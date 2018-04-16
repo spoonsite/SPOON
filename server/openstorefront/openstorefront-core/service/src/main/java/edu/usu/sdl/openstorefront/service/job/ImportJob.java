@@ -37,7 +37,7 @@ public class ImportJob
 		extends BaseJob
 {
 
-	private static final Logger log = Logger.getLogger(ImportJob.class.getName());
+	private static final Logger LOG = Logger.getLogger(ImportJob.class.getName());
 
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
@@ -57,14 +57,14 @@ public class ImportJob
 		List<FileHistory> fileHistories = service.getPersistenceService().queryByExample(queryByExample);
 
 		if (fileHistories.isEmpty() == false) {
-			log.log(Level.FINE, MessageFormat.format("Found {0} pending uploads", fileHistories.size()));
+			LOG.log(Level.FINE, MessageFormat.format("Found {0} pending uploads", fileHistories.size()));
 		}
 		for (FileHistory fileHistory : fileHistories) {
-			log.log(Level.FINE, MessageFormat.format("Found upload to process: {0}", fileHistory.getOriginalFilename()));
+			LOG.log(Level.FINE, MessageFormat.format("Found upload to process: {0}", fileHistory.getOriginalFilename()));
 			try {
 				ServiceProxy.getProxy(ModificationType.IMPORT).getImportServicePrivate().processImport(fileHistory.getFileHistoryId());
 			} catch (Exception e) {
-				log.log(Level.SEVERE, "Failed to process file.", e);
+				LOG.log(Level.SEVERE, "Failed to process file.", e);
 			}
 		}
 	}

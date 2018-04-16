@@ -32,10 +32,6 @@ public class ComponentTrackingWrapper
 	@DataType(ComponentTracking.class)
 	private List<ComponentTracking> componentTrackings = new ArrayList<>();
 
-	public ComponentTrackingWrapper()
-	{
-	}
-
 	public ComponentTrackingWrapper(List<ComponentTracking> componentTrackings, long totalNumber)
 	{
 		this.totalNumber = totalNumber;

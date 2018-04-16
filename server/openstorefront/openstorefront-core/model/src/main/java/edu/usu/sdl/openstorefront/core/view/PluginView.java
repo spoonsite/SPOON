@@ -39,10 +39,6 @@ public class PluginView
 	private String version;
 	private Long runtimeId;
 
-	public PluginView()
-	{
-	}
-
 	public static PluginView toView(Plugin plugin)
 	{
 		PluginView view = new PluginView();

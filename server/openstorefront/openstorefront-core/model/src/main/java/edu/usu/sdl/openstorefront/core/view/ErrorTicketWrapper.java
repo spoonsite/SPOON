@@ -32,10 +32,6 @@ public class ErrorTicketWrapper
 	@DataType(ErrorTicket.class)
 	private List<ErrorTicket> errorTickets = new ArrayList<>();
 
-	public ErrorTicketWrapper()
-	{
-	}
-
 	public ErrorTicketWrapper(List<ErrorTicket> errorTickets, long totalNumber)
 	{
 		this.errorTickets = errorTickets;

@@ -36,6 +36,7 @@ public class FileType
 	public static final String CHECKLISTQUESTIONS = "CHKQUESTIONS";
 	public static final String SYSTEM = "SYSTEM";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileType()
 	{
 	}

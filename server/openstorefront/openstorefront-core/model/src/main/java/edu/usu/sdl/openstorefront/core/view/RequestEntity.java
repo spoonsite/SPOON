@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.core.view;
 
 import java.util.List;
@@ -24,12 +23,9 @@ import java.util.List;
  */
 public class RequestEntity
 {
+
 	private List<String> entity;
 
-	public RequestEntity()
-	{
-	}	
-	
 	/**
 	 * @return the entity
 	 */
@@ -45,5 +41,5 @@ public class RequestEntity
 	{
 		this.entity = entity;
 	}
-	
+
 }

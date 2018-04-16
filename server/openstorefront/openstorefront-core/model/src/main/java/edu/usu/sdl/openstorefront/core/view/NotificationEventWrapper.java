@@ -30,10 +30,6 @@ public class NotificationEventWrapper
 	@DataType(NotificationEventView.class)
 	private List<NotificationEventView> data = new ArrayList<>();
 
-	public NotificationEventWrapper()
-	{
-	}
-
 	public List<NotificationEventView> getData()
 	{
 		return data;

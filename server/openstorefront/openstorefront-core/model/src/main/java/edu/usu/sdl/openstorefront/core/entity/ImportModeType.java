@@ -34,6 +34,7 @@ public class ImportModeType
 	public static final String MERGE = "MERGE";
 	//public static final String REPLACE = "REPLACE";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ImportModeType()
 	{
 	}

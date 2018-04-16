@@ -26,10 +26,6 @@ public class ListingStats
 	private long numberOfComponents;
 	private long numberOfArticles;
 
-	public ListingStats()
-	{
-	}
-
 	public long getNumberOfComponents()
 	{
 		return numberOfComponents;

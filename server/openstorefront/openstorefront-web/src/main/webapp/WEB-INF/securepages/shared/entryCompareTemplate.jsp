@@ -140,25 +140,33 @@ limitations under the License.
 		color: #fff;
 		cursor: pointer;
 	}
-
+	h1 {
+		line-height: 1em;
+	}
 	h3.quickView {
 		background-color: #6c6c6c;
 		cursor: pointer;
 		height: 50px;
 		padding-top: 0.75em;
 	}
-
+	.breadcrumbs {
+		font-size: 1.2em;
+	}
 </style>
 <tpl if="name">
 	<h1>{name}</h1>
-	<p>{organization}</p>
+	<p>Organization: {organization}</p>
 	<tpl if="version">
 		<p><b>Version:</b> {version}</p>
 	</tpl>
 	<tpl if="releaseDate">
 		<p><b>Release Date:</b> {releaseDate}</p>
 	</tpl>
-	<p><b>Entry Type:</b> {componentTypeLabel}</p>
+	<div class="breadcrumbs">
+		<tpl for="parents" between="&nbsp; &gt; &nbsp;">
+			<a target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch('{componentType}')" href="searchResults.jsp">{label}</a>
+		</tpl>
+	</div>
 	<tpl for="attributes">
 		<tpl if="badgeUrl">
 			<img src="{badgeUrl}" title="{codeDescription}" width="40" />
@@ -173,8 +181,6 @@ limitations under the License.
 			</span>
 		</tpl>
 	</tpl>
-	<br>
-	<br>
 	<div>
 		<h3 class="quickView toggle-collapse">Description <div data-qtip="Collapse panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret" role="presentation"></div></h3>
 		<section class="eval-visible-true">

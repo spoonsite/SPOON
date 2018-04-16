@@ -29,13 +29,10 @@ import org.apache.commons.beanutils.BeanUtils;
  * @author dshurtleff
  */
 public class ChangeLogView
-	extends ChangeLog	
+		extends ChangeLog
 {
-	private String changeTypeDescription;
 
-	public ChangeLogView()
-	{
-	}
+	private String changeTypeDescription;
 
 	public static ChangeLogView toView(ChangeLog changeLog)
 	{
@@ -58,8 +55,8 @@ public class ChangeLogView
 		});
 
 		return views;
-	}		
-	
+	}
+
 	public String getChangeTypeDescription()
 	{
 		return changeTypeDescription;

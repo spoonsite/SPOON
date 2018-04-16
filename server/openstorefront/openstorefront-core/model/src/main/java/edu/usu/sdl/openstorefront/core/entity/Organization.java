@@ -112,6 +112,7 @@ public class Organization
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String logoOriginalFileName;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Organization()
 	{
 	}

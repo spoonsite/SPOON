@@ -32,15 +32,10 @@ import org.apache.commons.beanutils.BeanUtils;
 public class FaqView
 		extends Faq
 {
-	
+
 	private String faqCategoryTypeDescription;
 	private int categorySortOrder;
-	
-	public FaqView()
-	{
-		
-	}
-	
+
 	public static FaqView toView(Faq faq)
 	{
 		FaqView view = new FaqView();
@@ -50,12 +45,12 @@ public class FaqView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		view.setFaqCategoryTypeDescription(TranslateUtil.translate(FaqCategoryType.class, faq.getCategory()));
-		
+
 		FaqCategoryType categoryType = ServiceProxyFactory.getServiceProxy().getLookupService().getLookupEnity(FaqCategoryType.class, faq.getCategory());
 		int categorySortOrder = categoryType.getSortOrder() != null ? categoryType.getSortOrder() : Integer.MAX_VALUE;
-		
+
 		view.setCategorySortOrder(categorySortOrder);
-		
+
 		return view;
 	}
 
@@ -67,7 +62,7 @@ public class FaqView
 		});
 		return views;
 	}
-	
+
 	public String getFaqCategoryTypeDescription()
 	{
 		return faqCategoryTypeDescription;
@@ -77,7 +72,7 @@ public class FaqView
 	{
 		this.faqCategoryTypeDescription = faqCategoryTypeDescription;
 	}
-	
+
 	public int getCategorySortOrder()
 	{
 		return categorySortOrder;

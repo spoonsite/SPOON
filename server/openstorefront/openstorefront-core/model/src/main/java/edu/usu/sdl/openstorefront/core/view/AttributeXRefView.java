@@ -35,11 +35,6 @@ public class AttributeXRefView
 	@DataType(AttributeXRefMap.class)
 	private List<AttributeXRefMap> map;
 
-	public AttributeXRefView()
-	{
-
-	}
-
 	/**
 	 * @return the type
 	 */

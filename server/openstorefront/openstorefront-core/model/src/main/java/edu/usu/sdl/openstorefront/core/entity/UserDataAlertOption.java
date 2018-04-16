@@ -39,7 +39,7 @@ public class UserDataAlertOption
 
 	@ConsumeField
 	private Boolean alertOnQuestions;
-	
+
 	@ConsumeField
 	private Boolean alertOnContactUpdate;
 
@@ -49,6 +49,7 @@ public class UserDataAlertOption
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserDataAlertOption()
 	{
 	}

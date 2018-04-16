@@ -25,18 +25,20 @@ import javax.ws.rs.QueryParam;
  * @author dshurtleff
  */
 public class AttributeFilterParams
-	extends FilterQueryParams
+		extends FilterQueryParams
 {
-	@QueryParam("attributeTypeDescription")	
-	@Size(min = 0, max = 255)
-	@Sanitize(TextSanitizer.class)
-	private String attributeTypeDescription;	
-	
-	@QueryParam("attributeCodeLabel")	
-	@Size(min = 0, max = 255)
-	@Sanitize(TextSanitizer.class)
-	private String attributeCodeLabel;	
 
+	@QueryParam("attributeTypeDescription")
+	@Size(min = 0, max = 255)
+	@Sanitize(TextSanitizer.class)
+	private String attributeTypeDescription;
+
+	@QueryParam("attributeCodeLabel")
+	@Size(min = 0, max = 255)
+	@Sanitize(TextSanitizer.class)
+	private String attributeCodeLabel;
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeFilterParams()
 	{
 	}

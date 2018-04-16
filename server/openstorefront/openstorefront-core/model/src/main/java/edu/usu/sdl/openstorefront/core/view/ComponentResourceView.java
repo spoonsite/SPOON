@@ -50,10 +50,6 @@ public class ComponentResourceView
 	private static final String LOCAL_RESOURCE_URL = "Resource.action?LoadResource&resourceId=";
 	private static final String ACTUAL_RESOURCE_URL = "Resource.action?Redirect&resourceId=";
 
-	public ComponentResourceView()
-	{
-	}
-
 	public static List<ComponentResourceView> toViewList(List<ComponentResource> resources)
 	{
 		List<ComponentResourceView> viewList = new ArrayList();

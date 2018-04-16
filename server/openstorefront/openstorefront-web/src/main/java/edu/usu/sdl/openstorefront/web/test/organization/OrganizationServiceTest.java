@@ -107,7 +107,7 @@ public class OrganizationServiceTest extends BaseTestCase
 		compQuestionResp.setComponentId(orgComponent.getComponentId());
 		compQuestionResp.setResponse("Why yes they did on July 20, 1969.  Thank you Mr. Armstrong.");
 		compQuestionResp.setOrganization("First-Test-001 Organization");
-		compQuestionResp = (ComponentQuestionResponse) compQuestionResp.find();
+		compQuestionResp = compQuestionResp.find();
 		question.getResponds().add(compQuestionResp);
 		componentAll.getQuestions().add(question);
 
@@ -279,7 +279,7 @@ public class OrganizationServiceTest extends BaseTestCase
 			try {
 				service.getOrganizationService().removeOrganization(organizationCheck.getOrganizationId());
 			} catch (AttachedReferencesException ex) {
-				failureReason.append(ex).append("- Unable to delete ").append(organizationTarget.getName()).append("<br><br>");
+				failureReason.append(ex).append("- Unable to delete ").append(organizationCheck.getName()).append("<br><br>");
 			}
 		}
 

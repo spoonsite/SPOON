@@ -30,21 +30,22 @@ import javax.validation.constraints.Size;
 public class SystemSearch
 		extends StandardEntity<SystemSearch>
 {
-	
+
 	@PK(generated = true)
 	@NotNull
 	private String searchId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String searchName;
-	
+
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_1MB)	
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	@ConsumeField
 	private String searchRequest;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SystemSearch()
 	{
 	}
@@ -53,7 +54,7 @@ public class SystemSearch
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);
-		
+
 		SystemSearch userSaveSearch = (SystemSearch) entity;
 		this.setSearchName(userSaveSearch.getSearchName());
 		this.setSearchRequest(userSaveSearch.getSearchRequest());
@@ -88,5 +89,5 @@ public class SystemSearch
 	{
 		this.searchId = searchId;
 	}
-	
+
 }

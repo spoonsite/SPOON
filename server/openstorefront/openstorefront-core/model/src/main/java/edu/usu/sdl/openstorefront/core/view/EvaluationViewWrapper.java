@@ -30,10 +30,6 @@ public class EvaluationViewWrapper
 	@DataType(EvaluationView.class)
 	private List<EvaluationView> data = new ArrayList<>();
 
-	public EvaluationViewWrapper()
-	{
-	}
-
 	public List<EvaluationView> getData()
 	{
 		return data;

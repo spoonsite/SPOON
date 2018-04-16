@@ -18,12 +18,16 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -38,12 +42,31 @@ public class ComponentType
 
 	public static final String FIELD_LABEL = "label";
 
+	private static final long serialVersionUID = 1L;
+
 	@PK(generated = false)
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@NotNull
 	@Sanitize(CleanKeySanitizer.class)
 	@ConsumeField
 	private String componentType;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@Sanitize(CleanKeySanitizer.class)
+	private String parentComponentType;
+
+	@DataType(RoleLink.class)
+	@ConsumeField
+	@Embedded
+	@OneToMany(orphanRemoval = true)
+	private List<RoleLink> assignedGroups;
+
+	@DataType(UserLink.class)
+	@ConsumeField
+	@Embedded
+	@OneToMany(orphanRemoval = true)
+	private List<UserLink> assignedUsers;
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -102,12 +125,17 @@ public class ComponentType
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String iconUrl;
 
+	@ConsumeField
+	@APIDescription("Used to indicate whether or not to display the component type icon in the search results")
+	private Boolean includeIconInSearch;
+
 	public static final String COMPONENT = "COMP";
 	public static final String ARTICLE = "ARTICLE";
 
 	//Dummy Value for filtering
 	public static final String ALL = "ALL";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentType()
 	{
 	}
@@ -134,6 +162,10 @@ public class ComponentType
 		this.setDataEntryQuestions(componentTypeLocal.getDataEntryQuestions());
 		this.setAllowOnSubmission(componentTypeLocal.getAllowOnSubmission());
 		this.setIconUrl(componentTypeLocal.getIconUrl());
+		this.setAssignedGroups(componentTypeLocal.getAssignedGroups());
+		this.setAssignedUsers(componentTypeLocal.getAssignedUsers());
+		this.setParentComponentType(componentTypeLocal.getParentComponentType());
+		this.setIncludeIconInSearch(componentTypeLocal.getIncludeIconInSearch());
 		this.setSubmissionTemplateId(componentTypeLocal.getSubmissionTemplateId());
 
 	}
@@ -288,6 +320,16 @@ public class ComponentType
 		this.allowOnSubmission = allowOnSubmission;
 	}
 
+	public String getParentComponentType()
+	{
+		return parentComponentType;
+	}
+
+	public void setParentComponentType(String parentComponentType)
+	{
+		this.parentComponentType = parentComponentType;
+	}
+
 	public String getIconUrl()
 	{
 		return iconUrl;
@@ -296,6 +338,36 @@ public class ComponentType
 	public void setIconUrl(String iconUrl)
 	{
 		this.iconUrl = iconUrl;
+	}
+
+	public List<RoleLink> getAssignedGroups()
+	{
+		return assignedGroups;
+	}
+
+	public void setAssignedGroups(List<RoleLink> assignedGroups)
+	{
+		this.assignedGroups = assignedGroups;
+	}
+
+	public List<UserLink> getAssignedUsers()
+	{
+		return assignedUsers;
+	}
+
+	public void setAssignedUsers(List<UserLink> assignedUsers)
+	{
+		this.assignedUsers = assignedUsers;
+	}
+
+	public Boolean getIncludeIconInSearch()
+	{
+		return includeIconInSearch;
+	}
+
+	public void setIncludeIconInSearch(Boolean includeIconInSearch)
+	{
+		this.includeIconInSearch = includeIconInSearch;
 	}
 
 	public String getSubmissionTemplateId()

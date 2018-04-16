@@ -27,10 +27,6 @@ public class SystemStatusView
 	private String systemStatus;
 	private String detailedStatus;
 
-	public SystemStatusView()
-	{
-	}
-
 	public boolean getStarted()
 	{
 		return started;

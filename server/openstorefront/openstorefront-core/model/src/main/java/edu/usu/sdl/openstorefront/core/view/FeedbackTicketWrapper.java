@@ -25,15 +25,11 @@ import java.util.List;
  * @author dshurtleff
  */
 public class FeedbackTicketWrapper
-	extends ListWrapper	
+		extends ListWrapper
 {
 
 	@DataType(FeedbackTicket.class)
 	private List<FeedbackTicket> data = new ArrayList<>();
-	
-	public FeedbackTicketWrapper()
-	{
-	}
 
 	public FeedbackTicketWrapper(List<FeedbackTicket> tickets, long totalNumber)
 	{
@@ -41,7 +37,7 @@ public class FeedbackTicketWrapper
 		this.totalNumber = totalNumber;
 		this.results = tickets.size();
 	}
-	
+
 	public List<FeedbackTicket> getData()
 	{
 		return data;
@@ -51,5 +47,5 @@ public class FeedbackTicketWrapper
 	{
 		this.data = data;
 	}
-	
+
 }

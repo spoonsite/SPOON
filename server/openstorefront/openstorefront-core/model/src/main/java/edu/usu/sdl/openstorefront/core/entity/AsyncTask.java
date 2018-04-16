@@ -31,6 +31,8 @@ public class AsyncTask
 		extends StandardEntity<AsyncTask>
 {
 
+	private static final long serialVersionUID = 1L;
+
 	@PK()
 	private String taskId;
 	private Date submitedDts;
@@ -41,6 +43,7 @@ public class AsyncTask
 	private String error;
 	private TaskStatus status;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AsyncTask()
 	{
 	}

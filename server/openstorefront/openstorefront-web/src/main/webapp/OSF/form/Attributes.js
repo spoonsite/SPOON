@@ -49,20 +49,18 @@ Ext.define('OSF.form.Attributes', {
 
 					var optionalAttributes = [];
 					Ext.Array.each(data, function (attribute) {
-						if (!attribute.requiredFlg) {
-							optionalAttributes.push(attribute);
-						} else if (attribute.requiredRestrictions) {
-							var optFound = Ext.Array.findBy(attribute.requiredRestrictions, function (item) {
-								if (item.componentType === attributePanel.component.componentType) {
-									return true;
-								} else {
-									return false;
+						var required = false;
+						
+						if (attribute.requiredRestrictions) {
+							Ext.Array.each(attribute.requiredRestrictions, function(restriction) {
+								if (restriction.componentType === attributePanel.component.componentType) {
+									required = true;
 								}
 							});
-							if (!optFound) {
-								optionalAttributes.push(attribute);
-							}
-						}
+						}						
+						if (!required) {
+							optionalAttributes.push(attribute);
+						} 
 					});
 					optionalAttributes.reverse();
 					attributePanel.attributeGrid.getStore().loadData(optionalAttributes);
@@ -285,43 +283,6 @@ Ext.define('OSF.form.Attributes', {
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/attributes'
-										},
-										listeners: {
-											load: function (store, records, opts) {
-												store.filterBy(function (attribute) {
-													if (attribute.data.associatedComponentTypes) {
-														var optFound = Ext.Array.findBy(attribute.data.associatedComponentTypes, function (item) {
-															if (item.componentType === attributePanel.component.componentType) {
-																return true;
-															} else {
-																return false;
-															}
-														});
-														if (optFound) {
-															return true;
-														} else {
-															return false;
-														}
-													} else {
-												if (attribute.data.requiredRestrictions) {
-													var optFound = Ext.Array.findBy(attribute.data.requiredRestrictions, function (item) {
-														if (item.componentType === attributePanel.component.componentType) {
-															return true;
-														} else {
-															return false;
-														}
-													});
-													if (optFound) {
-														return false;
-													} else {
-														return true;
-													}
-												} else {
-													return true;
-												} 
-													}
-												});
-											}
 										}
 									},
 									listeners: {
@@ -419,12 +380,14 @@ Ext.define('OSF.form.Attributes', {
 																		var addTypeWin = this.up('window');
 
 																		CoreUtil.submitForm({
-																			url: 'api/v1/resource/attributes/attributetypes/metadata',
+																			url: 'api/v1/resource/attributes/attributetypes/metadata?componentType=' + encodeURIComponent(attributePanel.component.componentType),
 																			method: 'POST',
 																			data: data,
 																			form: form,
 																			success: function (response, opts) {
-																				attributeTypeCb.getStore().load();
+																				attributeTypeCb.getStore().load({
+																					url: 'api/v1/resource/attributes/optional?componentType=' + encodeURIComponent(attributePanel.component.componentType)
+																				});
 																				addTypeWin.close();
 																			}
 																		});
@@ -595,11 +558,9 @@ Ext.define('OSF.form.Attributes', {
 				var component = Ext.decode(response.responseText);
 				attributePanel.component = component;
 				attributePanel.loadComponentAttributes();
-				attributePanel.attributeGrid.down('form').getComponent('attributeTypePanel').getComponent('attributeTypeCB').getStore().load();
-
-				if (callback) {
-					callback();
-				}
+				attributePanel.attributeGrid.queryById('attributeTypeCB').getStore().load({
+					url: 'api/v1/resource/attributes/optional?componentType=' + component.componentType 
+				});
 			}
 		});
 
@@ -618,20 +579,3 @@ Ext.define('OSF.form.Attributes', {
 
 });
 
-// custom Vtype (validator) for vtype:'AttributeNumber'
-Ext.define('Override.form.field.VTypes', {
-	override: 'Ext.form.field.VTypes',
-
-	AttributeNumber: function (value) {
-		return this.AttributeNumberRe.test(value);
-	},
-	// Any number of digits on whole nuumbers and 0-20 digits for decimal precision
-	AttributeNumberRe: /^\d*(\.\d{0,20})?$/,
-	AttributeNumberText: 'Must be numeric with decimal precision less than or equal to 20.'
-			// Mask forces only charaters meeting the regular expersion are
-			// allowed to be entered. We decided to not to enforce a mask so 
-			// users can tell the difference between readOnly fields and 
-			// incorrect input
-
-			// AttributeNumberMask: /[\d\.]/i
-});

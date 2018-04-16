@@ -44,12 +44,12 @@ public class HighlightTest extends BaseTestCase
 		highlight = highlight.find();
 		if (highlight != null) {
 			results.append("Highlight saved successfully<br><br>");
+			results.append("Deactivating highlight...<br>");
+			service.getSystemService().removeHighlight(highlight.getHighlightId());
 		} else {
 			failureReason.append("Unable to save highlight<br><br>");
 		}
 
-		results.append("Deactivating highlight...<br>");
-		service.getSystemService().removeHighlight(highlight.getHighlightId());
 		highlight = new Highlight();
 		highlight.setTitle("Highlight Test");
 		highlight.setActiveStatus(Highlight.INACTIVE_STATUS);

@@ -47,6 +47,7 @@ public class ReviewSearchHandler
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected ValidationResult internalValidate()
 	{
 		ValidationResult validationResult = new ValidationResult();
@@ -55,31 +56,31 @@ public class ReviewSearchHandler
 			if (StringUtils.isBlank(searchElement.getField())) {
 				validationResult.getRuleResults().add(getRuleResult("field", "Required"));
 			}
-			boolean checkValue = true; 			
+			boolean checkValue = true;
 			Field field = ReflectionUtil.getField(new ComponentReview(), searchElement.getField());
 			if (field == null) {
 				validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on review"));
 			} else {
 				Class type = field.getType();
-				if (type.getSimpleName().equals(String.class.getSimpleName())) {
+				if (type.isAssignableFrom(String.class)) {
 					//Nothing to check
-				} else if (type.getSimpleName().equals(Integer.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Integer.class)) {
 					if (StringUtils.isNumeric(searchElement.getValue()) == false) {
 						validationResult.getRuleResults().add(getRuleResult("value", "Value should be an integer for this field"));
 					}
-				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Date.class)) {
 					checkValue = false;
 					if (searchElement.getStartDate() == null && searchElement.getEndDate() == null) {
 						validationResult.getRuleResults().add(getRuleResult("startDate", "Start or End date should be entered for this field"));
 						validationResult.getRuleResults().add(getRuleResult("endDate", "Start or End date should be entered for this field"));
-					}					
-				} else if (type.getSimpleName().equals(Boolean.class.getSimpleName())) {
+					}
+				} else if (type.isAssignableFrom(Boolean.class)) {
 					//Nothing to check
 				} else {
 					validationResult.getRuleResults().add(getRuleResult("field", "Field type handling not supported"));
 				}
 			}
-			
+
 			if (checkValue && StringUtils.isBlank(searchElement.getValue())) {
 				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
 			}
@@ -89,6 +90,7 @@ public class ReviewSearchHandler
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<String> processSearch()
 	{
 		List<String> foundIds = new ArrayList<>();
@@ -98,20 +100,20 @@ public class ReviewSearchHandler
 			try {
 				ComponentReview componentReview = new ComponentReview();
 				componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
-				
+
 				Field field = ReflectionUtil.getField(new ComponentReview(), searchElement.getField());
 				field.setAccessible(true);
-				QueryByExample queryByExample = new QueryByExample(componentReview);
+				QueryByExample<ComponentReview> queryByExample = new QueryByExample<>(componentReview);
 
 				Class type = field.getType();
-				if (type.getSimpleName().equals(String.class.getSimpleName())) {
+				if (type.isAssignableFrom(String.class)) {
 					String likeValue = null;
 					switch (searchElement.getStringOperation()) {
 						case EQUALS:
 							String value = searchElement.getValue();
 							if (searchElement.getCaseInsensitive()) {
 								queryByExample.getFieldOptions().put(field.getName(),
-									new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+										new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 
 								value = value.toLowerCase();
 							}
@@ -131,16 +133,16 @@ public class ReviewSearchHandler
 						field.set(componentReviewLike, likeValue);
 						queryByExample.setLikeExample(componentReviewLike);
 					}
-				} else if (type.getSimpleName().equals(Integer.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Integer.class)) {
 					field.set(componentReview, Convert.toInteger(searchElement.getValue()));
-					queryByExample.getFieldOptions().put(field.getName(),										
-							new GenerateStatementOptionBuilder().setOperation(searchElement.getNumberOperation().toQueryOperation()).build());		
-				} else if (type.getSimpleName().equals(Date.class.getSimpleName())) {
+					queryByExample.getFieldOptions().put(field.getName(),
+							new GenerateStatementOptionBuilder().setOperation(searchElement.getNumberOperation().toQueryOperation()).build());
+				} else if (type.isAssignableFrom(Date.class)) {
 
 					ComponentReview componentReviewStartExample = new ComponentReview();
 
 					field.set(componentReviewStartExample, searchElement.getStartDate());
-					SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+					SpecialOperatorModel<ComponentReview> specialOperatorModel = new SpecialOperatorModel<>();
 					specialOperatorModel.setExample(componentReviewStartExample);
 					specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
 					queryByExample.getExtraWhereCauses().add(specialOperatorModel);
@@ -148,13 +150,13 @@ public class ReviewSearchHandler
 					ComponentReview componentReviewEndExample = new ComponentReview();
 
 					field.set(componentReviewEndExample, searchElement.getEndDate());
-					specialOperatorModel = new SpecialOperatorModel();
+					specialOperatorModel = new SpecialOperatorModel<>();
 					specialOperatorModel.setExample(componentReviewEndExample);
 					specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 					specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 					queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-				} else if (type.getSimpleName().equals(Boolean.class.getSimpleName())) {
+				} else if (type.isAssignableFrom(Boolean.class)) {
 					field.set(componentReview, Convert.toBoolean(searchElement.getValue()));
 				} else {
 					throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");

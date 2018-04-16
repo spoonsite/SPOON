@@ -29,13 +29,10 @@ import org.apache.commons.beanutils.BeanUtils;
  * @author dshurtleff
  */
 public class UserRegistrationView
-	extends UserRegistration
+		extends UserRegistration
 {
-	private String userTypeDescription;
 
-	public UserRegistrationView()
-	{
-	}
+	private String userTypeDescription;
 
 	public static UserRegistrationView toView(UserRegistration userRegistration)
 	{
@@ -56,8 +53,8 @@ public class UserRegistrationView
 			views.add(toView(userRegistration));
 		});
 		return views;
-	}	
-		
+	}
+
 	public String getUserTypeDescription()
 	{
 		return userTypeDescription;
@@ -67,5 +64,5 @@ public class UserRegistrationView
 	{
 		this.userTypeDescription = userTypeDescription;
 	}
-	
+
 }

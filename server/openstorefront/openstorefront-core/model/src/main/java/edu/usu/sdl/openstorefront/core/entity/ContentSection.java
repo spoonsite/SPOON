@@ -84,6 +84,7 @@ public class ContentSection
 	@FK(value = ContentSectionTemplate.class, softReference = true)
 	private String templateId;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ContentSection()
 	{
 	}

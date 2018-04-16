@@ -131,6 +131,7 @@ public class AttributeCode
 	public static final String DI2ELEVEL_LEVEL2 = "LEVEL2";
 	public static final String DI2ELEVEL_LEVEL3 = "LEVEL3";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeCode()
 	{
 	}

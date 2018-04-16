@@ -55,6 +55,7 @@ public class ComponentAttributePk
 	@FK(AttributeCode.class)
 	private String attributeCode;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentAttributePk()
 	{
 	}

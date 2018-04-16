@@ -69,6 +69,7 @@ public class EvaluationComment
 	@Sanitize(TextSanitizer.class)
 	private String entity;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public EvaluationComment()
 	{
 	}

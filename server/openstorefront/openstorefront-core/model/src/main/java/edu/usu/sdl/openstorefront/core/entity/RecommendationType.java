@@ -26,8 +26,4 @@ public class RecommendationType
 		extends LookupEntity<RecommendationType>
 {
 
-	public RecommendationType()
-	{
-	}
-
 }

@@ -30,10 +30,6 @@ public class ChecklistQuestionWrapper
 	@DataType(ChecklistQuestionView.class)
 	private List<ChecklistQuestionView> data = new ArrayList<>();
 
-	public ChecklistQuestionWrapper()
-	{
-	}
-
 	public List<ChecklistQuestionView> getData()
 	{
 		return data;

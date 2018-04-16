@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -92,6 +93,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentTrackingWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.TagView;
@@ -136,7 +138,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -168,7 +169,7 @@ public class ComponentRESTResource
 
 	// <editor-fold defaultstate="collapsed"  desc="COMPONENT GENERAL FUNCTIONS">
 	@GET
-	@APIDescription("Get a list of components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
+	@APIDescription("Get a list of components <br>(Note: this is only the top level component object, See Component Detail for composite resource.)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentSearchView.class)
 	public List<ComponentSearchView> getComponents()
@@ -195,7 +196,7 @@ public class ComponentRESTResource
 				return sendSingleEntityResponse(validationResult.toRestError());
 			}
 
-			List<ComponentLookupModel> lookupModels = new ArrayList<>();
+			List<ComponentLookupModel> lookupModels;
 
 			Component componentExample = new Component();
 
@@ -233,7 +234,7 @@ public class ComponentRESTResource
 			};
 			return sendSingleEntityResponse(entity);
 		} else {
-			List<ComponentLookupModel> lookupModels = new ArrayList<>();
+			List<ComponentLookupModel> lookupModels;
 
 			Component componentExample = new Component();
 
@@ -296,7 +297,7 @@ public class ComponentRESTResource
 
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-	@APIDescription("Get a list of all components <br>(Note: this only the top level component object, See Component Detail for composite resource.)")
+	@APIDescription("Get a list of all components <br>(Note: this is only the top level component object, See Component Detail for composite resource.)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminWrapper.class)
 	@Path("/filterable")
@@ -352,7 +353,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@APIDescription("Gets a component <br>(Note: this only the top level component object only)")
+	@APIDescription("Gets a component <br>(Note: this is only the top level component object)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@Path("/{id}")
@@ -477,15 +478,8 @@ public class ComponentRESTResource
 				}
 				TVFS.umount();
 
-				Response.ResponseBuilder response = Response.ok(new StreamingOutput()
-				{
-
-					@Override
-					public void write(OutputStream output) throws IOException, WebApplicationException
-					{
-						Files.copy(Paths.get(archiveName), output);
-					}
-
+				Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
+					Files.copy(Paths.get(archiveName), output);
 				});
 				response.header("Content-Type", "application/zip");
 				response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.zip\"");
@@ -716,6 +710,11 @@ public class ComponentRESTResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 
+			List<AttributeType> requiredAttributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponent().getComponentType(), false);
+			Set<String> requiredTypeSet = requiredAttributeTypes.stream()
+					.map(AttributeType::getAttributeType)
+					.collect(Collectors.toSet());
+
 			//pick up all existing active attributes not already in the update
 			ComponentAttribute componentAttributeExample = new ComponentAttribute();
 			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
@@ -723,7 +722,13 @@ public class ComponentRESTResource
 			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 			for (ComponentAttribute componentAttribute : componentAttributes) {
 				if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue()) == false) {
-					component.getAttributes().add(componentAttribute);
+
+					//don't add required for the type; if missing (Allow the multiple requires to be removed)
+					AttributeType attributeType = service.getAttributeService().findType(componentAttribute.getComponentAttributePk().getAttributeType());
+					if (!(attributeType != null
+							&& requiredTypeSet.contains(componentAttribute.getComponentAttributePk().getAttributeType()))) {
+						component.getAttributes().add(componentAttribute);
+					}
 				}
 			}
 
@@ -871,7 +876,30 @@ public class ComponentRESTResource
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-	@APIDescription("Changes owner of component")
+	@APIDescription(
+			"Changes the Entry Type of an existing components to another existing Entry Type"
+	)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/componenttype/{newType}")
+	public Response changeType(
+			@PathParam("newType") String newType,
+			@APIDescription("expected to be a set valid component ids") MultipleIds multipleIds)
+	{
+		ComponentType found = new ComponentType();
+		found.setComponentType(newType);
+		found = found.find();
+		if (found != null) {
+			for (String componentId : multipleIds.getIds()) {
+				service.getComponentService().changeComponentType(componentId, newType);
+			}
+
+			return Response.ok().build();
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	@PUT
+	@APIDescription("Changes librarian assigned to a component")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Path("/{id}/assignLibrarian")
 	public Response assignLibrarian(
@@ -1063,7 +1091,7 @@ public class ComponentRESTResource
 		ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
 		componentVersionHistory.setVersionHistoryId(versionHistoryId);
 		componentVersionHistory.setComponentId(componentId);
-		componentVersionHistory = (ComponentVersionHistory) componentVersionHistory.find();
+		componentVersionHistory = componentVersionHistory.find();
 		return sendSingleEntityResponse(componentVersionHistory);
 	}
 
@@ -1124,7 +1152,7 @@ public class ComponentRESTResource
 		ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
 		componentVersionHistory.setVersionHistoryId(versionHistoryId);
 		componentVersionHistory.setComponentId(componentId);
-		componentVersionHistory = (ComponentVersionHistory) componentVersionHistory.find();
+		componentVersionHistory = componentVersionHistory.find();
 		if (componentVersionHistory != null) {
 			if (options == null) {
 				options = new ComponentRestoreOptions();
@@ -1150,7 +1178,7 @@ public class ComponentRESTResource
 		ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
 		componentVersionHistory.setVersionHistoryId(versionHistoryId);
 		componentVersionHistory.setComponentId(componentId);
-		componentVersionHistory = (ComponentVersionHistory) componentVersionHistory.find();
+		componentVersionHistory = componentVersionHistory.find();
 		if (componentVersionHistory != null) {
 			service.getComponentService().deleteSnapshot(versionHistoryId);
 		}
@@ -1229,8 +1257,7 @@ public class ComponentRESTResource
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 		componentAttributePk.setAttributeType(attributeType);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
-		return componentAttributes;
+		return service.getPersistenceService().queryByExample(new QueryByExample<>(componentAttributeExample));
 	}
 
 	@GET
@@ -1251,7 +1278,7 @@ public class ComponentRESTResource
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 		componentAttributePk.setAttributeType(attributeType);
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
-		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(new QueryByExample(componentAttributeExample));
+		List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(new QueryByExample<>(componentAttributeExample));
 		for (ComponentAttribute attribute : componentAttributes) {
 			AttributeCodePk attributeCodePk = new AttributeCodePk();
 			attributeCodePk.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
@@ -2664,7 +2691,7 @@ public class ComponentRESTResource
 			responseExample.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			responseExample.setQuestionId(question.getQuestionId());
 
-			List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(new QueryByExample(responseExample));
+			List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(new QueryByExample<>(responseExample));
 			ComponentQuestionView questionView = ComponentQuestionView.toView(question, ComponentQuestionResponseView.toViewList(responses));
 			componentQuestionViews.add(questionView);
 		}
@@ -3357,7 +3384,7 @@ public class ComponentRESTResource
 		componentReviewConPk.setComponentReviewId(reviewId);
 		componentReviewConExample.setComponentReviewConPk(componentReviewConPk);
 		componentReviewConExample.setComponentId(componentId);
-		return service.getPersistenceService().queryByExample(new QueryByExample(componentReviewConExample));
+		return service.getPersistenceService().queryByExample(new QueryByExample<>(componentReviewConExample));
 	}
 
 	@GET
@@ -3383,7 +3410,7 @@ public class ComponentRESTResource
 		componentReviewConExample.setComponentReviewConPk(componentReviewConPk);
 		componentReviewConExample.setComponentId(componentId);
 
-		ComponentReviewCon reviewCon = service.getPersistenceService().queryOneByExample(new QueryByExample(componentReviewConExample));
+		ComponentReviewCon reviewCon = service.getPersistenceService().queryOneByExample(new QueryByExample<>(componentReviewConExample));
 		return sendSingleEntityResponse(reviewCon);
 	}
 
@@ -3492,7 +3519,7 @@ public class ComponentRESTResource
 		ComponentReviewProPk componentReviewProPk = new ComponentReviewProPk();
 		componentReviewProPk.setComponentReviewId(reviewId);
 		componentReviewProExample.setComponentReviewProPk(componentReviewProPk);
-		return service.getPersistenceService().queryByExample(new QueryByExample(componentReviewProExample));
+		return service.getPersistenceService().queryByExample(new QueryByExample<>(componentReviewProExample));
 	}
 
 	@GET
@@ -3517,7 +3544,7 @@ public class ComponentRESTResource
 		componentReviewProPk.setComponentReviewId(reviewId);
 		componentReviewProPk.setReviewPro(proId);
 		componentReviewProExample.setComponentReviewProPk(componentReviewProPk);
-		ComponentReviewPro componentReviewPro = service.getPersistenceService().queryOneByExample(new QueryByExample(componentReviewProExample));
+		ComponentReviewPro componentReviewPro = service.getPersistenceService().queryOneByExample(new QueryByExample<>(componentReviewProExample));
 		return sendSingleEntityResponse(componentReviewPro);
 	}
 
@@ -3696,7 +3723,7 @@ public class ComponentRESTResource
 		ComponentTag componentTagExample = new ComponentTag();
 		componentTagExample.setComponentId(componentId);
 		componentTagExample.setTagId(tagId);
-		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample(componentTagExample));
+		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample<>(componentTagExample));
 		return sendSingleEntityResponse(componentTag);
 	}
 
@@ -3730,7 +3757,7 @@ public class ComponentRESTResource
 		ComponentTag example = new ComponentTag();
 		example.setTagId(tagId);
 		example.setComponentId(componentId);
-		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample(example));
+		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample<>(example));
 		if (componentTag != null) {
 			response = ownerCheck(componentTag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 			if (response == null) {
@@ -3754,7 +3781,7 @@ public class ComponentRESTResource
 		ComponentTag componentTagExample = new ComponentTag();
 		componentTagExample.setComponentId(componentId);
 		componentTagExample.setText(example.getText());
-		ComponentTag tag = service.getPersistenceService().queryOneByExample(new QueryByExample(componentTagExample));
+		ComponentTag tag = service.getPersistenceService().queryOneByExample(new QueryByExample<>(componentTagExample));
 
 		if (tag != null) {
 			response = ownerCheck(tag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
@@ -4026,7 +4053,7 @@ public class ComponentRESTResource
 		ComponentRelationship existing = new ComponentRelationship();
 		existing.setComponentId(componentId);
 		existing.setComponentRelationshipId(relationshipId);
-		existing = (ComponentRelationship) existing.find();
+		existing = existing.find();
 		if (existing != null) {
 			relationship.setComponentId(componentId);
 			relationship.setComponentRelationshipId(relationshipId);
@@ -4079,7 +4106,7 @@ public class ComponentRESTResource
 		trackingExample.setComponentId(componentId);
 		trackingExample.setActiveStatus(filterQueryParams.getStatus());
 
-		QueryByExample<ComponentTracking> queryByExample = new QueryByExample(trackingExample);
+		QueryByExample<ComponentTracking> queryByExample = new QueryByExample<>(trackingExample);
 		queryByExample.setMaxResults(filterQueryParams.getMax());
 		queryByExample.setFirstResult(filterQueryParams.getOffset());
 
@@ -4090,7 +4117,7 @@ public class ComponentRESTResource
 
 		List<ComponentTracking> componentTrackings = service.getPersistenceService().queryByExample(queryByExample);
 
-		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, trackingExample));
+		long total = service.getPersistenceService().countByExample(new QueryByExample<>(QueryType.COUNT, trackingExample));
 		return sendSingleEntityResponse(new ComponentTrackingWrapper(componentTrackings, total));
 	}
 
@@ -4464,7 +4491,7 @@ public class ComponentRESTResource
 			GenerateStatementOption option = new GenerateStatementOption();
 			option.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
 
-			QueryByExample configQueryExample = new QueryByExample();
+			QueryByExample<ComponentIntegrationConfig> configQueryExample = new QueryByExample<>();
 			configQueryExample.getFieldOptions().put(ComponentIntegrationConfig.FIELD_ISSUENUMBER, option);
 			configQueryExample.setExample(configExample);
 
@@ -4524,7 +4551,7 @@ public class ComponentRESTResource
 				GenerateStatementOption issueNumberOption = new GenerateStatementOption();
 				issueNumberOption.setMethod(GenerateStatementOption.METHOD_UPPER_CASE);
 
-				QueryByExample configQueryExample = new QueryByExample();
+				QueryByExample<ComponentIntegrationConfig> configQueryExample = new QueryByExample<>();
 				configQueryExample.getFieldOptions().put("integrationConfigId", configIdOption);
 				configQueryExample.getFieldOptions().put("issueNumber", issueNumberOption);
 				configQueryExample.setExample(configExample);

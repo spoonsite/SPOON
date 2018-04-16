@@ -31,10 +31,6 @@ public class DBLogRecordWrapper
 	@DataType(DBLogRecord.class)
 	private List<DBLogRecord> logRecords = new ArrayList<>();
 
-	public DBLogRecordWrapper()
-	{
-	}
-
 	public List<DBLogRecord> getLogRecords()
 	{
 		return logRecords;

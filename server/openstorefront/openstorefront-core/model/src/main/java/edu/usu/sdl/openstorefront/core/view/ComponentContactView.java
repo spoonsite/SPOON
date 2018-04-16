@@ -44,16 +44,12 @@ public class ComponentContactView
 	private Date updateDts;
 	private String activeStatus;
 
-	public ComponentContactView()
-	{
-	}
-
 	public static ComponentContactView toView(ComponentContact contact)
 	{
 		ComponentContactView view = new ComponentContactView();
 		Contact contactFull = contact.fullContact();
-		
-		view.setComponentContactId(contact.getComponentContactId());				
+
+		view.setComponentContactId(contact.getComponentContactId());
 		view.setEmail(contactFull.getEmail());
 		view.setPositionDescription(TranslateUtil.translate(ContactType.class, contact.getContactType()));
 		view.setContactType(contact.getContactType());

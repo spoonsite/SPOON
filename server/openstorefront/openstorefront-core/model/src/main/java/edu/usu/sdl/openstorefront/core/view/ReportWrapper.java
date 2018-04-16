@@ -28,10 +28,6 @@ public class ReportWrapper
 	private long totalNumber;
 	private List<ReportView> data = new ArrayList<>();
 
-	public ReportWrapper()
-	{
-	}
-
 	public long getTotalNumber()
 	{
 		return totalNumber;

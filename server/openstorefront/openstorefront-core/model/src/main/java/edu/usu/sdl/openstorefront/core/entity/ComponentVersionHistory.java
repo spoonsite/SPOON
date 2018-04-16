@@ -44,6 +44,7 @@ public class ComponentVersionHistory
 	@APIDescription("If this history was based on file history, this field will hold filehistoryId")
 	private String fileHistoryId;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentVersionHistory()
 	{
 	}

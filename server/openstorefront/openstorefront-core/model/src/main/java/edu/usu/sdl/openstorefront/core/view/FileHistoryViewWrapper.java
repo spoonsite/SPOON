@@ -30,10 +30,6 @@ public class FileHistoryViewWrapper
 	@DataType(FileHistoryView.class)
 	private List<FileHistoryView> data = new ArrayList<>();
 
-	public FileHistoryViewWrapper()
-	{
-	}
-
 	public List<FileHistoryView> getData()
 	{
 		return data;

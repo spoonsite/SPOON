@@ -480,7 +480,7 @@
 				var actionRefresh = function() {
 					Ext.getCmp('contactGrid').getStore().load({
 						url: 'api/v1/resource/contacts'
-					});					
+					});
 				};
 				
 				var actionView = function(record) {

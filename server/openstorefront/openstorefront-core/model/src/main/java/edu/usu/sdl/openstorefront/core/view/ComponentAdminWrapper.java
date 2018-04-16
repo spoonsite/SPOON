@@ -30,6 +30,7 @@ public class ComponentAdminWrapper
 	@DataType(ComponentAdminView.class)
 	private List<ComponentAdminView> components = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentAdminWrapper()
 	{
 	}

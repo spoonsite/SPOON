@@ -30,9 +30,8 @@ Ext.define('OSF.component.AttributeAssignment', {
 	y: '2em',
 	layout: 'fit',
 	bodyStyle: 'padding: 5px',
-	items: [
-		
-	],
+	closeAction: 'destroy',
+	
 	initComponent: function () {
 		this.callParent();
 		

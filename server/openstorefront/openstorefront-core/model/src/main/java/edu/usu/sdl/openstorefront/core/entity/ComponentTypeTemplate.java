@@ -63,6 +63,7 @@ public class ComponentTypeTemplate
 	@APIDescription("This is used to persist the visual designer")
 	private String templateBlocks;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTypeTemplate()
 	{
 	}

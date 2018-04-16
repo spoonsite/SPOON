@@ -39,6 +39,7 @@ public class AlertType
 	public static final String USER_MANAGEMENT = "USERMANG";
 	public static final String COMPONENT_COMMENT = "CMPCOMMENT";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AlertType()
 	{
 	}

@@ -31,26 +31,27 @@ import javax.validation.constraints.Size;
 public class UserSavedSearch
 		extends StandardEntity<UserSavedSearch>
 {
-	
+
 	@PK(generated = true)
 	@NotNull
 	private String userSearchId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String searchName;
-	
+
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_1MB)	
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	@ConsumeField
 	private String searchRequest;
-	
+
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)	
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	@FK(UserProfile.class)
-	private String username;	
-	
+	private String username;
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserSavedSearch()
 	{
 	}
@@ -59,12 +60,12 @@ public class UserSavedSearch
 	public void updateFields(StandardEntity entity)
 	{
 		super.updateFields(entity);
-		
+
 		UserSavedSearch userSaveSearch = (UserSavedSearch) entity;
 		this.setSearchName(userSaveSearch.getSearchName());
 		this.setSearchRequest(userSaveSearch.getSearchRequest());
 		this.setUsername(userSaveSearch.getUsername());
-		
+
 	}
 
 	public String getUserSearchId()
@@ -106,5 +107,5 @@ public class UserSavedSearch
 	{
 		this.username = username;
 	}
-	
+
 }

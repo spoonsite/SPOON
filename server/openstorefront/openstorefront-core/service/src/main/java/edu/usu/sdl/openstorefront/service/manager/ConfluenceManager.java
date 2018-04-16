@@ -39,7 +39,7 @@ public class ConfluenceManager
 		implements Initializable, PooledResourceManager<ConfluenceClient>
 {
 
-	private static final Logger log = Logger.getLogger(ConfluenceManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(ConfluenceManager.class.getName());
 
 	private BlockingQueue<ConfluenceClient> clientPool;
 	private int maxPoolSize;
@@ -59,14 +59,14 @@ public class ConfluenceManager
 
 	public static void init()
 	{
-		log.log(Level.FINE, "Initializing Confluence Pool");
+		LOG.log(Level.FINE, "Initializing Confluence Pool");
 
 		String poolSize = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_CONFLUENCE_POOL_SIZE, "20");
 		int maxPoolSize = Convert.toInteger(poolSize);
 		BlockingQueue<ConfluenceClient> clientPool = new ArrayBlockingQueue<>(maxPoolSize, true);
 		poolInstance = new ConfluenceManager(clientPool, maxPoolSize);
 
-		log.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
+		LOG.log(Level.FINE, MessageFormat.format("Filling Pool to: {0}", poolSize));
 		ConnectionModel connectionModel = new ConnectionModel();
 		connectionModel.setUrl(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_CONFLUENCE_URL));
 		connectionModel.setUsername(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_TOOLS_USER));
@@ -74,7 +74,9 @@ public class ConfluenceManager
 
 		for (int i = 0; i < maxPoolSize; i++) {
 			ConfluenceClient client = new ConfluenceClient(connectionModel, poolInstance);
-			clientPool.offer(client);
+			if (!clientPool.offer(client)) {
+				LOG.log(Level.FINER, "Client not added to Pool; Pool was full.");
+			}
 		}
 	}
 
@@ -105,9 +107,9 @@ public class ConfluenceManager
 	{
 		if (poolInstance != null) {
 			if (poolInstance.getAvailableConnections() != poolInstance.getMaxConnections()) {
-				log.log(Level.WARNING, MessageFormat.format("{0} confluence connections were in process. ", poolInstance.getAvailableConnections()));
+				LOG.log(Level.WARNING, () -> MessageFormat.format("{0} confluence connections were in process. ", poolInstance.getAvailableConnections()));
 			}
-			log.log(Level.FINE, "Stopping pool.");
+			LOG.log(Level.FINE, "Stopping pool.");
 			poolInstance.shutdownPool();
 		}
 		started.set(false);
@@ -119,6 +121,7 @@ public class ConfluenceManager
 		return started.get();
 	}
 
+	@Override
 	public ConfluenceClient getClient()
 	{
 		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_CONNECTION_WAIT_TIME, "60"));
@@ -129,6 +132,7 @@ public class ConfluenceManager
 			}
 			return client;
 		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
 			throw new OpenStorefrontRuntimeException("Unable to retrieve Confluence Connection - wait interrupted.  No resource available.", "Adjust confluence pool size appropriate to load.", ex, ErrorTypeCode.INTEGRATION);
 		}
 	}
@@ -136,7 +140,9 @@ public class ConfluenceManager
 	@Override
 	public void releaseClient(ConfluenceClient confluenceClient)
 	{
-		clientPool.offer(confluenceClient);
+		if (!clientPool.offer(confluenceClient)) {
+			LOG.log(Level.FINER, "Client not added to Pool; Pool was full.");
+		}
 	}
 
 	@Override

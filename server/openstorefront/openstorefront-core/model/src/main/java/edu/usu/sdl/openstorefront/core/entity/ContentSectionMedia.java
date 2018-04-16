@@ -83,7 +83,7 @@ public class ContentSectionMedia
 
 	@APIDescription("A local media file")
 	private MediaFile file;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String caption;
@@ -92,6 +92,7 @@ public class ContentSectionMedia
 	@ConsumeField
 	private Boolean privateMedia;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ContentSectionMedia()
 	{
 	}
@@ -119,7 +120,7 @@ public class ContentSectionMedia
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
 	public Path pathToMedia()
-	{ 
+	{
 		//Note: this may be ran from a proxy so don't use fields directly
 		return getFile().path();
 	}
@@ -189,7 +190,7 @@ public class ContentSectionMedia
 	{
 		this.fileName = fileName;
 	}
-	
+
 	/**
 	 * @return filename used by the original source
 	 * @deprecated As of release 2.5, replaced by
@@ -200,7 +201,7 @@ public class ContentSectionMedia
 	{
 		return originalName;
 	}
-	
+
 	/**
 	 * @param originalName filename used by the original source
 	 * @deprecated As of release 2.5, replaced by
