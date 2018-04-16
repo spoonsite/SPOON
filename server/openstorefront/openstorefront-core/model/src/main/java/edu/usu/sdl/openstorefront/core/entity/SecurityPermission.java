@@ -69,6 +69,7 @@ public class SecurityPermission
 	public static final String ADMIN_EVALUATION_TEMPLATE_SECTION = "ADMIN-EVALUATION-TEMPLATE-SECTION";
 	public static final String ADMIN_CONTACT_MANAGEMENT = "ADMIN-CONTACT-MANAGEMENT";
 	public static final String ADMIN_ENTRY_TEMPLATES = "ADMIN-ENTRY-TEMPLATES";
+	public static final String ADMIN_PARTIAL_SUBMISSIONS = "ADMIN-PARTIAL-SUBMISSIONS";
 	public static final String ADMIN_ENTRY_TYPES = "ADMIN-ENTRY-TYPES";
 	public static final String ADMIN_QUESTIONS = "ADMIN-QUESTIONS";
 	public static final String ADMIN_REVIEW = "ADMIN-REVIEW";
@@ -126,6 +127,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_SECTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_SECTION, "Admin evalution template section"));
 		codeMap.put(ADMIN_CONTACT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_CONTACT_MANAGEMENT, "Admin contact management"));
 		codeMap.put(ADMIN_ENTRY_TEMPLATES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TEMPLATES, "Admin entry templates"));
+		codeMap.put(ADMIN_PARTIAL_SUBMISSIONS, newLookup(SecurityPermission.class, ADMIN_PARTIAL_SUBMISSIONS, "Admin partial submissions"));
 		codeMap.put(ADMIN_ENTRY_TYPES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TYPES, "Admin entry types"));
 		codeMap.put(ADMIN_QUESTIONS, newLookup(SecurityPermission.class, ADMIN_QUESTIONS, "Admin questions"));
 		codeMap.put(ADMIN_REVIEW, newLookup(SecurityPermission.class, ADMIN_REVIEW, "Admin review"));
