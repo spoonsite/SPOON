@@ -30,6 +30,9 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.mapping.MappingController;
@@ -39,6 +42,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +53,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -111,7 +117,7 @@ public class SubmissionFormServiceImplTest
 	public void testSaveSubmissionFormTemplateValid()
 	{
 		System.out.println("testSaveSubmissionFormTemplateValid");
-		handleSaveSubmissionTemplateTest(SubmissionTemplateStatus.VALID, false);
+		handleSaveSubmissionTemplateTest(SubmissionTemplateStatus.PENDING_VERIFICATION, false);
 	}
 
 	private void handleSaveSubmissionTemplateTest(String expected, boolean addError)
@@ -295,4 +301,51 @@ public class SubmissionFormServiceImplTest
 
 		}
 	}
+
+	@Test
+	public void testDeleteUserSubmissionNoMedia() throws IOException
+	{
+		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
+
+		UserSubmission userSubmission = new UserSubmission();
+		Mockito.when(persistenceService.findById(UserSubmission.class, "1")).thenReturn(userSubmission);
+
+		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService);
+		instance.deleteUserSubmission("1");
+
+	}
+
+	@Test
+	public void testDeleteUserSubmissionMedia() throws IOException
+	{
+		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
+
+		UserSubmission userSubmission = new UserSubmission();
+
+		List<UserSubmissionField> fields = new ArrayList<>();
+		UserSubmissionField userSubmissionField = new UserSubmissionField();
+		UserSubmissionMedia media = new UserSubmissionMedia();
+		MediaFile mediaFile = new MediaFile();
+		mediaFile.setFileType(MediaFileType.MEDIA);
+		mediaFile.setFileName("testmedia.txt");
+		media.setFile(mediaFile);
+
+		Path path = mediaFile.path();
+		Files.createFile(path);
+
+		userSubmissionField.setMedia(new ArrayList<>());
+		userSubmissionField.getMedia().add(media);
+		fields.add(userSubmissionField);
+		userSubmission.setFields(fields);
+
+		Mockito.when(persistenceService.findById(UserSubmission.class, "1")).thenReturn(userSubmission);
+
+		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService);
+		instance.deleteUserSubmission("1");
+
+		path = mediaFile.path();
+		assertTrue(!path.toFile().exists());
+
+	}
+
 }

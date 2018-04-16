@@ -18,7 +18,7 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
-import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
 import java.util.List;
@@ -96,7 +96,7 @@ public interface SubmissionFormService
 	 * @param userSubmission
 	 * @return ComponentFormSet with the entries
 	 */
-	public ComponentFormSet verifySubmission(UserSubmission userSubmission);
+	public VerifySubmissionTemplateResult verifySubmission(UserSubmission userSubmission);
 
 	/**
 	 * Convert and saves component The user submission is then removed.

@@ -19,6 +19,8 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
@@ -27,9 +29,12 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.service.mapping.MappingController;
+import edu.usu.sdl.openstorefront.service.mapping.MappingException;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,6 +71,11 @@ public class SubmissionFormServiceImpl
 		super(persistenceService);
 	}
 
+	public void setMappingController(MappingController mappingController)
+	{
+		this.mappingController = mappingController;
+	}
+
 	@Override
 	public SubmissionFormTemplate saveSubmissionFormTemplate(SubmissionFormTemplate template)
 	{
@@ -79,7 +89,7 @@ public class SubmissionFormServiceImpl
 
 		ValidationResult validationResult = validateTemplate(template, componentType.get(0).getComponentType());
 		if (validationResult.valid()) {
-			template.setTemplateStatus(SubmissionTemplateStatus.VALID);
+			template.setTemplateStatus(SubmissionTemplateStatus.PENDING_VERIFICATION);
 		} else {
 			template.setTemplateStatus(SubmissionTemplateStatus.INCOMPLETE);
 		}
@@ -167,11 +177,6 @@ public class SubmissionFormServiceImpl
 		}
 	}
 
-	public void setMappingController(MappingController mappingController)
-	{
-		this.mappingController = mappingController;
-	}
-
 	@Override
 	public List<UserSubmission> getUserSubmissions(String ownerUsername)
 	{
@@ -198,30 +203,118 @@ public class SubmissionFormServiceImpl
 	}
 
 	@Override
-	public ComponentFormSet verifySubmission(UserSubmission userSubmission)
+	public VerifySubmissionTemplateResult verifySubmission(UserSubmission userSubmission)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Objects.requireNonNull(userSubmission);
+
+		VerifySubmissionTemplateResult verifySubmissionTemplateResult = new VerifySubmissionTemplateResult();
+
+		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
+		if (formTemplate != null) {
+			try {
+				ComponentFormSet componentFormSet = mappingController.mapUserSubmissionToEntry(formTemplate, userSubmission);
+				ValidationResult validationResult = componentFormSet.validate(true);
+
+				verifySubmissionTemplateResult.setComponentFormSet(componentFormSet);
+				verifySubmissionTemplateResult.setValidationResult(validationResult);
+
+				if (validationResult.valid()) {
+					formTemplate.setTemplateStatus(SubmissionTemplateStatus.VERIFIED);
+					formTemplate.populateBaseUpdateFields();
+					persistenceService.persist(formTemplate);
+				}
+
+			} catch (MappingException ex) {
+				LOG.log(Level.WARNING, "Failed to mapped user submisson");
+				if (LOG.isLoggable(Level.FINE)) {
+					LOG.log(Level.FINE, null, ex);
+				}
+			}
+
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find form template.", "");
+		}
+		return verifySubmissionTemplateResult;
 	}
 
 	@Override
 	public void submitUserSubmissionForApproval(UserSubmission userSubmission)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
+		if (formTemplate != null) {
+			try {
+				ComponentFormSet componentFormSet = mappingController.mapUserSubmissionToEntry(formTemplate, userSubmission);
+
+				componentFormSet.getPrimary().getComponent().setApprovalState(ApprovalStatus.PENDING);
+				getComponentService().saveFullComponent(componentFormSet.getPrimary());
+				for (ComponentAll componentAll : componentFormSet.getChildren()) {
+					getComponentService().saveFullComponent(componentAll);
+				}
+
+			} catch (MappingException ex) {
+				Logger.getLogger(SubmissionFormServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+			}
+
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find form template.", "");
+		}
 	}
 
 	@Override
 	public UserSubmission editComponentForSubmission(String submissionTemplateId, String componentId)
 	{
 		Objects.isNull(componentId);
-		ComponentFormSet componentFormSet = new ComponentFormSet();
 
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		UserSubmission userSubmission = null;
+		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, submissionTemplateId);
+		if (formTemplate != null) {
+			ComponentFormSet componentFormSet = new ComponentFormSet();
+			ComponentAll componentAll = getComponentService().getFullComponent(componentId);
+			componentFormSet.setPrimary(componentAll);
+
+			for (ComponentRelationship relationship : componentAll.getRelationships()) {
+				componentFormSet.getChildren().add(getComponentService().getFullComponent(relationship.getRelatedComponentId()));
+			}
+
+			try {
+				userSubmission = mappingController.mapEntriesToUserSubmission(formTemplate, componentFormSet);
+			} catch (MappingException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to map entry to submission.", "Check error ticket/logs", ex);
+			}
+
+			saveUserSubmission(userSubmission);
+
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find form template.", "");
+		}
+
+		return userSubmission;
 	}
 
 	@Override
 	public void submitChangeRequestForApproval(UserSubmission userSubmission)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Objects.requireNonNull(userSubmission.getOriginalComponentId());
+
+		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
+		if (formTemplate != null) {
+			try {
+				ComponentFormSet componentFormSet = mappingController.mapUserSubmissionToEntry(formTemplate, userSubmission);
+
+				componentFormSet.getPrimary().getComponent().setApprovalState(ApprovalStatus.PENDING);
+				getComponentService().saveFullComponent(componentFormSet.getPrimary());
+				for (ComponentAll componentAll : componentFormSet.getChildren()) {
+					getComponentService().saveFullComponent(componentAll);
+				}
+				getComponentService().submitChangeRequest(userSubmission.getOriginalComponentId());
+
+			} catch (MappingException ex) {
+				Logger.getLogger(SubmissionFormServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+			}
+
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find form template.", "");
+		}
 	}
 
 	@Override

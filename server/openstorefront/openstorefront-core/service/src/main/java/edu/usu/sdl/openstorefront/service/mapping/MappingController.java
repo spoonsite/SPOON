@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
-import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
@@ -24,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
@@ -67,32 +67,34 @@ public class MappingController
 
 		ValidationResult result = new ValidationResult();
 
-		List<ComponentAll> allComponents = new ArrayList<>();
+		ComponentFormSet componentFormSet = new ComponentFormSet();
+
 		ComponentAll mainComponent = new ComponentAll();
 		Component component = new Component();
 		component.setComponentType(componentType);
 		component.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 		mainComponent.setComponent(component);
-		allComponents.add(mainComponent);
+
+		componentFormSet.setPrimary(mainComponent);
 
 		try {
-			verifySections(template, mainComponent, allComponents);
+			verifySections(template, componentFormSet);
 		} catch (MappingException ex) {
 			RuleResult ruleResult = new RuleResult();
 			ruleResult.setFieldName(ex.getFieldType());
 			ruleResult.setMessage(ex.getLocalizedMessage());
 			result.getRuleResults().add(ruleResult);
 		}
-		result.merge(validateComponents(allComponents));
+		result.merge(componentFormSet.validate(false));
 		return result;
 	}
 
-	private void verifySections(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents) throws MappingException
+	private void verifySections(SubmissionFormTemplate template, ComponentFormSet componentFormSet) throws MappingException
 	{
 		if (template.getSections() != null) {
 			for (SubmissionFormSection section : template.getSections()) {
 				try {
-					verifyFields(section.getFields(), mainComponent, allComponents);
+					verifyFields(section.getFields(), componentFormSet);
 				} catch (MappingException ex) {
 					ex.setSectionName(section.getName());
 					throw ex;
@@ -101,25 +103,14 @@ public class MappingController
 		}
 	}
 
-	private void verifyFields(List<SubmissionFormField> fields, ComponentAll mainComponent, List<ComponentAll> allComponents) throws MappingException
+	private void verifyFields(List<SubmissionFormField> fields, ComponentFormSet componentFormSet) throws MappingException
 	{
 		if (fields != null) {
 			for (SubmissionFormField field : fields) {
 				BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
-				allComponents.addAll(mapper.mapField(mainComponent, field));
+				componentFormSet.getChildren().addAll(mapper.mapField(componentFormSet.getPrimary(), field));
 			}
 		}
-	}
-
-	private ValidationResult validateComponents(List<ComponentAll> allComponents)
-	{
-		ValidationResult result = new ValidationResult();
-
-		for (ComponentAll componentAll : allComponents) {
-			result.merge(componentAll.validate());
-		}
-
-		return result;
 	}
 
 	/**
@@ -129,22 +120,23 @@ public class MappingController
 	 * @param userSubmission
 	 * @return All entries created
 	 */
-	public List<ComponentAll> mapUserSubmissionToEntry(SubmissionFormTemplate template, UserSubmission userSubmission) throws MappingException
+	public ComponentFormSet mapUserSubmissionToEntry(SubmissionFormTemplate template, UserSubmission userSubmission) throws MappingException
 	{
+		ComponentFormSet componentFormSet = new ComponentFormSet();
 
-		List<ComponentAll> allComponents = new ArrayList<>();
 		ComponentAll mainComponent = new ComponentAll();
 		Component component = new Component();
 		component.setComponentType(userSubmission.getComponentType());
+		component.setComponentId(userSubmission.getOriginalComponentId());
 		mainComponent.setComponent(component);
-		allComponents.add(mainComponent);
+		componentFormSet.setPrimary(mainComponent);
 
-		mapTemplateSections(template, mainComponent, allComponents, userSubmission);
+		mapTemplateSections(template, componentFormSet, userSubmission);
 
-		return allComponents;
+		return componentFormSet;
 	}
 
-	private void mapTemplateSections(SubmissionFormTemplate template, ComponentAll mainComponent, List<ComponentAll> allComponents, UserSubmission userSubmission) throws MappingException
+	private void mapTemplateSections(SubmissionFormTemplate template, ComponentFormSet componentFormSet, UserSubmission userSubmission) throws MappingException
 	{
 		if (template.getSections() != null) {
 
@@ -155,7 +147,7 @@ public class MappingController
 
 			for (SubmissionFormSection section : template.getSections()) {
 				try {
-					mapTemplateFields(section.getFields(), mainComponent, allComponents, userFieldMap);
+					mapTemplateFields(section.getFields(), componentFormSet, userFieldMap);
 				} catch (MappingException ex) {
 					ex.setSectionName(section.getName());
 					throw ex;
@@ -164,14 +156,14 @@ public class MappingController
 		}
 	}
 
-	private void mapTemplateFields(List<SubmissionFormField> fields, ComponentAll mainComponent, List<ComponentAll> allComponents, Map<String, UserSubmissionField> submissionFields) throws MappingException
+	private void mapTemplateFields(List<SubmissionFormField> fields, ComponentFormSet componentFormSet, Map<String, UserSubmissionField> submissionFields) throws MappingException
 	{
 		if (fields != null) {
 			for (SubmissionFormField field : fields) {
 				BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
 				UserSubmissionField userField = submissionFields.get(field.getFieldId());
 				if (userField != null) {
-					allComponents.addAll(mapper.mapField(mainComponent, field, userField));
+					componentFormSet.getChildren().addAll(mapper.mapField(componentFormSet.getPrimary(), field, userField));
 				} else {
 					if (LOG.isLoggable(Level.FINEST)) {
 						LOG.log(Level.FINEST, () -> "No user data for field: {0}" + field.getLabel());

@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
-import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -35,6 +34,7 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -248,8 +248,8 @@ public class MappingControllerTest
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
-		List<ComponentAll> componentAlls = instance.mapUserSubmissionToEntry(template, userSubmission);
-		assertTrue(componentAlls.get(0).getComponent().getName().equals("Apple"));
+		ComponentFormSet componentFormSet = instance.mapUserSubmissionToEntry(template, userSubmission);
+		assertTrue(componentFormSet.getPrimary().getComponent().getName().equals("Apple"));
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
@@ -303,8 +303,8 @@ public class MappingControllerTest
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
-		List<ComponentAll> componentAlls = instance.mapUserSubmissionToEntry(template, userSubmission);
-		System.out.println(componentAlls);
+		ComponentFormSet componentFormSet = instance.mapUserSubmissionToEntry(template, userSubmission);
+		System.out.println(componentFormSet);
 
 	}
 
@@ -381,8 +381,8 @@ public class MappingControllerTest
 		field.setRawValue(contactJson);
 		userSubmission.getFields().add(field);
 
-		List<ComponentAll> componentAlls = instance.mapUserSubmissionToEntry(template, userSubmission);
-		assertTrue(componentAlls.get(0).getContacts().get(0).getFirstName().equals("Bob"));
+		ComponentFormSet componentFormSet = instance.mapUserSubmissionToEntry(template, userSubmission);
+		assertTrue(componentFormSet.getPrimary().getContacts().get(0).getFirstName().equals("Bob"));
 	}
 
 	@Test

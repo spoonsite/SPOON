@@ -15,7 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
-import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,30 @@ public class ComponentFormSet
 
 	public ComponentFormSet()
 	{
+	}
+
+	public ValidationResult validate(boolean checkRequiredForComponent)
+	{
+		ValidationResult result = new ValidationResult();
+
+		List<ComponentAll> toCheck = new ArrayList<>();
+		if (primary != null) {
+			toCheck.add(primary);
+		}
+		toCheck.addAll(children);
+
+		for (ComponentAll componentAll : toCheck) {
+			result.merge(componentAll.validate());
+
+			if (checkRequiredForComponent) {
+				RequiredForComponent requiredForComponent = new RequiredForComponent();
+				requiredForComponent.setComponent(componentAll.getComponent());
+				requiredForComponent.setAttributes(componentAll.getAttributes());
+				result.merge(requiredForComponent.checkForComplete());
+			}
+		}
+
+		return result;
 	}
 
 	public ComponentAll getPrimary()
