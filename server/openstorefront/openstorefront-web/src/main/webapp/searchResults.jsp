@@ -479,6 +479,7 @@
 								value: null
 							}]
 						}),
+						emptyText: '*ALL*',
 						listeners: {
 							change: function(field, newValue, oldValue, opts) {
 								filterResults();
