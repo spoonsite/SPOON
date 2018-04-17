@@ -1744,8 +1744,8 @@
 									emptyText: 'All',
 									fieldLabel: 'Entry Type',
 									name: 'componentType',
-									valueField: 'componentType',
-									displayField: 'label',
+									valueField: 'code',
+									displayField: 'description',
 									typeAhead: false,
 									matchFieldWidth: false,
 									editable: false,
@@ -1755,7 +1755,7 @@
 										}
 									},
 									storeConfig: {
-										url: 'api/v1/resource/componenttypes',
+										url: 'api/v1/resource/componenttypes/lookup',
 										model: undefined,
 										fields: [
 											'componentType',
