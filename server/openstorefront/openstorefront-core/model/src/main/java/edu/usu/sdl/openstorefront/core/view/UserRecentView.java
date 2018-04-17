@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.core.view;
 
 import javax.validation.constraints.NotNull;
@@ -24,18 +23,15 @@ import javax.validation.constraints.NotNull;
  */
 public class UserRecentView
 {
+
 	@NotNull
 	private long viewId;
-	
+
 	@NotNull
 	private String componentName;
-	
+
 	@NotNull
 	private long componentId;
-
-	public UserRecentView()
-	{
-	}
 
 	public long getViewId()
 	{
@@ -66,5 +62,5 @@ public class UserRecentView
 	{
 		this.componentId = componentId;
 	}
-	
+
 }

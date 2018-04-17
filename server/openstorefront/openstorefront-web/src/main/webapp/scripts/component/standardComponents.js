@@ -20,7 +20,7 @@
 
 Ext.define('OSF.component.StandardComboBox', {
 	extend: 'Ext.form.field.ComboBox',
-	alias: 'osf.widget.StandardComboBox',
+	alias: 'widget.StandardComboBox',
 
 	emptyText: 'Select',
 	labelSeparator: '',
@@ -47,9 +47,185 @@ Ext.define('OSF.component.StandardComboBox', {
 
 });
 
+/***
+ * Creates a combo box that allows selection of multiple users chosen via typing
+ * in part of their names or choosing them from a list. 
+ * Example usage:
+ * 
+ * var selectionCombo = Ext.create('OSF.component.UserMultiSelectComboBox', {
+ *						addAll: true, //optionally adds an All option to end of list
+ *						width: 375,
+ *						margin: '50',
+ *					});
+ */
+Ext.define('OSF.component.UserMultiSelectComboBox', {
+	extend: 'Ext.form.field.Tag',
+	alias: 'widget.UserMultiSelectComboBox',
+
+	labelAlign: 'top',	
+	labelSeparator: '',
+	valueField: 'code',
+	displayField: 'description',	
+	typeAhead: true,
+	anyMatch: true,
+	editable: true,
+	forceSelection: true,
+	
+	queryMode: 'remote',
+	addAll: false,	
+	store: {
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/userprofiles/lookup'
+		}
+	},	
+	initComponent: function () {
+		
+		this.callParent();
+		var selectBox = this;
+		
+		selectBox.getStore().on('load', function (store, records, opts) {
+			if (selectBox.addAll) {
+				store.add({
+					code: null,
+					description: 'All'
+				});
+			}
+		});	
+		
+		if (selectBox.queryMode === 'local') {
+			selectBox.getStore().load();
+		}
+		
+	}
+});
+
+Ext.define('OSF.component.UserSingleSelectComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.UserSingleSelectComboBox',
+
+	labelAlign: 'top',	
+	labelSeparator: '',
+	valueField: 'code',
+	displayField: 'description',	
+	typeAhead: true,
+	anyMatch: true,
+	editable: true,
+	forceSelection: true,
+	
+	queryMode: 'remote',
+	addAll: false,
+	store: {
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/userprofiles/lookup'
+		}
+	},
+	initComponent: function () {
+		
+		this.callParent();
+		var selectBox = this;
+		
+		selectBox.getStore().on('load', function (store, records, opts) {
+			if (selectBox.addAll) {
+				store.add({
+					code: null,
+					description: 'All'
+				});
+			}
+		});	
+		
+		if (selectBox.queryMode === 'local') {
+			selectBox.getStore().load();
+		}		
+	}
+});
+
+Ext.define('OSF.component.RoleGroupMultiSelectComboBox', {
+	extend: 'Ext.form.field.Tag',
+	alias: 'widget.RoleGroupMultiSelectComboBox',
+
+	labelAlign: 'top',	
+	labelSeparator: '',
+	valueField: 'code',
+	displayField: 'description',	
+	typeAhead: true,
+	anyMatch: true,
+	editable: true,
+	forceSelection: true,
+
+	queryMode: 'local',
+	addAll: false,
+	store: {
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/securityroles/lookup'
+		}
+	},	
+	initComponent: function () {
+		
+		this.callParent();
+		var selectBox = this;
+				
+		selectBox.getStore().on('load', function (store, records, opts) {
+			if (selectBox.addAll) {
+				store.add({
+					code: null,
+					description: 'All'
+				});
+			}
+		});	
+		
+		if (selectBox.queryMode === 'local') {
+			selectBox.getStore().load();
+		}		
+	}
+});
+
+Ext.define('OSF.component.RoleGroupSingleSelectComboBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.RoleGroupSingleSelectComboBox',
+
+	labelAlign: 'top',	
+	labelSeparator: '',
+	valueField: 'code',
+	displayField: 'description',	
+	typeAhead: true,
+	anyMatch: true,
+	editable: true,
+	forceSelection: true,
+	
+	queryMode: 'local',
+	addAll: false,
+	store: {
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/securityroles/lookup'
+		}
+	},	
+	initComponent: function () {
+		
+		this.callParent();
+		var selectBox = this;
+				
+		selectBox.getStore().on('load', function (store, records, opts) {
+			if (selectBox.addAll) {
+				store.add({
+					code: null,
+					description: 'All'
+				});
+			}
+		});	
+		
+		if (selectBox.queryMode === 'local') {
+			selectBox.getStore().load();
+		}		
+	}
+});
+
 Ext.define('OSF.component.SecurityComboBox', {
 	extend: 'Ext.form.field.ComboBox',
-	alias: 'osf.widget.SecurityComboBox',
+	alias: 'widget.SecurityComboBox',
 
 	emptyText: 'Select',
 	labelSeparator: '',
@@ -101,7 +277,7 @@ Ext.define('OSF.component.SecurityComboBox', {
 
 Ext.define('OSF.component.DataSensitivityComboBox', {
 	extend: 'Ext.form.field.ComboBox',
-	alias: 'osf.widget.DataSensitivityComboBox',
+	alias: 'widget.DataSensitivityComboBox',
 
 	emptyText: 'Select',
 	labelSeparator: '',
@@ -182,7 +358,7 @@ Ext.define('OSF.component.DataSensitivityComboBox', {
 
 Ext.define('OSF.component.DataSourceComboBox', {
 	extend: 'Ext.form.field.ComboBox',
-	alias: 'osf.widget.DataSourceComboBox',
+	alias: 'widget.DataSourceComboBox',
 
 	emptyText: 'Select',
 	labelSeparator: '',
@@ -326,7 +502,6 @@ Ext.define('OSF.component.fileFieldMaxLabel', {
 		fileField.addListener('change', handleFileLimit);
 	}
 });
-
 
 Ext.define('OSF.component.UserMenu', {
 	extend: 'Ext.button.Button',
@@ -598,7 +773,7 @@ Ext.define('OSF.component.UserMenu', {
 
 Ext.define('OSF.component.ChangeLogWindow', {
 	extend: 'Ext.window.Window',
-	alias: 'osf.widget.ChangeLogWindow',
+	alias: 'widget.ChangeLogWindow',
 
 	title: 'Change History',
 	modal: false,

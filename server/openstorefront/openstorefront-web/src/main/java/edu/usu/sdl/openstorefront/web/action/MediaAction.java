@@ -520,6 +520,7 @@ public class MediaAction
 	}
 
 	@HandlesEvent("SectionMedia")
+	@SuppressWarnings("squid:S1872")
 	public Resolution sectionMedia() throws FileNotFoundException
 	{
 		ContentSectionMedia sectionMedia = new ContentSectionMedia();
@@ -577,11 +578,7 @@ public class MediaAction
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
-			if (sectionMedia != null) {
-				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media record: {1} ", new Object[]{mediaFile.path(), sectionMedia.getContentSectionMediaId()}));
-			} else {
-				LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.path(), mediaFile.getMediaFileId()}));
-			}
+			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check section media file record: {1} ", new Object[]{mediaFile.path(), mediaFile.getMediaFileId()}));
 			in = MediaAction.class.getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}

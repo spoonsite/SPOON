@@ -36,6 +36,7 @@ public class CustomFieldType
 	public static final String COMBO_EDIT_FIELD = "COMBOEDIT";
 	public static final String CHECKBOX_FIELD = "CHECKBOX";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public CustomFieldType()
 	{
 	}

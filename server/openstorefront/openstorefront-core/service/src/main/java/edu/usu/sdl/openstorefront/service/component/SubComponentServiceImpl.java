@@ -105,7 +105,7 @@ public class SubComponentServiceImpl
 			T baseComponentExample = subComponentClass.newInstance();
 			baseComponentExample.setComponentId(componentId);
 			baseComponentExample.setActiveStatus(activeStatus);
-			List<T> data = persistenceService.queryByExample(new QueryByExample(baseComponentExample));
+			List<T> data = persistenceService.queryByExample(new QueryByExample<>(baseComponentExample));
 			data = filterEngine.filter(data);
 			return data;
 		} catch (InstantiationException | IllegalAccessException ex) {
@@ -245,14 +245,14 @@ public class SubComponentServiceImpl
 			T example = subComponentClass.newInstance();
 			example.setComponentId(componentId);
 
-			if (subComponentClass.getName().equals(ComponentResource.class.getName())) {
+			if (subComponentClass.isAssignableFrom(ComponentResource.class)) {
 				List<T> resources = persistenceService.queryByExample(example);
 				resources.forEach(resource
 						-> {
 					removeLocalResource((ComponentResource) resource);
 				});
 			}
-			if (subComponentClass.getName().equals(ComponentMedia.class.getName())) {
+			if (subComponentClass.isAssignableFrom(ComponentMedia.class)) {
 				List<T> media = persistenceService.queryByExample(example);
 				media.forEach(mediaItem
 						-> {
@@ -280,7 +280,7 @@ public class SubComponentServiceImpl
 		pk.setComponentId(componentId);
 		example.setComponentAttributePk(pk);
 		example.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-		return persistenceService.queryByExample(new QueryByExample(example));
+		return persistenceService.queryByExample(new QueryByExample<>(example));
 	}
 
 	public void saveComponentAttribute(ComponentAttribute attribute, boolean updateLastActivity)
@@ -304,8 +304,8 @@ public class SubComponentServiceImpl
 		attribute.getComponentAttributePk().setAttributeCode(sanitizedCode);
 
 		if (validationResult.valid()) {
-			AttributeType type = componentService.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
-			if (type.getAllowMultipleFlg() == false) {
+			AttributeType typeLocal = componentService.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
+			if (typeLocal.getAllowMultipleFlg() == false) {
 				ComponentAttribute example = new ComponentAttribute();
 				example.setComponentAttributePk(new ComponentAttributePk());
 				example.getComponentAttributePk().setAttributeType(attribute.getComponentAttributePk().getAttributeType());
@@ -428,6 +428,7 @@ public class SubComponentServiceImpl
 		return saveComponentMedia(media, true);
 	}
 
+	@SuppressWarnings("deprecation")
 	ComponentMedia saveComponentMedia(ComponentMedia media, boolean updateLastActivity)
 	{
 		ComponentMedia newMedia;
@@ -510,7 +511,7 @@ public class SubComponentServiceImpl
 			relationshipCheck.setComponentId(componentRelationship.getComponentId());
 			relationshipCheck.setRelatedComponentId(componentRelationship.getRelatedComponentId());
 
-			QueryByExample queryByExample = new QueryByExample(relationshipCheck);
+			QueryByExample<ComponentRelationship> queryByExample = new QueryByExample<>(relationshipCheck);
 			queryByExample.setReturnNonProxied(false);
 
 			componentRelationshipExisting = persistenceService.queryOneByExample(queryByExample);
@@ -592,6 +593,7 @@ public class SubComponentServiceImpl
 		return saveComponentResource(resource, true);
 	}
 
+	@SuppressWarnings("deprecation")
 	ComponentResource saveComponentResource(ComponentResource resource, boolean updateLastActivity)
 	{
 		ComponentResource oldResource = persistenceService.findById(ComponentResource.class, resource.getResourceId());
@@ -777,7 +779,7 @@ public class SubComponentServiceImpl
 					RuleResult ruleResult = new RuleResult();
 					ruleResult.setEntityClassName(ComponentAttributePk.class.getSimpleName());
 					ruleResult.setFieldName(AttributeCodePk.FIELD_ATTRIBUTE_CODE);
-					ruleResult.setMessage("Attribute code { " + pk.getAttributeType()+ " : " + pk.getAttributeCode()+ " } not found");
+					ruleResult.setMessage("Attribute code { " + pk.getAttributeType() + " : " + pk.getAttributeCode() + " } not found");
 					validationResult.getRuleResults().add(ruleResult);
 				}
 			}
@@ -805,7 +807,7 @@ public class SubComponentServiceImpl
 		ComponentReview example = new ComponentReview();
 		example.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 		example.setCreateUser(username);
-		List<ComponentReview> tempReviews = persistenceService.queryByExample(new QueryByExample(example));
+		List<ComponentReview> tempReviews = persistenceService.queryByExample(new QueryByExample<>(example));
 
 		ComponentReview pendingReviewExample = new ComponentReview();
 		pendingReviewExample.setCreateUser(username);
@@ -814,7 +816,7 @@ public class SubComponentServiceImpl
 		List<ComponentReview> pendingComponentReviews = persistenceService.queryByExample(pendingReviewExample);
 		tempReviews.addAll(pendingComponentReviews);
 
-		List<ComponentReviewView> reviews = new ArrayList();
+		List<ComponentReviewView> reviews = new ArrayList<>();
 		tempReviews.forEach(review
 				-> {
 			ComponentReviewPro tempPro = new ComponentReviewPro();
@@ -830,8 +832,8 @@ public class SubComponentServiceImpl
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
 
-			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample(tempPro))));
-			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample(tempCon))));
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample<>(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample<>(tempCon))));
 
 			reviews.add(tempView);
 		});

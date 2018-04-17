@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright 2014 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,10 +75,6 @@ public class HighlightFilter
 	@QueryParam("all")
 	@DefaultValue("false")
 	private Boolean all;
-
-	public HighlightFilter()
-	{
-	}
 
 	public ValidationResult validate()
 	{

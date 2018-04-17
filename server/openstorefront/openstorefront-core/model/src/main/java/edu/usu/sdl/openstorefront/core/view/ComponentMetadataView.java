@@ -34,10 +34,6 @@ public class ComponentMetadataView
 	private Date updateDts;
 	private String activeStatus;
 
-	public ComponentMetadataView()
-	{
-	}
-
 	public static ComponentMetadataView toView(ComponentMetadata metadata)
 	{
 		ComponentMetadataView componentMetadataView = new ComponentMetadataView();

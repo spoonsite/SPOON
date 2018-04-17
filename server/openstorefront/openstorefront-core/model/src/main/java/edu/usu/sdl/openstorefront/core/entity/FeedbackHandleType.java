@@ -28,16 +28,18 @@ import java.util.Map;
 @SystemTable
 @APIDescription("Defines feedback handling")
 public class FeedbackHandleType
-	extends LookupEntity<FeedbackHandleType>
+		extends LookupEntity<FeedbackHandleType>
 {
+
 	public static final String JIRA = "JIRA";
 	public static final String EMAIL = "EMAIL";
 	public static final String INTERNAL = "INTERNAL";
-	
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FeedbackHandleType()
 	{
 	}
-	
+
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{

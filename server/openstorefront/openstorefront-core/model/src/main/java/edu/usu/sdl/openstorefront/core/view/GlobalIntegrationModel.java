@@ -40,11 +40,6 @@ public class GlobalIntegrationModel
 
 	private String cronExpressionDescription;
 
-	public GlobalIntegrationModel()
-	{
-
-	}
-
 	public String getJiraRefreshRate()
 	{
 		return jiraRefreshRate;

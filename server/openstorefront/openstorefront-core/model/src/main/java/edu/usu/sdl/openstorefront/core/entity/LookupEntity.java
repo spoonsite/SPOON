@@ -82,6 +82,7 @@ public abstract class LookupEntity<T extends LookupEntity>
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String highlightStyle;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public LookupEntity()
 	{
 	}
@@ -138,10 +139,10 @@ public abstract class LookupEntity<T extends LookupEntity>
 		StringWriter stringWriter = new StringWriter();
 		CSVWriter writer = new CSVWriter(stringWriter);
 		writer.writeNext(new String[]{getCode(),
-									  getDescription(),
-									  getDetailedDescription(),
-									  getSortOrder() != null ? sortOrder.toString() : "",
-									  getHighlightStyle()
+			getDescription(),
+			getDetailedDescription(),
+			getSortOrder() != null ? sortOrder.toString() : "",
+			getHighlightStyle()
 		});
 		return stringWriter.toString();
 	}

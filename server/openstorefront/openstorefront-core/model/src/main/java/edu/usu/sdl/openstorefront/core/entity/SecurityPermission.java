@@ -84,10 +84,6 @@ public class SecurityPermission
 
 	public static final String ADMIN_SUPPORT_MEDIA = "ADMIN-SUPPORT-MEDIA";
 
-	public SecurityPermission()
-	{
-	}
-
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{

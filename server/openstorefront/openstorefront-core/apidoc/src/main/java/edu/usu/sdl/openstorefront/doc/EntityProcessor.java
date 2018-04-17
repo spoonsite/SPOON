@@ -51,7 +51,7 @@ import org.apache.commons.lang3.StringUtils;
 public class EntityProcessor
 {
 
-	private static final Logger log = Logger.getLogger(EntityProcessor.class.getName());
+	private static final Logger LOG = Logger.getLogger(EntityProcessor.class.getName());
 
 	private EntityProcessor()
 	{
@@ -61,7 +61,7 @@ public class EntityProcessor
 	{
 		List<EntityDocModel> entityDocModels = new ArrayList<>();
 
-		log.log(Level.FINEST, "Construct Entities");
+		LOG.log(Level.FINEST, "Construct Entities");
 		for (Class entity : entities) {
 			EntityDocModel docModel = createEntityModel(entity);
 			addSuperClass(entity.getSuperclass(), docModel);
@@ -75,6 +75,7 @@ public class EntityProcessor
 		return entityDocModels;
 	}
 
+	@SuppressWarnings("squid:S1872")
 	private static void addSuperClass(Class entity, EntityDocModel docModel)
 	{
 		if (entity != null) {
@@ -90,6 +91,7 @@ public class EntityProcessor
 		EntityDocModel docModel = new EntityDocModel();
 		docModel.setName(entity.getSimpleName());
 
+		@SuppressWarnings("unchecked")
 		APIDescription description = (APIDescription) entity.getAnnotation(APIDescription.class);
 		if (description != null) {
 			docModel.setDescription(description.value());
@@ -102,6 +104,7 @@ public class EntityProcessor
 		return docModel;
 	}
 
+	@SuppressWarnings("squid:S1872")
 	private static void addFields(Class entity, EntityDocModel docModel)
 	{
 		if (entity != null) {
@@ -116,7 +119,7 @@ public class EntityProcessor
 					fieldModel.setOriginClass(entity.getSimpleName());
 					fieldModel.setEmbeddedType(ReflectionUtil.isComplexClass(field.getType()));
 					if (ReflectionUtil.isCollectionClass(field.getType())) {
-						DataType dataType = (DataType) field.getAnnotation(DataType.class);
+						DataType dataType = field.getAnnotation(DataType.class);
 						if (dataType != null) {
 							String typeClass = dataType.value().getSimpleName();
 							if (StringUtils.isNotBlank(dataType.actualClassName())) {
@@ -126,7 +129,7 @@ public class EntityProcessor
 						}
 					}
 
-					APIDescription description = (APIDescription) field.getAnnotation(APIDescription.class);
+					APIDescription description = field.getAnnotation(APIDescription.class);
 					if (description != null) {
 						fieldModel.setDescription(description.value());
 					}
@@ -136,7 +139,7 @@ public class EntityProcessor
 							EntityConstraintModel entityConstraintModel = new EntityConstraintModel();
 							entityConstraintModel.setName(annotation.annotationType().getSimpleName());
 
-							APIDescription annotationDescription = (APIDescription) annotation.annotationType().getAnnotation(APIDescription.class);
+							APIDescription annotationDescription = annotation.annotationType().getAnnotation(APIDescription.class);
 							if (annotationDescription != null) {
 								entityConstraintModel.setDescription(annotationDescription.value());
 							}
@@ -172,11 +175,11 @@ public class EntityProcessor
 							} else if (annObj instanceof Sanitize) {
 								Sanitize sanitize = (Sanitize) annObj;
 								List<String> sanitizerList = new ArrayList<>();
-								for (Class<? extends Sanitizer>  sanitizeClass : sanitize.value()) {
+								for (Class<? extends Sanitizer> sanitizeClass : sanitize.value()) {
 									sanitizerList.add(sanitizeClass.getSimpleName());
-								}								
-								entityConstraintModel.setRules("<b>Sanitize:</b> " + String.join(", ", sanitizerList));								
-							
+								}
+								entityConstraintModel.setRules("<b>Sanitize:</b> " + String.join(", ", sanitizerList));
+
 							} else if (annObj instanceof Unique) {
 								Unique unique = (Unique) annObj;
 								entityConstraintModel.setRules("<b>Handler:</b> " + unique.value().getSimpleName());

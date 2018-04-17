@@ -98,7 +98,8 @@ public class DBArchiveHandler
 				//The user has been warned.
 				Thread.sleep(2000);
 			} catch (InterruptedException ex) {
-				//ignore and continue
+				LOG.log(Level.WARNING, "Interrupted DB Import", ex);
+				Thread.currentThread().interrupt();
 			}
 
 			DBManager.getInstance().importDB(new TFileInputStream(importFile));

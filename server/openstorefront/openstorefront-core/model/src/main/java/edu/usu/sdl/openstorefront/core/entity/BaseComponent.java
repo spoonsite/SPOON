@@ -36,6 +36,7 @@ public abstract class BaseComponent<T>
 	@FK(Component.class)
 	private String componentId;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public BaseComponent()
 	{
 	}

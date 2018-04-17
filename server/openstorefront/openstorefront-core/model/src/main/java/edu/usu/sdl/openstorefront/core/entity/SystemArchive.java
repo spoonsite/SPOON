@@ -91,6 +91,7 @@ public class SystemArchive
 	@FK(ImportModeType.class)
 	private String importModeType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SystemArchive()
 	{
 	}

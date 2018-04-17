@@ -36,10 +36,6 @@ public class ChecklistTemplateDetailView
 	private String instructions;
 	private List<ChecklistQuestionView> questions = new ArrayList<>();
 
-	public ChecklistTemplateDetailView()
-	{
-	}
-
 	public static ChecklistTemplateDetailView toView(ChecklistTemplate template)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();

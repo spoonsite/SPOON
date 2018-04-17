@@ -67,7 +67,7 @@ public class ArchitectureSearchHandler
 			attributeCodePkExample.setAttributeType(searchElement.getKeyField());
 			attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 
-			QueryByExample<AttributeCode> queryByExample = new QueryByExample(attributeCodeExample);
+			QueryByExample<AttributeCode> queryByExample = new QueryByExample<>(attributeCodeExample);
 
 			if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
 				String likeValue = null;
@@ -88,7 +88,7 @@ public class ArchitectureSearchHandler
 			}
 
 			List<AttributeCode> attributeCodes = serviceProxy.getPersistenceService().queryByExample(queryByExample);
-			List<String> ids = new ArrayList();
+			List<String> ids = new ArrayList<>();
 			attributeCodes.forEach(code -> {
 				ids.add(code.getAttributeCodePk().getAttributeCode());
 			});

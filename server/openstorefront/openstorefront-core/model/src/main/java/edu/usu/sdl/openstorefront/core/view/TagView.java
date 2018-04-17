@@ -38,10 +38,6 @@ public class TagView
 	private String createUser;
 	private Date createDts;
 
-	public TagView()
-	{
-	}
-
 	public static TagView toView(ComponentTag tag)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();

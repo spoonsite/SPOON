@@ -28,23 +28,20 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class UserSecurityView
 {
-	private String username;	
-	private String firstname;	
-	private String lastname;	
-	private String email;	
-	private String approvalStatus;	
-	private String approvalStatusDescription;	
-	private Date lastLoginAttempt;	
-	private Integer failedLoginAttempts;	
+
+	private String username;
+	private String firstname;
+	private String lastname;
+	private String email;
+	private String approvalStatus;
+	private String approvalStatusDescription;
+	private Date lastLoginAttempt;
+	private Integer failedLoginAttempts;
 	private boolean pendingUserPasswordReset;
 	private String activeStatus;
 	private Date passwordUpdateDts;
-	private Boolean usingDefaultPassword;	
+	private Boolean usingDefaultPassword;
 
-	public UserSecurityView()
-	{
-	}
-	
 	public static UserSecurityView toView(UserSecurity userSecurity, UserProfile userProfile)
 	{
 		UserSecurityView view = new UserSecurityView();
@@ -53,20 +50,20 @@ public class UserSecurityView
 		view.setLastname(userProfile.getLastName());
 		view.setEmail(userProfile.getEmail());
 		view.setApprovalStatus(userSecurity.getApprovalStatus());
-		view.setApprovalStatusDescription(TranslateUtil.translate(UserApprovalStatus.class, userSecurity.getApprovalStatus()));		
+		view.setApprovalStatusDescription(TranslateUtil.translate(UserApprovalStatus.class, userSecurity.getApprovalStatus()));
 		view.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts());
 		view.setLastLoginAttempt(userSecurity.getLastLoginAttempt());
 		view.setActiveStatus(userSecurity.getActiveStatus());
 		view.setPasswordUpdateDts(userSecurity.getPasswordUpdateDts());
 		view.setUsingDefaultPassword(userSecurity.getUsingDefaultPassword());
-						
+
 		if (StringUtils.isNotBlank(userSecurity.getPasswordChangeApprovalCode())) {
 			view.setPendingUserPasswordReset(true);
 		}
-		
+
 		return view;
 	}
-	
+
 	public String getUsername()
 	{
 		return username;
@@ -186,5 +183,5 @@ public class UserSecurityView
 	{
 		this.usingDefaultPassword = usingDefaultPassword;
 	}
-	
+
 }

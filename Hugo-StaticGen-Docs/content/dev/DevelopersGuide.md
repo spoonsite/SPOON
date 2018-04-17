@@ -124,8 +124,33 @@ The following key libraries were used in the development:
     * We recommend at least 2GB. (-Xmx2g)
   * if you want to use the Tomcat manager-gui you will need to configuring manager application access -  https://tomcat.apache.org/tomcat-7.0-doc/manager-howto.html#Configuring_Manager_Application_Access
     * make sure you have RW access to $Tomcat_HOME/bin/felix-cache
+## 1.4 Dev Environment with Visual Studio Code
 
-## 1.4 Building with Maven CLI
+1. **VS Code Install/configuration**
+  * Install Visual Studio Code  - https://code.visualstudio.com
+     * Read this page to get a walk through of how to setup VS code for Java Development https://code.visualstudio.com/docs/languages/java
+     * Get familiar with VS Code by watching the quick videos about it here: https://code.visualstudio.com/docs/getstarted/introvideos
+2. Install the Java 8 EE SDK found here: http://www.oracle.com/technetwork/java/javaee/downloads/index.html
+3. Install Apache Maven here: https://maven.apache.org/download.cgi
+4. Install Tomcat here:  https://tomcat.apache.org/download-80.cgi
+5. Once you have VS Code installed and the other dependent applications you will need to install the VS Code extensions and configure them reading their install pages and how paths are set to point to the applications.
+    * Java Extension Pack by Red Hat. This includes several extensions for Java Development
+    * Tomcat Extension
+    * Maven for Java Extension
+6. **Clone the openstorefront GitHub repo to the desired directory**
+  * https://help.github.com/articles/cloning-a-repository/
+7. **Open the openstorefront Project**
+  * Select the Open Folder Menu in VS Code or press Ctrl-K Ctrl-O. You can also go to File->Add Folder to Workspace
+  * Open the openstorefront folder to be added. You will notice git is integrated with VS Code to see files that are changing.
+8. **Open Maven Extension with openstorefont drop down**
+    * You will likely need to set the JAVA_HOME environment variable and java and maven paths to the windows PATH system variables. 
+    * Right mouse click on the openstorefront package in the maven extension and click the install button to build the project. 
+9. **After the build completes use the Tomcat Extension**
+    * The tomcat extension allows you to select where Tomcat is installed. You should also set where the tomcat web folder is located in the settings. The extension will create a new folder structure. "tomcat.workspace": "F:\\sf"
+    * Read the configuration information on the extension. 
+    * I had problems getting the the .war file to copy to the running tomcat instance so I had to use another extension to perform the copy. With the tomcat workspace defined you can now setup a copy script from maven build for the war file or you can use a copy file VSCode extension to copy the war file to the correct location. If tomcat is running it will unpack the war file and you should be able to access the running application in your browser at localhost://8080/openstorefront.  
+
+## 1.5 Building with Maven CLI
 
 Install Maven if not installed by your IDE - http://maven.apache.org/install.html
 
@@ -134,13 +159,13 @@ run `mvn install` from `$PROJECT\_HOME/server/openstorefront`
 (Skip tests) `mvn -Dmaven.test.skip=true` or `mvn -DskipTests=true install`
 
 
-## 1.5 Deploying
+## 1.6 Deploying
 
 Copy the war artifact to the webapp directory for Tomcat. Some IDEs can
 handle this for you. See application server documentation for other deployment
 mechanisms.
 
-## 1.6  Running
+## 1.7  Running
 
 The application is targeted to run in Tomcat 7; however, it may run in
 other compatible containers with little or no changes.
@@ -151,7 +176,7 @@ See [Setup](/systemadmin/setup/)
 {{% /notice %}}
 
 
-## 1.7 Testing
+## 1.8 Testing
 
 -   Unit tests
   * run as part of the Maven install.
@@ -161,7 +186,7 @@ See [Setup](/systemadmin/setup/)
     <http://localhost:8080/openstorefront/test/ServiceTest.action>
 
 
-## 1.8  Contributing Patches
+## 1.9  Contributing Patches
 
 The code is hosted on the public GitHub
 [https://github.com/di2e/openstorefront](<https://github.com/di2e/openstorefront>). Create a pull request to the
@@ -173,7 +198,7 @@ Please file bugs or enhancement by submitting a ticket to:
 If you are unable to obtain a login account then submit an issue ticket
 on the GitHub site.
 
-## 1.9 Versioning Strategy
+## 1.10 Versioning Strategy
 
 The software is versioned based on the following:
 
@@ -190,18 +215,18 @@ version number which represents the major version. The version in the
 URL doesn't change with minor versions. However, the API follows with
 the version of the application.
 
-## 1.10 Licensing
+## 1.11 Licensing
 
 The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.
 
-## 1.11 Security
+## 1.12 Security
 
 Openstorefront support several environments each have different security needs.
 It also support a built in user management.  Regardless of the authentication mechanism the security is based on dynamic role made up of permissions.
 
 The granularity of the permissions is mostly feature/tool based.  
 
-### 1.11.1 Adding Permissions
+### 1.12.1 Adding Permissions
 
 1. Add Permission to SecurityPermission entity in code.
 
@@ -220,7 +245,7 @@ Use caution in marking APIs as there may be other features that rely a shared AP
 Also, keep in mind there may be special handling for "owners" of the data beyond a permission.
 
 
-### 1.11.2 Data Restriction
+### 1.12.2 Data Restriction
 
 Data may be restricted by source and/or data sensitivity.  Data sensitivity may 
 be marked at a entity-level however, not all entity need to be marked. Marking

@@ -35,6 +35,7 @@ public class UserSecurity
 		extends StandardEntity<UserSecurity>
 {
 
+	@SuppressWarnings("squid:S2068")
 	public static final String PASSWORD_FIELD = "password";
 	public static final String FIELD_USERNAME = "username";
 
@@ -74,6 +75,7 @@ public class UserSecurity
 	@FK(UserApprovalStatus.class)
 	private String approvalStatus;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserSecurity()
 	{
 	}

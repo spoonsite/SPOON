@@ -174,6 +174,7 @@ public class Component
 	@APIDescription("When was it assigned")
 	private Date assignedLibrarianDts;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Component()
 	{
 	}

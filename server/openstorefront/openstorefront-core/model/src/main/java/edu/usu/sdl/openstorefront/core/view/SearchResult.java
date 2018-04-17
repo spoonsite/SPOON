@@ -62,17 +62,13 @@ public class SearchResult
 	@NotNull
 	private String resourceLocation;
 
-  //  @DataType(SearchResultAttribute.class)
+	//  @DataType(SearchResultAttribute.class)
 	// private List<SearchResultAttribute> attributes = new ArrayList<>();
 	@DataType(SolrAttributeCodeTypeModel.class)
 	private List<SolrAttributeCodeTypeModel> attributes = new ArrayList<>();
 
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
-
-	public SearchResult()
-	{
-	}
 
 	public String getListingType()
 	{

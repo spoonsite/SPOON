@@ -26,8 +26,4 @@ public class RelationshipType
 		extends LookupEntity<RelationshipType>
 {
 
-	public RelationshipType()
-	{
-	}
-
 }

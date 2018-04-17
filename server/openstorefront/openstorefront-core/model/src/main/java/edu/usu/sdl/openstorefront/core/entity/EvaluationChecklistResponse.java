@@ -84,6 +84,7 @@ public class EvaluationChecklistResponse
 	@APIDescription("Indicates that an evaluator manually added or removed; This used for auto syncing.")
 	private Boolean userAddRemoveFlg;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public EvaluationChecklistResponse()
 	{
 	}

@@ -75,6 +75,7 @@ public class Contact
 	@FK(value = Organization.class, referencedField = "name", softReference = true)
 	private String organization;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Contact()
 	{
 	}

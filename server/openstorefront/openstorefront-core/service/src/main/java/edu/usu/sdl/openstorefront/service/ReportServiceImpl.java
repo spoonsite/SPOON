@@ -76,6 +76,7 @@ public class ReportServiceImpl
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public Report generateReport(Report report)
 	{
 		Objects.requireNonNull(report, "Report is required");
@@ -171,6 +172,7 @@ public class ReportServiceImpl
 		Report report = new Report();
 		report.setReportType(reportType);
 		BaseReport baseReport = BaseReport.getReport(report);
+		@SuppressWarnings("unchecked")
 		List<ReportFormat> reportFormat = baseReport.getSupportedFormats(reportTranmissionType);
 		return reportFormat;
 	}
@@ -181,6 +183,7 @@ public class ReportServiceImpl
 		Report report = new Report();
 		report.setReportType(reportType);
 		BaseReport baseReport = BaseReport.getReport(report);
+		@SuppressWarnings("unchecked")
 		List<ReportTransmissionType> transmissionTypes = baseReport.getSupportedOutputs();
 		return transmissionTypes;
 	}
@@ -228,7 +231,7 @@ public class ReportServiceImpl
 		LocalDate expirationLocalDate;
 		LocalDate currentDate = LocalDate.now();
 
-		expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)) - 1);
+		expirationLocalDate = currentDate.minusDays(Integer.parseInt(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)) - 1L);
 		Date expirationDate = Date.from(expirationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 		Report reportExample = new Report();
@@ -263,6 +266,7 @@ public class ReportServiceImpl
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void runScheduledReportNow(ScheduledReport scheduledReport)
 	{
 		Objects.requireNonNull(scheduledReport);
@@ -288,7 +292,7 @@ public class ReportServiceImpl
 			scheduledReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 			saveScheduledReport(scheduledReport);
 		} else {
-			LOG.log(Level.FINE, "Scheduled report was removed.  Old Id: " + scheduledReport.getScheduleReportId());
+			LOG.log(Level.FINE, () -> "Scheduled report was removed.  Old Id: " + scheduledReport.getScheduleReportId());
 		}
 
 		if (RunStatus.ERROR.equals(reportProcessed.getRunStatus())) {

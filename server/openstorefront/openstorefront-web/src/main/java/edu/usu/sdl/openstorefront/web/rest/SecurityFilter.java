@@ -51,13 +51,14 @@ public class SecurityFilter
 	HttpServletRequest httpServletRequest;
 
 	@Override
+	@SuppressWarnings({"squid:S1872", "squid:S3923"})
 	public void filter(ContainerRequestContext requestContext) throws IOException
 	{
 		boolean doAdminCheck = true;
 		RequireSecurity requireSecurity = resourceInfo.getResourceMethod().getAnnotation(RequireSecurity.class);
 		if (requireSecurity.specialCheck() != null) {
-			try {		
-				doAdminCheck =  requireSecurity.specialCheck().newInstance().specialSecurityCheck(resourceInfo, requestContext, requireSecurity);
+			try {
+				doAdminCheck = requireSecurity.specialCheck().newInstance().specialSecurityCheck(resourceInfo, requestContext, requireSecurity);
 			} catch (InstantiationException | IllegalAccessException ex) {
 				throw new OpenStorefrontRuntimeException(ex);
 			}
@@ -65,7 +66,7 @@ public class SecurityFilter
 
 		if (doAdminCheck) {
 			boolean hasPermission = false;
-			
+
 			Set<String> userPermissions = SecurityUtil.getUserContext().permissions();
 			Set<String> userRoles = SecurityUtil.getUserContext().roles();
 			int matchPermissions = 0;
@@ -74,51 +75,55 @@ public class SecurityFilter
 					matchPermissions++;
 				}
 			}
-			
+
 			int matchRoles = 0;
 			for (String role : requireSecurity.roles()) {
 				if (userRoles.contains(role)) {
 					matchRoles++;
 				}
-			}			
-			
+			}
+
 			if (null == requireSecurity.logicOperator()) {
 				throw new OpenStorefrontRuntimeException("Logic operation not supported.");
-			} else switch (requireSecurity.logicOperator()) {
-				case OR:
-					if (requireSecurity.value().length > 0 && matchPermissions > 0) {
-						if (requireSecurity.roles().length > 0 && matchRoles > 0) {
-							hasPermission = true;
-						} else if (requireSecurity.roles().length == 0) {
-							hasPermission = true;
-						}
-					} else if (requireSecurity.roles().length > 0 && matchRoles > 0) {
-						if (requireSecurity.value().length == 0) { 
-							hasPermission = true;
-						}
-					} else if (requireSecurity.value().length == 0 &&
-							requireSecurity.roles().length == 0) {
-						hasPermission = true;
-					}	break;
-				case AND:
-					if (requireSecurity.value().length == matchPermissions) {
-						if (requireSecurity.roles().length == matchRoles) {
-							hasPermission = true;
-						} else if (requireSecurity.roles().length == 0) {
-							hasPermission = true;
-						} 
-					} else if (requireSecurity.roles().length == matchRoles) {
-						if (requireSecurity.value().length == 0) {
+			} else {
+				switch (requireSecurity.logicOperator()) {
+					case OR:
+						if (requireSecurity.value().length > 0 && matchPermissions > 0) {
+							if (requireSecurity.roles().length > 0 && matchRoles > 0) {
+								hasPermission = true;
+							} else if (requireSecurity.roles().length == 0) {
+								hasPermission = true;
+							}
+						} else if (requireSecurity.roles().length > 0 && matchRoles > 0) {
+							if (requireSecurity.value().length == 0) {
+								hasPermission = true;
+							}
+						} else if (requireSecurity.value().length == 0
+								&& requireSecurity.roles().length == 0) {
 							hasPermission = true;
 						}
-					} else if (requireSecurity.value().length == 0 &&
-							requireSecurity.roles().length == 0) {
-						hasPermission = true;
-					}	break;
-				default:
-					throw new OpenStorefrontRuntimeException("Logic operation not supported.");
+						break;
+					case AND:
+						if (requireSecurity.value().length == matchPermissions) {
+							if (requireSecurity.roles().length == matchRoles) {
+								hasPermission = true;
+							} else if (requireSecurity.roles().length == 0) {
+								hasPermission = true;
+							}
+						} else if (requireSecurity.roles().length == matchRoles) {
+							if (requireSecurity.value().length == 0) {
+								hasPermission = true;
+							}
+						} else if (requireSecurity.value().length == 0
+								&& requireSecurity.roles().length == 0) {
+							hasPermission = true;
+						}
+						break;
+					default:
+						throw new OpenStorefrontRuntimeException("Logic operation not supported.");
+				}
 			}
-						
+
 			if (hasPermission == false) {
 				requestContext.abortWith(Response
 						.status(Response.Status.UNAUTHORIZED)

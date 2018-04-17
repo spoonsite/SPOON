@@ -45,6 +45,7 @@ public class ApplicationStatus
 	private long totalDiskSpace;
 	private String rootStoragePath;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ApplicationStatus()
 	{
 	}

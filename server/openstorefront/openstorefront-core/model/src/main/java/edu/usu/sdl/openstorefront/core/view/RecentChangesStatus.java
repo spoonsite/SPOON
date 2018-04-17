@@ -27,10 +27,6 @@ public class RecentChangesStatus
 	private Date lastSentDts;
 	private Date nextSendDts;
 
-	public RecentChangesStatus()
-	{
-	}
-
 	public Date getLastSentDts()
 	{
 		return lastSentDts;

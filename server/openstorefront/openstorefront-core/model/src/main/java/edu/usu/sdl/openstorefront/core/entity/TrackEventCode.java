@@ -37,10 +37,6 @@ public class TrackEventCode
 	public static final String EXTERNAL_LINK_CLICK = "ELC";
 	public static final String COMPONENT_SYNC = "SYNC";
 
-	public TrackEventCode()
-	{
-	}
-
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{

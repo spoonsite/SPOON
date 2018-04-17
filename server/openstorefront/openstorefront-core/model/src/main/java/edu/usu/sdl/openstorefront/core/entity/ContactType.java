@@ -30,6 +30,7 @@ public class ContactType
 	public static final String GOVERNMENT = "GOV";
 	public static final String SUBMITTER = "SUB";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ContactType()
 	{
 	}

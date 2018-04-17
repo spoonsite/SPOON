@@ -84,6 +84,7 @@ public class SecurityRole
 	@ConsumeField
 	private Boolean allowUnspecifiedDataSensitivity;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SecurityRole()
 	{
 	}

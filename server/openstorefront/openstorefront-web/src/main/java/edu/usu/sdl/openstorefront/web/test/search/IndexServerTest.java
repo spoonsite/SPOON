@@ -31,8 +31,10 @@ import java.util.logging.Logger;
  * @author dshurtleff
  */
 public class IndexServerTest
-	extends BaseTestCase
+		extends BaseTestCase
 {
+
+	private static final Logger LOG = Logger.getLogger(IndexServerTest.class.getName());
 
 	@Override
 	public String getDescription()
@@ -43,46 +45,46 @@ public class IndexServerTest
 	@Override
 	protected void initializeTest()
 	{
-		super.initializeTest(); 		
-		SearchServerManager.getInstance().getSearchServer().deleteAll();	
+		super.initializeTest();
+		SearchServerManager.getInstance().getSearchServer().deleteAll();
 	}
 
-	
 	@Override
 	protected void runInternalTest()
-	{		
+	{
 		//Empty Search
 		addResultsLines("Checking Empty index.");
 		FilterQueryParams filterQueryParams = FilterQueryParams.defaultFilter();
 		filterQueryParams.setSortField("name");
-		
+
 		IndexSearchResult searchResults = SearchServerManager.getInstance().getSearchServer().doIndexSearch("*", filterQueryParams);
 		addResultsLines("Results found (There may be a delay): " + searchResults.getTotalResults());
-		
+
 		//Add Record
 		ComponentAll componentAll = getTestComponent();
 		List<Component> components = new ArrayList<>();
 		components.add(componentAll.getComponent());
 		SearchServerManager.getInstance().getSearchServer().index(components);
-		
+
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException ex) {
-			Logger.getLogger(IndexServerTest.class.getName()).log(Level.SEVERE, null, ex);
+			LOG.log(Level.SEVERE, null, ex);
+			Thread.currentThread().interrupt();
 		}
 		//Search for record
 		searchResults = SearchServerManager.getInstance().getSearchServer().doIndexSearch("Test", filterQueryParams);
 		addResultsLines("Results found: " + searchResults.getTotalResults());
 		if (searchResults.getTotalResults() == 0) {
-			addFailLines("Unable to find indexed record");			
+			addFailLines("Unable to find indexed record");
 		}
-		
+
 	}
 
 	@Override
 	protected void cleanupTest()
 	{
-		super.cleanupTest(); 
+		super.cleanupTest();
 		SearchServerManager.getInstance().getSearchServer().resetIndexer();
 	}
 

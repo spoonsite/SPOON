@@ -42,43 +42,43 @@ public class ReportOption
 
 	@ConsumeField
 	private Date endDts;
-	
+
 	@ConsumeField
 	private boolean displayContacts;
-	
+
 	@ConsumeField
 	private boolean displayDependencies;
-	
+
 	@ConsumeField
 	private boolean displayDescription;
-	
+
 	@ConsumeField
 	private boolean displayEvalDetails;
-	
+
 	@ConsumeField
 	private boolean displayEvalSummary;
-	
+
 	@ConsumeField
 	private boolean displayEvalVersions;
-	
+
 	@ConsumeField
 	private boolean displayOrgData;
-	
+
 	@ConsumeField
 	private boolean displayQA;
-	
+
 	@ConsumeField
 	private boolean displayRelationships;
-	
+
 	@ConsumeField
 	private boolean displayReportReviews;
-	
+
 	@ConsumeField
 	private boolean displayResources;
-	
+
 	@ConsumeField
 	private boolean displayTags;
-	
+
 	@ConsumeField
 	private boolean displayVitals;
 
@@ -95,11 +95,11 @@ public class ReportOption
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String category;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String assignedUser;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	private String assignedGroup;
@@ -107,6 +107,7 @@ public class ReportOption
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ReportOption()
 	{
 	}
@@ -190,7 +191,7 @@ public class ReportOption
 	{
 		this.assignedGroup = assignedGroup;
 	}
-	
+
 	public boolean getDisplayContacts()
 	{
 		return displayContacts;

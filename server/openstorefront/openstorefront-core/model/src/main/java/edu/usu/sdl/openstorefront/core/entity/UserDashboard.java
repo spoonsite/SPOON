@@ -28,27 +28,29 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Stores user dashboard")
 public class UserDashboard
-	extends StandardEntity<UserDashboard>		
+		extends StandardEntity<UserDashboard>
 {
+
 	public static final String DEFAULT_NAME = "DEFAULT";
-	
+
 	@PK(generated = true)
 	@NotNull
 	private String dashboardId;
-	
+
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
 	@NotNull
 	private String username;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_80)
 	private String name;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@APIDescription("UI can use this field to store state.")
 	private String dashboardState;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserDashboard()
 	{
 	}
@@ -56,12 +58,12 @@ public class UserDashboard
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		super.updateFields(entity); 
-		
+		super.updateFields(entity);
+
 		UserDashboard userDashboard = (UserDashboard) entity;
 		this.setName(userDashboard.getName());
 		this.setDashboardState(userDashboard.getDashboardState());
-						
+
 	}
 
 	public String getDashboardId()
@@ -103,5 +105,5 @@ public class UserDashboard
 	{
 		this.dashboardState = dashboardState;
 	}
-	
+
 }

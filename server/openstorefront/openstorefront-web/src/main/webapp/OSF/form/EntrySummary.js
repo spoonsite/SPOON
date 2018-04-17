@@ -221,7 +221,7 @@ Ext.define('OSF.form.EntrySummary', {
 					var attributes = Ext.decode(response.responseText);
 					
 					Ext.Ajax.request({
-						url: 'api/v1/resource/attributes/attributetypes/required?componentType=' + entryForm.componentData.componentType,
+						url: 'api/v1/resource/attributes/required?componentType=' + entryForm.componentData.componentType,
 						success: function(response, opts) {
 							
 							var requiredAttributes = Ext.decode(response.responseText);

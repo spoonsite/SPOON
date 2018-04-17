@@ -30,10 +30,6 @@ public class WorkflowStatus
 		extends LookupEntity<WorkflowStatus>
 {
 
-	public WorkflowStatus()
-	{
-	}
-
 	public static WorkflowStatus initalStatus()
 	{
 		List<WorkflowStatus> status = allActiveStatuses();

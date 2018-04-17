@@ -71,8 +71,9 @@ public class AttributeTypeView
 	private List<ComponentTypeRestriction> requiredRestrictions = new ArrayList<>();
 
 	@DataType(ComponentTypeRestriction.class)
-	private List<ComponentTypeRestriction> associatedComponentTypes = new ArrayList<>();
+	private List<ComponentTypeRestriction> optionalRestrictions = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeTypeView()
 	{
 	}
@@ -93,7 +94,7 @@ public class AttributeTypeView
 		attributeTypeView.setDefaultAttributeCode(attributeType.getDefaultAttributeCode());
 		attributeTypeView.setActiveStatus(attributeType.getActiveStatus());
 		attributeTypeView.setRequiredRestrictions(attributeType.getRequiredRestrictions());
-		attributeTypeView.setAssociatedComponentTypes(attributeType.getAssociatedComponentTypes());
+		attributeTypeView.setOptionalRestrictions(attributeType.getOptionalRestrictions());
 		attributeTypeView.setAttributeValueType(attributeType.getAttributeValueType());
 		attributeTypeView.setAttributeValueTypeDescription(TranslateUtil.translate(AttributeValueType.class, attributeType.getAttributeValueType()));
 
@@ -248,14 +249,14 @@ public class AttributeTypeView
 		this.requiredRestrictions = requiredRestrictions;
 	}
 
-	public List<ComponentTypeRestriction> getAssociatedComponentTypes()
+	public List<ComponentTypeRestriction> getOptionalRestrictions()
 	{
-		return associatedComponentTypes;
+		return optionalRestrictions;
 	}
 
-	public void setAssociatedComponentTypes(List<ComponentTypeRestriction> associatedComponentTypes)
+	public void setOptionalRestrictions(List<ComponentTypeRestriction> optionalRestrictions)
 	{
-		this.associatedComponentTypes = associatedComponentTypes;
+		this.optionalRestrictions = optionalRestrictions;
 	}
 
 	public String getAttributeValueType()

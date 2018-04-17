@@ -24,16 +24,18 @@ import javax.validation.constraints.NotNull;
  */
 public class UserCredential
 {
+
+	@SuppressWarnings("squid:S2068")
 	public static final String FIELD_EXISTING_PASSWORD = "existingPassword";
-	
-	
+
 	@ConsumeField
 	@NotNull
 	private String password;
-	
+
 	@ConsumeField
 	private String existingPassword;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserCredential()
 	{
 	}

@@ -658,110 +658,120 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 	loadEval: function(evaluationId, componentId){
 		var entryPanel = this;
 
-		entryPanel.setLoading(true);
+		entryPanel.setLoading('Loading Entry...');
 		entryPanel.evaluationId = evaluationId;
 		entryPanel.componentId = componentId;
 		
-		var entryType = 'COMP';		
 		Ext.Ajax.request({
-			url: 'api/v1/resource/componenttypes/'+ entryType,
+			url: 'api/v1/resource/components/' + entryPanel.componentId,
 			callback: function() {				
+				entryPanel.setLoading(false);
 			},
 			success: function(response, opts) {
-				var entryType = Ext.decode(response.responseText);
-				var menuItems = [];
-				menuItems.push(
-					{							
-						text: 'Summary',							
-						handler: function(){
-							entryPanel.loadContentForm({
-								form: 'EntrySummary',
-								title: 'Entry Summary',
-								refreshCallback: entryPanel.externalRefreshCallback
-							});								
-						}							
-					}					
-				);
-				if (entryType.dataEntryAttributes){
-					menuItems.push({						
-						text: 'Attributes',							
-						handler: function(){
-							entryPanel.loadContentForm({
-								form: 'Attributes',
-								title: 'Entry Attributes'
+				var componentFull = Ext.decode(response.responseText);
+				
+				evalPanel.setLoading('Loading Entry Type...');				
+				Ext.Ajax.request({
+				url: 'api/v1/resource/componenttypes/'+ componentFull.componentType,
+				callback: function() {	
+					entryPanel.setLoading(false);
+				},
+				success: function(response, opts) {
+						var entryType = Ext.decode(response.responseText);
+						var menuItems = [];
+						menuItems.push(
+							{							
+								text: 'Summary',							
+								handler: function(){
+									entryPanel.loadContentForm({
+										form: 'EntrySummary',
+										title: 'Entry Summary',
+										refreshCallback: entryPanel.externalRefreshCallback
+									});								
+								}							
+							}					
+						);
+						if (entryType.dataEntryAttributes){
+							menuItems.push({						
+								text: 'Attributes',							
+								handler: function(){
+									entryPanel.loadContentForm({
+										form: 'Attributes',
+										title: 'Entry Attributes'
+									});
+								}
 							});
 						}
-					});
-				}
-				if (entryType.dataEntryRelationships){
-					menuItems.push({						
-						text: 'Relationships',							
-						handler: function(){
-							entryPanel.loadContentForm({
-								form: 'Relationships',
-								title: 'Entry Relationships'
-							});
+						if (entryType.dataEntryRelationships){
+							menuItems.push({						
+								text: 'Relationships',							
+								handler: function(){
+									entryPanel.loadContentForm({
+										form: 'Relationships',
+										title: 'Entry Relationships'
+									});
+								}
+							});					
 						}
-					});					
-				}
-				if (entryType.dataEntryContacts){
-					menuItems.push({						
-						text: 'Contacts',							
-						handler: function(){
-							entryPanel.loadContentForm({
-								form: 'Contacts',
-								title: 'Entry Contacts'
-							});
+						if (entryType.dataEntryContacts){
+							menuItems.push({						
+								text: 'Contacts',							
+								handler: function(){
+									entryPanel.loadContentForm({
+										form: 'Contacts',
+										title: 'Entry Contacts'
+									});
+								}
+							});					
 						}
-					});					
-				}
-				if (entryType.dataEntryResources){
-					menuItems.push({						
-						text: 'Resources',							
-						handler: function(){
-							entryPanel.loadContentForm({
-								form: 'Resources',
-								title: 'Entry Resources'
-							});	
+						if (entryType.dataEntryResources){
+							menuItems.push({						
+								text: 'Resources',							
+								handler: function(){
+									entryPanel.loadContentForm({
+										form: 'Resources',
+										title: 'Entry Resources'
+									});	
+								}
+							});					
 						}
-					});					
-				}
-				if (entryType.dataEntryMedia){
-					menuItems.push({						
-						text: 'Media',							
-						handler: function(){
-							entryPanel.loadContentForm({
-								form: 'Media',
-								title: 'Entry Media'
-							});
+						if (entryType.dataEntryMedia){
+							menuItems.push({						
+								text: 'Media',							
+								handler: function(){
+									entryPanel.loadContentForm({
+										form: 'Media',
+										title: 'Entry Media'
+									});
+								}
+							});						
 						}
-					});						
-				}
-				if (entryType.dataEntryDependencies){
-					menuItems.push({						
-						text: 'Dependencies',							
-						handler: function(){
-							entryPanel.loadContentForm({
-								form: 'Dependencies',
-								title: 'Entry Dependencies'
-							});
+						if (entryType.dataEntryDependencies){
+							menuItems.push({						
+								text: 'Dependencies',							
+								handler: function(){
+									entryPanel.loadContentForm({
+										form: 'Dependencies',
+										title: 'Entry Dependencies'
+									});
+								}
+							});					
 						}
-					});					
-				}
-				menuItems.push({						
-					text: 'Tags',							
-					handler: function(){
-						entryPanel.loadContentForm({
-							form: 'Tags',
-							title: 'Tags'
+						menuItems.push({						
+							text: 'Tags',							
+							handler: function(){
+								entryPanel.loadContentForm({
+									form: 'Tags',
+									title: 'Tags'
+								});
+							}
 						});
+
+						entryPanel.navigation.removeAll();
+						entryPanel.navigation.add(menuItems);
+					
 					}
 				});
-
-				entryPanel.navigation.removeAll();
-				entryPanel.navigation.add(menuItems);
-
-				entryPanel.setLoading(false);
 			}
 		});
 	}

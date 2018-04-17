@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.LockSwitch;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
+import edu.usu.sdl.openstorefront.common.util.RetryUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
@@ -33,7 +34,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.ChangeLog;
 import edu.usu.sdl.openstorefront.core.entity.ChangeType;
@@ -59,13 +59,12 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
-import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
-import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
+import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
@@ -149,7 +148,6 @@ import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -165,6 +163,7 @@ public class CoreComponentServiceImpl
 	private static final Logger LOG = Logger.getLogger(CoreComponentServiceImpl.class.getName());
 
 	private static final String COPY_MARKER = "- COPY";
+	private static final ReentrantLock LOCK = new ReentrantLock();
 
 	public CoreComponentServiceImpl(ComponentServiceImpl componentService)
 	{
@@ -227,26 +226,6 @@ public class CoreComponentServiceImpl
 			}
 		}
 		return componentName;
-	}
-
-	public String getComponentType(String componentId)
-	{
-		String componentType = null;
-		Element element = OSFCacheManager.getComponentTypeComponentCache().get(componentId);
-		if (element != null) {
-			componentType = (String) element.getObjectValue();
-		} else {
-			String query = "select componentId, componentType from " + Component.class.getSimpleName();
-			List<ODocument> documents = persistenceService.query(query, null);
-			for (ODocument document : documents) {
-				Element newElement = new Element(document.field("componentId"), document.field("componentType"));
-				if (document.field("componentId").equals(componentId)) {
-					componentType = (String) document.field("componentType");
-				}
-				OSFCacheManager.getComponentTypeComponentCache().put(newElement);
-			}
-		}
-		return componentType;
 	}
 
 	public List<ComponentSearchView> getComponents()
@@ -334,7 +313,7 @@ public class CoreComponentServiceImpl
 		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
 		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
 		tempWatch.setComponentId(componentId);
-		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample(tempWatch));
+		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample<>(tempWatch));
 		if (tempUserWatch != null) {
 			result.setLastViewedDts(tempUserWatch.getLastViewDts());
 		}
@@ -394,7 +373,7 @@ public class CoreComponentServiceImpl
 		componentTrackingExample.setComponentId(componentId);
 		result.setComponentViews(persistenceService.countByExample(componentTrackingExample));
 
-		List<ComponentReview> tempReviews = new ArrayList();
+		List<ComponentReview> tempReviews = new ArrayList<>();
 		List<ComponentReview> tempApprovedReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
 		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
 		String currentUser = SecurityUtil.getCurrentUserName();
@@ -404,7 +383,7 @@ public class CoreComponentServiceImpl
 			}
 		}
 		tempReviews.addAll(tempApprovedReviews);
-		List<ComponentReviewView> reviews = new ArrayList();
+		List<ComponentReviewView> reviews = new ArrayList<>();
 		tempReviews = filterEngine.filter(tempReviews);
 
 		tempReviews.forEach(review
@@ -422,8 +401,8 @@ public class CoreComponentServiceImpl
 
 			ComponentReviewView tempView = ComponentReviewView.toView(review);
 
-			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample(tempPro))));
-			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample(tempCon))));
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample<>(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample<>(tempCon))));
 
 			reviews.add(tempView);
 		});
@@ -497,7 +476,10 @@ public class CoreComponentServiceImpl
 
 	public RequiredForComponent saveComponent(RequiredForComponent component)
 	{
-		componentService.getComponentServicePrivate().doSaveComponent(component);
+		//Because the last activity runs aync it can cause db conflicts
+		RetryUtil.retryAction(3, () -> {
+			componentService.getComponentServicePrivate().doSaveComponent(component);
+		});
 		updateComponentLastActivity(component.getComponent().getComponentId());
 
 		return component;
@@ -691,13 +673,13 @@ public class CoreComponentServiceImpl
 							String mediaTypeCode;
 							String mimeType = existingTemporaryMedia.getMimeType();
 							if (mimeType.contains("image")) {
-								mediaTypeCode = "IMG";
+								mediaTypeCode = MediaType.IMAGE;
 							} else if (mimeType.contains("video")) {
-								mediaTypeCode = "VID";
+								mediaTypeCode = MediaType.VIDEO;
 							} else if (mimeType.contains("audio")) {
-								mediaTypeCode = "AUD";
+								mediaTypeCode = MediaType.AUDIO;
 							} else {
-								mediaTypeCode = "OTH";
+								mediaTypeCode = MediaType.OTHER;
 							}
 
 							componentMedia.setMediaTypeCode(mediaTypeCode);
@@ -1002,6 +984,7 @@ public class CoreComponentServiceImpl
 		return componentAll;
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends BaseComponent> boolean handleBaseComponentSave(Class<T> baseComponentClass, List<T> baseComponents, String componentId)
 	{
 		boolean changed = false;
@@ -1113,6 +1096,7 @@ public class CoreComponentServiceImpl
 		cascadeDeleteOfComponent(componentId, new ComponentDeleteOptions());
 	}
 
+	@SuppressWarnings("squid:S1872")
 	public void cascadeDeleteOfComponent(String componentId, ComponentDeleteOptions option)
 	{
 		Objects.requireNonNull(componentId, "Component Id is required.");
@@ -1181,11 +1165,13 @@ public class CoreComponentServiceImpl
 	{
 		example.setComponentId(componentId);
 		if (example instanceof ComponentResource) {
+			@SuppressWarnings("unchecked")
 			List<T> foundRecords = example.findByExample();
 			for (T found : foundRecords) {
 				sub.removeLocalResource((ComponentResource) found);
 			}
 		} else if (example instanceof ComponentMedia) {
+			@SuppressWarnings("unchecked")
 			List<T> foundRecords = example.findByExample();
 			for (T found : foundRecords) {
 				sub.removeLocalMedia((ComponentMedia) found);
@@ -1200,7 +1186,7 @@ public class CoreComponentServiceImpl
 		UserWatch example = new UserWatch();
 		example.setComponentId(componentId);
 		example.setUsername(userId);
-		example = persistenceService.queryOneByExample(new QueryByExample(example));
+		example = persistenceService.queryOneByExample(new QueryByExample<>(example));
 		if (example != null) {
 			UserWatch watch = persistenceService.findById(UserWatch.class, example.getUserWatchId());
 			watch.setLastViewDts(TimeUtil.currentDate());
@@ -1527,7 +1513,7 @@ public class CoreComponentServiceImpl
 			}
 		}
 
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		SpecialOperatorModel<Component> specialOperatorModel = new SpecialOperatorModel<>();
 
 		// If given, filter the search by name
 		if (StringUtils.isNotBlank(filter.getComponentName())) {
@@ -1540,7 +1526,7 @@ public class CoreComponentServiceImpl
 			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
 		}
 
-		QueryByExample queryByExample = new QueryByExample(componentExample);
+		QueryByExample<Component> queryByExample = new QueryByExample<>(componentExample);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
 		//TODO: consider moving the filtering work to the DB
@@ -1572,9 +1558,9 @@ public class CoreComponentServiceImpl
 		Component pendingChangeExample = new Component();
 		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
 
-		QueryByExample queryPendingChanges = new QueryByExample(new Component());
+		QueryByExample<Component> queryPendingChanges = new QueryByExample<>(new Component());
 
-		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(pendingChangeExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
 		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
@@ -1700,8 +1686,7 @@ public class CoreComponentServiceImpl
 
 	public void processComponentUpdates()
 	{
-		ReentrantLock lock = new ReentrantLock();
-		lock.lock();
+		LOCK.lock();
 		try {
 			ComponentUpdateQueue updateQueueExample = new ComponentUpdateQueue();
 			updateQueueExample.setNodeId(PropertiesManager.getInstance().getNodeName());
@@ -1761,7 +1746,7 @@ public class CoreComponentServiceImpl
 				}
 			}
 		} finally {
-			lock.unlock();
+			LOCK.unlock();
 		}
 
 	}
@@ -1905,7 +1890,7 @@ public class CoreComponentServiceImpl
 					Component componentSearch = new Component();
 					componentSearch.setName(validNewName.toLowerCase());
 
-					QueryByExample queryByExample = new QueryByExample(componentSearch);
+					QueryByExample<Component> queryByExample = new QueryByExample<>(componentSearch);
 					queryByExample.getFieldOptions().put(Component.FIELD_NAME,
 							new GenerateStatementOptionBuilder()
 									.setMethod(GenerateStatementOption.METHOD_LOWER_CASE)
@@ -2070,7 +2055,7 @@ public class CoreComponentServiceImpl
 				try {
 					TVFS.umount();
 				} catch (FsSyncException ex) {
-					throw new OpenStorefrontRuntimeException("Unable to unable to unmount snapshot...it may be unreadable.", ex);
+					LOG.log(Level.SEVERE, "Unable to unable to unmount snapshot...it may be unreadable.", ex);
 				}
 			}
 			persistenceService.persist(versionHistory);
@@ -2431,163 +2416,6 @@ public class CoreComponentServiceImpl
 		return recordStatistics;
 	}
 
-	public List<ComponentType> getAllComponentTypes()
-	{
-		List<ComponentType> componentTypes;
-		Element element = OSFCacheManager.getComponentTypeCache().get(OSFCacheManager.ALLCODE_KEY);
-		if (element != null) {
-			componentTypes = (List<ComponentType>) element.getObjectValue();
-		} else {
-			ComponentType componentType = new ComponentType();
-			componentTypes = componentType.findByExample();
-			element = new Element(OSFCacheManager.ALLCODE_KEY, componentTypes);
-			OSFCacheManager.getComponentTypeCache().put(element);
-		}
-
-		return componentTypes;
-	}
-
-	public ComponentType saveComponentType(ComponentType componentType)
-	{
-		ComponentType existing = persistenceService.findById(ComponentType.class, componentType.getComponentType());
-		if (existing != null) {
-			existing.updateFields(componentType);
-			componentType = persistenceService.persist(existing);
-		} else {
-			componentType.populateBaseCreateFields();
-			componentType = persistenceService.persist(componentType);
-		}
-		OSFCacheManager.getComponentTypeCache().removeAll();
-
-		return componentType;
-	}
-
-	public void removeComponentType(String componentType, String newComponentType)
-	{
-		ComponentType componentTypeFound = persistenceService.findById(ComponentType.class, componentType);
-		if (componentTypeFound != null) {
-
-			boolean inactivate = true;
-			if (StringUtils.isNotBlank(newComponentType)) {
-				ComponentType newType = persistenceService.findById(ComponentType.class, newComponentType);
-
-				if (newType != null) {
-					//migrate data
-					Component setComponent = new Component();
-					setComponent.setComponentType(newComponentType);
-
-					Component whereComponent = new Component();
-					whereComponent.setComponentType(componentType);
-
-					persistenceService.updateByExample(Component.class, setComponent, whereComponent);
-
-					FileDataMap setfileDataMap = new FileDataMap();
-					setfileDataMap.setDefaultComponentType(newComponentType);
-
-					FileDataMap wherefileDataMap = new FileDataMap();
-					wherefileDataMap.setDefaultComponentType(componentType);
-					persistenceService.updateByExample(FileDataMap.class, setfileDataMap, wherefileDataMap);
-
-					//remove restrictions
-					AttributeType attributeTypeExample = new AttributeType();
-					List<AttributeType> allAttributes = attributeTypeExample.findByExample();
-					List<AttributeType> updateAttributes = new ArrayList<>();
-					for (AttributeType attributeType : allAttributes) {
-
-						boolean addToUpdate = false;
-						if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
-							for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
-								String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
-								if (checkType.equals(componentType)) {
-									attributeType.getRequiredRestrictions().remove(i);
-									addToUpdate = true;
-								}
-							}
-						}
-
-						if (attributeType.getAssociatedComponentTypes() != null && !attributeType.getAssociatedComponentTypes().isEmpty()) {
-							for (int i = attributeType.getAssociatedComponentTypes().size() - 1; i >= 0; i--) {
-								String checkType = attributeType.getAssociatedComponentTypes().get(i).getComponentType();
-								if (checkType.equals(componentType)) {
-									attributeType.getAssociatedComponentTypes().remove(i);
-									addToUpdate = true;
-								}
-							}
-						}
-
-						if (addToUpdate) {
-							updateAttributes.add(attributeType);
-						}
-
-						for (AttributeType attributeTypeUpdated : updateAttributes) {
-							componentService.getAttributeService().saveAttributeType(attributeTypeUpdated, false);
-						}
-					}
-
-					//remove
-					inactivate = false;
-					persistenceService.delete(componentTypeFound);
-				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to find new component type: {0}  to migrate data to.  Inactivating component type: {1}", new Object[]{
-						newComponentType, componentType
-					}));
-				}
-			}
-
-			if (inactivate) {
-				componentTypeFound.setActiveStatus(ComponentType.INACTIVE_STATUS);
-				componentTypeFound.populateBaseUpdateFields();
-				persistenceService.persist(componentTypeFound);
-			}
-			OSFCacheManager.getComponentCache().removeAll();
-			OSFCacheManager.getComponentTypeCache().removeAll();
-		}
-	}
-
-	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
-	{
-		Objects.requireNonNull(componentTypeTemplate);
-
-		ComponentTypeTemplate existing = persistenceService.findById(ComponentTypeTemplate.class, componentTypeTemplate.getTemplateId());
-		if (existing != null) {
-			existing.updateFields(componentTypeTemplate);
-			componentTypeTemplate = persistenceService.persist(existing);
-		} else {
-			if (StringUtil.isBlank(componentTypeTemplate.getTemplateId())) {
-				componentTypeTemplate.setTemplateId(persistenceService.generateId());
-			}
-			componentTypeTemplate.populateBaseCreateFields();
-			componentTypeTemplate = persistenceService.persist(componentTypeTemplate);
-		}
-		return componentTypeTemplate;
-	}
-
-	public void removeComponentTypeTemplate(String templateId)
-	{
-		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateId);
-		if (template != null) {
-			template.setActiveStatus(ComponentType.INACTIVE_STATUS);
-			template.populateBaseUpdateFields();
-			persistenceService.persist(template);
-		}
-	}
-
-	public void deleteComponentTypeTemplate(String templateId)
-	{
-		ComponentTypeTemplate template = persistenceService.findById(ComponentTypeTemplate.class, templateId);
-		if (template != null) {
-			ComponentType componentType = new ComponentType();
-			componentType.setComponentTypeTemplate(templateId);
-
-			List<ComponentType> types = componentType.findByExample();
-			if (types.isEmpty()) {
-				persistenceService.delete(template);
-			} else {
-				throw new OpenStorefrontRuntimeException("Unable to delete; Entry types are point to the template.", "Remove the template from entry types (both active and inactive) and try again.");
-			}
-		}
-	}
-
 	public Component approveComponent(String componentId)
 	{
 		Component component = persistenceService.findById(Component.class, componentId);
@@ -2746,19 +2574,6 @@ public class CoreComponentServiceImpl
 
 		}
 		return iconMediaId;
-	}
-
-	public String resolveComponentTypeIcon(String componentType)
-	{
-		String typeIcon = null;
-		List<ComponentType> componentTypes = getAllComponentTypes();
-		for (ComponentType componentTypeLocal : componentTypes) {
-			if (componentTypeLocal.getComponentType().equals(componentType)) {
-				typeIcon = componentTypeLocal.getIconUrl();
-			}
-		}
-
-		return typeIcon;
 	}
 
 }

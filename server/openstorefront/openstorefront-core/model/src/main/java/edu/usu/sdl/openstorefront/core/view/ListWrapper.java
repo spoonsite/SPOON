@@ -26,10 +26,6 @@ public abstract class ListWrapper
 	protected long totalNumber;
 	protected int results;
 
-	public ListWrapper()
-	{
-	}
-
 	public long getTotalNumber()
 	{
 		return totalNumber;
