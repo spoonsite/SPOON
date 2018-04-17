@@ -32,6 +32,11 @@ public class ErrorTicketWrapper
 	@DataType(ErrorTicket.class)
 	private List<ErrorTicket> errorTickets = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public ErrorTicketWrapper()
+	{
+	}
+
 	public ErrorTicketWrapper(List<ErrorTicket> errorTickets, long totalNumber)
 	{
 		this.errorTickets = errorTickets;

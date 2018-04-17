@@ -31,6 +31,11 @@ public class UserSavedSearchWrapper
 	@DataType(UserSavedSearch.class)
 	private List<UserSavedSearch> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public UserSavedSearchWrapper()
+	{
+	}
+
 	public List<UserSavedSearch> getData()
 	{
 		return data;

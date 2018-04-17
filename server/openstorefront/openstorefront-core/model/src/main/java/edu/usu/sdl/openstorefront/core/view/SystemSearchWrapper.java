@@ -31,6 +31,11 @@ public class SystemSearchWrapper
 	@DataType(SystemSearch.class)
 	private List<SystemSearch> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public SystemSearchWrapper()
+	{
+	}
+
 	public List<SystemSearch> getData()
 	{
 		return data;

@@ -28,6 +28,11 @@ public class ReportWrapper
 	private long totalNumber;
 	private List<ReportView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public ReportWrapper()
+	{
+	}
+
 	public long getTotalNumber()
 	{
 		return totalNumber;

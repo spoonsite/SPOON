@@ -29,6 +29,11 @@ public class UserMessageWrapper
 	private long totalNumber;
 	private List<UserMessage> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public UserMessageWrapper()
+	{
+	}
+
 	public long getTotalNumber()
 	{
 		return totalNumber;

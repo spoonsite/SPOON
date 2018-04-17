@@ -31,6 +31,11 @@ public class UserProfileWrapper
 	@DataType(UserProfileView.class)
 	private List<UserProfileView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public UserProfileWrapper()
+	{
+	}
+
 	public long getTotalNumber()
 	{
 		return totalNumber;
