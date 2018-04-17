@@ -160,15 +160,15 @@
 				};
 
 				var actionView = function(record) {
-					console.log("Action view partial template");
+					viewSubmissionWin.show();
 				}
 
 				var actionReassign = function(record) {
-					console.log("Reassign view partial template");
+					reassignSubmissionWin.show();
 				}
 
 				var actionDelete = function(record){
-					
+
 					//check if delete is possible
 					Ext.getCmp('templateGrid').setLoading("Checking delete...");
 					Ext.Ajax.request({
@@ -188,7 +188,7 @@
 								
 							} else {							
 								Ext.Msg.show({
-									title:'Delete Template?',
+									title:'Delete Submission?',
 									iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
 									message: 'Are you sure you want to delete ' + Ext.util.Format.ellipsis(record.get('name'), 20) + '?',
 									buttons: Ext.Msg.YESNOCANCEL,
@@ -216,6 +216,101 @@
 				};
 
 			});
+
+			var reassignSubmissionWin = Ext.create('Ext.window.Window', {
+					width: '70%',
+					height: '80%',
+					maximizable: true,
+					title: 'Reassign Entry Submission',
+					iconCls: 'fa fa-lg fa-edit',
+					modal: true,
+					//layout: 'fit',
+					items : [
+						{
+							xtype: 'UserSingleSelectComboBox',
+							fieldLabel: 'Select a user',
+							width: '100%'
+						}
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items:[
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Save',
+									iconCls: 'fa fa-lg fa-save'
+								},
+								{
+									xtype: 'tbfill'
+								}
+							]
+						}
+					]
+			})
+
+			var viewSubmissionWin = Ext.create('Ext.window.Window', {
+					width: '70%',
+					height: '80%',
+					maximizable: true,
+					title: 'View',
+					iconCls: 'fa fa-lg fa-eye',
+					modal: true,
+					layout: 'fit',
+					items: [
+						//previewContents
+					],
+					tools: [
+						{
+							type: 'up',
+							tooltip: 'popout preview',
+							handler: function(){
+								//window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('componentGrid').getSelection()[0].get('componentId'), "Preview");
+							}
+						}
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Previous',
+									id: 'previewWinTools-previousBtn',
+									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
+									handler: function() {
+										//actionPreviewNextRecord(false);
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Close',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+									handler: function() {
+										this.up('window').hide();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Next',
+									id: 'previewWinTools-nextBtn',
+									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+									iconAlign: 'right',
+									handler: function() {
+										//actionPreviewNextRecord(true);
+									}
+								}
+							]
+						}
+					]
+				});
 			
 		</script>	
 		
