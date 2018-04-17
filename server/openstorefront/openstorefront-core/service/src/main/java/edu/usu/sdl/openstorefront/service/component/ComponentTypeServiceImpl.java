@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.component;
 
+import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -38,6 +39,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
@@ -654,4 +657,31 @@ public class ComponentTypeServiceImpl
 		return existing;
 	}
 
+	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
+	{
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		ComponentType currentComponentType = findComponentTypeInList(componentTypeId, componentTypes);
+		
+		List<ComponentType> componentTypeParents = new ArrayList<>();
+		
+		if (currentComponentType.getParentComponentType() != null) {
+			do {
+				currentComponentType = findComponentTypeInList(currentComponentType.getParentComponentType(), componentTypes);
+				componentTypeParents.add(currentComponentType);
+			} while (currentComponentType.getParentComponentType() != null);
+	
+			if (reverseOrder) {
+				Lists.reverse(componentTypeParents);
+			}
+		}
+
+		return componentTypeParents;
+	}
+
+	private ComponentType findComponentTypeInList(String componentType, List<ComponentType> componentTypes)
+	{
+		return componentTypes.stream()
+			.filter(t -> t.getComponentType().equals(componentType))
+			.collect(Collectors.toList()).get(0);
+	}
 }

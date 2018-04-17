@@ -68,6 +68,7 @@ import edu.usu.sdl.openstorefront.service.component.IntegrationComponentServiceI
 import edu.usu.sdl.openstorefront.service.component.SubComponentServiceImpl;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -751,6 +752,12 @@ public class ComponentServiceImpl
 	public ComponentType activateComponentType(String componentTypeId)
 	{
 		return type.activateComponentType(componentTypeId);
+	}
+
+	@Override
+	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
+	{
+		return type.getComponentTypeParents(componentTypeId, reverseOrder);
 	}
 
 }
