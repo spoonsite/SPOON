@@ -49,6 +49,7 @@ public class Plugin
 	@APIDescription("Indentifies the plugin")
 	private String pluginType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Plugin()
 	{
 	}

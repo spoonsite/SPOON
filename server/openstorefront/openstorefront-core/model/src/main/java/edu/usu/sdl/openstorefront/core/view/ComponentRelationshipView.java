@@ -44,10 +44,6 @@ public class ComponentRelationshipView
 	private String relationshipTypeDescription;
 	private Date updateDts;
 
-	public ComponentRelationshipView()
-	{
-	}
-
 	public static ComponentRelationshipView toView(ComponentRelationship componentRelationship)
 	{
 		Objects.requireNonNull(componentRelationship, "Component Required");

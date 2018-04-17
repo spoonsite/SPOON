@@ -32,10 +32,6 @@ public class ComponentSearchWrapper
 	private List<ComponentSearchView> data = new ArrayList<>();
 	private List<ResultTypeStat> resultTypeStats = new ArrayList<>();
 
-	public ComponentSearchWrapper()
-	{
-	}
-
 	public List<ComponentSearchView> getData()
 	{
 		return data;

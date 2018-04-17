@@ -95,6 +95,7 @@ public abstract class StandardEntity<T>
 
 	private Boolean adminModified;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public StandardEntity()
 	{
 	}

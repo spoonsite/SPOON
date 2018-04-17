@@ -26,8 +26,4 @@ public class ReviewCon
 		extends LookupEntity<ReviewCon>
 {
 
-	public ReviewCon()
-	{
-	}
-
 }

@@ -84,6 +84,7 @@ public class ContentSubSection
 	@OneToMany(orphanRemoval = true)
 	private List<CustomField> customFields;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ContentSubSection()
 	{
 	}

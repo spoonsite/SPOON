@@ -66,6 +66,7 @@ public class EvaluationTemplate
 	@DataType(EvaluationSectionTemplate.class)
 	private List<EvaluationSectionTemplate> sectionTemplates;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public EvaluationTemplate()
 	{
 	}

@@ -50,6 +50,7 @@ public class FileFormat
 	private String fileRequirements;
 	private boolean supportsDataMap;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileFormat()
 	{
 	}

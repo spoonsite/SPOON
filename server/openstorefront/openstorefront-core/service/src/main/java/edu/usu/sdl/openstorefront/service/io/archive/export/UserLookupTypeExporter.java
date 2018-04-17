@@ -64,6 +64,7 @@ public class UserLookupTypeExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public void exporterInit()
 	{
 		super.exporterInit();

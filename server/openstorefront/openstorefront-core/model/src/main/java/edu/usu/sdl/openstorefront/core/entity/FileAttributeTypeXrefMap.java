@@ -61,10 +61,11 @@ public class FileAttributeTypeXrefMap
 	@OneToMany(orphanRemoval = true)
 	@DataType(FileAttributeCodeXrefMap.class)
 	private List<FileAttributeCodeXrefMap> attributeCodeXrefMap;
-	
+
 	@Version
-	private String storageVersion;	
-	
+	private String storageVersion;
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileAttributeTypeXrefMap()
 	{
 	}
@@ -128,5 +129,5 @@ public class FileAttributeTypeXrefMap
 	{
 		this.storageVersion = storageVersion;
 	}
-	
+
 }

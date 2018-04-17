@@ -29,10 +29,6 @@ public class SystemErrorModel
 	private String errorTicketNumber;
 	private String potentialResolution;
 
-	public SystemErrorModel()
-	{
-	}
-
 	@Override
 	public String toString()
 	{

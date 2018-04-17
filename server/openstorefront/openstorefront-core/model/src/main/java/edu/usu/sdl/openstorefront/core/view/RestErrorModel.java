@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.usu.sdl.openstorefront.core.view;
 
 import java.io.Serializable;
@@ -22,17 +21,15 @@ import java.util.Map;
 
 /**
  * Use for passing back friendly error messages
+ *
  * @author dshurtleff
  */
 public class RestErrorModel
-	implements Serializable
+		implements Serializable
 {
+
 	private boolean success = false;
 	private Map<String, String> errors = new HashMap<>();
-
-	public RestErrorModel()
-	{
-	}
 
 	public boolean getSuccess()
 	{
@@ -53,5 +50,5 @@ public class RestErrorModel
 	{
 		this.errors = errors;
 	}
-	
+
 }

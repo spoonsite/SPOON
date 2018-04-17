@@ -144,7 +144,9 @@ public class ElasticSearchManager
 
 		for (int i = 0; i < maxPoolSize; i++) {
 			ElasticSearchClient client = createClient(host, port);
-			clientPool.offer(client);
+			if (!clientPool.offer(client)) {
+				LOG.log(Level.FINER, "Client not added to Pool; Pool was full.");
+			}
 		}
 	}
 
@@ -184,6 +186,7 @@ public class ElasticSearchManager
 			}
 			return client;
 		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
 			throw new OpenStorefrontRuntimeException("Unable to retrieve Elasticsearch Connection - wait interrupted.  No resource available.", "Adjust Elasticsearch pool size appropriate to load. (system admin)", ex, ErrorTypeCode.INTEGRATION);
 		}
 	}
@@ -221,7 +224,9 @@ public class ElasticSearchManager
 	@Override
 	public void releaseClient(ElasticSearchClient client)
 	{
-		clientPool.offer(client);
+		if (!clientPool.offer(client)) {
+			LOG.log(Level.FINER, "Client not added to Pool; Pool was full.");
+		}
 	}
 
 	@Override
@@ -491,20 +496,19 @@ public class ElasticSearchManager
 
 	protected String toProperCase(String query)
 	{
-		final String DELIMITERS = " '-/*";
+		String delimiters = "'-/*";
 
 		StringBuilder searchQuery = new StringBuilder();
 		boolean capNext = true;
-
 		for (char c : query.toCharArray()) {
 
 			if (capNext && Character.isLetter(c)) {
-				c = (capNext) ? Character.toUpperCase(c) : Character.toLowerCase(c);
+				c = Character.toUpperCase(c);
 				searchQuery.append(c);
-				capNext = (DELIMITERS.indexOf((int) c) >= 0);
+				capNext = (delimiters.indexOf((int) c) >= 0);
 			} else {
 				searchQuery.append(c);
-				capNext = (DELIMITERS.indexOf((int) c) >= 0);
+				capNext = (delimiters.indexOf((int) c) >= 0);
 			}
 		}
 		return searchQuery.toString();

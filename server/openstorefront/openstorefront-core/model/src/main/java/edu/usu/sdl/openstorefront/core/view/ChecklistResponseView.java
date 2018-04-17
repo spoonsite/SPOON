@@ -39,10 +39,6 @@ public class ChecklistResponseView
 	private ChecklistQuestionView question;
 	private String workflowStatusDescription;
 
-	public ChecklistResponseView()
-	{
-	}
-
 	public static ChecklistResponseView toView(EvaluationChecklistResponse response)
 	{
 		ChecklistResponseView checklistResponseView = new ChecklistResponseView();

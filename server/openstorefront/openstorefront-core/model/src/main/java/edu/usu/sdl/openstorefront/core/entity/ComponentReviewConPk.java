@@ -46,6 +46,7 @@ public class ComponentReviewConPk
 	@FK(ReviewCon.class)
 	private String reviewCon;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentReviewConPk()
 	{
 	}

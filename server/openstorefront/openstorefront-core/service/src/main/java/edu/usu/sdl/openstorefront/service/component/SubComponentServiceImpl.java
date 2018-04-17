@@ -245,14 +245,14 @@ public class SubComponentServiceImpl
 			T example = subComponentClass.newInstance();
 			example.setComponentId(componentId);
 
-			if (subComponentClass.getName().equals(ComponentResource.class.getName())) {
+			if (subComponentClass.isAssignableFrom(ComponentResource.class)) {
 				List<T> resources = persistenceService.queryByExample(example);
 				resources.forEach(resource
 						-> {
 					removeLocalResource((ComponentResource) resource);
 				});
 			}
-			if (subComponentClass.getName().equals(ComponentMedia.class.getName())) {
+			if (subComponentClass.isAssignableFrom(ComponentMedia.class)) {
 				List<T> media = persistenceService.queryByExample(example);
 				media.forEach(mediaItem
 						-> {

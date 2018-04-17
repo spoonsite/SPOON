@@ -40,10 +40,6 @@ public class AttributeTypeSave
 	@ConsumeField
 	private List<ComponentTypeRestriction> optionalComponentTypes = new ArrayList<>();
 
-	public AttributeTypeSave()
-	{
-	}
-
 	public AttributeType getAttributeType()
 	{
 		return attributeType;

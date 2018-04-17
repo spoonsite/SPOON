@@ -37,6 +37,7 @@ public class AlertView
 
 	private List<String> componentTypeAlertOptionLabels = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AlertView()
 	{
 	}

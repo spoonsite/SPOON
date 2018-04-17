@@ -24,15 +24,12 @@ import java.util.List;
  *
  * @author dshurtleff
  */
-public class ContactViewWrapper 
+public class ContactViewWrapper
 		extends ListWrapper
 {
+
 	@DataType(Contact.class)
 	private List<Contact> data = new ArrayList<>();
-	
-	public ContactViewWrapper()
-	{
-	}
 
 	public List<Contact> getData()
 	{
@@ -43,5 +40,5 @@ public class ContactViewWrapper
 	{
 		this.data = data;
 	}
-	
+
 }

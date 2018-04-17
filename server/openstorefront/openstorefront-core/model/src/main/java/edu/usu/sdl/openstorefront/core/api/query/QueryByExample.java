@@ -36,9 +36,12 @@ public class QueryByExample<T extends BaseEntity>
 
 	public static final String LIKE_SYMBOL = "%";
 
+	//Query Triggers; used to flag field that should be used in a query
 	public static final String STRING_FLAG = "X";
 	public static final int INT_FLAG = 1;
 	public static final Boolean BOOLEAN_FLAG = Boolean.TRUE;
+
+	@SuppressWarnings("squid:S2386")
 	public static final Date DATE_FLAG = new Date();
 
 	private QueryType queryType = QueryType.SELECT;
@@ -67,15 +70,16 @@ public class QueryByExample<T extends BaseEntity>
 	{
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Object getFlagForType(Class fieldType)
 	{
 		Object trigger = null;
 
-		if (fieldType.getName().equals(Boolean.class.getName())) {
+		if (fieldType.isAssignableFrom(Boolean.class)) {
 			trigger = Boolean.TRUE;
-		} else if (fieldType.getName().equals(Integer.class.getName())) {
+		} else if (fieldType.isAssignableFrom(Integer.class)) {
 			trigger = 1;
-		} else if (fieldType.getName().equals(BigDecimal.class.getName())) {
+		} else if (fieldType.isAssignableFrom(BigDecimal.class)) {
 			trigger = BigDecimal.ONE;
 		} else {
 			try {

@@ -29,13 +29,16 @@ import java.util.List;
 public class FindLookupTest
 		extends BaseTestCase
 {
+
 	@Override
+	@SuppressWarnings("squid:S1872")
 	protected void runInternalTest()
 	{
 		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
 			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubLookupEntity(entityClass)) {
+					@SuppressWarnings("unchecked")
 					List<LookupEntity> lookupEnities = service.getLookupService().findLookup(entityClass);
 					results.append("Lookup: ").append(entityClass.getSimpleName()).append("<br>");
 					lookupEnities.forEach(entity -> {

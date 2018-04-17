@@ -34,8 +34,4 @@ public class ResourceType
 	public static final String BINARY = "BINARIES";
 	public static final String SERVICE = "SERVICE";
 
-	public ResourceType()
-	{
-	}
-
 }

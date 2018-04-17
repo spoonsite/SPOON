@@ -48,10 +48,6 @@ public class EvaluationView
 	private String issueNumber;
 	private String integrationUrl;
 
-	public EvaluationView()
-	{
-	}
-
 	public static EvaluationView toView(Evaluation evaluation)
 	{
 		return toView(evaluation, new HashMap<>());

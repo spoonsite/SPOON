@@ -44,10 +44,6 @@ public class FileHistoryView
 	private long warningsCount;
 	private long errorsCount;
 
-	public FileHistoryView()
-	{
-	}
-
 	public static FileHistoryView toView(FileHistory fileHistory, Map<String, List<FileDataMap>> dataMaps)
 	{
 		FileHistoryView view = new FileHistoryView();
@@ -65,25 +61,25 @@ public class FileHistoryView
 			view.setFileFormatDescription(fileHistory.getFileFormat());
 			view.setFileTypeDescription(OpenStorefrontConstant.NOT_AVAILABLE);
 		}
-		
+
 		if (fileHistory.getFileDataMapId() != null) {
 			if (dataMaps.containsKey(fileHistory.getFileDataMapId())) {
 				FileDataMap fileDataMap = dataMaps.get(fileHistory.getFileDataMapId()).get(0);
 				view.setFileMappingApplied(fileDataMap.getName());
 			}
 		}
-		
+
 		return view;
 	}
 
 	public static List<FileHistoryView> toView(List<FileHistory> fileHistories)
 	{
 		List<FileHistoryView> views = new ArrayList<>();
-		
+
 		FileDataMap fileDataMap = new FileDataMap();
 		List<FileDataMap> fileDataMaps = fileDataMap.findByExample();
 		Map<String, List<FileDataMap>> dataMaps = fileDataMaps.stream().collect(Collectors.groupingBy(FileDataMap::getFileDataMapId));
-		
+
 		fileHistories.forEach(fileHistory -> {
 			views.add(toView(fileHistory, dataMaps));
 		});

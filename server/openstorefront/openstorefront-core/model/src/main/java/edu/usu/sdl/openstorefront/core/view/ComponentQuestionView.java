@@ -50,10 +50,6 @@ public class ComponentQuestionView
 	@DataType(ComponentQuestionResponseView.class)
 	private List<ComponentQuestionResponseView> responses = new ArrayList<>();
 
-	public ComponentQuestionView()
-	{
-	}
-
 	public static ComponentQuestionView toView(ComponentQuestion question, List<ComponentQuestionResponseView> responses)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();

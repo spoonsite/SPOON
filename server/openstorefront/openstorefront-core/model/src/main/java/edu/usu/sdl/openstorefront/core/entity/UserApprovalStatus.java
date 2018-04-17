@@ -34,16 +34,12 @@ public class UserApprovalStatus
 	public static final String APPROVED = "A";
 	public static final String PENDING = "P";
 
-	public UserApprovalStatus()
-	{
-	}
-
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(PENDING, newLookup(ApprovalStatus.class, PENDING, "Pending"));
-		codeMap.put(APPROVED, newLookup(ApprovalStatus.class, APPROVED, "Approved"));		
+		codeMap.put(APPROVED, newLookup(ApprovalStatus.class, APPROVED, "Approved"));
 		return codeMap;
 	}
 

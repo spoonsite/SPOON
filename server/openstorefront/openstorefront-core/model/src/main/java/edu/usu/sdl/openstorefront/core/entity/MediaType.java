@@ -33,6 +33,7 @@ public class MediaType
 	public static final String ARCHIVE = "ARC";
 	public static final String OTHER = "OTH";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public MediaType()
 	{
 	}

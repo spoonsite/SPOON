@@ -35,8 +35,9 @@ import javax.validation.constraints.Size;
 @APIDescription("Hold an external field to internal entity field mapping")
 @Embeddable
 public class FileDataMapField
-	implements Serializable
+		implements Serializable
 {
+
 	@ConsumeField
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_4K)
@@ -46,42 +47,43 @@ public class FileDataMapField
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String entityClass;
-	
+
 	@ConsumeField
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)	
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String entityField;
-	
+
 	@ConsumeField
 	private Boolean useAsAttributeLabel;
-	
+
 	@ConsumeField
 	private Boolean concatenate;
-	
+
 	@ConsumeField
 	private Boolean addEndPathToValue;
-	
+
 	@ConsumeField
 	private Boolean fileAttachment;
-	
+
 	@ConsumeField
 	private String pathToEnityField;
 
 	@ConsumeField
 	@Embedded
 	@DataType(DataMapTransform.class)
-	@OneToMany(orphanRemoval = true)	
+	@OneToMany(orphanRemoval = true)
 	private List<DataMapTransform> transforms;
-	
+
 	@ConsumeField
 	@Embedded
 	@DataType(DataMapTransform.class)
 	@OneToMany(orphanRemoval = true)
 	private List<DataMapTransform> pathTransforms;
-	
+
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileDataMapField()
 	{
 	}
@@ -195,5 +197,5 @@ public class FileDataMapField
 	{
 		this.storageVersion = storageVersion;
 	}
-	
+
 }

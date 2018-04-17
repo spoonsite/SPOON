@@ -26,6 +26,7 @@ public class ExperienceTimeType
 		extends LookupEntity<ExperienceTimeType>
 {
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ExperienceTimeType()
 	{
 	}

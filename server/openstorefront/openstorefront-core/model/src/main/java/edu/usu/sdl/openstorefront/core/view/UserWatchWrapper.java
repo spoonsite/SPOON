@@ -24,15 +24,12 @@ import java.util.List;
  * @author dshurtleff
  */
 public class UserWatchWrapper
-	extends ListWrapper
+		extends ListWrapper
 {
+
 	@DataType(UserWatchView.class)
 	private List<UserWatchView> data = new ArrayList<>();
 
-	public UserWatchWrapper()
-	{
-	}
-	
 	public List<UserWatchView> getData()
 	{
 		return data;
@@ -42,5 +39,5 @@ public class UserWatchWrapper
 	{
 		this.data = data;
 	}
-	
+
 }

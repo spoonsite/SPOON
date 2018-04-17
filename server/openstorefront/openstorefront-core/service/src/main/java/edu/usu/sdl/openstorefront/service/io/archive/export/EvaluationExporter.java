@@ -94,6 +94,7 @@ public class EvaluationExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public void exportRecords()
 	{
 		Evaluation evaluationExample = new Evaluation();
@@ -247,6 +248,7 @@ public class EvaluationExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public long getTotalRecords()
 	{
 		long count = 0;

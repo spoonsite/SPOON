@@ -34,10 +34,6 @@ public class ReportFilterQueryParams
 	@QueryParam("reportType")
 	private String reportType;
 
-	public ReportFilterQueryParams()
-	{
-	}
-
 	public boolean getShowAllUsers()
 	{
 		return showAllUsers;

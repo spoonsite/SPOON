@@ -28,16 +28,17 @@ import javax.persistence.Version;
  */
 @APIDescription("Holder for a Data Transform (see File Data Map)")
 public class DataMapTransform
-	implements Serializable
+		implements Serializable
 {
-	
+
 	@ConsumeField
 	@Sanitize(TextSanitizer.class)
 	private String transform;
-	
+
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public DataMapTransform()
 	{
 	}
@@ -61,5 +62,5 @@ public class DataMapTransform
 	{
 		this.storageVersion = storageVersion;
 	}
-		
+
 }

@@ -29,14 +29,11 @@ import org.apache.commons.beanutils.BeanUtils;
  * @author dshurtleff
  */
 public class ContentSectionMediaView
-	extends ContentSectionMedia
+		extends ContentSectionMedia
 {
+
 	private String mediaTypeDescription;
 	private String link;
-
-	public ContentSectionMediaView()
-	{
-	}
 
 	public static ContentSectionMediaView toView(ContentSectionMedia contentSectionMedia)
 	{
@@ -47,21 +44,21 @@ public class ContentSectionMediaView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		view.setMediaTypeDescription(TranslateUtil.translate(MediaType.class, contentSectionMedia.getMediaTypeCode()));
-		view.setLink("Media.action?SectionMedia&mediaId=" + contentSectionMedia.getContentSectionMediaId());		
-		
+		view.setLink("Media.action?SectionMedia&mediaId=" + contentSectionMedia.getContentSectionMediaId());
+
 		return view;
 	}
-	
+
 	public static List<ContentSectionMediaView> toView(List<ContentSectionMedia> mediaRecords)
 	{
 		List<ContentSectionMediaView> views = new ArrayList<>();
-		
+
 		mediaRecords.forEach((media) -> {
 			views.add(toView(media));
 		});
 		return views;
-	}	
-	
+	}
+
 	public String getMediaTypeDescription()
 	{
 		return mediaTypeDescription;

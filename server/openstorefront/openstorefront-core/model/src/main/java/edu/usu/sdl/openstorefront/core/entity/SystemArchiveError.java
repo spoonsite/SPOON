@@ -40,6 +40,7 @@ public class SystemArchiveError
 	@NotNull
 	private String message;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SystemArchiveError()
 	{
 	}

@@ -48,6 +48,7 @@ public class UserRole
 	@ConsumeField
 	private String role;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserRole()
 	{
 	}

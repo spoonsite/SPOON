@@ -56,10 +56,6 @@ public class ComponentFilterParams
 		return filterQueryParams;
 	}
 
-	public ComponentFilterParams()
-	{
-	}
-
 	public String getApprovalState()
 	{
 		return approvalState;

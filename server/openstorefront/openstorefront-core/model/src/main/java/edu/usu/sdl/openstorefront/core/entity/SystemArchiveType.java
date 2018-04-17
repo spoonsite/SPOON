@@ -35,6 +35,7 @@ public class SystemArchiveType
 	public static final String FULL = "FULLEXPORT";
 	public static final String GENERAL = "GENERAL";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SystemArchiveType()
 	{
 	}

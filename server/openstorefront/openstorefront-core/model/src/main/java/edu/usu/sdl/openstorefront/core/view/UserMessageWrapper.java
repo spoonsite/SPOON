@@ -29,10 +29,6 @@ public class UserMessageWrapper
 	private long totalNumber;
 	private List<UserMessage> data = new ArrayList<>();
 
-	public UserMessageWrapper()
-	{
-	}
-
 	public long getTotalNumber()
 	{
 		return totalNumber;

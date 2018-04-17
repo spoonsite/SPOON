@@ -47,10 +47,6 @@ public class ComponentQuestionResponseView
 	private Date updateDts;
 	private String activeStatus;
 
-	public ComponentQuestionResponseView()
-	{
-	}
-
 	public static ComponentQuestionResponseView toView(ComponentQuestionResponse response)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();

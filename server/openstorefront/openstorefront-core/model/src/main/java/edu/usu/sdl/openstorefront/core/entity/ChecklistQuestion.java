@@ -83,6 +83,7 @@ public class ChecklistQuestion
 	@OneToMany(orphanRemoval = true)
 	private List<Tag> tags;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ChecklistQuestion()
 	{
 	}

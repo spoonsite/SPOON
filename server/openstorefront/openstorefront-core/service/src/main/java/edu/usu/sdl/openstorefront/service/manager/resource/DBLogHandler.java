@@ -74,6 +74,7 @@ public class DBLogHandler
 			asyncLoggerService.awaitTermination(3, TimeUnit.SECONDS);
 		} catch (InterruptedException ex) {
 			getErrorManager().error("Failed to shutdown db logger", ex, 2);
+			Thread.currentThread().interrupt();
 		}
 	}
 

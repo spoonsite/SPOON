@@ -64,6 +64,7 @@ public class NotificationEvent
 	@APIDescription("Internal Entity, if applicable")
 	private String entityMetaDataStatus;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public NotificationEvent()
 	{
 	}

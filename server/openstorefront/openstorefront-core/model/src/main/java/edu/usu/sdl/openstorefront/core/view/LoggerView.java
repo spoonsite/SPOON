@@ -29,10 +29,6 @@ public class LoggerView
 	private String level;
 	private List<String> handlers = new ArrayList<>();
 
-	public LoggerView()
-	{
-	}
-
 	public String getName()
 	{
 		return name;

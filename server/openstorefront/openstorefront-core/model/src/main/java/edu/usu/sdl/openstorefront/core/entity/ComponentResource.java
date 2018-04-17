@@ -99,6 +99,7 @@ public class ComponentResource
 	@APIDescription("This is used to indentify if a resource requires a login or CAC")
 	private Boolean restricted;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentResource()
 	{
 	}

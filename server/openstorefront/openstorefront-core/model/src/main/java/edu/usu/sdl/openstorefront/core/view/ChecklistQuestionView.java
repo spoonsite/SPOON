@@ -34,10 +34,6 @@ public class ChecklistQuestionView
 
 	private String evaluationSectionDescription;
 
-	public ChecklistQuestionView()
-	{
-	}
-
 	public static ChecklistQuestionView toView(ChecklistQuestion checklistQuestion)
 	{
 		ChecklistQuestionView checklistQuestionView = new ChecklistQuestionView();

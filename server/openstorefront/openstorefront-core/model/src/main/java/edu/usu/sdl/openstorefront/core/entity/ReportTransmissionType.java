@@ -37,6 +37,7 @@ public class ReportTransmissionType
 
 	private boolean supportsMultiple = false;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ReportTransmissionType()
 	{
 	}

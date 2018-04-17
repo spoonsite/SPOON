@@ -43,10 +43,6 @@ public class LookupModel
 	@Size(max = 1000)
 	private String description;
 
-	public LookupModel()
-	{
-	}
-
 	@Override
 	public String toString()
 	{

@@ -29,10 +29,6 @@ public class MemoryPoolStatus
 	private long commitedKb;
 	private long maxKb;
 
-	public MemoryPoolStatus()
-	{
-	}
-
 	public long getInitKb()
 	{
 		return initKb;

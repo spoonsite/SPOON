@@ -53,10 +53,6 @@ public class RequiredForComponent
 	private boolean attributeChanged;
 	private boolean updateVersion = true;
 
-	public RequiredForComponent()
-	{
-	}
-
 	public ValidationResult checkForComplete()
 	{
 		ValidationResult validationResult = new ValidationResult();

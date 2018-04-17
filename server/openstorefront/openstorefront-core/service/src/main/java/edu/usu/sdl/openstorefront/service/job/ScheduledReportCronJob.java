@@ -57,7 +57,7 @@ public class ScheduledReportCronJob
 			if (report != null) {
 				//There appears to be quartz bug with the cron trigger and fast running jobs; it fires them multiple times until the second changes
 				//this will prevent run it multiple times
-				//Discovery on quartz 2.2.1
+				//Discovered on quartz 2.2.1
 				boolean run = true;
 				if (report.getLastRanDts() != null) {
 					Instant instant = Instant.ofEpochMilli(report.getLastRanDts().getTime());
@@ -74,7 +74,9 @@ public class ScheduledReportCronJob
 					//slow down
 					Thread.sleep(MIN_RERUN_TIME_WAIT);
 				} catch (InterruptedException ex) {
+					LOG.log(Level.WARNING, "Report wait interrupted.", ex);
 					//ingore exception
+					Thread.currentThread().interrupt();
 				}
 			} else {
 				LOG.log(Level.FINE, MessageFormat.format("Scheduled report can not be found OR is not active (removing job).  Report Id: {0}", reportId));

@@ -66,6 +66,7 @@ public class EvaluationChecklistRecommendation
 	@APIDescription("Private information is not published; recommendation will not show.")
 	private Boolean privateFlg;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public EvaluationChecklistRecommendation()
 	{
 	}

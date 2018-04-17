@@ -91,10 +91,6 @@ public class UserProfileView
 	@ConsumeField
 	private boolean isAnonymousUser;
 
-	public UserProfileView()
-	{
-	}
-
 	public static UserProfileView toView(UserContext userContext)
 	{
 		UserProfileView view = toView(userContext.getUserProfile(), false);

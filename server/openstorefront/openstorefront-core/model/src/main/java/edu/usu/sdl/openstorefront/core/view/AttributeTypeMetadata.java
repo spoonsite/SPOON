@@ -49,10 +49,6 @@ public class AttributeTypeMetadata
 	@ValidValueType(value = {}, lookupClass = AttributeValueType.class)
 	private String attributeValueType;
 
-	public AttributeTypeMetadata()
-	{
-	}
-
 	public String getLabel()
 	{
 		return label;

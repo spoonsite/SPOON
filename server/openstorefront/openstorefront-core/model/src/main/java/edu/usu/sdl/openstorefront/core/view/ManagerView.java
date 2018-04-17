@@ -19,16 +19,13 @@ package edu.usu.sdl.openstorefront.core.view;
  *
  * @author dshurtleff
  */
-public class ManagerView		
+public class ManagerView
 {
+
 	private String name;
 	private String managerClass;
 	private int order;
 	private boolean started;
-
-	public ManagerView()
-	{
-	}
 
 	public String getName()
 	{

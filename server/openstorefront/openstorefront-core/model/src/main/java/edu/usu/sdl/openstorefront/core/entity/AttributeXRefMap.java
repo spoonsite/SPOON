@@ -54,6 +54,7 @@ public class AttributeXRefMap
 	@APIDescription("external system code")
 	private String externalCode;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeXRefMap()
 	{
 

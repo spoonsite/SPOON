@@ -34,10 +34,6 @@ public class SupportMediaView
 
 	private String mediaTypeDescription;
 
-	public SupportMediaView()
-	{
-	}
-
 	public static SupportMediaView toView(SupportMedia supportedMedia)
 	{
 		SupportMediaView view = new SupportMediaView();

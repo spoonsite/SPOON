@@ -35,6 +35,7 @@ import org.apache.commons.beanutils.BeanUtils;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ComponentView
 		extends Component
 {
@@ -52,10 +53,6 @@ public class ComponentView
 	private String componentTypeIconUrl;
 	private ComponentTypeNestedModel componentTypeNestedModel;
 	private String currentDataOwner;
-
-	public ComponentView()
-	{
-	}
 
 	public static ComponentView toView(Component component, boolean populateOwnerInfo)
 	{

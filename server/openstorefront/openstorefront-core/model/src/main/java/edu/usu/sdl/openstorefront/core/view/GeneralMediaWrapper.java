@@ -30,10 +30,6 @@ public class GeneralMediaWrapper
 	@DataType(GeneralMediaView.class)
 	private List<GeneralMediaView> data = new ArrayList<>();
 
-	public GeneralMediaWrapper()
-	{
-	}
-
 	public GeneralMediaWrapper(List<GeneralMediaView> data, long total)
 	{
 		this.data = data;
