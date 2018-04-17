@@ -249,7 +249,8 @@ public class Component
 
 	}
 
-	public String findOwnerUsername()
+	@Override
+	public String entityOwner()
 	{
 		if (getOwnerUser() != null) {
 			return getOwnerUser();

@@ -69,6 +69,12 @@ public class UserSubmission
 	}
 
 	@Override
+	public String entityOwner()
+	{
+		return getOwnerUsername();
+	}
+
+	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		super.updateFields(entity);

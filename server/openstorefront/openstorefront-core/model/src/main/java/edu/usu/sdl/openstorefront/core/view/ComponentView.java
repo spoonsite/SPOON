@@ -40,6 +40,8 @@ public class ComponentView
 		extends Component
 {
 
+	private static final long serialVersionUID = 1L;
+
 	private String componentTypeLabel;
 	private String approvalStateLabel;
 	private Integer numberOfPendingChanges;
@@ -58,7 +60,7 @@ public class ComponentView
 	{
 		ComponentView componentView = toView(component);
 		if (populateOwnerInfo) {
-			UserProfile userProfile = ServiceProxyFactory.getServiceProxy().getUserService().getUserProfile(component.findOwnerUsername());
+			UserProfile userProfile = ServiceProxyFactory.getServiceProxy().getUserService().getUserProfile(component.entityOwner());
 			if (userProfile != null) {
 				componentView.setOwnerEmail(userProfile.getEmail());
 			}
@@ -75,7 +77,7 @@ public class ComponentView
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
-		componentView.setCurrentDataOwner(component.findOwnerUsername());
+		componentView.setCurrentDataOwner(component.entityOwner());
 
 		componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, componentView.getApprovalState()));
 		componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(component.getComponentType()));

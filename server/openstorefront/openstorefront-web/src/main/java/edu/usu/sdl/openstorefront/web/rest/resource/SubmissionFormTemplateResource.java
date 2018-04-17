@@ -17,10 +17,15 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import javax.ws.rs.Path;
+
 /**
  *
  * @author dshurtleff
  */
+@Path("v1/resource/submissiontemplates")
+@APIDescription("Submission Template Resource")
 public class SubmissionFormTemplateResource
 {
 	//get templates
