@@ -470,11 +470,11 @@
 						margin: '0 0 10 0',					
 						editable: false,
 						typeAhead: false,
-						displayField: 'label',
-						valueField: 'componentType',
+						displayField: 'description',
+						valueField: 'code',
 						storeConfig: {
 							autoLoad: true,
-							url: 'api/v1/resource/componenttypes',
+							url: 'api/v1/resource/componenttypes/lookup',
 							sorters: [{
 								property: 'label',
 								direction: 'ASC'
@@ -884,13 +884,14 @@
 							}
 						});
 						
+						var searchStatsCombo = Ext.getCmp('searchStats');
 						Ext.Object.each(stats, function(key, value, self) {
-							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + value.type + '\');SearchPage.filterResults();">' + value.count + '</a></span> <b>'+ value.typeLabel + '(s)</b> ';
+							searchStatsCombo.addStoreItem({
+								label: '(' + value.count + ') ' + value.typeLabel,
+								value: value.type
+							});
 						});
-					
 					}
-
-					Ext.getCmp('searchStats').update(statLine);	
 				}
 				
 			};
@@ -937,12 +938,16 @@
 						var response = opts.getResponse();
 						var dataResponse = Ext.decode(response.responseText);
 						
+						var searchStatsCombo = Ext.getCmp('searchStats');
 						Ext.Array.each(dataResponse.resultTypeStats, function(stat) {
-							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + stat.componentType + '\');SearchPage.filterResults();">' + stat.count + '</a></span> <b>'+ stat.componentTypeDescription + '(s)</b> ';
+
+							searchStatsCombo.addStoreItem({
+								label: '(' + stat.count + ') ' + stat.componentTypeDescription,
+								value: stat.componentType
+							});
 						});
 						
 					}
-					Ext.getCmp('searchStats').update(statLine);
 				}
 				
 				//sorting Attributes
@@ -1189,9 +1194,40 @@
 					{
 						xtype: 'panel',
 						dock: 'top',
-						id: 'searchStats',
-						bodyStyle: 'text-align: center;',
-						html: 'Loading...'
+						layout: {
+							align: 'center',
+							type: 'vbox'
+						},
+						style: 'padding: 10px 0 0 0',
+						items: [
+							{
+								xtype: 'combo',
+								width: '30%',
+								fieldLabel: 'Entry Types',
+								id: 'searchStats',
+								displayField: 'label',
+								valueField: 'value',
+								emptyText: 'ALL',
+								store: Ext.create('Ext.data.Store', {
+									fields: ['label', 'value'],
+									data: [{
+										label: 'ALL',
+										value: null
+									}]
+								}),
+								listeners: {
+									change: function (combo, newVal) {
+										Ext.getCmp('filterByType').setValue(newVal);
+										SearchPage.filterResults();
+									}
+								},
+								addStoreItem: function (item) {
+									if (this.getStore().query('value', item.value).items.length === 0) {
+										this.getStore().add(item);
+									}
+								}
+							}
+						]
 					},
 					{
 						xtype: 'toolbar',

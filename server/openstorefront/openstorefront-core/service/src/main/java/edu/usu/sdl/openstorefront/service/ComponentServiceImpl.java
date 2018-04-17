@@ -760,4 +760,10 @@ public class ComponentServiceImpl
 		return type.getComponentTypeParents(componentTypeId, reverseOrder);
 	}
 
+	@Override
+	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder)
+	{
+		return type.getComponentTypeParentsString(componentTypeId, reverseOrder);
+	}
+
 }

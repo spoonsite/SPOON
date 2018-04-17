@@ -299,6 +299,26 @@ public class ComponentTypeServiceTest
 		assertEquals(componentTypeList, new ArrayList<>());
 	}
 
+	@Test
+	public void getComponentTypeParentsString() {
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
+
+		List<ComponentType> componentTypes = getMockData();
+		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+
+		Mockito.when(mockCore.getComponentTypeParentsString("C", false)).thenCallRealMethod();
+		Mockito.when(mockCore.getComponentTypeParents("C", false)).thenCallRealMethod();
+
+		Mockito.when(mockCore.getComponentTypeParentsString("C", true)).thenCallRealMethod();
+		Mockito.when(mockCore.getComponentTypeParents("C", true)).thenCallRealMethod();
+
+		String componentTypeList_notReversed = mockCore.getComponentTypeParentsString("C", false);
+		String componentTypeList_reversed = mockCore.getComponentTypeParentsString("C", true);
+
+		 assertEquals(componentTypeList_notReversed, "Gala < Apple < Fruit");
+		 assertEquals(componentTypeList_reversed, "Fruit > Apple > Gala");
+	}
+
 	private List<ComponentType> getMockData()
 	{
 		List<ComponentType> componentTypes = new ArrayList<>();

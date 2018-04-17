@@ -31,9 +31,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -154,16 +152,7 @@ public class ComponentTypeResource
 			LookupModel lookupModel = new LookupModel();
 			lookupModel.setCode(type.getComponentType());
 
-			List<ComponentType> parentChildComponentTypes = new ArrayList<>(Arrays.asList(type));
-			
-			List<ComponentType> parentComponentTypes = service.getComponentService().getComponentTypeParents(type.getComponentType(), false);
-			parentChildComponentTypes.addAll(parentComponentTypes);
-
-			String labels = parentChildComponentTypes.stream()
-				.map(t -> {
-					return t.getComponentType().equals(type.getComponentType()) && parentChildComponentTypes.size() > 1 ? "<b>" + t.getLabel() + "</b>" : t.getLabel();
-				})
-				.collect(Collectors.joining(" &#8592; "));
+			String labels = service.getComponentService().getComponentTypeParentsString(type.getComponentType(), Boolean.TRUE);
 
 			lookupModel.setDescription(labels);
 

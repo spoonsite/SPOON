@@ -214,6 +214,15 @@ public interface ComponentService
 	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder);
 
 	/**
+	 * Queries a list which consists of a component type and it's parents (stringified).
+	 *
+	 * @param componentTypeId
+	 * @param reverseOrder
+	 * @return Sorted String (list) of component types (Is sorted as child <- parent[0] <- ... <- parent[n])
+	 */
+	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder);
+
+	/**
 	 * Resolves the template for a given type
 	 *
 	 * @param componentType

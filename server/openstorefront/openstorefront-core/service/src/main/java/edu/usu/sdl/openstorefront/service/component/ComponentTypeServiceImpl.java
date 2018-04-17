@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.component;
 
-import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -35,6 +34,7 @@ import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -671,7 +671,7 @@ public class ComponentTypeServiceImpl
 			} while (currentComponentType.getParentComponentType() != null);
 	
 			if (reverseOrder) {
-				Lists.reverse(componentTypeParents);
+				Collections.reverse(componentTypeParents);
 			}
 		}
 
@@ -684,4 +684,29 @@ public class ComponentTypeServiceImpl
 			.filter(t -> t.getComponentType().equals(componentType))
 			.collect(Collectors.toList()).get(0);
 	}
+
+	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder)
+	{
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		ComponentType type = findComponentTypeInList(componentTypeId, componentTypes);
+
+		List<ComponentType> parentChildComponentTypes = new ArrayList<>();
+
+		List<ComponentType> parentComponentTypes = getComponentTypeParents(componentTypeId, reverseOrder);
+		if (reverseOrder) {
+			parentChildComponentTypes.addAll(parentComponentTypes);
+			parentChildComponentTypes.add(type);
+		}
+		else {
+			parentChildComponentTypes.add(type);
+			parentChildComponentTypes.addAll(parentComponentTypes);
+		}
+
+		String labels = parentChildComponentTypes.stream()
+			.map(t -> t.getLabel())
+			.collect(Collectors.joining(reverseOrder ? " > " : " < "));
+
+		return labels;
+	}
+
 }
