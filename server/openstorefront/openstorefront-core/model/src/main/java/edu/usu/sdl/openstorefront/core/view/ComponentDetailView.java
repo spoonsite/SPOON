@@ -215,9 +215,10 @@ public class ComponentDetailView
 			recordVersion = 1;
 		}
 		approvalStateLabel = TranslateUtil.translate(ApprovalStatus.class, component.getApprovalState());
-		componentTypeLabel = TranslateUtil.translateComponentType(component.getComponentType());
-
 		Service service = ServiceProxyFactory.getServiceProxy();
+		
+		componentTypeLabel = service.getComponentService().getComponentTypeParentsString(componentType, true);
+		
 		componentIconId = service.getComponentService().resolveComponentIcon(componentId);
 		componentTypeIconUrl = service.getComponentService().resolveComponentTypeIcon(componentType);
 
