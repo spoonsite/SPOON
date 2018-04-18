@@ -2,7 +2,7 @@
 
 This documentation is built with [Hugo](https://gohugo.io), a static website generator.
 
-To install Hugo follow the directions [here](https://gohugo.io/getting-started/installing/) or download the latest release [here](https://github.com/gohugoio/hugo/releases).
+To install Hugo follow the directions [here](https://gohugo.io/getting-started/installing/) or download the latest release and put it in your path. [here](https://github.com/gohugoio/hugo/releases).
 
 The theme used for this documentation is [DocDock](http://docdock.netlify.com). Refer to the DocDock documentation for information on the theme such as shortcodes available, configuration, and site organization.
 
