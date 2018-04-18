@@ -660,15 +660,18 @@ public class ComponentTypeServiceImpl
 	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType currentComponentType = findComponentTypeInList(componentTypeId, componentTypes);
+		ComponentType currentComponentType = findComponentType(componentTypes, componentTypeId);
 		
 		List<ComponentType> componentTypeParents = new ArrayList<>();
 		
-		if (currentComponentType.getParentComponentType() != null) {
+		if (currentComponentType != null && currentComponentType.getParentComponentType() != null) {
 			do {
-				currentComponentType = findComponentTypeInList(currentComponentType.getParentComponentType(), componentTypes);
-				componentTypeParents.add(currentComponentType);
-			} while (currentComponentType.getParentComponentType() != null);
+				currentComponentType = findComponentType(componentTypes, currentComponentType.getParentComponentType());
+				
+				if (currentComponentType != null) {
+					componentTypeParents.add(currentComponentType);
+				}
+			} while (currentComponentType != null && currentComponentType.getParentComponentType() != null);
 	
 			if (reverseOrder) {
 				Collections.reverse(componentTypeParents);
@@ -678,21 +681,15 @@ public class ComponentTypeServiceImpl
 		return componentTypeParents;
 	}
 
-	private ComponentType findComponentTypeInList(String componentType, List<ComponentType> componentTypes)
-	{
-		return componentTypes.stream()
-			.filter(t -> t.getComponentType().equals(componentType))
-			.collect(Collectors.toList()).get(0);
-	}
-
 	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType type = findComponentTypeInList(componentTypeId, componentTypes);
+		ComponentType type = findComponentType(componentTypes, componentTypeId);
 
 		List<ComponentType> parentChildComponentTypes = new ArrayList<>();
 
 		List<ComponentType> parentComponentTypes = getComponentTypeParents(componentTypeId, reverseOrder);
+		
 		if (reverseOrder) {
 			parentChildComponentTypes.addAll(parentComponentTypes);
 			parentChildComponentTypes.add(type);
