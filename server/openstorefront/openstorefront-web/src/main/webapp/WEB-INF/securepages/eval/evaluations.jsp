@@ -67,8 +67,7 @@
 							store.getProxy().extraParams = {
 								'assignedUser': Ext.getCmp('filterAssignedUser').getValue(),
 								'assignedGroup': Ext.getCmp('filterAssignedGroup').getValue(),
-								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue(),
-								published: false
+								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue()
 							};
 						}
 					}						
@@ -80,14 +79,14 @@
 					columnLines: true,
 					store: evalGridStore,
 					columns: [
-						{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
-						{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },	
-						{ text: 'Published', dataIndex: 'published', align: 'center', width: 175,
+						{ text: 'Entry Name', dataIndex: 'componentName', width: 250},
+						{ text: 'Version', dataIndex: 'version', align: 'center', flex: 1 },	
+						{ text: 'Published', dataIndex: 'published', align: 'center', flex: 1,
 							renderer: CoreUtil.renderer.booleanRenderer
 						},
-						{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
-						{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
-						{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
+						{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', flex: 1 },					
+						{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', flex: 1},
+						{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', flex: 1,
 							renderer: function(value, meta, record) {
 								if (value === 'INPROGRESS') {
 									meta.tdCls = 'alert-warning';
@@ -102,10 +101,10 @@
 								return record.get('workflowStatusDescription');
 							}
 						},					
-						{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true  },
-						{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 175 },
-						{ text: 'Update User', dataIndex: 'updateUser', width: 175 },
-						{ text: 'Integration Management', dataIndex: 'issueNumber', width: 175, sortable: false,
+						{ text: 'Create User', dataIndex: 'createUser', flex: 1, hidden: true  },
+						{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 1 },
+						{ text: 'Update User', dataIndex: 'updateUser', flex: 1 },
+						{ text: 'Integration Management', dataIndex: 'issueNumber', flex: 1, sortable: false,
 							renderer: function(value, meta, record) { 
 								if(value)
 								{
