@@ -40,7 +40,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
@@ -235,6 +234,11 @@ public class ComponentTypeServiceImpl
 								if (checkType.equals(componentType)) {
 									attributeType.getRequiredRestrictions().remove(i);
 									addToUpdate = true;
+								} else {
+									if (findComponentType(getAllComponentTypes(), checkType) == null) {
+										attributeType.getRequiredRestrictions().remove(i);
+										addToUpdate = true;
+									}
 								}
 							}
 						}
@@ -245,12 +249,17 @@ public class ComponentTypeServiceImpl
 								if (checkType.equals(componentType)) {
 									attributeType.getOptionalRestrictions().remove(i);
 									addToUpdate = true;
+								} else {
+									if (findComponentType(getAllComponentTypes(), checkType) == null) {
+										attributeType.getOptionalRestrictions().remove(i);
+										addToUpdate = true;
+									}
 								}
 							}
 						}
 
 						if (addToUpdate) {
-							componentService.getAttributeService().saveAttributeType(attributeType, false);
+							componentService.getAttributeServicePrivate().performSaveAttributeType(attributeType);
 						}
 
 					}

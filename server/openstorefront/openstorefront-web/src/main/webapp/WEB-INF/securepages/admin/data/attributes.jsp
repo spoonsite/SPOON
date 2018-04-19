@@ -283,38 +283,38 @@
 			///////////////
 
 			Ext.override(Ext.view.DragZone, {
-			    getDragText: function() {
-			        if (this.dragTextField) {
-			            var fieldValue = this.dragData.records[0].get(this.dragTextField);
-			            return Ext.String.format(this.dragText, fieldValue);
-			        } else {
-			            var count = this.dragData.records.length;
-			            return Ext.String.format(this.dragText, count, count === 1 ? '' : 's');
-			        }
-			    }
+			    getDragText: function() {
+			        if (this.dragTextField) {
+			            var fieldValue = this.dragData.records[0].get(this.dragTextField);
+			            return Ext.String.format(this.dragText, fieldValue);
+			        } else {
+			            var count = this.dragData.records.length;
+			            return Ext.String.format(this.dragText, count, count === 1 ? '' : 's');
+			        }
+			    }
 			});
 
 
 			Ext.override(Ext.grid.plugin.DragDrop, {
-			    onViewRender : function(view) {
-			        var me = this;
+			    onViewRender : function(view) {
+			        var me = this;
 
-			        if (me.enableDrag) {
-			            me.dragZone = Ext.create('Ext.view.DragZone', {
-			                view: view,
-			                ddGroup: me.dragGroup || me.ddGroup,
-			                dragText: me.dragText,
-			                dragTextField: me.dragTextField
-			            });
-			        }
+			        if (me.enableDrag) {
+			            me.dragZone = Ext.create('Ext.view.DragZone', {
+			                view: view,
+			                ddGroup: me.dragGroup || me.ddGroup,
+			                dragText: me.dragText,
+			                dragTextField: me.dragTextField
+			            });
+			        }
 
-			        if (me.enableDrop) {
-			            me.dropZone = Ext.create('Ext.grid.ViewDropZone', {
-			                view: view,
-			                ddGroup: me.dropGroup || me.ddGroup
-			            });
-			        }
-			    }
+			        if (me.enableDrop) {
+			            me.dropZone = Ext.create('Ext.grid.ViewDropZone', {
+			                view: view,
+			                ddGroup: me.dropGroup || me.ddGroup
+			            });
+			        }
+			    }
 			});
 
 			///////////////////
