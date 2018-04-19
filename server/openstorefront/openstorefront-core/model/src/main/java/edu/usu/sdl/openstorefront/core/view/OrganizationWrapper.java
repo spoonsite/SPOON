@@ -31,6 +31,11 @@ public class OrganizationWrapper
 	@DataType(OrganizationView.class)
 	private List<OrganizationView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public OrganizationWrapper()
+	{
+	}
+
 	public long getTotalNumber()
 	{
 		return totalNumber;

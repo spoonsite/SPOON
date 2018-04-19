@@ -31,6 +31,11 @@ public class FeedbackTicketWrapper
 	@DataType(FeedbackTicket.class)
 	private List<FeedbackTicket> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public FeedbackTicketWrapper()
+	{
+	}
+
 	public FeedbackTicketWrapper(List<FeedbackTicket> tickets, long totalNumber)
 	{
 		this.data = tickets;

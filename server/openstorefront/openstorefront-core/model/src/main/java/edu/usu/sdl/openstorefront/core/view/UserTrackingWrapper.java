@@ -32,6 +32,11 @@ public class UserTrackingWrapper
 	@DataType(UserTracking.class)
 	private List<UserTracking> userTracking = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public UserTrackingWrapper()
+	{
+	}
+
 	public UserTrackingWrapper(List<UserTracking> userTracking, long totalNumber)
 	{
 		this.totalNumber = totalNumber;
