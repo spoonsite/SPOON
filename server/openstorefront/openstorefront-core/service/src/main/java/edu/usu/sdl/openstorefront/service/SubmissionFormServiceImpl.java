@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.LockSwitch;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
@@ -43,6 +44,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -142,6 +144,7 @@ public class SubmissionFormServiceImpl
 		SubmissionFormResource savedResource = resource.save();
 		try (InputStream fileInput = in) {
 			MediaFile mediaFile = savedResource.getFile();
+			mediaFile.setMediaFileId(persistenceService.generateId());
 			mediaFile.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mediaFile.getMimeType()));
 			mediaFile.setFileType(MediaFileType.RESOURCE);
 			Path path = Paths.get(MediaFileType.RESOURCE.getPath(), mediaFile.getFileName());
@@ -203,6 +206,53 @@ public class SubmissionFormServiceImpl
 	}
 
 	@Override
+	public UserSubmission saveSubmissionFormMedia(UserSubmission userSubmission, String fieldId, MediaFile mediaFile, InputStream in)
+	{
+		Objects.requireNonNull(userSubmission);
+		Objects.requireNonNull(fieldId);
+		Objects.requireNonNull(in);
+
+		UserSubmissionField field = null;
+		if (userSubmission.getFields() != null) {
+			for (UserSubmissionField existing : userSubmission.getFields()) {
+				if (existing.getFieldId().equals(fieldId)) {
+					field = existing;
+				}
+			}
+		}
+
+		if (field == null) {
+			throw new OpenStorefrontRuntimeException(
+					"Unable to find user submission field id: "
+					+ fieldId
+					+ " submission Id: "
+					+ userSubmission.getUserSubmissionId(), "Check Data");
+		}
+
+		try (InputStream fileInput = in) {
+			UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
+			userSubmissionMedia.setFieldId(fieldId);
+			userSubmissionMedia.setSubmissionMediaId(persistenceService.generateId());
+
+			mediaFile.setMediaFileId(persistenceService.generateId());
+			mediaFile.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mediaFile.getMimeType()));
+			mediaFile.setFileType(MediaFileType.MEDIA);
+			Path path = Paths.get(MediaFileType.MEDIA.getPath(), mediaFile.getFileName());
+			Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
+
+			userSubmissionMedia.setFile(mediaFile);
+			if (field.getMedia() != null) {
+				field.setMedia(new ArrayList<>());
+			}
+			field.getMedia().add(userSubmissionMedia);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		}
+		userSubmission = saveUserSubmission(userSubmission);
+		return userSubmission;
+	}
+
+	@Override
 	public VerifySubmissionTemplateResult verifySubmission(UserSubmission userSubmission)
 	{
 		Objects.requireNonNull(userSubmission);
@@ -250,6 +300,7 @@ public class SubmissionFormServiceImpl
 				for (ComponentAll componentAll : componentFormSet.getChildren()) {
 					getComponentService().saveFullComponent(componentAll);
 				}
+				deleteUserSubmission(userSubmission.getUserSubmissionId());
 
 			} catch (MappingException ex) {
 				Logger.getLogger(SubmissionFormServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -307,6 +358,8 @@ public class SubmissionFormServiceImpl
 					getComponentService().saveFullComponent(componentAll);
 				}
 				getComponentService().submitChangeRequest(userSubmission.getOriginalComponentId());
+
+				deleteUserSubmission(userSubmission.getUserSubmissionId());
 
 			} catch (MappingException ex) {
 				Logger.getLogger(SubmissionFormServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -367,6 +420,44 @@ public class SubmissionFormServiceImpl
 				&& path.toFile().delete() == false) {
 			LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path.toString()));
 		}
+	}
+
+	@Override
+	public void deleteUserSubmissionMedia(String userSubmissionId, String mediaId)
+	{
+		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmissionId);
+		if (existing != null) {
+
+			LockSwitch lockSwitch = new LockSwitch();
+			if (existing.getFields() != null) {
+				for (UserSubmissionField field : existing.getFields()) {
+					lockSwitch.setSwitched(findMediaAndDelete(field, mediaId));
+				}
+			}
+
+			if (lockSwitch.isSwitched()) {
+				existing.populateBaseUpdateFields();
+				persistenceService.persist(existing);
+			}
+		}
+
+	}
+
+	private boolean findMediaAndDelete(UserSubmissionField field, String mediaId)
+	{
+		boolean updated = false;
+		if (field.getMedia() != null) {
+			for (UserSubmissionMedia media : field.getMedia()) {
+				if (media.getSubmissionMediaId().equals(mediaId)) {
+					deleteSubmissionMedia(media.getFile());
+					updated = true;
+				}
+			}
+			field.getMedia().removeIf((media) -> {
+				return media.getSubmissionMediaId().equals(mediaId);
+			});
+		}
+		return updated;
 	}
 
 }

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
@@ -91,6 +92,15 @@ public interface SubmissionFormService
 	public UserSubmission saveUserSubmission(UserSubmission userSubmission);
 
 	/**
+	 * Save Submission Media for user (it should moved to actual records
+	 *
+	 * @param resource
+	 * @param in
+	 * @return saved form media metadata
+	 */
+	public UserSubmission saveSubmissionFormMedia(UserSubmission userSubmission, String fieldId, MediaFile mediaFile, InputStream in);
+
+	/**
 	 * Convert submission to Components but it does not save the results
 	 *
 	 * @param userSubmission
@@ -136,5 +146,13 @@ public interface SubmissionFormService
 	 * @param userSubmissionId
 	 */
 	public void deleteUserSubmission(String userSubmissionId);
+
+	/**
+	 * Delete just the media from a submission
+	 *
+	 * @param userSubmissionId
+	 * @param mediaId
+	 */
+	public void deleteUserSubmissionMedia(String userSubmissionId, String mediaId);
 
 }

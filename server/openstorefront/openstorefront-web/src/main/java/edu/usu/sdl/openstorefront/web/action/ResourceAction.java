@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -65,7 +66,7 @@ public class ResourceAction
 
 	private static final Logger LOG = Logger.getLogger(ResourceAction.class.getName());
 
-	@Validate(required = true, on = {"LoadResource", "Redirect"})
+	@Validate(required = true, on = {"LoadResource", "Redirect", "LoadSubmissionFormResource"})
 	private String resourceId;
 
 	@ValidateNestedProperties({
@@ -78,6 +79,13 @@ public class ResourceAction
 
 	@Validate(required = true, on = "UploadResource")
 	private FileBean file;
+
+	@ValidateNestedProperties({
+		@Validate(required = true, field = "resourceType", on = "UploadSubmissionFormResource")
+		,
+		@Validate(required = true, field = "templateId", on = "UploadSubmissionFormResource")
+	})
+	private SubmissionFormResource submissionFormResource;
 
 	@DefaultHandler
 	public Resolution defaultPage()
@@ -123,7 +131,7 @@ public class ResourceAction
 
 	}
 
-	@ValidationMethod(on = {"UploadResource"})
+	@ValidationMethod(on = {"UploadResource", "UploadSubmissionFormResource"})
 	public void uploadHook(ValidationErrors errors)
 	{
 		checkUploadSizeValidation(errors, file, "file");
@@ -187,6 +195,90 @@ public class ResourceAction
 			}
 		} else {
 			errors.put("componentResource", "Missing component resource information");
+		}
+		if (resolution == null) {
+			resolution = streamUploadResponse(errors);
+		}
+		return resolution;
+	}
+
+	@HandlesEvent("LoadSubmissionFormResource")
+	public Resolution loadSubmissionFormResource() throws FileNotFoundException
+	{
+		mediaFile = service.getPersistenceService().findById(MediaFile.class, resourceId);
+		if (mediaFile == null) {
+			submissionFormResource = service.getPersistenceService().findById(SubmissionFormResource.class, resourceId);
+
+			if (submissionFormResource == null || submissionFormResource.getFile() == null) {
+				throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+			}
+			mediaFile = submissionFormResource.getFile();
+		}
+
+		InputStream in;
+		long length;
+		Path path = mediaFile.path();
+		if (path != null && path.toFile().exists()) {
+			in = new FileInputStream(path.toFile());
+			length = path.toFile().length();
+		} else {
+			String message = MessageFormat.format("Resource not on disk. Check Media File record: {0} ", resourceId);
+			throw new OpenStorefrontRuntimeException(message);
+		}
+
+		return new RangeResolutionBuilder()
+				.setContentType(mediaFile.getMimeType())
+				.setInputStream(in)
+				.setTotalLength(length)
+				.setRequest(getContext().getRequest())
+				.setFilename(mediaFile.getOriginalName())
+				.createRangeResolution();
+
+	}
+
+	@HandlesEvent("UploadSubmissionFormResource")
+	public Resolution uploadSubmissionFormResource()
+	{
+		Resolution resolution = null;
+		Map<String, String> errors = new HashMap<>();
+
+		if (submissionFormResource != null) {
+
+			boolean allow = false;
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)) {
+				allow = true;
+				LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			}
+
+			if (allow) {
+				if (!doesFileExceedLimit(file)) {
+
+					ValidationModel validationModel = new ValidationModel(submissionFormResource);
+					validationModel.setConsumeFieldsOnly(true);
+					ValidationResult validationResult = ValidationUtil.validate(validationModel);
+					if (validationResult.valid()) {
+						try {
+							mediaFile = new MediaFile();
+							mediaFile.setMimeType(file.getContentType());
+							mediaFile.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
+							submissionFormResource.setFile(mediaFile);
+							service.getSubmissionFormService().saveSubmissionFormResource(submissionFormResource, file.getInputStream());
+
+						} catch (IOException ex) {
+							throw new OpenStorefrontRuntimeException("Unable to able to save resource.", "Contact System Admin. Check disk space and permissions.", ex);
+						} finally {
+							deleteUploadFile(file);
+						}
+					} else {
+						errors.put("file", validationResult.toHtmlString());
+					}
+				}
+			} else {
+				resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+			}
+
+		} else {
+			errors.put("submissionFormResource", "Missing submission form resource information");
 		}
 		if (resolution == null) {
 			resolution = streamUploadResponse(errors);
@@ -269,5 +361,15 @@ public class ResourceAction
 	public void setMediaFile(MediaFile mediaFile)
 	{
 		this.mediaFile = mediaFile;
+	}
+
+	public SubmissionFormResource getSubmissionFormResource()
+	{
+		return submissionFormResource;
+	}
+
+	public void setSubmissionFormResource(SubmissionFormResource submissionFormResource)
+	{
+		this.submissionFormResource = submissionFormResource;
 	}
 }

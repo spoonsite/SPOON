@@ -64,7 +64,9 @@ import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.RunStatus;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
@@ -1008,6 +1010,35 @@ public class ComponentRESTResource
 
 		Component component = service.getComponentService().createPendingChangeComponent(componentId);
 		response = Response.created(URI.create("v1/resource/components/" + component.getComponentId())).entity(component).build();
+		return response;
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(UserSubmission.class)
+	@APIDescription("Create a change request component")
+	@Path("/{id}/changerequestforsubmission/{submissionTemplateId}")
+	public Response changeRequestForSubmission(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("submissionTemplateId")
+			@RequiredParam String submissionTemplateId
+	)
+	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
+		if (response != null) {
+			return response;
+		}
+
+		SubmissionFormTemplate template = new SubmissionFormTemplate();
+		template.setSubmissionTemplateId(submissionTemplateId);
+		template = template.find();
+		if (template != null) {
+			UserSubmission userSubmission = service.getSubmissionFormService().editComponentForSubmission(submissionTemplateId, componentId);
+			response = Response.created(URI.create("v1/resource/usersubmissions/" + userSubmission.getUserSubmissionId())).entity(userSubmission).build();
+		} else {
+			response = Response.status(Response.Status.NOT_FOUND).build();
+		}
 		return response;
 	}
 

@@ -23,9 +23,13 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.net.URI;
 import java.util.List;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -57,6 +61,7 @@ public class UserSubmissionResource
 
 	//get submissions for user (owner)
 	@GET
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Gets user submissions for current user")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSubmission.class)
@@ -71,6 +76,7 @@ public class UserSubmissionResource
 
 	//get submissions for user (owner/admin) REPLACE WITH CORRECT PERMISSION
 	@GET
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Gets a submission")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSubmission.class)
@@ -91,10 +97,109 @@ public class UserSubmissionResource
 	}
 
 	//create submission (just submission permission)
-	//update submission	(submission - owner/admin)
-	//submit for approval (owner)
-	//create change request (owner/admin)
+	@POST
+	@APIDescription("Creates a new Submission")
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(UserSubmission.class)
+	public Response createUserSubmission(
+			UserSubmission userSubmission
+	)
+	{
+		return handleSaveSubmission(userSubmission, true);
+	}
+
+	//update submission	(submission - owner/admin) FIX Admin permission
+	@PUT
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@APIDescription("Updates an user submission")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(UserSubmission.class)
+	@Path("/{submissionId}")
+	public Response updateUserSubmission(
+			@PathParam("submissionId") String submissionId,
+			UserSubmission userSubmission)
+	{
+		UserSubmission existing = new UserSubmission();
+		existing.setUserSubmissionId(submissionId);
+		existing = existing.find();
+
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		if (existing != null) {
+			response = ownerCheck(existing, SecurityPermission.USER_SUBMISSIONS);
+			if (response == null) {
+				userSubmission.setUserSubmissionId(submissionId);
+				response = handleSaveSubmission(userSubmission, false);
+			}
+		}
+		return response;
+	}
+
+	private Response handleSaveSubmission(UserSubmission userSubmission, boolean post)
+	{
+		ValidationResult validationResult = userSubmission.validate();
+		if (validationResult.valid()) {
+			userSubmission = service.getSubmissionFormService().saveUserSubmission(userSubmission);
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			return Response.created(URI.create("v1/resource/usersubmissions/" + userSubmission.getUserSubmissionId())).entity(userSubmission).build();
+		} else {
+			return Response.ok(userSubmission).build();
+		}
+	}
+
+	//submit for approval (owner) FIX Admin permission
+	@PUT
+	@APIDescription("Submits a submission for approval")
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/{submissionId}/submitforapproval")
+	public Response submitForApproval(
+			@PathParam("submissionId") String submissionId
+	)
+	{
+		UserSubmission existing = new UserSubmission();
+		existing.setUserSubmissionId(submissionId);
+		existing = existing.find();
+
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		if (existing != null) {
+			response = ownerCheck(existing, SecurityPermission.USER_SUBMISSIONS);
+			if (response == null) {
+				service.getSubmissionFormService().submitUserSubmissionForApproval(existing);
+			}
+		}
+		return response;
+	}
+
 	//submit change request (owner)
+	@PUT
+	@APIDescription("Submits a submission for approval")
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/{submissionId}/submitchangeforapproval")
+	public Response submitChangelForApproval(
+			@PathParam("submissionId") String submissionId
+	)
+	{
+		UserSubmission existing = new UserSubmission();
+		existing.setUserSubmissionId(submissionId);
+		existing = existing.find();
+
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		if (existing != null) {
+			response = ownerCheck(existing, SecurityPermission.USER_SUBMISSIONS);
+			if (response == null) {
+				service.getSubmissionFormService().submitChangeRequestForApproval(existing);
+			}
+		}
+		return response;
+	}
+
 	//reassign owner (admin)
 	@PUT
 	@APIDescription("Reassign Owner on a submission")
@@ -135,6 +240,29 @@ public class UserSubmissionResource
 			response = ownerCheck(userSubmission, SecurityPermission.USER_SUBMISSIONS);
 			if (response == null) {
 				service.getSubmissionFormService().deleteUserSubmission(submissionId);
+				response = Response.noContent().build();
+			}
+		}
+		return response;
+	}
+
+	@DELETE
+	@APIDescription("Deletes a submission media")
+	@Path("/{submissionId}/media/{mediaId}")
+	public Response deleteUserSubmissionMedia(
+			@PathParam("submissionId") String submissionId,
+			@PathParam("mediaId") String mediaId
+	)
+	{
+		UserSubmission userSubmission = new UserSubmission();
+		userSubmission.setUserSubmissionId(submissionId);
+		userSubmission = userSubmission.find();
+
+		Response response = Response.noContent().build();
+		if (userSubmission != null) {
+			response = ownerCheck(userSubmission, SecurityPermission.USER_SUBMISSIONS);
+			if (response == null) {
+				service.getSubmissionFormService().deleteUserSubmissionMedia(submissionId, mediaId);
 				response = Response.noContent().build();
 			}
 		}
