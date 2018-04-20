@@ -30,6 +30,11 @@ public class UserSecurityWrapper
 	@DataType(UserSecurityView.class)
 	private List<UserSecurityView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public UserSecurityWrapper()
+	{
+	}
+
 	public List<UserSecurityView> getData()
 	{
 		return data;

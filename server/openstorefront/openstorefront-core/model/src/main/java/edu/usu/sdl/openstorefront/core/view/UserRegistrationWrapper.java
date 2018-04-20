@@ -30,6 +30,11 @@ public class UserRegistrationWrapper
 	@DataType(UserRegistrationView.class)
 	private List<UserRegistrationView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public UserRegistrationWrapper()
+	{
+	}
+
 	public List<UserRegistrationView> getData()
 	{
 		return data;

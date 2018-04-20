@@ -31,6 +31,11 @@ public class OrgReferenceWrapper
 	@DataType(OrgReference.class)
 	private List<OrgReference> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public OrgReferenceWrapper()
+	{
+	}
+
 	public List<OrgReference> getData()
 	{
 		return data;

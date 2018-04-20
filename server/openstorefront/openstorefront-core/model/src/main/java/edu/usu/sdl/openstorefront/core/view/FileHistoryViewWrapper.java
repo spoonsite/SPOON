@@ -30,6 +30,11 @@ public class FileHistoryViewWrapper
 	@DataType(FileHistoryView.class)
 	private List<FileHistoryView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
+	public FileHistoryViewWrapper()
+	{
+	}
+
 	public List<FileHistoryView> getData()
 	{
 		return data;
