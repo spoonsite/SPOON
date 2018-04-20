@@ -402,10 +402,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 					width: '100%',
 					editable: false,
 					typeAhead: false,
-					displayField: 'label',
-					valueField: 'componentType',
+					displayField: 'description',
+					valueField: 'code',
 					storeConfig: {
-						url: 'api/v1/resource/componenttypes/submission'
+						url: 'api/v1/resource/componenttypes/lookup'
 					},
 					listeners: {
 						change: function (field, newValue, oldValue, opts) {

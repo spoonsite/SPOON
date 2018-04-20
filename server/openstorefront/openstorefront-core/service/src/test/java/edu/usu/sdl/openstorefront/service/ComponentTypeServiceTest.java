@@ -311,12 +311,17 @@ public class ComponentTypeServiceTest
 
 		Mockito.when(mockCore.getComponentTypeParentsString("C", true)).thenCallRealMethod();
 		Mockito.when(mockCore.getComponentTypeParents("C", true)).thenCallRealMethod();
+		
+		Mockito.when(mockCore.getComponentTypeParentsString("TEST_VALUE", true)).thenCallRealMethod();
+		Mockito.when(mockCore.getComponentTypeParents("TEST_VALUE", true)).thenCallRealMethod();
 
 		String componentTypeList_notReversed = mockCore.getComponentTypeParentsString("C", false);
 		String componentTypeList_reversed = mockCore.getComponentTypeParentsString("C", true);
+		String componentTypeList_invalidType = mockCore.getComponentTypeParentsString("TEST_VALUE", true);
 
-		 assertEquals(componentTypeList_notReversed, "Gala < Apple < Fruit");
-		 assertEquals(componentTypeList_reversed, "Fruit > Apple > Gala");
+		 assertEquals("Gala < Apple < Fruit", componentTypeList_notReversed);
+		 assertEquals("Fruit > Apple > Gala", componentTypeList_reversed);
+		 assertEquals("TEST_VALUE", componentTypeList_invalidType);
 	}
 
 	private List<ComponentType> getMockData()
