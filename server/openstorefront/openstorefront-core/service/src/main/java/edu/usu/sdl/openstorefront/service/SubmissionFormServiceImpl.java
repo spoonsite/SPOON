@@ -282,14 +282,21 @@ public class SubmissionFormServiceImpl
 			}
 
 		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find form template.", "");
+			throw missingFormTemplateException(userSubmission.getTemplateId());
 		}
 		return verifySubmissionTemplateResult;
+	}
+
+	private OpenStorefrontRuntimeException missingFormTemplateException(String templateId)
+	{
+		return new OpenStorefrontRuntimeException("Unable to find form template. Template Id: " + templateId, "Check Data");
 	}
 
 	@Override
 	public void submitUserSubmissionForApproval(UserSubmission userSubmission)
 	{
+		Objects.requireNonNull(userSubmission);
+
 		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
 		if (formTemplate != null) {
 			try {
@@ -307,7 +314,7 @@ public class SubmissionFormServiceImpl
 			}
 
 		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find form template.", "");
+			throw missingFormTemplateException(userSubmission.getTemplateId());
 		}
 	}
 
@@ -336,7 +343,7 @@ public class SubmissionFormServiceImpl
 			saveUserSubmission(userSubmission);
 
 		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find form template.", "");
+			throw missingFormTemplateException(submissionTemplateId);
 		}
 
 		return userSubmission;
@@ -345,6 +352,7 @@ public class SubmissionFormServiceImpl
 	@Override
 	public void submitChangeRequestForApproval(UserSubmission userSubmission)
 	{
+		Objects.requireNonNull(userSubmission);
 		Objects.requireNonNull(userSubmission.getOriginalComponentId());
 
 		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
@@ -366,7 +374,7 @@ public class SubmissionFormServiceImpl
 			}
 
 		} else {
-			throw new OpenStorefrontRuntimeException("Unable to find form template.", "");
+			throw missingFormTemplateException(userSubmission.getTemplateId());
 		}
 	}
 
@@ -415,10 +423,13 @@ public class SubmissionFormServiceImpl
 	private void deleteSubmissionMedia(MediaFile mediaFile)
 	{
 		Path path = mediaFile.path();
-		if (path != null
-				&& path.toFile().exists()
-				&& path.toFile().delete() == false) {
-			LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path.toString()));
+		try {
+			if (path != null
+					&& Files.deleteIfExists(path)) {
+				LOG.log(Level.WARNING, () -> MessageFormat.format("Unable to delete local media...unable to find it. Path: {0}", path));
+			}
+		} catch (IOException ex) {
+			LOG.log(Level.WARNING, ex, () -> MessageFormat.format("Unable to delete local media...check permissions or it may be in use. Path: {0}", path));
 		}
 	}
 

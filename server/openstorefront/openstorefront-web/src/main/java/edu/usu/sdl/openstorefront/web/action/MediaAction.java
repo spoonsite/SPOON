@@ -138,11 +138,13 @@ public class MediaAction
 	@Validate(required = true, on = {"UploadSubmissionMedia"})
 	private String userSubmissionFieldId;
 
+	private static final String ACCESS_DENIED = "Access denied";
+
 	@DefaultHandler
 	public Resolution audioTestPage()
 	{
 		//return new ForwardResolution("/WEB-INF/securepages/test/audioTest.jsp");
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 	}
 
 	@ValidationMethod(on = {"UploadMedia", "UploadOrganizationLogo", "UploadGeneralMedia", "UploadSectionMedia", "UploadSubmissionMedia"})
@@ -201,7 +203,7 @@ public class MediaAction
 				boolean allow = false;
 				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
-					LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+					LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
@@ -241,7 +243,7 @@ public class MediaAction
 						}
 					}
 				} else {
-					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 				}
 			} else {
 				errors.put("componentMedia", "Missing component; check Component Id");
@@ -304,7 +306,7 @@ public class MediaAction
 	{
 		Map<String, String> errors = new HashMap<>();
 
-		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+		LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		if (generalMedia != null) {
 			generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
@@ -381,7 +383,7 @@ public class MediaAction
 	{
 		Map<String, String> errors = new HashMap<>();
 
-		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+		LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		if (supportMedia != null) {
 
 			ValidationModel validationModel = new ValidationModel(supportMedia);
@@ -702,7 +704,7 @@ public class MediaAction
 			boolean allow = false;
 			if (SecurityUtil.hasPermission(SecurityPermission.USER_SUBMISSIONS)) {
 				allow = true;
-				LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+				LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			} else if (SecurityUtil.isCurrentUserTheOwner(userSubmission)) {
 				allow = true;
 
@@ -722,7 +724,7 @@ public class MediaAction
 				}
 
 			} else {
-				resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+				resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 			}
 		} else {
 			errors.put("userSubmissionId", "Unable to find user submission.");

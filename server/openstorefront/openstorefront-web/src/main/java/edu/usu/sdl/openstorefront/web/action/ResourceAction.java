@@ -87,10 +87,12 @@ public class ResourceAction
 	})
 	private SubmissionFormResource submissionFormResource;
 
+	private static final String ACCESS_DENIED = "Access denied";
+
 	@DefaultHandler
 	public Resolution defaultPage()
 	{
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 	}
 
 	@HandlesEvent("LoadResource")
@@ -101,7 +103,7 @@ public class ResourceAction
 			componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
 			componentResource = filterEngine.filter(componentResource, true);
 			if (componentResource == null || componentResource.getFile() == null) {
-				throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+				throw resourceNotFoundException(resourceId);
 			}
 			mediaFile = componentResource.getFile();
 		}
@@ -131,6 +133,11 @@ public class ResourceAction
 
 	}
 
+	private OpenStorefrontRuntimeException resourceNotFoundException(String resourceId)
+	{
+		return new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+	}
+
 	@ValidationMethod(on = {"UploadResource", "UploadSubmissionFormResource"})
 	public void uploadHook(ValidationErrors errors)
 	{
@@ -149,7 +156,7 @@ public class ResourceAction
 				boolean allow = false;
 				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
-					LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+					LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
@@ -188,7 +195,7 @@ public class ResourceAction
 						}
 					}
 				} else {
-					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 				}
 			} else {
 				errors.put("componentResource", "Missing component; check Component Id");
@@ -210,7 +217,7 @@ public class ResourceAction
 			submissionFormResource = service.getPersistenceService().findById(SubmissionFormResource.class, resourceId);
 
 			if (submissionFormResource == null || submissionFormResource.getFile() == null) {
-				throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+				throw resourceNotFoundException(resourceId);
 			}
 			mediaFile = submissionFormResource.getFile();
 		}
@@ -251,30 +258,9 @@ public class ResourceAction
 			}
 
 			if (allow) {
-				if (!doesFileExceedLimit(file)) {
-
-					ValidationModel validationModel = new ValidationModel(submissionFormResource);
-					validationModel.setConsumeFieldsOnly(true);
-					ValidationResult validationResult = ValidationUtil.validate(validationModel);
-					if (validationResult.valid()) {
-						try {
-							mediaFile = new MediaFile();
-							mediaFile.setMimeType(file.getContentType());
-							mediaFile.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
-							submissionFormResource.setFile(mediaFile);
-							service.getSubmissionFormService().saveSubmissionFormResource(submissionFormResource, file.getInputStream());
-
-						} catch (IOException ex) {
-							throw new OpenStorefrontRuntimeException("Unable to able to save resource.", "Contact System Admin. Check disk space and permissions.", ex);
-						} finally {
-							deleteUploadFile(file);
-						}
-					} else {
-						errors.put("file", validationResult.toHtmlString());
-					}
-				}
+				doSubmissionFormUpload(errors);
 			} else {
-				resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+				resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 			}
 
 		} else {
@@ -286,13 +272,39 @@ public class ResourceAction
 		return resolution;
 	}
 
+	private void doSubmissionFormUpload(Map<String, String> errors) throws OpenStorefrontRuntimeException
+	{
+		if (!doesFileExceedLimit(file)) {
+
+			ValidationModel validationModel = new ValidationModel(submissionFormResource);
+			validationModel.setConsumeFieldsOnly(true);
+			ValidationResult validationResult = ValidationUtil.validate(validationModel);
+			if (validationResult.valid()) {
+				try {
+					mediaFile = new MediaFile();
+					mediaFile.setMimeType(file.getContentType());
+					mediaFile.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
+					submissionFormResource.setFile(mediaFile);
+					service.getSubmissionFormService().saveSubmissionFormResource(submissionFormResource, file.getInputStream());
+
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to able to save resource.", "Contact System Admin. Check disk space and permissions.", ex);
+				} finally {
+					deleteUploadFile(file);
+				}
+			} else {
+				errors.put("file", validationResult.toHtmlString());
+			}
+		}
+	}
+
 	@HandlesEvent("Redirect")
 	public Resolution redirect() throws FileNotFoundException
 	{
 		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
 		componentResource = filterEngine.filter(componentResource, true);
 		if (componentResource == null) {
-			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+			throw resourceNotFoundException(resourceId);
 		}
 
 		ComponentTracking componentTracking = new ComponentTracking();

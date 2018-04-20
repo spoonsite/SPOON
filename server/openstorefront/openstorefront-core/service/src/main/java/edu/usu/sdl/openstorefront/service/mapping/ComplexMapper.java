@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
-import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldType;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,64 +69,65 @@ public class ComplexMapper
 	{
 		List<ComponentAll> childComponents = new ArrayList<>();
 
-		String fieldType = submissionField.getFieldType();
-		try {
-			switch (fieldType) {
+		if (userSubmissionField != null) {
 
-				case SubmissionFormFieldType.ATTRIBUTE:
-				case SubmissionFormFieldType.ATTRIBUTE_MULTI:
-				case SubmissionFormFieldType.ATTRIBUTE_RADIO:
-				case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
-					addAttribute(componentAll, userSubmissionField);
-					break;
+			String fieldType = submissionField.getFieldType();
+			try {
+				switch (fieldType) {
 
-				case SubmissionFormFieldType.CONTACT:
-				case SubmissionFormFieldType.CONTACT_MULTI:
-					addContact(componentAll, userSubmissionField);
-					break;
+					case SubmissionFormFieldType.ATTRIBUTE:
+					case SubmissionFormFieldType.ATTRIBUTE_MULTI:
+					case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+					case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
+						addAttribute(componentAll, userSubmissionField);
+						break;
 
-				case SubmissionFormFieldType.EXT_DEPENDENCY:
-				case SubmissionFormFieldType.EXT_DEPENDENCY_MULTI:
-					addDependency(componentAll, userSubmissionField);
-					break;
+					case SubmissionFormFieldType.CONTACT:
+					case SubmissionFormFieldType.CONTACT_MULTI:
+						addContact(componentAll, userSubmissionField);
+						break;
 
-				case SubmissionFormFieldType.MEDIA:
-				case SubmissionFormFieldType.MEDIA_MULTI:
-					addMedia(componentAll, userSubmissionField);
-					break;
+					case SubmissionFormFieldType.EXT_DEPENDENCY:
+					case SubmissionFormFieldType.EXT_DEPENDENCY_MULTI:
+						addDependency(componentAll, userSubmissionField);
+						break;
 
-				case SubmissionFormFieldType.RESOURCE:
-				case SubmissionFormFieldType.RESOURCE_MULTI:
-					addResource(componentAll, userSubmissionField);
-					break;
+					case SubmissionFormFieldType.MEDIA:
+					case SubmissionFormFieldType.MEDIA_MULTI:
+						addMedia(componentAll, userSubmissionField);
+						break;
 
-				case SubmissionFormFieldType.TAG:
-				case SubmissionFormFieldType.TAG_MULTI:
-					addTag(componentAll, userSubmissionField);
-					break;
+					case SubmissionFormFieldType.RESOURCE:
+					case SubmissionFormFieldType.RESOURCE_MULTI:
+						addResource(componentAll, userSubmissionField);
+						break;
 
-				case SubmissionFormFieldType.RELATIONSHIPS:
-				case SubmissionFormFieldType.RELATIONSHIPS_MULTI:
-					addRelationships(componentAll, userSubmissionField);
-					break;
+					case SubmissionFormFieldType.TAG:
+					case SubmissionFormFieldType.TAG_MULTI:
+						addTag(componentAll, userSubmissionField);
+						break;
 
-				default:
-					throw new UnsupportedOperationException(fieldType + " not supported");
+					case SubmissionFormFieldType.RELATIONSHIPS:
+					case SubmissionFormFieldType.RELATIONSHIPS_MULTI:
+						addRelationships(componentAll, userSubmissionField);
+						break;
+
+					default:
+						throw new UnsupportedOperationException(fieldType + " not supported");
+				}
+			} catch (IOException ioe) {
+				String value = userSubmissionField.getRawValue();
+
+				if (LOG.isLoggable(Level.FINER)) {
+					LOG.log(Level.FINER, "Field Mapping exception", ioe);
+				}
+				MappingException mappingException = new MappingException("Unable to mapping form field to entry.");
+				mappingException.setFieldLabel(submissionField.getLabel());
+				mappingException.setFieldType(fieldType);
+				mappingException.setMappingType(submissionField.getMappingType());
+				mappingException.setRawValue(value);
+				throw mappingException;
 			}
-		} catch (IOException ioe) {
-			String value = null;
-			if (userSubmissionField != null) {
-				value = userSubmissionField.getRawValue();
-			}
-			if (LOG.isLoggable(Level.FINER)) {
-				LOG.log(Level.FINER, "Field Mapping exception", ioe);
-			}
-			MappingException mappingException = new MappingException("Unable to mapping form field to entry.");
-			mappingException.setFieldLabel(submissionField.getLabel());
-			mappingException.setFieldType(fieldType);
-			mappingException.setMappingType(submissionField.getMappingType());
-			mappingException.setRawValue(value);
-			throw mappingException;
 		}
 
 		return childComponents;

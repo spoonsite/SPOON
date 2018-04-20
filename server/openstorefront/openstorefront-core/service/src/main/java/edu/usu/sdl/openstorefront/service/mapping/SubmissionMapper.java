@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
-import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -25,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,30 +60,30 @@ public class SubmissionMapper
 	{
 		List<ComponentAll> childComponents = new ArrayList<>();
 
-		try {
-			//Note: entry type is assume to be set in the data
-			//Assume media is all correctly handled and transfered.
-			//UI can leverage the mapping cabilities to help create the records.
-			//From this angle there is a lot ambiguities.
-			childComponents = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentAll>>()
-			{
-			});
+		if (userSubmissionField != null) {
+			try {
+				//Note: entry type is assume to be set in the data
+				//Assume media is all correctly handled and transfered.
+				//UI can leverage the mapping cabilities to help create the records.
+				//From this angle there is a lot ambiguities.
+				childComponents = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentAll>>()
+				{
+				});
 
-		} catch (IOException ex) {
-			String value = null;
-			if (userSubmissionField != null) {
-				value = userSubmissionField.getRawValue();
-			}
-			if (LOG.isLoggable(Level.FINER)) {
-				LOG.log(Level.FINER, "Field Mapping exception", ex);
-			}
+			} catch (IOException ex) {
+				String value = userSubmissionField.getRawValue();
 
-			MappingException mappingException = new MappingException("Unable to map form field to entry.");
-			mappingException.setFieldLabel(submissionField.getLabel());
-			mappingException.setFieldName(submissionField.getFieldName());
-			mappingException.setMappingType(submissionField.getMappingType());
-			mappingException.setRawValue(value);
-			throw mappingException;
+				if (LOG.isLoggable(Level.FINER)) {
+					LOG.log(Level.FINER, "Field Mapping exception", ex);
+				}
+
+				MappingException mappingException = new MappingException("Unable to map form field to entry.");
+				mappingException.setFieldLabel(submissionField.getLabel());
+				mappingException.setFieldName(submissionField.getFieldName());
+				mappingException.setMappingType(submissionField.getMappingType());
+				mappingException.setRawValue(value);
+				throw mappingException;
+			}
 		}
 
 		return childComponents;
