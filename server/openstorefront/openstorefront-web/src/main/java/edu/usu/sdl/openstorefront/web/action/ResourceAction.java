@@ -272,7 +272,7 @@ public class ResourceAction
 		return resolution;
 	}
 
-	private void doSubmissionFormUpload(Map<String, String> errors) throws OpenStorefrontRuntimeException
+	private void doSubmissionFormUpload(Map<String, String> errors)
 	{
 		if (!doesFileExceedLimit(file)) {
 
