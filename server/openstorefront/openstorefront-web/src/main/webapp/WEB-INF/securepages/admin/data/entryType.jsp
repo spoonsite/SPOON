@@ -892,8 +892,6 @@
 					}
 					flatList = [];
 					traverseTree(typeToRemove, flatList, children);
-					console.log(flatList);
-
 
 					var promptWindow = Ext.create('Ext.window.Window', {
 						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',

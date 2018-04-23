@@ -231,14 +231,9 @@ public class ComponentTypeServiceImpl
 						if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 							for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
 								String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
-								if (checkType.equals(componentType)) {
+								if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
 									attributeType.getRequiredRestrictions().remove(i);
 									addToUpdate = true;
-								} else {
-									if (findComponentType(getAllComponentTypes(), checkType) == null) {
-										attributeType.getRequiredRestrictions().remove(i);
-										addToUpdate = true;
-									}
 								}
 							}
 						}
@@ -246,14 +241,9 @@ public class ComponentTypeServiceImpl
 						if (attributeType.getOptionalRestrictions() != null && !attributeType.getOptionalRestrictions().isEmpty()) {
 							for (int i = attributeType.getOptionalRestrictions().size() - 1; i >= 0; i--) {
 								String checkType = attributeType.getOptionalRestrictions().get(i).getComponentType();
-								if (checkType.equals(componentType)) {
+								if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
 									attributeType.getOptionalRestrictions().remove(i);
 									addToUpdate = true;
-								} else {
-									if (findComponentType(getAllComponentTypes(), checkType) == null) {
-										attributeType.getOptionalRestrictions().remove(i);
-										addToUpdate = true;
-									}
 								}
 							}
 						}
