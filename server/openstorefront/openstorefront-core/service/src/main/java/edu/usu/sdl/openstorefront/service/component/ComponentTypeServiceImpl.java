@@ -164,6 +164,39 @@ public class ComponentTypeServiceImpl
 		return childModels;
 	}
 
+	private void resetComponentParent(ComponentType componentType)
+	{
+		componentType.setParentComponentType(null);
+		ComponentType componentTypeTemp = persistenceService.findById(ComponentType.class, componentType.getComponentType());
+		componentTypeTemp.setParentComponentType(null);
+		persistenceService.persist(componentTypeTemp);
+	}
+	
+	// check that
+	// 1. no orphans (i.e. parent does not exist)
+	// 2. a component is not a parent of itself
+	private void fixOrphans(List<ComponentType> componentTypes)
+	{
+		for (ComponentType componentTypeA : componentTypes) {
+			// if parent of itself
+			if (componentTypeA.getParentComponentType() != null && componentTypeA.getParentComponentType().equals(componentTypeA.getComponentType())) {
+				resetComponentParent(componentTypeA);
+				continue;
+			}
+			boolean foundParent = false;
+			for (ComponentType componentTypeB : componentTypes) {
+				// check for orphans
+				if (componentTypeA.getParentComponentType() != null && componentTypeA.getParentComponentType().equals(componentTypeB.getComponentType())) {
+					foundParent = true;
+					break;
+				}
+			}
+			if (!foundParent) {
+				resetComponentParent(componentTypeA);
+			}
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<ComponentType> getAllComponentTypes()
 	{
@@ -174,6 +207,7 @@ public class ComponentTypeServiceImpl
 		} else {
 			ComponentType componentType = new ComponentType();
 			componentTypes = componentType.findByExample();
+			fixOrphans(componentTypes);
 			element = new Element(OSFCacheManager.ALLCODE_KEY, componentTypes);
 			OSFCacheManager.getComponentTypeCache().put(element);
 		}
