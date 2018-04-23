@@ -45,10 +45,7 @@
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){			
 				
-
-
 				var templateGrid = Ext.create('Ext.grid.Panel', {
-					id: 'templateGrid',
 					title: 'Partial Submissions <i class="fa fa-question-circle"  data-qtip="Allows for managing partial entry submissions" ></i>',
 					store: {
 						fields: [
@@ -66,18 +63,26 @@
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/componenttypetemplates', //GET partial submissions
-							extraParams: {
-								all: true
-							}							
+							url: 'api/v1/resource/usersubmissions/admin'
 						}						
 					},
 					columnLines: true,
 					columns: [						
-						{ text: 'Submission Name', dataIndex: 'name', flex: 1, minWidth: 200 },
-						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 150 },
-						{ text: 'Submission User', dataIndex: 'createUser', width: 150 },
-						{ text: 'Submission Date', dataIndex: 'submissionDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },						
+						{ text: 'Change Request Name', dataIndex: 'componentName', flex: 1, minWidth: 200,
+							renderer: function(value) {
+								if (value) {
+									return value;
+								} else {
+									return '<New Submission>'
+								}
+							}
+						},						
+						{ text: 'Entry Type', dataIndex: 'componentTypeDecription', flex: 2, minWidth: 200 },	
+						{ text: 'Owner User', dataIndex: 'ownerUser', width: 150 },						
+						{ text: 'Create User', dataIndex: 'createUser', width: 150 },						
+						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },						
+						{ text: 'Update User', dataIndex: 'updateUser', width: 150 },						
+						{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' }						
 					],
 					dockedItems: [
 						{
@@ -97,22 +102,22 @@
 								},
 								{
 									text: 'View',
-									id: 'lookupGrid-tools-view',
+									itemId: 'view',
 									scale: 'medium',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction',
 									handler: function () {
-										actionView(Ext.getCmp('templateGrid').getSelection()[0]);
+										actionView(templateGrid.getSelection()[0]);
 									}
 								}, 								
 								{
 									text: 'Reassign',
-									id: 'lookupGrid-tools-reassign',
+									itemId: 'reassign',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
 									handler: function () {
-										actionReassign(Ext.getCmp('templateGrid').getSelection()[0]);
+										actionReassign(templateGrid.getSelection()[0]);
 									}								
 								},
 								{
@@ -120,12 +125,12 @@
 								},
 								{
 									text: 'Delete',
-									id: 'lookupGrid-tools-delete',
+									itemId: 'delete',
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									handler: function () {
-										actionDelete(Ext.getCmp('templateGrid').getSelection()[0]);
+										actionDelete(templateGrid.getSelection()[0]);
 									}								
 								}								
 							]
@@ -144,173 +149,194 @@
 				addComponentToMainViewPort(templateGrid);				
 
 				var checkEntryGridTools = function() {
-					if (Ext.getCmp('templateGrid').getSelectionModel().getCount() === 1) {
-						Ext.getCmp('lookupGrid-tools-reassign').setDisabled(false);
-						Ext.getCmp('lookupGrid-tools-view').setDisabled(false);
-						Ext.getCmp('lookupGrid-tools-delete').setDisabled(false);					
+					if (templateGrid.getSelectionModel().getCount() === 1) {
+						templateGrid.queryById('reassign').setDisabled(false);
+						templateGrid.queryById('view').setDisabled(false);
+						templateGrid.queryById('delete').setDisabled(false);					
 					} else {
-						Ext.getCmp('lookupGrid-tools-reassign').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-view').setDisabled(true);	
-						Ext.getCmp('lookupGrid-tools-delete').setDisabled(true);
+						templateGrid.queryById('reassign').setDisabled(true);
+						templateGrid.queryById('view').setDisabled(true);	
+						templateGrid.queryById('delete').setDisabled(true);
 					}
 				};
 				
 				var actionRefresh = function() {
-					Ext.getCmp('templateGrid').getStore().reload();
+					templateGrid.getStore().reload();
 				};
 
-				var actionView = function(record) {
+				var actionView = function(record) {					
+					
+					var viewSubmissionWin = Ext.create('Ext.window.Window', {
+						width: '70%',
+						height: '80%',
+						maximizable: true,
+						title: 'View',
+						iconCls: 'fa fa-lg fa-eye',
+						modal: true,
+						layout: 'fit',
+						closeAction: 'destroy',
+						items: [
+							{
+								html: 'TODO: Show Form with the data populated'
+							}
+						],
+						tools: [
+							{
+								type: 'up',
+								tooltip: 'popout preview',
+								handler: function(){
+									//window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('componentGrid').getSelection()[0].get('componentId'), "Preview");
+								}
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Previous',
+										id: 'previewWinTools-previousBtn',
+										iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
+										handler: function() {
+											//actionPreviewNextRecord(false);
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Close',
+										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+										handler: function() {
+											this.up('window').hide();
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Next',
+										id: 'previewWinTools-nextBtn',
+										iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+										iconAlign: 'right',
+										handler: function() {
+											//actionPreviewNextRecord(true);
+										}
+									}
+								]
+							}
+						]
+					});		
 					viewSubmissionWin.show();
-				}
+					
+				};
 
 				var actionReassign = function(record) {
+					
+					var reassignSubmissionWin = Ext.create('Ext.window.Window', {
+						width: 400,
+						height: 200,				
+						title: 'Reassign Entry Submission',
+						iconCls: 'fa fa-lg fa-edit',
+						modal: true,
+						layout: 'fit',
+						closeAction: 'destroy',
+						items : [
+							{
+								xtype: 'form',
+								itemId: 'form',
+								bodyStyle: 'padding: 10px;',
+								layout: 'anchor',
+								items: [
+									{
+										xtype: 'UserSingleSelectComboBox',
+										fieldLabel: 'Select a user<span class="field-required" />',
+										allowBlank: false,
+										name: 'ownerUsername',
+										width: '100%'
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items:[
+											{
+												text: 'Save',
+												formBind: true,
+												iconCls: 'fa fa-lg fa-save icon-button-color-save',
+												handler: function() {
+													var form = this.up('form');
+													var data = form.getValues();
+
+													reassignSubmissionWin.setLoading('Reassigning...');
+													Ext.Ajax.request({
+														url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId') + '/reassignowner/' + encodeURIComponent(data.ownerUsername),
+														method: 'PUT',
+														callback: function() {
+															reassignSubmissionWin.setLoading(false);
+														},
+														success: function() {
+															Ext.toast('Successfully reassigned submisssion');
+															actionRefresh();
+														}
+													})
+
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+												handler: function() {
+													reassignSubmissionWin.close();
+												}
+											}									
+										]
+									}
+								]								
+							}
+						]						
+					});
 					reassignSubmissionWin.show();
-				}
+					
+					//load record
+					if (record) {
+						reassignSubmissionWin.queryById('form').loadRecord(record);
+					}
+				};
 
 				var actionDelete = function(record){
-
-					//check if delete is possible
-					Ext.getCmp('templateGrid').setLoading("Checking delete...");
-					Ext.Ajax.request({
-						url: 'api/v1/resource/componenttypetemplates/' + record.get('templateId') + '/attached',
-						method: 'GET',
-						callback: function(){
-							Ext.getCmp('templateGrid').setLoading(false);
-						},
-						success: function(response, opts){
-							var attachedRecords = Ext.decode(response.responseText);
-							if (attachedRecords.length > 0) {
-								var entryTypeNames = [];
-								Ext.Array.each(attachedRecords, function(entryType) {
-									entryTypeNames.push(entryType.label);
-								});
-								Ext.Msg.alert('Template in Use', 'The template is being use by the following entry type(s):<br> ' + entryTypeNames.join());								
-								
-							} else {							
-								Ext.Msg.show({
-									title:'Delete Submission?',
-									iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
-									message: 'Are you sure you want to delete ' + Ext.util.Format.ellipsis(record.get('name'), 20) + '?',
-									buttons: Ext.Msg.YESNOCANCEL,
-									icon: Ext.Msg.QUESTION,
-									fn: function(btn) {
-										if (btn === 'yes') {
-											Ext.getCmp('templateGrid').setLoading("Deleting...");
-											Ext.Ajax.request({
-												url: 'api/v1/resource/componenttypetemplates/' + record.get('templateId') + '/force',
-												method: 'DELETE',
-												callback: function(){
-													Ext.getCmp('templateGrid').setLoading(false);
-												},
-												success: function(response, opts){
-													actionRefresh();
-												}
-											});
-										}
+					Ext.Msg.show({
+						title:'Delete Submission?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						message: 'Are you sure you want to delete ' + Ext.util.Format.ellipsis(record.get('name'), 20) + '?',
+						buttons: Ext.Msg.YESNOCANCEL,
+						icon: Ext.Msg.QUESTION,
+						fn: function(btn) {
+							if (btn === 'yes') {
+								Ext.getCmp('templateGrid').setLoading("Deleting...");
+								Ext.Ajax.request({
+									url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId'),
+									method: 'DELETE',
+									callback: function(){
+										Ext.getCmp('templateGrid').setLoading(false);
+									},
+									success: function(response, opts){
+										actionRefresh();
 									}
 								});
 							}
 						}
 					});
-					
 				};
+				
 
 			});
 
-			var reassignSubmissionWin = Ext.create('Ext.window.Window', {
-					width: '70%',
-					height: '80%',
-					maximizable: true,
-					title: 'Reassign Entry Submission',
-					iconCls: 'fa fa-lg fa-edit',
-					modal: true,
-					//layout: 'fit',
-					items : [
-						{
-							xtype: 'UserSingleSelectComboBox',
-							fieldLabel: 'Select a user',
-							width: '100%'
-						}
-					],
-					dockedItems: [
-						{
-							xtype: 'toolbar',
-							dock: 'bottom',
-							items:[
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Save',
-									iconCls: 'fa fa-lg fa-save'
-								},
-								{
-									xtype: 'tbfill'
-								}
-							]
-						}
-					]
-			})
-
-			var viewSubmissionWin = Ext.create('Ext.window.Window', {
-					width: '70%',
-					height: '80%',
-					maximizable: true,
-					title: 'View',
-					iconCls: 'fa fa-lg fa-eye',
-					modal: true,
-					layout: 'fit',
-					items: [
-						//previewContents
-					],
-					tools: [
-						{
-							type: 'up',
-							tooltip: 'popout preview',
-							handler: function(){
-								//window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('componentGrid').getSelection()[0].get('componentId'), "Preview");
-							}
-						}
-					],
-					dockedItems: [
-						{
-							xtype: 'toolbar',
-							dock: 'bottom',
-							items: [
-								{
-									text: 'Previous',
-									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
-									handler: function() {
-										//actionPreviewNextRecord(false);
-									}
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-									handler: function() {
-										this.up('window').hide();
-									}
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Next',
-									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-									iconAlign: 'right',
-									handler: function() {
-										//actionPreviewNextRecord(true);
-									}
-								}
-							]
-						}
-					]
-				});
 			
 		</script>	
 		

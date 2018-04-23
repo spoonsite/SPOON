@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.view.UserSubmissionView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -47,10 +48,9 @@ public class UserSubmissionResource
 		extends BaseResource
 {
 
-	//get all submissions (admin)
 	@GET
 	@APIDescription("Gets all user submissions for all users; Note: these are incomplete submissions")
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSubmission.class)
 	public List<UserSubmission> getUserSubmissions()
@@ -59,7 +59,18 @@ public class UserSubmissionResource
 		return userSubmissionExample.findByExample();
 	}
 
-	//get submissions for user (owner)
+	@GET
+	@APIDescription("Gets all user submissions for all users; Note: these are incomplete submissions")
+	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(UserSubmissionView.class)
+	@Path("/admin")
+	public List<UserSubmissionView> getUserSubmissionsAdmin()
+	{
+		UserSubmission userSubmissionExample = new UserSubmission();
+		return UserSubmissionView.toView(userSubmissionExample.findByExample());
+	}
+
 	@GET
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Gets user submissions for current user")
@@ -74,7 +85,6 @@ public class UserSubmissionResource
 		return userSubmissionExample.findByExample();
 	}
 
-	//get submissions for user (owner/admin) REPLACE WITH CORRECT PERMISSION
 	@GET
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Gets a submission")
@@ -89,14 +99,13 @@ public class UserSubmissionResource
 		userSubmission.setUserSubmissionId(submissionId);
 		userSubmission = userSubmission.find();
 
-		Response response = ownerCheck(userSubmission, SecurityPermission.USER_SUBMISSIONS);
+		Response response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 		if (response == null) {
 			response = sendSingleEntityResponse(userSubmission);
 		}
 		return response;
 	}
 
-	//create submission (just submission permission)
 	@POST
 	@APIDescription("Creates a new Submission")
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
@@ -128,7 +137,7 @@ public class UserSubmissionResource
 
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		if (existing != null) {
-			response = ownerCheck(existing, SecurityPermission.USER_SUBMISSIONS);
+			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 			if (response == null) {
 				userSubmission.setUserSubmissionId(submissionId);
 				response = handleSaveSubmission(userSubmission, false);
@@ -152,7 +161,6 @@ public class UserSubmissionResource
 		}
 	}
 
-	//submit for approval (owner) FIX Admin permission
 	@PUT
 	@APIDescription("Submits a submission for approval")
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
@@ -168,7 +176,7 @@ public class UserSubmissionResource
 
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		if (existing != null) {
-			response = ownerCheck(existing, SecurityPermission.USER_SUBMISSIONS);
+			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 			if (response == null) {
 				service.getSubmissionFormService().submitUserSubmissionForApproval(existing);
 			}
@@ -176,7 +184,6 @@ public class UserSubmissionResource
 		return response;
 	}
 
-	//submit change request (owner)
 	@PUT
 	@APIDescription("Submits a submission for approval")
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
@@ -192,7 +199,7 @@ public class UserSubmissionResource
 
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		if (existing != null) {
-			response = ownerCheck(existing, SecurityPermission.USER_SUBMISSIONS);
+			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 			if (response == null) {
 				service.getSubmissionFormService().submitChangeRequestForApproval(existing);
 			}
@@ -200,10 +207,9 @@ public class UserSubmissionResource
 		return response;
 	}
 
-	//reassign owner (admin)
 	@PUT
 	@APIDescription("Reassign Owner on a submission")
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{submissionId}/reassignowner/{username}")
 	public Response reassignOwner(
@@ -223,8 +229,8 @@ public class UserSubmissionResource
 		return sendSingleEntityResponse(userSubmission);
 	}
 
-	//delete submission (owner/admin)
 	@DELETE
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Deletes a submission")
 	@Path("/{submissionId}")
 	public Response deleteUserSubmission(
@@ -237,7 +243,7 @@ public class UserSubmissionResource
 
 		Response response = Response.noContent().build();
 		if (userSubmission != null) {
-			response = ownerCheck(userSubmission, SecurityPermission.USER_SUBMISSIONS);
+			response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 			if (response == null) {
 				service.getSubmissionFormService().deleteUserSubmission(submissionId);
 				response = Response.noContent().build();
@@ -247,6 +253,7 @@ public class UserSubmissionResource
 	}
 
 	@DELETE
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@APIDescription("Deletes a submission media")
 	@Path("/{submissionId}/media/{mediaId}")
 	public Response deleteUserSubmissionMedia(
@@ -260,7 +267,7 @@ public class UserSubmissionResource
 
 		Response response = Response.noContent().build();
 		if (userSubmission != null) {
-			response = ownerCheck(userSubmission, SecurityPermission.USER_SUBMISSIONS);
+			response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 			if (response == null) {
 				service.getSubmissionFormService().deleteUserSubmissionMedia(submissionId, mediaId);
 				response = Response.noContent().build();

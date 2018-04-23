@@ -94,7 +94,7 @@
 			});	
 			dataMenu.push({
 				text: 'Partial Submissions',
-				permission: 'ADMIN-PARTIAL-SUBMISSIONS',
+				permission: 'ADMIN-USER-SUBMISSIONS',
 				handler: function(){
 					actionLoadContent('Partial-Submissions');
 				}
