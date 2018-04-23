@@ -186,9 +186,9 @@ public class EntryListingReport
 		lineModel.setComponentId(component.getComponentId());
 		lineModel.setViewLink(viewLinkBase + component.getComponentId());
 
-		String entryType = ConfluenceClient.confluenceEscapeCharater(TranslateUtil.translateComponentType(
+		String entryType = ConfluenceClient.confluenceEscapeCharater(
 			service.getComponentService().getComponentTypeParentsString(component.getComponentType(), true)
-		));
+		);
 		lineModel.setEntryType(entryType);
 
 		lineModel.setLastUpdatedDts(component.getLastActivityDts());
