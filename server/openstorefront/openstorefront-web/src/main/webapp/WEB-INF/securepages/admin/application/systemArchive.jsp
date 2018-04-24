@@ -247,6 +247,7 @@
 					]
 					
 				});				
+				
 				addComponentToMainViewPort(archiveGrid);
 				
 				var actionRefresh = function() {
@@ -260,8 +261,11 @@
 					});
 				};
 				
+
+
+
+
 				var actionGenerate = function() {
-					
 					var generateWin = Ext.create('Ext.window.Window', {
 						title: 'Generate Archive',
 						modal: true,
@@ -348,6 +352,13 @@
 												itemId: 'entrySelector',
 												title: 'Select Entries',
 												maxHeight: 250,
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'includeRelatedEntities',
+												name: 'includeRelatedEntities',											
+												boxLabel: 'Include Related Entities',
+												checked: true										
 											},									
 											{
 												xtype: 'checkbox',
@@ -474,7 +485,7 @@
 														archiveOptions.push({
 															primaryEntity: 'Organization'
 														});
-													}	
+													}													
 													if (data.attributes) {
 														archiveOptions.push({
 															primaryEntity: 'AttributeType'
@@ -540,9 +551,13 @@
 						]
 					});
 					generateWin.show();
-										
 				};				
 				
+
+
+
+
+
 				var actionImport = function() {
 					
 					var importWin = Ext.create('Ext.window.Window', {
