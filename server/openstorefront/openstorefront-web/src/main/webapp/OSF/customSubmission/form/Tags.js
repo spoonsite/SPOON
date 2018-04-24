@@ -21,11 +21,17 @@
 
 Ext.define('OSF.customSubmission.form.Tags', {
 	extend: 'Ext.form.Panel',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+		
 	initComponent: function () {
-		this.callParent();
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add(Ext.create('OSF.component.StandardComboBox', {
+		this.callParent();		
+		var tagPanel = this;
+
+		tagPanel.add(
+		{
+			xtype: 'StandardComboBox',	
 			name: 'text',
 			colName: 'name',
 			allowBlank: false,
@@ -39,7 +45,7 @@ Ext.define('OSF.customSubmission.form.Tags', {
 			storeConfig: {
 				url: 'api/v1/resource/components/tags'
 			}
-		}));
+		});
 
 	}
 });

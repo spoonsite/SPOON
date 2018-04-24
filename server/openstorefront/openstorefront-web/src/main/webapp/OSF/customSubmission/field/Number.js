@@ -15,28 +15,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global Ext, CoreUtil, CoreService */
 
-/* Author: cyearsley */
 
-Ext.define('OSF.customSubmission.Section', {
-	extend: 'Ext.form.Panel',
-	items: [],
-	sectionTitle: '',
-	scrollable: true,
-	
-	initComponent: function () {
-		var section = this;
-		section.callParent();
-	},
-	
-	getUserValues: function () {
-		var data = [];
-		var section = this;
-				
-		Ext.Array.forEach(section.items.items, function (field) {
-			data.push(field.getUserData());
-		});
-		return data;
-	}
-});

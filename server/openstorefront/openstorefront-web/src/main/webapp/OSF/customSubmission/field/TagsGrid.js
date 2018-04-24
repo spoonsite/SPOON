@@ -20,7 +20,7 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.field.TagsGrid', {
-	extend: 'OSF.customSubmission.Grid',
+	extend: 'OSF.customSubmission.BaseGrid',
 	formPanel: 'Tags',
 	title: 'Tags'
 });

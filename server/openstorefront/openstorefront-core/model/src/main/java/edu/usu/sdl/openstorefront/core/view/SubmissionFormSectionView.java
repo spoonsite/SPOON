@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ public class SubmissionFormSectionView
 	private String name;
 	private String instructions;
 	private Integer stepOrder;
+
+	@DataType(SubmissionFormFieldView.class)
 	private List<SubmissionFormFieldView> fields = new ArrayList<>();
 
 	@SuppressWarnings({"squid:S1186"})

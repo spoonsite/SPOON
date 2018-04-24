@@ -20,7 +20,7 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.field.DependenciesGrid', {
-	extend: 'OSF.customSubmission.Grid',
+	extend: 'OSF.customSubmission.BaseGrid',
 	formPanel: 'Dependencies',
 	title: 'Dependencies'
 });

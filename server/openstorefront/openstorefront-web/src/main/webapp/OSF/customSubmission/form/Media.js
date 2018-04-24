@@ -21,13 +21,18 @@
 
 Ext.define('OSF.customSubmission.form.Media', {
 	extend: 'Ext.form.Panel',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',	
+	
 	initComponent: function () {
 		this.callParent();
+		
+		var mediaPanel = this;
 
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add([
-			Ext.create('OSF.component.StandardComboBox', {
+		mediaPanel.add([
+			{
+				xtype: 'StandardComboBox',
 				name: 'mediaTypeCode',
 				colName: 'mediaType',
 				allowBlank: false,
@@ -40,7 +45,7 @@ Ext.define('OSF.customSubmission.form.Media', {
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/MediaType'
 				}
-			}),
+			},
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Caption <span class="field-required" />',
@@ -119,15 +124,15 @@ Ext.define('OSF.customSubmission.form.Media', {
 				name: 'originalLink',
 				colName: 'externalLink'
 			},
-			Ext.create('OSF.component.SecurityComboBox', {
+			{
+				xtype: 'SecurityComboBox',
 				itemId: 'securityMarkings'
-				// hidden: submissionPanel.hideSecurityMarkings
-			}),
-			Ext.create('OSF.component.DataSensitivityComboBox', {
+			},
+			{
+				xtype: 'DataSensitivityComboBox',
 				width: 450,
-				labelAlign: 'left',
-				fieldLabel: 'Data Sensitivity:'
-			})
+				labelAlign: 'left'				
+			}
 		]);
 	}
 });

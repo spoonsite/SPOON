@@ -18,8 +18,10 @@
 
 /* Author Brigham Michaelis */
 
+/* global Ext */
+
 Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
-	extend: 'OSF.customSubmission.Grid',
+	extend: 'OSF.customSubmission.BaseGrid',
 	formPanel: 'Relationships',
 	title: 'Relationships'
 });

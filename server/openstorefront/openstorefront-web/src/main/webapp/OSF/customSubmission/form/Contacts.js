@@ -21,22 +21,19 @@
 
 Ext.define('OSF.customSubmission.form.Contacts', {
 	extend: 'Ext.form.Panel',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+	
 	initComponent: function () {
 		this.callParent();
+		
+		var contactPanel = this;
 
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add(
+		contactPanel.add(
 			[
-				// {
-				// 	xtype: 'hidden',
-				// 	name: 'componentContactId'
-				// },
-				// {
-				// 	xtype: 'hidden',
-				// 	name: 'contactId'
-				// },
-				Ext.create('OSF.component.StandardComboBox', {
+				{
+					xtype: 'StandardComboBox',
 					name: 'contactType',
 					itemId: 'contactType',
 					allowBlank: false,
@@ -53,8 +50,9 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 								value: /SUB/
 							}]
 					}
-				}),
-				Ext.create('OSF.component.StandardComboBox', {
+				},
+				{
+					xtype: 'StandardComboBox',
 					name: 'organization',
 					allowBlank: false,
 					margin: '0 0 5 0',
@@ -65,8 +63,9 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					storeConfig: {
 						url: 'api/v1/resource/organizations/lookup'
 					}
-				}),
-				Ext.create('OSF.component.StandardComboBox', {
+				},
+				{
+					xtype: 'StandardComboBox',
 					name: 'firstName',
 					allowBlank: false,
 					margin: '0 0 5 0',
@@ -99,8 +98,9 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 							combo.up('form').getComponent('contactType').setValue(contactType);
 						}
 					}
-				}),
-				Ext.create('OSF.component.StandardComboBox', {
+				},
+				{
+					xtype: 'StandardComboBox',
 					name: 'lastName',
 					allowBlank: false,
 					margin: '0 0 5 0',
@@ -133,7 +133,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 							combo.up('form').getComponent('contactType').setValue(contactType);
 						}
 					}
-				}),
+				},
 				{
 					xtype: 'textfield',
 					fieldLabel: 'Email <span class="field-required" />',
@@ -156,14 +156,16 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					margin: '15 0 10 0',
 					name: 'phone'
 				},
-				Ext.create('OSF.component.SecurityComboBox', {
-					itemId: 'securityMarkings'
-					// hidden: submissionPanel.hideSecurityMarkings
-				}),
-				Ext.create('OSF.component.DataSensitivityComboBox', {
-					width: 450,
-				})
+				{
+					xtype: 'SecurityComboBox',
+					itemId: 'securityMarkings'					
+				},
+				{
+					xtype: 'DataSensitivityComboBox',
+					width: 450
+				}
 			]
 		);
-	},
+	}
+	
 });

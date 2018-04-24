@@ -18,8 +18,10 @@
 
  /* Author: cyearsley */
 
+/* global Ext */
+
 Ext.define('OSF.customSubmission.field.AttributesGrid', {
-	extend: 'OSF.customSubmission.Grid',
+	extend: 'OSF.customSubmission.BaseGrid',
 	formPanel: 'Attributes',
 	title: 'Attributes'
 });

@@ -702,7 +702,7 @@ public class MediaAction
 		if (userSubmission != null) {
 
 			boolean allow = false;
-			if (SecurityUtil.hasPermission(SecurityPermission.USER_SUBMISSIONS)) {
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT)) {
 				allow = true;
 				LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			} else if (SecurityUtil.isCurrentUserTheOwner(userSubmission)) {

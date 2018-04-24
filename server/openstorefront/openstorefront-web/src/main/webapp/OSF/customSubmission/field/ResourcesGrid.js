@@ -20,7 +20,7 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.field.ResourcesGrid', {
-	extend: 'OSF.customSubmission.Grid',
+	extend: 'OSF.customSubmission.BaseGrid',
 	formPanel: 'Resources',
 	title: 'Resources'
 });

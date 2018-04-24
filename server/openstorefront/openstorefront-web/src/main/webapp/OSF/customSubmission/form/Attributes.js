@@ -18,21 +18,21 @@
 
  /* Author: cyearsley */
 
+/* global Ext */
+
 Ext.define('OSF.customSubmission.form.Attributes', {
 	extend: 'Ext.form.Panel',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+	
 	initComponent: function(){
 		this.callParent();
-		var self = this;
-
-		Ext.Ajax.request({
-			url: 'api/v1/resource/attributes',
-			success: function (response, opts) {
-				self.items.items[0].store.setData(Ext.decode(response.responseText));
-			}
-		});
-		this.add([
-			
-			Ext.create('Ext.form.ComboBox',{
+		var attributePanel = this;
+		
+		attributePanel.add([
+			{
+				xtype: 'combobox',
 				itemId: 'attributeTypeCB',
 				fieldLabel: 'Attribute Type <span class="field-required" />',
 				name: 'type',
@@ -46,9 +46,9 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				allowBlank: false,
 				valueField: 'attributeType',
 				displayField: 'description',
-				width: 400,
-				flex: 1,
+				width: '100%',
 				store: Ext.create('Ext.data.Store', {
+					autoLoad: true,
 					sorters: [
 						{
 							property: 'description',
@@ -61,11 +61,10 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 							}
 						}
 					],
-					fields: [
-						"attributeType",
-						"description"
-					],
-					data: []
+					proxy: {
+						type: 'ajax',
+						url: 'api/v1/resource/attributes'
+					}
 				}),
 				listConfig: {
 					getInnerTpl: function () {
@@ -117,8 +116,9 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 						}
 					}
 				}
-			}),
-			Ext.create('Ext.form.ComboBox',{
+			},
+			{
+				xtype: 'combobox',
 				itemId: 'attributeCodeCB',
 				fieldLabel: 'Attribute Code <span class="field-required" />',
 				name: 'code',
@@ -131,7 +131,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				displayField: 'label',
 				labelAlign: 'left',
 				labelSeparator: '',
-				width: 400,
+				width: '100%',
 				listConfig: {
 					getInnerTpl: function () {
 						return '{label} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
@@ -149,15 +149,23 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 								return item;
 							}
 						}
-					],
-					fields: [
-						"code",
-						"label"
 					]
 				})
-			})
+			}
 		]);
+	},
+	
+	getSubmissionValue: function() {
+		var attributePanel = this;
+		
+		var data = attributePanel.getValues();
+		
+				
+		
 	}
+	
+	
+	
 });
 
 

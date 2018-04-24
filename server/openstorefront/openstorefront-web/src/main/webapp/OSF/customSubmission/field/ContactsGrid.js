@@ -20,7 +20,7 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.field.ContactsGrid', {
-	extend: 'OSF.customSubmission.Grid',
+	extend: 'OSF.customSubmission.BaseGrid',
 	formPanel: 'Contacts',
 	title: 'Contacts'
 });

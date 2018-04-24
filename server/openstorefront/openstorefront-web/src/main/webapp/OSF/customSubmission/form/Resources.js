@@ -21,13 +21,18 @@
 
 Ext.define('OSF.customSubmission.form.Resources', {
 	extend: 'Ext.form.Panel',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',	
+	
 	initComponent: function () {
 		this.callParent();
+		
+		var resourcePanel = this;
 
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add([
-			Ext.create('OSF.component.StandardComboBox', {
+		resourcePanel.add([
+			{
+				xtype: 'StandardComboBox',
 				name: 'resourceType',
 				allowBlank: false,
 				margin: '0 0 15 0',
@@ -38,7 +43,7 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/ResourceType'
 				}
-			}),
+			},
 			{
 				xtype: 'textfield',
 				labelAlign: 'top',
@@ -100,14 +105,14 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				labelAlign: 'top',
 				hidden: true
 			},
-			Ext.create('OSF.component.SecurityComboBox', {
-				itemId: 'securityMarkings'
-				// hidden: submissionPanel.hideSecurityMarkings
-			}),
-			Ext.create('OSF.component.DataSensitivityComboBox', {
-				width: 450,
-				fieldLabel: 'Data Sensitivity:'
-			})
+			{
+				xtype: 'SecurityComboBox',
+				itemId: 'securityMarkings'			
+			},
+			{
+				xtype: 'DataSensitivityComboBox',
+				width: 450
+			}
 		]);
 	}
 });

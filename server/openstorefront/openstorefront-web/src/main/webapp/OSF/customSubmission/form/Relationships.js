@@ -18,11 +18,18 @@
 
 Ext.define('OSF.customSubmission.form.Relationships', {
 	extend: 'Ext.form.Panel',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+	
 	initComponent: function () {
 		this.callParent();
 		
-		this.add([
-			Ext.create('OSF.component.StandardComboBox',{
+		var relationshipPanel = this;
+		
+		relationshipPanel.add([
+			{
+				xtype: 'StandardComboBox',
 				name: 'relationshipType',
 				allowBlank: false,
 				editable: false,
@@ -33,8 +40,9 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/RelationshipType'
 				}
-				}),
-			Ext.create('OSF.component.StandardComboBox', {
+			},
+			{
+				xtype: 'StandardComboBox',
 				name: 'componentType',
 				colName: 'Entry Type',
 				allowBlank: true,
@@ -66,8 +74,9 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 						});
 					}
 				}
-				}),											
-			Ext.create('OSF.component.StandardComboBox', {
+			},											
+			{
+				xtype: 'StandardComboBox',
 				itemId: 'relationshipTargetCB',
 				name: 'relatedComponentId',
 				colName: 'Target Entry',
@@ -80,7 +89,7 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 					url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL',
 					autoLoad: true
 				}
-			})							
+			}							
 		]);		
 	}
 });

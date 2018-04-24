@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -35,6 +36,7 @@ public class SubmissionFormTemplateView
 	private String templateStatus;
 	private String templateStatusLabel;
 
+	@DataType(SubmissionFormSectionView.class)
 	private List<SubmissionFormSectionView> sections = new ArrayList<>();
 
 	@SuppressWarnings({"squid:S1186"})
@@ -54,6 +56,9 @@ public class SubmissionFormTemplateView
 		if (template.getSections() != null) {
 			template.getSections().forEach(section -> {
 				view.getSections().add(SubmissionFormSectionView.toView(section));
+			});
+			template.getSections().sort((a, b) -> {
+				return a.getStepOrder().compareTo(b.getStepOrder());
 			});
 		}
 

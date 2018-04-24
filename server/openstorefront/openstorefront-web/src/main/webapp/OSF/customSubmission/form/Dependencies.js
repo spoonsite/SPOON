@@ -21,12 +21,15 @@
 
 Ext.define('OSF.customSubmission.form.Dependencies', {
 	extend: 'Ext.form.Panel',
+		
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',	
+	
 	initComponent: function () {
 		this.callParent();
+		var dependancyPanel = this;		
 
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add([
+		dependancyPanel.add([
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Name <span class="field-required" />',									
@@ -60,12 +63,12 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 				width: 450,
 				name: 'comment'
 			},
-			Ext.create('OSF.component.SecurityComboBox', {								
-			}),
-			Ext.create('OSF.component.DataSensitivityComboBox', {			
-				width: 450,
-				labelAlign: 'left'
-			})	
+			{
+				xtype: 'SecurityComboBox'
+			},
+			{			
+				xtype: 'DataSensitivityComboBox'
+			}
 		]);
 	}
 });
