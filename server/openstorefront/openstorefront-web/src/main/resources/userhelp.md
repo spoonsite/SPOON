@@ -442,7 +442,7 @@ rather than updating the contact information on step3.  That way the contact inf
 user profile.
 
 
-#### 2.3.3.3 How to Delete an Entry
+#### 2.3.3.3 How to Delete an Entry @USER-SUBMISSIONS
 -----------
 
 1.  Click on the entry you wish to remove
@@ -458,6 +458,11 @@ user profile.
 A user can copy or preview an entry by selecting an entry and clicking on the "Options" 
 drop-down arrow in the submissions toolbar.  Users can also toggle notify by selecting an entry
  and clicking on the "Options" drop-down arrow in the toolbar.
+
+#### 2.3.3.5 Submitting a New Component - External Doc @USER-SUBMISSIONS
+-----------
+
+<a href="http://di2e.github.io/openstorefront/user/quick-overview-of-submitting-a-new-component/" target="_blank">Submitting a New Component (di2e.github.io)</a>
 
 ### 2.3.4 Tools
 -----------
@@ -1588,6 +1593,26 @@ Here you formulate the questions to be asked on a template.
 
 Section templates can be created for further customization.
 
+### 3.3.3 External Docs @ADMIN-EVALUATION-MANAGEMENT
+------
+
+Links to external documentation refering to Evaluation Management
+
+#### 3.3.3.1 Basic Entry Template For Storefront @ADMIN-EVALUATION-MANAGEMENT
+------
+
+<a href="http://di2e.github.io/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/" target="_blank">Basic Entry Template For Storefront (di2e.github.io)</a>
+
+#### 3.3.3.2 Create An Evaluation @ADMIN-EVALUATION-MANAGEMENT
+------
+
+<a href="http://di2e.github.io/openstorefront/evaluations/librarian/createevaluationguide/" target="_blank">Create An Evaluation (di2e.github.io)</a>
+
+#### 3.3.3.3 Publish An Evaluation
+------
+
+<a href="http://di2e.github.io/openstorefront/evaluations/librarian/publishinganevaluationguide/" target="_blank">Publish An Evaluation (di2e.github.io)</a>
+
 ## 3.4 Application Management @ADMIN-SYSTEM-MANAGEMENT
 --------
 
@@ -1988,6 +2013,7 @@ Allows user with the appropriate permission to create and edit evaluations.
 Evaluations are accessed by going to your username in the upper-right of the browser window.  In the drop-down select Evaluation Tools.  A dashboard is displayed.
 
 ## 4.1 Evaluations @EVALUATIONS 
+-----
 
 The evaluations section shows a table of evaluations assigned to you.  Filters can be set for the assigned user, assigned group, and workflow status.
 
@@ -1996,6 +2022,16 @@ Selecting an evaluation allows you to Assign it to another user or to Edit the e
 When Editing the evaluation the status can be changed and the various forms, questions, and other information is entered.  A change history is kept and comments can be added.
 
 The preview button will show what the evaluation will look like when published.  Private information will not be shown.
+
+## 4.2 Evaluators Guide - External Link @EVALUATIONS
+-----
+
+<a href="http://di2e.github.io/openstorefront/evaluations/evaluator/storefront-evaluators-guide/" target="_blank">Evaluators guide (di2e.github.io)</a>
+
+## 4.3 FAQ - External Link @EVALUATIONS
+-----
+
+<a href="http://di2e.github.io/openstorefront/evaluations/evaluator/faq/" target="_blank">FAQ (di2e.github.io)</a>
 
 # 5.  Glossary
 ----------
