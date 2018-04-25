@@ -247,6 +247,7 @@
 					]
 					
 				});				
+				
 				addComponentToMainViewPort(archiveGrid);
 				
 				var actionRefresh = function() {
@@ -259,9 +260,7 @@
 						}
 					});
 				};
-				
 				var actionGenerate = function() {
-					
 					var generateWin = Ext.create('Ext.window.Window', {
 						title: 'Generate Archive',
 						modal: true,
@@ -348,6 +347,13 @@
 												itemId: 'entrySelector',
 												title: 'Select Entries',
 												maxHeight: 250,
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'includeRelatedEntities',
+												name: 'includeRelatedEntities',											
+												boxLabel: 'Include Related Entities',
+												checked: true										
 											},									
 											{
 												xtype: 'checkbox',
@@ -464,7 +470,6 @@
 															});	
 														});
 													}
-													
 													if (data.highlight) {
 														archiveOptions.push({
 															primaryEntity: 'Highlight'
@@ -474,7 +479,7 @@
 														archiveOptions.push({
 															primaryEntity: 'Organization'
 														});
-													}	
+													}													
 													if (data.attributes) {
 														archiveOptions.push({
 															primaryEntity: 'AttributeType'
@@ -540,11 +545,8 @@
 						]
 					});
 					generateWin.show();
-										
 				};				
-				
 				var actionImport = function() {
-					
 					var importWin = Ext.create('Ext.window.Window', {
 						title: 'Import Archive',
 						modal: true,
@@ -600,7 +602,6 @@
 												iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 												formBind: true,
 												handler: function() {
-													
 													var uploadForm = this.up('form');
 													//var data = uploadForm.getValues();
 													var progressMsg = Ext.MessageBox.show({
@@ -613,7 +614,6 @@
 														wait: true,
 														waitConfig: {interval: 300}
 													});
-													
 													uploadForm.submit({
 														submitEmptyText: false,
 														url: 'Upload.action?ImportArchive',	
@@ -646,15 +646,11 @@
 						]
 					});
 					importWin.show();		
-					
 				};				
-				
 				var actionDownload = function(record) {
 					window.location.href = 'api/v1/resource/systemarchives/' + record.get('archiveId') + '/download';					
 				};	
-				
 				var actionView = function(record) {
-					
 					var errorWin = Ext.create('Ext.window.Window', {
 						title: 'Errors',
 						iconCls: 'fa fa-lg fa-info-circle icon-small-vertical-correction',
