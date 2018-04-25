@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SupportMedia;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.doc.security.LogicOperation;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -98,7 +99,7 @@ public class MediaAction
 	@Validate(required = true, on = "DataImage")
 	private String imageType;
 
-	@Validate(required = true, on = {"UploadMedia", "UploadOrganizationLogo"})
+	@Validate(required = true, on = {"UploadMedia", "UploadOrganizationLogo", "UploadSubmissionMedia"})
 	private FileBean file;
 
 	@Validate(required = true, on = "GeneralMedia")
@@ -131,14 +132,22 @@ public class MediaAction
 	@Validate(required = true, on = {"OrganizationLogo", "UploadOrganizationLogo"})
 	private String organizationId;
 
+	@Validate(required = true, on = {"UploadSubmissionMedia"})
+	private String userSubmissionId;
+
+	@Validate(required = true, on = {"UploadSubmissionMedia"})
+	private String userSubmissionFieldId;
+
+	private static final String ACCESS_DENIED = "Access denied";
+
 	@DefaultHandler
 	public Resolution audioTestPage()
 	{
 		//return new ForwardResolution("/WEB-INF/securepages/test/audioTest.jsp");
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 	}
 
-	@ValidationMethod(on = {"UploadMedia", "UploadOrganizationLogo", "UploadGeneralMedia", "UploadSectionMedia"})
+	@ValidationMethod(on = {"UploadMedia", "UploadOrganizationLogo", "UploadGeneralMedia", "UploadSectionMedia", "UploadSubmissionMedia"})
 	public void uploadHook(ValidationErrors errors)
 	{
 		checkUploadSizeValidation(errors, file, "file");
@@ -194,7 +203,7 @@ public class MediaAction
 				boolean allow = false;
 				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
-					LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+					LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
@@ -234,7 +243,7 @@ public class MediaAction
 						}
 					}
 				} else {
-					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 				}
 			} else {
 				errors.put("componentMedia", "Missing component; check Component Id");
@@ -297,7 +306,7 @@ public class MediaAction
 	{
 		Map<String, String> errors = new HashMap<>();
 
-		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+		LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		if (generalMedia != null) {
 			generalMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 			generalMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
@@ -374,7 +383,7 @@ public class MediaAction
 	{
 		Map<String, String> errors = new HashMap<>();
 
-		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+		LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		if (supportMedia != null) {
 
 			ValidationModel validationModel = new ValidationModel(supportMedia);
@@ -680,6 +689,54 @@ public class MediaAction
 		}.setFilename("visual." + imageType);
 	}
 
+	@HandlesEvent("UploadSubmissionMedia")
+	public Resolution uploadSubmissionMedia()
+	{
+		Resolution resolution = null;
+
+		Map<String, String> errors = new HashMap<>();
+
+		UserSubmission userSubmission = new UserSubmission();
+		userSubmission.setUserSubmissionId(userSubmissionId);
+		userSubmission = userSubmission.find();
+		if (userSubmission != null) {
+
+			boolean allow = false;
+			if (SecurityUtil.hasPermission(SecurityPermission.USER_SUBMISSIONS)) {
+				allow = true;
+				LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			} else if (SecurityUtil.isCurrentUserTheOwner(userSubmission)) {
+				allow = true;
+
+			}
+
+			if (allow) {
+				mediaFile = new MediaFile();
+				mediaFile.setOriginalName(StringProcessor.getJustFileName(file.getFileName()));
+				mediaFile.setMimeType(file.getContentType());
+
+				try {
+					service.getSubmissionFormService().saveSubmissionFormMedia(userSubmission, userSubmissionFieldId, mediaFile, file.getInputStream());
+				} catch (IOException ex) {
+					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
+				} finally {
+					deleteUploadFile(file);
+				}
+
+			} else {
+				resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
+			}
+		} else {
+			errors.put("userSubmissionId", "Unable to find user submission.");
+		}
+
+		if (resolution == null) {
+			resolution = streamUploadResponse(errors);
+		}
+
+		return resolution;
+	}
+
 	public String getMediaId()
 	{
 		return mediaId;
@@ -798,6 +855,26 @@ public class MediaAction
 	public void setSupportMedia(SupportMedia supportMedia)
 	{
 		this.supportMedia = supportMedia;
+	}
+
+	public String getUserSubmissionId()
+	{
+		return userSubmissionId;
+	}
+
+	public void setUserSubmissionId(String userSubmissionId)
+	{
+		this.userSubmissionId = userSubmissionId;
+	}
+
+	public String getUserSubmissionFieldId()
+	{
+		return userSubmissionFieldId;
+	}
+
+	public void setUserSubmissionFieldId(String userSubmissionFieldId)
+	{
+		this.userSubmissionFieldId = userSubmissionFieldId;
 	}
 
 }

@@ -15,7 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldMappingType;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -28,17 +34,40 @@ public class MapperFactory
 	{
 		BaseMapper mapper = null;
 		switch (mappingType) {
-			case SubmissionFormFieldMappingType.FIELD:
-				mapper = new EntityFieldMapper();
+			case SubmissionFormFieldMappingType.COMPONENT:
+				mapper = new ComponentFieldMapper();
 				break;
 			case SubmissionFormFieldMappingType.COMPLEX:
 				mapper = new ComplexMapper();
 				break;
-			case SubmissionFormFieldMappingType.ATTRIBUTE:
-				mapper = new AttributeFormMapper();
-				break;
 			case SubmissionFormFieldMappingType.SUBMISSION:
 				mapper = new SubmissionMapper();
+				break;
+			case SubmissionFormFieldMappingType.NONE:
+				mapper = new BaseMapper()
+				{
+
+					@Override
+					public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField)
+					{
+						//noop; for static content
+						return new ArrayList<>();
+					}
+
+					@Override
+					public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
+					{
+						//noop; for static content
+						return new ArrayList<>();
+					}
+
+					@Override
+					public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
+					{
+						return new UserSubmissionField();
+					}
+
+				};
 				break;
 			default:
 				throw new UnsupportedOperationException(mappingType + " not supported");

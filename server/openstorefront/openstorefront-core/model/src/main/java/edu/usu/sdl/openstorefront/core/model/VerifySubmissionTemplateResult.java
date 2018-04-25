@@ -13,23 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.mapping;
+package edu.usu.sdl.openstorefront.core.model;
 
-import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
-import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 
 /**
  *
  * @author dshurtleff
  */
-public class AttributeFormMapper
-		extends BaseMapper
+public class VerifySubmissionTemplateResult
 {
 
-	@Override
-	public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, Object userSubmission)
+	private ComponentFormSet componentFormSet;
+	private ValidationResult validationResult;
+
+	public VerifySubmissionTemplateResult()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	public ComponentFormSet getComponentFormSet()
+	{
+		return componentFormSet;
+	}
+
+	public void setComponentFormSet(ComponentFormSet componentFormSet)
+	{
+		this.componentFormSet = componentFormSet;
+	}
+
+	public ValidationResult getValidationResult()
+	{
+		return validationResult;
+	}
+
+	public void setValidationResult(ValidationResult validationResult)
+	{
+		this.validationResult = validationResult;
 	}
 
 }

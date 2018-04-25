@@ -1046,7 +1046,7 @@ var CoreUtil = {
 			Ext.Array.forEach(node.children, function(node) {
 				//deep copy of parents for recursive call
 				CoreUtil.traverseNestedModel(node, JSON.parse(JSON.stringify(parents)), target);
-			})
+			});
 		}
 	},
 	saveAdvancedComponentSearch: function(componentId) {

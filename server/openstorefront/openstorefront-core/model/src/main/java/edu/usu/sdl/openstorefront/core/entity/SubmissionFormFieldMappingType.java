@@ -33,9 +33,8 @@ public class SubmissionFormFieldMappingType
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String FIELD = "FIELD";
+	public static final String COMPONENT = "COMPONENT";
 	public static final String COMPLEX = "COMPLEX";
-	public static final String ATTRIBUTE = "ATTRIBUTE";
 	public static final String SUBMISSION = "SUBMISSION";
 	public static final String NONE = "NONE";
 
@@ -48,9 +47,8 @@ public class SubmissionFormFieldMappingType
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(FIELD, newLookup(SubmissionFormFieldMappingType.class, FIELD, "Field"));
+		codeMap.put(COMPONENT, newLookup(SubmissionFormFieldMappingType.class, COMPONENT, "Field"));
 		codeMap.put(COMPLEX, newLookup(SubmissionFormFieldType.class, COMPLEX, "Complex"));
-		codeMap.put(ATTRIBUTE, newLookup(SubmissionFormFieldType.class, ATTRIBUTE, "Attribute"));
 		codeMap.put(SUBMISSION, newLookup(SubmissionFormFieldType.class, SUBMISSION, "Submission"));
 		codeMap.put(NONE, newLookup(SubmissionFormFieldType.class, NONE, "None"));
 		return codeMap;

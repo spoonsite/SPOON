@@ -33,7 +33,8 @@ public class SubmissionTemplateStatus
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String VALID = "VALID";
+	public static final String VERIFIED = "VERIFIED";
+	public static final String PENDING_VERIFICATION = "PENDING_VERIFICATION";
 	public static final String INCOMPLETE = "INCOMPLETE";
 
 	@SuppressWarnings({"squid:S1186"})
@@ -45,7 +46,8 @@ public class SubmissionTemplateStatus
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(VALID, newLookup(SubmissionFormFieldType.class, VALID, "Valid"));
+		codeMap.put(VERIFIED, newLookup(SubmissionFormFieldType.class, VERIFIED, "Verfied"));
+		codeMap.put(PENDING_VERIFICATION, newLookup(SubmissionFormFieldType.class, PENDING_VERIFICATION, "Pending Verification"));
 		codeMap.put(INCOMPLETE, newLookup(SubmissionFormFieldType.class, INCOMPLETE, "Incomplete"));
 		return codeMap;
 	}

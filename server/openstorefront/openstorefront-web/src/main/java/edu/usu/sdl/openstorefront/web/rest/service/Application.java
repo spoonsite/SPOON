@@ -454,14 +454,14 @@ public class Application
 		DBLogRecord logEndExample = new DBLogRecord();
 		logEndExample.setEventDts(TimeUtil.endOfDay(filterQueryParams.getEnd()));
 
-		QueryByExample queryByExample = new QueryByExample(logRecordExample);
+		QueryByExample<DBLogRecord> queryByExample = new QueryByExample<>(logRecordExample);
 
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		SpecialOperatorModel<DBLogRecord> specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(logStartExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(logEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);

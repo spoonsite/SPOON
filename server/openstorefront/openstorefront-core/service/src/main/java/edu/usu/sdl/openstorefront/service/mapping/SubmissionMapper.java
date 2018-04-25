@@ -15,10 +15,24 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
+ * This is is expected to create child components
  *
  * @author dshurtleff
  */
@@ -26,10 +40,108 @@ public class SubmissionMapper
 		extends BaseMapper
 {
 
-	@Override
-	public ComponentAll mapField(ComponentAll componentAll, SubmissionFormField submissionField, Object userSubmission)
+	private static final Logger LOG = Logger.getLogger(ComplexMapper.class.getName());
+	private ObjectMapper objectMapper;
+
+	public SubmissionMapper()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		super();
+		objectMapper = StringProcessor.defaultObjectMapper();
+	}
+
+	public SubmissionMapper(ObjectMapper objectMapper)
+	{
+		this.objectMapper = objectMapper;
+	}
+
+	@Override
+	public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
+			throws MappingException
+	{
+		List<ComponentAll> childComponents = new ArrayList<>();
+
+		if (userSubmissionField != null) {
+			try {
+				//Note: entry type is assume to be set in the data
+				//Assume media is all correctly handled and transfered.
+				//UI can leverage the mapping cabilities to help create the records.
+				//From this angle there is a lot ambiguities.
+				childComponents = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentAll>>()
+				{
+				});
+
+			} catch (IOException ex) {
+				String value = userSubmissionField.getRawValue();
+
+				if (LOG.isLoggable(Level.FINER)) {
+					LOG.log(Level.FINER, "Field Mapping exception", ex);
+				}
+
+				MappingException mappingException = new MappingException("Unable to map form field to entry.");
+				mappingException.setFieldLabel(submissionField.getLabel());
+				mappingException.setFieldName(submissionField.getFieldName());
+				mappingException.setMappingType(submissionField.getMappingType());
+				mappingException.setRawValue(value);
+				throw mappingException;
+			}
+		}
+
+		return childComponents;
+	}
+
+	@Override
+	public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	{
+		UserSubmissionField userSubmissionField = new UserSubmissionField();
+
+		userSubmissionField.setTemplateFieldId(submissionField.getFieldId());
+
+		try {
+			String childComponents = objectMapper.writeValueAsString(componentFormSet.getChildren());
+			userSubmissionField.setRawValue(childComponents);
+
+			//pull all media
+			userSubmissionField.setMedia(new ArrayList<>());
+			for (ComponentAll componentAll : componentFormSet.getChildren()) {
+				addComponentMedia(componentAll, userSubmissionField);
+				addComponentResources(componentAll, userSubmissionField);
+			}
+
+		} catch (IOException ex) {
+			if (LOG.isLoggable(Level.FINER)) {
+				LOG.log(Level.FINER, "Field Mapping exception", ex);
+			}
+
+			MappingException mappingException = new MappingException("Unable to map entry to form field.");
+			mappingException.setFieldLabel(submissionField.getLabel());
+			mappingException.setFieldName(submissionField.getFieldName());
+			mappingException.setMappingType(submissionField.getMappingType());
+			throw mappingException;
+		}
+
+		return userSubmissionField;
+	}
+
+	private void addComponentMedia(ComponentAll componentAll, UserSubmissionField userSubmissionField)
+	{
+		for (ComponentMedia media : componentAll.getMedia()) {
+			if (media.getFile() != null) {
+				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
+				userSubmissionMedia.setFile(media.getFile());
+				userSubmissionField.getMedia().add(userSubmissionMedia);
+			}
+		}
+	}
+
+	private void addComponentResources(ComponentAll componentAll, UserSubmissionField userSubmissionField)
+	{
+		for (ComponentResource resource : componentAll.getResources()) {
+			if (resource.getFile() != null) {
+				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
+				userSubmissionMedia.setFile(resource.getFile());
+				userSubmissionField.getMedia().add(userSubmissionMedia);
+			}
+		}
 	}
 
 }

@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
-import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import java.text.MessageFormat;
@@ -51,7 +50,7 @@ public class SecurityUtil
 
 	public static final String USER_CONTEXT_KEY = "USER_CONTEXT";
 
-	private static final ThreadLocal<AtomicBoolean> systemUser = new ThreadLocal<>();
+	private static final ThreadLocal<AtomicBoolean> SYSTEMUSER = new ThreadLocal<>();
 
 	/**
 	 * Is the current request logged in
@@ -118,7 +117,7 @@ public class SecurityUtil
 	 */
 	public static void initSystemUser()
 	{
-		systemUser.set(new AtomicBoolean(true));
+		SYSTEMUSER.set(new AtomicBoolean(true));
 	}
 
 	/**
@@ -128,10 +127,10 @@ public class SecurityUtil
 	 */
 	public static boolean isSystemUser()
 	{
-		if (systemUser.get() == null) {
+		if (SYSTEMUSER.get() == null) {
 			return false;
 		} else {
-			return systemUser.get().get();
+			return SYSTEMUSER.get().get();
 		}
 	}
 
@@ -216,11 +215,7 @@ public class SecurityUtil
 	public static boolean isCurrentUserTheOwner(StandardEntity entity)
 	{
 		if (entity != null) {
-			if (entity instanceof Component) {
-				return getCurrentUserName().equals(((Component) entity).findOwnerUsername());
-			} else {
-				return getCurrentUserName().equals(entity.getCreateUser());
-			}
+			return getCurrentUserName().equals(entity.entityOwner());
 		} else {
 			return false;
 		}

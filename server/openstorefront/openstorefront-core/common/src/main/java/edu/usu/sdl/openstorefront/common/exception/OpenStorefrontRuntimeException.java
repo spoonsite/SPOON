@@ -27,6 +27,8 @@ public class OpenStorefrontRuntimeException
 		extends RuntimeException
 {
 
+	private static final long serialVersionUID = 1L;
+
 	private String potentialResolution;
 	private String errorTypeCode;
 
@@ -43,9 +45,8 @@ public class OpenStorefrontRuntimeException
 		this.potentialResolution = potentialResolution;
 		this.errorTypeCode = errorTypeCode;
 	}
-	
-	// <editor-fold desc="chained construtors" defaultstate="collapsed">
 
+	// <editor-fold desc="chained construtors" defaultstate="collapsed">
 	public OpenStorefrontRuntimeException()
 	{
 		this((String) null);

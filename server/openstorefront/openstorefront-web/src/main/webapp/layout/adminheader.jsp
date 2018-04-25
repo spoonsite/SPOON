@@ -93,6 +93,13 @@
 				}
 			});	
 			dataMenu.push({
+				text: 'Partial Submissions',
+				permission: 'ADMIN-USER-SUBMISSIONS',
+				handler: function(){
+					actionLoadContent('Partial-Submissions');
+				}
+			});	
+			dataMenu.push({
 				text: 'Help',
 				menu: {
 					items: [

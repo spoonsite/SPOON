@@ -53,23 +53,15 @@ public class SubmissionFormField
 
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@ValidValueType(value = {}, lookupClass = SubmissionFormFieldType.class)
 	@FK(SubmissionFormFieldType.class)
 	private String fieldType;
 
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@ValidValueType(value = {}, lookupClass = SubmissionFormFieldMappingType.class)
 	@FK(SubmissionFormFieldMappingType.class)
 	private String mappingType;
-
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
-	@Sanitize(TextSanitizer.class)
-	@APIDescription("Typically should match existing entity name")
-	private String entityName;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
@@ -80,6 +72,12 @@ public class SubmissionFormField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(CleanKeySanitizer.class)
 	private String attributeType;
+
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = RelationshipType.class)
+	@FK(RelationshipType.class)
+	@APIDescription("This is used with child entries to determine the type of relationsip")
+	private String relationshipType;
 
 	@ConsumeField
 	private String subSubmissionTemplateId;
@@ -117,6 +115,11 @@ public class SubmissionFormField
 	private Boolean allowHTMLInComment;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(TextSanitizer.class)
+	private String childEntryType;
+
+	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(TextSanitizer.class)
 	private String commentLabel;
@@ -141,7 +144,6 @@ public class SubmissionFormField
 
 		this.setAllowHTMLInComment(submissionFormField.getAllowHTMLInComment());
 		this.setCommentLabel(submissionFormField.getCommentLabel());
-		this.setEntityName(submissionFormField.getEntityName());
 		this.setFieldName(submissionFormField.getFieldName());
 		this.setFieldOrder(submissionFormField.getFieldOrder());
 		this.setFieldType(submissionFormField.getFieldType());
@@ -173,16 +175,6 @@ public class SubmissionFormField
 	public void setMappingType(String mappingType)
 	{
 		this.mappingType = mappingType;
-	}
-
-	public String getEntityName()
-	{
-		return entityName;
-	}
-
-	public void setEntityName(String entityName)
-	{
-		this.entityName = entityName;
 	}
 
 	public String getFieldName()
@@ -333,6 +325,26 @@ public class SubmissionFormField
 	public void setStaticContent(String staticContent)
 	{
 		this.staticContent = staticContent;
+	}
+
+	public String getChildEntryType()
+	{
+		return childEntryType;
+	}
+
+	public void setChildEntryType(String childEntryType)
+	{
+		this.childEntryType = childEntryType;
+	}
+
+	public String getRelationshipType()
+	{
+		return relationshipType;
+	}
+
+	public void setRelationshipType(String relationshipType)
+	{
+		this.relationshipType = relationshipType;
 	}
 
 }
