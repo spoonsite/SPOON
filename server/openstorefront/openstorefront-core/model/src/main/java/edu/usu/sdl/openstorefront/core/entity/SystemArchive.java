@@ -48,7 +48,7 @@ public class SystemArchive
 	private String archiveId;
 
 	@ConsumeField
-	private Boolean includeRelatedEntities; // add a getter ande setter and set appropriateley in the section below
+	private Boolean includeRelatedEntities;
 
 	@ConsumeField
 	@NotNull
