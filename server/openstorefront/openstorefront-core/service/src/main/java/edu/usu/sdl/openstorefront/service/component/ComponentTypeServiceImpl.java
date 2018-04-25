@@ -258,7 +258,7 @@ public class ComponentTypeServiceImpl
 
 					//remove restrictions
 					AttributeType attributeTypeExample = new AttributeType();
-					List<AttributeType> allAttributes = attributeTypeExample.findByExample();
+					List<AttributeType> allAttributes = attributeTypeExample.findByExampleProxy();
 					for (AttributeType attributeType : allAttributes) {
 
 						boolean addToUpdate = false;
@@ -283,7 +283,7 @@ public class ComponentTypeServiceImpl
 						}
 
 						if (addToUpdate) {
-							componentService.getAttributeServicePrivate().performSaveAttributeType(attributeType);
+							persistenceService.persist(attributeType);
 						}
 
 					}
