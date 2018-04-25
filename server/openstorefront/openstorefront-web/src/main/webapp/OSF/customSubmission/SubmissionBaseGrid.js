@@ -18,9 +18,9 @@
 /* global Ext */
 
 Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
-	extend: 'Ext.panel.Grid',
+	extend: 'Ext.grid.Panel',
 	
-	submissionTemplateData: {
+	fieldTemplate: {
 		fieldType: null,
 		mappingType: 'COMPLEX',
 		questionNumber: null,
@@ -28,6 +28,73 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 		labelTooltip: null,
 		required: null
 	},
+	columnLines: true,
+	frame: true,
+	width: '100%',
+	maxWidth: 1024,	
+	store: {},
+	listeners: {
+		selectionchange: function (selectionModel, records, opts) {
+		
+			var deleteButton = this.queryById('deleteBtn');
+			var editButton = this.queryById('editBtn');
+
+			if (records.length > 0) {
+				editButton.setDisabled(false);
+				deleteButton.setDisabled(false);
+			} else {
+				editButton.setDisabled(true);
+				deleteButton.setDisabled(true);
+			}
+		}
+	},	
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'top',
+			items: [
+				{
+					text: 'Add',
+					iconCls: 'fa fa-lg fa-plus icon-button-color-save',
+					handler: function () {
+
+						var grid = this.up('grid');
+						grid.actionAddEdit();
+					}
+				},
+				{
+					text: 'Edit',
+					iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+					disabled: true,
+					itemId: 'editBtn',
+					handler: function () {
+
+						var grid = this.up('grid');
+						grid.actionAddEdit(grid.getSelection()[0]);						
+					}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Delete',
+					iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
+					disabled: true,
+					itemId: 'deleteBtn',
+					handler: function () {
+
+						var grid = this.up('grid');
+						grid.store.remove(grid.getSelection()[0]);
+
+						var deleteButton = grid.queryById('deleteBtn');
+						var editButton = grid.queryById('editBtn');
+						editButton.setDisabled(true);
+						deleteButton.setDisabled(true);
+					}
+				}
+			]
+		}
+	],
 	
 	initComponent: function () {
 		var submissionGrid = this;
@@ -39,24 +106,24 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 		var submissionGrid = this;
 		
 		var questionNumber = null;
-		if (submissionGrid.submissionTemplateData.questionNumber) {
+		if (submissionGrid.fieldTemplate.questionNumber) {
 			questionNumber = {
 				xtype: 'tbtext',
-				text: submissionGrid.submissionTemplateData.questionNumber,
+				text: submissionGrid.fieldTemplate.questionNumber,
 				cls: 'submission-question-number'
 			};
 		}
 		
 		var label = null;
-		if (submissionGrid.submissionTemplateData.label) {
+		if (submissionGrid.fieldTemplate.label) {
 			var tooltip = '';
-			if (submissionGrid.submissionTemplateData.labelTooltip) {
-				tooltip = ' <i class="fa fa-lg fa-question-circle"  data-qtip="'+submissionGrid.submissionTemplateData.labelTooltip+'"></i>';
+			if (submissionGrid.fieldTemplate.labelTooltip) {
+				tooltip = ' <i class="fa fa-lg fa-question-circle"  data-qtip="'+submissionGrid.fieldTemplate.labelTooltip+'"></i>';
 			}
 			
 			label = {
 				xtype: 'tbtext',
-				text: submissionGrid.submissionTemplateData.label + tooltip,
+				text: submissionGrid.fieldTemplate.label + tooltip,
 				cls: 'submission-label'
 			};
 		}		
@@ -69,12 +136,12 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 				items: []
 			};
 			if (questionNumber) {
-				toolbar.push(questionNumber);
+				toolbar.items.push(questionNumber);
 			}
 			if (label) {
-				toolbar.push(label);
+				toolbar.items.push(label);
 			}			
-			submissionGrid.addDock(toolbar);
+			submissionGrid.addDocked(toolbar, 0);
 		}			
 	},
 	

@@ -21,9 +21,13 @@
 
 Ext.define('OSF.customSubmission.form.Contacts', {
 	extend: 'Ext.form.Panel',
+	alias: 'widget.osf-submissionform-contact',
 	
 	layout: 'anchor',
 	bodyStyle: 'padding: 10px',
+	defaults: {
+		width: '100%'
+	},
 	
 	initComponent: function () {
 		this.callParent();
@@ -39,8 +43,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					allowBlank: false,
 					margin: '0 0 5 0',
 					editable: false,
-					typeAhead: false,
-					width: 450,
+					typeAhead: false,					
 					fieldLabel: 'Contact Type <span class="field-required" />',
 					storeConfig: {
 						url: 'api/v1/resource/lookuptypes/ContactType',
@@ -55,8 +58,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					xtype: 'StandardComboBox',
 					name: 'organization',
 					allowBlank: false,
-					margin: '0 0 5 0',
-					width: 450,
+					margin: '0 0 5 0',					
 					fieldLabel: 'Organization <span class="field-required" />',
 					forceSelection: false,
 					valueField: 'description',
@@ -68,8 +70,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					xtype: 'StandardComboBox',
 					name: 'firstName',
 					allowBlank: false,
-					margin: '0 0 5 0',
-					width: 450,
+					margin: '0 0 5 0',					
 					fieldLabel: 'First Name  <span class="field-required" />',
 					forceSelection: false,
 					valueField: 'firstName',
@@ -104,7 +105,6 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					name: 'lastName',
 					allowBlank: false,
 					margin: '0 0 5 0',
-					width: 450,
 					fieldLabel: 'Last Name <span class="field-required" />',
 					forceSelection: false,
 					valueField: 'lastName',
@@ -137,8 +137,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				{
 					xtype: 'textfield',
 					fieldLabel: 'Email <span class="field-required" />',
-					labelWidth: 80,
-					width: 400,
+					labelWidth: 80,	
 					margin: '15 0 0 0',
 					maxLength: '255',
 					allowBlank: false,
@@ -151,18 +150,15 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					fieldLabel: 'Phone <span class="field-required" />',
 					allowBlank: false,
 					labelWidth: 80,
-					width: 400,
 					maxLength: '120',
 					margin: '15 0 10 0',
 					name: 'phone'
 				},
 				{
-					xtype: 'SecurityComboBox',
-					itemId: 'securityMarkings'					
+					xtype: 'SecurityComboBox'					
 				},
 				{
-					xtype: 'DataSensitivityComboBox',
-					width: 450
+					xtype: 'DataSensitivityComboBox'
 				}
 			]
 		);

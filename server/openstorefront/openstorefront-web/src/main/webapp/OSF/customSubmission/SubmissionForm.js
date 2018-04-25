@@ -21,6 +21,12 @@
 Ext.define('OSF.customSubmission.SubmissionForm', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-submissionform',
+	requires: [
+		'OSF.customSubmission.Section'
+	],
+
+	scrollable: true,
+	layout: 'card',
 
 	initComponent: function () {
 		var submissionForm = this;
@@ -70,7 +76,19 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 			name: 'Review Submission',
 			instructions: 'Review submission and submit for approval',
 			review: true
-		});			
+		});
+		
+		//create sections
+		var sectionComponents = [];
+		Ext.Array.each(submissionForm.template.sections, function(section){
+			var sectionComponent = Ext.create('OSF.customSubmission.Section', {				
+			});
+			sectionComponent.load(section, submissionFormTemplate, userSubmission);
+			
+			section.component = sectionComponent;
+			sectionComponents.push(sectionComponents);
+		});
+		submissionForm.add(sectionComponents);
 		
 		submissionForm.displayCurrentSection();
 						
@@ -78,15 +96,13 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 	},
 	
 	displayCurrentSection: function() {
-		var submissionForm = this;
-		console.log(submissionForm.currentSection);
-		//display Name (optional)
-		//display instruction
-		
-		//render section
+		var submissionForm = this;		
 		var section = submissionForm.template.sections[submissionForm.currentSection];
-		submissionForm.update('<h1>' + section.name + '</h1>');
+		submissionForm.setActiveItem(section.component);	
 		
+		if (submissionForm.progressCallback) {
+			submissionForm.progressCallback(submissionForm.currentSection, submissionForm.template.sections.length);
+		}
 	},
 	
 	getSections: function() {
@@ -94,9 +110,9 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		return submissionForm.template.sections;
 	},
 	
-	getCurrentSectionTitle: function() {
+	getCurrentSection: function() {
 		var submissionForm = this;
-		return submissionForm.template.sections[submissionForm.currentSection].name;
+		return submissionForm.template.sections[submissionForm.currentSection];
 	},
 	
 	hasNextSection: function() {

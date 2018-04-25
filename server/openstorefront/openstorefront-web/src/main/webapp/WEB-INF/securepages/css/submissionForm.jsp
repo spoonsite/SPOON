@@ -25,3 +25,18 @@ limitations under the License.
 	font-weight: bold;
 	font-size: 14px;
 }
+
+.submission-section {
+}
+
+.submission-section-title {
+	font-weight: bold;
+	text-align: center;
+	font-size: 24px;
+	padding-bottom: 10px;
+}
+
+.submission-instructions {
+	font-size: 16px;
+	font-style: italic;
+}

@@ -38,6 +38,24 @@
 								instructions: 'This is section 1',
 								stepOrder: 0,
 								fields: [
+									{
+										fieldId: 1,
+										questionNumber: 'Q-1.',
+										label: 'Select and add attributes to your entry.',
+										labelTooltip: 'Attributes are metadata that describe your entry',
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'ATTRIBUTE_MULTI'
+									},
+									{
+										fieldId: 2,
+										questionNumber: 'Q-2.',
+										label: 'Add Contacts to Entry.',
+										labelTooltip: 'Contacts to entry',
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'CONTACT_MULTI'											
+									}
 								]										
 							},
 							{
@@ -59,7 +77,7 @@
 						]
 					},
 					'test'
-				)
+				);
 			
 				
 			});			

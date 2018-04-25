@@ -22,6 +22,7 @@
 
 Ext.define('OSF.customSubmission.form.Attributes', {
 	extend: 'Ext.form.Panel',
+	alias: 'widget.osf-submissionform-attribute',
 	
 	layout: 'anchor',
 	bodyStyle: 'padding: 10px',

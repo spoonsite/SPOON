@@ -28,7 +28,12 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 	items: [
 		{
 			xtype: 'osf-submissionform',
-			itemId: 'submissionForm'
+			itemId: 'submissionForm',
+			progressCallback: function(currentSectionIndex, totalSections) {
+				submissionFormFullControl = this.up('panel');
+				var total = totalSections - 1;
+				submissionFormFullControl.queryById('progress').updateProgress( currentSectionIndex / total);
+			}
 		}
 	],	
 	dockedItems: [
@@ -36,6 +41,18 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			xtype: 'toolbar',
 			dock: 'top',
 			items: [
+				{
+					xtype: 'tbtext',
+					text: 'Progress:'
+				},
+				{
+					xtype: 'progressbar',
+					itemId: 'progress',
+					width: '30%',
+					maxWidth: 300,
+					animate: true,
+					textTpl: '{[Math.round(values.value*100)]} %'
+				},
 				{
 					xtype: 'tbfill'
 				},
@@ -117,8 +134,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		submissionFormFullControl.setLoading(true);
 		var form = submissionFormFullControl.queryById('submissionForm');
 		submissionFormFullControl.handleInitEvent();
-		form.remoteLoadTemplate(submissionTemplateId, entryType, userSubmissionId);
-		
+		form.remoteLoadTemplate(submissionTemplateId, entryType, userSubmissionId);		
 
 	},
 	
@@ -133,6 +149,14 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		}
 		if (form.hasNextSection()) {
 			submissionFormFullControl.queryById('nextSection').setDisabled(false);					
+		}
+		var section = form.getCurrentSection();
+		if (section && section.review) {
+			submissionFormFullControl.queryById('save').setHidden(true);
+			submissionFormFullControl.queryById('submitApproval').setHidden(false);
+		} else {
+			submissionFormFullControl.queryById('save').setHidden(false);
+			submissionFormFullControl.queryById('submitApproval').setHidden(true);
 		}		
 	},
 	
@@ -161,7 +185,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 				});				
 				submissionFormFullControl.queryById('sectionNav').getMenu().add(sectionMenu);
 				submissionFormFullControl.checkNextPrevious();
-				
+								
 			};
 		}		
 		form.on('ready', submissionFormFullControl.initHandler);

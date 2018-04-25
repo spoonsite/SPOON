@@ -21,14 +21,71 @@
 
 Ext.define('OSF.customSubmission.Section', {
 	extend: 'Ext.form.Panel',
-	items: [],
-	sectionTitle: '',
-	scrollable: true,
+	alias: 'widget.osf-submissionform-section',
+	requires: [
+		'OSF.customSubmission.field.AttributesGrid',
+		'OSF.customSubmission.field.ContactsGrid',
+		'OSF.customSubmission.form.*'
+	],
+	
+	width: '100%',
+	showSectionName: true,
+	bodyStyle: 'padding: 20px;',
+	layout: 'anchor',
 	
 	initComponent: function () {
 		var section = this;
 		section.callParent();
 	},
+	
+	load: function(sectionData, template, userSubmission) {
+		
+		var section = this;
+		
+		var itemsToAdd = [];
+		if (section.showSectionName) {
+			itemsToAdd.push({
+				xtype: 'panel',
+				width: '100%',
+				data: sectionData,
+				tpl: new Ext.XTemplate(
+					'<div class="submission-section-title">{name}</div>'
+				)
+			});		
+		}
+		itemsToAdd.push({
+				xtype: 'panel',
+				width: '100%',
+				margin: '0 0 20 0',
+				data: sectionData,
+				tpl: new Ext.XTemplate(
+					'<div class="submission-instructions">{instructions}</div>'
+				)
+		});
+		
+		Ext.Array.each(sectionData.fields, function(field){
+			
+			switch(field.fieldType) {
+				case 'ATTRIBUTE_MULTI':
+					itemsToAdd.push({
+						xtype: 'osf-submissionform-attributegrid',
+						fieldTemplate: field,
+						margin: '0 0 20 0'
+					});
+				break;	
+				case 'CONTACT_MULTI':
+					itemsToAdd.push({
+						xtype: 'osf-submissionform-contactgrid',
+						fieldTemplate: field,
+						margin: '0 0 20 0'
+					});
+				break;	
+
+			}			
+		});
+				
+		section.add(itemsToAdd);
+	},		
 	
 	getUserValues: function () {
 		var data = [];
@@ -39,4 +96,5 @@ Ext.define('OSF.customSubmission.Section', {
 		});
 		return data;
 	}
+	
 });
