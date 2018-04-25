@@ -52,16 +52,77 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 			cls: 'floating-menu-button',
 			handler: function() {
 
-				// // add a field after the current and set as active
-				var formBuilderPanel = this.up('[itemId=floatingMenu]').getFormBuilderPanel();
-				var fieldIndex = formBuilderPanel.itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
-				var newFormBuilderItem = Ext.create({
-					xtype: 'osf-formbuilderitem',
-					formBuilderPanel: formBuilderPanel
-				});
+				var button = this;
+				var disabledUp = false;
+				var disabledDown = false;
+				var formBuilderPanel = button.up('[itemId=floatingMenu]').getFormBuilderPanel();
+				
+				var popupMenu = Ext.create('Ext.menu.Menu', {
+					floating: true,
+					defaults: {
+						listeners: {
+							click: function () {
+								this.up('menu').handleFieldItemCreation(this.fieldType, formBuilderPanel);
+							}
+						}
+					},
+					items: [
+						{
+							text: 'Short Answer',
+							iconCls: 'fa fa-minus fa-2x',
+							fieldType: 'shortAnswer'
+						},
+						{
+							text: 'Paragraph',
+							iconCls: 'fa fa-align-left fa-2x',
+							fieldType: 'longAnswer'
+						},
+						{
+							xtype: 'menuseparator'
+						},
+						{
+							text: 'Multiple Choice',
+							iconCls: 'fa fa-dot-circle-o fa-2x',
+							fieldType: 'radio'
+						},
+						{
+							text: 'Checkboxes',
+							iconCls: 'fa fa-check-square-o fa-2x',
+							fieldType: 'checkbox'
+						},
+						{
+							text: 'Dropdown',
+							iconCls: 'fa fa-chevron-circle-down fa-2x',
+							fieldType: 'combo'
+						},
+						{
+							xtype: 'menuseparator'
+						},
+						{
+							text: 'Grid',
+							iconCls: 'fa fa-table fa-2x',
+							fieldType: 'grid'
+						},
+						{
+							text: 'Form',
+							iconCls: 'fa fa-file-text-o fa-2x',
+							fieldType: 'form'
+						}
+					],
+					handleFieldItemCreation: function (fieldType, formBuilderPanel) {
+						// add a field after the current and set as active
+						var fieldIndex = formBuilderPanel.itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
+						var newFormBuilderItem = Ext.create({
+							xtype: 'osf-formbuilderitem',
+							formBuilderPanel: formBuilderPanel,
+							fieldType: fieldType,
+						});
 
-				formBuilderPanel.itemContainer.insert(fieldIndex+1, newFormBuilderItem);
-				newFormBuilderItem.setActiveFormItem(newFormBuilderItem);
+						formBuilderPanel.itemContainer.insert(fieldIndex + 1, newFormBuilderItem);
+						newFormBuilderItem.setActiveFormItem(newFormBuilderItem);
+					}
+				});
+				popupMenu.showAt(button.getXY());
 			}
 		},
 		{

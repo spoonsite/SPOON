@@ -78,6 +78,7 @@ Ext.define('OSF.customSubmissionTool.Window', {
 		var csfWindow = this;
 
 		if (!csfWindow.formBuilderPanel) {
+			console.log("TEMPLATE RECORD: ", csfWindow.recordItem);
 			csfWindow.formBuilderPanel = Ext.create('OSF.customSubmissionTool.FormBuilderPanel', {
 				templateRecord: csfWindow.recordItem
 			});

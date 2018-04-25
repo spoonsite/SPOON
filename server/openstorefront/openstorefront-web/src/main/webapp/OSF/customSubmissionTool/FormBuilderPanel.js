@@ -63,6 +63,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		this.callParent();
 		var formBuilderPanel = this;
 
+		console.log("FORM BUILDER PANEL : ", this);
+
 		formBuilderPanel.queryById('tools').add(
 			[
 				{
@@ -101,12 +103,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 					fieldItems: [
 						{
 							question: 'Question #1',
-							formBuilderPanel: formBuilderPanel
-						},
-						{
-							question: 'Question #2',
-							formBuilderPanel: formBuilderPanel
-						}
+							formBuilderPanel: formBuilderPanel,
+							// fieldType: 'checkbox',
+							labelCode: 'WOO'
+						}//,
+						// {
+						// 	question: 'Question #2',
+						// 	formBuilderPanel: formBuilderPanel
+						// }
 					]
 				},
 				{
@@ -127,28 +131,95 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 			];
 		}
 
-		// utils for easily adding/removing sections to the templateRecord
-		formBuilderPanel.templateRecord.sections.add = function (newSection) {
-			formBuilderPanel.templateRecord.sections.push(newSection);
-			formBuilderPanel.sectionPanel.updateNavList();
-			formBuilderPanel.activeItem = null;
-			formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[formBuilderPanel.templateRecord.sections.length - 1]);
-		};
-		formBuilderPanel.templateRecord.sections.remove = function (section) {
-			var sectionId = section.sectionId || section;
-			Ext.Array.forEach(formBuilderPanel.templateRecord.sections, function (el, index) {
-				if (el.sectionId === sectionId) {
-					formBuilderPanel.templateRecord.sections.splice(index, 1);
-				}
-			});
-			formBuilderPanel.sectionPanel.updateNavList();
-			formBuilderPanel.activeItem = null;
-			formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
-		};
-
 		// loads the first section in the tempateRecord
 		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
 
 		formBuilderPanel.sectionPanel.updateNavList();
+	},
+
+	/**
+	 * Adds a section to the templateRecord, then loads the newly created section
+	 */
+	addSection: function (newSection) {
+
+		var formBuilderPanel = this;
+
+		formBuilderPanel.templateRecord.sections.push(newSection);
+		formBuilderPanel.sectionPanel.updateNavList();
+		formBuilderPanel.activeItem = null;
+		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[formBuilderPanel.templateRecord.sections.length - 1]);
+	},
+
+	removeSection: function (section) {
+
+		var formBuilderPanel = this;
+
+		var sectionId = section.sectionId || section;
+		Ext.Array.forEach(formBuilderPanel.templateRecord.sections, function (el, index) {
+			if (el.sectionId === sectionId) {
+				formBuilderPanel.templateRecord.sections.splice(index, 1);
+			}
+		});
+		formBuilderPanel.sectionPanel.updateNavList();
+		formBuilderPanel.activeItem = null;
+		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
+	},
+
+	/**
+	 * Saves the section by:
+	 * 	1) updates the section's name and instructions
+	 * 	2) retreiving all physical items from the display panel
+	 * 	3) then updates the active section's fieldItems
+	 */
+	saveSection: function (sectionId) {
+
+		var formBuilderPanel = this;
+		var displayPanel = this.query('osf-csf-displaypanel')[0];
+		var sectionFormValues = displayPanel.queryById('sectionContainer').getForm().getFieldValues();
+
+		var navNeedsUpdate = false;
+
+		if (formBuilderPanel.activeSection) {
+
+			if (formBuilderPanel.activeSection.name !== sectionFormValues.name) {
+
+				navNeedsUpdate = true;
+			}
+
+			formBuilderPanel.activeSection.name = sectionFormValues.name || displayPanel.untitledSectionName;
+			formBuilderPanel.activeSection.instructions = sectionFormValues.instructions || '';
+
+			if (navNeedsUpdate) {
+
+				formBuilderPanel.sectionPanel.updateNavList();
+			}
+
+			// update the activeSection (this saves the section!)
+			formBuilderPanel.activeSection.fieldItems = formBuilderPanel.getSection();
+		}
+	},
+
+	getSection: function (sectionId) {
+
+		var formBuilderPanel = this;
+		if (sectionId) {
+			// look up specific section...
+		}
+		else {
+			var items = formBuilderPanel.queryById('itemContainer').getRefItems();
+			var dataItems = [];
+
+			Ext.Array.forEach(items, function (el, index) {
+
+				dataItems.push({
+					question: el.question,
+					fieldType: el.fieldType,
+					labelCode: el.labelCode,
+					mappedTo: el.mappedTo
+				});
+			});
+
+			return dataItems;
+		}
 	}
 });
