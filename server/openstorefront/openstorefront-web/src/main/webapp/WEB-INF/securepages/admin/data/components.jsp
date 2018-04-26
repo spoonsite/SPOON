@@ -1388,14 +1388,14 @@
 									allowBlank: false,
 									name: 'componentType',
 									width: '100%',
-									valueField: 'componentType',
+									valueField: 'code',
 									queryMode: 'local',
-									displayField: 'label',
+									displayField: 'description',
 									store: {
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
-											url: 'api/v1/resource/componenttypes'
+											url: 'api/v1/resource/componenttypes/lookup'
 										}
 									}
 								}
@@ -1411,79 +1411,37 @@
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
 
-												// Get Selection
-												var selection = Ext.getCmp('componentGrid').getSelection();
+												// Get selected component ids for components that need updated
+												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
+													return item.getData().componentId;
+												});
 
-												// Get Number Of Selected
-												var selected = componentGrid.getSelectionModel().getCount();
+												var componentType = this.up('form').getForm().findField('componentType').getValue();
 
-												// Get Calling Window
-												var ownerWindow = this.up('window');
-
-												// Get Form
-												var form = this.up('form');
-
-												// Get Chosen Username
-												var componentType = form.getForm().findField('componentType').getValue();
-
-												// Inform User Of Update Process
 												componentGrid.mask('Updating Type(s)...');
+												this.up('window').close();
 
-												// Close Form Window
-												ownerWindow.close();
+												Ext.Ajax.request({
+													url: 'api/v1/resource/components/componenttype/' + componentType,
+													method: 'PUT',
+													jsonData: {
+														ids: componentIds
+													},
+													success: function (response, opts) {
+														
+														if (response.error) {
 
-												// Initialize Update Counter
-												var componentUpdateCount = 0;
-
-												// Loop Through Selected Components
-												for (i = 0; i < selected; i++) {
-
-													// Store Component ID
-													var componentId = selection[i].get('componentId');
-
-													// Build Initial Request Data
-													var requestData = {
-
-														component: selection[i].data,
-														attributes: [ ]
-													};
-
-													// Modify Component Type
-													requestData.component.componentType = componentType;
-
-													// Make Request
-													Ext.Ajax.request({
-
-														url: 'api/v1/resource/components/' + componentId,
-														method: 'PUT',
-														jsonData: requestData,
-														success: function(response, opts) {
-
-															// Check For Errors
-															if (response.responseText.indexOf('errors') !== -1) {
-
-																// Provide Error Notification
-																Ext.toast('An Entry Failed To Update', 'Error');
-
-																// Provide Log Information
-																console.log(response);
-															}
-
-															// Check If We Are On The Final Request
-															if (++componentUpdateCount === selected) {
-
-																// Provide Success Notification
-																Ext.toast('All Entries Have Been Processed', 'Success');
-
-																// Refresh Grid
-																actionRefreshComponentGrid();
-
-																// Unmask Grid
-																componentGrid.unmask();
-															}
+															Ext.toast('An Entry Failed To Update', 'Error');
+															console.log(response.error);
 														}
-													});
-												}
+														else {
+
+															Ext.toast('All Entries Have Been Processed', 'Success');
+															actionRefreshComponentGrid();
+															componentGrid.unmask();
+														}
+													}
+												});
 											}
 										},
 										{
@@ -1858,8 +1816,8 @@
 									emptyText: 'All',
 									fieldLabel: 'Entry Type',
 									name: 'componentType',
-									valueField: 'componentType',
-									displayField: 'label',
+									valueField: 'code',
+									displayField: 'description',
 									typeAhead: false,
 									matchFieldWidth: false,
 									editable: false,
@@ -1869,7 +1827,7 @@
 										}
 									},
 									storeConfig: {
-										url: 'api/v1/resource/componenttypes',
+										url: 'api/v1/resource/componenttypes/lookup',
 										model: undefined,
 										fields: [
 											'componentType',

@@ -122,11 +122,12 @@ public class ComponentSearchView
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
 		view.setComponentType(component.getComponentType());
-		view.setComponentTypeDescription(TranslateUtil.translateComponentType(component.getComponentType()));
 		view.setDataSource(component.getDataSource());
 		view.setDataSensitivity(component.getDataSensitivity());
-
+		
 		Service service = ServiceProxyFactory.getServiceProxy();
+		view.setComponentTypeDescription(service.getComponentService().getComponentTypeParentsString(component.getComponentType(), Boolean.TRUE));
+
 		view.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		view.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
 		view.setIncludeIconInSearch(service.getComponentService().resolveComponentTypeIncludeIconInSearch(component.getComponentType()));

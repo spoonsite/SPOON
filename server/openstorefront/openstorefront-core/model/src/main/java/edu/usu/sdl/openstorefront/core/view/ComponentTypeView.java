@@ -40,6 +40,7 @@ public class ComponentTypeView
 	private ComponentTypeTemplateResolution template;
 	private ComponentTypeUserResolution users;
 	private ComponentTypeRoleResolution roles;
+	private String parentLabel;
 
 	public static ComponentTypeView toView(ComponentType componentType)
 	{
@@ -54,6 +55,7 @@ public class ComponentTypeView
 		view.setTemplate(service.getComponentService().findTemplateForComponentType(componentType.getComponentType()));
 		view.setUsers(service.getComponentService().findUserForComponentType(componentType.getComponentType()));
 		view.setRoles(service.getComponentService().findRoleGroupsForComponentType(componentType.getComponentType()));
+		view.setParentLabel(service.getComponentService().getComponentTypeParentsString(componentType.getComponentType(), true));
 		return view;
 	}
 
@@ -64,6 +66,16 @@ public class ComponentTypeView
 			views.add(ComponentTypeView.toView(componentType));
 		});
 		return views;
+	}
+
+	public String getParentLabel()
+	{
+		return parentLabel;
+	}
+
+	public void setParentLabel(String parentLabel)
+	{
+		this.parentLabel = parentLabel;
 	}
 
 	public ComponentTypeTemplateResolution getTemplate()

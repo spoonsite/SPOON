@@ -138,6 +138,10 @@
 		<div>			
 			${line.component.getSecurityMarkingType()!}			
 		</div>
+
+		<div>
+			Entry Type: <b>${line.component.getComponentTypeLabel()!}</b>
+		</div>
 			
 		<#if line.component.tags?has_content && reportOptions.displayTags>
 			<div>
@@ -216,7 +220,11 @@
 						<td><b>${resource.resourceTypeDesc!}</b></td>
 						<td>${resource.description!}</td>
 						<td>${resource.link!}</td>
-						<td>${resource.restricted!}</td>
+						<#if resource.restricted??>
+							<td>${resource.restricted?then("Yes", "No")}</td>
+						<#else>
+							<td></td>
+						</#if>
 					</tr>
 				</#list>
 			</table>

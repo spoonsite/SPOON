@@ -34,10 +34,13 @@ import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
@@ -181,6 +184,36 @@ public class ComponentTypeServiceImpl
 		return childModels;
 	}
 
+	private void resetComponentParent(ComponentType componentType)
+	{
+		componentType.setParentComponentType(null);
+		ComponentType componentTypeTemp = persistenceService.findById(ComponentType.class, componentType.getComponentType());
+		componentTypeTemp.setParentComponentType(null);
+		persistenceService.persist(componentTypeTemp);
+	}
+
+	// check that
+	// 1. no orphans (i.e. parent does not exist)
+	// 2. a component is not a parent of itself
+	private void fixOrphans(List<ComponentType> componentTypes)
+	{
+		Set<String> typeSet = componentTypes.stream()
+				.map(ComponentType::getComponentType)
+				.collect(Collectors.toSet());
+
+		for (ComponentType componentTypeA : componentTypes) {
+			// if parent of itself
+			if (componentTypeA.getParentComponentType() != null
+					&& componentTypeA.getParentComponentType().equals(componentTypeA.getComponentType())) {
+				resetComponentParent(componentTypeA);
+
+			} else if (componentTypeA.getParentComponentType() != null
+					&& !typeSet.contains(componentTypeA.getParentComponentType())) {
+				resetComponentParent(componentTypeA);
+			}
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<ComponentType> getAllComponentTypes()
 	{
@@ -191,6 +224,7 @@ public class ComponentTypeServiceImpl
 		} else {
 			ComponentType componentType = new ComponentType();
 			componentTypes = componentType.findByExample();
+			fixOrphans(componentTypes);
 			element = new Element(OSFCacheManager.ALLCODE_KEY, componentTypes);
 			OSFCacheManager.getComponentTypeCache().put(element);
 		}
@@ -264,14 +298,14 @@ public class ComponentTypeServiceImpl
 	{
 		//remove restrictions
 		AttributeType attributeTypeExample = new AttributeType();
-		List<AttributeType> allAttributes = attributeTypeExample.findByExample();
+		List<AttributeType> allAttributes = attributeTypeExample.findByExampleProxy();
 		for (AttributeType attributeType : allAttributes) {
 
 			boolean updateAttributeBasedOnRequired = removeTypeRequiredAttributeToRemove(attributeType, componentType);
 			boolean updateAttributeBasedOnOptional = removeTypeOptionalAttributeToRemove(attributeType, componentType);
 
 			if (updateAttributeBasedOnRequired || updateAttributeBasedOnOptional) {
-				componentService.getAttributeService().saveAttributeType(attributeType, false);
+				persistenceService.persist(attributeType);
 			}
 
 		}
@@ -283,7 +317,7 @@ public class ComponentTypeServiceImpl
 		if (attributeType.getOptionalRestrictions() != null && !attributeType.getOptionalRestrictions().isEmpty()) {
 			for (int i = attributeType.getOptionalRestrictions().size() - 1; i >= 0; i--) {
 				String checkType = attributeType.getOptionalRestrictions().get(i).getComponentType();
-				if (checkType.equals(componentType)) {
+				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
 					attributeType.getOptionalRestrictions().remove(i);
 					updateAttribute = true;
 				}
@@ -298,7 +332,7 @@ public class ComponentTypeServiceImpl
 		if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 			for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
 				String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
-				if (checkType.equals(componentType)) {
+				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
 					attributeType.getRequiredRestrictions().remove(i);
 					updateAttribute = true;
 				}
@@ -769,6 +803,58 @@ public class ComponentTypeServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id passed: " + componentId);
 		}
 		return component;
+	}
+
+	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
+	{
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		ComponentType currentComponentType = findComponentType(componentTypes, componentTypeId);
+
+		List<ComponentType> componentTypeParents = new ArrayList<>();
+
+		if (currentComponentType != null && currentComponentType.getParentComponentType() != null) {
+			do {
+				currentComponentType = findComponentType(componentTypes, currentComponentType.getParentComponentType());
+
+				if (currentComponentType != null) {
+					componentTypeParents.add(currentComponentType);
+				}
+			} while (currentComponentType != null && currentComponentType.getParentComponentType() != null);
+
+			if (reverseOrder) {
+				Collections.reverse(componentTypeParents);
+			}
+		}
+
+		return componentTypeParents;
+	}
+
+	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder)
+	{
+		List<ComponentType> componentTypes = getAllComponentTypes();
+		ComponentType typeLocal = findComponentType(componentTypes, componentTypeId);
+
+		if (typeLocal == null) {
+			return componentTypeId;
+		}
+
+		List<ComponentType> parentChildComponentTypes = new ArrayList<>();
+
+		List<ComponentType> parentComponentTypes = getComponentTypeParents(componentTypeId, reverseOrder);
+
+		if (reverseOrder) {
+			parentChildComponentTypes.addAll(parentComponentTypes);
+			parentChildComponentTypes.add(typeLocal);
+		} else {
+			parentChildComponentTypes.add(typeLocal);
+			parentChildComponentTypes.addAll(parentComponentTypes);
+		}
+
+		String labels = parentChildComponentTypes.stream()
+				.map(t -> t.getLabel())
+				.collect(Collectors.joining(reverseOrder ? " > " : " < "));
+
+		return labels;
 	}
 
 }
