@@ -34,11 +34,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	},
 
 	isActive: false,
-	templateRecord: undefined,
-	fieldType: null,
-	mappedTo: null,
-	question: null,
-	labelCode: null,
 	
 	items: [
 		{
@@ -48,7 +43,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				align: 'center'
 			},
 			height: '20%',
-			// style: 'background: cyan',
 			items: [
 				{
 					xtype: 'textfield',

@@ -32,14 +32,20 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 		this.queryById('itemContainer').add(item);
 
 	},
+
+	/**
+	 * Create an formBuilderItem given the sectionItem's data
+	 * @param sectionItem - data representation of a form item
+	 */
 	createItem: function (sectionItem) {
 
-		return Ext.create({
-			xtype: 'osf-formbuilderitem',
-			question: sectionItem.question,
-			labelCode: sectionItem.labelCode,
-			fieldType: sectionItem.fieldType
-		});
+		var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
+		return Ext.create(
+			Ext.apply(
+				formBuilderPanel.generateSectionObject(sectionItem),
+				{xtype: 'osf-formbuilderitem'}
+			)
+		);
 	},
 
 	/**

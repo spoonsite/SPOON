@@ -56,6 +56,44 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		}
 	],
 
+	fieldTypeMapping: [
+		{
+			fieldType: 'shortAnswer',
+			mapping: []
+		},
+		{
+			fieldType: 'longAnswer',
+			mapping: []
+		},
+		{
+			fieldType: 'radio',
+			mapping: []
+		},
+		{
+			fieldType: 'checkbox',
+			mapping: []
+		},
+		{
+			fieldType: 'combo',
+			mapping: []
+		},
+		{
+			fieldType: 'grid',
+			mapping: []
+		},
+		{
+			fieldType: 'form',
+			mapping: []
+		}
+	],
+
+	validSectionItems: [
+		'question',
+		'fieldType',
+		'labelCode',
+		'mappedTo'
+	],
+
 	templateRecord: undefined,
 
 	initComponent: function () {
@@ -139,6 +177,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 
 	/**
 	 * Adds a section to the templateRecord, then loads the newly created section
+	 * @param newSection - the section to be added
 	 */
 	addSection: function (newSection) {
 
@@ -150,6 +189,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[formBuilderPanel.templateRecord.sections.length - 1]);
 	},
 
+	/**
+	 * Deletes a section physically and from the templateRecord (then reassigns the active section to the first in the list)
+	 * @param sectionId - provide to specify the section
+	 */
 	removeSection: function (section) {
 
 		var formBuilderPanel = this;
@@ -171,7 +214,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 	 * 	2) retreiving all physical items from the display panel
 	 * 	3) then updates the active section's fieldItems
 	 */
-	saveSection: function (sectionId) {
+	saveSection: function () {
 
 		var formBuilderPanel = this;
 		var displayPanel = this.query('osf-csf-displaypanel')[0];
@@ -199,6 +242,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		}
 	},
 
+	/**
+	 * Get a specific section or the currently active section.
+	 * @param sectionId - provide to specify the section
+	 */
 	getSection: function (sectionId) {
 
 		var formBuilderPanel = this;
@@ -209,17 +256,28 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 			var items = formBuilderPanel.queryById('itemContainer').getRefItems();
 			var dataItems = [];
 
+			
 			Ext.Array.forEach(items, function (el, index) {
-
-				dataItems.push({
-					question: el.question,
-					fieldType: el.fieldType,
-					labelCode: el.labelCode,
-					mappedTo: el.mappedTo
-				});
+				
+				dataItems.push(formBuilderPanel.generateSectionObject(el));
 			});
 
 			return dataItems;
 		}
+	},
+
+	/**
+	 * Given a complex or simple object, will convert it into an object that only contains the fields needed for a section.
+	 * @param sectionItem - complex/simple object representation of a section item
+	 */
+	generateSectionObject: function (sectionItem) {
+
+		var resultSection = {};
+		var formBuilderPanel = this;
+		Ext.Array.forEach(formBuilderPanel.validSectionItems, function (item, index) {
+			resultSection[item] = sectionItem[item];
+		});
+
+		return resultSection;
 	}
 });
