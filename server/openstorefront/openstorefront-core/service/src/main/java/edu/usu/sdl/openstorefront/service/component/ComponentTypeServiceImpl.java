@@ -834,12 +834,7 @@ public class ComponentTypeServiceImpl
 		List<ComponentType> componentTypes = getAllComponentTypes();
 		ComponentType typeLocal = findComponentType(componentTypes, componentTypeId);
 
-		if (typeLocal == null) {
-			return componentTypeId;
-		}
-
 		List<ComponentType> parentChildComponentTypes = new ArrayList<>();
-
 		List<ComponentType> parentComponentTypes = getComponentTypeParents(componentTypeId, reverseOrder);
 
 		if (reverseOrder) {
