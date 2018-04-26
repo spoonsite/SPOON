@@ -467,7 +467,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 		var topicButtonHandler = function (newTab, item) {
 
 			var desc = item.description;
-			var descriptionText = '<h3>' + item.label + '</h3>';
+			var descriptionText = '<h3>' + item.parentLabel + '</h3>';
 			if (desc)
 			{
 				descriptionText += '<hr>' + desc;
@@ -524,7 +524,7 @@ Ext.define('OSF.component.SearchToolWindow', {
 							xtype: 'button',
 							cls: 'list-button',
 							height: 50,
-							text: item.label,
+							text: item.parentLabel,
 							desc: item.description,
 							width: '100%',
 							handler: function () {

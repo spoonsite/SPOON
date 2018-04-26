@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -150,7 +151,11 @@ public class ComponentTypeResource
 				-> {
 			LookupModel lookupModel = new LookupModel();
 			lookupModel.setCode(type.getComponentType());
-			lookupModel.setDescription(type.getLabel());
+
+			String labels = service.getComponentService().getComponentTypeParentsString(type.getComponentType(), Boolean.TRUE);
+
+			lookupModel.setDescription(labels);
+
 			lookups.add(lookupModel);
 		});
 		lookups.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
