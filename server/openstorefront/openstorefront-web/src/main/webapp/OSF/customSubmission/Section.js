@@ -26,6 +26,7 @@ Ext.define('OSF.customSubmission.Section', {
 		'OSF.customSubmission.field.AttributesGrid',
 		'OSF.customSubmission.field.ContactsGrid',
 		'OSF.customSubmission.SubmissionFormWrapper',
+		'OSF.customSubmission.field.DependenciesGrid',
 		'OSF.customSubmission.field.Text'
 	],
 	
@@ -111,6 +112,33 @@ Ext.define('OSF.customSubmission.Section', {
 						xtype: 'osf-submissionform-contactgrid'						
 					}));
 				break;	
+				case 'EXT_DEPEND':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-formwrapper',
+						actualForm: {
+							xtype: 'osf-submissionform-dependency'
+						}						
+					}));
+				break;					
+				case 'EXT_DEPEND_MULTI':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-dependencygrid'						
+					}));
+				break;
+				case 'MEDIA':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-formwrapper',
+						actualForm: {
+							xtype: 'osf-submissionform-dependency'
+						}						
+					}));
+				break;					
+				case 'MEDIA_MULTI':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-dependencygrid'						
+					}));
+				break;			
+				
 				case 'TEXT':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-text',

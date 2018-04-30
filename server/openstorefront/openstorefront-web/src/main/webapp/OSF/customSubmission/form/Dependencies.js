@@ -21,9 +21,18 @@
 
 Ext.define('OSF.customSubmission.form.Dependencies', {
 	extend: 'Ext.form.Panel',
+	xtype: 'osf-submissionform-dependency',
 		
 	layout: 'anchor',
-	bodyStyle: 'padding: 10px',	
+	bodyStyle: 'padding: 10px;',
+	fieldType: 'EXT_DEPEND',
+
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},
 	
 	initComponent: function () {
 		this.callParent();
@@ -34,7 +43,6 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 				xtype: 'textfield',
 				fieldLabel: 'Name <span class="field-required" />',									
 				allowBlank: false,	
-				width: 450,								
 				maxLength: '255',
 				name: 'dependencyName',
 				colName: 'name'
@@ -44,7 +52,6 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 				fieldLabel: 'Version <span class="field-required" />',									
 				allowBlank: false,								
 				maxLength: '255',
-				width: 450,
 				name: 'version'
 			},
 			{
@@ -52,7 +59,6 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 				fieldLabel: 'External Link',															
 				emptyText: 'http://dependency.com/download',									
 				maxLength: '255',
-				width: 450,
 				name: 'dependancyReferenceLink',
 				colName: 'externalLink'
 			},
@@ -60,7 +66,6 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 				xtype: 'textfield',
 				fieldLabel: 'Comment',																											
 				maxLength: '255',
-				width: 450,
 				name: 'comment'
 			},
 			{

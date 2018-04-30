@@ -30,12 +30,12 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 	fieldType: 'CONTACT_MULTI',
 	
 	columns: [
-		{ text: 'Position', dataIndex: 'contactTypeLabel', width: 200 },
+		{ text: 'Contact Type', dataIndex: 'contactTypeLabel', width: 200 },
 		{ text: 'Organization', dataIndex: 'organization', width: 200 },
 		{ text: 'First Name', dataIndex: 'firstName', width: 200 },
 		{ text: 'Last Name', dataIndex: 'lastName', width: 200 },
 		{ text: 'Email', dataIndex: 'email', width: 200 },
-		{ text: 'Phone', dataIndex: 'phone', width: 200 },
+		{ text: 'Phone', dataIndex: 'phone', flex: 1, minWidth: 150 },
 		{ text: 'Security Marking', dataIndex: 'securityMarking', width: 200, hidden: true },
 		{ text: 'Data Sensitivity', dataIndex: 'dataSensitivity', width: 200, hidden: true }
 	],
@@ -73,8 +73,6 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
-//										data.typeLabel = CoreService.attributeservice.translateType(data.type);
-//										data.codeLabel = CoreService.attributeservice.translateCode(data.type, data.code);
 										
 										grid.getStore().add(data);
 										this.up('window').close();

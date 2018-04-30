@@ -34,7 +34,7 @@
 						sections: [
 							{
 								stepId: 1,
-								name: 'Section 1',
+								name: 'Section 1 - Grids',
 								instructions: 'This is section 1',
 								stepOrder: 0,
 								fields: [
@@ -57,37 +57,55 @@
 										fieldType: 'CONTACT_MULTI'											
 									},
 									{
-										fieldId: 3,
+										fieldId: 5,
 										questionNumber: 'Q-3.',
+										label: 'Add Dependencies to Entry.',
+										labelTooltip: 'Dependencies to entry',
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'EXT_DEPEND_MULTI'											
+									}
+									
+								]										
+							},
+							{
+								stepId: 2,
+								name: 'Section 2 - Forms',
+								instructions: 'This is section 2',
+								stepOrder: 0,
+								fields: [
+									{
+										fieldId: 3,
+										questionNumber: 'Q-10.',
 										label: 'Add Tech Point of Contact',										
 										mappingType: 'COMPLEX',
 										required: true,
 										fieldType: 'CONTACT'											
 									},
 									{
-										fieldId: 3,
-										questionNumber: 'Q-4.',
+										fieldId: 6,
+										questionNumber: 'Q-11.',
+										label: 'Add Dependancy',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'EXT_DEPEND'											
+									}									
+								]										
+							},
+							{
+								stepId: 3,
+								name: 'Section 3 - Fields',
+								instructions: 'This is section 3',
+								stepOrder: 0,
+								fields: [
+									{
+										fieldId: 4,
+										questionNumber: 'Q-20.',
 										label: 'Entry Name',										
 										mappingType: 'COMPONENT',
 										required: true,
 										fieldType: 'TEXT'										
 									}
-								]										
-							},
-							{
-								stepId: 2,
-								name: 'Section 2',
-								instructions: 'This is section 2',
-								stepOrder: 0,
-								fields: [
-								]										
-							},
-							{
-								stepId: 3,
-								name: 'Section 3',
-								instructions: 'This is section 3',
-								stepOrder: 0,
-								fields: [
 								]										
 							}							
 						]
