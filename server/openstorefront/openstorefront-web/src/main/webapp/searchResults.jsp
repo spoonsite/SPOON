@@ -473,26 +473,24 @@
 						editable: false,
 						typeAhead: false,
 						displayField: 'label',
-						valueField: 'componentType',
-						storeConfig: {
-							autoLoad: true,
-							url: 'api/v1/resource/componenttypes',
-							sorters: [{
-								property: 'label',
-								direction: 'ASC'
-							}],
-							listeners: {
-								
-								load: function(store, records, successful, operation, eOpts) {
-									
-									store.add({label: '*All*', componentType: null});
-								}
-							}
-						},
+						valueField: 'value',
+						store: Ext.create('Ext.data.Store', {
+							fields: ['label', 'value'],
+							data: [{
+								label: '*ALL*',
+								value: null
+							}]
+						}),
+						emptyText: '*ALL*',
 						listeners: {
 							change: function(field, newValue, oldValue, opts) {
 								filterResults();
 							}	
+						},
+						addStoreItem: function (item) {
+							if (this.getStore().query('value', item.value).items.length === 0) {
+								this.getStore().add(item);
+							}
 						}
 					}),
 					{
@@ -886,13 +884,14 @@
 							}
 						});
 						
+						var filterByTypeCombo = Ext.getCmp('filterByType');
 						Ext.Object.each(stats, function(key, value, self) {
-							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + value.type + '\');SearchPage.filterResults();">' + value.count + '</a></span> <b>'+ value.typeLabel + '(s)</b> ';
+							filterByTypeCombo.addStoreItem({
+								label: '(' + value.count + ') ' + value.typeLabel,
+								value: value.type
+							});
 						});
-					
 					}
-
-					Ext.getCmp('searchStats').update(statLine);	
 				}
 				
 			};
@@ -939,12 +938,16 @@
 						var response = opts.getResponse();
 						var dataResponse = Ext.decode(response.responseText);
 						
+						var filterByTypeCombo = Ext.getCmp('filterByType');
 						Ext.Array.each(dataResponse.resultTypeStats, function(stat) {
-							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + stat.componentType + '\');SearchPage.filterResults();">' + stat.count + '</a></span> <b>'+ stat.componentTypeDescription + '(s)</b> ';
+
+							filterByTypeCombo.addStoreItem({
+								label: '(' + stat.count + ') ' + stat.componentTypeDescription,
+								value: stat.componentType
+							});
 						});
 						
 					}
-					Ext.getCmp('searchStats').update(statLine);
 				}
 				
 				//sorting Attributes
@@ -1188,13 +1191,6 @@
 					}
 				],
 				dockedItems: [
-					{
-						xtype: 'panel',
-						dock: 'top',
-						id: 'searchStats',
-						bodyStyle: 'text-align: center;',
-						html: 'Loading...'
-					},
 					{
 						xtype: 'toolbar',
 						dock: 'top',

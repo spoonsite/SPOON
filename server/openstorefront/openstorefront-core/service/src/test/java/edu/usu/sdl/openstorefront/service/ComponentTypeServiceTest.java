@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
@@ -29,8 +30,10 @@ import edu.usu.sdl.openstorefront.core.model.ComponentTypeTemplateResolution;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeUserResolution;
 import edu.usu.sdl.openstorefront.service.component.ComponentTypeServiceImpl;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -262,6 +265,74 @@ public class ComponentTypeServiceTest
 		String url = mockCore.resolveComponentTypeIcon("C");
 
 		assertEquals("test.png", url);
+	}
+
+	@Test
+	public void getComponentTypeParents()
+	{
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
+
+		List<ComponentType> componentTypes = getMockData();
+		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+
+		Mockito.when(mockCore.getComponentTypeParents("C", false)).thenCallRealMethod();
+
+		List<String> componentTypeList = mockCore.getComponentTypeParents("C", false)
+				.stream()
+				.map(ct -> ct.getComponentType())
+				.collect(Collectors.toList());
+
+		assertEquals(componentTypeList, new ArrayList<>(Arrays.asList("B", "A")));
+	}
+
+	@Test
+	public void getComponentTypeParents_noParents()
+	{
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
+
+		List<ComponentType> componentTypes = getMockData();
+		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+
+		Mockito.when(mockCore.getComponentTypeParents("A", false)).thenCallRealMethod();
+
+		List<ComponentType> componentTypeList = mockCore.getComponentTypeParents("A", false);
+
+		assertEquals(componentTypeList, new ArrayList<>());
+	}
+
+	@Test
+	public void getComponentTypeParentsString()
+	{
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
+
+		List<ComponentType> componentTypes = getMockData();
+		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+
+		Mockito.when(mockCore.getComponentTypeParentsString("C", false)).thenCallRealMethod();
+		Mockito.when(mockCore.getComponentTypeParents("C", false)).thenCallRealMethod();
+
+		Mockito.when(mockCore.getComponentTypeParentsString("C", true)).thenCallRealMethod();
+		Mockito.when(mockCore.getComponentTypeParents("C", true)).thenCallRealMethod();
+
+		String componentTypeList_notReversed = mockCore.getComponentTypeParentsString("C", false);
+		String componentTypeList_reversed = mockCore.getComponentTypeParentsString("C", true);
+
+		assertEquals("Gala < Apple < Fruit", componentTypeList_notReversed);
+		assertEquals("Fruit > Apple > Gala", componentTypeList_reversed);
+
+	}
+
+	@Test(expected = OpenStorefrontRuntimeException.class)
+	public void getComponentTypeParentsString_Invalid()
+	{
+		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
+
+		List<ComponentType> componentTypes = getMockData();
+		Mockito.when(mockCore.getAllComponentTypes()).thenReturn(componentTypes);
+
+		Mockito.when(mockCore.getComponentTypeParentsString("TEST_VALUE", true)).thenCallRealMethod();
+		Mockito.when(mockCore.getComponentTypeParents("TEST_VALUE", true)).thenCallRealMethod();
+		mockCore.getComponentTypeParentsString("TEST_VALUE", true);
 	}
 
 	private List<ComponentType> getMockData()

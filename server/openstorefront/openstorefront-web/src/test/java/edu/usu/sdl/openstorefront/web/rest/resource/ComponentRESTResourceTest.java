@@ -18,6 +18,10 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import edu.usu.sdl.openstorefront.core.api.AttributeService;
+import edu.usu.sdl.openstorefront.core.api.ComponentService;
+import edu.usu.sdl.openstorefront.core.api.LookupService;
+import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
@@ -77,11 +81,33 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	public void getComponentsTest()
 	{
 		//Arrange
+		Service service = Mockito.mock(Service.class);
+		ComponentService componentService = Mockito.mock(ComponentService.class);
+		Mockito.when(service.getComponentService()).thenReturn(componentService);
+
+		AttributeService attributeService = Mockito.mock(AttributeService.class);
+		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
+
+		LookupService lookupService = Mockito.mock(LookupService.class);
+		Mockito.when(service.getLookupService()).thenReturn(lookupService);
+
+		List<ComponentType> componentTypes = new ArrayList<>();
+		ComponentType componentType = new ComponentType();
+		componentType.setComponentType("TEST");
+		componentType.setLabel("Test");
+		componentTypes.add(componentType);
+
+		Mockito.when(componentService.getAllComponentTypes()).thenReturn(componentTypes);
+		Mockito.when(service.getPersistenceService()).thenReturn(new TestPersistenceService());
+
+		ServiceProxyFactory.setTestService(service);
+
 		List<ODocument> dbResults = new ArrayList<>();
 		// NOTE: (KB) as a general rule I don't like to mock thirdparty classes
 		// however why is ODocument exposed above the persistance service layer
 		ODocument item1 = Mockito.mock(ODocument.class);
 		Mockito.when(item1.field("componentId")).thenReturn("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
+		Mockito.when(item1.field("componentType")).thenReturn("TEST");
 		dbResults.add(item1);
 
 		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());

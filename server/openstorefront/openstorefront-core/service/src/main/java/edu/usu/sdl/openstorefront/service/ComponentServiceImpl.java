@@ -765,4 +765,15 @@ public class ComponentServiceImpl
 		return core.assignLibrarian(componentId, librarianUsername);
 	}
 
+	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
+	{
+		return type.getComponentTypeParents(componentTypeId, reverseOrder);
+	}
+
+	@Override
+	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder)
+	{
+		return type.getComponentTypeParentsString(componentTypeId, reverseOrder);
+	}
+
 }

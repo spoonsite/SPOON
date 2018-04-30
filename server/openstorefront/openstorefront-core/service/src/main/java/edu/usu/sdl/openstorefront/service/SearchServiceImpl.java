@@ -364,7 +364,7 @@ public class SearchServiceImpl
 					} else {
 						ResultTypeStat stat = new ResultTypeStat();
 						stat.setComponentType(view.getComponentType());
-						stat.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
+						stat.setComponentTypeDescription(getComponentService().getComponentTypeParentsString(view.getComponentType(), true));
 						stat.setCount(1);
 						stats.put(view.getComponentType(), stat);
 					}

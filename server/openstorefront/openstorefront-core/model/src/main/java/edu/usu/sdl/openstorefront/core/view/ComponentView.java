@@ -80,10 +80,10 @@ public class ComponentView
 		componentView.setCurrentDataOwner(component.entityOwner());
 
 		componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, componentView.getApprovalState()));
-		componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(component.getComponentType()));
 		componentView.setSecurityMarkingDescription(TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()));
-
+		
 		Service service = ServiceProxyFactory.getServiceProxy();
+		componentView.setComponentTypeLabel(service.getComponentService().getComponentTypeParentsString(component.getComponentType(), true));
 		componentView.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		componentView.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
 		componentView.setComponentTypeNestedModel(service.getComponentService().getComponentType(new ComponentTypeOptions(component.getComponentType())));

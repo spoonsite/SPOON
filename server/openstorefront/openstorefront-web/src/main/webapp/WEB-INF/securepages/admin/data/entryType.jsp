@@ -877,6 +877,21 @@
 				
 				var actionRemoveType = function() {
 					var typeToRemove = Ext.getCmp('entryGrid').getSelection()[0].get('componentType').componentType;
+					var children = Ext.getCmp('entryGrid').getStore().getRoot().store.root.childNodes;
+					//get flat list of all nodes that are not typeToRemove and its children
+					var traverseTree = function(typeCode, flatList, children) {
+						if (children.length === 0) {
+							return;
+						}
+						Ext.Array.forEach(children, function(child) {
+							if (child.data.compID !== typeCode) {
+								flatList.push(child.data.compID);
+								traverseTree(typeCode, flatList, child.childNodes);
+							}
+						})
+					}
+					flatList = [];
+					traverseTree(typeToRemove, flatList, children);
 
 					var promptWindow = Ext.create('Ext.window.Window', {
 						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
@@ -962,10 +977,11 @@
 												load: function(store, records, successful, opts) {
 													
 													store.filterBy(function(record){
-														if (record.get('code') === typeToRemove) {
-															return false;
-														} else {
+														//need to exclude itself and its children
+														if (flatList.indexOf(record.get('code')) >= 0) {
 															return true;
+														} else {
+															return false;
 														}
 													});
 												}

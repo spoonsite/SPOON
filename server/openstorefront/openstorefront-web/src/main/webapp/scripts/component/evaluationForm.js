@@ -670,7 +670,7 @@ Ext.define('OSF.component.EvaluationEntryPanel', {
 			success: function(response, opts) {
 				var componentFull = Ext.decode(response.responseText);
 				
-				evalPanel.setLoading('Loading Entry Type...');				
+				entryPanel.setLoading('Loading Entry Type...');				
 				Ext.Ajax.request({
 				url: 'api/v1/resource/componenttypes/'+ componentFull.componentType,
 				callback: function() {	
