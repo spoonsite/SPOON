@@ -30,8 +30,7 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 	},
 	columnLines: true,
 	frame: true,
-	width: '100%',
-	maxWidth: 1024,	
+	width: '100%',	
 	store: {},
 	listeners: {
 		selectionchange: function (selectionModel, records, opts) {
@@ -105,44 +104,19 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 	display: function() {
 		var submissionGrid = this;
 		
-		var questionNumber = null;
-		if (submissionGrid.fieldTemplate.questionNumber) {
-			questionNumber = {
-				xtype: 'tbtext',
-				text: submissionGrid.fieldTemplate.questionNumber,
-				cls: 'submission-question-number'
-			};
-		}
 		
-		var label = null;
-		if (submissionGrid.fieldTemplate.label) {
-			var tooltip = '';
-			if (submissionGrid.fieldTemplate.labelTooltip) {
-				tooltip = ' <i class="fa fa-lg fa-question-circle"  data-qtip="'+submissionGrid.fieldTemplate.labelTooltip+'"></i>';
-			}
-			
-			label = {
-				xtype: 'tbtext',
-				text: submissionGrid.fieldTemplate.label + tooltip,
-				cls: 'submission-label'
-			};
-		}		
-		
-		if (questionNumber || label) {
-			
-			var toolbar = {
-				xtype: 'toolbar',
-				dock: 'top',
-				items: []
-			};
-			if (questionNumber) {
-				toolbar.items.push(questionNumber);
-			}
-			if (label) {
-				toolbar.items.push(label);
-			}			
-			submissionGrid.addDocked(toolbar, 0);
-		}			
+		var toolbar = {
+			xtype: 'toolbar',
+			dock: 'top',
+			items: [
+				{
+					xtype: 'tbtext',
+					text: submissionGrid.createQuestionLabel()
+				}
+			]
+		};
+
+		submissionGrid.addDocked(toolbar, 0);
 	},
 	
 	/**

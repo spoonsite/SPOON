@@ -39,6 +39,7 @@ public class SubmissionFormFieldType
 	public static final String RADIO = "RADIO";
 	public static final String CHECKBOX = "CHECKBOX";
 	public static final String NUMBER = "NUMBER";
+	public static final String ORGANIZATION = "ORGANATION";
 	public static final String STATIC_CONTENT = "CONTENT";
 	public static final String ATTRIBUTE = "ATTRIBUTE";
 	public static final String ATTRIBUTE_MULTI = "ATTRIBUTE_MULTI";
@@ -75,6 +76,8 @@ public class SubmissionFormFieldType
 		codeMap.put(CHECKBOX, newLookup(SubmissionFormFieldType.class, CHECKBOX, "Checkbox"));
 		codeMap.put(NUMBER, newLookup(SubmissionFormFieldType.class, NUMBER, "Number"));
 		codeMap.put(STATIC_CONTENT, newLookup(SubmissionFormFieldType.class, STATIC_CONTENT, "Static Content"));
+
+		codeMap.put(ORGANIZATION, newLookup(SubmissionFormFieldType.class, ORGANIZATION, "Organization"));
 
 		codeMap.put(ATTRIBUTE, newLookup(SubmissionFormFieldType.class, ATTRIBUTE, "Attribute"));
 		codeMap.put(ATTRIBUTE_MULTI, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_MULTI, "Attribute Multiple"));

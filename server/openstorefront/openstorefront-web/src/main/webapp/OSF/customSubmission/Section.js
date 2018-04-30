@@ -25,11 +25,13 @@ Ext.define('OSF.customSubmission.Section', {
 	requires: [
 		'OSF.customSubmission.field.AttributesGrid',
 		'OSF.customSubmission.field.ContactsGrid',
-		'OSF.customSubmission.form.*'
+		'OSF.customSubmission.SubmissionFormWrapper',
+		'OSF.customSubmission.field.Text'
 	],
 	
 	width: '100%',
 	showSectionName: true,
+	scrollable: true,
 	bodyStyle: 'padding: 20px;',
 	layout: 'anchor',
 	
@@ -63,24 +65,58 @@ Ext.define('OSF.customSubmission.Section', {
 				)
 		});
 		
+		
 		Ext.Array.each(sectionData.fields, function(field){
+
+			var createQuestionLabel = function() {
+				var fullLabel = '';
+				if (field.questionNumber) {
+					fullLabel += '<span class="submission-question-number">' +field.questionNumber + '</span>  ';
+				}
+
+				if (field.label) {
+					var tooltip = '';
+					if (field.labelTooltip) {
+						tooltip = ' <i class="fa fa-lg fa-question-circle"  data-qtip="' + field.labelTooltip+'"></i>';
+					}
+					var required = field.required ? '<span class="field-required" />' : '';			
+
+					fullLabel += '<span class="submission-label">' + field.label + '</span>'
+							+ required + tooltip;
+				}	
+				return fullLabel;
+			};			
 			
+			var defaults = {
+				fieldTemplate: field,
+				createQuestionLabel: createQuestionLabel,
+				margin: '0 0 20 0'
+			};
 			switch(field.fieldType) {
 				case 'ATTRIBUTE_MULTI':
-					itemsToAdd.push({
-						xtype: 'osf-submissionform-attributegrid',
-						fieldTemplate: field,
-						margin: '0 0 20 0'
-					});
-				break;	
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-attributegrid'
+					}));
+				break;
+				case 'CONTACT':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-formwrapper',
+						actualForm: {
+							xtype: 'osf-submissionform-contact'
+						}						
+					}));
+				break;				
 				case 'CONTACT_MULTI':
-					itemsToAdd.push({
-						xtype: 'osf-submissionform-contactgrid',
-						fieldTemplate: field,
-						margin: '0 0 20 0'
-					});
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-contactgrid'						
+					}));
 				break;	
-
+				case 'TEXT':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-text',
+						labelAlign: field.labelAlign ? field.labelAlign : 'top'
+					}));
+				break;	
 			}			
 		});
 				

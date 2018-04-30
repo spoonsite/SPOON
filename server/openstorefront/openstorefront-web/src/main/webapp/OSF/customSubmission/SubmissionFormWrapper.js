@@ -15,12 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global Ext */
+/* global Ext, submissionGrid */
 
-Ext.define('OSF.customSubmission.SubmissionBaseField', {
-	extend: 'Ext.form.Panel',
+Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
+	extend: 'Ext.form.FieldSet',
+	alias: 'widget.osf-submissionform-formwrapper',
 	
-	submissionTemplateData: {
+	//Set this to the form 
+	actualForm: null,
+	
+	fieldTemplate: {
 		fieldType: null,
 		mappingType: 'COMPLEX',
 		questionNumber: null,
@@ -36,46 +40,14 @@ Ext.define('OSF.customSubmission.SubmissionBaseField', {
 	},
 	
 	display: function() {
-		var submissionField = this;
+		var submissionField = this;		
 		
-		var questionNumber = null;
-		if (submissionField.submissionTemplateData.questionNumber) {
-			questionNumber = {
-				xtype: 'tbtext',
-				text: submissionField.submissionTemplateData.questionNumber,
-				cls: 'submission-question-number'
-			};
+		submissionField.setTitle(submissionField.createQuestionLabel());
+		
+		if (submissionField.actualForm) {
+			submissionField.add(submissionField.actualForm);
 		}
-		
-		var label = null;
-		if (submissionField.submissionTemplateData.label) {
-			var tooltip = '';
-			if (submissionField.submissionTemplateData.labelTooltip) {
-				tooltip = ' <i class="fa fa-lg fa-question-circle"  data-qtip="'+submissionField.submissionTemplateData.labelTooltip+'"></i>';
-			}
-			
-			label = {
-				xtype: 'tbtext',
-				text: submissionField.submissionTemplateData.label + tooltip,
-				cls: 'submission-label'
-			};
-		}		
-		
-		if (questionNumber || label) {
-			
-			var toolbar = {
-				xtype: 'toolbar',
-				dock: 'top',
-				items: []
-			};
-			if (questionNumber) {
-				toolbar.push(questionNumber);
-			}
-			if (label) {
-				toolbar.push(label);
-			}			
-			submissionField.addDock(toolbar);
-		}			
+				
 	},
 	
 	/**
@@ -97,12 +69,12 @@ Ext.define('OSF.customSubmission.SubmissionBaseField', {
 	 */
 	getTemplateData: function() {
 		var submissionField = this;
-		return submissionField.submissionTemplateData;
+		return submissionField.fieldTemplate;
 	},
 	
 	setTemplateData: function(editData) {
 		var submissionField = this;
-		submissionField.submissionTemplateData = editData;
+		submissionField.fieldTemplate = editData;
 		submissionField.display();
 	},
 	

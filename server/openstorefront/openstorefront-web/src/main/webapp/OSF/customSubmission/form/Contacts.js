@@ -26,7 +26,10 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 	layout: 'anchor',
 	bodyStyle: 'padding: 10px',
 	defaults: {
-		width: '100%'
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
 	},
 	
 	initComponent: function () {
@@ -136,9 +139,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				},
 				{
 					xtype: 'textfield',
-					fieldLabel: 'Email <span class="field-required" />',
-					labelWidth: 80,	
-					margin: '15 0 0 0',
+					fieldLabel: 'Email <span class="field-required" />',										
 					maxLength: '255',
 					allowBlank: false,
 					regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
@@ -148,10 +149,8 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				{
 					xtype: 'textfield',
 					fieldLabel: 'Phone <span class="field-required" />',
-					allowBlank: false,
-					labelWidth: 80,
-					maxLength: '120',
-					margin: '15 0 10 0',
+					allowBlank: false,					
+					maxLength: '120',					
 					name: 'phone'
 				},
 				{

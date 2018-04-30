@@ -103,6 +103,11 @@ public class SubmissionFormField
 	private String labelTooltip;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
+	@Sanitize(TextSanitizer.class)
+	private String labelAlign;
+
+	@ConsumeField
 	private Boolean required;
 
 	@ConsumeField
@@ -149,6 +154,7 @@ public class SubmissionFormField
 		this.setFieldType(submissionFormField.getFieldType());
 		this.setLabel(submissionFormField.getLabel());
 		this.setLabelTooltip(submissionFormField.getLabelTooltip());
+		this.setLabelAlign(submissionFormField.getLabelAlign());
 		this.setMappingType(submissionFormField.getMappingType());
 		this.setRequireComment(submissionFormField.getRequireComment());
 		this.setRequired(submissionFormField.getRequired());
@@ -345,6 +351,16 @@ public class SubmissionFormField
 	public void setRelationshipType(String relationshipType)
 	{
 		this.relationshipType = relationshipType;
+	}
+
+	public String getLabelAlign()
+	{
+		return labelAlign;
+	}
+
+	public void setLabelAlign(String labelAlign)
+	{
+		this.labelAlign = labelAlign;
 	}
 
 }

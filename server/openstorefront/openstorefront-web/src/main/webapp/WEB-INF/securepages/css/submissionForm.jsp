@@ -19,11 +19,13 @@ limitations under the License.
 .submission-question-number {
 	font-weight: bold;
 	font-size: 14px;
+	color: black;
 }
 
 .submission-label {
 	font-weight: bold;
 	font-size: 14px;
+	color: black;
 }
 
 .submission-section {

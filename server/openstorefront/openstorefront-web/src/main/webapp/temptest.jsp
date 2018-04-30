@@ -44,7 +44,7 @@
 										label: 'Select and add attributes to your entry.',
 										labelTooltip: 'Attributes are metadata that describe your entry',
 										mappingType: 'COMPLEX',
-										required: true,
+										required: false,
 										fieldType: 'ATTRIBUTE_MULTI'
 									},
 									{
@@ -55,6 +55,22 @@
 										mappingType: 'COMPLEX',
 										required: true,
 										fieldType: 'CONTACT_MULTI'											
+									},
+									{
+										fieldId: 3,
+										questionNumber: 'Q-3.',
+										label: 'Add Tech Point of Contact',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'CONTACT'											
+									},
+									{
+										fieldId: 3,
+										questionNumber: 'Q-4.',
+										label: 'Entry Name',										
+										mappingType: 'COMPONENT',
+										required: true,
+										fieldType: 'TEXT'										
 									}
 								]										
 							},

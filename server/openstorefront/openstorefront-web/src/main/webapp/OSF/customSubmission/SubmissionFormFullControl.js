@@ -32,7 +32,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			progressCallback: function(currentSectionIndex, totalSections) {
 				submissionFormFullControl = this.up('panel');
 				var total = totalSections - 1;
-				submissionFormFullControl.queryById('progress').updateProgress( currentSectionIndex / total);
+				submissionFormFullControl.queryById('progress').updateProgress(currentSectionIndex / total, (currentSectionIndex + 1) + ' / ' + totalSections, true);
 			}
 		}
 	],	
@@ -51,7 +51,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					width: '30%',
 					maxWidth: 300,
 					animate: true,
-					textTpl: '{[Math.round(values.value*100)]} %'
+					textTpl: '0 / 0'
 				},
 				{
 					xtype: 'tbfill'
