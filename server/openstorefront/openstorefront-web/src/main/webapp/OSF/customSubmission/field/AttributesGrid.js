@@ -48,7 +48,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 			title: 'Add/Edit Attribute',
 			modal: true,
 			width: 800,
-			height: 200,
+			height: 255,
 			closeMode: 'destroy',
 			layout: 'fit',
 			items: [

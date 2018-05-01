@@ -64,7 +64,25 @@
 										mappingType: 'COMPLEX',
 										required: true,
 										fieldType: 'EXT_DEPEND_MULTI'											
-									}
+									},
+									{
+										fieldId: 6,
+										questionNumber: 'Q-4.',
+										label: 'Add Media (Images, Video...etc).',
+										labelTooltip: 'This media will show in the media view of the entry.',
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'MEDIA_MULTI'											
+									},
+									{
+										fieldId: 6,
+										questionNumber: 'Q-5.',
+										label: 'Add Relationships',
+										labelTooltip: 'Describe relationships to existing items.',
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'RELATIONSHIPS_MULTI'											
+									}									
 									
 								]										
 							},
@@ -75,8 +93,16 @@
 								stepOrder: 0,
 								fields: [
 									{
-										fieldId: 3,
+										fieldId: 10,
 										questionNumber: 'Q-10.',
+										label: 'Add Attribute',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'ATTRIBUTE'											
+									},
+									{
+										fieldId: 10,
+										questionNumber: 'Q-11.',
 										label: 'Add Tech Point of Contact',										
 										mappingType: 'COMPLEX',
 										required: true,
@@ -84,12 +110,29 @@
 									},
 									{
 										fieldId: 6,
-										questionNumber: 'Q-11.',
+										questionNumber: 'Q-12.',
 										label: 'Add Dependancy',										
 										mappingType: 'COMPLEX',
 										required: true,
 										fieldType: 'EXT_DEPEND'											
+									},
+									{
+										fieldId: 6,
+										questionNumber: 'Q-13.',
+										label: 'Add Media',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'MEDIA'											
+									},
+									{
+										fieldId: 6,
+										questionNumber: 'Q-14.',
+										label: 'Add Relationship',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'RELATIONSHIPS'											
 									}									
+									
 								]										
 							},
 							{

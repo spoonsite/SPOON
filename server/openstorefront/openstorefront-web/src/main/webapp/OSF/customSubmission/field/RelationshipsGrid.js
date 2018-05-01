@@ -16,12 +16,86 @@
  * See NOTICE.txt for more information.
  */
 
-/* Author Brigham Michaelis */
+/* Author: Brigham Michaelis */
 
 /* global Ext */
 
 Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
-	extend: 'OSF.customSubmission.BaseGrid',
-	formPanel: 'Relationships',
-	title: 'Relationships'
+	extend: 'OSF.customSubmission.SubmissionBaseGrid',
+	xtype: 'osf-submissionform-relationshipgrid',
+	requires: [
+		'OSF.customSubmission.form.Relationships'
+	],
+	
+	title: '',
+	fieldType: 'RELATIONSHIPS_MULTI',
+	
+	columns: [
+		{ text: 'Relation Type', dataIndex: 'relationType', width: 250 },
+		{ text: 'Entry Name', dataIndex: 'targetName', flex: 1, minWidth: 200 },
+		{ text: 'Entry Type', dataIndex: 'targetEntryType', width: 250 }
+	],
+	
+	actionAddEdit: function(record) {
+		var grid = this;
+		
+		var addEditWin = Ext.create('Ext.window.Window', {
+			title: 'Add/Edit Relationship',
+			modal: true,
+			width: 800,
+			height: 310,
+			closeMode: 'destroy',
+			layout: 'fit',
+			items: [
+				{
+					xtype: 'osf-submissionform-relationships',
+					itemId: 'form',
+					scrollable: true,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Save',
+									formBind: true,
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+									handler: function () {
+										var form = this.up('form');
+										var data = form.getValues();
+										
+										//get Target Name
+										
+										//get target Entry Type
+										
+										
+										grid.getStore().add(data);
+										this.up('window').close();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+									handler: function () {
+										this.up('window').close();												
+									}
+								}								
+							]
+						}
+					]
+				}
+			]
+			
+		});
+		addEditWin.show();
+		
+		if (record) {
+			addEditWin.queryById('form').loadRecord(record);
+		}		
+		
+	}	
+	
 });

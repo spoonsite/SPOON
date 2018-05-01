@@ -27,6 +27,13 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 	layout: 'anchor',
 	bodyStyle: 'padding: 10px',
 	
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},	
+	
 	initComponent: function(){
 		this.callParent();
 		var attributePanel = this;
@@ -37,9 +44,6 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				itemId: 'attributeTypeCB',
 				fieldLabel: 'Attribute Type <span class="field-required" />',
 				name: 'type',
-				labelWidth: 120,
-				labelAlign: 'left',
-				labelSeparator: '',
 				forceSelection: true,
 				queryMode: 'local',
 				editable: true,
@@ -130,8 +134,6 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				allowBlank: false,
 				valueField: 'code',
 				displayField: 'label',
-				labelAlign: 'left',
-				labelSeparator: '',
 				width: '100%',
 				listConfig: {
 					getInnerTpl: function () {

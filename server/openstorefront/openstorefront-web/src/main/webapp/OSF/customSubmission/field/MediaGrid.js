@@ -50,7 +50,7 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 		var grid = this;
 		
 		var addEditWin = Ext.create('Ext.window.Window', {
-			title: 'Add/Edit Contact',
+			title: 'Add/Edit Media',
 			modal: true,
 			width: 800,
 			height: 600,
@@ -58,7 +58,7 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 			layout: 'fit',
 			items: [
 				{
-					xtype: 'osf-submissionform-contact',
+					xtype: 'osf-submissionform-media',
 					itemId: 'form',
 					scrollable: true,
 					dockedItems: [

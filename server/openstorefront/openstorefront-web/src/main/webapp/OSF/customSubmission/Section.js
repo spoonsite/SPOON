@@ -27,6 +27,8 @@ Ext.define('OSF.customSubmission.Section', {
 		'OSF.customSubmission.field.ContactsGrid',
 		'OSF.customSubmission.SubmissionFormWrapper',
 		'OSF.customSubmission.field.DependenciesGrid',
+		'OSF.customSubmission.field.MediaGrid',
+		'OSF.customSubmission.field.RelationshipsGrid',
 		'OSF.customSubmission.field.Text'
 	],
 	
@@ -94,6 +96,14 @@ Ext.define('OSF.customSubmission.Section', {
 				margin: '0 0 20 0'
 			};
 			switch(field.fieldType) {
+				case 'ATTRIBUTE':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-formwrapper',
+						actualForm: {
+							xtype: 'osf-submissionform-attribute'
+						}						
+					}));
+				break;				
 				case 'ATTRIBUTE_MULTI':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-attributegrid'
@@ -129,15 +139,28 @@ Ext.define('OSF.customSubmission.Section', {
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
-							xtype: 'osf-submissionform-dependency'
+							xtype: 'osf-submissionform-media'
 						}						
 					}));
 				break;					
 				case 'MEDIA_MULTI':
 					itemsToAdd.push(Ext.apply(defaults, {
-						xtype: 'osf-submissionform-dependencygrid'						
+						xtype: 'osf-submissionform-mediagrid'						
 					}));
-				break;			
+				break;				
+				case 'RELATIONSHIPS':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-formwrapper',
+						actualForm: {
+							xtype: 'osf-submissionform-relationships'
+						}						
+					}));
+				break;					
+				case 'RELATIONSHIPS_MULTI':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-relationshipgrid'						
+					}));
+				break;				
 				
 				case 'TEXT':
 					itemsToAdd.push(Ext.apply(defaults, {
