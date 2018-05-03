@@ -258,12 +258,14 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						tools.getComponent('removeBtn').setDisabled(false);
 						tools.getComponent('tool-approveBtn').setDisabled(false);
 						tools.getComponent('messageBtn').setDisabled(false);
+						tools.getComponent('commentBtn').setDisabled(false);
 					} else {
 						tools.getComponent('editBtn').setDisabled(true);
 						tools.getComponent('unsubmitBtn').setDisabled(true);
 						tools.getComponent('removeBtn').setDisabled(true);
 						tools.getComponent('tool-approveBtn').setDisabled(true);
 						tools.getComponent('messageBtn').setDisabled(true);
+						tools.getComponent('commentBtn').setDisabled(true);
 					}
 
 					//load preview
@@ -338,6 +340,25 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							handler: function(){ 
 								var changeRequestComponentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
 								changeRequestWindow.editChangeRequest(changeRequestComponentId, this.up('grid').getSelectionModel().getSelection()[0]);								
+							}
+						}, // Change
+						{
+							text: 'Comment',
+							itemId: 'commentBtn',
+							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+							disabled: true,
+							handler: function(){
+								var commentWindow = Ext.create('Ext.window.Window', {
+									closeAction: 'destroy', // this might break future stuff!					
+									id: 'commentWindowId',
+									title: 'Add Comment',
+									iconCls: 'fa fa-lg fa-user',
+									width: '35%',
+									height: 350, 
+									y: 200,
+									modal: true,
+									layout: 'fit',
+								}).show();
 							}
 						},
 						{

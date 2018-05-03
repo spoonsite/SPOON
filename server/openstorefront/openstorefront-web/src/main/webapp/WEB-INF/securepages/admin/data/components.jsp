@@ -56,6 +56,7 @@
 			Ext.require('OSF.form.EntryReviews');
 			Ext.require('OSF.form.OldEvaluationSummary');
 			Ext.require('OSF.form.Tags');
+			Ext.require('OSF.form.Comments'); // Change
 
 
 				//Add/Edit forms ------>
@@ -87,8 +88,6 @@
 				});
 
 				//Sub Forms
-
-
 				var handleAttributes = function(componentType, loadingForm) {
 										
 					loadingForm.setLoading(true);
@@ -109,8 +108,6 @@
 						}
 					});					
 				};
-
-
 
 				var allComponentTypes = [];
 				Ext.Ajax.request({
@@ -722,12 +719,8 @@
 					return mainAddEditWin;
 				};
 
-
-
-
-			//MAIN GRID -------------->
-				var versionViewTemplate = new Ext.XTemplate(
-				);
+				//MAIN GRID -------------->
+				var versionViewTemplate = new Ext.XTemplate();
 
 				Ext.Ajax.request({
 					url: 'Router.action?page=shared/entrySimpleViewTemplate.jsp',
@@ -1225,13 +1218,88 @@
 					approveWin.show();					
 				};
 				
+				// Change
+				var toggleWin = Ext.create('Ext.window.Window',{
+					id: 'toggleWin',
+					title: 'Toggle Comment',
+					iconCls: 'fa fa-lg fa-edit',
+					width: '35%',
+					height: 350,
+					y: 200,
+					modal: true,
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'changeOwnerForm',
+							bodyStyle: 'padding: 10px',
+							items: [
+								{
+									xtype: 'textarea',
+									fieldLabel: 'Optional Comments',
+									labelAlign: 'top',
+									labelSeparator: '',
+									typeAhead: true,
+									editable: true,
+									allowBlank: true,
+									name: 'Comment name',
+									width: '100%',
+									valueField: 'username',
+									forceSelection: false,
+									queryMode: 'local',
+									displayField: 'Comment displayfield',
+									store: {
+										autoLoad: true,
+									}
+								}
+							],
+							dockedItems:[
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											formBind: true,
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
+											handler: function(){
 
+												// Get Calling Window
+												var ownerWindow = this.up('window');
+
+												// Get Form
+												var form = this.up('form');
+
+												// Close Form Window
+												ownerWindow.close();
+
+												// Initialize Update Counter
+												var componentUpdateCount = 0;
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function(){
+												this.up('window').close();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+				
 				var changeOwnerWin = Ext.create('Ext.window.Window', {
 					id: 'changeOwnerWin',
 					title: 'Change Owner - ',
 					iconCls: 'fa fa-lg fa-user',
 					width: '35%',
-					height: 175,
+					height: 350, // Change
 					y: 200,
 					modal: true,
 					layout: 'fit',
@@ -1266,6 +1334,24 @@
 												totalProperty: 'totalNumber'
 											}
 										}
+									}
+								},// Change
+								{
+									xtype: 'textarea',
+									fieldLabel: 'Optional Comments',
+									labelAlign: 'top',
+									labelSeparator: '',
+									typeAhead: true,
+									editable: true,
+									allowBlank: true,
+									name: 'Comment name',
+									width: '100%',
+									valueField: 'username',
+									forceSelection: false,
+									queryMode: 'local',
+									displayField: 'Comment displayfield',
+									store: {
+										autoLoad: true,
 									}
 								}
 							],
@@ -1362,13 +1448,12 @@
 					]
 				});
 
-
 				var changeTypeWin = Ext.create('Ext.window.Window', {
 					id: 'changeTypeWin',
 					title: 'Change Type - ',
 					iconCls: 'fa fa-lg fa-exchange',
 					width: '35%',
-					height: 175,
+					height: 350, // Change
 					y: 200,
 					modal: true,
 					layout: 'fit',
@@ -1397,6 +1482,24 @@
 											type: 'ajax',
 											url: 'api/v1/resource/componenttypes/lookup'
 										}
+									}
+								},// Change
+								{
+									xtype: 'textarea',
+									fieldLabel: 'Optional Comments',
+									labelAlign: 'top',
+									labelSeparator: '',
+									typeAhead: true,
+									editable: true,
+									allowBlank: true,
+									name: 'Comment name',
+									width: '100%',
+									valueField: 'username',
+									forceSelection: false,
+									queryMode: 'local',
+									displayField: 'Comment displayfield',
+									store: {
+										autoLoad: true,
 									}
 								}
 							],
@@ -1460,7 +1563,6 @@
 						}
 					]
 				});
-
 
 				var maingridStore = Ext.create('Ext.data.Store', {
 					autoLoad: true,
@@ -1609,7 +1711,7 @@
 					id: 'mergeComponentWin',
 					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges duplicate entry to target entry. <br> Meaning target will contain merged entry\'s information and duplicate entry will be deleted." ></i>',
 					width: '40%',
-					height: 260,
+					height: 400, // Change
 					modal: true,
 					layout: 'fit',
 					items: [
@@ -1692,6 +1794,24 @@
 									width: '100%',
 									displayField: 'name',
 									readOnly: true
+								}, // Change
+								{
+									xtype: 'textarea',
+									fieldLabel: 'Optional Comments',
+									labelAlign: 'top',
+									labelSeparator: '',
+									typeAhead: true,
+									editable: true,
+									allowBlank: true,
+									name: 'Comment name',
+									width: '100%',
+									valueField: 'username',
+									forceSelection: false,
+									queryMode: 'local',
+									displayField: 'Comment displayfield',
+									store: {
+										autoLoad: true,
+									}
 								}								
 							]
 						}
@@ -2220,7 +2340,6 @@
 					}
 				};
 
-
 				var actionAddEditComponent = function(record) {
 
 					var mainAddEditWin = createAddEditWin();
@@ -2263,7 +2382,6 @@
 
 				   return mainAddEditWin;
 				};
-
 
 				var checkFormTabs = function(mainAddEditWin, record, componentType) {
 
@@ -2325,6 +2443,7 @@
 									addSubTab('OSF.form.EntryQuestions', 'Questions', 'User Questions');
 								}
 								addSubTab('OSF.form.Tags', 'Tags', 'Searchable Labels');
+								addSubTab('OSF.form.Comments', 'Comments', 'Admin Comments'); // Change
 							}
 						});
 						tabpanel.add(panelsToAdd);
@@ -2380,7 +2499,7 @@
 							var method = 'PUT';
 							var urlEnd = '/activate';
 						}
-
+						Ext.getCmp('toggleWin').show();
 						Ext.Ajax.request({
 							url: 'api/v1/resource/components/' + componentId + urlEnd,
 							method: method,
