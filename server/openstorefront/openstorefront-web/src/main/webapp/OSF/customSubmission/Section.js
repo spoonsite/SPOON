@@ -29,6 +29,9 @@ Ext.define('OSF.customSubmission.Section', {
 		'OSF.customSubmission.field.DependenciesGrid',
 		'OSF.customSubmission.field.MediaGrid',
 		'OSF.customSubmission.field.RelationshipsGrid',
+		'OSF.customSubmission.field.ResourcesGrid',
+		'OSF.customSubmission.field.TagsGrid',
+		'OSF.customSubmission.field.TextArea',
 		'OSF.customSubmission.field.Text'
 	],
 	
@@ -160,14 +163,46 @@ Ext.define('OSF.customSubmission.Section', {
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-relationshipgrid'						
 					}));
-				break;				
+				break;
+				case 'RESOURCE':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-formwrapper',
+						actualForm: {
+							xtype: 'osf-submissionform-resource'
+						}						
+					}));
+				break;					
+				case 'RESOURCE_MULTI':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-resourcegrid'						
+					}));
+				break;
+				case 'TAG':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-formwrapper',
+						actualForm: {
+							xtype: 'osf-submissionform-tags'
+						}						
+					}));
+				break;					
+				case 'TAG_MULTI':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-tagsgrid'						
+					}));
+				break;			
 				
 				case 'TEXT':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-text',
 						labelAlign: field.labelAlign ? field.labelAlign : 'top'
 					}));
-				break;	
+				break;
+				case 'TEXTAREA':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-textarea',
+						labelAlign: field.labelAlign ? field.labelAlign : 'top'
+					}));
+				break;				
 			}			
 		});
 				

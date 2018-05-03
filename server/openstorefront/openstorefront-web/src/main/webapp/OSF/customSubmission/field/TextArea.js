@@ -16,4 +16,33 @@
  * See NOTICE.txt for more information.
  */
 
+/* global Ext */
 
+Ext.define('OSF.customSubmission.field.TextArea', {
+	extend: 'Ext.form.field.TextArea',	
+	xtype: 'osf-submissionform-textarea',
+	
+	width: '100%',
+	maxWidth: 800,	
+	height: 200,
+	grow: true,		
+	labelAlign: 'top',
+	
+	fieldTemplate: {
+		fieldType: null,
+		mappingType: 'COMPONENT',
+		questionNumber: null,
+		label: null,
+		labelTooltip: null,
+		required: null
+	},	
+	
+	initComponent: function () {
+		var textField = this;
+		textField.callParent();
+			
+		textField.setFieldLabel(textField.createQuestionLabel());
+		
+	}
+	
+});

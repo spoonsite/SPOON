@@ -82,7 +82,26 @@
 										mappingType: 'COMPLEX',
 										required: true,
 										fieldType: 'RELATIONSHIPS_MULTI'											
+									},
+									{
+										fieldId: 6,
+										questionNumber: 'Q-6.',
+										label: 'Add Resource',
+										labelTooltip: 'Add external links and local asset',
+										mappingType: 'COMPLEX',
+										required: false,
+										fieldType: 'RESOURCE_MULTI'											
+									},
+									{
+										fieldId: 6,
+										questionNumber: 'Q-7.',
+										label: 'Add Tags',
+										labelTooltip: 'Add tags',
+										mappingType: 'COMPLEX',
+										required: false,
+										fieldType: 'TAG_MULTI'											
 									}									
+									
 									
 								]										
 							},
@@ -131,8 +150,23 @@
 										mappingType: 'COMPLEX',
 										required: true,
 										fieldType: 'RELATIONSHIPS'											
+									},
+									{
+										fieldId: 6,
+										questionNumber: 'Q-15.',
+										label: 'Add Resources',										
+										mappingType: 'COMPLEX',
+										required: false,
+										fieldType: 'RESOURCE'											
+									},
+									{
+										fieldId: 6,
+										questionNumber: 'Q-16.',
+										label: 'Add Tag',										
+										mappingType: 'COMPLEX',
+										required: false,
+										fieldType: 'TAG'											
 									}									
-									
 								]										
 							},
 							{
@@ -148,6 +182,14 @@
 										mappingType: 'COMPONENT',
 										required: true,
 										fieldType: 'TEXT'										
+									},
+									{
+										fieldId: 4,
+										questionNumber: 'Q-21.',
+										label: 'Simple Description',										
+										mappingType: 'COMPONENT',
+										required: true,
+										fieldType: 'TEXTAREA'										
 									}
 								]										
 							}							

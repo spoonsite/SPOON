@@ -20,7 +20,7 @@
 
 Ext.define('OSF.customSubmission.field.Text', {
 	extend: 'Ext.form.field.Text',	
-	alias: 'widget.osf-submissionform-text',
+	xtype: 'osf-submissionform-text',
 	
 	width: '100%',
 	maxWidth: 800,	

@@ -21,9 +21,17 @@
 
 Ext.define('OSF.customSubmission.form.Tags', {
 	extend: 'Ext.form.Panel',
+	xtype: 'osf-submissionform-tags',
 	
 	layout: 'anchor',
 	bodyStyle: 'padding: 10px',
+	fieldType: 'TAG',
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},	
 		
 	initComponent: function () {
 		this.callParent();		
@@ -33,10 +41,8 @@ Ext.define('OSF.customSubmission.form.Tags', {
 		{
 			xtype: 'StandardComboBox',	
 			name: 'text',
-			colName: 'name',
 			allowBlank: false,
 			margin: '0 0 0 0',
-			width: 400,
 			fieldLabel: 'Tag<span class="field-required" />',
 			forceSelection: false,
 			valueField: 'text',

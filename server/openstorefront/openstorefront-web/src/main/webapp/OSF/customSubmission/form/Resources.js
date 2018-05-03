@@ -21,9 +21,18 @@
 
 Ext.define('OSF.customSubmission.form.Resources', {
 	extend: 'Ext.form.Panel',
+	xtype: 'osf-submissionform-resource',
 	
 	layout: 'anchor',
-	bodyStyle: 'padding: 10px',	
+	bodyStyle: 'padding: 10px',
+	fieldType: 'RESOURCE',
+	
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},
 	
 	initComponent: function () {
 		this.callParent();
@@ -38,7 +47,6 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				margin: '0 0 15 0',
 				editable: false,
 				typeAhead: false,
-				width: 450,
 				fieldLabel: 'Resource Type: <span class="field-required" />',
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/ResourceType'
@@ -48,19 +56,16 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				xtype: 'textfield',
 				labelAlign: 'top',
 				fieldLabel: 'Description',
-				maxLength: '255',
-				width: 450,
+				maxLength: '255',				
 				name: 'description'
 			},
 			{
 				xtype: 'checkbox',
 				name: 'restricted',
-				width: 450,
 				boxLabel: '<strong>Restricted</strong>'
 			},
 			{
 				xtype: 'button',
-				width: 450,
 				margin: '0 0 15 0',
 				text: 'External Link',
 				menu: [
@@ -91,7 +96,6 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				fieldLabel: 'Link',
 				maxLength: '255',
 				emptyText: 'http://www.example.com/resource',
-				width: 450,
 				labelAlign: 'top',
 				name: 'originalLink',
 				colName: 'externalLink'
@@ -100,18 +104,15 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				xtype: 'fileFieldMaxLabel',
 				itemId: 'upload',
 				name: 'file',
-				colName: 'filePath',
-				width: 450,
+				colName: 'filePath',	
 				labelAlign: 'top',
 				hidden: true
 			},
 			{
-				xtype: 'SecurityComboBox',
-				itemId: 'securityMarkings'			
+				xtype: 'SecurityComboBox'			
 			},
 			{
-				xtype: 'DataSensitivityComboBox',
-				width: 450
+				xtype: 'DataSensitivityComboBox'
 			}
 		]);
 	}
