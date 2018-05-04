@@ -77,6 +77,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -689,13 +690,14 @@ public class SystemServiceImpl
 		HelpSection helpSectionExample = new HelpSection();
 		helpSectionExample.setAdminSection(includeAdmin);
 
-		List<HelpSection> helpSections = persistenceService.queryByExample(helpSectionExample);
-
+		List<HelpSection> allHelpSections = persistenceService.queryByExample(helpSectionExample);
+		List<HelpSection> helpSections = Collections.EMPTY_LIST;
+		
 		UserContext userContext = SecurityUtil.getUserContext();
 
 		if (userContext != null) {
 			final Set<String> permissions = userContext.permissions();
-			helpSections = helpSections.stream().filter(help
+			helpSections = allHelpSections.stream().filter(help
 					-> {
 				if (StringUtils.isNotBlank(help.getPermission())) {
 					if (permissions.contains(help.getPermission())) {
@@ -790,6 +792,16 @@ public class SystemServiceImpl
 				}
 				restOfTitle.append(titleSplit[i]);
 			}
+			
+			// If a user has permission to see a child node but not the parent node then
+			// a node has been created that is blank. For clarity and consistency
+			// we need to add a title to the node and some filler text to the body
+			if (restOfTitle.length() == 0)
+			{
+				restOfTitle.append("Section Heading REDACTED");
+				helpSection.getHelpSection().setContent("<hr><p>This Space Intentionally Left Blank</p>");
+			}
+			
 			helpSection.getHelpSection().setTitle(titleNumber + restOfTitle.toString());
 
 			if (titleNumber.endsWith(". ") == false) {
