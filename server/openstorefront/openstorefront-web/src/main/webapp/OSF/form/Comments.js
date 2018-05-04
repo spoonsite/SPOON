@@ -20,9 +20,7 @@
 Ext.define('OSF.form.Comments', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Comments',
-	
 	layout: 'fit',
-		
 	
 	initComponent: function () {
         console.log('here we are calling the init func thing.');
@@ -173,7 +171,6 @@ Ext.define('OSF.form.Comments', {
 			callback();
 		}
 	}
-	
 	
 });
 

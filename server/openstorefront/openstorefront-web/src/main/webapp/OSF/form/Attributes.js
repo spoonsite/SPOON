@@ -19,15 +19,15 @@ Ext.require('OSF.form.MultipleAttributes');
 Ext.define('OSF.form.Attributes', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Attributes',
-
 	layout: 'fit',
+	
 	initComponent: function () {
 
 		this.callParent();
 
 		var attributePanel = this;
 
-		attributePanel.loadComponentAttributes = function (status) {
+		attributePanel.loadComponentAttributes = function (status) { 
 			if (!status) {
 				var tools = attributePanel.attributeGrid.getComponent('tools');
 				status = tools.getComponent('attributeFilterActiveStatus').getValue();
