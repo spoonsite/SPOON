@@ -745,7 +745,7 @@ Admin tools allow for the management of all data in the system.
 (Sections marked with * require admin account access.)
 
 
-## 3.1 Dashboard @ADMIN-SYSTEM-MANAGEMENT
+## 3.1 Dashboard @ADMIN-SYSTEM-MANAGEMENT 
 --------
 
 The dashboard is the homepage of the Admin Tools.  This is accessed by
@@ -1608,7 +1608,7 @@ Links to external documentation refering to Evaluation Management
 
 <a href="http://di2e.github.io/openstorefront/evaluations/librarian/createevaluationguide/" target="_blank">Create An Evaluation (di2e.github.io)</a>
 
-#### 3.3.3.3 Publish An Evaluation
+#### 3.3.3.3 Publish An Evaluation @ADMIN-EVALUATION-MANAGEMENT
 ------
 
 <a href="http://di2e.github.io/openstorefront/evaluations/librarian/publishinganevaluationguide/" target="_blank">Publish An Evaluation (di2e.github.io)</a>
