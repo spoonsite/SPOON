@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.io;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
@@ -136,7 +137,7 @@ public class LookupImporter
 						LookupEntity lookupEntity = (LookupEntity) lookupClass.newInstance();
 						lookupEntity.importData(data);
 						lookupEntities.add(lookupEntity);
-					} catch (IllegalAccessException | InstantiationException e) {
+					} catch (OpenStorefrontRuntimeException | IllegalAccessException | InstantiationException e) {
 						LOG.log(Level.WARNING, () -> MessageFormat.format("{0} -  Unable Process line: {1} in file: {2}", e, Arrays.toString(data), file));
 					}
 				}
