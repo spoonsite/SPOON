@@ -16,4 +16,23 @@
  * See NOTICE.txt for more information.
  */
 
+/* global Ext */
 
+Ext.define('OSF.customSubmission.field.StaticContent', {
+	extend: 'Ext.panel.Panel',	
+	xtype: 'osf-submissionform-staticcontent',
+	
+	width: '100%',
+	tpl: '{content}',
+	
+	initComponent: function () {
+		var panel = this;
+		panel.callParent();
+			
+		panel.update({
+			content: panel.fieldTemplate.staticContent
+		});
+		
+	}
+	
+});

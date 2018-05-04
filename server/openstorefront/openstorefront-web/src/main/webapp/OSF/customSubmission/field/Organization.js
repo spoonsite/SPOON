@@ -15,5 +15,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
+/* global Ext */
 
+Ext.define('OSF.customSubmission.field.Organization', {
+	extend: 'Ext.form.field.ComboBox',	
+	xtype: 'osf-submissionform-organization',
+	
+	width: '100%',
+	maxWidth: 800,	
+	labelAlign: 'top',
+	forceSelection: false,
+	valueField: 'description',
+	displayField: 'description',
+	editable: true,
+	queryMode: 'remote',
+	store: {				
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/organizations/lookup'
+		},
+		sorters: [{
+			property: 'description',
+			direction: 'ASC'
+		}]
+	},	
+		
+	fieldTemplate: {
+		fieldType: null,
+		mappingType: 'COMPONENT',
+		questionNumber: null,
+		label: null,
+		labelTooltip: null,
+		required: null
+	},	
+	
+	initComponent: function () {
+		var field = this;
+		field.callParent();			
+		field.setFieldLabel(field.createQuestionLabel());
+		
+	}
+	
+});
 

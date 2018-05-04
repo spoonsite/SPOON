@@ -36,10 +36,8 @@ public class SubmissionFormFieldType
 	public static final String TEXT = "TEXT";
 	public static final String TEXT_AREA = "TEXTAREA";
 	public static final String RICH_TEXT = "RICHTEXT";
-	public static final String RADIO = "RADIO";
-	public static final String CHECKBOX = "CHECKBOX";
 	public static final String NUMBER = "NUMBER";
-	public static final String ORGANIZATION = "ORGANATION";
+	public static final String ORGANIZATION = "ORGANIZATION";
 	public static final String STATIC_CONTENT = "CONTENT";
 	public static final String ATTRIBUTE = "ATTRIBUTE";
 	public static final String ATTRIBUTE_MULTI = "ATTRIBUTE_MULTI";
@@ -72,8 +70,6 @@ public class SubmissionFormFieldType
 
 		codeMap.put(TEXT, newLookup(SubmissionFormFieldType.class, TEXT, "Text"));
 		codeMap.put(TEXT_AREA, newLookup(SubmissionFormFieldType.class, TEXT_AREA, "Text Area"));
-		codeMap.put(RADIO, newLookup(SubmissionFormFieldType.class, RADIO, "Radio Single Option"));
-		codeMap.put(CHECKBOX, newLookup(SubmissionFormFieldType.class, CHECKBOX, "Checkbox"));
 		codeMap.put(NUMBER, newLookup(SubmissionFormFieldType.class, NUMBER, "Number"));
 		codeMap.put(STATIC_CONTENT, newLookup(SubmissionFormFieldType.class, STATIC_CONTENT, "Static Content"));
 

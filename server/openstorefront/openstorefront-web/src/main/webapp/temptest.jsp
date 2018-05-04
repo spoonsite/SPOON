@@ -190,9 +190,78 @@
 										mappingType: 'COMPONENT',
 										required: true,
 										fieldType: 'TEXTAREA'										
-									}
+									},
+									{
+										fieldId: 4,
+										questionNumber: 'Q-22.',
+										label: 'Version Number',										
+										mappingType: 'COMPONENT',
+										required: true,
+										fieldType: 'NUMBER'										
+									},
+									{
+										fieldId: 4,
+										questionNumber: 'Q-23.',
+										label: 'Rich text',										
+										mappingType: 'COMPONENT',
+										required: true,
+										fieldType: 'RICHTEXT'										
+									},									
+									{
+										fieldId: 4,
+										questionNumber: 'Q-24.',
+										label: 'Organization',										
+										mappingType: 'COMPONENT',
+										required: true,
+										fieldType: 'ORGANIZATION'										
+									}									
+									
 								]										
-							}							
+							},
+							{
+								stepId: 4,
+								name: 'Section 4 - Static Content',
+								instructions: 'Displays static content',
+								stepOrder: 0,
+								fields: [
+									{	
+										fieldId: 4,
+										questionNumber: 'Q-30.',
+										label: 'Line',										
+										mappingType: 'NONE',
+										required: false,
+										fieldType: 'CONTENT',
+										staticContent: '<hr>'
+									},
+									{	
+										fieldId: 4,
+										questionNumber: 'Q-31.',
+										label: 'Text',										
+										mappingType: 'NONE',
+										required: false,
+										fieldType: 'CONTENT',
+										staticContent: '<b>Hello</b> this is some text'
+									},									
+									{	
+										fieldId: 4,
+										questionNumber: 'Q-32.',
+										label: 'Image',										
+										mappingType: 'NONE',
+										required: false,
+										fieldType: 'CONTENT',
+										staticContent: '<img src="images/background_globe.jpg" height=200>'
+									},
+									{	
+										fieldId: 4,
+										questionNumber: 'Q-3.',
+										label: 'Download',										
+										mappingType: 'NONE',
+										required: false,
+										fieldType: 'CONTENT',
+										staticContent: '<a href="download.csv" style="padding: 20px; text-align: center; background: purple; color: white;">Download</a>'
+									}									
+								]
+							}
 						]
 					},
 					'test'

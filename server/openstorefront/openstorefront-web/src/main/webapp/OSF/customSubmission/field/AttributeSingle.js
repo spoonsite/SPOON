@@ -17,3 +17,39 @@
  */
 
 
+/* global Ext, fieldPanel */
+
+Ext.define('OSF.customSubmission.field.AttributeSingle', {
+	extend: 'Ext.panel.Panel',	
+	
+	width: '100%',
+	layout: 'anchor',
+	
+	initComponent: function () {
+		var panel = this;
+		panel.callParent();
+			
+		fieldPanel.label = Ext.create('Ext.panel.Panel', {
+			layout: 'hbox',
+			items: [
+				{
+					xtype: 'panel',
+					flex: 1,
+					html: fieldPanel.createQuestionLabel()
+				},
+				{
+					xtype: 'checkbox',
+					boxLabel: 'Private'
+				}
+			]
+		});	
+		
+		//use filetype to determine rendering
+		
+		
+		panel.add([
+			fieldPanel.label
+		]);	
+	}
+
+});

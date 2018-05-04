@@ -16,4 +16,55 @@
  * See NOTICE.txt for more information.
  */
 
+/* global Ext, CoreUtil */
 
+Ext.define('OSF.customSubmission.field.RichText', {
+	extend: 'Ext.panel.Panel',	
+	xtype: 'osf-submissionform-richtext',
+	
+	width: '100%',
+	maxWidth: 800,
+	layout: 'fit',
+	
+	fieldTemplate: {
+		fieldType: null,
+		mappingType: 'COMPONENT',
+		questionNumber: null,
+		label: null,
+		labelTooltip: null,
+		required: null
+	},	
+	
+	initComponent: function () {
+		var fieldPanel = this;
+		fieldPanel.callParent();
+			
+		fieldPanel.label = Ext.create('Ext.panel.Panel', {
+			dock: 'top',		
+			html: fieldPanel.createQuestionLabel()
+		});	
+			
+		fieldPanel.textArea = Ext.create('Ext.ux.form.TinyMCETextArea', {					
+			fieldStyle: 'font-family: Courier New; font-size: 12px;',
+			style: { border: '0' },			
+			name: 'description',
+			height: 250,
+			maxLength: 65536,
+			tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig("osfmediaretriever"), {
+//					mediaSelectionUrl: function(){					
+//						return 'api/v1/resource/components/' + entryForm.componentId + '/media/view';					
+//					}
+			})	
+		});	
+			
+		fieldPanel.addDocked(fieldPanel.label);	
+			
+		fieldPanel.add([		
+			fieldPanel.textArea
+		]);
+		
+	}
+	
+	
+	
+});

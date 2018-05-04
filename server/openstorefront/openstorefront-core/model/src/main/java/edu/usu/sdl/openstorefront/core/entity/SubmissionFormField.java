@@ -74,6 +74,13 @@ public class SubmissionFormField
 	private String attributeType;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@ValidValueType(value = {}, lookupClass = ContactType.class)
+	@FK(ContactType.class)
+	@APIDescription("Leave null to prompt for type")
+	private String contactType;
+
+	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = RelationshipType.class)
 	@FK(RelationshipType.class)
 	@APIDescription("This is used with child entries to determine the type of relationsip")
@@ -361,6 +368,16 @@ public class SubmissionFormField
 	public void setLabelAlign(String labelAlign)
 	{
 		this.labelAlign = labelAlign;
+	}
+
+	public String getContactType()
+	{
+		return contactType;
+	}
+
+	public void setContactType(String contactType)
+	{
+		this.contactType = contactType;
 	}
 
 }

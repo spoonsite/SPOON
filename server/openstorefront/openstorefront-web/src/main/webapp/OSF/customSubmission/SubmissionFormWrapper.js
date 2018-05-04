@@ -45,6 +45,7 @@ Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
 		submissionField.setTitle(submissionField.createQuestionLabel());
 		
 		if (submissionField.actualForm) {
+			submissionField.actualForm.fieldTemplate = submissionField.fieldTemplate;
 			submissionField.add(submissionField.actualForm);
 		}
 				

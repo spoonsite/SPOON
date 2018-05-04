@@ -16,4 +16,32 @@
  * See NOTICE.txt for more information.
  */
 
+/* global Ext */
+
+Ext.define('OSF.customSubmission.field.Number', {
+	extend: 'Ext.form.field.Number',	
+	xtype: 'osf-submissionform-number',
+	
+	width: '100%',
+	maxWidth: 800,	
+	labelAlign: 'top',
+	
+	fieldTemplate: {
+		fieldType: null,
+		mappingType: 'COMPONENT',
+		questionNumber: null,
+		label: null,
+		labelTooltip: null,
+		required: null
+	},	
+	
+	initComponent: function () {
+		var numberField = this;
+		numberField.callParent();
+			
+		numberField.setFieldLabel(numberField.createQuestionLabel());
+		
+	}
+	
+});
 

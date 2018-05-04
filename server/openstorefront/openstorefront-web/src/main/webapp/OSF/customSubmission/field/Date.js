@@ -16,4 +16,32 @@
  * See NOTICE.txt for more information.
  */
 
+/* global Ext */
+
+Ext.define('OSF.customSubmission.field.Date', {
+	extend: 'Ext.form.field.Date',	
+	xtype: 'osf-submissionform-date',
+	
+	width: '100%',
+	maxWidth: 800,	
+	labelAlign: 'top',
+	
+	fieldTemplate: {
+		fieldType: null,
+		mappingType: 'COMPONENT',
+		questionNumber: null,
+		label: null,
+		labelTooltip: null,
+		required: null
+	},	
+	
+	initComponent: function () {
+		var numberField = this;
+		numberField.callParent();
+			
+		numberField.setFieldLabel(numberField.createQuestionLabel());
+		
+	}
+	
+});
 
