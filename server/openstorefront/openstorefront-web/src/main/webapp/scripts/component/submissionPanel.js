@@ -402,10 +402,10 @@ Ext.define('OSF.component.SubmissionPanel', {
 					width: '100%',
 					editable: false,
 					typeAhead: false,
-					displayField: 'description',
-					valueField: 'code',
+					displayField: 'parentLabel',
+					valueField: 'componentType',
 					storeConfig: {
-						url: 'api/v1/resource/componenttypes/lookup'
+						url: 'api/v1/resource/componenttypes'
 					},
 					listeners: {
 						change: function (field, newValue, oldValue, opts) {
@@ -414,7 +414,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								submissionPanel.componentTypeSelected = newValue;
 
 								var sectionPanel = submissionPanel.detailsPanel.getComponent('detailSections');
-
+								
 								sectionPanel.getComponent('optionalAttributes').setHidden(true);
 								sectionPanel.getComponent('contactGrid').setHidden(true);
 								sectionPanel.getComponent('resourceGrid').setHidden(true);
