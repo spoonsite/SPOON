@@ -23,7 +23,6 @@ Ext.define('OSF.form.Comments', {
 	layout: 'fit',
 	
 	initComponent: function () {
-        console.log('here we are calling the init func thing.');
         this.callParent();
 		
         var commentPanel = this;
@@ -32,7 +31,8 @@ Ext.define('OSF.form.Comments', {
             var componentId = commentPanel.componentId;
             console.log('adding the comment');
             CoreUtil.submitForm({
-				// url: 'api/v1/resource/components/' + componentId + '/tags',
+				// Somewhere in here, under the right conditions, we are going to change the method and update the url to correctly reflect if it is a POST or a PUT.
+				// url: 'api/v1/resource/components/' + componentId + '/comments',
 				// method: 'POST',
 				// data: data,
                 // form: form,
@@ -41,8 +41,10 @@ Ext.define('OSF.form.Comments', {
 					form.reset();
                 }
 			});	
+		};
+		var actionDeleteComment = function(form){
 
-        };
+		};
         commentPanel.commentGrid = Ext.create('Ext.grid.Panel',{
             columnLines: true,
 			store: Ext.create('Ext.data.Store', {
@@ -164,6 +166,7 @@ Ext.define('OSF.form.Comments', {
         commentPanel.commentGrid.componentId = componentId;
 
         commentPanel.commentGrid.getStore().load({
+			// GET request
             url: 'api/v1/resource/components/' + componentId + '/comments'
         });
 		
