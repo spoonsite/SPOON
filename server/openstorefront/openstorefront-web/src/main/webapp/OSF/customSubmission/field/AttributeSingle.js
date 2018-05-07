@@ -21,6 +21,9 @@
 
 Ext.define('OSF.customSubmission.field.AttributeSingle', {
 	extend: 'Ext.panel.Panel',	
+	requires: [
+		'OSF.common.AttributeCodeSelect'
+	],
 	
 	width: '100%',
 	layout: 'anchor',
@@ -49,68 +52,104 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 			fieldPanel.label
 		]);			
 		
-		Ext.Ajax.request({
-			url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '/attributecodes',
-			success: function(response, opts) {
-				var attributeCodes = Ext.decode(response.responseText);
+
+		var checkForRequiredComment = function(value) {
+			if (panel.fieldTemplate.requiredCommentOnValue &&
+					panel.fieldTemplate.requiredCommentOnValue === value) {
 				
-				var displayItems = [];
-				if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
-					//combo box or nothing if code is set
+				panel.queryById('comment').setHidden(false);
+				panel.queryById('comment').setAllowBlank(false);
+			} else if (panel.fieldTemplate.requiredCommentOnValue) {
+				
+				panel.queryById('comment').setHidden(true);
+				panel.queryById('comment').setAllowBlank(true);				
+			}
+		};	
+				
+		var displayItems = [];
+		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
+			//combo box or nothing if code is set
+			Ext.Ajax.request({
+				url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType),
+				success: function(response, opts) {
+					var attributeTypeView = Ext.decode(response.responseText);
 					displayItems.push({
-							xtype: 'combobox',
-							name: 'attributeCode',
-							width: '100%',
-							maxWidth: 800,
-							editable: false,
-							typeAhead: false,
-							displayField: 'label',
-							valueField: 'code',
-							store: {
-								fields: [
-									{ name: 'code', mapping: function(data){ 
-										return data.attributeCodePk.attributeCode;
-									}}										
-								],
-								data: attributeCodes
-							}
-						});
-				} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
+						xtype: 'AttributeCodeSelect',
+						name: 'attributeCode',
+						attributeTypeView: attributeTypeView,
+						width: '100%',
+						maxWidth: 800,
+						listerners: {
+							change: function(field, newValue, oldValue) {
+								checkForRequiredComment(newValue);
+							} 
+						}
+					});							
+				}
+			});
+
+		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
+
+			Ext.Ajax.request({
+				url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '/attributecodes',
+				success: function(response, opts) {
+					var attributeCodes = Ext.decode(response.responseText);
+
 					//display all active
 					Ext.Array.each(attributeCodes, function(code){
 						displayItems.push({
 							xtype: 'radio',
 							name: 'attributeCode',
-							boxLabel: code.label
+							boxLabel: code.label,
+							listerners: {
+								change: function(field, newValue, oldValue) {
+									checkForRequiredComment(newValue);
+								} 
+							}							
 						});
-					});					
+					});		
+				}
+			});
 
-				} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_MCHECKBOX') {
-					//display all active	
+		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_MCHECKBOX') {
+			//display all active	
+			Ext.Ajax.request({
+				url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '/attributecodes',
+				success: function(response, opts) {					
+					var attributeCodes = Ext.decode(response.responseText);
+
 					Ext.Array.each(attributeCodes, function(code){
 						displayItems.push({
 							xtype: 'checkBox',							
 							name: 'attributeCodes',
-							boxLabel: code.label
+							boxLabel: code.label,
+							listerners: {
+								change: function(field, newValue, oldValue) {
+									checkForRequiredComment(newValue);
+								} 
+							}							
 						});
-					});						
-				}				
-								
-				//comments
-				var commentType = 'textarea';
-				if (panel.fieldTemplate.allowHTMLInComment) {
-					commentType = '';
-				}				
-				displayItems.push({
-					xtype: commentType
-				});
-				
-				panel.add(displayItems);	
-				
-			}
-		});			
+					});
+				}	
+			});
+		}				
 
-						
+		//comments
+		var commentType = 'textarea';
+		if (panel.fieldTemplate.allowHTMLInComment) {
+			commentType = 'htmleditor';
+		}				
+		displayItems.push({
+			xtype: commentType,
+			itemId: 'comment',
+			name: 'comment',
+			allowBlank: panel.fieldTemplate.requireComment ? false : true,
+			fieldLabel: panel.fieldTemplate.commentLabel,
+			hidden: panel.fieldTemplate.requireComment ? false : true	
+		});
+
+		panel.add(displayItems);	
+		
 	}
 
 });
