@@ -87,6 +87,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		}
 	],
 
+	/**
+	 * When adding section item field types... do it here.
+	 */
 	validSectionItems: [
 		'question',
 		'fieldType',
@@ -100,8 +103,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 
 		this.callParent();
 		var formBuilderPanel = this;
-
-		console.log("FORM BUILDER PANEL : ", this);
 
 		formBuilderPanel.queryById('tools').add(
 			[
@@ -213,31 +214,28 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 	 * 	1) updates the section's name and instructions
 	 * 	2) retreiving all physical items from the display panel
 	 * 	3) then updates the active section's fieldItems
+	 * @param refreshNav - bool to indicate whether or not the nav needs to be refreshed.
 	 */
-	saveSection: function () {
+	saveSection: function (refreshNav) {
 
+		// typeof refreshNav === 'undefined' ? formBuilderPanel.activeSection.name !== sectionFormValues.name : refreshNav;
 		var formBuilderPanel = this;
 		var displayPanel = this.query('osf-csf-displaypanel')[0];
 		var sectionFormValues = displayPanel.queryById('sectionContainer').getForm().getFieldValues();
 
-		var navNeedsUpdate = false;
-
 		if (formBuilderPanel.activeSection) {
 
-			if (formBuilderPanel.activeSection.name !== sectionFormValues.name) {
-
-				navNeedsUpdate = true;
-			}
+			refreshNav = typeof refreshNav === 'undefined' ? formBuilderPanel.activeSection.name !== sectionFormValues.name : refreshNav;
 
 			formBuilderPanel.activeSection.name = sectionFormValues.name || displayPanel.untitledSectionName;
 			formBuilderPanel.activeSection.instructions = sectionFormValues.instructions || '';
 
-			if (navNeedsUpdate) {
+			if (refreshNav) {
 
 				formBuilderPanel.sectionPanel.updateNavList();
 			}
 
-			// update the activeSection (this saves the section!)
+			// update the activeSection (this saves the section in the templateRecord)
 			formBuilderPanel.activeSection.fieldItems = formBuilderPanel.getSection();
 		}
 	},

@@ -54,7 +54,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					height: 50,
 					listeners: {
 						change: function (self, newVal) {
-							this.up('[cls=form-builder-item]').labelCode = newVal;
+							// var formBuilderItem = this.up('[cls=form-builder-item]');
+							// formBuilderItem.labelCode = newVal;
+							// formBuilderItem.saveSection();
+							this.up('[cls=form-builder-item]').saveSection('labelCode', newVal);
 						}
 					}
 				},
@@ -74,9 +77,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					width: '90%',
 					listeners: {
 						change: function (self, newVal) {
-							var formBuilderItem = this.up('[cls=form-builder-item]');
-							formBuilderItem.question = newVal;
-							formBuilderItem.saveSection();
+							// var formBuilderItem = this.up('[cls=form-builder-item]');
+							// formBuilderItem.question = newVal;
+							// formBuilderItem.saveSection();
+							this.up('[cls=form-builder-item]').saveSection('question', newVal);
 						}
 					}
 				}
@@ -95,11 +99,22 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		}
 	],
 	
-	saveSection: function () {
+	saveSection: function (itemField, newVal) {
+		var formBuilderItem = this;
 		if (this.getFormBuilderPanel()) {
 
+			if (itemField && newVal) {
+
+				if (formBuilderItem.getFormBuilderPanel().validSectionItems.indexOf(itemField) === -1) {
+					console.error("There is no support for the field: ", itemField);
+				}
+				else {
+					this[itemField] = newVal;
+				}
+			}
+
 			// saveSection defined is the DisplayPanel
-			this.getFormBuilderPanel().saveSection();
+			this.getFormBuilderPanel().saveSection(true);
 		}
 	},
 
