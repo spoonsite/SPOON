@@ -97,12 +97,13 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				}				
 								
 				//comments
+				var commentType = 'textarea';
 				if (panel.fieldTemplate.allowHTMLInComment) {
-//					displayItems.push({
-//						xtype: ''
-//					});
+					commentType = '';
 				}				
-				
+				displayItems.push({
+					xtype: commentType
+				});
 				
 				panel.add(displayItems);	
 				
