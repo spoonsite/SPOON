@@ -75,6 +75,11 @@ public class SubmissionFormField
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(CleanKeySanitizer.class)
+	private String attributeCode;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@ValidValueType(value = {}, lookupClass = ContactType.class)
 	@FK(ContactType.class)
 	@APIDescription("Leave null to prompt for type")
@@ -121,7 +126,7 @@ public class SubmissionFormField
 	private Boolean requireComment;
 
 	@ConsumeField
-	private Boolean requiredCommentOnValue;
+	private String requiredCommentOnValue;
 
 	@ConsumeField
 	private Boolean allowHTMLInComment;
@@ -166,6 +171,12 @@ public class SubmissionFormField
 		this.setRequireComment(submissionFormField.getRequireComment());
 		this.setRequired(submissionFormField.getRequired());
 		this.setRequiredCommentOnValue(submissionFormField.getRequiredCommentOnValue());
+		this.setAttributeType(submissionFormField.getAttributeType());
+		this.setAttributeCode(submissionFormField.getAttributeCode());
+		this.setContactType(submissionFormField.getContactType());
+		this.setRelationshipType(submissionFormField.getRelationshipType());
+		this.setChildEntryType(submissionFormField.getChildEntryType());
+
 		this.setSectionId(submissionFormField.getSectionId());
 
 	}
@@ -240,12 +251,12 @@ public class SubmissionFormField
 		this.requireComment = requireComment;
 	}
 
-	public Boolean getRequiredCommentOnValue()
+	public String getRequiredCommentOnValue()
 	{
 		return requiredCommentOnValue;
 	}
 
-	public void setRequiredCommentOnValue(Boolean requiredCommentOnValue)
+	public void setRequiredCommentOnValue(String requiredCommentOnValue)
 	{
 		this.requiredCommentOnValue = requiredCommentOnValue;
 	}
@@ -378,6 +389,16 @@ public class SubmissionFormField
 	public void setContactType(String contactType)
 	{
 		this.contactType = contactType;
+	}
+
+	public String getAttributeCode()
+	{
+		return attributeCode;
+	}
+
+	public void setAttributeCode(String attributeCode)
+	{
+		this.attributeCode = attributeCode;
 	}
 
 }

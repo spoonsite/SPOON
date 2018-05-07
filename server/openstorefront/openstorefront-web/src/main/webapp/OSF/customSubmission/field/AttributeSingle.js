@@ -35,6 +35,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				{
 					xtype: 'panel',
 					flex: 1,
+					maxWidth: 800,
 					html: fieldPanel.createQuestionLabel()
 				},
 				{
@@ -44,12 +45,71 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 			]
 		});	
 		
-		//use filetype to determine rendering
-		
-		
 		panel.add([
 			fieldPanel.label
-		]);	
+		]);			
+		
+		Ext.Ajax.request({
+			url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '/attributecodes',
+			success: function(response, opts) {
+				var attributeCodes = Ext.decode(response.responseText);
+				
+				var displayItems = [];
+				if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
+					//combo box or nothing if code is set
+					displayItems.push({
+							xtype: 'combobox',
+							name: 'attributeCode',
+							width: '100%',
+							maxWidth: 800,
+							editable: false,
+							typeAhead: false,
+							displayField: 'label',
+							valueField: 'code',
+							store: {
+								fields: [
+									{ name: 'code', mapping: function(data){ 
+										return data.attributeCodePk.attributeCode;
+									}}										
+								],
+								data: attributeCodes
+							}
+						});
+				} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
+					//display all active
+					Ext.Array.each(attributeCodes, function(code){
+						displayItems.push({
+							xtype: 'radio',
+							name: 'attributeCode',
+							boxLabel: code.label
+						});
+					});					
+
+				} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_MCHECKBOX') {
+					//display all active	
+					Ext.Array.each(attributeCodes, function(code){
+						displayItems.push({
+							xtype: 'checkBox',							
+							name: 'attributeCodes',
+							boxLabel: code.label
+						});
+					});						
+				}				
+								
+				//comments
+				if (panel.fieldTemplate.allowHTMLInComment) {
+//					displayItems.push({
+//						xtype: ''
+//					});
+				}				
+				
+				
+				panel.add(displayItems);	
+				
+			}
+		});			
+
+						
 	}
 
 });
