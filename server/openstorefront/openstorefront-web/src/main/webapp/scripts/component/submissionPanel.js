@@ -405,7 +405,11 @@ Ext.define('OSF.component.SubmissionPanel', {
 					displayField: 'parentLabel',
 					valueField: 'componentType',
 					storeConfig: {
-						url: 'api/v1/resource/componenttypes'
+						url: 'api/v1/resource/componenttypes',
+						sorters: [{
+							property: 'parentLabel',
+							direction: 'ASC'
+						}]
 					},
 					listeners: {
 						change: function (field, newValue, oldValue, opts) {
