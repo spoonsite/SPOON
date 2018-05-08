@@ -691,10 +691,11 @@ public class SystemServiceImpl
 		helpSectionExample.setAdminSection(includeAdmin);
 
 		List<HelpSection> allHelpSections = persistenceService.queryByExample(helpSectionExample);
-		List<HelpSection> helpSections = Collections.EMPTY_LIST;
+		List<HelpSection> helpSections = Collections.emptyList();
 		
 		UserContext userContext = SecurityUtil.getUserContext();
 
+		// Filter out help items the user does not have access to
 		if (userContext != null) {
 			final Set<String> permissions = userContext.permissions();
 			helpSections = allHelpSections.stream().filter(help
@@ -711,6 +712,7 @@ public class SystemServiceImpl
 			}).collect(Collectors.toList());
 		}
 
+		// Build a tree from the list of sorted help sections based on the section numbers
 		if (helpSections.isEmpty() == false) {
 
 			//Root Section
@@ -730,6 +732,8 @@ public class SystemServiceImpl
 				String codeTokens[] = helpSection.getSectionNumber().split(Pattern.quote("."));
 				HelpSectionAll rootHelp = helpSectionAll;
 				StringBuilder codeKey = new StringBuilder();
+				// Make sure the tree contains nodes for all parents of the current node
+				// Due to the filtering it may be possible to have access to a child without access to the parent
 				for (String codeToken : codeTokens) {
 					codeKey.append(codeToken);
 					//put in stubs as needed
@@ -740,25 +744,46 @@ public class SystemServiceImpl
 					}
 					for (HelpSectionAll child : rootHelp.getChildSections()) {
 						if (child.getHelpSection().getSectionNumber().equals(compare)) {
+							// The section already exists, nothing more to do with this child
 							found = true;
 							rootHelp = child;
 							break;
 						}
 					}
 					if (!found) {
+						// Add placeholder in tree
 						HelpSectionAll newChild = new HelpSectionAll();
 						HelpSection childHelp = new HelpSection();
 						childHelp.setSectionNumber(compare);
+
+						for (HelpSection each : allHelpSections)
+						{
+							// Make sure that every section has the correct title. 
+							// Even sections that are otherwise blank due to not having permission to view the contents should have the correct title.
+							if (each.getSectionNumber().equals(compare))
+							{
+								String title = each.getTitle();
+								// Strip off the section number. 
+								// NOTE: Substring is inclusive, so adding one to get all characters from AFTER the last period to end of line
+								title = title.substring(title.lastIndexOf('.') + 1); 
+								childHelp.setTitle(title);
+								// childHelp.setContent("<hr><p>This Space Intentionally Left Blank</p>");
+								childHelp.setContent(each.getContent());
+								break;
+							}
+						}
+
 						newChild.setHelpSection(childHelp);
 						rootHelp.getChildSections().add(newChild);
 						rootHelp = newChild;
 					}
 					codeKey.append(".");
 				}
+				// Add each help section to the appropriate place in the tree
 				rootHelp.setHelpSection(helpSection);
 			}
 		}
-		//reorder help number so missing sections do cause holes
+		//reorder help number so missing sections do not cause holes in the final numbered list
 		reorderHelpSectionTitles(helpSectionAll, "");
 		return helpSectionAll;
 	}
@@ -791,15 +816,6 @@ public class SystemServiceImpl
 					restOfTitle.append(" ");
 				}
 				restOfTitle.append(titleSplit[i]);
-			}
-			
-			// If a user has permission to see a child node but not the parent node then
-			// a node has been created that is blank. For clarity and consistency
-			// we need to add a title to the node and some filler text to the body
-			if (restOfTitle.length() == 0)
-			{
-				restOfTitle.append("Section Heading REDACTED");
-				helpSection.getHelpSection().setContent("<hr><p>This Space Intentionally Left Blank</p>");
 			}
 			
 			helpSection.getHelpSection().setTitle(titleNumber + restOfTitle.toString());
