@@ -100,9 +100,18 @@
 										mappingType: 'COMPLEX',
 										required: false,
 										fieldType: 'TAG_MULTI'											
-									}									
-									
-									
+									},
+									{
+										fieldId: 6,
+										questionNumber: 'Q-8.',
+										label: 'Add Child Submission',
+										labelTooltip: 'Add related submissions',
+										mappingType: 'SUBMISSION',										
+										required: false,
+										fieldType: 'SUBMISSIONS',
+										relationshipType: 'CONTAINS',
+										childEntryType: 'COMP'
+									}
 								]										
 							},
 							{
@@ -201,6 +210,14 @@
 									},
 									{
 										fieldId: 4,
+										questionNumber: 'Q-22-1.',
+										label: 'Release Date',										
+										mappingType: 'COMPONENT',
+										required: false,
+										fieldType: 'DATE'										
+									},									
+									{
+										fieldId: 4,
 										questionNumber: 'Q-23.',
 										label: 'Rich text',										
 										mappingType: 'COMPONENT',
@@ -214,7 +231,69 @@
 										mappingType: 'COMPONENT',
 										required: true,
 										fieldType: 'ORGANIZATION'										
-									}									
+									},
+									{
+										fieldId: 4,
+										questionNumber: 'Q-25.',
+										label: 'What operating system(s) does the software require?',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'ATTRIBUTE_SINGLE',
+										attributeType: 'TYPE'
+									},
+									{
+										fieldId: 4,
+										questionNumber: 'Q-26.',
+										label: 'Is in memory storage required to maintain required performance identified above (e.g. in memory database)?',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'ATTRIBUTE_RADIO',
+										attributeType: 'DI2ESTATE'
+									},									
+									{
+										fieldId: 4,
+										questionNumber: 'Q-27.',
+										label: 'What is the intended Classification For Use (Select all that apply)?',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'ATTRIBUTE_MCHECKBOX',
+										attributeType: 'NETWORK'
+									},
+									{
+										fieldId: 4,
+										questionNumber: 'Q-28.',
+										label: 'Funded',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'ATTRIBUTE_RADIO',
+										attributeType: 'FUNDED',
+										requireComment: true,
+										showComment: true,
+										commentLabel: 'Provide Why'
+									},	
+									{
+										fieldId: 4,
+										questionNumber: 'Q-29.',
+										label: 'Comment on Yes',										
+										mappingType: 'COMPLEX',
+										required: true,
+										fieldType: 'ATTRIBUTE_RADIO',
+										attributeType: 'FUNDED',										
+										requiredCommentOnValue: 'Y'
+									},
+									{
+										fieldId: 5,
+										questionNumber: 'Q-30.',
+										label: 'Comment Only',										
+										mappingType: 'COMPLEX',
+										required: false,
+										fieldType: 'ATTRIBUTE_SINGLE',
+										attributeType: 'FUNDED',										
+										attributeCode: 'Y',
+										showComment: true,
+										allowHTMLInComment: true,
+										requireComment: false
+									}	
 									
 								]										
 							},

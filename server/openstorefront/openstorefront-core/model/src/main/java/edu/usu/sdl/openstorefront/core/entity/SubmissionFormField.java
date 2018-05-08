@@ -126,6 +126,9 @@ public class SubmissionFormField
 	private Boolean requireComment;
 
 	@ConsumeField
+	private Boolean showComment;
+
+	@ConsumeField
 	private String requiredCommentOnValue;
 
 	@ConsumeField
@@ -176,6 +179,7 @@ public class SubmissionFormField
 		this.setContactType(submissionFormField.getContactType());
 		this.setRelationshipType(submissionFormField.getRelationshipType());
 		this.setChildEntryType(submissionFormField.getChildEntryType());
+		this.setShowComment(submissionFormField.getShowComment());
 
 		this.setSectionId(submissionFormField.getSectionId());
 
@@ -399,6 +403,16 @@ public class SubmissionFormField
 	public void setAttributeCode(String attributeCode)
 	{
 		this.attributeCode = attributeCode;
+	}
+
+	public Boolean getShowComment()
+	{
+		return showComment;
+	}
+
+	public void setShowComment(Boolean showComment)
+	{
+		this.showComment = showComment;
 	}
 
 }

@@ -21,7 +21,7 @@
 
 Ext.define('OSF.customSubmission.form.Contacts', {
 	extend: 'Ext.form.Panel',
-	alias: 'widget.osf-submissionform-contact',
+	xtype: 'osf-submissionform-contact',
 	
 	layout: 'anchor',
 	bodyStyle: 'padding: 10px',

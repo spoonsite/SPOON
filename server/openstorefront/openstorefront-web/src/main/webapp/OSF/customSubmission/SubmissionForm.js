@@ -22,7 +22,8 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-submissionform',
 	requires: [
-		'OSF.customSubmission.Section'
+		'OSF.customSubmission.Section',
+		'OSF.customSubmission.ReviewSection'
 	],
 
 	scrollable: true,
@@ -79,17 +80,25 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		});
 		
 		//create sections
+		submissionForm.formSections = [];
 		var sectionComponents = [];
 		Ext.Array.each(submissionForm.template.sections, function(section){
-			var sectionComponent = Ext.create('OSF.customSubmission.Section', {				
-			});
-			sectionComponent.load(section, submissionFormTemplate, userSubmission);
-			
+			var sectionComponent;
+			if (section.review) {
+				sectionComponent = Ext.create('OSF.customSubmission.ReviewSection', {				
+				});				
+			} else {
+				var sectionComponent = Ext.create('OSF.customSubmission.Section', {				
+				});
+				sectionComponent.load(section, submissionFormTemplate, userSubmission);			
+				
+				submissionForm.formSections.push(section.component);
+			}
 			section.component = sectionComponent;
 			sectionComponents.push(sectionComponents);
+			
 		});
-		submissionForm.add(sectionComponents);
-		
+		submissionForm.add(sectionComponents);		
 		submissionForm.displayCurrentSection();
 						
 		submissionForm.fireEvent('ready', submissionForm);
@@ -98,7 +107,11 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 	displayCurrentSection: function() {
 		var submissionForm = this;		
 		var section = submissionForm.template.sections[submissionForm.currentSection];
-		submissionForm.setActiveItem(section.component);	
+		submissionForm.setActiveItem(section.component);
+		
+		if (section.review) {
+			section.component.displayReviewSections(submissionForm.formSections);
+		}
 		
 		if (submissionForm.progressCallback) {
 			submissionForm.progressCallback(submissionForm.currentSection, submissionForm.template.sections.length);

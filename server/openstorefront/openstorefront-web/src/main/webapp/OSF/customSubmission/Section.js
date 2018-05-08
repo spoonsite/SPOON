@@ -22,7 +22,7 @@
 Ext.define('OSF.customSubmission.Section', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.osf-submissionform-section',
-	requires: [
+	requires: [		
 		'OSF.customSubmission.field.AttributesGrid',
 		'OSF.customSubmission.field.ContactsGrid',
 		'OSF.customSubmission.SubmissionFormWrapper',
@@ -37,6 +37,8 @@ Ext.define('OSF.customSubmission.Section', {
 		'OSF.customSubmission.field.Date',
 		'OSF.customSubmission.field.RichText',
 		'OSF.customSubmission.field.Organization',
+		'OSF.customSubmission.field.AttributeSingle',
+		'OSF.customSubmission.field.ChildSubmissions',
 		'OSF.customSubmission.field.StaticContent'
 	],
 	
@@ -104,6 +106,13 @@ Ext.define('OSF.customSubmission.Section', {
 				margin: '0 0 20 0'
 			};
 			switch(field.fieldType) {
+				case 'ATTRIBUTE_SINGLE':
+				case 'ATTRIBUTE_RADIO':
+				case 'ATTRIBUTE_MCHECKBOX':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-attributesingle'
+					}));
+				break;
 				case 'ATTRIBUTE':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-formwrapper',
@@ -194,6 +203,11 @@ Ext.define('OSF.customSubmission.Section', {
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-tagsgrid'						
 					}));
+				break;
+				case 'SUBMISSIONS':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-childsubmissions'						
+					}));
 				break;			
 				
 				case 'TEXT':
@@ -251,6 +265,29 @@ Ext.define('OSF.customSubmission.Section', {
 			data.push(field.getUserData());
 		});
 		return data;
+	},
+	
+	getReviewableQuestions: function () {
+		var section = this;
+		
+		var questions = [];
+		Ext.Array.forEach(section.items.items, function (field) {
+			questions.push({
+				question: field.createQuestionLabel(),
+				value: field.reviewDisplayValue()
+			});
+		});
+		return questions;
+	},
+	valid: function() {
+		var section = this;
+		
+		valid = true;
+		Ext.Array.forEach(section.items.items, function (field) {
+			
+		});
+		
+		return valid;
 	}
 	
 });

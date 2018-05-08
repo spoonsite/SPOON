@@ -20,6 +20,7 @@
 
 Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 	extend: 'Ext.panel.Panel',
+	xtype: 'osf-customSubmission-SubmissionformFullControl',
 	requires: [
 		'OSF.customSubmission.SubmissionForm'
 	],

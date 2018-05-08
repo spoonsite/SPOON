@@ -21,6 +21,7 @@
 
 Ext.define('OSF.customSubmission.field.AttributeSingle', {
 	extend: 'Ext.panel.Panel',	
+	xtype: 'osf-submissionform-attributesingle',
 	requires: [
 		'OSF.common.AttributeCodeSelect'
 	],
@@ -32,14 +33,14 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		var panel = this;
 		panel.callParent();
 			
-		fieldPanel.label = Ext.create('Ext.panel.Panel', {
+		panel.label = Ext.create('Ext.panel.Panel', {
 			layout: 'hbox',
 			items: [
 				{
 					xtype: 'panel',
 					flex: 1,
 					maxWidth: 800,
-					html: fieldPanel.createQuestionLabel()
+					html: panel.createQuestionLabel()
 				},
 				{
 					xtype: 'checkbox',
@@ -49,45 +50,75 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		});	
 		
 		panel.add([
-			fieldPanel.label
+			panel.label
 		]);			
 		
+		var addCommentField = function(displayItems) {
+			//comments
+			var commentType = 'textarea';
+			if (panel.fieldTemplate.allowHTMLInComment) {
+				commentType = 'htmleditor';
+			}				
+			displayItems.push({
+				xtype: commentType,
+				itemId: 'comment',
+				name: 'comment',
+				width: '100%',
+				maxWidth: 800,
+				height: panel.fieldTemplate.allowHTMLInComment ? 200 : 150,
+				allowBlank: panel.fieldTemplate.requireComment ? false : true,
+				fieldLabel: panel.fieldTemplate.commentLabel,
+				labelAlign: 'top',
+				hidden: panel.fieldTemplate.showComment ? false : true	
+			});
+		};		
 
 		var checkForRequiredComment = function(value) {
 			if (panel.fieldTemplate.requiredCommentOnValue &&
 					panel.fieldTemplate.requiredCommentOnValue === value) {
 				
 				panel.queryById('comment').setHidden(false);
-				panel.queryById('comment').setAllowBlank(false);
+				panel.queryById('comment').setConfig({
+					allowBlank: false					
+				});
 			} else if (panel.fieldTemplate.requiredCommentOnValue) {
 				
 				panel.queryById('comment').setHidden(true);
-				panel.queryById('comment').setAllowBlank(true);				
+				panel.queryById('comment').setConfig({
+					allowBlank: true
+				});				
 			}
 		};	
 				
 		var displayItems = [];
 		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
 			//combo box or nothing if code is set
-			Ext.Ajax.request({
-				url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType),
-				success: function(response, opts) {
-					var attributeTypeView = Ext.decode(response.responseText);
-					displayItems.push({
-						xtype: 'AttributeCodeSelect',
-						name: 'attributeCode',
-						attributeTypeView: attributeTypeView,
-						width: '100%',
-						maxWidth: 800,
-						listerners: {
-							change: function(field, newValue, oldValue) {
-								checkForRequiredComment(newValue);
-							} 
-						}
-					});							
-				}
-			});
-
+			if (panel.fieldTemplate.attributeCode) {
+				addCommentField(displayItems);
+				panel.add(displayItems);
+			} else {
+				Ext.Ajax.request({
+					url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '?view=true',
+					success: function(response, opts) {
+						var attributeTypeView = Ext.decode(response.responseText);
+						displayItems.push({
+							xtype: 'AttributeCodeSelect',
+							name: 'attributeCode',
+							showLabel: false,
+							attributeTypeView: attributeTypeView,
+							width: '100%',
+							maxWidth: 800,
+							listeners: {
+								change: function(field, newValue, oldValue) {
+									checkForRequiredComment(newValue);
+								} 
+							}
+						});	
+						addCommentField(displayItems);
+						panel.add(displayItems);
+					}
+				});
+			}
 		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
 
 			Ext.Ajax.request({
@@ -100,14 +131,19 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 						displayItems.push({
 							xtype: 'radio',
 							name: 'attributeCode',
-							boxLabel: code.label,
-							listerners: {
-								change: function(field, newValue, oldValue) {
-									checkForRequiredComment(newValue);
+							boxLabel: code.label,							
+							submitValue: code.attributeCodePk.attributeCode,
+							listeners: {
+								change: function(field, newValue, oldValue, optd) {									
+									if (newValue) {
+										checkForRequiredComment(field.submitValue);
+									}
 								} 
 							}							
 						});
-					});		
+					});	
+					addCommentField(displayItems);
+					panel.add(displayItems);	
 				}
 			});
 
@@ -120,35 +156,25 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 
 					Ext.Array.each(attributeCodes, function(code){
 						displayItems.push({
-							xtype: 'checkBox',							
+							xtype: 'checkbox',							
 							name: 'attributeCodes',
 							boxLabel: code.label,
-							listerners: {
+							listeners: {
 								change: function(field, newValue, oldValue) {
 									checkForRequiredComment(newValue);
 								} 
 							}							
 						});
 					});
+					addCommentField(displayItems);
+					panel.add(displayItems);	
 				}	
 			});
 		}				
 
-		//comments
-		var commentType = 'textarea';
-		if (panel.fieldTemplate.allowHTMLInComment) {
-			commentType = 'htmleditor';
-		}				
-		displayItems.push({
-			xtype: commentType,
-			itemId: 'comment',
-			name: 'comment',
-			allowBlank: panel.fieldTemplate.requireComment ? false : true,
-			fieldLabel: panel.fieldTemplate.commentLabel,
-			hidden: panel.fieldTemplate.requireComment ? false : true	
-		});
 
-		panel.add(displayItems);	
+
+		
 		
 	}
 
