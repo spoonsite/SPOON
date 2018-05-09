@@ -74,6 +74,18 @@ public class SubmissionFormField
 	private String attributeType;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(CleanKeySanitizer.class)
+	private String attributeCode;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@ValidValueType(value = {}, lookupClass = ContactType.class)
+	@FK(ContactType.class)
+	@APIDescription("Leave null to prompt for type")
+	private String contactType;
+
+	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = RelationshipType.class)
 	@FK(RelationshipType.class)
 	@APIDescription("This is used with child entries to determine the type of relationsip")
@@ -103,13 +115,21 @@ public class SubmissionFormField
 	private String labelTooltip;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
+	@Sanitize(TextSanitizer.class)
+	private String labelAlign;
+
+	@ConsumeField
 	private Boolean required;
 
 	@ConsumeField
 	private Boolean requireComment;
 
 	@ConsumeField
-	private Boolean requiredCommentOnValue;
+	private Boolean showComment;
+
+	@ConsumeField
+	private String requiredCommentOnValue;
 
 	@ConsumeField
 	private Boolean allowHTMLInComment;
@@ -149,10 +169,18 @@ public class SubmissionFormField
 		this.setFieldType(submissionFormField.getFieldType());
 		this.setLabel(submissionFormField.getLabel());
 		this.setLabelTooltip(submissionFormField.getLabelTooltip());
+		this.setLabelAlign(submissionFormField.getLabelAlign());
 		this.setMappingType(submissionFormField.getMappingType());
 		this.setRequireComment(submissionFormField.getRequireComment());
 		this.setRequired(submissionFormField.getRequired());
 		this.setRequiredCommentOnValue(submissionFormField.getRequiredCommentOnValue());
+		this.setAttributeType(submissionFormField.getAttributeType());
+		this.setAttributeCode(submissionFormField.getAttributeCode());
+		this.setContactType(submissionFormField.getContactType());
+		this.setRelationshipType(submissionFormField.getRelationshipType());
+		this.setChildEntryType(submissionFormField.getChildEntryType());
+		this.setShowComment(submissionFormField.getShowComment());
+
 		this.setSectionId(submissionFormField.getSectionId());
 
 	}
@@ -227,12 +255,12 @@ public class SubmissionFormField
 		this.requireComment = requireComment;
 	}
 
-	public Boolean getRequiredCommentOnValue()
+	public String getRequiredCommentOnValue()
 	{
 		return requiredCommentOnValue;
 	}
 
-	public void setRequiredCommentOnValue(Boolean requiredCommentOnValue)
+	public void setRequiredCommentOnValue(String requiredCommentOnValue)
 	{
 		this.requiredCommentOnValue = requiredCommentOnValue;
 	}
@@ -345,6 +373,46 @@ public class SubmissionFormField
 	public void setRelationshipType(String relationshipType)
 	{
 		this.relationshipType = relationshipType;
+	}
+
+	public String getLabelAlign()
+	{
+		return labelAlign;
+	}
+
+	public void setLabelAlign(String labelAlign)
+	{
+		this.labelAlign = labelAlign;
+	}
+
+	public String getContactType()
+	{
+		return contactType;
+	}
+
+	public void setContactType(String contactType)
+	{
+		this.contactType = contactType;
+	}
+
+	public String getAttributeCode()
+	{
+		return attributeCode;
+	}
+
+	public void setAttributeCode(String attributeCode)
+	{
+		this.attributeCode = attributeCode;
+	}
+
+	public Boolean getShowComment()
+	{
+		return showComment;
+	}
+
+	public void setShowComment(Boolean showComment)
+	{
+		this.showComment = showComment;
 	}
 
 }

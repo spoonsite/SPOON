@@ -15,43 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global Ext, CoreUtil, CoreService */
 
-/* Author: cyearsley */
+/* global Ext */
 
-Ext.define('OSF.customSubmission.form.Tags', {
-	extend: 'Ext.form.Panel',
-	xtype: 'osf-submissionform-tags',
+Ext.define('OSF.customSubmission.field.TextArea', {
+	extend: 'Ext.form.field.TextArea',	
+	xtype: 'osf-submissionform-textarea',
 	
-	layout: 'anchor',
-	bodyStyle: 'padding: 10px',
-	fieldType: 'TAG',
-	defaults: {
-		width: '100%',
-		maxWidth: 800,
-		labelAlign: 'top',
-		labelSeparator: ''		
+	width: '100%',
+	maxWidth: 800,	
+	height: 200,
+	grow: true,		
+	labelAlign: 'top',
+	
+	fieldTemplate: {
+		fieldType: null,
+		mappingType: 'COMPONENT',
+		questionNumber: null,
+		label: null,
+		labelTooltip: null,
+		required: null
 	},	
-		
+	
 	initComponent: function () {
-		this.callParent();		
-		var tagPanel = this;
-
-		tagPanel.add(
-		{
-			xtype: 'StandardComboBox',	
-			name: 'text',
-			allowBlank: false,
-			margin: '0 0 0 0',
-			fieldLabel: 'Tag<span class="field-required" />',
-			forceSelection: false,
-			valueField: 'text',
-			displayField: 'text',
-			maxLength: 120,
-			storeConfig: {
-				url: 'api/v1/resource/components/tags'
-			}
-		});
-
+		var textField = this;
+		textField.callParent();
+			
+		textField.setFieldLabel(textField.createQuestionLabel());
+		
 	}
+	
 });

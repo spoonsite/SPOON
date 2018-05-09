@@ -21,41 +21,51 @@
 
 Ext.define('OSF.customSubmission.form.Resources', {
 	extend: 'Ext.form.Panel',
+	xtype: 'osf-submissionform-resource',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+	fieldType: 'RESOURCE',
+	
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},
+	
 	initComponent: function () {
 		this.callParent();
+		
+		var resourcePanel = this;
 
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add([
-			Ext.create('OSF.component.StandardComboBox', {
+		resourcePanel.add([
+			{
+				xtype: 'StandardComboBox',
 				name: 'resourceType',
 				allowBlank: false,
 				margin: '0 0 15 0',
 				editable: false,
 				typeAhead: false,
-				width: 450,
 				fieldLabel: 'Resource Type: <span class="field-required" />',
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/ResourceType'
 				}
-			}),
+			},
 			{
 				xtype: 'textfield',
 				labelAlign: 'top',
 				fieldLabel: 'Description',
-				maxLength: '255',
-				width: 450,
+				maxLength: '255',				
 				name: 'description'
 			},
 			{
 				xtype: 'checkbox',
 				name: 'restricted',
-				width: 450,
 				boxLabel: '<strong>Restricted</strong>'
 			},
 			{
 				xtype: 'button',
-				width: 450,
 				margin: '0 0 15 0',
 				text: 'External Link',
 				menu: [
@@ -86,7 +96,6 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				fieldLabel: 'Link',
 				maxLength: '255',
 				emptyText: 'http://www.example.com/resource',
-				width: 450,
 				labelAlign: 'top',
 				name: 'originalLink',
 				colName: 'externalLink'
@@ -95,19 +104,16 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				xtype: 'fileFieldMaxLabel',
 				itemId: 'upload',
 				name: 'file',
-				colName: 'filePath',
-				width: 450,
+				colName: 'filePath',	
 				labelAlign: 'top',
 				hidden: true
 			},
-			Ext.create('OSF.component.SecurityComboBox', {
-				itemId: 'securityMarkings'
-				// hidden: submissionPanel.hideSecurityMarkings
-			}),
-			Ext.create('OSF.component.DataSensitivityComboBox', {
-				width: 450,
-				fieldLabel: 'Data Sensitivity:'
-			})
+			{
+				xtype: 'SecurityComboBox'			
+			},
+			{
+				xtype: 'DataSensitivityComboBox'
+			}
 		]);
 	}
 });

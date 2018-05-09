@@ -20,7 +20,85 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.field.DependenciesGrid', {
-	extend: 'OSF.customSubmission.Grid',
-	formPanel: 'Dependencies',
-	title: 'Dependencies'
+	extend: 'OSF.customSubmission.SubmissionBaseGrid',
+	alias: 'widget.osf-submissionform-dependencygrid',
+	requires: [
+		'OSF.customSubmission.form.Dependencies'
+	],
+	
+	title: '',
+	fieldType: 'EXT_DEPEND_MULTI',
+	
+	columns: [
+		{ text: 'Name', dataIndex: 'dependencyName', width: 200 },
+		{ text: 'Version', dataIndex: 'version', width: 200 },
+		{ text: 'Link', dataIndex: 'dependancyReferenceLink', width: 200 },
+		{ text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 200  },
+		{ text: 'Security Marking', dataIndex: 'securityMarking', width: 200, hidden: true },
+		{ text: 'Data Sensitivity', dataIndex: 'dataSensitivity', width: 200, hidden: true }
+	],	
+	
+	initComponent: function () {
+		var grid = this;
+		grid.callParent();	
+		
+	},		
+	
+	actionAddEdit: function(record) {
+		var grid = this;
+		
+		var addEditWin = Ext.create('Ext.window.Window', {
+			title: 'Add/Edit Dependency',
+			modal: true,
+			width: 800,
+			height: 515,
+			closeMode: 'destroy',
+			layout: 'fit',
+			items: [
+				{
+					xtype: 'osf-submissionform-dependency',
+					itemId: 'form',
+					scrollable: true,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Save',
+									formBind: true,
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+									handler: function () {
+										var form = this.up('form');
+										var data = form.getValues();
+										
+										grid.getStore().add(data);
+										this.up('window').close();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+									handler: function () {
+										this.up('window').close();												
+									}
+								}								
+							]
+						}
+					]
+				}
+			]
+			
+		});
+		addEditWin.show();
+		
+		if (record) {
+			addEditWin.queryById('form').loadRecord(record);
+		}		
+		
+	}	
+	
 });

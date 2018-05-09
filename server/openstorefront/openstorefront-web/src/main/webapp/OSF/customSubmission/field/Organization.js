@@ -15,43 +15,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global Ext, CoreUtil, CoreService */
+/* global Ext */
 
-/* Author: cyearsley */
-
-Ext.define('OSF.customSubmission.form.Tags', {
-	extend: 'Ext.form.Panel',
-	xtype: 'osf-submissionform-tags',
+Ext.define('OSF.customSubmission.field.Organization', {
+	extend: 'Ext.form.field.ComboBox',	
+	xtype: 'osf-submissionform-organization',
 	
-	layout: 'anchor',
-	bodyStyle: 'padding: 10px',
-	fieldType: 'TAG',
-	defaults: {
-		width: '100%',
-		maxWidth: 800,
-		labelAlign: 'top',
-		labelSeparator: ''		
+	width: '100%',
+	maxWidth: 800,	
+	labelAlign: 'top',
+	forceSelection: false,
+	valueField: 'description',
+	displayField: 'description',
+	editable: true,
+	queryMode: 'remote',
+	store: {				
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/organizations/lookup'
+		},
+		sorters: [{
+			property: 'description',
+			direction: 'ASC'
+		}]
 	},	
 		
+	fieldTemplate: {
+		fieldType: null,
+		mappingType: 'COMPONENT',
+		questionNumber: null,
+		label: null,
+		labelTooltip: null,
+		required: null
+	},	
+	
 	initComponent: function () {
-		this.callParent();		
-		var tagPanel = this;
-
-		tagPanel.add(
-		{
-			xtype: 'StandardComboBox',	
-			name: 'text',
-			allowBlank: false,
-			margin: '0 0 0 0',
-			fieldLabel: 'Tag<span class="field-required" />',
-			forceSelection: false,
-			valueField: 'text',
-			displayField: 'text',
-			maxLength: 120,
-			storeConfig: {
-				url: 'api/v1/resource/components/tags'
-			}
-		});
-
+		var field = this;
+		field.callParent();			
+		field.setFieldLabel(field.createQuestionLabel());
+		
 	}
+	
 });
+

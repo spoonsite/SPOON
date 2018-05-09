@@ -16,39 +16,40 @@
  * See NOTICE.txt for more information.
  */
 
-/* Author: Brigham Michaelis */
-
 /* global Ext */
 
-Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
+Ext.define('OSF.customSubmission.field.ChildSubmissions', {
 	extend: 'OSF.customSubmission.SubmissionBaseGrid',
-	xtype: 'osf-submissionform-relationshipgrid',
-	requires: [
-		'OSF.customSubmission.form.Relationships'
-	],
-	
+	xtype: 'osf-submissionform-childsubmissions',
+		
 	title: '',
-	fieldType: 'RELATIONSHIPS_MULTI',
+	fieldType: 'SUBMISSIONS',
 	
 	columns: [
-		{ text: 'Relation Type', dataIndex: 'relationType', width: 250 },
-		{ text: 'Entry Name', dataIndex: 'targetName', flex: 1, minWidth: 200 },
-		{ text: 'Entry Type', dataIndex: 'targetEntryType', width: 250 }
+		{ text: 'Entry Type', dataIndex: 'componentType', width: 200 },
+		{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200 }
 	],
+	
+	initComponent: function () {
+		var grid = this;
+		grid.callParent();	
+		
+	},	
 	
 	actionAddEdit: function(record) {
 		var grid = this;
 		
 		var addEditWin = Ext.create('Ext.window.Window', {
-			title: 'Add/Edit Relationship',
+			title: 'Add/Edit Entry',
 			modal: true,
 			width: 800,
-			height: 310,
+			height: 600,
 			closeMode: 'destroy',
+			maximizable: true,
 			layout: 'fit',
 			items: [
 				{
-					xtype: 'osf-submissionform-relationships',
+					xtype: 'osf-customSubmission-SubmissionformFullControl',
 					itemId: 'form',
 					scrollable: true,
 					dockedItems: [
@@ -64,10 +65,7 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 										var form = this.up('form');
 										var data = form.getValues();
 										
-										//get Target Name
-										
-										//get target Entry Type
-										
+										//get the name
 										
 										grid.getStore().add(data);
 										this.up('window').close();
@@ -92,10 +90,15 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 		});
 		addEditWin.show();
 		
+		//load the form template based on the type
+		
+		
+		
 		if (record) {
 			addEditWin.queryById('form').loadRecord(record);
 		}		
 		
-	}	
+	}
+	
 	
 });

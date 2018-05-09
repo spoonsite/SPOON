@@ -18,8 +18,85 @@
 
  /* Author: cyearsley */
 
+/* global Ext, CoreService */
+
 Ext.define('OSF.customSubmission.field.AttributesGrid', {
-	extend: 'OSF.customSubmission.Grid',
-	formPanel: 'Attributes',
-	title: 'Attributes'
+	extend: 'OSF.customSubmission.SubmissionBaseGrid',	
+	alias: 'widget.osf-submissionform-attributegrid',
+	requires: [
+		'OSF.customSubmission.form.Attributes'
+	],
+	
+	title: '',
+	fieldType: 'ATTRIBUTE_MULTI',
+	
+	columns: [
+		{ text: 'Type', dataIndex: 'typeLabel', flex: 1, minWidth: 200 },
+		{ text: 'Code', dataIndex: 'codeLabel', flex: 2, minWidth: 200 }
+	],
+	
+	initComponent: function () {
+		var grid = this;
+		grid.callParent();	
+		CoreService.attributeservice.warmCache();
+	},
+	
+	actionAddEdit: function(record) {
+		var grid = this;
+		
+		var addEditWin = Ext.create('Ext.window.Window', {
+			title: 'Add/Edit Attribute',
+			modal: true,
+			width: 800,
+			height: 255,
+			closeMode: 'destroy',
+			layout: 'fit',
+			items: [
+				{
+					xtype: 'osf-submissionform-attribute',
+					itemId: 'form',
+					scrollable: true,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Save',
+									formBind: true,
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+									handler: function () {
+										var form = this.up('form');
+										var data = form.getValues();
+										data.typeLabel = CoreService.attributeservice.translateType(data.type);
+										data.codeLabel = CoreService.attributeservice.translateCode(data.type, data.code);
+										
+										grid.getStore().add(data);
+										this.up('window').close();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+									handler: function () {
+										this.up('window').close();												
+									}
+								}								
+							]
+						}
+					]
+				}
+			]
+			
+		});
+		addEditWin.show();
+		
+		if (record) {
+			addEditWin.queryById('form').loadRecord(record);
+		}
+	}
+	
 });

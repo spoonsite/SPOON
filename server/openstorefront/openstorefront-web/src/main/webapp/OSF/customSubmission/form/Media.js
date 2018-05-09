@@ -21,50 +21,59 @@
 
 Ext.define('OSF.customSubmission.form.Media', {
 	extend: 'Ext.form.Panel',
+	xtype: 'osf-submissionform-media',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+	fieldType: 'MEDIA',
+
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},	
+	
 	initComponent: function () {
 		this.callParent();
+		
+		var mediaPanel = this;
 
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add([
-			Ext.create('OSF.component.StandardComboBox', {
+		mediaPanel.add([
+			{
+				xtype: 'StandardComboBox',
 				name: 'mediaTypeCode',
 				colName: 'mediaType',
 				allowBlank: false,
 				margin: '0 0 15 0',
 				editable: false,
 				typeAhead: false,
-				width: 450,
 				fieldLabel: 'Media Type: <span class="field-required" />',
 				labelAlign: 'left',
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/MediaType'
 				}
-			}),
+			},
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Caption <span class="field-required" />',
 				allowBlank: false,
 				maxLength: '255',
-				width: 450,
 				name: 'caption'
 			},
 			{
 				xtype: 'checkbox',
 				boxLabel: '<strong>Hide In Carousel</strong>',
-				width: 450,
 				name: 'hideInDisplay',
 				colName: 'hideInCarousel'
 			},
 			{
 				xtype: 'checkbox',
 				boxLabel: '<strong>Used Inline</strong>',
-				width: 450,
 				name: 'usedInline'
 			},
 			{
 				xtype: 'checkbox',
-				width: 450,
 				boxLabel: '<strong>Icon</strong> <i class="fa fa-question-circle"  data-qtip="Designates a media item to be used as an icon. There should only be one active on a entry at a time."></i>',
 				name: 'iconFlag',
 				colName: 'showIcon'
@@ -72,7 +81,6 @@ Ext.define('OSF.customSubmission.form.Media', {
 			{
 				xtype: 'button',
 				text: 'Local Resource',
-				width: 450,
 				margin: '0 0 15 0',
 				menu: [
 					{
@@ -106,28 +114,23 @@ Ext.define('OSF.customSubmission.form.Media', {
 				itemId: 'upload',
 				name: 'file',
 				colName: 'filePath',
-				width: 450,
 				resourceLabel: 'Upload Media'
 			},
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Link',
 				hidden: true,
-				width: 450,
 				maxLength: '255',
 				emptyText: 'http://www.example.com/image.png',
 				name: 'originalLink',
 				colName: 'externalLink'
 			},
-			Ext.create('OSF.component.SecurityComboBox', {
-				itemId: 'securityMarkings'
-				// hidden: submissionPanel.hideSecurityMarkings
-			}),
-			Ext.create('OSF.component.DataSensitivityComboBox', {
-				width: 450,
-				labelAlign: 'left',
-				fieldLabel: 'Data Sensitivity:'
-			})
+			{
+				xtype: 'SecurityComboBox'
+			},
+			{
+				xtype: 'DataSensitivityComboBox'
+			}
 		]);
 	}
 });
