@@ -92,7 +92,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 				});
 				sectionComponent.load(section, submissionFormTemplate, userSubmission);			
 				
-				submissionForm.formSections.push(section.component);
+				submissionForm.formSections.push(section);
 			}
 			section.component = sectionComponent;
 			sectionComponents.push(sectionComponents);

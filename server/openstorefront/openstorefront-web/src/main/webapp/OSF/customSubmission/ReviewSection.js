@@ -23,6 +23,7 @@ Ext.define('OSF.customSubmission.ReviewSection', {
 	xtype: 'osf-customsubmission-reviewsection',
 	
 	scrollable: true,	
+	bodyStyle: 'padding: 20px',
 	
 	displayReviewSections: function(reviewSections) {
 		var reviewPanel = this;
@@ -32,17 +33,30 @@ Ext.define('OSF.customSubmission.ReviewSection', {
 		
 		var displayItems = [];
 		Ext.Array.each(reviewSections, function(section){
-			var validMessage = '<i class="fa fa-lg fa-close alert-danger"';
-			if (section.valid()) {
-				validMessage = '<i class="fa fa-lg fa-check alert-success"';
+			var validMessage = '<i class="fa fa-lg fa-close alert-danger" title="Valid"></i>';
+			if (section.component.valid()) {
+				validMessage = '<i class="fa fa-lg fa-check alert-success" title="Invalid"></i>';
 			}
 			
+			var questionsConfig = [{
+				data: section.component.getReviewableQuestions(),					
+				tpl: new Ext.XTemplate(
+					'<tpl for=".">' +	
+						'<div><span>{question}</span> '+
+							'<tpl if="valid"><i class="fa fa-lg fa-check alert-success" title="Valid"></i></tpl>' +
+							'<tpl if="!valid"><i class="fa fa-lg fa-close alert-danger" title="Invalid"></i></tpl>' +												
+							'<div style="margin-top: 10px; margin-bottom: 10px;">' +
+							'{value}' +
+							'</div>' +
+						'</div>' +
+					'</tpl>'	
+				)	
+			}];
+			
 			displayItems.push({
-				xtype: 'fieldSet',
+				xtype: 'fieldset',
 				title: section.name + ' ' + validMessage,
-				items: [
-					//section.allQuestions
-				],
+				items: questionsConfig,
 				margin: '0 0 20 0'
 			});
 			

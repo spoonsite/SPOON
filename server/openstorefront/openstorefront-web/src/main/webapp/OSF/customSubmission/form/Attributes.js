@@ -165,6 +165,10 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 		
 				
 		
+	},
+	
+	reviewDisplayValue: function() {
+						
 	}
 	
 	

@@ -51,6 +51,11 @@ Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
 				
 	},
 	
+	reviewDisplayValue: function() {
+		var submissionField = this;
+		return submissionField.actualForm.reviewDisplayValue ? submissionField.actualForm.reviewDisplayValue() : 'N/A';
+	},
+	
 	/**
 	 * Override to add options
 	 */

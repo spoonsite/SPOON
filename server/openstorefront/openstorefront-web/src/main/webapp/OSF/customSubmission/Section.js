@@ -272,10 +272,14 @@ Ext.define('OSF.customSubmission.Section', {
 		
 		var questions = [];
 		Ext.Array.forEach(section.items.items, function (field) {
-			questions.push({
-				question: field.createQuestionLabel(),
-				value: field.reviewDisplayValue()
-			});
+			var skip = field.skipOnReview ? field.skipOnReview : false;
+			if (field.createQuestionLabel && !skip) {
+				questions.push({
+					question: field.createQuestionLabel(),
+					value: field.reviewDisplayValue ? field.reviewDisplayValue() : 'N/A',
+					valid: field.isValid ? field.isValid() : true
+				});
+			}	
 		});
 		return questions;
 	},
