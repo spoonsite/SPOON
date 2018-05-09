@@ -21,7 +21,7 @@
 /* global Ext */
 
 Ext.define('OSF.customSubmission.form.Attributes', {
-	extend: 'Ext.form.Panel',
+	extend: 'OSF.customSubmission.SubmissionBaseForm',
 	alias: 'widget.osf-submissionform-attribute',
 	
 	layout: 'anchor',
@@ -165,12 +165,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 		
 				
 		
-	},
-	
-	reviewDisplayValue: function() {
-						
-	}
-	
+	}	
 	
 	
 });

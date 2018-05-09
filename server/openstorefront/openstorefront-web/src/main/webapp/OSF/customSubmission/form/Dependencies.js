@@ -20,7 +20,7 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.form.Dependencies', {
-	extend: 'Ext.form.Panel',
+	extend: 'OSF.customSubmission.SubmissionBaseForm',
 	xtype: 'osf-submissionform-dependency',
 		
 	layout: 'anchor',

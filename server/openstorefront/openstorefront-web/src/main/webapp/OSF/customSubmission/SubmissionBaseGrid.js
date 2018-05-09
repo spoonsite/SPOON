@@ -152,9 +152,71 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 	 */	
 	getUserData: function() {
 		return {};
+	},
+
+	reviewDisplayValue: function(){
+		var grid = this;
+		
+		if (grid.getStore().getCount() === 0) {
+			return '(No Data Entered)';
+		}		
+		
+		var template = new Ext.XTemplate(
+			'<table class="submission-review-table">' + 
+			'<thead>' +
+			'	<tpl for="columns">'+
+			'		<th class="submission-review-header">' + 
+			'			{title}' + 
+			'		</th>' + 			
+			'	</tpl>'+
+			'</thead>' +
+			'<tbody>' + 
+			'	<tpl for="data">'+
+			'		<tr class="submission-review-row">' +
+			'			<tpl for="fields">'+
+			'				<td class="submission-review-data">' +
+			'					{value}' +
+			'				</td>' +
+			'			</tpl>' +			
+			'		</tr>' +
+			'	</tpl>'+
+			'</tbody>' +
+			'</table>'
+		);
+		
+		var data = {
+			columns: [],
+			data: []
+		};
+		
+		Ext.Array.each(grid.getColumns(), function(column) {
+			if (!column.isHidden) {
+				data.columns.push({
+					title: column.text
+				});
+			}
+		});
+		
+		
+		grid.getStore().each(function(record){
+			var fields = [];
+			
+			Ext.Array.each(grid.getColumns(), function(column) {
+				if (!column.isHidden) {
+					fields.push({
+						value: record.get(column.dataIndex)
+					});
+				}
+			});
+			
+			data.data.push({
+				fields: fields
+			});
+		});
+		
+		return template.apply(data);
 	}
-	
-	
+		
 	
 });
 

@@ -15,43 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global Ext, CoreUtil, CoreService */
 
-/* Author: cyearsley */
+/* global Ext */
 
-Ext.define('OSF.customSubmission.form.Tags', {
-	extend: 'OSF.customSubmission.SubmissionBaseForm',
-	xtype: 'osf-submissionform-tags',
+Ext.define('OSF.customSubmission.SubmissionBaseForm', {
+	extend: 'Ext.form.Panel',
 	
-	layout: 'anchor',
-	bodyStyle: 'padding: 10px',
-	fieldType: 'TAG',
-	defaults: {
-		width: '100%',
-		maxWidth: 800,
-		labelAlign: 'top',
-		labelSeparator: ''		
-	},	
-		
-	initComponent: function () {
-		this.callParent();		
-		var tagPanel = this;
-
-		tagPanel.add(
-		{
-			xtype: 'StandardComboBox',	
-			name: 'text',
-			allowBlank: false,
-			margin: '0 0 0 0',
-			fieldLabel: 'Tag<span class="field-required" />',
-			forceSelection: false,
-			valueField: 'text',
-			displayField: 'text',
-			maxLength: 120,
-			storeConfig: {
-				url: 'api/v1/resource/components/tags'
-			}
-		});
-
+	
+	
+	reviewDisplayValue: function() {
+		var attributePanel = this;		
+		var data = attributePanel.getValues();
+		return 'TEST';
 	}
+		
+	
 });

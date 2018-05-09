@@ -60,6 +60,7 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 				{
 					xtype: 'osf-submissionform-contact',
 					itemId: 'form',
+					fieldTemplate: grid.fieldTemplate,
 					scrollable: true,
 					dockedItems: [
 						{

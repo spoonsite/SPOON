@@ -42,3 +42,34 @@ limitations under the License.
 	font-size: 16px;
 	font-style: italic;
 }
+
+.submission-review-table {
+	border:1px solid black;
+	vertical-align:top;
+	text-align:left;
+    border-collapse: collapse;    	
+}
+
+.submission-review-header {
+    border: 1px solid #ddd;
+    padding: 8px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #3c3c3c;
+    color: white;	
+}
+
+.submission-review-data {
+	padding: 8px;
+	border: 1px solid #ddd;
+} 
+
+.submission-review-row:nth-child(even) {
+	background-color: white;
+}
+
+.submission-review-row:nth-child(odd) {
+	background-color: whitesmoke;
+	
+}

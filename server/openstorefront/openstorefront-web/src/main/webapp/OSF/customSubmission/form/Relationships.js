@@ -16,8 +16,10 @@
  * See NOTICE.txt for more information.
  */
 
+/* global Ext */
+
 Ext.define('OSF.customSubmission.form.Relationships', {
-	extend: 'Ext.form.Panel',
+	extend: 'OSF.customSubmission.SubmissionBaseForm',
 	xtype: 'osf-submissionform-relationships',
 	
 	layout: 'anchor',
