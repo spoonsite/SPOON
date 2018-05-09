@@ -767,7 +767,6 @@ public class SystemServiceImpl
 								// NOTE: Substring is inclusive, so adding one to get all characters from AFTER the last period to end of line
 								title = title.substring(title.lastIndexOf('.') + 1); 
 								childHelp.setTitle(title);
-								// childHelp.setContent("<hr><p>This Space Intentionally Left Blank</p>");
 								childHelp.setContent(each.getContent());
 								break;
 							}
