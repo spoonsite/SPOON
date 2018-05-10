@@ -165,7 +165,55 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 		
 				
 		
-	}	
+	},
+	
+	reviewDisplayValue: function() {
+		var attributePanel = this;
+		
+		var template = new Ext.XTemplate(
+			'<table class="submission-review-table">' + 
+			'<tbody>' + 
+			'	<tpl for=".">'+
+			'		<tr class="submission-review-row">' +
+			'			<td class="submission-review-label">'+
+			'				{label}' +
+			'			</td>' +
+			'			<td class="submission-review-data" style="min-width: 150px">' +
+			'				{value}' +
+			'			</td>' +			
+			'		</tr>' +
+			'	</tpl>'+
+			'</tbody>' +
+			'</table>'
+		);
+
+		data = [];
+		var value = '';
+		var typeRecord = attributePanel.queryById('attributeTypeCB').getSelection();
+		if (typeRecord) {
+			value = typeRecord.get('description');
+		}
+		
+		data.push({
+			label: attributePanel.queryById('attributeTypeCB').fieldLabel,
+			value: value
+		});
+		
+		value = '';
+		typeRecord = attributePanel.queryById('attributeCodeCB').getSelection();
+		if (typeRecord) {
+			value = typeRecord.get('label');
+		} else {
+			value = attributePanel.queryById('attributeCodeCB').getValue();
+		}
+		
+		data.push({
+			label: attributePanel.queryById('attributeCodeCB').fieldLabel,
+			value: value
+		});		
+		
+		return template.apply(data);
+	}
 	
 	
 });

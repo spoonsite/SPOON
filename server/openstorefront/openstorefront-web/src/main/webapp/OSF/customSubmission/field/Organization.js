@@ -54,7 +54,12 @@ Ext.define('OSF.customSubmission.field.Organization', {
 		field.callParent();			
 		field.setFieldLabel(field.createQuestionLabel());
 		
-	}
+	},
+	
+	reviewDisplayValue: function() {
+		var textField = this;
+		return textField.getValue();	
+	}	
 	
 });
 

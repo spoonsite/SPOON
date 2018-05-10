@@ -82,7 +82,9 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		//create sections
 		submissionForm.formSections = [];
 		var sectionComponents = [];
+		var index = 0;
 		Ext.Array.each(submissionForm.template.sections, function(section){
+			section.index = index++;			
 			var sectionComponent;
 			if (section.review) {
 				sectionComponent = Ext.create('OSF.customSubmission.ReviewSection', {				
@@ -110,7 +112,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		submissionForm.setActiveItem(section.component);
 		
 		if (section.review) {
-			section.component.displayReviewSections(submissionForm.formSections);
+			section.component.displayReviewSections(submissionForm.formSections, submissionForm);
 		}
 		
 		if (submissionForm.progressCallback) {

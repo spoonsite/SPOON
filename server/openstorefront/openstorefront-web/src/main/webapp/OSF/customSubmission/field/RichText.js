@@ -63,6 +63,11 @@ Ext.define('OSF.customSubmission.field.RichText', {
 			fieldPanel.textArea
 		]);
 		
+	},
+	
+	reviewDisplayValue: function() {
+		var textField = this;
+		return textField.textArea.getValue();	
 	}
 	
 	

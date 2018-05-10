@@ -44,6 +44,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				},
 				{
 					xtype: 'checkbox',
+					itemId: 'privateField',
 					boxLabel: 'Private'
 				}
 			]
@@ -91,6 +92,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		};	
 				
 		var displayItems = [];
+		panel.selectValues = [];
 		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
 			//combo box or nothing if code is set
 			if (panel.fieldTemplate.attributeCode) {
@@ -110,6 +112,16 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 							maxWidth: 800,
 							listeners: {
 								change: function(field, newValue, oldValue) {
+									
+									var processValue = '';
+									var record = field.getSelection();
+									if (record) {
+										processValue = record.get('label');
+									} else {
+										processValue = newValue;
+									}
+																	
+									panel.selectValues = [processValue];									
 									checkForRequiredComment(newValue);
 								} 
 							}
@@ -158,6 +170,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 						displayItems.push({
 							xtype: 'checkbox',							
 							name: 'attributeCodes',
+							submitValue: code.attributeCodePk.attributeCode,
 							boxLabel: code.label,
 							listeners: {
 								change: function(field, newValue, oldValue) {
@@ -172,10 +185,14 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 			});
 		}				
 
-
-
+	},
+	
+	reviewDisplayValue: function() {
+		var panel = this;
 		
 		
+		return '';
 	}
+	
 
 });

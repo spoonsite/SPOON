@@ -286,7 +286,7 @@ Ext.define('OSF.customSubmission.Section', {
 	valid: function() {
 		var section = this;
 		
-		valid = true;
+		var valid = true;
 		Ext.Array.forEach(section.items.items, function (field) {
 			
 		});

@@ -46,6 +46,7 @@ Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
 		
 		if (submissionField.actualForm) {
 			submissionField.actualForm.fieldTemplate = submissionField.fieldTemplate;
+			submissionField.actualForm.itemId = 'component';
 			submissionField.add(submissionField.actualForm);
 		}
 				
@@ -53,7 +54,8 @@ Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
 	
 	reviewDisplayValue: function() {
 		var submissionField = this;
-		return submissionField.actualForm.reviewDisplayValue ? submissionField.actualForm.reviewDisplayValue() : 'N/A';
+		var formComponent = submissionField.queryById('component');		
+		return formComponent.reviewDisplayValue ? formComponent.reviewDisplayValue() : 'N/A';
 	},
 	
 	/**

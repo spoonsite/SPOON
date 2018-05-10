@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext, reviewSections */
+/* global Ext, reviewSections, section */
 
 Ext.define('OSF.customSubmission.ReviewSection', {
 	extend: 'Ext.panel.Panel',
@@ -27,46 +27,50 @@ Ext.define('OSF.customSubmission.ReviewSection', {
 	title: 'Review Submission',
 	titleAlign: 'center',
 	
-	displayReviewSections: function(reviewSections) {
+	displayReviewSections: function(reviewSections, submissionForm) {
 		var reviewPanel = this;
 		
 		reviewPanel.removeAll();
 		reviewPanel.reviewSections = reviewSections;
 		
+		window.submissionFormJump = function(sectionIndex) {
+			submissionForm.jumpToSection(sectionIndex);
+		};
+		
 		var displayItems = [{
 			html: 'Review ALL sections and verify input before submitting.'	
 		}];
 		Ext.Array.each(reviewSections, function(section){
-			var validMessage = '<i class="fa fa-lg fa-close alert-danger" title="Valid"></i>';
+			var validMessage = '<i class="fa fa-lg fa-close text-danger" title="Valid"></i>';
 			if (section.component.valid()) {
-				validMessage = '<i class="fa fa-lg fa-check alert-success" title="Invalid"></i>';
+				validMessage = '<i class="fa fa-lg fa-check text-success" title="Invalid"></i>';
 			}
 			var questions = section.component.getReviewableQuestions();
 			var questionsConfig = [];
 			if (questions.length > 0) {
-				var questionsConfig = [{
+				questionsConfig.push({
 					data: questions,					
 					tpl: new Ext.XTemplate(
 						'<tpl for=".">' +	
 							'<div><span>{question}</span> '+
-								'<tpl if="valid"><i class="fa fa-lg fa-check alert-success" title="Valid"></i></tpl>' +
-								'<tpl if="!valid"><i class="fa fa-lg fa-close alert-danger" title="Invalid"></i></tpl>' +												
+								'<tpl if="valid"><i class="fa fa-lg fa-check text-success" title="Valid"></i></tpl>' +
+								'<tpl if="!valid"><i class="fa fa-lg fa-close text-danger" title="Invalid"></i></tpl>' +												
 								'<div style="margin-top: 10px; margin-bottom: 10px;">' +
 								'{value}' +
 								'</div>' +
 							'</div>' +
 						'</tpl>'	
 					)	
-				}];
+				});
 			} else {
-				var questionsConfig = [{
+				questionsConfig.push({
 					html: 'No Form Fields'	
-				}];
+				});
 			}
 			
 			displayItems.push({
 				xtype: 'fieldset',
-				title: section.name + ' ' + validMessage,
+				title: '<a href="#" onclick="submissionFormJump(' + section.index + ')">' + section.name + '</a> ' + validMessage,
 				items: questionsConfig,
 				margin: '0 0 20 0'
 			});

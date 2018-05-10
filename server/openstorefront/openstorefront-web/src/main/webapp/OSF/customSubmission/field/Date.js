@@ -41,7 +41,13 @@ Ext.define('OSF.customSubmission.field.Date', {
 			
 		numberField.setFieldLabel(numberField.createQuestionLabel());
 		
-	}
+	},
+	
+	reviewDisplayValue: function() {
+		var textField = this;
+		return textField.getValue();	
+	}	
+	
 	
 });
 

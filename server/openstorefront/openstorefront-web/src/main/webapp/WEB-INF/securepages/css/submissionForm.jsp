@@ -65,6 +65,12 @@ limitations under the License.
 	border: 1px solid #ddd;
 } 
 
+.submission-review-label {
+	padding: 8px;
+	font-weight: bold;
+	border: 1px solid #ddd;
+}
+
 .submission-review-row:nth-child(even) {
 	background-color: white;
 }
