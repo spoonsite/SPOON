@@ -27,15 +27,16 @@ Ext.define('OSF.form.Comments', {
 		
         var commentPanel = this;
         var actionAddComment = function(form){
-            var data = form.getValues();
+			var data = form.getValues();
+			console.log(data);
             var componentId = commentPanel.componentId;
             console.log('adding the comment');
             CoreUtil.submitForm({
 				// Somewhere in here, under the right conditions, we are going to change the method and update the url to correctly reflect if it is a POST or a PUT.
-				// url: 'api/v1/resource/components/' + componentId + '/comments',
-				// method: 'POST',
-				// data: data,
-                // form: form,
+				url: 'api/v1/resource/components/' + componentId + '/comments',
+				method: 'POST',
+				data: data,
+                form: form,
 				success: function(){
 					commentPanel.commentGrid.getStore().reload();
 					form.reset();
@@ -61,7 +62,8 @@ Ext.define('OSF.form.Comments', {
 				}
 			}),
 			columns: [
-				{ text: 'Comment', dataIndex: 'text', flex: 1, minWidth: 200 },
+				{ text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 200 },
+				{ text: 'Comment Type', align: 'center', dataIndex: 'commentType', width: 150 },
 				{ text: 'Create User', align: 'center', dataIndex: 'createUser', width: 150 },
 				{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true },
@@ -69,63 +71,78 @@ Ext.define('OSF.form.Comments', {
             ],
             listeners: {
 				selectionchange: function(grid, record, index, opts){
-					var fullgrid = tagPanel.tagGrid;
+					var fullgrid = commentPanel.commentGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
+						fullgrid.down('toolbar').getComponent('edit').setDisabled(false);
 					} else {
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
+						fullgrid.down('toolbar').getComponent('edit').setDisabled(true);
 					}
 				}						
             },
             dockedItems: [
 				{
 					xtype: 'form',
+					title: 'Comments:',
 					layout: 'anchor',
 					padding: 10,
 					defaults: {
 						labelAlign: 'top',
 						labelSeparator: ''
 					},
+					buttonAlign: 'center',
+					buttons: [
+						{
+							xtype: 'button',
+							text: 'Save',
+							formBind: true,
+							iconCls: 'fa fa-save',
+							margin: '30 0 0 0',
+							minWidth: 75,
+							handler: function(){
+								actionAddComment(this.up('form'));
+							}
+						},
+						{
+							xtype: 'button',
+							text: 'cancel',
+							iconCls: 'fa fa-close',
+							margin: '30 0 0 0',
+							minWidth: 75,
+							handler: function(){
+								this.up('form').reset();
+							}
+						}
+					],
 					items: [
 						{
-							xtype: 'panel',
-							layout: 'hbox',
+							xtype: 'textarea',
+							name: 'comment',
+							fieldLabel: 'comment',
+							width: '100%',
+							labelWidth: 150,
+							maxLength: 4096
+						},
+						{
+							xtype: 'form',
 							items: [
 								Ext.create('OSF.component.StandardComboBox', {
-									name: 'text',	
-									itemId: 'commentField',
-									flex: 1,
-									fieldLabel: 'Add Comment',
-									forceSelection: false,
-									valueField: 'text',
-									displayField: 'text',										
-									margin: '0 10 10 0',
-									maxLength: 120,
-									// storeConfig: {
-									// 	//url: 'api/v1/resource/components/' + tagPanel.componentId + '/tagsfree'
-									// },
-									listeners:{
-										specialkey: function(field, e) {
-											var value = this.getValue();
-											if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
-												actionAddComment(this.up('form'));
-											}	
+									name: 'commentType',									
+									allowBlank: false,
+									editable: false,
+									typeAhead: false,
+									margin: '0 0 5 0',
+									width: '100%',
+									fieldLabel: 'Comment Type <span class="field-required" />',
+									storeConfig: {
+										url: 'api/v1/resource/lookuptypes/ComponentCommentType'
+									},
+									listeners: {
+										change: function(cb, newValue, oldValue) {
 										}
 									}
-								}),
-								{
-									xtype: 'button',
-									text: 'Add',
-									iconCls: 'fa fa-plus',
-									margin: '30 0 0 0',
-									minWidth: 75,
-									handler: function(){
-										var commentField = this.findParentByType('form').query('[name="text"]')[0];
-										if (commentField.isValid()) {
-											actionAddComment(this.up('form'));
-										}
-									}
-								}
+								})
 							]
 						}
 					]
@@ -138,6 +155,17 @@ Ext.define('OSF.form.Comments', {
 							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								this.up('grid').getStore().reload();
+							}
+						},
+						{
+							text: 'Edit',
+							itemId: 'edit',
+							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+							disabled: true,
+							handler: function () {
+								var record = commentPanel.commentGrid.getSelection()[0];
+								console.log(record);
+								//actionEdit(record);
 							}
 						},
 						{
@@ -163,7 +191,8 @@ Ext.define('OSF.form.Comments', {
         
         var commentPanel = this;
         commentPanel.componentId = componentId;
-        commentPanel.commentGrid.componentId = componentId;
+		commentPanel.commentGrid.componentId = componentId;
+		console.log(componentId);
 
         commentPanel.commentGrid.getStore().load({
 			// GET request

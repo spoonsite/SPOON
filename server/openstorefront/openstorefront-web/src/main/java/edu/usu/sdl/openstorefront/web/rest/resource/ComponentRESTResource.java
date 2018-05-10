@@ -1084,6 +1084,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed" desc="Version history">
 	@GET
 	@APIDescription("Gets all version history for a component")
@@ -1216,6 +1217,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
@@ -2424,11 +2426,9 @@ public class ComponentRESTResource
 
 	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource Comment section">
 	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Gets the list of comments associated to an entity")
-	@Produces(
-			{
-				MediaType.APPLICATION_JSON
-			})
+	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentComment.class)
 	@Path("/{id}/comments")
 	public List<ComponentComment> getComponentComment(
@@ -2437,8 +2437,63 @@ public class ComponentRESTResource
 	{
 		return service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
 	}
+	
+//	@DELETE
+//	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+//	@APIDescription("Delete all comments from the specified component")
+//	@Consumes({MediaType.APPLICATION_JSON})
+//	@DataType(ComponentComment.class)
+//	@Path("/{id}/comments")
+//	public void deleteComponentComments(
+//			@PathParam("id")
+//			@RequiredParam String componentId)
+//	{
+//		ComponentComment example = new ComponentComment();
+//		example.setComponentId(componentId);
+//		service.getComponentService().deleteAllBaseComponent(ComponentComment.class, componentId);
+//	}
+//	
+//	@PUT
+//	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+//	@APIDescription("Edit a specific comment from the specified component")
+//	@Consumes({MediaType.APPLICATION_JSON})
+//	@DataType(ComponentComment.class)
+//	@Path("/{id}/comments/{commentId}")
+	
+	
+	@POST
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Add a single comment to the specified component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(ComponentComment.class)
+	@Path("/{id}/comments")
+	public Response addComponentTag(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam ComponentComment comment)
+	{
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if(component != null){
+			comment.setComponentId(componentId);
+			ValidationResult validResult = comment.validate();
+			if(validResult.valid()){
+				ComponentComment newComment = comment.save();
+				return Response.created(URI.create("v1/resource/components/" + comment.getComponentId() + "/comments/" + comment.getCommentId())).entity(newComment).build();
+			}
+			else{
+				return Response.ok(validResult.toRestError()).build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+	
+	
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
 	@APIDescription("Get the entire metadata list")
@@ -3764,7 +3819,6 @@ public class ComponentRESTResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
 	@Path("/{id}/tags")
-
 	public void deleteComponentTags(
 			@PathParam("id")
 			@RequiredParam String componentId)
@@ -4113,6 +4167,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
@@ -4219,6 +4274,7 @@ public class ComponentRESTResource
 //
 //	}
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
