@@ -30,6 +30,7 @@ Ext.define('OSF.customSubmission.Section', {
 		'OSF.customSubmission.field.MediaGrid',
 		'OSF.customSubmission.field.RelationshipsGrid',
 		'OSF.customSubmission.field.ResourcesGrid',
+		'OSF.customSubmission.field.ResourceSimple',
 		'OSF.customSubmission.field.TagsGrid',
 		'OSF.customSubmission.field.TextArea',
 		'OSF.customSubmission.field.Text',
@@ -185,7 +186,12 @@ Ext.define('OSF.customSubmission.Section', {
 							xtype: 'osf-submissionform-resource'
 						}						
 					}));
-				break;					
+				break;	
+				case 'RESOURCE_SIMPLE':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-resourcesimple'
+					}));
+				break;			
 				case 'RESOURCE_MULTI':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-resourcegrid'						

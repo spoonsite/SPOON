@@ -215,6 +215,14 @@
 										mappingType: 'COMPONENT',
 										required: false,
 										fieldType: 'DATE'										
+									},	
+									{
+										fieldId: 6,
+										questionNumber: 'Q-22-2.',
+										label: 'Upload ATO Document',										
+										mappingType: 'COMPLEX',
+										required: false,
+										fieldType: 'RESOURCE_SIMPLE'										
 									},									
 									{
 										fieldId: 4,

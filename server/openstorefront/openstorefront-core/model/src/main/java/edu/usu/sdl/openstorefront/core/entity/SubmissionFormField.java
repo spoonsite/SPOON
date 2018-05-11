@@ -92,6 +92,11 @@ public class SubmissionFormField
 	private String relationshipType;
 
 	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = ResourceType.class)
+	@FK(ResourceType.class)
+	private String resourceType;
+
+	@ConsumeField
 	private String subSubmissionTemplateId;
 
 	@ConsumeField
@@ -180,6 +185,7 @@ public class SubmissionFormField
 		this.setRelationshipType(submissionFormField.getRelationshipType());
 		this.setChildEntryType(submissionFormField.getChildEntryType());
 		this.setShowComment(submissionFormField.getShowComment());
+		this.setResourceType(submissionFormField.getResourceType());
 
 		this.setSectionId(submissionFormField.getSectionId());
 
@@ -413,6 +419,16 @@ public class SubmissionFormField
 	public void setShowComment(Boolean showComment)
 	{
 		this.showComment = showComment;
+	}
+
+	public String getResourceType()
+	{
+		return resourceType;
+	}
+
+	public void setResourceType(String resourceType)
+	{
+		this.resourceType = resourceType;
 	}
 
 }

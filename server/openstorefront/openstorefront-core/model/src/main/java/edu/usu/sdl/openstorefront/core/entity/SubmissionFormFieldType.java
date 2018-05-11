@@ -52,6 +52,7 @@ public class SubmissionFormFieldType
 	public static final String MEDIA = "MEDIA";
 	public static final String MEDIA_MULTI = "MEDIA_MULTI";
 	public static final String RESOURCE = "RESOURCE";
+	public static final String RESOURCE_SIMPLE = "RESOURCE_SIMPLE";
 	public static final String RESOURCE_MULTI = "RESOURCE_MULTI";
 	public static final String TAG = "TAG";
 	public static final String TAG_MULTI = "TAG_MULTI";
@@ -90,6 +91,7 @@ public class SubmissionFormFieldType
 		codeMap.put(MEDIA, newLookup(SubmissionFormFieldType.class, MEDIA, "Media"));
 		codeMap.put(MEDIA_MULTI, newLookup(SubmissionFormFieldType.class, MEDIA_MULTI, "Media Multiple"));
 		codeMap.put(RESOURCE, newLookup(SubmissionFormFieldType.class, RESOURCE, "Resource"));
+		codeMap.put(RESOURCE_SIMPLE, newLookup(SubmissionFormFieldType.class, RESOURCE_SIMPLE, "Resource Simple"));
 		codeMap.put(RESOURCE_MULTI, newLookup(SubmissionFormFieldType.class, RESOURCE_MULTI, "Resource Multiple"));
 		codeMap.put(TAG, newLookup(SubmissionFormFieldType.class, TAG, "Tag"));
 		codeMap.put(TAG_MULTI, newLookup(SubmissionFormFieldType.class, TAG_MULTI, "Tag Multiple"));
