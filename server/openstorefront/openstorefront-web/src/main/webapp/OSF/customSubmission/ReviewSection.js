@@ -79,8 +79,16 @@ Ext.define('OSF.customSubmission.ReviewSection', {
 		
 		reviewPanel.add(displayItems);
 		
+	
+		var existingWarning = reviewPanel.queryById('warning');
+		if (existingWarning) {
+			reviewPanel.removeDocked(existingWarning);
+		}		
+		
 		if (!reviewPanel.allSectionsValid()) {
+			 
 			reviewPanel.addDocked({
+				itemId: 'warning',
 				html: '<div class="alert-danger" style="text-align: center; font-size: 16px;"><i class="fa fa-exclamation-triangle"> One or more sections are invalid</div>'
 			});
 		}

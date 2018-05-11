@@ -134,6 +134,9 @@ public class SubmissionFormField
 	private Boolean showComment;
 
 	@ConsumeField
+	private Boolean hidePrivateAttributeFlag;
+
+	@ConsumeField
 	private String requiredCommentOnValue;
 
 	@ConsumeField
@@ -186,6 +189,7 @@ public class SubmissionFormField
 		this.setChildEntryType(submissionFormField.getChildEntryType());
 		this.setShowComment(submissionFormField.getShowComment());
 		this.setResourceType(submissionFormField.getResourceType());
+		this.setHidePrivateAttributeFlag(submissionFormField.getHidePrivateAttributeFlag());
 
 		this.setSectionId(submissionFormField.getSectionId());
 
@@ -429,6 +433,16 @@ public class SubmissionFormField
 	public void setResourceType(String resourceType)
 	{
 		this.resourceType = resourceType;
+	}
+
+	public Boolean getHidePrivateAttributeFlag()
+	{
+		return hidePrivateAttributeFlag;
+	}
+
+	public void setHidePrivateAttributeFlag(Boolean hidePrivateAttributeFlag)
+	{
+		this.hidePrivateAttributeFlag = hidePrivateAttributeFlag;
 	}
 
 }

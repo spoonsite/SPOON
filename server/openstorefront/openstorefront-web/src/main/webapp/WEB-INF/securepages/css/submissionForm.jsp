@@ -39,8 +39,9 @@ limitations under the License.
 }
 
 .submission-instructions {
+	padding: 10px;
 	font-size: 16px;
-	font-style: italic;
+	line-height: 100%;
 }
 
 .submission-review-table {
@@ -78,4 +79,17 @@ limitations under the License.
 .submission-review-row:nth-child(Even) {
 	background-color: whitesmoke;
 	
+}
+
+.submission-button {
+	padding: 20px;
+	height: 50px;
+	border: 1px solid #ddd;	
+	vertical-align: middle;
+	background: ${actionBean.branding.primaryColor};
+	color: ${actionBean.branding.primaryTextColor};
+}
+
+.submission-button:hover {
+	opacity: .7;
 }

@@ -46,6 +46,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 					xtype: 'checkbox',
 					itemId: 'privateField',
 					name: 'private',
+					hidden: panel.fieldTemplate.hidePrivateAttributeFlag ? true : false,
 					boxLabel: 'Private'
 				}
 			]

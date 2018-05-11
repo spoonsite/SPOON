@@ -219,41 +219,47 @@ Ext.define('OSF.customSubmission.Section', {
 				case 'TEXT':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-text',
+						labelWidth: 300,
 						labelAlign: field.labelAlign ? field.labelAlign : 'top'
 					}));
 				break;
 				case 'TEXTAREA':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-textarea',
+						labelWidth: 300,
 						labelAlign: field.labelAlign ? field.labelAlign : 'top'
 					}));
 				break;
 				case 'NUMBER':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-number',
+						labelWidth: 300,
 						labelAlign: field.labelAlign ? field.labelAlign : 'top'
 					}));
 				break;
 				case 'DATE':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-date',
+						labelWidth: 300,
 						labelAlign: field.labelAlign ? field.labelAlign : 'top'
 					}));
 				break;
 				case 'RICHTEXT':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-richtext',
+						labelWidth: 300,
 						labelAlign: field.labelAlign ? field.labelAlign : 'top'
 					}));
 				break;
 				case 'ORGANIZATION':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-organization',
+						labelWidth: 300,
 						labelAlign: field.labelAlign ? field.labelAlign : 'top'
 					}));
 				break;	
 				case 'CONTENT':
-					itemsToAdd.push(Ext.apply(defaults, {
+					itemsToAdd.push(Ext.apply(defaults, {						
 						xtype: 'osf-submissionform-staticcontent'
 					}));
 				break;			

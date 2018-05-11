@@ -1,0 +1,211 @@
+{
+	"name": "Test Template",
+	"description": "This is a test description",
+	"templateStatus": "VALID",
+	"sections": [
+		{
+			"stepId": 1,
+			"name": "1.  Instructions",
+			"instructions": "<br><br><b>Purpose: </b>  Intent of this Software data sheet is to aid potential acquirers obtain critical information directly from vendors as the acquirers make their purchasing decisions. <br><br> <b>Instructions:</b>  Complete Sections 2 through 4 as described below.  Each Section has a comments section for any additional information vendor deems pertinent. <br><br> <b>Section 2.</b>  General Information - System Description - Provide basic naming, versioning and description information.  Also requests existing requirements (government or other) that the component was built to. <br><br> <b>Section 3</b> - Software Delivery Information - Provide general system information associated with the software <br><br> <b>Section 4</b> - Attributes - Each of the primary attributes (Performance, Security/Vulnerability, Usability, Software Design, Supportability, Testability, Scalability, Extensibility, Interoperability, and Affordability) has multiple sub-attributes.  Requested responses range from simple \"Yes, No, N/A\" to detailed descriptions/provision of documentation <br> To go to a spcific section of the Acquisition Workflow, click on the drop-down box and select the area you wish to edit. <br><br> <b>NOTE:</b>  Each question also has an option to indicate if the information is public or private.  By default, each question is marked \"Public.\"  Public means the information will be published on the DI2E Storefront.",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "2. Software Description",
+			"instructions": "Complete the below form with general company and product information:",
+			"stepOrder": 0,
+			"fields": [
+				{
+					"fieldId": 4,
+					"questionNumber": "G-1.",
+					"label": "Company Name",
+					"labelAlign": "left",
+					"mappingType": "COMPONENT",
+					"required": true,
+					"fieldType": "ORGANIZATION"	
+				},
+				{
+					"fieldId": 10,
+					"questionNumber": "G-2.",
+					"label": "Point Of Contact",										
+					"mappingType": "COMPLEX",
+					"required": true,
+					"fieldType": "CONTACT"							
+				},
+				{
+					"fieldId": 4,									
+					"mappingType": "NONE",
+					"required": false,
+					"fieldType": "CONTENT",
+					"staticContent": "<hr>"				
+				},
+				{
+					"fieldId": 4,
+					"questionNumber": "G-3.",
+					"label": "Product/System Name",										
+					"labelAlign": "left",
+					"mappingType": "COMPONENT",
+					"required": true,
+					"fieldType": "TEXT"		
+				},
+				{
+					"fieldId": 4,
+					"questionNumber": "G-4",
+					"label": "Short Product Description",
+					"labelAlign": "left",
+					"mappingType": "COMPONENT",
+					"required": true,
+					"fieldType": "TEXTAREA"	
+				},
+				{
+					"fieldId": 4,									
+					"mappingType": "NONE",
+					"required": false,
+					"fieldType": "CONTENT",
+					"staticContent": "<hr>"				
+				},
+				{
+					"fieldId": 4,
+					"questionNumber": "G-5.",
+					"label": "Which Joint Common System Function(s) from the JOINT COMMON SYSTEM FUNCTION LIST (JCSFL) DICTIONARY does the software implement?",										
+					"mappingType": "COMPLEX",
+					"required": true,
+					"hidePrivateAttributeFlag": true,
+					"fieldType": "ATTRIBUTE_SINGLE",
+					"attributeType": "TYPE"
+				},
+				{
+					"fieldId": 5,
+					"questionNumber": "G-6.",
+					"label": "From your required capability document, identify what specific capability this component implements?  Provide your referenced capability document and specific required capability(s).",										
+					"mappingType": "COMPLEX",
+					"required": false,
+					"fieldType": "ATTRIBUTE_SINGLE",
+					"attributeType": "FUNDED",										
+					"attributeCode": "Y",
+					"showComment": true,
+					"hidePrivateAttributeFlag": true,
+					"allowHTMLInComment": false,
+					"requireComment": false
+				},
+				{
+					"fieldId": 4,
+					"questionNumber": "G-7.",
+					"label": "Does a CONOPS exist for a proposed solution or an existing, similar use case?",										
+					"mappingType": "COMPLEX",
+					"required": false,
+					"hidePrivateAttributeFlag": true,
+					"fieldType": "ATTRIBUTE_RADIO",
+					"attributeType": "FUNDED"
+				},
+				{
+					"fieldId": 4,
+					"questionNumber": "G-8.",
+					"label": "Does a Software Requirements Specification (SRS) / Software Requirements Description (SRD) or other similar documentation exist?",										
+					"mappingType": "COMPLEX",
+					"required": false,
+					"hidePrivateAttributeFlag": true,
+					"fieldType": "ATTRIBUTE_RADIO",
+					"attributeType": "FUNDED"
+				}				
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "3. Software Delivery Information",
+			"instructions": "<b><u>Instructions</u></b>",
+			"stepOrder": 0,
+			"fields": [
+				{
+					"fieldId": 4,
+					"mappingType": "NONE",
+					"required": false,
+					"fieldType": "CONTENT",
+					"staticContent": "Step 1: Download form and complete information per the instructions on the template. <a href='download.csv' class='submission-button'>Download</a>"
+				}
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4A. Performance",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4B. Security",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4C. Usability",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4D. Software Design",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4E. Supportability",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4F. Testability",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4G. Scalability",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4H. Extensibility",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4I. Interoperability",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		},
+		{
+			"stepId": 2,
+			"name": "4J. Affordability",
+			"instructions": "",
+			"stepOrder": 0,
+			"fields": [
+			]
+		}		
+	]
+}
