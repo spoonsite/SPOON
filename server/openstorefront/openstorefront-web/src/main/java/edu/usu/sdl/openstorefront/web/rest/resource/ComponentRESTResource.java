@@ -2424,7 +2424,7 @@ public class ComponentRESTResource
 	}
 	// </editor-fold>
 
-	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource Comment section">
+	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource COMMENT section">
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Gets the list of comments associated to an entity")
@@ -2437,22 +2437,6 @@ public class ComponentRESTResource
 	{
 		return service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
 	}
-	
-//	@DELETE
-//	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-//	@APIDescription("Delete a comment from the specified component")
-//	@Consumes({MediaType.APPLICATION_JSON})
-//	@DataType(ComponentComment.class)
-//	@Path("/{id}/comments")
-//	public void deleteComponentComments(
-//			@PathParam("id")
-//			@RequiredParam String componentId)
-//	{
-//		ComponentComment example = new ComponentComment();
-//		example.setComponentId(componentId);
-//		service.getComponentService().deleteAllBaseComponent(ComponentComment.class, componentId);
-//	}
-	
 	
 	@DELETE
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
@@ -2478,13 +2462,7 @@ public class ComponentRESTResource
 		}
 		return response;
 	}
-//	
-//	@PUT
-//	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-//	@APIDescription("Edit a specific comment from the specified component")
-//	@Consumes({MediaType.APPLICATION_JSON})
-//	@DataType(ComponentComment.class)
-//	@Path("/{id}/comments/{commentId}")
+	
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Update a comment associated to the component")
@@ -2508,12 +2486,12 @@ public class ComponentRESTResource
 			checkBaseComponentBelongsToComponent(componentComment, componentId);
 			comment.setComponentId(componentId);
 			comment.setCommentId(commentId);
-			response = saveComment(comment, false);
+			response = saveComment(comment);
 		}
 		return response;
 	}
 
-	private Response saveComment(ComponentComment comment, Boolean post)
+	private Response saveComment(ComponentComment comment)
 	{
 		ValidationModel validationModel = new ValidationModel(comment);
 		validationModel.setConsumeFieldsOnly(true);
@@ -2522,17 +2500,12 @@ public class ComponentRESTResource
 			comment.setActiveStatus(ComponentComment.ACTIVE_STATUS);
 			comment.setCreateUser(SecurityUtil.getCurrentUserName());
 			comment.setUpdateUser(SecurityUtil.getCurrentUserName());
-			//service.getComponentService().saveComponentComment(comment);
+			comment.save();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + comment.getComponentId() + "/comments/" + comment.getCommentId())).entity(comment).build();
-		} else {
-			return Response.ok(comment).build();
-		}
+		return Response.ok(comment).build();
 	}
-	
 	
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
@@ -2562,9 +2535,6 @@ public class ComponentRESTResource
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
-	
-	
-
 	// </editor-fold>
 	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
