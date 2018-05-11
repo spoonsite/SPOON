@@ -531,10 +531,17 @@ Ext.define('OSF.form.Attributes', {
 		});
 		
 		var actionEdit = function(record) {
+			console.log(record);
+			console.log(record.get('type'));
+			console.log(record.get('code'));
+			console.log(record.modified);
+			console.log(record.modified);
 			record.set({
 				attributeType: record.get('type'),
 				attributeCode: record.get('code')				
 			});			
+			console.log(record.modified);
+			console.log(record.modified);
 			attributePanel.attributeGrid.queryById('form').loadRecord(record);			
 		};
 

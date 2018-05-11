@@ -28,9 +28,9 @@ Ext.define('OSF.form.Comments', {
         var commentPanel = this;
         var actionAddComment = function(form){
 			var data = form.getValues();
-			console.log(data);
+			//console.log(data);
             var componentId = commentPanel.componentId;
-            console.log('adding the comment');
+            //console.log('adding the comment');
             CoreUtil.submitForm({
 				// Somewhere in here, under the right conditions, we are going to change the method and update the url to correctly reflect if it is a POST or a PUT.
 				url: 'api/v1/resource/components/' + componentId + '/comments',
@@ -43,9 +43,7 @@ Ext.define('OSF.form.Comments', {
                 }
 			});	
 		};
-		var actionDeleteComment = function(form){
 
-		};
         commentPanel.commentGrid = Ext.create('Ext.grid.Panel',{
             columnLines: true,
 			store: Ext.create('Ext.data.Store', {
@@ -84,6 +82,7 @@ Ext.define('OSF.form.Comments', {
             dockedItems: [
 				{
 					xtype: 'form',
+					itemId: 'form',
 					title: 'Comments:',
 					layout: 'anchor',
 					padding: 10,
@@ -101,7 +100,34 @@ Ext.define('OSF.form.Comments', {
 							margin: '30 0 0 0',
 							minWidth: 75,
 							handler: function(){
-								actionAddComment(this.up('form'));
+								// actionAddComment(this.up('form'));
+								var form = this.up('form');
+								
+									var data = form.getValues();
+									//console.log(data);
+									var componentId = commentPanel.componentId;
+									// console.log('I am going to POST');
+									var method = 'POST';
+									var update = '';
+									if(data.commentId){
+										console.log('No I am not, I am going to PUT');
+										update = '/' + data.commentId;
+										method = 'PUT'
+									}
+									//console.log(data);
+									//console.log('adding the comment');
+									CoreUtil.submitForm({
+										// Somewhere in here, under the right conditions, we are going to change the method and update the url to correctly reflect if it is a POST or a PUT.
+										url: 'api/v1/resource/components/' + componentId + '/comments' + update,
+										method: method,
+										data: data,
+										form: form,
+										success: function(){
+											commentPanel.commentGrid.getStore().reload();
+											form.reset();
+										}
+									});	
+								
 							}
 						},
 						{
@@ -144,7 +170,11 @@ Ext.define('OSF.form.Comments', {
 									}
 								})
 							]
-						}
+						},
+						{
+							xtype: 'hidden',
+							name: 'commentId'
+						},
 					]
 				},						
 				{
@@ -164,7 +194,8 @@ Ext.define('OSF.form.Comments', {
 							disabled: true,
 							handler: function () {
 								var record = commentPanel.commentGrid.getSelection()[0];
-								console.log(record);
+								actionEdit(record);
+								//console.log(record.data.commentId);
 								//actionEdit(record);
 							}
 						},
@@ -177,14 +208,107 @@ Ext.define('OSF.form.Comments', {
 							iconCls: 'fa fa-lg fa-trash icon-button-color-warning',									
 							disabled: true,
 							handler: function(){
-                                // Delete should happen here!
+								// Delete should happen here!
+								//console.log(commentPanel.commentGrid);
+								//console.log(commentId);
+								//console.log(comments);
 								//CoreUtil.actionSubComponentToggleStatus(commentPanel.commentGrid, 'commentId', 'comments');
+								
+
+								// var record = commentPanel.commentGrid.getSelection()[0];
+								// console.log(record.data.commentId);
+								// Get Selection
+								var comment = commentPanel.commentGrid.getSelection()[0];
+								var commentId = comment.data.commentId;
+								var componentId= commentPanel.componentId;
+								// console.log(selection);
+								// // Get Number Of Selected
+								// var selected = commentPanel.commentGrid.getSelectionModel().getCount();
+
+								// // Check If Only One Record Selected
+								// if (selected === 1) {
+
+								// 	var name = selection[0].get('name');
+								// }
+								// else {
+
+								// 	var name = selected + ' Records';
+								// }
+
+								// Confirm Delete Operation
+								Ext.Msg.show({
+									title: 'Delete Component?',
+									message: 'Are you sure you want to delete:  ' + name +' ?',
+									buttons: Ext.Msg.YESNO,
+									icon: Ext.Msg.QUESTION,
+									fn: function(btn) {
+
+										if (btn === 'yes') {
+
+											// Indicate To User Deletion Is Occurring
+											// Ext.getCmp('commentPanel.commentGrid').setLoading(true);
+
+											// Initialize Update Counter
+											// var componentDeleteCount = 0;
+
+											// Loop Through Selection
+											// for (i = 0; i < selected; i++) {
+
+												// Get Component ID
+												//var componentId = selection[i].get('componentId');
+
+												// Make Request
+												Ext.Ajax.request({
+
+													url: 'api/v1/resource/components/' + componentId + '/comments/' + commentId,
+													method: 'DELETE',
+													success: function(response, opts) {
+
+														// Check For Errors
+														if (response.responseText.indexOf('errors') !== -1) {
+
+															// Provide Error Notification
+															Ext.toast('An Entry Failed To Delete', 'Error');
+
+															// Provide Log Information
+															console.log(response);
+														}
+
+														// Check If We Are On The Final Request
+														// if (++componentDeleteCount === selected) {
+
+															// // Provide Success Notification
+															// Ext.toast('Selected entries have been deleted', 'Success');
+
+															// // Refresh Grid
+															// actionRefreshComponentGrid();
+
+															// // Unmask Grid
+															// Ext.getCmp('commentGrid').setLoading(false);
+															commentPanel.commentGrid.getStore().reload();
+															// form.reset();
+														// }
+													}
+												});
+											// }
+										}
+									}
+								});
 							}
 						}
 					]
 				}
             ]
-        });
+		});
+		var actionEdit = function(record) {
+			//console.log(record);
+			// record.set({
+			// 	attributeType: record.get('type'),
+			// 	attributeCode: record.get('code')				
+			// });			
+			// attributePanel.attributeGrid.queryById('form').loadRecord(record);			
+			commentPanel.commentGrid.queryById('form').loadRecord(record);
+		};
         commentPanel.add(commentPanel.commentGrid);
     },
 	loadData: function(evaluationId, componentId, data, opts, callback) {
@@ -192,7 +316,7 @@ Ext.define('OSF.form.Comments', {
         var commentPanel = this;
         commentPanel.componentId = componentId;
 		commentPanel.commentGrid.componentId = componentId;
-		console.log(componentId);
+		//console.log(componentId);
 
         commentPanel.commentGrid.getStore().load({
 			// GET request

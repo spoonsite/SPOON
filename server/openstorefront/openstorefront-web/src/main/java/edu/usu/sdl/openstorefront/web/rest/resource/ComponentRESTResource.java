@@ -2440,7 +2440,7 @@ public class ComponentRESTResource
 	
 //	@DELETE
 //	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-//	@APIDescription("Delete all comments from the specified component")
+//	@APIDescription("Delete a comment from the specified component")
 //	@Consumes({MediaType.APPLICATION_JSON})
 //	@DataType(ComponentComment.class)
 //	@Path("/{id}/comments")
@@ -2452,6 +2452,32 @@ public class ComponentRESTResource
 //		example.setComponentId(componentId);
 //		service.getComponentService().deleteAllBaseComponent(ComponentComment.class, componentId);
 //	}
+	
+	
+	@DELETE
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Delete a comment by id from the specified entity")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/comments/{commentId}")
+	public Response deleteComponentCommentById(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("commentId")
+			@RequiredParam String commentId)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		ComponentComment example = new ComponentComment();
+		example.setCommentId(commentId);
+		example.setComponentId(componentId);
+		ComponentComment componentComment = service.getPersistenceService().queryOneByExample(new QueryByExample<>(example));
+		if (componentComment != null) {
+			response = ownerCheck(componentComment, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+			if (response == null) {
+				service.getComponentService().deleteBaseComponent(ComponentComment.class, commentId);
+			}
+		}
+		return response;
+	}
 //	
 //	@PUT
 //	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
@@ -2459,6 +2485,53 @@ public class ComponentRESTResource
 //	@Consumes({MediaType.APPLICATION_JSON})
 //	@DataType(ComponentComment.class)
 //	@Path("/{id}/comments/{commentId}")
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Update a comment associated to the component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}/comments/{commentId}")
+	public Response updateComponentComment(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("commentId")
+			@RequiredParam String commentId,
+			ComponentComment comment)
+	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+
+		response = Response.status(Response.Status.NOT_FOUND).build();
+		ComponentComment componentComment = service.getPersistenceService().findById(ComponentComment.class, commentId);
+		if (componentComment != null) {
+			checkBaseComponentBelongsToComponent(componentComment, componentId);
+			comment.setComponentId(componentId);
+			comment.setCommentId(commentId);
+			response = saveComment(comment, false);
+		}
+		return response;
+	}
+
+	private Response saveComment(ComponentComment comment, Boolean post)
+	{
+		ValidationModel validationModel = new ValidationModel(comment);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			comment.setActiveStatus(ComponentComment.ACTIVE_STATUS);
+			comment.setCreateUser(SecurityUtil.getCurrentUserName());
+			comment.setUpdateUser(SecurityUtil.getCurrentUserName());
+			//service.getComponentService().saveComponentComment(comment);
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		if (post) {
+			return Response.created(URI.create("v1/resource/components/" + comment.getComponentId() + "/comments/" + comment.getCommentId())).entity(comment).build();
+		} else {
+			return Response.ok(comment).build();
+		}
+	}
 	
 	
 	@POST
