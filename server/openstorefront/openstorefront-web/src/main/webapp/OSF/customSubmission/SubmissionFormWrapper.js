@@ -69,7 +69,9 @@ Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
 	 * Override to handle validation
 	 */	
 	isValid: function() {
-		return true;
+		var submissionField = this;	
+		var formComponent = submissionField.queryById('component');
+		return formComponent.isValid();
 	},
 	
 	/**

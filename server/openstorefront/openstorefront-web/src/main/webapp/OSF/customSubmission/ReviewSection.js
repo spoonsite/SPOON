@@ -78,6 +78,12 @@ Ext.define('OSF.customSubmission.ReviewSection', {
 		});
 		
 		reviewPanel.add(displayItems);
+		
+		if (!reviewPanel.allSectionsValid()) {
+			reviewPanel.addDocked({
+				html: '<div class="alert-danger" style="text-align: center; font-size: 16px;"><i class="fa fa-exclamation-triangle"> One or more sections are invalid</div>'
+			});
+		}
 	},
 	
 	allSectionsValid: function() {
@@ -87,8 +93,8 @@ Ext.define('OSF.customSubmission.ReviewSection', {
 		
 		if (reviewPanel.reviewSections) {
 			valid = true;
-			Ext.Array.each(reviewSections, function(section){
-				if (!section.valid()) {
+			Ext.Array.each(reviewPanel.reviewSections, function(section){
+				if (!section.component.valid()) {
 					valid = false;
 				} 
 			});

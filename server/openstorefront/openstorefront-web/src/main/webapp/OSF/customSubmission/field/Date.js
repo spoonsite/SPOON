@@ -36,16 +36,23 @@ Ext.define('OSF.customSubmission.field.Date', {
 	},	
 	
 	initComponent: function () {
-		var numberField = this;
-		numberField.callParent();
+		var field = this;
+		field.callParent();
 			
-		numberField.setFieldLabel(numberField.createQuestionLabel());
+		if (field.fieldTemplate.required) {
+			field.setConfig({
+					allowBlank: false
+			});				
+		}			
+			
+		field.setFieldLabel(field.createQuestionLabel());
 		
 	},
 	
 	reviewDisplayValue: function() {
-		var textField = this;
-		return textField.getValue();	
+		var field = this;
+		var value = field.getValue();
+		return value && value !== '' ? value : '(No Data Entered)';	
 	}	
 	
 	

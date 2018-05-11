@@ -276,7 +276,7 @@
 										questionNumber: 'Q-29.',
 										label: 'Comment on Yes',										
 										mappingType: 'COMPLEX',
-										required: true,
+										required: false,
 										fieldType: 'ATTRIBUTE_RADIO',
 										attributeType: 'FUNDED',										
 										requiredCommentOnValue: 'Y'
@@ -305,7 +305,7 @@
 								fields: [
 									{	
 										fieldId: 4,
-										questionNumber: 'Q-30.',
+										questionNumber: 'Q-40.',
 										label: 'Line',										
 										mappingType: 'NONE',
 										required: false,
@@ -314,7 +314,7 @@
 									},
 									{	
 										fieldId: 4,
-										questionNumber: 'Q-31.',
+										questionNumber: 'Q-41.',
 										label: 'Text',										
 										mappingType: 'NONE',
 										required: false,
@@ -323,7 +323,7 @@
 									},									
 									{	
 										fieldId: 4,
-										questionNumber: 'Q-32.',
+										questionNumber: 'Q-42.',
 										label: 'Image',										
 										mappingType: 'NONE',
 										required: false,
@@ -332,7 +332,7 @@
 									},
 									{	
 										fieldId: 4,
-										questionNumber: 'Q-3.',
+										questionNumber: 'Q-43.',
 										label: 'Download',										
 										mappingType: 'NONE',
 										required: false,

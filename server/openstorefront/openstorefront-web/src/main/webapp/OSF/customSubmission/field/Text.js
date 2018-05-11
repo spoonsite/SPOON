@@ -38,6 +38,12 @@ Ext.define('OSF.customSubmission.field.Text', {
 	initComponent: function () {
 		var textField = this;
 		textField.callParent();
+		
+		if (textField.fieldTemplate.required) {
+			textField.setConfig({
+					allowBlank: false
+			});				
+		}
 			
 		textField.setFieldLabel(textField.createQuestionLabel());
 		
@@ -45,7 +51,8 @@ Ext.define('OSF.customSubmission.field.Text', {
 	
 	reviewDisplayValue: function() {
 		var textField = this;
-		return textField.getValue();	
+		var value = textField.getValue();
+		return value && value !== '' ? value : '(No Data Entered)';	
 	}
 	
 });

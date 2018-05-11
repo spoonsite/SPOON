@@ -71,11 +71,11 @@ limitations under the License.
 	border: 1px solid #ddd;
 }
 
-.submission-review-row:nth-child(even) {
+.submission-review-row:nth-child(odd) {
 	background-color: white;
 }
 
-.submission-review-row:nth-child(odd) {
+.submission-review-row:nth-child(Even) {
 	background-color: whitesmoke;
 	
 }

@@ -39,13 +39,20 @@ Ext.define('OSF.customSubmission.field.Number', {
 		var numberField = this;
 		numberField.callParent();
 			
+		if (numberField.fieldTemplate.required) {
+			numberField.setConfig({
+					allowBlank: false
+			});				
+		}				
+			
 		numberField.setFieldLabel(numberField.createQuestionLabel());
 		
 	},
 	
 	reviewDisplayValue: function() {
-		var textField = this;
-		return textField.getValue();	
+		var field = this;
+		var value = field.getValue();
+		return value && value !== '' ? value : '(No Data Entered)';		
 	}	
 	
 });

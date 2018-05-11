@@ -155,6 +155,13 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		if (section && section.review) {
 			submissionFormFullControl.queryById('save').setHidden(true);
 			submissionFormFullControl.queryById('submitApproval').setHidden(false);
+			
+			if (!section.component.allSectionsValid()) {
+				submissionFormFullControl.queryById('submitApproval').setDisabled(true);
+			} else {
+				submissionFormFullControl.queryById('submitApproval').setDisabled(false);
+			}
+			
 		} else {
 			submissionFormFullControl.queryById('save').setHidden(false);
 			submissionFormFullControl.queryById('submitApproval').setHidden(true);

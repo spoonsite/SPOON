@@ -114,6 +114,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 		attributePanel.field = Ext.create(xtype, Ext.apply({
 				fieldLabel: attributePanel.showLabel ? attributePanel.attributeTypeView.description + requireType : '',
 				forceSelection: forceSelection,
+				name: attributePanel.name ? attributePanel.name : 'attributeCode',
 				queryMode: 'local',
 				vtype: numberVType,
 				selectOnFocus: false,
@@ -126,6 +127,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				labelSepartor: '',
 				valueField: 'code',
 				displayField: 'label',
+				listeners: attributePanel.fieldListeners,
 				store: Ext.create('Ext.data.Store', {
 					data: attributePanel.attributeTypeView.codes
 				}),

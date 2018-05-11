@@ -130,7 +130,15 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 	 * Override to handle validation
 	 */	
 	isValid: function() {
-		return true;
+		var submissionGrid = this;
+		var valid = true;
+		if (submissionGrid.fieldTemplate.required) {
+			//must have at least one entry
+			if (submissionGrid.getStore().getCount() === 0) {
+				valid = false;
+			}
+		}
+		return valid;
 	},
 	
 	/**
@@ -190,7 +198,7 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 		};
 		
 		Ext.Array.each(grid.getColumns(), function(column) {
-			if (!column.isHidden) {
+			if (!column.isHidden()) {
 				data.columns.push({
 					title: column.text
 				});
@@ -202,7 +210,7 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 			var fields = [];
 			
 			Ext.Array.each(grid.getColumns(), function(column) {
-				if (!column.isHidden) {
+				if (!column.isHidden()) {
 					fields.push({
 						value: record.get(column.dataIndex)
 					});

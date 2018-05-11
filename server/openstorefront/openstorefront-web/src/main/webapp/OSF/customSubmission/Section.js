@@ -288,7 +288,12 @@ Ext.define('OSF.customSubmission.Section', {
 		
 		var valid = true;
 		Ext.Array.forEach(section.items.items, function (field) {
-			
+			var skip = field.skipOnReview ? field.skipOnReview : false;
+			if (field.createQuestionLabel && !skip) {
+				if (field.isValid && !field.isValid()) {
+					valid = false;
+				}
+			}
 		});
 		
 		return valid;

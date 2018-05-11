@@ -20,7 +20,7 @@
 /* global Ext, fieldPanel */
 
 Ext.define('OSF.customSubmission.field.AttributeSingle', {
-	extend: 'Ext.panel.Panel',	
+	extend: 'Ext.form.Panel',	
 	xtype: 'osf-submissionform-attributesingle',
 	requires: [
 		'OSF.common.AttributeCodeSelect'
@@ -45,6 +45,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				{
 					xtype: 'checkbox',
 					itemId: 'privateField',
+					name: 'private',
 					boxLabel: 'Private'
 				}
 			]
@@ -92,7 +93,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		};	
 				
 		var displayItems = [];
-		panel.selectValues = [];
+		panel.selectedValue = {};
 		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
 			//combo box or nothing if code is set
 			if (panel.fieldTemplate.attributeCode) {
@@ -108,9 +109,10 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 							name: 'attributeCode',
 							showLabel: false,
 							attributeTypeView: attributeTypeView,
+							required: panel.fieldTemplate.required,
 							width: '100%',
 							maxWidth: 800,
-							listeners: {
+							fieldListeners: {
 								change: function(field, newValue, oldValue) {
 									
 									var processValue = '';
@@ -121,7 +123,10 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 										processValue = newValue;
 									}
 																	
-									panel.selectValues = [processValue];									
+									panel.selectedValue = {
+											label: processValue,
+											value: newValue
+									};									
 									checkForRequiredComment(newValue);
 								} 
 							}
@@ -148,6 +153,12 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 							listeners: {
 								change: function(field, newValue, oldValue, optd) {									
 									if (newValue) {
+										
+										panel.selectedValue = {
+											label: field.boxLabel,
+											value: field.submitValue
+										};
+										
 										checkForRequiredComment(field.submitValue);
 									}
 								} 
@@ -169,12 +180,17 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 					Ext.Array.each(attributeCodes, function(code){
 						displayItems.push({
 							xtype: 'checkbox',							
-							name: 'attributeCodes',
+							name: code.attributeCodePk.attributeCode,
 							submitValue: code.attributeCodePk.attributeCode,
 							boxLabel: code.label,
 							listeners: {
 								change: function(field, newValue, oldValue) {
-									checkForRequiredComment(newValue);
+									if (newValue) {
+										panel.selectedValue[field.submitValue] = field.boxLabel;
+										checkForRequiredComment(field.submitValue);
+									} else {
+										delete panel.selectedValue[field.submitValue];
+									}
 								} 
 							}							
 						});
@@ -187,11 +203,89 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 
 	},
 	
+	isValid : function() {
+		var panel = this;
+		var valid = panel.callParent();
+		if (valid && panel.fieldTemplate.required) {
+			if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
+				valid = panel.selectedValue && panel.selectedValue.value;
+			} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_MCHECKBOX') {
+				valid = panel.selectedValue && Ext.Object.getSize(panel.selectedValue) > 0;
+			}
+		}	
+		return valid;	
+	},
+	
 	reviewDisplayValue: function() {
 		var panel = this;
 		
+		var values = panel.getValues();
 		
-		return '';
+		
+		var template = new Ext.XTemplate(
+			'<table class="submission-review-table">' + 
+			'<tbody>' + 
+			'	<tpl for=".">'+
+			'		<tr class="submission-review-row">' +
+			'			<td class="submission-review-label">'+
+			'				{label}' +
+			'			</td>' +
+			'			<td class="submission-review-data" style="min-width: 150px">' +
+			'				{value}' +
+			'			</td>' +			
+			'		</tr>' +
+			'	</tpl>'+
+			'</tbody>' +
+			'</table>'
+		);
+
+		var data = [];
+		
+		//values 
+		var responseValue = 'No Data Entered';
+		
+		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
+			if (panel.selectedValue) {
+				responseValue = panel.selectedValue.label;
+			}
+		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
+			if (panel.selectedValue) {
+				responseValue = panel.selectedValue.label;			
+			}
+		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_MCHECKBOX') {			
+			var allValues = [];
+			Ext.Object.each(panel.selectedValue, function(key, value, myself) {
+				allValues.push(value);
+			});
+			responseValue = allValues.join(',<br>');
+		}
+		
+		if (responseValue) {
+			data.push({
+				label: 'Response',
+				value: responseValue
+			});		
+		}
+		
+		if (values.comment && values.comment  !== '') {
+			data.push({
+				label: 'Comment',
+				value: values.comment
+			});		
+		}
+
+		if (values.private) {
+			data.push({
+				label: 'Private',
+				value: 'True'
+			});		
+		}
+		
+		if (data.length === 0) {
+			return '(No Data Entered)';
+		}
+		
+		return template.apply(data);
 	}
 	
 

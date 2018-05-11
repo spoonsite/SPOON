@@ -48,6 +48,7 @@ Ext.define('OSF.customSubmission.field.RichText', {
 			fieldStyle: 'font-family: Courier New; font-size: 12px;',
 			style: { border: '0' },			
 			name: 'description',
+			allowBlank: fieldPanel.fieldTemplate.required ? false : true,
 			height: 250,
 			maxLength: 65536,
 			tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig("osfmediaretriever"), {
@@ -67,7 +68,13 @@ Ext.define('OSF.customSubmission.field.RichText', {
 	
 	reviewDisplayValue: function() {
 		var textField = this;
-		return textField.textArea.getValue();	
+		var value = textField.textArea.getValue();	
+		return value && value !== '' ? value : '(No Data Entered)';					
+	},
+	
+	isValid : function() {
+		var textField = this;
+		return textField.textArea.isValid();
 	}
 	
 	

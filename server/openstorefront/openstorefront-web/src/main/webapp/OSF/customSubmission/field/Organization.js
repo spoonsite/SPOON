@@ -52,13 +52,21 @@ Ext.define('OSF.customSubmission.field.Organization', {
 	initComponent: function () {
 		var field = this;
 		field.callParent();			
+		
+		if (field.fieldTemplate.required) {
+			field.setConfig({
+					allowBlank: false
+			});				
+		}		
+		
 		field.setFieldLabel(field.createQuestionLabel());
 		
 	},
 	
 	reviewDisplayValue: function() {
-		var textField = this;
-		return textField.getValue();	
+		var field = this;
+		var value = field.getValue();
+		return value && value !== '' ? value : '(No Data Entered)';	
 	}	
 	
 });
