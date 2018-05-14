@@ -35,6 +35,7 @@ Ext.define('OSF.form.Comments', {
 				update = '/' + data.commentId;
 				method = 'PUT'
 			}
+			//console.log(data);
 			CoreUtil.submitForm({
 				url: 'api/v1/resource/components/' + componentId + '/comments' + update,
 				method: method,
@@ -186,8 +187,8 @@ Ext.define('OSF.form.Comments', {
 								var commentId = comment.data.commentId;
 								var componentId= commentPanel.componentId;
 								Ext.Msg.show({
-									title: 'Delete Component?',
-									message: 'Are you sure you want to delete:  ' + name +' ?',
+									title: 'Delete Commment?',
+									message: 'Are you sure you want to delete the comment?',
 									buttons: Ext.Msg.YESNO,
 									icon: Ext.Msg.QUESTION,
 									fn: function(btn) {

@@ -1299,7 +1299,7 @@
 					title: 'Change Owner - ',
 					iconCls: 'fa fa-lg fa-user',
 					width: '35%',
-					height: 350, // Change
+					height: 450, // Change
 					y: 200,
 					modal: true,
 					layout: 'fit',
@@ -1335,11 +1335,13 @@
 											}
 										}
 									}
-								},// Change
+								}, // Change
 								{
 									xtype: 'textarea',
+									itemId: 'searchComment',
 									fieldLabel: 'Optional Comments',
 									labelAlign: 'top',
+									maxLength: 4096,
 									labelSeparator: '',
 									typeAhead: true,
 									editable: true,
@@ -1353,7 +1355,12 @@
 									store: {
 										autoLoad: true,
 									}
-								}
+								},
+								{
+									xtype: 'hidden',
+									itemId: 'searchCommentId',
+									name: 'commentId'
+								},
 							],
 							dockedItems: [
 								{
@@ -1377,6 +1384,13 @@
 
 												// Get Form
 												var form = this.up('form');
+												var data = {
+													commentId: form.queryById('searchCommentId').value,
+													commentType: "ADMIN",
+													comment: form.queryById('searchComment').value
+												};
+												//console.log(data);
+												// console.log(form);// forms.items.items[1].value = text field stuff,
 
 												// Get Chosen Username
 												var username = form.getForm().findField('currentDataOwner').getValue();
@@ -1395,6 +1409,7 @@
 
 													// Store Component ID
 													var componentId = selection[i].get('componentId');
+													//console.log(componentId, ' '  ,data.comment != '');
 
 													// Make Request
 													Ext.Ajax.request({
@@ -1403,6 +1418,18 @@
 														method: 'PUT',
 														rawData: username,
 														success: function(response, opts) {
+															//console.log(response.responseText);
+															var res = Ext.decode(response.responseText);
+															
+															if(data.comment != ''){
+																Ext.Ajax.request({
+																	url: 'api/v1/resource/components/' + res.componentId + '/comments',
+																	method: 'POST',
+																	jsonData: data,
+																	success: function(response, opts){
+																	}
+																});	
+															}
 
 															// Check For Errors
 															if (response.responseText.indexOf('errors') !== -1) {
@@ -1429,6 +1456,7 @@
 														}
 													});
 												}
+												form.reset();
 											}
 										},
 										{
@@ -1486,8 +1514,10 @@
 								},// Change
 								{
 									xtype: 'textarea',
+									itemId: 'searchComment',
 									fieldLabel: 'Optional Comments',
 									labelAlign: 'top',
+									maxLength: 4096,
 									labelSeparator: '',
 									typeAhead: true,
 									editable: true,
@@ -1501,7 +1531,12 @@
 									store: {
 										autoLoad: true,
 									}
-								}
+								},
+								{
+									xtype: 'hidden',
+									itemId: 'searchCommentId',
+									name: 'commentId'
+								},
 							],
 							dockedItems: [
 								{
@@ -1514,10 +1549,19 @@
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
 
+												var form = this.up('form');
+												var data = {
+													commentId: form.queryById('searchCommentId').value,
+													commentType: "ADMIN",
+													comment: form.queryById('searchComment').value
+												};
+												//console.log(data);
+
 												// Get selected component ids for components that need updated
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
+												//console.log(componentIds);
 
 												var componentType = this.up('form').getForm().findField('componentType').getValue();
 
@@ -1538,7 +1582,18 @@
 															console.log(response.error);
 														}
 														else {
-
+															for(var i = 0; i < componentIds.length; i++){
+																if(data.comment != ''){
+																	Ext.Ajax.request({
+																		url: 'api/v1/resource/components/' + componentIds[i] + '/comments',
+																		method: 'POST',
+																		jsonData: data,
+																		success: function(response, opts){
+																		}
+																	});	
+																}
+															}
+															form.reset();
 															Ext.toast('All Entries Have Been Processed', 'Success');
 															actionRefreshComponentGrid();
 															componentGrid.unmask();
