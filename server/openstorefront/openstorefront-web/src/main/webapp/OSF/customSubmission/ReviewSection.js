@@ -38,12 +38,12 @@ Ext.define('OSF.customSubmission.ReviewSection', {
 		};
 		
 		var displayItems = [{
-			html: 'Review ALL sections and verify input before submitting.'	
+			html: '<h3>Review ALL sections and verify input before submitting.</h3><i class="fa fa-2x fa-check text-success" title="Valid"></i> <b>- Valid</b> <br><i class="fa fa-2x fa-close text-danger" title="Invalid"></i> <b>- Invalid</b>'	
 		}];
 		Ext.Array.each(reviewSections, function(section){
-			var validMessage = '<i class="fa fa-lg fa-close text-danger" title="Valid"></i>';
+			var validMessage = '<i class="fa fa-lg fa-close text-danger" title="Invalid"></i>';
 			if (section.component.valid()) {
-				validMessage = '<i class="fa fa-lg fa-check text-success" title="Invalid"></i>';
+				validMessage = '<i class="fa fa-lg fa-check text-success" title="Valid"></i>';
 			}
 			var questions = section.component.getReviewableQuestions();
 			var questionsConfig = [];

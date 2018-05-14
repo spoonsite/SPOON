@@ -45,6 +45,7 @@ public class ComponentResourceView
 	private Date updateDts;
 	private String activeStatus;
 	private String originalLink;
+	private Boolean privateFlag;
 	private String componentId;
 
 	private static final String LOCAL_RESOURCE_URL = "Resource.action?LoadResource&resourceId=";
@@ -52,7 +53,7 @@ public class ComponentResourceView
 
 	public static List<ComponentResourceView> toViewList(List<ComponentResource> resources)
 	{
-		List<ComponentResourceView> viewList = new ArrayList();
+		List<ComponentResourceView> viewList = new ArrayList<>();
 		resources.forEach(resource -> {
 			viewList.add(toView(resource));
 		});
@@ -67,6 +68,7 @@ public class ComponentResourceView
 		componentResourceView.setResourceType(componentResource.getResourceType());
 		componentResourceView.setResourceTypeDesc(TranslateUtil.translate(ResourceType.class, componentResource.getResourceType()));
 		componentResourceView.setRestricted(componentResource.getRestricted());
+		componentResourceView.setPrivateFlag(componentResource.getPrivateFlag());
 		componentResourceView.setUpdateDts(componentResource.getUpdateDts());
 		componentResourceView.setActiveStatus(componentResource.getActiveStatus());
 		componentResourceView.setComponentId(componentResource.getComponentId());
@@ -227,6 +229,16 @@ public class ComponentResourceView
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
+	}
+
+	public Boolean getPrivateFlag()
+	{
+		return privateFlag;
+	}
+
+	public void setPrivateFlag(Boolean privateFlag)
+	{
+		this.privateFlag = privateFlag;
 	}
 
 }

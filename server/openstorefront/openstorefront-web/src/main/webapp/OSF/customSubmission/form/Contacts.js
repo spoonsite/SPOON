@@ -169,6 +169,12 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 		});		
 					
 		contactPanel.add(formItems);
+		
+		if (contactPanel.fieldTemplate.popluateContactWithUser) {
+			CoreService.userservice.getCurrentUser().then(function (usercontext) {
+				contactPanel.getForm().setValues(usercontext);
+			});
+		}
 	
 	}
 	

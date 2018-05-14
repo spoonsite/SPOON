@@ -32,6 +32,10 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 		this.callParent();
 		
 		var resourcePanel = this;
+		
+		if (resourcePanel.fieldTemplate.allowPrivateResource) {
+			resourcePanel.setMaxWidth(860);
+		}
 
 		var labelData = {
 			question:  resourcePanel.createQuestionLabel(),
@@ -51,13 +55,26 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 		resourcePanel.add([
 			resourcePanel.label,
 			{
-				xtype: 'button',
-				text: 'Upload',
-				width: 100,
-				handler: function() {
-					resourcePanel.uploadWindow();
-				}
+				xtype: 'panel',
+				layout: 'hbox',
+				items: [
+					{
+						xtype: 'button',
+						text: 'Upload',
+						width: 100,
+						handler: function() {
+							resourcePanel.uploadWindow();
+						}
+					},
+					{
+						xtype: 'checkbox',
+						margin: '0 0 0 5',						
+						hidden: resourcePanel.fieldTemplate.allowPrivateResource ? false : true,
+						boxLabel: 'Private'						
+					}
+				]
 			}
+			
 		]);
 	
 	},

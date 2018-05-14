@@ -110,6 +110,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		var submissionForm = this;		
 		var section = submissionForm.template.sections[submissionForm.currentSection];
 		submissionForm.setActiveItem(section.component);
+		//section.component.setScrollY(0, true);
 		
 		if (section.review) {
 			section.component.displayReviewSections(submissionForm.formSections, submissionForm);

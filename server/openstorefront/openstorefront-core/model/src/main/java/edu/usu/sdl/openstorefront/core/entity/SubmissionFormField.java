@@ -137,6 +137,12 @@ public class SubmissionFormField
 	private Boolean hidePrivateAttributeFlag;
 
 	@ConsumeField
+	private Boolean allowPrivateResource;
+
+	@ConsumeField
+	private Boolean popluateContactWithUser;
+
+	@ConsumeField
 	private String requiredCommentOnValue;
 
 	@ConsumeField
@@ -149,7 +155,7 @@ public class SubmissionFormField
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
-	@Sanitize(TextSanitizer.class)
+	@Sanitize(BasicHTMLSanitizer.class)
 	private String commentLabel;
 
 	@NotNull
@@ -190,6 +196,8 @@ public class SubmissionFormField
 		this.setShowComment(submissionFormField.getShowComment());
 		this.setResourceType(submissionFormField.getResourceType());
 		this.setHidePrivateAttributeFlag(submissionFormField.getHidePrivateAttributeFlag());
+		this.setAllowPrivateResource(submissionFormField.getAllowPrivateResource());
+		this.setPopluateContactWithUser(submissionFormField.getPopluateContactWithUser());
 
 		this.setSectionId(submissionFormField.getSectionId());
 
@@ -443,6 +451,26 @@ public class SubmissionFormField
 	public void setHidePrivateAttributeFlag(Boolean hidePrivateAttributeFlag)
 	{
 		this.hidePrivateAttributeFlag = hidePrivateAttributeFlag;
+	}
+
+	public Boolean getAllowPrivateResource()
+	{
+		return allowPrivateResource;
+	}
+
+	public void setAllowPrivateResource(Boolean allowPrivateResource)
+	{
+		this.allowPrivateResource = allowPrivateResource;
+	}
+
+	public Boolean getPopluateContactWithUser()
+	{
+		return popluateContactWithUser;
+	}
+
+	public void setPopluateContactWithUser(Boolean popluateContactWithUser)
+	{
+		this.popluateContactWithUser = popluateContactWithUser;
 	}
 
 }

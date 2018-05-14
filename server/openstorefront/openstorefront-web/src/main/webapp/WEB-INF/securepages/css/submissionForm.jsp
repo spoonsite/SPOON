@@ -31,6 +31,10 @@ limitations under the License.
 .submission-section {
 }
 
+.submission-section-nav-select {
+	background:	black;
+}
+
 .submission-section-title {
 	font-weight: bold;
 	text-align: center;

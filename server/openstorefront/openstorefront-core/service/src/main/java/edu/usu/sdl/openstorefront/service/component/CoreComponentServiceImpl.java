@@ -338,9 +338,15 @@ public class CoreComponentServiceImpl
 		List<ComponentResource> componentResources = componentService.getBaseComponent(ComponentResource.class, componentId);
 
 		componentResources = SortUtil.sortComponentResource(componentResources);
-		componentResources.forEach(resource
-				-> {
-			result.getResources().add(ComponentResourceView.toView(resource));
+		componentResources.forEach(resource -> {
+			boolean add = true;
+			if (!showPrivateInformation && Convert.toBoolean(resource.getPrivateFlag())) {
+				LOG.log(Level.FINEST, "Private Resource was removed");
+				add = false;
+			}
+			if (add) {
+				result.getResources().add(ComponentResourceView.toView(resource));
+			}
 		});
 
 		List<ComponentMetadata> componentMetadata = componentService.getBaseComponent(ComponentMetadata.class, componentId);

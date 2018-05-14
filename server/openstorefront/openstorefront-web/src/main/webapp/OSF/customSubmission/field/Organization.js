@@ -27,6 +27,7 @@ Ext.define('OSF.customSubmission.field.Organization', {
 	forceSelection: false,
 	valueField: 'description',
 	displayField: 'description',
+	emptyText: 'Select or Type in',
 	editable: true,
 	queryMode: 'remote',
 	store: {				

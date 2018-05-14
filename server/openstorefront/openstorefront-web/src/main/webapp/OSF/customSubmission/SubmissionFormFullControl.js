@@ -25,16 +25,38 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		'OSF.customSubmission.SubmissionForm'
 	],
 
-	layout: 'fit',
+	layout: 'border',
+	showJumpSection: false,
+	showNavigationPanel: true,
+	collaspeNavAtFirst: false,
+	
 	items: [
 		{
 			xtype: 'osf-submissionform',
+			region: 'center',
 			itemId: 'submissionForm',
+			border: true,
 			progressCallback: function(currentSectionIndex, totalSections) {
 				submissionFormFullControl = this.up('panel');
 				var total = totalSections - 1;
 				submissionFormFullControl.queryById('progress').updateProgress(currentSectionIndex / total, (currentSectionIndex + 1) + ' / ' + totalSections, true);
+				
+				submissionFormFullControl.updateNavPanel(currentSectionIndex);
 			}
+		},
+		{
+			xtype: 'panel',
+			itemId: 'navPanel',
+			title: 'Sections',
+			region: 'west',
+			scrollable: true,
+			split: true,
+			layout: 'anchor',
+			titleCollapse: true,
+			collapsible: true,
+			border: true,
+			bodyStyle: 'padding: 10px; background: white;',
+			width: 250			
 		}
 	],	
 	dockedItems: [
@@ -59,8 +81,9 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 				},
 				{
 					text: 'Jump To Section',
-					itemId: 'sectionNav',
+					itemId: 'jumpSectionNav',
 					scale: 'medium',
+					hidden: true,
 					menu: {						
 					}
 				}
@@ -127,6 +150,31 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		var submissionFormFullControl = this;
 		submissionFormFullControl.callParent();		
 		
+		if (submissionFormFullControl.showJumpSection) {
+			submissionFormFullControl.queryById('jumpSectionNav').setHidden(false);
+		}	
+		
+		if (!submissionFormFullControl.showNavigationPanel) {
+			submissionFormFullControl.queryById('navPanel').setHidden(true);
+		}
+		
+		
+	},
+	updateNavPanel: function(currentSectionIndex) {
+		var submissionFormFullControl = this;
+		var navPanel = submissionFormFullControl.queryById('navPanel');
+		var selectedComponents = navPanel.query();
+		if (selectedComponents) {
+			Ext.Array.each(selectedComponents, function(navButton){
+				navButton.removeCls('submission-section-nav-select');
+			});
+		}
+		
+		Ext.Array.each(navPanel.items.items, function(navButton) {
+			if (navButton.sectionIndex === currentSectionIndex) {
+				navButton.addCls('submission-section-nav-select');
+			}	
+		});
 	},
 	
 	remoteLoad: function(submissionTemplateId, entryType, userSubmissionId) {
@@ -191,8 +239,29 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					});
 					index++;
 				});				
-				submissionFormFullControl.queryById('sectionNav').getMenu().add(sectionMenu);
+				submissionFormFullControl.queryById('jumpSectionNav').getMenu().add(sectionMenu);
 				submissionFormFullControl.checkNextPrevious();
+				
+				var sectionButtons = [];
+				var index = 0;
+				Ext.Array.each(form.getSections(), function(section) {
+					sectionButtons.push({
+						xtype: 'button',
+						text: section.name,
+						width: '100%',
+						margin: '0 0 20 0',
+						sectionIndex: index,
+						section: section,
+						handler: function() {							
+							form.jumpToSection(this.sectionIndex);
+							submissionFormFullControl.checkNextPrevious();
+						}
+					});
+					index++;
+				});	
+				
+				submissionFormFullControl.queryById('navPanel').add(sectionButtons);
+				submissionFormFullControl.updateNavPanel(0);				
 								
 			};
 		}		
