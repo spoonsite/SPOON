@@ -56,7 +56,7 @@
 			Ext.require('OSF.form.EntryReviews');
 			Ext.require('OSF.form.OldEvaluationSummary');
 			Ext.require('OSF.form.Tags');
-			Ext.require('OSF.form.Comments'); // Change
+			Ext.require('OSF.form.Comments');
 
 
 				//Add/Edit forms ------>
@@ -2594,7 +2594,7 @@
 									addSubTab('OSF.form.EntryQuestions', 'Questions', 'User Questions');
 								}
 								addSubTab('OSF.form.Tags', 'Tags', 'Searchable Labels');
-								addSubTab('OSF.form.Comments', 'Comments', 'Admin Comments'); // Change
+								addSubTab('OSF.form.Comments', 'Comments', 'Admin Comments');
 							}
 						});
 						tabpanel.add(panelsToAdd);
