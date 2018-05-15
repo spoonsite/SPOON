@@ -1984,7 +1984,7 @@
 					plugins: 'gridfilters',
 					//enableLocking: true,
 					columns: [
-						{ text: 'Name', dataIndex: 'name', width: 275, flex: 1,
+						{ text: 'Name', dataIndex: 'name', width: 275, minWidth: 350 , flex: 150,
 							filter: {
 								type: 'string'
 							}

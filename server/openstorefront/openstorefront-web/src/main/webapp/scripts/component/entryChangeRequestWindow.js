@@ -73,7 +73,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			title: 'Change Request Comments: ',
 			iconCls: 'fa fa-lg fa-user',
 			width: '35%',
-			height: 450,
+			height: 250,
 			y: 200,
 			modal: true,
 			layout: 'fit',
