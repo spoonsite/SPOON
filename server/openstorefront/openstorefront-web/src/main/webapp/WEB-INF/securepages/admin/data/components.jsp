@@ -1878,7 +1878,7 @@
 														url: 'api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
 														method: 'POST',
 														success: function(response, opts){
-															// DO NOT DELETE. THIS IS A FEATURE THAT WILL BE IMPLEMENTED LATER.
+															// DO NOT DELETE. THIS IS A MERGE FEATURE THAT WILL BE IMPLEMENTED LATER.
 															// if(data.comment != ''){
 															// 	Ext.Ajax.request({
 															// 		url: 'api/v1/resource/components/' + data.targetComponentId + '/comments',
@@ -1937,7 +1937,7 @@
 									displayField: 'name',
 									readOnly: true
 								},
-								// DO NOT DELETE. THIS IS A FEATURE THAT WILL BE IMPLEMENTED LATER.
+								// DO NOT DELETE. THIS IS A MERGE FEATURE THAT WILL BE IMPLEMENTED LATER.
 								// Change
 								// {
 								// 	xtype: 'textarea',
