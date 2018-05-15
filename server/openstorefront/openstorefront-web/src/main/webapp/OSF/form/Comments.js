@@ -35,7 +35,6 @@ Ext.define('OSF.form.Comments', {
 				update = '/' + data.commentId;
 				method = 'PUT'
 			}
-			//console.log(data);
 			CoreUtil.submitForm({
 				url: 'api/v1/resource/components/' + componentId + '/comments' + update,
 				method: method,

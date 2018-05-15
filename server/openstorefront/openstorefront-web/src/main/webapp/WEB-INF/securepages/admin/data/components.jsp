@@ -1218,11 +1218,10 @@
 					approveWin.show();					
 				};
 				
-				// Change
 				var toggleWin = Ext.create('Ext.window.Window',{
 					id: 'toggleWin',
-					title: 'Toggle Comment',
-					iconCls: 'fa fa-lg fa-edit',
+					title: 'Toggle ',
+					iconCls: 'fa fa-lg fa-exchange',
 					width: '35%',
 					height: 350,
 					y: 200,
@@ -1231,13 +1230,15 @@
 					items: [
 						{
 							xtype: 'form',
-							itemId: 'changeOwnerForm',
+							itemId: 'toggleForm',
 							bodyStyle: 'padding: 10px',
 							items: [
 								{
 									xtype: 'textarea',
+									itemId: 'searchComment',
 									fieldLabel: 'Optional Comments',
 									labelAlign: 'top',
+									maxLength: 4096,
 									labelSeparator: '',
 									typeAhead: true,
 									editable: true,
@@ -1251,30 +1252,102 @@
 									store: {
 										autoLoad: true,
 									}
-								}
+								},
+								{
+									xtype: 'hidden',
+									itemId: 'searchCommentId',
+									name: 'commentId'
+								},
 							],
-							dockedItems:[
+							dockedItems: [
 								{
 									xtype: 'toolbar',
 									dock: 'bottom',
 									items: [
 										{
-											text: 'Save',
+											text: 'Toggle',
 											formBind: true,
-											iconCls: 'fa fa-lg fa-save icon-button-color-save',
+											iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 
-												// Get Calling Window
-												var ownerWindow = this.up('window');
-
-												// Get Form
 												var form = this.up('form');
+												var data = {
+													commentId: form.queryById('searchCommentId').value,
+													commentType: "ADMIN",
+													comment: form.queryById('searchComment').value
+												};
+												
+												Ext.getCmp('componentGrid').setLoading(true);
 
-												// Close Form Window
-												ownerWindow.close();
+												// Get Selection
+												var selection = Ext.getCmp('componentGrid').getSelection();
+
+												// Get Number Of Selected
+												var selected = componentGrid.getSelectionModel().getCount();
 
 												// Initialize Update Counter
-												var componentUpdateCount = 0;
+												var componentToggleCount = 0;
+
+												// Loop Through Selection
+												for (i = 0; i < selected; i++) {
+
+													var componentId = selection[i].get('componentId');
+													var currentStatus = selection[i].get('activeStatus');
+
+													if (currentStatus === 'A') {
+
+														var method = 'DELETE';
+														var urlEnd = '';
+													}
+													else {
+
+														var method = 'PUT';
+														var urlEnd = '/activate';
+													}
+
+													Ext.Ajax.request({
+														url: 'api/v1/resource/components/' + componentId + urlEnd,
+														method: method,
+														componentId: componentId,
+														success: function(response, opts) {
+															
+															if(data.comment != ''){
+																Ext.Ajax.request({
+																	url: 'api/v1/resource/components/' + opts.componentId + '/comments',
+																	method: 'POST',
+																	jsonData: data,
+																	success: function(response, opts){
+																	}
+																});	
+															}
+
+															// Check For Errors
+															if (response.responseText.indexOf('errors') !== -1) {
+
+																// Provide Error Notification
+																Ext.toast('An Entry Failed To Toggle', 'Error');
+
+																// Provide Log Information
+																console.log(response);
+															}
+
+															// Check If We Are On The Final Request
+															if (++componentToggleCount === selected) {
+
+																// Provide Success Notification
+																Ext.toast('All Entries Have Been Processed', 'Success');
+
+																// Refresh Grid
+																actionRefreshComponentGrid();
+
+																// Unmask Grid
+																Ext.getCmp('componentGrid').setLoading(false);
+															}
+														}
+													});
+												}
+												form.reset();
+												this.up('#toggleWin').close();
 											}
 										},
 										{
@@ -1299,7 +1372,7 @@
 					title: 'Change Owner - ',
 					iconCls: 'fa fa-lg fa-user',
 					width: '35%',
-					height: 450, // Change
+					height: 450,
 					y: 200,
 					modal: true,
 					layout: 'fit',
@@ -1335,7 +1408,7 @@
 											}
 										}
 									}
-								}, // Change
+								},
 								{
 									xtype: 'textarea',
 									itemId: 'searchComment',
@@ -1389,8 +1462,6 @@
 													commentType: "ADMIN",
 													comment: form.queryById('searchComment').value
 												};
-												//console.log(data);
-												// console.log(form);// forms.items.items[1].value = text field stuff,
 
 												// Get Chosen Username
 												var username = form.getForm().findField('currentDataOwner').getValue();
@@ -1409,7 +1480,6 @@
 
 													// Store Component ID
 													var componentId = selection[i].get('componentId');
-													//console.log(componentId, ' '  ,data.comment != '');
 
 													// Make Request
 													Ext.Ajax.request({
@@ -1418,7 +1488,6 @@
 														method: 'PUT',
 														rawData: username,
 														success: function(response, opts) {
-															//console.log(response.responseText);
 															var res = Ext.decode(response.responseText);
 															
 															if(data.comment != ''){
@@ -1481,7 +1550,7 @@
 					title: 'Change Type - ',
 					iconCls: 'fa fa-lg fa-exchange',
 					width: '35%',
-					height: 350, // Change
+					height: 350,
 					y: 200,
 					modal: true,
 					layout: 'fit',
@@ -1511,7 +1580,7 @@
 											url: 'api/v1/resource/componenttypes/lookup'
 										}
 									}
-								},// Change
+								},
 								{
 									xtype: 'textarea',
 									itemId: 'searchComment',
@@ -1555,13 +1624,11 @@
 													commentType: "ADMIN",
 													comment: form.queryById('searchComment').value
 												};
-												//console.log(data);
 
 												// Get selected component ids for components that need updated
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
-												//console.log(componentIds);
 
 												var componentType = this.up('form').getForm().findField('componentType').getValue();
 
@@ -1766,7 +1833,9 @@
 					id: 'mergeComponentWin',
 					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges duplicate entry to target entry. <br> Meaning target will contain merged entry\'s information and duplicate entry will be deleted." ></i>',
 					width: '40%',
-					height: 400, // Change
+					height: 250,
+					// DO NOT DELETE. THIS IS A FEATURE THAT WILL BE IMPLEMENTED LATER.
+					// height: 400, // Change
 					modal: true,
 					layout: 'fit',
 					items: [
@@ -1790,9 +1859,17 @@
 											handler: function() {
 
 												var mergeForm = this.up('form');
+												// DO NOT DELETE. THIS IS FOR A FEATURE THAT WILL BE IMPLEMENTED LATER.
+												// var inputData = {
+												// 	commentId: mergeForm.queryById('searchCommentId').value,
+												// 	commentType: "ADMIN",
+												// 	comment: mergeForm.queryById('searchComment').value
+												// };
+												//console.log(inputData);
 												var data = mergeForm.getValues();
 
 												//check data for same id
+												// Remember! target persists, and merge dies.
 												if (data.mergeComponentId === data.targetComponentId) {
 													mergeForm.getComponent('targetComponent').markInvalid('Target Component must be different than merge component.');
 												} else {
@@ -1801,6 +1878,16 @@
 														url: 'api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
 														method: 'POST',
 														success: function(response, opts){
+															// DO NOT DELETE. THIS IS A FEATURE THAT WILL BE IMPLEMENTED LATER.
+															// if(data.comment != ''){
+															// 	Ext.Ajax.request({
+															// 		url: 'api/v1/resource/components/' + data.targetComponentId + '/comments',
+															// 		method: 'POST',
+															// 		jsonData: inputData,
+															// 		success: function(response, opts){
+															// 		}
+															// 	});	
+															// }
 															mergeForm.setLoading(false);
 
 															Ext.getCmp('mergeComponentWin').hide();
@@ -1849,25 +1936,34 @@
 									width: '100%',
 									displayField: 'name',
 									readOnly: true
-								}, // Change
-								{
-									xtype: 'textarea',
-									fieldLabel: 'Optional Comments',
-									labelAlign: 'top',
-									labelSeparator: '',
-									typeAhead: true,
-									editable: true,
-									allowBlank: true,
-									name: 'Comment name',
-									width: '100%',
-									valueField: 'username',
-									forceSelection: false,
-									queryMode: 'local',
-									displayField: 'Comment displayfield',
-									store: {
-										autoLoad: true,
-									}
-								}								
+								},
+								// DO NOT DELETE. THIS IS A FEATURE THAT WILL BE IMPLEMENTED LATER.
+								// Change
+								// {
+								// 	xtype: 'textarea',
+								// 	itemId: 'searchComment',
+								// 	fieldLabel: 'Optional Comments',
+								// 	labelAlign: 'top',
+								// 	maxLength: 4096,
+								// 	labelSeparator: '',
+								// 	typeAhead: true,
+								// 	editable: true,
+								// 	allowBlank: true,
+								// 	name: 'Comment name',
+								// 	width: '100%',
+								// 	valueField: 'username',
+								// 	forceSelection: false,
+								// 	queryMode: 'local',
+								// 	displayField: 'Comment displayfield',
+								// 	store: {
+								// 		autoLoad: true,
+								// 	}
+								// },
+								// {
+								// 	xtype: 'hidden',
+								// 	itemId: 'searchCommentId',
+								// 	name: 'commentId'
+								// },							
 							]
 						}
 					]
@@ -2526,65 +2622,7 @@
 				};
 
 				var actionToggleStatus = function() {
-
-					Ext.getCmp('componentGrid').setLoading(true);
-
-					// Get Selection
-					var selection = Ext.getCmp('componentGrid').getSelection();
-
-					// Get Number Of Selected
-					var selected = componentGrid.getSelectionModel().getCount();
-
-					// Initialize Update Counter
-					var componentToggleCount = 0;
-
-					// Loop Through Selection
-					for (i = 0; i < selected; i++) {
-
-						var componentId = selection[i].get('componentId');
-						var currentStatus = selection[i].get('activeStatus');
-
-						if (currentStatus === 'A') {
-
-							var method = 'DELETE';
-							var urlEnd = '';
-						}
-						else {
-
-							var method = 'PUT';
-							var urlEnd = '/activate';
-						}
-						Ext.getCmp('toggleWin').show();
-						Ext.Ajax.request({
-							url: 'api/v1/resource/components/' + componentId + urlEnd,
-							method: method,
-							success: function(response, opts) {
-
-								// Check For Errors
-								if (response.responseText.indexOf('errors') !== -1) {
-
-									// Provide Error Notification
-									Ext.toast('An Entry Failed To Toggle', 'Error');
-
-									// Provide Log Information
-									console.log(response);
-								}
-
-								// Check If We Are On The Final Request
-								if (++componentToggleCount === selected) {
-
-									// Provide Success Notification
-									Ext.toast('All Entries Have Been Processed', 'Success');
-
-									// Refresh Grid
-									actionRefreshComponentGrid();
-
-									// Unmask Grid
-									Ext.getCmp('componentGrid').setLoading(false);
-								}
-							}
-						});
-					}
+					Ext.getCmp('toggleWin').show();
 				};
 
 				var actionDeleteComponent = function() {
