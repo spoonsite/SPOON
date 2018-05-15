@@ -177,37 +177,37 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 		});
 
 		changeRequestWindow.submissionPanel = Ext.create('OSF.component.SubmissionPanel', {											
-				formWarningMessage: changeRequestWindow.changeRequestWarning,
-				submitForReviewUrl: function (componentId){
-					return 'api/v1/resource/componentsubmissions/' + componentId+ '/submitchangerequest';
-				},
-				cancelSubmissionHandlerYes: function(){
-					changeRequestWindow.submissionWindow.completeClose=true;
-					changeRequestWindow.submissionWindow.close();
-					changeRequestWindow.submissionWindow.completeClose=false;
-					if (changeRequestWindow.successHandler) {
-						changeRequestWindow.successHandler();
-					}
-				},
-				cancelSubmissionHandlerNo: function(){
-					changeRequestWindow.submissionWindow.completeClose=true;
-					changeRequestWindow.submissionWindow.close();
-					changeRequestWindow.submissionWindow.completeClose=false;
-					if (changeRequestWindow.successHandler) {
-						changeRequestWindow.successHandler();
-					}
-				},				
-				handleSubmissionSuccess: function(response, opts) {
-					changeRequestWindow.submissionWindow.completeClose=true;
-					changeRequestWindow.submissionWindow.close();
-					changeRequestWindow.submissionWindow.completeClose=false;
-					if (changeRequestWindow.changeGrid.getStore().getProxy().url) {
-						changeRequestWindow.changeGrid.getStore().reload();
-					}
-					if (changeRequestWindow.successHandler) {
-						changeRequestWindow.successHandler();
-					}					
+			formWarningMessage: changeRequestWindow.changeRequestWarning,
+			submitForReviewUrl: function (componentId){
+				return 'api/v1/resource/componentsubmissions/' + componentId+ '/submitchangerequest';
+			},
+			cancelSubmissionHandlerYes: function(){
+				changeRequestWindow.submissionWindow.completeClose=true;
+				changeRequestWindow.submissionWindow.close();
+				changeRequestWindow.submissionWindow.completeClose=false;
+				if (changeRequestWindow.successHandler) {
+					changeRequestWindow.successHandler();
 				}
+			},
+			cancelSubmissionHandlerNo: function(){
+				changeRequestWindow.submissionWindow.completeClose=true;
+				changeRequestWindow.submissionWindow.close();
+				changeRequestWindow.submissionWindow.completeClose=false;
+				if (changeRequestWindow.successHandler) {
+					changeRequestWindow.successHandler();
+				}
+			},				
+			handleSubmissionSuccess: function(response, opts) {
+				changeRequestWindow.submissionWindow.completeClose=true;
+				changeRequestWindow.submissionWindow.close();
+				changeRequestWindow.submissionWindow.completeClose=false;
+				if (changeRequestWindow.changeGrid.getStore().getProxy().url) {
+					changeRequestWindow.changeGrid.getStore().reload();
+				}
+				if (changeRequestWindow.successHandler) {
+					changeRequestWindow.successHandler();
+				}					
+			}
 		});
 		
 		changeRequestWindow.submissionWindow = Ext.create('Ext.window.Window', {				
@@ -342,17 +342,17 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 				{ text: 'Name', dataIndex: 'name', width: 150 },
 				{ text: 'Approval Status', align: 'center', dataIndex: 'approvalState', width: 150, tooltip: 'Changes are removed upon Approval',
 					renderer: function(value, metaData){
-								var text = value;
-								if (value === 'A') {
-									text = 'Approved';
-									metaData.tdCls = 'alert-success';
-								} else if (value === 'P') {
-									text = 'Pending';
-									metaData.tdCls = 'alert-warning';
-								} else if (value === 'N') {
-									text = 'Not Submitted';
-								}
-								return text;
+						var text = value;
+						if (value === 'A') {
+							text = 'Approved';
+							metaData.tdCls = 'alert-success';
+						} else if (value === 'P') {
+							text = 'Pending';
+							metaData.tdCls = 'alert-warning';
+						} else if (value === 'N') {
+							text = 'Not Submitted';
+						}
+						return text;
 					}
 				},
 				{ text: 'Update Date', dataIndex: 'updateDts', flex: 1, xtype: 'datecolumn', format:'m/d/y H:i:s' },
@@ -443,9 +443,9 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							handler: function(){
 								var emails = changeRequestWindow.changeGrid.getSelection()[0].get('ownerEmail');
 								var messageWindow = Ext.create('OSF.component.MessageWindow', {					
-											closeAction: 'destory',
-											alwaysOnTop: true,
-											initialToUsers: emails
+									closeAction: 'destory',
+									alwaysOnTop: true,
+									initialToUsers: emails
 								}).show();
 							}
 						},

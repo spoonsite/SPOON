@@ -983,8 +983,6 @@
 														}
 													}
 												});
-
-
 											}
 										}
 									]
@@ -2530,12 +2528,10 @@
 					}
 					mainAddEditWin.generalForm.queryById('componentTypeMainCB').resumeEvent('change');
 
-
 				   return mainAddEditWin;
 				};
 
 				var checkFormTabs = function(mainAddEditWin, record, componentType) {
-
 
 					if (record) {
 
