@@ -23,10 +23,9 @@ Ext.define('OSF.form.Comments', {
 	layout: 'fit',
 	
 	initComponent: function () {
-        this.callParent();
-		
-        var commentPanel = this;
-        var actionAddComment = function(form){
+		this.callParent();
+		var commentPanel = this;
+		var actionAddComment = function(form){
 			var data = form.getValues();
 			var componentId = commentPanel.componentId;
 			var method = 'POST';
@@ -47,8 +46,8 @@ Ext.define('OSF.form.Comments', {
 			});	
 		};
 
-        commentPanel.commentGrid = Ext.create('Ext.grid.Panel',{
-            columnLines: true,
+		commentPanel.commentGrid = Ext.create('Ext.grid.Panel',{
+			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				fields: [			
 					{
@@ -69,8 +68,8 @@ Ext.define('OSF.form.Comments', {
 				{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true },
 				{ text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 150, hidden: true }
-            ],
-            listeners: {
+			],
+			listeners: {
 				selectionchange: function(grid, record, index, opts){
 					var fullgrid = commentPanel.commentGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
@@ -81,7 +80,7 @@ Ext.define('OSF.form.Comments', {
 						fullgrid.down('toolbar').getComponent('edit').setDisabled(true);
 					}
 				}						
-            },
+			},
             dockedItems: [
 				{
 					xtype: 'form',
@@ -140,10 +139,6 @@ Ext.define('OSF.form.Comments', {
 									storeConfig: {
 										url: 'api/v1/resource/lookuptypes/ComponentCommentType'
 									},
-									listeners: {
-										change: function(cb, newValue, oldValue) {
-										}
-									}
 								})
 							]
 						},
@@ -214,27 +209,26 @@ Ext.define('OSF.form.Comments', {
 						}
 					]
 				}
-            ]
+			]
 		});
 		var actionEdit = function(record) {		
 			commentPanel.commentGrid.queryById('form').loadRecord(record);
 		};
-        commentPanel.add(commentPanel.commentGrid);
-    },
+		commentPanel.add(commentPanel.commentGrid);
+	},
 	loadData: function(evaluationId, componentId, data, opts, callback) {
         
-        var commentPanel = this;
-        commentPanel.componentId = componentId;
+		var commentPanel = this;
+		commentPanel.componentId = componentId;
 		commentPanel.commentGrid.componentId = componentId;
 
-        commentPanel.commentGrid.getStore().load({
-            url: 'api/v1/resource/components/' + componentId + '/comments'
-        });
+		commentPanel.commentGrid.getStore().load({
+			url: 'api/v1/resource/components/' + componentId + '/comments'
+		});
 		
 		if (callback) {
 			callback();
 		}
 	}
-	
 });
 
