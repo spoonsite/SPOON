@@ -80,11 +80,11 @@ public class ComponentComment
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		super.updateFields(entity);
-		ComponentComment comment = (ComponentComment)entity;
-		setCommentType(comment.getCommentType());
-		setComment(comment.getComment());
-		setParentCommentId(comment.getParentCommentId());
-		setPrivateComment(comment.getPrivateComment());
+		ComponentComment componentComment = (ComponentComment)entity;
+		setCommentType(componentComment.getCommentType());
+		setComment(componentComment.getComment());
+		setParentCommentId(componentComment.getParentCommentId());
+		setPrivateComment(componentComment.getPrivateComment());
 	}
 
 	public String getCommentId()
