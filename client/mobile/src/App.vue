@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <v-app>
       <v-toolbar fixed class="indigo" dark>
         <v-spacer></v-spacer>
         <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
@@ -26,6 +27,7 @@
       </v-navigation-drawer>
 
       <router-view/>
+    </v-app>
   </div>
 </template>
 
