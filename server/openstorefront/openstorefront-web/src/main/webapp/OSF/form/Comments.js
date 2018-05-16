@@ -77,7 +77,9 @@ Ext.define('OSF.form.Comments', {
 				}
 			}),
 			columns: [
-				{ text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 200 },
+				{ text: 'Comment', dataIndex: 'comment', flex: 1, minWidth: 200, renderer: function(value){
+					return Ext.util.Format.stripTags(value);
+				}},
 				{ text: 'Comment Type', align: 'center', dataIndex: 'commentType', width: 150 },
 				{ text: 'Create User', align: 'center', dataIndex: 'createUser', width: 150 },
 				{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
@@ -138,6 +140,7 @@ Ext.define('OSF.form.Comments', {
 							itemId: 'commentField',
 							fieldLabel: 'Component Comments:',
 							width: '100%',
+							height: 200,	
 							allowBlank: false,
 							labelWidth: 150,
 							exceededLimit: false,
