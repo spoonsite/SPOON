@@ -9,10 +9,9 @@ export default new Vuex.Store({
     aSubtitle: 'SmallSat Parts On Orbit Now(SPOON) is a registry of Small - Satellite Equipment, Software and Services'
   },
   mutations: {
-
-  },
-  actions: {
-
+    setTitle (state, payload) {
+      state.aTitle = payload.title
+    }
   },
   getters: {
 

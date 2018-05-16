@@ -25,11 +25,13 @@ export default {
     VideoComp,
     TitleBarComp
   },
-  data: function() {
-    return {
-      title: this.$store.state.aTitle,
-      subTitle: this.$store.state.aSubtitle
-    };
+  computed: {
+    title(){
+      return this.$store.state.aTitle;
+    },
+    subTitle(){
+      return this.$store.state.aSubtitle;
+    }
   }
 };
 </script>

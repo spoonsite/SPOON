@@ -12,7 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/openstorefront': {
-        'target': 'http://localhost:8080',
+        // 'target': 'http://localhost:8080',
+        'target': 'http://store-accept.usurf.usu.edu/openstorefront',
         'changeOrigin': true
       }
     },

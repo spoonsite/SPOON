@@ -1,15 +1,15 @@
 <template>
   <div>
-    <v-toolbar dense flat id="topbar">
+    <v-toolbar dense flat dark color="primary">
       <v-spacer></v-spacer>
-      <v-toolbar-title>{{CTitle}}</v-toolbar-title>
+      <v-toolbar-title >{{CTitle}}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon id="menubutton">
         <v-icon>menu</v-icon>
       </v-btn>
     </v-toolbar>
     <hr>
-    <v-toolbar dense id="subbar">
+    <v-toolbar dense dark color="secondary">
       <v-spacer></v-spacer>
       <v-toolbar-title id="subtitle">{{CSubtitle}}</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -29,14 +29,6 @@ export default {
 hr {
   background: goldenrod;
   height: 7px;
-}
-#topbar {
-  background-color: #252931;
-  color: white;
-}
-#subbar {
-  background-color: #303540;
-  color: white;
 }
 #subtitle {
   font-size: 1em;

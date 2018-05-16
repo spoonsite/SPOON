@@ -14,7 +14,7 @@
         <v-container fluid grid-list-x>
           <v-layout row>
             <v-flex xs2 ml-2>
-              <v-btn color="accent" id="login-button" style="margin-bottom:2em;">Login</v-btn>
+              <v-btn color="accent" id="login-button" style="margin-bottom:2em;" v-on:click="testAPI">Login</v-btn>
             </v-flex>
           </v-layout>
           <v-layout row justify-start>
@@ -54,7 +54,15 @@ export default {
     usernameRules:[
      v=> !!v || "Username is required"
     ]
-  })
+  }),
+  methods:{
+    testAPI: function(event){
+      console.log("Button Clicked Calling API");
+      if(event){
+           this.$api.getTest();
+      }
+    }
+  }
 };
 </script>
 
