@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import Vuetify from 'vuetify'
 import LoginPage from '@/components/LoginPage'
 
 Vue.use(Router)
@@ -15,15 +15,12 @@ Vue.use(Vuetify, {
     warning: '#FFA000',
     success: '#388E3C'
   }
-}
-)
+})
 
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'loginPage',
-      component: LoginPage
-    }
-  ]
+  routes: [{
+    path: '/',
+    name: 'loginPage',
+    component: LoginPage
+  }]
 })

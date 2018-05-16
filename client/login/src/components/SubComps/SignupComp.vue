@@ -1,6 +1,6 @@
 <template>
   <v-card class="elevation-5">
-    <v-toolbar id="toolbar-title" dense>
+    <v-toolbar color="primary" dark dense>
       <v-toolbar-title>Sign up for an Account</v-toolbar-title>
     </v-toolbar>
     <v-card-text>
@@ -15,9 +15,9 @@
     <v-card-actions>
       <v-container fluid grid-list-x>
         <v-layout row>
-          <v-btn id="signup-button" style="margin:.75em;">Sign up</v-btn>
-          <v-btn id="how-button" style="margin:.75em;">How to Register
-            <v-icon light>play_circle_outline</v-icon>
+          <v-btn color="accent" style="margin:.75em;">Sign up</v-btn>
+          <v-btn color="accent" style="margin:.75em;">How to Register
+            &nbsp;<v-icon light>play_circle_outline</v-icon>
           </v-btn>
         </v-layout>
       </v-container>
@@ -33,10 +33,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#toolbar-title {
-  background-color: #303540 !important;
-  color: white;
-}
 #signup-button {
   background-color: #303540 !important;
   color: white;

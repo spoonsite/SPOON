@@ -1,6 +1,8 @@
 <template>
   <div id="app">
+    <v-app>
     <router-view/>
+    </v-app>
   </div>
 </template>
 
@@ -13,4 +15,7 @@ export default {
 </script>
 
 <style>
+#app {
+  font-family: "Roboto";
+}
 </style>
