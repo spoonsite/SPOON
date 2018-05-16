@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import 'vuetify/dist/vuetify.min.css'
 import Vuetify from 'vuetify'
 import LoginPage from '@/components/LoginPage'
+import ForgotUserPage from '@/components/ForgotUserPage'
+import ForgotPasswordPage from '@/components/ForgotPasswordPage'
 
 Vue.use(Router)
 Vue.use(Vuetify, {
@@ -18,9 +20,22 @@ Vue.use(Vuetify, {
 })
 
 export default new Router({
-  routes: [{
-    path: '/',
-    name: 'loginPage',
-    component: LoginPage
-  }]
+  routes: [
+    {
+      path: '/',
+      name: 'loginPage',
+      component: LoginPage
+    },
+    {
+      path: '/forgot-username',
+      name: 'forgotUsername',
+      component: ForgotUserPage
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgotPassword',
+      component: ForgotPasswordPage
+    }
+  ]
+
 })
