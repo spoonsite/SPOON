@@ -16,7 +16,7 @@
  * See NOTICE.txt for more information.
  */
 
-/* global Ext */
+/* global Ext, sectionData */
 
 Ext.define('OSF.customSubmission.SubmissionForm', {
 	extend: 'Ext.panel.Panel',
@@ -66,11 +66,25 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		
 	},
 	
+	initializeUserSubmission: function() {
+		//Create a new submission form and save
+		var submissionForm = this;
+		
+
+		
+		//save and then update the ids
+		//server to create a new one
+		
+	},
+	
 	loadTemplate: function(submissionFormTemplate, entryType, userSubmission) {
 		var submissionForm = this;
 		submissionForm.template = submissionFormTemplate;
 		submissionForm.entryType = entryType;
 		submissionForm.currentSection = 0;
+		if (!userSubmission)	{
+			userSubmission = submissionForm.initializeUserSubmission(submissionForm.template);
+		}
 		submissionForm.userSubmission = userSubmission;
 		
 		submissionForm.template.sections.push({
@@ -183,7 +197,11 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 	getUserData: function() {
 		var submissionForm = this;
 		
-		//go though section and create user submission
+		
+		
+
+
+		
 	}
 	
 });

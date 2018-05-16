@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.util.LockSwitch;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
@@ -28,10 +27,10 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
-import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.model.UserSubmissionAll;
 import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.service.mapping.MappingController;
@@ -44,7 +43,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -206,32 +204,18 @@ public class SubmissionFormServiceImpl
 	}
 
 	@Override
-	public UserSubmission saveSubmissionFormMedia(UserSubmission userSubmission, String fieldId, MediaFile mediaFile, InputStream in)
+	public UserSubmissionMedia saveSubmissionFormMedia(String userSubmissionId, String templateFieldId, MediaFile mediaFile, InputStream in)
 	{
-		Objects.requireNonNull(userSubmission);
-		Objects.requireNonNull(fieldId);
+		Objects.requireNonNull(userSubmissionId);
+		Objects.requireNonNull(templateFieldId);
 		Objects.requireNonNull(in);
 
-		UserSubmissionField field = null;
-		if (userSubmission.getFields() != null) {
-			for (UserSubmissionField existing : userSubmission.getFields()) {
-				if (existing.getFieldId().equals(fieldId)) {
-					field = existing;
-				}
-			}
-		}
-
-		if (field == null) {
-			throw new OpenStorefrontRuntimeException(
-					"Unable to find user submission field id: "
-					+ fieldId
-					+ " submission Id: "
-					+ userSubmission.getUserSubmissionId(), "Check Data");
-		}
-
+		//check for existing and remove old
+		UserSubmissionMedia userSubmissionMedia;
 		try (InputStream fileInput = in) {
-			UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
-			userSubmissionMedia.setFieldId(fieldId);
+			userSubmissionMedia = new UserSubmissionMedia();
+			userSubmissionMedia.setTemplateFieldId(templateFieldId);
+			userSubmissionMedia.setUserSubmissionId(userSubmissionId);
 			userSubmissionMedia.setSubmissionMediaId(persistenceService.generateId());
 
 			mediaFile.setMediaFileId(persistenceService.generateId());
@@ -241,15 +225,12 @@ public class SubmissionFormServiceImpl
 			Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
 
 			userSubmissionMedia.setFile(mediaFile);
-			if (field.getMedia() != null) {
-				field.setMedia(new ArrayList<>());
-			}
-			field.getMedia().add(userSubmissionMedia);
+			userSubmissionMedia.populateBaseCreateFields();
+			userSubmissionMedia = persistenceService.persist(userSubmissionMedia);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
-		userSubmission = saveUserSubmission(userSubmission);
-		return userSubmission;
+		return userSubmissionMedia;
 	}
 
 	@Override
@@ -334,14 +315,22 @@ public class SubmissionFormServiceImpl
 				componentFormSet.getChildren().add(getComponentService().getFullComponent(relationship.getRelatedComponentId()));
 			}
 
+			UserSubmissionAll userSubmissionAll;
 			try {
-				userSubmission = mappingController.mapEntriesToUserSubmission(formTemplate, componentFormSet);
+				userSubmissionAll = mappingController.mapEntriesToUserSubmission(formTemplate, componentFormSet);
 			} catch (MappingException ex) {
 				throw new OpenStorefrontRuntimeException("Unable to map entry to submission.", "Check error ticket/logs", ex);
 			}
 
-			saveUserSubmission(userSubmission);
+			userSubmission = saveUserSubmission(userSubmissionAll.getUserSubmission());
+			for (UserSubmissionMedia media : userSubmissionAll.getMedia()) {
+				media.setSubmissionMediaId(persistenceService.generateId());
+				media.setUserSubmissionId(userSubmission.getUserSubmissionId());
+				media.populateBaseUpdateFields();
+				persistenceService.persist(media);
+			}
 
+			//question: what to do with the original?
 		} else {
 			throw missingFormTemplateException(submissionTemplateId);
 		}
@@ -399,24 +388,23 @@ public class SubmissionFormServiceImpl
 		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmissionId);
 		if (existing != null) {
 
-			if (existing.getFields() != null) {
-				for (UserSubmissionField field : existing.getFields()) {
-					handleMediaDelete(field);
-				}
+			UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
+			userSubmissionMedia.setUserSubmissionId(userSubmissionId);
+			List<UserSubmissionMedia> userSubmissionMediaRecords = userSubmissionMedia.findByExampleProxy();
+
+			for (UserSubmissionMedia media : userSubmissionMediaRecords) {
+				handleMediaDelete(media);
+				persistenceService.delete(media);
 			}
 
 			persistenceService.delete(existing);
 		}
 	}
 
-	private void handleMediaDelete(UserSubmissionField field)
+	private void handleMediaDelete(UserSubmissionMedia media)
 	{
-		if (field.getMedia() != null) {
-			for (UserSubmissionMedia media : field.getMedia()) {
-				if (media.getFile() != null) {
-					deleteSubmissionMedia(media.getFile());
-				}
-			}
+		if (media != null && media.getFile() != null) {
+			deleteSubmissionMedia(media.getFile());
 		}
 	}
 
@@ -434,41 +422,15 @@ public class SubmissionFormServiceImpl
 	}
 
 	@Override
-	public void deleteUserSubmissionMedia(String userSubmissionId, String mediaId)
+	public void deleteUserSubmissionMedia(String submissionMediaId)
 	{
-		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmissionId);
+		UserSubmissionMedia existing = persistenceService.findById(UserSubmissionMedia.class, submissionMediaId);
 		if (existing != null) {
 
-			LockSwitch lockSwitch = new LockSwitch();
-			if (existing.getFields() != null) {
-				for (UserSubmissionField field : existing.getFields()) {
-					lockSwitch.setSwitched(findMediaAndDelete(field, mediaId));
-				}
-			}
-
-			if (lockSwitch.isSwitched()) {
-				existing.populateBaseUpdateFields();
-				persistenceService.persist(existing);
-			}
+			handleMediaDelete(existing);
+			persistenceService.delete(existing);
 		}
 
-	}
-
-	private boolean findMediaAndDelete(UserSubmissionField field, String mediaId)
-	{
-		boolean updated = false;
-		if (field.getMedia() != null) {
-			for (UserSubmissionMedia media : field.getMedia()) {
-				if (media.getSubmissionMediaId().equals(mediaId)) {
-					deleteSubmissionMedia(media.getFile());
-					updated = true;
-				}
-			}
-			field.getMedia().removeIf((media) -> {
-				return media.getSubmissionMediaId().equals(mediaId);
-			});
-		}
-		return updated;
 	}
 
 }

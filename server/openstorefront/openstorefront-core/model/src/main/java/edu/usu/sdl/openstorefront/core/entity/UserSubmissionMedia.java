@@ -16,10 +16,9 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
-import java.io.Serializable;
 import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
@@ -31,9 +30,8 @@ import javax.validation.constraints.NotNull;
  * @author dshurtleff
  */
 @APIDescription("This is part of the submission form field")
-@Embeddable
 public class UserSubmissionMedia
-		implements Serializable
+		extends StandardEntity<UserSubmissionMedia>
 {
 
 	private static final long serialVersionUID = 1L;
@@ -42,7 +40,10 @@ public class UserSubmissionMedia
 	@NotNull
 	private String submissionMediaId;
 
-	private String fieldId;
+	private String templateFieldId;
+
+	@FK(UserSubmission.class)
+	private String userSubmissionId;
 
 	@ManyToOne(cascade = {CascadeType.ALL})
 	@APIDescription("A local media file")
@@ -63,16 +64,6 @@ public class UserSubmissionMedia
 		this.submissionMediaId = submissionMediaId;
 	}
 
-	public String getFieldId()
-	{
-		return fieldId;
-	}
-
-	public void setFieldId(String fieldId)
-	{
-		this.fieldId = fieldId;
-	}
-
 	public MediaFile getFile()
 	{
 		return file;
@@ -81,6 +72,26 @@ public class UserSubmissionMedia
 	public void setFile(MediaFile file)
 	{
 		this.file = file;
+	}
+
+	public String getUserSubmissionId()
+	{
+		return userSubmissionId;
+	}
+
+	public void setUserSubmissionId(String userSubmissionId)
+	{
+		this.userSubmissionId = userSubmissionId;
+	}
+
+	public String getTemplateFieldId()
+	{
+		return templateFieldId;
+	}
+
+	public void setTemplateFieldId(String templateFieldId)
+	{
+		this.templateFieldId = templateFieldId;
 	}
 
 }

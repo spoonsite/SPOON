@@ -15,11 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
-import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldMappingType;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,9 +62,10 @@ public class MapperFactory
 					}
 
 					@Override
-					public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
+					public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
 					{
-						return new UserSubmissionField();
+						//noop; for static content
+						return null;
 					}
 
 				};

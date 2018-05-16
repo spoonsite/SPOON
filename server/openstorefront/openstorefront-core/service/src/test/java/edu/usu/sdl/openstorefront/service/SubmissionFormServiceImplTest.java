@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
@@ -31,7 +32,6 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
-import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.security.UserContext;
@@ -307,6 +307,11 @@ public class SubmissionFormServiceImplTest
 	{
 		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
 
+		Service testService = Mockito.mock(Service.class);
+		Mockito.when(testService.getPersistenceService()).thenReturn(persistenceService);
+		Mockito.when(persistenceService.queryByExample(Mockito.any(QueryByExample.class))).thenReturn(new ArrayList<>());
+		ServiceProxyFactory.setTestService(testService);
+
 		UserSubmission userSubmission = new UserSubmission();
 		Mockito.when(persistenceService.findById(UserSubmission.class, "1")).thenReturn(userSubmission);
 
@@ -320,10 +325,6 @@ public class SubmissionFormServiceImplTest
 	{
 		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
 
-		UserSubmission userSubmission = new UserSubmission();
-
-		List<UserSubmissionField> fields = new ArrayList<>();
-		UserSubmissionField userSubmissionField = new UserSubmissionField();
 		UserSubmissionMedia media = new UserSubmissionMedia();
 		MediaFile mediaFile = new MediaFile();
 		mediaFile.setFileType(MediaFileType.MEDIA);
@@ -333,18 +334,13 @@ public class SubmissionFormServiceImplTest
 		Path path = mediaFile.path();
 		Files.createFile(path);
 
-		userSubmissionField.setMedia(new ArrayList<>());
-		userSubmissionField.getMedia().add(media);
-		fields.add(userSubmissionField);
-		userSubmission.setFields(fields);
-
-		Mockito.when(persistenceService.findById(UserSubmission.class, "1")).thenReturn(userSubmission);
+		Mockito.when(persistenceService.findById(UserSubmissionMedia.class, "1")).thenReturn(media);
 
 		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService);
-		instance.deleteUserSubmission("1");
+		instance.deleteUserSubmissionMedia("1");
 
 		path = mediaFile.path();
-		assertTrue(!path.toFile().exists());
+		assertTrue("Media should be deleted", !path.toFile().exists());
 
 	}
 

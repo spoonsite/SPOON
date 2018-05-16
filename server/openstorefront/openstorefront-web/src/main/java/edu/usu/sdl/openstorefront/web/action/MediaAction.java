@@ -136,7 +136,7 @@ public class MediaAction
 	private String userSubmissionId;
 
 	@Validate(required = true, on = {"UploadSubmissionMedia"})
-	private String userSubmissionFieldId;
+	private String submissionTemplateFieldId;
 
 	private static final String ACCESS_DENIED = "Access denied";
 
@@ -716,7 +716,7 @@ public class MediaAction
 				mediaFile.setMimeType(file.getContentType());
 
 				try {
-					service.getSubmissionFormService().saveSubmissionFormMedia(userSubmission, userSubmissionFieldId, mediaFile, file.getInputStream());
+					service.getSubmissionFormService().saveSubmissionFormMedia(userSubmissionId, submissionTemplateFieldId, mediaFile, file.getInputStream());
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 				} finally {
@@ -867,14 +867,14 @@ public class MediaAction
 		this.userSubmissionId = userSubmissionId;
 	}
 
-	public String getUserSubmissionFieldId()
+	public String getSubmissionTemplateFieldId()
 	{
-		return userSubmissionFieldId;
+		return submissionTemplateFieldId;
 	}
 
-	public void setUserSubmissionFieldId(String userSubmissionFieldId)
+	public void setSubmissionTemplateFieldId(String submissionTemplateFieldId)
 	{
-		this.userSubmissionFieldId = userSubmissionFieldId;
+		this.submissionTemplateFieldId = submissionTemplateFieldId;
 	}
 
 }

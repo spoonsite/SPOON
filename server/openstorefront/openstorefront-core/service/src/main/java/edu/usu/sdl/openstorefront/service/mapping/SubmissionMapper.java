@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -90,21 +91,22 @@ public class SubmissionMapper
 	}
 
 	@Override
-	public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
 	{
+		UserSubmissionFieldMedia fieldMedia = new UserSubmissionFieldMedia();
 		UserSubmissionField userSubmissionField = new UserSubmissionField();
 
 		userSubmissionField.setTemplateFieldId(submissionField.getFieldId());
+		fieldMedia.setUserSubmissionField(userSubmissionField);
 
 		try {
 			String childComponents = objectMapper.writeValueAsString(componentFormSet.getChildren());
 			userSubmissionField.setRawValue(childComponents);
 
 			//pull all media
-			userSubmissionField.setMedia(new ArrayList<>());
 			for (ComponentAll componentAll : componentFormSet.getChildren()) {
-				addComponentMedia(componentAll, userSubmissionField);
-				addComponentResources(componentAll, userSubmissionField);
+				fieldMedia.getMedia().addAll(addComponentMedia(componentAll, submissionField.getFieldId()));
+				fieldMedia.getMedia().addAll(addComponentResources(componentAll, submissionField.getFieldId()));
 			}
 
 		} catch (IOException ex) {
@@ -119,29 +121,35 @@ public class SubmissionMapper
 			throw mappingException;
 		}
 
-		return userSubmissionField;
+		return fieldMedia;
 	}
 
-	private void addComponentMedia(ComponentAll componentAll, UserSubmissionField userSubmissionField)
+	private List<UserSubmissionMedia> addComponentMedia(ComponentAll componentAll, String templateFieldId) throws JsonProcessingException
 	{
+		List<UserSubmissionMedia> createdMedia = new ArrayList<>();
 		for (ComponentMedia media : componentAll.getMedia()) {
 			if (media.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
-				userSubmissionMedia.setFile(media.getFile());
-				userSubmissionField.getMedia().add(userSubmissionMedia);
+				userSubmissionMedia.setFile(media.getFile().copy());
+				userSubmissionMedia.setTemplateFieldId(templateFieldId);
+				createdMedia.add(userSubmissionMedia);
 			}
 		}
+		return createdMedia;
 	}
 
-	private void addComponentResources(ComponentAll componentAll, UserSubmissionField userSubmissionField)
+	private List<UserSubmissionMedia> addComponentResources(ComponentAll componentAll, String templateFieldId) throws JsonProcessingException
 	{
+		List<UserSubmissionMedia> createdMedia = new ArrayList<>();
 		for (ComponentResource resource : componentAll.getResources()) {
 			if (resource.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
-				userSubmissionMedia.setFile(resource.getFile());
-				userSubmissionField.getMedia().add(userSubmissionMedia);
+				userSubmissionMedia.setFile(resource.getFile().copy());
+				userSubmissionMedia.setTemplateFieldId(templateFieldId);
+				createdMedia.add(userSubmissionMedia);
 			}
 		}
+		return createdMedia;
 	}
 
 }

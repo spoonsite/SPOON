@@ -18,7 +18,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 4,
+					"fieldId": 1,
 					"questionNumber": "G-1.",
 					"label": "Company Name",
 					"labelAlign": "left",
@@ -27,7 +27,7 @@
 					"fieldType": "ORGANIZATION"	
 				},
 				{
-					"fieldId": 10,
+					"fieldId": 2,
 					"questionNumber": "G-2.",
 					"label": "Point Of Contact",					
 					"mappingType": "COMPLEX",
@@ -35,7 +35,7 @@
 					"fieldType": "CONTACT"							
 				},
 				{
-					"fieldId": 4,									
+					"fieldId": 3,									
 					"mappingType": "NONE",
 					"required": false,
 					"fieldType": "CONTENT",
@@ -51,8 +51,8 @@
 					"fieldType": "TEXT"		
 				},
 				{
-					"fieldId": 4,
-					"questionNumber": "G-4",
+					"fieldId": 5,
+					"questionNumber": "G-4.",
 					"label": "Short Product Description",
 					"labelAlign": "left",
 					"mappingType": "COMPONENT",
@@ -60,14 +60,14 @@
 					"fieldType": "TEXTAREA"	
 				},
 				{
-					"fieldId": 4,									
+					"fieldId": 6,									
 					"mappingType": "NONE",
 					"required": false,
 					"fieldType": "CONTENT",
 					"staticContent": "<hr>"				
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 7,
 					"questionNumber": "G-5.",
 					"label": "Which Joint Common System Function(s) from the JOINT COMMON SYSTEM FUNCTION LIST (JCSFL) DICTIONARY does the software implement?",										
 					"mappingType": "COMPLEX",
@@ -77,7 +77,7 @@
 					"attributeType": "TYPE"
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 8,
 					"questionNumber": "G-6.",
 					"label": "From your required capability document, identify what specific capability this component implements?  Provide your referenced capability document and specific required capability(s).",										
 					"mappingType": "COMPLEX",
@@ -91,7 +91,7 @@
 					"requireComment": false
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 9,
 					"questionNumber": "G-7.",
 					"label": "Does a CONOPS exist for a proposed solution or an existing, similar use case?",										
 					"mappingType": "COMPLEX",
@@ -101,7 +101,7 @@
 					"attributeType": "FUNDED"
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 10,
 					"questionNumber": "G-8.",
 					"label": "Does a Software Requirements Specification (SRS) / Software Requirements Description (SRD) or other similar documentation exist?",										
 					"mappingType": "COMPLEX",
@@ -119,14 +119,14 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 4,
+					"fieldId": 11,
 					"mappingType": "NONE",
 					"required": false,
 					"fieldType": "CONTENT",
 					"staticContent": "<span class='submission-label'>Step 1: Download form and complete information per the instructions on the template.</span> <a href='download.csv' class='submission-button'>Download</a>"
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 12,
 					"questionNumber": "Step 2:",
 					"label": "Upload completed form",										
 					"mappingType": "COMPLEX",
@@ -142,7 +142,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 5,
+					"fieldId": 13,
 					"questionNumber": "P-1.",
 					"label": "List the machines and/or services you require and machine resources.",										
 					"mappingType": "COMPLEX",
@@ -155,7 +155,7 @@
 					"requireComment": false					
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 14,
 					"questionNumber": "P-2.",
 					"label": "List hardware attributes that would have a negative impact on the operation of your software, or identify hardware attributes that would have a optimize the operation of your software.",										
 					"mappingType": "COMPLEX",
@@ -168,7 +168,7 @@
 					"requireComment": false					
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 15,
 					"questionNumber": "P-3.",
 					"label": "What operating system(s) does the software require?",										
 					"mappingType": "COMPLEX",
@@ -181,7 +181,7 @@
 					"requireComment": false					
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 16,
 					"questionNumber": "P-4.",
 					"label": "Is in memory storage required to maintain required performance identified above (e.g. in memory database)?",										
 					"mappingType": "COMPLEX",
@@ -190,7 +190,7 @@
 					"attributeType": "FUNDED"					
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 17,
 					"questionNumber": "P-5.",
 					"label": "Specify the minimum/ maximum throughput on inputs and outputs.  In addition, What data sources was performance testing performed on? (data sources have their own performance requirements)",										
 					"mappingType": "COMPLEX",
@@ -203,7 +203,7 @@
 					"requireComment": false					
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 18,
 					"questionNumber": "P-6.",
 					"label": "Is in memory storage required to maintain required performance identified above (e.g. in memory database)?",										
 					"mappingType": "COMPLEX",
@@ -214,7 +214,7 @@
 					"commentLabel": "Yes, identify who monitors the performance:"
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 19,
 					"questionNumber": "P-7.",
 					"label": "If performance is guaranteed by the Service Level Agreement, are there contractual enforcement clauses?",										
 					"mappingType": "COMPLEX",
@@ -225,7 +225,7 @@
 					"commentLabel": "If Yes, provide description below:"
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 20,
 					"questionNumber": "P-8.",
 					"label": "Has performance verification been performed on the component?",										
 					"mappingType": "COMPLEX",
@@ -244,7 +244,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 4,
+					"fieldId": 21,
 					"questionNumber": "SV-1.",
 					"label": "Is the component foreign owned, developed by foreigners or developed overseas?",										
 					"mappingType": "COMPLEX",
@@ -255,7 +255,7 @@
 					"commentLabel": "If Yes, provide description below:"					
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 22,
 					"questionNumber": "SV-2.",
 					"label": " Is the component foreign owned, developed by foreigners or developed overseas?",										
 					"mappingType": "COMPLEX",
@@ -264,7 +264,7 @@
 					"attributeType": "TYPE"
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 23,
 					"questionNumber": "SV-3.",
 					"label": "What is the intended Classification For Use (Select all that apply)?",										
 					"mappingType": "COMPLEX",
@@ -273,7 +273,7 @@
 					"attributeType": "NETWORK"					
 				},				
 				{
-					"fieldId": 4,
+					"fieldId": 24,
 					"questionNumber": "SV-4.",
 					"label": "Is the component foreign owned, developed by foreigners or developed overseas?",										
 					"mappingType": "COMPLEX",
@@ -293,7 +293,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 4,
+					"fieldId": 25,
 					"questionNumber": "U-1.",
 					"label": "Does the software have a user interface?",										
 					"mappingType": "COMPLEX",
@@ -302,7 +302,7 @@
 					"attributeType": "FUNDED"					
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 26,
 					"questionNumber": "U-2.",
 					"label": "Describe the frameworks (e.g., Bootstrap) and/or UI libraries that were used to develop the software?",										
 					"mappingType": "COMPLEX",
@@ -311,7 +311,7 @@
 					"attributeType": "FUNDED"					
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 27,
 					"questionNumber": "U-3.",
 					"label": "Can the software be demonstrated?",										
 					"mappingType": "COMPLEX",
@@ -328,7 +328,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 5,
+					"fieldId": 28,
 					"questionNumber": "SD-1.",
 					"label": "List all commercial programming languages (compiled and interpreted) used (e.g. Java, C++, Scala) and standards are implemented and which version(s).",										
 					"mappingType": "COMPLEX",
@@ -341,7 +341,7 @@
 					"requireComment": false							
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 29,
 					"questionNumber": "SD-2.",
 					"label": "Is the software DCGS Integration Backbone (DIB) compatible?",										
 					"mappingType": "COMPLEX",
@@ -350,7 +350,7 @@
 					"attributeType": "FUNDED"					
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 30,
 					"questionNumber": "SD-3.",
 					"label": "Briefly describe the overall system (hardware and software) technical architecture in which this software resides.",										
 					"mappingType": "COMPLEX",
@@ -363,7 +363,7 @@
 					"requireComment": false						
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 31,
 					"questionNumber": "SV-4.",
 					"label": "Are there DoD-relevant Use Cases for this software?",										
 					"mappingType": "COMPLEX",
@@ -382,7 +382,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 4,
+					"fieldId": 32,
 					"questionNumber": "SPT-1.",
 					"label": "Has the software been evaluated for supportability?",										
 					"mappingType": "COMPLEX",
@@ -391,7 +391,7 @@
 					"attributeType": "FUNDED"						
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 33,
 					"questionNumber": "SPT-2.",
 					"label": "When are maintenance releases to be made available? (i.e. upgrade schedule)?",										
 					"mappingType": "COMPLEX",
@@ -404,7 +404,7 @@
 					"requireComment": false					
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 34,
 					"questionNumber": "SPT-3.",
 					"label": "Is there a Software Maintenance Agreement and Release Schedule?",										
 					"mappingType": "COMPLEX",
@@ -421,7 +421,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 4,
+					"fieldId": 35,
 					"questionNumber": "T-1.",
 					"label": "Are there automated test tools to verify functionality?",										
 					"mappingType": "COMPLEX",
@@ -432,7 +432,7 @@
 					"commentLabel": "If Yes, identify tools and describe how often they are used in comments<br> If No, state why<br>If N/A, state why"					
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 36,
 					"questionNumber": "T-2.",
 					"label": "Are test plans, procedures and results available?",										
 					"mappingType": "COMPLEX",
@@ -443,7 +443,7 @@
 					"commentLabel": "If No, state why"						
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 37,
 					"questionNumber": "T-3.",
 					"label": "Has this software passed a DI2E Conformance Test Kit (CTK), or otherwise been assessed in a DI2E event (e.g. ENTERPRISE CHALLENGE)?",										
 					"mappingType": "COMPLEX",
@@ -462,7 +462,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 5,
+					"fieldId": 38,
 					"questionNumber": "SC-1.",
 					"label": "How does the software scale to meet the requirements of a denser operating environment (more signals, more users, etc.) or provide more capability?",										
 					"mappingType": "COMPLEX",
@@ -475,7 +475,7 @@
 					"requireComment": false						
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 39,
 					"questionNumber": "SC-2.",
 					"label": "How does the hardware scale to meet the requirements of a denser operating environment (more signals, more users, etc.) or provide more capability?",										
 					"mappingType": "COMPLEX",
@@ -488,7 +488,7 @@
 					"requireComment": false						
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 40,
 					"questionNumber": "SC-3.",
 					"label": "Does your software operate in a virtualized environment?",										
 					"mappingType": "COMPLEX",
@@ -507,7 +507,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 5,
+					"fieldId": 41,
 					"questionNumber": "EX-1.",
 					"label": "What kinds of changes (e.g.  Ports, protocols, schema) to the software impact the interface?",										
 					"mappingType": "COMPLEX",
@@ -520,7 +520,7 @@
 					"requireComment": false							
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 42,
 					"questionNumber": "EX-2.",
 					"label": "Do mechanisms exist to support integrating additional functionality?",										
 					"mappingType": "COMPLEX",
@@ -531,7 +531,7 @@
 					"commentLabel": "If Yes, describe the mechanisms. (Example Common mechanisms are install a new virtual machine, install new container (e.g. Docker), install new program, install new plugin shared object or jar, install new script, or install new declarative mapping.)"						
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 43,
 					"questionNumber": "EX-3.",
 					"label": "Does the system employ a modular design (MOSA compliant)?",										
 					"mappingType": "COMPLEX",
@@ -550,7 +550,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 4,
+					"fieldId": 44,
 					"questionNumber": "I-1.",
 					"label": "Are DISR standards implemented by this software?",										
 					"mappingType": "COMPLEX",
@@ -561,7 +561,7 @@
 					"commentLabel": "If Yes, list the standards below:"											
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 45,
 					"questionNumber": "I-2.",
 					"label": "Does the software conform to other standards not yet listed (e.g. NIST Cloud Standards)?",										
 					"mappingType": "COMPLEX",
@@ -572,7 +572,7 @@
 					"commentLabel": "If Yes, list standards in comments section below:"						
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 46,
 					"questionNumber": "I-3.",
 					"label": "Are components used within this suite accessible by external systems?",										
 					"mappingType": "COMPLEX",
@@ -591,7 +591,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 4,
+					"fieldId": 47,
 					"questionNumber": "A-1.",
 					"label": "Does this software require a license?",										
 					"mappingType": "COMPLEX",
@@ -600,14 +600,14 @@
 					"attributeType": "FUNDED"					
 				},
 				{
-					"fieldId": 4,									
+					"fieldId": 48,									
 					"mappingType": "NONE",
 					"required": false,
 					"fieldType": "CONTENT",
 					"staticContent": "If Yes, please answer/respond to (A-1.1 through A-1.4) If No, skip to A-2"	
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 49,
 					"questionNumber": "A-1.1",
 					"label": "Provide a copy of the software license agreement",										
 					"mappingType": "COMPLEX",
@@ -616,14 +616,14 @@
 					"fieldType": "RESOURCE_SIMPLE"				
 				},
 				{
-					"fieldId": 4,									
+					"fieldId": 50,									
 					"mappingType": "NONE",
 					"required": false,
 					"fieldType": "CONTENT",
 					"staticContent": "<br><br>Provide cost model associated with licensing, purchasing, maintaining this code.  (Upload document or comment below)<hr>"	
 				},				
 				{					
-					"fieldId": 4,
+					"fieldId": 51,
 					"questionNumber": "A-1.2.a",
 					"label": "Provide cost model associated with licensing, purchasing, maintaining this code.",										
 					"mappingType": "COMPLEX",
@@ -632,7 +632,7 @@
 					"fieldType": "RESOURCE_SIMPLE"				
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 52,
 					"questionNumber": "A-1.2.b",
 					"label": "Provide cost model Comment",										
 					"mappingType": "COMPLEX",
@@ -645,21 +645,21 @@
 					"requireComment": false						
 				},				
 				{
-					"fieldId": 4,									
+					"fieldId": 53,									
 					"mappingType": "NONE",
 					"required": false,
 					"fieldType": "CONTENT",
 					"staticContent": "<hr>"	
 				},
 				{
-					"fieldId": 4,									
+					"fieldId": 54,									
 					"mappingType": "NONE",
 					"required": false,
 					"fieldType": "CONTENT",
 					"staticContent": "<h3>Section A-2</h3>"	
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 55,
 					"questionNumber": "A-2.",
 					"label": "dentify the Intellectual Property rights (for both Software Development Kit and OPERATIONAL SW)",										
 					"mappingType": "COMPLEX",
@@ -672,7 +672,7 @@
 					"requireComment": false		
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 56,
 					"questionNumber": "A-3.",
 					"label": "With regards to the Government’s rights in non-commercial technical data and software deliverables ( DFARS 252.227-7013 and 252.227-7014) , does the government have Unlimited (U/L) Rights or Government Purpose Rights (GPR) as defined in the Federal Acquisition Regulation (FAR) and the Department of Defense (DoD) Federal Acquisition Regulation Supplement (DFARS)?",										
 					"mappingType": "COMPLEX",
@@ -681,7 +681,7 @@
 					"attributeType": "FUNDED"	
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 57,
 					"questionNumber": "I-3.",
 					"label": "Is the software is GOTS?",										
 					"mappingType": "COMPLEX",

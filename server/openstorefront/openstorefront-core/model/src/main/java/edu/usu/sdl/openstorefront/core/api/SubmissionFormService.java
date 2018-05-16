@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
@@ -92,13 +93,15 @@ public interface SubmissionFormService
 	public UserSubmission saveUserSubmission(UserSubmission userSubmission);
 
 	/**
-	 * Save Submission Media for user (it should moved to actual records
+	 * Save Submission Media for user (it will be moved to actual records)
 	 *
-	 * @param resource
+	 * @param userSubmissionId
+	 * @param templateFieldId
 	 * @param in
+	 * @param mediaFile
 	 * @return saved form media metadata
 	 */
-	public UserSubmission saveSubmissionFormMedia(UserSubmission userSubmission, String fieldId, MediaFile mediaFile, InputStream in);
+	public UserSubmissionMedia saveSubmissionFormMedia(String userSubmissionId, String templateFieldId, MediaFile mediaFile, InputStream in);
 
 	/**
 	 * Convert submission to Components but it does not save the results
@@ -150,9 +153,8 @@ public interface SubmissionFormService
 	/**
 	 * Delete just the media from a submission
 	 *
-	 * @param userSubmissionId
-	 * @param mediaId
+	 * @param submissionMediaId
 	 */
-	public void deleteUserSubmissionMedia(String userSubmissionId, String mediaId);
+	public void deleteUserSubmissionMedia(String submissionMediaId);
 
 }

@@ -42,6 +42,7 @@ public class UserSubmission
 	private String userSubmissionId;
 
 	@NotNull
+	@ConsumeField
 	@FK(SubmissionTemplateStatus.class)
 	private String templateId;
 
@@ -51,6 +52,7 @@ public class UserSubmission
 	@FK(value = ComponentType.class, enforce = true)
 	private String componentType;
 
+	@ConsumeField
 	@FK(Component.class)
 	private String originalComponentId;
 
@@ -86,17 +88,6 @@ public class UserSubmission
 				if (StringUtil.isBlank(userSubmissionField.getFieldId())) {
 					userSubmissionField.setFieldId(StringProcessor.uniqueId());
 				}
-				linkMedia(userSubmissionField);
-			}
-		}
-	}
-
-	private void linkMedia(UserSubmissionField userSubmissionField)
-	{
-		for (UserSubmissionMedia media : userSubmissionField.getMedia()) {
-			media.setFieldId(userSubmissionField.getFieldId());
-			if (StringUtil.isBlank(media.getSubmissionMediaId())) {
-				media.setSubmissionMediaId(StringProcessor.uniqueId());
 			}
 		}
 	}

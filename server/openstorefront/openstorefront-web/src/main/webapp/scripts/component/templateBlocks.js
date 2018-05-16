@@ -109,7 +109,7 @@ Ext.define('OSF.component.template.Resources', {
 			'		<tr class="details-table">',
 			'			<td class="details-table"><b>{resourceTypeDesc}</b>',
 			'                   <tpl if="description"><br>{description}</tpl>',
-			'					<tpl if="privateFlag"><div class="private-badge">private</div></tpl>',
+			'					<tpl if="privateFlag"><br><span class="private-badge">private</span></tpl>',
 			'           </td>',
 			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="{actualLink}" class="details-table" target="_blank">{link}</a></td>',
 			'		</tr>',
