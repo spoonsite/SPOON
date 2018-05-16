@@ -47,6 +47,12 @@ Ext.define('OSF.form.Comments', {
 		};
 
 		commentPanel.commentGrid = Ext.create('Ext.grid.Panel',{
+			plugins: [{
+				ptype: 'rowexpander',
+				rowBodyTpl : new Ext.XTemplate(
+					'<hr>{comment}'
+				)
+			}],
 			columnLines: true,
 			store: Ext.create('Ext.data.Store', {
 				fields: [			
@@ -99,7 +105,7 @@ Ext.define('OSF.form.Comments', {
 							text: 'Save',
 							formBind: true,
 							iconCls: 'fa fa-save',
-							margin: '30 0 0 0',
+							margin: '30 10 10 10',
 							minWidth: 75,
 							handler: function(){
 								actionAddComment(this.up('form'));
@@ -107,9 +113,9 @@ Ext.define('OSF.form.Comments', {
 						},
 						{
 							xtype: 'button',
-							text: 'cancel',
+							text: 'Cancel',
 							iconCls: 'fa fa-close',
-							margin: '30 0 0 0',
+							margin: '30 10 10 10',
 							minWidth: 75,
 							handler: function(){
 								this.up('form').reset();
@@ -118,7 +124,7 @@ Ext.define('OSF.form.Comments', {
 					],
 					items: [
 						{
-							xtype: 'textarea',
+							xtype: 'htmleditor',
 							name: 'comment',
 							fieldLabel: 'Component Comments:',
 							width: '100%',

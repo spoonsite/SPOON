@@ -1232,7 +1232,7 @@
 							bodyStyle: 'padding: 10px',
 							items: [
 								{
-									xtype: 'textarea',
+									xtype: 'htmleditor',
 									itemId: 'searchComment',
 									fieldLabel: 'Optional Comments',
 									labelAlign: 'top',
@@ -1408,7 +1408,7 @@
 									}
 								},
 								{
-									xtype: 'textarea',
+									xtype: 'htmleditor',
 									itemId: 'searchComment',
 									fieldLabel: 'Optional Comments',
 									labelAlign: 'top',
@@ -1548,7 +1548,7 @@
 					title: 'Change Type - ',
 					iconCls: 'fa fa-lg fa-exchange',
 					width: '35%',
-					height: 350,
+					height: 450,
 					y: 200,
 					modal: true,
 					layout: 'fit',
@@ -1580,7 +1580,7 @@
 									}
 								},
 								{
-									xtype: 'textarea',
+									xtype: 'htmleditor',
 									itemId: 'searchComment',
 									fieldLabel: 'Optional Comments',
 									labelAlign: 'top',
@@ -1938,7 +1938,7 @@
 								// DO NOT DELETE. THIS IS A MERGE FEATURE THAT WILL BE IMPLEMENTED LATER.
 								// Change
 								// {
-								// 	xtype: 'textarea',
+								// 	xtype: 'htmleditor',
 								// 	itemId: 'searchComment',
 								// 	fieldLabel: 'Optional Comments',
 								// 	labelAlign: 'top',

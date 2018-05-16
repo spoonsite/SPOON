@@ -73,7 +73,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			title: 'Change Request Comments: ',
 			iconCls: 'fa fa-lg fa-user',
 			width: '35%',
-			height: 250,
+			height: 350,
 			y: 200,
 			modal: true,
 			layout: 'fit',
@@ -84,7 +84,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 					bodyStyle: 'padding: 10px',
 					items: [ 
 						{
-							xtype: 'textarea',
+							xtype: 'htmleditor',
 							itemId: 'searchComment',
 							fieldLabel: 'Optional Comments',
 							labelAlign: 'top',
