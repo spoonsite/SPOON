@@ -15,45 +15,46 @@ import ContactPage from '@/components/ContactPage'
 Vue.use(Router)
 
 export default new Router({
+  // mode: 'history',
   routes: [
     {
       path: '/',
-      name: 'LandingPage',
+      name: 'Home',
       component: LandingPage
     },
     {
       path: '/faq',
-      name: 'FAQ',
+      name: 'F.A.Q.',
       component: FAQPage
     },
     {
       path: '/search',
-      name: 'SearchPage',
+      name: 'Search',
       component: SearchPage
     },
     {
       path: '/entry-detail',
-      name: 'EntryDetailPage',
+      name: 'Entry Detail',
       component: EntryDetailPage
     },
     {
       path: '/profile',
-      name: 'UserProfilePage',
+      name: 'User Profile',
       component: UserProfilePage
     },
     {
       path: '/watches',
-      name: 'WatchesPage',
+      name: 'Watches',
       component: WatchesPage
     },
     {
       path: '/reset-password',
-      name: 'ResetPasswordPage',
+      name: 'Reset Password',
       component: ResetPasswordPage
     },
     {
       path: '/submission-status',
-      name: 'SubmissionStatusPage',
+      name: 'Submission Status',
       component: SubmissionStatusPage
     },
     {
@@ -63,12 +64,12 @@ export default new Router({
     },
     {
       path: '/sme-approval',
-      name: 'SMEApprovalPage',
+      name: 'SME Approval',
       component: SMEApprovalPage
     },
     {
       path: '/contact',
-      name: 'ContactPage',
+      name: 'Contact',
       component: ContactPage
     }
   ]
