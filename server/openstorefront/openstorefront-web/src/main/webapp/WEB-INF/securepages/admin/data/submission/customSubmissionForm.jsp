@@ -21,10 +21,10 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
-<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
+<stripes:layout-render name="../../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 	
-	<stripes:layout-render name="../../../../layout/adminheader.jsp">
+	<stripes:layout-render name="../../../../../layout/adminheader.jsp">
 	</stripes:layout-render>
 
 	<link rel="stylesheet" href="css/customForms.css">	
