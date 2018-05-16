@@ -34,6 +34,7 @@ Ext.define('OSF.form.Comments', {
 				update = '/' + data.commentId;
 				method = 'PUT'
 			}
+
 			CoreUtil.submitForm({
 				url: 'api/v1/resource/components/' + componentId + '/comments' + update,
 				method: method,
@@ -42,8 +43,16 @@ Ext.define('OSF.form.Comments', {
 				success: function(){
 					commentPanel.commentGrid.getStore().reload();
 					form.reset();
+				},
+				failure: function(){
+					Ext.toast({
+						title: 'Validation Error. The Server could not process the request.',
+						html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+						width: 500,
+						autoCloseDelay: 10000,
+					});
 				}
-			});	
+			});		
 		};
 
 		commentPanel.commentGrid = Ext.create('Ext.grid.Panel',{
@@ -126,28 +135,37 @@ Ext.define('OSF.form.Comments', {
 						{
 							xtype: 'htmleditor',
 							name: 'comment',
+							itemId: 'commentField',
 							fieldLabel: 'Component Comments:',
 							width: '100%',
+							allowBlank: false,
 							labelWidth: 150,
-							maxLength: 4096
+							exceededLimit: false,
+							listeners: {
+								change: function(field, newValue, oldValue, eOpts){
+									if(newValue.length > 4096){
+										field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
+										this.exceededLimit = true;
+									}
+									if( this.exceededLimit && (newValue.length <= 4096)){
+										field.setFieldLabel('Component Comments');
+										this.exceededLimit = false;
+									}
+								}
+							}
 						},
-						{
-							xtype: 'form',
-							items: [
-								Ext.create('OSF.component.StandardComboBox', {
-									name: 'commentType',									
-									allowBlank: false,
-									editable: false,
-									typeAhead: false,
-									margin: '0 0 5 0',
-									width: '100%',
-									fieldLabel: 'Comment Type <span class="field-required" />',
-									storeConfig: {
-										url: 'api/v1/resource/lookuptypes/ComponentCommentType'
-									},
-								})
-							]
-						},
+						Ext.create('OSF.component.StandardComboBox', {
+							name: 'commentType',									
+							allowBlank: false,
+							editable: false,
+							typeAhead: false,
+							margin: '0 0 5 0',
+							width: '100%',
+							fieldLabel: 'Comment Type <span class="field-required" />',
+							storeConfig: {
+								url: 'api/v1/resource/lookuptypes/ComponentCommentType'
+							},
+						}),						
 						{
 							xtype: 'hidden',
 							name: 'commentId'

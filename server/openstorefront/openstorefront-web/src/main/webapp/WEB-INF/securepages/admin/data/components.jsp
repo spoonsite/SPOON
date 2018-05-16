@@ -1249,6 +1249,19 @@
 									displayField: 'Comment displayfield',
 									store: {
 										autoLoad: true,
+									},
+									exceededLimit: false,
+									listeners: {
+										change: function(field, newValue, oldValue, eOpts){
+											if(newValue.length > 4096){
+												field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
+												this.exceededLimit = true;
+											}
+											if( this.exceededLimit && (newValue.length <= 4096)){
+												field.setFieldLabel('Component Comments');
+												this.exceededLimit = false;
+											}
+										}
 									}
 								},
 								{
@@ -1315,6 +1328,14 @@
 																	method: 'POST',
 																	jsonData: data,
 																	success: function(response, opts){
+																	},
+																	failure: function(){
+																		Ext.toast({
+																			title: 'Validation Error. The Server could not process the request.',
+																			html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+																			width: 500,
+																			autoCloseDelay: 10000,
+																		});
 																	}
 																});	
 															}
@@ -1425,6 +1446,19 @@
 									displayField: 'Comment displayfield',
 									store: {
 										autoLoad: true,
+									},
+									exceededLimit: false,
+									listeners: {
+										change: function(field, newValue, oldValue, eOpts){
+											if(newValue.length > 4096){
+												field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
+												this.exceededLimit = true;
+											}
+											if( this.exceededLimit && (newValue.length <= 4096)){
+												field.setFieldLabel('Component Comments');
+												this.exceededLimit = false;
+											}
+										}
 									}
 								},
 								{
@@ -1494,6 +1528,14 @@
 																	method: 'POST',
 																	jsonData: data,
 																	success: function(response, opts){
+																	},
+																	failure: function(){
+																		Ext.toast({
+																			title: 'Validation Error. The Server could not process the request.',
+																			html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+																			width: 500,
+																			autoCloseDelay: 10000,
+																		});
 																	}
 																});	
 															}
@@ -1597,6 +1639,19 @@
 									displayField: 'Comment displayfield',
 									store: {
 										autoLoad: true,
+									},
+									exceededLimit: false,
+									listeners: {
+										change: function(field, newValue, oldValue, eOpts){
+											if(newValue.length > 4096){
+												field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
+												this.exceededLimit = true;
+											}
+											if( this.exceededLimit && (newValue.length <= 4096)){
+												field.setFieldLabel('Component Comments');
+												this.exceededLimit = false;
+											}
+										}
 									}
 								},
 								{
@@ -1654,6 +1709,14 @@
 																		method: 'POST',
 																		jsonData: data,
 																		success: function(response, opts){
+																		},
+																		failure: function(){
+																			Ext.toast({
+																				title: 'Validation Error. The Server could not process the request.',
+																				html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+																				width: 500,
+																				autoCloseDelay: 10000,
+																			});
 																		}
 																	});	
 																}
@@ -1878,13 +1941,21 @@
 														success: function(response, opts){
 															// DO NOT DELETE. THIS IS A MERGE FEATURE THAT WILL BE IMPLEMENTED LATER.
 															// if(data.comment != ''){
-															// 	Ext.Ajax.request({
-															// 		url: 'api/v1/resource/components/' + data.targetComponentId + '/comments',
-															// 		method: 'POST',
-															// 		jsonData: inputData,
-															// 		success: function(response, opts){
-															// 		}
-															// 	});	
+																// Ext.Ajax.request({
+																// 	url: 'api/v1/resource/components/' + data.targetComponentId + '/comments',
+																// 	method: 'POST',
+																// 	jsonData: inputData,
+																// 	success: function(response, opts){
+																// 	},
+																// 	failure: function(){
+																// 		Ext.toast({
+																// 			title: 'Validation Error. The Server could not process the request.',
+																// 			html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+																// 			width: 500,
+																// 			autoCloseDelay: 10000,
+																// 		});
+																// 	}
+																// });	
 															// }
 															mergeForm.setLoading(false);
 
@@ -1955,6 +2026,19 @@
 								// 	displayField: 'Comment displayfield',
 								// 	store: {
 								// 		autoLoad: true,
+								// 	},
+								// 	exceededLimit: false,
+								// 	listeners: {
+								// 		change: function(field, newValue, oldValue, eOpts){
+								// 			if(newValue.length > 4096){
+								// 				field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
+								// 				this.exceededLimit = true;
+								// 			}
+								// 			if( this.exceededLimit && (newValue.length <= 4096)){
+								// 				field.setFieldLabel('Component Comments');
+								// 				this.exceededLimit = false;
+								// 			}
+								// 		}
 								// 	}
 								// },
 								// {
