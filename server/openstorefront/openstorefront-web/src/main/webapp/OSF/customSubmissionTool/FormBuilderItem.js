@@ -20,8 +20,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-formbuilderitem',
 
-	templateRecord: undefined,
-
+	requires: ['OSF.customSubmissionTool.ItemMenu'],
+	
 	height: 275,
 	margin: '10 10 10 0',
 	padding: '10 20 10 20',
@@ -29,25 +29,94 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	width: '100%',
 	cls: 'form-builder-item',
 	overCls: 'csf-hover',
-	isActive: false,
 	layout: {
 		type: 'anchor'
 	},
+
+	isActive: false,
+	
 	items: [
 		{
-	        xtype: 'textfield',
-	        itemId: 'question',
-	        emptyText: 'Untitled Question',
-			fieldStyle: 'font-size: 32px',
-	        height: 50,
-	        width: '100%',
-	        listeners: {
-	        	change: function (self, newVal) {
-	        		this.up('[cls=form-builder-item]').question = newVal;
-	        	}
-	        }
+			xtype: 'container',
+			layout: {
+				type: 'hbox',
+				align: 'center'
+			},
+			height: '20%',
+			items: [
+				{
+					xtype: 'textfield',
+					itemId: 'labelCode',
+					width: '9%',
+					maxLength: 3,
+					enforceMaxLength: true,
+					fieldStyle: 'font-size: 32px; text-align: center; padding: 0;',
+					height: 50,
+					listeners: {
+						change: function (self, newVal) {
+							// var formBuilderItem = this.up('[cls=form-builder-item]');
+							// formBuilderItem.labelCode = newVal;
+							// formBuilderItem.saveSection();
+							this.up('[cls=form-builder-item]').saveSection('labelCode', newVal);
+						}
+					}
+				},
+				{
+					xtype: 'label',
+					text: '∙',
+					width: '1%',
+					style: 'font-size: 32px; padding-top: 32px;',
+					height: 50
+				},
+				{
+					xtype: 'textfield',
+					itemId: 'question',
+					emptyText: 'Untitled Question',
+					fieldStyle: 'font-size: 32px; padding: 0;',
+					height: 50,
+					width: '90%',
+					listeners: {
+						change: function (self, newVal) {
+							// var formBuilderItem = this.up('[cls=form-builder-item]');
+							// formBuilderItem.question = newVal;
+							// formBuilderItem.saveSection();
+							this.up('[cls=form-builder-item]').saveSection('question', newVal);
+						}
+					}
+				}
+			]
+		},
+		{
+			xtype: 'container',
+			itemId: 'itemRenderContainer',
+			height: '80%',
+			// style: 'background: red;',
+			items: [
+				{
+					xtype: 'csfItemMenu'
+				}
+			]
 		}
-    ],
+	],
+	
+	saveSection: function (itemField, newVal) {
+		var formBuilderItem = this;
+		if (this.getFormBuilderPanel()) {
+
+			if (itemField && newVal) {
+
+				if (formBuilderItem.getFormBuilderPanel().validSectionItems.indexOf(itemField) === -1) {
+					console.error("There is no support for the field: ", itemField);
+				}
+				else {
+					this[itemField] = newVal;
+				}
+			}
+
+			// saveSection defined is the DisplayPanel
+			this.getFormBuilderPanel().saveSection(true);
+		}
+	},
 
     getFormBuilderPanel: function () {
     	return this.formBuilderPanel || this.up('[itemId=formBuilderPanel]');
@@ -149,6 +218,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			fieldContainer.dragTarget = new Ext.drag.Target({
 				element: fieldContainer.getEl()
 			});
+
+			// set the field type
+			var fieldTypeCombo = fieldContainer.queryById('fieldTypeCombo');
+			if (fieldContainer.fieldType) {
+				fieldTypeCombo.setValue(fieldContainer.fieldType);
+			}
     	}
     },
 
@@ -158,20 +233,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		var fieldContainer = this;
 
 		fieldContainer.queryById('question').setValue(fieldContainer.question);
-
-		//fieldContainer.items.items[0].items.items[0].add(Ext.create('OSF.customSubmissionTool.ItemMenu', {width: '100%'}));
-
-		// fieldContainer.items.items[1].add(Ext.create('Ext.DataView', {
-  //   		itemId: 'questionDataView',
-  //   		store: {},
-  //   		tpl: new Ext.XTemplate('<div class="field-content"><h1>QUESTION: ' + fieldContainer.generateRandomId(4)), // + '</h1><div class="drag-handle" style="width: 50px; height: 50px; background: blue;"></div></div>'
-  //   		itemSelector: '.field-template-' + fieldContainer.generateRandomId(50)
-  //   	}));
-		// if (fieldContainer.templateRecord === undefined) { // display the record with some default settings
-
-		// }
-		// else { // display the field with the predefined data
-
-		// }
+		fieldContainer.queryById('labelCode').setValue(fieldContainer.labelCode);
 	}
 });

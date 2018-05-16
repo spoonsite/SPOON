@@ -16,6 +16,9 @@
  /* Author: cyearsley */
 /* global Ext, CoreUtil, CoreService */
 
+/**
+ * The FieldDisplayPanel is responsible for "rendering" items in the form field viewport.
+ */
 Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	extend: 'Ext.container.Container',
 	alias: 'widget.osf-csf-displaypanel',
@@ -24,96 +27,67 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	scrollable: true,
 	bodyStyle: 'padding: 5px;',
 	style: 'background: #fff;',
+	untitledSectionName: '<b style="color: red;">Untitled Section</b> <i class="fa fa-exclamation-triangle" style="color: orange;" data-qtip="This section needs a name" aria-hidden="true"></i>',
 	addItem: function (item) {
 		this.queryById('itemContainer').add(item);
 
 	},
-	getFieldItems: function () {
 
-		var items = this.queryById('itemContainer').getRefItems();
-		var dataItems = [];
-
-		Ext.Array.forEach(items, function (el, index) {
-			dataItems.push({
-				question: el.question
-				//TODO specify other field attributes (e.g. fieldType)
-			});
-		});
-
-		return dataItems;
-	},
+	/**
+	 * Create an formBuilderItem given the sectionItem's data
+	 * @param sectionItem - data representation of a form item
+	 */
 	createItem: function (sectionItem) {
 
-		return Ext.create({
-			xtype: 'osf-formbuilderitem',
-			question: sectionItem.question
-		});
+		var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
+		return Ext.create(
+			Ext.apply(
+				formBuilderPanel.generateSectionObject(sectionItem),
+				{xtype: 'osf-formbuilderitem'}
+			)
+		);
 	},
-	saveSection: function () {
 
-		var displayPanel = this;
-		var formBuilderPanel = displayPanel.up('[itemId=formBuilderPanel]');
-		var sectionFormValues = displayPanel.queryById('sectionContainer').getForm().getFieldValues();
-
-		var navNeedsUpdate = false;
-
-		if (sectionFormValues.name) {
-
-			if (formBuilderPanel.activeSection.name !== sectionFormValues.name) {
-
-				navNeedsUpdate = true;
-			}
-
-			formBuilderPanel.activeSection.name = sectionFormValues.name;
-			formBuilderPanel.activeSection.instructions = sectionFormValues.instructions;
-		}
-
-		if (navNeedsUpdate) {
-
-			formBuilderPanel.sectionPanel.updateNavList();
-		}
-
-		if (formBuilderPanel.activeSection) {
-			formBuilderPanel.activeSection.fieldItems = displayPanel.getFieldItems()
-		}
-	},
+	/**
+	 * physically inserts all form items in a section onto the display panel
+	 */
 	loadSection: function (section, saveSection) {
 
 		var displayPanel = this;
-		saveSection = typeof saveSection !== 'undefined' ? saveSection : true;
-
-		if (saveSection) {
-			displayPanel.saveSection();
-		}
-
 		var formBuilderPanel = displayPanel.up('[itemId=formBuilderPanel]');
 		var sectionForm = displayPanel.queryById('sectionContainer').getForm();
 		var itemContainer = displayPanel.queryById('itemContainer');
 
-		// reset the section form to the sections current values...
-		sectionForm.setValues({
-			name: section.name,
-			instructions: section.instructions
-		});
+		saveSection = typeof saveSection !== 'undefined' ? saveSection : true;
 
+		if (saveSection) {
+			formBuilderPanel.saveSection();
+		}
+		
 		// clear current item container
 		itemContainer.removeAll();
-
+		
 		// create items and add them to the itemsContainer
 		var fieldItems = [];
 		for (var i = 0; i < section.fieldItems.length; i++) {
-
+			
 			fieldItems.push(displayPanel.createItem(section.fieldItems[i]));
 		}
-
+		
 		itemContainer.add(fieldItems);
-
+		
 		// set the first item as active (need to push this back on the stack though...)
 		Ext.defer(function () {
 			itemContainer.query('[cls=form-builder-item]')[0].setActiveFormItem();
 		},1);
-
+		
 		formBuilderPanel.activeSection = section;
+
+		// reset the section form to the sections current values...
+		sectionForm.setValues({
+			name: section.name === displayPanel.untitledSectionName ? '' : section.name,
+			instructions: section.instructions
+		});
 	},
 	items: [
 		{
@@ -125,13 +99,25 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 					xtype: 'textfield',
 					name: 'name',
 					emptyText: 'Untitled Section',
-					width: '100%'					
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+
+							this.up('[itemId=formBuilderPanel]').saveSection();
+						}
+					}
 				},
 				{
 					xtype: 'textarea',
 					name: 'instructions',
 					emptyText: 'Instructions',
-					width: '100%'					
+					width: '100%',
+					listeners: {
+						change: function () {
+							
+							this.up('[itemId=formBuilderPanel]').saveSection();
+						}
+					}
 				}
 			]
 		},

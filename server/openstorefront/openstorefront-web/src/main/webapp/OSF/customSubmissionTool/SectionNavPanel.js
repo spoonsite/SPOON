@@ -33,7 +33,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 					handler: function() {
 						var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
-						formBuilderPanel.templateRecord.sections.add({
+						formBuilderPanel.addSection({
 							name: 'Untitled',
 							instructions: '',
 							sectionId: Math.random().toString(36).substr(2, 10),
@@ -60,7 +60,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					handler: function() {
 						var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
 						if (formBuilderPanel.templateRecord.sections.length > 1) {
-							formBuilderPanel.templateRecord.sections.remove(formBuilderPanel.activeSection);
+							formBuilderPanel.removeSection(formBuilderPanel.activeSection);
 
 							// set the selection to the first tree list section
 							var navList = formBuilderPanel.queryById('navList');
@@ -91,7 +91,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 						// loads selection if ids match
 						Ext.Array.forEach(templateRecord.sections, function (el, index) {
 							if (el.sectionId === record.data.sectionId) {
-								formBuilderPanel.displayPanel.saveSection();
+								formBuilderPanel.saveSection();
 								formBuilderPanel.displayPanel.loadSection(el);
 							}
 						});
@@ -119,7 +119,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 
 							Ext.Array.forEach(el.fieldItems, function (el) {
 								childrenItems[index].children.push({
-									text: el.question,
+									text: (el.labelCode ? el.labelCode + '. ' : '') + el.question,
 									leaf: true
 								});
 							});
