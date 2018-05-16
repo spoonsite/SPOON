@@ -219,14 +219,7 @@ public class LoginAction
 			return new RedirectResolution(LoginAction.class);
 		}
 		
-		try {
-			SecurityUtil.logout(getContext().getRequest(), getContext().getResponse());
-		}
-		catch (NullPointerException ex) {
-			// TODO: Log this exception. See ticket STORE-3020
-			// Devin said to log this and continue with the logout process,
-			// but IDK how to log things yet. -Michael
-		}
+		SecurityUtil.logout(getContext().getRequest(), getContext().getResponse());
 
 		String logoutUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LOGOUT_URL, "/login.jsp");
 		if (StringUtils.isBlank(logoutUrl)) {
