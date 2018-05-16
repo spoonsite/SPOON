@@ -72,3 +72,4 @@ project*.properties
 .vscode/
 
 
+!/server/openstorefront/extjs/src/main/resources/META-INF/resources/webjars/extjs/6.2.0/build/
