@@ -2,7 +2,7 @@
   <div>
     <title-bar-comp :CTitle="title" :CSubtitle="subTitle" />
     <v-layout align-center justify-center>
-      <video-comp/>
+      <video-comp class="video-comp"/>
     </v-layout>
     <v-layout align-center justify-center>
       <signup-comp class="signup-comp" />
@@ -38,6 +38,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.video-comp{
+  margin-top:2em;
+   width:40%;
+}
 .login-comp {
   width: 50%;
   height: 100%;
