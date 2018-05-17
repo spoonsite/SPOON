@@ -37,11 +37,11 @@ export default {
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
   padding: 0.7em 1.2em;
   margin-bottom: 0.3em;
+  margin-left: auto;
+  margin-right: auto;
   font-size: 120%;
   transition: box-shadow 0.7s;
   max-width: 30em;
-  margin-left: auto;
-  margin-right: auto;
 }
 .searchfield {
   display: inline-block;

@@ -1,5 +1,5 @@
 <template>
-<div class="mx-3">
+<div class="mx-3 mt-5">
   <form v-on:submit.prevent="newSearch()"  class="clearfix">
     <div class="searchbar">
       <input v-model="searchQuery" class="searchfield" type="text" placeholder="Search">
@@ -126,10 +126,11 @@
 
   <div v-if="searchResults.data">
     <v-expansion-panel popout>
-      <v-expansion-panel-content v-for="item in searchResults.data.data" :key="item">
+      <v-expansion-panel-content style="grey" v-for="item in searchResults.data.data" :key="item">
         <div slot="header">{{ item.name }}</div>
         <v-card>
           <v-card-text>
+            <!-- TODO: display more details and a link to the details page for that component -->
             {{ item.description }}
           </v-card-text>
         </v-card>
@@ -297,16 +298,19 @@ export default {
   background-color: #E0E0E0;
 }
 /* Search Bar */
+form {
+  max-width: 40em;
+  margin: 0 auto;
+}
 .searchbar {
   border-radius: 2px;
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
   padding: 0.7em 1.2em;
   margin-bottom: 0.3em;
-  font-size: 120%;
-  transition: box-shadow 0.7s;
-  max-width: 30em;
   margin-left: auto;
   margin-right: auto;
+  font-size: 120%;
+  transition: box-shadow 0.7s;
 }
 .searchfield {
   display: inline-block;
