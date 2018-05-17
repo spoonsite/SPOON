@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <v-layout mt-3 align-center justify-center>
+    <v-flex xs12 sm8 align-center justify-center>
     <v-card class="elevation-5">
       <v-toolbar color="primary" dark dense>
         <v-toolbar-title>Log in</v-toolbar-title>
@@ -17,19 +18,19 @@
               <v-btn color="accent" id="login-button" style="margin-bottom:2em;" v-on:click="testAPI">Login</v-btn>
             </v-flex>
           </v-layout>
-          <v-layout row justify-start>
-            <v-flex>
+          <v-layout row>
+              <router-link :to="{name: 'forgotPassword'}">
               <v-btn color="secondary" flat small>Forgot Password</v-btn>
-            </v-flex>
-            <v-flex>|</v-flex>
-            <v-flex>
+              </router-link>|
+              <router-link :to="{name: 'forgotUsername'}">
               <v-btn color="secondary" flat small>Forgot Username</v-btn>
-            </v-flex>
+              </router-link>
           </v-layout>
         </v-container>
       </v-card-actions>
     </v-card>
-  </div>
+  </v-flex>
+  </v-layout>
 </template>
 
 <script>

@@ -1,28 +1,32 @@
 <template>
-  <v-card class="elevation-5">
-    <v-toolbar color="primary" dark dense>
-      <v-toolbar-title>Sign up for an Account</v-toolbar-title>
-    </v-toolbar>
-    <v-card-text>
-      <div>
-        <ol class="circles-list">
-          <li>Go to Sign-up page</li>
-          <li>Fill out the form to setup your account</li>
-          <li>Use the account you created to log in</li>
-        </ol>
-      </div>
-    </v-card-text>
-    <v-card-actions>
-      <v-container fluid grid-list-x>
-        <v-layout row>
-          <v-btn color="accent" style="margin:.75em;">Sign up</v-btn>
-          <v-btn color="accent" style="margin:.75em;">How to Register
-            &nbsp;<v-icon light>play_circle_outline</v-icon>
-          </v-btn>
-        </v-layout>
-      </v-container>
-    </v-card-actions>
-  </v-card>
+  <v-layout mt-3 align-center justify-center>
+    <v-flex xs12 sm8>
+      <v-card class="elevation-5">
+        <v-toolbar color="primary" dark dense>
+          <v-toolbar-title>Sign up for an Account</v-toolbar-title>
+        </v-toolbar>
+        <v-card-text>
+          <div>
+            <ol class="circles-list">
+              <li>Go to Sign-up page</li>
+              <li>Fill out the form to setup your account</li>
+              <li>Use the account you created to log in</li>
+            </ol>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-container fluid grid-list-x>
+            <v-layout row>
+              <v-btn color="accent" style="margin:.75em;">Sign up</v-btn>
+              <v-btn color="accent" style="margin:.75em;">How to Register
+                &nbsp;<v-icon light>play_circle_outline</v-icon>
+              </v-btn>
+            </v-layout>
+          </v-container>
+        </v-card-actions>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
