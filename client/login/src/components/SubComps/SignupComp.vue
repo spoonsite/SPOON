@@ -17,7 +17,9 @@
         <v-card-actions>
           <v-container fluid grid-list-x>
             <v-layout row>
-              <v-btn color="accent" style="margin:.75em;">Sign up</v-btn>
+              <router-link :to="{name: 'registration'}">
+                <v-btn color="accent" style="margin:.75em;">Sign up</v-btn>
+              </router-link>
               <v-btn color="accent" style="margin:.75em;">How to Register
                 &nbsp;<v-icon light>play_circle_outline</v-icon>
               </v-btn>

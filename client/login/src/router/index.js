@@ -5,6 +5,7 @@ import Vuetify from 'vuetify'
 import LoginPage from '@/components/LoginPage'
 import ForgotUserPage from '@/components/ForgotUserPage'
 import ForgotPasswordPage from '@/components/ForgotPasswordPage'
+import RegistrationPage from '@/components/RegistrationPage'
 
 Vue.use(Router)
 Vue.use(Vuetify, {
@@ -35,6 +36,11 @@ export default new Router({
       path: '/forgot-password',
       name: 'forgotPassword',
       component: ForgotPasswordPage
+    },
+    {
+      path: '/registration',
+      name: 'registration',
+      component: RegistrationPage
     }
   ]
 
