@@ -111,24 +111,50 @@ Ext.define('OSF.form.Contacts', {
 								var form = this.up('form');
 								var data = form.getValues();
 								var componentId = contactPanel.contactGrid.componentId;
-
-								var method = 'POST';
-								var update = '';
-								if (data.componentContactId) {
-									update = '/' + data.componentContactId;
-									method = 'PUT';
+								if (data.contactId) {
+									//Edit an existing contact
+									Ext.MessageBox.confirm('Edit Existing Contact?', "You are about to edit an existing contact, would you like save your changes?",function(btn, text){
+										if (btn == 'yes'){
+											if(data.componentContactId){
+												CoreUtil.submitForm({
+													url: 'api/v1/resource/components/' + componentId + '/contacts/' + data.componentContactId,
+													method: 'PUT',
+													data: data,
+													form: form,
+													success: function(){
+														contactPanel.contactGrid.getStore().reload();
+														form.reset();
+													}
+												});
+											}
+											else{
+												CoreUtil.submitForm({
+													url: 'api/v1/resource/contacts/' + data.contactId,
+													method: 'PUT',
+													data: data,
+													form: form,
+													success: function(){
+														contactPanel.contactGrid.getStore().reload();
+														form.reset();
+													}
+												});
+											}
+										}
+										});
 								}
-
-								CoreUtil.submitForm({
-									url: 'api/v1/resource/components/' + componentId + '/contacts' + update,
-									method: method,
-									data: data,
-									form: form,
-									success: function(){
-										contactPanel.contactGrid.getStore().reload();
-										form.reset();
-									}
-								});
+								else{
+									//Create a new contact
+									CoreUtil.submitForm({
+										url: 'api/v1/resource/components/' + componentId + '/contacts',
+										method: 'POST',
+										data: data,
+										form: form,
+										success: function(){
+											contactPanel.contactGrid.getStore().reload();
+											form.reset();
+										}
+									});
+								}
 							}
 						},
 						{
@@ -157,7 +183,7 @@ Ext.define('OSF.form.Contacts', {
 							editable: false,
 							typeAhead: false,
 							width: '100%',
-							fieldLabel: 'Contact Type <span class="field-required" />',
+							fieldLabel: 'Contact Type:<span class="field-required" />',
 							storeConfig: {
 								url: 'api/v1/resource/lookuptypes/ContactType'
 							}
@@ -167,7 +193,7 @@ Ext.define('OSF.form.Contacts', {
 							allowBlank: false,
 							margin: '0 0 5 0',
 							width: '100%',
-							fieldLabel: 'Organization <span class="field-required" />',
+							fieldLabel: 'Organization:<span class="field-required" />',
 							forceSelection: false,
 							valueField: 'description',
 							storeConfig: {
@@ -183,7 +209,7 @@ Ext.define('OSF.form.Contacts', {
 							allowBlank: false,
 							margin: '0 0 5 0',
 							width: '100%',
-							fieldLabel: 'First Name  <span class="field-required" />',
+							fieldLabel: 'First Name:<span class="field-required" />',
 							forceSelection: false,
 							valueField: 'firstName',
 							displayField: 'firstName',
@@ -204,7 +230,7 @@ Ext.define('OSF.form.Contacts', {
 							listeners: {
 								select: function(combo, record, opts) {
 									record.set('componentContactId', null);
-									record.set('contactId', null);
+									//record.set('contactId', null);
 									var contactType =  combo.up('form').getComponent('contactType').getValue();
 									combo.up('form').reset();
 									combo.up('form').loadRecord(record);
@@ -217,7 +243,7 @@ Ext.define('OSF.form.Contacts', {
 							allowBlank: false,									
 							margin: '0 0 5 0',
 							width: '100%',
-							fieldLabel: 'Last Name <span class="field-required" />',
+							fieldLabel: 'Last Name:<span class="field-required" />',
 							forceSelection: false,
 							valueField: 'lastName',
 							displayField: 'lastName',
@@ -238,7 +264,7 @@ Ext.define('OSF.form.Contacts', {
 							listeners: {
 								select: function(combo, record, opts) {
 									record.set('componentContactId', null);
-									record.set('contactId', null);
+									//record.set('contactId', null);
 									var contactType =  combo.up('form').getComponent('contactType').getValue();
 									combo.up('form').reset();
 									combo.up('form').loadRecord(record);
@@ -246,6 +272,20 @@ Ext.define('OSF.form.Contacts', {
 								}
 							}
 						}),
+						// {
+						// 	xtype: 'textfield',
+						// 	fieldLabel: 'First Name<span class="field-required" />',																																	
+						// 	maxLength: '80',
+						// 	allowBlank: false,
+						// 	name: 'firstName'
+						// },
+						// {
+						// 	xtype: 'textfield',
+						// 	fieldLabel: 'Last Name<span class="field-required" />',																																	
+						// 	maxLength: '80',
+						// 	allowBlank: false,
+						// 	name: 'lastName'
+						// },
 						{
 							xtype: 'textfield',
 							fieldLabel: 'Email',																																	

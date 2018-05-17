@@ -73,12 +73,12 @@ public class ContactServiceImpl
 			existing.setEmail(contact.getEmail());
 			existing = existing.findProxy();
 
-			if (existing == null) {
-				existing = new Contact();
-				existing.setFirstName(contact.getFirstName());
-				existing.setLastName(contact.getLastName());
-				existing = existing.findProxy();
-			}
+			// if (existing == null) {
+			// 	existing = new Contact();
+			// 	existing.setFirstName(contact.getFirstName());
+			// 	existing.setLastName(contact.getLastName());
+			// 	existing = existing.findProxy();
+			// }
 		}
 
 		// Check For Existing Contact
