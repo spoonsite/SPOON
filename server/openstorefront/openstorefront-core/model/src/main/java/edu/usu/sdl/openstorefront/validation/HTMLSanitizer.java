@@ -16,14 +16,8 @@
 package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
-import org.jsoup.select.Elements;
 
 /**
  * The sanitizes HTML to prevent XSS attacks This will allow structure....but no
