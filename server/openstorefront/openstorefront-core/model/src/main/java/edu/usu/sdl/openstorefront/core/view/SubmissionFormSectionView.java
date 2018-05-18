@@ -28,7 +28,7 @@ import java.util.List;
 public class SubmissionFormSectionView
 {
 
-	private String stepId;
+	private String sectionId;
 	private String templateId;
 	private String name;
 	private String instructions;
@@ -45,7 +45,7 @@ public class SubmissionFormSectionView
 	public static SubmissionFormSectionView toView(SubmissionFormSection step)
 	{
 		SubmissionFormSectionView view = new SubmissionFormSectionView();
-		view.setStepId(step.getStepId());
+		view.setSectionId(step.getSectionId());
 		view.setTemplateId(step.getTemplateId());
 		view.setName(step.getName());
 		view.setInstructions(step.getInstructions());
@@ -69,14 +69,14 @@ public class SubmissionFormSectionView
 		return views;
 	}
 
-	public String getStepId()
+	public String getSectionId()
 	{
-		return stepId;
+		return sectionId;
 	}
 
-	public void setStepId(String stepId)
+	public void setSectionId(String sectionId)
 	{
-		this.stepId = stepId;
+		this.sectionId = sectionId;
 	}
 
 	public String getTemplateId()

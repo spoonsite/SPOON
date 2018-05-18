@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
+/* global Ext */
+
 Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.osf-form-templateinfo-panel',
@@ -37,26 +39,49 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Name <span class="field-required" />',
-				value: infoPanel.templateRecord.formName,
+				name: 'name',
 				maxLength: 255,
-				allowBlank: false				
+				allowBlank: false,
+				listeners: {
+					change: function(field, newValue, oldValue, opts) {
+						infoPanel.templateRecord.name = newValue;
+					}
+				}
 			},
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Description <span class="field-required" />',
 				labelAlign: 'top',
-				value: infoPanel.templateRecord.description,
+				name: 'description',
 				maxLength: 255,
-				allowBlank: false	
+				allowBlank: false,
+				listeners: {
+					change: function(field, newValue, oldValue, opts) {
+						infoPanel.templateRecord.description = newValue;
+					}
+				}	
 			},
 			{
 				xtype: 'panel',
-				html: '<b>Last Saved: </b>' + Ext.Date.format(new Date(), 'F j, Y, g:i a')
+				itemId: 'lastSaved',
+				data: infoPanel.templateRecord,
+				tpl: '<b>Last Saved: </b> {[Ext.Date.format(values.updateDts, "F j, Y, g:i a")]}'
 			}
 			
 		];		
 		
 		infoPanel.add(items);
+		
+		var record = Ext.create('Ext.data.Model', {			
+		});
+		record.set(infoPanel.templateRecord);
+		
+		infoPanel.loadRecord(record);
+	},
+	
+	updateInfo: function() {		
+		var infoPanel = this;
+		infoPanel.queryById('lastSaved').update(infoPanel.templateRecord);
 	}
 	
 	

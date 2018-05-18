@@ -108,6 +108,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 			[
 				{
 					xtype: 'osf-form-templateinfo-panel',
+					itemId: 'infoPanel',
 					width: '100%',
 					templateRecord: formBuilderPanel.templateRecord
 				},
@@ -115,6 +116,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 					xtype: 'osf-csf-sectionnavpanel',					
 					width: '100%',					
 					itemId: 'sectionPanel',
+					formBuilderPanel: formBuilderPanel,
 					templateRecord: formBuilderPanel.templateRecord,
 					flex: 2
 				},
@@ -132,48 +134,22 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.floatingMenu = formBuilderPanel.queryById('floatingMenu');
 		formBuilderPanel.sectionPanel = formBuilderPanel.queryById('sectionPanel');
 
+		formBuilderPanel.displayPanel.formBuilderPanel = formBuilderPanel;
+
 		// if no template record section has been defined, define it
-		if (typeof formBuilderPanel.templateRecord.sections === 'undefined') {
-			formBuilderPanel.templateRecord.sections = [
-				{
-					name: 'Untitled',
-					instructions: '',
-					sectionId: Math.random().toString(36).substr(2, 10),
-					fieldItems: [
-						{
-							question: 'Question #1',
-							formBuilderPanel: formBuilderPanel,
-							// fieldType: 'checkbox',
-							labelCode: 'WOO'
-						}//,
-						// {
-						// 	question: 'Question #2',
-						// 	formBuilderPanel: formBuilderPanel
-						// }
-					]
-				},
-				{
-					name: 'A brand new section!',
-					instructions: 'This is some dummy data to fill out the "instructions" textfield :)',
-					sectionId: Math.random().toString(36).substr(2, 10),
-					fieldItems: [
-						{
-							question: 'Super cool question #1',
-							formBuilderPanel: formBuilderPanel
-						},
-						{
-							question: 'Super cool question #2',
-							formBuilderPanel: formBuilderPanel
-						}
-					]
-				}
-			];
+		if (!formBuilderPanel.templateRecord.sections) {
+			formBuilderPanel.templateRecord.sections = [];
 		}
 
 		// loads the first section in the tempateRecord
-		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
+		//formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
 
-		formBuilderPanel.sectionPanel.updateNavList();
+		formBuilderPanel.sectionPanel.updateTemplate();
+	},
+
+	updateTemplate: function() {
+		var formBuilderPanel = this;
+		formBuilderPanel.queryById('infoPanel').updateInfo();				
 	},
 
 	/**
@@ -194,7 +170,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 	 * Deletes a section physically and from the templateRecord (then reassigns the active section to the first in the list)
 	 * @param sectionId - provide to specify the section
 	 */
-	removeSection: function (section) {
+	removeSection: function (sectionId) {
 
 		var formBuilderPanel = this;
 

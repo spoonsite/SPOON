@@ -85,7 +85,18 @@ public class SubmissionFormTemplate
 		this.setDescription(template.getDescription());
 		this.setTemplateStatus(template.getTemplateStatus());
 		this.setSections(template.getSections());
+		updateSectionLinks();
 
+	}
+
+	public void updateSectionLinks()
+	{
+		if (getSections() != null) {
+			for (SubmissionFormSection section : getSections()) {
+				section.setTemplateId(getSubmissionTemplateId());
+				section.updateFieldLinks();
+			}
+		}
 	}
 
 	public String getSubmissionTemplateId()

@@ -101,6 +101,7 @@ public class SubmissionFormServiceImpl
 		} else {
 			template.setSubmissionTemplateId(persistenceService.generateId());
 			template.populateBaseCreateFields();
+			template.updateSectionLinks();
 			template = persistenceService.persist(template);
 		}
 		template = persistenceService.unwrapProxyObject(template);

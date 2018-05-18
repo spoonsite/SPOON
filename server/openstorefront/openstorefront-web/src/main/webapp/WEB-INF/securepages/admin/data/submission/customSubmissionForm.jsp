@@ -32,12 +32,14 @@
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.require('OSF.customSubmissionTool.Window');
+		Ext.require('OSF.customSubmission.SubmissionFormFullControl');
+		Ext.require('OSF.customSubmissionTool.EntryTypeSelectWindow');
 		
 		Ext.onReady(function(){	
 			
 			var formTemplateGrid = Ext.create('Ext.grid.Panel', {
 				id: 'formTemplateGrid',
-				title: 'Manage Custom Submission Forms <i class="fa fa-question-circle"  data-qtip="Add, edit, and delete custom submission forms"></i>',
+				title: 'Manage Custom Submission Forms <i class="fa fa-question-circle" data-qtip="Add, edit, and delete custom submission forms"></i>',
 				columnLines: true,
 				store: {
 					autoLoad: true,
@@ -51,15 +53,15 @@
 							dateFormat: 'c'
 						}
 					],
-					// proxy: {
-					// 	type: 'ajax',
-					// 	url: 'api/v1/resource/evaluationtemplates'
-					// },
+					proxy: {
+					 	type: 'ajax',
+					 	url: 'api/v1/resource/submissiontemplates'
+					},
 					listeners: {
 						beforeLoad: function(store, operation, eOpts){
-							// store.getProxy().extraParams = {
-							// 	status: Ext.getCmp('filterActiveStatus').getValue()
-							// };
+							store.getProxy().extraParams = {
+								status: Ext.getCmp('filterActiveStatus').getValue()
+							};
 						}
 					}
 				},
@@ -86,8 +88,8 @@
 				columns: [
 					{ text: 'Name', dataIndex: 'name', flex: 10 },
 					{ text: 'Description', dataIndex: 'description', flex: 10 },
-					{ text: 'Form Completion Status <i class="fa fa-question-circle" data-qtip="Indicates that a form is ready for use"></i>', dataIndex: 'completionStatus', flex: 5 },
-					{ text: 'Active Status <i class="fa fa-question-circle" data-qtip="Indicates that a form is being used"></i>', dataIndex: 'status', flex: 4 },
+					{ text: 'Form Completion Status <i class="fa fa-question-circle" data-qtip="Indicates that a form is ready for use"></i>', dataIndex: 'templateStatusLabel', align: 'center', flex: 5 },
+					{ text: 'Active Status', dataIndex: 'activeStatus', align: 'center', flex: 4 },
 					{ text: 'Create Date', dataIndex: 'createDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 4 },
 					{ text: 'Create User', dataIndex: 'createUser', flex: 4 },
 					{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 4 },
@@ -225,84 +227,129 @@
 			};
 		
 			var actionAddEdit = function(record) {
-				record = record || {};
-				Ext.create('Ext.window.Window', {
-					width: 400,
-					height: 260,
-					modal: true,
-					title: 'Add Submission Template',
-					itemId: 'createFormWindow',
-					items: [
-						{
-							xtype: 'form',
-							itemId: 'createFormWindowForm',
-							layout: 'anchor',	
-							scrollable: true,
-						    defaults: {
-						        anchor: '100%'
-						    },
-							items: [
-								{
-									xtype: 'textfield',
-									fieldLabel: 'New Form Name <i class="fa fa-question-circle"  data-qtip="This is what the form template will be identified by"></i>',
-									labelAlign: 'top',
-									name: 'formName',
-									margin: 15,
-									flex: 1
-								},
-								{
-									xtype: 'textfield',
-									fieldLabel: 'Description',
-									labelAlign: 'top',
-									name: 'description',
-									margin: 15,
-									flex: 1
-								}
-							]
+				
+				if (record) {
+					//edit
+					Ext.create('OSF.customSubmissionTool.Window', {
+						template: record.data,
+						saveCallback: function(updatedTemplate) {
+							actionRefresh();
 						}
-					],
-					dockedItems: [{
-				        xtype: 'toolbar',
-				        dock: 'bottom',
-				        items: [
-				        	{
-					            xtype: 'button',
-					            text: 'Create Form',
-								iconCls: 'fa fa-save icon-button-color-save',
-					            listeners: {
-					            	click: function () {
-					            		var createFormWindow = this.up('[itemId=createFormWindow]');
-					            		var form = createFormWindow.queryById('createFormWindowForm');
-					            		form.setLoading(true);
+					}).show();
 
-										
-
-										Ext.create('OSF.customSubmissionTool.Window', {
-											recordItem: Ext.apply(record, form.getValues()),
+				} else {
+					//add
+					var addWindow = Ext.create('Ext.window.Window',	{
+						width: 400,
+						height: 260,
+						modal: true,
+						closeAction: 'destroy',
+						title: 'Add Submission Template',					
+						items: [
+							{
+								xtype: 'form',
+								itemId: 'createForm',
+								layout: 'anchor',	
+								scrollable: true,
+								bodyStyle: 'padding: 10px',
+								defaults: {
+									labelAlign: 'top',
+									width: '100%'
+								},
+								items: [
+									{
+										xtype: 'textfield',
+										fieldLabel: 'New Form Name <i class="fa fa-question-circle"  data-qtip="This is what the form template will be identified by"></i>',									
+										name: 'name',
+										allowBlank: false
+									},
+									{
+										xtype: 'textfield',
+										fieldLabel: 'Description',									
+										name: 'description'									
+									}
+								],
+								dockedItems: [{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											xtype: 'button',
+											formBind: true,
+											text: 'Create Form',
+											iconCls: 'fa fa-save icon-button-color-save',
 											listeners: {
-												show: function () {
-					            					createFormWindow.close();
+												click: function () {
+													var createForm = this.up('form');
+
+													var data = createForm.getValues();
+													data.templateStatus = 'INCOMPLETE';
+
+													CoreUtil.submitForm({
+														url: 'api/v1/resource/submissiontemplates',
+														method: 'POST',
+														data: data,
+														form: createForm,
+														success: function(response, opts){
+															var newTemplate = Ext.decode(response.responseText);
+
+															actionRefresh();
+															Ext.create('OSF.customSubmissionTool.Window', {
+																template: newTemplate,
+																saveCallback: function(updatedTemplate) {
+																	actionRefresh();
+																}
+															}).show();
+															addWindow.close();
+														}
+													});
+
+
+
 												}
 											}
-										}).show();
-					            		
-					            	}
-					            }
-					        },
-					        '->',
-					        {
-					            xtype: 'button',
-					            text: 'Cancel',
-								iconCls: 'fa fa-close icon-button-color-warning',
-					            listeners: {
-					            	click: function () {
-					            		this.up('[itemId=createFormWindow]').close();
-					            	}
-					            }
-					        }
-				        ]
-				    }]
-				}).show();
+										},
+										'->',
+										{
+											xtype: 'button',
+											text: 'Cancel',
+											iconCls: 'fa fa-close icon-button-color-warning',
+											listeners: {
+												click: function () {
+													addWindow.close();
+												}
+											}
+										}
+									]
+								}]
+							}
+						]
+					});
+					addWindow.show();
+				}
+				
+			};
+			
+			var actionToggleStatus = function(record) {
+				
+				var action = 'inactivate';
+				if (record.get('activeStatus') === 'I') {
+					action = 'activate';
+				} 
+				
+				formTemplateGrid.setLoading('Updating Status...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/submissiontemplates/' + record.get('submissionTemplateId') + '/' + action,
+					method: 'PUT',
+					callback: function() {
+						formTemplateGrid.setLoading(false);
+					},
+					success: function(response, opt) {
+						actionRefresh();
+					}
+				});
+				
+		
 			};
 			
 			var actionDelete = function(record) {
@@ -313,11 +360,50 @@
 					buttons: Ext.Msg.YESNO,
 					icon: Ext.Msg.QUESTION,
 					fn: function(btn) {
+						if (btn === 'yes') {
+							
+							formTemplateGrid.setLoading('Deleting...');
+							Ext.Ajax.request({
+								url: 'api/v1/resource/submissiontemplates/' + record.get('submissionTemplateId'),
+								method: 'DELETE',
+								callback: function() {
+									formTemplateGrid.setLoading(false);
+								},
+								success: function(response, opt) {
+									actionRefresh();
+								}
+							});
+							
+						}
 					}
 				});
 			};
 			
 			var actionPreview = function(record) {
+				
+				var entryTypeSelect = Ext.create('OSF.customSubmissionTool.EntryTypeSelectWindow', {
+					selectCallBack: function(entryType) {
+						var previewWin = Ext.create('Ext.window.Window', {
+							title: 'Preview',
+							layout: 'fit',
+							modal: true,
+							closeAction: 'destroy',
+							width: '80%',
+							height: '80%',
+							maximizable: true,
+							items: [
+								{
+									xtype: 'osf-customSubmission-SubmissionformFullControl',
+									itemId: 'form'							
+								}
+							]
+						});
+						previewWin.show();
+
+						previewWin.queryById('form').load(record.data, entryType);						
+					}
+				});
+				entryTypeSelect.show();
 				
 			};
 					

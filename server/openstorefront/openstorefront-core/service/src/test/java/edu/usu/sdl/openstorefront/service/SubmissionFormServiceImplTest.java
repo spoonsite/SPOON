@@ -148,6 +148,7 @@ public class SubmissionFormServiceImplTest
 		Mockito.when(mappingController.verifyTemplate(Mockito.any(), Mockito.any())).thenReturn(validationResult);
 
 		SubmissionFormTemplate template = new SubmissionFormTemplate();
+		template.setSubmissionTemplateId("1");
 		template.setName("Test");
 		template.setDescription("This is a test");
 

@@ -31,13 +31,11 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		style: 'border: none; background: none; color: rgb(200,200,200);'
 	},
 	layout: 'vbox',
-	getFormBuilderPanel: function () {
 
-		return this.formBuilderPanel || this.up('[itemId=formBuilderPanel]');
-	},
 	updatePosition: function () {
-
-		var formBuilderPanel = this.getFormBuilderPanel();
+		var floatingMenu = this;
+		
+		var formBuilderPanel = floatingMenu.formBuilderPanel;
 		if (this.hidden) {
 			this.setHidden(false);
 		}
@@ -55,7 +53,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 				var button = this;
 				var disabledUp = false;
 				var disabledDown = false;
-				var formBuilderPanel = button.up('[itemId=floatingMenu]').getFormBuilderPanel();
+				var formBuilderPanel = button.up('panel').formBuilderPanel;
 				
 				var popupMenu = Ext.create('Ext.menu.Menu', {
 					floating: true,
@@ -115,7 +113,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 						var newFormBuilderItem = Ext.create({
 							xtype: 'osf-formbuilderitem',
 							formBuilderPanel: formBuilderPanel,
-							fieldType: fieldType,
+							fieldType: fieldType
 						});
 
 						formBuilderPanel.itemContainer.insert(fieldIndex + 1, newFormBuilderItem);

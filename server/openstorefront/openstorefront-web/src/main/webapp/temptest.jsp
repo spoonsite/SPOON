@@ -32,15 +32,15 @@
 						var template = Ext.decode(response.responseText);
 						
 						var userSubmission = {
-							componentType: submissionForm.entryType,
-							templateId: submissionForm.template.templateId,
-							originalComponentId: submissionForm.template.originalComponentId,
+							componentType: 'test',
+							templateId: template.templateId,
+							originalComponentId: template.originalComponentId,
 							fields: []
 						};
 
-						Ext.Array.each(submissionForm.template.sections, function(section){
+						Ext.Array.each(template.sections, function(section){
 							if (!section.review) {
-								Ext.Array.each(sectionData.fields, function(field){
+								Ext.Array.each(section.fields, function(field){
 									userSubmission.fields.push({
 
 									});

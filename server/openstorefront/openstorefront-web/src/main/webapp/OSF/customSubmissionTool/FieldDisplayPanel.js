@@ -21,7 +21,7 @@
  */
 Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	extend: 'Ext.container.Container',
-	alias: 'widget.osf-csf-displaypanel',
+	xtype: 'osf-csf-displaypanel',
 	requires: ['OSF.customSubmissionTool.FloatingMenu'],
 
 	scrollable: true,
@@ -38,8 +38,9 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	 * @param sectionItem - data representation of a form item
 	 */
 	createItem: function (sectionItem) {
+		var displayPanel = this;
 
-		var formBuilderPanel = this.up('[itemId=formBuilderPanel]');
+		var formBuilderPanel = displayPanel.formBuilderPanel;
 		return Ext.create(
 			Ext.apply(
 				formBuilderPanel.generateSectionObject(sectionItem),
@@ -50,49 +51,68 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 
 	/**
 	 * physically inserts all form items in a section onto the display panel
+	 * 
 	 */
 	loadSection: function (section, saveSection) {
 
-		var displayPanel = this;
-		var formBuilderPanel = displayPanel.up('[itemId=formBuilderPanel]');
+		var displayPanel = this;		
+		var formBuilderPanel = displayPanel.formBuilderPanel;
+		var sectionContainer = displayPanel.queryById('sectionContainer')
 		var sectionForm = displayPanel.queryById('sectionContainer').getForm();
 		var itemContainer = displayPanel.queryById('itemContainer');
-
-		saveSection = typeof saveSection !== 'undefined' ? saveSection : true;
-
-		if (saveSection) {
-			formBuilderPanel.saveSection();
-		}
 		
-		// clear current item container
-		itemContainer.removeAll();
+				
+		itemContainer.removeAll();		
 		
-		// create items and add them to the itemsContainer
-		var fieldItems = [];
-		for (var i = 0; i < section.fieldItems.length; i++) {
+		if (!section) {
+			sectionContainer.setHidden(true);			
+			return;
+		} else {
+			sectionContainer.setHidden(false);
+			displayPanel.section = section;
 			
-			fieldItems.push(displayPanel.createItem(section.fieldItems[i]));
+			displayPanel.queryById('menu').formBuilderPanel = formBuilderPanel;
+			displayPanel.queryById('menu').setHidden(false);
 		}
 		
-		itemContainer.add(fieldItems);
 		
-		// set the first item as active (need to push this back on the stack though...)
-		Ext.defer(function () {
-			itemContainer.query('[cls=form-builder-item]')[0].setActiveFormItem();
-		},1);
-		
-		formBuilderPanel.activeSection = section;
+
+//		saveSection = typeof saveSection !== 'undefined' ? saveSection : true;
+//
+//		if (saveSection) {
+//			formBuilderPanel.saveSection();
+//		}
+//		
+//
+//		// create items and add them to the itemsContainer
+//		var fieldItems = [];
+//		for (var i = 0; i < section.fieldItems.length; i++) {
+//			
+//			fieldItems.push(displayPanel.createItem(section.fieldItems[i]));
+//		}
+//		
+//		itemContainer.add(fieldItems);
+//		
+//		// set the first item as active (need to push this back on the stack though...)
+//		Ext.defer(function () {
+//			itemContainer.query('[cls=form-builder-item]')[0].setActiveFormItem();
+//		},1);
+//		
+//		formBuilderPanel.activeSection = section;
 
 		// reset the section form to the sections current values...
 		sectionForm.setValues({
 			name: section.name === displayPanel.untitledSectionName ? '' : section.name,
 			instructions: section.instructions
 		});
+		
+		
 	},
 	items: [
 		{
 			xtype: 'form',
 			itemId: 'sectionContainer',
+			hidden: true,
 			padding: 10,
 			items: [
 				{
@@ -101,20 +121,27 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 					emptyText: 'Untitled Section',
 					width: '100%',
 					listeners: {
-						change: function (self, newVal) {
-
-							this.up('[itemId=formBuilderPanel]').saveSection();
+						change: function (field, newValue, oldValue, opts) {
+							var displayPanel = this.up('osf-csf-displaypanel');
+							
+							displayPanel.section.formBuilderPanel.saveSection();
 						}
 					}
 				},
-				{
-					xtype: 'textarea',
-					name: 'instructions',
-					emptyText: 'Instructions',
+				{	
+					xtype: 'tinymce_textarea',
+					itemId: 'description',
+					fieldStyle: 'font-family: Courier New; font-size: 12px;',
+					style: { border: '0' },					
 					width: '100%',
+					height: 250,
+					name: 'instructions',			
+					maxLength: 65536,
+					emptyText: 'Instructions',
+					tinyMCEConfig: CoreUtil.tinymceConfigNoMedia(),				
 					listeners: {
-						change: function () {
-							
+						change: function (field, newValue, oldValue, opts) {
+
 							this.up('[itemId=formBuilderPanel]').saveSection();
 						}
 					}
@@ -130,7 +157,7 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 				{
 					xtype: 'container',
 					itemId: 'itemContainer',
-					columnWidth: 0.9,
+					columnWidth: 0.9
 				},
 				{
 					xtype: 'container',
@@ -140,7 +167,7 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 					items: [
 						{
 							xtype: 'osf-csf-floatingMenu',
-							formBuilderPanel: Ext.getCmp('formBuilderPanel')
+							itemId: 'menu'
 						}
 					]
 				}

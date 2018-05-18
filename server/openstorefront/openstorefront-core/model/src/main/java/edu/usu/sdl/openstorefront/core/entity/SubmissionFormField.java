@@ -200,7 +200,6 @@ public class SubmissionFormField
 		this.setPopluateContactWithUser(submissionFormField.getPopluateContactWithUser());
 
 		this.setSectionId(submissionFormField.getSectionId());
-
 	}
 
 	public String getFieldType()

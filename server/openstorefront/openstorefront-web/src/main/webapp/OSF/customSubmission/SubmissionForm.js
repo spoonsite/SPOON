@@ -87,6 +87,10 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		}
 		submissionForm.userSubmission = userSubmission;
 		
+		if (!submissionForm.template.sections) {
+			submissionForm.template.sections = [];
+		}
+		
 		submissionForm.template.sections.push({
 			name: 'Review Submission',
 			instructions: 'Review submission and submit for approval',

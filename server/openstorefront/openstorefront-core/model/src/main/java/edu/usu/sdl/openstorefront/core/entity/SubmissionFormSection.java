@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
@@ -31,6 +32,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -46,7 +48,7 @@ public class SubmissionFormSection
 
 	@PK(generated = true)
 	@NotNull
-	private String stepId;
+	private String sectionId;
 
 	@FK(SubmissionFormTemplate.class)
 	@NotNull
@@ -85,21 +87,39 @@ public class SubmissionFormSection
 	{
 		super.updateFields(entity);
 
-		SubmissionFormSection step = (SubmissionFormSection) entity;
-		this.setName(step.getName());
-		this.setInstructions(step.getInstructions());
-		this.setStepOrder(step.getStepOrder());
-		this.setFields(step.getFields());
+		SubmissionFormSection section = (SubmissionFormSection) entity;
+		this.setName(section.getName());
+		this.setInstructions(section.getInstructions());
+		this.setStepOrder(section.getStepOrder());
+		this.setFields(section.getFields());
+		updateFieldLinks();
 	}
 
-	public String getStepId()
+	public void updateFieldLinks()
 	{
-		return stepId;
+		if (StringUtils.isBlank(getSectionId())) {
+			setSectionId(StringProcessor.uniqueId());
+		}
+
+		if (getFields() != null) {
+			for (SubmissionFormField field : getFields()) {
+				field.setSectionId(getSectionId());
+				if (StringUtils.isBlank(field.getFieldId())) {
+					field.setFieldId(StringProcessor.uniqueId());
+				}
+			}
+		}
+
 	}
 
-	public void setStepId(String stepId)
+	public String getSectionId()
 	{
-		this.stepId = stepId;
+		return sectionId;
+	}
+
+	public void setSectionId(String sectionId)
+	{
+		this.sectionId = sectionId;
 	}
 
 	public String getTemplateId()

@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
+/* global Ext */
+
 Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-csf-templateprogresspanel',
@@ -103,16 +105,7 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 				features: [{ ftype: 'grouping' }],
 				store: Ext.create('Ext.data.Store', {
 					sortInfo: { field: "required", direction: "ASC" },
-					groupField: 'entity',
-					data: [
-						{entity: 'Entry', field: 'Description', required: 'Required', mapped: true, fieldTypes: ['textarea','textfield']},									
-						{entity: 'Entry', field: 'Entry Type', required: 'Required', mapped: true, fieldTypes: ['dropdown','radio','checkbox']},
-						{entity: 'Entry', field: 'Name', required: 'Required', mapped: false, fieldTypes: ['textarea','textfield']},
-						{entity: 'Entry', field: 'GUID', required: 'Not Required', mapped: false, fieldTypes: ['grid']},
-						{entity: 'Entry', field: 'Version', required: 'Not Required', mapped: false, fieldTypes: ['checkbox', 'radio', 'grid']},
-						{entity: 'Contact', field: 'First Name', required: 'Required', mapped: false, fieldTypes: ['radio','dropdown','checkbox']},
-						{entity: 'Contact', field: 'Last Name', required: 'Required', mapped: true, fieldTypes: ['grid', 'radio']}
-					],
+					groupField: 'entity',					
 					fields: ['nameMapping', 'required']
 				})
 			}
