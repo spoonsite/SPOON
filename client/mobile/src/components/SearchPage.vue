@@ -77,6 +77,7 @@
           item-value="componentType"
           label="Component Type"
           clearable
+          multi-line
         ></v-select>
         <v-select
           v-model="filters.tags"
@@ -123,10 +124,13 @@
     </v-chip>
   </div>
 
-  <div style="width: 100%; text-align: center">
+  <div v-if="searchQueryIsDirty" class="overlay">
     <v-progress-circular
-      v-if="searchQueryIsDirty"
-      indeterminate color="primary"
+      color="teal"
+      :size="70"
+      :width="7"
+      indeterminate
+      :class="{center:searchQueryIsDirty}"
     ></v-progress-circular>
   </div>
 
@@ -258,24 +262,18 @@ export default {
     deleteOrg (org) {
       this.filters.organizations = _.remove(this.filters.organizations, n => n !== org)
     },
-    submitSearch (componentType) {
+    submitSearch () {
       this.searchQueryIsDirty = true
       let that = this
       let searchElements = [
         {
           mergeCondition: 'AND',
           searchType: 'INDEX',
-          value: '***'
+          value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
         }
       ]
-
-      if (that.filters.component && that.searchQuery) {
-        searchElements = [
-          {
-            mergeCondition: 'AND',
-            searchType: 'INDEX',
-            value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
-          },
+      if (that.filters.component) {
+        searchElements.push(
           {
             caseInsensitive: false,
             field: 'componentType',
@@ -284,31 +282,20 @@ export default {
             stringOperation: 'EQUALS',
             value: that.filters.component
           }
-        ]
-      } else if (that.filters.component) {
-        searchElements = [
-          {
-            mergeCondition: 'AND',
-            searchType: 'INDEX',
-            value: '***'
-          },
-          {
-            caseInsensitive: false,
-            field: 'componentType',
-            mergeCondition: 'AND',
-            searchType: 'COMPONENT',
-            stringOperation: 'EQUALS',
-            value: that.filters.component
-          }
-        ]
-      } else if (that.searchQuery !== undefined) {
-        searchElements = [
-          {
-            mergeCondition: 'AND',
-            searchType: 'INDEX',
-            value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
-          }
-        ]
+        )
+      }
+      if (that.filters.tags) {
+        that.filters.tags.forEach(function (tag) {
+          searchElements.push(
+            {
+              caseInsensitive: true,
+              mergeCondition: 'AND',
+              searchType: 'TAG',
+              stringOperation: 'EQUALS',
+              value: tag
+            }
+          )
+        })
       }
       axios
         .post(
@@ -476,6 +463,7 @@ export default {
   right: 0;
   background-color: white;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 980;
 }
 .activePage {
   background-color: #e0e0e0;
@@ -530,5 +518,22 @@ input:focus + .icon {
   content: '';
   clear: both;
   display: table;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 990;
+  background-color: rgba(255,255,255, 0.7);
+  pointer-events: all;
+}
+.center {
+  z-index: 991;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
