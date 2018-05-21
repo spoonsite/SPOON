@@ -27,7 +27,7 @@
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
-        <div style="margin-left: 2em; margin-right: 1em;">
+        <v-card-text>
           <h3>Sort Order</h3>
           <v-radio-group v-model="searchSortOrder">
             <v-radio label="Ascending" value="ASC"></v-radio>
@@ -44,7 +44,7 @@
           <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
           <!-- <v-checkbox v-model="showAll" label="Show all search results"></v-checkbox> -->
           <v-btn @click="resetOptions()">Reset Options</v-btn>
-        </div>
+        </v-card-text>
       </v-card>
     </v-dialog>
 
@@ -76,21 +76,28 @@
           item-text="parentLabel"
           item-value="componentType"
           label="Component Type"
+          clearable
         ></v-select>
         <v-select
           v-model="filters.tags"
-          :items="tags"
+          :items="tagsList"
+          item-value="text"
           label="Tags"
           multiple
           chips
+          clearable
         ></v-select>
         <v-select
           v-model="filters.organizations"
-          :items="organizations"
+          :items="organizationsList"
+          item-text="name"
+          item-value="name"
           label="Organizations"
           multiple
           chips
+          clearable
         ></v-select>
+          <v-btn @click="clear()">Clear Filters</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -162,11 +169,11 @@
                 </tr>
               </tbody>
             </table>
-            <!-- TODO: display more details and a link to the details page for that component -->
           </v-card-text>
           <v-card-text v-html="item.description">
           </v-card-text>
           <v-card-actions>
+            <!-- TODO: link to the details page for that component -->
             <v-btn color="info">More Information</v-btn>
           </v-card-actions>
         </v-card>
@@ -223,6 +230,8 @@ export default {
       this.filters.component = this.$route.query.comp
     }
     this.getComponentTypes()
+    this.getTags()
+    this.getOrganizations()
     this.newSearch()
   },
   beforeRouteUpdate (to, from, next) {
@@ -332,6 +341,28 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
+    getTags () {
+      let that = this
+      axios
+        .get(
+          '/openstorefront/api/v1/resource/components/tags'
+        )
+        .then(response => {
+          that.tagsList = response.data
+        })
+        .catch(e => this.errors.push(e))
+    },
+    getOrganizations () {
+      let that = this
+      axios
+        .get(
+          '/openstorefront/api/v1/resource/organizations'
+        )
+        .then(response => {
+          that.organizationsList = response.data.data
+        })
+        .catch(e => this.errors.push(e))
+    },
     newSearch () {
       this.searchPage = 0
       this.show = false
@@ -402,18 +433,8 @@ export default {
   data () {
     return {
       componentsList: [],
-      tags: [
-        'ISP-3U',
-        'GNC-PTS',
-        'GNC-DETSEN',
-        'SMM-FRAMES'
-      ],
-      organizations: [
-        'NASA',
-        'DI2E',
-        'Raytheon',
-        'Space Dynamics Lab'
-      ],
+      tagsList: [],
+      organizationsList: [],
       selected: [],
       show: false,
       showOptions: false,
@@ -495,32 +516,6 @@ input:focus {
 }
 input:focus + .icon {
   color: #3467c0;
-}
-.pill {
-  border-radius: 10px;
-  color: white;
-  background-color: #555;
-  padding: 0.1em 0.5em;
-  margin-right: 0.3em;
-  margin-top: 0.3em;
-}
-.statpill {
-  border-radius: 10px;
-  color: white;
-  background-color: #555;
-  padding: 0.1em 0.5em;
-  margin-right: 0.3em;
-  margin-top: 0.3em;
-  display: inline-block;
-  font-size: 85%;
-}
-.statpillnum {
-  border-radius: 10px;
-  background-color: #333;
-  margin: 0;
-  margin-left: 0.3em;
-  padding: 0 0.4em;
-  display: inline-block;
 }
 .fade-enter-active {
   transition: opacity 0.2s;
