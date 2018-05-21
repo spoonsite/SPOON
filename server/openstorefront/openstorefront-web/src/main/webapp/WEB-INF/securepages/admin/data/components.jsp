@@ -1328,6 +1328,15 @@
 																	method: 'POST',
 																	jsonData: data,
 																	success: function(response, opts){
+																		if (response.responseText.indexOf('errors') !== -1) {
+																		// Provide Error Notification
+																			Ext.toast({
+																				title: 'Validation Error. The Server could not process the comment request. ',
+																				html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+																				width: 550,
+																				autoCloseDelay: 10000,
+																			});
+																		}
 																	},
 																	failure: function(){
 																		Ext.toast({
@@ -1528,6 +1537,15 @@
 																	method: 'POST',
 																	jsonData: data,
 																	success: function(response, opts){
+																		if (response.responseText.indexOf('errors') !== -1) {
+																		// Provide Error Notification
+																			Ext.toast({
+																				title: 'Validation Error. The Server could not process the comment request. ',
+																				html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+																				width: 550,
+																				autoCloseDelay: 10000,
+																			});
+																		}
 																	},
 																	failure: function(){
 																		Ext.toast({
@@ -1544,7 +1562,7 @@
 															if (response.responseText.indexOf('errors') !== -1) {
 
 																// Provide Error Notification
-																Ext.toast('An Entry Failed To Update', 'Error');
+																Ext.toast('An Entry Failed To Update the Owner', 'Error');
 
 																// Provide Log Information
 																console.log(response);
@@ -1709,6 +1727,16 @@
 																		method: 'POST',
 																		jsonData: data,
 																		success: function(response, opts){
+
+																			if (response.responseText.indexOf('errors') !== -1) {
+																			// Provide Error Notification
+																				Ext.toast({
+																					title: 'Validation Error. The Server could not process the comment request. ',
+																					html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+																					width: 550,
+																					autoCloseDelay: 10000,
+																				});
+																			}
 																		},
 																		failure: function(){
 																			Ext.toast({
