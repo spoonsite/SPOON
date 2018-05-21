@@ -72,7 +72,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 		var commentWin = Ext.create('Ext.window.Window', {
 			title: 'Change Request Comments: ',
 			iconCls: 'fa fa-lg fa-user',
-			width: '35%',
+			width: '50%',
 			height: 350,
 			y: 200,
 			modal: true,
