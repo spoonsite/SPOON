@@ -48,45 +48,8 @@ Ext.define('OSF.customSubmissionTool.Window', {
 					scale: 'medium',
 					iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction',
 					handler: function() {
-						var submissionWindow = this.up('window');
-						
-						if (submissionWindow.template.name === '' || submissionWindow.template.description === ''){
-							Ext.Msg.show({
-								title:'Validation',
-								message: 'Name and Description are required.',
-								buttons: Ext.Msg.OK,
-								icon: Ext.Msg.ERROR,
-								fn: function(btn) {									
-								}
-							});
-						} else {
-						
-							submissionWindow.setLoading("Saving...");
-							Ext.Ajax.request({
-								url: 'api/v1/resource/submissiontemplates',
-								method: 'POST',
-								jsonData: submissionWindow.template,
-								callback: function(){
-									submissionWindow.setLoading(false);
-								},
-								success: function(response, opts){
-									var updatedTemplate = Ext.decode(response.responseText);
-									Ext.toast('Saved Template Successfully');
-																		
-									submissionWindow.template.updateUser = updatedTemplate.updateUser;
-									submissionWindow.template.updateDts = Ext.Date.parse(updatedTemplate.updateDts, 'c');
-									
-									//update all section id and field ids
-									
-
-									submissionWindow.formBuilderPanel.updateTemplate(updatedTemplate);
-									if (submissionWindow.saveCallback) {
-										submissionWindow.saveCallback(updatedTemplate);
-									}
-								}
-							});
-						}
-						
+						var submissionWindow = this.up('window');						
+						submissionWindow.saveTemplate();						
 					}
 				},
 				{
@@ -143,11 +106,61 @@ Ext.define('OSF.customSubmissionTool.Window', {
 
 		if (!csfWindow.formBuilderPanel) {			
 			csfWindow.formBuilderPanel = Ext.create('OSF.customSubmissionTool.FormBuilderPanel', {
-				templateRecord: csfWindow.template
+				templateRecord: csfWindow.template,
+				controlWindow: csfWindow
 			});
 		}
 
 		csfWindow.add(csfWindow.formBuilderPanel);
+	},
+	saveTemplate: function() {
+		var submissionWindow = this;
+		
+		if (submissionWindow.template.name === '' || submissionWindow.template.description === ''){
+			Ext.Msg.show({
+				title:'Validation',
+				message: 'Name and Description are required.',
+				buttons: Ext.Msg.OK,
+				icon: Ext.Msg.ERROR,
+				fn: function(btn) {									
+				}
+			});
+		} else {
+
+			//set section order			
+			if (submissionWindow.template.sections) {
+				Ext.Array.forEach(submissionWindow.template.sections, function(section, index){
+					section.sectionOrder = index;
+				});
+			}			
+
+			submissionWindow.setLoading("Saving...");
+			Ext.Ajax.request({
+				url: 'api/v1/resource/submissiontemplates',
+				method: 'POST',
+				jsonData: submissionWindow.template,
+				callback: function(){
+					submissionWindow.setLoading(false);
+				},
+				success: function(response, opts){
+					var updatedTemplate = Ext.decode(response.responseText);
+					Ext.toast('Saved Template Successfully');
+
+					submissionWindow.template.updateUser = updatedTemplate.updateUser;
+					submissionWindow.template.updateDts = Ext.Date.parse(updatedTemplate.updateDts, 'c');
+
+					//update all section id and field ids
+
+
+
+					submissionWindow.formBuilderPanel.updateTemplate(updatedTemplate);
+					if (submissionWindow.saveCallback) {
+						submissionWindow.saveCallback(updatedTemplate);
+					}
+				}
+			});
+		}		
+		
 	}
 
 });

@@ -28,6 +28,7 @@ import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -94,6 +95,11 @@ public class SubmissionFormTemplate
 		if (getSections() != null) {
 			for (SubmissionFormSection section : getSections()) {
 				section.setTemplateId(getSubmissionTemplateId());
+				if (StringUtils.isBlank(section.getCreateUser())) {
+					section.populateBaseCreateFields();
+				} else {
+					section.populateBaseUpdateFields();
+				}
 				section.updateFieldLinks();
 			}
 		}

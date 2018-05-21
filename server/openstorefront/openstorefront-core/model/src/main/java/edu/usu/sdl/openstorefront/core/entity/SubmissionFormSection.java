@@ -69,7 +69,7 @@ public class SubmissionFormSection
 	@NotNull
 	@Min(0)
 	@Max(Integer.MAX_VALUE)
-	private Integer stepOrder;
+	private Integer sectionOrder;
 
 	@ConsumeField
 	@DataType(SubmissionFormField.class)
@@ -90,7 +90,7 @@ public class SubmissionFormSection
 		SubmissionFormSection section = (SubmissionFormSection) entity;
 		this.setName(section.getName());
 		this.setInstructions(section.getInstructions());
-		this.setStepOrder(section.getStepOrder());
+		this.setSectionOrder(section.getSectionOrder());
 		this.setFields(section.getFields());
 		updateFieldLinks();
 	}
@@ -104,6 +104,12 @@ public class SubmissionFormSection
 		if (getFields() != null) {
 			for (SubmissionFormField field : getFields()) {
 				field.setSectionId(getSectionId());
+				if (StringUtils.isBlank(field.getCreateUser())) {
+					field.populateBaseCreateFields();
+				} else {
+					field.populateBaseUpdateFields();
+				}
+
 				if (StringUtils.isBlank(field.getFieldId())) {
 					field.setFieldId(StringProcessor.uniqueId());
 				}
@@ -152,14 +158,14 @@ public class SubmissionFormSection
 		this.instructions = instructions;
 	}
 
-	public Integer getStepOrder()
+	public Integer getSectionOrder()
 	{
-		return stepOrder;
+		return sectionOrder;
 	}
 
-	public void setStepOrder(Integer stepOrder)
+	public void setSectionOrder(Integer sectionOrder)
 	{
-		this.stepOrder = stepOrder;
+		this.sectionOrder = sectionOrder;
 	}
 
 	public List<SubmissionFormField> getFields()

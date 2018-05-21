@@ -57,7 +57,7 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 
 		var displayPanel = this;		
 		var formBuilderPanel = displayPanel.formBuilderPanel;
-		var sectionContainer = displayPanel.queryById('sectionContainer')
+		var sectionContainer = displayPanel.queryById('sectionContainer');
 		var sectionForm = displayPanel.queryById('sectionContainer').getForm();
 		var itemContainer = displayPanel.queryById('itemContainer');
 		
@@ -65,9 +65,11 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 		itemContainer.removeAll();		
 		
 		if (!section) {
+			displayPanel.queryById('selectionMessage').setHidden(false);
 			sectionContainer.setHidden(true);			
 			return;
 		} else {
+			displayPanel.queryById('selectionMessage').setHidden(true);
 			sectionContainer.setHidden(false);
 			displayPanel.section = section;
 			
@@ -110,6 +112,11 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	},
 	items: [
 		{
+			xtype: 'panel',
+			itemId: 'selectionMessage',
+			html: '<h1>Add or Select a Section.</h1>'
+		},
+		{
 			xtype: 'form',
 			itemId: 'sectionContainer',
 			hidden: true,
@@ -122,9 +129,9 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 					width: '100%',
 					listeners: {
 						change: function (field, newValue, oldValue, opts) {
-							var displayPanel = this.up('osf-csf-displaypanel');
-							
-							displayPanel.section.formBuilderPanel.saveSection();
+							var displayPanel = this.up('osf-csf-displaypanel');							
+							displayPanel.section.name = newValue;							
+							displayPanel.formBuilderPanel.updateSection(displayPanel.section);
 						}
 					}
 				},
@@ -141,8 +148,9 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 					tinyMCEConfig: CoreUtil.tinymceConfigNoMedia(),				
 					listeners: {
 						change: function (field, newValue, oldValue, opts) {
-
-							this.up('[itemId=formBuilderPanel]').saveSection();
+							var displayPanel = this.up('osf-csf-displaypanel');							
+							displayPanel.section.instructions = newValue;							
+							displayPanel.formBuilderPanel.updateSection(displayPanel.section);							
 						}
 					}
 				}

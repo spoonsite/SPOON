@@ -79,7 +79,9 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 	
 	loadTemplate: function(submissionFormTemplate, entryType, userSubmission) {
 		var submissionForm = this;
-		submissionForm.template = submissionFormTemplate;
+		
+		//template get manipulated slightly
+		submissionForm.template = Ext.clone(submissionFormTemplate);
 		submissionForm.entryType = entryType;
 		submissionForm.currentSection = 0;
 		if (!userSubmission)	{

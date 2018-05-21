@@ -65,12 +65,14 @@ public class SubmissionFormTemplateView
 		view.setUpdateDts(template.getUpdateDts());
 
 		if (template.getSections() != null) {
+			template.getSections().sort((a, b) -> {
+				return a.getSectionOrder().compareTo(b.getSectionOrder());
+			});
+
 			template.getSections().forEach(section -> {
 				view.getSections().add(SubmissionFormSectionView.toView(section));
 			});
-			template.getSections().sort((a, b) -> {
-				return a.getStepOrder().compareTo(b.getStepOrder());
-			});
+
 		}
 
 		return view;

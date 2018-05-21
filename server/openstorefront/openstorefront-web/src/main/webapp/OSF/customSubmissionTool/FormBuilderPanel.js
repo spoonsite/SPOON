@@ -185,6 +185,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
 	},
 
+	updateSection: function (section) {
+		var formBuilderPanel = this;
+		
+		formBuilderPanel.sectionPanel.updateSection(section);
+	},
+
 	/**
 	 * Saves the section by:
 	 * 	1) updates the section's name and instructions

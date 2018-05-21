@@ -32,7 +32,7 @@ public class SubmissionFormSectionView
 	private String templateId;
 	private String name;
 	private String instructions;
-	private Integer stepOrder;
+	private Integer sectionOrder;
 
 	@DataType(SubmissionFormFieldView.class)
 	private List<SubmissionFormFieldView> fields = new ArrayList<>();
@@ -42,17 +42,21 @@ public class SubmissionFormSectionView
 	{
 	}
 
-	public static SubmissionFormSectionView toView(SubmissionFormSection step)
+	public static SubmissionFormSectionView toView(SubmissionFormSection section)
 	{
 		SubmissionFormSectionView view = new SubmissionFormSectionView();
-		view.setSectionId(step.getSectionId());
-		view.setTemplateId(step.getTemplateId());
-		view.setName(step.getName());
-		view.setInstructions(step.getInstructions());
-		view.setStepOrder(step.getStepOrder());
+		view.setSectionId(section.getSectionId());
+		view.setTemplateId(section.getTemplateId());
+		view.setName(section.getName());
+		view.setInstructions(section.getInstructions());
+		view.setSectionOrder(section.getSectionOrder());
 
-		if (step.getFields() != null) {
-			step.getFields().forEach(field -> {
+		if (section.getFields() != null) {
+			section.getFields().sort((a, b) -> {
+				return a.getFieldOrder().compareTo(b.getFieldOrder());
+			});
+
+			section.getFields().forEach(field -> {
 				view.getFields().add(SubmissionFormFieldView.toView(field));
 			});
 		}
@@ -60,11 +64,11 @@ public class SubmissionFormSectionView
 		return view;
 	}
 
-	public static List<SubmissionFormSectionView> toView(List<SubmissionFormSection> steps)
+	public static List<SubmissionFormSectionView> toView(List<SubmissionFormSection> sections)
 	{
 		List<SubmissionFormSectionView> views = new ArrayList<>();
-		steps.forEach(step -> {
-			views.add(toView(step));
+		sections.forEach(section -> {
+			views.add(toView(section));
 		});
 		return views;
 	}
@@ -109,14 +113,14 @@ public class SubmissionFormSectionView
 		this.instructions = instructions;
 	}
 
-	public Integer getStepOrder()
+	public Integer getSectionOrder()
 	{
-		return stepOrder;
+		return sectionOrder;
 	}
 
-	public void setStepOrder(Integer stepOrder)
+	public void setSectionOrder(Integer sectionOrder)
 	{
-		this.stepOrder = stepOrder;
+		this.sectionOrder = sectionOrder;
 	}
 
 	public List<SubmissionFormFieldView> getFields()

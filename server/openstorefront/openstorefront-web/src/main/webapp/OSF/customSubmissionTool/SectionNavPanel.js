@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 	extend: 'Ext.panel.Panel',
@@ -35,27 +35,15 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					handler: function() {
 						var navPanel = this.up('panel');
 						
-						var formBuilderPanel = navPanel.formBuilderPanel;
+					//	var formBuilderPanel = navPanel.formBuilderPanel;
 						
 						navPanel.addSection({
 							name: 'Untitled',
 							instructions: '',
-							sectionId: Ext.id,
+							sectionId: CoreUtil.uuidv4(),
 							fields: []
 						});
 						
-//						formBuilderPanel.addSection({
-//							name: 'Untitled',
-//							instructions: '',
-//							sectionId: Math.random().toString(36).substr(2, 10),
-//							fieldItems: [
-//								{
-//									question: '',
-//									formBuilderPanel: formBuilderPanel
-//								}
-//							]
-//						});
-
 					}
 				},
 				{
@@ -104,10 +92,29 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 			},			
 			listeners: {
 				beforedrop: function(node, data, overModel, dropPosition, dropHandlers, eOpts) {
-					
+				
+					if (overModel && overModel.get('sectionId') 
+							&& dropPosition === 'append') {
+						//don't allow nesting sections
+						dropHandlers.cancelDrop();
+					}					
+				
 				},
 				drop: function(node, data, overModel, dropPosition, opts) {
 					//reorder sections and move questions
+					if (overModel && overModel.get('sectionId')) {					
+						var root = navPanel.treePanel.getStore().getRoot();
+						
+						var sections = [];
+						root.eachChild(function(node){
+							Ext.Array.filter(navPanel.templateRecord.sections, function(section){
+								if (node.get('sectionId') === section.sectionId) {
+									sections.push(section);
+								}
+							});					
+						});
+						navPanel.templateRecord.sections = sections;						
+					}
 					
 				},
 				selectionchange: function (selectionModel, records) {
@@ -165,6 +172,16 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 	updateSection: function(section) {
 		var navPanel = this;
 		
+		var navList = navPanel.queryById('navList');
+		
+		navList.getStore().each(function(sectionRecord) {
+			if (sectionRecord.get('sectionId') && sectionRecord.get('sectionId') === section.sectionId) {
+				sectionRecord.set('name', section.name);
+				sectionRecord.set('text', section.name);
+				sectionRecord.set('instructions', section.instructions);
+			}
+		});
+		
 	},
 	
 	deleteSection: function(sectionNavRecord) {
@@ -197,18 +214,16 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 	updateTemplate: function() {
 		var navPanel = this;		
 		var store = navPanel.treePanel.getStore();
+		var navList = navPanel.queryById('navList');
 		
-		var root = {
-			expanded: true,
-			children: []
-		};
+		var root = navList.getStore().getRoot();
 		
+		var selectionSet = false;
 		Ext.Array.each(navPanel.templateRecord.sections, function(section) {
 			
 			var sectionItem = {
 				expanded: false,
-				leaf: false,
-				iconCls: 'fa fa-file-text',
+				leaf: false,		
 				text: section.name,
 				sectionId: section.sectionId,
 				children: []
@@ -223,11 +238,13 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					fieldId: field.fieldId
 				});
 			});
-			root.children.push(sectionItem);
+			var nodeInserted = root.appendChild(sectionItem);
+			if (!selectionSet) {
+				navList.setSelection(nodeInserted);
+				selectionSet = true;
+			}
 		});
-		
-		
-		store.loadData(root);
+				
 	}	
 	
 	
