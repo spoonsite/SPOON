@@ -1,5 +1,5 @@
 <template>
-<div class="mx-3 mt-5">
+<div class="mx-3 mt-4">
   <form v-on:submit.prevent="newSearch()"  class="clearfix">
     <div class="searchbar">
       <input v-model="searchQuery" class="searchfield" type="text" placeholder="Search">
@@ -43,29 +43,17 @@
           {{ searchPageSize }}
           <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
           <!-- <v-checkbox v-model="showAll" label="Show all search results"></v-checkbox> -->
+          <v-btn @click="resetOptions()">Reset Options</v-btn>
         </div>
-        <v-btn @click.stop="showOptions = false">
-          <v-icon>save</v-icon> &nbsp; Save
-        </v-btn>
       </v-card>
     </v-dialog>
 
     <!-- Filter pills if there are any -->
-    <v-btn small @click="clear()" v-if="selected.length !== 0">Clear Filters</v-btn>
-    <div v-if="selected.length !== 0" style="padding: 0 0.5em 0.8em 0.8em;">
-      <transition-group name="fade">
-        <div
-          class="pill"
-          style="display: inline-block"
-          v-for="item in selected"
-          v-bind:key="item">
-          {{ item }}
-          <div
-            style="display: inline-block; cursor: pointer;"
-            @click="deleteItem(item)"
-          >&times;</div>
-        </div>
-      </transition-group>
+    <v-btn small @click="clear()" v-if="filters.component !== '' || filters.organizations.length !== 0 || filters.tags.length !== 0">Clear Filters</v-btn>
+    <div style="padding: 0 0.5em 0.8em 0.8em;">
+      <span v-if="filters.component !== ''"><v-chip close small @input="filters.component = ''" color="teal lighten-2" text-color="white">{{ filters.component }}</v-chip></span>
+      <span v-if="filters.tags.length !== 0"><v-chip v-for="tag in filters.tags" :key="tag" close small @input="deleteTag(tag)">{{ tag }}</v-chip></span>
+      <span v-if="filters.organizations.length !== 0"><v-chip v-for="org in filters.organizations" :key="org" close small color="indigo lighten-2" text-color="white" @input="deleteOrg(org)">{{ org }}</v-chip></span>
     </div>
 
     <!-- Search Filters Dialog -->
@@ -81,41 +69,50 @@
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-list>
-          <v-expansion-panel>
-            <v-expansion-panel-content
-              v-for="item in items"
-              :key="item.label"
-              expand-icon="arrow_drop_down"
-            >
-              <div slot="header">{{ item.label }}</div>
-              <v-list-tile v-for="data in item.data" :key="data">
-                <v-list-tile-action>
-                  <v-checkbox v-model="selected" :value="data"></v-checkbox>
-                </v-list-tile-action>
-                <v-list-tile-title>{{ data }}</v-list-tile-title>
-              </v-list-tile>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-list>
-        <v-btn @click.stop="show = false">
-          <v-icon>save</v-icon> &nbsp; Save
-        </v-btn>
+        <v-card-text>
+        <v-select
+          v-model="filters.component"
+          :items="components"
+          label="Component Type"
+        ></v-select>
+        <v-select
+          v-model="filters.tags"
+          :items="tags"
+          label="Tags"
+          multiple
+          chips
+        ></v-select>
+        <v-select
+          v-model="filters.organizations"
+          :items="organizations"
+          label="Organizations"
+          multiple
+          chips
+        ></v-select>
+        </v-card-text>
       </v-card>
     </v-dialog>
+
   </form>
 
   <!-- Search Results -->
   <h2 v-if="searchResults.data" style="text-align: center">Search Results</h2>
 
-  <p v-if="searchResults.data">
+  <p v-if="searchResults.data && searchResults.data.totalNumber === 0">No Search Results</p>
+  <p v-else-if="searchResults.data">
     <span v-if="searchQueryIsDirty">Fetching</span><span v-else>Showing</span>
     {{ offset + 1 }} -
     {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
     of
     {{ searchResults.data.totalNumber }} results
   </p>
-  <p v-if="getNumPages() === 0 && searchResults.data && searchResults.data.data.length === 0">No Search Results</p>
+
+  <div v-if="searchResults.data" style="margin-bottom: 1em; padding-bottom: 0.5em; overflow: auto; white-space: nowrap;">
+    <v-chip v-for="stat in searchResults.data.resultTypeStats" :key="stat" @click="searchCategory(stat.componentType)" small color="teal" text-color="white">
+      <v-avatar size="24px !important" class="teal darken-2">{{ stat.count }}</v-avatar>
+      {{ stat.componentTypeDescription }}
+    </v-chip>
+  </div>
 
   <div style="width: 100%; text-align: center">
     <v-progress-circular
@@ -125,14 +122,51 @@
   </div>
 
   <div v-if="searchResults.data">
-    <v-expansion-panel popout>
+    <v-expansion-panel>
       <v-expansion-panel-content style="grey" v-for="item in searchResults.data.data" :key="item">
-        <div slot="header">{{ item.name }}</div>
+        <div slot="header">
+          <div style="float: left;" v-if="item.componentTypeIconUrl">
+            <img :src="'/openstorefront/' + item.componentTypeIconUrl" width="30" style="margin-right: 1em;">
+          </div>
+          <div>
+            {{ item.name }}
+          </div>
+        </div>
         <v-card>
           <v-card-text>
+            <div
+            style="float: left; margin-bottom: 0.5em;"
+            v-for="(comp, i) in item.componentTypeDescription.split('>')"
+            :key="comp"
+            >
+              <router-link
+                :to="{ path: 'search', query: { comp: item.componentType }}">
+                {{ comp }}
+              </router-link>
+              <v-icon
+              v-if="i + 1 < item.componentTypeDescription.split('>').length">
+                chevron_right
+              </v-icon>
+            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>Organization:</td>
+                  <td>{{ item.organization }}</td>
+                </tr>
+                <tr>
+                  <td>Last Updated:</td>
+                  <td>{{ item.updateDts | formatDate }}</td>
+                </tr>
+              </tbody>
+            </table>
             <!-- TODO: display more details and a link to the details page for that component -->
-            {{ item.description }}
           </v-card-text>
+          <v-card-text v-html="item.description">
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="info">More Information</v-btn>
+          </v-card-actions>
         </v-card>
       </v-expansion-panel-content>
     </v-expansion-panel>
@@ -147,12 +181,12 @@
   </div>
 
   <!-- Pagination -->
-  <div style="text-align: center;">
+  <div class="pagination">
     <v-btn
       flat
       icon
       v-if="offset > 0" @click="prevPage()">
-    <v-icon x-large>chevron_left</v-icon>
+    <v-icon x-large style="color: #333;">chevron_left</v-icon>
     </v-btn>
     <button
       class="pageButton"
@@ -164,12 +198,11 @@
       flat
       icon
       v-if="offset + searchPageSize < totalSearchResults" @click="nextPage()">
-      <v-icon x-large>chevron_right</v-icon>
+      <v-icon x-large style="color: #333;">chevron_right</v-icon>
     </v-btn>
-    <!-- <v-btn icon flat>
-      <v-icon>fas fa-angle-double-right</v-icon>
-    </v-btn> -->
   </div>
+
+  <div class="v-spacer"></div>
 
 </div>
 </template>
@@ -183,46 +216,115 @@ export default {
   mounted () {
     if (this.$route.query.q) {
       this.searchQuery = this.$route.query.q
-      this.newSearch()
     }
+    if (this.$route.query.comp) {
+      this.filters.component = this.$route.query.comp
+    }
+    this.newSearch()
   },
   beforeRouteUpdate (to, from, next) {
-    if (to.query.q !== from.query.q) {
-      this.searchQuery = to.query.q
-      this.newSearch()
-    }
+    this.searchQuery = to.query.q
+    this.filters.component = to.query.comp
+    this.newSearch()
   },
   methods: {
     clear () {
-      this.selected = []
+      this.filters = {
+        component: '',
+        tags: [],
+        organizations: []
+      }
     },
-    deleteItem (item) {
-      this.selected = _.remove(this.selected, n => n !== item)
+    resetOptions () {
+      this.searchPageSize = 10
+      this.searchSortField = 'searchScore'
+      this.searchSortOrder = 'DESC'
     },
-    submitSearch () {
+    deleteTag (tag) {
+      this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
+    },
+    deleteOrg (org) {
+      this.filters.organizations = _.remove(this.filters.organizations, n => n !== org)
+    },
+    submitSearch (componentType) {
       this.searchQueryIsDirty = true
       let that = this
+      let searchElements = [
+        {
+          mergeCondition: 'AND',
+          searchType: 'INDEX',
+          value: '***'
+        }
+      ]
+
+      if (that.filters.component && that.searchQuery) {
+        searchElements = [
+          {
+            mergeCondition: 'AND',
+            searchType: 'INDEX',
+            value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
+          },
+          {
+            caseInsensitive: false,
+            field: 'componentType',
+            mergeCondition: 'AND',
+            searchType: 'COMPONENT',
+            stringOperation: 'EQUALS',
+            value: that.filters.component
+          }
+        ]
+      } else if (that.filters.component) {
+        searchElements = [
+          {
+            mergeCondition: 'AND',
+            searchType: 'INDEX',
+            value: '***'
+          },
+          {
+            caseInsensitive: false,
+            field: 'componentType',
+            mergeCondition: 'AND',
+            searchType: 'COMPONENT',
+            stringOperation: 'EQUALS',
+            value: that.filters.component
+          }
+        ]
+      } else if (that.searchQuery !== undefined) {
+        searchElements = [
+          {
+            mergeCondition: 'AND',
+            searchType: 'INDEX',
+            value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
+          }
+        ]
+      }
       axios
-        .post(`/openstorefront/api/v1/service/search/advance?paging=true&sortField=${that.searchSortField}&sortOrder=${that.searchSortOrder}&offset=${that.searchPage * that.searchPageSize}&max=${that.searchPageSize}`, {
-          searchElements: [
-            {
-              mergeCondition: 'AND',
-              searchType: 'INDEX',
-              value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
-            }
-          ]
-        })
-        .then((response) => {
+        .post(
+          `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
+            that.searchSortField
+          }&sortOrder=${that.searchSortOrder}&offset=${that.searchPage *
+            that.searchPageSize}&max=${that.searchPageSize}`,
+          {
+            searchElements
+          }
+        )
+        .then(response => {
           that.searchResults = response
           that.totalSearchResults = response.data.totalNumber
           that.searchQueryIsDirty = false
         })
-        .catch(e => (this.errors.push(e)))
-        .finally(() => { that.searchQueryIsDirty = false })
+        .catch(e => this.errors.push(e))
+        .finally(() => {
+          that.searchQueryIsDirty = false
+        })
     },
     newSearch () {
       this.searchPage = 0
       this.show = false
+      this.submitSearch()
+    },
+    searchCategory (category) {
+      this.filters.component = category
       this.submitSearch()
     },
     nextPage () {
@@ -246,7 +348,12 @@ export default {
     getPagination (currentPage) {
       // show 4 pages
       if (this.getNumPages() === 0) return []
-      return _.range(currentPage - 1 > 0 ? currentPage - 1 : 1, currentPage + 4 > this.getNumPages() ? this.getNumPages() + 2 : currentPage + 4)
+      return _.range(
+        currentPage - 1 > 0 ? currentPage - 1 : 1,
+        currentPage + 4 > this.getNumPages()
+          ? this.getNumPages() + 2
+          : currentPage + 4
+      )
     }
   },
   watch: {
@@ -254,6 +361,24 @@ export default {
     //   this.searchQueryIsDirty = true;
     //   // some expensive query
     // }, 1000),
+    filters: {
+      handler: function () {
+        if (!this.show) {
+          this.newSearch()
+        }
+      },
+      deep: true
+    },
+    show () {
+      if (this.show === false) {
+        this.newSearch()
+      }
+    },
+    showOptions () {
+      if (this.showOptions === false) {
+        this.newSearch()
+      }
+    }
   },
   computed: {
     offset () {
@@ -262,14 +387,33 @@ export default {
   },
   data () {
     return {
-      items: [
-        { label: 'Category', color: 'teal', data: ['Shooters', 'Telescopes', 'Rockets', 'Propulsion', 'Blasters', 'Guns', 'Bullets', 'Gear'] },
-        { label: 'Organization', color: 'blue', data: ['NASA', 'Navy', 'SpaceX', 'Starsem', 'Orbital ATK', 'Lockheed Martin', 'Rockwell'] }
+      components: [
+        'ISP-3U',
+        'GNC-PTS',
+        'GNC-DETSEN',
+        'SMM-FRAMES'
+      ],
+      tags: [
+        'ISP-3U',
+        'GNC-PTS',
+        'GNC-DETSEN',
+        'SMM-FRAMES'
+      ],
+      organizations: [
+        'NASA',
+        'DI2E',
+        'Raytheon',
+        'Space Dynamics Lab'
       ],
       selected: [],
       show: false,
       showOptions: false,
       searchQuery: '',
+      filters: {
+        component: '',
+        tags: [],
+        organizations: []
+      },
       searchResults: {},
       searchQueryIsDirty: false,
       errors: [],
@@ -288,14 +432,29 @@ export default {
 /* Paging */
 .pageButton {
   padding: 0.2em 0.8em;
-  margin-right: 0.2em;
+  margin: 0.8em 0.2em;
   border-radius: 2px;
+  /* color: rgba(0,0,0,.4); */
+}
+.pagination {
+  text-align: center;
+  display: block;
+  margin: auto;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 .activePage {
-  background-color: #E0E0E0;
+  background-color: #e0e0e0;
 }
 .pageButton:hover {
-  background-color: #E0E0E0;
+  background-color: #e0e0e0;
+}
+.v-spacer {
+  height: 5em;
 }
 /* Search Bar */
 form {
@@ -304,9 +463,9 @@ form {
 }
 .searchbar {
   border-radius: 2px;
-  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
   padding: 0.7em 1.2em;
-  margin-bottom: 0.3em;
   margin-left: auto;
   margin-right: auto;
   font-size: 120%;
@@ -320,33 +479,51 @@ form {
   float: right;
 }
 input {
-    caret-color: #3467C0;
+  caret-color: #3467c0;
 }
 input:focus {
   outline: none;
 }
 input:focus + .icon {
-  color: #3467C0;
+  color: #3467c0;
 }
 .pill {
   border-radius: 10px;
   color: white;
-  background-color:#555;
+  background-color: #555;
   padding: 0.1em 0.5em;
   margin-right: 0.3em;
   margin-top: 0.3em;
 }
-.fade-enter-active, {
-  transition: opacity .2s;
+.statpill {
+  border-radius: 10px;
+  color: white;
+  background-color: #555;
+  padding: 0.1em 0.5em;
+  margin-right: 0.3em;
+  margin-top: 0.3em;
+  display: inline-block;
+  font-size: 85%;
+}
+.statpillnum {
+  border-radius: 10px;
+  background-color: #333;
+  margin: 0;
+  margin-left: 0.3em;
+  padding: 0 0.4em;
+  display: inline-block;
+}
+.fade-enter-active {
+  transition: opacity 0.2s;
 }
 .fade-leave-active {
-  transition: opacity .1s;
+  transition: opacity 0.1s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
 .clearfix:after {
-  content: "";
+  content: '';
   clear: both;
   display: table;
 }

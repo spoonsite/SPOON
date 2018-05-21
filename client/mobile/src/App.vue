@@ -3,23 +3,23 @@
     <v-app>
       <header>
         <div class="toolbar">
-        <v-toolbar color="primary" dark flat>
+        <v-toolbar color="primary" dense dark flat>
           <v-spacer></v-spacer>
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <!-- <v-toolbar-items>
             <v-btn icon @click="nav('profile')"><v-icon>fas fa-user</v-icon></v-btn>
           </v-toolbar-items> -->
-          <v-toolbar-items>
+          <!-- <v-toolbar-items>
             <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn>
-          </v-toolbar-items>
+          </v-toolbar-items> -->
           <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
         </v-toolbar>
         </div>
         <v-alert :value="alert" color="warning" style="margin: 0; height: 30px; text-align: center;">Security Banner</v-alert>
       </header>
 
-      <v-navigation-drawer right fixed v-model="drawer" class="nav-drawer">
+      <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer">
         <v-list>
           <v-list-tile v-for="link in links" :key="link.name" class="menu-item" @click="nav(link.link)">
             <v-list-tile-action>
@@ -61,7 +61,7 @@ export default {
         { link: '/faq', icon: 'question', name: 'F.A.Q.' },
         { link: '/contact', icon: 'comment', name: 'Contact' }
       ],
-      alert: true
+      alert: false
     }
   },
   methods: {
@@ -73,7 +73,7 @@ export default {
 </script>
 
 <style lang="scss">
-$toolbar-height: 56px;
+$toolbar-height: 52px;
 $goldbar-height: 4px;
 $banner-height: 30px;
 
@@ -81,7 +81,8 @@ $offset: $toolbar-height + $goldbar-height;
 $offset-banner: $offset + $banner-height;
 
 #app {
-  font-family: "Roboto"
+  font-family: "Roboto";
+  color: #333;
 }
 .menu-item:hover {
   background-color: rgba(0,0,0,0.1);

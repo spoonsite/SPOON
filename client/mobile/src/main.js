@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import format from 'date-fns/format'
 
 Vue.config.productionTip = false
 
@@ -18,6 +19,10 @@ Vue.use(Vuetify, {
     warning: '#FFA000',
     success: '#388E3C'
   }
+})
+
+Vue.filter('formatDate', (value) => {
+  return format(value, 'YYYY/MM/DD')
 })
 
 /* eslint-disable no-new */
