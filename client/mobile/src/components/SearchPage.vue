@@ -72,7 +72,9 @@
         <v-card-text>
         <v-select
           v-model="filters.component"
-          :items="components"
+          :items="componentsList"
+          item-text="parentLabel"
+          item-value="componentType"
           label="Component Type"
         ></v-select>
         <v-select
@@ -220,6 +222,7 @@ export default {
     if (this.$route.query.comp) {
       this.filters.component = this.$route.query.comp
     }
+    this.getComponentTypes()
     this.newSearch()
   },
   beforeRouteUpdate (to, from, next) {
@@ -318,6 +321,17 @@ export default {
           that.searchQueryIsDirty = false
         })
     },
+    getComponentTypes () {
+      let that = this
+      axios
+        .get(
+          '/openstorefront/api/v1/resource/componenttypes'
+        )
+        .then(response => {
+          that.componentsList = response.data
+        })
+        .catch(e => this.errors.push(e))
+    },
     newSearch () {
       this.searchPage = 0
       this.show = false
@@ -387,12 +401,7 @@ export default {
   },
   data () {
     return {
-      components: [
-        'ISP-3U',
-        'GNC-PTS',
-        'GNC-DETSEN',
-        'SMM-FRAMES'
-      ],
+      componentsList: [],
       tags: [
         'ISP-3U',
         'GNC-PTS',
