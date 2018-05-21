@@ -84,37 +84,16 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 					bodyStyle: 'padding: 10px',
 					items: [ 
 						{
-							xtype: 'htmleditor',
+							xtype: 'osf-common-validhtmleditor',
 							itemId: 'searchComment',
 							fieldLabel: 'Optional Comments',
 							labelAlign: 'top',
-							maxLength: 4096,
-							labelSeparator: '',
-							typeAhead: true,
-							editable: true,
-							allowBlank: true,
 							name: 'Comment name',
 							width: '100%',
-							valueField: 'username',
-							forceSelection: false,
-							queryMode: 'local',
 							displayField: 'Comment displayfield',
 							store: {
 								autoLoad: true,
 							},
-							exceededLimit: false,
-							listeners: {
-								change: function(field, newValue, oldValue, eOpts){
-									if(newValue.length > 4096){
-										field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
-										this.exceededLimit = true;
-									}
-									if( this.exceededLimit && (newValue.length <= 4096)){
-										field.setFieldLabel('Component Comments');
-										this.exceededLimit = false;
-									}
-								}
-							}
 						},
 						{
 							xtype: 'hidden',

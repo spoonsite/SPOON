@@ -43,8 +43,6 @@
 
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
-			Ext.onReady(function() {
-
 			Ext.require('OSF.common.AttributeCodeSelect');
 			Ext.require('OSF.form.Attributes');
 			Ext.require('OSF.form.Contacts');
@@ -57,6 +55,10 @@
 			Ext.require('OSF.form.OldEvaluationSummary');
 			Ext.require('OSF.form.Tags');
 			Ext.require('OSF.form.Comments');
+			Ext.require('OSF.common.ValidHtmlEditor');
+			
+			Ext.onReady(function() {
+
 
 
 				//Add/Edit forms ------>
@@ -1232,37 +1234,16 @@
 							bodyStyle: 'padding: 10px',
 							items: [
 								{
-									xtype: 'htmleditor',
+									xtype: 'osf-common-validhtmleditor',
 									itemId: 'searchComment',
 									fieldLabel: 'Optional Comments',
 									labelAlign: 'top',
-									maxLength: 4096,
-									labelSeparator: '',
-									typeAhead: true,
-									editable: true,
-									allowBlank: true,
 									name: 'Comment name',
 									width: '100%',
-									valueField: 'username',
-									forceSelection: false,
-									queryMode: 'local',
 									displayField: 'Comment displayfield',
 									store: {
 										autoLoad: true,
 									},
-									exceededLimit: false,
-									listeners: {
-										change: function(field, newValue, oldValue, eOpts){
-											if(newValue.length > 4096){
-												field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
-												this.exceededLimit = true;
-											}
-											if( this.exceededLimit && (newValue.length <= 4096)){
-												field.setFieldLabel('Component Comments');
-												this.exceededLimit = false;
-											}
-										}
-									}
 								},
 								{
 									xtype: 'hidden',
@@ -1438,37 +1419,16 @@
 									}
 								},
 								{
-									xtype: 'htmleditor',
+									xtype: 'osf-common-validhtmleditor',
 									itemId: 'searchComment',
 									fieldLabel: 'Optional Comments',
 									labelAlign: 'top',
-									maxLength: 4096,
-									labelSeparator: '',
-									typeAhead: true,
-									editable: true,
-									allowBlank: true,
 									name: 'Comment name',
 									width: '100%',
-									valueField: 'username',
-									forceSelection: false,
-									queryMode: 'local',
 									displayField: 'Comment displayfield',
 									store: {
 										autoLoad: true,
 									},
-									exceededLimit: false,
-									listeners: {
-										change: function(field, newValue, oldValue, eOpts){
-											if(newValue.length > 4096){
-												field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
-												this.exceededLimit = true;
-											}
-											if( this.exceededLimit && (newValue.length <= 4096)){
-												field.setFieldLabel('Component Comments');
-												this.exceededLimit = false;
-											}
-										}
-									}
 								},
 								{
 									xtype: 'hidden',
@@ -1640,37 +1600,16 @@
 									}
 								},
 								{
-									xtype: 'htmleditor',
+									xtype: 'osf-common-validhtmleditor',
 									itemId: 'searchComment',
 									fieldLabel: 'Optional Comments',
 									labelAlign: 'top',
-									maxLength: 4096,
-									labelSeparator: '',
-									typeAhead: true,
-									editable: true,
-									allowBlank: true,
 									name: 'Comment name',
 									width: '100%',
-									valueField: 'username',
-									forceSelection: false,
-									queryMode: 'local',
 									displayField: 'Comment displayfield',
 									store: {
 										autoLoad: true,
 									},
-									exceededLimit: false,
-									listeners: {
-										change: function(field, newValue, oldValue, eOpts){
-											if(newValue.length > 4096){
-												field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
-												this.exceededLimit = true;
-											}
-											if( this.exceededLimit && (newValue.length <= 4096)){
-												field.setFieldLabel('Component Comments');
-												this.exceededLimit = false;
-											}
-										}
-									}
 								},
 								{
 									xtype: 'hidden',
@@ -1700,7 +1639,7 @@
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
-
+												console.log(componentIds);
 												var componentType = this.up('form').getForm().findField('componentType').getValue();
 
 												componentGrid.mask('Updating Type(s)...');
