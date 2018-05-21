@@ -34,13 +34,13 @@
 							<name>internetexplorerdriver</name>
 							<platform>windows</platform>
 							<bit>32</bit>
-							<version>3.3.0</version>
+							<version>3.8.0</version>
 						</driver>
 						<driver>
 							<name>internetexplorerdriver</name>
 							<platform>windows</platform>
 							<bit>64</bit>
-							<version>3.3.0</version>
+							<version>3.8.0</version>
 						</driver>
 						<driver>
 							<name>chromedriver</name>
