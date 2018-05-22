@@ -67,19 +67,19 @@ public class ContactServiceImpl
 		Objects.requireNonNull(contact, "Contact required");
 
 		Contact existing = persistenceService.findById(Contact.class, contact.getContactId());
-		if (existing == null) {
+		// if (existing == null) {
 
-			existing = new Contact();
-			existing.setEmail(contact.getEmail());
-			existing = existing.findProxy();
+		// 	existing = new Contact();
+		// 	existing.setEmail(contact.getEmail());
+		// 	existing = existing.findProxy();
 
-			// if (existing == null) {
-			// 	existing = new Contact();
-			// 	existing.setFirstName(contact.getFirstName());
-			// 	existing.setLastName(contact.getLastName());
-			// 	existing = existing.findProxy();
-			// }
-		}
+		// 	if (existing == null) {
+		// 		existing = new Contact();
+		// 		existing.setFirstName(contact.getFirstName());
+		// 		existing.setLastName(contact.getLastName());
+		// 		existing = existing.findProxy();
+		// 	}
+		// }
 
 		// Check For Existing Contact
 		if (existing != null) {
