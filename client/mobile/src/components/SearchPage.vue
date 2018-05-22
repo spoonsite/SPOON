@@ -61,6 +61,7 @@
       <span v-if="filters.component !== ''"><v-chip close small @input="filters.component = ''" color="teal lighten-2" text-color="white">{{ filters.component }}</v-chip></span>
       <span v-if="filters.tags.length !== 0"><v-chip v-for="tag in filters.tags" :key="tag" close small @input="deleteTag(tag)">{{ tag }}</v-chip></span>
       <span v-if="filters.organization !== ''"><v-chip close small color="indigo lighten-2" text-color="white" @input="filters.organization = ''">{{ filters.organization }}</v-chip></span>
+      <span v-if="filters.entryType !== ''"><v-chip close small color="purple lighten-2" text-color="white" @input="filters.entryType = ''">{{ filters.entryType }}</v-chip></span>
     </div>
 
     <!-- Search Filters Dialog -->
@@ -235,6 +236,9 @@ export default {
     if (this.$route.query.comp) {
       this.filters.component = this.$route.query.comp
     }
+    if (this.$route.query.entryType) {
+      this.filters.entryType = this.$route.query.entryType
+    }
     this.getComponentTypes()
     this.getTags()
     this.getOrganizations()
@@ -247,6 +251,7 @@ export default {
     if (to.query.comp) {
       this.filters.component = to.query.comp
     }
+    this.filters.entryType = to.query.entryType
     this.newSearch()
   },
   methods: {
@@ -313,6 +318,20 @@ export default {
           }
         )
       }
+      if (that.filters.entryType) {
+        searchElements.push(
+          {
+            caseInsensitive: false,
+            field: 'componentType',
+            mergeCondition: 'AND',
+            numberOperation: 'EQUALS',
+            searchChildren: true,
+            searchType: 'ENTRYTYPE',
+            stringOperation: 'EQUALS',
+            value: that.filters.entryType
+          }
+        )
+      }
       axios
         .post(
           `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
@@ -363,6 +382,17 @@ export default {
         )
         .then(response => {
           that.organizationsList = response.data.data
+        })
+        .catch(e => this.errors.push(e))
+    },
+    getNestedComponentTypes () {
+      let that = this
+      axios
+        .get(
+          '/openstorefront/api/v1/resource/componenttypes/nested'
+        )
+        .then(response => {
+          that.nestedComponentTypesList = response.data.data
         })
         .catch(e => this.errors.push(e))
     },
@@ -441,7 +471,8 @@ export default {
       filters: {
         component: '',
         tags: [],
-        organization: ''
+        organization: '',
+        entryType: ''
       },
       searchResults: {},
       searchQueryIsDirty: false,

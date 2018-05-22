@@ -12,15 +12,15 @@
 
       <h2 style="margin-bottom: 1em;">Browse Categories</h2>
 
-      <v-list v-for="category in categories" :key="category.title">
+      <v-list v-for="item in nestedComponentTypesList.children" :key="item.componentType.label">
         <v-list-tile>
-          <v-list-tile-avatar>
-            <v-icon>fas fa-{{ category.icon }} fa-2x pa2</v-icon>
-          </v-list-tile-avatar>
+          <div style="float: left;" v-if="item.componentType.iconUrl">
+            <img :src="'/openstorefront/' + item.componentType.iconUrl" width="35" style="margin-right: 1em;">
+          </div>
           <v-list-tile-content>
 
-          <router-link :to="{ path: 'search', query: { q: category.title }}" style="width: 100%;">
-              {{ category.title}}
+          <router-link :to="{ path: 'search', query: { entryType: item.componentType.componentType }}" style="width: 100%;">
+              {{ item.componentType.label }}
           </router-link>
 
           </v-list-tile-content>
@@ -36,6 +36,7 @@
 
 <script lang="js">
 import SearchBar from './subcomponents/SearchBar'
+import axios from 'axios'
 
 export default {
   name: 'landing-page',
@@ -44,41 +45,13 @@ export default {
   },
   props: [],
   mounted () {
-
+    this.getNestedComponentTypes()
   },
   data () {
     return {
       searchQuery: '',
-      categories: [
-        {
-          title: 'Space',
-          icon: 'rocket'
-        },
-        {
-          title: 'Space Shuttle That is a Superty Long Title',
-          icon: 'space-shuttle'
-        },
-        {
-          title: 'Moon',
-          icon: 'moon'
-        },
-        {
-          title: 'Parts',
-          icon: 'wrench'
-        },
-        {
-          title: 'Moon',
-          icon: 'moon'
-        },
-        {
-          title: 'Parts',
-          icon: 'wrench'
-        },
-        {
-          title: 'Space Shuttle That is a Superty Long Title',
-          icon: 'moon'
-        }
-      ]
+      nestedComponentTypesList: [],
+      errors: []
     }
   },
   methods: {
@@ -87,6 +60,17 @@ export default {
     },
     submitSearch () {
       this.$router.push(`/search?q=${this.searchQuery}`)
+    },
+    getNestedComponentTypes () {
+      let that = this
+      axios
+        .get(
+          '/openstorefront/api/v1/resource/componenttypes/nested'
+        )
+        .then(response => {
+          that.nestedComponentTypesList = response.data
+        })
+        .catch(e => this.errors.push(e))
     }
   },
   computed: {
