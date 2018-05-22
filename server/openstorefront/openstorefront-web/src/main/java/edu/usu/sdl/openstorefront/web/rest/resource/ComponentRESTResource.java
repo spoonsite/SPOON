@@ -1041,6 +1041,51 @@ public class ComponentRESTResource
 		}
 		return response;
 	}
+	
+	@POST
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@APIDescription("Change owner of listed components and attach a comment")
+	@Path("/change_owner_and_comment")
+	public Response changeOwnerAndComment(
+	
+	)
+	{
+		Response response = null;
+		
+		return response;
+	}
+	
+	@POST
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@APIDescription("Change type of listed components and attach a comment")
+	@Path("/change_type_and_comment")
+	public Response changeTypeAndComment(
+	
+	)
+	{
+		Response response = null;
+		
+		return response;
+	}
+	
+	@POST
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@APIDescription("Change status of listed components and attach a comment")
+	@Path("/change_status_and_comment")
+	public Response toggleAndComment(
+	
+	)
+	{
+		Response response = null;
+		
+		return response;
+	}
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
