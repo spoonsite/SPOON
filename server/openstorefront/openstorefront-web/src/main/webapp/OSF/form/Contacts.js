@@ -168,6 +168,7 @@ Ext.define('OSF.form.Contacts', {
 							iconCls: 'fa fa-lg fa-close',
 							handler: function () {
 								this.up('form').reset();
+								this.up('form').down('grid').getSelectionModel().deselectAll();
 							}
 						}
 					],
@@ -377,12 +378,24 @@ Ext.define('OSF.form.Contacts', {
 										
 									}),
 									columns: [
-										{ text: 'First Name', dataIndex: 'firstName' },
-										{ text: 'Last Name', dataIndex: 'lastName'},
-										{ text: 'Email', dataIndex: 'email' },
-										{ text: 'Phone', dataIndex: 'phone' },
+										{ text: 'First Name', dataIndex: 'firstName', flex:1 },
+										{ text: 'Last Name', dataIndex: 'lastName', flex:1},
+										{ text: 'Email', dataIndex: 'email', flex:2 },
+										//{ text: 'Phone', dataIndex: 'phone' },
 									],
-									
+									selModel: {
+										selType: 'checkboxmodel',
+										mode: 'SINGLE'
+									 },
+									 listeners: {
+										itemclick: function (view, record, item, index, opts) {
+											var contactType =  this.up('form').getForm().findField('contactType').getValue();
+											this.up('form').reset();
+											console.log(record);
+											this.up('form').loadRecord(record);
+											this.up('form').getForm().findField('contactType').setValue(contactType);
+										}
+									}
 								})
 							]
 						}]
