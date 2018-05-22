@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -25,6 +26,7 @@ public class ChangeOwnerAction
 		extends MultipleEntryAction
 {
 	@NotNull
+	@ConsumeField
 	private String newOwner;
 	
 	public ChangeOwnerAction()

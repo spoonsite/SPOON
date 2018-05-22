@@ -1054,12 +1054,32 @@ public class ComponentRESTResource
 			ChangeOwnerAction changeOwnerAction
 	)
 	{
-		Component component = service.getPersistenceService().findById(Component.class, componentId);
-		if (component != null) {
-			service.getComponentService().changeOwner(componentId, newOwner);
-			component.setCreateUser(newOwner);
+		ValidationModel validationModel = new ValidationModel(changeOwnerAction);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			for(String componentId: changeOwnerAction.getComponentIds()){
+				Component component = service.getPersistenceService().findById(Component.class, componentId);
+				if (component != null) {
+					service.getComponentService().changeOwner(componentId, changeOwnerAction.getNewOwner());
+					saveEntryActionComment(changeOwnerAction, componentId);
+				}
+				else{
+					LOG.log(Level.FINE, ()-> "Cannot find componentId: " + componentId);
+				}
+			}
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
 		}
-		return sendSingleEntityResponse(component);
+		return Response.ok().build();
+	}
+
+	private void saveEntryActionComment(MultipleEntryAction entryAction, String componentId)
+	{
+		if(entryAction.getComment() != null){
+			entryAction.getComment().setComponentId(componentId);
+			entryAction.getComment().save();
+		}
 	}
 	
 	@PUT
@@ -1071,9 +1091,24 @@ public class ComponentRESTResource
 			ChangeEntryTypeAction changeEntryTypeAction
 	)
 	{
-		Response response = null;
-		
-		return response;
+		ValidationModel validationModel = new ValidationModel(changeEntryTypeAction);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			for(String componentId: changeEntryTypeAction.getComponentIds()){
+				Component component = service.getPersistenceService().findById(Component.class, componentId);
+				if (component != null) {
+					service.getComponentService().changeComponentType(componentId, changeEntryTypeAction.getNewType());
+					saveEntryActionComment(changeEntryTypeAction, componentId);
+				}
+				else{
+					LOG.log(Level.FINE, ()-> "Cannot find componentId: " + componentId);
+				}
+			}
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.ok().build();
 	}
 	
 	@PUT
@@ -1085,9 +1120,29 @@ public class ComponentRESTResource
 			MultipleEntryAction multipleEntryAction	
 	)
 	{
-		Response response = null;
-		
-		return response;
+		ValidationModel validationModel = new ValidationModel(multipleEntryAction);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			for(String componentId: multipleEntryAction.getComponentIds()){
+				Component component = service.getPersistenceService().findById(Component.class, componentId);
+				if (component != null) {
+					if(Component.ACTIVE_STATUS.equals(component.getActiveStatus())){
+						service.getComponentService().deactivateComponent(componentId);
+					}
+					else{
+						service.getComponentService().activateComponent(componentId);
+					}
+					saveEntryActionComment(multipleEntryAction, componentId);
+				}
+				else{
+					LOG.log(Level.FINE, ()-> "Cannot find componentId: " + componentId);
+				}
+			}
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.ok().build();
 	}
 
 	@PUT

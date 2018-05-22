@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
+import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +26,10 @@ import java.util.List;
  */
 public class MultipleEntryAction
 {
+	@ConsumeField
 	private List<String> componentIds = new ArrayList<>();
-	private String commentType;
-	private String comment;
+	@ConsumeField
+	private ComponentComment comment;
 
 	public MultipleEntryAction()
 	{
@@ -42,24 +45,16 @@ public class MultipleEntryAction
 		this.componentIds = componentIds;
 	}
 
-	public String getCommentType()
-	{
-		return commentType;
-	}
-
-	public void setCommentType(String commentType)
-	{
-		this.commentType = commentType;
-	}
-
-	public String getComment()
+	public ComponentComment getComment()
 	{
 		return comment;
 	}
 
-	public void setComment(String comment)
+	public void setComment(ComponentComment comment)
 	{
 		this.comment = comment;
 	}
+
+
 	
 }
