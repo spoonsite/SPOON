@@ -4,10 +4,21 @@
     <div class="searchbar">
       <input v-model="searchQuery" class="searchfield" type="text" placeholder="Search">
       <v-icon class="search-icon" @click="newSearch()">search</v-icon>
+      <v-icon v-if="searchQuery !== ''" class="search-clear" @click="searchQuery = ''">fas fa-times</v-icon>
     </div>
 
+    <v-card v-if="searchSuggestions.length > 0">
+      <v-list dense>
+        <v-list-tile v-for="i in searchSuggestions" :key="i" @click="searchQuery = i.name; newSearch(); searchSuggestions = [];" class="suggestion">
+          <v-list-tile-content>
+            {{ i.name }}
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-card>
+
     <div style="display: inline-block; float: right;">
-      <v-btn small @click="show = !show" flat icon>
+      <v-btn small @click="showFilters = !showFilters" flat icon>
         <v-icon style="font-size: 1.2em;">fas fa-filter</v-icon>
       </v-btn>
       <v-btn small flat @click.stop="showOptions = true" icon><v-icon style="font-size: 1.2em;">fas fa-cog</v-icon>
@@ -49,23 +60,23 @@
     </v-dialog>
 
     <!-- Filter pills if there are any -->
-    <v-btn small @click="clear()" v-if="filters.component !== '' || filters.organizations.length !== 0 || filters.tags.length !== 0">Clear Filters</v-btn>
+    <v-btn small @click="clear()" v-if="filters.component !== '' || filters.organization !== '' || filters.tags.length !== 0">Clear Filters</v-btn>
     <div style="padding: 0 0.5em 0.8em 0.8em;">
       <span v-if="filters.component !== ''"><v-chip close small @input="filters.component = ''" color="teal lighten-2" text-color="white">{{ filters.component }}</v-chip></span>
       <span v-if="filters.tags.length !== 0"><v-chip v-for="tag in filters.tags" :key="tag" close small @input="deleteTag(tag)">{{ tag }}</v-chip></span>
-      <span v-if="filters.organizations.length !== 0"><v-chip v-for="org in filters.organizations" :key="org" close small color="indigo lighten-2" text-color="white" @input="deleteOrg(org)">{{ org }}</v-chip></span>
+      <span v-if="filters.organization !== ''"><v-chip close small color="indigo lighten-2" text-color="white" @input="filters.organization = ''">{{ filters.organization }}</v-chip></span>
     </div>
 
     <!-- Search Filters Dialog -->
     <v-dialog
-      v-model="show"
+      v-model="showFilters"
       max-width="300px"
       >
       <v-card>
         <v-card-title>
           <h2>Search Filters</h2>
           <v-spacer></v-spacer>
-          <v-btn @click.stop="show = false" icon>
+          <v-btn @click.stop="showFilters = false" icon>
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
@@ -89,13 +100,11 @@
           clearable
         ></v-select>
         <v-select
-          v-model="filters.organizations"
+          v-model="filters.organization"
           :items="organizationsList"
           item-text="name"
           item-value="name"
           label="Organizations"
-          multiple
-          chips
           clearable
         ></v-select>
           <v-btn @click="clear()">Clear Filters</v-btn>
@@ -198,6 +207,7 @@
     <v-btn
       flat
       icon
+      style="margin:0;"
       v-if="offset > 0" @click="prevPage()">
     <v-icon x-large style="color: #333;">chevron_left</v-icon>
     </v-btn>
@@ -210,6 +220,7 @@
     <v-btn
       flat
       icon
+      style="margin:0;"
       v-if="offset + searchPageSize < totalSearchResults" @click="nextPage()">
       <v-icon x-large style="color: #333;">chevron_right</v-icon>
     </v-btn>
@@ -259,10 +270,8 @@ export default {
     deleteTag (tag) {
       this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
     },
-    deleteOrg (org) {
-      this.filters.organizations = _.remove(this.filters.organizations, n => n !== org)
-    },
     submitSearch () {
+      this.searchSuggestions = []
       this.searchQueryIsDirty = true
       let that = this
       let searchElements = [
@@ -289,13 +298,26 @@ export default {
           searchElements.push(
             {
               caseInsensitive: true,
-              mergeCondition: 'AND',
+              mergeCondition: 'OR',
               searchType: 'TAG',
               stringOperation: 'EQUALS',
               value: tag
             }
           )
         })
+      }
+      if (that.filters.organization) {
+        searchElements.push(
+          {
+            caseInsensitive: false,
+            mergeCondition: 'AND',
+            searchType: 'COMPONENT',
+            numberOperation: 'EQUALS',
+            stringOperation: 'EQUALS',
+            field: 'organization',
+            value: that.filters.organization
+          }
+        )
       }
       axios
         .post(
@@ -343,16 +365,27 @@ export default {
       let that = this
       axios
         .get(
-          '/openstorefront/api/v1/resource/organizations'
+          '/openstorefront/api/v1/resource/organizations?componentOnly=true'
         )
         .then(response => {
           that.organizationsList = response.data.data
         })
         .catch(e => this.errors.push(e))
     },
+    getSearchSuggestions () {
+      let that = this
+      axios
+        .get(
+          `/openstorefront/api/v1/service/search/suggestions?query=${that.searchQuery}&componentType=`
+        )
+        .then(response => {
+          that.searchSuggestions = response.data
+        })
+        .catch(e => this.errors.push(e))
+    },
     newSearch () {
       this.searchPage = 0
-      this.show = false
+      this.showFilters = false
       this.submitSearch()
     },
     searchCategory (category) {
@@ -389,20 +422,23 @@ export default {
     }
   },
   watch: {
-    // searchQuery: _.throttle(function () {
-    //   this.searchQueryIsDirty = true;
-    //   // some expensive query
-    // }, 1000),
+    searchQuery: _.throttle(function () {
+      if (this.searchQuery === '') {
+        this.searchSuggestions = []
+      } else if (!this.searchQueryIsDirty) {
+        this.getSearchSuggestions()
+      }
+    }, 400),
     filters: {
       handler: function () {
-        if (!this.show) {
+        if (!this.showFilters) {
           this.newSearch()
         }
       },
       deep: true
     },
-    show () {
-      if (this.show === false) {
+    showFilters () {
+      if (this.showFilters === false) {
         this.newSearch()
       }
     },
@@ -423,13 +459,14 @@ export default {
       tagsList: [],
       organizationsList: [],
       selected: [],
-      show: false,
+      showFilters: false,
       showOptions: false,
       searchQuery: '',
+      searchSuggestions: {},
       filters: {
         component: '',
         tags: [],
-        organizations: []
+        organization: ''
       },
       searchResults: {},
       searchQueryIsDirty: false,
@@ -449,7 +486,7 @@ export default {
 /* Paging */
 .pageButton {
   padding: 0.2em 0.8em;
-  margin: 0.8em 0.2em;
+  margin: 0.4em 0.2em;
   border-radius: 2px;
   /* color: rgba(0,0,0,.4); */
 }
@@ -463,7 +500,7 @@ export default {
   right: 0;
   background-color: white;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  z-index: 980;
+  z-index: 3;
 }
 .activePage {
   background-color: #e0e0e0;
@@ -472,7 +509,7 @@ export default {
   background-color: #e0e0e0;
 }
 .v-spacer {
-  height: 5em;
+  height: 3.2em;
 }
 /* Search Bar */
 form {
@@ -495,6 +532,16 @@ form {
 }
 .search-icon {
   float: right;
+}
+.search-icon:hover {
+  cursor: pointer;
+}
+.search-clear {
+  float: right;
+  padding-right: 0.5em;
+}
+.search-clear:hover {
+  cursor: pointer;
 }
 input {
   caret-color: #3467c0;
@@ -535,5 +582,9 @@ input:focus + .icon {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.suggestion:hover {
+  background-color: rgba(255,255,255, 0.7);
+  cursor: pointer;
 }
 </style>
