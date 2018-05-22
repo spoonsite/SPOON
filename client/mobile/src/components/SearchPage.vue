@@ -156,7 +156,7 @@
         </div>
         <v-card>
           <v-card-text>
-            <div
+            <!-- <div
             style="float: left; margin-bottom: 0.5em;"
             v-for="(comp, i) in item.componentTypeDescription.split('>')"
             :key="comp"
@@ -169,7 +169,7 @@
               v-if="i + 1 < item.componentTypeDescription.split('>').length">
                 chevron_right
               </v-icon>
-            </div>
+            </div> -->
             <table class="table">
               <tbody>
                 <tr>
@@ -259,7 +259,7 @@ export default {
       this.filters = {
         component: '',
         tags: [],
-        organizations: []
+        organization: ''
       }
     },
     resetOptions () {
