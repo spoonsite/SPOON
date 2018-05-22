@@ -53,14 +53,15 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 				var button = this;
 				var disabledUp = false;
 				var disabledDown = false;
+				var floatingMenuPanel = button.up('panel');
 				var formBuilderPanel = button.up('panel').formBuilderPanel;
 				
 				var popupMenu = Ext.create('Ext.menu.Menu', {
 					floating: true,
 					defaults: {
 						listeners: {
-							click: function () {
-								this.up('menu').handleFieldItemCreation(this.fieldType, formBuilderPanel);
+							click: function (menuItem, e, opts) {
+								floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.options);
 							}
 						}
 					},
@@ -68,12 +69,48 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 						{
 							text: 'Short Answer',
 							iconCls: 'fa fa-minus fa-2x',
-							fieldType: 'shortAnswer'
+							defaults: {
+								listeners: {
+									click: function (menuItem, e, opts) {
+										floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.options);
+									}
+								}
+							},							
+							menu: [
+								{
+									text: 'Mapped Text',
+									fieldType: 'TEXT'									
+								},
+								{
+									text: 'Mapped Number',
+									fieldType: 'NUMBER'																		
+								},
+								{
+									text: 'Mapped Date',
+									fieldType: 'DATE'																		
+								}
+							]
 						},
 						{
 							text: 'Paragraph',
 							iconCls: 'fa fa-align-left fa-2x',
-							fieldType: 'longAnswer'
+							defaults: {
+								listeners: {
+									click: function (menuItem, e, opts) {
+										floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.options);
+									}
+								}
+							},								
+							menu: [
+								{
+									text: 'Mapped TextArea',
+									fieldType: 'TEXTAREA'									
+								},
+								{
+									text: 'Mapped RichText',
+									fieldType: 'RICHTEXT'																		
+								}
+							]
 						},
 						{
 							xtype: 'menuseparator'
@@ -81,17 +118,33 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 						{
 							text: 'Multiple Choice',
 							iconCls: 'fa fa-dot-circle-o fa-2x',
-							fieldType: 'radio'
+							fieldType: 'ATTRIBUTE_RADIO'
 						},
 						{
 							text: 'Checkboxes',
 							iconCls: 'fa fa-check-square-o fa-2x',
-							fieldType: 'checkbox'
+							fieldType: 'ATTRIBUTE_MCHECKBOX'
 						},
 						{
 							text: 'Dropdown',
 							iconCls: 'fa fa-chevron-circle-down fa-2x',
-							fieldType: 'combo'
+							defaults: {
+								listeners: {
+									click: function (menuItem, e, opts) {
+										floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.options);
+									}
+								}
+							},								
+							menu: [
+								{
+									text: 'Attribute Select',
+									fieldType: 'ATTRIBUTE_SINGLE'									
+								},
+								{
+									text: 'Entry Organization',
+									fieldType: 'ORGANIZATION'																		
+								}
+							]
 						},
 						{
 							xtype: 'menuseparator'
@@ -99,26 +152,70 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 						{
 							text: 'Grid',
 							iconCls: 'fa fa-table fa-2x',
-							fieldType: 'grid'
+							defaults: {
+								listeners: {
+									click: function (menuItem, e, opts) {
+										floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.options);
+									}
+								}
+							},							
+							menu: [
+								{
+									text: 'Attributes',
+									fieldType: 'ATTRIBUTE_MULTI'									
+								},
+								{
+									text: 'Contacts',
+									fieldType: 'CONTACT_MULTI'																		
+								},
+								{
+									text: 'External Dependency',
+									fieldType: 'EXT_DEPEND_MULTI'																		
+								},								
+								{
+									text: 'Media',
+									fieldType: 'MEDIA_MULTI'																		
+								},
+								{
+									text: 'Resources',
+									fieldType: 'RESOURCE_MULTI'																		
+								},
+								{
+									text: 'Relationships',
+									fieldType: 'RELATIONSHIPS_MULTI'																		
+								},								
+								{
+									text: 'Tags',
+									fieldType: 'TAG_MULTI'																		
+								},															
+								{
+									text: 'Child Submissions',
+									fieldType: 'SUBMISSIONS'																		
+								}	
+							]
 						},
 						{
 							text: 'Form',
 							iconCls: 'fa fa-file-text-o fa-2x',
-							fieldType: 'form'
+							defaults: {
+								listeners: {
+									click: function (menuItem, e, opts) {
+										floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.options);
+									}
+								}
+							},							
+							menu: [
+								{
+									text: 'Single Contact',
+									fieldType: 'CONTACT'									
+								},
+								{
+									text: 'Single Resource',
+									fieldType: 'RESOURCE_SIMPLE'																		
+								}
+							]
 						}
-					],
-					handleFieldItemCreation: function (fieldType, formBuilderPanel) {
-						// add a field after the current and set as active
-						var fieldIndex = formBuilderPanel.itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
-						var newFormBuilderItem = Ext.create({
-							xtype: 'osf-formbuilderitem',
-							formBuilderPanel: formBuilderPanel,
-							fieldType: fieldType
-						});
-
-						formBuilderPanel.itemContainer.insert(fieldIndex + 1, newFormBuilderItem);
-						newFormBuilderItem.setActiveFormItem(newFormBuilderItem);
-					}
+					]
 				});
 				popupMenu.showAt(button.getXY());
 			}
@@ -136,7 +233,10 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 			flex: 1,
 			cls: 'floating-menu-button',
 			handler: function() {
-				
+				var floatingMenuPanel = this.up('panel');
+				floatingMenuPanel.addNewItem(null, 'CONTENT', {
+					staticContent: ''
+				});
 			}					
 		},				
 		{
@@ -144,7 +244,10 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 			flex: 1,
 			cls: 'floating-menu-button',
 			handler: function() {
-				
+				var floatingMenuPanel = this.up('panel');
+				floatingMenuPanel.addNewItem(null, 'CONTENT', {
+					staticContent: '<hr>'
+				});				
 			}					
 		},
 		{
@@ -152,11 +255,14 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 			flex: 1,
 			cls: 'floating-menu-button',
 			handler: function() {
-				
+				var floatingMenuPanel = this.up('panel');
+				floatingMenuPanel.addNewItem(null, 'CONTENT', {
+					staticContent: '<img src="GeneralMedia?name="></img>'
+				});				
 			}					
 		},
 		{
-			text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true" data-qtip="Delete section"></i>',
+			text: '<i style="color:#5f5f5f;" class="fa fa-trash fa-2x" aria-hidden="true" data-qtip="Delete Field"></i>',
 			flex: 1,
 			cls: 'floating-menu-button',
 			itemId: 'deleteButton',
@@ -185,7 +291,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 					var button = this;
 					var disabledUp = false;
 					var disabledDown = false;
-					var formBuilderPanel = button.up('[itemId=floatingMenu]').getFormBuilderPanel();
+					var formBuilderPanel = button.up('panel').formBuilderPanel;
 
 					var itemIndex = formBuilderPanel.itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
 					if (itemIndex === 0) {
@@ -210,5 +316,40 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 				
 			}					
 		}
-	]
+	],
+	addNewItem: function(menuItem, fieldType, fieldOptions) {
+		var floatingMenu = this;		
+		var formBuilderPanel = floatingMenu.formBuilderPanel;
+		
+		fieldOptions = fieldOptions || {};
+		
+		var newTemplateField = Ext.apply({
+			fieldId: CoreUtil.uuidv4(),
+			sectionId: formBuilderPanel.activeSection,
+			fieldType: fieldType,
+			label: 'Untitled',
+			questionNumber: ''
+		},fieldOptions);
+		
+		// add a field after the current and set as active
+		var fieldIndex = formBuilderPanel.itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
+		var newFormBuilderItem = Ext.create({
+			xtype: 'osf-formbuilderitem',
+			formBuilderPanel: formBuilderPanel,
+			templateField: newTemplateField,
+			fieldType: fieldType
+		});
+
+		var insertIndex = fieldIndex + 1;
+		formBuilderPanel.itemContainer.insert(insertIndex, newFormBuilderItem);
+		newFormBuilderItem.setActiveFormItem(newFormBuilderItem);	
+		
+		if (!formBuilderPanel.activeSection.fields) {
+			formBuilderPanel.activeSection.fields = [];
+		}		
+		Ext.Array.insert(formBuilderPanel.activeSection.fields, insertIndex, [newTemplateField]); 
+		formBuilderPanel.sectionPanel.addField(formBuilderPanel.activeSection, newTemplateField, insertIndex);
+
+	}
+	
 });

@@ -20,7 +20,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-formbuilderitem',
 
-	requires: ['OSF.customSubmissionTool.ItemMenu'],
+	requires: ['OSF.customSubmissionTool.FieldOptions'],
 	
 	height: 275,
 	margin: '10 10 10 0',
@@ -42,7 +42,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				type: 'hbox',
 				align: 'center'
 			},
-			height: '20%',
+			
 			items: [
 				{
 					xtype: 'textfield',
@@ -89,11 +89,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		{
 			xtype: 'container',
 			itemId: 'itemRenderContainer',
-			height: '80%',
-			// style: 'background: red;',
+			//style: 'background: red;',
 			items: [
 				{
-					xtype: 'csfItemMenu'
+					xtype: 'csf-field-options'
 				}
 			]
 		}
@@ -148,13 +147,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			var fieldItem = this;
 
 			var formBuilderPanel = fieldItem.getFormBuilderPanel();
-			var itemContainer = formBuilderPanel.itemContainer;
-			if (itemContainer.items.items.length === 1) {
-				formBuilderPanel.queryById('deleteButton').setDisabled(true);
-			}
-			else if (itemContainer.items.items.length === 2) {
-				formBuilderPanel.queryById('deleteButton').setDisabled(false);	
-			}
+			var itemContainer = formBuilderPanel.itemContainer;		
     	},
     	click: {
     		element: 'el',
@@ -174,7 +167,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				element: fieldContainer.getEl(),
 				draggingCls: 'csf-drag',
 				constrain: {
-					vertical: true,
+					vertical: true
 				},
 				listeners: {
 					dragstart: function (self, info, event, eOpts) {

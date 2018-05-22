@@ -187,7 +187,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 			'</table>'
 		);
 
-		data = [];
+		var data = [];
 		var value = '';
 		var typeRecord = attributePanel.queryById('attributeTypeCB').getSelection();
 		if (typeRecord) {

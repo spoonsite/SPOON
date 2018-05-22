@@ -16,9 +16,9 @@
  /* Author: cyearsley */
 /* global Ext, CoreUtil, CoreService */
 
-Ext.define('OSF.customSubmissionTool.ItemMenu', {
+Ext.define('OSF.customSubmissionTool.FieldOptions', {
 	extend: 'Ext.Container',
-	alias: 'widget.csfItemMenu',
+	xtype: 'csf-field-options',
 	layout: 'column',
 
 	require: ['widget.formpanel'],
@@ -39,15 +39,10 @@ Ext.define('OSF.customSubmissionTool.ItemMenu', {
 							fieldLabel: 'Field Type <i class="fa fa-question-circle" data-qtip="Radio buttons, checkboxes, grids, etc."></i>',
 							itemId: 'fieldTypeCombo',
 							queryMode: 'local',
-							displayField: 'label',
-							valueField: 'value',
+							displayField: 'description',
+							valueField: 'code',
 							editable: false,
-							style: 'padding: 8px;',
-							listConfig: {
-								getInnerTpl: function () {
-									return '<i class="fa {icon}" aria-hidden="true"></i>&nbsp;&nbsp;{label}';
-								}
-							},
+							style: 'padding: 8px;',						
 							listeners: {
 								change: function (self, newVal) {
 
@@ -77,44 +72,11 @@ Ext.define('OSF.customSubmissionTool.ItemMenu', {
 								});
 							},
 							store: {
-								fields: ['label', 'value'],
-								data: [
-									{
-										label: 'Short Answer',
-										value: 'shortAnswer',
-										icon: 'fa-minus'
-									},
-									{
-										label: 'Long Answer',
-										value: 'longAnswer',
-										icon: 'fa-align-left'
-									},
-									{
-										label: 'Multiple Choice',
-										value: 'radio',
-										icon: 'fa-dot-circle-o'
-									},
-									{
-										label: 'Checkbox',
-										value: 'checkbox',
-										icon: 'fa-check-square-o'
-									},
-									{
-										label: 'Dropdown',
-										value: 'combo',
-										icon: 'fa-chevron-circle-down'
-									},
-									{
-										label: 'Grid',
-										value: 'grid',
-										icon: 'fa-table'
-									},
-									{
-										label: 'Form',
-										value: 'form',
-										icon: 'fa-file-text-o'
-									}
-								]
+								autoLoad: true,
+								proxy: {
+									type: 'ajax',
+									url: 'api/v1/resource/lookuptypes/SubmissionFormFieldType'
+								}
 							}
 						},
 						{
@@ -149,7 +111,7 @@ Ext.define('OSF.customSubmissionTool.ItemMenu', {
 							case 'checkbox':
 								(function () {
 									
-								}())
+								}());
 								break;
 
 							default:

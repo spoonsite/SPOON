@@ -34,6 +34,7 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 				xtype: 'grid',	
 				itemId: 'grid',
 				border: true,
+				columnLines: true,
 				columns: [
 					{text: 'mapped', dataIndex: 'mapped', align: 'center', width: 75,
 						renderer: function(value) {
@@ -153,6 +154,8 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 								model.name !== 'componentType' &&
 								model.name !== 'approvalState' &&
 								model.name !== 'changeApprovalMode' &&
+								model.name !== 'externalId' &&
+								model.name !== 'guid' &&
 								model.name !== 'notifyOfApprovalEmail'
 							) {
 							var required = false;

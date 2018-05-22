@@ -37,7 +37,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			itemId: 'submissionForm',
 			border: true,
 			progressCallback: function(currentSectionIndex, totalSections) {
-				submissionFormFullControl = this.up('panel');
+				var submissionFormFullControl = this.up('panel');
 				var total = totalSections - 1;
 				submissionFormFullControl.queryById('progress').updateProgress(currentSectionIndex / total, (currentSectionIndex + 1) + ' / ' + totalSections, true);
 				

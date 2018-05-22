@@ -199,16 +199,37 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		root.removeChild(sectionNavRecord);
 	},	
 	
-	addField: function(section, field) {
+	addField: function(section, field, index) {
 		var navPanel = this;
+		var navList = navPanel.queryById('navList');
+		var root = navList.getStore().getRoot();
+		
+		var record = Ext.create('Ext.data.TreeModel', {			
+		});
+		
+		record.set({
+			expanded: false,
+			leaf: true,			
+			text: field.questionNumber + ' ' + field.label,
+			fieldId: field.fieldId,
+			children: []			
+		});		
+		
+		root.eachChild(function(child) {
+			if (child.get('sectionId') === section.sectionId) {
+				child.insertChild(index,  record);
+			}	
+		});
 	},	
 	
 	updateField: function(field) {
 		var navPanel = this;
+		var navList = navPanel.queryById('navList');
 	},
 	
 	deleteField: function(field) {
 		var navPanel = this;
+		var navList = navPanel.queryById('navList');
 	},	
 	
 	updateTemplate: function() {

@@ -72,6 +72,7 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 			displayPanel.queryById('selectionMessage').setHidden(true);
 			sectionContainer.setHidden(false);
 			displayPanel.section = section;
+			displayPanel.formBuilderPanel.activeSection = section;
 			
 			displayPanel.queryById('menu').formBuilderPanel = formBuilderPanel;
 			displayPanel.queryById('menu').setHidden(false);
