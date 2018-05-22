@@ -71,6 +71,8 @@ import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.sort.SortUtil;
+import edu.usu.sdl.openstorefront.core.view.ChangeEntryTypeAction;
+import edu.usu.sdl.openstorefront.core.view.ChangeOwnerAction;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
@@ -95,6 +97,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentTrackingWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.MultipleEntryAction;
 import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
@@ -1042,29 +1045,30 @@ public class ComponentRESTResource
 		return response;
 	}
 	
-	@POST
+	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@APIDescription("Change owner of listed components and attach a comment")
-	@Path("/change_owner_and_comment")
+	@Path("/changeowner")
 	public Response changeOwnerAndComment(
-	
+			ChangeOwnerAction changeOwnerAction
 	)
 	{
-		Response response = null;
-		
-		return response;
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+		if (component != null) {
+			service.getComponentService().changeOwner(componentId, newOwner);
+			component.setCreateUser(newOwner);
+		}
+		return sendSingleEntityResponse(component);
 	}
 	
-	@POST
+	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@APIDescription("Change type of listed components and attach a comment")
-	@Path("/change_type_and_comment")
+	@Path("/changetype")
 	public Response changeTypeAndComment(
-	
+			ChangeEntryTypeAction changeEntryTypeAction
 	)
 	{
 		Response response = null;
@@ -1072,14 +1076,13 @@ public class ComponentRESTResource
 		return response;
 	}
 	
-	@POST
+	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@APIDescription("Change status of listed components and attach a comment")
-	@Path("/change_status_and_comment")
+	@Path("/togglestatus")
 	public Response toggleAndComment(
-	
+			MultipleEntryAction multipleEntryAction	
 	)
 	{
 		Response response = null;
