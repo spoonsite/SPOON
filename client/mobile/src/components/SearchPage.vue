@@ -1,22 +1,18 @@
 <template>
 <div class="mx-3 mt-4">
-  <form v-on:submit.prevent="newSearch()"  class="clearfix">
-    <div class="searchbar">
-      <input v-model="searchQuery" class="searchfield" type="text" placeholder="Search">
-      <v-icon class="search-icon" @click="newSearch()">search</v-icon>
-      <v-icon v-if="searchQuery !== ''" class="search-clear" @click="searchQuery = ''">fas fa-times</v-icon>
-    </div>
 
-    <v-card v-if="searchSuggestions.length > 0">
-      <v-list dense>
-        <v-list-tile v-for="i in searchSuggestions" :key="i" @click="searchQuery = i.name; newSearch(); searchSuggestions = [];" class="suggestion">
-          <v-list-tile-content>
-            {{ i.name }}
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-card>
+  <div v-if="errors.length > 0">
+    <ul>
+      <li v-for="error in errors" :key="error">
+        {{ error }}
+      </li>
+    </ul>
+  </div>
 
+  <div class="clearfix">
+    <SearchBar v-on:submitSearch="submitSearch()" :hideSuggestions="searchQueryIsDirty" v-model="searchQuery"></SearchBar>
+
+    <!-- SearchBar Menu Buttons -->
     <div style="display: inline-block; float: right;">
       <v-btn small @click="showFilters = !showFilters" flat icon>
         <v-icon style="font-size: 1.2em;">fas fa-filter</v-icon>
@@ -104,15 +100,14 @@
           :items="organizationsList"
           item-text="name"
           item-value="name"
-          label="Organizations"
+          label="Organization"
           clearable
         ></v-select>
           <v-btn @click="clear()">Clear Filters</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
-
-  </form>
+  </div> <!-- Search Bar and menu  -->
 
   <!-- Search Results -->
   <h2 v-if="searchResults.data" style="text-align: center">Search Results</h2>
@@ -194,14 +189,6 @@
     </v-expansion-panel>
   </div>
 
-  <div v-if="errors.length > 0">
-    <ul>
-      <li v-for="error in errors" :key="error">
-        {{ error }}
-      </li>
-    </ul>
-  </div>
-
   <!-- Pagination -->
   <div class="pagination">
     <v-btn
@@ -234,9 +221,13 @@
 <script>
 import _ from 'lodash'
 import axios from 'axios'
+import SearchBar from './subcomponents/SearchBar'
 
 export default {
   name: 'SearchPage',
+  components: {
+    SearchBar
+  },
   mounted () {
     if (this.$route.query.q) {
       this.searchQuery = this.$route.query.q
@@ -250,8 +241,12 @@ export default {
     this.newSearch()
   },
   beforeRouteUpdate (to, from, next) {
-    this.searchQuery = to.query.q
-    this.filters.component = to.query.comp
+    if (to.query.q) {
+      this.searchQuery = to.query.q
+    }
+    if (to.query.comp) {
+      this.filters.component = to.query.comp
+    }
     this.newSearch()
   },
   methods: {
@@ -271,7 +266,6 @@ export default {
       this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
     },
     submitSearch () {
-      this.searchSuggestions = []
       this.searchQueryIsDirty = true
       let that = this
       let searchElements = [
@@ -372,17 +366,6 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
-    getSearchSuggestions () {
-      let that = this
-      axios
-        .get(
-          `/openstorefront/api/v1/service/search/suggestions?query=${that.searchQuery}&componentType=`
-        )
-        .then(response => {
-          that.searchSuggestions = response.data
-        })
-        .catch(e => this.errors.push(e))
-    },
     newSearch () {
       this.searchPage = 0
       this.showFilters = false
@@ -422,13 +405,6 @@ export default {
     }
   },
   watch: {
-    searchQuery: _.throttle(function () {
-      if (this.searchQuery === '') {
-        this.searchSuggestions = []
-      } else if (!this.searchQueryIsDirty) {
-        this.getSearchSuggestions()
-      }
-    }, 400),
     filters: {
       handler: function () {
         if (!this.showFilters) {
@@ -462,7 +438,6 @@ export default {
       showFilters: false,
       showOptions: false,
       searchQuery: '',
-      searchSuggestions: {},
       filters: {
         component: '',
         tags: [],
@@ -511,56 +486,6 @@ export default {
 .v-spacer {
   height: 3.2em;
 }
-/* Search Bar */
-form {
-  max-width: 40em;
-  margin: 0 auto;
-}
-.searchbar {
-  border-radius: 2px;
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  padding: 0.7em 1.2em;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: 120%;
-  transition: box-shadow 0.7s;
-}
-.searchfield {
-  display: inline-block;
-  width: 80%;
-}
-.search-icon {
-  float: right;
-}
-.search-icon:hover {
-  cursor: pointer;
-}
-.search-clear {
-  float: right;
-  padding-right: 0.5em;
-}
-.search-clear:hover {
-  cursor: pointer;
-}
-input {
-  caret-color: #3467c0;
-}
-input:focus {
-  outline: none;
-}
-input:focus + .icon {
-  color: #3467c0;
-}
-.fade-enter-active {
-  transition: opacity 0.2s;
-}
-.fade-leave-active {
-  transition: opacity 0.1s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
 .clearfix:after {
   content: '';
   clear: both;
@@ -582,9 +507,5 @@ input:focus + .icon {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-.suggestion:hover {
-  background-color: rgba(255,255,255, 0.7);
-  cursor: pointer;
 }
 </style>

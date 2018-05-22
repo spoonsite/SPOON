@@ -5,7 +5,7 @@
       <img class="logo" src="../assets/img/SPOON_logo.png" width="300" alt="SPOON Logo">
     </div>
 
-    <SearchBar class="mx-3 my-4"></SearchBar>
+    <SearchBar v-on:submitSearch="submitSearch()" v-model="searchQuery" class="mx-3 my-4"></SearchBar>
 
     <div style="margin: 0 1.5em;">
       <div style="max-width: 36em; margin: 0 auto;">
@@ -48,6 +48,7 @@ export default {
   },
   data () {
     return {
+      searchQuery: '',
       categories: [
         {
           title: 'Space',
@@ -83,6 +84,9 @@ export default {
   methods: {
     link (query) {
       return `/search?q=${query}`
+    },
+    submitSearch () {
+      this.$router.push(`/search?q=${this.searchQuery}`)
     }
   },
   computed: {

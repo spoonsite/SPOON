@@ -1,31 +1,78 @@
 <template>
   <form v-on:submit.prevent="submitQuery()">
     <div class="searchbar">
-      <input v-model="searchQuery" class="searchfield" type="text" placeholder="Search">
+      <input
+        :value="value"
+        @input="$emit('input', $event.target.value)"
+        class="searchfield"
+        type="text"
+        placeholder="Search"
+      >
       <v-icon class="search-icon" @click="submitQuery()">search</v-icon>
+      <v-icon v-if="value !== ''" class="search-clear" @click="$emit('input', '')">fas fa-times</v-icon>
     </div>
+
+    <v-card v-if="searchSuggestions.length > 0">
+      <v-list dense>
+        <v-list-tile v-for="i in searchSuggestions" :key="i" @click="submitQuery(i.name);" class="suggestion">
+          <v-list-tile-content>
+            {{ i.name }}
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-card>
+
   </form>
 </template>
 
 <script>
+import axios from 'axios'
+import _ from 'lodash'
+
 export default {
   name: 'SearchBar',
-  props: [],
+  props: ['value', 'hideSuggestions'],
   mounted () {
-
   },
   data () {
     return {
-      searchQuery: ''
+      searchSuggestions: []
     }
   },
   methods: {
-    submitQuery () {
-      this.$router.push(`/search?q=${this.searchQuery}`)
+    submitQuery (query) {
+      if (query) {
+        this.$emit('input', query)
+      }
+      this.searchSuggestions = []
+      this.$emit('submitSearch')
+      // this.$router.push(`/search?q=${this.value}`)
+    },
+    getSearchSuggestions () {
+      let that = this
+      if (!this.hideSuggestions) {
+        axios
+          .get(
+            `/openstorefront/api/v1/service/search/suggestions?query=${that.value}&componentType=`
+          )
+          .then(response => {
+            that.searchSuggestions = response.data
+          })
+          .catch(e => this.errors.push(e))
+      }
     }
   },
   computed: {
 
+  },
+  watch: {
+    value: _.throttle(function () {
+      if (this.value === '') {
+        this.searchSuggestions = []
+      } else if (!this.searchQueryIsDirty) {
+        this.getSearchSuggestions()
+      }
+    }, 400)
   }
 }
 </script>
@@ -50,6 +97,16 @@ export default {
 .search-icon {
   float: right;
 }
+.search-icon:hover {
+  cursor: pointer;
+}
+.search-clear {
+  float: right;
+  padding-right: 0.5em;
+}
+.search-clear:hover {
+  cursor: pointer;
+}
 input {
     caret-color: #3467C0;
 }
@@ -58,14 +115,6 @@ input:focus {
 }
 input:focus + .icon {
   color: #3467C0;
-}
-.pill {
-  border-radius: 10px;
-  color: white;
-  background-color:#555;
-  padding: 0.1em 0.5em;
-  margin-right: 0.3em;
-  margin-top: 0.3em;
 }
 .fade-enter-active, {
   transition: opacity .2s;
