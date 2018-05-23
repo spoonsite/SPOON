@@ -1291,7 +1291,7 @@
 																	title: 'validation error. the server could not process the request. ',
 																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
 																	width: 550,
-																	autoclosedelay: 10000,
+																	autoclosedelay: 10000
 																});
 															}
 														}
@@ -1303,7 +1303,7 @@
 															title: 'validation error. the server could not process the request. ',
 															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
 															width: 550,
-															autoclosedelay: 10000,
+															autoclosedelay: 10000
 														});
 													}
 												});
@@ -1429,7 +1429,7 @@
 																	title: 'validation error. the server could not process the request. ',
 																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
 																	width: 550,
-																	autoclosedelay: 10000,
+																	autoclosedelay: 10000
 																});
 															}
 														}
@@ -1441,7 +1441,7 @@
 															title: 'validation error. the server could not process the request. ',
 															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
 															width: 550,
-															autoclosedelay: 10000,
+															autoclosedelay: 10000
 														});
 													}
 												});
@@ -1562,7 +1562,7 @@
 																	title: 'validation error. the server could not process the request. ',
 																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
 																	width: 550,
-																	autoclosedelay: 10000,
+																	autoclosedelay: 10000
 																});
 															}
 														}
@@ -1574,7 +1574,7 @@
 															title: 'validation error. the server could not process the request. ',
 															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
 															width: 550,
-															autoclosedelay: 10000,
+															autoclosedelay: 10000
 														});
 													}
 												});
