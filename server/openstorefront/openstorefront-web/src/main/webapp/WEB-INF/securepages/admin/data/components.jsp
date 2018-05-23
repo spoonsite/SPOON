@@ -1270,7 +1270,7 @@
 													componentIds: componentIds,
 													comment: {
 														commentType: 'ADMIN',
-														comment: form.queryById('searchComment').value
+														comment: form.queryById('searchComment').getValue()
 													}
 												};
 												if(data.comment.comment === ''){
@@ -1407,7 +1407,7 @@
 													componentIds: componentIds,
 													comment: {
 														commentType: 'ADMIN',
-														comment: form.queryById('searchComment').value
+														comment: form.queryById('searchComment').getValue()
 													},
 													newOwner: username
 												};
@@ -1539,7 +1539,7 @@
 													componentIds: componentIds,
 													comment: {
 														commentType: 'ADMIN',
-														comment: form.queryById('searchComment').value
+														comment: form.queryById('searchComment').getValue()
 
 													},
 													newType: componentType
