@@ -28,7 +28,7 @@ public class ChangeEntryTypeAction
 	@NotNull
 	@ConsumeField
 	private String newType;
-	
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ChangeEntryTypeAction()
 	{
 	}
