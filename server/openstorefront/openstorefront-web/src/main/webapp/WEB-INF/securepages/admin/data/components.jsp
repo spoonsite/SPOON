@@ -1261,15 +1261,11 @@
 											formBind: true,
 											iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
-
 												var form = this.up('form');
-												
-												Ext.getCmp('componentGrid').setLoading(true);
-
+												Ext.getCmp('componentGrid').setLoading('Toggling the selected entries...');
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
-
 												var data = {
 													componentIds: componentIds,
 													comment: {
@@ -1277,11 +1273,16 @@
 														comment: form.queryById('searchComment').value
 													}
 												};
-
+												if(data.comment.comment === ''){
+													data.comment = null;
+												}
 												Ext.Ajax.request({
 													url: 'api/v1/resource/components/togglestatus',
 													method: 'PUT',
 													jsonData: data,
+													callback: function(){
+														Ext.getCmp('componentGrid').setLoading(false);
+													},
 													success: function(response, opts) {
 														if (response.responseText !== '') {
 															if( response.responseText.indexOf('errors') !== -1) {
@@ -1294,6 +1295,8 @@
 																});
 															}
 														}
+														actionRefreshComponentGrid();
+														form.reset();
 													},
 													failure: function(){
 														Ext.toast({
@@ -1304,10 +1307,7 @@
 														});
 													}
 												});
-												actionRefreshComponentGrid();
-												Ext.getCmp('componentGrid').setLoading(false);
-												form.reset();
-												this.up('#toggleWin').close();
+												this.up('window').close()
 											}
 										},
 										{
@@ -1397,15 +1397,12 @@
 											formBind: true,
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
-												
+												Ext.getCmp('componentGrid').setLoading('Changing the owner for the selected entries...');
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
-												
 												var form = this.up('form');
-												
 												var username = form.getForm().findField('currentDataOwner').getValue();
-
 												var data = {
 													componentIds: componentIds,
 													comment: {
@@ -1414,13 +1411,16 @@
 													},
 													newOwner: username
 												};
-
-												componentGrid.mask('Updating Owner(s)...');
-
+												if(data.comment.comment === ''){
+													data.comment = null;
+												}
 												Ext.Ajax.request({
 													url: 'api/v1/resource/components/changeowner',
 													method: 'PUT',
 													jsonData: data,
+													callback: function(){
+														Ext.getCmp('componentGrid').setLoading(false);
+													},
 													success: function(response, opts) {
 														if (response.responseText !== '') {
 															if( response.responseText.indexOf('errors') !== -1) {
@@ -1433,6 +1433,8 @@
 																});
 															}
 														}
+														actionRefreshComponentGrid();
+														form.reset();
 													},
 													failure: function(){
 														Ext.toast({
@@ -1443,13 +1445,7 @@
 														});
 													}
 												});
-
-												actionRefreshComponentGrid();
-												
 												this.up('window').close()
-
-												componentGrid.unmask();
-												form.reset();
 											}
 										},
 										{
@@ -1533,16 +1529,11 @@
 											formBind: true,
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
-
-												// Get selected component ids for components that need updated
+												Ext.getCmp('componentGrid').setLoading('Changing the type for the selected entries...');
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
 												var componentType = this.up('form').getForm().findField('componentType').getValue();
-
-												componentGrid.mask('Updating Type(s)...');
-												this.up('window').close();
-												
 												var form = this.up('form');
 												var data = {
 													componentIds: componentIds,
@@ -1553,11 +1544,16 @@
 													},
 													newType: componentType
 												};
-												
+												if(data.comment.comment === ''){
+													data.comment = null;
+												}
 												Ext.Ajax.request({
 													url: 'api/v1/resource/components/changetype',
 													method: 'PUT',
 													jsonData: data,
+													callback: function(){
+														Ext.getCmp('componentGrid').setLoading(false);
+													},
 													success: function(response, opts) {
 														if (response.responseText !== '') {
 															if( response.responseText.indexOf('errors') !== -1) {
@@ -1570,6 +1566,8 @@
 																});
 															}
 														}
+														form.reset();
+														actionRefreshComponentGrid();
 													},
 													failure: function(){
 														Ext.toast({
@@ -1580,10 +1578,7 @@
 														});
 													}
 												});
-
-												form.reset();
-												actionRefreshComponentGrid();
-												componentGrid.unmask();
+												this.up('window').close()
 											}
 										},
 										{
