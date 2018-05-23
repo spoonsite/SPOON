@@ -109,8 +109,6 @@ Ext.define('OSF.form.Contacts', {
 								var componentId = contactPanel.contactGrid.componentId;
 								if (data.contactId) {
 									//Edit an existing contact
-									Ext.MessageBox.confirm('Edit Existing Contact?', "You are about to edit an existing contact, would you like save your changes?", function (btn, text) {
-										if (btn == 'yes') {
 											if (data.componentContactId) {
 												CoreUtil.submitForm({
 													url: 'api/v1/resource/components/' + componentId + '/contacts/' + data.componentContactId,
@@ -136,18 +134,7 @@ Ext.define('OSF.form.Contacts', {
 												});
 											}
 										}
-									});
-								}
 								else {
-									Ext.Ajax.request({
-										url: 'api/v1/resource/contacts/filtered',
-										method: 'GET',
-										success: function (response, opts) {
-											var data = Ext.decode(response.responseText);
-											console.log(data);
-											console.log(data.length);
-										},
-									});
 									//Create a new contact
 									CoreUtil.submitForm({
 										url: 'api/v1/resource/components/' + componentId + '/contacts',
@@ -443,8 +430,12 @@ Ext.define('OSF.form.Contacts', {
 							itemId: 'editBtn',
 							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 							handler: function () {
+								var record = contactPanel.contactGrid.getSelection()[0]
 								this.up('grid').down('form').reset();
-								this.up('grid').down('form').loadRecord(contactPanel.contactGrid.getSelection()[0]);
+								this.up('grid').down('form').loadRecord(record);
+								var grid = this.up('grid').down('form').down('grid');
+								var index = grid.store.find('contactId',record.data.contactId);
+								grid.getView().select(index);
 							}
 						},
 						{
