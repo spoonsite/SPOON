@@ -1065,7 +1065,7 @@ public class ComponentRESTResource
 					saveEntryActionComment(changeOwnerAction, componentId);
 				}
 				else{
-					LOG.log(Level.FINE, ()-> "Cannot find componentId: " + componentId);
+					LOG.log(Level.FINE, ()-> "Change owner error cannot find componentId: " + componentId);
 				}
 			}
 		} else {
@@ -1106,7 +1106,7 @@ public class ComponentRESTResource
 					saveEntryActionComment(changeEntryTypeAction, componentId);
 				}
 				else{
-					LOG.log(Level.FINE, ()-> "Cannot find componentId: " + componentId);
+					LOG.log(Level.FINE, ()-> "Change Type Error cannot find componentId: " + componentId);
 				}
 			}
 		} else {
@@ -1140,7 +1140,7 @@ public class ComponentRESTResource
 					saveEntryActionComment(multipleEntryAction, componentId);
 				}
 				else{
-					LOG.log(Level.FINE, ()-> "Cannot find componentId: " + componentId);
+					LOG.log(Level.FINE, ()-> "Toggle Error, cannot find componentId: " + componentId);
 				}
 			}
 		} else {
