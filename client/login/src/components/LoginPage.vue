@@ -12,13 +12,13 @@
 </template>
 
 <script>
-import TitleBarComp from "./SubComps/TitleBarComp";
-import LoginComp from "./SubComps/LoginComp";
-import SignupComp from "./SubComps/SignupComp";
-import VideoComp from "./SubComps/VideoComp";
+import TitleBarComp from './SubComps/TitleBarComp'
+import LoginComp from './SubComps/LoginComp'
+import SignupComp from './SubComps/SignupComp'
+import VideoComp from './SubComps/VideoComp'
 
 export default {
-  name: "LoginPage",
+  name: 'LoginPage',
   components: {
     LoginComp,
     SignupComp,
@@ -26,14 +26,14 @@ export default {
     TitleBarComp
   },
   computed: {
-    title(){
-      return this.$store.state.aTitle;
+    title () {
+      return this.$store.state.aTitle
     },
-    subTitle(){
-      return this.$store.state.aSubtitle;
+    subTitle () {
+      return this.$store.state.aSubtitle
     }
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

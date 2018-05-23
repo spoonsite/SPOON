@@ -8,27 +8,26 @@
 </template>
 
 <script>
-import ForgotUsernameComp from "./SubComps/ForgotUsernameComp";
-import TitleBarComp from "./SubComps/TitleBarComp"
+import ForgotUsernameComp from './SubComps/ForgotUsernameComp'
+import TitleBarComp from './SubComps/TitleBarComp'
 
 export default {
-  name: "ForgotUserPage",
+  name: 'ForgotUserPage',
   components: {
     ForgotUsernameComp,
     TitleBarComp
   },
   computed: {
-    title(){
-      return this.$store.state.aTitle;
+    title () {
+      return this.$store.state.aTitle
     },
-    subTitle(){
-      return this.$store.state.aSubtitle;
+    subTitle () {
+      return this.$store.state.aSubtitle
     }
   }
-};
+}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .login-comp {
   width: 50%;

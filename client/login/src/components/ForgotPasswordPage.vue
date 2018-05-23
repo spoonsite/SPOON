@@ -8,24 +8,24 @@
 </template>
 
 <script>
-import ForgotPasswordComp from "./SubComps/ForgotPasswordComp";
-import TitleBarComp from "./SubComps/TitleBarComp"
+import ForgotPasswordComp from './SubComps/ForgotPasswordComp'
+import TitleBarComp from './SubComps/TitleBarComp'
 
 export default {
-  name: "ForgotPasswordPage",
+  name: 'ForgotPasswordPage',
   components: {
     ForgotPasswordComp,
     TitleBarComp
   },
   computed: {
-    title(){
-      return this.$store.state.aTitle;
+    title () {
+      return this.$store.state.aTitle
     },
-    subTitle(){
-      return this.$store.state.aSubtitle;
+    subTitle () {
+      return this.$store.state.aSubtitle
     }
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

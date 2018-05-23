@@ -35,36 +35,36 @@
 
 <script>
 export default {
-  name: "LoginComp",
+  name: 'LoginComp',
   data: () => ({
     valid: false,
-    password: "",
+    password: '',
     passwordRules: [
-      v => !!v || "Password is required"
-      //v => (v. && v.length <= 20) || "Password must be less than 20 characters",
-      //v => (!v && v.length >= 8) || "Password must be at least 8 characters"
+      v => !!v || 'Password is required'
+      // v => (v. && v.length <= 20) || "Password must be less than 20 characters",
+      // v => (!v && v.length >= 8) || "Password must be at least 8 characters"
     ],
-    email: "",
+    email: '',
     emailRules: [
-      v => !!v || "E-mail is required",
+      v => !!v || 'E-mail is required',
       v =>
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-        "E-mail must be valid"
+        'E-mail must be valid'
     ],
-    username:"",
-    usernameRules:[
-     v=> !!v || "Username is required"
+    username: '',
+    usernameRules: [
+      v => !!v || 'Username is required'
     ]
   }),
-  methods:{
-    testAPI: function(event){
-      console.log("Button Clicked Calling API");
-      if(event){
-           this.$api.getTest();
+  methods: {
+    testAPI: function (event) {
+      console.log('Button Clicked Calling API')
+      if (event) {
+        this.$api.getTest()
       }
     }
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

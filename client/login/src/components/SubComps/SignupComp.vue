@@ -33,8 +33,8 @@
 
 <script>
 export default {
-  name: "SignUpComp"
-};
+  name: 'SignUpComp'
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -54,8 +54,7 @@ div ol {
 }
 ol.circles-list {
   list-style-type: none;
-  list-style-type: decimal !ie; /*IE 7- hack*/
-
+  /* list-style-type: decimal !ie; IE 7- hack */
   margin: 0;
   margin-left: 4em;
   padding: 0;

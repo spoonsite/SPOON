@@ -27,26 +27,26 @@
 
 <script>
 export default {
-  name: "RegistrationCredentialsComp",
+  name: 'RegistrationCredentialsComp',
   data: () => ({
     valid: false,
-    email: "",
+    email: '',
     emailRules: [
-      v => !!v || "E-mail is required",
+      v => !!v || 'E-mail is required',
       v =>
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-        "E-mail must be valid"
+        'E-mail must be valid'
     ]
   }),
-  methods:{
-    testAPI: function(event){
-      console.log("Button Clicked Calling API");
-      if(event){
-           this.$api.getTest();
+  methods: {
+    testAPI: function (event) {
+      console.log('Button Clicked Calling API')
+      if (event) {
+        this.$api.getTest()
       }
     }
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

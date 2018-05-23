@@ -19,9 +19,9 @@
 
 <script>
 export default {
-  name: "TitleBarComp",
-  props: ["CTitle", "CSubtitle"]
-};
+  name: 'TitleBarComp',
+  props: ['CTitle', 'CSubtitle']
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
