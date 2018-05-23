@@ -107,8 +107,7 @@ Ext.define('OSF.form.Contacts', {
 								var form = this.up('form');
 								var data = form.getValues();
 								var componentId = contactPanel.contactGrid.componentId;
-								if (data.contactId) {
-									//Edit an existing contact
+								var existingStore = this.up('form').down('grid').getStore();
 											if (data.componentContactId) {
 												CoreUtil.submitForm({
 													url: 'api/v1/resource/components/' + componentId + '/contacts/' + data.componentContactId,
@@ -117,23 +116,25 @@ Ext.define('OSF.form.Contacts', {
 													form: form,
 													success: function () {
 														contactPanel.contactGrid.getStore().reload();
+														existingStore.reload();
 														form.reset();
 													}
 												});
 											}
-											else {
-												CoreUtil.submitForm({
-													url: 'api/v1/resource/contacts/' + data.contactId,
-													method: 'PUT',
-													data: data,
-													form: form,
-													success: function () {
-														contactPanel.contactGrid.getStore().reload();
-														form.reset();
-													}
-												});
-											}
-										}
+										// 	else {
+										// 		CoreUtil.submitForm({
+										// 			url: 'api/v1/resource/contacts/' + data.contactId,
+										// 			method: 'PUT',
+										// 			data: data,
+										// 			form: form,
+										// 			success: function () {
+										// 				contactPanel.contactGrid.getStore().reload();
+										// 				existingStore.reload();
+										// 				form.reset();
+										// 			}
+										// 		});
+										// 	}
+										// }
 								else {
 									//Create a new contact
 									CoreUtil.submitForm({
@@ -143,6 +144,7 @@ Ext.define('OSF.form.Contacts', {
 										form: form,
 										success: function () {
 											contactPanel.contactGrid.getStore().reload();
+											existingStore.reload();
 											form.reset();
 										}
 									});
@@ -378,7 +380,6 @@ Ext.define('OSF.form.Contacts', {
 										itemclick: function (view, record, item, index, opts) {
 											var contactType =  this.up('form').getForm().findField('contactType').getValue();
 											this.up('form').reset();
-											console.log(record);
 											this.up('form').loadRecord(record);
 											this.up('form').getForm().findField('contactType').setValue(contactType);
 										}
