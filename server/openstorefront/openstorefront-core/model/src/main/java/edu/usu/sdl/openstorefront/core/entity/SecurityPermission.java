@@ -352,7 +352,7 @@ public class SecurityPermission
 
 		// Reports
 		codeMap.put(REPORTS_SCHEDULE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE, "Reports schedule", null, GROUPBY_REPORTS));
-		codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "Reports", null, GROUPBY_REPORTS));
+		codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "General Reports", null, GROUPBY_REPORTS));
 		codeMap.put(REPORTS_ALL, newLookup(SecurityPermission.class, REPORTS_ALL, "Reports All - Allows viewing reports from all users", null, GROUPBY_REPORTS));
 
 		// User submissions/management permissions
@@ -585,7 +585,7 @@ public class SecurityPermission
 		// ========================================================================================================================
 		codeMap.put(ENTRY_TAG, newLookup(SecurityPermission.class, ENTRY_TAG, "Entry tag", null, GROUPBY_OLD));
 		codeMap.put(USER_SUBMISSIONS, newLookup(SecurityPermission.class, USER_SUBMISSIONS, "User submissions", null, GROUPBY_OLD));
-		codeMap.put(EVALUATIONS, newLookup(SecurityPermission.class, EVALUATIONS, "Evaluations", null, GROUPBY_OLD));
+		codeMap.put(EVALUATIONS, newLookup(SecurityPermission.class, EVALUATIONS, "General Evaluations", null, GROUPBY_OLD));
 		codeMap.put(RELATIONSHIP_VIEW_TOOL, newLookup(SecurityPermission.class, RELATIONSHIP_VIEW_TOOL, "Relationship View Tool", null, GROUPBY_OLD));
 		codeMap.put(REPORT_ENTRY_LISTING_REPORT, newLookup(SecurityPermission.class, REPORT_ENTRY_LISTING_REPORT, "Allows running entry listing report", null, GROUPBY_OLD));
 		codeMap.put(ADMIN_USER_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT, "Admin user management", null, GROUPBY_OLD));
