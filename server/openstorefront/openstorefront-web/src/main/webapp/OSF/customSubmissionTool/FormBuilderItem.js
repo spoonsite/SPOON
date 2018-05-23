@@ -17,12 +17,12 @@
 /* global Ext, CoreUtil, CoreService */
 
 Ext.define('OSF.customSubmissionTool.FormBuilderItem', {	
-	extend: 'Ext.panel.Panel',
+	extend: 'Ext.form.Panel',
 	alias: 'widget.osf-formbuilderitem',
 
 	requires: ['OSF.customSubmissionTool.FieldOptions'],
 	
-	height: 275,
+	minHeight: 275,
 	margin: '10 10 10 0',
 	padding: '10 20 10 20',
 	target: true,
@@ -32,60 +32,55 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	layout: {
 		type: 'anchor'
 	},
-
 	isActive: false,
-	
+	defaults: {
+		labelAlign: 'right',
+		labelWidth: 150,
+		width: '100%'		
+	},
 	items: [
 		{
-			xtype: 'container',
-			layout: {
-				type: 'hbox',
-				align: 'center'
-			},
-			
-			items: [
-				{
-					xtype: 'textfield',
-					itemId: 'labelCode',
-					width: '9%',
-					maxLength: 3,
-					enforceMaxLength: true,
-					fieldStyle: 'font-size: 32px; text-align: center; padding: 0;',
-					height: 50,
-					listeners: {
-						change: function (self, newVal) {
-							// var formBuilderItem = this.up('[cls=form-builder-item]');
-							// formBuilderItem.labelCode = newVal;
-							// formBuilderItem.saveSection();
-							this.up('[cls=form-builder-item]').saveSection('labelCode', newVal);
-						}
-					}
-				},
-				{
-					xtype: 'label',
-					text: '∙',
-					width: '1%',
-					style: 'font-size: 32px; padding-top: 32px;',
-					height: 50
-				},
-				{
-					xtype: 'textfield',
-					itemId: 'question',
-					emptyText: 'Untitled Question',
-					fieldStyle: 'font-size: 32px; padding: 0;',
-					height: 50,
-					width: '90%',
-					listeners: {
-						change: function (self, newVal) {
-							// var formBuilderItem = this.up('[cls=form-builder-item]');
-							// formBuilderItem.question = newVal;
-							// formBuilderItem.saveSection();
-							this.up('[cls=form-builder-item]').saveSection('question', newVal);
-						}
-					}
+			xtype: 'textfield',
+			itemId: 'questionNumber',
+			name: 'questionNumber',
+			fieldLabel: 'Question Number',
+			maxLength: 80,
+			enforceMaxLength: true,
+			listeners: {
+				change: function (self, newVal) {
+					var formBuilderItem = this.up('panel');														
+					formBuilderItem.templateField.questionNumber = newVal;
+					formBuilderItem.updateQuestion();
 				}
-			]
+			}
 		},
+		{
+			xtype: 'textarea',
+			itemId: 'label',
+			name: 'label',
+			fieldLabel: 'Label',				
+			maxLength: 4096,
+			enforceMaxLength: true,
+			listeners: {
+				change: function (self, newVal) {
+					var formBuilderItem = this.up('panel');														
+					formBuilderItem.templateField.label = newVal;
+					formBuilderItem.updateQuestion();							
+				}
+			}
+		},
+		{
+			xtype: 'textfield',
+			name: 'labelTooltip',
+			fieldLabel: 'Label Tooltip',
+			itemId: 'labelTooltip',	
+			listeners: {
+				change: function (self, newVal) {
+					var formBuilderItem = this.up('panel');														
+					formBuilderItem.templateField.labelTooltip = newVal;						
+				}
+			}			
+		},		
 		{
 			xtype: 'container',
 			itemId: 'itemRenderContainer',
@@ -98,23 +93,27 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		}
 	],
 	
-	saveSection: function (itemField, newVal) {
+	updateQuestion: function (itemField, newVal) {
 		var formBuilderItem = this;
-		if (this.getFormBuilderPanel()) {
+		formBuilderItem.formBuilderPanel.sectionPanel.updateField(formBuilderItem.templateField);
+		
+//		if (this.getFormBuilderPanel()) {
+//
+//			if (itemField && newVal) {
+//
+//				if (formBuilderItem.getFormBuilderPanel().validSectionItems.indexOf(itemField) === -1) {
+//					console.error("There is no support for the field: ", itemField);
+//				}
+//				else {
+//					this[itemField] = newVal;
+//				}
+//			}
+//
+//			// saveSection defined is the DisplayPanel
+//			this.getFormBuilderPanel().saveSection(true);
+//		}
+		
 
-			if (itemField && newVal) {
-
-				if (formBuilderItem.getFormBuilderPanel().validSectionItems.indexOf(itemField) === -1) {
-					console.error("There is no support for the field: ", itemField);
-				}
-				else {
-					this[itemField] = newVal;
-				}
-			}
-
-			// saveSection defined is the DisplayPanel
-			this.getFormBuilderPanel().saveSection(true);
-		}
 	},
 
     getFormBuilderPanel: function () {
@@ -126,7 +125,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     },
 
     setActiveFormItem: function (cmp) {
-
     	var newItem = cmp || this;
     	var formBuilderPanel = this.getFormBuilderPanel();
 		var previousActiveItem = formBuilderPanel.activeItem;
@@ -138,7 +136,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		formBuilderPanel.activeItem = newItem;
 
 		// update the menu position
-		formBuilderPanel.floatingMenu.updatePosition();
+		newItem.floatingMenu.updatePosition();
     },
 
     listeners: {
@@ -162,55 +160,55 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			var fieldContainer = this;
 
 			// set this container as a drag source
-			new Ext.drag.Source({
-				// handle: '#' + fieldContainer.el.dom.id,
-				element: fieldContainer.getEl(),
-				draggingCls: 'csf-drag',
-				constrain: {
-					vertical: true
-				},
-				listeners: {
-					dragstart: function (self, info, event, eOpts) {
-						fieldContainer.disable();
-					},
-					dragend: function (self, info, event, eOpts) {
-
-						// if there is a valid target container:
-						//		* swap the y coords of both containers
-						//		* swap the location in the parent panel's items array
-						if (info.target !== null) {
-
-							// identify the active (container being dragged,) and the target container
-							var activeContainer = fieldContainer;
-							var targetContainer = Ext.getCmp(info.target._element.id);
-							var itemContainer = fieldContainer.getItemContainer();
-
-							// get the index of the active and target field items in the item container
-							var activeIndex = itemContainer.items.items.indexOf(activeContainer);
-							var targetIndex = itemContainer.items.items.indexOf(targetContainer);
-
-							// reset the y index of the active container, and then swap the items.
-							activeContainer.setY(fieldContainer.getY() - event.delta.y);
-							itemContainer.insert(targetIndex, activeContainer);
-							itemContainer.insert(activeIndex, targetContainer);
-
-							// update the floating menu
-							fieldContainer.getFormBuilderPanel().floatingMenu.updatePosition();
-
-						} else {
-
-							fieldContainer.setY(fieldContainer.getY() - event.delta.y);
-						}
-
-						fieldContainer.enable();
-					}
-				}
-			});
-
-			// set this container as an eligible drag source
-			fieldContainer.dragTarget = new Ext.drag.Target({
-				element: fieldContainer.getEl()
-			});
+//			new Ext.drag.Source({
+//				// handle: '#' + fieldContainer.el.dom.id,
+//				element: fieldContainer.getEl(),
+//				draggingCls: 'csf-drag',
+//				constrain: {
+//					vertical: true
+//				},
+//				listeners: {
+//					dragstart: function (self, info, event, eOpts) {
+//						fieldContainer.disable();
+//					},
+//					dragend: function (self, info, event, eOpts) {
+//
+//						// if there is a valid target container:
+//						//		* swap the y coords of both containers
+//						//		* swap the location in the parent panel's items array
+//						if (info.target !== null) {
+//
+//							// identify the active (container being dragged,) and the target container
+//							var activeContainer = fieldContainer;
+//							var targetContainer = Ext.getCmp(info.target._element.id);
+//							var itemContainer = fieldContainer.getItemContainer();
+//
+//							// get the index of the active and target field items in the item container
+//							var activeIndex = itemContainer.items.items.indexOf(activeContainer);
+//							var targetIndex = itemContainer.items.items.indexOf(targetContainer);
+//
+//							// reset the y index of the active container, and then swap the items.
+//							activeContainer.setY(fieldContainer.getY() - event.delta.y);
+//							itemContainer.insert(targetIndex, activeContainer);
+//							itemContainer.insert(activeIndex, targetContainer);
+//
+//							// update the floating menu
+//							fieldContainer.getFormBuilderPanel().floatingMenu.updatePosition();
+//
+//						} else {
+//
+//							fieldContainer.setY(fieldContainer.getY() - event.delta.y);
+//						}
+//
+//						fieldContainer.enable();
+//					}
+//				}
+//			});
+//
+//			// set this container as an eligible drag source
+//			fieldContainer.dragTarget = new Ext.drag.Target({
+//				element: fieldContainer.getEl()
+//			});
 
 			// set the field type
 			var fieldTypeCombo = fieldContainer.queryById('fieldTypeCombo');
@@ -225,7 +223,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		this.callParent();
 		var fieldContainer = this;
 
-		fieldContainer.queryById('question').setValue(fieldContainer.question);
-		fieldContainer.queryById('labelCode').setValue(fieldContainer.labelCode);
+		var record = Ext.create('Ext.data.Model', {			
+		});
+		record.set(fieldContainer.templateField);
+		fieldContainer.loadRecord(record);
 	}
 });

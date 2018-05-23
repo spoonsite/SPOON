@@ -53,6 +53,11 @@ Ext.define('OSF.customSubmissionTool.EntryTypeSelectWindow', {
 						proxy: {
 							type: 'ajax',
 							url: 'api/v1/resource/componenttypes/lookup'
+						},
+						listeners: {
+							load: function(store, records, successful, operation, opts) {
+								
+							}
 						}
 					}
 				}
@@ -88,7 +93,16 @@ Ext.define('OSF.customSubmissionTool.EntryTypeSelectWindow', {
 				}
 			]
 		}
-	]
+	],
+	initComponent: function () {
+		this.callParent();
+		var entryTypeWindow = this;
+		
+		
+			
+		
+	}
+	
 	
 });	
 

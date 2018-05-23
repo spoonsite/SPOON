@@ -131,6 +131,9 @@ Ext.define('OSF.customSubmissionTool.Window', {
 			if (submissionWindow.template.sections) {
 				Ext.Array.forEach(submissionWindow.template.sections, function(section, index){
 					section.sectionOrder = index;
+					Ext.Array.forEach(section.fields, function(field, indexField) {
+						field.fieldOrder = indexField;
+					});					
 				});
 			}			
 
@@ -144,18 +147,39 @@ Ext.define('OSF.customSubmissionTool.Window', {
 				},
 				success: function(response, opts){
 					var updatedTemplate = Ext.decode(response.responseText);
-					Ext.toast('Saved Template Successfully');
+					
+					if (updatedTemplate.errors && updatedTemplate.success === false) {
+						//read errors;
+						var details = '';
+						if (updatedTemplate.errors) {
+							Ext.Array.each(updatedTemplate.errors.entry, function (item, index, entry) {
+								details += item.key + ': ' + item.value + '<br>';
+							});
+						}
+						
+						Ext.Msg.show({
+							title:'Save Error',
+							message: 'Failed to Save; Check Input. <br><br> <b>Details:</b><br> '+ details ,
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) {								
+							}
+						});						
+						
+					} else {
+						Ext.toast('Saved Template Successfully');
 
-					submissionWindow.template.updateUser = updatedTemplate.updateUser;
-					submissionWindow.template.updateDts = Ext.Date.parse(updatedTemplate.updateDts, 'c');
+						submissionWindow.template.updateUser = updatedTemplate.updateUser;
+						submissionWindow.template.updateDts = Ext.Date.parse(updatedTemplate.updateDts, 'c');
 
-					//update all section id and field ids
+						//update all section id and field ids
 
 
 
-					submissionWindow.formBuilderPanel.updateTemplate(updatedTemplate);
-					if (submissionWindow.saveCallback) {
-						submissionWindow.saveCallback(updatedTemplate);
+						submissionWindow.formBuilderPanel.updateTemplate(updatedTemplate);
+						if (submissionWindow.saveCallback) {
+							submissionWindow.saveCallback(updatedTemplate);
+						}
 					}
 				}
 			});

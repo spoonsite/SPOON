@@ -57,18 +57,21 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					handler: function() {
 						var navPanel = this.up('panel');
 						
-						var formBuilderPanel = navPanel.formBuilderPanel;
+						Ext.Msg.show({
+							title:'Delete Section?',
+							message: 'Are you sure you want to delete this section and all questions in that section?<br><br><b>Note:</b> Delete is not permanent until the template is saved.',
+							buttons: Ext.Msg.YESNO,
+							icon: Ext.Msg.QUESTION,
+							fn: function(btn) {
+								if (btn === 'yes') {
+									var formBuilderPanel = navPanel.formBuilderPanel;
 						
-						var navList = navPanel.queryById('navList');
-						navPanel.deleteSection(navList.getSelection()[0]);
-						
-						
-						//formBuilderPanel.removeSection(formBuilderPanel.activeSection);
+									var navList = navPanel.queryById('navList');
+									navPanel.deleteSection(navList.getSelection()[0]);
+								}
+							}
+						});						
 
-//						//set the selection to the first tree list section
-//						var navList = formBuilderPanel.queryById('navList');
-//						avList.setSelection(navList.getStore().getRoot().childNodes[0]);
-						
 					}					
 				}
 			]
@@ -86,21 +89,77 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 			viewConfig: {
 				plugins: {
 					ptype: 'treeviewdragdrop',
-					containerScroll: true,
-					allowParentInserts: true
+					containerScroll: true
 				}
 			},			
 			listeners: {
 				beforedrop: function(node, data, overModel, dropPosition, dropHandlers, eOpts) {
 				
-					if (overModel && overModel.get('sectionId') 
+					if (data.records[0].get('fieldId')) {
+						if (overModel && overModel.get('sectionId') 
+							&& dropPosition !== 'append') {
+							dropHandlers.cancelDrop();
+							return false;
+						}
+					}
+					
+					if (data.records[0].get('sectionId')) {
+						if (overModel && overModel.get('fieldId')) {
+							dropHandlers.cancelDrop();
+							return false;
+						} else if (overModel && overModel.get('sectionId') 
 							&& dropPosition === 'append') {
-						//don't allow nesting sections
-						dropHandlers.cancelDrop();
-					}					
+							dropHandlers.cancelDrop();
+							return false;
+						}
+					} 
+												
 				
 				},
 				drop: function(node, data, overModel, dropPosition, opts) {
+					
+					//move field to a new section
+					if (data.records[0].get('fieldId')) {
+						if (overModel && overModel.get('sectionId')) {	
+							//remove from current section
+							var fieldId = data.records[0].get('fieldId');
+							var actualField;
+							Ext.Array.each(navPanel.templateRecord.sections, function(section){								
+								var found = false;								
+								Ext.Array.each(section.fields, function(field) {
+									if (field.fieldId === fieldId) {
+										actualField = field;
+										found = true;
+									}
+								});
+								if (found) {
+									var keepQuestions = [];
+									Ext.Array.each(section.fields, function(field) {
+										if (field.fieldId !== fieldId) {
+											keepQuestions.push(field);
+										}
+									});
+									section.fields = keepQuestions;
+								}
+							});
+							
+							//add to section
+							var insertIndex = overModel.indexOf(node);
+							Ext.Array.each(navPanel.templateRecord.sections, function(section){
+								if (overModel.get('sectionId') === section.sectionId) {
+									Ext.Array.insert(section.fields, insertIndex, actualField);
+								}
+							});
+						} 
+					}
+										
+					if (data.records[0].get('fieldId')) {
+						if (overModel && overModel.get('fieldId')) {	
+							
+						}
+					}
+					
+					
 					//reorder sections and move questions
 					if (overModel && overModel.get('sectionId')) {					
 						var root = navPanel.treePanel.getStore().getRoot();
@@ -124,13 +183,13 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 							navPanel.queryById('delete').setDisabled(false);
 
 							// loads selection if ids match
-							Ext.Array.forEach(navPanel.templateRecord.sections, function (el, index) {
-								if (el.sectionId === records[0].get('sectionId')) {
+							Ext.Array.forEach(navPanel.templateRecord.sections, function (section, index) {
+								if (section.sectionId === records[0].get('sectionId')) {
 									navPanel.formBuilderPanel.saveSection();
-									navPanel.formBuilderPanel.displayPanel.loadSection(el);
+									navPanel.formBuilderPanel.displayPanel.loadSection(section);
 								}
-							});
-							navPanel.formBuilderPanel.activeItem = null;
+							});							
+							records[0].expand();
 						} else {
 							navPanel.queryById('delete').setDisabled(true);
 						}
@@ -215,9 +274,9 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 			children: []			
 		});		
 		
-		root.eachChild(function(child) {
-			if (child.get('sectionId') === section.sectionId) {
-				child.insertChild(index,  record);
+		root.eachChild(function(sectionNode) {
+			if (sectionNode.get('sectionId') === section.sectionId) {
+				sectionNode.insertChild(index,  record);
 			}	
 		});
 	},	
@@ -225,11 +284,37 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 	updateField: function(field) {
 		var navPanel = this;
 		var navList = navPanel.queryById('navList');
+		var root = navList.getStore().getRoot();
+		
+		root.eachChild(function(sectionNode) {
+			if (sectionNode.get('sectionId') === field.sectionId) {
+				sectionNode.eachChild(function(fieldNode){
+					if (fieldNode.get('fieldId') === field.fieldId) {
+						fieldNode.set('text', field.questionNumber + ' ' + field.label);
+					}
+				});
+			}	
+		});
+		
 	},
 	
 	deleteField: function(field) {
 		var navPanel = this;
 		var navList = navPanel.queryById('navList');
+		var root = navList.getStore().getRoot();
+		
+		root.eachChild(function(sectionNode) {
+			if (sectionNode.get('sectionId') === field.sectionId) {
+				sectionNode.eachChild(function(fieldNode){
+					if (fieldNode.get('fieldId') === field.fieldId) {
+						Ext.defer(function(){
+							sectionNode.removeChild(fieldNode);
+						}, 100);
+					}
+				});
+			}	
+		});		
+		
 	},	
 	
 	updateTemplate: function() {

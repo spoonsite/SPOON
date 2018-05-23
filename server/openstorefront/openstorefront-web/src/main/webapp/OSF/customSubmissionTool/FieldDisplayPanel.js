@@ -76,32 +76,25 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 			
 			displayPanel.queryById('menu').formBuilderPanel = formBuilderPanel;
 			displayPanel.queryById('menu').setHidden(false);
+			
+			//load questions
+			var newFieldItems = [];
+			Ext.Array.each(section.fields, function(field){
+				newFieldItems.push({
+					xtype: 'osf-formbuilderitem',
+					formBuilderPanel: formBuilderPanel,
+					floatingMenu: displayPanel.queryById('menu'),
+					templateField: field
+				});
+			});		
+			itemContainer.add(newFieldItems);
+			if (newFieldItems.length > 0) {
+				itemContainer.items.items[0].setActiveFormItem();
+			} else {
+				formBuilderPanel.activeItem = null;
+			}
 		}
-		
-		
 
-//		saveSection = typeof saveSection !== 'undefined' ? saveSection : true;
-//
-//		if (saveSection) {
-//			formBuilderPanel.saveSection();
-//		}
-//		
-//
-//		// create items and add them to the itemsContainer
-//		var fieldItems = [];
-//		for (var i = 0; i < section.fieldItems.length; i++) {
-//			
-//			fieldItems.push(displayPanel.createItem(section.fieldItems[i]));
-//		}
-//		
-//		itemContainer.add(fieldItems);
-//		
-//		// set the first item as active (need to push this back on the stack though...)
-//		Ext.defer(function () {
-//			itemContainer.query('[cls=form-builder-item]')[0].setActiveFormItem();
-//		},1);
-//		
-//		formBuilderPanel.activeSection = section;
 
 		// reset the section form to the sections current values...
 		sectionForm.setValues({

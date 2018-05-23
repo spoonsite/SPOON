@@ -152,39 +152,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.queryById('infoPanel').updateInfo();				
 	},
 
-	/**
-	 * Adds a section to the templateRecord, then loads the newly created section
-	 * @param newSection - the section to be added
-	 */
-	addSection: function (newSection) {
-
-		var formBuilderPanel = this;
-
-		formBuilderPanel.templateRecord.sections.push(newSection);
-		formBuilderPanel.sectionPanel.updateNavList();
-		formBuilderPanel.activeItem = null;
-		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[formBuilderPanel.templateRecord.sections.length - 1]);
-	},
-
-	/**
-	 * Deletes a section physically and from the templateRecord (then reassigns the active section to the first in the list)
-	 * @param sectionId - provide to specify the section
-	 */
-	removeSection: function (sectionId) {
-
-		var formBuilderPanel = this;
-
-		var sectionId = section.sectionId || section;
-		Ext.Array.forEach(formBuilderPanel.templateRecord.sections, function (el, index) {
-			if (el.sectionId === sectionId) {
-				formBuilderPanel.templateRecord.sections.splice(index, 1);
-			}
-		});
-		formBuilderPanel.sectionPanel.updateNavList();
-		formBuilderPanel.activeItem = null;
-		formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
-	},
-
 	updateSection: function (section) {
 		var formBuilderPanel = this;
 		

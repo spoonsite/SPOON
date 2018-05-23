@@ -41,7 +41,7 @@ var CoreUtil = {
 	},
 	calculateEvalutationScore: function (obj) {
 		// obj.data.fullEvaluation requires the key: checkListAll
-		var fullEvaluations = obj.fullEvaluations
+		var fullEvaluations = obj.fullEvaluations;
 		var data = obj.data;
 		var callBack = obj.success;
 
