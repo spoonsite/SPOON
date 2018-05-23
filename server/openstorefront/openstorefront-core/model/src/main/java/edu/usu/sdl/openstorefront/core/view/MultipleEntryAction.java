@@ -30,7 +30,7 @@ public class MultipleEntryAction
 	private List<String> componentIds = new ArrayList<>();
 	@ConsumeField
 	private ComponentComment comment;
-
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public MultipleEntryAction()
 	{
 	}

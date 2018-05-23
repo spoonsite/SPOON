@@ -28,7 +28,7 @@ public class ChangeOwnerAction
 	@NotNull
 	@ConsumeField
 	private String newOwner;
-	
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ChangeOwnerAction()
 	{
 	}
