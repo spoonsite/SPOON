@@ -127,6 +127,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -1054,18 +1055,24 @@ public class ComponentRESTResource
 			ChangeOwnerAction changeOwnerAction
 	)
 	{
-		ValidationModel validationModel = new ValidationModel(changeOwnerAction);
+		return entryActionWithComment((component)->{
+			service.getComponentService().changeOwner(component.getComponentId(), changeOwnerAction.getNewOwner());
+		}, changeOwnerAction);		
+	}
+	
+	private Response entryActionWithComment(Consumer<Component> consumer, MultipleEntryAction multipleEntryActionObject){
+		ValidationModel validationModel = new ValidationModel(multipleEntryActionObject);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			for(String componentId: changeOwnerAction.getComponentIds()){
+			for(String componentId: multipleEntryActionObject.getComponentIds()){
 				Component component = service.getPersistenceService().findById(Component.class, componentId);
 				if (component != null) {
-					service.getComponentService().changeOwner(componentId, changeOwnerAction.getNewOwner());
-					saveEntryActionComment(changeOwnerAction, componentId);
+					consumer.accept(component);
+					saveEntryActionComment(multipleEntryActionObject, componentId);
 				}
 				else{
-					LOG.log(Level.FINE, ()-> "Change owner error cannot find componentId: " + componentId);
+					LOG.log(Level.FINE, ()-> "Cannot find componentId: " + componentId);
 				}
 			}
 		} else {
@@ -1095,24 +1102,9 @@ public class ComponentRESTResource
 			ChangeEntryTypeAction changeEntryTypeAction
 	)
 	{
-		ValidationModel validationModel = new ValidationModel(changeEntryTypeAction);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			for(String componentId: changeEntryTypeAction.getComponentIds()){
-				Component component = service.getPersistenceService().findById(Component.class, componentId);
-				if (component != null) {
-					service.getComponentService().changeComponentType(componentId, changeEntryTypeAction.getNewType());
-					saveEntryActionComment(changeEntryTypeAction, componentId);
-				}
-				else{
-					LOG.log(Level.FINE, ()-> "Change Type Error cannot find componentId: " + componentId);
-				}
-			}
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-		return Response.ok().build();
+		return entryActionWithComment((component)->{
+			service.getComponentService().changeComponentType(component.getComponentId(), changeEntryTypeAction.getNewType());
+		}, changeEntryTypeAction);
 	}
 	
 	@PUT
@@ -1124,29 +1116,14 @@ public class ComponentRESTResource
 			MultipleEntryAction multipleEntryAction	
 	)
 	{
-		ValidationModel validationModel = new ValidationModel(multipleEntryAction);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			for(String componentId: multipleEntryAction.getComponentIds()){
-				Component component = service.getPersistenceService().findById(Component.class, componentId);
-				if (component != null) {
-					if(Component.ACTIVE_STATUS.equals(component.getActiveStatus())){
-						service.getComponentService().deactivateComponent(componentId);
-					}
-					else{
-						service.getComponentService().activateComponent(componentId);
-					}
-					saveEntryActionComment(multipleEntryAction, componentId);
-				}
-				else{
-					LOG.log(Level.FINE, ()-> "Toggle Error, cannot find componentId: " + componentId);
-				}
+		return entryActionWithComment((component)->{
+			if(Component.ACTIVE_STATUS.equals(component.getActiveStatus())){
+				service.getComponentService().deactivateComponent(component.getComponentId());
 			}
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-		return Response.ok().build();
+			else{
+				service.getComponentService().activateComponent(component.getComponentId());
+			}
+		}, multipleEntryAction);
 	}
 
 	@PUT
