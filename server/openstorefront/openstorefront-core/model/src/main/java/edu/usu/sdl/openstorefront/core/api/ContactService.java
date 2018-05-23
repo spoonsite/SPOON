@@ -34,7 +34,8 @@ public interface ContactService
 	public Contact findContact(String contactId);
 	
 	/**
-	 * If mergeSimilar is true this will update existing contact or try to find one base on key and update that.
+	 * If mergeSimilar is true this will update existing contact based on email or name.
+	 * If not it will try to find one base on key and update that.
 	 * If not if will add a contact
 	 * 
 	 * @param contact
