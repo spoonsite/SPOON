@@ -72,6 +72,12 @@ Ext.define('OSF.form.Comments', {
 					}														
 				],
 				autoLoad: false,
+				sorters: [
+					new Ext.util.Sorter({
+						property: 'createDts',
+						direction: 'DESC'
+					})
+				],
 				proxy: {
 					type: 'ajax'							
 				}

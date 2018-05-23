@@ -1077,8 +1077,12 @@ public class ComponentRESTResource
 	private void saveEntryActionComment(MultipleEntryAction entryAction, String componentId)
 	{
 		if(entryAction.getComment() != null){
-			entryAction.getComment().setComponentId(componentId);
-			entryAction.getComment().save();
+			ComponentComment componentComment = new ComponentComment();
+			componentComment.setComponentId(componentId);
+			componentComment.setCommentType(entryAction.getComment().getCommentType());
+			componentComment.setComment(entryAction.getComment().getComment());
+			componentComment.setPrivateComment(entryAction.getComment().getPrivateComment());
+			componentComment.save();
 		}
 	}
 	

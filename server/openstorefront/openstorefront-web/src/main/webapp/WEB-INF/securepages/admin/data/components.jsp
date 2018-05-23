@@ -1266,122 +1266,46 @@
 												
 												Ext.getCmp('componentGrid').setLoading(true);
 
-												// Get Selection
-												var selection = Ext.getCmp('componentGrid').getSelection();
-
-												// Get Number Of Selected
-												var selected = componentGrid.getSelectionModel().getCount();
-												// What do we need?
-												// We need... for every component id we need to know if it is active or inact
-												
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
-												// console.log(componentIds);
 
-												// Initialize Update Counter
-												var componentToggleCount = 0;
-												
 												var data = {
-													commentId: form.queryById('searchCommentId').value,
-													commentType: "ADMIN",
-													comment: form.queryById('searchComment').value,
-													components: [],
+													componentIds: componentIds,
+													comment: {
+														commentType: 'ADMIN',
+														comment: form.queryById('searchComment').value
+													}
 												};
 
-												// Loop Through Selection
-												for (i = 0; i < selected; i++) {
-
-													var componentId = selection[i].get('componentId');
-													var currentStatus = selection[i].get('activeStatus');
-													data.components.push({
-														componentId: componentId,
-														currentStatus: currentStatus
-													});
-
-													// if (currentStatus === 'A') {
-
-													// 	var method = 'DELETE';
-													// 	var urlEnd = '';
-													// }
-													// else {
-
-													// 	var method = 'PUT';
-													// 	var urlEnd = '/activate';
-													// }
-
-													// Ext.Ajax.request({
-													// 	url: 'api/v1/resource/components/' + componentId + urlEnd,
-													// 	method: method,
-													// 	componentId: componentId,
-													// 	success: function(response, opts) {
-															
-													// 		if(data.comment != ''){
-													// 			Ext.Ajax.request({
-													// 				url: 'api/v1/resource/components/' + opts.componentId + '/comments',
-													// 				method: 'POST',
-													// 				jsonData: data,
-													// 				success: function(response, opts){
-													// 					if (response.responseText.indexOf('errors') !== -1) {
-													// 					// Provide Error Notification
-													// 						Ext.toast({
-													// 							title: 'Validation Error. The Server could not process the comment request. ',
-													// 							html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
-													// 							width: 550,
-													// 							autoCloseDelay: 10000,
-													// 						});
-													// 					}
-													// 				},
-													// 				failure: function(){
-													// 					Ext.toast({
-													// 						title: 'Validation Error. The Server could not process the request.',
-													// 						html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
-													// 						width: 500,
-													// 						autoCloseDelay: 10000,
-													// 					});
-													// 				}
-													// 			});	
-													// 		}
-
-													// 		// Check For Errors
-													// 		if (response.responseText.indexOf('errors') !== -1) {
-
-													// 			// Provide Error Notification
-													// 			Ext.toast('An Entry Failed To Toggle', 'Error');
-
-													// 			// Provide Log Information
-													// 			console.log(response);
-													// 		}
-
-													// 		// Check If We Are On The Final Request
-													// 		if (++componentToggleCount === selected) {
-
-													// 			// Provide Success Notification
-													// 			Ext.toast('All Entries Have Been Processed', 'Success');
-
-													// 			// Refresh Grid
-													// 			actionRefreshComponentGrid();
-
-													// 			// Unmask Grid
-													// 			Ext.getCmp('componentGrid').setLoading(false);
-													// 		}
-													// 	}
-													// });
-												}
 												Ext.Ajax.request({
-													url: 'api/v1/resource/components/change_status_and_comment',
-													method: 'POST',
+													url: 'api/v1/resource/components/togglestatus',
+													method: 'PUT',
 													jsonData: data,
-													success: function(response, opts){
-														console.log('We are in the success!');
+													success: function(response, opts) {
+														if (response.responseText !== '') {
+															if( response.responseText.indexOf('errors') !== -1) {
+															// provide error notification
+																Ext.toast({
+																	title: 'validation error. the server could not process the request. ',
+																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																	width: 550,
+																	autoclosedelay: 10000,
+																});
+															}
+														}
 													},
 													failure: function(){
-														console.log('we are in the failure!');
+														Ext.toast({
+															title: 'validation error. the server could not process the request. ',
+															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+															width: 550,
+															autoclosedelay: 10000,
+														});
 													}
 												});
 												actionRefreshComponentGrid();
 												Ext.getCmp('componentGrid').setLoading(false);
-												console.log(data);
 												form.reset();
 												this.up('#toggleWin').close();
 											}
@@ -1473,126 +1397,57 @@
 											formBind: true,
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
-
-												// Get Selection
-												var selection = Ext.getCmp('componentGrid').getSelection();
-
-												// Get Number Of Selected
-												var selected = componentGrid.getSelectionModel().getCount();
-
-												// Get Calling Window
-												var ownerWindow = this.up('window');
 												
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
-												// Get Chosen Username
 												
 												var form = this.up('form');
+												
 												var username = form.getForm().findField('currentDataOwner').getValue();
 
-												// Get Form
 												var data = {
-													commentId: form.queryById('searchCommentId').value,
-													commentType: "ADMIN",
-													comment: form.queryById('searchComment').value,
-													componentIdsArray: componentIds,
+													componentIds: componentIds,
+													comment: {
+														commentType: 'ADMIN',
+														comment: form.queryById('searchComment').value
+													},
 													newOwner: username
 												};
 
-												// Inform User Of Update Process
 												componentGrid.mask('Updating Owner(s)...');
 
-												// Close Form Window
-												ownerWindow.close()
-
-												// Initialize Update Counter
-												var componentUpdateCount = 0;
-
 												Ext.Ajax.request({
-													url: 'api/v1/resource/components/change_owner_and_comment',
-													method: 'POST',
+													url: 'api/v1/resource/components/changeowner',
+													method: 'PUT',
 													jsonData: data,
 													success: function(response, opts) {
-														console.log('We are in the success ', response, ' ', data);
+														if (response.responseText !== '') {
+															if( response.responseText.indexOf('errors') !== -1) {
+															// provide error notification
+																Ext.toast({
+																	title: 'validation error. the server could not process the request. ',
+																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																	width: 550,
+																	autoclosedelay: 10000,
+																});
+															}
+														}
 													},
 													failure: function(){
-														console.log('We are in the failure ', data);
+														Ext.toast({
+															title: 'validation error. the server could not process the request. ',
+															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+															width: 550,
+															autoclosedelay: 10000,
+														});
 													}
 												});
 
-												// Loop Through Selected Components
-												// for (i = 0; i < selected; i++) {
-
-												// 	// Store Component ID
-												// 	var componentId = selection[i].get('componentId');
-
-												// 	// Make Request
-												// 	Ext.Ajax.request({
-
-												// 		url: 'api/v1/resource/components/' + componentId + '/changeowner',
-												// 		method: 'PUT',
-												// 		rawData: username,
-												// 		success: function(response, opts) {
-												// 			var res = Ext.decode(response.responseText);
-															
-												// 			if(data.comment != ''){
-												// 				Ext.Ajax.request({
-												// 					url: 'api/v1/resource/components/' + res.componentId + '/comments',
-												// 					method: 'POST',
-												// 					jsonData: data,
-												// 					success: function(response, opts){
-												// 						if (response.responseText.indexOf('errors') !== -1) {
-												// 						// Provide Error Notification
-												// 							Ext.toast({
-												// 								title: 'Validation Error. The Server could not process the comment request. ',
-												// 								html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
-												// 								width: 550,
-												// 								autoCloseDelay: 10000,
-												// 							});
-												// 						}
-												// 					},
-												// 					failure: function(){
-												// 						Ext.toast({
-												// 							title: 'Validation Error. The Server could not process the request.',
-												// 							html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
-												// 							width: 500,
-												// 							autoCloseDelay: 10000,
-												// 						});
-												// 					}
-												// 				});	
-												// 			}
-
-												// 			// Check For Errors
-												// 			if (response.responseText.indexOf('errors') !== -1) {
-
-												// 				// Provide Error Notification
-												// 				Ext.toast('An Entry Failed To Update the Owner', 'Error');
-
-												// 				// Provide Log Information
-												// 				console.log(response);
-												// 			}
-
-												// 			// Check If We Are On The Final Request
-												// 			if (++componentUpdateCount === selected) {
-
-												// 				// Provide Success Notification
-												// 				Ext.toast('All Entries Have Been Processed', 'Success');
-
-												// 				// Refresh Grid
-												// 				actionRefreshComponentGrid();
-
-												// 				// Unmask Grid
-												// 				componentGrid.unmask();
-												// 			}
-												// 		}
-												// 	});
-												// }
-
-												// Refresh Grid
 												actionRefreshComponentGrid();
+												
+												this.up('window').close()
 
-												// Unmask Grid
 												componentGrid.unmask();
 												form.reset();
 											}
@@ -1683,7 +1538,6 @@
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
-												console.log(componentIds);
 												var componentType = this.up('form').getForm().findField('componentType').getValue();
 
 												componentGrid.mask('Updating Type(s)...');
@@ -1691,76 +1545,41 @@
 												
 												var form = this.up('form');
 												var data = {
-													commentId: form.queryById('searchCommentId').value,
-													commentType: "ADMIN",
-													comment: form.queryById('searchComment').value,
-													newType: componentType,
-													componentIdsArray: componentIds
+													componentIds: componentIds,
+													comment: {
+														commentType: 'ADMIN',
+														comment: form.queryById('searchComment').value
+
+													},
+													newType: componentType
 												};
 												
 												Ext.Ajax.request({
-													url: 'api/v1/resource/components/change_type_and_comment',
-													method: 'POST',
+													url: 'api/v1/resource/components/changetype',
+													method: 'PUT',
 													jsonData: data,
 													success: function(response, opts) {
-														console.log('We are in the success ', response, ' ', data);
+														if (response.responseText !== '') {
+															if( response.responseText.indexOf('errors') !== -1) {
+															// provide error notification
+																Ext.toast({
+																	title: 'validation error. the server could not process the request. ',
+																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																	width: 550,
+																	autoclosedelay: 10000,
+																});
+															}
+														}
 													},
 													failure: function(){
-														console.log('We are in the failure ', data);
+														Ext.toast({
+															title: 'validation error. the server could not process the request. ',
+															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+															width: 550,
+															autoclosedelay: 10000,
+														});
 													}
 												});
-
-
-												// Ext.Ajax.request({
-												// 	url: 'api/v1/resource/components/componenttype/' + componentType,
-												// 	method: 'PUT',
-												// 	jsonData: {
-												// 		ids: componentIds
-												// 	},
-												// 	success: function (response, opts) {
-														
-												// 		if (response.error) {
-
-												// 			Ext.toast('An Entry Failed To Update', 'Error');
-												// 			console.log(response.error);
-												// 		}
-												// 		else {
-												// 			for(var i = 0; i < componentIds.length; i++){
-												// 				if(data.comment != ''){
-												// 					Ext.Ajax.request({
-												// 						url: 'api/v1/resource/components/' + componentIds[i] + '/comments',
-												// 						method: 'POST',
-												// 						jsonData: data,
-												// 						success: function(response, opts){
-
-												// 							if (response.responseText.indexOf('errors') !== -1) {
-												// 							// Provide Error Notification
-												// 								Ext.toast({
-												// 									title: 'Validation Error. The Server could not process the comment request. ',
-												// 									html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
-												// 									width: 550,
-												// 									autoCloseDelay: 10000,
-												// 								});
-												// 							}
-												// 						},
-												// 						failure: function(){
-												// 							Ext.toast({
-												// 								title: 'Validation Error. The Server could not process the request.',
-												// 								html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
-												// 								width: 500,
-												// 								autoCloseDelay: 10000,
-												// 							});
-												// 						}
-												// 					});	
-												// 				}
-												// 			}
-												// 			form.reset();
-												// 			Ext.toast('All Entries Have Been Processed', 'Success');
-												// 			actionRefreshComponentGrid();
-												// 			componentGrid.unmask();
-												// 		}
-												// 	}
-												// });
 
 												form.reset();
 												actionRefreshComponentGrid();
