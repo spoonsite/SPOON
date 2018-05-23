@@ -49,6 +49,7 @@ public abstract class LookupEntity<T extends LookupEntity>
 {
 
 	public static final String FIELD_DESCRIPTION = "description";
+	public static final String DEFAULT_GROUPBY = "none";
 
 	@PK
 	@NotNull
@@ -81,6 +82,9 @@ public abstract class LookupEntity<T extends LookupEntity>
 	@APIDescription("Used to store visual style preference")
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String highlightStyle;
+
+	@APIDescription("A string representation of what the entity should be grouped by.")
+	private String groupBy;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public LookupEntity()
@@ -120,6 +124,11 @@ public abstract class LookupEntity<T extends LookupEntity>
 
 	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription)
 	{
+		return newLookup(lookupClass, code, description, detailedDescription, DEFAULT_GROUPBY);
+	}
+
+	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription, String groupBy)
+	{
 		T lookup = null;
 		try {
 			lookup = lookupClass.newInstance();
@@ -127,6 +136,7 @@ public abstract class LookupEntity<T extends LookupEntity>
 			lookup.setCode(code);
 			lookup.setDescription(description);
 			lookup.setDetailedDescription(detailedDescription);
+			lookup.setGroupBy(groupBy);
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to create lookup", ex);
 		}
@@ -251,6 +261,14 @@ public abstract class LookupEntity<T extends LookupEntity>
 	public void setHighlightStyle(String highlightStyle)
 	{
 		this.highlightStyle = highlightStyle;
+	}
+
+	public void setGroupBy(String groupBy) {
+		this.groupBy = groupBy;
+	}
+
+	public String getGroupBy() {
+		return groupBy;
 	}
 
 }
