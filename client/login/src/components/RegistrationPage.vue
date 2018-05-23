@@ -1,20 +1,17 @@
 <template>
-  <div>
-    <v-layout align-center justify-center column>
-      <v-toolbar class="topbar">
-        <v-spacer></v-spacer>
-        <v-toolbar-title>Registration - Fill out the form to signup for an account</v-toolbar-title>
-         <v-spacer></v-spacer>
-      </v-toolbar>
-      <registration-credentials-comp class="rcc"/>
-      <registration-user-comp class="ruc"/>
-      <registration-email-verify-comp class="revc"/>
-      <v-toolbar class="botbar">
-        <v-btn color="accent" style="margin-left:2em;" @click="signup()"><v-icon light>check</v-icon> &nbsp; Signup</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn color="accent" style="margin-right:2em;" @click="cancel()"><v-icon light>cancel</v-icon> &nbsp; Cancel</v-btn>
-      </v-toolbar>
-    </v-layout>
+  <div class="wrapper">
+      <h2>Registration - Fill out the form to signup for an account</h2>
+      <registration-credentials-comp/>
+      <registration-user-comp/>
+      <registration-email-verify-comp/>
+      <div class="button-wrapper">
+        <div class="btn1">
+          <v-btn block color="accent" @click="signup()"><v-icon light>check</v-icon> &nbsp; Signup</v-btn>
+        </div>
+        <div class="btn2">
+        <v-btn block color="accent" @click="cancel()"><v-icon light>cancel</v-icon> &nbsp; Cancel</v-btn>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -45,22 +42,33 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
- .rcc{
-   width:85%;
- }
- .ruc{
-   width:85%;
- }
- .revc{
-   width:85%;
- }
- .topbar{
-   width:85%;
-   margin-top:2em !important;
- }
- .botbar{
-   width:85%;
-   margin-top:1em !important;
- }
-
+.wrapper {
+  max-width: 45em;
+  padding: 1em;
+  margin-right: auto;
+  margin-left: auto;
+}
+.button-wrapper {
+  width: 100%;
+}
+.btn1 {
+  padding-right: 1em;
+  width: 50%;
+  float: left;
+}
+.btn2 {
+  padding-left: 1em;
+  width: 50%;
+  float: left;
+}
+@media screen and (max-width: 599px) {
+  .btn1 {
+    padding-right: 0;
+    width: 100%;
+  }
+  .btn2 {
+    padding-left: 0;
+    width: 100%;
+  }
+}
 </style>

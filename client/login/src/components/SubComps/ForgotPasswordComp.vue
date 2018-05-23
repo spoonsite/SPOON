@@ -14,7 +14,7 @@
           <v-container fluid grid-list-x>
             <v-layout row>
               <v-flex xs2 ml-2>
-                <v-btn color="accent" style="margin-bottom:2em;" @click="testAPI">Send password</v-btn>
+                <v-btn color="accent" style="margin-bottom:2em;" @click="testAPI()">Send password</v-btn>
               </v-flex>
             </v-layout>
           </v-container>

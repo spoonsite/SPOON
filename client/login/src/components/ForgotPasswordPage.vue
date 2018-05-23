@@ -19,16 +19,5 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.login-comp {
-  width: 50%;
-  height: 100%;
-  margin: 2em;
-}
-.signup-comp {
-  width: 50%;
-  height: 100%;
-  margin: 2em;
-}
 </style>
