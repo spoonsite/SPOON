@@ -25,6 +25,7 @@ import java.util.Map;
  *
  * @author dshurtleff
  * @author cyearsley
+ * We should probably consider using enums in the future.
  */
 @SystemTable
 @APIDescription("Defines Security Permissions")
@@ -76,6 +77,54 @@ public class SecurityPermission
 	// ========================================================================================================================
 
 	public static final String GROUPBY_OLD = "Old permissions (to be replaced/renamed)";
+
+	// Page level permissions
+	public static final String GROUPBY_PAGES = "Page Level Permissions";
+	public static final String ADMIN_ATTRIBUTE_PAGE = "ADMIN-ATTRIBUTE-PAGE";
+	public static final String ADMIN_ENTRIES_PAGE = "ADMIN-ENTRIES-PAGE";
+	public static final String ADMIN_CONTACTS_PAGE = "ADMIN-CONTACTS-PAGE";
+	public static final String ADMIN_ENTRYTYPE_PAGE = "ADMIN-ENTRYTYPE-PAGE";
+	public static final String ADMIN_ENTRYTEMPLATES_PAGE = "ADMIN-ENTRYTEMPLATES-PAGE";
+	public static final String ADMIN_FAQ_PAGE = "ADMIN-FAQ-PAGE";
+	public static final String ADMIN_SUPPORTMEDIA_PAGE = "ADMIN-SUPPORTMEDIA-PAGE";
+	public static final String ADMIN_HIGHLIGHTS_PAGE = "ADMIN-HIGHLIGHTS-PAGE";
+	public static final String ADMIN_INTEGRATION_PAGE = "ADMIN-INTEGRATION-PAGE";
+	public static final String ADMIN_IMPORT_PAGE = "ADMIN-IMPORT-PAGE";
+	public static final String ADMIN_LOOKUPS_PAGE = "ADMIN-LOOKUPS-PAGE";
+	public static final String ADMIN_MEDIA_PAGE = "ADMIN-MEDIA-PAGE";
+	public static final String ADMIN_ORGANIZATION_PAGE = "ADMIN-ORGANIZATION-PAGE";
+	public static final String ADMIN_RELATIONSHIPS_PAGE = "ADMIN-RELATIONSHIPS-PAGE";
+	public static final String ADMIN_SEARCHES_PAGE = "ADMIN-SEARCHES-PAGE";
+	public static final String ADMIN_QUESTION_PAGE = "ADMIN-QUESTION-PAGE";
+	public static final String ADMIN_REVIEWS_PAGE = "ADMIN-REVIEWS-PAGE";
+	public static final String ADMIN_WATCHES_PAGE = "ADMIN-WATCHES-PAGE";
+	public static final String ADMIN_TAGS_PAGE = "ADMIN-TAGS-PAGE";
+	public static final String ADMIN_USERPROFILES_PAGE = "ADMIN-USERPROFILES-PAGE";
+	public static final String EVAL_PAGE = "EVAL-PAGE";
+	public static final String EVAL_TEMPLATES_PAGE = "EVAL-TEMPLATES-PAGE";
+	public static final String EVAL_CHECKLIST_TEMPLATES_PAGE = "EVAL-CHECKLIST-TEMPLATES-PAGE";
+	public static final String EVAL_CHECKLIST_QUESTIONS_PAGE = "EVAL-CHECKLIST-QUESTIONS-PAGE";
+	public static final String EVAL_SECTION_PAGE = "EVAL-SECTION-PAGE";
+	public static final String ADMIN_ALERTS_PAGE = "ADMIN-ALERTS-PAGE";
+	public static final String ADMIN_BRANDING_PAGE = "ADMIN-BRANDING-PAGE";
+	public static final String ADMIN_FEEDBACK_PAGE = "ADMIN-FEEDBACK-PAGE";
+	public static final String ADMIN_JOBS_PAGE = "ADMIN-JOBS-PAGE";
+	public static final String ADMIN_MESSAGES_PAGE = "ADMIN-MESSAGES-PAGE";
+	public static final String REPORTS_PAGE = "REPORTS-PAGE";
+	public static final String ADMIN_SECURITY_PAGE = "ADMIN-SECURITY-PAGE";
+	public static final String ADMIN_ROLES_PAGE = "ADMIN-ROLES-PAGE";
+	public static final String ADMIN_SYSTEM_PAGE = "ADMIN-SYSTEM-PAGE";
+	public static final String ADMIN_SYSTEM_ARCHIVES_PAGE = "ADMIN-SYSTEM-ARCHIVES-PAGE";
+	public static final String ADMIN_TRACKING_PAGE = "ADMIN-TRACKING-PAGE";
+	public static final String ADMIN_USER_MANAGEMENT_PAGE = "ADMIN-USER-MANAGEMENT-PAGE";
+	public static final String ADMIN_API_PAGE = "ADMIN-API-PAGE";
+	public static final String USER_PROFILE_PAGE = "USER-PROFILE-PAGE";
+	public static final String USER_SUBMISSIONS_PAGE = "USER-SUBMISSIONS-PAGE";
+	public static final String USER_QUESTIONS_PAGE = "USER-QUESTIONS-PAGE";
+	public static final String USER_RELATIONSHIPS_PAGE = "USER-RELATIONSHIPS-PAGE";
+	public static final String USER_REVIEWS_PAGE = "USER-REVIEWS-PAGE";
+	public static final String USER_SEARCHES_PAGE = "USER-SEARCHES-PAGE";
+	public static final String USER_WATCHES_PAGE = "USER-WATCHES-PAGE";
 
 	// Reports
 	public static final String GROUPBY_REPORTS = "Reports";
@@ -349,6 +398,53 @@ public class SecurityPermission
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
+
+		// Pages
+		codeMap.put(ADMIN_ATTRIBUTE_PAGE, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_PAGE, "Provides access to the admin attribute page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_ENTRIES_PAGE, newLookup(SecurityPermission.class, ADMIN_ENTRIES_PAGE, "Provides access to the admin entry page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_CONTACTS_PAGE, newLookup(SecurityPermission.class, ADMIN_CONTACTS_PAGE, "Provides access to the admin contacts page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_ENTRYTYPE_PAGE, newLookup(SecurityPermission.class, ADMIN_ENTRYTYPE_PAGE, "Provides access to the admin entry types page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_ENTRYTEMPLATES_PAGE, newLookup(SecurityPermission.class, ADMIN_ENTRYTEMPLATES_PAGE, "Provides access to the entry templates page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_FAQ_PAGE, newLookup(SecurityPermission.class, ADMIN_FAQ_PAGE, "Provides access to the admin faq page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_SUPPORTMEDIA_PAGE, newLookup(SecurityPermission.class, ADMIN_SUPPORTMEDIA_PAGE, "Provides access to the Support Media page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_HIGHLIGHTS_PAGE, newLookup(SecurityPermission.class, ADMIN_HIGHLIGHTS_PAGE, "Provides access to the Highlights page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_INTEGRATION_PAGE, newLookup(SecurityPermission.class, ADMIN_INTEGRATION_PAGE, "Provides access to the Integration page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_IMPORT_PAGE, newLookup(SecurityPermission.class, ADMIN_IMPORT_PAGE, "Provides access to the admin Import page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_LOOKUPS_PAGE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_PAGE, "Provides access to the Lookups page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_MEDIA_PAGE, newLookup(SecurityPermission.class, ADMIN_MEDIA_PAGE, "Provides access to the admin Media page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_ORGANIZATION_PAGE, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_PAGE, "Provides access to the admin Organization page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_RELATIONSHIPS_PAGE, newLookup(SecurityPermission.class, ADMIN_RELATIONSHIPS_PAGE, "Provides access to the admin Relationships page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_SEARCHES_PAGE, newLookup(SecurityPermission.class, ADMIN_SEARCHES_PAGE, "Provides access to the admin Searches page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_QUESTION_PAGE, newLookup(SecurityPermission.class, ADMIN_QUESTION_PAGE, "Provides access to the admin Questions page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_REVIEWS_PAGE, newLookup(SecurityPermission.class, ADMIN_REVIEWS_PAGE, "Provides access to the admin Reviews page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_WATCHES_PAGE, newLookup(SecurityPermission.class, ADMIN_WATCHES_PAGE, "Provides access to the admin Watches page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_TAGS_PAGE, newLookup(SecurityPermission.class, ADMIN_TAGS_PAGE, "Provides access to the admin Tags page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_USERPROFILES_PAGE, newLookup(SecurityPermission.class, ADMIN_USERPROFILES_PAGE, "Provides access to the admin User Profiles page", null, GROUPBY_PAGES));
+		codeMap.put(EVAL_PAGE, newLookup(SecurityPermission.class, EVAL_PAGE, "Provides access to the Evaluator Management page", null, GROUPBY_PAGES));
+		codeMap.put(EVAL_TEMPLATES_PAGE, newLookup(SecurityPermission.class, EVAL_TEMPLATES_PAGE, "Provides access to the Evaluation Templates page", null, GROUPBY_PAGES));
+		codeMap.put(EVAL_CHECKLIST_TEMPLATES_PAGE, newLookup(SecurityPermission.class, EVAL_CHECKLIST_TEMPLATES_PAGE, "Provides access to the Evaluation Checklist Templates page", null, GROUPBY_PAGES));
+		codeMap.put(EVAL_CHECKLIST_QUESTIONS_PAGE, newLookup(SecurityPermission.class, EVAL_CHECKLIST_QUESTIONS_PAGE, "Provides access to the Evaluation Checklist Questions page", null, GROUPBY_PAGES));
+		codeMap.put(EVAL_SECTION_PAGE, newLookup(SecurityPermission.class, EVAL_SECTION_PAGE, "Provides access to the Evaluation Section page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_ALERTS_PAGE, newLookup(SecurityPermission.class, ADMIN_ALERTS_PAGE, "Provides access to the admin Alerts page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_BRANDING_PAGE, newLookup(SecurityPermission.class, ADMIN_BRANDING_PAGE, "Provides access to the admin Branding page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_FEEDBACK_PAGE, newLookup(SecurityPermission.class, ADMIN_FEEDBACK_PAGE, "Provides access to the admin Feedback page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_JOBS_PAGE, newLookup(SecurityPermission.class, ADMIN_JOBS_PAGE, "Provides access to the admin Jobs page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_MESSAGES_PAGE, newLookup(SecurityPermission.class, ADMIN_MESSAGES_PAGE, "Provides access to the admin Messages/Notification page", null, GROUPBY_PAGES));
+		codeMap.put(REPORTS_PAGE, newLookup(SecurityPermission.class, REPORTS_PAGE, "Provides access to the Reports page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_SECURITY_PAGE, newLookup(SecurityPermission.class, ADMIN_SECURITY_PAGE, "Provides access to the admin Security page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_ROLES_PAGE, newLookup(SecurityPermission.class, ADMIN_ROLES_PAGE, "Provides access to the admin Roles page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_SYSTEM_PAGE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_PAGE, "Provides access to the admin System page (ONLY FOR ADMINS)", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_SYSTEM_ARCHIVES_PAGE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_ARCHIVES_PAGE, "Provides access to the admin System Archives page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_TRACKING_PAGE, newLookup(SecurityPermission.class, ADMIN_TRACKING_PAGE, "Provides access to the admin Tracking page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_USER_MANAGEMENT_PAGE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_PAGE, "Provides access to the admin User Management page", null, GROUPBY_PAGES));
+		codeMap.put(ADMIN_API_PAGE, newLookup(SecurityPermission.class, ADMIN_API_PAGE, "Provides access to the API page", null, GROUPBY_PAGES));
+		codeMap.put(USER_PROFILE_PAGE, newLookup(SecurityPermission.class, USER_PROFILE_PAGE, "Provides access to the Profile page", null, GROUPBY_PAGES));
+		codeMap.put(USER_SUBMISSIONS_PAGE, newLookup(SecurityPermission.class, USER_SUBMISSIONS_PAGE, "Provides access to the Submission page", null, GROUPBY_PAGES));
+		codeMap.put(USER_QUESTIONS_PAGE, newLookup(SecurityPermission.class, USER_QUESTIONS_PAGE, "Provides access to the Questions page", null, GROUPBY_PAGES));
+		codeMap.put(USER_RELATIONSHIPS_PAGE, newLookup(SecurityPermission.class, USER_RELATIONSHIPS_PAGE, "Provides access to the Relationships page", null, GROUPBY_PAGES));
+		codeMap.put(USER_REVIEWS_PAGE, newLookup(SecurityPermission.class, USER_REVIEWS_PAGE, "Provides access to the Reviews page", null, GROUPBY_PAGES));
+		codeMap.put(USER_SEARCHES_PAGE, newLookup(SecurityPermission.class, USER_SEARCHES_PAGE, "Provides access to the Searches page", null, GROUPBY_PAGES));
+		codeMap.put(USER_WATCHES_PAGE, newLookup(SecurityPermission.class, USER_WATCHES_PAGE, "Provides access to the Watches page", null, GROUPBY_PAGES));
 
 		// Reports
 		codeMap.put(REPORTS_SCHEDULE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE, "Reports schedule", null, GROUPBY_REPORTS));
