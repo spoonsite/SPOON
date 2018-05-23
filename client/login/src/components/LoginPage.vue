@@ -1,55 +1,41 @@
 <template>
   <div>
-    <title-bar-comp :CTitle="title" :CSubtitle="subTitle" />
-    <v-layout align-center justify-center>
-      <video-comp class="video-comp"/>
-    </v-layout>
-    <v-layout align-center justify-center>
-      <signup-comp class="signup-comp" />
-      <login-comp class="login-comp" />
-    </v-layout>
+    <video controls class="video" src="https://www.spoonsite.com/openstorefront/Branding.action?GeneralMedia&name=SPOON%20Overview;" poster="https://www.spoonsite.com/openstorefront/Branding.action?GeneralMedia&amp;name=SPOON%20Overview%20Poster"></video>
+    <div class="wrapper">
+      <signup-comp></signup-comp>
+      <login-comp></login-comp>
+    </div>
   </div>
 </template>
 
 <script>
-import TitleBarComp from './SubComps/TitleBarComp'
 import LoginComp from './SubComps/LoginComp'
 import SignupComp from './SubComps/SignupComp'
-import VideoComp from './SubComps/VideoComp'
 
 export default {
   name: 'LoginPage',
   components: {
     LoginComp,
-    SignupComp,
-    VideoComp,
-    TitleBarComp
+    SignupComp
   },
   computed: {
-    title () {
-      return this.$store.state.aTitle
-    },
-    subTitle () {
-      return this.$store.state.aSubtitle
-    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.video-comp{
-  margin-top:2em;
-   width:40%;
+.video {
+  width: 100%;
+  max-width: 45em;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
 }
-.login-comp {
-  width: 50%;
-  height: 100%;
-  margin: 2em;
-}
-.signup-comp {
-  width: 50%;
-  height: 100%;
-  margin: 2em;
+.wrapper {
+  max-width: 45em;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

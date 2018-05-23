@@ -1,91 +1,75 @@
 <template>
-  <v-layout mt-3 align-center justify-center>
-    <v-flex xs12 sm8>
-      <v-card class="elevation-5">
-        <v-toolbar color="primary" dark dense>
-          <v-toolbar-title>Sign up for an Account</v-toolbar-title>
-        </v-toolbar>
-        <v-card-text>
-          <div>
-            <ol class="circles-list">
-              <li>Go to Sign-up page</li>
-              <li>Fill out the form to setup your account</li>
-              <li>Use the account you created to log in</li>
-            </ol>
-          </div>
-        </v-card-text>
-        <v-card-actions>
-          <v-container fluid grid-list-x>
-            <v-layout row>
-              <router-link :to="{name: 'registration'}">
-                <v-btn color="accent" style="margin:.75em;">Sign up</v-btn>
+  <div>
+    <v-card class="elevation-5 ma-3">
+      <v-toolbar color="primary" dark dense>
+        <v-toolbar-title>Sign up for an Account</v-toolbar-title>
+      </v-toolbar>
+      <v-list two-line>
+        <v-list-tile v-for="(value, index) in signupSteps" :key="index">
+            <v-list-tile-avatar>
+              <svg width="40" height="40">
+                <circle cx="20" cy="20" r="20" fill="#333842" />
+                <text x="50%" y="50%" text-anchor="middle" fill="white" font-size="20px" dy=".3em">{{ index + 1 }}</text>
+                Sorry, your browser does not support inline SVG.
+              </svg>
+            </v-list-tile-avatar>
+          <v-list-tile-content>
+            {{ value }}
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+      <v-card-actions>
+        <v-container>
+          <v-layout row fluid wrap>
+            <v-flex class="btn1" xs12 sm6>
+              <router-link :to="{name: 'registration'}" class="btn btn--block accent">
+                <div class="btn__content">
+                  Sign Up
+                </div>
               </router-link>
-              <v-btn color="accent" style="margin:.75em;">How to Register
+              </v-flex>
+              <v-flex class="btn2" xs12 sm6>
+              <v-btn block color="accent">How to Register
                 &nbsp;<v-icon light>play_circle_outline</v-icon>
               </v-btn>
-            </v-layout>
-          </v-container>
-        </v-card-actions>
-      </v-card>
-    </v-flex>
-  </v-layout>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-card-actions>
+    </v-card>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'SignUpComp'
+  name: 'SignUpComp',
+  data () {
+    return {
+      signupSteps: [
+        'Go to the Sign-Up page.',
+        'FoFollow the steps on the screen to set up your account.',
+        'Use the account you created to Sign In.'
+      ]
+    }
+  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#signup-button {
-  background-color: #303540 !important;
-  color: white;
+.btn1 {
+  padding-right: 1em;
 }
-#how-button {
-  background-color: #303540 !important;
-  color: white;
+.btn2 {
+  padding-left: 1em;
 }
-div ol {
-  width: 80%;
-  font-family: "Roboto", "Franklin Gothic Medium", "Arial Narrow", Arial,
-    sans-serif;
-}
-ol.circles-list {
-  list-style-type: none;
-  /* list-style-type: decimal !ie; IE 7- hack */
-  margin: 0;
-  margin-left: 4em;
-  padding: 0;
-
-  counter-reset: li-counter;
-}
-ol.circles-list > li {
-  position: relative;
-  margin-bottom: 20px;
-  padding-left: 0.5em;
-  min-height: 3em;
-}
-ol.circles-list > li:before {
-  position: absolute;
-  top: 0;
-  left: -1.33em;
-  width: 1.2em;
-  height: 1.2em;
-
-  font-size: 2.5em;
-  line-height: 1.2;
-  text-align: center;
-  color: #f5f5f5;
-
-  border: 3px solid #c5c5c5;
-  border-radius: 50%;
-  background-color: #464646;
-  content: counter(li-counter);
-  counter-increment: li-counter;
-}
-li:content {
-  font-size: 5em;
+@media screen and (max-width: 599px) {
+  .btn1 {
+    padding-right: 0;
+    margin-bottom: 1em;
+  }
+  .btn2 {
+    padding-left: 0;
+  }
 }
 </style>

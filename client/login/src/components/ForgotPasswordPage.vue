@@ -1,6 +1,5 @@
 <template>
   <div>
-    <title-bar-comp :CTitle="title" :CSubtitle="subTitle" />
     <v-layout align-center justify-center>
       <forgot-password-comp/>
     </v-layout>
@@ -9,21 +8,13 @@
 
 <script>
 import ForgotPasswordComp from './SubComps/ForgotPasswordComp'
-import TitleBarComp from './SubComps/TitleBarComp'
 
 export default {
   name: 'ForgotPasswordPage',
   components: {
-    ForgotPasswordComp,
-    TitleBarComp
+    ForgotPasswordComp
   },
   computed: {
-    title () {
-      return this.$store.state.aTitle
-    },
-    subTitle () {
-      return this.$store.state.aSubtitle
-    }
   }
 }
 </script>

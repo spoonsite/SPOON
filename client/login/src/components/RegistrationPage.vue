@@ -1,6 +1,5 @@
 <template>
   <div>
-    <title-bar-comp :CTitle="title" :CSubtitle="subTitle" />
     <v-layout align-center justify-center column>
       <v-toolbar class="topbar">
         <v-spacer></v-spacer>
@@ -21,7 +20,6 @@
 
 <script>
 import RegistrationUserComp from './SubComps/RegistrationUserComp'
-import TitleBarComp from './SubComps/TitleBarComp'
 import RegistrationEmailVerifyComp from './SubComps/RegistrationEmailVerifyComp'
 import RegistrationCredentialsComp from './SubComps/RegistrationCredentialsComp'
 
@@ -30,8 +28,7 @@ export default {
   components: {
     RegistrationUserComp,
     RegistrationEmailVerifyComp,
-    RegistrationCredentialsComp,
-    TitleBarComp
+    RegistrationCredentialsComp
   },
   methods: {
     signup () {
@@ -42,12 +39,6 @@ export default {
     }
   },
   computed: {
-    title () {
-      return this.$store.state.aTitle
-    },
-    subTitle () {
-      return this.$store.state.aSubtitle
-    }
   }
 }
 </script>

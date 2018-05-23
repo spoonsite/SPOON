@@ -1,7 +1,6 @@
 <template>
-  <v-layout mt-3 align-center justify-center>
-    <v-flex xs12 sm8 align-center justify-center>
-    <v-card class="elevation-5">
+  <div>
+    <v-card class="elevation-5 ma-3">
       <v-toolbar color="primary" dark dense>
         <v-toolbar-title>Log in</v-toolbar-title>
       </v-toolbar>
@@ -12,25 +11,24 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-container fluid grid-list-x>
-          <v-layout row>
-            <v-flex xs2 ml-2>
-              <v-btn color="accent" id="login-button" style="margin-bottom:2em;" v-on:click="testAPI">Login</v-btn>
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-              <router-link :to="{name: 'forgotPassword'}">
-              <v-btn color="secondary" flat small>Forgot Password</v-btn>
-              </router-link>|
-              <router-link :to="{name: 'forgotUsername'}">
-              <v-btn color="secondary" flat small>Forgot Username</v-btn>
-              </router-link>
-          </v-layout>
-        </v-container>
+        <div class="wrapper">
+            <v-btn block color="accent" style="margin-bottom:1em;" @click="testAPI">Login</v-btn>
+          <div class="buttons">
+            <router-link :to="{name: 'forgotPassword'}" class="button-wrapper pr2">
+              <div class="btn btn--block btn--outline">
+                Forgot Password
+              </div>
+            </router-link>
+            <router-link :to="{name: 'forgotUsername'}" class="button-wrapper pl2">
+              <div class="btn btn--block btn--outline">
+                Forgot Username
+              </div>
+            </router-link>
+          </div>
+        </div>
       </v-card-actions>
     </v-card>
-  </v-flex>
-  </v-layout>
+  </div>
 </template>
 
 <script>
@@ -69,4 +67,26 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+a {
+  text-decoration: none;
+}
+.wrapper {
+  width: 100%;
+  margin: 0 1em;
+}
+.buttons {
+  width: 100%;
+}
+.button-wrapper {
+  width: 50%;
+  text-align: center;
+  float: left;
+  margin-bottom: 1em;
+}
+.pr2 {
+  padding-right: 1em;
+}
+.pl2 {
+  padding-left: 1em;
+}
 </style>

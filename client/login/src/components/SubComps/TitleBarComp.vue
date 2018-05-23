@@ -1,19 +1,16 @@
 <template>
   <div>
-    <v-toolbar dense flat dark color="primary">
-      <v-spacer></v-spacer>
-      <v-toolbar-title >{{CTitle}}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon id="menubutton">
-        <v-icon>menu</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <hr>
-    <v-toolbar dense dark color="secondary">
-      <v-spacer></v-spacer>
-      <v-toolbar-title id="subtitle">{{CSubtitle}}</v-toolbar-title>
-      <v-spacer></v-spacer>
-    </v-toolbar>
+    <div class="topbar">
+      <v-toolbar dense flat dark color="primary">
+        <v-spacer></v-spacer>
+        <v-toolbar-title >{{CTitle}}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-toolbar-side-icon></v-toolbar-side-icon>
+      </v-toolbar>
+    </div>
+    <div class="subtitle dark secondary">
+      {{ CSubtitle }}
+    </div>
   </div>
 </template>
 
@@ -26,15 +23,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-hr {
-  background: goldenrod;
-  height: 7px;
+.topbar {
+  border-bottom: 4px solid gold;
 }
-#subtitle {
+.subtitle {
+  text-align: center;
+  color: white;
+  padding: 0.8em 0;
   font-size: 1em;
   font-style: italic;
-}
-#menubutton {
-  color: white;
 }
 </style>
