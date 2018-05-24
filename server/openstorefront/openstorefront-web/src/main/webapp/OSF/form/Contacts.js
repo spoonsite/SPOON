@@ -250,12 +250,15 @@ Ext.define('OSF.form.Contacts', {
 						{
 							title: 'Existing Contacts',
 							columnWidth: 0.5,
-							bodyStyle: 'padding: 10px;',
+							bodyStyle: 'padding: 0px;',
 							items: [
 
 								Ext.create('Ext.grid.Panel', {
 									columnLines: true,
-									maxHeight: 230,
+									maxHeight: 250,
+									frame: true,
+									frameHeader: true,
+									bodyStyle: 'padding: 0px',
 									store: Ext.create('Ext.data.Store', {
 										fields: [
 											"contactId",
@@ -288,14 +291,21 @@ Ext.define('OSF.form.Contacts', {
 									],
 									selModel: {
 										selType: 'checkboxmodel',
+										allowDeselect: true,
+										toggleOnClick: true,
 										mode: 'SINGLE'
 									},
 									listeners: {
-										itemclick: function (view, record, item, index, opts) {
-											var contactType = this.up('form').getForm().findField('contactType').getValue();
-											this.up('form').reset();
-											this.up('form').loadRecord(record);
-											this.up('form').getForm().findField('contactType').setValue(contactType);
+										selectionchange: function (grid, record, index, opts) {
+											if(this.getSelectionModel().getCount() > 0){
+												var contactType = this.up('form').getForm().findField('contactType').getValue();
+												this.up('form').reset();
+												this.up('form').loadRecord(this.getSelection()[0]);
+												this.up('form').getForm().findField('contactType').setValue(contactType);
+											}
+											else{
+												this.up('form').reset();
+											}
 										}
 									}
 								})
