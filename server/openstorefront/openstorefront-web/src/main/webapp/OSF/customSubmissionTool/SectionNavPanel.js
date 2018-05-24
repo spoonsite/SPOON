@@ -121,58 +121,21 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					//move field to a new section
 					if (data.records[0].get('fieldId')) {
 						if (overModel && overModel.get('sectionId')) {	
-							//remove from current section
-							var fieldId = data.records[0].get('fieldId');
-							var actualField;
-							Ext.Array.each(navPanel.templateRecord.sections, function(section){								
-								var found = false;								
-								Ext.Array.each(section.fields, function(field) {
-									if (field.fieldId === fieldId) {
-										actualField = field;
-										found = true;
-									}
-								});
-								if (found) {
-									var keepQuestions = [];
-									Ext.Array.each(section.fields, function(field) {
-										if (field.fieldId !== fieldId) {
-											keepQuestions.push(field);
-										}
-									});
-									section.fields = keepQuestions;
-								}
-							});
-							
-							//add to section
-							var insertIndex = overModel.indexOf(node);
-							Ext.Array.each(navPanel.templateRecord.sections, function(section){
-								if (overModel.get('sectionId') === section.sectionId) {
-									Ext.Array.insert(section.fields, insertIndex, actualField);
-								}
-							});
+							navPanel.syncModel();
 						} 
 					}
-										
+					
+					//reorder questions
 					if (data.records[0].get('fieldId')) {
 						if (overModel && overModel.get('fieldId')) {	
-							
+							navPanel.syncModel();
 						}
 					}
 					
 					
 					//reorder sections and move questions
 					if (overModel && overModel.get('sectionId')) {					
-						var root = navPanel.treePanel.getStore().getRoot();
-						
-						var sections = [];
-						root.eachChild(function(node){
-							Ext.Array.filter(navPanel.templateRecord.sections, function(section){
-								if (node.get('sectionId') === section.sectionId) {
-									sections.push(section);
-								}
-							});					
-						});
-						navPanel.templateRecord.sections = sections;						
+						navPanel.syncModel();					
 					}
 					
 				},
@@ -182,15 +145,15 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 						if (records[0].get('sectionId')) {
 							navPanel.queryById('delete').setDisabled(false);
 
-							// loads selection if ids match
-							Ext.Array.forEach(navPanel.templateRecord.sections, function (section, index) {
-								if (section.sectionId === records[0].get('sectionId')) {
-									navPanel.formBuilderPanel.saveSection();
-									navPanel.formBuilderPanel.displayPanel.loadSection(section);
-								}
-							});							
+							navPanel.formBuilderPanel.displayPanel.loadSection(records[0].data.section);
 							records[0].expand();
 						} else {
+							//field
+							navPanel.formBuilderPanel.displayPanel.loadSection(
+									records[0].parentNode.data.section, 
+									records[0].get('fieldId')
+							);
+							
 							navPanel.queryById('delete').setDisabled(true);
 						}
 					} else {
@@ -203,6 +166,25 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		navPanel.add(navPanel.treePanel);
 						
 	},
+	syncModel: function() {
+		//sync the template with the view
+		var navPanel = this;
+		var navList = navPanel.queryById('navList');
+		var root = navList.getStore().getRoot();
+		
+		var newSections = [];
+		root.eachChild(function(sectionNode) {
+			var newFields = [];
+			sectionNode.eachChild(function(fieldNode){
+				newFields.push(fieldNode.data.field);
+			});
+			
+			sectionNode.data.section.fields = newFields;
+			newSections.push(sectionNode.data.section);
+		});
+		
+		navPanel.templateRecord.sections = newSections;		
+	},	
 	
 	addSection: function(section) {		
 		var navPanel = this;
@@ -218,6 +200,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 			leaf: false,			
 			text: section.name,
 			sectionId: section.sectionId,
+			section: section,
 			children: []			
 		});
 		
@@ -271,6 +254,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 			leaf: true,			
 			text: field.questionNumber + ' ' + field.label,
 			fieldId: field.fieldId,
+			field: field,
 			children: []			
 		});		
 		
@@ -332,16 +316,18 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 				leaf: false,		
 				text: section.name,
 				sectionId: section.sectionId,
+				section: section,
 				children: []
 			};
 			
 			Ext.Array.each(section.fields, function(field) {
-				var fieldType = field.fieldType ? ' (' + field.fieldType + ')' : '';
+				//var fieldType = field.fieldType ? ' (' + field.fieldType + ')' : '';
 				
 				sectionItem.children.push({
 					leaf: true,
-					text: (field.questionNumber ? field.questionNumber : '')  + field.label + fieldType,
-					fieldId: field.fieldId
+					text: (field.questionNumber ? field.questionNumber : '')  + field.label,
+					fieldId: field.fieldId,
+					field: field
 				});
 			});
 			var nodeInserted = root.appendChild(sectionItem);

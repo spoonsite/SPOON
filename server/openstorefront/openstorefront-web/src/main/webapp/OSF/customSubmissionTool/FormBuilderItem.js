@@ -129,8 +129,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     	var formBuilderPanel = this.getFormBuilderPanel();
 		var previousActiveItem = formBuilderPanel.activeItem;
 
-		if (previousActiveItem) {
+		if (previousActiveItem && !previousActiveItem.isDestroyed) {
 			previousActiveItem.removeCls('csf-active');
+		} else {
+			previousActiveItem = null;
 		}
 		newItem.addCls('csf-active');
 		formBuilderPanel.activeItem = newItem;

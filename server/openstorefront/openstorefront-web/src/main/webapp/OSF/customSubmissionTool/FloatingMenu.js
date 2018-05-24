@@ -41,7 +41,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		}
 					
 		if (formBuilderPanel.activeItem && formBuilderPanel.activeItem.el) {		
-			floatingMenu.setY(formBuilderPanel.activeItem.getY(), true);								
+			floatingMenu.setY(formBuilderPanel.activeItem.getY(), false);								
 		}
 	},
 	items: [

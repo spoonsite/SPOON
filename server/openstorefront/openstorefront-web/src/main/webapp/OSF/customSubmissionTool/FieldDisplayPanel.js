@@ -53,7 +53,7 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	 * physically inserts all form items in a section onto the display panel
 	 * 
 	 */
-	loadSection: function (section, saveSection) {
+	loadSection: function (section, activeFieldId) {
 
 		var displayPanel = this;		
 		var formBuilderPanel = displayPanel.formBuilderPanel;
@@ -88,10 +88,24 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 				});
 			});		
 			itemContainer.add(newFieldItems);
-			if (newFieldItems.length > 0) {
-				itemContainer.items.items[0].setActiveFormItem();
+			itemContainer.updateLayout(true, true);
+			
+			if (activeFieldId) {
+				Ext.Array.each(itemContainer.items.items, function(fieldItem){
+					if (fieldItem.templateField.fieldId === activeFieldId) {
+						fieldItem.setActiveFormItem();
+									
+						Ext.defer(function(){
+							displayPanel.scrollTo(fieldItem.getX(), fieldItem.getY()-50, true);
+						}, 500);					
+					}
+				});
 			} else {
-				formBuilderPanel.activeItem = null;
+				if (newFieldItems.length > 0) {
+					itemContainer.items.items[0].setActiveFormItem();
+				} else {
+					formBuilderPanel.activeItem = null;
+				}
 			}
 		}
 
