@@ -250,15 +250,13 @@ Ext.define('OSF.form.Contacts', {
 						{
 							title: 'Existing Contacts',
 							columnWidth: 0.5,
-							bodyStyle: 'padding: 0px;',
 							items: [
-
 								Ext.create('Ext.grid.Panel', {
+									itemId: 'existingContactGrid',
 									columnLines: true,
-									maxHeight: 250,
-									frame: true,
+									height: 250,
+									border: true,
 									frameHeader: true,
-									bodyStyle: 'padding: 0px',
 									store: Ext.create('Ext.data.Store', {
 										fields: [
 											"contactId",
@@ -297,14 +295,15 @@ Ext.define('OSF.form.Contacts', {
 									},
 									listeners: {
 										selectionchange: function (grid, record, index, opts) {
+											var form = this.up('form');
 											if(this.getSelectionModel().getCount() > 0){
-												var contactType = this.up('form').getForm().findField('contactType').getValue();
-												this.up('form').reset();
-												this.up('form').loadRecord(this.getSelection()[0]);
-												this.up('form').getForm().findField('contactType').setValue(contactType);
+												var contactType = form.getForm().findField('contactType').getValue();
+												form.reset();
+												form.loadRecord(this.getSelection()[0]);
+												form.getForm().findField('contactType').setValue(contactType);
 											}
 											else{
-												this.up('form').reset();
+												form.reset();
 											}
 										}
 									}
@@ -358,7 +357,7 @@ Ext.define('OSF.form.Contacts', {
 								var record = contactPanel.contactGrid.getSelection()[0]
 								this.up('grid').down('form').reset();
 								this.up('grid').down('form').loadRecord(record);
-								var grid = this.up('grid').down('form').down('grid');
+								var grid = this.up('grid').queryById('existingContactGrid');
 								var index = grid.store.find('contactId', record.data.contactId);
 								grid.getView().select(index);
 							}
