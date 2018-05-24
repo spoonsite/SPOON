@@ -76,6 +76,17 @@ public class ComponentComment
 		setCommentId(null);
 	}
 
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+		ComponentComment componentComment = (ComponentComment)entity;
+		setCommentType(componentComment.getCommentType());
+		setComment(componentComment.getComment());
+		setParentCommentId(componentComment.getParentCommentId());
+		setPrivateComment(componentComment.getPrivateComment());
+	}
+
 	public String getCommentId()
 	{
 		return commentId;
