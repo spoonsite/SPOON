@@ -25,7 +25,7 @@ import java.util.Map;
  *
  * @author dshurtleff
  * @author cyearsley
- * We should probably consider using enums in the future.
+ * 
  */
 @SystemTable
 @APIDescription("Defines Security Permissions")
@@ -133,10 +133,21 @@ public class SecurityPermission
 	public static final String REPORTS_ALL = "REPORTS-ALL";
 
 	// Report permissions
-	public static final String REPORT_ACTION_REPORT = "REPORT-ACTION-REPORT";
-	public static final String REPORT_ENTRYLISTING_REPORT = "REPORT-ENTRYLISTING-REPORT";
 	public static final String REPORT_OUTPUT_EMAIL_ATTACH = "REPORT-OUTPUT-EMAIL-ATTACH";
 	public static final String REPORT_OUTPUT_EMAIL_BODY = "REPORT-OUTPUT-EMAIL-BODY";
+	public static final String RUN_ACTION_REPORT = "RUN-ACTION-REPORT";
+	public static final String RUN_ENTRIES_BY_CAT_REPORT = "RUN-ENTRIES-BY-CAT-REPORT";
+	public static final String RUN_ENTRIES_BY_ORG_REPORT = "RUN-ENTRIES-BY-ORG-REPORT";
+	public static final String RUN_ENTRY_REPORT = "RUN-ENTRY-REPORT";
+	public static final String RUN_ENTRY_DETAIL_REPORT = "RUN-ENTRY-DETAIL-REPORT";
+	public static final String RUN_ENTRY_LISTING_REPORT = "RUN-ENTRY-LISTING-REPORT";
+	public static final String RUN_ENTRY_STATUS_REPORT = "RUN-ENTRY-STATUS-REPORT";
+	public static final String RUN_EVAL_STATUS_REPORT = "RUN-EVAL-STATUS-REPORT";
+	public static final String RUN_LINK_VALIDATION_REPORT = "RUN-LINK-VALIDATION-REPORT";
+	public static final String RUN_SUBMISSIONS_REPORT = "RUN-SUBMISSIONS-REPORT";
+	public static final String RUN_USAGE_REPORT = "RUN-USAGE-REPORT";
+	public static final String RUN_USER_REPORT = "RUN-USER-REPORT";
+	public static final String RUN_USER_ORG_REPORT = "RUN-USER-ORG-REPORT";
 
 	// User submissions/management permissions
 	public static final String GROUPBY_USER_SUBMISSION = "User Submissions";
@@ -159,10 +170,15 @@ public class SecurityPermission
 	public static final String ADMIN_SYSTEM_MANAGEMENT_PLUGIN = "ADMIN-SYSTEM-MANAGEMENT-PLUGIN";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_ARCHIVE = "ADMIN-SYSTEM-MANAGEMENT-ARCHIVE";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET = "ADMIN-SYSTEM-MANAGEMENT-ERROR-TICKET";
-	public static final String ADMIN_SYSTEM_MANAGEMENT_SEARCH = "ADMIN-SYSTEM-MANAGEMENT-SEARCH";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_SEARCH_CONTROL = "ADMIN-SYSTEM-MANAGEMENT-SEARCH-CONTROL";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_APP_READ = "ADMIN-SYSTEM-MANAGEMENT-APP-READ";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_APP_DELETE = "ADMIN-SYSTEM-MANAGEMENT-APP-DELETE";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_APP_UPDATE = "ADMIN-SYSTEM-MANAGEMENT-APP-UPDATE";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_LOGGING_PERMISSIONS = "ADMIN-SYSTEM-MANAGEMENT-LOGGING-PERMISSIONS";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_MANAGERS = "ADMIN-SYSTEM-MANAGEMENT-MANAGERS";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_CACHE = "ADMIN-SYSTEM-MANAGEMENT-CACHE";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_RECENT_CHANGES = "ADMIN-SYSTEM-MANAGEMENT-RECENT-CHANGES";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP = "ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP";
 
 	// Entry Management
 	public static final String GROUPBY_ENTRY_MANAGEMENT = "Entries";
@@ -463,10 +479,21 @@ public class SecurityPermission
 		codeMap.put(ADMIN_USER_MANAGEMENT_CREATE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_CREATE, "Allow admin user submission creation", null, GROUPBY_USER_MANAGEMENT));
 
 		// Report permissions
-		codeMap.put(REPORT_ACTION_REPORT, newLookup(SecurityPermission.class, REPORT_ACTION_REPORT, "Allow user to run action report", null, GROUPBY_REPORTS));
-		codeMap.put(REPORT_ENTRYLISTING_REPORT, newLookup(SecurityPermission.class, REPORT_ENTRYLISTING_REPORT, "Allow user to run entry listin report", null, GROUPBY_REPORTS));
 		codeMap.put(REPORT_OUTPUT_EMAIL_ATTACH, newLookup(SecurityPermission.class, REPORT_OUTPUT_EMAIL_ATTACH, "Allow user to run report as attached email", null, GROUPBY_REPORTS));
 		codeMap.put(REPORT_OUTPUT_EMAIL_BODY, newLookup(SecurityPermission.class, REPORT_OUTPUT_EMAIL_BODY, "Allow user to run report as the content of an email body", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_ACTION_REPORT, newLookup(SecurityPermission.class, RUN_ACTION_REPORT, "Allows user to run the Action report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_ENTRIES_BY_CAT_REPORT, newLookup(SecurityPermission.class, RUN_ENTRIES_BY_CAT_REPORT, "Allows user to run the Entries by Category report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_ENTRIES_BY_ORG_REPORT, newLookup(SecurityPermission.class, RUN_ENTRIES_BY_ORG_REPORT, "Allows user to run the Entries by Organization report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_ENTRY_REPORT, newLookup(SecurityPermission.class, RUN_ENTRY_REPORT, "Allows user to run the Entry report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_ENTRY_DETAIL_REPORT, newLookup(SecurityPermission.class, RUN_ENTRY_DETAIL_REPORT, "Allows user to run the Entry Detail report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_ENTRY_LISTING_REPORT, newLookup(SecurityPermission.class, RUN_ENTRY_LISTING_REPORT, "Allows user to run the Entry Listing report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_ENTRY_STATUS_REPORT, newLookup(SecurityPermission.class, RUN_ENTRY_STATUS_REPORT, "Allows user to run the Entry Status report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_EVAL_STATUS_REPORT, newLookup(SecurityPermission.class, RUN_EVAL_STATUS_REPORT, "Allows user to run the Evaluation Status report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_LINK_VALIDATION_REPORT, newLookup(SecurityPermission.class, RUN_LINK_VALIDATION_REPORT, "Allows user to run the Link Validation report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_SUBMISSIONS_REPORT, newLookup(SecurityPermission.class, RUN_SUBMISSIONS_REPORT, "Allows user to run the Sumbissions report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_USAGE_REPORT, newLookup(SecurityPermission.class, RUN_USAGE_REPORT, "Allows user to run the Usage report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_USER_REPORT, newLookup(SecurityPermission.class, RUN_USER_REPORT, "Allows user to run the User report", null, GROUPBY_REPORTS));
+		codeMap.put(RUN_USER_ORG_REPORT, newLookup(SecurityPermission.class, RUN_USER_ORG_REPORT, "Allows user to run the User by Organization report", null, GROUPBY_REPORTS));
 
 		// System Management
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT, "General sys admin permission", null, GROUPBY_SYSTEM_MANAGEMENT));
@@ -474,10 +501,15 @@ public class SecurityPermission
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_PLUGIN, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_PLUGIN, "Allows for management of plugins", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_ARCHIVE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_ARCHIVE, "Allows for sys archive management", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET, "Allows for sys error ticket management", null, GROUPBY_SYSTEM_MANAGEMENT));
-		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_SEARCH, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_SEARCH, "Allows for sys search management", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_SEARCH_CONTROL, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_SEARCH_CONTROL, "Allows for sys search management", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_APP_READ, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_APP_READ, "Allows for reading application meta data", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_APP_DELETE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_APP_DELETE, "Allows for removal/clearing operations for the sys", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_APP_UPDATE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_APP_UPDATE, "Allows for updating system configs", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_LOGGING_PERMISSIONS, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_LOGGING_PERMISSIONS, "Access to permission logging", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_MANAGERS, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_MANAGERS, "System managers", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_CACHE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_CACHE, "Access to system cache", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_RECENT_CHANGES, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_RECENT_CHANGES, "System recent changes", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP, "Access to config properties", null, GROUPBY_SYSTEM_MANAGEMENT));
 
 		// Entry Management
 		codeMap.put(ADMIN_ENTRY_CREATE, newLookup(SecurityPermission.class, ADMIN_ENTRY_CREATE, "Allows admin to create entries", null, GROUPBY_ENTRY_MANAGEMENT));

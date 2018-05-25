@@ -49,7 +49,6 @@ public abstract class LookupEntity<T extends LookupEntity>
 {
 
 	public static final String FIELD_DESCRIPTION = "description";
-	public static final String DEFAULT_GROUPBY = "none";
 
 	@PK
 	@NotNull
@@ -124,7 +123,7 @@ public abstract class LookupEntity<T extends LookupEntity>
 
 	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription)
 	{
-		return newLookup(lookupClass, code, description, detailedDescription, DEFAULT_GROUPBY);
+		return newLookup(lookupClass, code, description, detailedDescription, null);
 	}
 
 	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription, String groupBy)
