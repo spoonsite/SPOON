@@ -1,31 +1,23 @@
 <template>
   <div>
-    <v-card class="elevation-5 ma-3">
-      <v-toolbar color="primary" dark dense>
-        <v-toolbar-title>Log in</v-toolbar-title>
-      </v-toolbar>
+    <v-card class="elevation-5 mt-4">
       <v-card-text>
-        <v-form v-model="valid">
-          <v-text-field prepend-icon="person" name="username" label="Username" type="text" :rules="usernameRules"></v-text-field>
-          <v-text-field prepend-icon="lock" name="password" label="Password" type="password" :rules="passwordRules"></v-text-field>
+        <v-form v-model="valid" class="clearfix">
+          <v-text-field prepend-icon="person" name="username" label="Username" type="text" :rules="usernameRules" tabindex=1></v-text-field>
+          <router-link :to="{name: 'forgotUsername'}" class="link" tabindex=5>Forgot Username</router-link>
+          <v-text-field style="margin-top: 0 !important;" prepend-icon="lock" name="password" label="Password" type="password" :rules="passwordRules" tabindex=2></v-text-field>
+          <router-link :to="{name: 'forgotPassword'}" class="link" tabindex=6>Forgot Password</router-link>
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <div class="wrapper">
-            <v-btn block color="accent" style="margin-bottom:1em;" @click="testAPI">Login</v-btn>
-          <div class="buttons">
-            <router-link :to="{name: 'forgotPassword'}" class="button-wrapper pr2">
-              <div class="btn btn--block btn--outline">
-                Forgot Password
-              </div>
-            </router-link>
-            <router-link :to="{name: 'forgotUsername'}" class="button-wrapper pl2">
-              <div class="btn btn--block btn--outline">
-                Forgot Username
-              </div>
-            </router-link>
-          </div>
-        </div>
+        <v-container style="margin: 0; padding: 0 1em 1em 1em;">
+          <v-flex xs12>
+            <v-btn block color="accent" style="margin-bottom:1em;" @click="testAPI" tabindex=3>Login</v-btn>
+          </v-flex>
+          <v-flex xs12 class="register">
+            <router-link :to="{name: 'registration'}" tabindex=4>Register for a new account</router-link>
+          </v-flex>
+        </v-container>
       </v-card-actions>
     </v-card>
   </div>
@@ -55,7 +47,7 @@ export default {
     ]
   }),
   methods: {
-    testAPI: function (event) {
+    testAPI (event) {
       console.log('Button Clicked Calling API')
       if (event) {
         this.$api.getTest()
@@ -70,23 +62,22 @@ export default {
 a {
   text-decoration: none;
 }
-.wrapper {
-  width: 100%;
-  margin: 0 1em;
+a:hover {
+  text-decoration: underline;
 }
-.buttons {
-  width: 100%;
+.clearfix:after {
+  content: '';
+  clear: both;
+  display: table;
 }
-.button-wrapper {
-  width: 50%;
+.link {
+  float: right;
+  position: relative;
+  top: -1.5em;
+}
+.register {
   text-align: center;
-  float: left;
-  margin-bottom: 1em;
-}
-.pr2 {
-  padding-right: 1em;
-}
-.pl2 {
-  padding-left: 1em;
+  width: 100%;
+  font-size: 1.4em;
 }
 </style>

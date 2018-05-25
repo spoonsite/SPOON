@@ -1,10 +1,8 @@
 <template>
-  <div>
-    <video controls class="video" src="https://www.spoonsite.com/openstorefront/Branding.action?GeneralMedia&name=SPOON%20Overview;" poster="https://www.spoonsite.com/openstorefront/Branding.action?GeneralMedia&amp;name=SPOON%20Overview%20Poster"></video>
-    <div class="wrapper">
-      <signup-comp></signup-comp>
-      <login-comp></login-comp>
-    </div>
+  <div class="login-page pa-4">
+    <video controls class="video elevation-5" src="https://www.spoonsite.com/openstorefront/Branding.action?GeneralMedia&name=SPOON%20Overview;" poster="https://www.spoonsite.com/openstorefront/Branding.action?GeneralMedia&amp;name=SPOON%20Overview%20Poster"></video>
+    <!-- <signup-comp></signup-comp> -->
+    <login-comp></login-comp>
   </div>
 </template>
 
@@ -25,17 +23,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.login-page {
+  max-width: 50em;
+  margin-left: auto;
+  margin-right: auto;
+}
 .video {
   width: 100%;
-  max-width: 45em;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 1em;
-}
-.wrapper {
-  max-width: 45em;
-  margin-left: auto;
-  margin-right: auto;
 }
 </style>

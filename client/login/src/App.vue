@@ -27,7 +27,7 @@ export default {
   mounted () {
     /* eslint-disable no-undef */
     // particleJS loaded from CDN, npm loading fails
-    let particles = false
+    let particles = true
     if (particles) {
       particlesJS('particle-js', {
         particles: {
@@ -123,5 +123,15 @@ canvas {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% 50%;
+}
+@media screen and (max-width: 380px) {
+  .v-spacer {
+    height: 13em;
+  }
+}
+@media screen and (max-width: 320px) {
+  .v-spacer {
+    height: 15em;
+  }
 }
 </style>
