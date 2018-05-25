@@ -38,29 +38,7 @@ Ext.define('OSF.customSubmissionTool.EntryTypeSelectWindow', {
 				labelAlign: 'top',
 				width: '100%'
 			},
-			items: [
-				{
-					xtype: 'combobox',
-					fieldLabel: 'Entry Type <span class="field-required" />',
-					name: 'entryType',
-					allowBlank: false,
-					displayField: 'description',
-					valueField: 'code',
-					editable: false,
-					typeAhead: false,					
-					store: {
-						autoLoad: true,
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/componenttypes/lookup'
-						},
-						listeners: {
-							load: function(store, records, successful, operation, opts) {
-								
-							}
-						}
-					}
-				}
+			items: [	
 			],
 			dockedItems: [
 				{
@@ -97,9 +75,34 @@ Ext.define('OSF.customSubmissionTool.EntryTypeSelectWindow', {
 	initComponent: function () {
 		this.callParent();
 		var entryTypeWindow = this;
-		
-		
 			
+		var form = entryTypeWindow.queryById('form');
+		
+		form.add({
+			xtype: 'combobox',
+			fieldLabel: 'Entry Type <span class="field-required" />',
+			itemId: 'entryType',
+			name: 'entryType',
+			allowBlank: false,
+			displayField: 'description',
+			valueField: 'code',
+			editable: false,
+			typeAhead: false,					
+			store: {
+				autoLoad: true,
+				proxy: {
+					type: 'ajax',
+					url: 'api/v1/resource/componenttypes/lookup'
+				},
+				listeners: {
+					load: function(store, records, successful, operation, opts) {
+						if (entryTypeWindow.selectedEntryType) {
+							form.queryById('entryType').setValue(entryTypeWindow.selectedEntryType);
+						}
+					}
+				}
+			}
+		});
 		
 	}
 	

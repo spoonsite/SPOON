@@ -122,6 +122,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 				},
 				{
 					xtype: 'osf-csf-templateprogresspanel',
+					itemId: 'templateProgress',
 					width: '100%',
 					templateRecord: formBuilderPanel.templateRecord,
 					flex: 2
@@ -133,6 +134,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.itemContainer = formBuilderPanel.queryById('itemContainer');
 		formBuilderPanel.floatingMenu = formBuilderPanel.queryById('floatingMenu');
 		formBuilderPanel.sectionPanel = formBuilderPanel.queryById('sectionPanel');
+		formBuilderPanel.templateProgressPanel = formBuilderPanel.queryById('templateProgress');
 
 		formBuilderPanel.displayPanel.formBuilderPanel = formBuilderPanel;
 

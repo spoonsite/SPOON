@@ -243,6 +243,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-clone fa-2x" aria-hidden="true" data-qtip="Copy a field"></i>',
 			flex: 1,
+			hidden: true,
 			cls: 'floating-menu-button',
 			handler: function() {
 				//copy active item
@@ -308,6 +309,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-ellipsis-v fa-2x" aria-hidden="true" data-qtip="More options"></i>',
 			flex: 1,
+			hidden: true,
 			cls: 'floating-menu-button',
 			listeners: {
 				click: function () {

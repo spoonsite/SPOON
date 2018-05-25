@@ -63,7 +63,9 @@ Ext.define('OSF.customSubmissionTool.Window', {
 						var submissionWindow = this.up('window');
 						
 						var entryTypeSelect = Ext.create('OSF.customSubmissionTool.EntryTypeSelectWindow', {
+							selectedEntryType: submissionWindow.selectedEntryType,
 							selectCallBack: function(entryType) {
+								submissionWindow.selectedEntryType = entryType;
 								var previewWin = Ext.create('Ext.window.Window', {
 									title: 'Preview',
 									layout: 'fit',
