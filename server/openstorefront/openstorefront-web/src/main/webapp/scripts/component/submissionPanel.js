@@ -1296,6 +1296,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 													if(record){
 														var index = store.find('contactId', record.data.contactId);
 														addWindow.queryById('existingContactGrid').getView().select(index);
+														addWindow.down('form').getForm().findField('componentContactId').setValue(record.data.componentContactId);
 													}
 												}
 											}
