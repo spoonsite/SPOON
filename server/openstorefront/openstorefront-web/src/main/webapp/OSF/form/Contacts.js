@@ -110,7 +110,6 @@ Ext.define('OSF.form.Contacts', {
 								var existingStore = this.up('form').down('grid').getStore();
 								if (data.componentContactId) {
 									//Update an existing contact
-									console.log("Updating");
 									CoreUtil.submitForm({
 										url: 'api/v1/resource/components/' + componentId + '/contacts/' + data.componentContactId,
 										method: 'PUT',
@@ -125,7 +124,6 @@ Ext.define('OSF.form.Contacts', {
 								}
 								else {
 									//Create a new contact
-									console.log("creating");
 									CoreUtil.submitForm({
 										url: 'api/v1/resource/components/' + componentId + '/contacts',
 										method: 'POST',
