@@ -8,8 +8,8 @@
         type="text"
         placeholder="Search"
       >
-      <v-icon class="search-icon" @click="submitQuery()">search</v-icon>
-      <v-icon v-if="value !== ''" class="search-clear" @click="$emit('input', '')">fas fa-times</v-icon>
+      <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
+      <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), submitQuery()">clear</v-icon>
     </div>
 
     <v-card v-if="searchSuggestions.length > 0">
@@ -98,13 +98,6 @@ export default {
   float: right;
 }
 .search-icon:hover {
-  cursor: pointer;
-}
-.search-clear {
-  float: right;
-  padding-right: 0.5em;
-}
-.search-clear:hover {
   cursor: pointer;
 }
 input {

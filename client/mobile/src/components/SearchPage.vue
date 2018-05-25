@@ -9,7 +9,7 @@
     </ul>
   </div>
 
-  <div class="clearfix">
+  <div class="clearfix centeralign" style="max-width: 36em;">
     <SearchBar v-on:submitSearch="submitSearch()" :hideSuggestions="searchQueryIsDirty" v-model="searchQuery"></SearchBar>
 
     <!-- SearchBar Menu Buttons -->
@@ -41,27 +41,27 @@
             <v-radio label="Descending" value="DESC"></v-radio>
           </v-radio-group>
           <h3>Sort by:</h3>
-          <v-radio-group v-model="searchSortField">
-            <v-radio label="Search Relevance" value="searchScore"></v-radio>
-            <v-radio label="Description" value="description"></v-radio>
-            <v-radio label="Name" value="name"></v-radio>
-          </v-radio-group>
+          <v-select
+            v-model="searchSortField"
+            :items="searchSortFields"
+          ></v-select>
           <h3>Page Size</h3>
           {{ searchPageSize }}
           <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
           <!-- <v-checkbox v-model="showAll" label="Show all search results"></v-checkbox> -->
+          <v-btn @click.stop="showOptions = false">Submit</v-btn>
           <v-btn @click="resetOptions()">Reset Options</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <!-- Filter pills if there are any -->
-    <v-btn small @click="clear()" v-if="filters.component !== '' || filters.organization !== '' || filters.tags.length !== 0">Clear Filters</v-btn>
+    <v-btn small @click="clear()" v-if="(filters.entryType || filters.component || filters.organization || filters.tags.length !== 0)">Clear Filters</v-btn>
     <div style="padding: 0 0.5em 0.8em 0.8em;">
-      <span v-if="filters.component !== ''"><v-chip close small @input="filters.component = ''" color="teal lighten-2" text-color="white">{{ filters.component }}</v-chip></span>
+      <span v-if="filters.component"><v-chip close small @input="filters.component = ''" color="teal lighten-2" text-color="white">{{ filters.component }}</v-chip></span>
       <span v-if="filters.tags.length !== 0"><v-chip v-for="tag in filters.tags" :key="tag" close small @input="deleteTag(tag)">{{ tag }}</v-chip></span>
-      <span v-if="filters.organization !== ''"><v-chip close small color="indigo lighten-2" text-color="white" @input="filters.organization = ''">{{ filters.organization }}</v-chip></span>
-      <span v-if="filters.entryType !== ''"><v-chip close small color="purple lighten-2" text-color="white" @input="filters.entryType = ''">{{ filters.entryType }}</v-chip></span>
+      <span v-if="filters.organization"><v-chip close small color="indigo lighten-2" text-color="white" @input="filters.organization = ''">{{ filters.organization }}</v-chip></span>
+      <span v-if="filters.entryType"><v-chip close small color="purple lighten-2" text-color="white" @input="filters.entryType = ''">{{ filters.entryType }}</v-chip></span>
     </div>
 
     <!-- Search Filters Dialog -->
@@ -78,6 +78,15 @@
           </v-btn>
         </v-card-title>
         <v-card-text>
+        <v-select
+          v-model="filters.entryType"
+          :items="entryTypeList"
+          item-text="componentType.label"
+          item-value="componentType.componentType"
+          label="Entry Type"
+          clearable
+          multi-line
+        ></v-select>
         <v-select
           v-model="filters.component"
           :items="componentsList"
@@ -104,6 +113,7 @@
           label="Organization"
           clearable
         ></v-select>
+          <v-btn @click.stop="showFilters = false">Submit</v-btn>
           <v-btn @click="clear()">Clear Filters</v-btn>
         </v-card-text>
       </v-card>
@@ -152,29 +162,47 @@
         </div>
         <v-card>
           <v-card-text>
-            <!-- <div
-            style="float: left; margin-bottom: 0.5em;"
-            v-for="(comp, i) in item.componentTypeDescription.split('>')"
-            :key="comp"
-            >
+            <p>
               <router-link
-                :to="{ path: 'search', query: { comp: item.componentType }}">
-                {{ comp }}
+                :to="{ path: 'search', query: { comp: item.componentType }}"
+              >
+                {{ item.componentTypeDescription }}
               </router-link>
-              <v-icon
-              v-if="i + 1 < item.componentTypeDescription.split('>').length">
-                chevron_right
-              </v-icon>
-            </div> -->
-            <table class="table">
+            </p>
+            <p
+              style="padding-bottom: 1em;"
+              v-if="item.tags.length !== 0"
+            >
+            <span
+              v-for="tag in item.tags"
+              :key="tag"
+              style="float: left; margin-right: 0.8em; cursor: pointer;"
+              @click="addTag(tag.text)"
+            >
+              <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
+            </span>
+            </p>
+            <table class="table" style="border: 1px solid rgba(0,0,0,0.1);">
               <tbody>
                 <tr>
                   <td>Organization:</td>
                   <td>{{ item.organization }}</td>
                 </tr>
                 <tr>
+                  <td>Average User Rating:</td>
+                  <td><star-rating :rating="item.averageRating" :read-only="true" :increment="0.01" :star-size="30"></star-rating></td>
+                </tr>
+                <tr>
+                  <td>Date Created:</td>
+                  <td>{{ item.createDts | formatDate }}</td>
+                </tr>
+                <tr>
                   <td>Last Updated:</td>
                   <td>{{ item.updateDts | formatDate }}</td>
+                </tr>
+                <tr>
+                  <td>Approved Date:</td>
+                  <td>{{ item.approvedDts | formatDate }}</td>
                 </tr>
               </tbody>
             </table>
@@ -223,11 +251,13 @@
 import _ from 'lodash'
 import axios from 'axios'
 import SearchBar from './subcomponents/SearchBar'
+import StarRating from 'vue-star-rating'
 
 export default {
   name: 'SearchPage',
   components: {
-    SearchBar
+    SearchBar,
+    StarRating
   },
   mounted () {
     if (this.$route.query.q) {
@@ -240,6 +270,7 @@ export default {
       this.filters.entryType = this.$route.query.entryType
     }
     this.getComponentTypes()
+    this.getEntryTypes()
     this.getTags()
     this.getOrganizations()
     this.newSearch()
@@ -259,7 +290,8 @@ export default {
       this.filters = {
         component: '',
         tags: [],
-        organization: ''
+        organization: '',
+        entryType: ''
       }
     },
     resetOptions () {
@@ -269,6 +301,11 @@ export default {
     },
     deleteTag (tag) {
       this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
+    },
+    addTag (tag) {
+      if (this.filters.tags.indexOf(tag) === -1) {
+        this.filters.tags.push(tag)
+      }
     },
     submitSearch () {
       this.searchQueryIsDirty = true
@@ -352,6 +389,17 @@ export default {
           that.searchQueryIsDirty = false
         })
     },
+    getEntryTypes () {
+      let that = this
+      axios
+        .get(
+          '/openstorefront/api/v1/resource/componenttypes/nested'
+        )
+        .then(response => {
+          that.entryTypeList = response.data.children
+        })
+        .catch(e => this.errors.push(e))
+    },
     getComponentTypes () {
       let that = this
       axios
@@ -367,7 +415,7 @@ export default {
       let that = this
       axios
         .get(
-          '/openstorefront/api/v1/resource/components/tags'
+          '/openstorefront/api/v1/resource/components/tagviews?approvedOnly=true'
         )
         .then(response => {
           that.tagsList = response.data
@@ -461,6 +509,7 @@ export default {
   },
   data () {
     return {
+      entryTypeList: [],
       componentsList: [],
       tagsList: [],
       organizationsList: [],
@@ -482,7 +531,15 @@ export default {
       totalSearchResults: 0,
       searchSortOrder: 'DESC',
       showAll: false,
-      searchSortField: 'searchScore'
+      searchSortField: 'searchScore',
+      searchSortFields: [
+        { text: 'Name', value: 'name' },
+        { text: 'Organization', value: 'organization' },
+        { text: 'User Rating', value: 'averageRating' },
+        { text: 'Last Update', value: 'lastActivityDts' },
+        { text: 'Approval Date', value: 'approvedDts' },
+        { text: 'Relevance', value: 'searchScore' }
+      ]
     }
   }
 }
@@ -538,5 +595,9 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.centeralign {
+  margin-right: auto;
+  margin-left: auto;
 }
 </style>
