@@ -272,6 +272,7 @@
 		};
 		
 		/* global Ext */
+		Ext.require('OSF.common.SecurityComponentMixin');
 		Ext.onReady(function(){
 			//Idle timeout check (Note: this probably as it doesn't cover all cases.)
 			Ext.ns('CoreApp');
