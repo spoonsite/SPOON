@@ -87,7 +87,7 @@ Ext.define('OSF.form.Contacts', {
 			dockedItems: [
 				{
 					xtype: 'form',
-					title: 'Add/Edit Contact',
+					title: 'Add/Edit Contact <i class="fa fa-question-circle" data-qtip="This form allows you add contacts to the entry or edit the contacts already connected to the entry."></i>',
 					collapsible: true,
 					titleCollapse: true,
 					animCollapse: false,
@@ -248,7 +248,7 @@ Ext.define('OSF.form.Contacts', {
 
 						},
 						{
-							title: 'Existing Contacts',
+							title: 'Existing Contacts  <i class="fa fa-question-circle" data-qtip="Selecting a contact from this grid will allow you to add an existing contact to the entry. This grid will also show the contact currently being edited."></i>',
 							columnWidth: 0.5,
 							items: [
 								Ext.create('Ext.grid.Panel', {
