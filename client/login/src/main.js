@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import 'babel-polyfill'
 import axios from 'axios'
 import App from './App'
 import router from './router'

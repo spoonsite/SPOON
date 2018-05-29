@@ -6,6 +6,7 @@ import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import format from 'date-fns/format'
+import 'babel-polyfill'
 
 Vue.config.productionTip = false
 
