@@ -183,34 +183,24 @@
               <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
             </span>
             </p>
-            <div style="overflow: auto; white-space: nowrap;">
-              <table class="table" style="border: 1px solid rgba(0,0,0,0.1);">
-                <tbody>
-                  <tr>
-                    <td>Organization:</td>
-                    <td>{{ item.organization }}</td>
-                  </tr>
-                  <tr>
-                    <td>Average User Rating:</td>
-                    <td><star-rating :rating="item.averageRating" :read-only="true" :increment="0.01" :star-size="20"></star-rating></td>
-                  </tr>
-                  <tr>
-                    <td>Date Created:</td>
-                    <td>{{ item.createDts | formatDate }}</td>
-                  </tr>
-                  <tr>
-                    <td>Last Updated:</td>
-                    <td>{{ item.updateDts | formatDate }}</td>
-                  </tr>
-                  <tr>
-                    <td>Approved Date:</td>
-                    <td>{{ item.approvedDts | formatDate }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </v-card-text>
-          <v-card-text v-html="item.description">
+            <h2>Details</h2>
+            <hr>
+            <p><strong>Organization:</strong> {{ item.organization }}</p>
+            <p>
+              <strong>Average User Rating:</strong>
+              <star-rating :rating="item.averageRating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
+            </p>
+            <p><strong>Date Created:</strong> {{ item.createDts | formatDate }}</p>
+            <p><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
+            <p><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
+            <h2>Attributes</h2>
+            <hr>
+            <p v-for="attribute in item.attributes" :key="attribute.typeLabel">
+              <strong>{{ attribute.typeLabel }}:</strong> {{ attribute.label }}
+            </p>
+            <h2>Description</h2>
+            <hr>
+            <div v-html="item.description"></div>
           </v-card-text>
           <v-card-actions>
             <!-- TODO: link to the details page for that component -->
@@ -602,5 +592,9 @@ export default {
 .centeralign {
   margin-right: auto;
   margin-left: auto;
+}
+hr {
+  color: #333;
+  margin-bottom: 1em;
 }
 </style>
