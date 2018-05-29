@@ -136,7 +136,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					//reorder sections and move questions
 					if (overModel && overModel.get('sectionId')) {					
 						navPanel.syncModel();					
-					}
+					}					
 					
 				},
 				selectionchange: function (selectionModel, records) {
@@ -166,7 +166,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		navPanel.add(navPanel.treePanel);
 						
 	},
-	syncModel: function() {
+	syncModel: function(skipUpdateSection) {
 		//sync the template with the view
 		var navPanel = this;
 		var navList = navPanel.queryById('navList');
@@ -182,8 +182,18 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 			sectionNode.data.section.fields = newFields;
 			newSections.push(sectionNode.data.section);
 		});
-		
 		navPanel.templateRecord.sections = newSections;		
+		
+		var records = navList.getSelection();
+		
+		navPanel.formBuilderPanel.markAsChanged();
+		
+		if (!skipUpdateSection) {
+			navPanel.formBuilderPanel.displayPanel.loadSection(
+					records[0].parentNode.data.section, 
+					records[0].get('fieldId')
+			);		
+		}
 	},	
 	
 	addSection: function(section) {		
@@ -207,7 +217,8 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		var root = navList.getStore().getRoot();
 		root.appendChild(record);
 		
-		navList.setSelection(record);		
+		navList.setSelection(record);	
+		navPanel.formBuilderPanel.markAsChanged();
 		
 	},
 		
@@ -223,6 +234,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 				sectionRecord.set('instructions', section.instructions);
 			}
 		});
+		navPanel.formBuilderPanel.markAsChanged();
 		
 	},
 	
@@ -239,6 +251,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		//remove node from tree
 		var root = navList.getStore().getRoot();
 		root.removeChild(sectionNavRecord);
+		navPanel.syncModel();
 	},	
 	
 	addField: function(section, field, index) {
@@ -263,6 +276,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 				sectionNode.insertChild(index,  record);
 			}	
 		});
+		navPanel.formBuilderPanel.markAsChanged();
 	},	
 	
 	updateField: function(field) {
@@ -279,6 +293,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 				});
 			}	
 		});
+		navPanel.formBuilderPanel.markAsChanged();
 		
 	},
 	
@@ -293,12 +308,12 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 					if (fieldNode.get('fieldId') === field.fieldId) {
 						Ext.defer(function(){
 							sectionNode.removeChild(fieldNode);
+							navPanel.syncModel(true);
 						}, 100);
 					}
 				});
 			}	
-		});		
-		
+		});	
 	},	
 	
 	updateTemplate: function() {

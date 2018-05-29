@@ -98,11 +98,32 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 	],
 
 	templateRecord: undefined,
-
+	changed: false,
+	hasChanges: function(){
+		var formBuilderPanel = this;		
+		return formBuilderPanel.changed;
+	},
+	
+	markAsChanged: function(){
+		var formBuilderPanel = this;
+		//skip initial load
+		if (!formBuilderPanel.initialLoad) {
+			formBuilderPanel.changed = true;
+			formBuilderPanel.queryById('infoPanel').updateInfo(true);
+		}
+	},
+	markAsSaved: function(){
+		var formBuilderPanel = this;
+		formBuilderPanel.changed = false;
+		formBuilderPanel.queryById('infoPanel').updateInfo(false);		
+	}, 
+	
 	initComponent: function () {
 
 		this.callParent();
 		var formBuilderPanel = this;
+
+		formBuilderPanel.initialLoad = true;
 
 		formBuilderPanel.queryById('tools').add(
 			[
@@ -110,6 +131,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 					xtype: 'osf-form-templateinfo-panel',
 					itemId: 'infoPanel',
 					width: '100%',
+					formBuilderPanel: formBuilderPanel,
 					templateRecord: formBuilderPanel.templateRecord
 				},
 				{
@@ -147,6 +169,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		//formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
 
 		formBuilderPanel.sectionPanel.updateTemplate();
+		formBuilderPanel.initialLoad = false;
 	},
 
 	updateTemplate: function() {

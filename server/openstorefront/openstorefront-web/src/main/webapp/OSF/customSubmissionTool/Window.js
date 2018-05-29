@@ -95,13 +95,42 @@ Ext.define('OSF.customSubmissionTool.Window', {
 					text: 'Close',
 					scale: 'medium',
 					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
-					handler: function() {						
-						this.up('window').close();
+					handler: function() {
+						var csfWindow = this.up('window');
+						csfWindow.close();
 					}
 				}				
 			]
 		}
 	],
+	listeners: {
+		beforeclose: function(csfWindow, opts) {
+			if (csfWindow.proceedWithClose){
+				return true;
+			} else {
+				if (csfWindow.formBuilderPanel.hasChanges()) {
+					Ext.Msg.show({
+						title:'Save Changes?',
+						message: 'Would you like to save your changes?',
+						buttons: Ext.Msg.YESNOCANCEL,
+						icon: Ext.Msg.QUESTION,
+						fn: function(btn) {
+							if (btn === 'yes') {
+								csfWindow.saveTemplate(function(){
+									csfWindow.proceedWithClose = true;
+									csfWindow.close();
+								});
+							} else if (btn === 'no') {
+								csfWindow.proceedWithClose = true;
+								csfWindow.close();
+							} 
+						}
+					});
+					return false;
+				}
+			}
+		}
+	},
 	initComponent: function () {
 		this.callParent();
 		var csfWindow = this;
@@ -115,7 +144,7 @@ Ext.define('OSF.customSubmissionTool.Window', {
 
 		csfWindow.add(csfWindow.formBuilderPanel);
 	},
-	saveTemplate: function() {
+	saveTemplate: function(afterSave) {
 		var submissionWindow = this;
 		
 		if (submissionWindow.template.name === '' || submissionWindow.template.description === ''){
@@ -176,12 +205,15 @@ Ext.define('OSF.customSubmissionTool.Window', {
 
 						//update all section id and field ids
 
-
-
+						submissionWindow.formBuilderPanel.markAsSaved();
 						submissionWindow.formBuilderPanel.updateTemplate(updatedTemplate);
 						if (submissionWindow.saveCallback) {
 							submissionWindow.saveCallback(updatedTemplate);
 						}
+						if (afterSave) {
+							afterSave(updatedTemplate);
+						}
+						
 					}
 				}
 			});

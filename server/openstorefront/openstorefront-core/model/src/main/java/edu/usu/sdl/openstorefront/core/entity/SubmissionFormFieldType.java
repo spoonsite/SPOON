@@ -73,6 +73,7 @@ public class SubmissionFormFieldType
 
 		codeMap.put(TEXT, newLookup(SubmissionFormFieldType.class, TEXT, "Text"));
 		codeMap.put(TEXT_AREA, newLookup(SubmissionFormFieldType.class, TEXT_AREA, "Text Area"));
+		codeMap.put(RICH_TEXT, newLookup(SubmissionFormFieldType.class, RICH_TEXT, "RichText"));
 		codeMap.put(NUMBER, newLookup(SubmissionFormFieldType.class, NUMBER, "Number"));
 		codeMap.put(DATE, newLookup(SubmissionFormFieldType.class, DATE, "Date"));
 		codeMap.put(STATIC_CONTENT, newLookup(SubmissionFormFieldType.class, STATIC_CONTENT, "Static Content"));

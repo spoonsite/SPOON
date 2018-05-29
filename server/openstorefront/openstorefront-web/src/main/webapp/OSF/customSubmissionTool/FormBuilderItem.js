@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  /* Author: cyearsley */
-/* global Ext, CoreUtil, CoreService */
+/* global Ext, CoreUtil, CoreService, MediaUtil */
 
 Ext.define('OSF.customSubmissionTool.FormBuilderItem', {	
 	extend: 'Ext.form.Panel',
@@ -102,104 +102,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				change: function (combo, newVal, oldValue, opts) {
 					var formBuilderItem = this.up('panel');	
 					
-					//update mappingType and show/hide fields
-					
-					//hide all option fields
-					Ext.Array.each(formBuilderItem.items.items, function(optionField) {
-						if (optionField.optionField) {
-							optionField.setHidden(true);
-						}
-					});
-					
-					//update Mapping Types 
-					var availableMappedFields = formBuilderItem.formBuilderPanel.templateProgressPanel.getAvaliableMappableFields();					
-					formBuilderItem.getForm().findField('fieldName').getStore().loadData(availableMappedFields);
-										
-					switch (newVal) {
-						case 'TEXT':
-							formBuilderItem.templateField.mappingType = 'COMPONENT';
-							formBuilderItem.getForm().findField('fieldName').setHidden(false);
-						break;	
-						case 'NUMBER':
-							formBuilderItem.templateField.mappingType = 'COMPONENT';
-							formBuilderItem.getForm().findField('fieldName').setHidden(false);
-						break;	
-						case 'DATE':
-							formBuilderItem.templateField.mappingType = 'COMPONENT';
-							
-						break;	
-						case 'TEXTAREA':
-							formBuilderItem.templateField.mappingType = 'COMPONENT';
-							
-						break;	
-						case 'RICHTEXT':
-							formBuilderItem.templateField.mappingType = 'COMPONENT';
-							
-						break;	
-						case 'ATTRIBUTE_RADIO':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-							
-						break;
-						case 'ATTRIBUTE_MCHECKBOX':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-							
-						break;
-						case 'ATTRIBUTE_SINGLE':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-							
-						break;
-						case 'ORGANIZATION':
-							formBuilderItem.templateField.mappingType = 'COMPONENT';
-							
-						break;
-						case 'ATTRIBUTE_MULTI':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-							
-						break;		
-						case 'CONTACT_MULTI':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-							
-						break;
-						case 'EXT_DEPEND_MULTI':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-							
-						break;
-						case 'MEDIA_MULTI':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-							
-						break;
-						case 'RESOURCE_MULTI':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-							
-						break;	
-						case 'RELATIONSHIPS_MULTI':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-							
-						break;
-						case 'TAG_MULTI':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-						break;					
-						case 'SUBMISSIONS':
-							formBuilderItem.templateField.mappingType = 'SUBMISSION';
-						break;						
-						case 'RESOURCE_SIMPLE':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-						break;	
-						case 'CONTACT':
-							formBuilderItem.templateField.mappingType = 'COMPLEX';
-						break;						
-						
-						default: 
-							console.error('Field type note supported: ' + newVal);
-						break;	
-					}
-					
-					
-					
-					//Map to Field need get date from the template Progress
-					
-					
-					formBuilderItem.syncTemplateField(false);					
+					formBuilderItem.fieldType = newVal;
+					formBuilderItem.resyncfieldOptions();
 				}
 			},			
 			store: {
@@ -250,7 +154,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			listeners: {
 				change: function (combo, newVal, oldValue, opts) {
 					var formBuilderItem = this.up('panel');	
-					formBuilderItem.syncTemplateField(false);					
+					formBuilderItem.syncTemplateField(false);	
+					
+					formBuilderItem.formBuilderPanel.templateProgressPanel.updateTemplateProgress();
+					formBuilderItem.formBuilderPanel.displayPanel.updateFieldPanels();
 				}
 			},
 			store: {				
@@ -271,15 +178,17 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					var formBuilderItem = this.up('panel');	
 					
 					var record = combo.getSelection();
-					var codeField = formBuilderItem.queryById('attributeCode');
-					var requireValueField = formBuilderItem.queryById('requiredCommentOnValue');
-					codeField.clearValue();
-					requireValueField.clearValue();					
-					
-					codeField.getStore().loadData(record.data.codes);
-					requireValueField.getStore().loadData(record.data.codes);
-					
-					formBuilderItem.syncTemplateField(false);					
+					if (record) {
+						var codeField = formBuilderItem.queryById('attributeCode');
+						var requireValueField = formBuilderItem.queryById('requiredCommentOnValue');
+						codeField.clearValue();
+						requireValueField.clearValue();					
+
+						codeField.getStore().loadData(record.data.codes);
+						requireValueField.getStore().loadData(record.data.codes);
+
+						formBuilderItem.syncTemplateField(false);					
+					}
 				}
 			},			
 			store: {
@@ -396,19 +305,26 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				}				
 			}
 		},		
-		{
-			xtype: 'textarea',
+		{			
+			xtype: 'tinymce_textarea',
 			hidden: true,
 			optionField: true,			
+			fieldStyle: 'font-family: Courier New; font-size: 12px;',
+			style: {border: '0'},
 			fieldLabel: 'Static Content',
 			name: 'staticContent',
+			height: 200,
 			maxLength: 4096,
+			tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig(), {
+				mediaSelectionUrl: MediaUtil.generalMediaUrl,
+				mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
+			}),
 			listeners: {
 				change: function (combo, newVal, oldValue, opts) {
 					var formBuilderItem = this.up('panel');	
 					formBuilderItem.syncTemplateField(false);					
 				}
-			}
+			}			
 		},
 		{
 			xtype: 'combo',
@@ -533,12 +449,186 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		}
 		
 	],
+	resyncfieldOptions: function() {
+		var formBuilderItem = this;
+		
+		//hide all option fields
+		Ext.Array.each(formBuilderItem.items.items, function(optionField) {
+			if (optionField.optionField) {
+				optionField.setHidden(true);
+			}
+		});
+
+		//update Mapping Types 
+		var availableMappedFields = formBuilderItem.formBuilderPanel.templateProgressPanel.getAvaliableMappableFields();					
+
+		var filterMappedFilelds = function(typeAccepted) {
+			var mappableFields = Ext.Array.filter(availableMappedFields, function (fieldRecord) {
+				var keep = false;
+				Ext.Array.forEach(fieldRecord.get('fieldTypes'), function (fieldType) {
+					if (fieldType === typeAccepted) {
+						keep = true;
+					}
+				});
+				return keep;
+			});	
+			return mappableFields;
+		};
+
+		switch (formBuilderItem.fieldType) {
+			case 'TEXT':
+				formBuilderItem.templateField.mappingType = 'COMPONENT';
+				formBuilderItem.getForm().findField('fieldName').setHidden(false);	
+				formBuilderItem.getForm().findField('labelAlign').setHidden(false);					
+
+				var mappableFields = filterMappedFilelds('textfield');							
+				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
+			break;	
+			case 'NUMBER':
+				formBuilderItem.templateField.mappingType = 'COMPONENT';
+				formBuilderItem.getForm().findField('fieldName').setHidden(false);
+				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
+
+				var mappableFields = filterMappedFilelds('textfield');							
+				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
+			break;	
+			case 'DATE':
+				formBuilderItem.templateField.mappingType = 'COMPONENT';
+				formBuilderItem.getForm().findField('fieldName').setHidden(false);
+				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
+
+				var mappableFields = filterMappedFilelds('date');							
+				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);							
+			break;	
+			case 'TEXTAREA':
+				formBuilderItem.templateField.mappingType = 'COMPONENT';
+				formBuilderItem.getForm().findField('fieldName').setHidden(false);
+				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
+
+				var mappableFields = filterMappedFilelds('textarea');							
+				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
+			break;	
+			case 'RICHTEXT':
+				formBuilderItem.templateField.mappingType = 'COMPONENT';
+				formBuilderItem.getForm().findField('fieldName').setHidden(false);
+
+				var mappableFields = filterMappedFilelds('textarea');							
+				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
+			break;	
+			case 'ATTRIBUTE_RADIO':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+			
+				formBuilderItem.getForm().findField('attributeType').setHidden(false);
+				formBuilderItem.getForm().findField('requiredCommentOnValue').setHidden(false);
+				formBuilderItem.getForm().findField('commentLabel').setHidden(false);
+				formBuilderItem.getForm().findField('requireComment').setHidden(false);
+				formBuilderItem.getForm().findField('showComment').setHidden(false);
+				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);							
+			break;
+			case 'ATTRIBUTE_MCHECKBOX':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+				formBuilderItem.getForm().findField('attributeType').setHidden(false);					
+				formBuilderItem.getForm().findField('commentLabel').setHidden(false);
+				formBuilderItem.getForm().findField('requireComment').setHidden(false);
+				formBuilderItem.getForm().findField('showComment').setHidden(false);
+				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);
+			break;
+			case 'ATTRIBUTE_SINGLE':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
+				formBuilderItem.getForm().findField('attributeType').setHidden(false);
+				formBuilderItem.getForm().findField('attributeCode').setHidden(false);
+				formBuilderItem.getForm().findField('requiredCommentOnValue').setHidden(false);
+				formBuilderItem.getForm().findField('commentLabel').setHidden(false);
+				formBuilderItem.getForm().findField('requireComment').setHidden(false);
+				formBuilderItem.getForm().findField('showComment').setHidden(false);
+				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);	
+			break;
+			case 'ATTRIBUTE_MULTI':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+			break;						
+			case 'ORGANIZATION':
+				formBuilderItem.templateField.mappingType = 'COMPONENT';
+				formBuilderItem.getForm().findField('fieldName').setHidden(false);
+				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
+
+				var mappableFields = Ext.Array.filter(availableMappedFields, function (fieldRecord) {
+					return fieldRecord.get('field') === 'organization';
+				});							
+
+				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);														
+			break;	
+			case 'CONTACT_MULTI':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+			break;
+			case 'EXT_DEPEND_MULTI':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+			break;
+			case 'MEDIA_MULTI':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+			break;
+			case 'RESOURCE_MULTI':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+			break;	
+			case 'RELATIONSHIPS_MULTI':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+			break;
+			case 'TAG_MULTI':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+			break;					
+			case 'SUBMISSIONS':
+				formBuilderItem.templateField.mappingType = 'SUBMISSION';
+
+				formBuilderItem.getForm().findField('childEntryType').setHidden(false);
+				formBuilderItem.getForm().findField('subSubmissionTemplateId').setHidden(false);
+			break;						
+			case 'RESOURCE_SIMPLE':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+				formBuilderItem.getForm().findField('resourceType').setHidden(false);							
+				formBuilderItem.getForm().findField('allowPrivateResource').setHidden(false);
+			break;	
+			case 'CONTACT':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+
+				formBuilderItem.getForm().findField('contactType').setHidden(false);
+				formBuilderItem.getForm().findField('popluateContactWithUser').setHidden(false);
+			break;
+			case 'CONTENT':
+				formBuilderItem.templateField.mappingType = 'NONE';
+				formBuilderItem.getForm().findField('staticContent').setHidden(false);							
+			break;					
+
+			default: 
+				console.error('Field type note supported: ' + formBuilderItem.fieldType);
+			break;	
+		}										
+
+		formBuilderItem.syncTemplateField(false);		
+		
+	},
 	syncTemplateField: function(updateQuestion) {
 		var formBuilderItem = this;
 		var formData = formBuilderItem.getValues();
+	
+		if (formData.contactType === ''){
+			delete formData.contactType;
+		}	
+		
+		if (formData.resourceType === ''){
+			delete formData.resourceType;
+		}		
 		
 		Ext.apply(formBuilderItem.templateField, formData);
-		
+			
 		if (updateQuestion) {
 			formBuilderItem.updateQuestion();
 		}

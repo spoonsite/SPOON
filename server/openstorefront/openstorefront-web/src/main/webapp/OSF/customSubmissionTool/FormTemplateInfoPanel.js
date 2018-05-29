@@ -45,6 +45,7 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 				listeners: {
 					change: function(field, newValue, oldValue, opts) {
 						infoPanel.templateRecord.name = newValue;
+						infoPanel.formBuilderPanel.markAsChanged();
 					}
 				}
 			},
@@ -58,6 +59,7 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 				listeners: {
 					change: function(field, newValue, oldValue, opts) {
 						infoPanel.templateRecord.description = newValue;
+						infoPanel.formBuilderPanel.markAsChanged();
 					}
 				}	
 			},
@@ -65,7 +67,8 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 				xtype: 'panel',
 				itemId: 'lastSaved',
 				data: infoPanel.templateRecord,
-				tpl: '<b>Last Saved: </b> {[Ext.Date.format(values.updateDts, "F j, Y, g:i a")]}'
+				tpl: '<b>Last Saved: </b> {[Ext.Date.format(values.updateDts, "F j, Y, g:i a")]}'+
+					 ' <tpl if="unsavedChanges"><span class="text-danger"><i class="fa fa-lg fa-exclamation-triangle"></i> Unsaved Changes</span></tpl> '	
 			}
 			
 		];		
@@ -79,9 +82,13 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 		infoPanel.loadRecord(record);
 	},
 	
-	updateInfo: function() {		
+	updateInfo: function(unsavedChanges) {		
 		var infoPanel = this;
-		infoPanel.queryById('lastSaved').update(infoPanel.templateRecord);
+		
+		infoPanel.queryById('lastSaved').update(Ext.apply({
+			unsavedChanges: unsavedChanges
+		}, infoPanel.templateRecord));		
+		
 	}
 	
 	

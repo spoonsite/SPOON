@@ -21,7 +21,7 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-csf-templateprogresspanel',
 
-	title: 'Template Progress (<i style="color:red;" class="fa fa-lg fa-close"></i> Incomplete)',
+	title: 'Mappable Fields',
 	layout: 'fit',
 
 	initComponent: function () {
@@ -126,6 +126,26 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 		var templateProgressPanel = this;
 		
 		var updateProgress = function() {
+			var grid = templateProgressPanel.queryById('grid');
+			
+			grid.getStore().each(function(record){
+				record.set('mapped', false, {
+					dirty: false
+				});
+			});
+			
+			grid.getStore().each(function(record){
+				Ext.Array.each(templateProgressPanel.templateRecord.sections, function(section) {
+					Ext.Array.each(section.fields, function(field) {
+						if (record.get('field') === field.fieldName) {
+							record.set('mapped', true, {
+								dirty: false
+							});
+						} 
+					});								
+				});
+				
+			});
 			
 		};
 		

@@ -48,6 +48,14 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 			)
 		);
 	},
+	
+	updateFieldPanels: function() {
+		var displayPanel = this;	
+		var itemContainer = displayPanel.queryById('itemContainer');
+		Ext.Array.each(itemContainer.items.items, function(fieldItem){
+			fieldItem.resyncfieldOptions();	
+		});		
+	},
 
 	/**
 	 * physically inserts all form items in a section onto the display panel

@@ -29,6 +29,8 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 	showJumpSection: false,
 	showNavigationPanel: true,
 	collaspeNavAtFirst: false,
+	hideSave: false,
+	showCustomButton: false,
 	
 	items: [
 		{
@@ -110,10 +112,23 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					xtype: 'tbfill'
 				},
 				{
+					text: 'Custom',
+					itemId: 'custom',
+					scale: 'medium',
+					hidden: true,
+					handler: function() {
+						var submissionFormFullControl = this.up('panel');
+						
+						if (submissionFormFullControl.customButtonHandler) {
+							submissionFormFullControl.customButtonHandler();						
+						}
+					}
+				},
+				{
 					text: 'Save',
 					itemId: 'save',
 					iconCls: 'fa fa-2x fa-save icon-vertical-correction icon-button-color-save',
-					scale: 'medium',
+					scale: 'medium',			
 					handler: function() {
 						
 					}
