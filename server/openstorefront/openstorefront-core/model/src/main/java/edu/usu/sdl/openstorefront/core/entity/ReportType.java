@@ -78,8 +78,10 @@ public class ReportType
 		((ReportType) codeMap.get(SUBMISSION)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
 		((ReportType) codeMap.get(EVALUATION_STATUS)).setRequiredPermission(SecurityPermission.EVALUATIONS);
-		((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.REPORT_ACTION_REPORT);
-		((ReportType) codeMap.get(ENTRY_LISTING)).setRequiredPermission(SecurityPermission.REPORT_ENTRY_LISTING_REPORT);
+		// ((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.REPORT_ACTION_REPORT);
+		((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.RUN_ACTION_REPORT);
+		// ((ReportType) codeMap.get(ENTRY_LISTING)).setRequiredPermission(SecurityPermission.REPORT_ENTRY_LISTING_REPORT);
+		((ReportType) codeMap.get(ENTRY_LISTING)).setRequiredPermission(SecurityPermission.RUN_ENTRY_LISTING_REPORT);
 		((ReportType) codeMap.get(ENTRY_STATUS)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
 
 		//update metadata for component type reports
