@@ -58,10 +58,10 @@
     <!-- Filter pills if there are any -->
     <v-btn small @click="clear()" v-if="(filters.entryType || filters.component || filters.organization || filters.tags.length !== 0)">Clear Filters</v-btn>
     <div style="padding: 0 0.5em 0.8em 0.8em;">
+      <span v-if="filters.entryType"><v-chip close small color="purple lighten-2" text-color="white" @input="filters.entryType = ''">{{ filters.entryType }}</v-chip></span>
       <span v-if="filters.component"><v-chip close small @input="filters.component = ''" color="teal lighten-2" text-color="white">{{ filters.component }}</v-chip></span>
       <span v-if="filters.tags.length !== 0"><v-chip v-for="tag in filters.tags" :key="tag" close small @input="deleteTag(tag)">{{ tag }}</v-chip></span>
       <span v-if="filters.organization"><v-chip close small color="indigo lighten-2" text-color="white" @input="filters.organization = ''">{{ filters.organization }}</v-chip></span>
-      <span v-if="filters.entryType"><v-chip close small color="purple lighten-2" text-color="white" @input="filters.entryType = ''">{{ filters.entryType }}</v-chip></span>
     </div>
 
     <!-- Search Filters Dialog -->
@@ -171,6 +171,7 @@
             </p>
             <p
               style="padding-bottom: 1em;"
+              class="clearfix"
               v-if="item.tags.length !== 0"
             >
             <span
@@ -182,30 +183,32 @@
               <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
             </span>
             </p>
-            <table class="table" style="border: 1px solid rgba(0,0,0,0.1);">
-              <tbody>
-                <tr>
-                  <td>Organization:</td>
-                  <td>{{ item.organization }}</td>
-                </tr>
-                <tr>
-                  <td>Average User Rating:</td>
-                  <td><star-rating :rating="item.averageRating" :read-only="true" :increment="0.01" :star-size="30"></star-rating></td>
-                </tr>
-                <tr>
-                  <td>Date Created:</td>
-                  <td>{{ item.createDts | formatDate }}</td>
-                </tr>
-                <tr>
-                  <td>Last Updated:</td>
-                  <td>{{ item.updateDts | formatDate }}</td>
-                </tr>
-                <tr>
-                  <td>Approved Date:</td>
-                  <td>{{ item.approvedDts | formatDate }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div style="overflow: auto; white-space: nowrap;">
+              <table class="table" style="border: 1px solid rgba(0,0,0,0.1);">
+                <tbody>
+                  <tr>
+                    <td>Organization:</td>
+                    <td>{{ item.organization }}</td>
+                  </tr>
+                  <tr>
+                    <td>Average User Rating:</td>
+                    <td><star-rating :rating="item.averageRating" :read-only="true" :increment="0.01" :star-size="20"></star-rating></td>
+                  </tr>
+                  <tr>
+                    <td>Date Created:</td>
+                    <td>{{ item.createDts | formatDate }}</td>
+                  </tr>
+                  <tr>
+                    <td>Last Updated:</td>
+                    <td>{{ item.updateDts | formatDate }}</td>
+                  </tr>
+                  <tr>
+                    <td>Approved Date:</td>
+                    <td>{{ item.approvedDts | formatDate }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </v-card-text>
           <v-card-text v-html="item.description">
           </v-card-text>

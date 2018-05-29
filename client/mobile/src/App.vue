@@ -19,7 +19,7 @@
         <v-alert :value="alert" color="warning" style="margin: 0; height: 30px; text-align: center;">Security Banner</v-alert>
       </header>
 
-      <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer">
+      <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer" touchless>
         <v-list>
           <v-list-tile v-for="link in links" :key="link.name" class="menu-item" @click="nav(link.link)">
             <v-list-tile-action>

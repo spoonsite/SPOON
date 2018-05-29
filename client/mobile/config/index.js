@@ -12,8 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/openstorefront': {
-        // 'target': 'https://spoonsite.com',
-        'target': 'http://localhost:8080',
+        'target': 'https://spoonsite.com',
+        // 'target': 'http://localhost:8080',
         'changeOrigin': true
       }
     },
