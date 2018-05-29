@@ -1089,14 +1089,16 @@ Ext.define('OSF.component.SubmissionPanel', {
 				modal: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Contact</span>',
 				alwaysOnTop: true,
-				width: '50%',
-				maxHeight: 600,
+				width: '75%',
 				layout: 'fit',
-				dockedItems: [
+				items: [
 					{
 						xtype: 'form',
+						scrollable: true,
 						border: true,
-						layout: 'column',
+						layout: {
+							type: 'hbox',
+						},
 						bodyStyle: 'padding: 10px;',
 						margin: '0 0 5 0',
 						buttonAlign: 'center',
@@ -1161,7 +1163,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						],
 						items: [
 							{
-								columnWidth: 0.5,
+								flex: 1,
 								layout: 'vbox',
 								bodyStyle: 'padding: 10px;',
 								defaults: {
@@ -1256,78 +1258,75 @@ Ext.define('OSF.component.SubmissionPanel', {
 								Ext.create('OSF.component.DataSensitivityComboBox', {
 								})
 								]
-	
+
 							},
 							{
+								xtype: 'grid',
 								title: 'Existing Contacts',
-								columnWidth: 0.5,
-								items: [
-									Ext.create('Ext.grid.Panel', {
-										itemId: 'existingContactGrid',
-										columnLines: true,
-										height: 250,
-										border: true,
-										frameHeader: true,
-										store: Ext.create('Ext.data.Store', {
-											fields: [
-												"contactId",
-												"positionDescription",
-												"contactType",
-												"name",
-												"firstName",
-												"lastName",
-												"email",
-												"phone",
-												"organization",
-												{
-													name: 'updateDts',
-													type: 'date',
-													dateFormat: 'c'
-												},
-												"activeStatus"
-											],
-											autoLoad: true,
-											proxy: {
-												type: 'ajax',
-												url: 'api/v1/resource/contacts/filtered'
-											},
-											listeners:{
-												load: function ( store, records, successful, operation, eOpts ){
-													if(record){
-														var index = store.find('contactId', record.data.contactId);
-														addWindow.queryById('existingContactGrid').getView().select(index);
-														addWindow.down('form').getForm().findField('componentContactId').setValue(record.data.componentContactId);
-													}
-												}
-											}
-										}),
-										columns: [
-											{ text: 'First Name', dataIndex: 'firstName', flex: 1 },
-											{ text: 'Last Name', dataIndex: 'lastName', flex: 1 },
-											{ text: 'Email', dataIndex: 'email', flex: 2 },
-										],
-										selModel: {
-											selType: 'checkboxmodel',
-											allowDeselect: true,
-											toggleOnClick: true,
-											mode: 'SINGLE'
+								flex: 1,
+								itemId: 'existingContactGrid',
+								height: '100%',
+								columnLines: true,
+								border: true,
+								frameHeader: true,
+								store: Ext.create('Ext.data.Store', {
+									fields: [
+										"contactId",
+										"positionDescription",
+										"contactType",
+										"name",
+										"firstName",
+										"lastName",
+										"email",
+										"phone",
+										"organization",
+										{
+											name: 'updateDts',
+											type: 'date',
+											dateFormat: 'c'
 										},
-										listeners: {
-											selectionchange: function (grid, record, index, opts) {
-												var form = this.up('form');
-												if(this.getSelectionModel().getCount() > 0){
-													var contactType = form.getForm().findField('contactType').getValue();
-													form.reset();
-													form.loadRecord(this.getSelection()[0]);
-													form.getForm().findField('contactType').setValue(contactType);
-												}
-												else{
-													form.reset();
-												}
+										"activeStatus"
+									],
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/contacts/filtered'
+									},
+									listeners: {
+										load: function (store, records, successful, operation, eOpts) {
+											if (record) {
+												var index = store.find('contactId', record.data.contactId);
+												addWindow.queryById('existingContactGrid').getView().select(index);
+												addWindow.down('form').getForm().findField('componentContactId').setValue(record.data.componentContactId);
 											}
 										}
-									})
-								]
+									}
+								}),
+								columns: [
+									{ text: 'First Name', dataIndex: 'firstName', flex: 1 },
+									{ text: 'Last Name', dataIndex: 'lastName', flex: 1 },
+									{ text: 'Email', dataIndex: 'email', flex: 2 },
+								],
+								selModel: {
+									selType: 'checkboxmodel',
+									allowDeselect: true,
+									toggleOnClick: true,
+									mode: 'SINGLE'
+								},
+								listeners: {
+									selectionchange: function (grid, record, index, opts) {
+										var form = this.up('form');
+										if (this.getSelectionModel().getCount() > 0) {
+											var contactType = form.getForm().findField('contactType').getValue();
+											form.reset();
+											form.loadRecord(this.getSelection()[0]);
+											form.getForm().findField('contactType').setValue(contactType);
+										}
+										else {
+											form.reset();
+										}
+									}
+								}
 							}]
 					}
 				]
