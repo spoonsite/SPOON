@@ -20,7 +20,7 @@
 Ext.define('OSF.component.EntryChangeRequestWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.EntryChangeRequestWindow',
-	
+	requires: ['OSF.common.ValidHtmlEditor'],
 	title: 'Change Requests',
 	modal: true,
 	maximizable: true,
