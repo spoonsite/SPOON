@@ -1746,8 +1746,6 @@
 					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges duplicate entry to target entry. <br> Meaning target will contain merged entry\'s information and duplicate entry will be deleted." ></i>',
 					width: '40%',
 					height: 250,
-					// DO NOT DELETE. THIS IS A FEATURE THAT WILL BE IMPLEMENTED LATER.
-					// height: 400, // Change
 					modal: true,
 					layout: 'fit',
 					items: [
@@ -1769,45 +1767,16 @@
 											formBind: true,
 											iconCls: 'fa fa-lg fa-compress icon-button-color-default',
 											handler: function() {
-
 												var mergeForm = this.up('form');
-												// DO NOT DELETE. THIS IS FOR A FEATURE THAT WILL BE IMPLEMENTED LATER.
-												// var inputData = {
-												// 	commentId: mergeForm.queryById('searchCommentId').value,
-												// 	commentType: "ADMIN",
-												// 	comment: mergeForm.queryById('searchComment').value
-												// };
-												//console.log(inputData);
 												var data = mergeForm.getValues();
-
-												//check data for same id
-												// Remember! target persists, and merge dies.
-												if (data.mergeComponentId === data.targetComponentId) {
-													mergeForm.getComponent('targetComponent').markInvalid('Target Component must be different than merge component.');
+												if (data.targetComponentId === data.duplicateComponentId) {
+													mergeForm.getComponent('duplicateComponent').markInvalid(' must be different');
 												} else {
 													mergeForm.setLoading("Merging...");
 													Ext.Ajax.request({
-														url: 'api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
+														url: 'api/v1/resource/components/' + data.targetComponentId + '/' + data.duplicateComponentId + '/merge',
 														method: 'POST',
 														success: function(response, opts){
-															// DO NOT DELETE. THIS IS A MERGE FEATURE THAT WILL BE IMPLEMENTED LATER.
-															// if(data.comment != ''){
-																// Ext.Ajax.request({
-																// 	url: 'api/v1/resource/components/' + data.targetComponentId + '/comments',
-																// 	method: 'POST',
-																// 	jsonData: inputData,
-																// 	success: function(response, opts){
-																// 	},
-																// 	failure: function(){
-																// 		Ext.toast({
-																// 			title: 'Validation Error. The Server could not process the request.',
-																// 			html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
-																// 			width: 500,
-																// 			autoCloseDelay: 10000,
-																// 		});
-																// 	}
-																// });	
-															// }
 															mergeForm.setLoading(false);
 
 															Ext.getCmp('mergeComponentWin').hide();
@@ -1835,8 +1804,8 @@
 							],
 							items: [
 								Ext.create('OSF.component.StandardComboBox', {
-									name: 'targetComponentId',
-									itemId: 'targetComponent',
+									name: 'duplicateComponentId',
+									itemId: 'duplicateComponent',
 									allowBlank: false,
 									width: '100%',
 									margin: '0 0 0 0',
@@ -1848,7 +1817,7 @@
 								}),
 								{
 									xtype: 'combobox',
-									name: 'mergeComponentId',
+									name: 'targetComponentId',
 									fieldLabel: 'Target Entry',
 									store: maingridStore,
 									queryLocal: true,
@@ -1857,46 +1826,6 @@
 									displayField: 'name',
 									readOnly: true
 								},
-								// DO NOT DELETE. THIS IS A MERGE FEATURE THAT WILL BE IMPLEMENTED LATER.
-								// Change
-								// {
-								// 	xtype: 'htmleditor',
-								// 	itemId: 'searchComment',
-								// 	fieldLabel: 'Optional Comments',
-								// 	labelAlign: 'top',
-								// 	maxLength: 4096,
-								// 	labelSeparator: '',
-								// 	typeAhead: true,
-								// 	editable: true,
-								// 	allowBlank: true,
-								// 	name: 'Comment name',
-								// 	width: '100%',
-								// 	valueField: 'username',
-								// 	forceSelection: false,
-								// 	queryMode: 'local',
-								// 	displayField: 'Comment displayfield',
-								// 	store: {
-								// 		autoLoad: true,
-								// 	},
-								// 	exceededLimit: false,
-								// 	listeners: {
-								// 		change: function(field, newValue, oldValue, eOpts){
-								// 			if(newValue.length > 4096){
-								// 				field.setFieldLabel('<span style = "color: red"> ERROR!  <i class="fa fa-exclamation-triangle"></i> You have exceeded the maximum length for a comment. Please shorten your comment. <i class="fa fa-exclamation-triangle"></i></span>');
-								// 				this.exceededLimit = true;
-								// 			}
-								// 			if( this.exceededLimit && (newValue.length <= 4096)){
-								// 				field.setFieldLabel('Component Comments');
-								// 				this.exceededLimit = false;
-								// 			}
-								// 		}
-								// 	}
-								// },
-								// {
-								// 	xtype: 'hidden',
-								// 	itemId: 'searchCommentId',
-								// 	name: 'commentId'
-								// },							
 							]
 						}
 					]
@@ -2655,14 +2584,14 @@
 
 					var record = Ext.create('Ext.data.Model', {
 						fields: [
-							'mergeComponentId',
-							'targetComponentId'
+							'targetComponentId',
+							'duplicateComponentId'
 						]
 					});
-					record.set('mergeComponentId', Ext.getCmp('componentGrid').getSelection()[0].get('componentId'));
+					record.set('targetComponentId', Ext.getCmp('componentGrid').getSelection()[0].get('componentId'));
 
 					Ext.getCmp('mergeComponentWin').getComponent('mergeForm').loadRecord(record);
-					Ext.getCmp('mergeComponentWin').getComponent('mergeForm').getComponent('targetComponent').getStore().load();
+					Ext.getCmp('mergeComponentWin').getComponent('mergeForm').getComponent('duplicateComponent').getStore().load();
 				};
 
 				var actionVersions = function() {
