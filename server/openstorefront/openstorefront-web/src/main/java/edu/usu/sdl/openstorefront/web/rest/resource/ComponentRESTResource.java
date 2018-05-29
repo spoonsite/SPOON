@@ -1913,7 +1913,7 @@ public class ComponentRESTResource
 			contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 			contact.setCreateUser(SecurityUtil.getCurrentUserName());
 			contact.setUpdateUser(SecurityUtil.getCurrentUserName());
-			service.getComponentService().saveComponentContact(contact);
+			service.getComponentService().saveComponentContact(contact,true,false);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
