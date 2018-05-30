@@ -433,6 +433,35 @@
 					deleteWin.show();
 					
 				};
+
+				// var loadRoleGrid = function (record, store, dataIndex, dataType, itemType, grid) {
+				var loadRoleGrid = function (gridData) {
+
+					var roleRecord = gridData.roleRecord;
+					var grid = gridData.grid;
+					var store = grid.getStore();
+					var enabledColumnIndex = gridData.enabledColumnIndex;
+					var dataType = gridData.dataType;
+					var itemType = gridData.itemType;
+
+					// Array<String> representation of all permissions
+					roleRecord.data[dataType] = roleRecord.data[dataType] || [];
+					var data = roleRecord.getData()[dataType].map(function (item) {
+						return item[itemType];
+					});
+
+					store.each(function (item) {
+						var enabled = false;
+						if (data.indexOf(item.getData().code) !== -1) {
+							enabled = true;
+						}
+
+						// not using item.set() because it will put the grid in a "dirty" state
+						item.data[enabledColumnIndex] = enabled;
+					});
+
+					grid.view.refresh();
+				};
 				
 				var actionManagePermissions = function(record) {
 						
@@ -442,7 +471,7 @@
 						closeAction: 'destroy',
 						canClose: false,
 						width: 1000,
-						height: 500,
+						height: '80%',
 						layout: {
 							type: 'hbox',
 							align: 'stretch'
@@ -564,19 +593,13 @@
 									listeners: {
 										load: function (store, records, opts) {
 
-											// Array<String> representation of all permissions
-											var userPermissions = record.getData().permissions.map(function (item) {
-												return item.permission;
-											});
-
-											store.each(function (item) {
-												var permissionEnabled = false;
-												if (userPermissions.indexOf(item.getData().code) !== -1) {
-													permissionEnabled = true;
-												}
-
-												// not using item.set() because it will put the grid in a "dirty" state
-												item.data.permissionEnabled = permissionEnabled;
+											var grid = permissionWin.down('[itemId=permissionGrid]');
+											loadRoleGrid({
+												roleRecord: record,
+												grid: grid,
+												enabledColumnIndex: 'permissionEnabled',
+												dataType: 'permissions',
+												itemType: 'permission'
 											});
 										}
 									}
@@ -598,9 +621,8 @@
 											
 											var permissions = [];
 											var grid = permissionWin.getComponent('permissionGrid');
-											grid.setDirty(false);
 											grid.getStore().each(function (item) {
-
+												
 												if (item.get('permissionEnabled')) {
 													permissions.push({
 														permission: item.get('code')
@@ -621,6 +643,7 @@
 												},
 												success: function(response, opts) {
 													Ext.toast('Updated Permissions.')
+													grid.setDirty(false);
 													permissionWin.close();
 												}
 											});
@@ -660,11 +683,49 @@
 						iconCls: 'fa fa-legal',
 						closeAction: 'destroy',
 						width: 1000,
-						height: 500,
+						height: '70%',
+						isDirty: false,
+						canClose: false,
+						setDirty: function (isDirty) {
+							this.isDirty = isDirty;
+							this.down('[itemId=dirtyLabel]').setHidden(false);
+						},
 						layout: {
 							type: 'fit'
 						},
 						modal: true,
+						listeners: {
+							beforeclose: function () {
+
+								if (dataWin.isDirty) {
+									if (dataWin.canClose) {
+										return true;
+									}
+									else {
+										Ext.Msg.show({
+											title: 'Unsaved data',
+											message: 'You have unsaved changes. Discard changes?',
+											buttons: Ext.Msg.YESNO,
+											buttonText: {
+												yes: "Discard",
+												no: "Cancel"
+											},
+											icon: Ext.Msg.WARNING,
+											fn: function (btn) {
+												if (btn === 'yes') {
+													dataWin.canClose = true;
+													dataWin.close();
+												}
+											}
+										});
+										return false;
+									}
+								}
+								else {
+									return true;
+								}
+							}
+						},
 						items: [
 							{
 								xtype: 'tabpanel',
@@ -679,10 +740,9 @@
 										items: [
 											{
 												xtype: 'grid',
-												id: 'dataSourcesGrid',
+												itemId: 'dataSourcesGrid',
 												title: 'Restricted <i class="fa fa-question-circle"  data-qtip="Drag record to remove restriction from ' + record.get('roleName') + '"></i>',
-												width: '50%',
-												margin: '0 5 0 0',
+												width: '100%',
 												columnLines: true,
 												store: {	
 													autoLoad: true,
@@ -692,62 +752,33 @@
 													},
 													listeners: {
 														load: function(store, records, opts) {
-															
-															var sourcesInList = [];
-															var sourcesAvaliable = [];
-															Ext.getCmp('dataSourcesGrid').getStore().each(function(item){
-																var include = false;
-																Ext.Array.each(record.data.dataSecurity, function(inListSource){
-																
-																	if (item.get('code') === inListSource.dataSource) {																		
-																		include = true;
-																	}
-																});
-																if (include) {
-																	sourcesInList.push(item);
-																} else {
-																	sourcesAvaliable.push(item);
-																}
+
+															var grid = dataWin.down('[itemId=dataSourcesGrid]');
+															loadRoleGrid({
+																roleRecord: record,
+																grid: grid,
+																enabledColumnIndex: 'enabled',
+																dataType: 'dataSecurity',
+																itemType: 'dataSource'
 															});
-															Ext.getCmp('dataSourcesGrid').getStore().removeAll();
-															Ext.getCmp('dataSourcesGrid').getStore().loadRecords(sourcesAvaliable);
-															Ext.getCmp('dataSourcesInRoleGrid').getStore().loadRecords(sourcesInList);
-															
 														}
-													}											
-												},
-												viewConfig: {
-													plugins: {
-														ptype: 'gridviewdragdrop',
-														dragText: 'Add: {0}',
-														dragTextField: 'description'
 													}
-												},										
+												},
 												columns: [
-													{ text: 'Code', dataIndex: 'code', width: 200},
-													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+													{
+														xtype: 'checkcolumn',
+														text: 'Enabled',
+														dataIndex: 'enabled',
+														flex: 1,
+														listeners: {
+															checkchange: function () {
+																dataWin.setDirty(true);
+															}
+														}
+													},
+													{ text: 'Code', dataIndex: 'code', flex: 3},
+													{ text: 'Description', dataIndex: 'description', flex: 6, minWidth: 200}
 												]
-											},
-											{
-												xtype: 'grid',
-												id: 'dataSourcesInRoleGrid',
-												title: 'Accessible <i class="fa fa-question-circle"  data-qtip="Drag record to add restriction to ' + record.get('roleName') + '"></i>',
-												width: '50%',
-												margin: '0 5 0 0',
-												columnLines: true,
-												store: {																						
-												},
-												viewConfig: {
-													plugins: {
-														ptype: 'gridviewdragdrop',
-														dragText: 'Remove: {0}',
-														dragTextField: 'description'
-													}
-												},										
-												columns: [
-													{ text: 'Code', dataIndex: 'code', width: 200},
-													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
-												]										
 											}
 										]
 									},
@@ -763,10 +794,9 @@
 										items: [
 											{
 												xtype: 'grid',
-												id: 'dataSensitivityGrid',
+												itemId: 'dataSensitivityGrid',
 												title: 'Restricted <i class="fa fa-question-circle"  data-qtip="Drag record to add to ' + record.get('roleName') + '"></i>',
-												width: '50%',
-												margin: '0 5 0 0',
+												width: '100%',
 												columnLines: true,
 												store: {	
 													autoLoad: true,
@@ -776,61 +806,33 @@
 													},
 													listeners: {
 														load: function(store, records, opts) {
-															
-															var sourcesInList = [];
-															var sourcesAvaliable = [];
-															Ext.getCmp('dataSensitivityGrid').getStore().each(function(item){
-																var include = false;
-																Ext.Array.each(record.data.dataSecurity, function(inListSource){
-																
-																	if (item.get('code') === inListSource.dataSensitivity) {																		
-																		include = true;
-																	}
-																});
-																if (include) {
-																	sourcesInList.push(item);
-																} else {
-																	sourcesAvaliable.push(item);
-																}
+
+															var grid = dataWin.down('[itemId=dataSensitivityGrid]');
+															loadRoleGrid({
+																roleRecord: record,
+																grid: grid,
+																enabledColumnIndex: 'enabled',
+																dataType: 'dataSecurity',
+																itemType: 'dataSensitivity'
 															});
-															Ext.getCmp('dataSensitivityGrid').getStore().removeAll();
-															Ext.getCmp('dataSensitivityGrid').getStore().loadRecords(sourcesAvaliable);
-															Ext.getCmp('dataSensitivitiesInRoleGrid').getStore().loadRecords(sourcesInList);
 														}
-													}											
-												},
-												viewConfig: {
-													plugins: {
-														ptype: 'gridviewdragdrop',
-														dragText: 'Add: {0}',
-														dragTextField: 'description'
 													}
-												},										
+												},
 												columns: [
-													{ text: 'Code', dataIndex: 'code', width: 200},
-													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+													{
+														xtype: 'checkcolumn',
+														text: 'Enabled',
+														dataIndex: 'enabled',
+														flex: 1,
+														listeners: {
+															checkchange: function () {
+																dataWin.setDirty(true);
+															}
+														}
+													},
+													{ text: 'Code', dataIndex: 'code', flex: 3 },
+													{ text: 'Description', dataIndex: 'description', flex: 6, minWidth: 200 }
 												]
-											},	
-											{
-												xtype: 'grid',
-												id: 'dataSensitivitiesInRoleGrid',
-												title: 'Accessible <i class="fa fa-question-circle"  data-qtip="Drag record to remove from ' + record.get('roleName') + '"></i>',
-												width: '50%',
-												margin: '0 5 0 0',
-												columnLines: true,
-												store: {																						
-												},
-												viewConfig: {
-													plugins: {
-														ptype: 'gridviewdragdrop',
-														dragText: 'Remove: {0}',
-														dragTextField: 'description'
-													}
-												},										
-												columns: [
-													{ text: 'Code', dataIndex: 'code', width: 200},
-													{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
-												]										
 											}
 										]
 									}
@@ -850,18 +852,25 @@
 										handler: function() {
 											
 											var dataRestrictions = [];
-											
-											Ext.getCmp('dataSourcesInRoleGrid').getStore().each(function(item){												
-												dataRestrictions.push({
-													dataSource: item.get('code')
-												});
-											});			
-											
-											Ext.getCmp('dataSensitivitiesInRoleGrid').getStore().each(function(item){												
-												dataRestrictions.push({
-													dataSensitivity: item.get('code')
-												});
-											});											
+
+											var dataSourcesGrid = dataWin.down('[itemId=dataSourcesGrid]');
+											var dataSensitivityGrid = dataWin.down('[itemId=dataSensitivityGrid]');
+
+											dataSourcesGrid.getStore().each(function (item) {
+												if (item.get('enabled')) {
+													dataRestrictions.push({
+														dataSource: item.get('code')
+													});
+												}
+											});
+
+											dataSensitivityGrid.getStore().each(function (item) {
+												if (item.get('enabled')) {
+													dataRestrictions.push({
+														dataSensitivity: item.get('code')
+													});
+												}
+											});
 											
 											var data = record.data;
 											data.dataSecurity = dataRestrictions;
@@ -876,10 +885,17 @@
 												},
 												success: function(response, opts) {
 													Ext.toast('Updated Data Restrictions.')
+													dataWin.setDirty(false);
 													dataWin.close();
 												}
 											});											
 										}
+									},
+									{
+										xtype: 'label',
+										itemId: 'dirtyLabel',
+										hidden: true,
+										html: '<div style="color: #ff0033; font-weight: bold;">You have unsaved changes</div>'
 									},
 									{
 										xtype: 'tbfill'
