@@ -31,6 +31,9 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 	collaspeNavAtFirst: false,
 	hideSave: false,
 	showCustomButton: false,
+	previewMode: false,
+	customButtonText: 'Close',
+	customButtonIconCls: 'fa fa-2x fa-close icon-vertical-correction icon-button-color-warning',
 	
 	items: [
 		{
@@ -112,8 +115,9 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					xtype: 'tbfill'
 				},
 				{
-					text: 'Custom',
+					text: 'Close',					
 					itemId: 'custom',
+					iconCls: 'fa fa-2x fa-close icon-vertical-correction icon-button-color-warning',
 					scale: 'medium',
 					hidden: true,
 					handler: function() {
@@ -173,6 +177,17 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			submissionFormFullControl.queryById('navPanel').setHidden(true);
 		}
 		
+		if (submissionFormFullControl.hideSave) {
+			submissionFormFullControl.queryById('save').setHidden(true);
+		}
+		
+		if (submissionFormFullControl.showCustomButton) {
+			submissionFormFullControl.queryById('custom').setText(submissionFormFullControl.customButtonText);
+			submissionFormFullControl.queryById('custom').setIconCls(submissionFormFullControl.customButtonIconCls);
+			submissionFormFullControl.queryById('custom').setHidden(false);
+		}		
+		
+		submissionFormFullControl.queryById('submissionForm').previewMode = submissionFormFullControl.previewMode;
 		
 	},
 	updateNavPanel: function(currentSectionIndex) {
@@ -216,8 +231,10 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		}
 		var section = form.getCurrentSection();
 		if (section && section.review) {
-			submissionFormFullControl.queryById('save').setHidden(true);
-			submissionFormFullControl.queryById('submitApproval').setHidden(false);
+			if (!submissionFormFullControl.hideSave) {
+				submissionFormFullControl.queryById('save').setHidden(true);
+				submissionFormFullControl.queryById('submitApproval').setHidden(false);
+			}
 			
 			if (!section.component.allSectionsValid()) {
 				submissionFormFullControl.queryById('submitApproval').setDisabled(true);
@@ -226,8 +243,10 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			}
 			
 		} else {
-			submissionFormFullControl.queryById('save').setHidden(false);
-			submissionFormFullControl.queryById('submitApproval').setHidden(true);
+			if (!submissionFormFullControl.hideSave) {
+				submissionFormFullControl.queryById('save').setHidden(false);
+				submissionFormFullControl.queryById('submitApproval').setHidden(true);
+			}
 		}		
 	},
 	

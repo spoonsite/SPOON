@@ -73,11 +73,16 @@ Ext.define('OSF.customSubmissionTool.Window', {
 									closeAction: 'destroy',
 									width: '80%',
 									height: '80%',
-									maximizable: true,
+									maximizable: true,									
 									items: [
 										{
 											xtype: 'osf-customSubmission-SubmissionformFullControl',
-											itemId: 'form'							
+											itemId: 'form',
+											showCustomButton: true,
+											hideSave: true,
+											customButtonHandler: function() {
+												previewWin.close();
+											}											
 										}
 									]
 								});

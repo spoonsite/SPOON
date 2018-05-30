@@ -394,7 +394,12 @@
 							items: [
 								{
 									xtype: 'osf-customSubmission-SubmissionformFullControl',
-									itemId: 'form'							
+									itemId: 'form',
+									showCustomButton: true,
+									hideSave: true,
+									customButtonHandler: function() {
+										previewWin.close();
+									}								
 								}
 							]
 						});
