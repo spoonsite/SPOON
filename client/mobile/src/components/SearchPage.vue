@@ -19,6 +19,8 @@
       </v-btn>
       <v-btn small flat @click.stop="showOptions = true" icon><v-icon style="font-size: 1.2em;">fas fa-cog</v-icon>
       </v-btn>
+      <v-btn small flat @click.stop="showHelp = true" icon><v-icon style="font-size: 1.2em;">fas fa-question</v-icon>
+      </v-btn>
     </div>
 
     <!-- Search Options Dialog -->
@@ -29,10 +31,6 @@
       <v-card>
         <v-card-title>
           <h2>Search Options</h2>
-          <v-spacer></v-spacer>
-          <v-btn @click.stop="showOptions = false" icon>
-            <v-icon>close</v-icon>
-          </v-btn>
         </v-card-title>
         <v-card-text>
           <h3>Sort Order</h3>
@@ -48,77 +46,93 @@
           <h3>Page Size</h3>
           {{ searchPageSize }}
           <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
-          <!-- <v-checkbox v-model="showAll" label="Show all search results"></v-checkbox> -->
+        </v-card-text>
+        <v-card-action>
           <v-btn @click.stop="showOptions = false">Submit</v-btn>
           <v-btn @click="resetOptions()">Reset Options</v-btn>
-        </v-card-text>
+        </v-card-action>
       </v-card>
     </v-dialog>
 
     <!-- Filter pills if there are any -->
-    <v-btn small @click="clear()" v-if="(filters.entryType || filters.component || filters.organization || filters.tags.length !== 0)">Clear Filters</v-btn>
+    <v-btn small @click="clear()" v-if="(filters.component || filters.organization || filters.tags.length !== 0)">Clear Filters</v-btn>
     <div style="padding: 0 0.5em 0.8em 0.8em;">
-      <span v-if="filters.entryType"><v-chip close small color="purple lighten-2" text-color="white" @input="filters.entryType = ''">{{ filters.entryType }}</v-chip></span>
-      <span v-if="filters.component"><v-chip close small @input="filters.component = ''" color="teal lighten-2" text-color="white">{{ filters.component }}</v-chip></span>
-      <span v-if="filters.tags.length !== 0"><v-chip v-for="tag in filters.tags" :key="tag" close small @input="deleteTag(tag)">{{ tag }}</v-chip></span>
-      <span v-if="filters.organization"><v-chip close small color="indigo lighten-2" text-color="white" @input="filters.organization = ''">{{ filters.organization }}</v-chip></span>
+      <span v-if="filters.component"><v-chip close small @input="filters.component = ''" color="teal lighten-2" text-color="white">{{ filters.component | truncate(30) }}</v-chip></span>
+      <span v-if="filters.tags.length !== 0"><v-chip v-for="tag in filters.tags" :key="tag" close small @input="deleteTag(tag)">{{ tag | truncate(30) }}</v-chip></span>
+      <span v-if="filters.organization"><v-chip close small color="indigo lighten-2" text-color="white" @input="filters.organization = ''">{{ filters.organization | truncate(30) }}</v-chip></span>
     </div>
 
     <!-- Search Filters Dialog -->
     <v-dialog
       v-model="showFilters"
-      max-width="300px"
+      max-width="500px"
       >
       <v-card>
         <v-card-title>
           <h2>Search Filters</h2>
-          <v-spacer></v-spacer>
-          <v-btn @click.stop="showFilters = false" icon>
-            <v-icon>close</v-icon>
-          </v-btn>
         </v-card-title>
-        <v-card-text>
-        <v-select
-          v-model="filters.entryType"
-          :items="entryTypeList"
-          item-text="componentType.label"
-          item-value="componentType.componentType"
-          label="Entry Type"
-          clearable
-          multi-line
-        ></v-select>
-        <v-select
-          v-model="filters.component"
-          :items="componentsList"
-          item-text="parentLabel"
-          item-value="componentType"
-          label="Component Type"
-          clearable
-          multi-line
-        ></v-select>
-        <v-select
-          v-model="filters.tags"
-          :items="tagsList"
-          item-value="text"
-          label="Tags"
-          multiple
-          chips
-          clearable
-        ></v-select>
-        <v-select
-          v-model="filters.organization"
-          :items="organizationsList"
-          item-text="name"
-          item-value="name"
-          label="Organization"
-          clearable
-        ></v-select>
+        <v-card-text class="clearfix">
+          <v-select
+            v-model="filters.component"
+            :items="componentsList"
+            item-text="parentLabel"
+            item-value="componentType"
+            label="Category"
+            clearable
+            multi-line
+          ></v-select>
+          <v-checkbox label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
+          <v-select
+            v-model="filters.tags"
+            hide-details
+            :items="tagsList"
+            item-value="text"
+            label="Tags"
+            multiple
+            chips
+            clearable
+          ></v-select>
+          <v-radio-group label="Tag Search Condition" v-model="filters.tagCondition">
+            <v-radio label="And" value="AND"></v-radio>
+            <v-radio label="Or" value="OR"></v-radio>
+          </v-radio-group>
+          <v-select
+            v-model="filters.organization"
+            :items="organizationsList"
+            item-text="name"
+            item-value="name"
+            label="Organization"
+            clearable
+          ></v-select>
+        </v-card-text>
+        <v-card-action>
           <v-btn @click.stop="showFilters = false">Submit</v-btn>
           <v-btn @click="clear()">Clear Filters</v-btn>
-        </v-card-text>
+        </v-card-action>
       </v-card>
     </v-dialog>
   </div> <!-- Search Bar and menu  -->
+
+  <!-- Search Help Dialog -->
+    <v-dialog
+      v-model="showHelp"
+      max-width="300px"
+      >
+      <v-card>
+        <v-card-title>
+          <h2>Search Help</h2>
+        </v-card-title>
+        <v-card-text>
+          <h3>Filter Color Legend</h3>
+          <v-chip close small color="teal lighten-2" text-color="white">Category Shortcode</v-chip>
+          <v-chip close small>Tag</v-chip>
+          <v-chip close small color="indigo lighten-2" text-color="white">Organization</v-chip>
+        </v-card-text>
+        <v-card-action>
+          <v-btn @click="showHelp = !showHelp">Close</v-btn>
+        </v-card-action>
+      </v-card>
+    </v-dialog>
 
   <!-- Search Results -->
   <h2 v-if="searchResults.data" style="text-align: center">Search Results</h2>
@@ -150,8 +164,8 @@
   </div>
 
   <div v-if="searchResults.data">
-    <v-expansion-panel>
-      <v-expansion-panel-content style="grey" v-for="item in searchResults.data.data" :key="item">
+    <v-expansion-panel class="elevation-2">
+      <v-expansion-panel-content v-for="item in searchResults.data.data" :key="item">
         <div slot="header">
           <div style="float: left;" v-if="item.componentTypeIconUrl">
             <img :src="'/openstorefront/' + item.componentTypeIconUrl" width="30" style="margin-right: 1em;">
@@ -160,7 +174,7 @@
             {{ item.name }}
           </div>
         </div>
-        <v-card>
+        <v-card class="grey lighten-4">
           <v-card-text>
             <p>
               <router-link
@@ -259,11 +273,10 @@ export default {
     if (this.$route.query.comp) {
       this.filters.component = this.$route.query.comp
     }
-    if (this.$route.query.entryType) {
-      this.filters.entryType = this.$route.query.entryType
+    if (this.$route.query.children) {
+      this.filters.children = this.$route.query.children
     }
     this.getComponentTypes()
-    this.getEntryTypes()
     this.getTags()
     this.getOrganizations()
     this.newSearch()
@@ -275,7 +288,9 @@ export default {
     if (to.query.comp) {
       this.filters.component = to.query.comp
     }
-    this.filters.entryType = to.query.entryType
+    if (to.query.children) {
+      this.filters.children = to.query.children
+    }
     this.newSearch()
   },
   methods: {
@@ -284,7 +299,8 @@ export default {
         component: '',
         tags: [],
         organization: '',
-        entryType: ''
+        children: false,
+        tagCondition: 'AND'
       }
     },
     resetOptions () {
@@ -316,7 +332,8 @@ export default {
             caseInsensitive: false,
             field: 'componentType',
             mergeCondition: 'AND',
-            searchType: 'COMPONENT',
+            searchType: 'ENTRYTYPE',
+            searchChildren: that.filters.children,
             stringOperation: 'EQUALS',
             value: that.filters.component
           }
@@ -327,7 +344,7 @@ export default {
           searchElements.push(
             {
               caseInsensitive: true,
-              mergeCondition: 'OR',
+              mergeCondition: that.filters.tagCondition,
               searchType: 'TAG',
               stringOperation: 'EQUALS',
               value: tag
@@ -345,20 +362,6 @@ export default {
             stringOperation: 'EQUALS',
             field: 'organization',
             value: that.filters.organization
-          }
-        )
-      }
-      if (that.filters.entryType) {
-        searchElements.push(
-          {
-            caseInsensitive: false,
-            field: 'componentType',
-            mergeCondition: 'AND',
-            numberOperation: 'EQUALS',
-            searchChildren: true,
-            searchType: 'ENTRYTYPE',
-            stringOperation: 'EQUALS',
-            value: that.filters.entryType
           }
         )
       }
@@ -381,17 +384,6 @@ export default {
         .finally(() => {
           that.searchQueryIsDirty = false
         })
-    },
-    getEntryTypes () {
-      let that = this
-      axios
-        .get(
-          '/openstorefront/api/v1/resource/componenttypes/nested'
-        )
-        .then(response => {
-          that.entryTypeList = response.data.children
-        })
-        .catch(e => this.errors.push(e))
     },
     getComponentTypes () {
       let that = this
@@ -502,19 +494,20 @@ export default {
   },
   data () {
     return {
-      entryTypeList: [],
       componentsList: [],
       tagsList: [],
       organizationsList: [],
       selected: [],
       showFilters: false,
       showOptions: false,
+      showHelp: false,
       searchQuery: '',
       filters: {
         component: '',
         tags: [],
         organization: '',
-        entryType: ''
+        children: false,
+        tagCondition: 'AND'
       },
       searchResults: {},
       searchQueryIsDirty: false,
