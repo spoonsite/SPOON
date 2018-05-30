@@ -285,7 +285,9 @@ public class SecurityUtil
 		try {
 			request.logout();
 		} catch (ServletException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
+			LOG.log(Level.WARNING, ()->"Unable to log out of container authorization system. Error message:\n" + ex.getMessage());
+			LOG.log(Level.FINEST, "Stack Trace of Logout Failure", ex);
+//			throw new OpenStorefrontRuntimeException(ex);
 		}
 
 		//For now invalidate all cookies; in the future there may be some that should persist.
