@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
@@ -285,9 +284,8 @@ public class SecurityUtil
 		try {
 			request.logout();
 		} catch (ServletException ex) {
-			LOG.log(Level.WARNING, ()->"Unable to log out of container authorization system. Error message:\n" + ex.getMessage());
-			LOG.log(Level.FINEST, "Stack Trace of Logout Failure", ex);
-//			throw new OpenStorefrontRuntimeException(ex);
+			LOG.log(Level.WARNING, () -> "Unable to log out of container authorization system. Error message:\n" + ex.getMessage());
+			LOG.log(Level.FINEST, "Trace of Logout Failure", ex);
 		}
 
 		//For now invalidate all cookies; in the future there may be some that should persist.
