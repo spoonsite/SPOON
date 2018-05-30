@@ -71,6 +71,8 @@ import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.sort.SortUtil;
+import edu.usu.sdl.openstorefront.core.view.ChangeEntryTypeAction;
+import edu.usu.sdl.openstorefront.core.view.ChangeOwnerAction;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
@@ -95,6 +97,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentTrackingWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
+import edu.usu.sdl.openstorefront.core.view.MultipleEntryAction;
 import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
@@ -124,6 +127,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -1041,6 +1045,86 @@ public class ComponentRESTResource
 		}
 		return response;
 	}
+	
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@APIDescription("Change owner of listed components and attach a comment")
+	@Path("/changeowner")
+	public Response changeOwnerAndComment(
+			ChangeOwnerAction changeOwnerAction
+	)
+	{
+		return entryActionWithComment((component)->{
+			service.getComponentService().changeOwner(component.getComponentId(), changeOwnerAction.getNewOwner());
+		}, changeOwnerAction);		
+	}
+	
+	private Response entryActionWithComment(Consumer<Component> consumer, MultipleEntryAction multipleEntryActionObject){
+		ValidationModel validationModel = new ValidationModel(multipleEntryActionObject);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			for(String componentId: multipleEntryActionObject.getComponentIds()){
+				Component component = service.getPersistenceService().findById(Component.class, componentId);
+				if (component != null) {
+					consumer.accept(component);
+					saveEntryActionComment(multipleEntryActionObject, componentId);
+				}
+				else{
+					LOG.log(Level.FINE, ()-> "Cannot find componentId: " + componentId);
+				}
+			}
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.ok().build();
+	}
+
+	private void saveEntryActionComment(MultipleEntryAction entryAction, String componentId)
+	{
+		if(entryAction.getComment() != null){
+			ComponentComment componentComment = new ComponentComment();
+			componentComment.setComponentId(componentId);
+			componentComment.setCommentType(entryAction.getComment().getCommentType());
+			componentComment.setComment(entryAction.getComment().getComment());
+			componentComment.setPrivateComment(entryAction.getComment().getPrivateComment());
+			componentComment.save();
+		}
+	}
+	
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@APIDescription("Change type of listed components and attach a comment")
+	@Path("/changetype")
+	public Response changeTypeAndComment(
+			ChangeEntryTypeAction changeEntryTypeAction
+	)
+	{
+		return entryActionWithComment((component)->{
+			service.getComponentService().changeComponentType(component.getComponentId(), changeEntryTypeAction.getNewType());
+		}, changeEntryTypeAction);
+	}
+	
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@APIDescription("Change status of listed components and attach a comment")
+	@Path("/togglestatus")
+	public Response toggleAndComment(
+			MultipleEntryAction multipleEntryAction	
+	)
+	{
+		return entryActionWithComment((component)->{
+			if(Component.ACTIVE_STATUS.equals(component.getActiveStatus())){
+				service.getComponentService().deactivateComponent(component.getComponentId());
+			}
+			else{
+				service.getComponentService().activateComponent(component.getComponentId());
+			}
+		}, multipleEntryAction);
+	}
 
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
@@ -1084,6 +1168,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed" desc="Version history">
 	@GET
 	@APIDescription("Gets all version history for a component")
@@ -1216,6 +1301,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource ATTRIBUTE Section">
 	@GET
 	@APIDescription("Gets attributes for a component")
@@ -1827,7 +1913,7 @@ public class ComponentRESTResource
 			contact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
 			contact.setCreateUser(SecurityUtil.getCurrentUserName());
 			contact.setUpdateUser(SecurityUtil.getCurrentUserName());
-			service.getComponentService().saveComponentContact(contact);
+			service.getComponentService().saveComponentContact(contact,true,false);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -2422,13 +2508,11 @@ public class ComponentRESTResource
 	}
 	// </editor-fold>
 
-	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource Comment section">
+	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource COMMENT section">
 	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Gets the list of comments associated to an entity")
-	@Produces(
-			{
-				MediaType.APPLICATION_JSON
-			})
+	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentComment.class)
 	@Path("/{id}/comments")
 	public List<ComponentComment> getComponentComment(
@@ -2437,8 +2521,106 @@ public class ComponentRESTResource
 	{
 		return service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
 	}
+	
+	@DELETE
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Delete a comment by id from the specified entity")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/comments/{commentId}")
+	public Response deleteComponentCommentById(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("commentId")
+			@RequiredParam String commentId)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		ComponentComment example = new ComponentComment();
+		example.setCommentId(commentId);
+		example.setComponentId(componentId);
+		ComponentComment componentComment = service.getPersistenceService().queryOneByExample(new QueryByExample<>(example));
+		if (componentComment != null) {
+			response = ownerCheck(componentComment, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+			if (response == null) {
+				service.getComponentService().deleteBaseComponent(ComponentComment.class, commentId);
+			}
+		}
+		return response;
+	}
+	
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Update a comment associated to the component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}/comments/{commentId}")
+	public Response updateComponentComment(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@PathParam("commentId")
+			@RequiredParam String commentId,
+			ComponentComment comment)
+	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
 
+		response = Response.status(Response.Status.NOT_FOUND).build();
+		ComponentComment componentComment = service.getPersistenceService().findById(ComponentComment.class, commentId);
+		if (componentComment != null) {
+			checkBaseComponentBelongsToComponent(componentComment, componentId);
+			comment.setComponentId(componentId);
+			comment.setCommentId(commentId);
+			response = saveComment(comment);
+		}
+		return response;
+	}
+
+	private Response saveComment(ComponentComment comment)
+	{
+		ValidationModel validationModel = new ValidationModel(comment);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			comment.setActiveStatus(ComponentComment.ACTIVE_STATUS);
+			comment.setCreateUser(SecurityUtil.getCurrentUserName());
+			comment.setUpdateUser(SecurityUtil.getCurrentUserName());
+			comment.save();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return Response.ok(comment).build();
+	}
+	
+	@POST
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@APIDescription("Add a single comment to the specified component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(ComponentComment.class)
+	@Path("/{id}/comments")
+	public Response addComponentTag(
+			@PathParam("id")
+			@RequiredParam String componentId,
+			@RequiredParam ComponentComment comment)
+	{
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if(component != null){
+			comment.setComponentId(componentId);
+			ValidationResult validResult = comment.validate();
+			if(validResult.valid()){
+				ComponentComment newComment = comment.save();
+				return Response.created(URI.create("v1/resource/components/" + comment.getComponentId() + "/comments/" + comment.getCommentId())).entity(newComment).build();
+			}
+			else{
+				return Response.ok(validResult.toRestError()).build();
+			}
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
 	@APIDescription("Get the entire metadata list")
@@ -3764,7 +3946,6 @@ public class ComponentRESTResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
 	@Path("/{id}/tags")
-
 	public void deleteComponentTags(
 			@PathParam("id")
 			@RequiredParam String componentId)
@@ -4113,6 +4294,7 @@ public class ComponentRESTResource
 	}
 
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
@@ -4219,6 +4401,7 @@ public class ComponentRESTResource
 //
 //	}
 	// </editor-fold>
+	
 	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)

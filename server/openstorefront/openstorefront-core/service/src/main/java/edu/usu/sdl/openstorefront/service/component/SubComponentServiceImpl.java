@@ -346,7 +346,12 @@ public class SubComponentServiceImpl
 
 	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity)
 	{
-		Contact contactFull = componentService.getContactService().saveContact(contact.toContact());
+		saveComponentContact(contact,updateLastActivity,true);
+	}
+
+	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity, boolean mergeSimilar)
+	{
+		Contact contactFull = componentService.getContactService().saveContact(contact.toContact(), mergeSimilar);
 		contact.setContactId(contactFull.getContactId());
 
 		ComponentContact oldContact = persistenceService.findById(ComponentContact.class, contact.getComponentContactId());
