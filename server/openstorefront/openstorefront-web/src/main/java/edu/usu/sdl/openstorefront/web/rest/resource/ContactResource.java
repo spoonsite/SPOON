@@ -200,7 +200,7 @@ public class ContactResource
 		ValidationResult validationResult = contact.validate(true);
 		if (validationResult.valid()) {
 
-			contact = service.getContactService().saveContact(contact);
+			contact = service.getContactService().saveContact(contact,false);
 
 			if (post) {
 				return Response.created(URI.create("v1/resource/contacts/" + contact.getContactId())).entity(contact).build();
