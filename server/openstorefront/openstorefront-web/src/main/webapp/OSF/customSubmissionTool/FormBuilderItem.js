@@ -475,13 +475,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			return mappableFields;
 		};
 
+		var mappableFields;
 		switch (formBuilderItem.fieldType) {
 			case 'TEXT':
 				formBuilderItem.templateField.mappingType = 'COMPONENT';
 				formBuilderItem.getForm().findField('fieldName').setHidden(false);	
 				formBuilderItem.getForm().findField('labelAlign').setHidden(false);					
 
-				var mappableFields = filterMappedFilelds('textfield');							
+				mappableFields = filterMappedFilelds('textfield');							
 				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
 			break;	
 			case 'NUMBER':
@@ -489,7 +490,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('fieldName').setHidden(false);
 				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
 
-				var mappableFields = filterMappedFilelds('textfield');							
+				mappableFields = filterMappedFilelds('textfield');							
 				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
 			break;	
 			case 'DATE':
@@ -497,7 +498,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('fieldName').setHidden(false);
 				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
 
-				var mappableFields = filterMappedFilelds('date');							
+				mappableFields = filterMappedFilelds('date');							
 				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);							
 			break;	
 			case 'TEXTAREA':
@@ -505,14 +506,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('fieldName').setHidden(false);
 				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
 
-				var mappableFields = filterMappedFilelds('textarea');							
+				mappableFields = filterMappedFilelds('textarea');							
 				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
 			break;	
 			case 'RICHTEXT':
 				formBuilderItem.templateField.mappingType = 'COMPONENT';
 				formBuilderItem.getForm().findField('fieldName').setHidden(false);
 
-				var mappableFields = filterMappedFilelds('textarea');							
+				mappableFields = filterMappedFilelds('textarea');							
 				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
 			break;	
 			case 'ATTRIBUTE_RADIO':
@@ -555,7 +556,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('fieldName').setHidden(false);
 				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
 
-				var mappableFields = Ext.Array.filter(availableMappedFields, function (fieldRecord) {
+				mappableFields = Ext.Array.filter(availableMappedFields, function (fieldRecord) {
 					return fieldRecord.get('field') === 'organization';
 				});							
 
@@ -665,14 +666,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		newItem.floatingMenu.updatePosition();
     },
 
-    listeners: {
-    	afterlayout: function () {
-
-			var fieldItem = this;
-
-			var formBuilderPanel = fieldItem.getFormBuilderPanel();
-			var itemContainer = formBuilderPanel.itemContainer;		
-    	},
+    listeners: {    	
     	click: {
     		element: 'el',
     		fn: function () {

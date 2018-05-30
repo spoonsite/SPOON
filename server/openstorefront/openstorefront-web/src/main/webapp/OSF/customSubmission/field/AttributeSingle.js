@@ -245,13 +245,9 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		//values 
 		var responseValue = 'No Data Entered';
 		
-		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
+		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE' || panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
 			if (panel.selectedValue) {
 				responseValue = panel.selectedValue.label;
-			}
-		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
-			if (panel.selectedValue) {
-				responseValue = panel.selectedValue.label;			
 			}
 		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_MCHECKBOX') {			
 			var allValues = [];

@@ -277,7 +277,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 				submissionFormFullControl.checkNextPrevious();
 				
 				var sectionButtons = [];
-				var index = 0;
+				index = 0;
 				Ext.Array.each(form.getSections(), function(section) {
 					sectionButtons.push({
 						xtype: 'button',

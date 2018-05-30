@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
@@ -124,7 +123,7 @@ public class SubmissionMapper
 		return fieldMedia;
 	}
 
-	private List<UserSubmissionMedia> addComponentMedia(ComponentAll componentAll, String templateFieldId) throws JsonProcessingException
+	private List<UserSubmissionMedia> addComponentMedia(ComponentAll componentAll, String templateFieldId)
 	{
 		List<UserSubmissionMedia> createdMedia = new ArrayList<>();
 		for (ComponentMedia media : componentAll.getMedia()) {
@@ -138,7 +137,7 @@ public class SubmissionMapper
 		return createdMedia;
 	}
 
-	private List<UserSubmissionMedia> addComponentResources(ComponentAll componentAll, String templateFieldId) throws JsonProcessingException
+	private List<UserSubmissionMedia> addComponentResources(ComponentAll componentAll, String templateFieldId)
 	{
 		List<UserSubmissionMedia> createdMedia = new ArrayList<>();
 		for (ComponentResource resource : componentAll.getResources()) {

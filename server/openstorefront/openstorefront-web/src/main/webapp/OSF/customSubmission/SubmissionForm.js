@@ -110,7 +110,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 				sectionComponent = Ext.create('OSF.customSubmission.ReviewSection', {				
 				});				
 			} else {
-				var sectionComponent = Ext.create('OSF.customSubmission.Section', {				
+				sectionComponent = Ext.create('OSF.customSubmission.Section', {				
 				});
 				sectionComponent.load(section, submissionFormTemplate, userSubmission);			
 				

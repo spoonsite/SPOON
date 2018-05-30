@@ -67,7 +67,7 @@ Ext.define('OSF.customSubmission.field.Organization', {
 	reviewDisplayValue: function() {
 		var field = this;
 		var value = field.getValue();
-		return value && value !== '' ? value : '(No Data Entered)';	
+		return (value && value !== '') ? value : '(No Data Entered)';	
 	}	
 	
 });

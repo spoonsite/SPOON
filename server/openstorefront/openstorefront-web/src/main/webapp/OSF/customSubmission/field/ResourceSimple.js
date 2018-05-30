@@ -141,7 +141,7 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 	reviewDisplayValue: function() {
 		var field = this;
 		var value = field.uploadedFile;
-		return value && value !== '' ? value : '(No Data Entered)';	
+		return (value && value !== '') ? value : '(No Data Entered)';	
 	},
 	
 	isValid: function() {

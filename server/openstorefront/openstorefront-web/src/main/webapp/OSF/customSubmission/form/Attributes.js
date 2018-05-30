@@ -198,8 +198,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 			label: attributePanel.queryById('attributeTypeCB').fieldLabel,
 			value: value
 		});
-		
-		value = '';
+				
 		typeRecord = attributePanel.queryById('attributeCodeCB').getSelection();
 		if (typeRecord) {
 			value = typeRecord.get('label');

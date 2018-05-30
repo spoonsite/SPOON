@@ -63,9 +63,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 							buttons: Ext.Msg.YESNO,
 							icon: Ext.Msg.QUESTION,
 							fn: function(btn) {
-								if (btn === 'yes') {
-									var formBuilderPanel = navPanel.formBuilderPanel;
-						
+								if (btn === 'yes') {						
 									var navList = navPanel.queryById('navList');
 									navPanel.deleteSection(navList.getSelection()[0]);
 								}
@@ -318,9 +316,8 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 	
 	updateTemplate: function() {
 		var navPanel = this;		
-		var store = navPanel.treePanel.getStore();
-		var navList = navPanel.queryById('navList');
-		
+
+		var navList = navPanel.queryById('navList');		
 		var root = navList.getStore().getRoot();
 		
 		var selectionSet = false;

@@ -391,41 +391,6 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 				}
 
 			}					
-		},
-		{
-			text: '<i style="color:#5f5f5f;" class="fa fa-ellipsis-v fa-2x" aria-hidden="true" data-qtip="More options"></i>',
-			flex: 1,
-			hidden: true,
-			cls: 'floating-menu-button',
-			listeners: {
-				click: function () {
-					var button = this;
-					var disabledUp = false;
-					var disabledDown = false;
-					var formBuilderPanel = button.up('panel').formBuilderPanel;
-
-					var itemIndex = formBuilderPanel.itemContainer.items.items.indexOf(formBuilderPanel.activeItem);
-					if (itemIndex === 0) {
-						disabledUp = true;
-					}
-					if (itemIndex === formBuilderPanel.itemContainer.items.items.length -1) {
-						disabledDown = true;
-					}
-					var popupMenu = Ext.create('Ext.menu.Menu', {
-						floating: true,
-						items: [
-							{text: 'Move up', iconCls: 'fa fa-angle-up fa-2x', disabled: disabledUp}, //TODO
-							{text: 'Move down', iconCls: 'fa fa-angle-down fa-2x', disabled: disabledDown}, //TODO
-							{text: 'Select & swap', iconCls: 'fa fa-retweet fa-2x'}, //TODO
-							{text: 'Move to Section', iconCls: 'fa fa-external-link-square fa-2x'} //TODO
-						]
-					});
-					popupMenu.showAt(button.getXY());
-				}
-			},
-			handler: function() {
-				
-			}					
 		}
 	],
 	addNewItem: function(menuItem, fieldType, mappingType, fieldOptions) {

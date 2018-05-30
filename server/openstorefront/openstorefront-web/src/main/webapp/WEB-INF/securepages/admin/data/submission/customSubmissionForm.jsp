@@ -75,11 +75,13 @@
 						if (selected.length > 0) {
 							tools.getComponent('edit').setDisabled(false);
 							tools.getComponent('togglestatus').setDisabled(false);
+							tools.getComponent('copy').setDisabled(false);							
 							tools.getComponent('preview').setDisabled(false);
 							tools.getComponent('delete').setDisabled(false);
 						} else {
 							tools.getComponent('edit').setDisabled(true);
 							tools.getComponent('togglestatus').setDisabled(true);
+							tools.getComponent('copy').setDisabled(true);
 							tools.getComponent('preview').setDisabled(true);
 							tools.getComponent('delete').setDisabled(true);
 						}
@@ -176,6 +178,17 @@
 								xtype: 'tbseparator'
 							},
 							{
+								text: 'Copy',
+								iconCls: 'fa fa-2x fa-copy icon-button-color-default',
+								itemId: 'copy',
+								disabled: true,	
+								scale: 'medium',
+								handler: function(){
+									var record = Ext.getCmp('formTemplateGrid').getSelectionModel().getSelection()[0];
+									actionCopy(record);
+								}
+							},							
+							{
 								text: 'Toggle Active Status',
 								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
@@ -259,14 +272,16 @@
 								items: [
 									{
 										xtype: 'textfield',
-										fieldLabel: 'New Form Name <i class="fa fa-question-circle"  data-qtip="This is what the form template will be identified by"></i>',									
+										fieldLabel: 'New Form Name <i class="fa fa-question-circle" data-qtip="This is what the form template will be identified by"></i>',									
 										name: 'name',
+										maxLength: 255,
 										allowBlank: false
 									},
 									{
 										xtype: 'textfield',
 										fieldLabel: 'Description',									
-										name: 'description'									
+										name: 'description',
+										maxLength: 1024
 									}
 								],
 								dockedItems: [{
@@ -347,9 +362,88 @@
 					success: function(response, opt) {
 						actionRefresh();
 					}
-				});
+				});		
+			};
+			
+			var actionCopy = function(record) {
 				
-		
+				var promptWindow = Ext.create('Ext.window.Window', {
+					title: 'Copy Template',
+					layout: 'fit',
+					closeAction: 'destroy',
+					modal: true,
+					width: 400,
+					height: 200,
+					items: [
+						{
+							xtype: 'form',
+							scrollable: true,
+							bodyStyle: 'padding: 10px;',
+							layout: 'anchor',
+							items: [
+								{
+									xtype: 'textfield',
+									name: 'name',
+									fieldLabel: 'Enter a New Name <span class="field-required" />',
+									width: '100%',
+									labelAlign: 'top',
+									allowBlank: false,
+									maxLength: 255
+									
+								}
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Copy',
+											formBind: true,
+											iconCls: 'fa fa-lg fa-copy icon-button-color-default',
+											handler: function() {
+												var form = this.up('form');
+												var formData = form.getValues();
+												
+												var copiedData = Ext.clone(record.data);
+												copiedData.submissionTemplateId = null;
+												copiedData.name = formData.name; 
+												
+												promptWindow.setLoading('Copying...');
+												Ext.Ajax.request({
+													url: 'api/v1/resource/submissiontemplates',
+													method: 'POST',
+													jsonData: copiedData,
+													callback: function() {
+														promptWindow.setLoading(false);
+													},
+													success: function(response, opts){														
+														actionRefresh();													
+														promptWindow.close();
+													}
+												});
+												
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function() {
+												promptWindow.close();
+											}											
+										}
+									]
+								}
+							]
+						}
+					]
+					
+				});
+				promptWindow.show();
+				
 			};
 			
 			var actionDelete = function(record) {

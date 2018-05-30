@@ -69,7 +69,7 @@ Ext.define('OSF.customSubmission.field.RichText', {
 	reviewDisplayValue: function() {
 		var textField = this;
 		var value = textField.textArea.getValue();	
-		return value && value !== '' ? value : '(No Data Entered)';					
+		return (value && value !== '') ? value : '(No Data Entered)';					
 	},
 	
 	isValid : function() {

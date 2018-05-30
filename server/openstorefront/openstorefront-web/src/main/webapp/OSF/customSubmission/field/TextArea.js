@@ -54,7 +54,7 @@ Ext.define('OSF.customSubmission.field.TextArea', {
 	reviewDisplayValue: function() {
 		var textField = this;
 		var value = textField.getValue();
-		return value && value !== '' ? value : '(No Data Entered)';	
+		return (value && value !== '') ? value : '(No Data Entered)';	
 	}	
 	
 });

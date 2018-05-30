@@ -23,7 +23,6 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
-import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
@@ -114,14 +113,6 @@ public class SubmissionFormServiceImpl
 		SubmissionFormTemplate existing = persistenceService.findById(SubmissionFormTemplate.class, templateId);
 		if (existing != null) {
 
-			SubmissionFormResource resourceExample = new SubmissionFormResource();
-			resourceExample.setTemplateId(templateId);
-
-			List<SubmissionFormResource> resources = resourceExample.findByExample();
-			resources.forEach(resource -> {
-				deleteSubmissionFormResource(resource.getResourceId());
-			});
-
 			persistenceService.delete(existing);
 		}
 	}
@@ -131,52 +122,6 @@ public class SubmissionFormServiceImpl
 	{
 		Objects.requireNonNull(template);
 		return mappingController.verifyTemplate(template, componentType);
-	}
-
-	@Override
-	public SubmissionFormResource saveSubmissionFormResource(SubmissionFormResource resource, InputStream in)
-	{
-		Objects.requireNonNull(resource);
-		Objects.requireNonNull(resource.getFile());
-		Objects.requireNonNull(in);
-
-		SubmissionFormResource savedResource = resource.save();
-		try (InputStream fileInput = in) {
-			MediaFile mediaFile = savedResource.getFile();
-			mediaFile.setMediaFileId(persistenceService.generateId());
-			mediaFile.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mediaFile.getMimeType()));
-			mediaFile.setFileType(MediaFileType.RESOURCE);
-			Path path = Paths.get(MediaFileType.RESOURCE.getPath(), mediaFile.getFileName());
-			Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
-
-			persistenceService.persist(savedResource);
-		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
-		}
-
-		savedResource = persistenceService.unwrapProxyObject(savedResource);
-		return savedResource;
-
-	}
-
-	@Override
-	public void deleteSubmissionFormResource(String resourceId)
-	{
-		SubmissionFormResource resource = persistenceService.findById(SubmissionFormResource.class, resourceId);
-
-		if (resource.getFile() != null) {
-			Path path = resource.getFile().path();
-			if (path != null && path.toFile().exists()) {
-				try {
-					Files.delete(path);
-				} catch (IOException ex) {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete local media. Path: {0}", path));
-					LOG.log(Level.FINE, null, ex);
-				}
-			}
-
-			persistenceService.delete(resource);
-		}
 	}
 
 	@Override

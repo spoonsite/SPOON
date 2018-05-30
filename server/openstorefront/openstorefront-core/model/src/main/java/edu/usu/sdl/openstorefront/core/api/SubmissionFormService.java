@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
-import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
@@ -49,22 +48,6 @@ public interface SubmissionFormService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteSubmissionFormTemplate(String templateId);
-
-	/**
-	 * Save Submission Resource
-	 *
-	 * @param resource
-	 * @param in
-	 * @return saved form resource metadata
-	 */
-	public SubmissionFormResource saveSubmissionFormResource(SubmissionFormResource resource, InputStream in);
-
-	/**
-	 * Delete Submission Resource this will remove it from the file system
-	 *
-	 * @param resourceId
-	 */
-	public void deleteSubmissionFormResource(String resourceId);
 
 	/**
 	 * Checks the template mappings to make sure they represent a complete

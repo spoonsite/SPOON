@@ -20,7 +20,6 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.view.SubmissionFormTemplateView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -184,25 +183,6 @@ public class SubmissionFormTemplateResource
 	)
 	{
 		service.getSubmissionFormService().deleteSubmissionFormTemplate(templateId);
-	}
-
-	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
-	@APIDescription("Deletes a submission template resource")
-	@Path("/{templateId}/resource/{resourceId}")
-	public void deleteUserSubmission(
-			@PathParam("templateId") String templateId,
-			@PathParam("resourceId") String resourceId
-	)
-	{
-		SubmissionFormResource submissionFormResource = new SubmissionFormResource();
-		submissionFormResource.setResourceId(resourceId);
-		submissionFormResource.setTemplateId(templateId);
-		submissionFormResource = submissionFormResource.find();
-
-		if (submissionFormResource != null) {
-			service.getSubmissionFormService().deleteSubmissionFormResource(resourceId);
-		}
 	}
 
 }

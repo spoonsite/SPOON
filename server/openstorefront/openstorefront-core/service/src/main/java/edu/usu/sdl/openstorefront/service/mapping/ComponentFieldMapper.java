@@ -68,14 +68,12 @@ public class ComponentFieldMapper
 			throw mappingException;
 		}
 		//handle any media (inline media)
-		if (userSubmissionField != null) {
-			if (submissionField.getFieldId() != null) {
-				UserSubmissionMedia exampleMedia = new UserSubmissionMedia();
-				exampleMedia.setTemplateFieldId(submissionField.getFieldId());
-				List<UserSubmissionMedia> mediaRecords = exampleMedia.findByExample();
+		if (userSubmissionField != null && submissionField.getFieldId() != null) {
+			UserSubmissionMedia exampleMedia = new UserSubmissionMedia();
+			exampleMedia.setTemplateFieldId(submissionField.getFieldId());
+			List<UserSubmissionMedia> mediaRecords = exampleMedia.findByExample();
 
-				componentAll.getMedia().addAll(createInlineMedia(mediaRecords));
-			}
+			componentAll.getMedia().addAll(createInlineMedia(mediaRecords));
 		}
 
 		return childComponents;
