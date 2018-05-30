@@ -135,10 +135,10 @@
     </v-dialog>
 
   <!-- Search Results -->
-  <h2 v-if="searchResults.data" style="text-align: center">Search Results</h2>
+  <h2 v-if="searchResults.data" style="text-align: center" class="mb-2">Search Results</h2>
 
   <p v-if="searchResults.data && searchResults.data.totalNumber === 0">No Search Results</p>
-  <p v-else-if="searchResults.data">
+  <p v-else-if="searchResults.data" class="mb-0">
     <span v-if="searchQueryIsDirty">Fetching</span><span v-else>Showing</span>
     {{ offset + 1 }} -
     {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
@@ -147,8 +147,8 @@
   </p>
 
   <div v-if="searchResults.data" style="margin-bottom: 1em; padding-bottom: 0.5em; overflow: auto; white-space: nowrap;">
-    <v-chip v-for="stat in searchResults.data.resultTypeStats" :key="stat" @click="searchCategory(stat.componentType)" small color="teal" text-color="white">
-      <v-avatar size="24px !important" class="teal darken-2">{{ stat.count }}</v-avatar>
+    <v-chip v-for="stat in searchResults.data.resultTypeStats" :key="stat" @click="searchCategory(stat.componentType)" color="teal" text-color="white">
+      <v-avatar class="teal darken-2">{{ stat.count }}</v-avatar>
       {{ stat.componentTypeDescription }}
     </v-chip>
   </div>
