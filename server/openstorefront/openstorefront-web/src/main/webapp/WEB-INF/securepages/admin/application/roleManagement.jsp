@@ -450,79 +450,179 @@
 						items: [
 							{
 								xtype: 'grid',
-								itemId: 'availableGrid',
-								title: 'Permissions Available', 
-								autoEl: {
-									'data-test' : 'permissionsAvailableTable'
-								},
+								itemId: 'permissionGrid',
+								title: 'Acttive Permissions for ' + record.get('roleName'),
+								width: '100%',
+								isDirty: false,
+								findRelatedPermissions: function (grouping) {
 
-								width: '50%',
-								margin: '0 5 0 0',
-								columnLines: true,
+									var store = this.getStore();
+
+									return store.getData().items.reduce(function (acc, item) {
+										if (item.getData().groupBy === grouping) {
+											acc.push(item);
+										}
+										return acc;
+									}, []);
+								},
+								setDirty: function (isDirty) {
+									permissionWin.down('[itemId=dirtyLabel]').setHidden(false);
+								},
+								features: [
+									{ 
+										ftype: 'grouping',
+										groupHeaderTpl: Ext.create('Ext.XTemplate',
+											'<div style="height: 2em;">{name}',
+												'<div style="float: right; text-align: right;">',
+													'<button class="x-btn-default-toolbar-large" type="check-group" style="display: inline-block; margin: -5px 10px 0 0; cursor: pointer;"><i type="check-group" class="fa fa-plus-circle" aria-hidden="true"></i> Add All</button>',
+													'<button class="x-btn-default-toolbar-large" type="uncheck-group" style="display: inline-block; margin: -5px 0 0 0; cursor: pointer;"><i type="uncheck-group" class="fa fa-minus-circle" aria-hidden="true"></i> Clear All</button>',
+												'</div>',
+											'</div>'
+										),
+										startCollapsed: true
+									}
+								],
+								viewConfig: {
+									listeners: {
+										groupclick: function (view, node, group, event) {
+
+											var targetType = event.target.getAttribute('type');
+											var buttonIsTarget = targetType === 'check-group' || targetType === 'uncheck-group' ? true : false;
+											var isCollapsed = typeof event.record.isCollapsedPlaceholder === 'undefined' ? false : true;
+											var grid = permissionWin.getComponent('permissionGrid');
+											var itemsToBeUpdated = grid.findRelatedPermissions(event.record.getData().groupBy);
+
+											if (!isCollapsed && buttonIsTarget) {
+												grid.setDirty(true);
+												Ext.Array.forEach(itemsToBeUpdated, function (item) {
+													item.set('permissionEnabled', targetType === 'check-group' ? true : false);
+												});
+												
+												return false;
+											}
+
+											return true;
+										}
+									}
+								},
+								columns: [
+									{
+										xtype: 'checkcolumn',
+										text: 'Enabled',
+										dataIndex: 'permissionEnabled',
+										flex: 1,
+										listeners: {
+											checkchange: function () {
+												permissionWin.getComponent('permissionGrid').setDirty(true);
+											}
+										}
+									},
+									{ text: 'Code', dataIndex: 'code', flex: 3 },
+									{ text: 'Description', dataIndex: 'description', flex: 6, minWidth: 200 }
+								],
 								store: {
 									autoLoad: true,
+									groupField: 'groupBy',
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/lookuptypes/SecurityPermission'
 									},
 									listeners: {
-										load: function(store, records, opts) {
-											var permissionsInList = [];
-											var permissionsAvailable = [];
-											
-											permissionWin.getComponent('availableGrid').getStore().each(function(item){
-												var roleHasPermission = false;
-												Ext.Array.each(record.data.permissions, function(inListPermission){													
-													if (item.get('code') === inListPermission.permission) {														roleHasPermission = true;
-														roleHasPermission = true;
-													} 
-												});
-												if (roleHasPermission) {
-													permissionsInList.push(item);
-												} else {
-													permissionsAvailable.push(item);
-												}
+										load: function (store, records, opts) {
+
+											// Array<String> representation of all permissions
+											var userPermissions = record.getData().permissions.map(function (item) {
+												return item.permission;
 											});
-											
-											permissionWin.getComponent('availableGrid').getStore().removeAll();
-											permissionWin.getComponent('availableGrid').getStore().loadRecords(permissionsAvailable);
-											permissionWin.getComponent('rolePermissionsGrid').getStore().loadRecords(permissionsInList);
+
+											store.each(function (item) {
+												var permissionEnabled = false;
+												if (userPermissions.indexOf(item.getData().code) !== -1) {
+													permissionEnabled = true;
+												}
+
+												// not using item.set() because it will put the grid in a "dirty" state
+												item.data.permissionEnabled = permissionEnabled;
+											});
 										}
 									}
-								},
-								viewConfig: {
-									plugins: {
-										ptype: 'gridviewdragdrop',
-										dragText: 'Drag and drop to <b>Current Role Permissions</b> to add'
-									}
-								},
-								columns: [
-									{ text: 'Code', dataIndex: 'code', width: 200},
-									{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
-								]
-							},
-							{
-								xtype: 'grid',
-								itemId: 'rolePermissionsGrid',
-								title: 'Current Role Permissions',
-								autoEl: {
-									'data-test' : 'currentRolePermissionsTable'
-								},
-								width: '50%',
-								columnLines: true,
-								store: {									
-								},
-								viewConfig: {
-									plugins: {
-										ptype: 'gridviewdragdrop',
-										dragText: 'Drag and drop to <b>Permissions Available</b> to delete Role'
-									}
-								},
-								columns: [
-									{ text: 'Code', dataIndex: 'code', width: 200},
-									{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
-								]						
+								}
 							}
+							// {
+							// 	xtype: 'grid',
+							// 	itemId: 'availableGrid',
+							// 	title: 'Permissions Available', 
+							// 	autoEl: {
+							// 		'data-test' : 'permissionsAvailableTable'
+							// 	},
+
+							// 	width: '50%',
+							// 	margin: '0 5 0 0',
+							// 	columnLines: true,
+							// 	store: {
+									// autoLoad: true,
+									// proxy: {
+									// 	type: 'ajax',
+									// 	url: 'api/v1/resource/lookuptypes/SecurityPermission'
+									// },
+							// 		listeners: {
+										// load: function(store, records, opts) {
+										// 	var permissionsInList = [];
+										// 	var permissionsAvailable = [];
+											
+										// 	permissionWin.getComponent('availableGrid').getStore().each(function(item){
+										// 		var roleHasPermission = false;
+										// 		Ext.Array.each(record.data.permissions, function(inListPermission){													
+										// 			if (item.get('code') === inListPermission.permission) {														roleHasPermission = true;
+										// 				roleHasPermission = true;
+										// 			} 
+										// 		});
+										// 		if (roleHasPermission) {
+										// 			permissionsInList.push(item);
+										// 		} else {
+										// 			permissionsAvailable.push(item);
+										// 		}
+										// 	});
+											
+										// 	permissionWin.getComponent('availableGrid').getStore().removeAll();
+										// 	permissionWin.getComponent('availableGrid').getStore().loadRecords(permissionsAvailable);
+										// 	permissionWin.getComponent('rolePermissionsGrid').getStore().loadRecords(permissionsInList);
+										// }
+							// 		}
+							// 	},
+							// 	viewConfig: {
+							// 		plugins: {
+							// 			ptype: 'gridviewdragdrop',
+							// 			dragText: 'Drag and drop to <b>Current Role Permissions</b> to add'
+							// 		}
+							// 	},
+								// columns: [
+								// 	{ text: 'Code', dataIndex: 'code', width: 200},
+								// 	{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+								// ]
+							// },
+							// {
+							// 	xtype: 'grid',
+							// 	itemId: 'rolePermissionsGrid',
+							// 	title: 'Current Role Permissions',
+							// 	autoEl: {
+							// 		'data-test' : 'currentRolePermissionsTable'
+							// 	},
+							// 	width: '50%',
+							// 	columnLines: true,
+							// 	store: {									
+							// 	},
+							// 	viewConfig: {
+							// 		plugins: {
+							// 			ptype: 'gridviewdragdrop',
+							// 			dragText: 'Drag and drop to <b>Permissions Available</b> to delete Role'
+							// 		}
+							// 	},
+							// 	columns: [
+							// 		{ text: 'Code', dataIndex: 'code', width: 200},
+							// 		{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200}
+							// 	]						
+							// }
 						],
 						dockedItems: [
 							{
@@ -563,6 +663,12 @@
 											});
 											
 										}
+									},
+									{
+										xtype: 'label',
+										itemId: 'dirtyLabel',
+										hidden: true,
+										html: '<div style="color: #ff0033; font-weight: bold;">You have unsaved changes</div>'
 									},
 									{
 										xtype: 'tbfill'
