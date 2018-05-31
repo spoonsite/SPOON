@@ -251,7 +251,8 @@ Ext.define('OSF.form.Contacts', {
 							title: 'Existing Contacts  <i class="fa fa-question-circle" data-qtip="Selecting a contact from this grid will allow you to add an existing contact to the entry. This grid will also show the contact currently being edited."></i>',
 							columnWidth: 0.5,
 							items: [
-								Ext.create('Ext.grid.Panel', {
+								{
+									xtype: 'grid',
 									itemId: 'existingContactGrid',
 									columnLines: true,
 									height: 250,
@@ -259,33 +260,22 @@ Ext.define('OSF.form.Contacts', {
 									frameHeader: true,
 									store: Ext.create('Ext.data.Store', {
 										fields: [
-											"contactId",
-											"positionDescription",
-											"contactType",
-											"name",
-											"firstName",
-											"lastName",
-											"email",
-											"phone",
-											"organization",
 											{
 												name: 'updateDts',
 												type: 'date',
 												dateFormat: 'c'
-											},
-											"activeStatus"
+											}
 										],
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/contacts/filtered'
-										},
-
+										}
 									}),
 									columns: [
 										{ text: 'First Name', dataIndex: 'firstName', flex: 1 },
 										{ text: 'Last Name', dataIndex: 'lastName', flex: 1 },
-										{ text: 'Email', dataIndex: 'email', flex: 2 },
+										{ text: 'Email', dataIndex: 'email', flex: 2 }
 									],
 									selModel: {
 										selType: 'checkboxmodel',
@@ -307,7 +297,7 @@ Ext.define('OSF.form.Contacts', {
 											}
 										}
 									}
-								})
+								}
 							]
 						}]
 				},
@@ -354,7 +344,7 @@ Ext.define('OSF.form.Contacts', {
 							itemId: 'editBtn',
 							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 							handler: function () {
-								var record = contactPanel.contactGrid.getSelection()[0]
+								var record = contactPanel.contactGrid.getSelection()[0];
 								var grid = this.up('grid').queryById('existingContactGrid');
 								var index = grid.store.find('contactId', record.data.contactId);
 								grid.getView().select(index);

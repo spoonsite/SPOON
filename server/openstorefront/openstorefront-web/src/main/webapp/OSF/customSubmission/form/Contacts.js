@@ -23,21 +23,24 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 	extend: 'OSF.customSubmission.SubmissionBaseForm',
 	xtype: 'osf-submissionform-contact',
 	
-	layout: 'anchor',
+	layout: 'hbox',
 	bodyStyle: 'padding: 10px',
-	defaults: {
-		width: '100%',
-		maxWidth: 800,
-		labelAlign: 'top',
-		labelSeparator: ''		
-	},
 	
 	initComponent: function () {
 		this.callParent();
 		
 		var contactPanel = this;
 
-		var formItems = [];
+		var formItems = [
+			{
+				xtype: 'hidden',
+				name: 'componentContactId'
+			},
+			{
+				xtype: 'hidden',
+				name: 'contactId'
+			}
+		];
 		
 		if (!contactPanel.fieldTemplate.contactType) {
 			formItems.push({
@@ -50,12 +53,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				typeAhead: false,					
 				fieldLabel: 'Contact Type <span class="field-required" />',
 				storeConfig: {
-					url: 'api/v1/resource/lookuptypes/ContactType',
-					filters: [{
-							property: 'code',
-							operator: '!=',
-							value: /SUB/
-						}]
+					url: 'api/v1/resource/lookuptypes/ContactType'
 				}				
 			});
 		}
@@ -74,71 +72,29 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 		});
 		
 		formItems.push({
-			xtype: 'StandardComboBox',
-			name: 'firstName',
-			allowBlank: false,
-			margin: '0 0 5 0',					
-			fieldLabel: 'First Name  <span class="field-required" />',
-			forceSelection: false,
-			valueField: 'firstName',
-			displayField: 'firstName',
+			xtype: 'textfield',
+			fieldLabel: 'First Name<span class="field-required" />',
 			maxLength: '80',
-			typeAhead: false,
-			autoSelect: false,
-			selectOnTab: false,
-			assertValue: function () {
-			},
-			listConfig: {
-				itemTpl: [
-					'{firstName} <span style="color: grey">({email})</span>'
-				]
-			},
-			storeConfig: {
-				url: 'api/v1/resource/contacts/filtered'
-			},
+			allowBlank: false,
+			name: 'firstName',
 			listeners: {
-				select: function (combo, record, opts) {
-					record.set('componentContactId', null);
-					record.set('contactId', null);
-					var contactType = combo.up('form').getComponent('contactType').getValue();
-					combo.up('form').reset();
-					combo.up('form').loadRecord(record);
-					combo.up('form').getComponent('contactType').setValue(contactType);
+				change: function (firstNameField, newValue, oldValue, opts) {
+					var grid = this.up('form').down('grid');
+					grid.store.filter('firstName', newValue);
 				}
 			}			
 		});	
 		
 		formItems.push({
-			xtype: 'StandardComboBox',
-			name: 'lastName',
-			allowBlank: false,
-			margin: '0 0 5 0',
-			fieldLabel: 'Last Name <span class="field-required" />',
-			forceSelection: false,
-			valueField: 'lastName',
-			displayField: 'lastName',
+			xtype: 'textfield',
+			fieldLabel: 'Last Name<span class="field-required" />',
 			maxLength: '80',
-			typeAhead: false,
-			autoSelect: false,
-			selectOnTab: false,
-			assertValue: function () {
-			},
-			listConfig: {
-				itemTpl: [
-					'{lastName} <span style="color: grey">({email})</span>'
-				]
-			},
-			storeConfig: {
-				url: 'api/v1/resource/contacts/filtered'
-			},
+			allowBlank: false,
+			name: 'lastName',
 			listeners: {
-				select: function (combo, record, opts) {
-					record.set('componentContactId', null);
-					record.set('contactId', null);
-					var contactType = combo.up('form').getComponent('contactType').getValue();
-					combo.up('form').reset();
-					combo.up('form').loadRecord(record);
-					combo.up('form').getComponent('contactType').setValue(contactType);
+				change: function (lastNameField, newValue, oldValue, opts) {
+					var grid = this.up('form').down('grid');
+					grid.store.filter('lastName', newValue);
 				}
 			}
 		});	
@@ -150,7 +106,13 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 			allowBlank: false,
 			regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
 			regexText: 'Must be a valid email address. Eg. xxx@xxx.xxx',
-			name: 'email'
+			name: 'email',
+			listeners: {
+				change: function (emailField, newValue, oldValue, opts) {
+					var grid = this.up('form').down('grid');
+					grid.store.filter('email', newValue);
+				}
+			}			
 		});	
 		
 		formItems.push({
@@ -168,7 +130,71 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 			xtype: 'DataSensitivityComboBox'
 		});		
 					
-		contactPanel.add(formItems);
+		contactPanel.add([
+			{
+				xtype: 'panel',
+				width: '50%',
+				margin: '0 10 0 0',			
+				layout: 'anchor',
+				defaults: {
+					width: '100%',
+					maxWidth: 800,
+					labelAlign: contactPanel.fieldTemplate.labelAlign ? contactPanel.fieldTemplate.labelAlign : 'top',
+					labelSeparator: ''		
+				},				
+				items: formItems
+			},
+			{
+				xtype: 'grid',
+				width: '50%',
+				title: 'Existing Contacts  <i class="fa fa-question-circle" data-qtip="Selecting a contact from this grid will allow you to add an existing contact to the entry. This grid will also show the contact currently being edited."></i>',
+				itemId: 'existingContactGrid',
+				columnLines: true,
+				height: '100%',
+				border: true,
+				frameHeader: true,
+				hidden: contactPanel.fieldTemplate.hideExistingContactPicker ? contactPanel.fieldTemplate.hideExistingContactPicker : false,
+				store: {
+					fields: [
+						{
+							name: 'updateDts',
+							type: 'date',
+							dateFormat: 'c'
+						}
+					],
+					autoLoad: true,
+					proxy: {
+						type: 'ajax',
+						url: 'api/v1/resource/contacts/filtered'
+					}
+				},
+				columns: [
+					{ text: 'First Name', dataIndex: 'firstName', flex: 1 },
+					{ text: 'Last Name', dataIndex: 'lastName', flex: 1 },
+					{ text: 'Email', dataIndex: 'email', flex: 2 }
+				],
+				selModel: {
+					selType: 'checkboxmodel',
+					allowDeselect: true,
+					toggleOnClick: true,
+					mode: 'SINGLE'
+				},
+				listeners: {
+					selectionchange: function (grid, record, index, opts) {
+						var form = this.up('form');
+						if(this.getSelectionModel().getCount() > 0){
+							var contactType = form.getForm().findField('contactType').getValue();
+							form.reset();
+							form.loadRecord(this.getSelection()[0]);
+							form.getForm().findField('contactType').setValue(contactType);
+						}
+						else{
+							form.reset();
+						}
+					}
+				}				
+			}
+		]);
 		
 		if (contactPanel.fieldTemplate.popluateContactWithUser) {
 			CoreService.userservice.getCurrentUser().then(function (usercontext) {

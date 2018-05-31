@@ -408,6 +408,20 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		{
 			xtype: 'checkbox',
 			hidden: true,
+			optionField: true,			
+			name: 'hideExistingContactPicker',
+			boxLabel: '<b>Hide Existing Contact Picker</b>',
+			margin: '0 0 0 155',
+			listeners: {
+				change: function (self, newVal) {
+					var formBuilderItem = this.up('panel');														
+					formBuilderItem.syncTemplateField(true);						
+				}
+			}			
+		},
+		{
+			xtype: 'checkbox',
+			hidden: true,
 			optionField: true,
 			name: 'allowPrivateResource',
 			boxLabel: '<b>Alliow Private Resource</b>',
@@ -564,7 +578,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			break;	
 			case 'CONTACT_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
-
+				formBuilderItem.getForm().findField('hideExistingContactPicker').setHidden(false);
 			break;
 			case 'EXT_DEPEND_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
@@ -602,10 +616,11 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 				formBuilderItem.getForm().findField('contactType').setHidden(false);
 				formBuilderItem.getForm().findField('popluateContactWithUser').setHidden(false);
+				formBuilderItem.getForm().findField('hideExistingContactPicker').setHidden(false);
 			break;
 			case 'CONTENT':
 				formBuilderItem.templateField.mappingType = 'NONE';
-				formBuilderItem.getForm().findField('staticContent').setHidden(false);							
+				formBuilderItem.getForm().findField('staticContent').setHidden(false);			
 			break;					
 
 			default: 

@@ -137,6 +137,9 @@ public class SubmissionFormField
 	private Boolean hidePrivateAttributeFlag;
 
 	@ConsumeField
+	private Boolean hideExistingContactPicker;
+
+	@ConsumeField
 	private Boolean allowPrivateResource;
 
 	@ConsumeField
@@ -198,6 +201,7 @@ public class SubmissionFormField
 		this.setHidePrivateAttributeFlag(submissionFormField.getHidePrivateAttributeFlag());
 		this.setAllowPrivateResource(submissionFormField.getAllowPrivateResource());
 		this.setPopluateContactWithUser(submissionFormField.getPopluateContactWithUser());
+		this.setHideExistingContactPicker(submissionFormField.getHideExistingContactPicker());
 
 		this.setSectionId(submissionFormField.getSectionId());
 	}
@@ -470,6 +474,16 @@ public class SubmissionFormField
 	public void setPopluateContactWithUser(Boolean popluateContactWithUser)
 	{
 		this.popluateContactWithUser = popluateContactWithUser;
+	}
+
+	public Boolean getHideExistingContactPicker()
+	{
+		return hideExistingContactPicker;
+	}
+
+	public void setHideExistingContactPicker(Boolean hideExistingContactPicker)
+	{
+		this.hideExistingContactPicker = hideExistingContactPicker;
 	}
 
 }
