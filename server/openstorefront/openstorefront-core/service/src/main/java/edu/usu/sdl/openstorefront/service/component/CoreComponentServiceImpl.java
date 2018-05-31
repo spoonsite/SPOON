@@ -40,6 +40,7 @@ import edu.usu.sdl.openstorefront.core.entity.ChangeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
@@ -2271,6 +2272,14 @@ public class CoreComponentServiceImpl
 				mergeSubEntities(mergeComponent.getMetadata(), targetComponent.getMetadata());
 				mergeSubEntities(mergeComponent.getTags(), targetComponent.getTags());
 				mergeSubEntities(mergeComponent.getResources(), targetComponent.getResources());
+				
+				ComponentComment commentExample = new ComponentComment();
+				commentExample.setComponentId(mergeComponent.getComponent().getComponentId());
+				List<ComponentComment> comments = commentExample.findByExampleProxy();
+				for(ComponentComment comment : comments){
+					comment.setComponentId(targetComponentId);
+					persistenceService.persist(comment);
+				}
 
 				Set<String> targetReviewKey = targetComponent.getReviews().stream().map(review
 						-> {
@@ -2324,7 +2333,7 @@ public class CoreComponentServiceImpl
 				//New one need to be created upon editing the evaluation
 				Evaluation existingEvaluations = new Evaluation();
 				existingEvaluations.setOriginComponentId(mergeComponent.getComponent().getComponentId());
-				List<Evaluation> evaluations = existingEvaluations.findByExample();
+				List<Evaluation> evaluations = existingEvaluations.findByExampleProxy();
 				for (Evaluation evaluation : evaluations) {
 					evaluation.setOriginComponentId(targetComponentId);
 					persistenceService.persist(evaluation);
@@ -2342,6 +2351,8 @@ public class CoreComponentServiceImpl
 
 				persistenceService.commit();
 				//remove mergeComponent
+//				ComponentDeleteOptions componentDeleteOptions = new ComponentDeleteOptions();
+//				componentDeleteOptions.getIgnoreClasses().add(Evaluation.class.getSimpleName());
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
 
 				cleanupCache(toMergeComponentId);
