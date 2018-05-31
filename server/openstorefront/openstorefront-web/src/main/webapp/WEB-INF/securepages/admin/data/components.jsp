@@ -1741,96 +1741,6 @@
 					}
 				});
 
-				var mergeComponentWin = Ext.create('Ext.window.Window', {
-					id: 'mergeComponentWin',
-					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges duplicate entry to target entry. <br> Meaning target will contain merged entry\'s information and duplicate entry will be deleted." ></i>',
-					width: '40%',
-					height: 250,
-					modal: true,
-					layout: 'fit',
-					items: [
-						{
-							xtype: 'form',
-							itemId: 'mergeForm',
-							layout: 'vbox',
-							bodyStyle: 'padding: 10px;',
-							defaults: {
-								labelAlign: 'top'
-							},
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Merge',
-											formBind: true,
-											iconCls: 'fa fa-lg fa-compress icon-button-color-default',
-											handler: function() {
-												var mergeForm = this.up('form');
-												var data = mergeForm.getValues();
-												if (data.targetComponentId === data.duplicateComponentId) {
-													mergeForm.getComponent('duplicateComponent').markInvalid(' must be different');
-												} else {
-													mergeForm.setLoading("Merging...");
-													Ext.Ajax.request({
-														url: 'api/v1/resource/components/' + data.targetComponentId + '/' + data.duplicateComponentId + '/merge',
-														method: 'POST',
-														success: function(response, opts){
-															mergeForm.setLoading(false);
-
-															Ext.getCmp('mergeComponentWin').hide();
-															actionRefreshComponentGrid();
-														},
-														failure: function(response, opts){
-															mergeForm.setLoading(false);
-														}
-													});
-												}
-											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function() {
-												this.up('window').hide();
-											}
-										}
-									]
-								}
-							],
-							items: [
-								Ext.create('OSF.component.StandardComboBox', {
-									name: 'duplicateComponentId',
-									itemId: 'duplicateComponent',
-									allowBlank: false,
-									width: '100%',
-									margin: '0 0 0 0',
-									fieldLabel: 'Duplicate Entry',
-									storeConfig: {
-										url: 'api/v1/resource/components/lookup?all=true',
-										autoLoad: false
-									}
-								}),
-								{
-									xtype: 'combobox',
-									name: 'targetComponentId',
-									fieldLabel: 'Target Entry',
-									store: maingridStore,
-									queryLocal: true,
-									valueField: 'componentId',
-									width: '100%',
-									displayField: 'name',
-									readOnly: true
-								},
-							]
-						}
-					]
-				});
-
 				var componentGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage Entries <i class="fa fa-lg fa-question-circle"  data-qtip="This tool allows for manipulating all data related to an entry" ></i>',
 					id: 'componentGrid',
@@ -2110,14 +2020,6 @@
 											iconCls: 'fa fa-lg fa-clone icon-small-vertical-correction icon-button-color-default',
 											handler: function(){
 												actionCopyComponent();
-											}
-										},
-										{
-											id: 'lookupGrid-tools-action-merge',
-											text: 'Merge',
-											iconCls: 'fa fa-lg fa-compress icon-small-vertical-correction icon-button-color-default',
-											handler: function(){
-												actionMergeComponent();
 											}
 										},
 										{
@@ -2576,22 +2478,6 @@
 							Ext.getCmp('componentGrid').setLoading(false);
 						}
 					});
-				};
-
-				var actionMergeComponent = function() {
-					Ext.getCmp('mergeComponentWin').show();
-					Ext.getCmp('mergeComponentWin').getComponent('mergeForm').reset(true);
-
-					var record = Ext.create('Ext.data.Model', {
-						fields: [
-							'targetComponentId',
-							'duplicateComponentId'
-						]
-					});
-					record.set('targetComponentId', Ext.getCmp('componentGrid').getSelection()[0].get('componentId'));
-
-					Ext.getCmp('mergeComponentWin').getComponent('mergeForm').loadRecord(record);
-					Ext.getCmp('mergeComponentWin').getComponent('mergeForm').getComponent('duplicateComponent').getStore().load();
 				};
 
 				var actionVersions = function() {
