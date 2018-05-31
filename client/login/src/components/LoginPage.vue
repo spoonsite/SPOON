@@ -8,13 +8,11 @@
 
 <script>
 import LoginComp from './SubComps/LoginComp'
-import SignupComp from './SubComps/SignupComp'
 
 export default {
   name: 'LoginPage',
   components: {
-    LoginComp,
-    SignupComp
+    LoginComp
   },
   computed: {
   }

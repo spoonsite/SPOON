@@ -2,17 +2,44 @@
   <div>
     <v-card class="elevation-5 mt-4">
       <v-card-text>
-        <v-form v-model="valid" class="clearfix">
-          <v-text-field prepend-icon="person" name="username" label="Username" type="text" :rules="usernameRules" tabindex=1></v-text-field>
-          <router-link :to="{name: 'forgotUsername'}" class="link" tabindex=5>Forgot Username</router-link>
-          <v-text-field style="margin-top: 0 !important;" prepend-icon="lock" name="password" label="Password" type="password" :rules="passwordRules" tabindex=2></v-text-field>
-          <router-link :to="{name: 'forgotPassword'}" class="link" tabindex=6>Forgot Password</router-link>
+        <v-form v-model="valid"  ref="form" class="clearfix">
+          <v-text-field
+            prepend-icon="person"
+            name="username"
+            label="Username"
+            type="text"
+            :rules="usernameRules"
+            v-model="username"
+            :error-messages="usernameError"
+            tabindex=1
+          ></v-text-field>
+          <router-link :to="{name: 'forgotUsername'}" class="forgot-link" tabindex=5>Forgot Username</router-link>
+          <v-text-field
+            style="margin-top: 0 !important;"
+            prepend-icon="lock"
+            name="password"
+            label="Password"
+            type="password"
+            :rules="passwordRules"
+            :error-messages="passwordError"
+            v-model="password"
+            v-on:keyup.enter="login"
+            tabindex=2
+          ></v-text-field>
+          <router-link :to="{name: 'forgotPassword'}" class="forgot-link" tabindex=6>Forgot Password</router-link>
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-container style="margin: 0; padding: 0 1em 1em 1em;">
           <v-flex xs12>
-            <v-btn block color="accent" style="margin-bottom:1em;" @click="testAPI" tabindex=3>Login</v-btn>
+            <v-btn
+              block
+              color="accent"
+              style="margin-bottom:1em;"
+              @click="login"
+              :disabled="!valid"
+              tabindex=3
+            >Login</v-btn>
           </v-flex>
           <v-flex xs12 class="register">
             <router-link :to="{name: 'registration'}" tabindex=4>Register for a new account</router-link>
@@ -44,13 +71,60 @@ export default {
     username: '',
     usernameRules: [
       v => !!v || 'Username is required'
-    ]
+    ],
+    response: {}
   }),
+  computed: {
+    passwordError () {
+      if (this.response.data && !this.response.data.success && this.response.data.errors.password) {
+        return this.response.data.errors.password
+      }
+    },
+    usernameError () {
+      if (this.response.data && !this.response.data.success && this.response.data.errors.username) {
+        return this.response.data.errors.username
+      }
+    }
+  },
   methods: {
     testAPI (event) {
       console.log('Button Clicked Calling API')
       if (event) {
         this.$api.getTest()
+      }
+    },
+    getCookie (cname) {
+      let name = `${cname}=`
+      let decodedCookie = decodeURIComponent(document.cookie)
+      let ca = decodedCookie.split(';')
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i]
+        while (c.charAt(0) === ' ') {
+          c = c.substring(1)
+        }
+        if (c.indexOf(name) === 0) {
+          return c.substring(name.length, c.length)
+        }
+      }
+      return ''
+    },
+    login () {
+      if (this.$refs.form.validate()) {
+        let token = this.getCookie('X-Csrf-Token')
+        this.$http.post('/openstorefront/Login.action?Login', {
+          username: this.username,
+          password: this.password,
+          gotoPage: ''
+        },
+        {
+          headers: {
+            'X-Csrf-Token': token
+          }
+        })
+          .then(response => (
+            this.response = response
+          ))
+          .catch(error => console.log(error))
       }
     }
   }
@@ -70,10 +144,21 @@ a:hover {
   clear: both;
   display: table;
 }
-.link {
+.wrapper {
+  max-width: 45em;
+  padding: 1em;
+  margin-right: auto;
+  margin-left: auto;
+}
+.forgot-link {
   float: right;
   position: relative;
   top: -1.5em;
+}
+@media screen and (max-width: 450px) {
+  .forgot-link {
+    top: -0.5em;
+  }
 }
 .register {
   text-align: center;

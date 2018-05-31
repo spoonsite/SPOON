@@ -2,14 +2,22 @@
   <div id="app">
     <v-app>
       <title-bar-comp :CTitle="title" :CSubtitle="subTitle"/>
-      <router-view/>
+      <router-view style="height: 80%;"/>
       <div id="particle-js"></div>
-      <div class="v-spacer"></div>
-      <v-footer color="primary" dark absolute height="auto">
-        <v-card color="primary" dark>
-          <img src="openstorefront/Branding.action?GeneralMedia&name=SpoonLogoWhiteSquare" alt="" width="100">
-          <img src="openstorefront/Branding.action?GeneralMedia&name=S3VI Logo" alt="">
-          <img src="openstorefront/Branding.action?GeneralMedia&name=SSP Logo" alt="">
+      <v-footer color="primary" dark height="auto">
+        <v-card color="primary" flat dark class="footer-wrapper">
+            <v-layout row wrap>
+              <v-flex xs12 sm4 offset-sm2>
+                <img class="" src="openstorefront/Branding.action?GeneralMedia&name=SpoonLogoWhiteSquare" alt="" width="180">
+                <img class="logo-img" src="openstorefront/Branding.action?GeneralMedia&name=S3VI Logo" alt="">
+                <img class="logo-img" src="openstorefront/Branding.action?GeneralMedia&name=SSP Logo" alt="">
+              </v-flex>
+              <v-flex xs12 sm5 lg4>
+                <v-card-text>
+                  This is a U.S. Government system and is for authorized users only. By accessing and using this computer system, you are consenting to system monitoring, including the monitoring of keystrokes. Unauthorized use of, or access to, this computer system may subject you to disciplinary action and criminal prosecution.
+                </v-card-text>
+              </v-flex>
+            </v-layout>
         </v-card>
       </v-footer>
     </v-app>
@@ -105,9 +113,14 @@ export default {
 #app, .application--wrap, .wrapper {
   background-color: rgba(255,255,255,0);
 }
-
-.v-spacer {
-  height: 8em;
+.footer-wrapper {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.logo-img {
+  margin: 0.5em;
+  padding: 0.5em;
 }
 canvas {
   display: block;
@@ -123,15 +136,5 @@ canvas {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% 50%;
-}
-@media screen and (max-width: 380px) {
-  .v-spacer {
-    height: 13em;
-  }
-}
-@media screen and (max-width: 320px) {
-  .v-spacer {
-    height: 15em;
-  }
 }
 </style>

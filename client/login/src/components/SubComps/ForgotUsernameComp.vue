@@ -1,5 +1,5 @@
 <template>
-  <v-layout mt-3>
+  <v-layout ma-3>
     <v-flex xs12 sm6 offset-sm3>
       <v-card class="elevation-5">
         <v-toolbar color="primary" dark dense>
@@ -10,15 +10,9 @@
             <v-text-field prepend-icon="email" name="email" label="Enter Email" type="text" :rules="emailRules"></v-text-field>
           </v-form>
         </v-card-text>
-        <v-card-actions>
-          <v-container fluid grid-list-x>
-            <v-layout row>
-              <v-flex xs2 ml-2>
-                <v-btn color="accent" style="margin-bottom:2em;" @click="testAPI">Send Username</v-btn>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-actions>
+        <v-card-action>
+          <v-btn color="accent" style="margin-bottom:2em;" @click="testAPI">Send Username</v-btn>
+        </v-card-action>
       </v-card>
     </v-flex>
   </v-layout>
