@@ -8,11 +8,15 @@
           </v-toolbar>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-card-text>
+
               <v-select
                 label="Choose Type"
                 :items="contactTypeOptions"
+                :rules="contactTypeRules"
                 v-model="contactType"
+                required
               ></v-select>
+
             </v-card-text>
             <v-card-text>
 
@@ -79,17 +83,21 @@
             </v-container>
             <v-card-actions>
               <v-container fluid grid-list-x>
-                <v-layout row center>
+                <v-layout row >
                   <v-flex>
                     <v-btn
+                      block
                       color="accent"
                       style="margin-bottom:2em;"
                       :disabled="!valid"
                       @click="submit"
                       >Submit</v-btn>
                   </v-flex>
+                </v-layout>
+                <v-layout row justify-center>
                   <v-flex>
                     <v-btn
+                      block
                       color="accent"
                       style="margin-bottom:2em;"
                       @click="cancel"
@@ -120,10 +128,10 @@ export default {
       [v => !!v || 'Type is required']
     ],
     contactTypeOptions: [
-      { text: 'Report Issue' },
-      { text: 'Help' },
-      { text: 'Improvement' },
-      { text: 'New Feature' }
+      'Report Issue',
+      'Help',
+      'Improvement',
+      'New Feature'
     ],
     subject: '',
     subjectRules: [
@@ -159,7 +167,7 @@ export default {
       if (this.$refs.form.validate()) {
           // Native form submission is not yet supported
           axios.post('/api/submit', {
-            contactType: this.select,
+            contactType: this.contactType,
             subject: this.subject,
             description: this.description,
             name: this.name,
