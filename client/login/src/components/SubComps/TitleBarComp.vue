@@ -12,7 +12,7 @@
       {{ CSubtitle }}
     </div>
 
-    <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer">
+    <v-navigation-drawer temporary right fixed width="200" v-model="drawer" class="nav-drawer">
       <v-list>
         <v-list-tile v-for="link in links" :key="link.name" class="menu-item" @click="nav(link.link)">
           <v-list-tile-action>
