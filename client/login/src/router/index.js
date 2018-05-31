@@ -5,6 +5,7 @@ import ForgotUserPage from '@/components/ForgotUserPage'
 import ForgotPasswordPage from '@/components/ForgotPasswordPage'
 import RegistrationPage from '@/components/RegistrationPage'
 import ContactUsPage from '@/components/ContactUsPage'
+import FAQPage from '@/components/FAQPage'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/contact-us',
       name: 'contactUs',
       component: ContactUsPage
+    },
+    {
+      path: '/faq',
+      name: 'faq',
+      component: FAQPage
     }
   ]
 
