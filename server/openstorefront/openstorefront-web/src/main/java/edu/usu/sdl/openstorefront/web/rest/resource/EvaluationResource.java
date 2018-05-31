@@ -452,6 +452,34 @@ public class EvaluationResource
 	}
 
 	@PUT
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_ASSIGN_USER)
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@APIDescription("Updates an evaluation; Only fields that user should update some field have may have additional restrictions.")
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}/assignuser/{username}")
+	public Response updateEvaluationAssignedUser(
+		@PathParam("evaluationId") String evaluationId,
+		@PathParam("username") String username
+	)
+	{
+		Evaluation evaluationExisting = new Evaluation();
+		evaluationExisting.setEvaluationId(evaluationId);
+		evaluationExisting = evaluationExisting.find();
+
+		if (evaluationExisting != null) {
+
+				evaluationExisting.setAssignedUser(username);
+				evaluationExisting.populateBaseUpdateFields();
+				evaluationExisting.save();
+
+				return Response.ok(evaluationExisting).build();
+		} else {
+			return sendSingleEntityResponse(evaluationExisting);
+		}
+	}
+
+	@PUT
 	@RequireSecurity(SecurityPermission.EVALUATIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
