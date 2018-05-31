@@ -2351,8 +2351,6 @@ public class CoreComponentServiceImpl
 
 				persistenceService.commit();
 				//remove mergeComponent
-//				ComponentDeleteOptions componentDeleteOptions = new ComponentDeleteOptions();
-//				componentDeleteOptions.getIgnoreClasses().add(Evaluation.class.getSimpleName());
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
 
 				cleanupCache(toMergeComponentId);
