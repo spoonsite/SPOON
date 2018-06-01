@@ -282,13 +282,8 @@ public class AttributeResource
 			@RequiredParam List<String> types)
 	{
 		List<AttributeAll> attributes = new ArrayList<>();
-
 		AttributeType attributeTypeExample = new AttributeType();
-		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 		
-		AttributeType otherAttributeTypeExample = new AttributeType();
-		otherAttributeTypeExample.setActiveStatus(AttributeType.INACTIVE_STATUS);
-
 		boolean restrictTypes = false;
 		Set<String> typeSet = new HashSet<>();
 		if (types != null) {
@@ -297,8 +292,6 @@ public class AttributeResource
 		}
 
 		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(new QueryByExample<>(attributeTypeExample));
-		List<AttributeType> otherAttributeTypes = service.getPersistenceService().queryByExample(new QueryByExample<>(otherAttributeTypeExample));
-		attributeTypes.addAll(otherAttributeTypes);
 		for (AttributeType attributeType : attributeTypes) {
 			if (restrictTypes && typeSet.contains(attributeType.getAttributeType())) {
 				AttributeAll attributeAll = new AttributeAll();
