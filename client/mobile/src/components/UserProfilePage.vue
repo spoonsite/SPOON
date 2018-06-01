@@ -14,19 +14,28 @@
       <v-layout column align-center>
         <v-layout row wrap align-center>
           <!-- Avatar Icon -->
-          <v-card raised>
-            <v-layout align-center justify-space-around mt-2>
-              <v-icon size="8em">fas fa-user-tie</v-icon>
-            </v-layout>
-            <v-card-actions>
-              <v-btn flat color="orange">Change Avatar</v-btn>
-            </v-card-actions>
-          </v-card>
+          <v-flex>
+            <v-card raised>
+              <v-layout column align-center>
+                <v-flex pt-2>
+                  <v-icon size="8em">fas fa-user-tie</v-icon>
+                </v-flex>
+                <v-card-actions>
+                  <v-btn flat color="orange">Change Avatar</v-btn>
+                </v-card-actions>
+              </v-layout>
+            </v-card>
+          </v-flex>
           <v-spacer></v-spacer>
           <!-- Password Reset -->
-          <v-form>
-            <v-btn color="accent" mb-2 @click="resetPassword">Reset Password</v-btn>
-          </v-form>
+          <v-flex>
+            <router-link :to="{name: 'Reset Password'}" style="text-decoration: none;">
+              <v-btn
+                color="accent"
+                mb-2
+              >Reset Password</v-btn>
+            </router-link>
+          </v-flex>
         </v-layout>
         <v-layout column>
           <!-- Contact Details -->
@@ -74,11 +83,25 @@
                   mask="phone"
                   v-model="phone"
                   box
+                  counter=80
                   placeholder="(123) 456-7890"
                   label="Phone number"
                   hint="Enter your phone number"
                 ></v-text-field>
               </v-flex>
+              <v-flex xs12>
+                <v-select
+                  :items="organizations"
+                  :filter="orgFilter"
+                  :rules="[() => !!currentOrg || 'This field is required']"
+                  v-model="currentOrg"
+                  item-text="description"
+                  label="Select an Organization"
+                  autocomplete
+                  required
+                  hint="Type to filter or click to select"
+                ></v-select>
+            </v-flex>
             </v-layout>
           </v-container>
           <!-- Notification Checkboxes -->
@@ -91,11 +114,13 @@
 </template>
 
 <script lang="js">
+import axios from 'axios';
+
 export default {
   name: 'user-profile-page',
   props: [],
   mounted () {
-
+    this.getOrgs();
   },
   data () {
     return {
@@ -103,7 +128,9 @@ export default {
       first: '',
       last: '',
       email: '',
-      phone: ''
+      phone: '',
+      organizations: [],
+      currentOrg: undefined
     };
   },
   methods: {
@@ -112,6 +139,23 @@ export default {
       // From https://stackoverflow.com/a/9204568
       var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
+    },
+    orgFilter (item, queryText, itemText) {
+      const hasValue = val => val != null ? val : '';
+      const text = hasValue(item.description);
+      const query = hasValue(queryText);
+      return text.toString()
+        .toLowerCase()
+        .indexOf(query.toString().toLowerCase()) > -1;
+    },
+    getOrgs () {
+      let that = this;
+      axios
+        .get('/openstorefront/api/v1/resource/organizations/lookup')
+        .then(response => {
+          that.organizations = response.data;
+        })
+        .catch(e => this.errors.push(e));
     }
   },
   computed: {
