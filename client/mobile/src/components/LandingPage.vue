@@ -35,8 +35,8 @@
 </template>
 
 <script lang="js">
-import SearchBar from './subcomponents/SearchBar'
-import axios from 'axios'
+import SearchBar from './subcomponents/SearchBar';
+import axios from 'axios';
 
 export default {
   name: 'landing-page',
@@ -45,38 +45,38 @@ export default {
   },
   props: [],
   mounted () {
-    this.getNestedComponentTypes()
+    this.getNestedComponentTypes();
   },
   data () {
     return {
       searchQuery: '',
       nestedComponentTypesList: [],
       errors: []
-    }
+    };
   },
   methods: {
     link (query) {
-      return `/search?q=${query}`
+      return `/search?q=${query}`;
     },
     submitSearch () {
-      this.$router.push(`/search?q=${this.searchQuery}`)
+      this.$router.push(`/search?q=${this.searchQuery}`);
     },
     getNestedComponentTypes () {
-      let that = this
+      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/componenttypes/nested'
         )
         .then(response => {
-          that.nestedComponentTypesList = response.data
+          that.nestedComponentTypesList = response.data;
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => this.errors.push(e));
     }
   },
   computed: {
 
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

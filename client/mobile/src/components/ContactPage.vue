@@ -15,7 +15,7 @@ export default {
   },
   data () {
     return {
-    }
+    };
   },
   methods: {
 
@@ -23,7 +23,7 @@ export default {
   computed: {
 
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

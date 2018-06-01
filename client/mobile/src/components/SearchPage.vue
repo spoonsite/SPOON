@@ -255,10 +255,10 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import axios from 'axios'
-import SearchBar from './subcomponents/SearchBar'
-import StarRating from 'vue-star-rating'
+import _ from 'lodash';
+import axios from 'axios';
+import SearchBar from './subcomponents/SearchBar';
+import StarRating from 'vue-star-rating';
 
 export default {
   name: 'SearchPage',
@@ -268,30 +268,30 @@ export default {
   },
   mounted () {
     if (this.$route.query.q) {
-      this.searchQuery = this.$route.query.q
+      this.searchQuery = this.$route.query.q;
     }
     if (this.$route.query.comp) {
-      this.filters.component = this.$route.query.comp
+      this.filters.component = this.$route.query.comp;
     }
     if (this.$route.query.children) {
-      this.filters.children = this.$route.query.children
+      this.filters.children = this.$route.query.children;
     }
-    this.getComponentTypes()
-    this.getTags()
-    this.getOrganizations()
-    this.newSearch()
+    this.getComponentTypes();
+    this.getTags();
+    this.getOrganizations();
+    this.newSearch();
   },
   beforeRouteUpdate (to, from, next) {
     if (to.query.q) {
-      this.searchQuery = to.query.q
+      this.searchQuery = to.query.q;
     }
     if (to.query.comp) {
-      this.filters.component = to.query.comp
+      this.filters.component = to.query.comp;
     }
     if (to.query.children) {
-      this.filters.children = to.query.children
+      this.filters.children = to.query.children;
     }
-    this.newSearch()
+    this.newSearch();
   },
   methods: {
     clear () {
@@ -301,31 +301,31 @@ export default {
         organization: '',
         children: false,
         tagCondition: 'AND'
-      }
+      };
     },
     resetOptions () {
-      this.searchPageSize = 10
-      this.searchSortField = 'searchScore'
-      this.searchSortOrder = 'DESC'
+      this.searchPageSize = 10;
+      this.searchSortField = 'searchScore';
+      this.searchSortOrder = 'DESC';
     },
     deleteTag (tag) {
-      this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
+      this.filters.tags = _.remove(this.filters.tags, n => n !== tag);
     },
     addTag (tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
-        this.filters.tags.push(tag)
+        this.filters.tags.push(tag);
       }
     },
     submitSearch () {
-      this.searchQueryIsDirty = true
-      let that = this
+      this.searchQueryIsDirty = true;
+      let that = this;
       let searchElements = [
         {
           mergeCondition: 'AND',
           searchType: 'INDEX',
           value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
         }
-      ]
+      ];
       if (that.filters.component) {
         searchElements.push(
           {
@@ -337,7 +337,7 @@ export default {
             stringOperation: 'EQUALS',
             value: that.filters.component
           }
-        )
+        );
       }
       if (that.filters.tags) {
         that.filters.tags.forEach(function (tag) {
@@ -349,8 +349,8 @@ export default {
               stringOperation: 'EQUALS',
               value: tag
             }
-          )
-        })
+          );
+        });
       }
       if (that.filters.organization) {
         searchElements.push(
@@ -363,7 +363,7 @@ export default {
             field: 'organization',
             value: that.filters.organization
           }
-        )
+        );
       }
       axios
         .post(
@@ -376,120 +376,120 @@ export default {
           }
         )
         .then(response => {
-          that.searchResults = response
-          that.totalSearchResults = response.data.totalNumber
-          that.searchQueryIsDirty = false
+          that.searchResults = response;
+          that.totalSearchResults = response.data.totalNumber;
+          that.searchQueryIsDirty = false;
         })
         .catch(e => this.errors.push(e))
         .finally(() => {
-          that.searchQueryIsDirty = false
-        })
+          that.searchQueryIsDirty = false;
+        });
     },
     getComponentTypes () {
-      let that = this
+      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/componenttypes'
         )
         .then(response => {
-          that.componentsList = response.data
+          that.componentsList = response.data;
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => this.errors.push(e));
     },
     getTags () {
-      let that = this
+      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/components/tagviews?approvedOnly=true'
         )
         .then(response => {
-          that.tagsList = response.data
+          that.tagsList = response.data;
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => this.errors.push(e));
     },
     getOrganizations () {
-      let that = this
+      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/organizations?componentOnly=true'
         )
         .then(response => {
-          that.organizationsList = response.data.data
+          that.organizationsList = response.data.data;
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => this.errors.push(e));
     },
     getNestedComponentTypes () {
-      let that = this
+      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/componenttypes/nested'
         )
         .then(response => {
-          that.nestedComponentTypesList = response.data.data
+          that.nestedComponentTypesList = response.data.data;
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => this.errors.push(e));
     },
     newSearch () {
-      this.searchPage = 0
-      this.showFilters = false
-      this.submitSearch()
+      this.searchPage = 0;
+      this.showFilters = false;
+      this.submitSearch();
     },
     searchCategory (category) {
-      this.filters.component = category
-      this.submitSearch()
+      this.filters.component = category;
+      this.submitSearch();
     },
     nextPage () {
-      this.searchPage += 1
-      this.submitSearch()
+      this.searchPage += 1;
+      this.submitSearch();
     },
     prevPage () {
       if (this.searchPage > 0) {
-        this.searchPage -= 1
-        this.submitSearch()
+        this.searchPage -= 1;
+        this.submitSearch();
       }
     },
     getPage (n) {
-      this.searchPage = n
-      this.submitSearch()
+      this.searchPage = n;
+      this.submitSearch();
     },
     getNumPages () {
       // compute number of pages of data based on page size
-      return Math.floor(this.totalSearchResults / this.searchPageSize)
+      return Math.floor(this.totalSearchResults / this.searchPageSize);
     },
     getPagination (currentPage) {
       // show 4 pages
-      if (this.getNumPages() === 0) return []
+      if (this.getNumPages() === 0) return [];
       return _.range(
         currentPage - 1 > 0 ? currentPage - 1 : 1,
         currentPage + 4 > this.getNumPages()
           ? this.getNumPages() + 2
           : currentPage + 4
-      )
+      );
     }
   },
   watch: {
     filters: {
       handler: function () {
         if (!this.showFilters) {
-          this.newSearch()
+          this.newSearch();
         }
       },
       deep: true
     },
     showFilters () {
       if (this.showFilters === false) {
-        this.newSearch()
+        this.newSearch();
       }
     },
     showOptions () {
       if (this.showOptions === false) {
-        this.newSearch()
+        this.newSearch();
       }
     }
   },
   computed: {
     offset () {
-      return this.searchPage * this.searchPageSize
+      return this.searchPage * this.searchPageSize;
     }
   },
   data () {
@@ -526,9 +526,9 @@ export default {
         { text: 'Approval Date', value: 'approvedDts' },
         { text: 'Relevance', value: 'searchScore' }
       ]
-    }
+    };
   }
-}
+};
 </script>
 
 <style scoped>

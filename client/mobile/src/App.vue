@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import router from './router/index'
+import router from './router/index';
 
 export default {
   name: 'App',
@@ -62,14 +62,14 @@ export default {
         { link: '/contact', icon: 'comment', name: 'Contact' }
       ],
       alert: false
-    }
+    };
   },
   methods: {
     nav (url) {
-      router.push(url)
+      router.push(url);
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
