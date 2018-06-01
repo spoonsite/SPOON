@@ -39,7 +39,7 @@ export default {
       links: [
         { link: '/', icon: 'home', name: 'Home' },
         { link: '/faq', icon: 'question', name: 'FAQ' },
-        { link: '/contact', icon: 'comment', name: 'Contact Us' }
+        { link: '/contact-us', icon: 'comment', name: 'Contact Us' }
       ]
     };
   },
