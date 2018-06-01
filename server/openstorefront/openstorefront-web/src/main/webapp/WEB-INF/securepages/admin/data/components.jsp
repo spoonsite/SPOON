@@ -842,7 +842,7 @@
 									id: 'versionWin-tool-restoreBtn',
 									iconCls: 'fa fa-lg fa-reply icon-button-color-refresh',
 									disabled: true,
-									requiredPermissions: ['ADMIN-ENTRY-VERSION-RESTOREs'],
+									requiredPermissions: ['ADMIN-ENTRY-VERSION-RESTORE'],
 									handler: function(){
 										//prompt
 										versionWinRestorePrompt.show();

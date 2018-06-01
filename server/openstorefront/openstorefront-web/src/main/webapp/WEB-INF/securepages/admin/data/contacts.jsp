@@ -438,6 +438,7 @@
 									disabled: true,
 									scale: 'medium',									
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
+									requiredPermissions: ['ADMIN-CONTACT-MANAGEMENT-UPDATE'],
 									handler: function() {
 										actionToggleStatus(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);	
 									}
