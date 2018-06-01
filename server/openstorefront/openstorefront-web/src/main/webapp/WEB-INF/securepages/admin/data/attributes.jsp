@@ -555,6 +555,7 @@
 								id: 'attributeGrid-tools-add',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-CREATE'],
 								handler: function() {
 									actionAddAttribute();
 								}
@@ -566,6 +567,7 @@
 								width: '150px',
 								disabled: true,
 								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 								handler: function() {
 									var record = attributeGrid.getSelection()[0];
 									actionEditAttribute(record);
@@ -577,6 +579,7 @@
 								scale: 'medium',
 								width: '160px',
 								disabled: true,
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-CREATE', 'ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 								iconCls: 'fa fa-2x fa-list-alt icon-vertical-correction-edit icon-button-color-default',
 								handler: function() {
 									var record = attributeGrid.getSelection()[0];
@@ -589,9 +592,9 @@
 							{
 								text: 'Entry Assignment',
 								id: 'attributeGrid-tools-assign',
-								hidden: true,
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-list-alt icon-vertical-correction-edit icon-button-color-default',
+								requiredPermissions: ['ADMIN-COMPONENT-ATTRIBUTE-MANAGEMENT'],
 								handler: function() {
 									var entryWin = Ext.create('OSF.component.AttributeAssignment', {										
 									});
@@ -604,11 +607,13 @@
 								scale: 'medium',																	
 								disabled: true,
 								iconCls: 'fa fa-2x fa-gear icon-vertical-correction icon-button-color-default',
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE', 'ADMIN-ATTRIBUTE-MANAGEMENT-DELETE'],
 								menu: [
 									{
 										text: 'Set Flags',
 										id: 'attributeGrid-tools-action-flags',
 										iconCls: 'fa fa-lg fa-flag icon-small-vertical-correction icon-button-color-default',
+										requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 										handler: function() {
 											
 											// Check If Only One Record Selected
@@ -629,12 +634,14 @@
 										}
 									},
 									{
-										xtype: 'menuseparator'
+										xtype: 'menuseparator',
+										requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE']
 									},
 									{
 										text: 'Toggle Status',
 										id: 'attributeGrid-tools-action-toggle',
 										iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction icon-button-color-default',
+										requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 										handler: function() {
 											
 											actionToggleAttributeStatus();
@@ -645,6 +652,7 @@
 										id: 'attributeGrid-tools-action-delete',
 										cls: 'alert-danger',
 										iconCls: 'fa fa-lg fa-trash icon-button-color-default icon-small-vertical-correction',
+										requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-DELETE'],
 										handler: function() {
 											
 											actionDeleteAttribute();
@@ -658,9 +666,9 @@
 							{
 								text: 'Import',
 								id: 'attributeGrid-tools-import',
-								hidden: true,
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
+								requiredPermissions: ['ADMIN-DATA-IMPORT-EXPORT'],
 								handler: function() {
 									actionImportAttribute();
 								}
@@ -668,10 +676,10 @@
 							{
 								text: 'Export',
 								id: 'attributeGrid-tools-export',
-								hidden: true,
 								scale: 'medium',
 								disabled: true,
 								iconCls: 'fa fa-2x fa-download icon-button-color-default',
+								requiredPermissions: ['ADMIN-DATA-IMPORT-EXPORT'],
 								handler: function() {
 									var records = attributeGrid.getSelection();
 									actionExportAttribute(records);
@@ -681,16 +689,6 @@
 					}
 				]
 			});
-			
-			CoreService.userservice.getCurrentUser().then(function(user){
-				if (CoreService.userservice.userHasPermisson(user, "ADMIN-ENTRY-MANAGEMENT")) {
-					Ext.getCmp('attributeGrid-tools-assign').setHidden(false);					
-				}
-				if (CoreService.userservice.userHasPermisson(user, "ADMIN-DATA-IMPORT-EXPORT")) {
-					Ext.getCmp('attributeGrid-tools-import').setHidden(false);
-					Ext.getCmp('attributeGrid-tools-export').setHidden(false);
-				}				
-			});			
 
 			var actionAddAttribute = function() {				
 				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
@@ -1556,6 +1554,7 @@
 								id: 'addNewCodeAttr',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-CREATE'],
 								handler: function () {
 									var parentAttributeRecord = attributeGrid.getSelection()[0];
 									actionAddCode(parentAttributeRecord);
@@ -1568,6 +1567,7 @@
 								width: '140px',
 								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-view',
 								disabled: true,
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
 									actionEditCode(record);
@@ -1582,6 +1582,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 								disabled: true,
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
 									actionToggleCode(record);
@@ -1593,6 +1594,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								disabled: true,
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 								handler: function () {
 									var record = codesGrid.getSelection()[0];
 									var title = 'Delete Attribute Code?';
@@ -1613,6 +1615,7 @@
 								id: 'codesToolbarAddAttachment',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-paperclip icon-vertical-correction icon-button-color-default',
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 								handler: function() {
 									Ext.getCmp('attachmentUploadWindow').show();
 								}
@@ -1623,6 +1626,7 @@
 								id: 'codesToolbarDownloadAttachment',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-download icon-button-color-default',
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 								handler: function() {
 									var codeRecord = codesGrid.getSelection()[0];
 									var typeRecord = attributeGrid.getSelection()[0];
@@ -1644,6 +1648,7 @@
 								id: 'codesToolbarDeleteAttachment',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 								handler: function() {
 									var record = codesGrid.getSelection()[0];
 									var title = '<i class="fa fa-warning icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Delete Attachment?</span>';

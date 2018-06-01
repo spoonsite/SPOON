@@ -22,10 +22,12 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ComponentSimpleAttributeView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSimpleWrapper;
 import edu.usu.sdl.openstorefront.core.view.MultipleIds;
+import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +60,7 @@ public class ComponentAttributeResource
 	@APIDescription("Get the components which contain a specified attribute type and code")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentSimpleWrapper.class)
+	@RequireSecurity(SecurityPermission.ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT)
 	public Response getComponentsWithAttributeCode(
 			@QueryParam("attributeType") String type,
 			@QueryParam("attributeCode") String code,
@@ -124,6 +127,7 @@ public class ComponentAttributeResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{attributeType}/{attributeCode}")
 	@DataType(ComponentAttribute.class)
+	@RequireSecurity(SecurityPermission.ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT)
 	public Response assignAttribute(
 			@PathParam("attributeType") String type,
 			@PathParam("attributeCode") String code,
@@ -155,6 +159,7 @@ public class ComponentAttributeResource
 	@APIDescription("Removes Attribute from components")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{attributeType}/{attributeCode}")
+	@RequireSecurity(SecurityPermission.ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT)
 	public void removeAttribute(
 			@PathParam("attributeType") String type,
 			@PathParam("attributeCode") String code,

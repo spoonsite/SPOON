@@ -201,7 +201,7 @@ public class SecurityPermission
 	public static final String ADMIN_ENTRY_RESOURCE_MANAGEMENT = "ADMIN-ENTRY-RESOURCE-MANAGEMENT";
 	public static final String ADMIN_ENTRY_EVALSECTION_MANAGEMENT = "ADMIN-ENTRY-EVALSECTION-MANAGEMENT";
 	public static final String ADMIN_ENTRY_TAG_MANAGEMENT = "ADMIN-ENTRY-TAG-MANAGEMENT";
-	public static final String ADMIN_ENTRY_CHANGEREQUEST_APPROVE = "ADMIN-ENTRY-CHANGEREQUEST-APPROVE";
+	public static final String ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT = "ADMIN-ENTRY-CHANGEREQUEST-MANAGEMENT";
 	public static final String ADMIN_ENTRY_CHANGEOWNER = "ADMIN-ENTRY-CHANGEOWNER";
 	public static final String ADMIN_ENTRY_EXPORT = "ADMIN-ENTRY-EXPORT";
 	public static final String ADMIN_ENTRY_PENDINGCHANGE_READ = "ADMIN-ENTRY-PENDINGCHANGE-READ";
@@ -370,6 +370,7 @@ public class SecurityPermission
 	public static final String ADMIN_ATTRIBUTE_MANAGEMENT_UPDATE = "ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE";
 	public static final String ADMIN_ATTRIBUTE_MANAGEMENT_DELETE = "ADMIN-ATTRIBUTE-MANAGEMENT-DELETE";
 	public static final String ADMIN_ATTRIBUTE_MANAGEMENT_CREATE = "ADMIN-ATTRIBUTE-MANAGEMENT-CREATE";
+	public static final String ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT = "ADMIN-COMPONENT-ATTRIBUTE-MANAGEMENT";
 
 	// Alert
 	public static final String GROUPBY_ALERT = "Alerts";
@@ -531,7 +532,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ENTRY_RESOURCE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_RESOURCE_MANAGEMENT, "Gives an admin resource management for entries", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_EVALSECTION_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_EVALSECTION_MANAGEMENT, "Gives an admin the ability to manage eval sections", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_TAG_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_TAG_MANAGEMENT, "Allows for tag management", null, GROUPBY_ENTRY_MANAGEMENT));
-		codeMap.put(ADMIN_ENTRY_CHANGEREQUEST_APPROVE, newLookup(SecurityPermission.class, ADMIN_ENTRY_CHANGEREQUEST_APPROVE, "Allows for change requests to be approved", null, GROUPBY_ENTRY_MANAGEMENT));
+		codeMap.put(ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, "Allows for management change requests", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_CHANGEOWNER, newLookup(SecurityPermission.class, ADMIN_ENTRY_CHANGEOWNER, "Allows admin to change the owner of an entry", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_EXPORT, newLookup(SecurityPermission.class, ADMIN_ENTRY_EXPORT, "Allows admin to export an entry", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_PENDINGCHANGE_READ, newLookup(SecurityPermission.class, ADMIN_ENTRY_PENDINGCHANGE_READ, "Allows admin to read pending changes", null, GROUPBY_ENTRY_MANAGEMENT));
@@ -675,6 +676,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ATTRIBUTE_MANAGEMENT_UPDATE, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_MANAGEMENT_UPDATE, "Gives ability to update existing attributes", null, GROUPBY_ATTRIBUTE));
 		codeMap.put(ADMIN_ATTRIBUTE_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_MANAGEMENT_DELETE, "Gives ability to delete existing attributes", null, GROUPBY_ATTRIBUTE));
 		codeMap.put(ADMIN_ATTRIBUTE_MANAGEMENT_CREATE, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_MANAGEMENT_CREATE, "Gives ability to create new attributes", null, GROUPBY_ATTRIBUTE));
+		codeMap.put(ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT, "Gives ability to manage attributes on entries from the admin tools manage assignments tool", null, GROUPBY_ATTRIBUTE));
 
 		// Alert
 		codeMap.put(ADMIN_ALERT_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_ALERT_MANAGEMENT_DELETE, "Give ability to delete alerts", null, GROUPBY_ALERT));

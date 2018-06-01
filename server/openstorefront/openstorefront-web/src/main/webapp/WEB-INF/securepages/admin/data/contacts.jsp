@@ -397,6 +397,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									requiredPermissions: ['ADMIN-CONTACT-MANAGEMENT-CREATE'],
 									handler: function () {
 										actionAdd();										
 									}									
@@ -409,6 +410,7 @@
 									width: '100px',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									requiredPermissions: ['ADMIN-CONTACT-MANAGEMENT-UPDATE'],
 									handler: function () {
 										actionEdit(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -446,6 +448,7 @@
 									scale: 'medium',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-compress icon-button-color-default icon-vertical-correction',
+									requiredPermissions: ['ADMIN-CONTACT-MANAGEMENT-UPDATE'],
 									handler: function () {
 										actionMerge(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -462,6 +465,7 @@
 									disabled: true,
 									scale: 'medium',									
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['ADMIN-CONTACT-MANAGEMENT-DELETE'],
 									handler: function() {
 										actionDelete(Ext.getCmp('contactGrid').getSelectionModel().getSelection()[0]);	
 									}

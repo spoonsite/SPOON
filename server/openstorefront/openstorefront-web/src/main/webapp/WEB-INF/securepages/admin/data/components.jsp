@@ -842,6 +842,7 @@
 									id: 'versionWin-tool-restoreBtn',
 									iconCls: 'fa fa-lg fa-reply icon-button-color-refresh',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-VERSION-RESTOREs'],
 									handler: function(){
 										//prompt
 										versionWinRestorePrompt.show();
@@ -962,6 +963,7 @@
 											id: 'versionWin-tool-removeBtn',
 											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											disabled: true,
+											requiredPermissions: ['ADMIN-ENTRY-VERSION-DELETE'],
 											handler: function(){
 												var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
 												var versionHistoryId = Ext.getCmp('versionGrid').getSelection()[0].get('versionHistoryId');
@@ -1880,6 +1882,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									requiredPermissions: ['ADMIN-ENTRY-CREATE'],
 									handler: function () {
 										actionAddEditComponent();
 									}
@@ -1891,6 +1894,7 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-view',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-UPDATE'],
 									handler: function () {
 										actionAddEditComponent(Ext.getCmp('componentGrid').getSelection()[0]);
 									}
@@ -1902,6 +1906,7 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-READ'],
 									handler: function () {
 										actionPreviewComponent(Ext.getCmp('componentGrid').getSelection()[0].get('componentId'));
 									}
@@ -1916,6 +1921,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-APPROVE'],
 									handler: function () {
 										actionApproveComponent();
 									},
@@ -1937,10 +1943,22 @@
 									id: 'lookupGrid-tools-action',
 									scale: 'medium',
 									disabled: true,
+									requiredPermissions: [
+										'ADMIN-ENTRY-CHANGEOWNER',
+										'ADMIN-ENTRY-CHANGETYPE',
+										'ADMIN-ENTRY-CHANGEREQUEST-MANAGEMENT',
+										'ADMIN-ENTRY-APPROVE',
+										'ADMIN-ENTRY-CREATE',
+										'ADMIN-ENTRY-MERGE',
+										'ADMIN-ENTRY-VERSION-READ',
+										'ADMIN-ENTRY-UPDATE',
+										'ADMIN-ENTRY-DELETE'
+									],
 									menu: [
 										{
 											text: 'Change Owner',
 											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-CHANGEOWNER'],
 											handler: function(){
 												actionChangeOwner();
 											}
@@ -1948,6 +1966,7 @@
 										{
 											text: 'Change Type',
 											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-CHANGETYPE'],
 											handler: function(){
 												actionChangeType();
 											}
@@ -1956,6 +1975,7 @@
 											id: 'lookupGrid-tools-action-changeRequests',
 											text: 'Change Requests',
 											iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-CHANGEREQUEST-MANAGEMENT'],
 											handler: function () {
 												actionChangeRequests(Ext.getCmp('componentGrid').getSelection()[0]);
 											}
@@ -1963,18 +1983,21 @@
 										{
 											text: 'Approve Related Entries',
 											iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+											requiredPermissions: ['ADMIN-ENTRY-APPROVE'],
 											handler: function() {
 												var record = Ext.getCmp('componentGrid').getSelection()[0];
 												showMultiApproveForm(record.get('componentId'), record.get('name'));
 											}
 										},										
 										{
-											xtype: 'menuseparator'
+											xtype: 'menuseparator',
+											requiredPermissions: ['ADMIN-ENTRY-CREATE', 'ADMIN-ENTRY-MERGE', 'ADMIN-ENTRY-VERSION-READ']
 										},
 										{
 											id: 'lookupGrid-tools-action-copy',
 											text: 'Copy',
 											iconCls: 'fa fa-lg fa-clone icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-CREATE'],
 											handler: function(){
 												actionCopyComponent();
 											}
@@ -1983,6 +2006,7 @@
 											id: 'lookupGrid-tools-action-merge',
 											text: 'Merge',
 											iconCls: 'fa fa-lg fa-compress icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-MERGE'],
 											handler: function(){
 												actionMergeComponent();
 											}
@@ -1991,27 +2015,32 @@
 											id: 'lookupGrid-tools-action-versions',
 											text: 'Versions',
 											iconCls: 'fa fa-lg fa-object-ungroup icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-VERSION-READ'],
 											handler: function(){
 												actionVersions();
 											}
 										},
 										{
-											xtype: 'menuseparator'
+											xtype: 'menuseparator',
+											requiredPermissions: ['ADMIN-ENTRY-TOGGLE-STATUS']
 										},
 										{
 											text: 'Toggle Status',
 											iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-TOGGLE-STATUS'],
 											handler: function(){
 												actionToggleStatus();
 											}
 										},
 										{
-											xtype: 'menuseparator'
+											xtype: 'menuseparator',
+											requiredPermissions: ['ADMIN-ENTRY-DELETE']
 										},
 										{
 											text: 'Delete',
 											cls: 'alert-danger',
 											iconCls: 'fa fa-lg fa-trash icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-DELETE'],
 											handler: function() {
 												actionDeleteComponent();
 											}
