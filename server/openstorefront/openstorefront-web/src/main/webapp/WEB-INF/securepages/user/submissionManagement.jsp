@@ -35,6 +35,7 @@
 				
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
+			Ext.require('OSF.customSubmission.SubmissionFormFullControl');			
 
 			Ext.onReady(function () {
 				
@@ -264,15 +265,16 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'New Submission',									
+									text: 'New Submission',
+									itemId: 'newSubmission',
 									scale: 'medium',
 									autoEl: {
 										"data-test": "newSubmissionBtn"
 									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',									
 									handler: function () {
-										Ext.getCmp('submissionWindow').show();
-										Ext.getCmp('submissionPanel').resetSubmission();
+										//Ext.getCmp('submissionWindow').show();
+										//Ext.getCmp('submissionPanel').resetSubmission();
 									}
 								},
 								{
@@ -576,6 +578,48 @@
 				
 				addComponentToMainViewPort(submissionGrid);
 				
+				//newSubmission
+				var loadAvailableSubmissionForms = function() {
+					
+					var submissionBtn = submissionGrid.queryById('newSubmission');
+					
+					submissionGrid.setLoading(true);
+					Ext.Ajax.request({
+						url: 'api/v1/resource/componenttypes',
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var componentTypes = Ext.decode(response.responseText);
+							
+							componentTypes = componentTypes.sort(function(a, b){
+								return a.label.localeCompare(b.label);
+							});
+							
+							var menuItems = [];
+							Ext.Array.each(componentTypes, function(componentType){
+								if (componentType.allowOnSubmission) {
+									menuItems.push({
+										text: componentType.label,
+										componentType: componentType,
+										submissionTemplateId: componentType.submissionTemplateId,
+										handler: function() {											
+											loadSubmissionForm(this.submissionTemplateId, this.componentType.componentType);
+										}
+									});
+								}
+							});
+							submissionBtn.setMenu({
+								items: menuItems
+							});
+						}
+					});
+					
+					
+				};
+				loadAvailableSubmissionForms();
+								
+				
 				var actionRefreshSubmission = function(){
 					Ext.getCmp('submissionGrid').getStore().load();
 				};
@@ -591,6 +635,51 @@
 				CoreService.userservice.getCurrentUser().then(function(user){
 					currentUser = user;
 				});
+				
+				var loadSubmissionForm = function(submissionTemplateId, componentType) {
+					
+					
+					if (!submissionTemplateId) {						
+					
+						//load default id (find default form)
+						console.log("Need to Set default");
+					}
+					
+					if (submissionTemplateId) {
+						
+						submissionGrid.setLoading('Loading Submission Form...');
+						Ext.Ajax.request({
+							url: 'api/v1/resource/submissiontemplates/' + submissionTemplateId,
+							callback: function() {
+								submissionGrid.setLoading(false);
+							},
+							success: function(response, opts) {
+								var template = Ext.decode(response.responseText);
+								
+								var submissionWin = Ext.create('Ext.window.Window', {
+									title: 'Submission',
+									layout: 'fit',
+									modal: true,
+									closeAction: 'destroy',
+									width: '80%',
+									height: '80%',
+									maximizable: true,									
+									items: [
+										{
+											xtype: 'osf-customSubmission-SubmissionformFullControl',
+											itemId: 'form'								
+										}
+									]
+								});
+								submissionWin.show();
+								submissionWin.queryById('form').load(template, componentType);
+							}
+						});
+						
+					}
+					
+				};
+				
 				
 			});
 

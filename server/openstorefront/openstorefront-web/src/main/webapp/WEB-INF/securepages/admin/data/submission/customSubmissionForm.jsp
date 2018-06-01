@@ -27,14 +27,21 @@
 	<stripes:layout-render name="../../../../../layout/adminheader.jsp">
 	</stripes:layout-render>
 
+	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>
+	
 	<link rel="stylesheet" href="css/customForms.css">	
+	
+	<form name="exportForm" action="api/v1/resource/submissiontemplates/export" method="POST" >
+		<p style="display: none;" id="exportFormIds">
+		</p>
+	</form>	
 		
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
 		Ext.require('OSF.customSubmissionTool.Window');
 		Ext.require('OSF.customSubmission.SubmissionFormFullControl');
 		Ext.require('OSF.customSubmissionTool.EntryTypeSelectWindow');
-		
+				
 		Ext.onReady(function(){	
 			
 			var formTemplateGrid = Ext.create('Ext.grid.Panel', {
@@ -77,12 +84,14 @@
 							tools.getComponent('togglestatus').setDisabled(false);
 							tools.getComponent('copy').setDisabled(false);							
 							tools.getComponent('preview').setDisabled(false);
+							tools.getComponent('export').setDisabled(false);
 							tools.getComponent('delete').setDisabled(false);
 						} else {
 							tools.getComponent('edit').setDisabled(true);
 							tools.getComponent('togglestatus').setDisabled(true);
 							tools.getComponent('copy').setDisabled(true);
 							tools.getComponent('preview').setDisabled(true);
+							tools.getComponent('export').setDisabled(true);
 							tools.getComponent('delete').setDisabled(true);
 						}
 					}
@@ -216,6 +225,28 @@
 							{
 								xtype: 'tbfill'
 							},
+							{		
+								text: 'Import',
+								iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
+								itemId: 'import',								
+								scale: 'medium',
+								handler: function(){									
+									actionImport();
+								}
+							},
+							{
+								text: 'Export',
+								iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction',
+								itemId: 'export',
+								disabled: true,
+								scale: 'medium',
+								handler: function(){									
+									actionExport();
+								}
+							},
+							{
+								xtype: 'tbseparator'
+							},
 							{
 								text: 'Delete',
 								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
@@ -227,7 +258,6 @@
 									actionDelete(record);
 								}
 							}
-							
 						]
 					}
 				]
@@ -505,6 +535,36 @@
 				entryTypeSelect.show();
 				
 			};
+			
+			var actionImport = function() {
+				
+				var importWindow = Ext.create('OSF.component.ImportWindow', {
+					fileTypeValue: 'SUBTEMPLATE',	
+					closeAction: 'destroy',
+					uploadSuccess: function(form, action) {
+						actionRefresh();
+					}
+				});
+				importWindow.show();
+			};
+			
+			var actionExport = function() {
+				var ids = "";
+
+				Ext.Array.each(formTemplateGrid.getSelection(), function(record) {
+					ids += '<input type="hidden" name="id" ';
+					ids += 'value="' + record.get('submissionTemplateId') +'" />';
+				});
+
+				var token = Ext.util.Cookies.get('X-Csrf-Token');
+				if (token) {						
+					ids += '<input type="hidden" name="X-Csrf-Token" ';
+					ids += 'value="' + token + '" />';
+				}
+				document.getElementById('exportFormIds').innerHTML = ids;
+
+				document['exportForm'].submit();				
+			};			
 					
 		});
 		

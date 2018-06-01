@@ -318,7 +318,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		
 	},
 	
-	submitSumissionForApproval() {
+	submitSumissionForApproval: function() {
 		
 	}	
 	
