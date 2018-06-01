@@ -455,7 +455,7 @@ public class EvaluationResource
 	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_ASSIGN_USER)
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Consumes({ MediaType.APPLICATION_JSON })
-	@APIDescription("Updates an evaluation; Only fields that user should update some field have may have additional restrictions.")
+	@APIDescription("Updates the assigned user for an evaluation.")
 	@DataType(Evaluation.class)
 	@Path("/{evaluationId}/assignuser/{username}")
 	public Response updateEvaluationAssignedUser(
@@ -502,7 +502,6 @@ public class EvaluationResource
 
 				evaluationExisting.setVersion(evaluation.getVersion());
 				evaluationExisting.setWorkflowStatus(evaluation.getWorkflowStatus());
-				evaluationExisting.setAssignedUser(evaluation.getAssignedUser());
 				evaluationExisting.setAssignedGroup(evaluation.getAssignedGroup());
 				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());
 				evaluationExisting.setSecurityMarkingType(evaluation.getSecurityMarkingType());
