@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import axios from 'axios'
-import _ from 'lodash'
+import axios from 'axios';
+import _ from 'lodash';
 
 export default {
   name: 'SearchBar',
@@ -37,28 +37,28 @@ export default {
   data () {
     return {
       searchSuggestions: []
-    }
+    };
   },
   methods: {
     submitQuery (query) {
       if (query) {
-        this.$emit('input', query)
+        this.$emit('input', query);
       }
-      this.searchSuggestions = []
-      this.$emit('submitSearch')
+      this.searchSuggestions = [];
+      this.$emit('submitSearch');
       // this.$router.push(`/search?q=${this.value}`)
     },
     getSearchSuggestions () {
-      let that = this
+      let that = this;
       if (!this.hideSuggestions) {
         axios
           .get(
             `/openstorefront/api/v1/service/search/suggestions?query=${that.value}&componentType=`
           )
           .then(response => {
-            that.searchSuggestions = response.data
+            that.searchSuggestions = response.data;
           })
-          .catch(e => this.errors.push(e))
+          .catch(e => this.errors.push(e));
       }
     }
   },
@@ -68,13 +68,13 @@ export default {
   watch: {
     value: _.throttle(function () {
       if (this.value === '') {
-        this.searchSuggestions = []
+        this.searchSuggestions = [];
       } else if (!this.searchQueryIsDirty) {
-        this.getSearchSuggestions()
+        this.getSearchSuggestions();
       }
     }, 400)
   }
-}
+};
 </script>
 
 <style>

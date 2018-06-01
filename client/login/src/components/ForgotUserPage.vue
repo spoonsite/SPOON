@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import ForgotUsernameComp from './SubComps/ForgotUsernameComp'
+import ForgotUsernameComp from './SubComps/ForgotUsernameComp';
 
 export default {
   name: 'ForgotUserPage',
@@ -16,7 +16,7 @@ export default {
   },
   computed: {
   }
-}
+};
 </script>
 
 <style scoped>

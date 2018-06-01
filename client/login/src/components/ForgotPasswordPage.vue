@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import ForgotPasswordComp from './SubComps/ForgotPasswordComp'
+import ForgotPasswordComp from './SubComps/ForgotPasswordComp';
 
 export default {
   name: 'ForgotPasswordPage',
@@ -16,7 +16,7 @@ export default {
   },
   computed: {
   }
-}
+};
 </script>
 
 <style scoped>

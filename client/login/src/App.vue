@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import TitleBarComp from './components/SubComps/TitleBarComp'
+import TitleBarComp from './components/SubComps/TitleBarComp';
 
 export default {
   name: 'App',
@@ -35,7 +35,7 @@ export default {
   mounted () {
     /* eslint-disable no-undef */
     // particleJS loaded from CDN, npm loading fails
-    let particles = true
+    let particles = true;
     if (particles) {
       particlesJS('particle-js', {
         particles: {
@@ -91,18 +91,18 @@ export default {
           }
         },
         retina_detect: true
-      })
+      });
     }
   },
   computed: {
     title () {
-      return this.$store.state.aTitle
+      return this.$store.state.aTitle;
     },
     subTitle () {
-      return this.$store.state.aSubtitle
+      return this.$store.state.aSubtitle;
     }
   }
-}
+};
 </script>
 
 <style>

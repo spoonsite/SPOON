@@ -77,40 +77,40 @@ export default {
   computed: {
     passwordError () {
       if (this.response.data && !this.response.data.success && this.response.data.errors.password) {
-        return this.response.data.errors.password
+        return this.response.data.errors.password;
       }
     },
     usernameError () {
       if (this.response.data && !this.response.data.success && this.response.data.errors.username) {
-        return this.response.data.errors.username
+        return this.response.data.errors.username;
       }
     }
   },
   methods: {
     testAPI (event) {
-      console.log('Button Clicked Calling API')
+      console.log('Button Clicked Calling API');
       if (event) {
-        this.$api.getTest()
+        this.$api.getTest();
       }
     },
     getCookie (cname) {
-      let name = `${cname}=`
-      let decodedCookie = decodeURIComponent(document.cookie)
-      let ca = decodedCookie.split(';')
+      let name = `${cname}=`;
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(';');
       for (var i = 0; i < ca.length; i++) {
-        var c = ca[i]
+        var c = ca[i];
         while (c.charAt(0) === ' ') {
-          c = c.substring(1)
+          c = c.substring(1);
         }
         if (c.indexOf(name) === 0) {
-          return c.substring(name.length, c.length)
+          return c.substring(name.length, c.length);
         }
       }
-      return ''
+      return '';
     },
     login () {
       if (this.$refs.form.validate()) {
-        let token = this.getCookie('X-Csrf-Token')
+        let token = this.getCookie('X-Csrf-Token');
         this.$http.post('/openstorefront/Login.action?Login', {
           username: this.username,
           password: this.password,
@@ -124,11 +124,11 @@ export default {
           .then(response => (
             this.response = response
           ))
-          .catch(error => console.log(error))
+          .catch(error => console.log(error));
       }
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -143,12 +143,6 @@ a:hover {
   content: '';
   clear: both;
   display: table;
-}
-.wrapper {
-  max-width: 45em;
-  padding: 1em;
-  margin-right: auto;
-  margin-left: auto;
 }
 .forgot-link {
   float: right;

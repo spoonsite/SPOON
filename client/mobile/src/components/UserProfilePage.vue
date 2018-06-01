@@ -104,7 +104,7 @@ export default {
       last: '',
       email: '',
       phone: ''
-    }
+    };
   },
   methods: {
     resetPassword () {},
@@ -117,8 +117,7 @@ export default {
   computed: {
 
   }
-}
-
+};
 </script>
 
 <style scoped lang="scss">
