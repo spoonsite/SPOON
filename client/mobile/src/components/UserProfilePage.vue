@@ -110,8 +110,8 @@ export default {
     resetPassword () {},
     validateEmail (email) {
       // From https://stackoverflow.com/a/9204568
-      var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return re.test(email)
+      var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
     }
   },
   computed: {
