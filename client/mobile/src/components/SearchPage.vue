@@ -164,17 +164,17 @@
   </div>
 
   <div v-if="searchResults.data">
-    <v-expansion-panel class="elevation-2">
+    <v-expansion-panel popout>
       <v-expansion-panel-content v-for="item in searchResults.data.data" :key="item">
         <div slot="header">
-          <div style="float: left;" v-if="item.componentTypeIconUrl">
+          <div style="float: left;" v-if="item.includeIconInSearch && item.componentTypeIconUrl">
             <img :src="'/openstorefront/' + item.componentTypeIconUrl" width="30" style="margin-right: 1em;">
           </div>
           <div>
             {{ item.name }}
           </div>
         </div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
             <p>
               <router-link
@@ -204,14 +204,8 @@
               <strong>Average User Rating:</strong>
               <star-rating :rating="item.averageRating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
-            <p><strong>Date Created:</strong> {{ item.createDts | formatDate }}</p>
             <p><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
             <p><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
-            <h2>Attributes</h2>
-            <hr>
-            <p v-for="attribute in item.attributes" :key="attribute.typeLabel">
-              <strong>{{ attribute.typeLabel }}:</strong> {{ attribute.label }}
-            </p>
             <h2>Description</h2>
             <hr>
             <div v-html="item.description"></div>
