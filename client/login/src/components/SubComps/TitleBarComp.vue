@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import router from '../../router/index'
+import router from '../../router/index';
 
 export default {
   name: 'TitleBarComp',
@@ -41,14 +41,14 @@ export default {
         { link: '/faq', icon: 'question', name: 'FAQ' },
         { link: '/contact', icon: 'comment', name: 'Contact Us' }
       ]
-    }
+    };
   },
   methods: {
     nav (url) {
-      router.push(url)
+      router.push(url);
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

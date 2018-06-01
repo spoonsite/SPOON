@@ -16,9 +16,9 @@
 </template>
 
 <script>
-import RegistrationUserComp from './SubComps/RegistrationUserComp'
-import RegistrationEmailVerifyComp from './SubComps/RegistrationEmailVerifyComp'
-import RegistrationCredentialsComp from './SubComps/RegistrationCredentialsComp'
+import RegistrationUserComp from './SubComps/RegistrationUserComp';
+import RegistrationEmailVerifyComp from './SubComps/RegistrationEmailVerifyComp';
+import RegistrationCredentialsComp from './SubComps/RegistrationCredentialsComp';
 
 export default {
   name: 'RegistrationPage',
@@ -29,15 +29,15 @@ export default {
   },
   methods: {
     signup () {
-      return 0
+      return 0;
     },
     cancel () {
-      return 0
+      return 0;
     }
   },
   computed: {
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

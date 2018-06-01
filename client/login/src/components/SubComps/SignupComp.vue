@@ -50,9 +50,9 @@ export default {
         'FoFollow the steps on the screen to set up your account.',
         'Use the account you created to Sign In.'
       ]
-    }
+    };
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
