@@ -36,6 +36,7 @@
                   :rules="descriptionRules"
                   :counter="4096"
                   label="Description"
+                  textarea
                   required
                   ></v-text-field>
 
