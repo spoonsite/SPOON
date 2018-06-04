@@ -218,7 +218,7 @@
           </v-card-text>
           <v-card-actions>
             <!-- TODO: link to the details page for that component -->
-            <v-btn color="info">More Information</v-btn>
+            <v-btn color="info" @click="moreInformation(item.componentID)">More Information</v-btn>
           </v-card-actions>
         </v-card>
       </v-expansion-panel-content>
@@ -259,6 +259,8 @@ import _ from 'lodash'
 import axios from 'axios'
 import SearchBar from './subcomponents/SearchBar'
 import StarRating from 'vue-star-rating'
+import VueRouter from '../../../login/node_modules/vue-router';
+import router from '../router/index'
 
 export default {
   name: 'SearchPage',
@@ -465,6 +467,15 @@ export default {
           ? this.getNumPages() + 2
           : currentPage + 4
       )
+    },
+    moreInformation (componentID) {
+      console.log(componentID);
+      router.push({
+        path: '/entry-detail/:id+' + componentID,
+        params: {
+          id: componentID
+        }
+      })
     }
   },
   watch: {

@@ -33,7 +33,7 @@ export default new Router({
       component: SearchPage
     },
     {
-      path: '/entry-detail',
+      path: '/entry-detail/:id+',
       name: 'Entry Detail',
       component: EntryDetailPage
     },
