@@ -89,10 +89,8 @@
 
 <#if data?has_content>
 <h2>Full Index</h2>
-<#list data as dataSet>
 	<ac:structured-macro ac:name="ui-expand">
-		<ac:parameter ac:name="title">${dataSet.title}</ac:parameter>
-		<ac:parameter ac:name="expanded">false</ac:parameter>
+		<ac:parameter ac:name="expanded">true</ac:parameter>
 		<ac:rich-text-body>			
 			<table>
 				<thead>
@@ -105,29 +103,30 @@
 					</tr>	
 				</thead>
 				<tbody>
-					<#list dataSet.data as listing>
-						<tr>
-							<td style="width: 200px;">
-								<a href="${listing.viewLink}" target="_blank">${listing.name}</a>
-							</td>	
-							<td>
-								${listing.shortDescription}
-							</td>
-							<td style="width: 150px; text-align: center;">
-								${listing.entryType}
-							</td>							
-							<td style="width: 150px; text-align: center;">
-								${listing.lastUpdatedDts?date}
-							</td>
-							<td style="width: 150px; text-align: center;">
-								${listing.evaluationStatus}
-							</td>
-						</tr>		
+					<#list data as dataSet>
+						<#list dataSet.data as listing>
+							<tr>
+								<td style="width: 200px;">
+									<a href="${listing.viewLink}" target="_blank">${listing.name}</a>
+								</td>	
+								<td>
+									${listing.shortDescription}
+								</td>
+								<td style="width: 150px; text-align: center;">
+									${listing.entryType}
+								</td>							
+								<td style="width: 150px; text-align: center;">
+									${listing.lastUpdatedDts?date}
+								</td>
+								<td style="width: 150px; text-align: center;">
+									${listing.evaluationStatus}
+								</td>
+							</tr>		
+						</#list>
 					</#list>
 				</tbody>	
 			</table>		
 		</ac:rich-text-body>
 	</ac:structured-macro>
-</#list>
 </#if>	
 
