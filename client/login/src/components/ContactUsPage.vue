@@ -74,7 +74,7 @@
 
                 <v-text-field
                   v-model="organization"
-                  :rules="y=organizationRules"
+                  :rules="organizationRules"
                   :counter="200"
                   label="Organization"
                   ></v-text-field>
