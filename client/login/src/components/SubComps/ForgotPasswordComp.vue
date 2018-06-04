@@ -33,13 +33,13 @@ export default {
   }),
   methods: {
     testAPI: function (event) {
-      console.log('Button Clicked Calling API')
+      console.log('Button Clicked Calling API');
       if (event) {
-        this.$api.getTest()
+        this.$api.getTest();
       }
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import LoginComp from './SubComps/LoginComp'
+import LoginComp from './SubComps/LoginComp';
 
 export default {
   name: 'LoginPage',
@@ -16,7 +16,7 @@ export default {
   },
   computed: {
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

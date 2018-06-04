@@ -19,7 +19,7 @@
         <v-alert :value="alert" color="warning" style="margin: 0; height: 30px; text-align: center;">Security Banner</v-alert>
       </header>
 
-      <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer" touchless>
+      <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer" touchless temporary>
         <v-list>
           <v-list-tile v-for="link in links" :key="link.name" class="menu-item" @click="nav(link.link)">
             <v-list-tile-action>
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import router from './router/index'
+import router from './router/index';
 
 export default {
   name: 'App',
@@ -59,17 +59,18 @@ export default {
         { link: '/', icon: 'home', name: 'Home' },
         { link: '/sme-approval', icon: 'check', name: 'SME Approval' },
         { link: '/faq', icon: 'question', name: 'F.A.Q.' },
-        { link: '/contact', icon: 'comment', name: 'Contact' }
+        { link: '/contact', icon: 'comment', name: 'Contact' },
+        { link: '/profile', icon: 'user-edit', name: 'Manage Profile' }
       ],
       alert: false
-    }
+    };
   },
   methods: {
     nav (url) {
-      router.push(url)
+      router.push(url);
     }
   }
-}
+};
 </script>
 
 <style lang="scss">

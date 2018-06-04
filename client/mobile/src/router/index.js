@@ -1,18 +1,18 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import LandingPage from '@/components/LandingPage'
-import SearchPage from '@/components/SearchPage'
-import EntryDetailPage from '@/components/EntryDetailPage'
-import UserProfilePage from '@/components/UserProfilePage'
-import FAQPage from '@/components/FAQPage'
-import WatchesPage from '@/components/WatchesPage'
-import ResetPasswordPage from '@/components/ResetPasswordPage'
-import SubmissionStatusPage from '@/components/SubmissionStatusPage'
-import EntryCommentsPage from '@/components/EntryCommentsPage'
-import SMEApprovalPage from '@/components/SMEApprovalPage'
-import ContactPage from '@/components/ContactPage'
+import Vue from 'vue';
+import Router from 'vue-router';
+import LandingPage from '@/components/LandingPage';
+import SearchPage from '@/components/SearchPage';
+import EntryDetailPage from '@/components/EntryDetailPage';
+import UserProfilePage from '@/components/UserProfilePage';
+import FAQPage from '@/components/FAQPage';
+import WatchesPage from '@/components/WatchesPage';
+import ResetPasswordPage from '@/components/ResetPasswordPage';
+import SubmissionStatusPage from '@/components/SubmissionStatusPage';
+import EntryCommentsPage from '@/components/EntryCommentsPage';
+import SMEApprovalPage from '@/components/SMEApprovalPage';
+import ContactPage from '@/components/ContactPage';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   // mode: 'history',
@@ -73,4 +73,4 @@ export default new Router({
       component: ContactPage
     }
   ]
-})
+});
