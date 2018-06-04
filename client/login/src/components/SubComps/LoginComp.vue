@@ -110,20 +110,25 @@ export default {
     },
     login () {
       if (this.$refs.form.validate()) {
+        let data = new FormData();
+        data.append('username', this.username);
+        data.append('password', this.password);
+        data.append('gotoPage', '');
+
         let token = this.getCookie('X-Csrf-Token');
-        this.$http.post('/openstorefront/Login.action?Login', {
-          username: this.username,
-          password: this.password,
-          gotoPage: ''
-        },
-        {
-          headers: {
-            'X-Csrf-Token': token
-          }
-        })
-          .then(response => (
-            this.response = response
-          ))
+        this.$http.post('/openstorefront/Login.action?Login',
+          data,
+          {
+            headers: {
+              'X-Csrf-Token': token
+            }
+          })
+          .then(response => {
+            if (response.data.success) {
+              window.location.href = response.data.message;
+            }
+            this.response = response;
+          })
           .catch(error => console.log(error));
       }
     }

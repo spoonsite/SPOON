@@ -17,70 +17,60 @@
                 required
               ></v-select>
 
-            </v-card-text>
-            <v-card-text>
 
-                <v-text-field
-                  v-model="subject"
-                  :rules="subjectRules"
-                  :counter="200"
-                  label="Subject"
-                  required
-                  ></v-text-field>
+              <v-text-field
+                v-model="subject"
+                :rules="subjectRules"
+                :counter="255"
+                label="Subject"
+                required
+              ></v-text-field>
 
-            </v-card-text>
-            <v-card-text>
-
-                <v-text-field
-                  v-model="description"
-                  :rules="descriptionRules"
-                  :counter="4096"
-                  label="Description"
-                  required
-                  ></v-text-field>
+              <v-text-field
+                v-model="description"
+                :rules="descriptionRules"
+                :counter="4096"
+                label="Description"
+                textarea
+                required
+              ></v-text-field>
 
             </v-card-text>
-            <v-container dark class="grey lighten-2">
-              <v-card-text>
+            <v-card-text class="grey lighten-2">
+                <v-card-title>
+                  <span class="subheading">Contact Information</span>
+                </v-card-title>
 
-                <v-text-field
-                  v-model="name"
-                  :rules="nameRules"
-                  :counter="40"
-                  label="Name"
-                  required
-                  ></v-text-field>
+              <v-text-field
+                v-model="name"
+                :rules="nameRules"
+                :counter="80"
+                label="Name"
+                required
+              ></v-text-field>
 
-              </v-card-text>
-              <v-card-text>
+              <v-text-field
+                v-model="email"
+                :rules="emailRules"
+                label="Email"
+                required
+               ></v-text-field>
 
-                <v-text-field
-                  v-model="email"
-                  :rules="emailRules"
-                  label="Email"
-                  required
-                  ></v-text-field>
+              <v-text-field
+                v-model="phone"
+                :rules="phoneRules"
+                :counter="80"
+                label="Phone"
+               ></v-text-field>
 
-              </v-card-text>
-              <v-card-text>
+              <v-text-field
+                v-model="organization"
+                :rules="organizationRules"
+                :counter="120"
+                label="Organization"
+               ></v-text-field>
 
-                <v-text-field
-                  v-model="phone"
-                  label="Phone"
-                  ></v-text-field>
-
-              </v-card-text>
-              <v-card-text>
-
-                <v-text-field
-                  v-model="organization"
-                  :rules="y=organizationRules"
-                  :counter="200"
-                  label="Organization"
-                  ></v-text-field>
-
-              </v-card-text>
-            </v-container>
+            </v-card-text>
             <v-card-actions>
               <v-container fluid grid-list-x>
                 <v-layout row >
@@ -125,7 +115,7 @@ export default {
     valid: true,
     contactType: null,
     contactTypeRules: [
-      [v => !!v || 'Type is required']
+      v => !!v || 'Type is required'
     ],
     contactTypeOptions: [
       'Report Issue',
@@ -136,7 +126,7 @@ export default {
     subject: '',
     subjectRules: [
       v => !!v || 'Subject is required',
-      v => (v && v.length <= 200) || 'Maximum length for this field is 200'
+      v => (v && v.length <= 255) || 'Maximum length for this field is 255'
     ],
     description: '',
     descriptionRules: [
@@ -146,7 +136,7 @@ export default {
     name: '',
     nameRules: [
       v => !!v || 'Name is required',
-      v => v.length <= 10 || 'Name must be less than 10 characters'
+      v => v.length <= 80 || 'Name must be less than 80 characters'
     ],
     email: '',
     emailRules: [
@@ -156,9 +146,12 @@ export default {
         'E-mail must be valid'
     ],
     phone: '',
+    phoneRules: [
+      v => v.length <= 80 || 'Maximum length for this field is 80'
+    ],
     organization: '',
     organizationRules: [
-      v => (v.length <= 200) || 'Maximum length for this field is 200'
+      v => (v.length <= 120) || 'Maximum length for this field is 120'
     ],
 
   }),
