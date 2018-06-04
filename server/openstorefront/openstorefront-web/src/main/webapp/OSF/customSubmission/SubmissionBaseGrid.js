@@ -117,6 +117,22 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 		};
 
 		submissionGrid.addDocked(toolbar, 0);
+		
+		if (!submissionGrid.fieldTemplate.alwaysShowDetailGrid) {
+			
+			if (!submissionGrid.showOnEntryType()) {
+				submissionGrid.setHidden(true);
+			}
+
+		} 
+		
+	},
+	
+	/**
+	 * Override add the appropriate check
+	 */	
+	showOnEntryType: function() {		
+		return true;
 	},
 	
 	/**

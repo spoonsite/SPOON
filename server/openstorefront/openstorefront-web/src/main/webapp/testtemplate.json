@@ -28,7 +28,7 @@
 					"fieldType": "CONTACT_MULTI"											
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 3,
 					"questionNumber": "Q-3.",
 					"label": "Add Dependencies to Entry.",
 					"labelTooltip": "Dependencies to entry",
@@ -37,7 +37,7 @@
 					"fieldType": "EXT_DEPEND_MULTI"											
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 4,
 					"questionNumber": "Q-4.",
 					"label": "Add Media (Images, Video...etc).",
 					"labelTooltip": "This media will show in the media view of the entry.",
@@ -46,7 +46,7 @@
 					"fieldType": "MEDIA_MULTI"											
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 5,
 					"questionNumber": "Q-5.",
 					"label": "Add Relationships",
 					"labelTooltip": "Describe relationships to existing items.",
@@ -64,7 +64,7 @@
 					"fieldType": "RESOURCE_MULTI"											
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 7,
 					"questionNumber": "Q-7.",
 					"label": "Add Tags",
 					"labelTooltip": "Add tags",
@@ -73,7 +73,7 @@
 					"fieldType": "TAG_MULTI"											
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 8,
 					"questionNumber": "Q-8.",
 					"label": "Add Child Submission",
 					"labelTooltip": "Add related submissions",
@@ -92,7 +92,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 10,
+					"fieldId": 9,
 					"questionNumber": "Q-10.",
 					"label": "Add Attribute",										
 					"mappingType": "COMPLEX",
@@ -108,7 +108,7 @@
 					"fieldType": "CONTACT"											
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 11,
 					"questionNumber": "Q-12.",
 					"label": "Add Dependancy",										
 					"mappingType": "COMPLEX",
@@ -116,7 +116,7 @@
 					"fieldType": "EXT_DEPEND"											
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 12,
 					"questionNumber": "Q-13.",
 					"label": "Add Media",										
 					"mappingType": "COMPLEX",
@@ -124,7 +124,7 @@
 					"fieldType": "MEDIA"											
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 13,
 					"questionNumber": "Q-14.",
 					"label": "Add Relationship",										
 					"mappingType": "COMPLEX",
@@ -132,7 +132,7 @@
 					"fieldType": "RELATIONSHIPS"											
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 14,
 					"questionNumber": "Q-15.",
 					"label": "Add Resources",										
 					"mappingType": "COMPLEX",
@@ -140,7 +140,7 @@
 					"fieldType": "RESOURCE"											
 				},
 				{
-					"fieldId": 6,
+					"fieldId": 15,
 					"questionNumber": "Q-16.",
 					"label": "Add Tag",										
 					"mappingType": "COMPLEX",
@@ -156,7 +156,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{
-					"fieldId": 4,
+					"fieldId": 15,
 					"questionNumber": "Q-20.",
 					"label": "Entry Name",										
 					"mappingType": "COMPONENT",
@@ -164,7 +164,7 @@
 					"fieldType": "TEXT"										
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 16,
 					"questionNumber": "Q-21.",
 					"label": "Simple Description",										
 					"mappingType": "COMPONENT",
@@ -172,7 +172,7 @@
 					"fieldType": "TEXTAREA"										
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 17,
 					"questionNumber": "Q-22.",
 					"label": "Version Number",										
 					"mappingType": "COMPONENT",
@@ -180,7 +180,7 @@
 					"fieldType": "NUMBER"										
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 18,
 					"questionNumber": "Q-22-1.",
 					"label": "Release Date",										
 					"mappingType": "COMPONENT",
@@ -188,7 +188,7 @@
 					"fieldType": "DATE"										
 				},	
 				{
-					"fieldId": 6,
+					"fieldId": 19,
 					"questionNumber": "Q-22-2.",
 					"label": "Upload ATO Document",										
 					"mappingType": "COMPLEX",
@@ -196,7 +196,7 @@
 					"fieldType": "RESOURCE_SIMPLE"										
 				},									
 				{
-					"fieldId": 4,
+					"fieldId": 20,
 					"questionNumber": "Q-23.",
 					"label": "Rich text",										
 					"mappingType": "COMPONENT",
@@ -204,7 +204,7 @@
 					"fieldType": "RICHTEXT"										
 				},									
 				{
-					"fieldId": 4,
+					"fieldId": 21,
 					"questionNumber": "Q-24.",
 					"label": "Organization",										
 					"mappingType": "COMPONENT",
@@ -212,7 +212,7 @@
 					"fieldType": "ORGANIZATION"										
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 22,
 					"questionNumber": "Q-25.",
 					"label": "What operating system(s) does the software require?",										
 					"mappingType": "COMPLEX",
@@ -221,7 +221,7 @@
 					"attributeType": "TYPE"
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 23,
 					"questionNumber": "Q-26.",
 					"label": "Is in memory storage required to maintain required performance identified above (e.g.in memory database)?",										
 					"mappingType": "COMPLEX",
@@ -230,7 +230,7 @@
 					"attributeType": "DI2ESTATE"
 				},									
 				{
-					"fieldId": 4,
+					"fieldId": 24,
 					"questionNumber": "Q-27.",
 					"label": "What is the intended Classification For Use (Select all that apply)?",										
 					"mappingType": "COMPLEX",
@@ -239,7 +239,7 @@
 					"attributeType": "NETWORK"
 				},
 				{
-					"fieldId": 4,
+					"fieldId": 25,
 					"questionNumber": "Q-28.",
 					"label": "Funded",										
 					"mappingType": "COMPLEX",
@@ -251,7 +251,7 @@
 					"commentLabel": "Provide Why"
 				},	
 				{
-					"fieldId": 4,
+					"fieldId": 26,
 					"questionNumber": "Q-29.",
 					"label": "Comment on Yes",										
 					"mappingType": "COMPLEX",
@@ -261,7 +261,7 @@
 					"requiredCommentOnValue": "Y"
 				},
 				{
-					"fieldId": 5,
+					"fieldId": 27,
 					"questionNumber": "Q-30.",
 					"label": "Comment Only",										
 					"mappingType": "COMPLEX",
@@ -283,7 +283,7 @@
 			"stepOrder": 0,
 			"fields": [
 				{	
-					"fieldId": 4,
+					"fieldId": 28,
 					"questionNumber": "Q-40.",
 					"label": "Line",										
 					"mappingType": "NONE",
@@ -292,7 +292,7 @@
 					"staticContent": "<hr>"
 				},
 				{	
-					"fieldId": 4,
+					"fieldId": 29,
 					"questionNumber": "Q-41.",
 					"label": "Text",										
 					"mappingType": "NONE",
@@ -301,7 +301,7 @@
 					"staticContent": "<b>Hello</b> this is some text"
 				},									
 				{	
-					"fieldId": 4,
+					"fieldId": 30,
 					"questionNumber": "Q-42.",
 					"label": "Image",										
 					"mappingType": "NONE",
@@ -310,7 +310,7 @@
 					"staticContent": "<img src='images/background_globe.jpg' height=200>"
 				},
 				{	
-					"fieldId": 4,
+					"fieldId": 31,
 					"questionNumber": "Q-43.",
 					"label": "Download",										
 					"mappingType": "NONE",

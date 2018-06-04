@@ -64,6 +64,8 @@ public class SubmissionFormTemplate
 	@FK(SubmissionTemplateStatus.class)
 	private String templateStatus;
 
+	private Boolean defaultTemplate;
+
 	@ConsumeField
 	@DataType(SubmissionFormSection.class)
 	@Embedded
@@ -86,6 +88,8 @@ public class SubmissionFormTemplate
 		this.setDescription(template.getDescription());
 		this.setTemplateStatus(template.getTemplateStatus());
 		this.setSections(template.getSections());
+		this.setDefaultTemplate(template.getDefaultTemplate());
+
 		updateSectionLinks();
 
 	}
@@ -153,6 +157,16 @@ public class SubmissionFormTemplate
 	public void setSections(List<SubmissionFormSection> sections)
 	{
 		this.sections = sections;
+	}
+
+	public Boolean getDefaultTemplate()
+	{
+		return defaultTemplate;
+	}
+
+	public void setDefaultTemplate(Boolean defaultTemplate)
+	{
+		this.defaultTemplate = defaultTemplate;
 	}
 
 }

@@ -2469,7 +2469,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'panel',
 							itemId: 'dependenciesGrid-help',
-							html: '<h3>Add necessary software/hardware dependancies not included with the component.</h3>'
+							html: '<h3>Add necessary software/hardware dependencies not included with the component.</h3>'
 						},
 						{
 							xtype: 'grid',

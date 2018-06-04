@@ -111,11 +111,11 @@ public class SubmissionFormField
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
-	@Sanitize(TextSanitizer.class)
+	@Sanitize(BasicHTMLSanitizer.class)
 	private String label;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1K)
 	@Sanitize(BasicHTMLSanitizer.class)
 	private String labelTooltip;
 
@@ -141,6 +141,9 @@ public class SubmissionFormField
 
 	@ConsumeField
 	private Boolean allowPrivateResource;
+
+	@ConsumeField
+	private Boolean alwaysShowDetailGrid;
 
 	@ConsumeField
 	private Boolean popluateContactWithUser;
@@ -202,6 +205,7 @@ public class SubmissionFormField
 		this.setAllowPrivateResource(submissionFormField.getAllowPrivateResource());
 		this.setPopluateContactWithUser(submissionFormField.getPopluateContactWithUser());
 		this.setHideExistingContactPicker(submissionFormField.getHideExistingContactPicker());
+		this.setAlwaysShowDetailGrid(submissionFormField.getAlwaysShowDetailGrid());
 
 		this.setSectionId(submissionFormField.getSectionId());
 	}
@@ -484,6 +488,16 @@ public class SubmissionFormField
 	public void setHideExistingContactPicker(Boolean hideExistingContactPicker)
 	{
 		this.hideExistingContactPicker = hideExistingContactPicker;
+	}
+
+	public Boolean getAlwaysShowDetailGrid()
+	{
+		return alwaysShowDetailGrid;
+	}
+
+	public void setAlwaysShowDetailGrid(Boolean alwaysShowDetailGrid)
+	{
+		this.alwaysShowDetailGrid = alwaysShowDetailGrid;
 	}
 
 }

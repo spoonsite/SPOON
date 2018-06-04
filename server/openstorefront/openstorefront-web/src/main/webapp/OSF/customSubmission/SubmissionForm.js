@@ -80,50 +80,74 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 	loadTemplate: function(submissionFormTemplate, entryType, userSubmission) {
 		var submissionForm = this;
 		
-		//template get manipulated slightly
-		submissionForm.template = Ext.clone(submissionFormTemplate);
-		submissionForm.entryType = entryType;
-		submissionForm.currentSection = 0;
-		if (!userSubmission)	{
-			userSubmission = submissionForm.initializeUserSubmission(submissionForm.template);
-		}
-		submissionForm.userSubmission = userSubmission;
-		
-		if (!submissionForm.template.sections) {
-			submissionForm.template.sections = [];
-		}
-		
-		submissionForm.template.sections.push({
-			name: 'Review Submission',
-			instructions: 'Review submission and submit for approval',
-			review: true
-		});
-		
-		//create sections
-		submissionForm.formSections = [];
-		var sectionComponents = [];
-		var index = 0;
-		Ext.Array.each(submissionForm.template.sections, function(section){
-			section.index = index++;			
-			var sectionComponent;
-			if (section.review) {
-				sectionComponent = Ext.create('OSF.customSubmission.ReviewSection', {				
-				});				
-			} else {
-				sectionComponent = Ext.create('OSF.customSubmission.Section', {				
-				});
-				sectionComponent.load(section, submissionFormTemplate, userSubmission);			
-				
-				submissionForm.formSections.push(section);
+		var handleLoadTemplate = function(componentType) {
+			//template get manipulated slightly
+			submissionForm.template = Ext.clone(submissionFormTemplate);
+			submissionForm.entryType = componentType;
+			submissionForm.currentSection = 0;
+			if (!userSubmission)	{
+				userSubmission = submissionForm.initializeUserSubmission(submissionForm.template);
 			}
-			section.component = sectionComponent;
-			sectionComponents.push(sectionComponents);
+			submissionForm.userSubmission = userSubmission;
+
+			if (!submissionForm.template.sections) {
+				submissionForm.template.sections = [];
+			}
+
+			submissionForm.template.sections.push({
+				name: 'Review Submission',
+				instructions: 'Review submission and submit for approval',
+				review: true
+			});
+
+			//create sections
+			submissionForm.formSections = [];
+			var sectionComponents = [];
+			var index = 0;
+			Ext.Array.each(submissionForm.template.sections, function(section){
+				section.index = index++;			
+				var sectionComponent;
+				if (section.review) {
+					sectionComponent = Ext.create('OSF.customSubmission.ReviewSection', {				
+						componentType: componentType
+					});				
+				} else {
+					sectionComponent = Ext.create('OSF.customSubmission.Section', {		
+						componentType: componentType
+					});
+					sectionComponent.load(section, submissionFormTemplate, userSubmission);			
+
+					submissionForm.formSections.push(section);
+				}
+				section.component = sectionComponent;				
+				sectionComponents.push(sectionComponent);
+
+			});
+			submissionForm.add(sectionComponents);		
+			submissionForm.displayCurrentSection();
+
+			submissionForm.fireEvent('ready', submissionForm);			
+		};	
+		
+		
+		
+		if (Ext.isString(entryType)) {
 			
-		});
-		submissionForm.add(sectionComponents);		
-		submissionForm.displayCurrentSection();
-						
-		submissionForm.fireEvent('ready', submissionForm);
+			submissionForm.setLoading(true);
+			Ext.Ajax.request({
+				url: 'api/v1/resource/componenttypes/' + entryType,
+				callback: function(){
+					submissionForm.setLoading(false);
+				},
+				success: function(response, opts) {
+					var componentType = Ext.decode(response.responseText);
+					handleLoadTemplate(componentType);
+				}
+			});			
+		} else {
+			handleLoadTemplate(entryType);
+		}
+
 	},
 	
 	displayCurrentSection: function() {

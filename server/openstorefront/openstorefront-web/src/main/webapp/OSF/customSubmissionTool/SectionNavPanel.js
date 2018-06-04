@@ -263,7 +263,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		record.set({
 			expanded: false,
 			leaf: true,			
-			text: field.questionNumber + ' ' + field.label,
+			text: Ext.util.Format.stripTags(field.questionNumber + ' ' + field.label),
 			fieldId: field.fieldId,
 			field: field,
 			children: []			
@@ -286,7 +286,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 			if (sectionNode.get('sectionId') === field.sectionId) {
 				sectionNode.eachChild(function(fieldNode){
 					if (fieldNode.get('fieldId') === field.fieldId) {
-						fieldNode.set('text', field.questionNumber + ' ' + field.label);
+						fieldNode.set('text', Ext.util.Format.stripTags(field.questionNumber + ' ' + field.label));
 					}
 				});
 			}	
@@ -337,7 +337,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 				
 				sectionItem.children.push({
 					leaf: true,
-					text: (field.questionNumber ? field.questionNumber : '')  + field.label,
+					text: Ext.util.Format.stripTags((field.questionNumber ? field.questionNumber : '')  + field.label),
 					fieldId: field.fieldId,
 					field: field
 				});

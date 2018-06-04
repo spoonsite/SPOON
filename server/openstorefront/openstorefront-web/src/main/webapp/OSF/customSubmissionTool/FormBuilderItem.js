@@ -460,7 +460,22 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					formBuilderItem.syncTemplateField(true);						
 				}
 			}			
-		}
+		},
+		{
+			xtype: 'checkbox',
+			hidden: true,
+			optionField: true,			
+			name: 'alwaysShowDetailGrid',
+			boxLabel: '<b>Always Show Details Grid</b> <i class="fa fa-question-circle" data-qtip="Default behavior is to hide if the entry type does not support this information."></i>',
+			margin: '0 0 0 155',
+			listeners: {
+				change: function (self, newVal) {
+					var formBuilderItem = this.up('panel');														
+					formBuilderItem.syncTemplateField(true);						
+				}
+			}			
+		}		
+		
 		
 	],
 	resyncfieldOptions: function() {
@@ -564,6 +579,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			case 'ATTRIBUTE_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
 
+				formBuilderItem.getForm().findField('alwaysShowDetailGrid').setHidden(false);	
 			break;						
 			case 'ORGANIZATION':
 				formBuilderItem.templateField.mappingType = 'COMPONENT';
@@ -579,22 +595,23 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			case 'CONTACT_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
 				formBuilderItem.getForm().findField('hideExistingContactPicker').setHidden(false);
+				formBuilderItem.getForm().findField('alwaysShowDetailGrid').setHidden(false);	
 			break;
 			case 'EXT_DEPEND_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
-
+				formBuilderItem.getForm().findField('alwaysShowDetailGrid').setHidden(false);	
 			break;
 			case 'MEDIA_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
-
+				formBuilderItem.getForm().findField('alwaysShowDetailGrid').setHidden(false);	
 			break;
 			case 'RESOURCE_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
-
+				formBuilderItem.getForm().findField('alwaysShowDetailGrid').setHidden(false);	
 			break;	
 			case 'RELATIONSHIPS_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
-
+				formBuilderItem.getForm().findField('alwaysShowDetailGrid').setHidden(false);	
 			break;
 			case 'TAG_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';

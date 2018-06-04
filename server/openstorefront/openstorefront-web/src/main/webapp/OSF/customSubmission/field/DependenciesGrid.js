@@ -99,6 +99,11 @@ Ext.define('OSF.customSubmission.field.DependenciesGrid', {
 			addEditWin.queryById('form').loadRecord(record);
 		}		
 		
+	},
+	
+	showOnEntryType: function() {
+		var grid = this;		
+		return grid.componentType.dataEntryDependencies || false;		
 	}	
 	
 });

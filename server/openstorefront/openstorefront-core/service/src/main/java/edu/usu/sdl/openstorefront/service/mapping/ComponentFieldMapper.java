@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
@@ -54,7 +56,11 @@ public class ComponentFieldMapper
 		}
 
 		try {
-			BeanUtils.setProperty(componentAll.getComponent(), submissionField.getFieldName(), value);
+			if (Component.FIELD_RELEASE_DATE.equals(submissionField.getFieldName())) {
+				componentAll.getComponent().setReleaseDate(Convert.toDate(value));
+			} else {
+				BeanUtils.setProperty(componentAll.getComponent(), submissionField.getFieldName(), value);
+			}
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			if (LOG.isLoggable(Level.FINER)) {
 				LOG.log(Level.FINER, null, ex);

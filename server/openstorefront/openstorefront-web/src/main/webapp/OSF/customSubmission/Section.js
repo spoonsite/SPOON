@@ -104,6 +104,7 @@ Ext.define('OSF.customSubmission.Section', {
 			var defaults = {
 				fieldTemplate: field,
 				createQuestionLabel: createQuestionLabel,
+				componentType: section.componentType,
 				margin: '0 0 20 0'
 			};
 			switch(field.fieldType) {

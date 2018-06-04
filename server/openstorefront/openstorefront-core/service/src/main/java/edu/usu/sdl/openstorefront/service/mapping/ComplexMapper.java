@@ -79,6 +79,7 @@ public class ComplexMapper
 					case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
 					case SubmissionFormFieldType.ATTRIBUTE_MULTI:
 					case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+					case SubmissionFormFieldType.ATTRIBUTE_REQUIRED:
 					case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
 						addAttribute(componentAll, userSubmissionField);
 						break;
@@ -280,6 +281,7 @@ public class ComplexMapper
 				case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI:
 				case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+				case SubmissionFormFieldType.ATTRIBUTE_REQUIRED:
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
 					mapAttributes(userSubmissionField, componentFormSet);
 					break;

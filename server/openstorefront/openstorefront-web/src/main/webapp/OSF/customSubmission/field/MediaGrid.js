@@ -105,6 +105,11 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 			addEditWin.queryById('form').loadRecord(record);
 		}		
 		
+	},
+	
+	showOnEntryType: function() {
+		var grid = this;		
+		return grid.componentType.dataEntryMedia || false;		
 	}
 
 });

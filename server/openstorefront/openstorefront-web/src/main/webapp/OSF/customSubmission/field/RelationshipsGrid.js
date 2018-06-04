@@ -96,6 +96,11 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 			addEditWin.queryById('form').loadRecord(record);
 		}		
 		
+	},
+	
+	showOnEntryType: function() {
+		var grid = this;		
+		return grid.componentType.dataEntryRelationships || false;		
 	}	
 	
 });

@@ -102,6 +102,11 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 			addEditWin.queryById('form').loadRecord(record);
 		}		
 		
+	},
+	
+	showOnEntryType: function() {
+		var grid = this;		
+		return grid.componentType.dataEntryContacts || false;		
 	}
 	
 	

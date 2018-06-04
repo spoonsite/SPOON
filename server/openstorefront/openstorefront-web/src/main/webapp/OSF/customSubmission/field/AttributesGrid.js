@@ -97,6 +97,11 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 		if (record) {
 			addEditWin.queryById('form').loadRecord(record);
 		}
+	},
+	
+	showOnEntryType: function() {
+		var grid = this;		
+		return grid.componentType.dataEntryAttributes || false;		
 	}
 	
 });

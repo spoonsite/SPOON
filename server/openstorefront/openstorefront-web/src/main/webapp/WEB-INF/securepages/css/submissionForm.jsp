@@ -16,6 +16,10 @@ limitations under the License.
 
 <%@page  contentType="text/css" %>
 
+h3 {
+    line-height: 130%;
+}
+
 .submission-question-number {
 	font-weight: bold;
 	font-size: 14px;

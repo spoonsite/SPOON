@@ -282,6 +282,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					sectionButtons.push({
 						xtype: 'button',
 						text: section.name,
+						textAlign: 'left',
 						width: '100%',
 						margin: '0 0 20 0',
 						sectionIndex: index,
