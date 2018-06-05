@@ -32,9 +32,6 @@ Ext.define('OSF.form.Media', {
 		mediaPanel.mediaGridForm = Ext.create('Ext.form.Panel', {
 			xtype: 'form',			
 			title: 'Add/Edit Media',
-			viewConfig: {
-				enableTextSelection: true
-			},
 			collapsible: true,
 			titleCollapse: true,
 			border: true,
