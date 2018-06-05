@@ -243,6 +243,7 @@ public class SecurityPermission
 	public static final String ADMIN_INTEGRATION_RUNCONFIG = "ADMIN-INTEGRATION-RUNCONFIG";
 	public static final String ADMIN_INTEGRATION_RUNINTEGRATION = "ADMIN-INTEGRATION-RUNINTEGRATION";
 	public static final String ADMIN_INTEGRATION_TOGGLESTATUS = "ADMIN-INTEGRATION-TOGGLESTATUS";
+	public static final String ADMIN_INTEGRATION_EXTERNAL = "ADMIN-INTEGRATION-EXTERNAL";
 
 	// Watches
 	public static final String GROUPBY_WATCHES = "Watches";
@@ -349,7 +350,7 @@ public class SecurityPermission
 	public static final String ADMIN_BRANDING_UPDATE = "ADMIN-BRANDING-UPDATE";
 
 	// Contact
-	public static final String GROUPBY_CONTACT = "Conctacts";
+	public static final String GROUPBY_CONTACT = "Contacts";
 	public static final String ADMIN_CONTACT_MANAGEMENT_CREATE = "ADMIN-CONTACT-MANAGEMENT-CREATE";
 	public static final String ADMIN_CONTACT_MANAGEMENT_UPDATE = "ADMIN-CONTACT-MANAGEMENT-UPDATE";
 	public static final String ADMIN_CONTACT_MANAGEMENT_DELETE = "ADMIN-CONTACT-MANAGEMENT-DELETE";
@@ -569,6 +570,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_INTEGRATION_RUNCONFIG, newLookup(SecurityPermission.class, ADMIN_INTEGRATION_RUNCONFIG, "allows for running config", null, GROUPBY_INTEGRATION));
 		codeMap.put(ADMIN_INTEGRATION_RUNINTEGRATION, newLookup(SecurityPermission.class, ADMIN_INTEGRATION_RUNINTEGRATION, "allows for running one integration", null, GROUPBY_INTEGRATION));
 		codeMap.put(ADMIN_INTEGRATION_TOGGLESTATUS, newLookup(SecurityPermission.class, ADMIN_INTEGRATION_TOGGLESTATUS, "allows for the ability to toggle the status of an integration", null, GROUPBY_INTEGRATION));
+		codeMap.put(ADMIN_INTEGRATION_EXTERNAL, newLookup(SecurityPermission.class, ADMIN_INTEGRATION_EXTERNAL, "Allows ability to integration abilities with external sources", null, GROUPBY_INTEGRATION));
 
 		// Watches
 		codeMap.put(ADMIN_WATCHES_DELETE, newLookup(SecurityPermission.class, ADMIN_WATCHES_DELETE, "delete watches", null, GROUPBY_WATCHES));

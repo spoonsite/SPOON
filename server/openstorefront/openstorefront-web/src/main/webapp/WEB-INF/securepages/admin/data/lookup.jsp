@@ -172,11 +172,13 @@
 								}
 							},
 							{
+								requiredPermissions: ['ADMIN-LOOKUPS-CREATE'],
 								xtype: 'tbseparator'								
 							},
 							{
 								text: 'Add',
 								iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction-media-table',
+								requiredPermissions: ['ADMIN-LOOKUPS-CREATE'],
 								handler: function () {
 									actionEditCodeForm(null);
 								}									
@@ -186,11 +188,13 @@
 								id: 'codeGrid-tools-edit',
 								disabled: true,
 								iconCls: 'fa fa-lg fa-edit icon-button-color-edit icon-small-vertical-correction-media-table',
+								requiredPermissions: ['ADMIN-LOOKUPS-UPDATE'],
 								handler: function () {
 									actionEditCodeForm(Ext.getCmp('codeGrid').getSelection()[0]);
 								}								
 							},
 							{
+								requiredPermissions: ['ADMIN-LOOKUPS-UPDATE'],
 								xtype: 'tbseparator'								
 							},
 							{
@@ -198,6 +202,7 @@
 								id: 'codeGrid-tools-status',
 								disabled: true,
 								iconCls: 'fa fa-lg fa-power-off icon-button-color-default icon-small-vertical-correction-media-table',
+								requiredPermissions: ['ADMIN-LOOKUPS-UPDATE'],
 								handler: function () {
 									actionToggleStatus(Ext.getCmp('codeGrid').getSelection()[0]);
 								}								

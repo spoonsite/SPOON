@@ -47,11 +47,13 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 		//	@param permissionLogicalOperator (string) - OR indicates the user needs one or more permissions, AND indicates user needs ALL listed permissions
 		//	@param actionOnInvalidPermissions (string) - indicates what should happen to the UI component when the user has insufficient permissions
 		//	@param requiredPermissions (string) - permissions that are tied to the UI component
+		//	@param afterPermissionCheck (function) - to be called after permissions have been handled on UI component
 		mixins: [mixin],
 		securityMixin: mixin,
 		permissionLogicalOperator: 'OR',
 		actionOnInvalidPermission: 'hide',
 		requiredPermissions: [],
+		afterPermissionCheck: function () {},
 		permissionsActionMap: {
 			// @param method - method that will be executed
 			// @invalidValue - value to be passed to the <method> for invalid permissions
@@ -144,6 +146,8 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 			else if (hasPermission && actionMapObj.canCallByDefault) {
 				uiComponent[actionMapObj.method](actionMapObj.validValue !== null ? actionMapObj.validValue : undefined);
 			}
+
+			uiComponent.afterPermissionCheck();
 		}
 	});
 });
