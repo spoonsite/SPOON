@@ -1,7 +1,6 @@
 <template lang="html">
 
 <section class="user-profile-page">
-<h1 class="text-xs-center">user-profile-page Component</h1>
 <v-container grid-list-xl text-xs-center>
 <v-layout row wrap>
   <!-- Errors -->
@@ -41,7 +40,6 @@
       ref="first"
       v-model="first"
       :rules="[() => !!first || 'This field is required']"
-      box
       required
       placeholder="John"
       label="First Name"
@@ -52,7 +50,6 @@
       ref="last"
       v-model="last"
       :rules="[() => !!last || 'This field is required']"
-      box
       required
       placeholder="Doe"
       label="Last Name"
@@ -66,7 +63,6 @@
         () => !!email || 'This field is required',
         () => validateEmail(email) || 'Email address not in valid format'
       ]"
-      box
       required
       placeholder="name@example.com"
       label="Email address"
@@ -78,8 +74,7 @@
     https://github.com/googlei18n/libphonenumber -->
     <v-text-field
       v-model="phone"
-      count=8
-      box
+      counter=80
       placeholder="(123) 456-7890"
       label="Phone number"
       hint="Enter your phone number"
@@ -94,7 +89,6 @@
       :rules="[() => !!currentOrg || 'This field is required']"
       v-model="currentOrg"
       label="Select an Organization"
-      autocomplete
       required
       combobox
       hint="Type to filter or click to select"
@@ -104,7 +98,6 @@
       <v-text-field
         ref="position"
         v-model="position"
-        box
         label="Position Title"
         hint="Enter your current title"
       ></v-text-field>
@@ -142,7 +135,14 @@
   </v-flex> -->
   <!-- Save Button -->
   <v-flex xs10 offset-xs1>
+    <v-alert v-model="saved" type="success" dismissible>
+      Updated User Profile
+    </v-alert>
+    <v-alert v-model="errorOnSave" type="error" dismissible>
+      Error saving updates to User Profile
+    </v-alert>
     <v-btn
+      v-if="!saved && !errorOnSave"
       block
       round
       v-on:click="updateProfile"
@@ -179,7 +179,9 @@ export default {
       userTypeCodes: [],
       userTypeCode: undefined,
       notify: false,
-      monthly: false
+      monthly: false,
+      saved: false,
+      errorOnSave: false
     };
   },
   methods: {
@@ -244,6 +246,13 @@ export default {
         .catch(e => this.errors.push(e));
     },
     updateProfile () {
+      let that = this;
+      let org = '';
+      if (typeof this.currentOrg === 'string') {
+        org = this.currentOrg;
+      } else {
+        org = this.currentOrg.description;
+      }
       let newProfile = {
         'userTypeCode': this.userTypeCodes.find(each => each.description === this.userTypeCode).code, // User Role
         'firstName': this.first,
@@ -251,13 +260,20 @@ export default {
         'email': this.email,
         'phone': this.phone,
         'positionTitle': this.position,
-        'organization': this.currentOrg.description,
+        'organization': org,
         'notifyOfNew': this.notify
       };
 
       this.$http
         .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, newProfile)
-        .catch(e => this.errors.push(e));
+        .then(response => {
+          that.saved = true;
+          that.getRestOfUserData();
+        })
+        .catch(e => {
+          that.errors.push(e);
+          that.errorOnSave = true;
+        });
     }
   },
   computed: {
