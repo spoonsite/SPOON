@@ -14,6 +14,31 @@ Vue.config.productionTip = false;
 
 Vue.prototype.$http = axios;
 
+// Add CSRF Token if it comes in on a cookie
+let csrfToken;
+axios.interceptors.request.use(
+  function (config) {
+    if (!csrfToken) {
+      let split = document.cookie.split('=');
+      let tokenIndex = split.indexOf('X-Csrf-Token');
+      if (tokenIndex !== -1) {
+        csrfToken = split[tokenIndex + 1];
+        axios.defaults.headers.common = {
+          'X-Requested-With': 'XMLHttpRequest',
+          withCredentials: true,
+          'Access-Control-Allow-Credentials': true,
+          'X-Csrf-Token': csrfToken
+        };
+      }
+    }
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
+
 Vue.use(Vuetify, {
   theme: {
     primary: '#2a2d35',
@@ -29,6 +54,9 @@ Vue.use(Vuetify, {
 Vue.use(VueTruncate);
 Vue.filter('formatDate', value => {
   return format(value, 'YYYY/MM/DD');
+});
+Vue.filter('prettyJSON', function (value) {
+  return JSON.stringify(JSON.parse(value));
 });
 
 /* eslint-disable no-new */

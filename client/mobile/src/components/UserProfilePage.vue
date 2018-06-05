@@ -8,7 +8,7 @@
   <v-flex xs12>
     <div v-if="errors.length > 0">
       <ul>
-        <li v-for="error in errors" :key="error">{{ error }}</li>
+        <li v-for="error in errors" :key="error" v-html='error'></li>
       </ul>
     </div>
   </v-flex>
@@ -19,9 +19,10 @@
         <v-flex pt-2>
           <v-icon size="8em">fas fa-user-tie</v-icon>
         </v-flex>
+        <!-- Can't yet change or add avatar icons. Uncomment and set up once we can
         <v-card-actions>
           <v-btn flat color="orange">Change Avatar</v-btn>
-        </v-card-actions>
+        </v-card-actions> -->
       </v-layout>
     </v-card>
   </v-flex>
@@ -95,6 +96,7 @@
       label="Select an Organization"
       autocomplete
       required
+      combobox
       hint="Type to filter or click to select"
     ></v-select>
   </v-flex>
@@ -128,6 +130,7 @@
       id="notify"
     ></v-switch>
   </v-flex>
+  <!-- Monthly email not set up yet. Once it is, uncomment this section
   <v-flex xs12>
     <v-switch
       label="Receive monthly email"
@@ -136,7 +139,7 @@
       id="monthly"
       disabled
     ></v-switch>
-  </v-flex>
+  </v-flex> -->
   <!-- Save Button -->
   <v-flex xs10 offset-xs1>
     <v-btn
@@ -158,9 +161,9 @@ export default {
   name: 'user-profile-page',
   props: [],
   mounted () {
+    this.getCurrentUserName();
     this.getOrgs();
     this.getRoles();
-    this.getCurrentUserData();
   },
   data () {
     return {
@@ -180,13 +183,12 @@ export default {
     };
   },
   methods: {
-    getCurrentUserData () {
+    getRestOfUserData () {
       let that = this;
+      let url = '/openstorefront/api/v1/resource/userprofiles/' + that.username;
       this.$http
-        .get('/openstorefront/api/v1/resource/userprofiles/currentuser')
+        .get(url)
         .then(response => {
-          // console.log(response.data);
-          that.username = response.data.username;
           that.first = response.data.firstName;
           that.last = response.data.lastName;
           that.email = response.data.email;
@@ -195,6 +197,16 @@ export default {
           that.position = response.data.positionTitle;
           that.userTypeCode = response.data.userTypeDescription;
           that.notify = response.data.notifyOfNew;
+        })
+        .catch(e => this.errors.push(e));
+    },
+    getCurrentUserName () {
+      let that = this;
+      this.$http
+        .get('/openstorefront/api/v1/resource/userprofiles/currentuser')
+        .then(response => {
+          that.username = response.data.username;
+          that.getRestOfUserData();
         })
         .catch(e => this.errors.push(e));
     },
@@ -232,18 +244,19 @@ export default {
         .catch(e => this.errors.push(e));
     },
     updateProfile () {
-      let data = new FormData();
-      data.append('userTypeCode', this.userTypeCodes.find(each => each.description === this.userTypeCode).code); // User Role
-      data.append('firstName', this.first);
-      data.append('lastName', this.last);
-      data.append('email', this.email);
-      data.append('phone', this.phone);
-      data.append('positionTitle', this.position);
-      data.append('organization', this.currentOrg.description);
-      data.append('notifyOfNew', this.notify);
-      data.append('gotoPage', '');
+      let newProfile = {
+        'userTypeCode': this.userTypeCodes.find(each => each.description === this.userTypeCode).code, // User Role
+        'firstName': this.first,
+        'lastName': this.last,
+        'email': this.email,
+        'phone': this.phone,
+        'positionTitle': this.position,
+        'organization': this.currentOrg.description,
+        'notifyOfNew': this.notify
+      };
+
       this.$http
-        .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, data)
+        .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, newProfile)
         .catch(e => this.errors.push(e));
     }
   },
