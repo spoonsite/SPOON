@@ -8,8 +8,11 @@ import 'vuetify/dist/vuetify.min.css';
 import format from 'date-fns/format';
 import 'babel-polyfill';
 import VueTruncate from 'vue-truncate-filter';
+import axios from 'axios';
 
 Vue.config.productionTip = false;
+
+Vue.prototype.$http = axios;
 
 Vue.use(Vuetify, {
   theme: {
@@ -24,7 +27,7 @@ Vue.use(Vuetify, {
 });
 
 Vue.use(VueTruncate);
-Vue.filter('formatDate', (value) => {
+Vue.filter('formatDate', value => {
   return format(value, 'YYYY/MM/DD');
 });
 
