@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
   name: 'FAQPage',
@@ -28,23 +28,23 @@ export default {
   }),
   methods: {
     getQuestions: function () {
-      let that = this
+      let that = this;
 
       // that.questions = this.$api.getFAQquestions()
 
       axios
         .get('/openstorefront/api/v1/resource/faq')
         .then(response => {
-          var filtered = response.data.filter(item => item.activeStatus === 'A')
-          that.questions = filtered
+          var filtered = response.data.filter(item => item.activeStatus === 'A');
+          that.questions = filtered;
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => this.errors.push(e));
     }
   },
   mounted () {
-    this.getQuestions()
+    this.getQuestions();
   }
-}
+};
 </script>
 
 <style>
