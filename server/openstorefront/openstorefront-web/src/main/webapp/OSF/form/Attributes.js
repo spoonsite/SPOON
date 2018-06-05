@@ -70,6 +70,9 @@ Ext.define('OSF.form.Attributes', {
 
 		attributePanel.attributeGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					"type",
@@ -575,6 +578,10 @@ Ext.define('OSF.form.Attributes', {
 			}
 
 		});
+
+		if(callback){
+			callback();
+		}
 	}
 
 });
