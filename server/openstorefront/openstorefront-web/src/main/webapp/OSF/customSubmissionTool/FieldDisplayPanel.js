@@ -176,22 +176,22 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 		// display area for fieldItems and the floating menu
 		{
 			xtype: 'container',
-			layout: 'column',
+			layout: 'hbox',
 			items: [
 				{
 					xtype: 'container',
 					itemId: 'itemContainer',
-					columnWidth: 0.9
+					flex: 1
 				},
 				{
 					xtype: 'container',
 					height: '100%',
 					padding: '10 40 0 20',
-					columnWidth: 0.1,
 					items: [
 						{
 							xtype: 'osf-csf-floatingMenu',
-							itemId: 'menu'
+							itemId: 'menu',
+							width: 50
 						}
 					]
 				}

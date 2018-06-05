@@ -23,6 +23,7 @@ Ext.define('OSF.customSubmission.Section', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.osf-submissionform-section',
 	requires: [		
+		'OSF.customSubmission.form.AttributeRequired',
 		'OSF.customSubmission.field.AttributesGrid',
 		'OSF.customSubmission.field.ContactsGrid',
 		'OSF.customSubmission.SubmissionFormWrapper',
@@ -122,7 +123,16 @@ Ext.define('OSF.customSubmission.Section', {
 							xtype: 'osf-submissionform-attribute'
 						}						
 					}));
-				break;				
+				break;		
+				case 'ATTRIBUTE_REQUIRED':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-formwrapper',
+						actualForm: {
+							xtype: 'osf-submissionform-attributerequired',
+							componentType: section.componentType
+						}						
+					}));
+				break;
 				case 'ATTRIBUTE_MULTI':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-attributegrid'

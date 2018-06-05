@@ -85,7 +85,12 @@
 							tools.getComponent('copy').setDisabled(false);							
 							tools.getComponent('preview').setDisabled(false);
 							tools.getComponent('export').setDisabled(false);
-							tools.getComponent('delete').setDisabled(false);
+							
+							if (!selected[0].get('defaultTemplate')) {								
+								tools.getComponent('delete').setDisabled(false);
+							} else {
+								tools.getComponent('delete').setDisabled(true);
+							}
 						} else {
 							tools.getComponent('edit').setDisabled(true);
 							tools.getComponent('togglestatus').setDisabled(true);
@@ -97,7 +102,15 @@
 					}
 				},
 				columns: [
-					{ text: 'Name', dataIndex: 'name', flex: 10 },
+					{ text: 'Name', dataIndex: 'name', flex: 10, 
+						renderer: function(value, meta, record) {
+							if (record.get('defaultTemplate')) {
+								return value + ' (<b>Default</b>)';
+							} else {
+								return value;
+							}
+						}
+					},
 					{ text: 'Description', dataIndex: 'description', flex: 10 },
 					{ text: 'Form Completion Status <i class="fa fa-question-circle" data-qtip="Indicates that a form is ready for use"></i>', dataIndex: 'templateStatusLabel', align: 'center', flex: 5 },
 					{ text: 'Active Status', dataIndex: 'activeStatus', align: 'center', flex: 4 },

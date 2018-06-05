@@ -576,6 +576,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('showComment').setHidden(false);
 				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);	
 			break;
+			case 'ATTRIBUTE_REQUIRED':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+			break;			
 			case 'ATTRIBUTE_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
 

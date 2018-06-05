@@ -36,6 +36,7 @@ public class SubmissionFormTemplateView
 	private String description;
 	private String templateStatus;
 	private String templateStatusLabel;
+	private Boolean defaultTemplate;
 	private String activeStatus;
 	private String createUser;
 	private Date createDts;
@@ -63,6 +64,7 @@ public class SubmissionFormTemplateView
 		view.setCreateDts(template.getCreateDts());
 		view.setUpdateUser(template.getUpdateUser());
 		view.setUpdateDts(template.getUpdateDts());
+		view.setDefaultTemplate(template.getDefaultTemplate());
 
 		if (template.getSections() != null) {
 			template.getSections().sort((a, b) -> {
@@ -195,6 +197,16 @@ public class SubmissionFormTemplateView
 	public void setUpdateDts(Date updateDts)
 	{
 		this.updateDts = updateDts;
+	}
+
+	public Boolean getDefaultTemplate()
+	{
+		return defaultTemplate;
+	}
+
+	public void setDefaultTemplate(Boolean defaultTemplate)
+	{
+		this.defaultTemplate = defaultTemplate;
 	}
 
 }

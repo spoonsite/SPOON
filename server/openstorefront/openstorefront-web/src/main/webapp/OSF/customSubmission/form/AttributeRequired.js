@@ -29,15 +29,71 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 	layout: 'anchor',
 	
 	initComponent: function () {
-		var panel = this;
-		panel.callParent();
+		var formPanel = this;
+		formPanel.callParent();
 		
 		//load required for entry type and generate form
-		//Ext.Ajax.request({
-			
-		//});
+		
+		formPanel.setLoading(true);
+		Ext.Ajax.request({
+			url: 'api/v1/resource/attributes/required?componentType=' + formPanel.componentType.componentType + '&submissionOnly=true',
+			callback: function() {
+				formPanel.setLoading(false);
+			},
+			success: function(response, opts) {
+				var attributeTypes = Ext.decode(response.responseText);
+				
+				if (attributeTypes.length === 0) {
+					formPanel.setHidden(true);
+				}
+				
+				var fields = [];
+				Ext.Array.each(attributeTypes, function(attributeType){
+					
+					fields.push({
+						xtype: 'AttributeCodeSelect',
+						attributeTypeView: attributeType
+					});										
+					
+				});
+				formPanel.add(fields);
+				formPanel.updateLayout(true, true);
+				
+			}
+		});
 		
 		
-	}
+	},
+	reviewDisplayValue: function() {
+		var attributePanel = this;
+		
+		var template = new Ext.XTemplate(
+			'<table class="submission-review-table">' + 
+			'<tbody>' + 
+			'	<tpl for=".">'+
+			'		<tr class="submission-review-row">' +
+			'			<td class="submission-review-label">'+
+			'				{label}' +
+			'			</td>' +
+			'			<td class="submission-review-data" style="min-width: 150px">' +
+			'				{value}' +
+			'			</td>' +			
+			'		</tr>' +
+			'	</tpl>'+
+			'</tbody>' +
+			'</table>'
+		);
+
+		var data = [];
+		
+		Ext.Array.each(attributePanel.items.items, function(field) {
+			data.push({
+				label: field.attributeTypeView.description,
+				value: field.getValue()
+			});
+		});
+		
+		return template.apply(data);
+	}	
 	
 });

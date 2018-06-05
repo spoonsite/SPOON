@@ -28,7 +28,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -274,6 +273,7 @@ public class SecurityUtil
 		return message.toString();
 	}
 
+	@SuppressWarnings("UseSpecificCatch")
 	public static void logout(HttpServletRequest request, HttpServletResponse response)
 	{
 		Subject currentUser = SecurityUtils.getSubject();
@@ -281,9 +281,11 @@ public class SecurityUtil
 
 		currentUser.logout();
 		request.getSession().invalidate();
+
+		//Handle all exceptions (workaround for tomcat bug in 7.0_65)
 		try {
 			request.logout();
-		} catch (ServletException ex) {
+		} catch (Exception ex) {
 			LOG.log(Level.WARNING, () -> "Unable to log out of container authorization system. Error message:\n" + ex.getMessage());
 			LOG.log(Level.FINEST, "Trace of Logout Failure", ex);
 		}

@@ -585,36 +585,46 @@
 					
 					submissionGrid.setLoading(true);
 					Ext.Ajax.request({
-						url: 'api/v1/resource/componenttypes',
+						url: 'api/v1/resource/submissiontemplates/default',
 						callback: function() {
 							submissionGrid.setLoading(false);
 						},
 						success: function(response, opts) {
-							var componentTypes = Ext.decode(response.responseText);
+							var defaultTemplate = Ext.decode(response.responseText);							
 							
-							componentTypes = componentTypes.sort(function(a, b){
-								return a.label.localeCompare(b.label);
-							});
-							
-							var menuItems = [];
-							Ext.Array.each(componentTypes, function(componentType){
-								if (componentType.allowOnSubmission) {
-									menuItems.push({
-										text: componentType.label,
-										componentType: componentType,
-										submissionTemplateId: componentType.submissionTemplateId,
-										handler: function() {											
-											loadSubmissionForm(this.submissionTemplateId, this.componentType.componentType);
+							submissionGrid.setLoading(true);
+							Ext.Ajax.request({
+								url: 'api/v1/resource/componenttypes',
+								callback: function() {
+									submissionGrid.setLoading(false);
+								},
+								success: function(response, opts) {
+									var componentTypes = Ext.decode(response.responseText);
+
+									componentTypes = componentTypes.sort(function(a, b){
+										return a.label.localeCompare(b.label);
+									});
+
+									var menuItems = [];
+									Ext.Array.each(componentTypes, function(componentType){
+										if (componentType.allowOnSubmission) {
+											menuItems.push({
+												text: componentType.label,
+												componentType: componentType,
+												submissionTemplateId: componentType.submissionTemplateId || defaultTemplate.submissionTemplateId,
+												handler: function() {											
+													loadSubmissionForm(this.submissionTemplateId, this.componentType.componentType);
+												}
+											});
 										}
 									});
+									submissionBtn.setMenu({
+										items: menuItems
+									});
 								}
-							});
-							submissionBtn.setMenu({
-								items: menuItems
-							});
+							});							
 						}
-					});
-					
+					});					
 					
 				};
 				loadAvailableSubmissionForms();
@@ -638,10 +648,7 @@
 				
 				var loadSubmissionForm = function(submissionTemplateId, componentType) {
 					
-					
 					if (!submissionTemplateId) {						
-					
-						//load default id (find default form)
 						console.log("Need to Set default");
 					}
 					

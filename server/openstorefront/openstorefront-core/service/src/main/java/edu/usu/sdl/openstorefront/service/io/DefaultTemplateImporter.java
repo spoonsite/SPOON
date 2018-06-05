@@ -15,7 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service.io;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -32,9 +40,34 @@ public class DefaultTemplateImporter
 	public void initialize()
 	{
 		//check for default
+		LOG.log(Level.INFO, "Checking for Default Submission Template.");
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setDefaultTemplate(Boolean.TRUE);
+		submissionFormTemplate = submissionFormTemplate.find();
+		if (submissionFormTemplate == null) {
+			try (InputStream is = DefaultTemplateImporter.class.getResourceAsStream("/data/defaultSubmissionTemplate.json");) {
 
-		//read in the template
-		//store 
+				//it gets exported as an array
+				List<SubmissionFormTemplate> templates = StringProcessor.defaultObjectMapper().readValue(is, new TypeReference<List<SubmissionFormTemplate>>()
+				{
+				});
+				if (templates.size() > 0) {
+					LOG.log(Level.INFO, "Found Default Template");
+					submissionFormTemplate = templates.get(0);
+					submissionFormTemplate.setDefaultTemplate(Boolean.TRUE);
+					ServiceProxy.getProxy().getSubmissionFormService().saveSubmissionFormTemplate(submissionFormTemplate);
+					LOG.log(Level.INFO, "Saved Default Template");
+				} else {
+					LOG.log(Level.SEVERE, "No default template defined. Check code");
+				}
+
+			} catch (IOException io) {
+				LOG.log(Level.SEVERE, "Unable to read template.");
+				LOG.log(Level.FINEST, null, io);
+			}
+		} else {
+			LOG.log(Level.INFO, "Default Submission Template found.");
+		}
 	}
 
 	@Override

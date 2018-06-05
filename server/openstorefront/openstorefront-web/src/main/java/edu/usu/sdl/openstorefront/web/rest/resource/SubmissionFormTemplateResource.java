@@ -91,6 +91,25 @@ public class SubmissionFormTemplateResource
 		return sendSingleEntityResponse(view);
 	}
 
+	@GET
+	@APIDescription("Gets Template")
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(SubmissionFormTemplateView.class)
+	@Path("/default")
+	public Response getDefaultSubmissionFormTemplate()
+	{
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setDefaultTemplate(Boolean.TRUE);
+		submissionFormTemplate = submissionFormTemplate.find();
+
+		SubmissionFormTemplateView view = null;
+		if (submissionFormTemplate != null) {
+			view = SubmissionFormTemplateView.toView(submissionFormTemplate);
+		}
+		return sendSingleEntityResponse(view);
+	}
+
 	@POST
 	@APIDescription("Exports questions in JSON format.")
 	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)

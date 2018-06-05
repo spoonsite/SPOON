@@ -22,6 +22,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 
 	itemId: 'floatingMenu',
 	height: 275,
+	minWidth: 50,
 	hidden: true,
 	cls: 'floating-menu-container',
 	style: 'background: rgba(200,200,200,0.8); box-shadow: 2px 2px 10px; border-radius: 5px;',
@@ -195,7 +196,17 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 							},							
 							menu: [
 								{
-									text: 'Attributes',
+									text: 'Attributes (Required)',
+									fieldType: 'ATTRIBUTE_REQUIRED',
+									mappingType: 'COMPLEX',
+									listeners: {
+										click: function (menuItem, e, opts) {
+											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
+										}
+									}									
+								},								
+								{
+									text: 'Attributes (Optional)',
 									fieldType: 'ATTRIBUTE_MULTI',
 									mappingType: 'COMPLEX',
 									listeners: {
