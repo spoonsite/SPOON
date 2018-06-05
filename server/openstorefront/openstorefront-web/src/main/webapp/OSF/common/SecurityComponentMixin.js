@@ -92,6 +92,7 @@ Ext.define('OSF.common.SecurityComponentMixin', {
 		securityMixin: mixin,
 		permissionLogicalOperator: 'OR',
 		actionOnInvalidPermission: 'hide',
+		requiredPermissions: [],
 		handleComponentRender: function () {
 
 			var uiComponent = this;

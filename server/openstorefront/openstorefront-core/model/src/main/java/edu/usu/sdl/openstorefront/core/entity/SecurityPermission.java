@@ -126,11 +126,16 @@ public class SecurityPermission
 	public static final String USER_SEARCHES_PAGE = "USER-SEARCHES-PAGE";
 	public static final String USER_WATCHES_PAGE = "USER-WATCHES-PAGE";
 
+
 	// Reports
 	public static final String GROUPBY_REPORTS = "Reports";
 	public static final String REPORTS_SCHEDULE = "REPORTS-SCHEDULE";
+	public static final String REPORTS_SCHEDULE_UPDATE = "REPORTS-SCHEDULE-UPDATE";
 	public static final String REPORTS = "REPORTS";
 	public static final String REPORTS_ALL = "REPORTS-ALL";
+	public static final String REPORTS_CREATE = "REPORTS-CREATE";
+	public static final String REPORTS_DELETE = "REPORTS-DELETE";
+
 
 	// Report permissions
 	public static final String REPORT_OUTPUT_EMAIL_ATTACH = "REPORT-OUTPUT-EMAIL-ATTACH";
@@ -226,6 +231,11 @@ public class SecurityPermission
 	public static final String ADMIN_MESSAGE_MANAGEMENT_CREATE = "ADMIN-MESSAGE-MANAGEMENT-CREATE";
 	public static final String ADMIN_MESSAGE_MANAGEMENT_DELETE = "ADMIN-MESSAGE-MANAGEMENT-DELETE";
 	public static final String ADMIN_MESSAGE_MANAGEMENT_UPDATE = "ADMIN-MESSAGE-MANAGEMENT-UPDATE";
+
+	//Admin Notification Events
+    public static final String GROUPBY_NOTIFICATION_EVENT_MANAGEMENT = "Event/Notification";
+	public static final String ADMIN_NOTIFICATION_EVENT_CREATE = "ADMIN-NOTIFICATION-EVENT-CREATE";
+	public static final String ADMIN_NOTIFICATION_EVENT_DELETE = "ADMIN-NOTIFICATION-EVENT-DELETE";
 
 	// Job Management
 	public static final String GROUPBY_JOB_MANAGEMENT = "Jobs";
@@ -349,7 +359,7 @@ public class SecurityPermission
 	public static final String ADMIN_BRANDING_UPDATE = "ADMIN-BRANDING-UPDATE";
 
 	// Contact
-	public static final String GROUPBY_CONTACT = "Conctacts";
+	public static final String GROUPBY_CONTACT = "Contacts";
 	public static final String ADMIN_CONTACT_MANAGEMENT_CREATE = "ADMIN-CONTACT-MANAGEMENT-CREATE";
 	public static final String ADMIN_CONTACT_MANAGEMENT_UPDATE = "ADMIN-CONTACT-MANAGEMENT-UPDATE";
 	public static final String ADMIN_CONTACT_MANAGEMENT_DELETE = "ADMIN-CONTACT-MANAGEMENT-DELETE";
@@ -399,6 +409,13 @@ public class SecurityPermission
 	public static final String ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE = "ADMIN-SUBMISSION-FORM-TEMPLATE-UPDATE";
 	public static final String ADMIN_SUBMISSION_FORM_TEMPLATE_DELETE = "ADMIN-SUBMISSION-FORM-TEMPLATE-DELETE";
 
+	//Admin Security
+	public static final String GROUPBY_ADMIN_SECURITY = "Admin Security Management";
+	public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
+	public static final String ADMIN_SECURITY_POLICY = "ADMIN-SECURITY-POLICY";
+	public static final String ADMIN_SECURITY_SHIRO_CONFIG = "ADMIN-SECURITY-SHIRO-CONFIG";
+
+
 	// Other
 	public static final String GROUPBY_OTHER = "Other";
 	public static final String ALLOW_USER_ATTRIBUTE_TYPE_CREATION = "ALLOW-USER-ATTRIBUTE-TYPE-CREATION";
@@ -407,7 +424,6 @@ public class SecurityPermission
 	public static final String ADMIN_ORGANIZATION_EXTRACTION = "ADMIN-ORGANIZATION-EXTRACTION";
 	public static final String ADMIN_MEDIA_DELETE = "ADMIN-MEDIA-DELETE";
 	public static final String API_DOCS = "API_DOCS";
-	public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
 	public static final String ADMIN_SUPPORT_MEDIA = "ADMIN-SUPPORT-MEDIA";
 
 	@Override
@@ -464,8 +480,11 @@ public class SecurityPermission
 
 		// Reports
 		codeMap.put(REPORTS_SCHEDULE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE, "Reports schedule", null, GROUPBY_REPORTS));
+		codeMap.put(REPORTS_SCHEDULE_UPDATE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE_UPDATE, "Allows editing of scheduled reports", null, GROUPBY_REPORTS));
 		codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "General Reports", null, GROUPBY_REPORTS));
 		codeMap.put(REPORTS_ALL, newLookup(SecurityPermission.class, REPORTS_ALL, "Reports All - Allows viewing reports from all users", null, GROUPBY_REPORTS));
+		codeMap.put(REPORTS_CREATE, newLookup(SecurityPermission.class, REPORTS_CREATE, "Allows to create a new report", null, GROUPBY_REPORTS));
+		codeMap.put(REPORTS_DELETE, newLookup(SecurityPermission.class, REPORTS_DELETE, "Allows to delete a report", null, GROUPBY_REPORTS));
 
 		// User submissions/management permissions
 		codeMap.put(USER_SUBMISSIONS_UPDATE, newLookup(SecurityPermission.class, USER_SUBMISSIONS_UPDATE, "Allow user submission updates", null, GROUPBY_USER_SUBMISSION));
@@ -554,6 +573,10 @@ public class SecurityPermission
 		codeMap.put(ADMIN_MESSAGE_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_MESSAGE_MANAGEMENT_DELETE, "Allows for deleting a notification event", null, GROUPBY_MESSAGE_MANAGEMENT));
 		codeMap.put(ADMIN_MESSAGE_MANAGEMENT_UPDATE, newLookup(SecurityPermission.class, ADMIN_MESSAGE_MANAGEMENT_UPDATE, "Allow for updating a notification event", null, GROUPBY_MESSAGE_MANAGEMENT));
 
+		// Notification Events
+		codeMap.put(ADMIN_NOTIFICATION_EVENT_CREATE, newLookup(SecurityPermission.class, ADMIN_NOTIFICATION_EVENT_CREATE, "Allows for the ability to post a new notification event", null, GROUPBY_NOTIFICATION_EVENT_MANAGEMENT));
+		codeMap.put(ADMIN_NOTIFICATION_EVENT_DELETE, newLookup(SecurityPermission.class, ADMIN_NOTIFICATION_EVENT_DELETE, "Allows for deleting a notification event", null, GROUPBY_NOTIFICATION_EVENT_MANAGEMENT));
+		
 		// Job Management
 		codeMap.put(ADMIN_JOB_MANAGEMENT_ACTION, newLookup(SecurityPermission.class, ADMIN_JOB_MANAGEMENT_ACTION, "Allows user to perform some action with a job", null, GROUPBY_JOB_MANAGEMENT));
 		codeMap.put(ADMIN_JOB_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_JOB_MANAGEMENT_DELETE, "Allows user to remove a job", null, GROUPBY_JOB_MANAGEMENT));
@@ -700,6 +723,13 @@ public class SecurityPermission
 		codeMap.put(ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE, newLookup(SecurityPermission.class, ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE, "Allows for updating submission form templates", null, GROUPBY_SUBMISSION_FORM_TEMPLATE));
 		codeMap.put(ADMIN_SUBMISSION_FORM_TEMPLATE_DELETE, newLookup(SecurityPermission.class, ADMIN_SUBMISSION_FORM_TEMPLATE_DELETE, "Allows for deleting submission form templates", null, GROUPBY_SUBMISSION_FORM_TEMPLATE));
 
+		//Admin Security
+		codeMap.put(ADMIN_SECURITY, newLookup(SecurityPermission.class, ADMIN_SECURITY, "Security general permission", null, GROUPBY_ADMIN_SECURITY));
+		codeMap.put(ADMIN_SECURITY_POLICY, newLookup(SecurityPermission.class, ADMIN_SECURITY_POLICY, "Access the security policy tab", null, GROUPBY_ADMIN_SECURITY));
+		codeMap.put(ADMIN_SECURITY_SHIRO_CONFIG, newLookup(SecurityPermission.class, ADMIN_SECURITY_SHIRO_CONFIG, "Access the Shiro Config", null, GROUPBY_ADMIN_SECURITY));
+
+
+
 		// Other
 		codeMap.put(ALLOW_USER_ATTRIBUTE_TYPE_CREATION, newLookup(SecurityPermission.class, ALLOW_USER_ATTRIBUTE_TYPE_CREATION, "Allows for creating attribute types", null, GROUPBY_OTHER));
 		codeMap.put(RELATION_VIEW_TOOL, newLookup(SecurityPermission.class, RELATION_VIEW_TOOL, "Allows for use of the view tool?", null, GROUPBY_OTHER));
@@ -707,7 +737,6 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ORGANIZATION_EXTRACTION, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_EXTRACTION, "Allows for organization extraction", null, GROUPBY_OTHER));
 		codeMap.put(ADMIN_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_MEDIA_DELETE, "Allows for deleting media", null, GROUPBY_OTHER));
 		codeMap.put(API_DOCS, newLookup(SecurityPermission.class, API_DOCS, "Allows said user to view API docs", null, GROUPBY_OTHER));
-		codeMap.put(ADMIN_SECURITY, newLookup(SecurityPermission.class, ADMIN_SECURITY, "security general permission", null, GROUPBY_OTHER));
 		codeMap.put(ADMIN_SUPPORT_MEDIA, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA, "Support media general permission", null, GROUPBY_OTHER));
 		
 		// ========================================================================================================================

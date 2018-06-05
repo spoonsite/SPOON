@@ -71,4 +71,4 @@ project*.properties
 .classpath
 .vscode/
 
-
+client/login/node_modules/

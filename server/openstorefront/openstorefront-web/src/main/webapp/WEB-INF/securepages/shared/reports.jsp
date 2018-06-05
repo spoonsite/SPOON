@@ -289,7 +289,7 @@
 											xtype: 'checkbox',
 											id: 'scheduleReportFilter-showAll',
 											padding: '0 20 0 0',
-											hidden: true,
+											requiredPermissions: ['REPORTS-ALL'],
 											listeners: {
 												change: function(filter, newValue, oldValue, opts){
 													scheduleReportRefreshGrid();
@@ -316,7 +316,8 @@
 											tooltip: 'Refresh the list of records'
 										},
 										{
-											xtype: 'tbseparator'
+											xtype: 'tbseparator',
+											requiredPermissions: ['REPORTS-SCHEDULE']
 										},
 										{
 											text: 'Add',
@@ -325,6 +326,7 @@
 											width: '100px',
 											iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 											disabled: false,
+											requiredPermissions: ['REPORTS-SCHEDULE'],
 											handler: function () {
 												scheduleReportAdd();
 											},
@@ -337,6 +339,7 @@
 											width: '100px',
 											iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 											disabled: true,
+											requiredPermissions: ['REPORTS-SCHEDULE-UPDATE'],
 											handler: function () {
 												scheduleReportEdit();
 											},
@@ -358,7 +361,8 @@
 											tooltip: 'Report Details'
 										},
 										{
-											xtype: 'tbseparator'
+											xtype: 'tbseparator',
+											requiredPermissions: ['REPORTS-SCHEDULE-UPDATE']
 										},
 										{
 											text: 'Toggle Status',
@@ -366,6 +370,7 @@
 											scale: 'medium',
 											iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 											disabled: true,
+											requiredPermissions: ['REPORTS-SCHEDULE-UPDATE'],
 											handler: function () {
 												scheduleReportActivate();
 											},
@@ -381,6 +386,7 @@
 											width: '110px',
 											iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 											disabled: true,
+											requiredPermissions: ['REPORTS-DELETE'],
 											handler: function () {
 												scheduleReportDelete();
 											},
@@ -579,11 +585,7 @@
 												fieldLabel: 'How often to run the report?<span class="field-required" />',																							
 												store: {
 													data: [
-														{ code: 'NOW', description: 'Now (One Time Only)'},
-														{ code: 'PERIOD', description: 'Periodically'},
-														{ code: 'DAYS', description: 'Every X Days'},
-														{ code: 'MINUTES', description: 'Every X Minutes'},
-														{ code: 'CUSTOM', description: 'Custom'}
+														{ code: 'NOW', description: 'Now (One Time Only)'}
 													]
 												},
 												displayField: 'description',
@@ -591,8 +593,10 @@
 												value: 'NOW',
 												editable: false,
 												hidden: true,
+
 												allowBlank: false,
 												listeners: {
+													
 													change: function (cb, newVal, oldVal, opts) {
 													
 														//hide fields
@@ -870,6 +874,20 @@
 						]
 					});
 					scheduleWin.show();
+
+					CoreService.userservice.getCurrentUser().then(function(user){
+					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE")) {
+
+						var cbData = [
+							{ code: 'PERIOD', description: 'Periodically'},
+							{ code: 'DAYS', description: 'Every X Days'},
+							{ code: 'MINUTES', description: 'Every X Minutes'},
+							{ code: 'CUSTOM', description: 'Custom'}
+						];
+						
+						scheduleWin.queryById('scheduleOptions').getStore().loadData(cbData, true);     
+					}
+				});
 					
 					var outputs = [];
 				
@@ -1893,6 +1911,7 @@
 									boxLabel: 'Show Scheduled Only',									
 									margin: '0 20 0 0',
 									enableToggle: true,
+									requiredPermissions: ['REPORTS-SCHEDULE'],
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											historyRefreshGrid();
@@ -1904,7 +1923,7 @@
 									xtype: 'checkbox',
 									id: 'historyFilter-showAll',
 									padding: '0 20 0 0',
-									hidden: true,
+									requiredPermissions: ['REPORTS-ALL'],
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											historyRefreshGrid();
@@ -1931,12 +1950,14 @@
 									tooltip: 'Refresh the list of records'
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['REPORTS-CREATE']
 								},
 								{
 									text: 'New Report',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon',
 									scale: 'medium',
+									requiredPermissions: ['REPORTS-CREATE'],
 									handler: function () {										
 										showAddEditWin();
 									}
@@ -1944,9 +1965,9 @@
 								{
 									text: 'Scheduled Reports',
 									id: 'scheduledReportBtn',
-									hidden: true,
 									iconCls: 'fa fa-2x fa-clock-o icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
+									requiredPermissions: ['REPORTS-SCHEDULE'],
 									handler: function () {
 										scheduledReportsWin.show();
 										scheduleReportRefreshGrid();
@@ -2003,6 +2024,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['REPORTS-DELETE'],
 									handler: function () {
 										historyDelete();
 									},
@@ -2456,25 +2478,12 @@
 					}
 				};
 
+
 				var historyExport = function () {
 					Ext.toast('Exporting Report Data ...');
 					var selectedObj = Ext.getCmp('historyGrid').getSelection()[0].data;
 					window.location.href = 'api/v1/resource/reports/' + selectedObj.reportId + '/report';
 				};
-
-				CoreService.userservice.getCurrentUser().then(function(user){
-					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE")) {
-						Ext.getCmp('scheduledReportBtn').setHidden(false);
-					}
-					if (CoreService.userservice.userHasPermisson(user, "REPORTS-ALL")) {
-						Ext.getCmp('historyFilter-showAll').setHidden(false);
-						Ext.getCmp('scheduleReportFilter-showAll').setHidden(false);						
-					}
-				});
-
-
-
-
 
 			});
 
