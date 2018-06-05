@@ -212,7 +212,7 @@
           </v-card-text>
           <v-card-actions>
             <!-- TODO: link to the details page for that component -->
-            <v-btn color="info" @click="moreInformation(item.componentID)">More Information</v-btn>
+            <v-btn color="info" @click="moreInformation(item.componentId)">More Information</v-btn>
           </v-card-actions>
         </v-card>
       </v-expansion-panel-content>
@@ -462,12 +462,12 @@ export default {
           : currentPage + 4
       )
     },
-    moreInformation (componentID) {
-      console.log(componentID);
+    moreInformation (componentId) {
+      console.log(componentId);
       router.push({
-        path: '/entry-detail/:id+' + componentID,
+        name: 'Entry Detail',
         params: {
-          id: componentID
+          id: componentId
         }
       })
     }
