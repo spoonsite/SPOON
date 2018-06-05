@@ -134,6 +134,7 @@
 								}
 							},
 							{
+								requiredPermissions: ['ADMIN-INTEGRATION-CREATE'],
 								xtype: 'tbseparator'
 							},
 							{
@@ -141,6 +142,7 @@
 								id: 'componentConfigGrid-tools-add',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+								requiredPermissions: ['ADMIN-INTEGRATION-CREATE'],
 								handler: function () {
 									actionAddNewConfiguration();
 								}
@@ -152,12 +154,14 @@
 								width: '100px',
 								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								disabled: true,
+								requiredPermissions: ['ADMIN-INTEGRATION-UPDATE'],
 								handler: function () {
 									var record = componentConfigGrid.getSelection()[0];
 									actionEditIntegration(record);
 								}
 							},
 							{
+								requiredPermissions: ['ADMIN-INTEGRATION-RUNINTEGRATION'],
 								xtype: 'tbseparator'
 							},
 							{
@@ -166,8 +170,9 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 								disabled: true,
+								requiredPermissions: ['ADMIN-INTEGRATION-RUNINTEGRATION'],
 								handler: function () {
-//									
+
 									actionRunJob();
 								}
 							},
@@ -177,6 +182,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								disabled: true,
+								requiredPermissions: ['ADMIN-INTEGRATION-TOGGLESTATUS'],
 								handler: function () {
 									if (Ext.getCmp('componentConfigGrid').getSelectionModel().getCount() === 1) {
 										var record = componentConfigGrid.getSelection()[0];
@@ -189,6 +195,7 @@
 								}
 							},
 							{
+								requiredPermissions: ['ADMIN-INTEGRATION-RUNALL'],
 								xtype: 'tbfill'
 							},
 							{
@@ -197,11 +204,13 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 								tooltip: 'Run all jobs with an active component configuration.',
+								requiredPermissions: ['ADMIN-INTEGRATION-RUNALLs'],
 								handler: function () {
 									actionRunAllJobs();
 								}
 							},
 							{
+								requiredPermissions: ['ADMIN-INTEGRATION-DELETE'],
 								xtype: 'tbseparator'
 							},
 							{
@@ -210,6 +219,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-warning icon-vertical-correction',
 								disabled: true,
+								requiredPermissions: ['ADMIN-INTEGRATION-DELETE'],
 								handler: function () {
 									var ending = componentConfigGrid.getSelection().length > 1 ? "s" : "";
 									var msg = 'Are you sure you want to delete ' + componentConfigGrid.getSelection().length + ' configuration' + ending + '?';
@@ -801,6 +811,8 @@
 				title: 'Jira Mapping Configuration',
 				id: 'jiraConfigGrid',
 				store: jiraConfigStore,
+				requiredPermissions: ['ADMIN-INTEGRATION-EXTERNAL'],
+				actionOnInvalidPermission: 'destroy',
 				columns: [
 					{ text: 'Project Id', dataIndex: 'projectType', flex: 1},
 					{ text: 'Issue Type', dataIndex: 'issueType', flex: 1},
@@ -841,6 +853,7 @@
 								id: 'jiraConfigGrid-tools-add',
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+								requiredPermissions: ['ADMIN-INTEGRATION-CREATE'],
 								handler: function () {
 									actionAddMapping();
 								}
@@ -852,6 +865,7 @@
 								width: '100px',
 								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 								disabled: true,
+								requiredPermissions: ['ADMIN-INTEGRATION-UPDATE'],
 								handler: function () {
 									var record = jiraConfigGrid.getSelection()[0];
 									actionEditMapping(record);
@@ -866,6 +880,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-trash icon-button-color-warning',
 								disabled: true,
+								requiredPermissions: ['ADMIN-INTEGRATION-DELETE'],
 								handler: function () {
 									var record = jiraConfigGrid.getSelection()[0];
 									var title = 'Delete Mapping';
