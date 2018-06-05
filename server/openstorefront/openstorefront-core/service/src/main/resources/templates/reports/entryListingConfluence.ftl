@@ -57,7 +57,7 @@
 					<th>Name</th>
 					<th>Description</th>
 					<th style="text-align: center;">Entry Type</th>
-					<th style="text-align: center;">Last Updated</th>
+					<th style="text-align: center;">Evaluation Completed Date</th>
 					<th style="text-align: center;">Evaluation Status</th>
 				</tr>	
 			</thead>
@@ -73,7 +73,7 @@
 						<td style="width: 150px; text-align: center;">
 							${listing.entryType}
 						</td>							
-						<td style="width: 150px; text-align: center;">
+						<td style="width: 225px; text-align: center;">
 							${listing.lastUpdatedDts?date}
 						</td>
 						<td style="width: 150px; text-align: center;">
