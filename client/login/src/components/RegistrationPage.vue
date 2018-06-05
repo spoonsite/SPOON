@@ -1,9 +1,9 @@
 <template>
   <div class="wrapper">
       <h2>Registration - Fill out the form to signup for an account</h2>
-      <registration-credentials-comp/>
-      <registration-user-comp/>
-      <registration-email-verify-comp/>
+      <registration-credentials-comp v-model="credentials"/>
+      <!-- <registration-user-comp v-model="userInformation"/>
+      <registration-email-verify-comp v-model="verificationCode"/> -->
       <div class="button-wrapper">
         <div class="btn1">
           <v-btn block color="accent" @click="signup()"><v-icon light>check</v-icon> &nbsp; Signup</v-btn>
@@ -27,6 +27,23 @@ export default {
     RegistrationEmailVerifyComp,
     RegistrationCredentialsComp
   },
+  data: () => ({
+    credentials: {
+      username: '',
+      password1: '',
+      password2: ''
+    },
+    userInformation: {
+      firstName: '',
+      lastName: '',
+      organization: '',
+      positionTitle: '',
+      email: '',
+      phone: '',
+      userType: ''
+    },
+    verificationCode: ''
+  }),
   methods: {
     signup () {
       return 0;
@@ -40,7 +57,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .wrapper {
   max-width: 45em;
