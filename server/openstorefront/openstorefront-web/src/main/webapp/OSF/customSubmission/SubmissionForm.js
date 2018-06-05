@@ -230,10 +230,12 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 	getUserData: function() {
 		var submissionForm = this;
 		
-		
-		
-
-
+		if (!submissionForm.userSubmission) {
+			submissionForm.userSubmission = {
+				templateId : submissionForm.template.submissionTemplateId,
+				componentType : submissionForm.entryType.componentType
+			};
+		}
 		
 	}
 	

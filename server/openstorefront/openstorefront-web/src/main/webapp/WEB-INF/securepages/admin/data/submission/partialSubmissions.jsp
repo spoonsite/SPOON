@@ -17,7 +17,7 @@
  * See NOTICE.txt for more information.
  */
 
-    Document   : entryTemplate
+    Document   : partialSubmissions.jsp
     Created on : Mar 21, 2016, 2:43:11 PM
     Author     : dshurtleff
 --%>

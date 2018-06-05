@@ -120,7 +120,8 @@ Ext.define('OSF.customSubmission.Section', {
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
-							xtype: 'osf-submissionform-attribute'
+							xtype: 'osf-submissionform-attribute',
+							componentType: section.componentType
 						}						
 					}));
 				break;		

@@ -56,6 +56,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 					xtype: 'osf-submissionform-attribute',
 					itemId: 'form',
 					scrollable: true,
+					componentType: grid.componentType,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
