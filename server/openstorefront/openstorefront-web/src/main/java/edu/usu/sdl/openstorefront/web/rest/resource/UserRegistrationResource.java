@@ -188,7 +188,8 @@ public class UserRegistrationResource
 			UserRegistration savedRegistration = new UserRegistration();
 			savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
 			savedRegistration = savedRegistration.find();
-
+			savedRegistration.setVerificationCode("");
+			
 			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
