@@ -1957,6 +1957,7 @@ public class CoreComponentServiceImpl
 				FileHistoryOption fileHistoryOption = new FileHistoryOption();
 				fileHistoryOption.setSkipDuplicationCheck(true);
 				fileHistoryOption.setSkipRequiredAttributes(true);
+				fileHistoryOption.setUploadTags(true);
 
 				componentAll = saveFullComponent(componentAll, fileHistoryOption);
 
