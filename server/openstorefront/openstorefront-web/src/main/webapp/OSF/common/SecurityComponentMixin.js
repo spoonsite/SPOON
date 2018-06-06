@@ -53,7 +53,7 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 		permissionLogicalOperator: 'OR',
 		actionOnInvalidPermission: 'hide',
 		requiredPermissions: [],
-		permissionCheckSucces: function () {},
+		permissionCheckSuccess: function () {},
 		permissionCheckFailure: function () {},
 		permissionsActionMap: {
 			// @param method - method that will be executed
