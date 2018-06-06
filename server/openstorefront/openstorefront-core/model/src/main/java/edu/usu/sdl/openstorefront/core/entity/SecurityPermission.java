@@ -355,6 +355,10 @@ public class SecurityPermission
 	public static final String ADMIN_EVALUATION_PUBLISH_SUMMARY = "ADMIN-EVALUATION-PUBLISH-SUMMARY";
 	public static final String ADMIN_EVALUATION_DELETE_COMMENT = "ADMIN-EVALUATION-DELETE-COMMENT";
 
+	public static final String USER_EVALUATIONS_READ = "USER-EVALUATIONS-READ";
+	public static final String USER_EVALUATIONS_UPDATE = "USER-EVALUATIONS-UPDATE";
+	public static final String USER_EVALUATIONS_ASSIGN_USER = "USER-EVALUATIONS-ASSIGN-USER";
+
 	// Branding
 	public static final String GROUPBY_BRANDING = "Branding";
 	public static final String ADMIN_BRANDING_DELETE = "ADMIN-BRANDING-DELETE";
@@ -681,6 +685,10 @@ public class SecurityPermission
 		codeMap.put(ADMIN_EVALUATION_TOGGLE_PUBLISH, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TOGGLE_PUBLISH, "Allows the user to publish an evaluation", null, GROUPBY_EVALUATION));
 		codeMap.put(ADMIN_EVALUATION_PUBLISH_SUMMARY, newLookup(SecurityPermission.class, ADMIN_EVALUATION_PUBLISH_SUMMARY, "Allows the user to publish a summary", null, GROUPBY_EVALUATION));
 		codeMap.put(ADMIN_EVALUATION_DELETE_COMMENT, newLookup(SecurityPermission.class, ADMIN_EVALUATION_DELETE_COMMENT, "Allows the user to delete a comment on said evaluation", null, GROUPBY_EVALUATION));
+
+		codeMap.put(USER_EVALUATIONS_READ, newLookup(SecurityPermission.class, USER_EVALUATIONS_READ, "Allows an evaluator to 'view' an evaluation", null, GROUPBY_EVALUATION));
+		codeMap.put(USER_EVALUATIONS_UPDATE, newLookup(SecurityPermission.class, USER_EVALUATIONS_UPDATE, "Allows an evaluator  'edit' an evaluation", null, GROUPBY_EVALUATION));
+		codeMap.put(USER_EVALUATIONS_ASSIGN_USER, newLookup(SecurityPermission.class, USER_EVALUATIONS_ASSIGN_USER, "Allows an evaluator to assign a user to an evaluation (ONLY HIDES BUTTON)", null, GROUPBY_EVALUATION));
 
 		// Branding
 		codeMap.put(ADMIN_BRANDING_DELETE, newLookup(SecurityPermission.class, ADMIN_BRANDING_DELETE, "Gives ability to delete brandings", null, GROUPBY_BRANDING));
