@@ -2,7 +2,7 @@
   <div id="app">
     <v-app>
       <title-bar-comp :CTitle="title" :CSubtitle="subTitle"/>
-      <router-view style="height: 80%;"/>
+      <router-view style="height: 100%;" />
       <div id="particle-js"></div>
       <v-footer color="primary" dark height="auto">
         <v-card color="primary" flat dark class="footer-wrapper">
@@ -129,6 +129,7 @@ canvas {
 #particle-js {
   z-index: -1;
   position: absolute;
+  top: 0; /* IE11 */
   width: 100%;
   height: 100%;
   background-color: #fafafa;

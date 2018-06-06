@@ -1,7 +1,7 @@
 <template>
 <div>
-  <v-layout style="max-width: 35em; margin-right: auto; margin-left: auto;" >
-    <v-flex xs12>
+  <v-layout mt-3 mx-3>
+    <v-flex xs12 sm4 offset-sm4>
       <v-card class="elevation-5 mt-3 mx-3">
         <v-toolbar color="primary" dark dense>
           <v-toolbar-title>Forgot Username</v-toolbar-title>

@@ -1,5 +1,7 @@
 <template>
-  <div class="wrapper">
+  <v-layout mt-3 mx-3>
+    <v-flex xs12 sm4 offset-sm4>
+
       <h2>Registration - Fill out the form to signup for an account</h2>
 
       <v-layout row wrap>
@@ -171,7 +173,8 @@
       </v-card>
     </v-dialog>
 
-  </div>
+  </v-flex>
+</v-layout>
 </template>
 
 <script>
@@ -321,12 +324,6 @@ export default {
 </script>
 
 <style scoped>
-.wrapper {
-  max-width: 45em;
-  padding: 1em;
-  margin-right: auto;
-  margin-left: auto;
-}
 .button-wrapper {
   width: 100%;
 }

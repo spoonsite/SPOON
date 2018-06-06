@@ -1,20 +1,18 @@
 <template>
-<div class="wrapper">
-  <h2 class="text-xs-center">Frequently Asked Questions</h2>
+<v-layout mt-3 mx-3>
+  <v-flex xs12 sm4 offset-sm4>
+    <h2 class="text-xs-center">Frequently Asked Questions</h2>
 
-<v-layout mt-3>
-    <v-flex xs12>
-      <v-expansion-panel popout>
-        <v-expansion-panel-content v-for="entry in questions" :key="entry.faqSortOrder" ripple>
-        <div slot="header" class="title">{{entry.question}}</div>
-        <v-card>
-          <v-card-text class="grey lighten-3" v-html="entry.answer"></v-card-text>
-        </v-card>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-flex>
-  </v-layout>
-</div>
+    <v-expansion-panel popout>
+      <v-expansion-panel-content v-for="entry in questions" :key="entry.faqSortOrder" ripple>
+      <div slot="header" class="title">{{entry.question}}</div>
+      <v-card>
+        <v-card-text class="grey lighten-3" v-html="entry.answer"></v-card-text>
+      </v-card>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </v-flex>
+</v-layout>
 </template>
 
 <script>
@@ -29,8 +27,6 @@ export default {
   methods: {
     getQuestions: function () {
       let that = this;
-
-      // that.questions = this.$api.getFAQquestions()
 
       axios
         .get('/openstorefront/api/v1/resource/faq')
@@ -48,10 +44,4 @@ export default {
 </script>
 
 <style>
-.wrapper {
-  max-width: 45em;
-  padding: 1em;
-  margin-right: auto;
-  margin-left: auto;
-}
 </style>

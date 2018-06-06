@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-layout mt-3>
-      <v-flex xs12 sm6 offset-sm3>
+    <v-layout mt-3 mx-3>
+      <v-flex xs12 sm4 offset-sm4>
         <v-card class="elevation-5">
           <v-toolbar color="primary" dark dense>
             <v-toolbar-title>Contact Us</v-toolbar-title>
@@ -16,7 +16,6 @@
                 v-model="contactType"
                 required
               ></v-select>
-
 
               <v-text-field
                 v-model="subject"
@@ -35,11 +34,9 @@
                 required
               ></v-text-field>
 
-            </v-card-text>
-            <v-card-text class="grey lighten-2">
-                <v-card-title>
-                  <span class="subheading">Contact Information</span>
-                </v-card-title>
+              <v-card-title>
+                <h2>Contact Information</h2>
+              </v-card-title>
 
               <v-text-field
                 v-model="name"
@@ -89,7 +86,6 @@
                     <v-btn
                       block
                       color="accent"
-                      style="margin-bottom:2em;"
                       @click="cancel"
                       >Cancel</v-btn>
                   </v-flex>
@@ -107,10 +103,6 @@
 
 export default {
   name: 'ContactUsPage',
-  components: {
-  },
-  computed: {
-  },
   data: () => ({
     valid: true,
     contactType: null,
@@ -152,40 +144,29 @@ export default {
     organization: '',
     organizationRules: [
       v => (v.length <= 120) || 'Maximum length for this field is 120'
-    ],
-
+    ]
   }),
   methods: {
-    submit() {
+    submit () {
       if (this.$refs.form.validate()) {
-          // Native form submission is not yet supported
-          axios.post('/api/submit', {
-            contactType: this.contactType,
-            subject: this.subject,
-            description: this.description,
-            name: this.name,
-            email: this.email,
-            phone: this.phone,
-            organization: this.organization
-          })
-        }
+        // Native form submission is not yet supported
+        this.$http.post('/api/submit', {
+          contactType: this.contactType,
+          subject: this.subject,
+          description: this.description,
+          name: this.name,
+          email: this.email,
+          phone: this.phone,
+          organization: this.organization
+        });
+      }
     },
     cancel () {
       this.$refs.form.reset();
     }
   }
-}
+};
 </script>
 
 <style scoped>
-.login-comp {
-  width: 50%;
-  height: 100%;
-  margin: 2em;
-}
-.signup-comp {
-  width: 50%;
-  height: 100%;
-  margin: 2em;
-}
 </style>
