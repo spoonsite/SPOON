@@ -204,7 +204,7 @@
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 								tooltip: 'Run all jobs with an active component configuration.',
-								requiredPermissions: ['ADMIN-INTEGRATION-RUNALLs'],
+								requiredPermissions: ['ADMIN-INTEGRATION-RUNALL'],
 								handler: function () {
 									actionRunAllJobs();
 								}

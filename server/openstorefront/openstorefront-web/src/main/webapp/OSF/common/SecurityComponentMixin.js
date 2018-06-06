@@ -53,7 +53,8 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 		permissionLogicalOperator: 'OR',
 		actionOnInvalidPermission: 'hide',
 		requiredPermissions: [],
-		afterPermissionCheck: function () {},
+		permissionCheckSucces: function () {},
+		permissionCheckFailure: function () {},
 		permissionsActionMap: {
 			// @param method - method that will be executed
 			// @invalidValue - value to be passed to the <method> for invalid permissions
@@ -141,13 +142,13 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 
 			if (!hasPermission) {
 				uiComponent[actionMapObj.method](actionMapObj.invalidValue !== null ? actionMapObj.invalidValue : undefined);
+				uiComponent.permissionCheckFailure();
 			}
 			// Don't run unless user has valid permissions, and the actionMapObj has a method that doesn't destroy the component.
 			else if (hasPermission && actionMapObj.canCallByDefault) {
 				uiComponent[actionMapObj.method](actionMapObj.validValue !== null ? actionMapObj.validValue : undefined);
+				uiComponent.permissionCheckSucces();
 			}
-
-			uiComponent.afterPermissionCheck();
 		}
 	});
 });
