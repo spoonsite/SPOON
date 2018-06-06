@@ -374,6 +374,7 @@
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['ADMIN-FAQ-DELETE'],
 									handler: function () {
 										actionDelete(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);
 									}
