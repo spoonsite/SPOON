@@ -52,6 +52,7 @@ Ext.define('OSF.customSubmission.field.ChildSubmissions', {
 					xtype: 'osf-customSubmission-SubmissionformFullControl',
 					itemId: 'form',
 					scrollable: true,
+					fieldTemplate: grid.fieldTemplate,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -65,7 +66,9 @@ Ext.define('OSF.customSubmission.field.ChildSubmissions', {
 										var form = this.up('form');
 										var data = form.getValues();
 										
-										//get the name
+										data.componentType = grid.fieldTemplate.childEntryType;
+										
+										//get the name (un-name if not)
 										
 										grid.getStore().add(data);
 										this.up('window').close();
@@ -98,6 +101,20 @@ Ext.define('OSF.customSubmission.field.ChildSubmissions', {
 			addEditWin.queryById('form').loadRecord(record);
 		}		
 		
+	},
+	getUserData: function() {
+		var grid = this;
+		
+		var data = [];
+		grid.getStore().each(function(record){
+			data.push(record.getData());
+		});
+		
+		var userSubmissionField = {			
+			templateFieldId: grid.fieldTemplate.fieldId,
+			rawValue: Ext.encode(data)
+		};		
+		return userSubmissionField;			
 	}
 	
 	

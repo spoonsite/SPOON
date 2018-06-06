@@ -237,6 +237,17 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 			};
 		}
 		
+		var userSubmissionFields = [];
+		
+		//go through section
+		Ext.Array.each(submissionForm.template.sections, function(section){
+			 userSubmissionFields = userSubmissionFields.join(section.component.getUserValues());			
+		});		
+		
+		//get field values
+		submissionForm.userSubmission.fields = userSubmissionFields;
+		
+		return submissionForm.userSubmission;
 	}
 	
 });

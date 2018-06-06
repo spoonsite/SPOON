@@ -104,6 +104,20 @@ Ext.define('OSF.customSubmission.field.DependenciesGrid', {
 	showOnEntryType: function() {
 		var grid = this;		
 		return grid.componentType.dataEntryDependencies || false;		
-	}	
+	},	
+	getUserData: function() {
+		var grid = this;
+		
+		var data = [];
+		grid.getStore().each(function(record){
+			data.push(record.getData());
+		});
+		
+		var userSubmissionField = {			
+			templateFieldId: grid.fieldTemplate.fieldId,
+			rawValue: Ext.encode(data)
+		};		
+		return userSubmissionField;			
+	}		
 	
 });

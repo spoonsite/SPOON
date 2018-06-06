@@ -27,6 +27,7 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 	maxWidth: 800,
 	
 	fieldType: 'RESOURCE_SIMPLE',
+	uploadedFile: false,
 	
 	initComponent: function () {
 		this.callParent();
@@ -115,6 +116,7 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 									handler: function () {
 										
+										//on success field.uploadedFile = true
 									}
 								},
 								{
@@ -152,7 +154,29 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 		} else {
 			return true;
 		}
-	}
+	},
+	getUserData: function() {
+		var field = this;
+		
+		if (field.uploadedFile){
+			
+			//get the file upload info (mediaFile)
+			
+			var resource = {
+				resourceType: field.fieldTemplate.resourceType				
+			};
+			
+			
+			var userSubmissionField = {			
+				templateFieldId: field.fieldTemplate.fieldId,
+				rawValue: Ext.encode(resource)
+			};	
+			return userSubmissionField;		
+		} else {
+			return null;		
+		}
+		
+	}	
 	
 });
 

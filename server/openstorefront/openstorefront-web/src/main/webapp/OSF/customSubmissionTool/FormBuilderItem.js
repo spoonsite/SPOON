@@ -424,7 +424,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			hidden: true,
 			optionField: true,
 			name: 'allowPrivateResource',
-			boxLabel: '<b>Alliow Private Resource</b>',
+			boxLabel: '<b>Allow Private Resource</b>',
 			margin: '0 0 0 155',
 			listeners: {
 				change: function (self, newVal) {

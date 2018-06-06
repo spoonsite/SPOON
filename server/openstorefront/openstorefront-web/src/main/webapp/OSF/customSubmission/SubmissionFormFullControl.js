@@ -134,7 +134,8 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					iconCls: 'fa fa-2x fa-save icon-vertical-correction icon-button-color-save',
 					scale: 'medium',			
 					handler: function() {
-						
+						var submissionFormFullControl = this.up('panel');
+						submissionFormFullControl.saveSubmission();					
 					}
 				},
 				{
@@ -144,7 +145,8 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					scale: 'medium',
 					hidden: true,
 					handler: function() {
-						
+						var submissionFormFullControl = this.up('panel');
+						submissionFormFullControl.submitSumissionForApproval();						
 					}
 				},				
 				{
@@ -316,10 +318,17 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 	},
 	
 	saveSubmission: function() {
+		var submissionFormFullControl = this;
+		
+		var form = submissionFormFullControl.queryById('submissionForm');
+						
+		console.log(form.getUserData());			
 		
 	},
 	
 	submitSumissionForApproval: function() {
+		var submissionFormFullControl = this;
+		var form = submissionFormFullControl.queryById('submissionForm');
 		
 	}	
 	

@@ -72,8 +72,8 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
-										
-										//get label
+
+										data.resourceTypeLabel = form.queryById('resourceType').getSelection()[0].get('description');
 										
 										grid.getStore().add(data);
 										this.up('window').close();
@@ -107,6 +107,20 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 	showOnEntryType: function() {
 		var grid = this;		
 		return grid.componentType.dataEntryResources || false;		
-	}	
+	},	
+	getUserData: function() {
+		var grid = this;
+		
+		var data = [];
+		grid.getStore().each(function(record){
+			data.push(record.getData());
+		});
+		
+		var userSubmissionField = {			
+			templateFieldId: grid.fieldTemplate.fieldId,
+			rawValue: Ext.encode(data)
+		};		
+		return userSubmissionField;			
+	}		
 	
 });

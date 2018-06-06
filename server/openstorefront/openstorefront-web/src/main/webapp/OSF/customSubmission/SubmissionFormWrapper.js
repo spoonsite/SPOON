@@ -87,12 +87,11 @@ Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
 		submissionField.fieldTemplate = editData;
 		submissionField.display();
 	},
-	
-	/**
-	 * Override to match what server expects
-	 */	
+
 	getUserData: function() {
-		return {};
+		var submissionField = this;
+		var formComponent = submissionField.queryById('component');		
+		return formComponent.getSubmissionValue();
 	}	
 	
 });

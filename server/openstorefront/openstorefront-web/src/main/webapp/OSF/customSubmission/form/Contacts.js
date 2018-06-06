@@ -202,6 +202,24 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 			});
 		}
 	
-	}
+	},
+	
+	getSubmissionValue: function() {
+		var contactPanel = this;
+		
+		var data = contactPanel.getValues();
+		
+		if (contactPanel.fieldTemplate.contactType) {
+			data.contactType = contactPanel.fieldTemplate.contactType;
+		}
+		
+		var userSubmissionField = {			
+			templateFieldId: contactPanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;		
+	}	
 	
 });

@@ -286,7 +286,12 @@ Ext.define('OSF.customSubmission.Section', {
 		var section = this;
 				
 		Ext.Array.forEach(section.items.items, function (field) {
-			data.push(field.getUserData());
+			if (!field.skipOnData && field.getUserData) {
+				var userData = field.getUserData();
+				if (userData) {
+					data.push(field.getUserData());
+				}
+			}
 		});
 		return data;
 	},

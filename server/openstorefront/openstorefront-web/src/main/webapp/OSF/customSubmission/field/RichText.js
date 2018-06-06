@@ -75,8 +75,15 @@ Ext.define('OSF.customSubmission.field.RichText', {
 	isValid : function() {
 		var textField = this;
 		return textField.textArea.isValid();
+	},
+	getUserData: function() {
+		var textField = this;
+		
+		var userSubmissionField = {			
+			templateFieldId: textField.fieldTemplate.fieldId,
+			rawValue: textField.textArea.getValue()
+		};		
+		return userSubmissionField;			
 	}
-	
-	
-	
+		
 });

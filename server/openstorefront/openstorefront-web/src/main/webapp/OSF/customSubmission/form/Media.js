@@ -42,8 +42,8 @@ Ext.define('OSF.customSubmission.form.Media', {
 		mediaPanel.add([
 			{
 				xtype: 'StandardComboBox',
-				name: 'mediaTypeCode',
-				colName: 'mediaType',
+				itemId: 'mediaTypeCode',
+				name: 'mediaTypeCode',				
 				allowBlank: false,
 				margin: '0 0 15 0',
 				editable: false,
@@ -132,5 +132,21 @@ Ext.define('OSF.customSubmission.form.Media', {
 				xtype: 'DataSensitivityComboBox'
 			}
 		]);
-	}
+	},
+	getSubmissionValue: function() {		
+		var mediaPanel = this;
+		
+		//Add handling of the local resources
+		
+		var data = mediaPanel.getValues();
+		
+		var userSubmissionField = {			
+			templateFieldId: mediaPanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;	
+	}	
+	
 });

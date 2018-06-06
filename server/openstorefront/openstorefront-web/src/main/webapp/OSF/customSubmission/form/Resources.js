@@ -42,6 +42,7 @@ Ext.define('OSF.customSubmission.form.Resources', {
 		resourcePanel.add([
 			{
 				xtype: 'StandardComboBox',
+				itemId: 'resourceType',
 				name: 'resourceType',
 				allowBlank: false,
 				margin: '0 0 15 0',
@@ -115,5 +116,21 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				xtype: 'DataSensitivityComboBox'
 			}
 		]);
+	},
+	getSubmissionValue: function() {
+		var resourcePanel = this;
+		
+		//Add handling of the local resources
+		
+		var data = resourcePanel.getValues();
+		
+		var userSubmissionField = {			
+			templateFieldId: resourcePanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;		
 	}
+
 });

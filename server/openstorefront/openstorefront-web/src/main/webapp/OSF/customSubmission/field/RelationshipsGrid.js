@@ -32,8 +32,7 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 	
 	columns: [
 		{ text: 'Relation Type', dataIndex: 'relationType', width: 250 },
-		{ text: 'Entry Name', dataIndex: 'targetName', flex: 1, minWidth: 200 },
-		{ text: 'Entry Type', dataIndex: 'targetEntryType', width: 250 }
+		{ text: 'Entry Name', dataIndex: 'targetName', flex: 1, minWidth: 200 }
 	],
 	
 	actionAddEdit: function(record) {
@@ -64,10 +63,8 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 										var form = this.up('form');
 										var data = form.getValues();
 										
-										//get Target Name
-										
-										//get target Entry Type
-										
+										data.relationType = form.queryById('relationshipType').getSelection()[0].get('description');										
+										data.targetName = form.queryById('relationshipTargetCB').getSelection()[0].get('description');
 										
 										grid.getStore().add(data);
 										this.up('window').close();
@@ -101,6 +98,20 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 	showOnEntryType: function() {
 		var grid = this;		
 		return grid.componentType.dataEntryRelationships || false;		
+	},
+	getUserData: function() {
+		var grid = this;
+		
+		var data = [];
+		grid.getStore().each(function(record){
+			data.push(record.getData());
+		});
+		
+		var userSubmissionField = {			
+			templateFieldId: grid.fieldTemplate.fieldId,
+			rawValue: Ext.encode(data)
+		};		
+		return userSubmissionField;			
 	}	
 	
 });

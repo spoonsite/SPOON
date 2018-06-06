@@ -39,6 +39,7 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 		relationshipPanel.add([
 			{
 				xtype: 'StandardComboBox',
+				itemId: 'relationshipType',
 				name: 'relationshipType',
 				allowBlank: false,
 				editable: false,
@@ -51,8 +52,7 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 			},
 			{
 				xtype: 'StandardComboBox',
-				name: 'componentType',
-				colName: 'Entry Type',
+				name: 'componentType',	
 				allowBlank: true,
 				editable: false,
 				typeAhead: false,
@@ -97,5 +97,19 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 				}
 			}							
 		]);		
+	},
+	getSubmissionValue: function() {
+		var relationshipPanel = this;
+		
+		var data = relationshipPanel.getValues();
+		delete data.componentType;		
+		
+		var userSubmissionField = {			
+			templateFieldId: relationshipPanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;			
 	}
 });

@@ -53,5 +53,18 @@ Ext.define('OSF.customSubmission.form.Tags', {
 			}
 		});
 
+	},
+	getSubmissionValue: function() {
+		var tagPanel = this;
+		
+		var data = tagPanel.getValues();
+		
+		var userSubmissionField = {			
+			templateFieldId: tagPanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;		
 	}
 });

@@ -68,6 +68,15 @@ Ext.define('OSF.customSubmission.field.Organization', {
 		var field = this;
 		var value = field.getValue();
 		return (value && value !== '') ? value : '(No Data Entered)';	
+	},	
+	getUserData: function() {
+		var field = this;
+		
+		var userSubmissionField = {			
+			templateFieldId: field.fieldTemplate.fieldId,
+			rawValue: field.getValue()
+		};		
+		return userSubmissionField;			
 	}	
 	
 });

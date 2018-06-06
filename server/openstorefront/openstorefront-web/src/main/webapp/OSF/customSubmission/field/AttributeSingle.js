@@ -283,6 +283,49 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		}
 		
 		return template.apply(data);
+	},
+	getUserData: function() {
+		var panel = this;
+		
+		var values = panel.getValues();
+		
+		var data = [];
+		
+		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE' || panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
+			if (panel.selectedValue) {
+				
+				data.push({
+					componentAttributePk: {
+						attributeType: panel.fieldTemplate.attributeType,
+						attributeCode: panel.selectedValue.attributeCode
+					},
+					comment: values.comment,
+					privateFlag: values.private					
+				});
+			
+			}
+		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_MCHECKBOX') {			
+			
+			//place comment on all attrbitues?
+			Ext.Object.each(panel.selectedValue, function(key, value, myself) {
+				
+				data.push({
+					componentAttributePk: {
+						attributeType: panel.fieldTemplate.attributeType,
+						attributeCode: value
+					},
+					comment: values.comment,
+					privateFlag: values.private					
+				});				
+				
+			});			
+		}		
+		
+		var userSubmissionField = {			
+			templateFieldId: panel.fieldTemplate.fieldId,
+			rawValue: Ext.encode(data)
+		};		
+		return userSubmissionField;			
 	}
 	
 

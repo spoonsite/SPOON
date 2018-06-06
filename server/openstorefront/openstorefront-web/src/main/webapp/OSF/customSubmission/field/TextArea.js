@@ -55,6 +55,15 @@ Ext.define('OSF.customSubmission.field.TextArea', {
 		var textField = this;
 		var value = textField.getValue();
 		return (value && value !== '') ? value : '(No Data Entered)';	
-	}	
+	},
+	getUserData: function() {
+		var textField = this;
+		
+		var userSubmissionField = {			
+			templateFieldId: textField.fieldTemplate.fieldId,
+			rawValue: textField.getValue()
+		};		
+		return userSubmissionField;			
+	}
 	
 });

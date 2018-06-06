@@ -44,6 +44,14 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 		var grid = this;
 		grid.callParent();	
 		
+		if (grid.fieldTemplate.contactType) {
+			Ext.Array.each(grid.getColumns(), function(column) {
+				if (column.dataIndex === 'contactTypeLabel') {
+					column.setHidden(true);
+				}
+			});
+		}
+		
 	},	
 	
 	actionAddEdit: function(record) {
@@ -74,6 +82,11 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
+										
+										var contactTypeField = form.queryById('contactType');
+										if (contactTypeField) {
+											data.contactTypeLabel = contactTypeField.getSelection()[0].get('description');
+										}
 										
 										grid.getStore().add(data);
 										this.up('window').close();
@@ -107,7 +120,21 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 	showOnEntryType: function() {
 		var grid = this;		
 		return grid.componentType.dataEntryContacts || false;		
-	}
+	},
+	getUserData: function() {
+		var grid = this;
+		
+		var data = [];
+		grid.getStore().each(function(record){
+			data.push(record.getData());
+		});
+		
+		var userSubmissionField = {			
+			templateFieldId: grid.fieldTemplate.fieldId,
+			rawValue: Ext.encode(data)
+		};		
+		return userSubmissionField;			
+	}	
 	
 	
 });

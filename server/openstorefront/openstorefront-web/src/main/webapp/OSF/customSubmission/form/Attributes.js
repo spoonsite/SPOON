@@ -316,8 +316,13 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 		
 		var data = attributePanel.getValues();
 		
-				
-		
+		var userSubmissionField = {			
+			templateFieldId: attributePanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;
 	},
 	
 	reviewDisplayValue: function() {

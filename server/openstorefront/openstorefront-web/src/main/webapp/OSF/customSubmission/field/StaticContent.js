@@ -25,6 +25,7 @@ Ext.define('OSF.customSubmission.field.StaticContent', {
 	width: '100%',
 	tpl: '{content}',
 	skipOnReview: true,
+	skipOnData: true,
 	
 	initComponent: function () {
 		var panel = this;

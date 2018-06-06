@@ -94,6 +94,25 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 		});
 		
 		return template.apply(data);
-	}	
+	},
+	getSubmissionValue: function() {
+		var attributePanel = this;
+
+		var data = [];
+		Ext.Array.each(attributePanel.items.items, function(field) {
+			data.push({
+				componentAttributePk: {
+					attributeType: field.attributeTypeView.attributeType,
+					attributeCode: field.getValue()
+				}
+			});
+		});
+		
+		var userSubmissionField = {			
+			templateFieldId: attributePanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode(data)
+		};		
+		return userSubmissionField;			
+	}
 	
 });
