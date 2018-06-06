@@ -114,7 +114,8 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-CREATE']
 								},
 								{
 									text: 'Add',
@@ -122,6 +123,7 @@
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction-add',
 									width: '100px',
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-CREATE'],
 									handler: function() {
 										actionAddEditRole();
 									}
@@ -133,22 +135,24 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-UPDATE'],
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
 										actionAddEditRole(record);
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-UPDATE']
 								},
 								{
 									text: 'Manage Users',
 									itemId: 'users',
 									disabled: true,
-									hidden: true,
 									width: '170px',
 									iconCls: 'fa fa-2x fa-users icon-button-color-default icon-correction-users',
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-UPDATE'],
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
 										actionManageUsers(record);
@@ -161,6 +165,7 @@
 									iconCls: 'fa fa-2x fa-key icon-correction-key icon-button-color-key',
 									scale: 'medium',
 									width: '200px',
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-UPDATE'],
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
 										actionManagePermissions(record);
@@ -173,6 +178,7 @@
 									iconCls: 'fa fa-2x fa-legal icon-correction-gavel icon-button-color-default',
 									width: '240px',
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-UPDATE'],
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
 										actionManageData(record);										
@@ -188,6 +194,7 @@
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									width: '100px',
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-DELETE'],
 									handler: function() {
 										var record = roleGrid.getSelectionModel().getSelection()[0];
 										actionManageDelete(record);										
@@ -1080,11 +1087,11 @@
 				};
 				
 				
-				CoreService.userservice.getCurrentUser().then(function(user){
-					if (CoreService.userservice.userHasPermisson(user, "ADMIN-USER-MANAGEMENT")) {
-						roleGrid.getComponent('tools').getComponent('users').setHidden(false);					
-					}									
-				});					
+				// CoreService.userservice.getCurrentUser().then(function(user){
+				// 	if (CoreService.userservice.userHasPermisson(user, "ADMIN-USER-MANAGEMENT")) {
+				// 		roleGrid.getComponent('tools').getComponent('users').setHidden(false);					
+				// 	}									
+				// });					
 				
 			});
 			

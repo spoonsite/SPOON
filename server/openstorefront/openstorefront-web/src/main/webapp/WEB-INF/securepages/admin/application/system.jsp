@@ -371,6 +371,8 @@
 					id: 'statusPanel',
 					tabPosition: 'left',
 					tabRotation: 0,
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-STATUS'],
+					actionOnInvalidPermission: 'destroy',
 					tabBar: {
 						border: false
 					},
@@ -405,6 +407,8 @@
 					store: errorTicketsStore,
 					plugins: 'gridfilters',
 					bufferedRenderer: false,
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-ERROR-TICKET'],
+					actionOnInvalidPermission: 'destroy',
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -616,6 +620,8 @@
 					title: 'Application State Properties',
 					id: 'appStatePropGrid',
 					store: appStatePropStore,
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-APP-PROP'],
+					actionOnInvalidPermission: 'destroy',
 					columnLines: true,
 					columns: [
 						{text: 'Key', dataIndex: 'key', flex: 3},
@@ -799,6 +805,8 @@
 					title: 'System Configuration Properties',
 					id: 'sysConfigPropGrid',
 					store: sysConfigPropStore,
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-READ'],
+					actionOnInvalidPermission: 'destroy',
 					columnLines: true,
 					dockedItems: [
 						{
@@ -815,13 +823,15 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-UPDATE']
 								},
 								{
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-UPDATE'],
 									handler: function() {
 										addSysConfigProp();
 									}
@@ -833,6 +843,7 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-UPDATE'],
 									handler: function() {
 										var record = Ext.getCmp('sysConfigPropGrid').getSelection()[0];
 										editSysConfigProp(record);
@@ -847,6 +858,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-DELETE'],
 									handler: function() {
 										var record = Ext.getCmp('sysConfigPropGrid').getSelection()[0];
 										deleteSysConfigProp(record);
@@ -1200,15 +1212,19 @@
 						status = find.data.description;
 					}
 
-					if (status === 'true') {
+					if (status === 'true' && label !== 'undefined') {
+						if(label !== undefined){
 						label.setText('On');
 						label.setStyle({color: 'green'});
 						button.setText('Disable');
+						}
 					}
 					else {
+						if(label !== undefined){
 						label.setText('Off');
 						label.setStyle({color: 'red'});
 						button.setText('Enable');
+						}
 					}
 
 				};
@@ -1449,11 +1465,14 @@
 					title: 'Logs and Logging',
 					id: 'logPanel',
 					tabPosition: 'left',
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-LOGGING'],
+					actionOnInvalidPermission: 'destroy',
 					tabRotation: 0,
 					tabBar: {
 						border: false
 					},
 					items: [loggerGrid, logGrid]
+
 				});
 
 				var pluginStore = Ext.create('Ext.data.Store', {
@@ -1469,6 +1488,8 @@
 					id: 'pluginGrid',
 					title: 'Plugins',
 					store: pluginStore,
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-PLUGIN'],
+					actionOnInvalidPermission: 'destroy',
 					columnLines: true,
 					columns: [
 						{text: 'ID', dataIndex: 'pluginId', flex: 1, cellWrap: true, hidden: true},
@@ -1758,6 +1779,8 @@
 				var managersGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Managers',
 					columnLines: true,
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-MANAGERS'],
+					actionOnInvalidPermission: 'destroy',
 					store: {
 						autoLoad: true,
 						proxy: {
@@ -1939,6 +1962,8 @@
 				
 				var cacheGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Cache',
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-CACHE'],
+					actionOnInvalidPermission: 'destroy',
 					columnLines: true,
 					store: {	
 						autoLoad: true,
@@ -2021,6 +2046,8 @@
 					title: 'Search Control',
 					id: 'searchControlPanel',
 					style: 'padding: 10px',
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-SEARCH-CONTROL'],
+					actionOnInvalidPermission: 'destroy',
 					items: [
 						{
 							text: 'Re-Index Listings',
@@ -2047,6 +2074,8 @@
 				var recentChangesPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Recent Changes E-mail',
 					id: 'recentChangesPanel',
+					requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-RECENT-CHANGES'],
+					actionOnInvalidPermission: 'destroy',
 					items: [
 						{
 							xtype: 'form',
@@ -2153,10 +2182,20 @@
 						cacheGrid,
 						searchControlPanel,
 						recentChangesPanel
-					]
+					],
+					listeners:{
+						remove: function(){
+							if(this.items.length===0){
+								Ext.toast({html: 'You do not have access permissions to see any data on this view.', title:'No Access', align:'b'}); 
+								
+							}
+						}	
+					}
 				});
 
 				addComponentToMainViewPort(systemMainPanel);
+
+
 
 				var actionLoadSystemData = function (update) {
 

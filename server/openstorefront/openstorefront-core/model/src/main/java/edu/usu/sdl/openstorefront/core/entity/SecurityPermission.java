@@ -171,19 +171,21 @@ public class SecurityPermission
 	// System Management
 	public static final String GROUPBY_SYSTEM_MANAGEMENT = "System";
 	public static final String ADMIN_SYSTEM_MANAGEMENT = "ADMIN-SYSTEM-MANAGEMENT";
-	public static final String ADMIN_SYSTEM_MANAGEMENT_UPDATE_APPPROP = "ADMIN-SYSTEM-MANAGEMENT-UPDATE-APPPROP";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_APP_PROP = "ADMIN-SYSTEM-MANAGEMENT-APP-PROP";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_PLUGIN = "ADMIN-SYSTEM-MANAGEMENT-PLUGIN";
-	public static final String ADMIN_SYSTEM_MANAGEMENT_ARCHIVE = "ADMIN-SYSTEM-MANAGEMENT-ARCHIVE";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_READ = "ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-READ";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_CREATE = "ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-CREATE";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_DELETE = "ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-DELETE";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET = "ADMIN-SYSTEM-MANAGEMENT-ERROR-TICKET";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_SEARCH_CONTROL = "ADMIN-SYSTEM-MANAGEMENT-SEARCH-CONTROL";
-	public static final String ADMIN_SYSTEM_MANAGEMENT_APP_READ = "ADMIN-SYSTEM-MANAGEMENT-APP-READ";
-	public static final String ADMIN_SYSTEM_MANAGEMENT_APP_DELETE = "ADMIN-SYSTEM-MANAGEMENT-APP-DELETE";
-	public static final String ADMIN_SYSTEM_MANAGEMENT_APP_UPDATE = "ADMIN-SYSTEM-MANAGEMENT-APP-UPDATE";
-	public static final String ADMIN_SYSTEM_MANAGEMENT_LOGGING_PERMISSIONS = "ADMIN-SYSTEM-MANAGEMENT-LOGGING-PERMISSIONS";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_READ = "ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-READ";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_UPDATE = "ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-UPDATE";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_DELETE = "ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-DELETE";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_LOGGING = "ADMIN-SYSTEM-MANAGEMENT-LOGGING";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_MANAGERS = "ADMIN-SYSTEM-MANAGEMENT-MANAGERS";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_CACHE = "ADMIN-SYSTEM-MANAGEMENT-CACHE";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_RECENT_CHANGES = "ADMIN-SYSTEM-MANAGEMENT-RECENT-CHANGES";
-	public static final String ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP = "ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_STATUS = "ADMIN-SYSTEM-MANAGEMENT-STATUS";
 
 	// Entry Management
 	public static final String GROUPBY_ENTRY_MANAGEMENT = "Entries";
@@ -518,19 +520,21 @@ public class SecurityPermission
 
 		// System Management
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT, "General sys admin permission", null, GROUPBY_SYSTEM_MANAGEMENT));
-		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_UPDATE_APPPROP, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_UPDATE_APPPROP, "Allows for updating app properties", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_APP_PROP, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_APP_PROP, "Allows for updating app properties", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_PLUGIN, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_PLUGIN, "Allows for management of plugins", null, GROUPBY_SYSTEM_MANAGEMENT));
-		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_ARCHIVE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_ARCHIVE, "Allows for sys archive management", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_READ, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_READ, "Allows for sys archive management", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_CREATE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_CREATE, "Allows for sys archive creation", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_DELETE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_DELETE, "Allows for sys archive deletion", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET, "Allows for sys error ticket management", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_SEARCH_CONTROL, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_SEARCH_CONTROL, "Allows for sys search management", null, GROUPBY_SYSTEM_MANAGEMENT));
-		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_APP_READ, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_APP_READ, "Allows for reading application meta data", null, GROUPBY_SYSTEM_MANAGEMENT));
-		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_APP_DELETE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_APP_DELETE, "Allows for removal/clearing operations for the sys", null, GROUPBY_SYSTEM_MANAGEMENT));
-		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_APP_UPDATE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_APP_UPDATE, "Allows for updating system configs", null, GROUPBY_SYSTEM_MANAGEMENT));
-		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_LOGGING_PERMISSIONS, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_LOGGING_PERMISSIONS, "Access to permission logging", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_READ, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_READ, "Allows for reading application meta data", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_DELETE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_DELETE, "Allows for removal/clearing operations for the sys", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_UPDATE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_UPDATE, "Allows for updating system configs", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_LOGGING, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_LOGGING, "Access to permission logging", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_MANAGERS, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_MANAGERS, "System managers", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_CACHE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_CACHE, "Access to system cache", null, GROUPBY_SYSTEM_MANAGEMENT));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_RECENT_CHANGES, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_RECENT_CHANGES, "System recent changes", null, GROUPBY_SYSTEM_MANAGEMENT));
-		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP, "Access to config properties", null, GROUPBY_SYSTEM_MANAGEMENT));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_STATUS, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_STATUS, "Access to system status", null, GROUPBY_SYSTEM_MANAGEMENT));
 
 		// Entry Management
 		codeMap.put(ADMIN_ENTRY_CREATE, newLookup(SecurityPermission.class, ADMIN_ENTRY_CREATE, "Allows admin to create entries", null, GROUPBY_ENTRY_MANAGEMENT));
