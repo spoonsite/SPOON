@@ -49,14 +49,13 @@ export default {
       // this.$router.push(`/search?q=${this.value}`)
     },
     getSearchSuggestions () {
-      let that = this;
       if (!this.hideSuggestions) {
         axios
           .get(
-            `/openstorefront/api/v1/service/search/suggestions?query=${that.value}&componentType=`
+            `/openstorefront/api/v1/service/search/suggestions?query=${this.value}&componentType=`
           )
           .then(response => {
-            that.searchSuggestions = response.data;
+            this.searchSuggestions = response.data;
           })
           .catch(e => this.errors.push(e));
       }

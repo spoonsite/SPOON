@@ -62,13 +62,12 @@ export default {
       this.$router.push(`/search?q=${this.searchQuery}`);
     },
     getNestedComponentTypes () {
-      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/componenttypes/nested'
         )
         .then(response => {
-          that.nestedComponentTypesList = response.data;
+          this.nestedComponentTypesList = response.data;
         })
         .catch(e => this.errors.push(e));
     }

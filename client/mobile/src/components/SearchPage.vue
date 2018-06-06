@@ -47,10 +47,10 @@
           {{ searchPageSize }}
           <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
         </v-card-text>
-        <v-card-action>
+        <v-card-actions>
           <v-btn @click.stop="showOptions = false">Submit</v-btn>
           <v-btn @click="resetOptions()">Reset Options</v-btn>
-        </v-card-action>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -105,10 +105,10 @@
             clearable
           ></v-select>
         </v-card-text>
-        <v-card-action>
+        <v-card-actions>
           <v-btn @click.stop="showFilters = false">Submit</v-btn>
           <v-btn @click="clear()">Clear Filters</v-btn>
-        </v-card-action>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div> <!-- Search Bar and menu  -->
@@ -128,9 +128,9 @@
           <v-chip close small>Tag</v-chip>
           <v-chip close small color="indigo lighten-2" text-color="white">Organization</v-chip>
         </v-card-text>
-        <v-card-action>
+        <v-card-actions>
           <v-btn @click="showHelp = !showHelp">Close</v-btn>
-        </v-card-action>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -147,7 +147,7 @@
   </p>
 
   <div v-if="searchResults.data" style="margin-bottom: 1em; padding-bottom: 0.5em; overflow: auto; white-space: nowrap;">
-    <v-chip v-for="stat in searchResults.data.resultTypeStats" :key="stat" @click="searchCategory(stat.componentType)" color="teal" text-color="white">
+    <v-chip v-for="stat in searchResults.data.resultTypeStats" :key="stat.componentTypeDescription" @click="searchCategory(stat.componentType)" color="teal" text-color="white">
       <v-avatar class="teal darken-2">{{ stat.count }}</v-avatar>
       {{ stat.componentTypeDescription }}
     </v-chip>
@@ -165,7 +165,7 @@
 
   <div v-if="searchResults.data">
     <v-expansion-panel popout>
-      <v-expansion-panel-content v-for="item in searchResults.data.data" :key="item">
+      <v-expansion-panel-content v-for="item in searchResults.data.data" :key="item.name">
         <div slot="header">
           <div style="float: left;" v-if="item.includeIconInSearch && item.componentTypeIconUrl">
             <img :src="'/openstorefront/' + item.componentTypeIconUrl" width="30" style="margin-right: 1em;">
@@ -190,7 +190,7 @@
             >
             <span
               v-for="tag in item.tags"
-              :key="tag"
+              :key="tag.text"
               style="float: left; margin-right: 0.8em; cursor: pointer;"
               @click="addTag(tag.text)"
             >
@@ -312,33 +312,32 @@ export default {
     },
     submitSearch () {
       this.searchQueryIsDirty = true;
-      let that = this;
       let searchElements = [
         {
           mergeCondition: 'AND',
           searchType: 'INDEX',
-          value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
+          value: this.searchQuery.trim() ? `*${this.searchQuery}*` : '***'
         }
       ];
-      if (that.filters.component) {
+      if (this.filters.component) {
         searchElements.push(
           {
             caseInsensitive: false,
             field: 'componentType',
             mergeCondition: 'AND',
             searchType: 'ENTRYTYPE',
-            searchChildren: that.filters.children,
+            searchChildren: this.filters.children,
             stringOperation: 'EQUALS',
-            value: that.filters.component
+            value: this.filters.component
           }
         );
       }
-      if (that.filters.tags) {
-        that.filters.tags.forEach(function (tag) {
+      if (this.filters.tags) {
+        this.filters.tags.forEach(function (tag) {
           searchElements.push(
             {
               caseInsensitive: true,
-              mergeCondition: that.filters.tagCondition,
+              mergeCondition: this.filters.tagCondition,
               searchType: 'TAG',
               stringOperation: 'EQUALS',
               value: tag
@@ -346,7 +345,7 @@ export default {
           );
         });
       }
-      if (that.filters.organization) {
+      if (this.filters.organization) {
         searchElements.push(
           {
             caseInsensitive: false,
@@ -355,71 +354,67 @@ export default {
             numberOperation: 'EQUALS',
             stringOperation: 'EQUALS',
             field: 'organization',
-            value: that.filters.organization
+            value: this.filters.organization
           }
         );
       }
       axios
         .post(
           `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
-            that.searchSortField
-          }&sortOrder=${that.searchSortOrder}&offset=${that.searchPage *
-            that.searchPageSize}&max=${that.searchPageSize}`,
+            this.searchSortField
+          }&sortOrder=${this.searchSortOrder}&offset=${this.searchPage *
+            this.searchPageSize}&max=${this.searchPageSize}`,
           {
             searchElements
           }
         )
         .then(response => {
-          that.searchResults = response;
-          that.totalSearchResults = response.data.totalNumber;
-          that.searchQueryIsDirty = false;
+          this.searchResults = response;
+          this.totalSearchResults = response.data.totalNumber;
+          this.searchQueryIsDirty = false;
         })
         .catch(e => this.errors.push(e))
         .finally(() => {
-          that.searchQueryIsDirty = false;
+          this.searchQueryIsDirty = false;
         });
     },
     getComponentTypes () {
-      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/componenttypes'
         )
         .then(response => {
-          that.componentsList = response.data;
+          this.componentsList = response.data;
         })
         .catch(e => this.errors.push(e));
     },
     getTags () {
-      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/components/tagviews?approvedOnly=true'
         )
         .then(response => {
-          that.tagsList = response.data;
+          this.tagsList = response.data;
         })
         .catch(e => this.errors.push(e));
     },
     getOrganizations () {
-      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/organizations?componentOnly=true'
         )
         .then(response => {
-          that.organizationsList = response.data.data;
+          this.organizationsList = response.data.data;
         })
         .catch(e => this.errors.push(e));
     },
     getNestedComponentTypes () {
-      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/componenttypes/nested'
         )
         .then(response => {
-          that.nestedComponentTypesList = response.data.data;
+          this.nestedComponentTypesList = response.data.data;
         })
         .catch(e => this.errors.push(e));
     },

@@ -24,9 +24,7 @@ Vue.use(Vuetify, {
 });
 
 Vue.use(VueTruncate);
-Vue.filter('formatDate', (value) => {
-  return format(value, 'YYYY/MM/DD');
-});
+Vue.filter('formatDate', value => format(value, 'YYYY/MM/DD'));
 
 /* eslint-disable no-new */
 new Vue({
