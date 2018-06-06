@@ -249,12 +249,12 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import axios from 'axios'
-import SearchBar from './subcomponents/SearchBar'
-import StarRating from 'vue-star-rating'
+import _ from 'lodash';
+import axios from 'axios';
+import SearchBar from './subcomponents/SearchBar';
+import StarRating from 'vue-star-rating';
 import VueRouter from '../../../login/node_modules/vue-router';
-import router from '../router/index'
+import router from '../router/index';
 
 export default {
   name: 'SearchPage',
