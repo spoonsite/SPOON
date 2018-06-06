@@ -52,12 +52,8 @@ Vue.use(Vuetify, {
 });
 
 Vue.use(VueTruncate);
-Vue.filter('formatDate', value => {
-  return format(value, 'YYYY/MM/DD');
-});
-Vue.filter('prettyJSON', function (value) {
-  return JSON.stringify(JSON.parse(value));
-});
+Vue.filter('formatDate', value => format(value, 'YYYY/MM/DD'));
+Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)));
 
 /* eslint-disable no-new */
 new Vue({

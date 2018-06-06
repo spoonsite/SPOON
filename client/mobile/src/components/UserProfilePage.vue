@@ -37,9 +37,9 @@
   <!-- Contact Details -->
   <v-flex xs12 sm6>
     <v-text-field
-      ref="first"
-      v-model="first"
-      :rules="[() => !!first || 'This field is required']"
+      ref="firstName"
+      v-model="firstName"
+      :rules="inputRequired"
       required
       placeholder="John"
       label="First Name"
@@ -47,9 +47,9 @@
   </v-flex>
   <v-flex xs12 sm6>
     <v-text-field
-      ref="last"
-      v-model="last"
-      :rules="[() => !!last || 'This field is required']"
+      ref="lastName"
+      v-model="lastName"
+      :rules="inputRequired"
       required
       placeholder="Doe"
       label="Last Name"
@@ -59,10 +59,7 @@
     <v-text-field
       ref="email"
       v-model="email"
-      :rules="[
-        () => !!email || 'This field is required',
-        () => validateEmail(email) || 'Email address not in valid format'
-      ]"
+      :rules="emailRules"
       required
       placeholder="name@example.com"
       label="Email address"
@@ -86,7 +83,7 @@
       item-text="description"
       item-value="description"
       :filter="orgFilter"
-      :rules="[() => !!currentOrg || 'This field is required']"
+      :rules="inputRequired"
       v-model="currentOrg"
       label="Select an Organization"
       required
@@ -107,7 +104,7 @@
       :items="userTypeCodes"
       item-text="description"
       item-value="description"
-      :rules="[() => !!userTypeCode || 'This field is required']"
+      :rules="inputRequired"
       v-model="userTypeCode"
       label="User Role"
       required
@@ -156,9 +153,11 @@
 </template>
 
 <script lang="js">
+import validators from '../util/validators';
 
 export default {
   name: 'user-profile-page',
+  mixins: [validators],
   props: [],
   mounted () {
     this.getCurrentUserName();
@@ -169,8 +168,8 @@ export default {
     return {
       errors: [],
       username: '',
-      first: '',
-      last: '',
+      firstName: '',
+      lastName: '',
       email: '',
       phone: '',
       organizations: [],
@@ -186,36 +185,35 @@ export default {
   },
   methods: {
     getRestOfUserData () {
-      let that = this;
-      let url = '/openstorefront/api/v1/resource/userprofiles/' + that.username;
+      let url = '/openstorefront/api/v1/resource/userprofiles/' + this.username;
       this.$http
         .get(url)
         .then(response => {
-          that.first = response.data.firstName;
-          that.last = response.data.lastName;
-          that.email = response.data.email;
-          that.phone = response.data.phone;
-          that.currentOrg = {'code': '', 'description': response.data.organization};
-          that.position = response.data.positionTitle;
-          that.userTypeCode = response.data.userTypeDescription;
-          that.notify = response.data.notifyOfNew;
+          let org;
+          if (response.data.organization) {
+            org = {'code': '', 'description': response.data.organization};
+          } else {
+            org = '';
+          }
+          this.firstName = response.data.firstName;
+          this.lastName = response.data.lastName;
+          this.email = response.data.email;
+          this.phone = response.data.phone;
+          this.currentOrg = org;
+          this.position = response.data.positionTitle;
+          this.userTypeCode = response.data.userTypeDescription;
+          this.notify = response.data.notifyOfNew;
         })
         .catch(e => this.errors.push(e));
     },
     getCurrentUserName () {
-      let that = this;
       this.$http
         .get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
-          that.username = response.data.username;
-          that.getRestOfUserData();
+          this.username = response.data.username;
+          if (this.username !== 'ANONYMOUS') { this.getRestOfUserData(); }
         })
         .catch(e => this.errors.push(e));
-    },
-    validateEmail (email) {
-      // From https://stackoverflow.com/a/9204568
-      var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(email);
     },
     orgFilter (item, queryText, itemText) {
       const hasValue = val => val != null ? val : '';
@@ -226,58 +224,46 @@ export default {
         .indexOf(query.toString().toLowerCase()) > -1;
     },
     getOrgs () {
-      let that = this;
       this.$http
         .get('/openstorefront/api/v1/resource/organizations/lookup')
         .then(response => {
-          that.organizations = response.data;
+          this.organizations = response.data;
         })
         .catch(e => this.errors.push(e));
     },
     getRoles () {
-      let that = this;
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/UserTypeCode')
         .then(response => {
-          that.userTypeCodes = response.data.filter(item => {
+          this.userTypeCodes = response.data.filter(item => {
             return item.activeStatus === 'A';
           });
         })
         .catch(e => this.errors.push(e));
     },
     updateProfile () {
-      let that = this;
-      let org = '';
-      if (typeof this.currentOrg === 'string') {
-        org = this.currentOrg;
-      } else {
-        org = this.currentOrg.description;
-      }
       let newProfile = {
         'userTypeCode': this.userTypeCodes.find(each => each.description === this.userTypeCode).code, // User Role
-        'firstName': this.first,
-        'lastName': this.last,
+        'firstName': this.firstName,
+        'lastName': this.lastName,
         'email': this.email,
         'phone': this.phone,
         'positionTitle': this.position,
-        'organization': org,
+        'organization': typeof this.currentOrg === 'string' ? this.currentOrg : this.currentOrg.description,
         'notifyOfNew': this.notify
       };
 
       this.$http
         .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, newProfile)
         .then(response => {
-          that.saved = true;
-          that.getRestOfUserData();
+          this.saved = true;
+          this.getRestOfUserData();
         })
         .catch(e => {
-          that.errors.push(e);
-          that.errorOnSave = true;
+          this.errors.push(e);
+          this.errorOnSave = true;
         });
     }
-  },
-  computed: {
-
   }
 };
 </script>
