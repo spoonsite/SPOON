@@ -208,14 +208,13 @@ export default {
     if (this.$route.params.id) {
       this.id = this.$route.params.id;
     }
-    this.getComponent();
+
     this.getDetail();
     this.computeAverageRating();
   },
   data () {
     return {
       baseURL: '/openstorefront/',
-      component: {},
       detail: {},
       watchSwitch: false,
       attributeTableHeaders: [
@@ -231,14 +230,6 @@ export default {
     };
   },
   methods: {
-    getComponent () {
-      let that = this;
-      this.$http.get('/openstorefront/api/v1/resource/components/' + this.id)
-        .then(response => {
-          that.component = response.data;
-        })
-        .catch(e => this.errors.push(e));
-    },
     getDetail () {
       let that = this;
       this.$http.get('/openstorefront/api/v1/resource/components/' + this.id + '/detail')
