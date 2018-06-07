@@ -112,7 +112,6 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 							case 'OR': // user only requires one of the specified permissions
 								if (matchedPermissions === 0) {
 									uiComponent.handleComponentRender(false);
-									uiComponent.setHidden(true);
 								}
 								else {
 									uiComponent.handleComponentRender(true);
@@ -142,12 +141,12 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 
 			if (!hasPermission) {
 				uiComponent[actionMapObj.method](actionMapObj.invalidValue !== null ? actionMapObj.invalidValue : undefined);
-				uiComponent.permissionCheckFailure();
+				uiComponent.permissionCheckFailure.call(uiComponent);
 			}
 			// Don't run unless user has valid permissions, and the actionMapObj has a method that doesn't destroy the component.
 			else if (hasPermission && actionMapObj.canCallByDefault) {
 				uiComponent[actionMapObj.method](actionMapObj.validValue !== null ? actionMapObj.validValue : undefined);
-				uiComponent.permissionCheckSucces();
+				uiComponent.permissionCheckSucces.call(uiComponent);
 			}
 		}
 	});
