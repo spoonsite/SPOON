@@ -128,6 +128,7 @@
 								},
 								{ 
 									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION']
 								},
 								{
 									text: 'Resume Job',
@@ -137,6 +138,7 @@
 									iconCls: 'fa fa-2x fa-play-circle icon-button-color-run icon-vertical-correction',
 									name: 'individualJobControl',
 									disabled: true,
+                                    requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
 									handler: function () {
 										var record = Ext.getCmp('jobGrid').getSelection()[0];
 										resumeJob(record);
@@ -150,6 +152,7 @@
 									id: 'jobGrid-jobPause',
 									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
 									handler: function () {
 										var record = Ext.getCmp('jobGrid').getSelection()[0];
 										pauseJob(record);
@@ -163,6 +166,7 @@
 									iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 									name: 'individualJobControl',
 									disabled: true,
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
 									handler: function () {
 										var record = Ext.getCmp('jobGrid').getSelection()[0];
 										executeJob(record);
@@ -174,6 +178,7 @@
 								{ 
 									xtype: 'label',
 									text: 'Show Integration Jobs:',
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
 									style: {
 										fontWeight: 'bold'
 									}
@@ -181,6 +186,7 @@
 								{
 									xtype: 'segmentedbutton',
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
 									items: [  
 										{
 											enableToggle: true,
@@ -210,11 +216,13 @@
 									]
 								},
 								{ 
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION']
 								},
 								{
 									xtype: 'label',
 									html: '<ext title="The scheduler state is not persistent. When the web application is restarted, the scheduler state will be reset.">System Job Scheduler:',
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
 									style: {
 										fontWeight: 'bold'
 									}
@@ -223,6 +231,7 @@
 									xtype: 'label',
 									id: 'schedulerStatusLabel',
 									text: 'Running',
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
 									style: {
 										color: 'green',
 										fontWeight: 'bold'
@@ -236,6 +245,7 @@
 									id: 'jobGrid-schedulerToggleButton',
 									iconCls: 'fa fa-2x fa-pause-circle icon-button-color-default icon-vertical-correction',
 									name: 'schedulerControl',
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
 									handler: function () {
 										toggleScheduler();
 									}
@@ -412,12 +422,14 @@
 									id: 'taskGrid-tools-cancel',
 									iconCls: 'fa fa-2x fa-stop-circle icon-button-color-default icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-READ'],
 									handler: function() {
 										actionCancelTask(Ext.getCmp('taskGrid').getSelection()[0]);
 									}									
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-DELETE'],
 								},								
 								{
 									text: 'Delete',
@@ -426,6 +438,7 @@
 									id: 'taskGrid-tools-delete',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-DELETE'],
 									handler: function() {
 										actionDeleteTask(Ext.getCmp('taskGrid').getSelection()[0]);
 									}

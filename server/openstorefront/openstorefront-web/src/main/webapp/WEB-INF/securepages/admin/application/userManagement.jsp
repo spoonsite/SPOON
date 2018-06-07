@@ -119,25 +119,29 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-CREATE']
 								},
 								{
 									text: 'Add',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction-add',
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-CREATE'],
 									handler: function(){
 										actionAddUser();
 									}									
 								},
 								{
 									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE']
 								},
 								{
 									text: '&nbsp;Message',
 									itemId: 'message',
 									disabled: true,
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-default',								
+									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-default',
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE'],								
 									handler: function () {
 										var record = registrationGrid.getSelection()[0];
 										actionMessageUser(record);
@@ -152,6 +156,7 @@
 									disabled: true,
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-DELETE'],
 									handler: function(){
 										var record = registrationGrid.getSelectionModel().getSelection()[0];
 										
@@ -690,7 +695,8 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE']
 								},
 								{
 									text: 'Approve',
@@ -698,6 +704,7 @@
 									iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction-check',
 									scale: 'medium',
 									disabled: true,
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE'],
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];
 										actionApproveUser(record);
@@ -709,6 +716,7 @@
 									iconCls: 'fa fa-2x fa-rotate-left icon-button-color-refresh icon-vertical-correction',
 									scale: 'medium',
 									disabled: true,
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE'],
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];
 										actionResetPassword(record);
@@ -721,6 +729,7 @@
 									hidden: true,
 									iconCls: 'fa fa-2x fa-key icon-correction-key icon-button-color-key',
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-UPDATE'],
 									handler: function() {
 										var record = userGrid.getSelectionModel().getSelection()[0];
 										actionManageRoles(record);
@@ -732,14 +741,16 @@
 									disabled: true,
 									scale: 'medium',
 									width: '130px',
-									iconCls: 'fa fa-2x fa-envelope-o icon-button-color-default icon-vertical-correction-send',								
+									iconCls: 'fa fa-2x fa-envelope-o icon-button-color-default icon-vertical-correction-send',	
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE'],							
 									handler: function () {
 										var record = userGrid.getSelection()[0];
 										actionMessageUser(record);
 									}										
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE']
 								},
 								{
 									text: 'Unlock Account',
@@ -747,6 +758,7 @@
 									iconCls: 'fa fa-2x fa-unlock-alt icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
 									disabled: true,
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE'],
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];
 										actionUnlockUser(record);
@@ -759,6 +771,7 @@
 									scale: 'medium',
 									tooltip: 'Locks/Inactivates user account',
 									disabled: true,
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE'],
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];
 										actionDisableUser(record);
@@ -771,6 +784,7 @@
 									scale: 'medium',
 									tooltip: 'Resets Login Attempts',
 									disabled: true,
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE'],
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];
 										actionResetLoginAttempts(record);
@@ -786,6 +800,7 @@
 									scale: 'medium',
 									width: '110px',
 									disabled: true,
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-DELETE'],
 									handler: function(){
 										var record = userGrid.getSelectionModel().getSelection()[0];
 										actionDeleteUser(record);

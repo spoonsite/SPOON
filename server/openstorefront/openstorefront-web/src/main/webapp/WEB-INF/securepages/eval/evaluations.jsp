@@ -275,13 +275,15 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
+									requiredPermissions: ['USER-EVALUATIONS-READ'],
 									handler: function () {
 										var selection = Ext.getCmp('evaluationGrid').getSelection()[0];
 										actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId);
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['USER-EVALUATIONS-UPDATE']
 								},
 								{
 									text: 'Edit',
@@ -290,13 +292,15 @@
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit',
 									scale: 'medium',
 									width: '100px',
+									requiredPermissions: ['USER-EVALUATIONS-UPDATE'],
 									handler: function(){
 										var record = evaluationGrid.getSelection()[0];
 										actionEdit(record);
 									}									
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER']
 								},	
 								{
 									text: 'Assign User',
@@ -304,6 +308,7 @@
 									disabled: true,									
 									iconCls: 'fa fa-2x fa-user icon-button-color-default',
 									scale: 'medium',
+									requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER'],
 									handler: function(){
 										var record = evaluationGrid.getSelection()[0];
 										actionAssignUser(record);
@@ -349,7 +354,7 @@
 				
 				var actionAssignUser = function(record) {
 					var assignWin = Ext.create('Ext.window.Window', {
-						title: 'Assign Group',
+						title: 'Assign User',
 						iconCls: 'fa fa-user',
 						closeAction: 'destroy',
 						modal: true,
@@ -410,7 +415,7 @@
 													data = Ext.apply(data, formData);
 
 													CoreUtil.submitForm({
-														url: 'api/v1/resource/evaluations/' + data.evaluationId,
+														url: 'api/v1/resource/evaluations/' + data.evaluationId + '/assignuser/' + data.assignedUser,
 														method: 'PUT',
 														form: form,
 														data: data,

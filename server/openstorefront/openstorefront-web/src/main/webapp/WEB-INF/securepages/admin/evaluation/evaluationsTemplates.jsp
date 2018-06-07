@@ -454,13 +454,15 @@
 								}
 							},
 							{
-								xtype: 'tbseparator'
+								xtype: 'tbseparator',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CREATE']
 							},
 							{
 								text: 'Add',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								width: '100px',
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CREATE'],
 								handler: function(){
 									actionAddEdit();
 								}
@@ -472,13 +474,15 @@
 								width: '100px',
 								disabled: true,									
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('templateGrid').getSelectionModel().getSelection()[0];
 									actionAddEdit(record);
 								}
 							},
 							{
-								xtype: 'tbseparator'
+								xtype: 'tbseparator',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-UPDATE']
 							},
 							{
 								text: 'Toggle Status',
@@ -486,6 +490,7 @@
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('templateGrid').getSelectionModel().getSelection()[0];
 									actionToggleStatus(record);
@@ -500,6 +505,7 @@
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-DELETE'],
 								handler: function(){
 									var record = Ext.getCmp('templateGrid').getSelectionModel().getSelection()[0];
 									actionDelete(record);

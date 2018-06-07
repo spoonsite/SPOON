@@ -19,6 +19,7 @@
 /* global CoreApp */
 
 //Extensions
+Ext.require('OSF.common.SecurityComponentMixin');
 
 Ext.apply(Ext.selection.RowModel.prototype, {
 	selectPrevious: function(){

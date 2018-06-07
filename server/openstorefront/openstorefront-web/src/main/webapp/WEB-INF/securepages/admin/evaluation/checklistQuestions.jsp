@@ -456,13 +456,15 @@
 								}
 							},
 							{
-								xtype: 'tbseparator'
+								xtype: 'tbseparator',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-CREATE']
 							},
 							{
 								text: 'Add',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								scale: 'medium',
 								width: '100px',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-CREATE'],
 								handler: function(){
 									actionAddEditQuestion();
 								}
@@ -474,6 +476,7 @@
 								disabled: true,									
 								scale: 'medium',
 								width: '100px',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
 									actionAddEditQuestion(record);
@@ -486,13 +489,15 @@
 								disabled: true,									
 								scale: 'medium',
 								width: '100px',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-READ'],
 								handler: function(){
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
 									actionViewQuestion(record);
 								}
 							},												
 							{
-								xtype: 'tbseparator'
+								xtype: 'tbseparator',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-UPDATE']
 							},
 							{
 								text: 'Toggle Status',
@@ -500,6 +505,7 @@
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-UDPATE'],
 								handler: function(){
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
 									actionToggleStatus(record);
@@ -511,6 +517,7 @@
 								itemId: 'copy',
 								disabled: true,								
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-CREATE'],
 								handler: function(){
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
 									actionCopyRecord(record);
@@ -523,6 +530,7 @@
 								text: 'Import',
 								iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-CREATE'],
 								handler: function(){
 									actionImport();
 								}
@@ -531,12 +539,14 @@
 								text: 'Export',
 								iconCls: 'fa fa-2x fa-download icon-button-color-default',
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-READ'],
 								handler: function(){
 									actionExport();
 								}
 							},
 							{
-								xtype: 'tbseparator'
+								xtype: 'tbseparator',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-DELETE']
 							},							
 							{
 								text: 'Delete',
@@ -544,6 +554,7 @@
 								itemId: 'delete',
 								disabled: true,																
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-DELETE'],
 								handler: function(){
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
 									actionDelete(record);									
