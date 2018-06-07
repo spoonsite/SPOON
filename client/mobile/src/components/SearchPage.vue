@@ -253,7 +253,6 @@ import _ from 'lodash';
 import axios from 'axios';
 import SearchBar from './subcomponents/SearchBar';
 import StarRating from 'vue-star-rating';
-import VueRouter from '../../../login/node_modules/vue-router';
 import router from '../router/index';
 
 export default {
@@ -455,7 +454,7 @@ export default {
         currentPage + 4 > this.getNumPages()
           ? this.getNumPages() + 2
           : currentPage + 4
-      )
+      );
     },
     moreInformation (componentId) {
       console.log(componentId);
@@ -464,7 +463,7 @@ export default {
         params: {
           id: componentId
         }
-      })
+      });
     }
   },
   watch: {
