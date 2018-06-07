@@ -73,12 +73,12 @@
 								if (value) {
 									return value;
 								} else {
-									return '<New Submission>'
+									return '(New Submission)';
 								}
 							}
 						},						
-						{ text: 'Entry Type', dataIndex: 'componentTypeDecription', flex: 2, minWidth: 200 },	
-						{ text: 'Owner User', dataIndex: 'ownerUser', width: 150 },						
+						{ text: 'Entry Type', dataIndex: 'componentTypeDescription', flex: 2, minWidth: 200 },	
+						{ text: 'Owner User', dataIndex: 'ownerUsername', width: 150 },						
 						{ text: 'Create User', dataIndex: 'createUser', width: 150 },						
 						{ text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },						
 						{ text: 'Update User', dataIndex: 'updateUser', width: 150 },						
@@ -166,69 +166,10 @@
 
 				var actionView = function(record) {					
 					
-					var viewSubmissionWin = Ext.create('Ext.window.Window', {
-						width: '70%',
-						height: '80%',
-						maximizable: true,
-						title: 'View',
-						iconCls: 'fa fa-lg fa-eye',
-						modal: true,
-						layout: 'fit',
-						closeAction: 'destroy',
-						items: [
-							{
-								html: 'TODO: Show Form with the data populated'
-							}
-						],
-						tools: [
-							{
-								type: 'up',
-								tooltip: 'popout preview',
-								handler: function(){
-									//window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('componentGrid').getSelection()[0].get('componentId'), "Preview");
-								}
-							}
-						],
-						dockedItems: [
-							{
-								xtype: 'toolbar',
-								dock: 'bottom',
-								items: [
-									{
-										text: 'Previous',
-										id: 'previewWinTools-previousBtn',
-										iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',
-										handler: function() {
-											//actionPreviewNextRecord(false);
-										}
-									},
-									{
-										xtype: 'tbfill'
-									},
-									{
-										text: 'Close',
-										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-										handler: function() {
-											this.up('window').hide();
-										}
-									},
-									{
-										xtype: 'tbfill'
-									},
-									{
-										text: 'Next',
-										id: 'previewWinTools-nextBtn',
-										iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-										iconAlign: 'right',
-										handler: function() {
-											//actionPreviewNextRecord(true);
-										}
-									}
-								]
-							}
-						]
-					});		
-					viewSubmissionWin.show();
+					//preview
+					
+					//load record
+					
 					
 				};
 
@@ -280,6 +221,7 @@
 														success: function() {
 															Ext.toast('Successfully reassigned submisssion');
 															actionRefresh();
+															reassignSubmissionWin.close();
 														}
 													})
 
@@ -311,19 +253,18 @@
 
 				var actionDelete = function(record){
 					Ext.Msg.show({
-						title:'Delete Submission?',
-						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
-						message: 'Are you sure you want to delete ' + Ext.util.Format.ellipsis(record.get('name'), 20) + '?',
-						buttons: Ext.Msg.YESNOCANCEL,
+						title:'Delete Submission?',						
+						message: 'Are you sure you want to delete selected record?',
+						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
 						fn: function(btn) {
 							if (btn === 'yes') {
-								Ext.getCmp('templateGrid').setLoading("Deleting...");
+								templateGrid.setLoading("Deleting...");
 								Ext.Ajax.request({
 									url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId'),
 									method: 'DELETE',
 									callback: function(){
-										Ext.getCmp('templateGrid').setLoading(false);
+										templateGrid.setLoading(false);
 									},
 									success: function(response, opts){
 										actionRefresh();

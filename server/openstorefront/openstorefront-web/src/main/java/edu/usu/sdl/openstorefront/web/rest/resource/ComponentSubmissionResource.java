@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
@@ -116,6 +117,33 @@ public class ComponentSubmissionResource
 					componentView.setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, pendingChangesList.get(0).getApprovalState()));
 					componentView.setPendingChangeComponentId(pendingChangesList.get(0).getComponentId());
 				}
+			}
+
+			//get usersubmission and normalize
+			List<UserSubmission> userSubmissions = service.getSubmissionFormService().getUserSubmissions(SecurityUtil.getCurrentUserName());
+			userSubmissions.sort((a, b) -> {
+				return a.getCreateDts().compareTo(b.getCreateDts());
+			});
+
+			int submissionCount = 1;
+			for (UserSubmission userSubmission : userSubmissions) {
+				ComponentView componentView = new ComponentView();
+
+				componentView.setUserSubmissionId(userSubmission.getUserSubmissionId());
+				componentView.setCurrentDataOwner(userSubmission.getOwnerUsername());
+				componentView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+				componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, ApprovalStatus.NOT_SUBMITTED));
+				componentView.setComponentType(userSubmission.getComponentType());
+				componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(userSubmission.getComponentType()));
+
+				if (userSubmission.getOriginalComponentId() != null) {
+					componentView.setName(service.getComponentService().getComponentName(userSubmission.getOriginalComponentId()));
+				} else {
+					componentView.setName("(Incomplete Submission) " + (submissionCount++));
+				}
+
+				componentView.setDescription("(Complete Submission and Submit for Approval)");
+				views.add(componentView);
 			}
 
 			GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(views)

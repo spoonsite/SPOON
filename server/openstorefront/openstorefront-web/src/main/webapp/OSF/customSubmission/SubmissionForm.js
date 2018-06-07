@@ -70,14 +70,28 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		//Create a new submission form and save
 		var submissionForm = this;
 		
-
+		var userSubmission = {
+			templateId : submissionForm.template.submissionTemplateId,
+			componentType : submissionForm.entryType.componentType,
+			fields: []		
+		};
 		
-		//save and then update the ids
-		//server to create a new one
-		
+		Ext.Ajax.request({
+			url: 'api/v1/resource/usersubmissions',
+			method: 'POST',
+			jsonData: userSubmission,
+			callback: function() {				
+			},
+			success: function(response, opts) {
+				var savedSubmission = Ext.decode(response.responseText);
+				submissionForm.userSubmission.userSubmissionId = savedSubmission.userSubmissionId;
+				submissionForm.userSubmission.ownerUsername = savedSubmission.ownerUsername;
+			}
+		});
+		return userSubmission;
 	},
 	
-	loadTemplate: function(submissionFormTemplate, entryType, userSubmission) {
+	loadTemplate: function(submissionFormTemplate, entryType, userSubmission, createNewSubmission) {
 		var submissionForm = this;
 		
 		var handleLoadTemplate = function(componentType) {
@@ -85,7 +99,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 			submissionForm.template = Ext.clone(submissionFormTemplate);
 			submissionForm.entryType = componentType;
 			submissionForm.currentSection = 0;
-			if (!userSubmission)	{
+			if (!userSubmission && createNewSubmission)	{
 				userSubmission = submissionForm.initializeUserSubmission(submissionForm.template);
 			}
 			submissionForm.userSubmission = userSubmission;
@@ -133,11 +147,9 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		
 		if (Ext.isString(entryType)) {
 			
-			submissionForm.setLoading(true);
 			Ext.Ajax.request({
 				url: 'api/v1/resource/componenttypes/' + entryType,
 				callback: function(){
-					submissionForm.setLoading(false);
 				},
 				success: function(response, opts) {
 					var componentType = Ext.decode(response.responseText);
@@ -241,7 +253,9 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		
 		//go through section
 		Ext.Array.each(submissionForm.template.sections, function(section){
-			 userSubmissionFields = userSubmissionFields.join(section.component.getUserValues());			
+			if (!section.review) {
+				userSubmissionFields = userSubmissionFields.concat(section.component.getUserValues());			
+			}
 		});		
 		
 		//get field values

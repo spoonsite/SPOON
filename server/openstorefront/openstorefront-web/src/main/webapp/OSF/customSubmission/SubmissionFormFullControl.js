@@ -305,24 +305,35 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		form.on('ready', submissionFormFullControl.initHandler);
 	},
 	
-	load: function(submissionTemplate, entryType, userSubmission) {
+	load: function(submissionTemplate, entryType, userSubmission, createNewSubmission) {
 		var submissionFormFullControl = this;
 		
 		submissionFormFullControl.setLoading(true);
 		var form = submissionFormFullControl.queryById('submissionForm');
 		
 		submissionFormFullControl.handleInitEvent();
-		form.loadTemplate(submissionTemplate, entryType, userSubmission);
-		
+		form.loadTemplate(submissionTemplate, entryType, userSubmission, createNewSubmission);		
 		
 	},
 	
 	saveSubmission: function() {
 		var submissionFormFullControl = this;
 		
-		var form = submissionFormFullControl.queryById('submissionForm');
-						
-		console.log(form.getUserData());			
+		var form = submissionFormFullControl.queryById('submissionForm');						
+		var userSubmission = form.getUserData();		
+		
+		submissionFormFullControl.setLoading("Saving...");
+		Ext.Ajax.request({
+			url: 'api/v1/resource/usersubmissions',
+			method: 'POST',
+			jsonData: userSubmission,
+			callback: function() {		
+				submissionFormFullControl.setLoading(false);
+			},
+			success: function(response, opts) {
+				Ext.toast('Saved Successfully');
+			}
+		});
 		
 	},
 	

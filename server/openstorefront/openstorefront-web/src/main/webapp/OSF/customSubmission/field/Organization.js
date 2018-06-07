@@ -29,8 +29,10 @@ Ext.define('OSF.customSubmission.field.Organization', {
 	displayField: 'description',
 	emptyText: 'Select or Type in',
 	editable: true,
-	queryMode: 'remote',
-	store: {				
+	typeAhead: true,
+	queryMode: 'local',
+	store: {	
+		autoLoad: true,
 		proxy: {
 			type: 'ajax',
 			url: 'api/v1/resource/organizations/lookup'

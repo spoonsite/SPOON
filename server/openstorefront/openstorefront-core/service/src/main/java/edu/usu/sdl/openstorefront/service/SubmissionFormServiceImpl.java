@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.model.UserSubmissionAll;
 import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.mapping.MappingController;
 import edu.usu.sdl.openstorefront.service.mapping.MappingException;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -143,6 +144,10 @@ public class SubmissionFormServiceImpl
 		} else {
 			userSubmission.setUserSubmissionId(persistenceService.generateId());
 			userSubmission.populateBaseCreateFields();
+			if (userSubmission.getOwnerUsername() == null) {
+				userSubmission.setOwnerUsername(SecurityUtil.getCurrentUserName());
+			}
+
 			existing = persistenceService.persist(userSubmission);
 		}
 		existing = persistenceService.unwrapProxyObject(existing);

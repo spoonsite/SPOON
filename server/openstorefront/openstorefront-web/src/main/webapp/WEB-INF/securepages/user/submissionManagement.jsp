@@ -679,7 +679,7 @@
 									]
 								});
 								submissionWin.show();
-								submissionWin.queryById('form').load(template, componentType);
+								submissionWin.queryById('form').load(template, componentType, null, true);
 							}
 						});
 						
