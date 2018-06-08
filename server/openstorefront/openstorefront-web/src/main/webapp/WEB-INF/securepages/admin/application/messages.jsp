@@ -173,7 +173,8 @@
 									tooltip: 'Refresh the list of messages'
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-READ']
 								},
 								{
 									text: 'View',
@@ -182,6 +183,7 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-READ'],
 									handler: function () {
 										mViewMessage();
 									},
@@ -197,6 +199,7 @@
 									id: 'mProcessNowButton',
 									iconCls: 'fa fa-2x fa-bolt icon-button-color-run icon-vertical-correction',
 									disabled: false,
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-UPDATE'],
 									handler: function () {
 										mProcessMessagesNow();
 									},
@@ -210,6 +213,7 @@
 									width: '250px',
 									iconCls: 'fa fa-2x fa-eraser icon-button-color-default icon-vertical-correction-eraser',
 									disabled: false,
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-UPDATE'],
 									handler: function () {
 										mCleanupOldMessagesNow();
 									},
@@ -217,7 +221,8 @@
 
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-DELETE']
 								},
 								{
 									text: 'Delete',
@@ -227,6 +232,7 @@
 									width: '110px',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-DELETE'],
 									handler: function () {
 										mDeleteMessage();
 									},
@@ -476,7 +482,8 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-CREATE']
 								},
 								{
 									text: 'Create Admin Message',
@@ -484,6 +491,7 @@
 									id: 'nAdminMessageButton',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									tooltip: 'Create admin message',
+									requiredPermissions: ['ADMIN-NOTIFICATION-EVENT-CREATE'],
 									handler: function () {
 										nAdminMessage();
 									}
@@ -497,6 +505,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-NOTIFICATION-EVENT-DELETE'],
 									handler: function () {
 										nDelete();
 									}

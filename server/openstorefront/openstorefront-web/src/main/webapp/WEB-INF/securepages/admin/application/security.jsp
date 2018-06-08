@@ -29,13 +29,15 @@
 			/* global Ext, CoreUtil */
 
 			Ext.onReady(function () {
-				
-				
+
+                
 				var shiroConfig = Ext.create('Ext.form.Panel', {
 					title: 'Shiro Config',
 					iconCls: 'fa fa-lg fa-gear',
 					scrollable: true,
 					layout: 'fit',
+					requiredPermissions: ['ADMIN-SECURITY-SHIRO-CONFIG'],
+					actionOnInvalidPermission: 'destroy',
 					items: [
 						{
 							xtype: 'textarea',							
@@ -79,6 +81,8 @@
 					bodyStyle: 'padding: 20px;',
 					scrollable: true,
 					layout: 'anchor',
+					requiredPermissions: ['ADMIN-SECURITY-POLICY'],
+					actionOnInvalidPermission: 'destroy',
 					items: [
 						{
 							xtype: 'hidden',
@@ -229,13 +233,19 @@
 												
 				var mainPanel = Ext.create('Ext.tab.Panel', {
 					title: 'Security Management <i class="fa fa-question-circle"  data-qtip="Manage security policy for the application"></i>',
-					items: [
-						policyForm,
-						shiroConfig
-					]
+					items: [policyForm,shiroConfig],
+					listeners:{
+						remove: function(){
+							if(this.items.length===0){
+								Ext.toast({html: 'You do not have access permissions to see any data on this view.', title:'No Access', align:'b'}); 
+								
+							}
+						}	
+					}
 				});
 				
-				addComponentToMainViewPort(mainPanel);					
+				addComponentToMainViewPort(mainPanel);
+				
 				
 				policyForm.setLoading(true);
 				Ext.Ajax.request({

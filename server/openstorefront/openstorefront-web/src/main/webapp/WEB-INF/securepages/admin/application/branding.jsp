@@ -1115,13 +1115,15 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-BRANDING-UPDATE','ADMIN-BRANDING-CREATE']
 								},
 								{
 									text: 'Add',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									width: '100px',
+									requiredPermissions: ['ADMIN-BRANDING-CREATE'],
 									handler: function () {
 										actionAdd();
 									}
@@ -1133,13 +1135,15 @@
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									width: '100px',
 									disabled: true,
+									requiredPermissions: ['ADMIN-BRANDING-UPDATE'],
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
 										actionEdit(record);
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-BRANDING-UPDATE'],
 								},
 								{
 									text: 'Toggle Branding Status',
@@ -1147,6 +1151,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 									disabled: true,
+									requiredPermissions: ['ADMIN-BRANDING-UPDATE'],
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
 										actionActivate(record);
@@ -1158,6 +1163,7 @@
 									scale: 'medium',
 									width: '150px',
 									iconCls: 'fa fa-2x fa-clone icon-button-color-default icon-vertical-correction-edit',
+									requiredPermissions: ['ADMIN-BRADING-CREATE'],
 									menu: {
 										items: [
 											{
@@ -1191,12 +1197,14 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-undo icon-button-color-refresh icon-vertical-correction',
 									width: '170px',
+									requiredPermissions: ['ADMIN-BRANDING-UPDATE'],
 									handler: function () {
 										actionResetToDefault();
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-BRANDING-DELETE']
 								},
 								{
 									text: 'Delete',
@@ -1204,6 +1212,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-BRANDING-DELETE'],
 									handler: function () {
 										var record = this.up('grid').getSelectionModel().getSelection()[0];
 										actionDelete(record);

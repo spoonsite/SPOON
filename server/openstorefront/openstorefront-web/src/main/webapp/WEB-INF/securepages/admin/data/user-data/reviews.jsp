@@ -57,6 +57,14 @@
 					store: Ext.data.StoreManager.lookup('reviewStore'),
 					columnLines: true,
 					selModel: 'rowmodel',
+					requiredPermissions: ['ADMIN-REVIEW-READ'],
+					permissionCheckFailure: function () {
+						Ext.toast({
+							html: 'You do not have permissions to view the data on this page',
+							title: 'Invalid Permissions',
+							align: 'b'
+						});
+					},
 					plugins: [{
 						ptype: 'cellediting',
 						clicksToEdit: 1
@@ -186,6 +194,7 @@
 									}
 								},
 								{
+									requiredPermissions: ['ADMIN-REVIEW-UPDATE', 'ADMIN-REVIEW-DELETE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -193,10 +202,12 @@
 									id: 'reviewGrid-tools-action',
 									scale: 'medium',																	
 									disabled: true,
+									requiredPermissions: ['ADMIN-REVIEW-UPDATE', 'ADMIN-REVIEW-DELETE'],
 									menu: [
 										{
 											text: 'Approve/Activate',											
 											iconCls: 'fa fa-lg fa-check-square-o icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-REVIEW-UPDATE'],
 											handler: function(){
 												var record = Ext.getCmp('reviewGrid').getSelection()[0];
 												actionSetActivation(record, "A");
@@ -205,6 +216,7 @@
 										{
 											text: 'Pending',
 											iconCls: 'fa fa-lg fa-square-o icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-REVIEW-UPDATE'],
 											handler: function(){
 												var record = Ext.getCmp('reviewGrid').getSelection()[0];
 												actionSetActivation(record, "P");
@@ -213,6 +225,7 @@
 										{
 											text: 'Inactivate',
 											iconCls: 'fa fa-lg fa-eye-slash icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-REVIEW-DELETE'],
 											handler: function() {
 												var record = Ext.getCmp('reviewGrid').getSelection()[0];
 												actionSetActivation(record, "I");

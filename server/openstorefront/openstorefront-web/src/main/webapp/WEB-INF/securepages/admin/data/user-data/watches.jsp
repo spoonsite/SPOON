@@ -78,6 +78,14 @@
 					},					
 					store: watchStore,
 					bufferedRenderer: false,
+					requiredPermissions: ['ADMIN-WATCHES-READ'],
+					permissionCheckFailure: function () {
+						Ext.toast({
+							html: 'You do not have permissions to view the data on this page',
+							title: 'Invalid Permissions',
+							align: 'b'
+						});
+					},
 					columns: [
 						{ text: 'Entry', dataIndex: 'componentName', flex: 1, minWidth: 200, 
 							renderer: function(value, meta, record) {
@@ -127,6 +135,7 @@
 									}
 								},
 								{
+									requiredPermissions: ['ADMIN-WATCHES-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -135,6 +144,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,									
+									requiredPermissions: ['ADMIN-WATCHES-UPDATE'],
 									handler: function () {
 										actionSetStatus();
 									}									

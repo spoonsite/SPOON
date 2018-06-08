@@ -192,7 +192,8 @@
 									tooltip: 'Refresh the list of records'
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-TRACKING-READ']
 								},
 								{
 									text: 'View',
@@ -201,6 +202,7 @@
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									width: '100px',
 									disabled: true,
+									requiredPermissions: ['ADMIN-TRACKING-READ'],
 									handler: function () {
 										userViewMessage();
 									},
@@ -215,6 +217,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-download icon-button-color-default',
 									disabled: false,
+									requiredPermissions: ['ADMIN-TRACKING-READ'],
 									handler: function () {
 										userExport();
 									},
@@ -860,6 +863,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-download icon-button-color-default',
 									disabled: false,
+									requiredPermissions: ['ADMIN-TRACKING-READ'],
 									handler: function () {
 										entryExport();
 									},

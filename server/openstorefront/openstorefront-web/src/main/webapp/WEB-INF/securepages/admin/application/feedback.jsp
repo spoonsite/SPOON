@@ -216,7 +216,8 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-FEEDBACK-READ'],
 								},
 								{
 									text: 'View Details',
@@ -225,12 +226,14 @@
 									disabled: true,
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									width: '140px',
+									requiredPermissions: ['ADMIN-FEEDBACK-READ'],
 									handler: function () {
 										actionView(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0]);										
 									}									
 								},								
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-FEEDBACK-UPDATE']
 								},
 								{
 									text: 'Mark Outstanding',
@@ -238,6 +241,7 @@
 									scale: 'medium',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit icon-button-color-default',
+									requiredPermissions: ['ADMIN-FEEDBACK-UPDATE'],
 									handler: function () {
 										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], false);										
 									}									
@@ -248,6 +252,7 @@
 									scale: 'medium',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save',
+									requiredPermissions: ['ADMIN-FEEDBACK-UPDATE'],
 									handler: function () {
 										actionMarkStatus(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0], true);										
 									}									
@@ -261,6 +266,7 @@
 									disabled: true,
 									scale: 'medium',									
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['ADMIN-FEEDBACK-DELETE'],
 									handler: function() {
 										actionDelete(Ext.getCmp('ticketGrid').getSelectionModel().getSelection()[0]);	
 									}									

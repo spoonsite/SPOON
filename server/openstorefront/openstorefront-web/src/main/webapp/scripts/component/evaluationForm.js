@@ -298,11 +298,14 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 					
 					var commentPanels = [];
 					var createComments = function(comment, parent, messageMenu) {
-						var closeable = false;						
-						if (rootEvalPanel.user.admin || rootEvalPanel.user.username === comment.createUser) {
-							closeable = true;
-							messageMenu.queryById('edit').setHidden(false);
-						}
+						var closeable=true;
+						messageMenu.queryById('edit').setHidden(true);
+						
+						//var closeable = false;						
+						// if (rootEvalPanel.user.admin || rootEvalPanel.user.username === comment.createUser) {
+						// 	closeable = true;
+						// 	messageMenu.queryById('edit').setHidden(false);
+						// }
 						var iconCls = '';
 						var headerStyle = 'background: olive;';
 						if (comment.replyCommentId) {
@@ -420,6 +423,27 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 							],
 							collapsible: true,
 							titleCollapse: true,
+							requiredPermissions: ['ADMIN-EVALUATION-DELETE-COMMENT'],
+							permissionCheckSuccess: function(){
+								closeable=true;
+								messageMenu.queryById('edit').setHidden(false);
+                                
+							},
+							permissionCheckFailure: function(){
+								if(rootEvalPanel.user.username === comment.createUser)
+								{
+									this.closeable=true;
+									this.setClosable(true);
+									messageMenu.queryById('edit').setHidden(false);		
+								}
+								else
+								{
+									this.closeable=false;
+									this.setClosable(false);
+								    messageMenu.queryById('edit').setHidden(true);
+								}
+								this.setHidden(false);
+							},
 							closable: closeable,
 							closeToolText: 'Delete',
 							margin: '0 0 0 0', 

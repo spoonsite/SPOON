@@ -171,6 +171,8 @@
 								Ext.create('OSF.component.StandardComboBox', {
 									id: 'alertFilter-ActiveStatus',
 									emptyText: 'Active',
+									editable: false,
+									typeAhead: false,
 									fieldLabel: 'Active Status',
 									name: 'activeStatus',
 									listeners: {
@@ -233,13 +235,15 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-ALERT-MANAGEMENT-UPDATE','ADMIN-ALERT-MANAGEMENT-CREATE']
 								},
 								{
 									text: 'Add',
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									requiredPermissions: ['ADMIN-ALERT-MANAGEMENT-CREATE'],
 									handler: function () {
 										actionEditAlertForm(null);
 									}
@@ -251,13 +255,15 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									requiredPermissions: ['ADMIN-ALERT-MANAGEMENT-UPDATE'],
 									handler: function () {
 										var record = Ext.getCmp('alertGrid').getSelection()[0];
 										actionEditAlertForm(record);
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-ALERT-MANAGEMENT-UPDATE']
 								},
 								{
 									text: 'Toggle Status',
@@ -265,6 +271,7 @@
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-ALERT-MANAGEMENT-UPDATE'],
 									handler: function () {
 										var record = Ext.getCmp('alertGrid').getSelection()[0];
 										actionToggleActivation(record);
@@ -279,6 +286,7 @@
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									scale: 'medium',
+									requiredPermissions: ['ADMIN-ALERT-MANAGEMENT-DELETE'],
 									handler: function () {
 										var record = Ext.getCmp('alertGrid').getSelection()[0];
 										actionDeleteAlert(record);
