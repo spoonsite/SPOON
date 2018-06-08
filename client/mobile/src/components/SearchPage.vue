@@ -312,33 +312,34 @@ export default {
       }
     },
     submitSearch () {
-      this.searchQueryIsDirty = true;
+      let that = this;
+      that.searchQueryIsDirty = true;
       let searchElements = [
         {
           mergeCondition: 'AND',
           searchType: 'INDEX',
-          value: this.searchQuery.trim() ? `*${this.searchQuery}*` : '***'
+          value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
         }
       ];
-      if (this.filters.component) {
+      if (that.filters.component) {
         searchElements.push(
           {
             caseInsensitive: false,
             field: 'componentType',
             mergeCondition: 'AND',
             searchType: 'ENTRYTYPE',
-            searchChildren: this.filters.children,
+            searchChildren: that.filters.children,
             stringOperation: 'EQUALS',
-            value: this.filters.component
+            value: that.filters.component
           }
         );
       }
-      if (this.filters.tags) {
-        this.filters.tags.forEach(function (tag) {
+      if (that.filters.tags) {
+        that.filters.tags.forEach(function (tag) {
           searchElements.push(
             {
               caseInsensitive: true,
-              mergeCondition: this.filters.tagCondition,
+              mergeCondition: that.filters.tagCondition,
               searchType: 'TAG',
               stringOperation: 'EQUALS',
               value: tag
@@ -346,7 +347,7 @@ export default {
           );
         });
       }
-      if (this.filters.organization) {
+      if (that.filters.organization) {
         searchElements.push(
           {
             caseInsensitive: false,
@@ -355,28 +356,28 @@ export default {
             numberOperation: 'EQUALS',
             stringOperation: 'EQUALS',
             field: 'organization',
-            value: this.filters.organization
+            value: that.filters.organization
           }
         );
       }
       axios
         .post(
           `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
-            this.searchSortField
-          }&sortOrder=${this.searchSortOrder}&offset=${this.searchPage *
-            this.searchPageSize}&max=${this.searchPageSize}`,
+            that.searchSortField
+          }&sortOrder=${that.searchSortOrder}&offset=${that.searchPage *
+            that.searchPageSize}&max=${that.searchPageSize}`,
           {
             searchElements
           }
         )
         .then(response => {
-          this.searchResults = response;
-          this.totalSearchResults = response.data.totalNumber;
-          this.searchQueryIsDirty = false;
+          that.searchResults = response;
+          that.totalSearchResults = response.data.totalNumber;
+          that.searchQueryIsDirty = false;
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => that.errors.push(e))
         .finally(() => {
-          this.searchQueryIsDirty = false;
+          that.searchQueryIsDirty = false;
         });
     },
     getComponentTypes () {
