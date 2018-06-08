@@ -74,6 +74,7 @@ public class SecurityPermission
 	public static final String ADMIN_ROLE_MANAGEMENT = "ADMIN-ROLE-MANAGEMENT";
 	public static final String ADMIN_FAQ = "ADMIN-FAQ";
 	public static final String ADMIN_SUBMISSION_FORM_TEMPLATE = "ADMIN-SUBMISSION-FORM-TEMPLATE";
+	public static final String ADMIN_SUPPORT_MEDIA = "ADMIN-SUPPORT-MEDIA";
 	// ========================================================================================================================
 
 	public static final String GROUPBY_OLD = "Old permissions (to be replaced/renamed)";
@@ -423,6 +424,11 @@ public class SecurityPermission
 	public static final String ADMIN_SECURITY_POLICY = "ADMIN-SECURITY-POLICY";
 	public static final String ADMIN_SECURITY_SHIRO_CONFIG = "ADMIN-SECURITY-SHIRO-CONFIG";
 
+	// Support Media
+	public static final String GROUPBY_SUPPORT_MEDIA = "Support Media";
+	public static final String ADMIN_SUPPORT_MEDIA_UPDATE = "ADMIN-SUPPORT-MEDIA-UPDATE";
+	public static final String ADMIN_SUPPORT_MEDIA_DELETE = "ADMIN-SUPPORT-MEDIA-DELETE";
+	public static final String ADMIN_SUPPORT_MEDIA_CREATE = "ADMIN-SUPPORT-MEDIA-CREATE";
 
 	// Other
 	public static final String GROUPBY_OTHER = "Other";
@@ -432,7 +438,6 @@ public class SecurityPermission
 	public static final String ADMIN_ORGANIZATION_EXTRACTION = "ADMIN-ORGANIZATION-EXTRACTION";
 	public static final String ADMIN_MEDIA_DELETE = "ADMIN-MEDIA-DELETE";
 	public static final String API_DOCS = "API_DOCS";
-	public static final String ADMIN_SUPPORT_MEDIA = "ADMIN-SUPPORT-MEDIA";
 
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
@@ -744,7 +749,10 @@ public class SecurityPermission
 		codeMap.put(ADMIN_SECURITY_POLICY, newLookup(SecurityPermission.class, ADMIN_SECURITY_POLICY, "Access the security policy tab", null, GROUPBY_ADMIN_SECURITY));
 		codeMap.put(ADMIN_SECURITY_SHIRO_CONFIG, newLookup(SecurityPermission.class, ADMIN_SECURITY_SHIRO_CONFIG, "Access the Shiro Config", null, GROUPBY_ADMIN_SECURITY));
 
-
+		// Support Media
+		codeMap.put(ADMIN_SUPPORT_MEDIA_UPDATE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_UPDATE, "Allows for updating support medias", null, GROUPBY_SUPPORT_MEDIA));
+		codeMap.put(ADMIN_SUPPORT_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_DELETE, "Allows for the deletion of support medias", null, GROUPBY_SUPPORT_MEDIA));
+		codeMap.put(ADMIN_SUPPORT_MEDIA_CREATE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_CREATE, "Allows for the uploading of support medias", null, GROUPBY_SUPPORT_MEDIA));
 
 		// Other
 		codeMap.put(ALLOW_USER_ATTRIBUTE_TYPE_CREATION, newLookup(SecurityPermission.class, ALLOW_USER_ATTRIBUTE_TYPE_CREATION, "Allows for creating attribute types", null, GROUPBY_OTHER));
@@ -753,9 +761,9 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ORGANIZATION_EXTRACTION, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_EXTRACTION, "Allows for organization extraction", null, GROUPBY_OTHER));
 		codeMap.put(ADMIN_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_MEDIA_DELETE, "Allows for deleting media", null, GROUPBY_OTHER));
 		codeMap.put(API_DOCS, newLookup(SecurityPermission.class, API_DOCS, "Allows said user to view API docs", null, GROUPBY_OTHER));
-		codeMap.put(ADMIN_SUPPORT_MEDIA, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA, "Support media general permission", null, GROUPBY_OTHER));
 		
 		// ========================================================================================================================
+		codeMap.put(ADMIN_SUPPORT_MEDIA, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA, "Support media general permission", null, GROUPBY_OLD));
 		codeMap.put(ENTRY_TAG, newLookup(SecurityPermission.class, ENTRY_TAG, "Entry tag", null, GROUPBY_OLD));
 		codeMap.put(USER_SUBMISSIONS, newLookup(SecurityPermission.class, USER_SUBMISSIONS, "User submissions", null, GROUPBY_OLD));
 		codeMap.put(EVALUATIONS, newLookup(SecurityPermission.class, EVALUATIONS, "General Evaluations", null, GROUPBY_OLD));

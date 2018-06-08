@@ -314,7 +314,7 @@
 									}
 								},
 								{
-									requiredPermissions: ['ADMIN-SUPPORT-MEDIA'],
+									requiredPermissions: ['ADMIN-SUPPORT-CREATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -323,7 +323,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
-									requiredPermissions: ['ADMIN-SUPPORT-MEDIA'],
+									requiredPermissions: ['ADMIN-SUPPORT-MEDIA-CREATE'],
 									handler: function () {
 										actionAdd();										
 									}									
@@ -335,7 +335,7 @@
 									width: '100px',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
-									requiredPermissions: ['ADMIN-SUPPORT-MEDIA'],
+									requiredPermissions: ['ADMIN-SUPPORT-MEDIA-UPDATE'],
 									handler: function () {
 										actionEdit(Ext.getCmp('supportGrid').getSelectionModel().getSelection()[0]);										
 									}									
@@ -366,7 +366,7 @@
 									}									
 								},								
 								{
-									requiredPermissions: ['ADMIN-SUPPORT-MEDIA'],
+									requiredPermissions: ['ADMIN-SUPPORT-MEDIA-DELETE'],
 									xtype: 'tbfill'
 								},
 								{
@@ -378,7 +378,7 @@
 									disabled: true,
 									scale: 'medium',									
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
-									requiredPermissions: ['ADMIN-SUPPORT-MEDIA'],
+									requiredPermissions: ['ADMIN-SUPPORT-MEDIA-DELETE'],
 									handler: function() {
 										actionDelete(Ext.getCmp('supportGrid').getSelectionModel().getSelection()[0]);	
 									}
