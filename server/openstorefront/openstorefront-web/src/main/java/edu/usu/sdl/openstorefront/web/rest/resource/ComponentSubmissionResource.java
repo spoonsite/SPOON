@@ -130,6 +130,8 @@ public class ComponentSubmissionResource
 				ComponentView componentView = new ComponentView();
 
 				componentView.setUserSubmissionId(userSubmission.getUserSubmissionId());
+				componentView.setSubmissionTemplateId(userSubmission.getTemplateId());
+
 				componentView.setCurrentDataOwner(userSubmission.getOwnerUsername());
 				componentView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 				componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, ApprovalStatus.NOT_SUBMITTED));
@@ -143,6 +145,8 @@ public class ComponentSubmissionResource
 				}
 
 				componentView.setDescription("(Complete Submission and Submit for Approval)");
+				componentView.setUpdateDts(userSubmission.getUpdateDts());
+				componentView.setUpdateUser(userSubmission.getUpdateUser());
 				views.add(componentView);
 			}
 

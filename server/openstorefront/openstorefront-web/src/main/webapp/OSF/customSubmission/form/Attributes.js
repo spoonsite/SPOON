@@ -295,7 +295,19 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 			},
 			success: function(response, opts) {
 				var attributeTypes = Ext.decode(response.responseText);				
-				attributePanel.queryById('attributeTypeCB').getStore().loadData(attributeTypes);				
+				attributePanel.queryById('attributeTypeCB').getStore().loadData(attributeTypes);
+				
+				if (attributePanel.section) {
+					var initialData = attributePanel.section.submissionForm.getFieldData(attributePanel.fieldTemplate.fieldId);
+					if (initialData) {
+						var data = Ext.decode(initialData);
+						var record = Ext.create('Ext.data.Model', {				
+						});
+						record.set(data[0]);
+						attributePanel.loadRecord(record);			
+					}			
+				}					
+				
 			}
 		});
 		

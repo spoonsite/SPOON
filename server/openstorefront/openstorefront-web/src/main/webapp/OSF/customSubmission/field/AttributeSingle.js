@@ -92,6 +92,13 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				});				
 			}
 		};	
+		
+		var initialData = panel.section.submissionForm.getFieldData(panel.fieldTemplate.fieldId);
+		var decodedData = null;
+		if (initialData) {
+			decodedData = Ext.decode(initialData);
+		}			
+		
 				
 		var displayItems = [];
 		panel.selectedValue = {};
@@ -100,6 +107,15 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 			if (panel.fieldTemplate.attributeCode) {
 				addCommentField(displayItems);
 				panel.add(displayItems);
+				
+				//init
+				if (decodedData) {
+					var record = Ext.create('Ext.data.Model', {						
+					});				
+					record.set(decodedData[0]);	
+					panel.loadRecord(record);
+				}
+				
 			} else {
 				Ext.Ajax.request({
 					url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '?view=true',
@@ -125,8 +141,8 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 									}
 																	
 									panel.selectedValue = {
-											label: processValue,
-											value: newValue
+										label: processValue,
+										value: field.getValue()
 									};									
 									checkForRequiredComment(newValue);
 								} 
@@ -134,6 +150,19 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 						});	
 						addCommentField(displayItems);
 						panel.add(displayItems);
+						
+						//init
+						if (decodedData) {
+							var record = Ext.create('Ext.data.Model', {						
+							});			
+							//set comment and private
+							record.set(decodedData[0]);
+							panel.loadRecord(record);
+							
+							//TODO: group the value and load attributeCode
+							
+						}
+						
 					}
 				});
 			}
@@ -168,6 +197,17 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 					});	
 					addCommentField(displayItems);
 					panel.add(displayItems);	
+					
+					//init
+					if (decodedData) {
+						var record = Ext.create('Ext.data.Model', {						
+						});				
+						//set comment and private
+						record.set(decodedData[0]);
+						panel.loadRecord(record);
+						
+						//TODO: set code
+					}
 				}
 			});
 
@@ -198,9 +238,21 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 					});
 					addCommentField(displayItems);
 					panel.add(displayItems);	
+					
+					//init
+					if (decodedData) {
+						var record = Ext.create('Ext.data.Model', {						
+						});		
+						//set comment and private
+						record.set(decodedData[0]);
+						panel.loadRecord(record);
+						
+						//TODO: check all matching boxes
+						
+					}
 				}	
 			});
-		}				
+		}
 
 	},
 	
@@ -291,13 +343,50 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		
 		var data = [];
 		
-		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE' || panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
+		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
+			if (panel.selectedValue.value) {
+				
+				//place comment on all attrbitues?
+				Ext.Array.each(panel.selectedValue.value, function(value) {
+					var componentAttribute = {
+						componentAttributePk: {
+							attributeType: panel.fieldTemplate.attributeType,
+							attributeCode: value
+						},
+						comment: values.comment,
+						privateFlag: values.private					
+					};
+					if (componentAttribute.comment === '') {
+						delete componentAttribute.comment;
+					}
+
+					data.push(componentAttribute);
+				});
+							
+			} else {
+				//comment only
+				var componentAttribute = {
+					componentAttributePk: {
+						attributeType: panel.fieldTemplate.attributeType,
+						attributeCode: panel.fieldTemplate.attributeCode
+					},
+					comment: values.comment,
+					privateFlag: values.private					
+				};
+				if (componentAttribute.comment === '') {
+					delete componentAttribute.comment;
+				}
+
+				data.push(componentAttribute);												
+			}
+			
+		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
 			if (panel.selectedValue) {
 				
 				var componentAttribute = {
 					componentAttributePk: {
 						attributeType: panel.fieldTemplate.attributeType,
-						attributeCode: panel.selectedValue.attributeCode
+						attributeCode: panel.selectedValue.value
 					},
 					comment: values.comment,
 					privateFlag: values.private					

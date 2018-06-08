@@ -106,6 +106,7 @@ Ext.define('OSF.customSubmission.Section', {
 				fieldTemplate: field,
 				createQuestionLabel: createQuestionLabel,
 				componentType: section.componentType,
+				section: section,
 				margin: '0 0 20 0'
 			};
 			switch(field.fieldType) {
@@ -121,7 +122,8 @@ Ext.define('OSF.customSubmission.Section', {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
 							xtype: 'osf-submissionform-attribute',
-							componentType: section.componentType
+							componentType: section.componentType,
+							section: section
 						}						
 					}));
 				break;		
@@ -130,7 +132,8 @@ Ext.define('OSF.customSubmission.Section', {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
 							xtype: 'osf-submissionform-attributerequired',
-							componentType: section.componentType
+							componentType: section.componentType,
+							section: section
 						}						
 					}));
 				break;
@@ -143,7 +146,8 @@ Ext.define('OSF.customSubmission.Section', {
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
-							xtype: 'osf-submissionform-contact'
+							xtype: 'osf-submissionform-contact',
+							section: section
 						}						
 					}));
 				break;				
@@ -156,20 +160,22 @@ Ext.define('OSF.customSubmission.Section', {
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
-							xtype: 'osf-submissionform-dependency'
+							xtype: 'osf-submissionform-dependency',
+							section: section
 						}						
 					}));
 				break;					
 				case 'EXT_DEPEND_MULTI':
 					itemsToAdd.push(Ext.apply(defaults, {
-						xtype: 'osf-submissionform-dependencygrid'						
+						xtype: 'osf-submissionform-dependencygrid'
 					}));
 				break;
 				case 'MEDIA':
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
-							xtype: 'osf-submissionform-media'
+							xtype: 'osf-submissionform-media',
+							section: section
 						}						
 					}));
 				break;					
@@ -182,7 +188,8 @@ Ext.define('OSF.customSubmission.Section', {
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
-							xtype: 'osf-submissionform-relationships'
+							xtype: 'osf-submissionform-relationships',
+							section: section
 						}						
 					}));
 				break;					
@@ -195,7 +202,8 @@ Ext.define('OSF.customSubmission.Section', {
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
-							xtype: 'osf-submissionform-resource'
+							xtype: 'osf-submissionform-resource',
+							section: section
 						}						
 					}));
 				break;	
@@ -213,7 +221,8 @@ Ext.define('OSF.customSubmission.Section', {
 					itemsToAdd.push(Ext.apply(defaults, {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
-							xtype: 'osf-submissionform-tags'
+							xtype: 'osf-submissionform-tags',
+							section: section
 						}						
 					}));
 				break;					

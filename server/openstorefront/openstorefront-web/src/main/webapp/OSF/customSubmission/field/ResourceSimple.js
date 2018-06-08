@@ -77,6 +77,8 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 			}
 			
 		]);
+		
+		//on edit hold on the meta record
 	
 	},
 	

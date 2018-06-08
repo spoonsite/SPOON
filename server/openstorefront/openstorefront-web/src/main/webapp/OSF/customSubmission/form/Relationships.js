@@ -96,7 +96,19 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 					autoLoad: true
 				}
 			}							
-		]);		
+		]);	
+		
+		if (relationshipPanel.section) {
+			var initialData = relationshipPanel.section.submissionForm.getFieldData(relationshipPanel.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				relationshipPanel.loadRecord(record);			
+			}			
+		}	
+		
 	},
 	getSubmissionValue: function() {
 		var relationshipPanel = this;

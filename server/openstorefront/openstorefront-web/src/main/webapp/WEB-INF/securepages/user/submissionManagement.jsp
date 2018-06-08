@@ -198,6 +198,11 @@
 								dateFormat: 'c'
 							},
 							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},							
+							{
 								name: 'submitApproveDts',
 								type:	'date',
 								dateFormat: 'c',
@@ -244,7 +249,8 @@
 						{ text: 'Submit/Approve Date', align: 'center', dataIndex: 'submitApproveDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Approval Email', dataIndex: 'notifyOfApprovalEmail', width: 200, sortable: false },
 						{ text: 'Pending Change', align: 'center', dataIndex: 'statusOfPendingChange', width: 150, sortable: false },
-						{ text: 'Pending Change Submit Date', align: 'center', dataIndex: 'pendingChangeSubmitDts', width: 250, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true, sortable: false }
+						{ text: 'Pending Change Submit Date', align: 'center', dataIndex: 'pendingChangeSubmitDts', width: 250, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true, sortable: false },
+						{ text: 'Last Update Date', align: 'center', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
 					dockedItems: [
 						{
@@ -286,8 +292,15 @@
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-										Ext.getCmp('submissionWindow').show();
-										Ext.getCmp('submissionPanel').editSubmission(componentId);
+										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
+										
+										if (record.get('userSubmissionId')) {										
+											loadSubmissionForm(record.get('submissionTemplateId'), record.get('componentType'), record);
+										} else {
+											Ext.getCmp('submissionWindow').show();
+											Ext.getCmp('submissionPanel').editSubmission(componentId);
+										}
+										
 									}
 								},
 								{
@@ -471,6 +484,7 @@
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
+										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
 										Ext.Msg.show({
 											title:'Delete?',
 											message: 'Are sure you want to delete: ' + name + '?',
@@ -479,16 +493,30 @@
 											fn: function(btn) {
 												if (btn === 'yes') {
 													Ext.getCmp('submissionGrid').setLoading('Removing...');
-													Ext.Ajax.request({
-														url: 'api/v1/resource/componentsubmissions/' + componentId + '/inactivate',
-														method: 'PUT',
-														callback: function(){
-															Ext.getCmp('submissionGrid').setLoading(false);
-														},
-														success: function(response, opts) {
-															actionRefreshSubmission();
-														}
-													});	
+													if (record.get('userSubmissionId')) {
+														Ext.Ajax.request({
+															url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId'),
+															method: 'DELETE',
+															callback: function(){
+																Ext.getCmp('submissionGrid').setLoading(false);
+															},
+															success: function(response, opts) {
+																actionRefreshSubmission();
+															}
+														});	
+													} else {
+													
+														Ext.Ajax.request({
+															url: 'api/v1/resource/componentsubmissions/' + componentId + '/inactivate',
+															method: 'PUT',
+															callback: function(){
+																Ext.getCmp('submissionGrid').setLoading(false);
+															},
+															success: function(response, opts) {
+																actionRefreshSubmission();
+															}
+														});	
+													}
 												} 
 											}
 										});
@@ -558,6 +586,10 @@
 								
 								if (record.get('statusOfPendingChange')) {
 									tools.getComponent('tbRemoveChangeRequest').setHidden(false);
+								}
+								
+								if (record.get('userSubmissionId')) {
+									tools.getComponent('options').setDisabled(true);
 								}
 								
 							} else {
@@ -646,10 +678,10 @@
 					currentUser = user;
 				});
 				
-				var loadSubmissionForm = function(submissionTemplateId, componentType) {
+				var loadSubmissionForm = function(submissionTemplateId, componentType, record) {
 					
 					if (!submissionTemplateId) {						
-						console.log("Need to Set default");
+						console.error("Need to Set default");
 					}
 					
 					if (submissionTemplateId) {
@@ -679,14 +711,35 @@
 									]
 								});
 								submissionWin.show();
-								submissionWin.queryById('form').load(template, componentType, null, true);
+								
+								var finishLoadingForm = function(userSubmission) {
+									submissionWin.queryById('form').load(template, componentType, userSubmission, true);					
+								};
+
+								if (record) {
+
+									//load user submission
+									submissionWin.setLoading(true);
+									Ext.Ajax.request({
+										url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId'),
+										callback: function(){
+											submissionWin.setLoading(false);
+										},
+										success: function(response, opt) {
+											var userSubmission = Ext.decode(response.responseText);
+											finishLoadingForm(userSubmission);
+										}
+									});
+								} else {
+									finishLoadingForm(null);
+								}								
+								
 							}
 						});
 						
 					}
 					
-				};
-				
+				};				
 				
 			});
 

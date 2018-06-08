@@ -132,6 +132,18 @@ Ext.define('OSF.customSubmission.form.Media', {
 				xtype: 'DataSensitivityComboBox'
 			}
 		]);
+		
+		if (mediaPanel.section) {
+			var initialData = mediaPanel.section.submissionForm.getFieldData(mediaPanel.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				mediaPanel.loadRecord(record);			
+			}			
+		}		
+		
 	},
 	getSubmissionValue: function() {		
 		var mediaPanel = this;

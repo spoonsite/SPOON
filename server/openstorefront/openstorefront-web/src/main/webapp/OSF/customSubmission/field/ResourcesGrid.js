@@ -43,6 +43,14 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 		var grid = this;
 		grid.callParent();	
 		
+		if (grid.section) {
+			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);				
+				grid.getStore().loadData(data);
+			}			
+		}
+		
 	},	
 	
 	actionAddEdit: function(record) {
@@ -73,7 +81,7 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 										var form = this.up('form');
 										var data = form.getValues();
 
-										data.resourceTypeLabel = form.queryById('resourceType').getSelection()[0].get('description');
+										data.resourceTypeLabel = form.queryById('resourceType').getSelection().get('description');
 										
 										grid.getStore().add(data);
 										this.up('window').close();

@@ -49,6 +49,11 @@ Ext.define('OSF.customSubmission.field.TextArea', {
 			
 		textField.setFieldLabel(textField.createQuestionLabel());
 		
+		var initialData = textField.section.submissionForm.getFieldData(textField.fieldTemplate.fieldId);
+		if (initialData) {
+			textField.setValue(initialData);
+		}
+		
 	},
 	
 	reviewDisplayValue: function() {

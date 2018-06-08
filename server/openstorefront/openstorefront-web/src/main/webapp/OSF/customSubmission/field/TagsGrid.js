@@ -36,7 +36,15 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 	
 	initComponent: function () {
 		var grid = this;
-		grid.callParent();	
+		grid.callParent();
+		
+		if (grid.section) {
+			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);				
+				grid.getStore().loadData(data);
+			}			
+		}	
 		
 	},	
 	

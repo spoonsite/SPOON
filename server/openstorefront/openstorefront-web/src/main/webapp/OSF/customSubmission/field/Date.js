@@ -47,6 +47,11 @@ Ext.define('OSF.customSubmission.field.Date', {
 			
 		field.setFieldLabel(field.createQuestionLabel());
 		
+		var initialData = field.section.submissionForm.getFieldData(field.fieldTemplate.fieldId);
+		if (initialData) {
+			field.setValue(initialData);
+		}			
+		
 	},
 	
 	reviewDisplayValue: function() {

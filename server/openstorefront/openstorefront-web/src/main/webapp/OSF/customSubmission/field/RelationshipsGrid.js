@@ -35,6 +35,20 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 		{ text: 'Entry Name', dataIndex: 'targetName', flex: 1, minWidth: 200 }
 	],
 	
+	initComponent: function () {
+		var grid = this;
+		grid.callParent();	
+		
+		if (grid.section) {
+			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);				
+				grid.getStore().loadData(data);
+			}			
+		}
+		
+	},	
+	
 	actionAddEdit: function(record) {
 		var grid = this;
 		
@@ -63,8 +77,8 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 										var form = this.up('form');
 										var data = form.getValues();
 										
-										data.relationType = form.queryById('relationshipType').getSelection()[0].get('description');										
-										data.targetName = form.queryById('relationshipTargetCB').getSelection()[0].get('description');
+										data.relationType = form.queryById('relationshipType').getSelection().get('description');										
+										data.targetName = form.queryById('relationshipTargetCB').getSelection().get('description');
 										
 										grid.getStore().add(data);
 										this.up('window').close();

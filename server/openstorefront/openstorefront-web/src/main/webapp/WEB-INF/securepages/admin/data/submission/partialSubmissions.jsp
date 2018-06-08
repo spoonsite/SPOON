@@ -42,6 +42,9 @@
 		</form>
 		
 		<script type="text/javascript">
+			
+			Ext.require('OSF.customSubmission.SubmissionFormFullControl');	
+			
 			/* global Ext, CoreUtil */
 			Ext.onReady(function(){			
 				
@@ -166,9 +169,59 @@
 
 				var actionView = function(record) {					
 					
-					//preview
+					templateGrid.setLoading('Loading Submission Form...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/submissiontemplates/' + record.get('templateId'),
+						callback: function() {
+							templateGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var template = Ext.decode(response.responseText);
+
+							var submissionWin = Ext.create('Ext.window.Window', {
+								title: 'Preview Incomplete Submission (READ-ONLY)',
+								layout: 'fit',
+								modal: true,
+								closeAction: 'destroy',
+								width: '80%',
+								height: '80%',
+								maximizable: true,									
+								items: [
+									{
+										xtype: 'osf-customSubmission-SubmissionformFullControl',
+										itemId: 'form',
+										showCustomButton: true,
+										hideSave: true,
+										customButtonHandler: function() {
+											submissionWin.close();
+										}	
+									}
+								]
+							});
+							submissionWin.show();
+
+							var finishLoadingForm = function(userSubmission) {
+								submissionWin.queryById('form').load(template, userSubmission.componentType, userSubmission, false);					
+							};
+
+							if (record) {
+
+								//load user submission
+								submissionWin.setLoading(true);
+								Ext.Ajax.request({
+									url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId'),
+									callback: function(){
+										submissionWin.setLoading(false);
+									},
+									success: function(response, opt) {
+										var userSubmission = Ext.decode(response.responseText);
+										finishLoadingForm(userSubmission);
+									}
+								});
+							} 
+						}
+					});
 					
-					//load record
 					
 					
 				};

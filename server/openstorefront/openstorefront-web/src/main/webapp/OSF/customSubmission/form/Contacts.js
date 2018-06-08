@@ -166,6 +166,15 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					proxy: {
 						type: 'ajax',
 						url: 'api/v1/resource/contacts/filtered'
+					},
+					listeners: {
+						load: function(store, records, opt) {
+							if (contactPanel.contactId) {
+								var existingGrid = contactPanel.queryById('existingContactGrid');
+								var index = existingGrid.getStore().find('contactId', contactPanel.contactId);
+								existingGrid.getView().select(index);
+							}
+						}
 					}
 				},
 				columns: [
@@ -196,7 +205,23 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 			}
 		]);
 		
-		if (contactPanel.fieldTemplate.popluateContactWithUser) {
+		var initialData = null;
+		if (contactPanel.section) {
+			initialData = contactPanel.section.submissionForm.getFieldData(contactPanel.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				contactPanel.loadRecord(record);
+				
+				if (!contactPanel.fieldTemplate.hideExistingContactPicker) {	
+					contactPanel.contactId = record.data.contactId;		
+				}
+			}			
+		}	
+		
+		if (contactPanel.fieldTemplate.popluateContactWithUser && !initialData) {
 			CoreService.userservice.getCurrentUser().then(function (usercontext) {
 				contactPanel.getForm().setValues(usercontext);
 			});

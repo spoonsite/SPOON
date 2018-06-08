@@ -116,6 +116,18 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				xtype: 'DataSensitivityComboBox'
 			}
 		]);
+		
+		if (resourcePanel.section) {
+			var initialData = resourcePanel.section.submissionForm.getFieldData(resourcePanel.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				resourcePanel.loadRecord(record);			
+			}			
+		}		
+		
 	},
 	getSubmissionValue: function() {
 		var resourcePanel = this;

@@ -64,6 +64,11 @@ Ext.define('OSF.customSubmission.field.Organization', {
 		
 		field.setFieldLabel(field.createQuestionLabel());
 		
+		var initialData = field.section.submissionForm.getFieldData(field.fieldTemplate.fieldId);
+		if (initialData) {
+			field.setValue(initialData);
+		}		
+		
 	},
 	
 	reviewDisplayValue: function() {

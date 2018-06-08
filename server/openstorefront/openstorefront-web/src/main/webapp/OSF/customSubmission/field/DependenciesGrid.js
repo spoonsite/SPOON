@@ -42,6 +42,14 @@ Ext.define('OSF.customSubmission.field.DependenciesGrid', {
 		var grid = this;
 		grid.callParent();	
 		
+		if (grid.section) {
+			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);				
+				grid.getStore().loadData(data);
+			}			
+		}		
+		
 	},		
 	
 	actionAddEdit: function(record) {

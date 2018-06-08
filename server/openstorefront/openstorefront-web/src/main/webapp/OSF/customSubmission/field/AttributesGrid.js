@@ -39,6 +39,14 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 		var grid = this;
 		grid.callParent();	
 		CoreService.attributeservice.warmCache();
+		
+		if (grid.section) {
+			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);				
+				grid.getStore().loadData(data);
+			}			
+		}		
 	},
 	
 	actionAddEdit: function(record) {

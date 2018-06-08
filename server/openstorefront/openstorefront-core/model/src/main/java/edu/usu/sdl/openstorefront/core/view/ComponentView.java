@@ -56,6 +56,7 @@ public class ComponentView
 	private ComponentTypeNestedModel componentTypeNestedModel;
 	private String currentDataOwner;
 	private String userSubmissionId;
+	private String submissionTemplateId;
 
 	public static ComponentView toView(Component component, boolean populateOwnerInfo)
 	{
@@ -248,6 +249,16 @@ public class ComponentView
 	public void setUserSubmissionId(String userSubmissionId)
 	{
 		this.userSubmissionId = userSubmissionId;
+	}
+
+	public String getSubmissionTemplateId()
+	{
+		return submissionTemplateId;
+	}
+
+	public void setSubmissionTemplateId(String submissionTemplateId)
+	{
+		this.submissionTemplateId = submissionTemplateId;
 	}
 
 }

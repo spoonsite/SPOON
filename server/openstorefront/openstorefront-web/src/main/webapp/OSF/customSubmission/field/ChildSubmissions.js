@@ -34,6 +34,14 @@ Ext.define('OSF.customSubmission.field.ChildSubmissions', {
 		var grid = this;
 		grid.callParent();	
 		
+		if (grid.section) {
+			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);				
+				grid.getStore().loadData(data);
+			}			
+		}		
+		
 	},	
 	
 	actionAddEdit: function(record) {
@@ -93,7 +101,7 @@ Ext.define('OSF.customSubmission.field.ChildSubmissions', {
 		});
 		addEditWin.show();
 		
-		//load the form template based on the type
+		//FINISH: load the form template based on the type
 		
 		
 		

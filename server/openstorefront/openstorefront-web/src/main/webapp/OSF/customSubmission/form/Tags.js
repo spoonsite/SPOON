@@ -52,6 +52,17 @@ Ext.define('OSF.customSubmission.form.Tags', {
 				url: 'api/v1/resource/components/tags'
 			}
 		});
+		
+		if (field.section) {
+			var initialData = field.section.submissionForm.getFieldData(field.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				tagPanel.loadRecord(record);			
+			}			
+		}
 
 	},
 	getSubmissionValue: function() {

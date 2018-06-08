@@ -75,6 +75,18 @@ Ext.define('OSF.customSubmission.form.Dependencies', {
 				xtype: 'DataSensitivityComboBox'
 			}
 		]);
+		
+		if (dependancyPanel.section) {
+			var initialData = dependancyPanel.section.submissionForm.getFieldData(dependancyPanel.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				dependancyPanel.loadRecord(record);			
+			}			
+		}			
+		
 	},
 	getSubmissionValue: function() {
 		var dependancyPanel = this;

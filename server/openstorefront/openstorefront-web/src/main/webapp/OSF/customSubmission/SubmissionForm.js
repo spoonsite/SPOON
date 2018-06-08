@@ -123,17 +123,19 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 				var sectionComponent;
 				if (section.review) {
 					sectionComponent = Ext.create('OSF.customSubmission.ReviewSection', {				
-						componentType: componentType
+						componentType: componentType,
+						submissionForm: submissionForm
 					});				
 				} else {
 					sectionComponent = Ext.create('OSF.customSubmission.Section', {		
-						componentType: componentType
+						componentType: componentType,
+						submissionForm: submissionForm
 					});
 					sectionComponent.load(section, submissionFormTemplate, userSubmission);			
 
 					submissionForm.formSections.push(section);
 				}
-				section.component = sectionComponent;				
+				section.component = sectionComponent;					
 				sectionComponents.push(sectionComponent);
 
 			});
@@ -238,7 +240,21 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 			submissionForm.displayCurrentSection();
 		}		
 	},
-	
+	getFieldData: function(fieldId) {
+		var submissionForm = this;
+		
+		var data = null;
+		if (submissionForm.userSubmission) {
+			if (submissionForm.userSubmission.fields) {
+				Ext.Array.each(submissionForm.userSubmission.fields, function(field){
+					if (field.templateFieldId ===  fieldId) {
+						data = field.rawValue;
+					}
+				});
+			}
+		}
+		return data;
+	},	
 	getUserData: function() {
 		var submissionForm = this;
 		

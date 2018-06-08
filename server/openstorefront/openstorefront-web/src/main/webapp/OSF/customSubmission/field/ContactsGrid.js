@@ -52,6 +52,14 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 			});
 		}
 		
+		if (grid.section) {
+			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);				
+				grid.getStore().loadData(data);
+			}			
+		}		
+		
 	},	
 	
 	actionAddEdit: function(record) {
@@ -85,7 +93,9 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 										
 										var contactTypeField = form.queryById('contactType');
 										if (contactTypeField) {
-											data.contactTypeLabel = contactTypeField.getSelection()[0].get('description');
+											var selectedType = contactTypeField.getSelection();
+											
+											data.contactTypeLabel = selectedType.get('description');
 										}
 										
 										grid.getStore().add(data);

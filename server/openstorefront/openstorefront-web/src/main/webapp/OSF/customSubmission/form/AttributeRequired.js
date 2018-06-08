@@ -52,12 +52,43 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 					
 					fields.push({
 						xtype: 'AttributeCodeSelect',
+						attributeType: attributeType.attributeType,
 						attributeTypeView: attributeType
 					});										
 					
 				});
 				formPanel.add(fields);
 				formPanel.updateLayout(true, true);
+				
+				
+				var initialData = formPanel.section.submissionForm.getFieldData(formPanel.fieldTemplate.fieldId);
+				if (initialData) {
+					var data = Ext.decode(initialData);				
+					
+					//group values by type
+					var typeGroup = {};
+					Ext.Array.each(data, function(item) {
+						if (typeGroup[item.componentAttributePk.attributeType]) {
+							typeGroup[item.componentAttributePk.attributeType].push(item.componentAttributePk.attributeCode);
+						} else {
+							typeGroup[item.componentAttributePk.attributeType] = [];
+							typeGroup[item.componentAttributePk.attributeType].push(item.componentAttributePk.attributeCode);
+						}
+					});
+					
+					//find field and set values
+					Ext.Object.each(typeGroup, function(key, value){
+						
+						Ext.Array.each(formPanel.items.items, function(field){
+							if (field.attributeType === key) {
+								field.setValue(value);
+							}
+						});
+						
+					});
+					
+					
+				}	
 				
 			}
 		});
@@ -100,11 +131,15 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 
 		var data = [];
 		Ext.Array.each(attributePanel.items.items, function(field) {
-			data.push({
-				componentAttributePk: {
-					attributeType: field.attributeTypeView.attributeType,
-					attributeCode: field.getValue()
-				}
+			
+			var allValues = field.getValue();			
+			Ext.Array.each(allValues, function(value){				
+				data.push({
+					componentAttributePk: {
+						attributeType: field.attributeTypeView.attributeType,
+						attributeCode: value
+					}
+				});
 			});
 		});
 		

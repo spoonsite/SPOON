@@ -64,6 +64,11 @@ Ext.define('OSF.customSubmission.field.RichText', {
 			fieldPanel.textArea
 		]);
 		
+		var initialData = fieldPanel.section.submissionForm.getFieldData(fieldPanel.fieldTemplate.fieldId);
+		if (initialData) {
+			fieldPanel.textArea.setValue(initialData);
+		}		
+		
 	},
 	
 	reviewDisplayValue: function() {

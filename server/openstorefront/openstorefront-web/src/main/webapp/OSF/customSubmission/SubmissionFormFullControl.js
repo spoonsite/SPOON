@@ -322,10 +322,17 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		var form = submissionFormFullControl.queryById('submissionForm');						
 		var userSubmission = form.getUserData();		
 		
+		var method = 'POST';
+		var endingURL = '';
+		if (userSubmission.userSubmissionId) {
+			method = 'PUT';
+			endingURL = '/' + userSubmission.userSubmissionId
+		}
+		
 		submissionFormFullControl.setLoading("Saving...");
 		Ext.Ajax.request({
-			url: 'api/v1/resource/usersubmissions',
-			method: 'POST',
+			url: 'api/v1/resource/usersubmissions' + endingURL,
+			method: method,
 			jsonData: userSubmission,
 			callback: function() {		
 				submissionFormFullControl.setLoading(false);
