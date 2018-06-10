@@ -177,6 +177,7 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 		{
 			xtype: 'container',
 			layout: 'hbox',
+			minHeight: 300,
 			items: [
 				{
 					xtype: 'container',
@@ -185,13 +186,13 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 				},
 				{
 					xtype: 'container',
-					height: '100%',
+					height: '100%',					
 					padding: '10 40 0 20',
 					items: [
 						{
 							xtype: 'osf-csf-floatingMenu',
 							itemId: 'menu',
-							width: 50
+							width: 50							
 						}
 					]
 				}
