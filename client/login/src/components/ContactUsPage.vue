@@ -150,14 +150,20 @@ export default {
     submit () {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
-        this.$http.post('/api/submit', {
-          contactType: this.contactType,
-          subject: this.subject,
+        this.$http.post('/openstorefront/api/v1/resource/feedbacktickets', {
+          summary: this.subject,
           description: this.description,
-          name: this.name,
+          fullname: this.name,
           email: this.email,
+          organization: this.organization,
           phone: this.phone,
-          organization: this.organization
+          ticketType: this.contactType,
+          webInformation: {
+            location: window.location.href,
+            userAgent: navigator.userAgent,
+            referrer: navigator.referrer,
+            screenResolution: 'Height: ' + window.innerHeight + ', Width:' + window.innerWidth
+          }
         });
       }
     },
