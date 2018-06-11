@@ -58,6 +58,7 @@
 						'<table class="info-table">',
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Reported Issue Type</b></td><td class="info-table"> {ticketType}</td></tr>',
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Reported Username</b></td><td class="info-table"> {username}</td></tr>',
+						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Reported Fullname</b></td><td class="info-table"> {fullname}</td></tr>',
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Reported Firstname</b></td><td class="info-table"> {firstname}</td></tr>',
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Reported Lastname</b></td><td class="info-table"> {lastname}</td></tr>',
 						'<tr class="info-table"><td class="info-table" style="width: 20%;"><b>Reported Organization</b></td><td class="info-table"> {organization}</td></tr>',
