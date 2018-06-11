@@ -96,6 +96,16 @@
         </v-card>
       </v-flex>
     </v-layout>
+
+    <v-dialog v-model="confirmationDialog" max-width="300px">
+      <v-card title>
+        <v-card-text>Feedback has been submitted.</v-card-text>
+        <v-card-actions>
+          <v-btn @click="$router.push('/')"><v-icon>fas fa-return</v-icon>Return to Homepage</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -105,6 +115,7 @@ export default {
   name: 'ContactUsPage',
   data: () => ({
     valid: true,
+    confirmationDialog: false,
     contactType: null,
     contactTypeRules: [
       v => !!v || 'Type is required'
@@ -164,7 +175,12 @@ export default {
             referrer: navigator.referrer,
             screenResolution: 'Height: ' + window.innerHeight + ', Width:' + window.innerWidth
           }
-        });
+        })
+        .then(response => {
+        })
+        .catch(error => console.log(error));
+        this.$refs.form.reset();
+        this.confirmationDialog = true;
       }
     },
     cancel () {
