@@ -11,31 +11,8 @@
       </ul>
     </div>
   </v-flex>
-  <!-- Avatar Icon -->
-  <v-flex xs12 sm5 md3>
-    <v-card raised>
-      <v-layout column align-center>
-        <v-flex pt-2>
-          <v-icon size="8em">fas fa-user-tie</v-icon>
-        </v-flex>
-        <!-- Can't yet change or add avatar icons. Uncomment and set up once we can
-        <v-card-actions>
-          <v-btn flat color="orange">Change Avatar</v-btn>
-        </v-card-actions> -->
-      </v-layout>
-    </v-card>
-  </v-flex>
-  <!-- Password Reset -->
-  <v-flex xs12 sm5 md5 offset-xs0 offset-lg2>
-    <router-link :to="{name: 'Reset Password'}" style="text-decoration: none;">
-      <v-btn
-        color="accent"
-        mb-2
-      >Reset Password</v-btn>
-    </router-link>
-  </v-flex>
   <!-- Contact Details -->
-  <v-flex xs12 sm6>
+  <v-flex xs12 sm6 pt-0 pb-0>
     <v-text-field
       ref="firstName"
       v-model="firstName"
@@ -45,7 +22,7 @@
       label="First Name"
     ></v-text-field>
   </v-flex>
-  <v-flex xs12 sm6>
+  <v-flex xs12 sm6 pt-0 pb-0>
     <v-text-field
       ref="lastName"
       v-model="lastName"
@@ -55,7 +32,7 @@
       label="Last Name"
     ></v-text-field>
   </v-flex>
-  <v-flex xs12>
+  <v-flex xs12 pt-0 pb-0>
     <v-text-field
       ref="email"
       v-model="email"
@@ -66,10 +43,11 @@
       hint="Enter your email. Example: my.name@example.com"
     ></v-text-field>
   </v-flex>
-  <v-flex xs12>
+  <v-flex xs12 pt-0 pb-0>
     <!-- Consider using a true parser later for validation of phone number
     https://github.com/googlei18n/libphonenumber -->
     <v-text-field
+      ref="phone"
       v-model="phone"
       counter=80
       placeholder="(123) 456-7890"
@@ -77,8 +55,9 @@
       hint="Enter your phone number"
     ></v-text-field>
   </v-flex>
-  <v-flex xs12>
+  <v-flex xs12 pt-0 pb-0>
     <v-select
+      ref="user_org"
       :items="organizations"
       item-text="description"
       item-value="description"
@@ -91,16 +70,17 @@
       hint="Type to filter or click to select"
     ></v-select>
   </v-flex>
-    <v-flex xs12>
-      <v-text-field
-        ref="position"
-        v-model="position"
-        label="Position Title"
-        hint="Enter your current title"
-      ></v-text-field>
+  <v-flex xs12 pt-0 pb-0>
+    <v-text-field
+      ref="user_position"
+      v-model="position"
+      label="Position Title"
+      hint="Enter your current title"
+    ></v-text-field>
   </v-flex>
-  <v-flex xs12>
+  <v-flex xs12 pt-0>
     <v-select
+      ref="user_app_role"
       :items="userTypeCodes"
       item-text="description"
       item-value="description"
@@ -108,30 +88,35 @@
       v-model="userTypeCode"
       label="User Role"
       required
-      hint="Click to selecta role"
+      hint="Click to select a role"
     ></v-select>
   </v-flex>
   <!-- Notification Checkboxes -->
-  <v-flex xs12>
+  <v-flex xs1>
+    <v-tooltip bottom>
+      <v-icon slot="activator">fas fa-question-circle</v-icon>
+      <span>Receive a periodic email about recent changes</span>
+    </v-tooltip>
+  </v-flex>
+  <v-flex xs11>
     <v-switch
-      label="Receive periodic email"
+      ref="periodic_notify"
+      label="Notify about Updates"
       ripple
       v-model="notify"
       id="notify"
     ></v-switch>
   </v-flex>
-  <!-- Monthly email not set up yet. Once it is, uncomment this section
-  <v-flex xs12>
-    <v-switch
-      label="Receive monthly email"
-      ripple
-      v-model="monthly"
-      id="monthly"
-      disabled
-    ></v-switch>
-  </v-flex> -->
+  <!-- Reset Button -->
+  <v-flex xs12 sm2>
+    <v-btn
+      block
+      v-on:click="reset"
+      color="accent"
+    >Reset Form</v-btn>
+  </v-flex>
   <!-- Save Button -->
-  <v-flex xs10 offset-xs1>
+  <v-flex xs12 sm10>
     <v-alert v-model="saved" type="success" dismissible>
       Updated User Profile
     </v-alert>
@@ -141,7 +126,6 @@
     <v-btn
       v-if="!saved && !errorOnSave"
       block
-      round
       v-on:click="updateProfile"
       color="accent"
     >Save</v-btn>
@@ -158,7 +142,6 @@ import validators from '../util/validators';
 export default {
   name: 'user-profile-page',
   mixins: [validators],
-  props: [],
   mounted () {
     this.getCurrentUserName();
     this.getOrgs();
@@ -263,6 +246,9 @@ export default {
           this.errors.push(e);
           this.errorOnSave = true;
         });
+    },
+    reset () {
+      this.getRestOfUserData();
     }
   }
 };
