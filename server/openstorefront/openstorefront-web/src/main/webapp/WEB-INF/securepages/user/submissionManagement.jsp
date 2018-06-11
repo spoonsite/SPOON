@@ -279,8 +279,7 @@
 									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',									
 									handler: function () {
-										//Ext.getCmp('submissionWindow').show();
-										//Ext.getCmp('submissionPanel').resetSubmission();
+										actionNewSubmission();
 									}
 								},
 								{
@@ -611,9 +610,8 @@
 				addComponentToMainViewPort(submissionGrid);
 				
 				//newSubmission
+				var availableSubmissions = [];
 				var loadAvailableSubmissionForms = function() {
-					
-					var submissionBtn = submissionGrid.queryById('newSubmission');
 					
 					submissionGrid.setLoading(true);
 					Ext.Ajax.request({
@@ -626,33 +624,41 @@
 							
 							submissionGrid.setLoading(true);
 							Ext.Ajax.request({
-								url: 'api/v1/resource/componenttypes',
+								url: 'api/v1/resource/componenttypes/nested',
 								callback: function() {
 									submissionGrid.setLoading(false);
 								},
 								success: function(response, opts) {
-									var componentTypes = Ext.decode(response.responseText);
+									var componentTypeRoot = Ext.decode(response.responseText);
 
-									componentTypes = componentTypes.sort(function(a, b){
-										return a.label.localeCompare(b.label);
-									});
-
-									var menuItems = [];
-									Ext.Array.each(componentTypes, function(componentType){
-										if (componentType.allowOnSubmission) {
-											menuItems.push({
-												text: componentType.label,
-												componentType: componentType,
-												submissionTemplateId: componentType.submissionTemplateId || defaultTemplate.submissionTemplateId,
-												handler: function() {											
-													loadSubmissionForm(this.submissionTemplateId, this.componentType.componentType);
-												}
-											});
+									var flattenComponentTypes = function(root, indent) {
+										if (root.componentType) {
+											var submissionTemplateId = defaultTemplate.submissionTemplateId;
+											if (root.componentType.submissionTemplateId) {
+												submissionTemplateId = root.componentType.submissionTemplateId;
+											}
+											
+											if (root.componentType.allowOnSubmission) {
+												availableSubmissions.push({
+													componentType: root.componentType.componentType,
+													submissionTemplateId: submissionTemplateId,
+													label: root.componentType.label,
+													description: root.componentType.description,
+													iconUrl: root.componentType.iconUrl,
+													indent: indent
+												});
+											}
 										}
+										Ext.Array.each(root.children, function(child){											
+											flattenComponentTypes(child, (indent + 10));
+										});
+									};
+									flattenComponentTypes(componentTypeRoot, 0);
+									
+									availableSubmissions = availableSubmissions.sort(function(a, b){
+										return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
 									});
-									submissionBtn.setMenu({
-										items: menuItems
-									});
+									
 								}
 							});							
 						}
@@ -661,6 +667,96 @@
 				};
 				loadAvailableSubmissionForms();
 								
+				var actionNewSubmission = function() {
+					
+					var entryTypeSelectWin = Ext.create('Ext.window.Window', {
+						title: 'Select Entry Type Form',
+						modal: true,
+						scrollable: true,
+						closeAction: 'destroy',					
+						width: '65%',
+						minWidth: 400,
+						height: '50%',
+						minHeight: 300,
+						layout: 'fit',
+						bodyStyle: 'padding: 20px;',
+						items: [
+							{
+								xtype: 'dataview',
+								itemId: 'dataview',
+								store: {								
+								},
+								itemSelector: 'div.entry-type',
+								emptyText: 'No Submission Forms available',
+								selectedItemCls: 'entry-type-select',
+								tpl: new Ext.XTemplate(
+									'<tpl for=".">',	
+									'<div style="width: 100%; margin-bottom: 10px; padding-left: {indent}px;" class="entry-type entry-type-selector">',
+									'	<table style="width: 100%;">',
+									'		<tr><tpl if="iconUrl"><td><img scr="{iconUrl}"></td></tpl>',
+									'			<td>',
+									'				<h1>{label}</h1>',
+									'				{description}',
+									'				<hr>',
+									'			</td>',
+									'		</tr>',	
+									'	</table>',
+									'</div>',
+									'</tpl>'		
+								),
+								selectionModel: {
+									toggleOnClick: true
+								},
+								listeners: {
+									itemclick: function(view, record, node, index, e, opts) {
+										entryTypeSelectWin.submissionTemplateId = record.get('submissionTemplateId');
+										entryTypeSelectWin.componentType = record.get('componentType');										
+									}
+								}
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Create',
+										iconCls: 'fa fa-2x fa-plus icon-vertical-correction icon-button-color-save',
+										scale: 'medium',
+										handler: function() {											
+											loadSubmissionForm(entryTypeSelectWin.submissionTemplateId, entryTypeSelectWin.componentType);											
+											entryTypeSelectWin.close();
+										}										
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-2x fa-close icon-vertical-correction icon-button-color-warning',
+										scale: 'medium',
+										handler: function() {
+											entryTypeSelectWin.close();
+										}										
+									}
+								]
+							}
+						]						
+						
+					});
+					entryTypeSelectWin.show();		
+					entryTypeSelectWin.queryById('dataview').getStore().loadData(availableSubmissions);
+					if (availableSubmissions.length > 0) {
+						entryTypeSelectWin.queryById('dataview').getSelectionModel().select(0);
+						var typeRecord = entryTypeSelectWin.queryById('dataview').getStore().getAt(0);
+						entryTypeSelectWin.submissionTemplateId = typeRecord.get('submissionTemplateId');
+						entryTypeSelectWin.componentType = typeRecord.get('componentType');	
+					}
+					
+				};			
+								
+
 				
 				var actionRefreshSubmission = function(){
 					Ext.getCmp('submissionGrid').getStore().load();
@@ -706,7 +802,10 @@
 									items: [
 										{
 											xtype: 'osf-customSubmission-SubmissionformFullControl',
-											itemId: 'form'								
+											itemId: 'form',
+											finishInitialSave: function() {
+												actionRefreshSubmission();
+											}
 										}
 									]
 								});

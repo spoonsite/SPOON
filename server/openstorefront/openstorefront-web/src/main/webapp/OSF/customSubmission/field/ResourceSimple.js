@@ -78,11 +78,32 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 			
 		]);
 		
-		//on edit hold on the meta record
+		//on edit hold on to the meta record
+		
+		var initialData = resourcePanel.section.submissionForm.getFieldData(resourcePanel.fieldTemplate.fieldId);
+		if (initialData) {
+			var data = Ext.decode(initialData);
+			var record = Ext.create('Ext.data.Model', {				
+			});
+			record.set(data[0]);
+			resourcePanel.loadRecord(record);			
+		}		
+		
+		if (resourcePanel.section) {
+			if (!resourcePanel.section.submissionForm.userSubmission) {
+				resourcePanel.previewMode = true;			
+			} else {
+				resourcePanel.userSubmissionId = resourcePanel.section.submissionForm.userSubmission.userSubmissionId;
+			}
+		} else {
+			resourcePanel.previewMode = true;
+		}		
 	
 	},
 	
 	uploadWindow: function() {
+		var resourcePanel = this;
+		
 		//prompt for upload
 		
 		var uploadWindow = Ext.create('Ext.window.Window', {
@@ -91,6 +112,7 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 			width: 500,
 			height: 200,
 			layout: 'fit',
+			closeAction: 'destroy',
 			items: [
 				{
 					xtype: 'form',
@@ -119,6 +141,22 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 									handler: function () {
 										
 										//on success field.uploadedFile = true
+										if (resourcePanel.previewMode) {
+											Ext.Msg.show({
+												title:'Preview Mode',
+												message: 'Unable to upload file in preview mode.',
+												buttons: Ext.Msg.OK,
+												icon: Ext.Msg.ERROR,
+												fn: function(btn) {
+												}
+											});	
+											uploadWindow.close();
+										} else {
+											//upload
+											
+											
+										}
+										
 									}
 								},
 								{

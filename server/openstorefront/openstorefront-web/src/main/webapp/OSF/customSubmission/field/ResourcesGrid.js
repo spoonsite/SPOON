@@ -68,6 +68,8 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 					xtype: 'osf-submissionform-resource',
 					itemId: 'form',
 					scrollable: true,
+					section: grid.section,
+					fieldId: grid.fieldTemplate.fieldId,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -80,6 +82,7 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
+										form.handleUpload();
 
 										data.resourceTypeLabel = form.queryById('resourceType').getSelection().get('description');
 										

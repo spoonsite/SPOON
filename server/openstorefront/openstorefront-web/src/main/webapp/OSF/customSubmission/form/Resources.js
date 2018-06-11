@@ -26,6 +26,7 @@ Ext.define('OSF.customSubmission.form.Resources', {
 	layout: 'anchor',
 	bodyStyle: 'padding: 10px',
 	fieldType: 'RESOURCE',
+	localResource: false,
 	
 	defaults: {
 		width: '100%',
@@ -76,6 +77,8 @@ Ext.define('OSF.customSubmission.form.Resources', {
 							var form = this.up('form');
 							var button = this.up('button');
 							button.setText('External Link');
+							resourcePanel.localResource = false;
+							
 							form.getForm().findField('file').setHidden(true);
 							form.getForm().findField('originalLink').setHidden(false);
 						}
@@ -86,6 +89,8 @@ Ext.define('OSF.customSubmission.form.Resources', {
 							var form = this.up('form');
 							var button = this.up('button');
 							button.setText('Local Resource');
+							resourcePanel.localResource = true;
+							
 							form.getForm().findField('file').setHidden(false);
 							form.getForm().findField('originalLink').setHidden(true);
 						}
@@ -117,7 +122,7 @@ Ext.define('OSF.customSubmission.form.Resources', {
 			}
 		]);
 		
-		if (resourcePanel.section) {
+		if (resourcePanel.section && resourcePanel.fieldTemplate) {
 			var initialData = resourcePanel.section.submissionForm.getFieldData(resourcePanel.fieldTemplate.fieldId);
 			if (initialData) {
 				var data = Ext.decode(initialData);
@@ -128,7 +133,36 @@ Ext.define('OSF.customSubmission.form.Resources', {
 			}			
 		}		
 		
+		if (resourcePanel.section) {
+			if (!resourcePanel.section.submissionForm.userSubmission) {
+				resourcePanel.previewMode = true;			
+			} else {
+				resourcePanel.userSubmissionId = resourcePanel.section.submissionForm.userSubmission.userSubmissionId;
+			}
+		} else {
+			resourcePanel.previewMode = true;
+		}		
+		
 	},
+	handleUpload: function() {
+		var resourcePanel = this;
+		
+		if (resourcePanel.previewMode && resourcePanel.localResource) {			
+			Ext.Msg.show({
+				title:'Preview Mode',
+				message: 'Unable to upload file in preview mode.',
+				buttons: Ext.Msg.OK,
+				icon: Ext.Msg.ERROR,
+				fn: function(btn) {
+				}
+			});			
+		} else if (resourcePanel.localResource && !resourcePanel.previewMode) {
+			
+			//upload file
+			
+			
+		}
+	},	
 	getSubmissionValue: function() {
 		var resourcePanel = this;
 		

@@ -101,3 +101,17 @@ h3 {
 .submission-button:hover {
 	opacity: .7;
 }
+
+.entry-type-selector:hover {
+	background-color: whitesmoke;
+	cursor: pointer;
+}
+
+.entry-type-select {
+	background-color: #ffea7c;
+	border-left: 10px darkgrey solid;
+}
+.entry-type-select:hover {
+	background-color: #ffea7c;
+	border-left: 10px grey solid;
+}

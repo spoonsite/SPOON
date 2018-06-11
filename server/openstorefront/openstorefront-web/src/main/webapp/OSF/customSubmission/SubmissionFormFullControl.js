@@ -47,7 +47,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 				submissionFormFullControl.queryById('progress').updateProgress(currentSectionIndex / total, (currentSectionIndex + 1) + ' / ' + totalSections, true);
 				
 				submissionFormFullControl.updateNavPanel(currentSectionIndex);
-			}
+			}			
 		},
 		{
 			xtype: 'panel',
@@ -190,6 +190,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		}		
 		
 		submissionFormFullControl.queryById('submissionForm').previewMode = submissionFormFullControl.previewMode;
+		submissionFormFullControl.queryById('submissionForm').finishInitialSave = submissionFormFullControl.finishInitialSave;
 		
 	},
 	updateNavPanel: function(currentSectionIndex) {

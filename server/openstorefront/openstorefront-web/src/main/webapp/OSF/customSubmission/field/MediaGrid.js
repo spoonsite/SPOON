@@ -68,7 +68,9 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 				{
 					xtype: 'osf-submissionform-media',
 					itemId: 'form',
-					scrollable: true,
+					scrollable: true,	
+					section: grid.section,	
+					fieldId: grid.fieldTemplate.fieldId,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -80,7 +82,8 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 									handler: function () {
 										var form = this.up('form');
-										var data = form.getValues();
+										var data = form.getValues();										
+										form.handleUpload(data);
 										
 										data.mediaTypeCodeLabel = form.queryById('mediaTypeCode').getSelection().get('description');
 										

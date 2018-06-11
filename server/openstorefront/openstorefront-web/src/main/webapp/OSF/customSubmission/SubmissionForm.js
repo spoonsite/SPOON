@@ -86,6 +86,10 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 				var savedSubmission = Ext.decode(response.responseText);
 				submissionForm.userSubmission.userSubmissionId = savedSubmission.userSubmissionId;
 				submissionForm.userSubmission.ownerUsername = savedSubmission.ownerUsername;
+				
+				if (submissionForm.finishInitialSave) {
+					submissionForm.finishInitialSave(savedSubmission);
+				}
 			}
 		});
 		return userSubmission;

@@ -192,6 +192,18 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				}
 			},			
 			store: {
+			sorters: [
+					{
+						property: 'description',
+						direction: 'ASC',
+						transform: function (item) {
+							if (item) {
+								item = item.toLowerCase();
+							}
+							return item;
+						}
+					}
+				],
 				proxy: {
 					type: 'ajax',
 					url: 'api/v1/resource/attributes'
