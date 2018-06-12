@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
-import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
 import java.io.Serializable;
@@ -37,7 +36,7 @@ public class ComponentTypeNestedModel
 
 	private ComponentTypeView componentType;
 
-	@DataType(ComponentTypeNestedModel.class)
+	//Can't put nest type in api doc/creates serialization loop
 	private List<ComponentTypeNestedModel> children = new ArrayList<>();
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
