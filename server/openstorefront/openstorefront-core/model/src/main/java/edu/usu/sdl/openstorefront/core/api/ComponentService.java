@@ -800,7 +800,6 @@ public interface ComponentService
 	 * @param targetComponentId
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component merge(String toMergeComponentId, String targetComponentId);
 
 	/**
@@ -924,7 +923,7 @@ public interface ComponentService
 	 * @param componentIdOfPendingChange
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
+//	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component mergePendingChange(String componentIdOfPendingChange);
 
 	/**
