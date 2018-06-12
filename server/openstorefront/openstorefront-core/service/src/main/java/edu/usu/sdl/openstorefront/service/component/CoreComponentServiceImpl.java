@@ -2352,7 +2352,6 @@ public class CoreComponentServiceImpl
 				
 				//remove mergeComponent
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
-
 				cleanupCache(toMergeComponentId);
 				cleanupCache(targetComponentId);
 
