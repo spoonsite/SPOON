@@ -51,6 +51,16 @@
             </configuration>
           </execution>
 
+          <execution>
+            <id>npm run copy</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run copy</arguments>
+            </configuration>
+          </execution>
+
           <!-- <execution>
             <id>javascript tests</id>
             <goals>
