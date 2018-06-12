@@ -144,7 +144,7 @@ Ext.define('OSF.customSubmission.form.Resources', {
 		}		
 		
 	},
-	handleUpload: function() {
+	handleUpload: function(actualRecord) {
 		var resourcePanel = this;
 		
 		if (resourcePanel.previewMode && resourcePanel.localResource) {			
@@ -158,9 +158,68 @@ Ext.define('OSF.customSubmission.form.Resources', {
 			});			
 		} else if (resourcePanel.localResource && !resourcePanel.previewMode) {
 			
-			//upload file
-			
-			
+			//upload file			
+			var form = resourcePanel;
+			var data = form.getValues();
+
+			data.fileSelected = form.queryById('upload').getValue();
+			data.link = data.originalLink;
+			data.originalName = data.originalFileName;
+
+			if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
+
+				form.getForm().markInvalid({
+					file: 'Either a link or a file must be entered',
+					originalLink: 'Either a link or a file must be entered'
+				});
+
+			} else {
+				if (data.fileSelected) {
+					//upload
+
+					var progressMsg = Ext.MessageBox.show({
+						title: 'Resource Upload',
+						msg: 'Uploading resource please wait...',
+						width: 300,
+						height: 150,
+						closable: false,
+						progressText: 'Uploading...',
+						wait: true,
+						waitConfig: {interval: 300}
+					});
+
+					form.submit({
+						url: 'Media.action?UploadSubmissionMedia',
+						params: {
+							'userSubmissionId': resourcePanel.userSubmissionId,
+							'submissionTemplateFieldId': resourcePanel.fieldId
+						},
+						method: 'POST',
+						submitEmptyText: false,
+						success: function (form, action, opt) {
+							progressMsg.hide();
+						},
+						failure: function (form, action, opt) {
+							var data = Ext.decode(action.response.responseText);
+							if (data.success && data.success === false){
+								Ext.Msg.show({
+									title: 'Upload Failed',
+									msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
+									buttons: Ext.Msg.OK
+								});													
+								refreshGrid();	
+							} else {
+								//false positive the return object doesn't have success																
+								Ext.toast('Uploaded Successfully', '', 'tr');													
+								actualRecord.file = {
+									mediaFileId: data.file.mediaFileId
+								};
+							}
+							progressMsg.hide();
+						}
+					});
+				}
+			}	
 		}
 	},	
 	getSubmissionValue: function() {

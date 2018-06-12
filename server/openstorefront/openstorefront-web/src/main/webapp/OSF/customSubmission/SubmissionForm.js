@@ -144,7 +144,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 
 			});
 			submissionForm.add(sectionComponents);		
-			submissionForm.displayCurrentSection();
+			submissionForm.displayCurrentSection(true);
 
 			submissionForm.fireEvent('ready', submissionForm);			
 		};	
@@ -168,7 +168,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 
 	},
 	
-	displayCurrentSection: function() {
+	displayCurrentSection: function(initialDisplay) {
 		var submissionForm = this;		
 		var section = submissionForm.template.sections[submissionForm.currentSection];
 		submissionForm.setActiveItem(section.component);
@@ -183,6 +183,9 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		
 		if (submissionForm.progressCallback) {
 			submissionForm.progressCallback(submissionForm.currentSection, submissionForm.template.sections.length);
+		}
+		if (submissionForm.sectionChangeHandler) {
+			submissionForm.sectionChangeHandler(initialDisplay);
 		}
 	},
 	

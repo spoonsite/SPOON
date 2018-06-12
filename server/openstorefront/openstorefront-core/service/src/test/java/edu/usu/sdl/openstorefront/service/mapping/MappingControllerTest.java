@@ -235,17 +235,17 @@ public class MappingControllerTest
 		userSubmission.setFields(new ArrayList<>());
 
 		UserSubmissionField field = new UserSubmissionField();
-		field.setFieldId("NAME");
+		field.setTemplateFieldId("NAME");
 		field.setRawValue("Apple");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("ORG");
+		field.setTemplateFieldId("ORG");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("DESCR");
+		field.setTemplateFieldId("DESCR");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
@@ -290,17 +290,17 @@ public class MappingControllerTest
 		userSubmission.setFields(new ArrayList<>());
 
 		UserSubmissionField field = new UserSubmissionField();
-		field.setFieldId("NAME");
+		field.setTemplateFieldId("NAME");
 		field.setRawValue("Apple");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("ORG");
+		field.setTemplateFieldId("ORG");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("DESCR");
+		field.setTemplateFieldId("DESCR");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
@@ -352,22 +352,22 @@ public class MappingControllerTest
 		userSubmission.setFields(new ArrayList<>());
 
 		UserSubmissionField field = new UserSubmissionField();
-		field.setFieldId("NAME");
+		field.setTemplateFieldId("NAME");
 		field.setRawValue("Apple");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("ORG");
+		field.setTemplateFieldId("ORG");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("DESCR");
+		field.setTemplateFieldId("DESCR");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("CONTACT");
+		field.setTemplateFieldId("CONTACT");
 
 		ComponentContact contact = new ComponentContact();
 		contact.setFirstName("Bob");

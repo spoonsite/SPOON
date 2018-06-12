@@ -122,6 +122,7 @@ Ext.define('OSF.customSubmission.SubmissionBaseGrid', {
 			
 			if (!submissionGrid.showOnEntryType()) {
 				submissionGrid.setHidden(true);
+				submissionGrid.skipOnReview = true;
 			}
 
 		} 

@@ -38,7 +38,7 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 			resourcePanel.setMaxWidth(860);
 		}
 
-		var labelData = {
+		resourcePanel.labelData = {
 			question:  resourcePanel.createQuestionLabel(),
 			uploadedFile: ''
 		};
@@ -46,10 +46,10 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 		resourcePanel.label = Ext.create('Ext.panel.Panel', {		
 			flex: 1,
 			margin: '0 10 0 0',
-			data: labelData,
+			data: resourcePanel.labelData,
 			tpl: new Ext.XTemplate(
 				'{question}',
-				'<div>{uploadedFile}</div>'
+				'<div>Uploaded: {uploadedFile}</div>'
 			)
 		});	
 
@@ -69,6 +69,7 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 					},
 					{
 						xtype: 'checkbox',
+						itemId: 'private',
 						margin: '0 0 0 5',						
 						hidden: resourcePanel.fieldTemplate.allowPrivateResource ? false : true,
 						boxLabel: 'Private'						
@@ -83,10 +84,14 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 		var initialData = resourcePanel.section.submissionForm.getFieldData(resourcePanel.fieldTemplate.fieldId);
 		if (initialData) {
 			var data = Ext.decode(initialData);
-			var record = Ext.create('Ext.data.Model', {				
-			});
-			record.set(data[0]);
-			resourcePanel.loadRecord(record);			
+			
+			if (data.privateFlag) {
+				resourcePanel.queryById('private').setValue(data.privateFlag);
+			}
+			
+			resourcePanel.uploadedFile = data.file;			
+			resourcePanel.labelData.uploadedFile = data.file.originalName;														
+			resourcePanel.label.update(resourcePanel.labelData);
 		}		
 		
 		if (resourcePanel.section) {
@@ -153,6 +158,56 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 											uploadWindow.close();
 										} else {
 											//upload
+											var form = this.up('form');
+											
+											var progressMsg = Ext.MessageBox.show({
+												title: 'Media Upload',
+												msg: 'Uploading media please wait...',
+												width: 300,
+												height: 150,
+												closable: false,
+												progressText: 'Uploading...',
+												wait: true,
+												waitConfig: {interval: 300}
+											});
+
+											form.submit({
+												url: 'Media.action?UploadSubmissionMedia',
+												params: {
+													'userSubmissionId': resourcePanel.userSubmissionId,
+													'submissionTemplateFieldId': resourcePanel.fieldTemplate.fieldId
+												},
+												method: 'POST',
+												submitEmptyText: false,
+												success: function (form, action, opt) {
+													progressMsg.hide();
+													uploadWindow.close();
+												},
+												failure: function (form, action, opt) {
+													var data = Ext.decode(action.response.responseText);
+													if (data.success && data.success === false){
+														Ext.Msg.show({
+															title: 'Upload Failed',
+															msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
+															buttons: Ext.Msg.OK
+														});																										
+													} else {
+														//false positive the return object doesn't have success																
+														Ext.toast('Uploaded Successfully', '', 'tr');													
+														
+														//update media record
+														resourcePanel.uploadedFile = {
+															mediaFileId: data.file.mediaFileId,
+															originalName: data.file.originalName
+														};
+														
+														resourcePanel.labelData.uploadedFile = data.file.originalName;														
+														resourcePanel.label.update(resourcePanel.labelData);
+														uploadWindow.close();
+													}
+													progressMsg.hide();
+												}
+											});
 											
 											
 										}
@@ -203,9 +258,10 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 			//get the file upload info (mediaFile)
 			
 			var resource = {
-				resourceType: field.fieldTemplate.resourceType				
-			};
-			
+				resourceType: field.fieldTemplate.resourceType,
+				privateFlag: field.queryById('private').getValue(),
+				file: field.uploadedFile
+			};			
 			
 			var userSubmissionField = {			
 				templateFieldId: field.fieldTemplate.fieldId,

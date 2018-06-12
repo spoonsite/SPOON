@@ -47,7 +47,14 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 				submissionFormFullControl.queryById('progress').updateProgress(currentSectionIndex / total, (currentSectionIndex + 1) + ' / ' + totalSections, true);
 				
 				submissionFormFullControl.updateNavPanel(currentSectionIndex);
-			}			
+			},
+			sectionChangeHandler: function(initialDisplay) {
+				var submissionFormFullControl = this.up('panel');
+				var form = submissionFormFullControl.queryById('submissionForm');	
+				if (form.userSubmission && !initialDisplay) {
+					submissionFormFullControl.saveSubmission();
+				}
+			}
 		},
 		{
 			xtype: 'panel',
@@ -327,7 +334,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		var endingURL = '';
 		if (userSubmission.userSubmissionId) {
 			method = 'PUT';
-			endingURL = '/' + userSubmission.userSubmissionId
+			endingURL = '/' + userSubmission.userSubmissionId;
 		}
 		
 		submissionFormFullControl.setLoading("Saving...");
@@ -348,6 +355,26 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 	submitSumissionForApproval: function() {
 		var submissionFormFullControl = this;
 		var form = submissionFormFullControl.queryById('submissionForm');
+		
+		
+		var userSubmission = form.getUserData();	
+		
+		submissionFormFullControl.setLoading("Submitting Entry...");
+		Ext.Ajax.request({
+			url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitforapproval',
+			method: 'PUT',
+			jsonData: userSubmission,
+			callback: function() {		
+				submissionFormFullControl.setLoading(false);
+			},
+			success: function(response, opts) {
+				Ext.toast('Entry Submitted Successfully');
+				
+				if (submissionFormFullControl.submissionSuccess) {
+					submissionFormFullControl.submissionSuccess();
+				}
+			}
+		});
 		
 	}	
 	

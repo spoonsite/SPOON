@@ -143,7 +143,7 @@ public class MappingController
 
 			Map<String, UserSubmissionField> userFieldMap = new HashMap<>();
 			for (UserSubmissionField submissionField : userSubmission.getFields()) {
-				userFieldMap.put(submissionField.getFieldId(), submissionField);
+				userFieldMap.put(submissionField.getTemplateFieldId(), submissionField);
 			}
 
 			for (SubmissionFormSection section : template.getSections()) {

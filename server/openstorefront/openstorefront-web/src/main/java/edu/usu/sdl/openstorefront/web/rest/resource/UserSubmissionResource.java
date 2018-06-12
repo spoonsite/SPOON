@@ -186,7 +186,7 @@ public class UserSubmissionResource
 	}
 
 	@PUT
-	@APIDescription("Submits a submission for approval")
+	@APIDescription("Submits a change request for approval")
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{submissionId}/submitchangeforapproval")

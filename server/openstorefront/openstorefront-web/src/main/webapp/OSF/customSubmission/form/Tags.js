@@ -53,8 +53,8 @@ Ext.define('OSF.customSubmission.form.Tags', {
 			}
 		});
 		
-		if (field.section) {
-			var initialData = field.section.submissionForm.getFieldData(field.fieldTemplate.fieldId);
+		if (tagPanel.section) {
+			var initialData = tagPanel.section.submissionForm.getFieldData(tagPanel.fieldTemplate.fieldId);
 			if (initialData) {
 				var data = Ext.decode(initialData);
 				var record = Ext.create('Ext.data.Model', {				

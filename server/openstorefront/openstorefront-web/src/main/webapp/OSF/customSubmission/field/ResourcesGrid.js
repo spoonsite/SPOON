@@ -82,7 +82,7 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
-										form.handleUpload();
+										form.handleUpload(data);
 
 										data.resourceTypeLabel = form.queryById('resourceType').getSelection().get('description');
 										

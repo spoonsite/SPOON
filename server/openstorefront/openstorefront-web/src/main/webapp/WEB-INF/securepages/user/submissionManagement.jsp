@@ -649,15 +649,17 @@
 												});
 											}
 										}
+										
+										root.children = root.children.sort(function(a, b){
+											return a.componentType.label.toLowerCase().localeCompare(b.componentType.label.toLowerCase());
+										});										
 										Ext.Array.each(root.children, function(child){											
 											flattenComponentTypes(child, (indent + 10));
 										});
 									};
 									flattenComponentTypes(componentTypeRoot, 0);
 									
-									availableSubmissions = availableSubmissions.sort(function(a, b){
-										return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
-									});
+									
 									
 								}
 							});							
@@ -802,17 +804,30 @@
 									items: [
 										{
 											xtype: 'osf-customSubmission-SubmissionformFullControl',
-											itemId: 'form',
+											itemId: 'controlForm',
 											finishInitialSave: function() {
 												actionRefreshSubmission();
+											},
+											submissionSuccess: function() {
+												actionRefreshSubmission();
+												submissionWin.skipSave = true;
+												submissionWin.close();
 											}
 										}
-									]
+									],
+									listeners: {
+										beforeclose: function(panel, opts) {
+											var form = panel.queryById('submissionForm');	
+											if (form.userSubmission && !submissionWin.skipSave) {
+												panel.queryById('controlForm').saveSubmission();
+											}
+										}
+									}
 								});
 								submissionWin.show();
 								
 								var finishLoadingForm = function(userSubmission) {
-									submissionWin.queryById('form').load(template, componentType, userSubmission, true);					
+									submissionWin.queryById('controlForm').load(template, componentType, userSubmission, true);					
 								};
 
 								if (record) {
