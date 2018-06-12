@@ -84,6 +84,9 @@ export default {
       if (this.response.data && !this.response.data.success && this.response.data.errors.username) {
         return this.response.data.errors.username;
       }
+    },
+    gotoPage () {
+      return this.$route.query.gotoPage;
     }
   },
   methods: {
@@ -125,7 +128,11 @@ export default {
           })
           .then(response => {
             if (response.data.success) {
-              window.location.href = response.data.message;
+              if (this.gotoPage) {
+                window.location.href = this.gotoPage;
+              } else {
+                window.location.href = response.data.message;
+              }
             }
             this.response = response;
           })

@@ -102,7 +102,11 @@ public class LoginAction
 			}
 		}
 		getContext().getRequest().getSession().setAttribute(ShiroAdjustedFilter.REFERENCED_URL_ATTRIBUTE, gotoPage);
-		return new ForwardResolution("/login.jsp").addParameter("gotoPage", gotoPage);
+		// return new ForwardResolution("/login.jsp").addParameter("gotoPage", gotoPage);
+		if (gotoPage != null) {
+			return new RedirectResolution("/login/index.html#/?gotoPage=" + gotoPage);
+		}
+		return new RedirectResolution("/login/index.html");
 	}
 
 	private Resolution handleLoginRedirect()
@@ -221,9 +225,9 @@ public class LoginAction
 		
 		SecurityUtil.logout(getContext().getRequest(), getContext().getResponse());
 
-		String logoutUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LOGOUT_URL, "/login.jsp");
+		String logoutUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LOGOUT_URL, "/login/index.html");
 		if (StringUtils.isBlank(logoutUrl)) {
-			logoutUrl = "/login.jsp";
+			logoutUrl = "/login/index.html";
 		}
 		if (logoutUrl.toLowerCase().startsWith("http")) {
 			return new RedirectResolution(logoutUrl, false);

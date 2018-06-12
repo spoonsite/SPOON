@@ -148,10 +148,10 @@
 
     <div class="button-wrapper mt-2">
       <div class="btn1">
-        <v-btn block color="accent" :disabled="!valid" @click="register()"><v-icon light>check</v-icon> &nbsp; Signup</v-btn>
+        <v-btn block color="accent" :disabled="!valid" @click="register()"><v-icon class="icon" light>check</v-icon>Signup</v-btn>
       </div>
       <div class="btn2">
-      <v-btn block color="accent" @click="cancel()"><v-icon light>cancel</v-icon> &nbsp; Cancel</v-btn>
+      <v-btn block color="accent" @click="cancel()"><v-icon light class="icon">cancel</v-icon>Cancel</v-btn>
       </div>
     </div>
 
@@ -159,7 +159,7 @@
       <v-card tile>
         <v-card-text>Verificaton code sent. Check your email.</v-card-text>
         <v-card-actions>
-          <v-btn @click="verificationDialog = false"><v-icon>fas fa-times</v-icon> &nbsp; Close</v-btn>
+          <v-btn @click="verificationDialog = false"><v-icon class="icon">fas fa-times</v-icon>Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -168,7 +168,7 @@
       <v-card tile>
         <v-card-text>Registration Success! Return to login screen to login with your new username and password.</v-card-text>
         <v-card-actions>
-          <v-btn @click="$router.push('/')"><v-icon>fas fa-sign-in-alt</v-icon>&nbsp; Return to Login</v-btn>
+          <v-btn @click="$router.push('/')"><v-icon class="icon">fas fa-sign-in-alt</v-icon>Return to Login</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -336,6 +336,9 @@ export default {
   padding-left: 1em;
   width: 50%;
   float: left;
+}
+.icon {
+  padding-right: 0.5em;
 }
 @media screen and (max-width: 599px) {
   .btn1 {
