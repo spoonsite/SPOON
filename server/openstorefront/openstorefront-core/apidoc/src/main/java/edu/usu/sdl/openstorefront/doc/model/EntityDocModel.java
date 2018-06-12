@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.doc.model;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,13 @@ public class EntityDocModel
 
 	private String name;
 	private String description;
+
+	//Note: these will cause circular loops if processed in the API Docs
+	//skip
 	private List<EntityDocModel> parentEntities = new ArrayList<>();
 	private List<EntityDocModel> implementedEntities = new ArrayList<>();
+
+	@DataType(EntityFieldModel.class)
 	private List<EntityFieldModel> fieldModels = new ArrayList<>();
 
 	public EntityDocModel()

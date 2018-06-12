@@ -170,7 +170,7 @@ public class ComponentTypeNestedModelTest
 		nm1.setChildren(nm1Children);
 
 		// Act
-		List<String> entryTypeChildren = nm1.getComponentTypeChildren();
+		List<String> entryTypeChildren = nm1.findComponentTypeChildren();
 
 		// Assert
 		assertEquals(Arrays.asList("A1", "A2", "A3", "B"), entryTypeChildren);
@@ -182,7 +182,7 @@ public class ComponentTypeNestedModelTest
 		ComponentTypeNestedModel nestedModel = new ComponentTypeNestedModel();
 
 		// Act
-		List<String> entryTypeChildren = nestedModel.getComponentTypeChildren();
+		List<String> entryTypeChildren = nestedModel.findComponentTypeChildren();
 
 		// Assert
 		assertEquals(new ArrayList<>(), entryTypeChildren);

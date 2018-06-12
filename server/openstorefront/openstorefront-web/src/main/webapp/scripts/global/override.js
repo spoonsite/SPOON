@@ -242,6 +242,31 @@ Ext.define('OSF.defaults.ComboBox', {
 			
 });
 
+Ext.define('OSF.defaults.RatePicker', {
+    override: 'Ext.ux.rating.Picker',
+	
+	applyGlyphs: function(value) {
+		if (typeof value === 'string') {
+			//<debug>
+			if (value.length !== 2) {
+				value = '#*';
+			}
+			//</debug>
+			value = [
+				value.charAt(0),
+				value.charAt(1)
+			];
+		} else if (typeof value[0] === 'number') {
+			value = [
+				String.fromCharCode(value[0]),
+				String.fromCharCode(value[1])
+			];
+		}
+		return value;
+	}	
+	
+});
+
 // custom Vtype (validator) for vtype:'AttributeNumber'
 Ext.define('Override.form.field.VTypes', {
 	override: 'Ext.form.field.VTypes',

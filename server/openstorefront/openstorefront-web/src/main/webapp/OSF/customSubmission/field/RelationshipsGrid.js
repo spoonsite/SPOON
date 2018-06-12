@@ -16,10 +16,116 @@
  * See NOTICE.txt for more information.
  */
 
-/* Author Brigham Michaelis */
+/* Author: Brigham Michaelis */
+
+/* global Ext */
 
 Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
-	extend: 'OSF.customSubmission.Grid',
-	formPanel: 'Relationships',
-	title: 'Relationships'
+	extend: 'OSF.customSubmission.SubmissionBaseGrid',
+	xtype: 'osf-submissionform-relationshipgrid',
+	requires: [
+		'OSF.customSubmission.form.Relationships'
+	],
+	
+	title: '',
+	fieldType: 'RELATIONSHIPS_MULTI',
+	
+	columns: [
+		{ text: 'Relation Type', dataIndex: 'relationType', width: 250 },
+		{ text: 'Entry Name', dataIndex: 'targetName', flex: 1, minWidth: 200 }
+	],
+	
+	initComponent: function () {
+		var grid = this;
+		grid.callParent();	
+		
+		if (grid.section) {
+			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);				
+				grid.getStore().loadData(data);
+			}			
+		}
+		
+	},	
+	
+	actionAddEdit: function(record) {
+		var grid = this;
+		
+		var addEditWin = Ext.create('Ext.window.Window', {
+			title: 'Add/Edit Relationship',
+			modal: true,
+			width: 800,
+			height: 310,
+			closeMode: 'destroy',
+			layout: 'fit',
+			items: [
+				{
+					xtype: 'osf-submissionform-relationships',
+					itemId: 'form',
+					scrollable: true,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Save',
+									formBind: true,
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+									handler: function () {
+										var form = this.up('form');
+										var data = form.getValues();
+										
+										data.relationType = form.queryById('relationshipType').getSelection().get('description');										
+										data.targetName = form.queryById('relationshipTargetCB').getSelection().get('description');
+										
+										grid.getStore().add(data);
+										this.up('window').close();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+									handler: function () {
+										this.up('window').close();												
+									}
+								}								
+							]
+						}
+					]
+				}
+			]
+			
+		});
+		addEditWin.show();
+		
+		if (record) {
+			addEditWin.queryById('form').loadRecord(record);
+		}		
+		
+	},
+	
+	showOnEntryType: function() {
+		var grid = this;		
+		return grid.componentType.dataEntryRelationships || false;		
+	},
+	getUserData: function() {
+		var grid = this;
+		
+		var data = [];
+		grid.getStore().each(function(record){
+			data.push(record.getData());
+		});
+		
+		var userSubmissionField = {			
+			templateFieldId: grid.fieldTemplate.fieldId,
+			rawValue: Ext.encode(data)
+		};		
+		return userSubmissionField;			
+	}	
+	
 });

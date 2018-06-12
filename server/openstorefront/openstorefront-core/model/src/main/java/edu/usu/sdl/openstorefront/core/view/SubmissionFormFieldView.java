@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldMappingType;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class SubmissionFormFieldView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 		view.setMappingTypeDescription(TranslateUtil.translate(SubmissionFormFieldMappingType.class, view.getMappingType()));
-		view.setFieldTypeDescription(TranslateUtil.translate(SubmissionFormFieldMappingType.class, view.getFieldType()));
+		view.setFieldTypeDescription(TranslateUtil.translate(SubmissionFormFieldType.class, view.getFieldType()));
 
 		return view;
 	}

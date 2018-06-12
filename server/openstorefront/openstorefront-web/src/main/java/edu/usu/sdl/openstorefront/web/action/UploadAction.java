@@ -122,7 +122,7 @@ public class UploadAction
 
 	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@HandlesEvent("UploadLookup")
-	@SuppressWarnings("UseSpecificCatch")
+	@SuppressWarnings({"UseSpecificCatch", "unchecked"})
 	public Resolution uploadLookup()
 	{
 		Map<String, String> errors = new HashMap<>();
@@ -518,6 +518,7 @@ public class UploadAction
 
 	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
 	@HandlesEvent("PreviewMapping")
+	@SuppressWarnings("unchecked")
 	public Resolution previewMapping()
 	{
 		Map<String, String> errors = new HashMap<>();
@@ -612,6 +613,17 @@ public class UploadAction
 		return streamErrorResponse(errors, true);
 	}
 
+	@SuppressWarnings("serial")
+	private class InvalidFileTypeException extends Exception
+	{
+
+		public InvalidFileTypeException(String message)
+		{
+
+			super(message);
+		}
+	}
+
 	public FileBean getUploadFile()
 	{
 		return uploadFile;
@@ -700,16 +712,6 @@ public class UploadAction
 	public void setAttributeCodeName(String attributeCodeName)
 	{
 		this.attributeCodeName = attributeCodeName;
-	}
-
-	private class InvalidFileTypeException extends Exception
-	{
-
-		public InvalidFileTypeException(String message)
-		{
-
-			super(message);
-		}
 	}
 
 	public String getImportModeType()

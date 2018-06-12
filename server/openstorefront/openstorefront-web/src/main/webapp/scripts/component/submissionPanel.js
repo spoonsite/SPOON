@@ -1097,7 +1097,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						scrollable: true,
 						border: true,
 						layout: {
-							type: 'hbox',
+							type: 'hbox'
 						},
 						bodyStyle: 'padding: 10px;',
 						margin: '0 0 5 0',
@@ -1305,7 +1305,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 								columns: [
 									{ text: 'First Name', dataIndex: 'firstName', flex: 1 },
 									{ text: 'Last Name', dataIndex: 'lastName', flex: 1 },
-									{ text: 'Email', dataIndex: 'email', flex: 2 },
+									{ text: 'Email', dataIndex: 'email', flex: 2 }
 								],
 								selModel: {
 									selType: 'checkboxmodel',
@@ -2469,7 +2469,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'panel',
 							itemId: 'dependenciesGrid-help',
-							html: '<h3>Add necessary software/hardware dependancies not included with the component.</h3>'
+							html: '<h3>Add necessary software/hardware dependencies not included with the component.</h3>'
 						},
 						{
 							xtype: 'grid',

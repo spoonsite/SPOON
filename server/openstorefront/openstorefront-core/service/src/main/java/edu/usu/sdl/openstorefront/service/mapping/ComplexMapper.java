@@ -76,8 +76,10 @@ public class ComplexMapper
 				switch (fieldType) {
 
 					case SubmissionFormFieldType.ATTRIBUTE:
+					case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
 					case SubmissionFormFieldType.ATTRIBUTE_MULTI:
 					case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+					case SubmissionFormFieldType.ATTRIBUTE_REQUIRED:
 					case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
 						addAttribute(componentAll, userSubmissionField);
 						break;
@@ -98,6 +100,7 @@ public class ComplexMapper
 						break;
 
 					case SubmissionFormFieldType.RESOURCE:
+					case SubmissionFormFieldType.RESOURCE_SIMPLE:
 					case SubmissionFormFieldType.RESOURCE_MULTI:
 						addResource(componentAll, userSubmissionField);
 						break;
@@ -180,17 +183,20 @@ public class ComplexMapper
 	private void mapMedia(UserSubmissionField userSubmissionField, List<ComponentMedia> mediaRecords)
 	{
 		Map<String, UserSubmissionMedia> mediaMap = new HashMap<>();
-		if (userSubmissionField.getMedia() != null) {
-			for (UserSubmissionMedia userSubmissionMedia : userSubmissionField.getMedia()) {
-				mediaMap.put(userSubmissionMedia.getFile().getMediaFileId(), userSubmissionMedia);
-			}
+
+		UserSubmissionMedia fieldMediaExample = new UserSubmissionMedia();
+		fieldMediaExample.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
+		List<UserSubmissionMedia> fieldMedia = fieldMediaExample.findByExample();
+
+		for (UserSubmissionMedia userSubmissionMedia : fieldMedia) {
+			mediaMap.put(userSubmissionMedia.getFile().getMediaFileId(), userSubmissionMedia);
 		}
 
 		for (ComponentMedia media : mediaRecords) {
 			if (media.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = mediaMap.get(media.getFile().getMediaFileId());
 				if (userSubmissionMedia != null) {
-					media.setFile(userSubmissionMedia.getFile());
+					media.setFile(userSubmissionMedia.getFile().copy());
 				} else {
 					media.setFile(null);
 				}
@@ -216,17 +222,20 @@ public class ComplexMapper
 	private void mapResource(UserSubmissionField userSubmissionField, List<ComponentResource> resources)
 	{
 		Map<String, UserSubmissionMedia> mediaMap = new HashMap<>();
-		if (userSubmissionField.getMedia() != null) {
-			for (UserSubmissionMedia userSubmissionMedia : userSubmissionField.getMedia()) {
-				mediaMap.put(userSubmissionMedia.getFile().getMediaFileId(), userSubmissionMedia);
-			}
+
+		UserSubmissionMedia fieldMediaExample = new UserSubmissionMedia();
+		fieldMediaExample.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
+		List<UserSubmissionMedia> fieldMedia = fieldMediaExample.findByExample();
+
+		for (UserSubmissionMedia userSubmissionMedia : fieldMedia) {
+			mediaMap.put(userSubmissionMedia.getFile().getMediaFileId(), userSubmissionMedia);
 		}
 
 		for (ComponentResource resource : resources) {
 			if (resource.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = mediaMap.get(resource.getFile().getMediaFileId());
 				if (userSubmissionMedia != null) {
-					resource.setFile(userSubmissionMedia.getFile());
+					resource.setFile(userSubmissionMedia.getFile().copy());
 				} else {
 					resource.setFile(null);
 				}
@@ -255,20 +264,24 @@ public class ComplexMapper
 	}
 
 	@Override
-	public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
 	{
+		UserSubmissionFieldMedia userSubmissionFieldMedia = new UserSubmissionFieldMedia();
+
 		UserSubmissionField userSubmissionField = new UserSubmissionField();
+		userSubmissionFieldMedia.setUserSubmissionField(userSubmissionField);
 
 		userSubmissionField.setTemplateFieldId(submissionField.getFieldId());
-		userSubmissionField.setMedia(new ArrayList<>());
 
 		String fieldType = submissionField.getFieldType();
 		try {
 			switch (fieldType) {
 
 				case SubmissionFormFieldType.ATTRIBUTE:
+				case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI:
 				case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+				case SubmissionFormFieldType.ATTRIBUTE_REQUIRED:
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
 					mapAttributes(userSubmissionField, componentFormSet);
 					break;
@@ -289,6 +302,7 @@ public class ComplexMapper
 					break;
 
 				case SubmissionFormFieldType.RESOURCE:
+				case SubmissionFormFieldType.RESOURCE_SIMPLE:
 				case SubmissionFormFieldType.RESOURCE_MULTI:
 					mapResourcesForForm(userSubmissionField, componentFormSet);
 					break;
@@ -317,7 +331,7 @@ public class ComplexMapper
 			throw mappingException;
 		}
 
-		return userSubmissionField;
+		return userSubmissionFieldMedia;
 	}
 
 	private void mapAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
@@ -346,8 +360,9 @@ public class ComplexMapper
 		for (ComponentMedia media : componentFormSet.getPrimary().getMedia()) {
 			if (media.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
-				userSubmissionMedia.setFile(media.getFile());
-				userSubmissionField.getMedia().add(userSubmissionMedia);
+				userSubmissionMedia.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
+				userSubmissionMedia.setFile(media.getFile().copy());
+
 			}
 		}
 
@@ -361,8 +376,9 @@ public class ComplexMapper
 		for (ComponentResource resource : componentFormSet.getPrimary().getResources()) {
 			if (resource.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
-				userSubmissionMedia.setFile(resource.getFile());
-				userSubmissionField.getMedia().add(userSubmissionMedia);
+				userSubmissionMedia.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
+				userSubmissionMedia.setFile(resource.getFile().copy());
+
 			}
 		}
 	}

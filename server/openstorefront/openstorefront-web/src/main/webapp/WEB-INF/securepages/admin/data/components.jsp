@@ -359,7 +359,7 @@
 																		}
 																	});
 
-																	if (record == null) {
+																	if (record === null) {
 																		//means this is a change request
 																		record = Ext.create('Ext.data.Model', {
 																		});

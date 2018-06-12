@@ -74,10 +74,27 @@ public class SubmissionFormField
 	private String attributeType;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(CleanKeySanitizer.class)
+	private String attributeCode;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@ValidValueType(value = {}, lookupClass = ContactType.class)
+	@FK(ContactType.class)
+	@APIDescription("Leave null to prompt for type")
+	private String contactType;
+
+	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = RelationshipType.class)
 	@FK(RelationshipType.class)
 	@APIDescription("This is used with child entries to determine the type of relationsip")
 	private String relationshipType;
+
+	@ConsumeField
+	@ValidValueType(value = {}, lookupClass = ResourceType.class)
+	@FK(ResourceType.class)
+	private String resourceType;
 
 	@ConsumeField
 	private String subSubmissionTemplateId;
@@ -94,13 +111,18 @@ public class SubmissionFormField
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
-	@Sanitize(TextSanitizer.class)
+	@Sanitize(BasicHTMLSanitizer.class)
 	private String label;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1K)
 	@Sanitize(BasicHTMLSanitizer.class)
 	private String labelTooltip;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_60)
+	@Sanitize(TextSanitizer.class)
+	private String labelAlign;
 
 	@ConsumeField
 	private Boolean required;
@@ -109,7 +131,25 @@ public class SubmissionFormField
 	private Boolean requireComment;
 
 	@ConsumeField
-	private Boolean requiredCommentOnValue;
+	private Boolean showComment;
+
+	@ConsumeField
+	private Boolean hidePrivateAttributeFlag;
+
+	@ConsumeField
+	private Boolean hideExistingContactPicker;
+
+	@ConsumeField
+	private Boolean allowPrivateResource;
+
+	@ConsumeField
+	private Boolean alwaysShowDetailGrid;
+
+	@ConsumeField
+	private Boolean popluateContactWithUser;
+
+	@ConsumeField
+	private String requiredCommentOnValue;
 
 	@ConsumeField
 	private Boolean allowHTMLInComment;
@@ -121,7 +161,7 @@ public class SubmissionFormField
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
-	@Sanitize(TextSanitizer.class)
+	@Sanitize(BasicHTMLSanitizer.class)
 	private String commentLabel;
 
 	@NotNull
@@ -149,12 +189,25 @@ public class SubmissionFormField
 		this.setFieldType(submissionFormField.getFieldType());
 		this.setLabel(submissionFormField.getLabel());
 		this.setLabelTooltip(submissionFormField.getLabelTooltip());
+		this.setLabelAlign(submissionFormField.getLabelAlign());
 		this.setMappingType(submissionFormField.getMappingType());
 		this.setRequireComment(submissionFormField.getRequireComment());
 		this.setRequired(submissionFormField.getRequired());
 		this.setRequiredCommentOnValue(submissionFormField.getRequiredCommentOnValue());
-		this.setSectionId(submissionFormField.getSectionId());
+		this.setAttributeType(submissionFormField.getAttributeType());
+		this.setAttributeCode(submissionFormField.getAttributeCode());
+		this.setContactType(submissionFormField.getContactType());
+		this.setRelationshipType(submissionFormField.getRelationshipType());
+		this.setChildEntryType(submissionFormField.getChildEntryType());
+		this.setShowComment(submissionFormField.getShowComment());
+		this.setResourceType(submissionFormField.getResourceType());
+		this.setHidePrivateAttributeFlag(submissionFormField.getHidePrivateAttributeFlag());
+		this.setAllowPrivateResource(submissionFormField.getAllowPrivateResource());
+		this.setPopluateContactWithUser(submissionFormField.getPopluateContactWithUser());
+		this.setHideExistingContactPicker(submissionFormField.getHideExistingContactPicker());
+		this.setAlwaysShowDetailGrid(submissionFormField.getAlwaysShowDetailGrid());
 
+		this.setSectionId(submissionFormField.getSectionId());
 	}
 
 	public String getFieldType()
@@ -227,12 +280,12 @@ public class SubmissionFormField
 		this.requireComment = requireComment;
 	}
 
-	public Boolean getRequiredCommentOnValue()
+	public String getRequiredCommentOnValue()
 	{
 		return requiredCommentOnValue;
 	}
 
-	public void setRequiredCommentOnValue(Boolean requiredCommentOnValue)
+	public void setRequiredCommentOnValue(String requiredCommentOnValue)
 	{
 		this.requiredCommentOnValue = requiredCommentOnValue;
 	}
@@ -345,6 +398,106 @@ public class SubmissionFormField
 	public void setRelationshipType(String relationshipType)
 	{
 		this.relationshipType = relationshipType;
+	}
+
+	public String getLabelAlign()
+	{
+		return labelAlign;
+	}
+
+	public void setLabelAlign(String labelAlign)
+	{
+		this.labelAlign = labelAlign;
+	}
+
+	public String getContactType()
+	{
+		return contactType;
+	}
+
+	public void setContactType(String contactType)
+	{
+		this.contactType = contactType;
+	}
+
+	public String getAttributeCode()
+	{
+		return attributeCode;
+	}
+
+	public void setAttributeCode(String attributeCode)
+	{
+		this.attributeCode = attributeCode;
+	}
+
+	public Boolean getShowComment()
+	{
+		return showComment;
+	}
+
+	public void setShowComment(Boolean showComment)
+	{
+		this.showComment = showComment;
+	}
+
+	public String getResourceType()
+	{
+		return resourceType;
+	}
+
+	public void setResourceType(String resourceType)
+	{
+		this.resourceType = resourceType;
+	}
+
+	public Boolean getHidePrivateAttributeFlag()
+	{
+		return hidePrivateAttributeFlag;
+	}
+
+	public void setHidePrivateAttributeFlag(Boolean hidePrivateAttributeFlag)
+	{
+		this.hidePrivateAttributeFlag = hidePrivateAttributeFlag;
+	}
+
+	public Boolean getAllowPrivateResource()
+	{
+		return allowPrivateResource;
+	}
+
+	public void setAllowPrivateResource(Boolean allowPrivateResource)
+	{
+		this.allowPrivateResource = allowPrivateResource;
+	}
+
+	public Boolean getPopluateContactWithUser()
+	{
+		return popluateContactWithUser;
+	}
+
+	public void setPopluateContactWithUser(Boolean popluateContactWithUser)
+	{
+		this.popluateContactWithUser = popluateContactWithUser;
+	}
+
+	public Boolean getHideExistingContactPicker()
+	{
+		return hideExistingContactPicker;
+	}
+
+	public void setHideExistingContactPicker(Boolean hideExistingContactPicker)
+	{
+		this.hideExistingContactPicker = hideExistingContactPicker;
+	}
+
+	public Boolean getAlwaysShowDetailGrid()
+	{
+		return alwaysShowDetailGrid;
+	}
+
+	public void setAlwaysShowDetailGrid(Boolean alwaysShowDetailGrid)
+	{
+		this.alwaysShowDetailGrid = alwaysShowDetailGrid;
 	}
 
 }

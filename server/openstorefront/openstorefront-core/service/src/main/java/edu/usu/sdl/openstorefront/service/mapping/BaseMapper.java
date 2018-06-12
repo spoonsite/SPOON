@@ -15,10 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
-import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import java.util.List;
 
 /**
@@ -57,10 +57,10 @@ public abstract class BaseMapper
 	 * Map the component or sub-entity back to a user submission
 	 *
 	 * @param submissionField
-	 * @param componentFormSe
+	 * @param componentFormSet
 	 * @return
 	 * @throws MappingException
 	 */
-	public abstract UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException;
+	public abstract UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException;
 
 }
