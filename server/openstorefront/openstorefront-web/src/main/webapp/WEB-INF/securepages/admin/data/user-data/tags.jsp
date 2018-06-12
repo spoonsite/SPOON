@@ -561,6 +561,11 @@
 					flex: 1,
 					border: false,
 					autoScroll: true,
+					requiredPermissions: ['ADMIN-ENTRY-TAG-MANAGEMENT'],
+					permissionCheckFailure: function () { // shouldn't be able to add tags to an entry
+						this.setHidden(false);
+						this.getView().getPlugins('gridviewdragdrop')[0].disable();
+					},
 					viewConfig: {
 						
 						plugins: {
@@ -821,6 +826,11 @@
 					autoScroll: true,
 					margin: '5 5 5 5',
 					emptyText: 'Select a Tag to see the current associated Entries',
+					requiredPermissions: ['ADMIN-ENTRY-TAG-MANAGEMENT'],
+					permissionCheckFailure: function () { // shouldn't be able to remove tags from an entry
+						this.setHidden(false);
+						this.getView().getPlugins('gridviewdragdrop')[0].disable();
+					},
 					viewConfig: {
 						
 						plugins: {

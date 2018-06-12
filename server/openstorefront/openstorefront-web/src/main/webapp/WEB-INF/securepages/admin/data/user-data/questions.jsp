@@ -165,6 +165,7 @@
 									id: 'question-tools-action',
 									scale: 'medium',																	
 									disabled: true,
+									requiredPermissions: ['ADMIN-QUESTIONS-UPDATE'],
 									menu: [
 										{
 											text: 'Approve/Activate',											
@@ -331,6 +332,7 @@
 									id: 'answer-tools-action',
 									scale: 'medium',																	
 									disabled: true,
+									requiredPermissions: ['ADMIN-QUESTIONS-UPDATE'],
 									menu: [
 										{
 											text: 'Approve/Activate',											
@@ -444,6 +446,14 @@
 				var mainPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Manage Questions <i class="fa fa-question-circle"  data-qtip="User questions and answers about a component."></i>',
 					bodyPadding: '6em',
+					requiredPermissions: ['ADMIN-QUESTIONS-READ'],
+					permissionCheckFailure: function () {
+						Ext.toast({
+							html: 'You do not have permissions to view the data on this page',
+							title: 'Invalid Permissions',
+							align: 'b'
+						});
+					},
 					layout: {
 						type: 'hbox',
 						align: 'stretch',

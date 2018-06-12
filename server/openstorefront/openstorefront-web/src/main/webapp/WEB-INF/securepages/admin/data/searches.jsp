@@ -300,6 +300,7 @@
 										"data-test": "addBtnSearches"
 									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save',
+									requiredPermissions: ['ADMIN-SEARCH-CREATE'],
 									handler: function () {
 										actionAdd();										
 									}									
@@ -314,11 +315,13 @@
 										"data-test": "editBtnSearches"
 									},
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									requiredPermissions: ['ADMIN-SEARCH-UPDATE'],
 									handler: function () {
 										actionEdit(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);										
 									}									
 								},								
 								{
+									requiredPermissions: ['ADMIN-SEARCH-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -330,6 +333,7 @@
 									disabled: true,
 									scale: 'medium',									
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
+									requiredPermissions: ['ADMIN-SEARCH-UPDATE'],
 									handler: function() {
 										actionToggleStatus(Ext.getCmp('searchgrid').getSelectionModel().getSelection()[0]);	
 									}
