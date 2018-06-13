@@ -13,7 +13,7 @@
 		<sonar.organization>di2e-github</sonar.organization>
 		<sonar.sources>src/main</sonar.sources>
 		<sonar.test.sources>src/test</sonar.test.sources>
-		<sonar.exclusions>**/system-tests/**,**/src/test/**,**/target/**,**/webjars/**,**/Hugo-StaticGen-Docs/**,**/docs**,**/socket.io.js,**/jquery-2.0.3.js,**/src/main/resources/uas.xml,**/*.sql,**/nb-configuration.xml</sonar.exclusions>
+		<sonar.exclusions>**/openstorefront-client-login/**, **/openstorefront-client-mobile/**, **/system-tests/**,**/src/test/**,**/target/**,**/webjars/**,**/Hugo-StaticGen-Docs/**,**/docs**,**/socket.io.js,**/jquery-2.0.3.js,**/src/main/resources/uas.xml,**/*.sql,**/nb-configuration.xml</sonar.exclusions>
 		<sonar.java.source>7</sonar.java.source>
 		<sonar.junit.reportPaths>server/openstorefront/openstorefront-core/service/target/surefire-reports, server/openstorefront/openstorefront-core/model/target/surefire-report, server/openstorefront/openstorefront-core/common/target/surefire-reports, server/openstorefront/openstorefront-core/apidoc/target/surefire-reports, server/openstorefront/openstorefront-web/target/surefire-reports</sonar.junit.reportPaths>
 	</properties>
