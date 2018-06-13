@@ -1,6 +1,6 @@
 <template>
 <v-layout mt-3 mx-3>
-  <v-flex xs12 sm4 offset-sm4>
+  <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
     <h2 class="text-xs-center">Frequently Asked Questions</h2>
 
     <v-expansion-panel popout>

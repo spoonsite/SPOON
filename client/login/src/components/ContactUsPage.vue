@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-layout mt-3 mx-3>
-      <v-flex xs12 sm4 offset-sm4>
+      <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
         <v-card class="elevation-5">
           <v-toolbar color="primary" dark dense>
             <v-toolbar-title>Contact Us</v-toolbar-title>
@@ -176,9 +176,9 @@ export default {
             screenResolution: 'Height: ' + window.innerHeight + ', Width:' + window.innerWidth
           }
         })
-        .then(response => {
-        })
-        .catch(error => console.log(error));
+          .then(response => {
+          })
+          .catch(error => console.log(error));
         this.$refs.form.reset();
         this.confirmationDialog = true;
       }

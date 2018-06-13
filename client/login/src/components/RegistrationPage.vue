@@ -1,6 +1,6 @@
 <template>
   <v-layout mt-3 mx-3>
-    <v-flex xs12 sm4 offset-sm4>
+    <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
 
       <h2>Registration - Fill out the form to signup for an account</h2>
 
