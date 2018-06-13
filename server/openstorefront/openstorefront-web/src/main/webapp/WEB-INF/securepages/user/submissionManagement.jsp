@@ -271,7 +271,7 @@
 										"data-test": "newSubmissionBtn"
 									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',									
-									requiredPermissions: ['USER-SUBMISSIONS-CHANGEREQUEST'],
+									requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 									handler: function () {
 										Ext.getCmp('submissionWindow').show();
 										Ext.getCmp('submissionPanel').resetSubmission();
