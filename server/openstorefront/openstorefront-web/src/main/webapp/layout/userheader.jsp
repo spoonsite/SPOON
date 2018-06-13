@@ -56,6 +56,7 @@
 			var toolsMenu = [];
 			toolsMenu.push({
 				text: 'Questions',
+				requiredPermissions: ['USER-QUESTIONS-PAGE'],
 				handler: function(){
 					actionLoadContent('Questions');
 				}
@@ -64,6 +65,7 @@
 				id: 'tools-menu-relationships',
 				text: 'Relationships',
 				hidden: true,
+				requiredPermissions: ['USER-RELATIONSHIPS-PAGE'],
 				handler: function(){
 					actionLoadContent('Relationships');
 				}			
@@ -72,24 +74,28 @@
 				id: 'tools-menu-reports',
 				text: 'Reports',
 				hidden: true,
+				requiredPermissions: ['REPORTS-PAGE'],
 				handler: function(){
 					actionLoadContent('Reports');
 				}			
 			});
 			toolsMenu.push({
 				text: 'Reviews',
+				requiredPermissions: ['USER-REVIEWS-PAGE'],
 				handler: function(){
 					actionLoadContent('Reviews');
 				}				
 			});
 			toolsMenu.push({
 				text: 'Searches',
+				requiredPermissions: ['USER-SEARCHES-PAGE'],
 				handler: function(){
 					actionLoadContent('Searches');
 				}				
 			});			
 			toolsMenu.push({
 				text: 'Watches',
+				requiredPermissions: ['USER-WATCHES-PAGE'],
 				handler: function(){
 					actionLoadContent('Watches');
 				}			
@@ -181,12 +187,14 @@
 									id: 'dashboardUserHomeButton',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									margin: '0 10 0 0',
+									requiredPermissions: ['DASHBOARD-PAGE'],
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
 								},	
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['USER-PROFILE-PAGE']
 								},										
 								{
 									text: 'Profile',
@@ -194,6 +202,7 @@
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-user icon-button-color-default',
 									margin: '0 10 0 0',
+									requiredPermissions: ['USER-PROFILE-PAGE'],
 									handler: function(){
 										actionLoadContent('User-Profile');
 									}									
@@ -205,6 +214,7 @@
 									hidden: true,
 									iconCls: 'fa fa-2x fa-list icon-button-color-default',
 									margin: '0 10 0 0',
+									requiredPermissions: ['USER-SUBMISSIONS-PAGE'],
 									handler: function(){
 										actionLoadContent('Submissions');
 									}									

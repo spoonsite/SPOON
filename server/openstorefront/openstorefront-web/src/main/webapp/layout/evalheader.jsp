@@ -136,24 +136,28 @@
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									margin: '0 10 0 0',
+									requiredPermissions: ['DASHBOARD-PAGE'],
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
 								},	
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['EVAL-PAGE']
 								},										
 								{
 									text: 'Evaluations',
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-file-text-o icon-button-color-default',
 									margin: '0 10 0 0',
+									requiredPermissions: ['EVAL-PAGE'],
 									handler: function(){
 										actionLoadContent('Evaluations');
 									}									
 								},
 								{							
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['REPORTS-PAGE']
 								},											
 								{
 									itemId: 'main-menu-reports',
@@ -161,6 +165,7 @@
 									scale   : 'large',
 									hidden: true,
 									iconCls: 'fa fa-2x fa-list icon-button-color-default',
+									requiredPermissions: ['REPORTS-PAGE'],
 									handler: function(){
 										actionLoadContent('Reports');
 									}									
