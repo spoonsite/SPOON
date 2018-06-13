@@ -241,6 +241,12 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public void saveComponentContact(ComponentContact contact,boolean updateLastActivity, boolean mergeSimilar)
+	{
+		sub.saveComponentContact(contact, updateLastActivity, mergeSimilar);
+	}
+
+	@Override
 	public void saveComponentDependency(ComponentExternalDependency dependency)
 	{
 		sub.saveComponentDependency(dependency);

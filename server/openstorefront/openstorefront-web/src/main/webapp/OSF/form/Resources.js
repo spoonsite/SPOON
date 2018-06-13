@@ -31,6 +31,9 @@ Ext.define('OSF.form.Resources', {
 			title: 'Add/Edit Resources',
 			collapsible: true,
 			titleCollapse: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			border: true,
 			layout: 'vbox',
 			bodyStyle: 'padding: 10px;',
@@ -209,6 +212,9 @@ Ext.define('OSF.form.Resources', {
 
 		resourcePanel.resourcesGrid = Ext.create('Ext.grid.Panel', {	
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					"resourceId",
