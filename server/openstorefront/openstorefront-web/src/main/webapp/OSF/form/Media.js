@@ -360,6 +360,7 @@ Ext.define('OSF.form.Media', {
 							itemId: 'toggleStatusBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',							
 							disabled: true,
+							hidden: mediaPanel.hideToggleStatus || false,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(mediaPanel.mediaGrid, 'componentMediaId', 'media');
 							}
