@@ -161,6 +161,7 @@ public class SecurityPermission
 	public static final String USER_SUBMISSIONS_CREATE = "USER-SUBMISSIONS-CREATE";
 	public static final String USER_SUBMISSIONS_READ = "USER-SUBMISSIONS-READ";
 	public static final String USER_SUBMISSIONS_DELETE = "USER-SUBMISSIONS-DELETE";
+	public static final String USER_SUBMISSIONS_CHANGEREQUEST = "USER-SUBMISSIONS-CHANGEREQUEST";
 
 	public static final String GROUPBY_USER_MANAGEMENT = "Users";
 	public static final String ADMIN_USER_MANAGEMENT_DELETE = "ADMIN-USER-MANAGEMENT-DELETE";
@@ -519,6 +520,7 @@ public class SecurityPermission
 		codeMap.put(USER_SUBMISSIONS_CREATE, newLookup(SecurityPermission.class, USER_SUBMISSIONS_CREATE, "Allow user submission creation", null, GROUPBY_USER_SUBMISSION));
 		codeMap.put(USER_SUBMISSIONS_READ, newLookup(SecurityPermission.class, USER_SUBMISSIONS_READ, "Allow user submission reading", null, GROUPBY_USER_SUBMISSION));
 		codeMap.put(USER_SUBMISSIONS_DELETE, newLookup(SecurityPermission.class, USER_SUBMISSIONS_DELETE, "Allow user submission deleting", null, GROUPBY_USER_SUBMISSION));
+		codeMap.put(USER_SUBMISSIONS_CHANGEREQUEST, newLookup(SecurityPermission.class, USER_SUBMISSIONS_CHANGEREQUEST, "Allow user to create change requests", null, GROUPBY_USER_SUBMISSION));
 
 		codeMap.put(ADMIN_USER_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_DELETE, "Allow admin user submission deleting", null, GROUPBY_USER_MANAGEMENT));
 		codeMap.put(ADMIN_USER_MANAGEMENT_READ, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_READ, "Allow admin user submission reading", null, GROUPBY_USER_MANAGEMENT));

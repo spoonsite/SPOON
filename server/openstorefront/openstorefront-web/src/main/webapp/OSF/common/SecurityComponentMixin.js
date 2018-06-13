@@ -46,15 +46,19 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 	Ext.override(Ext.Component, {
 		//	@param permissionLogicalOperator (string) - OR indicates the user needs one or more permissions, AND indicates user needs ALL listed permissions
 		//	@param actionOnInvalidPermissions (string) - indicates what should happen to the UI component when the user has insufficient permissions
+		//	@param beforePermissionsCheckSuccess (function) - executes before check success. Return true to perform the opposite of "actionOnInvalidPermission" (returns true by default)
+		//	@param beforePermissionsCheckFailure (function) - executes before check failure. Return true to perform "actionOnInvalidPermissions" (returns true by default)
 		//	@param requiredPermissions (string) - permissions that are tied to the UI component
-		//	@param afterPermissionCheck (function) - to be called after permissions have been handled on UI component
 		mixins: [mixin],
 		securityMixin: mixin,
 		permissionLogicalOperator: 'OR',
 		actionOnInvalidPermission: 'hide',
 		requiredPermissions: [],
+		beforePermissionsCheckSuccess: function () { return true; },
+		beforePermissionsCheckFailure: function () { return true; },
 		permissionCheckSuccess: function () {},
 		permissionCheckFailure: function () {},
+		hasValidPermissions: true,
 		permissionsActionMap: {
 			// @param method - method that will be executed
 			// @invalidValue - value to be passed to the <method> for invalid permissions
@@ -78,6 +82,14 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 				invalidValue: null,
 				validValue: null,
 				canCallByDefault: false
+			}
+		},
+		listeners: {
+			beforeshow: function () {
+				if (!this.hasValidPermissions && this.actionOnInvalidPermission === 'hide') {
+					return false;
+				}
+				return true;
 			}
 		},
 		initComponent: function () {
@@ -111,6 +123,7 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 						switch (uiComponent.permissionLogicalOperator) {
 							case 'OR': // user only requires one of the specified permissions
 								if (matchedPermissions === 0) {
+									uiComponent.hasValidPermissions = false;
 									uiComponent.handleComponentRender(false);
 								}
 								else {
@@ -120,6 +133,7 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 	
 							case 'AND': // user requires ALL specified permission
 								if (matchedPermissions !== uiComponent.requiredPermissions.length) {
+									uiComponent.hasValidPermissions = false;
 									uiComponent.handleComponentRender(false);
 								}
 								else {
@@ -139,12 +153,12 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 			var uiComponent = this;
 			var actionMapObj = uiComponent.permissionsActionMap[uiComponent.actionOnInvalidPermission];
 
-			if (!hasPermission) {
+			if (!hasPermission && uiComponent.beforePermissionsCheckFailure()) {
 				uiComponent[actionMapObj.method](actionMapObj.invalidValue !== null ? actionMapObj.invalidValue : undefined);
 				uiComponent.permissionCheckFailure.call(uiComponent);
 			}
 			// Don't run unless user has valid permissions, and the actionMapObj has a method that doesn't destroy the component.
-			else if (hasPermission && actionMapObj.canCallByDefault) {
+			else if (hasPermission && actionMapObj.canCallByDefault && uiComponent.beforePermissionsCheckSuccess()) {
 				uiComponent[actionMapObj.method](actionMapObj.validValue !== null ? actionMapObj.validValue : undefined);
 				uiComponent.permissionCheckSucces.call(uiComponent);
 			}
