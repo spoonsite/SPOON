@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.doc.model;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,8 @@ public class EntityFieldModel
 	private String originClass;
 	private boolean embeddedType;
 	private boolean primaryKey;
+
+	@DataType(EntityConstraintModel.class)
 	private List<EntityConstraintModel> constraints = new ArrayList<>();
 
 	public EntityFieldModel()

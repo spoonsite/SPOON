@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
@@ -29,7 +28,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -275,6 +273,7 @@ public class SecurityUtil
 		return message.toString();
 	}
 
+	@SuppressWarnings("UseSpecificCatch")
 	public static void logout(HttpServletRequest request, HttpServletResponse response)
 	{
 		Subject currentUser = SecurityUtils.getSubject();
@@ -282,12 +281,13 @@ public class SecurityUtil
 
 		currentUser.logout();
 		request.getSession().invalidate();
+
+		//Handle all exceptions (workaround for tomcat bug in 7.0_65)
 		try {
 			request.logout();
-		} catch (ServletException ex) {
-			LOG.log(Level.WARNING, ()->"Unable to log out of container authorization system. Error message:\n" + ex.getMessage());
-			LOG.log(Level.FINEST, "Stack Trace of Logout Failure", ex);
-//			throw new OpenStorefrontRuntimeException(ex);
+		} catch (Exception ex) {
+			LOG.log(Level.WARNING, () -> "Unable to log out of container authorization system. Error message:\n" + ex.getMessage());
+			LOG.log(Level.FINEST, "Trace of Logout Failure", ex);
 		}
 
 		//For now invalidate all cookies; in the future there may be some that should persist.

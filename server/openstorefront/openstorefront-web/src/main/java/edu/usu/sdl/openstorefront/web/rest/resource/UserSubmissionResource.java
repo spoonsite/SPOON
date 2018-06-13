@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -185,7 +186,7 @@ public class UserSubmissionResource
 	}
 
 	@PUT
-	@APIDescription("Submits a submission for approval")
+	@APIDescription("Submits a change request for approval")
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{submissionId}/submitchangeforapproval")
@@ -261,15 +262,16 @@ public class UserSubmissionResource
 			@PathParam("mediaId") String mediaId
 	)
 	{
-		UserSubmission userSubmission = new UserSubmission();
-		userSubmission.setUserSubmissionId(submissionId);
-		userSubmission = userSubmission.find();
+		UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
+		userSubmissionMedia.setUserSubmissionId(submissionId);
+		userSubmissionMedia.setSubmissionMediaId(mediaId);
+		userSubmissionMedia = userSubmissionMedia.find();
 
 		Response response = Response.noContent().build();
-		if (userSubmission != null) {
-			response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS);
+		if (userSubmissionMedia != null) {
+			response = ownerCheck(userSubmissionMedia, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 			if (response == null) {
-				service.getSubmissionFormService().deleteUserSubmissionMedia(submissionId, mediaId);
+				service.getSubmissionFormService().deleteUserSubmissionMedia(mediaId);
 				response = Response.noContent().build();
 			}
 		}

@@ -282,6 +282,24 @@
 										]
 									}
 								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'submissionTemplateId',																		
+									width: '100%',
+									margin: '0 0 20 0',
+									fieldLabel: 'Submission Form Template',
+									emptyText: 'Default',
+									displayField: 'name',
+									valueField: 'submissionTemplateId',
+									storeConfig: {
+										url: 'api/v1/resource/submissiontemplates',
+										addRecords: [
+											{
+												submissionTemplateId: null,
+												name: 'Default'
+											} 
+										]
+									}
+								}),								
 								{
 									xtype: 'label',
 									text: 'Icon URL:',

@@ -35,6 +35,8 @@ public class ComponentTypeNestedModel
 	private static final long serialVersionUID = 1L;
 
 	private ComponentTypeView componentType;
+
+	//Can't put nest type in api doc/creates serialization loop
 	private List<ComponentTypeNestedModel> children = new ArrayList<>();
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
@@ -42,7 +44,7 @@ public class ComponentTypeNestedModel
 	{
 	}
 
-	public List<String> getComponentTypeChildren()
+	public List<String> findComponentTypeChildren()
 	{
 		return findChildrenTypes(this, new ArrayList<>());
 	}

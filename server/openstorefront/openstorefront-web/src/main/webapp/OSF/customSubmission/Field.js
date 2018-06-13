@@ -69,7 +69,7 @@ Ext.define('OSF.customSubmission.Field', {
 			value: this.field.getValue(),
 			fieldData: this.getForm().getValues(),
 			name: this.name
-		}
+		};
 	},
 	getItems: function () {
 		return this.items.items;

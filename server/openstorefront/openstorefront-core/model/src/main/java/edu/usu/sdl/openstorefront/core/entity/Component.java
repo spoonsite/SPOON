@@ -56,6 +56,7 @@ public class Component
 	public static final String FIELD_NAME = "name";
 	public static final String FIELD_DESCRIPTION = "description";
 	public static final String FIELD_LAST_ACTIVITY_DTS = "lastActivityDts";
+	public static final String FIELD_RELEASE_DATE = "releaseDate";
 
 	@PK(generated = true)
 	@NotNull

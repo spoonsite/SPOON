@@ -35,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.model.UserSubmissionAll;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,7 @@ public class MappingControllerTest
 					}
 
 					@Override
-					public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
+					public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
 					{
 						throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 					}
@@ -234,17 +235,17 @@ public class MappingControllerTest
 		userSubmission.setFields(new ArrayList<>());
 
 		UserSubmissionField field = new UserSubmissionField();
-		field.setFieldId("NAME");
+		field.setTemplateFieldId("NAME");
 		field.setRawValue("Apple");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("ORG");
+		field.setTemplateFieldId("ORG");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("DESCR");
+		field.setTemplateFieldId("DESCR");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
@@ -289,17 +290,17 @@ public class MappingControllerTest
 		userSubmission.setFields(new ArrayList<>());
 
 		UserSubmissionField field = new UserSubmissionField();
-		field.setFieldId("NAME");
+		field.setTemplateFieldId("NAME");
 		field.setRawValue("Apple");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("ORG");
+		field.setTemplateFieldId("ORG");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("DESCR");
+		field.setTemplateFieldId("DESCR");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
@@ -351,22 +352,22 @@ public class MappingControllerTest
 		userSubmission.setFields(new ArrayList<>());
 
 		UserSubmissionField field = new UserSubmissionField();
-		field.setFieldId("NAME");
+		field.setTemplateFieldId("NAME");
 		field.setRawValue("Apple");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("ORG");
+		field.setTemplateFieldId("ORG");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("DESCR");
+		field.setTemplateFieldId("DESCR");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("CONTACT");
+		field.setTemplateFieldId("CONTACT");
 
 		ComponentContact contact = new ComponentContact();
 		contact.setFirstName("Bob");
@@ -439,10 +440,10 @@ public class MappingControllerTest
 		componentAll.getContacts().add(componentContact);
 		componentFormSet.setPrimary(componentAll);
 
-		UserSubmission userSubmission = instance.mapEntriesToUserSubmission(template, componentFormSet);
+		UserSubmissionAll userSubmissionAll = instance.mapEntriesToUserSubmission(template, componentFormSet);
 
-		assertTrue(userSubmission.getFields().size() == 4);
-		assertTrue(userSubmission.getFields().get(0).getRawValue().equals("Apple"));
+		assertTrue(userSubmissionAll.getUserSubmission().getFields().size() == 4);
+		assertTrue(userSubmissionAll.getUserSubmission().getFields().get(0).getRawValue().equals("Apple"));
 
 	}
 
@@ -500,7 +501,7 @@ public class MappingControllerTest
 		componentAll.getContacts().add(componentContact);
 		componentFormSet.setPrimary(componentAll);
 
-		UserSubmission userSubmission = instance.mapEntriesToUserSubmission(template, componentFormSet);
+		UserSubmissionAll userSubmissionAll = instance.mapEntriesToUserSubmission(template, componentFormSet);
 
 	}
 

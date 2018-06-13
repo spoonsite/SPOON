@@ -19,18 +19,18 @@
 
 /* Author: cyearsley */
 
-Ext.define('OSF.customSubmission.Grid', {
+Ext.define('OSF.customSubmission.BaseGrid', {
 	extend: 'Ext.grid.Panel',
 	formPanel: undefined,
 	title: '&nbsp',
+	columnLines: true,
 	forceFit: true,
-	frame: true,
+	frame: true,	
+	store: {},
 	initComponent: function () {
-
 		var csGrid = this;
 		csGrid.callParent();
-		csGrid.setStore(Ext.create('Ext.data.Store'));
-
+		
 		var storeFields = [];
 		var gridColumns = [];
 		var dummyFormPanel = Ext.create('OSF.customSubmission.form.' + csGrid.formPanel);
@@ -100,7 +100,7 @@ Ext.define('OSF.customSubmission.Grid', {
 	dockedItems: [
 		{
 			xtype: 'toolbar',
-			dock: 'bottom',
+			dock: 'top',
 			items: [
 				{
 					text: 'Add',
@@ -155,27 +155,25 @@ Ext.define('OSF.customSubmission.Grid', {
 	]
 });
 
-Ext.define('OSF.customSubmission.GridWindow', {
+Ext.define('OSF.customSubmission.FormWindow', {
 	extend: 'Ext.window.Window',
 	inEdit: false,
-	minWidth: 430,
-	minHeight: 300,
-	maxWidth: 500,
-	padding: 10,
-	closeAction: 'hide',
+	closeAction: 'destroy',
 	modal: true,
 	alwaysOnTop: true,
 	scrollable: true,
 	gridReference: null,
 	formPanel: undefined,
+	layout: 'fit',
+	
 	initComponent: function () {
 		
 		this.callParent();
-		var csGrid = this;
+		var formWindow = this;
 
-		csGrid.add(csGrid.formPanel);
-		if (csGrid.inEdit) {
-			csGrid.query('form')[0].loadRecord(csGrid.gridReference.getSelection()[0]);
+		formWindow.add(formWindow.formPanel);
+		if (formWindow.inEdit) {
+			formWindow.formPanel.loadRecord(formWindow.gridReference.getSelection()[0]);
 		}
 	},
 	dockedItems: [
@@ -185,11 +183,12 @@ Ext.define('OSF.customSubmission.GridWindow', {
 			items: [
 				{
 					text: 'Save',
+					formBind: true,
 					iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 					handler: function () {
 
-						var gridWindow = this.up('window');
-						var form = gridWindow.query('form')[0];
+						var formWindow = this.up('window');
+						var form = formWindow.query('form')[0];
 						var newRecord = {};
 						Ext.Array.forEach(form.items.items, function (el) {
 							
@@ -205,16 +204,16 @@ Ext.define('OSF.customSubmission.GridWindow', {
 						});
 
 						// remove currently selected item
-						if (gridWindow.inEdit) {
-							gridWindow.gridReference.store.remove(gridWindow.gridReference.getSelection()[0]);
+						if (formWindow.inEdit) {
+							formWindow.gridReference.store.remove(formWindow.gridReference.getSelection()[0]);
 						}
 
-						gridWindow.gridReference.setSelection();
-						gridWindow.gridReference.query('[itemId=deleteBtn]')[0].setDisabled(true);
-						gridWindow.gridReference.query('[itemId=editBtn]')[0].setDisabled(true);
-						gridWindow.gridReference.getStore().add(newRecord);
+						formWindow.gridReference.setSelection();
+						formWindow.gridReference.query('[itemId=deleteBtn]')[0].setDisabled(true);
+						formWindow.gridReference.query('[itemId=editBtn]')[0].setDisabled(true);
+						formWindow.gridReference.getStore().add(newRecord);
 						form.reset();
-						gridWindow.close();
+						formWindow.close();
 					}
 				},
 				{
@@ -224,14 +223,11 @@ Ext.define('OSF.customSubmission.GridWindow', {
 					text: 'Cancel',
 					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 					handler: function () {
-
-						var csGrid = this.up('window');
-						var form = csGrid.query('form')[0];
-						form.reset();
-						csGrid.close();
+						var formWindow = this.up('window');		
+						formWindow.close();
 					}
 				}
 			]
 		}
 	]
-})
+});
