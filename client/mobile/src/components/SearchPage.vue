@@ -159,7 +159,7 @@
       :size="70"
       :width="7"
       indeterminate
-      :class="{center:searchQueryIsDirty}"
+      class="center"
     ></v-progress-circular>
   </div>
 
