@@ -248,7 +248,9 @@ Ext.define('OSF.form.EntrySummary', {
 									componentAttributePk: {
 										attributeType: attribute.componentAttributePk.attributeType,
 										attributeCode: attribute.componentAttributePk.attributeCode
-									}
+									},
+									comment: attribute.comment,
+									privateFlag: attribute.privateFlag
 								});								
 							});
 							
