@@ -70,10 +70,11 @@
 	<script src="scripts/socket.io.js" type="text/javascript"></script>
 		
 	<%-- Core Utils --%>	
-	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>		
+	<%-- NOTE: override should be last --%>
 	<script src="scripts/util/coreUtil.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/util/dateUtil.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/global/coreService.js?v=${appVersion}" type="text/javascript"></script>	
+	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>		
 	
 	<%-- Custom Components --%>		
 	<script src="scripts/component/notificationPanel.js?v=${appVersion}" type="text/javascript"></script>

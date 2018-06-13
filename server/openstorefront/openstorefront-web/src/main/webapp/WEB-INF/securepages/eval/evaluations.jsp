@@ -119,7 +119,9 @@
 					],
 					listeners: {
 						itemdblclick: function(grid, record, item, index, e, opts){
-							actionEdit(record);
+							if (evaluationGrid.down('[itemId=edit]').hasValidPermissions) {
+								actionEdit(record);
+							}
 						},						
 						selectionchange: function(selModel, selected, opts) {
 							var tools = evaluationGrid.getComponent('tools');

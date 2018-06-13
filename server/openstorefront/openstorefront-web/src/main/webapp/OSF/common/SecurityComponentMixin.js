@@ -55,6 +55,7 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 		requiredPermissions: [],
 		permissionCheckSuccess: function () {},
 		permissionCheckFailure: function () {},
+		hasValidPermissions: true,
 		permissionsActionMap: {
 			// @param method - method that will be executed
 			// @invalidValue - value to be passed to the <method> for invalid permissions
@@ -111,6 +112,7 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 						switch (uiComponent.permissionLogicalOperator) {
 							case 'OR': // user only requires one of the specified permissions
 								if (matchedPermissions === 0) {
+									uiComponent.hasValidPermissions = false;
 									uiComponent.handleComponentRender(false);
 								}
 								else {
@@ -120,6 +122,7 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 	
 							case 'AND': // user requires ALL specified permission
 								if (matchedPermissions !== uiComponent.requiredPermissions.length) {
+									uiComonent.hasValidPermissions = false;
 									uiComponent.handleComponentRender(false);
 								}
 								else {
