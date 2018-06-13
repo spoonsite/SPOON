@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.RetryUtil;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
@@ -118,45 +119,51 @@ public class SubComponentServiceImpl
 		return deactivateBaseComponent(subComponentClass, pk, true, null);
 	}
 
-	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity, String updateUser)
+	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity, final String updateUser)
 	{
-		T found = persistenceService.findById(subComponentClass, pk);
-		if (found != null) {
+		RetryUtil.retryAction(5, ()->{
+			T found = persistenceService.findById(subComponentClass, pk);
+			if (found != null) {
+				if (found instanceof LoggableModel) {
+					componentService.getChangeLogService().logStatusChange(found, T.INACTIVE_STATUS);
+				}
 
-			if (found instanceof LoggableModel) {
-				componentService.getChangeLogService().logStatusChange(found, T.INACTIVE_STATUS);
-			}
+				found.setActiveStatus(T.INACTIVE_STATUS);
+				found.setUpdateDts(TimeUtil.currentDate());
+				String newUpdateUser = updateUser;
+				if (StringUtils.isBlank(newUpdateUser)) {
+					newUpdateUser = SecurityUtil.getCurrentUserName();
+				}
+				found.setUpdateUser(newUpdateUser);
 
-			found.setActiveStatus(T.INACTIVE_STATUS);
-			found.setUpdateDts(TimeUtil.currentDate());
-			if (StringUtils.isBlank(updateUser)) {
-				updateUser = SecurityUtil.getCurrentUserName();
-			}
-			found.setUpdateUser(updateUser);
-			persistenceService.persist(found);
+				persistenceService.persist(found);
 
-			if (updateComponentActivity) {
-				updateComponentLastActivity(found.getComponentId());
-			}
-		}
-		return found;
+				if (updateComponentActivity) {
+					updateComponentLastActivity(found.getComponentId());
+				}
+			}			
+		});
+		return persistenceService.findById(subComponentClass, pk);
 	}
 
 	public <T extends BaseComponent> T activateBaseComponent(Class<T> subComponentClass, Object pk)
 	{
-		T found = persistenceService.findById(subComponentClass, pk);
-		if (found != null) {
-			if (found instanceof LoggableModel) {
-				componentService.getChangeLogService().logStatusChange(found, T.ACTIVE_STATUS);
-			}
+		RetryUtil.retryAction(5, ()->{
+			T found = persistenceService.findById(subComponentClass, pk);
+			if (found != null) {
+				if (found instanceof LoggableModel) {
+					componentService.getChangeLogService().logStatusChange(found, T.ACTIVE_STATUS);
+				}
 
-			found.setActiveStatus(T.ACTIVE_STATUS);
-			found.populateBaseUpdateFields();
-			persistenceService.persist(found);
+				found.setActiveStatus(T.ACTIVE_STATUS);
+				found.populateBaseUpdateFields();
+				persistenceService.persist(found);
 
-			updateComponentLastActivity(found.getComponentId());
-		}
-		return found;
+				updateComponentLastActivity(found.getComponentId());
+			}	
+		
+		});
+		return persistenceService.findById(subComponentClass, pk);
 	}
 
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk)

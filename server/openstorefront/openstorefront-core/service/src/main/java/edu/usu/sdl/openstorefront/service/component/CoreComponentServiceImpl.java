@@ -1997,6 +1997,7 @@ public class CoreComponentServiceImpl
 				FileHistoryOption fileHistoryOption = new FileHistoryOption();
 				fileHistoryOption.setSkipDuplicationCheck(true);
 				fileHistoryOption.setSkipRequiredAttributes(true);
+				fileHistoryOption.setUploadTags(true);
 
 				componentAll = saveFullComponent(componentAll, fileHistoryOption);
 
@@ -2388,11 +2389,9 @@ public class CoreComponentServiceImpl
 					userWatch.populateBaseUpdateFields();
 					persistenceService.persist(userWatch);
 				}
-
-				persistenceService.commit();
+				
 				//remove mergeComponent
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
-
 				cleanupCache(toMergeComponentId);
 				cleanupCache(targetComponentId);
 
