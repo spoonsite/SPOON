@@ -70,5 +70,6 @@ project*.properties
 .settings/
 .classpath
 .vscode/
+.bin/
 
-client/login/node_modules/
+node_modules/
