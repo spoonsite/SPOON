@@ -212,7 +212,20 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				var data = Ext.decode(initialData);
 				var record = Ext.create('Ext.data.Model', {				
 				});
-				record.set(data[0]);
+				
+				if (contactPanel.fieldTemplate.contactType) {
+					var specificContact;
+					Ext.Array.each(data, function(contact){
+						if (contact.contactType === contactPanel.fieldTemplate.contactType) {
+							specificContact = contact;
+						}
+					});
+					if (specificContact) {
+						record.set(specificContact);
+					}
+				} else {				
+					record.set(data[0]);
+				}				
 				contactPanel.loadRecord(record);
 				
 				if (!contactPanel.fieldTemplate.hideExistingContactPicker) {	

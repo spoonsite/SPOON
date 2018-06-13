@@ -86,6 +86,11 @@ public class SubmissionFormField
 	private String contactType;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1K)
+	@APIDescription("Json Encoded array of contact Types to exclude form added/viewable from grid")
+	private String excludeContactType;
+
+	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = RelationshipType.class)
 	@FK(RelationshipType.class)
 	@APIDescription("This is used with child entries to determine the type of relationsip")
@@ -206,6 +211,7 @@ public class SubmissionFormField
 		this.setPopluateContactWithUser(submissionFormField.getPopluateContactWithUser());
 		this.setHideExistingContactPicker(submissionFormField.getHideExistingContactPicker());
 		this.setAlwaysShowDetailGrid(submissionFormField.getAlwaysShowDetailGrid());
+		this.setExcludeContactType(submissionFormField.getExcludeContactType());
 
 		this.setSectionId(submissionFormField.getSectionId());
 	}
@@ -498,6 +504,16 @@ public class SubmissionFormField
 	public void setAlwaysShowDetailGrid(Boolean alwaysShowDetailGrid)
 	{
 		this.alwaysShowDetailGrid = alwaysShowDetailGrid;
+	}
+
+	public String getExcludeContactType()
+	{
+		return excludeContactType;
+	}
+
+	public void setExcludeContactType(String excludeContactType)
+	{
+		this.excludeContactType = excludeContactType;
 	}
 
 }

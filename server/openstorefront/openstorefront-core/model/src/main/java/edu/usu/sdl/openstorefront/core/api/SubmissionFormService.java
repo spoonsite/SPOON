@@ -105,11 +105,13 @@ public interface SubmissionFormService
 	 * Convert an Entry and related sub-entries into a UserSubmission This fill
 	 * in what it can based on the template.
 	 *
-	 * @param submissionTemplateId
+	 * It will resolve the appropriate template base on the entry type.
+	 *
 	 * @param componentId
+	 * @param forChangeRequest
 	 * @return
 	 */
-	public UserSubmission editComponentForSubmission(String submissionTemplateId, String componentId);
+	public UserSubmission editComponentForSubmission(String componentId, boolean forChangeRequest);
 
 	/**
 	 * Creates a change request from a submission
@@ -119,7 +121,7 @@ public interface SubmissionFormService
 	public void submitChangeRequestForApproval(UserSubmission userSubmission);
 
 	/**
-	 * Ressign Ownership
+	 * Reassign Ownership
 	 *
 	 * @param userSubmissionId
 	 * @param newOwnerUsername

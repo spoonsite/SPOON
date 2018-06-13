@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.mapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.ContactService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.Service;
@@ -26,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldMappingType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldType;
@@ -75,7 +77,7 @@ public class MappingControllerTest
 		assertFalse(result.valid());
 	}
 
-	private void setupMockService()
+	private Service setupMockService()
 	{
 		Service mockService = Mockito.mock(Service.class);
 
@@ -93,7 +95,7 @@ public class MappingControllerTest
 		Mockito.when(lookupService.findLookup(ApprovalStatus.class, null)).thenReturn(approvalStatus.systemValues());
 
 		ServiceProxyFactory.setTestService(mockService);
-
+		return mockService;
 	}
 
 	private MapperFactory getMockMapperFactory()
@@ -389,7 +391,16 @@ public class MappingControllerTest
 	@Test
 	public void testEntryToUserSubmissionMapValid() throws MappingException
 	{
-		setupMockService();
+		Service mockService = setupMockService();
+
+		ContactService contactService = Mockito.mock(ContactService.class);
+		Mockito.when(mockService.getContactService()).thenReturn(contactService);
+		Contact contact = new Contact();
+		contact.setFirstName("Bob");
+		contact.setLastName("test");
+		contact.setEmail("bob@test.com");
+		Mockito.when(contactService.findContact(Mockito.anyString())).thenReturn(contact);
+
 		MappingController instance = new MappingController();
 
 		SubmissionFormTemplate template = new SubmissionFormTemplate();

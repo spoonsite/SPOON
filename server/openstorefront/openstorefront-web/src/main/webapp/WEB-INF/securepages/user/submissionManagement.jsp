@@ -296,8 +296,7 @@
 										if (record.get('userSubmissionId')) {										
 											loadSubmissionForm(record.get('submissionTemplateId'), record.get('componentType'), record);
 										} else {
-											Ext.getCmp('submissionWindow').show();
-											Ext.getCmp('submissionPanel').editSubmission(componentId);
+											editExistingEntry(componentId);
 										}
 										
 									}
@@ -776,7 +775,26 @@
 					currentUser = user;
 				});
 				
-				var loadSubmissionForm = function(submissionTemplateId, componentType, record) {
+				var editExistingEntry = function(componentId) {
+					
+					submissionGrid.setLoading('Loading Submission...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + componentId + '/usersubmission',
+						method: 'POST',
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var userSubmission = Ext.decode(response.responseText);
+														
+							loadSubmissionForm(userSubmission.templateId, userSubmission.componentType, null, userSubmission);
+							actionRefreshSubmission();
+						}
+					});
+					
+				};
+				
+				var loadSubmissionForm = function(submissionTemplateId, componentType, record, userSubmissionExisting) {
 					
 					if (!submissionTemplateId) {						
 						console.error("Need to Set default");
@@ -844,8 +862,8 @@
 											finishLoadingForm(userSubmission);
 										}
 									});
-								} else {
-									finishLoadingForm(null);
+								} else {									
+									finishLoadingForm(userSubmissionExisting);
 								}								
 								
 							}

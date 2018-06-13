@@ -32,6 +32,12 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
+import edu.usu.sdl.openstorefront.core.view.ComponentContactView;
+import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
+import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
+import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -298,13 +304,13 @@ public class ComplexMapper
 
 				case SubmissionFormFieldType.MEDIA:
 				case SubmissionFormFieldType.MEDIA_MULTI:
-					mapMediaForForm(userSubmissionField, componentFormSet);
+					userSubmissionFieldMedia.getMedia().addAll(mapMediaForForm(userSubmissionField, componentFormSet));
 					break;
 
 				case SubmissionFormFieldType.RESOURCE:
 				case SubmissionFormFieldType.RESOURCE_SIMPLE:
 				case SubmissionFormFieldType.RESOURCE_MULTI:
-					mapResourcesForForm(userSubmissionField, componentFormSet);
+					userSubmissionFieldMedia.getMedia().addAll(mapResourcesForForm(userSubmissionField, componentFormSet));
 					break;
 
 				case SubmissionFormFieldType.TAG:
@@ -336,25 +342,27 @@ public class ComplexMapper
 
 	private void mapAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getAttributes());
+		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(componentFormSet.getPrimary().getAttributes()));
 		userSubmissionField.setRawValue(value);
 	}
 
 	private void mapContacts(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getContacts());
+		String value = objectMapper.writeValueAsString(ComponentContactView.toViewList(componentFormSet.getPrimary().getContacts()));
 		userSubmissionField.setRawValue(value);
 	}
 
 	private void mapDependencies(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getExternalDependencies());
+		String value = objectMapper.writeValueAsString(ComponentExternalDependencyView.toViewList(componentFormSet.getPrimary().getExternalDependencies()));
 		userSubmissionField.setRawValue(value);
 	}
 
-	private void mapMediaForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	private List<UserSubmissionMedia> mapMediaForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getMedia());
+		List<UserSubmissionMedia> userSubmissionMediaRecords = new ArrayList<>();
+
+		String value = objectMapper.writeValueAsString(ComponentMediaView.toViewList(componentFormSet.getPrimary().getMedia()));
 		userSubmissionField.setRawValue(value);
 
 		for (ComponentMedia media : componentFormSet.getPrimary().getMedia()) {
@@ -362,15 +370,17 @@ public class ComplexMapper
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
 				userSubmissionMedia.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
 				userSubmissionMedia.setFile(media.getFile().copy());
-
+				userSubmissionMediaRecords.add(userSubmissionMedia);
 			}
 		}
-
+		return userSubmissionMediaRecords;
 	}
 
-	private void mapResourcesForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	private List<UserSubmissionMedia> mapResourcesForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getResources());
+		List<UserSubmissionMedia> userSubmissionMediaRecords = new ArrayList<>();
+
+		String value = objectMapper.writeValueAsString(ComponentResourceView.toViewList(componentFormSet.getPrimary().getResources()));
 		userSubmissionField.setRawValue(value);
 
 		for (ComponentResource resource : componentFormSet.getPrimary().getResources()) {
@@ -378,9 +388,11 @@ public class ComplexMapper
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
 				userSubmissionMedia.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
 				userSubmissionMedia.setFile(resource.getFile().copy());
-
+				userSubmissionMediaRecords.add(userSubmissionMedia);
 			}
 		}
+
+		return userSubmissionMediaRecords;
 	}
 
 	private void mapTags(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
@@ -391,7 +403,7 @@ public class ComplexMapper
 
 	private void mapRelationships(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getRelationships());
+		String value = objectMapper.writeValueAsString(ComponentRelationshipView.toViewList(componentFormSet.getPrimary().getRelationships()));
 		userSubmissionField.setRawValue(value);
 	}
 

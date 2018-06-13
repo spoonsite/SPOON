@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Handles Submission Forms and Templates
@@ -146,6 +148,11 @@ public class SubmissionFormServiceImpl
 			userSubmission.populateBaseCreateFields();
 			if (userSubmission.getOwnerUsername() == null) {
 				userSubmission.setOwnerUsername(SecurityUtil.getCurrentUserName());
+			}
+			if (userSubmission.getFields() != null) {
+				for (UserSubmissionField field : userSubmission.getFields()) {
+					field.setFieldId(persistenceService.generateId());
+				}
 			}
 
 			existing = persistenceService.persist(userSubmission);
@@ -251,39 +258,60 @@ public class SubmissionFormServiceImpl
 	}
 
 	@Override
-	public UserSubmission editComponentForSubmission(String submissionTemplateId, String componentId)
+	public UserSubmission editComponentForSubmission(String componentId, boolean forChangeRequest)
 	{
 		Objects.isNull(componentId);
 
 		UserSubmission userSubmission = null;
-		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, submissionTemplateId);
-		if (formTemplate != null) {
-			ComponentFormSet componentFormSet = new ComponentFormSet();
-			ComponentAll componentAll = getComponentService().getFullComponent(componentId);
-			componentFormSet.setPrimary(componentAll);
 
-			for (ComponentRelationship relationship : componentAll.getRelationships()) {
-				componentFormSet.getChildren().add(getComponentService().getFullComponent(relationship.getRelatedComponentId()));
+		ComponentFormSet componentFormSet = new ComponentFormSet();
+		ComponentAll componentAll = getComponentService().getFullComponent(componentId);
+		componentFormSet.setPrimary(componentAll);
+
+		ComponentType componentType = new ComponentType();
+		componentType.setComponentType(componentAll.getComponent().getComponentType());
+		componentType = componentType.find();
+
+		SubmissionFormTemplate formTemplate;
+		if (componentType != null) {
+			if (StringUtils.isNotBlank(componentType.getSubmissionTemplateId())) {
+				formTemplate = persistenceService.findById(SubmissionFormTemplate.class, componentType.getSubmissionTemplateId());
+			} else {
+				SubmissionFormTemplate templateExample = new SubmissionFormTemplate();
+				templateExample.setDefaultTemplate(Boolean.TRUE);
+				formTemplate = templateExample.find();
 			}
-
-			UserSubmissionAll userSubmissionAll;
-			try {
-				userSubmissionAll = mappingController.mapEntriesToUserSubmission(formTemplate, componentFormSet);
-			} catch (MappingException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to map entry to submission.", "Check error ticket/logs", ex);
-			}
-
-			userSubmission = saveUserSubmission(userSubmissionAll.getUserSubmission());
-			for (UserSubmissionMedia media : userSubmissionAll.getMedia()) {
-				media.setSubmissionMediaId(persistenceService.generateId());
-				media.setUserSubmissionId(userSubmission.getUserSubmissionId());
-				media.populateBaseUpdateFields();
-				persistenceService.persist(media);
-			}
-
-			//question: what to do with the original?
 		} else {
-			throw missingFormTemplateException(submissionTemplateId);
+			throw new OpenStorefrontRuntimeException("Unable to find component Type", "Check Data");
+		}
+
+		for (ComponentRelationship relationship : componentAll.getRelationships()) {
+			componentFormSet.getChildren().add(getComponentService().getFullComponent(relationship.getRelatedComponentId()));
+		}
+
+		UserSubmissionAll userSubmissionAll;
+		try {
+			userSubmissionAll = mappingController.mapEntriesToUserSubmission(formTemplate, componentFormSet);
+		} catch (MappingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to map entry to submission.", "Check error ticket/logs", ex);
+		}
+
+		if (forChangeRequest) {
+			userSubmission.setOriginalComponentId(componentId);
+		} else {
+			userSubmission.setOriginalComponentId(null);
+		}
+
+		userSubmission = saveUserSubmission(userSubmissionAll.getUserSubmission());
+		for (UserSubmissionMedia media : userSubmissionAll.getMedia()) {
+			media.setSubmissionMediaId(persistenceService.generateId());
+			media.setUserSubmissionId(userSubmission.getUserSubmissionId());
+			media.populateBaseUpdateFields();
+			persistenceService.persist(media);
+		}
+
+		if (!forChangeRequest) {
+			getComponentService().cascadeDeleteOfComponent(componentId);
 		}
 
 		return userSubmission;
@@ -301,11 +329,12 @@ public class SubmissionFormServiceImpl
 				ComponentFormSet componentFormSet = mappingController.mapUserSubmissionToEntry(formTemplate, userSubmission);
 
 				componentFormSet.getPrimary().getComponent().setApprovalState(ApprovalStatus.PENDING);
-				getComponentService().saveFullComponent(componentFormSet.getPrimary());
+				componentFormSet.getPrimary().getComponent().setPendingChangeId(userSubmission.getOriginalComponentId());
+				ComponentAll savedComponentAll = getComponentService().saveFullComponent(componentFormSet.getPrimary());
 				for (ComponentAll componentAll : componentFormSet.getChildren()) {
 					getComponentService().saveFullComponent(componentAll);
 				}
-				getComponentService().submitChangeRequest(userSubmission.getOriginalComponentId());
+				getComponentService().submitChangeRequest(savedComponentAll.getComponent().getComponentId());
 
 				deleteUserSubmission(userSubmission.getUserSubmissionId());
 

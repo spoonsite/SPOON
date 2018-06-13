@@ -257,7 +257,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			displayField: 'description',
 			valueField: 'code',
 			editable: false,
-			queryMode: 'remote',
+			queryMode: 'local',
 			listeners: {
 				change: function (combo, newVal, oldValue, opts) {
 					var formBuilderItem = this.up('panel');							
@@ -265,6 +265,31 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				}
 			},
 			store: {
+				autoLoad: true,
+				proxy: {
+					type: 'ajax',
+					url: 'api/v1/resource/lookuptypes/ContactType'
+				}				
+			}
+		},		
+		{
+			xtype: 'tagfield',
+			hidden: true,
+			optionField: true,			
+			fieldLabel: 'Exclude Contact Types',
+			name: 'excludeContactType',
+			displayField: 'description',
+			valueField: 'code',
+			editable: true,
+			queryMode: 'local',
+			listeners: {
+				change: function (combo, newVal, oldValue, opts) {
+					var formBuilderItem = this.up('panel');							
+					formBuilderItem.syncTemplateField(false);					
+				}
+			},
+			store: {
+				autoLoad: true,
 				proxy: {
 					type: 'ajax',
 					url: 'api/v1/resource/lookuptypes/ContactType'
@@ -611,6 +636,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
 				formBuilderItem.getForm().findField('hideExistingContactPicker').setHidden(false);
 				formBuilderItem.getForm().findField('alwaysShowDetailGrid').setHidden(false);	
+				formBuilderItem.getForm().findField('excludeContactType').setHidden(false);
 			break;
 			case 'EXT_DEPEND_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
@@ -671,11 +697,18 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			delete formData.contactType;
 		}	
 		
+		if (formData.excludeContactType === ''){
+			delete formData.excludeContactType;
+		}		
+		
 		if (formData.resourceType === ''){
 			delete formData.resourceType;
 		}		
 		
 		Ext.apply(formBuilderItem.templateField, formData);
+		if (formBuilderItem.templateField.excludeContactType) {
+			formBuilderItem.templateField.excludeContactType = Ext.encode(formBuilderItem.templateField.excludeContactType);
+		}
 			
 		if (updateQuestion) {
 			formBuilderItem.updateQuestion();
@@ -793,6 +826,13 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		var record = Ext.create('Ext.data.Model', {			
 		});
 		record.set(fieldContainer.templateField);
+		
+		if (fieldContainer.templateField.excludeContactType) {		
+			try {
+				record.set('excludeContactType', Ext.decode(fieldContainer.templateField.excludeContactType));
+			}catch(e){				
+			}
+		}
 		fieldContainer.loadRecord(record);
 	}
 });
