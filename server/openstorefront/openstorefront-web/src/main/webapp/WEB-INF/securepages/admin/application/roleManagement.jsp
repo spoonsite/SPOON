@@ -115,7 +115,7 @@
 								},
 								{
 									xtype: 'tbseparator',
-									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-CREATE']
+									requiredPermissions: ['ADMIN-ROLE-MANAGEMENT-CREATE', 'ADMIN-ROLE-MANAGEMENT-UPDATE']
 								},
 								{
 									text: 'Add',

@@ -159,6 +159,7 @@ Ext.define('OSF.component.NotificationPanel', {
 					xtype: 'widgetcolumn',
 					align: 'center',
 					width: 75,
+					requiredPermissions: ['ADMIN-NOTIFICATION-EVENT-DELETE'],
 					widget: {
 						xtype: 'button',
 						iconCls: 'fa fa-trash',
@@ -232,6 +233,7 @@ Ext.define('OSF.component.NotificationPanel', {
 							text: 'Delete All',
 							scale: 'medium',
 							iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+							requiredPermissions: ['ADMIN-NOTIFICATION-EVENT-DELETE'],
 							handler: function () {
 								var notificationStore = this.up('grid').getStore();
 								

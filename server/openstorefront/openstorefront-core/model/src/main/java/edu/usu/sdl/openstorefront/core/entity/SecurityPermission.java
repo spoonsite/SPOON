@@ -161,6 +161,7 @@ public class SecurityPermission
 	public static final String USER_SUBMISSIONS_CREATE = "USER-SUBMISSIONS-CREATE";
 	public static final String USER_SUBMISSIONS_READ = "USER-SUBMISSIONS-READ";
 	public static final String USER_SUBMISSIONS_DELETE = "USER-SUBMISSIONS-DELETE";
+	public static final String USER_SUBMISSIONS_CHANGEREQUEST = "USER-SUBMISSIONS-CHANGEREQUEST";
 
 	public static final String GROUPBY_USER_MANAGEMENT = "Users";
 	public static final String ADMIN_USER_MANAGEMENT_DELETE = "ADMIN-USER-MANAGEMENT-DELETE";
@@ -418,6 +419,21 @@ public class SecurityPermission
 	public static final String ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE = "ADMIN-SUBMISSION-FORM-TEMPLATE-UPDATE";
 	public static final String ADMIN_SUBMISSION_FORM_TEMPLATE_DELETE = "ADMIN-SUBMISSION-FORM-TEMPLATE-DELETE";
 
+	// Dashboard Widgets
+	public static final String GROUPBY_DASHBOARD_WIDGET = "Dashboard Widgets";
+	public static final String DASHBOARD_WIDGET_ENTRY_STATS = "DASHBOARD-WIDGET-ENTRY-STATS";
+	public static final String DASHBOARD_WIDGET_EVALUATION_STATS = "DASHBOARD-WIDGET-EVALUATION-STATS";
+	public static final String DASHBOARD_WIDGET_NOTIFICATIONS = "DASHBOARD-WIDGET-NOTIFICATIONS";
+	public static final String DASHBOARD_WIDGET_OUTSTANDING_FEEDBACK = "DASHBOARD-WIDGET-OUTSTANDING-FEEDBACK";
+	public static final String DASHBOARD_WIDGET_PENDING_REQUESTS = "DASHBOARD-WIDGET-PENDING-REQUESTS";
+	public static final String DASHBOARD_WIDGET_QUESTIONS = "DASHBOARD-WIDGET-QUESTIONS";
+	public static final String DASHBOARD_WIDGET_USER_DATA = "DASHBOARD-WIDGET-USER-DATA";
+	public static final String DASHBOARD_WIDGET_REPORTS = "DASHBOARD-WIDGET-REPORTS";
+	public static final String DASHBOARD_WIDGET_SAVED_SEARCH = "DASHBOARD-WIDGET-SAVED-SEARCH";
+	public static final String DASHBOARD_WIDGET_SUBMISSION_STATUS = "DASHBOARD-WIDGET-SUBMISSION-STATUS";
+	public static final String DASHBOARD_WIDGET_SYSTEM_STATUS = "DASHBOARD-WIDGET-SYSTEM-STATUS";
+	public static final String DASHBOARD_WIDGET_USER_STATS = "DASHBOARD-WIDGET-USER-STATS";
+	public static final String DASHBOARD_WIDGET_WATCHES = "DASHBOARD-WIDGET-WATCHES";
 	//Admin Security
 	public static final String GROUPBY_ADMIN_SECURITY = "Admin Security Management";
 	public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
@@ -504,6 +520,7 @@ public class SecurityPermission
 		codeMap.put(USER_SUBMISSIONS_CREATE, newLookup(SecurityPermission.class, USER_SUBMISSIONS_CREATE, "Allow user submission creation", null, GROUPBY_USER_SUBMISSION));
 		codeMap.put(USER_SUBMISSIONS_READ, newLookup(SecurityPermission.class, USER_SUBMISSIONS_READ, "Allow user submission reading", null, GROUPBY_USER_SUBMISSION));
 		codeMap.put(USER_SUBMISSIONS_DELETE, newLookup(SecurityPermission.class, USER_SUBMISSIONS_DELETE, "Allow user submission deleting", null, GROUPBY_USER_SUBMISSION));
+		codeMap.put(USER_SUBMISSIONS_CHANGEREQUEST, newLookup(SecurityPermission.class, USER_SUBMISSIONS_CHANGEREQUEST, "Allow user to create change requests", null, GROUPBY_USER_SUBMISSION));
 
 		codeMap.put(ADMIN_USER_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_DELETE, "Allow admin user submission deleting", null, GROUPBY_USER_MANAGEMENT));
 		codeMap.put(ADMIN_USER_MANAGEMENT_READ, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_READ, "Allow admin user submission reading", null, GROUPBY_USER_MANAGEMENT));
@@ -744,6 +761,20 @@ public class SecurityPermission
 		codeMap.put(ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE, newLookup(SecurityPermission.class, ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE, "Allows for updating submission form templates", null, GROUPBY_SUBMISSION_FORM_TEMPLATE));
 		codeMap.put(ADMIN_SUBMISSION_FORM_TEMPLATE_DELETE, newLookup(SecurityPermission.class, ADMIN_SUBMISSION_FORM_TEMPLATE_DELETE, "Allows for deleting submission form templates", null, GROUPBY_SUBMISSION_FORM_TEMPLATE));
 
+		// Dashboard Widgets
+		codeMap.put(DASHBOARD_WIDGET_ENTRY_STATS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_ENTRY_STATS, "Allows user to view the Entry Stats widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_EVALUATION_STATS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_EVALUATION_STATS, "Allows user to view the Evaluation Stats widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_NOTIFICATIONS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_NOTIFICATIONS, "Allows user to view the Notifications widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_OUTSTANDING_FEEDBACK, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_OUTSTANDING_FEEDBACK, "Allows user to view the Outstanding Feedback widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_PENDING_REQUESTS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_PENDING_REQUESTS, "Allows user to view the Pending Approval Requests widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_QUESTIONS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_QUESTIONS, "Allows user to view the Questions widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_USER_DATA, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_USER_DATA, "Allows user to view the Recent User Data widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_REPORTS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_REPORTS, "Allows user to view the Reports widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_SAVED_SEARCH, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_SAVED_SEARCH, "Allows user to view the Saved Search widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_SUBMISSION_STATUS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_SUBMISSION_STATUS, "Allows user to view the Submission Status widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_SYSTEM_STATUS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_SYSTEM_STATUS, "Allows user to view the System Status widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_USER_STATS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_USER_STATS, "Allows user to view the User Stats widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
+		codeMap.put(DASHBOARD_WIDGET_WATCHES, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_WATCHES, "Allows user to view the Watches widget (only effects UI)", null, GROUPBY_DASHBOARD_WIDGET));
 		//Admin Security
 		codeMap.put(ADMIN_SECURITY, newLookup(SecurityPermission.class, ADMIN_SECURITY, "Security general permission", null, GROUPBY_ADMIN_SECURITY));
 		codeMap.put(ADMIN_SECURITY_POLICY, newLookup(SecurityPermission.class, ADMIN_SECURITY_POLICY, "Access the security policy tab", null, GROUPBY_ADMIN_SECURITY));

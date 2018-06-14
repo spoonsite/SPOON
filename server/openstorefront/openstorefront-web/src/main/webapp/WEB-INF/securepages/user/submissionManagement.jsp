@@ -261,6 +261,7 @@
 									}
 								}, 
 								{
+									requiredPermissions: ['USER-SUBMISSIONS-CHANGEREQUEST', 'USER-SUBMISSIONS-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -270,6 +271,7 @@
 										"data-test": "newSubmissionBtn"
 									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',									
+									requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 									handler: function () {
 										Ext.getCmp('submissionWindow').show();
 										Ext.getCmp('submissionPanel').resetSubmission();
@@ -282,6 +284,7 @@
 									disabled: true,
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									requiredPermissions: ['USER-SUBMISSIONS-UPDATE'],
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										Ext.getCmp('submissionWindow').show();
@@ -296,6 +299,10 @@
 									scale: 'medium',
 									width: '180px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-default icon-vertical-correction-view',
+									requiredPermissions: ['USER-SUBMISSIONS-CHANGEREQUEST'],
+									beforePermissionsCheckSuccess: function () {
+										return false;
+									},
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];										
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
@@ -328,17 +335,20 @@
 												text: 'Preview',
 												itemId: 'tbPreview',
 												iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction icon-button-color-default',
+												requiredPermissions: ['USER-SUBMISSIONS-READ'],
 												handler: function () {
 													actionPreviewComponent();
 												}
 											},
 											{
+												requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 												xtype: 'menuseparator'
 											},
 											{
 												text: 'Copy',
 												itemId: 'tbCopy',
 												iconCls: 'fa fa-lg fa-clone icon-small-vertical-correction icon-button-color-default',
+												requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 												handler: function () {
 													var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 
@@ -356,6 +366,7 @@
 												}
 											},
 											{
+												requiredPermissions: ['USER-SUBMISSIONS-READ', 'USER-SUBMISSIONS-CREATE'],
 												xtype: 'menuseparator'
 											},											
 											{
@@ -466,6 +477,7 @@
 									disabled: true,
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['USER-SUBMISSIONS-DELETE'],
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -498,6 +510,7 @@
 									hidden: true,
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['USER-SUBMISSIONS-DELETE'],
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
 										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
