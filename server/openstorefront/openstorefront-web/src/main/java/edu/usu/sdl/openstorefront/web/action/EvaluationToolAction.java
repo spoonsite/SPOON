@@ -39,9 +39,9 @@ public class EvaluationToolAction
 	@Override
 	public Map<String, PageModel> getPageMap()
 	{
-		pageMap.put("Dashboard", new PageModel("/WEB-INF/securepages/shared/dashboard.jsp"));
-		pageMap.put("Evaluations", new PageModel("/WEB-INF/securepages/eval/evaluations.jsp", new String[]{SecurityPermission.EVALUATIONS}));
-		pageMap.put("Reports", new PageModel("/WEB-INF/securepages/shared/reports.jsp", new String[]{SecurityPermission.REPORTS}));
+		pageMap.put("Dashboard", new PageModel("/WEB-INF/securepages/shared/dashboard.jsp", new String[]{SecurityPermission.DASHBOARD_PAGE}));
+		pageMap.put("Evaluations", new PageModel("/WEB-INF/securepages/eval/evaluations.jsp", new String[]{SecurityPermission.EVAL_PAGE}));
+		pageMap.put("Reports", new PageModel("/WEB-INF/securepages/shared/reports.jsp", new String[]{SecurityPermission.REPORTS_PAGE}));
 		
 
 		return pageMap;
