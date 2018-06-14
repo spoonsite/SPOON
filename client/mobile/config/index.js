@@ -13,8 +13,8 @@ module.exports = {
     proxyTable: {
       '/openstorefront': {
         // 'target': 'https://spoonsite.com',
-        // 'target': 'http://localhost:8080',
-        'target': 'http://spoon-staging.usurf.usu.edu',
+        'target': 'http://localhost:8080',
+        // 'target': 'http://spoon-staging.usurf.usu.edu',
         'changeOrigin': true
       }
     },
@@ -57,7 +57,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '',
 
     /**
      * Source Maps

@@ -19,15 +19,15 @@ Ext.require('OSF.form.MultipleAttributes');
 Ext.define('OSF.form.Attributes', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Attributes',
-
 	layout: 'fit',
+	
 	initComponent: function () {
 
 		this.callParent();
 
 		var attributePanel = this;
 
-		attributePanel.loadComponentAttributes = function (status) {
+		attributePanel.loadComponentAttributes = function (status) { 
 			if (!status) {
 				var tools = attributePanel.attributeGrid.getComponent('tools');
 				status = tools.getComponent('attributeFilterActiveStatus').getValue();
@@ -70,6 +70,9 @@ Ext.define('OSF.form.Attributes', {
 
 		attributePanel.attributeGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					"type",
@@ -575,6 +578,10 @@ Ext.define('OSF.form.Attributes', {
 			}
 
 		});
+
+		if(callback){
+			callback();
+		}
 	}
 
 });

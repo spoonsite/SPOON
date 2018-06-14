@@ -621,6 +621,7 @@
 							evalformWin.show();
 							
 							var evaluation = Ext.decode(response.responseText);
+							record.set('componentId', evaluation.componentId);
 							evalformWin.loadEval(record, function(){
 								actionRefresh();
 							});
