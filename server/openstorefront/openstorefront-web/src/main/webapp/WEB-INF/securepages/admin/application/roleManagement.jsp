@@ -542,10 +542,11 @@
 									{ 
 										ftype: 'grouping',
 										groupHeaderTpl: Ext.create('Ext.XTemplate',
-											'<div style="height: 2em;">{name}',
-												'<div style="float: right; text-align: right;">',
-													'<button class="x-btn-default-toolbar-large" type="check-group" style="display: inline-block; margin: -5px 10px 0 0; cursor: pointer;"><i type="check-group" class="fa fa-plus-circle" aria-hidden="true"></i> Add All</button>',
-													'<button class="x-btn-default-toolbar-large" type="uncheck-group" style="display: inline-block; margin: -5px 0 0 0; cursor: pointer;"><i type="uncheck-group" class="fa fa-minus-circle" aria-hidden="true"></i> Clear All</button>',
+											'<div style="height: 2.8em;">',
+												'<div style="float: left; width: 70%;">{name}</div>',
+												'<div style="float: right; width: 29%; text-align: right; display: block;">',
+													'<button class="x-btn-default-toolbar-large" button-type="check-group" style="display: inline-block; margin: 0 10px 0 0; cursor: pointer;"><i button-type="check-group" class="fa fa-plus-circle" aria-hidden="true"></i> Add All</button>',
+													'<button class="x-btn-default-toolbar-large" button-type="uncheck-group" style="display: inline-block; margin: 0 0 0 0; cursor: pointer;"><i button-type="uncheck-group" class="fa fa-minus-circle" aria-hidden="true"></i> Clear All</button>',
 												'</div>',
 											'</div>'
 										),
@@ -556,7 +557,7 @@
 									listeners: {
 										groupclick: function (view, node, group, event) {
 
-											var targetType = event.target.getAttribute('type');
+											var targetType = event.target.getAttribute('button-type');
 											var buttonIsTarget = targetType === 'check-group' || targetType === 'uncheck-group' ? true : false;
 											var isCollapsed = typeof event.record.isCollapsedPlaceholder === 'undefined' ? false : true;
 											var grid = permissionWin.getComponent('permissionGrid');
