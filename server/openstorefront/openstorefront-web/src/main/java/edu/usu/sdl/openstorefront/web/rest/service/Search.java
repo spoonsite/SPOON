@@ -162,7 +162,7 @@ public class Search
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_DELETE)
 	@APIDescription("Removes all indexes from the search engine")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/clearSolr")
@@ -173,7 +173,7 @@ public class Search
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@APIDescription("Removes all indexes from Solr and then reindexes current components and articles")
 	@Path("/resetSolr")
 	public Response resetSolr()

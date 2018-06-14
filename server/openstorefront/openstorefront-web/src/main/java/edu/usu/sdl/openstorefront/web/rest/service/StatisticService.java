@@ -64,7 +64,7 @@ public class StatisticService
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_READ)
 	@APIDescription("Gets component statistics")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentStatisticView.class)
@@ -123,7 +123,7 @@ public class StatisticService
 	}
 
 	@GET
-	@RequireSecurity("ADMIN-USER-MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_READ)
 	@APIDescription("Gets user statistics")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserStatisticView.class)

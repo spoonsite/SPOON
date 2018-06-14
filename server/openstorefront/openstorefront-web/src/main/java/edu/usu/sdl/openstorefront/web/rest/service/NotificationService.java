@@ -57,7 +57,7 @@ public class NotificationService
 
 	@POST
 	@APIDescription("Sends an admin message to all active user with emails.")
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
 	@Path("/admin-message")
 	public Response adminMessage(
 			@RequiredParam AdminMessage adminMessage)
@@ -79,7 +79,7 @@ public class NotificationService
 
 	@POST
 	@APIDescription("Sends recent change email to all users that are flagged to be notified or an email via the query param")
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
 	@Path("/recent-changes")
 	public Response recentChanges(
 			@QueryParam("lastRunDts")
@@ -119,7 +119,7 @@ public class NotificationService
 
 	@GET
 	@APIDescription("Gets the status of the recent change email.")
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_READ)
 	@DataType(RecentChangesStatus.class)
 	@Path("/recent-changes/status")
 	public Response recentChangesStatus()

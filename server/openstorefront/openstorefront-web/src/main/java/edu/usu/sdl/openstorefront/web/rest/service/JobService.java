@@ -55,7 +55,7 @@ public class JobService
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_READ)
 	@APIDescription("Retrieves all jobs in scheduler")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JobModel.class)
@@ -75,7 +75,7 @@ public class JobService
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_READ)
 	@APIDescription("Retrieves current scheduler status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JobSchedulerStatus.class)
@@ -88,7 +88,7 @@ public class JobService
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_READ)
 	@APIDescription("Retrieves a system job name")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JobModel.class)
@@ -108,7 +108,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_ACTION)
 	@APIDescription("Pauses a job  (Note: this is not persisted.  Restarting the application will restart the scheduler.)")
 	@Path("/{jobname}/{groupname}/pause")
 	public Response pauseSystmJob(
@@ -123,7 +123,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_ACTION)
 	@APIDescription("Resumes a  Job")
 	@Path("/{jobname}/{groupname}/resume")
 	public Response resumeScheduler(
@@ -138,7 +138,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_ACTION)
 	@APIDescription("Runs a job now")
 	@Path("/{jobname}/{groupname}/runnow")
 	public Response runJobNow(
@@ -152,7 +152,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_ACTION)
 	@APIDescription("Pauses Scheduler  (Note this is not persisted.  Restarting the application will restart the scheduler.)")
 	@Path("/pause")
 	public Response pauseScheduler()
@@ -162,7 +162,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_ACTION)
 	@APIDescription("Resumes Scheduler")
 	@Path("/resume")
 	public Response resumeScheduler()
@@ -172,7 +172,7 @@ public class JobService
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_READ)
 	@APIDescription("Retrieves task manager status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TaskManagerStatus.class)
@@ -184,7 +184,7 @@ public class JobService
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_READ)
 	@APIDescription("Retrieves task")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TaskManagerStatus.class)
@@ -206,7 +206,7 @@ public class JobService
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_ACTION)
 	@APIDescription("Attempts to cancel task. ")
 	@Path("/tasks/{taskId}/cancel")
 	public Response cancelTask(
@@ -225,7 +225,7 @@ public class JobService
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_DELETE)
 	@APIDescription("Deletes a completed task.")
 	@Path("/tasks/{taskId}")
 	public void deteteTask(

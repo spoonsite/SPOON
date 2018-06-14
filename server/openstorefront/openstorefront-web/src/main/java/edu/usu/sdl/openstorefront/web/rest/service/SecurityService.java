@@ -68,7 +68,7 @@ public class SecurityService
 
 	@GET
 	@APIDescription("Gets the shiro config.")
-	@RequireSecurity(SecurityPermission.ADMIN_SECURITY)
+	@RequireSecurity(SecurityPermission.ADMIN_SECURITY_SHIRO_CONFIG)
 	@Produces({MediaType.TEXT_PLAIN})
 	@Path("/shiroconfig")
 	public Response getShiroConfig()
@@ -87,7 +87,7 @@ public class SecurityService
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SECURITY)
+	@RequireSecurity(SecurityPermission.ADMIN_SECURITY_SHIRO_CONFIG)
 	@APIDescription("Saves shiro config")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/shiroconfig")
