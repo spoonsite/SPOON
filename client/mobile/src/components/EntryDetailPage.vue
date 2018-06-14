@@ -183,7 +183,7 @@
       </v-expansion-panel-content>
 
       <v-expansion-panel-content v-if="detail.contacts !== 0">
-        <div slot="header">Contact</div>
+        <div slot="header">Contacts</div>
         <v-card class="grey lighten-5">
           <v-card-text>
             <h2>Points of Contact</h2>
@@ -261,13 +261,11 @@
 
 <script lang="js">
 import StarRating from 'vue-star-rating';
-import Lightbox from 'vue-pure-lightbox';
 
 export default {
   name: 'entry-detail-page',
   components: {
-    StarRating,
-    Lightbox
+    StarRating
   },
   mounted () {
     if (this.$route.params.id) {
