@@ -261,6 +261,7 @@
 
 <script lang="js">
 import StarRating from 'vue-star-rating';
+import _ from 'lodash';
 
 export default {
   name: 'entry-detail-page',
@@ -299,17 +300,16 @@ export default {
   },
   methods: {
     getDetail () {
-      let that = this;
-      that.isLoading = true;
+      this.isLoading = true;
       this.$http.get('/openstorefront/api/v1/resource/components/' + this.id + '/detail')
         .then(response => {
-          that.detail = response.data;
+          this.detail = response.data;
         })
         .catch(e => this.errors.push(e))
         .finally(() => {
-          that.computeHasImage();
-          that.filterLightboxList();
-          that.isLoading = false;
+          this.computeHasImage();
+          this.filterLightboxList();
+          this.isLoading = false;
         });
     },
     computeAverageRating (detail) {
@@ -332,61 +332,46 @@ export default {
       return averageRating;
     },
     filterLightboxList () {
-      let that = this;
-      var temp = {};
-      if (that.detail.componentMedia) {
-        for (var i = 0; i < that.detail.componentMedia.length; i++) {
-          if (that.detail.componentMedia[i].mediaTypeCode === 'IMG') {
-            temp = that.detail.componentMedia[i];
-            temp.index = i;
-            that.lightboxList.push(temp);
-          }
-        }
+      if (this.detail.componentMedia) {
+        this.lightboxList = _.filter(this.detail.componentMedia, { 'mediaTypeCode': 'IMG' });
       }
     },
     computeHasImage () {
-      let that = this;
-
-      if (that.detail.componentMedia) {
-        for (var i = 0; i < that.detail.componentMedia.length; i++) {
-          if (that.detail.componentMedia[i].mediaTypeCode === 'IMG') {
+      if (this.detail.componentMedia) {
+        for (var i = 0; i < this.detail.componentMedia.length; i++) {
+          if (this.detail.componentMedia[i].mediaTypeCode === 'IMG') {
             this.hasImage = true;
           }
         }
       }
     },
     lightboxOn (index) {
-      let that = this;
-      that.lightboxState = true;
-      that.lightboxCurrentIndex = index;
-      that.lightboxCurrentImage = that.baseURL + that.lightboxList[index].link;
-      that.lightboxSetImage();
+      this.lightboxState = true;
+      this.lightboxCurrentIndex = index;
+      this.lightboxCurrentImage = this.baseURL + this.lightboxList[index].link;
+      this.lightboxSetImage();
     },
     lightboxSetImage () {
-      let that = this;
-      that.lightboxCurrentImage = that.baseURL + that.lightboxList[that.lightboxCurrentIndex].link;
+      this.lightboxCurrentImage = this.baseURL + this.lightboxList[this.lightboxCurrentIndex].link;
     },
     lightboxOff () {
-      let that = this;
-      that.lightboxState = false;
+      this.lightboxState = false;
     },
     lightboxNext () {
-      let that = this;
-      if (that.lightboxCurrentIndex >= that.lightboxList.length - 1) {
-        that.lightboxCurrentIndex = 0;
+      if (this.lightboxCurrentIndex >= this.lightboxList.length - 1) {
+        this.lightboxCurrentIndex = 0;
       } else {
-        that.lightboxCurrentIndex++;
+        this.lightboxCurrentIndex++;
       }
-      that.lightboxSetImage();
+      this.lightboxSetImage();
     },
     lightboxPrev () {
-      let that = this;
-      if (that.lightboxCurrentIndex === 0) {
-        that.lightboxCurrentIndex = that.lightboxList.length - 1;
+      if (this.lightboxCurrentIndex === 0) {
+        this.lightboxCurrentIndex = this.lightboxList.length - 1;
       } else {
-        that.lightboxCurrentIndex--;
+        this.lightboxCurrentIndex--;
       }
-      that.lightboxSetImage();
+      this.lightboxSetImage();
     }
   },
   computed: {
