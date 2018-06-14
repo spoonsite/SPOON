@@ -347,6 +347,7 @@ Ext.define('OSF.form.Resources', {
 							itemId: 'toggleStatusBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 							disabled: true,
+							hidden: resourcePanel.hideToggleStatus || false,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources');
 							}
