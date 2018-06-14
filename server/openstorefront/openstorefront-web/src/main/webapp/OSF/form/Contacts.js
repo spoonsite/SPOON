@@ -363,6 +363,7 @@ Ext.define('OSF.form.Contacts', {
 							itemId: 'toggleStatusBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 							disabled: true,
+							hidden: contactPanel.hideToggleStatus || false,
 							handler: function () {
 								CoreUtil.actionSubComponentToggleStatus(contactPanel.contactGrid, 'componentContactId', 'contacts');
 							}
