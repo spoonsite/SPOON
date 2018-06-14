@@ -89,9 +89,11 @@ Ext.define('OSF.customSubmission.field.ResourceSimple', {
 				resourcePanel.queryById('private').setValue(data.privateFlag);
 			}
 			
-			resourcePanel.uploadedFile = data.file;			
-			resourcePanel.labelData.uploadedFile = data.file.originalName;														
-			resourcePanel.label.update(resourcePanel.labelData);
+			resourcePanel.uploadedFile = data.file;		
+			if (data.file) {
+				resourcePanel.labelData.uploadedFile = data.file.originalName;														
+				resourcePanel.label.update(resourcePanel.labelData);
+			}
 		}		
 		
 		if (resourcePanel.section) {

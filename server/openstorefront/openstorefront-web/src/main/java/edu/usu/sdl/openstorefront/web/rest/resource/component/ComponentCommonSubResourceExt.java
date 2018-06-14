@@ -70,7 +70,7 @@ import jersey.repackaged.com.google.common.collect.Lists;
  *
  * @author dshurtleff
  */
-public class ComponentCommonSubResourceExt
+public abstract class ComponentCommonSubResourceExt
 		extends GeneralComponentResourceExt
 {
 

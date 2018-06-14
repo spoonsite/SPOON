@@ -656,6 +656,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			break;
 			case 'TAG_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
+				formBuilderItem.getForm().findField('alwaysShowDetailGrid').setHidden(false);
 			break;					
 			case 'SUBMISSIONS':
 				formBuilderItem.templateField.mappingType = 'SUBMISSION';

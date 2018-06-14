@@ -31,8 +31,8 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 	fieldType: 'ATTRIBUTE_MULTI',
 	
 	columns: [
-		{ text: 'Type', dataIndex: 'typeLabel', flex: 1, minWidth: 200 },
-		{ text: 'Code', dataIndex: 'codeLabel', flex: 2, minWidth: 200 }
+		{ text: 'Type', dataIndex: 'typeDescription', flex: 1, minWidth: 200 },
+		{ text: 'Code', dataIndex: 'codeDescription', flex: 2, minWidth: 200 }
 	],
 	
 	initComponent: function () {
@@ -44,7 +44,32 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
 			if (initialData) {
 				var data = Ext.decode(initialData);				
-				grid.getStore().loadData(data);
+				//separate hidden and required from editible
+				grid.hiddenAttributes = [];
+				var editable = [];
+				Ext.Array.each(data, function(attributeView){
+					if (attributeView.hideOnSubmission) {
+						grid.hiddenAttributes.push(attributeView);
+					} else {
+						//check required
+						var required = false;
+						if (attributeView.requiredRestrictions) {
+							Ext.Array.each(attributeView.requiredRestrictions, function(restriction){
+								if (restriction.componentType === grid.componentType.componentType) {
+									required = true;
+								}
+							});
+						}
+						
+						if (required) {
+							grid.hiddenAttributes.push(attributeView);
+						} else{
+							editable.push(attributeView);
+						}
+					}
+				});
+				
+				grid.getStore().loadData(editable);				
 			}			
 		}		
 	},
@@ -64,6 +89,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 					xtype: 'osf-submissionform-attribute',
 					itemId: 'form',
 					scrollable: true,
+					originalRecord: record,
 					componentType: grid.componentType,
 					dockedItems: [
 						{
@@ -77,10 +103,16 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
-										data.typeLabel = CoreService.attributeservice.translateType(data.type);
-										data.codeLabel = CoreService.attributeservice.translateCode(data.type, data.code);
+										data.typeDescription = CoreService.attributeservice.translateType(data.type);
+										data.codeDescription = CoreService.attributeservice.translateCode(data.type, data.code);
 										
-										grid.getStore().add(data);
+										if (record) {
+											record.set(data, {
+												dirty: false
+											});
+										} else {
+											grid.getStore().add(data);
+										}
 										this.up('window').close();
 									}
 								},
@@ -104,7 +136,9 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 		addEditWin.show();
 		
 		if (record) {
-			addEditWin.queryById('form').loadRecord(record);
+			addEditWin.queryById('form').initLoadRecord = function(){
+				addEditWin.queryById('form').loadRecord(record);
+			};
 		}
 	},
 	
@@ -116,9 +150,22 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 		var grid = this;
 		
 		var data = [];
+		
+		var allAttributes = [];
 		grid.getStore().each(function(record){
-			data.push(record.getData());
+			allAttributes.push(record.getData());
 		});
+		if (grid.hiddenAttributes) {
+			allAttributes = allAttributes.concat(grid.hiddenAttributes);
+		}
+		Ext.Array.each(allAttributes, function(dataItem){
+			data.push(Ext.apply(dataItem, {				
+				componentAttributePk: {
+					attributeType: dataItem.type,
+					attributeCode: dataItem.code
+				}
+			}));
+		});	
 		
 		var userSubmissionField = {			
 			templateFieldId: grid.fieldTemplate.fieldId,

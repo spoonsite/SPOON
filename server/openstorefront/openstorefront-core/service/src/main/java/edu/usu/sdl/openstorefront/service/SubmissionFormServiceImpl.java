@@ -262,7 +262,7 @@ public class SubmissionFormServiceImpl
 	{
 		Objects.isNull(componentId);
 
-		UserSubmission userSubmission = null;
+		UserSubmission userSubmission;
 
 		ComponentFormSet componentFormSet = new ComponentFormSet();
 		ComponentAll componentAll = getComponentService().getFullComponent(componentId);
@@ -297,9 +297,9 @@ public class SubmissionFormServiceImpl
 		}
 
 		if (forChangeRequest) {
-			userSubmission.setOriginalComponentId(componentId);
+			userSubmissionAll.getUserSubmission().setOriginalComponentId(componentId);
 		} else {
-			userSubmission.setOriginalComponentId(null);
+			userSubmissionAll.getUserSubmission().setOriginalComponentId(null);
 		}
 
 		userSubmission = saveUserSubmission(userSubmissionAll.getUserSubmission());

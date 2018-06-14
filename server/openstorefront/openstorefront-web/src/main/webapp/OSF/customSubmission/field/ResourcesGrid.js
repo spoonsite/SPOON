@@ -30,7 +30,7 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 	fieldType: 'RESOURCE_MULTI',
 	
 	columns: [
-		{ text: 'Resource Type', dataIndex: 'resourceTypeLabel', width: 200 },
+		{ text: 'Resource Type', dataIndex: 'resourceTypeDesc', width: 200 },
 		{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
 		{ text: 'Original Link', dataIndex: 'originalLink', width: 200 },		
 		{ text: 'Local Name', dataIndex: 'originalName', width: 200 },
@@ -68,6 +68,7 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 					xtype: 'osf-submissionform-resource',
 					itemId: 'form',
 					scrollable: true,
+					originalRecord: record,
 					section: grid.section,
 					fieldId: grid.fieldTemplate.fieldId,
 					dockedItems: [
@@ -84,9 +85,15 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 										var data = form.getValues();
 										form.handleUpload(data);
 
-										data.resourceTypeLabel = form.queryById('resourceType').getSelection().get('description');
+										data.resourceTypeDesc = form.queryById('resourceType').getSelection().get('description');
 										
-										grid.getStore().add(data);
+										if (record) {
+											record.set(data, {
+												dirty: false
+											});
+										} else {
+											grid.getStore().add(data);
+										}
 										this.up('window').close();
 									}
 								},

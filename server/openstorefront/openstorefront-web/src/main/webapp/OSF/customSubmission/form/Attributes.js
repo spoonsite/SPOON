@@ -107,6 +107,13 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 											});
 										});
 										codeField.getStore().loadData(lookUpCodes);
+										
+										if (attributePanel.initLoadRecord) {
+											//just fire once
+											attributePanel.initLoadRecord();
+											delete attributePanel.initLoadRecord;
+										}
+										
 									}
 								});
 
@@ -306,8 +313,12 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 						record.set(data[0]);
 						attributePanel.loadRecord(record);			
 					}			
-				}					
-				
+				}
+								
+				if (attributePanel.initLoadRecord) {
+					//just fire to load type
+					attributePanel.initLoadRecord();					
+				}
 			}
 		});
 		
@@ -327,11 +338,17 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 		var attributePanel = this;
 		
 		var data = attributePanel.getValues();
+		var attributeFull = {
+			componentAttributePk: {
+				attributeType: data.type,
+				attributeCode: data.code
+			}
+		};
 		
 		var userSubmissionField = {			
 			templateFieldId: attributePanel.fieldTemplate.fieldId,
 			rawValue: Ext.encode([
-				data
+				attributeFull
 			])
 		};		
 		return userSubmissionField;

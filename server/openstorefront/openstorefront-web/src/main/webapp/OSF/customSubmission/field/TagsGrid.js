@@ -63,6 +63,7 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 					xtype: 'osf-submissionform-tags',
 					itemId: 'form',
 					scrollable: true,
+					originalRecord: record,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -76,7 +77,13 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 										var form = this.up('form');
 										var data = form.getValues();
 										
-										grid.getStore().add(data);
+										if (record) {
+											record.set(data, {
+												dirty: false
+											});
+										} else {
+											grid.getStore().add(data);
+										}
 										this.up('window').close();
 									}
 								},

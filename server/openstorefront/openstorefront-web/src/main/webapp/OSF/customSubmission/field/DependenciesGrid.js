@@ -67,6 +67,7 @@ Ext.define('OSF.customSubmission.field.DependenciesGrid', {
 					xtype: 'osf-submissionform-dependency',
 					itemId: 'form',
 					scrollable: true,
+					originalRecord: record,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -80,7 +81,13 @@ Ext.define('OSF.customSubmission.field.DependenciesGrid', {
 										var form = this.up('form');
 										var data = form.getValues();
 										
-										grid.getStore().add(data);
+										if (record) {
+											record.set(data, {
+												dirty: false
+											});
+										} else {
+											grid.getStore().add(data);
+										}
 										this.up('window').close();
 									}
 								},

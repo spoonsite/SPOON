@@ -30,7 +30,7 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 	fieldType: 'CONTACT_MULTI',
 	
 	columns: [
-		{ text: 'Contact Type', dataIndex: 'contactTypeLabel', width: 200 },
+		{ text: 'Contact Type', dataIndex: 'positionDescription', width: 200 },
 		{ text: 'Organization', dataIndex: 'organization', width: 200 },
 		{ text: 'First Name', dataIndex: 'firstName', width: 200 },
 		{ text: 'Last Name', dataIndex: 'lastName', width: 200 },
@@ -46,7 +46,7 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 		
 		if (grid.fieldTemplate.contactType) {
 			Ext.Array.each(grid.getColumns(), function(column) {
-				if (column.dataIndex === 'contactTypeLabel') {
+				if (column.dataIndex === 'positionDescription') {
 					column.setHidden(true);
 				}
 			});
@@ -58,7 +58,20 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 				var data = Ext.decode(initialData);				
 				grid.getStore().loadData(data);
 			}			
-		}		
+		}	
+		
+		if (grid.fieldTemplate.excludeContactType) {
+			var filterTypes = Ext.decode(grid.fieldTemplate.excludeContactType);
+			grid.getStore().filterBy(function(record){
+				var keep = true;
+				Ext.Array.each(filterTypes, function(filterItem) {
+					if (record.get('contactType') === filterItem) {
+						keep = false;
+					}
+				});			
+				return keep;
+			});	
+		}
 		
 	},	
 	
@@ -69,7 +82,7 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 			title: 'Add/Edit Contact',
 			modal: true,
 			width: 800,
-			height: 600,
+			height: 650,
 			closeMode: 'destroy',
 			layout: 'fit',
 			items: [
@@ -77,6 +90,7 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 					xtype: 'osf-submissionform-contact',
 					itemId: 'form',
 					fieldTemplate: grid.fieldTemplate,
+					originalRecord: record,
 					scrollable: true,
 					dockedItems: [
 						{
@@ -95,10 +109,16 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 										if (contactTypeField) {
 											var selectedType = contactTypeField.getSelection();
 											
-											data.contactTypeLabel = selectedType.get('description');
+											data.positionDescription = selectedType.get('description');
 										}
 										
-										grid.getStore().add(data);
+										if (record) {
+											record.set(data, {
+												dirty: false
+											});
+										} else {
+											grid.getStore().add(data);
+										}
 										this.up('window').close();
 									}
 								},

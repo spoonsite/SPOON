@@ -31,8 +31,8 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 	fieldType: 'RELATIONSHIPS_MULTI',
 	
 	columns: [
-		{ text: 'Relation Type', dataIndex: 'relationType', width: 250 },
-		{ text: 'Entry Name', dataIndex: 'targetName', flex: 1, minWidth: 200 }
+		{ text: 'Relation Type', dataIndex: 'relationshipTypeDescription', width: 250 },
+		{ text: 'Entry Name', dataIndex: 'targetComponentName', flex: 1, minWidth: 200 }
 	],
 	
 	initComponent: function () {
@@ -46,6 +46,8 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 				grid.getStore().loadData(data);
 			}			
 		}
+		
+		grid.queryById('editBtn').setHidden(true);
 		
 	},	
 	
@@ -64,6 +66,7 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 					xtype: 'osf-submissionform-relationships',
 					itemId: 'form',
 					scrollable: true,
+					originalRecord: record,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -77,10 +80,16 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 										var form = this.up('form');
 										var data = form.getValues();
 										
-										data.relationType = form.queryById('relationshipType').getSelection().get('description');										
-										data.targetName = form.queryById('relationshipTargetCB').getSelection().get('description');
+										data.relationshipTypeDescription = form.queryById('relationshipType').getSelection().get('description');										
+										data.targetComponentName = form.queryById('relationshipTargetCB').getSelection().get('description');
 										
-										grid.getStore().add(data);
+										if (record) {
+											record.set(data, {
+												dirty: false
+											});
+										} else {
+											grid.getStore().add(data);
+										}
 										this.up('window').close();
 									}
 								},

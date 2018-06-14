@@ -30,7 +30,7 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 	fieldType: 'MEDIA',
 	
 	columns: [
-		{ text: 'Media Type', dataIndex: 'mediaTypeCodeLabel', width: 200 },
+		{ text: 'Media Type', dataIndex: 'contentType', width: 200 },
 		{ text: 'Caption', dataIndex: 'caption', width: 200 },
 		{ text: 'External Link', dataIndex: 'originalLink', flex: 1, minWidth: 150 },
 		{ text: 'Hide In Display', dataIndex: 'hideInDisplay', width: 200 },
@@ -68,7 +68,8 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 				{
 					xtype: 'osf-submissionform-media',
 					itemId: 'form',
-					scrollable: true,	
+					scrollable: true,
+					originalRecord: record,
 					section: grid.section,	
 					fieldId: grid.fieldTemplate.fieldId,
 					dockedItems: [
@@ -85,9 +86,15 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 										var data = form.getValues();										
 										form.handleUpload(data);
 										
-										data.mediaTypeCodeLabel = form.queryById('mediaTypeCode').getSelection().get('description');
+										data.contentType = form.queryById('mediaTypeCode').getSelection().get('description');
 										
-										grid.getStore().add(data);
+										if (record) {
+											record.set(data, {
+												dirty: false
+											});
+										} else {
+											grid.getStore().add(data);
+										}
 										this.up('window').close();
 									}
 								},

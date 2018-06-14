@@ -239,7 +239,25 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				contactPanel.getForm().setValues(usercontext);
 			});
 		}
-	
+		
+		var contactTypeField = contactPanel.queryById('contactType');
+		if (contactTypeField) {
+			if (contactPanel.fieldTemplate.excludeContactType) {
+				var filterTypes = Ext.decode(contactPanel.fieldTemplate.excludeContactType);
+				
+				contactTypeField.getStore().filterBy(function(record){
+					var keep = true;
+					Ext.Array.each(filterTypes, function (filterItem) {
+						if (record.get('code') === filterItem) {
+							keep = false;
+						}
+					});
+					return keep;
+				});
+				
+			}
+		}
+
 	},
 	
 	getSubmissionValue: function() {

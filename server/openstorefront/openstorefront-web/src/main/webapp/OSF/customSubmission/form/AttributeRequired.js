@@ -65,6 +65,16 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 				if (initialData) {
 					var data = Ext.decode(initialData);				
 					
+					//data from the initial load is not in the expected form					
+					Ext.Array.each(data, function(item) {
+						if (!item.componentAttributePk){
+							item.componentAttributePk = {
+								attributeType: item.type,
+								attributeCode: item.code
+							};	
+						}
+					});
+					
 					//group values by type
 					var typeGroup = {};
 					Ext.Array.each(data, function(item) {
