@@ -353,7 +353,8 @@ Ext.define('OSF.form.Media', {
 							}									
 						},
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbseparator',
+							hidden: mediaPanel.hideToggleStatus || false
 						},
 						{
 							text: 'Toggle Status',

@@ -340,7 +340,8 @@ Ext.define('OSF.form.Resources', {
 							}									
 						},
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbseparator',
+							hidden: resourcePanel.hideToggleStatus || false
 						},
 						{
 							text: 'Toggle Status',
