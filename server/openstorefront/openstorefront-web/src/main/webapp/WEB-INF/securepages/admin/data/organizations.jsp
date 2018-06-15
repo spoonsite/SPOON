@@ -357,6 +357,7 @@
 												text: 'Upload Logo',
 												formBind: true, 
 												iconCls: 'fa fa-lg fa-upload ',
+												requiredPermissions: ['ADMIN-ORGANIZATION-UPDATE', 'ADMIN-ORGANIZATION-CREATE'],
 												handler: function(){
 													var logoForm = addEditLogoWin.queryById('logoForm');
 													

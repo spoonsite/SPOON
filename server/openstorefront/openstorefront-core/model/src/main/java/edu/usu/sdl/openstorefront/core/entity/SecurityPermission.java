@@ -135,9 +135,6 @@ public class SecurityPermission
 	public static final String DASHBOARD_WIDGET_USER_STATS = "DASHBOARD-WIDGET-USER-STATS";
 	public static final String DASHBOARD_WIDGET_WATCHES = "DASHBOARD-WIDGET-WATCHES";
 
-	// Dashboard Widgets
-	// public static final String GROUPBY_DASHBOARD_WIDGET = "Dashboard Widgets";
-
 	// Entry Management
 	public static final String GROUPBY_ENTRY_MANAGEMENT = "Entries";
 	public static final String ADMIN_ENTRIES_PAGE = "ADMIN-ENTRIES-PAGE";
@@ -292,6 +289,7 @@ public class SecurityPermission
 	public static final String ADMIN_SUPPORTMEDIA_PAGE = "ADMIN-SUPPORTMEDIA-PAGE";
 	public static final String ADMIN_MEDIA_PAGE = "ADMIN-MEDIA-PAGE";
 	public static final String ADMIN_MEDIA_DELETE = "ADMIN-MEDIA-DELETE";
+	public static final String ADMIN_MEDIA_UPLOAD = "ADMIN-MEDIA-UPLOAD";
 	public static final String ADMIN_TEMPMEDIA_MANAGEMENT_READ = "ADMIN-TEMPMEDIA-MANAGEMENT-READ";
 	public static final String ADMIN_TEMPMEDIA_MANAGEMENT_DELETE = "ADMIN-TEMPMEDIA-MANAGEMENT-DELETE";
 	public static final String ADMIN_SUPPORT_MEDIA_CREATE = "ADMIN-SUPPORT-MEDIA-CREATE";
@@ -650,7 +648,8 @@ public class SecurityPermission
 		//Media
 		codeMap.put(ADMIN_MEDIA_PAGE, newLookup(SecurityPermission.class, ADMIN_MEDIA_PAGE, "Provides access to the admin Media page", null, GROUPBY_MEDIA));
 		codeMap.put(ADMIN_SUPPORTMEDIA_PAGE, newLookup(SecurityPermission.class, ADMIN_SUPPORTMEDIA_PAGE, "Provides access to the Support Media page", null, GROUPBY_MEDIA));
-		codeMap.put(ADMIN_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_MEDIA_DELETE, "Allows for deleting media", null, GROUPBY_MEDIA));		
+		codeMap.put(ADMIN_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_MEDIA_DELETE, "Allows for deleting media", null, GROUPBY_MEDIA));	
+		codeMap.put(ADMIN_MEDIA_UPLOAD, newLookup(SecurityPermission.class, ADMIN_MEDIA_UPLOAD, "Allows for uploading media", null, GROUPBY_MEDIA));		
 		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT_READ, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT_READ, "Provides the ability to read temp media", null, GROUPBY_MEDIA));
 		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT_DELETE, "Provides the ability to delete temp media", null, GROUPBY_MEDIA));
 		codeMap.put(ADMIN_SUPPORT_MEDIA_CREATE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_CREATE, "Allows for the uploading of support medias", null, GROUPBY_MEDIA));

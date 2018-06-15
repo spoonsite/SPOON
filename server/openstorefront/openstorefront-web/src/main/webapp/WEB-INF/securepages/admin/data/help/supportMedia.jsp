@@ -44,6 +44,7 @@
 						closeAction: 'destroy',
 						height: 650,
 						layout: 'fit',
+						requiredPermissions: ['ADMIN-SUPPORT-MEDIA'],
 						items: [
 							{
 								xtype: 'form',

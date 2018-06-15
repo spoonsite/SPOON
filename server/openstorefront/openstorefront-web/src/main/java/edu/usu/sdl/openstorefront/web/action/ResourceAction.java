@@ -154,10 +154,10 @@ public class ResourceAction
 			Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
 			if (component != null) {
 				boolean allow = false;
-				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
+				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT)) {
 					allow = true;
 					LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
+				} else if (SecurityUtil.hasPermission(SecurityPermission.USER_EVALUATIONS_UPDATE)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
 					}
@@ -252,7 +252,7 @@ public class ResourceAction
 		if (submissionFormResource != null) {
 
 			boolean allow = false;
-			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)) {
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE)) {
 				allow = true;
 				LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			}
