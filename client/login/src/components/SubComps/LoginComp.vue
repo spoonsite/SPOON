@@ -39,7 +39,17 @@
               @click="login"
               :disabled="!valid"
               tabindex=3
-            >Login</v-btn>
+            >
+            <span v-if="!loading">Login</span>
+            <span v-else>
+              <v-progress-circular
+                color="teal"
+                indeterminate
+                :size="24"
+                :width="3"
+              ></v-progress-circular>
+            </span>
+            </v-btn>
           </v-flex>
           <v-flex xs12 class="register">
             <router-link :to="{name: 'registration'}" tabindex=4>Register for a new account</router-link>
@@ -55,6 +65,7 @@ export default {
   name: 'LoginComp',
   data: () => ({
     valid: false,
+    loading: false,
     password: '',
     passwordRules: [
       v => !!v || 'Password is required'
@@ -113,6 +124,7 @@ export default {
     },
     login () {
       if (this.$refs.form.validate()) {
+        this.loading = true;
         let data = new FormData();
         data.append('username', this.username);
         data.append('password', this.password);
@@ -133,6 +145,8 @@ export default {
               } else {
                 window.location.href = response.data.message;
               }
+            } else {
+              this.loading = false;
             }
             this.response = response;
           })
