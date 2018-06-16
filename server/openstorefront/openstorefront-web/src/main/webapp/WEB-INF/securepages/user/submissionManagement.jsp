@@ -314,17 +314,8 @@
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
 										
-										if (record.get('statusOfPendingChange')) {		
-											Ext.getCmp('submissionGrid').setLoading(true);
-											Ext.getCmp('changeRequestWindow').editChangeRequest(record.get('pendingChangeComponentId'), function(){
-												Ext.getCmp('submissionGrid').setLoading(false);
-											});
-										} else {
-											Ext.getCmp('submissionGrid').setLoading("Creating Change Request...");
-											Ext.getCmp('changeRequestWindow').newChangeRequest(componentId, function(){
-												Ext.getCmp('submissionGrid').setLoading(false);
-											}, true);
-										}
+										createChangeRequest(componentId);
+
 									}
 								},								
 								{
@@ -774,6 +765,25 @@
 				CoreService.userservice.getCurrentUser().then(function(user){
 					currentUser = user;
 				});
+				
+				var createChangeRequest = function(componentId) {
+		
+					submissionGrid.setLoading('Creating change request...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + componentId + '/changerequestforsubmission',
+						method: 'POST',
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var userSubmission = Ext.decode(response.responseText);
+														
+							loadSubmissionForm(userSubmission.templateId, userSubmission.componentType, null, userSubmission);
+							actionRefreshSubmission();
+						}
+					});
+		
+				};
 				
 				var editExistingEntry = function(componentId) {
 					

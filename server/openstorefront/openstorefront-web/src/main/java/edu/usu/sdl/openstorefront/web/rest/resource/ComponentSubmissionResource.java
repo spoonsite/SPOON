@@ -139,7 +139,7 @@ public class ComponentSubmissionResource
 				componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(userSubmission.getComponentType()));
 
 				if (userSubmission.getOriginalComponentId() != null) {
-					componentView.setName(service.getComponentService().getComponentName(userSubmission.getOriginalComponentId()));
+					componentView.setName(service.getComponentService().getComponentName(userSubmission.getOriginalComponentId()) + " (Incomplete Change Request)");
 				} else {
 					componentView.setName("(Incomplete Submission) " + (submissionCount++));
 				}
