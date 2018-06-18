@@ -608,6 +608,7 @@
 												text: 'Import',
 												iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 												formBind: true,
+												requiredPermissions: ['ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_CREATE'],
 												handler: function() {
 													var uploadForm = this.up('form');
 													//var data = uploadForm.getValues();
