@@ -1,23 +1,28 @@
 <template lang="html">
 
 <section class="user-profile-page">
+<!-- Errors -->
+<v-flex xs12>
+  <div v-if="errors.length > 0">
+    <ul>
+      <li v-for="error in errors" :key="error" v-html='error'></li>
+    </ul>
+  </div>
+</v-flex>
+
+<v-form ref="form" v-model="valid" lazy-validation>
 <v-container grid-list-xl text-xs-center>
 <v-layout row wrap>
-  <!-- Errors -->
-  <v-flex xs12>
-    <div v-if="errors.length > 0">
-      <ul>
-        <li v-for="error in errors" :key="error" v-html='error'></li>
-      </ul>
-    </div>
-  </v-flex>
   <!-- Contact Details -->
   <v-flex xs12 sm6 pt-0 pb-0>
     <v-text-field
       ref="firstName"
       v-model="firstName"
-      :rules="inputRequired"
+      name="fname"
+      :rules="[rules.required]"
       required
+      counter=80
+      maxLength="80"
       placeholder="John"
       label="First Name"
     ></v-text-field>
@@ -26,8 +31,11 @@
     <v-text-field
       ref="lastName"
       v-model="lastName"
-      :rules="inputRequired"
+      name="lname"
+      :rules="[rules.required]"
       required
+      counter=80
+      maxLength="80"
       placeholder="Doe"
       label="Last Name"
     ></v-text-field>
@@ -35,9 +43,13 @@
   <v-flex xs12 pt-0 pb-0>
     <v-text-field
       ref="email"
+      type="email"
+      name="email"
+      id="email"
       v-model="email"
-      :rules="emailRules"
+      :rules="[rules.required, rules.email]"
       required
+      maxLength="1000"
       placeholder="name@example.com"
       label="Email address"
       hint="Enter your email. Example: my.name@example.com"
@@ -49,7 +61,9 @@
     <v-text-field
       ref="phone"
       v-model="phone"
-      counter=80
+      name="phone"
+      type="tel"
+      maxLength="80"
       placeholder="(123) 456-7890"
       label="Phone number"
       hint="Enter your phone number"
@@ -59,13 +73,15 @@
     <v-select
       ref="user_org"
       :items="organizations"
+      name="organization"
       item-text="description"
       item-value="description"
       :filter="orgFilter"
-      :rules="inputRequired"
+      :rules="[rules.required]"
       v-model="currentOrg"
       label="Select an Organization"
       required
+      maxLength="120"
       combobox
       hint="Type to filter or click to select"
     ></v-select>
@@ -74,6 +90,8 @@
     <v-text-field
       ref="user_position"
       v-model="position"
+      name="organization-title"
+      maxLength="255"
       label="Position Title"
       hint="Enter your current title"
     ></v-text-field>
@@ -84,7 +102,7 @@
       :items="userTypeCodes"
       item-text="description"
       item-value="description"
-      :rules="inputRequired"
+      :rules="[rules.required]"
       v-model="userTypeCode"
       label="User Role"
       required
@@ -125,6 +143,7 @@
     </v-alert>
     <v-btn
       v-if="!saved && !errorOnSave"
+      :disabled="!valid"
       block
       v-on:click="updateProfile"
       color="accent"
@@ -132,6 +151,7 @@
   </v-flex>
 </v-layout>
 </v-container>
+</v-form>
 </section>
 
 </template>
@@ -163,7 +183,8 @@ export default {
       notify: false,
       monthly: false,
       saved: false,
-      errorOnSave: false
+      errorOnSave: false,
+      valid: true
     };
   },
   methods: {
@@ -225,27 +246,29 @@ export default {
         .catch(e => this.errors.push(e));
     },
     updateProfile () {
-      let newProfile = {
-        'userTypeCode': this.userTypeCodes.find(each => each.description === this.userTypeCode).code, // User Role
-        'firstName': this.firstName,
-        'lastName': this.lastName,
-        'email': this.email,
-        'phone': this.phone,
-        'positionTitle': this.position,
-        'organization': typeof this.currentOrg === 'string' ? this.currentOrg : this.currentOrg.description,
-        'notifyOfNew': this.notify
-      };
+      if (this.$refs.form.validate()) {
+        let newProfile = {
+          'userTypeCode': this.userTypeCodes.find(each => each.description === this.userTypeCode).code, // User Role
+          'firstName': this.firstName,
+          'lastName': this.lastName,
+          'email': this.email,
+          'phone': this.phone,
+          'positionTitle': this.position,
+          'organization': typeof this.currentOrg === 'string' ? this.currentOrg : this.currentOrg.description,
+          'notifyOfNew': this.notify
+        };
 
-      this.$http
-        .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, newProfile)
-        .then(response => {
-          this.saved = true;
-          this.getRestOfUserData();
-        })
-        .catch(e => {
-          this.errors.push(e);
-          this.errorOnSave = true;
-        });
+        this.$http
+          .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, newProfile)
+          .then(response => {
+            this.saved = true;
+            this.getRestOfUserData();
+          })
+          .catch(e => {
+            this.errors.push(e);
+            this.errorOnSave = true;
+          });
+      }
     },
     reset () {
       this.getRestOfUserData();
