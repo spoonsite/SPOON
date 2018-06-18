@@ -27,6 +27,11 @@ Ext.define('OSF.form.Media', {
 		this.callParent();
 		
 		var mediaPanel = this;
+
+		function enableAll(){
+			mediaPanel.mediaGridForm.queryById('linkType').enable(true);
+			mediaPanel.mediaGridForm.queryById('upload').enable(true);
+		}
 		
 
 		mediaPanel.mediaGridForm = Ext.create('Ext.form.Panel', {
@@ -134,6 +139,7 @@ Ext.define('OSF.form.Media', {
 								});
 							}
 						}
+						enableAll();
 					}
 				},
 				{
@@ -141,6 +147,7 @@ Ext.define('OSF.form.Media', {
 					text: 'Cancel',										
 					iconCls: 'fa fa-lg fa-close',
 					handler: function(){
+						enableAll();
 						this.up('form').reset();
 						this.up('form').getComponent('upload').setFieldLabel('Upload Media (Limit 1GB)');
 					}									
@@ -191,7 +198,8 @@ Ext.define('OSF.form.Media', {
 				},
 				{
 					xtype: 'textfield',
-					fieldLabel: 'Link',																																	
+					fieldLabel: 'Link',
+					itemId: 'linkType',																																	
 					maxLength: '255',									
 					emptyText: 'http://www.example.com/image.png',
 					name: 'originalLink',
@@ -324,6 +332,8 @@ Ext.define('OSF.form.Media', {
 											status: newValue
 										}
 									});
+									mediaPanel.mediaGridForm.reset();
+									enableAll();
 								}
 							}
 						}, 								
@@ -332,6 +342,8 @@ Ext.define('OSF.form.Media', {
 							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								this.up('grid').getStore().reload();
+								this.up('grid').down('form').reset();
+								enableAll();
 							}
 						},
 						{
@@ -343,6 +355,14 @@ Ext.define('OSF.form.Media', {
 							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 							handler: function(){
 								var record = mediaPanel.mediaGrid.getSelection()[0];
+								if(record.data){
+									if(record.data.fileName){
+										mediaPanel.mediaGridForm.queryById('linkType').disable(true);
+									}
+									else{
+										mediaPanel.mediaGridForm.queryById('upload').disable(true);
+									}
+								}
 								this.up('grid').down('form').reset();
 								this.up('grid').down('form').loadRecord(record);
 								if (record.get('originalFileName')) {
@@ -364,6 +384,8 @@ Ext.define('OSF.form.Media', {
 							hidden: mediaPanel.hideToggleStatus || false,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(mediaPanel.mediaGrid, 'componentMediaId', 'media');
+								this.up('grid').down('form').reset();
+								enableAll();
 							}
 						},
 						{
@@ -388,7 +410,8 @@ Ext.define('OSF.form.Media', {
 								} else {
 									CoreUtil.actionSubComponentToggleStatus(mediaPanel.mediaGrid, 'componentMediaId', 'media', undefined, undefined, true);
 								}
-
+								this.up('grid').down('form').reset();
+								enableAll();
 							}									
 						}
 					]
@@ -396,7 +419,6 @@ Ext.define('OSF.form.Media', {
 			]																
 		});		
 		mediaPanel.mediaGrid.addDocked(mediaPanel.mediaGridForm, 0);
-		
 		
 		mediaPanel.add(mediaPanel.mediaGrid);
 	},

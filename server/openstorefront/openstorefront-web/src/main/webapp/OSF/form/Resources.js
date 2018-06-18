@@ -26,7 +26,12 @@ Ext.define('OSF.form.Resources', {
 		this.callParent();
 		
 		var resourcePanel = this;
-		
+
+		function enableAll(){
+			resourcePanel.resourceGridForm.queryById('linkType').enable(true);
+			resourcePanel.resourceGridForm.queryById('upload').enable(true);
+		}
+			
 		resourcePanel.resourceGridForm = Ext.create('Ext.form.Panel', {
 			title: 'Add/Edit Resources',
 			collapsible: true,
@@ -135,6 +140,7 @@ Ext.define('OSF.form.Resources', {
 
 							}
 						}
+						enableAll();
 					}
 				},
 				{
@@ -142,6 +148,7 @@ Ext.define('OSF.form.Resources', {
 					text: 'Cancel',										
 					iconCls: 'fa fa-lg fa-close',
 					handler: function(){
+						enableAll();
 						this.up('form').reset();
 						this.up('form').getComponent('upload').setFieldLabel('Upload Resource (Limit 1GB)');
 					}									
@@ -197,6 +204,7 @@ Ext.define('OSF.form.Resources', {
 				{
 					xtype: 'textfield',
 					fieldLabel: 'Link',																																	
+					itemId: 'linkType',
 					maxLength: '255',									
 					emptyText: 'http://www.example.com/resource',
 					name: 'originalLink'
@@ -311,6 +319,8 @@ Ext.define('OSF.form.Resources', {
 											status: newValue
 										}
 									});
+									resourcePanel.resourceGridForm.reset();
+									enableAll();
 								}
 							}
 						}, 								
@@ -319,6 +329,8 @@ Ext.define('OSF.form.Resources', {
 							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								this.up('grid').getStore().reload();
+								enableAll();
+								this.up('grid').down('form').reset();
 							}
 						},
 						{
@@ -330,6 +342,13 @@ Ext.define('OSF.form.Resources', {
 							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 							handler: function(){
 								var record = resourcePanel.resourcesGrid.getSelection()[0];
+								if(record.data){
+									if(record.data.originalFileName){
+										resourcePanel.resourceGridForm.queryById('linkType').disable();
+									}else{
+										resourcePanel.resourceGridForm.queryById('upload').disable();
+									}
+								}
 								this.up('grid').down('form').reset();
 								this.up('grid').down('form').loadRecord(record);
 								if (record.get('originalFileName')) {
@@ -351,6 +370,8 @@ Ext.define('OSF.form.Resources', {
 							hidden: resourcePanel.hideToggleStatus || false,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources');
+								enableAll();
+								this.up('grid').down('form').reset();
 							}
 						},
 						{
@@ -363,6 +384,8 @@ Ext.define('OSF.form.Resources', {
 							disabled: true,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources', undefined, undefined, true);
+								enableAll();
+								this.up('grid').down('form').reset();
 							}									
 						}
 					]
