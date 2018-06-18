@@ -149,6 +149,7 @@ public class SecurityPermission
 	public static final String ADMIN_ENTRY_MERGE = "ADMIN-ENTRY-MERGE";
 	public static final String ADMIN_ENTRY_VERSION_DELETE = "ADMIN-ENTRY-VERSION-DELETE";
 	public static final String ADMIN_ENTRY_VERSION_READ = "ADMIN-ENTRY-VERSION-READ";
+	public static final String ADMIN_ENTRY_VERSION_CREATE = "ADMIN-ENTRY-VERSION-CREATE"; 
 	public static final String ADMIN_ENTRY_VERSION_RESTORE = "ADMIN-ENTRY-VERSION-RESTORE";
 	public static final String ADMIN_ENTRY_APPROVE = "ADMIN-ENTRY-APPROVE";
 	public static final String ADMIN_ENTRY_CHANGETYPE = "ADMIN-ENTRY-CHANGETYPE";
@@ -524,6 +525,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ENTRY_MERGE, newLookup(SecurityPermission.class, ADMIN_ENTRY_MERGE, "Allows the admin to merge two entries together", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_VERSION_DELETE, newLookup(SecurityPermission.class, ADMIN_ENTRY_VERSION_DELETE, "Allows the admin to delete the version", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_VERSION_READ, newLookup(SecurityPermission.class, ADMIN_ENTRY_VERSION_READ, "Allows the admin to read the version", null, GROUPBY_ENTRY_MANAGEMENT));
+		codeMap.put(ADMIN_ENTRY_VERSION_CREATE, newLookup(SecurityPermission.class, ADMIN_ENTRY_VERSION_CREATE, "Allows the admin to create a snapshot of the version", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_VERSION_RESTORE, newLookup(SecurityPermission.class, ADMIN_ENTRY_VERSION_RESTORE, "Allows the admin to restore a version of an entry", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_APPROVE, newLookup(SecurityPermission.class, ADMIN_ENTRY_APPROVE, "Allows an admin the ability to approve an entry", null, GROUPBY_ENTRY_MANAGEMENT));
 		codeMap.put(ADMIN_ENTRY_CHANGETYPE, newLookup(SecurityPermission.class, ADMIN_ENTRY_CHANGETYPE, "Gives the admin the ability to change an entry's entry type", null, GROUPBY_ENTRY_MANAGEMENT));
