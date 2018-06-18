@@ -32,7 +32,16 @@ Ext.define('OSF.form.Media', {
 			mediaPanel.mediaGridForm.queryById('linkType').enable(true);
 			mediaPanel.mediaGridForm.queryById('upload').enable(true);
 		}
-		
+
+		var downloadRecord = function(record) {
+			if(record.data){
+				if(record.data.componentMediaId){
+					let buildString = 'Media.action?LoadMedia&mediaId=';
+					buildString += record.data.componentMediaId;
+					window.location.href = '' + buildString;
+				}
+			}
+		};	
 
 		mediaPanel.mediaGridForm = Ext.create('Ext.form.Panel', {
 			xtype: 'form',			
@@ -295,10 +304,20 @@ Ext.define('OSF.form.Media', {
 				selectionchange: function(grid, record, index, opts){
 					var fullgrid = mediaPanel.mediaGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
+						var record = mediaPanel.mediaGrid.getSelection()[0];
+						if(record.data){
+							if(record.data.fileName){
+								fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(false);
+							}
+							else{
+								fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(true);
+							}
+						}
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
 					} else {
+						fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
@@ -390,6 +409,16 @@ Ext.define('OSF.form.Media', {
 						},
 						{
 							xtype: 'tbfill'
+						},
+						{
+							text: 'Download',
+							itemId: 'downloadBtn',
+							disabled: true,
+							iconCls: 'fa fa-2x fa-download icon-vertical-correction-edit icon-button-color-default',
+							handler: function(){
+								var record = mediaPanel.mediaGrid.getSelection()[0];
+								downloadRecord(record);
+							}
 						},
 						{
 							text: 'Delete',

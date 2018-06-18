@@ -31,6 +31,16 @@ Ext.define('OSF.form.Resources', {
 			resourcePanel.resourceGridForm.queryById('linkType').enable(true);
 			resourcePanel.resourceGridForm.queryById('upload').enable(true);
 		}
+
+		var downloadRecord = function(record) {
+			if(record.data){
+				if(record.data.resourceId){
+					let buildString = 'Resource.action?Redirect&resourceId=';
+					buildString += record.data.resourceId;
+					window.location.href = '' + buildString;
+				}
+			}
+		};	
 			
 		resourcePanel.resourceGridForm = Ext.create('Ext.form.Panel', {
 			title: 'Add/Edit Resources',
@@ -282,10 +292,20 @@ Ext.define('OSF.form.Resources', {
 				selectionchange: function(grid, record, index, opts){
 					var fullgrid = resourcePanel.resourcesGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
+						var record = resourcePanel.resourcesGrid.getSelection()[0];
+						if(record.data){
+							if(record.data.originalFileName){
+								fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(false);
+							}
+							else{
+								fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(true);
+							}
+						}
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
 					} else {
+						fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
@@ -376,6 +396,16 @@ Ext.define('OSF.form.Resources', {
 						},
 						{
 							xtype: 'tbfill'
+						},
+						{
+							text: 'Download',
+							itemId: 'downloadBtn',
+							disabled: true,
+							iconCls: 'fa fa-2x fa-download icon-vertical-correction-edit icon-button-color-default',
+							handler: function(){
+								var record = resourcePanel.resourcesGrid.getSelection()[0];
+								downloadRecord(record);
+							}
 						},
 						{
 							text: 'Delete',
