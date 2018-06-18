@@ -291,7 +291,7 @@
 									displayField: 'name',
 									valueField: 'submissionTemplateId',
 									storeConfig: {
-										url: 'api/v1/resource/submissiontemplates',
+										url: 'api/v1/resource/submissiontemplates/verified',
 										addRecords: [
 											{
 												submissionTemplateId: null,

@@ -314,8 +314,11 @@
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
 										
-										createChangeRequest(componentId);
-
+										if (record.get('pendingChangeComponentId')) {
+											editChangeRequest(record.get('pendingChangeComponentId'));
+										} else {									
+											createChangeRequest(componentId);
+										}
 									}
 								},								
 								{
@@ -784,6 +787,25 @@
 					});
 		
 				};
+				
+				var editChangeRequest = function(componentId) {
+		
+					submissionGrid.setLoading('Editing change request...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + componentId + '/editchangerequest',
+						method: 'POST',
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var userSubmission = Ext.decode(response.responseText);
+														
+							loadSubmissionForm(userSubmission.templateId, userSubmission.componentType, null, userSubmission);
+							actionRefreshSubmission();
+						}
+					});
+		
+				};		
 				
 				var editExistingEntry = function(componentId) {
 					

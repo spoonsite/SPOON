@@ -203,6 +203,7 @@ public class UserSubmissionResource
 			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 			if (response == null) {
 				service.getSubmissionFormService().submitChangeRequestForApproval(existing);
+				response = Response.ok().build();
 			}
 		}
 		return response;

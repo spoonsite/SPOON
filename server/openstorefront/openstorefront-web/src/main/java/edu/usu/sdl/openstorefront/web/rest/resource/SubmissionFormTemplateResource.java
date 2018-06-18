@@ -24,6 +24,9 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
 import edu.usu.sdl.openstorefront.core.view.SubmissionFormTemplateView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -71,8 +74,21 @@ public class SubmissionFormTemplateResource
 	}
 
 	@GET
-	@APIDescription("Gets Template")
+	@APIDescription("Gets Submission Templates")
 	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/verified")
+	@DataType(SubmissionFormTemplateView.class)
+	public List<SubmissionFormTemplateView> getVerifiedSubmissionFormTemplates()
+	{
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setActiveStatus(SubmissionFormTemplate.ACTIVE_STATUS);
+		submissionFormTemplate.setTemplateStatus(SubmissionTemplateStatus.VERIFIED);
+		return SubmissionFormTemplateView.toView(submissionFormTemplate.findByExample());
+	}
+
+	@GET
+	@APIDescription("Gets Verified Templates")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SubmissionFormTemplateView.class)
 	@Path("/{templateId}")
@@ -93,7 +109,6 @@ public class SubmissionFormTemplateResource
 
 	@GET
 	@APIDescription("Gets Template")
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SubmissionFormTemplateView.class)
 	@Path("/default")
@@ -228,6 +243,40 @@ public class SubmissionFormTemplateResource
 			submissionFormTemplate.save();
 		}
 
+		return sendSingleEntityResponse(submissionFormTemplate);
+	}
+
+	@PUT
+	@APIDescription("Verifies Template")
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/{templateId}/verify/{userSubmissionId}")
+	public Response verifyTemplate(
+			@PathParam("templateId") String templateId,
+			@PathParam("userSubmissionId") String userSubmissionId
+	)
+	{
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setSubmissionTemplateId(templateId);
+		submissionFormTemplate = submissionFormTemplate.find();
+		if (submissionFormTemplate != null) {
+
+			UserSubmission userSubmission = new UserSubmission();
+			userSubmission.setUserSubmissionId(userSubmissionId);
+			userSubmission = userSubmission.find();
+
+			if (userSubmission != null) {
+				VerifySubmissionTemplateResult result = service.getSubmissionFormService().verifySubmission(userSubmission);
+				if (result.getValidationResult().valid()) {
+					return Response.ok().build();
+				} else {
+					return sendSingleEntityResponse(result.getValidationResult().toRestError());
+				}
+			} else {
+				return sendSingleEntityResponse(submissionFormTemplate);
+			}
+
+		}
 		return sendSingleEntityResponse(submissionFormTemplate);
 	}
 

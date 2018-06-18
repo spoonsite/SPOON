@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
+import edu.usu.sdl.openstorefront.core.model.EditSubmissionOptions;
 import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
@@ -95,6 +96,13 @@ public interface SubmissionFormService
 	public VerifySubmissionTemplateResult verifySubmission(UserSubmission userSubmission);
 
 	/**
+	 * Save template and marks as default and sets to Verified.
+	 *
+	 * @param template
+	 */
+	public void saveSubmissionTemplateAsDefault(SubmissionFormTemplate template);
+
+	/**
 	 * Convert and saves component The user submission is then removed.
 	 *
 	 * @param userSubmission
@@ -109,9 +117,10 @@ public interface SubmissionFormService
 	 *
 	 * @param componentId
 	 * @param forChangeRequest
+	 * @param removeComponent
 	 * @return
 	 */
-	public UserSubmission editComponentForSubmission(String componentId, boolean forChangeRequest);
+	public UserSubmission editComponentForSubmission(String componentId, EditSubmissionOptions options);
 
 	/**
 	 * Creates a change request from a submission

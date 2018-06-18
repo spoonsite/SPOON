@@ -196,6 +196,9 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			submissionFormFullControl.queryById('custom').setHidden(false);
 		}		
 		
+		submissionFormFullControl.queryById('submitApproval').setText(submissionFormFullControl.submitText || 'Submit For Approval');
+		
+		
 		submissionFormFullControl.queryById('submissionForm').previewMode = submissionFormFullControl.previewMode;
 		submissionFormFullControl.queryById('submissionForm').finishInitialSave = submissionFormFullControl.finishInitialSave;
 		
@@ -359,22 +362,84 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		
 		var userSubmission = form.getUserData();	
 		
-		submissionFormFullControl.setLoading("Submitting Entry...");
-		Ext.Ajax.request({
-			url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitforapproval',
-			method: 'PUT',
-			jsonData: userSubmission,
-			callback: function() {		
-				submissionFormFullControl.setLoading(false);
-			},
-			success: function(response, opts) {
-				Ext.toast('Entry Submitted Successfully');
-				
-				if (submissionFormFullControl.submissionSuccess) {
-					submissionFormFullControl.submissionSuccess();
+		if (submissionFormFullControl.verifyMode) {
+			
+			submissionFormFullControl.setLoading("Verify Submission...");
+			Ext.Ajax.request({
+				url: 'api/v1/resource/submissiontemplates/' + userSubmission.templateId + '/verify/' + userSubmission.userSubmissionId,
+				method: 'PUT',
+				jsonData: userSubmission,
+				callback: function() {		
+					submissionFormFullControl.setLoading(false);
+				},
+				success: function(response, opts) {
+					var data;
+					try {
+						data = Ext.decode(response.responseText);
+					} catch(e){						
+					}
+					if (data && !data.success) {
+						var errorMessage = '';
+						Ext.Array.each(data.errors.entry, function(errorItem){
+							errorMessage += '<b>' + errorItem.key + ':</b> ' + errorItem.value + '<br>';
+						});
+						
+						Ext.Msg.show({
+							title: 'Unable to Verify',
+							message: 'Check Input and make sure template has all required Fields/Attributes. <br><br>' + errorMessage,
+							buttons: Ext.Msg.OK,
+							icon: Ext.Msg.ERROR,
+							fn: function(btn) {
+							}
+						});
+						
+					} else {
+						Ext.toast('Verified Successfully');					
+
+						if (submissionFormFullControl.submissionSuccess) {
+							submissionFormFullControl.submissionSuccess();
+						}
+					}
 				}
+			});
+			
+		} else {				
+			if (userSubmission.originalComponentId) {
+				submissionFormFullControl.setLoading("Submitting Change Request...");
+				Ext.Ajax.request({
+					url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitchangeforapproval',
+					method: 'PUT',
+					jsonData: userSubmission,
+					callback: function() {		
+						submissionFormFullControl.setLoading(false);
+					},
+					success: function(response, opts) {
+						Ext.toast('Change Request Submitted Successfully');
+
+						if (submissionFormFullControl.submissionSuccess) {
+							submissionFormFullControl.submissionSuccess();
+						}
+					}
+				});
+			} else {		
+				submissionFormFullControl.setLoading("Submitting Entry...");
+				Ext.Ajax.request({
+					url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitforapproval',
+					method: 'PUT',
+					jsonData: userSubmission,
+					callback: function() {		
+						submissionFormFullControl.setLoading(false);
+					},
+					success: function(response, opts) {
+						Ext.toast('Entry Submitted Successfully');
+
+						if (submissionFormFullControl.submissionSuccess) {
+							submissionFormFullControl.submissionSuccess();
+						}
+					}
+				});
 			}
-		});
+		}
 		
 	}	
 	

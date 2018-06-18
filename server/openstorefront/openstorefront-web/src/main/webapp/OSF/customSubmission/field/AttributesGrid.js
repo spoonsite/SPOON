@@ -155,9 +155,11 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 		grid.getStore().each(function(record){
 			allAttributes.push(record.getData());
 		});
-		if (grid.hiddenAttributes) {
-			allAttributes = allAttributes.concat(grid.hiddenAttributes);
-		}
+		
+		//Skip hidden as they can 
+//		if (grid.hiddenAttributes) {
+//			allAttributes = allAttributes.concat(grid.hiddenAttributes);
+//		}
 		Ext.Array.each(allAttributes, function(dataItem){
 			data.push(Ext.apply(dataItem, {				
 				componentAttributePk: {

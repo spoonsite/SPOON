@@ -190,6 +190,7 @@
 									{
 										xtype: 'osf-customSubmission-SubmissionformFullControl',
 										itemId: 'form',
+										previewMode: true,
 										showCustomButton: true,
 										hideSave: true,
 										customButtonHandler: function() {

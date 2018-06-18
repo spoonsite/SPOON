@@ -42,7 +42,14 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 		if (grid.section) {
 			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
 			if (initialData) {
-				var data = Ext.decode(initialData);				
+				var data = Ext.decode(initialData);	
+				
+				//map missing fields
+				Ext.Array.each(data, function(dataItem){
+					dataItem.relatedComponentId = dataItem.targetComponentId;
+					dataItem.componentRelationshipId = dataItem.relationshipId;
+				});				
+				
 				grid.getStore().loadData(data);
 			}			
 		}

@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.EditSubmissionOptions;
 import edu.usu.sdl.openstorefront.core.view.ChangeEntryTypeAction;
 import edu.usu.sdl.openstorefront.core.view.ChangeOwnerAction;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
@@ -989,10 +990,12 @@ public abstract class GeneralComponentResourceExt
 			@RequiredParam String componentId
 	)
 	{
-		return handleCreateUserSubmission(componentId, false);
+		EditSubmissionOptions options = new EditSubmissionOptions();
+		options.setRemoveComponent(true);
+		return handleCreateUserSubmission(componentId, options);
 	}
 
-	private Response handleCreateUserSubmission(String componentId, boolean forChangeRequest)
+	private Response handleCreateUserSubmission(String componentId, EditSubmissionOptions options)
 	{
 		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
 		if (response != null) {
@@ -1002,11 +1005,11 @@ public abstract class GeneralComponentResourceExt
 		component.setComponentId(componentId);
 		component = component.find();
 		if (component != null) {
-			if (!forChangeRequest && ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
+			if (!options.isForChangeRequest() && ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
 				throw new OpenStorefrontRuntimeException("Unable to edit an Approved entry.", "Refresh and check data.");
 			}
 
-			UserSubmission userSubmission = service.getSubmissionFormService().editComponentForSubmission(componentId, forChangeRequest);
+			UserSubmission userSubmission = service.getSubmissionFormService().editComponentForSubmission(componentId, options);
 
 			response = Response.created(URI.create("v1/resource/usersubmission/" + userSubmission.getUserSubmissionId())).entity(userSubmission).build();
 		} else {
@@ -1026,7 +1029,26 @@ public abstract class GeneralComponentResourceExt
 			@RequiredParam String componentId
 	)
 	{
-		return handleCreateUserSubmission(componentId, true);
+		EditSubmissionOptions options = new EditSubmissionOptions();
+		options.setForChangeRequest(true);
+		return handleCreateUserSubmission(componentId, options);
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(UserSubmission.class)
+	@APIDescription("Edit a change request component (Make sure to set the component id to the change request's id")
+	@Path("/{id}/editchangerequest")
+	public Response editChangeRequestForSubmission(
+			@PathParam("id")
+			@RequiredParam String componentId
+	)
+	{
+		EditSubmissionOptions options = new EditSubmissionOptions();
+		options.setForChangeRequest(true);
+		options.setEditChangeRequest(true);
+		options.setRemoveComponent(true);
+		return handleCreateUserSubmission(componentId, options);
 	}
 
 	@PUT

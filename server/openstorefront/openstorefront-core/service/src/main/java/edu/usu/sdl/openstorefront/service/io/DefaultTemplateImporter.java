@@ -54,8 +54,8 @@ public class DefaultTemplateImporter
 				if (templates.size() > 0) {
 					LOG.log(Level.INFO, "Found Default Template");
 					submissionFormTemplate = templates.get(0);
-					submissionFormTemplate.setDefaultTemplate(Boolean.TRUE);
-					ServiceProxy.getProxy().getSubmissionFormService().saveSubmissionFormTemplate(submissionFormTemplate);
+					ServiceProxy.getProxy().getSubmissionFormService().saveSubmissionTemplateAsDefault(submissionFormTemplate);
+
 					LOG.log(Level.INFO, "Saved Default Template");
 				} else {
 					LOG.log(Level.SEVERE, "No default template defined. Check code");

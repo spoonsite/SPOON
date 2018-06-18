@@ -86,6 +86,12 @@
 							tools.getComponent('preview').setDisabled(false);
 							tools.getComponent('export').setDisabled(false);
 							
+							if (selected[0].get('templateStatus') === 'PENDING_VERIFICATION') {
+								tools.getComponent('verify').setDisabled(false);							
+							} else {
+								tools.getComponent('verify').setDisabled(true);
+							}
+							
 							if (!selected[0].get('defaultTemplate')) {								
 								tools.getComponent('delete').setDisabled(false);
 							} else {
@@ -98,6 +104,7 @@
 							tools.getComponent('preview').setDisabled(true);
 							tools.getComponent('export').setDisabled(true);
 							tools.getComponent('delete').setDisabled(true);
+							tools.getComponent('verify').setDisabled(true);
 						}
 					}
 				},
@@ -112,7 +119,18 @@
 						}
 					},
 					{ text: 'Description', dataIndex: 'description', flex: 10 },
-					{ text: 'Form Completion Status <i class="fa fa-question-circle" data-qtip="Indicates that a form is ready for use"></i>', dataIndex: 'templateStatusLabel', align: 'center', flex: 5 },
+					{ text: 'Form Completion Status <i class="fa fa-question-circle" data-qtip="Indicates that a form is ready for use"></i>', dataIndex: 'templateStatusLabel', align: 'center', flex: 5,
+						renderer: function(value, meta, record) {
+							if (record.get('templateStatus') === 'INCOMPLETE') {
+								meta.tdCls = 'alert-danger';
+							} else if (record.get('templateStatus') === 'PENDING_VERIFICATION') {
+								meta.tdCls = 'alert-warning';
+							} else {
+								meta.tdCls = 'alert-success';
+							}
+							return record.get('templateStatusLabel');
+						}
+					},
 					{ text: 'Active Status', dataIndex: 'activeStatus', align: 'center', flex: 4 },
 					{ text: 'Create Date', dataIndex: 'createDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 4 },
 					{ text: 'Create User', dataIndex: 'createUser', flex: 4 },
@@ -225,8 +243,19 @@
 								xtype: 'tbseparator'
 							},
 							{
-								text: 'Preview',
-								iconCls: 'fa fa-2x fa-eye icon-button-color-view',
+								text: 'Verify',
+								iconCls: 'fa fa-2x fa-check icon-button-color-save icon-vertical-correction',
+								itemId: 'verify',
+								disabled: true,	
+								scale: 'medium',
+								handler: function(){
+									var record = Ext.getCmp('formTemplateGrid').getSelectionModel().getSelection()[0];
+									actionVerifyTemplate(record);
+								}
+							},							
+							{
+								text: 'Preview', 
+								iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction',
 								itemId: 'preview',
 								disabled: true,	
 								scale: 'medium',
@@ -533,6 +562,7 @@
 									xtype: 'osf-customSubmission-SubmissionformFullControl',
 									itemId: 'form',
 									showCustomButton: true,
+									previewMode: true,
 									hideSave: true,
 									customButtonHandler: function() {
 										previewWin.close();
@@ -547,6 +577,38 @@
 				});
 				entryTypeSelect.show();
 				
+			};
+			
+			var actionVerifyTemplate = function(record) {
+				var entryTypeSelect = Ext.create('OSF.customSubmissionTool.EntryTypeSelectWindow', {
+					selectCallBack: function(entryType) {
+						var previewWin = Ext.create('Ext.window.Window', {
+							title: 'Preview',
+							layout: 'fit',
+							modal: true,
+							closeAction: 'destroy',
+							width: '80%',
+							height: '80%',
+							maximizable: true,
+							items: [
+								{
+									xtype: 'osf-customSubmission-SubmissionformFullControl',
+									itemId: 'form',
+									verifyMode: true,
+									submitText: 'Verify Submission',
+									submissionSuccess: function() {
+										actionRefresh();
+										previewWin.close();
+									}
+								}
+							]
+						});
+						previewWin.show();
+
+						previewWin.queryById('form').load(record.data, entryType, null, true);						
+					}
+				});
+				entryTypeSelect.show();				
 			};
 			
 			var actionImport = function() {
