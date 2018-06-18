@@ -77,10 +77,8 @@ public class HelpImporter
 
 			boolean process = true;
 			String newCheckSum = new String(digest);
-			if (StringUtils.isNotBlank(checkSum)) {
-				if (checkSum.equals(newCheckSum)) {
-					process = false;
-				}
+			if (StringUtils.isNotBlank(checkSum) && checkSum.equals(newCheckSum)) {
+				process = false;
 			}
 
 			if (process) {
@@ -123,7 +121,7 @@ public class HelpImporter
 		try (BufferedReader bin = new BufferedReader(new InputStreamReader(in))) {
 			data = bin.lines().collect(Collectors.joining("\n"));
 		} catch (IOException e) {
-
+			LOG.log(Level.WARNING, "Unable to read help file", e);
 		}
 
 		PegDownProcessor pegDownProcessor = new PegDownProcessor(PROCESSING_TIMEOUT);
@@ -142,11 +140,12 @@ public class HelpImporter
 		boolean capture = false;
 		HelpSection helpSection = null;
 		for (Element element : elements) {
-			if (headerTags.contains(element.tagName().toLowerCase()) == false && capture) {
-				if (helpSection != null) {
-					if (helpSection.getContent().contains(element.outerHtml()) == false) {
-						helpSection.setContent(helpSection.getContent() + element.outerHtml());
-					}
+			if (!headerTags.contains(element.tagName().toLowerCase())
+					&& capture
+					&& helpSection != null) {
+
+				if (helpSection.getContent().contains(element.outerHtml()) == false) {
+					helpSection.setContent(helpSection.getContent() + element.outerHtml());
 				}
 			}
 

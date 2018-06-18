@@ -26,10 +26,6 @@ public class EditSubmissionOptions
 	private boolean removeComponent;
 	private boolean editChangeRequest;
 
-	public EditSubmissionOptions()
-	{
-	}
-
 	public boolean isForChangeRequest()
 	{
 		return forChangeRequest;

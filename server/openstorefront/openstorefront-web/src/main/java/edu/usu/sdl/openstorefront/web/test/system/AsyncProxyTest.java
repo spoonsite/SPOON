@@ -56,7 +56,7 @@ public class AsyncProxyTest
 			public void afterExecute(TaskFuture taskFuture)
 			{
 				try {
-					results.append("Runnning in callback: <br>");
+					results.append("Running in callback: <br>");
 					List<ErrorTypeCode> errorTypeCodesLocal = (List<ErrorTypeCode>) taskFuture.getFuture().get();
 					errorTypeCodesLocal.forEach(code -> {
 						results.append(code.getCode()).append(" - ").append(code.getDescription()).append("<br>");

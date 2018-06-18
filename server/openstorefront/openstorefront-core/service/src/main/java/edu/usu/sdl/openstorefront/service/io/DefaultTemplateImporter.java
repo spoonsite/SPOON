@@ -51,7 +51,7 @@ public class DefaultTemplateImporter
 				List<SubmissionFormTemplate> templates = StringProcessor.defaultObjectMapper().readValue(is, new TypeReference<List<SubmissionFormTemplate>>()
 				{
 				});
-				if (templates.size() > 0) {
+				if (!templates.isEmpty()) {
 					LOG.log(Level.INFO, "Found Default Template");
 					submissionFormTemplate = templates.get(0);
 					ServiceProxy.getProxy().getSubmissionFormService().saveSubmissionTemplateAsDefault(submissionFormTemplate);

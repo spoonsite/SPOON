@@ -282,8 +282,8 @@ public class SubmissionFormServiceImpl
 	@Override
 	public UserSubmission editComponentForSubmission(String componentId, EditSubmissionOptions options)
 	{
-		Objects.isNull(componentId);
-		Objects.isNull(options);
+		Objects.requireNonNull(componentId);
+		Objects.requireNonNull(options);
 
 		UserSubmission userSubmission;
 
