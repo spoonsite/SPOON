@@ -51,6 +51,7 @@ Vue.use(Vuetify, {
   }
 });
 
+Vue.prototype.$http = axios;
 Vue.use(VueTruncate);
 Vue.filter('formatDate', value => format(value, 'YYYY/MM/DD'));
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)));

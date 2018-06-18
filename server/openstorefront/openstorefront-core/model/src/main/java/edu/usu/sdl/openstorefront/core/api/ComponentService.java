@@ -399,6 +399,15 @@ public interface ComponentService
 
 	/**
 	 *
+	 * @param contact
+	 * @param updateLastActivity
+	 * @param mergeSimilar
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity, boolean mergeSimilar);
+
+	/**
+	 *
 	 * @param dependency
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)

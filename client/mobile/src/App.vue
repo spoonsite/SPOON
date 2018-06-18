@@ -29,6 +29,22 @@
               <v-list-tile-title>{{ link.name }}</v-list-tile-title>
             </v-content>
           </v-list-tile>
+          <v-divider></v-divider>
+          <v-list-tile class="menu-item" @click="logout()">
+            <v-list-tile-action>
+              <v-icon>fas fa-sign-out-alt</v-icon>
+            </v-list-tile-action>
+            <v-content>
+              <v-list-tile-title>Logout</v-list-tile-title>
+            </v-content>
+          </v-list-tile>
+          <v-footer absolute height="auto" style="background-color: white;">
+            <v-card flat tile style="margin: auto;">
+              <v-card-text>
+                <a href="/openstorefront">Go to desktop version</a>
+              </v-card-text>
+            </v-card>
+          </v-footer>
         </v-list>
       </v-navigation-drawer>
 
@@ -68,6 +84,13 @@ export default {
   methods: {
     nav (url) {
       router.push(url);
+    },
+    logout () {
+      this.$http.get('/openstorefront/Login.action?Logout')
+        .then(response => {
+          window.location.href = 'openstorefront';
+        })
+        .catch(e => console.log(e));
     }
   }
 };
@@ -87,6 +110,7 @@ $offset-banner: $offset + $banner-height;
 }
 .menu-item:hover {
   background-color: rgba(0,0,0,0.1);
+  cursor: pointer;
 }
 .offset-banner {
   margin-top: $offset-banner;

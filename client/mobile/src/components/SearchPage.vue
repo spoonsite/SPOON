@@ -47,10 +47,10 @@
           {{ searchPageSize }}
           <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
         </v-card-text>
-        <v-card-action>
+        <v-card-actions>
           <v-btn @click.stop="showOptions = false">Submit</v-btn>
           <v-btn @click="resetOptions()">Reset Options</v-btn>
-        </v-card-action>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -105,10 +105,10 @@
             clearable
           ></v-select>
         </v-card-text>
-        <v-card-action>
+        <v-card-actions>
           <v-btn @click.stop="showFilters = false">Submit</v-btn>
           <v-btn @click="clear()">Clear Filters</v-btn>
-        </v-card-action>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div> <!-- Search Bar and menu  -->
@@ -128,9 +128,9 @@
           <v-chip close small>Tag</v-chip>
           <v-chip close small color="indigo lighten-2" text-color="white">Organization</v-chip>
         </v-card-text>
-        <v-card-action>
+        <v-card-actions>
           <v-btn @click="showHelp = !showHelp">Close</v-btn>
-        </v-card-action>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -147,7 +147,7 @@
   </p>
 
   <div v-if="searchResults.data" style="margin-bottom: 1em; padding-bottom: 0.5em; overflow: auto; white-space: nowrap;">
-    <v-chip v-for="stat in searchResults.data.resultTypeStats" :key="stat" @click="searchCategory(stat.componentType)" color="teal" text-color="white">
+    <v-chip v-for="stat in searchResults.data.resultTypeStats" :key="stat.componentTypeDescription" @click="searchCategory(stat.componentType)" color="teal" text-color="white">
       <v-avatar class="teal darken-2">{{ stat.count }}</v-avatar>
       {{ stat.componentTypeDescription }}
     </v-chip>
@@ -164,17 +164,17 @@
   </div>
 
   <div v-if="searchResults.data">
-    <v-expansion-panel class="elevation-2">
-      <v-expansion-panel-content v-for="item in searchResults.data.data" :key="item">
+    <v-expansion-panel popout>
+      <v-expansion-panel-content v-for="item in searchResults.data.data" :key="item.name">
         <div slot="header">
-          <div style="float: left;" v-if="item.componentTypeIconUrl">
+          <div style="float: left;" v-if="item.includeIconInSearch && item.componentTypeIconUrl">
             <img :src="'/openstorefront/' + item.componentTypeIconUrl" width="30" style="margin-right: 1em;">
           </div>
           <div>
             {{ item.name }}
           </div>
         </div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
             <p>
               <router-link
@@ -190,7 +190,7 @@
             >
             <span
               v-for="tag in item.tags"
-              :key="tag"
+              :key="tag.text"
               style="float: left; margin-right: 0.8em; cursor: pointer;"
               @click="addTag(tag.text)"
             >
@@ -204,21 +204,15 @@
               <strong>Average User Rating:</strong>
               <star-rating :rating="item.averageRating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
-            <p><strong>Date Created:</strong> {{ item.createDts | formatDate }}</p>
             <p><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
             <p><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
-            <h2>Attributes</h2>
-            <hr>
-            <p v-for="attribute in item.attributes" :key="attribute.typeLabel">
-              <strong>{{ attribute.typeLabel }}:</strong> {{ attribute.label }}
-            </p>
             <h2>Description</h2>
             <hr>
             <div v-html="item.description"></div>
           </v-card-text>
           <v-card-actions>
             <!-- TODO: link to the details page for that component -->
-            <v-btn color="info">More Information</v-btn>
+            <v-btn color="info" @click="moreInformation(item.componentId)">More Information</v-btn>
           </v-card-actions>
         </v-card>
       </v-expansion-panel-content>
@@ -259,6 +253,7 @@ import _ from 'lodash';
 import axios from 'axios';
 import SearchBar from './subcomponents/SearchBar';
 import StarRating from 'vue-star-rating';
+import router from '../router/index';
 
 export default {
   name: 'SearchPage',
@@ -317,8 +312,8 @@ export default {
       }
     },
     submitSearch () {
-      this.searchQueryIsDirty = true;
       let that = this;
+      that.searchQueryIsDirty = true;
       let searchElements = [
         {
           mergeCondition: 'AND',
@@ -380,52 +375,48 @@ export default {
           that.totalSearchResults = response.data.totalNumber;
           that.searchQueryIsDirty = false;
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => that.errors.push(e))
         .finally(() => {
           that.searchQueryIsDirty = false;
         });
     },
     getComponentTypes () {
-      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/componenttypes'
         )
         .then(response => {
-          that.componentsList = response.data;
+          this.componentsList = response.data;
         })
         .catch(e => this.errors.push(e));
     },
     getTags () {
-      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/components/tagviews?approvedOnly=true'
         )
         .then(response => {
-          that.tagsList = response.data;
+          this.tagsList = response.data;
         })
         .catch(e => this.errors.push(e));
     },
     getOrganizations () {
-      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/organizations?componentOnly=true'
         )
         .then(response => {
-          that.organizationsList = response.data.data;
+          this.organizationsList = response.data.data;
         })
         .catch(e => this.errors.push(e));
     },
     getNestedComponentTypes () {
-      let that = this;
       axios
         .get(
           '/openstorefront/api/v1/resource/componenttypes/nested'
         )
         .then(response => {
-          that.nestedComponentTypesList = response.data.data;
+          this.nestedComponentTypesList = response.data.data;
         })
         .catch(e => this.errors.push(e));
     },
@@ -465,6 +456,15 @@ export default {
           ? this.getNumPages() + 2
           : currentPage + 4
       );
+    },
+    moreInformation (componentId) {
+      console.log(componentId);
+      router.push({
+        name: 'Entry Detail',
+        params: {
+          id: componentId
+        }
+      });
     }
   },
   watch: {

@@ -50,8 +50,10 @@ public class BasicHTMLSanitizerTest
 		String lineSeparator = Character.toString((char) 0x2028);
 		return Arrays.asList(new Object[][]{
 			{null, null},
-			{"<html><body><div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"top:100px;left:100px;\">Hello World</div></div></body></html>", "<div>\n <a rel=\"nofollow\">click ME</a>\n <div>\n  Hello World\n </div>\n</div>"},
-			{"<html><body><div>Hello " + lineSeparator + "World</div></body></html>", "<div>\n Hello<br><br>World\n</div>"}, // hidden whitespace Line Seperator
+			{"<html><body><div class=\"box\" style=\"width: 1362px;top:100px;left:100px;\"><a href=\"/click\">click ME</a><div class=\"box\" style=\"top:100px;left:100px;\">Hello World</div></div></body></html>",
+			"<div style=\"width: 1362px;top:100px;left:100px;\"> \n <a rel=\"nofollow\">click ME</a> \n <div style=\"top:100px;left:100px;\">\n   Hello World \n </div> \n</div>"},
+			{"<html><body><div>Hello " + lineSeparator + "World</div></body></html>", 
+			"<div>\n" +"  Hello<br><br>World \n" +"</div>"}, // hidden whitespace Line Seperator
 		});
 	}
 
@@ -60,6 +62,8 @@ public class BasicHTMLSanitizerTest
 	{
 		BasicHTMLSanitizer sanitizer = new BasicHTMLSanitizer();
 		Object result = sanitizer.santize(input);
+		System.out.println("EXPECTED: " + expectedOutput);
+		System.out.println("RESULT  : " + result);
 		assertEquals(expectedOutput, result);
 	}
 }

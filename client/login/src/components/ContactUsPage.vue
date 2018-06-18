@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-layout mt-3>
-      <v-flex xs12 sm6 offset-sm3>
+    <v-layout mt-3 mx-3>
+      <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
         <v-card class="elevation-5">
           <v-toolbar color="primary" dark dense>
             <v-toolbar-title>Contact Us</v-toolbar-title>
@@ -17,70 +17,57 @@
                 required
               ></v-select>
 
+              <v-text-field
+                v-model="subject"
+                :rules="subjectRules"
+                :counter="255"
+                label="Subject"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model="description"
+                :rules="descriptionRules"
+                :counter="4096"
+                label="Description"
+                textarea
+                required
+              ></v-text-field>
+
+              <v-card-title>
+                <h2>Contact Information</h2>
+              </v-card-title>
+
+              <v-text-field
+                v-model="name"
+                :rules="nameRules"
+                :counter="80"
+                label="Name"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model="email"
+                :rules="emailRules"
+                label="Email"
+                required
+               ></v-text-field>
+
+              <v-text-field
+                v-model="phone"
+                :rules="phoneRules"
+                :counter="80"
+                label="Phone"
+               ></v-text-field>
+
+              <v-text-field
+                v-model="organization"
+                :rules="organizationRules"
+                :counter="120"
+                label="Organization"
+               ></v-text-field>
+
             </v-card-text>
-            <v-card-text>
-
-                <v-text-field
-                  v-model="subject"
-                  :rules="subjectRules"
-                  :counter="200"
-                  label="Subject"
-                  required
-                  ></v-text-field>
-
-            </v-card-text>
-            <v-card-text>
-
-                <v-text-field
-                  v-model="description"
-                  :rules="descriptionRules"
-                  :counter="4096"
-                  label="Description"
-                  required
-                  ></v-text-field>
-
-            </v-card-text>
-            <v-container dark class="grey lighten-2">
-              <v-card-text>
-
-                <v-text-field
-                  v-model="name"
-                  :rules="nameRules"
-                  :counter="40"
-                  label="Name"
-                  required
-                  ></v-text-field>
-
-              </v-card-text>
-              <v-card-text>
-
-                <v-text-field
-                  v-model="email"
-                  :rules="emailRules"
-                  label="Email"
-                  required
-                  ></v-text-field>
-
-              </v-card-text>
-              <v-card-text>
-
-                <v-text-field
-                  v-model="phone"
-                  label="Phone"
-                  ></v-text-field>
-
-              </v-card-text>
-              <v-card-text>
-
-                <v-text-field
-                  v-model="organization"
-                  :rules="y=organizationRules"
-                  :counter="200"
-                  label="Organization"
-                  ></v-text-field>
-
-              </v-card-text>
-            </v-container>
             <v-card-actions>
               <v-container fluid grid-list-x>
                 <v-layout row >
@@ -99,7 +86,6 @@
                     <v-btn
                       block
                       color="accent"
-                      style="margin-bottom:2em;"
                       @click="cancel"
                       >Cancel</v-btn>
                   </v-flex>
@@ -110,6 +96,16 @@
         </v-card>
       </v-flex>
     </v-layout>
+
+    <v-dialog v-model="confirmationDialog" max-width="300px">
+      <v-card title>
+        <v-card-text>Feedback has been submitted.</v-card-text>
+        <v-card-actions>
+          <v-btn @click="$router.push('/')"><v-icon>fas fa-return</v-icon>Return to Homepage</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -117,15 +113,12 @@
 
 export default {
   name: 'ContactUsPage',
-  components: {
-  },
-  computed: {
-  },
   data: () => ({
     valid: true,
+    confirmationDialog: false,
     contactType: null,
     contactTypeRules: [
-      [v => !!v || 'Type is required']
+      v => !!v || 'Type is required'
     ],
     contactTypeOptions: [
       'Report Issue',
@@ -136,7 +129,7 @@ export default {
     subject: '',
     subjectRules: [
       v => !!v || 'Subject is required',
-      v => (v && v.length <= 200) || 'Maximum length for this field is 200'
+      v => (v && v.length <= 255) || 'Maximum length for this field is 255'
     ],
     description: '',
     descriptionRules: [
@@ -146,53 +139,56 @@ export default {
     name: '',
     nameRules: [
       v => !!v || 'Name is required',
-      v => v.length <= 10 || 'Name must be less than 10 characters'
+      v => v.length <= 80 || 'Name must be less than 80 characters'
     ],
     email: '',
     emailRules: [
       v => !!v || 'E-mail is required',
       v =>
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) ||
         'E-mail must be valid'
     ],
     phone: '',
+    phoneRules: [
+      v => v.length <= 80 || 'Maximum length for this field is 80'
+    ],
     organization: '',
     organizationRules: [
-      v => (v.length <= 200) || 'Maximum length for this field is 200'
-    ],
-
+      v => (v.length <= 120) || 'Maximum length for this field is 120'
+    ]
   }),
   methods: {
-    submit() {
+    submit () {
       if (this.$refs.form.validate()) {
-          // Native form submission is not yet supported
-          axios.post('/api/submit', {
-            contactType: this.contactType,
-            subject: this.subject,
-            description: this.description,
-            name: this.name,
-            email: this.email,
-            phone: this.phone,
-            organization: this.organization
+        // Native form submission is not yet supported
+        this.$http.post('/openstorefront/api/v1/resource/feedbacktickets', {
+          summary: this.subject,
+          description: this.description,
+          fullname: this.name,
+          email: this.email,
+          organization: this.organization,
+          phone: this.phone,
+          ticketType: this.contactType,
+          webInformation: {
+            location: window.location.href,
+            userAgent: navigator.userAgent,
+            referrer: navigator.referrer,
+            screenResolution: 'Height: ' + window.innerHeight + ', Width:' + window.innerWidth
+          }
+        })
+          .then(response => {
           })
-        }
+          .catch(error => console.log(error));
+        this.$refs.form.reset();
+        this.confirmationDialog = true;
+      }
     },
     cancel () {
       this.$refs.form.reset();
     }
   }
-}
+};
 </script>
 
 <style scoped>
-.login-comp {
-  width: 50%;
-  height: 100%;
-  margin: 2em;
-}
-.signup-comp {
-  width: 50%;
-  height: 100%;
-  margin: 2em;
-}
 </style>
