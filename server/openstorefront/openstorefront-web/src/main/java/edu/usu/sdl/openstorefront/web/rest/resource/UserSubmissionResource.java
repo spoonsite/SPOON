@@ -179,7 +179,12 @@ public class UserSubmissionResource
 		if (existing != null) {
 			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 			if (response == null) {
-				service.getSubmissionFormService().submitUserSubmissionForApproval(existing);
+				ValidationResult validateResult = service.getSubmissionFormService().submitUserSubmissionForApproval(existing);
+				if (!validateResult.valid()) {
+					response = Response.ok(validateResult.getRuleResults()).build();
+				} else {
+					response = Response.ok().build();
+				}
 			}
 		}
 		return response;
@@ -190,7 +195,7 @@ public class UserSubmissionResource
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{submissionId}/submitchangeforapproval")
-	public Response submitChangelForApproval(
+	public Response submitChangeForApproval(
 			@PathParam("submissionId") String submissionId
 	)
 	{
@@ -202,8 +207,12 @@ public class UserSubmissionResource
 		if (existing != null) {
 			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 			if (response == null) {
-				service.getSubmissionFormService().submitChangeRequestForApproval(existing);
-				response = Response.ok().build();
+				ValidationResult validateResult = service.getSubmissionFormService().submitChangeRequestForApproval(existing);
+				if (!validateResult.valid()) {
+					response = Response.ok(validateResult.getRuleResults()).build();
+				} else {
+					response = Response.ok().build();
+				}
 			}
 		}
 		return response;

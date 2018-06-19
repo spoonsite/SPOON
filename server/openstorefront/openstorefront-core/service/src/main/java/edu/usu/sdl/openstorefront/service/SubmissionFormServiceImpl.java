@@ -254,9 +254,11 @@ public class SubmissionFormServiceImpl
 	}
 
 	@Override
-	public void submitUserSubmissionForApproval(UserSubmission userSubmission)
+	public ValidationResult submitUserSubmissionForApproval(UserSubmission userSubmission)
 	{
 		Objects.requireNonNull(userSubmission);
+
+		ValidationResult validationResult = new ValidationResult();
 
 		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
 		if (formTemplate != null) {
@@ -264,11 +266,19 @@ public class SubmissionFormServiceImpl
 				ComponentFormSet componentFormSet = mappingController.mapUserSubmissionToEntry(formTemplate, userSubmission);
 
 				componentFormSet.getPrimary().getComponent().setApprovalState(ApprovalStatus.PENDING);
-				getComponentService().saveFullComponent(componentFormSet.getPrimary());
+
+				validationResult.merge(componentFormSet.getPrimary().validate());
 				for (ComponentAll componentAll : componentFormSet.getChildren()) {
-					getComponentService().saveFullComponent(componentAll);
+					validationResult.merge(componentAll.validate());
 				}
-				deleteUserSubmission(userSubmission.getUserSubmissionId());
+
+				if (validationResult.valid()) {
+					getComponentService().saveFullComponent(componentFormSet.getPrimary());
+					for (ComponentAll componentAll : componentFormSet.getChildren()) {
+						getComponentService().saveFullComponent(componentAll);
+					}
+					deleteUserSubmission(userSubmission.getUserSubmissionId());
+				}
 
 			} catch (MappingException ex) {
 				Logger.getLogger(SubmissionFormServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -277,6 +287,8 @@ public class SubmissionFormServiceImpl
 		} else {
 			throw missingFormTemplateException(userSubmission.getTemplateId());
 		}
+
+		return validationResult;
 	}
 
 	@Override
@@ -348,10 +360,12 @@ public class SubmissionFormServiceImpl
 	}
 
 	@Override
-	public void submitChangeRequestForApproval(UserSubmission userSubmission)
+	public ValidationResult submitChangeRequestForApproval(UserSubmission userSubmission)
 	{
 		Objects.requireNonNull(userSubmission);
 		Objects.requireNonNull(userSubmission.getOriginalComponentId());
+
+		ValidationResult validationResult = new ValidationResult();
 
 		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
 		if (formTemplate != null) {
@@ -361,13 +375,21 @@ public class SubmissionFormServiceImpl
 				componentFormSet.getPrimary().getComponent().setApprovalState(ApprovalStatus.PENDING);
 				componentFormSet.getPrimary().getComponent().setComponentId(persistenceService.generateId());
 				componentFormSet.getPrimary().getComponent().setPendingChangeId(userSubmission.getOriginalComponentId());
-				ComponentAll savedComponentAll = getComponentService().saveFullComponent(componentFormSet.getPrimary());
-				for (ComponentAll componentAll : componentFormSet.getChildren()) {
-					getComponentService().saveFullComponent(componentAll);
-				}
-				getComponentService().submitChangeRequest(savedComponentAll.getComponent().getComponentId());
 
-				deleteUserSubmission(userSubmission.getUserSubmissionId());
+				validationResult.merge(componentFormSet.getPrimary().validate());
+				for (ComponentAll componentAll : componentFormSet.getChildren()) {
+					validationResult.merge(componentAll.validate());
+				}
+
+				if (validationResult.valid()) {
+					ComponentAll savedComponentAll = getComponentService().saveFullComponent(componentFormSet.getPrimary());
+					for (ComponentAll componentAll : componentFormSet.getChildren()) {
+						getComponentService().saveFullComponent(componentAll);
+					}
+					getComponentService().submitChangeRequest(savedComponentAll.getComponent().getComponentId());
+
+					deleteUserSubmission(userSubmission.getUserSubmissionId());
+				}
 
 			} catch (MappingException ex) {
 				Logger.getLogger(SubmissionFormServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -376,6 +398,8 @@ public class SubmissionFormServiceImpl
 		} else {
 			throw missingFormTemplateException(userSubmission.getTemplateId());
 		}
+
+		return validationResult;
 	}
 
 	@Override

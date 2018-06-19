@@ -106,8 +106,9 @@ public interface SubmissionFormService
 	 * Convert and saves component The user submission is then removed.
 	 *
 	 * @param userSubmission
+	 * @return ValidationResult
 	 */
-	public void submitUserSubmissionForApproval(UserSubmission userSubmission);
+	public ValidationResult submitUserSubmissionForApproval(UserSubmission userSubmission);
 
 	/**
 	 * Convert an Entry and related sub-entries into a UserSubmission This fill
@@ -126,8 +127,9 @@ public interface SubmissionFormService
 	 * Creates a change request from a submission
 	 *
 	 * @param userSubmission
+	 * @return ValidationResult
 	 */
-	public void submitChangeRequestForApproval(UserSubmission userSubmission);
+	public ValidationResult submitChangeRequestForApproval(UserSubmission userSubmission);
 
 	/**
 	 * Reassign Ownership
