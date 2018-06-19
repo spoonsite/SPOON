@@ -71,6 +71,10 @@ export default new Router({
       path: '/contact',
       name: 'Contact',
       component: ContactPage
+    },
+    {
+      path: '*',
+      redirect: '/' // Page not found
     }
   ]
 });
