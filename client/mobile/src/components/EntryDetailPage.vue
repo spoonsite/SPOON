@@ -7,19 +7,40 @@
       </v-card-text>
     </v-card>
 
+    <!-- MEDIA carousel -->
     <div
       v-if="detail.componentMedia && detail.componentMedia.length !== 0"
       class="mediaWrapper  grey lighten-2"
       >
-
       <div class="mediaItem">
         <img
-          v-for="item in lightboxList"
+          v-for="(item, index) in lightboxList"
           :key="item.link"
           :src="baseURL+item.link"
           class="mediaImage elevation-4"
-          @click="lightboxOn(item.index)"
+          @click="lightboxOn(index)"
         >
+      </div>
+    </div>
+
+    <!-- LIGHTBOX Popup -->
+    <div v-if="lightbox" class="lightbox">
+      <div class="lightboxImageWrapper">
+        <img :src="lightboxCurrentImage" class="lightboxImage elevation-3">
+      </div>
+
+      <div class="lightboxControl">
+        <v-btn v-if="lightboxList.length > 1" flat icon small color="yellow" @click="lightboxPrev()">
+          <v-icon dark>navigate_before</v-icon>
+        </v-btn>
+
+        <v-btn flat icon small color="yellow" style="margin-left: 2em; margin-right: 2em;" @click="lightbox = false;">
+          <v-icon dark>clear</v-icon>
+        </v-btn>
+
+        <v-btn v-if="lightboxList.length > 1" flat icon small color="yellow" @click="lightboxNext()">
+          <v-icon dark>navigate_next</v-icon>
+        </v-btn>
       </div>
     </div>
 
@@ -235,28 +256,7 @@
       ></v-progress-circular>
     </div>
 
-    <div v-if="lightboxState" class="lightbox">
-      <div class="lightboxImageWrapper">
-        <img :src="lightboxCurrentImage" class="lightboxImage elevation-3">
-      </div>
-
-      <div class="lightboxControl">
-        <v-btn flat icon small color="yellow" @click="lightboxPrev()">
-          <v-icon dark>navigate_before</v-icon>
-        </v-btn>
-
-        <v-btn flat icon small color="yellow" style="margin-left: 2em; margin-right: 2em;" @click="lightboxOff()">
-          <v-icon dark>clear</v-icon>
-        </v-btn>
-
-        <v-btn flat icon small color="yellow" @click="lightboxNext()">
-          <v-icon dark>navigate_next</v-icon>
-        </v-btn>
-      </div>
-    </div>
-
   </div>
-
 </template>
 
 <script lang="js">
@@ -283,7 +283,7 @@ export default {
       watchSwitch: false,
       hasImage: false,
       lightboxList: [],
-      lightboxState: false,
+      lightbox: false,
       lightboxCurrentImage: '',
       lightboxCurrentIndex: 0,
       attributeTableHeaders: [
@@ -341,12 +341,13 @@ export default {
         for (var i = 0; i < this.detail.componentMedia.length; i++) {
           if (this.detail.componentMedia[i].mediaTypeCode === 'IMG') {
             this.hasImage = true;
+            return;
           }
         }
       }
     },
     lightboxOn (index) {
-      this.lightboxState = true;
+      this.lightbox = true;
       this.lightboxCurrentIndex = index;
       this.lightboxCurrentImage = this.baseURL + this.lightboxList[index].link;
       this.lightboxSetImage();
@@ -354,28 +355,16 @@ export default {
     lightboxSetImage () {
       this.lightboxCurrentImage = this.baseURL + this.lightboxList[this.lightboxCurrentIndex].link;
     },
-    lightboxOff () {
-      this.lightboxState = false;
-    },
     lightboxNext () {
-      if (this.lightboxCurrentIndex >= this.lightboxList.length - 1) {
-        this.lightboxCurrentIndex = 0;
-      } else {
-        this.lightboxCurrentIndex++;
-      }
+      this.lightboxCurrentIndex = this.lightboxList.length % (this.lightboxCurrentIndex + 1);
       this.lightboxSetImage();
     },
     lightboxPrev () {
-      if (this.lightboxCurrentIndex === 0) {
-        this.lightboxCurrentIndex = this.lightboxList.length - 1;
-      } else {
-        this.lightboxCurrentIndex--;
-      }
+      this.lightboxCurrentIndex = this.lightboxList.length > 0 ? this.lightboxCurrentIndex - 1 : this.lightboxList.length;
       this.lightboxSetImage();
     }
   },
   computed: {
-
   }
 };
 </script>
