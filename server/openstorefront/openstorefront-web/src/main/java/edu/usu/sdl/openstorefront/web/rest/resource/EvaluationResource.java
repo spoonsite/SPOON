@@ -91,7 +91,7 @@ public class EvaluationResource
 	private static final Logger LOG = Logger.getLogger(EvaluationResource.class.getSimpleName());
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationViewWrapper.class)
 	@APIDescription("Gets Evaluations")
@@ -230,7 +230,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationView.class)
 	@APIDescription("Gets an evaluation")
@@ -251,7 +251,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentDetailView.class)
 	@APIDescription("Get component view (including evals) for published and current evaluation (whether published or not)")
@@ -279,7 +279,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("True if there has been a change to the template, that was not updated in the evaluation; otherwise False")
 	@Path("/{evaluationId}/checkTemplateUpdate")
@@ -295,7 +295,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationStatistic.class)
 	@APIDescription("Get Evaluation statistics")
@@ -348,7 +348,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationAll.class)
 	@APIDescription("Gets an evaluation")
@@ -362,7 +362,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationInfoView.class)
 	@APIDescription("Gets an evaluation information status")
@@ -384,7 +384,7 @@ public class EvaluationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT_CREATE)
 	@APIDescription("Creates an evaluation from template ")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -408,7 +408,7 @@ public class EvaluationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT_CREATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Copies an full evaluation putting the new evaluation in a pending state.")
 	@DataType(Evaluation.class)
@@ -433,7 +433,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_PUBLISH_SUMMARY)
 	@APIDescription("Approves the entry summary change request and approves the entry if not, approved")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Evaluation.class)
@@ -480,7 +480,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@APIDescription("Updates an evaluation; Only fields that user should update some field have may have additional restrictions.")
@@ -518,7 +518,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@APIDescription("Updates an evaluation; to reflect changes in the template. Unpublished only.")
@@ -544,7 +544,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Make sure change request exists for the evaluation; It will create new one if needed.")
 	@DataType(Evaluation.class)
@@ -568,7 +568,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_ALLOW_NEW_SECTIONS)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Toggles the allow new section flag")
 	@Path("/{evaluationId}/allownewsections")
@@ -595,7 +595,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_ALLOW_QUESTION_MANAGEMENT)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Toggles the question management flag")
 	@Path("/{evaluationId}/allowquestionmanagement")
@@ -622,7 +622,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TOGGLE_PUBLISH)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Publish an evaluation")
 	@Path("/{evaluationId}/publish")
@@ -642,7 +642,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TOGGLE_PUBLISH)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Unpublish an evaluation")
 	@Path("/{evaluationId}/unpublish")
@@ -662,7 +662,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_ACTIVATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates an evaluation")
 	@Path("/{evaluationId}/activate")
@@ -686,7 +686,7 @@ public class EvaluationResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_MANAGEMENT_DELETE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates or hard removes a evaluation")
 	@Path("/{evaluationId}")
@@ -704,7 +704,7 @@ public class EvaluationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Adds a new section to an evaluation based on a section template. Evaluation must allow adding Sections")
 	@DataType(ContentSectionAll.class)
@@ -740,7 +740,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@APIDescription("Save a section and it's subsections")
@@ -780,7 +780,7 @@ public class EvaluationResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.WILDCARD})
 	@APIDescription("Deletes a section and it's subsections; Evaluation must allow for adding sections")
 	@DataType(ContentSectionAll.class)
@@ -813,7 +813,7 @@ public class EvaluationResource
 	//add sub section to section
 	//remove sub section to section
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionMediaView.class)
 	@APIDescription("Gets media for a section")
@@ -846,7 +846,7 @@ public class EvaluationResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionMedia.class)
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@APIDescription("Update the flags on the section media. To add media post to MediaUpload.action?UploadSectionMedia&contentSectionMedia...&file")
 	@Path("/{evaluationId}/sections/{sectionId}/media/{sectionMediaId}")
 	public Response updateSectionMedia(
@@ -881,7 +881,7 @@ public class EvaluationResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@APIDescription("Deletes media for a section")
 	@Path("/{evaluationId}/sections/{sectionId}/media/{sectionMediaId}")
 	public void deleteSectionMedia(
@@ -907,7 +907,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationComment.class)
 	@APIDescription("Gets all evaluation comments")
@@ -937,7 +937,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationComment.class)
 	@APIDescription("Gets an evaluation comment")
@@ -956,7 +956,7 @@ public class EvaluationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationComment.class)
@@ -972,7 +972,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationComment.class)
@@ -1013,7 +1013,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationComment.class)
 	@APIDescription("Toggles acknowlege flag on an evaluation")
@@ -1058,7 +1058,7 @@ public class EvaluationResource
 		evaluationComment = evaluationComment.find();
 		if (evaluationComment != null) {
 
-			response = ownerCheck(evaluationComment, SecurityPermission.ADMIN_EVALUATION_MANAGEMENT);
+			response = ownerCheck(evaluationComment, SecurityPermission.ADMIN_EVALUATION_DELETE_COMMENT);
 			if (response == null) {
 				evaluationComment.delete();
 				response = Response.noContent().build();
@@ -1068,7 +1068,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSection.class)
 	@APIDescription("Get active sections for an evaluation")
@@ -1090,7 +1090,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSection.class)
 	@APIDescription("Gets a section for an evaluation")
@@ -1109,7 +1109,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ContentSectionAll.class)
 	@APIDescription("Gets a section and subsections for an evaluation")
@@ -1133,7 +1133,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationChecklist.class)
 	@APIDescription("Get a checklist for an evaluation")
@@ -1152,7 +1152,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationChecklist.class)
@@ -1183,7 +1183,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@APIDescription("Add/Remove (inactivate) questions from evaluation checklist. Evaluation must be marked to allow changing questions.")
@@ -1214,7 +1214,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistResponseView.class)
 	@APIDescription("Gets checklist responses for an evaluation")
@@ -1233,7 +1233,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistResponseView.class)
 	@APIDescription("Get's a checklist response for an evaluation")
@@ -1254,7 +1254,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistResponseView.class)
@@ -1294,7 +1294,7 @@ public class EvaluationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationChecklistRecommendationView.class)
 	@APIDescription("Adds a checklist recommendation for an evaluation")
@@ -1313,7 +1313,7 @@ public class EvaluationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationChecklistRecommendation.class)
@@ -1330,7 +1330,7 @@ public class EvaluationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationChecklistRecommendation.class)
@@ -1378,7 +1378,7 @@ public class EvaluationResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.EVALUATIONS)
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Delete a recommendation.")
 	@Path("/{evaluationId}/checklist/{checklistId}/recommendations/{recommendationId}")
