@@ -35,10 +35,8 @@ Ext.define('OSF.form.Media', {
 
 		var downloadRecord = function(record) {
 			if(record.data){
-				if(record.data.componentMediaId){
-					let buildString = 'Media.action?LoadMedia&mediaId=';
-					buildString += record.data.componentMediaId;
-					window.location.href = '' + buildString;
+				if(record.data.link){
+					window.location.href = '' + record.data.link;
 				}
 			}
 		};	

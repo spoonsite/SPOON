@@ -31,16 +31,13 @@ Ext.define('OSF.form.Resources', {
 			resourcePanel.resourceGridForm.queryById('linkType').enable(true);
 			resourcePanel.resourceGridForm.queryById('upload').enable(true);
 		}
-
 		var downloadRecord = function(record) {
 			if(record.data){
-				if(record.data.resourceId){
-					let buildString = 'Resource.action?Redirect&resourceId=';
-					buildString += record.data.resourceId;
-					window.location.href = '' + buildString;
+				if(record.data.link){
+					window.location.href = '' + record.data.link;
 				}
 			}
-		};	
+		};
 			
 		resourcePanel.resourceGridForm = Ext.create('Ext.form.Panel', {
 			title: 'Add/Edit Resources',
