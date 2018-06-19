@@ -143,7 +143,7 @@ public abstract class GeneralExtendedComponentResourceExt
 		component = component.find();
 		if (component != null) {
 			ComponentVersionHistory versionHistory = service.getComponentService().snapshotVersion(componentId, null);
-			response = Response.created(URI.create("v1/resource/components/" + component.getComponentId())).entity(versionHistory).build();
+			response = Response.created(URI.create(BASE_RESOURCE_PATH + component.getComponentId())).entity(versionHistory).build();
 		}
 		return response;
 	}
@@ -355,7 +355,7 @@ public abstract class GeneralExtendedComponentResourceExt
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			service.getComponentService().saveComponentIntegration(integration);
-			return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + componentId + "/integration")).entity(integration).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -379,7 +379,7 @@ public abstract class GeneralExtendedComponentResourceExt
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				service.getComponentService().saveComponentIntegration(integration);
-				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
+				return Response.created(URI.create(BASE_RESOURCE_PATH + componentId + "/integration")).entity(integration).build();
 			} else {
 				return Response.ok(validationResult.toRestError()).build();
 			}
@@ -406,7 +406,7 @@ public abstract class GeneralExtendedComponentResourceExt
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				service.getComponentService().saveComponentIntegration(integration);
-				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration")).entity(integration).build();
+				return Response.created(URI.create(BASE_RESOURCE_PATH + componentId + "/integration")).entity(integration).build();
 			} else {
 				return Response.ok(validationResult.toRestError()).build();
 			}
@@ -607,7 +607,7 @@ public abstract class GeneralExtendedComponentResourceExt
 			} else {
 				integrationConfig.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
 				integrationConfig = service.getComponentService().saveComponentIntegrationConfig(integrationConfig);
-				return Response.created(URI.create("v1/resource/components/" + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
+				return Response.created(URI.create(BASE_RESOURCE_PATH + componentId + "/integration/configs/" + integrationConfig.getIntegrationConfigId())).entity(integrationConfig).build();
 			}
 		} else {
 			return Response.ok(validationResult.toRestError()).build();

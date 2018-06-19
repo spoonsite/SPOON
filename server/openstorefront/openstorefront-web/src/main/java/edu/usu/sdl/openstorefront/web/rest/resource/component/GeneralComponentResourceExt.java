@@ -167,32 +167,7 @@ public abstract class GeneralComponentResourceExt
 
 			List<ComponentLookupModel> lookupModels;
 
-			Component componentExample = new Component();
-
-			if (!filterQueryParams.getAll()) {
-				if (OpenStorefrontConstant.STATUS_VIEW_ALL.equalsIgnoreCase(filterQueryParams.getStatus())) {
-					componentExample.setActiveStatus(null);
-				} else {
-					componentExample.setActiveStatus(filterQueryParams.getStatus());
-				}
-
-				if (OpenStorefrontConstant.STATUS_VIEW_ALL.equalsIgnoreCase(filterQueryParams.getApprovalState())) {
-					componentExample.setApprovalState(null);
-				} else {
-					componentExample.setApprovalState(filterQueryParams.getApprovalState());
-				}
-			}
-			componentExample.setComponentType(filterQueryParams.getComponentType());
-			if (componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)) {
-				componentExample.setComponentType(null);
-			}
-			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
-
-			if (!includePending) {
-				components.removeIf(c -> {
-					return Component.PENDING_STATUS.equals(c.getActiveStatus());
-				});
-			}
+			List<Component> components = filterStatusOnComponents(filterQueryParams, includePending);
 
 			components = filterEngine.filter(components);
 			lookupModels = ComponentLookupModel.toView(components);
@@ -224,6 +199,35 @@ public abstract class GeneralComponentResourceExt
 			return sendSingleEntityResponse(entity);
 		}
 
+	}
+
+	private List<Component> filterStatusOnComponents(ComponentFilterParams filterQueryParams, boolean includePending)
+	{
+		Component componentExample = new Component();
+		if (!filterQueryParams.getAll()) {
+			if (OpenStorefrontConstant.STATUS_VIEW_ALL.equalsIgnoreCase(filterQueryParams.getStatus())) {
+				componentExample.setActiveStatus(null);
+			} else {
+				componentExample.setActiveStatus(filterQueryParams.getStatus());
+			}
+
+			if (OpenStorefrontConstant.STATUS_VIEW_ALL.equalsIgnoreCase(filterQueryParams.getApprovalState())) {
+				componentExample.setApprovalState(null);
+			} else {
+				componentExample.setApprovalState(filterQueryParams.getApprovalState());
+			}
+		}
+		componentExample.setComponentType(filterQueryParams.getComponentType());
+		if (componentExample.getComponentType() != null && componentExample.getComponentType().equals(ComponentType.ALL)) {
+			componentExample.setComponentType(null);
+		}
+		List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+		if (!includePending) {
+			components.removeIf(c -> {
+				return Component.PENDING_STATUS.equals(c.getActiveStatus());
+			});
+		}
+		return components;
 	}
 
 	@GET
@@ -467,7 +471,7 @@ public abstract class GeneralComponentResourceExt
 		}
 	}
 
-	private String exportComponentData(List<ComponentAll> fullComponents) throws OpenStorefrontRuntimeException, JsonProcessingException
+	private String exportComponentData(List<ComponentAll> fullComponents) throws JsonProcessingException
 	{
 		String componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
 		String archiveName = FileSystemManager.SYSTEM_TEMP_DIR + "/exportComponent-" + System.currentTimeMillis() + ".zip";
@@ -1157,8 +1161,7 @@ public abstract class GeneralComponentResourceExt
 	)
 	{
 		Component component = service.getComponentService().mergePendingChange(componentId);
-		Response response = Response.ok(component).build();
-		return response;
+		return Response.ok(component).build();
 	}
 
 	@GET
@@ -1189,7 +1192,7 @@ public abstract class GeneralComponentResourceExt
 	// <editor-fold defaultstate="collapsed"  desc="Private Utils">
 	protected void checkBaseComponentBelongsToComponent(BaseComponent component, String componentId)
 	{
-		if (component.getComponentId().equals(componentId) == false) {
+		if (!component.getComponentId().equals(componentId)) {
 			throw new OpenStorefrontRuntimeException("Entity does not belong to component", "Check input.");
 		}
 	}
@@ -1209,12 +1212,10 @@ public abstract class GeneralComponentResourceExt
 		if (component != null) {
 			response = ownerCheck(component, permission);
 			if (response == null) {
-				if (!SecurityUtil.hasPermission(permission)) {
-					if (skipApproveCheck == false) {
-						if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
-							response = Response.status(Response.Status.FORBIDDEN).build();
-						}
-					}
+				if (!SecurityUtil.hasPermission(permission)
+						&& !skipApproveCheck
+						&& ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
+					response = Response.status(Response.Status.FORBIDDEN).build();
 				}
 			}
 		} else {
