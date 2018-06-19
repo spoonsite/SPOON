@@ -53,10 +53,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 			handler: function() {
 
 				var button = this;
-				var disabledUp = false;
-				var disabledDown = false;
 				var floatingMenuPanel = button.up('panel');
-				var formBuilderPanel = button.up('panel').formBuilderPanel;
 				
 				var popupMenu = Ext.create('Ext.menu.Menu', {
 					floating: true,

@@ -312,7 +312,7 @@ public abstract class ComponentQuestionReviewExt
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+			if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").equalsIgnoreCase("true")) {
 				question.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 			} else {
 				question.setActiveStatus(ComponentQuestion.PENDING_STATUS);
@@ -324,7 +324,7 @@ public abstract class ComponentQuestionReviewExt
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + question.getComponentId() + "/questions/" + question.getQuestionId())).entity(question).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + question.getComponentId() + "/questions/" + question.getQuestionId())).entity(question).build();
 		} else {
 			return Response.ok(question).build();
 		}
@@ -349,8 +349,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
-		List<ComponentQuestionResponse> responses = service.getPersistenceService().queryByExample(responseExample);
-		return responses;
+		return service.getPersistenceService().queryByExample(responseExample);
 	}
 
 	@GET
@@ -519,7 +518,7 @@ public abstract class ComponentQuestionReviewExt
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").toLowerCase().equals("true")) {
+			if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_USER_REVIEW_AUTO_APPROVE, "true").equalsIgnoreCase("true")) {
 				response.setActiveStatus(ComponentQuestionResponse.ACTIVE_STATUS);
 			} else {
 				response.setActiveStatus(ComponentQuestionResponse.PENDING_STATUS);
@@ -532,7 +531,7 @@ public abstract class ComponentQuestionReviewExt
 		}
 		if (post) {
 
-			return Response.created(URI.create("v1/resource/components/" + response.getComponentId() + "/questions/" + response.getQuestionId() + "/responses/" + response.getResponseId())).entity(response).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + response.getComponentId() + "/questions/" + response.getQuestionId() + "/responses/" + response.getResponseId())).entity(response).build();
 		} else {
 			return Response.ok(response).build();
 		}
@@ -742,7 +741,7 @@ public abstract class ComponentQuestionReviewExt
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + review.getComponentId() + "/review/" + review.getComponentReviewId())).entity(review).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + review.getComponentId() + "/review/" + review.getComponentReviewId())).entity(review).build();
 		} else {
 			return Response.ok(review).build();
 		}
@@ -823,11 +822,11 @@ public abstract class ComponentQuestionReviewExt
 
 		ValidationResult validationResult = service.getComponentService().saveDetailReview(componentReview, pros, cons);
 
-		if (validationResult.valid() == false) {
+		if (!validationResult.valid()) {
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + componentReview.getComponentId() + "/review/" + componentReview.getComponentReviewId())).entity(review).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + componentReview.getComponentId() + "/review/" + componentReview.getComponentReviewId())).entity(review).build();
 		} else {
 			return Response.ok(review).build();
 		}
@@ -932,19 +931,7 @@ public abstract class ComponentQuestionReviewExt
 			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewCon con = new ComponentReviewCon();
-				ComponentReviewConPk pk = new ComponentReviewConPk();
-				pk.setComponentReviewId(reviewId);
-				ReviewCon conCode = service.getLookupService().getLookupEnity(ReviewCon.class, text);
-				if (conCode == null) {
-					conCode = service.getLookupService().getLookupEnityByDesc(ReviewCon.class, text);
-					if (conCode == null) {
-						pk.setReviewCon(null);
-					} else {
-						pk.setReviewCon(conCode.getCode());
-					}
-				} else {
-					pk.setReviewCon(conCode.getCode());
-				}
+				ComponentReviewConPk pk = checkReviewConPk(reviewId, text);
 				con.setComponentReviewConPk(pk);
 				con.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 				con.setComponentId(componentId);
@@ -956,7 +943,7 @@ public abstract class ComponentQuestionReviewExt
 					con.setCreateUser(SecurityUtil.getCurrentUserName());
 					con.setUpdateUser(SecurityUtil.getCurrentUserName());
 					service.getComponentService().saveComponentReviewCon(con);
-					response = Response.created(URI.create("v1/resource/components/" + con.getComponentId()
+					response = Response.created(URI.create(BASE_RESOURCE_PATH + con.getComponentId()
 							+ "/reviews/" + con.getComponentReviewConPk().getComponentReviewId()
 							+ "/cons/" + con.getComponentReviewConPk().getReviewCon())).entity(con).build();
 
@@ -968,6 +955,24 @@ public abstract class ComponentQuestionReviewExt
 		return response;
 	}
 	// </editor-fold>
+
+	private ComponentReviewConPk checkReviewConPk(String reviewId, String text)
+	{
+		ComponentReviewConPk pk = new ComponentReviewConPk();
+		pk.setComponentReviewId(reviewId);
+		ReviewCon conCode = service.getLookupService().getLookupEnity(ReviewCon.class, text);
+		if (conCode == null) {
+			conCode = service.getLookupService().getLookupEnityByDesc(ReviewCon.class, text);
+			if (conCode == null) {
+				pk.setReviewCon(null);
+			} else {
+				pk.setReviewCon(conCode.getCode());
+			}
+		} else {
+			pk.setReviewCon(conCode.getCode());
+		}
+		return pk;
+	}
 
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW PRO section">
 	@GET
@@ -1067,19 +1072,7 @@ public abstract class ComponentQuestionReviewExt
 			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
 			if (response == null) {
 				ComponentReviewPro pro = new ComponentReviewPro();
-				ComponentReviewProPk pk = new ComponentReviewProPk();
-				pk.setComponentReviewId(reviewId);
-				ReviewPro proCode = service.getLookupService().getLookupEnity(ReviewPro.class, text);
-				if (proCode == null) {
-					proCode = service.getLookupService().getLookupEnityByDesc(ReviewPro.class, text);
-					if (proCode == null) {
-						pk.setReviewPro(null);
-					} else {
-						pk.setReviewPro(proCode.getCode());
-					}
-				} else {
-					pk.setReviewPro(proCode.getCode());
-				}
+				ComponentReviewProPk pk = checkReviewProPk(reviewId, text);
 				pro.setComponentReviewProPk(pk);
 				pro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 				pro.setComponentId(componentId);
@@ -1091,7 +1084,7 @@ public abstract class ComponentQuestionReviewExt
 					pro.setCreateUser(SecurityUtil.getCurrentUserName());
 					pro.setUpdateUser(SecurityUtil.getCurrentUserName());
 					service.getComponentService().saveComponentReviewPro(pro);
-					response = Response.created(URI.create("v1/resource/components/" + pro.getComponentId()
+					response = Response.created(URI.create(BASE_RESOURCE_PATH + pro.getComponentId()
 							+ "/reviews/" + pro.getComponentReviewProPk().getComponentReviewId()
 							+ "/pros/" + pro.getComponentReviewProPk().getReviewPro())).entity(pro).build();
 				} else {
@@ -1100,6 +1093,24 @@ public abstract class ComponentQuestionReviewExt
 			}
 		}
 		return response;
+	}
+
+	private ComponentReviewProPk checkReviewProPk(String reviewId, String text)
+	{
+		ComponentReviewProPk pk = new ComponentReviewProPk();
+		pk.setComponentReviewId(reviewId);
+		ReviewPro proCode = service.getLookupService().getLookupEnity(ReviewPro.class, text);
+		if (proCode == null) {
+			proCode = service.getLookupService().getLookupEnityByDesc(ReviewPro.class, text);
+			if (proCode == null) {
+				pk.setReviewPro(null);
+			} else {
+				pk.setReviewPro(proCode.getCode());
+			}
+		} else {
+			pk.setReviewPro(proCode.getCode());
+		}
+		return pk;
 	}
 	// </editor-fold>
 

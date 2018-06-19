@@ -70,7 +70,7 @@ public class SubmissionTemplateStandardParser
 			@Override
 			public SubmissionFormTemplate nextRecord()
 			{
-				if (templates.size() > 0) {
+				if (!templates.isEmpty()) {
 					currentRecordNumber++;
 					return templates.remove(0);
 				} else {
@@ -84,8 +84,7 @@ public class SubmissionTemplateStandardParser
 	@Override
 	protected <T> Object parseRecord(T record)
 	{
-		SubmissionFormTemplate submissionFormTemplate = (SubmissionFormTemplate) record;
-		return submissionFormTemplate;
+		return record;
 	}
 
 }

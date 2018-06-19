@@ -230,7 +230,7 @@ public abstract class ComponentExtendedSubResourceExt
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + dependency.getComponentId() + "/dependency/" + dependency.getDependencyId())).entity(dependency).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + dependency.getComponentId() + "/dependency/" + dependency.getDependencyId())).entity(dependency).build();
 		} else {
 			return Response.ok(dependency).build();
 		}
@@ -395,7 +395,7 @@ public abstract class ComponentExtendedSubResourceExt
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/"
+			return Response.created(URI.create(BASE_RESOURCE_PATH
 					+ section.getComponentId() + "/sections/"
 					+ StringProcessor.urlEncode(section.getComponentEvaluationSectionPk().getEvaluationSection()))).entity(section).build();
 		} else {
@@ -507,7 +507,7 @@ public abstract class ComponentExtendedSubResourceExt
 			ValidationResult validResult = comment.validate();
 			if (validResult.valid()) {
 				ComponentComment newComment = comment.save();
-				return Response.created(URI.create("v1/resource/components/" + comment.getComponentId() + "/comments/" + comment.getCommentId())).entity(newComment).build();
+				return Response.created(URI.create(BASE_RESOURCE_PATH + comment.getComponentId() + "/comments/" + comment.getCommentId())).entity(newComment).build();
 			} else {
 				return Response.ok(validResult.toRestError()).build();
 			}
@@ -701,7 +701,7 @@ public abstract class ComponentExtendedSubResourceExt
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + metadata.getComponentId() + "/metadata/" + metadata.getMetadataId())).entity(metadata).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + metadata.getComponentId() + "/metadata/" + metadata.getMetadataId())).entity(metadata).build();
 		} else {
 			return Response.ok(metadata).build();
 		}

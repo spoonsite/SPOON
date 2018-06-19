@@ -132,6 +132,7 @@ public abstract class GeneralComponentResourceExt
 {
 
 	protected static final Logger LOG = Logger.getLogger(ComponentRESTResource.class.getSimpleName());
+	protected static final String BASE_RESOURCE_PATH = "v1/resource/components/";
 
 	@Context
 	HttpServletRequest request;
@@ -294,8 +295,7 @@ public abstract class GeneralComponentResourceExt
 	{
 		TextSanitizer sanitizer = new TextSanitizer();
 		search = (String) sanitizer.santize(search);
-		Set<LookupModel> lookups = service.getComponentService().getTypeahead(search);
-		return lookups;
+		return service.getComponentService().getTypeahead(search);
 	}
 
 	@GET
@@ -348,7 +348,7 @@ public abstract class GeneralComponentResourceExt
 	{
 		ComponentAdminView componentAdminView = null;
 		ComponentAdminWrapper views = service.getComponentService().getFilteredComponents(ComponentFilterParams.defaultFilter(), componentId);
-		if (views.getComponents().isEmpty() == false) {
+		if (!views.getComponents().isEmpty()) {
 			componentAdminView = views.getComponents().get(0);
 		}
 		return sendSingleEntityResponse(componentAdminView);
@@ -396,73 +396,88 @@ public abstract class GeneralComponentResourceExt
 
 	private Response exportComponents(List<ComponentAll> fullComponents)
 	{
-		if (fullComponents.isEmpty() == false) {
+		if (!fullComponents.isEmpty()) {
 			try {
-				String componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
-				String archiveName = FileSystemManager.SYSTEM_TEMP_DIR + "/exportComponent-" + System.currentTimeMillis() + ".zip";
-				File entry = new TFile(archiveName + "/components.json");
-				try (Writer writer = new TFileWriter(entry)) {
-					writer.write(componentJson);
-				} catch (IOException io) {
-					throw new OpenStorefrontRuntimeException("Unable to export components.", io);
-				}
+				String archiveName = exportComponentData(fullComponents);
 
 				Set<String> fileNameMediaSet = new HashSet<>();
 				Set<String> fileNameResourceSet = new HashSet<>();
 				for (ComponentAll componentAll : fullComponents) {
-					//media
-					for (ComponentMedia componentMedia : componentAll.getMedia()) {
-						java.nio.file.Path mediaPath = componentMedia.pathToMedia();
-						if (mediaPath != null) {
-							if (mediaPath.toFile().exists()) {
-								String name = mediaPath.getFileName().toString();
-								if (fileNameMediaSet.contains(name) == false) {
-									java.nio.file.Path archiveMediaPath = new TPath(archiveName + "/media/" + name);
-									Files.copy(mediaPath, archiveMediaPath);
-									fileNameMediaSet.add(name);
-								}
-							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Media not found (Not included in export) filename: {0}", (componentMedia.getFile() == null ? "" : componentMedia.getFile().getFileName())));
-							}
-						}
-					}
-
-					//localreources
-					for (ComponentResource componentResource : componentAll.getResources()) {
-						java.nio.file.Path resourcePath = componentResource.pathToResource();
-						if (resourcePath != null) {
-							if (resourcePath.toFile().exists()) {
-								String name = resourcePath.getFileName().toString();
-								if (fileNameResourceSet.contains(name) == false) {
-									java.nio.file.Path archiveResourcePath = new TPath(archiveName + "/resources/" + name);
-									Files.copy(resourcePath, archiveResourcePath);
-									fileNameResourceSet.add(name);
-								}
-							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Resource not found (Not included in export) filename: {0}", (componentResource.getFile() == null ? "" : componentResource.getFile().getFileName())));
-							}
-						}
-					}
+					addMediaToExport(componentAll, fileNameMediaSet, archiveName);
+					addResourcesToExport(componentAll, fileNameResourceSet, archiveName);
 				}
 				TVFS.umount();
 
 				Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
 					Files.copy(Paths.get(archiveName), output);
 				});
-				response.header("Content-Type", "application/zip");
-				response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.zip\"");
+				response.header(HEADER_CONTENT_TYPE, "application/zip");
+				response.header(HEADER_CONTENT_DISPOSITION, "attachment; filename=\"ExportedComponents.zip\"");
 				return response.build();
 			} catch (JsonProcessingException | FsSyncException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
+				throw new OpenStorefrontRuntimeException("Unable to export components. Writing issue or Sync Issue", ex);
 			} catch (IOException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to export components.", ex);
+				throw new OpenStorefrontRuntimeException("Unable to export components. File Issue", ex);
 			}
 		} else {
 			Response.ResponseBuilder response = Response.ok("[]");
-			response.header("Content-Type", MediaType.APPLICATION_JSON);
-			response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.json\"");
+			response.header(HEADER_CONTENT_TYPE, MediaType.APPLICATION_JSON);
+			response.header(HEADER_CONTENT_DISPOSITION, "attachment; filename=\"ExportedComponents.json\"");
 			return response.build();
 		}
+	}
+
+	private void addResourcesToExport(ComponentAll componentAll, Set<String> fileNameResourceSet, String archiveName) throws IOException
+	{
+		//localreources
+		for (ComponentResource componentResource : componentAll.getResources()) {
+			java.nio.file.Path resourcePath = componentResource.pathToResource();
+			if (resourcePath != null) {
+				if (resourcePath.toFile().exists()) {
+					String name = resourcePath.getFileName().toString();
+					if (!fileNameResourceSet.contains(name)) {
+						java.nio.file.Path archiveResourcePath = new TPath(archiveName + "/resources/" + name);
+						Files.copy(resourcePath, archiveResourcePath);
+						fileNameResourceSet.add(name);
+					}
+				} else {
+					LOG.log(Level.WARNING, () -> MessageFormat.format("Resource not found (Not included in export) filename: {0}", (componentResource.getFile() == null ? "" : componentResource.getFile().getFileName())));
+				}
+			}
+		}
+	}
+
+	private void addMediaToExport(ComponentAll componentAll, Set<String> fileNameMediaSet, String archiveName) throws IOException
+	{
+		//media
+		for (ComponentMedia componentMedia : componentAll.getMedia()) {
+			java.nio.file.Path mediaPath = componentMedia.pathToMedia();
+			if (mediaPath != null) {
+				if (mediaPath.toFile().exists()) {
+					String name = mediaPath.getFileName().toString();
+					if (!fileNameMediaSet.contains(name)) {
+						java.nio.file.Path archiveMediaPath = new TPath(archiveName + "/media/" + name);
+						Files.copy(mediaPath, archiveMediaPath);
+						fileNameMediaSet.add(name);
+					}
+				} else {
+					LOG.log(Level.WARNING, () -> MessageFormat.format("Media not found (Not included in export) filename: {0}", (componentMedia.getFile() == null ? "" : componentMedia.getFile().getFileName())));
+				}
+			}
+		}
+	}
+
+	private String exportComponentData(List<ComponentAll> fullComponents) throws OpenStorefrontRuntimeException, JsonProcessingException
+	{
+		String componentJson = StringProcessor.defaultObjectMapper().writeValueAsString(fullComponents);
+		String archiveName = FileSystemManager.SYSTEM_TEMP_DIR + "/exportComponent-" + System.currentTimeMillis() + ".zip";
+		File entry = new TFile(archiveName + "/components.json");
+		try (Writer writer = new TFileWriter(entry)) {
+			writer.write(componentJson);
+		} catch (IOException io) {
+			throw new OpenStorefrontRuntimeException("Unable to export components.", io);
+		}
+		return archiveName;
 	}
 
 	@POST
@@ -488,8 +503,8 @@ public abstract class GeneralComponentResourceExt
 		Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
 			Files.copy(exportFile.toPath(), output);
 		});
-		response.header("Content-Type", "application/zip");
-		response.header("Content-Disposition", "attachment; filename=\"ExportedComponents.zip\"");
+		response.header(HEADER_CONTENT_TYPE, "application/zip");
+		response.header(HEADER_CONTENT_DISPOSITION, "attachment; filename=\"ExportedComponents.zip\"");
 		return response.build();
 	}
 
@@ -637,7 +652,7 @@ public abstract class GeneralComponentResourceExt
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			RequiredForComponent savedComponent = service.getComponentService().saveComponent(component);
-			return Response.created(URI.create("v1/resource/components/" + savedComponent.getComponent().getComponentId())).entity(savedComponent).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + savedComponent.getComponent().getComponentId())).entity(savedComponent).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
@@ -689,7 +704,7 @@ public abstract class GeneralComponentResourceExt
 			componentAttributeExample.setComponentId(componentId);
 			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttributeExample);
 			for (ComponentAttribute componentAttribute : componentAttributes) {
-				if (attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue()) == false) {
+				if (!attributeKeySet.contains(componentAttribute.getComponentAttributePk().pkValue())) {
 
 					//don't add required for the type; if missing (Allow the multiple requires to be removed)
 					AttributeType attributeType = service.getAttributeService().findType(componentAttribute.getComponentAttributePk().getAttributeType());
@@ -760,7 +775,7 @@ public abstract class GeneralComponentResourceExt
 		component = component.find();
 		if (component != null) {
 			component = service.getComponentService().copy(componentId);
-			response = Response.created(URI.create("v1/resource/components/" + component.getComponentId())).entity(component).build();
+			response = Response.created(URI.create(BASE_RESOURCE_PATH + component.getComponentId())).entity(component).build();
 		}
 		return response;
 	}
@@ -800,10 +815,10 @@ public abstract class GeneralComponentResourceExt
 			}
 		} else {
 			if (mergeComponent == null) {
-				LOG.log(Level.FINE, MessageFormat.format("Unable to merge Component....merge component not found: {0}", mergeId));
+				LOG.log(Level.FINE, () -> MessageFormat.format("Unable to merge Component....merge component not found: {0}", mergeId));
 			}
 			if (targetComponent == null) {
-				LOG.log(Level.FINE, MessageFormat.format("Unable to merge Component....target component not found: {0}", targetId));
+				LOG.log(Level.FINE, () -> MessageFormat.format("Unable to merge Component....target component not found: {0}", targetId));
 			}
 		}
 		return response;
@@ -976,7 +991,7 @@ public abstract class GeneralComponentResourceExt
 		}
 
 		Component component = service.getComponentService().createPendingChangeComponent(componentId);
-		response = Response.created(URI.create("v1/resource/components/" + component.getComponentId())).entity(component).build();
+		response = Response.created(URI.create(BASE_RESOURCE_PATH + component.getComponentId())).entity(component).build();
 		return response;
 	}
 

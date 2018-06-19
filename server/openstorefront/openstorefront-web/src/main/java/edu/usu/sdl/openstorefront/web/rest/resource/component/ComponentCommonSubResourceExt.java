@@ -314,7 +314,7 @@ public abstract class ComponentCommonSubResourceExt
 		if (!validationResult.valid()) {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		return Response.created(URI.create("v1/resource/components/"
+		return Response.created(URI.create(BASE_RESOURCE_PATH
 				+ attribute.getComponentAttributePk().getComponentId() + "/attributes/"
 				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeType()) + "/"
 				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeCode()))).entity(attribute).build();
@@ -516,7 +516,7 @@ public abstract class ComponentCommonSubResourceExt
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + contact.getComponentId() + "/contacts/" + contact.getContactId())).entity(contact).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + contact.getComponentId() + "/contacts/" + contact.getContactId())).entity(contact).build();
 		} else {
 			return Response.ok(contact).build();
 		}
@@ -724,7 +724,7 @@ public abstract class ComponentCommonSubResourceExt
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + resource.getComponentId() + "/resources/" + resource.getResourceId())).entity(resource).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + resource.getComponentId() + "/resources/" + resource.getResourceId())).entity(resource).build();
 		} else {
 			return Response.ok(resource).build();
 		}
@@ -932,7 +932,7 @@ public abstract class ComponentCommonSubResourceExt
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		if (post) {
-			return Response.created(URI.create("v1/resource/components/" + media.getComponentId() + "/media/" + media.getComponentMediaId())).entity(media).build();
+			return Response.created(URI.create(BASE_RESOURCE_PATH + media.getComponentId() + "/media/" + media.getComponentMediaId())).entity(media).build();
 		} else {
 			return Response.ok(media).build();
 		}
@@ -964,7 +964,7 @@ public abstract class ComponentCommonSubResourceExt
 			for (ComponentTag tag : allTags) {
 				boolean pass = true;
 				for (ComponentTag myTag : componentTags) {
-					if (myTag.getText().toLowerCase().equals(tag.getText().toLowerCase())) {
+					if (myTag.getText().equalsIgnoreCase(tag.getText())) {
 						pass = false;
 						break;
 					}
@@ -1112,7 +1112,7 @@ public abstract class ComponentCommonSubResourceExt
 		Boolean valid = Boolean.TRUE;
 		List<ComponentTag> verified = new ArrayList<>();
 		List<RestErrorModel> unVerified = new ArrayList<>();
-		if (tags.size() > 0) {
+		if (!tags.isEmpty()) {
 			for (ComponentTag tag : tags) {
 				tag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
 				tag.setComponentId(componentId);
@@ -1129,7 +1129,7 @@ public abstract class ComponentCommonSubResourceExt
 				}
 			}
 			if (valid) {
-				if (verified.size() > 0) {
+				if (!verified.isEmpty()) {
 					verified.stream().forEach((tag) -> {
 						service.getComponentService().saveComponentTag(tag);
 					});
@@ -1166,7 +1166,7 @@ public abstract class ComponentCommonSubResourceExt
 
 		List<ComponentTag> currentTags = service.getComponentService().getBaseComponent(ComponentTag.class, componentId);
 		Boolean cont = Boolean.TRUE;
-		if (currentTags != null && currentTags.size() > 0) {
+		if (currentTags != null && !currentTags.isEmpty()) {
 			for (ComponentTag item : currentTags) {
 				if (item.getText().equals(tag.getText())) {
 					cont = Boolean.FALSE;
@@ -1186,7 +1186,7 @@ public abstract class ComponentCommonSubResourceExt
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-		return Response.created(URI.create("v1/resource/components/" + tag.getComponentId() + "/tags/" + tag.getTagId())).entity(tag).build();
+		return Response.created(URI.create(BASE_RESOURCE_PATH + tag.getComponentId() + "/tags/" + tag.getTagId())).entity(tag).build();
 	}
 	// </editor-fold>
 
@@ -1323,7 +1323,7 @@ public abstract class ComponentCommonSubResourceExt
 			relationship = service.getComponentService().saveComponentRelationship(relationship);
 
 			if (post) {
-				return Response.created(URI.create("v1/resource/components/"
+				return Response.created(URI.create(BASE_RESOURCE_PATH
 						+ relationship.getComponentId()
 						+ "/relationships/"
 						+ relationship.getComponentRelationshipId())).entity(relationship).build();

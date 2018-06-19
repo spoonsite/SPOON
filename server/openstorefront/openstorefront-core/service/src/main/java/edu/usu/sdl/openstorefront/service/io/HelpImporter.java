@@ -144,7 +144,7 @@ public class HelpImporter
 					&& capture
 					&& helpSection != null) {
 
-				if (helpSection.getContent().contains(element.outerHtml()) == false) {
+				if (!helpSection.getContent().contains(element.outerHtml())) {
 					helpSection.setContent(helpSection.getContent() + element.outerHtml());
 				}
 			}

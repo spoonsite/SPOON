@@ -84,71 +84,12 @@ public class ComponentSubmissionResource
 
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
 
-			//we then need to pull all the created user
-			componentExample.setOwnerUser(null);
-			componentExample.setCreateUser(SecurityUtil.getCurrentUserName());
-			List<Component> createComponents = service.getPersistenceService().queryByExample(componentExample);
-			for (Component createComponent : createComponents) {
-				if (createComponent.getOwnerUser() == null) {
-					components.add(createComponent);
-				}
-			}
+			pullOldOwnedComponents(componentExample, components);
 
 			List<ComponentView> views = ComponentView.toViewList(components);
 
-			Component pendingChangeExample = new Component();
-			pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
-
-			QueryByExample<Component> queryPendingChanges = new QueryByExample<>(new Component());
-
-			SpecialOperatorModel<Component> specialOperatorModel = new SpecialOperatorModel<>();
-			specialOperatorModel.setExample(pendingChangeExample);
-			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
-			queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
-
-			List<Component> pendingChanges = service.getPersistenceService().queryByExample(queryPendingChanges);
-			Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
-			for (ComponentView componentView : views) {
-				List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
-				if (pendingChangesList != null) {
-					componentView.setNumberOfPendingChanges(pendingChangesList.size());
-					//Only one change is supported at the moment.
-					componentView.setPendingChangeSubmitDts(pendingChangesList.get(0).getSubmittedDts());
-					componentView.setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, pendingChangesList.get(0).getApprovalState()));
-					componentView.setPendingChangeComponentId(pendingChangesList.get(0).getComponentId());
-				}
-			}
-
-			//get usersubmission and normalize
-			List<UserSubmission> userSubmissions = service.getSubmissionFormService().getUserSubmissions(SecurityUtil.getCurrentUserName());
-			userSubmissions.sort((a, b) -> {
-				return a.getCreateDts().compareTo(b.getCreateDts());
-			});
-
-			int submissionCount = 1;
-			for (UserSubmission userSubmission : userSubmissions) {
-				ComponentView componentView = new ComponentView();
-
-				componentView.setUserSubmissionId(userSubmission.getUserSubmissionId());
-				componentView.setSubmissionTemplateId(userSubmission.getTemplateId());
-
-				componentView.setCurrentDataOwner(userSubmission.getOwnerUsername());
-				componentView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
-				componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, ApprovalStatus.NOT_SUBMITTED));
-				componentView.setComponentType(userSubmission.getComponentType());
-				componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(userSubmission.getComponentType()));
-
-				if (userSubmission.getOriginalComponentId() != null) {
-					componentView.setName(service.getComponentService().getComponentName(userSubmission.getOriginalComponentId()) + " (Incomplete Change Request)");
-				} else {
-					componentView.setName("(Incomplete Submission) " + (submissionCount++));
-				}
-
-				componentView.setDescription("(Complete Submission and Submit for Approval)");
-				componentView.setUpdateDts(userSubmission.getUpdateDts());
-				componentView.setUpdateUser(userSubmission.getUpdateUser());
-				views.add(componentView);
-			}
+			processPendingChanges(views);
+			findUserSubmissionForView(views);
 
 			GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(views)
 			{
@@ -156,6 +97,79 @@ public class ComponentSubmissionResource
 			return sendSingleEntityResponse(entity);
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+	}
+
+	private void processPendingChanges(List<ComponentView> views)
+	{
+		Component pendingChangeExample = new Component();
+		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
+
+		QueryByExample<Component> queryPendingChanges = new QueryByExample<>(new Component());
+
+		SpecialOperatorModel<Component> specialOperatorModel = new SpecialOperatorModel<>();
+		specialOperatorModel.setExample(pendingChangeExample);
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NOT_NULL);
+		queryPendingChanges.getExtraWhereCauses().add(specialOperatorModel);
+
+		List<Component> pendingChanges = service.getPersistenceService().queryByExample(queryPendingChanges);
+		Map<String, List<Component>> pendingChangesMap = pendingChanges.stream().collect(Collectors.groupingBy(Component::getPendingChangeId));
+		for (ComponentView componentView : views) {
+			List<Component> pendingChangesList = pendingChangesMap.get(componentView.getComponentId());
+			if (pendingChangesList != null) {
+				componentView.setNumberOfPendingChanges(pendingChangesList.size());
+				//Only one change is supported at the moment.
+				componentView.setPendingChangeSubmitDts(pendingChangesList.get(0).getSubmittedDts());
+				componentView.setStatusOfPendingChange(TranslateUtil.translate(ApprovalStatus.class, pendingChangesList.get(0).getApprovalState()));
+				componentView.setPendingChangeComponentId(pendingChangesList.get(0).getComponentId());
+			}
+		}
+	}
+
+	private void findUserSubmissionForView(List<ComponentView> views)
+	{
+		//get usersubmission and normalize
+		List<UserSubmission> userSubmissions = service.getSubmissionFormService().getUserSubmissions(SecurityUtil.getCurrentUserName());
+		userSubmissions.sort((a, b) -> {
+			return a.getCreateDts().compareTo(b.getCreateDts());
+		});
+
+		int submissionCount = 1;
+		for (UserSubmission userSubmission : userSubmissions) {
+			ComponentView componentView = new ComponentView();
+
+			componentView.setUserSubmissionId(userSubmission.getUserSubmissionId());
+			componentView.setSubmissionTemplateId(userSubmission.getTemplateId());
+
+			componentView.setCurrentDataOwner(userSubmission.getOwnerUsername());
+			componentView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+			componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, ApprovalStatus.NOT_SUBMITTED));
+			componentView.setComponentType(userSubmission.getComponentType());
+			componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(userSubmission.getComponentType()));
+
+			if (userSubmission.getOriginalComponentId() != null) {
+				componentView.setName(service.getComponentService().getComponentName(userSubmission.getOriginalComponentId()) + " (Incomplete Change Request)");
+			} else {
+				componentView.setName("(Incomplete Submission) " + (submissionCount++));
+			}
+
+			componentView.setDescription("(Complete Submission and Submit for Approval)");
+			componentView.setUpdateDts(userSubmission.getUpdateDts());
+			componentView.setUpdateUser(userSubmission.getUpdateUser());
+			views.add(componentView);
+		}
+	}
+
+	private void pullOldOwnedComponents(Component componentExample, List<Component> components)
+	{
+		//we then need to pull all the created user
+		componentExample.setOwnerUser(null);
+		componentExample.setCreateUser(SecurityUtil.getCurrentUserName());
+		List<Component> createComponents = service.getPersistenceService().queryByExample(componentExample);
+		for (Component createComponent : createComponents) {
+			if (createComponent.getOwnerUser() == null) {
+				components.add(createComponent);
+			}
 		}
 	}
 

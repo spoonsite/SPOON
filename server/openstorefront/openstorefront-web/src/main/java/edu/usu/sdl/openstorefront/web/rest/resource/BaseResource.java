@@ -33,6 +33,9 @@ import javax.ws.rs.core.Response;
 public abstract class BaseResource
 {
 
+	protected final String HEADER_CONTENT_TYPE = "Content-Type";
+	protected final String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
+
 	protected final Service service = ServiceProxy.getProxy();
 
 	protected final FilterEngine filterEngine = new FilterEngine();
