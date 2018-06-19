@@ -166,6 +166,14 @@
 				var faqGrid = Ext.create('Ext.grid.Panel', {
 					id: 'faqGrid',
 					title: 'FAQ Management <i class="fa fa-question-circle" data-qtip="Allows for managing Frequently Asked Questions." ></i>',
+					requiredPermissions: ['ADMIN-FAQ-READ'],
+					permissionCheckFailure: function () {
+						Ext.toast({
+							html: 'You do not have permissions to view the data on this page',
+							title: 'Invalid Permissions',
+							align: 'b'
+						});
+					},
 					columnLines: true,
 					store: {
 						autoLoad: true,
