@@ -40,6 +40,10 @@ export default new Router({
       path: '/faq',
       name: 'faq',
       component: FAQPage
+    },
+    {
+      path: '*',
+      redirect: '/' // Page not found
     }
   ]
 
