@@ -33,8 +33,8 @@ import javax.ws.rs.core.Response;
 public abstract class BaseResource
 {
 
-	protected final static String HEADER_CONTENT_TYPE = "Content-Type";
-	protected final static String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
+	protected static final String HEADER_CONTENT_TYPE = "Content-Type";
+	protected static final String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
 
 	protected final Service service = ServiceProxy.getProxy();
 

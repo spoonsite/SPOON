@@ -1211,12 +1211,11 @@ public abstract class GeneralComponentResourceExt
 		component = component.find();
 		if (component != null) {
 			response = ownerCheck(component, permission);
-			if (response == null) {
-				if (!SecurityUtil.hasPermission(permission)
-						&& !skipApproveCheck
-						&& ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
-					response = Response.status(Response.Status.FORBIDDEN).build();
-				}
+			if (response == null
+					&& !SecurityUtil.hasPermission(permission)
+					&& !skipApproveCheck
+					&& ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
+				response = Response.status(Response.Status.FORBIDDEN).build();
 			}
 		} else {
 			response = Response.status(Response.Status.NOT_FOUND).build();
