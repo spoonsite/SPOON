@@ -17,7 +17,54 @@
         </v-toolbar>
         </div>
         <v-alert :value="alert" color="warning" style="margin: 0; height: 30px; text-align: center;">Security Banner</v-alert>
+
       </header>
+
+      <!-- Request Error Dialog -->
+      <v-dialog
+        v-model="errorDialog"
+        >
+        <v-card>
+          <v-card-title>
+            <h2>Error</h2>
+          </v-card-title>
+          <v-card-text>
+            <p>Oops! Something went wrong. Please contact the admin.</p>
+            <v-btn depressed small @click="showErrorDetails = !showErrorDetails">Details</v-btn>
+            <div v-if="showErrorDetails && errors.length > 0">
+              <strong>STATUS CODE:</strong> {{ currentError.status }} {{ currentError.statusText }}
+              <br>
+              <strong>METHOD:</strong>{{ currentError.config.method }}
+              <br>
+              <strong>URL:</strong>{{ currentError.config.url}}
+              <br>
+              <strong>REQUEST DATA:</strong><pre style="overflow-x: scroll;">{{ JSON.parse(currentError.config.data) }}</pre>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="submitErrorReport" color="success">Send Error Report</v-btn>
+            <v-btn @click.stop="errorDialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- Login Expired Dialog -->
+      <v-dialog
+        v-model="loginExpiredDialog"
+        max-width="300px"
+        >
+        <v-card>
+          <v-card-title>
+            <h2>Authentication Error</h2>
+          </v-card-title>
+          <v-card-text>
+            Oops! It looks like you are not logged in.
+          </v-card-text>
+          <v-card-actions>
+            <v-btn block href="openstorefront">Login</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer" touchless temporary>
         <v-list>
@@ -68,8 +115,30 @@ import router from './router/index';
 
 export default {
   name: 'App',
+  mounted () {
+    this.$http.interceptors.response.use(response => {
+      if (typeof response.data === 'string' &&
+          response.data.includes('<!-- ***USER-NOT-LOGIN*** -->') &&
+          !this.loggingOut) {
+        this.loginExpiredDialog = true;
+      }
+      return response;
+    },
+    error => {
+      this.errors.push(error.response);
+      this.currentError = error.response;
+      this.errorDialog = true;
+      return Promise.reject(error);
+    });
+  },
   data () {
     return {
+      errors: [],
+      currentError: {},
+      errorDialog: false,
+      showErrorDetails: false,
+      loginExpiredDialog: false,
+      loggingOut: false,
       drawer: false,
       links: [
         { link: '/', icon: 'home', name: 'Home' },
@@ -86,11 +155,16 @@ export default {
       router.push(url);
     },
     logout () {
+      this.loggingOut = true;
       this.$http.get('/openstorefront/Login.action?Logout')
         .then(response => {
           window.location.href = 'openstorefront';
         })
-        .catch(e => console.log(e));
+        .catch(e => this.errors.push(e));
+    },
+    submitErrorReport () {
+      this.errorDialog = false;
+      router.push({ name: 'Contact' });
     }
   }
 };

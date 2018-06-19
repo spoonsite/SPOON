@@ -1,14 +1,6 @@
 <template>
 <div class="mx-3 mt-4">
 
-  <div v-if="errors.length > 0">
-    <ul>
-      <li v-for="error in errors" :key="error">
-        {{ error }}
-      </li>
-    </ul>
-  </div>
-
   <div class="clearfix centeralign" style="max-width: 36em;">
     <SearchBar v-on:submitSearch="submitSearch()" :hideSuggestions="searchQueryIsDirty" v-model="searchQuery"></SearchBar>
 
@@ -250,7 +242,6 @@
 
 <script>
 import _ from 'lodash';
-import axios from 'axios';
 import SearchBar from './subcomponents/SearchBar';
 import StarRating from 'vue-star-rating';
 import router from '../router/index';
@@ -313,6 +304,9 @@ export default {
     },
     submitSearch () {
       let that = this;
+      // a new search clears the data and can trigger a watcher
+      // sometimes 2 POST requests get sent out together
+      if (that.searchQueryIsDirty) return;
       that.searchQueryIsDirty = true;
       let searchElements = [
         {
@@ -360,7 +354,7 @@ export default {
           }
         );
       }
-      axios
+      this.$http
         .post(
           `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
             that.searchSortField
@@ -381,7 +375,7 @@ export default {
         });
     },
     getComponentTypes () {
-      axios
+      this.$http
         .get(
           '/openstorefront/api/v1/resource/componenttypes'
         )
@@ -391,7 +385,7 @@ export default {
         .catch(e => this.errors.push(e));
     },
     getTags () {
-      axios
+      this.$http
         .get(
           '/openstorefront/api/v1/resource/components/tagviews?approvedOnly=true'
         )
@@ -401,7 +395,7 @@ export default {
         .catch(e => this.errors.push(e));
     },
     getOrganizations () {
-      axios
+      this.$http
         .get(
           '/openstorefront/api/v1/resource/organizations?componentOnly=true'
         )
@@ -411,7 +405,7 @@ export default {
         .catch(e => this.errors.push(e));
     },
     getNestedComponentTypes () {
-      axios
+      this.$http
         .get(
           '/openstorefront/api/v1/resource/componenttypes/nested'
         )
