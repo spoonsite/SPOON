@@ -21,9 +21,11 @@ Ext.define('OSF.form.Tags', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Tags',
 	
+	requiredPermissions: ['ADMIN-ENTRY-TAG-MANAGEMENT'],
+	beforePermissionsCheckFailure: function () { return false; },
+	beforePermissionsCheckSuccess: function () { return false; },
+	preventDefaultAction: true,
 	layout: 'fit',
-		
-	
 	initComponent: function () {			
 		this.callParent();
 		

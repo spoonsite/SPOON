@@ -58,6 +58,7 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 		beforePermissionsCheckFailure: function () { return true; },
 		permissionCheckSuccess: function () {},
 		permissionCheckFailure: function () {},
+		preventDefaultAction: false,
 		hasValidPermissions: true,
 		permissionsActionMap: {
 			// @param method - method that will be executed
@@ -105,7 +106,7 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 				}
 				else {
 					// given the actionOnInvalidPermission, if it has a valid permissionActionMap method... perform it.
-					if (actionMapObj.canCallByDefault) {
+					if (actionMapObj.canCallByDefault && !uiComponent.preventDefaultAction) {
 						uiComponent[actionMapObj.method](actionMapObj.invalidValue);
 					}
 	

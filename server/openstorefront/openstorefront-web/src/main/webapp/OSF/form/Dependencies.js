@@ -19,6 +19,10 @@ Ext.define('OSF.form.Dependencies', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Dependencies',
 
+	requiredPermissions: ['ADMIN-ENTRY-DEPENDENCY-MANAGEMENT'],
+	beforePermissionsCheckFailure: function () { return false; },
+	beforePermissionsCheckSuccess: function () { return false; },
+	preventDefaultAction: true,
 	layout: 'fit',
 	hideSecurityMarking: false,
 	

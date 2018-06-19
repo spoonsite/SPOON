@@ -509,6 +509,14 @@
 										width: '100%',
 										editable: false,
 										typeAhead: false,
+										requiredPermissions: ['ADMIN-ENTRY-CHANGETYPE'],
+										beforePermissionsCheckFailure: function () {
+											if (mainAddEditWin.generalForm.componentRecord) {
+												return true;
+											}
+											this.show();
+											return false;
+										},
 										storeConfig: {
 											url: 'api/v1/resource/componenttypes/lookup'
 										},
@@ -573,6 +581,14 @@
 										width: '100%',
 										editable: false,
 										typeAhead: false,
+										requiredPermissions: ['ADMIN-ENTRY-APPROVE'],
+										preventDefaultAction: true,
+										beforePermissionsCheckFailure: function () {
+											if (mainAddEditWin.generalForm.componentRecord) {
+												return true;
+											}
+											return false;
+										},
 										storeConfig: {
 											url: 'api/v1/resource/lookuptypes/ApprovalStatus'
 										}
@@ -712,6 +728,26 @@
 							{
 								xtype: 'tabpanel',
 								itemId: 'tabpanel',
+								listeners: {
+									add: function (tabPanel, item) {
+
+										// defer to push the check for valid permissions back on the stack
+										Ext.defer(function () {
+											if (!item.hasValidPermissions) {
+												
+												// check to see which tab to hide
+												var tabToHide = tabPanel.getTabBar().getRefItems().reduce(function (acc, tab) {
+													if (tab.title === item.title) {
+														acc = tab;
+													}
+													return acc;
+												}, null);
+												tabToHide.hide();
+											}
+										}, 1);
+										return true;
+									}	
+								},
 								items: [
 									generalForm
 								]
