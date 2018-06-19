@@ -79,7 +79,7 @@ public abstract class BaseResource
 	{
 		//Evaluator should be able to modify change requests on evaluations
 		if (component.getPendingChangeId() != null
-				&& SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
+				&& SecurityUtil.hasPermission(SecurityPermission.USER_EVALUATIONS_UPDATE)) {
 			return null;
 		} else {
 			return Response.status(Response.Status.FORBIDDEN)

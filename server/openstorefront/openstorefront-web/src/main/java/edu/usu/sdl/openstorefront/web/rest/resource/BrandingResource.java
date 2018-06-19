@@ -93,7 +93,7 @@ public class BrandingResource
 
 	@POST
 	@APIDescription("Add a branding")
-	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING_CREATE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addBranding(
@@ -105,7 +105,7 @@ public class BrandingResource
 
 	@PUT
 	@APIDescription("Update a branding")
-	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING_UPDATE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
@@ -143,7 +143,7 @@ public class BrandingResource
 
 	@PUT
 	@APIDescription("Reset to default branding")
-	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING_UPDATE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/current/default")
 	public Response setCurrentBrandingToDefault()
@@ -154,7 +154,7 @@ public class BrandingResource
 
 	@PUT
 	@APIDescription("Set Branding as active")
-	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING_UPDATE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}/active")
 	public Response setCurrentBranding(
@@ -174,7 +174,7 @@ public class BrandingResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_BRANDING)
+	@RequireSecurity(SecurityPermission.ADMIN_BRANDING_DELETE)
 	@APIDescription("Deletes branding and related data")
 	@Path("/{id}")
 	public void deleteTopicSearchItems(

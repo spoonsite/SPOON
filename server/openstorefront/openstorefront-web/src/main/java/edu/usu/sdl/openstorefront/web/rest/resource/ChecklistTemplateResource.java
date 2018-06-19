@@ -52,7 +52,7 @@ public class ChecklistTemplateResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplate.class)
 	@APIDescription("Gets templates")
@@ -68,7 +68,7 @@ public class ChecklistTemplateResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplate.class)
 	@APIDescription("Gets a template")
@@ -84,7 +84,7 @@ public class ChecklistTemplateResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplateDetailView.class)
 	@APIDescription("Gets a detailed template")
@@ -104,7 +104,7 @@ public class ChecklistTemplateResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_CREATE)
 	@APIDescription("Creates a checklist template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -115,7 +115,7 @@ public class ChecklistTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_UPDATE)
 	@APIDescription("Updates a checklist template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -163,7 +163,7 @@ public class ChecklistTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a template")
 	@Path("/{templateId}/activate")
@@ -187,7 +187,7 @@ public class ChecklistTemplateResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_READ)
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Check to see if checklist template is in use; returns true if in use or no content if not.")
 	@Path("/{templateId}/inuse")
@@ -209,7 +209,7 @@ public class ChecklistTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_DELETE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates or hard removes a template only if it's not in use")
 	@Path("/{templateId}")
