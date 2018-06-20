@@ -356,7 +356,8 @@ Ext.define('OSF.form.Contacts', {
 							}
 						},
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbseparator',
+							hidden: contactPanel.hideToggleStatus || false
 						},
 						{
 							text: 'Toggle Status',
