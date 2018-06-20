@@ -61,7 +61,7 @@ public class SecurityRoleResource
 	private static final Logger LOG = Logger.getLogger(SecurityRoleResource.class.getName());
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT_READ)
 	@APIDescription("Gets security roles.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SecurityRole.class)
@@ -99,7 +99,7 @@ public class SecurityRoleResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT_READ)
 	@APIDescription("Gets a security role.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SecurityRole.class)
@@ -116,7 +116,7 @@ public class SecurityRoleResource
 
 	@POST
 	@APIDescription("Create a new security role.")
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT_CREATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserRole.class)
@@ -129,7 +129,7 @@ public class SecurityRoleResource
 
 	@PUT
 	@APIDescription("Update a security role.")
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserRole.class)
@@ -170,7 +170,7 @@ public class SecurityRoleResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT_DELETE)
 	@APIDescription("Deletes a security role. Optional moves the users to a new role.")
 	@Path("/{rolename}")
 	public Response deleteRole(
@@ -189,7 +189,7 @@ public class SecurityRoleResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT_READ)
 	@APIDescription("Get users associated with role. Keep in mind there maybe phantom records based on security realm used.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserRole.class)
@@ -207,7 +207,7 @@ public class SecurityRoleResource
 
 	@POST
 	@APIDescription("Adds a user to a security role.")
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserRole.class)
@@ -238,7 +238,7 @@ public class SecurityRoleResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ROLE_MANAGEMENT_UPDATE)
 	@APIDescription("Removes an user from a security role.")
 	@Path("/{rolename}/users/{username}")
 	public Response removeUserFromRole(

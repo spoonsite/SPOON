@@ -49,7 +49,7 @@ public class PluginResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_PLUGIN)
 	@APIDescription("Gets plugin records with runtime info.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(PluginView.class)
@@ -60,7 +60,7 @@ public class PluginResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_PLUGIN)
 	@APIDescription("Get a plugin record with no runtime info.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Plugin.class)
@@ -76,7 +76,7 @@ public class PluginResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_PLUGIN)
 	@APIDescription("Downloads a plugin")
 	@Produces({MediaType.WILDCARD})
 	@DataType(Plugin.class)
@@ -107,7 +107,7 @@ public class PluginResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_PLUGIN)
 	@APIDescription("Starts a plugin")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/start")
@@ -126,7 +126,7 @@ public class PluginResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_PLUGIN)
 	@APIDescription("Stops a plugin")
 	@Path("/{id}/stop")
 	public Response stopPlugin(
@@ -144,7 +144,7 @@ public class PluginResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_PLUGIN)
 	@APIDescription("Uninstall a plugin")
 	@Path("/{id}")
 	public Response uninstallPlugin(
