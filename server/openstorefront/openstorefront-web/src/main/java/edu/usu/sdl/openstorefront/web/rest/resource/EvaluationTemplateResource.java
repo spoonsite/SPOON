@@ -51,7 +51,7 @@ public class EvaluationTemplateResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(EvaluationTemplate.class)
 	@APIDescription("Gets Evaluation templates")
@@ -75,7 +75,7 @@ public class EvaluationTemplateResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistTemplate.class)
 	@APIDescription("Gets a template")
@@ -91,7 +91,7 @@ public class EvaluationTemplateResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CREATE)
 	@APIDescription("Creates an evaluation template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -109,7 +109,7 @@ public class EvaluationTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_UPDATE)
 	@APIDescription("Updates a evaluation template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -141,7 +141,7 @@ public class EvaluationTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a template")
 	@Path("/{templateId}/activate")
@@ -165,7 +165,7 @@ public class EvaluationTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_DELETE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates or hard removes a template")
 	@Path("/{templateId}")
