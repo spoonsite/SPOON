@@ -922,9 +922,6 @@ public class SubComponentServiceImpl
 		resource.setFile(saveResourceFile(resource.getFile(), fileInput, mimeType, originalFileName));
 		resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 		resource = saveComponentResource(resource);
-		if(StringUtils.isBlank(resource.getResourceId())){
-			resource.setResourceId(persistenceService.generateId());
-		}
 		return resource;
 	}
 
