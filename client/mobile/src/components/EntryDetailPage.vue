@@ -1,25 +1,25 @@
 <template lang="html">
 
   <div class="entry-detail-page">
-    <v-card class="black white--text text-md-center">
+    <v-card class="grey darken-3 white--text text-md-center">
       <v-card-text>
         <h1>{{detail.name}}</h1>
       </v-card-text>
     </v-card>
 
     <Lightbox
-      v-if="detail.componentMedia && detail.componentMedia.length !== 0"
+      v-if="detail.componentMedia && detail.componentMedia.length > 0"
       :lightboxList="lightboxList"
     ></Lightbox>
 
-    <v-expansion-panel popout>
+    <v-expansion-panel popout class="mt-3">
 
       <v-expansion-panel-content>
         <div slot="header">Summary</div>
         <v-card class="grey lighten-5">
           <v-card-text>
             <p>
-              <img :src="baseURL + detail.componentTypeIconUrl" width="30" >
+              <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="30" >
               <router-link
                 :to="{path: '/search', query: { comp: detail.componentType }}"
               >
@@ -71,7 +71,7 @@
         </v-card>
       </v-expansion-panel-content>
 
-      <v-expansion-panel-content>
+      <v-expansion-panel-content v-if="detail.componentMedia && detail.componentMedia.length > 0">
         <div slot="header">Media Download</div>
         <v-card class="grey lighten-5">
           <v-card-text>
@@ -96,15 +96,15 @@
         <v-card class="grey lighten-5">
           <v-card-text>
             <div v-for="item in detail.resources"
-              :key="item.resourceType"
+              :key="item.resourceId"
             >
-              <p>
-                <strong >{{ item.resourceTypeDesc }}</strong>
-                <v-btn flat icon :href="baseURL+item.actualLink"><v-icon>link</v-icon></v-btn>
-              </p>
-              <a :href="item.link" style="overflow-x: scroll; white-space: nowrap;">
-                {{ item.link }}
-              </a>
+              <strong >{{ item.resourceTypeDesc }}</strong>
+              <v-btn flat icon :href="baseURL+item.actualLink"><v-icon>link</v-icon></v-btn>
+              <div style="overflow-x: auto; white-space: nowrap;">
+                <a :href="item.link" style="display: block; margin-bottom: 0.5em;">
+                  {{ item.link }}
+                </a>
+              </div>
             </div>
           </v-card-text>
         </v-card>
@@ -136,6 +136,9 @@
                 <p class="reviewPar"><strong>Comments:</strong></p>
                 <p v-html="review.comment"></p>
               </div>
+            </div>
+            <div v-else>
+              <p>There are no reviews for this entry.</p>
             </div>
           </v-card-text>
         </v-card>
@@ -174,7 +177,7 @@
       <v-expansion-panel-content v-if="detail.contacts !== 0">
         <div slot="header">Contacts</div>
         <v-card class="grey lighten-5">
-          <v-card-text>
+          <v-card-text v-if="detail.contacts.length > 0">
             <h2>Points of Contact</h2>
             <div
               v-for="contact in detail.contacts"
@@ -187,6 +190,9 @@
               <p class="contactPar"><strong>Phone: </strong>{{ contact.phone }}</p>
               <p class="contactPar"><strong>Email: </strong>{{ contact.email }}</p>
             </div>
+          </v-card-text>
+          <v-card-text v-else>
+            <p>There are no contacts for this entry.</p>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>

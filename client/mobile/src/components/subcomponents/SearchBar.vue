@@ -14,7 +14,7 @@
 
     <v-card v-if="searchSuggestions.length > 0">
       <v-list dense>
-        <v-list-tile v-for="i in searchSuggestions" :key="i" @click="submitQuery(i.name);" class="suggestion">
+        <v-list-tile v-for="i in searchSuggestions" :key="i.name" @click="submitQuery(i.name);" class="suggestion">
           <v-list-tile-content>
             {{ i.name }}
           </v-list-tile-content>

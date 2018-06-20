@@ -452,7 +452,6 @@ export default {
       );
     },
     moreInformation (componentId) {
-      console.log(componentId);
       router.push({
         name: 'Entry Detail',
         params: {

@@ -2,7 +2,7 @@
 <div>
     <!-- MEDIA carousel -->
     <div
-      class="mediaWrapper  grey lighten-2"
+      class="mediaWrapper"
       >
       <div class="mediaItem">
         <img
@@ -16,25 +16,37 @@
     </div>
 
     <!-- LIGHTBOX Popup -->
+    <transition name="fade">
     <div v-if="lightbox" class="lightbox">
-      <div class="lightboxImageWrapper">
-        <img :src="lightboxCurrentImage" class="lightboxImage elevation-3">
+      <div class="lightboxImageWrapper"
+        v-touch="{
+          left: () => lightboxNext(),
+          right: () => lightboxPrev()
+        }"
+        >
+        <transition name="swipe" keep-alive mode="out-in">
+          <div :key="lightboxCurrentImage">
+          <img :src="lightboxCurrentImage" class="lightboxImage elevation-3">
+          <p style="color: white;">Image {{ lightboxCurrentIndex + 1 }} of {{ lightboxList.length }}</p>
+          </div>
+        </transition>
       </div>
 
       <div class="lightboxControl">
-        <v-btn v-if="lightboxList.length > 1" flat icon small color="yellow" @click="lightboxPrev()">
+        <v-btn v-if="lightboxList.length > 1" flat icon small dark @click="lightboxPrev()">
           <v-icon dark>navigate_before</v-icon>
         </v-btn>
 
-        <v-btn flat icon small color="yellow" style="margin-left: 2em; margin-right: 2em;" @click="lightbox = false;">
+        <v-btn icon small dark style="margin-left: 2em; margin-right: 2em;" @click="lightbox = false;">
           <v-icon dark>clear</v-icon>
         </v-btn>
 
-        <v-btn v-if="lightboxList.length > 1" flat icon small color="yellow" @click="lightboxNext()">
+        <v-btn v-if="lightboxList.length > 1" flat icon small dark @click="lightboxNext()">
           <v-icon dark>navigate_next</v-icon>
         </v-btn>
       </div>
     </div>
+    </transition>
 </div>
 </template>
 
@@ -63,11 +75,14 @@ export default {
       this.lightboxCurrentImage = this.baseURL + this.lightboxList[this.lightboxCurrentIndex].link;
     },
     lightboxNext () {
-      this.lightboxCurrentIndex = this.lightboxList.length % (this.lightboxCurrentIndex + 1);
+      this.lightboxCurrentIndex = (this.lightboxCurrentIndex + 1) % this.lightboxList.length;
       this.lightboxSetImage();
     },
     lightboxPrev () {
-      this.lightboxCurrentIndex = this.lightboxList.length > 0 ? this.lightboxCurrentIndex - 1 : this.lightboxList.length;
+      this.lightboxCurrentIndex = this.lightboxCurrentIndex - 1;
+      if (this.lightboxCurrentIndex < 0) {
+        this.lightboxCurrentIndex = this.lightboxList.length - 1;
+      }
       this.lightboxSetImage();
     }
   },
@@ -101,6 +116,8 @@ export default {
     background: #fff;
     max-width: 98%;
     max-height: 90%;
+    border: 2px solid white;
+    border-radius: 2px;
   }
   .lightboxImageWrapper {
     margin-top: 1em;
@@ -113,10 +130,8 @@ export default {
     text-align: center;
   }
   .mediaWrapper {
-    overflow-x: scroll;
-    overflow-y: hidden;
+    overflow-x: auto;
     white-space: nowrap;
-    margin-bottom: 1em;
   }
   .mediaItem{
     float: left;
@@ -126,5 +141,21 @@ export default {
     background: #fff;
     margin: 1em;
     max-height: 8em;
+  }
+  /* transition animations */
+  .fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to{
+    opacity: 0;
+  }
+  .swipe-enter-active, .swipe-leave-active {
+    transition: opacity .3s;
+  }
+  .swipe-enter {
+    opacity: 0;
+  }
+  .swipe-leave-to {
+    opacity: 0;
   }
 </style>
