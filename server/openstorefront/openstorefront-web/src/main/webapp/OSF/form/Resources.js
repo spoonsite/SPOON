@@ -289,9 +289,9 @@ Ext.define('OSF.form.Resources', {
 				selectionchange: function(grid, record, index, opts){
 					var fullgrid = resourcePanel.resourcesGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
-						var record = resourcePanel.resourcesGrid.getSelection()[0];
-						if(record.data){
-							if(record.data.originalFileName){
+						var input_record = resourcePanel.resourcesGrid.getSelection()[0];
+						if(input_record.data){
+							if(input_record.data.originalFileName){
 								fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(false);
 							}
 							else{
