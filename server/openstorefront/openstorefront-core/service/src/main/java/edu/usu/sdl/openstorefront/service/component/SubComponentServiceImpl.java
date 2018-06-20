@@ -907,6 +907,9 @@ public class SubComponentServiceImpl
 		media.setMimeType(mimeType);
 		media.setOriginalName(originalFileName);
 		media.setFileType(type);
+		if(StringUtils.isBlank(media.getMediaFileId())){
+			media.setMediaFileId(persistenceService.generateId());
+		}
 
 		Path path = Paths.get(type.getPath() + "/" + media.getFileName());
 		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
@@ -919,6 +922,9 @@ public class SubComponentServiceImpl
 		resource.setFile(saveResourceFile(resource.getFile(), fileInput, mimeType, originalFileName));
 		resource.setUpdateUser(SecurityUtil.getCurrentUserName());
 		resource = saveComponentResource(resource);
+		if(StringUtils.isBlank(resource.getResourceId())){
+			resource.setResourceId(persistenceService.generateId());
+		}
 		return resource;
 	}
 
