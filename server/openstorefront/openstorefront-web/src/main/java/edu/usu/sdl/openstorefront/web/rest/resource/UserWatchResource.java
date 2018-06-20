@@ -51,7 +51,7 @@ public class UserWatchResource
 
 	@GET
 	@APIDescription("Get a list of user watches")
-	@RequireSecurity(SecurityPermission.ADMIN_WATCHES)
+	@RequireSecurity(SecurityPermission.ADMIN_WATCHES_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchWrapper.class)
 	public Response getWatches(@BeanParam FilterQueryParams filterQueryParams)
@@ -98,7 +98,7 @@ public class UserWatchResource
 
 	@PUT
 	@APIDescription("Activates a set of watches")
-	@RequireSecurity(SecurityPermission.ADMIN_WATCHES)
+	@RequireSecurity(SecurityPermission.ADMIN_WATCHES_UPDATE)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/activate")
 	public void activateWatches(
@@ -120,7 +120,7 @@ public class UserWatchResource
 
 	@PUT
 	@APIDescription("Inactivates a set of watches")
-	@RequireSecurity(SecurityPermission.ADMIN_WATCHES)
+	@RequireSecurity(SecurityPermission.ADMIN_WATCHES_UPDATE)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/inactivate")
 	public void inactivateWatches(

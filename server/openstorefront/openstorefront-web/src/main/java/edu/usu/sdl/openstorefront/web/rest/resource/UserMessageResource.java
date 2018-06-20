@@ -55,7 +55,7 @@ public class UserMessageResource
 
 	@GET
 	@APIDescription("Get a list of user messages")
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserMessage.class)
 	public Response userMessages(@BeanParam FilterQueryParams filterQueryParams)
@@ -109,7 +109,7 @@ public class UserMessageResource
 
 	@GET
 	@APIDescription("Gets a user message")
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserMessage.class)
 	@Path("/{id}")
@@ -123,7 +123,7 @@ public class UserMessageResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_DELETE)
 	@APIDescription("Removes a user message")
 	@Path("/{id}")
 	public void deleteUseMessage(
@@ -135,7 +135,7 @@ public class UserMessageResource
 
 	@POST
 	@APIDescription("Processes all active user messages now")
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_UPDATE)
 	@Path("/processnow")
 	public Response processUserMessages()
 	{
@@ -152,7 +152,7 @@ public class UserMessageResource
 
 	@POST
 	@APIDescription("Cleanup old user messages according to archive rules")
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_UPDATE)
 	@Path("/cleanold")
 	public Response cleanOld()
 	{
