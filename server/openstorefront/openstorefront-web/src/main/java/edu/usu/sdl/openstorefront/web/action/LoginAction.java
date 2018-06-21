@@ -143,7 +143,7 @@ public class LoginAction
 			switch (readableUserAgent.getDeviceCategory().getCategory()) {
 				case SMARTPHONE:
 				case TABLET:
-					startPage = "/mobile/index.html"; // this doesn't work
+					startPage = "/mobile/index.html";
 					break;
 				default:
 					startPage = userContext.userLandingPage();
