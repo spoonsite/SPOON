@@ -20,51 +20,62 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.form.Media', {
-	extend: 'Ext.form.Panel',
+	extend: 'OSF.customSubmission.SubmissionBaseForm',
+	xtype: 'osf-submissionform-media',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+	fieldType: 'MEDIA',
+	localResource: true,
+
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},	
+	
 	initComponent: function () {
 		this.callParent();
+		
+		var mediaPanel = this;
 
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add([
-			Ext.create('OSF.component.StandardComboBox', {
-				name: 'mediaTypeCode',
-				colName: 'mediaType',
+		mediaPanel.add([
+			{
+				xtype: 'StandardComboBox',
+				itemId: 'mediaTypeCode',
+				name: 'mediaTypeCode',				
 				allowBlank: false,
 				margin: '0 0 15 0',
 				editable: false,
 				typeAhead: false,
-				width: 450,
 				fieldLabel: 'Media Type: <span class="field-required" />',
 				labelAlign: 'left',
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/MediaType'
 				}
-			}),
+			},
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Caption <span class="field-required" />',
+				labelAlign: 'left',
 				allowBlank: false,
 				maxLength: '255',
-				width: 450,
 				name: 'caption'
 			},
 			{
 				xtype: 'checkbox',
 				boxLabel: '<strong>Hide In Carousel</strong>',
-				width: 450,
 				name: 'hideInDisplay',
 				colName: 'hideInCarousel'
 			},
 			{
 				xtype: 'checkbox',
 				boxLabel: '<strong>Used Inline</strong>',
-				width: 450,
 				name: 'usedInline'
 			},
 			{
 				xtype: 'checkbox',
-				width: 450,
 				boxLabel: '<strong>Icon</strong> <i class="fa fa-question-circle"  data-qtip="Designates a media item to be used as an icon. There should only be one active on a entry at a time."></i>',
 				name: 'iconFlag',
 				colName: 'showIcon'
@@ -72,7 +83,6 @@ Ext.define('OSF.customSubmission.form.Media', {
 			{
 				xtype: 'button',
 				text: 'Local Resource',
-				width: 450,
 				margin: '0 0 15 0',
 				menu: [
 					{
@@ -81,6 +91,8 @@ Ext.define('OSF.customSubmission.form.Media', {
 							var form = this.up('form');
 							var button = this.up('button');
 							button.setText('Local Resource');
+							mediaPanel.localResource = true;
+							
 							form.getForm().findField('file').setHidden(false);
 							form.getForm().findField('originalLink').setHidden(true);
 							
@@ -93,6 +105,8 @@ Ext.define('OSF.customSubmission.form.Media', {
 							var form = this.up('form');
 							var button = this.up('button');
 							button.setText('External Link');
+							mediaPanel.localResource = false;
+							
 							form.getForm().findField('file').setHidden(true);
 							form.getForm().findField('originalLink').setHidden(false);
 							
@@ -106,28 +120,141 @@ Ext.define('OSF.customSubmission.form.Media', {
 				itemId: 'upload',
 				name: 'file',
 				colName: 'filePath',
-				width: 450,
 				resourceLabel: 'Upload Media'
 			},
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Link',
 				hidden: true,
-				width: 450,
 				maxLength: '255',
 				emptyText: 'http://www.example.com/image.png',
 				name: 'originalLink',
 				colName: 'externalLink'
 			},
-			Ext.create('OSF.component.SecurityComboBox', {
-				itemId: 'securityMarkings'
-				// hidden: submissionPanel.hideSecurityMarkings
-			}),
-			Ext.create('OSF.component.DataSensitivityComboBox', {
-				width: 450,
-				labelAlign: 'left',
-				fieldLabel: 'Data Sensitivity:'
-			})
+			{
+				xtype: 'SecurityComboBox'
+			},
+			{
+				xtype: 'DataSensitivityComboBox'
+			}
 		]);
-	}
+		
+		if (mediaPanel.section && mediaPanel.fieldTemplate) {
+			var initialData = mediaPanel.section.submissionForm.getFieldData(mediaPanel.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				mediaPanel.loadRecord(record);			
+			}			
+		}		
+		
+		if (mediaPanel.section) {
+			if (!mediaPanel.section.submissionForm.userSubmission) {
+				mediaPanel.previewMode = true;			
+			} else {
+				mediaPanel.userSubmissionId = mediaPanel.section.submissionForm.userSubmission.userSubmissionId;
+			}
+		} else {
+			mediaPanel.previewMode = true;
+		}
+		
+	},
+	handleUpload: function(actualRecord) {
+		var mediaPanel = this;
+		
+		if (mediaPanel.previewMode && mediaPanel.localResource) {			
+			Ext.Msg.show({
+				title:'Preview Mode',
+				message: 'Unable to upload file in preview mode.',
+				buttons: Ext.Msg.OK,
+				icon: Ext.Msg.ERROR,
+				fn: function(btn) {
+				}
+			});			
+		} else if (mediaPanel.localResource && !mediaPanel.previewMode) {
+			
+			//upload file
+			
+			var form = mediaPanel;
+			var data = form.getValues();
+
+
+			data.fileSelected = form.queryById('upload').getValue();
+			data.link = data.originalLink;
+			data.originalName = data.originalFileName;
+
+			if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
+
+				form.getForm().markInvalid({
+					file: 'Either a link or a file must be entered',
+					originalLink: 'Either a link or a file must be entered'
+				});
+
+			} else {
+				if (data.fileSelected) {
+					//upload
+
+					var progressMsg = Ext.MessageBox.show({
+						title: 'Media Upload',
+						msg: 'Uploading media please wait...',
+						width: 300,
+						height: 150,
+						closable: false,
+						progressText: 'Uploading...',
+						wait: true,
+						waitConfig: {interval: 300}
+					});
+
+					form.submit({
+						url: 'Media.action?UploadSubmissionMedia',
+						params: {
+							'userSubmissionId': mediaPanel.userSubmissionId,
+							'submissionTemplateFieldId': mediaPanel.fieldId
+						},
+						method: 'POST',
+						submitEmptyText: false,
+						success: function (form, action, opt) {
+							progressMsg.hide();
+						},
+						failure: function (form, action, opt) {
+							var data = Ext.decode(action.response.responseText);
+							if (data.success && data.success === false){
+								Ext.Msg.show({
+									title: 'Upload Failed',
+									msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
+									buttons: Ext.Msg.OK
+								});													
+								refreshGrid();	
+							} else {
+								//false positive the return object doesn't have success																
+								Ext.toast('Uploaded Successfully', '', 'tr');													
+								actualRecord.file = {
+									mediaFileId: data.file.mediaFileId
+								};
+							}
+							progressMsg.hide();
+						}
+					});
+				}
+			}
+		}
+	},
+	getSubmissionValue: function() {		
+		var mediaPanel = this;
+		
+		//Add handling of the local resources
+		
+		var data = mediaPanel.getValues();
+		
+		var userSubmissionField = {			
+			templateFieldId: mediaPanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;	
+	}	
+	
 });

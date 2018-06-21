@@ -20,17 +20,29 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.form.Tags', {
-	extend: 'Ext.form.Panel',
+	extend: 'OSF.customSubmission.SubmissionBaseForm',
+	xtype: 'osf-submissionform-tags',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+	fieldType: 'TAG',
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},	
+		
 	initComponent: function () {
-		this.callParent();
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add(Ext.create('OSF.component.StandardComboBox', {
+		this.callParent();		
+		var tagPanel = this;
+
+		tagPanel.add(
+		{
+			xtype: 'StandardComboBox',	
 			name: 'text',
-			colName: 'name',
 			allowBlank: false,
 			margin: '0 0 0 0',
-			width: 400,
 			fieldLabel: 'Tag<span class="field-required" />',
 			forceSelection: false,
 			valueField: 'text',
@@ -39,7 +51,31 @@ Ext.define('OSF.customSubmission.form.Tags', {
 			storeConfig: {
 				url: 'api/v1/resource/components/tags'
 			}
-		}));
+		});
+		
+		if (tagPanel.section) {
+			var initialData = tagPanel.section.submissionForm.getFieldData(tagPanel.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				tagPanel.loadRecord(record);			
+			}			
+		}
 
+	},
+	getSubmissionValue: function() {
+		var tagPanel = this;
+		
+		var data = tagPanel.getValues();
+		
+		var userSubmissionField = {			
+			templateFieldId: tagPanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;		
 	}
 });

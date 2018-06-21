@@ -43,6 +43,7 @@ public class FileFormat
 	public static final String ATTRIBUTE_MAPPED_JSON = "ATTR_MAP_JSON";
 	public static final String ATTRIBUTE_MAPPED_XML = "ATTR_MAP_XML";
 
+	public static final String SUBMISSION_TEMPLATE_STANDARD = "SUBMTEMP_STANDARD";
 	public static final String CHECKLIST_QUESTIONS_STANDARD = "CHKQ_STANDARD";
 
 	private String fileType;
@@ -163,6 +164,13 @@ public class FileFormat
 		fileFormat.setFileType(FileType.CHECKLISTQUESTIONS);
 		fileFormat.setFileRequirements("JSON file of checklist questions");
 		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ChecklistQuestionStandardParser");
+		fileFormat.setSupportsDataMap(false);
+		addFormat(codeMap, fileFormat);
+
+		fileFormat = newLookup(FileFormat.class, SUBMISSION_TEMPLATE_STANDARD, "Submission Template Standard");
+		fileFormat.setFileType(FileType.SUBMISSION_TEMPLATE);
+		fileFormat.setFileRequirements("JSON file of a Submission Template");
+		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.SubmissionTemplateStandardParser");
 		fileFormat.setSupportsDataMap(false);
 		addFormat(codeMap, fileFormat);
 

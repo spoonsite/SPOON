@@ -288,61 +288,15 @@ public class CoreComponentServiceImpl
 
 		result.setApprovalState(tempComponent.getApprovalState());
 
-		//Pull relationships direct relationships
-		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
-		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
-		componentRelationshipExample.setComponentId(componentId);
-		List<ComponentRelationship> directRelationships = componentRelationshipExample.findByExample();
-		directRelationships = filterEngine.filter(directRelationships, true);
+		pullRelationshipDetails(componentId, result);
 
-		result.getRelationships().addAll(ComponentRelationshipView.toViewList(directRelationships));
-		result.setRelationships(result.getRelationships().stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList()));
-
-		//Pull indirect
-		componentRelationshipExample = new ComponentRelationship();
-		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
-		componentRelationshipExample.setRelatedComponentId(componentId);
-
-		List<ComponentRelationship> inDirectRelationships = componentRelationshipExample.findByExample();
-		inDirectRelationships = filterEngine.filter(inDirectRelationships, true);
-
-		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(inDirectRelationships);
-		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
-		result.getRelationships().addAll(relationshipViews);
-
-		UserWatch tempWatch = new UserWatch();
-		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
-		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
-		tempWatch.setComponentId(componentId);
-		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample<>(tempWatch));
-		if (tempUserWatch != null) {
-			result.setLastViewedDts(tempUserWatch.getLastViewDts());
-		}
-		List<ComponentAttribute> attributes = componentService.getAttributesByComponentId(componentId);
-
-		if (!showPrivateInformation) {
-			boolean removedAttributes = attributes.removeIf((attribute) -> {
-				return Convert.toBoolean(attribute.getPrivateFlag());
-			});
-
-			if (removedAttributes) {
-				LOG.log(Level.FINEST, "Private Attributes were removed");
-			}
-		}
-
-		result.setAttributes(ComponentAttributeView.toViewList(attributes));
-		result.getAttributes().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentAttributeView.TYPE_DESCRIPTION_FIELD));
+		getLastViewForUser(componentId, result);
+		pullAttributeDetails(componentId, showPrivateInformation, result);
 
 		result.setComponentId(componentId);
 		result.setTags(componentService.getBaseComponent(ComponentTag.class, componentId));
 
-		List<ComponentResource> componentResources = componentService.getBaseComponent(ComponentResource.class, componentId);
-
-		componentResources = SortUtil.sortComponentResource(componentResources);
-		componentResources.forEach(resource
-				-> {
-			result.getResources().add(ComponentResourceView.toView(resource));
-		});
+		pullResourceDetails(componentId, showPrivateInformation, result);
 
 		List<ComponentMetadata> componentMetadata = componentService.getBaseComponent(ComponentMetadata.class, componentId);
 		componentMetadata.forEach(metadata
@@ -368,48 +322,34 @@ public class CoreComponentServiceImpl
 			result.getContacts().add(ComponentContactView.toView(contact));
 		});
 
+		getViewsForComponent(componentId, result);
+
+		String currentUser = pullUserReviewDetails(componentId, result);
+		pullUserQuestionDetails(componentId, currentUser, result);
+
+		List<ComponentEvaluationSection> evaluationSections = componentService.getBaseComponent(ComponentEvaluationSection.class, componentId);
+		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSections));
+
+		List<EvaluationAll> publicEvaluations = componentService.getEvaluationService().getPublishEvaluations(componentId);
+		result.setFullEvaluations(publicEvaluations);
+
+		result.setToday(new Date());
+
+		result.setComponentDetails(tempComponent);
+		return result;
+	}
+
+	private void getViewsForComponent(String componentId, ComponentDetailView result)
+	{
 		ComponentTracking componentTrackingExample = new ComponentTracking();
 		componentTrackingExample.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 		componentTrackingExample.setTrackEventTypeCode(TrackEventCode.VIEW);
 		componentTrackingExample.setComponentId(componentId);
 		result.setComponentViews(persistenceService.countByExample(componentTrackingExample));
+	}
 
-		List<ComponentReview> tempReviews = new ArrayList<>();
-		List<ComponentReview> tempApprovedReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
-		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
-		String currentUser = SecurityUtil.getCurrentUserName();
-		for (ComponentReview review : tempPendingReviews) {
-			if (review.getCreateUser().equals(currentUser)) {
-				tempReviews.add(review);
-			}
-		}
-		tempReviews.addAll(tempApprovedReviews);
-		List<ComponentReviewView> reviews = new ArrayList<>();
-		tempReviews = filterEngine.filter(tempReviews);
-
-		tempReviews.forEach(review
-				-> {
-			ComponentReviewPro tempPro = new ComponentReviewPro();
-			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
-			ComponentReviewCon tempCon = new ComponentReviewCon();
-			ComponentReviewConPk tempConPk = new ComponentReviewConPk();
-
-			tempProPk.setComponentReviewId(review.getComponentReviewId());
-			tempConPk.setComponentReviewId(review.getComponentReviewId());
-
-			tempPro.setComponentReviewProPk(tempProPk);
-			tempCon.setComponentReviewConPk(tempConPk);
-
-			ComponentReviewView tempView = ComponentReviewView.toView(review);
-
-			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample<>(tempPro))));
-			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample<>(tempCon))));
-
-			reviews.add(tempView);
-		});
-		reviews.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentReviewView.UPDATE_DATE_FIELD));
-		result.setReviews(reviews);
-
+	private void pullUserQuestionDetails(String componentId, String currentUser, ComponentDetailView result)
+	{
 		// Here we grab the responses to each question
 		List<ComponentQuestionView> questionViews = new ArrayList<>();
 		List<ComponentQuestion> questions = componentService.getBaseComponent(ComponentQuestion.class, componentId);
@@ -442,17 +382,117 @@ public class CoreComponentServiceImpl
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
 		});
 		result.setQuestions(questionViews);
+	}
 
-		List<ComponentEvaluationSection> evaluationSections = componentService.getBaseComponent(ComponentEvaluationSection.class, componentId);
-		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSections));
+	private String pullUserReviewDetails(String componentId, ComponentDetailView result)
+	{
+		List<ComponentReview> tempReviews = new ArrayList<>();
+		List<ComponentReview> tempApprovedReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
+		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
+		String currentUser = SecurityUtil.getCurrentUserName();
+		for (ComponentReview review : tempPendingReviews) {
+			if (review.getCreateUser().equals(currentUser)) {
+				tempReviews.add(review);
+			}
+		}
+		tempReviews.addAll(tempApprovedReviews);
+		List<ComponentReviewView> reviews = new ArrayList<>();
+		tempReviews = filterEngine.filter(tempReviews);
+		tempReviews.forEach(review
+				-> {
+			ComponentReviewPro tempPro = new ComponentReviewPro();
+			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
+			ComponentReviewCon tempCon = new ComponentReviewCon();
+			ComponentReviewConPk tempConPk = new ComponentReviewConPk();
 
-		List<EvaluationAll> publicEvaluations = componentService.getEvaluationService().getPublishEvaluations(componentId);
-		result.setFullEvaluations(publicEvaluations);
+			tempProPk.setComponentReviewId(review.getComponentReviewId());
+			tempConPk.setComponentReviewId(review.getComponentReviewId());
 
-		result.setToday(new Date());
+			tempPro.setComponentReviewProPk(tempProPk);
+			tempCon.setComponentReviewConPk(tempConPk);
 
-		result.setComponentDetails(tempComponent);
-		return result;
+			ComponentReviewView tempView = ComponentReviewView.toView(review);
+
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample<>(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample<>(tempCon))));
+
+			reviews.add(tempView);
+		});
+		reviews.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentReviewView.UPDATE_DATE_FIELD));
+		result.setReviews(reviews);
+		return currentUser;
+	}
+
+	private void pullAttributeDetails(String componentId, boolean showPrivateInformation, ComponentDetailView result)
+	{
+		List<ComponentAttribute> attributes = componentService.getAttributesByComponentId(componentId);
+
+		if (!showPrivateInformation) {
+			boolean removedAttributes = attributes.removeIf((attribute) -> {
+				return Convert.toBoolean(attribute.getPrivateFlag());
+			});
+
+			if (removedAttributes) {
+				LOG.log(Level.FINEST, "Private Attributes were removed");
+			}
+		}
+
+		result.setAttributes(ComponentAttributeView.toViewList(attributes));
+		result.getAttributes().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentAttributeView.TYPE_DESCRIPTION_FIELD));
+	}
+
+	private void getLastViewForUser(String componentId, ComponentDetailView result)
+	{
+		UserWatch tempWatch = new UserWatch();
+		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
+		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
+		tempWatch.setComponentId(componentId);
+		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample<>(tempWatch));
+		if (tempUserWatch != null) {
+			result.setLastViewedDts(tempUserWatch.getLastViewDts());
+		}
+	}
+
+	private void pullResourceDetails(String componentId, boolean showPrivateInformation, ComponentDetailView result)
+	{
+		List<ComponentResource> componentResources = componentService.getBaseComponent(ComponentResource.class, componentId);
+
+		componentResources = SortUtil.sortComponentResource(componentResources);
+		componentResources.forEach(resource -> {
+			boolean add = true;
+			if (!showPrivateInformation && Convert.toBoolean(resource.getPrivateFlag())) {
+				LOG.log(Level.FINEST, "Private Resource was removed");
+				add = false;
+			}
+			if (add) {
+				result.getResources().add(ComponentResourceView.toView(resource));
+			}
+		});
+	}
+
+	private void pullRelationshipDetails(String componentId, ComponentDetailView result)
+	{
+		//Pull relationships direct relationships
+		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
+		componentRelationshipExample.setComponentId(componentId);
+		List<ComponentRelationship> directRelationships = componentRelationshipExample.findByExample();
+		directRelationships = filterEngine.filter(directRelationships, true);
+
+		result.getRelationships().addAll(ComponentRelationshipView.toViewList(directRelationships));
+		result.setRelationships(result.getRelationships().stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList()));
+
+		//Pull indirect
+		componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
+		componentRelationshipExample.setRelatedComponentId(componentId);
+
+		List<ComponentRelationship> inDirectRelationships = componentRelationshipExample.findByExample();
+		inDirectRelationships = filterEngine.filter(inDirectRelationships, true);
+
+		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(inDirectRelationships);
+		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
+		result.getRelationships().addAll(relationshipViews);
 	}
 
 	public void saveComponentTracking(ComponentTracking tracking)
@@ -1957,6 +1997,7 @@ public class CoreComponentServiceImpl
 				FileHistoryOption fileHistoryOption = new FileHistoryOption();
 				fileHistoryOption.setSkipDuplicationCheck(true);
 				fileHistoryOption.setSkipRequiredAttributes(true);
+				fileHistoryOption.setUploadTags(true);
 
 				componentAll = saveFullComponent(componentAll, fileHistoryOption);
 
@@ -2348,11 +2389,9 @@ public class CoreComponentServiceImpl
 					userWatch.populateBaseUpdateFields();
 					persistenceService.persist(userWatch);
 				}
-
-				persistenceService.commit();
+				
 				//remove mergeComponent
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
-
 				cleanupCache(toMergeComponentId);
 				cleanupCache(targetComponentId);
 

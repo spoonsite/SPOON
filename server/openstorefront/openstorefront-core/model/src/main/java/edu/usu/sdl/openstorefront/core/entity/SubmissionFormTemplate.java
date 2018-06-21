@@ -28,6 +28,7 @@ import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -63,6 +64,8 @@ public class SubmissionFormTemplate
 	@FK(SubmissionTemplateStatus.class)
 	private String templateStatus;
 
+	private Boolean defaultTemplate;
+
 	@ConsumeField
 	@DataType(SubmissionFormSection.class)
 	@Embedded
@@ -85,7 +88,25 @@ public class SubmissionFormTemplate
 		this.setDescription(template.getDescription());
 		this.setTemplateStatus(template.getTemplateStatus());
 		this.setSections(template.getSections());
+		this.setDefaultTemplate(template.getDefaultTemplate());
 
+		updateSectionLinks();
+
+	}
+
+	public void updateSectionLinks()
+	{
+		if (getSections() != null) {
+			for (SubmissionFormSection section : getSections()) {
+				section.setTemplateId(getSubmissionTemplateId());
+				if (StringUtils.isBlank(section.getCreateUser())) {
+					section.populateBaseCreateFields();
+				} else {
+					section.populateBaseUpdateFields();
+				}
+				section.updateFieldLinks();
+			}
+		}
 	}
 
 	public String getSubmissionTemplateId()
@@ -136,6 +157,16 @@ public class SubmissionFormTemplate
 	public void setSections(List<SubmissionFormSection> sections)
 	{
 		this.sections = sections;
+	}
+
+	public Boolean getDefaultTemplate()
+	{
+		return defaultTemplate;
+	}
+
+	public void setDefaultTemplate(Boolean defaultTemplate)
+	{
+		this.defaultTemplate = defaultTemplate;
 	}
 
 }

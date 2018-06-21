@@ -54,7 +54,7 @@ public class HelpImporter
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(HelpImporter.class.getName());
+	private static final Logger LOG = Logger.getLogger(HelpImporter.class.getName());
 
 	private static final long PROCESSING_TIMEOUT = 100000L;
 	private static final String IMAGE_URL_REPLACE = "../webapp/";
@@ -62,16 +62,14 @@ public class HelpImporter
 	@Override
 	public void initialize()
 	{
-		try
-		{
+		try {
 
 			ServiceProxy serviceProxy = new ServiceProxy();
 
 			//Check for file changes
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			try (InputStream is = HelpImporter.class.getResourceAsStream("/userhelp.md"); DigestInputStream dis = new DigestInputStream(is, md);)
-			{
+			try (InputStream is = HelpImporter.class.getResourceAsStream("/userhelp.md"); DigestInputStream dis = new DigestInputStream(is, md);) {
 				FileSystemManager.getInstance().copy(dis, bout);
 			}
 			byte[] digest = md.digest();
@@ -79,27 +77,22 @@ public class HelpImporter
 
 			boolean process = true;
 			String newCheckSum = new String(digest);
-			if (StringUtils.isNotBlank(checkSum))
-			{
-				if (checkSum.equals(newCheckSum))
-				{
+			if (StringUtils.isNotBlank(checkSum)) {
+				if (checkSum.equals(newCheckSum)) {
 					process = false;
 				}
 			}
 
-			if (process)
-			{
-				log.log(Level.INFO, "Loading Help");
+			if (process) {
+				LOG.log(Level.INFO, "Loading Help");
 				List<HelpSection> helpSections = processHelp(new ByteArrayInputStream(bout.toByteArray()));
 				serviceProxy.getSystemService().loadNewHelpSections(helpSections);
 
 				serviceProxy.getSystemService().saveProperty(ApplicationProperty.HELP_SYNC, newCheckSum);
-				log.log(Level.INFO, "Done Loading Help");
+				LOG.log(Level.INFO, "Done Loading Help");
 			}
 
-		}
-		catch (NoSuchAlgorithmException | IOException ex)
-		{
+		} catch (NoSuchAlgorithmException | IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to load help.", "Check system and resource userhelp.md", ex);
 		}
 	}
@@ -127,12 +120,9 @@ public class HelpImporter
 		List<HelpSection> helpSections = new ArrayList<>();
 
 		String data = "";
-		try (BufferedReader bin = new BufferedReader(new InputStreamReader(in)))
-		{
+		try (BufferedReader bin = new BufferedReader(new InputStreamReader(in))) {
 			data = bin.lines().collect(Collectors.joining("\n"));
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 
 		}
 
@@ -151,25 +141,19 @@ public class HelpImporter
 
 		boolean capture = false;
 		HelpSection helpSection = null;
-		for (Element element : elements)
-		{
-			if (headerTags.contains(element.tagName().toLowerCase()) == false && capture)
-			{
-				if (helpSection != null)
-				{
-					if (helpSection.getContent().contains(element.outerHtml()) == false)
-					{
+		for (Element element : elements) {
+			if (headerTags.contains(element.tagName().toLowerCase()) == false && capture) {
+				if (helpSection != null) {
+					if (helpSection.getContent().contains(element.outerHtml()) == false) {
 						helpSection.setContent(helpSection.getContent() + element.outerHtml());
 					}
 				}
 			}
 
-			if (headerTags.contains(element.tagName().toLowerCase()))
-			{
+			if (headerTags.contains(element.tagName().toLowerCase())) {
 				String title = element.html();
 
-				if (helpSection != null)
-				{
+				if (helpSection != null) {
 					//save old section
 					addHelpSection(helpSections, helpSection);
 				}
@@ -182,8 +166,7 @@ public class HelpImporter
 				helpSection.setSectionNumber(titleSplit[0]);
 				helpSection.setContent("");
 
-				if (title.contains("@"))
-				{
+				if (title.contains("@")) {
 					String permissionRaw[] = title.split("@");
 					helpSection.setPermission(permissionRaw[1]);
 					helpSection.setTitle(permissionRaw[0].trim());
@@ -194,8 +177,7 @@ public class HelpImporter
 			}
 		}
 		//Add last section
-		if (helpSection != null)
-		{
+		if (helpSection != null) {
 			addHelpSection(helpSections, helpSection);
 		}
 

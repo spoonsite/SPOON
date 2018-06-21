@@ -20,42 +20,54 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.form.Resources', {
-	extend: 'Ext.form.Panel',
+	extend: 'OSF.customSubmission.SubmissionBaseForm',
+	xtype: 'osf-submissionform-resource',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+	fieldType: 'RESOURCE',
+	localResource: false,
+	
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},
+	
 	initComponent: function () {
 		this.callParent();
+		
+		var resourcePanel = this;
 
-		// Because ExtJS does not like to create fields in the 'items' array...
-		//	we have to add them on init...
-		this.add([
-			Ext.create('OSF.component.StandardComboBox', {
+		resourcePanel.add([
+			{
+				xtype: 'StandardComboBox',
+				itemId: 'resourceType',
 				name: 'resourceType',
 				allowBlank: false,
 				margin: '0 0 15 0',
 				editable: false,
 				typeAhead: false,
-				width: 450,
 				fieldLabel: 'Resource Type: <span class="field-required" />',
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/ResourceType'
 				}
-			}),
+			},
 			{
 				xtype: 'textfield',
 				labelAlign: 'top',
 				fieldLabel: 'Description',
-				maxLength: '255',
-				width: 450,
+				maxLength: '255',				
 				name: 'description'
 			},
 			{
 				xtype: 'checkbox',
 				name: 'restricted',
-				width: 450,
 				boxLabel: '<strong>Restricted</strong>'
 			},
 			{
 				xtype: 'button',
-				width: 450,
 				margin: '0 0 15 0',
 				text: 'External Link',
 				menu: [
@@ -65,6 +77,8 @@ Ext.define('OSF.customSubmission.form.Resources', {
 							var form = this.up('form');
 							var button = this.up('button');
 							button.setText('External Link');
+							resourcePanel.localResource = false;
+							
 							form.getForm().findField('file').setHidden(true);
 							form.getForm().findField('originalLink').setHidden(false);
 						}
@@ -75,6 +89,8 @@ Ext.define('OSF.customSubmission.form.Resources', {
 							var form = this.up('form');
 							var button = this.up('button');
 							button.setText('Local Resource');
+							resourcePanel.localResource = true;
+							
 							form.getForm().findField('file').setHidden(false);
 							form.getForm().findField('originalLink').setHidden(true);
 						}
@@ -86,7 +102,6 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				fieldLabel: 'Link',
 				maxLength: '255',
 				emptyText: 'http://www.example.com/resource',
-				width: 450,
 				labelAlign: 'top',
 				name: 'originalLink',
 				colName: 'externalLink'
@@ -95,19 +110,132 @@ Ext.define('OSF.customSubmission.form.Resources', {
 				xtype: 'fileFieldMaxLabel',
 				itemId: 'upload',
 				name: 'file',
-				colName: 'filePath',
-				width: 450,
+				colName: 'filePath',	
 				labelAlign: 'top',
 				hidden: true
 			},
-			Ext.create('OSF.component.SecurityComboBox', {
-				itemId: 'securityMarkings'
-				// hidden: submissionPanel.hideSecurityMarkings
-			}),
-			Ext.create('OSF.component.DataSensitivityComboBox', {
-				width: 450,
-				fieldLabel: 'Data Sensitivity:'
-			})
+			{
+				xtype: 'SecurityComboBox'			
+			},
+			{
+				xtype: 'DataSensitivityComboBox'
+			}
 		]);
+		
+		if (resourcePanel.section && resourcePanel.fieldTemplate) {
+			var initialData = resourcePanel.section.submissionForm.getFieldData(resourcePanel.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				resourcePanel.loadRecord(record);			
+			}			
+		}		
+		
+		if (resourcePanel.section) {
+			if (!resourcePanel.section.submissionForm.userSubmission) {
+				resourcePanel.previewMode = true;			
+			} else {
+				resourcePanel.userSubmissionId = resourcePanel.section.submissionForm.userSubmission.userSubmissionId;
+			}
+		} else {
+			resourcePanel.previewMode = true;
+		}		
+		
+	},
+	handleUpload: function(actualRecord) {
+		var resourcePanel = this;
+		
+		if (resourcePanel.previewMode && resourcePanel.localResource) {			
+			Ext.Msg.show({
+				title:'Preview Mode',
+				message: 'Unable to upload file in preview mode.',
+				buttons: Ext.Msg.OK,
+				icon: Ext.Msg.ERROR,
+				fn: function(btn) {
+				}
+			});			
+		} else if (resourcePanel.localResource && !resourcePanel.previewMode) {
+			
+			//upload file			
+			var form = resourcePanel;
+			var data = form.getValues();
+
+			data.fileSelected = form.queryById('upload').getValue();
+			data.link = data.originalLink;
+			data.originalName = data.originalFileName;
+
+			if (!data.originalFileName && ((!data.link && !data.fileSelected) || (data.link && data.fileSelected))) {
+
+				form.getForm().markInvalid({
+					file: 'Either a link or a file must be entered',
+					originalLink: 'Either a link or a file must be entered'
+				});
+
+			} else {
+				if (data.fileSelected) {
+					//upload
+
+					var progressMsg = Ext.MessageBox.show({
+						title: 'Resource Upload',
+						msg: 'Uploading resource please wait...',
+						width: 300,
+						height: 150,
+						closable: false,
+						progressText: 'Uploading...',
+						wait: true,
+						waitConfig: {interval: 300}
+					});
+
+					form.submit({
+						url: 'Media.action?UploadSubmissionMedia',
+						params: {
+							'userSubmissionId': resourcePanel.userSubmissionId,
+							'submissionTemplateFieldId': resourcePanel.fieldId
+						},
+						method: 'POST',
+						submitEmptyText: false,
+						success: function (form, action, opt) {
+							progressMsg.hide();
+						},
+						failure: function (form, action, opt) {
+							var data = Ext.decode(action.response.responseText);
+							if (data.success && data.success === false){
+								Ext.Msg.show({
+									title: 'Upload Failed',
+									msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
+									buttons: Ext.Msg.OK
+								});													
+								refreshGrid();	
+							} else {
+								//false positive the return object doesn't have success																
+								Ext.toast('Uploaded Successfully', '', 'tr');													
+								actualRecord.file = {
+									mediaFileId: data.file.mediaFileId
+								};
+							}
+							progressMsg.hide();
+						}
+					});
+				}
+			}	
+		}
+	},	
+	getSubmissionValue: function() {
+		var resourcePanel = this;
+		
+		//Add handling of the local resources
+		
+		var data = resourcePanel.getValues();
+		
+		var userSubmissionField = {			
+			templateFieldId: resourcePanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;		
 	}
+
 });

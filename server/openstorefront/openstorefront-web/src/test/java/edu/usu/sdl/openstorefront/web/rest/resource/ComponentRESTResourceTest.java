@@ -266,6 +266,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 		savedAttribute.getComponentAttributePk().setComponentId(componentId);
 		persistenceService.addObjectWithId(ComponentAttribute.class, savedAttribute.getComponentAttributePk(), savedAttribute);
 		persistenceService.addObjectWithId(ComponentAttribute.class, savedAttribute.getComponentAttributePk(), savedAttribute); // Object is loaded twice
+		persistenceService.addObjectWithId(ComponentAttribute.class, savedAttribute.getComponentAttributePk(), savedAttribute); // Object is loaded twice
 
 		ComponentAttribute expectedAttribute = new ComponentAttribute();
 		expectedAttribute.setComponentId(componentId);

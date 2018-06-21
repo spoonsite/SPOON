@@ -15,10 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,7 +36,14 @@ public class SubmissionFormTemplateView
 	private String description;
 	private String templateStatus;
 	private String templateStatusLabel;
+	private Boolean defaultTemplate;
+	private String activeStatus;
+	private String createUser;
+	private Date createDts;
+	private String updateUser;
+	private Date updateDts;
 
+	@DataType(SubmissionFormSectionView.class)
 	private List<SubmissionFormSectionView> sections = new ArrayList<>();
 
 	@SuppressWarnings({"squid:S1186"})
@@ -50,11 +59,22 @@ public class SubmissionFormTemplateView
 		view.setDescription(template.getDescription());
 		view.setTemplateStatus(template.getTemplateStatus());
 		view.setTemplateStatusLabel(TranslateUtil.translate(SubmissionTemplateStatus.class, template.getTemplateStatus()));
+		view.setActiveStatus(template.getActiveStatus());
+		view.setCreateUser(template.getCreateUser());
+		view.setCreateDts(template.getCreateDts());
+		view.setUpdateUser(template.getUpdateUser());
+		view.setUpdateDts(template.getUpdateDts());
+		view.setDefaultTemplate(template.getDefaultTemplate());
 
 		if (template.getSections() != null) {
+			template.getSections().sort((a, b) -> {
+				return a.getSectionOrder().compareTo(b.getSectionOrder());
+			});
+
 			template.getSections().forEach(section -> {
 				view.getSections().add(SubmissionFormSectionView.toView(section));
 			});
+
 		}
 
 		return view;
@@ -127,6 +147,66 @@ public class SubmissionFormTemplateView
 	public void setTemplateStatusLabel(String templateStatusLabel)
 	{
 		this.templateStatusLabel = templateStatusLabel;
+	}
+
+	public String getActiveStatus()
+	{
+		return activeStatus;
+	}
+
+	public void setActiveStatus(String activeStatus)
+	{
+		this.activeStatus = activeStatus;
+	}
+
+	public String getCreateUser()
+	{
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser)
+	{
+		this.createUser = createUser;
+	}
+
+	public Date getCreateDts()
+	{
+		return createDts;
+	}
+
+	public void setCreateDts(Date createDts)
+	{
+		this.createDts = createDts;
+	}
+
+	public String getUpdateUser()
+	{
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser)
+	{
+		this.updateUser = updateUser;
+	}
+
+	public Date getUpdateDts()
+	{
+		return updateDts;
+	}
+
+	public void setUpdateDts(Date updateDts)
+	{
+		this.updateDts = updateDts;
+	}
+
+	public Boolean getDefaultTemplate()
+	{
+		return defaultTemplate;
+	}
+
+	public void setDefaultTemplate(Boolean defaultTemplate)
+	{
+		this.defaultTemplate = defaultTemplate;
 	}
 
 }

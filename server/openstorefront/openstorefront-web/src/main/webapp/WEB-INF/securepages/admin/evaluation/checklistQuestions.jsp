@@ -278,6 +278,7 @@
 				id: 'questionGrid',
 				title: 'Manage Checklist Questions <i class="fa fa-question-circle"  data-qtip="Manage checklist question pool; questions are tied to responses and templates."></i>',
 				columnLines: true,
+				bufferedRenderer: false,
 				store: {	
 					id: 'questionGridStore',
 					autoLoad: true,

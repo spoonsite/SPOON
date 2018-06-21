@@ -32,6 +32,12 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
+import edu.usu.sdl.openstorefront.core.view.ComponentContactView;
+import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
+import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
+import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
+import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,8 +82,10 @@ public class ComplexMapper
 				switch (fieldType) {
 
 					case SubmissionFormFieldType.ATTRIBUTE:
+					case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
 					case SubmissionFormFieldType.ATTRIBUTE_MULTI:
 					case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+					case SubmissionFormFieldType.ATTRIBUTE_REQUIRED:
 					case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
 						addAttribute(componentAll, userSubmissionField);
 						break;
@@ -98,6 +106,7 @@ public class ComplexMapper
 						break;
 
 					case SubmissionFormFieldType.RESOURCE:
+					case SubmissionFormFieldType.RESOURCE_SIMPLE:
 					case SubmissionFormFieldType.RESOURCE_MULTI:
 						addResource(componentAll, userSubmissionField);
 						break;
@@ -180,17 +189,20 @@ public class ComplexMapper
 	private void mapMedia(UserSubmissionField userSubmissionField, List<ComponentMedia> mediaRecords)
 	{
 		Map<String, UserSubmissionMedia> mediaMap = new HashMap<>();
-		if (userSubmissionField.getMedia() != null) {
-			for (UserSubmissionMedia userSubmissionMedia : userSubmissionField.getMedia()) {
-				mediaMap.put(userSubmissionMedia.getFile().getMediaFileId(), userSubmissionMedia);
-			}
+
+		UserSubmissionMedia fieldMediaExample = new UserSubmissionMedia();
+		fieldMediaExample.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
+		List<UserSubmissionMedia> fieldMedia = fieldMediaExample.findByExample();
+
+		for (UserSubmissionMedia userSubmissionMedia : fieldMedia) {
+			mediaMap.put(userSubmissionMedia.getFile().getMediaFileId(), userSubmissionMedia);
 		}
 
 		for (ComponentMedia media : mediaRecords) {
 			if (media.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = mediaMap.get(media.getFile().getMediaFileId());
 				if (userSubmissionMedia != null) {
-					media.setFile(userSubmissionMedia.getFile());
+					media.setFile(userSubmissionMedia.getFile().copy());
 				} else {
 					media.setFile(null);
 				}
@@ -216,17 +228,20 @@ public class ComplexMapper
 	private void mapResource(UserSubmissionField userSubmissionField, List<ComponentResource> resources)
 	{
 		Map<String, UserSubmissionMedia> mediaMap = new HashMap<>();
-		if (userSubmissionField.getMedia() != null) {
-			for (UserSubmissionMedia userSubmissionMedia : userSubmissionField.getMedia()) {
-				mediaMap.put(userSubmissionMedia.getFile().getMediaFileId(), userSubmissionMedia);
-			}
+
+		UserSubmissionMedia fieldMediaExample = new UserSubmissionMedia();
+		fieldMediaExample.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
+		List<UserSubmissionMedia> fieldMedia = fieldMediaExample.findByExample();
+
+		for (UserSubmissionMedia userSubmissionMedia : fieldMedia) {
+			mediaMap.put(userSubmissionMedia.getFile().getMediaFileId(), userSubmissionMedia);
 		}
 
 		for (ComponentResource resource : resources) {
 			if (resource.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = mediaMap.get(resource.getFile().getMediaFileId());
 				if (userSubmissionMedia != null) {
-					resource.setFile(userSubmissionMedia.getFile());
+					resource.setFile(userSubmissionMedia.getFile().copy());
 				} else {
 					resource.setFile(null);
 				}
@@ -255,20 +270,24 @@ public class ComplexMapper
 	}
 
 	@Override
-	public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
 	{
+		UserSubmissionFieldMedia userSubmissionFieldMedia = new UserSubmissionFieldMedia();
+
 		UserSubmissionField userSubmissionField = new UserSubmissionField();
+		userSubmissionFieldMedia.setUserSubmissionField(userSubmissionField);
 
 		userSubmissionField.setTemplateFieldId(submissionField.getFieldId());
-		userSubmissionField.setMedia(new ArrayList<>());
 
 		String fieldType = submissionField.getFieldType();
 		try {
 			switch (fieldType) {
 
 				case SubmissionFormFieldType.ATTRIBUTE:
+				case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI:
 				case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+				case SubmissionFormFieldType.ATTRIBUTE_REQUIRED:
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
 					mapAttributes(userSubmissionField, componentFormSet);
 					break;
@@ -285,12 +304,13 @@ public class ComplexMapper
 
 				case SubmissionFormFieldType.MEDIA:
 				case SubmissionFormFieldType.MEDIA_MULTI:
-					mapMediaForForm(userSubmissionField, componentFormSet);
+					userSubmissionFieldMedia.getMedia().addAll(mapMediaForForm(userSubmissionField, componentFormSet));
 					break;
 
 				case SubmissionFormFieldType.RESOURCE:
+				case SubmissionFormFieldType.RESOURCE_SIMPLE:
 				case SubmissionFormFieldType.RESOURCE_MULTI:
-					mapResourcesForForm(userSubmissionField, componentFormSet);
+					userSubmissionFieldMedia.getMedia().addAll(mapResourcesForForm(userSubmissionField, componentFormSet));
 					break;
 
 				case SubmissionFormFieldType.TAG:
@@ -317,54 +337,62 @@ public class ComplexMapper
 			throw mappingException;
 		}
 
-		return userSubmissionField;
+		return userSubmissionFieldMedia;
 	}
 
 	private void mapAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getAttributes());
+		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(componentFormSet.getPrimary().getAttributes()));
 		userSubmissionField.setRawValue(value);
 	}
 
 	private void mapContacts(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getContacts());
+		String value = objectMapper.writeValueAsString(ComponentContactView.toViewList(componentFormSet.getPrimary().getContacts()));
 		userSubmissionField.setRawValue(value);
 	}
 
 	private void mapDependencies(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getExternalDependencies());
+		String value = objectMapper.writeValueAsString(ComponentExternalDependencyView.toViewList(componentFormSet.getPrimary().getExternalDependencies()));
 		userSubmissionField.setRawValue(value);
 	}
 
-	private void mapMediaForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	private List<UserSubmissionMedia> mapMediaForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getMedia());
+		List<UserSubmissionMedia> userSubmissionMediaRecords = new ArrayList<>();
+
+		String value = objectMapper.writeValueAsString(ComponentMediaView.toViewList(componentFormSet.getPrimary().getMedia()));
 		userSubmissionField.setRawValue(value);
 
 		for (ComponentMedia media : componentFormSet.getPrimary().getMedia()) {
 			if (media.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
-				userSubmissionMedia.setFile(media.getFile());
-				userSubmissionField.getMedia().add(userSubmissionMedia);
+				userSubmissionMedia.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
+				userSubmissionMedia.setFile(media.getFile().copy());
+				userSubmissionMediaRecords.add(userSubmissionMedia);
 			}
 		}
-
+		return userSubmissionMediaRecords;
 	}
 
-	private void mapResourcesForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	private List<UserSubmissionMedia> mapResourcesForForm(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getResources());
+		List<UserSubmissionMedia> userSubmissionMediaRecords = new ArrayList<>();
+
+		String value = objectMapper.writeValueAsString(ComponentResourceView.toViewList(componentFormSet.getPrimary().getResources()));
 		userSubmissionField.setRawValue(value);
 
 		for (ComponentResource resource : componentFormSet.getPrimary().getResources()) {
 			if (resource.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
-				userSubmissionMedia.setFile(resource.getFile());
-				userSubmissionField.getMedia().add(userSubmissionMedia);
+				userSubmissionMedia.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
+				userSubmissionMedia.setFile(resource.getFile().copy());
+				userSubmissionMediaRecords.add(userSubmissionMedia);
 			}
 		}
+
+		return userSubmissionMediaRecords;
 	}
 
 	private void mapTags(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
@@ -375,7 +403,7 @@ public class ComplexMapper
 
 	private void mapRelationships(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getRelationships());
+		String value = objectMapper.writeValueAsString(ComponentRelationshipView.toViewList(componentFormSet.getPrimary().getRelationships()));
 		userSubmissionField.setRawValue(value);
 	}
 

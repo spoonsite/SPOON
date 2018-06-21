@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.mapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.ContactService;
 import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.Service;
@@ -26,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldMappingType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldType;
@@ -35,6 +37,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.model.UserSubmissionAll;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +77,7 @@ public class MappingControllerTest
 		assertFalse(result.valid());
 	}
 
-	private void setupMockService()
+	private Service setupMockService()
 	{
 		Service mockService = Mockito.mock(Service.class);
 
@@ -92,7 +95,7 @@ public class MappingControllerTest
 		Mockito.when(lookupService.findLookup(ApprovalStatus.class, null)).thenReturn(approvalStatus.systemValues());
 
 		ServiceProxyFactory.setTestService(mockService);
-
+		return mockService;
 	}
 
 	private MapperFactory getMockMapperFactory()
@@ -111,7 +114,7 @@ public class MappingControllerTest
 					}
 
 					@Override
-					public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
+					public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
 					{
 						throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 					}
@@ -234,17 +237,17 @@ public class MappingControllerTest
 		userSubmission.setFields(new ArrayList<>());
 
 		UserSubmissionField field = new UserSubmissionField();
-		field.setFieldId("NAME");
+		field.setTemplateFieldId("NAME");
 		field.setRawValue("Apple");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("ORG");
+		field.setTemplateFieldId("ORG");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("DESCR");
+		field.setTemplateFieldId("DESCR");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
@@ -289,17 +292,17 @@ public class MappingControllerTest
 		userSubmission.setFields(new ArrayList<>());
 
 		UserSubmissionField field = new UserSubmissionField();
-		field.setFieldId("NAME");
+		field.setTemplateFieldId("NAME");
 		field.setRawValue("Apple");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("ORG");
+		field.setTemplateFieldId("ORG");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("DESCR");
+		field.setTemplateFieldId("DESCR");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
@@ -351,22 +354,22 @@ public class MappingControllerTest
 		userSubmission.setFields(new ArrayList<>());
 
 		UserSubmissionField field = new UserSubmissionField();
-		field.setFieldId("NAME");
+		field.setTemplateFieldId("NAME");
 		field.setRawValue("Apple");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("ORG");
+		field.setTemplateFieldId("ORG");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("DESCR");
+		field.setTemplateFieldId("DESCR");
 		field.setRawValue("Org-Test");
 		userSubmission.getFields().add(field);
 
 		field = new UserSubmissionField();
-		field.setFieldId("CONTACT");
+		field.setTemplateFieldId("CONTACT");
 
 		ComponentContact contact = new ComponentContact();
 		contact.setFirstName("Bob");
@@ -388,7 +391,16 @@ public class MappingControllerTest
 	@Test
 	public void testEntryToUserSubmissionMapValid() throws MappingException
 	{
-		setupMockService();
+		Service mockService = setupMockService();
+
+		ContactService contactService = Mockito.mock(ContactService.class);
+		Mockito.when(mockService.getContactService()).thenReturn(contactService);
+		Contact contact = new Contact();
+		contact.setFirstName("Bob");
+		contact.setLastName("test");
+		contact.setEmail("bob@test.com");
+		Mockito.when(contactService.findContact(Mockito.anyString())).thenReturn(contact);
+
 		MappingController instance = new MappingController();
 
 		SubmissionFormTemplate template = new SubmissionFormTemplate();
@@ -439,10 +451,10 @@ public class MappingControllerTest
 		componentAll.getContacts().add(componentContact);
 		componentFormSet.setPrimary(componentAll);
 
-		UserSubmission userSubmission = instance.mapEntriesToUserSubmission(template, componentFormSet);
+		UserSubmissionAll userSubmissionAll = instance.mapEntriesToUserSubmission(template, componentFormSet);
 
-		assertTrue(userSubmission.getFields().size() == 4);
-		assertTrue(userSubmission.getFields().get(0).getRawValue().equals("Apple"));
+		assertTrue(userSubmissionAll.getUserSubmission().getFields().size() == 4);
+		assertTrue(userSubmissionAll.getUserSubmission().getFields().get(0).getRawValue().equals("Apple"));
 
 	}
 
@@ -500,7 +512,7 @@ public class MappingControllerTest
 		componentAll.getContacts().add(componentContact);
 		componentFormSet.setPrimary(componentAll);
 
-		UserSubmission userSubmission = instance.mapEntriesToUserSubmission(template, componentFormSet);
+		UserSubmissionAll userSubmissionAll = instance.mapEntriesToUserSubmission(template, componentFormSet);
 
 	}
 

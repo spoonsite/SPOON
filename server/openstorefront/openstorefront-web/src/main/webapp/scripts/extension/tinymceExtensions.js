@@ -554,7 +554,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					//normalize records
 					var showRecords = [];
 					//unwrap if needed
-					if (records.length == 1) {
+					if (records.length === 1) {
 						if (records[0].data.data) {
 
 							var newRecords = [];

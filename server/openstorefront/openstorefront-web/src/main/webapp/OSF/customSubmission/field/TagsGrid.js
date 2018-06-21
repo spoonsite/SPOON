@@ -20,7 +20,103 @@
 /* Author: cyearsley */
 
 Ext.define('OSF.customSubmission.field.TagsGrid', {
-	extend: 'OSF.customSubmission.Grid',
-	formPanel: 'Tags',
-	title: 'Tags'
+	extend: 'OSF.customSubmission.SubmissionBaseGrid',
+	xtype: 'osf-submissionform-tagsgrid',
+	
+	requires: [
+		'OSF.customSubmission.form.Tags'
+	],	
+	
+	title: '',
+	fieldType: 'TAG_MULTI',
+	
+	columns: [
+		{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 }
+	],
+	
+	initComponent: function () {
+		var grid = this;
+		grid.callParent();
+		
+		if (grid.section) {
+			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);				
+				grid.getStore().loadData(data);
+			}			
+		}	
+		
+	},	
+	
+	actionAddEdit: function(record) {
+		var grid = this;
+		
+		var addEditWin = Ext.create('Ext.window.Window', {
+			title: 'Add/Edit Tag',
+			modal: true,
+			width: 800,
+			height: 200,
+			closeMode: 'destroy',
+			layout: 'fit',
+			items: [
+				{
+					xtype: 'osf-submissionform-tags',
+					itemId: 'form',
+					scrollable: true,
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Save',
+									formBind: true,
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+									handler: function () {
+										var form = this.up('form');
+										var data = form.getValues();
+										
+										grid.getStore().add(data);
+										this.up('window').close();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+									handler: function () {
+										this.up('window').close();												
+									}
+								}								
+							]
+						}
+					]
+				}
+			]
+			
+		});
+		addEditWin.show();
+		
+		if (record) {
+			addEditWin.queryById('form').loadRecord(record);
+		}		
+		
+	},	
+	getUserData: function() {
+		var grid = this;
+		
+		var data = [];
+		grid.getStore().each(function(record){
+			data.push(record.getData());
+		});
+		
+		var userSubmissionField = {			
+			templateFieldId: grid.fieldTemplate.fieldId,
+			rawValue: Ext.encode(data)
+		};		
+		return userSubmissionField;			
+	}		
+	
 });

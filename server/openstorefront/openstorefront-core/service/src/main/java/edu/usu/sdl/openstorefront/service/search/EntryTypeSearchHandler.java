@@ -81,7 +81,7 @@ public class EntryTypeSearchHandler
 			List<String> componentTypes;
 			if (searchElement.getSearchChildren()) {
 				ComponentTypeNestedModel nestedModel = serviceProxy.getComponentService().getComponentType(componentTypeOptions);
-				componentTypes = nestedModel.getComponentTypeChildren();
+				componentTypes = nestedModel.findComponentTypeChildren();
 			} else {
 				componentTypes = Arrays.asList(searchElement.getValue());
 			}

@@ -16,9 +16,9 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
-import edu.usu.sdl.openstorefront.core.entity.SubmissionFormResource;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
@@ -50,22 +50,6 @@ public interface SubmissionFormService
 	public void deleteSubmissionFormTemplate(String templateId);
 
 	/**
-	 * Save Submission Resource
-	 *
-	 * @param resource
-	 * @param in
-	 * @return saved form resource metadata
-	 */
-	public SubmissionFormResource saveSubmissionFormResource(SubmissionFormResource resource, InputStream in);
-
-	/**
-	 * Delete Submission Resource this will remove it from the file system
-	 *
-	 * @param resourceId
-	 */
-	public void deleteSubmissionFormResource(String resourceId);
-
-	/**
 	 * Checks the template mappings to make sure they represent a complete
 	 * mapping to a valid entry.
 	 *
@@ -92,13 +76,15 @@ public interface SubmissionFormService
 	public UserSubmission saveUserSubmission(UserSubmission userSubmission);
 
 	/**
-	 * Save Submission Media for user (it should moved to actual records
+	 * Save Submission Media for user (it will be moved to actual records)
 	 *
-	 * @param resource
+	 * @param userSubmissionId
+	 * @param templateFieldId
 	 * @param in
+	 * @param mediaFile
 	 * @return saved form media metadata
 	 */
-	public UserSubmission saveSubmissionFormMedia(UserSubmission userSubmission, String fieldId, MediaFile mediaFile, InputStream in);
+	public UserSubmissionMedia saveSubmissionFormMedia(String userSubmissionId, String templateFieldId, MediaFile mediaFile, InputStream in);
 
 	/**
 	 * Convert submission to Components but it does not save the results
@@ -119,11 +105,13 @@ public interface SubmissionFormService
 	 * Convert an Entry and related sub-entries into a UserSubmission This fill
 	 * in what it can based on the template.
 	 *
-	 * @param submissionTemplateId
+	 * It will resolve the appropriate template base on the entry type.
+	 *
 	 * @param componentId
+	 * @param forChangeRequest
 	 * @return
 	 */
-	public UserSubmission editComponentForSubmission(String submissionTemplateId, String componentId);
+	public UserSubmission editComponentForSubmission(String componentId, boolean forChangeRequest);
 
 	/**
 	 * Creates a change request from a submission
@@ -133,7 +121,7 @@ public interface SubmissionFormService
 	public void submitChangeRequestForApproval(UserSubmission userSubmission);
 
 	/**
-	 * Ressign Ownership
+	 * Reassign Ownership
 	 *
 	 * @param userSubmissionId
 	 * @param newOwnerUsername
@@ -150,9 +138,8 @@ public interface SubmissionFormService
 	/**
 	 * Delete just the media from a submission
 	 *
-	 * @param userSubmissionId
-	 * @param mediaId
+	 * @param submissionMediaId
 	 */
-	public void deleteUserSubmissionMedia(String userSubmissionId, String mediaId);
+	public void deleteUserSubmissionMedia(String submissionMediaId);
 
 }

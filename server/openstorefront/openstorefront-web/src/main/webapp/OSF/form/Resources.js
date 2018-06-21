@@ -189,6 +189,12 @@ Ext.define('OSF.form.Resources', {
 					boxLabel: 'Restricted'
 				},
 				{
+					xtype: 'checkbox',
+					name: 'privateFlag',
+					padding: '0 0 0 210',				
+					boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides resource from public view"></i>'
+				},				
+				{
 					xtype: 'textfield',
 					fieldLabel: 'Link',																																	
 					maxLength: '255',									
@@ -249,7 +255,8 @@ Ext.define('OSF.form.Resources', {
 				{ text: 'Link',  dataIndex: 'originalLink', flex: 1, minWidth: 200 },
 				{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 				{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
-				{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },						
+				{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },	
+				{ text: 'Private',  dataIndex: 'privateFlag', width: 150 },
 				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
 				{ text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 200, hidden: true },
 				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: resourcePanel.hideSecurityMarking  }
@@ -340,6 +347,7 @@ Ext.define('OSF.form.Resources', {
 							itemId: 'toggleStatusBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 							disabled: true,
+							hidden: resourcePanel.hideToggleStatus || false,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources');
 							}
