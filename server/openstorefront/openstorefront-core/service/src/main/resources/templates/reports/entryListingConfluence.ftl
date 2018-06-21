@@ -57,7 +57,7 @@
 					<th>Name</th>
 					<th>Description</th>
 					<th style="text-align: center;">Entry Type</th>
-					<th style="text-align: center;">Evaluation Completed Date</th>
+					<th style="text-align: center;">Last Updated</th>
 					<th style="text-align: center;">Evaluation Status</th>
 				</tr>	
 			</thead>
