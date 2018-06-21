@@ -528,7 +528,7 @@
 								xtype: 'grid',
 								sortableColumns: false,
 								itemId: 'permissionGrid',
-								title: 'Acttive Permissions for ' + record.get('roleName'),
+								title: 'Active Permissions for ' + record.get('roleName'),
 								width: '100%',
 								isDirty: false,
 								findSubPermissions: function (record) {
