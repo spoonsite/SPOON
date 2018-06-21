@@ -52,9 +52,66 @@ Ext.define('OSF.customSubmission.field.RichText', {
 			height: 250,
 			maxLength: 65536,
 			tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig("osfmediaretriever"), {
-//					mediaSelectionUrl: function(){					
-//						return 'api/v1/resource/components/' + entryForm.componentId + '/media/view';					
-//					}
+				mediaSelectionUrl: function(){	
+					return 	'api/v1/resource/usersubmissions/' + fieldPanel.userSubmissionId + '/media';					
+				},
+				mediaUploadHandler: function(uploadForm, mediaInsertWindow) {
+					uploadForm.setLoading("Uploading...");
+
+					uploadForm.submit({
+						url: 'Media.action?UploadSubmissionMedia&userSubmissionId=' + fieldPanel.userSubmissionId 
+							 + '&submissionTemplateFieldId=' + fieldPanel.fieldTemplate.fieldId,
+						method: 'POST',
+						success: function (form, action) { },
+						failure: function (form, action) {
+
+							// In this case, to not up-end the
+							// server side things, technically a 
+							// failure is a potentially a success
+
+							//normalize record as they can be different 													
+							var newMediafile = {
+							};
+							console.log(action);
+							if (action.result && action.result.file.mediaFileId) {
+								newMediafile.mediaFileId = action.result.file.mediaFileId;
+								newMediafile.mimeType = action.result.file.mimeType;
+								newMediafile.valid = true;
+							}
+							
+
+							if (newMediafile.valid) {
+
+								// True success
+								uploadForm.setLoading(false);
+								var link = 'Media.action?LoadMedia&mediaId=';
+								link += encodeURIComponent(newMediafile.mediaFileId);
+
+								var mediaTypeCode = mediaInsertWindow.mediaToShow;
+								if (newMediafile.mimeType) {
+									if (newMediafile.mimeType.indexOf('image') !== -1) {
+										mediaTypeCode = 'IMG';
+									} else if (newMediafile.mimeType.indexOf('video') !== -1) {
+										mediaTypeCode = 'VID';
+									} else if (newMediafile.mimeType.indexOf('audio') !== -1) {
+										mediaTypeCode = 'AUD';
+									}
+								}
+
+								mediaInsertWindow.mediaHandler(link, newMediafile.name, mediaTypeCode, newMediafile.mimeType, action.result, newMediafile);
+								uploadForm.up('window').close();
+							} else {
+								// True failure
+								uploadForm.setLoading(false);
+								Ext.Msg.show({
+									title: 'Upload Failed',
+									msg: 'The file upload was unsuccessful.',
+									buttons: Ext.Msg.OK
+								});
+							}
+						}
+					});
+				}
 			})	
 		});	
 			
@@ -67,6 +124,16 @@ Ext.define('OSF.customSubmission.field.RichText', {
 		var initialData = fieldPanel.section.submissionForm.getFieldData(fieldPanel.fieldTemplate.fieldId);
 		if (initialData) {
 			fieldPanel.textArea.setValue(initialData);
+		}		
+		
+		if (fieldPanel.section) {
+			if (!fieldPanel.section.submissionForm.userSubmission) {
+				fieldPanel.previewMode = true;			
+			} else {
+				fieldPanel.userSubmissionId = fieldPanel.section.submissionForm.userSubmission.userSubmissionId;
+			}
+		} else {
+			fieldPanel.previewMode = true;
 		}		
 		
 	},

@@ -32,7 +32,8 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 	columns: [
 		{ text: 'Media Type', dataIndex: 'contentType', width: 200 },
 		{ text: 'Caption', dataIndex: 'caption', width: 200 },
-		{ text: 'External Link', dataIndex: 'originalLink', flex: 1, minWidth: 150 },
+		{ text: 'Filename', dataIndex: 'originalFileName', flex: 1, minWidth: 150 },
+		{ text: 'External Link', dataIndex: 'originalLink', flex: 1, minWidth: 150 },		
 		{ text: 'Hide In Display', dataIndex: 'hideInDisplay', width: 200 },
 		{ text: 'Used Inline', dataIndex: 'usedInline', width: 200 },
 		{ text: 'Icon Flag', dataIndex: 'iconFlag', width: 200 },
@@ -84,17 +85,20 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();										
-										form.handleUpload(data);
+										form.handleUpload(data, function(){
+											data.contentType = form.queryById('mediaTypeCode').getSelection().get('description');
+											data.originalFileName = form.originalFileName;
+
+											if (record) {
+												record.set(data, {
+													dirty: false
+												});
+											} else {
+												grid.getStore().add(data);
+											}
+										});
 										
-										data.contentType = form.queryById('mediaTypeCode').getSelection().get('description');
 										
-										if (record) {
-											record.set(data, {
-												dirty: false
-											});
-										} else {
-											grid.getStore().add(data);
-										}
 										this.up('window').close();
 									}
 								},

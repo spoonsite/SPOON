@@ -121,7 +121,7 @@ public class SubComponentServiceImpl
 
 	public <T extends BaseComponent> T deactivateBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity, final String updateUser)
 	{
-		RetryUtil.retryAction(5, ()->{
+		RetryUtil.retryAction(5, () -> {
 			T found = persistenceService.findById(subComponentClass, pk);
 			if (found != null) {
 				if (found instanceof LoggableModel) {
@@ -141,14 +141,14 @@ public class SubComponentServiceImpl
 				if (updateComponentActivity) {
 					updateComponentLastActivity(found.getComponentId());
 				}
-			}			
+			}
 		});
 		return persistenceService.findById(subComponentClass, pk);
 	}
 
 	public <T extends BaseComponent> T activateBaseComponent(Class<T> subComponentClass, Object pk)
 	{
-		RetryUtil.retryAction(5, ()->{
+		RetryUtil.retryAction(5, () -> {
 			T found = persistenceService.findById(subComponentClass, pk);
 			if (found != null) {
 				if (found instanceof LoggableModel) {
@@ -160,27 +160,27 @@ public class SubComponentServiceImpl
 				persistenceService.persist(found);
 
 				updateComponentLastActivity(found.getComponentId());
-			}	
-		
+			}
+
 		});
 		return persistenceService.findById(subComponentClass, pk);
 	}
 
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk)
 	{
-		deleteBaseComponent(subComponentClass, pk, true);
+		deleteBaseComponent(subComponentClass, pk, true, false);
 	}
 
-	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity)
+	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk, boolean updateComponentActivity, boolean keepMediaFiles)
 	{
 		T found = persistenceService.findById(subComponentClass, pk);
 		if (found != null) {
 			String componentId = found.getComponentId();
 			if (found instanceof ComponentResource) {
-				removeLocalResource((ComponentResource) found);
+				removeLocalResource((ComponentResource) found, keepMediaFiles);
 			}
 			if (found instanceof ComponentMedia) {
-				removeLocalMedia((ComponentMedia) found);
+				removeLocalMedia((ComponentMedia) found, keepMediaFiles);
 			}
 
 			if (found instanceof LoggableModel) {
@@ -195,7 +195,7 @@ public class SubComponentServiceImpl
 		}
 	}
 
-	void removeLocalResource(ComponentResource componentResource)
+	void removeLocalResource(ComponentResource componentResource, boolean keepMedia)
 	{
 		if (componentResource.getFile() != null) {
 			//Note: this can't be rolled back
@@ -204,13 +204,13 @@ public class SubComponentServiceImpl
 			example.getFile().setMediaFileId(componentResource.getFile().getMediaFileId());
 
 			long count = persistenceService.countByExample(example);
-			if (count == 1) {
+			if (count == 1 && !keepMedia) {
 				removeLocalMedia(componentResource.getFile().getMediaFileId());
 			}
 		}
 	}
 
-	void removeLocalMedia(ComponentMedia componentMedia)
+	void removeLocalMedia(ComponentMedia componentMedia, boolean keepMedia)
 	{
 		if (componentMedia.getFile() != null) {
 			//Note: this can't be rolled back
@@ -219,7 +219,7 @@ public class SubComponentServiceImpl
 			example.getFile().setMediaFileId(componentMedia.getFile().getMediaFileId());
 
 			long count = persistenceService.countByExample(example);
-			if (count == 1) {
+			if (count == 1 && !keepMedia) {
 				removeLocalMedia(componentMedia.getFile().getMediaFileId());
 			}
 		}
@@ -256,14 +256,14 @@ public class SubComponentServiceImpl
 				List<T> resources = persistenceService.queryByExample(example);
 				resources.forEach(resource
 						-> {
-					removeLocalResource((ComponentResource) resource);
+					removeLocalResource((ComponentResource) resource, false);
 				});
 			}
 			if (subComponentClass.isAssignableFrom(ComponentMedia.class)) {
 				List<T> media = persistenceService.queryByExample(example);
 				media.forEach(mediaItem
 						-> {
-					removeLocalMedia((ComponentMedia) mediaItem);
+					removeLocalMedia((ComponentMedia) mediaItem, false);
 				});
 			}
 			if (example instanceof LoggableModel) {
@@ -353,7 +353,7 @@ public class SubComponentServiceImpl
 
 	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity)
 	{
-		saveComponentContact(contact,updateLastActivity,true);
+		saveComponentContact(contact, updateLastActivity, true);
 	}
 
 	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity, boolean mergeSimilar)
@@ -448,7 +448,7 @@ public class SubComponentServiceImpl
 		ComponentMedia oldMedia = persistenceService.findById(ComponentMedia.class, media.getComponentMediaId());
 		if (oldMedia != null) {
 			if (StringUtils.isNotBlank(media.getLink())) {
-				removeLocalMedia(oldMedia);
+				removeLocalMedia(oldMedia, false);
 			}
 			oldMedia.updateFields(media);
 			newMedia = persistenceService.persist(oldMedia);
@@ -457,20 +457,6 @@ public class SubComponentServiceImpl
 				media.setComponentMediaId(persistenceService.generateId());
 			}
 
-			//On a merge there may be a pre-existing file that needs to be rename
-			if (StringUtils.isNotBlank(media.getFileName())) {
-				if (media.getFileName().equals(media.getComponentMediaId()) == false) {
-					Path oldPath = media.pathToMedia();
-					if (oldPath != null && oldPath.toFile().exists()) {
-						try {
-							Files.move(oldPath, oldPath.resolveSibling(media.getComponentMediaId()));
-						} catch (IOException ioe) {
-							throw new OpenStorefrontRuntimeException("Failed to rename media; trying to re-point record.", "Download media; delete original media record and then re-upload.", ioe);
-						}
-						media.setFileName(media.getComponentMediaId());
-					}
-				}
-			}
 			media.populateBaseCreateFields();
 			newMedia = persistenceService.persist(media);
 			componentService.getChangeLogService().addEntityChange(media);
@@ -612,7 +598,7 @@ public class SubComponentServiceImpl
 		if (oldResource != null) {
 
 			if (StringUtils.isNotBlank(resource.getLink())) {
-				removeLocalResource(oldResource);
+				removeLocalResource(oldResource, false);
 			}
 			oldResource.updateFields(resource);
 
@@ -623,20 +609,6 @@ public class SubComponentServiceImpl
 				resource.setResourceId(persistenceService.generateId());
 			}
 
-			//On a merge there may be a pre-existing file that needs to be rename
-			if (StringUtils.isNotBlank(resource.getFileName())) {
-				if (resource.getFileName().equals(resource.getResourceId()) == false) {
-					Path oldPath = resource.pathToResource();
-					if (oldPath != null && oldPath.toFile().exists()) {
-						try {
-							Files.move(oldPath, oldPath.resolveSibling(resource.getResourceId()));
-						} catch (IOException ioe) {
-							throw new OpenStorefrontRuntimeException("Failed to rename resource; trying to re-point record.", "Download resource; delete original media resource and then re-upload.", ioe);
-						}
-						resource.setFileName(resource.getResourceId());
-					}
-				}
-			}
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 			componentService.getChangeLogService().addEntityChange(resource);

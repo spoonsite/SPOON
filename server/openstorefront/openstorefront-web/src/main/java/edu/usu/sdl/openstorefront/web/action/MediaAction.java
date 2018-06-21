@@ -83,7 +83,7 @@ public class MediaAction
 
 	private static final Logger LOG = Logger.getLogger(MediaAction.class.getName());
 
-	@Validate(required = true, on = {"LoadMedia", "SectionMedia", "SupportMedia"})
+	@Validate(required = true, on = {"LoadMedia", "SectionMedia", "SupportMedia", "SubmissionMedia"})
 	private String mediaId;
 
 	@ValidateNestedProperties({

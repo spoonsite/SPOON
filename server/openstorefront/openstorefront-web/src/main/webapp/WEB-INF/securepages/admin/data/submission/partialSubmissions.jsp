@@ -114,7 +114,7 @@
 									}
 								}, 								
 								{
-									text: 'Reassign',
+									text: 'Change Owner',
 									itemId: 'reassign',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',

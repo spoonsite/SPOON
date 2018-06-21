@@ -1115,7 +1115,7 @@ public class CoreComponentServiceImpl
 					if (pkField != null) {
 						pkField.setAccessible(true);
 						if (oldEnity instanceof ComponentTag) {
-							sub.deleteBaseComponent(baseComponentClass, pkField.get(oldEnity), false);
+							sub.deleteBaseComponent(baseComponentClass, pkField.get(oldEnity), false, false);
 						} else {
 							sub.deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
 						}
@@ -1149,7 +1149,7 @@ public class CoreComponentServiceImpl
 				if (ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, entityClass)) {
 					if (option.getIgnoreClasses().contains(entityClass.getSimpleName()) == false) {
 						try {
-							deleteBaseComponent((BaseComponent) entityClass.newInstance(), componentId);
+							deleteBaseComponent((BaseComponent) entityClass.newInstance(), componentId, option.getKeepMediaFile());
 						} catch (InstantiationException | IllegalAccessException ex) {
 							throw new OpenStorefrontRuntimeException("Class is not a base component class: " + entityClass.getName(), "Check class");
 						}
@@ -1202,20 +1202,20 @@ public class CoreComponentServiceImpl
 		cleanupCache(componentId);
 	}
 
-	private <T extends BaseComponent> void deleteBaseComponent(T example, String componentId)
+	private <T extends BaseComponent> void deleteBaseComponent(T example, String componentId, boolean keepMedia)
 	{
 		example.setComponentId(componentId);
 		if (example instanceof ComponentResource) {
 			@SuppressWarnings("unchecked")
 			List<T> foundRecords = example.findByExample();
 			for (T found : foundRecords) {
-				sub.removeLocalResource((ComponentResource) found);
+				sub.removeLocalResource((ComponentResource) found, keepMedia);
 			}
 		} else if (example instanceof ComponentMedia) {
 			@SuppressWarnings("unchecked")
 			List<T> foundRecords = example.findByExample();
 			for (T found : foundRecords) {
-				sub.removeLocalMedia((ComponentMedia) found);
+				sub.removeLocalMedia((ComponentMedia) found, keepMedia);
 			}
 		}
 		persistenceService.deleteByExample(example);
@@ -2313,11 +2313,11 @@ public class CoreComponentServiceImpl
 				mergeSubEntities(mergeComponent.getMetadata(), targetComponent.getMetadata());
 				mergeSubEntities(mergeComponent.getTags(), targetComponent.getTags());
 				mergeSubEntities(mergeComponent.getResources(), targetComponent.getResources());
-				
+
 				ComponentComment commentExample = new ComponentComment();
 				commentExample.setComponentId(mergeComponent.getComponent().getComponentId());
 				List<ComponentComment> comments = commentExample.findByExampleProxy();
-				for(ComponentComment comment : comments){
+				for (ComponentComment comment : comments) {
 					comment.setComponentId(targetComponentId);
 					persistenceService.persist(comment);
 				}
@@ -2389,7 +2389,7 @@ public class CoreComponentServiceImpl
 					userWatch.populateBaseUpdateFields();
 					persistenceService.persist(userWatch);
 				}
-				
+
 				//remove mergeComponent
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
 				cleanupCache(toMergeComponentId);

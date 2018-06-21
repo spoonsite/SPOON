@@ -33,7 +33,7 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 		{ text: 'Resource Type', dataIndex: 'resourceTypeDesc', width: 200 },
 		{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 200 },
 		{ text: 'Original Link', dataIndex: 'originalLink', width: 200 },		
-		{ text: 'Local Name', dataIndex: 'originalName', width: 200 },
+		{ text: 'Local Name', dataIndex: 'originalFileName', width: 200 },
 		{ text: 'Restricted', dataIndex: 'restricted', width: 200 },
 		{ text: 'Security Marking', dataIndex: 'securityMarking', width: 200, hidden: true },
 		{ text: 'Data Sensitivity', dataIndex: 'dataSensitivity', width: 200, hidden: true }

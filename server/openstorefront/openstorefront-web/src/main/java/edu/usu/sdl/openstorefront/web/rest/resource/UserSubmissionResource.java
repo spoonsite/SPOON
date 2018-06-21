@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
+import edu.usu.sdl.openstorefront.core.view.UserSubmissionMediaView;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -36,6 +37,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -103,6 +105,34 @@ public class UserSubmissionResource
 		Response response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS);
 		if (response == null) {
 			response = sendSingleEntityResponse(userSubmission);
+		}
+		return response;
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@APIDescription("Gets a submission media records")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(UserSubmissionMediaView.class)
+	@Path("/{submissionId}/media")
+	public Response getUserSubmissionMedia(
+			@PathParam("submissionId") String submissionId
+	)
+	{
+		UserSubmission userSubmission = new UserSubmission();
+		userSubmission.setUserSubmissionId(submissionId);
+		userSubmission = userSubmission.find();
+
+		Response response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS);
+		if (response == null) {
+			UserSubmissionMedia media = new UserSubmissionMedia();
+			media.setUserSubmissionId(submissionId);
+			List<UserSubmissionMedia> allMedia = media.findByExample();
+
+			GenericEntity<List<UserSubmissionMediaView>> entity = new GenericEntity<List<UserSubmissionMediaView>>(UserSubmissionMediaView.toView(allMedia))
+			{
+			};
+			response = sendSingleEntityResponse(entity);
 		}
 		return response;
 	}
@@ -181,7 +211,7 @@ public class UserSubmissionResource
 			if (response == null) {
 				ValidationResult validateResult = service.getSubmissionFormService().submitUserSubmissionForApproval(existing);
 				if (!validateResult.valid()) {
-					response = Response.ok(validateResult.getRuleResults()).build();
+					response = Response.ok(validateResult.toRestError()).build();
 				} else {
 					response = Response.ok().build();
 				}
@@ -209,7 +239,7 @@ public class UserSubmissionResource
 			if (response == null) {
 				ValidationResult validateResult = service.getSubmissionFormService().submitChangeRequestForApproval(existing);
 				if (!validateResult.valid()) {
-					response = Response.ok(validateResult.getRuleResults()).build();
+					response = Response.ok(validateResult.toRestError()).build();
 				} else {
 					response = Response.ok().build();
 				}

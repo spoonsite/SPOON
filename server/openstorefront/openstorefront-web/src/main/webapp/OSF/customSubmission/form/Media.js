@@ -161,7 +161,7 @@ Ext.define('OSF.customSubmission.form.Media', {
 		}
 		
 	},
-	handleUpload: function(actualRecord) {
+	handleUpload: function(actualRecord, successCallback) {
 		var mediaPanel = this;
 		
 		if (mediaPanel.previewMode && mediaPanel.localResource) {			
@@ -225,19 +225,28 @@ Ext.define('OSF.customSubmission.form.Media', {
 									title: 'Upload Failed',
 									msg: 'The file upload was not successful. Check that the file meets the requirements and try again.',
 									buttons: Ext.Msg.OK
-								});													
-								refreshGrid();	
+								});																					
 							} else {
 								//false positive the return object doesn't have success																
 								Ext.toast('Uploaded Successfully', '', 'tr');													
 								actualRecord.file = {
-									mediaFileId: data.file.mediaFileId
+									mediaFileId: data.file.mediaFileId									
 								};
+								actualRecord.originalFileName = data.file.originalName;
+								mediaPanel.originalFileName = data.file.originalName;
+								
+								if (successCallback) {
+									successCallback();
+								}
 							}
 							progressMsg.hide();
 						}
 					});
 				}
+			}
+		} else {
+			if (successCallback) {
+				successCallback();
 			}
 		}
 	},

@@ -538,7 +538,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 
 		mediaInsertWindow.mediaSelectionStore = Ext.create('Ext.data.Store', {
 		});
-
+	
 		mediaInsertWindow.mediaSelectionStorePreLoad = Ext.create('Ext.data.Store', {
 			autoLoad: true,
 			proxy: {

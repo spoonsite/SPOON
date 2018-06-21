@@ -414,11 +414,33 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						submissionFormFullControl.setLoading(false);
 					},
 					success: function(response, opts) {
-						Ext.toast('Change Request Submitted Successfully');
-
-						if (submissionFormFullControl.submissionSuccess) {
-							submissionFormFullControl.submissionSuccess();
+						var data;
+						try {
+							data = Ext.decode(response.responseText);
+						} catch(e){						
 						}
+						if (data && !data.success) {
+							var errorMessage = '';
+							Ext.Array.each(data.errors.entry, function(errorItem){
+								errorMessage += '<b>' + errorItem.key + ':</b> ' + errorItem.value + '<br>';
+							});
+
+							Ext.Msg.show({
+								title: 'Unable to Submit Change Request',
+								message: 'Check input and adjust the following.<br><br>' + errorMessage,
+								buttons: Ext.Msg.OK,
+								icon: Ext.Msg.ERROR,
+								fn: function(btn) {
+								}
+							});
+
+						} else {	
+							Ext.toast('Change Request Submitted Successfully');
+
+							if (submissionFormFullControl.submissionSuccess) {
+								submissionFormFullControl.submissionSuccess();
+							}
+						}	
 					}
 				});
 			} else {		
@@ -431,10 +453,33 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						submissionFormFullControl.setLoading(false);
 					},
 					success: function(response, opts) {
-						Ext.toast('Entry Submitted Successfully');
+						var data;
+						try {
+							data = Ext.decode(response.responseText);
+						} catch(e){						
+						}
+						if (data && !data.success) {
+							var errorMessage = '';
+							Ext.Array.each(data.errors.entry, function(errorItem){
+								errorMessage += '<b>' + errorItem.key + ':</b> ' + errorItem.value + '<br>';
+							});
 
-						if (submissionFormFullControl.submissionSuccess) {
-							submissionFormFullControl.submissionSuccess();
+							Ext.Msg.show({
+								title: 'Unable to Submit Entry',
+								message: 'Check input and adjust the following.<br><br>' + errorMessage,
+								buttons: Ext.Msg.OK,
+								icon: Ext.Msg.ERROR,
+								fn: function(btn) {
+								}
+							});
+
+						} else {						
+
+							Ext.toast('Entry Submitted Successfully');
+
+							if (submissionFormFullControl.submissionSuccess) {
+								submissionFormFullControl.submissionSuccess();
+							}
 						}
 					}
 				});

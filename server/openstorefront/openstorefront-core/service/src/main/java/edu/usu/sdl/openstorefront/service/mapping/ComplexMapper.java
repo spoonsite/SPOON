@@ -202,7 +202,8 @@ public class ComplexMapper
 			if (media.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = mediaMap.get(media.getFile().getMediaFileId());
 				if (userSubmissionMedia != null) {
-					media.setFile(userSubmissionMedia.getFile().copy());
+					media.setFile(userSubmissionMedia.getFile());
+					media.setLink(null);
 				} else {
 					media.setFile(null);
 				}
@@ -241,7 +242,8 @@ public class ComplexMapper
 			if (resource.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = mediaMap.get(resource.getFile().getMediaFileId());
 				if (userSubmissionMedia != null) {
-					resource.setFile(userSubmissionMedia.getFile().copy());
+					resource.setFile(userSubmissionMedia.getFile());
+					resource.setLink(null);
 				} else {
 					resource.setFile(null);
 				}
@@ -362,17 +364,19 @@ public class ComplexMapper
 	{
 		List<UserSubmissionMedia> userSubmissionMediaRecords = new ArrayList<>();
 
-		String value = objectMapper.writeValueAsString(ComponentMediaView.toViewList(componentFormSet.getPrimary().getMedia()));
-		userSubmissionField.setRawValue(value);
-
 		for (ComponentMedia media : componentFormSet.getPrimary().getMedia()) {
 			if (media.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
 				userSubmissionMedia.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
-				userSubmissionMedia.setFile(media.getFile().copy());
+				userSubmissionMedia.setFile(media.getFile());
 				userSubmissionMediaRecords.add(userSubmissionMedia);
+
+				media.setFile(userSubmissionMedia.getFile());
 			}
 		}
+		String value = objectMapper.writeValueAsString(ComponentMediaView.toViewList(componentFormSet.getPrimary().getMedia()));
+		userSubmissionField.setRawValue(value);
+
 		return userSubmissionMediaRecords;
 	}
 
@@ -380,17 +384,18 @@ public class ComplexMapper
 	{
 		List<UserSubmissionMedia> userSubmissionMediaRecords = new ArrayList<>();
 
-		String value = objectMapper.writeValueAsString(ComponentResourceView.toViewList(componentFormSet.getPrimary().getResources()));
-		userSubmissionField.setRawValue(value);
-
 		for (ComponentResource resource : componentFormSet.getPrimary().getResources()) {
 			if (resource.getFile() != null) {
 				UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
 				userSubmissionMedia.setTemplateFieldId(userSubmissionField.getTemplateFieldId());
-				userSubmissionMedia.setFile(resource.getFile().copy());
+				userSubmissionMedia.setFile(resource.getFile());
 				userSubmissionMediaRecords.add(userSubmissionMedia);
+
+				resource.setFile(userSubmissionMedia.getFile());
 			}
 		}
+		String value = objectMapper.writeValueAsString(ComponentResourceView.toViewList(componentFormSet.getPrimary().getResources()));
+		userSubmissionField.setRawValue(value);
 
 		return userSubmissionMediaRecords;
 	}

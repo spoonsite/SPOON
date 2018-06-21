@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.model.EditSubmissionOptions;
 import edu.usu.sdl.openstorefront.core.model.UserSubmissionAll;
@@ -277,7 +278,7 @@ public class SubmissionFormServiceImpl
 					for (ComponentAll componentAll : componentFormSet.getChildren()) {
 						getComponentService().saveFullComponent(componentAll);
 					}
-					deleteUserSubmission(userSubmission.getUserSubmissionId());
+					internalDeleteUserSubmission(userSubmission.getUserSubmissionId(), false);
 				}
 
 			} catch (MappingException ex) {
@@ -353,7 +354,9 @@ public class SubmissionFormServiceImpl
 		}
 
 		if (options.removeComponent()) {
-			getComponentService().cascadeDeleteOfComponent(componentId);
+			ComponentDeleteOptions deleteOptions = new ComponentDeleteOptions();
+			deleteOptions.setKeepMediaFiles(true);
+			getComponentServicePrivate().cascadeDeleteOfComponent(componentId, deleteOptions);
 		}
 
 		return userSubmission;
@@ -388,7 +391,7 @@ public class SubmissionFormServiceImpl
 					}
 					getComponentService().submitChangeRequest(savedComponentAll.getComponent().getComponentId());
 
-					deleteUserSubmission(userSubmission.getUserSubmissionId());
+					internalDeleteUserSubmission(userSubmission.getUserSubmissionId(), false);
 				}
 
 			} catch (MappingException ex) {
@@ -420,6 +423,11 @@ public class SubmissionFormServiceImpl
 	@Override
 	public void deleteUserSubmission(String userSubmissionId)
 	{
+		internalDeleteUserSubmission(userSubmissionId, true);
+	}
+
+	private void internalDeleteUserSubmission(String userSubmissionId, boolean deleteActualMedia)
+	{
 		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmissionId);
 		if (existing != null) {
 
@@ -428,7 +436,9 @@ public class SubmissionFormServiceImpl
 			List<UserSubmissionMedia> userSubmissionMediaRecords = userSubmissionMedia.findByExampleProxy();
 
 			for (UserSubmissionMedia media : userSubmissionMediaRecords) {
-				handleMediaDelete(media);
+				if (deleteActualMedia) {
+					handleMediaDelete(media);
+				}
 				persistenceService.delete(media);
 			}
 
