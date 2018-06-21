@@ -622,6 +622,7 @@
 													else {
 														Ext.Array.forEach(subPermissionRecords, function (item) {
 															var row = grid.getView().getRowByRecord(item);
+															item.set('permissionEnabled', false);
 															row.classList.add('permission-row-disabled');
 														});
 													}
