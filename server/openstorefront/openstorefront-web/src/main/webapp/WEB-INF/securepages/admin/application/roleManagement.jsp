@@ -532,12 +532,9 @@
 								width: '100%',
 								isDirty: false,
 								findSubPermissions: function (record) {
-									return this.getStore().getData().items.reduce(function (acc, item) {
-										if (item.getData().permissionPredecessor === record.getData().code) {
-											acc.push(item);
-										}
-										return acc;
-									}, []);
+									return this.getStore().getData().items.filter(function (item) {
+										return item.getData().permissionPredecessor === record.getData().code;
+									});
 								},
 								findParentPermission: function (record) {
 									if (record.getData().permissionPredecessor) {
@@ -554,12 +551,9 @@
 
 									var store = this.getStore();
 
-									return store.getData().items.reduce(function (acc, item) {
-										if (item.getData().groupBy === grouping) {
-											acc.push(item);
-										}
-										return acc;
-									}, []);
+									return store.getData().items.filter(function (item) {
+										return item.getData().groupBy === grouping;
+									});
 								},
 								setDirty: function (isDirty) {
 									this.isDirty = isDirty;
