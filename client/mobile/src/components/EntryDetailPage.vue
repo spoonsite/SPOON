@@ -3,7 +3,7 @@
   <div class="entry-detail-page">
     <v-card class="grey darken-3 white--text text-md-center">
       <v-card-text>
-        <h1>{{detail.name}}</h1>
+        <h1 class="title">{{detail.name}}</h1>
       </v-card-text>
     </v-card>
 
@@ -16,8 +16,10 @@
 
       <v-expansion-panel-content>
         <div slot="header">Summary</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text>
+            <h2>Component Type</h2>
+            <hr>
             <p>
               <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="30" >
               <router-link
@@ -54,7 +56,7 @@
 
       <v-expansion-panel-content v-if="detail.attributes && detail.attributes.length !== 0">
         <div slot="header">Attributes</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text>
             <v-data-table
               :headers="attributeTableHeaders"
@@ -73,7 +75,7 @@
 
       <v-expansion-panel-content v-if="detail.componentMedia && detail.componentMedia.length > 0">
         <div slot="header">Media Download</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text>
             <p
               v-for="item in detail.componentMedia"
@@ -93,7 +95,7 @@
 
       <v-expansion-panel-content v-if="detail.resources && detail.resources.length !== 0">
         <div slot="header">Resources</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text>
             <div v-for="item in detail.resources"
               :key="item.resourceId"
@@ -112,7 +114,7 @@
 
       <v-expansion-panel-content>
         <div slot="header">Reviews</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text>
             <p>
               <strong>Average User Rating:</strong>
@@ -147,7 +149,7 @@
       <!-- TODO: do this once we're integrated with DI2E -->
       <v-expansion-panel-content v-if="detail.fullEvailation">
         <div slot="header">Evaluation</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text>
 
           </v-card-text>
@@ -156,7 +158,7 @@
 
       <v-expansion-panel-content v-if="detail.tags && detail.tags.length !== 0">
         <div slot="header">Tags</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text>
 
             <div
@@ -176,7 +178,7 @@
 
       <v-expansion-panel-content v-if="detail.contacts !== 0">
         <div slot="header">Contacts</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text v-if="detail.contacts.length > 0">
             <h2>Points of Contact</h2>
             <div
@@ -199,7 +201,7 @@
 
       <v-expansion-panel-content>
         <div slot="header">Watches</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text>
             <p>Watch this entry?</p>
             <!-- TODO: make watch api calls -->
@@ -211,7 +213,7 @@
       <!-- TODO: DO this later -->
       <v-expansion-panel-content>
         <div slot="header">Questions and Answers</div>
-        <v-card class="grey lighten-5">
+        <v-card class="grey lighten-4">
           <v-card-text>
 
           </v-card-text>
