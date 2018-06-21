@@ -660,7 +660,7 @@
 															row.classList.add('permission-row-disabled');
 														}, 1);
 													}
-													return '<span style="margin-left: 25px;">' + value + '</span>';
+													return '<span style="margin-left: 25px;">' + value + ' <i style="pointer-events: auto; color: #888;" class="fa fa-question-circle" data-qtip="' + parentRecord.getData().code + '"></i></span>';
 												}
 											}
 
