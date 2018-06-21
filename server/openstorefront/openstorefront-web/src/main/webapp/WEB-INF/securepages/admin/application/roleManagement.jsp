@@ -463,11 +463,18 @@
 							enabled = true;
 						}
 
+						item.data.sortColumn = (item.data.permissionPredecessor ? item.data.permissionPredecessor : '') + item.data.code;
+
 						// not using item.set() because it will put the grid in a "dirty" state
 						item.data[enabledColumnIndex] = enabled;
 					});
 
 					grid.view.refresh();
+					grid.getColumns().reduce(function (acc, col) {
+						if (col.dataIndex === 'sortColumn') {
+							return col;
+						}
+					}, {}).sort('up');
 				};
 				
 				var actionManagePermissions = function(record) {
@@ -519,10 +526,30 @@
 						items: [
 							{
 								xtype: 'grid',
+								sortableColumns: false,
 								itemId: 'permissionGrid',
 								title: 'Acttive Permissions for ' + record.get('roleName'),
 								width: '100%',
 								isDirty: false,
+								findSubPermissions: function (record) {
+									return this.getStore().getData().items.reduce(function (acc, item) {
+										if (item.getData().permissionPredecessor === record.getData().code) {
+											acc.push(item);
+										}
+										return acc;
+									}, []);
+								},
+								findParentPermission: function (record) {
+									if (record.getData().permissionPredecessor) {
+										return this.getStore().getData().items.reduce(function (acc, item) {
+											if (record.getData().permissionPredecessor === item.getData().code) {
+												acc = item;
+											}
+											return acc;
+										});
+									}
+									return null;
+								},
 								findRelatedPermissions: function (grouping) {
 
 									var store = this.getStore();
@@ -583,13 +610,65 @@
 										dataIndex: 'permissionEnabled',
 										flex: 1,
 										listeners: {
-											checkchange: function () {
-												permissionWin.getComponent('permissionGrid').setDirty(true);
+											checkchange: function (self, rowIndex, checked, record) {
+
+												// remove/add classes of sub-permissions to enable/disable permission rows
+												
+												var grid = this.up('grid');
+
+												if (typeof record.getData().permissionPredecessor === 'undefined') {
+
+													var subPermissionRecords = grid.findSubPermissions(record);
+													if (checked) {
+														Ext.Array.forEach(subPermissionRecords, function (item) {
+															var row = grid.getView().getRowByRecord(item);
+															row.classList.remove('permission-row-disabled');
+														});
+													}
+													else {
+														Ext.Array.forEach(subPermissionRecords, function (item) {
+															var row = grid.getView().getRowByRecord(item);
+															row.classList.add('permission-row-disabled');
+														});
+													}
+												}
+
+												// set the grid to a dirty state
+												grid.setDirty(true);
 											}
 										}
 									},
-									{ text: 'Code', dataIndex: 'code', flex: 3 },
-									{ text: 'Description', dataIndex: 'description', flex: 6, minWidth: 200 }
+									{
+										text: 'Code',
+										dataIndex: 'code',
+										flex: 6,
+										renderer: function (value, metaData) {
+
+											// indent the record if it has a "permissionPredecessor"
+
+											var grid = this;
+											var record = grid.getStore().getData().items[metaData.recordIndex];
+											
+											if (record.getData().permissionPredecessor) {
+												var parentRecord = grid.findParentPermission(record);
+												if (parentRecord) {
+
+													// defer so the view will have time to render.
+													if (!parentRecord.getData().permissionEnabled) {
+														Ext.defer(function () {
+															var row = grid.getView().getRowByRecord(record);
+															row.classList.add('permission-row-disabled');
+														}, 1);
+													}
+													return '<span style="margin-left: 25px;">' + value + '</span>';
+												}
+											}
+
+											return '<span>' + value + '</span>';
+										}
+									},
+									{ text: 'Description', dataIndex: 'description', flex: 6, minWidth: 200 },
+									{ text: 'Sort Order', dataIndex: 'sortColumn', hidden: true }
 								],
 								store: {
 									autoLoad: true,
@@ -600,7 +679,7 @@
 									},
 									listeners: {
 										load: function (store, records, opts) {
-
+											
 											var grid = permissionWin.down('[itemId=permissionGrid]');
 											loadRoleGrid({
 												roleRecord: record,
@@ -687,7 +766,7 @@
 				var actionManageData = function(record) {
 					
 					var dataWin = Ext.create('Ext.window.Window', {
-						title:  record.get('roleName') + ' Data Restrictions',						
+						title:  record.get('roleName') + ' Data Restrictions',					
 						iconCls: 'fa fa-legal',
 						closeAction: 'destroy',
 						width: 1000,

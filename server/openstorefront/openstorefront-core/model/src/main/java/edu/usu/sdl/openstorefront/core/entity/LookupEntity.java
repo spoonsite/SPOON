@@ -85,6 +85,9 @@ public abstract class LookupEntity<T extends LookupEntity>
 	@APIDescription("A string representation of what the entity should be grouped by.")
 	private String groupBy;
 
+	@APIDescription("A string representation of the permission predecessor of the current permission (without this permission predecessor, you cannot activate this permission)")
+	private String permissionPredecessor;
+
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public LookupEntity()
 	{
@@ -123,10 +126,10 @@ public abstract class LookupEntity<T extends LookupEntity>
 
 	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription)
 	{
-		return newLookup(lookupClass, code, description, detailedDescription, null);
+		return newLookup(lookupClass, code, description, detailedDescription, null, null);
 	}
 
-	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription, String groupBy)
+	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription, String groupBy, String permissionPredecessor)
 	{
 		T lookup = null;
 		try {
@@ -136,6 +139,8 @@ public abstract class LookupEntity<T extends LookupEntity>
 			lookup.setDescription(description);
 			lookup.setDetailedDescription(detailedDescription);
 			lookup.setGroupBy(groupBy);
+			lookup.setPermissionPredecessor(permissionPredecessor);
+
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to create lookup", ex);
 		}
@@ -268,6 +273,14 @@ public abstract class LookupEntity<T extends LookupEntity>
 
 	public String getGroupBy() {
 		return groupBy;
+	}
+
+	public void setPermissionPredecessor(String permissionPredecessor) {
+		this.permissionPredecessor = permissionPredecessor;
+	}
+
+	public String getPermissionPredecessor() {
+		return permissionPredecessor;
 	}
 
 }

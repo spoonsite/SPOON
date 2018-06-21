@@ -1797,3 +1797,15 @@ table.confluenceTable td.numberingColumn {
 .entrytype-attribute-assignment-header {
 	background: steelblue;
 }
+
+.permission-row-disabled {
+	pointer-events: none;
+}
+
+.permission-row-disabled .x-grid-checkcolumn {
+	opacity: 0.5;
+}
+
+.permission-row-disabled .x-grid-cell {
+	color: #ccc;
+}
