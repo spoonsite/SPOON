@@ -27,7 +27,19 @@ Ext.define('OSF.form.Media', {
 		this.callParent();
 		
 		var mediaPanel = this;
-		
+
+		function enableAll(){
+			mediaPanel.mediaGridForm.queryById('linkType').enable(true);
+			mediaPanel.mediaGridForm.queryById('upload').enable(true);
+		}
+
+		var downloadRecord = function(record) {
+			if(record.data){
+				if(record.data.link){
+					window.location.href = '' + record.data.link;
+				}
+			}
+		};	
 
 		mediaPanel.mediaGridForm = Ext.create('Ext.form.Panel', {
 			xtype: 'form',			
@@ -134,6 +146,7 @@ Ext.define('OSF.form.Media', {
 								});
 							}
 						}
+						enableAll();
 					}
 				},
 				{
@@ -141,6 +154,7 @@ Ext.define('OSF.form.Media', {
 					text: 'Cancel',										
 					iconCls: 'fa fa-lg fa-close',
 					handler: function(){
+						enableAll();
 						this.up('form').reset();
 						this.up('form').getComponent('upload').setFieldLabel('Upload Media (Limit 1GB)');
 					}									
@@ -191,7 +205,8 @@ Ext.define('OSF.form.Media', {
 				},
 				{
 					xtype: 'textfield',
-					fieldLabel: 'Link',																																	
+					fieldLabel: 'Link',
+					itemId: 'linkType',																																	
 					maxLength: '255',									
 					emptyText: 'http://www.example.com/image.png',
 					name: 'originalLink',
@@ -287,10 +302,20 @@ Ext.define('OSF.form.Media', {
 				selectionchange: function(grid, record, index, opts){
 					var fullgrid = mediaPanel.mediaGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
+						var input_record = mediaPanel.mediaGrid.getSelection()[0];
+						if(input_record.data){
+							if(input_record.data.fileName){
+								fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(false);
+							}
+							else{
+								fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(true);
+							}
+						}
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
 					} else {
+						fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
@@ -324,6 +349,8 @@ Ext.define('OSF.form.Media', {
 											status: newValue
 										}
 									});
+									mediaPanel.mediaGridForm.reset();
+									enableAll();
 								}
 							}
 						}, 								
@@ -332,6 +359,8 @@ Ext.define('OSF.form.Media', {
 							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								this.up('grid').getStore().reload();
+								this.up('grid').down('form').reset();
+								enableAll();
 							}
 						},
 						{
@@ -343,6 +372,14 @@ Ext.define('OSF.form.Media', {
 							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 							handler: function(){
 								var record = mediaPanel.mediaGrid.getSelection()[0];
+								if(record.data){
+									if(record.data.fileName){
+										mediaPanel.mediaGridForm.queryById('linkType').disable(true);
+									}
+									else{
+										mediaPanel.mediaGridForm.queryById('upload').disable(true);
+									}
+								}
 								this.up('grid').down('form').reset();
 								this.up('grid').down('form').loadRecord(record);
 								if (record.get('originalFileName')) {
@@ -353,7 +390,8 @@ Ext.define('OSF.form.Media', {
 							}									
 						},
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbseparator',
+							hidden: mediaPanel.hideToggleStatus || false
 						},
 						{
 							text: 'Toggle Status',
@@ -363,10 +401,22 @@ Ext.define('OSF.form.Media', {
 							hidden: mediaPanel.hideToggleStatus || false,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(mediaPanel.mediaGrid, 'componentMediaId', 'media');
+								this.up('grid').down('form').reset();
+								enableAll();
 							}
 						},
 						{
 							xtype: 'tbfill'
+						},
+						{
+							text: 'Download',
+							itemId: 'downloadBtn',
+							disabled: true,
+							iconCls: 'fa fa-2x fa-download icon-vertical-correction-edit icon-button-color-default',
+							handler: function(){
+								var record = mediaPanel.mediaGrid.getSelection()[0];
+								downloadRecord(record);
+							}
 						},
 						{
 							text: 'Delete',
@@ -387,7 +437,8 @@ Ext.define('OSF.form.Media', {
 								} else {
 									CoreUtil.actionSubComponentToggleStatus(mediaPanel.mediaGrid, 'componentMediaId', 'media', undefined, undefined, true);
 								}
-
+								this.up('grid').down('form').reset();
+								enableAll();
 							}									
 						}
 					]
@@ -395,7 +446,6 @@ Ext.define('OSF.form.Media', {
 			]																
 		});		
 		mediaPanel.mediaGrid.addDocked(mediaPanel.mediaGridForm, 0);
-		
 		
 		mediaPanel.add(mediaPanel.mediaGrid);
 	},

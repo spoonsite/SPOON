@@ -65,6 +65,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import jersey.repackaged.com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -703,6 +704,9 @@ public abstract class ComponentCommonSubResourceExt
 		componentResourceExample.setResourceId(resourceId);
 		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
+			if(StringUtils.isBlank(resource.getLink())){
+				resource.setFile(componentResource.getFile());
+			}
 			resource.setComponentId(componentId);
 			resource.setResourceId(resourceId);
 			response = saveResource(resource, false);
@@ -911,6 +915,9 @@ public abstract class ComponentCommonSubResourceExt
 		ComponentMedia componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
 		if (componentMedia != null) {
 			checkBaseComponentBelongsToComponent(componentMedia, componentId);
+			if(StringUtils.isBlank(media.getLink())){
+				media.setFile(componentMedia.getFile());
+			}
 			media.setComponentId(componentId);
 			media.setComponentMediaId(mediaId);
 			response = saveMedia(media, false);
