@@ -176,7 +176,7 @@
         </v-card>
       </v-expansion-panel-content>
 
-      <v-expansion-panel-content v-if="detail.contacts !== 0">
+      <v-expansion-panel-content v-if="detail.contacts && detail.contacts.length !== 0">
         <div slot="header">Contacts</div>
         <v-card class="grey lighten-4">
           <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
@@ -211,11 +211,20 @@
       </v-expansion-panel-content>
 
       <!-- TODO: DO this later -->
+      <!-- <EntryPageQA/>
+      /openstorefront/api/v1/resource/components/{id}/questions
+      /openstorefront/api/v1/resource/components/{id}/questions/{questionid}/responses
+      /openstorefront/api/v1/resource/components/{id}/questions/{questionid}/responses/{responseid}
+       -->
       <v-expansion-panel-content>
         <div slot="header">Questions and Answers</div>
         <v-card class="grey lighten-4">
           <v-card-text>
-
+            <div v-for="question in questions" :key="question.question">
+              <p v-html="question.question"></p>
+              <!-- get all the reponses for this answer from computed property -->
+              <!-- <p v-for="answer in responses" :key="answer.response"></p> -->
+            </div>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -245,12 +254,14 @@ export default {
     }
 
     this.getDetail();
+    this.getQuestions();
   },
   data () {
     return {
       baseURL: '/openstorefront/',
       isLoading: true,
       detail: {},
+      questions: {},
       watchSwitch: false,
       hasImage: false,
       lightboxList: [],
@@ -269,7 +280,7 @@ export default {
   methods: {
     getDetail () {
       this.isLoading = true;
-      this.$http.get('/openstorefront/api/v1/resource/components/' + this.id + '/detail')
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/detail`)
         .then(response => {
           this.detail = response.data;
         })
@@ -279,6 +290,14 @@ export default {
           this.filterLightboxList();
           this.isLoading = false;
         });
+    },
+    getQuestions () {
+      this.isLoading = true;
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions`)
+        .then(response => {
+          this.questions = response.data;
+        })
+        .catch(e => this.errors.push(e));
     },
     computeAverageRating (detail) {
       var temp = 0;
