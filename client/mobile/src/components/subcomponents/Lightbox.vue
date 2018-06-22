@@ -40,24 +40,10 @@
         <transition name="swipe" keep-alive mode="out-in">
           <div :key="lightboxCurrentImage">
             <img :src="lightboxCurrentImage" class="lightboxImage elevation-6">
-            <p style="color: white;">Image {{ lightboxCurrentIndex + 1 }} of {{ lightboxList.length }} <v-btn dark small flat icon><v-icon class="download-icon">fas fa-download</v-icon></v-btn></p>
+            <p style="color: white;">Image {{ lightboxCurrentIndex + 1 }} of {{ lightboxList.length }} <v-btn dark small flat icon :href="lightboxCurrentImage"><v-icon class="download-icon">fas fa-download</v-icon></v-btn></p>
           </div>
         </transition>
       </div>
-
-      <!-- <div class="lightboxControl">
-        <v-btn v-if="lightboxList.length > 1" flat icon small dark @click="lightboxPrev()">
-          <v-icon dark>navigate_before</v-icon>
-        </v-btn>
-
-        <v-btn icon small dark style="margin-left: 2em; margin-right: 2em;" @click="lightbox = false;">
-          <v-icon dark>clear</v-icon>
-        </v-btn>
-
-        <v-btn v-if="lightboxList.length > 1" flat icon small dark @click="lightboxNext()">
-          <v-icon dark>navigate_next</v-icon>
-        </v-btn>
-      </div> -->
 
     </div>
     </transition>
