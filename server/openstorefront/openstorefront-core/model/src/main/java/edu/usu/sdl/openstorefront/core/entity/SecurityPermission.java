@@ -685,8 +685,8 @@ public class SecurityPermission
 		// Questions
 		codeMap.put(USER_QUESTIONS_PAGE, newLookup(SecurityPermission.class, USER_QUESTIONS_PAGE, "Provides access to the Questions page", null, GROUPBY_QUESTION, null));
 		codeMap.put(ADMIN_QUESTION_PAGE, newLookup(SecurityPermission.class, ADMIN_QUESTION_PAGE, "Provides access to the admin Questions page", null, GROUPBY_QUESTION, null));
-		codeMap.put(ADMIN_QUESTIONS_READ, newLookup(SecurityPermission.class, ADMIN_QUESTIONS_READ, "Gives ability to read questions", null, GROUPBY_QUESTION, null));
-		codeMap.put(ADMIN_QUESTIONS_UPDATE, newLookup(SecurityPermission.class, ADMIN_QUESTIONS_UPDATE, "Gives ability to update questions", null, GROUPBY_QUESTION, ADMIN_QUESTIONS_READ));
+		codeMap.put(ADMIN_QUESTIONS_READ, newLookup(SecurityPermission.class, ADMIN_QUESTIONS_READ, "Gives admin ability to read questions on entries", null, GROUPBY_QUESTION, null));
+		codeMap.put(ADMIN_QUESTIONS_UPDATE, newLookup(SecurityPermission.class, ADMIN_QUESTIONS_UPDATE, "Gives admin ability to update questions on entries", null, GROUPBY_QUESTION, ADMIN_QUESTIONS_READ));
 
 		// Relationships
 		codeMap.put(ADMIN_RELATIONSHIPS_PAGE, newLookup(SecurityPermission.class, ADMIN_RELATIONSHIPS_PAGE, "Provides access to the admin Relationships page", null, GROUPBY_RELATIONSHIPS, null));

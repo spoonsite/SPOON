@@ -182,7 +182,7 @@
 					items: [
 						{
 							text: 'Questions',
-							permission: ['ADMIN-QUESTIONS-PAGE'],
+							permission: ['ADMIN-QUESTION-PAGE'],
 							handler: function(){
 								actionLoadContent('Questions');
 							}							
