@@ -282,9 +282,9 @@ public class SecurityPermission
 	public static final String GROUPBY_LOOKUP = "Lookups";
 	public static final String ADMIN_LOOKUPS_PAGE = "ADMIN-LOOKUPS-PAGE";
 	public static final String ADMIN_LOOKUPS_READ = "ADMIN-LOOKUPS-READ";
-	public static final String ADMIN_LOOKUPS_CREATE = "ADMIN-LOOKUPS-CREATE";
-	public static final String ADMIN_LOOKUPS_UPDATE = "ADMIN-LOOKUPS-UPDATE";
-	public static final String ADMIN_LOOKUPS_DELETE = "ADMIN-LOOKUPS-DELETE";
+	public static final String ADMIN_LOOKUPS_CREATE_CODE = "ADMIN-LOOKUPS-CREATE-CODE";
+	public static final String ADMIN_LOOKUPS_UPDATE_CODE = "ADMIN-LOOKUPS-UPDATE-CODE";
+	public static final String ADMIN_LOOKUPS_DELETE_CODE = "ADMIN-LOOKUPS-DELETE-CODE";
 
 	//Media
 	public static final String GROUPBY_MEDIA = "Media";
@@ -642,9 +642,9 @@ public class SecurityPermission
 		// Lookups
 		codeMap.put(ADMIN_LOOKUPS_PAGE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_PAGE, "Provides access to the Lookups page", null, GROUPBY_LOOKUP, null));
 		codeMap.put(ADMIN_LOOKUPS_READ, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_READ, "Provides the ability to read lookups", null, GROUPBY_LOOKUP, null));
-		codeMap.put(ADMIN_LOOKUPS_CREATE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_CREATE, "Provides the ability to create lookups", null, GROUPBY_LOOKUP, ADMIN_LOOKUPS_READ));
-		codeMap.put(ADMIN_LOOKUPS_UPDATE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_UPDATE, "Provides the ability to update a lookup(s)", null, GROUPBY_LOOKUP, ADMIN_LOOKUPS_READ));
-		codeMap.put(ADMIN_LOOKUPS_DELETE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_DELETE, "Provides the ability to delete lookups", null, GROUPBY_LOOKUP, ADMIN_LOOKUPS_READ));
+		codeMap.put(ADMIN_LOOKUPS_CREATE_CODE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_CREATE_CODE, "Provides the ability to create lookups", null, GROUPBY_LOOKUP, ADMIN_LOOKUPS_READ));
+		codeMap.put(ADMIN_LOOKUPS_UPDATE_CODE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_UPDATE_CODE, "Provides the ability to update a lookup(s)", null, GROUPBY_LOOKUP, ADMIN_LOOKUPS_READ));
+		codeMap.put(ADMIN_LOOKUPS_DELETE_CODE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_DELETE_CODE, "Provides the ability to delete lookups", null, GROUPBY_LOOKUP, ADMIN_LOOKUPS_READ));
 		
 		//Media
 		codeMap.put(ADMIN_MEDIA_PAGE, newLookup(SecurityPermission.class, ADMIN_MEDIA_PAGE, "Provides access to the admin Media page", null, GROUPBY_MEDIA, null));
