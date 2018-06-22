@@ -1680,6 +1680,14 @@
 				var templateGrid = Ext.create('Ext.grid.Panel', {
 					id: 'templateGrid',
 					title: 'Entry Templates <i class="fa fa-question-circle"  data-qtip="Allows for defining custom templates for entries" ></i>',
+					requiredPermissions: ['ADMIN-ENTRY-TEMPLATES-READ'],
+					permissionCheckFailure: function () {
+						Ext.toast({
+							html: 'You do not have permissions to view the data on this page',
+							title: 'Invalid Permissions',
+							align: 'b'
+						});
+					},
 					store: {
 						fields: [
 							{
