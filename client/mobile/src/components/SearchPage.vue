@@ -95,6 +95,7 @@
             item-value="name"
             label="Organization"
             clearable
+            autocomplete
           ></v-select>
         </v-card-text>
         <v-card-actions>
@@ -397,7 +398,7 @@ export default {
     getOrganizations () {
       this.$http
         .get(
-          '/openstorefront/api/v1/resource/organizations?componentOnly=true'
+          '/openstorefront/api/v1/resource/organizations?componentOnly=true&sortOrder=ASC&sortField=name'
         )
         .then(response => {
           this.organizationsList = response.data.data;
