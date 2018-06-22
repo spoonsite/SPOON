@@ -87,7 +87,7 @@
                 <v-icon>cloud_download</v-icon>
               </v-btn>
                 <strong>{{ item.contentType }}:</strong>
-                {{ item.originalFileName }}
+                {{ item.caption}}
             </p>
           </v-card-text>
         </v-card>
@@ -314,15 +314,11 @@ export default {
         }
       }
     }
-  },
-  computed: {
   }
 };
 </script>
 
 <style scoped lang="scss">
-  // .entry-detail-page {
-  // }
   .carousel {
     margin-bottom: 1em;
   }
