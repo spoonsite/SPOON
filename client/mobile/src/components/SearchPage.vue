@@ -146,15 +146,7 @@
     </v-chip>
   </div>
 
-  <div v-if="searchQueryIsDirty" class="overlay">
-    <v-progress-circular
-      color="teal"
-      :size="70"
-      :width="7"
-      indeterminate
-      class="center"
-    ></v-progress-circular>
-  </div>
+  <LoadingOverlay v-model="searchQueryIsDirty"></LoadingOverlay>
 
   <div v-if="searchResults.data">
     <v-expansion-panel popout>
@@ -244,6 +236,7 @@
 <script>
 import _ from 'lodash';
 import SearchBar from './subcomponents/SearchBar';
+import LoadingOverlay from './subcomponents/LoadingOverlay';
 import StarRating from 'vue-star-rating';
 import router from '../router/index';
 
@@ -251,6 +244,7 @@ export default {
   name: 'SearchPage',
   components: {
     SearchBar,
+    LoadingOverlay,
     StarRating
   },
   mounted () {
@@ -391,7 +385,7 @@ export default {
           '/openstorefront/api/v1/resource/components/tagviews?approvedOnly=true'
         )
         .then(response => {
-          this.tagsList = response.data;
+          this.tagsList = _.sortBy(response.data, [function (o) { return o.text; }]);
         })
         .catch(e => this.errors.push(e));
     },
@@ -558,23 +552,6 @@ export default {
   content: '';
   clear: both;
   display: table;
-}
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 990;
-  background-color: rgba(255,255,255, 0.7);
-  pointer-events: all;
-}
-.center {
-  z-index: 991;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 .centeralign {
   margin-right: auto;

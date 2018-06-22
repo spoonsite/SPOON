@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app>
-      <header>
+      <header style="z-index:20;">
         <div class="toolbar">
         <v-toolbar color="primary" dense dark flat>
           <v-spacer></v-spacer>
