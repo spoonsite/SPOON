@@ -6,7 +6,7 @@
       >
       <div class="mediaItem">
         <img
-          v-for="(item, index) in lightboxList"
+          v-for="(item, index) in list"
           :key="item.link"
           :src="baseURL+item.link"
           class="mediaImage elevation-4"
@@ -26,23 +26,29 @@
         }"
       >
 
-      <v-btn icon dark large class="close-btn" @click="lightbox = false;"><v-icon dark large>clear</v-icon></v-btn>
-
-      <v-btn class="left-btn" v-if="lightboxList.length > 1" flat icon dark @click="lightboxPrev()">
-        <v-icon large dark>navigate_before</v-icon>
-      </v-btn>
-
-      <v-btn class="right-btn" v-if="lightboxList.length > 1" flat icon dark @click="lightboxNext()">
-        <v-icon large dark>navigate_next</v-icon>
-      </v-btn>
-
       <div class="lightboxImageWrapper">
         <transition name="swipe" keep-alive mode="out-in">
-          <div :key="lightboxCurrentImage">
-            <img :src="lightboxCurrentImage" class="lightboxImage elevation-6">
-            <p style="color: white;">Image {{ lightboxCurrentIndex + 1 }} of {{ lightboxList.length }} <v-btn dark small flat icon :href="lightboxCurrentImage"><v-icon class="download-icon">fas fa-download</v-icon></v-btn></p>
+          <div :key="currentItem.link" style="margin-bottom: 3em;">
+            <p style="color: white;">{{ currentItem.caption}}</p>
+            <img :src="baseURL + currentItem.link" class="lightboxImage elevation-6">
+            <p style="color: white;">
+              Image {{ currentIndex + 1 }} of {{ list.length }}
+              <v-btn dark small flat icon :href="baseURL + currentItem.link"><v-icon class="download-icon">fas fa-download</v-icon></v-btn>
+            </p>
           </div>
         </transition>
+      </div>
+
+      <div class="lightboxControl">
+        <v-btn v-if="list.length > 1" flat icon small dark @click="lightboxPrev()">
+          <v-icon dark>navigate_before</v-icon>
+        </v-btn>
+        <v-btn icon small dark style="margin-left: 2em; margin-right: 2em;" @click="lightbox = false;">
+          <v-icon dark>clear</v-icon>
+        </v-btn>
+        <v-btn v-if="list.length > 1" flat icon small dark @click="lightboxNext()">
+          <v-icon dark>navigate_next</v-icon>
+        </v-btn>
       </div>
 
     </div>
@@ -53,35 +59,35 @@
 <script>
 export default {
   name: 'Lightbox',
-  props: ['lightboxList'],
+  props: ['list'],
   mounted () {
   },
   data () {
     return {
       baseURL: '/openstorefront/',
       lightbox: false,
-      lightboxCurrentImage: '',
-      lightboxCurrentIndex: 0
+      currentItem: null,
+      currentIndex: 0
     };
   },
   methods: {
     lightboxOn (index) {
       this.lightbox = true;
-      this.lightboxCurrentIndex = index;
-      this.lightboxCurrentImage = this.baseURL + this.lightboxList[index].link;
+      this.currentIndex = index;
+      this.currentItem = this.list[index];
       this.lightboxSetImage();
     },
     lightboxSetImage () {
-      this.lightboxCurrentImage = this.baseURL + this.lightboxList[this.lightboxCurrentIndex].link;
+      this.currentItem = this.list[this.currentIndex];
     },
     lightboxNext () {
-      this.lightboxCurrentIndex = (this.lightboxCurrentIndex + 1) % this.lightboxList.length;
+      this.currentIndex = (this.currentIndex + 1) % this.list.length;
       this.lightboxSetImage();
     },
     lightboxPrev () {
-      this.lightboxCurrentIndex = this.lightboxCurrentIndex - 1;
-      if (this.lightboxCurrentIndex < 0) {
-        this.lightboxCurrentIndex = this.lightboxList.length - 1;
+      this.currentIndex = this.currentIndex - 1;
+      if (this.currentIndex < 0) {
+        this.currentIndex = this.list.length - 1;
       }
       this.lightboxSetImage();
     }
@@ -159,24 +165,5 @@ export default {
   }
   .download-icon {
     font-size: 14px;
-  }
-  .left-btn {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    z-index: 991;
-  }
-  .right-btn {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    z-index: 991;
-  }
-  .close-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 991;
-
   }
 </style>

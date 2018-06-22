@@ -9,7 +9,7 @@
 
     <Lightbox
       v-if="detail.componentMedia && detail.componentMedia.length > 0"
-      :lightboxList="lightboxList"
+      :list="lightboxList"
     ></Lightbox>
 
     <v-expansion-panel popout class="mt-3">
@@ -80,7 +80,7 @@
             <p
               v-for="item in detail.componentMedia"
               :key="item.componentType"
-              style="overflow-x: scroll; white-space: nowrap;"
+              style="overflow-x: auto; white-space: nowrap;"
             >
 
               <v-btn flat icon :href="baseURL+item.link">
@@ -179,7 +179,7 @@
       <v-expansion-panel-content v-if="detail.contacts !== 0">
         <div slot="header">Contacts</div>
         <v-card class="grey lighten-4">
-          <v-card-text v-if="detail.contacts.length > 0">
+          <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
             <h2>Points of Contact</h2>
             <div
               v-for="contact in detail.contacts"
@@ -222,16 +222,7 @@
 
     </v-expansion-panel>
 
-    <div v-if="isLoading" class="overlay">
-      <v-progress-circular
-        color="teal"
-        :size="70"
-        :width="7"
-        indeterminate
-        class="center"
-      ></v-progress-circular>
-    </div>
-
+    <LoadingOverlay v-model="isLoading"></LoadingOverlay>
   </div>
 </template>
 
@@ -239,12 +230,14 @@
 import StarRating from 'vue-star-rating';
 import _ from 'lodash';
 import Lightbox from './subcomponents/Lightbox';
+import LoadingOverlay from './subcomponents/LoadingOverlay';
 
 export default {
   name: 'entry-detail-page',
   components: {
     StarRating,
-    Lightbox
+    Lightbox,
+    LoadingOverlay
   },
   mounted () {
     if (this.$route.params.id) {
@@ -333,25 +326,8 @@ export default {
   .carousel {
     margin-bottom: 1em;
   }
-  .center {
-    z-index: 991;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
   .contactPar {
     margin-bottom: 0.5em;
-  }
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 990;
-    background-color: rgba(255,255,255, 0.7);
-    pointer-events: all;
   }
   .reviewPar {
     margin-bottom: 0.5em;
