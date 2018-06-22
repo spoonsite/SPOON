@@ -49,6 +49,9 @@ public class FileHistoryOption
 	@ConsumeField
 	private Boolean skipDuplicationCheck;
 
+	@ConsumeField
+	private String defaultComponentType;
+
 	@Version
 	private String storageVersion;
 
@@ -125,6 +128,16 @@ public class FileHistoryOption
 	public void setSkipDuplicationCheck(Boolean skipDuplicationCheck)
 	{
 		this.skipDuplicationCheck = skipDuplicationCheck;
+	}
+
+	public String getDefaultComponentType()
+	{
+		return defaultComponentType;
+	}
+
+	public void setDefaultComponentType(String defaultComponentType)
+	{
+		this.defaultComponentType = defaultComponentType;
 	}
 
 }

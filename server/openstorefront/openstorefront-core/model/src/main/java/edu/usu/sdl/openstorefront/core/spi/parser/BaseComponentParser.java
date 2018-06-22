@@ -79,7 +79,12 @@ public abstract class BaseComponentParser
 
 	protected ComponentAll defaultComponentAll()
 	{
-		return defaultComponentAll(ComponentType.COMPONENT);
+		String componentType = ComponentType.COMPONENT;
+		if (fileHistoryAll.getFileHistory().getFileHistoryOption() != null
+				&& StringUtils.isNotBlank(fileHistoryAll.getFileHistory().getFileHistoryOption().getDefaultComponentType())) {
+			componentType = fileHistoryAll.getFileHistory().getFileHistoryOption().getDefaultComponentType();
+		}
+		return defaultComponentAll(componentType);
 	}
 
 	protected ComponentAll defaultComponentAll(String componentType)

@@ -15,13 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.web.test.dataimport;
 
-import edu.usu.sdl.openstorefront.web.test.BaseDataImportTest;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.core.entity.DataSource;
 import edu.usu.sdl.openstorefront.core.entity.FileFormat;
 import edu.usu.sdl.openstorefront.core.entity.FileHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
+import edu.usu.sdl.openstorefront.web.test.BaseDataImportTest;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -37,6 +37,8 @@ public class ER2XMLTest
 	@Override
 	protected void runInternalTest()
 	{
+		checkComponentType();
+
 		ImportContext importContext = new ImportContext();
 		importContext.setInput(FileSystemManager.getInstance().getApplicationResourceFile("/data/test/assettest.xml"));
 
@@ -46,6 +48,7 @@ public class ER2XMLTest
 		fileHistory.setOriginalFilename("assettest.xml");
 		fileHistory.setFileFormat(FileFormat.COMPONENT_ER2);
 		FileHistoryOption options = new FileHistoryOption();
+		options.setDefaultComponentType(TEST_COMPONENT_TYPE);
 		options.setSkipRequiredAttributes(true);
 		fileHistory.setFileHistoryOption(options);
 		importContext.getFileHistoryAll().setFileHistory(fileHistory);
