@@ -17,22 +17,35 @@
 
     <!-- LIGHTBOX Popup -->
     <transition name="fade">
-    <div v-if="lightbox" class="lightbox">
-      <div class="lightboxImageWrapper"
+    <div
+      v-if="lightbox"
+      class="lightbox"
         v-touch="{
           left: () => lightboxNext(),
           right: () => lightboxPrev()
         }"
-        >
+      >
+
+      <v-btn icon dark large class="close-btn" @click="lightbox = false;"><v-icon dark large>clear</v-icon></v-btn>
+
+      <v-btn class="left-btn" v-if="lightboxList.length > 1" flat icon dark @click="lightboxPrev()">
+        <v-icon large dark>navigate_before</v-icon>
+      </v-btn>
+
+      <v-btn class="right-btn" v-if="lightboxList.length > 1" flat icon dark @click="lightboxNext()">
+        <v-icon large dark>navigate_next</v-icon>
+      </v-btn>
+
+      <div class="lightboxImageWrapper">
         <transition name="swipe" keep-alive mode="out-in">
           <div :key="lightboxCurrentImage">
-          <img :src="lightboxCurrentImage" class="lightboxImage elevation-3">
-          <p style="color: white;">Image {{ lightboxCurrentIndex + 1 }} of {{ lightboxList.length }}</p>
+            <img :src="lightboxCurrentImage" class="lightboxImage elevation-6">
+            <p style="color: white;">Image {{ lightboxCurrentIndex + 1 }} of {{ lightboxList.length }} <v-btn dark small flat icon><v-icon class="download-icon">fas fa-download</v-icon></v-btn></p>
           </div>
         </transition>
       </div>
 
-      <div class="lightboxControl">
+      <!-- <div class="lightboxControl">
         <v-btn v-if="lightboxList.length > 1" flat icon small dark @click="lightboxPrev()">
           <v-icon dark>navigate_before</v-icon>
         </v-btn>
@@ -44,7 +57,8 @@
         <v-btn v-if="lightboxList.length > 1" flat icon small dark @click="lightboxNext()">
           <v-icon dark>navigate_next</v-icon>
         </v-btn>
-      </div>
+      </div> -->
+
     </div>
     </transition>
 </div>
@@ -96,12 +110,13 @@ export default {
 <style>
   .lightbox {
     position: fixed;
+    overflow-y: scroll;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 990;
-    background-color: rgba(71, 71, 71, 0.7);
+    background-color: rgba(71, 71, 71, 0.8);
     pointer-events: all;
   }
   .lightboxControl {
@@ -113,18 +128,16 @@ export default {
     background-color: rgba(39, 39, 39, 0.7);
   }
   .lightboxImage {
-    background: #fff;
-    max-width: 98%;
+    max-width: 90%;
     max-height: 90%;
-    border: 2px solid white;
-    border-radius: 2px;
+    background-color: white;
   }
   .lightboxImageWrapper {
     margin-top: 1em;
     width: 100%;
     max-height: 90%;
     position: absolute;
-    top: 45%;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
@@ -150,12 +163,34 @@ export default {
     opacity: 0;
   }
   .swipe-enter-active, .swipe-leave-active {
-    transition: opacity .3s;
+    transition: opacity .1s;
   }
   .swipe-enter {
     opacity: 0;
   }
   .swipe-leave-to {
     opacity: 0;
+  }
+  .download-icon {
+    font-size: 14px;
+  }
+  .left-btn {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: 991;
+  }
+  .right-btn {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    z-index: 991;
+  }
+  .close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 991;
+
   }
 </style>
