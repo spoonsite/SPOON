@@ -134,9 +134,6 @@ public class SecurityPermission
 	public static final String DASHBOARD_WIDGET_USER_STATS = "DASHBOARD-WIDGET-USER-STATS";
 	public static final String DASHBOARD_WIDGET_WATCHES = "DASHBOARD-WIDGET-WATCHES";
 
-	// Dashboard Widgets
-	// public static final String GROUPBY_DASHBOARD_WIDGET = "Dashboard Widgets";
-
 	// Entry Management
 	public static final String GROUPBY_ENTRY_MANAGEMENT = "Entries";
 	public static final String ADMIN_ENTRIES_PAGE = "ADMIN-ENTRIES-PAGE";
