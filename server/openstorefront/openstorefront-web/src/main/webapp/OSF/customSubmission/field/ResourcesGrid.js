@@ -83,17 +83,20 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
-										form.handleUpload(data);
-
-										data.resourceTypeDesc = form.queryById('resourceType').getSelection().get('description');
+										form.handleUpload(data,  function(){
+											data.resourceTypeDesc = form.queryById('resourceType').getSelection().get('description');
+											data.originalFileName = form.originalFileName;
+											data.link = data.originalLink;
 										
-										if (record) {
-											record.set(data, {
-												dirty: false
-											});
-										} else {
-											grid.getStore().add(data);
-										}
+											if (record) {
+												record.set(data, {
+													dirty: false
+												});
+											} else {
+												grid.getStore().add(data);
+											}
+										});
+										
 										this.up('window').close();
 									}
 								},

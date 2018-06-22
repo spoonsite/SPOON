@@ -144,7 +144,7 @@ Ext.define('OSF.customSubmission.form.Resources', {
 		}		
 		
 	},
-	handleUpload: function(actualRecord) {
+	handleUpload: function(actualRecord, successCallback) {
 		var resourcePanel = this;
 		
 		if (resourcePanel.previewMode && resourcePanel.localResource) {			
@@ -214,12 +214,22 @@ Ext.define('OSF.customSubmission.form.Resources', {
 								actualRecord.file = {
 									mediaFileId: data.file.mediaFileId
 								};
+								actualRecord.originalFileName = data.file.originalName;
+								resourcePanel.originalFileName = data.file.originalName;
+								
+								if (successCallback) {
+									successCallback();
+								}
 							}
 							progressMsg.hide();
 						}
 					});
 				}
 			}	
+		} else {
+			if (successCallback) {
+				successCallback();
+			}
 		}
 	},	
 	getSubmissionValue: function() {

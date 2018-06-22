@@ -36,7 +36,7 @@ Ext.define('OSF.customSubmission.field.MediaGrid', {
 		{ text: 'External Link', dataIndex: 'originalLink', flex: 1, minWidth: 150 },		
 		{ text: 'Hide In Display', dataIndex: 'hideInDisplay', width: 200 },
 		{ text: 'Used Inline', dataIndex: 'usedInline', width: 200 },
-		{ text: 'Icon Flag', dataIndex: 'iconFlag', width: 200 },
+		{ text: 'Icon Flag', dataIndex: 'iconFlag', width: 200, hidden: true },
 		{ text: 'Security Marking', dataIndex: 'securityMarking', width: 200, hidden: true },
 		{ text: 'Data Sensitivity', dataIndex: 'dataSensitivity', width: 200, hidden: true }
 	],
