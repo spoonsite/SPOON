@@ -75,7 +75,6 @@ public class AdminToolAction
 		//security
 		pageMap.put("Security", new PageModel("/WEB-INF/securepages/admin/application/security.jsp", new String[]{SecurityPermission.ADMIN_SECURITY_PAGE}));
 		pageMap.put("Security-Roles", new PageModel("/WEB-INF/securepages/admin/application/roleManagement.jsp", new String[]{SecurityPermission.ADMIN_ROLES_PAGE}));
-		//pageMap.put("Security-Roles", new PageModel("/WEB-INF/securepages/admin/application/roleManagement.jsp"));
 		pageMap.put("User-Management", new PageModel("/WEB-INF/securepages/admin/application/userManagement.jsp", new String[]{SecurityPermission.ADMIN_USER_MANAGEMENT_PAGE}));
 
 		//Evaluation
