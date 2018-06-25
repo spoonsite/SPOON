@@ -47,11 +47,17 @@ public abstract class BaseDataImportTest extends BaseTestCase
 			componentType.setDescription("This was created for auto tests");
 			componentType.save();
 
-			CleanupTestData cleanupTestData = () -> {
-				ComponentType componentTypeLocal = new ComponentType();
-				componentTypeLocal.setComponentType(TEST_COMPONENT_TYPE);
-				componentTypeLocal.delete();
+			CleanupTestData cleanupTestData = new CleanupTestData()
+			{
+				@Override
+				public void cleanup()
+				{
+					ComponentType componentTypeLocal = new ComponentType();
+					componentTypeLocal.setComponentType(TEST_COMPONENT_TYPE);
+					componentTypeLocal.delete();
+				}
 			};
+			cleanupTestData.setOrder(Integer.MAX_VALUE);
 			cleanTestDataList.add(cleanupTestData);
 
 		}

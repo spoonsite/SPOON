@@ -832,7 +832,13 @@ public class ComponentTypeServiceImpl
 	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType typeLocal = findComponentType(componentTypes, componentTypeId);
+		ComponentType typeLocal;
+		try {
+			typeLocal = findComponentType(componentTypes, componentTypeId);
+		} catch (OpenStorefrontRuntimeException ex) {
+			LOG.log(Level.WARNING, ex, () -> "Unable to Find Component Type: " + componentTypeId);
+			return "(" + componentTypeId + ")";
+		}
 
 		List<ComponentType> parentChildComponentTypes = new ArrayList<>();
 		List<ComponentType> parentComponentTypes = getComponentTypeParents(componentTypeId, reverseOrder);

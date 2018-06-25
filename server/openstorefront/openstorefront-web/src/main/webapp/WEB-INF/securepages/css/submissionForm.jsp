@@ -115,3 +115,11 @@ h3 {
 	background-color: #ffea7c;
 	border-left: 10px grey solid;
 }
+
+.submission-form-preview {
+	text-align: center;
+	font-size: 20px;
+	font-weight: bold;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}

@@ -179,13 +179,20 @@
 							var template = Ext.decode(response.responseText);
 
 							var submissionWin = Ext.create('Ext.window.Window', {
-								title: 'Preview Incomplete Submission (READ-ONLY)',
+								title: 'Preview',
 								layout: 'fit',
 								modal: true,
 								closeAction: 'destroy',
 								width: '80%',
 								height: '80%',
-								maximizable: true,									
+								maximizable: true,
+								dockedItems: [
+									{
+										xtype: 'panel',
+										dock: 'top',
+										html: '<div class="submission-form-preview alert-warning">Preview Mode - (Changes will not be Saved)</div>'
+									}
+								],								
 								items: [
 									{
 										xtype: 'osf-customSubmission-SubmissionformFullControl',

@@ -73,6 +73,9 @@ public abstract class BaseTestCase
 
 	protected void cleanupTest()
 	{
+		cleanTestDataList.sort((a, b) -> {
+			return new Integer(a.getOrder()).compareTo(b.getOrder());
+		});
 		for (CleanupTestData cleanupTestData : cleanTestDataList) {
 			try {
 				cleanupTestData.cleanup();
@@ -153,9 +156,15 @@ public abstract class BaseTestCase
 		}
 
 		final String componentIdToDelete = componentAll.getComponent().getComponentId();
-		CleanupTestData cleanupTestData = () -> {
-			service.getComponentService().cascadeDeleteOfComponent(componentIdToDelete);
+		CleanupTestData cleanupTestData = new CleanupTestData()
+		{
+			@Override
+			public void cleanup()
+			{
+				service.getComponentService().cascadeDeleteOfComponent(componentIdToDelete);
+			}
 		};
+		cleanupTestData.setOrder(1);
 		cleanTestDataList.add(cleanupTestData);
 
 		return componentAll;
@@ -179,9 +188,14 @@ public abstract class BaseTestCase
 			service.getUserService().saveUserProfile(userProfile, false);
 		}
 
-		CleanupTestData cleanupTestData = () -> {
-			results.append("Removing profile").append("<br>");
-			service.getUserService().deleteProfile(TEST_USER);
+		CleanupTestData cleanupTestData = new CleanupTestData()
+		{
+			@Override
+			public void cleanup()
+			{
+				results.append("Removing profile").append("<br>");
+				service.getUserService().deleteProfile(TEST_USER);
+			}
 		};
 		cleanTestDataList.add(cleanupTestData);
 

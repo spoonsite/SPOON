@@ -221,7 +221,20 @@
 						}
 					},
 					columns: [
-						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200 },
+						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200, 
+							renderer: function(value, metaData, record) {
+								var fullName = '';
+								
+								if (record.get('submissionOriginalComponentId')) {
+									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Change Request)';
+								} else if (record.get('userSubmissionId')) {
+									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Submission)';
+								} else {
+									fullName = value;
+								}
+								return fullName;
+							}
+						},
 						{ text: 'Description', dataIndex: 'description', flex: 2, minWidth: 250,
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
@@ -241,6 +254,7 @@
 									text = 'Pending';
 									metaData.tdCls = 'alert-warning';
 								} else if (value === 'N') {
+									metaData.tdCls = 'alert-danger';
 									text = 'Not Submitted';
 								}
 								return text;

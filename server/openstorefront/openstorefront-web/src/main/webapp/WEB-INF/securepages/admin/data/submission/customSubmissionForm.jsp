@@ -557,6 +557,13 @@
 							width: '80%',
 							height: '80%',
 							maximizable: true,
+							dockedItems: [
+								{
+									xtype: 'panel',
+									dock: 'top',
+									html: '<div class="submission-form-preview alert-warning">Preview Mode - (Changes will not be Saved)</div>'
+								}
+							],
 							items: [
 								{
 									xtype: 'osf-customSubmission-SubmissionformFullControl',
@@ -583,7 +590,7 @@
 				var entryTypeSelect = Ext.create('OSF.customSubmissionTool.EntryTypeSelectWindow', {
 					selectCallBack: function(entryType) {
 						var previewWin = Ext.create('Ext.window.Window', {
-							title: 'Preview',
+							title: 'Verify Template',
 							layout: 'fit',
 							modal: true,
 							closeAction: 'destroy',

@@ -39,6 +39,7 @@ public class UserSubmissionView
 	private String componentType;
 	private String componentTypeDescription;
 	private String componentName;
+	private String submissionName;
 	private String ownerUsername;
 	private String createUser;
 	private String updateUser;
@@ -184,6 +185,16 @@ public class UserSubmissionView
 	public void setOriginalComponentId(String originalComponentId)
 	{
 		this.originalComponentId = originalComponentId;
+	}
+
+	public String getSubmissionName()
+	{
+		return submissionName;
+	}
+
+	public void setSubmissionName(String submissionName)
+	{
+		this.submissionName = submissionName;
 	}
 
 }

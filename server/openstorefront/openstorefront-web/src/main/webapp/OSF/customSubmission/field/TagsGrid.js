@@ -77,12 +77,22 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 										var form = this.up('form');
 										var data = form.getValues();
 										
-										if (record) {
-											record.set(data, {
-												dirty: false
-											});
-										} else {
-											grid.getStore().add(data);
+										//look for internal duplicates
+										var foundDup = false;
+										grid.getStore().each(function(existing){
+											if (existing.get('text').toLowerCase() === data.text.toLowerCase()) {
+												foundDup = true;
+											}
+										});
+										
+										if (!foundDup) {
+											if (record) {
+												record.set(data, {
+													dirty: false
+												});
+											} else {
+												grid.getStore().add(data);
+											}
 										}
 										this.up('window').close();
 									}

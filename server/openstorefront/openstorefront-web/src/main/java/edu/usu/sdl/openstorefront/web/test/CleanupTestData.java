@@ -18,10 +18,22 @@ package edu.usu.sdl.openstorefront.web.test;
 /**
  *
  * @author dshurtleff
- * @param <T>
  */
-@FunctionalInterface
-public interface CleanupTestData
+public abstract class CleanupTestData
 {
-	public void cleanup();	
+
+	private int order = 1;
+
+	public abstract void cleanup();
+
+	public int getOrder()
+	{
+		return order;
+	}
+
+	public void setOrder(int order)
+	{
+		this.order = order;
+	}
+
 }

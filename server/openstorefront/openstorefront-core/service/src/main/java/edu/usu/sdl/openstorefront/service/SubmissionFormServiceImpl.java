@@ -332,11 +332,13 @@ public class SubmissionFormServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to map entry to submission.", "Check error ticket/logs", ex);
 		}
 
+		userSubmissionAll.getUserSubmission().setSubmissionName(componentAll.getComponent().getName());
 		if (options.isForChangeRequest()) {
 			if (options.isEditChangeRequest()) {
 				Component component = new Component();
 				component.setComponentId(componentId);
 				component = component.find();
+
 				userSubmissionAll.getUserSubmission().setOriginalComponentId(component.getPendingChangeId());
 			} else {
 				userSubmissionAll.getUserSubmission().setOriginalComponentId(componentId);

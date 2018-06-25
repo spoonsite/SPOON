@@ -57,6 +57,7 @@ public class ComponentView
 	private String currentDataOwner;
 	private String userSubmissionId;
 	private String submissionTemplateId;
+	private String submissionOriginalComponentId;
 
 	public static ComponentView toView(Component component, boolean populateOwnerInfo)
 	{
@@ -259,6 +260,16 @@ public class ComponentView
 	public void setSubmissionTemplateId(String submissionTemplateId)
 	{
 		this.submissionTemplateId = submissionTemplateId;
+	}
+
+	public String getSubmissionOriginalComponentId()
+	{
+		return submissionOriginalComponentId;
+	}
+
+	public void setSubmissionOriginalComponentId(String submissionOriginalComponentId)
+	{
+		this.submissionOriginalComponentId = submissionOriginalComponentId;
 	}
 
 }

@@ -65,6 +65,8 @@ public class UserSubmission
 	@NotNull
 	private String ownerUsername;
 
+	private String submissionName;
+
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserSubmission()
 	{
@@ -90,6 +92,7 @@ public class UserSubmission
 				}
 			}
 		}
+		this.setSubmissionName(userSubmission.getSubmissionName());
 	}
 
 	public String getUserSubmissionId()
@@ -150,6 +153,16 @@ public class UserSubmission
 	public void setOwnerUsername(String ownerUsername)
 	{
 		this.ownerUsername = ownerUsername;
+	}
+
+	public String getSubmissionName()
+	{
+		return submissionName;
+	}
+
+	public void setSubmissionName(String submissionName)
+	{
+		this.submissionName = submissionName;
 	}
 
 }
