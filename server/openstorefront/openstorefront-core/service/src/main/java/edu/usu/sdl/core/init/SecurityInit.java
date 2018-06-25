@@ -56,6 +56,12 @@ public class SecurityInit
 		service.getSystemService().saveProperty(ApplicationProperty.APPLICATION_CRYPT_KEY, cryptKey);
 		LOG.log(Level.CONFIG, "Setup Crypt Key");
 
+		// remove all existing roles
+		SecurityRole exampleRole = new SecurityRole();
+		exampleRole.findByExampleProxy().forEach(role -> {
+			service.getPersistenceService().delete(role);
+		});
+
 		//init default user and roles for system
 		//Default Role
 		SecurityRole securityRole = new SecurityRole();
@@ -106,44 +112,13 @@ public class SecurityInit
 		securityRole.setDescription("Super admin group");
 		securityRole.setLandingPage("/");
 
+		// add admin permissions (all the permissions)
 		permissions = new ArrayList<>();
-		permissionsToAdd = Arrays.asList(SecurityPermission.ADMIN_ALERT_MANAGEMENT,
-				SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT,
-				SecurityPermission.ADMIN_BRANDING,
-				SecurityPermission.ADMIN_CONTACT_MANAGEMENT,
-				SecurityPermission.ADMIN_DATA_IMPORT_EXPORT,
-				SecurityPermission.ADMIN_ENTRY_MANAGEMENT,
-				SecurityPermission.ADMIN_ENTRY_TEMPLATES,
-				SecurityPermission.ADMIN_ENTRY_TYPES,
-				SecurityPermission.ADMIN_EVALUATION_TEMPLATE,
-				SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST,
-				SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION,
-				SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION,
-				SecurityPermission.ADMIN_FEEDBACK,
-				SecurityPermission.ADMIN_HIGHLIGHTS,
-				SecurityPermission.ADMIN_INTEGRATION,
-				SecurityPermission.ADMIN_JOB_MANAGEMENT,
-				SecurityPermission.ADMIN_LOOKUPS,
-				SecurityPermission.ADMIN_MEDIA,
-				SecurityPermission.ADMIN_MESSAGE_MANAGEMENT,
-				SecurityPermission.ADMIN_ORGANIZATION,
-				SecurityPermission.ADMIN_ORGANIZATION_EXTRACTION,
-				SecurityPermission.ADMIN_QUESTIONS,
-				SecurityPermission.ADMIN_REVIEW,
-				SecurityPermission.ADMIN_SEARCH,
-				SecurityPermission.ADMIN_SYSTEM_MANAGEMENT,
-				SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT,
-				SecurityPermission.ADMIN_TRACKING,
-				SecurityPermission.ADMIN_USER_MANAGEMENT,
-				SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES,
-				SecurityPermission.ADMIN_WATCHES,
-				SecurityPermission.EVALUATIONS,
-				SecurityPermission.ADMIN_EVALUATION_MANAGEMENT,
-				SecurityPermission.API_DOCS,
-				SecurityPermission.REPORTS_ALL,
-				SecurityPermission.ADMIN_SECURITY,
-				SecurityPermission.ADMIN_ROLE_MANAGEMENT
-		);
+		List<String> adminPermissionsToAdd = new ArrayList<>();
+		service.getLookupService().findLookup(SecurityPermission.class).forEach(item -> {
+			adminPermissionsToAdd.add(item.getCode());
+		});
+		permissionsToAdd = adminPermissionsToAdd;
 
 		for (String newPermission : permissionsToAdd) {
 			SecurityRolePermission permission = new SecurityRolePermission();

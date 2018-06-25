@@ -339,8 +339,8 @@ public class SecurityPermission
 	// Reports
 	public static final String GROUPBY_REPORTS = "Reports";
 	public static final String REPORTS_PAGE = "REPORTS-PAGE";
-	public static final String REPORTS_CREATE = "REPORTS-CREATE";
-	public static final String REPORTS_DELETE = "REPORTS-DELETE";
+	public static final String REPORTS_CREATE = "REPORTS-CREATE"; // not even using this?
+	public static final String REPORTS_DELETE = "REPORTS-DELETE"; // not even using this?
 	public static final String REPORTS_ALL = "REPORTS-ALL";
 	public static final String REPORT_OUTPUT_EMAIL_ATTACH = "REPORT-OUTPUT-EMAIL-ATTACH";
 	public static final String REPORT_OUTPUT_EMAIL_BODY = "REPORT-OUTPUT-EMAIL-BODY";
