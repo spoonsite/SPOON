@@ -43,7 +43,7 @@ public class SecurityInit
 
 	public SecurityInit()
 	{
-		super("Security-Init");
+		super("Security-Init-test-1");
 	}
 
 	@Override
