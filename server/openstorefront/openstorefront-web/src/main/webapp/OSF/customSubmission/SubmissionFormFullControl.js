@@ -50,7 +50,9 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			},
 			sectionChangeHandler: function(initialDisplay) {
 				var submissionFormFullControl = this.up('panel');
-				var form = submissionFormFullControl.queryById('submissionForm');	
+				var form = submissionFormFullControl.queryById('submissionForm');
+				submissionFormFullControl.checkNextPrevious();
+				
 				if (form.userSubmission && !initialDisplay) {
 					submissionFormFullControl.saveSubmission();
 				}
