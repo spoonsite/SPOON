@@ -21,8 +21,8 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 	alias: 'widget.osf-csf-floatingMenu',
 
 	itemId: 'floatingMenu',
-	height: 275,
-	minWidth: 50,
+	height: 50,
+	minWidth: 275,
 	hidden: true,
 	cls: 'floating-menu-container',
 	style: 'background: rgba(200,200,200,0.8); box-shadow: 2px 2px 10px; border-radius: 5px;',
@@ -31,19 +31,19 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 		width: '100%',
 		style: 'border: none; background: none; color: rgb(200,200,200);'
 	},
-	layout: 'vbox',
+	layout: 'hbox',
 
 	updatePosition: function () {
-		var floatingMenu = this;
+		// var floatingMenu = this;
 		
-		var formBuilderPanel = floatingMenu.formBuilderPanel;
-		if (floatingMenu.hidden) {
-				floatingMenu.setHidden(false);
-		}
+		// var formBuilderPanel = floatingMenu.formBuilderPanel;
+		// if (floatingMenu.hidden) {
+		// 		floatingMenu.setHidden(false);
+		// }
 					
-		if (formBuilderPanel.activeItem && formBuilderPanel.activeItem.el) {		
-			floatingMenu.setY(formBuilderPanel.activeItem.getY(), false);								
-		}
+		// if (formBuilderPanel.activeItem && formBuilderPanel.activeItem.el) {		
+		// 	floatingMenu.setY(formBuilderPanel.activeItem.getY(), false);								
+		// }
 	},
 	items: [
 		{
