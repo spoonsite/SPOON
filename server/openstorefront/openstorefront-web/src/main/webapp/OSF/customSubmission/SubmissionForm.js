@@ -70,29 +70,101 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		//Create a new submission form and save
 		var submissionForm = this;
 		
-		var userSubmission = {
-			templateId : submissionForm.template.submissionTemplateId,
-			componentType : submissionForm.entryType.componentType,
-			fields: []		
+		//prompt for submission name
+		if (submissionForm.initialSubmissionName){
+			completeInitialSave();			
+		} else {
+			var promptWin = Ext.create('Ext.window.Window', {
+				title: 'Submission Name',
+				modal: true,
+				closable: false,
+				alwaysOnTop: true,
+				closeAction: 'destroy',
+				width: 400,
+				height: 200,
+				layout: 'fit',
+				onEsc: Ext.emptyFn,
+				items: [
+					{
+						xtype: 'form',
+						bodyStyle: 'padding: 10px;',
+						layout: 'anchor',
+						items: [
+							{
+								xtype: 'textfield',
+								fieldLabel: 'Enter Inital Submission Name<span class="field-required" />',
+								labelAlign: 'top',
+								width: '100%',
+								allowBlank: false,
+								name: 'name'								
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Ok',
+										formBind: true,
+										width: 75,
+										handler: function() {
+											var data = this.up('form').getValues();
+											submissionForm.initialSubmissionName = data.name;
+											completeInitialSave();
+											promptWin.close();
+										}
+									},
+									{
+										xtype: 'tbfill'
+									}
+								]
+							}
+						]
+					}
+				]								
+			});
+			promptWin.show();
+		}
+		
+		
+		
+		var completeInitialSave = function() {		
+			var userSubmission = {
+				templateId : submissionForm.template.submissionTemplateId,
+				componentType: submissionForm.entryType.componentType,
+				submissionName: submissionForm.initialSubmissionName,
+				fields: []		
+			};	
+
+			Ext.Ajax.request({
+				url: 'api/v1/resource/usersubmissions',
+				method: 'POST',
+				jsonData: userSubmission,
+				callback: function() {				
+				},
+				success: function(response, opts) {
+					var savedSubmission = Ext.decode(response.responseText);
+					submissionForm.userSubmission = savedSubmission;
+					
+					submissionForm.loadTemplate(
+							submissionForm.template, 
+							submissionForm.entryType, 
+							submissionForm.userSubmission, 
+							false
+					);
+
+					if (submissionForm.finishInitialSave) {
+						submissionForm.finishInitialSave(savedSubmission);
+					}					
+				}
+			});
 		};
 		
-		Ext.Ajax.request({
-			url: 'api/v1/resource/usersubmissions',
-			method: 'POST',
-			jsonData: userSubmission,
-			callback: function() {				
-			},
-			success: function(response, opts) {
-				var savedSubmission = Ext.decode(response.responseText);
-				submissionForm.userSubmission.userSubmissionId = savedSubmission.userSubmissionId;
-				submissionForm.userSubmission.ownerUsername = savedSubmission.ownerUsername;
-				
-				if (submissionForm.finishInitialSave) {
-					submissionForm.finishInitialSave(savedSubmission);
-				}
-			}
-		});
-		return userSubmission;
+		return null;		
 	},
 	
 	loadTemplate: function(submissionFormTemplate, entryType, userSubmission, createNewSubmission) {
@@ -105,6 +177,9 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 			submissionForm.currentSection = 0;
 			if (!userSubmission && createNewSubmission)	{
 				userSubmission = submissionForm.initializeUserSubmission(submissionForm.template);
+				if (!userSubmission) {
+					return;
+				}
 			}
 			submissionForm.userSubmission = userSubmission;
 
@@ -148,8 +223,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 
 			submissionForm.fireEvent('ready', submissionForm);			
 		};	
-		
-		
+			
 		
 		if (Ext.isString(entryType)) {
 			

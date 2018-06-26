@@ -24,6 +24,8 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
@@ -47,6 +49,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -169,16 +172,53 @@ public class SubmissionFormServiceImpl
 			if (userSubmission.getOwnerUsername() == null) {
 				userSubmission.setOwnerUsername(SecurityUtil.getCurrentUserName());
 			}
-			if (userSubmission.getFields() != null) {
-				for (UserSubmissionField field : userSubmission.getFields()) {
-					field.setFieldId(persistenceService.generateId());
-				}
+			if (userSubmission.getFields() == null) {
+				userSubmission.setFields(new ArrayList<>());
+			}
+			populateComponentNameField(userSubmission);
+
+			for (UserSubmissionField field : userSubmission.getFields()) {
+				field.setFieldId(persistenceService.generateId());
 			}
 
 			existing = persistenceService.persist(userSubmission);
 		}
 		existing = persistenceService.unwrapProxyObject(existing);
 		return existing;
+	}
+
+	private void populateComponentNameField(UserSubmission userSubmission) throws OpenStorefrontRuntimeException
+	{
+		SubmissionFormTemplate template = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
+		if (template != null) {
+			//prepopulate
+			SubmissionFormField nameField = null;
+			for (SubmissionFormSection section : template.getSections()) {
+				for (SubmissionFormField field : section.getFields()) {
+					if (Component.FIELD_NAME.equals(field.getFieldName())) {
+						nameField = field;
+					}
+				}
+			}
+			if (nameField != null) {
+				boolean addField = true;
+				for (UserSubmissionField field : userSubmission.getFields()) {
+					if (nameField.getFieldId().equals(field.getTemplateFieldId())) {
+						field.setRawValue(userSubmission.getSubmissionName());
+						addField = false;
+					}
+				}
+				if (addField) {
+					UserSubmissionField field = new UserSubmissionField();
+					field.setRawValue(userSubmission.getSubmissionName());
+					field.setTemplateFieldId(nameField.getFieldId());
+					userSubmission.getFields().add(field);
+				}
+			}
+
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find Form Template.", "Refresh and try again.");
+		}
 	}
 
 	@Override
