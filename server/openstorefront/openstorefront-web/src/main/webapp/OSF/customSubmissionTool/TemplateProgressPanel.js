@@ -238,6 +238,16 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 		}
 		
 	},
+
+	removeMapping: function(mapping){
+		var templateProgressPanel = this;
+		var grid = templateProgressPanel.queryById('grid');
+		var record = grid.getStore().queryRecords('field',mapping)[0];
+		record.set('mapped', false, {
+			dirty: false
+		});
+	},
+
 	getAvaliableMappableFields: function() {
 		var templateProgressPanel = this;
 		
