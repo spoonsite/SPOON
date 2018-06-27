@@ -186,6 +186,9 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 								model.name !== 'componentType' &&
 								model.name !== 'approvalState' &&
 								model.name !== 'changeApprovalMode' &&
+								model.name !== 'dataSource' &&
+								model.name !== 'securityMarkingType' &&
+								model.name !== 'dataSensitivity' &&
 								model.name !== 'externalId' &&
 								model.name !== 'guid' &&
 								model.name !== 'notifyOfApprovalEmail'
