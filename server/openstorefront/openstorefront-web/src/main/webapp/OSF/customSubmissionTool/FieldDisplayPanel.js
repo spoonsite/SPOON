@@ -68,7 +68,6 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 		var sectionContainer = displayPanel.queryById('sectionContainer');
 		var sectionForm = displayPanel.queryById('sectionContainer').getForm();
 		var itemContainer = displayPanel.queryById('itemContainer');
-		
 				
 		itemContainer.removeAll();		
 		

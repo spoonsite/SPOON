@@ -41,7 +41,16 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		{
 			xtype: 'panel',
 			itemId: 'collapsedSide',
-			html: 'collapse'
+			html: 'collapse',
+			listeners: {
+				click: {
+					element: 'el',
+					fn: function () {
+						var formBuilderItem = this.component.up();
+						formBuilderItem.setActiveFormItem();
+					}
+				},
+			}
 		},
 		{
 			xtype: 'panel',
@@ -775,6 +784,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		if (previousActiveItem && !previousActiveItem.isDestroyed) {
 			previousActiveItem.removeCls('csf-active');
 			previousActiveItem.setActiveItem(previousActiveItem.queryById('collapsedSide'));
+			
 		} else {
 			previousActiveItem = null;
 		}
@@ -787,14 +797,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     },
 
     listeners: {    	
-    	click: {
-    		element: 'el',
-    		fn: function () {
 
-    			var formBuilderItem = Ext.getCmp(this.id);
-    			formBuilderItem.setActiveFormItem();
-    		}
-    	},
     	afterrender: function () {
 
 			var fieldContainer = this;

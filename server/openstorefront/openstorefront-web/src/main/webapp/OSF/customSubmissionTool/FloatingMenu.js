@@ -34,12 +34,12 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 	layout: 'hbox',
 
 	updatePosition: function () {
-		// var floatingMenu = this;
+		var floatingMenu = this;
 		
-		// var formBuilderPanel = floatingMenu.formBuilderPanel;
-		// if (floatingMenu.hidden) {
-		// 		floatingMenu.setHidden(false);
-		// }
+		var formBuilderPanel = floatingMenu.formBuilderPanel;
+		if (floatingMenu.hidden) {
+				floatingMenu.setHidden(false);
+		}
 					
 		// if (formBuilderPanel.activeItem && formBuilderPanel.activeItem.el) {		
 		// 	floatingMenu.setY(formBuilderPanel.activeItem.getY(), false);								
