@@ -148,7 +148,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 								title: 'Add Type',
 								iconCls: 'fa fa-plus',
 								closeAction: 'destroy',
-								alwaysOnTop: true,
+								alwaysOnTop: 9999,								
 								modal: true,
 								width: 400,
 								height: 380,

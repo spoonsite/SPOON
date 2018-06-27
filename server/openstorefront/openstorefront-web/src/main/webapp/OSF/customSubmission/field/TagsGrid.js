@@ -56,6 +56,7 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 			modal: true,
 			width: 800,
 			height: 200,
+			alwaysOnTop: 99,
 			closeMode: 'destroy',
 			layout: 'fit',
 			items: [

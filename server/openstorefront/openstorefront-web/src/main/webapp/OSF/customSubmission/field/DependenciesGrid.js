@@ -60,6 +60,7 @@ Ext.define('OSF.customSubmission.field.DependenciesGrid', {
 			modal: true,
 			width: 800,
 			height: 515,
+			alwaysOnTop: 99,
 			closeMode: 'destroy',
 			layout: 'fit',
 			items: [

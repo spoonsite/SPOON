@@ -66,6 +66,7 @@ Ext.define('OSF.customSubmission.field.RelationshipsGrid', {
 			modal: true,
 			width: 800,
 			height: 310,
+			alwaysOnTop: 99,
 			closeMode: 'destroy',
 			layout: 'fit',
 			items: [
