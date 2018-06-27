@@ -318,8 +318,8 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					if (section.review) {
 						navButton.dock = 'bottom';
 						navButton.textAlign = 'center';
-						navButton.iconCls = 'fa fa-lg fa-check-square-o',
-						navButton.cls = 'submission-form-reviewbutton',
+						navButton.iconCls = 'fa fa-lg fa-check-square-o';
+						navButton.cls = 'submission-form-reviewbutton';
 						reviewSection.push(navButton);
 					} else {
 						sectionButtons.push(navButton);

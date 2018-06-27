@@ -74,7 +74,7 @@ public abstract class BaseTestCase
 	protected void cleanupTest()
 	{
 		cleanTestDataList.sort((a, b) -> {
-			return new Integer(a.getOrder()).compareTo(b.getOrder());
+			return Integer.compare(a.getOrder(), b.getOrder());
 		});
 		for (CleanupTestData cleanupTestData : cleanTestDataList) {
 			try {

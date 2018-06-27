@@ -187,7 +187,7 @@ public class SubmissionFormServiceImpl
 		return existing;
 	}
 
-	private void populateComponentNameField(UserSubmission userSubmission) throws OpenStorefrontRuntimeException
+	private void populateComponentNameField(UserSubmission userSubmission)
 	{
 		SubmissionFormTemplate template = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
 		if (template != null) {
