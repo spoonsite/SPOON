@@ -125,6 +125,29 @@ public class SubmissionFormTemplateResource
 		return sendSingleEntityResponse(view);
 	}
 
+	@GET
+	@APIDescription("Get template from an entry type, return default template if no valid template is available")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@DataType(SubmissionFormTemplateView.class)
+	@Path("/componenttype/{componentType}")
+	public Response getSubmissionFormTemplateFromEntryType(@PathParam("componentType") String componentType)
+	{
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setEntryType(componentType);
+		submissionFormTemplate.setActiveStatus(SubmissionFormTemplate.ACTIVE_STATUS);
+		submissionFormTemplate.setTemplateStatus(SubmissionTemplateStatus.VERIFIED);
+		submissionFormTemplate = submissionFormTemplate.find();
+
+		SubmissionFormTemplateView view = null;
+		if (submissionFormTemplate != null) {
+			view = SubmissionFormTemplateView.toView(submissionFormTemplate);
+		}
+		else {
+			return getDefaultSubmissionFormTemplate();
+		}
+		return sendSingleEntityResponse(view);
+	}
+
 	@POST
 	@APIDescription("Exports questions in JSON format.")
 	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)

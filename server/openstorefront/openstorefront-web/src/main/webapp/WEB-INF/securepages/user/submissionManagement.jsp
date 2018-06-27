@@ -850,12 +850,15 @@
 						
 						submissionGrid.setLoading('Loading Submission Form...');
 						Ext.Ajax.request({
-							url: 'api/v1/resource/submissiontemplates/' + submissionTemplateId,
+							url: 'api/v1/resource/submissiontemplates/componenttype/' + componentType,
 							callback: function() {
 								submissionGrid.setLoading(false);
 							},
 							success: function(response, opts) {
 								var template = Ext.decode(response.responseText);
+
+								// reset the entryTypeCode so it uses the record's entry type (not the entry type of the template)
+								template.entryTypeCode = componentType;
 								
 								var submissionWin = Ext.create('Ext.window.Window', {
 									title: 'Submission',
