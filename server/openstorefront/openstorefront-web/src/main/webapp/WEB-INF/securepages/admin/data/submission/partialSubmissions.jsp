@@ -70,8 +70,11 @@
 						}						
 					},
 					columnLines: true,
+					viewConfig: {
+						enableTextSelection: true
+					},		
 					columns: [						
-						{ text: 'Change Request Name', dataIndex: 'componentName', flex: 1, minWidth: 200,
+						{ text: 'Submission Name', dataIndex: 'submissionName', flex: 1, minWidth: 200,
 							renderer: function(value) {
 								if (value) {
 									return value;

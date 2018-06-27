@@ -50,7 +50,9 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			},
 			sectionChangeHandler: function(initialDisplay) {
 				var submissionFormFullControl = this.up('panel');
-				var form = submissionFormFullControl.queryById('submissionForm');	
+				var form = submissionFormFullControl.queryById('submissionForm');
+				submissionFormFullControl.checkNextPrevious();
+				
 				if (form.userSubmission && !initialDisplay) {
 					submissionFormFullControl.saveSubmission();
 				}
@@ -215,9 +217,14 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		
 		Ext.Array.each(navPanel.items.items, function(navButton) {
 			if (navButton.sectionIndex === currentSectionIndex) {
-				navButton.addCls('submission-section-nav-select');
+				navButton.addCls('submission-section-nav-select');	
+				
+				//auto scroll is problemmatic
+				//54 - relative offset
+				//var newY = navButton.getY() - (navPanel.getY() + 54);
+				//navPanel.scrollTo(0, newY, true);								
 			}	
-		});
+		});		
 	},
 	
 	remoteLoad: function(submissionTemplateId, entryType, userSubmissionId) {
@@ -290,9 +297,11 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 				submissionFormFullControl.checkNextPrevious();
 				
 				var sectionButtons = [];
+				var reviewSection = [];
 				index = 0;
 				Ext.Array.each(form.getSections(), function(section) {
-					sectionButtons.push({
+					
+					var navButton = {
 						xtype: 'button',
 						text: section.name,
 						textAlign: 'left',
@@ -304,11 +313,22 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 							form.jumpToSection(this.sectionIndex);
 							submissionFormFullControl.checkNextPrevious();
 						}
-					});
+					};
+					
+					if (section.review) {
+						navButton.dock = 'bottom';
+						navButton.textAlign = 'center';
+						navButton.iconCls = 'fa fa-lg fa-check-square-o',
+						navButton.cls = 'submission-form-reviewbutton',
+						reviewSection.push(navButton);
+					} else {
+						sectionButtons.push(navButton);
+					}
 					index++;
 				});	
 				
 				submissionFormFullControl.queryById('navPanel').add(sectionButtons);
+				submissionFormFullControl.queryById('navPanel').addDocked(reviewSection);
 				submissionFormFullControl.updateNavPanel(0);				
 								
 			};
