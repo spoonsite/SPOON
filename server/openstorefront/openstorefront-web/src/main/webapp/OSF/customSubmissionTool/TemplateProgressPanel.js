@@ -120,7 +120,19 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 		templateProgressPanel.updateTemplateProgress();
 		
 	},
-	
+	getMappableFieldForName: function(fieldName) {
+		var templateProgressPanel = this;
+		
+		var foundRecord;
+		
+		var grid = templateProgressPanel.queryById('grid');		
+		grid.getStore().each(function(item){
+			if (item.get('field') === fieldName) {
+				foundRecord = item;
+			}
+		});
+		return foundRecord;
+	},	
 	updateTemplateProgress: function(){
 		//assumes the template has been set.
 		var templateProgressPanel = this;
@@ -229,7 +241,7 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 		var records = [];		
 		templateProgressPanel.queryById('grid').getStore().each(function(record){
 			if (!record.get('mapped')) {
-				records.push(record);
+				records.push(record.copy());
 			}
 		});
 		

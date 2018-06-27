@@ -151,9 +151,26 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			displayField: 'field',
 			valueField: 'field',
 			editable: false,
+			checkRequiredMapping: function(formBuilderItem, combo) {				
+				var selectedRecord = combo.getSelection();
+				if (!selectedRecord && combo.getValue()) {
+					selectedRecord = formBuilderItem.formBuilderPanel.templateProgressPanel.getMappableFieldForName(combo.getValue());
+				}
+				
+				if (selectedRecord && selectedRecord.get('required')) {
+					combo.originalRequiredValue = formBuilderItem.getForm().findField('required').getValue();
+					formBuilderItem.getForm().findField('required').setValue(true);
+					formBuilderItem.getForm().findField('required').setReadOnly(true);
+				} else {
+					formBuilderItem.getForm().findField('required').setReadOnly(false);
+					formBuilderItem.getForm().findField('required').setValue(combo.originalRequiredValue || false);						
+				}									
+			},
 			listeners: {
 				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');	
+					var formBuilderItem = this.up('panel');											
+					combo.checkRequiredMapping(formBuilderItem, combo);
+					
 					formBuilderItem.syncTemplateField(false);	
 					
 					formBuilderItem.formBuilderPanel.templateProgressPanel.updateTemplateProgress();
@@ -541,7 +558,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			return mappableFields;
 		};
 
-		var mappableFields;
+		var mappableFields;	
 		switch (formBuilderItem.fieldType) {
 			case 'TEXT':
 				formBuilderItem.templateField.mappingType = 'COMPONENT';
@@ -549,7 +566,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('labelAlign').setHidden(false);					
 
 				mappableFields = filterMappedFilelds('textfield');							
-				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
+				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);				
 			break;	
 			case 'NUMBER':
 				formBuilderItem.templateField.mappingType = 'COMPONENT';
@@ -564,7 +581,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('fieldName').setHidden(false);
 				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
 
-				mappableFields = filterMappedFilelds('date');							
+				mappableFields = filterMappedFilelds('date');			
 				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);							
 			break;	
 			case 'TEXTAREA':
@@ -572,14 +589,14 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('fieldName').setHidden(false);
 				formBuilderItem.getForm().findField('labelAlign').setHidden(false);	
 
-				mappableFields = filterMappedFilelds('textarea');							
+				mappableFields = filterMappedFilelds('textarea');		
 				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
 			break;	
 			case 'RICHTEXT':
 				formBuilderItem.templateField.mappingType = 'COMPONENT';
 				formBuilderItem.getForm().findField('fieldName').setHidden(false);
 
-				mappableFields = filterMappedFilelds('textarea');							
+				mappableFields = filterMappedFilelds('textarea');	
 				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);
 			break;	
 			case 'ATTRIBUTE_RADIO':
@@ -629,8 +646,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				mappableFields = Ext.Array.filter(availableMappedFields, function (fieldRecord) {
 					return fieldRecord.get('field') === 'organization';
 				});							
-
-				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);														
+				var fieldNameCb = formBuilderItem.getForm().findField('fieldName');	
+				fieldNameCb.getStore().loadData(mappableFields);	
+				
+			//	fieldNameCb.checkRequiredMapping(formBuilderItem, fieldNameCb);
 			break;	
 			case 'CONTACT_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
@@ -686,6 +705,11 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				console.error('Field type note supported: ' + formBuilderItem.fieldType);
 			break;	
 		}										
+		
+		if (!formBuilderItem.getForm().findField('fieldName').isHidden()) {
+			var fieldNameCb = formBuilderItem.getForm().findField('fieldName');
+			fieldNameCb.checkRequiredMapping(formBuilderItem, fieldNameCb);			
+		}
 
 		formBuilderItem.syncTemplateField(false);		
 		
