@@ -258,6 +258,9 @@
 										xtype: 'UserSingleSelectComboBox',
 										fieldLabel: 'Select a user<span class="field-required" />',
 										allowBlank: false,
+										minChars: 1,
+										emptyText: 'Start typing to select new owner',
+										hideTrigger: true,
 										name: 'ownerUsername',
 										width: '100%'
 									}
