@@ -229,7 +229,7 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 		var records = [];		
 		templateProgressPanel.queryById('grid').getStore().each(function(record){
 			if (!record.get('mapped')) {
-				records.push(record);
+				records.push(record.copy());
 			}
 		});
 		
