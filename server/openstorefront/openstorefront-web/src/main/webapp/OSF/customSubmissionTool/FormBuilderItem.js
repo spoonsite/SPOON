@@ -41,7 +41,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		{
 			xtype: 'panel',
 			itemId: 'collapsedSide',
-			html: 'collapse',
+			tpl: new Ext.XTemplate(
+				'{label}'
+			),
 			listeners: {
 				click: {
 					element: 'el',
@@ -780,15 +782,23 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     	var newItem = cmp || this;
     	var formBuilderPanel = this.getFormBuilderPanel();
 		var previousActiveItem = formBuilderPanel.activeItem;
+		// var fieldContainer = this;
+
+		// var record = Ext.create('Ext.data.Model', {			
+		// });
+		// record.set(fieldContainer.templateField);
 
 		if (previousActiveItem && !previousActiveItem.isDestroyed) {
 			previousActiveItem.removeCls('csf-active');
 			previousActiveItem.setActiveItem(previousActiveItem.queryById('collapsedSide'));
+			//formBuilderPanel.queryById('collapsedSide').update(record.data);
 			
 		} else {
 			previousActiveItem = null;
 		}
 		newItem.addCls('csf-active');
+
+
 		formBuilderPanel.activeItem = newItem;
 		newItem.setActiveItem(newItem.queryById('infoSide'));
 
@@ -862,14 +872,13 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     },
 
 	initComponent: function () {
-
 		this.callParent();
 		var fieldContainer = this;
 
 		var record = Ext.create('Ext.data.Model', {			
 		});
 		record.set(fieldContainer.templateField);
-		
+
 		if (fieldContainer.templateField.excludeContactType) {		
 			try {
 				record.set('excludeContactType', Ext.decode(fieldContainer.templateField.excludeContactType));
@@ -877,5 +886,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			}
 		}
 		fieldContainer.loadRecord(record);
+
+		fieldContainer.queryById('collapsedSide').update(record.data);
 	}
 });
