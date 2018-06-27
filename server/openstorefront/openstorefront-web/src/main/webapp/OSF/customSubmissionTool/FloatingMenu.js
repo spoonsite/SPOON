@@ -388,6 +388,10 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 				var activeItem = formBuilderPanel.activeItem;
 
 				if (activeItem) {
+					// manually update template progress panel
+					var mapping = activeItem.getForm().findField('fieldName').getValue();
+					formBuilderPanel.templateProgressPanel.removeMapping(mapping);
+
 					formBuilderPanel.sectionPanel.deleteField(activeItem.templateField);
 				
 					activeItem.destroy();
