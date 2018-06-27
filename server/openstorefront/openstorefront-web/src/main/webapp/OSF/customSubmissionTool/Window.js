@@ -62,35 +62,28 @@ Ext.define('OSF.customSubmissionTool.Window', {
 					handler: function() {
 						var submissionWindow = this.up('window');
 						
-						var entryTypeSelect = Ext.create('OSF.customSubmissionTool.EntryTypeSelectWindow', {
-							selectedEntryType: submissionWindow.selectedEntryType,
-							selectCallBack: function(entryType) {
-								submissionWindow.selectedEntryType = entryType;
-								var previewWin = Ext.create('Ext.window.Window', {
-									title: 'Preview',
-									layout: 'fit',
-									modal: true,
-									closeAction: 'destroy',
-									width: '80%',
-									height: '80%',
-									maximizable: true,									
-									items: [
-										{
-											xtype: 'osf-customSubmission-SubmissionformFullControl',
-											itemId: 'form',
-											showCustomButton: true,
-											hideSave: true,
-											customButtonHandler: function() {
-												previewWin.close();
-											}											
-										}
-									]
-								});
-								previewWin.show();
-								previewWin.queryById('form').load(submissionWindow.template, entryType);						
-							}
+						var previewWin = Ext.create('Ext.window.Window', {
+							title: 'Preview',
+							layout: 'fit',
+							modal: true,
+							closeAction: 'destroy',
+							width: '80%',
+							height: '80%',
+							maximizable: true,									
+							items: [
+								{
+									xtype: 'osf-customSubmission-SubmissionformFullControl',
+									itemId: 'form',
+									showCustomButton: true,
+									hideSave: true,
+									customButtonHandler: function() {
+										previewWin.close();
+									}											
+								}
+							]
 						});
-						entryTypeSelect.show();						
+						previewWin.show();
+						previewWin.queryById('form').load(submissionWindow.template, submissionWindow.template.entryType);						
 					}					
 				},
 				{
@@ -171,7 +164,7 @@ Ext.define('OSF.customSubmissionTool.Window', {
 						field.fieldOrder = indexField;
 					});					
 				});
-			}			
+			}
 
 			submissionWindow.setLoading("Saving...");
 			Ext.Ajax.request({

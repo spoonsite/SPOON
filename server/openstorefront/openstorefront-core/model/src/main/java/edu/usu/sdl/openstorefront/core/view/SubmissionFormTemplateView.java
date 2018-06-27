@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -42,6 +43,8 @@ public class SubmissionFormTemplateView
 	private Date createDts;
 	private String updateUser;
 	private Date updateDts;
+	private String entryTypeCode;
+	private String entryTypeLabel;
 
 	@DataType(SubmissionFormSectionView.class)
 	private List<SubmissionFormSectionView> sections = new ArrayList<>();
@@ -65,6 +68,17 @@ public class SubmissionFormTemplateView
 		view.setUpdateUser(template.getUpdateUser());
 		view.setUpdateDts(template.getUpdateDts());
 		view.setDefaultTemplate(template.getDefaultTemplate());
+		
+		if (template.getEntryType() != null) {
+			view.setEntryTypeCode(template.getEntryType());
+			ComponentType componentTypeExample = new ComponentType();
+			componentTypeExample.setComponentType(template.getEntryType());
+			componentTypeExample = componentTypeExample.find();
+			
+			if (componentTypeExample != null) {
+				view.setEntryTypeLabel(componentTypeExample.getLabel());
+			}
+		}
 
 		if (template.getSections() != null) {
 			template.getSections().sort((a, b) -> {
@@ -207,6 +221,22 @@ public class SubmissionFormTemplateView
 	public void setDefaultTemplate(Boolean defaultTemplate)
 	{
 		this.defaultTemplate = defaultTemplate;
+	}
+	
+	public String getEntryTypeCode() {
+		return entryTypeCode;
+	}
+	
+	public void setEntryTypeCode(String entryTypeCode) {
+		this.entryTypeCode = entryTypeCode;
+	}
+	
+	public String getEntryTypeLabel() {
+		return entryTypeLabel;
+	}
+	
+	public void setEntryTypeLabel(String entryTypeLabel) {
+		this.entryTypeLabel = entryTypeLabel;
 	}
 
 }

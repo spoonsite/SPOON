@@ -63,13 +63,6 @@
 					proxy: {
 					 	type: 'ajax',
 					 	url: 'api/v1/resource/submissiontemplates'
-					},
-					listeners: {
-						beforeLoad: function(store, operation, eOpts){
-							store.getProxy().extraParams = {
-								status: Ext.getCmp('filterActiveStatus').getValue()
-							};
-						}
 					}
 				},
 				listeners: {
@@ -109,7 +102,7 @@
 					}
 				},
 				columns: [
-					{ text: 'Name', dataIndex: 'name', flex: 10, 
+					{ text: 'Name', dataIndex: 'name', flex: 7, 
 						renderer: function(value, meta, record) {
 							if (record.get('defaultTemplate')) {
 								return value + ' (<b>Default</b>)';
@@ -131,52 +124,23 @@
 							return record.get('templateStatusLabel');
 						}
 					},
+					{ text: 'Entry Type', dataIndex: 'entryTypeLabel', align: 'center', flex: 7,
+						renderer: function (value) {
+							if (typeof value !== 'undefined') {
+								return value;
+							}
+							else {
+								return '<span style="color: #ccc; font-style: italic;">None</span>'
+							}
+						}
+					},
 					{ text: 'Active Status', dataIndex: 'activeStatus', align: 'center', flex: 4 },
 					{ text: 'Create Date', dataIndex: 'createDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 4 },
 					{ text: 'Create User', dataIndex: 'createUser', flex: 4 },
 					{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 4 },
 					{ text: 'Update User', dataIndex: 'updateUser', flex: 4 }
 				],
-				dockedItems: [
-					{
-						xtype: 'toolbar',
-						dock: 'top',
-						items: [
-							Ext.create('OSF.component.StandardComboBox', {
-								id: 'filterActiveStatus',
-								emptyText: 'Active',
-								value: 'A',
-								fieldLabel: 'Active Status',
-								name: 'activeStatus',
-								typeAhead: false,
-								editable: false,
-								width: 200,
-								listeners: {
-									change: function(filter, newValue, oldValue, opts){
-										actionRefresh();
-									}
-								},
-								storeConfig: {
-									customStore: {
-										fields: [
-											'code',
-											'description'
-										],
-										data: [
-											{
-												code: 'A',
-												description: 'Active'
-											},
-											{
-												code: 'I',
-												description: 'Inactive'
-											}
-										]
-									}
-								}
-							})
-						]
-					},	
+				dockedItems: [	
 					{
 						dock: 'top',
 						xtype: 'toolbar',
@@ -326,7 +290,7 @@
 					//add
 					var addWindow = Ext.create('Ext.window.Window',	{
 						width: 400,
-						height: 260,
+						height: 330,
 						modal: true,
 						closeAction: 'destroy',
 						title: 'Add Submission Template',					
@@ -354,6 +318,24 @@
 										fieldLabel: 'Description',									
 										name: 'description',
 										maxLength: 1024
+									},
+									{
+										xtype: 'combobox',
+										fieldLabel: 'Entry Type',
+										itemId: 'entryType',
+										name: 'entryType',
+										displayField: 'description',
+										valueField: 'code',
+										editable: false,
+										typeAhead: false,
+										allowBlank: false,
+										store: {
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/componenttypes/lookup'
+											}
+										}
 									}
 								],
 								dockedItems: [{
@@ -371,6 +353,7 @@
 
 													var data = createForm.getValues();
 													data.templateStatus = 'INCOMPLETE';
+													data.activeStatus = 'I';
 
 													CoreUtil.submitForm({
 														url: 'api/v1/resource/submissiontemplates',
@@ -423,18 +406,50 @@
 				if (record.get('activeStatus') === 'I') {
 					action = 'activate';
 				} 
-				
-				formTemplateGrid.setLoading('Updating Status...');
-				Ext.Ajax.request({
-					url: 'api/v1/resource/submissiontemplates/' + record.get('submissionTemplateId') + '/' + action,
-					method: 'PUT',
-					callback: function() {
-						formTemplateGrid.setLoading(false);
-					},
-					success: function(response, opt) {
-						actionRefresh();
+				var toggleAction = function () {
+					formTemplateGrid.setLoading('Updating Status...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/submissiontemplates/' + record.get('submissionTemplateId') + '/' + action,
+						method: 'PUT',
+						callback: function() {
+							formTemplateGrid.setLoading(false);
+						},
+						success: function(response, opt) {
+							actionRefresh();
+						}
+					});		
+				};
+
+				var activeRecord = formTemplateGrid.getStore().getData().items.reduce(function (acc, item) {
+					var itemEntryType = item.get('entryTypeCode');
+					if (itemEntryType && itemEntryType === record.get('entryTypeCode') && item.get('activeStatus') === 'A') {
+						acc = item;
 					}
-				});		
+					return acc;
+				}, null);
+
+				if (activeRecord !== null && action === 'activate') {
+					Ext.Msg.show({
+						title: 'Set Form Template to Active?',
+						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
+						message: 'You are trying to activate a template that has an entry type of <span style="font-weight: bold;">"' + record.get('entryType') + '"</span><br />' +
+								'which is already in use by another template.<br />' +
+								'<span style="color: red;">Activating this template will decativate "<span style="font-weight: bold;">' + activeRecord.get('name') + '</span>".</span> <br />' +
+								'Are you sure you want to active this form template?',
+
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.QUESTION,
+						fn: function (btn) {
+							if (btn === 'yes') {
+								toggleAction();
+							}
+						}
+					});
+				}
+				else {
+					toggleAction();
+				}
+				
 			};
 			
 			var actionCopy = function(record) {
@@ -547,75 +562,64 @@
 			
 			var actionPreview = function(record) {
 				
-				var entryTypeSelect = Ext.create('OSF.customSubmissionTool.EntryTypeSelectWindow', {
-					selectCallBack: function(entryType) {
-						var previewWin = Ext.create('Ext.window.Window', {
-							title: 'Preview',
-							layout: 'fit',
-							modal: true,
-							closeAction: 'destroy',
-							width: '80%',
-							height: '80%',
-							maximizable: true,
-							dockedItems: [
-								{
-									xtype: 'panel',
-									dock: 'top',
-									html: '<div class="submission-form-preview alert-warning">Preview Mode - (Changes will not be Saved)</div>'
-								}
-							],
-							items: [
-								{
-									xtype: 'osf-customSubmission-SubmissionformFullControl',
-									itemId: 'form',
-									showCustomButton: true,
-									previewMode: true,
-									hideSave: true,
-									customButtonHandler: function() {
-										previewWin.close();
-									}								
-								}
-							]
-						});
-						previewWin.show();
-
-						previewWin.queryById('form').load(record.data, entryType);						
-					}
+				var previewWin = Ext.create('Ext.window.Window', {
+					title: 'Preview',
+					layout: 'fit',
+					modal: true,
+					closeAction: 'destroy',
+					width: '80%',
+					height: '80%',
+					maximizable: true,
+					dockedItems: [
+						{
+							xtype: 'panel',
+							dock: 'top',
+							html: '<div class="submission-form-preview alert-warning">Preview Mode - (Changes will not be Saved)</div>'
+						}
+					],
+					items: [
+						{
+							xtype: 'osf-customSubmission-SubmissionformFullControl',
+							itemId: 'form',
+							showCustomButton: true,
+							previewMode: true,
+							hideSave: true,
+							customButtonHandler: function() {
+								previewWin.close();
+							}								
+						}
+					]
 				});
-				entryTypeSelect.show();
+				previewWin.show();
 				
+				previewWin.queryById('form').load(record.data, record.getData().entryTypeCode);						
 			};
 			
 			var actionVerifyTemplate = function(record) {
-				var entryTypeSelect = Ext.create('OSF.customSubmissionTool.EntryTypeSelectWindow', {
-					selectCallBack: function(entryType) {
-						var previewWin = Ext.create('Ext.window.Window', {
-							title: 'Verify Template',
-							layout: 'fit',
-							modal: true,
-							closeAction: 'destroy',
-							width: '80%',
-							height: '80%',
-							maximizable: true,
-							items: [
-								{
-									xtype: 'osf-customSubmission-SubmissionformFullControl',
-									itemId: 'form',
-									verifyMode: true,
-									submitText: 'Verify Submission',
-									submissionSuccess: function() {
-										actionRefresh();
-										previewWin.close();
-									}
-								}
-							]
-						});
-						previewWin.show();
-
-						previewWin.queryById('form').load(record.data, entryType, null, true);						
-					}
+				var previewWin = Ext.create('Ext.window.Window', {
+					title: 'Verify Template',
+					layout: 'fit',
+					modal: true,
+					closeAction: 'destroy',
+					width: '80%',
+					height: '80%',
+					maximizable: true,
+					items: [
+						{
+							xtype: 'osf-customSubmission-SubmissionformFullControl',
+							itemId: 'form',
+							verifyMode: true,
+							submitText: 'Verify Submission',
+							submissionSuccess: function() {
+								actionRefresh();
+								previewWin.close();
+							}
+						}
+					]
 				});
-				entryTypeSelect.show();				
+				previewWin.show();
+
+				previewWin.queryById('form').load(record.data, record.getData().entryTypeCode, null, true);						
 			};
 			
 			var actionImport = function() {

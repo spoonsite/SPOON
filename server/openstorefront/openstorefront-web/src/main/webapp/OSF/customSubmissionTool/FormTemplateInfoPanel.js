@@ -64,6 +64,33 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 				}	
 			},
 			{
+				xtype: 'combobox',
+				fieldLabel: 'Entry Type <span class="field-required" />',
+				labelAlign: 'top',
+				itemId: 'entryType',
+				name: 'entryTypeCode',
+				displayField: 'description',
+				valueField: 'code',
+				editable: false,
+				typeAhead: false,
+				allowBlank: false,
+				store: {
+					autoLoad: true,
+					proxy: {
+						type: 'ajax',
+						url: 'api/v1/resource/componenttypes/lookup'
+					}
+				},
+				listeners: {
+					change: function (field, newValue, oldValue) {
+						infoPanel.templateRecord.entryType = newValue;
+						if (oldValue !== null) {
+							infoPanel.formBuilderPanel.markAsChanged();
+						}
+					}
+				}
+			},
+			{
 				xtype: 'panel',
 				itemId: 'lastSaved',
 				data: infoPanel.templateRecord,

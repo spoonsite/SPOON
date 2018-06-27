@@ -235,15 +235,32 @@ public class SubmissionFormTemplateResource
 
 	private Response updateStatus(String templateId, String newStatus)
 	{
-		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
-		submissionFormTemplate.setSubmissionTemplateId(templateId);
-		submissionFormTemplate = submissionFormTemplate.find();
-		if (submissionFormTemplate != null) {
-			submissionFormTemplate.setActiveStatus(newStatus);
-			submissionFormTemplate.save();
+		SubmissionFormTemplate targetSubmissionFormTemplate = new SubmissionFormTemplate();
+		targetSubmissionFormTemplate.setSubmissionTemplateId(templateId);
+		targetSubmissionFormTemplate = targetSubmissionFormTemplate.find();
+
+		// if activating a template, inactivate other templates that have same entry type
+		if (newStatus.equals(SubmissionFormTemplate.ACTIVE_STATUS) && targetSubmissionFormTemplate.getEntryType() != null) {
+			SubmissionFormTemplate affectedTemplateExample = new SubmissionFormTemplate();
+			affectedTemplateExample.setEntryType(targetSubmissionFormTemplate.getEntryType());
+			affectedTemplateExample.setActiveStatus(SubmissionFormTemplate.ACTIVE_STATUS);
+
+			List<SubmissionFormTemplate> affectedTemplates = affectedTemplateExample.findByExample();
+			affectedTemplates.forEach(template -> {
+				if (!template.getSubmissionTemplateId().equals(templateId)) {
+					template.setActiveStatus(SubmissionFormTemplate.INACTIVE_STATUS);
+					template.save();
+				}
+			});
 		}
 
-		return sendSingleEntityResponse(submissionFormTemplate);
+		// set active status for the target template
+		if (targetSubmissionFormTemplate != null) {
+			targetSubmissionFormTemplate.setActiveStatus(newStatus);
+			targetSubmissionFormTemplate.save();
+		}
+
+		return sendSingleEntityResponse(targetSubmissionFormTemplate);
 	}
 
 	@PUT
