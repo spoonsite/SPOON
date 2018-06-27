@@ -20,7 +20,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	extend: 'Ext.form.Panel',
 	alias: 'widget.osf-formbuilderitem',
 	
-	minHeight: 275,
+	minHeight: 50,
 	margin: '10 10 10 0',
 	padding: '10 20 10 20',
 	target: true,
@@ -28,7 +28,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	cls: 'form-builder-item',
 	overCls: 'csf-hover',
 	layout: {
-		type: 'anchor'
+		type: 'card'
 	},
 	isActive: false,
 	defaults: {
@@ -36,485 +36,522 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		labelWidth: 150,
 		width: '100%'		
 	},
+
 	items: [
 		{
-			xtype: 'textfield',
-			itemId: 'questionNumber',
-			name: 'questionNumber',
-			fieldLabel: 'Question Number',
-			maxLength: 80,
-			enforceMaxLength: true,
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);					
-				}
-			}
+			xtype: 'panel',
+			itemId: 'collapsedSide',
+			html: 'collapse'
 		},
 		{
-			xtype: 'textarea',
-			itemId: 'label',
-			name: 'label',
-			fieldLabel: 'Label',				
-			maxLength: 4096,
-			enforceMaxLength: true,
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);
-				}
-			}
-		},
-		{
-			xtype: 'textfield',
-			name: 'labelTooltip',
-			fieldLabel: 'Label Tooltip',
-			itemId: 'labelTooltip',	
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		},	
-		{
-			xtype: 'checkbox',
-			name: 'required',
-			boxLabel: '<b>Required</b>',
-			margin: '0 0 0 155',
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		},		
-		{
-			xtype: 'combo',
-			fieldLabel: 'Field Type <i class="fa fa-question-circle" data-qtip="Radio buttons, checkboxes, grids, etc."></i>',
-			itemId: 'fieldTypeCombo',
-			name: 'fieldType',
-			queryMode: 'local',
-			displayField: 'description',
-			valueField: 'code',
-			editable: false,							
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');	
-					
-					formBuilderItem.fieldType = newVal;
-					formBuilderItem.resyncfieldOptions();
-				}
-			},			
-			store: {
-				autoLoad: true,
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/lookuptypes/SubmissionFormFieldType'
-				}
-			}
-		},
-		//<-----------Control Fields ------>
-		
-		{
-			xtype: 'combo',
-			hidden: true,
-			optionField: true,
-			fieldLabel: 'Label Align',	
-			name: 'labelAlign',
-			queryMode: 'local',
-			displayField: 'description',
-			valueField: 'code',
-			editable: false,
-			emptyText: 'Default',
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');	
-					formBuilderItem.syncTemplateField(false);					
-				}
-			},			
-			store: {
-				data: [
-					{code: 'top', description: 'Top'},
-					{code: 'left', description: 'Left'},
-					{code: 'right', description: 'Right'},
-					{code: null, description: 'Default'}
-				]
-			}
-		},		
-		{
-			xtype: 'combo',
-			hidden: true,
-			optionField: true,			
-			fieldLabel: 'Map To Field',
-			name: 'fieldName',
-			displayField: 'field',
-			valueField: 'field',
-			editable: false,
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');	
-					formBuilderItem.syncTemplateField(false);	
-					
-					formBuilderItem.formBuilderPanel.templateProgressPanel.updateTemplateProgress();
-					formBuilderItem.formBuilderPanel.displayPanel.updateFieldPanels();
-				}
-			},
-			store: {				
-			}
-		},
-		{
-			xtype: 'combo',
-			hidden: true,
-			optionField: true,			
-			fieldLabel: 'Attribute Type',
-			name: 'attributeType',
-			displayField: 'description',
-			valueField: 'attributeType',
-			editable: false,
-			queryMode: 'remote',
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');	
-					
-					var record = combo.getSelection();
-					if (record) {
-						var codeField = formBuilderItem.queryById('attributeCode');
-						var requireValueField = formBuilderItem.queryById('requiredCommentOnValue');
-						codeField.clearValue();
-						requireValueField.clearValue();					
-
-						codeField.getStore().loadData(record.data.codes);
-						requireValueField.getStore().loadData(record.data.codes);
-
-						formBuilderItem.syncTemplateField(false);					
-					}
-				}
-			},			
-			store: {
-			sorters: [
-					{
-						property: 'description',
-						direction: 'ASC',
-						transform: function (item) {
-							if (item) {
-								item = item.toLowerCase();
-							}
-							return item;
+			xtype: 'panel',
+			itemId: 'infoSide',
+			width: '100%',
+			items: [
+				{
+					xtype: 'textfield',
+					itemId: 'questionNumber',
+					name: 'questionNumber',
+					fieldLabel: 'Question Number',
+					maxLength: 80,
+					enforceMaxLength: true,
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);					
 						}
 					}
-				],
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/attributes'
-				}				
-			}
-		},
-		{
-			xtype: 'combo',
-			hidden: true,
-			optionField: true,			
-			fieldLabel: 'Attribute Code',
-			itemId: 'attributeCode',
-			name: 'attributeCode',
-			displayField: 'label',
-			valueField: 'code',
-			editable: false,
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');	
-					formBuilderItem.syncTemplateField(false);					
-				}
-			},
-			store: {				
-			}
-		},
-		{
-			xtype: 'combo',
-			hidden: true,
-			optionField: true,			
-			itemId: 'requiredCommentOnValue',
-			fieldLabel: 'Require Comment on Value',
-			name: 'requiredCommentOnValue',
-			displayField: 'label',
-			valueField: 'code',
-			editable: false,
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');
-					formBuilderItem.syncTemplateField(false);					
-				}
-			},
-			store: {				
-			}
-		},		
-		{
-			xtype: 'combo',
-			hidden: true,
-			optionField: true,			
-			fieldLabel: 'Contact Type',
-			name: 'contactType',
-			displayField: 'description',
-			valueField: 'code',
-			editable: false,
-			queryMode: 'local',
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');							
-					formBuilderItem.syncTemplateField(false);					
-				}
-			},
-			store: {
-				autoLoad: true,
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/lookuptypes/ContactType'
-				}				
-			}
-		},		
-		{
-			xtype: 'tagfield',
-			hidden: true,
-			optionField: true,			
-			fieldLabel: 'Exclude Contact Types',
-			name: 'excludeContactType',
-			displayField: 'description',
-			valueField: 'code',
-			editable: true,
-			queryMode: 'local',
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');							
-					formBuilderItem.syncTemplateField(false);					
-				}
-			},
-			store: {
-				autoLoad: true,
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/lookuptypes/ContactType'
-				}				
-			}
-		},		
-		{
-			xtype: 'combo',
-			hidden: true,
-			optionField: true,			
-			fieldLabel: 'Resource Type',
-			name: 'resourceType',
-			displayField: 'description',
-			valueField: 'code',
-			editable: false,
-			queryMode: 'remote',
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');						
-					formBuilderItem.syncTemplateField(false);					
-				}
-			},
-			store: {
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/lookuptypes/ResourceType'
-				}
-			}
-		},
-		{
-			xtype: 'combo',
-			hidden: true,
-			optionField: true,			
-			fieldLabel: 'Submission Template',
-			name: 'subSubmissionTemplateId',
-			displayField: 'name',
-			valueField: 'submissionTemplateId',
-			editable: false,
-			queryMode: 'remote',
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');	
-					formBuilderItem.syncTemplateField(false);					
-				}
-			},
-			store: {				
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/submissiontemplates'
-				}				
-			}
-		},		
-		{			
-			xtype: 'tinymce_textarea',
-			hidden: true,
-			optionField: true,			
-			fieldStyle: 'font-family: Courier New; font-size: 12px;',
-			style: {border: '0'},
-			fieldLabel: 'Static Content',
-			name: 'staticContent',
-			height: 200,
-			maxLength: 4096,
-			tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig(), {
-				mediaSelectionUrl: MediaUtil.generalMediaUrl,
-				mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
-			}),
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');	
-					formBuilderItem.syncTemplateField(false);					
-				}
-			}			
-		},
-		{
-			xtype: 'combo',
-			hidden: true,
-			optionField: true,			
-			fieldLabel: 'Child Entry Type',
-			name: 'childEntryType',
-			displayField: 'description',
-			valueField: 'code',
-			editable: false,
-			queryMode: 'remote',
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');						
-					formBuilderItem.syncTemplateField(false);					
-				}
-			},
-			store: {
-				proxy: {
-					type: 'ajax',
-					url: 'api/v1/resource/componenttypes/lookup'
-				}
-			}
-		},
-		{
-			xtype: 'textfield',
-			hidden: true,
-			optionField: true,
-			fieldLabel: 'Comment Label',
-			name: 'commentLabel',
-			maxLength: 255,
-			listeners: {
-				change: function (combo, newVal, oldValue, opts) {
-					var formBuilderItem = this.up('panel');						
-					formBuilderItem.syncTemplateField(false);					
-				}
-			}			
-		},		
-		{
-			xtype: 'checkbox',
-			hidden: true,
-			optionField: true,			
-			name: 'requireComment',
-			boxLabel: '<b>Require Comment</b>',
-			margin: '0 0 0 155',
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		},
-		{
-			xtype: 'checkbox',
-			hidden: true,
-			optionField: true,			
-			name: 'showComment',
-			boxLabel: '<b>Show Comment</b>',
-			margin: '0 0 0 155',
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		},		
-		{
-			xtype: 'checkbox',
-			hidden: true,
-			optionField: true,			
-			name: 'hidePrivateAttributeFlag',
-			boxLabel: '<b>Hide Private Attribute Flag</b>',
-			margin: '0 0 0 155',
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		},
-		{
-			xtype: 'checkbox',
-			hidden: true,
-			optionField: true,			
-			name: 'hideExistingContactPicker',
-			boxLabel: '<b>Hide Existing Contact Picker</b>',
-			margin: '0 0 0 155',
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		},
-		{
-			xtype: 'checkbox',
-			hidden: true,
-			optionField: true,
-			name: 'allowPrivateResource',
-			boxLabel: '<b>Allow Private Resource</b>',
-			margin: '0 0 0 155',
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		},
-		{
-			xtype: 'checkbox',
-			hidden: true,
-			optionField: true,			
-			name: 'popluateContactWithUser',
-			boxLabel: '<b>Populate Contact With User</b>',
-			margin: '0 0 0 155',
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		},
-		{
-			xtype: 'checkbox',
-			hidden: true,
-			optionField: true,			
-			name: 'allowHTMLInComment',
-			boxLabel: '<b>Allow HTML in Comment</b>',
-			margin: '0 0 0 155',
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		},
-		{
-			xtype: 'checkbox',
-			hidden: true,
-			optionField: true,			
-			name: 'alwaysShowDetailGrid',
-			boxLabel: '<b>Always Show Details Grid</b> <i class="fa fa-question-circle" data-qtip="Default behavior is to hide if the entry type does not support this information."></i>',
-			margin: '0 0 0 155',
-			listeners: {
-				change: function (self, newVal) {
-					var formBuilderItem = this.up('panel');														
-					formBuilderItem.syncTemplateField(true);						
-				}
-			}			
-		}		
+				},
+				{
+					xtype: 'textarea',
+					itemId: 'label',
+					name: 'label',
+					fieldLabel: 'Label',				
+					maxLength: 4096,
+					enforceMaxLength: true,
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);
+						}
+					}
+				},
+				{
+					xtype: 'textfield',
+					name: 'labelTooltip',
+					fieldLabel: 'Label Tooltip',
+					itemId: 'labelTooltip',	
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				},	
+				{
+					xtype: 'checkbox',
+					name: 'required',
+					boxLabel: '<b>Required</b>',
+					margin: '0 0 0 155',
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				},		
+				{
+					xtype: 'combo',
+					fieldLabel: 'Field Type <i class="fa fa-question-circle" data-qtip="Radio buttons, checkboxes, grids, etc."></i>',
+					itemId: 'fieldTypeCombo',
+					name: 'fieldType',
+					queryMode: 'local',
+					displayField: 'description',
+					valueField: 'code',
+					editable: false,		
+					width: '100%',					
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');	
+							
+							formBuilderItem.fieldType = newVal;
+							formBuilderItem.resyncfieldOptions();
+						}
+					},			
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/lookuptypes/SubmissionFormFieldType'
+						}
+					}
+				},
+				//<-----------Control Fields ------>
+				
+				{
+					xtype: 'combo',
+					hidden: true,
+					optionField: true,
+					fieldLabel: 'Label Align',	
+					name: 'labelAlign',
+					queryMode: 'local',
+					displayField: 'description',
+					valueField: 'code',
+					editable: false,
+					emptyText: 'Default',
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');	
+							formBuilderItem.syncTemplateField(false);					
+						}
+					},			
+					store: {
+						data: [
+							{code: 'top', description: 'Top'},
+							{code: 'left', description: 'Left'},
+							{code: 'right', description: 'Right'},
+							{code: null, description: 'Default'}
+						]
+					}
+				},		
+				{
+					xtype: 'combo',
+					hidden: true,
+					optionField: true,			
+					fieldLabel: 'Map To Field',
+					name: 'fieldName',
+					displayField: 'field',
+					valueField: 'field',
+					editable: false,
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');	
+							formBuilderItem.syncTemplateField(false);	
+							
+							formBuilderItem.formBuilderPanel.templateProgressPanel.updateTemplateProgress();
+							formBuilderItem.formBuilderPanel.displayPanel.updateFieldPanels();
+						}
+					},
+					store: {				
+					}
+				},
+				{
+					xtype: 'combo',
+					hidden: true,
+					optionField: true,			
+					fieldLabel: 'Attribute Type',
+					name: 'attributeType',
+					displayField: 'description',
+					valueField: 'attributeType',
+					editable: false,
+					queryMode: 'remote',
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');	
+							
+							var record = combo.getSelection();
+							if (record) {
+								var codeField = formBuilderItem.queryById('attributeCode');
+								var requireValueField = formBuilderItem.queryById('requiredCommentOnValue');
+								codeField.clearValue();
+								requireValueField.clearValue();					
 		
+								codeField.getStore().loadData(record.data.codes);
+								requireValueField.getStore().loadData(record.data.codes);
 		
+								formBuilderItem.syncTemplateField(false);					
+							}
+						}
+					},			
+					store: {
+					sorters: [
+							{
+								property: 'description',
+								direction: 'ASC',
+								transform: function (item) {
+									if (item) {
+										item = item.toLowerCase();
+									}
+									return item;
+								}
+							}
+						],
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/attributes'
+						}				
+					}
+				},
+				{
+					xtype: 'combo',
+					hidden: true,
+					optionField: true,			
+					fieldLabel: 'Attribute Code',
+					itemId: 'attributeCode',
+					name: 'attributeCode',
+					displayField: 'label',
+					valueField: 'code',
+					editable: false,
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');	
+							formBuilderItem.syncTemplateField(false);					
+						}
+					},
+					store: {				
+					}
+				},
+				{
+					xtype: 'combo',
+					hidden: true,
+					optionField: true,			
+					itemId: 'requiredCommentOnValue',
+					fieldLabel: 'Require Comment on Value',
+					name: 'requiredCommentOnValue',
+					displayField: 'label',
+					valueField: 'code',
+					editable: false,
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');
+							formBuilderItem.syncTemplateField(false);					
+						}
+					},
+					store: {				
+					}
+				},		
+				{
+					xtype: 'combo',
+					hidden: true,
+					optionField: true,			
+					fieldLabel: 'Contact Type',
+					name: 'contactType',
+					displayField: 'description',
+					valueField: 'code',
+					editable: false,
+					queryMode: 'local',
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');							
+							formBuilderItem.syncTemplateField(false);					
+						}
+					},
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/lookuptypes/ContactType'
+						}				
+					}
+				},		
+				{
+					xtype: 'tagfield',
+					hidden: true,
+					optionField: true,			
+					fieldLabel: 'Exclude Contact Types',
+					name: 'excludeContactType',
+					displayField: 'description',
+					valueField: 'code',
+					editable: true,
+					queryMode: 'local',
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');							
+							formBuilderItem.syncTemplateField(false);					
+						}
+					},
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/lookuptypes/ContactType'
+						}				
+					}
+				},		
+				{
+					xtype: 'combo',
+					hidden: true,
+					optionField: true,			
+					fieldLabel: 'Resource Type',
+					name: 'resourceType',
+					displayField: 'description',
+					valueField: 'code',
+					editable: false,
+					queryMode: 'remote',
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');						
+							formBuilderItem.syncTemplateField(false);					
+						}
+					},
+					store: {
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/lookuptypes/ResourceType'
+						}
+					}
+				},
+				{
+					xtype: 'combo',
+					hidden: true,
+					optionField: true,			
+					fieldLabel: 'Submission Template',
+					name: 'subSubmissionTemplateId',
+					displayField: 'name',
+					valueField: 'submissionTemplateId',
+					editable: false,
+					queryMode: 'remote',
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');	
+							formBuilderItem.syncTemplateField(false);					
+						}
+					},
+					store: {				
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/submissiontemplates'
+						}				
+					}
+				},		
+				{			
+					xtype: 'tinymce_textarea',
+					hidden: true,
+					optionField: true,			
+					fieldStyle: 'font-family: Courier New; font-size: 12px;',
+					style: {border: '0'},
+					fieldLabel: 'Static Content',
+					name: 'staticContent',
+					height: 200,
+					maxLength: 4096,
+					width: '100%',
+					tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig(), {
+						mediaSelectionUrl: MediaUtil.generalMediaUrl,
+						mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
+					}),
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');	
+							formBuilderItem.syncTemplateField(false);					
+						}
+					}			
+				},
+				{
+					xtype: 'combo',
+					hidden: true,
+					optionField: true,			
+					fieldLabel: 'Child Entry Type',
+					name: 'childEntryType',
+					displayField: 'description',
+					valueField: 'code',
+					editable: false,
+					queryMode: 'remote',
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');						
+							formBuilderItem.syncTemplateField(false);					
+						}
+					},
+					store: {
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/componenttypes/lookup'
+						}
+					}
+				},
+				{
+					xtype: 'textfield',
+					hidden: true,
+					optionField: true,
+					fieldLabel: 'Comment Label',
+					name: 'commentLabel',
+					maxLength: 255,
+					width: '100%',
+					listeners: {
+						change: function (combo, newVal, oldValue, opts) {
+							var formBuilderItem = this.up().up('panel');						
+							formBuilderItem.syncTemplateField(false);					
+						}
+					}			
+				},		
+				{
+					xtype: 'checkbox',
+					hidden: true,
+					optionField: true,			
+					name: 'requireComment',
+					boxLabel: '<b>Require Comment</b>',
+					margin: '0 0 0 155',
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				},
+				{
+					xtype: 'checkbox',
+					hidden: true,
+					optionField: true,			
+					name: 'showComment',
+					boxLabel: '<b>Show Comment</b>',
+					margin: '0 0 0 155',
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				},		
+				{
+					xtype: 'checkbox',
+					hidden: true,
+					optionField: true,			
+					name: 'hidePrivateAttributeFlag',
+					boxLabel: '<b>Hide Private Attribute Flag</b>',
+					margin: '0 0 0 155',
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				},
+				{
+					xtype: 'checkbox',
+					hidden: true,
+					optionField: true,			
+					name: 'hideExistingContactPicker',
+					boxLabel: '<b>Hide Existing Contact Picker</b>',
+					margin: '0 0 0 155',
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				},
+				{
+					xtype: 'checkbox',
+					hidden: true,
+					optionField: true,
+					name: 'allowPrivateResource',
+					boxLabel: '<b>Allow Private Resource</b>',
+					margin: '0 0 0 155',
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				},
+				{
+					xtype: 'checkbox',
+					hidden: true,
+					optionField: true,			
+					name: 'popluateContactWithUser',
+					boxLabel: '<b>Populate Contact With User</b>',
+					margin: '0 0 0 155',
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				},
+				{
+					xtype: 'checkbox',
+					hidden: true,
+					optionField: true,			
+					name: 'allowHTMLInComment',
+					boxLabel: '<b>Allow HTML in Comment</b>',
+					margin: '0 0 0 155',
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				},
+				{
+					xtype: 'checkbox',
+					hidden: true,
+					optionField: true,			
+					name: 'alwaysShowDetailGrid',
+					boxLabel: '<b>Always Show Details Grid</b> <i class="fa fa-question-circle" data-qtip="Default behavior is to hide if the entry type does not support this information."></i>',
+					margin: '0 0 0 155',
+					width: '100%',
+					listeners: {
+						change: function (self, newVal) {
+							var formBuilderItem = this.up().up('panel');														
+							formBuilderItem.syncTemplateField(true);						
+						}
+					}			
+				}		
+			],
+		}
 	],
+
 	resyncfieldOptions: function() {
 		var formBuilderItem = this;
 		
@@ -737,11 +774,13 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 
 		if (previousActiveItem && !previousActiveItem.isDestroyed) {
 			previousActiveItem.removeCls('csf-active');
+			previousActiveItem.setActiveItem(previousActiveItem.queryById('collapsedSide'));
 		} else {
 			previousActiveItem = null;
 		}
 		newItem.addCls('csf-active');
 		formBuilderPanel.activeItem = newItem;
+		newItem.setActiveItem(newItem.queryById('infoSide'));
 
 		// update the menu position
 		newItem.floatingMenu.updatePosition();

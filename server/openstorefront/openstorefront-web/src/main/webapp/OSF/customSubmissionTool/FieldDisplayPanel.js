@@ -23,8 +23,8 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	extend: 'Ext.container.Container',
 	xtype: 'osf-csf-displaypanel',
 	requires: ['OSF.customSubmissionTool.FloatingMenu'],
+	layout: 'border',
 
-	scrollable: true,
 	bodyStyle: 'padding: 5px;',
 	style: 'background: #fff;',
 	untitledSectionName: '<b style="color: red;">Untitled Section</b> <i class="fa fa-exclamation-triangle" style="color: orange;" data-qtip="This section needs a name" aria-hidden="true"></i>',
@@ -117,23 +117,23 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 			}
 		}
 
-
 		// reset the section form to the sections current values...
 		sectionForm.setValues({
 			name: section.name === displayPanel.untitledSectionName ? '' : section.name,
 			instructions: section.instructions
 		});
 		
-		
 	},
 	items: [
 		{
 			xtype: 'panel',
+			region: 'north',
 			itemId: 'selectionMessage',
 			html: '<h1>Add or Select a Section.</h1>'
 		},
 		{
 			xtype: 'form',
+			region: 'north',
 			itemId: 'sectionContainer',
 			hidden: true,
 			padding: 10,
@@ -175,28 +175,26 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 
 		// display area for fieldItems and the floating menu
 		{
-			xtype: 'container',
-			layout: 'vbox',
+			xtype: 'panel',
+			region: 'center',
+			scrollable: true,
+			width: '100%',
+			dockedItems: [
+				{
+					xtype: 'osf-csf-floatingMenu',
+					dock: 'bottom',
+					itemId: 'menu',
+					width: '100%'						
+				}
+			],
+			layout: 'fit',
 			minHeight: 50,
 			items: [
 				{
 					xtype: 'container',
-					itemId: 'itemContainer',
-					width: '100%',
-					flex: 1
-				},
-				{
-					xtype: 'container',
-					height: '100%',					
-					padding: '10 40 0 20',
-					width: '100%',
-					items: [
-						{
-							xtype: 'osf-csf-floatingMenu',
-							itemId: 'menu',
-							width: '100%'							
-						}
-					]
+					layout: 'anchor',
+					scrollable: true,
+					itemId: 'itemContainer'
 				}
 			]
 		}
