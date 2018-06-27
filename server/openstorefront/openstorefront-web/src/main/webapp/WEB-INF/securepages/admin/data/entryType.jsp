@@ -270,7 +270,7 @@
 									name: 'componentTypeTemplate',																		
 									width: '100%',
 									margin: '0 0 20 0',
-									fieldLabel: 'Override Template',
+									fieldLabel: 'Entry Display Template',
 									emptyText: 'Default',
 									storeConfig: {
 										url: 'api/v1/resource/componenttypetemplates/lookup',
