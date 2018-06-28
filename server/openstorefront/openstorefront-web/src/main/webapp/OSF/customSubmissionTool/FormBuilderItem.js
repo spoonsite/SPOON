@@ -42,7 +42,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			xtype: 'panel',
 			itemId: 'collapsedSide',
 			tpl: new Ext.XTemplate(
-				
 				'<tpl if="questionNumber">',
 					'<b> {questionNumber} </b>',
 				'</tpl>',
