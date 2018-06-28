@@ -445,12 +445,22 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				data.push(componentAttribute);				
 				
 			});			
-		}		
+		}	
 		
-		var userSubmissionField = {			
-			templateFieldId: panel.fieldTemplate.fieldId,
-			rawValue: Ext.encode(data)
-		};		
+		var userSubmissionField = null;
+		var cleanUpData = [];
+		Ext.Array.each(data, function(dataItem){
+			if (dataItem.componentAttributePk.attributeCode && dataItem.componentAttributePk.attributeCode !== '') {
+				cleanUpData.push(dataItem);
+			}
+		});
+		
+		if (cleanUpData.length > 0) {
+			userSubmissionField = {			
+				templateFieldId: panel.fieldTemplate.fieldId,
+				rawValue: Ext.encode(cleanUpData)
+			};		
+		}
 		return userSubmissionField;			
 	}
 	

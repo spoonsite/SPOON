@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
@@ -187,7 +188,7 @@ public class SubmissionFormServiceImpl
 		return existing;
 	}
 
-	private void populateComponentNameField(UserSubmission userSubmission) throws OpenStorefrontRuntimeException
+	private void populateComponentNameField(UserSubmission userSubmission)
 	{
 		SubmissionFormTemplate template = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
 		if (template != null) {
@@ -314,9 +315,12 @@ public class SubmissionFormServiceImpl
 				}
 
 				if (validationResult.valid()) {
-					getComponentService().saveFullComponent(componentFormSet.getPrimary());
+					FileHistoryOption options = new FileHistoryOption();
+					options.setUploadTags(Boolean.TRUE);
+
+					getComponentService().saveFullComponent(componentFormSet.getPrimary(), options);
 					for (ComponentAll componentAll : componentFormSet.getChildren()) {
-						getComponentService().saveFullComponent(componentAll);
+						getComponentService().saveFullComponent(componentAll, options);
 					}
 					internalDeleteUserSubmission(userSubmission.getUserSubmissionId(), false);
 				}
@@ -427,9 +431,12 @@ public class SubmissionFormServiceImpl
 				}
 
 				if (validationResult.valid()) {
-					ComponentAll savedComponentAll = getComponentService().saveFullComponent(componentFormSet.getPrimary());
+					FileHistoryOption options = new FileHistoryOption();
+					options.setUploadTags(Boolean.TRUE);
+
+					ComponentAll savedComponentAll = getComponentService().saveFullComponent(componentFormSet.getPrimary(), options);
 					for (ComponentAll componentAll : componentFormSet.getChildren()) {
-						getComponentService().saveFullComponent(componentAll);
+						getComponentService().saveFullComponent(componentAll, options);
 					}
 					getComponentService().submitChangeRequest(savedComponentAll.getComponent().getComponentId());
 

@@ -120,7 +120,19 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 		templateProgressPanel.updateTemplateProgress();
 		
 	},
-	
+	getMappableFieldForName: function(fieldName) {
+		var templateProgressPanel = this;
+		
+		var foundRecord;
+		
+		var grid = templateProgressPanel.queryById('grid');		
+		grid.getStore().each(function(item){
+			if (item.get('field') === fieldName) {
+				foundRecord = item;
+			}
+		});
+		return foundRecord;
+	},	
 	updateTemplateProgress: function(){
 		//assumes the template has been set.
 		var templateProgressPanel = this;
@@ -174,6 +186,9 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 								model.name !== 'componentType' &&
 								model.name !== 'approvalState' &&
 								model.name !== 'changeApprovalMode' &&
+								model.name !== 'dataSource' &&
+								model.name !== 'securityMarkingType' &&
+								model.name !== 'dataSensitivity' &&
 								model.name !== 'externalId' &&
 								model.name !== 'guid' &&
 								model.name !== 'notifyOfApprovalEmail'
@@ -223,13 +238,23 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 		}
 		
 	},
+
+	removeMapping: function(mapping){
+		var templateProgressPanel = this;
+		var grid = templateProgressPanel.queryById('grid');
+		var record = grid.getStore().queryRecords('field',mapping)[0];
+		record.set('mapped', false, {
+			dirty: false
+		});
+	},
+
 	getAvaliableMappableFields: function() {
 		var templateProgressPanel = this;
 		
 		var records = [];		
 		templateProgressPanel.queryById('grid').getStore().each(function(record){
 			if (!record.get('mapped')) {
-				records.push(record);
+				records.push(record.copy());
 			}
 		});
 		

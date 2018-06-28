@@ -107,20 +107,20 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'View',
-									itemId: 'view',
+									text: 'Edit',
+									itemId: 'edit',
 									scale: 'medium',
 									disabled: true,
-									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction',
+									iconCls: 'fa fa-2x fa-edit icon-button-color-view icon-vertical-correction-edit',
 									handler: function () {
-										actionView(templateGrid.getSelection()[0]);
+										actionEdit(templateGrid.getSelection()[0]);
 									}
 								}, 								
 								{
 									text: 'Change Owner',
 									itemId: 'reassign',
 									scale: 'medium',
-									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									iconCls: 'fa fa-2x fa-user icon-button-color-edit icon-vertical-correction',
 									disabled: true,
 									handler: function () {
 										actionReassign(templateGrid.getSelection()[0]);
@@ -157,11 +157,11 @@
 				var checkEntryGridTools = function() {
 					if (templateGrid.getSelectionModel().getCount() === 1) {
 						templateGrid.queryById('reassign').setDisabled(false);
-						templateGrid.queryById('view').setDisabled(false);
+						templateGrid.queryById('edit').setDisabled(false);
 						templateGrid.queryById('delete').setDisabled(false);					
 					} else {
 						templateGrid.queryById('reassign').setDisabled(true);
-						templateGrid.queryById('view').setDisabled(true);	
+						templateGrid.queryById('edit').setDisabled(true);	
 						templateGrid.queryById('delete').setDisabled(true);
 					}
 				};
@@ -170,7 +170,7 @@
 					templateGrid.getStore().reload();
 				};
 
-				var actionView = function(record) {					
+				var actionEdit = function(record) {					
 					
 					templateGrid.setLoading('Loading Submission Form...');
 					Ext.Ajax.request({
@@ -189,25 +189,25 @@
 								width: '80%',
 								height: '80%',
 								maximizable: true,
-								dockedItems: [
-									{
-										xtype: 'panel',
-										dock: 'top',
-										html: '<div class="submission-form-preview alert-warning">Preview Mode - (Changes will not be Saved)</div>'
-									}
-								],								
 								items: [
 									{
 										xtype: 'osf-customSubmission-SubmissionformFullControl',
 										itemId: 'form',
-										previewMode: true,
-										showCustomButton: true,
-										hideSave: true,
-										customButtonHandler: function() {
+										submissionSuccess: function() {											
+											actionRefresh();
+											submissionWin.skipSave = true;
 											submissionWin.close();
-										}	
+										}
 									}
-								]
+								],
+								listeners: {
+									beforeclose: function(panel, opts) {
+										var form = panel.queryById('submissionForm');	
+										if (form.userSubmission && !submissionWin.skipSave) {
+											panel.queryById('controlForm').saveSubmission();
+										}
+									}
+								}
 							});
 							submissionWin.show();
 
@@ -258,6 +258,9 @@
 										xtype: 'UserSingleSelectComboBox',
 										fieldLabel: 'Select a user<span class="field-required" />',
 										allowBlank: false,
+										minChars: 1,
+										emptyText: 'Start typing to select new owner',
+										hideTrigger: true,
 										name: 'ownerUsername',
 										width: '100%'
 									}

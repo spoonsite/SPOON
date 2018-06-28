@@ -83,6 +83,7 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 			modal: true,
 			width: 800,
 			height: 650,
+			alwaysOnTop: 99,
 			closeMode: 'destroy',
 			layout: 'fit',
 			items: [

@@ -61,6 +61,7 @@ Ext.define('OSF.customSubmission.field.ResourcesGrid', {
 			modal: true,
 			width: 800,
 			height: 600,
+			alwaysOnTop: 99,
 			closeMode: 'destroy',
 			layout: 'fit',
 			items: [

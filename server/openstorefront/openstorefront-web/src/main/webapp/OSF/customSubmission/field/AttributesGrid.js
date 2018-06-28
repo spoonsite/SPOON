@@ -84,6 +84,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 			height: 255,
 			closeMode: 'destroy',
 			layout: 'fit',
+			alwaysOnTop: 99,
 			items: [
 				{
 					xtype: 'osf-submissionform-attribute',

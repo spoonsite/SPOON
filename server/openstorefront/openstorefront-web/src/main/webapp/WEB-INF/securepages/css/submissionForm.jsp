@@ -44,6 +44,7 @@ h3 {
 	text-align: center;
 	font-size: 24px;
 	padding-bottom: 10px;
+	padding-top: 5px;
 }
 
 .submission-instructions {
