@@ -875,8 +875,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		formBuilderPanel.activeItem = newItem;
 		newItem.setActiveItem(newItem.queryById('infoSide'));
 
-		// update the menu position
-		newItem.floatingMenu.updatePosition();
     },
 
     listeners: {    	
@@ -919,6 +917,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 //							itemContainer.insert(activeIndex, targetContainer);
 //
 //							// update the floating menu
+// 							UPDATE POSITION HAS BEEN REMOVED
 //							fieldContainer.getFormBuilderPanel().floatingMenu.updatePosition();
 //
 //						} else {

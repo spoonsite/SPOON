@@ -33,18 +33,6 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 	},
 	layout: 'hbox',
 
-	updatePosition: function () {
-		var floatingMenu = this;
-		
-		var formBuilderPanel = floatingMenu.formBuilderPanel;
-		if (floatingMenu.hidden) {
-				floatingMenu.setHidden(false);
-		}
-					
-		// if (formBuilderPanel.activeItem && formBuilderPanel.activeItem.el) {		
-		// 	floatingMenu.setY(formBuilderPanel.activeItem.getY(), false);								
-		// }
-	},
 	items: [
 		{
 			text: '<i style="color:#5f5f5f;" class="fa fa-plus-circle fa-2x" aria-hidden="true" data-qtip="Add a field"></i>',
