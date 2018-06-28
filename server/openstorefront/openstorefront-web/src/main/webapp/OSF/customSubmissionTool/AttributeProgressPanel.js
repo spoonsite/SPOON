@@ -48,19 +48,19 @@ Ext.define('OSF.customSubmissionTool.AttributeProgressPanel', {
 	loadGridStore: function (entryType) {
 
 		var progressPanel = this;
-		var entryType = entryType || progressPanel.templateRecord.entryTypeCode;
+		var entryType = entryType || progressPanel.getTemplateRecord().entryTypeCode;
 
 		var gridStore = Ext.create('Ext.data.Store', {
 			fields: ['description'],
 			proxy: {
 				type: 'ajax',
-				url: 'api/v1/resource/attributes/' + (progressPanel.displayRequiredAttributes ? 'required' : 'optional') + 
+				url: 'api/v1/resource/attributes/' + (progressPanel.getDisplayRequiredAttributes() ? 'required' : 'optional') + 
 					'?componentType=' + entryType
 			}
 		});
 
 		progressPanel.queryById('attributeProgressGrid').setStore(gridStore);
-		gridStore.reload();
+		gridStore.load();
 	},
 
 	items: [

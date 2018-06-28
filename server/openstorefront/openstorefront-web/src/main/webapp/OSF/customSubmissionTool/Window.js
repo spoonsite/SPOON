@@ -196,22 +196,35 @@ Ext.define('OSF.customSubmissionTool.Window', {
 						});						
 						
 					} else {
-						Ext.toast('Saved Template Successfully');
 
-						submissionWindow.template.updateUser = updatedTemplate.updateUser;
-						submissionWindow.template.updateDts = Ext.Date.parse(updatedTemplate.updateDts, 'c');
+						var handleResponse = function () {
 
-						//update all section id and field ids
+							submissionWindow.template.updateUser = updatedTemplate.updateUser;
+							submissionWindow.template.updateDts = Ext.Date.parse(updatedTemplate.updateDts, 'c');
+	
+							//update all section id and field ids
+							submissionWindow.formBuilderPanel.markAsSaved();
+							submissionWindow.formBuilderPanel.updateTemplate(updatedTemplate);
+							if (submissionWindow.saveCallback) {
+								submissionWindow.saveCallback(updatedTemplate);
+							}
+							if (afterSave) {
+								afterSave(updatedTemplate);
+							}
+						};
 
-						submissionWindow.formBuilderPanel.markAsSaved();
-						submissionWindow.formBuilderPanel.updateTemplate(updatedTemplate);
-						if (submissionWindow.saveCallback) {
-							submissionWindow.saveCallback(updatedTemplate);
+						if (updatedTemplate.activeStatus === 'A') {
+							Ext.Ajax.request({
+								url: 'api/v1/resource/submissiontemplates/' + updatedTemplate.submissionTemplateId + '/inactivate',
+								method: 'PUT',
+								success: function (response, opt) {
+									handleResponse();
+								}
+							});
 						}
-						if (afterSave) {
-							afterSave(updatedTemplate);
+						else {
+							handleResponse();
 						}
-						
 					}
 				}
 			});

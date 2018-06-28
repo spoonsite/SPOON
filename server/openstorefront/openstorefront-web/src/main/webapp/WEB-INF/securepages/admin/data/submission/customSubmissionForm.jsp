@@ -74,10 +74,16 @@
 
 						if (selected.length > 0) {
 							tools.getComponent('edit').setDisabled(false);
-							tools.getComponent('togglestatus').setDisabled(false);
 							tools.getComponent('copy').setDisabled(false);							
 							tools.getComponent('preview').setDisabled(false);
 							tools.getComponent('export').setDisabled(false);
+
+							if (selected[0].get('templateStatus') === 'VERIFIED') {
+								tools.getComponent('togglestatus').setDisabled(false);
+							}
+							else {
+								tools.getComponent('togglestatus').setDisabled(true);
+							}
 							
 							if (selected[0].get('templateStatus') === 'PENDING_VERIFICATION') {
 								tools.getComponent('verify').setDisabled(false);							
