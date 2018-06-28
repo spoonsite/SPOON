@@ -86,6 +86,8 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 						infoPanel.templateRecord.entryType = newValue;
 						if (oldValue !== null) {
 							infoPanel.formBuilderPanel.markAsChanged();
+							infoPanel.formBuilderPanel.requiredAttrProgressPanel.loadGridStore(newValue);
+							infoPanel.formBuilderPanel.optionalAttrProgressPanel.loadGridStore(newValue);
 						}
 					}
 				}
