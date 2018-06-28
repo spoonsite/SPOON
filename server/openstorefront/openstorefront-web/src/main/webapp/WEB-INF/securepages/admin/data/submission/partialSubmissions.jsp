@@ -192,7 +192,7 @@
 								items: [
 									{
 										xtype: 'osf-customSubmission-SubmissionformFullControl',
-										itemId: 'form',
+										itemId: 'controlForm',
 										submissionSuccess: function() {											
 											actionRefresh();
 											submissionWin.skipSave = true;
@@ -212,7 +212,7 @@
 							submissionWin.show();
 
 							var finishLoadingForm = function(userSubmission) {
-								submissionWin.queryById('form').load(template, userSubmission.componentType, userSubmission, false);					
+								submissionWin.queryById('controlForm').load(template, userSubmission.componentType, userSubmission, false);					
 							};
 
 							if (record) {
