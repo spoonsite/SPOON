@@ -381,8 +381,6 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 					activeItem.destroy();
 					formBuilderPanel.activeItem = null;
 					
-					// hide floating menu
-					floatingMenuPanel.setHidden(true);
 					formBuilderPanel.displayPanel.updateFieldPanels();
 				}
 

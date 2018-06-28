@@ -209,7 +209,31 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						proxy: {
 							type: 'ajax',
 							url: 'api/v1/resource/lookuptypes/SubmissionFormFieldType'
-						}
+						},
+						filters: [
+							function(fieldType){
+								var subFieldType = fieldType.get('code');
+								if(subFieldType == 'ATTRIBUTE'){
+									return false;
+								}
+								if(subFieldType == 'EXT_DEPEND'){
+									return false;
+								}
+								if(subFieldType == 'MEDIA'){
+									return false;
+								}
+								if(subFieldType == 'RELATIONSHIPS'){
+									return false;
+								}
+								if(subFieldType == 'RESOURCE'){
+									return false;
+								}
+								if(subFieldType == 'TAG'){
+									return false;
+								}
+								return true;
+							}
+						]
 					}
 				},
 				//<-----------Control Fields ------>
@@ -783,7 +807,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			break;					
 
 			default: 
-				console.error('Field type note supported: ' + formBuilderItem.fieldType);
+				console.error('Field type not supported: ' + formBuilderItem.fieldType);
 			break;	
 		}										
 
