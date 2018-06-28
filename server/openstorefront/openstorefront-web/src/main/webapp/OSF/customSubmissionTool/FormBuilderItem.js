@@ -646,10 +646,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				mappableFields = Ext.Array.filter(availableMappedFields, function (fieldRecord) {
 					return fieldRecord.get('field') === 'organization';
 				});							
-				var fieldNameCb = formBuilderItem.getForm().findField('fieldName');	
-				fieldNameCb.getStore().loadData(mappableFields);	
-				
-			//	fieldNameCb.checkRequiredMapping(formBuilderItem, fieldNameCb);
+				formBuilderItem.getForm().findField('fieldName').getStore().loadData(mappableFields);	
 			break;	
 			case 'CONTACT_MULTI':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
