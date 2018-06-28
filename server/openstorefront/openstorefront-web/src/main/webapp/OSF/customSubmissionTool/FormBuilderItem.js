@@ -618,7 +618,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		var formBuilderItem = this;
 		
 		//hide all option fields
-		Ext.Array.each(formBuilderItem.items.items, function(optionField) {
+		var infoSidePanel = formBuilderItem.queryById('infoSide');
+		Ext.Array.each(infoSidePanel.items.items, function(optionField) {
 			if (optionField.optionField) {
 				optionField.setHidden(true);
 			}
