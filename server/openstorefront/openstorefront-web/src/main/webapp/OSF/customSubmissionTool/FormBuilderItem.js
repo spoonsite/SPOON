@@ -42,7 +42,84 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			xtype: 'panel',
 			itemId: 'collapsedSide',
 			tpl: new Ext.XTemplate(
-				'{label}'
+				
+				'<tpl if="questionNumber">',
+					'<b> {questionNumber} </b>',
+				'</tpl>',
+				'<tpl if="label">',
+					'<b> {label} </b>',
+				'</tpl>',
+				'<tpl if="required">',
+					'<i style="color:#e81717"><b>*</b></i>',
+				'</tpl>',
+				'<div>{[this.iconFinder(values.fieldType)]}</div>' ,
+				'<div style="border-bottom: 1px solid grey"></div>',
+				{
+					disableFormats: true,
+					iconFinder: function(fieldType){
+						if(fieldType == 'TEXT'){
+							return '<i style="color:#5179ba;" class="fa fa-minus fa-2x" aria-hidden="true" data-qtip="Short Answer Mapped Text"></i>';
+						}
+						if(fieldType == 'NUMBER'){
+							return '<i style="color:#5179ba;" class="fa fa-minus fa-2x" aria-hidden="true" data-qtip="Short Answer Mapped Number"></i>';
+						}
+						if(fieldType == 'DATE'){
+							return '<i style="color:#5179ba;" class="fa fa-minus fa-2x" aria-hidden="true" data-qtip="Short Answer Mapped Date"></i>';
+						}
+						if(fieldType == 'TEXTAREA'){
+							return '<i style="color:#5179ba;" class="fa fa-align-left fa-2x" aria-hidden="true" data-qtip="Paragraph Mapped Text Area"></i>';
+						}
+						if(fieldType == 'RICHTEXT'){
+							return '<i style="color:#5179ba;" class="fa fa-align-left fa-2x" aria-hidden="true" data-qtip="Paragraph Mapped Rich Text"></i>';
+						}
+						if(fieldType == 'ATTRIBUTE_RADIO'){
+							return '<i style="color:#5179ba;" class="fa fa-dot-circle-o fa-2x" aria-hidden="true" data-qtip="Multiple Choice"></i>';
+						}
+						if(fieldType == 'ATTRIBUTE_MCHECKBOX'){
+							return '<i style="color:#5179ba;" class="fa fa-check-square-o fa-2x" aria-hidden="true" data-qtip="Checkboxes"></i>';
+						}
+						if(fieldType == 'ATTRIBUTE_SINGLE'){
+							return '<i style="color:#5179ba;" class="fa fa-chevron-circle-down fa-2x" aria-hidden="true" data-qtip="Dropdown Attribute Select"></i>';
+						}
+						if(fieldType == 'ORGANIZATION'){
+							return '<i style="color:#5179ba;" class="fa fa-chevron-circle-down fa-2x" aria-hidden="true" data-qtip="Dropdown Entry Organization"></i>';
+						}
+						if(fieldType == 'ATTRIBUTE_REQUIRED'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Attributes(Required)"></i>';
+						}
+						if(fieldType == 'ATTRIBUTE_MULTI'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Attributes(Optional)"></i>';
+						}
+						if(fieldType == 'CONTACT_MULTI'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Contacts"></i>';
+						}
+						if(fieldType == 'EXT_DEPEND_MULTI'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid External Dependency"></i>';
+						}
+						if(fieldType == 'MEDIA_MULTI'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Media"></i>';
+						}
+						if(fieldType == 'RESOURCE_MULTI'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Resources"></i>';
+						}
+						if(fieldType == 'RELATIONSHIPS_MULTI'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Relationships"></i>';
+						}
+						if(fieldType == 'TAG_MULTI'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Tags"></i>';
+						}
+						if(fieldType == 'SUBMISSIONS'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Child Submissions"></i>';
+						}
+						if(fieldType == 'CONTACT'){
+							return '<i style="color:#5179ba;" class="fa fa-file-text-o fa-2x" aria-hidden="true" data-qtip="Form Single Contact"></i>';
+						}
+						if(fieldType == 'RESOURCE_SIMPLE'){
+							return '<i style="color:#5179ba;" class="fa fa-file-text-o fa-2x" aria-hidden="true" data-qtip="Form Single Resource"></i>';
+						}
+						return '<i style="color:#5179ba;" class="fa fa-info-circle fa-2x" aria-hidden="true" data-qtip=""></i>';
+					}
+				}
 			),
 			listeners: {
 				click: {
@@ -768,6 +845,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 	updateQuestion: function () {
 		var formBuilderItem = this;
 		formBuilderItem.formBuilderPanel.sectionPanel.updateField(formBuilderItem.templateField);
+		formBuilderItem.queryById('collapsedSide').update(formBuilderItem.templateField);
 	},
 
     getFormBuilderPanel: function () {
@@ -782,16 +860,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
     	var newItem = cmp || this;
     	var formBuilderPanel = this.getFormBuilderPanel();
 		var previousActiveItem = formBuilderPanel.activeItem;
-		// var fieldContainer = this;
 
-		// var record = Ext.create('Ext.data.Model', {			
-		// });
-		// record.set(fieldContainer.templateField);
 
 		if (previousActiveItem && !previousActiveItem.isDestroyed) {
 			previousActiveItem.removeCls('csf-active');
 			previousActiveItem.setActiveItem(previousActiveItem.queryById('collapsedSide'));
-			//formBuilderPanel.queryById('collapsedSide').update(record.data);
+			previousActiveItem.updateQuestion();
 			
 		} else {
 			previousActiveItem = null;
