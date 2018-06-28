@@ -31,11 +31,6 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		type: 'card'
 	},
 	isActive: false,
-	defaults: {
-		labelAlign: 'right',
-		labelWidth: 150,
-		width: '100%'		
-	},
 
 	items: [
 		{
@@ -133,7 +128,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		{
 			xtype: 'panel',
 			itemId: 'infoSide',
-			width: '100%',
+			layout: 'anchor',
+			defaults: {
+				labelAlign: 'right',
+				labelWidth: 150,
+				width: '100%'		
+			},
 			items: [
 				{
 					xtype: 'textfield',
@@ -141,8 +141,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					name: 'questionNumber',
 					fieldLabel: 'Question Number',
 					maxLength: 80,
-					enforceMaxLength: true,
-					width: '100%',
+					enforceMaxLength: true,					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -156,8 +155,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					name: 'label',
 					fieldLabel: 'Label',				
 					maxLength: 4096,
-					enforceMaxLength: true,
-					width: '100%',
+					enforceMaxLength: true,					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -169,8 +167,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					xtype: 'textfield',
 					name: 'labelTooltip',
 					fieldLabel: 'Label Tooltip',
-					itemId: 'labelTooltip',	
-					width: '100%',
+					itemId: 'labelTooltip',						
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -182,8 +179,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					xtype: 'checkbox',
 					name: 'required',
 					boxLabel: '<b>Required</b>',
-					margin: '0 0 0 155',
-					width: '100%',
+					margin: '0 0 0 155',					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -199,8 +195,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					queryMode: 'local',
 					displayField: 'description',
 					valueField: 'code',
-					editable: false,		
-					width: '100%',					
+					editable: false,											
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');	
@@ -229,8 +224,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					displayField: 'description',
 					valueField: 'code',
 					editable: false,
-					emptyText: 'Default',
-					width: '100%',
+					emptyText: 'Default',					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');	
@@ -254,8 +248,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					name: 'fieldName',
 					displayField: 'field',
 					valueField: 'field',
-					editable: false,
-					width: '100%',
+					editable: false,					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');	
@@ -277,8 +270,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					displayField: 'description',
 					valueField: 'attributeType',
 					editable: false,
-					queryMode: 'remote',
-					width: '100%',
+					queryMode: 'remote',					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');	
@@ -325,8 +317,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					name: 'attributeCode',
 					displayField: 'label',
 					valueField: 'code',
-					editable: false,
-					width: '100%',
+					editable: false,					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');	
@@ -345,8 +336,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					name: 'requiredCommentOnValue',
 					displayField: 'label',
 					valueField: 'code',
-					editable: false,
-					width: '100%',
+					editable: false,					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');
@@ -365,8 +355,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					displayField: 'description',
 					valueField: 'code',
 					editable: false,
-					queryMode: 'local',
-					width: '100%',
+					queryMode: 'local',					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');							
@@ -390,8 +379,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					displayField: 'description',
 					valueField: 'code',
 					editable: true,
-					queryMode: 'local',
-					width: '100%',
+					queryMode: 'local',					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');							
@@ -415,8 +403,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					displayField: 'description',
 					valueField: 'code',
 					editable: false,
-					queryMode: 'remote',
-					width: '100%',
+					queryMode: 'remote',					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');						
@@ -439,8 +426,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					displayField: 'name',
 					valueField: 'submissionTemplateId',
 					editable: false,
-					queryMode: 'remote',
-					width: '100%',
+					queryMode: 'remote',					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');	
@@ -463,8 +449,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					fieldLabel: 'Static Content',
 					name: 'staticContent',
 					height: 200,
-					maxLength: 4096,
-					width: '100%',
+					maxLength: 4096,					
 					tinyMCEConfig: Ext.apply(CoreUtil.tinymceSearchEntryConfig(), {
 						mediaSelectionUrl: MediaUtil.generalMediaUrl,
 						mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
@@ -485,8 +470,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					displayField: 'description',
 					valueField: 'code',
 					editable: false,
-					queryMode: 'remote',
-					width: '100%',
+					queryMode: 'remote',					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');						
@@ -506,8 +490,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					optionField: true,
 					fieldLabel: 'Comment Label',
 					name: 'commentLabel',
-					maxLength: 255,
-					width: '100%',
+					maxLength: 255,					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');						
@@ -521,8 +504,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					optionField: true,			
 					name: 'requireComment',
 					boxLabel: '<b>Require Comment</b>',
-					margin: '0 0 0 155',
-					width: '100%',
+					margin: '0 0 0 155',					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -536,8 +518,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					optionField: true,			
 					name: 'showComment',
 					boxLabel: '<b>Show Comment</b>',
-					margin: '0 0 0 155',
-					width: '100%',
+					margin: '0 0 0 155',					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -551,8 +532,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					optionField: true,			
 					name: 'hidePrivateAttributeFlag',
 					boxLabel: '<b>Hide Private Attribute Flag</b>',
-					margin: '0 0 0 155',
-					width: '100%',
+					margin: '0 0 0 155',					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -566,8 +546,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					optionField: true,			
 					name: 'hideExistingContactPicker',
 					boxLabel: '<b>Hide Existing Contact Picker</b>',
-					margin: '0 0 0 155',
-					width: '100%',
+					margin: '0 0 0 155',					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -581,8 +560,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					optionField: true,
 					name: 'allowPrivateResource',
 					boxLabel: '<b>Allow Private Resource</b>',
-					margin: '0 0 0 155',
-					width: '100%',
+					margin: '0 0 0 155',					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -596,8 +574,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					optionField: true,			
 					name: 'popluateContactWithUser',
 					boxLabel: '<b>Populate Contact With User</b>',
-					margin: '0 0 0 155',
-					width: '100%',
+					margin: '0 0 0 155',					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -611,8 +588,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					optionField: true,			
 					name: 'allowHTMLInComment',
 					boxLabel: '<b>Allow HTML in Comment</b>',
-					margin: '0 0 0 155',
-					width: '100%',
+					margin: '0 0 0 155',					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
@@ -626,8 +602,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					optionField: true,			
 					name: 'alwaysShowDetailGrid',
 					boxLabel: '<b>Always Show Details Grid</b> <i class="fa fa-question-circle" data-qtip="Default behavior is to hide if the entry type does not support this information."></i>',
-					margin: '0 0 0 155',
-					width: '100%',
+					margin: '0 0 0 155',					
 					listeners: {
 						change: function (self, newVal) {
 							var formBuilderItem = this.up().up('panel');														
