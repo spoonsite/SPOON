@@ -1163,7 +1163,7 @@
 									scale: 'medium',
 									width: '150px',
 									iconCls: 'fa fa-2x fa-clone icon-button-color-default icon-vertical-correction-edit',
-									requiredPermissions: ['ADMIN-BRADING-CREATE'],
+									requiredPermissions: ['ADMIN-BRANDING-CREATE'],
 									menu: {
 										items: [
 											{
@@ -1193,7 +1193,7 @@
 									xtype: 'tbfill'
 								},
 								{
-									text: 'Reset To Default',
+									text: 'Reset to Default',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-undo icon-button-color-refresh icon-vertical-correction',
 									width: '170px',
