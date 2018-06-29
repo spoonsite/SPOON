@@ -4,6 +4,8 @@ description = ""
 weight = 10
 +++
 
+**Note:** 2.6 Introduced some UI changes however, processes and concepts are the same.
+
 ## TL;DR
 * Administrators create and publish evaluations. Evaluators fill out evaluations.
 * While editing an evaluation you will not see exactly what the user sees. The user sees things bundled under a Details tab and an Evaluation tab. In an evaluation everything under the Entry section applies to that Details tab while everything under the Sections and Checklist sections apply to that Evaluations tab.
@@ -12,7 +14,7 @@ weight = 10
 ## Overview
 In this guide we will go over how to correctly add information to an evaluation inside of the Storefront. All of the information in this guide has been developed for version 2.5 (2017-07-26 15:03:18 MDT). The general process of doing evaluations will be the same for previous versions but some of the specifics may be different.
 
-Entries that have been added to storefront can be evaluated. Entries can be added via user submission from the User Tools area or directly added by an administrator. Go [here](/openstorefront/user/quick-overview-of-submitting-a-new-component/) for a quick overview of how to submit a new entry.
+Entries that have been added to storefront can be evaluated. Entries can be added via user submission from the User Tools area or directly added by an administrator. Go [here](/user/quick-overview-of-submitting-a-new-component/) for a quick overview of how to submit a new entry.
 
 Any entry can have multiple evaluations and each evaluation will be tracked separately. This allows for multiple versions of a software package or service to be evaluated based on the same entry. Each evaluation is based on a template defined in advance by the administrator and the template determines everything from the look and feel of the evaluation to the questions that will be asked.
 
@@ -24,22 +26,22 @@ Storefront assumes that people doing the evaluations have familiarity with the s
 ## Before you begin
 Make sure your administrator has created an evaluation for you to use and that you are part of the STOREFRONT-Evaluators group (or equivalent).
 
-For our example below we created templates based on the information [here](/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/).
+For our example below we created templates based on the information [here](/evaluations/librarian/basic-entry-template-for-storefront/).
 
 ## General Process  
 For this demo we will be doing an evaluation of a fictional repository called the [Contoso](https://en.wikipedia.org/wiki/Contoso) Repository (name taken from examples from Microsoft). An entry for the repository has been approved and added to Storefront, and an empty evaluation (based on the above template) has been created. As the evaluation has not been published it doesn't show up on Storefront but the entry it is based on does.
 
-![Repository Details Pre Evaluation](/openstorefront/images/Screenshots/Repository%20Details%20Pre%20Evaluation.png)
+![Repository Details Pre Evaluation](/images/Screenshots/Repository%20Details%20Pre%20Evaluation.png)
 
 To start an evaluation, click on your user name in the upper right corner of the page and select __Evaluation Tools__. From the __Evaluation Tools Dashboard__ click the __Evaluations__ button. By default, the list will only show you evaluations that you have been assigned to. In our example, the evaluation was assigned to the general __STOREFRONT-Evaluators__ group and not to any particular user. Therefore, to get the evaluation to show up, change __Assigned User__ to __All__ and change __Assign to Group__ to __STOREFRONT-Evaluators__.
 
-![Locating Evaluation](/openstorefront/images/Screenshots/Locating%20Evaluation.png)
+![Locating Evaluation](/images/Screenshots/Locating%20Evaluation.png)
 
 It is best practice to assign yourself to any evaluation you are working on. This helps you to find it later and helps to signify which evaluations have been started and which have not. To do so, first select the evaluation from the list and click on the __Assign User__ button and pick yourself from the window that pops up before clicking __Save__.  
 
 To start working on an evaluation select it from the list and click on the __Edit__ button. Evaluations will always open up to the __Evaluations Info__ section.
 
-![Evaluations Info Page](/openstorefront/images/Screenshots/Evaluations%20Info%20Page.png)
+![Evaluations Info Page](/images/Screenshots/Evaluations%20Info%20Page.png)
 
 On the left hand side of the window you will see blue boxes which will take you to all of the available sections of the evaluation. The center of the window shows details for the currently selected section. On the right of the window is an expandable section for comments. Comments can be added to almost any section of an evaluation, but the comments will not be visible on the final published evaluation. The intention of the comments is for review, approval, communication, etc. amongst the evaluation team.  
 
@@ -50,11 +52,11 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 ### Evaluation
 
   1. Info
-      ![Evaluation Info](/openstorefront/images/Screenshots/Evaluations%20Info%20Page%202.png)
+      ![Evaluation Info](/images/Screenshots/Evaluations%20Info%20Page%202.png)
 
       This section gives you a high level status about the evaluation itself. Here you can change the version of the evaluation. How to best use the Version of an evaluation will be dependent on your particular implementation.
 
-      ![Evaluation Status](/openstorefront/images/Screenshots/Evaluation%20Status.png)
+      ![Evaluation Status](/images/Screenshots/Evaluation%20Status.png)
 
       The Status of an evaluation can be Open, In-Progress, Waiting for more information, Hold or Complete. It is best practice to update the status of an evaluation here whenever it changes. However, the status on this page, or any other page of the evaluation, is for the benefit of the evaluator and does not impact if or how an evaluation can be published by an administrator. Also note that even if an evaluation is marked as Complete that it will NOT be published into the Storefront search results. An evaluation will only be so published if an administrator publishes an evaluation.
 
@@ -62,7 +64,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
   2. Review
 
-      ![Evaluation Review Section](/openstorefront/images/Screenshots/Review%20Pane.png)
+      ![Evaluation Review Section](/images/Screenshots/Review%20Pane.png)
 
       All of the comments people make on your evaluation are listed here. If desired, you can mark any particular comment as acknowledged, or edit/delete any comment, or even reply to comments. None of these comments will show up in the final published evaluation.
 
@@ -70,7 +72,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
   1. Summary
 
-      ![Entry Summary](/openstorefront/images/Screenshots/Entry%20Summary.png)
+      ![Entry Summary](/images/Screenshots/Entry%20Summary.png)
 
       This summary is for the entry. Here we want to describe what the entry is, what it does, how it does it, and any other info to help show why people might be interested in it. This should be an objective condensation of the facts of the entry and not just a copy and paste of the marketing materials. It is also important to make sure that only publicly available material is added to any of these entries. Finally, it is important to note that this information is NOT related to any particular evaluation.
 
@@ -78,7 +80,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
   2. Attributes
 
-      ![Entry Attributes](/openstorefront/images/Screenshots/Entry%20Attributes.png)
+      ![Entry Attributes](/images/Screenshots/Entry%20Attributes.png)
 
       Attributes are used to categorize an entry, build category relationships, and improve searching. Available attribute types and codes are setup by an administrator and are controlled, in part, by the template used to create the evaluation and the entry type. Each entry should have as many attributes added to it as make sense for that entry. It is important that attributes are carefully curated for each entry. Some attribute types can be added only once, while others can be added multiple times (the expectation is that each entry would have a different attribute code).
 
@@ -88,17 +90,17 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
       Ultimately, attributes become Entry Vitals on the Details tab for an entry. Here is an example:
 
-      ![Entry Details](/openstorefront/images/Screenshots/Entry%20Details%20-%20Attributes%20to%20Vitals.png)
+      ![Entry Details](/images/Screenshots/Entry%20Details%20-%20Attributes%20to%20Vitals.png)
 
   3. Relationships
 
-      ![Entry Relationships](/openstorefront/images/Screenshots/Entry%20Relationships.png)
+      ![Entry Relationships](/images/Screenshots/Entry%20Relationships.png)
 
       Relationships show how various entries are related to one another. This helps with discovery of entries while searching. A thorough knowledge of existing entries is usually needed to add good entries here, but can be useful if done correctly.
 
   4. Contacts
 
-      ![Entry Contacts](/openstorefront/images/Screenshots/Entry%20Contacts.png)
+      ![Entry Contacts](/images/Screenshots/Entry%20Contacts.png)
 
       This section lets you manage all of the people related to the entry. If an entry was user submitted, then their contact will already be present. If possible, you should always have a technical or vendor Point Of Contact. Add other contacts here as appropriate and available.
 
@@ -106,11 +108,11 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
       Ultimately, contacts become Points of Contact on the Details tab for an entry. Here is an example:
 
-      ![Entry Details](/openstorefront/images/Screenshots/Entry%20Details%20-%20Contacts%20to%20POC.png)
+      ![Entry Details](/images/Screenshots/Entry%20Details%20-%20Contacts%20to%20POC.png)
 
   5. Resources
 
-     ![Entry Resources](/openstorefront/images/Screenshots/Entry%20Resources.png)
+     ![Entry Resources](/images/Screenshots/Entry%20Resources.png)
 
       The resources section is for managing links, documentation, etc. pertaining to the entry. Various specific resource types will be available, depending on the configuration of your system. At a minimum, you should ensure that there is a link to the homepage of the entry. Relevant documentation not otherwise available on the web, but still marked for distribution, can be uploaded here as well.
 
@@ -118,11 +120,11 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
       Ultimately, resources become Location of Entry Artifacts on the Details tab for an entry. Here is an example:
 
-      ![Entry Details](/openstorefront/images/Screenshots/Entry%20Details%20-%20Resources%20to%20Artifacts.png)
+      ![Entry Details](/images/Screenshots/Entry%20Details%20-%20Resources%20to%20Artifacts.png)
 
   6. Media
 
-      ![Entry Media](/openstorefront/images/Screenshots/Entry%20Media.png)
+      ![Entry Media](/images/Screenshots/Entry%20Media.png)
 
       The media section is for adding media specific to the entry in general. The media for an evaluation is different from the media for an entry. Media added from other sections in the Entry set of sections will show up to be managed here.
 
@@ -134,7 +136,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
   7. Tags
 
-      ![Entry Tags](/openstorefront/images/Screenshots/Entry%20Tags.png)
+      ![Entry Tags](/images/Screenshots/Entry%20Tags.png)
 
       Anyone can add tags to an entry at any time. This screen allows an evaluator to add new tags or manage existing tags. Tags are searchable and filterable on Storefront, so it is important that tags are properly curated.
 
@@ -142,7 +144,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
   1. Repo Overview (An basic example section)
 
-      ![Repo Overview](/openstorefront/images/Screenshots/Repo%20Overview.png)
+      ![Repo Overview](/images/Screenshots/Repo%20Overview.png)
 
       This is an example of a very basic custom section. Some templates will include a variety of sub-sections or other custom formatting. Generally, the sections allow you to focus on different aspects of the evaluation as determined by your implementation.
 
@@ -152,7 +154,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
   2. Private Notes (A more complex example section)
 
-      ![Private Notes](/openstorefront/images/Screenshots/Private%20Notes.png)
+      ![Private Notes](/images/Screenshots/Private%20Notes.png)
 
       Here is an example of a more complex section template where the base section contains sub-sections. Again, changes made to any of the sub-sections will NOT be automatically saved. You must click the Save button at the bottom of the window to save your changes.
 
@@ -162,17 +164,17 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
   1. Summary
 
-      ![Checklist Summary](/openstorefront/images/Screenshots/Checklist%20Summary.png)
+      ![Checklist Summary](/images/Screenshots/Checklist%20Summary.png)
 
       This summary is for the evaluation. After having investigated the entry, the summary should be filled out to summarize that investigation and the results thereof. The evaluator should put in their own words their experience of the evaluation. This would be the narration of part of a consumer report. It should summarize what was found in the checklist questions. (E.g. The asset was easily discoverable however, we found the documentation was lacking.) It is important to both remain objective and to realize that this is not just a regurgitation of the original entry summary. One way of thinking about it is that the entry summary tells you what the entry *should* be about, but this summary tells you what an entry was *actually* about.
 
       The Recommendations section is where you can list your recommendations for improvements about the entry. The intention is to communicate back to the source of the entry what you think should be done to make what they are doing better. These recommendations must be categorized into one of a set of options:
 
-      ![Recommendation Options](/openstorefront/images/Screenshots/Recommendation%20Categories.png)
+      ![Recommendation Options](/images/Screenshots/Recommendation%20Categories.png)
 
   2. All Questions
 
-      ![All Questions](/openstorefront/images/Screenshots/All%20Questions.png)
+      ![All Questions](/images/Screenshots/All%20Questions.png)
 
       This section gives a sortable and modifiable listing of all of the questions associated with your evaluation. As every question can have a status assigned to it you can use this overview to quickly find those questions that haven't yet been answered or are on hold if you are coming back to continue working on an evaluation.
 
@@ -180,7 +182,7 @@ The difference between an entry and an evaluation needs to be emphasized. While 
 
   3. Discoverable (An example question)
 
-      ![Checklist Question](/openstorefront/images/Screenshots/Checklist%20Question.png)
+      ![Checklist Question](/images/Screenshots/Checklist%20Question.png)
 
       Here is an example of a typical question. All questions are rated on a 1 to 5 rating scale with 5 being the best possible, 3 being normal and acceptable, and 1 being completely non-conforming. A typical question will have scoring criteria to help an evaluation be objective and consistent, an objective to help evaluators consider the same intent when looking at a question, the question itself, a free form response area, and private notes.
 
@@ -196,10 +198,10 @@ Once published, our sample entry looks like this:
 
 Details
 
-![Details Page for Contoso Repository](/openstorefront/images/Screenshots/Details%20Page%20for%20Contoso%20Repository.png)
+![Details Page for Contoso Repository](/images/Screenshots/Details%20Page%20for%20Contoso%20Repository.png)
 
-![Entry Details](/openstorefront/images/Screenshots/Entry%20Details.png)
+![Entry Details](/images/Screenshots/Entry%20Details.png)
 
 Evaluation
 
-![Evaluation Page for Contoso Repository](/openstorefront/images/Screenshots/Evaluation%20Page%20for%20Contoso%20Repository.png)
+![Evaluation Page for Contoso Repository](/images/Screenshots/Evaluation%20Page%20for%20Contoso%20Repository.png)

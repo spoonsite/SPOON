@@ -86,7 +86,7 @@ public class JobManager
 		try {
 			StdSchedulerFactory factory;
 			try {
-				factory = new StdSchedulerFactory(FileSystemManager.getConfig("quartz.properties").getPath());
+				factory = new StdSchedulerFactory(FileSystemManager.getInstance().getConfig("quartz.properties").getPath());
 			} catch (Exception ex) {
 				LOG.log(Level.CONFIG, "Unable to load quartz.properties...using defaults");
 				LOG.log(Level.FINER, null, ex);
@@ -481,7 +481,7 @@ public class JobManager
 				.withDescription("Directory Watch Job")
 				.build();
 
-		FileSystemManager.getDir(dirToWatch);
+		FileSystemManager.getInstance().getDir(dirToWatch);
 		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_NAME, dirToWatch);
 		job.getJobDataMap().put(DirectoryScanJob.DIRECTORY_SCAN_LISTENER_NAME, directoryScanListener.getClass().getName());
 		scheduler.getContext().put(directoryScanListener.getClass().getName(), directoryScanListener);

@@ -21,16 +21,13 @@ package edu.usu.sdl.openstorefront.core.view;
  */
 public class OrganizationRelationView
 {
+
 	private String organizationId;
 	private String organizationName;
 	private String componentId;
 	private String componentName;
 	private String componentType;
 	private String componentTypeDescription;
-
-	public OrganizationRelationView()
-	{
-	}
 
 	public String getOrganizationId()
 	{

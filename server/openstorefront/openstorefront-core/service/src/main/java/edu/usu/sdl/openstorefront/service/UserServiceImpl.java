@@ -243,9 +243,8 @@ public class UserServiceImpl
 			if (dupUsers.size() > 1) {
 				Date maxUpdateDate = null;
 				for (UserProfile userProfile : dupUsers) {
-					if (maxUpdateDate == null) {
-						maxUpdateDate = userProfile.getUpdateDts();
-					} else if (maxUpdateDate.before(userProfile.getUpdateDts())) {
+					if (maxUpdateDate == null
+							|| maxUpdateDate.before(userProfile.getUpdateDts())) {
 						maxUpdateDate = userProfile.getUpdateDts();
 					}
 				}
@@ -549,7 +548,7 @@ public class UserServiceImpl
 	@Override
 	public void cleanupOldUserMessages()
 	{
-		int maxDays = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_KEEP_DAYS, "30"));
+		int maxDays = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MESSAGE_KEEP_DAYS, "30"));
 
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);
@@ -604,9 +603,8 @@ public class UserServiceImpl
 			for (String email : emailList) {
 				Boolean found = false;
 				for (UserProfile user : usersToSend) {
-					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)) {
-						found = true;
-					} else if (StringUtils.equalsIgnoreCase(user.getUsername(), email)) {
+					if (StringUtils.equalsIgnoreCase(user.getEmail(), email)
+							|| StringUtils.equalsIgnoreCase(user.getUsername(), email)) {
 						found = true;
 					}
 				}
@@ -662,8 +660,8 @@ public class UserServiceImpl
 		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 
 		List<UserMessage> userMessages = persistenceService.queryByExample(userMessageExample);
-		int minQueueMinutes = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MIN_QUEUE_MINUTES, "10"));
-		int maxRetries = Convert.toInteger(PropertiesManager.getValue(PropertiesManager.KEY_MESSAGE_MAX_RETRIES, "5"));
+		int minQueueMinutes = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MESSAGE_MIN_QUEUE_MINUTES, "10"));
+		int maxRetries = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MESSAGE_MAX_RETRIES, "5"));
 		if (minQueueMinutes < 0) {
 			minQueueMinutes = 0;
 		}

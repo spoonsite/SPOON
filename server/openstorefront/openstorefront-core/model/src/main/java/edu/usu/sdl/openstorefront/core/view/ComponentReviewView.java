@@ -44,7 +44,7 @@ public class ComponentReviewView
 {
 
 	public static final String UPDATE_DATE_FIELD = "updateDate";
-	
+
 	private String username;
 
 	@NotNull
@@ -67,7 +67,7 @@ public class ComponentReviewView
 	@ConsumeField
 	private String userTimeCode;
 	private String userTimeDescription;
-	
+
 	@NotNull
 	@ConsumeField
 	private Date lastUsed;
@@ -95,10 +95,6 @@ public class ComponentReviewView
 	@ConsumeField
 	@DataType(ComponentReviewProCon.class)
 	private List<ComponentReviewProCon> cons = new ArrayList<>();
-
-	public ComponentReviewView()
-	{
-	}
 
 	public static ComponentReviewView toView(ComponentReview review)
 	{

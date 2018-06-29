@@ -67,6 +67,11 @@ public class ClientAPI
 		this.objectMapper = objectMapper;
 	}
 
+	public ClientAPI()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 	public void connect(String username, String password, String serverURL)
 	{
 
@@ -85,7 +90,7 @@ public class ClientAPI
 			connect(loginModel);
 		}
 	}
-	
+
 	private void connect(LoginModel loginModel)
 	{
 		if (httpclient == null) {
@@ -98,7 +103,7 @@ public class ClientAPI
 			connected = true;
 		}
 	}
-	
+
 	public boolean isConnected()
 	{
 		return connected;
@@ -123,7 +128,7 @@ public class ClientAPI
 				log.log(Level.FINEST, "None");
 			} else {
 				for (Cookie cookie : cookies) {
-					log.log(Level.FINEST, "- {0}", cookie.toString());
+					log.log(Level.FINEST, () -> "- " + cookie);
 				}
 			}
 		} catch (IOException ex) {
@@ -204,8 +209,8 @@ public class ClientAPI
 			}
 		}
 	}
-	
-	public Map<String,String>  translateFilterQueryParams(FilterQueryParams params)
+
+	public Map<String, String> translateFilterQueryParams(FilterQueryParams params)
 	{
 		try {
 			return BeanUtils.describe(params);
@@ -254,11 +259,11 @@ public class ClientAPI
 
 		return response;
 	}
-	
+
 	private String getCookieValue(String cookieKey)
 	{
 		String value = null;
-		
+
 		List<Cookie> cookies = cookieStore.getCookies();
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals(cookieKey)) {
@@ -277,7 +282,7 @@ public class ClientAPI
 
 			RequestConfig defaultRequestConfig = RequestConfig.custom()
 					.setCircularRedirectsAllowed(true).build();
-			
+
 			RequestBuilder builder = RequestBuilder.post()
 					.setUri(new URI(loginModel.getServerUrl() + apiPath))
 					.addHeader(CONTENT_TYPE, MEDIA_TYPE_JSON)
@@ -382,7 +387,7 @@ public class ClientAPI
 
 				builder.setEntity(entity);
 			}
-			
+
 			if (parameters != null) {
 				for (String key : parameters.keySet()) {
 					builder.addParameter(key, parameters.get(key));

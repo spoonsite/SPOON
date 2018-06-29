@@ -27,6 +27,9 @@ Ext.define('OSF.form.Relationships', {
 		
 		relationshipPanel.relationshipsGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					"relationshipId",
@@ -212,7 +215,7 @@ Ext.define('OSF.form.Relationships', {
 		
 		relationshipPanel.add(relationshipPanel.relationshipsGrid);
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		//just load option (filter out required)
 		var relationshipPanel = this;
 		
@@ -225,6 +228,10 @@ Ext.define('OSF.form.Relationships', {
 		
 		if (opts && opts.commentPanel) {
 			opts.commentPanel.loadComments(evaluationId, "Relationships", componentId);
+		}
+
+		if (callback) {
+			callback();
 		}
 	}	
 	

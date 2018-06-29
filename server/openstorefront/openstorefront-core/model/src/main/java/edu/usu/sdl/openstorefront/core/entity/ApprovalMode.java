@@ -35,6 +35,7 @@ public class ApprovalMode
 	public static final String REQUIRED = "R";
 	public static final String NOT_ALLOWED = "N";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ApprovalMode()
 	{
 	}

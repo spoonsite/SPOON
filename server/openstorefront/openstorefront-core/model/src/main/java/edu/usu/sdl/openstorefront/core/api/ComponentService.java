@@ -248,6 +248,15 @@ public interface ComponentService
 	public ComponentTypeUserResolution findUserForComponentType(String componentType);
 
 	/**
+	 * Switches component type of an entry.
+	 *
+	 * @param componentId
+	 * @param newType
+	 * @return
+	 */
+	public Component changeComponentType(String componentId, String newType);
+
+	/**
 	 * High-speed check for approval
 	 *
 	 * @param componentId
@@ -281,12 +290,22 @@ public interface ComponentService
 
 	/**
 	 * Return the details object of the component attached to the given id. (the
-	 * full view)
+	 * full view) Only Public information is returned
 	 *
 	 * @param componentId
 	 * @return details or null if not found
 	 */
 	public ComponentDetailView getComponentDetails(String componentId);
+
+	/**
+	 * Return the details object of the component attached to the given id. (the
+	 * full view)
+	 *
+	 * @param componentId
+	 * @param showPrivateInformation if true it will pull private information
+	 * @return details or null if not found
+	 */
+	public ComponentDetailView getComponentDetails(String componentId, boolean showPrivateInformation);
 
 	/**
 	 * Return the details object of the component attached to the given
@@ -377,6 +396,15 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void saveComponentContact(ComponentContact contact);
+
+	/**
+	 *
+	 * @param contact
+	 * @param updateLastActivity
+	 * @param mergeSimilar
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity, boolean mergeSimilar);
 
 	/**
 	 *
@@ -772,7 +800,6 @@ public interface ComponentService
 	 * @param targetComponentId
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component merge(String toMergeComponentId, String targetComponentId);
 
 	/**
@@ -871,20 +898,14 @@ public interface ComponentService
 	public Component changeOwner(String componentId, String newOwner);
 
 	/**
-	 * Changes the Entry Type of an existing component to another existing Entry
-	 * Type.
+	 * Assign a user in charge of validating data
 	 *
-	 * This operation flushes the component cache, triggers a re-index for the
-	 * component (at a later time via standard job scripts), and sends a
-	 * notification to any watchers of the component or changed component types
-	 *
-	 * @param componentId The ID of the component to change
-	 * @param newType A string consisting of the type to change an existing
-	 * components type into
-	 * @return modified component
+	 * @param componentId
+	 * @param librarianUsername
+	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
-	public Component changeComponentType(String componentId, String newType);
+	public Component assignLibrarian(String componentId, String librarianUsername);
 
 	/**
 	 * Creates a pending component record for the given component Id
@@ -902,7 +923,6 @@ public interface ComponentService
 	 * @param componentIdOfPendingChange
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component mergePendingChange(String componentIdOfPendingChange);
 
 	/**

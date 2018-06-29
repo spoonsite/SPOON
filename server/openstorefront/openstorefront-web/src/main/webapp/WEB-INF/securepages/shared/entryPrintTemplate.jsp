@@ -16,12 +16,11 @@ limitations under the License.
 
 <%@page import="edu.usu.sdl.openstorefront.common.manager.PropertiesManager"%>
 <%
-	String appVersion = PropertiesManager.getApplicationVersion();
+	String appVersion = PropertiesManager.getInstance().getApplicationVersion();
 	request.setAttribute("appVersion", appVersion);
 %>
 
-<link href="../webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-<link href="css/app.css?v=${appVersion}" rel="stylesheet" type="text/css"/>	
+<link href="webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 
 <style>
 	.print-general-block {
@@ -110,11 +109,13 @@ limitations under the License.
 						<tpl for="vitals">
 							<tr class="print-table">
 								<td class="print-table">
-									<b>{label}</b>								
+									<b>{label}</b>	
+									<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>
 								</td>
 								<td class="print-table alert-{highlightStyle}">
-							<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{value}
-							</td>
+									<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{value}</b>
+									<tpl if="comment"><hr>Comment: {comment}</tpl>
+								</td>
 							</tr>
 						</tpl>					
 					</table>			
@@ -219,7 +220,7 @@ limitations under the License.
 	</tpl>
 </tpl>
 
-<tpl if="show.evaluation && evaluation && evaluation.evaluationSections &&evaluation.evaluationSections.length &gt; 0">
+<tpl if="show.evaluation && evaluation && evaluation.evaluationSections && evaluation.evaluationSections.length &gt; 0">
 	<tpl if="show.vitals ">
 		<tpl if="vitals && vitals.length &gt; 0">
 			<div class="print-left-block print-section ">
@@ -228,11 +229,13 @@ limitations under the License.
 					<tpl for="vitals">
 						<tr class="print-table">
 							<td class="print-table">
-								<b>{label}</b>								
+								<b>{label}</b>	
+								<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>
 							</td>
 							<td class="print-table alert-{highlightStyle}">
-						<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{value}
-						</td>
+								<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{value}</b>
+								<tpl if="comment"><hr>Comment: {comment}</tpl>
+							</td>
 						</tr>
 					</tpl>					
 				</table>

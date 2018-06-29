@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,10 +53,6 @@ public class RequiredForComponent
 	private boolean componentChanged;
 	private boolean attributeChanged;
 	private boolean updateVersion = true;
-
-	public RequiredForComponent()
-	{
-	}
 
 	public ValidationResult checkForComplete()
 	{
@@ -90,19 +87,24 @@ public class RequiredForComponent
 			}
 		}
 
-		Set<String> missingAttributes = new HashSet<>();
+		Map<String, AttributeType> missingAttributes = new HashMap<>();
 		for (AttributeType attribute : requiredTypeMap.values()) {
 			String type = attribute.getAttributeType();
 			if (!inSetAttributeType.contains(type)) {
-				missingAttributes.add(type);
+				missingAttributes.put(type, attribute);
 			}
 		}
 		if (!missingAttributes.isEmpty()) {
+			List<String> missingAttributeLabels = missingAttributes.values()
+					.stream()
+					.map(AttributeType::getDescription)
+					.collect(Collectors.toList());
+
 			RuleResult ruleResult = new RuleResult();
-			ruleResult.setMessage("Missing Required Attributes");
+			ruleResult.setMessage("Missing Required Attributes. Missing: " + String.join(", ", missingAttributeLabels));
 			ruleResult.setEntityClassName(ComponentAttribute.class.getSimpleName());
 			ruleResult.setFieldName("componentAttributes");
-			ruleResult.setValidationRule("Must have required attributes. Missing: " + String.join(", ", missingAttributes));
+			ruleResult.setValidationRule("Must have required attributes. Missing: " + String.join(", ", missingAttributeLabels));
 			validationResult.getRuleResults().add(ruleResult);
 		}
 		return validationResult;

@@ -89,8 +89,8 @@ public class FeedbackServiceTest extends BaseTestCase
 		String email = getSystemEmail();
 		ticket_EmailTest.setEmail(email);
 
-		defaultPropertyValue = PropertiesManager.getValue(KEY_FEEDBACK_EMAIL);
-		PropertiesManager.setProperty(KEY_FEEDBACK_EMAIL, email);
+		defaultPropertyValue = PropertiesManager.getInstance().getValue(KEY_FEEDBACK_EMAIL);
+		PropertiesManager.getInstance().setProperty(KEY_FEEDBACK_EMAIL, email);
 
 		FeedbackTicket submittedTicket = new FeedbackTicket();
 		submittedTicket.setTicketType(ticket_EmailTest.getTicketType());
@@ -149,9 +149,9 @@ public class FeedbackServiceTest extends BaseTestCase
 		}
 
 		if (defaultPropertyValue != null) {
-			PropertiesManager.setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
+			PropertiesManager.getInstance().setProperty(KEY_FEEDBACK_EMAIL, defaultPropertyValue);
 		} else {
-			PropertiesManager.removeProperty(KEY_FEEDBACK_EMAIL);
+			PropertiesManager.getInstance().removeProperty(KEY_FEEDBACK_EMAIL);
 		}
 		if (defaultBranding != null) {
 			service.getBrandingService().setBrandingAsCurrent(defaultBranding.getBrandingId());

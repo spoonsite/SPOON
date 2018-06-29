@@ -34,6 +34,7 @@ public class AttributeValueType
 	public static final String NUMBER = "NUMBER";
 	public static final String TEXT = "TEXT";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeValueType()
 	{
 	}

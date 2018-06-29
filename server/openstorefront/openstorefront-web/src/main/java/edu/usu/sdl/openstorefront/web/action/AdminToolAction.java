@@ -64,11 +64,13 @@ public class AdminToolAction
 		pageMap.put("Tracking", new PageModel("/WEB-INF/securepages/admin/application/tracking.jsp", new String[]{SecurityPermission.ADMIN_TRACKING}));
 		pageMap.put("Messages", new PageModel("/WEB-INF/securepages/admin/application/messages.jsp", new String[]{SecurityPermission.ADMIN_MESSAGE_MANAGEMENT}));
 		pageMap.put("Entry-Template", new PageModel("/WEB-INF/securepages/admin/data/entryTemplate.jsp", new String[]{SecurityPermission.ADMIN_ENTRY_TEMPLATES}));
+		pageMap.put("Partial-Submissions", new PageModel("/WEB-INF/securepages/admin/data/submission/partialSubmissions.jsp", new String[]{SecurityPermission.ADMIN_USER_SUBMISSIONS}));
 		pageMap.put("Searches", new PageModel("/WEB-INF/securepages/admin/data/searches.jsp", new String[]{SecurityPermission.ADMIN_SEARCH}));
 		pageMap.put("Feedback", new PageModel("/WEB-INF/securepages/admin/application/feedback.jsp", new String[]{SecurityPermission.ADMIN_FEEDBACK}));
 		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/admin/data/relationships.jsp", new String[]{SecurityPermission.ADMIN_ENTRY_MANAGEMENT}));
 		pageMap.put("System-Archives", new PageModel("/WEB-INF/securepages/admin/application/systemArchive.jsp", new String[]{SecurityPermission.ADMIN_SYSTEM_MANAGEMENT}));
 		pageMap.put("Support-Media", new PageModel("/WEB-INF/securepages/admin/data/help/supportMedia.jsp", new String[]{SecurityPermission.ADMIN_SUPPORT_MEDIA}));
+		pageMap.put("Custom-Forms", new PageModel("/WEB-INF/securepages/admin/data/submission/customSubmissionForm.jsp", new String[]{SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE}));
 
 		//security
 		pageMap.put("Security", new PageModel("/WEB-INF/securepages/admin/application/security.jsp", new String[]{SecurityPermission.ADMIN_SECURITY}));

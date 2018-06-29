@@ -159,10 +159,6 @@ public class ComponentDetailView
 
 	private long componentViews = 0;
 
-	public ComponentDetailView()
-	{
-	}
-
 	public static ComponentDetailView toView(ComponentAll componentAll)
 	{
 		return toView(componentAll, new ArrayList<>());

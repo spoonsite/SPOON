@@ -119,7 +119,7 @@ public class AttributeCode
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getAttachmentFileName())) {
-			File attachmentDir = FileSystemManager.getDir(FileSystemManager.ATTACHMENT_DIR);
+			File attachmentDir = FileSystemManager.getInstance().getDir(FileSystemManager.ATTACHMENT_DIR);
 			path = Paths.get(attachmentDir.getPath() + "/" + getAttachmentFileName());
 		}
 		return path;
@@ -131,6 +131,7 @@ public class AttributeCode
 	public static final String DI2ELEVEL_LEVEL2 = "LEVEL2";
 	public static final String DI2ELEVEL_LEVEL3 = "LEVEL3";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeCode()
 	{
 	}

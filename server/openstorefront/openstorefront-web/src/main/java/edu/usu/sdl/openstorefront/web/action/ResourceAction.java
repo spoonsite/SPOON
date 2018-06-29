@@ -65,7 +65,7 @@ public class ResourceAction
 
 	private static final Logger LOG = Logger.getLogger(ResourceAction.class.getName());
 
-	@Validate(required = true, on = {"LoadResource", "Redirect"})
+	@Validate(required = true, on = {"LoadResource", "Redirect", "LoadSubmissionFormResource"})
 	private String resourceId;
 
 	@ValidateNestedProperties({
@@ -79,10 +79,12 @@ public class ResourceAction
 	@Validate(required = true, on = "UploadResource")
 	private FileBean file;
 
+	private static final String ACCESS_DENIED = "Access denied";
+
 	@DefaultHandler
 	public Resolution defaultPage()
 	{
-		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+		return new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 	}
 
 	@HandlesEvent("LoadResource")
@@ -93,7 +95,7 @@ public class ResourceAction
 			componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
 			componentResource = filterEngine.filter(componentResource, true);
 			if (componentResource == null || componentResource.getFile() == null) {
-				throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+				throw resourceNotFoundException(resourceId);
 			}
 			mediaFile = componentResource.getFile();
 		}
@@ -106,10 +108,10 @@ public class ResourceAction
 			length = path.toFile().length();
 		} else if (componentResource != null) {
 			Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
-			String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", new Object[]{componentResource.pathToResource(), resourceId, component.getName(), component.getComponentId()});
+			String message = MessageFormat.format("Resource not on disk: {0} Check resource record: {1} on component {2} ({3}) ", componentResource.pathToResource(), resourceId, component.getName(), component.getComponentId());
 			throw new OpenStorefrontRuntimeException(message);
 		} else {
-			String message = MessageFormat.format("Resource not on disk: {0} Check Media File record: {1} ", new Object[]{componentResource.pathToResource(), resourceId});
+			String message = MessageFormat.format("Resource not on disk. Check Media File record: {0} ", resourceId);
 			throw new OpenStorefrontRuntimeException(message);
 		}
 
@@ -123,7 +125,12 @@ public class ResourceAction
 
 	}
 
-	@ValidationMethod(on = {"UploadResource"})
+	private OpenStorefrontRuntimeException resourceNotFoundException(String resourceId)
+	{
+		return new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+	}
+
+	@ValidationMethod(on = {"UploadResource", "UploadSubmissionFormResource"})
 	public void uploadHook(ValidationErrors errors)
 	{
 		checkUploadSizeValidation(errors, file, "file");
@@ -141,7 +148,7 @@ public class ResourceAction
 				boolean allow = false;
 				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
 					allow = true;
-					LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+					LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
@@ -180,7 +187,7 @@ public class ResourceAction
 						}
 					}
 				} else {
-					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+					resolution = new ErrorResolution(HttpServletResponse.SC_FORBIDDEN, ACCESS_DENIED);
 				}
 			} else {
 				errors.put("componentResource", "Missing component; check Component Id");
@@ -200,7 +207,7 @@ public class ResourceAction
 		componentResource = service.getPersistenceService().findById(ComponentResource.class, resourceId);
 		componentResource = filterEngine.filter(componentResource, true);
 		if (componentResource == null) {
-			throw new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
+			throw resourceNotFoundException(resourceId);
 		}
 
 		ComponentTracking componentTracking = new ComponentTracking();
@@ -270,4 +277,5 @@ public class ResourceAction
 	{
 		this.mediaFile = mediaFile;
 	}
+
 }

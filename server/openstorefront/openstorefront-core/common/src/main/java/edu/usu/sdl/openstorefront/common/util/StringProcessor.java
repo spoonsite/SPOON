@@ -31,6 +31,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 /**
  * String processing methods and JSON handling.
@@ -330,25 +332,39 @@ public class StringProcessor
 		return result;
 	}
 
+	/**
+	 * Only Encode the part that needs encoding...this will encode the whole
+	 * input
+	 *
+	 * @param value
+	 * @return
+	 */
 	public static String urlEncode(String value)
 	{
 		if (StringUtils.isNotBlank(value)) {
 			try {
 				value = URLEncoder.encode(value, "UTF-8");
 			} catch (UnsupportedEncodingException ex) {
-				throw new OpenStorefrontRuntimeException("Unsupport encoding", "Check encode character set for the platform");
+				throw new OpenStorefrontRuntimeException("Unsupported encoding", "Check encode character set for the platform");
 			}
 		}
 		return value;
 	}
 
+	/**
+	 * Only decode the part that needs encoding...this will encode the whole
+	 * input
+	 *
+	 * @param value
+	 * @return
+	 */
 	public static String urlDecode(String value)
 	{
 		if (StringUtils.isNotBlank(value)) {
 			try {
 				value = URLDecoder.decode(value, "UTF-8");
 			} catch (UnsupportedEncodingException ex) {
-				throw new OpenStorefrontRuntimeException("Unsupport encoding", "Check encode character set for the platform");
+				throw new OpenStorefrontRuntimeException("Unsupported encoding", "Check encode character set for the platform");
 			}
 		}
 		return value;
@@ -372,7 +388,7 @@ public class StringProcessor
 			for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
 				String style = "color: grey; font-size: 10px;";
 				if (stackTraceElement.getClassName().contains("edu.usu.sdl")) {
-					style = "color: black; font-size: 12px; font-wieght: bold;";
+					style = "color: black; font-size: 12px; font-weight: bold;";
 				}
 				exception.append("<span style='")
 						.append(style).append("'>")
@@ -641,6 +657,52 @@ public class StringProcessor
 		final String key = idx > 0 ? it.substring(0, idx) : it;
 		final String value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
 		return new AbstractMap.SimpleImmutableEntry<>(key, value);
+	}
+        
+        public static String removeBadStyles(String html)
+	{
+		String safe;
+		Map<String, List<String>> badStyles = getBadStyles();
+		if (!badStyles.isEmpty()) {
+			Document doc = Jsoup.parse(html);
+			badStyles.forEach((key, value) -> {
+				value.forEach(styleValue -> {
+					List<String> styleList = getStyleVariations(key, styleValue);
+					styleList.forEach(styleToRemove -> {
+						Elements tags = doc.select(String.format("[style*=\"%s\"]", styleToRemove));
+						tags.forEach((element) -> {
+							String elementStyles = element.attr("style");
+							element.attr("style", elementStyles.replace(styleToRemove, ""));
+						});
+					});
+				});
+			});
+			safe = doc.body().html();
+		} else {
+			safe = html;
+		}
+		return safe;
+	}
+
+	private static List<String> getStyleVariations(String styleName, String styleValue)
+	{
+		List<String> styleList = new ArrayList();
+		styleList.add(String.format("%s:%s", styleName, styleValue));
+		styleList.add(String.format("%s :%s", styleName, styleValue));
+		styleList.add(String.format("%s: %s", styleName, styleValue));
+		styleList.add(String.format("%s : %s", styleName, styleValue));
+		return styleList;
+	}
+
+	private static Map<String, List<String>> getBadStyles()
+	{
+		Map<String, List<String>> badStyles = new HashMap<>();
+		List<String> positionValues = new ArrayList();
+		positionValues.add("absolute;");
+		positionValues.add("fixed;");
+		positionValues.add("static;");
+		badStyles.put("position", positionValues);
+		return badStyles;
 	}
 
 }

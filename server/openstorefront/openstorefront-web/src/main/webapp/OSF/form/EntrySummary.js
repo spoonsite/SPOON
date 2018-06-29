@@ -146,7 +146,7 @@ Ext.define('OSF.form.EntrySummary', {
 		});	
 	},
 	
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		var entryForm = this;
 		
 		entryForm.setLoading(true);
@@ -185,6 +185,9 @@ Ext.define('OSF.form.EntrySummary', {
 					entryForm.markUnsaved();
 				}, undefined);					
 				
+				if (callback) {
+					callback();
+				}
 			}
 		});	
 		
@@ -245,7 +248,9 @@ Ext.define('OSF.form.EntrySummary', {
 									componentAttributePk: {
 										attributeType: attribute.componentAttributePk.attributeType,
 										attributeCode: attribute.componentAttributePk.attributeCode
-									}
+									},
+									comment: attribute.comment,
+									privateFlag: attribute.privateFlag
 								});								
 							});
 							

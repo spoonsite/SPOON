@@ -30,6 +30,7 @@ public class ChecklistQuestionWrapper
 	@DataType(ChecklistQuestionView.class)
 	private List<ChecklistQuestionView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ChecklistQuestionWrapper()
 	{
 	}

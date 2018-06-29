@@ -282,10 +282,8 @@ public class AttributeResource
 			@RequiredParam List<String> types)
 	{
 		List<AttributeAll> attributes = new ArrayList<>();
-
 		AttributeType attributeTypeExample = new AttributeType();
-		attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
-
+		
 		boolean restrictTypes = false;
 		Set<String> typeSet = new HashSet<>();
 		if (types != null) {

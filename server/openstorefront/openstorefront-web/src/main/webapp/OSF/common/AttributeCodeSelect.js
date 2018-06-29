@@ -38,6 +38,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	required: true,
 	width: '100%',
 	layout: 'fit',	
+	showLabel: true,
 	
 	initComponent: function () {		
 		this.callParent();
@@ -89,7 +90,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 								valid = 'Number must not have a decimal point or have at least one digit after the decimal point.';
 							}
 							try {
-								var valueNumber = new Number(value);
+								var valueNumber = Number(value);
 								if (isNaN(valueNumber)) {						
 									valid = 'Value must be a valid number';
 								}
@@ -111,8 +112,9 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 		} 
 
 		attributePanel.field = Ext.create(xtype, Ext.apply({
-				fieldLabel: attributePanel.attributeTypeView.description + requireType,
+				fieldLabel: attributePanel.showLabel ? attributePanel.attributeTypeView.description + requireType : '',
 				forceSelection: forceSelection,
+				name: attributePanel.name ? attributePanel.name : 'attributeCode',
 				queryMode: 'local',
 				vtype: numberVType,
 				selectOnFocus: false,
@@ -125,6 +127,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				labelSepartor: '',
 				valueField: 'code',
 				displayField: 'label',
+				listeners: attributePanel.fieldListeners,
 				store: Ext.create('Ext.data.Store', {
 					data: attributePanel.attributeTypeView.codes
 				}),
@@ -174,6 +177,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 						newValues.push(value);
 					}
 				});
+				newValues = values;
 			}
 			return values;
 		} else {
@@ -202,7 +206,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					});
 				}
 				try {
-					var valueNumber = new Number(value);
+					var valueNumber = Number(value);
 					if (isNaN(valueNumber)) {						
 						valid = false;
 					}

@@ -38,6 +38,7 @@ public class ComponentTrackingCompleteWrapper
 	private ComponentTracking data;
 	private String componentTypeLabel;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTrackingCompleteWrapper()
 	{
 	}

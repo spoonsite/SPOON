@@ -53,6 +53,7 @@ public class ComponentTag
 	@Unique(ComponentTagUniqueHandler.class)
 	private String text;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTag()
 	{
 	}

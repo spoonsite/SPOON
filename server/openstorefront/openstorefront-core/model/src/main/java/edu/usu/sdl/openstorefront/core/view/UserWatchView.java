@@ -58,22 +58,18 @@ public class UserWatchView
 	@NotNull
 	@ConsumeField
 	private Boolean notifyFlg;
-	
+
 	private String activeStatus;
 	private String createUser;
 	private String updateUser;
-
-	public UserWatchView()
-	{
-	}
 
 	public static UserWatchView toView(UserWatch watch, Component component)
 	{
 		UserWatchView view = new UserWatchView();
 		view.setComponentId(watch.getComponentId());
-		view.setCreateDts(watch.getCreateDts());	
+		view.setCreateDts(watch.getCreateDts());
 		if (component != null) {
-			view.setComponentName(component.getName());			
+			view.setComponentName(component.getName());
 			view.setLastUpdateDts(component.getLastActivityDts());
 		}
 		view.setLastViewDts(watch.getLastViewDts());
@@ -81,34 +77,34 @@ public class UserWatchView
 		view.setWatchId(watch.getUserWatchId());
 		view.setActiveStatus(watch.getActiveStatus());
 		view.setUpdateUser(watch.getUpdateUser());
-		view.setCreateUser(watch.getCreateUser());		
+		view.setCreateUser(watch.getCreateUser());
 		return view;
 	}
-	
+
 	public static List<UserWatchView> toViewList(List<UserWatch> watches)
 	{
 		List<UserWatchView> views = new ArrayList<>();
-		
-		Set<String> componentIdSet = new HashSet<>();	
-		watches.forEach(watch->{
+
+		Set<String> componentIdSet = new HashSet<>();
+		watches.forEach(watch -> {
 			componentIdSet.add(watch.getComponentId());
 		});
-		
+
 		if (componentIdSet.isEmpty() == false) {
 			String query = "Select from " + Component.class.getSimpleName() + " where componentId in :idSet";
 			Map<String, Object> paramMap = new HashMap<>();
 			paramMap.put("idSet", componentIdSet);
-			
+
 			List<Component> components = ServiceProxyFactory.getServiceProxy().getPersistenceService().query(query, paramMap);
 			Map<String, List<Component>> componentMap = components.stream().collect(Collectors.groupingBy(Component::getComponentId));
-			watches.forEach(watch->{
+			watches.forEach(watch -> {
 				List<Component> componentsList = componentMap.get(watch.getComponentId());
 				if (componentsList != null) {
 					views.add(toView(watch, componentsList.get(0)));
 				}
 			});
 		}
-		
+
 		return views;
 	}
 

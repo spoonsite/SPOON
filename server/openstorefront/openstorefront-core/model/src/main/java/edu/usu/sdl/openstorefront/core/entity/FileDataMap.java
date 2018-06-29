@@ -62,6 +62,7 @@ public class FileDataMap
 	@DataType(FileDataMapField.class)
 	private List<FileDataMapField> dataMapFields;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileDataMap()
 	{
 	}

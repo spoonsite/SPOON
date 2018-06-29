@@ -131,6 +131,7 @@ public class ComponentType
 	//Dummy Value for filtering
 	public static final String ALL = "ALL";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentType()
 	{
 	}
@@ -161,6 +162,7 @@ public class ComponentType
 		this.setAssignedUsers(componentTypeLocal.getAssignedUsers());
 		this.setParentComponentType(componentTypeLocal.getParentComponentType());
 		this.setIncludeIconInSearch(componentTypeLocal.getIncludeIconInSearch());
+
 	}
 
 	public String getComponentType()
@@ -353,11 +355,13 @@ public class ComponentType
 		this.assignedUsers = assignedUsers;
 	}
 
-	public Boolean getIncludeIconInSearch() {
+	public Boolean getIncludeIconInSearch()
+	{
 		return includeIconInSearch;
 	}
-	
-	public void setIncludeIconInSearch(Boolean includeIconInSearch) {
+
+	public void setIncludeIconInSearch(Boolean includeIconInSearch)
+	{
 		this.includeIconInSearch = includeIconInSearch;
 	}
 

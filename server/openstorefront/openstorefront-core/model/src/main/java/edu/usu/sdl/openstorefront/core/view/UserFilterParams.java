@@ -27,26 +27,23 @@ import javax.ws.rs.QueryParam;
  * @author dshurtleff
  */
 public class UserFilterParams
-	extends FilterQueryParams
+		extends FilterQueryParams
 {
+
 	@QueryParam("approvalState")
 	@DefaultValue(UserApprovalStatus.APPROVED)
 	@Size(min = 0, max = 3)
 	@Sanitize(TextSanitizer.class)
 	private String approvalState;
-	
-	@QueryParam("searchField")	
+
+	@QueryParam("searchField")
 	@Size(min = 0, max = 255)
 	@Sanitize(TextSanitizer.class)
-	private String searchField;	
-	
-	@QueryParam("searchValue")	
-	@Size(min = 0, max = 255)	
-	private String searchValue;		
+	private String searchField;
 
-	public UserFilterParams()
-	{
-	}
+	@QueryParam("searchValue")
+	@Size(min = 0, max = 255)
+	private String searchValue;
 
 	public String getApprovalState()
 	{
@@ -77,5 +74,5 @@ public class UserFilterParams
 	{
 		this.searchValue = searchValue;
 	}
-	
+
 }

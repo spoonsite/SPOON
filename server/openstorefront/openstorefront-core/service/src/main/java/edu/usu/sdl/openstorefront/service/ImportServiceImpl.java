@@ -103,7 +103,7 @@ public class ImportServiceImpl
 		}
 
 		try (InputStream in = importContext.getInput(); OutputStream out = new FileOutputStream(fileHistory.pathToFileName().toFile())) {
-			FileSystemManager.copy(in, out);
+			FileSystemManager.getInstance().copy(in, out);
 		} catch (IOException e) {
 			throw new OpenStorefrontRuntimeException("Unable to save upload.", "Check file system permissions and disk space.", e);
 		}
@@ -176,6 +176,7 @@ public class ImportServiceImpl
 		if (fileFormat == null) {
 			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 			if (element != null) {
+				@SuppressWarnings("unchecked")
 				List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element.getObjectValue();
 				for (ExternalFormat pluginFormat : extraFileFormats) {
 					if (fileFormatCode.equals(pluginFormat.getFileFormat().getCode())) {
@@ -313,11 +314,7 @@ public class ImportServiceImpl
 	public FileFormat findFileFormat(String fileFormatCode)
 	{
 		ExternalFormat externalFormat = handleFindFileFormat(fileFormatCode, false);
-		if (externalFormat != null) {
-			return externalFormat.getFileFormat();
-		} else {
-			return null;
-		}
+		return externalFormat.getFileFormat();
 	}
 
 	@Override
@@ -330,6 +327,7 @@ public class ImportServiceImpl
 		//also pull in fileformat and translate Class to path
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
+			@SuppressWarnings("unchecked")
 			List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element.getObjectValue();
 			for (ExternalFormat externalFormat : extraFileFormats) {
 				if (externalFormat.getFileFormat().getFileType().equals(fileType)) {
@@ -357,6 +355,7 @@ public class ImportServiceImpl
 		//also pull in fileformat and translate Class to path
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
+			@SuppressWarnings("unchecked")
 			List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element.getObjectValue();
 			for (ExternalFormat externalFormat : extraFileFormats) {
 				FileFormat translatedFileFormat = new FileFormat();
@@ -381,7 +380,7 @@ public class ImportServiceImpl
 	@Override
 	public void cleanupOldFileHistory()
 	{
-		int maxDays = Convert.toInteger(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_FILE_HISTORY_KEEP_DAYS));
+		int maxDays = Convert.toInteger(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_FILE_HISTORY_KEEP_DAYS));
 
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);
@@ -555,6 +554,7 @@ public class ImportServiceImpl
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void registerFormat(FileFormat newFormat, Class parserClass)
 	{
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
@@ -576,6 +576,7 @@ public class ImportServiceImpl
 	{
 		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
+			@SuppressWarnings("unchecked")
 			List<ExternalFormat> fileFormats = (List<ExternalFormat>) element.getObjectValue();
 			for (int i = fileFormats.size() - 1; i >= 0; i--) {
 				FileFormat fileFormat = fileFormats.get(i).getFileFormat();

@@ -25,12 +25,14 @@ import javax.validation.constraints.Size;
 
 /**
  * This base abstraction for attributes
+ *
  * @author dshurtleff
  */
 @APIDescription("This is base abstraction for attributes")
 public abstract class Attribute
-	extends BaseEntity<Attribute>	
+		extends BaseEntity<Attribute>
 {
+
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
@@ -42,19 +44,21 @@ public abstract class Attribute
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@FK(AttributeCode.class)
 	private String attributeCode;
-	
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Attribute()
 	{
 	}
 
 	public abstract String ownerId();
-	
+
 	/**
-	 * This compare just the attribute information 
+	 * This compare just the attribute information
+	 *
 	 * @param o
-	 * @return 
+	 * @return
 	 */
-	@Override	
+	@Override
 	public int compareTo(Attribute o)
 	{
 		int value = ReflectionUtil.compareObjects(getAttributeType(), o.getAttributeType());
@@ -62,8 +66,8 @@ public abstract class Attribute
 			value = ReflectionUtil.compareObjects(getAttributeCode(), o.getAttributeCode());
 		}
 		return value;
-	}	
-	
+	}
+
 	public String getAttributeType()
 	{
 		return attributeType;
@@ -83,5 +87,5 @@ public abstract class Attribute
 	{
 		this.attributeCode = attributeCode;
 	}
-	
+
 }

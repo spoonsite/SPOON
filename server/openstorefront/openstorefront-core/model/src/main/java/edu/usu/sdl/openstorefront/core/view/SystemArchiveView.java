@@ -41,10 +41,6 @@ public class SystemArchiveView
 	private String ioDirectionTypeDescription;
 	private String importModeTypeDescription;
 
-	public SystemArchiveView()
-	{
-	}
-
 	public static SystemArchiveView toView(SystemArchive archive)
 	{
 		SystemArchiveView view = new SystemArchiveView();
@@ -57,10 +53,10 @@ public class SystemArchiveView
 		view.setRunStatusDescription(TranslateUtil.translate(RunStatus.class, archive.getRunStatus()));
 		view.setIoDirectionTypeDescription(TranslateUtil.translate(IODirectionType.class, archive.getIoDirectionType()));
 		view.setImportModeTypeDescription(TranslateUtil.translate(ImportModeType.class, archive.getImportModeType()));
-		
+
 		Path path = view.pathToArchive();
 		if (path == null || !path.toFile().exists()) {
-			view.setArchiveFilename(null);			
+			view.setArchiveFilename(null);
 		}
 
 		return view;

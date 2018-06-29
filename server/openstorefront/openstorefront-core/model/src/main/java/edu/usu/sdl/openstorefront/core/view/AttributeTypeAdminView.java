@@ -70,6 +70,30 @@ public class AttributeTypeAdminView
 		return views;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		int hash = 5;
+		hash = 59 * hash + (this.configurationWarning ? 1 : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final AttributeTypeAdminView other = (AttributeTypeAdminView) obj;
+		return this.configurationWarning == other.configurationWarning;
+	}
+
 	public boolean getConfigurationWarning()
 	{
 		return configurationWarning;

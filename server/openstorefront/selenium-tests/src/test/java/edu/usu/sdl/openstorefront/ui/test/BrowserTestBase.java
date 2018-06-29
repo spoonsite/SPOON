@@ -15,11 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.ui.test;
 
-import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.selenium.util.DriverWork;
 import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
-import edu.usu.sdl.openstorefront.ui.test.security.AccountSignupActivateIT;
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
@@ -46,7 +44,8 @@ public class BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	protected static APIClient apiClient;
+
+	// WebDriverUtil and Properties objects must stay in BrowserTestBase because there can only be one instance that all tests share
 	protected static WebDriverUtil webDriverUtil;
 	protected static Properties properties;
 
@@ -55,27 +54,12 @@ public class BrowserTestBase
 	{
 		properties = PropertiesUtil.getProperties();
 		webDriverUtil = new WebDriverUtil(properties);
-		apiClient = new APIClient();
 	}
 
 	@AfterClass
 	public static void cleanup() throws Exception
 	{
 		LOG.log(Level.INFO, "Starting cleanup");
-		apiClient.cleanup();
-		tearDown();
-	}
-
-	/*@BeforeClass
-	public static void setSize() throws Exception
-	{
-		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
-	}
-	 */
-	private static void tearDown() throws Exception
-	{
-		//Bot.driver().quit();
-		//WebDriverExtensionsContext.removeDriver();
 		webDriverUtil.closeDrivers();
 	}
 
@@ -106,7 +90,7 @@ public class BrowserTestBase
 
 			// Look for the titleText
 			try {
-				wait.until(ExpectedConditions.stalenessOf(userNameElement)); 
+				wait.until(ExpectedConditions.stalenessOf(userNameElement));
 				wait.until(ExpectedConditions.titleContains("Storefront"));  // Title has suffix of (dev), (Acceptance), etc.
 				LOG.log(Level.INFO, "*** Sucessfully logged in as ''{0}'' ***", userName);
 			} catch (Exception e) {
@@ -132,7 +116,7 @@ public class BrowserTestBase
 		try {
 			Thread.sleep(mills);
 		} catch (InterruptedException ex) {
-			Logger.getLogger(AccountSignupActivateIT.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(BrowserTestBase.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -140,7 +124,6 @@ public class BrowserTestBase
 	{
 		boolean done = false;
 		long startTime = System.currentTimeMillis();
-		System.out.println("********** START TIME: " + startTime);
 
 		while (!done && (System.currentTimeMillis() - startTime) < maxMilliSeconds) {
 			try {
@@ -149,13 +132,35 @@ public class BrowserTestBase
 			} catch (WebDriverException ex) {
 				sleep(500);
 				LOG.log(Level.WARNING, "{0} Retrying...", ex.getMessage());
-				System.out.println("Current TIME ******** " + System.currentTimeMillis());
 			}
 		}
 
 		if (!done) {
 			throw new WebDriverException("Browser failure");
 		}
+	}
+
+	/**
+	 * Locates a WebElement from a String and a list of css selected WebElements
+	 *
+	 * @param driver Selenium webdriver
+	 * @param selector css selector
+	 * @param text text to search for within list of web elements
+	 * @return WebElement
+	 */
+	protected static WebElement findElementByString(WebDriver driver, String selector, String text)
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 8);
+		List<WebElement> els = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(selector)));
+		WebElement element = null;
+
+		for (WebElement el : els) {
+			if (el.getText().contains(text)) {
+				element = el;
+				break;
+			}
+		}
+		return element;
 	}
 
 	/**
@@ -189,15 +194,13 @@ public class BrowserTestBase
 					theRow++;
 
 					WebElement cell = cells.get(columnIndex);
-					// Iterate through cells
+
 					if (cell.getText().equals(searchFor)) {
-						LOG.log(Level.INFO, "--- Clicking on the table at: ROW {0}. ---", theRow);
 						Actions builder = new Actions(driver);
 						builder.moveToElement(row).perform();
 						sleep(100);
 						builder.click().perform();
 						return true;
-						// System.out.println("TEXT '" + localSearch + "' WAS FOUND AT: " + fRow + ", " + fColumn);
 					}
 				} catch (Exception e) {
 
@@ -210,7 +213,6 @@ public class BrowserTestBase
 		}
 
 		return false;
-		//return new TableItem(fRow, fColumn);
 	}
 
 	/**

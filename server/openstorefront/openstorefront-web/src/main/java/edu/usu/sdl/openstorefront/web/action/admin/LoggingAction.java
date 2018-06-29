@@ -42,7 +42,7 @@ public class LoggingAction
 		extends BaseAction
 {
 
-	private static final Logger log = Logger.getLogger(LoggingAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(LoggingAction.class.getName());
 
 	@Validate(required = true, on = {"Handlers"})
 	private String handler;
@@ -92,7 +92,7 @@ public class LoggingAction
 			} else {
 				localLogger.setLevel(null);
 			}
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find logger", "Check name");
 		}
@@ -102,6 +102,7 @@ public class LoggingAction
 
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
 	@HandlesEvent("UpdateHandlerLevel")
+	@SuppressWarnings("squid:S1872")
 	public Resolution updateHandlerLevel()
 	{
 		Logger localLogger = LogManager.getLogManager().getLogger(logger);
@@ -116,7 +117,7 @@ public class LoggingAction
 					}
 				}
 			}
-			log.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+			LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find logger", "Check name");
 		}

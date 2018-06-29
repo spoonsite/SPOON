@@ -51,9 +51,11 @@ public class ComponentIntegration
 	@NotNull
 	@ValidValueType(value = {}, lookupClass = RunStatus.class)
 	private String status;
+
 	private Date lastStartTime;
 	private Date lastEndTime;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentIntegration()
 	{
 

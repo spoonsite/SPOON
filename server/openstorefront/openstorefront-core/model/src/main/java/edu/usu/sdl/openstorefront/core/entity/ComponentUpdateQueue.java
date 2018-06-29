@@ -40,6 +40,7 @@ public class ComponentUpdateQueue
 	@FK(ModificationType.class)
 	private String modificationType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentUpdateQueue()
 	{
 	}

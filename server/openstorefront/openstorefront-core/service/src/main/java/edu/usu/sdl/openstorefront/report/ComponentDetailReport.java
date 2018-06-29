@@ -281,7 +281,7 @@ public class ComponentDetailReport
 		String renderedTemplate = null;
 		try {
 			Map<String, Object> root = new HashMap<>();
-			root.put("baseUrl", PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL));
+			root.put("baseUrl", PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL));
 
 			EntryDetailsOptions options = new EntryDetailsOptions(report.getReportOption());
 			root.put("reportOptions", options);

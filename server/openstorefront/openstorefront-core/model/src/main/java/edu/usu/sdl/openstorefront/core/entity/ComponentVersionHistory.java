@@ -44,6 +44,7 @@ public class ComponentVersionHistory
 	@APIDescription("If this history was based on file history, this field will hold filehistoryId")
 	private String fileHistoryId;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentVersionHistory()
 	{
 	}
@@ -70,7 +71,7 @@ public class ComponentVersionHistory
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getVersionHistoryId())) {
-			File pathDir = FileSystemManager.getDir(FileSystemManager.COMPONENT_VERSION_DIR);
+			File pathDir = FileSystemManager.getInstance().getDir(FileSystemManager.COMPONENT_VERSION_DIR);
 			path = Paths.get(pathDir.getPath() + "/" + getVersionHistoryId() + ".zip");
 		}
 		return path;

@@ -20,7 +20,7 @@
 Ext.define('OSF.component.EntryChangeRequestWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.EntryChangeRequestWindow',
-	
+	requires: ['OSF.common.ValidHtmlEditor'],
 	title: 'Change Requests',
 	modal: true,
 	maximizable: true,
@@ -64,39 +64,161 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 				viewTemplate.set(response.responseText, true);
 			}
 		});
-		
-		changeRequestWindow.submissionPanel = Ext.create('OSF.component.SubmissionPanel', {											
-				formWarningMessage: changeRequestWindow.changeRequestWarning,
-				submitForReviewUrl: function (componentId){
-					return 'api/v1/resource/componentsubmissions/' + componentId+ '/submitchangerequest';
-				},
-				cancelSubmissionHandlerYes: function(){
-					changeRequestWindow.submissionWindow.completeClose=true;
-					changeRequestWindow.submissionWindow.close();
-					changeRequestWindow.submissionWindow.completeClose=false;
-					if (changeRequestWindow.successHandler) {
-						changeRequestWindow.successHandler();
-					}
-				},
-				cancelSubmissionHandlerNo: function(){
-					changeRequestWindow.submissionWindow.completeClose=true;
-					changeRequestWindow.submissionWindow.close();
-					changeRequestWindow.submissionWindow.completeClose=false;
-					if (changeRequestWindow.successHandler) {
-						changeRequestWindow.successHandler();
-					}
-				},				
-				handleSubmissionSuccess: function(response, opts) {
-					changeRequestWindow.submissionWindow.completeClose=true;
-					changeRequestWindow.submissionWindow.close();
-					changeRequestWindow.submissionWindow.completeClose=false;
-					if (changeRequestWindow.changeGrid.getStore().getProxy().url) {
-						changeRequestWindow.changeGrid.getStore().reload();
-					}
-					if (changeRequestWindow.successHandler) {
-						changeRequestWindow.successHandler();
-					}					
+
+		var actionApproveChangeRequest = function() {
+			commentWin.show();
+		};
+
+		var commentWin = Ext.create('Ext.window.Window', {
+			title: 'Change Request Comments: ',
+			iconCls: 'fa fa-lg fa-user',
+			width: '50%',
+			height: 350,
+			y: 200,
+			modal: true,
+			layout: 'fit',
+			items: [
+				{
+					xtype: 'form',
+					itemId: 'changeRequestCommentForm',
+					bodyStyle: 'padding: 10px',
+					items: [ 
+						{
+							xtype: 'osf-common-validhtmleditor',
+							itemId: 'searchComment',
+							fieldLabel: 'Optional Comments',
+							labelAlign: 'top',
+							name: 'Comment name',
+							width: '100%',
+							displayField: 'Comment displayfield',
+							store: {
+								autoLoad: true,
+							},
+						},
+						{
+							xtype: 'hidden',
+							itemId: 'searchCommentId',
+							name: 'commentId'
+						},
+					],
+					dockedItems: [
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							items: [
+								{
+									text: 'Approve Change',
+									formBind: true,
+									iconCls: 'fa fa-lg fa-check-square-o icon-button-color-save',
+									handler: function(){
+
+										// Get Form
+										var form = this.up('form');
+										var data = {
+											commentId: form.queryById('searchCommentId').value,
+											commentType: "ADMIN",
+											comment: form.queryById('searchComment').value
+										};
+
+										var changeRequestComponentId = changeRequestWindow.changeGrid.getSelection()[0].get('componentId');
+
+										changeRequestWindow.setLoading('Approving Change...');
+										Ext.Ajax.request({
+											url: 'api/v1/resource/components/' + changeRequestComponentId + '/mergechangerequest',
+											method: 'PUT',
+											callback: function(){
+												changeRequestWindow.setLoading(false);
+											},
+											success: function(response, opts) {
+												if(data.comment != ''){
+													Ext.Ajax.request({
+														url: 'api/v1/resource/components/' + changeRequestWindow.currentComponentId + '/comments',
+														method: 'POST',
+														jsonData: data,
+														success: function(response, opts){
+															
+															if (response.responseText.indexOf('errors') !== -1) {
+															// Provide Error Notification
+																Ext.toast({
+																	title: 'Validation Error. The Server could not process the comment request. ',
+																	html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+																	width: 550,
+																	autoCloseDelay: 10000,
+																});
+															}
+
+														},
+														failure: function(){
+															Ext.toast({
+																title: 'Validation Error. The Server could not process the request.',
+																html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
+																width: 500,
+																autoCloseDelay: 10000,
+															});
+														}
+													});	
+												}
+												changeRequestWindow.changeGrid.getStore().reload();
+												changeRequestWindow.loadCurrentView();								
+												if (changeRequestWindow.successHandler) {
+													changeRequestWindow.successHandler();
+												}
+											}
+										});	
+
+										form.reset();
+										this.up('window').close();
+									}
+								},
+								{
+									xtype: 'tbfill'
+								},
+								{
+									text: 'Cancel',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+									handler: function(){
+										this.up('window').close();
+									}
+								}
+							]
+						}
+					]
 				}
+			]
+		});
+
+		changeRequestWindow.submissionPanel = Ext.create('OSF.component.SubmissionPanel', {											
+			formWarningMessage: changeRequestWindow.changeRequestWarning,
+			submitForReviewUrl: function (componentId){
+				return 'api/v1/resource/componentsubmissions/' + componentId+ '/submitchangerequest';
+			},
+			cancelSubmissionHandlerYes: function(){
+				changeRequestWindow.submissionWindow.completeClose=true;
+				changeRequestWindow.submissionWindow.close();
+				changeRequestWindow.submissionWindow.completeClose=false;
+				if (changeRequestWindow.successHandler) {
+					changeRequestWindow.successHandler();
+				}
+			},
+			cancelSubmissionHandlerNo: function(){
+				changeRequestWindow.submissionWindow.completeClose=true;
+				changeRequestWindow.submissionWindow.close();
+				changeRequestWindow.submissionWindow.completeClose=false;
+				if (changeRequestWindow.successHandler) {
+					changeRequestWindow.successHandler();
+				}
+			},				
+			handleSubmissionSuccess: function(response, opts) {
+				changeRequestWindow.submissionWindow.completeClose=true;
+				changeRequestWindow.submissionWindow.close();
+				changeRequestWindow.submissionWindow.completeClose=false;
+				if (changeRequestWindow.changeGrid.getStore().getProxy().url) {
+					changeRequestWindow.changeGrid.getStore().reload();
+				}
+				if (changeRequestWindow.successHandler) {
+					changeRequestWindow.successHandler();
+				}					
+			}
 		});
 		
 		changeRequestWindow.submissionWindow = Ext.create('Ext.window.Window', {				
@@ -231,17 +353,17 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 				{ text: 'Name', dataIndex: 'name', width: 150 },
 				{ text: 'Approval Status', align: 'center', dataIndex: 'approvalState', width: 150, tooltip: 'Changes are removed upon Approval',
 					renderer: function(value, metaData){
-								var text = value;
-								if (value === 'A') {
-									text = 'Approved';
-									metaData.tdCls = 'alert-success';
-								} else if (value === 'P') {
-									text = 'Pending';
-									metaData.tdCls = 'alert-warning';
-								} else if (value === 'N') {
-									text = 'Not Submitted';
-								}
-								return text;
+						var text = value;
+						if (value === 'A') {
+							text = 'Approved';
+							metaData.tdCls = 'alert-success';
+						} else if (value === 'P') {
+							text = 'Pending';
+							metaData.tdCls = 'alert-warning';
+						} else if (value === 'N') {
+							text = 'Not Submitted';
+						}
+						return text;
 					}
 				},
 				{ text: 'Update Date', dataIndex: 'updateDts', flex: 1, xtype: 'datecolumn', format:'m/d/y H:i:s' },
@@ -301,24 +423,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							disabled: true,
 							hidden: true,
 							handler: function(){
-								var changeRequestWindow = this.up('window');
-								var changeRequestComponentId = changeRequestWindow.changeGrid.getSelection()[0].get('componentId');
-
-								changeRequestWindow.setLoading('Approving Change...');
-								Ext.Ajax.request({
-									url: 'api/v1/resource/components/' + changeRequestComponentId + '/mergechangerequest',
-									method: 'PUT',
-									callback: function(){
-										changeRequestWindow.setLoading(false);
-									},
-									success: function(response, opts) {
-										changeRequestWindow.changeGrid.getStore().reload();
-										changeRequestWindow.loadCurrentView();								
-										if (changeRequestWindow.successHandler) {
-											changeRequestWindow.successHandler();
-										}
-									}
-								});												
+								actionApproveChangeRequest();
 							}
 						},						
 						{
@@ -339,7 +444,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 								var changeRequestComponentId = this.up('grid').getSelectionModel().getSelection()[0].get('componentId');
 								changeRequestWindow.editChangeRequest(changeRequestComponentId, this.up('grid').getSelectionModel().getSelection()[0]);								
 							}
-						},
+						}, 
 						{
 							text: 'Message',
 							itemId: 'messageBtn',
@@ -349,9 +454,9 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							handler: function(){
 								var emails = changeRequestWindow.changeGrid.getSelection()[0].get('ownerEmail');
 								var messageWindow = Ext.create('OSF.component.MessageWindow', {					
-											closeAction: 'destory',
-											alwaysOnTop: true,
-											initialToUsers: emails
+									closeAction: 'destory',
+									alwaysOnTop: true,
+									initialToUsers: emails
 								}).show();
 							}
 						},

@@ -23,7 +23,9 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.RoleLink;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserLink;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
@@ -37,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -71,7 +74,7 @@ public class ComponentTypeServiceImpl
 			for (ODocument document : documents) {
 				Element newElement = new Element(document.field("componentId"), document.field("componentType"));
 				if (document.field("componentId").equals(componentId)) {
-					componentType = (String) document.field("componentType");
+					componentType = document.field("componentType");
 				}
 				OSFCacheManager.getComponentTypeComponentCache().put(newElement);
 			}
@@ -87,38 +90,54 @@ public class ComponentTypeServiceImpl
 
 		List<ComponentType> componentTypes = getAllComponentTypes();
 		if (componentTypeOptions.getComponentType() == null) {
-			typeModel = new ComponentTypeNestedModel();
-
-			List<ComponentType> roots = new ArrayList<>();
-			for (ComponentType componentType : componentTypes) {
-				if (componentType.getParentComponentType() == null) {
-					roots.add(componentType);
-				}
-			}
-			for (ComponentType componentType : roots) {
-				ComponentTypeNestedModel rootModel = new ComponentTypeNestedModel();
-				rootModel.setComponentType(ComponentTypeView.toView(componentType));
-				rootModel.getChildren().addAll(getChildrenComponentTypes(componentTypes, componentType));
-				typeModel.getChildren().add(rootModel);
-			}
+			typeModel = constructNestedModelNoParent(componentTypes);
 		} else {
-			ComponentType found = null;
-			for (ComponentType componentType : componentTypes) {
-				if (componentType.getComponentType().equals(componentTypeOptions.getComponentType())) {
-					found = componentType;
-				}
-			}
+			ComponentType found = findComponentTypeInList(componentTypes, componentTypeOptions);
 			if (found != null) {
-				typeModel = new ComponentTypeNestedModel();
-				if (componentTypeOptions.getPullParents() && found.getParentComponentType() != null) {
-					found = findTopParentComponentType(componentTypes, found);
-				}
-				typeModel.setComponentType(ComponentTypeView.toView(found));
-
-				if (componentTypeOptions.getPullChildren()) {
-					typeModel.getChildren().addAll(getChildrenComponentTypes(componentTypes, found));
-				}
+				typeModel = constructNestedModelWithParent(componentTypeOptions, found, componentTypes);
 			}
+		}
+		return typeModel;
+	}
+
+	private ComponentTypeNestedModel constructNestedModelWithParent(ComponentTypeOptions componentTypeOptions, ComponentType found, List<ComponentType> componentTypes)
+	{
+		ComponentTypeNestedModel typeModel = new ComponentTypeNestedModel();
+		if (componentTypeOptions.getPullParents() && found.getParentComponentType() != null) {
+			found = findTopParentComponentType(componentTypes, found);
+		}
+		typeModel.setComponentType(ComponentTypeView.toView(found));
+		if (componentTypeOptions.getPullChildren() && found != null) {
+			typeModel.getChildren().addAll(getChildrenComponentTypes(componentTypes, found));
+		}
+		return typeModel;
+	}
+
+	private ComponentType findComponentTypeInList(List<ComponentType> componentTypes, ComponentTypeOptions componentTypeOptions)
+	{
+		ComponentType found = null;
+		for (ComponentType componentType : componentTypes) {
+			if (componentType.getComponentType().equals(componentTypeOptions.getComponentType())) {
+				found = componentType;
+			}
+		}
+		return found;
+	}
+
+	private ComponentTypeNestedModel constructNestedModelNoParent(List<ComponentType> componentTypes)
+	{
+		ComponentTypeNestedModel typeModel = new ComponentTypeNestedModel();
+		List<ComponentType> roots = new ArrayList<>();
+		for (ComponentType componentType : componentTypes) {
+			if (componentType.getParentComponentType() == null) {
+				roots.add(componentType);
+			}
+		}
+		for (ComponentType componentType : roots) {
+			ComponentTypeNestedModel rootModel = new ComponentTypeNestedModel();
+			rootModel.setComponentType(ComponentTypeView.toView(componentType));
+			rootModel.getChildren().addAll(getChildrenComponentTypes(componentTypes, componentType));
+			typeModel.getChildren().add(rootModel);
 		}
 		return typeModel;
 	}
@@ -131,6 +150,9 @@ public class ComponentTypeServiceImpl
 				found = componentType;
 				break;
 			}
+		}
+		if (found == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find component Type: " + componentTypeId, "Check input");
 		}
 		return found;
 	}
@@ -171,27 +193,24 @@ public class ComponentTypeServiceImpl
 		componentTypeTemp.setParentComponentType(null);
 		persistenceService.persist(componentTypeTemp);
 	}
-	
+
 	// check that
 	// 1. no orphans (i.e. parent does not exist)
 	// 2. a component is not a parent of itself
 	private void fixOrphans(List<ComponentType> componentTypes)
 	{
+		Set<String> typeSet = componentTypes.stream()
+				.map(ComponentType::getComponentType)
+				.collect(Collectors.toSet());
+
 		for (ComponentType componentTypeA : componentTypes) {
 			// if parent of itself
-			if (componentTypeA.getParentComponentType() != null && componentTypeA.getParentComponentType().equals(componentTypeA.getComponentType())) {
+			if (componentTypeA.getParentComponentType() != null
+					&& componentTypeA.getParentComponentType().equals(componentTypeA.getComponentType())) {
 				resetComponentParent(componentTypeA);
-				continue;
-			}
-			boolean foundParent = false;
-			for (ComponentType componentTypeB : componentTypes) {
-				// check for orphans
-				if (componentTypeA.getParentComponentType() != null && componentTypeA.getParentComponentType().equals(componentTypeB.getComponentType())) {
-					foundParent = true;
-					break;
-				}
-			}
-			if (!foundParent) {
+
+			} else if (componentTypeA.getParentComponentType() != null
+					&& !typeSet.contains(componentTypeA.getParentComponentType())) {
 				resetComponentParent(componentTypeA);
 			}
 		}
@@ -240,71 +259,18 @@ public class ComponentTypeServiceImpl
 				ComponentType newType = persistenceService.findById(ComponentType.class, newComponentType);
 
 				if (newType != null) {
-					//migrate data
-					Component setComponent = new Component();
-					setComponent.setComponentType(newComponentType);
-
-					Component whereComponent = new Component();
-					whereComponent.setComponentType(componentType);
-
-					persistenceService.updateByExample(Component.class, setComponent, whereComponent);
-
-					FileDataMap setfileDataMap = new FileDataMap();
-					setfileDataMap.setDefaultComponentType(newComponentType);
-
-					FileDataMap wherefileDataMap = new FileDataMap();
-					wherefileDataMap.setDefaultComponentType(componentType);
-					persistenceService.updateByExample(FileDataMap.class, setfileDataMap, wherefileDataMap);
-
-					//remove restrictions
-					AttributeType attributeTypeExample = new AttributeType();
-					List<AttributeType> allAttributes = attributeTypeExample.findByExampleProxy();
-					for (AttributeType attributeType : allAttributes) {
-
-						boolean addToUpdate = false;
-						if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
-							for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
-								String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
-								if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
-									attributeType.getRequiredRestrictions().remove(i);
-									addToUpdate = true;
-								}
-							}
-						}
-
-						if (attributeType.getOptionalRestrictions() != null && !attributeType.getOptionalRestrictions().isEmpty()) {
-							for (int i = attributeType.getOptionalRestrictions().size() - 1; i >= 0; i--) {
-								String checkType = attributeType.getOptionalRestrictions().get(i).getComponentType();
-								if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
-									attributeType.getOptionalRestrictions().remove(i);
-									addToUpdate = true;
-								}
-							}
-						}
-
-						if (addToUpdate) {
-							persistenceService.persist(attributeType);
-						}
-
-					}
-
-					// Update children
-					ComponentType ctExample = new ComponentType();
-					ctExample.setParentComponentType(componentTypeFound.getComponentType());
-					List<ComponentType> ctChildren = ctExample.findByExampleProxy();
-
-					ctChildren.forEach(child -> {
-						child.setParentComponentType(newComponentType);
-						persistenceService.persist(child);
-					});
+					removeTypeMigrateData(newComponentType, componentType);
+					removeTypeCleanupAttributes(componentType);
+					removeTypeFromSubmissionTemplates(componentType);
+					removeTypeUpdateChildren(componentTypeFound, newComponentType);
 
 					//remove
 					inactivate = false;
 					persistenceService.delete(componentTypeFound);
 				} else {
-					LOG.log(Level.WARNING, MessageFormat.format("Unable to find new component type: {0}  to migrate data to.  Inactivating component type: {1}", new Object[]{
-						newComponentType, componentType
-					}));
+					LOG.log(Level.WARNING, () -> MessageFormat.format("Unable to find new component type: {0}  to migrate data to.  Inactivating component type: {1}",
+							newComponentType, componentType
+					));
 				}
 			}
 
@@ -316,6 +282,107 @@ public class ComponentTypeServiceImpl
 			OSFCacheManager.getComponentCache().removeAll();
 			OSFCacheManager.getComponentTypeCache().removeAll();
 		}
+	}
+
+	private void removeTypeFromSubmissionTemplates(String componentType)
+	{
+		Objects.requireNonNull(componentType);
+
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setEntryType(componentType);
+
+		List<SubmissionFormTemplate> allTemplates = submissionFormTemplate.findByExampleProxy();
+		for (SubmissionFormTemplate template : allTemplates) {
+			template.setEntryType(null);
+			persistenceService.persist(template);
+		}
+	}
+
+	private void removeTypeUpdateChildren(ComponentType componentTypeFound, String newComponentType)
+	{
+		// Update children
+		ComponentType childComponentTypes = new ComponentType();
+		childComponentTypes.setParentComponentType(componentTypeFound.getComponentType());
+		List<ComponentType> componentTypeChildren = childComponentTypes.findByExampleProxy();
+
+		componentTypeChildren.forEach(child -> {
+			child.setParentComponentType(newComponentType);
+			persistenceService.persist(child);
+		});
+	}
+
+	private void removeTypeCleanupAttributes(String componentType)
+	{
+		//remove restrictions
+		AttributeType attributeTypeExample = new AttributeType();
+		List<AttributeType> allAttributes = attributeTypeExample.findByExampleProxy();
+		for (AttributeType attributeType : allAttributes) {
+
+			boolean updateAttributeBasedOnRequired = removeTypeRequiredAttributeToRemove(attributeType, componentType);
+			boolean updateAttributeBasedOnOptional = removeTypeOptionalAttributeToRemove(attributeType, componentType);
+
+			if (updateAttributeBasedOnRequired || updateAttributeBasedOnOptional) {
+				persistenceService.persist(attributeType);
+			}
+
+		}
+	}
+
+	private boolean removeTypeOptionalAttributeToRemove(AttributeType attributeType, String componentType)
+	{
+		boolean updateAttribute = false;
+		if (attributeType.getOptionalRestrictions() != null && !attributeType.getOptionalRestrictions().isEmpty()) {
+			for (int i = attributeType.getOptionalRestrictions().size() - 1; i >= 0; i--) {
+				String checkType = attributeType.getOptionalRestrictions().get(i).getComponentType();
+				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
+					attributeType.getOptionalRestrictions().remove(i);
+					updateAttribute = true;
+				}
+			}
+		}
+		return updateAttribute;
+	}
+
+	private boolean removeTypeRequiredAttributeToRemove(AttributeType attributeType, String componentType)
+	{
+		boolean updateAttribute = false;
+		if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
+			for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
+				String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
+				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
+					attributeType.getRequiredRestrictions().remove(i);
+					updateAttribute = true;
+				}
+			}
+		}
+		return updateAttribute;
+	}
+
+	private void removeTypeMigrateData(String newComponentType, String componentType)
+	{
+		//migrate data
+		Component setComponent = new Component();
+		setComponent.setComponentType(newComponentType);
+
+		Component whereComponent = new Component();
+		whereComponent.setComponentType(componentType);
+
+		persistenceService.updateByExample(Component.class, setComponent, whereComponent);
+
+		FileDataMap setfileDataMap = new FileDataMap();
+		setfileDataMap.setDefaultComponentType(newComponentType);
+
+		FileDataMap wherefileDataMap = new FileDataMap();
+		wherefileDataMap.setDefaultComponentType(componentType);
+		persistenceService.updateByExample(FileDataMap.class, setfileDataMap, wherefileDataMap);
+
+		UserSubmission setUserSubmission = new UserSubmission();
+		setUserSubmission.setComponentType(newComponentType);
+
+		UserSubmission whereUserSubmission = new UserSubmission();
+		whereUserSubmission.setComponentType(componentType);
+		persistenceService.updateByExample(UserSubmission.class, setUserSubmission, whereUserSubmission);
+
 	}
 
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
@@ -386,11 +453,11 @@ public class ComponentTypeServiceImpl
 		List<ComponentType> componentTypes = getAllComponentTypes();
 
 		for (ComponentType componentTypeLocal : componentTypes) {
-			if (componentTypeLocal.getComponentType().equals(componentType)) {
-				if (componentTypeLocal.getIncludeIconInSearch() != null) {
-					includeInSearch = componentTypeLocal.getIncludeIconInSearch();
-					break;
-				}
+			if (componentTypeLocal.getComponentType().equals(componentType)
+					&& componentTypeLocal.getIncludeIconInSearch() != null) {
+
+				includeInSearch = componentTypeLocal.getIncludeIconInSearch();
+				break;
 			}
 		}
 
@@ -424,14 +491,7 @@ public class ComponentTypeServiceImpl
 			List<ComponentType> componentTypes = getAllComponentTypes();
 			for (ComponentType componentType : componentTypes) {
 				if (componentType.getAssignedGroups() != null) {
-					for (RoleLink roleLink : componentType.getAssignedGroups()) {
-						if (roleLink.getRoleName().equals(roleName)) {
-							boolean removeItem = performRemoveRoleFromType(componentType.getComponentType(), roleName);
-							if (removeItem) {
-								clearCache = true;
-							}
-						}
-					}
+					clearCache = removeRoleProcessRoleLinks(componentType, roleName, clearCache);
 				}
 			}
 
@@ -439,6 +499,19 @@ public class ComponentTypeServiceImpl
 				OSFCacheManager.getComponentTypeCache().removeAll();
 			}
 		}
+	}
+
+	private boolean removeRoleProcessRoleLinks(ComponentType componentType, String roleName, boolean clearCache)
+	{
+		for (RoleLink roleLink : componentType.getAssignedGroups()) {
+			if (roleLink.getRoleName().equals(roleName)) {
+				boolean removeItem = performRemoveRoleFromType(componentType.getComponentType(), roleName);
+				if (removeItem) {
+					clearCache = true;
+				}
+			}
+		}
+		return clearCache;
 	}
 
 	private boolean performRemoveRoleFromType(String componentType, String roleName)
@@ -472,14 +545,7 @@ public class ComponentTypeServiceImpl
 			List<ComponentType> componentTypes = getAllComponentTypes();
 			for (ComponentType componentType : componentTypes) {
 				if (componentType.getAssignedUsers() != null) {
-					for (UserLink userLink : componentType.getAssignedUsers()) {
-						if (userLink.getUsername().equals(username)) {
-							boolean removeItem = performRemoveUserFromType(componentType.getComponentType(), username);
-							if (removeItem) {
-								clearCache = true;
-							}
-						}
-					}
+					clearCache = removeUserProcessUserLinks(componentType, username, clearCache);
 				}
 			}
 
@@ -487,6 +553,19 @@ public class ComponentTypeServiceImpl
 				OSFCacheManager.getComponentTypeCache().removeAll();
 			}
 		}
+	}
+
+	private boolean removeUserProcessUserLinks(ComponentType componentType, String username, boolean clearCache)
+	{
+		for (UserLink userLink : componentType.getAssignedUsers()) {
+			if (userLink.getUsername().equals(username)) {
+				boolean removeItem = performRemoveUserFromType(componentType.getComponentType(), username);
+				if (removeItem) {
+					clearCache = true;
+				}
+			}
+		}
+		return clearCache;
 	}
 
 	private boolean performRemoveUserFromType(String componentType, String username)
@@ -552,28 +631,40 @@ public class ComponentTypeServiceImpl
 		ComponentTypeTemplateResolution resolution = null;
 
 		if (child.getParentComponentType() != null) {
-			for (ComponentType componentType : componentTypes) {
-				if (componentType.getComponentType().equals(child.getParentComponentType())) {
-					if (componentType.getComponentTypeTemplate() != null) {
-						resolution = new ComponentTypeTemplateResolution();
-						resolution.setCameFromAncestor(true);
-						resolution.setAncestorComponentType(componentType.getComponentType());
-						resolution.setAncestorComponentTypeLabel(componentType.getLabel());
+			resolution = processFirstParentWithTemplate(componentTypes, child);
+		}
+		return resolution;
+	}
 
-						ComponentTypeTemplate template = getComponentTypeTemplate(componentType.getComponentTypeTemplate());
-						if (template != null) {
-							resolution.setTemplateId(componentType.getComponentTypeTemplate());
-							resolution.setTemplateName(template.getName());
-						} else {
-							LOG.log(Level.WARNING, () -> "Override Template not found for: " + componentType);
-							resolution = null;
-						}
-						break;
-					} else {
-						resolution = findFirstParentWithTemplate(componentTypes, componentType);
-					}
+	private ComponentTypeTemplateResolution processFirstParentWithTemplate(List<ComponentType> componentTypes, ComponentType child)
+	{
+		ComponentTypeTemplateResolution resolution = null;
+		for (ComponentType componentType : componentTypes) {
+			if (componentType.getComponentType().equals(child.getParentComponentType())) {
+				if (componentType.getComponentTypeTemplate() != null) {
+					resolution = constructTemplateResolution(componentType);
+					break;
+				} else {
+					resolution = findFirstParentWithTemplate(componentTypes, componentType);
 				}
 			}
+		}
+		return resolution;
+	}
+
+	private ComponentTypeTemplateResolution constructTemplateResolution(ComponentType componentType)
+	{
+		ComponentTypeTemplateResolution resolution = new ComponentTypeTemplateResolution();
+		resolution.setCameFromAncestor(true);
+		resolution.setAncestorComponentType(componentType.getComponentType());
+		resolution.setAncestorComponentTypeLabel(componentType.getLabel());
+		ComponentTypeTemplate template = getComponentTypeTemplate(componentType.getComponentTypeTemplate());
+		if (template != null) {
+			resolution.setTemplateId(componentType.getComponentTypeTemplate());
+			resolution.setTemplateName(template.getName());
+		} else {
+			LOG.log(Level.WARNING, () -> "Override Template not found for: " + componentType);
+			resolution = null;
 		}
 		return resolution;
 	}
@@ -604,25 +695,37 @@ public class ComponentTypeServiceImpl
 		ComponentTypeRoleResolution resolution = null;
 
 		if (child.getParentComponentType() != null) {
-			for (ComponentType componentType : componentTypes) {
-				if (componentType.getComponentType().equals(child.getParentComponentType())) {
-					if (componentType.getAssignedGroups() != null
-							&& !componentType.getAssignedGroups().isEmpty()) {
+			resolution = processFirstParentWithRoles(componentTypes, child);
+		}
+		return resolution;
+	}
 
-						resolution = new ComponentTypeRoleResolution();
-						resolution.setCameFromAncestor(true);
-						resolution.setAncestorComponentType(componentType.getComponentType());
-						resolution.setAncestorComponentTypeLabel(componentType.getLabel());
+	private ComponentTypeRoleResolution processFirstParentWithRoles(List<ComponentType> componentTypes, ComponentType child)
+	{
+		ComponentTypeRoleResolution resolution = null;
+		for (ComponentType componentType : componentTypes) {
+			if (componentType.getComponentType().equals(child.getParentComponentType())) {
+				if (componentType.getAssignedGroups() != null
+						&& !componentType.getAssignedGroups().isEmpty()) {
 
-						for (RoleLink link : componentType.getAssignedGroups()) {
-							resolution.getRoles().add(link.getRoleName());
-						}
-						break;
-					} else {
-						resolution = findFirstParentWithRoles(componentTypes, componentType);
-					}
+					resolution = constructRoleResolution(componentType);
+					break;
+				} else {
+					resolution = findFirstParentWithRoles(componentTypes, componentType);
 				}
 			}
+		}
+		return resolution;
+	}
+
+	private ComponentTypeRoleResolution constructRoleResolution(ComponentType componentType)
+	{
+		ComponentTypeRoleResolution resolution = new ComponentTypeRoleResolution();
+		resolution.setCameFromAncestor(true);
+		resolution.setAncestorComponentType(componentType.getComponentType());
+		resolution.setAncestorComponentTypeLabel(componentType.getLabel());
+		for (RoleLink link : componentType.getAssignedGroups()) {
+			resolution.getRoles().add(link.getRoleName());
 		}
 		return resolution;
 	}
@@ -653,25 +756,37 @@ public class ComponentTypeServiceImpl
 		ComponentTypeUserResolution resolution = null;
 
 		if (child.getParentComponentType() != null) {
-			for (ComponentType componentType : componentTypes) {
-				if (componentType.getComponentType().equals(child.getParentComponentType())) {
-					if (componentType.getAssignedUsers() != null
-							&& !componentType.getAssignedUsers().isEmpty()) {
+			resolution = processFirstParentWithUser(componentTypes, child);
+		}
+		return resolution;
+	}
 
-						resolution = new ComponentTypeUserResolution();
-						resolution.setCameFromAncestor(true);
-						resolution.setAncestorComponentType(componentType.getComponentType());
-						resolution.setAncestorComponentTypeLabel(componentType.getLabel());
+	private ComponentTypeUserResolution processFirstParentWithUser(List<ComponentType> componentTypes, ComponentType child)
+	{
+		ComponentTypeUserResolution resolution = null;
+		for (ComponentType componentType : componentTypes) {
+			if (componentType.getComponentType().equals(child.getParentComponentType())) {
+				if (componentType.getAssignedUsers() != null
+						&& !componentType.getAssignedUsers().isEmpty()) {
 
-						for (UserLink link : componentType.getAssignedUsers()) {
-							resolution.getUsernames().add(link.getUsername());
-						}
-						break;
-					} else {
-						resolution = findFirstParentWithUser(componentTypes, componentType);
-					}
+					resolution = constructUserResolution(componentType);
+					break;
+				} else {
+					resolution = findFirstParentWithUser(componentTypes, componentType);
 				}
 			}
+		}
+		return resolution;
+	}
+
+	private ComponentTypeUserResolution constructUserResolution(ComponentType componentType)
+	{
+		ComponentTypeUserResolution resolution = new ComponentTypeUserResolution();
+		resolution.setCameFromAncestor(true);
+		resolution.setAncestorComponentType(componentType.getComponentType());
+		resolution.setAncestorComponentTypeLabel(componentType.getLabel());
+		for (UserLink link : componentType.getAssignedUsers()) {
+			resolution.getUsernames().add(link.getUsername());
 		}
 		return resolution;
 	}
@@ -690,22 +805,47 @@ public class ComponentTypeServiceImpl
 		return existing;
 	}
 
+	public Component changeComponentType(String componentId, String newType)
+	{
+		Component component = persistenceService.findById(Component.class, componentId);
+		if (component != null) {
+			ComponentType found = persistenceService.findById(ComponentType.class, newType);
+			if (found != null) {
+
+				if (!newType.equals(component.getComponentType())) {
+
+					component.setComponentType(newType);
+					component.populateBaseUpdateFields();
+					persistenceService.persist(component);
+
+					updateComponentLastActivity(componentId);
+				}
+
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to find component type.", "Check name of type: " + newType);
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id passed: " + componentId);
+		}
+		return component;
+	}
+
 	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
 		ComponentType currentComponentType = findComponentType(componentTypes, componentTypeId);
-		
+
 		List<ComponentType> componentTypeParents = new ArrayList<>();
-		
+
 		if (currentComponentType != null && currentComponentType.getParentComponentType() != null) {
 			do {
 				currentComponentType = findComponentType(componentTypes, currentComponentType.getParentComponentType());
-				
+
 				if (currentComponentType != null) {
 					componentTypeParents.add(currentComponentType);
 				}
 			} while (currentComponentType != null && currentComponentType.getParentComponentType() != null);
-	
+
 			if (reverseOrder) {
 				Collections.reverse(componentTypeParents);
 			}
@@ -717,28 +857,28 @@ public class ComponentTypeServiceImpl
 	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType type = findComponentType(componentTypes, componentTypeId);
-		
-		if (type == null) {
-			return componentTypeId;
+		ComponentType typeLocal;
+		try {
+			typeLocal = findComponentType(componentTypes, componentTypeId);
+		} catch (OpenStorefrontRuntimeException ex) {
+			LOG.log(Level.WARNING, ex, () -> "Unable to Find Component Type: " + componentTypeId);
+			return "(" + componentTypeId + ")";
 		}
 
 		List<ComponentType> parentChildComponentTypes = new ArrayList<>();
-
 		List<ComponentType> parentComponentTypes = getComponentTypeParents(componentTypeId, reverseOrder);
-		
+
 		if (reverseOrder) {
 			parentChildComponentTypes.addAll(parentComponentTypes);
-			parentChildComponentTypes.add(type);
-		}
-		else {
-			parentChildComponentTypes.add(type);
+			parentChildComponentTypes.add(typeLocal);
+		} else {
+			parentChildComponentTypes.add(typeLocal);
 			parentChildComponentTypes.addAll(parentComponentTypes);
 		}
 
 		String labels = parentChildComponentTypes.stream()
-			.map(t -> t.getLabel())
-			.collect(Collectors.joining(reverseOrder ? " > " : " < "));
+				.map(t -> t.getLabel())
+				.collect(Collectors.joining(reverseOrder ? " > " : " < "));
 
 		return labels;
 	}

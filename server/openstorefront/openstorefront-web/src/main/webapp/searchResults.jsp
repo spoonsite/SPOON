@@ -444,7 +444,9 @@
 						fieldLabel: 'By Tag',						
 						name: 'tags',
 						emptyText: 'Select Tags',
-						grow: false,
+	 					width: 300,
+						grow: true,
+	 					growMax: 300,
 						store: Ext.create('Ext.data.Store', {
 							autoLoad: true,
 							proxy: {

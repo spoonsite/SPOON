@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.api.ReportService;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
 import edu.usu.sdl.openstorefront.core.api.SystemArchiveService;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
@@ -104,6 +105,7 @@ public class ServiceProxy
 	private SystemArchiveServicePrivate systemArchiveServicePrivate;
 	private HelpSupportService helpSupportService;
 	private FaqService faqService;
+	private SubmissionFormService submissionFormService;
 
 	private FilterEngine filterEngine;
 	private static ProxyFactory proxyFactory = null;
@@ -173,7 +175,7 @@ public class ServiceProxy
 	@Override
 	public void reset()
 	{
-		persistenceService = getNewPersistenceService();
+		setPersistenceService(getNewPersistenceService());
 		lookupService = null;
 		attributeService = null;
 		attributeServicePrivate = null;
@@ -527,6 +529,15 @@ public class ServiceProxy
 
 	}
 
+	@Override
+	public SubmissionFormService getSubmissionFormService()
+	{
+		if (submissionFormService == null) {
+			submissionFormService = DynamicProxy.newInstance(new SubmissionFormServiceImpl());
+		}
+		return submissionFormService;
+	}
+
 	public static class Test
 	{
 
@@ -555,6 +566,11 @@ public class ServiceProxy
 		{
 			isTestPersistenceService.set(false);
 		}
+	}
+
+	public void setPersistenceService(PersistenceService persistenceService)
+	{
+		this.persistenceService = persistenceService;
 	}
 
 }

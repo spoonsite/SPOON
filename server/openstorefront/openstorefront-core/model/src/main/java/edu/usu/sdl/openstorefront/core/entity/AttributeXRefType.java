@@ -64,6 +64,7 @@ public class AttributeXRefType
 	@FK(IntegrationType.class)
 	private String integrationType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeXRefType()
 	{
 

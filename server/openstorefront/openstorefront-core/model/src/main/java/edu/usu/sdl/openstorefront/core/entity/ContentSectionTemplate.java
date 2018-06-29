@@ -47,6 +47,7 @@ public class ContentSectionTemplate
 	@Sanitize(HTMLSanitizer.class)
 	private String description;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ContentSectionTemplate()
 	{
 	}

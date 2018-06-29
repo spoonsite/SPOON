@@ -42,10 +42,6 @@ public class ScheduledReportView
 	private String reportFormatDescription;
 	private String cronDescription;
 
-	public ScheduledReportView()
-	{
-	}
-
 	public static ScheduledReportView toReportView(ScheduledReport report)
 	{
 		ScheduledReportView view = new ScheduledReportView();

@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Provide single access to system properties
+ * Provides central access to system properties
  *
  * @author dshurtleff
  */
@@ -155,30 +155,58 @@ public class PropertiesManager
 	public static final String REPORT_HISTORY_DAYS_TO_LIVE = "180";
 
 	public static final String KEY_NODE_NAME = "node.name";
+	public static final String DEFAULT_NODE_NAME = "PrimaryNode";
 
-	private static AtomicBoolean started = new AtomicBoolean(false);
-	private static SortedProperties properties;
+	private AtomicBoolean started = new AtomicBoolean(false);
+	private SortedProperties properties;
+	protected FileSystemManager fileSystemManager;
+	private String propertiesFile = "openstorefront.properties";
+	private String versionFile = "/filter/version.properties";
 
-	private static SortedProperties defaults = new SortedProperties();
+	private SortedProperties defaults = new SortedProperties();
 	private static final ReentrantLock LOCK = new ReentrantLock();
 
-	private static String getDefault(String key)
+	protected static PropertiesManager singleton = null;
+
+	public static PropertiesManager getInstance()
+	{
+		if (singleton == null) {
+			singleton = new PropertiesManager(FileSystemManager.getInstance());
+		}
+		return singleton;
+	}
+
+	public static PropertiesManager getInstance(FileSystemManager fileSystemManager)
+	{
+		if (singleton == null) {
+			singleton = new PropertiesManager(fileSystemManager);
+		}
+		singleton.setFileSystemManager(fileSystemManager);
+		return singleton;
+	}
+
+	protected PropertiesManager(FileSystemManager fileSystemManager)
+	{
+		this.fileSystemManager = fileSystemManager;
+	}
+
+	private String getDefault(String key)
 	{
 		return defaults.getProperty(key);
 	}
 
-	private static String getDefault(String key, String defaultValue)
+	private String getDefault(String key, String defaultValue)
 	{
 		return defaults.getProperty(key, defaultValue);
 	}
 
-	public static String getApplicationVersion()
+	public String getApplicationVersion()
 	{
 		String key = "app.version";
 		return getValue(key);
 	}
 
-	public static String getModuleVersion()
+	public String getModuleVersion()
 	{
 		loadVersionProperties();
 
@@ -196,22 +224,22 @@ public class PropertiesManager
 		return version.toString();
 	}
 
-	public static String getValueDefinedDefault(String key)
+	public String getValueDefinedDefault(String key)
 	{
 		return getProperties().getProperty(key, getDefault(key));
 	}
 
-	public static String getValueDefinedDefault(String key, String defaultValue)
+	public String getValueDefinedDefault(String key, String defaultValue)
 	{
 		return getProperties().getProperty(key, getDefault(key, defaultValue));
 	}
 
-	public static String getValue(String key)
+	public String getValue(String key)
 	{
 		return getProperties().getProperty(key);
 	}
 
-	public static void removeProperty(String key)
+	public void removeProperty(String key)
 	{
 		Object valueRemoved = getProperties().remove(key);
 		if (valueRemoved != null) {
@@ -227,7 +255,7 @@ public class PropertiesManager
 	 * @param defaultValue
 	 * @return
 	 */
-	public static String getValue(String key, String defaultValue)
+	public String getValue(String key, String defaultValue)
 	{
 		String value = getProperties().getProperty(key, defaultValue);
 		if (value != null) {
@@ -236,13 +264,13 @@ public class PropertiesManager
 		return value;
 	}
 
-	public static void setProperty(String key, String value)
+	public void setProperty(String key, String value)
 	{
 		getProperties().setProperty(key, value);
 		saveProperties();
 	}
 
-	public static Map<String, String> getAllProperties()
+	public Map<String, String> getAllProperties()
 	{
 		Map<String, String> propertyMap = new HashMap<>();
 		for (String key : getProperties().stringPropertyNames()) {
@@ -251,15 +279,62 @@ public class PropertiesManager
 		return propertyMap;
 	}
 
-	private static Properties getProperties()
+	private Properties getProperties()
 	{
 		if (properties == null) {
-			init();
+			initialize();
 		}
 		return properties;
 	}
 
-	private static void init()
+	private void loadVersionProperties()
+	{
+		try (InputStream in = fileSystemManager.getApplicationResourceFile(getVersionFile())) {
+			Properties versionProperties = new Properties();
+			versionProperties.load(in);
+			if (properties == null) {
+				properties = new SortedProperties();
+			}
+			properties.putAll(versionProperties);
+		} catch (IOException e) {
+			throw new OpenStorefrontRuntimeException(e);
+		}
+	}
+
+	private void saveProperties()
+	{
+		LOCK.lock();
+		String propertiesFilename = fileSystemManager.getConfig(getPropertiesFile()).getPath();
+		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(propertiesFilename))) {
+			properties.store(bout, "Open Storefront Properties");
+		} catch (IOException e) {
+			throw new OpenStorefrontRuntimeException(e);
+		} finally {
+			LOCK.unlock();
+		}
+	}
+
+	/**
+	 * This just return the localhost information (It may not represent the
+	 * external id)
+	 *
+	 * @return
+	 */
+	public String getNodeName()
+	{
+		String nodeName = getValue(PropertiesManager.KEY_NODE_NAME, DEFAULT_NODE_NAME);
+		try {
+			InetAddress inetAddress = InetAddress.getLocalHost();
+			nodeName = nodeName + "-" + inetAddress.toString();
+		} catch (UnknownHostException ex) {
+			LOG.log(Level.WARNING, "Unable to get information on localhost.  Node name may not be unique. This may not be an issue if there is only one node.");
+			LOG.log(Level.FINER, "Unable to get local node information", ex);
+		}
+		return nodeName;
+	}
+
+	@Override
+	public void initialize()
 	{
 		LOCK.lock();
 		try {
@@ -280,7 +355,7 @@ public class PropertiesManager
 			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
 			defaults.put(KEY_MAX_POST_SIZE, "1024"); // 1GB
 
-			String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
+			String propertiesFilename = fileSystemManager.getConfig(getPropertiesFile()).getPath();
 
 			if (Paths.get(propertiesFilename).toFile().createNewFile()) {
 				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", propertiesFilename);
@@ -299,57 +374,7 @@ public class PropertiesManager
 		} finally {
 			LOCK.unlock();
 		}
-	}
 
-	private static void loadVersionProperties()
-	{
-		try (InputStream in = FileSystemManager.getApplicationResourceFile("/filter/version.properties")) {
-			Properties versionProperties = new Properties();
-			versionProperties.load(in);
-			if (properties == null) {
-				properties = new SortedProperties();
-			}
-			properties.putAll(versionProperties);
-		} catch (IOException e) {
-			throw new OpenStorefrontRuntimeException(e);
-		}
-	}
-
-	private static void saveProperties()
-	{
-		LOCK.lock();
-		String propertiesFilename = FileSystemManager.getConfig("openstorefront.properties").getPath();
-		try (BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(propertiesFilename))) {
-			properties.store(bout, "Open Storefront Properties");
-		} catch (IOException e) {
-			throw new OpenStorefrontRuntimeException(e);
-		} finally {
-			LOCK.unlock();
-		}
-	}
-
-	/**
-	 * This just return the localhost information (It may not represent the
-	 * external id)
-	 *
-	 * @return
-	 */
-	public static String getNodeName()
-	{
-		String nodeName = PropertiesManager.getValue(PropertiesManager.KEY_NODE_NAME, "PrimaryNode");
-		try {
-			InetAddress inetAddress = InetAddress.getLocalHost();
-			nodeName = nodeName + "-" + inetAddress.toString();
-		} catch (UnknownHostException ex) {
-			LOG.log(Level.WARNING, "Unable to get information on localhost.  Node name may not be unique. This may not be an issue if there is only one node.");
-		}
-		return nodeName;
-	}
-
-	@Override
-	public void initialize()
-	{
-		PropertiesManager.init();
 		started.set(true);
 	}
 
@@ -363,6 +388,31 @@ public class PropertiesManager
 	public boolean isStarted()
 	{
 		return started.get();
+	}
+
+	public void setFileSystemManager(FileSystemManager fileSystemManager)
+	{
+		this.fileSystemManager = fileSystemManager;
+	}
+
+	public String getPropertiesFile()
+	{
+		return propertiesFile;
+	}
+
+	public void setPropertiesFile(String propertiesFile)
+	{
+		this.propertiesFile = propertiesFile;
+	}
+
+	public String getVersionFile()
+	{
+		return versionFile;
+	}
+
+	public void setVersionFile(String versionFile)
+	{
+		this.versionFile = versionFile;
 	}
 
 }

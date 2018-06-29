@@ -48,13 +48,13 @@ public class LDAPManager
 	{
 		LdapClient ldapClient = new LdapClient();
 
-		ldapClient.setUrl(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_URL));
-		ldapClient.setDnTemplate(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_USER_DN_TEMPLATE));
-		ldapClient.setSaslRealm(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_SASL_REALM));
-		ldapClient.setAuthMechansism(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_AUTHM, "SIMPLE"));
-		ldapClient.setBindDN(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_BIND_DN));
-		ldapClient.setCredentials(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_CREDENTIALS));
-		ldapClient.setContextRoot(PropertiesManager.getValue(PropertiesManager.KEY_LDAP_MANAGER_CONTEXT_ROOT));
+		ldapClient.setUrl(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_URL));
+		ldapClient.setDnTemplate(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_USER_DN_TEMPLATE));
+		ldapClient.setSaslRealm(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_SASL_REALM));
+		ldapClient.setAuthMechansism(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_AUTHM, "SIMPLE"));
+		ldapClient.setBindDN(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_BIND_DN));
+		ldapClient.setCredentials(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_CREDENTIALS));
+		ldapClient.setContextRoot(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LDAP_MANAGER_CONTEXT_ROOT));
 
 		return ldapClient;
 	}

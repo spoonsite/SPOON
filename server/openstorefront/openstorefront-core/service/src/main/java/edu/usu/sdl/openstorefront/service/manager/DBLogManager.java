@@ -40,14 +40,14 @@ public class DBLogManager
 	public static long getMaxLogEntries()
 	{
 		long max;
-		String maxRecords = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_DBLOG_MAX_RECORD);
+		String maxRecords = PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_DBLOG_MAX_RECORD);
 		max = Convert.toLong(maxRecords);
 		return max;
 	}
 
 	public static void init()
 	{
-		String useDBLogger = PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_DBLOG_ON);
+		String useDBLogger = PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_DBLOG_ON);
 		if (Convert.toBoolean(useDBLogger)) {
 			log.log(Level.CONFIG, "Using DB Logger");
 

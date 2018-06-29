@@ -1126,7 +1126,6 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 			
 		];					
 		
-		designerPanel.allComponents = [];
 		designerPanel.allComponents = layoutComponents.concat(availableComponents);
 		designerPanel.allComponents.sort(function(a, b){
 			return a.name.localeCompare(b.name);

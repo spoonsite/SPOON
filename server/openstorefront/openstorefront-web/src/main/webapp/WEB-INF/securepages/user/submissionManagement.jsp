@@ -35,6 +35,7 @@
 				
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
+			Ext.require('OSF.customSubmission.SubmissionFormFullControl');			
 
 			Ext.onReady(function () {
 				
@@ -197,6 +198,11 @@
 								dateFormat: 'c'
 							},
 							{
+								name: 'updateDts',
+								type:	'date',
+								dateFormat: 'c'
+							},							
+							{
 								name: 'submitApproveDts',
 								type:	'date',
 								dateFormat: 'c',
@@ -215,7 +221,20 @@
 						}
 					},
 					columns: [
-						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200 },
+						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200, 
+							renderer: function(value, metaData, record) {
+								var fullName = '';
+								
+								if (record.get('submissionOriginalComponentId')) {
+									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Change Request)';
+								} else if (record.get('userSubmissionId')) {
+									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Submission)';
+								} else {
+									fullName = value;
+								}
+								return fullName;
+							}
+						},
 						{ text: 'Description', dataIndex: 'description', flex: 2, minWidth: 250,
 						 renderer: function(value){
 							return Ext.util.Format.stripTags(value);
@@ -235,6 +254,7 @@
 									text = 'Pending';
 									metaData.tdCls = 'alert-warning';
 								} else if (value === 'N') {
+									metaData.tdCls = 'alert-danger';
 									text = 'Not Submitted';
 								}
 								return text;
@@ -243,7 +263,8 @@
 						{ text: 'Submit/Approve Date', align: 'center', dataIndex: 'submitApproveDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Approval Email', dataIndex: 'notifyOfApprovalEmail', width: 200, sortable: false },
 						{ text: 'Pending Change', align: 'center', dataIndex: 'statusOfPendingChange', width: 150, sortable: false },
-						{ text: 'Pending Change Submit Date', align: 'center', dataIndex: 'pendingChangeSubmitDts', width: 250, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true, sortable: false }
+						{ text: 'Pending Change Submit Date', align: 'center', dataIndex: 'pendingChangeSubmitDts', width: 250, xtype: 'datecolumn', format:'m/d/y H:i:s', hidden: true, sortable: false },
+						{ text: 'Last Update Date', align: 'center', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
 					dockedItems: [
 						{
@@ -264,15 +285,15 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'New Submission',									
+									text: 'New Submission',
+									itemId: 'newSubmission',
 									scale: 'medium',
 									autoEl: {
 										"data-test": "newSubmissionBtn"
 									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',									
 									handler: function () {
-										Ext.getCmp('submissionWindow').show();
-										Ext.getCmp('submissionPanel').resetSubmission();
+										actionNewSubmission();
 									}
 								},
 								{
@@ -284,8 +305,14 @@
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-										Ext.getCmp('submissionWindow').show();
-										Ext.getCmp('submissionPanel').editSubmission(componentId);
+										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
+										
+										if (record.get('userSubmissionId')) {										
+											loadSubmissionForm(record.get('componentType'), record);
+										} else {
+											editExistingEntry(componentId);
+										}
+										
 									}
 								},
 								{
@@ -301,16 +328,10 @@
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
 										
-										if (record.get('statusOfPendingChange')) {		
-											Ext.getCmp('submissionGrid').setLoading(true);
-											Ext.getCmp('changeRequestWindow').editChangeRequest(record.get('pendingChangeComponentId'), function(){
-												Ext.getCmp('submissionGrid').setLoading(false);
-											});
-										} else {
-											Ext.getCmp('submissionGrid').setLoading("Creating Change Request...");
-											Ext.getCmp('changeRequestWindow').newChangeRequest(componentId, function(){
-												Ext.getCmp('submissionGrid').setLoading(false);
-											}, true);
+										if (record.get('pendingChangeComponentId')) {
+											editChangeRequest(record.get('pendingChangeComponentId'));
+										} else {									
+											createChangeRequest(componentId);
 										}
 									}
 								},								
@@ -469,6 +490,7 @@
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
+										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
 										Ext.Msg.show({
 											title:'Delete?',
 											message: 'Are sure you want to delete: ' + name + '?',
@@ -477,16 +499,30 @@
 											fn: function(btn) {
 												if (btn === 'yes') {
 													Ext.getCmp('submissionGrid').setLoading('Removing...');
-													Ext.Ajax.request({
-														url: 'api/v1/resource/componentsubmissions/' + componentId + '/inactivate',
-														method: 'PUT',
-														callback: function(){
-															Ext.getCmp('submissionGrid').setLoading(false);
-														},
-														success: function(response, opts) {
-															actionRefreshSubmission();
-														}
-													});	
+													if (record.get('userSubmissionId')) {
+														Ext.Ajax.request({
+															url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId'),
+															method: 'DELETE',
+															callback: function(){
+																Ext.getCmp('submissionGrid').setLoading(false);
+															},
+															success: function(response, opts) {
+																actionRefreshSubmission();
+															}
+														});	
+													} else {
+													
+														Ext.Ajax.request({
+															url: 'api/v1/resource/componentsubmissions/' + componentId + '/inactivate',
+															method: 'PUT',
+															callback: function(){
+																Ext.getCmp('submissionGrid').setLoading(false);
+															},
+															success: function(response, opts) {
+																actionRefreshSubmission();
+															}
+														});	
+													}
 												} 
 											}
 										});
@@ -558,6 +594,10 @@
 									tools.getComponent('tbRemoveChangeRequest').setHidden(false);
 								}
 								
+								if (record.get('userSubmissionId')) {
+									tools.getComponent('options').setDisabled(true);
+								}
+								
 							} else {
 								tools.getComponent('tbEdit').setDisabled(true);
 								tools.getComponent('options').setDisabled(true);							
@@ -576,6 +616,138 @@
 				
 				addComponentToMainViewPort(submissionGrid);
 				
+				//newSubmission
+				var availableSubmissions = [];
+				var loadAvailableSubmissionForms = function() {					
+	
+					submissionGrid.setLoading(true);
+					Ext.Ajax.request({
+						url: 'api/v1/resource/componenttypes/nested',
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var componentTypeRoot = Ext.decode(response.responseText);
+
+							var flattenComponentTypes = function(root, indent) {
+								if (root.componentType) {
+
+									if (root.componentType.allowOnSubmission) {
+										availableSubmissions.push({
+											componentType: root.componentType.componentType,											
+											label: root.componentType.label,
+											description: root.componentType.description,
+											iconUrl: root.componentType.iconUrl,
+											indent: indent
+										});
+									}
+								}
+
+								root.children = root.children.sort(function(a, b){
+									return a.componentType.label.toLowerCase().localeCompare(b.componentType.label.toLowerCase());
+								});										
+								Ext.Array.each(root.children, function(child){											
+									flattenComponentTypes(child, (indent + 10));
+								});
+							};
+							flattenComponentTypes(componentTypeRoot, 0);
+
+						}
+					});	
+				};
+				loadAvailableSubmissionForms();
+								
+				var actionNewSubmission = function() {
+					
+					var entryTypeSelectWin = Ext.create('Ext.window.Window', {
+						title: 'Select Entry Type Form',
+						modal: true,
+						scrollable: true,
+						closeAction: 'destroy',					
+						width: '65%',
+						minWidth: 400,
+						height: '50%',
+						minHeight: 300,
+						layout: 'fit',
+						bodyStyle: 'padding: 20px;',
+						items: [
+							{
+								xtype: 'dataview',
+								itemId: 'dataview',
+								store: {								
+								},
+								itemSelector: 'div.entry-type',
+								emptyText: 'No Submission Forms available',
+								selectedItemCls: 'entry-type-select',
+								tpl: new Ext.XTemplate(
+									'<tpl for=".">',	
+									'<div style="width: 100%; margin-bottom: 10px; padding-left: {indent}px;" class="entry-type entry-type-selector">',
+									'	<table style="width: 100%;">',
+									'		<tr><tpl if="iconUrl"><td><img scr="{iconUrl}"></td></tpl>',
+									'			<td>',
+									'				<h1>{label}</h1>',
+									'				{description}',
+									'				<hr>',
+									'			</td>',
+									'		</tr>',	
+									'	</table>',
+									'</div>',
+									'</tpl>'		
+								),
+								selectionModel: {
+									toggleOnClick: true
+								},
+								listeners: {
+									itemclick: function(view, record, node, index, e, opts) {
+										entryTypeSelectWin.submissionTemplateId = record.get('submissionTemplateId');
+										entryTypeSelectWin.componentType = record.get('componentType');										
+									}
+								}
+							}
+						],
+						dockedItems: [
+							{
+								xtype: 'toolbar',
+								dock: 'bottom',
+								items: [
+									{
+										text: 'Create',
+										iconCls: 'fa fa-2x fa-plus icon-vertical-correction icon-button-color-save',
+										scale: 'medium',
+										handler: function() {											
+											loadSubmissionForm(entryTypeSelectWin.componentType);											
+											entryTypeSelectWin.close();
+										}										
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Cancel',
+										iconCls: 'fa fa-2x fa-close icon-vertical-correction icon-button-color-warning',
+										scale: 'medium',
+										handler: function() {
+											entryTypeSelectWin.close();
+										}										
+									}
+								]
+							}
+						]						
+						
+					});
+					entryTypeSelectWin.show();		
+					entryTypeSelectWin.queryById('dataview').getStore().loadData(availableSubmissions);
+					if (availableSubmissions.length > 0) {
+						entryTypeSelectWin.queryById('dataview').getSelectionModel().select(0);
+						var typeRecord = entryTypeSelectWin.queryById('dataview').getStore().getAt(0);
+						entryTypeSelectWin.submissionTemplateId = typeRecord.get('submissionTemplateId');
+						entryTypeSelectWin.componentType = typeRecord.get('componentType');	
+					}
+					
+				};			
+								
+
+				
 				var actionRefreshSubmission = function(){
 					Ext.getCmp('submissionGrid').getStore().load();
 				};
@@ -591,6 +763,138 @@
 				CoreService.userservice.getCurrentUser().then(function(user){
 					currentUser = user;
 				});
+				
+				var createChangeRequest = function(componentId) {
+		
+					submissionGrid.setLoading('Creating change request...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + componentId + '/changerequestforsubmission',
+						method: 'POST',
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var userSubmission = Ext.decode(response.responseText);
+														
+							loadSubmissionForm(userSubmission.componentType, null, userSubmission);
+							actionRefreshSubmission();
+						}
+					});
+		
+				};
+				
+				var editChangeRequest = function(componentId) {
+		
+					submissionGrid.setLoading('Editing change request...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + componentId + '/editchangerequest',
+						method: 'POST',
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var userSubmission = Ext.decode(response.responseText);
+														
+							loadSubmissionForm(userSubmission.componentType, null, userSubmission);
+							actionRefreshSubmission();
+						}
+					});
+		
+				};		
+				
+				var editExistingEntry = function(componentId) {
+					
+					submissionGrid.setLoading('Loading Submission...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + componentId + '/usersubmission',
+						method: 'POST',
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var userSubmission = Ext.decode(response.responseText);
+														
+							loadSubmissionForm(userSubmission.componentType, null, userSubmission);
+							actionRefreshSubmission();
+						}
+					});
+					
+				};
+				
+				var loadSubmissionForm = function(componentType, record, userSubmissionExisting) {
+						
+					submissionGrid.setLoading('Loading Submission Form...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/submissiontemplates/componenttype/' + componentType,
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var template = Ext.decode(response.responseText);
+
+							// reset the entryType so it uses the record's entry type (not the entry type of the template)
+							// Since the template entry type can be blank
+							template.entryType = componentType;
+
+							var submissionWin = Ext.create('Ext.window.Window', {
+								title: 'Submission',
+								layout: 'fit',
+								modal: true,
+								closeAction: 'destroy',
+								width: '80%',
+								height: '80%',
+								maximizable: true,									
+								items: [
+									{
+										xtype: 'osf-customSubmission-SubmissionformFullControl',
+										itemId: 'controlForm',
+										finishInitialSave: function() {
+											actionRefreshSubmission();
+										},
+										submissionSuccess: function() {
+											actionRefreshSubmission();
+											submissionWin.skipSave = true;
+											submissionWin.close();
+										}
+									}
+								],
+								listeners: {
+									beforeclose: function(panel, opts) {
+										var form = panel.queryById('submissionForm');	
+										if (form.userSubmission && !submissionWin.skipSave) {
+											panel.queryById('controlForm').saveSubmission();
+										}
+									}
+								}
+							});
+							submissionWin.show();
+
+							var finishLoadingForm = function(userSubmission) {
+								submissionWin.queryById('controlForm').load(template, componentType, userSubmission, true);					
+							};
+
+							if (record) {
+
+								//load user submission
+								submissionWin.setLoading(true);
+								Ext.Ajax.request({
+									url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId'),
+									callback: function(){
+										submissionWin.setLoading(false);
+									},
+									success: function(response, opt) {
+										var userSubmission = Ext.decode(response.responseText);
+										finishLoadingForm(userSubmission);
+									}
+								});
+							} else {									
+								finishLoadingForm(userSubmissionExisting);
+							}								
+
+						}
+					});
+					
+				};				
 				
 			});
 

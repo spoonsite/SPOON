@@ -24,17 +24,14 @@ import javax.validation.constraints.NotNull;
  */
 public class NewAttributeCode
 {
+
 	@ConsumeField
 	@NotNull
 	private String attributeCodeLabel;
-	
+
 	@ConsumeField
 	@NotNull
 	private String attributeType;
-
-	public NewAttributeCode()
-	{
-	}
 
 	public String getAttributeCodeLabel()
 	{
@@ -55,5 +52,5 @@ public class NewAttributeCode
 	{
 		this.attributeType = attributeType;
 	}
-	
+
 }

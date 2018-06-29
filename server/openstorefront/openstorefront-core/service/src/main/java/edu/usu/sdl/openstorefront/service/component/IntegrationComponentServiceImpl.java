@@ -252,10 +252,10 @@ public class IntegrationComponentServiceImpl
 			boolean run = true;
 			if (RunStatus.WORKING.equals(componentIntegration.getStatus())) {
 				//check for override
-				String overrideTime = PropertiesManager.getValue(PropertiesManager.KEY_JOB_WORKING_STATE_OVERRIDE, "30");
+				String overrideTime = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JOB_WORKING_STATE_OVERRIDE, "30");
 				if (componentIntegration.getLastStartTime() != null) {
 					LocalDateTime maxLocalDateTime = LocalDateTime.ofInstant(componentIntegration.getLastStartTime().toInstant(), ZoneId.systemDefault());
-					maxLocalDateTime.plusMinutes(Convert.toLong(overrideTime));
+					maxLocalDateTime = maxLocalDateTime.plusMinutes(Convert.toLong(overrideTime));
 					if (maxLocalDateTime.compareTo(LocalDateTime.now()) <= 0) {
 						LOG.log(Level.FINE, "Overriding the working state...assume it was stuck.");
 						run = true;

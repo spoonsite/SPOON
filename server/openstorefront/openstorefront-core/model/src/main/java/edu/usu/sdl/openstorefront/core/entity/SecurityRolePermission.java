@@ -33,16 +33,17 @@ import javax.validation.constraints.NotNull;
 public class SecurityRolePermission
 		implements Serializable
 {
-	
+
 	@NotNull
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = SecurityPermission.class)
 	@FK(SecurityPermission.class)
 	private String permission;
-	
+
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SecurityRolePermission()
 	{
 	}

@@ -26,7 +26,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -41,19 +43,20 @@ public class FileSystemManager
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(FileSystemManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(FileSystemManager.class.getName());
 
-	public static final String MAIN_DIR = System.getProperty("application.datadir", "/var/openstorefront");
-	public static final String MAIN_PERM_DIR = MAIN_DIR + "/perm";
-	public static final String MAIN_TEMP_DIR = MAIN_DIR + "/temp";
+	public static final String MAIN_PERM_DIR = "/perm";
+	public static final String MAIN_TEMP_DIR = "/temp";
+
 	public static final String SYSTEM_TEMP_DIR = System.getProperty("java.io.tmpdir");
-	public static final String CONFIG_DIR = MAIN_DIR + "/config";
-	public static final String IMPORT_DIR = MAIN_DIR + "/import";
-	public static final String IMPORT_HISTORY_DIR = MAIN_DIR + "/import/history";
-	public static final String IMPORT_LOOKUP_DIR = MAIN_DIR + "/import/lookup";
-	public static final String IMPORT_ARTICLE_DIR = MAIN_DIR + "/import/article";
-	public static final String IMPORT_HIGHLIGHT_DIR = MAIN_DIR + "/import/highlights";
-	public static final String IMPORT_COMPONENT_DIR = MAIN_DIR + "/import/component";
+
+	public static final String CONFIG_DIR = "/config";
+	public static final String IMPORT_DIR = "/import";
+	public static final String IMPORT_HISTORY_DIR = "/import/history";
+	public static final String IMPORT_LOOKUP_DIR = "/import/lookup";
+	public static final String IMPORT_ARTICLE_DIR = "/import/article";
+	public static final String IMPORT_HIGHLIGHT_DIR = "/import/highlights";
+	public static final String IMPORT_COMPONENT_DIR = "/import/component";
 	public static final String ARTICLE_DIR = MAIN_PERM_DIR + "/article";
 	public static final String MEDIA_DIR = MAIN_PERM_DIR + "/media";
 	public static final String ATTACHMENT_DIR = MAIN_PERM_DIR + "/attachment";
@@ -69,17 +72,37 @@ public class FileSystemManager
 	public static final String COMPONENT_VERSION_DIR = MAIN_PERM_DIR + "/componentversion";
 	public static final String PLUGIN_UNINSTALLED_DIR = MAIN_PERM_DIR + "/plugins/uninstalled";
 	public static final String PLUGIN_FAILED_DIR = MAIN_PERM_DIR + "/plugins/failed";
-	public static final String DB_DIR = MAIN_DIR + "/db";
-
-	private static AtomicBoolean started = new AtomicBoolean(false);
+	public static final String DB_DIR = "/db";
 
 	private static final int BUFFER_SIZE = 8192;
 
-	public static List<String> getTopLevelDirectories(Set<String> exclude)
+	private AtomicBoolean started = new AtomicBoolean(false);
+	private String baseDirectory;
+
+	protected static FileSystemManager singleton = null;
+
+	public static FileSystemManager getInstance()
 	{
+		if (singleton == null) {
+			singleton = new FileSystemManager();
+		}
+		return singleton;
+	}
+
+	protected FileSystemManager()
+	{
+		setBaseDirectory(System.getProperty("application.datadir", "/var/openstorefront"));
+	}
+
+	public List<String> getTopLevelDirectories(Set<String> exclude)
+	{
+		if (exclude == null) {
+			exclude = new HashSet<>();
+		}
+
 		List<String> directories = new ArrayList<>();
 
-		File mainDir = new File(MAIN_DIR);
+		File mainDir = new File(getBaseDirectory());
 		File files[] = mainDir.listFiles();
 		if (files != null) {
 			for (File file : files) {
@@ -91,53 +114,71 @@ public class FileSystemManager
 				}
 			}
 		}
+		directories.sort(null);
 		return directories;
 	}
 
-	public static File getDir(String directory)
+	/**
+	 * This get the relative path and create directories as needed
+	 *
+	 * @param directory
+	 * @return
+	 */
+	public File getDir(String directory)
 	{
-		File dir = new File(directory);
-		if (dir.mkdirs()) {
-			log.log(Level.FINEST, "Not all directories were created. Highly likely directories already exist.  If not, Check permission and Disk Space");
+		Objects.requireNonNull(directory);
+
+		File dir;
+		if (!SYSTEM_TEMP_DIR.equals(directory)) {
+			dir = new File(getBaseDirectory() + directory);
+			if (dir.mkdirs()) {
+				LOG.log(Level.FINEST, "Not all directories were created. Highly likely directories already exist.  If not, Check permission and Disk Space");
+			}
+		} else {
+			dir = new File(directory);
 		}
 		return dir;
 	}
 
-	public static File getConfig(String configFilename)
+	public File getConfig(String configFilename)
 	{
+		Objects.requireNonNull(configFilename);
 		return getFileDir(configFilename, CONFIG_DIR, "/");
 	}
 
-	public static File getImportLookup(String configFilename)
+	public File getImportLookup(String configFilename)
 	{
 		return getImportLookup(configFilename, null);
 	}
 
-	public static File getImportLookup(String configFilename, NewFileHandler newFileHandler)
+	public File getImportLookup(String configFilename, NewFileHandler newFileHandler)
 	{
 		return getFileDir(configFilename, IMPORT_LOOKUP_DIR, "/data/lookup/", newFileHandler);
 	}
 
-	private static File getFileDir(String configFilename, String directory, String resourceDir)
+	private File getFileDir(String configFilename, String directory, String resourceDir)
 	{
 		return getFileDir(configFilename, directory, resourceDir, null);
 	}
 
-	private static File getFileDir(String configFilename, String directory, String resourceDir, NewFileHandler newFileHandler)
+	private File getFileDir(String configFilename, String directory, String resourceDir, NewFileHandler newFileHandler)
 	{
 		File configFile = new File(getDir(directory) + "/" + configFilename);
 		if (configFile.exists() == false) {
-			log.log(Level.INFO, MessageFormat.format("Trying to copy: {0}{1} to {2}", new Object[]{resourceDir, configFilename, configFile}));
+			LOG.log(Level.INFO, () -> MessageFormat.format("Trying to copy: {0}{1} to {2}", resourceDir, configFilename, configFile));
 
 			URL resourceUrl = new FileSystemManager().getClass().getResource(resourceDir + configFilename);
 			if (resourceUrl != null) {
 				try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(resourceDir + configFilename)) {
-					Files.copy(in, Paths.get(directory + "/" + configFilename), StandardCopyOption.REPLACE_EXISTING);
+					Files.copy(in, Paths.get(getBaseDirectory() + directory + "/" + configFilename), StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException(ex);
 				}
 			} else {
-				log.log(Level.WARNING, MessageFormat.format("Unable to find resource: {0}{1}", new Object[]{resourceDir, configFilename}));
+				throw new OpenStorefrontRuntimeException(
+						MessageFormat.format("Unable to find resource: {0}{1}", resourceDir, configFilename),
+						"Check name and jar/packaging"
+				);
 			}
 
 			if (newFileHandler != null) {
@@ -156,7 +197,7 @@ public class FileSystemManager
 	 * @return inputstream to resource (It's up to the caller to close the
 	 * stream)
 	 */
-	public static InputStream getApplicationResourceFile(String resource)
+	public InputStream getApplicationResourceFile(String resource)
 	{
 		InputStream in = null;
 		URL resourceUrl = new FileSystemManager().getClass().getResource(resource);
@@ -176,9 +217,12 @@ public class FileSystemManager
 	 * @return
 	 * @throws IOException
 	 */
-	public static long copy(InputStream source, OutputStream sink)
+	public long copy(InputStream source, OutputStream sink)
 			throws IOException
 	{
+		Objects.requireNonNull(source);
+		Objects.requireNonNull(sink);
+
 		long nread = 0L;
 		byte[] buf = new byte[BUFFER_SIZE];
 		int n;
@@ -189,39 +233,40 @@ public class FileSystemManager
 		return nread;
 	}
 
-	public static void init()
-	{
-		//setup Dirs
-		FileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
-		FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
-		FileSystemManager.getDir(FileSystemManager.REPORT_DIR);
-		FileSystemManager.getDir(FileSystemManager.IMPORT_HISTORY_DIR);
-
-		started.set(true);
-	}
-
-	public static void cleanup()
-	{
-		//Nothing to do for now
-		started.set(false);
-	}
-
 	@Override
 	public void initialize()
 	{
-		FileSystemManager.init();
+		FileSystemManager fileSystemManager = FileSystemManager.getInstance();
+
+		//setup Dirs
+		fileSystemManager.getDir(FileSystemManager.MEDIA_DIR);
+		fileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
+		fileSystemManager.getDir(FileSystemManager.REPORT_DIR);
+		fileSystemManager.getDir(FileSystemManager.IMPORT_HISTORY_DIR);
+
+		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
-		FileSystemManager.cleanup();
+		started.set(false);
 	}
 
 	@Override
 	public boolean isStarted()
 	{
 		return started.get();
+	}
+
+	public String getBaseDirectory()
+	{
+		return baseDirectory;
+	}
+
+	public void setBaseDirectory(String baseDirectory)
+	{
+		this.baseDirectory = baseDirectory;
 	}
 
 }

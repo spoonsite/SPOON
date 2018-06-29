@@ -36,7 +36,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10, user-scalable=yes">
 		
 	<%
-		String appVersion = PropertiesManager.getApplicationVersion();		
+		String appVersion = PropertiesManager.getInstance().getApplicationVersion();		
 		request.setAttribute("appVersion", appVersion);
 		
 		Branding brandingView = ServiceProxy.getProxy().getBrandingService().getCurrentBrandingView();
@@ -47,9 +47,9 @@
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());
 		request.setAttribute("admin", SecurityUtil.isEntryAdminUser());
 		
-		request.setAttribute("idleTimeoutMinutes", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEOUT_MINUTES, "-1"));
-		request.setAttribute("idlegraceperiod", PropertiesManager.getValue(PropertiesManager.KEY_UI_IDLETIMEGRACE_MINUTES, "1"));
-		request.setAttribute("enableWebsocket", PropertiesManager.getValue(PropertiesManager.KEY_ENABLE_WEBSOCKETS, "false"));
+		request.setAttribute("idleTimeoutMinutes", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_UI_IDLETIMEOUT_MINUTES, "-1"));
+		request.setAttribute("idlegraceperiod", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_UI_IDLETIMEGRACE_MINUTES, "1"));
+		request.setAttribute("enableWebsocket", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ENABLE_WEBSOCKETS, "false"));
 		
 	%>	
 

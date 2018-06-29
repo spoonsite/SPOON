@@ -24,15 +24,17 @@ import java.util.List;
  * @author dshurtleff
  */
 public class UserWatchWrapper
-	extends ListWrapper
+		extends ListWrapper
 {
+
 	@DataType(UserWatchView.class)
 	private List<UserWatchView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserWatchWrapper()
 	{
 	}
-	
+
 	public List<UserWatchView> getData()
 	{
 		return data;
@@ -42,5 +44,5 @@ public class UserWatchWrapper
 	{
 		this.data = data;
 	}
-	
+
 }

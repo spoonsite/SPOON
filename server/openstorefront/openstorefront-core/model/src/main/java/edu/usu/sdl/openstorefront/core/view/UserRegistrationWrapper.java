@@ -24,11 +24,13 @@ import java.util.List;
  * @author dshurtleff
  */
 public class UserRegistrationWrapper
-	extends ListWrapper
+		extends ListWrapper
 {
+
 	@DataType(UserRegistrationView.class)
 	private List<UserRegistrationView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserRegistrationWrapper()
 	{
 	}
@@ -42,5 +44,5 @@ public class UserRegistrationWrapper
 	{
 		this.data = data;
 	}
-	
+
 }

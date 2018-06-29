@@ -38,6 +38,8 @@ public class ReportView
 		extends Report
 {
 
+	private static final long serialVersionUID = 1L;
+
 	private String reportTypeDescription;
 	private String reportFormatDescription;
 	private String runStatusDescription;
@@ -46,11 +48,12 @@ public class ReportView
 	private boolean noViewAvailable;
 	private String reportViewFormat;
 
-	public ReportView()
+	public static ReportView toReportView(Report report)
 	{
+		return toReportView(report, PropertiesManager.getInstance());
 	}
 
-	private static ReportView toReportView(Report report)
+	public static ReportView toReportView(Report report, PropertiesManager propertiesManager)
 	{
 		ReportView view = new ReportView();
 		try {
@@ -61,12 +64,13 @@ public class ReportView
 		view.setReportTypeDescription(TranslateUtil.translate(ReportType.class, report.getReportType()));
 
 		try {
-			view.setReportLifetimeMax(Integer.parseInt(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)));
+			view.setReportLifetimeMax(Integer.parseInt(propertiesManager.getValueDefinedDefault(PropertiesManager.KEY_REPORT_LIFETIME)));
 		} catch (NumberFormatException e) {
 			//	If the configured report lifetime is invalid, fallback to the default value for the max report lifetime
 			view.setReportLifetimeMax(Integer.parseInt(PropertiesManager.REPORT_HISTORY_DAYS_TO_LIVE));
 		}
 
+		@SuppressWarnings("deprecation")
 		String format = report.getReportFormat();
 		if (StringUtils.isBlank(format)) {
 			for (ReportOutput output : report.getReportOutputs()) {

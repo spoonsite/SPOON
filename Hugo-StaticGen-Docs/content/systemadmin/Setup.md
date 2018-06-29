@@ -727,13 +727,16 @@ should give you a response something like this:
 for example /etc/yum.repos.d/elasticsearch.repo
 
 ```
-[elasticsearch-6.x]
-name=Elasticsearch repository for 6.x packages
-baseurl=https://packages.elastic.co/elasticsearch/6.x/centos
-gpgcheck=1
-gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
-enabled=1
+[elasticsearch-6.x] 
+name=Elasticsearch repository for 6.x packages 
+baseurl=https://artifacts.elastic.co/packages/6.x/yum 
+gpgcheck=1 
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch 
+enabled=1 
+autorefresh=1 
+type=rpm-md 
 ```
+
 3)	yum install elasticsearch
 4)	systemctl daemon-reload
 5)	systemctl enable elasticsearch.service
@@ -814,9 +817,13 @@ should give you a response something like this:
    RedirectMatch ^/$ /openstorefront/
 </VirtualHost>
 ```
+
 4)	If you have SELinux running (which is installed by default on CentOS) then we need the instructions from here (http://sysadminsjourney.com/content/2010/02/01/apache-modproxy-error-13permission-denied-error-rhel/)
 
-    a)	/usr/sbin/setsebool -P httpd_can_network_connect 1
+*It suggested to disable SELinux unless you know what you doing. It can cause a lot of permission issues. (https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/sect-security-enhanced_linux-enabling_and_disabling_selinux-disabling_selinux)*
+
+    a)	/usr/sbin/setsebool -P httpd_can_network_connect 1  
+
     
 5) 	systemctl restart httpd
 

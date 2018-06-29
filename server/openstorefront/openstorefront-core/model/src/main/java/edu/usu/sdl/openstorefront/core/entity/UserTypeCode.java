@@ -28,8 +28,4 @@ public class UserTypeCode
 
 	public static final String END_USER = "USER";
 
-	public UserTypeCode()
-	{
-	}
-
 }

@@ -26,12 +26,9 @@ import java.util.List;
 public class ComponentSimpleWrapper
 		extends ListWrapper
 {
+
 	@DataType(ComponentSimpleAttributeView.class)
 	private List<ComponentSimpleAttributeView> data = new ArrayList<>();
-
-	public ComponentSimpleWrapper()
-	{
-	}
 
 	public List<ComponentSimpleAttributeView> getData()
 	{
@@ -42,5 +39,5 @@ public class ComponentSimpleWrapper
 	{
 		this.data = data;
 	}
-		
+
 }

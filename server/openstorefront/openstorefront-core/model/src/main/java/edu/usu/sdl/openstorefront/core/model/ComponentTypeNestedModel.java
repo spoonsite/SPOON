@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.model;
 
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.view.ComponentTypeView;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,16 +29,22 @@ import java.util.Map;
  * @author dshurtleff
  */
 public class ComponentTypeNestedModel
+		implements Serializable
 {
 
+	private static final long serialVersionUID = 1L;
+
 	private ComponentTypeView componentType;
+
+	//Can't put nest type in api doc/creates serialization loop
 	private List<ComponentTypeNestedModel> children = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTypeNestedModel()
 	{
 	}
 
-	public List<String> getComponentTypeChildren()
+	public List<String> findComponentTypeChildren()
 	{
 		return findChildrenTypes(this, new ArrayList<>());
 	}
@@ -53,7 +60,7 @@ public class ComponentTypeNestedModel
 		}
 
 		List<ComponentTypeNestedModel> childrenLocal = nestedModel.getChildren();
-		if (childrenLocal.size() <= 0) {
+		if (childrenLocal.isEmpty()) {
 			return childrenTypes;
 		}
 
@@ -87,27 +94,38 @@ public class ComponentTypeNestedModel
 				//put on parent
 				componentMap.put(nestedModel.getComponentType().getComponentType(), nestedModel.getComponentType());
 			}
-			for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
-				if (child.getComponentType() != null
-						&& child.getComponentType().getComponentType().equals(componentTypeId)) {
-					componentMap.put(child.getComponentType().getComponentType(), child.getComponentType());
-					found = true;
-					break;
-				}
-			}
+			found = findFirstMatchingChild(nestedModel, componentTypeId, componentMap, found);
 			if (!found) {
-				//check children
-				for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
-					//make sure it is a child
-					if (childOfType(child, componentTypeId)) {
-						Map<String, ComponentType> childMap = findParents(child, componentTypeId);
-						componentMap.putAll(childMap);
-					}
-				}
+				checkRestOfChildren(nestedModel, componentTypeId, componentMap);
 			}
 		}
 
 		return componentMap;
+	}
+
+	private void checkRestOfChildren(ComponentTypeNestedModel nestedModel, String componentTypeId, Map<String, ComponentType> componentMap)
+	{
+		//check children
+		for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
+			//make sure it is a child
+			if (childOfType(child, componentTypeId)) {
+				Map<String, ComponentType> childMap = findParents(child, componentTypeId);
+				componentMap.putAll(childMap);
+			}
+		}
+	}
+
+	private boolean findFirstMatchingChild(ComponentTypeNestedModel nestedModel, String componentTypeId, Map<String, ComponentType> componentMap, boolean found)
+	{
+		for (ComponentTypeNestedModel child : nestedModel.getChildren()) {
+			if (child.getComponentType() != null
+					&& child.getComponentType().getComponentType().equals(componentTypeId)) {
+				componentMap.put(child.getComponentType().getComponentType(), child.getComponentType());
+				found = true;
+				break;
+			}
+		}
+		return found;
 	}
 
 	private boolean childOfType(ComponentTypeNestedModel parent, String componentTypeId)

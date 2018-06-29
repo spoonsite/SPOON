@@ -87,14 +87,14 @@ public class ChecklistQuestionResource
 		ChecklistQuestion checklistEndExample = new ChecklistQuestion();
 		checklistEndExample.setUpdateDts(filterQueryParams.getEnd());
 
-		QueryByExample queryByExample = new QueryByExample(checklistExample);
+		QueryByExample<ChecklistQuestion> queryByExample = new QueryByExample<>(checklistExample);
 
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		SpecialOperatorModel<ChecklistQuestion> specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(checklistStartExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(checklistEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);

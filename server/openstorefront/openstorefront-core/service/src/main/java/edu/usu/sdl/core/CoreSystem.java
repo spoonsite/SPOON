@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.service.io.DefaultTemplateImporter;
 import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
@@ -73,11 +74,11 @@ public class CoreSystem
 
 	//Order is important
 	private static List<Initializable> managers = Arrays.asList(
-			new PropertiesManager(),
-			new OsgiManager(),
-			new FileSystemManager(),
+			PropertiesManager.getInstance(),
+			OsgiManager.getInstance(),
+			FileSystemManager.getInstance(),
 			DBManager.getInstance(),
-			new SearchServerManager(),
+			SearchServerManager.getInstance(),
 			new OSFCacheManager(),
 			new JiraManager(),
 			new ConfluenceManager(),
@@ -90,15 +91,16 @@ public class CoreSystem
 			new LDAPManager(),
 			new HelpImporter(),
 			new DBLogManager(),
+			new DefaultTemplateImporter(),
 			new PluginManager()
 	);
 
 	/**
-	 * Don't throw errors in post Constructs as that put the app server in a bad
-	 * state.
+	 * Don't throw errors in post Constructs as that puts the app server in a
+	 * bad state.
 	 */
 	@PostConstruct
-	public void construnct()
+	public void construct()
 	{
 		//Call init to separately to control timing.
 		LOG.log(Level.FINER, "Core Service constructed");
@@ -143,6 +145,7 @@ public class CoreSystem
 		return startedAllManagers;
 	}
 
+	@SuppressWarnings("squid:S1872")
 	private static boolean appyInits()
 	{
 		boolean allInitsCreated = true;

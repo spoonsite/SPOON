@@ -31,15 +31,23 @@ import java.util.List;
 public class IndexTest
 		extends BaseTestCase
 {
+
 	@Override
 	protected void runInternalTest()
 	{
 		ComponentAll componentAll = getTestComponent();
-	
+
 		results.append("Adding Component Index...<br>");
 		List<Component> componentsToIndex = new ArrayList<>();
 		componentsToIndex.add(componentAll.getComponent());
 		service.getSearchService().indexComponents(componentsToIndex);
+
+		try {
+			//Delay make sure index is ready
+			Thread.sleep(200);
+		} catch (InterruptedException ex) {
+			//ignore 
+		}
 
 		results.append("Searching Component Index...<br>");
 		SearchQuery query = new SearchQuery();

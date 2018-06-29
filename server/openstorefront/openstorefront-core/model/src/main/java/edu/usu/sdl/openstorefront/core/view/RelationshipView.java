@@ -21,14 +21,15 @@ package edu.usu.sdl.openstorefront.core.view;
  */
 public class RelationshipView
 {
+
 	public static final String ATTRIBUTE_TYPE_RELATION = "ATTRIBUTE_TYPE";
 	public static final String ATTRIBUTE_CODE_RELATION = "ATTRIBUTE_CODE";
-	
+
 	public static final String ENTITY_TYPE_COMPONENT = "component";
 	public static final String ENTITY_TYPE_ATTRIBUTE = "attribute";
 	public static final String ENTITY_TYPE_TAG = "tag";
 	public static final String ENTITY_TYPE_ORGANIZATION = "organization";
-	
+
 	private String key;
 	private String name;
 	private String entityType;
@@ -37,10 +38,6 @@ public class RelationshipView
 	private String targetKey;
 	private String targetName;
 	private String targetEntityType;
-
-	public RelationshipView()
-	{
-	}
 
 	public String getKey()
 	{
@@ -121,5 +118,5 @@ public class RelationshipView
 	{
 		this.relationshipLabel = relationshipLabel;
 	}
-	
+
 }

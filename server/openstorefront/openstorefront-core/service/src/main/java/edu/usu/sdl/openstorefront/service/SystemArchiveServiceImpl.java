@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveError;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -55,11 +56,7 @@ public class SystemArchiveServiceImpl
 			if (RunStatus.COMPLETE.equals(archive.getRunStatus())
 					|| RunStatus.ERROR.equals(archive.getRunStatus())) {
 				Path path = archive.pathToArchive();
-				if (path != null) {
-					if (path.toFile().exists()) {
-						path.toFile().delete();
-					}
-				}
+				deleteArchiveRemoveFile(path);
 				SystemArchiveError systemArchiveError = new SystemArchiveError();
 				systemArchiveError.setArchiveId(archiveId);
 				persistenceService.deleteByExample(systemArchiveError);
@@ -69,6 +66,15 @@ public class SystemArchiveServiceImpl
 				throw new OpenStorefrontRuntimeException("Unable delete system archive that is currently in process.",
 						"Check status on archive.  If the archive is stuck (meaning application was stopped in the middle. Wait for the system to auto-correct after processing timeout has occured)."
 				);
+			}
+		}
+	}
+
+	public void deleteArchiveRemoveFile(Path path)
+	{
+		if (path != null && path.toFile().exists()) {
+			if (!path.toFile().delete()) {
+				LOG.log(Level.WARNING, () -> MessageFormat.format("Unable to delete archive from path: {0}", path));
 			}
 		}
 	}

@@ -212,4 +212,11 @@ public interface Service
 	 */
 	public FaqService getFaqService();
 
+	/**
+	 * Handles submission form services
+	 *
+	 * @return
+	 */
+	public SubmissionFormService getSubmissionFormService();
+
 }

@@ -31,10 +31,6 @@ public class ComponentLookupModel
 	private String componentType;
 	private String componentTypeLabel;
 
-	public ComponentLookupModel()
-	{
-	}
-
 	public static ComponentLookupModel toView(Component component)
 	{
 		ComponentLookupModel view = new ComponentLookupModel();

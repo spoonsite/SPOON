@@ -19,15 +19,15 @@ Ext.require('OSF.form.MultipleAttributes');
 Ext.define('OSF.form.Attributes', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Attributes',
-
 	layout: 'fit',
+	
 	initComponent: function () {
 
 		this.callParent();
 
 		var attributePanel = this;
 
-		attributePanel.loadComponentAttributes = function (status) {
+		attributePanel.loadComponentAttributes = function (status) { 
 			if (!status) {
 				var tools = attributePanel.attributeGrid.getComponent('tools');
 				status = tools.getComponent('attributeFilterActiveStatus').getValue();
@@ -70,6 +70,9 @@ Ext.define('OSF.form.Attributes', {
 
 		attributePanel.attributeGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					"type",
@@ -92,6 +95,8 @@ Ext.define('OSF.form.Attributes', {
 			columns: [
 				{text: 'Attribute Type', dataIndex: 'typeDescription', width: 200},
 				{text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200},
+				{text: 'Comment', dataIndex: 'comment', flex: 2, minWidth: 200},
+				{text: 'Private Flag', dataIndex: 'privateFlag', width: 150},
 				{text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 			],
 			listeners: {
@@ -99,9 +104,11 @@ Ext.define('OSF.form.Attributes', {
 					var fullgrid = attributePanel.attributeGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
+						fullgrid.down('toolbar').getComponent('edit').setDisabled(false);						
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
 					} else {
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
+						fullgrid.down('toolbar').getComponent('edit').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
 					}
 				}
@@ -109,6 +116,7 @@ Ext.define('OSF.form.Attributes', {
 			dockedItems: [
 				{
 					xtype: 'form',
+					itemId: 'form',
 					title: 'Add Attribute',
 					collapsible: true,
 					titleCollapse: true,
@@ -434,7 +442,20 @@ Ext.define('OSF.form.Attributes', {
 									"label"
 								]
 							})
-						}
+						},						
+						{
+							xtype: 'textarea',
+							name: 'comment',
+							fieldLabel: 'Comment',
+							labelWidth: 150,
+							maxLength: 4096
+						},
+						{
+							xtype: 'checkbox',
+							name: 'privateFlag',
+							margin: '0 0 0 155',							
+							boxLabel: '<b>Private Flag</b>'
+						}						
 					]
 				},
 				{
@@ -470,13 +491,28 @@ Ext.define('OSF.form.Attributes', {
 							}
 						},
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbseparator',
+						},
+						{
+							text: 'Edit',
+							itemId: 'edit',
+							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+							disabled: true,
+							handler: function () {
+								var record = attributePanel.attributeGrid.getSelection()[0];
+								actionEdit(record);
+							}
+						},						
+						{
+							xtype: 'tbseparator',
+							hidden: attributePanel.hideToggleStatus || false
 						},
 						{
 							text: 'Toggle Status',
 							itemId: 'toggleStatusBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 							disabled: true,
+							hidden: attributePanel.hideToggleStatus || false,
 							handler: function () {
 								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, null, function () {
 									attributePanel.loadComponentAttributes();
@@ -501,10 +537,18 @@ Ext.define('OSF.form.Attributes', {
 				}
 			]
 		});
+		
+		var actionEdit = function(record) {
+			record.set({
+				attributeType: record.get('type'),
+				attributeCode: record.get('code')				
+			});			
+			attributePanel.attributeGrid.queryById('form').loadRecord(record);			
+		};
 
 		attributePanel.add(attributePanel.attributeGrid);
 	},
-	loadData: function (evaluationId, componentId, data, opts) {
+	loadData: function (evaluationId, componentId, data, opts, callback) {
 		//just load option (filter out required)
 		var attributePanel = this;
 
@@ -539,8 +583,11 @@ Ext.define('OSF.form.Attributes', {
 			}
 
 		});
+
+		if(callback){
+			callback();
+		}
 	}
 
 });
-
 

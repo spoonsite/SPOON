@@ -32,11 +32,9 @@ public class EvaluationChecklistRecommendationView
 		extends EvaluationChecklistRecommendation
 {
 
-	private String recommendationTypeDescription;
+	private static final long serialVersionUID = 1L;
 
-	public EvaluationChecklistRecommendationView()
-	{
-	}
+	private String recommendationTypeDescription;
 
 	public static EvaluationChecklistRecommendationView toView(EvaluationChecklistRecommendation recommendation)
 	{

@@ -37,6 +37,7 @@ public class ApprovalStatus
 	//this is just for filtering
 	public static final String FILTER_ALL = "ALL";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ApprovalStatus()
 	{
 	}

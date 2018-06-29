@@ -333,8 +333,12 @@ limitations under the License.
 				<table class="quickView-table" border="1">
 					<tpl for="vitals">
 						<tr class="quickView-table">
-							<td class="quickView-tableall" style="width: 30%;"><b>{label}</b></td>
-							<td class="quickView-tableall">{value}</td>
+							<td class="quickView-tableall" style="width: 30%;"><b>{label}</b>
+								<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>
+							</td>
+							<td class="quickView-tableall"><b>{value}</b>
+								<tpl if="comment"><hr>Comment: {comment}</tpl>
+							</td>
 						</tr>
 					</tpl>
 				</table>

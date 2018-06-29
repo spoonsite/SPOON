@@ -43,10 +43,6 @@ public class ComponentEvaluationSectionView
 	private Boolean notAvailable;
 	private String sectionDescription;
 
-	public ComponentEvaluationSectionView()
-	{
-	}
-
 	public static ComponentEvaluationSectionView toView(ComponentEvaluationSection section)
 	{
 		ComponentEvaluationSectionView view = new ComponentEvaluationSectionView();

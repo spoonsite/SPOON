@@ -30,6 +30,7 @@ public class GeneralMediaWrapper
 	@DataType(GeneralMediaView.class)
 	private List<GeneralMediaView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public GeneralMediaWrapper()
 	{
 	}

@@ -89,7 +89,7 @@ public class ComponentAttributeResource
 			view.setComponentType(service.getComponentService().getComponentTypeForComponent(attributeComponent.getComponentId()));
 			components.add(view);
 		}
-		int totalResults = 0;
+
 		components = components.stream().filter(c -> {
 			boolean keep = true;
 			if (StringUtils.isNotBlank(filterParams.getComponentName())) {
@@ -108,14 +108,9 @@ public class ComponentAttributeResource
 
 			return keep;
 		}).collect(Collectors.toList());
-		totalResults = components.size();
+		int totalResults = components.size();
 		components = filterParams.filter(components);
 
-//		for (ComponentSimpleAttributeView view : components) {
-//			List<ComponentAttribute> attributes = service.getComponentService().getAttributesByComponentId(view.getComponentId());
-//			List<ComponentAttributeView> attributeView = ComponentAttributeView.toViewList(attributes);
-//			view.setAttributes(attributeView);
-//		}
 		simpleWrapper.setData(components);
 		simpleWrapper.setResults(components.size());
 		simpleWrapper.setTotalNumber(totalResults);

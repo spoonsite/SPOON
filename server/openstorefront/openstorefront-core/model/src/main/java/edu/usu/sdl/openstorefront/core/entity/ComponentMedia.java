@@ -115,6 +115,7 @@ public class ComponentMedia
 	@DefaultValue("false")
 	private Boolean iconFlag;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentMedia()
 	{
 	}
@@ -178,7 +179,7 @@ public class ComponentMedia
 	}
 
 	/**
-	 * Get the path to the media on disk. 
+	 * Get the path to the media on disk.
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */

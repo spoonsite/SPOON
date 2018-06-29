@@ -25,12 +25,13 @@ import java.util.List;
  * @author dshurtleff
  */
 public class UserSavedSearchWrapper
-	extends ListWrapper
+		extends ListWrapper
 {
-	
+
 	@DataType(UserSavedSearch.class)
 	private List<UserSavedSearch> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserSavedSearchWrapper()
 	{
 	}

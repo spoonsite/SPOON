@@ -39,7 +39,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -67,12 +66,11 @@ public class LookupTypeResource
 		extends BaseResource
 {
 
-	private static final Logger LOG = Logger.getLogger(LookupTypeResource.class.getName());
-
 	@GET
 	@APIDescription("Get a list of available lookup entities")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
+	@SuppressWarnings("squid:S1872")
 	public List<LookupModel> listEntitiies(
 			@QueryParam("systemTables") Boolean systemTables
 	)
@@ -86,6 +84,7 @@ public class LookupTypeResource
 					boolean add = true;
 
 					if (systemTables != null) {
+						@SuppressWarnings("unchecked")
 						SystemTable systemTable = (SystemTable) entityClass.getAnnotation(SystemTable.class);
 						if (systemTables == false) {
 							if (systemTable != null) {
@@ -100,6 +99,7 @@ public class LookupTypeResource
 						LookupModel lookupModel = new LookupModel();
 
 						lookupModel.setCode(entityClass.getSimpleName());
+						@SuppressWarnings("unchecked")
 						APIDescription aPIDescription = (APIDescription) entityClass.getAnnotation(APIDescription.class);
 						if (aPIDescription != null) {
 							lookupModel.setDescription(aPIDescription.value());
@@ -117,6 +117,7 @@ public class LookupTypeResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(value = GenericLookupEntity.class, actualClassName = "LookupEntity")
 	@Path("/{entity}")
+	@SuppressWarnings("unchecked")
 	public Response getEntityValues(
 			@PathParam("entity")
 			@RequiredParam String entityName,
@@ -150,6 +151,7 @@ public class LookupTypeResource
 	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@Produces("text/csv")
 	@Path("/{entity}/export")
+	@SuppressWarnings("unchecked")
 	public Response exportEntityValues(
 			@PathParam("entity")
 			@RequiredParam String entityName,
@@ -202,6 +204,7 @@ public class LookupTypeResource
 		List<LookupModel> lookupViews = new ArrayList<>();
 		try {
 			Class lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + entityName);
+			@SuppressWarnings("unchecked")
 			List<LookupEntity> lookups = service.getLookupService().findLookup(lookupClass, filterQueryParams.getStatus());
 			lookups.sort(new LookupComparator<>());
 			for (LookupEntity lookupEntity : lookups) {
@@ -260,7 +263,7 @@ public class LookupTypeResource
 			return Response.ok(validationResult.toRestError()).build();
 		}
 		LookupEntity lookupEntityCreated = service.getLookupService().getLookupEnity(entityName, lookupEntity.getCode());
-		if (post) {			
+		if (post) {
 			return Response.created(URI.create("v1/resource/lookuptypes/"
 					+ entityName + "/"
 					+ StringProcessor.urlEncode(lookupEntity.getCode()))).entity(lookupEntityCreated).build();
@@ -289,6 +292,7 @@ public class LookupTypeResource
 		PersistenceService persistenceService = service.getPersistenceService();
 		try {
 			Class lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + entityName);
+			@SuppressWarnings("unchecked")
 			Object value = persistenceService.findById(lookupClass, code);
 			if (value != null) {
 				lookupEntity = (LookupEntity) persistenceService.unwrapProxyObject(value);
@@ -340,6 +344,7 @@ public class LookupTypeResource
 		LookupEntity lookupEntity = null;
 		try {
 			Class lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + entityName);
+			@SuppressWarnings("unchecked")
 			Object value = service.getPersistenceService().findById(lookupClass, code);
 			if (value != null) {
 				lookupEntity = (LookupEntity) service.getPersistenceService().unwrapProxyObject(value);
@@ -359,6 +364,7 @@ public class LookupTypeResource
 	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
 	@APIDescription("Remove a code from the entity")
 	@Path("/{entity}/{code}")
+	@SuppressWarnings("unchecked")
 	public void deleteEntityValue(
 			@PathParam("entity")
 			@RequiredParam String entityName,

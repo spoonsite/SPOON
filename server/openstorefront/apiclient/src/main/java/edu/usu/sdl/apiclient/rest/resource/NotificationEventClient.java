@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.apiclient.rest.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.apiclient.AbstractService;
+import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -25,11 +28,24 @@ import javax.ws.rs.core.Response;
  * @author ccummings
  */
 public class NotificationEventClient
+		extends AbstractService
 {
+
+	String basePath = "api/v1/resource/notificationevent";
+
+	public NotificationEventClient(ClientAPI client)
+	{
+		super(client);
+	}
+	
+	public NotificationEventClient()
+	{
+		this(new ClientAPI(new ObjectMapper()));
+	}
 
 	public void clearUserNotificationEvents()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		client.httpDelete(basePath + "/currentuser", null);
 	}
 
 	public void deleteNewEvent(String eventId, String username)

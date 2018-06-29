@@ -47,7 +47,7 @@ public class BrandingAction
 		extends BaseAction
 {
 
-	private static final Logger log = Logger.getLogger(BrandingAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(BrandingAction.class.getName());
 
 	@Validate(required = true, on = "CSS")
 	private String template;
@@ -97,21 +97,21 @@ public class BrandingAction
 		GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
 
 		//restrict to media part of the branding
-		if (!Convert.toBoolean(generalMedia.getAllowInBranding())) {
+		if (generalMedia != null && !Convert.toBoolean(generalMedia.getAllowInBranding())) {
 			generalMedia = null;
-			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is restricted.", name));
+			LOG.log(Level.FINE, MessageFormat.format("General Media with name: {0} is restricted.", name));
 		}
 
 		if (generalMedia == null) {
-			log.log(Level.FINE, MessageFormat.format("General Media with name: {0} is not found or was restricted.", name));
+			LOG.log(Level.FINE, MessageFormat.format("General Media with name: {0} is not found or was restricted.", name));
 			return new StreamingResolution("image/png")
 			{
 
 				@Override
 				protected void stream(HttpServletResponse response) throws Exception
 				{
-					try (InputStream in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE)) {
-						FileSystemManager.copy(in, response.getOutputStream());
+					try (InputStream in = BrandingAction.class.getResourceAsStream(MISSING_IMAGE)) {
+						FileSystemManager.getInstance().copy(in, response.getOutputStream());
 					}
 				}
 
@@ -125,8 +125,8 @@ public class BrandingAction
 			in = new FileInputStream(path.toFile());
 			length = path.toFile().length();
 		} else {
-			log.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
-			in = new FileSystemManager().getClass().getResourceAsStream(MISSING_IMAGE);
+			LOG.log(Level.WARNING, MessageFormat.format("Media not on disk: {0} Check general media record: {1} ", new Object[]{generalMedia.pathToMedia(), generalMedia.getName()}));
+			in = Branding.class.getResourceAsStream(MISSING_IMAGE);
 			length = MISSING_MEDIA_IMAGE_SIZE;
 		}
 

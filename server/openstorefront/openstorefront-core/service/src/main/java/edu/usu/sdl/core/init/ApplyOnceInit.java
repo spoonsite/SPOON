@@ -51,14 +51,14 @@ public abstract class ApplyOnceInit
 	public void applyChanges()
 	{
 		SecurityUtil.initSystemUser();
-		LOG.log(Level.INFO, MessageFormat.format("Checking {0} to make sure it's applied.", appliedKey));
+		LOG.log(Level.INFO, () -> MessageFormat.format("Checking {0} to make sure it is applied.", appliedKey));
 
 		String lastRunString = service.getSystemService().getPropertyValue(appliedKey + "_LASTRUN_DTS");
 		if (StringUtils.isNotBlank(lastRunString)) {
-			LOG.log(Level.INFO, MessageFormat.format("Already Applied {0} on {1}", appliedKey, lastRunString));
+			LOG.log(Level.INFO, () -> MessageFormat.format("Already Applied {0} on {1}", appliedKey, lastRunString));
 		} else {
 			String results = internalApply();
-			LOG.log(Level.INFO, MessageFormat.format("Applied {0} changes", appliedKey));
+			LOG.log(Level.INFO, () -> MessageFormat.format("Applied {0} changes", appliedKey));
 			service.getSystemService().saveProperty(appliedKey + "_LASTRUN_DTS", TimeUtil.dateToString(TimeUtil.currentDate()));
 			service.getSystemService().saveProperty(appliedKey + "_STATUS", results);
 		}

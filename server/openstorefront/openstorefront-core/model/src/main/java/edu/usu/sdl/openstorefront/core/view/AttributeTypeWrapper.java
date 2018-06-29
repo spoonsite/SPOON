@@ -27,6 +27,7 @@ public class AttributeTypeWrapper
 	private List<AttributeTypeAdminView> data;
 	private long totalNumber;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeTypeWrapper()
 	{
 	}

@@ -91,6 +91,7 @@ public class ComponentExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public void exportRecords()
 	{
 		for (SystemArchiveOption option : archive.getArchiveOptions()) {
@@ -164,6 +165,7 @@ public class ComponentExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public void importRecords()
 	{
 
@@ -208,7 +210,7 @@ public class ComponentExporter
 			if (media != null) {
 				for (TFile mediaFile : media) {
 					try {
-						Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+						Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException ex) {
 						LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
 						addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));
@@ -224,7 +226,7 @@ public class ComponentExporter
 			if (resources != null) {
 				for (TFile resourceFile : resources) {
 					try {
-						Files.copy(resourceFile.toPath(), FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+						Files.copy(resourceFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException ex) {
 						LOG.log(Level.WARNING, MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()), ex);
 						addError(MessageFormat.format("Failed to copy resource to path file: {0}", resourceFile.getName()));
@@ -238,6 +240,7 @@ public class ComponentExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public long getTotalRecords()
 	{
 		long records = 0;

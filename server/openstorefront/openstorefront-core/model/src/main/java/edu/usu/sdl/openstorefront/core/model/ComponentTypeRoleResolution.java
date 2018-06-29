@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +23,19 @@ import java.util.List;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ComponentTypeRoleResolution
+		implements Serializable
 {
+
+	private static final long serialVersionUID = 1L;
 
 	private List<String> roles = new ArrayList<>();
 	private String ancestorComponentType;
 	private String ancestorComponentTypeLabel;
 	private boolean cameFromAncestor;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTypeRoleResolution()
 	{
 	}

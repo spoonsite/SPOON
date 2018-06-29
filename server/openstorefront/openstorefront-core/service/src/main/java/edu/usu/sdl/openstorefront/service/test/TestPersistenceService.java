@@ -36,11 +36,11 @@ public class TestPersistenceService implements PersistenceService
 {
 
 	// <editor-fold defaultstate="collapsed" desc="Methods for managing the Test data set">
-	private static Map<Class<?>, Queue<List>> listResultsMap = new HashMap<>();
-	private static Map<Class<?>, Queue<BaseEntity>> singleResultsMap = new HashMap<>();
+	private static Map<String, Queue<List>> listResultsMap = new HashMap<>();
+	private static Map<String, Queue<BaseEntity>> singleResultsMap = new HashMap<>();
 	private static Map<String, Queue<List>> listQueryResultsMap = new HashMap<>();
-	private static Map<Class<?>, Queue<BaseEntity>> listExampleMap = new HashMap<>();
-	private static Map<Class<?>, Map<Object, Queue<BaseEntity>>> byIdMap = new HashMap<>();
+	private static Map<String, Queue<BaseEntity>> listExampleMap = new HashMap<>();
+	private static Map<String, Map<Object, Queue<BaseEntity>>> byIdMap = new HashMap<>();
 
 	public void clear()
 	{
@@ -64,42 +64,42 @@ public class TestPersistenceService implements PersistenceService
 		if ((queryResults.size() > 0) && (!cls.isInstance(queryResults.get(0)))) {
 			throw new IllegalArgumentException("List Contents do not match expected type: " + cls.getName());
 		}
-		if (!listResultsMap.containsKey(cls)) {
-			listResultsMap.put(cls, new LinkedList<>());
+		if (!listResultsMap.containsKey(cls.getName())) {
+			listResultsMap.put(cls.getName(), new LinkedList<>());
 		}
-		listResultsMap.get(cls).add(queryResults);
+		listResultsMap.get(cls.getName()).add(queryResults);
 	}
 
 	public void addObject(BaseEntity baseEntity)
 	{
-		if (!singleResultsMap.containsKey(baseEntity.getClass())) {
-			singleResultsMap.put(baseEntity.getClass(), new LinkedList<>());
+		if (!singleResultsMap.containsKey(baseEntity.getClass().getName())) {
+			singleResultsMap.put(baseEntity.getClass().getName(), new LinkedList<>());
 		}
-		singleResultsMap.get(baseEntity.getClass()).add(baseEntity);
+		singleResultsMap.get(baseEntity.getClass().getName()).add(baseEntity);
 	}
 
 	public void addObjectWithId(Class<?> cls, Object id, BaseEntity baseEntity)
 	{
-		if (!byIdMap.containsKey(cls)) {
-			byIdMap.put(cls, new HashMap<>());
+		if (!byIdMap.containsKey(cls.getName())) {
+			byIdMap.put(cls.getName(), new HashMap<>());
 		}
-		if (!byIdMap.get(cls).containsKey(id)) {
-			byIdMap.get(cls).put(id, new LinkedList<>());
+		if (!byIdMap.get(cls.getName()).containsKey(id)) {
+			byIdMap.get(cls.getName()).put(id, new LinkedList<>());
 		}
-		byIdMap.get(cls).get(id).add(baseEntity);
+		byIdMap.get(cls.getName()).get(id).add(baseEntity);
 	}
 
 	private void addListExample(BaseEntity example)
 	{
-		if (!listExampleMap.containsKey(example.getClass())) {
-			listExampleMap.put(example.getClass(), new LinkedList<>());
+		if (!listExampleMap.containsKey(example.getClass().getName())) {
+			listExampleMap.put(example.getClass().getName(), new LinkedList<>());
 		}
-		listExampleMap.get(example.getClass()).add(example);
+		listExampleMap.get(example.getClass().getName()).add(example);
 	}
 
 	public Queue<BaseEntity> getListExamples(Class<?> cls)
 	{
-		return (listExampleMap.containsKey(cls) && (!listExampleMap.get(cls).isEmpty())) ? listExampleMap.get(cls) : null;
+		return (listExampleMap.containsKey(cls.getName()) && (!listExampleMap.get(cls.getName()).isEmpty())) ? listExampleMap.get(cls.getName()) : null;
 	}
 	// </editor-fold>
 
@@ -107,7 +107,7 @@ public class TestPersistenceService implements PersistenceService
 	public <T> List<T> queryByExample(BaseEntity baseEntity)
 	{
 		addListExample(baseEntity);
-		return (listResultsMap.containsKey(baseEntity.getClass()) && (!listResultsMap.get(baseEntity.getClass()).isEmpty())) ? listResultsMap.get(baseEntity.getClass()).poll() : null;
+		return (listResultsMap.containsKey(baseEntity.getClass().getName()) && (!listResultsMap.get(baseEntity.getClass().getName()).isEmpty())) ? listResultsMap.get(baseEntity.getClass().getName()).poll() : null;
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class TestPersistenceService implements PersistenceService
 	@Override
 	public <T> T queryOneByExample(BaseEntity baseEntity)
 	{
-		return (singleResultsMap.containsKey(baseEntity.getClass()) && (!singleResultsMap.get(baseEntity.getClass()).isEmpty())) ? (T) singleResultsMap.get(baseEntity.getClass()).poll() : null;
+		return (singleResultsMap.containsKey(baseEntity.getClass().getName()) && (!singleResultsMap.get(baseEntity.getClass().getName()).isEmpty())) ? (T) singleResultsMap.get(baseEntity.getClass().getName()).poll() : null;
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class TestPersistenceService implements PersistenceService
 	@Override
 	public <T> T findById(Class<T> entity, Object id)
 	{
-		return (byIdMap.containsKey(entity) && byIdMap.get(entity).containsKey(id) && !byIdMap.get(entity).get(id).isEmpty()) ? (T) byIdMap.get(entity).get(id).poll() : null;
+		return (byIdMap.containsKey(entity.getName()) && byIdMap.get(entity.getName()).containsKey(id) && !byIdMap.get(entity.getName()).get(id).isEmpty()) ? (T) byIdMap.get(entity.getName()).get(id).poll() : null;
 	}
 
 	@Override

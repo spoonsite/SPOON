@@ -167,7 +167,12 @@ public class SearchTest extends JerseyShiroTest
 		persistenceService.addQuery("select componentAttributePk.attributeType as attributeType, componentAttributePk.attributeCode as attributeCode, componentId from ComponentAttribute where activeStatus='A' and componentId IN :componentIdsParams", Arrays.asList(componentAttributePk1, componentAttributePk2, componentAttributePk3, componentAttributePk4));
 		persistenceService.addQuery("select from ComponentReview where activeStatus='A' and componentId IN :componentIdsParams", new ArrayList<>());
 		persistenceService.addQuery("select from ComponentTag where activeStatus='A' and componentId IN :componentIdsParams", new ArrayList<>());
-		persistenceService.addQuery(ComponentType.class, new ArrayList<>());
+
+		ComponentType componentTypeExample = new ComponentType();
+		componentTypeExample.setComponentType("Test Component");
+		componentTypeExample.setLabel("Test Component");
+		componentTypeExample.setComponentTypeTemplate("testtemplate");
+		persistenceService.addQuery(ComponentType.class, Arrays.asList(componentTypeExample));
 
 		persistenceService.addQuery(ComponentMedia.class, new ArrayList<>());
 

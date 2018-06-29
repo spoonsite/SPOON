@@ -48,6 +48,9 @@ public class SystemArchive
 	private String archiveId;
 
 	@ConsumeField
+	private Boolean includeRelatedEntities;
+
+	@ConsumeField
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(TextSanitizer.class)
@@ -91,6 +94,7 @@ public class SystemArchive
 	@FK(ImportModeType.class)
 	private String importModeType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SystemArchive()
 	{
 	}
@@ -103,6 +107,9 @@ public class SystemArchive
 		SystemArchive archive = (SystemArchive) entity;
 
 		//set only non-null values; so just individual field can be set
+		if(archive.getIncludeRelatedEntities() != null){
+			setIncludeRelatedEntities(archive.getIncludeRelatedEntities());
+		}
 		if (archive.getSystemArchiveType() != null) {
 			setSystemArchiveType(archive.getSystemArchiveType());
 		}
@@ -140,7 +147,7 @@ public class SystemArchive
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getArchiveFilename())) {
-			File archiveDir = FileSystemManager.getDir(FileSystemManager.ARCHIVE_DIR);
+			File archiveDir = FileSystemManager.getInstance().getDir(FileSystemManager.ARCHIVE_DIR);
 			path = Paths.get(archiveDir.getPath() + "/" + getArchiveFilename());
 		}
 		return path;
@@ -154,6 +161,16 @@ public class SystemArchive
 	public void setArchiveId(String archiveId)
 	{
 		this.archiveId = archiveId;
+	}
+
+	public Boolean getIncludeRelatedEntities()
+	{
+		return includeRelatedEntities;
+	}
+
+	public void setIncludeRelatedEntities(Boolean boolFlag)
+	{
+		this.includeRelatedEntities = boolFlag;
 	}
 
 	public String getName()

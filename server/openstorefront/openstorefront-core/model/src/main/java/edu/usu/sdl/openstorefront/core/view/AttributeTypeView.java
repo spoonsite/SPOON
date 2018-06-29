@@ -73,6 +73,7 @@ public class AttributeTypeView
 	@DataType(ComponentTypeRestriction.class)
 	private List<ComponentTypeRestriction> optionalRestrictions = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeTypeView()
 	{
 	}

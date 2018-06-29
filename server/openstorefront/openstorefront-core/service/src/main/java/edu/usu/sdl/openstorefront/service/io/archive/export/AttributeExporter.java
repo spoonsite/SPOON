@@ -157,7 +157,7 @@ public class AttributeExporter
 			archive.save();
 			for (TFile mediaFile : media) {
 				try {
-					Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.ATTACHMENT_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+					Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.ATTACHMENT_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 
 					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
 					archive.save();

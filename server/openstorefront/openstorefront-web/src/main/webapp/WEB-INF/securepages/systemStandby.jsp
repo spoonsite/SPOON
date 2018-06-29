@@ -34,7 +34,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10, user-scalable=yes">
 		
 		<%
-			String appVersion = PropertiesManager.getApplicationVersion();
+			String appVersion = PropertiesManager.getInstance().getApplicationVersion();
 			request.setAttribute("appVersion", appVersion);
 			
 			SystemStatusView systemStatusView = CoreSystem.getStatus();

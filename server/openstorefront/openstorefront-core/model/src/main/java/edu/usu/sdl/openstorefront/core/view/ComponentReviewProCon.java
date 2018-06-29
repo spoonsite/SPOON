@@ -42,11 +42,6 @@ public class ComponentReviewProCon
 	private String componentId;
 	private String reviewId;
 
-	public ComponentReviewProCon()
-	{
-
-	}
-
 	public static ComponentReviewProCon toView(ComponentReviewPro pro)
 	{
 		ComponentReviewProCon view = new ComponentReviewProCon();

@@ -98,14 +98,14 @@ public class OrganizationResource
 		Organization organizationEndExample = new Organization();
 		organizationEndExample.setUpdateDts(filterQueryParams.getEnd());
 
-		QueryByExample queryByExample = new QueryByExample(organizationExample);
+		QueryByExample<Organization> queryByExample = new QueryByExample<>(organizationExample);
 
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		SpecialOperatorModel<Organization> specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(organizationStartExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(organizationEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
@@ -115,7 +115,7 @@ public class OrganizationResource
 			Organization organizationLikeExample = new Organization();
 			organizationLikeExample.setName("%" + filterQueryParams.getName().toLowerCase() + "%");
 
-			specialOperatorModel = new SpecialOperatorModel();
+			specialOperatorModel = new SpecialOperatorModel<>();
 			specialOperatorModel.setExample(organizationLikeExample);
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
 			specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);

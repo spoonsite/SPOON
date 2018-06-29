@@ -33,7 +33,8 @@ import javax.validation.constraints.NotNull;
 public class ComponentReviewProPk
 		extends BasePK<ComponentReviewProPk>
 {
-	public static final String FIELD_REVIEW_PRO = "reviewPro"; 
+
+	public static final String FIELD_REVIEW_PRO = "reviewPro";
 
 	@NotNull
 	@FK(ComponentReview.class)
@@ -45,6 +46,7 @@ public class ComponentReviewProPk
 	@FK(ReviewPro.class)
 	private String reviewPro;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentReviewProPk()
 	{
 	}

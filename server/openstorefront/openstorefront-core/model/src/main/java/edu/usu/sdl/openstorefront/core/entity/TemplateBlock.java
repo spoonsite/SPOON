@@ -28,23 +28,24 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Used to capture custom template block for the template designer")
 public class TemplateBlock
-	extends StandardEntity<TemplateBlock>
+		extends StandardEntity<TemplateBlock>
 {
-	
+
 	@PK(generated = true)
 	@NotNull
 	private String templateBlockId;
-		
+
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)		
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String name;
-	
+
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_64K)	
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_64K)
 	private String codeBlock;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public TemplateBlock()
 	{
 	}
@@ -52,11 +53,11 @@ public class TemplateBlock
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
-		super.updateFields(entity); 
-		
+		super.updateFields(entity);
+
 		TemplateBlock templateBlock = (TemplateBlock) entity;
 		this.setName(templateBlock.getName());
-		this.setCodeBlock(templateBlock.getCodeBlock());		
+		this.setCodeBlock(templateBlock.getCodeBlock());
 	}
 
 	public String getName()

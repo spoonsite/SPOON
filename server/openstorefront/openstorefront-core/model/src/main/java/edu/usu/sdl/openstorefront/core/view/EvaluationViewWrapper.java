@@ -30,6 +30,7 @@ public class EvaluationViewWrapper
 	@DataType(EvaluationView.class)
 	private List<EvaluationView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public EvaluationViewWrapper()
 	{
 	}

@@ -16,14 +16,20 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
+import edu.usu.sdl.openstorefront.core.entity.IntegrationType;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,12 +45,15 @@ public class EvaluationView
 
 	private String componentName;
 	private String workflowStatusDescription;
-
-	public EvaluationView()
-	{
-	}
+	private String issueNumber;
+	private String integrationUrl;
 
 	public static EvaluationView toView(Evaluation evaluation)
+	{
+		return toView(evaluation, new HashMap<>());
+	}
+
+	public static EvaluationView toView(Evaluation evaluation, Map<String, ComponentIntegrationConfig> integrationConfigMap)
 	{
 		EvaluationView evaluationView = new EvaluationView();
 		try {
@@ -59,6 +68,12 @@ public class EvaluationView
 		}
 		evaluationView.setWorkflowStatusDescription(TranslateUtil.translate(WorkflowStatus.class, evaluation.getWorkflowStatus()));
 
+		ComponentIntegrationConfig integration = integrationConfigMap.get(evaluation.getOriginComponentId());
+		if (integration != null && integration.getIntegrationType().equals(IntegrationType.JIRA)) {
+			evaluationView.setIssueNumber(integration.getIssueNumber());
+			String url = MessageFormat.format("{0}/browse/{1}", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_URL), integration.getIssueNumber());
+			evaluationView.setIntegrationUrl(url);
+		}
 		return evaluationView;
 	}
 
@@ -66,8 +81,15 @@ public class EvaluationView
 	{
 		List<EvaluationView> views = new ArrayList<>();
 
+		ComponentIntegrationConfig integrationExample = new ComponentIntegrationConfig();
+		integrationExample.setActiveStatus(ACTIVE_STATUS);
+		List<ComponentIntegrationConfig> integrationList = integrationExample.findByExample();
+		Map<String, ComponentIntegrationConfig> integrationConfigMap = new HashMap<>();
+		integrationList.forEach((integration) -> {
+			integrationConfigMap.put(integration.getComponentId(), integration);
+		});
 		for (Evaluation evaluation : evaluations) {
-			views.add(toView(evaluation));
+			views.add(toView(evaluation, integrationConfigMap));
 		}
 		return views;
 	}
@@ -92,4 +114,23 @@ public class EvaluationView
 		this.workflowStatusDescription = workflowStatusDescription;
 	}
 
+	public String getIssueNumber()
+	{
+		return issueNumber;
+	}
+
+	public void setIssueNumber(String issueNumber)
+	{
+		this.issueNumber = issueNumber;
+	}
+
+	public String getIntegrationUrl()
+	{
+		return integrationUrl;
+	}
+
+	public void setIntegrationUrl(String integrationUrl)
+	{
+		this.integrationUrl = integrationUrl;
+	}
 }

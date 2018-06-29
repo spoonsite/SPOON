@@ -34,6 +34,9 @@ import javax.validation.constraints.Size;
 public class ComponentTypeAlertOption
 		implements Serializable
 {
+
+	private static final long serialVersionUID = 1L;
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_NAME)
 	@Sanitize(TextSanitizer.class)
@@ -42,6 +45,7 @@ public class ComponentTypeAlertOption
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTypeAlertOption()
 	{
 	}

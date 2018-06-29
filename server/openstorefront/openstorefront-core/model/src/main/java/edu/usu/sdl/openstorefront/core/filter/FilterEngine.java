@@ -130,6 +130,7 @@ public class FilterEngine
 	 * restricted)
 	 * @return null if filter or the data if it should be kept
 	 */
+	@SuppressWarnings("squid:S3923")
 	public <T extends StandardEntity> T filter(T data, boolean checkParentComponent)
 	{
 		T returnValue = null;
@@ -216,6 +217,7 @@ public class FilterEngine
 		return returnValue;
 	}
 
+	@SuppressWarnings("squid:S3923")
 	private boolean keepComponent(Set<String> acceptedDataSources, Set<String> acceptedDataSensitivity, UserContext userContext, String componentId)
 	{
 		boolean keepData = false;

@@ -50,9 +50,9 @@ public class ComponentTypeNestedModelTest
 		ComponentTypeNestedModel instance = getData();
 		Map<String, ComponentType> typeMap = instance.findParents(instance, "C");
 
-		assertEquals(typeMap.keySet().contains("A"), true);
-		assertEquals(typeMap.keySet().contains("B"), true);
-		assertEquals(typeMap.keySet().contains("C"), true);
+		assertEquals(true, typeMap.keySet().contains("A"));
+		assertEquals(true, typeMap.keySet().contains("B"));
+		assertEquals(true, typeMap.keySet().contains("C"));
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class ComponentTypeNestedModelTest
 		nm1.setChildren(nm1Children);
 
 		// Act
-		List<String> entryTypeChildren = nm1.getComponentTypeChildren();
+		List<String> entryTypeChildren = nm1.findComponentTypeChildren();
 
 		// Assert
 		assertEquals(Arrays.asList("A1", "A2", "A3", "B"), entryTypeChildren);
@@ -182,7 +182,7 @@ public class ComponentTypeNestedModelTest
 		ComponentTypeNestedModel nestedModel = new ComponentTypeNestedModel();
 
 		// Act
-		List<String> entryTypeChildren = nestedModel.getComponentTypeChildren();
+		List<String> entryTypeChildren = nestedModel.findComponentTypeChildren();
 
 		// Assert
 		assertEquals(new ArrayList<>(), entryTypeChildren);

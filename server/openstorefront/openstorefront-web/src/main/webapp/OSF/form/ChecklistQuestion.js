@@ -187,7 +187,7 @@ Ext.define('OSF.form.ChecklistQuestion', {
 			questionForm.saveData();
 		});
 	},
-	loadData: function(evaluationId, componentId, data, opts) {
+	loadData: function(evaluationId, componentId, data, opts, callback) {
 		
 		var questionForm = this;
 		
@@ -270,6 +270,10 @@ Ext.define('OSF.form.ChecklistQuestion', {
 						});					
 					}
 				}, 100);
+
+				if (callback) {
+					callback();
+				}
 			}
 		});
 				

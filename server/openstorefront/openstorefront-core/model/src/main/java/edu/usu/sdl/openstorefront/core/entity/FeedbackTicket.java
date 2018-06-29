@@ -46,18 +46,18 @@ public class FeedbackTicket
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	private String description;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_FULLNAME)
 	private String fullname;
-	
+
 	@ConsumeField
 	private String email;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	private String organization;
-	
+
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_PHONE)
 	private String phone;
@@ -76,6 +76,7 @@ public class FeedbackTicket
 	@Embedded
 	private WebInformation webInformation;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FeedbackTicket()
 	{
 	}
@@ -108,7 +109,7 @@ public class FeedbackTicket
 		sb.append("*Web User-agent*:  ").append(StringProcessor.blankIfNull(this.getWebInformation().getUserAgent())).append("\t\n");
 		sb.append("*Web Referrer*:  ").append(StringProcessor.blankIfNull(this.getWebInformation().getReferrer())).append("\t\n");
 		sb.append("*Web Screen Resolution*:  ").append(StringProcessor.blankIfNull(this.getWebInformation().getScreenResolution())).append("\n");
-		sb.append("*Application Version*:  ").append(PropertiesManager.getApplicationVersion()).append("\t\n");
+		sb.append("*Application Version*:  ").append(PropertiesManager.getInstance().getApplicationVersion()).append("\t\n");
 		sb.append("\t\n");
 		sb.append(this.getDescription());
 		return sb.toString();
@@ -173,12 +174,12 @@ public class FeedbackTicket
 	{
 		this.lastname = lastname;
 	}
-	
+
 	public String getFullname()
 	{
 		return fullname;
 	}
-	
+
 	public void setFullname(String fullname)
 	{
 		this.fullname = fullname;

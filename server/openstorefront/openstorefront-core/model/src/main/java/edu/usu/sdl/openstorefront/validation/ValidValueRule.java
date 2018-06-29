@@ -55,6 +55,7 @@ public class ValidValueRule
 					if (validValueType.lookupClass().length > 0) {
 						for (Class lookupClass : validValueType.lookupClass()) {
 							//get all records / active inactive
+							@SuppressWarnings("unchecked")
 							List<LookupEntity> lookups = serviceProxy.getLookupService().findLookup(lookupClass, null);
 							lookups.forEach(item -> {
 								validValueSet.add(item.getCode());
@@ -102,6 +103,7 @@ public class ValidValueRule
 			for (Class lookupClass : validValueType.lookupClass()) {
 				List<String> validValues = new ArrayList<>();
 				//get all records / active inactive
+				@SuppressWarnings("unchecked")
 				List<LookupEntity> lookups = serviceProxy.findLookup(lookupClass, null);
 				lookups.forEach(item -> {
 					validValues.add(item.getCode());

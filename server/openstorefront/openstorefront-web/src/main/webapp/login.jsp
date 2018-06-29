@@ -20,12 +20,17 @@
 	SecurityPolicy securityPolicy = ServiceProxy.getProxy().getSecurityService().getSecurityPolicy();
 	request.setAttribute("allowRegistration", securityPolicy.getAllowRegistration());
 
-	String appVersion = PropertiesManager.getApplicationVersion();
+	String appVersion = PropertiesManager.getInstance().getApplicationVersion();
 	request.setAttribute("appVersion", appVersion);
 	// control css classes that may be set on html tag: no-overview no-registration no-registration-video
 %>
 <html> 
 	<head>
+		<!-- Responsive and mobile friendly stuff -->
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
 		<!-- ***USER-NOT-LOGIN*** -->
 		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">
 
@@ -575,7 +580,7 @@
 										   ">
 									<p id="passwordError" class="clearError errorText"></p>
 								</div>
-								<input type="button" value="Log in" class="btn btn-primary" onclick="submitForm();" />
+								<input type="button" name="loginBtn" value="Log in" class="btn btn-primary" onclick="submitForm();" />
 							</form>
 							<div id="forgot-password-links">
 								<a href="resetPassword.jsp">Forgot Password</a> | <a href="forgotUser.jsp">Forgot Username</a>

@@ -31,6 +31,7 @@ public class DBLogRecordWrapper
 	@DataType(DBLogRecord.class)
 	private List<DBLogRecord> logRecords = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public DBLogRecordWrapper()
 	{
 	}

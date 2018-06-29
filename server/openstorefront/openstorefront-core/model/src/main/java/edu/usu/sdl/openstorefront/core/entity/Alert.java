@@ -85,6 +85,7 @@ public class Alert
 	@OneToMany(orphanRemoval = true)
 	private List<ComponentTypeAlertOption> componentTypeAlertOptions;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Alert()
 	{
 	}

@@ -38,6 +38,7 @@ public class FileHistoryErrorType
 	public static final String WARNING = "WARNING";
 	public static final String MAPPING = "MAPPING";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileHistoryErrorType()
 	{
 	}

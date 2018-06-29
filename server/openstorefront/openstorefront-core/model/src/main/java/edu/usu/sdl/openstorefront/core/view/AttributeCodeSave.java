@@ -30,8 +30,8 @@ public class AttributeCodeSave
 	@ConsumeField
 	@DataType(NewAttributeCode.class)
 	private List<NewAttributeCode> userAttributes = new ArrayList<>();
-	
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeCodeSave()
 	{
 	}
@@ -45,5 +45,5 @@ public class AttributeCodeSave
 	{
 		this.userAttributes = userAttributes;
 	}
-	
+
 }

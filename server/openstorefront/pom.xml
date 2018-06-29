@@ -3,10 +3,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront</artifactId>
-	<version>2.5</version>
+	<version>2.6</version>
 	<packaging>pom</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.organization>di2e-github</sonar.organization>
+		<sonar.login>d0499c5a2dc1e97534f18c9fc33fddba4e17449a</sonar.login>
+		<sonar.organization>di2e-github</sonar.organization>
+		<sonar.sources>src/main</sonar.sources>
+		<sonar.test.sources>src/test</sonar.test.sources>
+		<sonar.exclusions>**/system-tests/**,**/src/test/**,**/target/**,**/webjars/**,**/Hugo-StaticGen-Docs/**,**/docs**,**/socket.io.js,**/jquery-2.0.3.js,**/src/main/resources/uas.xml,**/*.sql,**/nb-configuration.xml</sonar.exclusions>
+		<sonar.java.source>7</sonar.java.source>
+		<sonar.junit.reportPaths>server/openstorefront/openstorefront-core/service/target/surefire-reports, server/openstorefront/openstorefront-core/model/target/surefire-report, server/openstorefront/openstorefront-core/common/target/surefire-reports, server/openstorefront/openstorefront-core/apidoc/target/surefire-reports, server/openstorefront/openstorefront-web/target/surefire-reports</sonar.junit.reportPaths>
 	</properties>
 	<modules>
 		<module>openstorefront-web</module>

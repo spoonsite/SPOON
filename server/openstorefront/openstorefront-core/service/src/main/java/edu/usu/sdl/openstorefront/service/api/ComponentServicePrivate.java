@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.api.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 
 /**
@@ -73,5 +74,15 @@ public interface ComponentServicePrivate
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void removeUserFromComponentType(String username);
+
+	/**
+	 * Hard deletes a component and all related information The delete process
+	 * can be controlled via delete options
+	 *
+	 * @param componentId
+	 * @param option
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void cascadeDeleteOfComponent(String componentId, ComponentDeleteOptions option);
 
 }

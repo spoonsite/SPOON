@@ -21,15 +21,12 @@ package edu.usu.sdl.openstorefront.core.view;
  */
 public class CacheView
 {
+
 	private String name;
 	private long hitCount;
 	private double hitRatio;
 	private long missCount;
 	private long roughCount;
-
-	public CacheView()
-	{
-	}
 
 	public String getName()
 	{
@@ -80,5 +77,5 @@ public class CacheView
 	{
 		this.roughCount = roughCount;
 	}
-	
+
 }

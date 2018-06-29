@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ComponentStandardTest extends BaseDataImportTest
 {
+
 	private String fileHistoryId01 = null;
 //	private String fileHistoryId02 = null;
 
@@ -41,9 +42,11 @@ public class ComponentStandardTest extends BaseDataImportTest
 	@Override
 	protected void runInternalTest()
 	{
+		checkComponentType();
+
 		results.append("Component Standard Test With No Media<br>");
 		ImportContext importContextNoMedia = new ImportContext();
-		importContextNoMedia.setInput(FileSystemManager.getApplicationResourceFile("/data/test/standardtest.json"));
+		importContextNoMedia.setInput(FileSystemManager.getInstance().getApplicationResourceFile("/data/test/standardtest.json"));
 
 		FileHistory fileHistoryNoMedia = new FileHistory();
 		fileHistoryNoMedia.setFileFormat(COMPONENT_STANDARD);
@@ -66,7 +69,7 @@ public class ComponentStandardTest extends BaseDataImportTest
 //		results.append("<br>Component Standard Test With Media<br>");
 //
 //		ImportContext importContextMedia = new ImportContext();
-//		importContextMedia.setInput(FileSystemManager.getApplicationResourceFile("/data/test/standardwithmedia.zip"));
+//		importContextMedia.setInput(FileSystemManager.getInstance().getApplicationResourceFile("/data/test/standardwithmedia.zip"));
 //
 //		FileHistory fileHistoryMedia = new FileHistory();
 //		fileHistoryMedia.setFileFormat(COMPONENT_STANDARD);
@@ -82,8 +85,6 @@ public class ComponentStandardTest extends BaseDataImportTest
 //
 //		waitForImport(fileHistoryId02);
 //		handleResults(fileHistoryId02);
-
-
 	}
 
 	@Override

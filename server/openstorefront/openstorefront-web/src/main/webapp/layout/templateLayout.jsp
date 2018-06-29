@@ -30,7 +30,7 @@
 <stripes:layout-definition>
 	
 	<%
-		String appVersion = PropertiesManager.getApplicationVersion();
+		String appVersion = PropertiesManager.getInstance().getApplicationVersion();
 		request.setAttribute("appVersion", appVersion);
 		request.setAttribute("user", SecurityUtil.getCurrentUserName());
 		request.setAttribute("usercontext", SecurityUtil.getUserContext());

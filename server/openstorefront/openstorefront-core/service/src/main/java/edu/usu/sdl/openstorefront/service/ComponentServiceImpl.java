@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
@@ -68,7 +69,6 @@ import edu.usu.sdl.openstorefront.service.component.IntegrationComponentServiceI
 import edu.usu.sdl.openstorefront.service.component.SubComponentServiceImpl;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -160,7 +160,7 @@ public class ComponentServiceImpl
 	@Override
 	public <T extends BaseComponent> void deleteBaseComponent(Class<T> subComponentClass, Object pk)
 	{
-		sub.deleteBaseComponent(subComponentClass, pk, true);
+		sub.deleteBaseComponent(subComponentClass, pk, true, false);
 	}
 
 	@Override
@@ -218,6 +218,12 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public ComponentDetailView getComponentDetails(String componentId, boolean showPrivateInformation)
+	{
+		return core.getComponentDetails(componentId, showPrivateInformation);
+	}
+
+	@Override
 	public void saveComponentAttribute(ComponentAttribute attribute)
 	{
 		getComponentServicePrivate().saveComponentAttribute(attribute, true);
@@ -233,6 +239,12 @@ public class ComponentServiceImpl
 	public void saveComponentContact(ComponentContact contact)
 	{
 		sub.saveComponentContact(contact);
+	}
+
+	@Override
+	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity, boolean mergeSimilar)
+	{
+		sub.saveComponentContact(contact, updateLastActivity, mergeSimilar);
 	}
 
 	@Override
@@ -365,6 +377,12 @@ public class ComponentServiceImpl
 	public void cascadeDeleteOfComponent(String componentId)
 	{
 		core.cascadeDeleteOfComponent(componentId);
+	}
+
+	@Override
+	public void cascadeDeleteOfComponent(String componentId, ComponentDeleteOptions options)
+	{
+		core.cascadeDeleteOfComponent(componentId, options);
 	}
 
 	@Override
@@ -637,7 +655,7 @@ public class ComponentServiceImpl
 	@Override
 	public Component changeComponentType(String componentId, String newType)
 	{
-		return core.changeComponentType(componentId, newType);
+		return type.changeComponentType(componentId, newType);
 	}
 
 	@Override
@@ -755,6 +773,11 @@ public class ComponentServiceImpl
 	}
 
 	@Override
+	public Component assignLibrarian(String componentId, String librarianUsername)
+	{
+		return core.assignLibrarian(componentId, librarianUsername);
+	}
+
 	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
 	{
 		return type.getComponentTypeParents(componentTypeId, reverseOrder);

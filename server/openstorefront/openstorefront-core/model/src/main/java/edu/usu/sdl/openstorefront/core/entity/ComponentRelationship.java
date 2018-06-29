@@ -55,6 +55,7 @@ public class ComponentRelationship
 	@FK(Component.class)
 	private String relatedComponentId;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentRelationship()
 	{
 	}

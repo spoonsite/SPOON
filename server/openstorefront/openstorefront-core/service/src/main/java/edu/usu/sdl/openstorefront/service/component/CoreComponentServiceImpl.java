@@ -40,6 +40,7 @@ import edu.usu.sdl.openstorefront.core.entity.ChangeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
@@ -271,6 +272,11 @@ public class CoreComponentServiceImpl
 
 	public ComponentDetailView getComponentDetails(String componentId)
 	{
+		return getComponentDetails(componentId, false);
+	}
+
+	public ComponentDetailView getComponentDetails(String componentId, boolean showPrivateInformation)
+	{
 
 		ComponentDetailView result = new ComponentDetailView();
 		Component tempComponent = persistenceService.findById(Component.class, componentId);
@@ -282,50 +288,15 @@ public class CoreComponentServiceImpl
 
 		result.setApprovalState(tempComponent.getApprovalState());
 
-		//Pull relationships direct relationships
-		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
-		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
-		componentRelationshipExample.setComponentId(componentId);
-		List<ComponentRelationship> directRelationships = componentRelationshipExample.findByExample();
-		directRelationships = filterEngine.filter(directRelationships, true);
+		pullRelationshipDetails(componentId, result);
 
-		result.getRelationships().addAll(ComponentRelationshipView.toViewList(directRelationships));
-		result.setRelationships(result.getRelationships().stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList()));
-
-		//Pull indirect
-		componentRelationshipExample = new ComponentRelationship();
-		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
-		componentRelationshipExample.setRelatedComponentId(componentId);
-
-		List<ComponentRelationship> inDirectRelationships = componentRelationshipExample.findByExample();
-		inDirectRelationships = filterEngine.filter(inDirectRelationships, true);
-
-		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(inDirectRelationships);
-		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
-		result.getRelationships().addAll(relationshipViews);
-
-		UserWatch tempWatch = new UserWatch();
-		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
-		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
-		tempWatch.setComponentId(componentId);
-		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample<>(tempWatch));
-		if (tempUserWatch != null) {
-			result.setLastViewedDts(tempUserWatch.getLastViewDts());
-		}
-		List<ComponentAttribute> attributes = componentService.getAttributesByComponentId(componentId);
-		result.setAttributes(ComponentAttributeView.toViewList(attributes));
-		result.getAttributes().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentAttributeView.TYPE_DESCRIPTION_FIELD));
+		getLastViewForUser(componentId, result);
+		pullAttributeDetails(componentId, showPrivateInformation, result);
 
 		result.setComponentId(componentId);
 		result.setTags(componentService.getBaseComponent(ComponentTag.class, componentId));
 
-		List<ComponentResource> componentResources = componentService.getBaseComponent(ComponentResource.class, componentId);
-
-		componentResources = SortUtil.sortComponentResource(componentResources);
-		componentResources.forEach(resource
-				-> {
-			result.getResources().add(ComponentResourceView.toView(resource));
-		});
+		pullResourceDetails(componentId, showPrivateInformation, result);
 
 		List<ComponentMetadata> componentMetadata = componentService.getBaseComponent(ComponentMetadata.class, componentId);
 		componentMetadata.forEach(metadata
@@ -351,48 +322,34 @@ public class CoreComponentServiceImpl
 			result.getContacts().add(ComponentContactView.toView(contact));
 		});
 
+		getViewsForComponent(componentId, result);
+
+		String currentUser = pullUserReviewDetails(componentId, result);
+		pullUserQuestionDetails(componentId, currentUser, result);
+
+		List<ComponentEvaluationSection> evaluationSections = componentService.getBaseComponent(ComponentEvaluationSection.class, componentId);
+		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSections));
+
+		List<EvaluationAll> publicEvaluations = componentService.getEvaluationService().getPublishEvaluations(componentId);
+		result.setFullEvaluations(publicEvaluations);
+
+		result.setToday(new Date());
+
+		result.setComponentDetails(tempComponent);
+		return result;
+	}
+
+	private void getViewsForComponent(String componentId, ComponentDetailView result)
+	{
 		ComponentTracking componentTrackingExample = new ComponentTracking();
 		componentTrackingExample.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 		componentTrackingExample.setTrackEventTypeCode(TrackEventCode.VIEW);
 		componentTrackingExample.setComponentId(componentId);
 		result.setComponentViews(persistenceService.countByExample(componentTrackingExample));
+	}
 
-		List<ComponentReview> tempReviews = new ArrayList<>();
-		List<ComponentReview> tempApprovedReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
-		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
-		String currentUser = SecurityUtil.getCurrentUserName();
-		for (ComponentReview review : tempPendingReviews) {
-			if (review.getCreateUser().equals(currentUser)) {
-				tempReviews.add(review);
-			}
-		}
-		tempReviews.addAll(tempApprovedReviews);
-		List<ComponentReviewView> reviews = new ArrayList<>();
-		tempReviews = filterEngine.filter(tempReviews);
-
-		tempReviews.forEach(review
-				-> {
-			ComponentReviewPro tempPro = new ComponentReviewPro();
-			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
-			ComponentReviewCon tempCon = new ComponentReviewCon();
-			ComponentReviewConPk tempConPk = new ComponentReviewConPk();
-
-			tempProPk.setComponentReviewId(review.getComponentReviewId());
-			tempConPk.setComponentReviewId(review.getComponentReviewId());
-
-			tempPro.setComponentReviewProPk(tempProPk);
-			tempCon.setComponentReviewConPk(tempConPk);
-
-			ComponentReviewView tempView = ComponentReviewView.toView(review);
-
-			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample<>(tempPro))));
-			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample<>(tempCon))));
-
-			reviews.add(tempView);
-		});
-		reviews.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentReviewView.UPDATE_DATE_FIELD));
-		result.setReviews(reviews);
-
+	private void pullUserQuestionDetails(String componentId, String currentUser, ComponentDetailView result)
+	{
 		// Here we grab the responses to each question
 		List<ComponentQuestionView> questionViews = new ArrayList<>();
 		List<ComponentQuestion> questions = componentService.getBaseComponent(ComponentQuestion.class, componentId);
@@ -425,17 +382,117 @@ public class CoreComponentServiceImpl
 			questionViews.add(ComponentQuestionView.toView(question, responseViews));
 		});
 		result.setQuestions(questionViews);
+	}
 
-		List<ComponentEvaluationSection> evaluationSections = componentService.getBaseComponent(ComponentEvaluationSection.class, componentId);
-		result.setEvaluation(ComponentEvaluationView.toViewFromStorage(evaluationSections));
+	private String pullUserReviewDetails(String componentId, ComponentDetailView result)
+	{
+		List<ComponentReview> tempReviews = new ArrayList<>();
+		List<ComponentReview> tempApprovedReviews = componentService.getBaseComponent(ComponentReview.class, componentId);
+		List<ComponentReview> tempPendingReviews = componentService.getBaseComponent(ComponentReview.class, componentId, ComponentReview.PENDING_STATUS);
+		String currentUser = SecurityUtil.getCurrentUserName();
+		for (ComponentReview review : tempPendingReviews) {
+			if (review.getCreateUser().equals(currentUser)) {
+				tempReviews.add(review);
+			}
+		}
+		tempReviews.addAll(tempApprovedReviews);
+		List<ComponentReviewView> reviews = new ArrayList<>();
+		tempReviews = filterEngine.filter(tempReviews);
+		tempReviews.forEach(review
+				-> {
+			ComponentReviewPro tempPro = new ComponentReviewPro();
+			ComponentReviewProPk tempProPk = new ComponentReviewProPk();
+			ComponentReviewCon tempCon = new ComponentReviewCon();
+			ComponentReviewConPk tempConPk = new ComponentReviewConPk();
 
-		List<EvaluationAll> publicEvaluations = componentService.getEvaluationService().getPublishEvaluations(componentId);
-		result.setFullEvaluations(publicEvaluations);
+			tempProPk.setComponentReviewId(review.getComponentReviewId());
+			tempConPk.setComponentReviewId(review.getComponentReviewId());
 
-		result.setToday(new Date());
+			tempPro.setComponentReviewProPk(tempProPk);
+			tempCon.setComponentReviewConPk(tempConPk);
 
-		result.setComponentDetails(tempComponent);
-		return result;
+			ComponentReviewView tempView = ComponentReviewView.toView(review);
+
+			tempView.setPros(ComponentReviewProCon.toViewListPro(persistenceService.queryByExample(new QueryByExample<>(tempPro))));
+			tempView.setCons(ComponentReviewProCon.toViewListCon(persistenceService.queryByExample(new QueryByExample<>(tempCon))));
+
+			reviews.add(tempView);
+		});
+		reviews.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_DESCENDING, ComponentReviewView.UPDATE_DATE_FIELD));
+		result.setReviews(reviews);
+		return currentUser;
+	}
+
+	private void pullAttributeDetails(String componentId, boolean showPrivateInformation, ComponentDetailView result)
+	{
+		List<ComponentAttribute> attributes = componentService.getAttributesByComponentId(componentId);
+
+		if (!showPrivateInformation) {
+			boolean removedAttributes = attributes.removeIf((attribute) -> {
+				return Convert.toBoolean(attribute.getPrivateFlag());
+			});
+
+			if (removedAttributes) {
+				LOG.log(Level.FINEST, "Private Attributes were removed");
+			}
+		}
+
+		result.setAttributes(ComponentAttributeView.toViewList(attributes));
+		result.getAttributes().sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentAttributeView.TYPE_DESCRIPTION_FIELD));
+	}
+
+	private void getLastViewForUser(String componentId, ComponentDetailView result)
+	{
+		UserWatch tempWatch = new UserWatch();
+		tempWatch.setUsername(SecurityUtil.getCurrentUserName());
+		tempWatch.setActiveStatus(UserWatch.ACTIVE_STATUS);
+		tempWatch.setComponentId(componentId);
+		UserWatch tempUserWatch = persistenceService.queryOneByExample(new QueryByExample<>(tempWatch));
+		if (tempUserWatch != null) {
+			result.setLastViewedDts(tempUserWatch.getLastViewDts());
+		}
+	}
+
+	private void pullResourceDetails(String componentId, boolean showPrivateInformation, ComponentDetailView result)
+	{
+		List<ComponentResource> componentResources = componentService.getBaseComponent(ComponentResource.class, componentId);
+
+		componentResources = SortUtil.sortComponentResource(componentResources);
+		componentResources.forEach(resource -> {
+			boolean add = true;
+			if (!showPrivateInformation && Convert.toBoolean(resource.getPrivateFlag())) {
+				LOG.log(Level.FINEST, "Private Resource was removed");
+				add = false;
+			}
+			if (add) {
+				result.getResources().add(ComponentResourceView.toView(resource));
+			}
+		});
+	}
+
+	private void pullRelationshipDetails(String componentId, ComponentDetailView result)
+	{
+		//Pull relationships direct relationships
+		ComponentRelationship componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
+		componentRelationshipExample.setComponentId(componentId);
+		List<ComponentRelationship> directRelationships = componentRelationshipExample.findByExample();
+		directRelationships = filterEngine.filter(directRelationships, true);
+
+		result.getRelationships().addAll(ComponentRelationshipView.toViewList(directRelationships));
+		result.setRelationships(result.getRelationships().stream().filter(r -> r.getTargetApproved()).collect(Collectors.toList()));
+
+		//Pull indirect
+		componentRelationshipExample = new ComponentRelationship();
+		componentRelationshipExample.setActiveStatus(ComponentRelationship.ACTIVE_STATUS);
+		componentRelationshipExample.setRelatedComponentId(componentId);
+
+		List<ComponentRelationship> inDirectRelationships = componentRelationshipExample.findByExample();
+		inDirectRelationships = filterEngine.filter(inDirectRelationships, true);
+
+		List<ComponentRelationshipView> relationshipViews = ComponentRelationshipView.toViewList(inDirectRelationships);
+		relationshipViews = relationshipViews.stream().filter(r -> r.getOwnerApproved()).collect(Collectors.toList());
+		result.getRelationships().addAll(relationshipViews);
 	}
 
 	public void saveComponentTracking(ComponentTracking tracking)
@@ -587,6 +644,7 @@ public class CoreComponentServiceImpl
 					component.getComponent().setComponentId(persistenceService.generateId());
 				}
 				component.getComponent().populateBaseCreateFields();
+				component.getComponent().setOwnerUser(SecurityUtil.getCurrentUserName());
 				component.getComponent().setLastActivityDts(TimeUtil.currentDate());
 				if (component.getComponent().getRecordVersion() == null) {
 					component.getComponent().setRecordVersion(1);
@@ -1057,7 +1115,7 @@ public class CoreComponentServiceImpl
 					if (pkField != null) {
 						pkField.setAccessible(true);
 						if (oldEnity instanceof ComponentTag) {
-							sub.deleteBaseComponent(baseComponentClass, pkField.get(oldEnity), false);
+							sub.deleteBaseComponent(baseComponentClass, pkField.get(oldEnity), false, false);
 						} else {
 							sub.deactivateBaseComponent(baseComponentClass, pkField.get(oldEnity), false, oldEnity.getUpdateUser());
 						}
@@ -1079,6 +1137,7 @@ public class CoreComponentServiceImpl
 		cascadeDeleteOfComponent(componentId, new ComponentDeleteOptions());
 	}
 
+	@SuppressWarnings("squid:S1872")
 	public void cascadeDeleteOfComponent(String componentId, ComponentDeleteOptions option)
 	{
 		Objects.requireNonNull(componentId, "Component Id is required.");
@@ -1090,7 +1149,7 @@ public class CoreComponentServiceImpl
 				if (ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, entityClass)) {
 					if (option.getIgnoreClasses().contains(entityClass.getSimpleName()) == false) {
 						try {
-							deleteBaseComponent((BaseComponent) entityClass.newInstance(), componentId);
+							deleteBaseComponent((BaseComponent) entityClass.newInstance(), componentId, option.getKeepMediaFile());
 						} catch (InstantiationException | IllegalAccessException ex) {
 							throw new OpenStorefrontRuntimeException("Class is not a base component class: " + entityClass.getName(), "Check class");
 						}
@@ -1143,20 +1202,20 @@ public class CoreComponentServiceImpl
 		cleanupCache(componentId);
 	}
 
-	private <T extends BaseComponent> void deleteBaseComponent(T example, String componentId)
+	private <T extends BaseComponent> void deleteBaseComponent(T example, String componentId, boolean keepMedia)
 	{
 		example.setComponentId(componentId);
 		if (example instanceof ComponentResource) {
 			@SuppressWarnings("unchecked")
 			List<T> foundRecords = example.findByExample();
 			for (T found : foundRecords) {
-				sub.removeLocalResource((ComponentResource) found);
+				sub.removeLocalResource((ComponentResource) found, keepMedia);
 			}
 		} else if (example instanceof ComponentMedia) {
 			@SuppressWarnings("unchecked")
 			List<T> foundRecords = example.findByExample();
 			for (T found : foundRecords) {
-				sub.removeLocalMedia((ComponentMedia) found);
+				sub.removeLocalMedia((ComponentMedia) found, keepMedia);
 			}
 		}
 		persistenceService.deleteByExample(example);
@@ -1623,6 +1682,7 @@ public class CoreComponentServiceImpl
 
 				component.setApprovalState(ApprovalStatus.PENDING);
 				component.setSubmittedDts(TimeUtil.currentDate());
+				component.setSubmissionUser(SecurityUtil.getCurrentUserName());
 				component.setUpdateUser(SecurityUtil.getCurrentUserName());
 				component.populateBaseUpdateFields();
 				persistenceService.persist(component);
@@ -1647,6 +1707,7 @@ public class CoreComponentServiceImpl
 
 				component.setApprovalState(ApprovalStatus.PENDING);
 				component.setSubmittedDts(TimeUtil.currentDate());
+				component.setSubmissionUser(SecurityUtil.getCurrentUserName());
 				component.setUpdateUser(SecurityUtil.getCurrentUserName());
 				component.populateBaseUpdateFields();
 				component.setActiveStatus(Component.PENDING_STATUS);
@@ -1669,7 +1730,7 @@ public class CoreComponentServiceImpl
 		LOCK.lock();
 		try {
 			ComponentUpdateQueue updateQueueExample = new ComponentUpdateQueue();
-			updateQueueExample.setNodeId(PropertiesManager.getNodeName());
+			updateQueueExample.setNodeId(PropertiesManager.getInstance().getNodeName());
 
 			List<ComponentUpdateQueue> componentUpdateQueues = persistenceService.queryByExample(updateQueueExample);
 			if (componentUpdateQueues.isEmpty() == false) {
@@ -1936,6 +1997,7 @@ public class CoreComponentServiceImpl
 				FileHistoryOption fileHistoryOption = new FileHistoryOption();
 				fileHistoryOption.setSkipDuplicationCheck(true);
 				fileHistoryOption.setSkipRequiredAttributes(true);
+				fileHistoryOption.setUploadTags(true);
 
 				componentAll = saveFullComponent(componentAll, fileHistoryOption);
 
@@ -2035,7 +2097,7 @@ public class CoreComponentServiceImpl
 				try {
 					TVFS.umount();
 				} catch (FsSyncException ex) {
-					throw new OpenStorefrontRuntimeException("Unable to unable to unmount snapshot...it may be unreadable.", ex);
+					LOG.log(Level.SEVERE, "Unable to unable to unmount snapshot...it may be unreadable.", ex);
 				}
 			}
 			persistenceService.persist(versionHistory);
@@ -2142,7 +2204,7 @@ public class CoreComponentServiceImpl
 								for (TFile mediaFile : mediaFiles) {
 									try {
 										TFile source = mediaFile;
-										TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()).toFile());
+										TFile destination = new TFile(FileSystemManager.getInstance().getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()).toFile());
 										if (destination.isArchive() || destination.isDirectory()) {
 											destination = new TFile(destination, source.getName());
 										}
@@ -2159,7 +2221,7 @@ public class CoreComponentServiceImpl
 								for (TFile resourceFile : resourceFiles) {
 									try {
 										TFile source = resourceFile;
-										TFile destination = new TFile(FileSystemManager.getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()).toFile());
+										TFile destination = new TFile(FileSystemManager.getInstance().getDir(FileSystemManager.RESOURCE_DIR).toPath().resolve(resourceFile.getName()).toFile());
 										if (destination.isArchive() || destination.isDirectory()) {
 											destination = new TFile(destination, source.getName());
 										}
@@ -2252,6 +2314,14 @@ public class CoreComponentServiceImpl
 				mergeSubEntities(mergeComponent.getTags(), targetComponent.getTags());
 				mergeSubEntities(mergeComponent.getResources(), targetComponent.getResources());
 
+				ComponentComment commentExample = new ComponentComment();
+				commentExample.setComponentId(mergeComponent.getComponent().getComponentId());
+				List<ComponentComment> comments = commentExample.findByExampleProxy();
+				for (ComponentComment comment : comments) {
+					comment.setComponentId(targetComponentId);
+					persistenceService.persist(comment);
+				}
+
 				Set<String> targetReviewKey = targetComponent.getReviews().stream().map(review
 						-> {
 					return review.getComponentReview().uniqueKey();
@@ -2304,7 +2374,7 @@ public class CoreComponentServiceImpl
 				//New one need to be created upon editing the evaluation
 				Evaluation existingEvaluations = new Evaluation();
 				existingEvaluations.setOriginComponentId(mergeComponent.getComponent().getComponentId());
-				List<Evaluation> evaluations = existingEvaluations.findByExample();
+				List<Evaluation> evaluations = existingEvaluations.findByExampleProxy();
 				for (Evaluation evaluation : evaluations) {
 					evaluation.setOriginComponentId(targetComponentId);
 					persistenceService.persist(evaluation);
@@ -2320,10 +2390,8 @@ public class CoreComponentServiceImpl
 					persistenceService.persist(userWatch);
 				}
 
-				persistenceService.commit();
 				//remove mergeComponent
 				cascadeDeleteOfComponent(mergeComponent.getComponent().getComponentId());
-
 				cleanupCache(toMergeComponentId);
 				cleanupCache(targetComponentId);
 
@@ -2418,7 +2486,7 @@ public class CoreComponentServiceImpl
 	{
 		Component component = persistenceService.findById(Component.class, componentId);
 		if (component != null) {
-			component.setCreateUser(newOwner);
+			component.setOwnerUser(newOwner);
 			component.populateBaseUpdateFields();
 			persistenceService.persist(component);
 		} else {
@@ -2427,25 +2495,14 @@ public class CoreComponentServiceImpl
 		return component;
 	}
 
-	public Component changeComponentType(String componentId, String newType)
+	public Component assignLibrarian(String componentId, String librarianUsername)
 	{
 		Component component = persistenceService.findById(Component.class, componentId);
 		if (component != null) {
-			ComponentType found = persistenceService.findById(ComponentType.class, newType);
-			if (found != null) {
-
-				if (!newType.equals(component.getComponentType())) {
-
-					component.setComponentType(newType);
-					component.populateBaseUpdateFields();
-					persistenceService.persist(component);
-
-					updateComponentLastActivity(componentId);
-				}
-
-			} else {
-				throw new OpenStorefrontRuntimeException("Unable to find component type.", "Check name of type: " + newType);
-			}
+			component.setAssignedLibrarian(librarianUsername);
+			component.setAssignedLibrarianDts(TimeUtil.currentDate());
+			component.populateBaseUpdateFields();
+			persistenceService.persist(component);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id passed: " + componentId);
 		}
