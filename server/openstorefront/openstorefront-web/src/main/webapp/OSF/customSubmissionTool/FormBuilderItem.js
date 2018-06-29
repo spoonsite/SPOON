@@ -189,9 +189,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				},		
 				{
 					xtype: 'combo',
-					fieldLabel: 'Field Type <i class="fa fa-question-circle" data-qtip="Radio buttons, checkboxes, grids, etc."></i>',
-					itemId: 'fieldTypeCombo',
+					fieldLabel: '(Read Only) Type <i class="fa fa-question-circle" data-qtip="Radio buttons, checkboxes, grids, etc."></i>',
+					itemId: 'fieldTypeCombo',						
 					name: 'fieldType',
+					readOnly: true,
 					queryMode: 'local',
 					displayField: 'description',
 					valueField: 'code',
