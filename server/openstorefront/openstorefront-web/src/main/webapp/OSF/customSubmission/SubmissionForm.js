@@ -71,36 +71,44 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 		var submissionForm = this;
 		
 		var completeInitialSave = function() {		
-			var userSubmission = {
-				templateId : submissionForm.template.submissionTemplateId,
-				componentType: submissionForm.entryType.componentType,
-				submissionName: submissionForm.initialSubmissionName,
-				fields: []		
-			};	
-
 			Ext.Ajax.request({
-				url: 'api/v1/resource/usersubmissions',
-				method: 'POST',
-				jsonData: userSubmission,
-				callback: function() {				
-				},
-				success: function(response, opts) {
-					var savedSubmission = Ext.decode(response.responseText);
-					submissionForm.userSubmission = savedSubmission;
-					
-					submissionForm.loadTemplate(
-							submissionForm.template, 
-							submissionForm.entryType, 
-							submissionForm.userSubmission, 
-							false
-					);
+				url: 'api/v1/resource/componenttypes/' + submissionForm.template.entryType,
+				method: 'GET',
+				success: function (res) {
+					var componentType = Ext.decode(res.responseText);
 
-					if (submissionForm.finishInitialSave) {
-						submissionForm.finishInitialSave(savedSubmission);
-					}					
+					var userSubmission = {
+						templateId : submissionForm.template.submissionTemplateId,
+						componentType: componentType.componentType,
+						submissionName: submissionForm.initialSubmissionName,
+						fields: []		
+					};	
+		
+					Ext.Ajax.request({
+						url: 'api/v1/resource/usersubmissions',
+						method: 'POST',
+						jsonData: userSubmission,
+						callback: function() {				
+						},
+						success: function(response, opts) {
+							var savedSubmission = Ext.decode(response.responseText);
+							submissionForm.userSubmission = savedSubmission;
+							
+							submissionForm.loadTemplate(
+									submissionForm.template, 
+									componentType,
+									submissionForm.userSubmission, 
+									false
+							);
+		
+							if (submissionForm.finishInitialSave) {
+								submissionForm.finishInitialSave(savedSubmission);
+							}					
+						}
+					});
 				}
 			});
-		};		
+		};	
 		
 		//prompt for submission name
 		if (submissionForm.initialSubmissionName){
@@ -161,48 +169,6 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 			});
 			promptWin.show();
 		}
-		
-		
-		
-		var completeInitialSave = function() {		
-			Ext.Ajax.request({
-				url: 'api/v1/resource/componenttypes/' + submissionForm.template.entryType,
-				method: 'GET',
-				success: function (res) {
-					var componentType = Ext.decode(res.responseText);
-
-					var userSubmission = {
-						templateId : submissionForm.template.submissionTemplateId,
-						componentType: componentType.componentType,
-						submissionName: submissionForm.initialSubmissionName,
-						fields: []		
-					};	
-		
-					Ext.Ajax.request({
-						url: 'api/v1/resource/usersubmissions',
-						method: 'POST',
-						jsonData: userSubmission,
-						callback: function() {				
-						},
-						success: function(response, opts) {
-							var savedSubmission = Ext.decode(response.responseText);
-							submissionForm.userSubmission = savedSubmission;
-							
-							submissionForm.loadTemplate(
-									submissionForm.template, 
-									componentType,
-									submissionForm.userSubmission, 
-									false
-							);
-		
-							if (submissionForm.finishInitialSave) {
-								submissionForm.finishInitialSave(savedSubmission);
-							}					
-						}
-					});
-				}
-			});
-		};
 		
 		return null;		
 	},

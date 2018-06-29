@@ -45,10 +45,10 @@ Ext.define('OSF.customSubmissionTool.AttributeProgressPanel', {
 		progressPanel.loadGridStore();
 	},
 
-	loadGridStore: function (entryType) {
+	loadGridStore: function (entryTypeInput) {
 
 		var progressPanel = this;
-		var entryType = entryType || progressPanel.getTemplateRecord().entryTypeCode;
+		var entryType = entryTypeInput || progressPanel.getTemplateRecord().entryTypeCode;
 
 		var gridStore = Ext.create('Ext.data.Store', {
 			fields: ['description'],
