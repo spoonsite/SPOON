@@ -109,7 +109,7 @@ public class ComponentReport
 			ComponentTracking componentTrackingOrderExample = new ComponentTracking();
 			componentTrackingOrderExample.setEventDts(QueryByExample.DATE_FLAG);
 
-			QueryByExample queryByExample = new QueryByExample(componentTrackingExample);
+			QueryByExample<ComponentTracking> queryByExample = new QueryByExample<>(componentTrackingExample);
 			queryByExample.setMaxResults(1);
 			queryByExample.setOrderBy(componentTrackingOrderExample);
 			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_ASCENDING);

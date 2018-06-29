@@ -23,7 +23,9 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.RoleLink;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserLink;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
@@ -259,6 +261,7 @@ public class ComponentTypeServiceImpl
 				if (newType != null) {
 					removeTypeMigrateData(newComponentType, componentType);
 					removeTypeCleanupAttributes(componentType);
+					removeTypeFromSubmissionTemplates(componentType);
 					removeTypeUpdateChildren(componentTypeFound, newComponentType);
 
 					//remove
@@ -278,6 +281,20 @@ public class ComponentTypeServiceImpl
 			}
 			OSFCacheManager.getComponentCache().removeAll();
 			OSFCacheManager.getComponentTypeCache().removeAll();
+		}
+	}
+
+	private void removeTypeFromSubmissionTemplates(String componentType)
+	{
+		Objects.requireNonNull(componentType);
+
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setEntryType(componentType);
+
+		List<SubmissionFormTemplate> allTemplates = submissionFormTemplate.findByExampleProxy();
+		for (SubmissionFormTemplate template : allTemplates) {
+			template.setEntryType(null);
+			persistenceService.persist(template);
 		}
 	}
 
@@ -358,6 +375,14 @@ public class ComponentTypeServiceImpl
 		FileDataMap wherefileDataMap = new FileDataMap();
 		wherefileDataMap.setDefaultComponentType(componentType);
 		persistenceService.updateByExample(FileDataMap.class, setfileDataMap, wherefileDataMap);
+
+		UserSubmission setUserSubmission = new UserSubmission();
+		setUserSubmission.setComponentType(newComponentType);
+
+		UserSubmission whereUserSubmission = new UserSubmission();
+		whereUserSubmission.setComponentType(componentType);
+		persistenceService.updateByExample(UserSubmission.class, setUserSubmission, whereUserSubmission);
+
 	}
 
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
@@ -832,7 +857,13 @@ public class ComponentTypeServiceImpl
 	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType typeLocal = findComponentType(componentTypes, componentTypeId);
+		ComponentType typeLocal;
+		try {
+			typeLocal = findComponentType(componentTypes, componentTypeId);
+		} catch (OpenStorefrontRuntimeException ex) {
+			LOG.log(Level.WARNING, ex, () -> "Unable to Find Component Type: " + componentTypeId);
+			return "(" + componentTypeId + ")";
+		}
 
 		List<ComponentType> parentChildComponentTypes = new ArrayList<>();
 		List<ComponentType> parentComponentTypes = getComponentTypeParents(componentTypeId, reverseOrder);

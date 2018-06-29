@@ -36,13 +36,15 @@ public class SubmissionFormFieldType
 	public static final String TEXT = "TEXT";
 	public static final String TEXT_AREA = "TEXTAREA";
 	public static final String RICH_TEXT = "RICHTEXT";
-	public static final String RADIO = "RADIO";
-	public static final String CHECKBOX = "CHECKBOX";
 	public static final String NUMBER = "NUMBER";
+	public static final String DATE = "DATE";
+	public static final String ORGANIZATION = "ORGANIZATION";
 	public static final String STATIC_CONTENT = "CONTENT";
 	public static final String ATTRIBUTE = "ATTRIBUTE";
 	public static final String ATTRIBUTE_MULTI = "ATTRIBUTE_MULTI";
+	public static final String ATTRIBUTE_SINGLE = "ATTRIBUTE_SINGLE";
 	public static final String ATTRIBUTE_RADIO = "ATTRIBUTE_RADIO";
+	public static final String ATTRIBUTE_REQUIRED = "ATTRIBUTE_REQUIRED";
 	public static final String ATTRIBUTE_MULTI_CHECKBOX = "ATTRIBUTE_MCHECKBOX";
 	public static final String CONTACT = "CONTACT";
 	public static final String CONTACT_MULTI = "CONTACT_MULTI";
@@ -51,6 +53,7 @@ public class SubmissionFormFieldType
 	public static final String MEDIA = "MEDIA";
 	public static final String MEDIA_MULTI = "MEDIA_MULTI";
 	public static final String RESOURCE = "RESOURCE";
+	public static final String RESOURCE_SIMPLE = "RESOURCE_SIMPLE";
 	public static final String RESOURCE_MULTI = "RESOURCE_MULTI";
 	public static final String TAG = "TAG";
 	public static final String TAG_MULTI = "TAG_MULTI";
@@ -71,15 +74,20 @@ public class SubmissionFormFieldType
 
 		codeMap.put(TEXT, newLookup(SubmissionFormFieldType.class, TEXT, "Text"));
 		codeMap.put(TEXT_AREA, newLookup(SubmissionFormFieldType.class, TEXT_AREA, "Text Area"));
-		codeMap.put(RADIO, newLookup(SubmissionFormFieldType.class, RADIO, "Radio Single Option"));
-		codeMap.put(CHECKBOX, newLookup(SubmissionFormFieldType.class, CHECKBOX, "Checkbox"));
+		codeMap.put(RICH_TEXT, newLookup(SubmissionFormFieldType.class, RICH_TEXT, "RichText"));
 		codeMap.put(NUMBER, newLookup(SubmissionFormFieldType.class, NUMBER, "Number"));
+		codeMap.put(DATE, newLookup(SubmissionFormFieldType.class, DATE, "Date"));
 		codeMap.put(STATIC_CONTENT, newLookup(SubmissionFormFieldType.class, STATIC_CONTENT, "Static Content"));
+
+		codeMap.put(ORGANIZATION, newLookup(SubmissionFormFieldType.class, ORGANIZATION, "Organization"));
 
 		codeMap.put(ATTRIBUTE, newLookup(SubmissionFormFieldType.class, ATTRIBUTE, "Attribute"));
 		codeMap.put(ATTRIBUTE_MULTI, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_MULTI, "Attribute Multiple"));
 		codeMap.put(ATTRIBUTE_RADIO, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_RADIO, "Attribute Radio"));
+		codeMap.put(ATTRIBUTE_REQUIRED, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_REQUIRED, "Attribute Required"));
+		codeMap.put(ATTRIBUTE_SINGLE, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_SINGLE, "Attribute Single"));
 		codeMap.put(ATTRIBUTE_MULTI_CHECKBOX, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_MULTI_CHECKBOX, "Attribute Multiple Checkbox"));
+
 		codeMap.put(CONTACT, newLookup(SubmissionFormFieldType.class, CONTACT, "Contact"));
 		codeMap.put(CONTACT_MULTI, newLookup(SubmissionFormFieldType.class, CONTACT_MULTI, "Contact Multiple"));
 		codeMap.put(EXT_DEPENDENCY, newLookup(SubmissionFormFieldType.class, EXT_DEPENDENCY, "Dependency"));
@@ -87,6 +95,7 @@ public class SubmissionFormFieldType
 		codeMap.put(MEDIA, newLookup(SubmissionFormFieldType.class, MEDIA, "Media"));
 		codeMap.put(MEDIA_MULTI, newLookup(SubmissionFormFieldType.class, MEDIA_MULTI, "Media Multiple"));
 		codeMap.put(RESOURCE, newLookup(SubmissionFormFieldType.class, RESOURCE, "Resource"));
+		codeMap.put(RESOURCE_SIMPLE, newLookup(SubmissionFormFieldType.class, RESOURCE_SIMPLE, "Resource Simple"));
 		codeMap.put(RESOURCE_MULTI, newLookup(SubmissionFormFieldType.class, RESOURCE_MULTI, "Resource Multiple"));
 		codeMap.put(TAG, newLookup(SubmissionFormFieldType.class, TAG, "Tag"));
 		codeMap.put(TAG_MULTI, newLookup(SubmissionFormFieldType.class, TAG_MULTI, "Tag Multiple"));

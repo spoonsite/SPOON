@@ -446,7 +446,7 @@ Ext.define('OSF.form.Attributes', {
 						{
 							xtype: 'textarea',
 							name: 'comment',
-							fieldLabel: 'comment',
+							fieldLabel: 'Comment',
 							labelWidth: 150,
 							maxLength: 4096
 						},
@@ -491,6 +491,9 @@ Ext.define('OSF.form.Attributes', {
 							}
 						},
 						{
+							xtype: 'tbseparator',
+						},
+						{
 							text: 'Edit',
 							itemId: 'edit',
 							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
@@ -501,13 +504,15 @@ Ext.define('OSF.form.Attributes', {
 							}
 						},						
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbseparator',
+							hidden: attributePanel.hideToggleStatus || false
 						},
 						{
 							text: 'Toggle Status',
 							itemId: 'toggleStatusBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 							disabled: true,
+							hidden: attributePanel.hideToggleStatus || false,
 							handler: function () {
 								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, null, function () {
 									attributePanel.loadComponentAttributes();

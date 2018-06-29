@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class ComponentMediaView
 	private Boolean hideInDisplay;
 	private Boolean usedInline;
 	private Boolean iconFlag;
+	private MediaFile file;
 
 	public static ComponentMediaView toView(ComponentMedia media)
 	{
@@ -60,6 +62,8 @@ public class ComponentMediaView
 		mediaView.setUsedInline(media.getUsedInline());
 		mediaView.setIconFlag(media.getIconFlag());
 		mediaView.setLink(media.getLink());
+		mediaView.setFile(media.getFile());
+
 		if (media.getFile() != null) {
 			mediaView.setFileName(media.getFile().getFileName());
 			mediaView.setOriginalFileName(media.getFile().getOriginalName());
@@ -220,6 +224,16 @@ public class ComponentMediaView
 	public void setIconFlag(Boolean iconFlag)
 	{
 		this.iconFlag = iconFlag;
+	}
+
+	public MediaFile getFile()
+	{
+		return file;
+	}
+
+	public void setFile(MediaFile file)
+	{
+		this.file = file;
 	}
 
 }

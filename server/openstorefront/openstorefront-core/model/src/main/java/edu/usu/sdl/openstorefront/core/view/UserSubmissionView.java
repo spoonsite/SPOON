@@ -39,11 +39,12 @@ public class UserSubmissionView
 	private String componentType;
 	private String componentTypeDescription;
 	private String componentName;
+	private String submissionName;
 	private String ownerUsername;
 	private String createUser;
 	private String updateUser;
-	private Date createDate;
-	private Date updateDate;
+	private Date createDts;
+	private Date updateDts;
 
 	public UserSubmissionView()
 	{
@@ -156,24 +157,24 @@ public class UserSubmissionView
 		this.updateUser = updateUser;
 	}
 
-	public Date getCreateDate()
+	public Date getCreateDts()
 	{
-		return createDate;
+		return createDts;
 	}
 
-	public void setCreateDate(Date createDate)
+	public void setCreateDts(Date createDts)
 	{
-		this.createDate = createDate;
+		this.createDts = createDts;
 	}
 
-	public Date getUpdateDate()
+	public Date getUpdateDts()
 	{
-		return updateDate;
+		return updateDts;
 	}
 
-	public void setUpdateDate(Date updateDate)
+	public void setUpdateDts(Date updateDts)
 	{
-		this.updateDate = updateDate;
+		this.updateDts = updateDts;
 	}
 
 	public String getOriginalComponentId()
@@ -184,6 +185,16 @@ public class UserSubmissionView
 	public void setOriginalComponentId(String originalComponentId)
 	{
 		this.originalComponentId = originalComponentId;
+	}
+
+	public String getSubmissionName()
+	{
+		return submissionName;
+	}
+
+	public void setSubmissionName(String submissionName)
+	{
+		this.submissionName = submissionName;
 	}
 
 }

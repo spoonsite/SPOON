@@ -41,7 +41,7 @@ var CoreUtil = {
 	},
 	calculateEvalutationScore: function (obj) {
 		// obj.data.fullEvaluation requires the key: checkListAll
-		var fullEvaluations = obj.fullEvaluations
+		var fullEvaluations = obj.fullEvaluations;
 		var data = obj.data;
 		var callBack = obj.success;
 
@@ -1077,5 +1077,12 @@ var CoreUtil = {
 		};
 
 		CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-	}
+	},
+	uuidv4: function() {
+	  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+		return v.toString(16);
+	  });
+  }
+  
 };

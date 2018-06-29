@@ -55,6 +55,9 @@ public class ComponentView
 	private String componentTypeIconUrl;
 	private ComponentTypeNestedModel componentTypeNestedModel;
 	private String currentDataOwner;
+	private String userSubmissionId;
+	private String submissionTemplateId;
+	private String submissionOriginalComponentId;
 
 	public static ComponentView toView(Component component, boolean populateOwnerInfo)
 	{
@@ -81,7 +84,7 @@ public class ComponentView
 
 		componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, componentView.getApprovalState()));
 		componentView.setSecurityMarkingDescription(TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()));
-		
+
 		Service service = ServiceProxyFactory.getServiceProxy();
 		componentView.setComponentTypeLabel(service.getComponentService().getComponentTypeParentsString(component.getComponentType(), true));
 		componentView.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
@@ -237,6 +240,36 @@ public class ComponentView
 	public void setCurrentDataOwner(String currentDataOwner)
 	{
 		this.currentDataOwner = currentDataOwner;
+	}
+
+	public String getUserSubmissionId()
+	{
+		return userSubmissionId;
+	}
+
+	public void setUserSubmissionId(String userSubmissionId)
+	{
+		this.userSubmissionId = userSubmissionId;
+	}
+
+	public String getSubmissionTemplateId()
+	{
+		return submissionTemplateId;
+	}
+
+	public void setSubmissionTemplateId(String submissionTemplateId)
+	{
+		this.submissionTemplateId = submissionTemplateId;
+	}
+
+	public String getSubmissionOriginalComponentId()
+	{
+		return submissionOriginalComponentId;
+	}
+
+	public void setSubmissionOriginalComponentId(String submissionOriginalComponentId)
+	{
+		this.submissionOriginalComponentId = submissionOriginalComponentId;
 	}
 
 }

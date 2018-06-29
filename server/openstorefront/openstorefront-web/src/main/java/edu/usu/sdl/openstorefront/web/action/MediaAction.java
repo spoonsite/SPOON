@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SupportMedia;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.doc.security.LogicOperation;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -82,7 +83,7 @@ public class MediaAction
 
 	private static final Logger LOG = Logger.getLogger(MediaAction.class.getName());
 
-	@Validate(required = true, on = {"LoadMedia", "SectionMedia", "SupportMedia"})
+	@Validate(required = true, on = {"LoadMedia", "SectionMedia", "SupportMedia", "SubmissionMedia"})
 	private String mediaId;
 
 	@ValidateNestedProperties({
@@ -136,7 +137,7 @@ public class MediaAction
 	private String userSubmissionId;
 
 	@Validate(required = true, on = {"UploadSubmissionMedia"})
-	private String userSubmissionFieldId;
+	private String submissionTemplateFieldId;
 
 	private static final String ACCESS_DENIED = "Access denied";
 
@@ -702,7 +703,7 @@ public class MediaAction
 		if (userSubmission != null) {
 
 			boolean allow = false;
-			if (SecurityUtil.hasPermission(SecurityPermission.USER_SUBMISSIONS)) {
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT)) {
 				allow = true;
 				LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			} else if (SecurityUtil.isCurrentUserTheOwner(userSubmission)) {
@@ -716,7 +717,22 @@ public class MediaAction
 				mediaFile.setMimeType(file.getContentType());
 
 				try {
-					service.getSubmissionFormService().saveSubmissionFormMedia(userSubmission, userSubmissionFieldId, mediaFile, file.getInputStream());
+					UserSubmissionMedia userSubmissionMedia = service.getSubmissionFormService().saveSubmissionFormMedia(userSubmissionId, submissionTemplateFieldId, mediaFile, file.getInputStream());
+
+					//it appears to be serializing a proxy...so we can make a copy of what is wanted
+					UserSubmissionMedia cleanedMedia = new UserSubmissionMedia();
+					cleanedMedia.setSubmissionMediaId(userSubmissionMedia.getSubmissionMediaId());
+					cleanedMedia.setTemplateFieldId(userSubmissionMedia.getTemplateFieldId());
+					cleanedMedia.setUserSubmissionId(userSubmissionMedia.getUserSubmissionId());
+					cleanedMedia.setFile(new MediaFile());
+
+					cleanedMedia.getFile().setMediaFileId(userSubmissionMedia.getFile().getMediaFileId());
+					cleanedMedia.getFile().setOriginalName(userSubmissionMedia.getFile().getOriginalName());
+					cleanedMedia.getFile().setMimeType(userSubmissionMedia.getFile().getMimeType());
+					cleanedMedia.getFile().setFileType(userSubmissionMedia.getFile().getFileType());
+					cleanedMedia.getFile().setFileName(userSubmissionMedia.getFile().getFileName());
+
+					return streamResults(cleanedMedia, MediaType.TEXT_HTML);
 				} catch (IOException ex) {
 					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
 				} finally {
@@ -867,14 +883,14 @@ public class MediaAction
 		this.userSubmissionId = userSubmissionId;
 	}
 
-	public String getUserSubmissionFieldId()
+	public String getSubmissionTemplateFieldId()
 	{
-		return userSubmissionFieldId;
+		return submissionTemplateFieldId;
 	}
 
-	public void setUserSubmissionFieldId(String userSubmissionFieldId)
+	public void setSubmissionTemplateFieldId(String submissionTemplateFieldId)
 	{
-		this.userSubmissionFieldId = userSubmissionFieldId;
+		this.submissionTemplateFieldId = submissionTemplateFieldId;
 	}
 
 }
