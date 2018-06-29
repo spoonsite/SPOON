@@ -312,7 +312,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					displayField: 'description',
 					valueField: 'attributeType',
 					editable: false,
-					queryMode: 'remote',					
+					queryMode: 'local',					
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');	
@@ -321,18 +321,29 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							if (record) {
 								var codeField = formBuilderItem.queryById('attributeCode');
 								var requireValueField = formBuilderItem.queryById('requiredCommentOnValue');
+								codeField.suspendEvents(false);
+								requireValueField.suspendEvents(false);
+																
 								codeField.clearValue();
 								requireValueField.clearValue();					
 		
-								codeField.getStore().loadData(record.data.codes);
-								requireValueField.getStore().loadData(record.data.codes);
-		
+								codeField.getStore().loadData(Ext.Array.clone(record.data.codes));
+								requireValueField.getStore().loadData(Ext.Array.clone(record.data.codes));
+								
+								
+								codeField.setValue(formBuilderItem.templateField.attributeCode);								
+								requireValueField.setValue(formBuilderItem.templateField.requiredCommentOnValue);
+								
+								codeField.resumeEvents(true);
+								requireValueField.resumeEvents(true);
+										
 								formBuilderItem.syncTemplateField(false);					
 							}
 						}
 					},			
 					store: {
-					sorters: [
+						autoLoad: true,
+						sorters: [
 							{
 								property: 'description',
 								direction: 'ASC',
@@ -359,7 +370,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					name: 'attributeCode',
 					displayField: 'label',
 					valueField: 'code',
-					editable: false,					
+					editable: false,
+					queryMode: 'local',
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');	
@@ -378,7 +390,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					name: 'requiredCommentOnValue',
 					displayField: 'label',
 					valueField: 'code',
-					editable: false,					
+					editable: false,
+					queryMode: 'local',
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
 							var formBuilderItem = this.up().up('panel');
@@ -979,7 +992,10 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 			}catch(e){				
 			}
 		}
-		fieldContainer.loadRecord(record);
+		
+		fieldContainer.loadRecord(record);	
+		fieldContainer.getForm().findField('attributeType').setValue(record.get('attributeType'));
+		
 
 		fieldContainer.queryById('collapsedSide').update(record.data);
 	}

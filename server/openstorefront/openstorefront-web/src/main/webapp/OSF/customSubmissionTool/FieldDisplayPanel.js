@@ -59,7 +59,8 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 
 	/**
 	 * physically inserts all form items in a section onto the display panel
-	 * 
+	 * @param section
+	 * @param activeFieldId
 	 */
 	loadSection: function (section, activeFieldId) {
 
@@ -69,115 +70,93 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 		var sectionForm = displayPanel.queryById('sectionContainer').getForm();
 		var itemContainer = displayPanel.queryById('itemContainer');
 				
-		itemContainer.removeAll();		
+		
 		
 		if (!section) {
 			displayPanel.queryById('selectionMessage').setHidden(false);
 			sectionContainer.setHidden(true);			
 			return;
 		} else {
-			displayPanel.queryById('selectionMessage').setHidden(true);
-			sectionContainer.setHidden(false);
-			displayPanel.section = section;
-			displayPanel.formBuilderPanel.activeSection = section;
-			
-			displayPanel.queryById('menu').formBuilderPanel = formBuilderPanel;
-			displayPanel.queryById('menu').setHidden(false);
-			
-			//load questions
-			var newFieldItems = [];
-			Ext.Array.each(section.fields, function(field){
-				newFieldItems.push({
-					xtype: 'osf-formbuilderitem',
-					formBuilderPanel: formBuilderPanel,
-					floatingMenu: displayPanel.queryById('menu'),
-					templateField: field
-				});
-			});		
-			itemContainer.add(newFieldItems);
-			itemContainer.updateLayout(true, true);
-			
-			if (activeFieldId) {
-				Ext.Array.each(itemContainer.items.items, function(fieldItem){
-					if (fieldItem.templateField.fieldId === activeFieldId) {
-						fieldItem.setActiveFormItem();
-									
-						Ext.defer(function(){
-							displayPanel.scrollTo(fieldItem.getX(), fieldItem.getY()-50, true);
-						}, 500);					
-					}
-				});
-			} else {
-				if (newFieldItems.length > 0) {
-					itemContainer.items.items[0].setActiveFormItem();
-				} else {
-					formBuilderPanel.activeItem = null;
+			if (displayPanel.section && displayPanel.section.sectionId === section.sectionId) {
+				
+				if (activeFieldId) {
+					displayPanel.selectQuestion(activeFieldId, itemContainer);
 				}
+			 
+			} else {
+				itemContainer.removeAll();		
+				
+				displayPanel.queryById('selectionMessage').setHidden(true);
+				sectionContainer.setHidden(false);
+				displayPanel.section = section;
+				displayPanel.formBuilderPanel.activeSection = section;
+
+				displayPanel.queryById('menu').formBuilderPanel = formBuilderPanel;
+				displayPanel.queryById('menu').setHidden(false);
+
+				//load questions
+				var newFieldItems = [];
+				Ext.Array.each(section.fields, function(field){
+					newFieldItems.push({
+						xtype: 'osf-formbuilderitem',
+						formBuilderPanel: formBuilderPanel,
+						floatingMenu: displayPanel.queryById('menu'),
+						templateField: field
+					});
+				});		
+				itemContainer.add(newFieldItems);
+				itemContainer.updateLayout(true, true);
+
+				if (activeFieldId) {
+					displayPanel.selectQuestion(activeFieldId, itemContainer);
+				} else {
+					if (newFieldItems.length > 0) {
+						itemContainer.items.items[0].setActiveFormItem();
+					} else {
+						formBuilderPanel.activeItem = null;
+					}
+				}			
+				
+				// reset the section form to the sections current values...
+				sectionForm.setValues({
+					name: section.name === displayPanel.untitledSectionName ? '' : section.name,
+					instructions: section.instructions
+				});				
 			}
 		}
 
-		// reset the section form to the sections current values...
-		sectionForm.setValues({
-			name: section.name === displayPanel.untitledSectionName ? '' : section.name,
-			instructions: section.instructions
-		});
+
 		
 	},
+	selectQuestion: function(activeFieldId, itemContainer){
+		var displayPanel = this;
+		
+		Ext.Array.each(itemContainer.items.items, function(fieldItem){
+			if (fieldItem.templateField.fieldId === activeFieldId) {
+				fieldItem.setActiveFormItem();
+				
+				var y = fieldItem.getEl().dom.offsetTop;
+				displayPanel.queryById('center').scrollTo(0, y, false);												
+
+			}
+		});		
+	},		
 	items: [
 		{
 			xtype: 'panel',
 			region: 'north',
 			itemId: 'selectionMessage',
 			html: '<h1>Add or Select a Section.</h1>'
-		},
-		{
-			xtype: 'form',
-			region: 'north',
-			itemId: 'sectionContainer',
-			hidden: true,
-			padding: 10,
-			items: [
-				{
-					xtype: 'textfield',
-					name: 'name',
-					emptyText: 'Untitled Section',
-					width: '100%',
-					listeners: {
-						change: function (field, newValue, oldValue, opts) {
-							var displayPanel = this.up('osf-csf-displaypanel');							
-							displayPanel.section.name = newValue;							
-							displayPanel.formBuilderPanel.updateSection(displayPanel.section);
-						}
-					}
-				},
-				{	
-					xtype: 'tinymce_textarea',
-					itemId: 'description',
-					fieldStyle: 'font-family: Courier New; font-size: 12px;',
-					style: { border: '0' },					
-					width: '100%',
-					height: 250,
-					name: 'instructions',			
-					maxLength: 65536,
-					emptyText: 'Instructions',
-					tinyMCEConfig: CoreUtil.tinymceConfigNoMedia(),				
-					listeners: {
-						change: function (field, newValue, oldValue, opts) {
-							var displayPanel = this.up('osf-csf-displaypanel');							
-							displayPanel.section.instructions = newValue;							
-							displayPanel.formBuilderPanel.updateSection(displayPanel.section);							
-						}
-					}
-				}
-			]
-		},
+		},	
 
 		// display area for fieldItems and the floating menu
 		{
 			xtype: 'panel',
 			region: 'center',
+			itemId: 'center',
 			scrollable: true,
-			width: '100%',
+			bodyStyle: 'padding: 10px;',
+			layout: 'anchor',
 			dockedItems: [
 				{
 					xtype: 'osf-csf-floatingMenu',
@@ -185,14 +164,54 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 					itemId: 'menu',
 					width: '100%'						
 				}
-			],
-			layout: 'fit',
-			minHeight: 50,
+			],			
+			minHeight: 50,			
 			items: [
+				{
+					xtype: 'form',
+					width: '100%',
+					itemId: 'sectionContainer',
+					hidden: true,					
+					items: [
+						{
+							xtype: 'textfield',
+							fieldLabel: 'Section Title',
+							name: 'name',
+							emptyText: 'Untitled Section',
+							width: '100%',
+							listeners: {
+								change: function (field, newValue, oldValue, opts) {
+									var displayPanel = this.up('osf-csf-displaypanel');							
+									displayPanel.section.name = newValue;							
+									displayPanel.formBuilderPanel.updateSection(displayPanel.section);
+								}
+							}
+						},
+						{	
+							xtype: 'tinymce_textarea',
+							itemId: 'description',
+							fieldStyle: 'font-family: Courier New; font-size: 12px;',
+							style: { border: '0' },					
+							width: '100%',
+							height: 250,
+							name: 'instructions',			
+							maxLength: 65536,
+							emptyText: 'Instructions',
+							tinyMCEConfig: CoreUtil.tinymceConfigNoMedia(),				
+							listeners: {
+								change: function (field, newValue, oldValue, opts) {
+									var displayPanel = this.up('osf-csf-displaypanel');							
+									displayPanel.section.instructions = newValue;							
+									displayPanel.formBuilderPanel.updateSection(displayPanel.section);							
+								}
+							}
+						}
+					]
+				},				
 				{
 					xtype: 'container',
 					layout: 'anchor',
-					scrollable: true,
+					width: '100%',
 					itemId: 'itemContainer'
 				}
 			]
