@@ -72,6 +72,10 @@ public class SubmissionFormTemplate
 	@OneToMany(orphanRemoval = true)
 	private List<SubmissionFormSection> sections;
 
+	@ConsumeField
+	@FK(value = ComponentType.class, enforce = true)
+	private String entryType;
+
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SubmissionFormTemplate()
 	{
@@ -89,6 +93,7 @@ public class SubmissionFormTemplate
 		this.setTemplateStatus(template.getTemplateStatus());
 		this.setSections(template.getSections());
 		this.setDefaultTemplate(template.getDefaultTemplate());
+		this.setEntryType(template.getEntryType());
 
 		updateSectionLinks();
 
@@ -167,6 +172,16 @@ public class SubmissionFormTemplate
 	public void setDefaultTemplate(Boolean defaultTemplate)
 	{
 		this.defaultTemplate = defaultTemplate;
+	}
+
+	public String getEntryType()
+	{
+		return entryType;
+	}
+
+	public void setEntryType(String entryType)
+	{
+		this.entryType = entryType;
 	}
 
 }

@@ -64,6 +64,36 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 				}	
 			},
 			{
+				xtype: 'combobox',
+				fieldLabel: 'Entry Type <span class="field-required" />',
+				labelAlign: 'top',
+				itemId: 'entryType',
+				name: 'entryType',
+				displayField: 'description',
+				valueField: 'code',
+				editable: false,
+				typeAhead: false,
+				allowBlank: false,
+				hidden: infoPanel.templateRecord.defaultTemplate || false,
+				store: {
+					autoLoad: true,
+					proxy: {
+						type: 'ajax',
+						url: 'api/v1/resource/componenttypes/lookup'
+					}
+				},
+				listeners: {
+					change: function (field, newValue, oldValue) {
+						infoPanel.templateRecord.entryType = newValue;
+						if (oldValue !== null) {
+							infoPanel.formBuilderPanel.markAsChanged();
+							infoPanel.formBuilderPanel.requiredAttrProgressPanel.loadGridStore(newValue);
+							infoPanel.formBuilderPanel.optionalAttrProgressPanel.loadGridStore(newValue);
+						}
+					}
+				}
+			},
+			{
 				xtype: 'panel',
 				itemId: 'lastSaved',
 				data: infoPanel.templateRecord,
@@ -80,6 +110,14 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 		record.set(infoPanel.templateRecord);
 		
 		infoPanel.loadRecord(record);
+		
+		if (record.get('entryType')) {
+			//make sure the grid have finish rendering
+			Ext.defer(function(){
+				infoPanel.formBuilderPanel.requiredAttrProgressPanel.loadGridStore(record.get('entryType'));
+				infoPanel.formBuilderPanel.optionalAttrProgressPanel.loadGridStore(record.get('entryType'));
+			}, 100);			
+		}
 	},
 	
 	updateInfo: function(unsavedChanges) {		

@@ -125,6 +125,27 @@ public class SubmissionFormTemplateResource
 		return sendSingleEntityResponse(view);
 	}
 
+	@GET
+	@APIDescription("Get template from an entry type, return default template if no valid template is available")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(SubmissionFormTemplateView.class)
+	@Path("/componenttype/{componentType}")
+	public Response getSubmissionFormTemplateFromEntryType(@PathParam("componentType") String componentType)
+	{
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setEntryType(componentType);
+		submissionFormTemplate.setActiveStatus(SubmissionFormTemplate.ACTIVE_STATUS);
+		submissionFormTemplate.setTemplateStatus(SubmissionTemplateStatus.VERIFIED);
+		submissionFormTemplate = submissionFormTemplate.find();
+
+		if (submissionFormTemplate != null) {
+			SubmissionFormTemplateView view = SubmissionFormTemplateView.toView(submissionFormTemplate);
+			return sendSingleEntityResponse(view);
+		} else {
+			return getDefaultSubmissionFormTemplate();
+		}
+	}
+
 	@POST
 	@APIDescription("Exports questions in JSON format.")
 	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
@@ -235,15 +256,17 @@ public class SubmissionFormTemplateResource
 
 	private Response updateStatus(String templateId, String newStatus)
 	{
-		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
-		submissionFormTemplate.setSubmissionTemplateId(templateId);
-		submissionFormTemplate = submissionFormTemplate.find();
-		if (submissionFormTemplate != null) {
-			submissionFormTemplate.setActiveStatus(newStatus);
-			submissionFormTemplate.save();
+		SubmissionFormTemplate targetSubmissionFormTemplate = new SubmissionFormTemplate();
+		targetSubmissionFormTemplate.setSubmissionTemplateId(templateId);
+		targetSubmissionFormTemplate = targetSubmissionFormTemplate.find();
+
+		// set active status for the target template
+		if (targetSubmissionFormTemplate != null) {
+			service.getSubmissionFormService().toggleActiveStatus(templateId, newStatus);
+			targetSubmissionFormTemplate.setActiveStatus(newStatus);
 		}
 
-		return sendSingleEntityResponse(submissionFormTemplate);
+		return sendSingleEntityResponse(targetSubmissionFormTemplate);
 	}
 
 	@PUT

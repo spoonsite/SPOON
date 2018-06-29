@@ -308,7 +308,7 @@
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
 										
 										if (record.get('userSubmissionId')) {										
-											loadSubmissionForm(record.get('submissionTemplateId'), record.get('componentType'), record);
+											loadSubmissionForm(record.get('componentType'), record);
 										} else {
 											editExistingEntry(componentId);
 										}
@@ -618,61 +618,42 @@
 				
 				//newSubmission
 				var availableSubmissions = [];
-				var loadAvailableSubmissionForms = function() {
-					
+				var loadAvailableSubmissionForms = function() {					
+	
 					submissionGrid.setLoading(true);
 					Ext.Ajax.request({
-						url: 'api/v1/resource/submissiontemplates/default',
+						url: 'api/v1/resource/componenttypes/nested',
 						callback: function() {
 							submissionGrid.setLoading(false);
 						},
 						success: function(response, opts) {
-							var defaultTemplate = Ext.decode(response.responseText);							
-							
-							submissionGrid.setLoading(true);
-							Ext.Ajax.request({
-								url: 'api/v1/resource/componenttypes/nested',
-								callback: function() {
-									submissionGrid.setLoading(false);
-								},
-								success: function(response, opts) {
-									var componentTypeRoot = Ext.decode(response.responseText);
+							var componentTypeRoot = Ext.decode(response.responseText);
 
-									var flattenComponentTypes = function(root, indent) {
-										if (root.componentType) {
-											var submissionTemplateId = defaultTemplate.submissionTemplateId;
-											if (root.componentType.submissionTemplateId) {
-												submissionTemplateId = root.componentType.submissionTemplateId;
-											}
-											
-											if (root.componentType.allowOnSubmission) {
-												availableSubmissions.push({
-													componentType: root.componentType.componentType,
-													submissionTemplateId: submissionTemplateId,
-													label: root.componentType.label,
-													description: root.componentType.description,
-													iconUrl: root.componentType.iconUrl,
-													indent: indent
-												});
-											}
-										}
-										
-										root.children = root.children.sort(function(a, b){
-											return a.componentType.label.toLowerCase().localeCompare(b.componentType.label.toLowerCase());
-										});										
-										Ext.Array.each(root.children, function(child){											
-											flattenComponentTypes(child, (indent + 10));
+							var flattenComponentTypes = function(root, indent) {
+								if (root.componentType) {
+
+									if (root.componentType.allowOnSubmission) {
+										availableSubmissions.push({
+											componentType: root.componentType.componentType,											
+											label: root.componentType.label,
+											description: root.componentType.description,
+											iconUrl: root.componentType.iconUrl,
+											indent: indent
 										});
-									};
-									flattenComponentTypes(componentTypeRoot, 0);
-									
-									
-									
+									}
 								}
-							});							
+
+								root.children = root.children.sort(function(a, b){
+									return a.componentType.label.toLowerCase().localeCompare(b.componentType.label.toLowerCase());
+								});										
+								Ext.Array.each(root.children, function(child){											
+									flattenComponentTypes(child, (indent + 10));
+								});
+							};
+							flattenComponentTypes(componentTypeRoot, 0);
+
 						}
-					});					
-					
+					});	
 				};
 				loadAvailableSubmissionForms();
 								
@@ -734,7 +715,7 @@
 										iconCls: 'fa fa-2x fa-plus icon-vertical-correction icon-button-color-save',
 										scale: 'medium',
 										handler: function() {											
-											loadSubmissionForm(entryTypeSelectWin.submissionTemplateId, entryTypeSelectWin.componentType);											
+											loadSubmissionForm(entryTypeSelectWin.componentType);											
 											entryTypeSelectWin.close();
 										}										
 									},
@@ -795,7 +776,7 @@
 						success: function(response, opts) {
 							var userSubmission = Ext.decode(response.responseText);
 														
-							loadSubmissionForm(userSubmission.templateId, userSubmission.componentType, null, userSubmission);
+							loadSubmissionForm(userSubmission.componentType, null, userSubmission);
 							actionRefreshSubmission();
 						}
 					});
@@ -814,7 +795,7 @@
 						success: function(response, opts) {
 							var userSubmission = Ext.decode(response.responseText);
 														
-							loadSubmissionForm(userSubmission.templateId, userSubmission.componentType, null, userSubmission);
+							loadSubmissionForm(userSubmission.componentType, null, userSubmission);
 							actionRefreshSubmission();
 						}
 					});
@@ -833,89 +814,85 @@
 						success: function(response, opts) {
 							var userSubmission = Ext.decode(response.responseText);
 														
-							loadSubmissionForm(userSubmission.templateId, userSubmission.componentType, null, userSubmission);
+							loadSubmissionForm(userSubmission.componentType, null, userSubmission);
 							actionRefreshSubmission();
 						}
 					});
 					
 				};
 				
-				var loadSubmissionForm = function(submissionTemplateId, componentType, record, userSubmissionExisting) {
-					
-					if (!submissionTemplateId) {						
-						console.error("Need to Set default");
-					}
-					
-					if (submissionTemplateId) {
+				var loadSubmissionForm = function(componentType, record, userSubmissionExisting) {
 						
-						submissionGrid.setLoading('Loading Submission Form...');
-						Ext.Ajax.request({
-							url: 'api/v1/resource/submissiontemplates/' + submissionTemplateId,
-							callback: function() {
-								submissionGrid.setLoading(false);
-							},
-							success: function(response, opts) {
-								var template = Ext.decode(response.responseText);
-								
-								var submissionWin = Ext.create('Ext.window.Window', {
-									title: 'Submission',
-									layout: 'fit',
-									modal: true,
-									closeAction: 'destroy',
-									width: '80%',
-									height: '80%',
-									maximizable: true,									
-									items: [
-										{
-											xtype: 'osf-customSubmission-SubmissionformFullControl',
-											itemId: 'controlForm',
-											finishInitialSave: function() {
-												actionRefreshSubmission();
-											},
-											submissionSuccess: function() {
-												actionRefreshSubmission();
-												submissionWin.skipSave = true;
-												submissionWin.close();
-											}
-										}
-									],
-									listeners: {
-										beforeclose: function(panel, opts) {
-											var form = panel.queryById('submissionForm');	
-											if (form.userSubmission && !submissionWin.skipSave) {
-												panel.queryById('controlForm').saveSubmission();
-											}
+					submissionGrid.setLoading('Loading Submission Form...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/submissiontemplates/componenttype/' + componentType,
+						callback: function() {
+							submissionGrid.setLoading(false);
+						},
+						success: function(response, opts) {
+							var template = Ext.decode(response.responseText);
+
+							// reset the entryType so it uses the record's entry type (not the entry type of the template)
+							// Since the template entry type can be blank
+							template.entryType = componentType;
+
+							var submissionWin = Ext.create('Ext.window.Window', {
+								title: 'Submission',
+								layout: 'fit',
+								modal: true,
+								closeAction: 'destroy',
+								width: '80%',
+								height: '80%',
+								maximizable: true,									
+								items: [
+									{
+										xtype: 'osf-customSubmission-SubmissionformFullControl',
+										itemId: 'controlForm',
+										finishInitialSave: function() {
+											actionRefreshSubmission();
+										},
+										submissionSuccess: function() {
+											actionRefreshSubmission();
+											submissionWin.skipSave = true;
+											submissionWin.close();
 										}
 									}
-								});
-								submissionWin.show();
-								
-								var finishLoadingForm = function(userSubmission) {
-									submissionWin.queryById('controlForm').load(template, componentType, userSubmission, true);					
-								};
-
-								if (record) {
-
-									//load user submission
-									submissionWin.setLoading(true);
-									Ext.Ajax.request({
-										url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId'),
-										callback: function(){
-											submissionWin.setLoading(false);
-										},
-										success: function(response, opt) {
-											var userSubmission = Ext.decode(response.responseText);
-											finishLoadingForm(userSubmission);
+								],
+								listeners: {
+									beforeclose: function(panel, opts) {
+										var form = panel.queryById('submissionForm');	
+										if (form.userSubmission && !submissionWin.skipSave) {
+											panel.queryById('controlForm').saveSubmission();
 										}
-									});
-								} else {									
-									finishLoadingForm(userSubmissionExisting);
-								}								
-								
-							}
-						});
-						
-					}
+									}
+								}
+							});
+							submissionWin.show();
+
+							var finishLoadingForm = function(userSubmission) {
+								submissionWin.queryById('controlForm').load(template, componentType, userSubmission, true);					
+							};
+
+							if (record) {
+
+								//load user submission
+								submissionWin.setLoading(true);
+								Ext.Ajax.request({
+									url: 'api/v1/resource/usersubmissions/' + record.get('userSubmissionId'),
+									callback: function(){
+										submissionWin.setLoading(false);
+									},
+									success: function(response, opt) {
+										var userSubmission = Ext.decode(response.responseText);
+										finishLoadingForm(userSubmission);
+									}
+								});
+							} else {									
+								finishLoadingForm(userSubmissionExisting);
+							}								
+
+						}
+					});
 					
 				};				
 				

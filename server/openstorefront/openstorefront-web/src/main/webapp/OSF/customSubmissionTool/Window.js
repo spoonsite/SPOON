@@ -62,35 +62,48 @@ Ext.define('OSF.customSubmissionTool.Window', {
 					handler: function() {
 						var submissionWindow = this.up('window');
 						
-						var entryTypeSelect = Ext.create('OSF.customSubmissionTool.EntryTypeSelectWindow', {
-							selectedEntryType: submissionWindow.selectedEntryType,
-							selectCallBack: function(entryType) {
-								submissionWindow.selectedEntryType = entryType;
-								var previewWin = Ext.create('Ext.window.Window', {
-									title: 'Preview',
-									layout: 'fit',
-									modal: true,
-									closeAction: 'destroy',
-									width: '80%',
-									height: '80%',
-									maximizable: true,									
-									items: [
-										{
-											xtype: 'osf-customSubmission-SubmissionformFullControl',
-											itemId: 'form',
-											showCustomButton: true,
-											hideSave: true,
-											customButtonHandler: function() {
-												previewWin.close();
-											}											
-										}
-									]
-								});
-								previewWin.show();
-								previewWin.queryById('form').load(submissionWindow.template, entryType);						
-							}
+						var previewWin = Ext.create('Ext.window.Window', {
+							title: 'Preview',
+							layout: 'fit',
+							modal: true,
+							closeAction: 'destroy',
+							width: '80%',
+							height: '80%',
+							maximizable: true,									
+							items: [
+								{
+									xtype: 'osf-customSubmission-SubmissionformFullControl',
+									itemId: 'form',
+									showCustomButton: true,
+									hideSave: true,
+									customButtonHandler: function() {
+										previewWin.close();
+									}											
+								}
+							]
 						});
-						entryTypeSelect.show();						
+						previewWin.show();
+						
+						
+						var doLoad = function(componentType) {
+							submissionWindow.template.entryType = componentType;
+							previewWin.queryById('form').load(submissionWindow.template, submissionWindow.template.entryType);
+						};
+
+						if (!submissionWindow.template.entryType) {
+							//prompt
+							var entryTypeSelect = Ext.create('OSF.customSubmissionTool.EntryTypeSelectWindow', {
+								closable: false,
+								alwaysOnTop: true,						
+								onEsc: Ext.emptyFn,						
+								selectCallBack: function(entryType) {
+									doLoad(entryType);
+								}
+							});
+							entryTypeSelect.show();
+						} else {
+							doLoad(submissionWindow.template.entryType);
+						}						
 					}					
 				},
 				{
@@ -171,7 +184,7 @@ Ext.define('OSF.customSubmissionTool.Window', {
 						field.fieldOrder = indexField;
 					});					
 				});
-			}			
+			}
 
 			submissionWindow.setLoading("Saving...");
 			Ext.Ajax.request({
@@ -203,13 +216,11 @@ Ext.define('OSF.customSubmissionTool.Window', {
 						});						
 						
 					} else {
-						Ext.toast('Saved Template Successfully');
 
 						submissionWindow.template.updateUser = updatedTemplate.updateUser;
 						submissionWindow.template.updateDts = Ext.Date.parse(updatedTemplate.updateDts, 'c');
 
 						//update all section id and field ids
-
 						submissionWindow.formBuilderPanel.markAsSaved();
 						submissionWindow.formBuilderPanel.updateTemplate(updatedTemplate);
 						if (submissionWindow.saveCallback) {
@@ -218,7 +229,7 @@ Ext.define('OSF.customSubmissionTool.Window', {
 						if (afterSave) {
 							afterSave(updatedTemplate);
 						}
-						
+
 					}
 				}
 			});

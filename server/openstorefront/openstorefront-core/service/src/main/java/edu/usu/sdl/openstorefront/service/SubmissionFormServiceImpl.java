@@ -90,18 +90,23 @@ public class SubmissionFormServiceImpl
 	{
 		Objects.requireNonNull(template);
 
-		//Find type to verify against pick one
-		List<ComponentType> componentType = getComponentService().getAllComponentTypes();
-		if (componentType.isEmpty()) {
-			throw new OpenStorefrontRuntimeException("At least one component type needs to be defined and active", "Add Component Type");
+		String componentTypeInUse = template.getEntryType();
+		if (StringUtils.isBlank(componentTypeInUse)) {
+			//Find type to verify against pick one
+			List<ComponentType> componentType = getComponentService().getAllComponentTypes();
+			if (componentType.isEmpty()) {
+				throw new OpenStorefrontRuntimeException("At least one component type needs to be defined and active", "Add Component Type");
+			}
+			componentTypeInUse = componentType.get(0).getComponentType();
 		}
 
-		ValidationResult validationResult = validateTemplate(template, componentType.get(0).getComponentType());
+		ValidationResult validationResult = validateTemplate(template, componentTypeInUse);
 		if (validationResult.valid()) {
 			template.setTemplateStatus(SubmissionTemplateStatus.PENDING_VERIFICATION);
 		} else {
 			template.setTemplateStatus(SubmissionTemplateStatus.INCOMPLETE);
 		}
+		template.setActiveStatus(SubmissionFormTemplate.INACTIVE_STATUS);
 
 		SubmissionFormTemplate existing = persistenceService.findById(SubmissionFormTemplate.class, template.getSubmissionTemplateId());
 		if (existing != null) {
@@ -354,13 +359,7 @@ public class SubmissionFormServiceImpl
 
 		SubmissionFormTemplate formTemplate;
 		if (componentType != null) {
-			if (StringUtils.isNotBlank(componentType.getSubmissionTemplateId())) {
-				formTemplate = persistenceService.findById(SubmissionFormTemplate.class, componentType.getSubmissionTemplateId());
-			} else {
-				SubmissionFormTemplate templateExample = new SubmissionFormTemplate();
-				templateExample.setDefaultTemplate(Boolean.TRUE);
-				formTemplate = templateExample.find();
-			}
+			formTemplate = findTemplateForComponentType(componentType.getComponentType());
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find component Type", "Check Data");
 		}
@@ -525,6 +524,55 @@ public class SubmissionFormServiceImpl
 			persistenceService.delete(existing);
 		}
 
+	}
+
+	@Override
+	public void toggleActiveStatus(String submissionTemplateId, String newStatus)
+	{
+		Objects.requireNonNull(submissionTemplateId);
+		Objects.requireNonNull(submissionTemplateId);
+
+		SubmissionFormTemplate targetSubmissionFormTemplate = persistenceService.findById(SubmissionFormTemplate.class, submissionTemplateId);
+
+		// if activating a template, inactivate other templates that have same entry type
+		if (SubmissionFormTemplate.ACTIVE_STATUS.equals(newStatus) && targetSubmissionFormTemplate.getEntryType() != null) {
+			SubmissionFormTemplate affectedTemplateExample = new SubmissionFormTemplate();
+			affectedTemplateExample.setEntryType(targetSubmissionFormTemplate.getEntryType());
+			affectedTemplateExample.setActiveStatus(SubmissionFormTemplate.ACTIVE_STATUS);
+
+			List<SubmissionFormTemplate> affectedTemplates = affectedTemplateExample.findByExampleProxy();
+			affectedTemplates.forEach(template -> {
+				if (!template.getSubmissionTemplateId().equals(submissionTemplateId)) {
+					template.setActiveStatus(SubmissionFormTemplate.INACTIVE_STATUS);
+					persistenceService.persist(template);
+				}
+			});
+		}
+
+		targetSubmissionFormTemplate.setActiveStatus(newStatus);
+		targetSubmissionFormTemplate.populateBaseUpdateFields();
+		persistenceService.persist(targetSubmissionFormTemplate);
+	}
+
+	@Override
+	public SubmissionFormTemplate findTemplateForComponentType(String componentType)
+	{
+		Objects.requireNonNull(componentType);
+
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setEntryType(componentType);
+		submissionFormTemplate.setActiveStatus(SubmissionFormTemplate.ACTIVE_STATUS);
+		submissionFormTemplate.setTemplateStatus(SubmissionTemplateStatus.VERIFIED);
+		submissionFormTemplate = submissionFormTemplate.find();
+
+		if (submissionFormTemplate == null) {
+			//default
+			submissionFormTemplate = new SubmissionFormTemplate();
+			submissionFormTemplate.setDefaultTemplate(Boolean.TRUE);
+			submissionFormTemplate = submissionFormTemplate.find();
+		}
+
+		return submissionFormTemplate;
 	}
 
 }

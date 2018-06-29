@@ -23,7 +23,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		'OSF.customSubmissionTool.FormTemplateInfoPanel',
 		'OSF.customSubmissionTool.SectionNavPanel',
 		'OSF.customSubmissionTool.TemplateProgressPanel',
-		'OSF.customSubmissionTool.FieldDisplayPanel'
+		'OSF.customSubmissionTool.FieldDisplayPanel',
+		'OSF.customSubmissionTool.AttributeProgressPanel'
 	],
 
 	width: '100%',		
@@ -143,11 +144,29 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 					flex: 2
 				},
 				{
-					xtype: 'osf-csf-templateprogresspanel',
-					itemId: 'templateProgress',
+					xtype: 'tabpanel',
 					width: '100%',
-					templateRecord: formBuilderPanel.templateRecord,
-					flex: 2
+					flex: 2,
+					items: [
+						{
+							xtype: 'osf-csf-templateprogresspanel',
+							itemId: 'templateProgress',
+							width: '100%',
+							templateRecord: formBuilderPanel.templateRecord
+						},
+						{
+							xtype: 'osf-csf-attributeprogresspanel',
+							itemId: 'requiredAttributesProgress',
+							templateRecord: formBuilderPanel.templateRecord,
+							displayRequiredAttributes: true
+						},
+						{
+							xtype: 'osf-csf-attributeprogresspanel',
+							itemId: 'optionalAttributesProgress',
+							templateRecord: formBuilderPanel.templateRecord,
+							displayRequiredAttributes: false
+						}
+					]
 				}
 			]
 		);
@@ -157,6 +176,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.floatingMenu = formBuilderPanel.queryById('floatingMenu');
 		formBuilderPanel.sectionPanel = formBuilderPanel.queryById('sectionPanel');
 		formBuilderPanel.templateProgressPanel = formBuilderPanel.queryById('templateProgress');
+		formBuilderPanel.requiredAttrProgressPanel = formBuilderPanel.queryById('requiredAttributesProgress');
+		formBuilderPanel.optionalAttrProgressPanel = formBuilderPanel.queryById('optionalAttributesProgress');
 
 		formBuilderPanel.displayPanel.formBuilderPanel = formBuilderPanel;
 

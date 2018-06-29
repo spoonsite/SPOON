@@ -153,4 +153,19 @@ public interface SubmissionFormService
 	 */
 	public void deleteUserSubmissionMedia(String submissionMediaId);
 
+	/**
+	 * Only one submission form should be active per entry type
+	 *
+	 * @param submissionTemplateId
+	 */
+	public void toggleActiveStatus(String submissionTemplateId, String newStatus);
+
+	/**
+	 * Finds the associate verified/active template or pulls the default
+	 *
+	 * @param componentType
+	 * @return template or default template
+	 */
+	public SubmissionFormTemplate findTemplateForComponentType(String componentType);
+
 }
