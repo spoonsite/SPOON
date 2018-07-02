@@ -454,6 +454,7 @@
 										text: 'Upload',
 										iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 										formBind: true,
+										requiredPermissions: ['ADMIN-MEDIA-UPLOAD'],
 										handler: function(){     
 											var progressMsg = Ext.MessageBox.show({
 												title: 'Media Upload',

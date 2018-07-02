@@ -385,6 +385,7 @@
 										text: 'Upload',
 										iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 										formBind: true,
+										requiredPermissions: ['ADMIN_LOOKUPS_CREATE'],
 										handler: function(){
 											Ext.getCmp('uploadForm').submit({
 												url: '/openstorefront/Upload.action?UploadLookup&entityName=' + selectedTable.get('code'),

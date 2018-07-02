@@ -201,10 +201,10 @@ public class MediaAction
 			Component component = service.getPersistenceService().findById(Component.class, componentMedia.getComponentId());
 			if (component != null) {
 				boolean allow = false;
-				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
+				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT)) {
 					allow = true;
 					LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
+				} else if (SecurityUtil.hasPermission(SecurityPermission.USER_EVALUATIONS_UPDATE)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
 					}
@@ -501,9 +501,9 @@ public class MediaAction
 	}
 
 	@RequireSecurity(value = {
-		SecurityPermission.ADMIN_ENTRY_MANAGEMENT,
-		SecurityPermission.ADMIN_EVALUATION_MANAGEMENT,
-		SecurityPermission.EVALUATIONS
+		SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT,
+		SecurityPermission.ADMIN_ENTRY_EVALSECTION_MANAGEMENT,
+		SecurityPermission.USER_EVALUATIONS_UPDATE
 	}, logicOperator = LogicOperation.OR)
 	@HandlesEvent("UploadSectionMedia")
 	public Resolution uploadSectionMedia()
@@ -601,7 +601,10 @@ public class MediaAction
 				.createRangeResolution();
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	// @RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION_UPDATE)
+	@RequireSecurity(value = { SecurityPermission.ADMIN_ORGANIZATION_UPDATE,
+			SecurityPermission.ADMIN_ORGANIZATION_CREATE},
+			logicOperator = LogicOperation.OR)
 	@HandlesEvent("UploadOrganizationLogo")
 	public Resolution uploadOrganizationLogo()
 	{
@@ -702,7 +705,7 @@ public class MediaAction
 		if (userSubmission != null) {
 
 			boolean allow = false;
-			if (SecurityUtil.hasPermission(SecurityPermission.USER_SUBMISSIONS)) {
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_SUBMISSIONS_UPDATE)) {
 				allow = true;
 				LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
 			} else if (SecurityUtil.isCurrentUserTheOwner(userSubmission)) {

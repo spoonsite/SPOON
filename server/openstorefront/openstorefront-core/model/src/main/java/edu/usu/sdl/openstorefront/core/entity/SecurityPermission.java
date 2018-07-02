@@ -288,6 +288,7 @@ public class SecurityPermission
 	public static final String ADMIN_SUPPORTMEDIA_PAGE = "ADMIN-SUPPORTMEDIA-PAGE";
 	public static final String ADMIN_MEDIA_PAGE = "ADMIN-MEDIA-PAGE";
 	public static final String ADMIN_MEDIA_DELETE = "ADMIN-MEDIA-DELETE";
+	public static final String ADMIN_MEDIA_UPLOAD = "ADMIN-MEDIA-UPLOAD";
 	public static final String ADMIN_TEMPMEDIA_MANAGEMENT_READ = "ADMIN-TEMPMEDIA-MANAGEMENT-READ";
 	public static final String ADMIN_TEMPMEDIA_MANAGEMENT_DELETE = "ADMIN-TEMPMEDIA-MANAGEMENT-DELETE";
 	public static final String ADMIN_SUPPORT_MEDIA_CREATE = "ADMIN-SUPPORT-MEDIA-CREATE";
@@ -431,6 +432,7 @@ public class SecurityPermission
 	public static final String ADMIN_SYSTEM_MANAGEMENT_CACHE = "ADMIN-SYSTEM-MANAGEMENT-CACHE";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_RECENT_CHANGES = "ADMIN-SYSTEM-MANAGEMENT-RECENT-CHANGES";
 	public static final String ADMIN_SYSTEM_MANAGEMENT_STATUS = "ADMIN-SYSTEM-MANAGEMENT-STATUS";
+	public static final String ADMIN_SYSTEM_MANAGEMENT_STAND_BY = "ADMIN-SYSTEM-MANAGEMENT-STAND-BY";
 
 	//Tags
 	public static final String GROUPBY_TAGS = "Tags";
@@ -646,9 +648,10 @@ public class SecurityPermission
 		//Media
 		codeMap.put(ADMIN_MEDIA_PAGE, newLookup(SecurityPermission.class, ADMIN_MEDIA_PAGE, "Provides access to the admin Media page", null, GROUPBY_MEDIA, null));
 		codeMap.put(ADMIN_SUPPORTMEDIA_PAGE, newLookup(SecurityPermission.class, ADMIN_SUPPORTMEDIA_PAGE, "Provides access to the Support Media page", null, GROUPBY_MEDIA, null));
-		codeMap.put(ADMIN_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_MEDIA_DELETE, "Allows for deleting media", null, GROUPBY_MEDIA, null));		
+		codeMap.put(ADMIN_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_MEDIA_DELETE, "Allows for deleting media", null, GROUPBY_MEDIA, null));	
+		codeMap.put(ADMIN_MEDIA_UPLOAD, newLookup(SecurityPermission.class, ADMIN_MEDIA_UPLOAD, "Allows for uploading media", null, GROUPBY_MEDIA, null));		
 		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT_READ, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT_READ, "Provides the ability to read temp media", null, GROUPBY_MEDIA, null));
-		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT_DELETE, "Provides the ability to delete temp media", null, GROUPBY_MEDIA, ADMIN_TEMPMEDIA_MANAGEMENT_READ));
+		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT_DELETE, "Provides the ability to delete temp media", null, GROUPBY_MEDIA, null));
 		codeMap.put(ADMIN_SUPPORT_MEDIA_CREATE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_CREATE, "Allows for the uploading of support medias", null, GROUPBY_MEDIA, null));
  		codeMap.put(ADMIN_SUPPORT_MEDIA_UPDATE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_UPDATE, "Allows for updating support medias", null, GROUPBY_MEDIA, null));
 		codeMap.put(ADMIN_SUPPORT_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_DELETE, "Allows for the deletion of support medias", null, GROUPBY_MEDIA, null));
@@ -779,6 +782,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_CACHE, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_CACHE, "Access to system cache", null, GROUPBY_SYSTEM_MANAGEMENT, null));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_RECENT_CHANGES, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_RECENT_CHANGES, "System recent changes", null, GROUPBY_SYSTEM_MANAGEMENT, null));
 		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_STATUS, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_STATUS, "Access to system status", null, GROUPBY_SYSTEM_MANAGEMENT, null));
+		codeMap.put(ADMIN_SYSTEM_MANAGEMENT_STAND_BY, newLookup(SecurityPermission.class, ADMIN_SYSTEM_MANAGEMENT_STAND_BY, "Access to system standby action", null, GROUPBY_SYSTEM_MANAGEMENT, null));
 
 		//Tags
 		codeMap.put(ADMIN_TAGS_PAGE, newLookup(SecurityPermission.class, ADMIN_TAGS_PAGE, "Provides access to the admin Tags page", null, GROUPBY_TAGS, null));

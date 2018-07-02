@@ -81,7 +81,7 @@ public class LoggingAction
 		return new StreamingResolution("text/html", results.toString());
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_LOGGING)
 	@HandlesEvent("UpdateLogLevel")
 	public Resolution updateLogLevel()
 	{
@@ -100,7 +100,7 @@ public class LoggingAction
 		return viewLoggers();
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_LOGGING)
 	@HandlesEvent("UpdateHandlerLevel")
 	@SuppressWarnings("squid:S1872")
 	public Resolution updateHandlerLevel()

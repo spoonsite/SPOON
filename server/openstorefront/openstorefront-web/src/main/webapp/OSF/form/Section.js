@@ -272,6 +272,7 @@ Ext.define('OSF.form.Section', {
 												{
 													text: 'Upload',
 													iconCls: 'fa fa-lg fa-upload icon-button-color-default',
+													requiredPermissions: ['ADMIN-ENTRY-EVALSECTION-MANAGEMENT', 'ADMIN-ENTRY-EVALSECTION-MANAGEMENT', 'USER-EVALUATIONS-UPDATE'],
 													handler: function () {
 														var grid = this.up('grid');
 

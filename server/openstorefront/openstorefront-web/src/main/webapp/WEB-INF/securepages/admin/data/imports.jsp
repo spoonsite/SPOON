@@ -346,6 +346,7 @@
 												text: 'Upload',												
 												iconCls: 'fa fa-upload',
 												formBind: true,
+												requiredPermissions: ['ADMIN_DATA_IMPORT_EXPORT'],
 												handler: function() {
 													var uploadForm = this.up('form');
 													var fileFieldCB = Ext.getCmp('fieldForm').getComponent('fileFieldCB');
@@ -1372,6 +1373,7 @@
 																		text: 'Upload',
 																		formBind: true,
 																		iconCls: 'fa fa-lg fa-upload',
+																		requiredPermissions: ['ADMIN_DATA_IMPORT_EXPORT'],
 																		handler: function() {
 																			var uploadForm = this.up('form');
 																			var previewPanel = uploadForm.up('panel');
@@ -1470,6 +1472,7 @@
 															{
 																text: 'Upload',
 																iconCls: 'fa fa-lg fa-upload icon-button-color-default',
+																requiredPermissions: ['ADMIN_DATA_IMPORT_EXPORT'],
 																formBind: true,
 																handler: function() {
 																	var uploadForm = this.up('form');
