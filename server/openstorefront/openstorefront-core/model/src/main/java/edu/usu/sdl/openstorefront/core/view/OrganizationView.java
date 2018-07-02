@@ -34,10 +34,6 @@ public class OrganizationView
 
 	private String organizationTypeDescription;
 
-	public OrganizationView()
-	{
-	}
-
 	public static OrganizationView toView(Organization organization)
 	{
 		OrganizationView view = new OrganizationView();

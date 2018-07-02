@@ -31,6 +31,8 @@ public class SecurityPermission
 		extends LookupEntity<SecurityPermission>
 {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final String ENTRY_TAG = "ENTRY-TAG";
 	public static final String REPORTS_SCHEDULE = "REPORTS-SCHEDULE";
 	public static final String REPORTS = "REPORTS";
@@ -69,6 +71,7 @@ public class SecurityPermission
 	public static final String ADMIN_EVALUATION_TEMPLATE_SECTION = "ADMIN-EVALUATION-TEMPLATE-SECTION";
 	public static final String ADMIN_CONTACT_MANAGEMENT = "ADMIN-CONTACT-MANAGEMENT";
 	public static final String ADMIN_ENTRY_TEMPLATES = "ADMIN-ENTRY-TEMPLATES";
+	public static final String ADMIN_USER_SUBMISSIONS = "ADMIN-USER-SUBMISSIONS";
 	public static final String ADMIN_ENTRY_TYPES = "ADMIN-ENTRY-TYPES";
 	public static final String ADMIN_QUESTIONS = "ADMIN-QUESTIONS";
 	public static final String ADMIN_REVIEW = "ADMIN-REVIEW";
@@ -80,12 +83,9 @@ public class SecurityPermission
 	public static final String ADMIN_ROLE_MANAGEMENT = "ADMIN-ROLE-MANAGEMENT";
 	public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
 	public static final String ADMIN_FAQ = "ADMIN-FAQ";
+	public static final String ADMIN_SUBMISSION_FORM_TEMPLATE = "ADMIN-SUBMISSION-FORM-TEMPLATE";
 
 	public static final String ADMIN_SUPPORT_MEDIA = "ADMIN-SUPPORT-MEDIA";
-
-	public SecurityPermission()
-	{
-	}
 
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
@@ -129,6 +129,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_SECTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_SECTION, "Admin evalution template section"));
 		codeMap.put(ADMIN_CONTACT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_CONTACT_MANAGEMENT, "Admin contact management"));
 		codeMap.put(ADMIN_ENTRY_TEMPLATES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TEMPLATES, "Admin entry templates"));
+		codeMap.put(ADMIN_USER_SUBMISSIONS, newLookup(SecurityPermission.class, ADMIN_USER_SUBMISSIONS, "Admin user submissions"));
 		codeMap.put(ADMIN_ENTRY_TYPES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TYPES, "Admin entry types"));
 		codeMap.put(ADMIN_QUESTIONS, newLookup(SecurityPermission.class, ADMIN_QUESTIONS, "Admin questions"));
 		codeMap.put(ADMIN_REVIEW, newLookup(SecurityPermission.class, ADMIN_REVIEW, "Admin review"));
@@ -140,6 +141,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_SECURITY, newLookup(SecurityPermission.class, ADMIN_SECURITY, "Admin security"));
 		codeMap.put(ADMIN_ROLE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ROLE_MANAGEMENT, "Admin security role management"));
 		codeMap.put(ADMIN_FAQ, newLookup(SecurityPermission.class, ADMIN_FAQ, "Admin FAQ management"));
+		codeMap.put(ADMIN_SUBMISSION_FORM_TEMPLATE, newLookup(SecurityPermission.class, ADMIN_SUBMISSION_FORM_TEMPLATE, "Admin Custom Submission Form management"));
 
 		codeMap.put(ADMIN_SUPPORT_MEDIA, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA, "Admin Support Media"));
 

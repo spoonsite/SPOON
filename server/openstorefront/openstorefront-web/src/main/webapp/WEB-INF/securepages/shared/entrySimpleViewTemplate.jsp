@@ -48,7 +48,11 @@ limitations under the License.
 	<tpl if="releaseDate">
 		<p><b>Release Date:</b> {releaseDate}</p>
 	</tpl>
-	<p><b>Entry Type:</b> {componentTypeLabel}</p>
+	<div class="breadcrumbs">
+		<tpl for="parents" between="&nbsp; &gt; &nbsp;">
+			<a target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch('{componentType}')" href="searchResults.jsp"></a>{label}</a>
+		</tpl>
+	</div>
 	<br>
 	<b>Description</b>
 	<hr>
@@ -61,8 +65,12 @@ limitations under the License.
 			<table class="quickView-table" border="1">				
 				<tpl for="attributes">
 					<tr>
-						<td class="quickView-tableall"><b>{typeDescription}</b></td>
-						<td class="quickView-tableall">{codeDescription}</td>
+						<td class="quickView-tableall"><b>{typeDescription}</b>
+							<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>
+						</td>						
+						<td class="quickView-tableall"><b>{codeDescription}</b>
+							<tpl if="comment"><hr>Comment: {comment}</tpl>
+						</td>						
 					</tr>			
 				</tpl>
 			</table>

@@ -42,10 +42,6 @@ public class ComponentIntegrationView
 	private String activeStatus;
 	private String errorMessage;
 
-	public ComponentIntegrationView()
-	{
-	}
-
 	public static ComponentIntegrationView toView(ComponentIntegration integration, ComponentIntegrationConfig integrationConfig)
 	{
 		ComponentIntegrationView view = toView(integration);

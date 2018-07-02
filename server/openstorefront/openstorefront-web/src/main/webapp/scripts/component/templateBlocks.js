@@ -108,8 +108,9 @@ Ext.define('OSF.component.template.Resources', {
 			'	<tpl for="resources">',
 			'		<tr class="details-table">',
 			'			<td class="details-table"><b>{resourceTypeDesc}</b>',
-			'                       <tpl if="description"><br>{description}</tpl>',
-			'                       </td>',
+			'                   <tpl if="description"><br>{description}</tpl>',
+			'					<tpl if="privateFlag"><br><span class="private-badge">private</span></tpl>',
+			'           </td>',
 			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="{actualLink}" class="details-table" target="_blank">{link}</a></td>',
 			'		</tr>',
 			'	</tpl>',
@@ -215,8 +216,12 @@ Ext.define('OSF.component.template.Vitals', {
 			' <table class="details-table" width="100%">',
 			'	<tpl for="vitals">',
 			'		<tr class="details-table">',
-			'			<td class="details-table"><b>{label}</b></td>',
-			'			<td class="details-table highlight-{highlightStyle}"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\', \'{codeHasAttachment}\');">{value}</a><tpl if="codeHasAttachment"> <a href="api/v1/resource/attributes/attributetypes/{type}/attributecodes/{code}/attachment"><i class="fa fa-paperclip"></i> </a></tpl></td>',
+			'			<td class="details-table"><b>{label}</b>',
+			'				<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>',
+			'           </td>',
+			'			<td class="details-table highlight-{highlightStyle}"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\', \'{codeHasAttachment}\');"><b>{value}</b></a><tpl if="codeHasAttachment"> <a href="api/v1/resource/attributes/attributetypes/{type}/attributecodes/{code}/attachment"><i class="fa fa-paperclip"></i> </a></tpl>', 
+			'				<tpl if="comment"><hr>Comment: {comment}</tpl>',
+			'			</td>',
 			'		</tr>',
 			'	</tpl>',
 			'</table>'
@@ -243,6 +248,8 @@ Ext.define('OSF.component.template.Vitals', {
 					highlightStyle: item.highlightStyle,
 					type: item.type,
 					code: item.code,
+					privateFlag: item.privateFlag,
+					comment: item.comment,
 					updateDts: item.updateDts,
 					securityMarkingType: item.securityMarkingType,
 					codeHasAttachment: item.codeHasAttachment,
@@ -260,6 +267,8 @@ Ext.define('OSF.component.template.Vitals', {
 					value: item.value,
 					type: item.label,
 					code: item.value,
+					privateFlag: false,
+					comment: null,
 					vitalType: 'METADATA',
 					securityMarkingType: item.securityMarkingType,
 					updateDts: item.updateDts
@@ -1530,11 +1539,11 @@ Ext.define('OSF.component.template.EvaluationVersionSelect', {
 			if (entry.fullEvaluations.length > 0) {
 				//populate combo
 				var versions = [];
-				Ext.Array.each(entry.fullEvaluations, function (eval) {
+				Ext.Array.each(entry.fullEvaluations, function (evalLocal) {
 					versions.push({
-						code: eval.evaluation.evaluationId,
-						eval: eval,
-						description: "Version: " + eval.evaluation.version
+						code: evalLocal.evaluation.evaluationId,
+						eval: evalLocal,
+						description: "Version: " + evalLocal.evaluation.version
 					});
 				});
 

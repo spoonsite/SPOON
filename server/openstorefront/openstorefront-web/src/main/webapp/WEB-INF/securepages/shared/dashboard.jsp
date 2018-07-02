@@ -29,6 +29,8 @@
 		
 	<stripes:layout-render name="../../../layout/${actionBean.headerPage}">		
 	</stripes:layout-render>		
+
+	<link rel="stylesheet" href="css/dashboard.css">	
 		
 	<script src="scripts/component/userwatchPanel.js?v=${appVersion}" type="text/javascript"></script>	
 		

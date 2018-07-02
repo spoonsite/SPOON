@@ -33,10 +33,6 @@ public class TemporaryMediaView
 	private Date updateDts;
 	private String updateUser;
 
-	public TemporaryMediaView()
-	{
-	}
-
 	public static TemporaryMediaView toView(TemporaryMedia temporaryMedia)
 	{
 		TemporaryMediaView temporaryMediaView = new TemporaryMediaView();

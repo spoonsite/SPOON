@@ -19,16 +19,14 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 
 /**
  * Use to post a string
+ *
  * @author dshurtleff
  */
 public class GenericDataView
 {
+
 	@ConsumeField
 	private String data;
-
-	public GenericDataView()
-	{
-	}
 
 	public String getData()
 	{

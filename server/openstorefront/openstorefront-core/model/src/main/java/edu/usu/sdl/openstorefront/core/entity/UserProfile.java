@@ -109,6 +109,7 @@ public class UserProfile
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	private String searchResultView;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserProfile()
 	{
 	}

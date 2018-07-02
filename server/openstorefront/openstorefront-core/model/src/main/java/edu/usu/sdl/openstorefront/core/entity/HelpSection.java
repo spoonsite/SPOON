@@ -45,6 +45,7 @@ public class HelpSection
 	private Boolean adminSection;
 	private String permission;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public HelpSection()
 	{
 	}

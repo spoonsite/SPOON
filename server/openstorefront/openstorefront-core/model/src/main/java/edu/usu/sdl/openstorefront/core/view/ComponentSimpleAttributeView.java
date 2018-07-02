@@ -25,17 +25,14 @@ import java.util.List;
  */
 public class ComponentSimpleAttributeView
 {
+
 	private String componentId;
-	private String name;	
+	private String name;
 	private String componentType;
 	private String componentTypeDescription;
-	
+
 	@DataType(ComponentAttributeView.class)
 	private List<ComponentAttributeView> attributes = new ArrayList<>();
-
-	public ComponentSimpleAttributeView()
-	{
-	}
 
 	public String getComponentId()
 	{
@@ -45,8 +42,8 @@ public class ComponentSimpleAttributeView
 	public void setComponentId(String componentId)
 	{
 		this.componentId = componentId;
-	}	
-	
+	}
+
 	public String getName()
 	{
 		return name;
@@ -86,5 +83,5 @@ public class ComponentSimpleAttributeView
 	{
 		this.attributes = attributes;
 	}
-	
+
 }

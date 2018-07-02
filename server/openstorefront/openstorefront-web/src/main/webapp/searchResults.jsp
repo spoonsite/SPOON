@@ -139,26 +139,65 @@
 					compareViewTemplate.set(response.responseText, true);
 				}
 			});			
-									
-			var compareWin = Ext.create('Ext.window.Window', {
-				title: 'Compare',
-				iconCls: 'fa fa-columns',
-				modal: true,
-				width: '80%',
-				height: '80%',
-				maximizable: true,
-				layout: {
-					type: 'hbox',
-					align: 'stretch'
-				},				
-				items: [	
-					{
+
+			
+			var compareEntries = function(menu) {
+				
+				var changeComparePanelListenerGenerator = function(name) {
+					return function(cb, newValue, oldValue, opts) {
+						var comparePanel = this.up('panel');
+						if (newValue) {	
+							var otherStore = comparePanel.up('panel').getComponent(name).getComponent("cb").getStore();
+							otherStore.clearFilter();
+							otherStore.filterBy(function(record){
+								if (record.get('componentId') === newValue) {
+									return false;
+								} else {
+									return true;
+								}
+							});
+
+							comparePanel.setLoading(true);
+							Ext.Ajax.request({
+								url: 'api/v1/resource/components/' + newValue + '/detail',
+								callback: function(){
+									comparePanel.setLoading(false);
+								}, 
+								success: function(response, opts) {
+									var data = Ext.decode(response.responseText);
+									data = CoreUtil.processEntry(data);
+
+									root = data.componentTypeNestedModel;
+									CoreUtil.traverseNestedModel(root, [], data);
+
+									CoreUtil.calculateEvalutationScore({
+										fullEvaluations: data.fullEvaluations,
+										evaluation: data.fullEvaluations,
+										success: function (newData) {
+											data.fullEvaluations = newData.fullEvaluations;
+											comparePanel.update(data);
+
+											// Add event listeners for toggle-able containers
+											var toggleElements = document.querySelectorAll('.toggle-collapse');
+											for (ii = 0; ii < toggleElements.length; ii += 1) {
+												toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
+												toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
+											}
+										}
+									});
+								}
+							});	
+						} else {
+							comparePanel.update(null);
+						}
+					}
+				}
+				var comparePanelItemGenerator = function(itemId, name, side) {
+					result = {
 						xtype: 'panel',
-						itemId: 'compareAPanel',
-						width: '50%',
+						itemId: itemId,
 						split: true,
 						scrollable: true,
-						bodyStyle: 'padding: 10px;',
 						tpl: compareViewTemplate,
 						dockedItems: [
 							{
@@ -166,7 +205,7 @@
 								itemId: 'cb',
 								fieldLabel: '',								
 								queryMode: 'local',
-								name: 'componentA',
+								name: name,
 								valueField: 'componentId',
 								displayField: 'name',
 								emptyText: 'Select Entry',
@@ -174,132 +213,99 @@
 								},
 								flex: 1,
 								editable: false,
-								typeAhead: false,								
+								typeAhead: false,															
 								listeners: {
-									change: function(cb, newValue, oldValue, opts) {
-										var comparePanel = this.up('panel');
-										if (newValue) {										
-											//remove selection from other cb
-											var otherStore = comparePanel.up('panel').getComponent('compareBPanel').getComponent("cb").getStore();
-											otherStore.clearFilter();
-											otherStore.filterBy(function(record){
-												if (record.get('componentId') === newValue) {
-													return false;
-												} else {
-													return true;
-												}
-											});
-
-											comparePanel.setLoading(true);
-											Ext.Ajax.request({
-												url: 'api/v1/resource/components/' + newValue + '/detail',
-												callback: function(){
-													comparePanel.setLoading(false);
-												}, 
-												success: function(response, opts) {
-													var data = Ext.decode(response.responseText);
-													data = CoreUtil.processEntry(data);
-													
-													CoreUtil.calculateEvalutationScore({
-														fullEvaluations: data.fullEvaluations,
-														evaluation: data.fullEvaluations,
-														success: function (newData) {
-															data.fullEvaluations = newData.fullEvaluations;
-															comparePanel.update(data);
-
-															// Add event listeners for toggle-able containers
-															var toggleElements = document.querySelectorAll('.toggle-collapse');
-															for (ii = 0; ii < toggleElements.length; ii += 1) {
-																toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
-																toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
-															}
-														}
-													});
-												}
-											});
-										} else {
-											comparePanel.update(null);
-										}
-									}
+									change: changeComparePanelListenerGenerator(itemId) 
 								}
 							}
 						]
-					},
-					{
-						xtype: 'panel',
-						itemId: 'compareBPanel',
-						flex: 1,
-						split: true,
-						scrollable: true,
-						bodyStyle: 'padding: 20px;',
-						tpl: compareViewTemplate,
-						dockedItems: [
-							{
-								xtype: 'combobox',
-								itemId: 'cb',
-								fieldLabel: '',								
-								queryMode: 'local',
-								name: 'componentB',
-								valueField: 'componentId',
-								displayField: 'name',
-								emptyText: 'Select Entry',
-								flex: 1,
-								store: {									
-								},								
-								editable: false,
-								typeAhead: false,								
-								listeners: {
-									change: function(cb, newValue, oldValue, opts) {
-										var comparePanel = this.up('panel');
-										
-										if (newValue) {	
-											var otherStore = comparePanel.up('panel').getComponent('compareAPanel').getComponent("cb").getStore();
-											otherStore.clearFilter();
-											otherStore.filterBy(function(record){
-												if (record.get('componentId') === newValue) {
-													return false;
-												} else {
-													return true;
-												}
-											});
-
-											comparePanel.setLoading(true);
-											Ext.Ajax.request({
-												url: 'api/v1/resource/components/' + newValue + '/detail',
-												callback: function(){
-													comparePanel.setLoading(false);
-												}, 
-												success: function(response, opts) {
-													var data = Ext.decode(response.responseText);
-													data = CoreUtil.processEntry(data);
-
-													CoreUtil.calculateEvalutationScore({
-														fullEvaluations: data.fullEvaluations,
-														evaluation: data.fullEvaluations,
-														success: function (newData) {
-															data.fullEvaluations = newData.fullEvaluations;
-															comparePanel.update(data);
-
-															// Add event listeners for toggle-able containers
-															var toggleElements = document.querySelectorAll('.toggle-collapse');
-															for (ii = 0; ii < toggleElements.length; ii += 1) {
-																toggleElements[ii].removeEventListener('click', CoreUtil.toggleEventListener);
-																toggleElements[ii].addEventListener('click', CoreUtil.toggleEventListener);
-															}
-														}
-													});
-												}
-											});	
-										} else {
-											comparePanel.update(null);
-										}
-									}
-								}
-							}							
-						]						
 					}
-				]
-			});
+					if (side === 'left') {
+						result.width = '50%';
+						result.bodyStyle = 'padding: 10px';
+					} else if (side === 'right') {
+						result.flex = 1;
+						result.bodyStyle = 'padding: 20px';
+					}
+					return result;
+				}
+
+				var compareWin = Ext.create('Ext.window.Window', {
+					title: 'Compare',
+					iconCls: 'fa fa-columns',
+					modal: true,
+					width: '80%',
+					height: '80%',
+					maximizable: true,
+					closeAction: 'destroy',
+					layout: {
+						type: 'hbox',
+						align: 'stretch'
+					},				
+					items: [	
+						comparePanelItemGenerator('compareAPanel', 'componentA','left'),
+						comparePanelItemGenerator('compareBPanel', 'componentB', 'right')
+					]
+				});				
+				compareWin.show();
+				
+				var compareAcb = compareWin.getComponent('compareAPanel').getComponent('cb');
+				var compareBcb = compareWin.getComponent('compareBPanel').getComponent('cb');
+
+				compareAcb.setValue(null);
+				compareBcb.setValue(null);
+
+				var selectedComponents = [];
+				menu.items.each(function(item) {
+					if (item.componentId) {
+						var record = Ext.create('Ext.data.Model', {													
+						});
+						record.set({
+							componentId: item.componentId,
+							name: item.text
+						});
+						selectedComponents.push(record);
+					}
+				});
+
+
+				//if nothing selected
+				if(selectedComponents.length > 0) {
+					if (selectedComponents.length === 1) {
+						compareAcb.getStore().loadRecords(selectedComponents);
+						compareAcb.setValue(selectedComponents[0].get('componentId'));
+
+						var records = [];
+						searchResultsStore.each(function(record) {
+							records.push(record);
+						});
+						Ext.Array.sort(records, function(a, b){
+							return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
+						});
+						compareBcb.getStore().loadRecords(records);
+
+					} else if (selectedComponents.length > 1) {
+						compareAcb.getStore().loadRecords(selectedComponents);	
+						compareBcb.getStore().loadRecords(selectedComponents);
+
+						compareAcb.setValue(selectedComponents[0].get('componentId'));
+						compareBcb.setValue(selectedComponents[1].get('componentId'));																							
+
+					}											
+				} else {
+
+					var records = [];
+					searchResultsStore.each(function(record) {
+						records.push(record);
+					});
+					Ext.Array.sort(records, function(a, b){
+						return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
+					});
+
+					compareAcb.getStore().loadRecords(records);
+					compareBcb.getStore().loadRecords(records);
+				}				
+			}
 			
 			var loadAttributes = function() {
 				Ext.Ajax.request({
@@ -307,7 +313,7 @@
 					success: function(response, opts) {
 						var data = Ext.decode(response.responseText);
 						
-						
+
 						var visible = [];
 						var nonvisible = [];
 						Ext.Array.each(data.data, function(item){
@@ -319,8 +325,8 @@
 								margin: '0 0 1 0',
 								titleCollapse: true,
 								animCollapse: false,
-								html: '&nbsp;',								
-								listeners: {									
+								html: '&nbsp;',
+								listeners: {
 									expand: function(panel, opts){
 										if (!panel.loadedCodes) {
 											panel.loadedCodes = true;
@@ -438,7 +444,9 @@
 						fieldLabel: 'By Tag',						
 						name: 'tags',
 						emptyText: 'Select Tags',
-						grow: false,
+	 					width: 300,
+						grow: true,
+	 					growMax: 300,
 						store: Ext.create('Ext.data.Store', {
 							autoLoad: true,
 							proxy: {
@@ -465,26 +473,24 @@
 						editable: false,
 						typeAhead: false,
 						displayField: 'label',
-						valueField: 'componentType',
-						storeConfig: {
-							autoLoad: true,
-							url: 'api/v1/resource/componenttypes',
-							sorters: [{
-								property: 'label',
-								direction: 'ASC'
-							}],
-							listeners: {
-								
-								load: function(store, records, successful, operation, eOpts) {
-									
-									store.add({label: '*All*', componentType: null});
-								}
-							}
-						},
+						valueField: 'value',
+						store: Ext.create('Ext.data.Store', {
+							fields: ['label', 'value'],
+							data: [{
+								label: '*ALL*',
+								value: null
+							}]
+						}),
+						emptyText: '*ALL*',
 						listeners: {
 							change: function(field, newValue, oldValue, opts) {
 								filterResults();
 							}	
+						},
+						addStoreItem: function (item) {
+							if (this.getStore().query('value', item.value).items.length === 0) {
+								this.getStore().add(item);
+							}
 						}
 					}),
 					{
@@ -847,11 +853,14 @@
 					//check entry logo first
 					if (result.componentIconId) {
 						result.logo = 'Media.action?LoadMedia&mediaId=' + result.componentIconId;
-					} else if (result.componentTypeIconUrl) {
+					} else if (result.componentTypeIconUrl && result.includeIconInSearch) {
 						result.logo = result.componentTypeIconUrl;
 					} else {
 						result.logo = null;
 					}
+					//get all parent component types
+					root = result.componentTypeNestedModel;
+					CoreUtil.traverseNestedModel(root, [], result);
 				});
 				
 				currentDataSet = data;
@@ -875,13 +884,14 @@
 							}
 						});
 						
+						var filterByTypeCombo = Ext.getCmp('filterByType');
 						Ext.Object.each(stats, function(key, value, self) {
-							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + value.type + '\');SearchPage.filterResults();">' + value.count + '</a></span> <b>'+ value.typeLabel + '(s)</b> ';
+							filterByTypeCombo.addStoreItem({
+								label: '(' + value.count + ') ' + value.typeLabel,
+								value: value.type
+							});
 						});
-					
 					}
-
-					Ext.getCmp('searchStats').update(statLine);	
 				}
 				
 			};
@@ -897,7 +907,8 @@
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
 				{ text: 'Approved Date', section: 'approve', display: false },
-				{ text: 'Index Relevance', section: 'searchscore', display: true }
+				{ text: 'Index Relevance', section: 'searchscore', display: true },
+				{ text: 'Breadcrumbs', section: 'breadcrumbs', display: true }
 			];			
 			var allResultsSet;
 			searchResultsStore.on('load', function(store, records, success, opts){
@@ -927,12 +938,16 @@
 						var response = opts.getResponse();
 						var dataResponse = Ext.decode(response.responseText);
 						
+						var filterByTypeCombo = Ext.getCmp('filterByType');
 						Ext.Array.each(dataResponse.resultTypeStats, function(stat) {
-							statLine += '<span style="font-size: 14px;"><a href="#" onclick="Ext.getCmp(\'filterByType\').setValue(\'' + stat.componentType + '\');SearchPage.filterResults();">' + stat.count + '</a></span> <b>'+ stat.componentTypeDescription + '(s)</b> ';
+
+							filterByTypeCombo.addStoreItem({
+								label: '(' + stat.count + ') ' + stat.componentTypeDescription,
+								value: stat.componentType
+							});
 						});
 						
 					}
-					Ext.getCmp('searchStats').update(statLine);
 				}
 				
 				//sorting Attributes
@@ -1131,7 +1146,14 @@
 				'  <br><div class="searchresults-item-update">',
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'   ({componentTypeDescription}) <tpl if="show.searchscore"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'  <tpl if="show.searchscore"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'  <tpl if="show.breadcrumbs">',
+				'    <div style="display:block; font-size:14px; margin-top: 4px;">',
+				'      <tpl for="parents" between="&nbsp; &gt; &nbsp;">',
+				'         <a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
+				'      </tpl>',
+				'    </div>',
+				'  </tpl>',
 				' </div>',
 				'</tpl>',
 				{
@@ -1170,16 +1192,9 @@
 				],
 				dockedItems: [
 					{
-						xtype: 'panel',
-						dock: 'top',
-						id: 'searchStats',
-						bodyStyle: 'text-align: center;',
-						html: 'Loading...'
-					},
-					{
 						xtype: 'toolbar',
 						dock: 'top',
-						items: [				
+						items: [
 							{
 								xtype: 'combobox',
 								id: 'sortByCB',
@@ -1375,63 +1390,8 @@
 								],
 								listeners: {
 									click: function(){
-										var menu = this.getMenu();
-										var compareAcb = compareWin.getComponent('compareAPanel').getComponent('cb');
-										var compareBcb = compareWin.getComponent('compareBPanel').getComponent('cb');
-										
-										compareAcb.setValue(null);
-										compareBcb.setValue(null);
-										
-										var selectedComponents = [];
-										menu.items.each(function(item) {
-											if (item.componentId) {
-												var record = Ext.create('Ext.data.Model', {													
-												});
-												record.set({
-													componentId: item.componentId,
-													name: item.text
-												});
-												selectedComponents.push(record);
-											}
-										});
-										
-										
-										//if nothing selected
-										if(selectedComponents.length > 0) {
-											if (selectedComponents.length === 1) {
-												compareAcb.getStore().loadRecords(selectedComponents);
-												compareAcb.setValue(selectedComponents[0].get('componentId'));
-												
-												var records = [];
-												searchResultsStore.each(function(record) {
-													records.push(record);
-												});
-												Ext.Array.sort(records, function(a, b){
-													return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
-												});
-												compareBcb.getStore().loadRecords(records);
-			
-											} else if (selectedComponents.length > 1) {
-												compareAcb.getStore().loadRecords(selectedComponents);	
-												compareBcb.getStore().loadRecords(selectedComponents);
-												
-												compareAcb.setValue(selectedComponents[0].get('componentId'));
-												compareBcb.setValue(selectedComponents[1].get('componentId'));
-											}											
-										} else {
-										
-											var records = [];
-											searchResultsStore.each(function(record) {
-												records.push(record);
-											});
-											Ext.Array.sort(records, function(a, b){
-												return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
-											});
-
-											compareAcb.getStore().loadRecords(records);
-											compareBcb.getStore().loadRecords(records);
-										}
-										compareWin.show();
+										var menu = this.getMenu();										
+										compareEntries(menu);
 									}
 								}								
 							},
@@ -1488,7 +1448,7 @@
 									}
 								}
 							})
-						]						
+						]
 					}
 				],
 				items: [

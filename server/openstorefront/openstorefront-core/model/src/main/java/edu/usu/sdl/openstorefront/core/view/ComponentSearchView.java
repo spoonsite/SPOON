@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
@@ -26,6 +27,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,6 +77,10 @@ public class ComponentSearchView
 	private String dataSource;
 	private String dataSensitivity;
 
+	@APIDescription("This is the whole hiearchy for the entry type")
+	private ComponentTypeNestedModel componentTypeNestedModel;
+	private boolean includeIconInSearch;
+
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
 
@@ -86,10 +93,6 @@ public class ComponentSearchView
 	@DataType(SearchResultAttribute.class)
 	private List<SearchResultAttribute> attributes = new ArrayList<>();
 
-	public ComponentSearchView()
-	{
-	}
-
 	public static ComponentSearchView toView(Component component)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();
@@ -97,7 +100,7 @@ public class ComponentSearchView
 		ComponentAttributePk pk = new ComponentAttributePk();
 		pk.setComponentId(component.getComponentId());
 		example.setComponentAttributePk(pk);
-		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(new QueryByExample(example));
+		List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(new QueryByExample<>(example));
 		List<ComponentReview> reviews = service.getComponentService().getBaseComponent(ComponentReview.class, component.getComponentId());
 		List<ComponentTag> tags = service.getComponentService().getBaseComponent(ComponentTag.class, component.getComponentId());
 		return toView(component, attributes, reviews, tags);
@@ -119,13 +122,19 @@ public class ComponentSearchView
 		view.setReleaseDate(component.getReleaseDate());
 		view.setVersion(component.getVersion());
 		view.setComponentType(component.getComponentType());
-		view.setComponentTypeDescription(TranslateUtil.translateComponentType(component.getComponentType()));
 		view.setDataSource(component.getDataSource());
 		view.setDataSensitivity(component.getDataSensitivity());
-
+		
 		Service service = ServiceProxyFactory.getServiceProxy();
+		view.setComponentTypeDescription(service.getComponentService().getComponentTypeParentsString(component.getComponentType(), Boolean.TRUE));
+
 		view.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		view.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
+		view.setIncludeIconInSearch(service.getComponentService().resolveComponentTypeIncludeIconInSearch(component.getComponentType()));
+
+		ComponentTypeOptions options = new ComponentTypeOptions(component.getComponentType());
+		options.setPullParents(true);
+		view.setComponentTypeNestedModel(service.getComponentService().getComponentType(options));
 
 		List<SearchResultAttribute> componentAttributes = new ArrayList<>();
 		for (ComponentAttribute attribute : attributes) {
@@ -585,6 +594,26 @@ public class ComponentSearchView
 	public void setComponentTypeIconUrl(String componentTypeIconUrl)
 	{
 		this.componentTypeIconUrl = componentTypeIconUrl;
+	}
+
+	public ComponentTypeNestedModel getComponentTypeNestedModel()
+	{
+		return componentTypeNestedModel;
+	}
+
+	public void setComponentTypeNestedModel(ComponentTypeNestedModel componentTypeNestedModel)
+	{
+		this.componentTypeNestedModel = componentTypeNestedModel;
+	}
+
+	public Boolean getIncludeIconInSearch()
+	{
+		return includeIconInSearch;
+	}
+
+	public void setIncludeIconInSearch(Boolean includeIconInSearch)
+	{
+		this.includeIconInSearch = includeIconInSearch;
 	}
 
 }

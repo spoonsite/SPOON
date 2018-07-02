@@ -263,8 +263,8 @@ public class SecurityServiceImpl
 					Map<String, Object> data = new HashMap<>();
 					String subject = "Email Verification Code";
 					data.put("verificationCode", userRegistration.getVerificationCode());
-					data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
-					data.put("replyAddress", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+					data.put("replyName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
+					data.put("replyAddress", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
 					data.put("title", subject);
 					Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_VERIFICATION.toString(), data);
 					email.setSubject(subject);
@@ -696,6 +696,9 @@ public class SecurityServiceImpl
 			int updatedCount = persistenceService.runDbCommand(query, evalQueryParams);
 			LOG.log(Level.FINE, MessageFormat.format("{0} evaluation(s) were unassigned from  group {1}", new Object[]{updatedCount, securityRole.getRoleName()}));
 
+			getComponentServicePrivate().removeRoleFromComponentType(securityRole.getRoleName());
+			LOG.log(Level.FINE, "Removed Role from entry type");
+
 			persistenceService.delete(securityRole);
 
 			LOG.log(Level.INFO, MessageFormat.format("Role {0} was deleted by {2}. "
@@ -841,7 +844,7 @@ public class SecurityServiceImpl
 
 			getUserService().deleteProfile(username);
 
-			//Evaluation assigned to user should be fine and can be reassigned later. There profile will just be inactive.
+			//Evaluation assigned to user should be fine and can be reassigned later. Their profile will just be inactive.
 			persistenceService.delete(userSecurity);
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {1}. ", username, SecurityUtil.getCurrentUserName()));
@@ -906,8 +909,8 @@ public class SecurityServiceImpl
 		Map<String, Object> data = new HashMap<>();
 		String subject = "Forgot Username";
 		data.put("username", username);
-		data.put("replyName", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
-		data.put("replyAddress", PropertiesManager.getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+		data.put("replyName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
+		data.put("replyAddress", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
 		data.put("title", subject);
 		Email email = MailManager.newTemplateEmail(MailManager.Templates.FORGOT_USERNAME.toString(), data);
 		email.setSubject(subject);

@@ -19,15 +19,15 @@ Ext.require('OSF.form.MultipleAttributes');
 Ext.define('OSF.form.Attributes', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Attributes',
-
 	layout: 'fit',
+	
 	initComponent: function () {
 
 		this.callParent();
 
 		var attributePanel = this;
 
-		attributePanel.loadComponentAttributes = function (status) {
+		attributePanel.loadComponentAttributes = function (status) { 
 			if (!status) {
 				var tools = attributePanel.attributeGrid.getComponent('tools');
 				status = tools.getComponent('attributeFilterActiveStatus').getValue();
@@ -49,20 +49,18 @@ Ext.define('OSF.form.Attributes', {
 
 					var optionalAttributes = [];
 					Ext.Array.each(data, function (attribute) {
-						if (!attribute.requiredFlg) {
-							optionalAttributes.push(attribute);
-						} else if (attribute.requiredRestrictions) {
-							var optFound = Ext.Array.findBy(attribute.requiredRestrictions, function (item) {
-								if (item.componentType === attributePanel.component.componentType) {
-									return true;
-								} else {
-									return false;
+						var required = false;
+						
+						if (attribute.requiredRestrictions) {
+							Ext.Array.each(attribute.requiredRestrictions, function(restriction) {
+								if (restriction.componentType === attributePanel.component.componentType) {
+									required = true;
 								}
 							});
-							if (!optFound) {
-								optionalAttributes.push(attribute);
-							}
-						}
+						}						
+						if (!required) {
+							optionalAttributes.push(attribute);
+						} 
 					});
 					optionalAttributes.reverse();
 					attributePanel.attributeGrid.getStore().loadData(optionalAttributes);
@@ -72,6 +70,9 @@ Ext.define('OSF.form.Attributes', {
 
 		attributePanel.attributeGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					"type",
@@ -94,6 +95,8 @@ Ext.define('OSF.form.Attributes', {
 			columns: [
 				{text: 'Attribute Type', dataIndex: 'typeDescription', width: 200},
 				{text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200},
+				{text: 'Comment', dataIndex: 'comment', flex: 2, minWidth: 200},
+				{text: 'Private Flag', dataIndex: 'privateFlag', width: 150},
 				{text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 			],
 			listeners: {
@@ -101,9 +104,11 @@ Ext.define('OSF.form.Attributes', {
 					var fullgrid = attributePanel.attributeGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
+						fullgrid.down('toolbar').getComponent('edit').setDisabled(false);						
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
 					} else {
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
+						fullgrid.down('toolbar').getComponent('edit').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
 					}
 				}
@@ -111,6 +116,7 @@ Ext.define('OSF.form.Attributes', {
 			dockedItems: [
 				{
 					xtype: 'form',
+					itemId: 'form',
 					title: 'Add Attribute',
 					collapsible: true,
 					titleCollapse: true,
@@ -245,7 +251,7 @@ Ext.define('OSF.form.Attributes', {
 							handler: function () {
 								this.up('form').reset();
 							}
-						},
+						}
 					],
 					items: [
 						{
@@ -280,43 +286,6 @@ Ext.define('OSF.form.Attributes', {
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/attributes'
-										},
-										listeners: {
-											load: function (store, records, opts) {
-												store.filterBy(function (attribute) {
-													if (attribute.data.associatedComponentTypes) {
-														var optFound = Ext.Array.findBy(attribute.data.associatedComponentTypes, function (item) {
-															if (item.componentType === attributePanel.component.componentType) {
-																return true;
-															} else {
-																return false;
-															}
-														});
-														if (optFound) {
-															return true;
-														} else {
-															return false;
-														}
-													} else {
-												if (attribute.data.requiredRestrictions) {
-													var optFound = Ext.Array.findBy(attribute.data.requiredRestrictions, function (item) {
-														if (item.componentType === attributePanel.component.componentType) {
-															return true;
-														} else {
-															return false;
-														}
-													});
-													if (optFound) {
-														return false;
-													} else {
-														return true;
-													}
-												} else {
-													return true;
-												} 
-													}
-												});
-											}
 										}
 									},
 									listeners: {
@@ -414,12 +383,14 @@ Ext.define('OSF.form.Attributes', {
 																		var addTypeWin = this.up('window');
 
 																		CoreUtil.submitForm({
-																			url: 'api/v1/resource/attributes/attributetypes/metadata',
+																			url: 'api/v1/resource/attributes/attributetypes/metadata?componentType=' + encodeURIComponent(attributePanel.component.componentType),
 																			method: 'POST',
 																			data: data,
 																			form: form,
 																			success: function (response, opts) {
-																				attributeTypeCb.getStore().load();
+																				attributeTypeCb.getStore().load({
+																					url: 'api/v1/resource/attributes/optional?componentType=' + encodeURIComponent(attributePanel.component.componentType)
+																				});
 																				addTypeWin.close();
 																			}
 																		});
@@ -471,7 +442,20 @@ Ext.define('OSF.form.Attributes', {
 									"label"
 								]
 							})
-						}
+						},						
+						{
+							xtype: 'textarea',
+							name: 'comment',
+							fieldLabel: 'Comment',
+							labelWidth: 150,
+							maxLength: 4096
+						},
+						{
+							xtype: 'checkbox',
+							name: 'privateFlag',
+							margin: '0 0 0 155',							
+							boxLabel: '<b>Private Flag</b>'
+						}						
 					]
 				},
 				{
@@ -507,13 +491,28 @@ Ext.define('OSF.form.Attributes', {
 							}
 						},
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbseparator',
+						},
+						{
+							text: 'Edit',
+							itemId: 'edit',
+							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+							disabled: true,
+							handler: function () {
+								var record = attributePanel.attributeGrid.getSelection()[0];
+								actionEdit(record);
+							}
+						},						
+						{
+							xtype: 'tbseparator',
+							hidden: attributePanel.hideToggleStatus || false
 						},
 						{
 							text: 'Toggle Status',
 							itemId: 'toggleStatusBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 							disabled: true,
+							hidden: attributePanel.hideToggleStatus || false,
 							handler: function () {
 								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, null, function () {
 									attributePanel.loadComponentAttributes();
@@ -538,10 +537,18 @@ Ext.define('OSF.form.Attributes', {
 				}
 			]
 		});
+		
+		var actionEdit = function(record) {
+			record.set({
+				attributeType: record.get('type'),
+				attributeCode: record.get('code')				
+			});			
+			attributePanel.attributeGrid.queryById('form').loadRecord(record);			
+		};
 
 		attributePanel.add(attributePanel.attributeGrid);
 	},
-	loadData: function (evaluationId, componentId, data, opts) {
+	loadData: function (evaluationId, componentId, data, opts, callback) {
 		//just load option (filter out required)
 		var attributePanel = this;
 
@@ -559,7 +566,9 @@ Ext.define('OSF.form.Attributes', {
 				var component = Ext.decode(response.responseText);
 				attributePanel.component = component;
 				attributePanel.loadComponentAttributes();
-				attributePanel.attributeGrid.down('form').getComponent('attributeTypePanel').getComponent('attributeTypeCB').getStore().load();
+				attributePanel.attributeGrid.queryById('attributeTypeCB').getStore().load({
+					url: 'api/v1/resource/attributes/optional?componentType=' + component.componentType 
+				});
 			}
 		});
 
@@ -574,24 +583,11 @@ Ext.define('OSF.form.Attributes', {
 			}
 
 		});
+
+		if(callback){
+			callback();
+		}
 	}
 
 });
 
-// custom Vtype (validator) for vtype:'AttributeNumber'
-Ext.define('Override.form.field.VTypes', {
-	override: 'Ext.form.field.VTypes',
-
-	AttributeNumber: function (value) {
-		return this.AttributeNumberRe.test(value);
-	},
-	// Any number of digits on whole nuumbers and 0-20 digits for decimal precision
-	AttributeNumberRe: /^\d*(\.\d{0,20})?$/,
-	AttributeNumberText: 'Must be numeric with decimal precision less than or equal to 20.'
-			// Mask forces only charaters meeting the regular expersion are
-			// allowed to be entered. We decided to not to enforce a mask so 
-			// useres can tell the difference between readOnly fields and 
-			// incorrect input
-
-			// AttributeNumberMask: /[\d\.]/i
-});

@@ -15,12 +15,20 @@
  */
 package edu.usu.sdl.openstorefront.ui.test.admin;
 
+import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
+import edu.usu.sdl.openstorefront.selenium.provider.AttributeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.AuthenticationProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ClientApiProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.ComponentTypeProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.NotificationEventProvider;
+import edu.usu.sdl.openstorefront.selenium.provider.OrganizationProvider;
 import edu.usu.sdl.openstorefront.ui.test.BrowserTestBase;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -35,13 +43,37 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ccummings
  */
 public class AdminAddIntegrationIT
-		extends AdminTestBase
+		extends BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
+	private String entryName = "SeleniumTest";
+	private String organizationName = "SeleniumOrganization";
+	private String compDescription = "SeleniumTest Description";
+	private ClientApiProvider provider;
+	private AuthenticationProvider authProvider;
+	private AttributeProvider attributeProvider;
+	private OrganizationProvider organizationProvider;
+	private ComponentProvider componentProvider;
+	private ComponentTypeProvider componentTypeProvider;
+	private NotificationEventProvider notificationProvider;
 	private WebElement componentConfigTab;
-	private static List<String> componentIds = new ArrayList<>();
-	private String componentName = "Asset-Test-IntegrationComp";
+
+	@Before
+	public void setup() throws InterruptedException
+	{
+		authProvider = new AuthenticationProvider(properties, webDriverUtil);
+		authProvider.login();
+		provider = new ClientApiProvider();
+		attributeProvider = new AttributeProvider(provider.getAPIClient());
+		notificationProvider = new NotificationEventProvider(provider.getAPIClient());
+		organizationProvider = new OrganizationProvider(provider.getAPIClient());
+		componentTypeProvider = new ComponentTypeProvider(provider.getAPIClient());
+		componentProvider = new ComponentProvider(attributeProvider, organizationProvider, componentTypeProvider, provider.getAPIClient());
+		componentProvider.createComponent(entryName, compDescription, organizationName);
+		attributeProvider.createJiraMapping();
+		sleep(1000);
+	}
 
 	@Test
 	public void componentConfigTest() throws InterruptedException
@@ -49,21 +81,8 @@ public class AdminAddIntegrationIT
 		for (WebDriver driver : webDriverUtil.getDrivers()) {
 
 			webDriverUtil.getPage(driver, "AdminTool.action?load=Integrations");
-			createIntegrationComponent(componentName);
-			componentIds.add(apiClient.getComponentRESTTestClient().getComponentByName(componentName).getComponent().getComponentId());
-			createJiraMapping();
-			addComponentConfiguration(driver, componentName);
+			addComponentConfiguration(driver, entryName);
 		}
-	}
-
-	public void createJiraMapping()
-	{
-		apiClient.getAttributeTestClient().createJiraMapping();
-	}
-
-	public void createIntegrationComponent(String componentName)
-	{
-		apiClient.getComponentRESTTestClient().createAPIComponent(componentName);
 	}
 
 	public void addComponentConfiguration(WebDriver driver, String componentName) throws InterruptedException
@@ -72,7 +91,7 @@ public class AdminAddIntegrationIT
 		List<WebElement> tabs = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".x-tab.x-unselectable")));
 		componentConfigTab = tabs.get(0);
 		componentConfigTab.click();
-		
+
 		driver.navigate().refresh();
 
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#componentConfigGrid-tools-add"))).click();
@@ -137,11 +156,13 @@ public class AdminAddIntegrationIT
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='refreshBtnIntegrationWindow']"))).click();
 	}
 
-	@AfterClass
-	public static void cleanupTest()
+	@After
+	public void cleanupTest() throws AttachedReferencesException
 	{
-		componentIds.forEach((id) -> {
-			apiClient.getComponentRESTTestClient().deleteAPIComponentIntegration(id);
-		});
+		String compId = componentProvider.getComponentByName(entryName).getComponent().getComponentId();
+		componentProvider.getComponentRESTClient().deleteComponentConfig(compId);
+		componentProvider.cleanup();
+		notificationProvider.cleanup();
+		provider.clientDisconnect();
 	}
 }

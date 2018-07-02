@@ -45,7 +45,7 @@ public class ReportManager
 
 	private static final Logger LOG = Logger.getLogger(ReportManager.class.getName());
 	private static AtomicBoolean started = new AtomicBoolean(false);
-	private static final long MAX_WORKING_RETRY_TIME_MILLIS = 1440 * 60 * 1000;
+	private static final long MAX_WORKING_RETRY_TIME_MILLIS = 1440L * 60L * 1000L;
 
 	// configuration for reports templating engine
 	private static Configuration templateConfig = null;

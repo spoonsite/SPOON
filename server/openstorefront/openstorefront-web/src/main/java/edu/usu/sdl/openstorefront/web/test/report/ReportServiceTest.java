@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This runs all report for view only and for one format only Still this is
@@ -39,6 +41,8 @@ import java.util.Set;
  */
 public class ReportServiceTest extends BaseTestCase
 {
+
+	private static final Logger LOG = Logger.getLogger(ReportServiceTest.class.getName());
 
 	private List<Report> reports = null;
 	private ScheduledReport schedule = null;
@@ -50,7 +54,7 @@ public class ReportServiceTest extends BaseTestCase
 		results.append("Generating reports...<br>");
 		List<ReportType> types = service.getLookupService().findLookup(ReportType.class);
 
-		reports = new ArrayList();
+		reports = new ArrayList<>();
 
 		for (ReportType type : types) {
 
@@ -80,7 +84,7 @@ public class ReportServiceTest extends BaseTestCase
 		int maxTimeCheck = 0;
 		Report queryReport = new Report();
 		queryReport.setRunStatus(PENDING);
-		Set<String> allPendingReports = new HashSet();
+		Set<String> allPendingReports = new HashSet<>();
 
 		while (isPending || maxTimeCheck == 100) {
 			isPending = false;
@@ -94,11 +98,7 @@ public class ReportServiceTest extends BaseTestCase
 					break;
 				}
 			}
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException ex) {
-
-			}
+			delay();
 			maxTimeCheck++;
 		}
 		results.append("Reports complete<br><br>");
@@ -140,6 +140,16 @@ public class ReportServiceTest extends BaseTestCase
 			results.append("Scheduled Report Deleted<br>");
 		} else {
 			failureReason.append("Unable to delete report<br>");
+		}
+	}
+
+	public void delay()
+	{
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+			Thread.currentThread().interrupt();
 		}
 	}
 

@@ -1,0 +1,64 @@
+.csf-drag {
+	background: rgba(0,200,0,0.9)!important;
+	z-index: 9999;
+}
+.csf-hover {
+	background: rgba(200,200,200,0.8);
+	box-shadow: 0 0 0 rgba(200,200,200,0.4);
+	/*animation: pulse 2s infinite;*/
+}
+.csf-active {
+	border-top: 3px solid rgb(142,186,230)!important;
+	border-bottom: 3px solid rgb(142,186,230)!important;
+	background: rgba(142,186,230,0.3);
+	animation: pulse 2s infinite;
+	z-index: 9998;
+}
+
+.drag-handle {
+	background: rgb(170,170,170);
+	margin: auto;
+	box-shadow: 2px 2px 4px rgb(30,30,30);
+	visibility: hidden;
+	/*border-radius: 3px;*/
+}
+.drag-handle:hover {
+	cursor: n-resize;
+	box-shadow: 1px 1px 2px rgb(30,30,30);
+	background: rgb(180,180,180);
+}
+
+.floating-menu-button:hover {
+	background: rgba(255,255,255,0.4)!important;
+}
+
+.csf-hover .drag-handle {
+	visibility: visible;
+}
+.csf-active .drag-handle {
+	visibility: visible;
+}
+
+.csf-hover.csf-active {
+	background: rgba(142,186,230,0.6);
+}
+
+.form-builder-item {
+	border-top: 3px solid white;
+	border-bottom: 3px solid white;
+}
+
+@keyframes pulse {
+	0% {
+	    -moz-box-shadow: 0 0 0 0 rgba(142,186,230,0.4);
+	    box-shadow: 0 0 0 0 rgba(142,186,230,0.4);
+	}
+	50% {
+	    -moz-box-shadow: 0 0 0 20px rgba(142,186,230,0);
+	    box-shadow: 0 0 0 20px rgba(142,186,230,0);
+	}
+	100% {
+	    -moz-box-shadow: 0 0 0 0 rgba(142,186,230,0);
+	    box-shadow: 0 0 0 0 rgba(142,186,230,0);
+	}
+}

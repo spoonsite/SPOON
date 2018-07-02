@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.ui.test;
 
-import edu.usu.sdl.openstorefront.selenium.apitestclient.APIClient;
 import edu.usu.sdl.openstorefront.selenium.util.DriverWork;
 import edu.usu.sdl.openstorefront.selenium.util.PropertiesUtil;
 import edu.usu.sdl.openstorefront.selenium.util.WebDriverUtil;
@@ -27,6 +26,7 @@ import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -44,7 +44,8 @@ public class BrowserTestBase
 {
 
 	private static final Logger LOG = Logger.getLogger(BrowserTestBase.class.getName());
-	protected static APIClient apiClient;
+
+	// WebDriverUtil and Properties objects must stay in BrowserTestBase because there can only be one instance that all tests share
 	protected static WebDriverUtil webDriverUtil;
 	protected static Properties properties;
 
@@ -53,27 +54,12 @@ public class BrowserTestBase
 	{
 		properties = PropertiesUtil.getProperties();
 		webDriverUtil = new WebDriverUtil(properties);
-		apiClient = new APIClient();
 	}
 
 	@AfterClass
 	public static void cleanup() throws Exception
 	{
 		LOG.log(Level.INFO, "Starting cleanup");
-		apiClient.cleanup();
-		tearDown();
-	}
-
-	/*@BeforeClass
-	public static void setSize() throws Exception
-	{
-		webDriverUtil.get().manage().window.setSize(new Dimension(1080,800));
-	}
-	 */
-	private static void tearDown() throws Exception
-	{
-		//Bot.driver().quit();
-		//WebDriverExtensionsContext.removeDriver();
 		webDriverUtil.closeDrivers();
 	}
 
@@ -100,11 +86,7 @@ public class BrowserTestBase
 
 			// Enter password and hit ENTER since submit does not seem to work.
 			WebElement userPassword = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
-			userPassword.sendKeys(passWord);
-			sleep(1000);
-			
-			WebElement loginBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='loginBtn']")));
-			loginBtn.click();
+			userPassword.sendKeys(passWord, Keys.ENTER);
 
 			// Look for the titleText
 			try {
@@ -128,7 +110,7 @@ public class BrowserTestBase
 		}
 	}
 
-	// Making Thread.sleep "universal"
+	// Making Tread.sleep "universal"
 	protected static void sleep(int mills)
 	{
 		try {
@@ -156,6 +138,29 @@ public class BrowserTestBase
 		if (!done) {
 			throw new WebDriverException("Browser failure");
 		}
+	}
+
+	/**
+	 * Locates a WebElement from a String and a list of css selected WebElements
+	 *
+	 * @param driver Selenium webdriver
+	 * @param selector css selector
+	 * @param text text to search for within list of web elements
+	 * @return WebElement
+	 */
+	protected static WebElement findElementByString(WebDriver driver, String selector, String text)
+	{
+		WebDriverWait wait = new WebDriverWait(driver, 8);
+		List<WebElement> els = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(selector)));
+		WebElement element = null;
+
+		for (WebElement el : els) {
+			if (el.getText().contains(text)) {
+				element = el;
+				break;
+			}
+		}
+		return element;
 	}
 
 	/**
@@ -189,7 +194,7 @@ public class BrowserTestBase
 					theRow++;
 
 					WebElement cell = cells.get(columnIndex);
-					
+
 					if (cell.getText().equals(searchFor)) {
 						Actions builder = new Actions(driver);
 						builder.moveToElement(row).perform();

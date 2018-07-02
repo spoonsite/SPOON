@@ -44,14 +44,18 @@ public class FileHistoryOption
 	private Boolean uploadIntegration;
 
 	@ConsumeField
-	private Boolean skipRequiredAttributes;	
-	
+	private Boolean skipRequiredAttributes;
+
 	@ConsumeField
 	private Boolean skipDuplicationCheck;
-	
+
+	@ConsumeField
+	private String defaultComponentType;
+
 	@Version
 	private String storageVersion;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileHistoryOption()
 	{
 	}
@@ -124,6 +128,16 @@ public class FileHistoryOption
 	public void setSkipDuplicationCheck(Boolean skipDuplicationCheck)
 	{
 		this.skipDuplicationCheck = skipDuplicationCheck;
+	}
+
+	public String getDefaultComponentType()
+	{
+		return defaultComponentType;
+	}
+
+	public void setDefaultComponentType(String defaultComponentType)
+	{
+		this.defaultComponentType = defaultComponentType;
 	}
 
 }

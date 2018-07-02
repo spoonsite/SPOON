@@ -242,6 +242,48 @@ Ext.define('OSF.defaults.ComboBox', {
 			
 });
 
+Ext.define('OSF.defaults.RatePicker', {
+    override: 'Ext.ux.rating.Picker',
+	
+	applyGlyphs: function(value) {
+		if (typeof value === 'string') {
+			//<debug>
+			if (value.length !== 2) {
+				value = '#*';
+			}
+			//</debug>
+			value = [
+				value.charAt(0),
+				value.charAt(1)
+			];
+		} else if (typeof value[0] === 'number') {
+			value = [
+				String.fromCharCode(value[0]),
+				String.fromCharCode(value[1])
+			];
+		}
+		return value;
+	}	
+	
+});
+
+// custom Vtype (validator) for vtype:'AttributeNumber'
+Ext.define('Override.form.field.VTypes', {
+	override: 'Ext.form.field.VTypes',
+
+	AttributeNumber: function (value) {
+		return this.AttributeNumberRe.test(value);
+	},
+	// Any number of digits on whole nuumbers and 0-20 digits for decimal precision
+	AttributeNumberRe: /^-?\d*(\.\d{0,20})?$/,
+	AttributeNumberText: 'Must be numeric with decimal precision less than or equal to 20.'
+			// Mask forces only charaters meeting the regular expersion are
+			// allowed to be entered. We decided to not to enforce a mask so 
+			// useres can tell the difference between readOnly fields and 
+			// incorrect input
+
+			// AttributeNumberMask: /[\d\.]/i
+});
 
 
 

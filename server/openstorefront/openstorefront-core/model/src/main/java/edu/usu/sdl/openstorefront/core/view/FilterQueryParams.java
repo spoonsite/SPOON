@@ -98,10 +98,6 @@ public class FilterQueryParams
 	@DefaultValue("false")
 	private Boolean all;
 
-	public FilterQueryParams()
-	{
-	}
-
 	public ValidationResult validate()
 	{
 		ValidationModel validationModel = new ValidationModel(this);

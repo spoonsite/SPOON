@@ -67,6 +67,11 @@ public class ClientAPI
 		this.objectMapper = objectMapper;
 	}
 
+	public ClientAPI()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 	public void connect(String username, String password, String serverURL)
 	{
 
@@ -126,7 +131,7 @@ public class ClientAPI
 				LOG.log(Level.FINEST, "None");
 			} else {
 				for (Cookie cookie : cookies) {
-					LOG.log(Level.FINEST, "- {0}", cookie.toString());
+					LOG.log(Level.FINEST, () -> "- " + cookie);
 				}
 			}
 		} catch (IOException ex) {

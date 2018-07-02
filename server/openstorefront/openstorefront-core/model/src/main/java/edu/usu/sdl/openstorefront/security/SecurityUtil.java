@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.security;
 
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
@@ -29,7 +28,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,7 +48,7 @@ public class SecurityUtil
 
 	public static final String USER_CONTEXT_KEY = "USER_CONTEXT";
 
-	private static final ThreadLocal<AtomicBoolean> systemUser = new ThreadLocal<>();
+	private static final ThreadLocal<AtomicBoolean> SYSTEMUSER = new ThreadLocal<>();
 
 	/**
 	 * Is the current request logged in
@@ -117,7 +115,7 @@ public class SecurityUtil
 	 */
 	public static void initSystemUser()
 	{
-		systemUser.set(new AtomicBoolean(true));
+		SYSTEMUSER.set(new AtomicBoolean(true));
 	}
 
 	/**
@@ -127,10 +125,10 @@ public class SecurityUtil
 	 */
 	public static boolean isSystemUser()
 	{
-		if (systemUser.get() == null) {
+		if (SYSTEMUSER.get() == null) {
 			return false;
 		} else {
-			return systemUser.get().get();
+			return SYSTEMUSER.get().get();
 		}
 	}
 
@@ -215,7 +213,7 @@ public class SecurityUtil
 	public static boolean isCurrentUserTheOwner(StandardEntity entity)
 	{
 		if (entity != null) {
-			return getCurrentUserName().equals(entity.getCreateUser());
+			return getCurrentUserName().equals(entity.entityOwner());
 		} else {
 			return false;
 		}
@@ -275,6 +273,7 @@ public class SecurityUtil
 		return message.toString();
 	}
 
+	@SuppressWarnings("UseSpecificCatch")
 	public static void logout(HttpServletRequest request, HttpServletResponse response)
 	{
 		Subject currentUser = SecurityUtils.getSubject();
@@ -282,10 +281,13 @@ public class SecurityUtil
 
 		currentUser.logout();
 		request.getSession().invalidate();
+
+		//Handle all exceptions (workaround for tomcat bug in 7.0_65)
 		try {
 			request.logout();
-		} catch (ServletException ex) {
-			throw new OpenStorefrontRuntimeException(ex);
+		} catch (Exception ex) {
+			LOG.log(Level.WARNING, () -> "Unable to log out of container authorization system. Error message:\n" + ex.getMessage());
+			LOG.log(Level.FINEST, "Trace of Logout Failure", ex);
 		}
 
 		//For now invalidate all cookies; in the future there may be some that should persist.

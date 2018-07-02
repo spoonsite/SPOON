@@ -51,6 +51,8 @@ public abstract class StandardEntity<T>
 		extends BaseEntity<T>
 {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final Logger LOG = Logger.getLogger(StandardEntity.class.getName());
 
 	public static final String ACTIVE_STATUS = "A";
@@ -95,8 +97,19 @@ public abstract class StandardEntity<T>
 
 	private Boolean adminModified;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public StandardEntity()
 	{
+	}
+
+	/**
+	 * Override to do specific handling
+	 *
+	 * @return
+	 */
+	public String entityOwner()
+	{
+		return getCreateUser();
 	}
 
 	protected Set<String> excludedChangeFields()

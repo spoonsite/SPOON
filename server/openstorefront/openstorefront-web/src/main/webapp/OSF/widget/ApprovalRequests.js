@@ -101,11 +101,18 @@ Ext.define('OSF.widget.ApprovalRequests', {
 								return 'Submission';
 							}							
 						}
-					}					
+					},
+					{
+						name: 'componentType',
+						mapping: function(data) {
+							return data.component.componentTypeLabel;
+						}
+					}
 				]
 			},
 			columns: [
 				{ text: 'Request Type', dataIndex: 'requestType', width: 150 },
+				{ text: 'Entry Type', dataIndex: 'componentType', width: 150 },
 				{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200 },
 				{ text: 'User', dataIndex: 'updateUser', width: 200 },
 				{ text: 'Submission Date', dataIndex: 'submittedDts', width: 180, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
@@ -243,7 +250,7 @@ Ext.define('OSF.widget.ApprovalRequests', {
 				}
 			});
 			
-		}
+		};
 		approvalPanel.reloadRequests();
 	},
 	

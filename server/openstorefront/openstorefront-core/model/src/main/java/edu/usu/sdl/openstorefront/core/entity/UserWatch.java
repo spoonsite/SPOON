@@ -57,6 +57,7 @@ public class UserWatch
 	@APIDescription("Notify when watch is triggered")
 	private Boolean notifyFlg;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserWatch()
 	{
 	}

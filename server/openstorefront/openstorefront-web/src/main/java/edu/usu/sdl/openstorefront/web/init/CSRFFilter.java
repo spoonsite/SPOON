@@ -95,8 +95,7 @@ public class CSRFFilter
 							if (tokenFromHeader.equals(token)) {
 								valid = true;
 							}
-						}
-						else {
+						} else {
 							String tokenFromParameter = httpRequest.getParameter(X_CSRF_TOKEN);
 							if (StringUtils.isNotBlank(tokenFromParameter)) {
 								if (tokenFromParameter.equals(token)) {
@@ -104,8 +103,6 @@ public class CSRFFilter
 								}
 							}
 						}
-						
-						
 
 						if (!valid) {
 							HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -117,6 +114,8 @@ public class CSRFFilter
 						httpRequest.getSession().setAttribute(CSRF_TOKEN, token);
 
 						HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+						@SuppressWarnings("squid:S2092")
 						Cookie cookie = new Cookie(X_CSRF_TOKEN, token);
 						cookie.setHttpOnly(false);
 						cookie.setPath("/");

@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.ParamTypeDescription;
 import edu.usu.sdl.openstorefront.core.api.Service;
@@ -22,8 +23,12 @@ import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeTemplateResolution;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
@@ -107,7 +112,18 @@ public class ComponentDetailView
 	private String componentTypeLabel;
 	private String approvalStateLabel;
 	private String componentIconId;
+
+	@APIDescription("This is the resolved icon")
 	private String componentTypeIconUrl;
+
+	@APIDescription("This is the whole hiearchy for the entry type")
+	private ComponentTypeNestedModel componentTypeNestedModel;
+
+	@APIDescription("This entries direct type")
+	private ComponentType componentTypeFull;
+
+	@APIDescription("This is the display template that should be showing")
+	private String componentTemplateId;
 
 	private ComponentEvaluationView evaluation = new ComponentEvaluationView();
 
@@ -143,10 +159,6 @@ public class ComponentDetailView
 
 	private long componentViews = 0;
 
-	public ComponentDetailView()
-	{
-	}
-
 	public static ComponentDetailView toView(ComponentAll componentAll)
 	{
 		return toView(componentAll, new ArrayList<>());
@@ -173,6 +185,7 @@ public class ComponentDetailView
 		return detailView;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setComponentDetails(Component component)
 	{
 		name = component.getName();
@@ -198,12 +211,25 @@ public class ComponentDetailView
 			recordVersion = 1;
 		}
 		approvalStateLabel = TranslateUtil.translate(ApprovalStatus.class, component.getApprovalState());
-		componentTypeLabel = TranslateUtil.translateComponentType(component.getComponentType());
-
 		Service service = ServiceProxyFactory.getServiceProxy();
+		
+		componentTypeLabel = service.getComponentService().getComponentTypeParentsString(componentType, true);
+		
 		componentIconId = service.getComponentService().resolveComponentIcon(componentId);
 		componentTypeIconUrl = service.getComponentService().resolveComponentTypeIcon(componentType);
 
+		ComponentTypeTemplateResolution componentTypeTemplateResolution = service.getComponentService().findTemplateForComponentType(componentType);
+		if (componentTypeTemplateResolution != null) {
+			componentTemplateId = componentTypeTemplateResolution.getTemplateId();
+		}
+		ComponentTypeOptions options = new ComponentTypeOptions(component.getComponentType());
+		options.setPullParents(false);
+		options.setPullChildren(false);
+		componentTypeFull = service.getComponentService().getComponentType(options).getComponentType();
+
+		options = new ComponentTypeOptions(component.getComponentType());
+		options.setPullParents(true);
+		componentTypeNestedModel = service.getComponentService().getComponentType(options);
 		componentSecurityMarkingType = component.getSecurityMarkingType();
 
 		if (StringUtils.isNotBlank(component.getSecurityMarkingType())) {
@@ -707,5 +733,35 @@ public class ComponentDetailView
 	public void setDataSensitivityDescription(String dataSensitivityDescription)
 	{
 		setDataSensitivityDescriptionMapFromString(dataSensitivityDescription);
+	}
+
+	public ComponentTypeNestedModel getComponentTypeNestedModel()
+	{
+		return componentTypeNestedModel;
+	}
+
+	public void setComponentTypeNestedModel(ComponentTypeNestedModel componentTypeNestedModel)
+	{
+		this.componentTypeNestedModel = componentTypeNestedModel;
+	}
+
+	public ComponentType getComponentTypeFull()
+	{
+		return componentTypeFull;
+	}
+
+	public void setComponentTypeFull(ComponentType componentTypeFull)
+	{
+		this.componentTypeFull = componentTypeFull;
+	}
+
+	public String getComponentTemplateId()
+	{
+		return componentTemplateId;
+	}
+
+	public void setComponentTemplateId(String componentTemplateId)
+	{
+		this.componentTemplateId = componentTemplateId;
 	}
 }

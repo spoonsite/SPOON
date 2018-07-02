@@ -1,7 +1,7 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 2.5
+Version 2.6
                                                      
 
 # 1. Overview
@@ -28,31 +28,31 @@ Originally developed for DI2E (Defense Intelligence Information Enterprise)
 ![Logo](../webapp/images/help/di2elogo-sm.png)
 ![Logo](../webapp/images/help/sdl.png)
 
-## 1.1 Release Notes for v2.5
+## 1.1 Release Notes for v2.6
 ------
 
-Version 2.5 incorporates:
+Version 2.6 incorporates:
 
-* Improvements made to the display of evaluations
-* Reports now have an expiration date (default expiration: 180 days)
-* Other reporting improvements include more scheduling  and report options and  simple entry selection
-* Search results are now sorted by relevance by default
+* The Submission Process now allows for forms that closer match the input expected for 
+a given entry type.
+
+* Multiple Entry types/Topics can now be selected in the search
 
 ### 1.1.1 Administrator Release Notes, v2.5 @ADMIN-SYSTEM-MANAGEMENT
 -----
 
-*What's new in v2.5*
+*What's new in v2.6*
 
-* New Reports
-	* Entry Listing - an indexed report of entries (includes name, description, type, last updated, and evaluation status)
-	* Entry Status - shows status changes for entries across the system in a given time period
-	* Action - report shows items that need administrator's attention (such as an entries awaiting approval)
-* Report emails allow confluence attachments (requires specific permissions - see admin) 
-* File upload size is now configurable
-* New evaluation guides for librarian/administrator
-* Improved handling of inline media for entries and evaluations
+* Evaluation Form has been updated to improve distinguishing Entry from Evaluation
+* Published Evaluations are now visible.
+* A JIRA ticket link will now show in the evaluation table if configured
+* Improvements to the confluence report
+* Fix issues with change request merging of tags, media, and resources
+* Attribute can now be flagged private and have comments 
+* Resources can now be marked private
+* Entry type can now have sub type and be nested.
  
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.5" target="_blank">v2.5</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.6" target="_blank">v2.6</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
  
 
 # 2. User Features
@@ -407,32 +407,30 @@ listings on the application.
 
 This page displays all of the submissions you, the current logged in user, have
 made.  In the User Submissions table, the columns can be sorted by clicking on 
-the column header.  // Describe process flow
+the column header.  
 
 
 
 #### 2.3.3.1 How to Create a Submission/Entry @USER-SUBMISSIONS
 -----------
 
-The first tab of a new submission should be pre-filled with your logged in user information.  
-Make any necessary corrections and click on the Next button at the bottom.
+First determine the type of entry you want to submit. An administrator will create 
+the types and forms that are acceptable. Once the type is select the application
+will create a new "incomplete" submission.  To complete fill in the form and then 
+on the last step "Submit for Approval".  This will create a pending submission which
+the admin can now approve.  
 
-If a description of the product or entry already exists then it can be copied and pasted directly into the description text box.
-Clicking on the eye button on the far right of the toolbar of the description text box will cause another window to be displayed that shows how the entered info will be displayed on the final submitted form.
-If more room is needed or desired, click on the four outward arrows (second icon from the right) to change the text box to a full screen mode. 
-Misspelled words can also be corrected by doing a Shift+Right Click on any words with a red squiggly underline. 
+Note: If a change is made to a pending submission then that submission will need to 
+be resubmitted.
 
 #### 2.3.3.2 How to Create a Change Request/Edit Entry @USER-SUBMISSIONS
 -----------
 
+*Changes are NOT applied immediately, they must be approved by an Admin before being Public*
+
 Step 1) Click on the entry you wish to edit  
 Step 2) Click on the "Request Change" button in the submissions toolbar  
-Step 3) A change request form will appear that requires 4 steps:  
-
-	1. Verify or update all user information and click the "Next" button
-	2. Fill in or edit the required fields and click "Next"
-	3. Add/Delete any details (e.g. attributes, contacts, media, etc.) and click "Next"
-	4. Review the entry and click "Submit For Review".  This will take you back to the submissions page
+Step 3) A change request form will appear that matches the creation form.
 
 Under the "Pending Change" column you will see the status of the entry's change request.  The status is "Pending" 
 until the admin user approves the changes. 
@@ -442,7 +440,7 @@ rather than updating the contact information on step3.  That way the contact inf
 user profile.
 
 
-#### 2.3.3.3 How to Delete an Entry
+#### 2.3.3.3 How to Delete an Entry @USER-SUBMISSIONS
 -----------
 
 1.  Click on the entry you wish to remove
@@ -458,6 +456,11 @@ user profile.
 A user can copy or preview an entry by selecting an entry and clicking on the "Options" 
 drop-down arrow in the submissions toolbar.  Users can also toggle notify by selecting an entry
  and clicking on the "Options" drop-down arrow in the toolbar.
+
+#### 2.3.3.5 Submitting a New Component - External Doc @USER-SUBMISSIONS
+-----------
+
+<a href="http://di2e.github.io/openstorefront/user/quick-overview-of-submitting-a-new-component/" target="_blank">Submitting a New Component (di2e.github.io)</a>
 
 ### 2.3.4 Tools
 -----------
@@ -740,7 +743,7 @@ Admin tools allow for the management of all data in the system.
 (Sections marked with * require admin account access.)
 
 
-## 3.1 Dashboard @ADMIN-SYSTEM-MANAGEMENT
+## 3.1 Dashboard @ADMIN-SYSTEM-MANAGEMENT 
 --------
 
 The dashboard is the homepage of the Admin Tools.  This is accessed by
@@ -1138,7 +1141,7 @@ Note:
  - To __remove__ a template click on the template name and click **Delete** on the right-hand side of the toolbar.  
  - To __edit__ a template click on the template name and click **Edit** in the toolbar.  Make the necessary changes and click **Save/Continue** at the bottom. Click **Close**.  
 -----  
-  
+ 
 ### 3.2.6 Highlights @ADMIN-HIGHLIGHTS
 -------
 
@@ -1551,6 +1554,41 @@ addresses are leaked to other users.
 
 3.  Save the .json file locally.  The file contains the user information.
 
+### 3.2.16 Submission Templates @ADMIN-SUBMISSION-FORM-TEMPLATE
+-------
+
+This tool allows for creating form for submissions.  Submission template can be
+associated with an entry type.
+
+To create a template:
+
+1.  Add template then fill in name and description
+
+2.  Add sections and add questions
+
+3.  Make sure all required mapped fields are set
+
+4.  When complete save and the template will be set to  "Pending Verification" (as long as the required mapped fields are set)
+
+5.  Verify Template:
+       
+    a)  Select Template and click verify
+
+    b)  Select entry type (should match the intended entry type)
+
+    c)  Fill in the form and then click verify.  (This process makes sure you can successfully use the form). Note: it will create temporary partial submissions during the process.
+
+6.  Associate the form with an Entry type by using the Entry type screen (Edit type and set the form.  Only verify forms with be selectable)
+
+
+### 3.2.17 Partial Submissions @ADMIN-USER-SUBMISSIONS
+-------
+
+When a user creates a new submission but, does not submit it for approval it will
+create a partial or incomplete submission.  This tool is here to allow an admin to help 
+users by allowing an admin to view and re-assign incomplete submissions.
+
+
 ## 3.3 Evaluation Management @ADMIN-EVALUATION-MANAGEMENT
 ------
 
@@ -1587,6 +1625,26 @@ Here you formulate the questions to be asked on a template.
 ------
 
 Section templates can be created for further customization.
+
+### 3.3.3 External Docs @ADMIN-EVALUATION-MANAGEMENT
+------
+
+Links to external documentation refering to Evaluation Management
+
+#### 3.3.3.1 Basic Entry Template For Storefront @ADMIN-EVALUATION-MANAGEMENT
+------
+
+<a href="http://di2e.github.io/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/" target="_blank">Basic Entry Template For Storefront (di2e.github.io)</a>
+
+#### 3.3.3.2 Create An Evaluation @ADMIN-EVALUATION-MANAGEMENT
+------
+
+<a href="http://di2e.github.io/openstorefront/evaluations/librarian/createevaluationguide/" target="_blank">Create An Evaluation (di2e.github.io)</a>
+
+#### 3.3.3.3 Publish An Evaluation @ADMIN-EVALUATION-MANAGEMENT
+------
+
+<a href="http://di2e.github.io/openstorefront/evaluations/librarian/publishinganevaluationguide/" target="_blank">Publish An Evaluation (di2e.github.io)</a>
 
 ## 3.4 Application Management @ADMIN-SYSTEM-MANAGEMENT
 --------
@@ -1988,6 +2046,7 @@ Allows user with the appropriate permission to create and edit evaluations.
 Evaluations are accessed by going to your username in the upper-right of the browser window.  In the drop-down select Evaluation Tools.  A dashboard is displayed.
 
 ## 4.1 Evaluations @EVALUATIONS 
+-----
 
 The evaluations section shows a table of evaluations assigned to you.  Filters can be set for the assigned user, assigned group, and workflow status.
 
@@ -1996,6 +2055,16 @@ Selecting an evaluation allows you to Assign it to another user or to Edit the e
 When Editing the evaluation the status can be changed and the various forms, questions, and other information is entered.  A change history is kept and comments can be added.
 
 The preview button will show what the evaluation will look like when published.  Private information will not be shown.
+
+## 4.2 Evaluators Guide - External Link @EVALUATIONS
+-----
+
+<a href="http://di2e.github.io/openstorefront/evaluations/evaluator/storefront-evaluators-guide/" target="_blank">Evaluators guide (di2e.github.io)</a>
+
+## 4.3 FAQ - External Link @EVALUATIONS
+-----
+
+<a href="http://di2e.github.io/openstorefront/evaluations/evaluator/faq/" target="_blank">FAQ (di2e.github.io)</a>
 
 # 5.  Glossary
 ----------

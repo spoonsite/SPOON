@@ -34,8 +34,10 @@ public class FileType
 	public static final String COMPONENT = "COMPONENT";
 	public static final String ATTRIBUTE = "ATTRIBUTE";
 	public static final String CHECKLISTQUESTIONS = "CHKQUESTIONS";
+	public static final String SUBMISSION_TEMPLATE = "SUBTEMPLATE";
 	public static final String SYSTEM = "SYSTEM";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public FileType()
 	{
 	}
@@ -47,6 +49,7 @@ public class FileType
 		codeMap.put(COMPONENT, newLookup(FileType.class, COMPONENT, "Component"));
 		codeMap.put(ATTRIBUTE, newLookup(FileType.class, ATTRIBUTE, "Attribute"));
 		codeMap.put(CHECKLISTQUESTIONS, newLookup(FileType.class, CHECKLISTQUESTIONS, "Checklist Questions"));
+		codeMap.put(SUBMISSION_TEMPLATE, newLookup(FileType.class, SUBMISSION_TEMPLATE, "Submission Template"));
 		codeMap.put(SYSTEM, newLookup(FileType.class, SYSTEM, "System"));
 		return codeMap;
 	}

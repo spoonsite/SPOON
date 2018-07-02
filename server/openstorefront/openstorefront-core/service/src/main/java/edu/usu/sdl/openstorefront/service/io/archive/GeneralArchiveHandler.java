@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.io.archive;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveOption;
 import java.util.ArrayList;
@@ -124,9 +125,14 @@ public class GeneralArchiveHandler
 		for (SystemArchiveOption option : archive.getArchiveOptions()) {
 			BaseExporter exporter = BaseExporter.getExporter(option.getPrimaryEntity());
 			if (exporter != null) {
-				List<BaseExporter> dependantExports = exporter.getAllRequiredExports();
-				for (BaseExporter dependantExport : dependantExports) {
-					exporterMap.put(dependantExport.getExporterSupportEntity(), dependantExport);
+				if(Convert.toBoolean(archive.getIncludeRelatedEntities())){
+					List<BaseExporter> dependantExports = exporter.getAllRequiredExports();
+					for (BaseExporter dependantExport : dependantExports) {
+						exporterMap.put(dependantExport.getExporterSupportEntity(), dependantExport);
+					}
+				}
+				else {
+					exporterMap.put(exporter.getExporterSupportEntity(), exporter);
 				}
 			} else {
 				addError("Entity not supported: " + option.getPrimaryEntity());

@@ -110,7 +110,7 @@ Ext.define('OSF.form.EvaluationInfo', {
 		evalForm.add(formItems);
 	},
 
-	loadData: function (evaluationId, componentId, data, opts) {
+	loadData: function (evaluationId, componentId, data, opts, callback) {
 		var evalForm = this;
 
 		evalForm.setLoading(true);
@@ -190,6 +190,10 @@ Ext.define('OSF.form.EvaluationInfo', {
 					evalForm.reloadEval = function () {
 						opts.mainForm.loadEval(evaluationId, componentId);
 					};
+				}
+
+				if (callback) {
+					callback();
 				}
 			}
 		});

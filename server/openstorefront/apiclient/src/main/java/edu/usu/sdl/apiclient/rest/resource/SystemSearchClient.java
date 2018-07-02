@@ -20,6 +20,8 @@ import edu.usu.sdl.apiclient.AbstractService;
 import edu.usu.sdl.apiclient.ClientAPI;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.SystemSearchWrapper;
+import java.util.Map;
 import javax.ws.rs.core.Response;
 
 /**
@@ -53,9 +55,11 @@ public class SystemSearchClient
 		client.httpDelete(basePath + "/" + searchId, null);
 	}
 
-	public Response getAllSearches(FilterQueryParams filterQueryParams)
+	public SystemSearchWrapper getAllSearches(FilterQueryParams filterQueryParams)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Map<String, String> parameters = client.translateFilterQueryParams(filterQueryParams);
+		APIResponse response = client.httpGet(basePath, parameters);
+		return response.getResponse(SystemSearchWrapper.class);
 	}
 
 	public Response getSearch(String searchId)

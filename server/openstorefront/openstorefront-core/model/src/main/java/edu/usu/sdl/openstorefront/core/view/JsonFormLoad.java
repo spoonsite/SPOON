@@ -21,15 +21,12 @@ import java.io.Serializable;
  *
  * @author dshurtleff
  */
-public class JsonFormLoad <T>
-	implements Serializable
+public class JsonFormLoad<T>
+		implements Serializable
 {
+
 	private boolean success = true;
 	private T data;
-
-	public JsonFormLoad()
-	{
-	}
 
 	public boolean isSuccess()
 	{
@@ -50,5 +47,5 @@ public class JsonFormLoad <T>
 	{
 		this.data = data;
 	}
-	
+
 }

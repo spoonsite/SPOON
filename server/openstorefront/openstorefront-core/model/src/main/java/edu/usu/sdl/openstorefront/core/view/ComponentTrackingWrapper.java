@@ -32,6 +32,7 @@ public class ComponentTrackingWrapper
 	@DataType(ComponentTracking.class)
 	private List<ComponentTracking> componentTrackings = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentTrackingWrapper()
 	{
 	}

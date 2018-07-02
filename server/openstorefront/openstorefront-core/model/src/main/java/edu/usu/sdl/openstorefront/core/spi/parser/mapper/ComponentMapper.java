@@ -102,6 +102,7 @@ public class ComponentMapper
 		}
 	}
 
+	@SuppressWarnings({"squid:S3923", "squid:S1872"})
 	private void doMapping(
 			Map<String, ComponentAll> componentMap,
 			MapModel root,
@@ -171,6 +172,7 @@ public class ComponentMapper
 		return componentAll;
 	}
 
+	@SuppressWarnings({"squid:S3923", "squid:S1872"})
 	private boolean mapField(
 			ComponentAll componentAll,
 			Map<String, DataMapper> dataMappers,

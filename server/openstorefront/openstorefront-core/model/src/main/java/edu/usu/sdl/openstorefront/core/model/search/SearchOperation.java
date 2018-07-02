@@ -226,6 +226,7 @@ public class SearchOperation
 	{
 
 		COMPONENT,
+		ENTRYTYPE,
 		ATTRIBUTE,
 		ATTRIBUTESET,
 		ARCHITECTURE,

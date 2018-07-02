@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.api.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 
 /**
@@ -57,5 +58,31 @@ public interface ComponentServicePrivate
 	 * ran concurrently. It will block other threads on the same jvm.
 	 */
 	public void processComponentUpdates();
+
+	/**
+	 * Removes a role from the component type; Used when the role is removed
+	 *
+	 * @param roleName
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeRoleFromComponentType(String roleName);
+
+	/**
+	 * Remove user from component type; Used when the user is removed
+	 *
+	 * @param username
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void removeUserFromComponentType(String username);
+
+	/**
+	 * Hard deletes a component and all related information The delete process
+	 * can be controlled via delete options
+	 *
+	 * @param componentId
+	 * @param option
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void cascadeDeleteOfComponent(String componentId, ComponentDeleteOptions option);
 
 }

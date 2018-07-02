@@ -37,18 +37,19 @@ import java.util.logging.Logger;
  */
 public class AsyncTaskManager
 		implements Initializable
-{	
-	private static final Logger log = Logger.getLogger(AsyncTaskManager.class.getName());
-	
+{
+
+	private static final Logger LOG = Logger.getLogger(AsyncTaskManager.class.getName());
+
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static TaskThreadExecutor taskPool;
 
 	public static void init()
 	{
-		String maxPoolSize = PropertiesManager.getValue(PropertiesManager.KEY_MAX_TASK_POOL_SIZE, "20");
+		String maxPoolSize = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_TASK_POOL_SIZE, "20");
 		int poolSize = Convert.toInteger(maxPoolSize);
 		taskPool = new TaskThreadExecutor(5, poolSize, 30L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(200));
-		taskPool.allowCoreThreadTimeOut(true);		
+		taskPool.allowCoreThreadTimeOut(true);
 	}
 
 	public static void cleanup()
@@ -58,7 +59,11 @@ public class AsyncTaskManager
 			try {
 				taskPool.awaitTermination(5L, TimeUnit.SECONDS);
 			} catch (InterruptedException ex) {
-				log.log(Level.WARNING, "Task pool was interrupted durning shutdown. It may not have finsihed shutting down.");
+				LOG.log(Level.WARNING, "Task pool was interrupted durning shutdown. It may not have finsihed shutting down.");
+				if (LOG.isLoggable(Level.FINEST)) {
+					LOG.log(Level.FINEST, null, ex);
+				}
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
@@ -155,7 +160,7 @@ public class AsyncTaskManager
 	public void initialize()
 	{
 		AsyncTaskManager.init();
-		started.set(true);		
+		started.set(true);
 	}
 
 	@Override

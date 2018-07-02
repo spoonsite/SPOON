@@ -50,6 +50,7 @@ public class DBLogRecord
 	private Integer threadId;
 	private String stackTrace;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public DBLogRecord()
 	{
 	}

@@ -49,13 +49,14 @@ public class Plugin
 	@APIDescription("Indentifies the plugin")
 	private String pluginType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Plugin()
 	{
 	}
 
 	public String fullPath()
 	{
-		return FileSystemManager.getDir(FileSystemManager.PLUGIN_DIR) + "/" + getActualFilename();
+		return FileSystemManager.getInstance().getDir(FileSystemManager.PLUGIN_DIR) + "/" + getActualFilename();
 	}
 
 	public String getPluginId()

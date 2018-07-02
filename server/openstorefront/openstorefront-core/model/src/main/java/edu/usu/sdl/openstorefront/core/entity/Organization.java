@@ -112,6 +112,7 @@ public class Organization
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String logoOriginalFileName;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Organization()
 	{
 	}
@@ -140,7 +141,7 @@ public class Organization
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getLogoFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.ORGANIZATION_DIR);
+			File mediaDir = FileSystemManager.getInstance().getDir(FileSystemManager.ORGANIZATION_DIR);
 			path = Paths.get(mediaDir.getPath() + "/" + getLogoFileName());
 		}
 		return path;

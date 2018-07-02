@@ -29,14 +29,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -47,26 +44,6 @@ public class StringProcessorTest
 {
 
 	public StringProcessorTest()
-	{
-	}
-
-	@BeforeClass
-	public static void setUpClass()
-	{
-	}
-
-	@AfterClass
-	public static void tearDownClass()
-	{
-	}
-
-	@Before
-	public void setUp()
-	{
-	}
-
-	@After
-	public void tearDown()
 	{
 	}
 
@@ -310,16 +287,6 @@ public class StringProcessorTest
 	}
 
 	@Test
-	public void testExtactFileName()
-	{
-		System.out.println(StringProcessor.getJustFileName(".../akfjaklf/askjdkl/Test.png"));
-		System.out.println(StringProcessor.getJustFileName("Test.png"));
-		System.out.println(StringProcessor.getJustFileName("\\hera\\aaa\\akfjaklf\\Test.png"));
-		System.out.println(StringProcessor.getJustFileName("\\hera/aaa\\akfjaklf/Test.png"));
-		System.out.println(StringProcessor.getJustFileName("\\Projects\\Baker_Project\\Baker_file.pdf"));
-	}
-
-	@Test
 	public void testEnclose()
 	{
 		String test = "";
@@ -493,6 +460,255 @@ public class StringProcessorTest
 			System.out.print(" - ");
 			System.out.print(StringProcessor.isEmail(email));
 			System.out.print("\n");
+		}
+	}
+
+	/**
+	 * Test of getJustFileName method, of class StringProcessor.
+	 */
+	@Test
+	public void testGetJustFileName()
+	{
+		System.out.println("getJustFileName");
+		String originalFilename = "";
+		String expResult = "";
+		String result = StringProcessor.getJustFileName(originalFilename);
+		assertEquals(expResult, result);
+
+		expResult = "Test.png";
+		result = StringProcessor.getJustFileName(".../akfjaklf/askjdkl/Test.png");
+		assertEquals(expResult, result);
+
+		result = StringProcessor.getJustFileName("Test.png");
+		assertEquals(expResult, result);
+
+		result = StringProcessor.getJustFileName("\\hera\\aaa\\akfjaklf\\Test.png");
+		assertEquals(expResult, result);
+
+		result = StringProcessor.getJustFileName("\\hera/aaa\\akfjaklf/Test.png");
+		assertEquals(expResult, result);
+
+		expResult = "Baker_file.pdf";
+		result = StringProcessor.getJustFileName("\\Projects\\Baker_Project\\Baker_file.pdf");
+		assertEquals(expResult, result);
+	}
+
+	/**
+	 * Test of createHrefUrls method, of class StringProcessor.
+	 */
+	@Test
+	public void testCreateHrefUrls_String()
+	{
+		System.out.println("createHrefUrls");
+		String text = "https://facebook.com/";
+		String expResult = "<a href='https://facebook.com/' title='https://facebook.com/' target='_blank'> </a>";
+		String result = StringProcessor.createHrefUrls(text);
+		assertEquals(expResult, result);
+	}
+
+	/**
+	 * Test of blankIfNull method, of class StringProcessor.
+	 */
+	@Test
+	public void testBlankIfNull_String()
+	{
+		System.out.println("blankIfNull");
+		String text = "";
+		String expResult = "";
+		String result = StringProcessor.blankIfNull(text);
+		assertEquals(expResult, result);
+
+		text = null;
+		expResult = "";
+		result = StringProcessor.blankIfNull(text);
+		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of nullIfBlank method, of class StringProcessor.
+	 */
+	@Test
+	public void testNullIfBlank()
+	{
+		System.out.println("nullIfBlank");
+		String text = "";
+		String expResult = null;
+		String result = StringProcessor.nullIfBlank(text);
+		assertEquals(expResult, result);
+
+		text = "a";
+		expResult = "a";
+		result = StringProcessor.nullIfBlank(text);
+		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of urlEncode method, of class StringProcessor.
+	 */
+	@Test
+	public void testUrlEncode()
+	{
+		System.out.println("urlEncode");
+		String value = "";
+		String expResult = "";
+		String result = StringProcessor.urlEncode(value);
+		assertEquals(expResult, result);
+
+		value = " a";
+		expResult = "+a";
+		result = StringProcessor.urlEncode(value);
+		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of urlDecode method, of class StringProcessor.
+	 */
+	@Test
+	public void testUrlDecode()
+	{
+		System.out.println("urlDecode");
+		String value = "";
+		String expResult = "";
+		String result = StringProcessor.urlDecode(value);
+		assertEquals(expResult, result);
+
+		value = "http://google.com/+a";
+		expResult = "http://google.com/ a";
+		result = StringProcessor.urlDecode(value);
+		assertEquals(expResult, result);
+
+	}
+
+	/**
+	 * Test of parseStackTraceHtml method, of class StringProcessor.
+	 */
+	@Test
+	public void testParseStackTraceHtml()
+	{
+		System.out.println("parseStackTraceHtml");
+		Throwable throwable = new RuntimeException("Test");
+		String expResult = "<b>Message:</b> <span style='color: red;'><b>Test";
+		String result = StringProcessor.parseStackTraceHtml(throwable);
+
+		if (!result.startsWith(expResult)) {
+			fail("Should start with message");
+		}
+
+	}
+
+//	/**
+//	 * Test of enclose method, of class StringProcessor.
+//	 */
+//	@Test
+//	public void testEnclose_String()
+//	{
+//		System.out.println("enclose");
+//		String s = "";
+//		String expResult = "";
+//		String result = StringProcessor.enclose(s);
+//		assertEquals(expResult, result);
+//		// TODO review the generated test code and remove the default call to fail.
+//		fail("The test case is a prototype.");
+//	}
+//
+//	/**
+//	 * Test of enclose method, of class StringProcessor.
+//	 */
+//	@Test
+//	public void testEnclose_String_String()
+//	{
+//		System.out.println("enclose");
+//		String s = "";
+//		String enclose = "";
+//		String expResult = "";
+//		String result = StringProcessor.enclose(s, enclose);
+//		assertEquals(expResult, result);
+//		// TODO review the generated test code and remove the default call to fail.
+//		fail("The test case is a prototype.");
+//	}
+//	/**
+//	 * Test of enclose method, of class StringProcessor.
+//	 */
+//	@Test
+//	public void testEnclose_3args()
+//	{
+//		System.out.println("enclose");
+//		String s = "";
+//		String encloseStart = "";
+//		String encloseEnd = "";
+//		String expResult = "";
+//		String result = StringProcessor.enclose(s, encloseStart, encloseEnd);
+//		assertEquals(expResult, result);
+//		// TODO review the generated test code and remove the default call to fail.
+//		fail("The test case is a prototype.");
+//	}
+	/**
+	 * Test of decodeHexCharEscapes method, of class StringProcessor.
+	 */
+	@Test
+	public void testDecodeHexCharEscapes()
+	{
+		System.out.println("decodeHexCharEscapes");
+		String input = "x0020";
+		String expResult = " ";
+		String result = StringProcessor.decodeHexCharEscapes(input);
+		assertEquals(expResult, result);
+	}
+
+//	/**
+//	 * Test of formatForFilename method, of class StringProcessor.
+//	 */
+//	@Test
+//	public void testFormatForFilename()
+//	{
+//		System.out.println("formatForFilename");
+//		String input = "";
+//		String expResult = "";
+//		String result = StringProcessor.formatForFilename(input);
+//		assertEquals(expResult, result);
+//		// TODO review the generated test code and remove the default call to fail.
+//		fail("The test case is a prototype.");
+//	}
+	/**
+	 * Expected: To not throw error
+	 */
+	@Test
+	public void testUniqueId()
+	{
+		System.out.println("uniqueId");
+		String result = StringProcessor.uniqueId();
+		System.out.println(result);
+	}
+
+	/**
+	 * Test of truncateHTML method, of class StringProcessor.
+	 */
+	@Test
+	public void testTruncateHTML()
+	{
+		System.out.println("truncateHTML");
+		String html = "<b>test</b><br><br>abcdssa<b>";
+		int maxCharCount = 10;
+		String expResult = "<b>test</b><br><br><b>";
+		String result = StringProcessor.truncateHTML(html, maxCharCount);
+		assertEquals(expResult, result);
+	}
+
+	/**
+	 * Test of splitURLQuery method, of class StringProcessor.
+	 */
+	@Test
+	public void testSplitURLQuery()
+	{
+		System.out.println("splitURLQuery");
+		String query = "a=b&b=c";
+		Map<String, List<String>> result = StringProcessor.splitURLQuery(query);
+
+		if (!result.containsKey("a")) {
+			fail("Should contain a");
 		}
 	}
 

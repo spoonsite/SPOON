@@ -51,6 +51,7 @@ import edu.usu.sdl.openstorefront.service.search.AttributeSetSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.BaseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ComponentSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ContactSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.EntryTypeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.EvaluationScoreSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
@@ -104,14 +105,14 @@ public class SearchServiceImpl
 	@Override
 	public ComponentSearchWrapper getSearchItems(SearchQuery query, FilterQueryParams filter)
 	{
-		return SearchServerManager.getSearchServer().search(query, filter);
+		return SearchServerManager.getInstance().getSearchServer().search(query, filter);
 	}
 
 	@Override
 	public void indexComponents(List<Component> components)
 	{
 		if (!components.isEmpty()) {
-			SearchServerManager.getSearchServer().index(components);
+			SearchServerManager.getInstance().getSearchServer().index(components);
 			OSFCacheManager.getSearchCache().removeAll();
 		}
 	}
@@ -181,28 +182,28 @@ public class SearchServiceImpl
 	@Override
 	public void deleteById(String id)
 	{
-		SearchServerManager.getSearchServer().deleteById(id);
+		SearchServerManager.getInstance().getSearchServer().deleteById(id);
 		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
 	public void deleteAll()
 	{
-		SearchServerManager.getSearchServer().deleteAll();
+		SearchServerManager.getInstance().getSearchServer().deleteAll();
 		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
 	public void saveAll()
 	{
-		SearchServerManager.getSearchServer().saveAll();
+		SearchServerManager.getInstance().getSearchServer().saveAll();
 		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
 	public void resetIndexer()
 	{
-		SearchServerManager.getSearchServer().resetIndexer();
+		SearchServerManager.getInstance().getSearchServer().resetIndexer();
 		OSFCacheManager.getSearchCache().removeAll();
 	}
 
@@ -283,6 +284,9 @@ public class SearchServiceImpl
 				case REVIEWPRO:
 					handlers.add(new ReviewProConSearchHandler(searchElements));
 					break;
+				case ENTRYTYPE:
+					handlers.add(new EntryTypeSearchHandler(searchElements));
+					break;
 				default:
 					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchType, "Add support; programming error");
 			}
@@ -360,7 +364,7 @@ public class SearchServiceImpl
 					} else {
 						ResultTypeStat stat = new ResultTypeStat();
 						stat.setComponentType(view.getComponentType());
-						stat.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
+						stat.setComponentTypeDescription(getComponentService().getComponentTypeParentsString(view.getComponentType(), true));
 						stat.setCount(1);
 						stats.put(view.getComponentType(), stat);
 					}
@@ -374,24 +378,30 @@ public class SearchServiceImpl
 				}
 
 				List<String> idsToResolve = new ArrayList<>();
-				if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
-					int count = 0;
-					for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
-						idsToResolve.add(intermediateViews.get(i).getComponentId());
-						count++;
-						if (count >= searchModel.getMax()) {
-							break;
+				if (indexSearches.isEmpty()) {
+					if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
+						int count = 0;
+						for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
+							idsToResolve.add(intermediateViews.get(i).getComponentId());
+							count++;
+							if (count >= searchModel.getMax()) {
+								break;
+							}
 						}
+					}
+				} else {
+					for (ComponentSearchView view : intermediateViews) {
+						idsToResolve.add(view.getComponentId());
 					}
 				}
 
 				//resolve results
 				List<ComponentSearchView> views = getComponentService().getSearchComponentList(idsToResolve);
 
-				if (indexSearches.isEmpty() == false) {
+				if (!indexSearches.isEmpty()) {
 					//only the first one counts
 					String indexQuery = indexSearches.get(0).getValue();
-					SearchServerManager.updateSearchScore(indexQuery, views);
+					SearchServerManager.getInstance().getSearchServer().updateSearchScore(indexQuery, views);
 				}
 
 				if (StringUtils.isNotBlank(searchModel.getSortField())) {
@@ -401,6 +411,10 @@ public class SearchServiceImpl
 				//	Order by relevance then name
 				if (StringUtils.isNotBlank(searchModel.getSortField()) && ComponentSearchView.FIELD_SEARCH_SCORE.equals(searchModel.getSortField())) {
 					Collections.sort(views, new RelevanceComparator<>());
+				}
+
+				if (!indexSearches.isEmpty()) {
+					views = windowData(views, searchModel.getStartOffset(), searchModel.getMax());
 				}
 
 				//trim descriptions to max length
@@ -421,21 +435,39 @@ public class SearchServiceImpl
 		return searchResult;
 	}
 
+	private List<ComponentSearchView> windowData(List<ComponentSearchView> data, int offset, int max)
+	{
+		List<ComponentSearchView> results = new ArrayList<>();
+
+		//window
+		if (offset < data.size() && max > 0) {
+			int count = 0;
+			for (int i = offset; i < data.size(); i++) {
+				results.add(data.get(i));
+				count++;
+				if (count >= max) {
+					break;
+				}
+			}
+		}
+		return results;
+	}
+
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
 	{
-		return SearchServerManager.getSearchServer().doIndexSearch(query, filter);
+		return SearchServerManager.getInstance().getSearchServer().doIndexSearch(query, filter);
 	}
 
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
-		return SearchServerManager.getSearchServer().doIndexSearch(query, filter, addtionalFieldsToReturn);
+		return SearchServerManager.getInstance().getSearchServer().doIndexSearch(query, filter, addtionalFieldsToReturn);
 	}
 
 	@Override
 	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType)
 	{
-		return SearchServerManager.getSearchServer().searchSuggestions(query, maxResult, componentType);
+		return SearchServerManager.getInstance().getSearchServer().searchSuggestions(query, maxResult, componentType);
 	}
 
 	@Override

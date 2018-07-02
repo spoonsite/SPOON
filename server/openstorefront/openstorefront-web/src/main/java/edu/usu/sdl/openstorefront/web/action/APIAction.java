@@ -29,7 +29,6 @@ import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.ForwardResolution;
@@ -46,8 +45,6 @@ import org.apache.commons.lang3.StringUtils;
 public class APIAction
 		extends BaseAction
 {
-
-	private static final Logger log = Logger.getLogger(APIAction.class.getName());
 
 	@Validate(required = true, on = "API")
 	private String resourceClass;
@@ -85,6 +82,7 @@ public class APIAction
 		return streamResults(serviceClassModel);
 	}
 
+	@SuppressWarnings({"unchecked", "squid:S1872"})
 	private void initServiceDescription()
 	{
 		ResolverUtil resolverUtil = new ResolverUtil();
@@ -94,10 +92,14 @@ public class APIAction
 		classList.addAll(resolverUtil.getClasses());
 		for (Class apiResourceClass : classList) {
 			if (BaseResource.class.getName().equals(apiResourceClass.getName()) == false) {
-				LookupModel lookupModel = new LookupModel();
-				lookupModel.setCode(apiResourceClass.getSimpleName());
-				lookupModel.setDescription(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(apiResourceClass.getSimpleName())).replace("Resource", "").replace("REST", ""));
-				resourceClasses.add(lookupModel);
+
+				//skip extensions classes
+				if (!apiResourceClass.getSimpleName().endsWith("Ext")) {
+					LookupModel lookupModel = new LookupModel();
+					lookupModel.setCode(apiResourceClass.getSimpleName());
+					lookupModel.setDescription(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(apiResourceClass.getSimpleName())).replace("Resource", "").replace("REST", ""));
+					resourceClasses.add(lookupModel);
+				}
 			}
 		}
 
@@ -140,6 +142,7 @@ public class APIAction
 	}
 
 	@HandlesEvent("PrintView")
+	@SuppressWarnings({"unchecked", "squid:S1872"})
 	public Resolution printView()
 	{
 		ResolverUtil resolverUtil = new ResolverUtil();
@@ -169,6 +172,7 @@ public class APIAction
 	}
 
 	@HandlesEvent("ViewEntities")
+	@SuppressWarnings({"unchecked", "squid:S1872"})
 	public Resolution viewEntities()
 	{
 		ResolverUtil resolverUtil = new ResolverUtil();

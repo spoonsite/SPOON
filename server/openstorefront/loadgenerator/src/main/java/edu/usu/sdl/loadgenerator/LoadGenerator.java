@@ -69,7 +69,7 @@ public class LoadGenerator
 	public String generateDescription()
 	{
 		BufferedReader reader
-				= new BufferedReader(new InputStreamReader(FileSystemManager.getApplicationResourceFile("/generate_description.txt")));
+				= new BufferedReader(new InputStreamReader(FileSystemManager.getInstance().getApplicationResourceFile("/generate_description.txt")));
 
 		String fileData = reader.lines().collect(Collectors.joining("<br>"));
 
@@ -79,7 +79,7 @@ public class LoadGenerator
 	public List<String> readLinesFromFile(String filepath)
 	{
 		BufferedReader reader
-				= new BufferedReader(new InputStreamReader(FileSystemManager.getApplicationResourceFile(filepath), StandardCharsets.UTF_8));
+				= new BufferedReader(new InputStreamReader(FileSystemManager.getInstance().getApplicationResourceFile(filepath), StandardCharsets.UTF_8));
 		List<String> objects = new ArrayList();
 		String line = null;
 		try {
@@ -96,7 +96,7 @@ public class LoadGenerator
 	{
 		List<String> organizations = new ArrayList();
 		BufferedReader reader
-				= new BufferedReader(new InputStreamReader(FileSystemManager.getApplicationResourceFile("/organizations.txt")));
+				= new BufferedReader(new InputStreamReader(FileSystemManager.getInstance().getApplicationResourceFile("/organizations.txt")));
 		String line;
 		while ((line = reader.readLine()) != null) {
 			organizations.add(line);
@@ -140,7 +140,7 @@ public class LoadGenerator
 		List<String> organizations = getOrganizationList();
 		List<Contact> contacts = new ArrayList();
 		CSVReader reader
-				= new CSVReader(new InputStreamReader(FileSystemManager.getApplicationResourceFile("/contacts.csv")));
+				= new CSVReader(new InputStreamReader(FileSystemManager.getInstance().getApplicationResourceFile("/contacts.csv")));
 
 		String[] contactFile;
 		while ((contactFile = reader.readNext()) != null) {
@@ -186,7 +186,7 @@ public class LoadGenerator
 	{
 		List<AttributeAll> attributeAll = new ArrayList();
 		CSVReader reader
-				= new CSVReader(new InputStreamReader(FileSystemManager.getApplicationResourceFile("/attributes.csv")));
+				= new CSVReader(new InputStreamReader(FileSystemManager.getInstance().getApplicationResourceFile("/attributes.csv")));
 
 		String[] attributeFile;
 		while ((attributeFile = reader.readNext()) != null) {
@@ -233,7 +233,7 @@ public class LoadGenerator
 		List<String> resourceList = new ArrayList();
 
 		BufferedReader reader
-				= new BufferedReader(new InputStreamReader(FileSystemManager.getApplicationResourceFile("/list_of_links.txt")));
+				= new BufferedReader(new InputStreamReader(FileSystemManager.getInstance().getApplicationResourceFile("/list_of_links.txt")));
 		String line;
 		while ((line = reader.readLine()) != null) {
 			resourceList.add(line);

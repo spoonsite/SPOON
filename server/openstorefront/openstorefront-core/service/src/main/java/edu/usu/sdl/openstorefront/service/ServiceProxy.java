@@ -38,6 +38,7 @@ import edu.usu.sdl.openstorefront.core.api.ReportService;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
 import edu.usu.sdl.openstorefront.core.api.SystemArchiveService;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
@@ -49,6 +50,7 @@ import edu.usu.sdl.openstorefront.service.api.ChangeLogServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.PluginServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.ProxyFactory;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
@@ -103,15 +105,16 @@ public class ServiceProxy
 	private SystemArchiveServicePrivate systemArchiveServicePrivate;
 	private HelpSupportService helpSupportService;
 	private FaqService faqService;
+	private SubmissionFormService submissionFormService;
 
 	private FilterEngine filterEngine;
+	private static ProxyFactory proxyFactory = null;
 
 	public ServiceProxy()
 	{
 		if (Test.isMockPersistenceService.get()) {
 			this.persistenceService = Test.mockPersistanceService;
-		}
-		else if (Test.isTestPersistenceService.get()) {
+		} else if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
 	}
@@ -122,8 +125,7 @@ public class ServiceProxy
 
 		if (Test.isMockPersistenceService.get()) {
 			this.persistenceService = Test.mockPersistanceService;
-		}
-		else if (Test.isTestPersistenceService.get()) {
+		} else if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
 	}
@@ -135,12 +137,25 @@ public class ServiceProxy
 
 	public static ServiceProxy getProxy()
 	{
-		return new ServiceProxy();
+		if (proxyFactory != null) {
+			return proxyFactory.getServiceProxy(ModificationType.API);
+		} else {
+			return new ServiceProxy(ModificationType.API);
+		}
+	}
+
+	public static void setProxyFactory(ProxyFactory newFactory)
+	{
+		proxyFactory = newFactory;
 	}
 
 	public static ServiceProxy getProxy(String modificationType)
 	{
-		return new ServiceProxy(modificationType);
+		if (proxyFactory != null) {
+			return proxyFactory.getServiceProxy(modificationType);
+		} else {
+			return new ServiceProxy(modificationType);
+		}
 	}
 
 	public FilterEngine getFilterEngine()
@@ -155,6 +170,44 @@ public class ServiceProxy
 	public void setFilterEngine(FilterEngine filterEngine)
 	{
 		this.filterEngine = filterEngine;
+	}
+
+	@Override
+	public void reset()
+	{
+		setPersistenceService(getNewPersistenceService());
+		lookupService = null;
+		attributeService = null;
+		attributeServicePrivate = null;
+		componentService = null;
+		componentServicePrivate = null;
+		searchService = null;
+		searchServicePrivate = null;
+		userService = null;
+		userServicePrivate = null;
+		systemService = null;
+		alertService = null;
+		reportService = null;
+		organizationService = null;
+		pluginService = null;
+		pluginServicePrivate = null;
+		importService = null;
+		importServicePrivate = null;
+		brandingService = null;
+		notificationService = null;
+		feedbackService = null;
+		contactService = null;
+		evaluationService = null;
+		checklistService = null;
+		contentSectionService = null;
+		securityService = null;
+		securityServicePrivate = null;
+		changeLogService = null;
+		changeLogServicePrivate = null;
+		systemArchiveService = null;
+		systemArchiveServicePrivate = null;
+		helpSupportService = null;
+		faqService = null;
 	}
 
 	@Override
@@ -457,6 +510,7 @@ public class ServiceProxy
 		return systemArchiveServicePrivate;
 	}
 
+	@Override
 	public HelpSupportService getHelpSupportService()
 	{
 		if (helpSupportService == null) {
@@ -464,13 +518,24 @@ public class ServiceProxy
 		}
 		return helpSupportService;
 	}
-	
+
+	@Override
 	public FaqService getFaqService()
 	{
 		if (faqService == null) {
 			faqService = DynamicProxy.newInstance(new FaqServiceImpl());
 		}
 		return faqService;
+
+	}
+
+	@Override
+	public SubmissionFormService getSubmissionFormService()
+	{
+		if (submissionFormService == null) {
+			submissionFormService = DynamicProxy.newInstance(new SubmissionFormServiceImpl());
+		}
+		return submissionFormService;
 	}
 
 	public static class Test
@@ -479,26 +544,33 @@ public class ServiceProxy
 		private static AtomicBoolean isTestPersistenceService = new AtomicBoolean(false);
 		private static AtomicBoolean isMockPersistenceService = new AtomicBoolean(false);
 		private static PersistenceService mockPersistanceService = null;
-		
+
 		public static void setPersistenceServiceToTest()
 		{
 			isTestPersistenceService.set(true);
 		}
-		
+
 		public static void setPersistenceServiceToMock(PersistenceService persistanceService)
 		{
 			isMockPersistenceService.set(true);
 			mockPersistanceService = persistanceService;
 		}
-		
-		public static void clearPersistenceMock() {
+
+		public static void clearPersistenceMock()
+		{
 			isMockPersistenceService.set(false);
 			mockPersistanceService = null;
 		}
-		
-		public static void clearTest() {
+
+		public static void clearTest()
+		{
 			isTestPersistenceService.set(false);
 		}
+	}
+
+	public void setPersistenceService(PersistenceService persistenceService)
+	{
+		this.persistenceService = persistenceService;
 	}
 
 }

@@ -26,10 +26,6 @@ public class JiraIssueView
 	private String url;
 	private String id;
 
-	public JiraIssueView()
-	{
-	}
-
 	public String getTicketId()
 	{
 		return ticketId;

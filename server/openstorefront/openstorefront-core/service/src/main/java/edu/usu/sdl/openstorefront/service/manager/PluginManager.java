@@ -61,7 +61,7 @@ public class PluginManager
 		loadingPlugins.set(true);
 		
 		//start any stopped bundles
-		Bundle bundles[] = OsgiManager.getFelix().getBundleContext().getBundles();
+		Bundle bundles[] = OsgiManager.getInstance().getFelix().getBundleContext().getBundles();
 		for (Bundle bundle : bundles) {
 			if (Bundle.INSTALLED == bundle.getState()
 					|| Bundle.RESOLVED == bundle.getState()) {
@@ -100,10 +100,10 @@ public class PluginManager
 		boolean success = false;
 
 		try (InputStream in = bundleStream) {
-			Bundle bundle = OsgiManager.getFelix().getBundleContext().getBundle(location);
+			Bundle bundle = OsgiManager.getInstance().getFelix().getBundleContext().getBundle(location);
 			if (bundle == null
 					|| Bundle.UNINSTALLED == bundle.getState()) {
-				bundle = OsgiManager.getFelix().getBundleContext().installBundle(location, in);
+				bundle = OsgiManager.getInstance().getFelix().getBundleContext().installBundle(location, in);
 				if (bundle != null) {
 					if (Bundle.RESOLVED == bundle.getState() || Bundle.INSTALLED == bundle.getState()) {
 						bundle.start();
@@ -139,7 +139,7 @@ public class PluginManager
 	{
 		boolean success = false;
 
-		Bundle bundle = OsgiManager.getFelix().getBundleContext().getBundle(location);
+		Bundle bundle = OsgiManager.getInstance().getFelix().getBundleContext().getBundle(location);
 		if (bundle != null
 				&& (Bundle.INSTALLED == bundle.getState()
 				|| Bundle.RESOLVED == bundle.getState()
@@ -169,7 +169,7 @@ public class PluginManager
 	{
 		boolean success = false;
 
-		Bundle bundle = OsgiManager.getFelix().getBundleContext().getBundle(location);
+		Bundle bundle = OsgiManager.getInstance().getFelix().getBundleContext().getBundle(location);
 		if (bundle != null
 				&& (Bundle.INSTALLED == bundle.getState()
 				|| Bundle.RESOLVED == bundle.getState())) {
@@ -197,7 +197,7 @@ public class PluginManager
 	{
 		boolean success = false;
 
-		Bundle bundle = OsgiManager.getFelix().getBundleContext().getBundle(location);
+		Bundle bundle = OsgiManager.getInstance().getFelix().getBundleContext().getBundle(location);
 		if (bundle != null
 				&& (Bundle.ACTIVE == bundle.getState())) {
 			try {
@@ -234,7 +234,7 @@ public class PluginManager
 	{
 		List<PluginModel> plugins = new ArrayList<>();
 
-		Bundle bundles[] = OsgiManager.getFelix().getBundleContext().getBundles();
+		Bundle bundles[] = OsgiManager.getInstance().getFelix().getBundleContext().getBundles();
 		for (Bundle bundle : bundles) {
 			PluginModel pluginModel = new PluginModel();
 			pluginModel.setBundleId(bundle.getBundleId());
@@ -294,7 +294,7 @@ public class PluginManager
 				if (plugin != null) {
 					service.getPluginService().inactivatePlugin(plugin.getPluginId());
 				} else {
-					log.log(Level.INFO, MessageFormat.format("Can't find plugin metadata record for: {0}  Continuing.", bundle.getLocation()));
+					log.log(Level.INFO, MessageFormat.format("Cannot find plugin metadata record for: {0}  Continuing.", bundle.getLocation()));
 				}
 			} catch (Exception e) {
 				log.log(Level.WARNING, MessageFormat.format("Failed to unstalled: {0} (Continuing).", bundle.getLocation()));

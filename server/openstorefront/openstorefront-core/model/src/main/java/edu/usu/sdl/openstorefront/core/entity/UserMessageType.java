@@ -41,10 +41,6 @@ public class UserMessageType
 	public static final String USER_REGISTRATION = "USERREG";
 	public static final String USER_NEED_APPROVAL = "USERAPPR";
 
-	public UserMessageType()
-	{
-	}
-
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{

@@ -32,6 +32,7 @@ public class ComponentSearchWrapper
 	private List<ComponentSearchView> data = new ArrayList<>();
 	private List<ResultTypeStat> resultTypeStats = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentSearchWrapper()
 	{
 	}

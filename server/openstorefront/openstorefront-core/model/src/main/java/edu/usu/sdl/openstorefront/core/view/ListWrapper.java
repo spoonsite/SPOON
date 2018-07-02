@@ -26,6 +26,7 @@ public abstract class ListWrapper
 	protected long totalNumber;
 	protected int results;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ListWrapper()
 	{
 	}

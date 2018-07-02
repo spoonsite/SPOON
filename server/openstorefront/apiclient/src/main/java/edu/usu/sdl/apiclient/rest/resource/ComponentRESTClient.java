@@ -170,9 +170,10 @@ public class ComponentRESTClient
 		return response.getResponse(ComponentQuestion.class);
 	}
 
-	public Response addComponentQuestionResponse(String componentId, String questionId, ComponentQuestionResponse response)
+	public ComponentQuestionResponse addComponentQuestionResponse(String componentId, String questionId, ComponentQuestionResponse compQuestionResponse)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		APIResponse response = client.httpPost(basePath + "/" + componentId + "/questions/" + questionId + "/responses", compQuestionResponse, null);
+		return response.getResponse(ComponentQuestionResponse.class);
 	}
 
 	public Response addComponentRelationship(String componentId, ComponentRelationship relationship)
@@ -227,6 +228,11 @@ public class ComponentRESTClient
 	}
 
 	public Response changeOwner(String componentId, String newOwner)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	public Response changeType(String componentId, String newType)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

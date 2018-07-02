@@ -66,13 +66,13 @@ public class SubmissionsReport
 		Component componentEndExample = new Component();
 		componentEndExample.setUpdateDts(report.getReportOption().getEndDts());
 
-		QueryByExample queryByExample = new QueryByExample(componentExample);
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		QueryByExample<Component> queryByExample = new QueryByExample<>(componentExample);
+		SpecialOperatorModel<Component> specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(componentStartExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(componentEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
@@ -83,9 +83,8 @@ public class SubmissionsReport
 
 		List<Component> componentsSubmited = new ArrayList<>();
 		for (Component component : found) {
-			if (component.getSubmittedDts() != null) {
-				componentsSubmited.add(component);
-			} else if (ApprovalStatus.NOT_SUBMITTED.equals(component.getApprovalState())) {
+			if (component.getSubmittedDts() != null
+					|| ApprovalStatus.NOT_SUBMITTED.equals(component.getApprovalState())) {
 				componentsSubmited.add(component);
 			}
 		}

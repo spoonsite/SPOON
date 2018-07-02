@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
+import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
@@ -107,7 +108,7 @@ public class UserProfileResource
 
 		// Initialize User Profile Status Example
 		UserProfile userProfileExample = new UserProfile();
-		QueryByExample queryByExample = new QueryByExample(userProfileExample);
+		QueryByExample<UserProfile> queryByExample = new QueryByExample<>(userProfileExample);
 
 		// Check For 'All' Parameter
 		if (!filterQueryParams.getAll()) {
@@ -126,7 +127,7 @@ public class UserProfileResource
 
 				// Define A Special Lookup Operation (LIKE)
 				// (The Default Is Equals, Which We Still Need For Active Status)
-				SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+				SpecialOperatorModel<UserProfile> specialOperatorModel = new SpecialOperatorModel<>();
 				specialOperatorModel.setExample(userProfileSearchExample);
 				specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
 				specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
@@ -143,12 +144,12 @@ public class UserProfileResource
 		UserProfile userProfileEndExample = new UserProfile();
 		userProfileEndExample.setCreateDts(filterQueryParams.getEnd());
 
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		SpecialOperatorModel<UserProfile> specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(userProfileStartExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(userProfileEndExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
@@ -179,12 +180,15 @@ public class UserProfileResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
 	@Path("/lookup")
-	public Response userProfilesLookup()
+	public Response userProfilesLookup(
+			@QueryParam("query") String query
+	)
 	{
 		List<LookupModel> profiles = new ArrayList<>();
 
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
+
 		List<UserProfile> userProfiles = userProfileExample.findByExample();
 		for (UserProfile userProfile : userProfiles) {
 			LookupModel lookupModel = new LookupModel();
@@ -197,6 +201,17 @@ public class UserProfileResource
 			lookupModel.setDescription(name + email);
 			profiles.add(lookupModel);
 		}
+		if (query != null) {
+			if (StringUtils.isBlank(query)) {
+				//match nothing
+				profiles.clear();
+			} else {
+				profiles.removeIf((lookup) -> {
+					return !(lookup.getDescription().toLowerCase().contains(query.toLowerCase()));
+				});
+			}
+		}
+		profiles.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, LookupModel.DESCRIPTION_FIELD));
 
 		GenericEntity<List<LookupModel>> entity = new GenericEntity<List<LookupModel>>(profiles)
 		{
@@ -506,7 +521,7 @@ public class UserProfileResource
 		userTrackingExample.setCreateUser(userId);
 		userTrackingExample.setActiveStatus(filterQueryParams.getStatus());
 
-		QueryByExample<UserTracking> queryByExample = new QueryByExample(userTrackingExample);
+		QueryByExample<UserTracking> queryByExample = new QueryByExample<>(userTrackingExample);
 		queryByExample.setMaxResults(filterQueryParams.getMax());
 		queryByExample.setFirstResult(filterQueryParams.getOffset());
 
@@ -516,7 +531,7 @@ public class UserProfileResource
 		queryByExample.setSortDirection(OpenStorefrontConstant.SORT_DESCENDING);
 
 		List<UserTracking> userTrackings = service.getPersistenceService().queryByExample(queryByExample);
-		long total = service.getPersistenceService().countByExample(new QueryByExample(QueryType.COUNT, userTrackingExample));
+		long total = service.getPersistenceService().countByExample(new QueryByExample<>(QueryType.COUNT, userTrackingExample));
 		return sendSingleEntityResponse(new UserTrackingWrapper(userTrackings, total));
 	}
 

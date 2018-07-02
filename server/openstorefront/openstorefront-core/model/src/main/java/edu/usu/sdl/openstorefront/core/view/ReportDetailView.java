@@ -49,10 +49,6 @@ public class ReportDetailView
 	@DataType(ReportOutput.class)
 	private List<ReportOutput> outputs = new ArrayList<>();
 
-	public ReportDetailView()
-	{
-	}
-
 	public static ReportDetailView toView(Report report)
 	{
 		ReportDetailView view = new ReportDetailView();

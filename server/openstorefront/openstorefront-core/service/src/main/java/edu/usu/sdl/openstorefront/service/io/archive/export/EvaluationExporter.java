@@ -94,6 +94,7 @@ public class EvaluationExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public void exportRecords()
 	{
 		Evaluation evaluationExample = new Evaluation();
@@ -229,7 +230,7 @@ public class EvaluationExporter
 				if (media != null) {
 					for (TFile mediaFile : media) {
 						try {
-							Files.copy(mediaFile.toPath(), FileSystemManager.getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+							Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
 
 						} catch (IOException ex) {
 							LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
@@ -247,6 +248,7 @@ public class EvaluationExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public long getTotalRecords()
 	{
 		long count = 0;

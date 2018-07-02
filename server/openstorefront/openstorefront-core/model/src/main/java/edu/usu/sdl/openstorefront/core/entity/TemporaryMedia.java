@@ -68,6 +68,7 @@ public class TemporaryMedia
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	private String mimeType;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public TemporaryMedia()
 	{
 	}
@@ -82,7 +83,7 @@ public class TemporaryMedia
 	{
 		Path path = null;
 		if (StringUtils.isNotBlank(getFileName())) {
-			File mediaDir = FileSystemManager.getDir(FileSystemManager.TEMPORARY_MEDIA_DIR);
+			File mediaDir = FileSystemManager.getInstance().getDir(FileSystemManager.TEMPORARY_MEDIA_DIR);
 			path = Paths.get(mediaDir.getPath() + "/" + getFileName());
 		}
 		return path;

@@ -69,6 +69,7 @@ public class ComponentQuestionResponse
 	@FK(value = Organization.class, softReference = true, referencedField = "name")
 	private String organization;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentQuestionResponse()
 	{
 	}

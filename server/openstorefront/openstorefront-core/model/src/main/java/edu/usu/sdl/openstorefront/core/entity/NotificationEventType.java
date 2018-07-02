@@ -39,6 +39,7 @@ public class NotificationEventType
 	public static final String SUBMISSION = "SUBMISSION";
 	public static final String CHANGE_REQUEST = "CHANGERQT";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public NotificationEventType()
 	{
 	}

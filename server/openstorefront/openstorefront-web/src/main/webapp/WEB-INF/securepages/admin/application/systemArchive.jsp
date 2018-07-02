@@ -247,6 +247,7 @@
 					]
 					
 				});				
+				
 				addComponentToMainViewPort(archiveGrid);
 				
 				var actionRefresh = function() {
@@ -259,9 +260,7 @@
 						}
 					});
 				};
-				
 				var actionGenerate = function() {
-					
 					var generateWin = Ext.create('Ext.window.Window', {
 						title: 'Generate Archive',
 						modal: true,
@@ -308,8 +307,11 @@
 													form.queryById('options').setDisabled(true);													
 												}
 												if (!form.queryById('component').getValue()) {
-													form.queryById('entrySelectGrid').setDisabled(false);
-													form.queryById('entrySelectGrid').setDisabled(true);
+													// The Select Entries box must be toggled to get it to behave correctly
+													// This is likely due to how the data is added to the page. 
+													// See reports.jsp for another methodology if this section gets refactored
+													form.queryById('entrySelector').setDisabled(false);
+													form.queryById('entrySelector').setDisabled(true);
 												}
 												if (!form.queryById('branding').getValue()) {
 													form.queryById('brandingSelectGrid').setDisabled(false);
@@ -333,62 +335,25 @@
 													change: function(field, newValue, oldValue, opts) {
 														var form = field.up('form');
 														if (newValue) {
-															form.queryById('entrySelectGrid').setDisabled(false);		
+															form.queryById('entrySelector').setDisabled(false);		
 														} else {
-															form.queryById('entrySelectGrid').setDisabled(true);		
+															form.queryById('entrySelector').setDisabled(true);		
 														}
 													}
 												}
 											},
 											{
-												xtype: 'grid',
-												itemId: 'entrySelectGrid',
+												xtype: 'entryselect',
+												itemId: 'entrySelector',
 												title: 'Select Entries',
 												maxHeight: 250,
-												disabled: true,
-												columnLines: true,
-												selModel: {
-													selType: 'checkboxmodel'
-												},
-												store: {
-													autoLoad: true,
-													sorters: [
-														new Ext.util.Sorter({
-															property: 'description',
-															direction: 'ASC'
-														})
-													],
-													proxy: {
-														type: 'ajax',
-														url: 'api/v1/resource/components/lookup?approvalState=ALL'							
-													}											
-												},
-												columns: [
-													{text: 'Entry Name', dataIndex: 'description', flex: 1,
-														filter: {
-															type: 'string'
-														}
-													}
-												],										
-												dockedItems: [
-													{
-														xtype: 'textfield',
-														dock: 'top',
-														name: 'filterForEntries',																					
-														emptyText: 'Filter entries by name',
-														width: '100%',
-														maxLength: 30,
-														listeners: {
-															change: function (field, newVal, oldVal, opts) {
-																var grid = field.up('grid');
-																grid.getStore().filter([{
-																		property: 'description',
-																		value: newVal
-																}]);
-															}
-														}
-													}
-												]
+											},
+											{
+												xtype: 'checkbox',
+												itemId: 'includeRelatedEntities',
+												name: 'includeRelatedEntities',											
+												boxLabel: 'Include Related Entities',
+												checked: true										
 											},									
 											{
 												xtype: 'checkbox',
@@ -498,14 +463,13 @@
 													
 													var archiveOptions = [];
 													if (data.component) {
-														Ext.Array.each(generateWin.queryById('entrySelectGrid').getSelection(), function(record){
+														Ext.Array.each(generateWin.queryById('entrySelector').getSelected(), function(record){
 															archiveOptions.push({
 																primaryEntity: 'Component',
-																entityId: record.get('code')
+																entityId: record.componentId
 															});	
 														});
 													}
-													
 													if (data.highlight) {
 														archiveOptions.push({
 															primaryEntity: 'Highlight'
@@ -515,7 +479,7 @@
 														archiveOptions.push({
 															primaryEntity: 'Organization'
 														});
-													}	
+													}													
 													if (data.attributes) {
 														archiveOptions.push({
 															primaryEntity: 'AttributeType'
@@ -581,11 +545,8 @@
 						]
 					});
 					generateWin.show();
-										
 				};				
-				
 				var actionImport = function() {
-					
 					var importWin = Ext.create('Ext.window.Window', {
 						title: 'Import Archive',
 						modal: true,
@@ -641,7 +602,6 @@
 												iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 												formBind: true,
 												handler: function() {
-													
 													var uploadForm = this.up('form');
 													//var data = uploadForm.getValues();
 													var progressMsg = Ext.MessageBox.show({
@@ -654,7 +614,6 @@
 														wait: true,
 														waitConfig: {interval: 300}
 													});
-													
 													uploadForm.submit({
 														submitEmptyText: false,
 														url: 'Upload.action?ImportArchive',	
@@ -687,15 +646,11 @@
 						]
 					});
 					importWin.show();		
-					
 				};				
-				
 				var actionDownload = function(record) {
 					window.location.href = 'api/v1/resource/systemarchives/' + record.get('archiveId') + '/download';					
 				};	
-				
 				var actionView = function(record) {
-					
 					var errorWin = Ext.create('Ext.window.Window', {
 						title: 'Errors',
 						iconCls: 'fa fa-lg fa-info-circle icon-small-vertical-correction',

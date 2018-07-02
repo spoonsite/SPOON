@@ -93,6 +93,28 @@
 				}
 			});	
 			dataMenu.push({
+				text: 'Submissions',
+				menu: {
+					items: [
+						{
+							text: 'Submissions Form Templates',
+							permission: 'ADMIN-SUBMISSION-FORM-TEMPLATE',
+							handler: function(){
+								actionLoadContent('Custom-Forms');
+							}							
+						},
+						{
+							text: 'Partial Submissions',
+							permission: 'ADMIN-USER-SUBMISSIONS',
+							handler: function(){
+								actionLoadContent('Partial-Submissions');
+							}		
+						}
+					]
+				}
+			});
+	
+			dataMenu.push({
 				text: 'Help',
 				menu: {
 					items: [

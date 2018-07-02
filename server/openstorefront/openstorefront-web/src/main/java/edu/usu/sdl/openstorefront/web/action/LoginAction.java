@@ -221,7 +221,7 @@ public class LoginAction
 		
 		SecurityUtil.logout(getContext().getRequest(), getContext().getResponse());
 
-		String logoutUrl = PropertiesManager.getValue(PropertiesManager.KEY_LOGOUT_URL, "/login.jsp");
+		String logoutUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_LOGOUT_URL, "/login.jsp");
 		if (StringUtils.isBlank(logoutUrl)) {
 			logoutUrl = "/login.jsp";
 		}

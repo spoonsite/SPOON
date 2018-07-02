@@ -38,6 +38,6 @@ public enum MediaFileType
 
 	public String getPath()
 	{
-		return FileSystemManager.getDir(this.directory).getPath();
+		return FileSystemManager.getInstance().getDir(this.directory).getPath();
 	}
 }

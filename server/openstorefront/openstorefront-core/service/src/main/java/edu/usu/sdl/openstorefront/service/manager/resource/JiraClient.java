@@ -118,7 +118,7 @@ public class JiraClient
 		IssueType issueType = null;
 
 		GetCreateIssueMetadataOptions options = new GetCreateIssueMetadataOptionsBuilder()
-				.withProjectKeys(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_JIRA_FEEDBACK_PROJECT))
+				.withProjectKeys(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_JIRA_FEEDBACK_PROJECT))
 				.build();
 		Iterable<CimProject> cimProjects = getRestClient().getIssueClient().getCreateIssueMetadata(options).claim();
 		if (cimProjects != null) {
@@ -126,7 +126,7 @@ public class JiraClient
 				//There should only be one
 				basicProject = cimProject;
 				for (IssueType issueTypeInProject : cimProject.getIssueTypes()) {
-					if (issueTypeInProject.getName().equalsIgnoreCase(PropertiesManager.getValueDefinedDefault(PropertiesManager.KEY_JIRA_FEEDBACK_ISSUETYPE))) {
+					if (issueTypeInProject.getName().equalsIgnoreCase(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_JIRA_FEEDBACK_ISSUETYPE))) {
 						issueType = issueTypeInProject;
 						break;
 					}

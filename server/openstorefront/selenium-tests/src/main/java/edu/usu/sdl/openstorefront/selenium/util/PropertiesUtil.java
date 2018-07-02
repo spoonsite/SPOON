@@ -41,7 +41,7 @@ public class PropertiesUtil
 	{
 		if (properties == null) {
 			properties = new Properties();
-			File propertyFile = FileSystemManager.getConfig("testconfig.properties");
+			File propertyFile = FileSystemManager.getInstance().getConfig("testconfig.properties");
 			try (InputStream in = new FileInputStream(propertyFile)) {
 				properties.load(in);
 			} catch (IOException ex) {

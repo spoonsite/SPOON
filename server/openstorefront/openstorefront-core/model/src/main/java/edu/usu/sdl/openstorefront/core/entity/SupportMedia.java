@@ -73,6 +73,7 @@ public class SupportMedia
 	@APIDescription("A local media file")
 	private MediaFile file;
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SupportMedia()
 	{
 	}

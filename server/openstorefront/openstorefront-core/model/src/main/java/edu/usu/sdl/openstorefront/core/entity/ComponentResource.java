@@ -99,6 +99,11 @@ public class ComponentResource
 	@APIDescription("This is used to indentify if a resource requires a login or CAC")
 	private Boolean restricted;
 
+	@ConsumeField
+	@APIDescription("Private Flag")
+	private Boolean privateFlag;
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentResource()
 	{
 	}
@@ -145,6 +150,7 @@ public class ComponentResource
 		this.setLink(resource.getLink());
 		this.setResourceType(resource.getResourceType());
 		this.setRestricted(resource.getRestricted());
+		this.setPrivateFlag(resource.getPrivateFlag());
 
 	}
 
@@ -156,7 +162,7 @@ public class ComponentResource
 	}
 
 	/**
-	 * Get the path to the resource on disk. 
+	 * Get the path to the resource on disk.
 	 *
 	 * @return Resource or null if this doesn't represent a disk resource
 	 */
@@ -306,5 +312,15 @@ public class ComponentResource
 	public void setFile(MediaFile file)
 	{
 		this.file = file;
+	}
+
+	public Boolean getPrivateFlag()
+	{
+		return privateFlag;
+	}
+
+	public void setPrivateFlag(Boolean privateFlag)
+	{
+		this.privateFlag = privateFlag;
 	}
 }

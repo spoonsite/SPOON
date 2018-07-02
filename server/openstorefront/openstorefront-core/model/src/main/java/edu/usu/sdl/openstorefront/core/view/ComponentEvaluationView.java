@@ -34,10 +34,6 @@ public class ComponentEvaluationView
 	@DataType(ComponentEvaluationSectionView.class)
 	private List<ComponentEvaluationSectionView> evaluationSections = new ArrayList<>();
 
-	public ComponentEvaluationView()
-	{
-	}
-
 	public static ComponentEvaluationView toViewFromStorage(List<ComponentEvaluationSection> sections)
 	{
 		List<ComponentEvaluationSectionView> newSections = ComponentEvaluationSectionView.toViewList(sections);

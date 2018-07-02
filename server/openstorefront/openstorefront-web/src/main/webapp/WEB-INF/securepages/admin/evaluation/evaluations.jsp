@@ -9,7 +9,9 @@
     <stripes:layout-component name="contents">
 	
 	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
-	</stripes:layout-render>		
+	</stripes:layout-render>	
+
+	<link rel="stylesheet" href="css/evaluations.css">	
 		
 	<script src="scripts/component/evaluationForm.js?v=${appVersion}" type="text/javascript"></script>	
 		
@@ -182,18 +184,13 @@
 								typeAhead: true,
 								forceSelection: true,
 								editable: true,
+								anyMatch: true,
 								store: {									
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/userprofiles/lookup'
-									},
-									sorters: [
-										new Ext.util.Sorter({
-											property: 'description',
-											direction: 'ASC'
-										})
-									],
+									},									
 									listeners: {
 										load: function(store, records, opts) {
 											store.add({
@@ -273,20 +270,20 @@
 					}
 				},
 				columns: [
-					{ text: 'Entry Name', dataIndex: 'componentName', flex: 1},
-					{ text: 'Version', dataIndex: 'version', align: 'center', width: 225 },
-					{ text: 'Published', dataIndex: 'published', align: 'center', width: 175,
+					{ text: 'Entry Name', dataIndex: 'componentName', width: 250},
+					{ text: 'Version', dataIndex: 'version', align: 'center', flex: 1 },
+					{ text: 'Published', dataIndex: 'published', align: 'center', flex: 1,
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
-					{ text: 'Allow New Sections', dataIndex: 'allowNewSections', align: 'center', width: 175, hidden: true,
+					{ text: 'Allow New Sections', dataIndex: 'allowNewSections', align: 'center', flex: 1, hidden: true,
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
-					{ text: 'Allow Question Management', dataIndex: 'allowQuestionManagement', align: 'center', width: 175, hidden: true,
+					{ text: 'Allow Question Management', dataIndex: 'allowQuestionManagement', align: 'center', flex: 1, hidden: true,
 						renderer: CoreUtil.renderer.booleanRenderer
 					},					
-					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', width: 175 },					
-					{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', width: 175},
-					{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', width: 175,
+					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', flex: 1 },					
+					{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', flex: 1},
+					{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', flex: 1,
 						renderer: function(value, meta, record) {
 							if (value === 'INPROGRESS') {
 								meta.tdCls = 'alert-warning';
@@ -301,14 +298,26 @@
 							return record.get('workflowStatusDescription');
 						}
 					},					
-					{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true  },
-					{ text: 'Last Summary Published Date', dataIndex: 'lastSummaryApprovedDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 250, align: 'center' },
-					{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  width: 175, hidden: true },
-					{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true  }
+					{ text: 'Create User', dataIndex: 'createUser', flex: 1, hidden: true  },
+					{ text: 'Last Summary Published Date', dataIndex: 'lastSummaryApprovedDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 1, align: 'center' },
+					{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 1, hidden: true },
+					{ text: 'Update User', dataIndex: 'updateUser', flex: 1, hidden: true  },
+					{ text: 'Integration Management', dataIndex: 'issueNumber', flex: 1, sortable: false,
+						renderer: function(value, meta, record) { 
+							if(value)
+							{
+								return "<a target='_blank' href='" + record.get("integrationUrl") + "'>" + value + "</a>";
+							}
+							else
+							{
+								return "";
+							}
+						}
+					}
 				],
 				listeners: {
 					itemdblclick: function(grid, record, item, index, e, opts){
-						actionAddEditQuestion(record);
+						addEditEvaluation(record);
 					},						
 					selectionchange: function(selModel, selected, opts) {
 						var tools = Ext.getCmp('evaluationGrid').getComponent('tools');
@@ -332,13 +341,17 @@
 						
 						if (selected.length > 0 && selected[0].get('published')) {
 							Ext.getCmp('publish').setDisabled(true);
-							tools.getComponent('edit').setDisabled(true);
 							Ext.getCmp('unpublish').setDisabled(false);
+
+							tools.getComponent('edit').setText('Details');
+							tools.getComponent('edit').setIconCls('fa fa-2x fa-tasks icon-button-color-edit icon-vertical-correction-edit');
 						} else {
 							Ext.getCmp('publish').setDisabled(false);
 							Ext.getCmp('unpublish').setDisabled(true);
+
+							tools.getComponent('edit').setText('Edit');
+							tools.getComponent('edit').setIconCls('fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit');
 						}
-						
 					}
 				},				
 				dockedItems: [
@@ -592,7 +605,6 @@
 			var addEditEvaluation = function(record){
 				
 				if (record) {
-					
 					evaluationGrid.setLoading('Checking evaluation entry...');
 					Ext.Ajax.request({
 						url: 'api/v1/resource/evaluations/' + record.get('evaluationId') + '/checkentry',
@@ -601,13 +613,16 @@
 							evaluationGrid.setLoading(false);
 						},
 						success: function(response, opts) {
+							
 							var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {
-								title: 'Evaluation Form - ' + record.get('componentName')
+								title: 'Evaluation Form - ' + record.get('componentName'),
+								isPublishedEvaluation: record.data.published
 							});
 							evalformWin.show();
 							
 							var evaluation = Ext.decode(response.responseText);
-							evalformWin.loadEval(record.get('evaluationId'), evaluation.componentId, function(){
+							record.set('componentId', evaluation.componentId);
+							evalformWin.loadEval(record, function(){
 								actionRefresh();
 							});
 							
@@ -650,7 +665,7 @@
 									labelAlign: 'top',
 									width: '100%',
 									editable: false,
-									forceSelection: true,
+									forceSelection: true,									
 									store: {									
 										autoLoad: true,
 										proxy: {
@@ -748,18 +763,13 @@
 									typeAhead: true,
 									editable: true,
 									forceSelection: true,
+									anyMatch: true,
 									store: {									
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/userprofiles/lookup'
-										},
-										sorters: [
-											new Ext.util.Sorter({
-												property: 'description',
-												direction: 'ASC'
-											})
-										],
+										},										
 										listeners: {
 											load: function(store, records, opts) {
 												store.add({

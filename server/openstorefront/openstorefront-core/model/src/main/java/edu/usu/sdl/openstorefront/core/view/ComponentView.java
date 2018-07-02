@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -33,9 +35,12 @@ import org.apache.commons.beanutils.BeanUtils;
  *
  * @author dshurtleff
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class ComponentView
 		extends Component
 {
+
+	private static final long serialVersionUID = 1L;
 
 	private String componentTypeLabel;
 	private String approvalStateLabel;
@@ -48,16 +53,17 @@ public class ComponentView
 	private String securityMarkingDescription;
 	private String componentIconId;
 	private String componentTypeIconUrl;
-
-	public ComponentView()
-	{
-	}
+	private ComponentTypeNestedModel componentTypeNestedModel;
+	private String currentDataOwner;
+	private String userSubmissionId;
+	private String submissionTemplateId;
+	private String submissionOriginalComponentId;
 
 	public static ComponentView toView(Component component, boolean populateOwnerInfo)
 	{
 		ComponentView componentView = toView(component);
 		if (populateOwnerInfo) {
-			UserProfile userProfile = ServiceProxyFactory.getServiceProxy().getUserService().getUserProfile(component.getCreateUser());
+			UserProfile userProfile = ServiceProxyFactory.getServiceProxy().getUserService().getUserProfile(component.entityOwner());
 			if (userProfile != null) {
 				componentView.setOwnerEmail(userProfile.getEmail());
 			}
@@ -74,13 +80,16 @@ public class ComponentView
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
+		componentView.setCurrentDataOwner(component.entityOwner());
+
 		componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, componentView.getApprovalState()));
-		componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(component.getComponentType()));
 		componentView.setSecurityMarkingDescription(TranslateUtil.translate(SecurityMarkingType.class, component.getSecurityMarkingType()));
 
 		Service service = ServiceProxyFactory.getServiceProxy();
+		componentView.setComponentTypeLabel(service.getComponentService().getComponentTypeParentsString(component.getComponentType(), true));
 		componentView.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		componentView.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
+		componentView.setComponentTypeNestedModel(service.getComponentService().getComponentType(new ComponentTypeOptions(component.getComponentType())));
 
 		return componentView;
 	}
@@ -211,6 +220,56 @@ public class ComponentView
 	public void setComponentTypeIconUrl(String componentTypeIconUrl)
 	{
 		this.componentTypeIconUrl = componentTypeIconUrl;
+	}
+
+	public ComponentTypeNestedModel getComponentTypeNestedModel()
+	{
+		return componentTypeNestedModel;
+	}
+
+	public void setComponentTypeNestedModel(ComponentTypeNestedModel componentTypeNestedModel)
+	{
+		this.componentTypeNestedModel = componentTypeNestedModel;
+	}
+
+	public String getCurrentDataOwner()
+	{
+		return currentDataOwner;
+	}
+
+	public void setCurrentDataOwner(String currentDataOwner)
+	{
+		this.currentDataOwner = currentDataOwner;
+	}
+
+	public String getUserSubmissionId()
+	{
+		return userSubmissionId;
+	}
+
+	public void setUserSubmissionId(String userSubmissionId)
+	{
+		this.userSubmissionId = userSubmissionId;
+	}
+
+	public String getSubmissionTemplateId()
+	{
+		return submissionTemplateId;
+	}
+
+	public void setSubmissionTemplateId(String submissionTemplateId)
+	{
+		this.submissionTemplateId = submissionTemplateId;
+	}
+
+	public String getSubmissionOriginalComponentId()
+	{
+		return submissionOriginalComponentId;
+	}
+
+	public void setSubmissionOriginalComponentId(String submissionOriginalComponentId)
+	{
+		this.submissionOriginalComponentId = submissionOriginalComponentId;
 	}
 
 }

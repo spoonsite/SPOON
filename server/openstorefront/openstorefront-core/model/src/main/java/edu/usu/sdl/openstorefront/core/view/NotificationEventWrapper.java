@@ -30,6 +30,7 @@ public class NotificationEventWrapper
 	@DataType(NotificationEventView.class)
 	private List<NotificationEventView> data = new ArrayList<>();
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public NotificationEventWrapper()
 	{
 	}

@@ -29,10 +29,6 @@ public class EvaluationInfoView
 	private Date lastChangeDate;
 	private BigDecimal progessPercent;
 
-	public EvaluationInfoView()
-	{
-	}
-
 	public String getEvaluationId()
 	{
 		return evaluationId;

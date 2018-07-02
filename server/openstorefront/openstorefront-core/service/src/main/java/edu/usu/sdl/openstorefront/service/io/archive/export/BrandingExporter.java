@@ -68,6 +68,7 @@ public class BrandingExporter
 	}
 
 	@Override
+	@SuppressWarnings({"squid:S1872"})
 	public long getTotalRecords()
 	{
 		long records = 0;
@@ -79,6 +80,7 @@ public class BrandingExporter
 		return records;
 	}
 
+	@SuppressWarnings({"squid:S1872"})
 	private boolean include(String brandingId)
 	{
 		boolean include = false;

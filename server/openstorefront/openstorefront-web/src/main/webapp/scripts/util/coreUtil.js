@@ -41,7 +41,7 @@ var CoreUtil = {
 	},
 	calculateEvalutationScore: function (obj) {
 		// obj.data.fullEvaluation requires the key: checkListAll
-		var fullEvaluations = obj.fullEvaluations
+		var fullEvaluations = obj.fullEvaluations;
 		var data = obj.data;
 		var callBack = obj.success;
 
@@ -777,6 +777,8 @@ var CoreUtil = {
 					highlightStyle: item.highlightStyle,
 					type: item.type,
 					code: item.code,
+					privateFlag: item.privateFlag,
+					comment: item.comment,
 					updateDts: item.updateDts,
 					securityMarkingType: item.securityMarkingType,
 					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
@@ -1026,6 +1028,61 @@ var CoreUtil = {
 			return true;
 		}      
 		return false;		
-	} 
+	},
+	traverseNestedModel: function(node, parents, target) {
+		if (target.componentType === node.componentType.componentType) {
+			parents.push({
+				'label': node.componentType.label,
+				'componentType': node.componentType.componentType
+			});
+			target.parents = parents;
+			return;
+		}
+		if (node.children.length > 0) {
+			parents.push({
+				'label': node.componentType.label,
+				'componentType': node.componentType.componentType
+			});
+			Ext.Array.forEach(node.children, function(node) {
+				//deep copy of parents for recursive call
+				CoreUtil.traverseNestedModel(node, JSON.parse(JSON.stringify(parents)), target);
+			});
+		}
+	},
+	saveAdvancedComponentSearch: function(componentId) {
+		var searchObj = {
+			"sortField": null,
+			"sortDirection": "ASC",
+			"startOffset": 0,
+			"max": 2147483647,
+			"searchElements": [{
+					"searchType": "ENTRYTYPE",
+					"field": "componentType",
+					"value": componentId,
+					"searchChildren": true,
+					"keyField": null,
+					"keyValue": null,
+					"startDate": null,
+					"endDate": null,
+					"caseInsensitive": false,
+					"numberOperation": "EQUALS",
+					"stringOperation": "EQUALS",
+					"mergeCondition": "OR"  //OR.. NOT.. AND..
+				}]
+		};
 
+		var searchRequest = {
+			type: 'Advance',
+			query: searchObj
+		};
+
+		CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+	},
+	uuidv4: function() {
+	  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+		return v.toString(16);
+	  });
+  }
+  
 };

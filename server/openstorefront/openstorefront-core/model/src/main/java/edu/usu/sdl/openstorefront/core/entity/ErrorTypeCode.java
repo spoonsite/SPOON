@@ -35,6 +35,7 @@ public class ErrorTypeCode
 	public static final String INTEGRATION = "INT";
 	public static final String REPORT = "RPT";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ErrorTypeCode()
 	{
 	}

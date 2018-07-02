@@ -274,6 +274,7 @@ public class OrientPersistenceService
 	 * @param id required
 	 * @return
 	 */
+	@SuppressWarnings("squid:S1872")
 	private boolean checkPkObject(OObjectDatabaseTx db, Class entityClass, Object id)
 	{
 		boolean pkValid = true;
@@ -351,7 +352,7 @@ public class OrientPersistenceService
 	@Override
 	public int deleteByExample(BaseEntity example)
 	{
-		return deleteByExample(new QueryByExample(example));
+		return deleteByExample(new QueryByExample<>(example));
 	}
 
 	@Override
@@ -446,12 +447,13 @@ public class OrientPersistenceService
 	@Override
 	public long countByExample(BaseEntity example)
 	{
-		QueryByExample queryByExample = new QueryByExample(example);
+		QueryByExample queryByExample = new QueryByExample<>(example);
 		queryByExample.setQueryType(QueryType.COUNT);
 		return countByExample(queryByExample);
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public long countByExample(QueryByExample queryByExample)
 	{
 		if (QueryType.SELECT.equals(queryByExample.getQueryType())) {
@@ -506,7 +508,7 @@ public class OrientPersistenceService
 	@Override
 	public <T> List<T> queryByExample(BaseEntity baseEntity)
 	{
-		return queryByExample(new QueryByExample(baseEntity));
+		return queryByExample(new QueryByExample<>(baseEntity));
 	}
 
 	@Override
@@ -520,6 +522,7 @@ public class OrientPersistenceService
 		return results;
 	}
 
+	@SuppressWarnings("unchecked")
 	public SimpleEntry<String, Map<String, Object>> generateQuery(QueryByExample queryByExample)
 	{
 
@@ -601,6 +604,7 @@ public class OrientPersistenceService
 		return new SimpleEntry(queryString.toString(), mappedParams);
 	}
 
+	@SuppressWarnings("unchecked")
 	private SimpleEntry<String, Map<String, Object>> processExtraWhereClauses(QueryByExample queryByExample)
 	{
 		StringBuilder queryString = new StringBuilder();
@@ -631,6 +635,7 @@ public class OrientPersistenceService
 		return new SimpleEntry(queryString.toString(), mappedParams);
 	}
 
+	@SuppressWarnings("unchecked")
 	private SimpleEntry<String, Map<String, Object>> ProcessSpecialOperator(QueryByExample queryByExample, SpecialOperatorModel special)
 	{
 		Map<String, Object> mappedParams = new HashMap<>();
@@ -641,6 +646,7 @@ public class OrientPersistenceService
 		return new SimpleEntry(extraWhere, mappedParams);
 	}
 
+	@SuppressWarnings("unchecked")
 	private SimpleEntry<String, Map<String, Object>> ProcessWhereClauseGroup(QueryByExample queryByExample, WhereClauseGroup group)
 	{
 		StringBuilder queryString = new StringBuilder();
@@ -880,7 +886,7 @@ public class OrientPersistenceService
 	@Override
 	public <T> T queryOneByExample(BaseEntity baseEnity)
 	{
-		return queryOneByExample(new QueryByExample(baseEnity));
+		return queryOneByExample(new QueryByExample<>(baseEnity));
 	}
 
 	@Override
@@ -966,7 +972,7 @@ public class OrientPersistenceService
 			}
 		} catch (OpenStorefrontRuntimeException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
 			throw new OpenStorefrontRuntimeException("Unable to save record. (See stacktrace cause) \n Field Values: \n" + StringProcessor.printObject(entity), e);
 		} finally {
 			closeConnection(db);
@@ -1025,7 +1031,7 @@ public class OrientPersistenceService
 			} else {
 				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
 			}
-		} catch (Exception e) {
+		} catch (OpenStorefrontRuntimeException e) {
 			throw new OpenStorefrontRuntimeException("Unable to save record: " + StringProcessor.printObject(entity), e);
 		} finally {
 			closeConnection(db);

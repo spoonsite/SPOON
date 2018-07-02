@@ -473,7 +473,7 @@ Ext.define('OSF.form.Section', {
 		});
 
 	},
-	loadData: function (evaluationId, componentId, data, opts) {
+	loadData: function (evaluationId, componentId, data, opts, callback) {
 
 		var sectionForm = this;
 
@@ -795,6 +795,10 @@ Ext.define('OSF.form.Section', {
 				}, undefined, {
 					buffer: 1000
 				});
+
+				if (callback) {
+					callback();
+				}
 			}
 		});
 

@@ -43,10 +43,6 @@ public class ContentSectionTemplateView
 	@DataType(ContentSubSection.class)
 	private List<ContentSubSection> subSections = new ArrayList<>();
 
-	public ContentSectionTemplateView()
-	{
-	}
-
 	public ValidationResult validate()
 	{
 		ValidationResult validationResult = new ValidationResult();

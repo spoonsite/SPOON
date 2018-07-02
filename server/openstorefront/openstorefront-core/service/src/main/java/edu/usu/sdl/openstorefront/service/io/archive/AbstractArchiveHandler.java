@@ -123,7 +123,7 @@ public abstract class AbstractArchiveHandler
 	{
 
 		String archiveName = "archive-" + archive.getArchiveId() + ".zip";
-		fullArchiveName = FileSystemManager.getDir(FileSystemManager.ARCHIVE_DIR) + "/" + archiveName;
+		fullArchiveName = FileSystemManager.getInstance().getDir(FileSystemManager.ARCHIVE_DIR) + "/" + archiveName;
 
 		archive.setArchiveFilename(archiveName);
 		archive.save();
@@ -225,7 +225,7 @@ public abstract class AbstractArchiveHandler
 	protected void createManifest(ArchiveManifest manifest)
 	{
 		manifest.setSystemArchiveType(archive.getSystemArchiveType());
-		manifest.setApplicationVersion(PropertiesManager.getApplicationVersion());
+		manifest.setApplicationVersion(PropertiesManager.getInstance().getApplicationVersion());
 
 		File manifestFile = new TFile(fullArchiveName + MANIFEST_FILENAME);
 

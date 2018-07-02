@@ -18,6 +18,11 @@ public abstract class BaseTestAction
 		extends BaseAction
 {
 
+	private static final String TESTSSTRING = " tests=";
+	private static final String FAILURESSTRING = " failures=";
+	private static final String FAILEDSTRING = "failed";
+	private static final String PASSEDSTRING = "passed";
+
 	private class TestResults
 	{
 
@@ -94,9 +99,9 @@ public abstract class BaseTestAction
 			}
 			output.append("<testsuites id='ContainerTests' name='Container Tests ")
 					.append("timestamp")
-					.append("' tests='")
+					.append(TESTSSTRING)
 					.append(testCount)
-					.append("' failures='")
+					.append(FAILURESSTRING)
 					.append(failTestCount)
 					.append("' time='")
 					.append(time / 1000.0)
@@ -114,9 +119,15 @@ public abstract class BaseTestAction
 				testCasses.append(results.getContent());
 			}
 
-			output.append("<div class='test-suite ")
-					.append(failTestCount == 0 ? "passed" : (failTestCount == testCount) ? "failed" : "")
-					.append("'>")
+			output.append("<div class='test-suite ");
+			if (failTestCount == 0) {
+				output.append(PASSEDSTRING);
+			} else if (failTestCount == testCount) {
+				output.append(FAILEDSTRING);
+			} else {
+				output.append("");
+			}
+			output.append("'>")
 					.append("<h1>Total Results</h1>")
 					.append("<div class='test-suite-stat'>")
 					.append("Total: ").append(testCount).append(" ")
@@ -139,9 +150,9 @@ public abstract class BaseTestAction
 					.append(testSuiteModel.getName().replace(" ", ""))
 					.append("' name='Container Tests ")
 					.append("timestamp_here")
-					.append("' tests='")
+					.append(TESTSSTRING)
 					.append(results.getTestCount())
-					.append("' failures='")
+					.append(FAILURESSTRING)
 					.append(results.getFailTestCount())
 					.append("'>")
 					.append(results.getContent())
@@ -159,7 +170,7 @@ public abstract class BaseTestAction
 		StringBuilder testCase = new StringBuilder();
 		for (BaseTestCase test : testSuiteModel.getTests()) {
 			testCount++;
-			testCase.append("\n<testcase id='contaierTests.")
+			testCase.append("\n<testcase id='containerTests.")
 					.append(testSuiteModel.getName().replace(" ", ""))
 					.append(".")
 					.append(test.getDescription().replace(" ", ""))
@@ -168,7 +179,7 @@ public abstract class BaseTestAction
 					//					.append("' time='")
 					//					.append(test.getTime() / 1000.0)
 					.append("'>");
-			if (test.isSuccess() == false) {
+			if (!test.isSuccess()) {
 				testCase.append("\n<failure message='")
 						.append(test.getResults().toString().replace("<br>", ""))
 						.append("'>")
@@ -179,13 +190,13 @@ public abstract class BaseTestAction
 			testCase.append("</testcase>");
 		}
 
-		testsuite.append("\n<testsuite id='contaierTests.")
+		testsuite.append("\n<testsuite id='containerTests.")
 				.append(testSuiteModel.getName().replace(" ", ""))
 				.append("' name='")
 				.append(testSuiteModel.getName())
-				.append("' tests='")
+				.append(TESTSSTRING)
 				.append(testCount)
-				.append("' failures='")
+				.append(FAILURESSTRING)
 				.append(failTestCount)
 				.append("' time='")
 				.append(testSuiteModel.getRunTimeInMills() / 1000.0)
@@ -202,21 +213,14 @@ public abstract class BaseTestAction
 		int failTestCount = 0;
 		int testCount = 0;
 		if (summary) {
-			for (BaseTestCase test : testSuiteModel.getTests()) {
-				String passed = "<span style='color: green'> PASSED </span>";
-				if (test.isSuccess() == false) {
-					passed = "<span style='color: red'> FAILED </span>";
-				}
-
-				output.append("Test: <b>").append(test.getDescription()).append("</b>...").append(passed).append(" <br>");
-			}
+			printHtmlSummary(testSuiteModel, output);
 		} else {
 			StringBuilder testCase = new StringBuilder();
 			for (BaseTestCase test : testSuiteModel.getTests()) {
 				testCount++;
-				testCase.append("<div class='test-case ").append(test.isSuccess() ? "passed" : "failed").append("'>");
+				testCase.append("<div class='test-case ").append(test.isSuccess() ? PASSEDSTRING : FAILEDSTRING).append("'>");
 				String passed = "<span class='result passed'> PASSED </span>";
-				if (test.isSuccess() == false) {
+				if (!test.isSuccess()) {
 					passed = "<span class='result failed'> FAILED </span>";
 				}
 
@@ -225,7 +229,7 @@ public abstract class BaseTestAction
 				//results or failure
 				testCase.append("<div class='output'>Output: <br><br>");
 				testCase.append(test.getResults());
-				if (test.isSuccess() == false) {
+				if (!test.isSuccess()) {
 					testCase.append("<br>Failure Reason: <br>");
 					testCase.append(test.getFailureReason());
 					failTestCount++;
@@ -233,7 +237,9 @@ public abstract class BaseTestAction
 				testCase.append("</div></div>");
 			}
 
-			output.append("<div class='test-suite ").append(failTestCount == 0 ? "passed" : (failTestCount == testCount) ? "failed" : "").append("'>");
+			output.append("<div class='test-suite ");
+			printHtmlSuccessFail(failTestCount, output, testCount);
+
 			output.append("<h2>").append(testSuiteModel.getName()).append("</h2>");
 			output.append("<div class='test-list'>");
 			output.append(testCase);
@@ -241,6 +247,42 @@ public abstract class BaseTestAction
 		}
 
 		return new TestResults(output, failTestCount, testCount, testSuiteModel.getRunTimeInMills());
+	}
+
+	private void printHtmlSuccessFail(int failTestCount, StringBuilder output, int testCount)
+	{
+		if (failTestCount == 0) {
+			output.append(PASSEDSTRING).append("'>");
+		} else if (failTestCount == testCount) {
+			output.append(FAILEDSTRING).append("'>");
+		} else {
+			output.append("").append("'>");
+		}
+	}
+
+	private void printHtmlSummary(TestSuiteModel testSuiteModel, StringBuilder output)
+	{
+		output.append("<h3>PASSED TESTS</h3><hr><br>");
+		for (BaseTestCase test : testSuiteModel.getTests()) {
+			if (test.isSuccess()) {
+				output.append("Test: <b>")
+						.append(test.getDescription())
+						.append("</b>...")
+						.append("<span style='color: green'> PASSED </span>").append(" <br>");
+			}
+		}
+
+		output.append("<h3>FAILED TESTS</h3><hr><br>");
+		for (BaseTestCase test : testSuiteModel.getTests()) {
+			if (!test.isSuccess()) {
+				output.append("Test: <b>")
+						.append(test.getDescription())
+						.append("</b>...")
+						.append("<span style='color: red'> FAILED </span>")
+						.append(" <br>");
+			}
+		}
+
 	}
 
 	protected Resolution sendReport(String reportData)

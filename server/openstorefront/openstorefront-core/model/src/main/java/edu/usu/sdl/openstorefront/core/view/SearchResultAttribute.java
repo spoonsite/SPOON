@@ -38,10 +38,6 @@ public class SearchResultAttribute
 	private String badgeUrl;
 	private String label;
 
-	public SearchResultAttribute()
-	{
-	}
-
 	public static SearchResultAttribute toView(ComponentAttribute attribute)
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();

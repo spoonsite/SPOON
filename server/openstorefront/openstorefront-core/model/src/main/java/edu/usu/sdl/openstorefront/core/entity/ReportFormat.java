@@ -36,6 +36,7 @@ public class ReportFormat
 	public static final String PDF = "application-pdf";
 	public static final String HTML = "text-html";
 
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ReportFormat()
 	{
 	}

@@ -30,9 +30,8 @@ Ext.define('OSF.component.AttributeAssignment', {
 	y: '2em',
 	layout: 'fit',
 	bodyStyle: 'padding: 5px',
-	items: [
-		
-	],
+	closeAction: 'destroy',
+	
 	initComponent: function () {
 		this.callParent();
 		
@@ -230,7 +229,13 @@ Ext.define('OSF.component.AttributeAssignment', {
 					{ name: 'componentType', mapping: function(data) {
 						return data.component.componentType;
 					}}
-				]				
+				],
+				sorters: [
+					new Ext.util.Sorter({
+						property: 'name',
+						direction: 'ASC'
+					})
+				]
 			},
 			columnLines: true,
 			selModel: {
@@ -347,6 +352,12 @@ Ext.define('OSF.component.AttributeAssignment', {
 					{ name: 'name', mapping: function(data) {
 						return data.component.name;
 					}}
+				],
+				sorters: [
+					new Ext.util.Sorter({
+						property: 'name',
+						direction: 'ASC'
+					})
 				]
 			},
 			columnLines: true,

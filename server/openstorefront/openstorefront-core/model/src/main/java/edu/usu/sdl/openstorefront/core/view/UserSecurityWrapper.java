@@ -24,12 +24,13 @@ import java.util.List;
  * @author dshurtleff
  */
 public class UserSecurityWrapper
-	extends ListWrapper
+		extends ListWrapper
 {
-	
-	@DataType(UserSecurityView.class)
-	private List<UserSecurityView> data = new ArrayList<>();	
 
+	@DataType(UserSecurityView.class)
+	private List<UserSecurityView> data = new ArrayList<>();
+
+	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserSecurityWrapper()
 	{
 	}

@@ -11,6 +11,12 @@ public interface Service
 {
 
 	/**
+	 * Clear existing proxies and reset the persistence Persistence service is
+	 * not thread safe
+	 */
+	public void reset();
+
+	/**
 	 * Handles alert entities and services
 	 *
 	 * @return
@@ -198,5 +204,19 @@ public interface Service
 	 * @return
 	 */
 	public HelpSupportService getHelpSupportService();
+
+	/**
+	 * Faq Support entities
+	 *
+	 * @return
+	 */
+	public FaqService getFaqService();
+
+	/**
+	 * Handles submission form services
+	 *
+	 * @return
+	 */
+	public SubmissionFormService getSubmissionFormService();
 
 }

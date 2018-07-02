@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
@@ -79,7 +80,9 @@ public class ChangeRequestMessageGenerator
 					.append(" submitted changes for <b>Approval</b> since:  ").append(sdf.format(messageContext.getUserMessage().getCreateDts())).append("<hr>");
 			message.append("<ul>");
 			for (Component component : components) {
-				message.append(" <li>").append(component.getName())
+				message.append(" <li>").append(TranslateUtil.translateComponentType(component.getComponentType()))
+						.append(" &mdash; ")
+						.append(component.getName())
 						.append("  submitted by:  ").append(component.getCreateUser())
 						.append(" at ").append(sdf.format(component.getSubmittedDts()))
 						.append("</li>");
