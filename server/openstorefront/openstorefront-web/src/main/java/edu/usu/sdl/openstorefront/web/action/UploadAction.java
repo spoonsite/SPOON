@@ -120,7 +120,7 @@ public class UploadAction
 	@Validate(required = true, on = {"ImportArchive"})
 	private String importModeType;
 
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_CREATE)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_CREATE_CODE)
 	@HandlesEvent("UploadLookup")
 	@SuppressWarnings("UseSpecificCatch")
 	public Resolution uploadLookup()
