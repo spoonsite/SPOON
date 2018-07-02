@@ -569,38 +569,54 @@ public class SecurityPermission
 			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_ENTRY_STATS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_ENTRY_STATS, "Allows user to view the Entry Stats widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
-			null
+			Arrays.asList(
+				SecurityRole.LIBRARIAN_ROLE
+			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_EVALUATION_STATS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_EVALUATION_STATS, "Allows user to view the Evaluation Stats widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
-			null
+			Arrays.asList(
+				SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE
+			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_NOTIFICATIONS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_NOTIFICATIONS, "Allows user to view the Notifications widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
-			null
+			Arrays.asList(
+				SecurityRole.DEFAULT_GROUP, SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE
+			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_OUTSTANDING_FEEDBACK, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_OUTSTANDING_FEEDBACK, "Allows user to view the Outstanding Feedback widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
-			null
+			Arrays.asList(
+				SecurityRole.LIBRARIAN_ROLE
+			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_PENDING_REQUESTS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_PENDING_REQUESTS, "Allows user to view the Pending Approval Requests widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
-			null
+			Arrays.asList(
+				SecurityRole.LIBRARIAN_ROLE
+			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_QUESTIONS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_QUESTIONS, "Allows user to view the Questions widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
 			Arrays.asList(
-				SecurityRole.DEFAULT_GROUP
+				SecurityRole.DEFAULT_GROUP, SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE
 			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_USER_DATA, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_USER_DATA, "Allows user to view the Recent User Data widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
-			null
+			Arrays.asList(
+				SecurityRole.LIBRARIAN_ROLE
+			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_REPORTS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_REPORTS, "Allows user to view the Reports widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
-			null
+			Arrays.asList(
+				SecurityRole.DEFAULT_GROUP, SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE
+			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_SAVED_SEARCH, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_SAVED_SEARCH, "Allows user to view the Saved Search widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
 			Arrays.asList(
-				SecurityRole.DEFAULT_GROUP
+				SecurityRole.DEFAULT_GROUP, SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE
 			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_SUBMISSION_STATUS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_SUBMISSION_STATUS, "Allows user to view the Submission Status widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
-			null
+			Arrays.asList(
+				SecurityRole.DEFAULT_GROUP, SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE
+			)
 		));
 		codeMap.put(DASHBOARD_WIDGET_SYSTEM_STATUS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_SYSTEM_STATUS, "Allows user to view the System Status widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
 			null
@@ -610,7 +626,7 @@ public class SecurityPermission
 		));
 		codeMap.put(DASHBOARD_WIDGET_WATCHES, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_WATCHES, "Allows user to view the Watches widget (only effects UI)", null, GROUPBY_DASHBOARD, null,
 			Arrays.asList(
-				SecurityRole.DEFAULT_GROUP
+				SecurityRole.DEFAULT_GROUP, SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE
 			)
 		));
 		
