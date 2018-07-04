@@ -148,7 +148,7 @@ public class LookupTypeResource
 
 	@GET
 	@APIDescription("Exports codes in csv formt. POST to Upload.action?UploadLookup&entityName=entity and then the file to import codes (Requires Admin)")
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_READ)
 	@Produces("text/csv")
 	@Path("/{entity}/export")
 	@SuppressWarnings("unchecked")
@@ -225,7 +225,7 @@ public class LookupTypeResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_CREATE)
 	@APIDescription("Adds a new code to a given entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}")
@@ -310,7 +310,7 @@ public class LookupTypeResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_UPDATE)
 	@APIDescription("Updates descriptions for a given entity and code.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}/{code}")
@@ -332,7 +332,7 @@ public class LookupTypeResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_UPDATE)
 	@APIDescription("Activates a given entity code.")
 	@Path("/{entity}/{code}/activate")
 	public Response activeEntityCode(
@@ -361,7 +361,7 @@ public class LookupTypeResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_DELETE)
 	@APIDescription("Remove a code from the entity")
 	@Path("/{entity}/{code}")
 	@SuppressWarnings("unchecked")

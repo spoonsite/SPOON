@@ -70,7 +70,7 @@ public class ComponentSubmissionResource
 	//  This is so that a user may edit an approved component. If the desire for behavior changes, the code is still
 	//  there, you just need to remove the '|| true'
 	@GET
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_READ)
 	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this is only the top level component object)")
 	@DataType(ComponentView.class)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -128,7 +128,7 @@ public class ComponentSubmissionResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
 	@APIDescription("Creates a new Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -144,7 +144,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Updates Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -169,7 +169,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Updates Component Submission Notification Email")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.TEXT_PLAIN})
@@ -203,7 +203,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
 	@APIDescription("Submits Component Submission for approval.")
 	@Path("/{componentId}/submit")
 	public Response submitComponent(
@@ -231,7 +231,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Submits a change request for approval.")
 	@Path("/{componentId}/submitchangerequest")
 	public Response submitChangeRequest(
@@ -259,7 +259,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Unsubmits Component Submission for approval.")
 	@Path("/{componentId}/unsubmit")
 	public Response unsubmitComponent(
@@ -280,7 +280,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Unsubmits Change Request for approval.")
 	@Path("/{componentId}/unsubmitchangerequest")
 	public Response unsubmitChangeRequest(
@@ -301,7 +301,7 @@ public class ComponentSubmissionResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Inactivates an incomplete Component Submission.")
 	@Path("/{componentId}/inactivate")
 	public Response inactivateComponent(
@@ -418,7 +418,7 @@ public class ComponentSubmissionResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_READ)
 	@APIDescription("Get a component submission. Must be the owner of the submission or submission must be anonymous")
 	@DataType(ComponentAll.class)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -437,7 +437,7 @@ public class ComponentSubmissionResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Create a copy of a component")
 	@DataType(Component.class)
@@ -462,7 +462,7 @@ public class ComponentSubmissionResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Removes media from the specified component")
 	@Path("/{id}/media/{mediaId}/force")
 	public Response deleteComponentMedia(
@@ -497,7 +497,7 @@ public class ComponentSubmissionResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Remove a given resource from the specified component")
 	@Path("/{id}/resources/{resourceId}/force")
 	public Response deleteComponentResource(

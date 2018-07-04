@@ -96,7 +96,7 @@ public class HighlightResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS_CREATE)
 	@APIDescription("Creates a new Highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postHighlight(Highlight highlight)
@@ -105,7 +105,7 @@ public class HighlightResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS_UPDATE)
 	@APIDescription("Updates a highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -144,7 +144,7 @@ public class HighlightResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS_UPDATE)
 	@APIDescription("Deactivates a highlight")
 	@Path("/{id}/deactivate")
 	public void deactivateHighlight(
@@ -155,7 +155,7 @@ public class HighlightResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS_DELETE)
 	@APIDescription("Deletes a highlight")
 	@Path("/{id}/delete")
 	public void deleteHighlight(
@@ -166,7 +166,7 @@ public class HighlightResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS)
+	@RequireSecurity(SecurityPermission.ADMIN_HIGHLIGHTS_UPDATE)
 	@APIDescription("Activates a highlight")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/activate")

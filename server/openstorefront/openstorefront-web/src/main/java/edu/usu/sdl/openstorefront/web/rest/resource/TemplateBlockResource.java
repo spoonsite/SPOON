@@ -45,7 +45,7 @@ public class TemplateBlockResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_READ)
 	@APIDescription("Gets template blocks")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemplateBlock.class)
@@ -57,7 +57,7 @@ public class TemplateBlockResource
 	}
 		
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_READ)
 	@APIDescription("Gets template blocks")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemplateBlock.class)
@@ -73,7 +73,7 @@ public class TemplateBlockResource
 	}	
 	
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_CREATE)
 	@APIDescription("Adds a new component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -85,7 +85,7 @@ public class TemplateBlockResource
 	}
 	
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_UPDATE)
 	@APIDescription("Updates a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -123,7 +123,7 @@ public class TemplateBlockResource
 	}	
 	
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_DELETE)
 	@APIDescription("Inactivates a component type template")
 	@Path("/{templateBlockId}")
 	public void deleteNewEvent(

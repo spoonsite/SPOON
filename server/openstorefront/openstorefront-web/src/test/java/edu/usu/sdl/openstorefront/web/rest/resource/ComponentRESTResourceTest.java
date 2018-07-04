@@ -190,7 +190,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	{
 
 		//Arrange
-		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		setSinglePermission(SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 
@@ -246,7 +246,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	public void activateComponentAttributeTest()
 	{
 		//Arrange
-		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		setSinglePermission(SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 		String attributeType = "TESTATT";
@@ -297,7 +297,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	public void inactivateComponentAttributeTest()
 	{
 		//Arrange
-		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		setSinglePermission(SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 		String attributeType = "TESTATT";
@@ -339,7 +339,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	{
 
 		//Arrange
-		setSinglePermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		setSinglePermission(SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 
 		String componentId = "b3b2925e-af08-448e-a866-652154431c28";
 

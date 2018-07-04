@@ -298,7 +298,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_READ)
 	@APIDescription("Get a list of all components <br>(Note: this is only the top level component object, See Component Detail for composite resource.)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminWrapper.class)
@@ -370,7 +370,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireSecurity("SecurityPermission.ADMIN_ENTRY_MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_READ)
 	@APIDescription("Gets a component admin view")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminView.class)
@@ -390,7 +390,7 @@ public class ComponentRESTResource
 
 	@GET
 	@APIDescription("Export a component with full component details.")
-	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EXPORT)
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/{id}/export")
@@ -411,7 +411,7 @@ public class ComponentRESTResource
 
 	@POST
 	@APIDescription("Exports a set of components.  POST ZIP or JSON file to Upload.action?UploadComponent (multipart/form-data) uploadFile to import (Requires Admin)")
-	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EXPORT)
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/export")
@@ -591,7 +591,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW_READ)
 	@APIDescription("Get a list of components reviews")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentReviewView.class)
@@ -617,7 +617,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS_READ)
 	@APIDescription("Get a list of components questions")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionView.class)
@@ -662,7 +662,7 @@ public class ComponentRESTResource
 	public Response createComponent(
 			@RequiredParam RequiredForComponent component)
 	{
-		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
+		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_CREATE)) {
 			component.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 		}
 
@@ -686,7 +686,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam RequiredForComponent component)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_UPDATE);
 		if (response != null) {
 			return response;
 		}
@@ -747,7 +747,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_APPROVE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Approves a set components; Typically for approve related entries.")
 	@DataType(Component.class)
@@ -764,7 +764,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_APPROVE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Approves a component")
 	@DataType(Component.class)
@@ -779,7 +779,7 @@ public class ComponentRESTResource
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CREATE)
 	@APIDescription("Create a copy of a component")
 	@DataType(Component.class)
 	@Path("/{id}/copy")
@@ -801,7 +801,7 @@ public class ComponentRESTResource
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MERGE)
 	@APIDescription("Merge component A to component B")
 	@DataType(Component.class)
 	@Path("/{mergeId}/{targetId}/merge")
@@ -844,7 +844,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TOGGLE_STATUS)
 	@APIDescription("Activates a component")
 	@Path("/{id}/activate")
 	public Response activateComponent(
@@ -859,7 +859,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGEOWNER)
 	@APIDescription("Changes owner of component")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Path("/{id}/changeowner")
@@ -877,7 +877,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGETYPE)
 	@APIDescription(
 			"Changes the Entry Type of an existing components to another existing Entry Type"
 	)
@@ -918,7 +918,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TOGGLE_STATUS)
 	@APIDescription("Inactivates Component and removes any assoicated user watches.")
 	@Path("/{id}")
 	public void deleteComponentSingle(
@@ -984,7 +984,7 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, false);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_DELETE, false);
 		if (response != null) {
 			return response;
 		}
@@ -1003,7 +1003,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId
 	)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, true);
 		if (response != null) {
 			return response;
 		}
@@ -1025,7 +1025,7 @@ public class ComponentRESTResource
 			@RequiredParam String submissionTemplateId
 	)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, true);
 		if (response != null) {
 			return response;
 		}
@@ -1043,7 +1043,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@APIDescription("Merges change request component with it parent component")
@@ -1068,7 +1068,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId
 	)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_PENDINGCHANGE_READ, true);
 		if (response != null) {
 			return response;
 		}
@@ -1088,7 +1088,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Gets all version history for a component")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_READ)
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory")
 	public Response getComponentVersionHistory(
@@ -1110,7 +1110,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Gets a version history record")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_READ)
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}")
 	public Response getComponentVersionHistoryRecord(
@@ -1129,7 +1129,7 @@ public class ComponentRESTResource
 	@GET
 	@APIDescription("Gets the detail of a component version")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_READ)
 	@DataType(ComponentDetailView.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/view")
 	public Response viewComponentVerison(
@@ -1144,7 +1144,7 @@ public class ComponentRESTResource
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_CREATE)
 	@APIDescription("Create a version of the current component")
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory")
@@ -1167,7 +1167,7 @@ public class ComponentRESTResource
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_RESTORE)
 	@APIDescription("Restores a version of the current component")
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/restore")
@@ -1196,7 +1196,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_DELETE)
 	@APIDescription("Delete a version history record")
 	@Path("/{id}/versionhistory/{versionHistoryId}")
 	public void deleteVersionHistory(
@@ -1323,7 +1323,6 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Remove all attributes from the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes")
@@ -1331,7 +1330,7 @@ public class ComponentRESTResource
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response == null) {
 			ComponentAttribute attribute = new ComponentAttribute();
 			attribute.setComponentId(componentId);
@@ -1351,7 +1350,7 @@ public class ComponentRESTResource
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1375,7 +1374,7 @@ public class ComponentRESTResource
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1400,7 +1399,7 @@ public class ComponentRESTResource
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1424,7 +1423,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam List<ComponentAttribute> attributeList)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1448,7 +1447,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentAttribute attribute)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1547,7 +1546,7 @@ public class ComponentRESTResource
 			@PathParam("dependencyId")
 			@RequiredParam String dependencyId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_DEPENDENCY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1569,7 +1568,7 @@ public class ComponentRESTResource
 			@PathParam("dependencyId")
 			@RequiredParam String dependencyId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_DEPENDENCY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1594,7 +1593,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentExternalDependency dependency)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_DEPENDENCY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1615,7 +1614,7 @@ public class ComponentRESTResource
 			@RequiredParam String dependencyId,
 			ComponentExternalDependency dependency)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_DEPENDENCY_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1712,7 +1711,7 @@ public class ComponentRESTResource
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1735,7 +1734,7 @@ public class ComponentRESTResource
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1758,7 +1757,7 @@ public class ComponentRESTResource
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1782,7 +1781,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentContact contact)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1802,7 +1801,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentContactId,
 			ComponentContact contact)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1874,7 +1873,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EVALSECTION_MANAGEMENT)
 	@APIDescription("Deletes an evaluation section from the component")
 	@Path("/{id}/sections/{evalSection}")
 	public void deleteComponentEvaluationSection(
@@ -1890,7 +1889,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EVALSECTION_MANAGEMENT)
 	@APIDescription("Deletes all evaluation section from the component")
 	@Consumes(
 			{
@@ -1905,7 +1904,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EVALSECTION_MANAGEMENT)
 	@APIDescription("Adds a group evaluation section to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentEvaluationSection.class)
@@ -1943,7 +1942,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EVALSECTION_MANAGEMENT)
 	@APIDescription("Adds an evaluation section to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(ComponentEvaluationSection.class)
@@ -1959,7 +1958,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EVALSECTION_MANAGEMENT)
 	@APIDescription("Updates an evaluation section for a component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/sections/{evalSectionId}")
@@ -2077,7 +2076,7 @@ public class ComponentRESTResource
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2102,7 +2101,7 @@ public class ComponentRESTResource
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2127,7 +2126,7 @@ public class ComponentRESTResource
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2154,7 +2153,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentResource resource)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2175,7 +2174,7 @@ public class ComponentRESTResource
 			@RequiredParam String resourceId,
 			@RequiredParam ComponentResource resource)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2291,7 +2290,7 @@ public class ComponentRESTResource
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2313,7 +2312,7 @@ public class ComponentRESTResource
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2337,7 +2336,7 @@ public class ComponentRESTResource
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2365,7 +2364,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMedia media)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2385,7 +2384,7 @@ public class ComponentRESTResource
 			@RequiredParam String mediaId,
 			@RequiredParam ComponentMedia media)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -2527,7 +2526,7 @@ public class ComponentRESTResource
 			@PathParam("metadataId")
 			@RequiredParam String metadataId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_UPDATE);
 		if (response != null) {
 			return response;
 		}
@@ -2549,7 +2548,7 @@ public class ComponentRESTResource
 			@PathParam("metadataId")
 			@RequiredParam String metadataId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_UPDATE);
 		if (response != null) {
 			return response;
 		}
@@ -2574,7 +2573,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMetadata metadata)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_UPDATE);
 		if (response != null) {
 			return response;
 		}
@@ -2594,7 +2593,7 @@ public class ComponentRESTResource
 			@RequiredParam String metadataId,
 			@RequiredParam ComponentMetadata metadata)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_UPDATE);
 		if (response != null) {
 			return response;
 		}
@@ -2767,7 +2766,7 @@ public class ComponentRESTResource
 		ComponentQuestion componentQuestion = service.getPersistenceService().findById(ComponentQuestion.class, questionId);
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
-			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS);
+			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentQuestion.class, questionId);
 				response = Response.ok().build();
@@ -2777,7 +2776,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS_UPDATE)
 	@APIDescription("Activates a question from the specified entity")
 	@Consumes(
 			{
@@ -2803,7 +2802,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS_UPDATE)
 	@APIDescription("Set a question to pending for the specified entity")
 	@Consumes(
 			{
@@ -2857,7 +2856,7 @@ public class ComponentRESTResource
 		ComponentQuestion componentQuestion = service.getPersistenceService().findById(ComponentQuestion.class, questionId);
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
-			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS);
+			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
 			if (response == null) {
 				question.setComponentId(componentId);
 				question.setQuestionId(questionId);
@@ -2960,7 +2959,7 @@ public class ComponentRESTResource
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
-			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
+			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, responseId);
 				response = Response.ok().build();
@@ -3063,7 +3062,7 @@ public class ComponentRESTResource
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
-			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
+			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
 			if (response == null) {
 				questionResponseInput.setComponentId(componentId);
 				questionResponseInput.setQuestionId(questionId);
@@ -3190,7 +3189,7 @@ public class ComponentRESTResource
 		Response response = Response.ok().build();
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_DELETE);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentReview.class, reviewId);
 			}
@@ -3199,7 +3198,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW_UPDATE)
 	@APIDescription("Activate a review on the specified component")
 	@Consumes(
 			{
@@ -3225,7 +3224,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW_UPDATE)
 	@APIDescription("Sets a review on the specified component to pending")
 	@Consumes(
 			{
@@ -3279,7 +3278,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				review.setComponentId(componentId);
 				review.setComponentReviewId(reviewId);
@@ -3338,7 +3337,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				review.setComponentId(componentId);
 				review.setReviewId(reviewId);
@@ -3462,7 +3461,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_DELETE);
 			if (response == null) {
 				ComponentReviewCon example = new ComponentReviewCon();
 				ComponentReviewConPk pk = new ComponentReviewConPk();
@@ -3490,7 +3489,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				ComponentReviewCon con = new ComponentReviewCon();
 				ComponentReviewConPk pk = new ComponentReviewConPk();
@@ -3596,7 +3595,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				ComponentReviewPro example = new ComponentReviewPro();
 				ComponentReviewProPk pk = new ComponentReviewProPk();
@@ -3625,7 +3624,7 @@ public class ComponentRESTResource
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				ComponentReviewPro pro = new ComponentReviewPro();
 				ComponentReviewProPk pk = new ComponentReviewProPk();
@@ -3759,7 +3758,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TAG_MANAGEMENT)
 	@APIDescription("Delete all tags from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
@@ -3790,7 +3789,7 @@ public class ComponentRESTResource
 		example.setComponentId(componentId);
 		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample<>(example));
 		if (componentTag != null) {
-			response = ownerCheck(componentTag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+			response = ownerCheck(componentTag, SecurityPermission.ADMIN_ENTRY_TAG_MANAGEMENT);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tagId);
 			}
@@ -3815,7 +3814,7 @@ public class ComponentRESTResource
 		ComponentTag tag = service.getPersistenceService().queryOneByExample(new QueryByExample<>(componentTagExample));
 
 		if (tag != null) {
-			response = ownerCheck(tag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+			response = ownerCheck(tag, SecurityPermission.ADMIN_ENTRY_TAG_MANAGEMENT);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tag.getTagId());
 				response = Response.ok().build();
@@ -4033,7 +4032,7 @@ public class ComponentRESTResource
 			@RequiredParam String componentId,
 			@RequiredParam ComponentRelationship relationship)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RELATIONSHIP_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -4074,7 +4073,7 @@ public class ComponentRESTResource
 			@RequiredParam String relationshipId,
 			@RequiredParam ComponentRelationship relationship)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RELATIONSHIP_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -4103,7 +4102,7 @@ public class ComponentRESTResource
 			@PathParam("relationshipId")
 			@RequiredParam String relationshipId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RELATIONSHIP_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -4115,7 +4114,7 @@ public class ComponentRESTResource
 	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_READ)
 	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
 	@Produces(
 			{
@@ -4153,7 +4152,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_READ)
 	@APIDescription("Get the list of tracking details on a specified component")
 	@Produces(
 			{
@@ -4175,7 +4174,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_DELETE)
 	@APIDescription("Remove a tracking entry from the specified component")
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
@@ -4194,7 +4193,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_DELETE)
 	@APIDescription("Remove all tracking entries from the specified component")
 	@Path("/{id}/tracking")
 	public void deleteAllComponentTracking(
@@ -4221,7 +4220,7 @@ public class ComponentRESTResource
 	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_READ)
 	@APIDescription("Gets all integration models from the database.")
 	@Produces(
 			{
@@ -4246,7 +4245,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_READ)
 	@APIDescription("Gets a integration model")
 	@Produces(
 			{
@@ -4268,7 +4267,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_CREATE)
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration")
@@ -4289,7 +4288,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_UPDATE)
 	@APIDescription("Updates a component integration refresh Time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
@@ -4317,7 +4316,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_UPDATE)
 	@APIDescription("Removes the integration override time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
@@ -4343,7 +4342,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Activates  a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/activate")
@@ -4359,7 +4358,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Inactivates a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/inactivate")
@@ -4375,7 +4374,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_UPDATE)
 	@APIDescription("Toggle status for multiple component integration models. Consumes a list of componentId strings")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/integration/togglemultiple")
@@ -4397,7 +4396,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_DELETE)
 	@APIDescription("Removes component integration and all child configs.")
 	@Path("/{componentId}/integration")
 	public Response deleteComponentConfig(
@@ -4414,7 +4413,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_RUNINTEGRATION)
 	@APIDescription("Runs a full component integration")
 	@Path("/{componentId}/integration/run")
 	public Response runComponentIntegration(
@@ -4443,7 +4442,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_RUNALL)
 	@APIDescription("Runs all active component integrations")
 	@Path("/integrations/run")
 	public Response runAllComponentIntegration()
@@ -4456,7 +4455,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_READ)
 	@APIDescription("Gets all component integration configs")
 	@Produces(
 			{
@@ -4475,7 +4474,7 @@ public class ComponentRESTResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_READ)
 	@APIDescription("Gets all component integration configs")
 	@Produces(
 			{
@@ -4495,7 +4494,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_CREATE)
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs")
@@ -4542,7 +4541,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Updates a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{integrationConfigId}")
@@ -4605,7 +4604,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Activates a component integration config")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{configId}/activate")
@@ -4626,7 +4625,7 @@ public class ComponentRESTResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{configId}/inactivate")
@@ -4647,7 +4646,7 @@ public class ComponentRESTResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_DELETE)
 	@APIDescription("Deletes component integration config")
 	@Path("/{componentId}/integration/configs/{configId}")
 	public void deleteComponentIntegrationConfig(
@@ -4666,7 +4665,7 @@ public class ComponentRESTResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_RUNCONFIG)
 	@APIDescription("Runs a component integration config.")
 	@Path("/{componentId}/integration/configs/{configId}/run")
 	public Response runComponentIntegrationConfig(

@@ -71,7 +71,7 @@ public class FaqResource
 			activeStatus = null;
 		}
 		
-		List<Faq> faqs = service.getFaqService().getFaqs(SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ), activeStatus);
+		List<Faq> faqs = service.getFaqService().getFaqs(SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ_READ), activeStatus);
 		
 		List<FaqView> faqViews = FaqView.toView(faqs);
 
@@ -91,7 +91,7 @@ public class FaqResource
 	public Response faqSingleLookup(@PathParam("id") String faqId)
 	{
 		
-		Faq faq = service.getFaqService().getFaq(faqId, SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ));
+		Faq faq = service.getFaqService().getFaq(faqId, SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ_READ));
 		
 		if (faq == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
@@ -106,7 +106,7 @@ public class FaqResource
 	
 	@POST
 	@APIDescription("Creates an FAQ")
-	@RequireSecurity(SecurityPermission.ADMIN_FAQ)
+	@RequireSecurity(SecurityPermission.ADMIN_FAQ_CREATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)
@@ -124,7 +124,7 @@ public class FaqResource
 	
 	@PUT
 	@APIDescription("Updates an FAQ")
-	@RequireSecurity(SecurityPermission.ADMIN_FAQ)
+	@RequireSecurity(SecurityPermission.ADMIN_FAQ_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)
@@ -144,7 +144,7 @@ public class FaqResource
 	
 	@DELETE
 	@APIDescription("Deletes an FAQ")
-	@RequireSecurity(SecurityPermission.ADMIN_FAQ)
+	@RequireSecurity(SecurityPermission.ADMIN_FAQ_DELETE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)

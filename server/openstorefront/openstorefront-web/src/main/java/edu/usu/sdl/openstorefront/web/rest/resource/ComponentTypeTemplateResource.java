@@ -150,7 +150,7 @@ public class ComponentTypeTemplateResource
 	}	
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_CREATE)
 	@APIDescription("Adds a new component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -162,7 +162,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_UPDATE)
 	@APIDescription("Updates a component type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -201,7 +201,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_UPDATE)
 	@APIDescription("Activates a component type template")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}/activate")
@@ -223,7 +223,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_DELETE)
 	@APIDescription("Inactivates a component type template")
 	@Path("/{templateId}")
 	public void inactiveTemplate(
@@ -234,7 +234,7 @@ public class ComponentTypeTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TEMPLATES_DELETE)
 	@APIDescription("Delete component type template; if not attached")
 	@Path("/{templateId}/force")
 	public void deleteTemplate(
