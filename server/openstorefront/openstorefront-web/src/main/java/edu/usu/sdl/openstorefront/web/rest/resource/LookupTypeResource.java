@@ -225,7 +225,7 @@ public class LookupTypeResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_CREATE)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_CREATE_CODE)
 	@APIDescription("Adds a new code to a given entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}")
@@ -310,7 +310,7 @@ public class LookupTypeResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_UPDATE)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_UPDATE_CODE)
 	@APIDescription("Updates descriptions for a given entity and code.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{entity}/{code}")
@@ -332,7 +332,7 @@ public class LookupTypeResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_UPDATE)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_UPDATE_CODE)
 	@APIDescription("Activates a given entity code.")
 	@Path("/{entity}/{code}/activate")
 	public Response activeEntityCode(
@@ -361,7 +361,7 @@ public class LookupTypeResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_DELETE)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_DELETE_CODE)
 	@APIDescription("Remove a code from the entity")
 	@Path("/{entity}/{code}")
 	@SuppressWarnings("unchecked")
