@@ -47,6 +47,8 @@ public class UserRole
 	@FK(SecurityRole.class)
 	@ConsumeField
 	private String role;
+	
+	private Boolean keep;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserRole()
@@ -83,4 +85,13 @@ public class UserRole
 		this.username = username;
 	}
 
+	public Boolean getKeep()
+	{
+		return keep;
+	}
+
+	public void setKeep(Boolean keep)
+	{
+		this.keep = keep;
+	}
 }

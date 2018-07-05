@@ -149,7 +149,7 @@ public class HeaderRealm
 				String groupFragments[] = adGroup.split(",");				
 				for (String fragment : groupFragments) {
 					String keyValue[] = fragment.split("=");
-					if ("CN".equals(keyValue[0])) {
+					if ("CN".equals(keyValue[0].trim())) {
 						headerAuthToken.getGroups().add(keyValue[1]);
 					}
 				}

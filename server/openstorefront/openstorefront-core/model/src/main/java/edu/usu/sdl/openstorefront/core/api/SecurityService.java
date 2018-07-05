@@ -245,8 +245,8 @@ public interface SecurityService
 	UserSecurityWrapper getUserViews(UserFilterParams queryParams);
 
 	/**
-	 * This will remove all existing roles for a user and add matching roles for
-	 * the given set.
+	 * This will remove all roles from a given user, except for those rolls
+	 * that were given from within storefront proper.
 	 *
 	 * This is used to handling supporting external role/group management
 	 *
