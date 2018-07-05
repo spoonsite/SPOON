@@ -1027,7 +1027,7 @@
 									{
 										text: 'Keep Flag',
 										dataIndex: 'keep',
-										align: center,
+										align: 'center',
 										renderer: CoreUtil.renderer.booleanRenderer,
 										width: 100
 									},
