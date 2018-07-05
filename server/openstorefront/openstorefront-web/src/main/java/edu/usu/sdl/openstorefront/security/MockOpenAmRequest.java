@@ -58,13 +58,13 @@ public class MockOpenAmRequest
 	@Override
 	public Enumeration<String> getHeaders(String name)
 	{
-		StringTokenizer tokenizer = new StringTokenizer("CN=STORE-Admin,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab | "
+		StringTokenizer tokenizer = new StringTokenizer("CN=STORE-Admin,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab |"
 				+ "CN=VPN Users,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab |"
-				+ "CN=USU Users,OU=Groups,OU=USU,DC=basef,DC=dev,DC=lab | "
-				+ "CN=Atlassian Users,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab | "
-				+ "CN=USU SysAdmin,OU=Groups,OU=USU,DC=basef,DC=dev,DC=lab | "
-				+ "CN=Storefront SysAdmins,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab | "
-				+ "CN=STORE-Eval,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab | "
+				+ "CN=USU Users,OU=Groups,OU=USU,DC=basef,DC=dev,DC=lab |"
+				+ "CN=Atlassian Users,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab |"
+				+ "CN=USU SysAdmin,OU=Groups,OU=USU,DC=basef,DC=dev,DC=lab |"
+				+ "CN=Storefront SysAdmins,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab |"
+				+ "CN=STORE-Eval,OU=Groups,OU=DI2E-F,DC=basef,DC=dev,DC=lab |"
 				+ "CN=SWASe_Eval-ReadWrite,OU=Groups,OU=SWASe,OU=ProjectGroups,OU=External,DC=basef,DC=dev,DC=lab |", "|");
 
 		if ("memberOf".equals(name)) {

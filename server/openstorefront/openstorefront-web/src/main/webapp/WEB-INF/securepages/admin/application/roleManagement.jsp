@@ -1025,6 +1025,13 @@
 								columns: [
 									{text: 'Username', dataIndex: 'username', flex: 1, minWidth: 150},
 									{
+										text: 'Keep Flag',
+										dataIndex: 'keep',
+										align: center,
+										renderer: CoreUtil.renderer.booleanRenderer,
+										width: 100
+									},
+									{
 										xtype:'actioncolumn',
 										width: 50,
 										items:[
@@ -1093,7 +1100,7 @@
 													autoLoad: false,
 													proxy: {
 														type: 'ajax',
-														url: 'api/v1/resource/users',
+														url: 'api/v1/resource/userprofiles',
 														reader: {
 															type: 'json',
 															rootProperty: 'data',
