@@ -551,7 +551,6 @@
 				var evalMenuItems = [];
 				addMenuItems(evalMenuItems, evaluationMenu);				
 				if (evalMenuItems.length > 0) {
-					console.log("Eval Menu",evalMenuItems);
 					Ext.getCmp('evaluationManagementBtn').setHidden(false);
 					Ext.getCmp('evaluationManagementBtn').getMenu().add(evalMenuItems);
 				}
