@@ -21,6 +21,7 @@
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.10",
     "vue": "^2.5.2",
+    "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.1",
     "vue-star-rating": "^1.6.0",
     "vue-truncate-filter": "^1.1.7",

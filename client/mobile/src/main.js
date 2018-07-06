@@ -10,6 +10,9 @@ import 'babel-polyfill';
 import VueTruncate from 'vue-truncate-filter';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import VueQuillEditor from 'vue-quill-editor';
+import 'quill/dist/quill.core.css';
+import 'quill/dist/quill.snow.css';
 
 Vue.config.productionTip = false;
 
@@ -33,6 +36,7 @@ axios.interceptors.request.use(
   }
 );
 
+Vue.use(VueQuillEditor);
 Vue.use(Vuetify, {
   theme: {
     primary: '#2a2d35',

@@ -210,21 +210,12 @@
         </v-card>
       </v-expansion-panel-content>
 
-      <!-- TODO: DO this later -->
-      <!-- <EntryPageQA/>
-      /openstorefront/api/v1/resource/components/{id}/questions
-      /openstorefront/api/v1/resource/components/{id}/questions/{questionid}/responses
-      /openstorefront/api/v1/resource/components/{id}/questions/{questionid}/responses/{responseid}
-       -->
       <v-expansion-panel-content>
         <div slot="header">Questions and Answers</div>
         <v-card class="grey lighten-4">
           <v-card-text>
-            <div v-for="question in questions" :key="question.question">
-              <p v-html="question.question"></p>
-              <!-- get all the reponses for this answer from computed property -->
-              <!-- <p v-for="answer in responses" :key="answer.response"></p> -->
-            </div>
+            <v-btn>Ask a Question</v-btn>
+            <Question v-for="question in questions" :key="question.question" :question="question"></Question>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -240,13 +231,15 @@ import StarRating from 'vue-star-rating';
 import _ from 'lodash';
 import Lightbox from './subcomponents/Lightbox';
 import LoadingOverlay from './subcomponents/LoadingOverlay';
+import Question from './subcomponents/Question';
 
 export default {
   name: 'entry-detail-page',
   components: {
     StarRating,
     Lightbox,
-    LoadingOverlay
+    LoadingOverlay,
+    Question
   },
   mounted () {
     if (this.$route.params.id) {
@@ -265,6 +258,7 @@ export default {
       watchSwitch: false,
       hasImage: false,
       lightboxList: [],
+      errors: [],
       attributeTableHeaders: [
         {
           text: 'Attribute Type',
@@ -296,6 +290,15 @@ export default {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions`)
         .then(response => {
           this.questions = response.data;
+        })
+        .catch(e => this.errors.push(e));
+    },
+    getAnswers (qid) {
+      this.isLoading = true;
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions/${qid}/responses`)
+        .then(response => {
+          this.answers[qid] = response.data;
+          this.isLoading = false;
         })
         .catch(e => this.errors.push(e));
     },
@@ -350,5 +353,8 @@ export default {
   hr {
     color: #333;
     margin-bottom: 1em;
+  }
+  .icon {
+    margin-right: 0.3em;
   }
 </style>
