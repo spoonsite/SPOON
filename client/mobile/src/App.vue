@@ -130,6 +130,8 @@ export default {
       this.errorDialog = true;
       return Promise.reject(error);
     });
+
+    this.$store.dispatch('setCurrentUser', this.$http); // pass in current axios instance
   },
   data () {
     return {

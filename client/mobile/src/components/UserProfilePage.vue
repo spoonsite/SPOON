@@ -263,6 +263,7 @@ export default {
           .then(response => {
             this.saved = true;
             this.getRestOfUserData();
+            this.$store.dispatch('setCurrentUser', this.$http);
           })
           .catch(e => {
             this.errors.push(e);

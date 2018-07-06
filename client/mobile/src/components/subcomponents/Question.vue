@@ -52,6 +52,7 @@ export default {
     },
     answerQuestion (qid) {
       console.log(`Answer Question: ${qid}`);
+      console.log(`Current User: ${this.$store.state.currentUser.username}`);
     },
     editAnswer (aid) {
       console.log(`Edit Answer: ${aid}`);
