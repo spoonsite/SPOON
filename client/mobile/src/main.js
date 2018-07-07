@@ -37,7 +37,10 @@ axios.interceptors.request.use(
   }
 );
 
-Vue.use(VueQuillEditor);
+Vue.use(VueQuillEditor, {
+  modules: { toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], [{'list': 'bullet'}, {'list': 'ordered'}], ['clean']]
+  }
+});
 Vue.use(Vuetify, {
   theme: {
     primary: '#2a2d35',

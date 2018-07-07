@@ -214,11 +214,31 @@
         <div slot="header">Questions and Answers</div>
         <v-card class="grey lighten-4">
           <v-card-text>
-            <v-btn>Ask a Question</v-btn>
+            <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
             <Question v-for="question in questions" :key="question.question" :question="question"></Question>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
+
+    <v-dialog
+      v-model="askQuestionDialog"
+      >
+      <v-card>
+        <v-card-title>
+          <h2>Ask a Question</h2>
+        </v-card-title>
+        <v-card-text>
+          <quill-editor
+          style="background-color: white;"
+          v-model="newQuestion"
+          ></quill-editor>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="submitQuestion()">Submit</v-btn>
+          <v-btn @click="askQuestionDialog = false; newQuestion = '';">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     </v-expansion-panel>
 
@@ -253,6 +273,8 @@ export default {
     return {
       baseURL: '/openstorefront/',
       isLoading: true,
+      askQuestionDialog: false,
+      newQuestion: '',
       detail: {},
       questions: {},
       watchSwitch: false,
@@ -292,6 +314,22 @@ export default {
           this.questions = response.data;
         })
         .catch(e => this.errors.push(e));
+    },
+    submitQuestion () {
+      let data = {
+        dataSensitivity: '',
+        organization: this.$store.state.currentUser.organization,
+        question: this.newQuestion,
+        securityMarkingType: '',
+        userTypeCode: this.$store.state.currentUser.userTypeCode
+      };
+      this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/questions`, data)
+        .then(response => {
+          // question submitted
+          console.log('Question asked, awaiting approval');
+          this.newQuestion = '';
+          this.askQuestionDialog = false;
+        });
     },
     getAnswers (qid) {
       this.isLoading = true;
