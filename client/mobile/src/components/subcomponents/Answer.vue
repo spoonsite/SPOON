@@ -76,6 +76,7 @@ export default {
       this.$http.put(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${qid}/responses/${aid}`, data)
         .then(response => {
           this.$toasted.show('Edit submitted.');
+          this.answer = response.data;
           this.edit = false;
         })
         .catch(e => this.$toasted.error('There was a problem submitting the edit.'));
