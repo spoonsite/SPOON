@@ -43,7 +43,7 @@ public class SecurityInit
 
 	public SecurityInit()
 	{
-		super("Security-Init-test-1");
+		super("Security-Init-v2");
 	}
 
 	@Override
@@ -56,14 +56,19 @@ public class SecurityInit
 		service.getSystemService().saveProperty(ApplicationProperty.APPLICATION_CRYPT_KEY, cryptKey);
 		LOG.log(Level.CONFIG, "Setup Crypt Key");
 
-		// remove all existing roles
+		// remove all existing default roles and init default user and roles for system
 		SecurityRole exampleRole = new SecurityRole();
-		exampleRole.findByExampleProxy().forEach(role -> {
-			service.getPersistenceService().delete(role);
+		List<String> rolesToBeRemoved = Arrays.asList(SecurityRole.DEFAULT_GROUP, SecurityRole.GUEST_GROUP, 
+		SecurityRole.ADMIN_ROLE, SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE);
+		exampleRole.findByExample().forEach(role -> {
+			if (rolesToBeRemoved.contains(role.getRoleName())) {
+				role.delete();
+			}
 		});
 
-		//init default user and roles for system
-		//Default Role
+		// =================================
+		//  D E F A U L T - R O L E (DONE)
+		// =================================
 		SecurityRole securityRole = new SecurityRole();
 		securityRole.setRoleName(SecurityRole.DEFAULT_GROUP);
 		securityRole.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
@@ -72,13 +77,15 @@ public class SecurityInit
 		securityRole.setLandingPage("/");
 
 		List<SecurityRolePermission> permissions = new ArrayList<>();
-		List<String> permissionsToAdd = Arrays.asList(
-				SecurityPermission.ENTRY_TAG,
-				SecurityPermission.REPORTS_SCHEDULE,
-				SecurityPermission.REPORTS,
-				SecurityPermission.USER_SUBMISSIONS,
-				SecurityPermission.RELATIONSHIP_VIEW_TOOL
-		);
+		final List<String> permissionsToAdd = new ArrayList<>();
+
+		// iterate through each security permission lookup and use the records
+		//		that use the default role
+		service.getLookupService().findLookup(SecurityPermission.class).forEach(item -> {
+			if (item.getDefaultRoles() != null && item.getDefaultRoles().contains(SecurityRole.DEFAULT_GROUP)) {
+				permissionsToAdd.add(item.getCode());
+			}
+		});
 
 		for (String newPermission : permissionsToAdd) {
 			SecurityRolePermission permission = new SecurityRolePermission();
@@ -89,7 +96,9 @@ public class SecurityInit
 		service.getSecurityService().saveSecurityRole(securityRole);
 		LOG.log(Level.CONFIG, "Setup default group");
 
-		//Guest Role
+		// =================================
+		// G U E S T - R O L E (DONE)
+		// =================================
 		securityRole = new SecurityRole();
 		securityRole.setRoleName(SecurityRole.GUEST_GROUP);
 		securityRole.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
@@ -99,10 +108,12 @@ public class SecurityInit
 		service.getSecurityService().saveSecurityRole(securityRole);
 		LOG.log(Level.CONFIG, "Guest group was setup");
 
-		//Admin Role
+		// =================================
+		// A D M I N - R O L E (DONE)
+		// =================================
 		String adminRoleName = PropertiesManager.getInstance().getValue(
 				PropertiesManager.KEY_SECURITY_DEFAULT_ADMIN_GROUP,
-				"STOREFRONT-Admin"
+				SecurityRole.ADMIN_ROLE
 		);
 
 		securityRole = new SecurityRole();
@@ -114,11 +125,10 @@ public class SecurityInit
 
 		// add admin permissions (all the permissions)
 		permissions = new ArrayList<>();
-		List<String> adminPermissionsToAdd = new ArrayList<>();
+		permissionsToAdd.clear();
 		service.getLookupService().findLookup(SecurityPermission.class).forEach(item -> {
-			adminPermissionsToAdd.add(item.getCode());
+			permissionsToAdd.add(item.getCode());
 		});
-		permissionsToAdd = adminPermissionsToAdd;
 
 		for (String newPermission : permissionsToAdd) {
 			SecurityRolePermission permission = new SecurityRolePermission();
@@ -135,8 +145,10 @@ public class SecurityInit
 		service.getSecurityService().saveSecurityRole(securityRole);
 		LOG.log(Level.CONFIG, "Setup Extra Admin group");
 
-		//Evaluator Group
-		String evaluatorRoleName = "STOREFRONT-Evaluators";
+		// =================================
+		// E V A L U A T O R - G R O U P (DONE)
+		// =================================
+		String evaluatorRoleName = SecurityRole.EVALUATOR_ROLE;
 		securityRole = new SecurityRole();
 		securityRole.setRoleName(evaluatorRoleName);
 		securityRole.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
@@ -145,9 +157,15 @@ public class SecurityInit
 		securityRole.setLandingPage("/");
 
 		permissions = new ArrayList<>();
-		permissionsToAdd = Arrays.asList(
-				SecurityPermission.EVALUATIONS
-		);
+		permissionsToAdd.clear();
+
+		// iterate through each security permission lookup and use the records
+		//		that use the evaluator role
+		service.getLookupService().findLookup(SecurityPermission.class).forEach(item -> {
+			if (item.getDefaultRoles() != null && item.getDefaultRoles().contains(SecurityRole.EVALUATOR_ROLE)) {
+				permissionsToAdd.add(item.getCode());
+			}
+		});
 
 		for (String newPermission : permissionsToAdd) {
 			SecurityRolePermission permission = new SecurityRolePermission();
@@ -158,8 +176,10 @@ public class SecurityInit
 		service.getSecurityService().saveSecurityRole(securityRole);
 		LOG.log(Level.CONFIG, "Setup Evaluator group");
 
-		//Librarian
-		String libRoleName = "STOREFRONT-Librarian";
+		// =================================
+		// L I B R A R I A N (DONE)
+		// =================================
+		String libRoleName = SecurityRole.LIBRARIAN_ROLE;
 		securityRole = new SecurityRole();
 		securityRole.setRoleName(libRoleName);
 		securityRole.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
@@ -168,32 +188,15 @@ public class SecurityInit
 		securityRole.setLandingPage("/");
 
 		permissions = new ArrayList<>();
-		permissionsToAdd = Arrays.asList(
-				SecurityPermission.ADMIN_ALERT_MANAGEMENT,
-				SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT,
-				SecurityPermission.ADMIN_CONTACT_MANAGEMENT,
-				SecurityPermission.ADMIN_DATA_IMPORT_EXPORT,
-				SecurityPermission.ADMIN_ENTRY_MANAGEMENT,
-				SecurityPermission.ADMIN_ENTRY_TEMPLATES,
-				SecurityPermission.ADMIN_ENTRY_TYPES,
-				SecurityPermission.ADMIN_EVALUATION_TEMPLATE,
-				SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST,
-				SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION,
-				SecurityPermission.ADMIN_EVALUATION_TEMPLATE_SECTION,
-				SecurityPermission.ADMIN_FEEDBACK,
-				SecurityPermission.ADMIN_HIGHLIGHTS,
-				SecurityPermission.ADMIN_INTEGRATION,
-				SecurityPermission.ADMIN_LOOKUPS,
-				SecurityPermission.ADMIN_MEDIA,
-				SecurityPermission.ADMIN_WATCHES,
-				SecurityPermission.ADMIN_EVALUATION_MANAGEMENT,
-				SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES,
-				SecurityPermission.EVALUATIONS,
-				SecurityPermission.ADMIN_ORGANIZATION,
-				SecurityPermission.ADMIN_QUESTIONS,
-				SecurityPermission.ADMIN_REVIEW,
-				SecurityPermission.ADMIN_SEARCH
-		);
+		permissionsToAdd.clear();
+
+		// iterate through each security permission lookup and use the records
+		//		that use the evaluator role
+		service.getLookupService().findLookup(SecurityPermission.class).forEach(item -> {
+			if (item.getDefaultRoles() != null && item.getDefaultRoles().contains(SecurityRole.LIBRARIAN_ROLE)) {
+				permissionsToAdd.add(item.getCode());
+			}
+		});
 
 		for (String newPermission : permissionsToAdd) {
 			SecurityRolePermission permission = new SecurityRolePermission();
