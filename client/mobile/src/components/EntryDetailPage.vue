@@ -214,7 +214,7 @@
         <div slot="header">Questions and Answers</div>
         <v-card class="grey lighten-4">
           <v-card-text>
-            <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
+            <v-btn color="white" @click="askQuestionDialog = true">Ask a Question</v-btn>
             <Question v-for="question in questions" :key="question.question" :question="question"></Question>
           </v-card-text>
         </v-card>
@@ -226,6 +226,8 @@
       <v-card>
         <v-card-title>
           <h2>Ask a Question</h2>
+          <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+          <v-alert type="info" :value="true">All questions need admin approval before being made public.</v-alert>
         </v-card-title>
         <v-card-text>
           <quill-editor
@@ -325,8 +327,7 @@ export default {
       };
       this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/questions`, data)
         .then(response => {
-          // question submitted
-          console.log('Question asked, awaiting approval');
+          this.questions.push(response.data);
           this.newQuestion = '';
           this.askQuestionDialog = false;
         });

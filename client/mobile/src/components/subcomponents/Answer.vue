@@ -1,17 +1,23 @@
 <template>
-<div class="white pa-2 elevation-2 mt-2">
-  <p class="caption">Answered by <strong>{{ answer.createUser }}</strong> on {{ answer.createDts | formatDate }}</p>
-  <p class="caption" v-if="answer.createDts !== answer.updateDts">Updated on {{ answer.updateDts | formatDate }}</p>
-  <p class="ma-0" v-if="!edit"><span v-html="answer.response" ></span></p>
-  <quill-editor
-  v-else
-  style="background-color: white;"
-  v-model="answer.response"
-  ></quill-editor>
-  <div v-if="$store.state.currentUser.username === answer.createUser">
-    <v-btn icon color="success" v-if="edit" @click="editAnswer(answer.questionId, answer.responseId, answer.response)"><v-icon small class="icon">save</v-icon></v-btn>
-    <v-btn icon v-else @click="edit = true"><v-icon small class="icon">edit</v-icon></v-btn>
-    <v-btn icon @click="deleteDialog = true"><v-icon small class="icon">delete</v-icon></v-btn>
+<div class="white elevation-3 ma-3">
+  <v-alert type="warning" :value="answer.activeStatus === 'P'">This answer is pending admin approval.</v-alert>
+  <div class="pt-2 px-2">
+    <p class="caption">Answered by <strong>{{ answer.createUser }}</strong> on {{ answer.createDts | formatDate }}</p>
+    <p class="caption" v-if="answer.createDts !== answer.updateDts">Updated on {{ answer.updateDts | formatDate }}</p>
+    <div class="ma-0" v-if="!edit" v-html="answer.response"></div>
+    <div v-else>
+      <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+      <v-alert type="info" :value="true">All answers need admin approval before being made public.</v-alert>
+      <quill-editor
+      style="background-color: white;"
+      v-model="answer.response"
+      ></quill-editor>
+    </div>
+    <div v-if="$store.state.currentUser.username === answer.createUser">
+      <v-btn icon color="success" v-if="edit" @click="editAnswer(answer.questionId, answer.responseId, answer.response)"><v-icon small class="icon">save</v-icon></v-btn>
+      <v-btn icon v-else @click="edit = true"><v-icon small class="icon">edit</v-icon></v-btn>
+      <v-btn icon @click="deleteDialog = true"><v-icon small class="icon">delete</v-icon></v-btn>
+    </div>
   </div>
 
   <v-dialog
@@ -79,4 +85,7 @@ export default {
 </script>
 
 <style>
+.btn {
+  margin: 0;
+}
 </style>

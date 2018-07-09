@@ -1,13 +1,25 @@
 <template>
-<div>
-  <h2 @click="getAnswers(question.questionId);">Q: <span v-html="question.question"></span> </h2>
-  <hr>
-  <div v-if="$store.state.currentUser.username === question.createUser">
-    <v-btn icon @click="editQuestion(question.questionId)"><v-icon>edit</v-icon></v-btn>
-    <v-btn icon @click="deleteQuestionDialog = true"><v-icon>delete</v-icon></v-btn>
+<div class="mt-4">
+
+  <div class="white elevation-2" style="overflow: auto;">
+    <div style="width: 100%;" class="grey lighten-2 pa-2">
+      <h3>Question:</h3>
+    </div>
+    <v-alert type="warning" :value="question.activeStatus === 'P'">This question is pending admin approval.</v-alert>
+    <div class="pt-2 px-2" v-html="question.question"></div>
+    <div style="display: inline-block" v-if="$store.state.currentUser.username === question.createUser">
+      <v-btn icon @click="openEditQuestionDialog()">   <v-icon class="icon">edit</v-icon></v-btn>
+      <v-btn icon @click="deleteQuestionDialog = true"><v-icon class="icon">delete</v-icon></v-btn>
+    </div>
+    <v-btn icon @click="answerQuestionDialog = true"><v-icon>fas fa-reply</v-icon></v-btn>
+    <v-btn :loading="loading" v-if="!showAnswers" flat small @click="getAnswers(question.questionId); showAnswers = true;">View Answers</v-btn>
+    <v-btn :loading="loading" v-else-if="noAnswers" disabled flat small>No Answers</v-btn>
+    <v-btn :loading="loading" v-else flat small @click="showAnswers = false">Hide Answers</v-btn>
+
+    <div v-if="showAnswers">
+      <Answer v-for="answer in answers" :answer="answer" :key="answer.responseId"></Answer>
+    </div>
   </div>
-  <v-btn icon @click="answerQuestionDialog = true"><v-icon>fas fa-reply</v-icon></v-btn>
-  <Answer v-for="answer in answers" :answer="answer" :key="answer.responseId"></Answer>
 
   <v-dialog
     v-model="answerQuestionDialog"
@@ -15,8 +27,11 @@
     <v-card>
       <v-card-title>
         <h2>Answer a Question</h2>
+        <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+        <v-alert type="info" :value="true">All questions need admin approval before being made public.</v-alert>
       </v-card-title>
       <v-card-text>
+        <div v-html="question.question"></div>
         <quill-editor
         style="background-color: white;"
         v-model="newAnswer"
@@ -31,6 +46,7 @@
 
   <v-dialog
     v-model="deleteQuestionDialog"
+    max-width="300px"
     >
     <v-card>
       <v-card-text>
@@ -43,11 +59,34 @@
     </v-card>
   </v-dialog>
 
+  <v-dialog
+    v-model="editQuestionDialog"
+    >
+    <v-card>
+      <v-card-title>
+        <h2>Edit a Question</h2>
+        <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+        <v-alert type="info" :value="true">All questions need admin approval before being made public.</v-alert>
+      </v-card-title>
+      <v-card-text>
+        <quill-editor
+        style="background-color: white;"
+        v-model="newQuestion"
+        ></quill-editor>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="success" @click="editQuestion(question.questionId)">Submit</v-btn>
+        <v-btn @click="editQuestionDialog = false">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
 </div>
 </template>
 
 <script>
 import Answer from './Answer';
+import _ from 'lodash';
 
 export default {
   name: 'Question',
@@ -60,20 +99,32 @@ export default {
   data () {
     return {
       answers: {},
+      showAnswers: false,
       edit: false,
       answerQuestionDialog: false,
       deleteQuestionDialog: false,
+      editQuestionDialog: false,
       newAnswer: '',
-      errors: []
+      noAnswers: false,
+      newQuestion: '',
+      errors: [],
+      loading: false
     };
   },
   methods: {
     getAnswers (qid) {
-      this.$http.get(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`)
-        .then(response => {
-          this.answers = response.data;
-        })
-        .catch(e => this.errors.push(e));
+      if (_.isEmpty(this.answers)) {
+        this.loading = true;
+        this.$http.get(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`)
+          .then(response => {
+            this.answers = response.data;
+            if (this.answers.length === 0) {
+              this.noAnswers = true;
+            }
+            this.loading = false;
+          })
+          .catch(e => this.errors.push(e));
+      }
     },
     submitAnswer (qid) {
       console.log(`Answer question ${qid}`);
@@ -115,9 +166,14 @@ export default {
         .then(response => {
           // question submitted
           console.log('Question asked, awaiting approval');
+          this.question.question = this.newQuestion;
           this.newQuestion = '';
-          this.askQuestionDialog = false;
+          this.editQuestionDialog = false;
         });
+    },
+    openEditQuestionDialog () {
+      this.newQuestion = this.question.question;
+      this.editQuestionDialog = true;
     }
   },
   computed: {
@@ -128,4 +184,10 @@ export default {
 </script>
 
 <style>
+.icon {
+  font-size: 18px;
+}
+.btn {
+  margin: 0;
+}
 </style>
