@@ -833,7 +833,7 @@ public class ComponentTypeServiceImpl
 	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType currentComponentType = findComponentType(componentTypes, componentTypeId, true);
+		ComponentType currentComponentType = findComponentType(componentTypes, componentTypeId, false);
 
 		List<ComponentType> componentTypeParents = new ArrayList<>();
 
