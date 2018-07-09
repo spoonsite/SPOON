@@ -16,9 +16,11 @@
     <v-btn :loading="loading" v-else-if="noAnswers" disabled flat small>No Answers</v-btn>
     <v-btn :loading="loading" v-else flat small @click="showAnswers = false">Hide Answers</v-btn>
 
+    <transition name="slide">
     <div v-if="showAnswers">
       <Answer v-for="answer in answers" :answer="answer" :key="answer.responseId"></Answer>
     </div>
+    </transition>
   </div>
 
   <v-dialog
@@ -194,5 +196,13 @@ export default {
 }
 .btn {
   margin: 0;
+}
+.slide-enter-active, .slide-leave-active {
+  transition: 0.5s cubic-bezier(.25,.8,.5,1);
+  max-height: 50em;
+  overflow: hidden;
+}
+.slide-enter, .slide-leave-to {
+  max-height: 0;
 }
 </style>
