@@ -43,7 +43,7 @@ public class SecurityInit
 
 	public SecurityInit()
 	{
-		super("Security-Init-v2");
+		super("Security-Init-test3");
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class SecurityInit
 		// remove all existing default roles and init default user and roles for system
 		SecurityRole exampleRole = new SecurityRole();
 		List<String> rolesToBeRemoved = Arrays.asList(SecurityRole.DEFAULT_GROUP, SecurityRole.GUEST_GROUP, 
-		"STOREFRONT-Admin", SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE);
+		SecurityRole.ADMIN_ROLE, SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE);
 		exampleRole.findByExample().forEach(role -> {
 			if (rolesToBeRemoved.contains(role.getRoleName())) {
 				role.delete();
@@ -113,7 +113,7 @@ public class SecurityInit
 		// =================================
 		String adminRoleName = PropertiesManager.getInstance().getValue(
 				PropertiesManager.KEY_SECURITY_DEFAULT_ADMIN_GROUP,
-				"STOREFRONT-Admin"
+				SecurityRole.ADMIN_ROLE
 		);
 
 		securityRole = new SecurityRole();

@@ -129,10 +129,10 @@ public abstract class LookupEntity<T extends LookupEntity>
 
 	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription)
 	{
-		return newLookup(lookupClass, code, description, detailedDescription, null, null, null);
+		return newLookup(lookupClass, code, description, detailedDescription, null);
 	}
 
-	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription, String groupBy, String permissionPredecessor, List<String> defaultRoles)
+	public static <T extends LookupEntity> T newLookup(Class<T> lookupClass, String code, String description, String detailedDescription, String groupBy)
 	{
 		T lookup = null;
 		try {
@@ -142,8 +142,6 @@ public abstract class LookupEntity<T extends LookupEntity>
 			lookup.setDescription(description);
 			lookup.setDetailedDescription(detailedDescription);
 			lookup.setGroupBy(groupBy);
-			lookup.setPermissionPredecessor(permissionPredecessor);
-			lookup.setDefaultRoles(defaultRoles);
 
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to create lookup", ex);

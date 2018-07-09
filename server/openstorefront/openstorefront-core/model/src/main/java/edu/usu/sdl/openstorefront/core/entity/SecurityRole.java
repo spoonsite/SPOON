@@ -41,6 +41,7 @@ public class SecurityRole
 	public static final String DEFAULT_GROUP = "DEFAULT-GROUP";
 	public static final String EVALUATOR_ROLE = "STOREFRONT-Evaluators";
 	public static final String LIBRARIAN_ROLE = "STOREFRONT-Librarian";
+	public static final String ADMIN_ROLE = "STOREFRONT-Admin";
 
 	public static final String FIELD_ROLENAME = "roleName";
 
