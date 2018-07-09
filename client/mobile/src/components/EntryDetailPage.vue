@@ -330,7 +330,9 @@ export default {
           this.questions.push(response.data);
           this.newQuestion = '';
           this.askQuestionDialog = false;
-        });
+          this.$toasted.show('Question submitted.');
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the question.'));
     },
     getAnswers (qid) {
       this.isLoading = true;

@@ -4,6 +4,7 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 import store from './store';
+
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
 import format from 'date-fns/format';
@@ -14,6 +15,7 @@ import Cookies from 'js-cookie';
 import VueQuillEditor from 'vue-quill-editor';
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
+import Toasted from 'vue-toasted';
 
 Vue.config.productionTip = false;
 
@@ -51,6 +53,10 @@ Vue.use(Vuetify, {
     warning: '#FFA000',
     success: '#388E3C'
   }
+});
+Vue.use(Toasted, {
+  iconPack: 'fontawesome',
+  duration: 5000
 });
 
 Vue.prototype.$http = axios;

@@ -6,7 +6,7 @@
       <h3>Question:</h3>
     </div>
     <v-alert type="warning" :value="question.activeStatus === 'P'">This question is pending admin approval.</v-alert>
-    <div class="pt-2 px-2" v-html="question.question"></div>
+    <div class="pt-2 px-2" style="font-size: 16px;" v-html="question.question"></div>
     <div style="display: inline-block" v-if="$store.state.currentUser.username === question.createUser">
       <v-btn icon @click="openEditQuestionDialog()">   <v-icon class="icon">edit</v-icon></v-btn>
       <v-btn icon @click="deleteQuestionDialog = true"><v-icon class="icon">delete</v-icon></v-btn>
@@ -140,19 +140,22 @@ export default {
         .then(response => {
           // answer created
           if (response.status === 201) {
-            console.log('response created');
+            this.$toasted.show('Answer submitted.');
           }
           this.getAnswers(qid);
+          this.newAnswer = '';
           this.answerQuestionDialog = false;
-        });
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the answer.'));
     },
     deleteQuestion (qid) {
       this.$http.delete(`http://localhost:8080/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}`)
         .then(response => {
-          console.log(response);
           this.deleteQuestionDialog = false;
+          this.$toasted.show('Question deleted.');
           this.$emit('deleteQuestion');
-        });
+        })
+        .catch(e => this.$toasted.error('There was a problem deleting the answer.'));
     },
     editQuestion (qid) {
       let data = {
@@ -166,10 +169,12 @@ export default {
         .then(response => {
           // question submitted
           console.log('Question asked, awaiting approval');
-          this.question.question = this.newQuestion;
+          this.question = response.data;
           this.newQuestion = '';
+          this.$toasted.show('Edited question submitted.');
           this.editQuestionDialog = false;
-        });
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the edit.'));
     },
     openEditQuestionDialog () {
       this.newQuestion = this.question.question;

@@ -4,21 +4,35 @@
   <div class="pt-2 px-2">
     <p class="caption">Answered by <strong>{{ answer.createUser }}</strong> on {{ answer.createDts | formatDate }}</p>
     <p class="caption" v-if="answer.createDts !== answer.updateDts">Updated on {{ answer.updateDts | formatDate }}</p>
-    <div class="ma-0" v-if="!edit" v-html="answer.response"></div>
-    <div v-else>
-      <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
-      <v-alert type="info" :value="true">All answers need admin approval before being made public.</v-alert>
-      <quill-editor
-      style="background-color: white;"
-      v-model="answer.response"
-      ></quill-editor>
-    </div>
+    <div class="ma-0" v-html="answer.response"></div>
     <div v-if="$store.state.currentUser.username === answer.createUser">
-      <v-btn icon color="success" v-if="edit" @click="editAnswer(answer.questionId, answer.responseId, answer.response)"><v-icon small class="icon">save</v-icon></v-btn>
-      <v-btn icon v-else @click="edit = true"><v-icon small class="icon">edit</v-icon></v-btn>
+      <v-btn icon @click="edit = true"><v-icon small class="icon">edit</v-icon></v-btn>
       <v-btn icon @click="deleteDialog = true"><v-icon small class="icon">delete</v-icon></v-btn>
     </div>
   </div>
+
+  <v-dialog
+    v-model="edit"
+  >
+    <v-card>
+      <v-card-title>
+        <h2>Edit question</h2>
+        <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+        <v-alert type="info" :value="true">All answers need admin approval before being made public.</v-alert>
+      </v-card-title>
+      <v-card-text>
+        <quill-editor
+        style="background-color: white;"
+        v-model="answer.response"
+        ></quill-editor>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="editAnswer(answer.questionId, answer.responseId, answer.response)">Save</v-btn>
+        <v-btn @click="edit = false">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+
+  </v-dialog>
 
   <v-dialog
     v-model="deleteDialog"
@@ -61,20 +75,20 @@ export default {
       };
       this.$http.put(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${qid}/responses/${aid}`, data)
         .then(response => {
-          // answer updated
-          console.log('Edit successful');
+          this.$toasted.show('Edit submitted.');
           this.edit = false;
-        });
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the edit.'));
     },
     deleteAnswer (qid, aid) {
       console.log(`Delete Answer: ${aid}`);
       // if warning dialog === true
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${qid}/responses/${aid}`)
         .then(response => {
-          // answer deleted
-          console.log('Delete successful');
+          this.$toasted.show('Answer deleted.');
           this.deleteDialog = false;
-        });
+        })
+        .catch(e => this.$toasted.error('There was a problem deleting the answer.'));
     }
   },
   computed: {
