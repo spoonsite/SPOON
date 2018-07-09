@@ -38,17 +38,10 @@
               style="margin-bottom:1em;"
               @click="login"
               :disabled="!valid"
+              :loading="loading"
               tabindex=3
             >
-            <span v-if="!loading">Login</span>
-            <span v-else>
-              <v-progress-circular
-                color="teal"
-                indeterminate
-                :size="24"
-                :width="3"
-              ></v-progress-circular>
-            </span>
+            Login
             </v-btn>
           </v-flex>
           <v-flex xs12 class="register">
