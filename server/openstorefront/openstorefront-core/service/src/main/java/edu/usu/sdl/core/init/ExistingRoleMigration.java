@@ -45,7 +45,7 @@ public class ExistingRoleMigration
 	{
 		SecurityRole exampleRole = new SecurityRole();
 		List<String> defaultRoles = Arrays.asList(SecurityRole.DEFAULT_GROUP, SecurityRole.GUEST_GROUP,
-				"STOREFRONT-Admin", SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE);
+				SecurityRole.ADMIN_ROLE, SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE);
 		exampleRole.findByExample().forEach(role -> {
 			// if the role is not a default role, remove it's permissions
 			if (!defaultRoles.contains(role.getRoleName())) {
