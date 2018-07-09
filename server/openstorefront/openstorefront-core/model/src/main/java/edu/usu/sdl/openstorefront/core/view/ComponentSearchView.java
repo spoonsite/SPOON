@@ -29,7 +29,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.SecurityMarkingType;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
-import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -124,7 +123,7 @@ public class ComponentSearchView
 		view.setComponentType(component.getComponentType());
 		view.setDataSource(component.getDataSource());
 		view.setDataSensitivity(component.getDataSensitivity());
-		
+
 		Service service = ServiceProxyFactory.getServiceProxy();
 		view.setComponentTypeDescription(service.getComponentService().getComponentTypeParentsString(component.getComponentType(), Boolean.TRUE));
 

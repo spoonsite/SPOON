@@ -142,7 +142,7 @@ public class ComponentTypeServiceImpl
 		return typeModel;
 	}
 
-	private ComponentType findComponentType(List<ComponentType> componentTypes, String componentTypeId)
+	private ComponentType findComponentType(List<ComponentType> componentTypes, String componentTypeId, boolean throwError)
 	{
 		ComponentType found = null;
 		for (ComponentType componentType : componentTypes) {
@@ -151,7 +151,7 @@ public class ComponentTypeServiceImpl
 				break;
 			}
 		}
-		if (found == null) {
+		if (found == null && throwError) {
 			throw new OpenStorefrontRuntimeException("Unable to find component Type: " + componentTypeId, "Check input");
 		}
 		return found;
@@ -334,7 +334,7 @@ public class ComponentTypeServiceImpl
 		if (attributeType.getOptionalRestrictions() != null && !attributeType.getOptionalRestrictions().isEmpty()) {
 			for (int i = attributeType.getOptionalRestrictions().size() - 1; i >= 0; i--) {
 				String checkType = attributeType.getOptionalRestrictions().get(i).getComponentType();
-				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
+				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType, false) == null) {
 					attributeType.getOptionalRestrictions().remove(i);
 					updateAttribute = true;
 				}
@@ -349,7 +349,7 @@ public class ComponentTypeServiceImpl
 		if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 			for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
 				String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
-				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
+				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType, false) == null) {
 					attributeType.getRequiredRestrictions().remove(i);
 					updateAttribute = true;
 				}
@@ -604,7 +604,7 @@ public class ComponentTypeServiceImpl
 		ComponentTypeTemplateResolution templateResolution;
 
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
+		ComponentType componentTypeFull = findComponentType(componentTypes, componentType, true);
 
 		if (componentTypeFull.getComponentTypeTemplate() != null) {
 
@@ -674,7 +674,7 @@ public class ComponentTypeServiceImpl
 		ComponentTypeRoleResolution roleResolution;
 
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
+		ComponentType componentTypeFull = findComponentType(componentTypes, componentType, true);
 
 		if (componentTypeFull.getAssignedGroups() != null
 				&& !componentTypeFull.getAssignedGroups().isEmpty()) {
@@ -735,7 +735,7 @@ public class ComponentTypeServiceImpl
 		ComponentTypeUserResolution resolution;
 
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
+		ComponentType componentTypeFull = findComponentType(componentTypes, componentType, true);
 
 		if (componentTypeFull.getAssignedUsers() != null
 				&& !componentTypeFull.getAssignedUsers().isEmpty()) {
@@ -833,13 +833,13 @@ public class ComponentTypeServiceImpl
 	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType currentComponentType = findComponentType(componentTypes, componentTypeId);
+		ComponentType currentComponentType = findComponentType(componentTypes, componentTypeId, true);
 
 		List<ComponentType> componentTypeParents = new ArrayList<>();
 
 		if (currentComponentType != null && currentComponentType.getParentComponentType() != null) {
 			do {
-				currentComponentType = findComponentType(componentTypes, currentComponentType.getParentComponentType());
+				currentComponentType = findComponentType(componentTypes, currentComponentType.getParentComponentType(), false);
 
 				if (currentComponentType != null) {
 					componentTypeParents.add(currentComponentType);
@@ -859,7 +859,7 @@ public class ComponentTypeServiceImpl
 		List<ComponentType> componentTypes = getAllComponentTypes();
 		ComponentType typeLocal;
 		try {
-			typeLocal = findComponentType(componentTypes, componentTypeId);
+			typeLocal = findComponentType(componentTypes, componentTypeId, true);
 		} catch (OpenStorefrontRuntimeException ex) {
 			LOG.log(Level.WARNING, ex, () -> "Unable to Find Component Type: " + componentTypeId);
 			return "(" + componentTypeId + ")";
@@ -876,11 +876,9 @@ public class ComponentTypeServiceImpl
 			parentChildComponentTypes.addAll(parentComponentTypes);
 		}
 
-		String labels = parentChildComponentTypes.stream()
+		return parentChildComponentTypes.stream()
 				.map(t -> t.getLabel())
 				.collect(Collectors.joining(reverseOrder ? " > " : " < "));
-
-		return labels;
 	}
 
 }
