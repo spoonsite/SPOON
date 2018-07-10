@@ -19,7 +19,7 @@
             <v-text-field
               prepend-icon="lock"
               name="password1"
-              label="Password"
+              label="New Password"
               type="password"
               v-model="password1"
               :rules="password1Rules"

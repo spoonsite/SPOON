@@ -14,7 +14,7 @@
               label="Enter Email"
               type="text"
               v-model="email"
-              :rules="emailRules"
+              :rules="[rules.required, rules.email]"
             ></v-text-field>
           </v-form>
         </v-card-text>
@@ -37,18 +37,15 @@
 </template>
 
 <script>
+import validators from '../util/validators';
+
 export default {
   name: 'ForgotUsernameComp',
+  mixins: [validators],
   data: () => ({
     dialog: false,
     valid: false,
-    email: '',
-    emailRules: [
-      v => !!v || 'E-mail is required',
-      v =>
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-        'E-mail must be valid'
-    ]
+    email: ''
   }),
   methods: {
     submitEmail () {

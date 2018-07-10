@@ -96,7 +96,7 @@
               label="Business Email"
               type="text"
               v-model="userInformation.email"
-              :rules="emailRules"
+              :rules="[rules.required, rules.email]"
               required
             ></v-text-field>
 
@@ -178,8 +178,11 @@
 </template>
 
 <script>
+import validators from '../util/validators';
+
 export default {
   name: 'RegistrationPage',
+  mixins: [validators],
   mounted: function () {
     this.getOrganizations();
     this.getUserTypes();
@@ -227,23 +230,11 @@ export default {
       ],
       organizationsList: [],
       userTypesList: [],
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v =>
-          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-          'E-mail must be valid'
-      ],
       firstNameRules: [
-        v => !!v || 'First name is required',
-        v =>
-          /^\w+$/.test(v) ||
-          'Name must be valid'
+        v => !!v || 'First name is required'
       ],
       lastNameRules: [
-        v => !!v || 'Last name is required',
-        v =>
-          /^\w+$/.test(v) ||
-          'Name must be valid'
+        v => !!v || 'Last name is required'
       ],
       filter (item, queryText, itemText) {
         const hasValue = val => val != null ? val : '';
