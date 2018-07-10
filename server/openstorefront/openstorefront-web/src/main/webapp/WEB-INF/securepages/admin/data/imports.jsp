@@ -1746,12 +1746,14 @@
 								}
 							},
 							{
+								requiredPermissions: ['ADMIN-DATA-IMPORT-EXPORT'],
 								xtype: 'tbseparator'
 							},
 							{					
 								text: 'Import',								
 								scale: 'medium',
 								width: '120px',
+								requiredPermissions: ['ADMIN-DATA-IMPORT-EXPORT'],
 								iconCls: 'fa fa-2x fa-upload icon-vertical-correction-view icon-button-color-default',
 								handler: function () {
 									importWindow.show();
