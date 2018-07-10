@@ -218,9 +218,6 @@
 						{text: 'Update Date', dataIndex: 'updateDts', width: 200, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 					],
 					listeners: {
-						itemdblclick: function (grid, record, item, index, e, opts) {
-							actionEdit(record);
-						},
 						selectionchange: function (selModel, selected, opts) {
 							var tools = Ext.getCmp('faqGrid').getComponent('tools');
 
