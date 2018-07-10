@@ -15,12 +15,17 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +37,9 @@ import org.apache.commons.lang3.StringUtils;
 public class MediaFile
 		extends BaseEntity<MediaFile>
 {
+
+	private static final long serialVersionUID = 1L;
+
 	@PK(generated = true)
 	@NotNull
 	private String mediaFileId;
@@ -51,7 +59,7 @@ public class MediaFile
 	private MediaFileType fileType;
 
 	/**
-	 * Get the path to the file on disk. 
+	 * Get the path to the file on disk.
 	 *
 	 * @return Path or null if this doesn't represent a disk resource
 	 */
@@ -63,6 +71,37 @@ public class MediaFile
 			path = Paths.get(this.getFileType().getPath() + "/" + getFileName());
 		}
 		return path;
+	}
+
+	/**
+	 * This copy the file and create a new record
+	 *
+	 * @return a new Media file (Note it's not persist to the db)
+	 */
+	public MediaFile copy()
+	{
+		MediaFile newMedia = new MediaFile();
+
+		newMedia.setMediaFileId(StringProcessor.uniqueId());
+		newMedia.setMimeType(this.getMimeType());
+		newMedia.setFileName(StringProcessor.uniqueId() + OpenStorefrontConstant.getFileExtensionForMime(this.getMimeType()));
+		newMedia.setOriginalName(this.getOriginalName());
+
+		newMedia.setFileType(MediaFileType.MEDIA);
+
+		Path newPath = Paths.get(MediaFileType.MEDIA.getPath(), newMedia.getFileName());
+		try {
+			Files.copy(this.path(), newPath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException(
+					"Unable to copy media.",
+					"Old Path: " + this.path()
+					+ " New Path: " + newPath,
+					ex
+			);
+		}
+
+		return newMedia;
 	}
 
 	@Override
@@ -152,19 +191,11 @@ public class MediaFile
 		this.mimeType = mimeType;
 	}
 
-	/**
-	 *
-	 * @return
-	 */
 	public MediaFileType getFileType()
 	{
 		return fileType;
 	}
 
-	/**
-	 *
-	 * @param fileType
-	 */
 	public void setFileType(MediaFileType fileType)
 	{
 		this.fileType = fileType;

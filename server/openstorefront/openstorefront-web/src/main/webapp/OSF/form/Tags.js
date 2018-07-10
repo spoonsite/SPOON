@@ -34,7 +34,6 @@ Ext.define('OSF.form.Tags', {
 		var actionAddTag = function(form) {				
 			var data = form.getValues();
 			var componentId = tagPanel.componentId;
-
 			CoreUtil.submitForm({
 				url: 'api/v1/resource/components/' + componentId + '/tags',
 				method: 'POST',
@@ -49,6 +48,9 @@ Ext.define('OSF.form.Tags', {
 		
 		tagPanel.tagGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [			
 					{

@@ -15,11 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
+/* global Ext */
+
 Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-csf-templateprogresspanel',
 
-	title: 'Template Progress (<i style="color:red;" class="fa fa-lg fa-close"></i> Incomplete)',
+	title: 'Mappable Fields',
 	layout: 'fit',
 
 	initComponent: function () {
@@ -30,7 +32,9 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 		var items = [
 			{
 				xtype: 'grid',	
+				itemId: 'grid',
 				border: true,
+				columnLines: true,
 				columns: [
 					{text: 'mapped', dataIndex: 'mapped', align: 'center', width: 75,
 						renderer: function(value) {
@@ -49,7 +53,7 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 						align: 'center',
 						flex: 4,
 						renderer: function (value) {
-							if (value === 'Required') {
+							if (value) {
 								return '<i style="color:red;" class="fa fa-check" aria-hidden="true"></i>';
 							}
 							return '';
@@ -72,6 +76,10 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 
 										case 'textarea':
 											iconString += '<i class="fa fa-align-left" aria-hidden="true" data-qtip="Long Answer"></i>&nbsp;&nbsp;';
+											break;
+
+										case 'date':
+											iconString += '<i class="fa fa-calendar" aria-hidden="true" data-qtip="Calendar"></i>&nbsp;&nbsp;';
 											break;
 
 										case 'radio':
@@ -103,23 +111,154 @@ Ext.define('OSF.customSubmissionTool.TemplateProgressPanel', {
 				features: [{ ftype: 'grouping' }],
 				store: Ext.create('Ext.data.Store', {
 					sortInfo: { field: "required", direction: "ASC" },
-					groupField: 'entity',
-					data: [
-						{entity: 'Entry', field: 'Description', required: 'Required', mapped: true, fieldTypes: ['textarea','textfield']},									
-						{entity: 'Entry', field: 'Entry Type', required: 'Required', mapped: true, fieldTypes: ['dropdown','radio','checkbox']},
-						{entity: 'Entry', field: 'Name', required: 'Required', mapped: false, fieldTypes: ['textarea','textfield']},
-						{entity: 'Entry', field: 'GUID', required: 'Not Required', mapped: false, fieldTypes: ['grid']},
-						{entity: 'Entry', field: 'Version', required: 'Not Required', mapped: false, fieldTypes: ['checkbox', 'radio', 'grid']},
-						{entity: 'Contact', field: 'First Name', required: 'Required', mapped: false, fieldTypes: ['radio','dropdown','checkbox']},
-						{entity: 'Contact', field: 'Last Name', required: 'Required', mapped: true, fieldTypes: ['grid', 'radio']}
-					],
+					groupField: 'entity',					
 					fields: ['nameMapping', 'required']
 				})
 			}
 		];
 		templateProgressPanel.add(items);
+		templateProgressPanel.updateTemplateProgress();
 		
+	},
+	getMappableFieldForName: function(fieldName) {
+		var templateProgressPanel = this;
+		
+		var foundRecord;
+		
+		var grid = templateProgressPanel.queryById('grid');		
+		grid.getStore().each(function(item){
+			if (item.get('field') === fieldName) {
+				foundRecord = item;
+			}
+		});
+		return foundRecord;
+	},	
+	updateTemplateProgress: function(){
+		//assumes the template has been set.
+		var templateProgressPanel = this;
+		
+		var updateProgress = function() {
+			var grid = templateProgressPanel.queryById('grid');
+			
+			grid.getStore().each(function(record){
+				record.set('mapped', false, {
+					dirty: false
+				});
+			});
+			
+			grid.getStore().each(function(record){
+				Ext.Array.each(templateProgressPanel.templateRecord.sections, function(section) {
+					Ext.Array.each(section.fields, function(field) {
+						if (record.get('field') === field.fieldName) {
+							record.set('mapped', true, {
+								dirty: false
+							});
+						} 
+					});								
+				});
+				
+			});
+			
+		};
+		
+		if (!templateProgressPanel.componentMeta) {
+			
+			templateProgressPanel.setLoading(true);
+			Ext.Ajax.request({
+				url: 'api/v1/service/metadata/Component',
+				callback: function() {
+					templateProgressPanel.setLoading(false);
+				},
+				success: function(response, opts) {
+					templateProgressPanel.componentMeta = Ext.decode(response.responseText);
+					
+					var fields = [];
+					Ext.Array.each(templateProgressPanel.componentMeta.fieldModels, function(model){
+						
+						var consumeField = false;
+						Ext.Array.each(model.constraints, function(constraint) {
+							if (constraint.name === 'ConsumeField') {
+								consumeField = true;
+							}
+						});
+						
+						if (consumeField && 
+								model.name !== 'componentType' &&
+								model.name !== 'approvalState' &&
+								model.name !== 'changeApprovalMode' &&
+								model.name !== 'dataSource' &&
+								model.name !== 'securityMarkingType' &&
+								model.name !== 'dataSensitivity' &&
+								model.name !== 'externalId' &&
+								model.name !== 'guid' &&
+								model.name !== 'notifyOfApprovalEmail'
+							) {
+							var required = false;
+							Ext.Array.each(model.constraints, function(constraint) {
+								if (constraint.name === 'NotNull') {
+									required = true;
+								}
+							});
+							
+							var mapped = false;							
+							Ext.Array.each(templateProgressPanel.templateRecord.sections, function(section) {
+								Ext.Array.each(section.fields, function(field) {
+									if (model.name === field.fieldName) {
+										mapped = true;
+									}
+								});								
+							});
+							
+							
+							var fieldTypes = [];
+							if (model.type === 'String') {
+								fieldTypes.push('textfield');
+								fieldTypes.push('textarea');
+							} else if (model.type === 'Date') {
+								fieldTypes.push('date');								
+							}							
+							
+							fields.push({
+								entity: 'Component',
+								field: model.name,
+								required: required,
+								mapped: mapped,
+								fieldTypes: fieldTypes 
+							});
+						}
+						
+					});	
+					
+					templateProgressPanel.queryById('grid').getStore().add(fields);
+				}
+			});
+			
+		} else {
+			updateProgress();
+		}
+		
+	},
+
+	removeMapping: function(mapping){
+		var templateProgressPanel = this;
+		var grid = templateProgressPanel.queryById('grid');
+		var record = grid.getStore().queryRecords('field',mapping)[0];
+		record.set('mapped', false, {
+			dirty: false
+		});
+	},
+
+	getAvaliableMappableFields: function() {
+		var templateProgressPanel = this;
+		
+		var records = [];		
+		templateProgressPanel.queryById('grid').getStore().each(function(record){
+			if (!record.get('mapped')) {
+				records.push(record.copy());
+			}
+		});
+		
+		return records;
 	}
-	
 	
 });

@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author dshurtleff
  * @author cyearsley
- * 
+ *
  */
 @SystemTable
 @APIDescription("Defines Security Permissions")
@@ -82,7 +82,6 @@ public class SecurityPermission
 	public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
 
 	// ========================================================================================================================
-	
 	// Alerts
 	public static final String GROUPBY_ALERT = "Alerts";
 	public static final String ADMIN_ALERTS_PAGE = "ADMIN-ALERTS-PAGE";
@@ -100,7 +99,7 @@ public class SecurityPermission
 	public static final String ADMIN_ATTRIBUTE_PAGE = "ADMIN-ATTRIBUTE-PAGE";
 	public static final String ADMIN_ATTRIBUTE_MANAGEMENT_CREATE = "ADMIN-ATTRIBUTE-MANAGEMENT-CREATE";
 	public static final String ADMIN_ATTRIBUTE_MANAGEMENT_UPDATE = "ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE";
-	public static final String ADMIN_ATTRIBUTE_MANAGEMENT_DELETE = "ADMIN-ATTRIBUTE-MANAGEMENT-DELETE"; 
+	public static final String ADMIN_ATTRIBUTE_MANAGEMENT_DELETE = "ADMIN-ATTRIBUTE-MANAGEMENT-DELETE";
 	public static final String ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT = "ADMIN-COMPONENT-ATTRIBUTE-MANAGEMENT";
 
 	// Branding
@@ -109,7 +108,7 @@ public class SecurityPermission
 	public static final String ADMIN_BRANDING_CREATE = "ADMIN-BRANDING-CREATE";
 	public static final String ADMIN_BRANDING_UPDATE = "ADMIN-BRANDING-UPDATE";
 	public static final String ADMIN_BRANDING_DELETE = "ADMIN-BRANDING-DELETE";
-	
+
 	// Contacts
 	public static final String GROUPBY_CONTACT = "Contacts";
 	public static final String ADMIN_CONTACTS_PAGE = "ADMIN-CONTACTS-PAGE";
@@ -145,7 +144,7 @@ public class SecurityPermission
 	public static final String ADMIN_ENTRY_MERGE = "ADMIN-ENTRY-MERGE";
 	public static final String ADMIN_ENTRY_VERSION_DELETE = "ADMIN-ENTRY-VERSION-DELETE";
 	public static final String ADMIN_ENTRY_VERSION_READ = "ADMIN-ENTRY-VERSION-READ";
-	public static final String ADMIN_ENTRY_VERSION_CREATE = "ADMIN-ENTRY-VERSION-CREATE"; 
+	public static final String ADMIN_ENTRY_VERSION_CREATE = "ADMIN-ENTRY-VERSION-CREATE";
 	public static final String ADMIN_ENTRY_VERSION_RESTORE = "ADMIN-ENTRY-VERSION-RESTORE";
 	public static final String ADMIN_ENTRY_APPROVE = "ADMIN-ENTRY-APPROVE";
 	public static final String ADMIN_ENTRY_CHANGETYPE = "ADMIN-ENTRY-CHANGETYPE";
@@ -177,7 +176,7 @@ public class SecurityPermission
 	public static final String ADMIN_ENTRY_TYPES_CREATE = "ADMIN-ENTRY-TYPES-CREATE";
 	public static final String ADMIN_ENTRY_TYPES_UPDATE = "ADMIN-ENTRY-TYPES-UPDATE";
 	public static final String ADMIN_ENTRY_TYPES_DELETE = "ADMIN-ENTRY-TYPES-DELETE";
-	
+
 	//Evaluation Templates
 	public static final String GROUPBY_EVALUATION_TEMPLATE = "Evaluation Templates";
 	public static final String ADMIN_EVAL_TEMPLATES_PAGE = "ADMIN-EVAL-TEMPLATES-PAGE";
@@ -201,7 +200,7 @@ public class SecurityPermission
 	public static final String ADMIN_EVALUATION_TEMPLATE_CHECKLIST_CREATE = "ADMIN-EVALUATION-TEMPLATE-CHECKLIST-CREATE";
 	public static final String ADMIN_EVALUATION_TEMPLATE_CHECKLIST_UPDATE = "ADMIN-EVALUATION-TEMPLATE-CHECKLIST-UPDATE";
 	public static final String ADMIN_EVALUATION_TEMPLATE_CHECKLIST_DELETE = "ADMIN-EVALUATION-TEMPLATE-CHECKLIST-DELETE";
-	
+
 	//Evaluation Templates Sections
 	public static final String GROUPBY_EVALUATION_TEMPLATE_SECTION = "Evaluation Templates Sections";
 	public static final String ADMIN_EVAL_SECTION_PAGE = "ADMIN-EVAL-SECTION-PAGE";
@@ -227,7 +226,7 @@ public class SecurityPermission
 	public static final String EVAL_PAGE = "EVAL-PAGE";
 	public static final String USER_EVALUATIONS_READ = "USER-EVALUATIONS-READ";
 	public static final String USER_EVALUATIONS_UPDATE = "USER-EVALUATIONS-UPDATE";
-	public static final String USER_EVALUATIONS_ASSIGN_USER = "USER-EVALUATIONS-ASSIGN-USER";	
+	public static final String USER_EVALUATIONS_ASSIGN_USER = "USER-EVALUATIONS-ASSIGN-USER";
 
 	// FAQ
 	public static final String GROUPBY_FAQ = "FAQs";
@@ -236,7 +235,7 @@ public class SecurityPermission
 	public static final String ADMIN_FAQ_CREATE = "ADMIN-FAQ-CREATE";
 	public static final String ADMIN_FAQ_UPDATE = "ADMIN-FAQ-UPDATE";
 	public static final String ADMIN_FAQ_DELETE = "ADMIN-FAQ-DELETE";
-	
+
 	// Feedback
 	public static final String GROUPBY_FEEDBACK = "Feedback";
 	public static final String ADMIN_FEEDBACK_PAGE = "ADMIN-FEEDBACK-PAGE";
@@ -275,7 +274,7 @@ public class SecurityPermission
 	public static final String ADMIN_JOB_MANAGEMENT_READ = "ADMIN-JOB-MANAGEMENT-READ";
 	public static final String ADMIN_JOB_MANAGEMENT_ACTION = "ADMIN-JOB-MANAGEMENT-ACTION";
 	public static final String ADMIN_JOB_MANAGEMENT_DELETE = "ADMIN-JOB-MANAGEMENT-DELETE";
-	
+
 	// Lookups
 	public static final String GROUPBY_LOOKUP = "Lookups";
 	public static final String ADMIN_LOOKUPS_PAGE = "ADMIN-LOOKUPS-PAGE";
@@ -304,8 +303,8 @@ public class SecurityPermission
 	public static final String ADMIN_MESSAGE_MANAGEMENT_UPDATE = "ADMIN-MESSAGE-MANAGEMENT-UPDATE";
 	public static final String ADMIN_MESSAGE_MANAGEMENT_DELETE = "ADMIN-MESSAGE-MANAGEMENT-DELETE";
 
-	//Notification Events 
-    public static final String GROUPBY_NOTIFICATION_EVENT_MANAGEMENT = "Notification Events";
+	//Notification Events
+	public static final String GROUPBY_NOTIFICATION_EVENT_MANAGEMENT = "Notification Events";
 	public static final String ADMIN_NOTIFICATION_EVENT_CREATE = "ADMIN-NOTIFICATION-EVENT-CREATE";
 	public static final String ADMIN_NOTIFICATION_EVENT_DELETE = "ADMIN-NOTIFICATION-EVENT-DELETE";
 
@@ -318,14 +317,14 @@ public class SecurityPermission
 	public static final String ADMIN_ORGANIZATION_MERGE = "ADMIN-ORGANIZATION-MERGE";
 	public static final String ADMIN_ORGANIZATION_EXTRACTION = "ADMIN-ORGANIZATION-EXTRACTION";
 
-	// Profile Management 
+	// Profile Management
 	public static final String GROUPBY_PROFILE_MANAGEMENT = "Profile Management";
 	public static final String USER_PROFILE_PAGE = "USER-PROFILE-PAGE";
 	public static final String ADMIN_USERPROFILES_PAGE = "ADMIN-USERPROFILES-PAGE";
 	public static final String ADMIN_USER_MANAGEMENT_PROFILES_READ = "ADMIN-USER-MANAGEMENT-PROFILES-READ";
 	public static final String ADMIN_USER_MANAGEMENT_PROFILES_UPDATE = "ADMIN-USER-MANAGEMENT-PROFILES-UPDATE";
 	public static final String ADMIN_USER_MANAGEMENT_PROFILES_DELETE = "ADMIN-USER-MANAGEMENT-PROFILES-DELETE";
-	
+
 	// Questions
 	public static final String GROUPBY_QUESTION = "Questions";
 	public static final String USER_QUESTIONS_PAGE = "USER-QUESTIONS-PAGE";
@@ -384,7 +383,7 @@ public class SecurityPermission
 	public static final String ADMIN_SEARCH_CREATE = "ADMIN-SEARCH-CREATE";
 	public static final String ADMIN_SEARCH_UPDATE = "ADMIN-SEARCH-UPDATE";
 	public static final String ADMIN_SEARCH_DELETE = "ADMIN-SEARCH-DELETE";
-	
+
 	//Security
 	public static final String GROUPBY_ADMIN_SECURITY = "Security";
 	public static final String ADMIN_SECURITY_PAGE = "ADMIN-SECURITY-PAGE";
@@ -393,8 +392,7 @@ public class SecurityPermission
 
 	//Submissions (Admin)
 	public static final String GROUPBY_ADMIN_USER_SUBMISSION = "Submissions (Admin)";
-	public static final String ADMIN_PARTIAL_SUBMISSIONS_PAGE ="ADMIN-PARTIAL-SUBMISSIONS-PAGE";
-	public static final String ADMIN_SUBMISSION_FORM_SANDBOX_PAGE = "ADMIN-SUBMISSION-FORM-SANDBOX-PAGE";
+	public static final String ADMIN_PARTIAL_SUBMISSIONS_PAGE = "ADMIN-PARTIAL-SUBMISSIONS-PAGE";
 	public static final String ADMIN_SUBMISSION_FORM_TEMPLATE_PAGE = "ADMIN-SUBMISSION-FORM-TEMPLATE_PAGE";
 	public static final String ADMIN_USER_SUBMISSIONS_READ = "ADMIN-USER-SUBMISSIONS-READ";
 	public static final String ADMIN_USER_SUBMISSIONS_UPDATE = "ADMIN-USER-SUBMISSIONS-UPDATE";
@@ -445,8 +443,8 @@ public class SecurityPermission
 	public static final String ADMIN_TRACKING_READ = "ADMIN-TRACKING-READ";
 	public static final String ADMIN_TRACKING_UPDATE = "ADMIN-TRACKING-UPDATE";
 	public static final String ADMIN_TRACKING_DELETE = "ADMIN-TRACKING-DELETE";
-	
-    //Users (Admin)
+
+	//Users (Admin)
 	public static final String GROUPBY_USER_MANAGEMENT = "User Managment";
 	public static final String ADMIN_USER_MANAGEMENT_PAGE = "ADMIN-USER-MANAGEMENT-PAGE";
 	public static final String ADMIN_USER_MANAGEMENT_READ = "ADMIN-USER-MANAGEMENT-READ";
@@ -462,7 +460,6 @@ public class SecurityPermission
 	public static final String ADMIN_WATCHES_UPDATE = "ADMIN-WATCHES-UPDATE";
 	public static final String ADMIN_WATCHES_READ = "ADMIN-WATCHES-READ";
 
-
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
@@ -474,10 +471,10 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ALERT_MANAGEMENT_CREATE, newLookup(SecurityPermission.class, ADMIN_ALERT_MANAGEMENT_CREATE, "Gives ability to create new alerts", null, GROUPBY_ALERT, ADMIN_ALERT_MANAGEMENT_READ));
 		codeMap.put(ADMIN_ALERT_MANAGEMENT_UPDATE, newLookup(SecurityPermission.class, ADMIN_ALERT_MANAGEMENT_UPDATE, "Gives ability to update existing alerts", null, GROUPBY_ALERT, ADMIN_ALERT_MANAGEMENT_READ));
 		codeMap.put(ADMIN_ALERT_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_ALERT_MANAGEMENT_DELETE, "Give ability to delete alerts", null, GROUPBY_ALERT, ADMIN_ALERT_MANAGEMENT_READ));
-		
+
 		//API
 		codeMap.put(ADMIN_API_PAGE, newLookup(SecurityPermission.class, ADMIN_API_PAGE, "Give ability to see API docs", null, GROUPBY_API, null));
-		
+
 		//Attributes
 		codeMap.put(ADMIN_ATTRIBUTE_PAGE, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_PAGE, "Provides access to the admin attribute page", null, GROUPBY_ATTRIBUTE, null));
 		codeMap.put(ADMIN_ATTRIBUTE_MANAGEMENT_CREATE, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_MANAGEMENT_CREATE, "Gives ability to create new attributes", null, GROUPBY_ATTRIBUTE, null));
@@ -490,7 +487,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_BRANDING_CREATE, newLookup(SecurityPermission.class, ADMIN_BRANDING_CREATE, "Gives ability to create new brandings", null, GROUPBY_BRANDING, null));
 		codeMap.put(ADMIN_BRANDING_UPDATE, newLookup(SecurityPermission.class, ADMIN_BRANDING_UPDATE, "Gives ability to update brandings", null, GROUPBY_BRANDING, null));
 		codeMap.put(ADMIN_BRANDING_DELETE, newLookup(SecurityPermission.class, ADMIN_BRANDING_DELETE, "Gives ability to delete brandings", null, GROUPBY_BRANDING, null));
-		
+
 		// Contacts
 		codeMap.put(ADMIN_CONTACTS_PAGE, newLookup(SecurityPermission.class, ADMIN_CONTACTS_PAGE, "Provides access to the admin contacts page", null, GROUPBY_CONTACT, null));
 		codeMap.put(ADMIN_CONTACT_MANAGEMENT_CREATE, newLookup(SecurityPermission.class, ADMIN_CONTACT_MANAGEMENT_CREATE, "Gives ability to create contacts", null, GROUPBY_CONTACT, null));
@@ -512,7 +509,7 @@ public class SecurityPermission
 		codeMap.put(DASHBOARD_WIDGET_SYSTEM_STATUS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_SYSTEM_STATUS, "Allows user to view the System Status widget (only effects UI)", null, GROUPBY_DASHBOARD, null));
 		codeMap.put(DASHBOARD_WIDGET_USER_STATS, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_USER_STATS, "Allows user to view the User Stats widget (only effects UI)", null, GROUPBY_DASHBOARD, null));
 		codeMap.put(DASHBOARD_WIDGET_WATCHES, newLookup(SecurityPermission.class, DASHBOARD_WIDGET_WATCHES, "Allows user to view the Watches widget (only effects UI)", null, GROUPBY_DASHBOARD, null));
-		
+
 		// Entry Management
 		codeMap.put(ADMIN_ENTRIES_PAGE, newLookup(SecurityPermission.class, ADMIN_ENTRIES_PAGE, "Provides access to the admin entry page", null, GROUPBY_ENTRY_MANAGEMENT, null));
 		codeMap.put(ADMIN_ENTRY_READ, newLookup(SecurityPermission.class, ADMIN_ENTRY_READ, "Allows admin to read entries", null, GROUPBY_ENTRY_MANAGEMENT, null));
@@ -540,20 +537,20 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ENTRY_EXPORT, newLookup(SecurityPermission.class, ADMIN_ENTRY_EXPORT, "Allows admin to export an entry", null, GROUPBY_ENTRY_MANAGEMENT, ADMIN_ENTRY_READ));
 		codeMap.put(ADMIN_ENTRY_PENDINGCHANGE_READ, newLookup(SecurityPermission.class, ADMIN_ENTRY_PENDINGCHANGE_READ, "Allows admin to read pending changes", null, GROUPBY_ENTRY_MANAGEMENT, ADMIN_ENTRY_READ));
 		codeMap.put(ADMIN_ENTRY_ASSIGNUSER, newLookup(SecurityPermission.class, ADMIN_ENTRY_ASSIGNUSER, "Allows admin to assign libarian to a component", null, GROUPBY_ENTRY_MANAGEMENT, ADMIN_ENTRY_READ));
-		
+
 		// Entry Templates
 		codeMap.put(ADMIN_ENTRYTEMPLATES_PAGE, newLookup(SecurityPermission.class, ADMIN_ENTRYTEMPLATES_PAGE, "Provides access to the entry templates page", null, GROUPBY_ENTRY_TEMPLATES, null));
 		codeMap.put(ADMIN_ENTRY_TEMPLATES_READ, newLookup(SecurityPermission.class, ADMIN_ENTRY_TEMPLATES_READ, "Allows for the user to read entry templates", null, GROUPBY_ENTRY_TEMPLATES, null));
 		codeMap.put(ADMIN_ENTRY_TEMPLATES_CREATE, newLookup(SecurityPermission.class, ADMIN_ENTRY_TEMPLATES_CREATE, "Allows for the creation of entry templates", null, GROUPBY_ENTRY_TEMPLATES, ADMIN_ENTRY_TEMPLATES_READ));
 		codeMap.put(ADMIN_ENTRY_TEMPLATES_UPDATE, newLookup(SecurityPermission.class, ADMIN_ENTRY_TEMPLATES_UPDATE, "Allows the user to update entry templates", null, GROUPBY_ENTRY_TEMPLATES, ADMIN_ENTRY_TEMPLATES_READ));
 		codeMap.put(ADMIN_ENTRY_TEMPLATES_DELETE, newLookup(SecurityPermission.class, ADMIN_ENTRY_TEMPLATES_DELETE, "Allows the user to delete an entry template", null, GROUPBY_ENTRY_TEMPLATES, ADMIN_ENTRY_TEMPLATES_READ));
-		
+
 		// Entry Types
-		codeMap.put(ADMIN_ENTRYTYPE_PAGE, newLookup(SecurityPermission.class, ADMIN_ENTRYTYPE_PAGE, "Provides access to the admin entry types page", null, GROUPBY_ENTRY_TYPES, null));		
+		codeMap.put(ADMIN_ENTRYTYPE_PAGE, newLookup(SecurityPermission.class, ADMIN_ENTRYTYPE_PAGE, "Provides access to the admin entry types page", null, GROUPBY_ENTRY_TYPES, null));
 		codeMap.put(ADMIN_ENTRY_TYPES_CREATE, newLookup(SecurityPermission.class, ADMIN_ENTRY_TYPES_CREATE, "Allows for the creation of entry types", null, GROUPBY_ENTRY_TYPES, null));
 		codeMap.put(ADMIN_ENTRY_TYPES_UPDATE, newLookup(SecurityPermission.class, ADMIN_ENTRY_TYPES_UPDATE, "Allows for the ability to update entry types", null, GROUPBY_ENTRY_TYPES, null));
 		codeMap.put(ADMIN_ENTRY_TYPES_DELETE, newLookup(SecurityPermission.class, ADMIN_ENTRY_TYPES_DELETE, "Allow for deleting entry types", null, GROUPBY_ENTRY_TYPES, null));
-		
+
 		//Evaluation Template
 		codeMap.put(ADMIN_EVAL_TEMPLATES_PAGE, newLookup(SecurityPermission.class, ADMIN_EVAL_TEMPLATES_PAGE, "Provides access to the Evaluation Templates page", null, GROUPBY_EVALUATION_TEMPLATE, null));
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_READ, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_READ, "Gives the ability to read evaluation templates", null, GROUPBY_EVALUATION_TEMPLATE, null));
@@ -567,14 +564,14 @@ public class SecurityPermission
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_CREATE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_CREATE, "Provides the ability to create eval template checklist questions", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ));
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_UPDATE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_UPDATE, "Provides the ability to update eval template checklist questions", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ));
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_DELETE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_DELETE, "Provides the ability to delete eval template checklist question items", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ));
-		
+
 		//Evaluation Template Checklist
 		codeMap.put(ADMIN_EVAL_CHECKLIST_TEMPLATES_PAGE, newLookup(SecurityPermission.class, ADMIN_EVAL_CHECKLIST_TEMPLATES_PAGE, "Provides access to the Evaluation Checklist Templates page", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST, null));
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_READ, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_READ, "Gives the ability to read eval template checklist items", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST, null));
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_CREATE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_CREATE, "Gives the ability to create eval template checklist items", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_READ));
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_UPDATE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_UPDATE, "Gives the ability to update eval template checklist items", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_READ));
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_DELETE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_DELETE, "Gives the ability to delete a eval template checklist item", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_READ));
-		
+
 		//Evaluation Template Section
 		codeMap.put(ADMIN_EVAL_SECTION_PAGE, newLookup(SecurityPermission.class, ADMIN_EVAL_SECTION_PAGE, "Provides access to the Evaluation Section page", null, GROUPBY_EVALUATION_TEMPLATE_SECTION, null));
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_SECTION_READ, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_SECTION_READ, "Allows for reading eval template sections", null, GROUPBY_EVALUATION_TEMPLATE_SECTION, null));
@@ -605,7 +602,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_FAQ_CREATE, newLookup(SecurityPermission.class, ADMIN_FAQ_CREATE, "Gives ability to creater FAQs", null, GROUPBY_FAQ, ADMIN_FAQ_READ));
 		codeMap.put(ADMIN_FAQ_UPDATE, newLookup(SecurityPermission.class, ADMIN_FAQ_UPDATE, "Allows for update FAQs", null, GROUPBY_FAQ, ADMIN_FAQ_READ));
 		codeMap.put(ADMIN_FAQ_DELETE, newLookup(SecurityPermission.class, ADMIN_FAQ_DELETE, "Allows for deleting FAQs", null, GROUPBY_FAQ, ADMIN_FAQ_READ));
-		
+
 		// Feedback
 		codeMap.put(ADMIN_FEEDBACK_PAGE, newLookup(SecurityPermission.class, ADMIN_FEEDBACK_PAGE, "Provides access to the admin Feedback page", null, GROUPBY_FEEDBACK, null));
 		codeMap.put(ADMIN_FEEDBACK_READ, newLookup(SecurityPermission.class, ADMIN_FEEDBACK_READ, "allows for reading feedback", null, GROUPBY_FEEDBACK, null));
@@ -621,7 +618,7 @@ public class SecurityPermission
 		//Import Export
 		codeMap.put(ADMIN_IMPORT_PAGE, newLookup(SecurityPermission.class, ADMIN_IMPORT_PAGE, "Provides access to the admin Import page", null, GROUPBY_IMPORTEXPORT, null));
 		codeMap.put(ADMIN_DATA_IMPORT_EXPORT, newLookup(SecurityPermission.class, ADMIN_DATA_IMPORT_EXPORT, "export import", null, GROUPBY_IMPORTEXPORT, null));
-		
+
 		//Integrations
 		codeMap.put(ADMIN_INTEGRATION_PAGE, newLookup(SecurityPermission.class, ADMIN_INTEGRATION_PAGE, "Provides access to the Integration page", null, GROUPBY_INTEGRATION, null));
 		codeMap.put(ADMIN_INTEGRATION_READ, newLookup(SecurityPermission.class, ADMIN_INTEGRATION_READ, "Allows for reading integration", null, GROUPBY_INTEGRATION, null));
@@ -639,36 +636,36 @@ public class SecurityPermission
 		codeMap.put(ADMIN_JOB_MANAGEMENT_READ, newLookup(SecurityPermission.class, ADMIN_JOB_MANAGEMENT_READ, "Allows user to read jobs", null, GROUPBY_JOB_MANAGEMENT, null));
 		codeMap.put(ADMIN_JOB_MANAGEMENT_ACTION, newLookup(SecurityPermission.class, ADMIN_JOB_MANAGEMENT_ACTION, "Allows user to perform some action with a job", null, GROUPBY_JOB_MANAGEMENT, ADMIN_JOB_MANAGEMENT_READ));
 		codeMap.put(ADMIN_JOB_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_JOB_MANAGEMENT_DELETE, "Allows user to remove a job", null, GROUPBY_JOB_MANAGEMENT, ADMIN_JOB_MANAGEMENT_READ));
-		
+
 		// Lookups
 		codeMap.put(ADMIN_LOOKUPS_PAGE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_PAGE, "Provides access to the Lookups page", null, GROUPBY_LOOKUP, null));
 		codeMap.put(ADMIN_LOOKUPS_READ, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_READ, "Provides the ability to read lookups", null, GROUPBY_LOOKUP, null));
 		codeMap.put(ADMIN_LOOKUPS_CREATE_CODE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_CREATE_CODE, "Provides the ability to create lookups", null, GROUPBY_LOOKUP, ADMIN_LOOKUPS_READ));
 		codeMap.put(ADMIN_LOOKUPS_UPDATE_CODE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_UPDATE_CODE, "Provides the ability to update a lookup(s)", null, GROUPBY_LOOKUP, ADMIN_LOOKUPS_READ));
 		codeMap.put(ADMIN_LOOKUPS_DELETE_CODE, newLookup(SecurityPermission.class, ADMIN_LOOKUPS_DELETE_CODE, "Provides the ability to delete lookups", null, GROUPBY_LOOKUP, ADMIN_LOOKUPS_READ));
-		
+
 		//Media
 		codeMap.put(ADMIN_MEDIA_PAGE, newLookup(SecurityPermission.class, ADMIN_MEDIA_PAGE, "Provides access to the admin Media page", null, GROUPBY_MEDIA, null));
 		codeMap.put(ADMIN_SUPPORTMEDIA_PAGE, newLookup(SecurityPermission.class, ADMIN_SUPPORTMEDIA_PAGE, "Provides access to the Support Media page", null, GROUPBY_MEDIA, null));
-		codeMap.put(ADMIN_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_MEDIA_DELETE, "Allows for deleting media", null, GROUPBY_MEDIA, null));	
-		codeMap.put(ADMIN_MEDIA_UPLOAD, newLookup(SecurityPermission.class, ADMIN_MEDIA_UPLOAD, "Allows for uploading media", null, GROUPBY_MEDIA, null));		
+		codeMap.put(ADMIN_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_MEDIA_DELETE, "Allows for deleting media", null, GROUPBY_MEDIA, null));
+		codeMap.put(ADMIN_MEDIA_UPLOAD, newLookup(SecurityPermission.class, ADMIN_MEDIA_UPLOAD, "Allows for uploading media", null, GROUPBY_MEDIA, null));
 		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT_READ, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT_READ, "Provides the ability to read temp media", null, GROUPBY_MEDIA, null));
 		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT_DELETE, "Provides the ability to delete temp media", null, GROUPBY_MEDIA, null));
 		codeMap.put(ADMIN_SUPPORT_MEDIA_CREATE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_CREATE, "Allows for the uploading of support medias", null, GROUPBY_MEDIA, null));
- 		codeMap.put(ADMIN_SUPPORT_MEDIA_UPDATE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_UPDATE, "Allows for updating support medias", null, GROUPBY_MEDIA, null));
+		codeMap.put(ADMIN_SUPPORT_MEDIA_UPDATE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_UPDATE, "Allows for updating support medias", null, GROUPBY_MEDIA, null));
 		codeMap.put(ADMIN_SUPPORT_MEDIA_DELETE, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA_DELETE, "Allows for the deletion of support medias", null, GROUPBY_MEDIA, null));
-		
+
 		// Message Management
 		codeMap.put(ADMIN_MESSAGES_PAGE, newLookup(SecurityPermission.class, ADMIN_MESSAGES_PAGE, "Provides access to the admin Messages/Notification page", null, GROUPBY_MESSAGE_MANAGEMENT, null));
 		codeMap.put(ADMIN_MESSAGE_MANAGEMENT_READ, newLookup(SecurityPermission.class, ADMIN_MESSAGE_MANAGEMENT_READ, "Allows for the ability to read notification data", null, GROUPBY_MESSAGE_MANAGEMENT, null));
 		codeMap.put(ADMIN_MESSAGE_MANAGEMENT_CREATE, newLookup(SecurityPermission.class, ADMIN_MESSAGE_MANAGEMENT_CREATE, "Allows for the ability to post a new notification event", null, GROUPBY_MESSAGE_MANAGEMENT, ADMIN_MESSAGE_MANAGEMENT_READ));
 		codeMap.put(ADMIN_MESSAGE_MANAGEMENT_UPDATE, newLookup(SecurityPermission.class, ADMIN_MESSAGE_MANAGEMENT_UPDATE, "Allow for updating a notification event", null, GROUPBY_MESSAGE_MANAGEMENT, ADMIN_MESSAGE_MANAGEMENT_READ));
 		codeMap.put(ADMIN_MESSAGE_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_MESSAGE_MANAGEMENT_DELETE, "Allows for deleting a notification event", null, GROUPBY_MESSAGE_MANAGEMENT, ADMIN_MESSAGE_MANAGEMENT_READ));
-		
+
 		// Notification Events
 		codeMap.put(ADMIN_NOTIFICATION_EVENT_CREATE, newLookup(SecurityPermission.class, ADMIN_NOTIFICATION_EVENT_CREATE, "Allows for the ability to post a new notification event", null, GROUPBY_NOTIFICATION_EVENT_MANAGEMENT, null));
 		codeMap.put(ADMIN_NOTIFICATION_EVENT_DELETE, newLookup(SecurityPermission.class, ADMIN_NOTIFICATION_EVENT_DELETE, "Allows for deleting a notification event", null, GROUPBY_NOTIFICATION_EVENT_MANAGEMENT, null));
-		
+
 		// Organization
 		codeMap.put(ADMIN_ORGANIZATION_PAGE, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_PAGE, "Provides access to the admin Organization page", null, GROUPBY_ORGANIZATION, null));
 		codeMap.put(ADMIN_ORGANIZATION_CREATE, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_CREATE, "Allows for creating orgs", null, GROUPBY_ORGANIZATION, null));
@@ -676,7 +673,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ORGANIZATION_DELETE, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_DELETE, "Allows for deleting organizations", null, GROUPBY_ORGANIZATION, null));
 		codeMap.put(ADMIN_ORGANIZATION_MERGE, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_MERGE, "Allows for merging two organizations", null, GROUPBY_ORGANIZATION, null));
 		codeMap.put(ADMIN_ORGANIZATION_EXTRACTION, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION_EXTRACTION, "Allows for organization extraction", null, GROUPBY_ORGANIZATION, null));
-		
+
 		// Profile Management
 		codeMap.put(USER_PROFILE_PAGE, newLookup(SecurityPermission.class, USER_PROFILE_PAGE, "Provides access to the Profile page", null, GROUPBY_PROFILE_MANAGEMENT, null));
 		codeMap.put(ADMIN_USERPROFILES_PAGE, newLookup(SecurityPermission.class, ADMIN_USERPROFILES_PAGE, "Provides access to the admin User Profiles page", null, GROUPBY_PROFILE_MANAGEMENT, null));
@@ -693,7 +690,7 @@ public class SecurityPermission
 		// Relationships
 		codeMap.put(ADMIN_RELATIONSHIPS_PAGE, newLookup(SecurityPermission.class, ADMIN_RELATIONSHIPS_PAGE, "Provides access to the admin Relationships page", null, GROUPBY_RELATIONSHIPS, null));
 		codeMap.put(USER_RELATIONSHIPS_PAGE, newLookup(SecurityPermission.class, USER_RELATIONSHIPS_PAGE, "Provides access to the Relationships page", null, GROUPBY_RELATIONSHIPS, null));
-		
+
 		// Reports
 		codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "General Reports", null, GROUPBY_REPORTS, null));
 		codeMap.put(REPORTS_SCHEDULE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE, "Reports schedule", null, GROUPBY_REPORTS, REPORTS));
@@ -739,7 +736,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_SEARCH_CREATE, newLookup(SecurityPermission.class, ADMIN_SEARCH_CREATE, "create a search", null, GROUPBY_SEARCH, ADMIN_SEARCH_READ));
 		codeMap.put(ADMIN_SEARCH_UPDATE, newLookup(SecurityPermission.class, ADMIN_SEARCH_UPDATE, "update a search", null, GROUPBY_SEARCH, ADMIN_SEARCH_READ));
 		codeMap.put(ADMIN_SEARCH_DELETE, newLookup(SecurityPermission.class, ADMIN_SEARCH_DELETE, "delete a search", null, GROUPBY_SEARCH, ADMIN_SEARCH_READ));
-		
+
 		//Security
 		codeMap.put(ADMIN_SECURITY_PAGE, newLookup(SecurityPermission.class, ADMIN_SECURITY_PAGE, "Provides access to the admin Security page", null, GROUPBY_ADMIN_SECURITY, null));
 		codeMap.put(ADMIN_SECURITY_POLICY, newLookup(SecurityPermission.class, ADMIN_SECURITY_POLICY, "Access the security policy tab", null, GROUPBY_ADMIN_SECURITY, null));
@@ -747,7 +744,6 @@ public class SecurityPermission
 
 		//Submissions (Admin)
 		codeMap.put(ADMIN_PARTIAL_SUBMISSIONS_PAGE, newLookup(SecurityPermission.class, ADMIN_PARTIAL_SUBMISSIONS_PAGE, "Provides access to the partial submission page", null, GROUPBY_ADMIN_USER_SUBMISSION, null));
-		codeMap.put(ADMIN_SUBMISSION_FORM_SANDBOX_PAGE, newLookup(SecurityPermission.class, ADMIN_SUBMISSION_FORM_SANDBOX_PAGE, "Provides access to the sandbox submission page", null, GROUPBY_ADMIN_USER_SUBMISSION, null));
 		codeMap.put(ADMIN_SUBMISSION_FORM_TEMPLATE_PAGE, newLookup(SecurityPermission.class, ADMIN_SUBMISSION_FORM_TEMPLATE_PAGE, "Provides access to the admin custom submission form template page", null, GROUPBY_ADMIN_USER_SUBMISSION, null));
 		codeMap.put(ADMIN_USER_SUBMISSIONS_READ, newLookup(SecurityPermission.class, ADMIN_USER_SUBMISSIONS_READ, "Allows for reading user submissions", null, GROUPBY_ADMIN_USER_SUBMISSION, null));
 		codeMap.put(ADMIN_USER_SUBMISSIONS_UPDATE, newLookup(SecurityPermission.class, ADMIN_USER_SUBMISSIONS_UPDATE, "Allows for update user submissions", null, GROUPBY_ADMIN_USER_SUBMISSION, ADMIN_USER_SUBMISSIONS_READ));
@@ -788,28 +784,27 @@ public class SecurityPermission
 
 		//Tags
 		codeMap.put(ADMIN_TAGS_PAGE, newLookup(SecurityPermission.class, ADMIN_TAGS_PAGE, "Provides access to the admin Tags page", null, GROUPBY_TAGS, null));
-		
+
 		// Tracking
 		codeMap.put(ADMIN_TRACKING_PAGE, newLookup(SecurityPermission.class, ADMIN_TRACKING_PAGE, "Provides access to the admin Tracking page", null, GROUPBY_TRACKING, null));
 		codeMap.put(ADMIN_TRACKING_READ, newLookup(SecurityPermission.class, ADMIN_TRACKING_READ, "read tracking", null, GROUPBY_TRACKING, null));
 		codeMap.put(ADMIN_TRACKING_UPDATE, newLookup(SecurityPermission.class, ADMIN_TRACKING_UPDATE, "update tracking on an item", null, GROUPBY_TRACKING, ADMIN_TRACKING_READ));
 		codeMap.put(ADMIN_TRACKING_DELETE, newLookup(SecurityPermission.class, ADMIN_TRACKING_DELETE, "delete tracking from an item", null, GROUPBY_TRACKING, ADMIN_TRACKING_READ));
-		
+
 		//Users (Admin)
 		codeMap.put(ADMIN_USER_MANAGEMENT_PAGE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_PAGE, "Provides access to the admin User Management page", null, GROUPBY_USER_MANAGEMENT, null));
 		codeMap.put(ADMIN_USER_MANAGEMENT_READ, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_READ, "Allow admin user submission reading", null, GROUPBY_USER_MANAGEMENT, null));
 		codeMap.put(ADMIN_USER_MANAGEMENT_CREATE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_CREATE, "Allow admin user submission creation", null, GROUPBY_USER_MANAGEMENT, ADMIN_USER_MANAGEMENT_READ));
 		codeMap.put(ADMIN_USER_MANAGEMENT_UPDATE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_UPDATE, "Allow admin user submission updating", null, GROUPBY_USER_MANAGEMENT, ADMIN_USER_MANAGEMENT_READ));
 		codeMap.put(ADMIN_USER_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_DELETE, "Allow admin user submission deleting", null, GROUPBY_USER_MANAGEMENT, ADMIN_USER_MANAGEMENT_READ));
-		
+
 		// Watches
 		codeMap.put(ADMIN_WATCHES_PAGE, newLookup(SecurityPermission.class, ADMIN_WATCHES_PAGE, "Provides access to the admin Watches page", null, GROUPBY_WATCHES, null));
 		codeMap.put(USER_WATCHES_PAGE, newLookup(SecurityPermission.class, USER_WATCHES_PAGE, "Provides access to the Watches page", null, GROUPBY_WATCHES, null));
 		codeMap.put(ADMIN_WATCHES_READ, newLookup(SecurityPermission.class, ADMIN_WATCHES_READ, "ability to read watches", null, GROUPBY_WATCHES, null));
 		codeMap.put(ADMIN_WATCHES_UPDATE, newLookup(SecurityPermission.class, ADMIN_WATCHES_UPDATE, "update watches", null, GROUPBY_WATCHES, ADMIN_WATCHES_READ));
 		codeMap.put(ADMIN_WATCHES_DELETE, newLookup(SecurityPermission.class, ADMIN_WATCHES_DELETE, "delete watches", null, GROUPBY_WATCHES, ADMIN_WATCHES_READ));
-	
-		
+
 		// ========================================================================================================================
 		codeMap.put(ADMIN_SUPPORT_MEDIA, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA, "Support media general permission", null, GROUPBY_OLD, null));
 		codeMap.put(ENTRY_TAG, newLookup(SecurityPermission.class, ENTRY_TAG, "Entry tag", null, GROUPBY_OLD, null));
@@ -820,7 +815,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_USER_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT, "Admin user management", null, GROUPBY_OLD, null));
 		codeMap.put(ADMIN_ENTRY_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_MANAGEMENT, "Admin entry management", null, GROUPBY_OLD, null));
 		codeMap.put(ADMIN_MESSAGE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_MESSAGE_MANAGEMENT, "Admin message management", null, GROUPBY_OLD, null));
-		codeMap.put(ADMIN_JOB_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_JOB_MANAGEMENT, "Admin job management", null,GROUPBY_OLD, null));
+		codeMap.put(ADMIN_JOB_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_JOB_MANAGEMENT, "Admin job management", null, GROUPBY_OLD, null));
 		codeMap.put(ADMIN_INTEGRATION, newLookup(SecurityPermission.class, ADMIN_INTEGRATION, "Admin integration", null, GROUPBY_OLD, null));
 		codeMap.put(ADMIN_WATCHES, newLookup(SecurityPermission.class, ADMIN_WATCHES, "Admin watches", null, GROUPBY_OLD, null));
 		codeMap.put(ADMIN_TRACKING, newLookup(SecurityPermission.class, ADMIN_TRACKING, "Admin tracking", null, GROUPBY_OLD, null));
@@ -853,9 +848,8 @@ public class SecurityPermission
 		codeMap.put(ALLOW_USER_ATTRIBUTE_TYPE_CREATION, newLookup(SecurityPermission.class, ALLOW_USER_ATTRIBUTE_TYPE_CREATION, "Allows for creating attribute types", null, GROUPBY_OLD, null));
 		codeMap.put(RELATION_VIEW_TOOL, newLookup(SecurityPermission.class, RELATION_VIEW_TOOL, "Allows for use of the view tool?", null, GROUPBY_OLD, null));
 		codeMap.put(API_DOCS, newLookup(SecurityPermission.class, API_DOCS, "Allows said user to view API docs", null, GROUPBY_OLD, null));
-		
-		// ========================================================================================================================
 
+		// ========================================================================================================================
 		return codeMap;
 	}
 }

@@ -17,13 +17,12 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/openstorefront/dev/developersguide/</guid>
-      <description>1. Internal Development See documents under /dev for Coding and Style guides.
+      <description>1. Internal Development See User Interface Guide, Server Code Standard, and Front-end Code Standards for Coding and Style guides.
 1.1 Key Components Used The following components were used in the development:
  JDK 8
  Elasticsearch/Solr
  OpenAM (Configurable, default is property based log in.)
-  The application is a JEE servlet-container webapp, so any JEE 6 servlet-container compliant server should work with some server configuration. The current deployment target is Tomcat 7.
-1.2 Key Libraries Used The following key libraries were used in the development:</description>
+  The application is a JEE servlet-container webapp, so any JEE 6 servlet-container compliant server should work with some server configuration. The current deployment target is Tomcat 7.</description>
     </item>
     
     <item>
@@ -72,7 +71,7 @@ Added to that is application specific overrides and high-level components create
       
       <guid>/openstorefront/user/quick-overview-of-submitting-a-new-component/</guid>
       <description>To get to the User Tools section, click on your user name in the upper right corner of the page and then select User Tools from the drop down menu. Once at the User Tools sections, click on the Submissions button and then click the New Submission button.
-The first page of the Submission Form asks you to verify your own information. Any changes here will directly update your profile information.</description>
+The process for submission depends on the type of entry you want to submit and how admin has configured your environment. The application will provide a form which will guide you through the process.</description>
     </item>
     
     <item>
@@ -81,22 +80,10 @@ The first page of the Submission Form asks you to verify your own information. A
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/openstorefront/dev/front-end-code-standard/</guid>
-      <description>Use the Ext.js docs. Look at them first for utility functions (format, string manipulation, etc&amp;hellip;).
- When making reusable components don&amp;rsquo;t use &amp;ldquo;ID&amp;rdquo;s properties. Ids are OK on individual pages; must be unique; &amp;ldquo;ID&amp;rdquo; properties are Global.
- Match validation from server, where possible, to make it easier for the user to get the right values. Also, provide friendly but, direct messages. Pack related components (notification panel, notification) into a single script file.</description>
-    </item>
-    
-    <item>
-      <title>Git Workflow</title>
-      <link>/openstorefront/dev/gitworkflow/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/openstorefront/dev/gitworkflow/</guid>
-      <description>We are following the Git Flow style of branching.
-Master Follows current release
-Develop Holds the integrated development (CI server is pointed to this)
-Feature Branches Based from development and hold the changes for that feature.
-They are merged back into develop via a pull request when they are development complete. Branches can be pruned at that point or when after the release that contains them. Branch name are base on the top level ticket number for easy tracking (i.</description>
+      <description>Style Currently supporting IE 11, EDGE, Chrome, Firefox (latest LTS release)
+Safari, Opera or others (should work but, we are not testing for them)
+Project Specific  Use the Ext.js docs. Look at them first for utility functions as they are normalize for the browser. (format, string manipulation, etc&amp;hellip;).
+ When making reusable components don&amp;rsquo;t use &amp;ldquo;ID&amp;rdquo;s properties. Ids are OK on individual pages; must be unique; &amp;ldquo;ID&amp;rdquo; properties are Global.</description>
     </item>
     
     <item>
@@ -130,21 +117,6 @@ Users are specified in the users section.
     </item>
     
     <item>
-      <title>Jira Issue Tracking Workflow</title>
-      <link>/openstorefront/dev/jira-workflow/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/openstorefront/dev/jira-workflow/</guid>
-      <description>Ticket Types  New Features, Improvements, Bugs
- Task
- Build
-  New Features, Improvements, Bugs Stages  Pending Review - Holding state for new tickets awaiting developers initial triage.
- Waiting for information - Back to requestor for more details on requirements and/or screenshots.
- Getting PMO approval - Business owner or Project Manager approves/rejects an issue.
- Awaiting Design Review - Holding state awaiting developer resources.</description>
-    </item>
-    
-    <item>
       <title>Data Migration Guide</title>
       <link>/openstorefront/systemadmin/datamigrationguide/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -153,15 +125,6 @@ Users are specified in the users section.
       <description>This guide provide help for importing data from external sources as well as moving data from one instance to another instance.
 1. Importing/Export (Third parties) The application provides set of standard format that it accepts to import Attributes/Categories as well as Entries. It also provides a set of custom formats that can have mappings applied. These custom formats allow taking a variety of data with so simple handling.
 See Admin Tools -&amp;gt; Data Management -&amp;gt; Imports</description>
-    </item>
-    
-    <item>
-      <title>Testing</title>
-      <link>/openstorefront/dev/testing/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/openstorefront/dev/testing/</guid>
-      <description>Layers  Unit Tests (Server-side) - Unit test should cover Core libraries and utility classes. Test cases should be added for bug fixes and new features whenever possible. Integration/Container Tests (openstorefront/test/ServiceTest.action) - These test the server-side service/business layer. They are run on the Integration server as part of the Jenkins build. Integration tests should be added for each new feature. API Tests - These tests use a client that communicates to the rest api (work in progress) Acceptance ticket tests - We write this as part of the JIRA ticket for QA.</description>
     </item>
     
     <item>
@@ -180,7 +143,7 @@ See Admin Tools -&amp;gt; Data Management -&amp;gt; Imports</description>
       
       <guid>/openstorefront/systemadmin/versionmigrationguide/</guid>
       <description>In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4) That way data migrations will occur in the proper order. If you start from the lastest version and have no data then migration is not needed.
-Note: 2.4.3 This includes the database upgrade. Note: rollback to pervious storefront version will require restore from a backup proir to 2.</description>
+Note: 2.6 Some feature such as custom submission require new permission (See Admin -&amp;gt; Security Roles to add new permissions)</description>
     </item>
     
     <item>
@@ -189,7 +152,8 @@ Note: 2.4.3 This includes the database upgrade. Note: rollback to pervious store
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/openstorefront/dev/server-code-standard/</guid>
-      <description>Business logic, Transactions, rules should be handled in the service code. (core-service) API Interface should have documentation (javadocs) SimpleDateFormat is not thread-safe create new instances; don&amp;rsquo;t make static. For decimal numbers use BigDecimal and use valueOf to instantiate. Make sure any new code is placed in the appropriate module. Be cautious of dependencies. External resources should be handled by a Manager that in-turn handles the life-cycle. Use example query framework where possible.</description>
+      <description>Java Style Guide For most part applying the IDE Formating and it&amp;rsquo;s default warning are sufficient to follow and keep the code in-line. However, here is a lists of items to follow. Borrows ideas from https://google.github.io/styleguide/javaguide.html
+Special escape sequences For any character that has a special escape sequence (\b, \t, \n, \f, \r, \&amp;ldquo;, \&amp;rsquo; and \), that sequence is used rather than the corresponding octal (e.g. \012) or Unicode (e.</description>
     </item>
     
     <item>
@@ -198,7 +162,8 @@ Note: 2.4.3 This includes the database upgrade. Note: rollback to pervious store
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/openstorefront/evaluations/evaluator/storefront-evaluators-guide/</guid>
-      <description>TL;DR  Administrators create and publish evaluations. Evaluators fill out evaluations. While editing an evaluation you will not see exactly what the user sees. The user sees things bundled under a Details tab and an Evaluation tab. In an evaluation everything under the Entry section applies to that Details tab while everything under the Sections and Checklist sections apply to that Evaluations tab. Storefront assumes you know what all of the various questions mean, what the asset types available to you mean, and how your implementation of Storefront works.</description>
+      <description>Note: 2.6 Introduced some UI changes however, processes and concepts are the same.
+TL;DR  Administrators create and publish evaluations. Evaluators fill out evaluations. While editing an evaluation you will not see exactly what the user sees. The user sees things bundled under a Details tab and an Evaluation tab. In an evaluation everything under the Entry section applies to that Details tab while everything under the Sections and Checklist sections apply to that Evaluations tab.</description>
     </item>
     
     <item>

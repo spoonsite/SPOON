@@ -43,8 +43,6 @@
 
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
-			Ext.onReady(function() {
-
 			Ext.require('OSF.common.AttributeCodeSelect');
 			Ext.require('OSF.form.Attributes');
 			Ext.require('OSF.form.Contacts');
@@ -56,6 +54,11 @@
 			Ext.require('OSF.form.EntryReviews');
 			Ext.require('OSF.form.OldEvaluationSummary');
 			Ext.require('OSF.form.Tags');
+			Ext.require('OSF.form.Comments');
+			Ext.require('OSF.common.ValidHtmlEditor');
+			
+			Ext.onReady(function() {
+
 
 
 				//Add/Edit forms ------>
@@ -87,8 +90,6 @@
 				});
 
 				//Sub Forms
-
-
 				var handleAttributes = function(componentType, loadingForm) {
 										
 					loadingForm.setLoading(true);
@@ -109,8 +110,6 @@
 						}
 					});					
 				};
-
-
 
 				var allComponentTypes = [];
 				Ext.Ajax.request({
@@ -360,7 +359,7 @@
 																		}
 																	});
 
-																	if (record == null) {
+																	if (record === null) {
 																		//means this is a change request
 																		record = Ext.create('Ext.data.Model', {
 																		});
@@ -758,12 +757,8 @@
 					return mainAddEditWin;
 				};
 
-
-
-
-			//MAIN GRID -------------->
-				var versionViewTemplate = new Ext.XTemplate(
-				);
+				//MAIN GRID -------------->
+				var versionViewTemplate = new Ext.XTemplate();
 
 				Ext.Ajax.request({
 					url: 'Router.action?page=shared/entrySimpleViewTemplate.jsp',
@@ -1029,8 +1024,6 @@
 														}
 													}
 												});
-
-
 											}
 										}
 									]
@@ -1264,13 +1257,121 @@
 					approveWin.show();					
 				};
 				
-
+				var toggleWin = Ext.create('Ext.window.Window',{
+					id: 'toggleWin',
+					title: 'Toggle ',
+					iconCls: 'fa fa-lg fa-exchange',
+					width: '50%',
+					height: 350,
+					y: 200,
+					modal: true,
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'toggleForm',
+							bodyStyle: 'padding: 10px',
+							items: [
+								{
+									xtype: 'osf-common-validhtmleditor',
+									itemId: 'searchComment',
+									fieldLabel: 'Optional Comments',
+									labelAlign: 'top',
+									name: 'Comment name',
+									width: '100%',
+									displayField: 'Comment displayfield',
+									store: {
+										autoLoad: true,
+									},
+								},
+								{
+									xtype: 'hidden',
+									itemId: 'searchCommentId',
+									name: 'commentId'
+								},
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Toggle',
+											formBind: true,
+											iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction icon-button-color-default',
+											handler: function(){
+												var form = this.up('form');
+												Ext.getCmp('componentGrid').setLoading('Toggling the selected entries...');
+												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
+													return item.getData().componentId;
+												});
+												var data = {
+													componentIds: componentIds,
+													comment: {
+														commentType: 'ADMIN',
+														comment: form.queryById('searchComment').getValue()
+													}
+												};
+												if(data.comment.comment === ''){
+													data.comment = null;
+												}
+												Ext.Ajax.request({
+													url: 'api/v1/resource/components/togglestatus',
+													method: 'PUT',
+													jsonData: data,
+													callback: function(){
+														Ext.getCmp('componentGrid').setLoading(false);
+													},
+													success: function(response, opts) {
+														if (response.responseText !== '') {
+															if( response.responseText.indexOf('errors') !== -1) {
+															// provide error notification
+																Ext.toast({
+																	title: 'validation error. the server could not process the request. ',
+																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																	width: 550,
+																	autoclosedelay: 10000
+																});
+															}
+														}
+														actionRefreshComponentGrid();
+														form.reset();
+													},
+													failure: function(){
+														Ext.toast({
+															title: 'validation error. the server could not process the request. ',
+															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+															width: 550,
+															autoclosedelay: 10000
+														});
+													}
+												});
+												this.up('window').close()
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function(){
+												this.up('window').close();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				});
+				
 				var changeOwnerWin = Ext.create('Ext.window.Window', {
 					id: 'changeOwnerWin',
 					title: 'Change Owner - ',
 					iconCls: 'fa fa-lg fa-user',
-					width: '35%',
-					height: 175,
+					width: '50%',
+					height: 450,
 					y: 200,
 					modal: true,
 					layout: 'fit',
@@ -1306,7 +1407,24 @@
 											}
 										}
 									}
-								}
+								},
+								{
+									xtype: 'osf-common-validhtmleditor',
+									itemId: 'searchComment',
+									fieldLabel: 'Optional Comments',
+									labelAlign: 'top',
+									name: 'Comment name',
+									width: '100%',
+									displayField: 'Comment displayfield',
+									store: {
+										autoLoad: true,
+									},
+								},
+								{
+									xtype: 'hidden',
+									itemId: 'searchCommentId',
+									name: 'commentId'
+								},
 							],
 							dockedItems: [
 								{
@@ -1318,70 +1436,55 @@
 											formBind: true,
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
-
-												// Get Selection
-												var selection = Ext.getCmp('componentGrid').getSelection();
-
-												// Get Number Of Selected
-												var selected = componentGrid.getSelectionModel().getCount();
-
-												// Get Calling Window
-												var ownerWindow = this.up('window');
-
-												// Get Form
+												Ext.getCmp('componentGrid').setLoading('Changing the owner for the selected entries...');
+												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
+													return item.getData().componentId;
+												});
 												var form = this.up('form');
-
-												// Get Chosen Username
 												var username = form.getForm().findField('currentDataOwner').getValue();
-
-												// Inform User Of Update Process
-												componentGrid.mask('Updating Owner(s)...');
-
-												// Close Form Window
-												ownerWindow.close();
-
-												// Initialize Update Counter
-												var componentUpdateCount = 0;
-
-												// Loop Through Selected Components
-												for (i = 0; i < selected; i++) {
-
-													// Store Component ID
-													var componentId = selection[i].get('componentId');
-
-													// Make Request
-													Ext.Ajax.request({
-
-														url: 'api/v1/resource/components/' + componentId + '/changeowner',
-														method: 'PUT',
-														rawData: username,
-														success: function(response, opts) {
-
-															// Check For Errors
-															if (response.responseText.indexOf('errors') !== -1) {
-
-																// Provide Error Notification
-																Ext.toast('An Entry Failed To Update', 'Error');
-
-																// Provide Log Information
-																console.log(response);
-															}
-
-															// Check If We Are On The Final Request
-															if (++componentUpdateCount === selected) {
-
-																// Provide Success Notification
-																Ext.toast('All Entries Have Been Processed', 'Success');
-
-																// Refresh Grid
-																actionRefreshComponentGrid();
-
-																// Unmask Grid
-																componentGrid.unmask();
+												var data = {
+													componentIds: componentIds,
+													comment: {
+														commentType: 'ADMIN',
+														comment: form.queryById('searchComment').getValue()
+													},
+													newOwner: username
+												};
+												if(data.comment.comment === ''){
+													data.comment = null;
+												}
+												Ext.Ajax.request({
+													url: 'api/v1/resource/components/changeowner',
+													method: 'PUT',
+													jsonData: data,
+													callback: function(){
+														Ext.getCmp('componentGrid').setLoading(false);
+													},
+													success: function(response, opts) {
+														if (response.responseText !== '') {
+															if( response.responseText.indexOf('errors') !== -1) {
+															// provide error notification
+																Ext.toast({
+																	title: 'validation error. the server could not process the request. ',
+																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																	width: 550,
+																	autoclosedelay: 10000
+																});
 															}
 														}
-													});
-												}
+														actionRefreshComponentGrid();
+														form.reset();
+													},
+													failure: function(){
+														Ext.toast({
+															title: 'validation error. the server could not process the request. ',
+															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+															width: 550,
+															autoclosedelay: 10000
+														});
+													}
+												});
+												this.up('window').close()
 											}
 										},
 										{
@@ -1401,13 +1504,12 @@
 					]
 				});
 
-
 				var changeTypeWin = Ext.create('Ext.window.Window', {
 					id: 'changeTypeWin',
 					title: 'Change Type - ',
 					iconCls: 'fa fa-lg fa-exchange',
-					width: '35%',
-					height: 175,
+						width: '50%',
+					height: 450,
 					y: 200,
 					modal: true,
 					layout: 'fit',
@@ -1437,7 +1539,24 @@
 											url: 'api/v1/resource/componenttypes/lookup'
 										}
 									}
-								}
+								},
+								{
+									xtype: 'osf-common-validhtmleditor',
+									itemId: 'searchComment',
+									fieldLabel: 'Optional Comments',
+									labelAlign: 'top',
+									name: 'Comment name',
+									width: '100%',
+									displayField: 'Comment displayfield',
+									store: {
+										autoLoad: true,
+									},
+								},
+								{
+									xtype: 'hidden',
+									itemId: 'searchCommentId',
+									name: 'commentId'
+								},
 							],
 							dockedItems: [
 								{
@@ -1449,38 +1568,56 @@
 											formBind: true,
 											iconCls: 'fa fa-lg fa-save icon-button-color-save',
 											handler: function(){
-
-												// Get selected component ids for components that need updated
+												Ext.getCmp('componentGrid').setLoading('Changing the type for the selected entries...');
 												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 													return item.getData().componentId;
 												});
-
 												var componentType = this.up('form').getForm().findField('componentType').getValue();
+												var form = this.up('form');
+												var data = {
+													componentIds: componentIds,
+													comment: {
+														commentType: 'ADMIN',
+														comment: form.queryById('searchComment').getValue()
 
-												componentGrid.mask('Updating Type(s)...');
-												this.up('window').close();
-
-												Ext.Ajax.request({
-													url: 'api/v1/resource/components/componenttype/' + componentType,
-													method: 'PUT',
-													jsonData: {
-														ids: componentIds
 													},
-													success: function (response, opts) {
-														
-														if (response.error) {
-
-															Ext.toast('An Entry Failed To Update', 'Error');
-															console.log(response.error);
+													newType: componentType
+												};
+												if(data.comment.comment === ''){
+													data.comment = null;
+												}
+												Ext.Ajax.request({
+													url: 'api/v1/resource/components/changetype',
+													method: 'PUT',
+													jsonData: data,
+													callback: function(){
+														Ext.getCmp('componentGrid').setLoading(false);
+													},
+													success: function(response, opts) {
+														if (response.responseText !== '') {
+															if( response.responseText.indexOf('errors') !== -1) {
+															// provide error notification
+																Ext.toast({
+																	title: 'validation error. the server could not process the request. ',
+																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																	width: 550,
+																	autoclosedelay: 10000
+																});
+															}
 														}
-														else {
-
-															Ext.toast('All Entries Have Been Processed', 'Success');
-															actionRefreshComponentGrid();
-															componentGrid.unmask();
-														}
+														form.reset();
+														actionRefreshComponentGrid();
+													},
+													failure: function(){
+														Ext.toast({
+															title: 'validation error. the server could not process the request. ',
+															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+															width: 550,
+															autoclosedelay: 10000
+														});
 													}
 												});
+												this.up('window').close()
 											}
 										},
 										{
@@ -1499,7 +1636,6 @@
 						}
 					]
 				});
-
 
 				var maingridStore = Ext.create('Ext.data.Store', {
 					autoLoad: true,
@@ -1644,99 +1780,6 @@
 					}
 				});
 
-				var mergeComponentWin = Ext.create('Ext.window.Window', {
-					id: 'mergeComponentWin',
-					title: 'Merge <i class="fa fa-lg fa-question-circle"  data-qtip="This merges duplicate entry to target entry. <br> Meaning target will contain merged entry\'s information and duplicate entry will be deleted." ></i>',
-					width: '40%',
-					height: 260,
-					modal: true,
-					layout: 'fit',
-					items: [
-						{
-							xtype: 'form',
-							itemId: 'mergeForm',
-							layout: 'vbox',
-							bodyStyle: 'padding: 10px;',
-							defaults: {
-								labelAlign: 'top'
-							},
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Merge',
-											formBind: true,
-											iconCls: 'fa fa-lg fa-compress icon-button-color-default',
-											handler: function() {
-
-												var mergeForm = this.up('form');
-												var data = mergeForm.getValues();
-
-												//check data for same id
-												if (data.mergeComponentId === data.targetComponentId) {
-													mergeForm.getComponent('targetComponent').markInvalid('Target Component must be different than merge component.');
-												} else {
-													mergeForm.setLoading("Merging...");
-													Ext.Ajax.request({
-														url: 'api/v1/resource/components/' + data.mergeComponentId + '/' + data.targetComponentId + '/merge',
-														method: 'POST',
-														success: function(response, opts){
-															mergeForm.setLoading(false);
-
-															Ext.getCmp('mergeComponentWin').hide();
-															actionRefreshComponentGrid();
-														},
-														failure: function(response, opts){
-															mergeForm.setLoading(false);
-														}
-													});
-												}
-											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function() {
-												this.up('window').hide();
-											}
-										}
-									]
-								}
-							],
-							items: [
-								Ext.create('OSF.component.StandardComboBox', {
-									name: 'targetComponentId',
-									itemId: 'targetComponent',
-									allowBlank: false,
-									width: '100%',
-									margin: '0 0 0 0',
-									fieldLabel: 'Duplicate Entry',
-									storeConfig: {
-										url: 'api/v1/resource/components/lookup?all=true',
-										autoLoad: false
-									}
-								}),
-								{
-									xtype: 'combobox',
-									name: 'mergeComponentId',
-									fieldLabel: 'Target Entry',
-									store: maingridStore,
-									queryLocal: true,
-									valueField: 'componentId',
-									width: '100%',
-									displayField: 'name',
-									readOnly: true
-								}								
-							]
-						}
-					]
-				});
-
 				var componentGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Manage Entries <i class="fa fa-lg fa-question-circle"  data-qtip="This tool allows for manipulating all data related to an entry" ></i>',
 					id: 'componentGrid',
@@ -1752,7 +1795,7 @@
 					plugins: 'gridfilters',
 					//enableLocking: true,
 					columns: [
-						{ text: 'Name', dataIndex: 'name', width: 275, flex: 1,
+						{ text: 'Name', dataIndex: 'name', width: 275, minWidth: 350 , flex: 150,
 							filter: {
 								type: 'string'
 							}
@@ -2040,15 +2083,6 @@
 											}
 										},
 										{
-											id: 'lookupGrid-tools-action-merge',
-											text: 'Merge',
-											iconCls: 'fa fa-lg fa-compress icon-small-vertical-correction icon-button-color-default',
-											requiredPermissions: ['ADMIN-ENTRY-MERGE'],
-											handler: function(){
-												actionMergeComponent();
-											}
-										},
-										{
 											id: 'lookupGrid-tools-action-versions',
 											text: 'Versions',
 											iconCls: 'fa fa-lg fa-object-ungroup icon-small-vertical-correction icon-button-color-default',
@@ -2180,7 +2214,6 @@
 						// Ensure Pieces Of The Action Button Are Enabled
 						Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(false);
-						Ext.getCmp('lookupGrid-tools-action-merge').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(false);
 					}
 					else if (componentGrid.getSelectionModel().getCount() > 1) {
@@ -2197,7 +2230,6 @@
 						// Disable Pieces Of The Action Button
 						Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-action-merge').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(true);
 					}
 					else {
@@ -2286,7 +2318,6 @@
 					}
 				};
 
-
 				var actionAddEditComponent = function(record) {
 
 					var mainAddEditWin = createAddEditWin();
@@ -2326,13 +2357,10 @@
 					}
 					mainAddEditWin.generalForm.queryById('componentTypeMainCB').resumeEvent('change');
 
-
 				   return mainAddEditWin;
 				};
 
-
 				var checkFormTabs = function(mainAddEditWin, record, componentType) {
-
 
 					if (record) {
 
@@ -2391,6 +2419,7 @@
 									addSubTab('OSF.form.EntryQuestions', 'Questions', 'User Questions');
 								}
 								addSubTab('OSF.form.Tags', 'Tags', 'Searchable Labels');
+								addSubTab('OSF.form.Comments', 'Comments', 'Admin Comments');
 							}
 						});
 						tabpanel.add(panelsToAdd);
@@ -2418,65 +2447,7 @@
 				};
 
 				var actionToggleStatus = function() {
-
-					Ext.getCmp('componentGrid').setLoading(true);
-
-					// Get Selection
-					var selection = Ext.getCmp('componentGrid').getSelection();
-
-					// Get Number Of Selected
-					var selected = componentGrid.getSelectionModel().getCount();
-
-					// Initialize Update Counter
-					var componentToggleCount = 0;
-
-					// Loop Through Selection
-					for (i = 0; i < selected; i++) {
-
-						var componentId = selection[i].get('componentId');
-						var currentStatus = selection[i].get('activeStatus');
-
-						if (currentStatus === 'A') {
-
-							var method = 'DELETE';
-							var urlEnd = '';
-						}
-						else {
-
-							var method = 'PUT';
-							var urlEnd = '/activate';
-						}
-
-						Ext.Ajax.request({
-							url: 'api/v1/resource/components/' + componentId + urlEnd,
-							method: method,
-							success: function(response, opts) {
-
-								// Check For Errors
-								if (response.responseText.indexOf('errors') !== -1) {
-
-									// Provide Error Notification
-									Ext.toast('An Entry Failed To Toggle', 'Error');
-
-									// Provide Log Information
-									console.log(response);
-								}
-
-								// Check If We Are On The Final Request
-								if (++componentToggleCount === selected) {
-
-									// Provide Success Notification
-									Ext.toast('All Entries Have Been Processed', 'Success');
-
-									// Refresh Grid
-									actionRefreshComponentGrid();
-
-									// Unmask Grid
-									Ext.getCmp('componentGrid').setLoading(false);
-								}
-							}
-						});
-					}
+					Ext.getCmp('toggleWin').show();
 				};
 
 				var actionDeleteComponent = function() {
@@ -2570,22 +2541,6 @@
 							Ext.getCmp('componentGrid').setLoading(false);
 						}
 					});
-				};
-
-				var actionMergeComponent = function() {
-					Ext.getCmp('mergeComponentWin').show();
-					Ext.getCmp('mergeComponentWin').getComponent('mergeForm').reset(true);
-
-					var record = Ext.create('Ext.data.Model', {
-						fields: [
-							'mergeComponentId',
-							'targetComponentId'
-						]
-					});
-					record.set('mergeComponentId', Ext.getCmp('componentGrid').getSelection()[0].get('componentId'));
-
-					Ext.getCmp('mergeComponentWin').getComponent('mergeForm').loadRecord(record);
-					Ext.getCmp('mergeComponentWin').getComponent('mergeForm').getComponent('targetComponent').getStore().load();
 				};
 
 				var actionVersions = function() {

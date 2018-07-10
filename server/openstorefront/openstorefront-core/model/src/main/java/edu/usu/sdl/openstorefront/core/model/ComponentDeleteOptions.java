@@ -27,6 +27,7 @@ public class ComponentDeleteOptions
 
 	private Set<String> ignoreClasses = new HashSet<>();
 	private boolean removeWatches = true;
+	private boolean keepMediaFiles = false;
 
 	public ComponentDeleteOptions()
 	{
@@ -50,6 +51,16 @@ public class ComponentDeleteOptions
 	public void setIgnoreClasses(Set<String> ignoreClasses)
 	{
 		this.ignoreClasses = ignoreClasses;
+	}
+
+	public boolean getKeepMediaFile()
+	{
+		return keepMediaFiles;
+	}
+
+	public void setKeepMediaFiles(boolean keepMediaFiles)
+	{
+		this.keepMediaFiles = keepMediaFiles;
 	}
 
 }

@@ -1089,206 +1089,251 @@ Ext.define('OSF.component.SubmissionPanel', {
 				modal: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Contact</span>',
 				alwaysOnTop: true,
-				width: '50%',
-				maxHeight: 600,
+				width: '75%',
 				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
 						scrollable: true,
-						itemId: 'contactForm',
-						bodyStyle: 'padding: 10px;',
-						defaults: {
-							labelAlign: 'right',
-							labelSeparator: '',
-							width: '100%'
+						border: true,
+						layout: {
+							type: 'hbox'
 						},
+						bodyStyle: 'padding: 10px;',
+						margin: '0 0 5 0',
+						buttonAlign: 'center',
+						buttons: [
+							{
+								xtype: 'button',
+								text: 'Save',
+								formBind: true,
+								margin: '0 20 0 0',
+								iconCls: 'fa fa-lg fa-save',
+								handler: function () {
+									var form = this.up('form');
+									var data = form.getValues();
+									var componentId = submissionPanel.componentId;
+									var existingStore = this.up('form').down('grid').getStore();
+									if (data.componentContactId) {
+										//Update an existing contact
+										CoreUtil.submitForm({
+											url: 'api/v1/resource/components/' + componentId + '/contacts/' + data.componentContactId,
+											method: 'PUT',
+											data: data,
+											form: form,
+											success: function () {
+												grid.getStore().load({
+													url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'
+												});
+												existingStore.reload();
+												form.reset();
+												form.up('window').close();
+											}
+										});
+									}
+									else {
+										//Create a new contact
+										CoreUtil.submitForm({
+											url: 'api/v1/resource/components/' + componentId + '/contacts',
+											method: 'POST',
+											data: data,
+											form: form,
+											success: function () {
+												grid.getStore().load({
+													url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'
+												});
+												existingStore.reload();
+												form.reset();
+												form.up('window').close();
+											}
+										});
+									}
+								}
+							},
+							{
+								xtype: 'button',
+								text: 'Cancel',
+								iconCls: 'fa fa-lg fa-close',
+								handler: function () {
+									this.up('form').reset();
+									this.up('form').down('grid').getSelectionModel().deselectAll();
+									this.up('window').close();
+								}
+							}
+						],
 						items: [
 							{
-								xtype: 'hidden',
-								name: 'componentContactId'
-							},
-							{
-								xtype: 'hidden',
-								name: 'contactId'
-							},
-							Ext.create('OSF.component.StandardComboBox', {
-								name: 'contactType',
-								itemId: 'contactType',
-								allowBlank: false,
-								margin: '0 0 5 0',
-								editable: false,
-								typeAhead: false,
-								width: '100%',
-								fieldLabel: 'Contact Type <span class="field-required" />',
-								storeConfig: {
-									url: 'api/v1/resource/lookuptypes/ContactType',
-									filters: [{
-											property: 'code',
-											operator: '!=',
-											value: /SUB/
+								flex: 1,
+								layout: 'vbox',
+								bodyStyle: 'padding: 10px;',
+								defaults: {
+									labelAlign: 'right',
+									width: '100%'
+								},
+								items: [{
+									xtype: 'hidden',
+									name: 'componentContactId'
+								},
+								{
+									xtype: 'hidden',
+									name: 'contactId'
+								},
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'contactType',
+									itemId: 'contactType',
+									margin: '0 0 5 0',
+									allowBlank: false,
+									editable: false,
+									typeAhead: false,
+									width: '100%',
+									fieldLabel: 'Contact Type:<span class="field-required" />',
+									storeConfig: {
+										url: 'api/v1/resource/lookuptypes/ContactType'
+									}
+								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'organization',
+									allowBlank: false,
+									margin: '0 0 5 0',
+									width: '100%',
+									fieldLabel: 'Organization:<span class="field-required" />',
+									forceSelection: false,
+									valueField: 'description',
+									storeConfig: {
+										url: 'api/v1/resource/organizations/lookup',
+										sorters: [{
+											property: 'description',
+											direction: 'ASC'
 										}]
-								}
-							}),
-							Ext.create('OSF.component.StandardComboBox', {
-								name: 'organization',
-								allowBlank: false,
-								margin: '0 0 5 0',
-								width: '100%',
-								fieldLabel: 'Organization <span class="field-required" />',
-								forceSelection: false,
-								valueField: 'description',
-								storeConfig: {
-									url: 'api/v1/resource/organizations/lookup'
-								}
-							}),
-							Ext.create('OSF.component.StandardComboBox', {
-								name: 'firstName',
-								allowBlank: false,
-								margin: '0 0 5 0',
-								width: '100%',
-								fieldLabel: 'First Name  <span class="field-required" />',
-								forceSelection: false,
-								valueField: 'firstName',
-								displayField: 'firstName',
-								maxLength: '80',
-								typeAhead: false,
-								autoSelect: false,
-								selectOnTab: false,
-								assertValue: function () {
-								},
-								listConfig: {
-									itemTpl: [
-										'{firstName} <span style="color: grey">({email})</span>'
-									]
-								},
-								storeConfig: {
-									url: 'api/v1/resource/contacts/filtered'
-								},
-								listeners: {
-									select: function (combo, record, opts) {
-										record.set('componentContactId', null);
-										record.set('contactId', null);
-										var contactType = combo.up('form').getComponent('contactType').getValue();
-										combo.up('form').reset();
-										combo.up('form').loadRecord(record);
-										combo.up('form').getComponent('contactType').setValue(contactType);
 									}
-								}
-							}),
-							Ext.create('OSF.component.StandardComboBox', {
-								name: 'lastName',
-								allowBlank: false,
-								margin: '0 0 5 0',
-								width: '100%',
-								fieldLabel: 'Last Name <span class="field-required" />',
-								forceSelection: false,
-								valueField: 'lastName',
-								displayField: 'lastName',
-								maxLength: '80',
-								typeAhead: false,
-								autoSelect: false,
-								selectOnTab: false,
-								assertValue: function () {
-								},
-								listConfig: {
-									itemTpl: [
-										'{lastName} <span style="color: grey">({email})</span>'
-									]
-								},
-								storeConfig: {
-									url: 'api/v1/resource/contacts/filtered'
-								},
-								listeners: {
-									select: function (combo, record, opts) {
-										record.set('componentContactId', null);
-										record.set('contactId', null);
-										var contactType = combo.up('form').getComponent('contactType').getValue();
-										combo.up('form').reset();
-										combo.up('form').loadRecord(record);
-										combo.up('form').getComponent('contactType').setValue(contactType);
-									}
-								}
-							}),
-							{
-								xtype: 'textfield',
-								fieldLabel: 'Email <span class="field-required" />',
-								maxLength: '255',
-								allowBlank: false,
-								regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
-								regexText: 'Must be a valid email address. Eg. xxx@xxx.xxx',
-								name: 'email'
-							},
-							{
-								xtype: 'textfield',
-								fieldLabel: 'Phone <span class="field-required" />',
-								allowBlank: false,
-								maxLength: '120',
-								name: 'phone'
-							},
-							Ext.create('OSF.component.SecurityComboBox', {
-								itemId: 'securityMarkings',
-								hidden: submissionPanel.hideSecurityMarkings
-							}),
-							Ext.create('OSF.component.DataSensitivityComboBox', {
-								width: '100%'
-							})
-						],
-						dockedItems: [
-							{
-								xtype: 'toolbar',
-								dock: 'bottom',
-								items: [
-									{
-										text: 'Save',
-										formBind: true,
-										iconCls: 'fa fa-lg fa-save icon-button-color-save',
-										handler: function () {
-											var form = this.up('form');
-											var formWindow = this.up('window');
-											var data = form.getValues();
-											var componentId = submissionPanel.componentId;
-
-											var method = 'POST';
-											var update = '';
-											if (data.componentContactId) {
-												update = '/' + data.componentContactId;
-												method = 'PUT';
-											}
-
-											CoreUtil.submitForm({
-												url: 'api/v1/resource/components/' + componentId + '/contacts' + update,
-												method: method,
-												data: data,
-												form: form,
-												success: function () {
-													grid.getStore().load({
-														url: 'api/v1/resource/components/' + submissionPanel.componentId + '/contacts/view'
-													});
-													formWindow.close();
-												}
-											});
-										}
-									},
-									{
-										xtype: 'tbfill'
-									},
-									{
-										text: 'Cancel',
-										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-										handler: function () {
-											this.up('window').close();
+								}),
+								{
+									xtype: 'textfield',
+									fieldLabel: 'First Name<span class="field-required" />',
+									maxLength: '80',
+									allowBlank: false,
+									name: 'firstName',
+									listeners: {
+										change: function (firstNameField, newValue, oldValue, opts) {
+											var grid = this.up('form').down('grid');
+											grid.store.filter('firstName', newValue);
 										}
 									}
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Last Name<span class="field-required" />',
+									maxLength: '80',
+									allowBlank: false,
+									name: 'lastName',
+									listeners: {
+										change: function (lastNameField, newValue, oldValue, opts) {
+											var grid = this.up('form').down('grid');
+											grid.store.filter('lastName', newValue);
+										}
+									}
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Email',
+									maxLength: '255',
+									regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
+									regexText: 'Must be a valid email address. Eg. xxx@xxx.xxx',
+									name: 'email',
+									listeners: {
+										change: function (emailField, newValue, oldValue, opts) {
+											var grid = this.up('form').down('grid');
+											grid.store.filter('email', newValue);
+										}
+									}
+								},
+								{
+									xtype: 'textfield',
+									fieldLabel: 'Phone',
+									maxLength: '120',
+									name: 'phone'
+								},
+								Ext.create('OSF.component.SecurityComboBox', {
+								}),
+								Ext.create('OSF.component.DataSensitivityComboBox', {
+								})
 								]
-							}
-						]
+
+							},
+							{
+								xtype: 'grid',
+								title: 'Existing Contacts',
+								flex: 1,
+								itemId: 'existingContactGrid',
+								height: '100%',
+								columnLines: true,
+								border: true,
+								frameHeader: true,
+								store: Ext.create('Ext.data.Store', {
+									fields: [
+										"contactId",
+										"positionDescription",
+										"contactType",
+										"name",
+										"firstName",
+										"lastName",
+										"email",
+										"phone",
+										"organization",
+										{
+											name: 'updateDts',
+											type: 'date',
+											dateFormat: 'c'
+										},
+										"activeStatus"
+									],
+									autoLoad: true,
+									proxy: {
+										type: 'ajax',
+										url: 'api/v1/resource/contacts/filtered'
+									},
+									listeners: {
+										load: function (store, records, successful, operation, eOpts) {
+											if (record) {
+												var index = store.find('contactId', record.data.contactId);
+												addWindow.queryById('existingContactGrid').getView().select(index);
+												addWindow.down('form').getForm().findField('componentContactId').setValue(record.data.componentContactId);
+											}
+										}
+									}
+								}),
+								columns: [
+									{ text: 'First Name', dataIndex: 'firstName', flex: 1 },
+									{ text: 'Last Name', dataIndex: 'lastName', flex: 1 },
+									{ text: 'Email', dataIndex: 'email', flex: 2 }
+								],
+								selModel: {
+									selType: 'checkboxmodel',
+									allowDeselect: true,
+									toggleOnClick: true,
+									mode: 'SINGLE'
+								},
+								listeners: {
+									selectionchange: function (grid, record, index, opts) {
+										var form = this.up('form');
+										if (this.getSelectionModel().getCount() > 0) {
+											var contactType = form.getForm().findField('contactType').getValue();
+											form.reset();
+											form.loadRecord(this.getSelection()[0]);
+											form.getForm().findField('contactType').setValue(contactType);
+										}
+										else {
+											form.reset();
+										}
+									}
+								}
+							}]
 					}
 				]
 			}).show();
 
 			if (record) {
-				addWindow.getComponent('contactForm').loadRecord(record);
+				addWindow.down('form').loadRecord(record);
 			}
 		};
 
@@ -2424,7 +2469,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'panel',
 							itemId: 'dependenciesGrid-help',
-							html: '<h3>Add necessary software/hardware dependancies not included with the component.</h3>'
+							html: '<h3>Add necessary software/hardware dependencies not included with the component.</h3>'
 						},
 						{
 							xtype: 'grid',

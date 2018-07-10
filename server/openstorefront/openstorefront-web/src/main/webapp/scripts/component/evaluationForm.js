@@ -528,7 +528,8 @@ Ext.define('OSF.component.RootEvaluationPanel', {
 			}
 			
 			var contentForm = Ext.create('OSF.form.' + page.form, Ext.apply({	
-				hideSecurityMarking: hideSecurityMarking
+				hideSecurityMarking: hideSecurityMarking,
+				hideToggleStatus: true
 			}, page.options)
 			);
 			

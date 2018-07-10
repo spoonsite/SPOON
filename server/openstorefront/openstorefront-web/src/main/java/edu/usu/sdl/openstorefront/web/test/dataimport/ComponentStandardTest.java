@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ComponentStandardTest extends BaseDataImportTest
 {
+
 	private String fileHistoryId01 = null;
 //	private String fileHistoryId02 = null;
 
@@ -41,6 +42,8 @@ public class ComponentStandardTest extends BaseDataImportTest
 	@Override
 	protected void runInternalTest()
 	{
+		checkComponentType();
+
 		results.append("Component Standard Test With No Media<br>");
 		ImportContext importContextNoMedia = new ImportContext();
 		importContextNoMedia.setInput(FileSystemManager.getInstance().getApplicationResourceFile("/data/test/standardtest.json"));
@@ -82,8 +85,6 @@ public class ComponentStandardTest extends BaseDataImportTest
 //
 //		waitForImport(fileHistoryId02);
 //		handleResults(fileHistoryId02);
-
-
 	}
 
 	@Override

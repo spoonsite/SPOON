@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.model.UserSubmissionAll;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
@@ -142,7 +143,7 @@ public class MappingController
 
 			Map<String, UserSubmissionField> userFieldMap = new HashMap<>();
 			for (UserSubmissionField submissionField : userSubmission.getFields()) {
-				userFieldMap.put(submissionField.getFieldId(), submissionField);
+				userFieldMap.put(submissionField.getTemplateFieldId(), submissionField);
 			}
 
 			for (SubmissionFormSection section : template.getSections()) {
@@ -181,11 +182,13 @@ public class MappingController
 	 * @param userSubmission
 	 * @return userSubmission with all data possible mapped
 	 */
-	public UserSubmission mapEntriesToUserSubmission(SubmissionFormTemplate template, ComponentFormSet componentFormSet) throws MappingException
+	public UserSubmissionAll mapEntriesToUserSubmission(SubmissionFormTemplate template, ComponentFormSet componentFormSet) throws MappingException
 	{
 		Objects.requireNonNull(componentFormSet);
 		Objects.requireNonNull(componentFormSet.getPrimary(), "Must have at least a primary component");
 		Objects.requireNonNull(componentFormSet.getPrimary().getComponent());
+
+		UserSubmissionAll userSubmissionAll = new UserSubmissionAll();
 
 		UserSubmission userSubmission = new UserSubmission();
 		userSubmission.setTemplateId(template.getSubmissionTemplateId());
@@ -193,18 +196,20 @@ public class MappingController
 		userSubmission.setOriginalComponentId(componentFormSet.getPrimary().getComponent().getComponentId());
 		userSubmission.setFields(new ArrayList<>());
 
-		mapTemplateSectionsForSubmission(template, componentFormSet, userSubmission);
+		userSubmissionAll.setUserSubmission(userSubmission);
 
-		return userSubmission;
+		mapTemplateSectionsForSubmission(template, componentFormSet, userSubmissionAll);
+
+		return userSubmissionAll;
 	}
 
-	private void mapTemplateSectionsForSubmission(SubmissionFormTemplate template, ComponentFormSet componentFormSet, UserSubmission userSubmission) throws MappingException
+	private void mapTemplateSectionsForSubmission(SubmissionFormTemplate template, ComponentFormSet componentFormSet, UserSubmissionAll userSubmissionAll) throws MappingException
 	{
 		if (template.getSections() != null) {
 
 			for (SubmissionFormSection section : template.getSections()) {
 				try {
-					mapTemplateFieldsForSubmission(section.getFields(), componentFormSet, userSubmission);
+					mapTemplateFieldsForSubmission(section.getFields(), componentFormSet, userSubmissionAll);
 				} catch (MappingException ex) {
 					ex.setSectionName(section.getName());
 					throw ex;
@@ -213,14 +218,16 @@ public class MappingController
 		}
 	}
 
-	private void mapTemplateFieldsForSubmission(List<SubmissionFormField> fields, ComponentFormSet componentFormSet, UserSubmission userSubmission) throws MappingException
+	private void mapTemplateFieldsForSubmission(List<SubmissionFormField> fields, ComponentFormSet componentFormSet, UserSubmissionAll userSubmissionAll) throws MappingException
 	{
 		if (fields != null) {
 			for (SubmissionFormField field : fields) {
 				BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
-				UserSubmissionField userSubmissionField = mapper.mapComponentToSubmission(field, componentFormSet);
-				userSubmission.getFields().add(userSubmissionField);
-
+				UserSubmissionFieldMedia userSubmissionFieldMedia = mapper.mapComponentToSubmission(field, componentFormSet);
+				if (userSubmissionFieldMedia != null) {
+					userSubmissionAll.getUserSubmission().getFields().add(userSubmissionFieldMedia.getUserSubmissionField());
+					userSubmissionAll.getMedia().addAll(userSubmissionFieldMedia.getMedia());
+				}
 			}
 		}
 	}

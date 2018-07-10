@@ -15,16 +15,20 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.jsoup.helper.StringUtil;
 
 /**
@@ -42,6 +46,7 @@ public class UserSubmission
 	private String userSubmissionId;
 
 	@NotNull
+	@ConsumeField
 	@FK(SubmissionTemplateStatus.class)
 	private String templateId;
 
@@ -51,6 +56,7 @@ public class UserSubmission
 	@FK(value = ComponentType.class, enforce = true)
 	private String componentType;
 
+	@ConsumeField
 	@FK(Component.class)
 	private String originalComponentId;
 
@@ -62,6 +68,11 @@ public class UserSubmission
 
 	@NotNull
 	private String ownerUsername;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_COMPONENT_NAME)
+	@Sanitize(TextSanitizer.class)
+	private String submissionName;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserSubmission()
@@ -86,19 +97,9 @@ public class UserSubmission
 				if (StringUtil.isBlank(userSubmissionField.getFieldId())) {
 					userSubmissionField.setFieldId(StringProcessor.uniqueId());
 				}
-				linkMedia(userSubmissionField);
 			}
 		}
-	}
-
-	private void linkMedia(UserSubmissionField userSubmissionField)
-	{
-		for (UserSubmissionMedia media : userSubmissionField.getMedia()) {
-			media.setFieldId(userSubmissionField.getFieldId());
-			if (StringUtil.isBlank(media.getSubmissionMediaId())) {
-				media.setSubmissionMediaId(StringProcessor.uniqueId());
-			}
-		}
+		this.setSubmissionName(userSubmission.getSubmissionName());
 	}
 
 	public String getUserSubmissionId()
@@ -159,6 +160,16 @@ public class UserSubmission
 	public void setOwnerUsername(String ownerUsername)
 	{
 		this.ownerUsername = ownerUsername;
+	}
+
+	public String getSubmissionName()
+	{
+		return submissionName;
+	}
+
+	public void setSubmissionName(String submissionName)
+	{
+		this.submissionName = submissionName;
 	}
 
 }

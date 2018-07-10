@@ -31,6 +31,9 @@ Ext.define('OSF.form.Relationships', {
 		
 		relationshipPanel.relationshipsGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					"relationshipId",

@@ -15,13 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service.mapping;
 
-import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
+import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,11 @@ public class ComponentFieldMapper
 		}
 
 		try {
-			BeanUtils.setProperty(componentAll.getComponent(), submissionField.getFieldName(), value);
+			if (Component.FIELD_RELEASE_DATE.equals(submissionField.getFieldName())) {
+				componentAll.getComponent().setReleaseDate(Convert.toDate(value));
+			} else {
+				BeanUtils.setProperty(componentAll.getComponent(), submissionField.getFieldName(), value);
+			}
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			if (LOG.isLoggable(Level.FINER)) {
 				LOG.log(Level.FINER, null, ex);
@@ -68,8 +74,12 @@ public class ComponentFieldMapper
 			throw mappingException;
 		}
 		//handle any media (inline media)
-		if (userSubmissionField != null) {
-			componentAll.getMedia().addAll(createInlineMedia(userSubmissionField.getMedia()));
+		if (userSubmissionField != null && submissionField.getFieldId() != null) {
+			UserSubmissionMedia exampleMedia = new UserSubmissionMedia();
+			exampleMedia.setTemplateFieldId(submissionField.getFieldId());
+			List<UserSubmissionMedia> mediaRecords = exampleMedia.findByExample();
+
+			componentAll.getMedia().addAll(createInlineMedia(mediaRecords));
 		}
 
 		return childComponents;
@@ -83,7 +93,7 @@ public class ComponentFieldMapper
 			for (UserSubmissionMedia userSubmissionMedia : submissionMedia) {
 				ComponentMedia componentMedia = new ComponentMedia();
 				componentMedia.setMediaTypeCode(MediaType.typeFromMimeType(userSubmissionMedia.getFile().getMimeType()).getCode());
-				componentMedia.setFile(userSubmissionMedia.getFile());
+				componentMedia.setFile(userSubmissionMedia.getFile().copy());
 				componentMedia.setUsedInline(Boolean.TRUE);
 				componentMedia.setHideInDisplay(Boolean.TRUE);
 				componentMediaList.add(componentMedia);
@@ -94,9 +104,12 @@ public class ComponentFieldMapper
 	}
 
 	@Override
-	public UserSubmissionField mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
 	{
+		UserSubmissionFieldMedia userSubmissionFieldMedia = new UserSubmissionFieldMedia();
+
 		UserSubmissionField userSubmissionField = new UserSubmissionField();
+		userSubmissionFieldMedia.setUserSubmissionField(userSubmissionField);
 
 		try {
 			userSubmissionField.setTemplateFieldId(submissionField.getFieldId());
@@ -114,7 +127,7 @@ public class ComponentFieldMapper
 			throw mappingException;
 		}
 
-		return userSubmissionField;
+		return userSubmissionFieldMedia;
 	}
 
 }

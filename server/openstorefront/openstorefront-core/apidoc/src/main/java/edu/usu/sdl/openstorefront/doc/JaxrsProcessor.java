@@ -104,7 +104,8 @@ public class JaxrsProcessor
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 		int methodId = 0;
-		for (Method method : resource.getDeclaredMethods()) {
+
+		for (Method method : resource.getMethods()) {
 
 			APIMethodModel methodModel = new APIMethodModel();
 			methodModel.setId(methodId++);

@@ -28,7 +28,6 @@ import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
-import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlGenerator;
 import edu.usu.sdl.openstorefront.report.generator.HtmlToPdfGenerator;
@@ -187,7 +186,7 @@ public class EntryListingReport
 		lineModel.setViewLink(viewLinkBase + component.getComponentId());
 
 		String entryType = ConfluenceClient.confluenceEscapeCharater(
-			service.getComponentService().getComponentTypeParentsString(component.getComponentType(), true)
+				service.getComponentService().getComponentTypeParentsString(component.getComponentType(), true)
 		);
 		lineModel.setEntryType(entryType);
 

@@ -538,7 +538,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 
 		mediaInsertWindow.mediaSelectionStore = Ext.create('Ext.data.Store', {
 		});
-
+	
 		mediaInsertWindow.mediaSelectionStorePreLoad = Ext.create('Ext.data.Store', {
 			autoLoad: true,
 			proxy: {
@@ -554,7 +554,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					//normalize records
 					var showRecords = [];
 					//unwrap if needed
-					if (records.length == 1) {
+					if (records.length === 1) {
 						if (records[0].data.data) {
 
 							var newRecords = [];

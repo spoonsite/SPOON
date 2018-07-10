@@ -30,11 +30,26 @@ Ext.define('OSF.form.Resources', {
 		this.callParent();
 		
 		var resourcePanel = this;
-		
+
+		function enableAll(){
+			resourcePanel.resourceGridForm.queryById('linkType').enable(true);
+			resourcePanel.resourceGridForm.queryById('upload').enable(true);
+		}
+		var downloadRecord = function(record) {
+			if(record.data){
+				if(record.data.link){
+					window.location.href = '' + record.data.link;
+				}
+			}
+		};
+			
 		resourcePanel.resourceGridForm = Ext.create('Ext.form.Panel', {
 			title: 'Add/Edit Resources',
 			collapsible: true,
 			titleCollapse: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			border: true,
 			layout: 'vbox',
 			bodyStyle: 'padding: 10px;',
@@ -136,6 +151,7 @@ Ext.define('OSF.form.Resources', {
 
 							}
 						}
+						enableAll();
 					}
 				},
 				{
@@ -143,6 +159,7 @@ Ext.define('OSF.form.Resources', {
 					text: 'Cancel',										
 					iconCls: 'fa fa-lg fa-close',
 					handler: function(){
+						enableAll();
 						this.up('form').reset();
 						this.up('form').getComponent('upload').setFieldLabel('Upload Resource (Limit 1GB)');
 					}									
@@ -190,8 +207,15 @@ Ext.define('OSF.form.Resources', {
 					boxLabel: 'Restricted'
 				},
 				{
+					xtype: 'checkbox',
+					name: 'privateFlag',
+					padding: '0 0 0 210',				
+					boxLabel: 'Private <i class="fa fa-question-circle" data-qtip="Hides resource from public view"></i>'
+				},				
+				{
 					xtype: 'textfield',
 					fieldLabel: 'Link',																																	
+					itemId: 'linkType',
 					maxLength: '255',									
 					emptyText: 'http://www.example.com/resource',
 					name: 'originalLink'
@@ -213,6 +237,9 @@ Ext.define('OSF.form.Resources', {
 
 		resourcePanel.resourcesGrid = Ext.create('Ext.grid.Panel', {	
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					"resourceId",
@@ -247,7 +274,8 @@ Ext.define('OSF.form.Resources', {
 				{ text: 'Link',  dataIndex: 'originalLink', flex: 1, minWidth: 200 },
 				{ text: 'Mime Type',  dataIndex: 'mimeType', width: 200 },
 				{ text: 'Local Resource Name',  dataIndex: 'originalFileName', width: 200 },
-				{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },						
+				{ text: 'Restricted',  dataIndex: 'restricted', width: 150 },	
+				{ text: 'Private',  dataIndex: 'privateFlag', width: 150 },
 				{ text: 'Update Date', dataIndex: 'updateDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
 				{ text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 200, hidden: true },
 				{ text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: resourcePanel.hideSecurityMarking  }
@@ -265,10 +293,20 @@ Ext.define('OSF.form.Resources', {
 				selectionchange: function(grid, record, index, opts){
 					var fullgrid = resourcePanel.resourcesGrid;
 					if (fullgrid.getSelectionModel().getCount() === 1) {
+						var input_record = resourcePanel.resourcesGrid.getSelection()[0];
+						if(input_record.data){
+							if(input_record.data.originalFileName){
+								fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(false);
+							}
+							else{
+								fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(true);
+							}
+						}
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(false);
 					} else {
+						fullgrid.down('toolbar').getComponent('downloadBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('editBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
 						fullgrid.down('toolbar').getComponent('toggleStatusBtn').setDisabled(true);
@@ -302,6 +340,8 @@ Ext.define('OSF.form.Resources', {
 											status: newValue
 										}
 									});
+									resourcePanel.resourceGridForm.reset();
+									enableAll();
 								}
 							}
 						}, 								
@@ -310,6 +350,8 @@ Ext.define('OSF.form.Resources', {
 							iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
 							handler: function(){
 								this.up('grid').getStore().reload();
+								enableAll();
+								this.up('grid').down('form').reset();
 							}
 						},
 						{
@@ -321,6 +363,13 @@ Ext.define('OSF.form.Resources', {
 							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
 							handler: function(){
 								var record = resourcePanel.resourcesGrid.getSelection()[0];
+								if(record.data){
+									if(record.data.originalFileName){
+										resourcePanel.resourceGridForm.queryById('linkType').disable();
+									}else{
+										resourcePanel.resourceGridForm.queryById('upload').disable();
+									}
+								}
 								this.up('grid').down('form').reset();
 								this.up('grid').down('form').loadRecord(record);
 								if (record.get('originalFileName')) {
@@ -331,19 +380,33 @@ Ext.define('OSF.form.Resources', {
 							}									
 						},
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbseparator',
+							hidden: resourcePanel.hideToggleStatus || false
 						},
 						{
 							text: 'Toggle Status',
 							itemId: 'toggleStatusBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',									
 							disabled: true,
+							hidden: resourcePanel.hideToggleStatus || false,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources');
+								enableAll();
+								this.up('grid').down('form').reset();
 							}
 						},
 						{
 							xtype: 'tbfill'
+						},
+						{
+							text: 'Download',
+							itemId: 'downloadBtn',
+							disabled: true,
+							iconCls: 'fa fa-2x fa-download icon-vertical-correction-edit icon-button-color-default',
+							handler: function(){
+								var record = resourcePanel.resourcesGrid.getSelection()[0];
+								downloadRecord(record);
+							}
 						},
 						{
 							text: 'Delete',
@@ -352,6 +415,8 @@ Ext.define('OSF.form.Resources', {
 							disabled: true,
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(resourcePanel.resourcesGrid, 'resourceId', 'resources', undefined, undefined, true);
+								enableAll();
+								this.up('grid').down('form').reset();
 							}									
 						}
 					]
