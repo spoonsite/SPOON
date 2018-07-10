@@ -486,7 +486,7 @@ public abstract class GeneralComponentResourceExt
 
 	@POST
 	@APIDescription("Exports a set of components. In describe record format.")
-	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EXPORT)
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/export/describe")
@@ -1016,6 +1016,8 @@ public abstract class GeneralComponentResourceExt
 
 	private Response handleCreateUserSubmission(String componentId, EditSubmissionOptions options)
 	{
+		//Note: this permission is covering 3 different cases.  Right now admin can't hit this from the UI without becoming an owner.
+		//Refactor later if that is an issue.
 		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, true);
 		if (response != null) {
 			return response;
@@ -1071,7 +1073,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGEOWNER)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@APIDescription("Change owner of listed components and attach a comment")
 	@Path("/changeowner")
@@ -1118,8 +1120,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	//Update permission:  Comments are used in several different ways. So we need something generic?
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGETYPE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@APIDescription("Change type of listed components and attach a comment")
 	@Path("/changetype")
@@ -1133,8 +1134,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	//Update permission:  Comments are used in several different ways. So we need something generic?
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TOGGLE_STATUS)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@APIDescription("Change status of listed components and attach a comment")
 	@Path("/togglestatus")
