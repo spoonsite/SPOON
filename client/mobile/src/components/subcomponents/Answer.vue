@@ -82,8 +82,6 @@ export default {
         .catch(e => this.$toasted.error('There was a problem submitting the edit.'));
     },
     deleteAnswer (qid, aid) {
-      console.log(`Delete Answer: ${aid}`);
-      // if warning dialog === true
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${qid}/responses/${aid}`)
         .then(response => {
           this.$toasted.show('Answer deleted.');
