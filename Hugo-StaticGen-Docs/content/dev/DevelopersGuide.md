@@ -1,7 +1,6 @@
-
 +++
 title = "Developer Guide"
-description = ""
+description = "Developer Setup Guide"
 weight = 1
 +++
 
@@ -64,6 +63,7 @@ The following key libraries were used in the development:
     * We recommend at least 2GB. (-Xmx2g)
   * if you want to use the Tomcat manager-gui you will need to configuring manager application access -  https://tomcat.apache.org/tomcat-7.0-doc/manager-howto.html#Configuring_Manager_Application_Access
     * make sure you have RW access to $Tomcat_HOME/bin/felix-cache
+
 ## 1.4 Dev Environment with Visual Studio Code
 
 1. **VS Code Install/configuration**
@@ -389,5 +389,3 @@ functionality on top.
 
 -   See [Orient DB Studio](http://orientdb.com/docs/2.1.x/Home-page.html) for
     more information about Studio
-
-

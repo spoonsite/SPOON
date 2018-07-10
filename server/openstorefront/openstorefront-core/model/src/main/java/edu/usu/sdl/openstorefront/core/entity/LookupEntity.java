@@ -85,12 +85,6 @@ public abstract class LookupEntity<T extends LookupEntity>
 	@APIDescription("A string representation of what the entity should be grouped by.")
 	private String groupBy;
 
-	@APIDescription("A string representation of the permission predecessor of the current permission (without this permission predecessor, you cannot activate this permission)")
-	private String permissionPredecessor;
-
-	@APIDescription("A list of default roles")
-	private List<String> defaultRoles;
-
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public LookupEntity()
 	{
@@ -269,28 +263,14 @@ public abstract class LookupEntity<T extends LookupEntity>
 		this.highlightStyle = highlightStyle;
 	}
 
-	public void setGroupBy(String groupBy) {
+	public void setGroupBy(String groupBy)
+	{
 		this.groupBy = groupBy;
 	}
 
-	public String getGroupBy() {
+	public String getGroupBy()
+	{
 		return groupBy;
-	}
-
-	public void setPermissionPredecessor(String permissionPredecessor) {
-		this.permissionPredecessor = permissionPredecessor;
-	}
-
-	public String getPermissionPredecessor() {
-		return permissionPredecessor;
-	}
-	
-	public void setDefaultRoles(List<String> defaultRoles) {
-		this.defaultRoles = defaultRoles;
-	}
-	
-	public List<String> getDefaultRoles() {
-		return defaultRoles;
 	}
 
 }

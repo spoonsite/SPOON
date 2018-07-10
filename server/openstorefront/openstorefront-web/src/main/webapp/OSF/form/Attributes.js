@@ -25,13 +25,14 @@ Ext.define('OSF.form.Attributes', {
 	preventDefaultAction: true,
 
 	layout: 'fit',
+	
 	initComponent: function () {
 
 		this.callParent();
 
 		var attributePanel = this;
 
-		attributePanel.loadComponentAttributes = function (status) {
+		attributePanel.loadComponentAttributes = function (status) { 
 			if (!status) {
 				var tools = attributePanel.attributeGrid.getComponent('tools');
 				status = tools.getComponent('attributeFilterActiveStatus').getValue();
@@ -74,6 +75,9 @@ Ext.define('OSF.form.Attributes', {
 
 		attributePanel.attributeGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
+			viewConfig: {
+				enableTextSelection: true
+			},
 			store: Ext.create('Ext.data.Store', {
 				fields: [
 					"type",
@@ -447,7 +451,7 @@ Ext.define('OSF.form.Attributes', {
 						{
 							xtype: 'textarea',
 							name: 'comment',
-							fieldLabel: 'comment',
+							fieldLabel: 'Comment',
 							labelWidth: 150,
 							maxLength: 4096
 						},
@@ -492,6 +496,9 @@ Ext.define('OSF.form.Attributes', {
 							}
 						},
 						{
+							xtype: 'tbseparator'
+						},
+						{
 							text: 'Edit',
 							itemId: 'edit',
 							iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
@@ -502,13 +509,15 @@ Ext.define('OSF.form.Attributes', {
 							}
 						},						
 						{
-							xtype: 'tbseparator'
+							xtype: 'tbseparator',
+							hidden: attributePanel.hideToggleStatus || false
 						},
 						{
 							text: 'Toggle Status',
 							itemId: 'toggleStatusBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 							disabled: true,
+							hidden: attributePanel.hideToggleStatus || false,
 							handler: function () {
 								CoreUtil.actionSubComponentToggleStatus(attributePanel.attributeGrid, 'type', 'attributes', 'code', null, null, function () {
 									attributePanel.loadComponentAttributes();
@@ -579,6 +588,10 @@ Ext.define('OSF.form.Attributes', {
 			}
 
 		});
+
+		if(callback){
+			callback();
+		}
 	}
 
 });

@@ -399,6 +399,15 @@ public interface ComponentService
 
 	/**
 	 *
+	 * @param contact
+	 * @param updateLastActivity
+	 * @param mergeSimilar
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveComponentContact(ComponentContact contact, boolean updateLastActivity, boolean mergeSimilar);
+
+	/**
+	 *
 	 * @param dependency
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
@@ -791,7 +800,6 @@ public interface ComponentService
 	 * @param targetComponentId
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component merge(String toMergeComponentId, String targetComponentId);
 
 	/**
@@ -915,7 +923,6 @@ public interface ComponentService
 	 * @param componentIdOfPendingChange
 	 * @return
 	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
 	public Component mergePendingChange(String componentIdOfPendingChange);
 
 	/**

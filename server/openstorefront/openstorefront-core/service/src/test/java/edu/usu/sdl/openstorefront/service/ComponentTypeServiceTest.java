@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
@@ -322,7 +321,7 @@ public class ComponentTypeServiceTest
 
 	}
 
-	@Test(expected = OpenStorefrontRuntimeException.class)
+	@Test
 	public void getComponentTypeParentsString_Invalid()
 	{
 		ComponentTypeServiceImpl mockCore = Mockito.mock(ComponentTypeServiceImpl.class);
@@ -332,7 +331,8 @@ public class ComponentTypeServiceTest
 
 		Mockito.when(mockCore.getComponentTypeParentsString("TEST_VALUE", true)).thenCallRealMethod();
 		Mockito.when(mockCore.getComponentTypeParents("TEST_VALUE", true)).thenCallRealMethod();
-		mockCore.getComponentTypeParentsString("TEST_VALUE", true);
+		String value = mockCore.getComponentTypeParentsString("TEST_VALUE", true);
+		assertEquals("(TEST_VALUE)", value);
 	}
 
 	private List<ComponentType> getMockData()

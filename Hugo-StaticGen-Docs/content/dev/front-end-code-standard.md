@@ -17,8 +17,8 @@ Safari, Opera or others (should work but, we are not testing for them)
 2. When making reusable components don't use "ID"s properties. Ids are OK on individual pages; must be unique; "ID" properties are Global.  
 3. Match validation from server, where possible, to make it easier for the user to get the right values. Also, provide friendly but, direct messages.
 4. Pack related components (notification panel, notification) into a single script file. To reduced loading.
-5. Avoid deeply nested components definitions as it easier to read a fewer layers.
-6. Avoid ES 6 features until browsers support is consistent. (mainly IE 11) 
+5. Avoid deeply nested components definitions as it easier to read fewer layers.
+6. Avoid ES 6 features until browsers support is consistent. (mainly IE 11)
 7. { should be on the end of the line as browser may put in ; at the end of the line.
 
 

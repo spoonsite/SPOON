@@ -20,11 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -52,10 +48,6 @@ public class UserSubmissionField
 			+ " It can be a String or JSON encode object;"
 			+ " The template field controls what is accepted here and the mapping")
 	private String rawValue;
-
-	@Embedded
-	@OneToMany(cascade = {CascadeType.ALL})
-	private List<UserSubmissionMedia> media;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserSubmissionField()
@@ -90,16 +82,6 @@ public class UserSubmissionField
 	public void setRawValue(String rawValue)
 	{
 		this.rawValue = rawValue;
-	}
-
-	public List<UserSubmissionMedia> getMedia()
-	{
-		return media;
-	}
-
-	public void setMedia(List<UserSubmissionMedia> media)
-	{
-		this.media = media;
 	}
 
 }

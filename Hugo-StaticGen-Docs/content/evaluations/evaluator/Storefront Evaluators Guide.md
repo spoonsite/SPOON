@@ -4,6 +4,8 @@ description = ""
 weight = 10
 +++
 
+**Note:** 2.6 Introduced some UI changes however, processes and concepts are the same.
+
 ## TL;DR
 * Administrators create and publish evaluations. Evaluators fill out evaluations.
 * While editing an evaluation you will not see exactly what the user sees. The user sees things bundled under a Details tab and an Evaluation tab. In an evaluation everything under the Entry section applies to that Details tab while everything under the Sections and Checklist sections apply to that Evaluations tab.

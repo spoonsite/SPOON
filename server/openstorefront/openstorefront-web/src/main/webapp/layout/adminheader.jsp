@@ -93,12 +93,27 @@
 				}
 			});	
 			dataMenu.push({
-				text: 'Partial Submissions',
-				permission: ['ADMIN-PARTIAL-SUBMISSIONS-PAGE'],
-				handler: function(){
-					actionLoadContent('Partial-Submissions');
+				text: 'Submissions',
+				menu: {
+					items: [
+						{
+							text: 'Submissions Form Templates',
+							permission: 'ADMIN-SUBMISSION-FORM-TEMPLATE_PAGE',
+							handler: function(){
+								actionLoadContent('Custom-Forms');
+							}							
+						},
+						{
+							text: 'Partial Submissions',
+							permission: 'ADMIN-PARTIAL-SUBMISSIONS-PAGE',
+							handler: function(){
+								actionLoadContent('Partial-Submissions');
+							}		
+						}
+					]
 				}
-			});	
+			});
+	
 			dataMenu.push({
 				text: 'Help',
 				menu: {
