@@ -300,7 +300,7 @@ public class MediaAction
 				.createRangeResolution();
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_MEDIA)
+	@RequireSecurity(SecurityPermission.ADMIN_MEDIA_UPLOAD)
 	@HandlesEvent("UploadGeneralMedia")
 	public Resolution uploadGeneralMedia()
 	{
@@ -377,7 +377,7 @@ public class MediaAction
 				.createRangeResolution();
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_SUPPORT_MEDIA)
+	@RequireSecurity(SecurityPermission.ADMIN_SUPPORT_MEDIA_CREATE)
 	@HandlesEvent("UploadSupportMedia")
 	public Resolution uploadSupportMedia()
 	{
