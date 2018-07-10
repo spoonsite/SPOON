@@ -145,7 +145,8 @@ export default {
         { link: '/sme-approval', icon: 'check', name: 'SME Approval' },
         { link: '/faq', icon: 'question', name: 'F.A.Q.' },
         { link: '/contact', icon: 'comment', name: 'Contact' },
-        { link: '/profile', icon: 'user-edit', name: 'Manage Profile' }
+        { link: '/profile', icon: 'user-edit', name: 'Manage Profile' },
+        { link: '/reset-password', icon: 'key', name: 'Reset Password' }
       ],
       alert: false
     };
