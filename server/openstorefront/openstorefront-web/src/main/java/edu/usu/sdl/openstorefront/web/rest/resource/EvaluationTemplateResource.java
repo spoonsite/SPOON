@@ -22,8 +22,12 @@ import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.UpdateEvaluationTemplateModel;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.doc.security.LogicOperation;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import net.sourceforge.stripes.action.ErrorResolution;
+
 import java.net.URI;
 import java.util.List;
 import javax.ws.rs.BeanParam;
@@ -165,7 +169,9 @@ public class EvaluationTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_DELETE)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_EVALUATION_TEMPLATE_DELETE, SecurityPermission.ADMIN_EVALUATION_TEMPLATE_UPDATE},
+		logicOperator = LogicOperation.OR
+	)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates or hard removes a template")
 	@Path("/{templateId}")
@@ -175,15 +181,25 @@ public class EvaluationTemplateResource
 	)
 	{
 		if (force) {
-			EvaluationTemplate evaluationTemplate = new EvaluationTemplate();
-			evaluationTemplate.setTemplateId(templateId);
-			evaluationTemplate = evaluationTemplate.find();
-			if (evaluationTemplate != null) {
-				evaluationTemplate.delete();
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_DELETE)) {
+				EvaluationTemplate evaluationTemplate = new EvaluationTemplate();
+				evaluationTemplate.setTemplateId(templateId);
+				evaluationTemplate = evaluationTemplate.find();
+				if (evaluationTemplate != null) {
+					evaluationTemplate.delete();
+				}
+				return Response.noContent().build();
 			}
-			return Response.noContent().build();
+			else {
+				return Response.status(Response.Status.FORBIDDEN).build();
+			}
 		} else {
-			return updateStatus(templateId, EvaluationTemplate.INACTIVE_STATUS);
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_UPDATE)) {
+				return updateStatus(templateId, EvaluationTemplate.INACTIVE_STATUS);
+			}
+			else {
+				return Response.status(Response.Status.FORBIDDEN).build();
+			}
 		}
 	}
 

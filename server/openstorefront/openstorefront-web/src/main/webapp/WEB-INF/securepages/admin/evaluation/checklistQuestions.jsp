@@ -505,7 +505,7 @@
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
-								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-UDPATE'],
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
 									actionToggleStatus(record);
