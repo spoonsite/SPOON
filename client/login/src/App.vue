@@ -93,6 +93,7 @@ export default {
         retina_detect: true
       });
     }
+    this.$store.dispatch('getSecurityPolicy', this.$http);
   },
   computed: {
     title () {

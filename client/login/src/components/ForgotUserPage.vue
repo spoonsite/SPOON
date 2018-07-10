@@ -19,7 +19,7 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn :disabled="!valid" block color="accent" @click="submitEmail()">Send Username</v-btn>
+          <v-btn :loading="loading" :disabled="!valid" block color="accent" @click="submitEmail()">Send Username</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -45,13 +45,16 @@ export default {
   data: () => ({
     dialog: false,
     valid: false,
-    email: ''
+    email: '',
+    loading: false
   }),
   methods: {
     submitEmail () {
+      this.loading = true;
       this.$http.get(`/openstorefront/api/v1/service/security/forgotusername?emailAddress=${this.email}`)
         .then(response => {
           this.dialog = true;
+          this.loading = false;
         })
         .catch(error => console.log(error));
     }

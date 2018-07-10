@@ -129,7 +129,13 @@
       </v-toolbar>
       <v-card-text>
         <v-form v-model="verification.valid" ref="verifyForm">
-          <v-btn color="accent" :disabled="!verificationValid" style="margin-bottom:2em;" @click="register('POST')">Get Verification Code</v-btn>
+          <v-btn
+            color="accent"
+            :disabled="!verificationValid"
+            :loading="verificationLoading"
+            style="margin-bottom:2em;"
+            @click="register('POST')"
+          >Get Verification Code</v-btn>
           <v-text-field
             prepend-icon="lock"
             name="verifycode"
@@ -140,8 +146,6 @@
           ></v-text-field>
         </v-form>
       </v-card-text>
-      <v-card-actions>
-      </v-card-actions>
     </v-card>
     </v-flex>
     </v-layout>
@@ -190,6 +194,7 @@ export default {
   data: function () {
     return {
       verificationDialog: false,
+      verificationLoading: false,
       successDialog: false,
       credentials: {
         valid: false,
@@ -220,9 +225,11 @@ export default {
       ],
       password1Rules: [
         v => !!v || 'Password is required',
-        v =>
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~`!@#$%^&*()-+=<>:;"',.?])[A-Za-z\d~`!@#$%^&*()-+=<>:;"',.?]{8,}$/.test(v) ||
-          'Password must contain 1 uppercase, 1 number, and 1 special character (i.e. @$!%*#?&)'
+        v => {
+          let regex = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{' + String(this.$store.state.securitypolicy.minPasswordLength) + ',}$');
+          return regex.test(v) ||
+          `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least ${this.$store.state.securitypolicy.minPasswordLength} characters`;
+        }
       ],
       password2Rules: [
         v => !!v || 'Password verification is required',
@@ -279,11 +286,13 @@ export default {
         verificationCode: this.verification.code
       };
       if (verb === 'POST') {
+        this.verificationLoading = true;
         this.$http.post('/openstorefront/api/v1/resource/userregistrations', data)
           .then(response => {
             this.verificationDialog = true;
             this.registrationId = response.data.registrationId;
             this.verificationCode = response.data.verificationCode;
+            this.verificationLoading = false;
           })
           .catch(e => this.errors.push(e));
       } else {
