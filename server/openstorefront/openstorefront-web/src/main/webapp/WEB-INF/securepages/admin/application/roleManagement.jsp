@@ -470,11 +470,14 @@
 					});
 
 					grid.view.refresh();
-					grid.getColumns().reduce(function (acc, col) {
+					var sortableCol = grid.getColumns().reduce(function (acc, col) {
 						if (col.dataIndex === 'sortColumn') {
 							return col;
 						}
-					}, {}).sort('up');
+					}, {});
+					if (sortableCol) {
+						sortableCol.sort('up');
+					}
 				};
 				
 				var actionManagePermissions = function(record) {
