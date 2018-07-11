@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.mapping;
 
 import edu.usu.sdl.openstorefront.common.util.Convert;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.MediaType;
@@ -42,7 +43,7 @@ public class ComponentFieldMapper
 
 	private static final Logger LOG = Logger.getLogger(ComponentFieldMapper.class.getName());
 
-	private static final String STUB_TEST = "TEST";
+	private static final String STUB_TEST = "TEST-";
 
 	@Override
 	public List<ComponentAll> mapField(ComponentAll componentAll, SubmissionFormField submissionField, UserSubmissionField userSubmissionField)
@@ -50,7 +51,7 @@ public class ComponentFieldMapper
 	{
 		List<ComponentAll> childComponents = new ArrayList<>();
 
-		String value = STUB_TEST;
+		String value = STUB_TEST + StringProcessor.uniqueId();
 		if (userSubmissionField != null) {
 			value = userSubmissionField.getRawValue();
 		}
