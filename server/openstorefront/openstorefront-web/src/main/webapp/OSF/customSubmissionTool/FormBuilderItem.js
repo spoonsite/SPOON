@@ -741,11 +741,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
 			
 				formBuilderItem.getForm().findField('attributeType').setHidden(false);
-				formBuilderItem.getForm().findField('requiredCommentOnValue').setHidden(false);
+				formBuilderItem.getForm().findField('requiredCommentOnValue').setHidden(false);				
 				formBuilderItem.getForm().findField('commentLabel').setHidden(false);
 				formBuilderItem.getForm().findField('requireComment').setHidden(false);
 				formBuilderItem.getForm().findField('showComment').setHidden(false);
-				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);							
+				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);
+				formBuilderItem.getForm().findField('hidePrivateAttributeFlag').setHidden(false);
 			break;
 			case 'ATTRIBUTE_MCHECKBOX':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
@@ -755,6 +756,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('requireComment').setHidden(false);
 				formBuilderItem.getForm().findField('showComment').setHidden(false);
 				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);
+				formBuilderItem.getForm().findField('hidePrivateAttributeFlag').setHidden(false);
 			break;
 			case 'ATTRIBUTE_SINGLE':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
@@ -766,7 +768,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('commentLabel').setHidden(false);
 				formBuilderItem.getForm().findField('requireComment').setHidden(false);
 				formBuilderItem.getForm().findField('showComment').setHidden(false);
-				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);	
+				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);
+				formBuilderItem.getForm().findField('hidePrivateAttributeFlag').setHidden(false);
 			break;
 			case 'ATTRIBUTE_REQUIRED':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
@@ -866,6 +869,31 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		}		
 		
 		Ext.apply(formBuilderItem.templateField, formData);
+		
+		//remove fields that don't exist
+		Ext.Object.each(formBuilderItem.templateField, function(key, value){
+			var existingInForm = false;
+			if (key === 'mappingType' ||
+				key === 'fieldId' ||
+				key === 'sectionId' ||
+				key === 'fieldOrder' ||
+				key === 'fieldType'
+				) {
+				existingInForm = true;
+			} else {	
+				Ext.Object.each(formData, function(formDataKey, formDataValue){
+					if (key === formDataKey) {
+						existingInForm = true;
+					}
+				});
+			}
+			
+			if (!existingInForm) {
+				delete formBuilderItem.templateField[key];
+			}
+		});
+		
+		
 		if (formBuilderItem.templateField.excludeContactType) {
 			formBuilderItem.templateField.excludeContactType = Ext.encode(formBuilderItem.templateField.excludeContactType);
 		}

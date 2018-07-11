@@ -62,7 +62,7 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	 * @param section
 	 * @param activeFieldId
 	 */
-	loadSection: function (section, activeFieldId) {
+	loadSection: function (section, activeFieldId, fullRefresh) {
 
 		var displayPanel = this;		
 		var formBuilderPanel = displayPanel.formBuilderPanel;
@@ -77,7 +77,9 @@ Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 			sectionContainer.setHidden(true);			
 			return;
 		} else {
-			if (displayPanel.section && displayPanel.section.sectionId === section.sectionId) {
+						
+			if ((displayPanel.section && displayPanel.section.sectionId === section.sectionId) && 
+					!fullRefresh) {
 				
 				if (activeFieldId) {
 					displayPanel.selectQuestion(activeFieldId, itemContainer);
