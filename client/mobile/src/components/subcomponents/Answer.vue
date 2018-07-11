@@ -1,9 +1,9 @@
 <template>
-<div class="white elevation-3 ma-3">
+<div class="white elevation-3 ma-3" :class="{ dn : answer.activeStatus === 'I'}">
   <v-alert type="warning" :value="answer.activeStatus === 'P'">This answer is pending admin approval.</v-alert>
+  <v-alert type="error" :value="answer.activeStatus === 'I'">This answer is inactive.</v-alert>
   <div class="pt-2 px-2">
-    <p class="caption">Answered by <strong>{{ answer.createUser }}</strong> on {{ answer.createDts | formatDate }}</p>
-    <p class="caption" v-if="answer.createDts !== answer.updateDts">Updated on {{ answer.updateDts | formatDate }}</p>
+    <p class="caption">Answered by <strong>{{ answer.createUser }}</strong> on {{ answer.createDts | formatDate }} <span v-if="answer.createDts !== answer.updateDts">(updated on {{ answer.updateDts | formatDate }} by <strong>{{ answer.updateUser }})</strong></span></p>
     <div class="ma-0" v-html="answer.response"></div>
     <div v-if="$store.state.currentUser.username === answer.createUser">
       <v-btn icon @click="edit = true"><v-icon small class="icon">edit</v-icon></v-btn>
@@ -16,9 +16,9 @@
   >
     <v-card>
       <v-card-title>
-        <h2>Edit question</h2>
-        <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
-        <v-alert type="info" :value="true">All answers need admin approval before being made public.</v-alert>
+        <h2 class="w-100">Edit answer</h2>
+        <v-alert class="w-100" type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+        <v-alert class="w-100" type="info" :value="true">All answers need admin approval before being made public.</v-alert>
       </v-card-title>
       <v-card-text>
         <quill-editor
@@ -27,7 +27,7 @@
         ></quill-editor>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="editAnswer(answer.questionId, answer.responseId, answer.response)">Save</v-btn>
+        <v-btn @click="editAnswer()">Save</v-btn>
         <v-btn @click="edit = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -42,7 +42,7 @@
         <p>Are you sure you want to delete this answer?</p>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="warning" @click="deleteAnswer(answer.questionId, answer.responseId)"><v-icon>delete</v-icon> Delete</v-btn>
+        <v-btn color="warning" @click="deleteAnswer()"><v-icon>delete</v-icon> Delete</v-btn>
         <v-btn @click="deleteDialog = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -64,27 +64,30 @@ export default {
     };
   },
   methods: {
-    editAnswer (qid, aid, newAnswer) {
+    editAnswer () {
       let data = {
         dataSensitivity: '',
         organization: this.$store.state.currentUser.organization,
-        questionId: qid,
-        response: newAnswer,
+        questionId: this.answer.questionId,
+        response: this.answer.response,
         securityMarkingType: '',
         userTypeCode: this.$store.state.currentUser.userTypeCode
       };
-      this.$http.put(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${qid}/responses/${aid}`, data)
+      this.$http.put(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${this.answer.questionId}/responses/${this.answer.responseId}`, data)
         .then(response => {
           this.$toasted.show('Edit submitted.');
-          this.answer = response.data;
+          this.answer.response = response.data.response;
+          this.answer.activeStatus = response.data.activeStatus;
+          this.answer.updateDts = new Date(); // the date is not sent back in the response
           this.edit = false;
         })
         .catch(e => this.$toasted.error('There was a problem submitting the edit.'));
     },
-    deleteAnswer (qid, aid) {
-      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${qid}/responses/${aid}`)
+    deleteAnswer () {
+      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${this.answer.questionId}/responses/${this.answer.responseId}`)
         .then(response => {
           this.$toasted.show('Answer deleted.');
+          this.$emit('answerDeleted', this.answer);
           this.deleteDialog = false;
         })
         .catch(e => this.$toasted.error('There was a problem deleting the answer.'));
@@ -100,5 +103,11 @@ export default {
 <style>
 .btn {
   margin: 0;
+}
+.w-100 {
+  width: 100%;
+}
+.dn {
+  display: none;
 }
 </style>

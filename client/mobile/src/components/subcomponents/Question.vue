@@ -2,23 +2,33 @@
 <div class="mt-4">
 
   <div class="white elevation-2" style="overflow: auto;">
-    <div style="width: 100%;" class="grey lighten-2 pa-2">
-      <h3>Question:</h3>
+    <div class="grey lighten-2 pa-2">
+      <h3>Question
+      <span style="float: right" v-if="$store.state.currentUser.username === question.createUser">
+        <v-tooltip bottom>
+          <v-btn small slot="activator" icon @click="openEditQuestionDialog()">   <v-icon class="icon">edit</v-icon></v-btn>
+          <span>Edit the question</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <v-btn small slot="activator" icon @click="deleteQuestionDialog = true"><v-icon class="icon">delete</v-icon></v-btn>
+          <span>Delete the question</span>
+        </v-tooltip>
+      </span>
+      </h3>
+
     </div>
     <v-alert type="warning" :value="question.activeStatus === 'P'">This question is pending admin approval.</v-alert>
+    <p class="caption px-2">Asked by <strong>{{ question.createUser }}</strong> on {{ question.createDts | formatDate }} <span v-if="question.createDts !== question.updateDts">(updated on {{ question.updateDts | formatDate }} by <strong>{{ question.updateUser }}</strong>)</span></p>
     <div class="pt-2 px-2" style="font-size: 16px;" v-html="question.question"></div>
-    <div style="display: inline-block" v-if="$store.state.currentUser.username === question.createUser">
-      <v-btn icon @click="openEditQuestionDialog()">   <v-icon class="icon">edit</v-icon></v-btn>
-      <v-btn icon @click="deleteQuestionDialog = true"><v-icon class="icon">delete</v-icon></v-btn>
-    </div>
-    <v-btn icon @click="answerQuestionDialog = true"><v-icon>fas fa-reply</v-icon></v-btn>
+    <v-btn flat small @click="answerQuestionDialog = true">Answer</v-btn>
+
     <v-btn :loading="loading" v-if="!showAnswers" flat small @click="getAnswers(question.questionId); showAnswers = true;">View Answers</v-btn>
     <v-btn :loading="loading" v-else-if="noAnswers" disabled flat small>No Answers</v-btn>
     <v-btn :loading="loading" v-else flat small @click="showAnswers = false">Hide Answers</v-btn>
 
     <transition name="slide">
     <div v-if="showAnswers">
-      <Answer v-for="answer in answers" :answer="answer" :key="answer.responseId"></Answer>
+      <Answer v-for="answer in answers" :answer="answer" @answerDeleted="deleteAnswer" :key="answer.responseId"></Answer>
     </div>
     </transition>
   </div>
@@ -28,9 +38,9 @@
     >
     <v-card>
       <v-card-title>
-        <h2>Answer a Question</h2>
-        <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
-        <v-alert type="info" :value="true">All questions need admin approval before being made public.</v-alert>
+        <h2 class="w-100">Answer a Question</h2>
+        <v-alert class="w-100" type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+        <v-alert class="w-100" type="info" :value="true">All answers need admin approval before being made public.</v-alert>
       </v-card-title>
       <v-card-text>
         <div v-html="question.question"></div>
@@ -66,9 +76,9 @@
     >
     <v-card>
       <v-card-title>
-        <h2>Edit a Question</h2>
-        <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
-        <v-alert type="info" :value="true">All questions need admin approval before being made public.</v-alert>
+        <h2 class="w-100">Edit a Question</h2>
+        <v-alert class="w-100" type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+        <v-alert class="w-100" type="info" :value="true">All questions need admin approval before being made public.</v-alert>
       </v-card-title>
       <v-card-text>
         <quill-editor
@@ -100,7 +110,7 @@ export default {
   },
   data () {
     return {
-      answers: {},
+      answers: [],
       showAnswers: false,
       edit: false,
       answerQuestionDialog: false,
@@ -114,22 +124,35 @@ export default {
     };
   },
   methods: {
+    checkAnswers () {
+      this.noAnswers = false;
+      if (this.answers.length === 0) {
+        this.noAnswers = true;
+      } else {
+        let hasAnswer = false;
+        this.answers.forEach(function (el) {
+          if (el.activeStatus !== 'I') {
+            hasAnswer = true;
+          }
+        });
+        if (!hasAnswer) {
+          this.noAnswers = true;
+        }
+      }
+    },
     getAnswers (qid) {
       if (_.isEmpty(this.answers)) {
         this.loading = true;
         this.$http.get(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`)
           .then(response => {
             this.answers = response.data;
-            if (this.answers.length === 0) {
-              this.noAnswers = true;
-            }
+            this.checkAnswers();
             this.loading = false;
           })
           .catch(e => this.errors.push(e));
       }
     },
     submitAnswer (qid) {
-      console.log(`Answer question ${qid}`);
       let data = {
         dataSensitivity: '',
         organization: this.$store.state.currentUser.organization,
@@ -141,11 +164,11 @@ export default {
       this.$http.post(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`, data)
         .then(response => {
           // answer created
-          if (response.status === 201) {
-            this.$toasted.show('Answer submitted.');
-          }
-          this.getAnswers(qid);
+          this.$toasted.show('Answer submitted.');
+          this.answers.push(response.data);
           this.newAnswer = '';
+          this.noAnswers = false;
+          this.showAnswers = true;
           this.answerQuestionDialog = false;
         })
         .catch(e => this.$toasted.error('There was a problem submitting the answer.'));
@@ -155,7 +178,7 @@ export default {
         .then(response => {
           this.deleteQuestionDialog = false;
           this.$toasted.show('Question deleted.');
-          this.$emit('deleteQuestion');
+          this.$emit('questionDeleted', this.question);
         })
         .catch(e => this.$toasted.error('There was a problem deleting the answer.'));
     },
@@ -169,14 +192,22 @@ export default {
       };
       this.$http.put(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}`, data)
         .then(response => {
-          // question submitted
-          console.log('Question asked, awaiting approval');
-          this.question = response.data;
+          this.question.question = response.data.question;
+          this.question.updateDts = new Date(); // the date is not sent back in the response
+          this.question.activeStatus = response.data.activeStatus;
           this.newQuestion = '';
           this.$toasted.show('Edited question submitted.');
           this.editQuestionDialog = false;
         })
         .catch(e => this.$toasted.error('There was a problem submitting the edit.'));
+    },
+    deleteAnswer (answer) {
+      console.log(answer);
+      this.answers = this.answers.filter(function (el) {
+        return el.responseId !== answer.responseId;
+      });
+      // check if no answers
+      this.checkAnswers();
     },
     openEditQuestionDialog () {
       this.newQuestion = this.question.question;
@@ -204,5 +235,8 @@ export default {
 }
 .slide-enter, .slide-leave-to {
   max-height: 0;
+}
+.w-100 {
+  width: 100%;
 }
 </style>

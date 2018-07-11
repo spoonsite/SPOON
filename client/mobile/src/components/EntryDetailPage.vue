@@ -215,7 +215,7 @@
         <v-card class="grey lighten-4">
           <v-card-text>
             <v-btn color="white" @click="askQuestionDialog = true">Ask a Question</v-btn>
-            <Question v-for="question in questions" :key="question.question" :question="question"></Question>
+            <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion" :question="question"></Question>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -225,9 +225,9 @@
       >
       <v-card>
         <v-card-title>
-          <h2>Ask a Question</h2>
-          <v-alert type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
-          <v-alert type="info" :value="true">All questions need admin approval before being made public.</v-alert>
+          <h2 class="w-100">Ask a Question</h2>
+          <v-alert class="w-100" type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+          <v-alert class="w-100" type="info" :value="true">All questions need admin approval before being made public.</v-alert>
         </v-card-title>
         <v-card-text>
           <quill-editor
@@ -334,6 +334,9 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting the question.'));
     },
+    deleteQuestion (question) {
+      console.log(question);
+    },
     getAnswers (qid) {
       this.isLoading = true;
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions/${qid}/responses`)
@@ -397,5 +400,8 @@ export default {
   }
   .icon {
     margin-right: 0.3em;
+  }
+  .w-100 {
+    width: 100%;
   }
 </style>
