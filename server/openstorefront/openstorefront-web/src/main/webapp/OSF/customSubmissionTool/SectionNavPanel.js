@@ -164,7 +164,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		navPanel.add(navPanel.treePanel);
 						
 	},
-	syncModel: function(skipUpdateSection) {
+	syncModel: function(skipUpdateSection, fullRefresh) {
 		//sync the template with the view
 		var navPanel = this;
 		var navList = navPanel.queryById('navList');
@@ -189,7 +189,8 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		if (!skipUpdateSection) {
 			navPanel.formBuilderPanel.displayPanel.loadSection(
 					records[0].parentNode.data.section, 
-					records[0].get('fieldId')
+					records[0].get('fieldId'),
+					fullRefresh || true
 			);		
 		}
 	},	
