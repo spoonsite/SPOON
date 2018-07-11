@@ -166,6 +166,7 @@ public class SecurityPermission
 	public static final String ADMIN_ENTRY_EVALSECTION_MANAGEMENT = "ADMIN-ENTRY-EVALSECTION-MANAGEMENT";
 	public static final String ADMIN_ENTRY_TAG_MANAGEMENT = "ADMIN-ENTRY-TAG-MANAGEMENT";
 	public static final String ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT = "ADMIN-ENTRY-CHANGEREQUEST-MANAGEMENT";
+	public static final String ADMIN_ENTRY_COMMENT_MANAGEMENT = "ADMIN-ENTRY-COMMENT-MANAGEMENT";
 	public static final String ADMIN_ENTRY_CHANGEOWNER = "ADMIN-ENTRY-CHANGEOWNER";
 	public static final String ADMIN_ENTRY_EXPORT = "ADMIN-ENTRY-EXPORT";
 	public static final String ADMIN_ENTRY_PENDINGCHANGE_READ = "ADMIN-ENTRY-PENDINGCHANGE-READ";
@@ -700,6 +701,10 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, "Allows for management change requests", null, GROUPBY_ENTRY_MANAGEMENT));
 		((SecurityPermission) codeMap.get(ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT)).setPermissionPredecessor(ADMIN_ENTRY_READ);
 		((SecurityPermission) codeMap.get(ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
+		codeMap.put(ADMIN_ENTRY_COMMENT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_COMMENT_MANAGEMENT, "Allows for management entry comments", null, GROUPBY_ENTRY_MANAGEMENT));
+		((SecurityPermission) codeMap.get(ADMIN_ENTRY_COMMENT_MANAGEMENT)).setPermissionPredecessor(ADMIN_ENTRY_READ);
+		((SecurityPermission) codeMap.get(ADMIN_ENTRY_COMMENT_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(ADMIN_ENTRY_CHANGEOWNER, newLookup(SecurityPermission.class, ADMIN_ENTRY_CHANGEOWNER, "Allows admin to change the owner of an entry", null, GROUPBY_ENTRY_MANAGEMENT));
 		((SecurityPermission) codeMap.get(ADMIN_ENTRY_CHANGEOWNER)).setPermissionPredecessor(ADMIN_ENTRY_READ);

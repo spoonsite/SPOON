@@ -59,7 +59,7 @@ public class SubmissionFormTemplateResource
 
 	@GET
 	@APIDescription("Gets Submission Templates")
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SubmissionFormTemplateView.class)
 	public List<SubmissionFormTemplateView> getSubmissionFormTemplates(
@@ -75,7 +75,7 @@ public class SubmissionFormTemplateResource
 
 	@GET
 	@APIDescription("Gets Submission Templates")
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/verified")
 	@DataType(SubmissionFormTemplateView.class)
@@ -148,7 +148,7 @@ public class SubmissionFormTemplateResource
 
 	@POST
 	@APIDescription("Exports questions in JSON format.")
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_READ)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportFormTemplate(
@@ -181,7 +181,7 @@ public class SubmissionFormTemplateResource
 
 	@POST
 	@APIDescription("Creates a new Submission Template")
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_CREATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(SubmissionFormTemplate.class)
@@ -193,7 +193,7 @@ public class SubmissionFormTemplateResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE)
 	@APIDescription("Updates an Submission Template")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -232,7 +232,7 @@ public class SubmissionFormTemplateResource
 
 	@PUT
 	@APIDescription("Activate Form template")
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}/activate")
 	public Response activateTemplate(
@@ -243,8 +243,8 @@ public class SubmissionFormTemplateResource
 	}
 
 	@PUT
-	@APIDescription("Activate Form template")
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@APIDescription("Inactivate Form template")
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}/inactivate")
 	public Response inactivateTemplate(
@@ -271,7 +271,7 @@ public class SubmissionFormTemplateResource
 
 	@PUT
 	@APIDescription("Verifies Template")
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}/verify/{userSubmissionId}")
 	public Response verifyTemplate(
@@ -304,7 +304,7 @@ public class SubmissionFormTemplateResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE)
+	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_DELETE)
 	@APIDescription("Deletes a submission template")
 	@Path("/{templateId}")
 	public void deleteUserSubmission(

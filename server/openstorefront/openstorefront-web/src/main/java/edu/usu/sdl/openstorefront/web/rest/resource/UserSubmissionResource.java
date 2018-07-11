@@ -53,7 +53,7 @@ public class UserSubmissionResource
 
 	@GET
 	@APIDescription("Gets all user submissions for all users; Note: these are incomplete submissions")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSubmission.class)
 	public List<UserSubmission> getUserSubmissions()
@@ -64,7 +64,7 @@ public class UserSubmissionResource
 
 	@GET
 	@APIDescription("Gets all user submissions for all users; Note: these are incomplete submissions")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSubmissionView.class)
 	@Path("/admin")
@@ -75,7 +75,7 @@ public class UserSubmissionResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_READ)
 	@APIDescription("Gets user submissions for current user")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSubmission.class)
@@ -89,7 +89,7 @@ public class UserSubmissionResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_READ)
 	@APIDescription("Gets a submission")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSubmission.class)
@@ -110,7 +110,7 @@ public class UserSubmissionResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_READ)
 	@APIDescription("Gets a submission media records")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSubmissionMediaView.class)
@@ -139,7 +139,7 @@ public class UserSubmissionResource
 
 	@POST
 	@APIDescription("Creates a new Submission")
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(UserSubmission.class)
@@ -152,7 +152,7 @@ public class UserSubmissionResource
 
 	//update submission	(submission - owner/admin) FIX Admin permission
 	@PUT
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Updates an user submission")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -194,7 +194,7 @@ public class UserSubmissionResource
 
 	@PUT
 	@APIDescription("Submits a submission for approval")
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{submissionId}/submitforapproval")
 	public Response submitForApproval(
@@ -222,7 +222,7 @@ public class UserSubmissionResource
 
 	@PUT
 	@APIDescription("Submits a change request for approval")
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{submissionId}/submitchangeforapproval")
 	public Response submitChangeForApproval(
@@ -244,13 +244,16 @@ public class UserSubmissionResource
 					response = Response.ok().build();
 				}
 			}
+			else {
+				return Response.status(Response.Status.FORBIDDEN).build();
+			}
 		}
 		return response;
 	}
 
 	@PUT
 	@APIDescription("Reassign Owner on a submission")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{submissionId}/reassignowner/{username}")
 	public Response reassignOwner(
@@ -271,7 +274,7 @@ public class UserSubmissionResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_DELETE)
 	@APIDescription("Deletes a submission")
 	@Path("/{submissionId}")
 	public Response deleteUserSubmission(
@@ -294,7 +297,7 @@ public class UserSubmissionResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS)
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
 	@APIDescription("Deletes a submission media")
 	@Path("/{submissionId}/media/{mediaId}")
 	public Response deleteUserSubmissionMedia(

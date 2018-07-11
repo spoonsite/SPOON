@@ -130,7 +130,7 @@ public class ResourceAction
 		return new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 	}
 
-	@ValidationMethod(on = {"UploadResource", "UploadSubmissionFormResource"})
+	@ValidationMethod(on = {"UploadResource"})
 	public void uploadHook(ValidationErrors errors)
 	{
 		checkUploadSizeValidation(errors, file, "file");
