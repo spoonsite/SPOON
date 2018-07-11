@@ -14,12 +14,12 @@
               label="Enter Email"
               type="text"
               v-model="email"
-              :rules="emailRules"
+              :rules="[rules.required, rules.email]"
             ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn :disabled="!valid" block color="accent" @click="submitEmail()">Send Username</v-btn>
+          <v-btn :loading="loading" :disabled="!valid" block color="accent" @click="submitEmail()">Send Username</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -37,24 +37,24 @@
 </template>
 
 <script>
+import validators from '../util/validators';
+
 export default {
   name: 'ForgotUsernameComp',
+  mixins: [validators],
   data: () => ({
     dialog: false,
     valid: false,
     email: '',
-    emailRules: [
-      v => !!v || 'E-mail is required',
-      v =>
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-        'E-mail must be valid'
-    ]
+    loading: false
   }),
   methods: {
     submitEmail () {
+      this.loading = true;
       this.$http.get(`/openstorefront/api/v1/service/security/forgotusername?emailAddress=${this.email}`)
         .then(response => {
           this.dialog = true;
+          this.loading = false;
         })
         .catch(error => console.log(error));
     }

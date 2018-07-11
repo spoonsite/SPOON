@@ -19,7 +19,7 @@
             <v-text-field
               prepend-icon="lock"
               name="password1"
-              label="Password"
+              label="New Password"
               type="password"
               v-model="password1"
               :rules="password1Rules"
@@ -35,7 +35,7 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn :disabled="!valid" block color="accent" @click="submitReset()">Send Email Approval</v-btn>
+          <v-btn :loading="loading" :disabled="!valid" block color="accent" @click="submitReset()">Send Email Approval</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -59,6 +59,7 @@ export default {
     return {
       dialog: false,
       valid: false,
+      loading: false,
       username: '',
       usernameRules: [
         v => !!v || 'Username is required',
@@ -82,6 +83,7 @@ export default {
   },
   methods: {
     submitReset () {
+      this.loading = true;
       this.$http.put(`/openstorefront/api/v1/service/security/${this.username}/resetpassword`,
         {
           username: this.username,
@@ -90,6 +92,7 @@ export default {
         })
         .then(response => {
           this.dialog = true;
+          this.loading = false;
         })
         .catch(error => console.log(error));
     }

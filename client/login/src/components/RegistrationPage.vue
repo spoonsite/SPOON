@@ -96,7 +96,7 @@
               label="Business Email"
               type="text"
               v-model="userInformation.email"
-              :rules="emailRules"
+              :rules="[rules.required, rules.email]"
               required
             ></v-text-field>
 
@@ -129,7 +129,13 @@
       </v-toolbar>
       <v-card-text>
         <v-form v-model="verification.valid" ref="verifyForm">
-          <v-btn color="accent" :disabled="!verificationValid" style="margin-bottom:2em;" @click="register('POST')">Get Verification Code</v-btn>
+          <v-btn
+            color="accent"
+            :disabled="!verificationValid"
+            :loading="verificationLoading"
+            style="margin-bottom:2em;"
+            @click="register('POST')"
+          >Get Verification Code</v-btn>
           <v-text-field
             prepend-icon="lock"
             name="verifycode"
@@ -140,8 +146,6 @@
           ></v-text-field>
         </v-form>
       </v-card-text>
-      <v-card-actions>
-      </v-card-actions>
     </v-card>
     </v-flex>
     </v-layout>
@@ -178,8 +182,11 @@
 </template>
 
 <script>
+import validators from '../util/validators';
+
 export default {
   name: 'RegistrationPage',
+  mixins: [validators],
   mounted: function () {
     this.getOrganizations();
     this.getUserTypes();
@@ -187,6 +194,7 @@ export default {
   data: function () {
     return {
       verificationDialog: false,
+      verificationLoading: false,
       successDialog: false,
       credentials: {
         valid: false,
@@ -217,9 +225,11 @@ export default {
       ],
       password1Rules: [
         v => !!v || 'Password is required',
-        v =>
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~`!@#$%^&*()-+=<>:;"',.?])[A-Za-z\d~`!@#$%^&*()-+=<>:;"',.?]{8,}$/.test(v) ||
-          'Password must contain 1 uppercase, 1 number, and 1 special character (i.e. @$!%*#?&)'
+        v => {
+          let regex = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{' + String(this.$store.state.securitypolicy.minPasswordLength) + ',}$');
+          return regex.test(v) ||
+          `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least ${this.$store.state.securitypolicy.minPasswordLength} characters`;
+        }
       ],
       password2Rules: [
         v => !!v || 'Password verification is required',
@@ -227,23 +237,11 @@ export default {
       ],
       organizationsList: [],
       userTypesList: [],
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v =>
-          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-          'E-mail must be valid'
-      ],
       firstNameRules: [
-        v => !!v || 'First name is required',
-        v =>
-          /^\w+$/.test(v) ||
-          'Name must be valid'
+        v => !!v || 'First name is required'
       ],
       lastNameRules: [
-        v => !!v || 'Last name is required',
-        v =>
-          /^\w+$/.test(v) ||
-          'Name must be valid'
+        v => !!v || 'Last name is required'
       ],
       filter (item, queryText, itemText) {
         const hasValue = val => val != null ? val : '';
@@ -288,11 +286,13 @@ export default {
         verificationCode: this.verification.code
       };
       if (verb === 'POST') {
+        this.verificationLoading = true;
         this.$http.post('/openstorefront/api/v1/resource/userregistrations', data)
           .then(response => {
             this.verificationDialog = true;
             this.registrationId = response.data.registrationId;
             this.verificationCode = response.data.verificationCode;
+            this.verificationLoading = false;
           })
           .catch(e => this.errors.push(e));
       } else {
