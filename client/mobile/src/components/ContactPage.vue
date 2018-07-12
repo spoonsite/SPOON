@@ -3,9 +3,6 @@
     <v-layout mt-3 mx-3>
       <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
         <v-card class="elevation-5">
-          <v-toolbar color="primary" dark dense>
-            <v-toolbar-title>Contact Us</v-toolbar-title>
-          </v-toolbar>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-card-text>
 
