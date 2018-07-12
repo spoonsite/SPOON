@@ -152,7 +152,7 @@
 
     <div class="button-wrapper mt-2">
       <div class="btn1">
-        <v-btn block color="accent" :disabled="!valid" @click="register()"><v-icon class="icon" light>check</v-icon>Signup</v-btn>
+        <v-btn block color="accent" :loading="signupLoading" :disabled="!valid" @click="register()"><v-icon class="icon" light>check</v-icon>Signup</v-btn>
       </div>
       <div class="btn2">
       <v-btn block color="accent" @click="cancel()"><v-icon light class="icon">cancel</v-icon>Cancel</v-btn>
@@ -170,7 +170,8 @@
 
     <v-dialog v-model="successDialog" max-width="300px">
       <v-card tile>
-        <v-card-text>Registration Success! Return to login screen to login with your new username and password.</v-card-text>
+        <v-card-title><h2>Registration Success!</h2></v-card-title>
+        <v-card-text>Return to login screen to login with your new username and password.</v-card-text>
         <v-card-actions>
           <v-btn @click="$router.push('/')"><v-icon class="icon">fas fa-sign-in-alt</v-icon>Return to Login</v-btn>
         </v-card-actions>
@@ -195,6 +196,7 @@ export default {
     return {
       verificationDialog: false,
       verificationLoading: false,
+      signupLoading: false,
       successDialog: false,
       credentials: {
         valid: false,
@@ -296,9 +298,11 @@ export default {
           })
           .catch(e => this.errors.push(e));
       } else {
+        this.signupLoading = true;
         this.$http.put('/openstorefront/api/v1/resource/userregistrations', data)
           .then(response => {
             this.successDialog = true;
+            this.signupLoading = false;
           })
           .catch(e => this.errors.push(e));
       }
