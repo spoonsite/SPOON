@@ -367,7 +367,9 @@ export default {
     },
     filterLightboxList () {
       if (this.detail.componentMedia) {
-        this.lightboxList = _.filter(this.detail.componentMedia, { 'mediaTypeCode': 'IMG' });
+        this.lightboxList = _.filter(this.detail.componentMedia, function (o) {
+          return o.mediaTypeCode === 'IMG' && !o.hideInDisplay;
+        });
       }
     },
     computeHasImage () {
