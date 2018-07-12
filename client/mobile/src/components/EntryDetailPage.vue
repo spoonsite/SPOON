@@ -107,13 +107,13 @@
             <v-card-text>
               <div v-if="currentMediaDetailItem.mediaTypeCode === 'IMG'" style="text-align: center; padding-bottom: 2em;">
                 <h3 v-if="currentMediaDetailItem.caption">{{ currentMediaDetailItem.caption }}</h3>
-                <img :src="currentMediaDetailItem.link" :alt="currentMediaDetailItem.caption">
+                <img style="width: 100%;" :src="currentMediaDetailItem.link" :alt="currentMediaDetailItem.caption">
               </div>
-              <ul>
-                <li v-if="currentMediaDetailItem.originalFileName">File Name: {{ currentMediaDetailItem.originalFileName }}</li>
-                <li>Media Type: {{ currentMediaDetailItem.contentType }}</li>
-                <li>Link: <a :href="currentMediaDetailItem.link">{{ currentMediaDetailItem.link}}</a></li>
-                <li>Last Updated: {{ currentMediaDetailItem.updateDts | formatDate }}</li>
+              <ul style="overflow: auto;padding-bottom: 0.5em;">
+                <li v-if="currentMediaDetailItem.originalFileName"><strong>File Name: </strong>{{ currentMediaDetailItem.originalFileName }}</li>
+                <li><strong>Media Type:  </strong> {{ currentMediaDetailItem.contentType }}</li>
+                <li><strong>Link:        </strong> <a :href="currentMediaDetailItem.link">{{ currentMediaDetailItem.link}}</a></li>
+                <li><strong>Last Updated:</strong> {{ currentMediaDetailItem.updateDts | formatDate }}</li>
               </ul>
             </v-card-text>
             <v-card-actions>
