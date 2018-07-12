@@ -77,20 +77,51 @@
         <div slot="header">Media Download</div>
         <v-card class="grey lighten-4">
           <v-card-text>
-            <p
+            <ul class="fa-ul">
+            <li
               v-for="item in detail.componentMedia"
+              v-if="item.link"
               :key="item.componentType"
-              style="overflow-x: auto; white-space: nowrap;"
+              class="list-item"
             >
-
-              <v-btn flat icon :href="baseURL+item.link">
-                <v-icon>cloud_download</v-icon>
-              </v-btn>
-                <strong>{{ item.contentType }}:</strong>
-                {{ item.caption}}
-            </p>
+              <span class="fa-li"><v-icon class="icon-2x">fas fa-{{ mediaIconMap[item.mediaTypeCode] }}</v-icon></span>
+              <a
+                :href="item.link"
+                class="media-link"
+              >
+                <span v-if="item.caption">{{ item.caption }}</span><span v-else>{{ item.originalFileName }}</span>
+              </a>
+              <v-btn small icon @click="showMediaDetails(item)"><v-icon style="color: #999">fas fa-info-circle</v-icon></v-btn>
+            </li>
+            </ul>
           </v-card-text>
         </v-card>
+
+        <v-dialog
+          v-model="mediaDetailsDialog"
+          >
+          <v-card>
+            <v-card-title>
+              <h2 class="w-100">Media Details</h2>
+            </v-card-title>
+            <v-card-text>
+              <div v-if="currentMediaDetailItem.mediaTypeCode === 'IMG'" style="text-align: center; padding-bottom: 2em;">
+                <h3 v-if="currentMediaDetailItem.caption">{{ currentMediaDetailItem.caption }}</h3>
+                <img :src="currentMediaDetailItem.link" :alt="currentMediaDetailItem.caption">
+              </div>
+              <ul>
+                <li v-if="currentMediaDetailItem.originalFileName">File Name: {{ currentMediaDetailItem.originalFileName }}</li>
+                <li>Media Type: {{ currentMediaDetailItem.contentType }}</li>
+                <li>Link: <a :href="currentMediaDetailItem.link">{{ currentMediaDetailItem.link}}</a></li>
+                <li>Last Updated: {{ currentMediaDetailItem.updateDts | formatDate }}</li>
+              </ul>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="mediaDetailsDialog = false;">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
       </v-expansion-panel-content>
 
       <v-expansion-panel-content v-if="detail.resources && detail.resources.length !== 0">
@@ -104,7 +135,7 @@
               <v-btn flat icon :href="baseURL+item.actualLink"><v-icon>link</v-icon></v-btn>
               <div style="overflow-x: auto; white-space: nowrap;">
                 <a :href="item.link" style="display: block; margin-bottom: 0.5em;">
-                  {{ item.link }}
+                  <span v-if="item.description">{{ item.description }}</span><span v-else>{{ item.link }}</span>
                 </a>
               </div>
             </div>
@@ -283,6 +314,16 @@ export default {
       hasImage: false,
       lightboxList: [],
       errors: [],
+      mediaDetailsDialog: false,
+      currentMediaDetailItem: {},
+      mediaIconMap: {
+        'VID': 'file-video',
+        'TEX': 'file-alt',
+        'AUD': 'file-audio',
+        'ARC': 'file-archive',
+        'IMG': 'file-image',
+        'OTH': 'file'
+      },
       attributeTableHeaders: [
         {
           text: 'Attribute Type',
@@ -296,11 +337,25 @@ export default {
     };
   },
   methods: {
+    showMediaDetails (item) {
+      this.currentMediaDetailItem = item;
+      this.mediaDetailsDialog = true;
+    },
     getDetail () {
       this.isLoading = true;
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/detail`)
         .then(response => {
           this.detail = response.data;
+          // parse the description for `Media.action` relative paths and change to absolute paths
+          this.detail.description = this.detail.description.replace(/media\.action/i, '/openstorefront/Media.action');
+          this.detail.resources.forEach(function (el) {
+            el.link = el.link.replace(/resource\.action/i, '/openstorefront/Resource.action');
+          });
+          this.detail.componentMedia.forEach(function (el) {
+            if (el.link) {
+              el.link = el.link.replace(/media\.action/i, '/openstorefront/Media.action');
+            }
+          });
         })
         .catch(e => this.errors.push(e))
         .finally(() => {
@@ -405,5 +460,17 @@ export default {
   }
   .w-100 {
     width: 100%;
+  }
+  .icon-2x {
+    font-size: 20px;
+  }
+  .media-link {
+    text-decoration: none;
+  }
+  .media-link:hover {
+    text-decoration: underline;
+  }
+  .list-item {
+    line-height: 2.4em;
   }
 </style>
