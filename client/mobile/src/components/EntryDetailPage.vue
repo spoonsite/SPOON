@@ -152,7 +152,7 @@
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
 
-            <div v-if="detail.review && detail.reviews.length !== 0">
+            <div v-if="detail.reviews && detail.reviews.length !== 0">
               <div
                 v-for="review in detail.reviews"
                 :key="review.title"
@@ -187,7 +187,8 @@
         </v-card>
       </v-expansion-panel-content>
 
-      <v-expansion-panel-content v-if="detail.tags && detail.tags.length !== 0">
+      <!-- TODO: allow authorized users to add tags to the entry -->
+      <!-- <v-expansion-panel-content v-if="detail.tags && detail.tags.length !== 0">
         <div slot="header">Tags</div>
         <v-card class="grey lighten-4">
           <v-card-text>
@@ -205,7 +206,7 @@
 
           </v-card-text>
         </v-card>
-      </v-expansion-panel-content>
+      </v-expansion-panel-content> -->
 
       <v-expansion-panel-content v-if="detail.contacts && detail.contacts.length !== 0">
         <div slot="header">Contacts</div>
