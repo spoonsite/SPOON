@@ -6,18 +6,20 @@
       <div id="particle-js"></div>
       <v-footer color="primary" dark height="auto">
         <v-card color="primary" flat dark class="footer-wrapper">
-            <v-layout row wrap>
-              <v-flex xs12 sm4 offset-sm2>
-                <img class="" src="openstorefront/Branding.action?GeneralMedia&name=SpoonLogoWhiteSquare" alt="" width="180">
-                <img class="logo-img" src="openstorefront/Branding.action?GeneralMedia&name=S3VI Logo" alt="">
-                <img class="logo-img" src="openstorefront/Branding.action?GeneralMedia&name=SSP Logo" alt="">
-              </v-flex>
-              <v-flex xs12 sm5 lg4>
-                <v-card-text>
-                  This is a U.S. Government system and is for authorized users only. By accessing and using this computer system, you are consenting to system monitoring, including the monitoring of keystrokes. Unauthorized use of, or access to, this computer system may subject you to disciplinary action and criminal prosecution.
-                </v-card-text>
-              </v-flex>
-            </v-layout>
+          <v-layout row wrap>
+            <v-flex xs12 sm4 offset-sm2>
+              <!-- <img :src="'/openstorefront/' + $store.state.branding.secondaryLogoUrl" alt=""> -->
+              <!-- <img class="" src="openstorefront/Branding.action?GeneralMedia&name=SpoonLogoWhiteSquare" alt="" width="180">
+              <img class="logo-img" src="openstorefront/Branding.action?GeneralMedia&name=S3VI Logo" alt="">
+              <img class="logo-img" src="openstorefront/Branding.action?GeneralMedia&name=SSP Logo" alt=""> -->
+              <div v-html="$store.state.branding.loginLogoBlock"></div>
+            </v-flex>
+            <v-flex xs12 sm5 lg4>
+              <v-card-text v-html="$store.state.branding.loginWarning">
+              </v-card-text>
+            </v-flex>
+          </v-layout>
+          <div v-html="$store.state.branding.landingPageFooter"></div>
         </v-card>
       </v-footer>
     </v-app>
@@ -94,13 +96,14 @@ export default {
       });
     }
     this.$store.dispatch('getSecurityPolicy', this.$http);
+    this.$store.dispatch('getBranding', this.$http);
   },
   computed: {
     title () {
-      return this.$store.state.aTitle;
+      return this.$store.state.branding.landingPageTitle;
     },
     subTitle () {
-      return this.$store.state.aSubtitle;
+      return this.$store.state.branding.landingPageBanner;
     }
   }
 };

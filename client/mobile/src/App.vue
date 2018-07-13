@@ -132,6 +132,7 @@ export default {
     });
 
     this.$store.dispatch('setCurrentUser', this.$http); // pass in current axios instance
+    this.$store.dispatch('getBranding', this.$http);
   },
   data () {
     return {
