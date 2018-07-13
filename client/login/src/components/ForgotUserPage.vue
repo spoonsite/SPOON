@@ -51,7 +51,7 @@ export default {
   methods: {
     submitEmail () {
       this.loading = true;
-      this.$http.get(`/openstorefront/api/v1/service/security/forgotusername?emailAddress=${this.email}`)
+      this.$http.get(`/openstorefront/api/v1/service/security/forgotusername?emailAddress=${this.email.toLowerCase()}`)
         .then(response => {
           this.dialog = true;
           this.loading = false;

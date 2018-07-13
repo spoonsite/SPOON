@@ -228,7 +228,7 @@ export default {
       password1Rules: [
         v => !!v || 'Password is required',
         v => {
-          let regex = new RegExp('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{' + String(this.$store.state.securitypolicy.minPasswordLength) + ',}$');
+          let regex = new RegExp('^(?=.*[A-Z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{' + String(this.$store.state.securitypolicy.minPasswordLength) + ',}$');
           return regex.test(v) ||
           `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least ${this.$store.state.securitypolicy.minPasswordLength} characters`;
         }
@@ -281,7 +281,7 @@ export default {
         lastName: this.userInformation.lastName,
         organization: typeof this.userInformation.organization === 'string' ? this.userInformation.organization : this.userInformation.organization.description,
         positionTitle: this.userInformation.positionTitle,
-        email: this.userInformation.email,
+        email: this.userInformation.email.toLowerCase(),
         phone: this.userInformation.phone,
         userTypeCode: this.userInformation.userType,
         registrationId: this.registrationId,

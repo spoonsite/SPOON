@@ -71,9 +71,11 @@ export default {
       password2: '',
       password1Rules: [
         v => !!v || 'Password is required',
-        v =>
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~`!@#$%^&*()-+=<>:;"',.?])[A-Za-z\d~`!@#$%^&*()-+=<>:;"',.?]{8,}$/.test(v) ||
-          'Password must contain 1 uppercase, 1 number, and 1 special character (i.e. @$!%*#?&)'
+        v => {
+          let regex = new RegExp('^(?=.*[A-Z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{' + String(this.$store.state.securitypolicy.minPasswordLength) + ',}$');
+          return regex.test(v) ||
+          `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least ${this.$store.state.securitypolicy.minPasswordLength} characters`;
+        }
       ],
       password2Rules: [
         v => !!v || 'Password verification is required',
