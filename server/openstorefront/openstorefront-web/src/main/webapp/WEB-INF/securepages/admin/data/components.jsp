@@ -1366,143 +1366,6 @@
 					]
 				});
 				
-				var changeOwnerWin = Ext.create('Ext.window.Window', {
-					id: 'changeOwnerWin',
-					title: 'Change Owner - ',
-					iconCls: 'fa fa-lg fa-user',
-					width: '50%',
-					height: 450,
-					y: 200,
-					modal: true,
-					layout: 'fit',
-					items: [
-						{
-							xtype: 'form',
-							itemId: 'changeOwnerForm',
-							bodyStyle: 'padding: 10px',
-							items: [
-								{
-									xtype: 'combobox',
-									fieldLabel: 'Username <span class="field-required" />',
-									labelAlign: 'top',
-									labelSeparator: '',
-									typeAhead: true,
-									editable: true,
-									allowBlank: false,
-									name: 'currentDataOwner',
-									width: '100%',
-									valueField: 'username',
-									forceSelection: false,
-									queryMode: 'local',
-									displayField: 'username',
-									store: {
-										autoLoad: true,
-										proxy: {
-											type: 'ajax',
-											url: 'api/v1/resource/userprofiles',
-											reader: {
-												type: 'json',
-												rootProperty: 'data',
-												totalProperty: 'totalNumber'
-											}
-										}
-									}
-								},
-								{
-									xtype: 'osf-common-validhtmleditor',
-									itemId: 'searchComment',
-									fieldLabel: 'Optional Comments',
-									labelAlign: 'top',
-									name: 'Comment name',
-									width: '100%',
-									displayField: 'Comment displayfield',
-									store: {
-										autoLoad: true,
-									},
-								},
-								{
-									xtype: 'hidden',
-									itemId: 'searchCommentId',
-									name: 'commentId'
-								},
-							],
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Save',
-											formBind: true,
-											iconCls: 'fa fa-lg fa-save icon-button-color-save',
-											handler: function(){
-												Ext.getCmp('componentGrid').setLoading('Changing the owner for the selected entries...');
-												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
-													return item.getData().componentId;
-												});
-												var form = this.up('form');
-												var username = form.getForm().findField('currentDataOwner').getValue();
-												var data = {
-													componentIds: componentIds,
-													comment: {
-														commentType: 'ADMIN',
-														comment: form.queryById('searchComment').getValue()
-													},
-													newOwner: username
-												};
-												if(data.comment.comment === ''){
-													data.comment = null;
-												}
-												Ext.Ajax.request({
-													url: 'api/v1/resource/components/changeowner',
-													method: 'PUT',
-													jsonData: data,
-													callback: function(){
-														Ext.getCmp('componentGrid').setLoading(false);
-													},
-													success: function(response, opts) {
-														if (response.responseText !== '') {
-															if( response.responseText.indexOf('errors') !== -1) {
-															// provide error notification
-																Ext.toast({
-																	title: 'validation error. the server could not process the request. ',
-																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
-																	width: 550,
-																	autoclosedelay: 10000
-																});
-															}
-														}
-														actionRefreshComponentGrid();
-														form.reset();
-													},
-													failure: function(){
-														Ext.toast({
-															title: 'validation error. the server could not process the request. ',
-															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
-															width: 550,
-															autoclosedelay: 10000
-														});
-													}
-												});
-												this.up('window').close()
-											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function(){
-												this.up('window').close();
-											}
-										}
-									]
-								}
-							]
-						}
-					]
-				});
 
 				var changeTypeWin = Ext.create('Ext.window.Window', {
 					id: 'changeTypeWin',
@@ -2249,9 +2112,149 @@
 					changeRequestWindow.show();
 					changeRequestWindow.loadComponent(componentId, name);
 				};
-
+				
+				var changeOwnerWinCreated = false;
 				var actionChangeOwner = function() {
-
+					if(!changeOwnerWinCreated){
+						changeOwnerWinCreated = true;
+						Ext.create('Ext.window.Window', {
+							id: 'changeOwnerWin',
+							title: 'Change Owner - ',
+							iconCls: 'fa fa-lg fa-user',
+							width: '50%',
+							height: 450,
+							y: 200,
+							modal: true,
+							layout: 'fit',
+							items: [
+								{
+									xtype: 'form',
+									itemId: 'changeOwnerForm',
+									bodyStyle: 'padding: 10px',
+									items: [
+										{
+											xtype: 'combobox',
+											fieldLabel: 'Username <span class="field-required" />',
+											labelAlign: 'top',
+											labelSeparator: '',
+											typeAhead: true,
+											editable: true,
+											allowBlank: false,
+											name: 'currentDataOwner',
+											width: '100%',
+											valueField: 'username',
+											forceSelection: false,
+											queryMode: 'local',
+											displayField: 'username',
+											store: {
+												autoLoad: true,
+												proxy: {
+													type: 'ajax',
+													url: 'api/v1/resource/userprofiles',
+													reader: {
+														type: 'json',
+														rootProperty: 'data',
+														totalProperty: 'totalNumber'
+													}
+												}
+											}
+										},
+										{
+											xtype: 'osf-common-validhtmleditor',
+											itemId: 'searchComment',
+											fieldLabel: 'Optional Comments',
+											labelAlign: 'top',
+											name: 'Comment name',
+											width: '100%',
+											displayField: 'Comment displayfield',
+											store: {
+												autoLoad: true
+											}
+										},
+										{
+											xtype: 'hidden',
+											itemId: 'searchCommentId',
+											name: 'commentId'
+										}
+									],
+									dockedItems: [
+										{
+											xtype: 'toolbar',
+											dock: 'bottom',
+											items: [
+												{
+													text: 'Save',
+													formBind: true,
+													iconCls: 'fa fa-lg fa-save icon-button-color-save',
+													handler: function(){
+														Ext.getCmp('componentGrid').setLoading('Changing the owner for the selected entries...');
+														var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
+															return item.getData().componentId;
+														});
+														var form = this.up('form');
+														var username = form.getForm().findField('currentDataOwner').getValue();
+														var data = {
+															componentIds: componentIds,
+															comment: {
+																commentType: 'ADMIN',
+																comment: form.queryById('searchComment').getValue()
+															},
+															newOwner: username
+														};
+														if(data.comment.comment === ''){
+															data.comment = null;
+														}
+														Ext.Ajax.request({
+															url: 'api/v1/resource/components/changeowner',
+															method: 'PUT',
+															jsonData: data,
+															callback: function(){
+																Ext.getCmp('componentGrid').setLoading(false);
+															},
+															success: function(response, opts) {
+																if (response.responseText !== '') {
+																	if( response.responseText.indexOf('errors') !== -1) {
+																	// provide error notification
+																		Ext.toast({
+																			title: 'validation error. the server could not process the request. ',
+																			html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																			width: 550,
+																			autoclosedelay: 10000
+																		});
+																	}
+																}
+																actionRefreshComponentGrid();
+																form.reset();
+															},
+															failure: function(){
+																Ext.toast({
+																	title: 'validation error. the server could not process the request. ',
+																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																	width: 550,
+																	autoclosedelay: 10000
+																});
+															}
+														});
+														this.up('window').close();
+													}
+												},
+												{
+													xtype: 'tbfill'
+												},
+												{
+													text: 'Cancel',
+													iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+													handler: function(){
+														this.up('window').close();
+													}
+												}
+											]
+										}
+									]
+								}
+							]
+						});
+					}
 					// Get Selection
 					var selection = Ext.getCmp('componentGrid').getSelection();
 
