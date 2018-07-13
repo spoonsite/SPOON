@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.view.CheckQuestionFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionView;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
@@ -323,9 +324,9 @@ public class ChecklistQuestionResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_DELETE)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
-	@APIDescription("Inactivates a question or remove only if not in use")
+	@APIDescription("Inactivates a question or deletes it if the \"force\" query parameter is used")
 	@Path("/{questionId}")
 	public Response deleteChecklistQuestion(
 			@PathParam("questionId") String questionId,
@@ -333,8 +334,22 @@ public class ChecklistQuestionResource
 	)
 	{
 		if (force) {
-			service.getChecklistService().deleteQuestion(questionId);
-			return Response.noContent().build();
+			// Delete the checklist question if force is true
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_DELETE)) {
+				// But only if the user has the delete permission
+				service.getChecklistService().deleteQuestion(questionId);
+				return Response.noContent().build();
+			}
+			else {
+				// The user doesn't have delete permission. This probably means that a UI component
+				// doesn't require the delete permission to use this delete endpoint for deletion,
+				// which it should.
+				return Response.status(Response.Status.FORBIDDEN)
+					.type(MediaType.TEXT_PLAIN)
+					.entity("User does not have permission to delete.")
+					.build();
+			}
+		// Just inactivate the question instead of deleting it if the "force" query paramter is not used or is false.
 		} else {
 			return updateStatus(questionId, ChecklistTemplate.INACTIVE_STATUS);
 		}

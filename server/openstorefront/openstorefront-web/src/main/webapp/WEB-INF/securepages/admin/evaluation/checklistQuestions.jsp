@@ -505,7 +505,7 @@
 								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
 								disabled: true,								
-								scale: 'medium',
+								scale: 'medium',								
 								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
@@ -558,7 +558,7 @@
 								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION-DELETE'],
 								handler: function(){
 									var record = Ext.getCmp('questionGrid').getSelectionModel().getSelection()[0];
-									actionDelete(record);									
+									actionDelete(record);
 								}
 							}
 						]
@@ -705,6 +705,9 @@
 				var method = 'PUT';
 				var urlEnd = '/activate';
 				if (currentStatus === 'A') {
+					// There's no API endpoint for inactivating a checklist question.
+					// Instead, the delete endpoint is called without the "force" query parameter.
+					// See ChecklistQuestionResource.java
 					method = 'DELETE';
 					urlEnd = '';
 				}					
