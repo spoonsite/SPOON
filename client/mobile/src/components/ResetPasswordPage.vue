@@ -4,9 +4,6 @@
     <v-layout mt-3 mx-3>
       <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
         <v-card class="elevation-5 mt-3 mx-3">
-          <!-- <v-toolbar color="primary" dark dense>
-            <v-toolbar-title>Forgot Password</v-toolbar-title>
-          </v-toolbar> -->
           <v-card-text>
             <v-form v-model="valid" @submit.prevent="submitEmail()">
               <v-text-field
@@ -83,9 +80,11 @@ export default {
       password2: '',
       password1Rules: [
         v => !!v || 'Password is required',
-        v =>
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~`!@#$%^&*()-+=<>:;"',.?])[A-Za-z\d~`!@#$%^&*()-+=<>:;"',.?]{8,}$/.test(v) ||
-          'Password must contain 1 uppercase, 1 number, and 1 special character (i.e. @$!%*#?&)'
+        v => {
+          let regex = new RegExp('^(?=.*[A-Z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{8,}$');
+          return regex.test(v) ||
+          `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least 8 characters`;
+        }
       ],
       password2Rules: [
         v => !!v || 'Password verification is required',
@@ -102,7 +101,6 @@ export default {
           confirmPassword: this.password2
         })
         .then(postResponse => {
-          console.log('post');
           this.submitPutRequest();
         })
         .catch(error => console.log(error));
@@ -139,7 +137,4 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .reset-password-page {
-
-  }
 </style>
