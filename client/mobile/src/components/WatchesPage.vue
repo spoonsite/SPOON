@@ -13,10 +13,10 @@
           <v-card>
             <v-card-text>
               <p>
-                <strong>Last update to entry: </strong>  {{ item.lastUpdateDts | formatDate('YYYY/MM/DD hh:mm') }}
+                <strong>Last update to entry: </strong> {{ item.lastUpdateDts | formatWatchDate }}
               </p>
               <p>
-                <strong>Last time viewed: </strong> {{ item.lastViewDts | formatDate}}
+                <strong>Last time viewed: </strong> {{ item.lastViewDts | formatWatchDate }}
               </p>
             </v-card-text>
             <v-card-actions>
@@ -59,10 +59,17 @@ export default {
     getWatches () {
       this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
         .then(response => {
+          console.log();
           if (response) {
             if (response.data) {
               if (response.data.length > 0) {
                 this.watches = response.data;
+                // for (var i = 0; i < response.data.length; i++) {
+                //   if (response.data[i].componentId === this.id) {
+                //     this.watchId = response.data[i].watchId;
+                //     break;
+                //   }
+                // }
               }
             }
           }
