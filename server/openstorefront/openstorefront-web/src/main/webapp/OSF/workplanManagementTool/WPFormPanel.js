@@ -28,6 +28,7 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 		{
 			xtype: 'form',
 			itemId: 'workplanForm',
+			padding: 10,
 			items: [
 				{
 					xtype: 'textfield',

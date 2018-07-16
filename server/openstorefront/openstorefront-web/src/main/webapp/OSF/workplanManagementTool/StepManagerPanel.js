@@ -66,7 +66,24 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			scrollable: 'x',
 			height: '100%',
 			width: '90%',
-			padding: 10
+			padding: 10,
+			listeners: {
+				render: function () {
+					var stepsContainer = this;
+
+					// set up horizontal scrolling
+					stepsContainer.el.on('mousewheel', function (e) {
+						e.preventDefault();
+
+						if (e.getWheelDeltas().y < 0) {
+							stepsContainer.el.scrollTo('left', stepsContainer.el.getScroll().left + 20)
+						}
+						else {
+							stepsContainer.el.scrollTo('left', stepsContainer.el.getScroll().left - 20)
+						}
+					});
+				}
+			}
 		},
 		{
 			itemId: 'addRemoveStepContainer',
@@ -75,22 +92,46 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			width: '10%',
 			style: 'border-left: 1px solid #ccc;',
 			padding: 5,
+			defaults: {
+				listeners: {
+					click: function () {
+
+						var stepManager = this.up('[itemId=stepManager]');
+						switch (this.clickAction) {
+							case 'add':
+								stepManager.addStep();
+								break;
+							case 'insert':
+								stepManager.insertStep();
+								break;
+
+							case 'remove':
+								stepManager.removeStep();
+								break;
+							default:
+						}
+					}
+				}
+			},
 			items: [
 				{
 					xtype: 'button',
 					text: 'Add Step',
 					iconCls: 'fa fa-2x fa-plus icon-vertical-correction',
+					clickAction: 'add'
 				},
 				{
 					xtype: 'button',
 					text: 'Insert Step',
 					iconCls: 'fa fa-2x fa-level-down icon-vertical-correction',
-					margin: 5
+					margin: 5,
+					clickAction: 'insert'
 				},
 				{
 					xtype: 'button',
 					text: 'Remove Step',
 					iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+					clickAction: 'remove'
 				}
 			]
 		}
@@ -117,6 +158,18 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			
 			this.drawSteps();
 		}
+	},
+
+	addStep: function () {
+		console.log("TODO: add");
+	},
+
+	insertStep: function () {
+		console.log("TODO: insert");
+	},
+
+	removeStep: function () {
+		console.log("TODO: remove");
 	},
 	
 	drawSteps: function () {
