@@ -14,7 +14,7 @@ export default new Vuex.Store({
       state.currentUser = response.data;
     },
     setBranding (state, response) {
-      state.branding = response.data.filter(branding => branding.activeStatus === 'A')[0];
+      state.branding = response.data;
       state.branding.loginLogoBlock = state.branding.loginLogoBlock.replace(/branding\.action/i, '/openstorefront/Branding.action');
     }
   },
@@ -26,7 +26,7 @@ export default new Vuex.Store({
         });
     },
     getBranding (context, config) {
-      config.axios.get('/openstorefront/api/v1/resource/branding')
+      config.axios.get('/openstorefront/api/v1/resource/branding/current')
         .then(response => {
           context.commit('setBranding', response);
         })

@@ -13,7 +13,7 @@ export default new Vuex.Store({
       state.securitypolicy = response.data;
     },
     setBranding (state, response) {
-      state.branding = response.data.filter(branding => branding.activeStatus === 'A')[0];
+      state.branding = response.data;
       state.branding.loginLogoBlock = state.branding.loginLogoBlock.replace(/branding\.action/i, '/openstorefront/Branding.action');
     }
   },
@@ -25,7 +25,7 @@ export default new Vuex.Store({
         });
     },
     getBranding (context, axios) {
-      axios.get('/openstorefront/api/v1/resource/branding')
+      axios.get('/openstorefront/api/v1/resource/branding/current')
         .then(response => {
           context.commit('setBranding', response);
         });
