@@ -23,17 +23,18 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 	itemId: 'stepManager',
 	style: 'background: #fff; text-align: center;',
 	title: 'Step Manager',
-	height: 180,
+	height: 160,
 	layout: {
-		type: 'vbox',
+		type: 'hbox',
 		pack: 'center',
-		align: 'middle'
+		align: 'stretch'
 	},
 	items: [
 		{
 			xtype: 'button',
 			text: 'Create Step',
 			itemId: 'createFirstStepButton',
+			style: 'margin: 3.5em 0 2em 0;',
 			hidden: true,
 			listeners: {
 				click: function () {
@@ -56,24 +57,114 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 		{
 			xtype: 'container',
 			itemId: 'stepsContainer',
-			html: 'STEPS!!!!!!',
-			hidden: true
+			layout: {
+				type: 'hbox',
+				pack: 'center',
+				align: 'middle'
+			},
+			hidden: true,
+			scrollable: 'x',
+			height: '100%',
+			width: '90%',
+			padding: 10
+		},
+		{
+			itemId: 'addRemoveStepContainer',
+			hidden: true,
+			xtype: 'container',
+			width: '10%',
+			style: 'border-left: 1px solid #ccc;',
+			padding: 5,
+			items: [
+				{
+					xtype: 'button',
+					text: 'Add Step',
+					iconCls: 'fa fa-2x fa-plus icon-vertical-correction',
+				},
+				{
+					xtype: 'button',
+					text: 'Insert Step',
+					iconCls: 'fa fa-2x fa-level-down icon-vertical-correction',
+					margin: 5
+				},
+				{
+					xtype: 'button',
+					text: 'Remove Step',
+					iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+				}
+			]
 		}
 	],
-
+	
 	alertChange: function () {
 		
 		console.log("THIS (Step manager Panel)", this);
-
+		var firstStepButton = this.down('[itemId=createFirstStepButton]');
+		var stepsContainer = this.getStepsContainer();
+		var addRemoveContainer = this.down('[itemId=addRemoveStepContainer]');
+		
 		if (this.getWpWindow().getWorkplanConfig().steps.length === 0) {
 			this.setHtml('This workplan has <b>no</b> steps yet<br />Add one');
-			this.down('[itemId=createFirstStepButton]').show();
-			this.down('[itemId=stepsContainer]').hide();
+			firstStepButton.show();
+			stepsContainer.hide();
+			addRemoveContainer.hide();
 		}
 		else {
 			this.setHtml('');
-			this.down('[itemId=createFirstStepButton]').hide();
-			this.down('[itemId=stepsContainer]').show();
+			firstStepButton.hide();
+			stepsContainer.show();
+			addRemoveContainer.show();
+			
+			this.drawSteps();
 		}
+	},
+	
+	drawSteps: function () {
+		
+		var stepsContainer = this.getStepsContainer();
+		var elementsToAdd = [];
+		for (var i = 0; i < 25; i += 1) {
+			elementsToAdd.push({
+
+				xtype: 'container',
+				style: 'overflow: visible; padding: 3px 0 3px 0;' + (i === 4 ? 'border: 2px dotted #ccc;' : ''),
+				layout: {
+					type: 'vbox',
+					pack: 'center',
+					align: 'middle'
+				},
+				width: 70,
+				height: 90,
+				items: [
+					{
+						xtype: 'container',
+						html: (i !== 2 ? 'test' : 'test test test'),
+						style: 'align-text: center;'
+					},
+					{
+						xtype: 'button',
+						text: ':::',
+						style: 'border-radius: 40px;' + (i === 4 ? 'background: green;' : ''),
+						width: 40,
+						padding: 10
+					}
+				]
+			});
+
+			if (i !== 24) {
+				elementsToAdd.push({
+					xtype: 'container',
+					style: 'padding-top: 10px;',
+					html: '<i class="fa fa-2x fa-long-arrow-right" aria-hidden="true"></i>'
+				});
+			}
+		}
+
+		stepsContainer.removeAll(true);
+		stepsContainer.add(elementsToAdd);
+	},
+
+	getStepsContainer: function () {
+		return this.down('[itemId=stepsContainer]');
 	}
 });
