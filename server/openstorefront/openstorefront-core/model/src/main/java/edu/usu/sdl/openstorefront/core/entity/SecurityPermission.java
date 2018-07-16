@@ -166,6 +166,7 @@ public class SecurityPermission
 	public static final String ADMIN_ENTRY_EVALSECTION_MANAGEMENT = "ADMIN-ENTRY-EVALSECTION-MANAGEMENT";
 	public static final String ADMIN_ENTRY_TAG_MANAGEMENT = "ADMIN-ENTRY-TAG-MANAGEMENT";
 	public static final String ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT = "ADMIN-ENTRY-CHANGEREQUEST-MANAGEMENT";
+	public static final String ADMIN_ENTRY_COMMENT_MANAGEMENT = "ADMIN-ENTRY-COMMENT-MANAGEMENT";
 	public static final String ADMIN_ENTRY_CHANGEOWNER = "ADMIN-ENTRY-CHANGEOWNER";
 	public static final String ADMIN_ENTRY_EXPORT = "ADMIN-ENTRY-EXPORT";
 	public static final String ADMIN_ENTRY_PENDINGCHANGE_READ = "ADMIN-ENTRY-PENDINGCHANGE-READ";
@@ -469,6 +470,10 @@ public class SecurityPermission
 	public static final String ADMIN_WATCHES_UPDATE = "ADMIN-WATCHES-UPDATE";
 	public static final String ADMIN_WATCHES_READ = "ADMIN-WATCHES-READ";
 
+	// Workplan
+	public static final String GROUPBY_WORKPLAN = "Workplan";
+	public static final String ADMIN_WORKPLAN_PAGE = "ADMIN-WORKPLAN-PAGE";
+
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
@@ -700,6 +705,10 @@ public class SecurityPermission
 		codeMap.put(ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, "Allows for management change requests", null, GROUPBY_ENTRY_MANAGEMENT));
 		((SecurityPermission) codeMap.get(ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT)).setPermissionPredecessor(ADMIN_ENTRY_READ);
 		((SecurityPermission) codeMap.get(ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
+		codeMap.put(ADMIN_ENTRY_COMMENT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ENTRY_COMMENT_MANAGEMENT, "Allows for management entry comments", null, GROUPBY_ENTRY_MANAGEMENT));
+		((SecurityPermission) codeMap.get(ADMIN_ENTRY_COMMENT_MANAGEMENT)).setPermissionPredecessor(ADMIN_ENTRY_READ);
+		((SecurityPermission) codeMap.get(ADMIN_ENTRY_COMMENT_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(ADMIN_ENTRY_CHANGEOWNER, newLookup(SecurityPermission.class, ADMIN_ENTRY_CHANGEOWNER, "Allows admin to change the owner of an entry", null, GROUPBY_ENTRY_MANAGEMENT));
 		((SecurityPermission) codeMap.get(ADMIN_ENTRY_CHANGEOWNER)).setPermissionPredecessor(ADMIN_ENTRY_READ);
@@ -1547,6 +1556,11 @@ public class SecurityPermission
 		codeMap.put(ADMIN_WATCHES_DELETE, newLookup(SecurityPermission.class, ADMIN_WATCHES_DELETE, "delete watches", null, GROUPBY_WATCHES));
 		((SecurityPermission) codeMap.get(ADMIN_WATCHES_DELETE)).setPermissionPredecessor(ADMIN_WATCHES_READ);
 		((SecurityPermission) codeMap.get(ADMIN_WATCHES_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
+		// Workplan
+		codeMap.put(ADMIN_WORKPLAN_PAGE, newLookup(SecurityPermission.class, ADMIN_WORKPLAN_PAGE, "Provides access to the 'Workplans' page", null, GROUPBY_WORKPLAN));
+		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_PAGE)).setPermissionPredecessor(null);
+		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_PAGE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		// ========================================================================================================================
 		codeMap.put(ADMIN_SUPPORT_MEDIA, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA, "Support media general permission", null, GROUPBY_OLD));

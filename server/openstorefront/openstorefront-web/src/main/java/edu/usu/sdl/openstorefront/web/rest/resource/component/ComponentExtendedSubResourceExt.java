@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -404,10 +405,8 @@ public abstract class ComponentExtendedSubResourceExt
 	}
 	//</editor-fold>
 
-	//FIXME: UPDATE Permission for this section
 	// <editor-fold  defaultstate="collapsed"  desc="ComponentRESTResource COMMENT section">
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Gets the list of comments associated to an entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentComment.class)
@@ -416,11 +415,15 @@ public abstract class ComponentExtendedSubResourceExt
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
+		if (response != null) {
+			return Collections.emptyList();
+		}
+
 		return service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Delete a comment by id from the specified entity")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/comments/{commentId}")
@@ -436,7 +439,7 @@ public abstract class ComponentExtendedSubResourceExt
 		example.setComponentId(componentId);
 		ComponentComment componentComment = service.getPersistenceService().queryOneByExample(new QueryByExample<>(example));
 		if (componentComment != null) {
-			response = ownerCheck(componentComment, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+			response = ownerCheck(componentComment, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentComment.class, commentId);
 			}
@@ -445,7 +448,6 @@ public abstract class ComponentExtendedSubResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Update a comment associated to the component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/comments/{commentId}")
@@ -456,7 +458,7 @@ public abstract class ComponentExtendedSubResourceExt
 			@RequiredParam String commentId,
 			ComponentComment comment)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -489,7 +491,6 @@ public abstract class ComponentExtendedSubResourceExt
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Add a single comment to the specified component")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -500,6 +501,11 @@ public abstract class ComponentExtendedSubResourceExt
 			@RequiredParam String componentId,
 			@RequiredParam ComponentComment comment)
 	{
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
+		if (response != null) {
+			return response;
+		}
+
 		Component component = new Component();
 		component.setComponentId(componentId);
 		component = component.find();
