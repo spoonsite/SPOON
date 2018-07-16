@@ -21,14 +21,21 @@
             </v-card-text>
             <v-card-actions>
             <v-btn color="info" @click="moreInformation(item.componentId)">More Information</v-btn>
-          </v-card-actions>
+            </v-card-actions>
           </v-card>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </div>
 
     <div v-else>
-      There is nothing here
+      <v-card>
+        <v-card-text>
+          You aren't watching any entries.
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="info" @click="$router.push('/')">Return to Search</v-btn>
+        </v-card-actions>
+      </v-card>
     </div>
   </div>
 
