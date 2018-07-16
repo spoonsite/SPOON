@@ -131,7 +131,7 @@ export default {
       return Promise.reject(error);
     });
 
-    this.$store.dispatch('setCurrentUser', this.$http); // pass in current axios instance
+    this.$store.dispatch('setCurrentUser', {axios: this.$http, callback: this.checkWatches}); // pass in current axios instance
   },
   data () {
     return {
@@ -142,6 +142,7 @@ export default {
       loginExpiredDialog: false,
       loggingOut: false,
       drawer: false,
+      watchNumber: 0,
       links: [
         { link: '/', icon: 'home', name: 'Home' },
         { link: '/sme-approval', icon: 'check', name: 'SME Approval' },
@@ -167,6 +168,28 @@ export default {
     submitErrorReport () {
       this.errorDialog = false;
       router.push({ name: 'Contact' });
+    },
+    checkWatches () {
+      this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
+        .then(response => {
+          if (response.data) {
+            if (response.data.length > 0) {
+              for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
+                  this.watchNumber++;
+                }
+              }
+            }
+          }
+        })
+        .catch(e => this.errors.push(e))
+        .finally(() => {
+          if (this.watchNumber === 1) {
+            this.$toasted.show(this.watchNumber + ' entry has been updated.');
+          } else if (this.watchNumber > 0) {
+            this.$toasted.show(this.watchNumber + ' entries have been updated.');
+          }
+        });
     }
   }
 };

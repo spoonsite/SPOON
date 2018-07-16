@@ -14,10 +14,15 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    setCurrentUser (context, axios) {
-      axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
+    setCurrentUser (context, config) {
+      config.axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
           context.commit('setCurrentUser', response);
+        })
+        .finally(() => {
+          if (config.callback) {
+            config.callback();
+          }
         });
     }
   },
