@@ -23,8 +23,18 @@ Ext.define('OSF.workplanManagementTool.WPDefaultPanel', {
 		return this.up('window');
 	},
 
-	alert: function () {
-		this.getWpWindow().alertChildrenComponents();
+	alert: function (recipient) {
+		if (recipient) {
+			if (typeof this.getWpWindow[recipient] !== 'undefined') {
+				this.getWpWindow[recipient].alertChange();
+			}
+			else {
+				console.warn('There is no component "' + recipient + '" that can be alerted.');
+			}
+		}
+		else {
+			this.getWpWindow().alertChildrenComponents();
+		}
 	}
 
 });

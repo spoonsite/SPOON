@@ -78,6 +78,9 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			entryTypes: [],
 			steps: []
 		};
+
+		// reset the last selected step (if re-opening the tool)
+		this.setSelectedStep(null);
 		
 		// If no record was provided, us the defaultConfig
 		record = Ext.apply(defaultConfig, record);
