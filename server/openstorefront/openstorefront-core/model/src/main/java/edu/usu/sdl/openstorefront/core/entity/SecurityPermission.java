@@ -470,6 +470,10 @@ public class SecurityPermission
 	public static final String ADMIN_WATCHES_UPDATE = "ADMIN-WATCHES-UPDATE";
 	public static final String ADMIN_WATCHES_READ = "ADMIN-WATCHES-READ";
 
+	// Workplan
+	public static final String GROUPBY_WORKPLAN = "Workplan";
+	public static final String ADMIN_WORKPLAN_PAGE = "ADMIN-WORKPLAN-PAGE";
+
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
@@ -1552,6 +1556,11 @@ public class SecurityPermission
 		codeMap.put(ADMIN_WATCHES_DELETE, newLookup(SecurityPermission.class, ADMIN_WATCHES_DELETE, "delete watches", null, GROUPBY_WATCHES));
 		((SecurityPermission) codeMap.get(ADMIN_WATCHES_DELETE)).setPermissionPredecessor(ADMIN_WATCHES_READ);
 		((SecurityPermission) codeMap.get(ADMIN_WATCHES_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
+		// Workplan
+		codeMap.put(ADMIN_WORKPLAN_PAGE, newLookup(SecurityPermission.class, ADMIN_WORKPLAN_PAGE, "Provides access to the 'Workplans' page", null, GROUPBY_WORKPLAN));
+		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_PAGE)).setPermissionPredecessor(null);
+		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_PAGE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		// ========================================================================================================================
 		codeMap.put(ADMIN_SUPPORT_MEDIA, newLookup(SecurityPermission.class, ADMIN_SUPPORT_MEDIA, "Support media general permission", null, GROUPBY_OLD));
