@@ -144,6 +144,7 @@ export default {
       drawer: false,
       links: [
         { link: '/', icon: 'home', name: 'Home' },
+        { link: '/watches', icon: 'binoculars', name: 'Watch Page' },
         { link: '/sme-approval', icon: 'check', name: 'SME Approval' },
         { link: '/faq', icon: 'question', name: 'F.A.Q.' },
         { link: '/contact', icon: 'comment', name: 'Contact' },

@@ -62,6 +62,7 @@ Vue.use(Toasted, {
 Vue.prototype.$http = axios;
 Vue.use(VueTruncate);
 Vue.filter('formatDate', value => format(value, 'YYYY/MM/DD'));
+Vue.filter('formatWatchDate', value => format(value, 'YYYY/MM/DD hh:mm'));
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)));
 
 /* eslint-disable no-new */

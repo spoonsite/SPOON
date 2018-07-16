@@ -196,7 +196,6 @@
             <div v-html="item.description"></div>
           </v-card-text>
           <v-card-actions>
-            <!-- TODO: link to the details page for that component -->
             <v-btn color="info" @click="moreInformation(item.componentId)">More Information</v-btn>
           </v-card-actions>
         </v-card>
