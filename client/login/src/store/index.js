@@ -5,16 +5,16 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    aTitle: 'SPOON',
-    aSubtitle: 'SmallSat Parts On Orbit Now(SPOON) is a registry of Small - Satellite Equipment, Software and Services',
-    securitypolicy: {}
+    securitypolicy: {},
+    branding: {}
   },
   mutations: {
-    setTitle (state, payload) {
-      state.aTitle = payload.title;
-    },
     setSecurityPolicy (state, response) {
       state.securitypolicy = response.data;
+    },
+    setBranding (state, response) {
+      state.branding = response.data.filter(branding => branding.activeStatus === 'A')[0];
+      state.branding.loginLogoBlock = state.branding.loginLogoBlock.replace(/branding\.action/i, '/openstorefront/Branding.action');
     }
   },
   actions: {
@@ -22,6 +22,12 @@ export default new Vuex.Store({
       axios.get('/openstorefront/api/v1/resource/securitypolicy')
         .then(response => {
           context.commit('setSecurityPolicy', response);
+        });
+    },
+    getBranding (context, axios) {
+      axios.get('/openstorefront/api/v1/resource/branding')
+        .then(response => {
+          context.commit('setBranding', response);
         });
     }
   },
