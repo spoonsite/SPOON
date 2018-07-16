@@ -20,6 +20,7 @@ import Toasted from 'vue-toasted';
 Vue.config.productionTip = false;
 
 Vue.prototype.$http = axios;
+Vue.prototype.$cookies = Cookies;
 
 // Add CSRF Token on every request
 axios.interceptors.request.use(

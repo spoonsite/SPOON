@@ -66,6 +66,25 @@
         </v-card>
       </v-dialog>
 
+      <!-- First Time User Dialog -->
+      <v-dialog
+        v-model="firstTimeDialog"
+        max-width="300px"
+        >
+        <v-card>
+          <v-card-title>
+            <h2 v-if="this.$store.state.branding">Welcome to {{ this.$store.state.branding.applicationName }} mobile</h2>
+          </v-card-title>
+          <v-card-text>
+           <p>The mobile version of this application provides convenience on small screens. However, its features are limited compared to the desktop version.</p>
+           <p>If you need more advanced features please <a href="/openstorefront">go to the dekstop version.</a></p>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="firstTimeDialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer" touchless temporary>
         <v-list>
           <v-list-tile v-for="link in links" :key="link.name" class="menu-item" @click="nav(link.link)">
@@ -99,13 +118,6 @@
         <router-view/>
       </main>
 
-      <!-- <v-footer absolute height="auto" color="secondary" dark>
-        <v-card flat tile color="secondary" style="margin: auto;">
-          <v-card-text>
-            Contact <a style="color:white;" href="mailto:support@spoonsite.com">support@spoonsite.com</a>
-          </v-card-text>
-        </v-card>
-      </v-footer> -->
     </v-app>
   </div>
 </template>
@@ -132,6 +144,7 @@ export default {
     });
 
     this.$store.dispatch('setCurrentUser', this.$http); // pass in current axios instance
+    this.$store.dispatch('getBranding', {axios: this.$http, callback: this.checkFirstTime});
   },
   data () {
     return {
@@ -140,6 +153,7 @@ export default {
       errorDialog: false,
       showErrorDetails: false,
       loginExpiredDialog: false,
+      firstTimeDialog: false,
       loggingOut: false,
       drawer: false,
       links: [
@@ -167,6 +181,13 @@ export default {
     submitErrorReport () {
       this.errorDialog = false;
       router.push({ name: 'Contact' });
+    },
+    checkFirstTime () {
+      console.log('check first time');
+      if (this.$cookies.get('visited') !== 'yes') {
+        this.firstTimeDialog = true;
+        this.$cookies.set('visited', 'yes');
+      }
     }
   }
 };
