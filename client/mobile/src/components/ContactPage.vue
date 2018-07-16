@@ -35,21 +35,25 @@
                 <h2>Contact Information</h2>
               </v-card-title>
 
-              <p>
-                <v-text><strong>Name: </strong>{{this.$store.state.currentUser.firstName + this.$store.state.currentUser.lastName}}</v-text>
-              </p>
+              <v-text>
 
-              <p>
-                <v-text><strong>Email: </strong>{{this.$store.state.currentUser.email}}</v-text>
-              </p>
+                <p>
+                  <v-text><strong>Name: </strong>{{this.$store.state.currentUser.firstName + this.$store.state.currentUser.lastName}}</v-text>
+                </p>
 
-              <p>
-                <v-text><strong>Phone: </strong>{{this.$store.state.currentUser.phone}}</v-text>
-              </p>
+                <p>
+                  <v-text><strong>Email: </strong>{{this.$store.state.currentUser.email}}</v-text>
+                </p>
 
-              <p>
-                <v-text><strong>Organization: </strong>{{this.$store.state.currentUser.organization}}</v-text>
-              </p>
+                <p>
+                  <v-text><strong>Phone: </strong>{{this.$store.state.currentUser.phone}}</v-text>
+                </p>
+
+                <p>
+                  <v-text><strong>Organization: </strong>{{this.$store.state.currentUser.organization}}</v-text>
+                </p>
+
+              </v-text>
 
             </v-card-text>
             <v-card-actions>
