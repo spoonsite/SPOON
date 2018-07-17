@@ -41,12 +41,8 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 
 					var stepManager = this.up('[itemId=stepManager]');
 					var wpWindow = stepManager.getWpWindow();
-					wpWindow.getWorkplanConfig().steps.push({
-						name: 'Untitled Step',
-						description: '',
-						allowedRoles: [],
-						actions: []
-					});
+					
+					stepManager.addStep();
 					wpWindow.setSelectedStep(wpWindow.getWorkplanConfig().steps[0]);
 
 					// alert parent and siblings of alert
@@ -66,7 +62,8 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			scrollable: 'x',
 			height: '100%',
 			width: '90%',
-			padding: 10,
+			padding: '10 0 10 50',
+			cls: 'step-container',
 			listeners: {
 				render: function () {
 					var stepsContainer = this;
@@ -161,7 +158,14 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 	},
 
 	addStep: function () {
-		console.log("TODO: add");
+
+		this.getWpWindow().getWorkplanConfig().steps.push({
+			name: 'Untitled Step',
+			description: '',
+			allowedRoles: [],
+			actions: []
+		});
+		this.alert('stepManager');
 	},
 
 	insertStep: function () {
@@ -176,42 +180,29 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 		
 		var stepsContainer = this.getStepsContainer();
 		var elementsToAdd = [];
-		for (var i = 0; i < 25; i += 1) {
+		var wpWindow = this.getWpWindow();
+
+		Ext.Array.forEach(wpWindow.getWorkplanConfig().steps, function (item, index) {
+			console.log("ITEM: ", item);
 			elementsToAdd.push({
-
-				xtype: 'container',
-				style: 'overflow: visible; padding: 3px 0 3px 0;' + (i === 4 ? 'border: 2px dotted #ccc;' : ''),
-				layout: {
-					type: 'vbox',
-					pack: 'center',
-					align: 'middle'
+				xtype: 'dataview',
+				itemSelector: 'div.step-view',
+				stepRecord: { durp: 'TODO' },
+				store: {
+					fields: ['name'],
+					data: [ { name: item.name } ]
 				},
-				width: 70,
-				height: 90,
-				items: [
-					{
-						xtype: 'container',
-						html: (i !== 2 ? 'test' : 'test test test'),
-						style: 'align-text: center;'
-					},
-					{
-						xtype: 'button',
-						text: ':::',
-						style: 'border-radius: 40px;' + (i === 4 ? 'background: green;' : ''),
-						width: 40,
-						padding: 10
+				listeners: {
+					itemclick: function (a,b,c) {
+						console.log("TAP!", a,b,c);
 					}
-				]
+				},
+				itemTpl:'<div class="step-view-container">' +
+							'<span>{name} - '+index+'</span>' +
+							'<div class="step-view ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step' : '') + '"></div>' +
+						'</div>'
 			});
-
-			if (i !== 24) {
-				elementsToAdd.push({
-					xtype: 'container',
-					style: 'padding-top: 10px;',
-					html: '<i class="fa fa-2x fa-long-arrow-right" aria-hidden="true"></i>'
-				});
-			}
-		}
+		});
 
 		stepsContainer.removeAll(true);
 		stepsContainer.add(elementsToAdd);

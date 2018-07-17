@@ -571,3 +571,65 @@ table.confluenceTable td.numberingColumn {
 	color: #ccc;
 }
 
+.step-view-container {
+	width: 175px;
+	height: 85px;
+	/* border: 1px solid black; */
+	overflow: visible;
+	white-space: nowrap;
+}
+
+.step-view-container span {
+	position: relative;
+	left: -60px;
+}
+.step-view-container.last-step {
+	display: inline-block;
+}
+
+.step-view {
+	overflow: visible;
+	width: 60px;
+	height: 60px;
+	line-height: 44px;
+	display: inline-block;
+	border-radius: 60px;
+	background: #86b5ff;
+	border: 2px solid #333;
+	z-index: 11;
+	position: absolute;
+	left: 0;
+	text-align: center;
+	font-size: 14px;
+	margin-top: 1.5em;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
+}
+
+.step-view:hover {
+	background: #35b5ff;
+	cursor: pointer;
+}
+
+.step-view::after {
+	width: 115px;
+	height: 3px;
+	background: #333;
+	content: '';
+	position: absolute;
+	display: block;
+	top: 28px;
+	left: 58px;
+	pointer-events: none;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
+}
+
+.step-view.last-step::after {
+	visibility: hidden;
+	width: 0;
+	top: 0;
+	left: 0;
+}
+
+.step-container > div {
+	overflow: visible;
+}
