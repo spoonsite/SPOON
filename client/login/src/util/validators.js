@@ -1,3 +1,5 @@
+import store from '../store';
+
 export default {
   data: () => ({
     rules: {
@@ -15,6 +17,11 @@ export default {
       required: value => {
         // Value cannot be empty or only whitespace
         return (!!value && /^\s+$/.test(value) === false) || 'This field is required';
+      },
+      password: value => {
+        let regex = new RegExp('^(?=.*[A-Z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{' + String(store.state.securitypolicy.minPasswordLength) + ',}$');
+        return regex.test(value) ||
+        `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least ${store.state.securitypolicy.minPasswordLength} characters`;
       }
     }
   })

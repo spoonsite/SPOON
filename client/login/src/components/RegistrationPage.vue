@@ -29,7 +29,7 @@
                 name="password"
                 label="Password"
                 type="password"
-                :rules="password1Rules"
+                :rules="[rules.required, rules.password]"
                 :error-messages="errors.password"
                 v-model="credentials.password1"
               ></v-text-field>
@@ -242,14 +242,6 @@ export default {
         v =>
           /^\w+$/.test(v) ||
           'Username must be valid'
-      ],
-      password1Rules: [
-        v => !!v || 'Password is required',
-        v => {
-          let regex = new RegExp('^(?=.*[A-Z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{' + String(this.$store.state.securitypolicy.minPasswordLength) + ',}$');
-          return regex.test(v) ||
-          `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least ${this.$store.state.securitypolicy.minPasswordLength} characters`;
-        }
       ],
       password2Rules: [
         v => !!v || 'Password verification is required',
