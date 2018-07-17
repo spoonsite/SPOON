@@ -873,7 +873,7 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TOGGLE_PUBLISH)).setPermissionPredecessor(USER_EVALUATIONS_READ);
 		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TOGGLE_PUBLISH)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
-		codeMap.put(ADMIN_EVALUATION_PUBLISH_SUMMARY, newLookup(SecurityPermission.class, ADMIN_EVALUATION_PUBLISH_SUMMARY, "Allows the user to publish a summary", null, GROUPBY_EVALUATION_ADMIN));
+		codeMap.put(ADMIN_EVALUATION_PUBLISH_SUMMARY, newLookup(SecurityPermission.class, ADMIN_EVALUATION_PUBLISH_SUMMARY, "Allows the user to publish just the summary under the view menu", null, GROUPBY_EVALUATION_ADMIN));
 		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_PUBLISH_SUMMARY)).setPermissionPredecessor(USER_EVALUATIONS_READ);
 		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_PUBLISH_SUMMARY)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
