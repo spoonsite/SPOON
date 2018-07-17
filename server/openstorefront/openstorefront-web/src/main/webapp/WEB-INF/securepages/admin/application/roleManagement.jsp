@@ -658,7 +658,7 @@
 															row.classList.add('permission-row-disabled');
 														}, 1);
 													}
-													return '<span style="margin-left: 25px;">' + value + ' <i style="pointer-events: auto; color: #888;" class="fa fa-question-circle" data-qtip="' + parentRecord.getData().code + '"></i></span>';
+													return '<span style="margin-left: 25px;">' + value + ' <i style="pointer-events: auto; color: #888;" class="fa fa-question-circle" data-qtip="' + 'PERMISSION REQUIRES: ' + parentRecord.getData().code +'"></i></span>';
 												}
 											}
 
@@ -673,7 +673,7 @@
 									groupField: 'groupBy',
 									proxy: {
 										type: 'ajax',
-										url: 'api/v1/resource/lookuptypes/SecurityPermission'
+										url: 'api/v1/resource/securitypermission'
 									},
 									listeners: {
 										load: function (store, records, opts) {
