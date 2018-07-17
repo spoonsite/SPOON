@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app>
-      <header style="z-index:20;">
+      <header>
         <div class="toolbar">
         <v-toolbar color="primary" dense dark flat>
           <v-spacer></v-spacer>
@@ -17,7 +17,6 @@
         </v-toolbar>
         </div>
         <v-alert :value="alert" color="warning" style="margin: 0; height: 30px; text-align: center;">Security Banner</v-alert>
-
       </header>
 
       <!-- Request Error Dialog -->
@@ -219,7 +218,6 @@ header {
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 2;
 }
 .toolbar {
   border-bottom: 4px solid gold;
