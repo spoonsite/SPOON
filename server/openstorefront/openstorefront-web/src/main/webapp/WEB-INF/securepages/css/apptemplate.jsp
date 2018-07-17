@@ -603,6 +603,7 @@ table.confluenceTable td.numberingColumn {
 	font-size: 14px;
 	margin-top: 1.5em;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
+	outline: none;
 }
 
 .step-view:hover {
@@ -632,4 +633,12 @@ table.confluenceTable td.numberingColumn {
 
 .step-container > div {
 	overflow: visible;
+}
+
+.wp-step-active {
+	background: #42f4e8;
+}
+
+.step-view.wp-step-active:hover {
+	background: #3adacf;
 }

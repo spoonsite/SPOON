@@ -159,21 +159,38 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 
 	addStep: function () {
 
-		this.getWpWindow().getWorkplanConfig().steps.push({
-			name: 'Untitled Step',
-			description: '',
-			allowedRoles: [],
-			actions: []
-		});
+		this.getWpWindow().getWorkplanConfig().steps.push(this.getDefaultStep());
 		this.alert('stepManager');
 	},
 
 	insertStep: function () {
-		console.log("TODO: insert");
+
+		var wpWindow = this.getWpWindow();
+		var selectedStepIndex = wpWindow.getWorkplanConfig().steps.indexOf(wpWindow.getSelectedStep());
+
+		// insert an empty step AFTER the currently selected step
+		wpWindow.getWorkplanConfig().steps.splice(selectedStepIndex + 1, 0, this.getDefaultStep());
+		this.alert('stepManager');
 	},
 
 	removeStep: function () {
-		console.log("TODO: remove");
+
+		var wpWindow = this.getWpWindow();
+		var selectedStepIndex = wpWindow.getWorkplanConfig().steps.indexOf(wpWindow.getSelectedStep());
+		
+		wpWindow.setSelectedStep(null);
+		wpWindow.getWorkplanConfig().steps.splice(selectedStepIndex, 1);
+		this.alert();
+		console.log("TODO: Handle step migration");
+	},
+
+	getDefaultStep: function () {
+		return {
+			name: 'Untitled Step - ' + (this.getWpWindow().getWorkplanConfig().steps.length + 1),
+			description: '',
+			allowedRoles: [],
+			actions: []
+		}
 	},
 	
 	drawSteps: function () {
@@ -183,23 +200,29 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 		var wpWindow = this.getWpWindow();
 
 		Ext.Array.forEach(wpWindow.getWorkplanConfig().steps, function (item, index) {
-			console.log("ITEM: ", item);
 			elementsToAdd.push({
 				xtype: 'dataview',
 				itemSelector: 'div.step-view',
-				stepRecord: { durp: 'TODO' },
+				stepRecord: item,
 				store: {
 					fields: ['name'],
 					data: [ { name: item.name } ]
 				},
 				listeners: {
-					itemclick: function (a,b,c) {
-						console.log("TAP!", a,b,c);
+					itemmousedown: function (dataView) {
+						
+						var wpWindow = dataView.up('window');
+						wpWindow.setSelectedStep(dataView.stepRecord);
+					},
+					itemmouseup: function (dataview) {
+
+						var wpWindow = this.up('window');
+						wpWindow.alertChildrenComponents();
 					}
 				},
 				itemTpl:'<div class="step-view-container">' +
-							'<span>{name} - '+index+'</span>' +
-							'<div class="step-view ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step' : '') + '"></div>' +
+							'<span>{name}</span>' +
+							'<div class="step-view ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + (item === wpWindow.getSelectedStep() ? 'wp-step-active' : '') + '"></div>' +
 						'</div>'
 			});
 		});
