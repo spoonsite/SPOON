@@ -19,6 +19,7 @@
                 label="Username"
                 type="text"
                 :rules="usernameRules"
+                :error-messages="errors.username"
                 v-model="credentials.username"
               ></v-text-field>
             </v-layout>
@@ -29,6 +30,7 @@
                 label="Password"
                 type="password"
                 :rules="password1Rules"
+                :error-messages="errors.password"
                 v-model="credentials.password1"
               ></v-text-field>
             </v-layout>
@@ -39,6 +41,7 @@
                 label="Confirm Password"
                 type="password"
                 :rules="password2Rules"
+                :error-messages="errors.confirmPassword"
                 v-model="credentials.password2"
               ></v-text-field>
             </v-layout>
@@ -61,7 +64,8 @@
               label="First Name"
               type="text"
               v-model="userInformation.firstName"
-              :rules="firstNameRules"
+              :rules="[rules.required]"
+              :error-messages="errors.firstName"
               required
             ></v-text-field>
 
@@ -70,7 +74,8 @@
               label="Last Name"
               type="text"
               v-model="userInformation.lastName"
-              :rules="lastNameRules"
+              :rules="[rules.required]"
+              :error-messages="errors.lastName"
               required
             ></v-text-field>
 
@@ -78,9 +83,11 @@
               name="organization"
               label="Organization"
               :items="organizationsList"
+              :rules="[rules.required]"
               combobox
               item-text="description"
               v-model="userInformation.organization"
+              :error-messages="errors.organization"
               required
             ></v-select>
 
@@ -89,6 +96,7 @@
               label="Position Title"
               type="text"
               v-model="userInformation.positionTitle"
+              :error-messages="errors.positionTitle"
             ></v-text-field>
 
             <v-text-field
@@ -97,6 +105,7 @@
               type="text"
               v-model="userInformation.email"
               :rules="[rules.required, rules.email]"
+              :error-messages="errors.email"
               required
             ></v-text-field>
 
@@ -105,7 +114,8 @@
               label="Business Phone"
               type="text"
               v-model="userInformation.phone"
-              :rules="[v => !!v || 'Phone number is required']"
+              :rules="[rules.required]"
+              :error-messages="errors.phone"
               required
             ></v-text-field>
 
@@ -113,9 +123,12 @@
               name="usertype"
               v-model="userInformation.userType"
               :items="userTypesList"
+              :rules="[rules.required]"
               item-text="description"
               item-value="code"
               label="User Type"
+              :error-messages="errors.userTypeCode"
+              required
             ></v-select>
         </v-form>
       </v-card-text>
@@ -141,7 +154,8 @@
             name="verifycode"
             label="Enter the verification code from your email here"
             type="text"
-            :rules="[ v => !!v || 'Validation code is required' ]"
+            :rules="[rules.required]"
+            :error-messages="errors.verificationCode"
             v-model="verification.code"
           ></v-text-field>
         </v-form>
@@ -158,15 +172,6 @@
       <v-btn block color="accent" @click="cancel()"><v-icon light class="icon">cancel</v-icon>Cancel</v-btn>
       </div>
     </div>
-
-    <v-dialog v-model="verificationDialog" max-width="300px">
-      <v-card tile>
-        <v-card-text>Verificaton code sent. Check your email.</v-card-text>
-        <v-card-actions>
-          <v-btn @click="verificationDialog = false"><v-icon class="icon">fas fa-times</v-icon>Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-dialog v-model="successDialog" max-width="300px">
       <v-card tile>
@@ -194,10 +199,23 @@ export default {
   },
   data: function () {
     return {
-      verificationDialog: false,
       verificationLoading: false,
       signupLoading: false,
       successDialog: false,
+      errors: {
+        username: [],
+        password: [],
+        confirmPassord: [],
+        firstName: [],
+        lastName: [],
+        organization: [],
+        positionTitle: [],
+        email: [],
+        phone: [],
+        userTypeCode: [],
+        registrationId: [],
+        verificationCode: []
+      },
       credentials: {
         valid: false,
         username: '',
@@ -238,21 +256,7 @@ export default {
         v => this.credentials.password1 === this.credentials.password2 || 'Passwords must match'
       ],
       organizationsList: [],
-      userTypesList: [],
-      firstNameRules: [
-        v => !!v || 'First name is required'
-      ],
-      lastNameRules: [
-        v => !!v || 'Last name is required'
-      ],
-      filter (item, queryText, itemText) {
-        const hasValue = val => val != null ? val : '';
-        const text = hasValue(item.description);
-        const query = hasValue(queryText);
-        return text.toString()
-          .toLowerCase()
-          .indexOf(query.toString().toLowerCase()) > -1;
-      }
+      userTypesList: []
     };
   },
   methods: {
@@ -260,15 +264,13 @@ export default {
       this.$http.get('/openstorefront/api/v1/resource/organizations/lookup')
         .then(response => {
           this.organizationsList = response.data;
-        })
-        .catch(e => this.errors.push(e));
+        });
     },
     getUserTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/UserTypeCode')
         .then(response => {
           this.userTypesList = response.data;
-        })
-        .catch(e => this.errors.push(e));
+        });
     },
     register (verb) {
       // call POST for getting the email verification code
@@ -291,20 +293,30 @@ export default {
         this.verificationLoading = true;
         this.$http.post('/openstorefront/api/v1/resource/userregistrations', data)
           .then(response => {
-            this.verificationDialog = true;
-            this.registrationId = response.data.registrationId;
-            this.verificationCode = response.data.verificationCode;
+            this.clearErrors();
+            if (response.data.success === false) {
+              this.responseErrorHandler(response, 'Error getting registration code');
+            } else {
+              this.$toasted.success('Verification code sent to your email');
+              this.registrationId = response.data.registrationId;
+              this.verificationCode = response.data.verificationCode;
+            }
             this.verificationLoading = false;
-          })
-          .catch(e => this.errors.push(e));
+            this.signupLoading = false;
+          });
       } else {
         this.signupLoading = true;
         this.$http.put('/openstorefront/api/v1/resource/userregistrations', data)
           .then(response => {
-            this.successDialog = true;
+            this.clearErrors();
+            if (response.data.success === false) {
+              this.responseErrorHandler(response, 'Registration error');
+            } else {
+              this.successDialog = true;
+            }
+            this.verificationLoading = false;
             this.signupLoading = false;
-          })
-          .catch(e => this.errors.push(e));
+          });
       }
     },
     signup () {
@@ -314,6 +326,19 @@ export default {
       this.$refs.userInformationForm.reset();
       this.$refs.verifyForm.reset();
       this.$refs.credentialsForm.reset();
+    },
+    responseErrorHandler (response, message) {
+      this.$toasted.error(message);
+      if (response.data.errors.entry) {
+        response.data.errors.entry.forEach((el) => {
+          this.errors[el.key] = [el.value];
+        });
+      }
+    },
+    clearErrors () {
+      for (let key in this.errors) {
+        this.errors[key] = [];
+      }
     }
   },
   computed: {

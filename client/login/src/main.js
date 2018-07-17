@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
+import Toasted from 'vue-toasted';
 import 'babel-polyfill';
 import axios from 'axios';
 import App from './App';
@@ -22,6 +23,10 @@ Vue.use(Vuetify, {
     warning: '#FFA000',
     success: '#388E3C'
   }
+});
+Vue.use(Toasted, {
+  iconPack: 'fontawesome',
+  duration: 5000
 });
 
 /* eslint-disable no-new */
