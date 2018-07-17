@@ -159,6 +159,7 @@ export default {
       links: [
         { link: '/', icon: 'home', name: 'Home' },
         { link: '/sme-approval', icon: 'check', name: 'SME Approval' },
+        { link: '/submission-status', icon: 'sticky-note', name: 'Submission Status' },
         { link: '/faq', icon: 'question', name: 'F.A.Q.' },
         { link: '/contact', icon: 'comment', name: 'Contact' },
         { link: '/profile', icon: 'user-edit', name: 'Manage Profile' }
