@@ -68,7 +68,12 @@ export default new Router({
       component: SMEApprovalPage
     },
     {
-      path: '/contact',
+      path: '/contact/',
+      name: 'Contact',
+      component: ContactPage
+    },
+    {
+      path: '/contact/:ticket',
       name: 'Contact',
       component: ContactPage
     },

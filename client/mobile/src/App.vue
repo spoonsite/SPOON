@@ -180,7 +180,12 @@ export default {
     },
     submitErrorReport () {
       this.errorDialog = false;
-      router.push({ name: 'Contact' });
+      router.push({
+        name: 'Contact',
+        params: {
+          ticket: this.currentError.statusText
+        }
+      });
     },
     checkFirstTime () {
       console.log('check first time');
