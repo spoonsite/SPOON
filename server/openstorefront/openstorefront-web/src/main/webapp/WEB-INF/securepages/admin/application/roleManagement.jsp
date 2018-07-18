@@ -581,7 +581,6 @@
 								viewConfig: {
 									listeners: {
 										groupclick: function (view, node, group, event) {
-											console.log('we have been group clicked!')
 											var targetType = event.target.getAttribute('button-type');
 											var buttonIsTarget = targetType === 'check-group' || targetType === 'uncheck-group' ? true : false;
 											var isCollapsed = typeof event.record.isCollapsedPlaceholder === 'undefined' ? false : true;
@@ -611,9 +610,7 @@
 											checkchange: function (self, rowIndex, checked, record) {
 
 												// remove/add classes of sub-permissions to enable/disable permission rows
-												
 												var grid = this.up('grid');
-
 												var subPermissionRecords = grid.findSubPermissions(record);
 												if (checked) {
 													Ext.Array.forEach(subPermissionRecords, function (item) {
