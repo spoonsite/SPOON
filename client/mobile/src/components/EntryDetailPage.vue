@@ -381,7 +381,7 @@ export default {
     },
     checkWatch () {
       console.log(this.id);
-      this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
+      this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
         .then(response => {
           console.log();
           if (response) {
@@ -406,10 +406,10 @@ export default {
           username: this.$store.state.currentUser.username,
           notifyFlg: false
         };
-        this.$http.post('/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches', watch)
+        this.$http.post(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`, watch)
           .catch(e => this.errors.push(e));
 
-        this.$http.get('/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches')
+        this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
           .then(response => {
             console.log();
             if (response) {
@@ -425,7 +425,7 @@ export default {
           })
           .catch(e => this.errors.push(e));
       } else {
-        this.$http.delete('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches/' + this.watchId);
+        this.$http.delete(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches/${this.watchId}`);
       }
     }
   }
