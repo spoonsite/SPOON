@@ -19,6 +19,9 @@
 Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 	extend: 'OSF.workplanManagementTool.WPDefaultPanel',
 	alias: 'widget.osf.wp.stepManager',
+	requires: [
+		'OSF.workplanManagementTool.StepMigrationWindow'
+	],
 
 	itemId: 'stepManager',
 	style: 'background: #fff; text-align: center;',
@@ -52,6 +55,39 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 		},
 		{
 			xtype: 'container',
+			itemId: 'stepsLegendContainer',
+			hidden: true,
+			width: '5%',
+			padding: '0 0 0 10',
+			style: 'border-right: 1px solid #ccc',
+			layout: {
+				type: 'vbox',
+				pack: 'center'
+			},
+			defaults: {
+				margin: '0 0 10 0'
+			},
+			items: [
+				{
+					xtype: 'container',
+					html: '<div style="width: 100%;"><div class="wp-step-lengend wp-step-new"></div>&nbsp;<b>New</b></div>'
+				},
+				{
+					xtype: 'container',
+					html: '<div style="width: 100%;"><div class="wp-step-lengend wp-step-existing"></div>&nbsp;<b>Existing</b></div>'
+				},
+				{
+					xtype: 'container',
+					html: '<div style="width: 100%;"><div class="wp-step-lengend wp-step-migrated"></div>&nbsp;<b>Migrated</b></div>'
+				},
+				{
+					xtype: 'container',
+					html: '<div style="width: 100%;"><div class="wp-step-lengend wp-step-active"></div>&nbsp;<b>Active</b></div>'
+				}
+			]
+		},
+		{
+			xtype: 'container',
 			itemId: 'stepsContainer',
 			layout: {
 				type: 'hbox',
@@ -61,7 +97,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			hidden: true,
 			scrollable: 'x',
 			height: '100%',
-			width: '90%',
+			width: '85%',
 			padding: '10 0 10 50',
 			cls: 'step-container',
 			listeners: {
@@ -140,18 +176,21 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 		var firstStepButton = this.down('[itemId=createFirstStepButton]');
 		var stepsContainer = this.getStepsContainer();
 		var addRemoveContainer = this.down('[itemId=addRemoveStepContainer]');
+		var stepsLegendContainer = this.down('[itemId=stepsLegendContainer]');
 		
 		if (this.getWpWindow().getWorkplanConfig().steps.length === 0) {
 			this.setHtml('This workplan has <b>no</b> steps yet<br />Add one');
 			firstStepButton.show();
 			stepsContainer.hide();
 			addRemoveContainer.hide();
+			stepsLegendContainer.hide();
 		}
 		else {
 			this.setHtml('');
 			firstStepButton.hide();
 			stepsContainer.show();
 			addRemoveContainer.show();
+			stepsLegendContainer.show();
 			
 			this.drawSteps();
 		}
@@ -177,11 +216,27 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 
 		var wpWindow = this.getWpWindow();
 		var selectedStepIndex = wpWindow.getWorkplanConfig().steps.indexOf(wpWindow.getSelectedStep());
+		var stepManager = this;
+
+		var remove = function () {
+			wpWindow.setSelectedStep(null);
+			wpWindow.getWorkplanConfig().steps.splice(selectedStepIndex, 1);
+			stepManager.alert();
+		};
+
+		if (wpWindow.getSelectedStep().isNewStep) {
+			remove();
+		}
+		else {
+			Ext.create({
+				xtype: 'osf.wp.migrationwindow',
+				wpWindow: wpWindow,
+				onMigrate: function () {
+					remove();
+				}
+			}).show();
+		}
 		
-		wpWindow.setSelectedStep(null);
-		wpWindow.getWorkplanConfig().steps.splice(selectedStepIndex, 1);
-		this.alert();
-		console.log("TODO: Handle step migration");
 	},
 
 	getDefaultStep: function () {
@@ -189,7 +244,10 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			name: 'Untitled Step - ' + (this.getWpWindow().getWorkplanConfig().steps.length + 1),
 			description: '',
 			allowedRoles: [],
-			actions: []
+			actions: [],
+			isNewStep: true,
+			isMigratedTo: false,
+			stepId: CoreUtil.uuidv4()
 		}
 	},
 	
@@ -222,7 +280,13 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 				},
 				itemTpl:'<div class="step-view-container">' +
 							'<span>{name}</span>' +
-							'<div class="step-view ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + (item === wpWindow.getSelectedStep() ? 'wp-step-active' : '') + '"></div>' +
+							'<div ' +
+								'class="step-view ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') +
+								(item === wpWindow.getSelectedStep() ? 'wp-step-active ' : ' ') +
+								(item.isNewStep && item !== wpWindow.getSelectedStep() ? 'wp-step-new ' : ' ') +
+								(!item.isNewStep && !item.isMigratedTo && item !== wpWindow.getSelectedStep() ? 'wp-step-existing ' : ' ') +
+								(!item.isNewStep && item.isMigratedTo && item !== wpWindow.getSelectedStep() ? 'wp-step-migrated ' : ' ') +
+							'"></div>' +
 						'</div>'
 			});
 		});

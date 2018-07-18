@@ -73,7 +73,7 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 				{
 					xtype: 'colorfield',
 					format: '#hex6',
-					fieldLabel: 'Change Requested',
+					fieldLabel: 'Attention Required',
 					name: 'changeRequestedColor',
 					style: 'margin-left: 10%;',
 					width: 20,

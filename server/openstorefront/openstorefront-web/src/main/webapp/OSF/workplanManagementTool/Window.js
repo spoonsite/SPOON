@@ -26,7 +26,8 @@ Ext.define('OSF.workplanManagementTool.Window', {
 
 	config: {
 		workplanConfig: {},
-		selectedStep: null
+		selectedStep: null,
+		migrationsToPerform: []
 	},
 	layout: 'border',
 	defaults: {
