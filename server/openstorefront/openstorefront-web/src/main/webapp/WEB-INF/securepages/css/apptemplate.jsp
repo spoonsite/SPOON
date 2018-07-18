@@ -647,7 +647,7 @@ table.confluenceTable td.numberingColumn {
 		border-radius: 10px;
 	} */
 	0%   {border-radius: 100%;}
-    50%  {border-radius: 100%;}
+    60%  {border-radius: 100%;}
     100% {border-radius: 10px;}
 }
 

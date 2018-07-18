@@ -199,7 +199,6 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 	
 	alertChange: function () {
 		
-		console.log("THIS (Step manager Panel)", this);
 		var firstStepContainer = this.down('[itemId=createFirstStepContainer]');
 		var stepsContainer = this.getStepsContainer();
 		var addRemoveContainer = this.down('[itemId=addRemoveStepContainer]');

@@ -59,6 +59,9 @@ Ext.define('OSF.workplanManagementTool.Window', {
 		resize: function () {
 
 			this.down('[itemId=stepsContainer]').relativeWindowResize();
+		},
+		close: function () {
+			this.stepForm.clearForm();
 		}
 	},
 	

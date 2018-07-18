@@ -125,10 +125,12 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 		else {
 			defaultContainer.hide();
 			stepFormPanel.show();
-			// stepFormPanel.setHtml(this.getWpWindow().getSelectedStep().name);
 
-			console.log("SELECTED STEP: ", this.getWpWindow().getSelectedStep())
 			stepFormPanel.getForm().setValues(this.getWpWindow().getSelectedStep());
 		}
+	},
+
+	clearForm: function () {
+		this.down('form').getForm().reset();
 	}
 });
