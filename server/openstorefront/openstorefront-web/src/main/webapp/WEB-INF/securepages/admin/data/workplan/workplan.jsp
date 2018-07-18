@@ -41,8 +41,8 @@
 					title: 'Add/Edit Workplans',
 					iconCls: 'fa fa-edit icon-button-color-edit',
 					modal: true,
-					width: '95%',
-					height: '95%',
+					width: '75%',
+					height: '75%',
 					maximizable: true,
 				});
 

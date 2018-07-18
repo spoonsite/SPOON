@@ -580,11 +580,16 @@ table.confluenceTable td.numberingColumn {
 }
 
 .step-view-container span {
-	position: relative;
-	left: -60px;
+	/* position: relative;
+	left: -60px; */
+}
+.step-view-container.last-step span {
+	/* position: relative;
+	left: -20px; */
 }
 .step-view-container.last-step {
-	display: inline-block;
+	/* display: inline-block; */
+	width: 60px;
 }
 
 .step-view {
@@ -679,3 +684,16 @@ table.confluenceTable td.numberingColumn {
 	width: 1em;
 	height: 1em;
 }
+
+.wp-step-label
+ {
+	position: absolute;
+	left: 18%;
+	transform: translateX(-50%);
+ }
+ .wp-step-label.last-step
+ {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+ }

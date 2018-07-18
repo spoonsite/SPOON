@@ -50,6 +50,8 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 
 					// alert parent and siblings of alert
 					stepManager.alert();
+
+					stepManager.down('[itemId=stepsContainer]').relativeWindowResize();
 				}
 			}
 		},
@@ -57,7 +59,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			xtype: 'container',
 			itemId: 'stepsLegendContainer',
 			hidden: true,
-			width: '5%',
+			width: 100,
 			padding: '0 0 0 10',
 			style: 'border-right: 1px solid #ccc',
 			layout: {
@@ -70,19 +72,19 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			items: [
 				{
 					xtype: 'container',
-					html: '<div style="width: 100%;"><div class="wp-step-lengend wp-step-new"></div>&nbsp;<b>New</b></div>'
+					html: '<div style="width: 100%;" data-qtip="You just recently inserted this step"><div class="wp-step-lengend wp-step-new"></div>&nbsp;<b>New</b></div>'
 				},
 				{
 					xtype: 'container',
-					html: '<div style="width: 100%;"><div class="wp-step-lengend wp-step-existing"></div>&nbsp;<b>Existing</b></div>'
+					html: '<div style="width: 100%;" data-qtip="This step already existed on workplan modification"><div class="wp-step-lengend wp-step-existing"></div>&nbsp;<b>Existing</b></div>'
 				},
 				{
 					xtype: 'container',
-					html: '<div style="width: 100%;"><div class="wp-step-lengend wp-step-migrated"></div>&nbsp;<b>Migrated</b></div>'
+					html: '<div style="width: 100%;" data-qtip="You have migrated records from a deleted step, to this step"><div class="wp-step-lengend wp-step-migrated"></div>&nbsp;<b>Migrated</b></div>'
 				},
 				{
 					xtype: 'container',
-					html: '<div style="width: 100%;"><div class="wp-step-lengend wp-step-active"></div>&nbsp;<b>Active</b></div>'
+					html: '<div style="width: 100%;" data-qtip="You are actively viewing this step"><div class="wp-step-lengend wp-step-active"></div>&nbsp;<b>Active</b></div>'
 				}
 			]
 		},
@@ -97,11 +99,11 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			hidden: true,
 			scrollable: 'x',
 			height: '100%',
-			width: '85%',
-			padding: '10 0 10 50',
+			padding: '10 30 10 30',
 			cls: 'step-container',
 			listeners: {
 				render: function () {
+
 					var stepsContainer = this;
 
 					// set up horizontal scrolling
@@ -116,13 +118,21 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 						}
 					});
 				}
+			},
+			relativeWindowResize: function () {
+
+				var stepManager = this.up('[itemId=stepManager]');
+				var stepLegendContainer = stepManager.down('[itemId=stepsLegendContainer]');
+				var addRemoveStepContainer = stepManager.down('[itemId=addRemoveStepContainer]');
+
+				this.setWidth(this.up('window').getWidth() - stepLegendContainer.getWidth() - addRemoveStepContainer.getWidth());
 			}
 		},
 		{
 			itemId: 'addRemoveStepContainer',
 			hidden: true,
 			xtype: 'container',
-			width: '10%',
+			width: 200,
 			style: 'border-left: 1px solid #ccc;',
 			padding: 5,
 			layout: {
@@ -161,6 +171,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 				},
 				{
 					xtype: 'button',
+					itemId: 'insertStepButton',
 					text: 'Insert Step',
 					iconCls: 'fa fa-2x fa-level-down icon-vertical-correction',
 					margin: '10 0 10 0',
@@ -168,6 +179,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 				},
 				{
 					xtype: 'button',
+					itemId: 'removeStepButton',
 					text: 'Remove Step',
 					iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 					clickAction: 'remove'
@@ -197,6 +209,15 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			stepsContainer.show();
 			addRemoveContainer.show();
 			stepsLegendContainer.show();
+
+			if (this.getWpWindow().getSelectedStep() === null) {
+				addRemoveContainer.down('[itemId=removeStepButton]').disable();
+				addRemoveContainer.down('[itemId=insertStepButton]').disable();
+			}
+			else {
+				addRemoveContainer.down('[itemId=removeStepButton]').enable();
+				addRemoveContainer.down('[itemId=insertStepButton]').enable();
+			}
 			
 			this.drawSteps();
 		}
@@ -284,8 +305,8 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 						wpWindow.alertChildrenComponents();
 					}
 				},
-				itemTpl:'<div class="step-view-container">' +
-							'<span>{name}</span>' +
+				itemTpl: '<div class="step-view-container ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + '">' +
+							'<span class="wp-step-label ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + '">{name}</span>' +
 							'<div ' +
 								'class="step-view ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') +
 								(item === wpWindow.getSelectedStep() ? 'wp-step-active ' : ' ') +

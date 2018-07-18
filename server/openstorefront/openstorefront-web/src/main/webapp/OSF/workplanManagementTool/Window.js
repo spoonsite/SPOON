@@ -52,6 +52,13 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			region: 'center'
 		}
 	],
+
+	listeners: {
+		resize: function () {
+
+			this.down('[itemId=stepsContainer]').relativeWindowResize();
+		}
+	},
 	
 	initComponent: function () {
 		
