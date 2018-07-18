@@ -38,19 +38,19 @@
               <v-text>
 
                 <p>
-                  <v-text><strong>Name: </strong>{{this.$store.state.currentUser.firstName + this.$store.state.currentUser.lastName}}</v-text>
+                  <strong>Name: </strong>{{this.$store.state.currentUser.firstName + this.$store.state.currentUser.lastName}}
                 </p>
 
                 <p>
-                  <v-text><strong>Email: </strong>{{this.$store.state.currentUser.email}}</v-text>
+                  <strong>Email: </strong>{{this.$store.state.currentUser.email}}
                 </p>
 
                 <p>
-                  <v-text><strong>Phone: </strong>{{this.$store.state.currentUser.phone}}</v-text>
+                  <strong>Phone: </strong>{{this.$store.state.currentUser.phone}}
                 </p>
 
                 <p>
-                  <v-text><strong>Organization: </strong>{{this.$store.state.currentUser.organization}}</v-text>
+                  <strong>Organization: </strong>{{this.$store.state.currentUser.organization}}
                 </p>
 
               </v-text>
