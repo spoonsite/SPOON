@@ -279,6 +279,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			description: '',
 			allowedRoles: [],
 			actions: [],
+			activeOn: null,
 			isNewStep: true,
 			isMigratedTo: false,
 			stepId: CoreUtil.uuidv4()
@@ -309,7 +310,13 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 					itemmouseup: function (dataview) {
 
 						var wpWindow = this.up('window');
+						var stepForm = wpWindow.stepForm;
+
+						// ensure that the form can't track changes when changing steps.
+						//	this is because each step uses the same form, and changes values depending on the step
+						stepForm.canSave = false;
 						wpWindow.alertChildrenComponents();
+						stepForm.canSave = true;
 					}
 				},
 				itemTpl: '<div class="step-view-container ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + '">' +

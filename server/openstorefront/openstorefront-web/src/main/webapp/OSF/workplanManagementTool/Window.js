@@ -30,6 +30,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 		migrationsToPerform: []
 	},
 	layout: 'border',
+	resizable: false,
 	defaults: {
 		split: true
 	},
@@ -49,7 +50,8 @@ Ext.define('OSF.workplanManagementTool.Window', {
 		{
 			xtype: 'osf.wp.stepForm',
 			itemId: 'stepForm',
-			region: 'center'
+			region: 'center',
+			width: '100%'
 		}
 	],
 

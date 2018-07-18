@@ -42,7 +42,7 @@
 					iconCls: 'fa fa-edit icon-button-color-edit',
 					modal: true,
 					width: '75%',
-					height: '75%',
+					height: 820,
 					maximizable: true,
 				});
 

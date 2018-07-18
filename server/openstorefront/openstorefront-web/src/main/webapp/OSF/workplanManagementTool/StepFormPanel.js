@@ -20,13 +20,14 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 	extend: 'OSF.workplanManagementTool.WPDefaultPanel',
 	alias: 'widget.osf.wp.stepForm',
 
-	style: 'background: #fff; text-align: center;',
+	style: 'background: #fff;',
 	title: 'Step Configuration',
 	layout: {
 		type: 'vbox',
 		pack: 'center',
 		align: 'middle'
 	},
+	canSave: true,
 	items: [
 		{
 			xtype: 'container',
@@ -36,24 +37,98 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 			hidden: true
 		},
 		{
-			xtype: 'container',
-			itemId: 'stepFormContainer',
-			hidden: true
+			xtype: 'form',
+			itemId: 'stepFormPanel',
+			hidden: true,
+			style: 'text-align: left;',
+			width: '100%',
+			padding: '5%',
+			scrollable: true,
+			layout: {
+				type: 'table',
+				columns: 2
+			},
+			defaults: {
+				labelAlign: 'top',
+				width: '90%',
+				canAlertOnChange: false,
+				listeners: {
+					change: function (field, newVal, oldVal) {
+
+						var wpWindow = field.up('window');
+						var stepForm = field.up('[itemId=stepFormPanel]').getForm();
+
+						// save the current form
+						if (wpWindow.stepForm.canSave) {
+							Ext.apply(wpWindow.getSelectedStep(), stepForm.getValues());
+						}
+						if (field.canAlertOnChange) {
+							wpWindow.stepForm.alert();
+						}
+					}
+				}
+			},
+			items: [
+				{
+					xtype: 'textfield',
+					fieldLabel: 'Step name (?)',
+					name: 'name',
+					canAlertOnChange: true
+				},
+				{
+					xtype: 'combo',
+					fieldLabel: 'Active On (?)',
+					name: 'activeOn',
+					width: '100%',
+					editable: false
+				},
+				{
+					xtype: 'textarea',
+					fieldLabel: 'Short Description (?)',
+					name: 'description'
+				},
+				{
+					xtype: 'combo',
+					fieldLabel: 'Role Access (?)',
+					name: 'allowedRoles',
+					width: '100%',
+					editable: false,
+					displayField: 'description',
+					valueField: 'roleName',
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/securityroles'
+						}
+					}
+				},
+				{
+					xtype: 'grid',
+					title: 'Step Actions (?)',
+					colspan: 2,
+					width: '100%',
+					style: 'border: 3px solid green; min-height: 300px;'
+				}
+			]
 		}
 	],
 
 	alertChange: function () {
 
 		var defaultContainer = this.down('[itemId=defaultContainer]');
-		var stepFormContainer = this.down('[itemId=stepFormContainer]');
+		var stepFormPanel = this.down('[itemId=stepFormPanel]');
 		if (this.getWpWindow().getSelectedStep() === null) {
 			defaultContainer.show();
-			stepFormContainer.hide();
+			stepFormPanel.hide();
 		}
 		else {
 			defaultContainer.hide();
-			stepFormContainer.show();
-			stepFormContainer.setHtml(this.getWpWindow().getSelectedStep().name);
+			stepFormPanel.show();
+			// stepFormPanel.setHtml(this.getWpWindow().getSelectedStep().name);
+
+			console.log("SELECTED STEP: ", this.getWpWindow().getSelectedStep())
+			stepFormPanel.getForm().setValues(this.getWpWindow().getSelectedStep());
 		}
 	}
 });

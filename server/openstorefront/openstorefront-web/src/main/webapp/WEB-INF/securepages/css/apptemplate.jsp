@@ -639,19 +639,22 @@ table.confluenceTable td.numberingColumn {
 }
 
 @keyframes stepactivate {
-	from {
+	/* from {
 		border-radius: 100%
 	}
 
 	to {
 		border-radius: 10px;
-	}
+	} */
+	0%   {border-radius: 100%;}
+    50%  {border-radius: 100%;}
+    100% {border-radius: 10px;}
 }
 
 .wp-step-active {
 	/* background: #42f4e8; */
 	background: #82ff82;
-	animation-duration: 0.5s;
+	animation-duration: 0.6s;
 	animation-name: stepactivate;
 	border-radius: 10px;
 }
