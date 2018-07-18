@@ -157,6 +157,7 @@ export default {
       drawer: false,
       links: [
         { link: '/', icon: 'home', name: 'Home' },
+        { link: '/watches', icon: 'binoculars', name: 'Watch Page' },
         { link: '/sme-approval', icon: 'check', name: 'SME Approval' },
         { link: '/submission-status', icon: 'sticky-note', name: 'Submission Status' },
         { link: '/faq', icon: 'question', name: 'F.A.Q.' },
