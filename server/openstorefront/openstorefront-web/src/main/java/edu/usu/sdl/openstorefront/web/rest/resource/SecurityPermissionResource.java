@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
  *
  * @author bmichaelis
  */
-@Path("v1/resource/securitypermission")
+@Path("v1/resource/securitypermissions")
 @APIDescription("Provides access to security permission information")
 public class SecurityPermissionResource
 	extends BaseResource
@@ -41,10 +41,9 @@ public class SecurityPermissionResource
 	@GET
 	@APIDescription("Get a list of all permissions and permission information.")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(SecurityPolicy.class)
+	@DataType(SecurityPermission.class)
 	public Response getPermission()
 	{
-		Service service = ServiceProxyFactory.getServiceProxy();
 		List<SecurityPermission> securityPermissionList = service.getLookupService().findLookup(SecurityPermission.class);
 		GenericEntity<List<SecurityPermission>> entity = new GenericEntity<List<SecurityPermission>>(securityPermissionList)
 		{

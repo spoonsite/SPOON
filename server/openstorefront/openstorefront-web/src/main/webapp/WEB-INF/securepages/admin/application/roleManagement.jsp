@@ -667,7 +667,7 @@
 									groupField: 'groupBy',
 									proxy: {
 										type: 'ajax',
-										url: 'api/v1/resource/securitypermission'
+										url: 'api/v1/resource/securitypermissions'
 									},
 									listeners: {
 										load: function (store, records, opts) {
