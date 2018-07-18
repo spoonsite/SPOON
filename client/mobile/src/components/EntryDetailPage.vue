@@ -147,6 +147,7 @@
         <div slot="header">Reviews</div>
         <v-card class="grey lighten-4">
           <v-card-text>
+            <v-btn color="white" @click="writeReviewDialog = true">Write a Review</v-btn>
             <p>
               <strong>Average User Rating:</strong>
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
@@ -155,9 +156,10 @@
             <div v-if="detail.reviews && detail.reviews.length !== 0">
               <div
                 v-for="review in detail.reviews"
-                :key="review.title"
+                :key="review.reviewId"
               >
                 <hr>
+                <p v-if="review.activeStatus === 'P'" class="warning">This review is pending admin approval.</p>
                 <h2>{{ review.title }}</h2>
                 <p>
                   <star-rating :rating="review.rating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
@@ -166,8 +168,34 @@
                 <p class="reviewPar"><strong>organization: </strong>{{ review.organization }}</p>
                 <p class="reviewPar"><strong>Experience: </strong>{{ review.userTimeDescription }}</p>
                 <p class="reviewPar"><strong>Last Used: </strong>{{ review.lastUsed | formatDate }}</p>
+                <div v-if="review.pros.length > 0 || review.cons.length > 0">
+                  <v-layout row justify-space-around>
+                    <v-flex v-if="review.pros.length > 0" xs4>
+                        <v-card-text class="px-0">
+                          <p><strong>Pros</strong></p>
+                          <li v-for="pro in review.pros" :key="pro.code">{{ pro.text }}</li>
+                        </v-card-text>
+                    </v-flex>
+                    <v-flex v-if="review.cons.length > 0" xs4>
+                        <v-card-text class="px-0">
+                          <p><strong>Cons</strong></p>
+                          <p v-for="cons in review.cons" :key="cons.code">{{ cons.text }}</p>
+                        </v-card-text>
+                    </v-flex>
+                  </v-layout>
+                </div>
                 <p class="reviewPar"><strong>Comments:</strong></p>
                 <p v-html="review.comment"></p>
+                <v-btn v-if="review.username === $store.state.currentUser.username"
+                  color="white"
+                  @click="editReviewSetup(review)"
+                >Edit
+                </v-btn>
+                <v-btn v-if="review.username === $store.state.currentUser.username"
+                  color="warning"
+                  @click="deleteReviewDialog=true; deleteRequestId=review.reviewId;"
+                >Delete
+                </v-btn>
               </div>
             </div>
             <div v-else>
@@ -176,6 +204,112 @@
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
+
+      <v-dialog
+      v-model="writeReviewDialog"
+      >
+      <v-card>
+        <v-card-title>
+          <h2 class="w-100">Write a Review</h2>
+          <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
+          <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
+        </v-card-title>
+
+        <v-form v-model="reviewValid">
+
+        <v-container>
+          <v-text-field
+            v-model="newReview.title"
+            :rules="reviewTitleRules"
+            :counter="255"
+            label="Title"
+            required
+          ></v-text-field>
+
+          <star-rating
+            v-model="newReview.rating"
+            :rating="newReview.rating"
+            :read-only="false"
+            :increment="1"
+            :star-size="30"
+          ></star-rating>
+
+          <v-spacer style="height: 1.5em"></v-spacer>
+
+          <v-text-field
+            v-model="newReview.lastUsed"
+            :rules="lastUsedRules"
+            label="Last Used"
+            readonly
+            required
+            disabled
+            solo
+          ></v-text-field>
+
+          <v-date-picker
+            v-model="newReview.lastUsed"
+            :allowed-dates="todaysDateFormatted"
+            no-title
+            reactive
+            full-width
+          >
+            <v-spacer></v-spacer>
+            <v-btn flat color="primary" @click="newReview.lastUsed=''">Cancel</v-btn>
+          </v-date-picker>
+
+          <v-spacer style="height: 1em"></v-spacer>
+
+          <v-select
+            v-model="newReview.timeUsed"
+            :items="timeSelectOptions"
+            :rules="timeUsedRules"
+            label="How long have you used it"
+            required
+          ></v-select>
+
+          <v-select
+            v-model="newReview.pros"
+            :items="prosSelectOptions"
+            label="Pros"
+            chips
+            multiple
+          ></v-select>
+
+          <v-select
+            v-model="newReview.cons"
+            :items="consSelectOptions"
+            label="Cons"
+            chips
+            multiple
+          ></v-select>
+
+          <p>
+            Comment: <span v-if="newReview.comment === ''" class="red--text">comment is required *</span>
+          </p>
+
+          <quill-editor
+            style="background-color: white;"
+            v-model="comment"
+            :rules="commentRules"
+            required
+          ></quill-editor>
+
+        </v-container>
+          <v-card-actions>
+            <v-btn :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
+            <v-btn @click="writeReviewDialog = false; newReview.comment='';">Cancel</v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="deleteReviewDialog">
+      <v-card>
+        <v-card-title>Confirm Review Deletion</v-card-title>
+        <v-btn @click="deleteReviewConfirmation()">OK</v-btn>
+        <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
+      </v-card>
+    </v-dialog>
 
       <!-- TODO: do this once we're integrated with DI2E -->
       <v-expansion-panel-content v-if="detail.fullEvailation">
@@ -286,6 +420,8 @@ import _ from 'lodash';
 import Lightbox from './subcomponents/Lightbox';
 import LoadingOverlay from './subcomponents/LoadingOverlay';
 import Question from './subcomponents/Question';
+import format from 'date-fns/format';
+import isFuture from 'date-fns/is_future';
 
 export default {
   name: 'entry-detail-page',
@@ -300,6 +436,7 @@ export default {
       this.id = this.$route.params.id;
     }
 
+    this.lookupTypes();
     this.getDetail();
     this.getQuestions();
   },
@@ -309,6 +446,42 @@ export default {
       isLoading: true,
       askQuestionDialog: false,
       newQuestion: '',
+      writeReviewDialog: false,
+      deleteReviewDialog: false,
+      deleteRequestId: '',
+      editReviewId: '',
+      reviewSubmit: false,
+      newReview: {
+        title: '',
+        rating: 0,
+        recommend: false,
+        lastUsed: '',
+        timeUsed: '',
+        pros: [],
+        cons: []
+      },
+      comment: '',
+      reviewTitleRules: [
+        v => !!v || 'Title is required',
+        v => (v && v.length <= 255) || 'Title must be less than 255 characters'
+      ],
+      lastUsedRules: [
+        v => !!v || 'Date is required'
+      ],
+      timeUsedRules: [
+        v => !!v || 'Time used is required'
+      ],
+      commentRules: [
+        v => !!v || 'Comment is required'
+      ],
+      timeOptions: [],
+      timeSelectOptions: [],
+      prosOptions: [],
+      prosSelectOptions: [],
+      consOptions: [],
+      consSelectOptions: [],
+      reviewValid: false,
+      todaysDate: new Date(),
       detail: {},
       questions: {},
       watchSwitch: false,
@@ -338,6 +511,40 @@ export default {
     };
   },
   methods: {
+    lookupTypes () {
+      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
+        .then(response => {
+          if (response.data) {
+            this.timeOptions = response.data;
+            response.data.forEach(element => {
+              this.timeSelectOptions.push(element.description);
+            });
+          }
+        })
+        .catch(e => this.errors.push(e));
+
+      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
+        .then(response => {
+          if (response.data) {
+            this.prosOptions = response.data;
+            response.data.forEach(element => {
+              this.prosSelectOptions.push(element.description);
+            });
+          }
+        })
+        .catch(e => this.errors.push(e));
+
+      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
+        .then(response => {
+          if (response.data) {
+            this.consOptions = response.data;
+            response.data.forEach(element => {
+              this.consSelectOptions.push(element.description);
+            });
+          }
+        })
+        .catch(e => this.errors.push(e));
+    },
     showMediaDetails (item) {
       this.currentMediaDetailItem = item;
       this.mediaDetailsDialog = true;
@@ -390,6 +597,95 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting the question.'));
     },
+    submitReview () {
+      this.isLoading = true;
+
+      let data = {
+        comment: this.comment,
+        cons: [],
+        dataSensitivity: '',
+        lastUsed: this.newReview.lastUsed + 'T00:00:00',
+        organization: this.$store.state.currentUser.organization,
+        pros: [],
+        rating: this.newReview.rating,
+        reviewId: '',
+        securityMarkingType: '',
+        title: this.newReview.title,
+        userTimeCode: '',
+        userTypeCode: this.$store.state.currentUser.userTypeCode
+      };
+
+      this.consOptions.forEach(consElement => {
+        this.newReview.cons.forEach(selectElement => {
+          if (consElement.description === selectElement) {
+            data.cons.push({text: consElement.code});
+          }
+        });
+      });
+
+      this.prosOptions.forEach(prosElement => {
+        this.newReview.pros.forEach(selectElement => {
+          if (prosElement.description === selectElement) {
+            data.pros.push({text: prosElement.code});
+          }
+        });
+      });
+
+      this.timeOptions.forEach(element => {
+        if (this.newReview.timeUsed === element.description) {
+          data.userTimeCode = element.code;
+        }
+      });
+
+      if (this.editReviewId) {
+        this.$http.put(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.editReviewId}/detail`, data)
+          .then(response => {
+            this.writeReviewDialog = false;
+            this.editReviewId = '';
+            this.$toasted.show('Review Submitted');
+          })
+          .finally(() => {
+            this.isLoading = false;
+            this.getDetail();
+          })
+          .catch(e => this.$toasted.error('There was a problem submitting the review.'));
+      } else {
+      this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/reviews/detail`, data)
+        .then(response => {
+          this.writeReviewDialog = false;
+          this.$toasted.show('Review Submitted');
+        })
+        .finally(() => {
+          this.isLoading = false;
+          this.getDetail();
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the review.'));
+      }
+    },
+    editReviewSetup (review) {
+      this.writeReviewDialog = true;
+      this.newReview.title = review.title;
+      this.newReview.rating = review.rating;
+      this.newReview.recommend = review.recommend;
+      this.newReview.lastUsed = format(review.lastUsed, 'YYYY-MM-DD');
+      this.newReview.timeUsed = review.userTimeDescription;
+      review.pros.forEach(element => {
+        this.newReview.pros.push(element.text);
+      });
+      review.cons.forEach(element => {
+        this.newReview.cons.push(element.text);
+      });
+      this.comment = review.comment;
+      this.editReviewId = review.reviewId;
+    },
+    deleteReviewConfirmation () {
+      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
+      .then(response => {
+        this.$toasted.show('Review Deleted')
+        this.deleteReviewDialog = false;
+        this.getDetail();
+      })
+    },
     deleteQuestion (question) {
       console.log(question);
     },
@@ -437,7 +733,41 @@ export default {
           }
         }
       }
+    },
+    todaysDateFormatted (val) {
+      return !isFuture(val);
     }
+  },
+  watch: {
+    comment: function (val) {
+      if (val !== '' && this.reviewValid) {
+        this.reviewSubmit = true;
+      } else {
+        this.reviewSubmit = false;
+      }
+    },
+    reviewValid: function (val) {
+      if (val && this.comment !== '') {
+        this.reviewSubmit = true;
+      } else {
+        this.reviewSubmit = false;
+      }
+    },
+    writeReviewDialog: function (val) {
+      if (val === false) {
+        this.newReview.title = '';
+        this.newReview.rating = 0;
+        this.newReview.recommend = false;
+        this.newReview.lastUsed = '';
+        this.newReview.timeUsed = '';
+        this.newReview.pros = [];
+        this.newReview.cons = [];
+        this.editReviewId = '';
+        this.comment = '';
+      }
+    }
+  },
+  computed: {
   }
 };
 </script>
