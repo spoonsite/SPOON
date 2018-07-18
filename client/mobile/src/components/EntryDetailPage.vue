@@ -226,6 +226,10 @@
             required
           ></v-text-field>
 
+          <p>
+            <strong>Rating*</strong>
+          </p>
+
           <star-rating
             v-model="newReview.rating"
             :rating="newReview.rating"
@@ -235,6 +239,10 @@
           ></star-rating>
 
           <v-spacer style="height: 1.5em"></v-spacer>
+
+          <p>
+            <strong>Last date asset was used*</strong>
+          </p>
 
           <v-text-field
             v-model="newReview.lastUsed"
