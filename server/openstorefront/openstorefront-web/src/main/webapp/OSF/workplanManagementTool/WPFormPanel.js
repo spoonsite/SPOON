@@ -27,6 +27,8 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 	items: [
 		{
 			xtype: 'form',
+			itemId: 'workplanForm',
+			padding: 10,
 			items: [
 				{
 					xtype: 'textfield',
@@ -34,7 +36,8 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					fieldLabel: 'Workplan Name <span class="field-required" />',
 					allowBlank: false,
 					labelAlign: 'top',
-					width: '100%'
+					width: '100%',
+					style: 'border-bottom: 1px solid #ccc; padding-bottom: 15px;'
 				},
 				{
 					xtype: 'label',
@@ -70,7 +73,7 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 				{
 					xtype: 'colorfield',
 					format: '#hex6',
-					fieldLabel: 'Change Requested',
+					fieldLabel: 'Attention Required',
 					name: 'changeRequestedColor',
 					style: 'margin-left: 10%;',
 					width: 20,
@@ -82,8 +85,9 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					valueField: 'value',
 					displayField: 'name',
 					labelAlign: 'top',
-					style: 'margin-top: 20px',
+					style: 'border-top: 1px solid #ccc;',
 					allowBlank: false,
+					width: '100%',
 					store: {
 						fields: ['name', 'value'],
 						data: [
@@ -129,6 +133,8 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 	],
 
 	alertChange: function () {
-		
+
+		var workplanForm = this.down('[itemId=workplanForm]');
+		workplanForm.getForm().setValues(this.getWpWindow().getWorkplanConfig());
 	}
 });

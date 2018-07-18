@@ -26,13 +26,12 @@ Ext.define('OSF.workplanManagementTool.Window', {
 
 	config: {
 		workplanConfig: {},
-		selectedStep: null
+		selectedStep: null,
+		migrationsToPerform: []
 	},
-	style: 'background: #ccc;',
 	layout: 'border',
 	defaults: {
-		split: true,
-		bodyPadding: 15
+		split: true
 	},
 	items: [
 		{
@@ -71,10 +70,10 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			name: 'Untitled',
 			type: 'ENTRY',
 			active: false,
-			pendingColor: '#ccc',
-			inProgressColor: 'green',
-			completeColor: 'blue',
-			changeRequestColor: 'red',
+			pendingColor: '#cccccc',
+			inProgressColor: '777aea',
+			completeColor: '84d053',
+			changeRequestColor: 'ff0000',
 			entryTypes: [],
 			steps: []
 		};

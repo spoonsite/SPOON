@@ -25,8 +25,8 @@ Ext.define('OSF.workplanManagementTool.WPDefaultPanel', {
 
 	alert: function (recipient) {
 		if (recipient) {
-			if (typeof this.getWpWindow[recipient] !== 'undefined') {
-				this.getWpWindow[recipient].alertChange();
+			if (typeof this.getWpWindow()[recipient] !== 'undefined') {
+				this.getWpWindow()[recipient].alertChange();
 			}
 			else {
 				console.warn('There is no component "' + recipient + '" that can be alerted.');

@@ -38,7 +38,6 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 		{
 			xtype: 'container',
 			itemId: 'stepFormContainer',
-			html: 'STEP FORM!!!!!!',
 			hidden: true
 		}
 	],
@@ -54,6 +53,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 		else {
 			defaultContainer.hide();
 			stepFormContainer.show();
+			stepFormContainer.setHtml(this.getWpWindow().getSelectedStep().name);
 		}
 	}
 });
