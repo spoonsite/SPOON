@@ -99,7 +99,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			hidden: true,
 			scrollable: 'x',
 			height: '100%',
-			padding: '10 0 10 50',
+			padding: '10 30 10 30',
 			cls: 'step-container',
 			listeners: {
 				render: function () {
@@ -305,8 +305,8 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 						wpWindow.alertChildrenComponents();
 					}
 				},
-				itemTpl:'<div class="step-view-container">' +
-							'<span>{name}</span>' +
+				itemTpl: '<div class="step-view-container ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + '">' +
+							'<span class="wp-step-label ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + '">{name}</span>' +
 							'<div ' +
 								'class="step-view ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') +
 								(item === wpWindow.getSelectedStep() ? 'wp-step-active ' : ' ') +
