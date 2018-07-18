@@ -1,11 +1,10 @@
 <template lang="html">
   <div>
-    <v-layout mt-3 mx-3>
-      <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
-        <v-card class="elevation-5">
-          <v-form ref="form" v-model="valid" lazy-validation>
-            <v-card-text>
-
+    <v-layout>
+      <v-form ref="form" v-model="valid" lazy-validation>
+        <v-container grid-list-xl text-xs-left>
+          <v-layout row wrap>
+            <v-flex xs12 sm6 pt-0 pb-0>
               <v-select
                 label="Choose Type"
                 :items="contactTypeOptions"
@@ -13,7 +12,9 @@
                 v-model="contactType"
                 required
               ></v-select>
+            </v-flex>
 
+            <v-flex xs12 sm6 pt-0 pb-0>
               <v-text-field
                 v-model="subject"
                 :rules="subjectRules"
@@ -21,7 +22,10 @@
                 label="Subject"
                 required
               ></v-text-field>
+            </v-flex>
 
+
+            <v-flex  xs12 sm6 pt-0 pb-0>
               <v-text-field
                 v-model="description"
                 :rules="descriptionRules"
@@ -30,59 +34,43 @@
                 textarea
                 required
               ></v-text-field>
+            </v-flex>
 
-              <v-card-title>
-                <h2>Contact Information</h2>
-              </v-card-title>
+            <v-flex  xs12 sm6 pt-0 pb-0>
+              <h2>Contact Information</h2>
+              <p>
+                <strong>Name: </strong>{{this.$store.state.currentUser.firstName + this.$store.state.currentUser.lastName}}
+              </p>
+              <p>
+                <strong>Email: </strong>{{this.$store.state.currentUser.email}}
+              </p>
+              <p>
+                <strong>Phone: </strong>{{this.$store.state.currentUser.phone}}
+              </p>
+              <p>
+                <strong>Organization: </strong>{{this.$store.state.currentUser.organization}}
+              </p>
+            </v-flex>
 
-              <v-text>
-
-                <p>
-                  <strong>Name: </strong>{{this.$store.state.currentUser.firstName + this.$store.state.currentUser.lastName}}
-                </p>
-
-                <p>
-                  <strong>Email: </strong>{{this.$store.state.currentUser.email}}
-                </p>
-
-                <p>
-                  <strong>Phone: </strong>{{this.$store.state.currentUser.phone}}
-                </p>
-
-                <p>
-                  <strong>Organization: </strong>{{this.$store.state.currentUser.organization}}
-                </p>
-
-              </v-text>
-
-            </v-card-text>
-            <v-card-actions>
-              <v-container fluid grid-list-x>
-                <v-layout row >
-                  <v-flex>
-                    <v-btn
-                      block
-                      color="accent"
-                      style="margin-bottom:2em;"
-                      :disabled="!valid"
-                      @click="submit"
-                      >Submit</v-btn>
-                  </v-flex>
-                </v-layout>
-                <v-layout row justify-center>
-                  <v-flex>
-                    <v-btn
-                      block
-                      color="accent"
-                      @click="cancel"
-                      >Cancel</v-btn>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-actions>
-          </v-form>
-        </v-card>
-      </v-flex>
+            <v-flex xs12 pt-0 pb-0>
+              <v-btn
+                block
+                color="accent"
+                style="margin-bottom:2em;"
+                :disabled="!valid"
+                @click="submit"
+                >Submit</v-btn>
+            </v-flex>
+            <v-flex xs12 pt-0 pb-0>
+              <v-btn
+                block
+                color="accent"
+                @click="cancel"
+                >Cancel</v-btn>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-form>
     </v-layout>
 
     <v-dialog v-model="confirmationDialog" max-width="300px">
@@ -153,10 +141,10 @@ export default {
           }
         })
           .then(response => {
-          })
-          .catch(error => console.log(error));
-        this.$refs.form.reset();
-        this.confirmationDialog = true;
+            this.$refs.form.reset();
+            this.confirmationDialog = true;
+          });
+
       }
     },
     cancel () {

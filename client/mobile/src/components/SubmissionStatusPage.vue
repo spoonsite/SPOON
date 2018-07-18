@@ -81,7 +81,7 @@ export default {
             this.data = ret;
           }
         })
-        .finally(() => { this.loading = false; })
+        .finally(() => { this.loading = false; });
     },
     moreInformation (componentId) {
       this.$router.push({
