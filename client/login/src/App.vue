@@ -6,20 +6,7 @@
       <div id="particle-js"></div>
       <v-footer color="primary" dark height="auto">
         <v-card color="primary" flat dark class="footer-wrapper">
-          <v-layout row wrap>
-            <v-flex xs12 sm4 offset-sm2>
-              <!-- <img :src="'/openstorefront/' + $store.state.branding.secondaryLogoUrl" alt=""> -->
-              <!-- <img class="" src="openstorefront/Branding.action?GeneralMedia&name=SpoonLogoWhiteSquare" alt="" width="180">
-              <img class="logo-img" src="openstorefront/Branding.action?GeneralMedia&name=S3VI Logo" alt="">
-              <img class="logo-img" src="openstorefront/Branding.action?GeneralMedia&name=SSP Logo" alt=""> -->
-              <div v-html="$store.state.branding.loginLogoBlock"></div>
-            </v-flex>
-            <v-flex xs12 sm5 lg4>
-              <v-card-text v-html="$store.state.branding.loginWarning">
-              </v-card-text>
-            </v-flex>
-          </v-layout>
-          <div v-html="$store.state.branding.landingPageFooter"></div>
+          <div v-html="$store.state.branding.loginFooter"></div>
         </v-card>
       </v-footer>
     </v-app>
@@ -100,7 +87,7 @@ export default {
   },
   computed: {
     title () {
-      return this.$store.state.branding.landingPageTitle;
+      return this.$store.state.branding.applicationName;
     },
     subTitle () {
       return this.$store.state.branding.landingPageBanner;

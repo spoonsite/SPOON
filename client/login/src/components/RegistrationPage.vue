@@ -175,8 +175,16 @@
 
     <v-dialog v-model="successDialog" max-width="300px">
       <v-card tile>
-        <v-card-title><h2>Registration Success!</h2></v-card-title>
-        <v-card-text>Return to login screen to login with your new username and password.</v-card-text>
+        <v-card-title>
+          <h2>Registration Success!</h2>
+          <v-alert
+            type="info"
+            :value="!$store.state.securitypolicy.autoApproveUsers"
+          >You application has been submitted and is awaiting approval by the admin.</v-alert>
+        </v-card-title>
+        <v-card-text>
+          Return to login screen to login with your new username and password.
+        </v-card-text>
         <v-card-actions>
           <v-btn @click="$router.push('/')"><v-icon class="icon">fas fa-sign-in-alt</v-icon>Return to Login</v-btn>
         </v-card-actions>
