@@ -385,14 +385,12 @@ export default {
         .then(response => {
           console.log();
           if (response) {
-            if (response.data) {
-              if (response.data.length > 0) {
-                for (var i = 0; i < response.data.length; i++) {
-                  if (response.data[i].componentId === this.id) {
-                    this.watchSwitch = true;
-                    this.watchId = response.data[i].watchId;
-                    break;
-                  }
+            if (response.data && response.data.length > 0) {
+              for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].componentId === this.id) {
+                  this.watchSwitch = true;
+                  this.watchId = response.data[i].watchId;
+                  break;
                 }
               }
             }
@@ -408,20 +406,18 @@ export default {
           username: this.$store.state.currentUser.username,
           notifyFlg: false
         };
-        this.$http.post('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches', watch)
+        this.$http.post('/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches', watch)
           .catch(e => this.errors.push(e));
 
-        this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
+        this.$http.get('/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches')
           .then(response => {
             console.log();
             if (response) {
-              if (response.data) {
-                if (response.data.length > 0) {
-                  for (var i = 0; i < response.data.length; i++) {
-                    if (response.data[i].componentId === this.id) {
-                      this.watchId = response.data[i].watchId;
-                      break;
-                    }
+              if (response.data && response.data.length > 0) {
+                for (var i = 0; i < response.data.length; i++) {
+                  if (response.data[i].componentId === this.id) {
+                    this.watchId = response.data[i].watchId;
+                    break;
                   }
                 }
               }
