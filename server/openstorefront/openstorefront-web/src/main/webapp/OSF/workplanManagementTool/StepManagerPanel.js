@@ -34,26 +34,35 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 	},
 	items: [
 		{
-			xtype: 'button',
-			text: 'Create Step',
-			itemId: 'createFirstStepButton',
-			style: 'margin: 3.5em 0 2em 0;',
+			xtype: 'container',
+			itemId: 'createFirstStepContainer',
 			hidden: true,
-			listeners: {
-				click: function () {
-
-					var stepManager = this.up('[itemId=stepManager]');
-					var wpWindow = stepManager.getWpWindow();
-					
-					stepManager.addStep();
-					wpWindow.setSelectedStep(wpWindow.getWorkplanConfig().steps[0]);
-
-					// alert parent and siblings of alert
-					stepManager.alert();
-
-					stepManager.down('[itemId=stepsContainer]').relativeWindowResize();
+			margin: '25px 0 0 0',
+			items: [
+				{
+					xtype: 'container',
+					html: 'This workplan has <b>no</b> steps yet<br />Add one'
+				},
+				{
+					xtype: 'button',
+					text: 'Create Step',
+					listeners: {
+						click: function () {
+		
+							var stepManager = this.up('[itemId=stepManager]');
+							var wpWindow = stepManager.getWpWindow();
+							
+							stepManager.addStep();
+							wpWindow.setSelectedStep(wpWindow.getWorkplanConfig().steps[0]);
+		
+							// alert parent and siblings of alert
+							stepManager.alert();
+		
+							stepManager.down('[itemId=stepsContainer]').relativeWindowResize();
+						}
+					}
 				}
-			}
+			]
 		},
 		{
 			xtype: 'container',
@@ -191,21 +200,19 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 	alertChange: function () {
 		
 		console.log("THIS (Step manager Panel)", this);
-		var firstStepButton = this.down('[itemId=createFirstStepButton]');
+		var firstStepContainer = this.down('[itemId=createFirstStepContainer]');
 		var stepsContainer = this.getStepsContainer();
 		var addRemoveContainer = this.down('[itemId=addRemoveStepContainer]');
 		var stepsLegendContainer = this.down('[itemId=stepsLegendContainer]');
 		
 		if (this.getWpWindow().getWorkplanConfig().steps.length === 0) {
-			this.setHtml('This workplan has <b>no</b> steps yet<br />Add one');
-			firstStepButton.show();
+			firstStepContainer.show();
 			stepsContainer.hide();
 			addRemoveContainer.hide();
 			stepsLegendContainer.hide();
 		}
 		else {
-			this.setHtml('');
-			firstStepButton.hide();
+			firstStepContainer.hide();
 			stepsContainer.show();
 			addRemoveContainer.show();
 			stepsLegendContainer.show();
