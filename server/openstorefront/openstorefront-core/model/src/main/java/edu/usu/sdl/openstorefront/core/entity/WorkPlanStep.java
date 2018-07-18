@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -53,31 +53,38 @@ public class WorkPlanStep
 	private String name;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_80)
-	@Sanitize(TextSanitizer.class)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_1K)
+	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String description;
 
-	
+	@NotNull
+	@ConsumeField
+	private Integer stepOrder;
+
+	@ConsumeField
+	@Embedded
+	@DataType(WorkPlanStepAction.class)
+	@OneToMany(orphanRemoval = true)
+	private List<WorkPlanStepAction> actions;
+
+	@ConsumeField
+	@Embedded
+	@DataType(WorkPlanStepEvent.class)
+	@OneToMany(orphanRemoval = true)
+	private List<WorkPlanStepEvent> triggerEvents;
+
+	@ValidValueType(value
+			= {}, lookupClass = ApprovalStatus.class)
+	@ConsumeField
+	@APIDescription("Status of an approval on an entry that this step would match")
+	@FK(ApprovalStatus.class)
+	private String approvalStateToMatch;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public WorkPlanStep()
 	{
 	}
-
-	@Override
-	// public <T extends StandardEntity> void updateFields(T entity)
-	// {
-	// 	super.updateFields(entity);
-
-	// 	Alert alertUpdate = (Alert) entity;
-	// 	this.setAlertType(alertUpdate.getAlertType());
-	// 	this.setEmailAddresses(alertUpdate.getEmailAddresses());
-	// 	this.setName(alertUpdate.getName());
-	// 	this.setSystemErrorAlertOption(alertUpdate.getSystemErrorAlertOption());
-	// 	this.setUserDataAlertOption(alertUpdate.getUserDataAlertOption());
-	// 	this.setComponentTypeAlertOptions(alertUpdate.getComponentTypeAlertOptions());
-	// }
 
 	public String getWorkPlanStepId()
 	{
@@ -99,5 +106,54 @@ public class WorkPlanStep
 		this.name = name;
 	}
 
-	
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	public Integer getStepOrder()
+	{
+		return stepOrder;
+	}
+
+	public void setStepOrder(Integer stepOrder)
+	{
+		this.stepOrder = stepOrder;
+	}
+
+	public List<WorkPlanStepAction> getActions()
+	{
+		return actions;
+	}
+
+	public void setActions(List<WorkPlanStepAction> actions)
+	{
+		this.actions = actions;
+	}
+
+	public String getApprovalStateToMatch()
+	{
+		return approvalStateToMatch;
+	}
+
+	public void setApprovalStateToMatch(String approvalStateToMatch)
+	{
+		this.approvalStateToMatch = approvalStateToMatch;
+	}
+
+	public List<WorkPlanStepEvent> getTriggerEvents()
+	{
+		return triggerEvents;
+	}
+
+	public void setTriggerEvents(List<WorkPlanStepEvent> triggerEvents)
+	{
+		this.triggerEvents = triggerEvents;
+	}
+
 }
