@@ -486,6 +486,7 @@
 						title: record.get('roleName') + ' Permissions',
 						iconCls: 'fa fa-key icon-correction-key icon-button-color-key icon-small-vertical-correction',
 						closeAction: 'destroy',
+						maximizable: true,
 						canClose: false,
 						width: 1000,
 						height: '80%',
@@ -580,7 +581,7 @@
 								viewConfig: {
 									listeners: {
 										groupclick: function (view, node, group, event) {
-
+											console.log('we have been group clicked!')
 											var targetType = event.target.getAttribute('button-type');
 											var buttonIsTarget = targetType === 'check-group' || targetType === 'uncheck-group' ? true : false;
 											var isCollapsed = typeof event.record.isCollapsedPlaceholder === 'undefined' ? false : true;
@@ -613,24 +614,20 @@
 												
 												var grid = this.up('grid');
 
-												if (typeof record.getData().permissionPredecessor === 'undefined') {
-
-													var subPermissionRecords = grid.findSubPermissions(record);
-													if (checked) {
-														Ext.Array.forEach(subPermissionRecords, function (item) {
-															var row = grid.getView().getRowByRecord(item);
-															row.classList.remove('permission-row-disabled');
-														});
-													}
-													else {
-														Ext.Array.forEach(subPermissionRecords, function (item) {
-															var row = grid.getView().getRowByRecord(item);
-															item.set('permissionEnabled', false);
-															row.classList.add('permission-row-disabled');
-														});
-													}
+												var subPermissionRecords = grid.findSubPermissions(record);
+												if (checked) {
+													Ext.Array.forEach(subPermissionRecords, function (item) {
+														var row = grid.getView().getRowByRecord(item);
+														row.classList.remove('permission-row-disabled');
+													});
 												}
-
+												else {
+													Ext.Array.forEach(subPermissionRecords, function (item) {
+														var row = grid.getView().getRowByRecord(item);
+														item.set('permissionEnabled', false);
+														row.classList.add('permission-row-disabled');
+													});
+												}
 												// set the grid to a dirty state
 												grid.setDirty(true);
 											}

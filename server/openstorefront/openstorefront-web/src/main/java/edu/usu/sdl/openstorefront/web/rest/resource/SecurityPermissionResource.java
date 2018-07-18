@@ -39,7 +39,7 @@ public class SecurityPermissionResource
 	extends BaseResource
 {
 	@GET
-	@APIDescription("Gets some info ")
+	@APIDescription("Get a list of all permissions and permission information.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SecurityPolicy.class)
 	public Response getPermission()
@@ -51,12 +51,4 @@ public class SecurityPermissionResource
 		};
 		return sendSingleEntityResponse(entity);
 	}
-
 }
-
-//		Service service = ServiceProxyFactory.getServiceProxy();
-//		AttributeCodePk pk = new AttributeCodePk();
-//		pk.setAttributeCode(getComponentAttributePk().getAttributeCode());
-//		pk.setAttributeType(getComponentAttributePk().getAttributeType());
-//		AttributeCode code = service.getAttributeService().findCodeForType(pk);
-//		service.getLookupService().findLookup(lookTableClass);
