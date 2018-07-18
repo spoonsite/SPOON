@@ -73,6 +73,8 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					xtype: 'textfield',
 					fieldLabel: 'Step name (?)',
 					name: 'name',
+					maxLength: 20,
+					enforceMaxLength: true,
 					canAlertOnChange: true
 				},
 				{
@@ -88,27 +90,17 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					name: 'description'
 				},
 				{
-					xtype: 'combo',
 					fieldLabel: 'Role Access (?)',
-					name: 'allowedRoles',
+					xtype: 'RoleGroupMultiSelectComboBox',
 					width: '100%',
-					editable: false,
-					displayField: 'description',
-					valueField: 'roleName',
-					store: {
-						autoLoad: true,
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/securityroles'
-						}
-					}
+					name: 'allowedRoles'
 				},
 				{
 					xtype: 'grid',
 					title: 'Step Actions (?)',
 					colspan: 2,
 					width: '100%',
-					style: 'border: 3px solid green; min-height: 300px;'
+					style: 'min-height: 300px;'
 				}
 			]
 		}
