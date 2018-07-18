@@ -27,7 +27,6 @@ import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -37,7 +36,7 @@ import javax.validation.constraints.Size;
  */
 @APIDescription("Holds work plan information")
 public class WorkPlan
-		extends StandardEntity<Alert>
+		extends StandardEntity<WorkPlan>
 {
 
 	private static final long serialVersionUID = 1L;
@@ -47,66 +46,201 @@ public class WorkPlan
 	private String workPlanId;
 
 	@NotNull
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	private String name;
 
-	@DataType(WorkPlanStep.class)
 	@ConsumeField
 	@Embedded
+	@DataType(WorkPlanStep.class)
 	@OneToMany(orphanRemoval = true)
 	private List<WorkPlanStep> steps;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
 	private String inProgressColor;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
 	private String pendingColor;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Sanitize(TextSanitizer.class)
 	private String completeColor;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String changeRequestColor;
+	@Sanitize(TextSanitizer.class)
+	private String subStatusColor;
+
+	@NotNull
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ValidValueType(value = {}, lookupClass = WorkPlanType.class)
+	@FK(WorkPlanType.class)
+	private String workPlanType;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String type;
+	@Embedded
+	@OneToMany(orphanRemoval = true)
+	@DataType(WorkPlanComponentType.class)
+	private List<WorkPlanComponentType> componentTypes;
 
-	//Entry Types array of strings?
-	// @DataType(ComponentType.class)
-	// @ConsumeField
-	// @Embedded
-	// @OneToMany(orphanRemoval = true)
-	// private List<ComponentType> ;
-	
+	@ConsumeField
+	private String evaluationTemplateId;
+
+	@ConsumeField
+	private Boolean appliesToChildComponentTypes;
+
+	private Boolean defaultWorkPlan;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public WorkPlan()
 	{
 	}
 
-	//@Override
-	
-	// public WorkPlanStep goToStep(int stepNumber)
-	// {
-	// 	return this.steps.get(stepNumber);
-	// }
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
 
-	// public void setAlertId(String alertId)
-	// {
-	// 	this.alertId = alertId;
-	// }
+		WorkPlan workPlan = (WorkPlan) entity;
 
-	// public String getAlertType()
-	// {
-	// 	return alertType;
-	// }
+		this.setAppliesToChildComponentTypes(workPlan.getAppliesToChildComponentTypes());
+		this.setCompleteColor(workPlan.getCompleteColor());
+		this.setComponentTypes(workPlan.getComponentTypes());
+		this.setDefaultWorkPlan(workPlan.getDefaultWorkPlan());
+		this.setEvaluationTemplateId(workPlan.getEvaluationTemplateId());
+		this.setInProgressColor(workPlan.getInProgressColor());
+		this.setName(workPlan.getName());
+		this.setPendingColor(workPlan.getPendingColor());
+		this.setSteps(workPlan.getSteps());
+		this.setSubStatusColor(workPlan.getSubStatusColor());
+		this.setWorkPlanType(workPlan.getWorkPlanType());
+	}
 
+	public String getWorkPlanId()
+	{
+		return workPlanId;
+	}
+
+	public void setWorkPlanId(String workPlanId)
+	{
+		this.workPlanId = workPlanId;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public List<WorkPlanStep> getSteps()
+	{
+		return steps;
+	}
+
+	public void setSteps(List<WorkPlanStep> steps)
+	{
+		this.steps = steps;
+	}
+
+	public String getInProgressColor()
+	{
+		return inProgressColor;
+	}
+
+	public void setInProgressColor(String inProgressColor)
+	{
+		this.inProgressColor = inProgressColor;
+	}
+
+	public String getPendingColor()
+	{
+		return pendingColor;
+	}
+
+	public void setPendingColor(String pendingColor)
+	{
+		this.pendingColor = pendingColor;
+	}
+
+	public String getCompleteColor()
+	{
+		return completeColor;
+	}
+
+	public void setCompleteColor(String completeColor)
+	{
+		this.completeColor = completeColor;
+	}
+
+	public String getSubStatusColor()
+	{
+		return subStatusColor;
+	}
+
+	public void setSubStatusColor(String subStatusColor)
+	{
+		this.subStatusColor = subStatusColor;
+	}
+
+	public String getWorkPlanType()
+	{
+		return workPlanType;
+	}
+
+	public void setWorkPlanType(String workPlanType)
+	{
+		this.workPlanType = workPlanType;
+	}
+
+	public List<WorkPlanComponentType> getComponentTypes()
+	{
+		return componentTypes;
+	}
+
+	public void setComponentTypes(List<WorkPlanComponentType> componentTypes)
+	{
+		this.componentTypes = componentTypes;
+	}
+
+	public Boolean getAppliesToChildComponentTypes()
+	{
+		return appliesToChildComponentTypes;
+	}
+
+	public void setAppliesToChildComponentTypes(Boolean appliesToChildComponentTypes)
+	{
+		this.appliesToChildComponentTypes = appliesToChildComponentTypes;
+	}
+
+	public Boolean getDefaultWorkPlan()
+	{
+		return defaultWorkPlan;
+	}
+
+	public void setDefaultWorkPlan(Boolean defaultWorkPlan)
+	{
+		this.defaultWorkPlan = defaultWorkPlan;
+	}
+
+	public String getEvaluationTemplateId()
+	{
+		return evaluationTemplateId;
+	}
+
+	public void setEvaluationTemplateId(String evaluationTemplateId)
+	{
+		this.evaluationTemplateId = evaluationTemplateId;
+	}
 
 }

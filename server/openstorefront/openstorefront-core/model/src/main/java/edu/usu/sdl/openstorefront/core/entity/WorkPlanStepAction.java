@@ -22,12 +22,9 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
-import edu.usu.sdl.openstorefront.validation.Sanitize;
-import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -46,10 +43,28 @@ public class WorkPlanStepAction
 	@NotNull
 	private String workPlanStepActionId;
 
-	
+	@NotNull
+	@ConsumeField
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
+	@ValidValueType(value = {}, lookupClass = WorkPlanStepActionType.class)
+	@FK(WorkPlanStepActionType.class)
+	private String workPlanStepActionType;
+
+	@ConsumeField
+	@Embedded
+	@DataType(WorkPlanStep.class)
+	@OneToMany(orphanRemoval = true)
+	private List<WorkPlanStepPermission> stepPermission;
+
+	@ConsumeField
+	@ValidValueType(value = {OpenStorefrontConstant.AND_CONDITION, OpenStorefrontConstant.OR_CONDITION})
+	private String permissionLogicCondition;
+
+	@NotNull
+	@ConsumeField
+	private Integer actionOrder;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
-
 	public WorkPlanStepAction()
 	{
 	}
@@ -59,15 +74,62 @@ public class WorkPlanStepAction
 	{
 		super.updateFields(entity);
 
-		// Alert alertUpdate = (Alert) entity;
-		// this.setAlertType(alertUpdate.getAlertType());
-		// this.setEmailAddresses(alertUpdate.getEmailAddresses());
-		// this.setName(alertUpdate.getName());
-		// this.setSystemErrorAlertOption(alertUpdate.getSystemErrorAlertOption());
-		// this.setUserDataAlertOption(alertUpdate.getUserDataAlertOption());
-		// this.setComponentTypeAlertOptions(alertUpdate.getComponentTypeAlertOptions());
+		WorkPlanStepAction stepAction = (WorkPlanStepAction) entity;
+		this.setActionOrder(stepAction.getActionOrder());
+		this.setStepPermission(stepAction.getStepPermission());
+		this.setPermissionLogicCondition(stepAction.getPermissionLogicCondition());
+		this.setWorkPlanStepActionType(stepAction.getWorkPlanStepActionType());
+
 	}
 
-	
+	public String getWorkPlanStepActionId()
+	{
+		return workPlanStepActionId;
+	}
+
+	public void setWorkPlanStepActionId(String workPlanStepActionId)
+	{
+		this.workPlanStepActionId = workPlanStepActionId;
+	}
+
+	public String getWorkPlanStepActionType()
+	{
+		return workPlanStepActionType;
+	}
+
+	public void setWorkPlanStepActionType(String workPlanStepActionType)
+	{
+		this.workPlanStepActionType = workPlanStepActionType;
+	}
+
+	public List<WorkPlanStepPermission> getStepPermission()
+	{
+		return stepPermission;
+	}
+
+	public void setStepPermission(List<WorkPlanStepPermission> stepPermission)
+	{
+		this.stepPermission = stepPermission;
+	}
+
+	public String getPermissionLogicCondition()
+	{
+		return permissionLogicCondition;
+	}
+
+	public void setPermissionLogicCondition(String permissionLogicCondition)
+	{
+		this.permissionLogicCondition = permissionLogicCondition;
+	}
+
+	public Integer getActionOrder()
+	{
+		return actionOrder;
+	}
+
+	public void setActionOrder(Integer actionOrder)
+	{
+		this.actionOrder = actionOrder;
+	}
 
 }

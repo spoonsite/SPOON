@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,20 +26,18 @@ import java.util.Map;
  * @author dshurtleff
  */
 @SystemTable
-@APIDescription("Defines Changes that on an entity for the change log")
-public class ChangeType
-		extends LookupEntity<ChangeType>
+@APIDescription("Defines the type data of work plan is for")
+public class WorkPlanType
+		extends LookupEntity<WorkPlanType>
 {
 
-	public static final String UPDATED = "UPDATED";
-	public static final String ADDED = "ADDED";
-	public static final String REMOVED = "REMOVED";
-	public static final String SNAPSHOT = "SNAPSHOT";
-	public static final String RESTORE = "RESTORE";
-	public static final String WORKFLOW_CHANGE = "WORKFLOW_CHANGE";
+	private static final long serialVersionUID = 1L;
+
+	public static final String COMPONENT = "COMPONENT";
+	public static final String EVALUATION = "EVALUATION";
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
-	public ChangeType()
+	public WorkPlanType()
 	{
 	}
 
@@ -47,12 +45,9 @@ public class ChangeType
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(UPDATED, newLookup(ChangeType.class, UPDATED, "Updated"));
-		codeMap.put(ADDED, newLookup(ChangeType.class, ADDED, "Added"));
-		codeMap.put(REMOVED, newLookup(ChangeType.class, REMOVED, "Removed"));
-		codeMap.put(SNAPSHOT, newLookup(ChangeType.class, SNAPSHOT, "Snapshot"));
-		codeMap.put(RESTORE, newLookup(ChangeType.class, RESTORE, "Restore"));
-		codeMap.put(WORKFLOW_CHANGE, newLookup(ChangeType.class, WORKFLOW_CHANGE, "Workflow Change"));
+		codeMap.put(COMPONENT, newLookup(WorkPlanType.class, COMPONENT, "Entry"));
+		codeMap.put(EVALUATION, newLookup(WorkPlanType.class, EVALUATION, "Evaluation"));
+
 		return codeMap;
 	}
 
