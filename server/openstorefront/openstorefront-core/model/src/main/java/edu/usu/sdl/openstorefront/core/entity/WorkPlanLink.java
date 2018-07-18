@@ -70,6 +70,20 @@ public class WorkPlanLink
 	{
 	}
 
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		WorkPlanLink workPlanLink = (WorkPlanLink) entity;
+
+		this.setCurrentStepId(workPlanLink.getCurrentStepId());
+		this.setCurrentGroupAssigned(workPlanLink.getCurrentGroupAssigned());
+		this.setCurrentUserAssigned(workPlanLink.getCurrentUserAssigned());
+		this.setSubStatus(workPlanLink.getSubStatus());
+
+	}
+
 	public String getWorkPlanLinkId()
 	{
 		return workPlanLinkId;

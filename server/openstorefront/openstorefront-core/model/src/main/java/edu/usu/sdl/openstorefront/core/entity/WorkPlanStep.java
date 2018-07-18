@@ -86,6 +86,22 @@ public class WorkPlanStep
 	{
 	}
 
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+
+		WorkPlanStep workPlanStep = (WorkPlanStep) entity;
+
+		this.setName(workPlanStep.getName());
+		this.setDescription(workPlanStep.getDescription());
+		this.setActions(workPlanStep.getActions());
+		this.setApprovalStateToMatch(workPlanStep.getApprovalStateToMatch());
+		this.setStepOrder(workPlanStep.getStepOrder());
+		this.setTriggerEvents(workPlanStep.getTriggerEvents());
+
+	}
+
 	public String getWorkPlanStepId()
 	{
 		return workPlanStepId;

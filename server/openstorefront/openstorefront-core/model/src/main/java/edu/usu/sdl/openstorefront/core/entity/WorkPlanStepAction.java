@@ -74,6 +74,12 @@ public class WorkPlanStepAction
 	{
 		super.updateFields(entity);
 
+		WorkPlanStepAction stepAction = (WorkPlanStepAction) entity;
+		this.setActionOrder(stepAction.getActionOrder());
+		this.setStepPermission(stepAction.getStepPermission());
+		this.setPermissionLogicCondition(stepAction.getPermissionLogicCondition());
+		this.setWorkPlanStepActionType(stepAction.getWorkPlanStepActionType());
+
 	}
 
 	public String getWorkPlanStepActionId()

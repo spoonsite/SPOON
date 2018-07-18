@@ -107,6 +107,20 @@ public class WorkPlan
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		super.updateFields(entity);
+
+		WorkPlan workPlan = (WorkPlan) entity;
+
+		this.setAppliesToChildComponentTypes(workPlan.getAppliesToChildComponentTypes());
+		this.setCompleteColor(workPlan.getCompleteColor());
+		this.setComponentTypes(workPlan.getComponentTypes());
+		this.setDefaultWorkPlan(workPlan.getDefaultWorkPlan());
+		this.setEvaluationTemplateId(workPlan.getEvaluationTemplateId());
+		this.setInProgressColor(workPlan.getInProgressColor());
+		this.setName(workPlan.getName());
+		this.setPendingColor(workPlan.getPendingColor());
+		this.setSteps(workPlan.getSteps());
+		this.setSubStatusColor(workPlan.getSubStatusColor());
+		this.setWorkPlanType(workPlan.getWorkPlanType());
 	}
 
 	public String getWorkPlanId()
