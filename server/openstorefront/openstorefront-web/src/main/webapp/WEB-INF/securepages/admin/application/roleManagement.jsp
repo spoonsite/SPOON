@@ -486,6 +486,7 @@
 						title: record.get('roleName') + ' Permissions',
 						iconCls: 'fa fa-key icon-correction-key icon-button-color-key icon-small-vertical-correction',
 						closeAction: 'destroy',
+						maximizable: true,
 						canClose: false,
 						width: 1000,
 						height: '80%',
@@ -580,7 +581,6 @@
 								viewConfig: {
 									listeners: {
 										groupclick: function (view, node, group, event) {
-
 											var targetType = event.target.getAttribute('button-type');
 											var buttonIsTarget = targetType === 'check-group' || targetType === 'uncheck-group' ? true : false;
 											var isCollapsed = typeof event.record.isCollapsedPlaceholder === 'undefined' ? false : true;
@@ -610,27 +610,21 @@
 											checkchange: function (self, rowIndex, checked, record) {
 
 												// remove/add classes of sub-permissions to enable/disable permission rows
-												
 												var grid = this.up('grid');
-
-												if (typeof record.getData().permissionPredecessor === 'undefined') {
-
-													var subPermissionRecords = grid.findSubPermissions(record);
-													if (checked) {
-														Ext.Array.forEach(subPermissionRecords, function (item) {
-															var row = grid.getView().getRowByRecord(item);
-															row.classList.remove('permission-row-disabled');
-														});
-													}
-													else {
-														Ext.Array.forEach(subPermissionRecords, function (item) {
-															var row = grid.getView().getRowByRecord(item);
-															item.set('permissionEnabled', false);
-															row.classList.add('permission-row-disabled');
-														});
-													}
+												var subPermissionRecords = grid.findSubPermissions(record);
+												if (checked) {
+													Ext.Array.forEach(subPermissionRecords, function (item) {
+														var row = grid.getView().getRowByRecord(item);
+														row.classList.remove('permission-row-disabled');
+													});
 												}
-
+												else {
+													Ext.Array.forEach(subPermissionRecords, function (item) {
+														var row = grid.getView().getRowByRecord(item);
+														item.set('permissionEnabled', false);
+														row.classList.add('permission-row-disabled');
+													});
+												}
 												// set the grid to a dirty state
 												grid.setDirty(true);
 											}
@@ -658,7 +652,7 @@
 															row.classList.add('permission-row-disabled');
 														}, 1);
 													}
-													return '<span style="margin-left: 25px;">' + value + ' <i style="pointer-events: auto; color: #888;" class="fa fa-question-circle" data-qtip="' + parentRecord.getData().code + '"></i></span>';
+													return '<span style="margin-left: 25px;">' + value + ' <i style="pointer-events: auto; color: #888;" class="fa fa-question-circle" data-qtip="' + 'PERMISSION REQUIRES: ' + parentRecord.getData().code +'"></i></span>';
 												}
 											}
 
@@ -673,7 +667,7 @@
 									groupField: 'groupBy',
 									proxy: {
 										type: 'ajax',
-										url: 'api/v1/resource/lookuptypes/SecurityPermission'
+										url: 'api/v1/resource/securitypermissions'
 									},
 									listeners: {
 										load: function (store, records, opts) {
