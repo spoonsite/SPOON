@@ -644,7 +644,8 @@ table.confluenceTable td.numberingColumn {
 }
 
 .wp-step-active {
-	background: #42f4e8;
+	/* background: #42f4e8; */
+	background: #82ff82;
 	animation-duration: 0.5s;
 	animation-name: stepactivate;
 	border-radius: 10px;
@@ -655,17 +656,20 @@ table.confluenceTable td.numberingColumn {
 } */
 
 .wp-step-new {
-	background: #86b5ff;;
+	/* background: #86b5ff; */
+	background: #8aedff;
 	border-radius: 100%;
 }
 
 .wp-step-existing {
-	background: blueviolet;
+	/* background: blueviolet; */
+	background: #d479ff;
 	border-radius: 100%;
 }
 
 .wp-step-migrated {
-	background: goldenrod;
+	/* background: goldenrod; */
+	background: #ff6c44;
 	border-radius: 100%;
 }
 

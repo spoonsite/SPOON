@@ -26,7 +26,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 	itemId: 'stepManager',
 	style: 'background: #fff; text-align: center;',
 	title: 'Step Manager',
-	height: 160,
+	height: 180,
 	layout: {
 		type: 'hbox',
 		pack: 'center',
@@ -125,7 +125,13 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			width: '10%',
 			style: 'border-left: 1px solid #ccc;',
 			padding: 5,
+			layout: {
+				type: 'vbox',
+				pack: 'center',
+				align: 'middle'
+			},
 			defaults: {
+				width: '90%',
 				listeners: {
 					click: function () {
 
@@ -157,7 +163,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 					xtype: 'button',
 					text: 'Insert Step',
 					iconCls: 'fa fa-2x fa-level-down icon-vertical-correction',
-					margin: 5,
+					margin: '10 0 10 0',
 					clickAction: 'insert'
 				},
 				{
@@ -285,7 +291,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 								(item === wpWindow.getSelectedStep() ? 'wp-step-active ' : ' ') +
 								(item.isNewStep && item !== wpWindow.getSelectedStep() ? 'wp-step-new ' : ' ') +
 								(!item.isNewStep && !item.isMigratedTo && item !== wpWindow.getSelectedStep() ? 'wp-step-existing ' : ' ') +
-								(!item.isNewStep && item.isMigratedTo && item !== wpWindow.getSelectedStep() ? 'wp-step-migrated ' : ' ') +
+								(item.isMigratedTo && item !== wpWindow.getSelectedStep() ? 'wp-step-migrated ' : ' ') +
 							'"></div>' +
 						'</div>'
 			});
