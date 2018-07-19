@@ -191,7 +191,6 @@ export default {
       });
     },
     checkFirstTime () {
-      console.log('check first time');
       if (this.$cookies.get('visited') !== 'yes') {
         this.firstTimeDialog = true;
         this.$cookies.set('visited', 'yes');
