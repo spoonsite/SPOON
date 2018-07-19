@@ -1,7 +1,7 @@
 <template lang="html">
 
   <div class="entry-detail-page">
-    <v-card class="secondary white--text text-md-center">
+    <v-card class="grey darken-3 white--text text-md-center">
       <v-card-text>
         <h1 class="title">{{detail.name}}</h1>
       </v-card-text>
