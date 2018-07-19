@@ -2,7 +2,7 @@
   <div id="app">
     <v-app>
       <header>
-        <div class="toolbar">
+        <div :style="topbarStyle">
         <v-toolbar color="primary" dense dark flat>
           <v-spacer></v-spacer>
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
@@ -142,8 +142,7 @@ export default {
       return Promise.reject(error);
     });
 
-    this.$store.dispatch('setCurrentUser', this.$http); // pass in current axios instance
-    this.$store.dispatch('getBranding', {axios: this.$http, callback: this.checkFirstTime});
+    this.checkFirstTime();
   },
   data () {
     return {
@@ -164,6 +163,9 @@ export default {
         { link: '/contact', icon: 'comment', name: 'Contact' },
         { link: '/profile', icon: 'user-edit', name: 'Manage Profile' }
       ],
+      topbarStyle: {
+        'border-bottom': `4px solid ${this.$vuetify.theme.accent}`
+      },
       alert: false
     };
   },
@@ -200,7 +202,7 @@ export default {
 </script>
 
 <style lang="scss">
-$toolbar-height: 52px;
+$toolbar-height: 48px;
 $goldbar-height: 4px;
 $banner-height: 30px;
 
@@ -226,9 +228,6 @@ header {
   top: 0;
   width: 100%;
   z-index: 5;
-}
-.toolbar {
-  border-bottom: 4px solid gold;
 }
 .nav-drawer {
   background-color: white;

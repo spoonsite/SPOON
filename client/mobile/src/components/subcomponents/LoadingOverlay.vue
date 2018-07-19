@@ -1,9 +1,9 @@
 <template>
   <div v-if="value" class="overlay">
     <v-progress-circular
-      color="teal"
-      :size="70"
-      :width="7"
+      color="primary"
+      :size="60"
+      :width="6"
       indeterminate
       class="center"
     ></v-progress-circular>

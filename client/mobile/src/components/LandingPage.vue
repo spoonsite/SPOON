@@ -1,7 +1,7 @@
 <template lang="html">
 
   <section>
-    <div class="logo-wrapper">
+    <div class="logo-wrapper grey darken-3" v-if="$store.state.branding.applicationName === 'SPOON'">
       <img class="logo" src="../assets/img/SPOON_logo.png" width="300" alt="SPOON Logo">
     </div>
 
@@ -29,6 +29,12 @@
       </v-list>
       </div>
     </div>
+
+    <v-footer color="primary" dark height="auto">
+      <v-card color="primary" dark flat class="footer-wrapper">
+        <div v-html="$store.state.branding.landingPageFooter"></div>
+      </v-card>
+    </v-footer>
 
   </section>
 
@@ -88,11 +94,15 @@ export default {
 .logo-wrapper {
   max-width: 100%;
   text-align: center;
-  background-color: #252931;
   margin-bottom: 2em;
 }
 .logo {
   padding: 2em;
   max-width: 100%;
+}
+.footer-wrapper {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

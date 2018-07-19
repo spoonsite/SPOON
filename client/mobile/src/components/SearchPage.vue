@@ -196,7 +196,7 @@
             <div v-html="item.description"></div>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="info" @click="moreInformation(item.componentId)">More Information</v-btn>
+            <v-btn color="primary" @click="moreInformation(item.componentId)">More Information</v-btn>
           </v-card-actions>
         </v-card>
       </v-expansion-panel-content>

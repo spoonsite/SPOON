@@ -39,29 +39,18 @@ axios.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+Vue.prototype.$http = axios;
 
-Vue.use(VueQuillEditor, {
-  modules: { toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], [{'list': 'bullet'}, {'list': 'ordered'}], ['clean']]
-  }
-});
-Vue.use(Vuetify, {
-  theme: {
-    primary: '#2a2d35',
-    secondary: '#333842',
-    accent: '#565656',
-    error: '#C62828',
-    info: '#3F51B5',
-    warning: '#FFA000',
-    success: '#388E3C'
-  }
-});
 Vue.use(Toasted, {
   iconPack: 'fontawesome',
   duration: 5000
 });
-
-Vue.prototype.$http = axios;
 Vue.use(VueTruncate);
+Vue.use(VueQuillEditor, {
+  modules: { toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], [{'list': 'bullet'}, {'list': 'ordered'}], ['clean']]
+  }
+});
+
 Vue.filter('formatDate', function (value, formatString) {
   if (formatString) {
     return format(value, formatString);
@@ -71,11 +60,26 @@ Vue.filter('formatDate', function (value, formatString) {
 });
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)));
 
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  store,
-  components: { App },
-  template: '<App/>'
+store.dispatch('setCurrentUser');
+store.dispatch('getBranding', () => {
+  Vue.use(Vuetify, {
+    theme: {
+      primary: store.state.branding.primaryColor,
+      secondary: store.state.branding.secondaryColor,
+      accent: store.state.branding.accentColor,
+      error: '#C62828',
+      info: '#3F51B5',
+      warning: '#FFA000',
+      success: '#388E3C'
+    }
+  });
+
+  /* eslint-disable no-new */
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    components: { App },
+    template: '<App/>'
+  });
 });

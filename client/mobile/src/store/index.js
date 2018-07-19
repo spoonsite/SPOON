@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -15,25 +16,27 @@ export default new Vuex.Store({
     },
     setBranding (state, response) {
       state.branding = response.data;
-      state.branding.loginLogoBlock = state.branding.loginLogoBlock.replace(/branding\.action/i, '/openstorefront/Branding.action');
+      for (var key in state.branding) {
+        if (typeof state.branding[key] === 'string') {
+          state.branding[key] = state.branding[key].replace(/branding\.action/ig, '/openstorefront/Branding.action');
+        }
+      }
     }
   },
   actions: {
-    setCurrentUser (context, axios) {
+    setCurrentUser (context) {
       axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
           context.commit('setCurrentUser', response);
         });
     },
-    getBranding (context, config) {
-      config.axios.get('/openstorefront/api/v1/resource/branding/current')
+    getBranding (context, callback) {
+      axios.get('/openstorefront/api/v1/resource/branding/current')
         .then(response => {
           context.commit('setBranding', response);
         })
         .finally(() => {
-          if (config.callback) {
-            config.callback();
-          }
+          callback();
         });
     }
   },

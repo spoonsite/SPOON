@@ -1,7 +1,7 @@
 <template lang="html">
 
   <div class="entry-detail-page">
-    <v-card class="grey darken-3 white--text text-md-center">
+    <v-card class="secondary white--text text-md-center">
       <v-card-text>
         <h1 class="title">{{detail.name}}</h1>
       </v-card-text>
@@ -237,7 +237,7 @@
           <v-card-text>
             <p>Watch this entry?</p>
             <!-- TODO: make watch api calls -->
-            <v-switch :label="`Watch: ${watchSwitch.toString()}`" v-model="watchSwitch"></v-switch>
+            <v-switch color="info" :label="`Watch: ${watchSwitch.toString()}`" v-model="watchSwitch"></v-switch>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -248,6 +248,7 @@
           <v-card-text>
             <v-btn color="white" @click="askQuestionDialog = true">Ask a Question</v-btn>
             <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion" :question="question"></Question>
+            <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
