@@ -1,7 +1,6 @@
 <template lang="html">
   <div class="submission-status-page">
 
-
     <v-expansion-panel v-if="data && data.length > 0">
       <v-expansion-panel-content v-for="item in data" :key="item.name">
         <div slot="header">
