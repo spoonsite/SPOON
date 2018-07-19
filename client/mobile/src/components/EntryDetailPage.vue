@@ -147,7 +147,7 @@
         <div slot="header">Reviews</div>
         <v-card class="grey lighten-4">
           <v-card-text>
-            <v-btn color="white" @click="writeReviewDialog = true">Write a Review</v-btn>
+            <v-btn style="margin-bottom: 1em;" color="white" @click="writeReviewDialog = true">Write a Review</v-btn>
             <p>
               <strong>Average User Rating:</strong>
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
@@ -158,44 +158,45 @@
                 v-for="review in detail.reviews"
                 :key="review.reviewId"
               >
-                <hr>
-                <p v-if="review.activeStatus === 'P'" class="warning">This review is pending admin approval.</p>
-                <h2>{{ review.title }}</h2>
-                <p>
-                  <star-rating :rating="review.rating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
-                </p>
-                <p>{{ review.username + " (" + review.userTypeCode + ") - " }} {{ review.updateDate | formatDate }}</p>
-                <p class="reviewPar"><strong>organization: </strong>{{ review.organization }}</p>
-                <p class="reviewPar"><strong>Experience: </strong>{{ review.userTimeDescription }}</p>
-                <p class="reviewPar"><strong>Last Used: </strong>{{ review.lastUsed | formatDate }}</p>
-                <div v-if="review.pros.length > 0 || review.cons.length > 0">
-                  <v-layout row justify-space-around>
-                    <v-flex v-if="review.pros.length > 0" xs4>
-                        <v-card-text class="px-0">
-                          <p><strong>Pros</strong></p>
-                          <li v-for="pro in review.pros" :key="pro.code">{{ pro.text }}</li>
-                        </v-card-text>
-                    </v-flex>
-                    <v-flex v-if="review.cons.length > 0" xs4>
-                        <v-card-text class="px-0">
-                          <p><strong>Cons</strong></p>
-                          <p v-for="cons in review.cons" :key="cons.code">{{ cons.text }}</p>
-                        </v-card-text>
-                    </v-flex>
-                  </v-layout>
+                <div style="background-color: white; padding: 0.5em; margin-bottom: 1em;" class="elevation-2">
+                  <h2>{{ review.title }}</h2>
+                  <v-alert type="warning" :value="review.activeStatus === 'P'">This review is pending admin approval.</v-alert>
+                  <p>
+                    <star-rating :rating="review.rating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
+                  </p>
+                  <p>{{ review.username + " (" + review.userTypeCode + ") - " }} {{ review.updateDate | formatDate }}</p>
+                  <p class="reviewPar"><strong>Organization: </strong>{{ review.organization }}</p>
+                  <p class="reviewPar"><strong>Experience: </strong>{{ review.userTimeDescription }}</p>
+                  <p class="reviewPar"><strong>Last Used: </strong>{{ review.lastUsed | formatDate }}</p>
+                  <div v-if="review.pros.length > 0 || review.cons.length > 0">
+                    <v-layout row justify-space-around>
+                      <v-flex v-if="review.pros.length > 0" xs4>
+                          <v-card-text class="px-0">
+                            <p><strong>Pros</strong></p>
+                            <li v-for="pro in review.pros" :key="pro.code">{{ pro.text }}</li>
+                          </v-card-text>
+                      </v-flex>
+                      <v-flex v-if="review.cons.length > 0" xs4>
+                          <v-card-text class="px-0">
+                            <p><strong>Cons</strong></p>
+                            <p v-for="cons in review.cons" :key="cons.code">{{ cons.text }}</p>
+                          </v-card-text>
+                      </v-flex>
+                    </v-layout>
+                  </div>
+                  <p class="reviewPar"><strong>Comments:</strong></p>
+                  <p v-html="review.comment"></p>
+                  <v-btn v-if="review.username === $store.state.currentUser.username"
+                    color="white"
+                    @click="editReviewSetup(review)"
+                  >Edit
+                  </v-btn>
+                  <v-btn v-if="review.username === $store.state.currentUser.username"
+                    color="warning"
+                    @click="deleteReviewDialog=true; deleteRequestId=review.reviewId;"
+                  >Delete
+                  </v-btn>
                 </div>
-                <p class="reviewPar"><strong>Comments:</strong></p>
-                <p v-html="review.comment"></p>
-                <v-btn v-if="review.username === $store.state.currentUser.username"
-                  color="white"
-                  @click="editReviewSetup(review)"
-                >Edit
-                </v-btn>
-                <v-btn v-if="review.username === $store.state.currentUser.username"
-                  color="warning"
-                  @click="deleteReviewDialog=true; deleteRequestId=review.reviewId;"
-                >Delete
-                </v-btn>
               </div>
             </div>
             <div v-else>
