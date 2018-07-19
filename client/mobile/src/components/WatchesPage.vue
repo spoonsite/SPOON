@@ -27,16 +27,11 @@
       </v-expansion-panel>
     </div>
 
-    <div v-else>
-      <v-card>
-        <v-card-text>
-          You aren't watching any entries.
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary" @click="$router.push('/')">Return to Search</v-btn>
-        </v-card-actions>
-      </v-card>
-    </div>
+    <v-container v-else text-xs-center>
+      <h2>You aren't watching any entries.</h2>
+      <v-spacer style="height: 1.5em"></v-spacer>
+      <v-btn class="primary" v-on:click="$router.push('/')">Return to Search</v-btn>
+    </v-container>
   </div>
 
 </template>

@@ -1,11 +1,6 @@
 <template lang="html">
   <div class="submission-status-page">
 
-    <v-container v-if="!data || data.length === 0" text-xs-center>
-      <h2>You don't have any submissions.</h2>
-      <v-spacer style="height: 1.5em"></v-spacer>
-      <v-btn v-on:click="$router.push('/')" class="elevation-10">Return to Search</v-btn>
-    </v-container>
 
     <v-expansion-panel v-if="data && data.length > 0">
       <v-expansion-panel-content v-for="item in data" :key="item.name">
@@ -34,6 +29,12 @@
         </v-card>
       </v-expansion-panel-content>
     </v-expansion-panel>
+
+    <v-container v-else text-xs-center>
+      <h2>You don't have any submissions.</h2>
+      <v-spacer style="height: 1.5em"></v-spacer>
+      <v-btn class="primary" v-on:click="$router.push('/')">Return to Search</v-btn>
+    </v-container>
 
     <LoadingOverlay v-model="loading"></LoadingOverlay>
 
