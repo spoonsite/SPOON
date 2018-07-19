@@ -35,7 +35,7 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn :loading="loading" :disabled="!valid" block color="accent" @click="submitReset()">Send Email Approval</v-btn>
+          <v-btn :loading="loading" :disabled="!valid" block color="primary" @click="submitReset()">Send Email Approval</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>

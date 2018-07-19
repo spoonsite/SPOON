@@ -13,29 +13,33 @@ import store from './store';
 Vue.config.productionTip = false;
 
 Vue.prototype.$http = axios;
-Vue.use(Vuetify, {
-  theme: {
-    primary: '#2a2d35',
-    secondary: '#333842',
-    accent: '#565656',
-    error: '#C62828',
-    info: '#3F51B5',
-    warning: '#FFA000',
-    success: '#388E3C'
-  }
-});
-Vue.use(Toasted, {
-  iconPack: 'fontawesome',
-  duration: 5000
-});
 
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  store,
-  components: {
-    App
-  },
-  template: '<App/>'
+store.dispatch('getSecurityPolicy');
+store.dispatch('getBranding', () => {
+  Vue.use(Vuetify, {
+    theme: {
+      primary: store.state.branding.primaryColor,
+      secondary: store.state.branding.secondaryColor,
+      accent: store.state.branding.accentColor,
+      error: '#C62828',
+      info: '#3F51B5',
+      warning: '#FFA000',
+      success: '#388E3C'
+    }
+  });
+  Vue.use(Toasted, {
+    iconPack: 'fontawesome',
+    duration: 5000
+  });
+
+  /* eslint-disable no-new */
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    components: {
+      App
+    },
+    template: '<App/>'
+  });
 });

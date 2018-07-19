@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="topbar">
+    <div :style="topbarStyle">
       <v-toolbar dense flat dark color="primary">
         <v-spacer></v-spacer>
         <v-toolbar-title >{{CTitle}}</v-toolbar-title>
@@ -40,7 +40,10 @@ export default {
         { link: '/', icon: 'home', name: 'Home' },
         { link: '/faq', icon: 'question', name: 'FAQ' },
         { link: '/contact-us', icon: 'comment', name: 'Contact Us' }
-      ]
+      ],
+      topbarStyle: {
+        'border-bottom': `4px solid ${this.$vuetify.theme.accent}`
+      }
     };
   },
   methods: {
@@ -53,9 +56,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.topbar {
-  border-bottom: 4px solid gold;
-}
 .subtitle {
   text-align: center;
   color: white;

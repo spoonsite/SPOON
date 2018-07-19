@@ -48,7 +48,7 @@
 
               <v-text-field
                 v-model="email"
-                :rules="emailRules"
+                :rules="[rules.required, rules.email]"
                 label="Email"
                 required
                ></v-text-field>
@@ -74,7 +74,7 @@
                   <v-flex>
                     <v-btn
                       block
-                      color="accent"
+                      color="primary"
                       style="margin-bottom:2em;"
                       :disabled="!valid"
                       @click="submit"
@@ -85,7 +85,7 @@
                   <v-flex>
                     <v-btn
                       block
-                      color="accent"
+                      color="primary"
                       @click="cancel"
                       >Cancel</v-btn>
                   </v-flex>
@@ -110,9 +110,11 @@
 </template>
 
 <script>
+import validators from '../util/validators';
 
 export default {
   name: 'ContactUsPage',
+  mixins: [validators],
   data: () => ({
     valid: true,
     confirmationDialog: false,
@@ -142,12 +144,6 @@ export default {
       v => v.length <= 80 || 'Name must be less than 80 characters'
     ],
     email: '',
-    emailRules: [
-      v => !!v || 'E-mail is required',
-      v =>
-        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) ||
-        'E-mail must be valid'
-    ],
     phone: '',
     phoneRules: [
       v => v.length <= 80 || 'Maximum length for this field is 80'

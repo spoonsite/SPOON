@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -22,16 +23,19 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getSecurityPolicy (context, axios) {
+    getSecurityPolicy (context) {
       axios.get('/openstorefront/api/v1/resource/securitypolicy')
         .then(response => {
           context.commit('setSecurityPolicy', response);
         });
     },
-    getBranding (context, axios) {
+    getBranding (context, callback) {
       axios.get('/openstorefront/api/v1/resource/branding/current')
         .then(response => {
           context.commit('setBranding', response);
+        })
+        .finally(() => {
+          callback();
         });
     }
   },

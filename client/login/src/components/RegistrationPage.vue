@@ -143,7 +143,7 @@
       <v-card-text>
         <v-form v-model="verification.valid" ref="verifyForm">
           <v-btn
-            color="accent"
+            color="primary"
             :disabled="!verificationValid"
             :loading="verificationLoading"
             style="margin-bottom:2em;"
@@ -166,10 +166,10 @@
 
     <div class="button-wrapper mt-2">
       <div class="btn1">
-        <v-btn block color="accent" :loading="signupLoading" :disabled="!valid" @click="register()"><v-icon class="icon" light>check</v-icon>Signup</v-btn>
+        <v-btn block color="primary" :loading="signupLoading" :disabled="!valid" @click="register()"><v-icon class="icon" light>check</v-icon>Signup</v-btn>
       </div>
       <div class="btn2">
-      <v-btn block color="accent" @click="cancel()"><v-icon light class="icon">cancel</v-icon>Cancel</v-btn>
+      <v-btn block color="primary" @click="cancel()"><v-icon light class="icon">cancel</v-icon>Cancel</v-btn>
       </div>
     </div>
 

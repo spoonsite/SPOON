@@ -5,7 +5,7 @@
       <router-view style="height: 100%;" />
       <div id="particle-js"></div>
       <v-footer color="primary" dark height="auto">
-        <v-card color="primary" flat dark class="footer-wrapper">
+        <v-card color="primary" dark flat class="footer-wrapper">
           <div v-html="$store.state.branding.loginFooter"></div>
         </v-card>
       </v-footer>
@@ -82,8 +82,6 @@ export default {
         retina_detect: true
       });
     }
-    this.$store.dispatch('getSecurityPolicy', this.$http);
-    this.$store.dispatch('getBranding', this.$http);
   },
   computed: {
     title () {
