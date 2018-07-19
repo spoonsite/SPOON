@@ -659,16 +659,16 @@ export default {
           })
           .catch(e => this.$toasted.error('There was a problem submitting the review.'));
       } else {
-      this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/reviews/detail`, data)
-        .then(response => {
-          this.writeReviewDialog = false;
-          this.$toasted.show('Review Submitted');
-        })
-        .finally(() => {
-          this.isLoading = false;
-          this.getDetail();
-        })
-        .catch(e => this.$toasted.error('There was a problem submitting the review.'));
+        this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/reviews/detail`, data)
+          .then(response => {
+            this.writeReviewDialog = false;
+            this.$toasted.show('Review Submitted');
+          })
+          .finally(() => {
+            this.isLoading = false;
+            this.getDetail();
+          })
+          .catch(e => this.$toasted.error('There was a problem submitting the review.'));
       }
     },
     editReviewSetup (review) {
@@ -689,11 +689,11 @@ export default {
     },
     deleteReviewConfirmation () {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
-      .then(response => {
-        this.$toasted.show('Review Deleted')
-        this.deleteReviewDialog = false;
-        this.getDetail();
-      })
+        .then(response => {
+          this.$toasted.show('Review Deleted');
+          this.deleteReviewDialog = false;
+          this.getDetail();
+        });
     },
     deleteQuestion (question) {
       console.log(question);

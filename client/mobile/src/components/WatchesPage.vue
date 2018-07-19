@@ -85,7 +85,4 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .watches-page {
-
-  }
 </style>
