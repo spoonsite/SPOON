@@ -363,8 +363,8 @@
               <p class="contactPar"><strong>Name: </strong>{{ contact.name }}</p>
               <p class="contactPar"><strong>Organization: </strong>{{ contact.organization }}</p>
               <p class="contactPar"><strong>Position: </strong>{{ contact.positionDescription }}</p>
-              <p class="contactPar"><strong>Phone: </strong>{{ contact.phone }}</p>
-              <p class="contactPar"><strong>Email: </strong>{{ contact.email }}</p>
+              <p class="contactPar"><strong>Phone: </strong><a :href="`tel: ${contact.phone}`">{{ contact.phone }}</a></p>
+              <p class="contactPar"><strong>Email: </strong><a :href="`mailto:${contact.email}`">{{ contact.email }}</a></p>
             </div>
           </v-card-text>
           <v-card-text v-else>

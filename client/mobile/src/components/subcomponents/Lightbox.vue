@@ -33,7 +33,7 @@
             <img :src="currentItem.link" class="lightboxImage elevation-6">
             <p style="color: white;">
               Image {{ currentIndex + 1 }} of {{ list.length }}
-              <v-btn dark small flat icon :href="baseURL + currentItem.link"><v-icon class="download-icon">fas fa-download</v-icon></v-btn>
+              <v-btn dark small flat icon :href="currentItem.link"><v-icon class="download-icon">fas fa-download</v-icon></v-btn>
             </p>
           </div>
         </transition>
