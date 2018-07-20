@@ -54,6 +54,10 @@ public class WorkPlanStepAction
 	@ConsumeField
 	private Integer actionOrder;
 
+	@Embedded
+	@ConsumeField
+	private WorkFlowStepActionOption actionOption;
+
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public WorkPlanStepAction()
 	{

@@ -51,7 +51,7 @@ public class WorkPlanStepActionType
 		codeMap.put(ASSIGN_ENTRY, newLookup(WorkPlanStepActionType.class, ASSIGN_ENTRY, "Assign Entry"));
 		codeMap.put(APPROVE_ENTRY, newLookup(WorkPlanStepActionType.class, APPROVE_ENTRY, "Approve Entry"));
 		codeMap.put(PENDING_ENTRY, newLookup(WorkPlanStepActionType.class, PENDING_ENTRY, "Set Entry to Pending"));
-		codeMap.put(INACTIVATE_ENTRY, newLookup(WorkPlanStepActionType.class, INACTIVATE_ENTRY, "Inactivates Entry"));
+		codeMap.put(INACTIVATE_ENTRY, newLookup(WorkPlanStepActionType.class, INACTIVATE_ENTRY, "Inactivate Entry"));
 
 		return codeMap;
 	}

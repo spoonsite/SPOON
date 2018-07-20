@@ -45,7 +45,8 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			itemId: 'workplanForm',
 			region: 'west',
 			collapsible: true,
-			titleCollapse: true
+			titleCollapse: true,
+			scrollable: true
 		},
 		{
 			xtype: 'osf.wp.stepForm',

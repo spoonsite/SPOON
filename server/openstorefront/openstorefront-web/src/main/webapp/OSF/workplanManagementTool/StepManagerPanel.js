@@ -319,7 +319,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 					}
 				},
 				itemTpl: '<div class="step-view-container ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + '">' +
-							'<span class="wp-step-label ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + '">{name}</span>' +
+					'<span class="wp-step-label ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + (item === wpWindow.getSelectedStep() ? 'wp-step-label-active ' : ' ') +'">{name}</span>' +
 							'<div ' +
 								'class="step-view ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') +
 								(item === wpWindow.getSelectedStep() ? 'wp-step-active ' : ' ') +

@@ -34,7 +34,7 @@ public class WorkPlanType
 	private static final long serialVersionUID = 1L;
 
 	public static final String COMPONENT = "COMPONENT";
-	public static final String EVALUATION = "EVALUATION";
+	// public static final String EVALUATION = "EVALUATION";
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public WorkPlanType()
@@ -46,7 +46,7 @@ public class WorkPlanType
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(COMPONENT, newLookup(WorkPlanType.class, COMPONENT, "Entry"));
-		codeMap.put(EVALUATION, newLookup(WorkPlanType.class, EVALUATION, "Evaluation"));
+		// codeMap.put(EVALUATION, newLookup(WorkPlanType.class, EVALUATION, "Evaluation"));
 
 		return codeMap;
 	}

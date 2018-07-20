@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.io.Serializable;
 import java.util.List;
+
+import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
@@ -30,6 +32,7 @@ import javax.validation.constraints.Size;
  *
  * @author dshurtleff
  */
+@Embeddable
 public class WorkFlowStepActionOption
 		implements Serializable
 {

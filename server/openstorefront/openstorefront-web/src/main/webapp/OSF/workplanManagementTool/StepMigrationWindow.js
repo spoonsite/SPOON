@@ -87,7 +87,6 @@ Ext.define('OSF.workplanManagementTool.StepMigrationWindow', {
 					itemId: 'migrateButton',
 					disabled: true,
 					iconCls: 'fa fa-2x fa-sign-out icon-button-color-save icon-vertical-correction',
-					scale: 'medium',
 					handler: function () {
 
 						var migrationWindow = this.up('window');
@@ -115,7 +114,6 @@ Ext.define('OSF.workplanManagementTool.StepMigrationWindow', {
 				{
 					text: 'Cancel',
 					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
-					scale: 'medium',
 					handler: function () {
 						this.up('window').close();
 					}

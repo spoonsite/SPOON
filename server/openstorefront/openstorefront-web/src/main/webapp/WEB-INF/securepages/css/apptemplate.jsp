@@ -700,3 +700,19 @@ table.confluenceTable td.numberingColumn {
 	left: 50%;
 	transform: translateX(-50%);
  }
+
+ @keyframes steplabel {
+	0%   {font-weight: inherit;}
+    70%  {font-weight: inherit;}
+    100% {font-weight: bold;}
+ }
+
+ .wp-step-label-active {
+	font-weight: bold;
+	animation-duration: 0.6s;
+	animation-name: steplabel;
+ }
+
+ .action-options-fieldset table.x-table-layout {
+    width: 100%;
+}

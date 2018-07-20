@@ -81,24 +81,26 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 				},
 				{
 					xtype: 'combo',
+					name: 'workPlanType',
 					fieldLabel: 'Workplan For <span class="field-required" />',
-					valueField: 'value',
-					displayField: 'name',
+					valueField: 'code',
+					displayField: 'description',
 					labelAlign: 'top',
 					style: 'border-top: 1px solid #ccc;',
 					allowBlank: false,
 					width: '100%',
+					queryMode: 'remote',
 					store: {
-						fields: ['name', 'value'],
-						data: [
-							{ name: 'Entry Type', value: 'ENTRYTYPE' },
-							{ name: 'Evaluation', value: 'EVAL' }
-						]
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/lookuptypes/WorkPlanType'
+						},
+						fields: ['code', 'description']
 					},
 					listeners: {
 						change: function (oldVal, newVal) {
 							var entryTypeCombo = this.up().down('[itemId=entryTypeCombo]').show();
-							if (newVal === 'ENTRYTYPE') {
+							if (newVal === 'COMPONENT') {
 								entryTypeCombo.show();
 							}
 							else {
@@ -108,25 +110,18 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					}
 				},
 				{
-					xtype: 'combo',
+					xtype: 'EntryTypeMultiSelect',
+					name: 'componentTypes',
 					itemId: 'entryTypeCombo',
 					fieldLabel: 'Entry Type <span class="field-required" />',
-					valueField: 'value',
-					displayField: 'name',
+					valueField: 'code',
+					displayField: 'description',
 					labelAlign: 'top',
 					style: 'margin-top: 20px',
 					allowBlank: false,
 					hidden: true,
-					store: {
-						fields: ['name', 'value'],
-						data: [
-							{ name: 'Entry Type #1', value: 'ENTRYTYPE1' },
-							{ name: 'Entry Type #2', value: 'ENTRYTYPE2' },
-							{ name: 'Entry Type #3', value: 'ENTRYTYPE3' },
-							{ name: 'Entry Type #4', value: 'ENTRYTYPE4' },
-							{ name: 'Entry Type #5', value: 'ENTRYTYPE5' },
-						]
-					}
+					width: '100%',
+					queryMode: 'remote'
 				}
 			]
 		}

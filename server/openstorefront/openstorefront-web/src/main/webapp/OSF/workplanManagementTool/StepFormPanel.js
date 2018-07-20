@@ -19,6 +19,9 @@
 Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 	extend: 'OSF.workplanManagementTool.WPDefaultPanel',
 	alias: 'widget.osf.wp.stepForm',
+	requires: [
+		'OSF.workplanManagementTool.AddStepActionWindow'
+	],
 
 	style: 'background: #fff;',
 	title: 'Step Configuration',
@@ -99,7 +102,66 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					title: 'Step Actions (?)',
 					colspan: 2,
 					width: '100%',
-					style: 'min-height: 300px;'
+					style: 'border: 1px solid #ccc;',
+					height: 300,
+					columns: [
+						{ text: 'Action Type', dataIndex: 'workPlanStepActionType' ,flex: 3 },
+						{ text: 'Metadata', dataIndex: 'actionOption', flex: 3 },
+						{ text: 'Order', dataIndex: 'actionOrder', flex: 1 }
+					],
+					listeners: {
+						selectionchange: function () {
+							this.down('itemId=[removeActionButton]').enable();
+						}
+					},
+					dockedItems: [{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						items: [
+							{
+								xtype: 'button',
+								text: 'Add Action',
+								scale: 'medium',
+								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+								handler: function () {
+									Ext.create({
+										xtype: 'osf.wp.AddStepActionWindow',
+										width: 620,
+										height: 415,
+										stepActionStore: this.up('grid').getStore()
+									}).show();
+								}
+							},
+							{
+								xtype: 'button',
+								text: 'Increment Order',
+								scale: 'medium',
+								disabled: true,
+								iconCls: 'fa fa-2x fa-chevron-up icon-button-color-save icon-vertical-correction'
+							},
+							{
+								xtype: 'button',
+								text: 'Decrement Order',
+								scale: 'medium',
+								disabled: true,
+								iconCls: 'fa fa-2x fa-chevron-down icon-button-color-save icon-vertical-correction'
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								xtype: 'button',
+								text: 'Remove Action',
+								scale: 'medium',
+								itemId: 'removeActionButton',
+								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+								disabled: true,
+								handler: function () {
+									
+								}
+							}
+						]
+					}]
 				}
 			]
 		}
