@@ -318,7 +318,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							var formBuilderItem = this.up().up('panel');	
 							
 							var record = combo.getSelection();
-							if (record) {
+							if (record && record.data.codes) {
 								var codeField = formBuilderItem.queryById('attributeCode');
 								var requireValueField = formBuilderItem.queryById('requiredCommentOnValue');
 								codeField.suspendEvents(false);
@@ -342,7 +342,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						}
 					},			
 					store: {
-						autoLoad: true,
+						autoLoad: false,
 						sorters: [
 							{
 								property: 'description',
@@ -665,7 +665,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						}
 					}			
 				}		
-			],
+			]
 		}
 	],
 
@@ -904,9 +904,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		
 	},
 	
-	updateQuestion: function () {
+	updateQuestion: function (skipMarkedChange) {
 		var formBuilderItem = this;
-		formBuilderItem.formBuilderPanel.sectionPanel.updateField(formBuilderItem.templateField);
+		formBuilderItem.formBuilderPanel.sectionPanel.updateField(formBuilderItem.templateField, skipMarkedChange);
 		formBuilderItem.queryById('collapsedSide').update(formBuilderItem.templateField);
 	},
 
@@ -927,7 +927,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		if (previousActiveItem && !previousActiveItem.isDestroyed) {
 			previousActiveItem.removeCls('csf-active');
 			previousActiveItem.setActiveItem(previousActiveItem.queryById('collapsedSide'));
-			previousActiveItem.updateQuestion();
+			var skipMarkedChange = true;
+			previousActiveItem.updateQuestion(skipMarkedChange);
 			
 		} else {
 			previousActiveItem = null;
@@ -1022,8 +1023,19 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		}
 		
 		fieldContainer.loadRecord(record);	
-		fieldContainer.getForm().findField('attributeType').setValue(record.get('attributeType'));
-		
+	
+		var componentTypeUrl = '';
+		if (fieldContainer.formBuilderPanel.templateRecord.entryType) {
+			componentTypeUrl = '?componentType=' + fieldContainer.formBuilderPanel.templateRecord.entryType;
+		}
+	
+		fieldContainer.getForm().findField('attributeType').getStore().load({
+			url: 'api/v1/resource/attributes' + componentTypeUrl,
+			success: function() {
+				fieldContainer.getForm().findField('attributeType').setValue(record.get('attributeType'));
+			}
+		});			
+			
 
 		fieldContainer.queryById('collapsedSide').update(record.data);
 	}

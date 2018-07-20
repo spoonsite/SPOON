@@ -45,7 +45,9 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 				listeners: {
 					change: function(field, newValue, oldValue, opts) {
 						infoPanel.templateRecord.name = newValue;
-						infoPanel.formBuilderPanel.markAsChanged();
+						if (!infoPanel.initialLoad) {
+							infoPanel.formBuilderPanel.markAsChanged();
+						}
 					}
 				}
 			},
@@ -59,7 +61,9 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 				listeners: {
 					change: function(field, newValue, oldValue, opts) {
 						infoPanel.templateRecord.description = newValue;
-						infoPanel.formBuilderPanel.markAsChanged();
+						if (!infoPanel.initialLoad) {
+							infoPanel.formBuilderPanel.markAsChanged();
+						}
 					}
 				}	
 			},
@@ -85,21 +89,26 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 				listeners: {
 					change: function (field, newValue, oldValue) {
 						infoPanel.templateRecord.entryType = newValue;
-						if (oldValue !== null) {
-							infoPanel.formBuilderPanel.markAsChanged();
-							infoPanel.formBuilderPanel.requiredAttrProgressPanel.loadGridStore(newValue);
-							infoPanel.formBuilderPanel.optionalAttrProgressPanel.loadGridStore(newValue);
+						if (!infoPanel.initialLoad) {
+							infoPanel.formBuilderPanel.markAsChanged();							
+							Ext.Msg.show({
+								title:'Check Attributes',
+								message: 'Check all attribute questions to verify they are still valid.',
+								buttons: Ext.Msg.OK,
+								icon: Ext.Msg.INFO,
+								fn: function(btn) {
+								}
+							});
+							infoPanel.formBuilderPanel.displayPanel.reloadCurrentSection();		
 						}
+						infoPanel.initialLoad = false;
+						
+						infoPanel.formBuilderPanel.reloadAttributes(newValue);							
+						
+						
 					}
 				}
-			},
-			{
-				xtype: 'panel',
-				itemId: 'lastSaved',
-				data: infoPanel.templateRecord,
-				tpl: '<b>Last Saved: </b> {[Ext.Date.format(values.updateDts, "F j, Y, g:i a")]}'+
-					 ' <tpl if="unsavedChanges"><span class="text-danger"><i class="fa fa-lg fa-exclamation-triangle"></i> Unsaved Changes</span></tpl> '	
-			}
+			}			
 			
 		];		
 		
@@ -109,6 +118,7 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 		});
 		record.set(infoPanel.templateRecord);
 		
+		infoPanel.initialLoad = true;
 		infoPanel.loadRecord(record);
 		
 		if (record.get('entryType')) {
@@ -117,18 +127,11 @@ Ext.define('OSF.customSubmissionTool.FormTemplateInfoPanel', {
 				infoPanel.formBuilderPanel.requiredAttrProgressPanel.loadGridStore(record.get('entryType'));
 				infoPanel.formBuilderPanel.optionalAttrProgressPanel.loadGridStore(record.get('entryType'));
 			}, 100);			
+		} else {
+			infoPanel.initialLoad = false;
 		}
-	},
-	
-	updateInfo: function(unsavedChanges) {		
-		var infoPanel = this;
 		
-		infoPanel.queryById('lastSaved').update(Ext.apply({
-			unsavedChanges: unsavedChanges
-		}, infoPanel.templateRecord));		
-		
-	}
-	
+	}	
 	
 });
 	

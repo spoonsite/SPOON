@@ -278,7 +278,7 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 		navPanel.formBuilderPanel.markAsChanged();
 	},	
 	
-	updateField: function(field) {
+	updateField: function(field, skipMarkedChange) {
 		var navPanel = this;
 		var navList = navPanel.queryById('navList');
 		var root = navList.getStore().getRoot();
@@ -292,7 +292,9 @@ Ext.define('OSF.customSubmissionTool.SectionNavPanel', {
 				});
 			}	
 		});
-		navPanel.formBuilderPanel.markAsChanged();
+		if (!skipMarkedChange){
+			navPanel.formBuilderPanel.markAsChanged();
+		}
 		
 	},
 	

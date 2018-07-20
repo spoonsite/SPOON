@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
@@ -89,6 +90,10 @@ public class SubmissionFormServiceImpl
 	public SubmissionFormTemplate saveSubmissionFormTemplate(SubmissionFormTemplate template)
 	{
 		Objects.requireNonNull(template);
+
+		if (Convert.toBoolean(template.getDefaultTemplate())) {
+			template.setEntryType(null);
+		}
 
 		String componentTypeInUse = template.getEntryType();
 		if (StringUtils.isBlank(componentTypeInUse)) {

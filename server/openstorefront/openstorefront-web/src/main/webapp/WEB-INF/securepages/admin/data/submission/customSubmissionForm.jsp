@@ -508,6 +508,7 @@
 												var formData = form.getValues();
 												
 												var copiedData = Ext.clone(record.data);
+												copiedData.defaultTemplate = false;
 												copiedData.submissionTemplateId = null;
 												copiedData.name = formData.name; 
 												
