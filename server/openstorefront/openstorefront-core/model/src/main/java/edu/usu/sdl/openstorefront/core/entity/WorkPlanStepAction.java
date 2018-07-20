@@ -50,16 +50,6 @@ public class WorkPlanStepAction
 	@FK(WorkPlanStepActionType.class)
 	private String workPlanStepActionType;
 
-	@ConsumeField
-	@Embedded
-	@DataType(WorkPlanStep.class)
-	@OneToMany(orphanRemoval = true)
-	private List<WorkPlanStepPermission> stepPermission;
-
-	@ConsumeField
-	@ValidValueType(value = {OpenStorefrontConstant.AND_CONDITION, OpenStorefrontConstant.OR_CONDITION})
-	private String permissionLogicCondition;
-
 	@NotNull
 	@ConsumeField
 	private Integer actionOrder;
@@ -76,8 +66,6 @@ public class WorkPlanStepAction
 
 		WorkPlanStepAction stepAction = (WorkPlanStepAction) entity;
 		this.setActionOrder(stepAction.getActionOrder());
-		this.setStepPermission(stepAction.getStepPermission());
-		this.setPermissionLogicCondition(stepAction.getPermissionLogicCondition());
 		this.setWorkPlanStepActionType(stepAction.getWorkPlanStepActionType());
 
 	}
@@ -100,26 +88,6 @@ public class WorkPlanStepAction
 	public void setWorkPlanStepActionType(String workPlanStepActionType)
 	{
 		this.workPlanStepActionType = workPlanStepActionType;
-	}
-
-	public List<WorkPlanStepPermission> getStepPermission()
-	{
-		return stepPermission;
-	}
-
-	public void setStepPermission(List<WorkPlanStepPermission> stepPermission)
-	{
-		this.stepPermission = stepPermission;
-	}
-
-	public String getPermissionLogicCondition()
-	{
-		return permissionLogicCondition;
-	}
-
-	public void setPermissionLogicCondition(String permissionLogicCondition)
-	{
-		this.permissionLogicCondition = permissionLogicCondition;
 	}
 
 	public Integer getActionOrder()

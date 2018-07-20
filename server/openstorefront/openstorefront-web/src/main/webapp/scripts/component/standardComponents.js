@@ -182,6 +182,18 @@ Ext.define('OSF.component.RoleGroupMultiSelectComboBox', {
 	}
 });
 
+Ext.define('OSF.component.ActiveOnMultiSelectComboBox', {
+	extend: 'OSF.component.RoleGroupMultiSelectComboBox',
+	alias: 'widget.ActiveOnMultiCombo',
+
+	store: {
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/lookuptypes/EntityEventType'
+		}
+	}
+});
+
 Ext.define('OSF.component.RoleGroupSingleSelectComboBox', {
 	extend: 'Ext.form.field.ComboBox',
 	alias: 'widget.RoleGroupSingleSelectComboBox',

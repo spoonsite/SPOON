@@ -58,6 +58,16 @@ public class WorkPlanStep
 	@ConsumeField
 	private String description;
 
+	@ConsumeField
+	@Embedded
+	@DataType(WorkPlanStep.class)
+	@OneToMany(orphanRemoval = true)
+	private List<WorkPlanStepPermission> stepPermission;
+
+	@ConsumeField
+	@ValidValueType(value = { OpenStorefrontConstant.AND_CONDITION, OpenStorefrontConstant.OR_CONDITION })
+	private String permissionLogicCondition;
+
 	@NotNull
 	@ConsumeField
 	private Integer stepOrder;
@@ -99,6 +109,8 @@ public class WorkPlanStep
 		this.setApprovalStateToMatch(workPlanStep.getApprovalStateToMatch());
 		this.setStepOrder(workPlanStep.getStepOrder());
 		this.setTriggerEvents(workPlanStep.getTriggerEvents());
+		this.setStepPermission(workPlanStep.getStepPermission());
+		this.setPermissionLogicCondition(workPlanStep.getPermissionLogicCondition());
 
 	}
 
@@ -172,4 +184,19 @@ public class WorkPlanStep
 		this.triggerEvents = triggerEvents;
 	}
 
+	public List<WorkPlanStepPermission> getStepPermission() {
+		return stepPermission;
+	}
+
+	public void setStepPermission(List<WorkPlanStepPermission> stepPermission) {
+		this.stepPermission = stepPermission;
+	}
+
+	public String getPermissionLogicCondition() {
+		return permissionLogicCondition;
+	}
+
+	public void setPermissionLogicCondition(String permissionLogicCondition) {
+		this.permissionLogicCondition = permissionLogicCondition;
+	}
 }

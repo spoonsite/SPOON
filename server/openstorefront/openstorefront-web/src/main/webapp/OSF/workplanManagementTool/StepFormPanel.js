@@ -78,11 +78,10 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					canAlertOnChange: true
 				},
 				{
-					xtype: 'combo',
+					xtype: 'ActiveOnMultiCombo',
 					fieldLabel: 'Active On (?)',
 					name: 'activeOn',
-					width: '100%',
-					editable: false
+					width: '100%'
 				},
 				{
 					xtype: 'textarea',
