@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <v-layout>
-      <v-form ref="form" v-model="valid" lazy-validation>
+      <v-form class="centeralign" ref="form" v-model="valid" lazy-validation>
         <v-container grid-list-xl text-xs-left>
           <v-layout row wrap>
             <v-flex xs12 sm6 pt-0 pb-0>
@@ -54,7 +54,7 @@
             <v-flex xs12 pt-0 pb-0>
               <v-btn
                 block
-                color="primary"
+                color="accent"
                 style="margin-bottom:2em;"
                 :disabled="!valid"
                 @click="submit"
@@ -63,7 +63,7 @@
             <v-flex xs12 pt-0 pb-0>
               <v-btn
                 block
-                color="primary"
+                color="accent"
                 @click="cancel"
                 >Cancel</v-btn>
             </v-flex>
@@ -157,4 +157,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.centeralign {
+  margin-right: auto;
+  margin-left: auto;
+}
 </style>

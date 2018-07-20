@@ -1,5 +1,6 @@
 <template>
-<div class="mx-3 mt-4">
+<div class="mt-4">
+  <LoadingOverlay v-model="searchQueryIsDirty"></LoadingOverlay>
 
   <div class="clearfix centeralign" style="max-width: 36em;">
     <SearchBar v-on:submitSearch="submitSearch()" :hideSuggestions="searchQueryIsDirty" v-model="searchQuery"></SearchBar>
@@ -49,7 +50,7 @@
     <!-- Filter pills if there are any -->
     <v-btn small @click="clear()" v-if="(filters.component || filters.organization || filters.tags.length !== 0)">Clear Filters</v-btn>
     <div style="padding: 0 0.5em 0.8em 0.8em;">
-      <span v-if="filters.component"><v-chip close small @input="filters.component = ''" color="teal lighten-2" text-color="white">{{ filters.component | truncate(30) }}</v-chip></span>
+      <span v-if="filters.component"><v-chip close small @input="filters.component = ''" color="blue-grey lighten-2" text-color="white">{{ filters.component | truncate(30) }}</v-chip></span>
       <span v-if="filters.tags.length !== 0"><v-chip v-for="tag in filters.tags" :key="tag" close small @input="deleteTag(tag)">{{ tag | truncate(30) }}</v-chip></span>
       <span v-if="filters.organization"><v-chip close small color="indigo lighten-2" text-color="white" @input="filters.organization = ''">{{ filters.organization | truncate(30) }}</v-chip></span>
     </div>
@@ -117,7 +118,7 @@
         </v-card-title>
         <v-card-text>
           <h3>Filter Color Legend</h3>
-          <v-chip close small color="teal lighten-2" text-color="white">Category Shortcode</v-chip>
+          <v-chip close small color="blue-grey lighten-2" text-color="white">Category Shortcode</v-chip>
           <v-chip close small>Tag</v-chip>
           <v-chip close small color="indigo lighten-2" text-color="white">Organization</v-chip>
         </v-card-text>
@@ -128,27 +129,25 @@
     </v-dialog>
 
   <!-- Search Results -->
-  <h2 v-if="searchResults.data" style="text-align: center" class="mb-2">Search Results</h2>
+  <div v-if="searchResults.data" class="clearfix centeralign" style="max-width: 46em;">
+    <h2 style="text-align: center" class="mb-2">Search Results</h2>
 
-  <p v-if="searchResults.data && searchResults.data.totalNumber === 0">No Search Results</p>
-  <p v-else-if="searchResults.data" class="mb-0">
-    <span v-if="searchQueryIsDirty">Fetching</span><span v-else>Showing</span>
-    {{ offset + 1 }} -
-    {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
-    of
-    {{ searchResults.data.totalNumber }} results
-  </p>
+    <p v-if="searchResults.data.totalNumber === 0">No Search Results</p>
+    <p v-else class="mb-0">
+      <span v-if="searchQueryIsDirty">Fetching</span><span v-else>Showing</span>
+      {{ offset + 1 }} -
+      {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
+      of
+      {{ searchResults.data.totalNumber }} results
+    </p>
 
-  <div v-if="searchResults.data" style="margin-bottom: 1em; padding-bottom: 0.5em; overflow: auto; white-space: nowrap;">
-    <v-chip v-for="stat in searchResults.data.resultTypeStats" :key="stat.componentTypeDescription" @click="searchCategory(stat.componentType)" color="teal" text-color="white">
-      <v-avatar class="teal darken-2">{{ stat.count }}</v-avatar>
-      {{ stat.componentTypeDescription }}
-    </v-chip>
-  </div>
+    <div style="margin-bottom: 1em; padding-bottom: 0.5em; overflow: auto; white-space: nowrap;">
+      <v-chip v-for="stat in searchResults.data.resultTypeStats" :key="stat.componentTypeDescription" @click="searchCategory(stat.componentType)" color="blue-grey" text-color="white">
+        <v-avatar class="blue-grey darken-2">{{ stat.count }}</v-avatar>
+        {{ stat.componentTypeDescription }}
+      </v-chip>
+    </div>
 
-  <LoadingOverlay v-model="searchQueryIsDirty"></LoadingOverlay>
-
-  <div v-if="searchResults.data">
     <v-expansion-panel popout>
       <v-expansion-panel-content v-for="item in searchResults.data.data" :key="item.name">
         <div slot="header">
@@ -196,7 +195,7 @@
             <div v-html="item.description"></div>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" @click="moreInformation(item.componentId)">More Information</v-btn>
+            <v-btn color="accent" @click="moreInformation(item.componentId)">More Information</v-btn>
           </v-card-actions>
         </v-card>
       </v-expansion-panel-content>

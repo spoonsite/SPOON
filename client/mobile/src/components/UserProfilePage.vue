@@ -130,7 +130,7 @@
     <v-btn
       block
       v-on:click="reset"
-      color="primary"
+      color="accent"
     >Reset Form</v-btn>
   </v-flex>
   <!-- Save Button -->
@@ -146,7 +146,7 @@
       :disabled="!valid"
       block
       v-on:click="updateProfile"
-      color="primary"
+      color="accent"
     >Save</v-btn>
   </v-flex>
 </v-layout>

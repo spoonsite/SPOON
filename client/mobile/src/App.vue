@@ -164,7 +164,7 @@ export default {
         { link: '/profile', icon: 'user-edit', name: 'Manage Profile' }
       ],
       topbarStyle: {
-        'border-bottom': `4px solid ${this.$vuetify.theme.accent}`
+        'border-bottom': `4px solid ${this.$store.state.branding.accentColor}`
       },
       alert: false
     };

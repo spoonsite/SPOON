@@ -95,6 +95,7 @@ export default {
 }
 .search-icon {
   float: right;
+  font-size: 26px !important;
 }
 .search-icon:hover {
   cursor: pointer;
@@ -107,6 +108,9 @@ input:focus {
 }
 input:focus + .icon {
   color: #3467C0;
+}
+.myicon {
+  font-size: 14px;
 }
 .fade-enter-active, {
   transition: opacity .2s;

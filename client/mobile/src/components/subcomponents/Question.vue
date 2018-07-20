@@ -18,19 +18,21 @@
 
     </div>
     <v-alert type="warning" :value="question.activeStatus === 'P'">This question is pending admin approval.</v-alert>
-    <p class="caption px-2">Asked by <strong>{{ question.createUser }}</strong> on {{ question.createDts | formatDate }} <span v-if="question.createDts !== question.updateDts">(updated on {{ question.updateDts | formatDate }} by <strong>{{ question.updateUser }}</strong>)</span></p>
-    <div class="pt-2 px-2" style="font-size: 16px;" v-html="question.question"></div>
-    <v-btn flat small @click="answerQuestionDialog = true">Answer</v-btn>
+    <div class="px-2 pb-2">
+      <p class="caption">Asked by <strong>{{ question.createUser }}</strong> on {{ question.createDts | formatDate }} <span v-if="question.createDts !== question.updateDts">(updated on {{ question.updateDts | formatDate }} by <strong>{{ question.updateUser }}</strong>)</span></p>
+      <div class="pt-2" style="font-size: 16px;" v-html="question.question"></div>
+      <v-btn small @click="answerQuestionDialog = true">Answer</v-btn>
 
-    <v-btn :loading="loading" v-if="!showAnswers" flat small @click="getAnswers(question.questionId); showAnswers = true;">View Answers</v-btn>
-    <v-btn :loading="loading" v-else-if="noAnswers" disabled flat small>No Answers</v-btn>
-    <v-btn :loading="loading" v-else flat small @click="showAnswers = false">Hide Answers</v-btn>
+      <v-btn :loading="loading" v-if="!showAnswers" small @click="getAnswers(question.questionId); showAnswers = true;">View Answers</v-btn>
+      <v-btn :loading="loading" v-else-if="noAnswers" disabled small>No Answers</v-btn>
+      <v-btn :loading="loading" v-else small @click="showAnswers = false">Hide Answers</v-btn>
 
-    <transition name="slide">
-    <div v-if="showAnswers">
-      <Answer v-for="answer in answers" :answer="answer" @answerDeleted="deleteAnswer" :key="answer.responseId"></Answer>
+      <transition name="slide">
+      <div v-if="showAnswers">
+        <Answer v-for="answer in answers" :answer="answer" @answerDeleted="deleteAnswer" :key="answer.responseId"></Answer>
+      </div>
+      </transition>
     </div>
-    </transition>
   </div>
 
   <v-dialog

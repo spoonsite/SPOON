@@ -12,7 +12,8 @@
       :list="lightboxList"
     ></Lightbox>
 
-    <v-expansion-panel popout class="mt-3">
+    <div class="centeralign mt-3" style="max-width: 46em;">
+    <v-expansion-panel popout>
 
       <v-expansion-panel-content>
         <div slot="header">Summary</div>
@@ -187,13 +188,13 @@
                   <p class="reviewPar"><strong>Comments:</strong></p>
                   <p v-html="review.comment"></p>
                   <v-btn v-if="review.username === $store.state.currentUser.username"
-                    color="white"
                     @click="editReviewSetup(review)"
+                    small
                   >Edit
                   </v-btn>
                   <v-btn v-if="review.username === $store.state.currentUser.username"
-                    color="warning"
                     @click="deleteReviewDialog=true; deleteRequestId=review.reviewId;"
+                    small
                   >Delete
                   </v-btn>
                 </div>
@@ -208,6 +209,7 @@
 
       <v-dialog
       v-model="writeReviewDialog"
+      max-width="500px"
       >
       <v-card>
         <v-card-title>
@@ -263,7 +265,7 @@
             full-width
           >
             <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="newReview.lastUsed=''">Cancel</v-btn>
+            <v-btn flat color="accent" @click="newReview.lastUsed=''">Cancel</v-btn>
           </v-date-picker>
 
           <v-spacer style="height: 1em"></v-spacer>
@@ -380,7 +382,7 @@
           <v-card-text>
             <p>Watch this entry?</p>
             <!-- TODO: make watch api calls -->
-            <v-switch color="info" :label="`Watch: ${watchSwitch.toString()}`" v-model="watchSwitch"></v-switch>
+            <v-switch color="success" :label="watchSwitch ? 'Watching' : 'Not Watching'" v-model="watchSwitch"></v-switch>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -419,6 +421,7 @@
     </v-dialog>
 
     </v-expansion-panel>
+    </div>
 
     <LoadingOverlay v-model="isLoading"></LoadingOverlay>
   </div>
@@ -813,5 +816,9 @@ export default {
   }
   .list-item {
     line-height: 2.4em;
+  }
+  .centeralign {
+    margin-right: auto;
+    margin-left: auto;
   }
 </style>

@@ -1,8 +1,11 @@
 <template lang="html">
 
   <div class="watches-page">
+
+    <LoadingOverlay v-model="loading"></LoadingOverlay>
+
     <div  v-if="watches.length > 0">
-      <v-expansion-panel popout>
+      <v-expansion-panel popout class="mt-3">
         <v-expansion-panel-content v-for="item in watches" :key="item.componentName">
           <div slot="header" v-if="item.lastUpdateDts > item.lastViewDts" class="light-green accent-1">
             <strong>{{ item.componentName }}</strong>
@@ -20,14 +23,14 @@
               </p>
             </v-card-text>
             <v-card-actions>
-              <v-btn color="primary" @click="moreInformation(item.componentId)">More Information</v-btn>
+              <v-btn color="accent" @click="moreInformation(item.componentId)">More Information</v-btn>
             </v-card-actions>
           </v-card>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </div>
 
-    <v-container v-else text-xs-center>
+    <v-container v-else-if="!loading" text-xs-center>
       <h2>You aren't watching any entries.</h2>
       <v-spacer style="height: 1.5em"></v-spacer>
       <v-btn class="primary" v-on:click="$router.push('/')">Return to Search</v-btn>
@@ -38,31 +41,33 @@
 
 <script lang="js">
 import router from '../router/index';
+import LoadingOverlay from './subcomponents/LoadingOverlay';
 
 export default {
   name: 'watches-page',
   props: [],
+  components: {
+    LoadingOverlay
+  },
   mounted () {
     this.getWatches();
   },
   data () {
     return {
-      watches: []
+      watches: [],
+      loading: false
     };
   },
   methods: {
     getWatches () {
+      this.loading = true;
       this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
         .then(response => {
-          if (response) {
-            if (response.data) {
-              if (response.data.length > 0) {
-                this.watches = response.data;
-              }
-            }
+          if (response.data && response.data.length > 0) {
+            this.watches = response.data;
           }
-        })
-        .catch(e => this.errors.push(e));
+          this.loading = false;
+        });
     },
     moreInformation (componentId) {
       router.push({

@@ -3,7 +3,7 @@
   <v-layout mt-3 mx-3>
     <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
       <v-card class="elevation-5 mt-3 mx-3">
-        <v-toolbar color="primary" dark dense>
+        <v-toolbar color="accent" dark dense>
           <v-toolbar-title>Forgot Password</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
@@ -35,7 +35,7 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn :loading="loading" :disabled="!valid" block color="primary" @click="submitReset()">Send Email Approval</v-btn>
+          <v-btn :loading="loading" :disabled="!valid" block color="accent" @click="submitReset()">Send Email Approval</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>

@@ -23,13 +23,13 @@
             </p>
           </v-card-text>
           <v-card-actions v-if="item.approvalState !== 'N'">
-            <v-btn color="primary" @click="moreInformation(item.componentId)">More Information</v-btn>
+            <v-btn color="accent" @click="moreInformation(item.componentId)">More Information</v-btn>
           </v-card-actions>
         </v-card>
       </v-expansion-panel-content>
     </v-expansion-panel>
 
-    <v-container v-else text-xs-center>
+    <v-container v-else-if="!loading" text-xs-center>
       <h2>You don't have any submissions.</h2>
       <v-spacer style="height: 1.5em"></v-spacer>
       <v-btn class="primary" v-on:click="$router.push('/')">Return to Search</v-btn>

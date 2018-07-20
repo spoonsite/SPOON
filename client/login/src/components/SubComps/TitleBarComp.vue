@@ -8,7 +8,7 @@
         <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
       </v-toolbar>
     </div>
-    <div class="subtitle dark secondary">
+    <div class="subtitle dark accent">
       {{ CSubtitle }}
     </div>
 
@@ -42,7 +42,7 @@ export default {
         { link: '/contact-us', icon: 'comment', name: 'Contact Us' }
       ],
       topbarStyle: {
-        'border-bottom': `4px solid ${this.$vuetify.theme.accent}`
+        'border-bottom': `4px solid ${this.$store.state.branding.accentColor}`
       }
     };
   },
