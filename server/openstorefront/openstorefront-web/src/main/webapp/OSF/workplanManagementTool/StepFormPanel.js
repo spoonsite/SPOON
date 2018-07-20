@@ -127,7 +127,8 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 									Ext.create({
 										xtype: 'osf.wp.AddStepActionWindow',
 										width: 620,
-										height: 415,
+										maximizable: true,
+										height: 900,
 										stepActionStore: this.up('grid').getStore()
 									}).show();
 								}

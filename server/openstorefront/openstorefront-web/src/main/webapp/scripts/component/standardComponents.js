@@ -206,6 +206,34 @@ Ext.define('OSF.component.EntryTypeMultiSelect', {
 	}
 });
 
+Ext.define('OSF.component.UserCustomEmailCombo', {
+	extend: 'Ext.form.field.Tag',
+	alias: 'widget.UserCustomEmailCombo',
+
+	displayField: 'email',
+	valueField: 'email',
+	queryMode: 'local',
+	createNewOnEnter: true,
+	width: '100%',
+	store: {
+		autoload: true,
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/userprofiles'
+		},
+		listeners: {
+			load: function (store, records) {
+				
+				store.setData(records[0].getData().data);
+			}
+		}
+	},
+	initComponent: function () {
+		this.callParent();
+		this.getStore().load();
+	}
+});
+
 Ext.define('OSF.component.RoleGroupSingleSelectComboBox', {
 	extend: 'Ext.form.field.ComboBox',
 	alias: 'widget.RoleGroupSingleSelectComboBox',

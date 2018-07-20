@@ -26,14 +26,20 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 
 	title: 'Add Step Action',
 	modal: true,
-	resizable: false,
 	padding: 10,
+	scrollable: 'y',
 	items: [
 		{
 			xtype: 'form',
 			defaults: {
 				labelAlign: 'top',
 				width: '100%'
+			},
+			checkFormStatus: function () {
+				if (this.down('[itemId=actionOrderCombo]').getValue() && this.down('[itemId=actionTypeCombo]').getValue()) {
+					console.log("THIS: ", this);
+					this.up('window').down('[itemId=saveButton]').enable();
+				}
 			},
 			items: [
 				{
@@ -44,9 +50,15 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 					queryMode: 'local',
 					valueField: 'value',
 					displayField: 'name',
+					name: 'actionOrder',
 					editable: false,
 					store: {
 						fields: ['name', 'value']
+					},
+					listeners: {
+						change: function () {
+							this.up('form').checkFormStatus();
+						}
 					}
 				},
 				{
@@ -55,6 +67,8 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 					allowBlank: false,
 					valueField: 'code',
 					displayField: 'description',
+					itemId: 'actionTypeCombo',
+					name: 'workPlanStepActionType',
 					autoLoad: true,
 					editable: false,
 					queryMode: 'remote',
@@ -66,9 +80,12 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 					},
 					listeners: {
 						change: function (combo, newVal, oldVal) {
-
+							
+							this.up('form').checkFormStatus();
 							var optionsContainer = combo.up('form').down('[itemId=actionOptionsContainer]');
-							optionsContainer.removeAll();
+							optionsContainer.removeAll(true);
+
+							// handle assigning to groups or entries
 							if (newVal === 'ASSIGN_ENTRY' || newVal === 'EMAIL') {
 								optionsContainer.show();
 								if (newVal === 'ASSIGN_ENTRY') {
@@ -135,10 +152,39 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 										store: {}
 									});
 								}
-								else {
 
+								// handle emailing to user(s), and/or groups, and (if desired) the record owner
+								else {
+									optionsContainer.add([
+										{
+											xtype: 'UserCustomEmailCombo',
+											labelAlign: 'top',
+											fieldLabel: 'Individual Email Recipients (?)',
+											colspan: 2
+										},
+										{
+											xtype: 'checkbox',
+											name: 'emailOwner',
+											fieldLabel: 'Email Owner',
+											colspan: 2
+										},
+										{
+											xtype: 'checkbox',
+											name: 'emailEntryTypeGroup',
+											fieldLabel: 'Email Entry Type Group',
+											colspan: 2
+										},
+										{
+											xtype: 'tinymce_textarea',
+											name: 'emailMessage',
+											width: '100%',
+											height: 350,
+											colspan: 2
+										}
+									]);
 								}
 							}
+
 							else {
 								optionsContainer.hide();
 							}
@@ -151,7 +197,10 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 					itemId: 'actionOptionsContainer',
 					cls: 'action-options-fieldset',
 					hidden: true,
-					layout: 'table',
+					layout: {
+						type: 'table',
+						columns: 2
+					},
 					items: []
 				}
 			],
@@ -171,10 +220,11 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 			items: [
 				{
 					text: 'Save',
+					itemId: 'saveButton',
 					disabled: true,
 					iconCls: 'fa fa-2x fa-floppy-o icon-button-color-save icon-vertical-correction',
 					handler: function () {
-						
+						// TODO: SAVE
 					}
 				},
 				{
