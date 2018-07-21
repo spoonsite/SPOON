@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import java.io.Serializable;
@@ -49,9 +50,11 @@ public class WorkFlowStepActionOption
 	private String emailGroup;
 
 	@ConsumeField
+	@DefaultFieldValue("false")
 	private Boolean emailEntryTypeGroup;
 
 	@ConsumeField
+	@DefaultFieldValue("false")
 	private Boolean emailOwner;
 
 	@ConsumeField

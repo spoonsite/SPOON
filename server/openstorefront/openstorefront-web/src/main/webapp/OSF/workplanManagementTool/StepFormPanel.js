@@ -99,19 +99,40 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 				},
 				{
 					xtype: 'grid',
+					itemId: 'stepActionGrid',
 					title: 'Step Actions (?)',
 					colspan: 2,
 					width: '100%',
 					style: 'border: 1px solid #ccc;',
 					height: 300,
+					store:  {},
 					columns: [
 						{ text: 'Action Type', dataIndex: 'workPlanStepActionType' ,flex: 3 },
-						{ text: 'Metadata', dataIndex: 'actionOption', flex: 3 },
+						{ text: 'Metadata', dataIndex: 'actionOption', flex: 3,
+							renderer: function (metadata) {
+
+								if (metadata.fixedEmails || (metadata.fixedEmails && metadata.fixedEmails.length === 0)) {
+									var emails = '';
+									Ext.Array.forEach(metadata.fixedEmails, function (email) {
+										emails += 'Email to: ' + email + '<b style="font-size: 1.2em;">;</b> ';
+									});
+
+									return emails === '' ? 'No emails specified' : emails;
+								}
+								else if (typeof metadata.assignGroup !== 'undefined' || typeof metadata.assignUser !== 'undefined') {
+									if (metadata.assignGroup === '' || metadata.assignUser === '') {
+										return metadata.assignType === 'group' ? 'No group specified' : 'No user specified';
+									}
+									return metadata.assignGroup || metadata.assignUser;
+								}
+								return 'N/A';
+							}
+						},
 						{ text: 'Order', dataIndex: 'actionOrder', flex: 1 }
 					],
 					listeners: {
-						selectionchange: function () {
-							this.down('itemId=[removeActionButton]').enable();
+						selectionchange: function (grid, record) {
+							this.down('[itemId=removeActionButton]').enable();
 						}
 					},
 					dockedItems: [{
@@ -158,7 +179,8 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								disabled: true,
 								handler: function () {
-									
+									var grid = this.up('[itemId=stepFormPanel]').down('[itemId=stepActionGrid]');
+									grid.getStore().remove(grid.getSelection());
 								}
 							}
 						]

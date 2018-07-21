@@ -23,7 +23,6 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 	config: {
 		stepActionStore: null
 	},
-
 	title: 'Add Step Action',
 	modal: true,
 	padding: 10,
@@ -36,8 +35,9 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 				width: '100%'
 			},
 			checkFormStatus: function () {
+
+				// enable save button if action order and action type fields are populated
 				if (this.down('[itemId=actionOrderCombo]').getValue() && this.down('[itemId=actionTypeCombo]').getValue()) {
-					console.log("THIS: ", this);
 					this.up('window').down('[itemId=saveButton]').enable();
 				}
 			},
@@ -103,7 +103,6 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 													change: function (self, newVal, oldVal) {
 
 														var userGroupCombo = this.up('fieldset').down('[itemId=userGroupCombo]');
-														console.log("COMBO: ", userGroupCombo);
 														userGroupCombo.enable();
 														if (newVal === true) {
 															userGroupCombo.getStore().setProxy({
@@ -160,16 +159,17 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 											xtype: 'UserCustomEmailCombo',
 											labelAlign: 'top',
 											fieldLabel: 'Individual Email Recipients (?)',
+											name: 'fixedEmails',
 											colspan: 2
 										},
 										{
-											xtype: 'checkbox',
+											xtype: 'checkboxfield',
 											name: 'emailOwner',
 											fieldLabel: 'Email Owner',
 											colspan: 2
 										},
 										{
-											xtype: 'checkbox',
+											xtype: 'checkboxfield',
 											name: 'emailEntryTypeGroup',
 											fieldLabel: 'Email Entry Type Group',
 											colspan: 2
@@ -224,7 +224,20 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 					disabled: true,
 					iconCls: 'fa fa-2x fa-floppy-o icon-button-color-save icon-vertical-correction',
 					handler: function () {
-						// TODO: SAVE
+						var actionWindow = this.up('window');
+						var form = actionWindow.down('form')
+						var formValues = form.getValues();
+
+						var recordToSave = {};
+						recordToSave.actionOrder = formValues.actionOrder;
+						recordToSave.workPlanStepActionType = formValues.workPlanStepActionType;
+						
+						delete formValues.actionOrder;
+						delete formValues.workPlanStepActionType;
+						recordToSave.actionOption = formValues;
+
+						actionWindow.stepActionStore.add(recordToSave);
+						actionWindow.close();
 					}
 				},
 				{
