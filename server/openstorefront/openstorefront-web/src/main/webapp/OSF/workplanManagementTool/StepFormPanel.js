@@ -131,8 +131,9 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 						{ text: 'Metadata', dataIndex: 'actionOption', flex: 3,
 							renderer: function (metadata) {
 
-								if (metadata.fixedEmails || (metadata.fixedEmails && metadata.fixedEmails.length === 0)) {
+								if (metadata.fixedEmails === '' || metadata.fixedEmails) {
 									var emails = '';
+									metadata.fixedEmails = metadata.fixedEmails === '' ? [] : metadata.fixedEmails;
 									Ext.Array.forEach(metadata.fixedEmails, function (email) {
 										emails += 'Email to: ' + email + '<b style="font-size: 1.2em;">;</b> ';
 									});
@@ -210,6 +211,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								text: 'Increment Order',
 								scale: 'medium',
 								disabled: true,
+								hidden: true, // remove this property when functionality has been implemented
 								iconCls: 'fa fa-2x fa-chevron-up icon-button-color-save icon-vertical-correction'
 							},
 							{
@@ -218,6 +220,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								text: 'Decrement Order',
 								scale: 'medium',
 								disabled: true,
+								hidden: true, // remove this property when functionality has been implemented
 								iconCls: 'fa fa-2x fa-chevron-down icon-button-color-save icon-vertical-correction'
 							},
 							{
