@@ -99,6 +99,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 				},
 				{
 					xtype: 'grid',
+					sortableColumns: false,
 					itemId: 'stepActionGrid',
 					title: 'Step Actions (?)',
 					colspan: 2,
@@ -106,9 +107,9 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					style: 'border: 1px solid #ccc;',
 					height: 300,
 					store:  {
+						sortInfo: { field: 'actionOrder', direction: 'DESC' },
 						handleRecordChange: function (store) {
 
-							console.log("HANDLING!");
 							var wpWindow = Ext.getCmp('workplanWindow');
 							wpWindow.getSelectedStep().actions = store.getData().items.map(function (item) {
 								return item.getData();
@@ -150,9 +151,34 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 						{ text: 'Order', dataIndex: 'actionOrder', flex: 1 }
 					],
 					listeners: {
-						selectionchange: function (grid, record) {
-							this.down('[itemId=removeActionButton]').enable();
+						selectionchange: function (grid, recordsSelected) {
+
+							grid = this;
+							if (recordsSelected.length > 0) {
+								grid.down('[itemId=removeActionButton]').enable();
+								grid.down('[itemId=editActionButton]').enable();
+								grid.down('[itemId=incrementOrderButton]').enable();
+								grid.down('[itemId=decrementOrderButton]').enable();
+							}
+							else {
+								grid.down('[itemId=removeActionButton]').disable();
+								grid.down('[itemId=editActionButton]').disable();
+								grid.down('[itemId=incrementOrderButton]').disable();
+								grid.down('[itemId=decrementOrderButton]').disable();
+							}
 						}
+					},
+					addEditRecord: function () {
+
+						var grid = this;
+						Ext.create({
+							xtype: 'osf.wp.AddStepActionWindow',
+							width: 620,
+							maximizable: true,
+							height: 900,
+							stepActionGrid: grid,
+							recordToLoad: grid.getSelection().length > 0 ? grid.getSelection()[0].getData() : null
+						}).show();
 					},
 					dockedItems: [{
 						xtype: 'toolbar',
@@ -164,17 +190,23 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								handler: function () {
-									Ext.create({
-										xtype: 'osf.wp.AddStepActionWindow',
-										width: 620,
-										maximizable: true,
-										height: 900,
-										stepActionStore: this.up('grid').getStore()
-									}).show();
+									this.up('grid').addEditRecord();
 								}
 							},
 							{
 								xtype: 'button',
+								itemId: 'editActionButton',
+								text: 'Edit Action',
+								scale: 'medium',
+								disabled: true,
+								iconCls: 'fa fa-2x fa-pencil-square-o icon-button-color-save icon-vertical-correction',
+								handler: function () {
+									this.up('grid').addEditRecord();
+								}
+							},
+							{
+								xtype: 'button',
+								itemId: 'incrementOrderButton',
 								text: 'Increment Order',
 								scale: 'medium',
 								disabled: true,
@@ -182,6 +214,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 							},
 							{
 								xtype: 'button',
+								itemId: 'decrementOrderButton',
 								text: 'Decrement Order',
 								scale: 'medium',
 								disabled: true,
@@ -200,6 +233,11 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								handler: function () {
 									var grid = this.up('[itemId=stepFormPanel]').down('[itemId=stepActionGrid]');
 									grid.getStore().remove(grid.getSelection());
+
+									grid.down('[itemId=removeActionButton]').disable();
+									grid.down('[itemId=editActionButton]').disable();
+									grid.down('[itemId=incrementOrderButton]').disable();
+									grid.down('[itemId=decrementOrderButton]').disable();
 								}
 							}
 						]

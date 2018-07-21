@@ -21,7 +21,8 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 	alias: 'widget.osf.wp.AddStepActionWindow',
 
 	config: {
-		stepActionStore: null
+		stepActionGrid: null,
+		recordToLoad: null
 	},
 	title: 'Add Step Action',
 	modal: true,
@@ -69,9 +70,8 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 					displayField: 'description',
 					itemId: 'actionTypeCombo',
 					name: 'workPlanStepActionType',
-					autoLoad: true,
 					editable: false,
-					queryMode: 'remote',
+					queryMode: 'local',
 					store: {
 						proxy: {
 							type: 'ajax',
@@ -207,10 +207,37 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 		}
 	],
 	initComponent: function () {
-		this.callParent();
 
-		for (var i = 0; i < this.getStepActionStore().getData().items.length + 1; i += 1) {
-			this.down('[itemId=actionOrderCombo]').getStore().add({ name: i + 1, value: i + 1 });
+		this.callParent();
+		var actionWindow = this;
+		actionWindow.stepActionStore = actionWindow.getStepActionGrid().getStore();
+
+		for (var i = 0; i < actionWindow.stepActionStore.getData().items.length + 1; i += 1) {
+			actionWindow.down('[itemId=actionOrderCombo]').getStore().add({ name: i + 1, value: i + 1 });
+		}
+
+		actionWindow.down('[itemId=actionTypeCombo]').getStore().load();
+
+		if (actionWindow.recordToLoad) {
+			var form = actionWindow.down('form');
+
+			for (key in actionWindow.recordToLoad.actionOption) {
+				actionWindow.recordToLoad[key] = actionWindow.recordToLoad.actionOption[key];
+			}
+
+			var actionTypeCombo = form.getForm().getFields().items.filter(function (field) {
+				if (field.name === 'workPlanStepActionType') {
+					return field;
+				}
+			})[0];
+
+			// apply the value to the action type combo, in case there are action options to be set
+			actionTypeCombo.setValue(actionWindow.recordToLoad.workPlanStepActionType);
+
+			// defer to allow time for the rest of the from to render
+			Ext.defer(function () {
+				form.getForm().setValues(actionWindow.recordToLoad);
+			}, 500)
 		}
 	},
 	dockedItems: [
@@ -225,7 +252,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 					iconCls: 'fa fa-2x fa-floppy-o icon-button-color-save icon-vertical-correction',
 					handler: function () {
 						var actionWindow = this.up('window');
-						var form = actionWindow.down('form')
+						var form = actionWindow.down('form');
 						var formValues = form.getValues();
 
 						var recordToSave = {};
@@ -236,7 +263,22 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 						delete formValues.workPlanStepActionType;
 						recordToSave.actionOption = formValues;
 
-						actionWindow.stepActionStore.add(recordToSave);
+						// if we are editing a record, update it
+						if (actionWindow.recordToLoad) {
+							var indexToInsert = -1;
+							Ext.Array.forEach(actionWindow.stepActionStore.getData().items, function (record, index) {
+								if (record == actionWindow.getStepActionGrid().getSelection()[0]) {
+									indexToInsert = index;
+								}
+							});
+							actionWindow.stepActionStore.removeAt(indexToInsert);
+							actionWindow.stepActionStore.insert(indexToInsert, [recordToSave]);
+						}
+						// else add a new record
+						else {
+							actionWindow.stepActionStore.add(recordToSave);
+						}
+
 						actionWindow.close();
 					}
 				},
