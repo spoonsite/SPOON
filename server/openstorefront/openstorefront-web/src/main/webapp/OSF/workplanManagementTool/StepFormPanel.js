@@ -105,7 +105,26 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					width: '100%',
 					style: 'border: 1px solid #ccc;',
 					height: 300,
-					store:  {},
+					store:  {
+						handleRecordChange: function (store) {
+
+							console.log("HANDLING!");
+							var wpWindow = Ext.getCmp('workplanWindow');
+							wpWindow.getSelectedStep().actions = store.getData().items.map(function (item) {
+								return item.getData();
+							});
+						},
+						listeners: {
+							add: function (store, records) {
+
+								this.handleRecordChange(store);
+							},
+							remove: function (store, records) {
+
+								this.handleRecordChange(store);
+							}
+						}
+					},
 					columns: [
 						{ text: 'Action Type', dataIndex: 'workPlanStepActionType' ,flex: 3 },
 						{ text: 'Metadata', dataIndex: 'actionOption', flex: 3,
@@ -203,6 +222,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 			stepFormPanel.show();
 
 			stepFormPanel.getForm().setValues(this.getWpWindow().getSelectedStep());
+			this.down('[itemId=stepActionGrid]').getStore().setData(this.getWpWindow().getSelectedStep().actions);
 		}
 	},
 
