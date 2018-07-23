@@ -205,7 +205,7 @@
           <v-card-text>
             <p>Watch this entry?</p>
             <!-- TODO: make watch api calls -->
-            <v-switch v-on:click="updateWatch()" :label="`Watch: ${watchSwitch.toString()}`" v-model="watchSwitch" color="success"></v-switch>
+            <v-switch v-on:click="updateWatch()" :label="`Watch: ${watchSwitch.toString()}`" v-model="watchSwitch" color="success" readonly></v-switch>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -380,18 +380,21 @@ export default {
       }
     },
     checkWatch () {
-      console.log(this.id);
       this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
         .then(response => {
-          console.log();
           if (response) {
             if (response.data && response.data.length > 0) {
+              let tempWatch = false;
               for (var i = 0; i < response.data.length; i++) {
                 if (response.data[i].componentId === this.id) {
                   this.watchSwitch = true;
+                  tempWatch = true;
                   this.watchId = response.data[i].watchId;
                   break;
                 }
+              }
+              if (tempWatch === false) {
+                this.watchSwitch = false;
               }
             }
           }
@@ -407,26 +410,25 @@ export default {
           notifyFlg: false
         };
         this.$http.post(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`, watch)
-          .catch(e => this.errors.push(e));
-
-        this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
           .then(response => {
-            console.log();
-            if (response) {
-              if (response.data && response.data.length > 0) {
-                for (var i = 0; i < response.data.length; i++) {
-                  if (response.data[i].componentId === this.id) {
-                    this.watchId = response.data[i].watchId;
-                    break;
-                  }
-                }
-              }
+            if(response.errors) {
+              this.watchSwitch = false;
             }
           })
-          .catch(e => this.errors.push(e));
+          .finally(() => {
+            this.checkWatch();
+          });
       } else {
-        this.$http.delete(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches/${this.watchId}`);
+        this.$http.delete(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches/${this.watchId}`)
+        .finally(() => {
+          this.checkWatch();
+        });
       }
+    }
+  },
+  watch: {
+    watchSwitch: function (val) {
+      this.checkWatch();
     }
   }
 };
