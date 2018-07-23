@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 
 /**
  *
@@ -29,37 +30,41 @@ public class WorkPlanServiceImpl
 		extends ServiceProxy
 		implements WorkPlanService
 {
+
 	@Override
-	public List<WorkPlan> getWorkPlans()
+	public WorkPlan saveWorkPlan(WorkPlan workPlan)
 	{
-		// TODO: query ALL workplans (use a view)
-		return Arrays.asList();
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+
 	@Override
-	public WorkPlan getWorkPlan(String id)
+	public void activateWorkPlan(String workPlanId)
 	{
-		// TODO: get single workplan (use a view)
-		return new WorkPlan();
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+
 	@Override
-	public WorkPlan createWorkPlan(WorkPlan workPlan)
+	public void removeWorkPlan(String workPlanId, String newWorkPlanId)
 	{
-		// TODO: create workplan
-		return new WorkPlan();
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+
 	@Override
-	public WorkPlan updateWorkPlan(String workPlanId, WorkPlan newWorkPlan)
+	public WorkPlanLink getWorkPlanForComponent(String componentId)
 	{
-		// TODO: update workplan
-		return new WorkPlan();
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-	
+
 	@Override
-	public void deleteWorkPlan(String workPlanId)
+	public void assignWorkPlanForComponent(String componentId, String username, String roleGroup)
 	{
-		// TODO: delete said workplan
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
+
+	@Override
+	public WorkPlanLink moveComponentToStep(String nextStepId, String componentId)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
 }

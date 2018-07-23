@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import java.util.List;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 
 /**
  *
@@ -26,38 +27,52 @@ public interface WorkPlanService
 		extends AsyncService
 {
 	/**
-	 * Gets all WorkPlans
+	 * Saves a work plan
 	 *
-	 * @return List<WorkPlan>
-	 */
-	public List<WorkPlan> getWorkPlans();
-	
-	/**
-	 * Gets a single workplan
-	 *
-	 * @return WorkPlan
-	 */
-	public WorkPlan getWorkPlan(String id);
-	
-	/**
-	 * Create a workplan
-	 *
-	 * @return WorkPlan
-	 */
-	public WorkPlan createWorkPlan(WorkPlan workPlan);
-	
-	/**
-	 * Updates a workplan
-	 *
-	 * @return WorkPlan
-	 */
-	public WorkPlan updateWorkPlan(String workPlanId, WorkPlan newWorkPlan);
-	
-	/**
-	 * Deletes a workplan
-	 *
-	 * @param workPlanId
+	 * @param workPlan
 	 * @return
 	 */
-	public void deleteWorkPlan(String workPlanId);
+	WorkPlan saveWorkPlan(WorkPlan workPlan);
+
+	/**
+	 * Activates a plan / deactivate plan that other active plan that have the
+	 * same entry types
+	 *
+	 * @param workPlanId
+	 */
+	void activateWorkPlan(String workPlanId);
+
+	/**
+	 * Deletes a workplan and transfer to a new workplan...
+	 *
+	 * @param workPlanId
+	 * @param newWorkPlanId (if null) then it will go back to default
+	 */
+	void removeWorkPlan(String workPlanId, String newWorkPlanId);
+
+	/**
+	 * Pulls the current plan for the Component or creates one if needed
+	 *
+	 * @param componentId
+	 * @return
+	 */
+	WorkPlanLink getWorkPlanForComponent(String componentId);
+
+	/**
+	 * Assigns a WorkPlan for a Component
+	 *
+	 * @param componentId
+	 * @param username
+	 * @param roleGroup
+	 */
+	void assignWorkPlanForComponent(String componentId, String username, String roleGroup);
+
+	/**
+	 * Moves a Component to a new workflow step
+	 *
+	 * @param nextStepId
+	 * @return
+	 */
+	WorkPlanLink moveComponentToStep(String nextStepId, String componentId);
+
 }

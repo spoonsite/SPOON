@@ -18,13 +18,10 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
-import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
-import java.util.List;
 import javax.persistence.Embedded;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -71,6 +68,7 @@ public class WorkPlanStepAction
 		WorkPlanStepAction stepAction = (WorkPlanStepAction) entity;
 		this.setActionOrder(stepAction.getActionOrder());
 		this.setWorkPlanStepActionType(stepAction.getWorkPlanStepActionType());
+		this.setActionOption(stepAction.getActionOption());
 
 	}
 
@@ -102,6 +100,16 @@ public class WorkPlanStepAction
 	public void setActionOrder(Integer actionOrder)
 	{
 		this.actionOrder = actionOrder;
+	}
+
+	public WorkFlowStepActionOption getActionOption()
+	{
+		return actionOption;
+	}
+
+	public void setActionOption(WorkFlowStepActionOption actionOption)
+	{
+		this.actionOption = actionOption;
 	}
 
 }

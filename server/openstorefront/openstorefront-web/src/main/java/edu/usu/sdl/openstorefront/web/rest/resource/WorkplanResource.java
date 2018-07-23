@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -51,7 +52,8 @@ public class WorkplanResource
 	@DataType(WorkPlan.class)
 	public Response workplanLookupAll()
 	{
-		List<WorkPlan> workPlans = service.getWorkPlanService().getWorkPlans();
+		WorkPlan workPlanExample = new WorkPlan();
+		List<WorkPlan> workPlans = workPlanExample.findByExample();
 		
 		GenericEntity<List<WorkPlan>> entity = new GenericEntity<List<WorkPlan>>(workPlans)
 			{
@@ -68,8 +70,9 @@ public class WorkplanResource
 	public Response workPlanSingleLookup(@PathParam("id") String workPlanId)
 	{
 		
-		WorkPlan workPlan = service.getWorkPlanService().getWorkPlan(workPlanId);
-		
+		WorkPlan workPlan = new WorkPlan();
+		workPlan.setWorkPlanId(workPlanId);
+		workPlan = workPlan.find();
 		if (workPlan == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
@@ -89,7 +92,7 @@ public class WorkplanResource
 	public Response createWorkPlan(WorkPlan workPlan)
 	{
 		workPlan.populateBaseCreateFields();
-		WorkPlan createdWorkPlan = service.getWorkPlanService().createWorkPlan(workPlan);
+		WorkPlan createdWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
 		
 		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(createdWorkPlan)
 			{
@@ -109,7 +112,7 @@ public class WorkplanResource
 			WorkPlan workPlan
 	)
 	{
-		WorkPlan updatedWorkPlan = service.getWorkPlanService().updateWorkPlan(workPlanId, workPlan);
+		WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
 		
 		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(updatedWorkPlan)
 			{
@@ -118,14 +121,31 @@ public class WorkplanResource
 		return sendSingleEntityResponse(entity);
 	}
 	
+	@PUT
+	@APIDescription("Activates a Work Plan")
+	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/activate/{id}")
+	public Response activateWorkPlan(
+			@PathParam("id") String workPlanId
+	)
+	{
+		service.getWorkPlanService().activateWorkPlan(workPlanId);
+		return Response.status(Response.Status.OK).build();
+	}
+	
 	@DELETE
-	@APIDescription("Deletes a Work Plan")
+	@APIDescription("Deletes a Work Plan and moves it's records to a target Work Plan")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_DELETE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}")
-	public void deleteWorkPlan(@PathParam("id") String workPlanId)
+	@Path("/{deleteid}/moveto/{targetid}")
+	public void deleteWorkPlan(
+			@PathParam("deleteid") String removeWorkPlanId,
+			@PathParam("targetid") String targetWorkPlanId
+	)
 	{
-		service.getWorkPlanService().deleteWorkPlan(workPlanId);
+		service.getWorkPlanService().removeWorkPlan(removeWorkPlanId, targetWorkPlanId);
 	}
 }
