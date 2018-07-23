@@ -12,7 +12,7 @@
       :list="lightboxList"
     ></Lightbox>
 
-    <div class="centeralign mt-3" style="max-width: 46em;">
+    <div class="centeralign mt-3 mx-2" style="max-width: 46em;">
     <v-expansion-panel popout>
 
       <v-expansion-panel-content>

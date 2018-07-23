@@ -2,7 +2,7 @@
 <div class="mt-4">
   <LoadingOverlay v-model="searchQueryIsDirty"></LoadingOverlay>
 
-  <div class="clearfix centeralign" style="max-width: 36em;">
+  <div class="clearfix centeralign px-3" style="max-width: 36em;">
     <SearchBar v-on:submitSearch="submitSearch()" :hideSuggestions="searchQueryIsDirty" v-model="searchQuery"></SearchBar>
 
     <!-- SearchBar Menu Buttons -->
@@ -129,7 +129,7 @@
     </v-dialog>
 
   <!-- Search Results -->
-  <div v-if="searchResults.data" class="clearfix centeralign" style="max-width: 46em;">
+  <div v-if="searchResults.data" class="clearfix centeralign px-3" style="max-width: 46em;">
     <h2 style="text-align: center" class="mb-2">Search Results</h2>
 
     <p v-if="searchResults.data.totalNumber === 0">No Search Results</p>

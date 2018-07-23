@@ -17,7 +17,7 @@
     <v-card>
       <v-card-title>
         <h2 class="w-100">Edit answer</h2>
-        <v-alert class="w-100" type="warning" :value="true">Do not enter any ITAR restricted, FOUO, Proprietary or otherwise sensitive information.</v-alert>
+        <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
         <v-alert class="w-100" type="info" :value="true">All answers need admin approval before being made public.</v-alert>
       </v-card-title>
       <v-card-text>
