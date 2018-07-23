@@ -2,10 +2,10 @@
   <div>
 
     <v-layout mt-3 mx-3>
-      <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
-        <v-card class="elevation-5 mt-3 mx-3">
-          <v-card-text>
-            <v-form v-model="valid" @submit.prevent="submitEmail()">
+      <v-form v-model="valid" @submit.prevent="submitEmail()">
+        <v-container grid-list-xl text-xs-center>
+          <v-layout row wrap>
+            <v-flex xs12 sm6 pt-0 pb-0>
               <v-text-field
                 prepend-icon="vpn_key"
                 name="exesting-password"
@@ -14,6 +14,8 @@
                 v-model="existing"
                 :rules="[rules.required]"
               ></v-text-field>
+            </v-flex>
+            <v-flex xs12 sm6 pt-0 pb-0>
               <v-text-field
                 prepend-icon="lock"
                 name="password1"
@@ -22,6 +24,8 @@
                 v-model="password1"
                 :rules="[rules.required, rules.password]"
               ></v-text-field>
+            </v-flex>
+            <v-flex xs12 sm6 pt-0 pb-0>
               <v-text-field
                 prepend-icon="lock"
                 name="password2"
@@ -30,13 +34,13 @@
                 v-model="password2"
                 :rules="password2Rules"
               ></v-text-field>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn :disabled="!valid" block color="accent" @click="submitUpdate()">Update Password</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-flex>
+            </v-flex>
+            <v-flex>
+              <v-btn :disabled="!valid" block color="accent" @click="submitUpdate()">Update Password</v-btn>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-form>
     </v-layout>
 
     <v-dialog v-model="confirmationDialog" max-width="300px">
