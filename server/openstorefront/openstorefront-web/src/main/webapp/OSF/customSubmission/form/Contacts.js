@@ -42,6 +42,45 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 			}
 		];
 		
+		var disableField = false;		
+		
+		if (!contactPanel.fieldTemplate.required) {
+			disableField = true;
+			
+			formItems.push({
+				xtype: 'checkbox',
+				itemId: 'fillInCB',
+				name: 'use',
+				boxLabel: 'Edit form',
+				noDisable: true,
+				listeners: {
+					change: function (field, newValue, oldValue, opts) {
+						
+						if (newValue) {
+							contactPanel.queryById('existingContactGrid').setDisabled(false);
+							
+							var actualForm = contactPanel.queryById('actualForm');
+							Ext.Array.each(actualForm.items.items, function(formField){
+								if (!formField.noDisable) {
+									formField.setDisabled(false);
+								}
+							});
+							
+						} else {
+							contactPanel.queryById('existingContactGrid').setDisabled(true);
+							
+							var actualForm = contactPanel.queryById('actualForm');
+							Ext.Array.each(actualForm.items.items, function(formField){
+								if (!formField.noDisable) {
+									formField.setDisabled(true);
+								}
+							});							
+						}
+					}
+				}			
+			});
+		}
+		
 		if (!contactPanel.fieldTemplate.contactType) {
 			formItems.push({
 				xtype: 'StandardComboBox',
@@ -50,7 +89,8 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				allowBlank: false,
 				margin: '0 0 5 0',
 				editable: false,
-				typeAhead: false,					
+				typeAhead: false,
+				disabled: disableField,
 				fieldLabel: 'Contact Type <span class="field-required" />',
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/ContactType'
@@ -66,6 +106,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 			fieldLabel: 'Organization <span class="field-required" />',
 			forceSelection: false,
 			valueField: 'description',
+			disabled: disableField,
 			storeConfig: {
 				url: 'api/v1/resource/organizations/lookup'
 			}
@@ -73,9 +114,10 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 		
 		formItems.push({
 			xtype: 'textfield',
-			fieldLabel: 'First Name<span class="field-required" />',
+			fieldLabel: 'First Name <span class="field-required" />',
 			maxLength: '80',
 			allowBlank: false,
+			disabled: disableField,
 			name: 'firstName',
 			listeners: {
 				change: function (firstNameField, newValue, oldValue, opts) {
@@ -87,9 +129,10 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 		
 		formItems.push({
 			xtype: 'textfield',
-			fieldLabel: 'Last Name<span class="field-required" />',
+			fieldLabel: 'Last Name <span class="field-required" />',
 			maxLength: '80',
 			allowBlank: false,
+			disabled: disableField,
 			name: 'lastName',
 			listeners: {
 				change: function (lastNameField, newValue, oldValue, opts) {
@@ -104,6 +147,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 			fieldLabel: 'Email <span class="field-required" />',										
 			maxLength: '255',
 			allowBlank: false,
+			disabled: disableField,
 			regex: new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*", "i"),
 			regexText: 'Must be a valid email address. Eg. xxx@xxx.xxx',
 			name: 'email',
@@ -118,21 +162,25 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 		formItems.push({
 			xtype: 'textfield',
 			fieldLabel: 'Phone <span class="field-required" />',
-			allowBlank: false,					
+			allowBlank: false,	
+			disabled: disableField,
 			maxLength: '120',					
 			name: 'phone'			
 		});
 		
 		formItems.push({
-			xtype: 'SecurityComboBox'	
+			xtype: 'SecurityComboBox',
+			disabled: disableField
 		});
 		formItems.push({
-			xtype: 'DataSensitivityComboBox'
+			xtype: 'DataSensitivityComboBox',
+			disabled: disableField
 		});		
 					
 		contactPanel.add([
 			{
 				xtype: 'panel',
+				itemId: 'actualForm',
 				width: '50%',
 				margin: '0 10 0 0',			
 				layout: 'anchor',
@@ -149,6 +197,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				width: '50%',
 				title: 'Existing Contacts  <i class="fa fa-question-circle" data-qtip="Selecting a contact from this grid will allow you to add an existing contact to the entry. This grid will also show the contact currently being edited."></i>',
 				itemId: 'existingContactGrid',
+				disabled: disableField,
 				columnLines: true,
 				height: '100%',
 				border: true,
@@ -191,15 +240,34 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						var form = this.up('form');
+						
+						var fillInValue;
+						if (contactPanel.queryById('fillInCB')) {
+							fillInValue = contactPanel.queryById('fillInCB').getValue();
+						}
+						
 						if(this.getSelectionModel().getCount() > 0){
-							var contactType = form.getForm().findField('contactType').getValue();
+							
+							var contactType;
+							if (form.getForm().findField('contactType')) {
+								contactType = form.getForm().findField('contactType').getValue();
+							}
+							
 							form.reset();
 							form.loadRecord(this.getSelection()[0]);
-							form.getForm().findField('contactType').setValue(contactType);
+							
+							if (contactType) {
+								form.getForm().findField('contactType').setValue(contactType);
+							}
 						}
 						else{
 							form.reset();
 						}
+						
+						if (fillInValue) {
+							form.queryById('fillInCB').setValue(fillInValue);
+						}						
+						
 					}
 				}				
 			}
@@ -263,19 +331,28 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 	getSubmissionValue: function() {
 		var contactPanel = this;
 		
-		var data = contactPanel.getValues();
-		
-		if (contactPanel.fieldTemplate.contactType) {
-			data.contactType = contactPanel.fieldTemplate.contactType;
+		var createContact = true;
+		if (contactPanel.queryById('fillInCB') && !contactPanel.queryById('fillInCB').getValue()) {
+			createContact = false;
 		}
-		
-		var userSubmissionField = {			
-			templateFieldId: contactPanel.fieldTemplate.fieldId,
-			rawValue: Ext.encode([
-				data
-			])
-		};		
-		return userSubmissionField;		
+
+		if (createContact) {
+			var data = contactPanel.getValues();
+
+			if (contactPanel.fieldTemplate.contactType) {
+				data.contactType = contactPanel.fieldTemplate.contactType;
+			}
+
+			var userSubmissionField = {
+				templateFieldId: contactPanel.fieldTemplate.fieldId,
+				rawValue: Ext.encode([
+					data
+				])
+			};
+			return userSubmissionField;
+		} else {
+			return null;
+		}
 	}	
 	
 });
