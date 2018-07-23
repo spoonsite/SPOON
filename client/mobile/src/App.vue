@@ -161,7 +161,8 @@ export default {
         { link: '/submission-status', icon: 'sticky-note', name: 'Submission Status' },
         { link: '/faq', icon: 'question', name: 'F.A.Q.' },
         { link: '/contact', icon: 'comment', name: 'Contact' },
-        { link: '/profile', icon: 'user-edit', name: 'Manage Profile' }
+        { link: '/profile', icon: 'user-edit', name: 'Manage Profile' },
+        { link: '/reset-password', icon: 'key', name: 'Reset Password' }
       ],
       topbarStyle: {
         'border-bottom': `4px solid ${this.$store.state.branding.accentColor}`
