@@ -23,7 +23,9 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMap;
 import edu.usu.sdl.openstorefront.core.entity.RoleLink;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserLink;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
@@ -140,7 +142,7 @@ public class ComponentTypeServiceImpl
 		return typeModel;
 	}
 
-	private ComponentType findComponentType(List<ComponentType> componentTypes, String componentTypeId)
+	private ComponentType findComponentType(List<ComponentType> componentTypes, String componentTypeId, boolean throwError)
 	{
 		ComponentType found = null;
 		for (ComponentType componentType : componentTypes) {
@@ -149,7 +151,7 @@ public class ComponentTypeServiceImpl
 				break;
 			}
 		}
-		if (found == null) {
+		if (found == null && throwError) {
 			throw new OpenStorefrontRuntimeException("Unable to find component Type: " + componentTypeId, "Check input");
 		}
 		return found;
@@ -259,6 +261,7 @@ public class ComponentTypeServiceImpl
 				if (newType != null) {
 					removeTypeMigrateData(newComponentType, componentType);
 					removeTypeCleanupAttributes(componentType);
+					removeTypeFromSubmissionTemplates(componentType);
 					removeTypeUpdateChildren(componentTypeFound, newComponentType);
 
 					//remove
@@ -278,6 +281,20 @@ public class ComponentTypeServiceImpl
 			}
 			OSFCacheManager.getComponentCache().removeAll();
 			OSFCacheManager.getComponentTypeCache().removeAll();
+		}
+	}
+
+	private void removeTypeFromSubmissionTemplates(String componentType)
+	{
+		Objects.requireNonNull(componentType);
+
+		SubmissionFormTemplate submissionFormTemplate = new SubmissionFormTemplate();
+		submissionFormTemplate.setEntryType(componentType);
+
+		List<SubmissionFormTemplate> allTemplates = submissionFormTemplate.findByExampleProxy();
+		for (SubmissionFormTemplate template : allTemplates) {
+			template.setEntryType(null);
+			persistenceService.persist(template);
 		}
 	}
 
@@ -317,7 +334,7 @@ public class ComponentTypeServiceImpl
 		if (attributeType.getOptionalRestrictions() != null && !attributeType.getOptionalRestrictions().isEmpty()) {
 			for (int i = attributeType.getOptionalRestrictions().size() - 1; i >= 0; i--) {
 				String checkType = attributeType.getOptionalRestrictions().get(i).getComponentType();
-				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
+				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType, false) == null) {
 					attributeType.getOptionalRestrictions().remove(i);
 					updateAttribute = true;
 				}
@@ -332,7 +349,7 @@ public class ComponentTypeServiceImpl
 		if (attributeType.getRequiredRestrictions() != null && !attributeType.getRequiredRestrictions().isEmpty()) {
 			for (int i = attributeType.getRequiredRestrictions().size() - 1; i >= 0; i--) {
 				String checkType = attributeType.getRequiredRestrictions().get(i).getComponentType();
-				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType) == null) {
+				if (checkType.equals(componentType) || findComponentType(getAllComponentTypes(), checkType, false) == null) {
 					attributeType.getRequiredRestrictions().remove(i);
 					updateAttribute = true;
 				}
@@ -358,6 +375,14 @@ public class ComponentTypeServiceImpl
 		FileDataMap wherefileDataMap = new FileDataMap();
 		wherefileDataMap.setDefaultComponentType(componentType);
 		persistenceService.updateByExample(FileDataMap.class, setfileDataMap, wherefileDataMap);
+
+		UserSubmission setUserSubmission = new UserSubmission();
+		setUserSubmission.setComponentType(newComponentType);
+
+		UserSubmission whereUserSubmission = new UserSubmission();
+		whereUserSubmission.setComponentType(componentType);
+		persistenceService.updateByExample(UserSubmission.class, setUserSubmission, whereUserSubmission);
+
 	}
 
 	public ComponentTypeTemplate saveComponentTemplate(ComponentTypeTemplate componentTypeTemplate)
@@ -579,7 +604,7 @@ public class ComponentTypeServiceImpl
 		ComponentTypeTemplateResolution templateResolution;
 
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
+		ComponentType componentTypeFull = findComponentType(componentTypes, componentType, true);
 
 		if (componentTypeFull.getComponentTypeTemplate() != null) {
 
@@ -649,7 +674,7 @@ public class ComponentTypeServiceImpl
 		ComponentTypeRoleResolution roleResolution;
 
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
+		ComponentType componentTypeFull = findComponentType(componentTypes, componentType, true);
 
 		if (componentTypeFull.getAssignedGroups() != null
 				&& !componentTypeFull.getAssignedGroups().isEmpty()) {
@@ -710,7 +735,7 @@ public class ComponentTypeServiceImpl
 		ComponentTypeUserResolution resolution;
 
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType componentTypeFull = findComponentType(componentTypes, componentType);
+		ComponentType componentTypeFull = findComponentType(componentTypes, componentType, true);
 
 		if (componentTypeFull.getAssignedUsers() != null
 				&& !componentTypeFull.getAssignedUsers().isEmpty()) {
@@ -808,13 +833,13 @@ public class ComponentTypeServiceImpl
 	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType currentComponentType = findComponentType(componentTypes, componentTypeId);
+		ComponentType currentComponentType = findComponentType(componentTypes, componentTypeId, false);
 
 		List<ComponentType> componentTypeParents = new ArrayList<>();
 
 		if (currentComponentType != null && currentComponentType.getParentComponentType() != null) {
 			do {
-				currentComponentType = findComponentType(componentTypes, currentComponentType.getParentComponentType());
+				currentComponentType = findComponentType(componentTypes, currentComponentType.getParentComponentType(), false);
 
 				if (currentComponentType != null) {
 					componentTypeParents.add(currentComponentType);
@@ -832,7 +857,13 @@ public class ComponentTypeServiceImpl
 	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder)
 	{
 		List<ComponentType> componentTypes = getAllComponentTypes();
-		ComponentType typeLocal = findComponentType(componentTypes, componentTypeId);
+		ComponentType typeLocal;
+		try {
+			typeLocal = findComponentType(componentTypes, componentTypeId, true);
+		} catch (OpenStorefrontRuntimeException ex) {
+			LOG.log(Level.WARNING, ex, () -> "Unable to Find Component Type: " + componentTypeId);
+			return "(" + componentTypeId + ")";
+		}
 
 		List<ComponentType> parentChildComponentTypes = new ArrayList<>();
 		List<ComponentType> parentComponentTypes = getComponentTypeParents(componentTypeId, reverseOrder);
@@ -845,11 +876,9 @@ public class ComponentTypeServiceImpl
 			parentChildComponentTypes.addAll(parentComponentTypes);
 		}
 
-		String labels = parentChildComponentTypes.stream()
+		return parentChildComponentTypes.stream()
 				.map(t -> t.getLabel())
 				.collect(Collectors.joining(reverseOrder ? " > " : " < "));
-
-		return labels;
 	}
 
 }

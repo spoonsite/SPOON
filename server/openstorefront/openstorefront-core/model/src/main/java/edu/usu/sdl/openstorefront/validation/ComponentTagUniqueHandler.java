@@ -15,10 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.validation;
 
-
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import java.lang.reflect.Field;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -31,22 +31,22 @@ public class ComponentTagUniqueHandler implements UniqueHandler<ComponentTag>
 	public boolean isUnique(Field field, Object value, ComponentTag fullDataObject)
 	{
 		boolean unique = true;
-		ComponentTag componentTagExample = new ComponentTag();
-		componentTagExample.setComponentId(fullDataObject.getComponentId());
-		List<ComponentTag> componentTags = componentTagExample.findByExample();
+		if (StringUtils.isNotBlank(fullDataObject.getComponentId())) {
+			ComponentTag componentTagExample = new ComponentTag();
+			componentTagExample.setComponentId(fullDataObject.getComponentId());
+			List<ComponentTag> componentTags = componentTagExample.findByExample();
 
-		for (ComponentTag tag : componentTags) {
-			if (ComponentTag.INACTIVE_STATUS.equals(tag.getActiveStatus())) {
-				tag.delete();
-			}
-			else if (!((fullDataObject.getTagId() != null && tag.getTagId() != null) && fullDataObject.getTagId().equals(tag.getTagId()))) {
-				if (tag.getText().toLowerCase().equals(fullDataObject.getText().toLowerCase())) {
-					unique = false;
-					break;
+			for (ComponentTag tag : componentTags) {
+				if (ComponentTag.INACTIVE_STATUS.equals(tag.getActiveStatus())) {
+					tag.delete();
+				} else if (!((fullDataObject.getTagId() != null && tag.getTagId() != null) && fullDataObject.getTagId().equals(tag.getTagId()))) {
+					if (tag.getText().toLowerCase().equals(fullDataObject.getText().toLowerCase())) {
+						unique = false;
+						break;
+					}
 				}
 			}
 		}
-
 		return unique;
 	}
 

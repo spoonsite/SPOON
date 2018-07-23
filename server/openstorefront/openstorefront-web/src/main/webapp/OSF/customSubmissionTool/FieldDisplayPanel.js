@@ -16,147 +16,214 @@
  /* Author: cyearsley */
 /* global Ext, CoreUtil, CoreService */
 
+/**
+ * The FieldDisplayPanel is responsible for "rendering" items in the form field viewport.
+ */
 Ext.define('OSF.customSubmissionTool.FieldDisplayPanel', {
 	extend: 'Ext.container.Container',
-	alias: 'widget.osf-csf-displaypanel',
+	xtype: 'osf-csf-displaypanel',
 	requires: ['OSF.customSubmissionTool.FloatingMenu'],
+	layout: 'border',
 
-	scrollable: true,
 	bodyStyle: 'padding: 5px;',
 	style: 'background: #fff;',
+	untitledSectionName: '<b style="color: red;">Untitled Section</b> <i class="fa fa-exclamation-triangle" style="color: orange;" data-qtip="This section needs a name" aria-hidden="true"></i>',
 	addItem: function (item) {
 		this.queryById('itemContainer').add(item);
 
 	},
-	getFieldItems: function () {
 
-		var items = this.queryById('itemContainer').getRefItems();
-		var dataItems = [];
-
-		Ext.Array.forEach(items, function (el, index) {
-			dataItems.push({
-				question: el.question
-				//TODO specify other field attributes (e.g. fieldType)
-			});
-		});
-
-		return dataItems;
-	},
+	/**
+	 * Create an formBuilderItem given the sectionItem's data
+	 * @param sectionItem - data representation of a form item
+	 */
 	createItem: function (sectionItem) {
-
-		return Ext.create({
-			xtype: 'osf-formbuilderitem',
-			question: sectionItem.question
-		});
-	},
-	saveSection: function () {
-
 		var displayPanel = this;
-		var formBuilderPanel = displayPanel.up('[itemId=formBuilderPanel]');
-		var sectionFormValues = displayPanel.queryById('sectionContainer').getForm().getFieldValues();
 
-		var navNeedsUpdate = false;
-
-		if (sectionFormValues.name) {
-
-			if (formBuilderPanel.activeSection.name !== sectionFormValues.name) {
-
-				navNeedsUpdate = true;
-			}
-
-			formBuilderPanel.activeSection.name = sectionFormValues.name;
-			formBuilderPanel.activeSection.instructions = sectionFormValues.instructions;
-		}
-
-		if (navNeedsUpdate) {
-
-			formBuilderPanel.sectionPanel.updateNavList();
-		}
-
-		if (formBuilderPanel.activeSection) {
-			formBuilderPanel.activeSection.fieldItems = displayPanel.getFieldItems()
-		}
+		var formBuilderPanel = displayPanel.formBuilderPanel;
+		return Ext.create(
+			Ext.apply(
+				formBuilderPanel.generateSectionObject(sectionItem),
+				{xtype: 'osf-formbuilderitem'}
+			)
+		);
 	},
-	loadSection: function (section, saveSection) {
+	
+	updateFieldPanels: function() {
+		var displayPanel = this;	
+		var itemContainer = displayPanel.queryById('itemContainer');
+		Ext.Array.each(itemContainer.items.items, function(fieldItem){
+			fieldItem.resyncfieldOptions();	
+		});		
+	},
+	
+	reloadCurrentSection: function() {
+		var displayPanel = this;	
+		displayPanel.loadSection(displayPanel.section, null, true);
+	},
 
-		var displayPanel = this;
-		saveSection = typeof saveSection !== 'undefined' ? saveSection : true;
+	/**
+	 * physically inserts all form items in a section onto the display panel
+	 * @param section
+	 * @param activeFieldId
+	 * @param fullRefresh (forces a full reload)
+	 */
+	loadSection: function (section, activeFieldId, fullRefresh) {
 
-		if (saveSection) {
-			displayPanel.saveSection();
-		}
-
-		var formBuilderPanel = displayPanel.up('[itemId=formBuilderPanel]');
+		var displayPanel = this;		
+		var formBuilderPanel = displayPanel.formBuilderPanel;
+		var sectionContainer = displayPanel.queryById('sectionContainer');
 		var sectionForm = displayPanel.queryById('sectionContainer').getForm();
 		var itemContainer = displayPanel.queryById('itemContainer');
+				
+		
+		
+		if (!section) {
+			displayPanel.queryById('selectionMessage').setHidden(false);
+			sectionContainer.setHidden(true);			
+			return;
+		} else {
+						
+			if ((displayPanel.section && displayPanel.section.sectionId === section.sectionId) && 
+					!fullRefresh) {
+				
+				if (activeFieldId) {
+					displayPanel.selectQuestion(activeFieldId, itemContainer);
+				}
+			 
+			} else {
+				itemContainer.removeAll();		
+				
+				displayPanel.queryById('selectionMessage').setHidden(true);
+				sectionContainer.setHidden(false);
+				displayPanel.section = section;
+				displayPanel.formBuilderPanel.activeSection = section;
 
-		// reset the section form to the sections current values...
-		sectionForm.setValues({
-			name: section.name,
-			instructions: section.instructions
-		});
+				displayPanel.queryById('menu').formBuilderPanel = formBuilderPanel;
+				displayPanel.queryById('menu').setHidden(false);
 
-		// clear current item container
-		itemContainer.removeAll();
+				//load questions
+				var newFieldItems = [];
+				Ext.Array.each(section.fields, function(field){
+					newFieldItems.push({
+						xtype: 'osf-formbuilderitem',
+						formBuilderPanel: formBuilderPanel,
+						floatingMenu: displayPanel.queryById('menu'),
+						templateField: field
+					});
+				});		
+				itemContainer.add(newFieldItems);
+				Ext.defer(function(){
+					itemContainer.updateLayout(true, true);
+				}, 200);
+				
 
-		// create items and add them to the itemsContainer
-		var fieldItems = [];
-		for (var i = 0; i < section.fieldItems.length; i++) {
-
-			fieldItems.push(displayPanel.createItem(section.fieldItems[i]));
+				if (activeFieldId) {
+					displayPanel.selectQuestion(activeFieldId, itemContainer);
+				} else {
+					if (newFieldItems.length > 0) {
+						itemContainer.items.items[0].setActiveFormItem();
+					} else {
+						formBuilderPanel.activeItem = null;
+					}
+				}			
+				
+				// reset the section form to the sections current values...
+				sectionForm.setValues({
+					name: section.name === displayPanel.untitledSectionName ? '' : section.name,
+					instructions: section.instructions
+				});				
+			}
 		}
 
-		itemContainer.add(fieldItems);
 
-		// set the first item as active (need to push this back on the stack though...)
-		Ext.defer(function () {
-			itemContainer.query('[cls=form-builder-item]')[0].setActiveFormItem();
-		},1);
-
-		formBuilderPanel.activeSection = section;
+		
 	},
+	selectQuestion: function(activeFieldId, itemContainer){
+		var displayPanel = this;
+		
+		Ext.Array.each(itemContainer.items.items, function(fieldItem){
+			if (fieldItem.templateField.fieldId === activeFieldId) {
+				fieldItem.setActiveFormItem();
+				
+				var y = fieldItem.getEl().dom.offsetTop;
+				displayPanel.queryById('center').scrollTo(0, y, false);												
+
+			}
+		});		
+	},		
 	items: [
 		{
-			xtype: 'form',
-			itemId: 'sectionContainer',
-			padding: 10,
-			items: [
-				{
-					xtype: 'textfield',
-					name: 'name',
-					emptyText: 'Untitled Section',
-					width: '100%'					
-				},
-				{
-					xtype: 'textarea',
-					name: 'instructions',
-					emptyText: 'Instructions',
-					width: '100%'					
-				}
-			]
-		},
+			xtype: 'panel',
+			region: 'north',
+			itemId: 'selectionMessage',
+			html: '<h1>Add or Select a Section.</h1>'
+		},	
 
 		// display area for fieldItems and the floating menu
 		{
-			xtype: 'container',
-			layout: 'column',
+			xtype: 'panel',
+			region: 'center',
+			itemId: 'center',
+			scrollable: true,
+			bodyStyle: 'padding: 10px;',
+			layout: 'anchor',
+			dockedItems: [
+				{
+					xtype: 'osf-csf-floatingMenu',
+					dock: 'bottom',
+					itemId: 'menu',
+					width: '100%'						
+				}
+			],			
+			minHeight: 50,			
 			items: [
 				{
-					xtype: 'container',
-					itemId: 'itemContainer',
-					columnWidth: 0.9,
-				},
-				{
-					xtype: 'container',
-					height: '100%',
-					padding: '10 40 0 20',
-					columnWidth: 0.1,
+					xtype: 'form',
+					width: '100%',
+					itemId: 'sectionContainer',
+					hidden: true,					
 					items: [
 						{
-							xtype: 'osf-csf-floatingMenu',
-							formBuilderPanel: Ext.getCmp('formBuilderPanel')
+							xtype: 'textfield',
+							fieldLabel: 'Section Title',
+							name: 'name',
+							emptyText: 'Untitled Section',
+							width: '100%',
+							listeners: {
+								change: function (field, newValue, oldValue, opts) {
+									var displayPanel = this.up('osf-csf-displaypanel');							
+									displayPanel.section.name = newValue;							
+									displayPanel.formBuilderPanel.updateSection(displayPanel.section);
+								}
+							}
+						},
+						{	
+							xtype: 'tinymce_textarea',
+							itemId: 'description',
+							fieldStyle: 'font-family: Courier New; font-size: 12px;',
+							style: { border: '0' },					
+							width: '100%',
+							height: 250,
+							name: 'instructions',			
+							maxLength: 65536,
+							emptyText: 'Instructions',
+							tinyMCEConfig: CoreUtil.tinymceConfigNoMedia(),				
+							listeners: {
+								change: function (field, newValue, oldValue, opts) {
+									var displayPanel = this.up('osf-csf-displaypanel');							
+									displayPanel.section.instructions = newValue;							
+									displayPanel.formBuilderPanel.updateSection(displayPanel.section);							
+								}
+							}
 						}
 					]
+				},				
+				{
+					xtype: 'container',
+					layout: 'anchor',
+					width: '100%',
+					itemId: 'itemContainer'
 				}
 			]
 		}

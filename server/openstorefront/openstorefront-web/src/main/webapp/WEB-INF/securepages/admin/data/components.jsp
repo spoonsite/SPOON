@@ -359,7 +359,7 @@
 																		}
 																	});
 
-																	if (record == null) {
+																	if (record === null) {
 																		//means this is a change request
 																		record = Ext.create('Ext.data.Model', {
 																		});
@@ -2149,7 +2149,6 @@
 						// Ensure Pieces Of The Action Button Are Enabled
 						Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(false);
-						Ext.getCmp('lookupGrid-tools-action-merge').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(false);
 					}
 					else if (componentGrid.getSelectionModel().getCount() > 1) {
@@ -2166,7 +2165,6 @@
 						// Disable Pieces Of The Action Button
 						Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-action-merge').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(true);
 					}
 					else {

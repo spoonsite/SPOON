@@ -16,33 +16,48 @@
  * See NOTICE.txt for more information.
  */
 
+/* global Ext */
+
 Ext.define('OSF.customSubmission.form.Relationships', {
-	extend: 'Ext.form.Panel',
+	extend: 'OSF.customSubmission.SubmissionBaseForm',
+	xtype: 'osf-submissionform-relationships',
+	
+	layout: 'anchor',
+	bodyStyle: 'padding: 10px',
+	defaults: {
+		width: '100%',
+		maxWidth: 800,
+		labelAlign: 'top',
+		labelSeparator: ''		
+	},
+	
 	initComponent: function () {
 		this.callParent();
 		
-		this.add([
-			Ext.create('OSF.component.StandardComboBox',{
+		var relationshipPanel = this;
+		
+		relationshipPanel.add([
+			{
+				xtype: 'StandardComboBox',
+				itemId: 'relationshipType',
 				name: 'relationshipType',
 				allowBlank: false,
 				editable: false,
 				typeAhead: false,
-				width: 450,
 				margin: '0 0 0 0',
 				fieldLabel: 'Relationship Type <span class="field-required" />',
 				storeConfig: {
 					url: 'api/v1/resource/lookuptypes/RelationshipType'
 				}
-				}),
-			Ext.create('OSF.component.StandardComboBox', {
-				name: 'componentType',
-				colName: 'Entry Type',
+			},
+			{
+				xtype: 'StandardComboBox',
+				name: 'componentType',	
 				allowBlank: true,
 				editable: false,
 				typeAhead: false,
 				emptyText: 'All',
 				margin: '0 0 0 0',
-				width:450,
 				fieldLabel: 'Entry Type',
 				storeConfig: {
 					url: 'api/v1/resource/componenttypes/lookup',
@@ -66,21 +81,47 @@ Ext.define('OSF.customSubmission.form.Relationships', {
 						});
 					}
 				}
-				}),											
-			Ext.create('OSF.component.StandardComboBox', {
+			},											
+			{
+				xtype: 'StandardComboBox',
 				itemId: 'relationshipTargetCB',
 				name: 'relatedComponentId',
 				colName: 'Target Entry',
 				allowBlank: false,
 				margin: '0 0 10 0',
-				width: 450,
 				fieldLabel: 'Target Entry <span class="field-required" />',
 				forceSelection: true,
 				storeConfig: {
 					url: 'api/v1/resource/components/lookup?status=A&approvalState=ALL',
 					autoLoad: true
 				}
-			})							
-		]);		
+			}							
+		]);	
+		
+		if (relationshipPanel.section) {
+			var initialData = relationshipPanel.section.submissionForm.getFieldData(relationshipPanel.fieldTemplate.fieldId);
+			if (initialData) {
+				var data = Ext.decode(initialData);
+				var record = Ext.create('Ext.data.Model', {				
+				});
+				record.set(data[0]);
+				relationshipPanel.loadRecord(record);			
+			}			
+		}	
+		
+	},
+	getSubmissionValue: function() {
+		var relationshipPanel = this;
+		
+		var data = relationshipPanel.getValues();
+		delete data.componentType;		
+		
+		var userSubmissionField = {			
+			templateFieldId: relationshipPanel.fieldTemplate.fieldId,
+			rawValue: Ext.encode([
+				data
+			])
+		};		
+		return userSubmissionField;			
 	}
 });

@@ -28,6 +28,7 @@ import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -57,17 +58,24 @@ public class SubmissionFormTemplate
 	private String description;
 
 	@NotNull
-	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = SubmissionTemplateStatus.class)
 	@FK(SubmissionTemplateStatus.class)
 	private String templateStatus;
+
+	private String templateStatusDetail;
+
+	private Boolean defaultTemplate;
 
 	@ConsumeField
 	@DataType(SubmissionFormSection.class)
 	@Embedded
 	@OneToMany(orphanRemoval = true)
 	private List<SubmissionFormSection> sections;
+
+	@ConsumeField
+	@FK(value = ComponentType.class, enforce = true)
+	private String entryType;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public SubmissionFormTemplate()
@@ -84,8 +92,28 @@ public class SubmissionFormTemplate
 		this.setName(template.getName());
 		this.setDescription(template.getDescription());
 		this.setTemplateStatus(template.getTemplateStatus());
+		this.setTemplateStatusDetail(template.getTemplateStatusDetail());
 		this.setSections(template.getSections());
+		this.setDefaultTemplate(template.getDefaultTemplate());
+		this.setEntryType(template.getEntryType());
 
+		updateSectionLinks();
+
+	}
+
+	public void updateSectionLinks()
+	{
+		if (getSections() != null) {
+			for (SubmissionFormSection section : getSections()) {
+				section.setTemplateId(getSubmissionTemplateId());
+				if (StringUtils.isBlank(section.getCreateUser())) {
+					section.populateBaseCreateFields();
+				} else {
+					section.populateBaseUpdateFields();
+				}
+				section.updateFieldLinks();
+			}
+		}
 	}
 
 	public String getSubmissionTemplateId()
@@ -136,6 +164,36 @@ public class SubmissionFormTemplate
 	public void setSections(List<SubmissionFormSection> sections)
 	{
 		this.sections = sections;
+	}
+
+	public Boolean getDefaultTemplate()
+	{
+		return defaultTemplate;
+	}
+
+	public void setDefaultTemplate(Boolean defaultTemplate)
+	{
+		this.defaultTemplate = defaultTemplate;
+	}
+
+	public String getEntryType()
+	{
+		return entryType;
+	}
+
+	public void setEntryType(String entryType)
+	{
+		this.entryType = entryType;
+	}
+
+	public String getTemplateStatusDetail()
+	{
+		return templateStatusDetail;
+	}
+
+	public void setTemplateStatusDetail(String templateStatusDetail)
+	{
+		this.templateStatusDetail = templateStatusDetail;
 	}
 
 }

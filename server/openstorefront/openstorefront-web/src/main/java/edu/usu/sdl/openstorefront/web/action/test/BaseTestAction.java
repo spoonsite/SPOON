@@ -170,7 +170,7 @@ public abstract class BaseTestAction
 		StringBuilder testCase = new StringBuilder();
 		for (BaseTestCase test : testSuiteModel.getTests()) {
 			testCount++;
-			testCase.append("\n<testcase id='contaierTests.")
+			testCase.append("\n<testcase id='containerTests.")
 					.append(testSuiteModel.getName().replace(" ", ""))
 					.append(".")
 					.append(test.getDescription().replace(" ", ""))
@@ -190,7 +190,7 @@ public abstract class BaseTestAction
 			testCase.append("</testcase>");
 		}
 
-		testsuite.append("\n<testsuite id='contaierTests.")
+		testsuite.append("\n<testsuite id='containerTests.")
 				.append(testSuiteModel.getName().replace(" ", ""))
 				.append("' name='")
 				.append(testSuiteModel.getName())
@@ -262,14 +262,27 @@ public abstract class BaseTestAction
 
 	private void printHtmlSummary(TestSuiteModel testSuiteModel, StringBuilder output)
 	{
+		output.append("<h3>PASSED TESTS</h3><hr><br>");
 		for (BaseTestCase test : testSuiteModel.getTests()) {
-			String passed = "<span style='color: green'> PASSED </span>";
-			if (!test.isSuccess()) {
-				passed = "<span style='color: red'> FAILED </span>";
+			if (test.isSuccess()) {
+				output.append("Test: <b>")
+						.append(test.getDescription())
+						.append("</b>...")
+						.append("<span style='color: green'> PASSED </span>").append(" <br>");
 			}
-
-			output.append("Test: <b>").append(test.getDescription()).append("</b>...").append(passed).append(" <br>");
 		}
+
+		output.append("<h3>FAILED TESTS</h3><hr><br>");
+		for (BaseTestCase test : testSuiteModel.getTests()) {
+			if (!test.isSuccess()) {
+				output.append("Test: <b>")
+						.append(test.getDescription())
+						.append("</b>...")
+						.append("<span style='color: red'> FAILED </span>")
+						.append(" <br>");
+			}
+		}
+
 	}
 
 	protected Resolution sendReport(String reportData)

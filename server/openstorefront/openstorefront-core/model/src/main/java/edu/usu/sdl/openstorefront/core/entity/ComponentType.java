@@ -116,10 +116,6 @@ public class ComponentType
 	@ConsumeField
 	private String componentTypeTemplate;
 
-	@FK(value = SubmissionFormTemplate.class, enforce = true)
-	@ConsumeField
-	private String submissionTemplateId;
-
 	@ConsumeField
 	@APIDescription("This url to an icon for a type; Typically points to general media")
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -166,7 +162,6 @@ public class ComponentType
 		this.setAssignedUsers(componentTypeLocal.getAssignedUsers());
 		this.setParentComponentType(componentTypeLocal.getParentComponentType());
 		this.setIncludeIconInSearch(componentTypeLocal.getIncludeIconInSearch());
-		this.setSubmissionTemplateId(componentTypeLocal.getSubmissionTemplateId());
 
 	}
 
@@ -368,16 +363,6 @@ public class ComponentType
 	public void setIncludeIconInSearch(Boolean includeIconInSearch)
 	{
 		this.includeIconInSearch = includeIconInSearch;
-	}
-
-	public String getSubmissionTemplateId()
-	{
-		return submissionTemplateId;
-	}
-
-	public void setSubmissionTemplateId(String submissionTemplateId)
-	{
-		this.submissionTemplateId = submissionTemplateId;
 	}
 
 }

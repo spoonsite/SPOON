@@ -92,10 +92,14 @@ public class APIAction
 		classList.addAll(resolverUtil.getClasses());
 		for (Class apiResourceClass : classList) {
 			if (BaseResource.class.getName().equals(apiResourceClass.getName()) == false) {
-				LookupModel lookupModel = new LookupModel();
-				lookupModel.setCode(apiResourceClass.getSimpleName());
-				lookupModel.setDescription(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(apiResourceClass.getSimpleName())).replace("Resource", "").replace("REST", ""));
-				resourceClasses.add(lookupModel);
+
+				//skip extensions classes
+				if (!apiResourceClass.getSimpleName().endsWith("Ext")) {
+					LookupModel lookupModel = new LookupModel();
+					lookupModel.setCode(apiResourceClass.getSimpleName());
+					lookupModel.setDescription(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(apiResourceClass.getSimpleName())).replace("Resource", "").replace("REST", ""));
+					resourceClasses.add(lookupModel);
+				}
 			}
 		}
 
