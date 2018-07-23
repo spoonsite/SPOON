@@ -61,6 +61,7 @@ Vue.filter('formatDate', function (value, formatString) {
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)));
 
 store.dispatch('setCurrentUser');
+store.dispatch('getSecurityPolicy');
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
     theme: {

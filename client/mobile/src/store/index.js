@@ -7,10 +7,14 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     currentUser: {},
-    branding: {}
+    branding: {},
+    securitypolicy: {}
   },
   // mutations must be synchronous
   mutations: {
+    setSecurityPolicy (state, response) {
+      state.securitypolicy = response.data;
+    },
     setCurrentUser (state, response) {
       state.currentUser = response.data;
     },
@@ -24,10 +28,21 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    setCurrentUser (context) {
+    getSecurityPolicy (context) {
+      axios.get('/openstorefront/api/v1/resource/securitypolicy')
+        .then(response => {
+          context.commit('setSecurityPolicy', response);
+        });
+    },
+    setCurrentUser (context, callback) {
       axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
           context.commit('setCurrentUser', response);
+        })
+        .finally(() => {
+          if (callback) {
+            callback();
+          }
         });
     },
     getBranding (context, callback) {
@@ -36,7 +51,9 @@ export default new Vuex.Store({
           context.commit('setBranding', response);
         })
         .finally(() => {
-          callback();
+          if (callback) {
+            callback();
+          }
         });
     }
   },

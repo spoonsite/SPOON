@@ -1,14 +1,7 @@
 <template lang="html">
 
 <section class="user-profile-page">
-<!-- Errors -->
-<v-flex xs12>
-  <div v-if="errors.length > 0">
-    <ul>
-      <li v-for="error in errors" :key="error" v-html='error'></li>
-    </ul>
-  </div>
-</v-flex>
+<v-alert :value="disableForm" type="info">Editing user information has been disabled by the admin.</v-alert>
 
 <v-form ref="form" v-model="valid" lazy-validation>
 <v-container grid-list-xl text-xs-center>
@@ -17,7 +10,7 @@
   <v-flex xs12 sm6 pt-0 pb-0>
     <v-text-field
       ref="firstName"
-      v-model="firstName"
+      v-model="user.firstName"
       name="fname"
       :rules="[rules.required]"
       required
@@ -25,12 +18,13 @@
       maxLength="80"
       placeholder="John"
       label="First Name"
+      :disabled="disableForm"
     ></v-text-field>
   </v-flex>
   <v-flex xs12 sm6 pt-0 pb-0>
     <v-text-field
       ref="lastName"
-      v-model="lastName"
+      v-model="user.lastName"
       name="lname"
       :rules="[rules.required]"
       required
@@ -38,6 +32,7 @@
       maxLength="80"
       placeholder="Doe"
       label="Last Name"
+      :disabled="disableForm"
     ></v-text-field>
   </v-flex>
   <v-flex xs12 pt-0 pb-0>
@@ -46,13 +41,14 @@
       type="email"
       name="email"
       id="email"
-      v-model="email"
+      v-model="user.email"
       :rules="[rules.required, rules.email]"
       required
       maxLength="1000"
       placeholder="name@example.com"
       label="Email address"
       hint="Enter your email. Example: my.name@example.com"
+      :disabled="disableForm"
     ></v-text-field>
   </v-flex>
   <v-flex xs12 pt-0 pb-0>
@@ -60,13 +56,14 @@
     https://github.com/googlei18n/libphonenumber -->
     <v-text-field
       ref="phone"
-      v-model="phone"
+      v-model="user.phone"
       name="phone"
       type="tel"
       maxLength="80"
       placeholder="(123) 456-7890"
       label="Phone number"
       hint="Enter your phone number"
+      :disabled="disableForm"
     ></v-text-field>
   </v-flex>
   <v-flex xs12 pt-0 pb-0>
@@ -78,22 +75,24 @@
       item-value="description"
       :filter="orgFilter"
       :rules="[rules.required]"
-      v-model="currentOrg"
+      v-model="user.currentOrg"
       label="Select an Organization"
       required
       maxLength="120"
       combobox
       hint="Type to filter or click to select"
+      :disabled="disableForm"
     ></v-select>
   </v-flex>
   <v-flex xs12 pt-0 pb-0>
     <v-text-field
       ref="user_position"
-      v-model="position"
+      v-model="user.position"
       name="organization-title"
       maxLength="255"
       label="Position Title"
       hint="Enter your current title"
+      :disabled="disableForm"
     ></v-text-field>
   </v-flex>
   <v-flex xs12 pt-0>
@@ -103,10 +102,11 @@
       item-text="description"
       item-value="description"
       :rules="[rules.required]"
-      v-model="userTypeCode"
+      v-model="user.userTypeCode"
       label="User Role"
       required
       hint="Click to select a role"
+      :disabled="disableForm"
     ></v-select>
   </v-flex>
   <!-- Notification Checkboxes -->
@@ -121,33 +121,29 @@
       ref="periodic_notify"
       label="Notify about Updates"
       ripple
-      v-model="notify"
+      v-model="user.notify"
       id="notify"
+      :disabled="disableForm"
     ></v-switch>
+  </v-flex>
+  <!-- Save Button -->
+  <v-flex xs12 sm10>
+    <v-btn
+      :disabled="!valid || disableForm || !formChanged"
+      :loading="saving"
+      block
+      @click="updateProfile"
+      color="accent"
+    >Save</v-btn>
   </v-flex>
   <!-- Reset Button -->
   <v-flex xs12 sm2>
     <v-btn
+      :disabled="!valid || disableForm || !formChanged"
       block
-      v-on:click="reset"
+      @click="reset"
       color="accent"
     >Reset Form</v-btn>
-  </v-flex>
-  <!-- Save Button -->
-  <v-flex xs12 sm10>
-    <v-alert v-model="saved" type="success" dismissible>
-      Updated User Profile
-    </v-alert>
-    <v-alert v-model="errorOnSave" type="error" dismissible>
-      Error saving updates to User Profile
-    </v-alert>
-    <v-btn
-      v-if="!saved && !errorOnSave"
-      :disabled="!valid"
-      block
-      v-on:click="updateProfile"
-      color="accent"
-    >Save</v-btn>
   </v-flex>
 </v-layout>
 </v-container>
@@ -163,61 +159,60 @@ export default {
   name: 'user-profile-page',
   mixins: [validators],
   mounted () {
-    this.getCurrentUserName();
+    this.setUserInfo();
     this.getOrgs();
     this.getRoles();
   },
   data () {
     return {
       errors: [],
+      user: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        currentOrg: '',
+        position: '',
+        userTypeCode: '',
+        notify: false
+      },
+      cachedUser: {},
       username: '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
       organizations: [],
-      currentOrg: undefined,
-      position: '',
       userTypeCodes: [],
-      userTypeCode: undefined,
-      notify: false,
       monthly: false,
-      saved: false,
-      errorOnSave: false,
-      valid: true
+      saving: false,
+      valid: true,
+      formChanged: false
     };
   },
+  computed: {
+    disableForm () {
+      return !!this.$store.state.securitypolicy.disableUserInfoEdit;
+    }
+  },
+  watch: {
+    user: {
+      handler (after, before) {
+        this.formChanged = JSON.stringify(this.user) !== JSON.stringify(this.cachedUser);
+      },
+      deep: true
+    }
+  },
   methods: {
-    getRestOfUserData () {
-      let url = '/openstorefront/api/v1/resource/userprofiles/' + this.username;
-      this.$http
-        .get(url)
-        .then(response => {
-          let org;
-          if (response.data.organization) {
-            org = {'code': '', 'description': response.data.organization};
-          } else {
-            org = '';
-          }
-          this.firstName = response.data.firstName;
-          this.lastName = response.data.lastName;
-          this.email = response.data.email;
-          this.phone = response.data.phone;
-          this.currentOrg = org;
-          this.position = response.data.positionTitle;
-          this.userTypeCode = response.data.userTypeDescription;
-          this.notify = response.data.notifyOfNew;
-        })
-        .catch(e => this.errors.push(e));
-    },
-    getCurrentUserName () {
-      this.$http
-        .get('/openstorefront/api/v1/resource/userprofiles/currentuser')
-        .then(response => {
-          this.username = response.data.username;
-          if (this.username !== 'ANONYMOUS') { this.getRestOfUserData(); }
-        })
-        .catch(e => this.errors.push(e));
+    setUserInfo () {
+      this.user.firstName = this.$store.state.currentUser.firstName;
+      this.user.lastName = this.$store.state.currentUser.lastName;
+      this.user.email = this.$store.state.currentUser.email;
+      this.user.phone = this.$store.state.currentUser.phone;
+      this.user.currentOrg = this.$store.state.currentUser.organization;
+      this.user.position = this.$store.state.currentUser.positionTitle;
+      this.user.userTypeCode = this.$store.state.currentUser.userTypeDescription;
+      this.user.notify = this.$store.state.currentUser.notifyOfNew;
+
+      this.username = this.$store.state.currentUser.username;
+
+      this.cachedUser = JSON.parse(JSON.stringify(this.user));
     },
     orgFilter (item, queryText, itemText) {
       const hasValue = val => val != null ? val : '';
@@ -232,8 +227,7 @@ export default {
         .get('/openstorefront/api/v1/resource/organizations/lookup')
         .then(response => {
           this.organizations = response.data;
-        })
-        .catch(e => this.errors.push(e));
+        });
     },
     getRoles () {
       this.$http
@@ -242,37 +236,41 @@ export default {
           this.userTypeCodes = response.data.filter(item => {
             return item.activeStatus === 'A';
           });
-        })
-        .catch(e => this.errors.push(e));
+        });
     },
     updateProfile () {
       if (this.$refs.form.validate()) {
+        this.saving = true;
         let newProfile = {
-          'userTypeCode': this.userTypeCodes.find(each => each.description === this.userTypeCode).code, // User Role
-          'firstName': this.firstName,
-          'lastName': this.lastName,
-          'email': this.email,
-          'phone': this.phone,
-          'positionTitle': this.position,
-          'organization': typeof this.currentOrg === 'string' ? this.currentOrg : this.currentOrg.description,
-          'notifyOfNew': this.notify
+          'firstName': this.user.firstName,
+          'lastName': this.user.lastName,
+          'email': this.user.email,
+          'phone': this.user.phone,
+          'organization': this.user.currentOrg,
+          'positionTitle': this.user.position,
+          'userTypeCode': this.userTypeCodes.find(each => each.description === this.user.userTypeCode).code, // User Role
+          'notifyOfNew': this.user.notify
         };
 
         this.$http
           .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, newProfile)
           .then(response => {
-            this.saved = true;
-            this.getRestOfUserData();
-            this.$store.dispatch('setCurrentUser', this.$http);
+            // resyncing the user data
+            this.$store.dispatch('setCurrentUser', () => {
+              this.setUserInfo();
+            });
+            this.$toasted.show('Profile updated');
+            this.saving = false;
+            this.formChanged = false;
           })
           .catch(e => {
-            this.errors.push(e);
-            this.errorOnSave = true;
+            this.$toasted.error('Error updating profile');
+            this.saving = false;
           });
       }
     },
     reset () {
-      this.getRestOfUserData();
+      this.user = JSON.parse(JSON.stringify(this.cachedUser));
     }
   }
 };
