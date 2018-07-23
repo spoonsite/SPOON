@@ -37,6 +37,7 @@ public class WorkPlanStepActionType
 	public static final String APPROVE_ENTRY = "APPROVE_ENTRY";
 	public static final String PENDING_ENTRY = "PENDING_ENTRY";
 	public static final String INACTIVATE_ENTRY = "INACTIVATE_ENTRY";
+	public static final String ACTIVATE_ENTRY = "ACTIVATE_ENTRY";
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public WorkPlanStepActionType()
@@ -52,6 +53,7 @@ public class WorkPlanStepActionType
 		codeMap.put(APPROVE_ENTRY, newLookup(WorkPlanStepActionType.class, APPROVE_ENTRY, "Approve Entry"));
 		codeMap.put(PENDING_ENTRY, newLookup(WorkPlanStepActionType.class, PENDING_ENTRY, "Set Entry to Pending"));
 		codeMap.put(INACTIVATE_ENTRY, newLookup(WorkPlanStepActionType.class, INACTIVATE_ENTRY, "Inactivate Entry"));
+		codeMap.put(ACTIVATE_ENTRY, newLookup(WorkPlanStepActionType.class, ACTIVATE_ENTRY, "Activate Entry"));
 
 		return codeMap;
 	}

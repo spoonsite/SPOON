@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+
 /**
  *
  * @author cyearsley
@@ -22,5 +25,54 @@ package edu.usu.sdl.openstorefront.core.api;
 public interface WorkPlanService
 		extends AsyncService
 {
-	
+
+	/**
+	 * Saves a work plan
+	 *
+	 * @param workPlan
+	 * @return
+	 */
+	WorkPlan saveWorkPlan(WorkPlan workPlan);
+
+	/**
+	 * Activates a plan / deactivate plan that other active plan that have the
+	 * same entry types
+	 *
+	 * @param workPlanId
+	 */
+	void activateWorkPlan(String workPlanId);
+
+	/**
+	 * Deletes a workplan and transfer to a new workplan...
+	 *
+	 * @param workPlanId
+	 * @param newWorkPlanId (if null) then it will go back to default
+	 */
+	void removeWorkPlan(String workPlanId, String newWorkPlanId);
+
+	/**
+	 * Pulls the current plan for the Component or creates one if needed
+	 *
+	 * @param componentId
+	 * @return
+	 */
+	WorkPlanLink getWorkPlanForComponent(String componentId);
+
+	/**
+	 * Assigns a WorkPlan for a Component
+	 *
+	 * @param componentId
+	 * @param username
+	 * @param roleGroup
+	 */
+	void assignWorkPlanForComponent(String componentId, String username, String roleGroup);
+
+	/**
+	 * Moves a Component to a new workflow step
+	 *
+	 * @param nextStepId
+	 * @return
+	 */
+	WorkPlanLink moveComponentToStep(String nextStepId);
+
 }

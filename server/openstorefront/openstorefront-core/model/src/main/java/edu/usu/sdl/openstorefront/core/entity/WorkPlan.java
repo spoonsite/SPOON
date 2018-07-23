@@ -98,6 +98,9 @@ public class WorkPlan
 
 	private Boolean defaultWorkPlan;
 
+	@ConsumeField
+	private String adminRole;
+
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public WorkPlan()
 	{
@@ -121,6 +124,7 @@ public class WorkPlan
 		this.setSteps(workPlan.getSteps());
 		this.setSubStatusColor(workPlan.getSubStatusColor());
 		this.setWorkPlanType(workPlan.getWorkPlanType());
+		this.setAdminRole(workPlan.getAdminRole());
 	}
 
 	public String getWorkPlanId()
@@ -241,6 +245,16 @@ public class WorkPlan
 	public void setEvaluationTemplateId(String evaluationTemplateId)
 	{
 		this.evaluationTemplateId = evaluationTemplateId;
+	}
+
+	public String getAdminRole()
+	{
+		return adminRole;
+	}
+
+	public void setAdminRole(String adminRole)
+	{
+		this.adminRole = adminRole;
 	}
 
 }

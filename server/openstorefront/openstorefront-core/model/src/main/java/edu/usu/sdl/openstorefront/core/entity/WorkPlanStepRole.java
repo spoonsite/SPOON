@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.core.entity;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
-import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.Version;
@@ -30,7 +29,7 @@ import javax.validation.constraints.Size;
  * @author dshurtleff
  */
 @Embeddable
-public class WorkPlanStepPermission
+public class WorkPlanStepRole
 		implements Serializable
 {
 
@@ -39,25 +38,24 @@ public class WorkPlanStepPermission
 	@NotNull
 	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
-	@ValidValueType(value = {}, lookupClass = SecurityPermission.class)
-	@FK(SecurityPermission.class)
-	private String securityPermission;
+	@FK(SecurityRole.class)
+	private String securityRole;
 
 	@Version
 	private String storageVersion;
 
-	public WorkPlanStepPermission()
+	public WorkPlanStepRole()
 	{
 	}
 
-	public String getSecurityPermission()
+	public String getSecurityRole()
 	{
-		return securityPermission;
+		return securityRole;
 	}
 
-	public void setSecurityPermission(String securityPermission)
+	public void setSecurityRole(String securityRole)
 	{
-		this.securityPermission = securityPermission;
+		this.securityRole = securityRole;
 	}
 
 	public String getStorageVersion()

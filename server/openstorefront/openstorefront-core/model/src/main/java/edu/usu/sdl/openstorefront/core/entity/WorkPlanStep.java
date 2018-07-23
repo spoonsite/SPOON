@@ -60,13 +60,13 @@ public class WorkPlanStep
 
 	@ConsumeField
 	@Embedded
-	@DataType(WorkPlanStep.class)
+	@DataType(WorkPlanStepRole.class)
 	@OneToMany(orphanRemoval = true)
-	private List<WorkPlanStepPermission> stepPermission;
+	private List<WorkPlanStepRole> stepRole;
 
 	@ConsumeField
-	@ValidValueType(value = { OpenStorefrontConstant.AND_CONDITION, OpenStorefrontConstant.OR_CONDITION })
-	private String permissionLogicCondition;
+	@ValidValueType(value = {OpenStorefrontConstant.AND_CONDITION, OpenStorefrontConstant.OR_CONDITION})
+	private String roleLogicCondition;
 
 	@NotNull
 	@ConsumeField
@@ -109,8 +109,8 @@ public class WorkPlanStep
 		this.setApprovalStateToMatch(workPlanStep.getApprovalStateToMatch());
 		this.setStepOrder(workPlanStep.getStepOrder());
 		this.setTriggerEvents(workPlanStep.getTriggerEvents());
-		this.setStepPermission(workPlanStep.getStepPermission());
-		this.setPermissionLogicCondition(workPlanStep.getPermissionLogicCondition());
+		this.setStepRole(workPlanStep.getStepRole());
+		this.setRoleLogicCondition(workPlanStep.getRoleLogicCondition());
 
 	}
 
@@ -184,19 +184,23 @@ public class WorkPlanStep
 		this.triggerEvents = triggerEvents;
 	}
 
-	public List<WorkPlanStepPermission> getStepPermission() {
-		return stepPermission;
+	public List<WorkPlanStepRole> getStepRole()
+	{
+		return stepRole;
 	}
 
-	public void setStepPermission(List<WorkPlanStepPermission> stepPermission) {
-		this.stepPermission = stepPermission;
+	public void setStepRole(List<WorkPlanStepRole> stepRole)
+	{
+		this.stepRole = stepRole;
 	}
 
-	public String getPermissionLogicCondition() {
-		return permissionLogicCondition;
+	public String getRoleLogicCondition()
+	{
+		return roleLogicCondition;
 	}
 
-	public void setPermissionLogicCondition(String permissionLogicCondition) {
-		this.permissionLogicCondition = permissionLogicCondition;
+	public void setRoleLogicCondition(String roleLogicCondition)
+	{
+		this.roleLogicCondition = roleLogicCondition;
 	}
 }
