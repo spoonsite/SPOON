@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.entity;
+package edu.usu.sdl.openstorefront.service.workplan;
 
 /**
  *
  * @author dshurtleff
  */
-public class WorkflowAction
+public class WorkPlanEngine
 {
 
 }

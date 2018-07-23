@@ -178,6 +178,13 @@
 				}				
 			});	
 			dataMenu.push({
+				text: 'Workplans',
+				permission: ['ADMIN-WORKPLAN-PAGE'],
+				handler: function(){
+					actionLoadContent('Workplans');
+				}				
+			});		
+			dataMenu.push({
 				text: 'Relationships',
 				permission: ['ADMIN-RELATIONSHIPS-PAGE'],
 				handler: function(){

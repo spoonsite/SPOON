@@ -182,6 +182,58 @@ Ext.define('OSF.component.RoleGroupMultiSelectComboBox', {
 	}
 });
 
+Ext.define('OSF.component.ActiveOnMultiSelectComboBox', {
+	extend: 'OSF.component.RoleGroupMultiSelectComboBox',
+	alias: 'widget.ActiveOnMultiCombo',
+
+	store: {
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/lookuptypes/EntityEventType'
+		}
+	}
+});
+
+Ext.define('OSF.component.EntryTypeMultiSelect', {
+	extend: 'OSF.component.RoleGroupMultiSelectComboBox',
+	alias: 'widget.EntryTypeMultiSelect',
+
+	store: {
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/componenttypes/lookup'
+		}
+	}
+});
+
+Ext.define('OSF.component.UserCustomEmailCombo', {
+	extend: 'Ext.form.field.Tag',
+	alias: 'widget.UserCustomEmailCombo',
+
+	displayField: 'email',
+	valueField: 'email',
+	queryMode: 'local',
+	createNewOnEnter: true,
+	width: '100%',
+	store: {
+		autoload: true,
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/userprofiles'
+		},
+		listeners: {
+			load: function (store, records) {
+				
+				store.setData(records[0].getData().data);
+			}
+		}
+	},
+	initComponent: function () {
+		this.callParent();
+		this.getStore().load();
+	}
+});
+
 Ext.define('OSF.component.RoleGroupSingleSelectComboBox', {
 	extend: 'Ext.form.field.ComboBox',
 	alias: 'widget.RoleGroupSingleSelectComboBox',
