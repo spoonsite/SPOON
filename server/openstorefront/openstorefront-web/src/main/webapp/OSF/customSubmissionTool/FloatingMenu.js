@@ -44,11 +44,11 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 				var floatingMenuPanel = button.up('panel');
 				
 				var popupMenu = Ext.create('Ext.menu.Menu', {
-					floating: true,
+					floating: true,					
 					items: [
 						{
-							text: 'Short Answer',
-							iconCls: 'fa fa-minus fa-2x',					
+							text: 'Mappable Field',
+							iconCls: 'fa fa-minus fa-2x',
 							menu: [
 								{
 									text: 'Mapped Text',
@@ -58,7 +58,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 										click: function (menuItem, e, opts) {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
-									}									
+									}
 								},
 								{
 									text: 'Mapped Number',
@@ -79,20 +79,10 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
 									}
-								}
-							]
-						},
-						{
-							text: 'Paragraph',
-							iconCls: 'fa fa-align-left fa-2x',
-							defaults: {
-								listeners: {
-									click: function (menuItem, e, opts) {
-										floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
-									}
-								}
-							},								
-							menu: [
+								},
+								{
+									xtype: 'menuseparator'
+								},								
 								{
 									text: 'Mapped TextArea',
 									fieldType: 'TEXTAREA',
@@ -112,47 +102,9 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
 									}
-								}
-							]
-						},
-						{
-							xtype: 'menuseparator'
-						},
-						{
-							text: 'Multiple Choice',
-							iconCls: 'fa fa-dot-circle-o fa-2x',
-							fieldType: 'ATTRIBUTE_RADIO',
-							mappingType: 'COMPLEX',
-							listeners: {
-								click: function (menuItem, e, opts) {
-									floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
-								}
-							}
-						},
-						{
-							text: 'Checkboxes',
-							iconCls: 'fa fa-check-square-o fa-2x',
-							fieldType: 'ATTRIBUTE_MCHECKBOX',
-							mappingType: 'COMPLEX',
-							listeners: {
-								click: function (menuItem, e, opts) {
-									floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
-								}
-							}
-						},
-						{
-							text: 'Dropdown',
-							iconCls: 'fa fa-chevron-circle-down fa-2x',						
-							menu: [
+								},
 								{
-									text: 'Attribute Select',
-									fieldType: 'ATTRIBUTE_SINGLE',
-									mappingType: 'COMPLEX',
-									listeners: {
-										click: function (menuItem, e, opts) {
-											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
-										}
-									}									
+									xtype: 'menuseparator'
 								},
 								{
 									text: 'Entry Organization',
@@ -163,14 +115,57 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
 									}																		
-								}
+								}								
+							]
+						},
+
+						{
+							xtype: 'menuseparator'
+						},
+						{
+							text: 'Attribute',
+							iconCls: 'fa fa-plus-circle fa-2x',					
+							menu: [
+								{
+									text: 'Attribute Dropdown Select',
+									iconCls: 'fa fa-chevron-circle-down fa-2x',	
+									fieldType: 'ATTRIBUTE_SINGLE',
+									mappingType: 'COMPLEX',
+									listeners: {
+										click: function (menuItem, e, opts) {
+											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
+										}
+									}									
+								},
+								{
+									text: 'Multiple Choice',
+									iconCls: 'fa fa-dot-circle-o fa-2x',
+									fieldType: 'ATTRIBUTE_RADIO',
+									mappingType: 'COMPLEX',
+									listeners: {
+										click: function (menuItem, e, opts) {
+											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
+										}
+									}
+								},
+								{
+									text: 'Checkboxes',
+									iconCls: 'fa fa-check-square-o fa-2x',
+									fieldType: 'ATTRIBUTE_MCHECKBOX',
+									mappingType: 'COMPLEX',
+									listeners: {
+										click: function (menuItem, e, opts) {
+											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
+										}
+									}
+								}								
 							]
 						},
 						{
 							xtype: 'menuseparator'
 						},
 						{
-							text: 'Grid',
+							text: 'Grid/Table',
 							iconCls: 'fa fa-table fa-2x',
 							defaults: {
 								listeners: {
@@ -188,7 +183,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 										click: function (menuItem, e, opts) {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
-									}									
+									}
 								},								
 								{
 									text: 'Attributes (Optional)',
@@ -198,7 +193,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 										click: function (menuItem, e, opts) {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
-									}									
+									}								
 								},
 								{
 									text: 'Contacts',
@@ -248,7 +243,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 										click: function (menuItem, e, opts) {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
-									}																			
+									}																		
 								},								
 								{
 									text: 'Tags',
@@ -259,7 +254,8 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
 									}																			
-								},															
+								}
+								/* 	//Child Submissions are not 100% supported 							
 								{
 									text: 'Child Submissions',
 									fieldType: 'SUBMISSIONS',
@@ -270,18 +266,12 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 										}
 									}																			
 								}	
+								*/
 							]
 						},
 						{
 							text: 'Form',
 							iconCls: 'fa fa-file-text-o fa-2x',
-							defaults: {
-								listeners: {
-									click: function (menuItem, e, opts) {
-										floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
-									}
-								}
-							},							
 							menu: [
 								{
 									text: 'Single Contact',
@@ -291,7 +281,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 										click: function (menuItem, e, opts) {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
-									}									
+									}								
 								},
 								{
 									text: 'Single Resource',
@@ -307,7 +297,9 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 						}
 					]
 				});
-				popupMenu.showAt(button.getXY());
+				var location = button.getXY();
+				location[1] = location[1] - 150;
+				popupMenu.showAt(location);
 			}
 		},
 		{
@@ -338,7 +330,7 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 			handler: function() {
 				var floatingMenuPanel = this.up('panel');
 				floatingMenuPanel.addNewItem(null, 'CONTENT', 'NONE', {
-					staticContent: '<hr>'
+					staticContent: '_____________________________________________'
 				});				
 			}					
 		},
