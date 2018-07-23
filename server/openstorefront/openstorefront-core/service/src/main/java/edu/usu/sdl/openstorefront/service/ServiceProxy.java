@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
 import edu.usu.sdl.openstorefront.core.api.SystemArchiveService;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
+import edu.usu.sdl.openstorefront.core.api.WorkPlanService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
@@ -105,6 +106,7 @@ public class ServiceProxy
 	private SystemArchiveServicePrivate systemArchiveServicePrivate;
 	private HelpSupportService helpSupportService;
 	private FaqService faqService;
+	private WorkPlanService workPlanService;
 	private SubmissionFormService submissionFormService;
 
 	private FilterEngine filterEngine;
@@ -527,6 +529,15 @@ public class ServiceProxy
 		}
 		return faqService;
 
+	}
+	
+	@Override
+	public WorkPlanService getWorkPlanService()
+	{
+		if (workPlanService == null) {
+			workPlanService = DynamicProxy.newInstance(new WorkPlanServiceImpl());
+		}
+		return workPlanService;
 	}
 
 	@Override
