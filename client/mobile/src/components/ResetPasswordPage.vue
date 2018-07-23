@@ -12,7 +12,7 @@
                 label="Existing Password"
                 type="password"
                 v-model="existing"
-                :rules="existingRules"
+                :rules="[rules.required]"
               ></v-text-field>
               <v-text-field
                 prepend-icon="lock"
@@ -20,7 +20,7 @@
                 label="New Password"
                 type="password"
                 v-model="password1"
-                :rules="password1Rules"
+                :rules="[rules.required, rules.password]"
               ></v-text-field>
               <v-text-field
                 prepend-icon="lock"
@@ -60,11 +60,12 @@
 </template>
 
 <script lang="js">
+import validators from '../util/validators';
+
 export default {
   name: 'reset-password-page',
-  props: [],
+  mixins: [validators],
   mounted () {
-
   },
   data: function () {
     return {
@@ -73,19 +74,8 @@ export default {
       errorText: 'Error',
       valid: false,
       existing: '',
-      existingRules: [
-        v => !!v || 'Username is required'
-      ],
       password1: '',
       password2: '',
-      password1Rules: [
-        v => !!v || 'Password is required',
-        v => {
-          let regex = new RegExp('^(?=.*[A-Z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{8,}$');
-          return regex.test(v) ||
-          `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least 8 characters`;
-        }
-      ],
       password2Rules: [
         v => !!v || 'Password verification is required',
         v => this.password1 === this.password2 || 'Passwords must match'
