@@ -60,7 +60,7 @@ public class WorkPlanStep
 
 	@ConsumeField
 	@Embedded
-	@DataType(WorkPlanStep.class)
+	@DataType(WorkPlanStepPermission.class)
 	@OneToMany(orphanRemoval = true)
 	private List<WorkPlanStepPermission> stepPermission;
 

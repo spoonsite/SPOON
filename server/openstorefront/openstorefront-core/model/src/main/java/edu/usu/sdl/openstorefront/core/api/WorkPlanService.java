@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.core.api;
 
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import java.util.List;
+
 /**
  *
  * @author cyearsley
@@ -22,5 +25,39 @@ package edu.usu.sdl.openstorefront.core.api;
 public interface WorkPlanService
 		extends AsyncService
 {
+	/**
+	 * Gets all WorkPlans
+	 *
+	 * @return List<WorkPlan>
+	 */
+	public List<WorkPlan> getWorkPlans();
 	
+	/**
+	 * Gets a single workplan
+	 *
+	 * @return WorkPlan
+	 */
+	public WorkPlan getWorkPlan(String id);
+	
+	/**
+	 * Create a workplan
+	 *
+	 * @return WorkPlan
+	 */
+	public WorkPlan createWorkPlan(WorkPlan workPlan);
+	
+	/**
+	 * Updates a workplan
+	 *
+	 * @return WorkPlan
+	 */
+	public WorkPlan updateWorkPlan(String workPlanId, WorkPlan newWorkPlan);
+	
+	/**
+	 * Deletes a workplan
+	 *
+	 * @param workPlanId
+	 * @return
+	 */
+	public void deleteWorkPlan(String workPlanId);
 }
