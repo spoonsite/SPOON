@@ -56,15 +56,21 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <LoadingOverlay v-model="isLoading"></LoadingOverlay>
   </div>
 </template>
 
 <script lang="js">
 import validators from '../util/validators';
+import LoadingOverlay from './subcomponents/LoadingOverlay';
 
 export default {
   name: 'reset-password-page',
   mixins: [validators],
+  components: {
+    LoadingOverlay
+  },
   mounted () {
   },
   data: function () {
@@ -72,6 +78,7 @@ export default {
       confirmationDialog: false,
       errorDialog: false,
       errorText: 'Error',
+      isLoading: false,
       valid: false,
       existing: '',
       password1: '',
@@ -84,6 +91,7 @@ export default {
   },
   methods: {
     submitUpdate () {
+      this.isLoading = true;
       this.$http.post(`/openstorefront/api/v1/service/security/checkPassword`,
         {
           existingPassword: this.existing,
@@ -93,9 +101,12 @@ export default {
         .then(postResponse => {
           this.submitPutRequest();
         })
-        .catch(error => console.log(error));
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
     submitPutRequest () {
+      this.isLoading = true;
       this.$http.put('/openstorefront/api/v1/resource/users/currentuser/resetpassword',
         {
           existingPassword: this.existing,
@@ -107,16 +118,15 @@ export default {
             if (putResponse.data.errors.entry) {
               this.errorText = putResponse.data.errors.entry[0].value;
               this.errorDialog = true;
-              console.log(putResponse.data.errors.entry);
             }
           }
         })
         .finally(() => {
+          this.isLoading = false;
           if (this.errorDialog === false) {
             this.confirmationDialog = true;
           }
-        })
-        .catch(error => console.log(error));
+        });
     }
 
   },
