@@ -49,6 +49,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 			
 			formItems.push({
 				xtype: 'checkbox',
+				itemId: 'fillInCB',
 				name: 'use',
 				boxLabel: 'Edit form',
 				noDisable: true,
@@ -239,15 +240,34 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						var form = this.up('form');
+						
+						var fillInValue;
+						if (contactPanel.queryById('fillInCB')) {
+							fillInValue = contactPanel.queryById('fillInCB').getValue();
+						}
+						
 						if(this.getSelectionModel().getCount() > 0){
-							var contactType = form.getForm().findField('contactType').getValue();
+							
+							var contactType;
+							if (form.getForm().findField('contactType')) {
+								contactType = form.getForm().findField('contactType').getValue();
+							}
+							
 							form.reset();
 							form.loadRecord(this.getSelection()[0]);
-							form.getForm().findField('contactType').setValue(contactType);
+							
+							if (contactType) {
+								form.getForm().findField('contactType').setValue(contactType);
+							}
 						}
 						else{
 							form.reset();
 						}
+						
+						if (fillInValue) {
+							form.queryById('fillInCB').setValue(fillInValue);
+						}						
+						
 					}
 				}				
 			}
@@ -311,19 +331,28 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 	getSubmissionValue: function() {
 		var contactPanel = this;
 		
-		var data = contactPanel.getValues();
-		
-		if (contactPanel.fieldTemplate.contactType) {
-			data.contactType = contactPanel.fieldTemplate.contactType;
+		var createContact = true;
+		if (contactPanel.queryById('fillInCB') && !contactPanel.queryById('fillInCB').getValue()) {
+			createContact = false;
 		}
-		
-		var userSubmissionField = {			
-			templateFieldId: contactPanel.fieldTemplate.fieldId,
-			rawValue: Ext.encode([
-				data
-			])
-		};		
-		return userSubmissionField;		
+
+		if (createContact) {
+			var data = contactPanel.getValues();
+
+			if (contactPanel.fieldTemplate.contactType) {
+				data.contactType = contactPanel.fieldTemplate.contactType;
+			}
+
+			var userSubmissionField = {
+				templateFieldId: contactPanel.fieldTemplate.fieldId,
+				rawValue: Ext.encode([
+					data
+				])
+			};
+			return userSubmissionField;
+		} else {
+			return null;
+		}
 	}	
 	
 });

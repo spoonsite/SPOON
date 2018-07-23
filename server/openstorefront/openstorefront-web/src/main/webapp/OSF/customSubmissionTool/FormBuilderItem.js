@@ -421,7 +421,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/lookuptypes/ContactType'
+							url: 'api/v1/resource/lookuptypes/ContactType?addSelect=true'
 						}				
 					}
 				},		
