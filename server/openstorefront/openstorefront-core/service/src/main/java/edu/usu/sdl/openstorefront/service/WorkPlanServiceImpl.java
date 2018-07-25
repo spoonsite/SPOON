@@ -17,9 +17,6 @@ package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.core.api.WorkPlanService;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 
 /**

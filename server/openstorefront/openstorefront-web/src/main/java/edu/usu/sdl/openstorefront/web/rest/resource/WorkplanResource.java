@@ -21,8 +21,8 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
-import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -62,7 +62,7 @@ public class WorkplanResource
 	}
 	
 	@GET
-	@RequireSecurity(SecurityPermission.USER_WORKPLAN_READ)
+	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
 	@APIDescription("Gets a single Work Plan")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(WorkPlan.class)
@@ -84,9 +84,27 @@ public class WorkplanResource
 		return sendSingleEntityResponse(entity);
 	}
 	
+	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
+	@APIDescription("Gets a Work Plan for a component")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlan.class)
+	@Path("/component/{id}")
+	public Response getWorkPlanForComponent(@PathParam("id") String componentId)
+	{
+		
+		WorkPlanLink workPlan = service.getWorkPlanService().getWorkPlanForComponent(componentId);
+		
+		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workPlan)
+			{
+			};
+		
+		return sendSingleEntityResponse(entity);
+	}
+	
 	@POST
 	@APIDescription("Creates a Work Plan")
-	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_CREATE)
+	@RequireSecurity(SecurityPermission.USER_WORKPLAN_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response createWorkPlan(WorkPlan workPlan)
@@ -133,6 +151,42 @@ public class WorkplanResource
 	{
 		service.getWorkPlanService().activateWorkPlan(workPlanId);
 		return Response.status(Response.Status.OK).build();
+	}
+	
+	@PUT
+	@APIDescription("Assigns a workplan for a component")
+	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/assign/component{id}")
+	public Response assignWorkplanForComponent(
+			@PathParam("id") String componentId,
+			String username,
+			String roleGroup
+	)
+	{
+		service.getWorkPlanService().assignWorkPlanForComponent(componentId, username, roleGroup);
+		return Response.status(Response.Status.OK).build();
+	}
+	
+	@PUT
+	@APIDescription("Moves component to specified step")
+	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/movecomponent/{componentId}/tostep/{stepId}")
+	public Response moveComponentToStep(
+			@PathParam("componentId") String componentId,
+			@PathParam("stepId") String stepId
+	)
+	{
+		WorkPlanLink workPlanLink = service.getWorkPlanService().moveComponentToStep(stepId, componentId);
+		
+		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workPlanLink)
+			{
+			};
+		
+		return sendSingleEntityResponse(entity);
 	}
 	
 	@DELETE
