@@ -85,7 +85,7 @@ public class WorkplanResource
 	}
 	
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
+	@RequireSecurity(SecurityPermission.USER_WORKPLAN_READ)
 	@APIDescription("Gets a Work Plan for a component")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(WorkPlan.class)
@@ -104,7 +104,7 @@ public class WorkplanResource
 	
 	@POST
 	@APIDescription("Creates a Work Plan")
-	@RequireSecurity(SecurityPermission.USER_WORKPLAN_READ)
+	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_CREATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response createWorkPlan(WorkPlan workPlan)
@@ -171,7 +171,6 @@ public class WorkplanResource
 	
 	@PUT
 	@APIDescription("Moves component to specified step")
-	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/movecomponent/{componentId}/tostep/{stepId}")
@@ -180,6 +179,7 @@ public class WorkplanResource
 			@PathParam("stepId") String stepId
 	)
 	{
+		// TODO: check to see if the current user can move the component to the specified step
 		WorkPlanLink workPlanLink = service.getWorkPlanService().moveComponentToStep(stepId, componentId);
 		
 		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workPlanLink)
