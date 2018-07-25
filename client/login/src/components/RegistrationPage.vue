@@ -2,7 +2,24 @@
   <v-layout mt-3 mx-3>
     <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
 
-      <h2>Registration - Fill out the form to signup for an account</h2>
+      <h2 class="headline text-xs-center">Registration
+        <v-btn
+          v-if="$store.state.branding.loginRegistrationVideoUrl"
+          @click="videoDialog = true"
+          icon
+          small
+          color="accent"
+          style="position: relative; bottom: 1em; right: 0.5em;"
+        ><v-icon>fas fa-question</v-icon></v-btn>
+      </h2>
+
+      <v-dialog
+        v-if="$store.state.branding.loginRegistrationVideoUrl"
+        v-model="videoDialog"
+        max-width="800px"
+      >
+        <video ref="registrationVideo" controls class="video elevation-5" :src="$store.state.branding.loginRegistrationVideoUrl"></video>
+      </v-dialog>
 
       <v-layout row wrap>
       <v-flex xs12 mt-3>
@@ -210,6 +227,7 @@ export default {
       verificationLoading: false,
       signupLoading: false,
       successDialog: false,
+      videoDialog: false,
       errors: {
         username: [],
         password: [],
@@ -348,6 +366,15 @@ export default {
     verificationValid () {
       return this.credentials.valid && this.userInformation.valid;
     }
+  },
+  watch: {
+    videoDialog (newState, oldState) {
+      if (!newState) {
+        this.$refs.registrationVideo.pause();
+      } else {
+        this.$refs.registrationVideo.play();
+      }
+    }
   }
 };
 </script>
@@ -367,7 +394,11 @@ export default {
   float: left;
 }
 .icon {
-  padding-right: 0.5em;
+  color: white;
+  font-size: 12px;
+}
+.icon:hover {
+  cursor: pointer;
 }
 @media screen and (max-width: 599px) {
   .btn1 {
@@ -378,5 +409,9 @@ export default {
     padding-left: 0;
     width: 100%;
   }
+}
+.video {
+  width: 100%;
+  display: block;
 }
 </style>
