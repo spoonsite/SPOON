@@ -40,13 +40,13 @@
       </div>
 
       <div class="lightboxControl">
-        <v-btn v-if="list.length > 1" flat icon small dark @click="lightboxPrev()">
+        <v-btn v-if="list.length > 1" flat icon dark @click="lightboxPrev()">
           <v-icon dark>navigate_before</v-icon>
         </v-btn>
-        <v-btn icon small dark style="margin-left: 2em; margin-right: 2em;" @click="lightbox = false;">
+        <v-btn icon dark style="margin-left: 2em; margin-right: 2em;" @click="lightbox = false;">
           <v-icon dark>clear</v-icon>
         </v-btn>
-        <v-btn v-if="list.length > 1" flat icon small dark @click="lightboxNext()">
+        <v-btn v-if="list.length > 1" flat icon dark @click="lightboxNext()">
           <v-icon dark>navigate_next</v-icon>
         </v-btn>
       </div>
@@ -115,7 +115,7 @@ export default {
     bottom: 0%;
     position: fixed;
     width: 100%;
-    z-index: 991;
+    z-index: 999;
     text-align: center;
     background-color: rgba(39, 39, 39, 0.7);
   }
