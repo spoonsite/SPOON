@@ -156,8 +156,8 @@ export default {
       drawer: false,
       links: [
         { link: '/', icon: 'home', name: 'Home' },
-        { link: '/watches', icon: 'binoculars', name: 'Watch Page' },
-        { link: '/sme-approval', icon: 'check', name: 'SME Approval' },
+        { link: '/watches', icon: 'binoculars', name: 'Watches' },
+        // { link: '/sme-approval', icon: 'check', name: 'SME Approval' },
         { link: '/submission-status', icon: 'sticky-note', name: 'Submission Status' },
         { link: '/faq', icon: 'question', name: 'F.A.Q.' },
         { link: '/contact', icon: 'comment', name: 'Contact' },
@@ -227,7 +227,6 @@ header {
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 5;
 }
 .nav-drawer {
   background-color: white;
