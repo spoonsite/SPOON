@@ -171,7 +171,7 @@ export default {
         lastName: '',
         email: '',
         phone: '',
-        currentOrg: '',
+        currentOrg: {},
         position: '',
         userTypeCode: '',
         notify: false
@@ -205,7 +205,7 @@ export default {
       this.user.lastName = this.$store.state.currentUser.lastName;
       this.user.email = this.$store.state.currentUser.email;
       this.user.phone = this.$store.state.currentUser.phone;
-      this.user.currentOrg = this.$store.state.currentUser.organization;
+      this.user.currentOrg = {code: '', description: this.$store.state.currentUser.organization};
       this.user.position = this.$store.state.currentUser.positionTitle;
       this.user.userTypeCode = this.$store.state.currentUser.userTypeDescription;
       this.user.notify = this.$store.state.currentUser.notifyOfNew;
@@ -246,7 +246,7 @@ export default {
           'lastName': this.user.lastName,
           'email': this.user.email,
           'phone': this.user.phone,
-          'organization': this.user.currentOrg,
+          'organization': this.user.currentOrg.description,
           'positionTitle': this.user.position,
           'userTypeCode': this.userTypeCodes.find(each => each.description === this.user.userTypeCode).code, // User Role
           'notifyOfNew': this.user.notify
