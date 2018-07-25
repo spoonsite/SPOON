@@ -1,7 +1,9 @@
 <template lang="html">
   <div class="submission-status-page">
 
-    <v-expansion-panel v-if="data && data.length > 0">
+  <v-layout v-if="data && data.length > 0" mt-3 mx-2>
+    <v-flex xs12 md6 offset-md3>
+    <v-expansion-panel popout>
       <v-expansion-panel-content v-for="item in data" :key="item.name">
         <div slot="header">
           <h3>
@@ -10,7 +12,7 @@
               {{ item.name }}
             </h3>
           </div>
-        <v-card>
+        <v-card class="grey lighten-5">
           <v-card-text>
             <p>
               <strong>Submission Status: </strong>{{ item.approvalStateLabel }}
@@ -28,6 +30,8 @@
         </v-card>
       </v-expansion-panel-content>
     </v-expansion-panel>
+    </v-flex>
+  </v-layout>
 
     <v-container v-else-if="!loading" text-xs-center>
       <h2>You don't have any submissions.</h2>
@@ -104,5 +108,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+  .centeralign {
+    margin-right: auto;
+    margin-left: auto;
+  }
 </style>

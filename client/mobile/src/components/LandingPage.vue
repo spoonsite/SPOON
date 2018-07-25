@@ -19,7 +19,7 @@
           </div>
           <v-list-tile-content>
 
-          <router-link :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}" style="width: 100%;">
+          <router-link :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}" style="width: 100%; text-decoration: none;">
               {{ item.componentType.label }}
           </router-link>
 

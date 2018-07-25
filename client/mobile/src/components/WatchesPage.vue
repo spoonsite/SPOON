@@ -4,8 +4,9 @@
 
     <LoadingOverlay v-model="loading"></LoadingOverlay>
 
-    <div  v-if="watches.length > 0">
-      <v-expansion-panel popout class="mt-3">
+    <v-layout v-if="watches.length > 0" mt-3 mx-2>
+    <v-flex xs12 md6 offset-md3>
+      <v-expansion-panel popout>
         <v-expansion-panel-content v-for="item in watches" :key="item.componentName">
           <div slot="header" v-if="item.lastUpdateDts > item.lastViewDts" class="light-green accent-1">
             <strong>{{ item.componentName }}</strong>
@@ -13,7 +14,7 @@
           <div slot="header" v-else>
             {{ item.componentName }}
           </div>
-          <v-card>
+          <v-card class="grey lighten-5">
             <v-card-text>
               <p>
                 <strong>Last update to entry: </strong>  {{ item.lastUpdateDts | formatDate('YYYY/MM/DD hh:mm') }}
@@ -28,7 +29,8 @@
           </v-card>
         </v-expansion-panel-content>
       </v-expansion-panel>
-    </div>
+    </v-flex>
+    </v-layout>
 
     <v-container v-else-if="!loading" text-xs-center>
       <h2>You aren't watching any entries.</h2>
@@ -85,4 +87,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  .centeralign {
+    margin-right: auto;
+    margin-left: auto;
+  }
 </style>

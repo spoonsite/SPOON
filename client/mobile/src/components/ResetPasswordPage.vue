@@ -1,46 +1,36 @@
 <template lang="html">
   <div>
 
-    <v-layout mt-3 mx-3>
+    <v-layout mt-3 mx-4>
+    <v-flex xs12 sm6 offset-sm3 md4 offset-md4>
       <v-form v-model="valid" @submit.prevent="submitEmail()">
-        <v-container grid-list-xl text-xs-center>
-          <v-layout row wrap>
-            <v-flex xs12 sm6 pt-0 pb-0>
-              <v-text-field
-                prepend-icon="vpn_key"
-                name="exesting-password"
-                label="Existing Password"
-                type="password"
-                v-model="existing"
-                :rules="[rules.required]"
-              ></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm6 pt-0 pb-0>
-              <v-text-field
-                prepend-icon="lock"
-                name="password1"
-                label="New Password"
-                type="password"
-                v-model="password1"
-                :rules="[rules.required, rules.password]"
-              ></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm6 pt-0 pb-0>
-              <v-text-field
-                prepend-icon="lock"
-                name="password2"
-                label="Verify New Password"
-                type="password"
-                v-model="password2"
-                :rules="password2Rules"
-              ></v-text-field>
-            </v-flex>
-            <v-flex>
-              <v-btn :disabled="!valid" block color="accent" @click="submitUpdate()">Update Password</v-btn>
-            </v-flex>
-          </v-layout>
-        </v-container>
+        <v-text-field
+          prepend-icon="vpn_key"
+          name="exesting-password"
+          label="Existing Password"
+          type="password"
+          v-model="existing"
+          :rules="[rules.required]"
+        ></v-text-field>
+        <v-text-field
+          prepend-icon="lock"
+          name="password1"
+          label="New Password"
+          type="password"
+          v-model="password1"
+          :rules="[rules.required, rules.password]"
+        ></v-text-field>
+        <v-text-field
+          prepend-icon="lock"
+          name="password2"
+          label="Verify New Password"
+          type="password"
+          v-model="password2"
+          :rules="password2Rules"
+        ></v-text-field>
+        <v-btn :disabled="!valid" block color="accent" @click="submitUpdate()">Update Password</v-btn>
       </v-form>
+    </v-flex>
     </v-layout>
 
     <v-dialog v-model="confirmationDialog" max-width="300px">

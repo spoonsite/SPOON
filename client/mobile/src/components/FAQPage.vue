@@ -1,6 +1,6 @@
 <template>
-<v-layout mt-3 mx-3>
-  <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
+  <v-layout mt-3 mx-2>
+    <v-flex xs12 md6 offset-md3>
     <v-expansion-panel popout>
       <v-expansion-panel-content v-for="entry in questions" :key="entry.faqSortOrder" ripple>
       <div slot="header" class="title">{{entry.question}}</div>

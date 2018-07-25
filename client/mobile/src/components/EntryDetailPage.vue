@@ -12,12 +12,13 @@
       :list="lightboxList"
     ></Lightbox>
 
-    <div class="centeralign mt-3 mx-2" style="max-width: 46em;">
+    <v-layout mt-3 mx-2>
+    <v-flex xs12 md6 offset-md3>
     <v-expansion-panel popout>
 
       <v-expansion-panel-content>
         <div slot="header">Summary</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
             <h2>Component Type</h2>
             <hr>
@@ -57,7 +58,7 @@
 
       <v-expansion-panel-content v-if="detail.attributes && detail.attributes.length !== 0">
         <div slot="header">Attributes</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
             <v-data-table
               :headers="attributeTableHeaders"
@@ -76,7 +77,7 @@
 
       <v-expansion-panel-content v-if="detail.componentMedia && detail.componentMedia.length > 0">
         <div slot="header">Media Download</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
             <ul class="fa-ul">
             <li
@@ -127,7 +128,7 @@
 
       <v-expansion-panel-content v-if="detail.resources && detail.resources.length !== 0">
         <div slot="header">Resources</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
             <div v-for="item in detail.resources"
               :key="item.resourceId"
@@ -146,7 +147,7 @@
 
       <v-expansion-panel-content>
         <div slot="header">Reviews</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
             <v-btn style="margin-bottom: 1em;" color="white" @click="writeReviewDialog = true">Write a Review</v-btn>
             <p>
@@ -325,7 +326,7 @@
       <!-- TODO: do this once we're integrated with DI2E -->
       <v-expansion-panel-content v-if="detail.fullEvailation">
         <div slot="header">Evaluation</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
 
           </v-card-text>
@@ -335,7 +336,7 @@
       <!-- TODO: allow authorized users to add tags to the entry -->
       <!-- <v-expansion-panel-content v-if="detail.tags && detail.tags.length !== 0">
         <div slot="header">Tags</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
 
             <div
@@ -355,7 +356,7 @@
 
       <v-expansion-panel-content v-if="detail.contacts && detail.contacts.length !== 0">
         <div slot="header">Contacts</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
             <h2>Points of Contact</h2>
             <div
@@ -378,7 +379,7 @@
 
       <v-expansion-panel-content>
         <div slot="header">Watches</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
             <p>Watch this entry?</p>
             <!-- TODO: make watch api calls -->
@@ -389,7 +390,7 @@
 
       <v-expansion-panel-content>
         <div slot="header">Questions and Answers</div>
-        <v-card class="grey lighten-4">
+        <v-card class="grey lighten-5">
           <v-card-text>
             <v-btn color="white" @click="askQuestionDialog = true">Ask a Question</v-btn>
             <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion" :question="question"></Question>
@@ -421,7 +422,8 @@
     </v-dialog>
 
     </v-expansion-panel>
-    </div>
+    </v-flex>
+    </v-layout>
 
     <LoadingOverlay v-model="isLoading"></LoadingOverlay>
   </div>
