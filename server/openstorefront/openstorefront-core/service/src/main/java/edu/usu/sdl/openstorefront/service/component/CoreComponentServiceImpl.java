@@ -62,6 +62,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentUpdateQueue;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
+import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
@@ -78,6 +79,7 @@ import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
+import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
@@ -189,6 +191,11 @@ public class CoreComponentServiceImpl
 			persistenceService.persist(component);
 			componentService.getUserService().removeAllWatchesForComponent(componentId);
 			cleanupCache(componentId);
+
+			EntityEventModel entityEventModel = new EntityEventModel();
+			entityEventModel.setEventType(EntityEventType.DEACTIVATED);
+			entityEventModel.setEntityChanged(component);
+			componentService.getEntityEventService().processEvent(entityEventModel);
 		}
 	}
 
@@ -205,6 +212,11 @@ public class CoreComponentServiceImpl
 			List<Component> componentsToIndex = new ArrayList<>();
 			componentsToIndex.add(component);
 			componentService.getSearchService().indexComponents(componentsToIndex);
+
+			EntityEventModel entityEventModel = new EntityEventModel();
+			entityEventModel.setEventType(EntityEventType.ACTIVATED);
+			entityEventModel.setEntityChanged(component);
+			componentService.getEntityEventService().processEvent(entityEventModel);
 		}
 		return component;
 	}
@@ -764,6 +776,11 @@ public class CoreComponentServiceImpl
 
 			if (approved) {
 				sendApprovalNotification(component.getComponent());
+
+				EntityEventModel entityEventModel = new EntityEventModel();
+				entityEventModel.setEventType(EntityEventType.APPROVED);
+				entityEventModel.setEntityChanged(component);
+				componentService.getEntityEventService().processEvent(entityEventModel);
 			}
 			cleanupCache(component.getComponent().getComponentId());
 		} else {
@@ -1200,6 +1217,11 @@ public class CoreComponentServiceImpl
 		}
 		componentService.getSearchService().deleteById(componentId);
 		cleanupCache(componentId);
+
+		EntityEventModel entityEventModel = new EntityEventModel();
+		entityEventModel.setEventType(EntityEventType.ENTRY_DELETE);
+		entityEventModel.setEntityChanged(component);
+		componentService.getEntityEventService().processEvent(entityEventModel);
 	}
 
 	private <T extends BaseComponent> void deleteBaseComponent(T example, String componentId, boolean keepMedia)
@@ -1691,6 +1713,12 @@ public class CoreComponentServiceImpl
 				alertContext.setAlertType(AlertType.COMPONENT_SUBMISSION);
 				alertContext.setDataTrigger(component);
 				componentService.getAlertService().checkAlert(alertContext);
+
+				EntityEventModel entityEventModel = new EntityEventModel();
+				entityEventModel.setEventType(EntityEventType.PENDING);
+				entityEventModel.setEntityChanged(component);
+				componentService.getEntityEventService().processEvent(entityEventModel);
+
 			} else {
 				throw new OpenStorefrontRuntimeException("Component: " + component.getName() + " is already Approved. Id: " + componentId);
 			}
@@ -1717,6 +1745,11 @@ public class CoreComponentServiceImpl
 				alertContext.setAlertType(AlertType.CHANGE_REQUEST);
 				alertContext.setDataTrigger(component);
 				componentService.getAlertService().checkAlert(alertContext);
+
+				EntityEventModel entityEventModel = new EntityEventModel();
+				entityEventModel.setEventType(EntityEventType.PENDING_CHANGE_REQUEST);
+				entityEventModel.setEntityChanged(component);
+				componentService.getEntityEventService().processEvent(entityEventModel);
 			} else {
 				throw new OpenStorefrontRuntimeException("Change request: " + component.getName() + " is already Approved.  Id: " + componentId);
 			}
@@ -2477,6 +2510,11 @@ public class CoreComponentServiceImpl
 
 				sendApprovalNotification(component);
 				updateComponentLastActivity(componentId);
+
+				EntityEventModel entityEventModel = new EntityEventModel();
+				entityEventModel.setEventType(EntityEventType.APPROVED);
+				entityEventModel.setEntityChanged(component);
+				componentService.getEntityEventService().processEvent(entityEventModel);
 			}
 		}
 		return component;

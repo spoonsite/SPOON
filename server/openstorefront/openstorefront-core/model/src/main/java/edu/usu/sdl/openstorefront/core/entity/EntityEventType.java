@@ -36,11 +36,13 @@ public class EntityEventType
 	public static final String CREATE = "CREATE";
 	public static final String UPDATE = "UPDATE";
 	public static final String DELETE = "DELETE";
+	public static final String ENTRY_DELETE = "ENTRY_DELETE";
 	public static final String ACTIVATED = "ACTIVATED";
 	public static final String DEACTIVATED = "DEACTIVATED";
 	public static final String APPROVED = "APPROVED";
 	public static final String PENDING = "PENDING";
-	public static final String NOTSUBMITTED = "NOTSUBMITTED";
+	public static final String PENDING_CHANGE_REQUEST = "PENDING_CHANGE_REQUEST";
+	public static final String NEW_SUBMISSION_NOT_SUBMITTTED = "NOTSUBMITTED";
 	public static final String PUBLISH_EVALUATION = "PUBLISH_EVALUATION";
 	public static final String UNPUBLISH_EVALUATION = "UNPUBLISH_EVALUATION";
 
@@ -56,11 +58,13 @@ public class EntityEventType
 		codeMap.put(CREATE, newLookup(EntityEventType.class, CREATE, "Create"));
 		codeMap.put(UPDATE, newLookup(EntityEventType.class, UPDATE, "Update"));
 		codeMap.put(DELETE, newLookup(EntityEventType.class, DELETE, "Delete"));
+		codeMap.put(ENTRY_DELETE, newLookup(EntityEventType.class, ENTRY_DELETE, "Entry Delete"));
 		codeMap.put(ACTIVATED, newLookup(EntityEventType.class, ACTIVATED, "Activate"));
 		codeMap.put(DEACTIVATED, newLookup(EntityEventType.class, DEACTIVATED, "Deactivated"));
 		codeMap.put(APPROVED, newLookup(EntityEventType.class, APPROVED, "Approved"));
 		codeMap.put(PENDING, newLookup(EntityEventType.class, PENDING, "Pending"));
-		codeMap.put(NOTSUBMITTED, newLookup(EntityEventType.class, NOTSUBMITTED, "Not Submitted"));
+		codeMap.put(PENDING_CHANGE_REQUEST, newLookup(EntityEventType.class, PENDING_CHANGE_REQUEST, "Pending Change Request"));
+		codeMap.put(NEW_SUBMISSION_NOT_SUBMITTTED, newLookup(EntityEventType.class, NEW_SUBMISSION_NOT_SUBMITTTED, "New Submission (Not Submitted)"));
 		codeMap.put(PUBLISH_EVALUATION, newLookup(EntityEventType.class, PUBLISH_EVALUATION, "Published Evaluation"));
 		codeMap.put(UNPUBLISH_EVALUATION, newLookup(EntityEventType.class, UNPUBLISH_EVALUATION, "Unpublish Evaluation"));
 

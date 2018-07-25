@@ -99,6 +99,7 @@ public class WorkPlan
 	private Boolean defaultWorkPlan;
 
 	@ConsumeField
+	@FK(SecurityRole.class)
 	private String adminRole;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
