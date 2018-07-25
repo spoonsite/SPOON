@@ -70,8 +70,6 @@ Ext.define('OSF.workplanManagementTool.Window', {
 		
 		this.callParent();
 
-		console.log("WP WINDOW: ", this);
-
 		this.stepManager = this.down('[itemId=stepManager]');
 		this.workplanForm = this.down('[itemId=workplanForm]');
 		this.stepForm = this.down('[itemId=stepForm]');
