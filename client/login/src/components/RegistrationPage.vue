@@ -10,7 +10,7 @@
           small
           color="accent"
           style="position: relative; bottom: 1em; right: 0.5em;"
-        ><v-icon>fas fa-question</v-icon></v-btn>
+        ><v-icon style="font-size: 16px;">fas fa-question</v-icon></v-btn>
       </h2>
 
       <v-dialog
@@ -183,10 +183,10 @@
 
     <div class="button-wrapper mt-2">
       <div class="btn1">
-        <v-btn block color="accent" :loading="signupLoading" :disabled="!valid" @click="register()"><v-icon class="icon" light>check</v-icon>Signup</v-btn>
+        <v-btn block color="accent" :loading="signupLoading" :disabled="!valid" @click="register()"><v-icon class="custon-icon" light>check</v-icon>Signup</v-btn>
       </div>
       <div class="btn2">
-      <v-btn block color="accent" @click="cancel()"><v-icon light class="icon">cancel</v-icon>Cancel</v-btn>
+      <v-btn block color="accent" @click="cancel()"><v-icon light class="custom-icon">cancel</v-icon>Cancel</v-btn>
       </div>
     </div>
 
@@ -203,7 +203,7 @@
           Return to login screen to login with your new username and password.
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="$router.push('/')"><v-icon class="icon">fas fa-sign-in-alt</v-icon>Return to Login</v-btn>
+          <v-btn @click="$router.push('/')"><v-icon class="custom-icon">fas fa-sign-in-alt</v-icon>Return to Login</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -393,7 +393,7 @@ export default {
   width: 50%;
   float: left;
 }
-.icon {
+.custom-icon {
   padding-right: 0.5em;
 }
 @media screen and (max-width: 599px) {
