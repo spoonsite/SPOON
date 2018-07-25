@@ -383,7 +383,7 @@
           <v-card-text>
             <p>Watch this entry?</p>
             <!-- TODO: make watch api calls -->
-            <v-switch color="success" :label="watchSwitch ? 'Watching' : 'Not Watching'" v-model="watchSwitch"></v-switch>
+            <v-switch v-on:click="updateWatch()" color="success" :label="watchSwitch ? 'Watching' : 'Not Watching'" v-model="watchSwitch"></v-switch>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -454,6 +454,7 @@ export default {
     this.lookupTypes();
     this.getDetail();
     this.getQuestions();
+    this.checkWatch();
   },
   data () {
     return {
@@ -500,6 +501,7 @@ export default {
       detail: {},
       questions: {},
       watchSwitch: false,
+      watchId: 'holder',
       hasImage: false,
       lightboxList: [],
       errors: [],
@@ -751,6 +753,57 @@ export default {
     },
     todaysDateFormatted (val) {
       return !isFuture(val);
+    },
+    checkWatch () {
+      this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
+        .then(response => {
+          if (response) {
+            if (response.data && response.data.length > 0) {
+              let tempWatch = false;
+              for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].componentId === this.id) {
+                  this.watchSwitch = true;
+                  tempWatch = true;
+                  this.watchId = response.data[i].watchId;
+                  break;
+                }
+              }
+              if (tempWatch === false) {
+                this.watchSwitch = false;
+              }
+            }
+          }
+        })
+        .catch(e => this.errors.push(e));
+    },
+    updateWatch () {
+      if (this.watchSwitch === false) {
+        let watch = {
+          componentId: this.detail.componentId,
+          lastViewDts: new Date(),
+          username: this.$store.state.currentUser.username,
+          notifyFlg: false
+        };
+        this.$http.post(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`, watch)
+          .then(response => {
+            if(response.errors) {
+              this.watchSwitch = false;
+            }
+          })
+          .finally(() => {
+            this.checkWatch();
+          });
+      } else {
+        this.$http.delete(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches/${this.watchId}`)
+        .finally(() => {
+          this.checkWatch();
+        });
+      }
+    }
+  },
+  watch: {
+    watchSwitch: function (val) {
+      this.checkWatch();
     }
   },
   watch: {
