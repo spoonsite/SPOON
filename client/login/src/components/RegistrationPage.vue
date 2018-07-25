@@ -394,11 +394,7 @@ export default {
   float: left;
 }
 .icon {
-  color: white;
-  font-size: 12px;
-}
-.icon:hover {
-  cursor: pointer;
+  padding-right: 0.5em;
 }
 @media screen and (max-width: 599px) {
   .btn1 {

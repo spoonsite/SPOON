@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="elevation-5 mt-4">
+    <v-card class="elevation-5 my-4">
       <v-card-text>
         <v-form v-model="valid"  ref="form" class="clearfix">
           <v-text-field

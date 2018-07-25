@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout mt-3 mx-3>
+    <v-layout ma-3>
       <v-flex xs12 md4 offset-md4 sm6 offset-sm3>
         <v-card class="elevation-5">
           <v-toolbar color="primary" dark dense>
