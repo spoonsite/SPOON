@@ -158,7 +158,7 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/assign/component{id}")
+	@Path("/assign/component/{id}")
 	public Response assignWorkplanForComponent(
 			@PathParam("id") String componentId,
 			String username,
