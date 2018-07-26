@@ -34,14 +34,14 @@ export default new Vuex.Store({
           context.commit('setSecurityPolicy', response);
         });
     },
-    setCurrentUser (context, callback) {
+    setCurrentUser (context) {
       axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
           context.commit('setCurrentUser', response);
         })
         .finally(() => {
-          if (callback) {
-            callback();
+          if (context.callback) {
+            context.callback();
           }
         });
     },

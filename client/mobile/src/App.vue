@@ -144,6 +144,7 @@ export default {
 
     this.checkFirstTime();
     this.$store.dispatch('setCurrentUser', {axios: this.$http, callback: this.checkWatches}); // pass in current axios instance
+    this.checkWatches();
   },
   data () {
     return {
@@ -200,26 +201,47 @@ export default {
       }
     },
     checkWatches () {
-      this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
-        .then(response => {
-          if (response.data) {
-            if (response.data.length > 0) {
-              for (var i = 0; i < response.data.length; i++) {
-                if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
-                  this.watchNumber++;
+      if (this.$store.state.currentUser) {
+        this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
+          .then(response => {
+            if (response.data) {
+              if (response.data.length > 0) {
+                for (var i = 0; i < response.data.length; i++) {
+                  if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
+                    this.watchNumber++;
+                  }
                 }
               }
             }
-          }
-        })
-        .catch(e => this.errors.push(e))
-        .finally(() => {
-          if (this.watchNumber === 1) {
-            this.$toasted.show(this.watchNumber + ' entry has been updated.');
-          } else if (this.watchNumber > 0) {
-            this.$toasted.show(this.watchNumber + ' entries have been updated.');
-          }
-        });
+          })
+          .catch(e => this.errors.push(e))
+          .finally(() => {
+            if (this.watchNumber === 1) {
+              this.$toasted.show(this.watchNumber + ' entry has been updated.', {
+                icon : 'binoculars',
+                action : {
+                    text : 'View',
+                    onClick : (e, toastObject) => {
+                        this.$router.push('Watches');
+                        toastObject.goAway(0);
+                    }
+                }
+              });
+            } else if (this.watchNumber > 0) {
+              this.$toasted.show(this.watchNumber + ' entries have been updated.', {
+                icon : 'binoculars',
+                action : {
+                    text : 'View',
+                    onClick : (e, toastObject) => {
+                        this.$router.push('Watches');
+                        toastObject.goAway(0);
+                    }
+                }
+              });
+            }
+            console.log('got called')
+          });
+      }
     }
   }
 };
