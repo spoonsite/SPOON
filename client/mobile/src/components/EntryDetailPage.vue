@@ -529,43 +529,101 @@ export default {
     };
   },
   methods: {
-    lookupTypes () {
-      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
-        .then(response => {
-          if (response.data) {
-            this.timeOptions = response.data;
-            response.data.forEach(element => {
-              this.timeSelectOptions.push(element.description);
-            });
+    checkWatch () {
+      this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
+      .then(response => {
+        if (response) {
+          if (response.data && response.data.length > 0) {
+            let tempWatch = false;
+            for (var i = 0; i < response.data.length; i++) {
+              if (response.data[i].componentId === this.id) {
+                this.watchSwitch = true;
+                tempWatch = true;
+                this.watchId = response.data[i].watchId;
+                break;
+              }
+            }
+            if (tempWatch === false) {
+              this.watchSwitch = false;
+            }
           }
-        })
-        .catch(e => this.errors.push(e));
-
-      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
-        .then(response => {
-          if (response.data) {
-            this.prosOptions = response.data;
-            response.data.forEach(element => {
-              this.prosSelectOptions.push(element.description);
-            });
-          }
-        })
-        .catch(e => this.errors.push(e));
-
-      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
-        .then(response => {
-          if (response.data) {
-            this.consOptions = response.data;
-            response.data.forEach(element => {
-              this.consSelectOptions.push(element.description);
-            });
-          }
-        })
-        .catch(e => this.errors.push(e));
+        }
+      })
+      .finally(() => {
+        this.watchBeingChecked = false;
+      });
     },
-    showMediaDetails (item) {
-      this.currentMediaDetailItem = item;
-      this.mediaDetailsDialog = true;
+    computeAverageRating (detail) {
+      var temp = 0;
+      var averageRating = 0;
+      if (detail.reviews) {
+        for (var i = 0; i < detail.reviews.length; i++) {
+          if (detail.reviews[i].rating) {
+            temp += detail.reviews[i].rating;
+          } else {
+            return 0;
+          }
+        }
+      } else {
+        return 0;
+      }
+      if (detail.reviews.length !== 0) {
+        averageRating = temp / detail.reviews.length;
+      }
+      return averageRating;
+    },
+    computeHasImage () {
+      if (this.detail.componentMedia) {
+        for (var i = 0; i < this.detail.componentMedia.length; i++) {
+          if (this.detail.componentMedia[i].mediaTypeCode === 'IMG') {
+            this.hasImage = true;
+            return;
+          }
+        }
+      }
+    },
+    deleteQuestion (question) {
+      console.log(question);
+    },
+    deleteReviewConfirmation () {
+      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
+      .then(response => {
+        this.$toasted.show('Review Deleted');
+        this.deleteReviewDialog = false;
+        this.getDetail();
+      });
+    },
+    editReviewSetup (review) {
+      this.writeReviewDialog = true;
+      this.newReview.title = review.title;
+      this.newReview.rating = review.rating;
+      this.newReview.recommend = review.recommend;
+      this.newReview.lastUsed = format(review.lastUsed, 'YYYY-MM-DD');
+      this.newReview.timeUsed = review.userTimeDescription;
+      review.pros.forEach(element => {
+        this.newReview.pros.push(element.text);
+      });
+      review.cons.forEach(element => {
+        this.newReview.cons.push(element.text);
+      });
+      this.comment = review.comment;
+      this.editReviewId = review.reviewId;
+    },
+    filterLightboxList () {
+      if (this.detail.componentMedia) {
+        this.lightboxList = _.filter(this.detail.componentMedia, function (o) {
+          return o.mediaTypeCode === 'IMG' && !o.hideInDisplay;
+        });
+      }
+    },
+    getAnswers (qid) {
+      this.isLoading = true;
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions/${qid}/responses`)
+      .then(response => {
+        this.answers[qid] = response.data;
+        this.isLoading = false;
+      })
+      .catch(e => this.errors.push(e));
     },
     getDetail () {
       this.isLoading = true;
@@ -597,6 +655,44 @@ export default {
           this.questions = response.data;
         })
         .catch(e => this.errors.push(e));
+    },
+    lookupTypes () {
+      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
+      .then(response => {
+        if (response.data) {
+          this.timeOptions = response.data;
+          response.data.forEach(element => {
+            this.timeSelectOptions.push(element.description);
+          });
+        }
+      })
+      .catch(e => this.errors.push(e));
+
+      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
+      .then(response => {
+        if (response.data) {
+          this.prosOptions = response.data;
+          response.data.forEach(element => {
+            this.prosSelectOptions.push(element.description);
+          });
+        }
+      })
+      .catch(e => this.errors.push(e));
+
+      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
+      .then(response => {
+        if (response.data) {
+          this.consOptions = response.data;
+          response.data.forEach(element => {
+            this.consSelectOptions.push(element.description);
+          });
+        }
+      })
+      .catch(e => this.errors.push(e));
+    },
+    showMediaDetails (item) {
+      this.currentMediaDetailItem = item;
+      this.mediaDetailsDialog = true;
     },
     submitQuestion () {
       let data = {
@@ -680,107 +776,25 @@ export default {
           .catch(e => this.$toasted.error('There was a problem submitting the review.'));
       }
     },
-    editReviewSetup (review) {
-      this.writeReviewDialog = true;
-      this.newReview.title = review.title;
-      this.newReview.rating = review.rating;
-      this.newReview.recommend = review.recommend;
-      this.newReview.lastUsed = format(review.lastUsed, 'YYYY-MM-DD');
-      this.newReview.timeUsed = review.userTimeDescription;
-      review.pros.forEach(element => {
-        this.newReview.pros.push(element.text);
-      });
-      review.cons.forEach(element => {
-        this.newReview.cons.push(element.text);
-      });
-      this.comment = review.comment;
-      this.editReviewId = review.reviewId;
-    },
-    deleteReviewConfirmation () {
-      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
-        .then(response => {
-          this.$toasted.show('Review Deleted');
-          this.deleteReviewDialog = false;
-          this.getDetail();
-        });
-    },
-    deleteQuestion (question) {
-      console.log(question);
-    },
-    getAnswers (qid) {
-      this.isLoading = true;
-      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions/${qid}/responses`)
-        .then(response => {
-          this.answers[qid] = response.data;
-          this.isLoading = false;
-        })
-        .catch(e => this.errors.push(e));
-    },
-    computeAverageRating (detail) {
-      var temp = 0;
-      var averageRating = 0;
-      if (detail.reviews) {
-        for (var i = 0; i < detail.reviews.length; i++) {
-          if (detail.reviews[i].rating) {
-            temp += detail.reviews[i].rating;
-          } else {
-            return 0;
-          }
-        }
-      } else {
-        return 0;
-      }
-      if (detail.reviews.length !== 0) {
-        averageRating = temp / detail.reviews.length;
-      }
-      return averageRating;
-    },
-    filterLightboxList () {
-      if (this.detail.componentMedia) {
-        this.lightboxList = _.filter(this.detail.componentMedia, function (o) {
-          return o.mediaTypeCode === 'IMG' && !o.hideInDisplay;
-        });
-      }
-    },
-    computeHasImage () {
-      if (this.detail.componentMedia) {
-        for (var i = 0; i < this.detail.componentMedia.length; i++) {
-          if (this.detail.componentMedia[i].mediaTypeCode === 'IMG') {
-            this.hasImage = true;
-            return;
-          }
-        }
-      }
-    },
     todaysDateFormatted (val) {
       return !isFuture(val);
-    },
-    checkWatch () {
-      this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
-        .then(response => {
-          if (response) {
-            if (response.data && response.data.length > 0) {
-              let tempWatch = false;
-              for (var i = 0; i < response.data.length; i++) {
-                if (response.data[i].componentId === this.id) {
-                  this.watchSwitch = true;
-                  tempWatch = true;
-                  this.watchId = response.data[i].watchId;
-                  break;
-                }
-              }
-              if (tempWatch === false) {
-                this.watchSwitch = false;
-              }
-            }
-          }
-        })
-        .finally(() => {
-          this.watchBeingChecked = false;
-        });
     }
   },
   watch: {
+    comment: function (val) {
+      if (val !== '' && this.reviewValid) {
+        this.reviewSubmit = true;
+      } else {
+        this.reviewSubmit = false;
+      }
+    },
+    reviewValid: function (val) {
+      if (val && this.comment !== '') {
+        this.reviewSubmit = true;
+      } else {
+        this.reviewSubmit = false;
+      }
+    },
     watchSwitch: function (val) {
       if (!this.watchBeingChecked) {
         this.watchBeingChecked = true;
@@ -808,20 +822,6 @@ export default {
         }
       }
 
-    },
-    comment: function (val) {
-      if (val !== '' && this.reviewValid) {
-        this.reviewSubmit = true;
-      } else {
-        this.reviewSubmit = false;
-      }
-    },
-    reviewValid: function (val) {
-      if (val && this.comment !== '') {
-        this.reviewSubmit = true;
-      } else {
-        this.reviewSubmit = false;
-      }
     },
     writeReviewDialog: function (val) {
       if (val === false) {
