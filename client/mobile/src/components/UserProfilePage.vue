@@ -3,7 +3,7 @@
 <section class="user-profile-page">
 <v-alert :value="disableForm" type="info">Editing user information has been disabled by the admin.</v-alert>
 
-<v-form ref="form" v-model="valid" lazy-validation>
+<v-form ref="form" v-model="valid">
 <v-container grid-list-xl text-xs-center>
 <v-layout row wrap>
   <!-- Contact Details -->
@@ -16,7 +16,6 @@
       required
       counter=80
       maxLength="80"
-      placeholder="John"
       label="First Name"
       :disabled="disableForm"
     ></v-text-field>
@@ -30,7 +29,6 @@
       required
       counter=80
       maxLength="80"
-      placeholder="Doe"
       label="Last Name"
       :disabled="disableForm"
     ></v-text-field>
@@ -45,7 +43,6 @@
       :rules="[rules.required, rules.email]"
       required
       maxLength="1000"
-      placeholder="name@example.com"
       label="Email address"
       hint="Enter your email. Example: my.name@example.com"
       :disabled="disableForm"
@@ -60,7 +57,6 @@
       name="phone"
       type="tel"
       maxLength="80"
-      placeholder="(123) 456-7890"
       label="Phone number"
       hint="Enter your phone number"
       :disabled="disableForm"
@@ -110,13 +106,23 @@
     ></v-select>
   </v-flex>
   <!-- Notification Checkboxes -->
-  <v-flex xs1>
-    <v-tooltip bottom>
-      <v-icon slot="activator">fas fa-question-circle</v-icon>
-      <span>Receive a periodic email about recent changes</span>
-    </v-tooltip>
+  <v-flex xs2>
+    <v-icon class="info-icon" @click="notificationDialog = true">fas fa-question-circle</v-icon>
+    <v-dialog
+      v-model="notificationDialog"
+      max-width="300px"
+      >
+      <v-card>
+        <v-card-text>
+          Receive a periodic email about recent changes.
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="notificationDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-flex>
-  <v-flex xs11>
+  <v-flex xs10>
     <v-switch
       ref="periodic_notify"
       label="Notify about Updates"
@@ -183,7 +189,8 @@ export default {
       monthly: false,
       saving: false,
       valid: true,
-      formChanged: false
+      formChanged: false,
+      notificationDialog: false
     };
   },
   computed: {
@@ -277,4 +284,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.info-icon:hover {
+  cursor: pointer;
+}
 </style>
