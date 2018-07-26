@@ -53,13 +53,13 @@ public class WorkPlanServiceImpl
 	}
 
 	@Override
-	public void assignWorkPlanForComponent(String componentId, String username, String roleGroup)
+	public void assignWorkPlanForComponent(String workPlanId, String workLinkId, String username, String roleGroup)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
-	public WorkPlanLink moveComponentToStep(String nextStepId)
+	public WorkPlanLink moveComponentToStep(String workPlanId, String workLinkId, String workPlanStepId)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import java.util.List;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 
 /**
@@ -25,7 +26,6 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 public interface WorkPlanService
 		extends AsyncService
 {
-
 	/**
 	 * Saves a work plan
 	 *
@@ -65,7 +65,7 @@ public interface WorkPlanService
 	 * @param username
 	 * @param roleGroup
 	 */
-	void assignWorkPlanForComponent(String componentId, String username, String roleGroup);
+	void assignWorkPlanForComponent(String workPlanId, String workLinkId, String username, String roleGroup);
 
 	/**
 	 * Moves a Component to a new workflow step
@@ -73,6 +73,6 @@ public interface WorkPlanService
 	 * @param nextStepId
 	 * @return
 	 */
-	WorkPlanLink moveComponentToStep(String nextStepId);
+	WorkPlanLink moveComponentToStep(String workPlanId, String workLinkId, String workPlanStepId);
 
 }
