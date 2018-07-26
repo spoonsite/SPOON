@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
-import edu.usu.sdl.openstorefront.core.spi.NotificationEventListerner;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
@@ -45,6 +44,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
+import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
 
 /**
  * Handles Notification Events
@@ -165,15 +165,15 @@ public class NotificationServiceImpl
 	}
 
 	@Override
-	public void registerNotificationListerner(NotificationEventListerner notificationEventListerner)
+	public void registerNotificationListerner(NotificationEventListener notificationEventListerner)
 	{
 		Element element = OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
 		if (element == null) {
-			List<NotificationEventListerner> listeners = new ArrayList<>();
+			List<NotificationEventListener> listeners = new ArrayList<>();
 			element = new Element(LISTENER_KEY, listeners);
 			OSFCacheManager.getApplicationCache().put(element);
 		}
-		((List<NotificationEventListerner>) element.getObjectValue()).add(notificationEventListerner);
+		((List<NotificationEventListener>) element.getObjectValue()).add(notificationEventListerner);
 	}
 
 	@Override
@@ -185,8 +185,8 @@ public class NotificationServiceImpl
 
 		Element element = OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
 		if (element != null) {
-			List<NotificationEventListerner> listerners = (List<NotificationEventListerner>) element.getObjectValue();
-			for (NotificationEventListerner listerner : listerners) {
+			List<NotificationEventListener> listerners = (List<NotificationEventListener>) element.getObjectValue();
+			for (NotificationEventListener listerner : listerners) {
 				listerner.processEvent(persistenceService.deattachAll(notificationEvent));
 			}
 		}

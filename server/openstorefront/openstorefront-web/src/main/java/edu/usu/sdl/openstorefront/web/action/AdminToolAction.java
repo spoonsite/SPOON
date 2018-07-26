@@ -72,6 +72,7 @@ public class AdminToolAction
 		pageMap.put("System-Archives", new PageModel("/WEB-INF/securepages/admin/application/systemArchive.jsp", new String[]{SecurityPermission.ADMIN_SYSTEM_ARCHIVES_PAGE}));
 		pageMap.put("Support-Media", new PageModel("/WEB-INF/securepages/admin/data/help/supportMedia.jsp", new String[]{SecurityPermission.ADMIN_SUPPORTMEDIA_PAGE}));
 		pageMap.put("Custom-Forms", new PageModel("/WEB-INF/securepages/admin/data/submission/customSubmissionForm.jsp", new String[]{SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_PAGE}));
+		pageMap.put("Workplans", new PageModel("/WEB-INF/securepages/admin/data/workplan/workplan.jsp", new String[]{SecurityPermission.ADMIN_WORKPLAN_PAGE}));
 
 		//security
 		pageMap.put("Security", new PageModel("/WEB-INF/securepages/admin/application/security.jsp", new String[]{SecurityPermission.ADMIN_SECURITY_PAGE}));

@@ -39,6 +39,8 @@ public class OpenStorefrontConstant
 	public static final String STATUS_VIEW_ALL = "ALL";
 	public static final String DEFAULT_FROM_ADDRESS = "noreply@storefront.net";
 	public static final String GENERAL_KEY_SEPARATOR = ":";
+	public static final String AND_CONDITION = "AND";
+	public static final String OR_CONDITION = "OR";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_CRON = 250;

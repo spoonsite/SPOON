@@ -16,9 +16,9 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
-import edu.usu.sdl.openstorefront.core.spi.NotificationEventListerner;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
+import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
 
 /**
  * Handles Notification Events.
@@ -43,7 +43,7 @@ public interface NotificationService
 	 *
 	 * @param notificationEventListerner
 	 */
-	public void registerNotificationListerner(NotificationEventListerner notificationEventListerner);
+	public void registerNotificationListerner(NotificationEventListener notificationEventListerner);
 
 	/**
 	 * Save a new Notification event and notify Listener

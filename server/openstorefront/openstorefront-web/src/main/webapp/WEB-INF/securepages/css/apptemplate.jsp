@@ -22,6 +22,7 @@ limitations under the License.
 <%@ include file="submissionForm.jsp" %>
 <%@ include file="entryType.jsp" %>
 <%@ include file="evaluation.jsp" %>
+<%@ include file="workPlan.jsp" %>
 
 @media print {
     .pageBreak {		
@@ -571,3 +572,10 @@ table.confluenceTable td.numberingColumn {
 	color: #ccc;
 }
 
+.step-view-container {
+	width: 175px;
+	height: 85px;
+	/* border: 1px solid black; */
+	overflow: visible;
+	white-space: nowrap;
+}

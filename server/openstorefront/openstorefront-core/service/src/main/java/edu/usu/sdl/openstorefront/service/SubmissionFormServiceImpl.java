@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
@@ -36,6 +37,7 @@ import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.model.EditSubmissionOptions;
+import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.model.UserSubmissionAll;
 import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
@@ -188,6 +190,11 @@ public class SubmissionFormServiceImpl
 			}
 
 			existing = persistenceService.persist(userSubmission);
+
+			EntityEventModel entityEventModel = new EntityEventModel();
+			entityEventModel.setEventType(EntityEventType.NEW_SUBMISSION_NOT_SUBMITTTED);
+			entityEventModel.setEntityChanged(existing);
+			getEntityEventService().processEvent(entityEventModel);
 		}
 		existing = persistenceService.unwrapProxyObject(existing);
 		return existing;

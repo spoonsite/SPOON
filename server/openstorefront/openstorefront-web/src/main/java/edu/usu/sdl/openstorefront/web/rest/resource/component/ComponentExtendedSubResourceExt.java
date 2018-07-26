@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentEvaluationSectionView;
 import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
@@ -716,4 +717,22 @@ public abstract class ComponentExtendedSubResourceExt
 	}
 	// </editor-fold>
 
+	// <editor-fold defaultstate="collapsed"  desc="WorkPlan section">
+	@GET
+	@APIDescription("Get the worklink for a component")
+	@RequireSecurity(SecurityPermission.USER_WORKPLAN_READ)
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(WorkPlanLink.class)
+	@Path("/{id}/worklink")
+	public Response getComponentWorkLink(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		WorkPlanLink workLink = service.getWorkPlanService().getWorkPlanForComponent(componentId);
+		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workLink)
+			{
+			};
+		return sendSingleEntityResponse(entity);
+	}
+	// </editor-fold>
 }
