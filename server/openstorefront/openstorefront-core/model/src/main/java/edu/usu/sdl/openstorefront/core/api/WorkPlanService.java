@@ -65,7 +65,7 @@ public interface WorkPlanService
 	 * @param username
 	 * @param roleGroup
 	 */
-	void assignWorkPlanForComponent(String componentId, String username, String roleGroup);
+	void assignWorkPlanForComponent(String workPlanId, String workLinkId, String username, String roleGroup);
 
 	/**
 	 * Moves a Component to a new workflow step
@@ -73,6 +73,6 @@ public interface WorkPlanService
 	 * @param nextStepId
 	 * @return
 	 */
-	WorkPlanLink moveComponentToStep(String nextStepId, String componentId);
+	WorkPlanLink moveComponentToStep(String workPlanId, String workLinkId, String workPlanStepId);
 
 }

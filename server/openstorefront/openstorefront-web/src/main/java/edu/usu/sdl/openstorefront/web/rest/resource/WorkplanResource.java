@@ -61,6 +61,23 @@ public class WorkplanResource
 			};
 		return sendSingleEntityResponse(entity);
 	}
+
+	@GET
+	@APIDescription("Gets a list of all Worklinks.")
+	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
+	@Produces({ MediaType.APPLICATION_JSON })
+	@DataType(WorkPlan.class)
+	@Path("/worklinks")
+	public Response workLinkLookupAll()
+	{
+		// TODO: add a toView
+		WorkPlanLink workLinkExample = new WorkPlanLink();
+		List<WorkPlanLink> workLinks = workLinkExample.findByExample();
+
+		GenericEntity<List<WorkPlanLink>> entity = new GenericEntity<List<WorkPlanLink>>(workLinks) {
+		};
+		return sendSingleEntityResponse(entity);
+	}
 	
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
@@ -79,24 +96,6 @@ public class WorkplanResource
 		}
 		
 		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(workPlan)
-			{
-			};
-		
-		return sendSingleEntityResponse(entity);
-	}
-	
-	@GET
-	@RequireSecurity(SecurityPermission.USER_WORKPLAN_READ)
-	@APIDescription("Gets a Work Plan for a component")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(WorkPlan.class)
-	@Path("/component/{id}")
-	public Response getWorkPlanForComponent(@PathParam("id") String componentId)
-	{
-		
-		WorkPlanLink workPlan = service.getWorkPlanService().getWorkPlanForComponent(componentId);
-		
-		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workPlan)
 			{
 			};
 		
@@ -159,14 +158,15 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/assign/component/{id}")
+	@Path("/{workPlanId}/worklinks/{workLinkId}")
 	public Response assignWorkplanForComponent(
-			@PathParam("id") String componentId,
+			@PathParam("workPlanId") String workPlanId,
+			@PathParam("workLinkId") String workLinkId,
 			@QueryParam("username") String username,
 			@QueryParam("roleGroup") String roleGroup
 	)
 	{
-		service.getWorkPlanService().assignWorkPlanForComponent(componentId, username, roleGroup);
+		service.getWorkPlanService().assignWorkPlanForComponent(workPlanId, workLinkId, username, roleGroup);
 		return Response.status(Response.Status.OK).build();
 	}
 	
@@ -174,14 +174,15 @@ public class WorkplanResource
 	@APIDescription("Moves component to specified step")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/movecomponent/{componentId}/tostep/{stepId}")
+	@Path("/{workPlanId}/worklinks/{workLinkId}/tostep/{workPlanStepId}")
 	public Response moveComponentToStep(
-			@PathParam("componentId") String componentId,
-			@PathParam("stepId") String stepId
+			@PathParam("workPlanId") String workPlanId,
+			@PathParam("workLinkId") String workLinkId,
+			@PathParam("workPlanStepId") String workPlanStepId
 	)
 	{
 		// TODO: check to see if the current user can move the component to the specified step
-		WorkPlanLink workPlanLink = service.getWorkPlanService().moveComponentToStep(stepId, componentId);
+		WorkPlanLink workPlanLink = service.getWorkPlanService().moveComponentToStep(workPlanId, workLinkId, workPlanStepId);
 		
 		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workPlanLink)
 			{
@@ -191,14 +192,14 @@ public class WorkplanResource
 	}
 	
 	@DELETE
-	@APIDescription("Deletes a Work Plan and moves it's records to a target Work Plan")
+	@APIDescription("Deletes a Work Plan and moves it's records to a target Work Plan (if specified)")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_DELETE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{deleteid}/moveto/{targetid}")
+	@Path("/{workPlanId}")
 	public void deleteWorkPlan(
-			@PathParam("deleteid") String removeWorkPlanId,
-			@PathParam("targetid") String targetWorkPlanId
+			@PathParam("workPlanId") String removeWorkPlanId,
+			@QueryParam("targetWorkPlanId") String targetWorkPlanId
 	)
 	{
 		service.getWorkPlanService().removeWorkPlan(removeWorkPlanId, targetWorkPlanId);
