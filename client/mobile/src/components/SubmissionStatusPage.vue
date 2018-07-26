@@ -9,6 +9,7 @@
           <h3>
             <v-icon v-if="item.approvalState === 'N'" color="red darken-2">warning</v-icon>
             <v-icon v-if="item.approvalState === 'P'" color="orange darken-2">hourglass_empty</v-icon>
+            <v-icon v-if="item.approvalState === 'A'" color="light-green">done_outline</v-icon>
               {{ item.name }}
             </h3>
           </div>
