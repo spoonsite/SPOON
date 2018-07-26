@@ -35,8 +35,44 @@
 			/* global Ext, CoreUtil */
 			Ext.onReady(function() {
 
-				//MAIN GRID -------------->
 				var versionViewTemplate = new Ext.XTemplate();
+
+				var userAssignWin = Ext.create('Ext.window.Window', {
+					id: 'userAssignWin',
+					title: 'Assign entry to user:',
+					iconCls: 'fa fa-lg fa-exchange',
+						width: '50%',
+					height: 450,
+					y: 200,
+					modal: true,
+					layout: 'fit'
+				});
+
+				var componentViewWin = Ext.create('Ext.window.Window', {
+					id: 'componentViewWin',
+					title: 'Entry Details',
+					iconCls: 'fa fa-lg fa-exchange',
+						width: '50%',
+					height: 450,
+					y: 200,
+					modal: true,
+					layout: {
+						type: 'hbox',
+						align: 'stretch'
+					},
+					
+				});
+
+				var processCompWin = Ext.create('Ext.window.Window', {
+					id: 'processCompWin',
+					title: 'Entry Workflow',
+					iconCls: 'fa fa-lg fa-exchange',
+						width: '50%',
+					height: 450,
+					y: 200,
+					modal: true,
+					layout: 'fit'
+				});
 
 				var maingridStore = Ext.create('Ext.data.Store', {
 					autoLoad: true,
@@ -402,9 +438,11 @@
 				}
 				var actionViewComponent = function(){
 					console.log('view the thang');	
+					Ext.getCmp('componentViewWin').show();
 				}
 				var actionWorkAndProcessComponent = function(){
 					console.log('do the work');	
+					Ext.getCmp('processCompWin').show();
 				}
 				var actionAssignToAdmin= function(){
 					console.log('AssignToAdmin');	
@@ -417,6 +455,7 @@
 				}
 				var actionReassign = function(){
 					console.log('Reassign');	
+					Ext.getCmp('userAssignWin').show();
 				}
 
 			});
