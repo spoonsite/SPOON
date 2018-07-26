@@ -29,6 +29,14 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 			xtype: 'form',
 			itemId: 'workplanForm',
 			padding: 10,
+			defaults: {
+				listeners: {
+					change: function (field, newVal, oldVal) {
+
+						field.up('window').getWorkplanConfig()[field.name] = newVal;
+					}
+				}
+			},
 			items: [
 				{
 					xtype: 'textfield',
