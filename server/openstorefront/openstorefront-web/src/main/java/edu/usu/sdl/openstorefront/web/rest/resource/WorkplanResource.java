@@ -144,7 +144,7 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/activate/{id}")
+	@Path("/{id}/activate")
 	public Response activateWorkPlan(
 			@PathParam("id") String workPlanId
 	)

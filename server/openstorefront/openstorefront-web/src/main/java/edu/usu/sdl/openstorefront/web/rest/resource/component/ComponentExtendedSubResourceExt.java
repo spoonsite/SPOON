@@ -722,7 +722,7 @@ public abstract class ComponentExtendedSubResourceExt
 	@APIDescription("Get the worklink for a component")
 	@RequireSecurity(SecurityPermission.USER_WORKPLAN_READ)
 	@Produces(MediaType.APPLICATION_JSON)
-	@DataType(ComponentExternalDependency.class)
+	@DataType(WorkPlanLink.class)
 	@Path("/{id}/worklink")
 	public Response getComponentWorkLink(
 			@PathParam("id")
