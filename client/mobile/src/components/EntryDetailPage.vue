@@ -383,7 +383,7 @@
           <v-card-text>
             <p>Watch this entry?</p>
             <!-- TODO: make watch api calls -->
-            <v-switch v-on:click="updateWatch()" color="success" :label="watchSwitch ? 'Watching' : 'Not Watching'" v-model="watchSwitch"></v-switch>
+            <v-switch color="success" :label="watchSwitch ? 'Watching' : 'Not Watching'" v-model="watchSwitch"></v-switch>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -502,6 +502,7 @@ export default {
       questions: {},
       watchSwitch: false,
       watchId: 'holder',
+      watchBeingChecked: true,
       hasImage: false,
       lightboxList: [],
       errors: [],
@@ -774,39 +775,40 @@ export default {
             }
           }
         })
-        .catch(e => this.errors.push(e));
-    },
-    updateWatch () {
-      if (this.watchSwitch === false) {
-        let watch = {
-          componentId: this.detail.componentId,
-          lastViewDts: new Date(),
-          username: this.$store.state.currentUser.username,
-          notifyFlg: false
-        };
-        this.$http.post(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`, watch)
-          .then(response => {
-            if(response.errors) {
-              this.watchSwitch = false;
-            }
-          })
-          .finally(() => {
-            this.checkWatch();
-          });
-      } else {
-        this.$http.delete(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches/${this.watchId}`)
         .finally(() => {
-          this.checkWatch();
+          this.watchBeingChecked = false;
         });
-      }
     }
   },
   watch: {
     watchSwitch: function (val) {
-      this.checkWatch();
-    }
-  },
-  watch: {
+      if (!this.watchBeingChecked) {
+        this.watchBeingChecked = true;
+        if (this.watchSwitch === true) {
+          let watch = {
+            componentId: this.detail.componentId,
+            lastViewDts: new Date(),
+            username: this.$store.state.currentUser.username,
+            notifyFlg: false
+          };
+          this.$http.post(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`, watch)
+            .then(response => {
+              if(response.errors) {
+                this.watchSwitch = false;
+              }
+            })
+            .finally(() => {
+              this.checkWatch();
+            });
+        } else {
+          this.$http.delete(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches/${this.watchId}`)
+          .finally(() => {
+            this.checkWatch();
+          });
+        }
+      }
+
+    },
     comment: function (val) {
       if (val !== '' && this.reviewValid) {
         this.reviewSubmit = true;
