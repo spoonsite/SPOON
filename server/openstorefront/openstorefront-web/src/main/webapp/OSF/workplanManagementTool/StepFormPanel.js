@@ -23,7 +23,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 		'OSF.workplanManagementTool.AddStepActionWindow'
 	],
 
-	style: 'background: #fff;',
+	style: 'background: #fff; border-bottom: 1px solid #ececec;',
 	title: 'Step Configuration',
 	layout: {
 		type: 'vbox',
@@ -83,7 +83,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 				{
 					xtype: 'ActiveOnMultiCombo',
 					fieldLabel: 'Active On (?)',
-					name: 'activeOn',
+					name: 'triggerEvents',
 					width: '100%'
 				},
 				{
@@ -95,7 +95,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					fieldLabel: 'Role Access (?)',
 					xtype: 'RoleGroupMultiSelectComboBox',
 					width: '100%',
-					name: 'allowedRoles'
+					name: 'stepRole'
 				},
 				{
 					xtype: 'grid',

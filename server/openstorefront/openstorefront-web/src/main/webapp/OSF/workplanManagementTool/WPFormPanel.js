@@ -20,7 +20,7 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 	extend: 'OSF.workplanManagementTool.WPDefaultPanel',
 	alias: 'widget.osf.wp.form',
 	
-	style: 'background: #fff',
+	style: 'background: #fff; border-bottom: 1px solid #ececec',
 	title: 'Workplan Config',
 	width: 300,
 
@@ -29,6 +29,14 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 			xtype: 'form',
 			itemId: 'workplanForm',
 			padding: 10,
+			defaults: {
+				listeners: {
+					change: function (field, newVal, oldVal) {
+
+						field.up('window').getWorkplanConfig()[field.name] = newVal;
+					}
+				}
+			},
 			items: [
 				{
 					xtype: 'textfield',
@@ -36,8 +44,16 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					fieldLabel: 'Workplan Name <span class="field-required" />',
 					allowBlank: false,
 					labelAlign: 'top',
+					width: '100%'
+				},
+				{
+					xtype: 'checkbox',
+					fieldLabel: 'Use Default Work Plan',
+					name: 'defaultWorkPlan',
+					labelAlign: 'left',
+					style: 'border-bottom: 1px solid #ccc; padding-bottom: 15px;',
 					width: '100%',
-					style: 'border-bottom: 1px solid #ccc; padding-bottom: 15px;'
+					labelWidth: '80%'
 				},
 				{
 					xtype: 'label',
@@ -74,7 +90,7 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					xtype: 'colorfield',
 					format: '#hex6',
 					fieldLabel: 'Attention Required',
-					name: 'changeRequestedColor',
+					name: 'subStatusColor',
 					style: 'margin-left: 10%;',
 					width: 20,
 					value: '#ff0000'
@@ -89,8 +105,9 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					style: 'border-top: 1px solid #ccc;',
 					allowBlank: false,
 					width: '100%',
-					queryMode: 'remote',
+					queryMode: 'local',
 					store: {
+						autoLoad: true,
 						proxy: {
 							type: 'ajax',
 							url: 'api/v1/resource/lookuptypes/WorkPlanType'
@@ -100,14 +117,27 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					listeners: {
 						change: function (oldVal, newVal) {
 							var entryTypeCombo = this.up().down('[itemId=entryTypeCombo]').show();
+							var childrenComponentTypesCheckbox = this.up().down('[itemId=childrenComponentTypesCheckbox]').show();
 							if (newVal === 'COMPONENT') {
 								entryTypeCombo.show();
+								childrenComponentTypesCheckbox.show();
 							}
 							else {
 								entryTypeCombo.hide();
+								childrenComponentTypesCheckbox.hide();
 							}
 						}
 					}
+				},
+				{
+					xtype: 'checkbox',
+					fieldLabel: 'Applies to Child Component Types',
+					name: 'appliesToChildComponentTypes',
+					itemId: 'childrenComponentTypesCheckbox',
+					hidden: true,
+					labelAlign: 'left',
+					width: '100%',
+					labelWidth: '80%'
 				},
 				{
 					xtype: 'EntryTypeMultiSelect',
