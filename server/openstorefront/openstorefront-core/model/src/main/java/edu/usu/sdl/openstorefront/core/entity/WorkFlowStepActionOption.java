@@ -21,9 +21,9 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.DefaultFieldValue;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
+import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.io.Serializable;
 import java.util.List;
-
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
@@ -58,15 +58,27 @@ public class WorkFlowStepActionOption
 	private Boolean emailOwner;
 
 	@ConsumeField
+	@DefaultFieldValue("false")
+	private Boolean emailAssignee;
+
+	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)
 	private String emailMessage;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
+	@Sanitize(TextSanitizer.class)
+	private String emailSubject;
 
 	@ConsumeField
 	private String assignUser;
 
 	@ConsumeField
 	private String assignGroup;
+
+	@ConsumeField
+	private Boolean unassignGroup;
 
 	public WorkFlowStepActionOption()
 	{
@@ -140,6 +152,36 @@ public class WorkFlowStepActionOption
 	public void setAssignGroup(String assignGroup)
 	{
 		this.assignGroup = assignGroup;
+	}
+
+	public Boolean getUnassignGroup()
+	{
+		return unassignGroup;
+	}
+
+	public void setUnassignGroup(Boolean unassignGroup)
+	{
+		this.unassignGroup = unassignGroup;
+	}
+
+	public Boolean getEmailAssignee()
+	{
+		return emailAssignee;
+	}
+
+	public void setEmailAssignee(Boolean emailAssignee)
+	{
+		this.emailAssignee = emailAssignee;
+	}
+
+	public String getEmailSubject()
+	{
+		return emailSubject;
+	}
+
+	public void setEmailSubject(String emailSubject)
+	{
+		this.emailSubject = emailSubject;
 	}
 
 }

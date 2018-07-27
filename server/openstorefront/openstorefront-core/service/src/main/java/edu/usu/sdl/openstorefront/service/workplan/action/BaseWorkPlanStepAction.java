@@ -15,11 +15,39 @@
  */
 package edu.usu.sdl.openstorefront.service.workplan.action;
 
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+
 /**
  *
  * @author dshurtleff
  */
-public class BaseWorkPlanStepAction
+public abstract class BaseWorkPlanStepAction
 {
+
+	protected WorkPlanLink workPlanLink;
+	protected WorkPlan workPlan;
+	protected WorkPlanStepAction currentStepAction;
+	protected ServiceProxy service;
+
+	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
+	{
+		this.workPlanLink = workPlanLink;
+		this.workPlan = workPlan;
+		this.currentStepAction = currentStepAction;
+		service = ServiceProxy.getProxy();
+	}
+
+	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, ServiceProxy service)
+	{
+		this.workPlanLink = workPlanLink;
+		this.workPlan = workPlan;
+		this.currentStepAction = currentStepAction;
+		this.service = service;
+	}
+
+	public abstract void performAction();
 
 }

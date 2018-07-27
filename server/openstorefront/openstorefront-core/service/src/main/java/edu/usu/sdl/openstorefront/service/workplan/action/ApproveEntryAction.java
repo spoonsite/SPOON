@@ -15,11 +15,37 @@
  */
 package edu.usu.sdl.openstorefront.service.workplan.action;
 
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
+
 /**
  *
  * @author dshurtleff
  */
 public class ApproveEntryAction
+		extends BaseWorkPlanStepAction
 {
+
+	private static final Logger LOG = Logger.getLogger(ApproveEntryAction.class.getName());
+
+	public ApproveEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
+	{
+		super(workPlanLink, workPlan, currentStepAction);
+	}
+
+	@Override
+	public void performAction()
+	{
+		if (StringUtils.isNotBlank(workPlanLink.getComponentId())) {
+			service.getComponentService().approveComponent(workPlanLink.getComponentId());
+			LOG.log(Level.FINEST, () -> "Approved: Component Id - " + workPlanLink.getComponentId());
+		} else {
+			LOG.log(Level.FINEST, "Unable to approve; No component Id");
+		}
+	}
 
 }
