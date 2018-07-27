@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import java.util.Objects;
+
 import edu.usu.sdl.openstorefront.core.api.WorkPlanService;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
@@ -31,7 +33,39 @@ public class WorkPlanServiceImpl
 	@Override
 	public WorkPlan saveWorkPlan(WorkPlan workPlan)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Objects.requireNonNull(workPlan);
+		updateWorkPlanFields(workPlan);
+
+		if (workPlan.getWorkPlanId() != null) {
+			WorkPlan workPlanExample = new WorkPlan();
+			workPlanExample.setWorkPlanId(workPlan.getWorkPlanId());
+
+			workPlanExample = workPlanExample.findProxy();
+			if (workPlanExample != null) {
+					workPlanExample.updateFields(workPlan);
+					persistenceService.persist(workPlanExample);
+			}
+		}
+		else {
+			workPlan.setWorkPlanId(persistenceService.generateId());
+			workPlan.populateBaseCreateFields();
+
+			workPlan.save();
+		}
+
+		return workPlan;
+	}
+
+	private void updateWorkPlanFields (WorkPlan workPlan)
+	{
+		workPlan.getSteps().forEach(step -> {
+			step.populateBaseCreateFields();
+
+			step.getActions().forEach(action -> {
+				action.populateBaseCreateFields();
+				action.setWorkPlanStepActionId(persistenceService.generateId());
+			});
+		});
 	}
 
 	@Override

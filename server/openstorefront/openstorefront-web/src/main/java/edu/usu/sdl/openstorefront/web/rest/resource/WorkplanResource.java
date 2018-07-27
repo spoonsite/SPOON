@@ -70,7 +70,6 @@ public class WorkplanResource
 	@Path("/worklinks")
 	public Response workLinkLookupAll()
 	{
-		// TODO: add a toView
 		WorkPlanLink workLinkExample = new WorkPlanLink();
 		List<WorkPlanLink> workLinks = workLinkExample.findByExample();
 
@@ -124,9 +123,7 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{id}")
 	public Response updateWorkPlan(
-			@PathParam("id") String workPlanId,
 			WorkPlan workPlan
 	)
 	{

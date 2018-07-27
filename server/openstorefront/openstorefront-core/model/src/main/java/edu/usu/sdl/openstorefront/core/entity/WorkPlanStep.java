@@ -67,7 +67,6 @@ public class WorkPlanStep
 
 	@ConsumeField
 	@ValidValueType(value = {OpenStorefrontConstant.AND_CONDITION, OpenStorefrontConstant.OR_CONDITION})
-	@DefaultValue(OpenStorefrontConstant.OR_CONDITION)
 	private String roleLogicCondition;
 
 	@NotNull

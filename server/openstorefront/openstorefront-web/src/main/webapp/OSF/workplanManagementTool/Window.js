@@ -62,15 +62,51 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			items: [
 				{
 					text: 'Save Workplan',
-					disabled: true,
 					itemId: 'saveWorkplanButton',
 					iconCls: 'fa fa-2x fa-floppy-o icon-button-color-save icon-vertical-correction',
 					handler: function () {
 						var wpWindow = this.up('window');
+						
+						// set step order
 						Ext.Array.forEach(wpWindow.getWorkplanConfig().steps, function (item, index) {
 							wpWindow.getWorkplanConfig().steps[index].stepOrder = index + 1;
 						});
-						console.log("SAVING: ", wpWindow.getWorkplanConfig());
+						
+						// Configure componentType for save
+						Ext.Array.forEach(wpWindow.getWorkplanConfig().componentTypes, function (componentType, index) {
+							wpWindow.getWorkplanConfig().componentTypes[index] = { componentType: componentType };
+						});
+						
+						Ext.Array.forEach(wpWindow.getWorkplanConfig().steps, function (step, index) {
+							// Configure stepRoles for save
+							if (step.stepRole) {
+								Ext.Array.forEach(step.stepRole, function (role, index) {
+									step.stepRole[index] = { securityRole: role };
+								});
+							}
+							else {
+								step.stepRole = null;
+							}
+							
+							// Configure triigerEvents for save
+							if (step.triggerEvents) {
+								Ext.Array.forEach(step.triggerEvents, function (event, index) {
+									step.triggerEvents[index] = { entityEventType: event };
+								});
+							}
+							else {
+								step.triggerEvents = null;
+							}
+						});
+						
+						Ext.Ajax.request({
+							method: wpWindow.getWorkplanConfig().workPlanId ? 'POST' : 'PUT',
+							url: 'api/v1/resource/workplans',
+							jsonData: wpWindow.getWorkplanConfig(),
+							success: function (res) {
+								wpWindow.close();
+							}
+						});
 					}
 				},
 				{
@@ -86,14 +122,25 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			]
 		}
 	],
-
+	
 	listeners: {
+		show: function () {
+
+			var saveButton = this.down('[itemId=saveWorkplanButton]').enable();
+			if (this.getWorkplanConfig().steps.length > 0) {
+				saveButton.enable();
+			}
+			else {
+				saveButton.disable();
+			}
+		},
 		resize: function () {
 
 			this.down('[itemId=stepsContainer]').relativeWindowResize();
 		},
 		close: function () {
 			this.stepForm.clearForm();
+			Ext.getCmp('workplanGrid').getStore().load();
 		}
 	},
 	
@@ -118,6 +165,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			subStatusColor: 'ff0000',
 			componentTypes: [],
 			steps: [],
+			roleLogicCondition: 'OR',
 			appliesToChildComponentTypes: true,
 			defaultWorkPlan: false
 		};
@@ -127,10 +175,38 @@ Ext.define('OSF.workplanManagementTool.Window', {
 		
 		// If no record was provided, us the defaultConfig
 		record = Ext.apply(defaultConfig, record);
+		this.unPackFieldsForLoading(record)
 
 		this.setConfig(record);
 		
 		return this;
+	},
+
+	unPackFieldsForLoading: function (record) {
+
+		// unpack component types
+		Ext.Array.forEach(record.componentTypes, function (componentTypeObj, index) {
+			record.componentTypes[index] = componentTypeObj.componentType;
+		});
+
+		// sort the record's steps
+		record.steps.sort(function (a, b) {
+			return a.stepOrder - b.stepOrder;
+		});
+
+		// unpack steps
+		Ext.Array.forEach(record.steps, function (step, index) {
+			if (step.stepRole) {
+				step.stepRole = step.stepRole.map(function (item) {
+					return item.securityRole;
+				});
+			}
+			if (step.triggerEvents) {
+				step.triggerEvents = step.triggerEvents.map(function (item) {
+					return item.entityEventType;
+				});
+			}
+		});
 	},
 
 	setConfig: function () {

@@ -135,7 +135,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 									var emails = '';
 									metadata.fixedEmails = metadata.fixedEmails === '' ? [] : metadata.fixedEmails;
 									Ext.Array.forEach(metadata.fixedEmails, function (email) {
-										emails += 'Email to: ' + email + '<b style="font-size: 1.2em;">;</b> ';
+										emails += 'Email to: ' + email.email + '<b style="font-size: 1.2em;">;</b> ';
 									});
 
 									return emails === '' ? 'No emails specified' : emails;
