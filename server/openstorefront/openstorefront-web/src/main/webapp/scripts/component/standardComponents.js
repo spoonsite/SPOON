@@ -647,6 +647,18 @@ Ext.define('OSF.component.UserMenu', {
 					}
 				});
 			}
+			
+			menuItems.push({
+				text: 'Switch To Mobile',
+				itemId: 'menuSwitchToMobile',
+				hidden: true,
+				iconCls: 'fa fa-2x fa-mobile icon-button-color-default',
+				href: 'mobile/index.html',
+				handler: function () {
+					window.location.href = 'mobile/index.html';
+				}
+			});			
+			
 
 			if (userMenu.showLogout){
 				menuItems.push({
@@ -689,7 +701,13 @@ Ext.define('OSF.component.UserMenu', {
 					if (menuFAQ) {
 						menuFAQ.setHidden(false);
 					}
-				}				
+				}
+				if (branding.showLinkToMobile) {
+					var menuMobile = userMenu.getMenu().queryById('menuSwitchToMobile');
+					if (Ext.os.is.Tablet || Ext.os.is.Phone) {
+						menuMobile.setHidden(false);
+					}
+				}
 			});
 		}
 		

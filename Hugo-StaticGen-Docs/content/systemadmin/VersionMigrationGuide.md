@@ -7,6 +7,22 @@ markup = "mmark"
 
 In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.
 
+## Note: 2.6.3
+
+For existing applications:  
+(Update var/openstorefront/config/shiro.ini)
+
+Add:
+
+/login/** = anon 
+/mobile/** = authc 
+/api/v1/resource/branding/current = anon 
+/api/v1/resource/securitypolicy = anon 
+/api/v1/resource/faq/* = anon 
+/api/v1/resource/faq = anon 
+/api/v1/resource/feedbacktickets = anon 
+
+
 ## Note: 2.6
 
 Some feature such as custom submission require new permission (See Admin -> Security Roles to add new permissions)
