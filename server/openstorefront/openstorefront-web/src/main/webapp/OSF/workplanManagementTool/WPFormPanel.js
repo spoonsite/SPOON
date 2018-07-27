@@ -151,7 +151,8 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					allowBlank: false,
 					hidden: true,
 					width: '100%',
-					queryMode: 'remote'
+					queryMode: 'local',
+					autoLoad: true
 				}
 			]
 		}
