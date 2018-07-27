@@ -15,11 +15,40 @@
  */
 package edu.usu.sdl.openstorefront.service.workplan.action;
 
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author dshurtleff
  */
 public class AssignEntryAction
+		extends BaseWorkPlanStepAction
 {
+
+	public AssignEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
+	{
+		super(workPlanLink, workPlan, currentStepAction);
+	}
+
+	@Override
+	public void performAction()
+	{
+		if (currentStepAction.getActionOption() != null) {
+			workPlanLink.setCurrentUserAssigned(currentStepAction.getActionOption().getAssignUser());
+			if (StringUtils.isNotBlank(currentStepAction.getActionOption().getAssignGroup())) {
+				workPlanLink.setCurrentGroupAssigned(currentStepAction.getActionOption().getAssignGroup());
+			}
+			if (currentStepAction.getActionOption().getUnassignGroup()) {
+				workPlanLink.setCurrentGroupAssigned(null);
+			}
+		} else {
+			workPlanLink.setCurrentUserAssigned(null);
+		}
+
+		workPlanLink.save();
+	}
 
 }

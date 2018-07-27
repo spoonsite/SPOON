@@ -44,20 +44,15 @@ public class WorkPlanManager
 	//private JobManager jobManager;
 	private WorkPlanEngine workPlanEngine;
 
-	private WorkPlanManager(WorkPlanEngine workPlanEngine)
+	private WorkPlanManager()
 	{
-		this.workPlanEngine = workPlanEngine;
+		this.workPlanEngine = WorkPlanEngine.newWorkPlanEngine();
 	}
 
 	public static WorkPlanManager getInstance()
 	{
-		return getInstance(new WorkPlanEngine());
-	}
-
-	public static WorkPlanManager getInstance(WorkPlanEngine workPlanEngine)
-	{
 		if (singleton == null) {
-			singleton = new WorkPlanManager(workPlanEngine);
+			singleton = new WorkPlanManager();
 		}
 		return singleton;
 	}
