@@ -10,10 +10,11 @@ In general, you should always upgrade one version at a time in order. (IE. going
 ## Note: 2.6.3
 
 For existing applications:  
-(Update var/openstorefront/config/shiro.ini)
+(Update **var/openstorefront/config/shiro.ini**)
 
 Add:
 
+```
 /login/** = anon 
 /mobile/** = authc 
 /api/v1/resource/branding/current = anon 
@@ -21,7 +22,7 @@ Add:
 /api/v1/resource/faq/* = anon 
 /api/v1/resource/faq = anon 
 /api/v1/resource/feedbacktickets = anon 
-
+```
 
 ## Note: 2.6
 
