@@ -19,10 +19,10 @@
 --%>
 <%@include file="../../../../layout/includes.jsp" %>
 
-<stripes:layout-render name="../../../layout/toplevelLayout.jsp">
+<stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
-		<stripes:layout-render name="../../../layout/userheader.jsp">
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">
 		</stripes:layout-render>
 
 		

@@ -85,14 +85,13 @@
 					actionLoadContent('Entry-Types');
 				}
 			});
-			// dataMenu.push({
-			// 	text: 'SME ENTRY MANAGEMENT',
-			// 	// STUB IN PERMISSION HERE
-			// 	// permission: ['ADMIN-ENTRIES-PAGE'],
-			// 	handler: function(){
-			// 		actionLoadContent('SME-Entry-Management');
-			// 	}
-			// });
+			dataMenu.push({
+				text: 'WorkPlan-Progress',
+				permission: ['ADMIN-WORKPLAN-PAGE'],
+				handler: function(){
+					actionLoadContent('WorkPlan-Progress');
+				}
+			});
 			dataMenu.push({
 				text: 'Entry Templates',
 				permission: ['ADMIN-ENTRYTEMPLATES-PAGE'],

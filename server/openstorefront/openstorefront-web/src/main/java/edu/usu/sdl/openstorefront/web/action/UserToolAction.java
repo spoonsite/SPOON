@@ -48,8 +48,6 @@ public class UserToolAction
 		pageMap.put("Searches", new PageModel("/WEB-INF/securepages/user/searches.jsp", new String[]{SecurityPermission.USER_SEARCHES_PAGE}));
 		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/user/visualSearch.jsp", new String[]{SecurityPermission.USER_RELATIONSHIPS_PAGE}));
 		pageMap.put("Change-Password", new PageModel("/WEB-INF/securepages/user/changePassword.jsp"));		
-		// STUB IN PERMISSION HERE
-		pageMap.put("SME-Entry-Management", new PageModel("/WEB-INF/securepages/user/entryworkflowmanagement.jsp")); 
 
 		return pageMap;
 	}

@@ -100,14 +100,6 @@
 					actionLoadContent('Watches');
 				}			
 			});
-			toolsMenu.push({
-				text: 'SME ENTRY MANAGEMENT',
-				// STUB IN PERMISSION HERE
-				// permission: ['ADMIN-ENTRIES-PAGE'],
-				handler: function(){
-					actionLoadContent('SME-Entry-Management');
-				}
-			});	
 			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
