@@ -36,7 +36,7 @@ public class ChangeType
 	public static final String REMOVED = "REMOVED";
 	public static final String SNAPSHOT = "SNAPSHOT";
 	public static final String RESTORE = "RESTORE";
-	public static final String WORKFLOW_CHANGE = "WORKFLOW_CHANGE";
+	public static final String WORKPLAN_CHANGE = "WORKPLAN_CHANGE";
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ChangeType()
@@ -52,7 +52,7 @@ public class ChangeType
 		codeMap.put(REMOVED, newLookup(ChangeType.class, REMOVED, "Removed"));
 		codeMap.put(SNAPSHOT, newLookup(ChangeType.class, SNAPSHOT, "Snapshot"));
 		codeMap.put(RESTORE, newLookup(ChangeType.class, RESTORE, "Restore"));
-		codeMap.put(WORKFLOW_CHANGE, newLookup(ChangeType.class, WORKFLOW_CHANGE, "Workflow Change"));
+		codeMap.put(WORKPLAN_CHANGE, newLookup(ChangeType.class, WORKPLAN_CHANGE, "WorkPlan Change"));
 		return codeMap;
 	}
 

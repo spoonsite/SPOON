@@ -13,41 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.workplan.action;
+package edu.usu.sdl.openstorefront.service.workplan;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
  * @author dshurtleff
  */
-public abstract class BaseWorkPlanStepAction
+public class ActivateEntryAction
+		extends BaseWorkPlanStepAction
 {
 
-	protected WorkPlanLink workPlanLink;
-	protected WorkPlan workPlan;
-	protected WorkPlanStepAction currentStepAction;
-	protected ServiceProxy service;
+	private static final Logger LOG = Logger.getLogger(ActivateEntryAction.class.getName());
 
-	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
+	public ActivateEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
 	{
-		this.workPlanLink = workPlanLink;
-		this.workPlan = workPlan;
-		this.currentStepAction = currentStepAction;
-		service = ServiceProxy.getProxy();
+		super(workPlanLink, workPlan, currentStepAction);
 	}
 
-	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, ServiceProxy service)
+	@Override
+	public void performAction()
 	{
-		this.workPlanLink = workPlanLink;
-		this.workPlan = workPlan;
-		this.currentStepAction = currentStepAction;
-		this.service = service;
+		if (StringUtils.isNotBlank(workPlanLink.getComponentId())) {
+			service.getComponentService().activateComponent(workPlanLink.getComponentId());
+			LOG.log(Level.FINEST, () -> "Activate: Component Id - " + workPlanLink.getComponentId());
+		} else {
+			LOG.log(Level.FINEST, "Unable to activate; No component Id");
+		}
 	}
-
-	public abstract void performAction();
 
 }

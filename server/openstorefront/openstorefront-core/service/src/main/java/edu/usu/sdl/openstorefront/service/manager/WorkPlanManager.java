@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.model.EntityEventRegistrationModel;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.job.WorkPlanSyncJob;
 import edu.usu.sdl.openstorefront.service.manager.model.AddJobModel;
-import edu.usu.sdl.openstorefront.service.workplan.WorkPlanEngine;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang.StringUtils;
 
@@ -42,11 +41,8 @@ public class WorkPlanManager
 	private String registrationId;
 
 	//private JobManager jobManager;
-	private WorkPlanEngine workPlanEngine;
-
 	private WorkPlanManager()
 	{
-		this.workPlanEngine = WorkPlanEngine.newWorkPlanEngine();
 	}
 
 	public static WorkPlanManager getInstance()

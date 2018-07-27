@@ -13,39 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.workplan.action;
+package edu.usu.sdl.openstorefront.service.workplan;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
 
 /**
  *
  * @author dshurtleff
  */
-public class ActivateEntryAction
-		extends BaseWorkPlanStepAction
+public abstract class BaseWorkPlanStepAction
 {
 
-	private static final Logger LOG = Logger.getLogger(ActivateEntryAction.class.getName());
+	protected WorkPlanLink workPlanLink;
+	protected WorkPlan workPlan;
+	protected WorkPlanStepAction currentStepAction;
+	protected ServiceProxy service;
 
-	public ActivateEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
+	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
 	{
-		super(workPlanLink, workPlan, currentStepAction);
+		this.workPlanLink = workPlanLink;
+		this.workPlan = workPlan;
+		this.currentStepAction = currentStepAction;
+		service = ServiceProxy.getProxy();
 	}
 
-	@Override
-	public void performAction()
+	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, ServiceProxy service)
 	{
-		if (StringUtils.isNotBlank(workPlanLink.getComponentId())) {
-			service.getComponentService().activateComponent(workPlanLink.getComponentId());
-			LOG.log(Level.FINEST, () -> "Activate: Component Id - " + workPlanLink.getComponentId());
-		} else {
-			LOG.log(Level.FINEST, "Unable to activate; No component Id");
-		}
+		this.workPlanLink = workPlanLink;
+		this.workPlan = workPlan;
+		this.currentStepAction = currentStepAction;
+		this.service = service;
 	}
+
+	public abstract void performAction();
 
 }

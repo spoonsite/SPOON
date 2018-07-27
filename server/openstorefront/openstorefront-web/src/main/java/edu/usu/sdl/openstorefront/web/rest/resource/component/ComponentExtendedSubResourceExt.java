@@ -730,8 +730,8 @@ public abstract class ComponentExtendedSubResourceExt
 	{
 		WorkPlanLink workLink = service.getWorkPlanService().getWorkPlanForComponent(componentId);
 		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workLink)
-			{
-			};
+		{
+		};
 		return sendSingleEntityResponse(entity);
 	}
 	// </editor-fold>

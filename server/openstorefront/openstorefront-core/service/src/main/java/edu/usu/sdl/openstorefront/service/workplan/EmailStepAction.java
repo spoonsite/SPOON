@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.workplan.action;
+package edu.usu.sdl.openstorefront.service.workplan;
 
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
@@ -124,7 +124,7 @@ public class EmailStepAction
 		Email email = MailManager.newEmail();
 		email.setTextHTML(currentStepAction.getActionOption().getEmailMessage());
 
-		String subject = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE);
+		String subject = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE) + " Notification";
 		if (StringUtils.isNotBlank(currentStepAction.getActionOption().getEmailSubject())) {
 			subject = subject + " - " + currentStepAction.getActionOption().getEmailSubject();
 		}
