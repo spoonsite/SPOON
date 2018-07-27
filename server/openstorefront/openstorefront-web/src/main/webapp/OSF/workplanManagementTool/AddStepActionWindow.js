@@ -263,6 +263,11 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 						delete formValues.workPlanStepActionType;
 						recordToSave.actionOption = formValues;
 
+						// Format emails
+						Ext.Array.forEach(recordToSave.actionOption.fixedEmails, function (item, index) {
+							recordToSave.actionOption.fixedEmails[index] = { email: item };
+						});
+
 						// if we are editing a record, update it
 						if (actionWindow.recordToLoad) {
 							var indexToInsert = -1;

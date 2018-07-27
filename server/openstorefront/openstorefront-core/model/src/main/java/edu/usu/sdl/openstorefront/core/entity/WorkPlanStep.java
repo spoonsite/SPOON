@@ -30,6 +30,7 @@ import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.ws.rs.DefaultValue;
 
 /**
  *
@@ -66,6 +67,7 @@ public class WorkPlanStep
 
 	@ConsumeField
 	@ValidValueType(value = {OpenStorefrontConstant.AND_CONDITION, OpenStorefrontConstant.OR_CONDITION})
+	@DefaultValue(OpenStorefrontConstant.OR_CONDITION)
 	private String roleLogicCondition;
 
 	@NotNull

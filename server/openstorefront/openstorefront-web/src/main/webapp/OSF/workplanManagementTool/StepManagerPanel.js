@@ -232,6 +232,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 	addStep: function () {
 
 		this.getWpWindow().getWorkplanConfig().steps.push(this.getDefaultStep());
+		this.getWpWindow().down('[itemId=saveWorkplanButton]').enable();
 		this.alert('stepManager');
 	},
 
@@ -254,6 +255,9 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 		var remove = function () {
 			wpWindow.setSelectedStep(null);
 			wpWindow.getWorkplanConfig().steps.splice(selectedStepIndex, 1);
+			if (wpWindow.getWorkplanConfig().steps.length <= 0) {
+				wpWindow.down('[itemId=saveWorkplanButton]').disable();
+			}
 			stepManager.alert();
 		};
 
@@ -276,12 +280,12 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 		return {
 			name: 'Untitled Step - ' + (this.getWpWindow().getWorkplanConfig().steps.length + 1),
 			description: '',
-			allowedRoles: [],
+			stepRole: [],
 			actions: [],
-			activeOn: null,
+			triggerEvents: null,
 			isNewStep: true,
 			isMigratedTo: false,
-			stepId: CoreUtil.uuidv4()
+			workPlanStepId: CoreUtil.uuidv4()
 		}
 	},
 	

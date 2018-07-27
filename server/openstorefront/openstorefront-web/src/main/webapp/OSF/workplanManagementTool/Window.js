@@ -55,6 +55,37 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			width: '100%'
 		}
 	],
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'bottom',
+			items: [
+				{
+					text: 'Save Workplan',
+					disabled: true,
+					itemId: 'saveWorkplanButton',
+					iconCls: 'fa fa-2x fa-floppy-o icon-button-color-save icon-vertical-correction',
+					handler: function () {
+						var wpWindow = this.up('window');
+						Ext.Array.forEach(wpWindow.getWorkplanConfig().steps, function (item, index) {
+							wpWindow.getWorkplanConfig().steps[index].stepOrder = index + 1;
+						});
+						console.log("SAVING: ", wpWindow.getWorkplanConfig());
+					}
+				},
+				{
+					xtype: 'tbfill'
+				},
+				{
+					text: 'Cancel',
+					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+					handler: function () {
+						this.up('window').close();
+					}
+				}
+			]
+		}
+	],
 
 	listeners: {
 		resize: function () {
@@ -70,8 +101,6 @@ Ext.define('OSF.workplanManagementTool.Window', {
 		
 		this.callParent();
 
-		console.log("WP WINDOW: ", this);
-
 		this.stepManager = this.down('[itemId=stepManager]');
 		this.workplanForm = this.down('[itemId=workplanForm]');
 		this.stepForm = this.down('[itemId=stepForm]');
@@ -81,14 +110,16 @@ Ext.define('OSF.workplanManagementTool.Window', {
 
 		var defaultConfig = {
 			name: 'Untitled',
-			type: 'ENTRY',
+			workPlanType: 'COMPONENT',
 			active: false,
 			pendingColor: '#cccccc',
 			inProgressColor: '777aea',
 			completeColor: '84d053',
-			changeRequestColor: 'ff0000',
-			entryTypes: [],
-			steps: []
+			subStatusColor: 'ff0000',
+			componentTypes: [],
+			steps: [],
+			appliesToChildComponentTypes: true,
+			defaultWorkPlan: false
 		};
 
 		// reset the last selected step (if re-opening the tool)
