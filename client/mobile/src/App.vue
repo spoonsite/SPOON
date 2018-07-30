@@ -239,7 +239,6 @@ export default {
                 }
               });
             }
-            console.log('got called')
           });
       }
     }
