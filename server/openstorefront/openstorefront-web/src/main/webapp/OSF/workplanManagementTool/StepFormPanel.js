@@ -88,8 +88,10 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 				},
 				{
 					xtype: 'textarea',
-					fieldLabel: 'Short Description (?)',
-					name: 'description'
+					fieldLabel: 'Short Description (?) <span class="field-required" />',
+					name: 'description',
+					allowBlank: false,
+					canAlertOnChange: true
 				},
 				{
 					fieldLabel: 'Role Access (?)',

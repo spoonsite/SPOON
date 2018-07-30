@@ -72,7 +72,7 @@
 }
 
 .wp-step-migrated {
-	background: #ff6c44;
+	background: #ffb744;
 	border-radius: 100%;
 }
 
@@ -110,4 +110,12 @@
 
  .action-options-fieldset table.x-table-layout {
     width: 100%;
+}
+
+.wp-step-label-error {
+	color: #ff0000;
+}
+
+.wp-step-error {
+	border: 3px dotted #ff0000;
 }
