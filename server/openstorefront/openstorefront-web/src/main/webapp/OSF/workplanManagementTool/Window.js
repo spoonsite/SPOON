@@ -97,10 +97,19 @@ Ext.define('OSF.workplanManagementTool.Window', {
 							else {
 								step.triggerEvents = [];
 							}
+
+							// Configure emails in action (if there are any)
+							if (step.actions) {
+								Ext.Array.forEach(step.actions, function (action) {
+									if (action.actionOption.fixedEmails) {
+										Ext.Array.forEach(action.actionOption.fixedEmails, function (item, index) {
+											action.actionOption.fixedEmails[index] = { email: item };
+										});
+									}
+								});
+							}
 						});
 
-						console.log(wpWindow.getWorkplanConfig());
-						
 						Ext.Ajax.request({
 							method: wpWindow.getWorkplanConfig().workPlanId ? 'POST' : 'PUT',
 							url: 'api/v1/resource/workplans',
@@ -206,6 +215,16 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			if (step.triggerEvents) {
 				step.triggerEvents = step.triggerEvents.map(function (item) {
 					return item.entityEventType;
+				});
+			}
+
+			if (step.actions) {
+				Ext.Array.forEach(step.actions, function (action) {
+					if (action.actionOption.fixedEmails) {
+						Ext.Array.forEach(action.actionOption.fixedEmails, function (item, index) {
+							action.actionOption.fixedEmails[index] = item.email;
+						});
+					}
 				});
 			}
 		});

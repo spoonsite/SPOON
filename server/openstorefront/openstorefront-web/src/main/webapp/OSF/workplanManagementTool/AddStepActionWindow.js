@@ -28,6 +28,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 	modal: true,
 	padding: 10,
 	scrollable: 'y',
+	isEditing: false,
 	items: [
 		{
 			xtype: 'form',
@@ -263,15 +264,8 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 						delete formValues.workPlanStepActionType;
 						recordToSave.actionOption = formValues;
 
-						// Format emails
-						if (recordToSave.actionOption.fixedEmails) {
-							Ext.Array.forEach(recordToSave.actionOption.fixedEmails, function (item, index) {
-								recordToSave.actionOption.fixedEmails[index] = { email: item };
-							});
-						}
-
 						// if we are editing a record, update it
-						if (actionWindow.recordToLoad) {
+						if (actionWindow.recordToLoad && actionWindow.isEditing) {
 							var indexToInsert = -1;
 							Ext.Array.forEach(actionWindow.stepActionStore.getData().items, function (record, index) {
 								if (record == actionWindow.getStepActionGrid().getSelection()[0]) {

@@ -135,7 +135,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 									var emails = '';
 									metadata.fixedEmails = metadata.fixedEmails === '' ? [] : metadata.fixedEmails;
 									Ext.Array.forEach(metadata.fixedEmails, function (email) {
-										emails += 'Email to: ' + email.email + '<b style="font-size: 1.2em;">;</b> ';
+										emails += 'Email to: ' + email + '<b style="font-size: 1.2em;">;</b> ';
 									});
 
 									return emails === '' ? 'No emails specified' : emails;
@@ -169,7 +169,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 							}
 						}
 					},
-					addEditRecord: function () {
+					addEditRecord: function (isEditing) {
 
 						var grid = this;
 						Ext.create({
@@ -178,7 +178,8 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 							maximizable: true,
 							height: 900,
 							stepActionGrid: grid,
-							recordToLoad: grid.getSelection().length > 0 ? grid.getSelection()[0].getData() : null
+							isEditing: isEditing,
+							recordToLoad: grid.getSelection().length > 0 && isEditing ? grid.getSelection()[0].getData() : null
 						}).show();
 					},
 					dockedItems: [{
@@ -191,7 +192,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								handler: function () {
-									this.up('grid').addEditRecord();
+									this.up('grid').addEditRecord(false);
 								}
 							},
 							{
@@ -202,7 +203,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								disabled: true,
 								iconCls: 'fa fa-2x fa-pencil-square-o icon-button-color-save icon-vertical-correction',
 								handler: function () {
-									this.up('grid').addEditRecord();
+									this.up('grid').addEditRecord(true);
 								}
 							},
 							{
