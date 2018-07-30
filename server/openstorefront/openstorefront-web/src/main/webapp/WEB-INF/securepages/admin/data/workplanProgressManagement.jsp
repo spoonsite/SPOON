@@ -325,8 +325,6 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: false,
-									// requiredPermissions: ['ADMIN-ENTRY-READ'],
-                                    // STUB IN PERMISSION HERE
 									handler: function () {
 										actionViewComponent();
 									}
@@ -341,8 +339,7 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: false,
-									// requiredPermissions: ['ADMIN-ENTRY-READ'],
-                                    // STUB IN PERMISSION HERE
+									requiredPermissions: ['WORKFLOW-LINK-UPDATE'],
 									handler: function () {
 										actionWorkAndProcessComponent();
 									}
@@ -355,24 +352,13 @@
 									id: 'lookupGrid-tools-action',
 									scale: 'medium',
 									disabled: false,
-									requiredPermissions: [
-                                        // STUB IN REQUIRED PERMISSIONS FOR ACTION HERE
-										// 'ADMIN-ENTRY-CHANGEOWNER',
-										// 'ADMIN-ENTRY-CHANGETYPE',
-										// 'ADMIN-ENTRY-CHANGEREQUEST-MANAGEMENT',
-										// 'ADMIN-ENTRY-APPROVE',
-										// 'ADMIN-ENTRY-CREATE',
-										// 'ADMIN-ENTRY-MERGE',
-										// 'ADMIN-ENTRY-VERSION-READ',
-										// 'ADMIN-ENTRY-UPDATE',
-										// 'ADMIN-ENTRY-DELETE'
-									],
+									requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
 									menu: [
 										{
 											text: 'Assign To Admin',
 											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction icon-button-color-default',
                                             // STUB IN PERMISSION HERE
-											// requiredPermissions: ['ADMIN-ENTRY-CHANGEOWNER'],
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
 											handler: function(){
 												actionAssignToAdmin();
 											}
@@ -380,7 +366,7 @@
 										{
 											text: 'Assign To Me',
 											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction icon-button-color-default',
-											// requiredPermissions: ['ADMIN-ENTRY-CHANGETYPE'],
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
                                             // STUB IN PERMISSION HERE!
 											handler: function(){
 												actionAssignToMe();
@@ -389,7 +375,7 @@
 										{
 											text: 'Unassign',
 											iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction icon-button-color-default',
-											// requiredPermissions: ['ADMIN-ENTRY-CHANGEREQUEST-MANAGEMENT'],
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
                                             // STUB IN PERMISSION HERE
 											handler: function () {
 												actionUnassign();
@@ -397,12 +383,12 @@
 										},
 										{
 											xtype: 'menuseparator',
-											requiredPermissions: ['ADMIN-ENTRY-CREATE', 'ADMIN-ENTRY-MERGE', 'ADMIN-ENTRY-VERSION-READ']
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY']
 										},                                       
 										{
 											text: 'Reassign',
 											iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
-											// requiredPermissions: ['ADMIN-ENTRY-APPROVE'],
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
                                             // STUB IN PERMISSION HERE
 											handler: function() {
 												actionReassign();
