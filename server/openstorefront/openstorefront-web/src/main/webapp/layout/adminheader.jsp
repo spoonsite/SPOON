@@ -86,6 +86,13 @@
 				}
 			});
 			dataMenu.push({
+				text: 'WorkPlan-Progress',
+				permission: ['WORKPLAN-PROGRESS-MANAGEMENT-PAGE'],
+				handler: function(){
+					actionLoadContent('WorkPlan-Progress');
+				}
+			});
+			dataMenu.push({
 				text: 'Entry Templates',
 				permission: ['ADMIN-ENTRYTEMPLATES-PAGE'],
 				handler: function(){

@@ -101,7 +101,6 @@
 				}			
 			});
 			
-			
 			var notificationWin = Ext.create('OSF.component.NotificationWindow', {				
 			});	
 
