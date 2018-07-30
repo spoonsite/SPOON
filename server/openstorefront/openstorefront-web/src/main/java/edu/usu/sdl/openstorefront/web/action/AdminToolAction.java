@@ -41,7 +41,7 @@ public class AdminToolAction
 		pageMap.put("Attributes", new PageModel("/WEB-INF/securepages/admin/data/attributes.jsp", new String[]{SecurityPermission.ADMIN_ATTRIBUTE_PAGE}));
 		pageMap.put("Contacts", new PageModel("/WEB-INF/securepages/admin/data/contacts.jsp", new String[]{SecurityPermission.ADMIN_CONTACTS_PAGE}));
 		pageMap.put("Dashboard", new PageModel("/WEB-INF/securepages/shared/dashboard.jsp", new String[]{SecurityPermission.DASHBOARD_PAGE}));
-		pageMap.put("WorkPlan-Progress", new PageModel("/WEB-INF/securepages/admin/data/workplanProgressManagement.jsp", new String[]{SecurityPermission.ADMIN_WORKPLAN_PAGE}));
+		pageMap.put("WorkPlan-Progress", new PageModel("/WEB-INF/securepages/admin/data/workplanProgressManagement.jsp", new String[]{SecurityPermission.WORKPLAN_PROGRESS_MANAGEMENT_PAGE}));
 		pageMap.put("Entries", new PageModel("/WEB-INF/securepages/admin/data/components.jsp", new String[]{SecurityPermission.ADMIN_ENTRIES_PAGE}));
 		pageMap.put("Entry-Types", new PageModel("/WEB-INF/securepages/admin/data/entryType.jsp", new String[]{SecurityPermission.ADMIN_ENTRYTYPE_PAGE}));
 		pageMap.put("Highlights", new PageModel("/WEB-INF/securepages/admin/data/highlights.jsp", new String[]{SecurityPermission.ADMIN_HIGHLIGHTS_PAGE}));

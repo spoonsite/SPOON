@@ -87,7 +87,7 @@
 			});
 			dataMenu.push({
 				text: 'WorkPlan-Progress',
-				permission: ['ADMIN-WORKPLAN-PAGE'],
+				permission: ['WORKPLAN-PROGRESS-MANAGEMENT-PAGE'],
 				handler: function(){
 					actionLoadContent('WorkPlan-Progress');
 				}
