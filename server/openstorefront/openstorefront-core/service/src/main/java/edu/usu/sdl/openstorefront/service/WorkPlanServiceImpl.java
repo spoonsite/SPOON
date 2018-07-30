@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service;
 import java.util.Objects;
 
 import edu.usu.sdl.openstorefront.core.api.WorkPlanService;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 
@@ -49,6 +50,7 @@ public class WorkPlanServiceImpl
 		else {
 			workPlan.setWorkPlanId(persistenceService.generateId());
 			workPlan.populateBaseCreateFields();
+			workPlan.setActiveStatus(StandardEntity.INACTIVE_STATUS);
 
 			workPlan.save();
 		}

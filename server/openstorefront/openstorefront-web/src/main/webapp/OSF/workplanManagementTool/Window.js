@@ -85,7 +85,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 								});
 							}
 							else {
-								step.stepRole = null;
+								step.stepRole = [];
 							}
 							
 							// Configure triigerEvents for save
@@ -95,9 +95,11 @@ Ext.define('OSF.workplanManagementTool.Window', {
 								});
 							}
 							else {
-								step.triggerEvents = null;
+								step.triggerEvents = [];
 							}
 						});
+
+						console.log(wpWindow.getWorkplanConfig());
 						
 						Ext.Ajax.request({
 							method: wpWindow.getWorkplanConfig().workPlanId ? 'POST' : 'PUT',
