@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
-import java.util.List;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 
 /**
@@ -26,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 public interface WorkPlanService
 		extends AsyncService
 {
+
 	/**
 	 * Saves a work plan
 	 *
@@ -73,6 +73,40 @@ public interface WorkPlanService
 	 * @param nextStepId
 	 * @return
 	 */
-	WorkPlanLink moveComponentToStep(String workPlanId, String workLinkId, String workPlanStepId);
+	WorkPlanLink moveWorkLinkToStep(WorkPlanLink workPlanLink, String workPlanStepId);
+
+	/**
+	 * Moves workPlanlink to previous step in it's workflow
+	 *
+	 * @param workPlanLink
+	 */
+	public void previousStep(WorkPlanLink workPlanLink);
+
+	/**
+	 * Moves workPlanlink to next step in it's workflow
+	 *
+	 * @param workPlanLink
+	 */
+	public void nextStep(WorkPlanLink workPlanLink);
+
+	/**
+	 * Updated all worklink to match sure the accurately reflects the data
+	 */
+	void syncWorkPlanLinks();
+
+	/**
+	 * Retrieves a workplan and make sure it all sorted.
+	 *
+	 * @param workplanId
+	 * @return workplan or null if not found
+	 */
+	WorkPlan getWorkPlan(String workplanId);
+
+	/**
+	 * Sync work plan to the state of work plan
+	 *
+	 * @param componentId
+	 */
+	void updatedWorkPlanLinkToMatchState(String componentId);
 
 }

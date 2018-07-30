@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.workplan.action;
+package edu.usu.sdl.openstorefront.service.workplan;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
@@ -49,6 +49,8 @@ public class AssignEntryAction
 		}
 
 		workPlanLink.save();
+
+		//log workflow change assignment
 	}
 
 }

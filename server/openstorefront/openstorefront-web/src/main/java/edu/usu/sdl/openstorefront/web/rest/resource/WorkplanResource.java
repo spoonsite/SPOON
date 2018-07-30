@@ -46,6 +46,7 @@ import javax.ws.rs.core.Response;
 public class WorkplanResource
 		extends BaseResource
 {
+
 	@GET
 	@APIDescription("Gets a list of all Workplans.")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
@@ -55,17 +56,17 @@ public class WorkplanResource
 	{
 		WorkPlan workPlanExample = new WorkPlan();
 		List<WorkPlan> workPlans = workPlanExample.findByExample();
-		
+
 		GenericEntity<List<WorkPlan>> entity = new GenericEntity<List<WorkPlan>>(workPlans)
-			{
-			};
+		{
+		};
 		return sendSingleEntityResponse(entity);
 	}
 
 	@GET
 	@APIDescription("Gets a list of all Worklinks.")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(WorkPlan.class)
 	@Path("/worklinks")
 	public Response workLinkLookupAll()
@@ -73,11 +74,12 @@ public class WorkplanResource
 		WorkPlanLink workLinkExample = new WorkPlanLink();
 		List<WorkPlanLink> workLinks = workLinkExample.findByExample();
 
-		GenericEntity<List<WorkPlanLink>> entity = new GenericEntity<List<WorkPlanLink>>(workLinks) {
+		GenericEntity<List<WorkPlanLink>> entity = new GenericEntity<List<WorkPlanLink>>(workLinks)
+		{
 		};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
 	@APIDescription("Gets a single Work Plan")
@@ -86,21 +88,21 @@ public class WorkplanResource
 	@Path("/{id}")
 	public Response workPlanSingleLookup(@PathParam("id") String workPlanId)
 	{
-		
+
 		WorkPlan workPlan = new WorkPlan();
 		workPlan.setWorkPlanId(workPlanId);
 		workPlan = workPlan.find();
 		if (workPlan == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		
+
 		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(workPlan)
-			{
-			};
-		
+		{
+		};
+
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@POST
 	@APIDescription("Creates a Work Plan")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_CREATE)
@@ -110,14 +112,14 @@ public class WorkplanResource
 	{
 		workPlan.populateBaseCreateFields();
 		WorkPlan createdWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
-		
+
 		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(createdWorkPlan)
-			{
-			};
-		
+		{
+		};
+
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@PUT
 	@APIDescription("Updates a Work Plan")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
@@ -128,14 +130,14 @@ public class WorkplanResource
 	)
 	{
 		WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
-		
+
 		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(updatedWorkPlan)
-			{
-			};
-		
+		{
+		};
+
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@PUT
 	@APIDescription("Activates a Work Plan")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
@@ -149,7 +151,7 @@ public class WorkplanResource
 		service.getWorkPlanService().activateWorkPlan(workPlanId);
 		return Response.status(Response.Status.OK).build();
 	}
-	
+
 	@PUT
 	@APIDescription("Assigns a workplan for a component")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
@@ -166,7 +168,7 @@ public class WorkplanResource
 		service.getWorkPlanService().assignWorkPlanForComponent(workPlanId, workLinkId, username, roleGroup);
 		return Response.status(Response.Status.OK).build();
 	}
-	
+
 	@PUT
 	@APIDescription("Moves component to specified step")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -179,15 +181,15 @@ public class WorkplanResource
 	)
 	{
 		// TODO: check to see if the current user can move the component to the specified step
-		WorkPlanLink workPlanLink = service.getWorkPlanService().moveComponentToStep(workPlanId, workLinkId, workPlanStepId);
-		
-		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workPlanLink)
-			{
-			};
-		
-		return sendSingleEntityResponse(entity);
+//		WorkPlanLink workPlanLink = service.getWorkPlanService().moveComponentToStep(workPlanId, workLinkId, workPlanStepId);
+//
+//		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workPlanLink)
+//			{
+//			};
+
+		return sendSingleEntityResponse(null);
 	}
-	
+
 	@DELETE
 	@APIDescription("Deletes a Work Plan and moves it's records to a target Work Plan (if specified)")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_DELETE)
