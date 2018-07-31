@@ -37,17 +37,25 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 	},
 	items: [
 		{
-			flex: 0.25,
+			width: 450,
+			xtype: 'tabpanel',
 			region: 'west',
 			title: 'Template Information',
 			itemId: 'tools',
 			titleCollapse: true,
 			collapsible: true,		
 			split: true,
-			style: 'background: #fff;',			
-			layout: {
-				type: 'vbox'				
-			}
+			style: 'background: #fff;',
+			dockedItems: [
+				{
+					xtype: 'panel',
+					itemId: 'lastSaved',
+					dock: 'bottom',
+					margin: '0 0 0 10',
+					tpl: '<b>Last Saved: </b> {[Ext.Date.format(values.updateDts, "F j, Y, g:i a")]}'+
+					 ' <tpl if="unsavedChanges"><span class="text-danger"><i class="fa fa-lg fa-exclamation-triangle"></i> Unsaved Changes</span></tpl> '	
+				}
+			]
 		},
 		{
 			xtype: 'osf-csf-displaypanel',
@@ -110,13 +118,20 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		//skip initial load
 		if (!formBuilderPanel.initialLoad) {
 			formBuilderPanel.changed = true;
-			formBuilderPanel.queryById('infoPanel').updateInfo(true);
+					
+			formBuilderPanel.queryById('lastSaved').update(Ext.apply({
+				unsavedChanges: formBuilderPanel.changed
+			}, formBuilderPanel.templateRecord));		
+		
 		}
 	},
 	markAsSaved: function(){
 		var formBuilderPanel = this;
 		formBuilderPanel.changed = false;
-		formBuilderPanel.queryById('infoPanel').updateInfo(false);		
+		
+		formBuilderPanel.queryById('lastSaved').update(Ext.apply({
+			unsavedChanges: formBuilderPanel.changed
+		}, formBuilderPanel.templateRecord));	
 	}, 
 	
 	initComponent: function () {
@@ -129,24 +144,17 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		formBuilderPanel.queryById('tools').add(
 			[
 				{
-					xtype: 'osf-form-templateinfo-panel',
-					itemId: 'infoPanel',
-					width: '100%',
+					xtype: 'osf-csf-sectionnavpanel',					
+					width: '100%',					
+					itemId: 'sectionPanel',
+					scrollable: true,
 					formBuilderPanel: formBuilderPanel,
 					templateRecord: formBuilderPanel.templateRecord
 				},
 				{
-					xtype: 'osf-csf-sectionnavpanel',					
-					width: '100%',					
-					itemId: 'sectionPanel',
-					formBuilderPanel: formBuilderPanel,
-					templateRecord: formBuilderPanel.templateRecord,
-					flex: 2
-				},
-				{
 					xtype: 'tabpanel',
-					width: '100%',
-					flex: 2,
+					width: '100%',					
+					title: 'Mappings',
 					items: [
 						{
 							xtype: 'osf-csf-templateprogresspanel',
@@ -167,9 +175,17 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 							displayRequiredAttributes: false
 						}
 					]
-				}
+				},
+				{
+					xtype: 'osf-form-templateinfo-panel',
+					itemId: 'infoPanel',
+					title: 'Form',					
+					formBuilderPanel: formBuilderPanel,
+					templateRecord: formBuilderPanel.templateRecord
+				}				
 			]
 		);
+		formBuilderPanel.queryById('tools').setActiveItem(0);
 
 		formBuilderPanel.displayPanel = formBuilderPanel.queryById('fieldDisplayPanel');
 		formBuilderPanel.itemContainer = formBuilderPanel.queryById('itemContainer');
@@ -189,13 +205,26 @@ Ext.define('OSF.customSubmissionTool.FormBuilderPanel', {
 		// loads the first section in the tempateRecord
 		//formBuilderPanel.displayPanel.loadSection(formBuilderPanel.templateRecord.sections[0]);
 
+		formBuilderPanel.changed = false;		
 		formBuilderPanel.sectionPanel.updateTemplate();
-		formBuilderPanel.initialLoad = false;
+		Ext.defer(function(){
+			formBuilderPanel.updateTemplate();
+			formBuilderPanel.initialLoad = false;
+		}, 500);
+		
+		
+	},
+	reloadAttributes: function(newEntryType) {
+		var formBuilderPanel = this;
+		formBuilderPanel.requiredAttrProgressPanel.reloadStore(newEntryType);
+		formBuilderPanel.optionalAttrProgressPanel.reloadStore(newEntryType);
 	},
 
 	updateTemplate: function() {
 		var formBuilderPanel = this;
-		formBuilderPanel.queryById('infoPanel').updateInfo();				
+		formBuilderPanel.queryById('lastSaved').update(Ext.apply({
+			unsavedChanges: formBuilderPanel.changed
+		}, formBuilderPanel.templateRecord));		
 	},
 
 	updateSection: function (section) {

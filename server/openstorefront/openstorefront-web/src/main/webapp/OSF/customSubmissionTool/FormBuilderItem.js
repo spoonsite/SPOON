@@ -318,7 +318,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 							var formBuilderItem = this.up().up('panel');	
 							
 							var record = combo.getSelection();
-							if (record) {
+							if (record && record.data.codes) {
 								var codeField = formBuilderItem.queryById('attributeCode');
 								var requireValueField = formBuilderItem.queryById('requiredCommentOnValue');
 								codeField.suspendEvents(false);
@@ -342,7 +342,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						}
 					},			
 					store: {
-						autoLoad: true,
+						autoLoad: false,
 						sorters: [
 							{
 								property: 'description',
@@ -421,7 +421,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						autoLoad: true,
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/lookuptypes/ContactType'
+							url: 'api/v1/resource/lookuptypes/ContactType?addSelect=true'
 						}				
 					}
 				},		
@@ -665,7 +665,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						}
 					}			
 				}		
-			],
+			]
 		}
 	],
 
@@ -741,11 +741,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
 			
 				formBuilderItem.getForm().findField('attributeType').setHidden(false);
-				formBuilderItem.getForm().findField('requiredCommentOnValue').setHidden(false);
+				formBuilderItem.getForm().findField('requiredCommentOnValue').setHidden(false);				
 				formBuilderItem.getForm().findField('commentLabel').setHidden(false);
 				formBuilderItem.getForm().findField('requireComment').setHidden(false);
 				formBuilderItem.getForm().findField('showComment').setHidden(false);
-				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);							
+				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);
+				formBuilderItem.getForm().findField('hidePrivateAttributeFlag').setHidden(false);
 			break;
 			case 'ATTRIBUTE_MCHECKBOX':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
@@ -755,6 +756,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('requireComment').setHidden(false);
 				formBuilderItem.getForm().findField('showComment').setHidden(false);
 				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);
+				formBuilderItem.getForm().findField('hidePrivateAttributeFlag').setHidden(false);
 			break;
 			case 'ATTRIBUTE_SINGLE':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
@@ -766,7 +768,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('commentLabel').setHidden(false);
 				formBuilderItem.getForm().findField('requireComment').setHidden(false);
 				formBuilderItem.getForm().findField('showComment').setHidden(false);
-				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);	
+				formBuilderItem.getForm().findField('allowHTMLInComment').setHidden(false);
+				formBuilderItem.getForm().findField('hidePrivateAttributeFlag').setHidden(false);
 			break;
 			case 'ATTRIBUTE_REQUIRED':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
@@ -866,6 +869,31 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		}		
 		
 		Ext.apply(formBuilderItem.templateField, formData);
+		
+		//remove fields that don't exist
+		Ext.Object.each(formBuilderItem.templateField, function(key, value){
+			var existingInForm = false;
+			if (key === 'mappingType' ||
+				key === 'fieldId' ||
+				key === 'sectionId' ||
+				key === 'fieldOrder' ||
+				key === 'fieldType'
+				) {
+				existingInForm = true;
+			} else {	
+				Ext.Object.each(formData, function(formDataKey, formDataValue){
+					if (key === formDataKey) {
+						existingInForm = true;
+					}
+				});
+			}
+			
+			if (!existingInForm) {
+				delete formBuilderItem.templateField[key];
+			}
+		});
+		
+		
 		if (formBuilderItem.templateField.excludeContactType) {
 			formBuilderItem.templateField.excludeContactType = Ext.encode(formBuilderItem.templateField.excludeContactType);
 		}
@@ -876,9 +904,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		
 	},
 	
-	updateQuestion: function () {
+	updateQuestion: function (skipMarkedChange) {
 		var formBuilderItem = this;
-		formBuilderItem.formBuilderPanel.sectionPanel.updateField(formBuilderItem.templateField);
+		formBuilderItem.formBuilderPanel.sectionPanel.updateField(formBuilderItem.templateField, skipMarkedChange);
 		formBuilderItem.queryById('collapsedSide').update(formBuilderItem.templateField);
 	},
 
@@ -899,7 +927,8 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		if (previousActiveItem && !previousActiveItem.isDestroyed) {
 			previousActiveItem.removeCls('csf-active');
 			previousActiveItem.setActiveItem(previousActiveItem.queryById('collapsedSide'));
-			previousActiveItem.updateQuestion();
+			var skipMarkedChange = true;
+			previousActiveItem.updateQuestion(skipMarkedChange);
 			
 		} else {
 			previousActiveItem = null;
@@ -994,8 +1023,19 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 		}
 		
 		fieldContainer.loadRecord(record);	
-		fieldContainer.getForm().findField('attributeType').setValue(record.get('attributeType'));
-		
+	
+		var componentTypeUrl = '';
+		if (fieldContainer.formBuilderPanel.templateRecord.entryType) {
+			componentTypeUrl = '?componentType=' + fieldContainer.formBuilderPanel.templateRecord.entryType;
+		}
+	
+		fieldContainer.getForm().findField('attributeType').getStore().load({
+			url: 'api/v1/resource/attributes' + componentTypeUrl,
+			success: function() {
+				fieldContainer.getForm().findField('attributeType').setValue(record.get('attributeType'));
+			}
+		});			
+			
 
 		fieldContainer.queryById('collapsedSide').update(record.data);
 	}

@@ -210,8 +210,8 @@
     </ul>
 
  <section id="footer"><div style="color: #E0E0DA;">
-    <p>OpenStoreFront version 2.6</p>
-    <p>Documentation generated on Jun 29, 2018</p>
+    <p>OpenStoreFront version 2.6.3</p>
+    <p>Documentation generated on Jul 27, 2018</p>
     <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
@@ -282,6 +282,22 @@
     
     
     <p>In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.</p>
+
+<h2 id="note-263">Note: 2.6.3</h2>
+
+<p>For existing applications:<br>
+(Update <strong>var/openstorefront/config/shiro.ini</strong>)</p>
+
+<p>Add:</p>
+
+<pre><code>/login/** = anon 
+/mobile/** = authc 
+/api/v1/resource/branding/current = anon 
+/api/v1/resource/securitypolicy = anon 
+/api/v1/resource/faq/* = anon 
+/api/v1/resource/faq = anon 
+/api/v1/resource/feedbacktickets = anon 
+</code></pre>
 
 <h2 id="note-26">Note: 2.6</h2>
 

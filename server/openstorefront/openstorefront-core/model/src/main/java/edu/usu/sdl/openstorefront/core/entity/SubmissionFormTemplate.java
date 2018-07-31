@@ -58,11 +58,12 @@ public class SubmissionFormTemplate
 	private String description;
 
 	@NotNull
-	@ConsumeField
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = SubmissionTemplateStatus.class)
 	@FK(SubmissionTemplateStatus.class)
 	private String templateStatus;
+
+	private String templateStatusDetail;
 
 	private Boolean defaultTemplate;
 
@@ -91,6 +92,7 @@ public class SubmissionFormTemplate
 		this.setName(template.getName());
 		this.setDescription(template.getDescription());
 		this.setTemplateStatus(template.getTemplateStatus());
+		this.setTemplateStatusDetail(template.getTemplateStatusDetail());
 		this.setSections(template.getSections());
 		this.setDefaultTemplate(template.getDefaultTemplate());
 		this.setEntryType(template.getEntryType());
@@ -182,6 +184,16 @@ public class SubmissionFormTemplate
 	public void setEntryType(String entryType)
 	{
 		this.entryType = entryType;
+	}
+
+	public String getTemplateStatusDetail()
+	{
+		return templateStatusDetail;
+	}
+
+	public void setTemplateStatusDetail(String templateStatusDetail)
+	{
+		this.templateStatusDetail = templateStatusDetail;
 	}
 
 }

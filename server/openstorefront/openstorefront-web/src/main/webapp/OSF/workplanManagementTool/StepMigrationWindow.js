@@ -46,14 +46,14 @@ Ext.define('OSF.workplanManagementTool.StepMigrationWindow', {
 			xtype: 'combo',
 			queyMode: 'local',
 			displayField: 'name',
-			valueField: 'stepId',
+			valueField: 'workPlanStepId',
 			style: 'font-size: 2em; margin-top: 1.5em;',
 			allowBlank: false,
 			itemId: 'targetStepCombo',
 			store: {
-				field: ['name', 'stepId'],
+				field: ['name', 'workPlanStepId'],
 				data: migrationWindow.getWpWindow().getWorkplanConfig().steps.filter(function (step) {
-					return step.stepId !== migrationWindow.getWpWindow().getSelectedStep().stepId;
+					return step.workPlanStepId !== migrationWindow.getWpWindow().getSelectedStep().workPlanStepId;
 				})
 			},
 			listeners: {
@@ -91,16 +91,21 @@ Ext.define('OSF.workplanManagementTool.StepMigrationWindow', {
 
 						var migrationWindow = this.up('window');
 						var workplanWindow = migrationWindow.getWpWindow();
-						var targetStepId = migrationWindow.down('[itemId=targetStepCombo]').getValue();
+						var targetCombo = migrationWindow.down('[itemId=targetStepCombo]');
+						var targetStepId = targetCombo.getValue();
+						var targetDisplayName = targetCombo.getDisplayValue();
 
 						workplanWindow.getMigrationsToPerform().push({
-							initialStepId: workplanWindow.getSelectedStep().stepId,
-							targetStepId: targetStepId
+							initialStepId: workplanWindow.getSelectedStep().workPlanStepId,
+							targetStepId: targetStepId,
+							initialStepName: workplanWindow.getSelectedStep().name,
+							targetStepName: targetDisplayName
 						});
 
 						Ext.Array.forEach(workplanWindow.getWorkplanConfig().steps, function (step, index) {
-							if (step.stepId === targetStepId) {
+							if (step.workPlanStepId === targetStepId) {
 								step.isNewStep = false;
+								step.isMigratedTo = true;
 							}
 						});
 

@@ -94,6 +94,10 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 				{
 					xtype: 'container',
 					html: '<div style="width: 100%;" data-qtip="You are actively viewing this step"><div class="wp-step-lengend wp-step-active"></div>&nbsp;<b>Active</b></div>'
+				},
+				{
+					xtype: 'container',
+					html: '<div style="width: 100%;" data-qtip="There is an error in this step"><div style="border-radius: 100%;" class="wp-step-lengend wp-step-error"></div>&nbsp;<b>Error</b></div>'
 				}
 			]
 		},
@@ -211,6 +215,10 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			stepsLegendContainer.hide();
 		}
 		else {
+
+			// update step validation
+			this.getWpWindow().stepsValidationCheck();
+
 			firstStepContainer.hide();
 			stepsContainer.show();
 			addRemoveContainer.show();
@@ -226,6 +234,17 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			}
 			
 			this.drawSteps();
+		}
+
+		if (this.getWpWindow().getMigrationsToPerform().length > 0) {
+			var migrationString = '';
+			Ext.Array.forEach(this.getWpWindow().getMigrationsToPerform(), function (migration) {
+				migrationString += migration.initialStepName + '&nbsp;<i class=\"fa fa-long-arrow-right\"></i>&nbsp;' + migration.targetStepName + '<br />';
+			});
+			this.setTitle('Step Manager <span class="migration-label" style="float: right" data-qtip=\'' + migrationString + '\'">Migrations Performed&nbsp;&nbsp;</span>');
+		}
+		else {
+			this.setTitle('Step Manager');
 		}
 	},
 
@@ -285,6 +304,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			triggerEvents: null,
 			isNewStep: true,
 			isMigratedTo: false,
+			hasError: false,
 			workPlanStepId: CoreUtil.uuidv4()
 		}
 	},
@@ -323,13 +343,18 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 					}
 				},
 				itemTpl: '<div class="step-view-container ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + '">' +
-					'<span class="wp-step-label ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') + (item === wpWindow.getSelectedStep() ? 'wp-step-label-active ' : ' ') +'">{name}</span>' +
+							'<span ' +
+								'class="wp-step-label ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') +
+								(item === wpWindow.getSelectedStep() ? 'wp-step-label-active ' : ' ') +
+								(item.hasError ? 'wp-step-label-error ' : ' ') +
+							'">{name}</span>' +
 							'<div ' +
 								'class="step-view ' + (index === wpWindow.getWorkplanConfig().steps.length - 1 ? 'last-step ' : ' ') +
 								(item === wpWindow.getSelectedStep() ? 'wp-step-active ' : ' ') +
 								(item.isNewStep && item !== wpWindow.getSelectedStep() ? 'wp-step-new ' : ' ') +
 								(!item.isNewStep && !item.isMigratedTo && item !== wpWindow.getSelectedStep() ? 'wp-step-existing ' : ' ') +
 								(item.isMigratedTo && item !== wpWindow.getSelectedStep() ? 'wp-step-migrated ' : ' ') +
+								(item.hasError ? 'wp-step-error ' : ' ') +
 							'"></div>' +
 						'</div>'
 			});
