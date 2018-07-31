@@ -33,6 +33,7 @@
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.require('OSF.workplanManagementTool.Window');
+			Ext.require('OSF.workplanManagementTool.WorkPlanMigrationWindow');
 
 			Ext.onReady(function () {
 
@@ -227,6 +228,10 @@
 					// 		actionRefresh();
 					// 	}
 					// });
+					Ext.create({
+						xtype: 'osf.wp.workPlanMigrationWindow',
+						workplanGrid: workplanGrid
+					}).show();
 				};
 
 				addComponentToMainViewPort(workplanGrid);
