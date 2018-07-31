@@ -44,15 +44,18 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -414,14 +417,30 @@ public abstract class ComponentExtendedSubResourceExt
 	@Path("/{id}/comments")
 	public List<ComponentComment> getComponentComment(
 			@PathParam("id")
-			@RequiredParam String componentId)
+			@RequiredParam String componentId,
+			@DefaultValue("false")
+			@QueryParam("submissionOnly")
+			boolean submissionOnly)
 	{
 		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
-		if (response != null) {
-			return Collections.emptyList();
-		}
+		List<ComponentComment> comments = service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
 
-		return service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
+		if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)) {
+			if (submissionOnly) {
+				comments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
+			}
+		} else if (SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+			// allow user's name, owner's name, and private comments
+			List<ComponentComment> submissionComments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
+			submissionComments.forEach((comment) -> { if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())) comment.setCreateUser("ANONYMOUS"); });
+			comments = submissionComments;
+		} else if (response != null) {
+			List<ComponentComment> submissionComments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
+			submissionComments = comments.stream().filter(comment -> !comment.getPrivateComment()).collect(Collectors.toList());
+			submissionComments.forEach((comment) -> { if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())) comment.setCreateUser("ANONYMOUS"); });
+			comments = submissionComments;
+		}
+		return comments;
 	}
 
 	@DELETE
@@ -730,8 +749,8 @@ public abstract class ComponentExtendedSubResourceExt
 	{
 		WorkPlanLink workLink = service.getWorkPlanService().getWorkPlanForComponent(componentId);
 		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workLink)
-		{
-		};
+			{
+			};
 		return sendSingleEntityResponse(entity);
 	}
 	// </editor-fold>
