@@ -157,18 +157,44 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 							var record = Ext.create('Ext.data.Model', {						
 							});			
 							//set comment and private
-							record.set(decodedData[0]);
+							var myDataItem;
+							Ext.Array.each(decodedData, function(item) {
+								var attributeType;
+								if (item.componentAttributePk) {								
+									attributeType = item.componentAttributePk.attributeType;
+								} else {									
+									attributeType = item.type;
+								}
+								if (attributeTypeView.attributeType === attributeType) {
+									//take the first (Note: this may be not be correct. Can't restore if there are multiples of the same types.)
+									myDataItem = item;
+									return false;
+								}								
+							});
+							
+							record.set(myDataItem);
 							panel.loadRecord(record);
 							
 							
 							//group values by type
 							var typeGroup = {};
 							Ext.Array.each(decodedData, function(item) {
-								if (typeGroup[item.componentAttributePk.attributeType]) {
-									typeGroup[item.componentAttributePk.attributeType].push(item.componentAttributePk.attributeCode);
+								
+								var attributeCode;
+								var attributeType;
+								if (item.componentAttributePk) {
+									attributeCode = item.componentAttributePk.attributeCode;
+									attributeType = item.componentAttributePk.attributeType;
 								} else {
-									typeGroup[item.componentAttributePk.attributeType] = [];
-									typeGroup[item.componentAttributePk.attributeType].push(item.componentAttributePk.attributeCode);
+									attributeCode = item.code;
+									attributeType = item.type;
+								}							
+															
+								if (typeGroup[attributeType]) {
+									typeGroup[attributeType].push(attributeCode);
+								} else {
+									typeGroup[attributeType] = [];
+									typeGroup[attributeType].push(attributeCode);
 								}
 							});
 
@@ -215,13 +241,34 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 					if (decodedData) {
 						var record = Ext.create('Ext.data.Model', {						
 						});				
+						var attributeCode;
+						if (decodedData[0].componentAttributePk) {
+							attributeCode = decodedData[0].componentAttributePk.attributeCode;
+						} else {
+							attributeCode = decodedData[0].code;
+						}
+						
 						//set comment and private
-						record.set(decodedData[0]);
-						record.set('attributeCode',decodedData[0].componentAttributePk.attributeCode);						
+						var myDataItem;
+						Ext.Array.each(decodedData, function(item) {
+							var attributeType;
+							if (item.componentAttributePk) {								
+								attributeType = item.componentAttributePk.attributeType;
+							} else {									
+								attributeType = item.type;
+							}
+							if (panel.fieldTemplate.attributeType === attributeType) {
+								//take the first (Note: this may be not be correct. Can't restore if there are multiples of the same types.)
+								myDataItem = item;
+								return false;
+							}								
+						});						
+						record.set(myDataItem);
+						record.set('attributeCode', attributeCode);						
 						panel.loadRecord(record);
 						
 						Ext.Array.each(panel.items.items, function(formItem){
-							if (formItem.attributeCode && formItem.attributeCode === decodedData[0].componentAttributePk.attributeCode) {
+							if (formItem.attributeCode && formItem.attributeCode === attributeCode) {
 								formItem.setValue(true);
 							}
 						});
@@ -263,11 +310,31 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 						var record = Ext.create('Ext.data.Model', {						
 						});		
 						//set comment and private
-						record.set(decodedData[0]);
+						var myDataItem;
+						Ext.Array.each(decodedData, function(item) {
+							var attributeType;
+							if (item.componentAttributePk) {								
+								attributeType = item.componentAttributePk.attributeType;
+							} else {									
+								attributeType = item.type;
+							}
+							if (panel.fieldTemplate.attributeType === attributeType) {
+								//take the first (Note: this may be not be correct. Can't restore if there are multiples of the same types.)
+								myDataItem = item;
+								return false;
+							}								
+						});							
+						record.set(myDataItem);
 						panel.loadRecord(record);
 						
 						Ext.Array.each(decodedData, function(loadAttribute) {
-							var attributeCode = loadAttribute.componentAttributePk.attributeCode;
+							
+							var attributeCode;
+							if (loadAttribute.componentAttributePk) {
+								attributeCode = loadAttribute.componentAttributePk.attributeCode;
+							} else {
+								attributeCode = loadAttribute.code;
+							}
 							
 							Ext.Array.each(panel.items.items, function(formItem){
 								if (formItem.name && formItem.name === attributeCode) {

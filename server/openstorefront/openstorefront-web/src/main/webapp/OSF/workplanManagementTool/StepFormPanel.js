@@ -45,6 +45,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 			hidden: true,
 			style: 'text-align: left;',
 			width: '100%',
+			height: '100%',
 			padding: '5%',
 			scrollable: true,
 			layout: {
@@ -74,7 +75,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 			items: [
 				{
 					xtype: 'textfield',
-					fieldLabel: 'Step name (?)',
+					fieldLabel: 'Step name <i class="fa fa-question-circle" data-qtip="This is the name of the step (will be displayed to end users)" ></i> <span class="field-required" />',
 					name: 'name',
 					maxLength: 20,
 					enforceMaxLength: true,
@@ -82,26 +83,51 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 				},
 				{
 					xtype: 'ActiveOnMultiCombo',
-					fieldLabel: 'Active On (?)',
+					fieldLabel: 'Active On <i class="fa fa-question-circle" data-qtip="Will be set as the current step if one of these events occurs" ></i>',
 					name: 'triggerEvents',
 					width: '100%'
 				},
 				{
 					xtype: 'textarea',
-					fieldLabel: 'Short Description (?)',
-					name: 'description'
+					fieldLabel: 'Short Description <i class="fa fa-question-circle" data-qtip="A short description of what the step is for" ></i> <span class="field-required" />',
+					name: 'description',
+					allowBlank: false,
+					canAlertOnChange: true
 				},
 				{
-					fieldLabel: 'Role Access (?)',
+					fieldLabel: 'Role Access <i class="fa fa-question-circle" data-qtip="Roles that will have access to manipulate a record on this step" ></i>',
 					xtype: 'RoleGroupMultiSelectComboBox',
 					width: '100%',
 					name: 'stepRole'
 				},
 				{
+					fieldLabel: 'Aprroval State to Match <i class="fa fa-question-circle" data-qtip="This will be the <b>default</b> active step for an record that has been assigned to this workplan that has this record status" ></i>',
+					xtype: 'combo',
+					name: 'approvalStateToMatch',
+					colspan: 2,
+					width: '45.1%',
+					displayField: 'description',
+					valueField: 'code',
+					editable: false,
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/lookuptypes/ApprovalStatus'
+						},
+						fields: ['code', 'description'],
+						listeners: {
+							load: function (store, records) {
+								store.add({code: 'none', description: 'None'});
+							}
+						}
+					}
+				},
+				{
 					xtype: 'grid',
 					sortableColumns: false,
 					itemId: 'stepActionGrid',
-					title: 'Step Actions (?)',
+					title: 'Step Actions <i class="fa fa-question-circle" data-qtip="These action will be performed once this step becomes active" ></i>',
 					colspan: 2,
 					width: '100%',
 					style: 'border: 1px solid #ccc;',
@@ -135,7 +161,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 									var emails = '';
 									metadata.fixedEmails = metadata.fixedEmails === '' ? [] : metadata.fixedEmails;
 									Ext.Array.forEach(metadata.fixedEmails, function (email) {
-										emails += 'Email to: ' + email.email + '<b style="font-size: 1.2em;">;</b> ';
+										emails += 'Email to: ' + email + '<b style="font-size: 1.2em;">;</b> ';
 									});
 
 									return emails === '' ? 'No emails specified' : emails;
@@ -169,7 +195,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 							}
 						}
 					},
-					addEditRecord: function () {
+					addEditRecord: function (isEditing) {
 
 						var grid = this;
 						Ext.create({
@@ -178,7 +204,8 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 							maximizable: true,
 							height: 900,
 							stepActionGrid: grid,
-							recordToLoad: grid.getSelection().length > 0 ? grid.getSelection()[0].getData() : null
+							isEditing: isEditing,
+							recordToLoad: grid.getSelection().length > 0 && isEditing ? grid.getSelection()[0].getData() : null
 						}).show();
 					},
 					dockedItems: [{
@@ -191,7 +218,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								scale: 'medium',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								handler: function () {
-									this.up('grid').addEditRecord();
+									this.up('grid').addEditRecord(false);
 								}
 							},
 							{
@@ -202,7 +229,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								disabled: true,
 								iconCls: 'fa fa-2x fa-pencil-square-o icon-button-color-save icon-vertical-correction',
 								handler: function () {
-									this.up('grid').addEditRecord();
+									this.up('grid').addEditRecord(true);
 								}
 							},
 							{

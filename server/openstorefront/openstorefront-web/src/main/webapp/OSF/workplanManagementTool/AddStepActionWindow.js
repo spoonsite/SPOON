@@ -28,6 +28,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 	modal: true,
 	padding: 10,
 	scrollable: 'y',
+	isEditing: false,
 	items: [
 		{
 			xtype: 'form',
@@ -99,6 +100,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 											{
 												boxLabel: 'Assign to User',
 												inputValue: 'user',
+												itemId: 'assignToUserRadio',
 												listeners: {
 													change: function (self, newVal, oldVal) {
 
@@ -119,6 +121,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 											{
 												boxLabel: 'Assign to Group',
 												inputValue: 'group',
+												itemId: 'assignToGroupRadio',
 												listeners: {
 													change: function (self, newVal, oldVal) {
 
@@ -218,7 +221,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 
 		actionWindow.down('[itemId=actionTypeCombo]').getStore().load();
 
-		if (actionWindow.recordToLoad) {
+		if (actionWindow.recordToLoad && actionWindow.isEditing) {
 			var form = actionWindow.down('form');
 
 			for (key in actionWindow.recordToLoad.actionOption) {
@@ -236,6 +239,13 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 
 			// defer to allow time for the rest of the from to render
 			Ext.defer(function () {
+
+				if (actionWindow.recordToLoad.actionOption.assignUser) {
+					form.down('[itemId=assignToUserRadio]').setValue(true);
+				}
+				else if (actionWindow.recordToLoad.actionOption.assignGroup) {
+					form.down('[itemId=assignToGroupRadio]').setValue(true);
+				}
 				form.getForm().setValues(actionWindow.recordToLoad);
 			}, 500)
 		}
@@ -263,15 +273,8 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 						delete formValues.workPlanStepActionType;
 						recordToSave.actionOption = formValues;
 
-						// Format emails
-						if (recordToSave.actionOption.fixedEmails) {
-							Ext.Array.forEach(recordToSave.actionOption.fixedEmails, function (item, index) {
-								recordToSave.actionOption.fixedEmails[index] = { email: item };
-							});
-						}
-
 						// if we are editing a record, update it
-						if (actionWindow.recordToLoad) {
+						if (actionWindow.recordToLoad && actionWindow.isEditing) {
 							var indexToInsert = -1;
 							Ext.Array.forEach(actionWindow.stepActionStore.getData().items, function (record, index) {
 								if (record == actionWindow.getStepActionGrid().getSelection()[0]) {

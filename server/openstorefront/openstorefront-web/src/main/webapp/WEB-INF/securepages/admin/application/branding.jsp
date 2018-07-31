@@ -245,6 +245,11 @@
 																}
 															}
 														}
+													},
+													{
+														xtype: 'checkbox',
+														name: 'showLinkToMobile',
+														boxLabel: 'Show link to mobile site in menu'													 	
 													}
 
 												]

@@ -121,7 +121,8 @@ public class LookupTypeResource
 	public Response getEntityValues(
 			@PathParam("entity")
 			@RequiredParam String entityName,
-			@BeanParam FilterQueryParams filterQueryParams)
+			@BeanParam FilterQueryParams filterQueryParams,
+			@QueryParam("addSelect") boolean addSelect)
 	{
 		checkEntity(entityName);
 
@@ -139,6 +140,14 @@ public class LookupTypeResource
 		}
 		lookups = filterQueryParams.filter(lookups);
 		lookups.sort(new LookupComparator<>());
+
+		if (addSelect) {
+			LookupEntity select = new LookupEntity()
+			{
+			};
+			select.setDescription("*Select*");
+			lookups.add(select);
+		}
 
 		GenericEntity<List<LookupEntity>> entity = new GenericEntity<List<LookupEntity>>(lookups)
 		{

@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.ChangeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanComponentType;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
@@ -76,6 +77,7 @@ public class WorkPlanServiceImpl
 		} else {
 			workPlan.setWorkPlanId(persistenceService.generateId());
 			workPlan.populateBaseCreateFields();
+			workPlan.setActiveStatus(StandardEntity.INACTIVE_STATUS);
 
 			workPlan.save();
 		}

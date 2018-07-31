@@ -38,6 +38,7 @@ public class SubmissionFormTemplateView
 	private String description;
 	private String templateStatus;
 	private String templateStatusLabel;
+	private String templateStatusDetail;
 	private Boolean defaultTemplate;
 	private String activeStatus;
 	private String createUser;
@@ -63,6 +64,7 @@ public class SubmissionFormTemplateView
 		view.setDescription(template.getDescription());
 		view.setTemplateStatus(template.getTemplateStatus());
 		view.setTemplateStatusLabel(TranslateUtil.translate(SubmissionTemplateStatus.class, template.getTemplateStatus()));
+		view.setTemplateStatusDetail(template.getTemplateStatusDetail());
 		view.setActiveStatus(template.getActiveStatus());
 		view.setCreateUser(template.getCreateUser());
 		view.setCreateDts(template.getCreateDts());
@@ -237,6 +239,16 @@ public class SubmissionFormTemplateView
 	public void setEntryTypeLabel(String entryTypeLabel)
 	{
 		this.entryTypeLabel = entryTypeLabel;
+	}
+
+	public String getTemplateStatusDetail()
+	{
+		return templateStatusDetail;
+	}
+
+	public void setTemplateStatusDetail(String templateStatusDetail)
+	{
+		this.templateStatusDetail = templateStatusDetail;
 	}
 
 }
