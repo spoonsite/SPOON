@@ -31,8 +31,12 @@
 		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
 
+
+		<script src="scripts/component/workPlanProgressComment.js?v=${appVersion}" type="text/javascript"></script>
+
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
+			Ext.require('OSF.common.workPlanProgressComment');
 			Ext.onReady(function() {
 
 				var versionViewTemplate = new Ext.XTemplate();
@@ -48,19 +52,290 @@
 					layout: 'fit'
 				});
 
+				// var commentPanel = Ext.create('Ext.panel.Panel', {
+				// 	title: 'Comments',
+				// 	iconCls: 'fa fa-lg fa-comment',
+				// 	region: 'east',			
+				// 	collapsed: true,
+				// 	collapsible: true,
+				// 	animCollapse: false,
+				// 	floatable: false,
+				// 	titleCollapse: true,
+				// 	width: 375,
+				// 	minWidth: 250,
+				// 	split: true,			
+				// 	bodyStyle: 'background: white;',
+				// 	layout: 'fit',
+				// 	items: [
+				// 		{
+				// 			xtype: 'panel',
+				// 			itemId: 'comments',
+				// 			bodyStyle: 'padding: 10px;',
+				// 			scrollable: true,
+				// 			items: [						
+				// 			],
+				// 			dockedItems: [
+				// 				{
+				// 					xtype: 'form',
+				// 					itemId: 'form',
+				// 					dock: 'bottom',
+				// 					layout: 'anchor',
+				// 					items: [
+				// 						{
+				// 							xtype: 'hidden',
+				// 							name: 'commentId'
+				// 						},
+				// 						{
+				// 							xtype: 'hidden',
+				// 							name: 'replyCommentId'
+				// 						},
+				// 						{
+				// 							xtype: 'htmleditor',
+				// 							name: 'comment',									
+				// 							width: '100%',
+				// 							fieldBodyCls: 'form-comp-htmleditor-border',
+				// 							maxLength: 4000
+				// 						}
+				// 					],
+				// 					dockedItems: [
+				// 						{
+				// 							xtype: 'toolbar',
+				// 							dock: 'bottom',
+				// 							items: [
+				// 								{
+				// 									text: 'Comment',
+				// 									iconCls: 'fa fa-lg fa-comment icon-button-color-save',
+				// 									handler: function(){
+				// 										// var form = this.up('form');
+				// 										// var data = form.getValues();
+				// 										// data.acknowledge = false;
+														
+				// 										// var method = 'POST';
+				// 										// var update = '';		
+				// 										// if (data.commentId) {
+				// 										// 	method = 'PUT',
+				// 										// 	update = '/' + data.commentId;		
+				// 										// }
+				// 										// var evaluationId = rootEvalPanel.commentPanel.lastLoadOpt.evaluationId;
+				// 										// var entity = rootEvalPanel.commentPanel.lastLoadOpt.entity;
+				// 										// var entityId = rootEvalPanel.commentPanel.lastLoadOpt.entityId;
+				// 										// if (!entity) {
+				// 										// 	data.entity = 'Evaluation';
+				// 										// 	data.entityId = evaluationId;	
+				// 										// } else {
+				// 										// 	data.entity = entity;
+				// 										// 	data.entityId = entityId;
+				// 										// }
+														
+				// 										// CoreUtil.submitForm({
+				// 										// 	url: 'api/v1/resource/evaluations/' + evaluationId + '/comments' + update,
+				// 										// 	method: method,
+				// 										// 	data: data,
+				// 										// 	form: form,
+				// 										// 	success: function(){
+				// 										// 		rootEvalPanel.commentPanel.loadComments(evaluationId, entity, entityId);														
+				// 										// 		form.reset();
+																
+				// 										// 		if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
+				// 										// 			rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
+				// 										// 			rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
+				// 										// 		}
+				// 										// 		if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
+				// 										// 			rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
+				// 										// 			rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
+				// 										// 		}														
+				// 										// 	}
+				// 										// });												
+														
+				// 									}
+				// 								},
+				// 								{
+				// 									xtype: 'tbfill'
+				// 								},
+				// 								{
+				// 									text: 'Cancel',
+				// 									itemId: 'cancel',											
+				// 									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+				// 									handler: function(){										
+				// 										// var form = this.up('form');
+				// 										// form.reset();
+				// 										// if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
+				// 										// 	rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
+				// 										// 	rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
+				// 										// }
+				// 										// if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
+				// 										// 	rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
+				// 										// 	rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
+				// 										// }												
+				// 									}
+				// 								}
+				// 							]
+				// 						}
+				// 					]
+				// 				}
+				// 			]
+				// 		}				
+				// 	],
+				// 	listeners: {
+				// 		afterrender: function () {
+
+				// 			// if (rootEvalPanel.readOnly) {
+				// 			// 	var subCommentPanel = rootEvalPanel.query('[itemId=comments]')[0];
+
+				// 			// 	Ext.Array.forEach(subCommentPanel.query('panel'), function (el) {
+				// 			// 		el.setStyle('pointer-events', 'none');
+				// 			// 	});
+				// 			// 	Ext.Array.forEach(subCommentPanel.query('htmleditor'), function (el) {
+				// 			// 		el.setDisabled(true);
+				// 			// 		el.setVisible(false);
+				// 			// 	});
+				// 			// 	Ext.Array.forEach(subCommentPanel.query('button'), function (el) {
+				// 			// 		el.setDisabled(true);
+				// 			// 		el.setVisible(false);
+				// 			// 	});
+				// 			// }
+				// 		}
+				// 	}
+				// });
+
+				var previewContents = Ext.create('OSF.ux.IFrame', {
+					src: ''
+				});
+
 				var componentViewWin = Ext.create('Ext.window.Window', {
 					id: 'componentViewWin',
 					title: 'Entry Details',
 					iconCls: 'fa fa-lg fa-exchange',
-						width: '50%',
-					height: 450,
-					y: 200,
-					modal: true,
-					layout: {
-						type: 'hbox',
-						align: 'stretch'
+					maximizable: true,
+					// bodyBorder: true,
+					// frame: true,
+					width: '75%',
+					height: '75%',
+					defaults: {
+						collapsible: true,
+						split: true,
+						bodyPadding: 0
 					},
-					
+					layout: 'border',
+					items: [
+						{
+							xtype: 'panel',
+							title: 'Main Content',
+							collapsible: false,
+							region: 'center',
+							// frame: true,
+							// margins: '5 0 0 0',
+							margins: '0 0 0 0',
+							width: '75%',
+							height: '80%',
+							title: 'Entry Info',
+							iconCls: 'fa fa-lg fa-eye',
+							layout: 'fit',
+							items: [
+								previewContents
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function() {
+												this.up('window').hide();
+											}
+										},
+									]
+								}
+							]
+						},
+						{
+							xtype: 'panel',
+							id: 'workflowComments',
+							title: 'Workflow Comments',
+							iconCls: 'fa fa-lg fa-comment',	
+							region:'east',
+							floatable: false,
+							// margins: '5 0 0 0',
+							margins: '0 0 0 0',
+
+							collapsed: true,
+							collapsible: true,
+							animCollapse: false,
+							titleCollapse: true,
+
+							width: 300,
+							minWidth: 100,
+							maxWidth: 650,	
+							bodyStyle: 'background: white;',
+							layout: 'fit',
+							items: [
+								{
+									xtype: 'panel',
+									itemId: 'comments',
+									bodyStyle: 'padding: 10px;',
+									scrollable: true,
+									items: [						
+									],
+									dockedItems: [
+										{
+											xtype: 'form',
+											itemId: 'form',
+											dock: 'bottom',
+											layout: 'anchor',
+											items: [
+												{
+													xtype: 'hidden',
+													name: 'commentId'
+												},
+												{
+													xtype: 'hidden',
+													name: 'replyCommentId'
+												},
+												{
+													xtype: 'htmleditor',
+													name: 'comment',									
+													width: '100%',
+													fieldBodyCls: 'form-comp-htmleditor-border',
+													maxLength: 4000
+												}
+											],
+											dockedItems: [
+												{
+													xtype: 'toolbar',
+													dock: 'bottom',
+													items: [
+														{
+															text: 'Comment',
+															iconCls: 'fa fa-lg fa-comment icon-button-color-save',
+															handler: function(){													
+															}
+														},
+														{
+															xtype: 'tbfill'
+														},
+														{
+															text: 'Cancel',
+															itemId: 'cancel',											
+															iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+															handler: function(){																						
+															}
+														}
+													]
+												}
+											]
+										}
+									]
+								}				
+							],
+							listeners: {
+								afterrender: function () {
+								}
+							}
+						}
+
+					]					
 				});
 
 				var processCompWin = Ext.create('Ext.window.Window', {
@@ -424,7 +699,10 @@
 				}
 				var actionViewComponent = function(){
 					console.log('view the thang');	
-					Ext.getCmp('componentViewWin').show();
+					// Ext.getCmp('componentViewWin').show();
+
+					componentViewWin.show();
+					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + 'c6c30ae5-3585-47d8-84a5-39da38e554ed');
 				}
 				var actionWorkAndProcessComponent = function(){
 					console.log('do the work');	
