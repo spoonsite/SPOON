@@ -23,7 +23,7 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 	config: {
 		workplanGrid: null
 	},
-	height: 600,
+	height: 625,
 	width: 500,
 	scrollable: 'y',
 	title: 'Migrate Workplan Records',
@@ -107,7 +107,7 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 		},
 		{
 			xtype: 'fieldset',
-			height: '85%',
+			height: '83%',
 			width: '100%',
 			margin: 10,
 			scrollable: 'y',
@@ -142,7 +142,9 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 		migrationFormContainer.removeAll();
 
 		var targetComboStore = Ext.create('Ext.data.Store', {
-			data: targetRecord.getData().steps
+			data: targetRecord.getData().steps.map(function (step) {
+				return Ext.apply(step, { displayView: '<b>' + step.stepOrder + '.</b> ' + step.name });
+			})
 		});
 
 		Ext.Array.forEach(recordToBeDeleted.steps, function (step) {
@@ -162,7 +164,7 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 				items:[
 					{
 						xtype: 'container',
-						html: step.name,
+						html: '<b>' + step.stepOrder + '.</b> ' + step.name,
 						width: '30%',
 						style: 'text-align: center;'
 					},
@@ -177,9 +179,15 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 						fieldLabel: 'Target Step',
 						labelAlign: 'top',
 						width: '59%',
-						displayField: 'name',
+						displayField: 'displayView',
 						valueField: 'workPlanId',
-						store: targetComboStore
+						store: targetComboStore,
+						editable: false,
+						displayTpl: Ext.create('Ext.XTemplate',
+							'<tpl for=".">',
+								'{stepOrder}. {name}',
+							'</tpl>'
+						)
 					}
 				]
 			});
