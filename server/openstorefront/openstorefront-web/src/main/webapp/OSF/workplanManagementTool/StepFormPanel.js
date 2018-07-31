@@ -74,7 +74,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 			items: [
 				{
 					xtype: 'textfield',
-					fieldLabel: 'Step name (?)',
+					fieldLabel: 'Step name <i class="fa fa-question-circle" data-qtip="This is the name of the step (will be displayed to end users)" ></i>',
 					name: 'name',
 					maxLength: 20,
 					enforceMaxLength: true,
@@ -82,19 +82,19 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 				},
 				{
 					xtype: 'ActiveOnMultiCombo',
-					fieldLabel: 'Active On (?)',
+					fieldLabel: 'Active On <i class="fa fa-question-circle" data-qtip="Will be set as the current step if one of these events occurs" ></i>',
 					name: 'triggerEvents',
 					width: '100%'
 				},
 				{
 					xtype: 'textarea',
-					fieldLabel: 'Short Description (?) <span class="field-required" />',
+					fieldLabel: 'Short Description <i class="fa fa-question-circle" data-qtip="A short description of what the step is for" ></i> <span class="field-required" />',
 					name: 'description',
 					allowBlank: false,
 					canAlertOnChange: true
 				},
 				{
-					fieldLabel: 'Role Access (?)',
+					fieldLabel: 'Role Access <i class="fa fa-question-circle" data-qtip="Roles that will have access to manipulate a record on this step" ></i>',
 					xtype: 'RoleGroupMultiSelectComboBox',
 					width: '100%',
 					name: 'stepRole'
@@ -103,7 +103,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					xtype: 'grid',
 					sortableColumns: false,
 					itemId: 'stepActionGrid',
-					title: 'Step Actions (?)',
+					title: 'Step Actions <i class="fa fa-question-circle" data-qtip="These action will be performed once this step becomes active" ></i>',
 					colspan: 2,
 					width: '100%',
 					style: 'border: 1px solid #ccc;',
