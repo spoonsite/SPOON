@@ -17,6 +17,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource.component;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -430,14 +431,35 @@ public abstract class ComponentExtendedSubResourceExt
 				comments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
 			}
 		} else if (SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
-			// allow user's name, owner's name, and private comments
 			List<ComponentComment> submissionComments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
-			submissionComments.forEach((comment) -> { if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())) comment.setCreateUser("ANONYMOUS"); });
+			submissionComments.forEach((comment) -> {
+				// check if the createUser or updateUser is the owner of the component
+				if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())) comment.setCreateUser("ANONYMOUS");
+			});
 			comments = submissionComments;
 		} else if (response != null) {
-			List<ComponentComment> submissionComments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
-			submissionComments = comments.stream().filter(comment -> !comment.getPrivateComment()).collect(Collectors.toList());
-			submissionComments.forEach((comment) -> { if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())) comment.setCreateUser("ANONYMOUS"); });
+			List<ComponentComment> submissionComments;
+			submissionComments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION") && !Convert.toBoolean(comment.getPrivateComment())).collect(Collectors.toList());
+			submissionComments.forEach((comment) -> {
+				Component component = new Component();
+				component.setComponentId(comment.getComponentId());
+				component = component.find();
+				String owner = "";
+				if (component != null) owner = component.getOwnerUser();	
+				
+				if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())
+						&& !comment.getCreateUser().equals(owner)) {
+					comment.setCreateUser("ANONYMOUS");
+				}
+				if (!comment.getUpdateUser().equals(SecurityUtil.getCurrentUserName())
+						&& !comment.getUpdateUser().equals(owner)) {
+					comment.setUpdateUser("ANONYMOUS");
+				}
+				if (Convert.toBoolean(comment.getAdminComment())) {
+					comment.setCreateUser("Admin");
+					comment.setUpdateUser("Admin");
+				}
+			});
 			comments = submissionComments;
 		}
 		return comments;

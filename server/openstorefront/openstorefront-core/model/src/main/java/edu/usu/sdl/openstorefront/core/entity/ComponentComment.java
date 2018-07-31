@@ -58,6 +58,10 @@ public class ComponentComment
 	@ConsumeField
 	@APIDescription("Private comments are not shared with owners")
 	private Boolean privateComment;
+	
+	@ConsumeField
+	@APIDescription("Mark admin submission comments")
+	private Boolean adminComment;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentComment()
@@ -136,5 +140,15 @@ public class ComponentComment
 	{
 		this.parentCommentId = parentCommentId;
 	}
+	
+	public Boolean getAdminComment()
+	{
+		return adminComment;
+	}
 
+	public void setAdminComment(Boolean adminComment)
+	{
+		this.adminComment = adminComment;
+	}
+	
 }
