@@ -15,10 +15,13 @@
  */
 package edu.usu.sdl.openstorefront.service.workplan;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
+import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
@@ -27,13 +30,13 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author dshurtleff
  */
-public class ApproveEntryAction
+public class PendingEntryAction
 		extends BaseWorkPlanStepAction
 {
 
-	private static final Logger LOG = Logger.getLogger(ApproveEntryAction.class.getName());
+	private static final Logger LOG = Logger.getLogger(PendingEntryAction.class.getName());
 
-	public ApproveEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
+	public PendingEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
 	{
 		super(workPlanLink, workPlan, currentStepAction);
 	}
@@ -46,16 +49,20 @@ public class ApproveEntryAction
 			component.setComponentId(workPlanLink.getComponentId());
 			component = component.find();
 
-			if (component.getPendingChangeId() != null) {
-				service.getComponentService().mergePendingChange(workPlanLink.getComponentId());
-				LOG.log(Level.FINEST, () -> "Approved - Change Request: Component Id - " + workPlanLink.getComponentId());
-			} else {
-				service.getComponentService().approveComponent(workPlanLink.getComponentId());
-				LOG.log(Level.FINEST, () -> "Approved: Component Id - " + workPlanLink.getComponentId());
+			if (component == null) {
+				throw new OpenStorefrontRuntimeException("Unable to set component to pending.", "Check data and refresh. component id: " + workPlanLink.getComponentId());
 			}
 
+			component.setApprovalState(ApprovalStatus.PENDING);
+
+			RequiredForComponent requiredForComponent = new RequiredForComponent();
+			requiredForComponent.setComponent(component);
+			requiredForComponent.setAttributes(service.getComponentService().getAttributesByComponentId(workPlanLink.getComponentId()));
+			service.getComponentService().saveComponent(requiredForComponent);
+
+			LOG.log(Level.FINEST, () -> "Set Component to Pending: Component Id - " + workPlanLink.getComponentId());
 		} else {
-			LOG.log(Level.FINEST, "Unable to approve; No component Id");
+			LOG.log(Level.FINEST, "Unable to set to pending; No component Id");
 		}
 	}
 

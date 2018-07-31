@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 
 /**
  *
@@ -46,9 +47,9 @@ public interface WorkPlanService
 	 * Deletes a workplan and transfer to a new workplan...
 	 *
 	 * @param workPlanId
-	 * @param newWorkPlanId (if null) then it will go back to default
+	 * @param workPlanRemoveMigration (optional)
 	 */
-	void removeWorkPlan(String workPlanId, String newWorkPlanId);
+	void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration);
 
 	/**
 	 * Pulls the current plan for the Component or creates one if needed
@@ -59,18 +60,20 @@ public interface WorkPlanService
 	WorkPlanLink getWorkPlanForComponent(String componentId);
 
 	/**
-	 * Assigns a WorkPlan for a Component
+	 * Assigns a WorkPlan for a worklink
 	 *
-	 * @param componentId
+	 * @param workPlanId
+	 * @param workPlanLinkId
 	 * @param username
 	 * @param roleGroup
 	 */
-	void assignWorkPlanForComponent(String workPlanId, String workLinkId, String username, String roleGroup);
+	void assignWorkPlan(String workPlanId, String workPlanLinkId, String username, String roleGroup);
 
 	/**
 	 * Moves a Component to a new workflow step
 	 *
-	 * @param nextStepId
+	 * @param workPlanLink
+	 * @param workPlanStepId
 	 * @return
 	 */
 	WorkPlanLink moveWorkLinkToStep(WorkPlanLink workPlanLink, String workPlanStepId);
@@ -90,7 +93,7 @@ public interface WorkPlanService
 	public void nextStep(WorkPlanLink workPlanLink);
 
 	/**
-	 * Updated all worklink to match sure the accurately reflects the data
+	 * Updated all worklinks to match sure the accurately reflects the data
 	 */
 	void syncWorkPlanLinks();
 
@@ -108,5 +111,13 @@ public interface WorkPlanService
 	 * @param componentId
 	 */
 	void updatedWorkPlanLinkToMatchState(String componentId);
+
+	/**
+	 * Finds the work plan for component Type
+	 *
+	 * @param componentType
+	 * @return WorkPlan (if not found, the default will be returned)
+	 */
+	WorkPlan getWorkPlanForComponentType(String componentType);
 
 }

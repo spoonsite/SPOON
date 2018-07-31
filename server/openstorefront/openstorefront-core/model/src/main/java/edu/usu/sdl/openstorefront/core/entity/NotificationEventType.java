@@ -38,6 +38,7 @@ public class NotificationEventType
 	public static final String ADMIN = "ADMIN";
 	public static final String SUBMISSION = "SUBMISSION";
 	public static final String CHANGE_REQUEST = "CHANGERQT";
+	public static final String WORKPLAN_CHANGE = "WORKPLAN_CHANGE";
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public NotificationEventType()
@@ -56,6 +57,7 @@ public class NotificationEventType
 		codeMap.put(ADMIN, newLookup(NotificationEventType.class, ADMIN, "Admin"));
 		codeMap.put(SUBMISSION, newLookup(NotificationEventType.class, SUBMISSION, "Submission"));
 		codeMap.put(CHANGE_REQUEST, newLookup(NotificationEventType.class, CHANGE_REQUEST, "Change Request"));
+		codeMap.put(WORKPLAN_CHANGE, newLookup(NotificationEventType.class, WORKPLAN_CHANGE, "Workplan change"));
 
 		return codeMap;
 	}
