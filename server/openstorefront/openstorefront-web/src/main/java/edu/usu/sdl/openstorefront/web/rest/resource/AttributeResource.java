@@ -115,7 +115,9 @@ public class AttributeResource
 			@QueryParam("all")
 			@APIDescription("Setting all to true will pull both active and inactive records")
 			@DefaultValue("false") boolean all,
-			@QueryParam("important") Boolean important)
+			@QueryParam("important") Boolean important,
+			@APIDescription("If set, only get the attributes associated with the type; ignores All and Important")
+			@QueryParam("componentType") String componentType)
 	{
 		AttributeType attributeTypeExample = new AttributeType();
 
@@ -124,7 +126,14 @@ public class AttributeResource
 		}
 		attributeTypeExample.setImportantFlg(important);
 
-		List<AttributeType> attributeTypes = service.getPersistenceService().queryByExample(attributeTypeExample);
+		List<AttributeType> attributeTypes = new ArrayList<>();
+
+		if (StringUtils.isNotBlank(componentType)) {
+			attributeTypes.addAll(service.getAttributeService().findRequiredAttributes(componentType, true));
+			attributeTypes.addAll(service.getAttributeService().findOptionalAttributes(componentType, true));
+		} else {
+			attributeTypes = service.getPersistenceService().queryByExample(attributeTypeExample);
+		}
 
 		String codeStatus = null;
 		if (!all) {
@@ -283,7 +292,7 @@ public class AttributeResource
 	{
 		List<AttributeAll> attributes = new ArrayList<>();
 		AttributeType attributeTypeExample = new AttributeType();
-		
+
 		boolean restrictTypes = false;
 		Set<String> typeSet = new HashSet<>();
 		if (types != null) {

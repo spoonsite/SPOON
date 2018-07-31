@@ -49,7 +49,7 @@ Ext.define('OSF.customSubmission.SubmissionBaseForm', {
 
 		var data = [];
 		Ext.Array.each(fields.items, function(field){
-			if (field.fieldLabel && !field.hidden) {
+			if (field.fieldLabel && !field.hidden && !field.disabled) {
 				
 				var value;
 				

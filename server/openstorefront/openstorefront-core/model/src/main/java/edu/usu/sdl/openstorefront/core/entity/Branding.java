@@ -38,6 +38,8 @@ public class Branding
 		extends StandardEntity<Branding>
 {
 
+	private static final long serialVersionUID = 1L;
+
 	@PK(generated = true)
 	@NotNull
 	private String brandingId;
@@ -245,6 +247,9 @@ public class Branding
 	private Boolean showSupportMenuOnLogin;
 
 	@ConsumeField
+	private Boolean showLinkToMobile;
+
+	@ConsumeField
 	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private LandingTemplate landingTemplate;
@@ -308,6 +313,7 @@ public class Branding
 		setPanelHeaderTextColor(branding.getPanelHeaderTextColor());
 		setOverrideCSS(branding.getOverrideCSS());
 
+		setShowLinkToMobile(branding.getShowLinkToMobile());
 		setUseDefaultLandingPage(branding.getUseDefaultLandingPage());
 		setLandingTemplate(branding.getLandingTemplate());
 	}
@@ -799,5 +805,15 @@ public class Branding
 	public void setShowFAQ(Boolean showFAQ)
 	{
 		this.showFAQ = showFAQ;
+	}
+
+	public Boolean getShowLinkToMobile()
+	{
+		return showLinkToMobile;
+	}
+
+	public void setShowLinkToMobile(Boolean showLinkToMobile)
+	{
+		this.showLinkToMobile = showLinkToMobile;
 	}
 }

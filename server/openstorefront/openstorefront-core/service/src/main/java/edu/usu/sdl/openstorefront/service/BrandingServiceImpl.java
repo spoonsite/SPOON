@@ -79,15 +79,15 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getPrimaryLogoUrl() == null) {
-					branding.setPrimaryLogoUrl("images/di2elogo-lg.png");
+					branding.setPrimaryLogoUrl("/openstorefront/images/di2elogo-lg.png");
 				}
 
 				if (branding.getSecondaryLogoUrl() == null) {
-					branding.setSecondaryLogoUrl("images/di2elogo-sm.png");
+					branding.setSecondaryLogoUrl("/openstorefront/images/di2elogo-sm.png");
 				}
 
 				if (branding.getHomebackSplashUrl() == null) {
-					branding.setHomebackSplashUrl("images/background_globe.jpg");
+					branding.setHomebackSplashUrl("/openstorefront/images/background_globe.jpg");
 				}
 
 				if (branding.getLandingStatsText() == null) {
@@ -118,7 +118,7 @@ public class BrandingServiceImpl
 
 				if (branding.getLoginFooter() == null) {
 					branding.setLoginFooter(
-							"			<div class=\"disclaimer\">\n"
+							"			<div class=\"disclaimer\" style=\"max-width: 800px; padding: 10px;  text-align: center; margin-right: auto; margin-left: auto;\">\n"
 							+ "			  <span >By logging in you are consenting to these conditions</span>\n"
 							+ "			  <h1>WARNING:</h1>\n"
 							+ "			  <p>\n"
