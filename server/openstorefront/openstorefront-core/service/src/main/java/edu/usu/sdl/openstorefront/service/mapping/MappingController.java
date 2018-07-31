@@ -81,6 +81,8 @@ public class MappingController
 		try {
 			verifySections(template, componentFormSet);
 		} catch (MappingException ex) {
+			LOG.log(Level.FINER, "Verified failed; Details", ex);
+
 			RuleResult ruleResult = new RuleResult();
 			ruleResult.setFieldName(ex.getFieldType());
 			ruleResult.setMessage(ex.getLocalizedMessage());

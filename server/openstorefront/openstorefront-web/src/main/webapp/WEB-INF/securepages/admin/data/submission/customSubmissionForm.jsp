@@ -131,7 +131,12 @@
 							} else {
 								meta.tdCls = 'alert-success';
 							}
-							return record.get('templateStatusLabel');
+							
+							var displayStatus = record.get('templateStatusLabel');
+							if (record.get('templateStatusDetail')) {
+								displayStatus += ' <i class="fa fa-question-circle" data-qtip="' + record.get('templateStatusDetail') + '"></i>';
+							}
+							return displayStatus;
 						}
 					},
 					{ text: 'Entry Type', dataIndex: 'entryTypeLabel', align: 'center', flex: 7,
@@ -515,6 +520,7 @@
 												var formData = form.getValues();
 												
 												var copiedData = Ext.clone(record.data);
+												copiedData.defaultTemplate = false;
 												copiedData.submissionTemplateId = null;
 												copiedData.name = formData.name; 
 												

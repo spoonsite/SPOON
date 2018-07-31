@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
@@ -92,6 +93,10 @@ public class SubmissionFormServiceImpl
 	{
 		Objects.requireNonNull(template);
 
+		if (Convert.toBoolean(template.getDefaultTemplate())) {
+			template.setEntryType(null);
+		}
+
 		String componentTypeInUse = template.getEntryType();
 		if (StringUtils.isBlank(componentTypeInUse)) {
 			//Find type to verify against pick one
@@ -105,8 +110,11 @@ public class SubmissionFormServiceImpl
 		ValidationResult validationResult = validateTemplate(template, componentTypeInUse);
 		if (validationResult.valid()) {
 			template.setTemplateStatus(SubmissionTemplateStatus.PENDING_VERIFICATION);
+			template.setTemplateStatusDetail(null);
 		} else {
 			template.setTemplateStatus(SubmissionTemplateStatus.INCOMPLETE);
+			template.setTemplateStatusDetail(validationResult.toHtmlString());
+			LOG.log(Level.FINE, () -> "Unable to validated template (Incomplete): " + validationResult.toString());
 		}
 		template.setActiveStatus(SubmissionFormTemplate.INACTIVE_STATUS);
 

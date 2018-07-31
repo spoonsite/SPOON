@@ -188,7 +188,9 @@ public class UserRegistrationResource
 			UserRegistration savedRegistration = new UserRegistration();
 			savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
 			savedRegistration = savedRegistration.find();
-
+			// the verification code should not be sent back to new users creating an acount
+			savedRegistration.setVerificationCode("");
+			
 			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
