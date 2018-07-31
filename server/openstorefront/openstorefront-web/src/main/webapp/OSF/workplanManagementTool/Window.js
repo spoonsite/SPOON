@@ -181,6 +181,9 @@ Ext.define('OSF.workplanManagementTool.Window', {
 
 		// reset the last selected step (if re-opening the tool)
 		this.setSelectedStep(null);
+
+		// reset the migrationsToPerform
+		this.setMigrationsToPerform([]);
 		
 		// If no record was provided, us the defaultConfig
 		record = Ext.apply(defaultConfig, record);

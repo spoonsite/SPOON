@@ -243,6 +243,9 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			});
 			this.setTitle('Step Manager <span class="migration-label" style="float: right" data-qtip=\'' + migrationString + '\'">Migrations Performed&nbsp;&nbsp;</span>');
 		}
+		else {
+			this.setTitle('Step Manager');
+		}
 	},
 
 	addStep: function () {
