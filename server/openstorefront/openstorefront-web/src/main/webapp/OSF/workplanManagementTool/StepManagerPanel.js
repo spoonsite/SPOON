@@ -235,6 +235,14 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			
 			this.drawSteps();
 		}
+
+		if (this.getWpWindow().getMigrationsToPerform().length > 0) {
+			var migrationString = '';
+			Ext.Array.forEach(this.getWpWindow().getMigrationsToPerform(), function (migration) {
+				migrationString += migration.initialStepName + '&nbsp;<i class=\"fa fa-long-arrow-right\"></i>&nbsp;' + migration.targetStepName + '<br />';
+			});
+			this.setTitle('Step Manager <span class="migration-label" style="float: right" data-qtip=\'' + migrationString + '\'">Migrations Performed&nbsp;&nbsp;</span>');
+		}
 	},
 
 	addStep: function () {
