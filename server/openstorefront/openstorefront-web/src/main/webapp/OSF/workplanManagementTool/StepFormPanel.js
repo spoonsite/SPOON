@@ -45,6 +45,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 			hidden: true,
 			style: 'text-align: left;',
 			width: '100%',
+			height: '100%',
 			padding: '5%',
 			scrollable: true,
 			layout: {
@@ -74,7 +75,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 			items: [
 				{
 					xtype: 'textfield',
-					fieldLabel: 'Step name <i class="fa fa-question-circle" data-qtip="This is the name of the step (will be displayed to end users)" ></i>',
+					fieldLabel: 'Step name <i class="fa fa-question-circle" data-qtip="This is the name of the step (will be displayed to end users)" ></i> <span class="field-required" />',
 					name: 'name',
 					maxLength: 20,
 					enforceMaxLength: true,
@@ -98,6 +99,29 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					xtype: 'RoleGroupMultiSelectComboBox',
 					width: '100%',
 					name: 'stepRole'
+				},
+				{
+					fieldLabel: 'Aprroval State to Match <i class="fa fa-question-circle" data-qtip="This will be the <b>default</b> active step for an record that has been assigned to this workplan that has this record status" ></i>',
+					xtype: 'combo',
+					name: 'approvalStateToMatch',
+					colspan: 2,
+					width: '45.1%',
+					displayField: 'description',
+					valueField: 'code',
+					editable: false,
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/lookuptypes/ApprovalStatus'
+						},
+						fields: ['code', 'description'],
+						listeners: {
+							load: function (store, records) {
+								store.add({code: 'none', description: 'None'});
+							}
+						}
+					}
 				},
 				{
 					xtype: 'grid',

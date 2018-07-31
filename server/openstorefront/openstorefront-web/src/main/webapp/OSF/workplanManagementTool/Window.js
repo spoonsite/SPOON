@@ -100,6 +100,11 @@ Ext.define('OSF.workplanManagementTool.Window', {
 								step.triggerEvents = [];
 							}
 
+							// Configure approvalStateToMatch
+							if (step.approvalStateToMatch === 'none') {
+								delete step.approvalStateToMatch;
+							}
+
 							// Configure emails in action (if there are any)
 							if (step.actions) {
 								Ext.Array.forEach(step.actions, function (action) {
@@ -213,10 +218,15 @@ Ext.define('OSF.workplanManagementTool.Window', {
 					return item.securityRole;
 				});
 			}
+
 			if (step.triggerEvents) {
 				step.triggerEvents = step.triggerEvents.map(function (item) {
 					return item.entityEventType;
 				});
+			}
+
+			if (typeof step.approvalStateToMatch === 'undefined') {
+				step.approvalStateToMatch = 'none';
 			}
 
 			if (step.actions) {
@@ -273,7 +283,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 
 		var validationPass = true;
 		Ext.Array.forEach(this.getWorkplanConfig().steps, function (step) {
-			if (step.description === '') {
+			if (step.description === '' || step.name === '') {
 				step.hasError = true;
 				validationPass = false;
 			}
