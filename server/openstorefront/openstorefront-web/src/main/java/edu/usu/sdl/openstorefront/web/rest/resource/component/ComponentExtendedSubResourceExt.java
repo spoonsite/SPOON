@@ -427,26 +427,34 @@ public abstract class ComponentExtendedSubResourceExt
 		List<ComponentComment> comments = service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
 
 		if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)) {
+			/*        SUPER-ADMIN            */
 			if (submissionOnly) {
-				comments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
+				return comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
+			} else {
+				return comments;
 			}
 		} else if (SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+			/*        LIBRARIAN             */
 			List<ComponentComment> submissionComments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
 			submissionComments.forEach((comment) -> {
-				// check if the createUser or updateUser is the owner of the component
-				if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())) comment.setCreateUser("ANONYMOUS");
+				if (!SecurityUtil.isCurrentUserTheOwner(comment)) {
+					comment.setCreateUser("ANONYMOUS");
+				}
 			});
-			comments = submissionComments;
+			return submissionComments;
 		} else if (response != null) {
+			/*        ENTRY OWNER            */
 			List<ComponentComment> submissionComments;
-			submissionComments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION") && !Convert.toBoolean(comment.getPrivateComment())).collect(Collectors.toList());
+			submissionComments = comments.stream().filter(comment ->
+					comment.getCommentType().equals("SUBMISSION")
+					&& !Convert.toBoolean(comment.getPrivateComment())
+				).collect(Collectors.toList());
 			submissionComments.forEach((comment) -> {
 				Component component = new Component();
 				component.setComponentId(comment.getComponentId());
 				component = component.find();
-				String owner = "";
-				if (component != null) owner = component.getOwnerUser();	
-				
+				String owner = component != null ? component.getOwnerUser() : "";
+
 				if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())
 						&& !comment.getCreateUser().equals(owner)) {
 					comment.setCreateUser("ANONYMOUS");
@@ -460,9 +468,10 @@ public abstract class ComponentExtendedSubResourceExt
 					comment.setUpdateUser("Admin");
 				}
 			});
-			comments = submissionComments;
+			return submissionComments;
+		} else {
+			return Collections.emptyList();
 		}
-		return comments;
 	}
 
 	@DELETE
@@ -500,30 +509,37 @@ public abstract class ComponentExtendedSubResourceExt
 			@RequiredParam String commentId,
 			ComponentComment comment)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
-		if (response != null) {
-			return response;
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if (component == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		ComponentComment componentComment = service.getPersistenceService().findById(ComponentComment.class, commentId);
+		if (componentComment == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 
-		response = Response.status(Response.Status.NOT_FOUND).build();
-		ComponentComment componentComment = service.getPersistenceService().findById(ComponentComment.class, commentId);
-		if (componentComment != null) {
-			checkBaseComponentBelongsToComponent(componentComment, componentId);
+		if (component.getComponentId().equals(componentComment.getComponentId())
+				&& SecurityUtil.isCurrentUserTheOwner(componentComment)) {
 			comment.setComponentId(componentId);
 			comment.setCommentId(commentId);
-			response = saveComment(comment);
+			return saveComment(comment, false);
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
 		}
-		return response;
 	}
 
-	private Response saveComment(ComponentComment comment)
+	private Response saveComment(ComponentComment comment, Boolean isCreated)
 	{
 		ValidationModel validationModel = new ValidationModel(comment);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			comment.setActiveStatus(ComponentComment.ACTIVE_STATUS);
-			comment.setCreateUser(SecurityUtil.getCurrentUserName());
+			if (isCreated) {
+				comment.setCreateUser(SecurityUtil.getCurrentUserName());
+			}
 			comment.setUpdateUser(SecurityUtil.getCurrentUserName());
 			comment.save();
 		} else {
@@ -538,30 +554,30 @@ public abstract class ComponentExtendedSubResourceExt
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentComment.class)
 	@Path("/{id}/comments")
-	public Response addComponentTag(
+	public Response createComponentComment(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@RequiredParam ComponentComment comment)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
-		if (response != null) {
-			return response;
-		}
-
 		Component component = new Component();
 		component.setComponentId(componentId);
 		component = component.find();
-		if (component != null) {
-			comment.setComponentId(componentId);
-			ValidationResult validResult = comment.validate();
-			if (validResult.valid()) {
-				ComponentComment newComment = comment.save();
-				return Response.created(URI.create(BASE_RESOURCE_PATH + comment.getComponentId() + "/comments/" + comment.getCommentId())).entity(newComment).build();
-			} else {
-				return Response.ok(validResult.toRestError()).build();
-			}
+		if (component == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		return Response.status(Response.Status.NOT_FOUND).build();
+
+		if (SecurityUtil.isCurrentUserTheOwner(component)
+				|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)
+				|| SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+			comment.setComponentId(componentId);
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)
+					|| SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+				comment.setAdminComment(true);
+			}
+			return saveComment(comment, true);
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
 	}
 	// </editor-fold>
 
