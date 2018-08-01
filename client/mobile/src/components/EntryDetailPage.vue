@@ -399,6 +399,15 @@
         </v-card>
       </v-expansion-panel-content>
 
+      <v-expansion-panel-content v-if="commentsViewable" text-xs-center>
+        <div slot="header">Submission Comments</div>
+        <v-card class="grey lighten-5">
+          <v-card-actions>
+            <v-btn color="accent" @click="goToComments()">Go To Comments</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-expansion-panel-content>
+
     <v-dialog
       v-model="askQuestionDialog"
       >
@@ -437,10 +446,12 @@ import LoadingOverlay from './subcomponents/LoadingOverlay';
 import Question from './subcomponents/Question';
 import format from 'date-fns/format';
 import isFuture from 'date-fns/is_future';
+import router from '../router/index';
 
 export default {
   name: 'entry-detail-page',
   components: {
+    router,
     StarRating,
     Lightbox,
     LoadingOverlay,
@@ -656,6 +667,14 @@ export default {
         })
         .catch(e => this.errors.push(e));
     },
+    goToComments () {
+      router.push({
+        name: 'Submission Comments',
+        params: {
+          id: this.id
+        }
+      });
+    },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
       .then(response => {
@@ -838,6 +857,19 @@ export default {
     }
   },
   computed: {
+    commentsViewable () {
+      // TODO: look at me when the endpoints are implemented
+      if (this.$store.state.currentUser.username === this.detail.createUser) {
+        return true;
+      }
+      if (this.$store.getters.getPermission('ADMIN-ENTRY-COMMENT-MANAGEMENT')) {
+        return true;
+      }
+      if (this.$store.getters.getPermission('WORKFLOW-ADMIN-SUBMISSION-COMMENTS')) {
+        return true;
+      }
+      return false;
+    }
   }
 };
 </script>
