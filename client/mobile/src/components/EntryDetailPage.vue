@@ -542,27 +542,27 @@ export default {
   methods: {
     checkWatch () {
       this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
-      .then(response => {
-        if (response) {
-          if (response.data && response.data.length > 0) {
-            let tempWatch = false;
-            for (var i = 0; i < response.data.length; i++) {
-              if (response.data[i].componentId === this.id) {
-                this.watchSwitch = true;
-                tempWatch = true;
-                this.watchId = response.data[i].watchId;
-                break;
+        .then(response => {
+          if (response) {
+            if (response.data && response.data.length > 0) {
+              let tempWatch = false;
+              for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].componentId === this.id) {
+                  this.watchSwitch = true;
+                  tempWatch = true;
+                  this.watchId = response.data[i].watchId;
+                  break;
+                }
+              }
+              if (tempWatch === false) {
+                this.watchSwitch = false;
               }
             }
-            if (tempWatch === false) {
-              this.watchSwitch = false;
-            }
           }
-        }
-      })
-      .finally(() => {
-        this.watchBeingChecked = false;
-      });
+        })
+        .finally(() => {
+          this.watchBeingChecked = false;
+        });
     },
     computeAverageRating (detail) {
       var temp = 0;
@@ -598,11 +598,11 @@ export default {
     },
     deleteReviewConfirmation () {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
-      .then(response => {
-        this.$toasted.show('Review Deleted');
-        this.deleteReviewDialog = false;
-        this.getDetail();
-      });
+        .then(response => {
+          this.$toasted.show('Review Deleted');
+          this.deleteReviewDialog = false;
+          this.getDetail();
+        });
     },
     editReviewSetup (review) {
       this.writeReviewDialog = true;
@@ -630,11 +630,11 @@ export default {
     getAnswers (qid) {
       this.isLoading = true;
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions/${qid}/responses`)
-      .then(response => {
-        this.answers[qid] = response.data;
-        this.isLoading = false;
-      })
-      .catch(e => this.errors.push(e));
+        .then(response => {
+          this.answers[qid] = response.data;
+          this.isLoading = false;
+        })
+        .catch(e => this.errors.push(e));
     },
     getDetail () {
       this.isLoading = true;
@@ -677,37 +677,37 @@ export default {
     },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
-      .then(response => {
-        if (response.data) {
-          this.timeOptions = response.data;
-          response.data.forEach(element => {
-            this.timeSelectOptions.push(element.description);
-          });
-        }
-      })
-      .catch(e => this.errors.push(e));
+        .then(response => {
+          if (response.data) {
+            this.timeOptions = response.data;
+            response.data.forEach(element => {
+              this.timeSelectOptions.push(element.description);
+            });
+          }
+        })
+        .catch(e => this.errors.push(e));
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
-      .then(response => {
-        if (response.data) {
-          this.prosOptions = response.data;
-          response.data.forEach(element => {
-            this.prosSelectOptions.push(element.description);
-          });
-        }
-      })
-      .catch(e => this.errors.push(e));
+        .then(response => {
+          if (response.data) {
+            this.prosOptions = response.data;
+            response.data.forEach(element => {
+              this.prosSelectOptions.push(element.description);
+            });
+          }
+        })
+        .catch(e => this.errors.push(e));
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
-      .then(response => {
-        if (response.data) {
-          this.consOptions = response.data;
-          response.data.forEach(element => {
-            this.consSelectOptions.push(element.description);
-          });
-        }
-      })
-      .catch(e => this.errors.push(e));
+        .then(response => {
+          if (response.data) {
+            this.consOptions = response.data;
+            response.data.forEach(element => {
+              this.consSelectOptions.push(element.description);
+            });
+          }
+        })
+        .catch(e => this.errors.push(e));
     },
     showMediaDetails (item) {
       this.currentMediaDetailItem = item;
@@ -826,7 +826,7 @@ export default {
           };
           this.$http.post(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`, watch)
             .then(response => {
-              if(response.errors) {
+              if (response.errors) {
                 this.watchSwitch = false;
               }
             })
@@ -835,12 +835,11 @@ export default {
             });
         } else {
           this.$http.delete(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches/${this.watchId}`)
-          .finally(() => {
-            this.checkWatch();
-          });
+            .finally(() => {
+              this.checkWatch();
+            });
         }
       }
-
     },
     writeReviewDialog: function (val) {
       if (val === false) {
