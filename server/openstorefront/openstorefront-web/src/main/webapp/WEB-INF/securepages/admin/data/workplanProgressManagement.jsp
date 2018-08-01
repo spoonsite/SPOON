@@ -26,13 +26,13 @@
 		</stripes:layout-render>
 
 		
-		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
+		<!-- <script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
 
 
-		<script src="scripts/component/workPlanProgressComment.js?v=${appVersion}" type="text/javascript"></script>
+		<script src="scripts/component/workPlanProgressComment.js?v=${appVersion}" type="text/javascript"></script> -->
 
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
@@ -360,9 +360,9 @@
 						})
 					],
 					fields:[
-						// {name: 'name', mapping: function(data){
-						// 	return data.component.name;
-						// }},
+						{name: 'name', mapping: function(data){
+							return data.component.name;
+						}},
 						// {name: 'description', mapping: function(data){
 						// 	return data.component.description;
 						// }},
@@ -466,7 +466,20 @@
 						// 	return data.component.numberOfPendingChanges;
 						// }},
 						// 'integrationManagement'
-					]
+					],
+					proxy: CoreUtil.pagingProxy({
+						url: 'api/v1/resource/components/filterable',
+						extraParams: {
+							status: 'ALL',
+							approvalState: 'ALL',
+							componentType: 'ALL'
+						},
+						reader: {
+						   type: 'json',
+						   rootProperty: 'components',
+						   totalProperty: 'totalNumber'
+						}
+					}),
 				});
 
 				var componentGrid = Ext.create('Ext.grid.Panel', {
@@ -702,7 +715,9 @@
 					// Ext.getCmp('componentViewWin').show();
 
 					componentViewWin.show();
-					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + 'c6c30ae5-3585-47d8-84a5-39da38e554ed');
+					var comp_id = Ext.getCmp('componentGrid').getSelection()[0].data.component.componentId;
+					// console.log(comp_id);
+					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
 				}
 				var actionWorkAndProcessComponent = function(){
 					console.log('do the work');	
