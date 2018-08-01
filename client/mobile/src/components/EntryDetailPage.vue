@@ -510,6 +510,7 @@ export default {
       reviewValid: false,
       todaysDate: new Date(),
       detail: {},
+      addDetail: {},
       questions: {},
       watchSwitch: false,
       watchId: 'holder',
@@ -627,6 +628,16 @@ export default {
         });
       }
     },
+    getAddDetail () {
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}`)
+        .then(response => {
+          this.addDetail = response.data;
+        })
+        .catch(e => this.errors.push(e))
+        .finally(() => {
+          this.isLoading = false;
+        });
+    },
     getAnswers (qid) {
       this.isLoading = true;
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions/${qid}/responses`)
@@ -656,7 +667,7 @@ export default {
         .finally(() => {
           this.computeHasImage();
           this.filterLightboxList();
-          this.isLoading = false;
+          this.getAddDetail();
         });
     },
     getQuestions () {
@@ -858,7 +869,7 @@ export default {
   computed: {
     commentsViewable () {
       // TODO: look at me when the endpoints are implemented
-      if (this.$store.state.currentUser.username === this.detail.createUser) {
+      if (this.$store.state.currentUser.username === this.addDetail.ownerUser) {
         return true;
       }
       if (this.$store.getters.getPermission('ADMIN-ENTRY-COMMENT-MANAGEMENT')) {
