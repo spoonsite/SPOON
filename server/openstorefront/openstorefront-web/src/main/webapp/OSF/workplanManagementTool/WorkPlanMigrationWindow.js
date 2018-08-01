@@ -232,20 +232,27 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 						var stepMigrationTargetFields = migrationWindow.query('[itemId=targetStepCombo]');
 						var selectedRecord = migrationWindow.getWorkplanGrid().getSelection()[0].getData();
 						var migrationData = {
-							initialWorkPlanId: selectedRecord.workPlanId,
-							targetWorkPlanId: migrationWindow.down('[itemId=targetPlanCombo]').getValue(),
-							migrations: []
+							workPlanId: migrationWindow.down('[itemId=targetPlanCombo]').getValue(), // the target workplan
+							stepMigrations: []
 						};
 
 						Ext.Array.forEach(stepMigrationTargetFields, function (field) {
-							migrationData.migrations.push({
-								initalStepId: field.initialStepId,
-								targetStepId: field.getValue()
+							migrationData.stepMigrations.push({
+								fromStepId: field.initialStepId,
+								toStepId: field.getValue()
 							});
 						});
 
-						console.warn("TODO: perform migration and delete the selected record ", migrationData);
-						migrationWindow.close();
+						Ext.Ajax.request({
+							url: 'api/v1/resource/workplans/' + selectedRecord.workPlanId,
+							method: 'DELETE',
+							jsonData: migrationData,
+							success: function (res) {
+
+								migrationWindow.getWorkplanGrid().getStore().load();
+								migrationWindow.close();
+							}
+						});
 					}
 				},
 				{

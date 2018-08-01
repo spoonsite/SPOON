@@ -101,7 +101,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					name: 'stepRole'
 				},
 				{
-					fieldLabel: 'Aprroval State to Match <i class="fa fa-question-circle" data-qtip="This will be the <b>default</b> active step for an record that has been assigned to this workplan that has this record status" ></i>',
+					fieldLabel: 'Approval State to Match <i class="fa fa-question-circle" data-qtip="This will be the <b>default</b> active step for an record that has been assigned to this workplan that has this record status" ></i>',
 					xtype: 'combo',
 					name: 'approvalStateToMatch',
 					colspan: 2,
@@ -109,6 +109,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 					displayField: 'description',
 					valueField: 'code',
 					editable: false,
+					value: 'none',
 					store: {
 						autoLoad: true,
 						proxy: {
