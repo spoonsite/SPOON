@@ -100,65 +100,377 @@
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
-				});								
+				});							
+				
+				
+				// var previewComponentWinOLD = Ext.create('Ext.window.Window', {
+				// 	width: '70%',
+				// 	height: '80%',
+				// 	maximizable: true,
+				// 	title: 'Preview',
+				// 	modal: true,
+				// 	layout: 'fit',
+				// 	items: [
+				// 		previewContents
+				// 	],
+				// 	tools: [
+				// 		{
+				// 			type: 'up',
+				// 			tooltip: 'popout preview',
+				// 			handler: function(){
+				// 				window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('submissionGrid').getSelection()[0].get('componentId'), "Preview");
+				// 			}
+				// 		}
+				// 	], 
+				// 	dockedItems: [
+				// 		{
+				// 			xtype: 'toolbar',
+				// 			dock: 'bottom',
+				// 			items: [
+				// 				{
+				// 					text: 'Previous',
+				// 					id: 'previewWinTools-previousBtn',
+				// 					iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
+				// 					handler: function() {
+				// 						actionPreviewNextRecord(false);
+				// 					}									
+				// 				},
+				// 				{
+				// 					xtype: 'tbfill'
+				// 				},
+				// 				{
+				// 					text: 'Close',
+				// 					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+				// 					handler: function() {
+				// 						this.up('window').hide();
+				// 					}
+				// 				},
+				// 				{
+				// 					xtype: 'tbfill'
+				// 				},
+				// 				{
+				// 					text: 'Next',
+				// 					id: 'previewWinTools-nextBtn',
+				// 					iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+				// 					iconAlign: 'right',
+				// 					handler: function() {
+				// 						actionPreviewNextRecord(true);
+				// 					}									
+				// 				}
+				// 			]
+				// 		}
+				// 	]
+				// });				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 				var previewComponentWin = Ext.create('Ext.window.Window', {
-					width: '70%',
-					height: '80%',
+					id: 'componentViewWin',
+					title: 'Entry Details',
+					iconCls: 'fa fa-lg fa-exchange',
 					maximizable: true,
-					title: 'Preview',
-					modal: true,
-					layout: 'fit',
+					// bodyBorder: true,
+					// frame: true,
+					width: '75%',
+					height: '75%',
+					defaults: {
+						collapsible: true,
+						split: true,
+						bodyPadding: 0
+					},
+					layout: 'border',
 					items: [
-						previewContents
-					],
-					tools: [
 						{
-							type: 'up',
-							tooltip: 'popout preview',
-							handler: function(){
-								window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('submissionGrid').getSelection()[0].get('componentId'), "Preview");
-							}
-						}
-					], 
-					dockedItems: [
-						{
-							xtype: 'toolbar',
-							dock: 'bottom',
+							xtype: 'panel',
+							title: 'Preview',
+							collapsible: false,
+							region: 'center',
+							// frame: true,
+							// margins: '5 0 0 0',
+							margins: '0 0 0 0',
+							width: '75%',
+							height: '80%',
+							title: 'Entry Info',
+							iconCls: 'fa fa-lg fa-eye',
+							layout: 'fit',
 							items: [
+								previewContents
+							],
+							dockedItems: [
 								{
-									text: 'Previous',
-									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
-									handler: function() {
-										actionPreviewNextRecord(false);
-									}									
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-									handler: function() {
-										this.up('window').hide();
-									}
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Next',
-									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-									iconAlign: 'right',
-									handler: function() {
-										actionPreviewNextRecord(true);
-									}									
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Previous',
+											id: 'previewWinTools-previousBtn',
+											iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
+											handler: function() {
+												actionPreviewNextRecord(false);
+											}									
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function() {
+												this.up('window').hide();
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Next',
+											id: 'previewWinTools-nextBtn',
+											iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+											iconAlign: 'right',
+											handler: function() {
+												actionPreviewNextRecord(true);
+											}									
+										}
+									]
 								}
 							]
+						},
+						{
+							xtype: 'panel',
+							id: 'workflowComments',
+							title: 'Workflow Comments',
+							iconCls: 'fa fa-lg fa-comment',	
+							region:'east',
+							floatable: false,
+							// margins: '5 0 0 0',
+							margins: '0 0 0 0',
+
+							collapsed: true,
+							collapsible: true,
+							animCollapse: false,
+							titleCollapse: true,
+
+							width: 300,
+							minWidth: 100,
+							maxWidth: 650,	
+							bodyStyle: 'background: white;',
+							layout: 'fit',
+							items: [
+								{
+									xtype: 'panel',
+									itemId: 'comments',
+									bodyStyle: 'padding: 10px;',
+									scrollable: true,
+									items: [						
+									],
+									dockedItems: [
+										{
+											xtype: 'form',
+											itemId: 'form',
+											dock: 'bottom',
+											layout: 'anchor',
+											items: [
+												{
+													xtype: 'hidden',
+													name: 'commentId'
+												},
+												{
+													xtype: 'hidden',
+													name: 'replyCommentId'
+												},
+												{
+													xtype: 'htmleditor',
+													name: 'comment',									
+													width: '100%',
+													fieldBodyCls: 'form-comp-htmleditor-border',
+													maxLength: 4000
+												}
+											],
+											dockedItems: [
+												{
+													xtype: 'toolbar',
+													dock: 'bottom',
+													layout: {
+														vertical: true,
+														type: 'hbox',
+														align: 'stretch'
+													},
+													items: [
+														{
+															xtype: 'fieldcontainer',
+															fieldLabel: 'Private',
+															defaultType: 'checkboxfield',
+															items: [
+																{
+																	inputValue: '1',
+																	id        : 'checkbox1'
+																}
+															]
+														},
+														{
+															xtype: 'toolbar',
+															items: [
+																{
+																	text: 'Comment',
+																	iconCls: 'fa fa-lg fa-comment icon-button-color-save',
+																	handler: function(){													
+																	}
+																},
+																{
+																	xtype: 'tbfill'
+																},
+																{
+																	text: 'Cancel',
+																	itemId: 'cancel',											
+																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																	handler: function(){																						
+																	}
+																}
+															]
+														}
+	
+
+													]
+												}
+											]
+										}
+									]
+								}				
+							],
+							listeners: {
+								afterrender: function () {
+								}
+							}
 						}
-					]
-				});				
+
+					]					
+				});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 				var actionPreviewNextRecord = function(next) {
 					if (next) {
 						Ext.getCmp('submissionGrid').getSelectionModel().selectNext();						
