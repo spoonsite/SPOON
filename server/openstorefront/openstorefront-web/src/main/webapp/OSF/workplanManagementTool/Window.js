@@ -173,7 +173,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			name: 'Untitled',
 			workPlanType: 'COMPONENT',
 			active: false,
-			pendingColor: '#cccccc',
+			pendingColor: 'cccccc',
 			inProgressColor: '777aea',
 			completeColor: '84d053',
 			subStatusColor: 'ff0000',
