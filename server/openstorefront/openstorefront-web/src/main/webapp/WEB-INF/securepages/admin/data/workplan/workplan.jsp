@@ -178,9 +178,7 @@
 
 
 				var actionRefresh = function () {
-					// Ext.getCmp('workplanGrid').getStore().load({
-					// 	url: 'api/v1/resource/faq'
-					// });
+					Ext.getCmp('workplanGrid').getStore().load();
 				};
 
 				var actionAddEdit = function (record) {
@@ -191,43 +189,13 @@
 						.show();
 				};
 
-				var actionEdit = function (record) {
-					// addEditWindow.show();
-					// addEditWindow.getComponent('faqForm').reset();
-					// addEditWindow.getComponent('faqForm').loadRecord(record);
-				};
-
 				var actionToggleStatus = function (record) {
 
-					// record.set('activeStatus', record.get('activeStatus') === 'A' ? 'I' : 'A');
-					// record.data.type = undefined;
-
-					// workplanGrid.setLoading('Updating Status...');
-					// Ext.Ajax.request({
-					// 	url: 'api/v1/resource/faq/' + record.get('faqId') + '?status=all',
-					// 	jsonData: record.data,
-					// 	method: 'PUT',
-					// 	callback: function () {
-					// 		workplanGrid.setLoading(false);
-					// 	},
-					// 	success: function (response, opts) {
-					// 		actionRefresh();
-					// 	}
-					// });
+					console.warn("TODO: TOGGLE!");
 				};
 
 				var actionDelete = function (record) {
-					// workplanGrid.setLoading('Deleting FAQ...');
-					// Ext.Ajax.request({
-					// 	url: 'api/v1/resource/faq/' + record.get('faqId'),
-					// 	method: 'DELETE',
-					// 	callback: function () {
-					// 		workplanGrid.setLoading(false);
-					// 	},
-					// 	success: function (response, opts) {
-					// 		actionRefresh();
-					// 	}
-					// });
+					
 					Ext.create({
 						xtype: 'osf.wp.workPlanMigrationWindow',
 						workplanGrid: workplanGrid
