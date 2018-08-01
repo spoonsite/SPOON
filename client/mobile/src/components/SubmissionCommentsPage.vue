@@ -1,6 +1,12 @@
 <template lang="html">
 
   <section class="submission-comments-page">
+    <v-card class="grey darken-3 white--text text-md-center">
+      <v-card-text>
+        <h1 class="title">{{ componentName }}</h1>
+      </v-card-text>
+    </v-card>
+
     <v-container text-xs-center>
       <v-btn class="primary" v-on:click="returnToEntry()">Return To Entry</v-btn>
       <v-btn class="primary" v-on:click="editCommentDialog = true">Add Comment</v-btn>
@@ -60,10 +66,18 @@ export default {
           this.comments = response.data;
         }
       });
+
+    this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}`)
+      .then(response => {
+        if (response.data.name) {
+          this.componentName = response.data.name;
+        }
+      });
   },
   data () {
     return {
       id: '',
+      componentName: '',
       comments: {},
       deleteCommentDialog: false,
       submitCommentDialog: false,
