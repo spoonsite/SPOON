@@ -1,15 +1,17 @@
 <template lang="html">
 
   <section class="submission-comments-page">
-    <v-card class="grey darken-3 white--text text-md-center">
+    <v-card class="grey darken-3 white--text text-xs-center">
       <v-card-text>
         <h1 class="title">{{ componentName }}</h1>
       </v-card-text>
     </v-card>
 
-    <v-container text-xs-center>
-      <v-btn class="primary" v-on:click="returnToEntry()">Return To Entry</v-btn>
-      <v-btn class="primary" v-on:click="editCommentDialog = true">Add Comment</v-btn>
+    <v-container text-xs-center pa-2>
+      <v-layout justify-space-around>
+        <v-btn class="primary" v-on:click="returnToEntry()"><v-icon>fa-arrow-circle-left</v-icon>&nbsp; Return To Entry</v-btn>
+        <v-btn class="primary" v-on:click="submitCommentDialog = true"><v-icon>fa-comments</v-icon>&nbsp; Add Comment</v-btn>
+      </v-layout>
     </v-container>
 
     <v-divider></v-divider>
@@ -24,7 +26,7 @@
       >
       <v-card>
         <v-card-title>
-          <h2 class="w-100">Edit a Comment</h2>
+          <h2 class="w-100">Create a Comment</h2>
           <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
         </v-card-title>
         <v-card-text>

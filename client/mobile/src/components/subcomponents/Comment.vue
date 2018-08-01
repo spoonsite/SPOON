@@ -3,23 +3,22 @@
   <section class="comment-box">
     <div>
       <v-container pa-3>
-        <div class="white elevation-2" style="overflow: auto;">
+        <div class="white elevation-4" style="overflow: auto;">
           <div v-bind:class="isOwner(comment.createUser)">
-
             <h3>{{ comment.createUser }}
-              <span style="float: right" v-if="$store.state.currentUser.username === comment.createUser">
+              <span style="float: right;" v-if="$store.state.currentUser.username === comment.createUser">
                 <v-tooltip bottom>
-                  <v-btn small slot="activator" icon @click="openEditCommentDialog()">   <v-icon class="icon">edit</v-icon></v-btn>
+                  <v-btn small slot="activator" flat icon @click="openEditCommentDialog()" dark><v-icon class="icon">edit</v-icon></v-btn>
                   <span>Edit the question</span>
                 </v-tooltip>
                 <v-tooltip bottom>
-                  <v-btn small slot="activator" icon @click="deleteCommentDialog = true"><v-icon class="icon">delete</v-icon></v-btn>
+                  <v-btn small slot="activator" icon @click="deleteCommentDialog = true" dark><v-icon class="icon">delete</v-icon></v-btn>
                   <span>Delete the question</span>
                 </v-tooltip>
               </span>
             </h3>
-
           </div>
+
           <div class="pa-2">
             <strong>Comment date: </strong>
             <span>{{ comment.createDts | formatDate }}</span>
@@ -105,7 +104,7 @@ export default {
     },
     isOwner (createUser) {
       if (this.$store.state.currentUser.username === createUser) {
-        return 'cyan accent-4 pa-2';
+        return 'blue-grey darken-2 pa-2 white--text';
       }
       return 'grey lighten-2 pa-2';
     },
