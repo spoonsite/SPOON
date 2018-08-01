@@ -66,7 +66,7 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 				},
 				{
 					xtype: 'combo',
-					itemId: 'targetStepCombo',
+					itemId: 'targetPlanCombo',
 					style: 'margin-top: 0.5em;',
 					width: '50%',
 					editable: false,
@@ -136,24 +136,20 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 			return targetWorkplanId === item.getData().workPlanId;
 		})[0];
 
-		console.log("TARGET RECORD: ", targetRecord);
-
 		// remove all other fields in the migrationFormContainer
 		migrationFormContainer.removeAll();
 
 		var targetComboStore = Ext.create('Ext.data.Store', {
 			data: targetRecord.getData().steps.map(function (step) {
+
 				return Ext.apply(step, { displayView: '<b>' + step.stepOrder + '.</b> ' + step.name });
 			})
 		});
 
 		Ext.Array.forEach(recordToBeDeleted.steps, function (step) {
 
-			// console.log("STEP: ", step);
 			migrationFormContainer.add({
 				xtype: 'container',
-				initialStepId: step.workPlanId,
-				targetStepId: null,
 				width: '100%',
 				layout: {
 					type: 'hbox',
@@ -176,13 +172,20 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 					},
 					{
 						xtype: 'combo',
+						itemId: 'targetStepCombo',
+						initialStepId: step.workPlanStepId,
 						fieldLabel: 'Target Step',
 						labelAlign: 'top',
 						width: '59%',
 						displayField: 'displayView',
-						valueField: 'workPlanId',
+						valueField: 'workPlanStepId',
 						store: targetComboStore,
 						editable: false,
+						listeners: {
+							change: function (combo, newVal, oldVal) {
+								this.up('window').validateMigrationFields();
+							}
+						},
 						displayTpl: Ext.create('Ext.XTemplate',
 							'<tpl for=".">',
 								'{stepOrder}. {name}',
@@ -192,6 +195,26 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 				]
 			});
 		});
+	},
+	validateMigrationFields: function () {
+
+		var isValid = true;
+		var migrationWindow = this;
+		var migrateButton = migrationWindow.down('[itemId=migrateButton]');
+		var stepMigrationTargetFields = migrationWindow.query('[itemId=targetStepCombo]');
+
+		Ext.Array.forEach(stepMigrationTargetFields, function (field) {
+			if (field.getValue() === null) {
+				isValid = false;
+			}
+		});
+
+		if (!isValid) {
+			migrateButton.disable();
+		}
+		else {
+			migrateButton.enable();
+		}
 	},
 	dockedItems: [
 		{
@@ -206,6 +229,22 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 					handler: function () {
 
 						var migrationWindow = this.up('window');
+						var stepMigrationTargetFields = migrationWindow.query('[itemId=targetStepCombo]');
+						var selectedRecord = migrationWindow.getWorkplanGrid().getSelection()[0].getData();
+						var migrationData = {
+							initialWorkPlanId: selectedRecord.workPlanId,
+							targetWorkPlanId: migrationWindow.down('[itemId=targetPlanCombo]').getValue(),
+							migrations: []
+						};
+
+						Ext.Array.forEach(stepMigrationTargetFields, function (field) {
+							migrationData.migrations.push({
+								initalStepId: field.initialStepId,
+								targetStepId: field.getValue()
+							});
+						});
+
+						console.warn("TODO: perform migration and delete the selected record ", migrationData);
 						migrationWindow.close();
 					}
 				},
