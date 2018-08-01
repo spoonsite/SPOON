@@ -36,6 +36,15 @@ public interface WorkPlanService
 	WorkPlan saveWorkPlan(WorkPlan workPlan);
 
 	/**
+	 * @see saveWorkPlan(WorkPlan workPlan)
+	 *
+	 * @param workPlan
+	 * @param setAsInactive
+	 * @return
+	 */
+	WorkPlan saveWorkPlan(WorkPlan workPlan, boolean setAsInactive);
+
+	/**
 	 * Activates a plan / deactivate plan that other active plan that have the
 	 * same entry types
 	 *
@@ -70,23 +79,24 @@ public interface WorkPlanService
 	void assignWorkPlan(String workPlanId, String workPlanLinkId, String username, String roleGroup);
 
 	/**
-	 * Moves a Component to a new workflow step
+	 * Moves a Component to a new workplan step
 	 *
 	 * @param workPlanLink
 	 * @param workPlanStepId
+	 * @param checkRoles
 	 * @return
 	 */
-	WorkPlanLink moveWorkLinkToStep(WorkPlanLink workPlanLink, String workPlanStepId);
+	WorkPlanLink moveWorkLinkToStep(WorkPlanLink workPlanLink, String workPlanStepId, boolean checkRoles);
 
 	/**
-	 * Moves workPlanlink to previous step in it's workflow
+	 * Moves workPlanlink to previous step in it's workplan
 	 *
 	 * @param workPlanLink
 	 */
 	public void previousStep(WorkPlanLink workPlanLink);
 
 	/**
-	 * Moves workPlanlink to next step in it's workflow
+	 * Moves workPlanlink to next step in it's workplan
 	 *
 	 * @param workPlanLink
 	 */
@@ -119,5 +129,26 @@ public interface WorkPlanService
 	 * @return WorkPlan (if not found, the default will be returned)
 	 */
 	WorkPlan getWorkPlanForComponentType(String componentType);
+
+	/**
+	 * Updates plans and remove the component type
+	 *
+	 * @param componentType
+	 */
+	void removeComponentTypeFromWorkPlans(String componentType);
+
+	/**
+	 * Updates plans and remove the component type
+	 *
+	 * @param securityRole
+	 */
+	void removeSecurityRole(String securityRole);
+
+	/**
+	 * Removes all work links for a component
+	 *
+	 * @param componentId
+	 */
+	void removeWorkPlanlinkForComponent(String componentId);
 
 }
