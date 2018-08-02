@@ -1209,6 +1209,8 @@ public class CoreComponentServiceImpl
 			cascadeDeleteOfComponent(component.getComponentId());
 		}
 
+		componentService.getWorkPlanService().removeWorkPlanlinkForComponent(componentId);
+
 		Component component = persistenceService.findById(Component.class, componentId);
 		persistenceService.delete(component);
 

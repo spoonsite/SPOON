@@ -701,6 +701,9 @@ public class SecurityServiceImpl
 			getComponentServicePrivate().removeRoleFromComponentType(securityRole.getRoleName());
 			LOG.log(Level.FINE, "Removed Role from entry type");
 
+			getWorkPlanService().removeSecurityRole(securityRole.getRoleName());
+			LOG.log(Level.FINE, "Removed Role from work plan");
+
 			persistenceService.delete(securityRole);
 
 			LOG.log(Level.INFO, MessageFormat.format("Role {0} was deleted by {2}. "
@@ -761,7 +764,7 @@ public class SecurityServiceImpl
 		}
 		userSecurityExample.setApprovalStatus(queryParams.getApprovalState());
 
-		QueryByExample queryByExample = new QueryByExample(userSecurityExample);
+		QueryByExample<UserSecurity> queryByExample = new QueryByExample<>(userSecurityExample);
 
 		if (StringUtils.isNotBlank(queryParams.getSearchField())
 				&& StringUtils.isNotBlank(queryParams.getSearchValue())
@@ -770,7 +773,7 @@ public class SecurityServiceImpl
 			try {
 				BeanUtils.setProperty(userSecuritySearchExample, queryParams.getSearchField(), queryParams.getSearchValue().toLowerCase() + "%");
 
-				SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+				SpecialOperatorModel<UserSecurity> specialOperatorModel = new SpecialOperatorModel<>();
 				specialOperatorModel.setExample(userSecuritySearchExample);
 				specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
 				specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
@@ -862,13 +865,12 @@ public class SecurityServiceImpl
 		UserRole userRole = new UserRole();
 		userRole.setUsername(username);
 		List<UserRole> userRoles = userRole.findByExampleProxy();
-		
+
 		Set<String> keepSet = new HashSet<>();
-		for(UserRole role:userRoles){
-			if(!Convert.toBoolean(role.getKeep())){
+		for (UserRole role : userRoles) {
+			if (!Convert.toBoolean(role.getKeep())) {
 				persistenceService.delete(role);
-			}
-			else{
+			} else {
 				keepSet.add(role.getRole());
 			}
 		}
@@ -883,7 +885,7 @@ public class SecurityServiceImpl
 
 		for (String group : groups) {
 			if (existingRoleSet.contains(group)) {
-				if(!keepSet.contains(group)){
+				if (!keepSet.contains(group)) {
 					//we just need to add the role without having a security user
 					userRole = new UserRole();
 					userRole.setRole(group);

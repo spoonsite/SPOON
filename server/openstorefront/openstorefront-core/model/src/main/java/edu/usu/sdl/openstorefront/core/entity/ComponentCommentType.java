@@ -38,6 +38,7 @@ public class ComponentCommentType
 	public static final String INFORMATION = "INFO";
 	public static final String MERGE = "MERGE";
 	public static final String ADMINISTRATION = "ADMIN";
+	public static final String SUBMISSION = "SUBMISSION";
 
 	@SuppressWarnings({"squid:S1186"})
 	public ComponentCommentType()
@@ -53,6 +54,7 @@ public class ComponentCommentType
 		codeMap.put(INFORMATION, newLookup(ComponentCommentType.class, INFORMATION, "General Information"));
 		codeMap.put(MERGE, newLookup(ComponentCommentType.class, MERGE, "Merge"));
 		codeMap.put(ADMINISTRATION, newLookup(ComponentCommentType.class, ADMINISTRATION, "Administration"));
+		codeMap.put(SUBMISSION, newLookup(ComponentCommentType.class, SUBMISSION, "Submission"));
 		return codeMap;
 	}
 }
