@@ -85,7 +85,7 @@ public class WorkPlanStatusReport
 			}
 			lineModel.setWorkPlanName(workPlan.getName());
 
-			String linkName = "<Missing Check Link>";
+			String linkName = "(Missing Check Link)";
 			if (link.getComponentId() != null) {
 				linkName = service.getComponentService().getComponentName(link.getComponentId());
 			} else if (link.getEvaluationId() != null) {
@@ -119,7 +119,7 @@ public class WorkPlanStatusReport
 			lineModel.setCurrentAssignedGroup(assignedGroup);
 
 			WorkPlanStep step = workPlan.findWorkPlanStep(link.getCurrentStepId());
-			String stepName = "<Invalid step for workplan>";
+			String stepName = "(Invalid step for workplan)";
 			if (step != null) {
 				stepName = step.getName();
 			}

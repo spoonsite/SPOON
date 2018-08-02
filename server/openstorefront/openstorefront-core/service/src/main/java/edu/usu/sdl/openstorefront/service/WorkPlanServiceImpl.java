@@ -50,7 +50,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -214,17 +214,13 @@ public class WorkPlanServiceImpl
 			//Exists: check for type vs workplan
 			String componentType = getComponentService().getComponentTypeForComponent(componentId);
 			WorkPlan workPlan = getWorkPlan(workPlanLink.getWorkPlanId());
-			Set<String> workPlanType = workPlan.getComponentTypes().stream()
-					.map(WorkPlanComponentType::getComponentType)
-					.collect(Collectors.toSet());
-			if (!workPlanType.contains(componentType)) {
-				//move to plan
-				WorkPlan newWorkPlan = getWorkPlanForComponentType(componentType);
+			WorkPlan newWorkPlan = getWorkPlanForComponentType(componentType);
+
+			if (!newWorkPlan.getWorkPlanId().equals(workPlan.getWorkPlanId())) {
 				String stepId = matchWorkPlanStepWithStatus(newWorkPlan, componentId);
 
 				workPlanLink.setWorkPlanId(newWorkPlan.getWorkPlanId());
 				workPlanLink.setCurrentStepId(stepId);
-
 				workPlanLink.save();
 			}
 
@@ -525,7 +521,7 @@ public class WorkPlanServiceImpl
 			List<Component> components = persistenceService.queryByExample(queryByExample);
 			for (Component component : components) {
 				//ignore return
-				createWorkPlanLink(component.getComponentId());
+				getWorkPlanForComponent(component.getComponentId());
 
 				synced++;
 			}
@@ -637,7 +633,7 @@ public class WorkPlanServiceImpl
 			}
 		}
 
-		//on miss; fill cache
+		//pull default
 		if (workPlan == null) {
 			WorkPlan workPlanExample = new WorkPlan();
 			workPlanExample.setDefaultWorkPlan(Boolean.TRUE);
