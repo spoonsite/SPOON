@@ -17,9 +17,19 @@
     <v-divider></v-divider>
 
     <Comment
+      v-if="comments.length > 0"
       v-for="comment in comments"
       :key="comment.commentId"
-      :comment="comment"></Comment>
+      :comment="comment"
+      @dataChange="getComments"></Comment>
+
+    <v-container v-if="comments.length === 0" text-xs-center py-2>
+      <v-card-text>
+        <h1>
+          There are no comments on this submission.
+        </h1>
+      </v-card-text>
+    </v-container>
 
     <v-dialog
       v-model="submitCommentDialog"
@@ -42,6 +52,7 @@
       </v-card>
     </v-dialog>
 
+    <LoadingOverlay v-model="isLoading"></LoadingOverlay>
   </section>
 
 </template>
@@ -49,36 +60,38 @@
 <script lang="js">
 import router from '../router/index';
 import Comment from './subcomponents/Comment';
+import LoadingOverlay from './subcomponents/LoadingOverlay';
 
 export default {
   name: 'submission-comments-page',
   components: {
     Comment,
-    router
+    router,
+    LoadingOverlay
   },
   props: [],
   mounted () {
+    this.isLoading = true;
     if (this.$route.params.id) {
       this.id = this.$route.params.id;
     }
 
-    this.$http.get('http://localhost:3005/submission')
-      .then(response => {
-        if (response.data) {
-          this.comments = response.data;
-        }
-      });
+    this.getComments();
 
     this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}`)
       .then(response => {
         if (response.data.name) {
           this.componentName = response.data.name;
         }
+      })
+      .finally(() => {
+        this.isLoading = false;
       });
   },
   data () {
     return {
       id: '',
+      isLoading: false,
       componentName: '',
       comments: {},
       deleteCommentDialog: false,
@@ -87,6 +100,14 @@ export default {
     };
   },
   methods: {
+    getComments () {
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/comments?submissionOnly=true`)
+        .then(response => {
+          if (response.data) {
+            this.comments = response.data;
+          }
+        });
+    },
     isOwner (createUser) {
       if (this.$store.state.currentUser.username === createUser) {
         return 'cyan lighten-2 pa-2';
@@ -102,7 +123,24 @@ export default {
       });
     },
     submitComment () {
+      this.isLoading = true;
+      let commentSubmission = {
+        securityMarkingType: null,
+        dataSensitivity: null,
+        commentType: 'SUBMISSION', // ask about this.
+        comment: this.newComment,
+        parentCommentId: null,
+        privateComment: null,
+        adminComment: null
+      };
 
+      this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/comments`, commentSubmission)
+        .finally(() => {
+          this.submitCommentDialog = false;
+          this.getComments();
+          this.isLoading = false;
+          this.newComment = '';
+        });
     }
   },
   computed: {

@@ -5,16 +5,10 @@
       <v-container pa-3>
         <div class="white elevation-4" style="overflow: auto;">
           <div v-bind:class="isOwner(comment.createUser)">
-            <h3>{{ comment.createUser }}
+            <h3 style="height: 2em; vertical-align: middle; line-height: 2em;">{{ comment.createUser }}
               <span style="float: right;" v-if="$store.state.currentUser.username === comment.createUser">
-                <v-tooltip bottom>
-                  <v-btn small slot="activator" flat icon @click="openEditCommentDialog()" dark><v-icon class="icon">edit</v-icon></v-btn>
-                  <span>Edit the question</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <v-btn small slot="activator" icon @click="deleteCommentDialog = true" dark><v-icon class="icon">delete</v-icon></v-btn>
-                  <span>Delete the question</span>
-                </v-tooltip>
+                <v-btn small slot="activator" icon @click="deleteCommentDialog = true" dark><v-icon class="icon">delete</v-icon></v-btn>
+                <v-btn small slot="activator" flat icon @click="openEditCommentDialog()" dark><v-icon class="icon">edit</v-icon></v-btn>
               </span>
             </h3>
           </div>
@@ -60,47 +54,63 @@
           ></quill-editor>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="success" @click="editComment(comment.commentId)">Submit</v-btn>
+          <v-btn color="success" @click="editComment()">Submit</v-btn>
           <v-btn @click="editCommentDialog = false">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
+    <LoadingOverlay v-model="isLoading"></LoadingOverlay>
   </section>
 
 </template>
 
 <script lang="js">
+import LoadingOverlay from './LoadingOverlay';
 
 export default {
   name: 'Comment',
   props: ['comment'],
+  components: {
+    LoadingOverlay
+  },
   mounted () {
-    if (this.$route.params.id) {
-      this.id = this.$route.params.id;
-    }
-
-    this.$http.get('http://localhost:3005/submission')
-      .then(response => {
-        if (response.data) {
-          this.comments = response.data;
-        }
-      });
   },
   data () {
     return {
-      id: '',
       deleteCommentDialog: false,
       editCommentDialog: false,
+      isLoading: false,
       newComment: ''
     };
   },
   methods: {
     deleteComment () {
-      // implement when you have an endpoint.
+      this.isLoading = true;
+      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.comment.componentId}/comments/${this.comment.commentId}`)
+        .finally(() => {
+          this.isLoading = false;
+          this.$emit('dataChange');
+          this.deleteCommentDialog = false;
+        });
     },
-    editComment (commentId) {
-      // implement when you have an endpoint.
+    editComment () {
+      this.isLoading = true;
+      let commentEdit = {
+        securityMarkingType: null,
+        dataSensitivity: null,
+        commentType: 'SUBMISSION', // ask about this.
+        comment: this.newComment,
+        parentCommentId: null,
+        privateComment: null,
+        adminComment: null
+      };
+      this.$http.put(`/openstorefront/api/v1/resource/components/${this.comment.componentId}/comments/${this.comment.commentId}`, commentEdit)
+        .finally(() => {
+          this.isLoading = false;
+          this.$emit('dataChange');
+          this.editCommentDialog = false;
+        });
     },
     isOwner (createUser) {
       if (this.$store.state.currentUser.username === createUser) {
