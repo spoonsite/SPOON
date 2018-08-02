@@ -101,132 +101,12 @@
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
 				});							
-				
-				
-				// var previewComponentWinOLD = Ext.create('Ext.window.Window', {
-				// 	width: '70%',
-				// 	height: '80%',
-				// 	maximizable: true,
-				// 	title: 'Preview',
-				// 	modal: true,
-				// 	layout: 'fit',
-				// 	items: [
-				// 		previewContents
-				// 	],
-				// 	tools: [
-				// 		{
-				// 			type: 'up',
-				// 			tooltip: 'popout preview',
-				// 			handler: function(){
-				// 				window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('submissionGrid').getSelection()[0].get('componentId'), "Preview");
-				// 			}
-				// 		}
-				// 	], 
-				// 	dockedItems: [
-				// 		{
-				// 			xtype: 'toolbar',
-				// 			dock: 'bottom',
-				// 			items: [
-				// 				{
-				// 					text: 'Previous',
-				// 					id: 'previewWinTools-previousBtn',
-				// 					iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
-				// 					handler: function() {
-				// 						actionPreviewNextRecord(false);
-				// 					}									
-				// 				},
-				// 				{
-				// 					xtype: 'tbfill'
-				// 				},
-				// 				{
-				// 					text: 'Close',
-				// 					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-				// 					handler: function() {
-				// 						this.up('window').hide();
-				// 					}
-				// 				},
-				// 				{
-				// 					xtype: 'tbfill'
-				// 				},
-				// 				{
-				// 					text: 'Next',
-				// 					id: 'previewWinTools-nextBtn',
-				// 					iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-				// 					iconAlign: 'right',
-				// 					handler: function() {
-				// 						actionPreviewNextRecord(true);
-				// 					}									
-				// 				}
-				// 			]
-				// 		}
-				// 	]
-				// });				
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		
 				var previewComponentWin = Ext.create('Ext.window.Window', {
-					id: 'componentViewWin',
+					id: 'previewComponentWin',
 					title: 'Entry Details',
 					iconCls: 'fa fa-lg fa-exchange',
 					maximizable: true,
-					// bodyBorder: true,
-					// frame: true,
 					width: '75%',
 					height: '75%',
 					defaults: {
@@ -241,8 +121,6 @@
 							title: 'Preview',
 							collapsible: false,
 							region: 'center',
-							// frame: true,
-							// margins: '5 0 0 0',
 							margins: '0 0 0 0',
 							width: '75%',
 							height: '80%',
@@ -293,19 +171,16 @@
 						},
 						{
 							xtype: 'panel',
-							id: 'workflowComments',
-							title: 'Workflow Comments',
+							id: 'submissionComments',
+							title: 'Submission Comments',
 							iconCls: 'fa fa-lg fa-comment',	
 							region:'east',
 							floatable: false,
-							// margins: '5 0 0 0',
 							margins: '0 0 0 0',
-
 							collapsed: true,
 							collapsible: true,
 							animCollapse: false,
 							titleCollapse: true,
-
 							width: 300,
 							minWidth: 100,
 							maxWidth: 650,	
@@ -359,7 +234,7 @@
 															items: [
 																{
 																	inputValue: '1',
-																	id        : 'checkbox1'
+																	id        : 'privateCheckboxId'
 																}
 															]
 														},
@@ -401,75 +276,6 @@
 
 					]					
 				});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 				var actionPreviewNextRecord = function(next) {
 					if (next) {

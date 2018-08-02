@@ -58,9 +58,6 @@
 			Ext.require('OSF.common.ValidHtmlEditor');
 			
 			Ext.onReady(function() {
-
-
-
 				//Add/Edit forms ------>
 
 				//External Windows
@@ -112,6 +109,7 @@
 				};
 
 				var allComponentTypes = [];
+
 				Ext.Ajax.request({
 					url: 'api/v1/resource/componenttypes',
 					success: function(response, opts) {
@@ -1365,7 +1363,6 @@
 						}
 					]
 				});
-				
 
 				var changeTypeWin = Ext.create('Ext.window.Window', {
 					id: 'changeTypeWin',
@@ -2114,6 +2111,7 @@
 				};
 				
 				var changeOwnerWinCreated = false;
+
 				var actionChangeOwner = function() {
 					if(!changeOwnerWinCreated){
 						changeOwnerWinCreated = true;

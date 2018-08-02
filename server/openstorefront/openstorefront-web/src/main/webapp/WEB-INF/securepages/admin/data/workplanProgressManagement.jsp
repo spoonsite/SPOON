@@ -52,8 +52,6 @@
 					layout: 'fit'
 				});
 
-
-
 				var AssignToAdminCommentWin = Ext.create('Ext.window.Window', {
 					id: 'AssignToAdminCommentWin',
 					title: 'Assign entry to Admin:',
@@ -162,7 +160,6 @@
 					]					
 				
 				});
-
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
@@ -333,11 +330,7 @@
 					iconCls: 'fa fa-lg fa-exchange',
 					width: '50%',
 					height: '75%',
-					layout: {
-						vertical: true,
-						type: 'hbox',
-						align: 'stretch'
-					},
+					layout: 'anchor',
 					items: [
 						{
 							xtype: 'panel',
@@ -659,7 +652,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
-									disabled: false,
+									disabled: true,
 									handler: function () {
 										actionViewComponent();
 									}
@@ -671,9 +664,9 @@
 									text: 'Work/Process',
 									id: 'lookupGrid-tools-work-process',
 									scale: 'medium',
-									width: '100px',
-									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
-									disabled: false,
+									width: '200px',
+									iconCls: 'fa fa-2x fa-list-ol icon-button-color-view icon-vertical-correction-view',
+									disabled: true,
 									requiredPermissions: ['WORKFLOW-LINK-UPDATE'],
 									handler: function () {
 										actionWorkAndProcessComponent();
@@ -691,6 +684,8 @@
 									menu: [
 										{
 											text: 'Assign To Admin',
+											id: 'lookupGrid-tools-action-admin-assign',
+											disabled: true,
 											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction icon-button-color-default',
                                             // STUB IN PERMISSION HERE
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
@@ -700,7 +695,9 @@
 										},
 										{
 											text: 'Assign To Me',
-											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction icon-button-color-default',
+											id: 'lookupGrid-tools-action-me-assign',
+											disabled: true,
+											iconCls: 'fa fa-lg fas fa-wrench icon-small-vertical-correction icon-button-color-default',
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
                                             // STUB IN PERMISSION HERE!
 											handler: function(){
@@ -709,7 +706,9 @@
 										},
 										{
 											text: 'Unassign',
-											iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction icon-button-color-default',
+											id: 'lookupGrid-tools-action-unassign',
+											disabled: true,
+											iconCls: 'fa fa-lg fas fa-undo icon-small-vertical-correction icon-button-color-default',
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
                                             // STUB IN PERMISSION HERE
 											handler: function () {
@@ -722,7 +721,9 @@
 										},                                       
 										{
 											text: 'Reassign',
-											iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+											id: 'lookupGrid-tools-action-reassign',
+											disabled: true,
+											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction',											
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
                                             // STUB IN PERMISSION HERE
 											handler: function() {
@@ -740,8 +741,7 @@
                             console.log('you double clicked')
 						},
 						selectionchange: function(selectionModel, records, opts){
-							// checkComponetGridTools();
-                            console.log('you made a selection that does nothing!')
+							checkComponetGridTools();
 						}
 					},
 					bbar: Ext.create('Ext.PagingToolbar', {
@@ -753,6 +753,84 @@
 				});
 
 				addComponentToMainViewPort(componentGrid);
+
+				var checkComponetGridTools = function() {
+
+					if (componentGrid.getSelectionModel().getCount() === 1) {
+						console.log('you selected one!!!!');
+
+						// // Enable Tools & Buttons
+						// Ext.getCmp('lookupGrid-tools-export').setDisabled(false);
+						// Ext.getCmp('lookupGrid-tools-edit').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(false);
+						
+						// // Store Approval State
+						// var approvalState = Ext.getCmp('componentGrid').getSelection()[0].get('approvalState');
+
+						// // Check If Entry Is Approved
+						// if (approvalState !== 'A') {
+
+						// 	// Enable Approval Button
+						// 	Ext.getCmp('lookupGrid-tools-approve').setDisabled(false);
+						// }
+						// else {
+
+						// 	// Disable Approval Button
+						// 	Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
+						// }
+
+						// // Enable Action Button
+						// Ext.getCmp('lookupGrid-tools-action').setDisabled(false);
+
+						// // Ensure Pieces Of The Action Button Are Enabled
+						// Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(false);
+						// Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(false);
+						// Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(false);
+					}
+					else if (componentGrid.getSelectionModel().getCount() > 1) {
+						console.log('more than one!!!');
+
+						// // Enable/Disable Tools & Buttons
+						// Ext.getCmp('lookupGrid-tools-export').setDisabled(false);
+						// Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
+						// Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
+
+						// // Ensure Action Button Is Enabled
+						// Ext.getCmp('lookupGrid-tools-action').setDisabled(false);
+
+						// // Disable Pieces Of The Action Button
+						// Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(true);
+						// Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(true);
+						// Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(true);
+					}
+					else {
+						console.log('what the heck are you doing?');
+						// When nothing is happening!!
+
+						// // Disable Tools & Buttons
+						// Ext.getCmp('lookupGrid-tools-export').setDisabled(true);
+						// Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
+						// Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
+						// Ext.getCmp('lookupGrid-tools-action').setDisabled(true);
+					}
+				};
 
 				var actionRefreshComponentGrid = function(input){
 					console.log('You refreshed the screen with input: ' + input);	
