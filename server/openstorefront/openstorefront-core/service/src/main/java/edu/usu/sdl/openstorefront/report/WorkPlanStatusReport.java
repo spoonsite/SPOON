@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLinkType;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
@@ -68,13 +69,7 @@ public class WorkPlanStatusReport
 			WorkPlanStatusLineModel lineModel = new WorkPlanStatusLineModel();
 			lineModel.setWorkPlanLinkId(link.getWorkPlanLinkId());
 
-			String linkType = "Entry";
-			if (link.getEvaluationId() != null) {
-				linkType = "Evaluation";
-			} else if (link.getUserSubmissionId() != null) {
-				linkType = "Submission";
-			}
-			lineModel.setLinkType(linkType);
+			lineModel.setLinkType(WorkPlanLinkType.typeForWorkLink(link));
 
 			WorkPlan workPlan;
 			if (workPlanMap.containsKey(link.getWorkPlanId())) {
@@ -88,14 +83,21 @@ public class WorkPlanStatusReport
 			String linkName = "(Missing Check Link)";
 			if (link.getComponentId() != null) {
 				linkName = service.getComponentService().getComponentName(link.getComponentId());
+				String componentType = service.getComponentService().getComponentTypeForComponent(link.getComponentId());
+				lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(componentType, false));
 			} else if (link.getEvaluationId() != null) {
 				Evaluation evaluation = new Evaluation();
 				evaluation.setEvaluationId(link.getEvaluationId());
 				evaluation = evaluation.find();
 
 				linkName = service.getComponentService().getComponentName(evaluation.getComponentId());
+
+				String componentType = service.getComponentService().getComponentTypeForComponent(link.getComponentId());
+				lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(componentType, false));
 				if (StringUtils.isBlank(linkName)) {
 					linkName = service.getComponentService().getComponentName(evaluation.getOriginComponentId());
+					//can't switch type on evals
+					//lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(evaluation.getOriginComponentId(), false));
 				}
 			} else if (link.getUserSubmissionId() != null) {
 				UserSubmission userSubmission = new UserSubmission();
@@ -223,6 +225,7 @@ public class WorkPlanStatusReport
 		cvsGenerator.addLine(
 				"Link Name",
 				"Link Type",
+				"Entry Type",
 				"Workplan Name",
 				"Current Step Name",
 				"Current Assignee",
@@ -240,6 +243,7 @@ public class WorkPlanStatusReport
 			cvsGenerator.addLine(
 					reportLineModel.getLinkName(),
 					reportLineModel.getLinkType(),
+					reportLineModel.getComponentType(),
 					reportLineModel.getWorkPlanName(),
 					reportLineModel.getCurrentStepName(),
 					reportLineModel.getCurrentAssignee(),
