@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -181,12 +182,12 @@ public class WorkplanResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(WorkPlan.class)
 	public Response updateWorkPlan(
-			WorkPlan workPlan
+			WorkPlanModel workPlanModel
 	)
 	{
-		ValidationResult validationResult = workPlan.validate();
+		ValidationResult validationResult = workPlanModel.getWorkPlan().validate();
 		if (validationResult.valid()) {
-			WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
+			WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlanModel);
 			return sendSingleEntityResponse(updatedWorkPlan);
 		} else {
 			return sendSingleEntityResponse(validationResult.toRestError());

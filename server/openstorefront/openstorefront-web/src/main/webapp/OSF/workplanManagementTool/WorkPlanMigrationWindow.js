@@ -122,6 +122,18 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 				{
 					xtype: 'container',
 					html: 'Seclect a target workplan to start workplan migration'
+				},
+				{
+					xtype: 'label',
+					html: '<h2>OR</h2>'
+				},
+				{
+					xtype: 'button',
+					text: 'Delete Work Plan',
+					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
+					handler: function () {
+						this.up('window').migrateDeleteWorkPlan();
+					}
 				}
 			]
 		}
@@ -216,6 +228,34 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 			migrateButton.enable();
 		}
 	},
+	migrateDeleteWorkPlan: function () {
+		
+		var migrationWindow = this;
+		var stepMigrationTargetFields = migrationWindow.query('[itemId=targetStepCombo]');
+		var selectedRecord = migrationWindow.getWorkplanGrid().getSelection()[0].getData();
+		var migrationData = {
+			workPlanId: migrationWindow.down('[itemId=targetPlanCombo]').getValue(), // the target workplan
+			stepMigrations: []
+		};
+
+		Ext.Array.forEach(stepMigrationTargetFields, function (field) {
+			migrationData.stepMigrations.push({
+				fromStepId: field.initialStepId,
+				toStepId: field.getValue()
+			});
+		});
+
+		Ext.Ajax.request({
+			url: 'api/v1/resource/workplans/' + selectedRecord.workPlanId,
+			method: 'DELETE',
+			jsonData: migrationData,
+			success: function (res) {
+
+				migrationWindow.getWorkplanGrid().getStore().load();
+				migrationWindow.close();
+			}
+		});
+	},
 	dockedItems: [
 		{
 			xtype: 'toolbar',
@@ -228,31 +268,7 @@ Ext.define('OSF.workplanManagementTool.WorkPlanMigrationWindow', {
 					iconCls: 'fa fa-2x fa-sign-out icon-button-color-save icon-vertical-correction',
 					handler: function () {
 
-						var migrationWindow = this.up('window');
-						var stepMigrationTargetFields = migrationWindow.query('[itemId=targetStepCombo]');
-						var selectedRecord = migrationWindow.getWorkplanGrid().getSelection()[0].getData();
-						var migrationData = {
-							workPlanId: migrationWindow.down('[itemId=targetPlanCombo]').getValue(), // the target workplan
-							stepMigrations: []
-						};
-
-						Ext.Array.forEach(stepMigrationTargetFields, function (field) {
-							migrationData.stepMigrations.push({
-								fromStepId: field.initialStepId,
-								toStepId: field.getValue()
-							});
-						});
-
-						Ext.Ajax.request({
-							url: 'api/v1/resource/workplans/' + selectedRecord.workPlanId,
-							method: 'DELETE',
-							jsonData: migrationData,
-							success: function (res) {
-
-								migrationWindow.getWorkplanGrid().getStore().load();
-								migrationWindow.close();
-							}
-						});
+						this.up('window').migrateDeleteWorkPlan();
 					}
 				},
 				{

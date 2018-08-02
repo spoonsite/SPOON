@@ -65,15 +65,6 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					}
 				},
 				{
-					xtype: 'checkbox',
-					fieldLabel: 'Use Default Work Plan',
-					name: 'defaultWorkPlan',
-					labelAlign: 'left',
-					style: 'border-bottom: 1px solid #ccc; padding-bottom: 15px;',
-					width: '100%',
-					labelWidth: '80%'
-				},
-				{
 					xtype: 'label',
 					html: '<span style="font-size: 13px; font-weight: bold;">Status Colors</span>'
 				},
