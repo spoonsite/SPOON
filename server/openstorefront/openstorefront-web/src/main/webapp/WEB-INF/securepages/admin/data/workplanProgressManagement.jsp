@@ -25,15 +25,6 @@
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">
 		</stripes:layout-render>
 
-		
-		<!-- <script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
-
-
-		<script src="scripts/component/workPlanProgressComment.js?v=${appVersion}" type="text/javascript"></script> -->
-
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			// Ext.require('OSF.common.workPlanProgressComment');
@@ -64,7 +55,7 @@
 					items: [
 						{
 							xtype: 'panel',
-							id: 'workflowComments2',
+							id: 'workflowCommentsAssignAdmin',
 							title: 'Workflow Comments',
 							iconCls: 'fa fa-lg fa-comment',	
 							bodyStyle: 'background: white;',
@@ -222,12 +213,10 @@
 							floatable: false,
 							// margins: '5 0 0 0',
 							margins: '0 0 0 0',
-
 							collapsed: true,
 							collapsible: true,
 							animCollapse: false,
 							titleCollapse: true,
-
 							width: 300,
 							minWidth: 100,
 							maxWidth: 650,	
@@ -291,7 +280,51 @@
 																{
 																	text: 'Comment',
 																	iconCls: 'fa fa-lg fa-comment icon-button-color-save',
-																	handler: function(){													
+																	handler: function(){	
+																		// var form = this.up('form');
+																		// var data = form.getValues();
+																		// data.acknowledge = false;
+																		
+																		// var method = 'POST';
+																		// var update = '';		
+																		// if (data.commentId) {
+																		// 	method = 'PUT',
+																		// 	update = '/' + data.commentId;		
+																		// }
+																		// var componentId = Ext.getCmp('componentGrid').getSelection()[0].data.component.componentId;
+																		// console.log(componentId);
+
+																		// var entity = rootEvalPanel.commentPanel.lastLoadOpt.entity;
+																		// var entityId = rootEvalPanel.commentPanel.lastLoadOpt.entityId;
+																		// if (!entity) {
+																		// 	data.entity = 'Evaluation';
+																		// 	data.entityId = evaluationId;	
+																		// } else {
+																		// 	data.entity = entity;
+																		// 	data.entityId = entityId;
+																		// }
+																		// Ext.getCmp('componentViewWin').getComponent('comments')
+																		
+																		// CoreUtil.submitForm({
+																		// 	url: 'api/v1/resource/components/' + componentId + '/comments' + update,
+																		// 	method: method,
+																		// 	data: data,
+																		// 	form: form,
+																		// 	success: function(){
+																		// 		rootEvalPanel.commentPanel.loadComments(evaluationId, entity, entityId);														
+																		// 		form.reset();
+																				
+																		// 		if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
+																		// 			rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
+																		// 			rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
+																		// 		}
+																		// 		if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
+																		// 			rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
+																		// 			rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
+																		// 		}														
+																		// 	}
+																		// });		
+
 																	}
 																},
 																{
@@ -317,6 +350,24 @@
 							],
 							listeners: {
 								afterrender: function () {
+									
+
+									// if (rootEvalPanel.readOnly) {
+									// 	var subCommentPanel = rootEvalPanel.query('[itemId=comments]')[0];
+
+									// 	Ext.Array.forEach(subCommentPanel.query('panel'), function (el) {
+									// 		el.setStyle('pointer-events', 'none');
+									// 	});
+									// 	Ext.Array.forEach(subCommentPanel.query('htmleditor'), function (el) {
+									// 		el.setDisabled(true);
+									// 		el.setVisible(false);
+									// 	});
+									// 	Ext.Array.forEach(subCommentPanel.query('button'), function (el) {
+									// 		el.setDisabled(true);
+									// 		el.setVisible(false);
+									// 	});
+									// }
+									
 								}
 							}
 						}
@@ -687,7 +738,6 @@
 											id: 'lookupGrid-tools-action-admin-assign',
 											disabled: true,
 											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction icon-button-color-default',
-                                            // STUB IN PERMISSION HERE
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
 											handler: function(){
 												actionAssignToAdmin();
@@ -699,7 +749,6 @@
 											disabled: true,
 											iconCls: 'fa fa-lg fas fa-wrench icon-small-vertical-correction icon-button-color-default',
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
-                                            // STUB IN PERMISSION HERE!
 											handler: function(){
 												actionAssignToMe();
 											}
@@ -710,7 +759,6 @@
 											disabled: true,
 											iconCls: 'fa fa-lg fas fa-undo icon-small-vertical-correction icon-button-color-default',
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
-                                            // STUB IN PERMISSION HERE
 											handler: function () {
 												actionUnassign();
 											}
@@ -725,7 +773,6 @@
 											disabled: true,
 											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction',											
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
-                                            // STUB IN PERMISSION HERE
 											handler: function() {
 												actionReassign();
 											}
@@ -758,77 +805,34 @@
 
 					if (componentGrid.getSelectionModel().getCount() === 1) {
 						console.log('you selected one!!!!');
-
-						// // Enable Tools & Buttons
-						// Ext.getCmp('lookupGrid-tools-export').setDisabled(false);
-						// Ext.getCmp('lookupGrid-tools-edit').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(false);
-						
-						// // Store Approval State
-						// var approvalState = Ext.getCmp('componentGrid').getSelection()[0].get('approvalState');
 
-						// // Check If Entry Is Approved
-						// if (approvalState !== 'A') {
-
-						// 	// Enable Approval Button
-						// 	Ext.getCmp('lookupGrid-tools-approve').setDisabled(false);
-						// }
-						// else {
-
-						// 	// Disable Approval Button
-						// 	Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
-						// }
-
-						// // Enable Action Button
-						// Ext.getCmp('lookupGrid-tools-action').setDisabled(false);
-
-						// // Ensure Pieces Of The Action Button Are Enabled
-						// Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(false);
-						// Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(false);
-						// Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(false);
 					}
 					else if (componentGrid.getSelectionModel().getCount() > 1) {
 						console.log('more than one!!!');
 
-						// // Enable/Disable Tools & Buttons
-						// Ext.getCmp('lookupGrid-tools-export').setDisabled(false);
-						// Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
-						// Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
 
-						// // Ensure Action Button Is Enabled
-						// Ext.getCmp('lookupGrid-tools-action').setDisabled(false);
-
-						// // Disable Pieces Of The Action Button
-						// Ext.getCmp('lookupGrid-tools-action-changeRequests').setDisabled(true);
-						// Ext.getCmp('lookupGrid-tools-action-copy').setDisabled(true);
-						// Ext.getCmp('lookupGrid-tools-action-versions').setDisabled(true);
 					}
 					else {
-						console.log('what the heck are you doing?');
-						// When nothing is happening!!
 
-						// // Disable Tools & Buttons
-						// Ext.getCmp('lookupGrid-tools-export').setDisabled(true);
-						// Ext.getCmp('lookupGrid-tools-edit').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
-						// Ext.getCmp('lookupGrid-tools-approve').setDisabled(true);
-						// Ext.getCmp('lookupGrid-tools-action').setDisabled(true);
+
 					}
 				};
 
