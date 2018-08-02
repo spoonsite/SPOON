@@ -252,6 +252,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 
 		this.getWpWindow().getWorkplanConfig().steps.push(this.getDefaultStep());
 		this.getWpWindow().down('[itemId=saveWorkplanButton]').enable();
+		this.getWpWindow().alertChange();
 		this.alert('stepManager');
 	},
 
@@ -305,7 +306,8 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			isNewStep: true,
 			isMigratedTo: false,
 			hasError: false,
-			workPlanStepId: CoreUtil.uuidv4()
+			workPlanStepId: CoreUtil.uuidv4(),
+			approvalStateToMatch: 'none'
 		}
 	},
 	

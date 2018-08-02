@@ -17,21 +17,39 @@ package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepActionType;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepEvent;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanType;
+import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.model.EntityEventRegistrationModel;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.job.WorkPlanSyncJob;
 import edu.usu.sdl.openstorefront.service.manager.model.AddJobModel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Handles Workplan Initializing
+ * Handles WorkPlan Initializing
  *
  * @author dshurtleff
  */
 public class WorkPlanManager
 		implements Initializable
 {
+
+	private static final Logger LOG = Logger.getLogger(WorkPlanManager.class.getName());
 
 	private static final String JOB_NAME = "WorkPlanSync";
 	private static final Integer JOB_INTERVAL_MINUTES = 10;
@@ -56,19 +74,20 @@ public class WorkPlanManager
 	@Override
 	public void initialize()
 	{
-		ServiceProxy serviceProxy = ServiceProxy.getProxy();
+		ServiceProxy service = ServiceProxy.getProxy();
+
+		initDefaultWorkflow(service);
 
 		//add listener
 		EntityEventRegistrationModel registrationModel = new EntityEventRegistrationModel();
 		registrationModel.setRegistrationId(StringProcessor.uniqueId());
 		registrationModel.setName("WorkPlan Event Handler");
-		registrationModel.setListener((entityModel) -> {
-			//add hook to handling
-			//workPlanEngine
+		registrationModel.setListener((entityEventModel) -> {
+			triggerHandler(entityEventModel);
 			return true;
 		});
 
-		serviceProxy.getEntityEventService().registerEventListener(registrationModel);
+		service.getEntityEventService().registerEventListener(registrationModel);
 		registrationId = registrationModel.getRegistrationId();
 
 		//add job
@@ -80,6 +99,129 @@ public class WorkPlanManager
 		addJobModel.setRepeatForever(true);
 		addJobModel.setMinutes(JOB_INTERVAL_MINUTES);
 		JobManager.addJob(addJobModel);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void triggerHandler(EntityEventModel entityEventModel)
+	{
+		//For now we are only look for events related to components (ignore bulk, rely on sync)
+		Component component = null;
+		if ((entityEventModel.getEntityChanged() != null
+				&& entityEventModel.getEntityChanged().getClass().isAssignableFrom(Component.class))) {
+			component = (Component) entityEventModel.getEntityChanged();
+		}
+
+		if (component != null) {
+			ServiceProxy service = ServiceProxy.getProxy();
+			WorkPlanLink workPlanLink = service.getWorkPlanService().getWorkPlanForComponent(component.getComponentId());
+
+			WorkPlan workPlan = service.getWorkPlanService().getWorkPlan(workPlanLink.getWorkPlanId());
+
+			String eventStep = null;
+			for (WorkPlanStep step : workPlan.getSteps()) {
+				if (step.getTriggerEvents() != null
+						&& step.getTriggerEvents().stream().anyMatch(trigger -> {
+							return trigger.getEntityEventType().equals(entityEventModel.getEventType());
+						})) {
+
+					//get first match
+					eventStep = step.getWorkPlanStepId();
+					break;
+				}
+			}
+
+			if (eventStep != null && !eventStep.equals(workPlanLink.getCurrentStepId())) {
+				service.getWorkPlanService().moveWorkLinkToStep(workPlanLink, eventStep, false);
+			}
+		}
+	}
+
+	private void initDefaultWorkflow(ServiceProxy service)
+	{
+		WorkPlan workPlanDefault = new WorkPlan();
+		workPlanDefault.setDefaultWorkPlan(Boolean.TRUE);
+		workPlanDefault.setWorkPlanType(WorkPlanType.COMPONENT);
+		workPlanDefault = workPlanDefault.find();
+
+		if (workPlanDefault == null) {
+			LOG.log(Level.INFO, "Adding Default Entry Work Plan");
+
+			workPlanDefault = new WorkPlan();
+			workPlanDefault.setName("DEFAULT-ENTRY");
+			workPlanDefault.setDefaultWorkPlan(Boolean.TRUE);
+			workPlanDefault.setAdminRole(SecurityRole.ADMIN_ROLE);
+			workPlanDefault.setWorkPlanType(WorkPlanType.COMPONENT);
+			workPlanDefault.setPendingColor("cccccc");
+			workPlanDefault.setInProgressColor("777aea");
+			workPlanDefault.setCompleteColor("84d053");
+			workPlanDefault.setSubStatusColor("ff0000");
+
+			List<WorkPlanStep> workPlanSteps = new ArrayList<>();
+
+			WorkPlanStep step = new WorkPlanStep();
+			step.setWorkPlanStepId(service.getPersistenceService().generateId());
+			step.setName("Not Submitted");
+			step.setDescription("Entry is created; not ready for admin approval.");
+			step.setApprovalStateToMatch(ApprovalStatus.NOT_SUBMITTED);
+			step.setStepOrder(0);
+			step.setTriggerEvents(new ArrayList<>());
+			WorkPlanStepEvent workPlanStepEvent = new WorkPlanStepEvent();
+			workPlanStepEvent.setEntityEventType(EntityEventType.CREATE);
+			step.getTriggerEvents().add(workPlanStepEvent);
+			step.setActions(new ArrayList<>());
+			workPlanSteps.add(step);
+
+			step = new WorkPlanStep();
+			step.setWorkPlanStepId(service.getPersistenceService().generateId());
+			step.setName("Pending");
+			step.setDescription("Entry is waiting for admin approval");
+			step.setApprovalStateToMatch(ApprovalStatus.PENDING);
+			step.setStepOrder(0);
+			step.setTriggerEvents(new ArrayList<>());
+			workPlanStepEvent = new WorkPlanStepEvent();
+			workPlanStepEvent.setEntityEventType(EntityEventType.PENDING);
+			step.getTriggerEvents().add(workPlanStepEvent);
+
+			workPlanStepEvent = new WorkPlanStepEvent();
+			workPlanStepEvent.setEntityEventType(EntityEventType.PENDING_CHANGE_REQUEST);
+			step.getTriggerEvents().add(workPlanStepEvent);
+			step.setActions(new ArrayList<>());
+
+			WorkPlanStepAction action = new WorkPlanStepAction();
+			action.setWorkPlanStepActionId(service.getPersistenceService().generateId());
+			action.setActionOrder(0);
+			action.setWorkPlanStepActionType(WorkPlanStepActionType.PENDING_ENTRY);
+			step.getActions().add(action);
+			workPlanSteps.add(step);
+
+			step = new WorkPlanStep();
+			step.setWorkPlanStepId(service.getPersistenceService().generateId());
+			step.setName("Approved");
+			step.setDescription("Entry is Approved");
+			step.setApprovalStateToMatch(ApprovalStatus.APPROVED);
+			step.setStepOrder(0);
+			step.setTriggerEvents(new ArrayList<>());
+
+			workPlanStepEvent = new WorkPlanStepEvent();
+			workPlanStepEvent.setEntityEventType(EntityEventType.APPROVED);
+			step.getTriggerEvents().add(workPlanStepEvent);
+
+			step.setActions(new ArrayList<>());
+
+			action = new WorkPlanStepAction();
+			action.setWorkPlanStepActionId(service.getPersistenceService().generateId());
+			action.setActionOrder(0);
+			action.setWorkPlanStepActionType(WorkPlanStepActionType.APPROVE_ENTRY);
+			step.getActions().add(action);
+			workPlanSteps.add(step);
+
+			workPlanDefault.setSteps(workPlanSteps);
+			service.getWorkPlanService().saveWorkPlan(workPlanDefault, false);
+
+			LOG.log(Level.INFO, "Finish Adding Default Entry Work Plan");
+		}
+
+		//ADD SUPPORT: init default for Eval
 	}
 
 	@Override

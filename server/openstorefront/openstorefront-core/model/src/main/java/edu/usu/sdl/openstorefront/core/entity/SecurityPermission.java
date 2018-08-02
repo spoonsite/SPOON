@@ -368,6 +368,7 @@ public class SecurityPermission
 	public static final String RUN_USAGE_REPORT = "RUN-USAGE-REPORT";
 	public static final String RUN_USER_REPORT = "RUN-USER-REPORT";
 	public static final String RUN_USER_ORG_REPORT = "RUN-USER-ORG-REPORT";
+	public static final String RUN_WORKPLAN_STATUS = "RUN-WORKPLAN-STATUS";
 
 	// Reviews
 	public static final String GROUPBY_REVIEW = "Reviews";
@@ -1289,6 +1290,10 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(RUN_USER_ORG_REPORT)).setPermissionPredecessor(REPORTS);
 		((SecurityPermission) codeMap.get(RUN_USER_ORG_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
+		codeMap.put(RUN_WORKPLAN_STATUS, newLookup(SecurityPermission.class, RUN_WORKPLAN_STATUS, "Allows user to run the Workplan Status report", null, GROUPBY_REPORTS));
+		((SecurityPermission) codeMap.get(RUN_WORKPLAN_STATUS)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_WORKPLAN_STATUS)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
 		// Reviews
 		codeMap.put(USER_REVIEWS_PAGE, newLookup(SecurityPermission.class, USER_REVIEWS_PAGE, "Provides access to the Reviews page", null, GROUPBY_REVIEW));
 		((SecurityPermission) codeMap.get(USER_REVIEWS_PAGE)).setPermissionPredecessor(null);
@@ -1576,23 +1581,23 @@ public class SecurityPermission
 		codeMap.put(ADMIN_WORKPLAN_PAGE, newLookup(SecurityPermission.class, ADMIN_WORKPLAN_PAGE, "Provides access to the 'Workplans' page", null, GROUPBY_WORKPLAN));
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_PAGE)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_PAGE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-		
+
 		codeMap.put(ADMIN_WORKPLAN_READ, newLookup(SecurityPermission.class, ADMIN_WORKPLAN_READ, "Provides access to read workplans as admin", null, GROUPBY_WORKPLAN));
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_READ)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_READ)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-		
+
 		codeMap.put(ADMIN_WORKPLAN_CREATE, newLookup(SecurityPermission.class, ADMIN_WORKPLAN_CREATE, "Provides access to create workplans", null, GROUPBY_WORKPLAN));
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_CREATE)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_CREATE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-		
+
 		codeMap.put(ADMIN_WORKPLAN_UPDATE, newLookup(SecurityPermission.class, ADMIN_WORKPLAN_UPDATE, "Provides access to update workplans", null, GROUPBY_WORKPLAN));
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_UPDATE)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_UPDATE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-		
+
 		codeMap.put(ADMIN_WORKPLAN_DELETE, newLookup(SecurityPermission.class, ADMIN_WORKPLAN_DELETE, "Provides access to delete workplans", null, GROUPBY_WORKPLAN));
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_DELETE)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-		
+
 		codeMap.put(USER_WORKPLAN_READ, newLookup(SecurityPermission.class, USER_WORKPLAN_READ, "Allows users to view current 'status' of selected record in a workplan", null, GROUPBY_WORKPLAN));
 		((SecurityPermission) codeMap.get(USER_WORKPLAN_READ)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(USER_WORKPLAN_READ)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));

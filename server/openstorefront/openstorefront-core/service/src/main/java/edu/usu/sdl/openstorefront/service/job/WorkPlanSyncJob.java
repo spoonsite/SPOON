@@ -15,6 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.service.job;
 
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 
@@ -28,10 +31,21 @@ public class WorkPlanSyncJob
 		extends BaseJob
 {
 
+	private static final Logger LOG = Logger.getLogger(WorkPlanSyncJob.class.getName());
+
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
 	{
-
+		//must have at least one workPlan
+		WorkPlan workPlanExample = new WorkPlan();
+		long count = service.getPersistenceService().countByExample(workPlanExample);
+		if (count > 0) {
+			LOG.log(Level.FINER, "Starting WorkPlan Sync");
+			service.getWorkPlanService().syncWorkPlanLinks();
+			LOG.log(Level.FINER, "Done WorkPlan Sync");
+		} else {
+			LOG.log(Level.FINE, "No WorkPlan Availble; Make sure defaults exist.");
+		}
 	}
 
 }

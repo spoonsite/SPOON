@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -126,10 +128,10 @@ public class WorkplanResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response updateWorkPlan(
-			WorkPlan workPlan
+			WorkPlanModel workPlanModel
 	)
 	{
-		WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
+		WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlanModel);
 
 		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(updatedWorkPlan)
 		{
@@ -165,7 +167,7 @@ public class WorkplanResource
 			@QueryParam("roleGroup") String roleGroup
 	)
 	{
-		service.getWorkPlanService().assignWorkPlanForComponent(workPlanId, workLinkId, username, roleGroup);
+		service.getWorkPlanService().assignWorkPlan(workPlanId, workLinkId, username, roleGroup);
 		return Response.status(Response.Status.OK).build();
 	}
 
@@ -195,12 +197,13 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_DELETE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlanRemoveMigration.class)
 	@Path("/{workPlanId}")
 	public void deleteWorkPlan(
 			@PathParam("workPlanId") String removeWorkPlanId,
-			@QueryParam("targetWorkPlanId") String targetWorkPlanId
+			@APIDescription("Optional; if not set existing worklinks will use default workplan") WorkPlanRemoveMigration workPlanRemoveMigration
 	)
 	{
-		service.getWorkPlanService().removeWorkPlan(removeWorkPlanId, targetWorkPlanId);
+		service.getWorkPlanService().removeWorkPlan(removeWorkPlanId, workPlanRemoveMigration);
 	}
 }

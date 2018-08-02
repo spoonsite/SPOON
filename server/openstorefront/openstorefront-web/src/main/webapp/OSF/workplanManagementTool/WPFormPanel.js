@@ -48,13 +48,21 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					width: '100%'
 				},
 				{
-					xtype: 'checkbox',
-					fieldLabel: 'Use Default Work Plan',
-					name: 'defaultWorkPlan',
-					labelAlign: 'left',
-					style: 'border-bottom: 1px solid #ccc; padding-bottom: 15px;',
+					fieldLabel: 'Work Plan Admin Role <i class="fa fa-question-circle" data-qtip="Allows users that have this role to manage records that have this work plan" ></i>',
+					xtype: 'combo',
+					name: 'adminRole',
+					displayField: 'description',
+					valueField: 'code',
+					labelAlign: 'top',
 					width: '100%',
-					labelWidth: '80%'
+					store: {
+						autoLoad: true,
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/securityroles/lookup'
+						},
+						fields: ['code', 'description']
+					}
 				},
 				{
 					xtype: 'label',

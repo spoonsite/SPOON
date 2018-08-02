@@ -30,7 +30,6 @@ import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.ws.rs.DefaultValue;
 
 /**
  *

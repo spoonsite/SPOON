@@ -142,6 +142,37 @@ public class WorkPlan
 		return found;
 	}
 
+	/**
+	 * This ASSUMES the step Id is valid for the workflow Missing step will be
+	 * seen AS the last step That way is can be filter off as expected in
+	 * typical scenarios
+	 *
+	 * @param workPlanStepId
+	 * @return
+	 */
+	public boolean lastStep(String workPlanStepId)
+	{
+		boolean lastStep = false;
+
+		if (findWorkPlanStep(workPlanStepId) == null) {
+			return true;
+		}
+
+		if (this.getSteps() != null) {
+			int stepCount = 0;
+			for (WorkPlanStep step : getSteps()) {
+				if (step.getWorkPlanStepId().equals(workPlanStepId)) {
+					break;
+				}
+				stepCount++;
+			}
+			if (stepCount == getSteps().size()) {
+				lastStep = true;
+			}
+		}
+		return lastStep;
+	}
+
 	public String getWorkPlanId()
 	{
 		return workPlanId;

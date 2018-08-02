@@ -100,6 +100,11 @@ Ext.define('OSF.workplanManagementTool.Window', {
 								step.triggerEvents = [];
 							}
 
+							// Configure approvalStateToMatch
+							if (step.approvalStateToMatch === 'none') {
+								delete step.approvalStateToMatch;
+							}
+
 							// Configure emails in action (if there are any)
 							if (step.actions) {
 								Ext.Array.forEach(step.actions, function (action) {
@@ -112,10 +117,14 @@ Ext.define('OSF.workplanManagementTool.Window', {
 							}
 						});
 
+						var method = wpWindow.getWorkplanConfig().workPlanId ? 'PUT' : 'POST';
 						Ext.Ajax.request({
-							method: wpWindow.getWorkplanConfig().workPlanId ? 'POST' : 'PUT',
+							method: method,
 							url: 'api/v1/resource/workplans',
-							jsonData: wpWindow.getWorkplanConfig(),
+							jsonData: method === 'POST' ? wpWindow.getWorkplanConfig() : {
+								workPlan: wpWindow.getWorkplanConfig(),
+								workPlanStepMigrations: wpWindow.getMigrationsToPerform()
+							},
 							success: function (res) {
 								wpWindow.close();
 							}
@@ -168,7 +177,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 			name: 'Untitled',
 			workPlanType: 'COMPONENT',
 			active: false,
-			pendingColor: '#cccccc',
+			pendingColor: 'cccccc',
 			inProgressColor: '777aea',
 			completeColor: '84d053',
 			subStatusColor: 'ff0000',
@@ -213,15 +222,20 @@ Ext.define('OSF.workplanManagementTool.Window', {
 					return item.securityRole;
 				});
 			}
+
 			if (step.triggerEvents) {
 				step.triggerEvents = step.triggerEvents.map(function (item) {
 					return item.entityEventType;
 				});
 			}
 
+			if (typeof step.approvalStateToMatch === 'undefined') {
+				step.approvalStateToMatch = 'none';
+			}
+
 			if (step.actions) {
 				Ext.Array.forEach(step.actions, function (action) {
-					if (action.actionOption.fixedEmails) {
+					if (action.actionOption && action.actionOption.fixedEmails) {
 						Ext.Array.forEach(action.actionOption.fixedEmails, function (item, index) {
 							action.actionOption.fixedEmails[index] = item.email;
 						});
@@ -273,7 +287,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 
 		var validationPass = true;
 		Ext.Array.forEach(this.getWorkplanConfig().steps, function (step) {
-			if (step.description === '') {
+			if (step.description === '' || step.name === '') {
 				step.hasError = true;
 				validationPass = false;
 			}
