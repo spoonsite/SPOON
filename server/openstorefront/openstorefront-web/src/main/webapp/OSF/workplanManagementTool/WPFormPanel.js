@@ -34,6 +34,7 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					change: function (field, newVal, oldVal) {
 
 						field.up('window').getWorkplanConfig()[field.name] = newVal;
+						field.up('window').alertChange();
 					}
 				}
 			},
@@ -151,7 +152,8 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 					allowBlank: false,
 					hidden: true,
 					width: '100%',
-					queryMode: 'remote'
+					queryMode: 'local',
+					autoLoad: true
 				}
 			]
 		}

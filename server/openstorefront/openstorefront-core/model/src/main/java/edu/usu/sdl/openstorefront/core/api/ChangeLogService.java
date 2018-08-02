@@ -153,4 +153,13 @@ public interface ChangeLogService
 	 */
 	public void resumeSaving();
 
+	/**
+	 * Add a change record directly (typical use cases should be calling this)
+	 * Call the other logX method. Keep in mind saving may be suspended.
+	 *
+	 * @param changeLog
+	 */
+	@ServiceInterceptor(TransactionInterceptor.class)
+	public void saveChangeRecord(ChangeLog changeLog);
+
 }

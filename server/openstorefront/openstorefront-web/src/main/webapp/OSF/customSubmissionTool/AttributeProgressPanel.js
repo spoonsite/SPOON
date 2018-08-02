@@ -62,14 +62,32 @@ Ext.define('OSF.customSubmissionTool.AttributeProgressPanel', {
 		progressPanel.queryById('attributeProgressGrid').setStore(gridStore);
 		gridStore.load();
 	},
-
+	reloadStore: function(entryTypeInput) {
+		var progressPanel = this;
+		var attributeProgressGrid = progressPanel.queryById('attributeProgressGrid'); 
+		var entryType = entryTypeInput || progressPanel.getTemplateRecord().entryTypeCode;
+		attributeProgressGrid.getStore().load({
+			url: 'api/v1/resource/attributes/' + (progressPanel.getDisplayRequiredAttributes() ? 'required' : 'optional') + 
+					'?componentType=' + entryType
+		});
+	},
 	items: [
 		{
 			xtype: 'gridpanel',
 			itemId: 'attributeProgressGrid',
 			scrollable: true,
+			columnLines: true,
 			columns: [
-				{ text: 'Attribute Name', dataIndex: 'description', flex: 1 }
+				{ text: 'Attribute Name', dataIndex: 'description', flex: 1,
+					renderer: function(value, meta, record) {
+						var hiddenWarning = '';
+						if (record.get('hideOnSubmission')){
+							hiddenWarning = ' <i class="fa fa-exclamation-triangle text-danger" data-qtip="Marked as hidden on Submission Form"></i>';
+						}
+						return value + hiddenWarning;
+					}
+				},
+				{ text: 'Default Code', dataIndex: 'defaultAttributeCode', width: 125 }				
 			],
 			store: Ext.create('Ext.data.Store')
 		}

@@ -58,32 +58,19 @@
 						});
 					},
 					columnLines: true,
-					// store: {
-					// 	autoLoad: true,
-					// 	id: 'workplanGridStore',
-					// 	remoteSort: false,
-					// 	fields: [],
-					// 	proxy: {
-					// 		type: 'ajax',
-					// 		url: 'api/v1/resource/~~~~~~',
-					// 		reader: {
-					// 			type: 'json',
-					// 			rootProperty: 'data',
-					// 			totalProperty: 'totalNumber'
-					// 		}
-					// 	},
-					// 	listeners: {
-					// 		beforeLoad: function (store, operation, eOpts) {
-					// 			store.getProxy().extraParams = {
-					// 				status: Ext.getCmp('filterActiveStatus').getValue()
-					// 			};
-					// 		}
-					// 	}
-					// },
+					store: {
+						autoLoad: true,
+						id: 'workplanGridStore',
+						fields: ['name', 'workPlanType', 'activeStatus'],
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/workplans'
+						}
+					},
 					columns: [
 						{ text: 'Workplan Name', dataIndex: 'name', flex: 4 },
-						{ text: 'Type', dataIndex: 'type', flex: 2 },
-						{ text: 'Active', dataIndex: 'active', flex: 1 },
+						{ text: 'Type', dataIndex: 'workPlanType', flex: 2 },
+						{ text: 'Active', dataIndex: 'activeStatus', flex: 1 },
 						{ text: 'Create User', dataIndex: 'createUser', flex: 1, hidden: true },
 						{ text: 'Create Date', dataIndex: 'createDts', flex: 1, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
 						{ text: 'Update User', dataIndex: 'updateUser', flex: 1, hidden: true },
@@ -91,17 +78,17 @@
 					],
 					listeners: {
 						selectionchange: function (selModel, selected, opts) {
-							// var tools = Ext.getCmp('workplanGrid').getComponent('tools');
+							var tools = Ext.getCmp('workplanGrid').getComponent('tools');
 
-							// if (selected.length > 0) {
-							// 	tools.getComponent('edit').setDisabled(false);
-							// 	tools.getComponent('togglestatus').setDisabled(false);
-							// 	tools.getComponent('delete').setDisabled(false);
-							// } else {
-							// 	tools.getComponent('edit').setDisabled(true);
-							// 	tools.getComponent('togglestatus').setDisabled(true);
-							// 	tools.getComponent('delete').setDisabled(true);
-							// }
+							if (selected.length > 0) {
+								tools.getComponent('edit').setDisabled(false);
+								tools.getComponent('setactive').setDisabled(false);
+								tools.getComponent('delete').setDisabled(false);
+							} else {
+								tools.getComponent('edit').setDisabled(true);
+								tools.getComponent('setactive').setDisabled(true);
+								tools.getComponent('delete').setDisabled(true);
+							}
 						}
 					},
 					dockedItems: [
@@ -132,7 +119,7 @@
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 									// requiredPermissions: [''],
 									handler: function () {
-										actionAdd();
+										actionAddEdit();
 									}
 								},
 								{
@@ -145,7 +132,7 @@
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									// requiredPermissions: [''],
 									handler: function () {
-										actionEdit(Ext.getCmp('workplanGrid').getSelectionModel().getSelection()[0]);
+										actionAddEdit(Ext.getCmp('workplanGrid').getSelectionModel().getSelection()[0].getData());
 									}
 								},
 								{
@@ -195,7 +182,7 @@
 					// });
 				};
 
-				var actionAdd = function (record) {
+				var actionAddEdit = function (record) {
 
 					record = record || null;
 					workplanWindow

@@ -128,6 +128,20 @@ public class WorkPlan
 		this.setAdminRole(workPlan.getAdminRole());
 	}
 
+	public WorkPlanStep findWorkPlanStep(String workPlanStepId)
+	{
+		WorkPlanStep found = null;
+
+		if (this.getSteps() != null) {
+			for (WorkPlanStep step : getSteps()) {
+				if (step.getWorkPlanStepId().equals(workPlanStepId)) {
+					found = step;
+				}
+			}
+		}
+		return found;
+	}
+
 	public String getWorkPlanId()
 	{
 		return workPlanId;
