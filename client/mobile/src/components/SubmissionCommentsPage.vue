@@ -7,10 +7,10 @@
       </v-card-text>
     </v-card>
 
-    <v-container text-xs-center pa-2>
-      <v-layout justify-space-around>
-        <v-btn class="primary" v-on:click="returnToEntry()"><v-icon>fa-arrow-circle-left</v-icon>&nbsp; Return To Entry</v-btn>
-        <v-btn class="primary" v-on:click="submitCommentDialog = true"><v-icon>fa-comments</v-icon>&nbsp; Add Comment</v-btn>
+    <v-container pa-2>
+      <v-layout justify-end>
+        <!-- <v-btn class="primary" v-on:click="returnToEntry()"><v-icon>fa-arrow-circle-left</v-icon>&nbsp; Return To Entry</v-btn> -->
+        <v-btn round class="primary" v-on:click="submitCommentDialog = true"><v-icon>fa-comments</v-icon>&nbsp; Add Comment</v-btn>
       </v-layout>
     </v-container>
 
