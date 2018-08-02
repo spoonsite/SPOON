@@ -117,10 +117,14 @@ Ext.define('OSF.workplanManagementTool.Window', {
 							}
 						});
 
+						var method = wpWindow.getWorkplanConfig().workPlanId ? 'PUT' : 'POST';
 						Ext.Ajax.request({
-							method: wpWindow.getWorkplanConfig().workPlanId ? 'POST' : 'PUT',
+							method: method,
 							url: 'api/v1/resource/workplans',
-							jsonData: wpWindow.getWorkplanConfig(),
+							jsonData: method === 'POST' ? wpWindow.getWorkplanConfig() : {
+								workPlan: wpWindow.getWorkplanConfig(),
+								workPlanStepMigrations: wpWindow.getMigrationsToPerform()
+							},
 							success: function (res) {
 								wpWindow.close();
 							}
@@ -231,7 +235,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 
 			if (step.actions) {
 				Ext.Array.forEach(step.actions, function (action) {
-					if (action.actionOption.fixedEmails) {
+					if (action.actionOption && action.actionOption.fixedEmails) {
 						Ext.Array.forEach(action.actionOption.fixedEmails, function (item, index) {
 							action.actionOption.fixedEmails[index] = item.email;
 						});

@@ -33,6 +33,7 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanStepMigration;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
@@ -84,6 +85,20 @@ public class WorkPlanServiceImpl
 		clearCache();
 
 		return workPlan;
+	}
+	
+	@Override
+	public WorkPlan saveWorkPlan(WorkPlanModel workPlanModel)
+	{
+			
+		if (workPlanModel.getWorkPlan() != null) {
+			workPlanModel.setWorkPlan(saveWorkPlan(workPlanModel.getWorkPlan()));
+			if (workPlanModel.getWorkPlanStepMigrations() != null) {
+				resolveWorkPlanStepMigration(workPlanModel.getWorkPlan().getWorkPlanId(), workPlanModel.getWorkPlanStepMigrations());
+			}
+			return workPlanModel.getWorkPlan();
+		}
+		return null;
 	}
 
 	private void updateWorkPlanFields(WorkPlan workPlan)
@@ -143,7 +158,48 @@ public class WorkPlanServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to activate workplan.", "Check data and Refresh. WorkplanId: " + workPlanId);
 		}
 	}
-
+	
+	@Override
+	public void resolveWorkPlanStepMigration(String workPlanId, List<WorkPlanStepMigration> migrations)
+	{
+		WorkPlan workPlan = persistenceService.findById(WorkPlan.class, workPlanId);
+		if (workPlan != null) {
+			
+			if (migrations != null) {
+				
+				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+				workPlanLinkExample.setWorkPlanId(workPlan.getWorkPlanId());
+				List<WorkPlanLink> workPlanLinks = workPlanLinkExample.findByExample();
+				
+				migrations.forEach(migration -> {
+					String targetStepId = findTargetWorkPlanStepId(migration.getToStepId(), migrations);
+					workPlanLinks.stream().filter(workPlanLink -> workPlanLink.getCurrentStepId().equals(migration.getFromStepId())).forEach(workLink -> {
+						moveWorkLinkToStep(workLink, targetStepId);
+					});
+				});
+			}
+		}
+	}
+	
+	private String findTargetWorkPlanStepId(String targetStepId, List<WorkPlanStepMigration> migrations)
+	{
+		Boolean hasFoundMigration = false;
+		
+		for (WorkPlanStepMigration migration : migrations) {
+			if (migration.getFromStepId().equals(targetStepId)) {
+				
+				hasFoundMigration = Boolean.TRUE;
+				targetStepId = migration.getToStepId();
+			}
+		}
+		
+		if (hasFoundMigration) {
+			return findTargetWorkPlanStepId(targetStepId, migrations);
+		}
+		
+		return targetStepId;
+	}
+	
 	@Override
 	public void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration)
 	{
@@ -567,5 +623,4 @@ public class WorkPlanServiceImpl
 	{
 		OSFCacheManager.getWorkPlanTypeCache().removeAll();
 	}
-
 }

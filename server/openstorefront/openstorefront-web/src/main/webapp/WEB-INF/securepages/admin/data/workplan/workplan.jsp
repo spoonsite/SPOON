@@ -18,7 +18,7 @@
  */
 --%>
 	<%-- 
-	Document	: faq
+	Document	: workplan
 	Created on	: July 13, 2018, 2:25:32 PM
 	Author		: cyearsley
 --%>
@@ -50,7 +50,7 @@
 				var workplanGrid = Ext.create('Ext.grid.Panel', {
 					id: 'workplanGrid',
 					title: 'Workplan Management <i class="fa fa-question-circle" data-qtip="Add, edit, and delete workplans here" ></i>',
-					// requiredPermissions: [''],
+					requiredPermissions: ['ADMIN-WORKPLAN-READ'],
 					permissionCheckFailure: function () {
 						Ext.toast({
 							html: 'You do not have permissions to view the data on this page',
@@ -69,8 +69,27 @@
 						}
 					},
 					columns: [
-						{ text: 'Workplan Name', dataIndex: 'name', flex: 4 },
+						{
+							text: 'Workplan Name',
+							dataIndex: 'name',
+							flex: 4,
+							renderer: function (value, meta, record) {
+
+								return record.getData().defaultWorkPlan ? (value + ' <b>(Default Work Plan)</b>') : value;
+							}
+						},
 						{ text: 'Type', dataIndex: 'workPlanType', flex: 2 },
+						{ text: 'Apply to Sub Entry Types', dataIndex: 'appliesToChildComponentTypes', width: 200 },
+						{
+							text: 'Entry Types',
+							dataIndex: 'componentTypes',
+							flex: 10,
+							renderer: function (value) {
+								return value.map(function (item) {
+									return item.componentType;
+								}).join(', ');
+							}
+						},
 						{ text: 'Active', dataIndex: 'activeStatus', flex: 1 },
 						{ text: 'Create User', dataIndex: 'createUser', flex: 1, hidden: true },
 						{ text: 'Create Date', dataIndex: 'createDts', flex: 1, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s' },
@@ -82,10 +101,18 @@
 							var tools = Ext.getCmp('workplanGrid').getComponent('tools');
 
 							if (selected.length > 0) {
+
 								tools.getComponent('edit').setDisabled(false);
 								tools.getComponent('setactive').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
+
+								if (selected[0].getData().defaultWorkPlan) {
+
+									tools.getComponent('delete').setDisabled(true);
+									tools.getComponent('setactive').setDisabled(true);
+								}
 							} else {
+
 								tools.getComponent('edit').setDisabled(true);
 								tools.getComponent('setactive').setDisabled(true);
 								tools.getComponent('delete').setDisabled(true);
@@ -109,7 +136,7 @@
 								},
 								{
 									xtype: 'tbseparator',
-									// requiredPermissions: ['']
+									requiredPermissions: ['ADMIN-WORKPLAN-CREATE', 'ADMIN-WORKPLAN-UPDATE']
 								},
 								{
 									text: 'Add Workplan',
@@ -118,7 +145,7 @@
 									scale: 'medium',
 									width: '175px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
-									// requiredPermissions: [''],
+									requiredPermissions: ['ADMIN-WORKPLAN-CREATE'],
 									handler: function () {
 										actionAddEdit();
 									}
@@ -131,25 +158,22 @@
 									width: '100px',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
-									// requiredPermissions: [''],
+									requiredPermissions: ['ADMIN-WORKPLAN-UPDATE'],
 									handler: function () {
 										actionAddEdit(Ext.getCmp('workplanGrid').getSelectionModel().getSelection()[0].getData());
 									}
 								},
 								{
 									xtype: 'tbseparator',
-									// requiredPermissions: [''],
+									requiredPermissions: ['ADMIN-WORKPLAN-UPDATE'],
 								},
 								{
-									text: 'Set Active',
+									text: 'Toggle Active',
 									itemId: 'setactive',
-									// autoEl: {
-									// 	'data-test': 'toggleStatusFAQBtn'
-									// },
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
-									// requiredPermissions: [''],
+									requiredPermissions: ['ADMIN-WORKPLAN-UPDATE'],
 									handler: function () {
 										actionToggleStatus(Ext.getCmp('workplanGrid').getSelectionModel().getSelection()[0]);
 									}
@@ -160,13 +184,10 @@
 								{
 									text: 'Delete',
 									itemId: 'delete',
-									// autoEl: {
-									// 	'data-test': 'faqsDeleteBtn'
-									// },
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
-									// requiredPermissions: [''],
+									requiredPermissions: ['ADMIN-WORKPLAN-DELETE'],
 									handler: function () {
 										actionDelete(Ext.getCmp('workplanGrid').getSelectionModel().getSelection()[0]);
 									}
@@ -191,7 +212,10 @@
 
 				var actionToggleStatus = function (record) {
 
-					console.warn("TODO: TOGGLE!");
+					Ext.Ajax.request({
+						method: 'PUT',
+						url: 'api/v1/resource/workplans/' + record.getData().workPlanId + '/activate'
+					});
 				};
 
 				var actionDelete = function (record) {

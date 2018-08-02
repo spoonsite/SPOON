@@ -17,7 +17,10 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanStepMigration;
+import java.util.List;
 
 /**
  *
@@ -34,6 +37,14 @@ public interface WorkPlanService
 	 * @return
 	 */
 	WorkPlan saveWorkPlan(WorkPlan workPlan);
+	
+	/**
+	 * Updates/Saves a workplan from a workPlanModel
+	 *
+	 * @param workPlanModel
+	 * @return
+	 */
+	public WorkPlan saveWorkPlan(WorkPlanModel workPlanModel);
 
 	/**
 	 * Activates a plan / deactivate plan that other active plan that have the
@@ -120,4 +131,11 @@ public interface WorkPlanService
 	 */
 	WorkPlan getWorkPlanForComponentType(String componentType);
 
+	/**
+	 * Resolves step-to-step migrations in a work plan
+	 *
+	 * @param workPlanId
+	 * @param migrations a list a migrations to be performed
+	 */
+	void resolveWorkPlanStepMigration(String workPlanId, List<WorkPlanStepMigration> migrations);
 }

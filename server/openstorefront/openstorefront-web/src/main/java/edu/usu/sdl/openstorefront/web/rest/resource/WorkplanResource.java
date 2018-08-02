@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import java.util.List;
@@ -127,10 +128,10 @@ public class WorkplanResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response updateWorkPlan(
-			WorkPlan workPlan
+			WorkPlanModel workPlanModel
 	)
 	{
-		WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
+		WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlanModel);
 
 		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(updatedWorkPlan)
 		{
