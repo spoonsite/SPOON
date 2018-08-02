@@ -150,7 +150,10 @@ public class WorkPlanServiceImpl
 
 			}
 			//evalutions will need a separate check
+			workPlan.setActiveStatus(WorkPlan.ACTIVE_STATUS);
+			workPlan.save();
 
+			clearCache();
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to activate workplan.", "Check data and Refresh. WorkplanId: " + workPlanId);
 		}
