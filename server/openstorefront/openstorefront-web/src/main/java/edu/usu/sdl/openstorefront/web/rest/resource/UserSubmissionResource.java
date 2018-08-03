@@ -17,26 +17,35 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionMediaView;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionView;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -321,4 +330,178 @@ public class UserSubmissionResource
 	}
 
 	//Add comment endpoints
+	@GET
+	@APIDescription("Gets the list of comments associated to an submission")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(UserSubmissionComment.class)
+	@Path("/{id}/comments")
+	public Response getComponentComment(
+			@PathParam("id")
+			@RequiredParam String userSubmissionId,
+			@DefaultValue("false")
+			@QueryParam("submissionOnly") boolean submissionOnly)
+	{
+		String ANONYMOUS = "Anonymous";
+		String ADMIN = "Admin";
+		UserSubmission userSubmission = new UserSubmission();
+		userSubmission.setUserSubmissionId(userSubmissionId);
+		userSubmission = userSubmission.find();
+		if (userSubmission == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		String owner = userSubmission.entityOwner();
+
+		UserSubmissionComment userSubmissionCommentExample = new UserSubmissionComment();
+		userSubmissionCommentExample.setActiveStatus(UserSubmissionComment.ACTIVE_STATUS);
+		userSubmissionCommentExample.setUserSubmissionId(userSubmissionId);
+		List<UserSubmissionComment> comments = userSubmissionCommentExample.findByExample();
+
+		if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)) {
+			/*        SUPER-ADMIN            */
+			if (submissionOnly) {
+				comments = comments.stream().filter(comment -> ComponentCommentType.SUBMISSION.equals(comment.getCommentType())).collect(Collectors.toList());
+				return Response.ok(commentsToGenericEntity(comments)).build();
+			} else {
+				return Response.ok(commentsToGenericEntity(comments)).build();
+			}
+		} else if (SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+			/*        LIBRARIAN             */
+			List<UserSubmissionComment> submissionComments = comments.stream().filter(comment -> ComponentCommentType.SUBMISSION.equals(comment.getCommentType())).collect(Collectors.toList());
+			submissionComments.forEach((comment) -> {
+				if (!SecurityUtil.isCurrentUserTheOwner(comment)) {
+					comment.setCreateUser(ANONYMOUS);
+					comment.setUpdateUser(ANONYMOUS);
+				}
+			});
+			return Response.ok(commentsToGenericEntity(submissionComments)).build();
+		} else if (SecurityUtil.isCurrentUserTheOwner(userSubmission)) {
+			/*        ENTRY OWNER            */
+			List<UserSubmissionComment> submissionComments;
+			submissionComments = comments.stream().filter(comment
+					-> ComponentCommentType.SUBMISSION.equals(comment.getCommentType())
+					&& !Convert.toBoolean(comment.getPrivateComment())
+			).collect(Collectors.toList());
+			submissionComments.forEach((comment) -> {
+				if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())
+						&& !comment.getCreateUser().equals(owner)) {
+					comment.setCreateUser(ANONYMOUS);
+				}
+				if (!comment.getUpdateUser().equals(SecurityUtil.getCurrentUserName())
+						&& !comment.getUpdateUser().equals(owner)) {
+					comment.setUpdateUser(ANONYMOUS);
+				}
+				if (Convert.toBoolean(comment.getAdminComment())) {
+					comment.setCreateUser(ADMIN);
+					comment.setUpdateUser(ADMIN);
+				}
+			});
+			return Response.ok(commentsToGenericEntity(submissionComments)).build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+	}
+
+	@DELETE
+	@APIDescription("Delete a comment by id from the specified entity")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/{id}/comments/{commentId}")
+	public Response deleteComponentCommentById(
+			@PathParam("id")
+			@RequiredParam String userSubmissionId,
+			@PathParam("commentId")
+			@RequiredParam String commentId)
+	{
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		UserSubmissionComment example = new UserSubmissionComment();
+		example.setCommentId(commentId);
+		example.setUserSubmissionId(userSubmissionId);
+		UserSubmissionComment userSubmissionComment = example.find();
+		if (userSubmissionComment != null) {
+			response = ownerCheck(userSubmissionComment, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
+			if (response == null) {
+				userSubmissionComment.delete();
+			}
+		}
+		return response;
+	}
+
+	@PUT
+	@APIDescription("Update a comment associated to the component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{id}/comments/{commentId}")
+	public Response updateComponentComment(
+			@PathParam("id")
+			@RequiredParam String userSubmissionId,
+			@PathParam("commentId")
+			@RequiredParam String commentId,
+			UserSubmissionComment comment)
+	{
+		UserSubmissionComment commentExisting = new UserSubmissionComment();
+		commentExisting.setCommentId(commentId);
+		commentExisting.setUserSubmissionId(userSubmissionId);
+		commentExisting = commentExisting.find();
+		if (commentExisting == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+
+		if (SecurityUtil.isCurrentUserTheOwner(comment)) {
+			comment.setUserSubmissionId(userSubmissionId);
+			comment.setCommentId(commentId);
+			return saveComment(comment, false);
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+	}
+
+	private GenericEntity<List<UserSubmissionComment>> commentsToGenericEntity(List<UserSubmissionComment> comments)
+	{
+		return new GenericEntity<List<UserSubmissionComment>>(comments)
+		{
+		};
+	}
+
+	private Response saveComment(UserSubmissionComment comment, Boolean isCreated)
+	{
+		ValidationModel validationModel = new ValidationModel(comment);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			comment.save();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+		return isCreated ? Response.created(URI.create("v1/resource/usersubmissions/" + comment.getUserSubmissionId() + "/comments/" + comment.getCommentId())).entity(comment).build() : Response.ok(comment).build();
+	}
+
+	@POST
+	@APIDescription("Add a single comment to the specified component")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(UserSubmissionComment.class)
+	@Path("/{id}/comments")
+	public Response createComponentComment(
+			@PathParam("id")
+			@RequiredParam String userSubmissionId,
+			@RequiredParam UserSubmissionComment comment)
+	{
+		UserSubmission userSubmission = new UserSubmission();
+		userSubmission.setUserSubmissionId(userSubmissionId);
+		userSubmission = userSubmission.find();
+		if (userSubmission == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+
+		if (SecurityUtil.isCurrentUserTheOwner(userSubmission)
+				|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)
+				|| SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+			comment.setUserSubmissionId(userSubmissionId);
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)
+					|| SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+				comment.setAdminComment(true);
+			}
+			return saveComment(comment, true);
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+	}
 }

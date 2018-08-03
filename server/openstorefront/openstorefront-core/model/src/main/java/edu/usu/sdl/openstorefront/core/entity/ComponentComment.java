@@ -62,7 +62,6 @@ public class ComponentComment
 	@APIDescription("Private comments are not shared with owners")
 	private Boolean privateComment;
 
-	@ConsumeField
 	@APIDescription("Mark admin submission comments")
 	private Boolean adminComment;
 
@@ -104,6 +103,7 @@ public class ComponentComment
 		setComment(componentComment.getComment());
 		setParentCommentId(componentComment.getParentCommentId());
 		setPrivateComment(componentComment.getPrivateComment());
+		setAdminComment(componentComment.getAdminComment());
 	}
 
 	public String getCommentId()
