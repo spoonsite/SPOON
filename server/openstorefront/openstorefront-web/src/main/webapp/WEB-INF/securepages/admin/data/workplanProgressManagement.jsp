@@ -25,14 +25,9 @@
 		<stripes:layout-render name="../../../../layout/adminheader.jsp">
 		</stripes:layout-render>
 
-		
-		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
-
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
+			// Ext.require('OSF.common.workPlanProgressComment');
 			Ext.onReady(function() {
 
 				var versionViewTemplate = new Ext.XTemplate();
@@ -48,30 +43,401 @@
 					layout: 'fit'
 				});
 
+				var AssignToAdminCommentWin = Ext.create('Ext.window.Window', {
+					id: 'AssignToAdminCommentWin',
+					title: 'Assign entry to Admin:',
+					iconCls: 'fa fa-lg fa-exchange',
+						width: '50%',
+					height: '75%',
+					y: 200,
+					modal: true,
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'panel',
+							id: 'workflowCommentsAssignAdmin',
+							title: 'Workflow Comments',
+							iconCls: 'fa fa-lg fa-comment',	
+							bodyStyle: 'background: white;',
+							layout: 'fit',
+							items: [
+								{
+									xtype: 'panel',
+									itemId: 'comments',
+									bodyStyle: 'padding: 10px;',
+									scrollable: true,
+									items: [						
+									],
+									dockedItems: [
+										{
+											xtype: 'form',
+											itemId: 'form',
+											dock: 'bottom',
+											layout: 'anchor',
+											items: [
+												{
+													xtype: 'hidden',
+													name: 'commentId'
+												},
+												{
+													xtype: 'hidden',
+													name: 'replyCommentId'
+												},
+												{
+													xtype: 'htmleditor',
+													name: 'comment',									
+													width: '100%',
+													fieldBodyCls: 'form-comp-htmleditor-border',
+													maxLength: 4000
+												}
+											],
+											dockedItems: [
+												{
+													xtype: 'toolbar',
+													dock: 'bottom',
+													layout: {
+														vertical: true,
+														type: 'hbox',
+														align: 'stretch'
+													},
+													items: [
+														{
+															xtype: 'fieldcontainer',
+															fieldLabel: 'Private',
+															defaultType: 'checkboxfield',
+															items: [
+																{
+																	inputValue: '1',
+																	id        : 'checkbox2'
+																}
+															]
+														},
+														{
+															xtype: 'toolbar',
+															items: [
+																{
+																	text: 'Assign to Admin',
+																	iconCls: 'fa fa-lg fa-comment icon-button-color-save',
+																	handler: function(){													
+																	}
+																},
+																{
+																	xtype: 'tbfill'
+																},
+																{
+																	text: 'Cancel',
+																	itemId: 'cancel',											
+																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																	handler: function(){																						
+																	}
+																}
+															]
+														}
+	
+
+													]
+												}
+											]
+										}
+									]
+								}				
+							],
+							listeners: {
+								afterrender: function () {
+								}
+							}
+						}
+
+					]					
+				
+				});
+
+				var previewContents = Ext.create('OSF.ux.IFrame', {
+					src: ''
+				});
+
 				var componentViewWin = Ext.create('Ext.window.Window', {
 					id: 'componentViewWin',
 					title: 'Entry Details',
 					iconCls: 'fa fa-lg fa-exchange',
-						width: '50%',
-					height: 450,
-					y: 200,
-					modal: true,
-					layout: {
-						type: 'hbox',
-						align: 'stretch'
+					maximizable: true,
+					// bodyBorder: true,
+					// frame: true,
+					width: '75%',
+					height: '75%',
+					defaults: {
+						collapsible: true,
+						split: true,
+						bodyPadding: 0
 					},
-					
+					layout: 'border',
+					items: [
+						{
+							xtype: 'panel',
+							title: 'Main Content',
+							collapsible: false,
+							region: 'center',
+							// frame: true,
+							// margins: '5 0 0 0',
+							margins: '0 0 0 0',
+							width: '75%',
+							height: '80%',
+							title: 'Entry Info',
+							iconCls: 'fa fa-lg fa-eye',
+							layout: 'fit',
+							items: [
+								previewContents
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function() {
+												this.up('window').hide();
+											}
+										},
+									]
+								}
+							]
+						},
+						{
+							xtype: 'panel',
+							id: 'workflowComments',
+							title: 'Workflow Comments',
+							iconCls: 'fa fa-lg fa-comment',	
+							region:'east',
+							floatable: false,
+							// margins: '5 0 0 0',
+							margins: '0 0 0 0',
+							collapsed: true,
+							collapsible: true,
+							animCollapse: false,
+							titleCollapse: true,
+							width: 300,
+							minWidth: 100,
+							maxWidth: 650,	
+							bodyStyle: 'background: white;',
+							layout: 'fit',
+							items: [
+								{
+									xtype: 'panel',
+									itemId: 'comments',
+									bodyStyle: 'padding: 10px;',
+									scrollable: true,
+									items: [						
+									],
+									dockedItems: [
+										{
+											xtype: 'form',
+											itemId: 'form',
+											dock: 'bottom',
+											layout: 'anchor',
+											items: [
+												{
+													xtype: 'hidden',
+													name: 'commentId'
+												},
+												{
+													xtype: 'hidden',
+													name: 'replyCommentId'
+												},
+												{
+													xtype: 'htmleditor',
+													name: 'comment',									
+													width: '100%',
+													fieldBodyCls: 'form-comp-htmleditor-border',
+													maxLength: 4000
+												}
+											],
+											dockedItems: [
+												{
+													xtype: 'toolbar',
+													dock: 'bottom',
+													layout: {
+														vertical: true,
+														type: 'hbox',
+														align: 'stretch'
+													},
+													items: [
+														{
+															xtype: 'fieldcontainer',
+															fieldLabel: 'Private',
+															defaultType: 'checkboxfield',
+															items: [
+																{
+																	inputValue: '1',
+																	id        : 'checkbox1'
+																}
+															]
+														},
+														{
+															xtype: 'toolbar',
+															items: [
+																{
+																	text: 'Comment',
+																	iconCls: 'fa fa-lg fa-comment icon-button-color-save',
+																	handler: function(){	
+																		// var form = this.up('form');
+																		// var data = form.getValues();
+																		// data.acknowledge = false;
+																		
+																		// var method = 'POST';
+																		// var update = '';		
+																		// if (data.commentId) {
+																		// 	method = 'PUT',
+																		// 	update = '/' + data.commentId;		
+																		// }
+																		// var componentId = Ext.getCmp('componentGrid').getSelection()[0].data.component.componentId;
+																		// console.log(componentId);
+
+																		// var entity = rootEvalPanel.commentPanel.lastLoadOpt.entity;
+																		// var entityId = rootEvalPanel.commentPanel.lastLoadOpt.entityId;
+																		// if (!entity) {
+																		// 	data.entity = 'Evaluation';
+																		// 	data.entityId = evaluationId;	
+																		// } else {
+																		// 	data.entity = entity;
+																		// 	data.entityId = entityId;
+																		// }
+																		// Ext.getCmp('componentViewWin').getComponent('comments')
+																		
+																		// CoreUtil.submitForm({
+																		// 	url: 'api/v1/resource/components/' + componentId + '/comments' + update,
+																		// 	method: method,
+																		// 	data: data,
+																		// 	form: form,
+																		// 	success: function(){
+																		// 		rootEvalPanel.commentPanel.loadComments(evaluationId, entity, entityId);														
+																		// 		form.reset();
+																				
+																		// 		if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
+																		// 			rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
+																		// 			rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
+																		// 		}
+																		// 		if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
+																		// 			rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
+																		// 			rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
+																		// 		}														
+																		// 	}
+																		// });		
+
+																	}
+																},
+																{
+																	xtype: 'tbfill'
+																},
+																{
+																	text: 'Cancel',
+																	itemId: 'cancel',											
+																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																	handler: function(){																						
+																	}
+																}
+															]
+														}
+	
+
+													]
+												}
+											]
+										}
+									]
+								}				
+							],
+							listeners: {
+								afterrender: function () {
+									
+
+									// if (rootEvalPanel.readOnly) {
+									// 	var subCommentPanel = rootEvalPanel.query('[itemId=comments]')[0];
+
+									// 	Ext.Array.forEach(subCommentPanel.query('panel'), function (el) {
+									// 		el.setStyle('pointer-events', 'none');
+									// 	});
+									// 	Ext.Array.forEach(subCommentPanel.query('htmleditor'), function (el) {
+									// 		el.setDisabled(true);
+									// 		el.setVisible(false);
+									// 	});
+									// 	Ext.Array.forEach(subCommentPanel.query('button'), function (el) {
+									// 		el.setDisabled(true);
+									// 		el.setVisible(false);
+									// 	});
+									// }
+									
+								}
+							}
+						}
+
+					]					
 				});
 
 				var processCompWin = Ext.create('Ext.window.Window', {
 					id: 'processCompWin',
 					title: 'Entry Workflow',
 					iconCls: 'fa fa-lg fa-exchange',
-						width: '50%',
-					height: 450,
-					y: 200,
-					modal: true,
-					layout: 'fit'
+					width: '50%',
+					height: '75%',
+					layout: 'anchor',
+					items: [
+						{
+							xtype: 'panel',
+							title: 'This is some step in the workplan of the thing.'
+						},
+						Ext.create('OSF.component.StandardComboBox', {
+							name: 'Sub-Status',									
+							allowBlank: true,
+							editable: false,
+							typeAhead: false,
+							height: 60,
+							fieldLabel: 'Sub-Status',
+							storeConfig: {
+								url: 'api/v1/resource/lookuptypes/WorkPlanSubStatusType'
+							},
+						}),
+						{
+							xtype: 'form',
+							title: 'Step insts for completion pulled from a query'
+						},
+					],
+					dockedItems:[
+						{
+							xtype: 'toolbar',
+							dock: 'bottom',
+							layout: {
+								vertical: true,
+								type: 'hbox',
+								align: 'stretch'
+							},
+							items: [
+								{
+									xtype: 'toolbar',
+									items: [
+										{
+											text: 'Go To Previous Step',
+											iconCls: 'fa fa-lg fa-backward icon-button-color-save',
+											handler: function(){													
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Complete This Step',											
+											iconCls: 'fa fa-lg fa-list-alt icon-button-color-save',
+											handler: function(){																						
+											}
+										}
+									]
+								}
+
+
+							]
+						}
+					]
 				});
 
 				var maingridStore = Ext.create('Ext.data.Store', {
@@ -85,9 +451,9 @@
 						})
 					],
 					fields:[
-						// {name: 'name', mapping: function(data){
-						// 	return data.component.name;
-						// }},
+						{name: 'name', mapping: function(data){
+							return data.component.name;
+						}},
 						// {name: 'description', mapping: function(data){
 						// 	return data.component.description;
 						// }},
@@ -191,7 +557,20 @@
 						// 	return data.component.numberOfPendingChanges;
 						// }},
 						// 'integrationManagement'
-					]
+					],
+					proxy: CoreUtil.pagingProxy({
+						url: 'api/v1/resource/components/filterable',
+						extraParams: {
+							status: 'ALL',
+							approvalState: 'ALL',
+							componentType: 'ALL'
+						},
+						reader: {
+						   type: 'json',
+						   rootProperty: 'components',
+						   totalProperty: 'totalNumber'
+						}
+					}),
 				});
 
 				var componentGrid = Ext.create('Ext.grid.Panel', {
@@ -324,7 +703,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
-									disabled: false,
+									disabled: true,
 									handler: function () {
 										actionViewComponent();
 									}
@@ -336,9 +715,9 @@
 									text: 'Work/Process',
 									id: 'lookupGrid-tools-work-process',
 									scale: 'medium',
-									width: '100px',
-									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
-									disabled: false,
+									width: '200px',
+									iconCls: 'fa fa-2x fa-list-ol icon-button-color-view icon-vertical-correction-view',
+									disabled: true,
 									requiredPermissions: ['WORKFLOW-LINK-UPDATE'],
 									handler: function () {
 										actionWorkAndProcessComponent();
@@ -356,8 +735,9 @@
 									menu: [
 										{
 											text: 'Assign To Admin',
+											id: 'lookupGrid-tools-action-admin-assign',
+											disabled: true,
 											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction icon-button-color-default',
-                                            // STUB IN PERMISSION HERE
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
 											handler: function(){
 												actionAssignToAdmin();
@@ -365,18 +745,20 @@
 										},
 										{
 											text: 'Assign To Me',
-											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction icon-button-color-default',
+											id: 'lookupGrid-tools-action-me-assign',
+											disabled: true,
+											iconCls: 'fa fa-lg fas fa-wrench icon-small-vertical-correction icon-button-color-default',
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
-                                            // STUB IN PERMISSION HERE!
 											handler: function(){
 												actionAssignToMe();
 											}
 										},
 										{
 											text: 'Unassign',
-											iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction icon-button-color-default',
+											id: 'lookupGrid-tools-action-unassign',
+											disabled: true,
+											iconCls: 'fa fa-lg fas fa-undo icon-small-vertical-correction icon-button-color-default',
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
-                                            // STUB IN PERMISSION HERE
 											handler: function () {
 												actionUnassign();
 											}
@@ -387,9 +769,10 @@
 										},                                       
 										{
 											text: 'Reassign',
-											iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+											id: 'lookupGrid-tools-action-reassign',
+											disabled: true,
+											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction',											
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
-                                            // STUB IN PERMISSION HERE
 											handler: function() {
 												actionReassign();
 											}
@@ -405,8 +788,7 @@
                             console.log('you double clicked')
 						},
 						selectionchange: function(selectionModel, records, opts){
-							// checkComponetGridTools();
-                            console.log('you made a selection that does nothing!')
+							checkComponetGridTools();
 						}
 					},
 					bbar: Ext.create('Ext.PagingToolbar', {
@@ -419,19 +801,60 @@
 
 				addComponentToMainViewPort(componentGrid);
 
+				var checkComponetGridTools = function() {
+
+					if (componentGrid.getSelectionModel().getCount() === 1) {
+						console.log('you selected one!!!!');
+						Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(false);
+						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(false);
+
+					}
+					else if (componentGrid.getSelectionModel().getCount() > 1) {
+						console.log('more than one!!!');
+
+						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
+
+					}
+					else {
+
+						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
+						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
+
+					}
+				};
+
 				var actionRefreshComponentGrid = function(input){
 					console.log('You refreshed the screen with input: ' + input);	
 				}
 				var actionViewComponent = function(){
 					console.log('view the thang');	
-					Ext.getCmp('componentViewWin').show();
+					// Ext.getCmp('componentViewWin').show();
+
+					componentViewWin.show();
+					var comp_id = Ext.getCmp('componentGrid').getSelection()[0].data.component.componentId;
+					// console.log(comp_id);
+					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
 				}
 				var actionWorkAndProcessComponent = function(){
 					console.log('do the work');	
 					Ext.getCmp('processCompWin').show();
 				}
 				var actionAssignToAdmin= function(){
-					console.log('AssignToAdmin');	
+					console.log('AssignToAdmin');
+					Ext.getCmp('AssignToAdminCommentWin').show();	
 				}
 				var actionAssignToMe = function(){
 					console.log('AssignToMe');	

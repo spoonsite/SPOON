@@ -178,4 +178,14 @@ public interface WorkPlanService
 	 */
 	void removeWorkPlanLink(String workPlanLinkId);
 
+	/**
+	 * Checks the current user to see if they have permission for the requested
+	 * step.
+	 *
+	 * @param workPlan
+	 * @param workPlanStepId
+	 * @return true if the user has permission for the step
+	 */
+	boolean checkRolesOnStep(WorkPlan workPlan, String workPlanStepId);
+
 }

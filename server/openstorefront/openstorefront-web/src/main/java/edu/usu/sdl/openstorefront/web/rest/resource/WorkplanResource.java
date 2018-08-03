@@ -30,7 +30,9 @@ import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
@@ -79,12 +81,30 @@ public class WorkplanResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(WorkPlanLinkView.class)
 	@Path("/worklinks")
-	public Response workLinkLookupAll()
+	public Response workLinkLookupAll(
+			@QueryParam("showfinal") boolean showfinal,
+			@APIDescription("Shows links in steps the user may not have access to move steps. (For view only)")
+			@QueryParam("showallsteps") boolean showAllSteps
+	)
 	{
 		//depends on the user
 		WorkPlanLink workLinkExample = new WorkPlanLink();
 		workLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
 		List<WorkPlanLink> workLinks = workLinkExample.findByExample();
+
+		Map<String, WorkPlan> workPlanMap = new HashMap<>();
+		for (WorkPlanLink link : workLinks) {
+			if (!workPlanMap.containsKey(link.getWorkPlanId())) {
+				WorkPlan workPlan = service.getWorkPlanService().getWorkPlan(link.getWorkPlanId());
+				workPlanMap.put(link.getWorkPlanId(), workPlan);
+			}
+		}
+
+		if (!showfinal) {
+			workLinks.removeIf(link -> {
+				return workPlanMap.get(link.getWorkPlanId()).lastStep(link.getCurrentStepId());
+			});
+		}
 
 		if (!SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_LINK_READ_ALL)) {
 			//get worklinks assigned to them and assigned to there groups (remove other names)
@@ -93,6 +113,13 @@ public class WorkplanResource
 						return SecurityUtil.getCurrentUserName().equals(link.getCurrentUserAssigned())
 								|| linkPartOfUserGroup(link);
 					}).collect(Collectors.toList());
+
+			//Remove workflow that in step that current user doesn't have access
+			if (!showAllSteps) {
+				workLinks.removeIf(link -> {
+					return !doesUserHaveAccessToCurrentStep(link, workPlanMap);
+				});
+			}
 
 			//filter names
 			workLinks.forEach(link -> {
@@ -107,6 +134,12 @@ public class WorkplanResource
 		{
 		};
 		return sendSingleEntityResponse(entity);
+	}
+
+	private boolean doesUserHaveAccessToCurrentStep(WorkPlanLink workPlanLink, Map<String, WorkPlan> workPlanMap)
+	{
+		WorkPlan workPlan = workPlanMap.get(workPlanLink.getWorkPlanId());
+		return service.getWorkPlanService().checkRolesOnStep(workPlan, workPlanLink.getCurrentStepId());
 	}
 
 	private boolean linkPartOfUserGroup(WorkPlanLink workPlanLink)

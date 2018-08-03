@@ -1195,7 +1195,7 @@ public class SecurityPermission
 		// Relationships
 		codeMap.put(ADMIN_RELATIONSHIPS_PAGE, newLookup(SecurityPermission.class, ADMIN_RELATIONSHIPS_PAGE, "Provides access to the admin Relationships page", null, GROUPBY_RELATIONSHIPS));
 		((SecurityPermission) codeMap.get(ADMIN_RELATIONSHIPS_PAGE)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_RELATIONSHIPS_PAGE)).setDefaultRoles(null);
+		((SecurityPermission) codeMap.get(ADMIN_RELATIONSHIPS_PAGE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(USER_RELATIONSHIPS_PAGE, newLookup(SecurityPermission.class, USER_RELATIONSHIPS_PAGE, "Provides access to the Relationships page", null, GROUPBY_RELATIONSHIPS));
 		((SecurityPermission) codeMap.get(USER_RELATIONSHIPS_PAGE)).setPermissionPredecessor(null);
@@ -1517,7 +1517,7 @@ public class SecurityPermission
 		//Tags
 		codeMap.put(ADMIN_TAGS_PAGE, newLookup(SecurityPermission.class, ADMIN_TAGS_PAGE, "Provides access to the admin Tags page", null, GROUPBY_TAGS));
 		((SecurityPermission) codeMap.get(ADMIN_TAGS_PAGE)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_TAGS_PAGE)).setDefaultRoles(null);
+		((SecurityPermission) codeMap.get(ADMIN_TAGS_PAGE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		// Tracking
 		codeMap.put(ADMIN_TRACKING_PAGE, newLookup(SecurityPermission.class, ADMIN_TRACKING_PAGE, "Provides access to the admin Tracking page", null, GROUPBY_TRACKING));
@@ -1607,21 +1607,27 @@ public class SecurityPermission
 		codeMap.put(WORKPLAN_PROGRESS_MANAGEMENT_PAGE, newLookup(SecurityPermission.class, WORKPLAN_PROGRESS_MANAGEMENT_PAGE, "Enable viewing of the page", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
 		((SecurityPermission) codeMap.get(WORKPLAN_PROGRESS_MANAGEMENT_PAGE)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(WORKPLAN_PROGRESS_MANAGEMENT_PAGE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
 		codeMap.put(WORKFLOW_LINK_READ, newLookup(SecurityPermission.class, WORKFLOW_LINK_READ, "View your group workflow links", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_READ)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_READ)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
 		codeMap.put(WORKFLOW_LINK_READ_ALL, newLookup(SecurityPermission.class, WORKFLOW_LINK_READ_ALL, "View All workflow links", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_READ_ALL)).setPermissionPredecessor(WORKFLOW_LINK_READ);
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_READ_ALL)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
 		codeMap.put(WORKFLOW_LINK_UPDATE, newLookup(SecurityPermission.class, WORKFLOW_LINK_UPDATE, "Enable updating of workflows", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_UPDATE)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_UPDATE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-		codeMap.put(WORKFLOW_LINK_DELETE, newLookup(SecurityPermission.class, WORKFLOW_LINK_DELETE, "Enable deleting of workplan links", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
+
+		codeMap.put(WORKFLOW_LINK_DELETE, newLookup(SecurityPermission.class, WORKFLOW_LINK_DELETE, "Enable updating of workflows", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_DELETE)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
 		codeMap.put(WORKFLOW_LINK_ASSIGN, newLookup(SecurityPermission.class, WORKFLOW_LINK_ASSIGN, "Enable assigning and unassigning and assign to admin", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_ASSIGN)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_ASSIGN)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
 		codeMap.put(WORKFLOW_LINK_ASSIGN_ANY, newLookup(SecurityPermission.class, WORKFLOW_LINK_ASSIGN_ANY, "Assign any entry to any user", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_ASSIGN_ANY)).setPermissionPredecessor(WORKFLOW_LINK_ASSIGN);
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_ASSIGN_ANY)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));

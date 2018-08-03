@@ -86,19 +86,12 @@
 				}
 			});
 			dataMenu.push({
-				text: 'WorkPlan-Progress',
-				permission: ['WORKPLAN-PROGRESS-MANAGEMENT-PAGE'],
-				handler: function(){
-					actionLoadContent('WorkPlan-Progress');
-				}
-			});
-			dataMenu.push({
 				text: 'Entry Templates',
 				permission: ['ADMIN-ENTRYTEMPLATES-PAGE'],
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
-			});	
+			});		
 			dataMenu.push({
 				text: 'Submissions',
 				menu: {
@@ -183,13 +176,6 @@
 				handler: function(){
 					actionLoadContent('Organizations');
 				}				
-			});	
-			dataMenu.push({
-				text: 'Workplans',
-				permission: ['ADMIN-WORKPLAN-PAGE'],
-				handler: function(){
-					actionLoadContent('Workplans');
-				}				
 			});		
 			dataMenu.push({
 				text: 'Relationships',
@@ -248,6 +234,20 @@
 					width: '150px',
 				}
 			});
+			dataMenu.push({
+				text: 'Workplan Progress',
+				permission: ['WORKPLAN-PROGRESS-MANAGEMENT-PAGE'],
+				handler: function(){
+					actionLoadContent('WorkPlan-Progress');
+				}
+			});	
+			dataMenu.push({
+				text: 'Workplan Management',
+				permission: ['ADMIN-WORKPLAN-PAGE'],
+				handler: function(){
+					actionLoadContent('Workplans');
+				}				
+			});			
 			
 			var evaluationMenu = [];
 			evaluationMenu.push({
