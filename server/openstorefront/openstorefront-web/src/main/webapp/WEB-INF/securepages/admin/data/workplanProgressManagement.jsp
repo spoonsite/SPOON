@@ -28,6 +28,7 @@
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			// Ext.require('OSF.common.workPlanProgressComment');
+			Ext.require('OSF.workplanProgress.CommentPanel');
 			Ext.onReady(function() {
 
 				var versionViewTemplate = new Ext.XTemplate();
@@ -203,107 +204,17 @@
 							]
 						},
 						{
-							xtype: 'panel',
-							id: 'workflowComments',
-							title: 'Workflow Comments',
-							iconCls: 'fa fa-lg fa-comment',	
-							region:'east',
+							xtype: 'osf.wp.commentpanel',
 							floatable: false,
-							margin: '0 0 0 0',
-							collapsed: true,
+							collapsed: false,
 							collapsible: true,
 							animCollapse: false,
 							titleCollapse: true,
-							width: 300,
-							minWidth: 100,
-							maxWidth: 650,	
+							width: 500,
+							minWidth: 250,
+							maxWidth: 650,
 							bodyStyle: 'background: white;',
-							layout: 'fit',
-							items: [
-								{
-									xtype: 'panel',
-									itemId: 'comments',
-									bodyStyle: 'padding: 10px;',
-									scrollable: true,
-									items: [						
-									],
-									dockedItems: [
-										{
-											xtype: 'form',
-											itemId: 'form',
-											dock: 'bottom',
-											layout: 'anchor',
-											items: [
-												{
-													xtype: 'hidden',
-													name: 'commentId'
-												},
-												{
-													xtype: 'hidden',
-													name: 'replyCommentId'
-												},
-												{
-													xtype: 'htmleditor',
-													name: 'comment',									
-													width: '100%',
-													fieldBodyCls: 'form-comp-htmleditor-border',
-													maxLength: 4000
-												}
-											],
-											dockedItems: [
-												{
-													xtype: 'toolbar',
-													dock: 'bottom',
-													layout: {
-														vertical: true,
-														type: 'hbox',
-														align: 'stretch'
-													},
-													items: [
-														{
-															xtype: 'fieldcontainer',
-															fieldLabel: 'Private',
-															defaultType: 'checkboxfield',
-															items: [
-																{
-																	inputValue: '1',
-																	id        : 'checkbox1'
-																}
-															]
-														},
-														{
-															xtype: 'toolbar',
-															items: [
-																{
-																	text: 'Comment',
-																	iconCls: 'fa fa-lg fa-comment icon-button-color-save',
-																	handler: function(){
-																	}
-																},
-																{
-																	xtype: 'tbfill'
-																},
-																{
-																	text: 'Cancel',
-																	itemId: 'cancel',											
-																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-																	handler: function(){																						
-																	}
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}				
-							],
-							listeners: {
-								afterrender: function () {
-									
-								}
-							}
+							region: 'east'
 						}
 					]
 				});
@@ -322,7 +233,7 @@
 							title: 'This is some step in the workplan of the thing.'
 						},
 						Ext.create('OSF.component.StandardComboBox', {
-							name: 'Sub-Status',									
+							name: 'Sub-Status',
 							allowBlank: true,
 							editable: false,
 							typeAhead: false,
