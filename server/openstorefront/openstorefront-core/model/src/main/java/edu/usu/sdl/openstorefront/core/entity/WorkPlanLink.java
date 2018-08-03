@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.Unique;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.WorkPlanLinkComponentUniqueHandler;
 import edu.usu.sdl.openstorefront.validation.WorkPlanLinkEvaluationUniqueHandler;
+import edu.usu.sdl.openstorefront.validation.WorkPlanLinkSubmissionUniqueHandler;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -51,6 +52,10 @@ public class WorkPlanLink
 	@ConsumeField
 	@Unique(WorkPlanLinkEvaluationUniqueHandler.class)
 	private String evaluationId;
+
+	@ConsumeField
+	@Unique(WorkPlanLinkSubmissionUniqueHandler.class)
+	private String userSubmissionId;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_255)
@@ -162,6 +167,16 @@ public class WorkPlanLink
 	public void setCurrentUserAssigned(String currentUserAssigned)
 	{
 		this.currentUserAssigned = currentUserAssigned;
+	}
+
+	public String getUserSubmissionId()
+	{
+		return userSubmissionId;
+	}
+
+	public void setUserSubmissionId(String userSubmissionId)
+	{
+		this.userSubmissionId = userSubmissionId;
 	}
 
 }

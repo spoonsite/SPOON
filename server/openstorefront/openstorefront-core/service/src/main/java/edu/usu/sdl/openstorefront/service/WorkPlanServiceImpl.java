@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.RetryUtil;
 import edu.usu.sdl.openstorefront.core.api.WorkPlanService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
@@ -30,11 +31,16 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlanComponentType;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepRole;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanType;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
+import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanStepMigration;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.workplan.BaseWorkPlanStepAction;
 import java.util.ArrayList;
@@ -46,7 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -61,6 +67,12 @@ public class WorkPlanServiceImpl
 
 	@Override
 	public WorkPlan saveWorkPlan(WorkPlan workPlan)
+	{
+		return saveWorkPlan(workPlan, true);
+	}
+
+	@Override
+	public WorkPlan saveWorkPlan(WorkPlan workPlan, boolean setAsInactive)
 	{
 		Objects.requireNonNull(workPlan);
 		updateWorkPlanFields(workPlan);
@@ -77,13 +89,29 @@ public class WorkPlanServiceImpl
 		} else {
 			workPlan.setWorkPlanId(persistenceService.generateId());
 			workPlan.populateBaseCreateFields();
-			workPlan.setActiveStatus(StandardEntity.INACTIVE_STATUS);
+			if (setAsInactive) {
+				workPlan.setActiveStatus(StandardEntity.INACTIVE_STATUS);
+			}
 
 			workPlan.save();
 		}
 		clearCache();
 
 		return workPlan;
+	}
+	
+	@Override
+	public WorkPlan saveWorkPlan(WorkPlanModel workPlanModel)
+	{
+			
+		if (workPlanModel.getWorkPlan() != null) {
+			workPlanModel.setWorkPlan(saveWorkPlan(workPlanModel.getWorkPlan()));
+			if (workPlanModel.getWorkPlanStepMigrations() != null) {
+				resolveWorkPlanStepMigration(workPlanModel.getWorkPlan().getWorkPlanId(), workPlanModel.getWorkPlanStepMigrations());
+			}
+			return workPlanModel.getWorkPlan();
+		}
+		return null;
 	}
 
 	private void updateWorkPlanFields(WorkPlan workPlan)
@@ -104,12 +132,14 @@ public class WorkPlanServiceImpl
 		//make only allows one active with the same entry type
 		//other ones are inactivated.
 
-		WorkPlan workPlan = persistenceService.findById(WorkPlan.class, workPlanId);
+		WorkPlan workPlan = new WorkPlan();
+		workPlan.setWorkPlanId(workPlanId);
+		workPlan = workPlan.find();
 		if (workPlan != null) {
 			WorkPlan workPlanExample = new WorkPlan();
-			List<WorkPlan> existing = workPlanExample.findByExampleProxy();
+			List<WorkPlan> existing = workPlanExample.findByExample();
 			existing.removeIf((plan) -> {
-				return plan.getWorkPlanId().equals(workPlan.getWorkPlanId());
+				return plan.getWorkPlanId().equals(workPlanId);
 			});
 
 			if (workPlan.getComponentTypes() != null) {
@@ -132,18 +162,61 @@ public class WorkPlanServiceImpl
 
 				workPlanToInactivate.forEach(inactivePlan -> {
 					inactivePlan.setActiveStatus(WorkPlan.INACTIVE_STATUS);
-					inactivePlan.populateBaseUpdateFields();
-					persistenceService.persist(inactivePlan);
+					inactivePlan.save();
 				});
 
 			}
 			//evalutions will need a separate check
+			workPlan.setActiveStatus(WorkPlan.ACTIVE_STATUS);
+			workPlan.save();
 
+			clearCache();
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to activate workplan.", "Check data and Refresh. WorkplanId: " + workPlanId);
 		}
 	}
-
+	
+	@Override
+	public void resolveWorkPlanStepMigration(String workPlanId, List<WorkPlanStepMigration> migrations)
+	{
+		WorkPlan workPlan = persistenceService.findById(WorkPlan.class, workPlanId);
+		if (workPlan != null) {
+			
+			if (migrations != null) {
+				
+				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+				workPlanLinkExample.setWorkPlanId(workPlan.getWorkPlanId());
+				List<WorkPlanLink> workPlanLinks = workPlanLinkExample.findByExample();
+				
+				migrations.forEach(migration -> {
+					String targetStepId = findTargetWorkPlanStepId(migration.getToStepId(), migrations);
+					workPlanLinks.stream().filter(workPlanLink -> workPlanLink.getCurrentStepId().equals(migration.getFromStepId())).forEach(workLink -> {
+						moveWorkLinkToStep(workLink, targetStepId, true);
+					});
+				});
+			}
+		}
+	}
+	
+	private String findTargetWorkPlanStepId(String targetStepId, List<WorkPlanStepMigration> migrations)
+	{
+		Boolean hasFoundMigration = false;
+		
+		for (WorkPlanStepMigration migration : migrations) {
+			if (migration.getFromStepId().equals(targetStepId)) {
+				
+				hasFoundMigration = Boolean.TRUE;
+				targetStepId = migration.getToStepId();
+			}
+		}
+		
+		if (hasFoundMigration) {
+			return findTargetWorkPlanStepId(targetStepId, migrations);
+		}
+		
+		return targetStepId;
+	}
+	
 	@Override
 	public void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration)
 	{
@@ -202,19 +275,33 @@ public class WorkPlanServiceImpl
 			//Exists: check for type vs workplan
 			String componentType = getComponentService().getComponentTypeForComponent(componentId);
 			WorkPlan workPlan = getWorkPlan(workPlanLink.getWorkPlanId());
-			Set<String> workPlanType = workPlan.getComponentTypes().stream()
-					.map(WorkPlanComponentType::getComponentType)
-					.collect(Collectors.toSet());
-			if (!workPlanType.contains(componentType)) {
-				//move to plan
-				WorkPlan newWorkPlan = getWorkPlanForComponentType(componentType);
+			WorkPlan newWorkPlan = getWorkPlanForComponentType(componentType);
+
+			if (!newWorkPlan.getWorkPlanId().equals(workPlan.getWorkPlanId())) {
 				String stepId = matchWorkPlanStepWithStatus(newWorkPlan, componentId);
 
 				workPlanLink.setWorkPlanId(newWorkPlan.getWorkPlanId());
 				workPlanLink.setCurrentStepId(stepId);
-
 				workPlanLink.save();
 			}
+
+			//Make sure step exists; if not match steps
+			WorkPlanStep currentStep = workPlan.findWorkPlanStep(workPlanLink.getCurrentStepId());
+			if (currentStep == null) {
+				String stepId = matchWorkPlanStepWithStatus(workPlan, componentId);
+				workPlanLink.setCurrentStepId(stepId);
+				workPlanLink.save();
+			}
+
+			//Check the currentGroup (if not set it to the component type group)
+			if (StringUtils.isBlank(workPlanLink.getCurrentGroupAssigned())) {
+				ComponentTypeRoleResolution roleResolution = getComponentService().findRoleGroupsForComponentType(componentType);
+				if (roleResolution != null) {
+					//assign to first group
+					workPlanLink.setCurrentGroupAssigned(roleResolution.getRoles().get(0));
+				}
+			}
+
 		} else {
 			workPlanLink = createWorkPlanLink(componentId);
 		}
@@ -233,16 +320,14 @@ public class WorkPlanServiceImpl
 		if (StringUtils.isNotBlank(componentType)) {
 			WorkPlan workPlan = getWorkPlanForComponentType(componentType);
 
-			ComponentTypeOptions componentTypeOptions = new ComponentTypeOptions();
-			componentTypeOptions.setComponentType(componentType);
-			ComponentTypeNestedModel nestedModel = getComponentService().getComponentType(componentTypeOptions);
-
 			workPlanLink.setWorkPlanId(workPlan.getWorkPlanId());
 
-			if (!nestedModel.getComponentType().getRoles().getRoles().isEmpty()) {
+			ComponentTypeRoleResolution roleResolution = getComponentService().findRoleGroupsForComponentType(componentType);
+			if (roleResolution != null) {
 				//assign to first group
-				workPlanLink.setCurrentGroupAssigned(nestedModel.getComponentType().getRoles().getRoles().get(0));
+				workPlanLink.setCurrentGroupAssigned(roleResolution.getRoles().get(0));
 			}
+
 			workPlanLink.setCurrentStepId(matchWorkPlanStepWithStatus(workPlan, componentId));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find entry.", "Check data and refresh. ComponentId: " + componentId);
@@ -311,7 +396,7 @@ public class WorkPlanServiceImpl
 		}
 
 		if (previousStepId != null) {
-			moveWorkLinkToStep(workPlanLink, previousStepId);
+			moveWorkLinkToStep(workPlanLink, previousStepId, true);
 		}
 	}
 
@@ -333,38 +418,99 @@ public class WorkPlanServiceImpl
 		}
 
 		if (nextStepId != null) {
-			moveWorkLinkToStep(workPlanLink, nextStepId);
+			moveWorkLinkToStep(workPlanLink, nextStepId, true);
 		}
 	}
 
 	@Override
-	public WorkPlanLink moveWorkLinkToStep(WorkPlanLink workPlanLink, String workPlanStepId)
+	public WorkPlanLink moveWorkLinkToStep(WorkPlanLink workPlanLink, String workPlanStepId, boolean checkRoles)
 	{
-		WorkPlan workPlan = getWorkPlan(workPlanLink.getWorkPlanId());
-		String oldStepId = workPlanLink.getCurrentStepId();
+		Objects.requireNonNull(workPlanLink);
+		Objects.requireNonNull(workPlanStepId);
 
-		if (workPlanLink.getCurrentStepId().equals(workPlanStepId)) {
-			LOG.log(Level.FINE, "Work Plan Link is already on step request.");
+		if (workPlanLink.getUserSubmissionId() != null) {
+			LOG.log(Level.WARNING, "Moving steps on User Submission link is not allowed");
+			return workPlanLink;
+		}
+
+		WorkPlan workPlan = getWorkPlan(workPlanLink.getWorkPlanId());
+
+		//Check User to make sure
+		boolean proceed = true;
+		if (checkRoles) {
+			proceed = checkRolesOnStep(workPlan, workPlanStepId);
+		}
+
+		if (proceed) {
+			String oldStepId = workPlanLink.getCurrentStepId();
+
+			if (workPlanLink.getCurrentStepId().equals(workPlanStepId)) {
+				LOG.log(Level.FINE, "Work Plan Link is already on step request.");
+			} else {
+				WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(workPlanStepId);
+				if (workPlanStep != null) {
+
+					applyStepActions(workPlanLink, workPlan, workPlanStep);
+
+					workPlanLink.setCurrentStepId(workPlanStepId);
+					workPlanLink.setSubStatus(null);
+					workPlanLink.save();
+
+					logWorkPlanChange(workPlanLink, workPlan, oldStepId, workPlanStep);
+
+					if (StringUtils.isNotBlank(workPlanLink.getCurrentUserAssigned())) {
+						postNoticationOfWorkPlanChange(workPlanLink);
+					}
+
+				} else {
+					throw new OpenStorefrontRuntimeException("Unable to find Work Plan Step.", "Check data; step Id: " + workPlanStepId + " workplanId: " + workPlanLink.getWorkPlanId());
+				}
+			}
+			return workPlanLink;
 		} else {
 			WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(workPlanStepId);
-			if (workPlanStep != null) {
 
-				applyStepActions(workPlanLink, workPlan, workPlanStep);
-
-				workPlanLink.setCurrentStepId(workPlanStepId);
-				workPlanLink.save();
-
-				logWorkPlanChange(workPlanLink, workPlan, oldStepId, workPlanStep);
-
-				if (StringUtils.isNotBlank(workPlanLink.getCurrentUserAssigned())) {
-					postNoticationOfWorkPlanChange(workPlanLink);
-				}
-
-			} else {
-				throw new OpenStorefrontRuntimeException("Unable to find Work Plan Step.", "Check data; step Id: " + workPlanStepId + " workplanId: " + workPlanLink.getWorkPlanId());
-			}
+			throw new OpenStorefrontRuntimeException("User is not authorized to move to the workplan step",
+					"User: " + SecurityUtil.getCurrentUserName()
+					+ " Work Plan: " + workPlan.getName()
+					+ " Move Step: " + workPlanStep != null ? workPlanStep.getName() : "Unable to find step"
+			);
 		}
-		return workPlanLink;
+	}
+
+	private boolean checkRolesOnStep(WorkPlan workPlan, String workPlanStepId)
+	{
+		boolean proceed = false;
+
+		WorkPlanStep newStep = workPlan.findWorkPlanStep(workPlanStepId);
+		Set<String> userRoleSet = SecurityUtil.getUserContext().roles();
+		if (newStep.getStepRole() != null) {
+			String roleLogic = OpenStorefrontConstant.OR_CONDITION;
+			if (StringUtils.isNotBlank(newStep.getRoleLogicCondition())) {
+				roleLogic = newStep.getRoleLogicCondition();
+			}
+			boolean matchedConditions = false;
+			if (OpenStorefrontConstant.OR_CONDITION.equals(roleLogic)) {
+				for (WorkPlanStepRole stepRole : newStep.getStepRole()) {
+					if (userRoleSet.contains(stepRole.getSecurityRole())) {
+						matchedConditions = true;
+						break;
+					}
+				}
+			} else {
+				int matchCount = 0;
+				for (WorkPlanStepRole stepRole : newStep.getStepRole()) {
+					if (userRoleSet.contains(stepRole.getSecurityRole())) {
+						matchCount++;
+					}
+				}
+				if (matchCount == newStep.getStepRole().size()) {
+					matchedConditions = true;
+				}
+			}
+			proceed = matchedConditions;
+		}
+		return proceed;
 	}
 
 	private void logWorkPlanChange(WorkPlanLink workPlanLink, WorkPlan workPlan, String oldStepId, WorkPlanStep workPlanStep)
@@ -442,7 +588,7 @@ public class WorkPlanServiceImpl
 			List<Component> components = persistenceService.queryByExample(queryByExample);
 			for (Component component : components) {
 				//ignore return
-				createWorkPlanLink(component.getComponentId());
+				getWorkPlanForComponent(component.getComponentId());
 
 				synced++;
 			}
@@ -467,7 +613,7 @@ public class WorkPlanServiceImpl
 		if (!workPlanLink.getCurrentStepId().equals(stepId)) {
 
 			//apply actions?
-			moveWorkLinkToStep(workPlanLink, stepId);
+			moveWorkLinkToStep(workPlanLink, stepId, true);
 		}
 	}
 
@@ -513,6 +659,7 @@ public class WorkPlanServiceImpl
 	public WorkPlan getWorkPlanForComponentType(String componentType)
 	{
 		WorkPlan workPlan = null;
+		String defaultComponentPlanKey = "DEFAULT_COMPONENT_WP";
 
 		//check cache
 		Element element = OSFCacheManager.getWorkPlanTypeCache().get(componentType);
@@ -554,11 +701,20 @@ public class WorkPlanServiceImpl
 			}
 		}
 
-		//on miss; fill cache
+		//pull default
 		if (workPlan == null) {
-			WorkPlan workPlanExample = new WorkPlan();
-			workPlanExample.setDefaultWorkPlan(Boolean.TRUE);
-			workPlan = workPlanExample.find();
+			Element defaultElement = OSFCacheManager.getWorkPlanTypeCache().get(defaultComponentPlanKey);
+			if (defaultElement != null) {
+				workPlan = (WorkPlan) defaultElement.getObjectValue();
+			} else {
+				WorkPlan workPlanExample = new WorkPlan();
+				workPlanExample.setDefaultWorkPlan(Boolean.TRUE);
+				workPlanExample.setWorkPlanType(WorkPlanType.COMPONENT);
+				workPlan = workPlanExample.find();
+
+				defaultElement = new Element(defaultComponentPlanKey, workPlan);
+				OSFCacheManager.getWorkPlanTypeCache().put(defaultElement);
+			}
 		}
 		return workPlan;
 	}
@@ -566,6 +722,69 @@ public class WorkPlanServiceImpl
 	private void clearCache()
 	{
 		OSFCacheManager.getWorkPlanTypeCache().removeAll();
+	}
+
+	@Override
+	public void removeComponentTypeFromWorkPlans(String componentType)
+	{
+		WorkPlan workPlanExample = new WorkPlan();
+		List<WorkPlan> workPlans = workPlanExample.findByExampleProxy();
+		for (WorkPlan workPlan : workPlans) {
+			boolean save = false;
+			if (workPlan.getComponentTypes() != null) {
+				if (workPlan.getComponentTypes().removeIf(stepRole -> {
+					return stepRole.getComponentType().equals(componentType);
+				})) {
+					save = true;
+				}
+			}
+			if (save) {
+				workPlan.save();
+			}
+		}
+	}
+
+	@Override
+	public void removeSecurityRole(String securityRole)
+	{
+		WorkPlan workPlanExample = new WorkPlan();
+		List<WorkPlan> workPlans = workPlanExample.findByExampleProxy();
+		for (WorkPlan workPlan : workPlans) {
+			boolean save = false;
+			if (workPlan.getSteps() != null) {
+				for (WorkPlanStep step : workPlan.getSteps()) {
+					if (step.getStepRole() != null) {
+						if (step.getStepRole().removeIf(stepRole -> {
+							return stepRole.getSecurityRole().equals(securityRole);
+						})) {
+							save = true;
+						}
+					}
+				}
+			}
+			if (save) {
+				workPlan.save();
+			}
+		}
+	}
+
+	@Override
+	public void removeWorkPlanlinkForComponent(String componentId)
+	{
+		Objects.requireNonNull(componentId);
+
+		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+		workPlanLinkExample.setComponentId(componentId);
+		persistenceService.deleteByExample(workPlanLinkExample);
+	}
+
+	@Override
+	public void removeWorkPlanLink(String workPlanLinkId)
+	{
+		WorkPlanLink workPlanLink = persistenceService.findById(WorkPlanLink.class, workPlanLinkId);
+		if (workPlanLink != null) {
+			persistenceService.delete(workPlanLink);
+		}
 	}
 
 }

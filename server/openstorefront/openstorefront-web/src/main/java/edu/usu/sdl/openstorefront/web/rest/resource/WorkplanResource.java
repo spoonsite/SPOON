@@ -17,14 +17,22 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
+import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -37,6 +45,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -66,19 +75,72 @@ public class WorkplanResource
 
 	@GET
 	@APIDescription("Gets a list of all Worklinks.")
-	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_READ)
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(WorkPlan.class)
+	@DataType(WorkPlanLinkView.class)
 	@Path("/worklinks")
 	public Response workLinkLookupAll()
 	{
+		//depends on the user
 		WorkPlanLink workLinkExample = new WorkPlanLink();
+		workLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
 		List<WorkPlanLink> workLinks = workLinkExample.findByExample();
 
-		GenericEntity<List<WorkPlanLink>> entity = new GenericEntity<List<WorkPlanLink>>(workLinks)
+		if (!SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_LINK_READ_ALL)) {
+			//get worklinks assigned to them and assigned to there groups (remove other names)
+			workLinks = workLinks.stream()
+					.filter(link -> {
+						return SecurityUtil.getCurrentUserName().equals(link.getCurrentUserAssigned())
+								|| linkPartOfUserGroup(link);
+					}).collect(Collectors.toList());
+
+			//filter names
+			workLinks.forEach(link -> {
+				if (StringUtils.isNotBlank(link.getCurrentUserAssigned())
+						&& !SecurityUtil.getCurrentUserName().equals(link.getCurrentUserAssigned())) {
+					link.setCurrentUserAssigned(OpenStorefrontConstant.GENERIC_ADMIN_USER);
+				}
+			});
+		}
+
+		GenericEntity<List<WorkPlanLinkView>> entity = new GenericEntity<List<WorkPlanLinkView>>(WorkPlanLinkView.toView(workLinks))
 		{
 		};
 		return sendSingleEntityResponse(entity);
+	}
+
+	private boolean linkPartOfUserGroup(WorkPlanLink workPlanLink)
+	{
+		boolean partOfGroup = false;
+
+		Set<String> userRoles = SecurityUtil.getUserContext().roles();
+		if (StringUtils.isNotBlank(workPlanLink.getCurrentGroupAssigned())) {
+			if (userRoles.contains(workPlanLink.getCurrentGroupAssigned())) {
+				partOfGroup = true;
+			}
+		}
+
+		return partOfGroup;
+	}
+
+	@GET
+	@APIDescription("Gets a Worklink")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_READ)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlanLinkView.class)
+	@Path("/worklinks/{linkId}")
+	public Response getWorkLink(
+			@PathParam("linkId") String workLinkId
+	)
+	{
+		WorkPlanLinkView view = null;
+		WorkPlanLink workPlanLink = new WorkPlanLink();
+		workPlanLink.setWorkPlanLinkId(workLinkId);
+		workPlanLink = workPlanLink.find();
+		if (workPlanLink != null) {
+			view = WorkPlanLinkView.toView(workPlanLink);
+		}
+		return sendSingleEntityResponse(view);
 	}
 
 	@GET
@@ -89,19 +151,10 @@ public class WorkplanResource
 	@Path("/{id}")
 	public Response workPlanSingleLookup(@PathParam("id") String workPlanId)
 	{
-
 		WorkPlan workPlan = new WorkPlan();
 		workPlan.setWorkPlanId(workPlanId);
 		workPlan = workPlan.find();
-		if (workPlan == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-
-		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(workPlan)
-		{
-		};
-
-		return sendSingleEntityResponse(entity);
+		return sendSingleEntityResponse(workPlan);
 	}
 
 	@POST
@@ -109,16 +162,17 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_CREATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlan.class)
 	public Response createWorkPlan(WorkPlan workPlan)
 	{
-		workPlan.populateBaseCreateFields();
-		WorkPlan createdWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
-
-		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(createdWorkPlan)
-		{
-		};
-
-		return sendSingleEntityResponse(entity);
+		ValidationResult validationResult = workPlan.validate();
+		if (validationResult.valid()) {
+			workPlan.populateBaseCreateFields();
+			WorkPlan createdWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
+			return sendSingleEntityResponse(createdWorkPlan);
+		} else {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
 	}
 
 	@PUT
@@ -126,39 +180,44 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlan.class)
 	public Response updateWorkPlan(
-			WorkPlan workPlan
+			WorkPlanModel workPlanModel
 	)
 	{
-		WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
-
-		GenericEntity<WorkPlan> entity = new GenericEntity<WorkPlan>(updatedWorkPlan)
-		{
-		};
-
-		return sendSingleEntityResponse(entity);
+		ValidationResult validationResult = workPlanModel.getWorkPlan().validate();
+		if (validationResult.valid()) {
+			WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlanModel);
+			return sendSingleEntityResponse(updatedWorkPlan);
+		} else {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
 	}
 
 	@PUT
 	@APIDescription("Activates a Work Plan")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/activate")
 	public Response activateWorkPlan(
 			@PathParam("id") String workPlanId
 	)
 	{
-		service.getWorkPlanService().activateWorkPlan(workPlanId);
-		return Response.status(Response.Status.OK).build();
+		WorkPlan workPlan = new WorkPlan();
+		workPlan.setWorkPlanId(workPlanId);
+		workPlan = workPlan.find();
+		if (workPlan != null) {
+			service.getWorkPlanService().activateWorkPlan(workPlanId);
+			return Response.ok().build();
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
 	@PUT
-	@APIDescription("Assigns a workplan for a component")
-	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
+	@APIDescription("Assigns a workPlanLink to a user and/or group")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_ASSIGN_ANY)
 	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/{workPlanId}/worklinks/{workLinkId}")
+	@DataType(WorkPlanLinkView.class)
+	@Path("/{workPlanId}/worklinks/{workLinkId}/assign")
 	public Response assignWorkplanForComponent(
 			@PathParam("workPlanId") String workPlanId,
 			@PathParam("workLinkId") String workLinkId,
@@ -166,14 +225,79 @@ public class WorkplanResource
 			@QueryParam("roleGroup") String roleGroup
 	)
 	{
-		service.getWorkPlanService().assignWorkPlan(workPlanId, workLinkId, username, roleGroup);
-		return Response.status(Response.Status.OK).build();
+		return handleAssign(workPlanId, workLinkId, username, roleGroup);
+	}
+
+	@PUT
+	@APIDescription("Assigns a workPlanLink to current user")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_ASSIGN)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlanLinkView.class)
+	@Path("/{workPlanId}/worklinks/{workLinkId}/assigntome")
+	public Response assignWorkplanLinkToMe(
+			@PathParam("workPlanId") String workPlanId,
+			@PathParam("workLinkId") String workLinkId
+	)
+	{
+		return handleAssign(workPlanId, workLinkId, SecurityUtil.getCurrentUserName(), null);
+	}
+
+	@PUT
+	@APIDescription("Assigns a workPlanLink to current user")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_ASSIGN)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlanLinkView.class)
+	@Path("/{workPlanId}/worklinks/{workLinkId}/unassign")
+	public Response unassignWorkplanLink(
+			@PathParam("workPlanId") String workPlanId,
+			@PathParam("workLinkId") String workLinkId
+	)
+	{
+		return handleAssign(workPlanId, workLinkId, null, null);
+	}
+
+	@PUT
+	@APIDescription("Assigns a workPlanLink to the admin group")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_ASSIGN)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlanLinkView.class)
+	@Path("/{workPlanId}/worklinks/{workLinkId}/assignToAdmin")
+	public Response assignWorkplanLinkToAdmin(
+			@PathParam("workPlanId") String workPlanId,
+			@PathParam("workLinkId") String workLinkId
+	)
+	{
+		WorkPlan workPlan = service.getWorkPlanService().getWorkPlan(workPlanId);
+		if (workPlan != null) {
+			String adminGroup = StringUtils.isNotBlank(workPlan.getAdminRole()) ? workPlan.getAdminRole() : SecurityRole.ADMIN_ROLE;
+			return handleAssign(workPlanId, workLinkId, null, adminGroup);
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+
+	private Response handleAssign(String workPlanId, String workLinkId, String username, String roleGroup)
+	{
+		WorkPlanLinkView view = null;
+
+		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+		workPlanLinkExample.setWorkPlanId(workPlanId);
+		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
+		WorkPlanLink workPlanLink = workPlanLinkExample.find();
+
+		if (workPlanLink != null) {
+			service.getWorkPlanService().assignWorkPlan(workPlanId, workLinkId, username, roleGroup);
+			workPlanLink = workPlanLinkExample.find();
+			view = WorkPlanLinkView.toView(workPlanLink);
+		}
+
+		return sendSingleEntityResponse(view);
 	}
 
 	@PUT
 	@APIDescription("Moves component to specified step")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlanLinkView.class)
 	@Path("/{workPlanId}/worklinks/{workLinkId}/tostep/{workPlanStepId}")
 	public Response moveComponentToStep(
 			@PathParam("workPlanId") String workPlanId,
@@ -181,20 +305,24 @@ public class WorkplanResource
 			@PathParam("workPlanStepId") String workPlanStepId
 	)
 	{
-		// TODO: check to see if the current user can move the component to the specified step
-//		WorkPlanLink workPlanLink = service.getWorkPlanService().moveComponentToStep(workPlanId, workLinkId, workPlanStepId);
-//
-//		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workPlanLink)
-//			{
-//			};
+		WorkPlanLinkView view = null;
 
-		return sendSingleEntityResponse(null);
+		WorkPlanLink workPlanLink = new WorkPlanLink();
+		workPlanLink.setWorkPlanId(workPlanId);
+		workPlanLink.setWorkPlanLinkId(workLinkId);
+		workPlanLink = workPlanLink.find();
+
+		if (workPlanLink != null) {
+			workPlanLink = service.getWorkPlanService().moveWorkLinkToStep(workPlanLink, workPlanStepId, true);
+			view = WorkPlanLinkView.toView(workPlanLink);
+		}
+
+		return sendSingleEntityResponse(view);
 	}
 
 	@DELETE
 	@APIDescription("Deletes a Work Plan and moves it's records to a target Work Plan (if specified)")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_DELETE)
-	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(WorkPlanRemoveMigration.class)
 	@Path("/{workPlanId}")
@@ -205,4 +333,16 @@ public class WorkplanResource
 	{
 		service.getWorkPlanService().removeWorkPlan(removeWorkPlanId, workPlanRemoveMigration);
 	}
+
+	@DELETE
+	@APIDescription("Gets a Worklink")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_DELETE)
+	@Path("/worklinks/{linkId}")
+	public void deleteWorkLink(
+			@PathParam("linkId") String workLinkId
+	)
+	{
+		service.getWorkPlanService().removeWorkPlanLink(workLinkId);
+	}
+
 }

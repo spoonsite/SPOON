@@ -17,7 +17,10 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
+import edu.usu.sdl.openstorefront.core.model.WorkPlanStepMigration;
+import java.util.List;
 
 /**
  *
@@ -34,6 +37,23 @@ public interface WorkPlanService
 	 * @return
 	 */
 	WorkPlan saveWorkPlan(WorkPlan workPlan);
+
+	/**
+	 * Updates/Saves a workplan from a workPlanModel
+	 *
+	 * @param workPlanModel
+	 * @return
+	 */
+	public WorkPlan saveWorkPlan(WorkPlanModel workPlanModel);
+
+	/**
+	 * @see saveWorkPlan(WorkPlan workPlan)
+	 *
+	 * @param workPlan
+	 * @param setAsInactive
+	 * @return
+	 */
+	WorkPlan saveWorkPlan(WorkPlan workPlan, boolean setAsInactive);
 
 	/**
 	 * Activates a plan / deactivate plan that other active plan that have the
@@ -70,23 +90,24 @@ public interface WorkPlanService
 	void assignWorkPlan(String workPlanId, String workPlanLinkId, String username, String roleGroup);
 
 	/**
-	 * Moves a Component to a new workflow step
+	 * Moves a Component to a new workplan step
 	 *
 	 * @param workPlanLink
 	 * @param workPlanStepId
+	 * @param checkRoles
 	 * @return
 	 */
-	WorkPlanLink moveWorkLinkToStep(WorkPlanLink workPlanLink, String workPlanStepId);
+	WorkPlanLink moveWorkLinkToStep(WorkPlanLink workPlanLink, String workPlanStepId, boolean checkRoles);
 
 	/**
-	 * Moves workPlanlink to previous step in it's workflow
+	 * Moves workPlanlink to previous step in it's workplan
 	 *
 	 * @param workPlanLink
 	 */
 	public void previousStep(WorkPlanLink workPlanLink);
 
 	/**
-	 * Moves workPlanlink to next step in it's workflow
+	 * Moves workPlanlink to next step in it's workplan
 	 *
 	 * @param workPlanLink
 	 */
@@ -119,5 +140,42 @@ public interface WorkPlanService
 	 * @return WorkPlan (if not found, the default will be returned)
 	 */
 	WorkPlan getWorkPlanForComponentType(String componentType);
+
+	/**
+	 * Resolves step-to-step migrations in a work plan
+	 *
+	 * @param workPlanId
+	 * @param migrations a list a migrations to be performed
+	 */
+	void resolveWorkPlanStepMigration(String workPlanId, List<WorkPlanStepMigration> migrations);
+
+	/**
+	 * Updates plans and remove the component type
+	 *
+	 * @param componentType
+	 */
+	void removeComponentTypeFromWorkPlans(String componentType);
+
+	/**
+	 * Updates plans and remove the component type
+	 *
+	 * @param securityRole
+	 */
+	void removeSecurityRole(String securityRole);
+
+	/**
+	 * Removes all work links for a component
+	 *
+	 * @param componentId
+	 */
+	void removeWorkPlanlinkForComponent(String componentId);
+
+	/**
+	 * Hard-delete of a work plan link; Keep in mind a new one will get create
+	 * if the underlying data (eg. component) still exists
+	 *
+	 * @param workPlanLinkId
+	 */
+	void removeWorkPlanLink(String workPlanLinkId);
 
 }

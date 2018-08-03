@@ -96,8 +96,8 @@ Ext.define('OSF.workplanManagementTool.StepMigrationWindow', {
 						var targetDisplayName = targetCombo.getDisplayValue();
 
 						workplanWindow.getMigrationsToPerform().push({
-							initialStepId: workplanWindow.getSelectedStep().workPlanStepId,
-							targetStepId: targetStepId,
+							fromStepId: workplanWindow.getSelectedStep().workPlanStepId,
+							toStepId: targetStepId,
 							initialStepName: workplanWindow.getSelectedStep().name,
 							targetStepName: targetDisplayName
 						});

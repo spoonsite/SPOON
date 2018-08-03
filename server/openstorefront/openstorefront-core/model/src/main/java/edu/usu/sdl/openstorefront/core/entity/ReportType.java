@@ -44,6 +44,7 @@ public class ReportType
 	public static final String ACTION_REPORT = "ACTION";
 	public static final String ENTRY_LISTING = "ENTRYLIST";
 	public static final String ENTRY_STATUS = "ENTRYSTATUS";
+	public static final String WORKPLAN_STATUS = "WORKPLANSTATUS";
 
 	private String requiredPermission;
 	private boolean componentReport;
@@ -70,6 +71,7 @@ public class ReportType
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
 		codeMap.put(ENTRY_LISTING, newLookup(ReportType.class, ENTRY_LISTING, "Entry Listing", "List approved entries in a summary"));
 		codeMap.put(ENTRY_STATUS, newLookup(ReportType.class, ENTRY_STATUS, "Entry Status", "Gathers information about entry status for a time period."));
+		codeMap.put(WORKPLAN_STATUS, newLookup(ReportType.class, WORKPLAN_STATUS, "Workplan Status", "Shows the current status of items in workplans"));
 
 		//update metadata
 		((ReportType) codeMap.get(USAGE)).setRequiredPermission(SecurityPermission.RUN_USAGE_REPORT);

@@ -778,6 +778,7 @@ public class ComponentServiceImpl
 		return core.assignLibrarian(componentId, librarianUsername);
 	}
 
+	@Override
 	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder)
 	{
 		return type.getComponentTypeParents(componentTypeId, reverseOrder);
