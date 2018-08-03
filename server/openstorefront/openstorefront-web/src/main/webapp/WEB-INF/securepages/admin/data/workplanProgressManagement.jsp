@@ -128,7 +128,8 @@
 																	text: 'Cancel',
 																	itemId: 'cancel',											
 																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-																	handler: function(){																						
+																	handler: function() {
+																		this.up('window').close();
 																	}
 																}
 															]
@@ -163,6 +164,7 @@
 					maximizable: true,
 					width: '75%',
 					height: '75%',
+					modal: true,
 					defaults: {
 						collapsible: true,
 						split: true,
@@ -175,7 +177,7 @@
 							title: 'Main Content',
 							collapsible: false,
 							region: 'center',
-							margins: '0 0 0 0',
+							margin: '0 0 0 0',
 							width: '75%',
 							height: '80%',
 							title: 'Entry Info',
@@ -207,7 +209,7 @@
 							iconCls: 'fa fa-lg fa-comment',	
 							region:'east',
 							floatable: false,
-							margins: '0 0 0 0',
+							margin: '0 0 0 0',
 							collapsed: true,
 							collapsible: true,
 							animCollapse: false,
@@ -313,6 +315,7 @@
 					width: '50%',
 					height: '75%',
 					layout: 'anchor',
+					modal: true,
 					items: [
 						{
 							xtype: 'panel',
@@ -403,7 +406,7 @@
 
 				var componentGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Work Plan Progress Management <i class="fa fa-lg fa-question-circle"  data-qtip="This tool gives the ability to review records in a work plan" ></i>',
-					id: 'componentGrid',
+					id: 'workPlanLinkGrid',
 					store: maingridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
@@ -623,14 +626,14 @@
 				};
 
 				var actionRefreshComponentGrid = function(input){
-					console.log('You refreshed the screen with input: ' + input);	
+					Ext.getCmp('workPlanLinkGrid').getStore().load();
 				}
 				var actionViewComponent = function(){
 					console.log('view the thang');	
 					// Ext.getCmp('componentViewWin').show();
 
 					componentViewWin.show();
-					var comp_id = Ext.getCmp('componentGrid').getSelection()[0].data.component.componentId;
+					var comp_id = Ext.getCmp('workPlanLinkGrid').getSelection()[0].data.component.componentId;
 					// console.log(comp_id);
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
 				}
