@@ -31,20 +31,19 @@
 			Ext.require('OSF.workplanProgress.CommentPanel');
 			Ext.onReady(function() {
 
-				var versionViewTemplate = new Ext.XTemplate();
 
 				var userAssignWin = Ext.create('Ext.window.Window', {
 					id: 'userAssignWin',
 					title: 'Assign entry to user:',
 					iconCls: 'fa fa-lg fa-exchange',
-						width: '50%',
+					width: '50%',
 					height: 450,
 					y: 200,
 					modal: true,
 					layout: 'fit'
 				});
 
-				var AssignToAdminCommentWin = Ext.create('Ext.window.Window', {
+				var assignToAdminCommentWin = Ext.create('Ext.window.Window', {
 					id: 'AssignToAdminCommentWin',
 					title: 'Assign entry to Admin:',
 					iconCls: 'fa fa-lg fa-exchange',
@@ -241,12 +240,12 @@
 							fieldLabel: 'Sub-Status',
 							storeConfig: {
 								url: 'api/v1/resource/lookuptypes/WorkPlanSubStatusType'
-							},
+							}
 						}),
 						{
 							xtype: 'form',
 							title: 'Step insts for completion pulled from a query'
-						},
+						}
 					],
 					dockedItems:[
 						{
@@ -278,67 +277,87 @@
 										}
 									]
 								}
-
-
 							]
 						}
 					]
 				});
 
-				var maingridStore = Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					pageSize: 300,
-					remoteSort: true,
-					sorters: [
-						new Ext.util.Sorter({
-							property : 'name',
-							direction: 'ASC'
-						})
-					],
-					fields:[
-						{name: 'name', mapping: function(data){
-							return data.component.name;
-						}}
-					],
-					proxy: CoreUtil.pagingProxy({
-						url: 'api/v1/resource/components/filterable',
-						extraParams: {
-							status: 'ALL',
-							approvalState: 'ALL',
-							componentType: 'ALL'
-						},
-						reader: {
-						   type: 'json',
-						   rootProperty: 'components',
-						   totalProperty: 'totalNumber'
-						}
-					}),
-				});
-
-				var componentGrid = Ext.create('Ext.grid.Panel', {
+				var linkGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Work Plan Progress Management <i class="fa fa-lg fa-question-circle"  data-qtip="This tool gives the ability to review records in a work plan" ></i>',
-					id: 'workPlanLinkGrid',
-					store: maingridStore,
-					columnLines: true,
-					bodyCls: 'border_accent',
-					// viewConfig: {
-					// 	enableTextSelection: true
-					// },					
-					// selModel: {
-					// 	   selType: 'checkboxmodel'
-					// },
-					// plugins: 'gridfilters',
-					columns: [
-                       	{ text: 'Name', dataIndex: 'name', flex: 1 }, 
-                        { text: 'Current Workflow step', flex: 1 },
-						{ text: 'Sub Status', flex: 1 },
-						{ text: 'Assignee', flex: 1, sortable: true },
-						{ text: 'Type', dataIndex: 'componentType', flex: 1,
-                     		renderer: function (value, meta, record) {
-								return record.get('componentTypeLabel');
+					id: 'linkGrid',
+					store: {
+						autoLoad: true,					
+						sorters: [
+							new Ext.util.Sorter({
+								property : 'linkName',
+								direction: 'ASC'
+							})
+						],
+						fields: [
+							{ name: 'currentStepName', mapping: function(data){									
+								return data.currentStep ? data.currentStep.name : 'N/A';
+							}},
+							{
+								name: 'updateDts',
+								type: 'date',
+								dateFormat: 'c'
+							}						
+						],
+						proxy: {
+							type: 'ajax',
+							url: 'api/v1/resource/workplans/worklinks',						
+							reader: {
+							   type: 'json'
 							}
-						}, 
-						{ text: 'State', flex: 1, hidden: false }
+						}
+					},
+					columnLines: true,					
+					viewConfig: {
+						enableTextSelection: true
+					},					
+					columns: [
+                       	{ text: 'Name', dataIndex: 'linkName', flex: 2, minWidth: 200,
+							renderer: function(value, meta, record) {
+								var display = value;
+								if (record.get('userSubmissionId')) {
+									display += ' <i class="fa fa-exclamation-triangle text-warning" data-qtip="Owner is making changes"></i>';
+								}
+								return display;
+							}
+						}, 						
+						{ text: 'Link Type', dataIndex: 'linkType', width: 125, hidden: true }, 						
+						{ text: 'Entry Type', dataIndex: 'componentTypeFullDescription', flex: 1, minWidth: 200	}, 						
+						{ text: 'WorkPlan Name', dataIndex: 'workPlanName', width: 175, hidden: true },
+						{ text: 'WorkPlanLink Id', dataIndex: 'workPlanLinkId', width: 175, hidden: true },
+                        { text: 'Current Step', dataIndex: 'currentStepName', width: 175 },
+						{ text: 'Status Marking', dataIndex: 'subStatusDescription', width: 175,
+							renderer: function(value, meta, record) {
+								if (value) {									
+									return value;
+								}
+								meta.tdStyle = 'font-style: italic';
+								return 'Ready to Proceed';
+							}
+						},
+						{ text: 'Assigned To', dataIndex: 'currentUserAssigned', width: 175,
+							renderer: function(value, meta) {
+								if (value) {
+									return value;
+								}
+								meta.tdStyle = 'font-style: italic';
+								return 'Unassigned';
+							}
+						},					
+						{ text: 'Group Assigned', dataIndex: 'currentGroupAssigned', width: 175,							
+							renderer: function(value, meta) {
+								if (value) {
+									return value;
+								}
+								meta.tdStyle = 'font-style: italic';
+								return 'Unassigned';
+							}
+						},
+						{ text: 'Last updated', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s' }
 					],
 					dockedItems: [
 						{
@@ -379,7 +398,7 @@
 											]
 										}
 									}
-								}),
+								})
 							]
 						},
 						{
@@ -483,28 +502,17 @@
 						}
 					],
 					listeners: {
-						itemdblclick: function(grid, record, item, index, e, opts){
-							// actionAddEditComponent(record);
-                            console.log('you double clicked')
-						},
 						selectionchange: function(selectionModel, records, opts){
-							checkComponetGridTools();
+							checkGridTools();
 						}
-					},
-					bbar: Ext.create('Ext.PagingToolbar', {
-						store: maingridStore,
-						displayInfo: true,
-						displayMsg: 'Displaying Entries {0} - {1} of {2}',
-						emptyMsg: "No entries to display"
-					})
+					}
 				});
 
-				addComponentToMainViewPort(componentGrid);
+				addComponentToMainViewPort(linkGrid);
 
-				var checkComponetGridTools = function() {
+				var checkGridTools = function() {
 
-					if (componentGrid.getSelectionModel().getCount() === 1) {
-						console.log('you selected one!!!!');
+					if (linkGrid.getSelectionModel().getCount() === 1) {
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(false);
 						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(false);
@@ -513,8 +521,7 @@
 						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(false);
 
 					}
-					else if (componentGrid.getSelectionModel().getCount() > 1) {
-						console.log('more than one!!!');
+					else if (linkGrid.getSelectionModel().getCount() > 1) {
 
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
@@ -523,8 +530,7 @@
 						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
 
-					}
-					else {
+					} else {
 
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
@@ -537,35 +543,41 @@
 				};
 
 				var actionRefreshComponentGrid = function(input){
-					Ext.getCmp('workPlanLinkGrid').getStore().load();
-				}
+					Ext.getCmp('linkGrid').getStore().load();
+				};
+								
 				var actionViewComponent = function(){
 					console.log('view the thang');	
 					// Ext.getCmp('componentViewWin').show();
 
 					componentViewWin.show();
-					var comp_id = Ext.getCmp('workPlanLinkGrid').getSelection()[0].data.component.componentId;
+					var comp_id = Ext.getCmp('linkGrid').getSelection()[0].data.component.componentId;
 					// console.log(comp_id);
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
-				}
+				};
+				
 				var actionWorkAndProcessComponent = function(){
 					console.log('do the work');	
 					Ext.getCmp('processCompWin').show();
-				}
+				};
+				
 				var actionAssignToAdmin= function(){
 					console.log('AssignToAdmin');
 					Ext.getCmp('AssignToAdminCommentWin').show();	
-				}
+				};
+				
 				var actionAssignToMe = function(){
 					console.log('AssignToMe');	
-				}
+				};
+				
 				var actionUnassign = function(){
 					console.log('UnAssign');	
-				}
+				};
+				
 				var actionReassign = function(){
 					console.log('Reassign');	
 					Ext.getCmp('userAssignWin').show();
-				}
+				};
 
 			});
 
