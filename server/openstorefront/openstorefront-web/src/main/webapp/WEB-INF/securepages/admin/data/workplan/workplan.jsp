@@ -175,7 +175,55 @@
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									requiredPermissions: ['ADMIN-WORKPLAN-UPDATE'],
 									handler: function () {
-										actionToggleStatus(Ext.getCmp('workplanGrid').getSelectionModel().getSelection()[0]);
+										var workPlanGrid = Ext.getCmp('workplanGrid');
+										var selectedRecord = workPlanGrid.getSelectionModel().getSelection()[0].getData();
+
+										if (selectedRecord.activeStatus === 'I') {
+
+											var hasConflictingEntryTypes = false;
+
+											// filter out default workplan and self
+											workPlanGrid.getStore().getData().items.filter(function (item) {
+												return item.getData().workPlanId !== selectedRecord.workPlanId && !item.getData().defaultWorkPlan;
+											}).forEach(function (item) {
+
+												// compare componentType strings, to see if there are any shared component types
+												selectedRecord.componentTypes.map(function (obj) {
+													return obj.componentType;
+												}).forEach(function (ct) {
+													hasConflictingEntryTypes = item.getData().componentTypes.map(function (obj) {
+														return obj.componentType;
+													}).indexOf(ct) !== -1 ? true : hasConflictingEntryTypes;
+												})
+											});
+											
+
+											if (hasConflictingEntryTypes) {
+												Ext.Msg.show({
+													title: 'Work Plan Conflict!',
+													message: 'The work plan you are trying to activate contains entry types that are allocated<br />' +
+																'to another work plan. Activating this work plan will <b>inactivate the conflicting<br />' +
+																'work plan. Are you sure you want to active this work plan?</b>',
+													buttons: Ext.Msg.YESNO,
+													buttonText: {
+														yes: "Discard",
+														no: "Cancel"
+													},
+													icon: Ext.Msg.WARNING,
+													fn: function (btn) {
+														if (btn === 'yes') {
+															actionToggleStatus(selectedRecord);
+														}
+													}
+												});
+											}
+											else {
+												actionToggleStatus(selectedRecord);
+											}
+										}
+										else {
+											actionToggleStatus(selectedRecord);
+										}
 									}
 								},
 								{
@@ -214,7 +262,7 @@
 
 					Ext.Ajax.request({
 						method: 'PUT',
-						url: 'api/v1/resource/workplans/' + record.getData().workPlanId + '/activate'
+						url: 'api/v1/resource/workplans/' + record.workPlanId + '/activate'
 					});
 				};
 
