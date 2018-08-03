@@ -1,6 +1,6 @@
 <%--
-/*
- * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+/* 
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,8 +161,6 @@
 					title: 'Entry Details',
 					iconCls: 'fa fa-lg fa-exchange',
 					maximizable: true,
-					// bodyBorder: true,
-					// frame: true,
 					width: '75%',
 					height: '75%',
 					defaults: {
@@ -177,8 +175,6 @@
 							title: 'Main Content',
 							collapsible: false,
 							region: 'center',
-							// frame: true,
-							// margins: '5 0 0 0',
 							margins: '0 0 0 0',
 							width: '75%',
 							height: '80%',
@@ -211,7 +207,6 @@
 							iconCls: 'fa fa-lg fa-comment',	
 							region:'east',
 							floatable: false,
-							// margins: '5 0 0 0',
 							margins: '0 0 0 0',
 							collapsed: true,
 							collapsible: true,
@@ -280,51 +275,7 @@
 																{
 																	text: 'Comment',
 																	iconCls: 'fa fa-lg fa-comment icon-button-color-save',
-																	handler: function(){	
-																		// var form = this.up('form');
-																		// var data = form.getValues();
-																		// data.acknowledge = false;
-																		
-																		// var method = 'POST';
-																		// var update = '';		
-																		// if (data.commentId) {
-																		// 	method = 'PUT',
-																		// 	update = '/' + data.commentId;		
-																		// }
-																		// var componentId = Ext.getCmp('componentGrid').getSelection()[0].data.component.componentId;
-																		// console.log(componentId);
-
-																		// var entity = rootEvalPanel.commentPanel.lastLoadOpt.entity;
-																		// var entityId = rootEvalPanel.commentPanel.lastLoadOpt.entityId;
-																		// if (!entity) {
-																		// 	data.entity = 'Evaluation';
-																		// 	data.entityId = evaluationId;	
-																		// } else {
-																		// 	data.entity = entity;
-																		// 	data.entityId = entityId;
-																		// }
-																		// Ext.getCmp('componentViewWin').getComponent('comments')
-																		
-																		// CoreUtil.submitForm({
-																		// 	url: 'api/v1/resource/components/' + componentId + '/comments' + update,
-																		// 	method: method,
-																		// 	data: data,
-																		// 	form: form,
-																		// 	success: function(){
-																		// 		rootEvalPanel.commentPanel.loadComments(evaluationId, entity, entityId);														
-																		// 		form.reset();
-																				
-																		// 		if (rootEvalPanel.commentPanel.getComponent('comments').replyMessage) {
-																		// 			rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').replyMessage, true);
-																		// 			rootEvalPanel.commentPanel.getComponent('comments').replyMessage = null;
-																		// 		}
-																		// 		if (rootEvalPanel.commentPanel.getComponent('comments').editMessage) {
-																		// 			rootEvalPanel.commentPanel.getComponent('comments').removeDocked(rootEvalPanel.commentPanel.getComponent('comments').editMessage, true);
-																		// 			rootEvalPanel.commentPanel.getComponent('comments').editMessage = null;
-																		// 		}														
-																		// 	}
-																		// });		
-
+																	handler: function(){
 																	}
 																},
 																{
@@ -339,8 +290,6 @@
 																}
 															]
 														}
-	
-
 													]
 												}
 											]
@@ -351,28 +300,10 @@
 							listeners: {
 								afterrender: function () {
 									
-
-									// if (rootEvalPanel.readOnly) {
-									// 	var subCommentPanel = rootEvalPanel.query('[itemId=comments]')[0];
-
-									// 	Ext.Array.forEach(subCommentPanel.query('panel'), function (el) {
-									// 		el.setStyle('pointer-events', 'none');
-									// 	});
-									// 	Ext.Array.forEach(subCommentPanel.query('htmleditor'), function (el) {
-									// 		el.setDisabled(true);
-									// 		el.setVisible(false);
-									// 	});
-									// 	Ext.Array.forEach(subCommentPanel.query('button'), function (el) {
-									// 		el.setDisabled(true);
-									// 		el.setVisible(false);
-									// 	});
-									// }
-									
 								}
 							}
 						}
-
-					]					
+					]
 				});
 
 				var processCompWin = Ext.create('Ext.window.Window', {
@@ -453,110 +384,7 @@
 					fields:[
 						{name: 'name', mapping: function(data){
 							return data.component.name;
-						}},
-						// {name: 'description', mapping: function(data){
-						// 	return data.component.description;
-						// }},
-						// {name: 'activeStatus', mapping: function(data){
-						// 	return data.component.activeStatus;
-						// }},
-						// {name: 'approvalState', mapping: function(data){
-						// 	return data.component.approvalState;
-						// }},
-						// {name: 'approvalStateLabel', mapping: function(data){
-						// 	return data.component.approvalStateLabel;
-						// }},
-						// {name: 'approvedDts',
-						// 	type:	'date',
-						// 	dateFormat: 'c',
-						// 	mapping: function(data){
-						// 	return data.component.approvedDts;
-						// }},
-						// {name: 'approvedUser', mapping: function(data){
-						// 	return data.component.approvedUser;
-						// }},
-						// {name: 'componentId', mapping: function(data){
-						// 	return data.component.componentId;
-						// }},
-						// {name: 'componentType', mapping: function(data){
-						// 	return data.component.componentType;
-						// }},
-						// {name: 'componentTypeLabel', mapping: function(data){
-						// 	return data.component.componentTypeLabel;
-						// }},
-						// {name: 'organization', mapping: function(data){
-						// 	return data.component.organization;
-						// }},
-						// {name: 'createDts',
-						// 	type:	'date',
-						// 	dateFormat: 'c',
-						// 	mapping: function(data){
-						// 	return data.component.createDts;
-						// }},
-						// {name: 'createUser', mapping: function(data){
-						// 	return data.component.createUser;
-						// }},
-						// {name: 'lastActivityDts',
-						// 	type:	'date',
-						// 	dateFormat: 'c',
-						// 	mapping: function(data){
-						// 	return data.component.lastActivityDts;
-						// }},
-						// {name: 'guid', mapping: function(data){
-						// 	return data.component.guid;
-						// }},
-						// {name: 'externalId', mapping: function(data){
-						// 	return data.component.externalId;
-						// }},
-						// {name: 'changeApprovalMode', mapping: function(data){
-						// 	return data.component.changeApprovalMode;
-						// }},
-						// {name: 'notifyOfApprovalEmail', mapping: function(data){
-						// 	return data.component.notifyOfApprovalEmail;
-						// }},					
-						// {name: 'currentDataOwner', mapping: function(data){
-						// 	return data.component.currentDataOwner;
-						// }},					
-						// {name: 'dataSource', mapping: function(data){
-						// 	return data.component.dataSource;
-						// }},
-						// {name: 'dataSensitivity', mapping: function(data){
-						// 	return data.component.dataSensitivity;
-						// }},
-						// {name: 'securityMarkingType', mapping: function(data){
-						// 	return data.component.securityMarkingType;
-						// }},
-						// {name: 'securityMarkingDescription', mapping: function(data){
-						// 	return data.component.securityMarkingDescription;
-						// }},
-						// {name: 'lastModificationType', mapping: function(data){
-						// 	return data.component.lastModificationType;
-						// }},
-						// {name: 'fileHistoryId', mapping: function(data){
-						// 	return data.component.fileHistoryId;
-						// }},
-						// {name: 'recordVersion', mapping: function(data){
-						// 	return data.component.recordVersion;
-						// }},
-						// {name: 'submittedDts',
-						// 	type:	'date',
-						// 	dateFormat: 'c',
-						// 	mapping: function(data){
-						// 	return data.component.submittedDts;
-						// }},
-						// {name: 'updateDts',
-						// 	type:	'date',
-						// 	dateFormat: 'c',
-						// 	mapping: function(data){
-						// 	return data.component.updateDts;
-						// }},
-						// {name: 'updateUser', mapping: function(data){
-						// 	return data.component.updateUser;
-						// }},
-						// {name: 'numberOfPendingChanges', mapping: function(data){
-						// 	return data.component.numberOfPendingChanges;
-						// }},
-						// 'integrationManagement'
+						}}
 					],
 					proxy: CoreUtil.pagingProxy({
 						url: 'api/v1/resource/components/filterable',
@@ -574,71 +402,29 @@
 				});
 
 				var componentGrid = Ext.create('Ext.grid.Panel', {
-					title: 'Manage Entries <i class="fa fa-lg fa-question-circle"  data-qtip="This tool allows for manipulating all data related to an entry" ></i>',
+					title: 'Work Plan Progress Management <i class="fa fa-lg fa-question-circle"  data-qtip="This tool gives the ability to review records in a work plan" ></i>',
 					id: 'componentGrid',
 					store: maingridStore,
 					columnLines: true,
 					bodyCls: 'border_accent',
-					viewConfig: {
-						enableTextSelection: true
-					},					
-					selModel: {
-						   selType: 'checkboxmodel'
-					},
-					plugins: 'gridfilters',
+					// viewConfig: {
+					// 	enableTextSelection: true
+					// },					
+					// selModel: {
+					// 	   selType: 'checkboxmodel'
+					// },
+					// plugins: 'gridfilters',
 					columns: [
-                       	{ text: 'Name', dataIndex: 'name', width: 130,
-							filter: {
-								type: 'string'
-							}
-						}, 
-                        { text: 'Current Workflow step', width: 150 },
-						{ text: 'Sub Status', align: 'center', width: 125 },
-						{ text: 'Assignee', width: 175, sortable: true },
-						{ text: 'Type', align: 'center', dataIndex: 'componentType', width: 125,
-							filter: {
-								type: 'list'
-							},
+                       	{ text: 'Name', dataIndex: 'name', flex: 1 }, 
+                        { text: 'Current Workflow step', flex: 1 },
+						{ text: 'Sub Status', flex: 1 },
+						{ text: 'Assignee', flex: 1, sortable: true },
+						{ text: 'Type', dataIndex: 'componentType', flex: 1,
                      		renderer: function (value, meta, record) {
 								return record.get('componentTypeLabel');
 							}
 						}, 
-						{ text: 'State', width: 175, hidden: false }
-						// { text: 'Name', dataIndex: 'name', width: 275, minWidth: 350 , flex: 150,
-						// 	filter: {
-						// 		type: 'string'
-						// 	}
-						// },
-						// { text: 'Type', align: 'center', dataIndex: 'componentType', width: 125,
-						// 	filter: {
-						// 		type: 'list'
-						// 	},
-						// 	renderer: function (value, meta, record) {
-						// 		return record.get('componentTypeLabel');
-						// 	}
-						// },
-						// { text: 'Description', dataIndex: 'description', flex: 1, minWidth: 150, hidden:true,
-						//  renderer: function(value){
-						// 	return Ext.util.Format.stripTags(value);
-						// }},
-						// { text: 'Pending Changes', tooltip: 'See Action->Change Requests to view', align: 'center', dataIndex: 'numberOfPendingChanges', width: 150 },
-						// { text: 'Last Activity Date', dataIndex: 'lastActivityDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						// { text: 'Submitted Date', dataIndex: 'submittedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						// { text: 'Approval State', align: 'center', dataIndex: 'approvalState', width: 125,
-						// 	renderer: function (value, meta, record) {
-						// 		return record.get('approvalStateLabel');
-						// 	}
-						// },
-						// { text: 'Approval Date', dataIndex: 'approvedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						// { text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 125 },
-						// { text: 'Integration Management', dataIndex: 'integrationManagement', width: 175, sortable: false },
-						// { text: 'Current Owner', dataIndex: 'currentDataOwner', width: 175, sortable: false },
-						// { text: 'Update Date', dataIndex: 'updateDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s'},
-						// { text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
-						// { text: 'Create Date', dataIndex: 'createDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-						// { text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true },
-						// { text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true },
-						// { text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true, sortable: false }
+						{ text: 'State', flex: 1, hidden: false }
 					],
 					dockedItems: [
 						{
