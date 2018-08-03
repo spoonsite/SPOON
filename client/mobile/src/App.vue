@@ -88,7 +88,7 @@
         <v-list>
           <v-list-tile v-for="link in links" :key="link.name" class="menu-item" @click="nav(link.link)">
             <v-list-tile-action>
-              <v-icon>fas fa-{{ link.icon }}</v-icon>
+              <v-icon>fa fa-{{ link.icon }}</v-icon>
             </v-list-tile-action>
             <v-content>
               <v-list-tile-title>{{ link.name }}</v-list-tile-title>
