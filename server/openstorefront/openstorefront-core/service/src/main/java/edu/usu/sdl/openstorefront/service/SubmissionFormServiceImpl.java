@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
@@ -32,8 +33,10 @@ import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionTemplateStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
@@ -338,10 +341,14 @@ public class SubmissionFormServiceImpl
 					FileHistoryOption options = new FileHistoryOption();
 					options.setUploadTags(Boolean.TRUE);
 
-					getComponentService().saveFullComponent(componentFormSet.getPrimary(), options);
+					ComponentAll saveComponent = getComponentService().saveFullComponent(componentFormSet.getPrimary(), options);
 					for (ComponentAll componentAll : componentFormSet.getChildren()) {
 						getComponentService().saveFullComponent(componentAll, options);
 					}
+
+					copySubmissionCommentToComponent(userSubmission.getUserSubmissionId(), saveComponent.getComponent().getComponentId());
+					copySubmissionWorkLinkToComponent(userSubmission.getUserSubmissionId(), saveComponent.getComponent().getComponentId());
+
 					internalDeleteUserSubmission(userSubmission.getUserSubmissionId(), false);
 				}
 
@@ -413,6 +420,9 @@ public class SubmissionFormServiceImpl
 			persistenceService.persist(media);
 		}
 
+		copyCommentsToSubmission(componentId, userSubmission.getUserSubmissionId());
+		copyComponentWorkLinkToSubmission(componentId, userSubmission.getUserSubmissionId());
+
 		if (options.removeComponent()) {
 			ComponentDeleteOptions deleteOptions = new ComponentDeleteOptions();
 			deleteOptions.setKeepMediaFiles(true);
@@ -420,6 +430,73 @@ public class SubmissionFormServiceImpl
 		}
 
 		return userSubmission;
+	}
+
+	private void copyCommentsToSubmission(String componentId, String userSubmissionId)
+	{
+		Objects.requireNonNull(componentId);
+		Objects.requireNonNull(userSubmissionId);
+
+		ComponentComment componentCommentExample = new ComponentComment();
+		componentCommentExample.setComponentId(componentId);
+		List<ComponentComment> comments = componentCommentExample.findByExample();
+
+		for (ComponentComment comment : comments) {
+			UserSubmissionComment userSubmissionComment = comment.toUserSubmissionComment();
+			userSubmissionComment.setUserSubmissionId(userSubmissionId);
+			persistenceService.persist(userSubmissionComment);
+		}
+	}
+
+	private void copyComponentWorkLinkToSubmission(String componentId, String userSubmissionId)
+	{
+		Objects.requireNonNull(componentId);
+		Objects.requireNonNull(userSubmissionId);
+
+		WorkPlanLink existingComponent = getWorkPlanService().getWorkPlanForComponent(componentId);
+
+		//clear any existing
+		getWorkPlanService().removeWorkPlanLinkForSubmission(userSubmissionId);
+
+		//move the component one
+		existingComponent.setComponentId(null);
+		existingComponent.setUserSubmissionId(userSubmissionId);
+		existingComponent.save();
+
+	}
+
+	private void copySubmissionCommentToComponent(String userSubmissionId, String componentId)
+	{
+		Objects.requireNonNull(componentId);
+		Objects.requireNonNull(userSubmissionId);
+
+		UserSubmissionComment userSubmissionCommentExample = new UserSubmissionComment();
+		userSubmissionCommentExample.setUserSubmissionId(userSubmissionId);
+		List<UserSubmissionComment> comments = userSubmissionCommentExample.findByExample();
+
+		for (UserSubmissionComment comment : comments) {
+			ComponentComment componentComment = comment.toComponentComment();
+			componentComment.setComponentId(componentId);
+			persistenceService.persist(componentComment);
+		}
+
+	}
+
+	private void copySubmissionWorkLinkToComponent(String userSubmissionId, String componentId)
+	{
+		Objects.requireNonNull(componentId);
+		Objects.requireNonNull(userSubmissionId);
+
+		WorkPlanLink existingSubmission = getWorkPlanService().getWorkPlanLinkForSubmission(userSubmissionId);
+
+		//clear any existing
+		getWorkPlanService().removeWorkPlanlinkForComponent(componentId);
+
+		//move the submission one
+		existingSubmission.setComponentId(componentId);
+		existingSubmission.setUserSubmissionId(null);
+		existingSubmission.save();
+
 	}
 
 	@Override
@@ -453,6 +530,9 @@ public class SubmissionFormServiceImpl
 						getComponentService().saveFullComponent(componentAll, options);
 					}
 					getComponentService().submitChangeRequest(savedComponentAll.getComponent().getComponentId());
+
+					copySubmissionCommentToComponent(userSubmission.getUserSubmissionId(), savedComponentAll.getComponent().getComponentId());
+					copySubmissionWorkLinkToComponent(userSubmission.getUserSubmissionId(), savedComponentAll.getComponent().getComponentId());
 
 					internalDeleteUserSubmission(userSubmission.getUserSubmissionId(), false);
 				}
@@ -504,6 +584,12 @@ public class SubmissionFormServiceImpl
 				}
 				persistenceService.delete(media);
 			}
+
+			UserSubmissionComment commentExample = new UserSubmissionComment();
+			commentExample.setUserSubmissionId(userSubmissionId);
+			persistenceService.deleteByExample(existing);
+
+			getWorkPlanService().removeWorkPlanLinkForSubmission(userSubmissionId);
 
 			persistenceService.delete(existing);
 		}

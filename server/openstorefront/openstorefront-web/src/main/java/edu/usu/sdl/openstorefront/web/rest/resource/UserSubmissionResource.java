@@ -243,8 +243,7 @@ public class UserSubmissionResource
 				} else {
 					response = Response.ok().build();
 				}
-			}
-			else {
+			} else {
 				return Response.status(Response.Status.FORBIDDEN).build();
 			}
 		}
@@ -321,4 +320,5 @@ public class UserSubmissionResource
 		return response;
 	}
 
+	//Add comment endpoints
 }

@@ -188,4 +188,20 @@ public interface WorkPlanService
 	 */
 	boolean checkRolesOnStep(WorkPlan workPlan, String workPlanStepId);
 
+	/**
+	 * This will create a link (if it doesn't exist) otherwise it will return
+	 * existing
+	 *
+	 * @param userSubmissionId
+	 * @return the link
+	 */
+	WorkPlanLink getWorkPlanLinkForSubmission(String userSubmissionId);
+
+	/**
+	 * Removes all links for a submission
+	 *
+	 * @param userSubmissionId
+	 */
+	void removeWorkPlanLinkForSubmission(String userSubmissionId);
+
 }
