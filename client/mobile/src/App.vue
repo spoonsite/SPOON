@@ -216,19 +216,8 @@ export default {
           })
           .catch(e => this.errors.push(e))
           .finally(() => {
-            if (this.watchNumber === 1) {
-              this.$toasted.show(this.watchNumber + ' entry has been updated.', {
-                icon: 'binoculars',
-                action: {
-                  text: 'View',
-                  onClick: (e, toastObject) => {
-                    this.$router.push('Watches');
-                    toastObject.goAway(0);
-                  }
-                }
-              });
-            } else if (this.watchNumber > 0) {
-              this.$toasted.show(this.watchNumber + ' entries have been updated.', {
+            if (this.watchNumber > 0) {
+              this.$toasted.show(this.watchNumber + (this.watchNumber === 1 ? ' entry has' : ' entries have') + ' been updated.', {
                 icon: 'binoculars',
                 action: {
                   text: 'View',
