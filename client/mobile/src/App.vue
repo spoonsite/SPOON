@@ -218,24 +218,24 @@ export default {
           .finally(() => {
             if (this.watchNumber === 1) {
               this.$toasted.show(this.watchNumber + ' entry has been updated.', {
-                icon : 'binoculars',
-                action : {
-                    text : 'View',
-                    onClick : (e, toastObject) => {
-                        this.$router.push('Watches');
-                        toastObject.goAway(0);
-                    }
+                icon: 'binoculars',
+                action: {
+                  text: 'View',
+                  onClick: (e, toastObject) => {
+                    this.$router.push('Watches');
+                    toastObject.goAway(0);
+                  }
                 }
               });
             } else if (this.watchNumber > 0) {
               this.$toasted.show(this.watchNumber + ' entries have been updated.', {
-                icon : 'binoculars',
-                action : {
-                    text : 'View',
-                    onClick : (e, toastObject) => {
-                        this.$router.push('Watches');
-                        toastObject.goAway(0);
-                    }
+                icon: 'binoculars',
+                action: {
+                  text: 'View',
+                  onClick: (e, toastObject) => {
+                    this.$router.push('Watches');
+                    toastObject.goAway(0);
+                  }
                 }
               });
             }
