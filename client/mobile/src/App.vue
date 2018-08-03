@@ -204,12 +204,10 @@ export default {
       if (this.$store.state.currentUser) {
         this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
           .then(response => {
-            if (response.data) {
-              if (response.data.length > 0) {
-                for (var i = 0; i < response.data.length; i++) {
-                  if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
-                    this.watchNumber++;
-                  }
+            if (response.data && response.data.length > 0) {
+              for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
+                  this.watchNumber++;
                 }
               }
             }
