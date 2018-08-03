@@ -17,6 +17,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource.component;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -44,15 +45,18 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -414,14 +418,60 @@ public abstract class ComponentExtendedSubResourceExt
 	@Path("/{id}/comments")
 	public List<ComponentComment> getComponentComment(
 			@PathParam("id")
-			@RequiredParam String componentId)
+			@RequiredParam String componentId,
+			@DefaultValue("false")
+			@QueryParam("submissionOnly")
+			boolean submissionOnly)
 	{
 		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
-		if (response != null) {
+		List<ComponentComment> comments = service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
+
+		if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)) {
+			/*        SUPER-ADMIN            */
+			if (submissionOnly) {
+				return comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
+			} else {
+				return comments;
+			}
+		} else if (SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+			/*        LIBRARIAN             */
+			List<ComponentComment> submissionComments = comments.stream().filter(comment -> comment.getCommentType().equals("SUBMISSION")).collect(Collectors.toList());
+			submissionComments.forEach((comment) -> {
+				if (!SecurityUtil.isCurrentUserTheOwner(comment)) {
+					comment.setCreateUser("ANONYMOUS");
+				}
+			});
+			return submissionComments;
+		} else if (response != null) {
+			/*        ENTRY OWNER            */
+			List<ComponentComment> submissionComments;
+			submissionComments = comments.stream().filter(comment ->
+					comment.getCommentType().equals("SUBMISSION")
+					&& !Convert.toBoolean(comment.getPrivateComment())
+				).collect(Collectors.toList());
+			submissionComments.forEach((comment) -> {
+				Component component = new Component();
+				component.setComponentId(comment.getComponentId());
+				component = component.find();
+				String owner = component != null ? component.getOwnerUser() : "";
+
+				if (!comment.getCreateUser().equals(SecurityUtil.getCurrentUserName())
+						&& !comment.getCreateUser().equals(owner)) {
+					comment.setCreateUser("ANONYMOUS");
+				}
+				if (!comment.getUpdateUser().equals(SecurityUtil.getCurrentUserName())
+						&& !comment.getUpdateUser().equals(owner)) {
+					comment.setUpdateUser("ANONYMOUS");
+				}
+				if (Convert.toBoolean(comment.getAdminComment())) {
+					comment.setCreateUser("Admin");
+					comment.setUpdateUser("Admin");
+				}
+			});
+			return submissionComments;
+		} else {
 			return Collections.emptyList();
 		}
-
-		return service.getComponentService().getBaseComponent(ComponentComment.class, componentId);
 	}
 
 	@DELETE
@@ -459,30 +509,37 @@ public abstract class ComponentExtendedSubResourceExt
 			@RequiredParam String commentId,
 			ComponentComment comment)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
-		if (response != null) {
-			return response;
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if (component == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		ComponentComment componentComment = service.getPersistenceService().findById(ComponentComment.class, commentId);
+		if (componentComment == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 
-		response = Response.status(Response.Status.NOT_FOUND).build();
-		ComponentComment componentComment = service.getPersistenceService().findById(ComponentComment.class, commentId);
-		if (componentComment != null) {
-			checkBaseComponentBelongsToComponent(componentComment, componentId);
+		if (component.getComponentId().equals(componentComment.getComponentId())
+				&& SecurityUtil.isCurrentUserTheOwner(componentComment)) {
 			comment.setComponentId(componentId);
 			comment.setCommentId(commentId);
-			response = saveComment(comment);
+			return saveComment(comment, false);
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
 		}
-		return response;
 	}
 
-	private Response saveComment(ComponentComment comment)
+	private Response saveComment(ComponentComment comment, Boolean isCreated)
 	{
 		ValidationModel validationModel = new ValidationModel(comment);
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			comment.setActiveStatus(ComponentComment.ACTIVE_STATUS);
-			comment.setCreateUser(SecurityUtil.getCurrentUserName());
+			if (isCreated) {
+				comment.setCreateUser(SecurityUtil.getCurrentUserName());
+			}
 			comment.setUpdateUser(SecurityUtil.getCurrentUserName());
 			comment.save();
 		} else {
@@ -497,30 +554,30 @@ public abstract class ComponentExtendedSubResourceExt
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentComment.class)
 	@Path("/{id}/comments")
-	public Response addComponentTag(
+	public Response createComponentComment(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@RequiredParam ComponentComment comment)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT);
-		if (response != null) {
-			return response;
-		}
-
 		Component component = new Component();
 		component.setComponentId(componentId);
 		component = component.find();
-		if (component != null) {
-			comment.setComponentId(componentId);
-			ValidationResult validResult = comment.validate();
-			if (validResult.valid()) {
-				ComponentComment newComment = comment.save();
-				return Response.created(URI.create(BASE_RESOURCE_PATH + comment.getComponentId() + "/comments/" + comment.getCommentId())).entity(newComment).build();
-			} else {
-				return Response.ok(validResult.toRestError()).build();
-			}
+		if (component == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		return Response.status(Response.Status.NOT_FOUND).build();
+
+		if (SecurityUtil.isCurrentUserTheOwner(component)
+				|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)
+				|| SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+			comment.setComponentId(componentId);
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)
+					|| SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
+				comment.setAdminComment(true);
+			}
+			return saveComment(comment, true);
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
 	}
 	// </editor-fold>
 
@@ -730,8 +787,8 @@ public abstract class ComponentExtendedSubResourceExt
 	{
 		WorkPlanLink workLink = service.getWorkPlanService().getWorkPlanForComponent(componentId);
 		GenericEntity<WorkPlanLink> entity = new GenericEntity<WorkPlanLink>(workLink)
-		{
-		};
+			{
+			};
 		return sendSingleEntityResponse(entity);
 	}
 	// </editor-fold>

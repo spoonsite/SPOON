@@ -166,7 +166,7 @@ public class WorkPlan
 				}
 				stepCount++;
 			}
-			if (stepCount == getSteps().size()) {
+			if (stepCount == getSteps().size() - 1) {
 				lastStep = true;
 			}
 		}

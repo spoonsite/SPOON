@@ -37,7 +37,7 @@ public interface WorkPlanService
 	 * @return
 	 */
 	WorkPlan saveWorkPlan(WorkPlan workPlan);
-	
+
 	/**
 	 * Updates/Saves a workplan from a workPlanModel
 	 *
@@ -169,4 +169,23 @@ public interface WorkPlanService
 	 * @param componentId
 	 */
 	void removeWorkPlanlinkForComponent(String componentId);
+
+	/**
+	 * Hard-delete of a work plan link; Keep in mind a new one will get create
+	 * if the underlying data (eg. component) still exists
+	 *
+	 * @param workPlanLinkId
+	 */
+	void removeWorkPlanLink(String workPlanLinkId);
+
+	/**
+	 * Checks the current user to see if they have permission for the requested
+	 * step.
+	 *
+	 * @param workPlan
+	 * @param workPlanStepId
+	 * @return true if the user has permission for the step
+	 */
+	boolean checkRolesOnStep(WorkPlan workPlan, String workPlanStepId);
+
 }
