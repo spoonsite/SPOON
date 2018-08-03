@@ -99,9 +99,9 @@
 					listeners: {
 						selectionchange: function (selModel, selected, opts) {
 							var tools = Ext.getCmp('workplanGrid').getComponent('tools');
-
+							
 							if (selected.length > 0) {
-
+								
 								tools.getComponent('edit').setDisabled(false);
 								tools.getComponent('setactive').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
@@ -111,6 +111,11 @@
 									tools.getComponent('delete').setDisabled(true);
 									tools.getComponent('setactive').setDisabled(true);
 								}
+								
+								if (selected[0].getData().activeStatus === 'A') {
+									tools.getComponent('setactive').setDisabled(true);
+								}
+
 							} else {
 
 								tools.getComponent('edit').setDisabled(true);
@@ -168,58 +173,52 @@
 									requiredPermissions: ['ADMIN-WORKPLAN-UPDATE'],
 								},
 								{
-									text: 'Toggle Active',
+									text: 'Set Active',
 									itemId: 'setactive',
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									requiredPermissions: ['ADMIN-WORKPLAN-UPDATE'],
 									handler: function () {
+
 										var workPlanGrid = Ext.getCmp('workplanGrid');
-										var selectedRecord = workPlanGrid.getSelectionModel().getSelection()[0].getData();
+										var selectedRecord = Ext.getCmp('workplanGrid').getSelectionModel().getSelection()[0].getData();
+										var hasConflictingEntryTypes = false;
 
-										if (selectedRecord.activeStatus === 'I') {
+										// filter out default workplan, self, and all inactive records
+										workPlanGrid.getStore().getData().items.filter(function (item) {
+											return item.getData().workPlanId !== selectedRecord.workPlanId && !item.getData().defaultWorkPlan && item.getData().activeStatus !== 'I';
+										}).forEach(function (item) {
 
-											var hasConflictingEntryTypes = false;
-
-											// filter out default workplan and self
-											workPlanGrid.getStore().getData().items.filter(function (item) {
-												return item.getData().workPlanId !== selectedRecord.workPlanId && !item.getData().defaultWorkPlan;
-											}).forEach(function (item) {
-
-												// compare componentType strings, to see if there are any shared component types
-												selectedRecord.componentTypes.map(function (obj) {
+											// compare componentType strings, to see if there are any shared component types
+											selectedRecord.componentTypes.map(function (obj) {
+												return obj.componentType;
+											}).forEach(function (ct) {
+												hasConflictingEntryTypes = item.getData().componentTypes.map(function (obj) {
 													return obj.componentType;
-												}).forEach(function (ct) {
-													hasConflictingEntryTypes = item.getData().componentTypes.map(function (obj) {
-														return obj.componentType;
-													}).indexOf(ct) !== -1 ? true : hasConflictingEntryTypes;
-												})
-											});
-											
+												}).indexOf(ct) !== -1 ? true : hasConflictingEntryTypes;
+											})
+										});
+										
 
-											if (hasConflictingEntryTypes) {
-												Ext.Msg.show({
-													title: 'Work Plan Conflict!',
-													message: 'The work plan you are trying to activate contains entry types that are allocated<br />' +
-																'to another work plan. Activating this work plan will <b>inactivate the conflicting<br />' +
-																'work plan. Are you sure you want to active this work plan?</b>',
-													buttons: Ext.Msg.YESNO,
-													buttonText: {
-														yes: "Discard",
-														no: "Cancel"
-													},
-													icon: Ext.Msg.WARNING,
-													fn: function (btn) {
-														if (btn === 'yes') {
-															actionToggleStatus(selectedRecord);
-														}
+										if (hasConflictingEntryTypes) {
+											Ext.Msg.show({
+												title: 'Work Plan Conflict!',
+												message: 'The work plan you are trying to activate contains entry types that are allocated<br />' +
+															'to another work plan. Activating this work plan will <b>inactivate the conflicting<br />' +
+															'work plan. Are you sure you want to active this work plan?</b>',
+												buttons: Ext.Msg.YESNO,
+												buttonText: {
+													yes: "Activate",
+													no: "Cancel"
+												},
+												icon: Ext.Msg.WARNING,
+												fn: function (btn) {
+													if (btn === 'yes') {
+														actionToggleStatus(selectedRecord);
 													}
-												});
-											}
-											else {
-												actionToggleStatus(selectedRecord);
-											}
+												}
+											});
 										}
 										else {
 											actionToggleStatus(selectedRecord);
@@ -262,7 +261,10 @@
 
 					Ext.Ajax.request({
 						method: 'PUT',
-						url: 'api/v1/resource/workplans/' + record.workPlanId + '/activate'
+						url: 'api/v1/resource/workplans/' + record.workPlanId + '/activate',
+						success: function (res) {
+							Ext.getCmp('workplanGrid').getStore().load();
+						}
 					});
 				};
 
