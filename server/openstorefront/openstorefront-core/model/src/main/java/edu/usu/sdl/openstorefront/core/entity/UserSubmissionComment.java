@@ -33,14 +33,20 @@ import org.apache.commons.beanutils.BeanUtils;
  *
  * @author dshurtleff
  */
-@APIDescription("Comment are use internal management and communication with owners")
-public class ComponentComment
-		extends BaseComponent<ComponentComment>
+@APIDescription("Comments for submission to help owner communicate with admins")
+public class UserSubmissionComment
+		extends StandardEntity<UserSubmissionComment>
 {
+
+	private static final long serialVersionUID = 1L;
 
 	@PK(generated = true)
 	@NotNull
 	private String commentId;
+
+	@NotNull
+	@FK(UserSubmission.class)
+	private String userSubmissionId;
 
 	@NotNull
 	@ConsumeField
@@ -62,48 +68,36 @@ public class ComponentComment
 	@APIDescription("Private comments are not shared with owners")
 	private Boolean privateComment;
 
+	@ConsumeField
 	@APIDescription("Mark admin submission comments")
 	private Boolean adminComment;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
-	public ComponentComment()
+	public UserSubmissionComment()
 	{
 	}
 
-	public UserSubmissionComment toUserSubmissionComment()
+	public ComponentComment toComponentComment()
 	{
-		UserSubmissionComment submissionComment = new UserSubmissionComment();
+		ComponentComment componentComment = new ComponentComment();
 
 		try {
-			BeanUtils.copyProperties(submissionComment, this);
+			BeanUtils.copyProperties(componentComment, this);
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
 		}
-		return submissionComment;
-	}
-
-	@Override
-	public String uniqueKey()
-	{
-		return getCommentId();
-	}
-
-	@Override
-	protected void customKeyClear()
-	{
-		setCommentId(null);
+		return componentComment;
 	}
 
 	@Override
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		super.updateFields(entity);
-		ComponentComment componentComment = (ComponentComment) entity;
+		UserSubmissionComment componentComment = (UserSubmissionComment) entity;
 		setCommentType(componentComment.getCommentType());
 		setComment(componentComment.getComment());
 		setParentCommentId(componentComment.getParentCommentId());
 		setPrivateComment(componentComment.getPrivateComment());
-		setAdminComment(componentComment.getAdminComment());
 	}
 
 	public String getCommentId()
@@ -164,6 +158,16 @@ public class ComponentComment
 	public void setAdminComment(Boolean adminComment)
 	{
 		this.adminComment = adminComment;
+	}
+
+	public String getUserSubmissionId()
+	{
+		return userSubmissionId;
+	}
+
+	public void setUserSubmissionId(String userSubmissionId)
+	{
+		this.userSubmissionId = userSubmissionId;
 	}
 
 }

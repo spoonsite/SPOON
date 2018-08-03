@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLinkType;
@@ -72,10 +73,22 @@ public class WorkPlanLinkView
 		view.setLinkType(TranslateUtil.translate(WorkPlanLinkType.class, WorkPlanLinkType.typeForWorkLink(workPlanLink)));
 
 		if (workPlanLink.getComponentId() != null) {
+			view.setLinkName(service.getComponentService().getComponentName(workPlanLink.getComponentId()));
 			view.setComponentType(service.getComponentService().getComponentTypeForComponent(workPlanLink.getComponentId()));
 			view.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
 			view.setComponentTypeFullDescription(service.getComponentService().getComponentTypeParentsString(view.getComponentType(), false));
+		} else if (workPlanLink.getUserSubmissionId() != null) {
+			UserSubmission userSubmission = new UserSubmission();
+			userSubmission.setUserSubmissionId(workPlanLink.getUserSubmissionId());
+			userSubmission = userSubmission.find();
+
+			view.setLinkName(userSubmission.getSubmissionName());
+			view.setComponentType(userSubmission.getComponentType());
+			view.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
+			view.setComponentTypeFullDescription(service.getComponentService().getComponentTypeParentsString(view.getComponentType(), false));
 		}
+		//add handling for evaluations
+
 		WorkPlanStep step = workPlan.findWorkPlanStep(workPlanLink.getCurrentStepId());
 		if (step != null) {
 			view.setCurrentStep(WorkPlanStepView.toView(step));

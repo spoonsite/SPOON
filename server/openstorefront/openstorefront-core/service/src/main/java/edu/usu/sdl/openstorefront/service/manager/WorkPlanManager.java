@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
@@ -103,6 +104,24 @@ public class WorkPlanManager
 
 	@SuppressWarnings("unchecked")
 	protected void triggerHandler(EntityEventModel entityEventModel)
+	{
+		handleComponentEvent(entityEventModel);
+		handleSubmissionEvent(entityEventModel);
+	}
+
+	private void handleSubmissionEvent(EntityEventModel entityEventModel)
+	{
+		if (EntityEventType.NEW_SUBMISSION_NOT_SUBMITTTED.equals(entityEventModel.getEventType())
+				&& (entityEventModel.getEntityChanged() != null
+				&& entityEventModel.getEntityChanged().getClass().isAssignableFrom(UserSubmission.class))) {
+			ServiceProxy service = ServiceProxy.getProxy();
+			UserSubmission userSubmission = (UserSubmission) entityEventModel.getEntityChanged();
+			service.getWorkPlanService().getWorkPlanLinkForSubmission(userSubmission.getUserSubmissionId());
+		}
+
+	}
+
+	private void handleComponentEvent(EntityEventModel entityEventModel)
 	{
 		//For now we are only look for events related to components (ignore bulk, rely on sync)
 		Component component = null;
