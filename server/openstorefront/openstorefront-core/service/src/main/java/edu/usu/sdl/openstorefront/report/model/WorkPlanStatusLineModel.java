@@ -26,6 +26,7 @@ public class WorkPlanStatusLineModel
 
 	private String linkName;
 	private String linkType;
+	private String componentType;
 	private String workPlanName;
 	private String currentStepName;
 	private String currentAssignee;
@@ -159,6 +160,16 @@ public class WorkPlanStatusLineModel
 	public void setLastCommentUpdate(Date lastCommentUpdate)
 	{
 		this.lastCommentUpdate = lastCommentUpdate;
+	}
+
+	public String getComponentType()
+	{
+		return componentType;
+	}
+
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
 	}
 
 }

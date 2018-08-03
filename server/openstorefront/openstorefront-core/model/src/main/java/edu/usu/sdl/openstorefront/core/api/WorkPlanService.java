@@ -37,7 +37,7 @@ public interface WorkPlanService
 	 * @return
 	 */
 	WorkPlan saveWorkPlan(WorkPlan workPlan);
-	
+
 	/**
 	 * Updates/Saves a workplan from a workPlanModel
 	 *
@@ -169,4 +169,13 @@ public interface WorkPlanService
 	 * @param componentId
 	 */
 	void removeWorkPlanlinkForComponent(String componentId);
+
+	/**
+	 * Hard-delete of a work plan link; Keep in mind a new one will get create
+	 * if the underlying data (eg. component) still exists
+	 *
+	 * @param workPlanLinkId
+	 */
+	void removeWorkPlanLink(String workPlanLinkId);
+
 }
