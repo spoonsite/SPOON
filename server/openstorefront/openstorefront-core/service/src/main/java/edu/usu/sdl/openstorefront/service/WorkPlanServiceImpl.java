@@ -99,11 +99,11 @@ public class WorkPlanServiceImpl
 
 		return workPlan;
 	}
-	
+
 	@Override
 	public WorkPlan saveWorkPlan(WorkPlanModel workPlanModel)
 	{
-			
+
 		if (workPlanModel.getWorkPlan() != null) {
 			workPlanModel.setWorkPlan(saveWorkPlan(workPlanModel.getWorkPlan()));
 			if (workPlanModel.getWorkPlanStepMigrations() != null) {
@@ -175,19 +175,19 @@ public class WorkPlanServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable to activate workplan.", "Check data and Refresh. WorkplanId: " + workPlanId);
 		}
 	}
-	
+
 	@Override
 	public void resolveWorkPlanStepMigration(String workPlanId, List<WorkPlanStepMigration> migrations)
 	{
 		WorkPlan workPlan = persistenceService.findById(WorkPlan.class, workPlanId);
 		if (workPlan != null) {
-			
+
 			if (migrations != null) {
-				
+
 				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 				workPlanLinkExample.setWorkPlanId(workPlan.getWorkPlanId());
 				List<WorkPlanLink> workPlanLinks = workPlanLinkExample.findByExample();
-				
+
 				migrations.forEach(migration -> {
 					String targetStepId = findTargetWorkPlanStepId(migration.getToStepId(), migrations);
 					workPlanLinks.stream().filter(workPlanLink -> workPlanLink.getCurrentStepId().equals(migration.getFromStepId())).forEach(workLink -> {
@@ -197,26 +197,26 @@ public class WorkPlanServiceImpl
 			}
 		}
 	}
-	
+
 	private String findTargetWorkPlanStepId(String targetStepId, List<WorkPlanStepMigration> migrations)
 	{
 		Boolean hasFoundMigration = false;
-		
+
 		for (WorkPlanStepMigration migration : migrations) {
 			if (migration.getFromStepId().equals(targetStepId)) {
-				
+
 				hasFoundMigration = Boolean.TRUE;
 				targetStepId = migration.getToStepId();
 			}
 		}
-		
+
 		if (hasFoundMigration) {
 			return findTargetWorkPlanStepId(targetStepId, migrations);
 		}
-		
+
 		return targetStepId;
 	}
-	
+
 	@Override
 	public void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration)
 	{
@@ -478,13 +478,13 @@ public class WorkPlanServiceImpl
 		}
 	}
 
-	private boolean checkRolesOnStep(WorkPlan workPlan, String workPlanStepId)
+	public boolean checkRolesOnStep(WorkPlan workPlan, String workPlanStepId)
 	{
-		boolean proceed = false;
+		boolean proceed = true;
 
 		WorkPlanStep newStep = workPlan.findWorkPlanStep(workPlanStepId);
 		Set<String> userRoleSet = SecurityUtil.getUserContext().roles();
-		if (newStep.getStepRole() != null) {
+		if (newStep.getStepRole() != null && !newStep.getStepRole().isEmpty()) {
 			String roleLogic = OpenStorefrontConstant.OR_CONDITION;
 			if (StringUtils.isNotBlank(newStep.getRoleLogicCondition())) {
 				roleLogic = newStep.getRoleLogicCondition();
