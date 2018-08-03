@@ -29,15 +29,17 @@
           </v-card-title>
           <v-card-text>
             <p>Oops! Something went wrong. Please contact the admin.</p>
-            <v-btn depressed small @click="showErrorDetails = !showErrorDetails">Details</v-btn>
-            <div v-if="showErrorDetails && errors.length > 0">
+            <v-btn depressed small v-if="currentError" @click="showErrorDetails = !showErrorDetails">Details</v-btn>
+            <div v-if="showErrorDetails && currentError">
               <strong>STATUS CODE:</strong> {{ currentError.status }} {{ currentError.statusText }}
               <br>
               <strong>METHOD:</strong>{{ currentError.config.method }}
               <br>
               <strong>URL:</strong>{{ currentError.config.url}}
+              <span v-if="parseJSON(currentError.config.data)">
               <br>
-              <strong>REQUEST DATA:</strong><pre style="overflow-x: scroll;">{{ JSON.parse(currentError.config.data) }}</pre>
+              <strong>REQUEST DATA:</strong><pre style="overflow-x: scroll;">{{ parseJSON(currentError.config.data) }}</pre>
+              </span>
             </div>
           </v-card-text>
           <v-card-actions>
@@ -123,6 +125,7 @@
 
 <script>
 import router from './router/index';
+import safeParse from 'safe-json-parse/callback';
 
 export default {
   name: 'App',
@@ -184,6 +187,15 @@ export default {
           window.location.href = 'openstorefront';
         })
         .catch(e => this.errors.push(e));
+    },
+    parseJSON (obj) {
+      safeParse(obj, function (err, json) {
+        if (err) {
+          return undefined;
+        } else {
+          return json;
+        }
+      });
     },
     submitErrorReport () {
       this.errorDialog = false;
