@@ -78,6 +78,9 @@ public class WorkPlanServiceImpl
 		Objects.requireNonNull(workPlan);
 		updateWorkPlanFields(workPlan);
 
+		if (setAsInactive) {
+			workPlan.setActiveStatus(StandardEntity.INACTIVE_STATUS);
+		}
 		if (workPlan.getWorkPlanId() != null) {
 			WorkPlan workPlanExample = new WorkPlan();
 			workPlanExample.setWorkPlanId(workPlan.getWorkPlanId());
@@ -90,9 +93,6 @@ public class WorkPlanServiceImpl
 		} else {
 			workPlan.setWorkPlanId(persistenceService.generateId());
 			workPlan.populateBaseCreateFields();
-			if (setAsInactive) {
-				workPlan.setActiveStatus(StandardEntity.INACTIVE_STATUS);
-			}
 
 			workPlan.save();
 		}
@@ -106,7 +106,7 @@ public class WorkPlanServiceImpl
 	{
 
 		if (workPlanModel.getWorkPlan() != null) {
-			workPlanModel.setWorkPlan(saveWorkPlan(workPlanModel.getWorkPlan()));
+			workPlanModel.setWorkPlan(saveWorkPlan(workPlanModel.getWorkPlan(), true));
 			if (workPlanModel.getWorkPlanStepMigrations() != null) {
 				resolveWorkPlanStepMigration(workPlanModel.getWorkPlan().getWorkPlanId(), workPlanModel.getWorkPlanStepMigrations());
 			}
