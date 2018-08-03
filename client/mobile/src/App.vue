@@ -86,6 +86,7 @@
 
       <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer" touchless temporary>
         <v-list>
+          <!-- Add permissions check. -->
           <v-list-tile v-for="link in links" :key="link.name" class="menu-item" @click="nav(link.link)">
             <v-list-tile-action>
               <v-icon>fas fa-{{ link.icon }}</v-icon>
@@ -157,15 +158,23 @@ export default {
       loggingOut: false,
       drawer: false,
       watchNumber: 0,
-      links: [
-        { link: '/', icon: 'home', name: 'Home' },
-        { link: '/watches', icon: 'binoculars', name: 'Watches' },
-        // { link: '/sme-approval', icon: 'check', name: 'SME Approval' },
-        { link: '/submission-status', icon: 'sticky-note', name: 'Submission Status' },
-        { link: '/faq', icon: 'question', name: 'F.A.Q.' },
-        { link: '/contact', icon: 'comment', name: 'Contact' },
-        { link: '/profile', icon: 'user-edit', name: 'Manage Profile' },
-        { link: '/reset-password', icon: 'key', name: 'Reset Password' }
+      links: [ // Leave a permission array empty if no permissions are needed.
+        { link: '/', icon: 'home', name: 'Home',
+          permissions: [] },
+        { link: '/watches', icon: 'binoculars', name: 'Watches',
+          permissions: [] },
+        { link: '/sme-approval', icon: 'check', name: 'SME Approval',
+          permissions: [ 'ADMIN-EVALUATION-TEMPLATE-SECTION-UPDATE' ] },
+        { link: '/submission-status', icon: 'sticky-note', name: 'Submission Status',
+          permissions: [] },
+        { link: '/faq', icon: 'question', name: 'F.A.Q.',
+          permissions: [] },
+        { link: '/contact', icon: 'comment', name: 'Contact',
+          permissions: [] },
+        { link: '/profile', icon: 'user-edit', name: 'Manage Profile',
+          permissions: [] },
+        { link: '/reset-password', icon: 'key', name: 'Reset Password',
+          permissions: [] }
       ],
       topbarStyle: {
         'border-bottom': `4px solid ${this.$store.state.branding.accentColor}`
@@ -199,6 +208,14 @@ export default {
         this.firstTimeDialog = true;
         this.$cookies.set('visited', 'yes');
       }
+    },
+    checkPermissions (has) {
+      if (has.length === 0) return true;
+      has.forEach(perm => {
+        // console.log(has);
+        if (this.$store.getters.hasPermission(perm)) return true;
+      });
+      return false;
     },
     checkWatches () {
       if (this.$store.state.currentUser) {

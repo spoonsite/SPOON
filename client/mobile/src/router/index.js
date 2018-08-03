@@ -11,6 +11,7 @@ import SubmissionStatusPage from '@/components/SubmissionStatusPage';
 import SubmissionCommentsPage from '@/components/SubmissionCommentsPage';
 import SMEApprovalPage from '@/components/SMEApprovalPage';
 import ContactPage from '@/components/ContactPage';
+import WorkPlanProcess from '@/components/WorkPlanProcess';
 
 Vue.use(Router);
 
@@ -71,6 +72,11 @@ export default new Router({
       path: '/contact/:ticket?',
       name: 'Contact',
       component: ContactPage
+    },
+    {
+      path: '/work-plan-process/:id',
+      name: 'Work Plan Process',
+      component: WorkPlanProcess
     },
     {
       path: '*',

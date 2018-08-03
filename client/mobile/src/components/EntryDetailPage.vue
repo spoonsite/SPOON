@@ -872,10 +872,10 @@ export default {
       if (this.$store.state.currentUser.username === this.addDetail.ownerUser) {
         return true;
       }
-      if (this.$store.getters.getPermission('ADMIN-ENTRY-COMMENT-MANAGEMENT')) {
+      if (this.$store.getters.hasPermission('ADMIN-ENTRY-COMMENT-MANAGEMENT')) {
         return true;
       }
-      if (this.$store.getters.getPermission('WORKFLOW-ADMIN-SUBMISSION-COMMENTS')) {
+      if (this.$store.getters.hasPermission('WORKFLOW-ADMIN-SUBMISSION-COMMENTS')) {
         return true;
       }
       return false;
