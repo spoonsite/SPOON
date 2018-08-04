@@ -214,7 +214,8 @@
 							minWidth: 250,
 							maxWidth: 650,
 							bodyStyle: 'background: white;',
-							region: 'east'
+							region: 'east',
+							itemId: 'commentPanel'
 						}
 					]
 				});
@@ -513,26 +514,13 @@
 						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(false);
 
 					}
-					else if (componentGrid.getSelectionModel().getCount() > 1) {
-						console.log('more than one!!!');
-
-						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
-						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
-
-					}
 					else {
-
 						Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-work-process').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-admin-assign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
-
 					}
 				};
 
@@ -540,14 +528,13 @@
 					Ext.getCmp('workPlanLinkGrid').getStore().load();
 				}
 				var actionViewComponent = function(){
-					console.log('view the thang');	
-					// Ext.getCmp('componentViewWin').show();
 
+					var componentId = Ext.getCmp('workPlanLinkGrid').getSelection()[0].data.component.componentId;
+					componentViewWin.down('[itemId=commentPanel]').loadComponentComments(componentId);
 					componentViewWin.show();
-					var comp_id = Ext.getCmp('workPlanLinkGrid').getSelection()[0].data.component.componentId;
-					// console.log(comp_id);
-					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
+					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + componentId);
 				}
+
 				var actionWorkAndProcessComponent = function(){
 					console.log('do the work');	
 					Ext.getCmp('processCompWin').show();
