@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanSubStatusType;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
@@ -327,12 +328,106 @@ public class WorkplanResource
 	}
 
 	@PUT
-	@APIDescription("Moves component to specified step")
+	@APIDescription("Moves link to previous step")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_UPDATE)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlanLinkView.class)
+	@Path("/{workPlanId}/worklinks/{workLinkId}/previousstep")
+	public Response moveLinkToPreviousStep(
+			@PathParam("workPlanId") String workPlanId,
+			@PathParam("workLinkId") String workLinkId
+	)
+	{
+		WorkPlanLinkView view = null;
+
+		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+		workPlanLinkExample.setWorkPlanId(workPlanId);
+		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
+		WorkPlanLink workPlanLink = workPlanLinkExample.find();
+
+		if (workPlanLink != null) {
+			service.getWorkPlanService().previousStep(workPlanLink);
+
+			workPlanLink = workPlanLinkExample.find();
+			view = WorkPlanLinkView.toView(workPlanLink);
+		}
+
+		return sendSingleEntityResponse(view);
+	}
+
+	@PUT
+	@APIDescription("Moves link to next step")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_UPDATE)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlanLinkView.class)
+	@Path("/{workPlanId}/worklinks/{workLinkId}/nextstep")
+	public Response moveLinkToNextStep(
+			@PathParam("workPlanId") String workPlanId,
+			@PathParam("workLinkId") String workLinkId
+	)
+	{
+		WorkPlanLinkView view = null;
+
+		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+		workPlanLinkExample.setWorkPlanId(workPlanId);
+		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
+		WorkPlanLink workPlanLink = workPlanLinkExample.find();
+
+		if (workPlanLink != null) {
+			service.getWorkPlanService().nextStep(workPlanLink);
+
+			workPlanLink = workPlanLinkExample.find();
+			view = WorkPlanLinkView.toView(workPlanLink);
+		}
+
+		return sendSingleEntityResponse(view);
+	}
+
+	@PUT
+	@APIDescription("Updates link status")
+	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_UPDATE)
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(WorkPlanLinkView.class)
+	@Path("/{workPlanId}/worklinks/{workLinkId}/status/{statusCode}")
+	public Response updateLinkStatus(
+			@PathParam("workPlanId") String workPlanId,
+			@PathParam("workLinkId") String workLinkId,
+			@PathParam("statusCode") String statusCode
+	)
+	{
+		WorkPlanLinkView view = null;
+
+		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+		workPlanLinkExample.setWorkPlanId(workPlanId);
+		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
+		WorkPlanLink workPlanLink = workPlanLinkExample.find();
+
+		if (workPlanLink != null) {
+			if (WorkPlanSubStatusType.RESET_KEY.equals(statusCode)) {
+				workPlanLink.setSubStatus(null);
+			} else {
+				workPlanLink.setSubStatus(statusCode);
+			}
+
+			ValidationResult validationResult = workPlanLink.validate();
+			if (validationResult.valid()) {
+				workPlanLink.save();
+				view = WorkPlanLinkView.toView(workPlanLink);
+			} else {
+				return Response.ok(validationResult.toRestError()).build();
+			}
+		}
+
+		return sendSingleEntityResponse(view);
+	}
+
+	@PUT
+	@APIDescription("Moves link to specified step")
 	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(WorkPlanLinkView.class)
 	@Path("/{workPlanId}/worklinks/{workLinkId}/tostep/{workPlanStepId}")
-	public Response moveComponentToStep(
+	public Response moveLinkToStep(
 			@PathParam("workPlanId") String workPlanId,
 			@PathParam("workLinkId") String workLinkId,
 			@PathParam("workPlanStepId") String workPlanStepId

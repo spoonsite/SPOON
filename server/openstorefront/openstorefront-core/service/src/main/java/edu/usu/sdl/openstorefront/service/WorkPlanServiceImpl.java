@@ -390,7 +390,7 @@ public class WorkPlanServiceImpl
 
 		String previousStepId = null;
 		for (WorkPlanStep step : workPlan.getSteps()) {
-			if (step.getWorkPlanStepId().equals(step.getWorkPlanStepId())) {
+			if (step.getWorkPlanStepId().equals(workPlanLink.getCurrentStepId())) {
 				break;
 			}
 			previousStepId = step.getWorkPlanStepId();
@@ -413,7 +413,7 @@ public class WorkPlanServiceImpl
 				nextStepId = step.getWorkPlanStepId();
 				break;
 			}
-			if (step.getWorkPlanStepId().equals(step.getWorkPlanStepId())) {
+			if (step.getWorkPlanStepId().equals(workPlanLink.getCurrentStepId())) {
 				captureNext = true;
 			}
 		}
