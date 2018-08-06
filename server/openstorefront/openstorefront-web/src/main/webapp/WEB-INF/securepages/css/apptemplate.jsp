@@ -23,6 +23,7 @@ limitations under the License.
 <%@ include file="entryType.jsp" %>
 <%@ include file="evaluation.jsp" %>
 <%@ include file="workPlan.jsp" %>
+<%@ include file="submissionComments.jsp" %>
 
 @media print {
     .pageBreak {		
