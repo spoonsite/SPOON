@@ -218,69 +218,6 @@
 					]
 				});
 
-				var processCompWin = Ext.create('Ext.window.Window', {
-					id: 'processCompWin',
-					title: 'Entry Workflow',
-					iconCls: 'fa fa-lg fa-exchange',
-					width: '50%',
-					height: '75%',
-					layout: 'anchor',
-					modal: true,
-					items: [
-						{
-							xtype: 'panel',
-							title: 'This is some step in the workplan of the thing.'
-						},
-						Ext.create('OSF.component.StandardComboBox', {
-							name: 'Sub-Status',
-							allowBlank: true,
-							editable: false,
-							typeAhead: false,
-							height: 60,
-							fieldLabel: 'Sub-Status',
-							storeConfig: {
-								url: 'api/v1/resource/lookuptypes/WorkPlanSubStatusType'
-							}
-						}),
-						{
-							xtype: 'form',
-							title: 'Step insts for completion pulled from a query'
-						}
-					],
-					dockedItems:[
-						{
-							xtype: 'toolbar',
-							dock: 'bottom',
-							layout: {
-								vertical: true,
-								type: 'hbox',
-								align: 'stretch'
-							},
-							items: [
-								{
-									xtype: 'toolbar',
-									items: [
-										{
-											text: 'Go To Previous Step',
-											iconCls: 'fa fa-lg fa-backward icon-button-color-save',
-											handler: function(){													
-											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Complete This Step',											
-											iconCls: 'fa fa-lg fa-list-alt icon-button-color-save',
-											handler: function(){																						
-											}
-										}
-									]
-								}
-							]
-						}
-					]
-				});
 
 				var linkGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Work Plan Progress Management <i class="fa fa-lg fa-question-circle"  data-qtip="This tool gives the ability to review records in a work plan" ></i>',
@@ -332,10 +269,15 @@
                         { text: 'Current Step', dataIndex: 'currentStepName', width: 175 },
 						{ text: 'Status Marking', dataIndex: 'subStatusDescription', width: 175,
 							renderer: function(value, meta, record) {
-								if (value) {									
+								if (value) {	
+									var color = record.get('workPlanSubStatusColor');
+									if (!Ext.String.startsWith(color, '#')) {
+										color = '#' + color;
+									}
+									meta.tdStyle = 'font-weight: bold; background-color: ' + color;
 									return value;
 								}
-								meta.tdStyle = 'font-style: italic';
+								meta.tdStyle = 'font-style: italic; color: grey;';
 								return 'Ready to Proceed';
 							}
 						},
@@ -344,7 +286,7 @@
 								if (value) {
 									return value;
 								}
-								meta.tdStyle = 'font-style: italic';
+								meta.tdStyle = 'font-style: italic; color: grey;';
 								return 'Unassigned';
 							}
 						},					
@@ -353,7 +295,7 @@
 								if (value) {
 									return value;
 								}
-								meta.tdStyle = 'font-style: italic';
+								meta.tdStyle = 'font-style: italic; color: grey;';
 								return 'Unassigned';
 							}
 						},
@@ -439,7 +381,8 @@
 									disabled: true,
 									requiredPermissions: ['WORKFLOW-LINK-UPDATE'],
 									handler: function () {
-										actionWorkAndProcessComponent();
+										var record = linkGrid.getSelection()[0];
+										actionWorkAndProcessComponent(record);
 									}
 								},
 								{
@@ -556,9 +499,132 @@
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
 				};
 				
-				var actionWorkAndProcessComponent = function(){
-					console.log('do the work');	
-					Ext.getCmp('processCompWin').show();
+				var actionWorkAndProcessComponent = function(record){
+					
+					var workPlanId = record.get('workPlanId');
+					var workPlanLinkId = record.get('workPlanLinkId');
+										
+					var processCompWin = Ext.create('Ext.window.Window', {				
+						title: 'Workflow',
+						iconCls: 'fa fa-lg fa-exchange',
+						width: '50%',
+						height: 400,
+						closeAction: 'destroy',
+						layout: 'fit',						
+						modal: true,
+						items: [
+							{
+								xtype: 'panel',
+								itemId: 'stepInfo',
+								width: '100%',
+								scrollable: true,
+								bodyStyle: 'padding: 10px;',
+								tpl: new Ext.XTemplate(
+									'<h1 style="text-align: center">Current Step - {name}</h1>',
+									'<h3>Instructions: </h3>',
+									'{description}'
+								),
+								dockedItems:[
+									{
+										xtype: 'combo',	
+										dock: 'bottom',
+										itemId: 'statusField',
+										name: 'status',
+										width: '100%',
+										labelWidth: 200,
+										margin: '10 10 10 10',
+										allowBlank: true,
+										editable: false,
+										typeAhead: false,																
+										fieldLabel: 'Work State <i class="fa fa-question-circle text-warning" data-qtip="Flags an item with a status to communicate state"></i>',
+										valueField: 'code',
+										displayField: 'description',
+										queryMode: 'local',
+										store: {
+											autoLoad: true,
+											proxy: {
+												type: 'ajax',
+												url: 'api/v1/resource/lookuptypes/WorkPlanSubStatusType?addSelect=true'
+											}
+										},
+										listeners: {
+											change: function(field, newValue, oldValue) {
+												processCompWin.setLoading('Updating Status...');
+												
+												Ext.Ajax.request({
+													url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/status/' + (newValue || 'RESET'),
+													method: 'PUT',
+													callback: function() {
+														processCompWin.setLoading(false);
+													},
+													success: function(response, opt) {
+														actionRefreshComponentGrid();
+														Ext.toast('Successfully Updated Status');
+													}
+												});
+												
+											}
+										}	
+									}
+								]
+							}
+						],
+						dockedItems:[							
+							{
+								xtype: 'toolbar',
+								border: true,
+								dock: 'bottom',								
+								items: [									
+									{
+										text: 'Go To Previous Step',
+										iconCls: 'fa fa-lg fa-backward icon-button-color-save',
+										handler: function(){
+											processCompWin.setLoading('Updating State...');
+											Ext.Ajax.request({
+												url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/previousstep',
+												method: 'PUT',
+												callback: function() {
+													processCompWin.setLoading(false);
+												},
+												success: function(response, opt) {
+													actionRefreshComponentGrid();
+													Ext.toast('Successfully Updated Workflow');
+													processCompWin.close();
+												}												
+											});
+										}
+									},
+									{
+										xtype: 'tbfill'
+									},
+									{
+										text: 'Complete This Step',											
+										iconCls: 'fa fa-lg fa-list-alt icon-button-color-save',
+										handler: function(){
+											processCompWin.setLoading('Updating State...');
+											Ext.Ajax.request({
+												url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/nextstep',
+												method: 'PUT',
+												callback: function() {
+													processCompWin.setLoading(false);
+												},
+												success: function(response, opt) {
+													actionRefreshComponentGrid();
+													Ext.toast('Successfully Updated Workflow');
+													processCompWin.close();
+												}												
+											});											
+										}
+									}
+								]
+							}
+						]
+					});
+					processCompWin.show();
+					
+					processCompWin.queryById('stepInfo').update(record.get('currentStep'));
+					processCompWin.queryById('statusField').setValue(record.get('subStatus'));
+					
 				};
 				
 				var actionAssignToAdmin= function(){

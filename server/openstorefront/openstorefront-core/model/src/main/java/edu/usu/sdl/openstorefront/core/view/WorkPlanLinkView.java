@@ -49,6 +49,10 @@ public class WorkPlanLinkView
 	private String componentTypeFullDescription;
 	private String subStatusDescription;
 	private WorkPlanStepView currentStep;
+	private String workPlanInProgressColor;
+	private String workPlanPendingColor;
+	private String workPlanCompleteColor;
+	private String workPlanSubStatusColor;
 
 	public WorkPlanLinkView()
 	{
@@ -68,6 +72,10 @@ public class WorkPlanLinkView
 
 		WorkPlan workPlan = service.getWorkPlanService().getWorkPlan(workPlanLink.getWorkPlanId());
 		view.setWorkPlanName(workPlan.getName());
+		view.setWorkPlanCompleteColor(workPlan.getCompleteColor());
+		view.setWorkPlanInProgressColor(workPlan.getInProgressColor());
+		view.setWorkPlanPendingColor(workPlan.getPendingColor());
+		view.setWorkPlanSubStatusColor(workPlan.getSubStatusColor());
 		view.setSteps(WorkPlanStepView.toView(workPlan.getSteps()));
 		view.setSubStatusDescription(TranslateUtil.translate(WorkPlanSubStatusType.class, workPlanLink.getSubStatus()));
 		view.setLinkType(TranslateUtil.translate(WorkPlanLinkType.class, WorkPlanLinkType.typeForWorkLink(workPlanLink)));
@@ -196,6 +204,46 @@ public class WorkPlanLinkView
 	public void setComponentTypeFullDescription(String componentTypeFullDescription)
 	{
 		this.componentTypeFullDescription = componentTypeFullDescription;
+	}
+
+	public String getWorkPlanInProgressColor()
+	{
+		return workPlanInProgressColor;
+	}
+
+	public void setWorkPlanInProgressColor(String workPlanInProgressColor)
+	{
+		this.workPlanInProgressColor = workPlanInProgressColor;
+	}
+
+	public String getWorkPlanPendingColor()
+	{
+		return workPlanPendingColor;
+	}
+
+	public void setWorkPlanPendingColor(String workPlanPendingColor)
+	{
+		this.workPlanPendingColor = workPlanPendingColor;
+	}
+
+	public String getWorkPlanCompleteColor()
+	{
+		return workPlanCompleteColor;
+	}
+
+	public void setWorkPlanCompleteColor(String workPlanCompleteColor)
+	{
+		this.workPlanCompleteColor = workPlanCompleteColor;
+	}
+
+	public String getWorkPlanSubStatusColor()
+	{
+		return workPlanSubStatusColor;
+	}
+
+	public void setWorkPlanSubStatusColor(String workPlanSubStatusColor)
+	{
+		this.workPlanSubStatusColor = workPlanSubStatusColor;
 	}
 
 }
