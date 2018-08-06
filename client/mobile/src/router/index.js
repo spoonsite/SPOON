@@ -8,7 +8,7 @@ import FAQPage from '@/components/FAQPage';
 import WatchesPage from '@/components/WatchesPage';
 import ResetPasswordPage from '@/components/ResetPasswordPage';
 import SubmissionStatusPage from '@/components/SubmissionStatusPage';
-import EntryCommentsPage from '@/components/EntryCommentsPage';
+import SubmissionCommentsPage from '@/components/SubmissionCommentsPage';
 import SMEApprovalPage from '@/components/SMEApprovalPage';
 import ContactPage from '@/components/ContactPage';
 
@@ -58,9 +58,9 @@ export default new Router({
       component: SubmissionStatusPage
     },
     {
-      path: '/entry-comments',
-      name: 'EntryCommentsPage',
-      component: EntryCommentsPage
+      path: '/submission-comments/:id',
+      name: 'Submission Comments',
+      component: SubmissionCommentsPage
     },
     {
       path: '/sme-approval',

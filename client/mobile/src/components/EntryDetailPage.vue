@@ -399,6 +399,15 @@
         </v-card>
       </v-expansion-panel-content>
 
+      <v-expansion-panel-content v-if="commentsViewable" text-xs-center>
+        <div slot="header">Submission Comments</div>
+        <v-card class="grey lighten-5">
+          <v-card-actions>
+            <v-btn color="accent" @click="goToComments()">Go To Comments</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-expansion-panel-content>
+
     <v-dialog
       v-model="askQuestionDialog"
       >
@@ -437,10 +446,12 @@ import LoadingOverlay from './subcomponents/LoadingOverlay';
 import Question from './subcomponents/Question';
 import format from 'date-fns/format';
 import isFuture from 'date-fns/is_future';
+import router from '../router/index';
 
 export default {
   name: 'entry-detail-page',
   components: {
+    router,
     StarRating,
     Lightbox,
     LoadingOverlay,
@@ -499,6 +510,7 @@ export default {
       reviewValid: false,
       todaysDate: new Date(),
       detail: {},
+      addDetail: {},
       questions: {},
       watchSwitch: false,
       watchId: 'holder',
@@ -531,27 +543,27 @@ export default {
   methods: {
     checkWatch () {
       this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
-      .then(response => {
-        if (response) {
-          if (response.data && response.data.length > 0) {
-            let tempWatch = false;
-            for (var i = 0; i < response.data.length; i++) {
-              if (response.data[i].componentId === this.id) {
-                this.watchSwitch = true;
-                tempWatch = true;
-                this.watchId = response.data[i].watchId;
-                break;
+        .then(response => {
+          if (response) {
+            if (response.data && response.data.length > 0) {
+              let tempWatch = false;
+              for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].componentId === this.id) {
+                  this.watchSwitch = true;
+                  tempWatch = true;
+                  this.watchId = response.data[i].watchId;
+                  break;
+                }
+              }
+              if (tempWatch === false) {
+                this.watchSwitch = false;
               }
             }
-            if (tempWatch === false) {
-              this.watchSwitch = false;
-            }
           }
-        }
-      })
-      .finally(() => {
-        this.watchBeingChecked = false;
-      });
+        })
+        .finally(() => {
+          this.watchBeingChecked = false;
+        });
     },
     computeAverageRating (detail) {
       var temp = 0;
@@ -587,11 +599,11 @@ export default {
     },
     deleteReviewConfirmation () {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
-      .then(response => {
-        this.$toasted.show('Review Deleted');
-        this.deleteReviewDialog = false;
-        this.getDetail();
-      });
+        .then(response => {
+          this.$toasted.show('Review Deleted');
+          this.deleteReviewDialog = false;
+          this.getDetail();
+        });
     },
     editReviewSetup (review) {
       this.writeReviewDialog = true;
@@ -616,14 +628,24 @@ export default {
         });
       }
     },
+    getAddDetail () {
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}`)
+        .then(response => {
+          this.addDetail = response.data;
+        })
+        .catch(e => this.errors.push(e))
+        .finally(() => {
+          this.isLoading = false;
+        });
+    },
     getAnswers (qid) {
       this.isLoading = true;
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions/${qid}/responses`)
-      .then(response => {
-        this.answers[qid] = response.data;
-        this.isLoading = false;
-      })
-      .catch(e => this.errors.push(e));
+        .then(response => {
+          this.answers[qid] = response.data;
+          this.isLoading = false;
+        })
+        .catch(e => this.errors.push(e));
     },
     getDetail () {
       this.isLoading = true;
@@ -645,7 +667,7 @@ export default {
         .finally(() => {
           this.computeHasImage();
           this.filterLightboxList();
-          this.isLoading = false;
+          this.getAddDetail();
         });
     },
     getQuestions () {
@@ -656,39 +678,47 @@ export default {
         })
         .catch(e => this.errors.push(e));
     },
+    goToComments () {
+      router.push({
+        name: 'Submission Comments',
+        params: {
+          id: this.id
+        }
+      });
+    },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
-      .then(response => {
-        if (response.data) {
-          this.timeOptions = response.data;
-          response.data.forEach(element => {
-            this.timeSelectOptions.push(element.description);
-          });
-        }
-      })
-      .catch(e => this.errors.push(e));
+        .then(response => {
+          if (response.data) {
+            this.timeOptions = response.data;
+            response.data.forEach(element => {
+              this.timeSelectOptions.push(element.description);
+            });
+          }
+        })
+        .catch(e => this.errors.push(e));
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
-      .then(response => {
-        if (response.data) {
-          this.prosOptions = response.data;
-          response.data.forEach(element => {
-            this.prosSelectOptions.push(element.description);
-          });
-        }
-      })
-      .catch(e => this.errors.push(e));
+        .then(response => {
+          if (response.data) {
+            this.prosOptions = response.data;
+            response.data.forEach(element => {
+              this.prosSelectOptions.push(element.description);
+            });
+          }
+        })
+        .catch(e => this.errors.push(e));
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
-      .then(response => {
-        if (response.data) {
-          this.consOptions = response.data;
-          response.data.forEach(element => {
-            this.consSelectOptions.push(element.description);
-          });
-        }
-      })
-      .catch(e => this.errors.push(e));
+        .then(response => {
+          if (response.data) {
+            this.consOptions = response.data;
+            response.data.forEach(element => {
+              this.consSelectOptions.push(element.description);
+            });
+          }
+        })
+        .catch(e => this.errors.push(e));
     },
     showMediaDetails (item) {
       this.currentMediaDetailItem = item;
@@ -807,7 +837,7 @@ export default {
           };
           this.$http.post(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`, watch)
             .then(response => {
-              if(response.errors) {
+              if (response.errors) {
                 this.watchSwitch = false;
               }
             })
@@ -816,12 +846,11 @@ export default {
             });
         } else {
           this.$http.delete(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches/${this.watchId}`)
-          .finally(() => {
-            this.checkWatch();
-          });
+            .finally(() => {
+              this.checkWatch();
+            });
         }
       }
-
     },
     writeReviewDialog: function (val) {
       if (val === false) {
@@ -838,6 +867,19 @@ export default {
     }
   },
   computed: {
+    commentsViewable () {
+      // TODO: look at me when the endpoints are implemented
+      if (this.$store.state.currentUser.username === this.addDetail.ownerUser) {
+        return true;
+      }
+      if (this.$store.getters.getPermission('ADMIN-ENTRY-COMMENT-MANAGEMENT')) {
+        return true;
+      }
+      if (this.$store.getters.getPermission('WORKFLOW-ADMIN-SUBMISSION-COMMENTS')) {
+        return true;
+      }
+      return false;
+    }
   }
 };
 </script>
