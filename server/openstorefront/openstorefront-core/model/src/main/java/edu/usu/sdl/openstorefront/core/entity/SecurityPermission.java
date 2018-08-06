@@ -484,7 +484,6 @@ public class SecurityPermission
 	public static final String GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT = "Workplan Progress Management";
 	public static final String WORKPLAN_PROGRESS_MANAGEMENT_PAGE = "WORKPLAN-PROGRESS-MANAGEMENT-PAGE";
 	public static final String WORKFLOW_LINK_READ = "WORKFLOW-LINK-READ";
-
 	public static final String WORKFLOW_LINK_READ_ALL = "WORKFLOW-LINK-READ-ALL";
 	public static final String WORKFLOW_LINK_UPDATE = "WORKFLOW-LINK-UPDATE";
 	public static final String WORKFLOW_LINK_DELETE = "WORKFLOW-LINK-DELETE";

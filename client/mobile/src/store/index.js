@@ -8,7 +8,8 @@ export default new Vuex.Store({
   state: {
     currentUser: {},
     branding: {},
-    securitypolicy: {}
+    securitypolicy: {},
+    permissionMap: []
   },
   // mutations must be synchronous
   mutations: {
@@ -25,6 +26,17 @@ export default new Vuex.Store({
           state.branding[key] = state.branding[key].replace(/branding\.action/ig, '/openstorefront/Branding.action');
         }
       }
+    },
+    setPermissionMap (state, response) {
+      response.data.roles.forEach(roles => {
+        roles.permissions.forEach(permission => {
+          let found = false;
+          state.permissionMap.forEach(search => {
+            if (permission.permission === search) found = true;
+          });
+          if (!found) state.permissionMap.push(permission.permission);
+        });
+      });
     }
   },
   actions: {
@@ -38,6 +50,7 @@ export default new Vuex.Store({
       axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
           context.commit('setCurrentUser', response);
+          context.commit('setPermissionMap', response);
         })
         .finally(() => {
           if (context.callback) {
@@ -58,6 +71,12 @@ export default new Vuex.Store({
     }
   },
   getters: {
-
+    hasPermission: (state) => (search) => {
+      let ret = false;
+      state.permissionMap.forEach(permission => {
+        if (permission === search) ret = true;
+      });
+      return ret;
+    } // call this.$store.getters.hasPermission('ADMIN-...')
   }
 });

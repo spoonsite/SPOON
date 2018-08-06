@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanComponentType;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
@@ -389,7 +390,7 @@ public class WorkPlanServiceImpl
 
 		String previousStepId = null;
 		for (WorkPlanStep step : workPlan.getSteps()) {
-			if (step.getWorkPlanStepId().equals(step.getWorkPlanStepId())) {
+			if (step.getWorkPlanStepId().equals(workPlanLink.getCurrentStepId())) {
 				break;
 			}
 			previousStepId = step.getWorkPlanStepId();
@@ -412,7 +413,7 @@ public class WorkPlanServiceImpl
 				nextStepId = step.getWorkPlanStepId();
 				break;
 			}
-			if (step.getWorkPlanStepId().equals(step.getWorkPlanStepId())) {
+			if (step.getWorkPlanStepId().equals(workPlanLink.getCurrentStepId())) {
 				captureNext = true;
 			}
 		}
@@ -478,6 +479,7 @@ public class WorkPlanServiceImpl
 		}
 	}
 
+	@Override
 	public boolean checkRolesOnStep(WorkPlan workPlan, String workPlanStepId)
 	{
 		boolean proceed = true;
@@ -574,6 +576,8 @@ public class WorkPlanServiceImpl
 		//process all entries (x at time)
 		int maxResultsToProcess = 200;
 
+		LOG.log(Level.FINE, "Syncing component worklinks.");
+
 		Component componentExample = new Component();
 		long totalCount = persistenceService.countByExample(componentExample);
 
@@ -595,9 +599,22 @@ public class WorkPlanServiceImpl
 
 			startIndex += maxResultsToProcess;
 		}
-		LOG.log(Level.FINE, "Synced {0} worklinks.", synced);
+		final int totalSync = synced;
+		LOG.log(Level.FINE, () -> "Synced " + totalSync + " component worklinks.");
 
 		//Sync Evaluations: Future
+		LOG.log(Level.FINE, "Syncing user submisssions.");
+		UserSubmission userSubmissionExample = new UserSubmission();
+		List<UserSubmission> userSubmissions = userSubmissionExample.findByExample();
+		synced = 0;
+		for (UserSubmission userSubmission : userSubmissions) {
+			//ignore return
+			getWorkPlanLinkForSubmission(userSubmission.getUserSubmissionId());
+			synced++;
+		}
+		final int totalSyncSubmission = synced;
+		LOG.log(Level.FINE, () -> "Synced " + totalSyncSubmission + " component worklinks.");
+
 	}
 
 	@Override
@@ -785,6 +802,60 @@ public class WorkPlanServiceImpl
 		if (workPlanLink != null) {
 			persistenceService.delete(workPlanLink);
 		}
+	}
+
+	@Override
+	public WorkPlanLink getWorkPlanLinkForSubmission(String userSubmissionId)
+	{
+		Objects.requireNonNull(userSubmissionId);
+
+		WorkPlanLink workPlanLink = new WorkPlanLink();
+		workPlanLink.setUserSubmissionId(userSubmissionId);
+		workPlanLink = workPlanLink.find();
+		if (workPlanLink == null) {
+
+			UserSubmission userSubmission = persistenceService.findById(UserSubmission.class, userSubmissionId);
+
+			WorkPlanLink workPlanLinkNew = new WorkPlanLink();
+			workPlanLinkNew.setUserSubmissionId(userSubmissionId);
+			workPlanLinkNew.setWorkPlanLinkId(persistenceService.generateId());
+
+			//get workplan
+			String componentType = userSubmission.getComponentType();
+			if (StringUtils.isNotBlank(componentType)) {
+
+				WorkPlan workPlan = getWorkPlanForComponentType(componentType);
+				workPlanLinkNew.setWorkPlanId(workPlan.getWorkPlanId());
+
+				ComponentTypeRoleResolution roleResolution = getComponentService().findRoleGroupsForComponentType(componentType);
+				if (roleResolution != null) {
+					//assign to first group
+					workPlanLinkNew.setCurrentGroupAssigned(roleResolution.getRoles().get(0));
+				}
+
+				//set to first step
+				workPlanLinkNew.setCurrentStepId(workPlan.getSteps().get(0).getWorkPlanStepId());
+			} else {
+				throw new OpenStorefrontRuntimeException("Unable to find component Type for submission.", "Check data and refresh. User submissionId: " + userSubmissionId);
+			}
+
+			RetryUtil.retryAction(3, () -> {
+				workPlanLinkNew.save();
+			});
+
+		}
+
+		return workPlanLink;
+	}
+
+	@Override
+	public void removeWorkPlanLinkForSubmission(String userSubmissionId)
+	{
+		Objects.requireNonNull(userSubmissionId);
+
+		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+		workPlanLinkExample.setUserSubmissionId(userSubmissionId);
+		persistenceService.deleteByExample(workPlanLinkExample);
 	}
 
 }
