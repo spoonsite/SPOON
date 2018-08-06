@@ -53,7 +53,6 @@
                 <v-card-text>
                   <strong>Component Type: </strong>
                   <p>
-                    <!-- <img v-if="entry.componentTypeIconUrl" :src="baseURL + entry.componentTypeIconUrl" width="30" > -->
                     {{ entry.componentTypeDescription }}
                   </p>
                 </v-card-text>
