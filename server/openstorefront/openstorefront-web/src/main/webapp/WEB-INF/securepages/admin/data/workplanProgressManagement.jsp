@@ -118,7 +118,25 @@
 																{
 																	text: 'Assign to Admin',
 																	iconCls: 'fa fa-lg fa-comment icon-button-color-save',
-																	handler: function(){													
+																	handler: function(){
+																		// console.log('AssignToMe', 'api/v1/resource/workplans/{workPlanId}/worklinks/{workLinkId}/assignToAdmin');	
+																		var record = linkGrid.getSelection()[0];
+																		var workPlanId = record.get('workPlanId');
+																		var workPlanLinkId = record.get('workPlanLinkId');
+																		// console.log(record);
+																		Ext.Ajax.request({
+																			url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assignToAdmin',
+																			method: 'PUT',
+																			callback: function() {
+																				// processCompWin.setLoading(false);
+																			},
+																			success: function(response, opt) {
+																				actionRefreshComponentGrid();
+																				// Ext.toast('Successfully Updated Wor');
+																				// processCompWin.close();
+																				assignToAdminCommentWin.close();
+																			}												
+																		});													
 																	}
 																},
 																{
@@ -240,13 +258,29 @@
 								dateFormat: 'c'
 							}						
 						],
-						proxy: {
-							type: 'ajax',
-							url: 'api/v1/resource/workplans/worklinks',						
+						proxy: CoreUtil.pagingProxy({
+							url: 'api/v1/resource/workplans/worklinks',
+							extraParams: {
+								status: 'ALL'
+							},
 							reader: {
-							   type: 'json'
+								type: 'json'
 							}
+						}),
+						// proxy: {
+						// 	type: 'ajax',
+						// 	url: 'api/v1/resource/workplans/worklinks',						
+						// 	reader: {
+						// 	   type: 'json'
+						// 	}
+						// },
+						listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								status: Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() ? Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() : 'ALL'
+							};
 						}
+					}
 					},
 					columnLines: true,					
 					viewConfig: {
@@ -308,9 +342,9 @@
 							items: [
 								Ext.create('OSF.component.StandardComboBox', {
 									id: 'componentGridFilter-AssignmentStatus',
-									emptyText: 'All',
+									emptyText: 'ALL',
 									fieldLabel: 'Assignment Status',
-									name: 'assignmentStatus',
+									name: 'currentUserAssigned',
 									typeAhead: false,
 									editable: false,
 									listeners: {
@@ -485,8 +519,28 @@
 					}
 				};
 
-				var actionRefreshComponentGrid = function(input){
-					Ext.getCmp('linkGrid').getStore().load();
+				var actionRefreshComponentGrid = function(resetPage){
+					// Ext.getCmp('linkGrid').getStore().load();
+					console.log(Ext.getCmp('componentGridFilter-AssignmentStatus'));
+
+
+					var searchPram = {
+						status: Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() ? Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() : 'ALL'
+					};
+					if(resetPage)
+					{
+						console.log('refreshing', searchPram);
+						Ext.getCmp('linkGrid').getStore().loadPage(1,{
+							params: searchPram
+						});
+					}
+					else
+					{
+						Ext.getCmp('linkGrid').getStore().load({
+							params: searchPram
+						});
+
+					}
 				};
 								
 				var actionViewComponent = function(){
@@ -494,7 +548,7 @@
 					// Ext.getCmp('componentViewWin').show();
 
 					componentViewWin.show();
-					var comp_id = Ext.getCmp('linkGrid').getSelection()[0].data.component.componentId;
+					var comp_id = Ext.getCmp('linkGrid').getSelection()[0].data.componentId;
 					// console.log(comp_id);
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
 				};
@@ -629,19 +683,53 @@
 				
 				var actionAssignToAdmin= function(){
 					console.log('AssignToAdmin');
-					Ext.getCmp('AssignToAdminCommentWin').show();	
+					Ext.getCmp('AssignToAdminCommentWin').show();
+						
+					// console.log('AssignToMe', 'api/v1/resource/workplans/{workPlanId}/worklinks/{workLinkId}/assignToAdmin');	
 				};
 				
 				var actionAssignToMe = function(){
-					console.log('AssignToMe');	
+					var record = linkGrid.getSelection()[0];
+					var workPlanId = record.get('workPlanId');
+					var workPlanLinkId = record.get('workPlanLinkId');
+
+					Ext.Ajax.request({
+						url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assigntome',
+						method: 'PUT',
+						callback: function() {
+							// processCompWin.setLoading(false);
+						},
+						success: function(response, opt) {
+							actionRefreshComponentGrid();
+							// Ext.toast('Successfully Updated Wor');
+							// processCompWin.close();
+						}												
+					});
+					// console.log('AssignToMe', 'api/v1/resource/workplans/{workPlanId}/worklinks/{workLinkId}/assign');	
 				};
 				
 				var actionUnassign = function(){
-					console.log('UnAssign');	
+					var record = linkGrid.getSelection()[0];
+					var workPlanId = record.get('workPlanId');
+					var workPlanLinkId = record.get('workPlanLinkId');
+
+					Ext.Ajax.request({
+						url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/unassign',
+						method: 'PUT',
+						callback: function() {
+							// processCompWin.setLoading(false);
+						},
+						success: function(response, opt) {
+							actionRefreshComponentGrid();
+							// Ext.toast('Successfully Updated Wor');
+							// processCompWin.close();
+						}												
+					});
+					// console.log('UnAssign', 'api/v1/resource/workplans/{workPlanId}/worklinks/{workLinkId}/unassign');	
 				};
 				
 				var actionReassign = function(){
-					console.log('Reassign');	
+					console.log('Reassign');	dd
 					Ext.getCmp('userAssignWin').show();
 				};
 
