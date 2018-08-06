@@ -31,6 +31,7 @@
 			Ext.require('OSF.workplanProgress.CommentPanel');
 			Ext.onReady(function() {
 
+				var versionViewTemplate = new Ext.XTemplate();
 
 				var userAssignWin = Ext.create('Ext.window.Window', {
 					id: 'userAssignWin',
@@ -231,7 +232,8 @@
 							minWidth: 250,
 							maxWidth: 650,
 							bodyStyle: 'background: white;',
-							region: 'east'
+							region: 'east',
+							itemId: 'commentPanel'
 						}
 					]
 				});
@@ -515,7 +517,6 @@
 						Ext.getCmp('lookupGrid-tools-action-me-assign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-unassign').setDisabled(true);
 						Ext.getCmp('lookupGrid-tools-action-reassign').setDisabled(true);
-
 					}
 				};
 
