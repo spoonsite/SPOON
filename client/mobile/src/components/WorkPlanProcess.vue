@@ -104,26 +104,26 @@ export default {
     },
     nextStep () {
       this.continueLoading = true;
-      this.$http.put(`/openstorefront/api/v1/resource/workplans/${this.workLink.workPlanId}/worklinks/${this.workLink.workPlanLinkId}/tostep/${this.steps[this.currentStep - 1].workPlanStepId}`)
+      this.$http.put(`/openstorefront/api/v1/resource/workplans/${this.workLink.workPlanId}/worklinks/${this.workLink.workPlanLinkId}/tostep/${this.steps[this.currentStep].workPlanStepId}`)
         .then(res => {
           this.workLink = res.data;
         })
         .finally(() => {
           this.setSteps();
           this.continueLoading = false;
-          if (this.currentStep < this.steps.length) { this.currentStep = this.currentStep + 1; }
+          // if (this.currentStep < this.steps.length) { this.currentStep = this.currentStep + 1; }
         });
     },
     prevStep () {
       this.prevLoading = true;
-      this.$http.put(`/openstorefront/api/v1/resource/workplans/${this.workLink.workPlanId}/worklinks/${this.workLink.workPlanLinkId}/tostep/${this.steps[this.currentStep - 1].workPlanStepId}`)
+      this.$http.put(`/openstorefront/api/v1/resource/workplans/${this.workLink.workPlanId}/worklinks/${this.workLink.workPlanLinkId}/tostep/${this.steps[this.currentStep - 2].workPlanStepId}`)
         .then(res => {
           this.workLink = res.data;
         })
         .finally(() => {
           this.setSteps();
           this.prevLoading = false;
-          if (this.currentStep > 1) { this.currentStep = this.currentStep - 1; }
+          // if (this.currentStep > 1) { this.currentStep = this.currentStep - 1; }
         });
     },
     setSteps () {
