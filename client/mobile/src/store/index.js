@@ -71,8 +71,12 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    getPermission: (state) => (search) => {
-      return state.permissionMap.find(find => find === search);
-    } // call this.$store.getters.getPermission('ADMIN-...')
+    hasPermission: (state) => (search) => {
+      let ret = false;
+      state.permissionMap.forEach(permission => {
+        if (permission === search) ret = true;
+      });
+      return ret;
+    } // call this.$store.getters.hasPermission('ADMIN-...')
   }
 });
