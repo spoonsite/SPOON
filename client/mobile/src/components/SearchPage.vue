@@ -432,6 +432,7 @@ export default {
     },
     getNumPages () {
       // compute number of pages of data based on page size
+      if (this.totalSearchResults % this.searchPageSize === 0) return (this.totalSearchResults / this.searchPageSize) - 1;
       return Math.floor(this.totalSearchResults / this.searchPageSize);
     },
     getPagination (currentPage) {
