@@ -75,6 +75,16 @@
 			<version>4.7.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>material-icons</artifactId>
+			<version>0.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>roboto-fontface</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.pointconstructor</groupId>
 			<artifactId>tinymcetextarea</artifactId>
 			<version>5.1</version>

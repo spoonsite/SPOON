@@ -29,15 +29,17 @@
           </v-card-title>
           <v-card-text>
             <p>Oops! Something went wrong. Please contact the admin.</p>
-            <v-btn depressed small @click="showErrorDetails = !showErrorDetails">Details</v-btn>
-            <div v-if="showErrorDetails && errors.length > 0">
+            <v-btn depressed small v-if="currentError" @click="showErrorDetails = !showErrorDetails">Details</v-btn>
+            <div v-if="showErrorDetails && currentError">
               <strong>STATUS CODE:</strong> {{ currentError.status }} {{ currentError.statusText }}
               <br>
               <strong>METHOD:</strong>{{ currentError.config.method }}
               <br>
               <strong>URL:</strong>{{ currentError.config.url}}
+              <span v-if="parseJSON(currentError.config.data)">
               <br>
-              <strong>REQUEST DATA:</strong><pre style="overflow-x: scroll;">{{ JSON.parse(currentError.config.data) }}</pre>
+              <strong>REQUEST DATA:</strong><pre style="overflow-x: scroll;">{{ parseJSON(currentError.config.data) }}</pre>
+              </span>
             </div>
           </v-card-text>
           <v-card-actions>
@@ -89,7 +91,7 @@
           <!-- Add permissions check. -->
           <v-list-tile v-for="link in links" :key="link.name" class="menu-item" @click="nav(link.link)" v-if="checkPermissions(link.permissions)">
             <v-list-tile-action>
-              <v-icon>fas fa-{{ link.icon }}</v-icon>
+              <v-icon>fa fa-{{ link.icon }}</v-icon>
             </v-list-tile-action>
             <v-content>
               <v-list-tile-title>{{ link.name }}</v-list-tile-title>
@@ -124,6 +126,7 @@
 
 <script>
 import router from './router/index';
+import safeParse from 'safe-json-parse/callback';
 
 export default {
   name: 'App',
@@ -210,6 +213,15 @@ export default {
         })
         .catch(e => this.errors.push(e));
     },
+    parseJSON (obj) {
+      safeParse(obj, function (err, json) {
+        if (err) {
+          return undefined;
+        } else {
+          return json;
+        }
+      });
+    },
     submitErrorReport () {
       this.errorDialog = false;
       router.push({
@@ -242,31 +254,18 @@ export default {
       if (this.$store.state.currentUser) {
         this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
           .then(response => {
-            if (response.data) {
-              if (response.data.length > 0) {
-                for (var i = 0; i < response.data.length; i++) {
-                  if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
-                    this.watchNumber++;
-                  }
+            if (response.data && response.data.length > 0) {
+              for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
+                  this.watchNumber++;
                 }
               }
             }
           })
           .catch(e => this.errors.push(e))
           .finally(() => {
-            if (this.watchNumber === 1) {
-              this.$toasted.show(this.watchNumber + ' entry has been updated.', {
-                icon: 'binoculars',
-                action: {
-                  text: 'View',
-                  onClick: (e, toastObject) => {
-                    this.$router.push('Watches');
-                    toastObject.goAway(0);
-                  }
-                }
-              });
-            } else if (this.watchNumber > 0) {
-              this.$toasted.show(this.watchNumber + ' entries have been updated.', {
+            if (this.watchNumber > 0) {
+              this.$toasted.show(this.watchNumber + (this.watchNumber === 1 ? ' entry has' : ' entries have') + ' been updated.', {
                 icon: 'binoculars',
                 action: {
                   text: 'View',

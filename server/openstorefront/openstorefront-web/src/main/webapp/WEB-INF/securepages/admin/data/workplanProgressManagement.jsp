@@ -575,6 +575,7 @@
 
 					componentViewWin.show();
 					var comp_id = Ext.getCmp('linkGrid').getSelection()[0].data.componentId;
+					componentViewWin.down('[itemId=commentPanel]').loadComponentComments(comp_id);
 					// console.log(comp_id);
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
 				};
