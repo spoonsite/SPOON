@@ -204,7 +204,6 @@ export default {
         .catch(e => this.$toasted.error('There was a problem submitting the edit.'));
     },
     deleteAnswer (answer) {
-      console.log(answer);
       this.answers = this.answers.filter(function (el) {
         return el.responseId !== answer.responseId;
       });

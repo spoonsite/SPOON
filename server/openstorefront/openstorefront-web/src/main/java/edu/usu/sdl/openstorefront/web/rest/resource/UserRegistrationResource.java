@@ -66,7 +66,7 @@ public class UserRegistrationResource
 	HttpServletResponse response;
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_READ)
 	@APIDescription("Gets user registeration records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserRegistrationWrapper.class)
@@ -122,7 +122,7 @@ public class UserRegistrationResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_READ)
 	@APIDescription("Gets a user registeration record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserRegistrationView.class)
@@ -138,7 +138,7 @@ public class UserRegistrationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_CREATE)
 	@APIDescription("Creates a user registration by administrator")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -228,7 +228,7 @@ public class UserRegistrationResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_DELETE)
 	@APIDescription("Deletes a user registeration record only")
 	@Path("/{registrationId}")
 	public void deleteUserRegistration(

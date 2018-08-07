@@ -43,7 +43,7 @@ public class TemporaryMediaResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT_READ)
 	@APIDescription("Gets all temporary media records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemporaryMediaView.class)
@@ -67,7 +67,7 @@ public class TemporaryMediaResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT_READ)
 	@APIDescription("Gets all temporary media records for a lookup list")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -93,7 +93,7 @@ public class TemporaryMediaResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT_READ)
 	@APIDescription("Gets a temporary media record. See Media.action?TemporaryMedia&name={name} to get the actual resource")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(TemporaryMediaView.class)
@@ -108,7 +108,7 @@ public class TemporaryMediaResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_TEMPMEDIA_MANAGEMENT_DELETE)
 	@APIDescription("Deletes a temporary media record.")
 	@Path("/{id}")
 	public void deleteTemporaryMedia(

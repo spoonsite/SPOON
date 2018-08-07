@@ -94,7 +94,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Get a list of user profiles")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserProfileWrapper.class)
 	public Response userProfiles(@BeanParam FilterQueryParams filterQueryParams,
@@ -243,7 +243,7 @@ public class UserProfileResource
 		UserProfileView userProfileView = null;
 
 		if (SecurityUtil.getCurrentUserName().equals(userId)
-				|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)) {
+				|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_READ)) {
 
 			UserProfile userProfile = service.getUserService().getUserProfile(userId);
 			if (userProfile != null) {
@@ -255,7 +255,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Update user profile and returns updated profile.")
-	@RequireSecurity(value = {SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES}, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_UPDATE}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateProile(
 			@RequiredParam UserProfile inputProfile)
@@ -283,7 +283,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Updates user profile and returns updated profile.")
-	@RequireSecurity(value = {SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES}, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_UPDATE}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Response updateProfile(
@@ -303,7 +303,7 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Inactivates a user profile.  Note: if the user logs in, their profile will be reactivated.")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_DELETE)
 	@Path("/{username}")
 	public void deleteUserProfile(
 			@PathParam("username")
@@ -314,7 +314,7 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Inactivates a list of user profiles. Takes a list of usernames(Strings) as params.")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_DELETE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
@@ -331,7 +331,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Reactivates a list of user profiles. Takes a list of usernames(Strings) as params.")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_UPDATE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/multiple")
@@ -348,7 +348,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Reactivates a user profile.")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_UPDATE)
 	@Path("/{username}/reactivate")
 	public Response reactivateUserProfile(
 			@PathParam("username")
@@ -366,7 +366,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Sends test email to user based on user id")
-	@RequireSecurity(value = {SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES}, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_READ}, specialCheck = UserProfileRequireHandler.class)
 	@Path("/{id}/test-email")
 	public Response sendTestEmail(
 			@PathParam(UserProfileRequireHandler.USERNAME_ID_PARAM) String username,
@@ -379,7 +379,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Retrieves active user watches.")
-	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES_READ}, specialCheck = UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches")
 	@DataType(UserWatchView.class)
@@ -398,7 +398,7 @@ public class UserProfileResource
 
 	@GET
 	@APIDescription("Retrieves a user watch by id.")
-	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES_READ}, specialCheck = UserProfileRequireHandler.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserWatchView.class)
 	@Path("/{id}/watches/{watchId}")
@@ -415,7 +415,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a new watch to an existing user.")
-	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES_READ}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches")
 	public Response addWatch(
@@ -449,7 +449,7 @@ public class UserProfileResource
 
 	@PUT
 	@APIDescription("Updates an existing watch.")
-	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES_UPDATE}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/watches/{watchId}")
 	public Response updateWatch(
@@ -488,7 +488,7 @@ public class UserProfileResource
 
 	@DELETE
 	@APIDescription("Removes a user watch.")
-	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES}, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_WATCHES_DELETE}, specialCheck = UserProfileRequireHandler.class)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/watches/{watchId}")
 	public Response deleteWatch(
@@ -502,7 +502,7 @@ public class UserProfileResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_READ)
 	@APIDescription("Gets the list of tracking details on a specified user. Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTrackingWrapper.class)
@@ -536,7 +536,7 @@ public class UserProfileResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_READ)
 	@APIDescription("Gets the tracking details on a specified user and tracking id")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserTracking.class)
@@ -556,7 +556,7 @@ public class UserProfileResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_DELETE)
 	@APIDescription("Remove a tracking entry from the specified user")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}/tracking/{trackingId}")
@@ -579,7 +579,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Add a tracking entry for the specified user")
-	@RequireSecurity(value = SecurityPermission.ADMIN_TRACKING, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = SecurityPermission.ADMIN_TRACKING_UPDATE, specialCheck = UserProfileRequireHandler.class)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@DataType(UserTracking.class)
 	@Path("/{id}/tracking")
@@ -594,7 +594,7 @@ public class UserProfileResource
 	}
 
 	@PUT
-	@RequireSecurity(value = SecurityPermission.ADMIN_TRACKING, specialCheck = UserProfileRequireHandler.class)
+	@RequireSecurity(value = SecurityPermission.ADMIN_TRACKING_UPDATE, specialCheck = UserProfileRequireHandler.class)
 	@APIDescription("Update a tracking entry for the specified user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/tracking/{trackingId}")
@@ -636,7 +636,7 @@ public class UserProfileResource
 
 	@POST
 	@APIDescription("Exports user profiles in CSV format. Can consume a list of 'userId' form parameters. Not providing 'userId' parameters results in all profiles being exported.")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_PROFILES_READ)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportUserProfiles(

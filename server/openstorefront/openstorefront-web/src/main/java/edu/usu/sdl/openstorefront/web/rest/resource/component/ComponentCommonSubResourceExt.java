@@ -182,7 +182,6 @@ public abstract class ComponentCommonSubResourceExt
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
 	@APIDescription("Remove all attributes from the entity")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}/attributes")
@@ -190,7 +189,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response == null) {
 			ComponentAttribute attribute = new ComponentAttribute();
 			attribute.setComponentId(componentId);
@@ -210,7 +209,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -234,7 +233,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -259,7 +258,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("attributeCode")
 			@RequiredParam String attributeCode)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -283,7 +282,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String componentId,
 			@RequiredParam List<ComponentAttribute> attributeList)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -307,7 +306,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String componentId,
 			@RequiredParam ComponentAttribute attribute)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_ATTR_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -397,7 +396,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -420,7 +419,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -443,7 +442,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("componentContactId")
 			@RequiredParam String componentContactId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -467,7 +466,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String componentId,
 			@RequiredParam ComponentContact contact)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -487,7 +486,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String componentContactId,
 			ComponentContact contact)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CONTACT_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -595,7 +594,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -620,7 +619,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -645,7 +644,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("resourceId")
 			@RequiredParam String resourceId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -672,7 +671,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String componentId,
 			@RequiredParam ComponentResource resource)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -693,7 +692,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String resourceId,
 			@RequiredParam ComponentResource resource)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -704,7 +703,7 @@ public abstract class ComponentCommonSubResourceExt
 		componentResourceExample.setResourceId(resourceId);
 		ComponentResource componentResource = service.getPersistenceService().queryOneByExample(componentResourceExample);
 		if (componentResource != null) {
-			if(StringUtils.isBlank(resource.getLink())){
+			if (StringUtils.isBlank(resource.getLink())) {
 				resource.setFile(componentResource.getFile());
 			}
 			resource.setComponentId(componentId);
@@ -812,7 +811,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -834,7 +833,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -858,7 +857,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("mediaId")
 			@RequiredParam String mediaId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -886,7 +885,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String componentId,
 			@RequiredParam ComponentMedia media)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -906,7 +905,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String mediaId,
 			@RequiredParam ComponentMedia media)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -915,7 +914,7 @@ public abstract class ComponentCommonSubResourceExt
 		ComponentMedia componentMedia = service.getPersistenceService().findById(ComponentMedia.class, mediaId);
 		if (componentMedia != null) {
 			checkBaseComponentBelongsToComponent(componentMedia, componentId);
-			if(StringUtils.isBlank(media.getLink())){
+			if (StringUtils.isBlank(media.getLink())) {
 				media.setFile(componentMedia.getFile());
 			}
 			media.setComponentId(componentId);
@@ -1041,7 +1040,7 @@ public abstract class ComponentCommonSubResourceExt
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TAG_MANAGEMENT)
 	@APIDescription("Delete all tags from the specified component")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTag.class)
@@ -1096,7 +1095,7 @@ public abstract class ComponentCommonSubResourceExt
 		ComponentTag tag = service.getPersistenceService().queryOneByExample(new QueryByExample<>(componentTagExample));
 
 		if (tag != null) {
-			response = ownerCheck(tag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+			response = ownerCheck(tag, SecurityPermission.ADMIN_ENTRY_TAG_MANAGEMENT);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tag.getTagId());
 				response = Response.ok().build();
@@ -1314,7 +1313,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String componentId,
 			@RequiredParam ComponentRelationship relationship)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RELATIONSHIP_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1355,7 +1354,7 @@ public abstract class ComponentCommonSubResourceExt
 			@RequiredParam String relationshipId,
 			@RequiredParam ComponentRelationship relationship)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RELATIONSHIP_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}
@@ -1384,7 +1383,7 @@ public abstract class ComponentCommonSubResourceExt
 			@PathParam("relationshipId")
 			@RequiredParam String relationshipId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_RELATIONSHIP_MANAGEMENT);
 		if (response != null) {
 			return response;
 		}

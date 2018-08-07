@@ -37,6 +37,8 @@ public class UserProfile
 		implements OrganizationModel
 {
 
+	private static final long serialVersionUID = 1L;
+
 	@PK
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)
@@ -112,6 +114,11 @@ public class UserProfile
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserProfile()
 	{
+	}
+
+	public String fullName()
+	{
+		return getFirstName() + " " + getLastName();
 	}
 
 	public String getUsername()

@@ -36,7 +36,9 @@ import static edu.usu.sdl.openstorefront.core.api.query.QueryType.SELECT;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
+import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
@@ -369,6 +371,14 @@ public class OrientPersistenceService
 		OObjectDatabaseTx db = getConnection();
 		try {
 			deleteCount = db.command(new OCommandSQL(query.getKey())).execute(query.getValue());
+
+			EntityEventModel entityModel = new EntityEventModel();
+			entityModel.setBulkClassAffected(queryByExample.getExample() != null ? queryByExample.getExample().getClass() : null);
+			entityModel.setEventType(EntityEventType.DELETE);
+			if (ServiceProxy.getProxy().getEntityEventService() != null) {
+				ServiceProxy.getProxy().getEntityEventService().processEvent(entityModel);
+			}
+
 		} finally {
 			closeConnection(db);
 		}
@@ -389,6 +399,14 @@ public class OrientPersistenceService
 		OObjectDatabaseTx db = getConnection();
 		try {
 			deleteCount = db.command(new OCommandSQL(queryString.toString())).execute(queryParams);
+
+			EntityEventModel entityModel = new EntityEventModel();
+			entityModel.setBulkClassAffected(entityClass);
+			entityModel.setEventType(EntityEventType.DELETE);
+			if (ServiceProxy.getProxy().getEntityEventService() != null) {
+				ServiceProxy.getProxy().getEntityEventService().processEvent(entityModel);
+			}
+
 		} finally {
 			closeConnection(db);
 		}
@@ -425,6 +443,13 @@ public class OrientPersistenceService
 		OObjectDatabaseTx db = getConnection();
 		try {
 			updateCount = db.command(new OCommandSQL(queryString.toString())).execute(queryParams);
+
+			EntityEventModel entityModel = new EntityEventModel();
+			entityModel.setBulkClassAffected(entityClass);
+			entityModel.setEventType(EntityEventType.UPDATE);
+			if (ServiceProxy.getProxy().getEntityEventService() != null) {
+				ServiceProxy.getProxy().getEntityEventService().processEvent(entityModel);
+			}
 		} finally {
 			closeConnection(db);
 		}
@@ -611,7 +636,7 @@ public class OrientPersistenceService
 		Map<String, Object> mappedParams = new HashMap<>();
 		queryByExample.getExtraWhereCauses().forEach(item -> {
 			if (item.getClass() == SpecialOperatorModel.class) {
-				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessSpecialOperator(queryByExample, (SpecialOperatorModel) item);
+				SimpleEntry<String, Map<String, Object>> extraWhere = processSpecialOperator(queryByExample, (SpecialOperatorModel) item);
 				if (StringUtils.isNotBlank(extraWhere.getKey())) {
 					if (StringUtils.isNotBlank(queryString)) {
 						queryString.append(" AND ");
@@ -620,7 +645,7 @@ public class OrientPersistenceService
 					mappedParams.putAll(extraWhere.getValue());
 				}
 			} else if (item.getClass() == WhereClauseGroup.class) {
-				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
+				SimpleEntry<String, Map<String, Object>> extraWhere = processWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
 				if (StringUtils.isNotBlank(extraWhere.getKey())) {
 					if (StringUtils.isNotBlank(queryString)) {
 						queryString.append(" AND ");
@@ -636,7 +661,7 @@ public class OrientPersistenceService
 	}
 
 	@SuppressWarnings("unchecked")
-	private SimpleEntry<String, Map<String, Object>> ProcessSpecialOperator(QueryByExample queryByExample, SpecialOperatorModel special)
+	private SimpleEntry<String, Map<String, Object>> processSpecialOperator(QueryByExample queryByExample, SpecialOperatorModel special)
 	{
 		Map<String, Object> mappedParams = new HashMap<>();
 		String extraWhere = generateWhereClause(special.getExample(), new ComplexFieldStack(), special.getGenerateStatementOption(), queryByExample.getFieldOptions());
@@ -647,13 +672,13 @@ public class OrientPersistenceService
 	}
 
 	@SuppressWarnings("unchecked")
-	private SimpleEntry<String, Map<String, Object>> ProcessWhereClauseGroup(QueryByExample queryByExample, WhereClauseGroup group)
+	private SimpleEntry<String, Map<String, Object>> processWhereClauseGroup(QueryByExample queryByExample, WhereClauseGroup group)
 	{
 		StringBuilder queryString = new StringBuilder();
 		Map<String, Object> mappedParams = new HashMap<>();
 		group.getExtraWhereClause().forEach(item -> {
 			if (item.getClass() == SpecialOperatorModel.class) {
-				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessSpecialOperator(queryByExample, (SpecialOperatorModel) item);
+				SimpleEntry<String, Map<String, Object>> extraWhere = processSpecialOperator(queryByExample, (SpecialOperatorModel) item);
 				if (StringUtils.isNotBlank(extraWhere.getKey())) {
 					if (queryString.length() > 0) {
 						queryString.append(group.getStatementOption().getCondition());
@@ -662,7 +687,7 @@ public class OrientPersistenceService
 					mappedParams.putAll(extraWhere.getValue());
 				}
 			} else if (item.getClass() == WhereClauseGroup.class) {
-				SimpleEntry<String, Map<String, Object>> extraWhere = ProcessWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
+				SimpleEntry<String, Map<String, Object>> extraWhere = processWhereClauseGroup(queryByExample, (WhereClauseGroup) item);
 				if (StringUtils.isNotBlank(extraWhere.getKey())) {
 					if (queryString.length() > 0) {
 						queryString.append(group.getStatementOption().getCondition());
@@ -967,6 +992,21 @@ public class OrientPersistenceService
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				t = db.save(entity);
+
+				//This obviously won't catch everything but it will catch all common cases
+				EntityEventModel entityModel = new EntityEventModel();
+				entityModel.setEntityChanged(t);
+				entityModel.setOldEntity(entity);
+				if (isManaged(entity)) {
+					entityModel.setEventType(EntityEventType.UPDATE);
+				} else {
+					entityModel.setEventType(EntityEventType.CREATE);
+				}
+				//To make mocking easier
+				if (ServiceProxy.getProxy().getEntityEventService() != null) {
+					ServiceProxy.getProxy().getEntityEventService().processEvent(entityModel);
+				}
+
 			} else {
 				throw new OpenStorefrontValidationException("Unable to save record. (See stacktrace cause) \n Field Values: \n" + StringProcessor.printObject(entity), validationResult, "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
 			}
@@ -1046,6 +1086,14 @@ public class OrientPersistenceService
 		try {
 			if (entity != null) {
 				db.delete(entity);
+
+				EntityEventModel entityModel = new EntityEventModel();
+				entityModel.setEntityChanged(entity);
+				entityModel.setEventType(EntityEventType.DELETE);
+				if (ServiceProxy.getProxy().getEntityEventService() != null) {
+					ServiceProxy.getProxy().getEntityEventService().processEvent(entityModel);
+				}
+
 			}
 		} finally {
 			closeConnection(db);

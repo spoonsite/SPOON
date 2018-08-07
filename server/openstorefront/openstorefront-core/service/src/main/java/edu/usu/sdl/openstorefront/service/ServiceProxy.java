@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.api.ChecklistService;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.ContactService;
 import edu.usu.sdl.openstorefront.core.api.ContentSectionService;
+import edu.usu.sdl.openstorefront.core.api.EntityEventService;
 import edu.usu.sdl.openstorefront.core.api.EvaluationService;
 import edu.usu.sdl.openstorefront.core.api.FaqService;
 import edu.usu.sdl.openstorefront.core.api.FeedbackService;
@@ -42,6 +43,7 @@ import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
 import edu.usu.sdl.openstorefront.core.api.SystemArchiveService;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.UserService;
+import edu.usu.sdl.openstorefront.core.api.WorkPlanService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.ModificationType;
 import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
@@ -105,7 +107,9 @@ public class ServiceProxy
 	private SystemArchiveServicePrivate systemArchiveServicePrivate;
 	private HelpSupportService helpSupportService;
 	private FaqService faqService;
+	private WorkPlanService workPlanService;
 	private SubmissionFormService submissionFormService;
+	private EntityEventService entityEventService;
 
 	private FilterEngine filterEngine;
 	private static ProxyFactory proxyFactory = null;
@@ -208,6 +212,10 @@ public class ServiceProxy
 		systemArchiveServicePrivate = null;
 		helpSupportService = null;
 		faqService = null;
+		workPlanService = null;
+		entityEventService = null;
+		submissionFormService = null;
+
 	}
 
 	@Override
@@ -527,6 +535,23 @@ public class ServiceProxy
 		}
 		return faqService;
 
+	}
+
+	@Override
+	public WorkPlanService getWorkPlanService()
+	{
+		if (workPlanService == null) {
+			workPlanService = DynamicProxy.newInstance(new WorkPlanServiceImpl());
+		}
+		return workPlanService;
+	}
+
+	public EntityEventService getEntityEventService()
+	{
+		if (entityEventService == null) {
+			entityEventService = DynamicProxy.newInstance(new EntityEventServiceImpl());
+		}
+		return entityEventService;
 	}
 
 	@Override

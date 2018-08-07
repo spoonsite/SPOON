@@ -46,6 +46,7 @@ Ext.define('OSF.component.ImportWindow', {
 							text: 'Upload',
 							formBind: true,
 							iconCls: 'fa fa-lg fa-upload icon-button-color-default',
+							requiredPermissions: ['ADMIN-DATA-IMPORT-EXPORT'],
 							handler: function () {
 								var uploadForm = this.up('form');
 								var data = uploadForm.getValues();

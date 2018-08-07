@@ -90,7 +90,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_INTEGRATION_READ, SecurityPermission.ADMIN_INTEGRATION_EXTERNAL})
 	@APIDescription("Gets the possible projects from Jira.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -121,7 +121,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_INTEGRATION_READ, SecurityPermission.ADMIN_INTEGRATION_EXTERNAL})
 	@APIDescription("Gets the possible issues from a specific project in Jira.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JiraIssueModel.class)
@@ -149,7 +149,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_INTEGRATION_READ, SecurityPermission.ADMIN_INTEGRATION_EXTERNAL})
 	@APIDescription("Gets the issue ticket summary")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(String.class)
@@ -176,7 +176,7 @@ public class JiraService
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(value = {SecurityPermission.ADMIN_INTEGRATION_READ, SecurityPermission.ADMIN_INTEGRATION_EXTERNAL})
 	@APIDescription("Gets the possible fields from the issue type.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(JiraFieldInfoModel.class)

@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
+import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklist;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistRecommendation;
@@ -40,6 +41,7 @@ import edu.usu.sdl.openstorefront.core.entity.EvaluationTemplate;
 import edu.usu.sdl.openstorefront.core.entity.WorkflowStatus;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
+import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
@@ -299,10 +301,10 @@ public class EvaluationServiceImpl
 	{
 		Evaluation evaluationExample = new Evaluation();
 		evaluationExample.setTemplateId(templateId);
-		QueryByExample queryByExample = new QueryByExample(evaluationExample);
+		QueryByExample<Evaluation> queryByExample = new QueryByExample<>(evaluationExample);
 
 		if (evaluationIdsToSkip.size() > 0) {
-			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+			SpecialOperatorModel<Evaluation> specialOperatorModel = new SpecialOperatorModel<>();
 			// Define A Special Lookup Operation (IN)
 			Evaluation exampleEvaluation = new Evaluation();
 			exampleEvaluation.setEvaluationId(QueryByExample.STRING_FLAG);
@@ -650,6 +652,12 @@ public class EvaluationServiceImpl
 			evaluation.setPublished(Boolean.TRUE);
 			evaluation.populateBaseUpdateFields();
 			persistenceService.persist(evaluation);
+
+			EntityEventModel entityEventModel = new EntityEventModel();
+			entityEventModel.setEventType(EntityEventType.PUBLISH_EVALUATION);
+			entityEventModel.setEntityChanged(evaluation);
+			getEntityEventService().processEvent(entityEventModel);
+
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find Evaluation.", "Evaluation Id: " + evaluationId);
 		}
@@ -666,6 +674,12 @@ public class EvaluationServiceImpl
 			evaluation.setPublished(Boolean.FALSE);
 			evaluation.populateBaseUpdateFields();
 			persistenceService.persist(evaluation);
+
+			EntityEventModel entityEventModel = new EntityEventModel();
+			entityEventModel.setEventType(EntityEventType.UNPUBLISH_EVALUATION);
+			entityEventModel.setEntityChanged(evaluation);
+			getEntityEventService().processEvent(entityEventModel);
+
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find Evaluation.", "Evaluation Id: " + evaluationId);
 		}

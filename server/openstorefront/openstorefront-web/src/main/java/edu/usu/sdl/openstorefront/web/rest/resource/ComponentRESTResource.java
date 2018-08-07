@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-// <editor-fold defaultstate="collapsed"  desc="IMPORTS">
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.web.rest.resource.component.GeneralExtendedComponentResourceExt;
 import javax.ws.rs.Path;

@@ -590,6 +590,7 @@
 									}
 								},
 								{
+									requiredPermissions: ['ADMIN-ENTRY-TYPES-CREATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -598,6 +599,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									requiredPermissions: ['ADMIN-ENTRY-TYPES-CREATE'],
 									handler: function () {
 										actionAddEntry();
 									}
@@ -609,6 +611,7 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-TYPES-UPDATE'],
 									handler: function () {
 										actionEditEntry(Ext.getCmp('entryGrid').getSelection()[0]);
 									}								
@@ -635,6 +638,7 @@
 											}											
 										},										
 										{
+											requiredPermissions: ['ADMIN-ENTRY-TYPES-UPDATE'],
 											xtype: 'menuseparator'
 										},
 										{
@@ -643,11 +647,13 @@
 											disabled: true,
 											iconCls: 'fa fa-level-up fa-2x icon-button-color-default',
 											tooltip: 'Moves the selected record to the top-most level',
+											requiredPermissions: ['ADMIN-ENTRY-TYPES-UPDATE'],
 											handler: function () {
 												actionMoveToTop();
 											}
 										},
 										{
+											requiredPermissions: ['ADMIN-ENTRY-TYPES-UPDATE'],
 											xtype: 'menuseparator'
 										},
 										{
@@ -655,6 +661,7 @@
 											id: 'lookupGrid-tools-status',
 											disabled: true,
 											iconCls: 'fa fa-power-off fa-2x icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-TYPES-UPDATE'],
 											handler: function () {
 												actionToggleStatus();
 											}	
@@ -670,6 +677,7 @@
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-TYPES-DELETE'],
 									handler: function () {
 										actionRemoveType();
 									}									

@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SecurityService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.api.WorkPlanService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
@@ -207,8 +208,12 @@ public class SubmissionFormServiceImplTest
 	public void testDeleteUserSubmissionNoMedia() throws IOException
 	{
 		PersistenceService persistenceService = Mockito.mock(PersistenceService.class);
+		WorkPlanService workPlanService = Mockito.mock(WorkPlanService.class);
 
 		Service testService = Mockito.mock(Service.class);
+
+		Mockito.when(testService.getWorkPlanService()).thenReturn(workPlanService);
+
 		Mockito.when(testService.getPersistenceService()).thenReturn(persistenceService);
 		Mockito.when(persistenceService.queryByExample(Mockito.any(QueryByExample.class))).thenReturn(new ArrayList<>());
 		ServiceProxyFactory.setTestService(testService);
@@ -216,7 +221,11 @@ public class SubmissionFormServiceImplTest
 		UserSubmission userSubmission = new UserSubmission();
 		Mockito.when(persistenceService.findById(UserSubmission.class, "1")).thenReturn(userSubmission);
 
-		SubmissionFormServiceImpl instance = new SubmissionFormServiceImpl(persistenceService);
+		SubmissionFormServiceImpl instance = Mockito.spy(SubmissionFormServiceImpl.class);
+		instance.setPersistenceService(persistenceService);
+		Mockito.when(instance.getWorkPlanService()).thenReturn(workPlanService);
+		//Mockito.when(instance.deleteUserSubmission("1"))
+
 		instance.deleteUserSubmission("1");
 
 	}

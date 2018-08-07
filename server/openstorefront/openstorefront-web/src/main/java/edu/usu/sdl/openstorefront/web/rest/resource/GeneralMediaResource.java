@@ -148,7 +148,7 @@ public class GeneralMediaResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_MEDIA)
+	@RequireSecurity(SecurityPermission.ADMIN_MEDIA_DELETE)
 	@APIDescription("Deletes a general media record.")
 	@Path("/{name}")
 	public void deleteGeneralMedia(

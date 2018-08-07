@@ -1680,6 +1680,14 @@
 				var templateGrid = Ext.create('Ext.grid.Panel', {
 					id: 'templateGrid',
 					title: 'Entry Templates <i class="fa fa-question-circle"  data-qtip="Allows for defining custom templates for entries" ></i>',
+					requiredPermissions: ['ADMIN-ENTRY-TEMPLATES-READ'],
+					permissionCheckFailure: function () {
+						Ext.toast({
+							html: 'You do not have permissions to view the data on this page',
+							title: 'Invalid Permissions',
+							align: 'b'
+						});
+					},
 					store: {
 						fields: [
 							{
@@ -1732,6 +1740,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									requiredPermissions: ['ADMIN-ENTRY-TEMPLATES-CREATE'],
 									handler: function () {
 										actionAdd();
 									}
@@ -1743,11 +1752,13 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-TEMPLATES-UPDATE'],
 									handler: function () {
 										actionEdit(Ext.getCmp('templateGrid').getSelection()[0]);
 									}								
 								},
 								{
+									requiredPermissions: ['ADMIN-ENTRY-TEMPLATES-UPDATE'],
 									xtype: 'tbseparator'
 								},								
 								{
@@ -1756,11 +1767,13 @@
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-TEMPLATES-UPDATE'],
 									handler: function () {
 										actionToggleStatus();
 									}								
 								},
 								{
+									requiredPermissions: ['ADMIN-ENTRY-TEMPLATES-DELETE'],
 									xtype: 'tbfill'
 								},
 								{
@@ -1769,6 +1782,7 @@
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-TEMPLATES-DELETE'],
 									handler: function () {
 										actionDelete(Ext.getCmp('templateGrid').getSelection()[0]);
 									}								

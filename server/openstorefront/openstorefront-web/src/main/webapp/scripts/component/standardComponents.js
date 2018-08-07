@@ -182,6 +182,58 @@ Ext.define('OSF.component.RoleGroupMultiSelectComboBox', {
 	}
 });
 
+Ext.define('OSF.component.ActiveOnMultiSelectComboBox', {
+	extend: 'OSF.component.RoleGroupMultiSelectComboBox',
+	alias: 'widget.ActiveOnMultiCombo',
+
+	store: {
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/lookuptypes/EntityEventType'
+		}
+	}
+});
+
+Ext.define('OSF.component.EntryTypeMultiSelect', {
+	extend: 'OSF.component.RoleGroupMultiSelectComboBox',
+	alias: 'widget.EntryTypeMultiSelect',
+
+	store: {
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/componenttypes/lookup'
+		}
+	}
+});
+
+Ext.define('OSF.component.UserCustomEmailCombo', {
+	extend: 'Ext.form.field.Tag',
+	alias: 'widget.UserCustomEmailCombo',
+
+	displayField: 'email',
+	valueField: 'email',
+	queryMode: 'local',
+	createNewOnEnter: true,
+	width: '100%',
+	store: {
+		autoload: true,
+		proxy: {
+			type: 'ajax',
+			url: 'api/v1/resource/userprofiles'
+		},
+		listeners: {
+			load: function (store, records) {
+				
+				store.setData(records[0].getData().data);
+			}
+		}
+	},
+	initComponent: function () {
+		this.callParent();
+		this.getStore().load();
+	}
+});
+
 Ext.define('OSF.component.RoleGroupSingleSelectComboBox', {
 	extend: 'Ext.form.field.ComboBox',
 	alias: 'widget.RoleGroupSingleSelectComboBox',
@@ -726,38 +778,47 @@ Ext.define('OSF.component.UserMenu', {
 			}
 
 			var permissions = [
-				"ADMIN-USER-MANAGEMENT",
-				"ADMIN-SYSTEM-MANAGEMENT",
-				"ADMIN-ENTRY-MANAGEMENT",
-				"ADMIN-MESSAGE-MANAGEMENT",
-				"ADMIN-JOB-MANAGEMENT",
-				"ADMIN-INTEGRATION",
-				"ADMIN-DATA-IMPORT-EXPORT",
-				"ADMIN-WATCHES",
-				"ADMIN-TRACKING",
-				"ADMIN-SEARCH",
-				"ADMIN-USER-MANAGEMENT-PROFILES",
-				"ADMIN-TEMPMEDIA-MANAGEMENT",
-				"ADMIN-ORGANIZATION",
-				"ADMIN-LOOKUPS",
-				"ADMIN-HIGHLIGHTS",
-				"ADMIN-MEDIA",
-				"ADMIN-FEEDBACK",
-				"ADMIN-EVALUATION-TEMPLATE",
-				"API-DOCS",
-				"ADMIN-BRANDING",
-				"ADMIN-EVALUATION-TEMPLATE-SECTION",
-				"ADMIN-CONTACT-MANAGEMENT",
-				"ADMIN-ENTRY-TEMPLATES",
-				"ADMIN-ENTRY-TYPES",
-				"ADMIN-QUESTIONS",
-				"ADMIN-REVIEW",
-				"ADMIN-EVALUATION-TEMPLATE-CHECKLIST",
-				"ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION",
-				"ADMIN-ATTRIBUTE-MANAGEMENT",
-				"ADMIN-ALERT-MANAGEMENT",
-				"REPORTS-ALL",
-				"ADMIN-EVALUATION-MANAGEMENT"
+				"ADMIN-ALERTS-PAGE",
+				"ADMIN-API-PAGE",
+				"ADMIN-ATTRIBUTE-PAGE",
+				"ADMIN-BRANDING-PAGE",
+				"ADMIN-CONTACTS-PAGE",
+				"ADMIN-ENTRIES-PAGE",
+				"ADMIN-ENTRYTEMPLATES-PAGE",
+				"ADMIN-ENTRYTYPE-PAGE",
+				"ADMIN-EVAL-TEMPLATES-PAGE",
+				"ADMIN-EVAL-CHECKLIST-QUESTIONS-PAGE",
+				"ADMIN-EVAL-CHECKLIST-TEMPLATES-PAGE",
+				"ADMIN-EVAL-SECTION-PAGE",
+				"ADMIN-EVAL-PAGE",
+				"ADMIN-FAQ-PAGE",
+				"ADMIN-FEEDBACK-PAGE",
+				"ADMIN-HIGHLIGHTS-PAGE",
+				"ADMIN-IMPORT-PAGE",
+				"ADMIN-INTEGRATION-PAGE",
+				"ADMIN-JOBS-PAGE",
+				"ADMIN-LOOKUPS-PAGE",
+				"ADMIN-SUPPORTMEDIA-PAGE",
+				"ADMIN-MEDIA-PAGE",
+				"ADMIN-MESSAGES-PAGE",
+				"ADMIN-ORGANIZATION-PAGE",
+				"ADMIN-USERPROFILES-PAGE",
+				"ADMIN-QUESTION-PAGE",
+				"ADMIN-RELATIONSHIPS-PAGE",
+				"ADMIN-REVIEWS-PAGE",
+				"ADMIN-ROLES-PAGE",
+				"ADMIN-SEARCHES-PAGE",
+				"ADMIN-SECURITY-PAGE",
+				"ADMIN-PARTIAL-SUBMISSIONS-PAGE",
+				"ADMIN-SUBMISSION-FORM-SANDBOX-PAGE",
+				"ADMIN-SUBMISSION-FORM-TEMPLATE_PAGE",
+				"ADMIN-SYSTEM-PAGE",
+				"ADMIN-SYSTEM-ARCHIVES-PAGE",
+				"ADMIN-TAGS-PAGE",
+				"ADMIN-TRACKING-PAGE",
+				"ADMIN-USER-MANAGEMENT-PAGE",
+				"ADMIN-WATCHES-PAGE"
+
 			];
 
 			if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
@@ -767,7 +828,7 @@ Ext.define('OSF.component.UserMenu', {
 				}
 			}
 
-			if (CoreService.userservice.userHasPermisson(usercontext, ['EVALUATIONS'])) {
+			if (CoreService.userservice.userHasPermisson(usercontext, ['EVAL-PAGE'])) {
 				var evalmenu = userMenu.getMenu().getComponent('menuEvalTools');
 				if (evalmenu) {
 					userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);

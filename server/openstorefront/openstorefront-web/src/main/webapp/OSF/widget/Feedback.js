@@ -147,6 +147,7 @@ Ext.define('OSF.widget.Feedback', {
 							}									
 						},								
 						{
+							requiredPermissions: ['ADMIN-FEEDBACK-UPDATE'],
 							xtype: 'tbseparator'
 						},
 						{
@@ -155,6 +156,7 @@ Ext.define('OSF.widget.Feedback', {
 							scale: 'medium',
 							disabled: true,
 							iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save',
+							requiredPermissions: ['ADMIN-FEEDBACK-UPDATE'],
 							handler: function () {
 								actionMarkStatus(this.up('grid'), this.up('grid').getSelectionModel().getSelection()[0], true);										
 							}									

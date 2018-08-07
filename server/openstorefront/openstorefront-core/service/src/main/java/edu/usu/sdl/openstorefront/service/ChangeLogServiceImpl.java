@@ -96,7 +96,8 @@ public class ChangeLogServiceImpl
 		return changeLogs;
 	}
 
-	private void saveChangeRecord(ChangeLog changeLog)
+	@Override
+	public void saveChangeRecord(ChangeLog changeLog)
 	{
 		if (saveChanges) {
 			changeLog.populateBaseCreateFields();

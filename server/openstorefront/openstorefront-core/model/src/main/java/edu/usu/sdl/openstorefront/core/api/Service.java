@@ -211,6 +211,13 @@ public interface Service
 	 * @return
 	 */
 	public FaqService getFaqService();
+	
+	/**
+	 * Service for Workplans
+	 *
+	 * @return
+	 */
+	public WorkPlanService getWorkPlanService();
 
 	/**
 	 * Handles submission form services

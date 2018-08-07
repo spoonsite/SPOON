@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -617,11 +618,11 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(username);
 		Objects.requireNonNull(role);
 
-		UserSecurity userSecurity = new UserSecurity();
-		userSecurity.setUsername(username);
-		userSecurity = userSecurity.findProxy();
+		UserProfile userProfile = new UserProfile();
+		userProfile.setUsername(username);
+		userProfile = userProfile.findProxy();
 
-		if (userSecurity != null) {
+		if (userProfile != null) {
 			UserRole userRole = new UserRole();
 			userRole.setRole(role);
 			userRole.setUsername(username);
@@ -633,6 +634,7 @@ public class SecurityServiceImpl
 				userRole = new UserRole();
 				userRole.setRole(role);
 				userRole.setUsername(username);
+				userRole.setKeep(Boolean.TRUE);
 				userRole.setUserRoleId(persistenceService.generateId());
 				userRole.populateBaseCreateFields();
 				persistenceService.persist(userRole);
@@ -699,6 +701,9 @@ public class SecurityServiceImpl
 			getComponentServicePrivate().removeRoleFromComponentType(securityRole.getRoleName());
 			LOG.log(Level.FINE, "Removed Role from entry type");
 
+			getWorkPlanService().removeSecurityRole(securityRole.getRoleName());
+			LOG.log(Level.FINE, "Removed Role from work plan");
+
 			persistenceService.delete(securityRole);
 
 			LOG.log(Level.INFO, MessageFormat.format("Role {0} was deleted by {2}. "
@@ -759,7 +764,7 @@ public class SecurityServiceImpl
 		}
 		userSecurityExample.setApprovalStatus(queryParams.getApprovalState());
 
-		QueryByExample queryByExample = new QueryByExample(userSecurityExample);
+		QueryByExample<UserSecurity> queryByExample = new QueryByExample<>(userSecurityExample);
 
 		if (StringUtils.isNotBlank(queryParams.getSearchField())
 				&& StringUtils.isNotBlank(queryParams.getSearchValue())
@@ -768,7 +773,7 @@ public class SecurityServiceImpl
 			try {
 				BeanUtils.setProperty(userSecuritySearchExample, queryParams.getSearchField(), queryParams.getSearchValue().toLowerCase() + "%");
 
-				SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+				SpecialOperatorModel<UserSecurity> specialOperatorModel = new SpecialOperatorModel<>();
 				specialOperatorModel.setExample(userSecuritySearchExample);
 				specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LIKE);
 				specialOperatorModel.getGenerateStatementOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
@@ -859,7 +864,16 @@ public class SecurityServiceImpl
 
 		UserRole userRole = new UserRole();
 		userRole.setUsername(username);
-		persistenceService.deleteByExample(userRole);
+		List<UserRole> userRoles = userRole.findByExampleProxy();
+
+		Set<String> keepSet = new HashSet<>();
+		for (UserRole role : userRoles) {
+			if (!Convert.toBoolean(role.getKeep())) {
+				persistenceService.delete(role);
+			} else {
+				keepSet.add(role.getRole());
+			}
+		}
 
 		SecurityRole roleExample = new SecurityRole();
 		roleExample.setActiveStatus(SecurityRole.ACTIVE_STATUS);
@@ -871,20 +885,19 @@ public class SecurityServiceImpl
 
 		for (String group : groups) {
 			if (existingRoleSet.contains(group)) {
-
-				//we just need to add the role without having a security user
-				userRole = new UserRole();
-				userRole.setRole(group);
-				userRole.setUsername(username);
-				userRole.setUserRoleId(persistenceService.generateId());
-				userRole.populateBaseCreateFields();
-				persistenceService.persist(userRole);
-
+				if (!keepSet.contains(group)) {
+					//we just need to add the role without having a security user
+					userRole = new UserRole();
+					userRole.setRole(group);
+					userRole.setUsername(username);
+					userRole.setUserRoleId(persistenceService.generateId());
+					userRole.populateBaseCreateFields();
+					persistenceService.persist(userRole);
+				}
 			} else {
 				LOG.log(Level.FINER, MessageFormat.format("No Matching Role for group: {0}", group));
 			}
 		}
-
 	}
 
 	@Override
@@ -948,7 +961,7 @@ public class SecurityServiceImpl
 		userContext.getUserProfile().setFirstName(OpenStorefrontConstant.SYSTEM_USER);
 		userContext.getUserProfile().setUsername(OpenStorefrontConstant.SYSTEM_USER);
 
-		//puedo role with all permission and access to all data
+		//psuedo role with all permission and access to all data
 		SecurityRole systemRole = new SecurityRole();
 		systemRole.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
 		systemRole.setAllowUnspecifiedDataSource(Boolean.TRUE);

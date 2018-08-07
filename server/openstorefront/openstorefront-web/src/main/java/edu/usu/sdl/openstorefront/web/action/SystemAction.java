@@ -77,7 +77,7 @@ public class SystemAction
 		return new StreamingResolution("text/plain", getApplicationVersion());
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_UPDATE)
 	@HandlesEvent("BulkAttributeStatusUpdate")
 	public Resolution attributeStatusUpdate()
 	{
@@ -104,7 +104,7 @@ public class SystemAction
 	}
 
 	//Temp 1.4 Clean the duplicate attibutes
-	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_UPDATE)
 	@HandlesEvent("AttributeCleanup")
 	public Resolution attributeCleanup()
 	{
@@ -135,7 +135,7 @@ public class SystemAction
 		return new StreamingResolution("text/html", dupCount + " Duplicate Component Attribute Remove on: " + attributeType + " attribute Type. <br> Details: <br>" + details);
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT_UPDATE)
 	@HandlesEvent("ContactCleanup")
 	public Resolution contactCleanup()
 	{

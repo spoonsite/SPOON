@@ -269,7 +269,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_READ)
 	@APIDescription("Get a list of all components <br>(Note: this is only the top level component object, See Component Detail for composite resource.)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminWrapper.class)
@@ -340,7 +340,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@GET
-	@RequireSecurity("SecurityPermission.ADMIN_ENTRY_MANAGEMENT")
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_READ)
 	@APIDescription("Gets a component admin view")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentAdminView.class)
@@ -360,7 +360,7 @@ public abstract class GeneralComponentResourceExt
 
 	@GET
 	@APIDescription("Export a component with full component details.")
-	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EXPORT)
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/{id}/export")
@@ -381,7 +381,7 @@ public abstract class GeneralComponentResourceExt
 
 	@POST
 	@APIDescription("Exports a set of components.  POST ZIP or JSON file to Upload.action?UploadComponent (multipart/form-data) uploadFile to import (Requires Admin)")
-	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EXPORT)
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/export")
@@ -486,7 +486,7 @@ public abstract class GeneralComponentResourceExt
 
 	@POST
 	@APIDescription("Exports a set of components. In describe record format.")
-	@RequireSecurity(SecurityPermission.ADMIN_DATA_IMPORT_EXPORT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EXPORT)
 	@Produces({MediaType.WILDCARD})
 	@DataType(ComponentAll.class)
 	@Path("/export/describe")
@@ -576,7 +576,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW_READ)
 	@APIDescription("Get a list of components reviews")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentReviewView.class)
@@ -602,7 +602,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS_READ)
 	@APIDescription("Get a list of components questions")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentQuestionView.class)
@@ -647,7 +647,7 @@ public abstract class GeneralComponentResourceExt
 	public Response createComponent(
 			@RequiredParam RequiredForComponent component)
 	{
-		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
+		if (!SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_CREATE)) {
 			component.getComponent().setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 		}
 
@@ -671,7 +671,7 @@ public abstract class GeneralComponentResourceExt
 			@RequiredParam String componentId,
 			@RequiredParam RequiredForComponent component)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_UPDATE);
 		if (response != null) {
 			return response;
 		}
@@ -732,7 +732,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_APPROVE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Approves a set components; Typically for approve related entries.")
 	@DataType(Component.class)
@@ -749,7 +749,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_APPROVE)
 	@Produces(MediaType.APPLICATION_JSON)
 	@APIDescription("Approves a component")
 	@DataType(Component.class)
@@ -764,7 +764,7 @@ public abstract class GeneralComponentResourceExt
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CREATE)
 	@APIDescription("Create a copy of a component")
 	@DataType(Component.class)
 	@Path("/{id}/copy")
@@ -786,7 +786,7 @@ public abstract class GeneralComponentResourceExt
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MERGE)
 	@APIDescription("Merge component A to component B")
 	@DataType(Component.class)
 	@Path("/{mergeId}/{targetId}/merge")
@@ -829,7 +829,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TOGGLE_STATUS)
 	@APIDescription("Activates a component")
 	@Path("/{id}/activate")
 	public Response activateComponent(
@@ -844,7 +844,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGEOWNER)
 	@APIDescription("Changes owner of component")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Path("/{id}/changeowner")
@@ -862,7 +862,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGETYPE)
 	@APIDescription(
 			"Changes the Entry Type of an existing components to another existing Entry Type"
 	)
@@ -903,7 +903,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TOGGLE_STATUS)
 	@APIDescription("Inactivates Component and removes any assoicated user watches.")
 	@Path("/{id}")
 	public void deleteComponentSingle(
@@ -970,7 +970,7 @@ public abstract class GeneralComponentResourceExt
 			@PathParam("id")
 			@RequiredParam String componentId)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, false);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_DELETE, false);
 		if (response != null) {
 			return response;
 		}
@@ -989,7 +989,7 @@ public abstract class GeneralComponentResourceExt
 			@RequiredParam String componentId
 	)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, true);
 		if (response != null) {
 			return response;
 		}
@@ -1016,7 +1016,9 @@ public abstract class GeneralComponentResourceExt
 
 	private Response handleCreateUserSubmission(String componentId, EditSubmissionOptions options)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
+		//Note: this permission is covering 3 different cases.  Right now admin can't hit this from the UI without becoming an owner.
+		//Refactor later if that is an issue.
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT, true);
 		if (response != null) {
 			return response;
 		}
@@ -1071,7 +1073,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGEOWNER)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@APIDescription("Change owner of listed components and attach a comment")
 	@Path("/changeowner")
@@ -1118,7 +1120,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGETYPE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@APIDescription("Change type of listed components and attach a comment")
 	@Path("/changetype")
@@ -1132,7 +1134,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TOGGLE_STATUS)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@APIDescription("Change status of listed components and attach a comment")
 	@Path("/togglestatus")
@@ -1150,7 +1152,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CHANGEREQUEST_MANAGEMENT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(Component.class)
 	@APIDescription("Merges change request component with it parent component")
@@ -1174,7 +1176,7 @@ public abstract class GeneralComponentResourceExt
 			@RequiredParam String componentId
 	)
 	{
-		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_MANAGEMENT, true);
+		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_PENDINGCHANGE_READ, true);
 		if (response != null) {
 			return response;
 		}

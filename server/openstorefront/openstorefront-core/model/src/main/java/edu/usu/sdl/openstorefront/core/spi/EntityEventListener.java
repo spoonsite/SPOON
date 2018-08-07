@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2018 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.entity;
+package edu.usu.sdl.openstorefront.core.spi;
+
+import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 
 /**
  *
  * @author dshurtleff
  */
-public class WorkflowAction
+@FunctionalInterface
+public interface EntityEventListener
 {
+
+	/**
+	 * It is called when a new entity event get trigger in the application
+	 *
+	 * @param entityEventListener
+	 * @return success of the processing
+	 */
+	public boolean processEvent(EntityEventModel entityEventModel);
 
 }

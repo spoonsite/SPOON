@@ -72,7 +72,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	@GET
 	@APIDescription("Gets all version history for a component")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_READ)
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory")
 	public Response getComponentVersionHistory(
@@ -94,7 +94,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	@GET
 	@APIDescription("Gets a version history record")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_READ)
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}")
 	public Response getComponentVersionHistoryRecord(
@@ -113,7 +113,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	@GET
 	@APIDescription("Gets the detail of a component version")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_READ)
 	@DataType(ComponentDetailView.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/view")
 	public Response viewComponentVerison(
@@ -128,7 +128,7 @@ public abstract class GeneralExtendedComponentResourceExt
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_CREATE)
 	@APIDescription("Create a version of the current component")
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory")
@@ -151,7 +151,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_RESTORE)
 	@APIDescription("Restores a version of the current component")
 	@DataType(ComponentVersionHistory.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/restore")
@@ -180,7 +180,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_DELETE)
 	@APIDescription("Delete a version history record")
 	@Path("/{id}/versionhistory/{versionHistoryId}")
 	public void deleteVersionHistory(
@@ -202,7 +202,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	// </editor-fold>
 	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource TRACKING section">
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_READ)
 	@APIDescription("Get the list of tracking details on a specified component. Always sorts by create date.")
 	@Produces(
 			{
@@ -240,7 +240,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_READ)
 	@APIDescription("Get the list of tracking details on a specified component")
 	@Produces(
 			{
@@ -262,7 +262,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_DELETE)
 	@APIDescription("Remove a tracking entry from the specified component")
 	@Path("/{id}/tracking/{trackingId}")
 	public void deleteComponentTracking(
@@ -281,7 +281,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_DELETE)
 	@APIDescription("Remove all tracking entries from the specified component")
 	@Path("/{id}/tracking")
 	public void deleteAllComponentTracking(
@@ -294,7 +294,7 @@ public abstract class GeneralExtendedComponentResourceExt
 
 	// <editor-fold defaultstate="collapsed"  desc="Integrations">
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_READ)
 	@APIDescription("Gets all integration models from the database.")
 	@Produces(
 			{
@@ -319,7 +319,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_READ)
 	@APIDescription("Gets a integration model")
 	@Produces(
 			{
@@ -341,7 +341,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_CREATE)
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration")
@@ -362,7 +362,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_UPDATE)
 	@APIDescription("Updates a component integration refresh Time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
@@ -390,7 +390,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_UPDATE)
 	@APIDescription("Removes the integration override time")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/cron")
@@ -416,7 +416,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Activates  a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/activate")
@@ -432,7 +432,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Inactivates a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/inactivate")
@@ -448,7 +448,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_UPDATE)
 	@APIDescription("Toggle status for multiple component integration models. Consumes a list of componentId strings")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/integration/togglemultiple")
@@ -470,7 +470,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_DELETE)
 	@APIDescription("Removes component integration and all child configs.")
 	@Path("/{componentId}/integration")
 	public Response deleteComponentConfig(
@@ -487,7 +487,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_RUNINTEGRATION)
 	@APIDescription("Runs a full component integration")
 	@Path("/{componentId}/integration/run")
 	public Response runComponentIntegration(
@@ -516,7 +516,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_RUNALL)
 	@APIDescription("Runs all active component integrations")
 	@Path("/integrations/run")
 	public Response runAllComponentIntegration()
@@ -529,7 +529,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_READ)
 	@APIDescription("Gets all component integration configs")
 	@Produces(
 			{
@@ -548,7 +548,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_READ)
 	@APIDescription("Gets all component integration configs")
 	@Produces(
 			{
@@ -568,7 +568,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_CREATE)
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs")
@@ -615,7 +615,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Updates a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{integrationConfigId}")
@@ -678,7 +678,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Activates a component integration config")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{configId}/activate")
@@ -699,7 +699,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_TOGGLESTATUS)
 	@APIDescription("Saves a component integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{componentId}/integration/configs/{configId}/inactivate")
@@ -720,7 +720,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_DELETE)
 	@APIDescription("Deletes component integration config")
 	@Path("/{componentId}/integration/configs/{configId}")
 	public void deleteComponentIntegrationConfig(
@@ -739,7 +739,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_RUNCONFIG)
 	@APIDescription("Runs a component integration config.")
 	@Path("/{componentId}/integration/configs/{configId}/run")
 	public Response runComponentIntegrationConfig(

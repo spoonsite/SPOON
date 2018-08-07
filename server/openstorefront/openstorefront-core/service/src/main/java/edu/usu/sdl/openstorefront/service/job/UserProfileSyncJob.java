@@ -32,7 +32,7 @@ public class UserProfileSyncJob
 		extends BaseJob
 {
 
-	private static final Logger log = Logger.getLogger(UserProfileSyncJob.class.getName());
+	private static final Logger LOG = Logger.getLogger(UserProfileSyncJob.class.getName());
 
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
@@ -48,7 +48,7 @@ public class UserProfileSyncJob
 				throw new OpenStorefrontRuntimeException(ex);
 			}
 		} else {
-			log.log(Level.FINE, "External Sync Job is inactive.  To activate set 'external.sync.activate' to true in application config file.");
+			LOG.log(Level.FINE, "External Sync Job is inactive.  To activate set 'external.sync.activate' to true in application config file.");
 		}
 	}
 

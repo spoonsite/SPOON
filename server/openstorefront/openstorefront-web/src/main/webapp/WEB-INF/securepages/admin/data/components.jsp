@@ -58,9 +58,6 @@
 			Ext.require('OSF.common.ValidHtmlEditor');
 			
 			Ext.onReady(function() {
-
-
-
 				//Add/Edit forms ------>
 
 				//External Windows
@@ -112,6 +109,7 @@
 				};
 
 				var allComponentTypes = [];
+
 				Ext.Ajax.request({
 					url: 'api/v1/resource/componenttypes',
 					success: function(response, opts) {
@@ -508,6 +506,14 @@
 										width: '100%',
 										editable: false,
 										typeAhead: false,
+										requiredPermissions: ['ADMIN-ENTRY-CHANGETYPE'],
+										beforePermissionsCheckFailure: function () {
+											if (mainAddEditWin.generalForm.componentRecord) {
+												return true;
+											}
+											this.show();
+											return false;
+										},
 										storeConfig: {
 											url: 'api/v1/resource/componenttypes/lookup'
 										},
@@ -572,6 +578,14 @@
 										width: '100%',
 										editable: false,
 										typeAhead: false,
+										requiredPermissions: ['ADMIN-ENTRY-APPROVE'],
+										preventDefaultAction: true,
+										beforePermissionsCheckFailure: function () {
+											if (mainAddEditWin.generalForm.componentRecord) {
+												return true;
+											}
+											return false;
+										},
 										storeConfig: {
 											url: 'api/v1/resource/lookuptypes/ApprovalStatus'
 										}
@@ -711,6 +725,26 @@
 							{
 								xtype: 'tabpanel',
 								itemId: 'tabpanel',
+								listeners: {
+									add: function (tabPanel, item) {
+
+										// defer to push the check for valid permissions back on the stack
+										Ext.defer(function () {
+											if (!item.hasValidPermissions) {
+												
+												// check to see which tab to hide
+												var tabToHide = tabPanel.getTabBar().getRefItems().reduce(function (acc, tab) {
+													if (tab.title === item.title) {
+														acc = tab;
+													}
+													return acc;
+												}, null);
+												tabToHide.hide();
+											}
+										}, 1);
+										return true;
+									}	
+								},
 								items: [
 									generalForm
 								]
@@ -837,6 +871,7 @@
 									id: 'versionWin-tool-restoreBtn',
 									iconCls: 'fa fa-lg fa-reply icon-button-color-refresh',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-VERSION-RESTORE'],
 									handler: function(){
 										//prompt
 										versionWinRestorePrompt.show();
@@ -932,6 +967,7 @@
 											text: 'Create Snapshot',
 											iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction',
 											tooltip: 'Creates snapshot of the current verison',
+											requiredPermissions: ['ADMIN-ENTRY-VERSION-CREATE'],
 											handler: function(){
 												var versionWin = this.up('window');
 												versionWin.setLoading("Snapshoting current version...");
@@ -957,6 +993,7 @@
 											id: 'versionWin-tool-removeBtn',
 											iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
 											disabled: true,
+											requiredPermissions: ['ADMIN-ENTRY-VERSION-DELETE'],
 											handler: function(){
 												var componentId = Ext.getCmp('componentGrid').getSelection()[0].get('componentId');
 												var versionHistoryId = Ext.getCmp('versionGrid').getSelection()[0].get('versionHistoryId');
@@ -1278,144 +1315,6 @@
 												}
 												Ext.Ajax.request({
 													url: 'api/v1/resource/components/togglestatus',
-													method: 'PUT',
-													jsonData: data,
-													callback: function(){
-														Ext.getCmp('componentGrid').setLoading(false);
-													},
-													success: function(response, opts) {
-														if (response.responseText !== '') {
-															if( response.responseText.indexOf('errors') !== -1) {
-															// provide error notification
-																Ext.toast({
-																	title: 'validation error. the server could not process the request. ',
-																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
-																	width: 550,
-																	autoclosedelay: 10000
-																});
-															}
-														}
-														actionRefreshComponentGrid();
-														form.reset();
-													},
-													failure: function(){
-														Ext.toast({
-															title: 'validation error. the server could not process the request. ',
-															html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
-															width: 550,
-															autoclosedelay: 10000
-														});
-													}
-												});
-												this.up('window').close()
-											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Cancel',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function(){
-												this.up('window').close();
-											}
-										}
-									]
-								}
-							]
-						}
-					]
-				});
-				
-				var changeOwnerWin = Ext.create('Ext.window.Window', {
-					id: 'changeOwnerWin',
-					title: 'Change Owner - ',
-					iconCls: 'fa fa-lg fa-user',
-					width: '50%',
-					height: 450,
-					y: 200,
-					modal: true,
-					layout: 'fit',
-					items: [
-						{
-							xtype: 'form',
-							itemId: 'changeOwnerForm',
-							bodyStyle: 'padding: 10px',
-							items: [
-								{
-									xtype: 'combobox',
-									fieldLabel: 'Username <span class="field-required" />',
-									labelAlign: 'top',
-									labelSeparator: '',
-									typeAhead: true,
-									editable: true,
-									allowBlank: false,
-									name: 'currentDataOwner',
-									width: '100%',
-									valueField: 'username',
-									forceSelection: false,
-									queryMode: 'local',
-									displayField: 'username',
-									store: {
-										autoLoad: true,
-										proxy: {
-											type: 'ajax',
-											url: 'api/v1/resource/userprofiles',
-											reader: {
-												type: 'json',
-												rootProperty: 'data',
-												totalProperty: 'totalNumber'
-											}
-										}
-									}
-								},
-								{
-									xtype: 'osf-common-validhtmleditor',
-									itemId: 'searchComment',
-									fieldLabel: 'Optional Comments',
-									labelAlign: 'top',
-									name: 'Comment name',
-									width: '100%',
-									displayField: 'Comment displayfield',
-									store: {
-										autoLoad: true,
-									},
-								},
-								{
-									xtype: 'hidden',
-									itemId: 'searchCommentId',
-									name: 'commentId'
-								},
-							],
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Save',
-											formBind: true,
-											iconCls: 'fa fa-lg fa-save icon-button-color-save',
-											handler: function(){
-												Ext.getCmp('componentGrid').setLoading('Changing the owner for the selected entries...');
-												var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
-													return item.getData().componentId;
-												});
-												var form = this.up('form');
-												var username = form.getForm().findField('currentDataOwner').getValue();
-												var data = {
-													componentIds: componentIds,
-													comment: {
-														commentType: 'ADMIN',
-														comment: form.queryById('searchComment').getValue()
-													},
-													newOwner: username
-												};
-												if(data.comment.comment === ''){
-													data.comment = null;
-												}
-												Ext.Ajax.request({
-													url: 'api/v1/resource/components/changeowner',
 													method: 'PUT',
 													jsonData: data,
 													callback: function(){
@@ -1923,6 +1822,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									requiredPermissions: ['ADMIN-ENTRY-CREATE'],
 									handler: function () {
 										actionAddEditComponent();
 									}
@@ -1934,6 +1834,7 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-view',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-UPDATE'],
 									handler: function () {
 										actionAddEditComponent(Ext.getCmp('componentGrid').getSelection()[0]);
 									}
@@ -1945,6 +1846,7 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-READ'],
 									handler: function () {
 										actionPreviewComponent(Ext.getCmp('componentGrid').getSelection()[0].get('componentId'));
 									}
@@ -1959,6 +1861,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save icon-vertical-correction',
 									disabled: true,
+									requiredPermissions: ['ADMIN-ENTRY-APPROVE'],
 									handler: function () {
 										actionApproveComponent();
 									},
@@ -1980,10 +1883,22 @@
 									id: 'lookupGrid-tools-action',
 									scale: 'medium',
 									disabled: true,
+									requiredPermissions: [
+										'ADMIN-ENTRY-CHANGEOWNER',
+										'ADMIN-ENTRY-CHANGETYPE',
+										'ADMIN-ENTRY-CHANGEREQUEST-MANAGEMENT',
+										'ADMIN-ENTRY-APPROVE',
+										'ADMIN-ENTRY-CREATE',
+										'ADMIN-ENTRY-MERGE',
+										'ADMIN-ENTRY-VERSION-READ',
+										'ADMIN-ENTRY-UPDATE',
+										'ADMIN-ENTRY-DELETE'
+									],
 									menu: [
 										{
 											text: 'Change Owner',
 											iconCls: 'fa fa-lg fa-user icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-CHANGEOWNER'],
 											handler: function(){
 												actionChangeOwner();
 											}
@@ -1991,6 +1906,7 @@
 										{
 											text: 'Change Type',
 											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-CHANGETYPE'],
 											handler: function(){
 												actionChangeType();
 											}
@@ -1999,6 +1915,7 @@
 											id: 'lookupGrid-tools-action-changeRequests',
 											text: 'Change Requests',
 											iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-CHANGEREQUEST-MANAGEMENT'],
 											handler: function () {
 												actionChangeRequests(Ext.getCmp('componentGrid').getSelection()[0]);
 											}
@@ -2006,18 +1923,21 @@
 										{
 											text: 'Approve Related Entries',
 											iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+											requiredPermissions: ['ADMIN-ENTRY-APPROVE'],
 											handler: function() {
 												var record = Ext.getCmp('componentGrid').getSelection()[0];
 												showMultiApproveForm(record.get('componentId'), record.get('name'));
 											}
 										},										
 										{
-											xtype: 'menuseparator'
+											xtype: 'menuseparator',
+											requiredPermissions: ['ADMIN-ENTRY-CREATE', 'ADMIN-ENTRY-MERGE', 'ADMIN-ENTRY-VERSION-READ']
 										},
 										{
 											id: 'lookupGrid-tools-action-copy',
 											text: 'Copy',
 											iconCls: 'fa fa-lg fa-clone icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-CREATE'],
 											handler: function(){
 												actionCopyComponent();
 											}
@@ -2026,27 +1946,32 @@
 											id: 'lookupGrid-tools-action-versions',
 											text: 'Versions',
 											iconCls: 'fa fa-lg fa-object-ungroup icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-VERSION-READ'],
 											handler: function(){
 												actionVersions();
 											}
 										},
 										{
-											xtype: 'menuseparator'
+											xtype: 'menuseparator',
+											requiredPermissions: ['ADMIN-ENTRY-TOGGLE-STATUS']
 										},
 										{
 											text: 'Toggle Status',
 											iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-TOGGLE-STATUS'],
 											handler: function(){
 												actionToggleStatus();
 											}
 										},
 										{
-											xtype: 'menuseparator'
+											xtype: 'menuseparator',
+											requiredPermissions: ['ADMIN-ENTRY-DELETE']
 										},
 										{
 											text: 'Delete',
 											cls: 'alert-danger',
 											iconCls: 'fa fa-lg fa-trash icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['ADMIN-ENTRY-DELETE'],
 											handler: function() {
 												actionDeleteComponent();
 											}
@@ -2184,9 +2109,150 @@
 					changeRequestWindow.show();
 					changeRequestWindow.loadComponent(componentId, name);
 				};
+				
+				var changeOwnerWinCreated = false;
 
 				var actionChangeOwner = function() {
-
+					if(!changeOwnerWinCreated){
+						changeOwnerWinCreated = true;
+						Ext.create('Ext.window.Window', {
+							id: 'changeOwnerWin',
+							title: 'Change Owner - ',
+							iconCls: 'fa fa-lg fa-user',
+							width: '50%',
+							height: 450,
+							y: 200,
+							modal: true,
+							layout: 'fit',
+							items: [
+								{
+									xtype: 'form',
+									itemId: 'changeOwnerForm',
+									bodyStyle: 'padding: 10px',
+									items: [
+										{
+											xtype: 'combobox',
+											fieldLabel: 'Username <span class="field-required" />',
+											labelAlign: 'top',
+											labelSeparator: '',
+											typeAhead: true,
+											editable: true,
+											allowBlank: false,
+											name: 'currentDataOwner',
+											width: '100%',
+											valueField: 'username',
+											forceSelection: false,
+											queryMode: 'local',
+											displayField: 'username',
+											store: {
+												autoLoad: true,
+												proxy: {
+													type: 'ajax',
+													url: 'api/v1/resource/userprofiles',
+													reader: {
+														type: 'json',
+														rootProperty: 'data',
+														totalProperty: 'totalNumber'
+													}
+												}
+											}
+										},
+										{
+											xtype: 'osf-common-validhtmleditor',
+											itemId: 'searchComment',
+											fieldLabel: 'Optional Comments',
+											labelAlign: 'top',
+											name: 'Comment name',
+											width: '100%',
+											displayField: 'Comment displayfield',
+											store: {
+												autoLoad: true
+											}
+										},
+										{
+											xtype: 'hidden',
+											itemId: 'searchCommentId',
+											name: 'commentId'
+										}
+									],
+									dockedItems: [
+										{
+											xtype: 'toolbar',
+											dock: 'bottom',
+											items: [
+												{
+													text: 'Save',
+													formBind: true,
+													iconCls: 'fa fa-lg fa-save icon-button-color-save',
+													handler: function(){
+														Ext.getCmp('componentGrid').setLoading('Changing the owner for the selected entries...');
+														var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
+															return item.getData().componentId;
+														});
+														var form = this.up('form');
+														var username = form.getForm().findField('currentDataOwner').getValue();
+														var data = {
+															componentIds: componentIds,
+															comment: {
+																commentType: 'ADMIN',
+																comment: form.queryById('searchComment').getValue()
+															},
+															newOwner: username
+														};
+														if(data.comment.comment === ''){
+															data.comment = null;
+														}
+														Ext.Ajax.request({
+															url: 'api/v1/resource/components/changeowner',
+															method: 'PUT',
+															jsonData: data,
+															callback: function(){
+																Ext.getCmp('componentGrid').setLoading(false);
+															},
+															success: function(response, opts) {
+																if (response.responseText !== '') {
+																	if( response.responseText.indexOf('errors') !== -1) {
+																	// provide error notification
+																		Ext.toast({
+																			title: 'validation error. the server could not process the request. ',
+																			html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																			width: 550,
+																			autoclosedelay: 10000
+																		});
+																	}
+																}
+																actionRefreshComponentGrid();
+																form.reset();
+															},
+															failure: function(){
+																Ext.toast({
+																	title: 'validation error. the server could not process the request. ',
+																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																	width: 550,
+																	autoclosedelay: 10000
+																});
+															}
+														});
+														this.up('window').close();
+													}
+												},
+												{
+													xtype: 'tbfill'
+												},
+												{
+													text: 'Cancel',
+													iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+													handler: function(){
+														this.up('window').close();
+													}
+												}
+											]
+										}
+									]
+								}
+							]
+						});
+					}
 					// Get Selection
 					var selection = Ext.getCmp('componentGrid').getSelection();
 

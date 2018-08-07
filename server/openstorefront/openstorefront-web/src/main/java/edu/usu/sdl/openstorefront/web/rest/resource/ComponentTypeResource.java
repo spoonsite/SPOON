@@ -184,7 +184,7 @@ public class ComponentTypeResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES_CREATE)
 	@APIDescription("Adds a new component type")
 	@Produces(
 			{
@@ -203,7 +203,7 @@ public class ComponentTypeResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES_UPDATE)
 	@APIDescription("Updates a component type")
 	@Produces(
 			{
@@ -248,7 +248,7 @@ public class ComponentTypeResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES_UPDATE)
 	@APIDescription("Activates a component type")
 	@Path("/{type}/activate")
 	public Response activateComponentType(
@@ -260,7 +260,7 @@ public class ComponentTypeResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_TYPES_DELETE)
 	@APIDescription("Inactivates a component type unless new type is specified then it moves the data and deletes the type")
 	@Path("/{type}")
 	public void deleteComponentType(

@@ -19,6 +19,11 @@ Ext.require('OSF.form.MultipleAttributes');
 Ext.define('OSF.form.Attributes', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Attributes',
+	requiredPermissions: ['ADMIN-ENTRY-ATTR-MANAGEMENT'],
+	beforePermissionsCheckFailure: function () { return false; },
+	beforePermissionsCheckSuccess: function () { return false; },
+	preventDefaultAction: true,
+
 	layout: 'fit',
 	
 	initComponent: function () {
@@ -491,7 +496,7 @@ Ext.define('OSF.form.Attributes', {
 							}
 						},
 						{
-							xtype: 'tbseparator',
+							xtype: 'tbseparator'
 						},
 						{
 							text: 'Edit',

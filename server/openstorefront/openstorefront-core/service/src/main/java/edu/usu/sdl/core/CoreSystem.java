@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.service.manager.PluginManager;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
+import edu.usu.sdl.openstorefront.service.manager.WorkPlanManager;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,7 +93,8 @@ public class CoreSystem
 			new HelpImporter(),
 			new DBLogManager(),
 			new DefaultTemplateImporter(),
-			new PluginManager()
+			new PluginManager(),
+			WorkPlanManager.getInstance()
 	);
 
 	/**

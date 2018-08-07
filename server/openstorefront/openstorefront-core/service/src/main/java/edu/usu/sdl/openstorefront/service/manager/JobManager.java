@@ -264,6 +264,18 @@ public class JobManager
 		}
 	}
 
+	public static void removeJob(String jobName, String jobGroup)
+	{
+		try {
+			JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
+			if (scheduler.checkExists(jobKey)) {
+				scheduler.deleteJob(jobKey);
+			}
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable unschedule Job.", ex);
+		}
+	}
+
 	private static void addComponentUpdate() throws SchedulerException
 	{
 		LOG.log(Level.INFO, "Adding Component Update Job");

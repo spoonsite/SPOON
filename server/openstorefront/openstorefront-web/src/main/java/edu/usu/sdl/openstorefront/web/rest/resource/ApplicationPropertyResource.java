@@ -43,7 +43,7 @@ public class ApplicationPropertyResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_APP_PROP)
 	@APIDescription("Gets all active properties in the system")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ApplicationProperty.class)
@@ -56,7 +56,7 @@ public class ApplicationPropertyResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_APP_PROP)
 	@APIDescription("Gets a property in the system")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ApplicationProperty.class)
@@ -71,7 +71,7 @@ public class ApplicationPropertyResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_APP_PROP)
 	@APIDescription("Updates a property in the system. NOTE: data may need to be formatted specifically according to the property.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.WILDCARD})

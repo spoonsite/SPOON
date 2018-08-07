@@ -32,7 +32,7 @@ public class OSFCacheManager
 		implements Initializable
 {
 
-	private static final Logger log = Logger.getLogger(OSFCacheManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(OSFCacheManager.class.getName());
 
 	public static final String ALLCODE_KEY = "ALLCODES";
 
@@ -52,6 +52,7 @@ public class OSFCacheManager
 	private static Cache contactCache;
 	private static Cache searchCache;
 	private static Cache checklistQuestionCache;
+	private static Cache workPlanTypeCache;
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
@@ -129,6 +130,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("checklistQuestionCache", 1000, false, false, 300, 300);
 			singletonManager.addCache(memoryOnlyCache);
 			checklistQuestionCache = singletonManager.getCache("checklistQuestionCache");
+
+			memoryOnlyCache = new Cache("workPlanTypeCache", 1000, false, false, 7200, 7200);
+			singletonManager.addCache(memoryOnlyCache);
+			workPlanTypeCache = singletonManager.getCache("workPlanTypeCache");
 
 		} finally {
 			LOCK.unlock();
@@ -229,6 +234,11 @@ public class OSFCacheManager
 	public static Cache getComponentTypeComponentCache()
 	{
 		return componentTypeComponentCache;
+	}
+
+	public static Cache getWorkPlanTypeCache()
+	{
+		return workPlanTypeCache;
 	}
 
 	@Override

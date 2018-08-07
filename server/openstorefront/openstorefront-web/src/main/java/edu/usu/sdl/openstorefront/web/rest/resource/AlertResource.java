@@ -52,7 +52,7 @@ public class AlertResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT_READ)
 	@APIDescription("Gets alert subscription records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AlertView.class)
@@ -75,7 +75,7 @@ public class AlertResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT_READ)
 	@APIDescription("Gets an alert subscription record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Alert.class)
@@ -90,7 +90,7 @@ public class AlertResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT_CREATE)
 	@APIDescription("Creates a new Alert")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postAlert(Alert alert)
@@ -99,7 +99,7 @@ public class AlertResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT_UPDATE)
 	@APIDescription("Updates a Alert")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -135,7 +135,7 @@ public class AlertResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT_UPDATE)
 	@APIDescription("Activates an Alert")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Alert.class)
@@ -148,7 +148,7 @@ public class AlertResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT_UPDATE)
 	@APIDescription("Inactivates an Alert")
 	@Path("/{id}")
 	public void inactiveAlert(
@@ -158,7 +158,7 @@ public class AlertResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ALERT_MANAGEMENT_DELETE)
 	@APIDescription("Deletes an alert")
 	@Path("/{id}/force")
 	public void deleteAlert(

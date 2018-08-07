@@ -662,13 +662,15 @@
 								}
 							},
 							{
-								xtype: 'tbseparator'
+								xtype: 'tbseparator',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-CREATE']
 							},
 							{
 								text: 'Add',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save',									
 								scale: 'medium',
 								width: '100px',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-CREATE'],
 								handler: function(){
 									actionAddEdit();
 								}
@@ -680,6 +682,7 @@
 								disabled: true,									
 								scale: 'medium',
 								width: '100px',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('checklistGrid').getSelectionModel().getSelection()[0];
 									actionAddEdit(record);
@@ -692,13 +695,15 @@
 								disabled: true,									
 								scale: 'medium',
 								width: '110px',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-READ'],
 								handler: function(){
 									var record = Ext.getCmp('checklistGrid').getSelectionModel().getSelection()[0];
 									actionView(record);
 								}
 							},							
 							{
-								xtype: 'tbseparator'
+								xtype: 'tbseparator',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-UPDATE']
 							},
 							{
 								text: 'Toggle Status',
@@ -706,6 +711,7 @@
 								itemId: 'togglestatus',
 								disabled: true,								
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('checklistGrid').getSelectionModel().getSelection()[0];
 									actionToggleStatus(record);
@@ -718,6 +724,7 @@
 								disabled: true,								
 								scale: 'medium',
 								width: '110px',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-CREATE'],
 								handler: function(){
 									var record = Ext.getCmp('checklistGrid').getSelectionModel().getSelection()[0];
 									actionCopy(record);
@@ -732,6 +739,7 @@
 								itemId: 'delete',
 								disabled: true,									
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-TEMPLATE-CHECKLIST-DELETE'],
 								handler: function(){
 									var record = Ext.getCmp('checklistGrid').getSelectionModel().getSelection()[0];
 									actionDelete(record);

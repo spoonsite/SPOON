@@ -164,7 +164,7 @@ public class ContactResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT_CREATE)
 	@APIDescription("Creates a contact")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -175,7 +175,7 @@ public class ContactResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT_UPDATE)
 	@APIDescription("Updates a contact")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -213,7 +213,7 @@ public class ContactResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT_DELETE)
 	@APIDescription("Deletes a contact")
 	@Path("/{contactId}")
 	public void deleteContact(
@@ -224,7 +224,7 @@ public class ContactResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a contact")
 	@DataType(Contact.class)
@@ -238,7 +238,7 @@ public class ContactResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a contact")
 	@DataType(Contact.class)
@@ -268,7 +268,7 @@ public class ContactResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_CONTACT_MANAGEMENT_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Merge contacts")
 	@DataType(Contact.class)

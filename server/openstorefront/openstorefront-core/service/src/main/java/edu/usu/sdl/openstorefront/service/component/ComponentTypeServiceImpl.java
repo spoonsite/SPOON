@@ -262,6 +262,7 @@ public class ComponentTypeServiceImpl
 					removeTypeMigrateData(newComponentType, componentType);
 					removeTypeCleanupAttributes(componentType);
 					removeTypeFromSubmissionTemplates(componentType);
+					componentService.getWorkPlanService().removeComponentTypeFromWorkPlans(componentType);
 					removeTypeUpdateChildren(componentTypeFound, newComponentType);
 
 					//remove

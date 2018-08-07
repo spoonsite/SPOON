@@ -100,65 +100,183 @@
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
-				});								
+				});							
+		
 				var previewComponentWin = Ext.create('Ext.window.Window', {
-					width: '70%',
-					height: '80%',
+					id: 'previewComponentWin',
+					title: 'Entry Details',
+					iconCls: 'fa fa-lg fa-exchange',
 					maximizable: true,
-					title: 'Preview',
-					modal: true,
-					layout: 'fit',
+					width: '75%',
+					height: '75%',
+					defaults: {
+						collapsible: true,
+						split: true,
+						bodyPadding: 0
+					},
+					layout: 'border',
 					items: [
-						previewContents
-					],
-					tools: [
 						{
-							type: 'up',
-							tooltip: 'popout preview',
-							handler: function(){
-								window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('submissionGrid').getSelection()[0].get('componentId'), "Preview");
-							}
-						}
-					], 
-					dockedItems: [
-						{
-							xtype: 'toolbar',
-							dock: 'bottom',
+							xtype: 'panel',
+							title: 'Preview',
+							collapsible: false,
+							region: 'center',
+							margins: '0 0 0 0',
+							width: '75%',
+							height: '80%',
+							title: 'Entry Info',
+							iconCls: 'fa fa-lg fa-eye',
+							layout: 'fit',
 							items: [
+								previewContents
+							],
+							dockedItems: [
 								{
-									text: 'Previous',
-									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
-									handler: function() {
-										actionPreviewNextRecord(false);
-									}									
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-									handler: function() {
-										this.up('window').hide();
-									}
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Next',
-									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-									iconAlign: 'right',
-									handler: function() {
-										actionPreviewNextRecord(true);
-									}									
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Previous',
+											id: 'previewWinTools-previousBtn',
+											iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
+											handler: function() {
+												actionPreviewNextRecord(false);
+											}									
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Close',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function() {
+												this.up('window').hide();
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Next',
+											id: 'previewWinTools-nextBtn',
+											iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+											iconAlign: 'right',
+											handler: function() {
+												actionPreviewNextRecord(true);
+											}									
+										}
+									]
 								}
 							]
+						},
+						{
+							xtype: 'panel',
+							id: 'submissionComments',
+							title: 'Submission Comments',
+							iconCls: 'fa fa-lg fa-comment',	
+							region:'east',
+							floatable: false,
+							margins: '0 0 0 0',
+							collapsed: true,
+							collapsible: true,
+							animCollapse: false,
+							titleCollapse: true,
+							width: 300,
+							minWidth: 100,
+							maxWidth: 650,	
+							bodyStyle: 'background: white;',
+							layout: 'fit',
+							items: [
+								{
+									xtype: 'panel',
+									itemId: 'comments',
+									bodyStyle: 'padding: 10px;',
+									scrollable: true,
+									items: [						
+									],
+									dockedItems: [
+										{
+											xtype: 'form',
+											itemId: 'form',
+											dock: 'bottom',
+											layout: 'anchor',
+											items: [
+												{
+													xtype: 'hidden',
+													name: 'commentId'
+												},
+												{
+													xtype: 'hidden',
+													name: 'replyCommentId'
+												},
+												{
+													xtype: 'htmleditor',
+													name: 'comment',									
+													width: '100%',
+													fieldBodyCls: 'form-comp-htmleditor-border',
+													maxLength: 4000
+												}
+											],
+											dockedItems: [
+												{
+													xtype: 'toolbar',
+													dock: 'bottom',
+													layout: {
+														vertical: true,
+														type: 'hbox',
+														align: 'stretch'
+													},
+													items: [
+														{
+															xtype: 'fieldcontainer',
+															fieldLabel: 'Private',
+															defaultType: 'checkboxfield',
+															items: [
+																{
+																	inputValue: '1',
+																	id        : 'privateCheckboxId'
+																}
+															]
+														},
+														{
+															xtype: 'toolbar',
+															items: [
+																{
+																	text: 'Comment',
+																	iconCls: 'fa fa-lg fa-comment icon-button-color-save',
+																	handler: function(){													
+																	}
+																},
+																{
+																	xtype: 'tbfill'
+																},
+																{
+																	text: 'Cancel',
+																	itemId: 'cancel',											
+																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+																	handler: function(){																						
+																	}
+																}
+															]
+														}
+	
+
+													]
+												}
+											]
+										}
+									]
+								}				
+							],
+							listeners: {
+								afterrender: function () {
+								}
+							}
 						}
-					]
-				});				
+
+					]					
+				});
+
 				var actionPreviewNextRecord = function(next) {
 					if (next) {
 						Ext.getCmp('submissionGrid').getSelectionModel().selectNext();						
@@ -282,6 +400,7 @@
 									}
 								}, 
 								{
+									requiredPermissions: ['USER-SUBMISSIONS-CHANGEREQUEST', 'USER-SUBMISSIONS-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -292,6 +411,7 @@
 										"data-test": "newSubmissionBtn"
 									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',									
+									requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 									handler: function () {
 										actionNewSubmission();
 									}
@@ -303,6 +423,7 @@
 									disabled: true,
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									requiredPermissions: ['USER-SUBMISSIONS-UPDATE'],
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
@@ -323,6 +444,10 @@
 									scale: 'medium',
 									width: '180px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-default icon-vertical-correction-view',
+									requiredPermissions: ['USER-SUBMISSIONS-CHANGEREQUEST'],
+									beforePermissionsCheckSuccess: function () {
+										return false;
+									},
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];										
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
@@ -349,17 +474,20 @@
 												text: 'Preview',
 												itemId: 'tbPreview',
 												iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction icon-button-color-default',
+												requiredPermissions: ['USER-SUBMISSIONS-READ'],
 												handler: function () {
 													actionPreviewComponent();
 												}
 											},
 											{
+												requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 												xtype: 'menuseparator'
 											},
 											{
 												text: 'Copy',
 												itemId: 'tbCopy',
 												iconCls: 'fa fa-lg fa-clone icon-small-vertical-correction icon-button-color-default',
+												requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 												handler: function () {
 													var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 
@@ -377,6 +505,7 @@
 												}
 											},
 											{
+												requiredPermissions: ['USER-SUBMISSIONS-READ', 'USER-SUBMISSIONS-CREATE'],
 												xtype: 'menuseparator'
 											},											
 											{
@@ -487,6 +616,7 @@
 									disabled: true,
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['USER-SUBMISSIONS-DELETE'],
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -534,6 +664,7 @@
 									hidden: true,
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['USER-SUBMISSIONS-DELETE'],
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
 										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');

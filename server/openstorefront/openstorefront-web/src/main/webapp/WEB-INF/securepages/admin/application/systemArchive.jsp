@@ -184,24 +184,28 @@
 									text: 'Generate Archive',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction-add',
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-CREATE'],
 									handler: function () {
 										actionGenerate();
 									}									
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-CREATE']
 								},
 								{
 									text: 'Import Archive',
 									scale: 'medium',
 									width: '160px',
 									iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-correction-load-port',
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-CREATE'],
 									handler: function () {
 										actionImport();
 									}									
 								},								
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-READ']
 								},								
 								{
 									text: 'View Errors',
@@ -210,6 +214,7 @@
 									scale: 'medium',
 									width: '140px',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-READ'],
 									handler: function () {
 										var record = archiveGrid.getSelection()[0];
 										actionView(record);
@@ -222,6 +227,7 @@
 									scale: 'medium',
 									width: '130px',
 									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-correction-load-port',
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-READ'],
 									handler: function () {
 										var record = archiveGrid.getSelection()[0];
 										actionDownload(record);
@@ -236,6 +242,7 @@
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-ARCHIVE-DELETE'],
 									handler: function () {
 										var record = archiveGrid.getSelection()[0];
 										actionDelete(record);
@@ -601,6 +608,7 @@
 												text: 'Import',
 												iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 												formBind: true,
+												requiredPermissions: ['ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_CREATE'],
 												handler: function() {
 													var uploadForm = this.up('form');
 													//var data = uploadForm.getValues();

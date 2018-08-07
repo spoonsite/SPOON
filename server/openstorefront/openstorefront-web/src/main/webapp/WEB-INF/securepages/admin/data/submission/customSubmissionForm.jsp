@@ -170,6 +170,7 @@
 								}
 							},
 							{
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-CREATE', 'ADMIN-SUBMISSION-FORM-TEMPLATE-UPDATE'],
 								xtype: 'tbseparator'
 							},
 							{
@@ -177,6 +178,7 @@
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save',
 								width: '150px',
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-CREATE'],
 								handler: function(){
 									actionAddEdit();
 								}
@@ -188,6 +190,7 @@
 								width: '150px',
 								disabled: true,
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('formTemplateGrid').getSelectionModel().getSelection()[0];
 									actionAddEdit(record);
@@ -202,6 +205,7 @@
 								itemId: 'copy',
 								disabled: true,	
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-CREATE'],
 								handler: function(){
 									var record = Ext.getCmp('formTemplateGrid').getSelectionModel().getSelection()[0];
 									actionCopy(record);
@@ -213,12 +217,14 @@
 								itemId: 'togglestatus',
 								disabled: true,	
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('formTemplateGrid').getSelectionModel().getSelection()[0];
 									actionToggleStatus(record);
 								}
 							},
 							{
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-UPDATE', 'ADMIN-SUBMISSION-FORM-TEMPLATE-READ'],
 								xtype: 'tbseparator'
 							},
 							{
@@ -227,6 +233,7 @@
 								itemId: 'verify',
 								disabled: true,	
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('formTemplateGrid').getSelectionModel().getSelection()[0];
 									actionVerifyTemplate(record);
@@ -238,6 +245,7 @@
 								itemId: 'preview',
 								disabled: true,	
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-READ'],
 								handler: function(){
 									var record = Ext.getCmp('formTemplateGrid').getSelectionModel().getSelection()[0];
 									actionPreview(record);
@@ -251,6 +259,7 @@
 								iconCls: 'fa fa-2x fa-upload icon-button-color-default icon-vertical-correction',
 								itemId: 'import',								
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-CREATE'],
 								handler: function(){									
 									actionImport();
 								}
@@ -261,11 +270,13 @@
 								itemId: 'export',
 								disabled: true,
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-READ'],
 								handler: function(){									
 									actionExport();
 								}
 							},
 							{
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-DELETE'],
 								xtype: 'tbseparator'
 							},
 							{
@@ -274,6 +285,7 @@
 								itemId: 'delete',
 								disabled: true,
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-SUBMISSION-FORM-TEMPLATE-DELETE'],
 								handler: function(){
 									var record = Ext.getCmp('formTemplateGrid').getSelectionModel().getSelection()[0];
 									actionDelete(record);

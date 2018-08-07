@@ -17,19 +17,19 @@ package edu.usu.sdl.openstorefront.web.atmosphere;
 
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.model.NotificationMessage;
-import edu.usu.sdl.openstorefront.core.spi.NotificationEventListerner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.Broadcaster;
+import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
 
 /**
  *
  * @author dshurtleff
  */
 public class AtmosphereNotificationListerner
-		implements NotificationEventListerner
+		implements NotificationEventListener
 {
 
 	private static final Logger log = Logger.getLogger(AtmosphereNotificationListerner.class.getName());

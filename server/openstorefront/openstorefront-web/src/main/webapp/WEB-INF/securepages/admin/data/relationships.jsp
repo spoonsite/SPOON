@@ -362,6 +362,7 @@
 					store: targetStore,
 					flex: 1,
 					border: true,
+					requiredPermissions: ['ADMIN-ENTRY-RELATIONSHIP-MANAGEMENT'],
 					viewConfig: {
 						plugins: [
 							Ext.create('OSF.plugin.CellToCellDragDrop', {

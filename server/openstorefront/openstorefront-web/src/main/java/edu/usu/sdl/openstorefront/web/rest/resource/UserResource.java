@@ -65,7 +65,7 @@ public class UserResource
 
 	@GET
 	@APIDescription("Get a list of user for the built in security")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSecurityWrapper.class)
 	public Response getUsers(
@@ -88,7 +88,7 @@ public class UserResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_READ)
 	@APIDescription("Gets security roles that user is in (Not default group is not included).")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SecurityRole.class)
@@ -127,7 +127,7 @@ public class UserResource
 
 	@PUT
 	@APIDescription("Disable a user and prevents login")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_UPDATE)
 	@Path("/{username}/disable")
 	public Response disableUser(
 			@PathParam("username") String username
@@ -144,7 +144,7 @@ public class UserResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_UPDATE)
 	@APIDescription("Approves user")
 	@Path("/{username}/approve")
 	public Response approveRegistration(
@@ -164,7 +164,7 @@ public class UserResource
 
 	@PUT
 	@APIDescription("Unlocks a user")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_UPDATE)
 	@Path("/{username}/unlock")
 	public Response unlockUser(
 			@PathParam("username") String username
@@ -182,7 +182,7 @@ public class UserResource
 
 	@PUT
 	@APIDescription("Resets the failed login attempts")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_UPDATE)
 	@Path("/{username}/resetfailedlogins")
 	public Response resetfailedlogins(
 			@PathParam("username") String username
@@ -200,7 +200,6 @@ public class UserResource
 
 	@PUT
 	@APIDescription("Reset a user password (Admin Reset)")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{username}/resetpassword")
 	public Response resetUserPassword(
@@ -214,7 +213,7 @@ public class UserResource
 		if (userSecurity != null) {
 
 			if (SecurityUtil.getCurrentUserName().equals(username.toLowerCase())
-					|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT)) {
+					|| SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT_UPDATE)) {
 
 				service.getSecurityService().adminResetPassword(username.toLowerCase(), userCredential.getPassword().toCharArray());
 				return Response.ok().build();
@@ -268,7 +267,7 @@ public class UserResource
 
 	@DELETE
 	@APIDescription("Delete a user, user registration and profile.")
-	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_USER_MANAGEMENT_DELETE)
 	@Path("/{username}")
 	public Response deleteUser(
 			@PathParam("username") String username

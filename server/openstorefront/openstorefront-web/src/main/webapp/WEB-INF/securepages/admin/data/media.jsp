@@ -140,6 +140,7 @@
 									}								
 								},
 								{
+									requiredPermissions: ['ADMIN-MEDIA-DELETE'],
 									xtype: 'tbseparator'
 								},
 								{	text: 'Delete',
@@ -149,6 +150,7 @@
 									iconCls: 'fa fa-2x fa-trash icon-vertical-correction-edit icon-button-color-warning',
 									disabled: true,
 									tooltip: 'Delete media',
+									requiredPermissions: ['ADMIN-MEDIA-DELETE'],
 									handler: function () {
 										deleteRecord();
 								    }
@@ -452,6 +454,7 @@
 										text: 'Upload',
 										iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 										formBind: true,
+										requiredPermissions: ['ADMIN-MEDIA-UPLOAD'],
 										handler: function(){     
 											var progressMsg = Ext.MessageBox.show({
 												title: 'Media Upload',

@@ -89,7 +89,7 @@
 						iconCls: 'fa fa-envelope-o',
 						jsClass: 'OSF.component.NotificationPanel',
 						height: 400,
-						permissions: null,
+						permissions: ['DASHBOARD-WIDGET-NOTIFICATIONS'],
 						allowMultiples: false,
 						refresh: function(widget) {
 							widget.refreshData();
@@ -102,7 +102,7 @@
 						iconCls: 'fa fa-2x fa-gear',
 						jsClass: 'OSF.widget.SystemStats',						
 						height: 320,
-						permissions: "ADMIN-SYSTEM-MANAGEMENT",
+						permissions: ['DASHBOARD-WIDGET-SYSTEM-STATUS', 'ADMIN-SYSTEM-MANAGEMENT-STATUS'],
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -116,7 +116,7 @@
 						iconCls: 'fa fa-lg fa-bar-chart icon-small-vertical-correction',
 						jsClass: 'OSF.widget.UserStats',						
 						height: 320,
-						permissions: "ADMIN-USER-MANAGEMENT",
+						permissions: ['DASHBOARD-WIDGET-USER-STATS', 'ADMIN-USER-MANAGEMENT-READ'],
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -130,7 +130,7 @@
 						iconCls: 'fa fa-lg fa-bar-chart icon-small-vertical-correction',
 						jsClass: 'OSF.widget.EntryStats',						
 						height: 575,
-						permissions: "ADMIN-ENTRY-MANAGEMENT",
+						permissions: ['DASHBOARD-WIDGET-ENTRY-STATS', 'ADMIN-ENTRY-READ'],
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -144,7 +144,7 @@
 						iconCls: 'fa fa-lg fa-pie-chart icon-small-vertical-correction',
 						jsClass: 'OSF.widget.EvaluationStats',						
 						height: 575,
-						permissions: "EVALUATIONS",
+						permissions: ['DASHBOARD-WIDGET-EVALUATION-STATS', 'USER-EVALUATIONS-READ'],
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -158,7 +158,7 @@
 						iconCls: 'fa fa-2x fa-question',
 						jsClass: 'OSF.widget.Questions',						
 						height: 400,
-						permissions: null,
+						permissions: ['DASHBOARD-WIDGET-QUESTIONS'],
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -172,7 +172,7 @@
 						iconCls: 'fa fa-lg fa-commenting',
 						jsClass: 'OSF.widget.ApprovalRequests',						
 						height: 400,
-						permissions: "ADMIN-ENTRY-MANAGEMENT",
+						permissions: ['DASHBOARD-WIDGET-PENDING-REQUESTS', 'ADMIN-ENTRY-READ'],
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -186,7 +186,7 @@
 						iconCls: 'fa fa-lg fa-binoculars icon-small-vertical-correction',
 						jsClass: 'OSF.component.UserWatchPanel',						
 						height: 400,
-						permissions: null,
+						permissions: ['DASHBOARD-WIDGET-WATCHES'],
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -200,7 +200,7 @@
 						iconCls: 'fa fa-lg fa-list icon-small-vertical-correction',
 						jsClass: 'OSF.widget.Submissions',						
 						height: 400,
-						permissions: "USER-SUBMISSIONS",
+						permissions: ['DASHBOARD-WIDGET-SUBMISSION-STATUS', 'USER-SUBMISSIONS-READ'],
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -214,7 +214,7 @@
 						iconCls: 'fa fa-lg fa-search',
 						jsClass: 'OSF.widget.SavedSearch',						
 						height: 400,
-						permissions: null,
+						permissions: ['DASHBOARD-WIDGET-SAVED-SEARCH'],
 						adminOnly: false,
 						allowMultiples: true,
 						refresh: function(widget) {
@@ -237,7 +237,7 @@
 						iconCls: 'fa fa-lg fa-comment',
 						jsClass: 'OSF.widget.Feedback',						
 						height: 400,
-						permissions: "ADMIN-FEEDBACK",
+						permissions: ['DASHBOARD-WIDGET-OUTSTANDING-FEEDBACK', 'ADMIN-FEEDBACK-READ'],
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -251,7 +251,7 @@
 						iconCls: 'fa fa-lg fa-file-text-o',
 						jsClass: 'OSF.widget.Reports',						
 						height: 400,
-						permissions: "REPORTS",
+						permissions: ['DASHBOARD-WIDGET-REPORTS', 'REPORTS'],
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -265,7 +265,7 @@
 						iconCls: 'fa fa-2x fa-list-alt',
 						jsClass: 'OSF.widget.RecentUserData',						
 						height: 400,
-						permissions: "ADMIN-ENTRY-MANAGEMENT",						
+						permissions: ['DASHBOARD-WIDGET-USER-DATA', 'ADMIN-ENTRY-READ'],
 						adminOnly: true,
 						allowMultiples: false,
 						refresh: function(widget) {
@@ -294,7 +294,13 @@
 							}
 						}
 						if (widget.permissions) {
-							if (!CoreService.userservice.userHasPermisson(currentUser, widget.permissions)) {
+							var matchedPermissions = 0;
+							Ext.Array.forEach(widget.permissions, function (permission) {
+								if (CoreService.userservice.userHasPermisson(currentUser, permission)) {
+									matchedPermissions += 1;
+								}
+							});
+							if (matchedPermissions !== widget.permissions.length) {
 								keep = false;
 							}
 						}
@@ -510,15 +516,20 @@
 									config.widgetColor = widget.widgetColor;
 
 									var widgetPanel;
-									if (config.permissions) {
-										//if the user is no longer admin don't add widget
-										if (CoreService.userservice.userHasPermisson(currentUser, config.permissions)) {
-											widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
-										} 
-									} else {
-										widgetPanel = addWidgetToDashboard(config, noUpdateDash);				
-									}
-
+									//	Add panel regardless of permissions. If a user gets in this state... we still want them to be able
+									//		to remove the widget from the dashboard. NOTE: the user will not be able to use or view the widget
+									//		contents. If the user does not have the permissions they will see a message indicating they
+									//		do not have privileges.
+									widgetPanel = addWidgetToDashboard(config, noUpdateDash);				
+									
+									// if (config.permissions) {
+									// 	//if the user is no longer admin don't add widget
+									// 	if (CoreService.userservice.userHasPermisson(currentUser, config.permissions)) {
+									// 		widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
+									// 	} 
+									// } else {
+									// 	widgetPanel = addWidgetToDashboard(config, noUpdateDash);				
+									// }
 									//set other settings
 									if (widgetPanel) {
 										if (widget.widgetState) {
@@ -542,6 +553,18 @@
 						iconCls: widget.iconCls,					
 						layout: 'fit',
 						frame: true,						
+						requiredPermissions: widget.permissions,
+						permissionLogicalOperator: 'AND',
+						permissionCheckFailure: function () {
+							this.setHidden(false);
+							this.down('panel').setHidden(true);
+							this.setHtml('<div style="display: table; height: 100%; width: 100%;"><h2 style="display: table-cell; vertical-align: middle; text-align: center;">You have insufficient privileges to view this widget</h2></div>');
+							this.down('[type=refresh]').setHidden(true);
+							this.down('[type=prev]').setHidden(true);
+							this.down('[type=next]').setHidden(true);
+							this.down('[type=maximize]').setHidden(true);
+							this.down('[type=gear]').setHidden(true);
+						},
 						header: {
 							style: {
 								'background': widget.widgetColor
@@ -555,6 +578,7 @@
 						tools: [
 							{
 								type: 'refresh',
+								itemId: 'refresh-tool',
 								tooltip: 'Refresh Widget',							
 								callback: function(panel, tool, event) {
 									panel.widgetConfig.refresh(panel.getComponent('actualWidget'));
