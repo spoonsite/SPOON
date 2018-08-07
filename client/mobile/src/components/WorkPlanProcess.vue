@@ -28,7 +28,7 @@
                   color="primary"
                   @click="nextStep"
                   :loading="continueLoading"
-                  :disabled="continueLoading"><v-icon small>fa-arrow-circle-down</v-icon>&nbsp; Next</v-btn>
+                  :disabled="continueLoading"><v-icon class="mr-2" small>fa-arrow-circle-down</v-icon>Next</v-btn>
               </v-flex>
               <v-flex xs-6>
                 <v-btn
@@ -37,7 +37,7 @@
                   color="primary"
                   @click="prevStep"
                   :loading="prevLoading"
-                  :disabled="prevLoading"><v-icon small>fa-arrow-circle-up</v-icon>&nbsp; Back</v-btn>
+                  :disabled="prevLoading"><v-icon class="mr-2" small>fa-arrow-circle-up</v-icon>Back</v-btn>
               </v-flex>
             </v-layout>
           </v-stepper-content>
