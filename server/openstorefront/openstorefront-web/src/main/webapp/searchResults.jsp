@@ -35,7 +35,6 @@
 	<script type="text/javascript">
 		var SearchPage = {
 			viewDetails: function(componentId, resultId) {
-				SearchPage.commentPanel.loadComponentComments(componentId);
 				SearchPage.detailPanel.expand();
 				SearchPage.filterPanel.collapse();
 				
@@ -1464,18 +1463,6 @@
 			});
 			
 			SearchPage.detailContent = Ext.create('OSF.ux.IFrame', {				
-				region: 'center'
-			});
-
-			SearchPage.commentPanel = Ext.create('OSF.workplanProgress.CommentPanel', {
-				region: 'east',
-				collapsed: true,
-				titleCollapse: true,
-				collapsible: true,
-				animCollapse: false,
-				width: '50%',
-				style: 'background: #fff;',
-				margin: '10 0 0 0'
 			});
 			
 			SearchPage.detailPanel = Ext.create('Ext.panel.Panel', {
@@ -1490,10 +1477,9 @@
 				collapseMode: 'mini',
 				split: true,
 				collapsed: false,
-				layout: 'border',
+				layout: 'fit',
 				items: [
-					SearchPage.detailContent,
-					SearchPage.commentPanel
+					SearchPage.detailContent
 				]
 			});
 			//This corrects layout issue
