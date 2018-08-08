@@ -21,7 +21,6 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 	alias: 'widget.osf.wp.commentpanel',
 
 	config: {
-		// componentId: null,
 		recordId: null,
 		isPartialSubmission: null,
 		editComment: {
@@ -97,8 +96,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 							layout: 'hbox',
 							items: [
 								{
-									text: 'Post Comment',
-									width: '30%',
+									text: 'Post Comment',									
 									iconCls: 'fa fa-lg fa-comment icon-button-color-save',
 									itemId: 'postCommentId',
 									handler: function () {
@@ -222,7 +220,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 																			commentPanel.loadComponentComments(commentPanel.getRecordId());
 																			commentPanel.resetFormState();
 																		}
-																	})
+																	});
 																}
 															}
 														});
@@ -258,7 +256,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 					if (!isUpdatingComment) {
 						commentsContainerParent.setScrollY(commentsContainerParent.getHeight()*100);
 					}
-				}, 100)
+				}, 100);
 			}
 		});
 	},
