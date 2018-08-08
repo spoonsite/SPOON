@@ -597,7 +597,7 @@
 											id: 'lookupGrid-tools-action-reassign',
 											disabled: true,
 											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction',											
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY' && 'ADMIN-ROLE-MANAGEMENT-READ'],
 											handler: function() {
 												actionReassign();
 											}
