@@ -177,7 +177,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 								cls: (isOwner ? 'owner-submission-comment ' : ' ') + (res.length === index + 1 ? 'submission-new-comment' : ''),
 								html: 	'<div class="submission-comment ' + commentClass + '">' + 
 									'<div class="author-comment">' + commentObj.createUser + '</div>' +
-											'<div class="time-created-comment">' + commentObj.createDts + '</div>' +
+									'<div class="time-created-comment">' + (Ext.Date.format(new Date(commentObj.createDts), 'F j, Y, g:ia')) + '</div>' +
 											'<div class="block-comment">' + commentObj.comment + '</div>' +
 										'</div>',
 								listeners: isOwner ? {

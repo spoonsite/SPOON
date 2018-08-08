@@ -288,7 +288,6 @@
 					items: [
 						{
 							xtype: 'panel',
-							title: 'Main Content',
 							collapsible: false,
 							region: 'center',
 							margin: '0 0 0 0',
@@ -311,7 +310,7 @@
 											handler: function() {
 												this.up('window').hide();
 											}
-										},
+										}
 									]
 								}
 							]
@@ -333,52 +332,49 @@
 					]
 				});
 
+				var linkGridStore = Ext.create('Ext.data.Store', {
+					autoLoad: true,	
+					pageSize: 100,
+					remoteSort: true,
+					sorters: [
+						new Ext.util.Sorter({
+							property : 'linkName',
+							direction: 'ASC'
+						})
+					],
+					fields: [
+						{ name: 'currentStepName', mapping: function(data){									
+							return data.currentStep ? data.currentStep.name : 'N/A';
+						}},
+						{
+							name: 'updateDts',
+							type: 'date',
+							dateFormat: 'c'
+						}						
+					],
+					proxy: CoreUtil.pagingProxy({
+						url: 'api/v1/resource/workplans/worklinks',							
+						reader: {
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
+						}
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								assignFilter: Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() ? Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() : null,
+								showfinal: linkGrid.queryById('filter-showFinalStage').getValue() ? linkGrid.queryById('filter-showFinalStage').getValue() : false,
+								searchName: linkGrid.queryById('filter-searchName').getValue() ? linkGrid.queryById('filter-searchName').getValue(): null
+							};
+						}
+					}
+				});
 
 				var linkGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Work Plan Progress Management <i class="fa fa-lg fa-question-circle"  data-qtip="This tool gives the ability to review records in a work plan" ></i>',
 					id: 'linkGrid',
-					store: {
-						autoLoad: true,					
-						sorters: [
-							new Ext.util.Sorter({
-								property : 'linkName',
-								direction: 'ASC'
-							})
-						],
-						fields: [
-							{ name: 'currentStepName', mapping: function(data){									
-								return data.currentStep ? data.currentStep.name : 'N/A';
-							}},
-							{
-								name: 'updateDts',
-								type: 'date',
-								dateFormat: 'c'
-							}						
-						],
-						proxy: CoreUtil.pagingProxy({
-							url: 'api/v1/resource/workplans/worklinks',
-							extraParams: {
-								status: 'ALL'
-							},
-							reader: {
-								type: 'json'
-							}
-						}),
-						// proxy: {
-						// 	type: 'ajax',
-						// 	url: 'api/v1/resource/workplans/worklinks',						
-						// 	reader: {
-						// 	   type: 'json'
-						// 	}
-						// },
-						listeners: {
-						beforeLoad: function(store, operation, eOpts){
-							store.getProxy().extraParams = {
-								status: Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() ? Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() : 'ALL'
-							};
-						}
-					}
-					},
+					store: linkGridStore,
 					columnLines: true,					
 					viewConfig: {
 						enableTextSelection: true
@@ -457,21 +453,57 @@
 											],
 											data: [
 												{
-													code: 'A',
-													description: 'Assigned'
+													code: 'M',
+													description: 'Assigned To Me'
 												},
 												{
 													code: 'U',
 													description: 'Unassigned'
 												},
 												{
-													code: 'ALL',
+													code: null,
 													description: 'All'
 												}
 											]
 										}
 									}
-								})
+								}),
+								{
+									xtype: 'panel',
+									items: [
+										{																	
+											xtype: 'checkbox',
+											itemId: 'filter-showFinalStage',
+											name: 'showfinal',								
+											margin: '20 0 0 0',
+											width: 150,
+											requiredPermissions: ['WORKFLOW-LINK-READ-ALL'],
+											boxLabel: '<b>Show Final Stage</b>',
+											listeners: {
+												change: function(filter, newValue, oldValue, opts){													
+													actionRefreshComponentGrid(true);
+												}
+											}
+										}
+									]
+								},
+								{
+									xtype: 'textfield',
+									itemId: 'filter-searchName',
+									name: 'searchName',
+									requiredPermissions: ['WORKFLOW-LINK-READ-ALL'],
+									fieldLabel: 'Search By Name',
+									labelAlign: 'top',
+									labelSeparator: '',
+									listeners: {
+										change: {
+											fn: function(filter, newValue, oldValue, opts){
+												actionRefreshComponentGrid(true);
+											},
+											buffer: 1500
+										}
+									}
+								}
 							]
 						},
 						{
@@ -579,7 +611,13 @@
 						selectionchange: function(selectionModel, records, opts){
 							checkGridTools();
 						}
-					}
+					},
+					bbar: Ext.create('Ext.PagingToolbar', {
+						store: linkGridStore,
+						displayInfo: true,
+						displayMsg: 'Displaying Work Links {0} - {1} of {2}',
+						emptyMsg: "No Work Links to display"
+					})					
 				});
 
 				addComponentToMainViewPort(linkGrid);
@@ -615,27 +653,14 @@
 					}
 				};
 
-				var actionRefreshComponentGrid = function(resetPage){
-					// Ext.getCmp('linkGrid').getStore().load();
-					console.log(Ext.getCmp('componentGridFilter-AssignmentStatus'));
-
-
-					var searchPram = {
-						status: Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() ? Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() : 'ALL'
-					};
+				var actionRefreshComponentGrid = function(resetPage){					
 					if(resetPage)
-					{
-						console.log('refreshing', searchPram);
-						Ext.getCmp('linkGrid').getStore().loadPage(1,{
-							params: searchPram
-						});
+					{						
+						Ext.getCmp('linkGrid').getStore().loadPage(1);
 					}
 					else
 					{
-						Ext.getCmp('linkGrid').getStore().load({
-							params: searchPram
-						});
-
+						Ext.getCmp('linkGrid').getStore().load();
 					}
 				};
 								
