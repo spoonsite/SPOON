@@ -21,7 +21,9 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 	alias: 'widget.osf.wp.commentpanel',
 
 	config: {
-		componentId: null,
+		// componentId: null,
+		recordId: null,
+		isPartialSubmission: null,
 		editComment: {
 			commentId: null,
 			commentText: null
@@ -148,13 +150,13 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 			]
 		}
 	],
-	loadComponentComments: function (componentId, isUpdatingComment) {
+	loadComponentComments: function (recordId, isUpdatingComment) {
 	
 		var commentPanel = this;
-		commentPanel.setComponentId(componentId);
+		commentPanel.setRecordId(recordId);
 
 		Ext.Ajax.request({
-			url: 'api/v1/resource/components/' + commentPanel.getComponentId() + '/comments?submissionOnly=true',
+			url: 'api/v1/resource/' + (commentPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentPanel.getRecordId() + '/comments?submissionOnly=true',
 			method: 'GET',
 			success: function (res) {
 				
@@ -214,10 +216,10 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 															fn: function (btn) {
 																if (btn === 'yes') {
 																	Ext.Ajax.request({
-																		url: 'api/v1/resource/components/' + commentPanel.componentId + '/comments/' + commentObj.commentId,
+																		url: 'api/v1/resource/' + (commentPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentPanel.getRecordId() + '/comments/' + commentObj.commentId,
 																		method: 'DELETE',
 																		success: function () {
-																			commentPanel.loadComponentComments(commentPanel.getComponentId());
+																			commentPanel.loadComponentComments(commentPanel.getRecordId());
 																			commentPanel.resetFormState();
 																		}
 																	})
@@ -270,12 +272,14 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 		});
 
 		Ext.Ajax.request({
-			url: 'api/v1/resource/components/' + commentsPanel.getComponentId() + '/comments' + (commentId ? '/' + commentId : ''),
+			url: 'api/v1/resource/' + (commentsPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentsPanel.getRecordId() + '/comments' + (commentId ? '/' + commentId : ''),
 			method: commentId ? 'PUT' : 'POST',
 			jsonData: formValues,
 			success: function (res) {
+
+				var componentId = commentsPanel.getRecordId();
 				commentsPanel.resetFormState();
-				commentsPanel.loadComponentComments(commentsPanel.getComponentId(), commentId ? true : false);
+				commentsPanel.loadComponentComments(componentId, commentId ? true : false);
 			}
 		});
 	},
