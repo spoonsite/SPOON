@@ -34,14 +34,109 @@
 				var versionViewTemplate = new Ext.XTemplate();
 
 				var userAssignWin = Ext.create('Ext.window.Window', {
-					id: 'userAssignWin',
-					title: 'Assign entry to user:',
-					iconCls: 'fa fa-lg fa-exchange',
+					id: 'reassignWin',
+					title: 'Change Group/Assignee - ',
+					iconCls: 'fa fa-lg fa-user',
 					width: '50%',
 					height: 450,
 					y: 200,
 					modal: true,
-					layout: 'fit'
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'reassignForm',
+							bodyStyle: 'padding: 10px',
+							items: [
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'roleGroup',	
+									id: 'assignGroupId',								
+									allowBlank: false,
+									editable: false,
+									typeAhead: false,
+									margin: '0 0 5 0',
+									width: '100%',
+									height: 60,
+									fieldLabel: 'Group/Role <span class="field-required" />',
+									queryMode: 'local',
+									storeConfig: {
+										url: 'api/v1/resource/securityroles/lookup'
+									},
+									listeners: {
+										change: function(filter, newValue, oldValue, opts){
+											Ext.getCmp('assignUserId').getStore().load({
+												url: 'api/v1/resource/securityroles/'+ encodeURIComponent(newValue) +'/users',
+												callback: function(){
+													Ext.getCmp('assignUserId').setDisabled(false);
+												}
+											});
+										}
+									},
+								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'username',
+									id: 'assignUserId',								
+									allowBlank: true,
+									editable: false,
+									typeAhead: false,
+									margin: '0 0 5 0',
+									width: '100%',
+									height: 60,
+									fieldLabel: 'Assign User',
+									displayField: 'username',
+									valueField: 'username',
+									queryMode: 'local',
+									disabled: true,
+									store:{
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/securityroles'
+										}
+									}
+								})
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											formBind: true,
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
+											handler: function(){
+												var record = linkGrid.getSelection()[0];
+												var workPlanId = record.get('workPlanId');
+												var workPlanLinkId = record.get('workPlanLinkId');
+												var queryData = this.up('window').down('form').getValues();
+												var queryParams =  '?roleGroup=' + queryData.roleGroup + '&username=' + queryData.username;
+												Ext.Ajax.request({
+													url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assign' + queryParams,
+													method: 'PUT',
+													callback: function() {
+													},
+													success: function(response, opt) {
+														actionRefreshComponentGrid();
+													}												
+												});		
+												this.up('window').close();
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function(){
+												this.up('window').close();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
 				});
 
 				var assignToAdminCommentWin = Ext.create('Ext.window.Window', {
@@ -731,8 +826,9 @@
 				};
 				
 				var actionReassign = function(){
-					console.log('Reassign');	dd
-					Ext.getCmp('userAssignWin').show();
+					// console.log('Reassign');
+					userAssignWin.show();
+					
 				};
 
 			});
