@@ -20,8 +20,10 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanSubStatusType;
@@ -293,7 +295,7 @@ public class WorkplanResource
 			@QueryParam("roleGroup") String roleGroup
 	)
 	{
-		return handleAssign(workPlanId, workLinkId, username, roleGroup);
+		return handleAssign(workPlanId, workLinkId, username, roleGroup, null);
 	}
 
 	@PUT
@@ -307,7 +309,7 @@ public class WorkplanResource
 			@PathParam("workLinkId") String workLinkId
 	)
 	{
-		return handleAssign(workPlanId, workLinkId, SecurityUtil.getCurrentUserName(), null);
+		return handleAssign(workPlanId, workLinkId, SecurityUtil.getCurrentUserName(), null, null);
 	}
 
 	@PUT
@@ -321,29 +323,31 @@ public class WorkplanResource
 			@PathParam("workLinkId") String workLinkId
 	)
 	{
-		return handleAssign(workPlanId, workLinkId, null, null);
+		return handleAssign(workPlanId, workLinkId, null, null, null);
 	}
 
 	@PUT
 	@APIDescription("Assigns a workPlanLink to the admin group")
 	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_ASSIGN)
 	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(WorkPlanLinkView.class)
 	@Path("/{workPlanId}/worklinks/{workLinkId}/assignToAdmin")
 	public Response assignWorkplanLinkToAdmin(
 			@PathParam("workPlanId") String workPlanId,
-			@PathParam("workLinkId") String workLinkId
+			@PathParam("workLinkId") String workLinkId,
+			ComponentComment comment
 	)
 	{
 		WorkPlan workPlan = service.getWorkPlanService().getWorkPlan(workPlanId);
 		if (workPlan != null) {
 			String adminGroup = StringUtils.isNotBlank(workPlan.getAdminRole()) ? workPlan.getAdminRole() : SecurityRole.ADMIN_ROLE;
-			return handleAssign(workPlanId, workLinkId, null, adminGroup);
+			return handleAssign(workPlanId, workLinkId, null, adminGroup, comment);
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 
-	private Response handleAssign(String workPlanId, String workLinkId, String username, String roleGroup)
+	private Response handleAssign(String workPlanId, String workLinkId, String username, String roleGroup, ComponentComment comment)
 	{
 		WorkPlanLinkView view = null;
 
@@ -356,6 +360,19 @@ public class WorkplanResource
 			service.getWorkPlanService().assignWorkPlan(workPlanId, workLinkId, username, roleGroup);
 			workPlanLink = workPlanLinkExample.find();
 			view = WorkPlanLinkView.toView(workPlanLink);
+
+			if (comment != null) {
+				comment.setAdminComment(true);
+
+				if (workPlanLink.getComponentId() != null) {
+					comment.setComponentId(workPlanLink.getComponentId());
+					comment.save();
+				} else {
+					UserSubmissionComment userSubmissionComment = comment.toUserSubmissionComment();
+					userSubmissionComment.setUserSubmissionId(workPlanLink.getUserSubmissionId());
+					comment.save();
+				}
+			}
 		}
 
 		return sendSingleEntityResponse(view);

@@ -24,6 +24,8 @@
  * @author cyearsley
  */
 
+/* global CoreService, Ext */
+
 Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, function (mixin) {
 
 	var userPermissions = [];
