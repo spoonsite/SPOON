@@ -10,7 +10,7 @@
         <v-flex xs12 md6 offset-md3>
           <v-expansion-panel>
             <v-expansion-panel-content
-              v-for="entry in submissions"
+              v-for="entry in submissions.data"
               :key="entry.componentId"
               v-if="entry.hasOwnProperty('currentUserAssigned') && entry.currentUserAssigned === $store.state.currentUser.username">
               <div slot="header">{{entry.linkName}}</div>
@@ -45,7 +45,7 @@
         <v-flex xs12 md6 offset-md3>
           <v-expansion-panel>
             <v-expansion-panel-content
-              v-for="entry in submissions"
+              v-for="entry in submissions.data"
               :key="entry.componentId"
               v-if="!entry.hasOwnProperty('currentUserAssigned')">
               <div slot="header">{{entry.linkName}}</div>
