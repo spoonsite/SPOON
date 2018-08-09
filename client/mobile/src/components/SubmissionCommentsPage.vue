@@ -9,7 +9,7 @@
 
     <v-container pa-2>
       <v-layout justify-end>
-        <v-btn round class="primary" v-on:click="submitCommentDialog = true"><v-icon>fa-comments</v-icon>&nbsp; Add Comment</v-btn>
+        <v-btn round class="primary" v-on:click="submitCommentDialog = true"><v-icon class="mr-3">fa-comments</v-icon>Add Comment</v-btn>
       </v-layout>
     </v-container>
 
