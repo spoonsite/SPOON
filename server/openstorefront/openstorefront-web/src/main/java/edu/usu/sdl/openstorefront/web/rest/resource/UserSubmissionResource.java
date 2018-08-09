@@ -177,7 +177,7 @@ public class UserSubmissionResource
 
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		if (existing != null) {
-			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS);
+			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS_UPDATE);
 			if (response == null) {
 				userSubmission.setUserSubmissionId(submissionId);
 				response = handleSaveSubmission(userSubmission, false);
@@ -444,7 +444,7 @@ public class UserSubmissionResource
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 
-		if (SecurityUtil.isCurrentUserTheOwner(comment)) {
+		if (SecurityUtil.isCurrentUserTheOwner(commentExisting)) {
 			comment.setUserSubmissionId(userSubmissionId);
 			comment.setCommentId(commentId);
 			return saveComment(comment, false);

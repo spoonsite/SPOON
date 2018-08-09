@@ -27,6 +27,8 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanSubStatusType;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.WorkLinkWrapper;
 import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -36,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -60,6 +63,9 @@ public class WorkplanResource
 		extends BaseResource
 {
 
+	private static final String FILTER_ASSIGN_TO_ME = "M";
+	private static final String FILTER_UNASSIGN = "U";
+
 	@GET
 	@APIDescription("Gets a list of all Workplans.")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
@@ -80,12 +86,16 @@ public class WorkplanResource
 	@APIDescription("Gets a list of all Worklinks.")
 	@RequireSecurity(SecurityPermission.WORKFLOW_LINK_READ)
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(WorkPlanLinkView.class)
+	@DataType(WorkLinkWrapper.class)
 	@Path("/worklinks")
 	public Response workLinkLookupAll(
 			@QueryParam("showfinal") boolean showfinal,
 			@APIDescription("Shows links in steps the user may not have access to move steps. (For view only)")
-			@QueryParam("showallsteps") boolean showAllSteps
+			@QueryParam("showallsteps") boolean showAllSteps,
+			@BeanParam FilterQueryParams filterQueryParams,
+			@QueryParam("searchName") String searchName,
+			@APIDescription("M - Assign to Me; U - Unassigned")
+			@QueryParam("assignFilter") String assignFilter
 	)
 	{
 		//depends on the user
@@ -131,7 +141,31 @@ public class WorkplanResource
 			});
 		}
 
-		GenericEntity<List<WorkPlanLinkView>> entity = new GenericEntity<List<WorkPlanLinkView>>(WorkPlanLinkView.toView(workLinks))
+		if (FILTER_ASSIGN_TO_ME.equals(assignFilter)) {
+			workLinks.removeIf(link -> {
+				return !(SecurityUtil.getCurrentUserName().equals(link.getCurrentUserAssigned()));
+			});
+		} else if (FILTER_UNASSIGN.equals(assignFilter)) {
+			workLinks.removeIf(link -> {
+				return StringUtils.isNotBlank(link.getCurrentUserAssigned());
+			});
+		}
+
+		List<WorkPlanLinkView> views = WorkPlanLinkView.toView(workLinks);
+
+		if (StringUtils.isNotBlank(searchName)) {
+			views.removeIf(link -> {
+				return !link.getLinkName().toLowerCase().contains(searchName.toLowerCase());
+			});
+		}
+		WorkLinkWrapper workLinkWrapper = new WorkLinkWrapper();
+		workLinkWrapper.setTotalNumber(views.size());
+
+		views = filterQueryParams.filter(views);
+		workLinkWrapper.setData(views);
+		workLinkWrapper.setResults(views.size());
+
+		GenericEntity<WorkLinkWrapper> entity = new GenericEntity<WorkLinkWrapper>(workLinkWrapper)
 		{
 		};
 		return sendSingleEntityResponse(entity);

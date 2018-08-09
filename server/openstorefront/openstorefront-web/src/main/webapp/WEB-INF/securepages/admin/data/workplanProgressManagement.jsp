@@ -34,14 +34,109 @@
 				var versionViewTemplate = new Ext.XTemplate();
 
 				var userAssignWin = Ext.create('Ext.window.Window', {
-					id: 'userAssignWin',
-					title: 'Assign entry to user:',
-					iconCls: 'fa fa-lg fa-exchange',
+					id: 'reassignWin',
+					title: 'Change Group/Assignee - ',
+					iconCls: 'fa fa-lg fa-user',
 					width: '50%',
 					height: 450,
 					y: 200,
 					modal: true,
-					layout: 'fit'
+					layout: 'fit',
+					items: [
+						{
+							xtype: 'form',
+							itemId: 'reassignForm',
+							bodyStyle: 'padding: 10px',
+							items: [
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'roleGroup',	
+									id: 'assignGroupId',								
+									allowBlank: false,
+									editable: false,
+									typeAhead: false,
+									margin: '0 0 5 0',
+									width: '100%',
+									height: 60,
+									fieldLabel: 'Group/Role <span class="field-required" />',
+									queryMode: 'local',
+									storeConfig: {
+										url: 'api/v1/resource/securityroles/lookup'
+									},
+									listeners: {
+										change: function(filter, newValue, oldValue, opts){
+											Ext.getCmp('assignUserId').getStore().load({
+												url: 'api/v1/resource/securityroles/'+ encodeURIComponent(newValue) +'/users',
+												callback: function(){
+													Ext.getCmp('assignUserId').setDisabled(false);
+												}
+											});
+										}
+									},
+								}),
+								Ext.create('OSF.component.StandardComboBox', {
+									name: 'username',
+									id: 'assignUserId',								
+									allowBlank: true,
+									editable: false,
+									typeAhead: false,
+									margin: '0 0 5 0',
+									width: '100%',
+									height: 60,
+									fieldLabel: 'Assign User',
+									displayField: 'username',
+									valueField: 'username',
+									queryMode: 'local',
+									disabled: true,
+									store:{
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/securityroles'
+										}
+									}
+								})
+							],
+							dockedItems: [
+								{
+									xtype: 'toolbar',
+									dock: 'bottom',
+									items: [
+										{
+											text: 'Save',
+											formBind: true,
+											iconCls: 'fa fa-lg fa-save icon-button-color-save',
+											handler: function(){
+												var record = linkGrid.getSelection()[0];
+												var workPlanId = record.get('workPlanId');
+												var workPlanLinkId = record.get('workPlanLinkId');
+												var queryData = this.up('window').down('form').getValues();
+												var queryParams =  '?roleGroup=' + queryData.roleGroup + '&username=' + queryData.username;
+												Ext.Ajax.request({
+													url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assign' + queryParams,
+													method: 'PUT',
+													callback: function() {
+													},
+													success: function(response, opt) {
+														actionRefreshComponentGrid();
+													}												
+												});		
+												this.up('window').close();
+											}
+										},
+										{
+											xtype: 'tbfill'
+										},
+										{
+											text: 'Cancel',
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function(){
+												this.up('window').close();
+											}
+										}
+									]
+								}
+							]
+						}
+					]
 				});
 
 				var assignToAdminCommentWin = Ext.create('Ext.window.Window', {
@@ -193,7 +288,6 @@
 					items: [
 						{
 							xtype: 'panel',
-							title: 'Main Content',
 							collapsible: false,
 							region: 'center',
 							margin: '0 0 0 0',
@@ -216,7 +310,7 @@
 											handler: function() {
 												this.up('window').hide();
 											}
-										},
+										}
 									]
 								}
 							]
@@ -238,52 +332,49 @@
 					]
 				});
 
+				var linkGridStore = Ext.create('Ext.data.Store', {
+					autoLoad: true,	
+					pageSize: 100,
+					remoteSort: true,
+					sorters: [
+						new Ext.util.Sorter({
+							property : 'linkName',
+							direction: 'ASC'
+						})
+					],
+					fields: [
+						{ name: 'currentStepName', mapping: function(data){									
+							return data.currentStep ? data.currentStep.name : 'N/A';
+						}},
+						{
+							name: 'updateDts',
+							type: 'date',
+							dateFormat: 'c'
+						}						
+					],
+					proxy: CoreUtil.pagingProxy({
+						url: 'api/v1/resource/workplans/worklinks',							
+						reader: {
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber'
+						}
+					}),
+					listeners: {
+						beforeLoad: function(store, operation, eOpts){
+							store.getProxy().extraParams = {
+								assignFilter: Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() ? Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() : null,
+								showfinal: linkGrid.queryById('filter-showFinalStage').getValue() ? linkGrid.queryById('filter-showFinalStage').getValue() : false,
+								searchName: linkGrid.queryById('filter-searchName').getValue() ? linkGrid.queryById('filter-searchName').getValue(): null
+							};
+						}
+					}
+				});
 
 				var linkGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Work Plan Progress Management <i class="fa fa-lg fa-question-circle"  data-qtip="This tool gives the ability to review records in a work plan" ></i>',
 					id: 'linkGrid',
-					store: {
-						autoLoad: true,					
-						sorters: [
-							new Ext.util.Sorter({
-								property : 'linkName',
-								direction: 'ASC'
-							})
-						],
-						fields: [
-							{ name: 'currentStepName', mapping: function(data){									
-								return data.currentStep ? data.currentStep.name : 'N/A';
-							}},
-							{
-								name: 'updateDts',
-								type: 'date',
-								dateFormat: 'c'
-							}						
-						],
-						proxy: CoreUtil.pagingProxy({
-							url: 'api/v1/resource/workplans/worklinks',
-							extraParams: {
-								status: 'ALL'
-							},
-							reader: {
-								type: 'json'
-							}
-						}),
-						// proxy: {
-						// 	type: 'ajax',
-						// 	url: 'api/v1/resource/workplans/worklinks',						
-						// 	reader: {
-						// 	   type: 'json'
-						// 	}
-						// },
-						listeners: {
-						beforeLoad: function(store, operation, eOpts){
-							store.getProxy().extraParams = {
-								status: Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() ? Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() : 'ALL'
-							};
-						}
-					}
-					},
+					store: linkGridStore,
 					columnLines: true,					
 					viewConfig: {
 						enableTextSelection: true
@@ -362,21 +453,57 @@
 											],
 											data: [
 												{
-													code: 'A',
-													description: 'Assigned'
+													code: 'M',
+													description: 'Assigned To Me'
 												},
 												{
 													code: 'U',
 													description: 'Unassigned'
 												},
 												{
-													code: 'ALL',
+													code: null,
 													description: 'All'
 												}
 											]
 										}
 									}
-								})
+								}),
+								{
+									xtype: 'panel',
+									items: [
+										{																	
+											xtype: 'checkbox',
+											itemId: 'filter-showFinalStage',
+											name: 'showfinal',								
+											margin: '20 0 0 0',
+											width: 150,
+											requiredPermissions: ['WORKFLOW-LINK-READ-ALL'],
+											boxLabel: '<b>Show Final Stage</b>',
+											listeners: {
+												change: function(filter, newValue, oldValue, opts){													
+													actionRefreshComponentGrid(true);
+												}
+											}
+										}
+									]
+								},
+								{
+									xtype: 'textfield',
+									itemId: 'filter-searchName',
+									name: 'searchName',
+									requiredPermissions: ['WORKFLOW-LINK-READ-ALL'],
+									fieldLabel: 'Search By Name',
+									labelAlign: 'top',
+									labelSeparator: '',
+									listeners: {
+										change: {
+											fn: function(filter, newValue, oldValue, opts){
+												actionRefreshComponentGrid(true);
+											},
+											buffer: 1500
+										}
+									}
+								}
 							]
 						},
 						{
@@ -470,7 +597,8 @@
 											id: 'lookupGrid-tools-action-reassign',
 											disabled: true,
 											iconCls: 'fa fa-lg fa-exchange icon-small-vertical-correction',											
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY', 'ADMIN-ROLE-MANAGEMENT-READ'],
+											permissionLogicalOperator: 'AND',
 											handler: function() {
 												actionReassign();
 											}
@@ -484,7 +612,13 @@
 						selectionchange: function(selectionModel, records, opts){
 							checkGridTools();
 						}
-					}
+					},
+					bbar: Ext.create('Ext.PagingToolbar', {
+						store: linkGridStore,
+						displayInfo: true,
+						displayMsg: 'Displaying Work Links {0} - {1} of {2}',
+						emptyMsg: "No Work Links to display"
+					})					
 				});
 
 				addComponentToMainViewPort(linkGrid);
@@ -520,27 +654,14 @@
 					}
 				};
 
-				var actionRefreshComponentGrid = function(resetPage){
-					// Ext.getCmp('linkGrid').getStore().load();
-					console.log(Ext.getCmp('componentGridFilter-AssignmentStatus'));
-
-
-					var searchPram = {
-						status: Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() ? Ext.getCmp('componentGridFilter-AssignmentStatus').getValue() : 'ALL'
-					};
+				var actionRefreshComponentGrid = function(resetPage){					
 					if(resetPage)
-					{
-						console.log('refreshing', searchPram);
-						Ext.getCmp('linkGrid').getStore().loadPage(1,{
-							params: searchPram
-						});
+					{						
+						Ext.getCmp('linkGrid').getStore().loadPage(1);
 					}
 					else
 					{
-						Ext.getCmp('linkGrid').getStore().load({
-							params: searchPram
-						});
-
+						Ext.getCmp('linkGrid').getStore().load();
 					}
 				};
 								
@@ -550,6 +671,7 @@
 
 					componentViewWin.show();
 					var comp_id = Ext.getCmp('linkGrid').getSelection()[0].data.componentId;
+					componentViewWin.down('[itemId=commentPanel]').loadComponentComments(comp_id);
 					// console.log(comp_id);
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
 				};
@@ -730,8 +852,9 @@
 				};
 				
 				var actionReassign = function(){
-					console.log('Reassign');	dd
-					Ext.getCmp('userAssignWin').show();
+					// console.log('Reassign');
+					userAssignWin.show();
+					
 				};
 
 			});

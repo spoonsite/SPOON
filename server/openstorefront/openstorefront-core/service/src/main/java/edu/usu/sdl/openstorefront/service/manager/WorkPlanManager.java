@@ -100,6 +100,8 @@ public class WorkPlanManager
 		addJobModel.setRepeatForever(true);
 		addJobModel.setMinutes(JOB_INTERVAL_MINUTES);
 		JobManager.addJob(addJobModel);
+
+		started.set(true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -253,6 +255,7 @@ public class WorkPlanManager
 		}
 
 		JobManager.removeJob(JOB_NAME, JobManager.JOB_GROUP_SYSTEM);
+		started.set(false);
 	}
 
 	@Override

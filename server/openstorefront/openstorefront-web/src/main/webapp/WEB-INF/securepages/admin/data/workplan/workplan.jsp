@@ -85,9 +85,9 @@
 							dataIndex: 'componentTypes',
 							flex: 10,
 							renderer: function (value) {
-								return value.map(function (item) {
+								return value ? value.map(function (item) {
 									return item.componentType;
-								}).join(', ');
+								}).join(', ') : '';
 							}
 						},
 						{ text: 'Active', dataIndex: 'activeStatus', flex: 1 },

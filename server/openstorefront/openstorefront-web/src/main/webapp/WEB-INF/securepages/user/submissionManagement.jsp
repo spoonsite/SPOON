@@ -36,6 +36,7 @@
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
 			Ext.require('OSF.customSubmission.SubmissionFormFullControl');			
+			Ext.require('OSF.workplanProgress.CommentPanel');
 
 			Ext.onReady(function () {
 				
@@ -101,12 +102,23 @@
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
 				});							
+				
+				var entryCommentsPanel = Ext.create('OSF.workplanProgress.CommentPanel', {
+					region: 'east',
+					width: '30%',
+					animCollapse: false,
+					collapsible: true,
+					collapseDirection: 'left',
+					titleCollapse: true,
+					style: 'background: #ffffff;',
+					itemId: 'entryCommentsPanel'
+				});
 		
 				var previewComponentWin = Ext.create('Ext.window.Window', {
 					id: 'previewComponentWin',
-					title: 'Entry Details',
-					iconCls: 'fa fa-lg fa-exchange',
+					title: 'Entry Details',					
 					maximizable: true,
+					modal: true,
 					width: '75%',
 					height: '75%',
 					defaults: {
@@ -116,6 +128,7 @@
 					},
 					layout: 'border',
 					items: [
+						entryCommentsPanel,
 						{
 							xtype: 'panel',
 							title: 'Preview',
@@ -127,153 +140,49 @@
 							title: 'Entry Info',
 							iconCls: 'fa fa-lg fa-eye',
 							layout: 'fit',
+							itemId: 'previewPanel',
 							items: [
-								previewContents
-							],
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Previous',
-											id: 'previewWinTools-previousBtn',
-											iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
-											handler: function() {
-												actionPreviewNextRecord(false);
-											}									
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Close',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function() {
-												this.up('window').hide();
-											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Next',
-											id: 'previewWinTools-nextBtn',
-											iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-											iconAlign: 'right',
-											handler: function() {
-												actionPreviewNextRecord(true);
-											}									
-										}
-									]
-								}
+								previewContents,
 							]
-						},
-						{
-							xtype: 'panel',
-							id: 'submissionComments',
-							title: 'Submission Comments',
-							iconCls: 'fa fa-lg fa-comment',	
-							region:'east',
-							floatable: false,
-							margins: '0 0 0 0',
-							collapsed: true,
-							collapsible: true,
-							animCollapse: false,
-							titleCollapse: true,
-							width: 300,
-							minWidth: 100,
-							maxWidth: 650,	
-							bodyStyle: 'background: white;',
-							layout: 'fit',
-							items: [
-								{
-									xtype: 'panel',
-									itemId: 'comments',
-									bodyStyle: 'padding: 10px;',
-									scrollable: true,
-									items: [						
-									],
-									dockedItems: [
-										{
-											xtype: 'form',
-											itemId: 'form',
-											dock: 'bottom',
-											layout: 'anchor',
-											items: [
-												{
-													xtype: 'hidden',
-													name: 'commentId'
-												},
-												{
-													xtype: 'hidden',
-													name: 'replyCommentId'
-												},
-												{
-													xtype: 'htmleditor',
-													name: 'comment',									
-													width: '100%',
-													fieldBodyCls: 'form-comp-htmleditor-border',
-													maxLength: 4000
-												}
-											],
-											dockedItems: [
-												{
-													xtype: 'toolbar',
-													dock: 'bottom',
-													layout: {
-														vertical: true,
-														type: 'hbox',
-														align: 'stretch'
-													},
-													items: [
-														{
-															xtype: 'fieldcontainer',
-															fieldLabel: 'Private',
-															defaultType: 'checkboxfield',
-															items: [
-																{
-																	inputValue: '1',
-																	id        : 'privateCheckboxId'
-																}
-															]
-														},
-														{
-															xtype: 'toolbar',
-															items: [
-																{
-																	text: 'Comment',
-																	iconCls: 'fa fa-lg fa-comment icon-button-color-save',
-																	handler: function(){													
-																	}
-																},
-																{
-																	xtype: 'tbfill'
-																},
-																{
-																	text: 'Cancel',
-																	itemId: 'cancel',											
-																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-																	handler: function(){																						
-																	}
-																}
-															]
-														}
-	
-
-													]
-												}
-											]
-										}
-									]
-								}				
-							],
-							listeners: {
-								afterrender: function () {
-								}
-							}
+//							dockedItems: [
+//								{
+//									xtype: 'toolbar',
+//									dock: 'bottom',
+//									items: [
+//										{
+//											text: 'Previous',
+//											id: 'previewWinTools-previousBtn',
+//											iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
+//											handler: function() {
+//												actionPreviewNextRecord(false);
+//											}									
+//										},
+//										{
+//											xtype: 'tbfill'
+//										},
+//										{
+//											text: 'Close',
+//											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+//											handler: function() {
+//												this.up('window').hide();
+//											}
+//										},
+//										{
+//											xtype: 'tbfill'
+//										},
+//										{
+//											text: 'Next',
+//											id: 'previewWinTools-nextBtn',
+//											iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+//											iconAlign: 'right',
+//											handler: function() {
+//												actionPreviewNextRecord(true);
+//											}									
+//										}
+//									]
+//								}
+//							]
 						}
-
 					]					
 				});
 
@@ -283,7 +192,8 @@
 					} else {
 						Ext.getCmp('submissionGrid').getSelectionModel().selectPrevious();						
 					}
-					actionPreviewComponent();					
+					var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];							
+					actionPreviewComponent(selectedRecord);					
 				};				
 				var previewCheckButtons = function() {	
 					if (Ext.getCmp('submissionGrid').getSelectionModel().hasPrevious()) {
@@ -331,7 +241,22 @@
 										return data.submittedDts;
 									}
 								}
-							}							
+							},
+							{
+								name: 'fullname', 
+								mapping: function(data) {
+									var fullName = '';
+								
+									if (data.submissionOriginalComponentId) {
+										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + ' (Incomplete Change Request)';
+									} else if (data.userSubmissionId) {
+										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + ' (Incomplete Submission)';
+									} else {
+										fullName = data.name;
+									}
+									return fullName;
+								}
+							}
 						],
 						proxy: {
 							type: 'ajax',
@@ -339,19 +264,7 @@
 						}
 					},
 					columns: [
-						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200, 
-							renderer: function(value, metaData, record) {
-								var fullName = '';
-								
-								if (record.get('submissionOriginalComponentId')) {
-									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Change Request)';
-								} else if (record.get('userSubmissionId')) {
-									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Submission)';
-								} else {
-									fullName = value;
-								}
-								return fullName;
-							}
+						{ text: 'Name', dataIndex: 'fullname', flex: 1, minWidth: 200
 						},
 						{ text: 'Description', dataIndex: 'description', flex: 2, minWidth: 250,
 						 renderer: function(value){
@@ -464,6 +377,17 @@
 									xtype: 'tbseparator'
 								},
 								{
+									text: 'Comments',
+									iconCls: 'fa fa-2x fa-commenting-o icon-vertical-correction-view icon-button-color-edit',
+									scale: 'medium',
+									itemId: 'commentsButton',
+									disabled: true,
+									handler: function () {
+										var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
+										actionPreviewComponent(selectedRecord, true);
+									}
+								},
+								{
 									text: 'Options',
 									itemId: 'options',
 									scale: 'medium',	
@@ -476,7 +400,8 @@
 												iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction icon-button-color-default',
 												requiredPermissions: ['USER-SUBMISSIONS-READ'],
 												handler: function () {
-													actionPreviewComponent();
+													var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
+													actionPreviewComponent(selectedRecord, false);
 												}
 											},
 											{
@@ -687,7 +612,7 @@
 								
 								tools.getComponent('tbEdit').setDisabled(true);
 								tools.getComponent('options').setDisabled(false);
-
+								tools.getComponent('commentsButton').setDisabled(false);
 								
 								//hiddens
 								tools.getComponent('tbSubmitChange').setHidden(true);
@@ -732,6 +657,7 @@
 							} else {
 								tools.getComponent('tbEdit').setDisabled(true);
 								tools.getComponent('options').setDisabled(true);							
+								tools.getComponent('commentsButton').setDisabled(true);
 								
 								//hiddens
 								tools.getComponent('tbSubmitChange').setHidden(true);
@@ -883,11 +809,42 @@
 					Ext.getCmp('submissionGrid').getStore().load();
 				};
 				
-				var actionPreviewComponent = function(){
+				var actionPreviewComponent = function(record, isViewingComments) {
+
+					previewComponentWin.setTitle(record.get('fullname'));
+
+					var isPartialSubmission = record.get('userSubmissionId') ? true : false;
+			
+					var id = record.get('componentId');
+					if (record.get('userSubmissionId')) {
+						id = record.get('userSubmissionId');
+					} else if (record.get('pendingChangeComponentId')) {
+						id = record.get('pendingChangeComponentId');
+					}
+			
 					previewComponentWin.show();
-					var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-					previewContents.load('view.jsp?id=' + componentId +'&fullPage=true&embedded=true');
-					previewCheckButtons();					
+					if (!isPartialSubmission) {
+						previewComponentWin.getComponent('previewPanel').show();
+						entryCommentsPanel.setWidth('30%');
+						entryCommentsPanel.setIsPartialSubmission(false);
+
+						entryCommentsPanel.loadComponentComments(id);
+						if (isViewingComments) {
+							entryCommentsPanel.expand();
+						}
+						else {
+							entryCommentsPanel.collapse();
+						}
+						previewContents.load('view.jsp?id=' + id +'&fullPage=true&embedded=true');
+					}
+					else {
+						previewComponentWin.getComponent('previewPanel').hide();
+						entryCommentsPanel.setWidth('100%');
+
+						entryCommentsPanel.setIsPartialSubmission(true);
+						entryCommentsPanel.loadComponentComments(id);
+					}
+					//previewCheckButtons();					
 				};
 				
 				var currentUser;
