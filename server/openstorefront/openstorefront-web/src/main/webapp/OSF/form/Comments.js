@@ -32,7 +32,7 @@ Ext.define('OSF.form.Comments', {
 			var update = '';
 			if(data.commentId){
 				update = '/' + data.commentId;
-				method = 'PUT'
+				method = 'PUT';
 			}
 
 			CoreUtil.submitForm({
@@ -49,7 +49,7 @@ Ext.define('OSF.form.Comments', {
 						title: 'Validation Error. The Server could not process the request.',
 						html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
 						width: 500,
-						autoCloseDelay: 10000,
+						autoCloseDelay: 10000
 					});
 				}
 			});		
@@ -173,12 +173,12 @@ Ext.define('OSF.form.Comments', {
 							fieldLabel: 'Comment Type <span class="field-required" />',
 							storeConfig: {
 								url: 'api/v1/resource/lookuptypes/ComponentCommentType'
-							},
+							}
 						}),						
 						{
 							xtype: 'hidden',
 							name: 'commentId'
-						},
+						}
 					]
 				},						
 				{

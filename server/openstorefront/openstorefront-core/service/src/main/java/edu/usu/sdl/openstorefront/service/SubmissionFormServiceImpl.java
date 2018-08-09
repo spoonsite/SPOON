@@ -587,7 +587,7 @@ public class SubmissionFormServiceImpl
 
 			UserSubmissionComment commentExample = new UserSubmissionComment();
 			commentExample.setUserSubmissionId(userSubmissionId);
-			persistenceService.deleteByExample(existing);
+			persistenceService.deleteByExample(commentExample);
 
 			getWorkPlanService().removeWorkPlanLinkForSubmission(userSubmissionId);
 

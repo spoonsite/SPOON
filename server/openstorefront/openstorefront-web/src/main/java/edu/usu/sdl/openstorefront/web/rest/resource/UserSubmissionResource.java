@@ -444,7 +444,7 @@ public class UserSubmissionResource
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 
-		if (SecurityUtil.isCurrentUserTheOwner(comment)) {
+		if (SecurityUtil.isCurrentUserTheOwner(commentExisting)) {
 			comment.setUserSubmissionId(userSubmissionId);
 			comment.setCommentId(commentId);
 			return saveComment(comment, false);
