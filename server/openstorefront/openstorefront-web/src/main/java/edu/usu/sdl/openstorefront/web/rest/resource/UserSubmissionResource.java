@@ -508,7 +508,7 @@ public class UserSubmissionResource
 	}
 
 	@GET
-	@APIDescription("Get the worklink for a component")
+	@APIDescription("Get the worklink for a user submission")
 	@RequireSecurity(SecurityPermission.USER_WORKPLAN_READ)
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(WorkPlanLinkView.class)
