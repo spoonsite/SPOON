@@ -270,30 +270,43 @@
 								},
 								{
 									xtype: 'container',
-									itemId: 'workplanStatusContainer',
-									id: 'workplan-progress-management-worklink-status',
+									itemId: 'stepsLegendContainer',
+									id: 'workplan-progress-management-worklink-status-legend',
+									hidden: true,
+									width: 120,
+									padding: '0 0 0 15',
+									style: 'border-right: 1px solid #ccc',
 									layout: {
-										type: 'hbox',
+										type: 'vbox',
 										pack: 'center'
+									},
+									defaults: {
+										margin: '0 0 10 0'
 									},
 									items: [
 										{
 											xtype: 'container',
-											html: '<div style="width: 100%;">step 1</div>'
+											html: '<div style="width: 100%;" data-qtip="The current step of the workplan"><div class="wp-step-lengend current-step"></div>&nbsp;<strong>Current Step</strong></div>'
 										},
 										{
 											xtype: 'container',
-											html: '<div style="width: 100%;">step 2</div>'
-										},
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;">step 3</div>'
-										},
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;">step 4</div>'
+											html: '<div style="width: 100%;" data-qtip="This step has been completed or needs to be completed"><div class="wp-step-lengend wp-step"></div>&nbsp;<strong>Step</strong></div>'
 										}
 									]
+								},
+								{
+									// the container will be populated when an item is selected
+									xtype: 'container',
+									itemId: 'workplanStatusContainer',
+									id: 'workplan-progress-management-worklink-status',
+									layout: {
+										type: 'hbox',
+										pack: 'center',
+										scrollable: 'x',
+										height: '100%',
+										padding: '0 30 20 20',
+										cls: 'step-container',
+									}
 								},
 							]
 						},
@@ -404,13 +417,22 @@
 							checkGridTools();
 							var record = linkGrid.getSelection()[0];
 							var steps = record.get('steps');
-							var currentStep = record.get('currentStop');
+							var currentStep = record.get('currentStep');
 							var statusCmp = Ext.getCmp('workplan-progress-management-worklink-status');
+							var statusLegendCmp = Ext.getCmp('workplan-progress-management-worklink-status-legend');
+							statusLegendCmp.setVisible(true);
 							statusCmp.removeAll();
 							Ext.Array.forEach(steps, function (el, index) {
 								statusCmp.add({
 									xtype: 'container',
-									html: '<div style="width: 100%; margin-right: 1em;">' + el.name + '</div>'
+									html:	'<div class="step-view-container ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + 
+												'<span class="wp-step-label ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + el.name + '</span>' +
+												'<div data-qtip="' + el.description + '"' + 
+												'class="step-view ' + 
+												(el.workPlanStepId === currentStep.workPlanStepId ? ' current-step ' : ' wp-step ') +
+												(index === steps.length - 1 ? ' last-step ' : ' ') +
+												'"></div>' +
+											'</div>'
 								});
 							});
 						}
