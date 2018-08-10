@@ -116,9 +116,9 @@
 		
 				var previewComponentWin = Ext.create('Ext.window.Window', {
 					id: 'previewComponentWin',
-					title: 'Entry Details',
-					iconCls: 'fa fa-lg fa-exchange',
+					title: 'Entry Details',					
 					maximizable: true,
+					modal: true,
 					width: '75%',
 					height: '75%',
 					defaults: {
@@ -143,45 +143,45 @@
 							itemId: 'previewPanel',
 							items: [
 								previewContents,
-							],
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Previous',
-											id: 'previewWinTools-previousBtn',
-											iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
-											handler: function() {
-												actionPreviewNextRecord(false);
-											}									
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Close',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function() {
-												this.up('window').hide();
-											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Next',
-											id: 'previewWinTools-nextBtn',
-											iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-											iconAlign: 'right',
-											handler: function() {
-												actionPreviewNextRecord(true);
-											}									
-										}
-									]
-								}
 							]
+//							dockedItems: [
+//								{
+//									xtype: 'toolbar',
+//									dock: 'bottom',
+//									items: [
+//										{
+//											text: 'Previous',
+//											id: 'previewWinTools-previousBtn',
+//											iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
+//											handler: function() {
+//												actionPreviewNextRecord(false);
+//											}									
+//										},
+//										{
+//											xtype: 'tbfill'
+//										},
+//										{
+//											text: 'Close',
+//											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+//											handler: function() {
+//												this.up('window').hide();
+//											}
+//										},
+//										{
+//											xtype: 'tbfill'
+//										},
+//										{
+//											text: 'Next',
+//											id: 'previewWinTools-nextBtn',
+//											iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+//											iconAlign: 'right',
+//											handler: function() {
+//												actionPreviewNextRecord(true);
+//											}									
+//										}
+//									]
+//								}
+//							]
 						}
 					]					
 				});
@@ -192,7 +192,8 @@
 					} else {
 						Ext.getCmp('submissionGrid').getSelectionModel().selectPrevious();						
 					}
-					actionPreviewComponent();					
+					var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];							
+					actionPreviewComponent(selectedRecord);					
 				};				
 				var previewCheckButtons = function() {	
 					if (Ext.getCmp('submissionGrid').getSelectionModel().hasPrevious()) {
@@ -240,7 +241,22 @@
 										return data.submittedDts;
 									}
 								}
-							}							
+							},
+							{
+								name: 'fullname', 
+								mapping: function(data) {
+									var fullName = '';
+								
+									if (data.submissionOriginalComponentId) {
+										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + ' (Incomplete Change Request)';
+									} else if (data.userSubmissionId) {
+										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + ' (Incomplete Submission)';
+									} else {
+										fullName = data.name;
+									}
+									return fullName;
+								}
+							}
 						],
 						proxy: {
 							type: 'ajax',
@@ -248,19 +264,7 @@
 						}
 					},
 					columns: [
-						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200, 
-							renderer: function(value, metaData, record) {
-								var fullName = '';
-								
-								if (record.get('submissionOriginalComponentId')) {
-									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Change Request)';
-								} else if (record.get('userSubmissionId')) {
-									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Submission)';
-								} else {
-									fullName = value;
-								}
-								return fullName;
-							}
+						{ text: 'Name', dataIndex: 'fullname', flex: 1, minWidth: 200
 						},
 						{ text: 'Description', dataIndex: 'description', flex: 2, minWidth: 250,
 						 renderer: function(value){
@@ -379,10 +383,8 @@
 									itemId: 'commentsButton',
 									disabled: true,
 									handler: function () {
-										var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].getData();
-										var userSubmissionId = selectedRecord.userSubmissionId;
-
-										actionPreviewComponent(userSubmissionId ? true : false, true, userSubmissionId ? userSubmissionId : selectedRecord.componentId);
+										var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
+										actionPreviewComponent(selectedRecord, true);
 									}
 								},
 								{
@@ -398,9 +400,8 @@
 												iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction icon-button-color-default',
 												requiredPermissions: ['USER-SUBMISSIONS-READ'],
 												handler: function () {
-													var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].getData();
-
-													actionPreviewComponent(false, false, selectedRecord.componentId);
+													var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
+													actionPreviewComponent(selectedRecord, false);
 												}
 											},
 											{
@@ -808,8 +809,19 @@
 					Ext.getCmp('submissionGrid').getStore().load();
 				};
 				
-				var actionPreviewComponent = function(isPartialSubmission, isViewingComments, id){
+				var actionPreviewComponent = function(record, isViewingComments) {
 
+					previewComponentWin.setTitle(record.get('fullname'));
+
+					var isPartialSubmission = record.get('userSubmissionId') ? true : false;
+			
+					var id = record.get('componentId');
+					if (record.get('userSubmissionId')) {
+						id = record.get('userSubmissionId');
+					} else if (record.get('pendingChangeComponentId')) {
+						id = record.get('pendingChangeComponentId');
+					}
+			
 					previewComponentWin.show();
 					if (!isPartialSubmission) {
 						previewComponentWin.getComponent('previewPanel').show();
@@ -823,8 +835,7 @@
 						else {
 							entryCommentsPanel.collapse();
 						}
-						var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-						previewContents.load('view.jsp?id=' + componentId +'&fullPage=true&embedded=true');
+						previewContents.load('view.jsp?id=' + id +'&fullPage=true&embedded=true');
 					}
 					else {
 						previewComponentWin.getComponent('previewPanel').hide();
@@ -833,7 +844,7 @@
 						entryCommentsPanel.setIsPartialSubmission(true);
 						entryCommentsPanel.loadComponentComments(id);
 					}
-					previewCheckButtons();					
+					//previewCheckButtons();					
 				};
 				
 				var currentUser;

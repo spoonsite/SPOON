@@ -83,6 +83,7 @@ public class ReportType
 		((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.RUN_ACTION_REPORT);
 		((ReportType) codeMap.get(ENTRY_LISTING)).setRequiredPermission(SecurityPermission.RUN_ENTRY_LISTING_REPORT);
 		((ReportType) codeMap.get(ENTRY_STATUS)).setRequiredPermission(SecurityPermission.RUN_ENTRY_STATUS_REPORT);
+		((ReportType) codeMap.get(WORKPLAN_STATUS)).setRequiredPermission(SecurityPermission.RUN_WORKPLAN_STATUS);
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);

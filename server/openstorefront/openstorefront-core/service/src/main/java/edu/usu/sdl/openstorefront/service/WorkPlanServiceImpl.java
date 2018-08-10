@@ -839,9 +839,8 @@ public class WorkPlanServiceImpl
 				throw new OpenStorefrontRuntimeException("Unable to find component Type for submission.", "Check data and refresh. User submissionId: " + userSubmissionId);
 			}
 
-			RetryUtil.retryAction(3, () -> {
-				workPlanLinkNew.save();
-			});
+			workPlanLinkNew.save();
+			workPlanLink = workPlanLinkNew;
 
 		}
 

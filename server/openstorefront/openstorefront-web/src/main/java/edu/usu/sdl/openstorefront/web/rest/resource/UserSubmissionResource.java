@@ -25,8 +25,10 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionMediaView;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionView;
+import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -444,7 +446,7 @@ public class UserSubmissionResource
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 
-		if (SecurityUtil.isCurrentUserTheOwner(comment)) {
+		if (SecurityUtil.isCurrentUserTheOwner(commentExisting)) {
 			comment.setUserSubmissionId(userSubmissionId);
 			comment.setCommentId(commentId);
 			return saveComment(comment, false);
@@ -504,4 +506,22 @@ public class UserSubmissionResource
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
 	}
+
+	@GET
+	@APIDescription("Get the worklink for a user submission")
+	@RequireSecurity(SecurityPermission.USER_WORKPLAN_READ)
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(WorkPlanLinkView.class)
+	@Path("/{id}/worklink")
+	public Response getUserSubmissionWorkLink(
+			@PathParam("id")
+			@RequiredParam String userSubmissionId)
+	{
+		WorkPlanLink workLink = service.getWorkPlanService().getWorkPlanLinkForSubmission(userSubmissionId);
+		GenericEntity<WorkPlanLinkView> entity = new GenericEntity<WorkPlanLinkView>(WorkPlanLinkView.toView(workLink))
+		{
+		};
+		return sendSingleEntityResponse(entity);
+	}
+
 }

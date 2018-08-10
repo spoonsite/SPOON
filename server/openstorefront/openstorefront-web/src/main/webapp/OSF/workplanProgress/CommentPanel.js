@@ -21,7 +21,6 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 	alias: 'widget.osf.wp.commentpanel',
 
 	config: {
-		// componentId: null,
 		recordId: null,
 		isPartialSubmission: null,
 		editComment: {
@@ -97,8 +96,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 							layout: 'hbox',
 							items: [
 								{
-									text: 'Post Comment',
-									width: '30%',
+									text: 'Post Comment',									
 									iconCls: 'fa fa-lg fa-comment icon-button-color-save',
 									itemId: 'postCommentId',
 									handler: function () {
@@ -108,7 +106,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 								},
 								{
 									text: 'Update Comment',
-									iconCls: 'fa fa-lg fa-refresh icon-button-color-save',
+									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									itemId: 'editCommentButton',
 									hidden: true,
 									handler: function () {
@@ -117,7 +115,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 								},
 								{
 									text: 'Cancel Edit',
-									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
+									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 									itemId: 'cancelCommentButton',
 									hidden: true,
 									handler: function () {
@@ -130,10 +128,10 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 								},
 								{
 									xtype: 'fieldcontainer',
-									fieldLabel: 'Private',
+									fieldLabel: 'Private <i class="fa fa-question-circle" data-qtip="Private comments are only visable to admins"></i>',
 									defaultType: 'checkboxfield',
 									width: '30%',
-									labelWidth: 50,
+									labelWidth: 75,
 									style: 'float: right;',
 									items: [
 										{
@@ -155,9 +153,13 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 		var commentPanel = this;
 		commentPanel.setRecordId(recordId);
 
+		commentPanel.setLoading(true);
 		Ext.Ajax.request({
 			url: 'api/v1/resource/' + (commentPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentPanel.getRecordId() + '/comments?submissionOnly=true',
 			method: 'GET',
+			callback: function() {
+				commentPanel.setLoading(false);
+			},
 			success: function (res) {
 				
 				res = Ext.decode(res.responseText);
@@ -172,13 +174,15 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 
 						var isOwner = CoreService.userservice.user.username === commentObj.createUser;
 						var commentClass = isOwner ? 'submission-comment-right' : 'submission-comment-left';
+						var privateComment = commentObj.privateComment ? '<b>(Private)</b>' : '';
+						var privateCommentStyle = commentObj.privateComment ? 'alert-warning' : '';
 						var commentContents = [
 							{
 								xtype: 'container',
 								width: '100%',
 								cls: (isOwner ? 'owner-submission-comment ' : ' ') + (res.length === index + 1 ? 'submission-new-comment' : ''),
-								html: 	'<div class="submission-comment ' + commentClass + '">' + 
-									'<div class="author-comment">' + commentObj.createUser + '</div>' +
+								html: 	'<div class="submission-comment ' + commentClass + ' ' + privateCommentStyle + '">' + 
+									'<div class="author-comment">' + commentObj.createUser + ' ' + privateComment + '</div>' +
 									'<div class="time-created-comment">' + (Ext.Date.format(new Date(commentObj.createDts), 'F j, Y, g:ia')) + '</div>' +
 											'<div class="block-comment">' + commentObj.comment + '</div>' +
 										'</div>',
@@ -210,19 +214,23 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 													handler: function () {
 														Ext.Msg.show({
 															title: 'Delete Comment?',
-															message: 'You are about to delete the comment <b><i>"' + commentObj.comment + '"</i></b>. Are you sure you want to continue?',
+															message: 'You are about to delete the comment <b><i>"' + Ext.String.ellipsis(commentObj.comment, 100, true) + '"</i></b>.<br><br> Are you sure you want to continue?',
 															buttons: Ext.Msg.YESNO,
 															icon: Ext.Msg.QUESTION,
 															fn: function (btn) {
 																if (btn === 'yes') {
+																	commentPanel.setLoading('Deleting...');
 																	Ext.Ajax.request({
 																		url: 'api/v1/resource/' + (commentPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentPanel.getRecordId() + '/comments/' + commentObj.commentId,
 																		method: 'DELETE',
+																		callback: function() {
+																			commentPanel.setLoading(true);
+																		},
 																		success: function () {
 																			commentPanel.loadComponentComments(commentPanel.getRecordId());
 																			commentPanel.resetFormState();
 																		}
-																	})
+																	});
 																}
 															}
 														});
@@ -258,7 +266,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 					if (!isUpdatingComment) {
 						commentsContainerParent.setScrollY(commentsContainerParent.getHeight()*100);
 					}
-				}, 100)
+				}, 100);
 			}
 		});
 	},
@@ -271,10 +279,14 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 			privateComment: commentsPanel.down('[itemId=privateCheckbox]').getValue()
 		});
 
+		commentsPanel.setLoading('Saving...');
 		Ext.Ajax.request({
 			url: 'api/v1/resource/' + (commentsPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentsPanel.getRecordId() + '/comments' + (commentId ? '/' + commentId : ''),
 			method: commentId ? 'PUT' : 'POST',
 			jsonData: formValues,
+			callback: function() {
+				commentsPanel.setLoading(false);
+			},
 			success: function (res) {
 
 				var componentId = commentsPanel.getRecordId();
