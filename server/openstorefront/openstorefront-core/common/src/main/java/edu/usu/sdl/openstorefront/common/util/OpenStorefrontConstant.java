@@ -30,6 +30,7 @@ public class OpenStorefrontConstant
 	public static final String SORT_ASCENDING = "ASC";
 	public static final String SORT_DESCENDING = "DESC";
 	public static final String MAX_RECORDS = Integer.toString(Integer.MAX_VALUE);
+	public static final String GENERIC_ADMIN_USER = "ADMIN";
 	public static final String SYSTEM_USER = "SYSTEM";
 	public static final String SYSTEM_ADMIN_USER = "SYSTEM-ADMIN";
 	public static final String ANONYMOUS_USER = "ANONYMOUS";
@@ -39,6 +40,8 @@ public class OpenStorefrontConstant
 	public static final String STATUS_VIEW_ALL = "ALL";
 	public static final String DEFAULT_FROM_ADDRESS = "noreply@storefront.net";
 	public static final String GENERAL_KEY_SEPARATOR = ":";
+	public static final String AND_CONDITION = "AND";
+	public static final String OR_CONDITION = "OR";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_CRON = 250;

@@ -411,7 +411,7 @@ public class ReportResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_ALL)
 	@APIDescription("Deletes group of reports")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/delete")

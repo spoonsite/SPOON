@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.entity;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
@@ -23,8 +24,10 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import edu.usu.sdl.openstorefront.validation.BasicHTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
+import java.lang.reflect.InvocationTargetException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  *
@@ -59,9 +62,24 @@ public class ComponentComment
 	@APIDescription("Private comments are not shared with owners")
 	private Boolean privateComment;
 
+	@APIDescription("Mark admin submission comments")
+	private Boolean adminComment;
+
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentComment()
 	{
+	}
+
+	public UserSubmissionComment toUserSubmissionComment()
+	{
+		UserSubmissionComment submissionComment = new UserSubmissionComment();
+
+		try {
+			BeanUtils.copyProperties(submissionComment, this);
+		} catch (IllegalAccessException | InvocationTargetException ex) {
+			throw new OpenStorefrontRuntimeException(ex);
+		}
+		return submissionComment;
 	}
 
 	@Override
@@ -80,11 +98,12 @@ public class ComponentComment
 	public <T extends StandardEntity> void updateFields(T entity)
 	{
 		super.updateFields(entity);
-		ComponentComment componentComment = (ComponentComment)entity;
+		ComponentComment componentComment = (ComponentComment) entity;
 		setCommentType(componentComment.getCommentType());
 		setComment(componentComment.getComment());
 		setParentCommentId(componentComment.getParentCommentId());
 		setPrivateComment(componentComment.getPrivateComment());
+		setAdminComment(componentComment.getAdminComment());
 	}
 
 	public String getCommentId()
@@ -135,6 +154,16 @@ public class ComponentComment
 	public void setParentCommentId(String parentCommentId)
 	{
 		this.parentCommentId = parentCommentId;
+	}
+
+	public Boolean getAdminComment()
+	{
+		return adminComment;
+	}
+
+	public void setAdminComment(Boolean adminComment)
+	{
+		this.adminComment = adminComment;
 	}
 
 }

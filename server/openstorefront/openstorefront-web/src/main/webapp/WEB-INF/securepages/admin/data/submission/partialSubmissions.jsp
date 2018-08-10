@@ -49,6 +49,7 @@
 			Ext.onReady(function(){			
 				
 				var templateGrid = Ext.create('Ext.grid.Panel', {
+					requiredPermissions: ['ADMIN-USER-SUBMISSIONS-READ'],
 					title: 'Partial Submissions <i class="fa fa-question-circle"  data-qtip="Allows for managing partial entry submissions" ></i>',
 					store: {
 						fields: [
@@ -104,6 +105,7 @@
 									}
 								},
 								{
+									requiredPermissions: ['ADMIN-USER-SUBMISSIONS-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -112,6 +114,7 @@
 									scale: 'medium',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit icon-button-color-view icon-vertical-correction-edit',
+									requiredPermissions: ['ADMIN-USER-SUBMISSIONS-UPDATE'],
 									handler: function () {
 										actionEdit(templateGrid.getSelection()[0]);
 									}
@@ -121,12 +124,14 @@
 									itemId: 'reassign',
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-user icon-button-color-edit icon-vertical-correction',
+									requiredPermissions: ['ADMIN-USER-SUBMISSIONS-UPDATE'],
 									disabled: true,
 									handler: function () {
 										actionReassign(templateGrid.getSelection()[0]);
 									}								
 								},
 								{
+									requiredPermissions: ['ADMIN-USER-SUBMISSIONS-DELETE'],
 									xtype: 'tbfill'
 								},
 								{
@@ -134,6 +139,7 @@
 									itemId: 'delete',
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['ADMIN-USER-SUBMISSIONS-DELETE'],
 									disabled: true,
 									handler: function () {
 										actionDelete(templateGrid.getSelection()[0]);

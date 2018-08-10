@@ -138,6 +138,10 @@ public abstract class BaseReport<T extends BaseReportModel>
 				case ReportType.ENTRY_STATUS:
 					baseReport = new EntryStatusReport(report);
 					break;
+				case ReportType.WORKPLAN_STATUS:
+					baseReport = new WorkPlanStatusReport(report);
+					break;
+
 				default:
 					throw new OpenStorefrontRuntimeException("Report Type not supported", "Check type and/or add support. Type: " + report.getReportType(), ErrorTypeCode.REPORT);
 			}
@@ -206,7 +210,7 @@ public abstract class BaseReport<T extends BaseReportModel>
 		String key = transmissionType + "-" + reportFormat;
 		return key;
 	}
-	
+
 	/**
 	 * @param reportModel
 	 * @return html/text with a summary of the report

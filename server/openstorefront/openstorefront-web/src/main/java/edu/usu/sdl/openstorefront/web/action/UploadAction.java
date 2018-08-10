@@ -120,7 +120,7 @@ public class UploadAction
 	@Validate(required = true, on = {"ImportArchive"})
 	private String importModeType;
 
-	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS)
+	@RequireSecurity(SecurityPermission.ADMIN_LOOKUPS_CREATE_CODE)
 	@HandlesEvent("UploadLookup")
 	@SuppressWarnings({"UseSpecificCatch", "unchecked"})
 	public Resolution uploadLookup()
@@ -183,7 +183,7 @@ public class UploadAction
 		return streamUploadResponse(errors);
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_CREATE)
 	@HandlesEvent("UploadAttributes")
 	public Resolution uploadAttribute()
 	{
@@ -236,7 +236,7 @@ public class UploadAction
 		return streamUploadResponse(errors);
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_CREATE)
 	@HandlesEvent("UploadComponent")
 	public Resolution uploadComponent()
 	{
@@ -341,7 +341,7 @@ public class UploadAction
 		return streamUploadResponse(errors);
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_PLUGIN)
 	@HandlesEvent("UploadPlugin")
 	public Resolution uploadPlugin()
 	{
@@ -391,7 +391,7 @@ public class UploadAction
 		return streamUploadResponse(errors);
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_CREATE)
 	@HandlesEvent("AttributeCodeAttachment")
 	public Resolution uploadAttributeCodeAttachment()
 	{
@@ -576,7 +576,7 @@ public class UploadAction
 		return streamErrorResponse(errors, true);
 	}
 
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_CREATE)
 	@HandlesEvent("ImportArchive")
 	public Resolution importArchive()
 	{

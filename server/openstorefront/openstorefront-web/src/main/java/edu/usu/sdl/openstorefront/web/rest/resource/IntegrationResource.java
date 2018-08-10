@@ -47,7 +47,7 @@ public class IntegrationResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_READ)
 	@APIDescription("Gets the global integration model from the database.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(GlobalIntegrationModel.class)
@@ -64,7 +64,7 @@ public class IntegrationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION)
+	@RequireSecurity(SecurityPermission.ADMIN_INTEGRATION_CREATE)
 	@APIDescription("Saves a global integration model")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/global")

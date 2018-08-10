@@ -36,6 +36,7 @@
         <script type="text/javascript">
 			/* global Ext, CoreUtil, CoreService */
 			Ext.require('OSF.customSubmission.SubmissionFormFullControl');			
+			Ext.require('OSF.workplanProgress.CommentPanel');
 
 			Ext.onReady(function () {
 				
@@ -100,72 +101,99 @@
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
-				});								
+				});							
+				
+				var entryCommentsPanel = Ext.create('OSF.workplanProgress.CommentPanel', {
+					region: 'east',
+					width: '30%',
+					animCollapse: false,
+					collapsible: true,
+					collapseDirection: 'left',
+					titleCollapse: true,
+					style: 'background: #ffffff;',
+					itemId: 'entryCommentsPanel'
+				});
+		
 				var previewComponentWin = Ext.create('Ext.window.Window', {
-					width: '70%',
-					height: '80%',
+					id: 'previewComponentWin',
+					title: 'Entry Details',					
 					maximizable: true,
-					title: 'Preview',
 					modal: true,
-					layout: 'fit',
+					width: '75%',
+					height: '75%',
+					defaults: {
+						collapsible: true,
+						split: true,
+						bodyPadding: 0
+					},
+					layout: 'border',
 					items: [
-						previewContents
-					],
-					tools: [
+						entryCommentsPanel,
 						{
-							type: 'up',
-							tooltip: 'popout preview',
-							handler: function(){
-								window.open('view.jsp?fullPage=true&id=' + Ext.getCmp('submissionGrid').getSelection()[0].get('componentId'), "Preview");
-							}
-						}
-					], 
-					dockedItems: [
-						{
-							xtype: 'toolbar',
-							dock: 'bottom',
+							xtype: 'panel',
+							title: 'Preview',
+							collapsible: false,
+							region: 'center',
+							margins: '0 0 0 0',
+							width: '75%',
+							height: '80%',
+							title: 'Entry Info',
+							iconCls: 'fa fa-lg fa-eye',
+							layout: 'fit',
+							itemId: 'previewPanel',
 							items: [
-								{
-									text: 'Previous',
-									id: 'previewWinTools-previousBtn',
-									iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
-									handler: function() {
-										actionPreviewNextRecord(false);
-									}									
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Close',
-									iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-									handler: function() {
-										this.up('window').hide();
-									}
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Next',
-									id: 'previewWinTools-nextBtn',
-									iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-									iconAlign: 'right',
-									handler: function() {
-										actionPreviewNextRecord(true);
-									}									
-								}
+								previewContents,
 							]
+//							dockedItems: [
+//								{
+//									xtype: 'toolbar',
+//									dock: 'bottom',
+//									items: [
+//										{
+//											text: 'Previous',
+//											id: 'previewWinTools-previousBtn',
+//											iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
+//											handler: function() {
+//												actionPreviewNextRecord(false);
+//											}									
+//										},
+//										{
+//											xtype: 'tbfill'
+//										},
+//										{
+//											text: 'Close',
+//											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+//											handler: function() {
+//												this.up('window').hide();
+//											}
+//										},
+//										{
+//											xtype: 'tbfill'
+//										},
+//										{
+//											text: 'Next',
+//											id: 'previewWinTools-nextBtn',
+//											iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
+//											iconAlign: 'right',
+//											handler: function() {
+//												actionPreviewNextRecord(true);
+//											}									
+//										}
+//									]
+//								}
+//							]
 						}
-					]
-				});				
+					]					
+				});
+
 				var actionPreviewNextRecord = function(next) {
 					if (next) {
 						Ext.getCmp('submissionGrid').getSelectionModel().selectNext();						
 					} else {
 						Ext.getCmp('submissionGrid').getSelectionModel().selectPrevious();						
 					}
-					actionPreviewComponent();					
+					var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];							
+					actionPreviewComponent(selectedRecord);					
 				};				
 				var previewCheckButtons = function() {	
 					if (Ext.getCmp('submissionGrid').getSelectionModel().hasPrevious()) {
@@ -213,7 +241,22 @@
 										return data.submittedDts;
 									}
 								}
-							}							
+							},
+							{
+								name: 'fullname', 
+								mapping: function(data) {
+									var fullName = '';
+								
+									if (data.submissionOriginalComponentId) {
+										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + ' (Incomplete Change Request)';
+									} else if (data.userSubmissionId) {
+										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + ' (Incomplete Submission)';
+									} else {
+										fullName = data.name;
+									}
+									return fullName;
+								}
+							}
 						],
 						proxy: {
 							type: 'ajax',
@@ -221,19 +264,7 @@
 						}
 					},
 					columns: [
-						{ text: 'Name', dataIndex: 'name', flex: 1, minWidth: 200, 
-							renderer: function(value, metaData, record) {
-								var fullName = '';
-								
-								if (record.get('submissionOriginalComponentId')) {
-									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Change Request)';
-								} else if (record.get('userSubmissionId')) {
-									fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + value + ' (Incomplete Submission)';
-								} else {
-									fullName = value;
-								}
-								return fullName;
-							}
+						{ text: 'Name', dataIndex: 'fullname', flex: 1, minWidth: 200
 						},
 						{ text: 'Description', dataIndex: 'description', flex: 2, minWidth: 250,
 						 renderer: function(value){
@@ -282,6 +313,7 @@
 									}
 								}, 
 								{
+									requiredPermissions: ['USER-SUBMISSIONS-CHANGEREQUEST', 'USER-SUBMISSIONS-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -292,6 +324,7 @@
 										"data-test": "newSubmissionBtn"
 									},
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',									
+									requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 									handler: function () {
 										actionNewSubmission();
 									}
@@ -303,6 +336,7 @@
 									disabled: true,
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									requiredPermissions: ['USER-SUBMISSIONS-UPDATE'],
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
@@ -323,6 +357,10 @@
 									scale: 'medium',
 									width: '180px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-default icon-vertical-correction-view',
+									requiredPermissions: ['USER-SUBMISSIONS-CHANGEREQUEST'],
+									beforePermissionsCheckSuccess: function () {
+										return false;
+									},
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];										
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
@@ -339,6 +377,17 @@
 									xtype: 'tbseparator'
 								},
 								{
+									text: 'Comments',
+									iconCls: 'fa fa-2x fa-commenting-o icon-vertical-correction-view icon-button-color-edit',
+									scale: 'medium',
+									itemId: 'commentsButton',
+									disabled: true,
+									handler: function () {
+										var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
+										actionPreviewComponent(selectedRecord, true);
+									}
+								},
+								{
 									text: 'Options',
 									itemId: 'options',
 									scale: 'medium',	
@@ -349,17 +398,21 @@
 												text: 'Preview',
 												itemId: 'tbPreview',
 												iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction icon-button-color-default',
+												requiredPermissions: ['USER-SUBMISSIONS-READ'],
 												handler: function () {
-													actionPreviewComponent();
+													var selectedRecord = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
+													actionPreviewComponent(selectedRecord, false);
 												}
 											},
 											{
+												requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 												xtype: 'menuseparator'
 											},
 											{
 												text: 'Copy',
 												itemId: 'tbCopy',
 												iconCls: 'fa fa-lg fa-clone icon-small-vertical-correction icon-button-color-default',
+												requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 												handler: function () {
 													var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 
@@ -377,6 +430,7 @@
 												}
 											},
 											{
+												requiredPermissions: ['USER-SUBMISSIONS-READ', 'USER-SUBMISSIONS-CREATE'],
 												xtype: 'menuseparator'
 											},											
 											{
@@ -487,6 +541,7 @@
 									disabled: true,
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['USER-SUBMISSIONS-DELETE'],
 									handler: function () {
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
 										var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -534,6 +589,7 @@
 									hidden: true,
 									scale: 'medium',								
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['USER-SUBMISSIONS-DELETE'],
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
 										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
@@ -556,7 +612,7 @@
 								
 								tools.getComponent('tbEdit').setDisabled(true);
 								tools.getComponent('options').setDisabled(false);
-
+								tools.getComponent('commentsButton').setDisabled(false);
 								
 								//hiddens
 								tools.getComponent('tbSubmitChange').setHidden(true);
@@ -601,6 +657,7 @@
 							} else {
 								tools.getComponent('tbEdit').setDisabled(true);
 								tools.getComponent('options').setDisabled(true);							
+								tools.getComponent('commentsButton').setDisabled(true);
 								
 								//hiddens
 								tools.getComponent('tbSubmitChange').setHidden(true);
@@ -752,11 +809,42 @@
 					Ext.getCmp('submissionGrid').getStore().load();
 				};
 				
-				var actionPreviewComponent = function(){
+				var actionPreviewComponent = function(record, isViewingComments) {
+
+					previewComponentWin.setTitle(record.get('fullname'));
+
+					var isPartialSubmission = record.get('userSubmissionId') ? true : false;
+			
+					var id = record.get('componentId');
+					if (record.get('userSubmissionId')) {
+						id = record.get('userSubmissionId');
+					} else if (record.get('pendingChangeComponentId')) {
+						id = record.get('pendingChangeComponentId');
+					}
+			
 					previewComponentWin.show();
-					var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-					previewContents.load('view.jsp?id=' + componentId +'&fullPage=true&embedded=true');
-					previewCheckButtons();					
+					if (!isPartialSubmission) {
+						previewComponentWin.getComponent('previewPanel').show();
+						entryCommentsPanel.setWidth('30%');
+						entryCommentsPanel.setIsPartialSubmission(false);
+
+						entryCommentsPanel.loadComponentComments(id);
+						if (isViewingComments) {
+							entryCommentsPanel.expand();
+						}
+						else {
+							entryCommentsPanel.collapse();
+						}
+						previewContents.load('view.jsp?id=' + id +'&fullPage=true&embedded=true');
+					}
+					else {
+						previewComponentWin.getComponent('previewPanel').hide();
+						entryCommentsPanel.setWidth('100%');
+
+						entryCommentsPanel.setIsPartialSubmission(true);
+						entryCommentsPanel.loadComponentComments(id);
+					}
+					//previewCheckButtons();					
 				};
 				
 				var currentUser;

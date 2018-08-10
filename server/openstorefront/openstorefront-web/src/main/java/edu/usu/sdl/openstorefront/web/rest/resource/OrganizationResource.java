@@ -344,7 +344,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION_CREATE)
 	@APIDescription("Creates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -355,7 +355,7 @@ public class OrganizationResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION_UPDATE)
 	@APIDescription("Updates an organization")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -393,7 +393,7 @@ public class OrganizationResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION_MERGE)
 	@APIDescription("Merges one organization with another")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{targetId}/merge/{mergeId}")
@@ -431,7 +431,7 @@ public class OrganizationResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION_DELETE)
 	@APIDescription("Deletes an organization")
 	@Path("/{id}")
 	public void deleteOrganization(
@@ -441,7 +441,7 @@ public class OrganizationResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION)
+	@RequireSecurity(SecurityPermission.ADMIN_ORGANIZATION_UPDATE)
 	@APIDescription("Deletes an organization logo only")
 	@Path("/{id}/logo")
 	public void deleteOrganizationLogo(

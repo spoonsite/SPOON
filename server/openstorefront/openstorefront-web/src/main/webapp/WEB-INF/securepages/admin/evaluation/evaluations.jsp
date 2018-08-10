@@ -158,6 +158,7 @@
 								emptyText: 'Unassigned',
 								forceSelection: true,
 								editable: false,
+								requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER'],
 								store: {									
 									autoLoad: true,
 									proxy: {
@@ -185,6 +186,7 @@
 								forceSelection: true,
 								editable: true,
 								anyMatch: true,
+								requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER'],
 								store: {									
 									autoLoad: true,
 									proxy: {
@@ -204,7 +206,8 @@
 							{
 								xtype: 'checkbox',
 								name: 'allowNewSections',
-								boxLabel: 'Allow Adding Sections'
+								boxLabel: 'Allow Adding Sections',
+								requiredPermissions: ['ADMIN-EVALUATION-ALLOW-NEW-SECTIONS']
 							},
 /*							
 							{
@@ -216,7 +219,8 @@
 							{
 								xtype: 'checkbox',
 								name: 'allowQuestionManagement',
-								boxLabel: 'Allow Question Management'
+								boxLabel: 'Allow Question Management',
+								requiredPermissions: ['ADMIN-EVALUATION-ALLOW-QUESTION-MANAGEMENT']
 							}							
 						]
 					}
@@ -453,12 +457,14 @@
 								}
 							},
 							{
-								xtype: 'tbseparator'
+								xtype: 'tbseparator',
+								requiredPermissions: ['ADMIN-EVALUATION-MANAGEMENT-CREATE']
 							},
 							{
 								text: 'Add',
 								iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 								scale: 'medium',
+								requiredPermissions: ['ADMIN-EVALUATION-MANAGEMENT-CREATE'],
 								handler: function(){
 									addEditEvaluation();
 								}
@@ -470,6 +476,7 @@
 								disabled: true,
 								width: '100px',
 								scale: 'medium',
+								requiredPermissions: ['USER-EVALUATIONS-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 									addEditEvaluation(record);
@@ -482,13 +489,15 @@
 								width: '100px',
 								iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 								disabled: true,
+								requiredPermissions: ['USER-EVALUATIONS-READ'],
 								handler: function () {
 									var selection = Ext.getCmp('evaluationGrid').getSelection()[0];
 									actionPreviewComponent(selection.get('componentId'), selection.data.evaluationId, selection);
 								}
 							},
 							{
-								xtype: 'tbseparator'
+								xtype: 'tbseparator',
+								requiredPermissions: ['USER-EVALUATIONS-ACTIVATE']
 							},
 							{
 								text: 'Toggle Status',
@@ -496,6 +505,7 @@
 								itemId: 'togglestatus',
 								disabled: true,									
 								scale: 'medium',
+								requiredPermissions: ['USER-EVALUATIONS-ACTIVATE'],
 								handler: function(){
 									var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 									actionToggleStatus(record);
@@ -511,6 +521,7 @@
 										text: 'Publish',
 										id: 'publish',
 										iconCls: 'fa fa-lg fa-book icon-button-color-save icon-small-vertical-correction',
+										requiredPermissions: ['ADMIN-EVALUATION-TOGGLE-PUBLISH'],
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											publish(record);
@@ -520,28 +531,33 @@
 										text: 'Unpublish',
 										id: 'unpublish',
 										iconCls: 'fa fa-lg fa-ban icon-button-color-warning icon-small-vertical-correction',
+										requiredPermissions: ['ADMIN-EVALUATION-TOGGLE-PUBLISH'],
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											unpublish(record);
 										}										
 									},
 									{
-										xtype: 'menuseparator'
+										xtype: 'menuseparator',
+										requiredPermissions: ['ADMIN-EVALUATION-TOGGLE-PUBLISH'],
 									},									
 									{
 										text: 'Copy',										
 										iconCls: 'fa fa-lg fa-clone icon-button-color-default icon-small-vertical-correction',
+										requiredPermissions: ['ADMIN-EVALUATION-MANAGEMENT-CREATE'],
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											copy(record);
 										}										
 									},
 									{
-										xtype: 'menuseparator'
+										xtype: 'menuseparator',
+										requiredPermissions: ['ADMIN-EVALUATION-MANAGEMENT-CREATE'],
 									},									
 									{
 										text: 'Assign Group',
 										iconCls: 'fa fa-lg fa-users icon-button-color-default icon-small-vertical-correction',
+										requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER'],
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignGroup(record);
@@ -550,6 +566,7 @@
 									{
 										text: 'Assign User',
 										iconCls: 'fa fa-lg fa-user icon-button-color-default icon-small-vertical-correction',
+										requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER'],
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignUser(record);
@@ -558,6 +575,7 @@
 									{
 										text: 'Toggle Allow New Sections',
 										iconCls: 'fa fa-lg fa-power-off icon-button-color-default icon-small-vertical-correction',
+										requiredPermissions: ['ADMIN-EVALUATION-ALLOW-NEW-SECTIONS'],
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAllowNewSections(record);
@@ -566,18 +584,21 @@
 									{
 										text: 'Toggle Allow Question Management',
 										iconCls: 'fa fa-lg fa-power-off icon-button-color-default icon-small-vertical-correction',
+										requiredPermissions: ['ADMIN-EVALUATION-ALLOW-QUESTION-MANAGEMENT'],
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAllowQuestionManagement(record);
 										}										
 									},									
 									{
-										xtype: 'menuseparator'
+										xtype: 'menuseparator',
+										requiredPermissions: ['ADMIN-EVALUATION-MANAGEMENT-DELETE']
 									},
 									{
 										text: 'Delete',
 										iconCls: 'fa fa-lg fa-trash icon-button-color-warning icon-small-vertical-correction',
 										cls: 'alert-danger',
+										requiredPermissions: ['ADMIN-EVALUATION-MANAGEMENT-DELETE'],
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionDelete(record);
@@ -1035,6 +1056,7 @@
 								text: 'Publish Full Evaluation',
 								id: 'publishFullEvalBtn',
 								iconCls: 'fa fa-lg fa-book icon-button-color-save icon-small-vertical-correction',
+								requiredPermissions: ['ADMIN-EVALUATION-TOGGLE-PUBLISH'],
 								handler: function() {
 									var record = Ext.getCmp('evaluationGrid').getSelection()[0];									
 									publish(record, function(){
@@ -1050,6 +1072,7 @@
 								text: 'Publish Summary Only',
 								id: 'publishSummaryBtn',
 								iconCls: 'fa fa-lg fa-book icon-button-color-default icon-small-vertical-correction',
+								requiredPermissions: ['ADMIN-EVALUATION-PUBLISH-SUMMARY'],
 								handler: function() {
 									var record = Ext.getCmp('evaluationGrid').getSelection()[0];
 									publishSummary(record, function(){

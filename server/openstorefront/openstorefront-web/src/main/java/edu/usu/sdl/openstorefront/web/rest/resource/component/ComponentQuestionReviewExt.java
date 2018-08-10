@@ -206,7 +206,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentQuestion componentQuestion = service.getPersistenceService().findById(ComponentQuestion.class, questionId);
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
-			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS);
+			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentQuestion.class, questionId);
 				response = Response.ok().build();
@@ -216,7 +216,7 @@ public abstract class ComponentQuestionReviewExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS_UPDATE)
 	@APIDescription("Activates a question from the specified entity")
 	@Consumes(
 			{
@@ -242,7 +242,7 @@ public abstract class ComponentQuestionReviewExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS)
+	@RequireSecurity(SecurityPermission.ADMIN_QUESTIONS_UPDATE)
 	@APIDescription("Set a question to pending for the specified entity")
 	@Consumes(
 			{
@@ -296,7 +296,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentQuestion componentQuestion = service.getPersistenceService().findById(ComponentQuestion.class, questionId);
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
-			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS);
+			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
 			if (response == null) {
 				question.setComponentId(componentId);
 				question.setQuestionId(questionId);
@@ -398,7 +398,7 @@ public abstract class ComponentQuestionReviewExt
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
-			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
+			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, responseId);
 				response = Response.ok().build();
@@ -501,7 +501,7 @@ public abstract class ComponentQuestionReviewExt
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
-			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS);
+			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
 			if (response == null) {
 				questionResponseInput.setComponentId(componentId);
 				questionResponseInput.setQuestionId(questionId);
@@ -628,7 +628,7 @@ public abstract class ComponentQuestionReviewExt
 		Response response = Response.ok().build();
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_DELETE);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentReview.class, reviewId);
 			}
@@ -637,7 +637,7 @@ public abstract class ComponentQuestionReviewExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW_UPDATE)
 	@APIDescription("Activate a review on the specified component")
 	@Consumes(
 			{
@@ -663,7 +663,7 @@ public abstract class ComponentQuestionReviewExt
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_REVIEW)
+	@RequireSecurity(SecurityPermission.ADMIN_REVIEW_UPDATE)
 	@APIDescription("Sets a review on the specified component to pending")
 	@Consumes(
 			{
@@ -717,7 +717,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				review.setComponentId(componentId);
 				review.setComponentReviewId(reviewId);
@@ -776,7 +776,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				review.setComponentId(componentId);
 				review.setReviewId(reviewId);
@@ -900,7 +900,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_DELETE);
 			if (response == null) {
 				ComponentReviewCon example = new ComponentReviewCon();
 				ComponentReviewConPk pk = new ComponentReviewConPk();
@@ -928,7 +928,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				ComponentReviewCon con = new ComponentReviewCon();
 				ComponentReviewConPk pk = checkReviewConPk(reviewId, text);
@@ -954,7 +954,6 @@ public abstract class ComponentQuestionReviewExt
 		}
 		return response;
 	}
-	// </editor-fold>
 
 	private ComponentReviewConPk checkReviewConPk(String reviewId, String text)
 	{
@@ -974,6 +973,7 @@ public abstract class ComponentQuestionReviewExt
 		return pk;
 	}
 
+	// </editor-fold>
 	//<editor-fold defaultstate="collapsed"  desc="ComponentRESTResource REVIEW PRO section">
 	@GET
 	@APIDescription("Get the pros for a review associated with the given entity")
@@ -1040,7 +1040,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				ComponentReviewPro example = new ComponentReviewPro();
 				ComponentReviewProPk pk = new ComponentReviewProPk();
@@ -1069,7 +1069,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentReview componentReview = service.getPersistenceService().findById(ComponentReview.class, reviewId);
 		if (componentReview != null) {
 			checkBaseComponentBelongsToComponent(componentReview, componentId);
-			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW);
+			response = ownerCheck(componentReview, SecurityPermission.ADMIN_REVIEW_UPDATE);
 			if (response == null) {
 				ComponentReviewPro pro = new ComponentReviewPro();
 				ComponentReviewProPk pk = checkReviewProPk(reviewId, text);

@@ -19,6 +19,10 @@ Ext.define('OSF.form.Media', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Media',
 
+	requiredPermissions: ['ADMIN-ENTRY-MEDIA-MANAGEMENT'],
+	beforePermissionsCheckFailure: function () { return false; },
+	beforePermissionsCheckSuccess: function () { return false; },
+	preventDefaultAction: true,
 	layout: 'fit',
 	hideSecurityMarking: false,
 	

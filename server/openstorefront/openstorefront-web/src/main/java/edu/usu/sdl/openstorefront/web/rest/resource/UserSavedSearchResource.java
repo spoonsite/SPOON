@@ -59,7 +59,7 @@ public class UserSavedSearchResource
 
 	@GET
 	@APIDescription("Get a list of saved searches")
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearchWrapper.class)
 	public Response getAllSearches(@BeanParam FilterQueryParams filterQueryParams)
@@ -128,7 +128,7 @@ public class UserSavedSearchResource
 
 	@GET
 	@APIDescription("Get saved searches for a user")
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(UserSavedSearch.class)
 	@Path("/user/{username}")
@@ -155,7 +155,7 @@ public class UserSavedSearchResource
 		userSavedSearch.setUserSearchId(userSearchId);
 		userSavedSearch = (UserSavedSearch) userSavedSearch.find();
 
-		Response response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH);
+		Response response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH_READ);
 		if (response == null) {
 			response = sendSingleEntityResponse(userSavedSearch);
 		}
@@ -192,7 +192,7 @@ public class UserSavedSearchResource
 		userSavedSearch.setUserSearchId(searchId);
 		userSavedSearch = (UserSavedSearch) userSavedSearch.find();
 		if (userSavedSearch != null) {
-			response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH);
+			response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH_UPDATE);
 			if (response == null) {
 				search.setUserSearchId(searchId);
 
@@ -235,7 +235,7 @@ public class UserSavedSearchResource
 		userSavedSearch.setUserSearchId(userSearchId);
 		userSavedSearch = (UserSavedSearch) userSavedSearch.find();
 
-		Response response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH);
+		Response response = ownerCheck(userSavedSearch, SecurityPermission.ADMIN_SEARCH_DELETE);
 		if (response == null) {
 			service.getUserService().deleteUserSearch(userSearchId);
 			response = Response.ok().build();

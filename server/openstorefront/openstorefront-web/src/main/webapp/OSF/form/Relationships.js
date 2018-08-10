@@ -19,6 +19,10 @@ Ext.define('OSF.form.Relationships', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Relationships',
 
+	requiredPermissions: ['ADMIN-ENTRY-RELATIONSHIP-MANAGEMENT'],
+	beforePermissionsCheckFailure: function () { return false; },
+	beforePermissionsCheckSuccess: function () { return false; },
+	preventDefaultAction: true,
 	layout: 'fit',
 	initComponent: function () {		
 		this.callParent();

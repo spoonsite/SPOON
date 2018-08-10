@@ -59,53 +59,53 @@
 		var dataMenu = [];
 			dataMenu.push({
 				text: 'Attributes',
-				permission: 'ADMIN-ATTRIBUTE-MANAGEMENT',
+				permission: ['ADMIN-ATTRIBUTE-PAGE'],
 				handler: function(){
 					actionLoadContent('Attributes');
 				}
 			});
 			dataMenu.push({
 				text: 'Contacts',
-				permission: 'ADMIN-CONTACT-MANAGEMENT',
+				permission: ['ADMIN-CONTACTS-PAGE'],
 				handler: function(){
 					actionLoadContent('Contacts');
 				}
 			});			
 			dataMenu.push({
 				text: 'Entries',
-				permission: 'ADMIN-ENTRY-MANAGEMENT',
+				permission: ['ADMIN-ENTRIES-PAGE'],
 				handler: function(){
 					actionLoadContent('Entries');
 				}
 			});
 			dataMenu.push({
 				text: 'Entry Types',
-				permission: 'ADMIN-ENTRY-TYPES',
+				permission: ['ADMIN-ENTRYTYPE-PAGE'],
 				handler: function(){
 					actionLoadContent('Entry-Types');
 				}
 			});
 			dataMenu.push({
 				text: 'Entry Templates',
-				permission: 'ADMIN-ENTRY-TEMPLATES',
+				permission: ['ADMIN-ENTRYTEMPLATES-PAGE'],
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
-			});	
+			});		
 			dataMenu.push({
 				text: 'Submissions',
 				menu: {
 					items: [
 						{
 							text: 'Submissions Form Templates',
-							permission: 'ADMIN-SUBMISSION-FORM-TEMPLATE',
+							permission: 'ADMIN-SUBMISSION-FORM-TEMPLATE_PAGE',
 							handler: function(){
 								actionLoadContent('Custom-Forms');
 							}							
 						},
 						{
 							text: 'Partial Submissions',
-							permission: 'ADMIN-USER-SUBMISSIONS',
+							permission: 'ADMIN-PARTIAL-SUBMISSIONS-PAGE',
 							handler: function(){
 								actionLoadContent('Partial-Submissions');
 							}		
@@ -120,14 +120,14 @@
 					items: [
 						{
 							text: 'Frequently Asked Questions',
-							permission: 'ADMIN-FAQ',
+							permission: ['ADMIN-FAQ-PAGE'],
 							handler: function(){
 								actionLoadContent('FAQ');
 							}										
 						},
 						{
 							text: 'Support Media',
-							permission: 'ADMIN-SUPPORT-MEDIA',
+							permission: ['ADMIN-SUPPORTMEDIA-PAGE'],
 							handler: function(){
 								actionLoadContent('Support-Media');
 							}							
@@ -137,56 +137,56 @@
 			});
 			dataMenu.push({
 				text: 'Highlights',
-				permission: 'ADMIN-HIGHLIGHTS',
+				permission: ['ADMIN-HIGHLIGHTS-PAGE'],
 				handler: function(){
 					actionLoadContent('Highlights');
 				}
 			});			
 			dataMenu.push({
 				text: 'Integrations',
-				permission: 'ADMIN-INTEGRATION',
+				permission: ['ADMIN-INTEGRATION-PAGE'],
 				handler: function(){
 					actionLoadContent('Integrations');
 				}
 			});
 			dataMenu.push({
 				text: 'Imports',
-				permission: 'ADMIN-DATA-IMPORT-EXPORT',
+				permission: ['ADMIN-IMPORT-PAGE'],
 				handler: function(){
 					actionLoadContent('Imports');
 				}
 			});
 			dataMenu.push({
 				text: 'Lookups',
-				permission: 'ADMIN-LOOKUPS',
+				permission: ['ADMIN-LOOKUPS-PAGE'],
 				handler: function(){
 					actionLoadContent('Lookups');
 				}
 			});
 			dataMenu.push({
 				text: 'Media',
-				permission: 'ADMIN-MEDIA',
+				permission: ['ADMIN-MEDIA-PAGE'],
 				handler: function(){
 					actionLoadContent('Media');
 				}
 			});
 			dataMenu.push({
 				text: 'Organizations',
-				permission: 'ADMIN-ORGANIZATION',
+				permission: ['ADMIN-ORGANIZATION-PAGE'],
 				handler: function(){
 					actionLoadContent('Organizations');
 				}				
-			});	
+			});		
 			dataMenu.push({
 				text: 'Relationships',
-				permission: 'ADMIN-ENTRY-MANAGEMENT',
+				permission: ['ADMIN-RELATIONSHIPS-PAGE'],
 				handler: function(){
 					actionLoadContent('Relationships');
 				}				
 			});			
 			dataMenu.push({
 				text: 'Searches',
-				permission: 'ADMIN-SEARCH',
+				permission: ['ADMIN-SEARCHES-PAGE'],
 				handler: function(){
 					actionLoadContent('Searches');
 				}				
@@ -197,35 +197,35 @@
 					items: [
 						{
 							text: 'Questions',
-							permission: 'ADMIN-QUESTIONS',
+							permission: ['ADMIN-QUESTION-PAGE'],
 							handler: function(){
 								actionLoadContent('Questions');
 							}							
 						},
 						{
 							text: 'Reviews',
-							permission: 'ADMIN-REVIEW',
+							permission: ['ADMIN-REVIEWS-PAGE'],
 							handler: function(){
 								actionLoadContent('Reviews');
 							}							
 						},
 						{
 							text: 'Watches',
-							permission: 'ADMIN-WATCHES',
+							permission: ['ADMIN-WATCHES-PAGE'],
 							handler: function(){
 								actionLoadContent('Watches');
 							}							
 						},						
 						{
 							text: 'Tags',
-							permission: 'ADMIN-ENTRY-MANAGEMENT',
+							permission: ['ADMIN-TAGS-PAGE'],
 							handler: function(){
 								actionLoadContent('Tags');
 							}							
 						},
 						{
 							text: 'User Profiles',
-							permission: 'ADMIN-USER-MANAGEMENT-PROFILES',
+							permission: ['ADMIN-USERPROFILES-PAGE'],
 							handler: function(){
 								actionLoadContent('User-Profiles');
 							}							
@@ -234,43 +234,58 @@
 					width: '150px',
 				}
 			});
+			dataMenu.push({
+				text: 'Workplan Progress',
+				permission: ['WORKPLAN-PROGRESS-MANAGEMENT-PAGE'],
+				handler: function(){
+					actionLoadContent('WorkPlan-Progress');
+				}
+			});	
+			dataMenu.push({
+				text: 'Workplan Management',
+				permission: ['ADMIN-WORKPLAN-PAGE'],
+				handler: function(){
+					actionLoadContent('Workplans');
+				}				
+			});			
 			
 			var evaluationMenu = [];
 			evaluationMenu.push({
 				text: 'Evaluations',
-				permission: 'ADMIN-EVALUATION-MANAGEMENT',
+				permission: ['ADMIN-EVAL-PAGE'],
 				handler: function(){
 					actionLoadContent('Evaluations');
 				}				
 			});
 			evaluationMenu.push({
 				text: 'Templates',
+				permission:['ADMIN-EVAL-PAGE'],
 				menu: {
 					items: [
 						{
 							text: 'Evaluation Templates',
-							permission: 'ADMIN-EVALUATION-TEMPLATE',
+							permission: ['ADMIN-EVAL-TEMPLATES-PAGE'],
 							handler: function(){
 								actionLoadContent('Evaluation-Templates');
 							}							
 						},
 						{
 							text: 'Checklist Templates',
-							permission: 'ADMIN-EVALUATION-TEMPLATE-CHECKLIST',
+							permission: ['ADMIN-EVAL-CHECKLIST-TEMPLATES-PAGE'],
 							handler: function(){
 								actionLoadContent('Checklist-Templates');
 							}							
 						},
 						{
 							text: 'Checklist Questions',
-							permission: 'ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION',
+							permission: ['ADMIN-EVAL-CHECKLIST-QUESTIONS-PAGE'],
 							handler: function(){
 								actionLoadContent('Checklist-Questions');
 							}							
 						},							
 						{
 							text: 'Section Templates',
-							permission: 'ADMIN-EVALUATION-TEMPLATE-SECTION',
+							permission: ['ADMIN-EVAL-SECTION-PAGE'],
 							handler: function(){
 								actionLoadContent('Section-Templates');
 							}							
@@ -286,77 +301,77 @@
 			var appMenu = [];
 			appMenu.push({
 				text: 'Alerts',
-				permission: 'ADMIN-ALERT-MANAGEMENT',
+				permission: ['ADMIN-ALERTS-PAGE'],
 				handler: function(){
 					actionLoadContent('Alerts');
 				}
 			});			
 			appMenu.push({
 				text: 'Branding',
-				permission: 'ADMIN-BRANDING',
+				permission: ['ADMIN-BRANDING-PAGE'],
 				handler: function(){
 					actionLoadContent('Branding');
 				}				
 			});	
 			appMenu.push({
 				text: 'Feedback',
-				permission: 'ADMIN-FEEDBACK',
+				permission: ['ADMIN-FEEDBACK-PAGE'],
 				handler: function(){
 					actionLoadContent('Feedback');
 				}				
 			});			
 			appMenu.push({
 				text: 'Jobs',
-				permission: 'ADMIN-JOB-MANAGEMENT',
+				permission: ['ADMIN-JOBS-PAGE'],
 				handler: function(){
 					actionLoadContent('Jobs');
 				}				
 			});
 			appMenu.push({
 				text: 'Messages',
-				permission: 'ADMIN-MESSAGE-MANAGEMENT',
+				permission: ['ADMIN-MESSAGES-PAGE'],
 				handler: function(){
 					actionLoadContent('Messages');
 				}				
 			});			
 			appMenu.push({
 				text: 'Reports',
-				permission: 'REPORTS',
+				permission: ['REPORTS-PAGE'],
 				handler: function(){
 					actionLoadContent('Reports');
 				}				
 			});
 			appMenu.push({
 				text: 'Security',
-				permission: 'ADMIN-SECURITY',
+				permission: ['ADMIN-SECURITY-PAGE'],
 				handler: function(){
 					actionLoadContent('Security');
 				}				
 			});
 			appMenu.push({
 				text: 'Security Roles',
-				permission: 'ADMIN-ROLE-MANAGEMENT',
+			    permission: ['ADMIN-ROLES-PAGE'],
 				handler: function(){
 					actionLoadContent('Security-Roles');
 				}				
 			});		
 			appMenu.push({
 				text: 'System',
-				permission: 'ADMIN-SYSTEM-MANAGEMENT',
+				permission: ['ADMIN-SYSTEM-PAGE'],
 				handler: function(){
 					actionLoadContent('System');
 				}				
 			});
 			appMenu.push({
 				text: 'System Archives',
-				permission: 'ADMIN-SYSTEM-MANAGEMENT',
+				permission: ['ADMIN-SYSTEM-ARCHIVES-PAGE'],
 				handler: function(){
 					actionLoadContent('System-Archives');
 				}				
 			});			
 			appMenu.push({
 				text: 'Tracking',
-				permission: 'ADMIN-TRACKING',
+				permission: ['ADMIN-TRACKING-PAGE'],
 				handler: function(){
 					actionLoadContent('Tracking');
 				}				
@@ -364,7 +379,7 @@
 			appMenu.push({
 				text: 'User Management',
 				itemId: 'usermanagementMenu',
-				permission: 'ADMIN-USER-MANAGEMENT',
+				permission: ['ADMIN-USER-MANAGEMENT-PAGE'],
 				handler: function(){
 					actionLoadContent('User-Management');
 				}				
@@ -374,7 +389,7 @@
 			});
 			appMenu.push({
 				text: 'API Documentation',
-				permission: 'API-DOCS',
+				permission: 'ADMIN-API-PAGE',
 				href: 'API.action',
 				hrefTarget: '_blank'
 			});			
@@ -464,6 +479,7 @@
 									scale   : 'large',
 									iconCls: 'fa fa-2x fa-home icon-button-color-default',
 									margin: '0 10 0 0',
+									requiredPermissions: ['DASHBOARD-PAGE'],
 									handler: function(){
 										actionLoadContent('Dashboard');
 									}									
@@ -475,7 +491,7 @@
 									text: 'Data Management',
 									id: 'dataManagementBtn',
 									hidden: true,
-									scale   : 'large',
+									scale: 'large',
 									iconCls: 'fa fa-2x fa-database icon-button-color-default',
 									margin: '0 13 0 0',
 									menu: {																				

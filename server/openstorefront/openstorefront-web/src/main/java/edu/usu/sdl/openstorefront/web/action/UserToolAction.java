@@ -38,15 +38,15 @@ public class UserToolAction
 	@Override
 	public Map<String, PageModel> getPageMap()
 	{
-		pageMap.put("Dashboard", new PageModel("/WEB-INF/securepages/shared/dashboard.jsp"));
-		pageMap.put("User-Profile", new PageModel("/WEB-INF/securepages/user/userProfile.jsp"));
-		pageMap.put("Watches", new PageModel("/WEB-INF/securepages/user/watches.jsp"));
-		pageMap.put("Reviews", new PageModel("/WEB-INF/securepages/user/reviews.jsp"));
-		pageMap.put("Questions", new PageModel("/WEB-INF/securepages/user/questions.jsp"));
-		pageMap.put("Submissions", new PageModel("/WEB-INF/securepages/user/submissionManagement.jsp", new String[]{SecurityPermission.USER_SUBMISSIONS}));
-		pageMap.put("Reports", new PageModel("/WEB-INF/securepages/shared/reports.jsp", new String[]{SecurityPermission.REPORTS}));
-		pageMap.put("Searches", new PageModel("/WEB-INF/securepages/user/searches.jsp"));
-		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/user/visualSearch.jsp", new String[]{SecurityPermission.RELATIONSHIP_VIEW_TOOL}));
+		pageMap.put("Dashboard", new PageModel("/WEB-INF/securepages/shared/dashboard.jsp", new String[]{SecurityPermission.DASHBOARD_PAGE}));
+		pageMap.put("User-Profile", new PageModel("/WEB-INF/securepages/user/userProfile.jsp", new String[]{SecurityPermission.USER_PROFILE_PAGE}));
+		pageMap.put("Watches", new PageModel("/WEB-INF/securepages/user/watches.jsp", new String[]{SecurityPermission.USER_WATCHES_PAGE}));
+		pageMap.put("Reviews", new PageModel("/WEB-INF/securepages/user/reviews.jsp", new String[]{SecurityPermission.USER_REVIEWS_PAGE}));
+		pageMap.put("Questions", new PageModel("/WEB-INF/securepages/user/questions.jsp", new String[]{SecurityPermission.USER_QUESTIONS_PAGE}));
+		pageMap.put("Submissions", new PageModel("/WEB-INF/securepages/user/submissionManagement.jsp", new String[]{SecurityPermission.USER_SUBMISSIONS_PAGE}));
+		pageMap.put("Reports", new PageModel("/WEB-INF/securepages/shared/reports.jsp", new String[]{SecurityPermission.REPORTS_PAGE}));
+		pageMap.put("Searches", new PageModel("/WEB-INF/securepages/user/searches.jsp", new String[]{SecurityPermission.USER_SEARCHES_PAGE}));
+		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/user/visualSearch.jsp", new String[]{SecurityPermission.USER_RELATIONSHIPS_PAGE}));
 		pageMap.put("Change-Password", new PageModel("/WEB-INF/securepages/user/changePassword.jsp"));		
 
 		return pageMap;

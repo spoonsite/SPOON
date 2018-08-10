@@ -116,6 +116,14 @@
 					},
 					store: userProfileStore,
 					columnLines: true,
+					requiredPermissions: ['ADMIN-USER-MANAGEMENT-PROFILES-READ'],
+					permissionCheckFailure: function () {
+						Ext.toast({
+							html: 'You do not have permissions to view the data on this page',
+							title: 'Invalid Permissions',
+							align: 'b'
+						});
+					},
 					columns: {
 						defaults: {
 							cellWrap: true
@@ -358,12 +366,14 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-PROFILES-UPDATE'],
 									handler: function () {
 										var record = Ext.getCmp('userProfileGrid').getSelection()[0];
 										actionEditUser(record);
 									}
 								},
 								{
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT', 'ADMIN-USER-MANAGEMENT-PROFILES-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -389,6 +399,7 @@
 									disabled: true,
 									scale: 'medium',
 									tooltip: 'Activates/Deactivates',
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-PROFILES-UPDATE'],
 									handler: function () {
 										var records = Ext.getCmp('userProfileGrid').getSelection();
 										if (records.length > 1) {
@@ -399,6 +410,7 @@
 									}
 								},								
 								{
+									requiredPermissions: ['ADMIN-DATA-IMPORT-EXPORT'],
 									xtype: 'tbfill'
 								},
 								{
@@ -407,6 +419,7 @@
 									id: 'userProfileGrid-tools-export',
 									width: '150px',
 									iconCls: 'fa fa-2x fa-download icon-button-color-default icon-vertical-correction-edit',
+									requiredPermissions: ['ADMIN-DATA-IMPORT-EXPORT'],
 									menu: [
 										{
 											text: 'All Profiles',

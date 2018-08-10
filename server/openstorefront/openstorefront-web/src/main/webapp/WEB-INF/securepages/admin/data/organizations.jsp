@@ -125,6 +125,7 @@
 									}
 								},
 								{
+									requiredPermissions: ['ADMIN-ORGANIZATION-CREATE', 'ADMIN-ORGANIZATION-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -133,6 +134,7 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-corretion',
 									tooltip: 'Add record',
+									requiredPermissions: ['ADMIN-ORGANIZATION-CREATE'],
 									handler: function () {
 										addRecord();
 									}
@@ -145,11 +147,13 @@
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
 									tooltip: 'Edit selected record',
+									requiredPermissions: ['ADMIN-ORGANIZATION-UPDATE'],
 									handler: function () {
 										editRecord();
 									}								
 								},
 								{
+									requiredPermissions: ['ADMIN-ORGANIZATION-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{									
@@ -158,6 +162,7 @@
 									scale: 'medium',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-file-picture-o icon-button-color-default icon-vertical-correction',
+									requiredPermissions: ['ADMIN-ORGANIZATION-UPDATE'],
 									handler: function () {
 										manageLogoAction();
 									}
@@ -193,6 +198,7 @@
 									iconCls: 'fa fa-2x fa-compress icon-button-color-default icon-vertical-correction',
 									disabled: true,
 									tooltip: 'Merge selected record into another record',
+									requiredPermissions: ['ADMIN-ORGANIZATION-MERGE'],
 									handler: function () {
 										mergeRecords();
 									}								
@@ -220,6 +226,7 @@
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 									disabled: true,
 									tooltip: 'Delete record',
+									requiredPermissions: ['ADMIN-ORGANIZATION-DELETE'],
 									handler: function () {
 										deleteRecord();
 								    }
@@ -350,6 +357,7 @@
 												text: 'Upload Logo',
 												formBind: true, 
 												iconCls: 'fa fa-lg fa-upload ',
+												requiredPermissions: ['ADMIN-ORGANIZATION-UPDATE', 'ADMIN-ORGANIZATION-CREATE'],
 												handler: function(){
 													var logoForm = addEditLogoWin.queryById('logoForm');
 													

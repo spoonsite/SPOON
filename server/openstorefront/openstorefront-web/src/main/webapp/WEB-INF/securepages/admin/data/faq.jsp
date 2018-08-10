@@ -166,6 +166,14 @@
 				var faqGrid = Ext.create('Ext.grid.Panel', {
 					id: 'faqGrid',
 					title: 'FAQ Management <i class="fa fa-question-circle" data-qtip="Allows for managing Frequently Asked Questions." ></i>',
+					requiredPermissions: ['ADMIN-FAQ-READ'],
+					permissionCheckFailure: function () {
+						Ext.toast({
+							html: 'You do not have permissions to view the data on this page',
+							title: 'Invalid Permissions',
+							align: 'b'
+						});
+					},
 					columnLines: true,
 					store: {
 						autoLoad: true,
@@ -210,9 +218,6 @@
 						{text: 'Update Date', dataIndex: 'updateDts', width: 200, hidden: true, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
 					],
 					listeners: {
-						itemdblclick: function (grid, record, item, index, e, opts) {
-							actionEdit(record);
-						},
 						selectionchange: function (selModel, selected, opts) {
 							var tools = Ext.getCmp('faqGrid').getComponent('tools');
 
@@ -316,7 +321,8 @@
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-FAQ-CREATE']
 								},
 								{
 									text: 'Add',
@@ -325,6 +331,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									requiredPermissions: ['ADMIN-FAQ-CREATE'],
 									handler: function () {
 										actionAdd();
 									}
@@ -337,12 +344,14 @@
 									width: '100px',
 									disabled: true,
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
+									requiredPermissions: ['ADMIN-FAQ-UPDATE'],
 									handler: function () {
 										actionEdit(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);
 									}
 								},
 								{
-									xtype: 'tbseparator'
+									xtype: 'tbseparator',
+									requiredPermissions: ['ADMIN-FAQ-UPDATE'],
 								},
 								{
 									text: 'Toggle Status',
@@ -353,6 +362,7 @@
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
+									requiredPermissions: ['ADMIN-FAQ-UPDATE'],
 									handler: function () {
 										actionToggleStatus(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);
 									}
@@ -369,6 +379,7 @@
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+									requiredPermissions: ['ADMIN-FAQ-DELETE'],
 									handler: function () {
 										actionDelete(Ext.getCmp('faqGrid').getSelectionModel().getSelection()[0]);
 									}

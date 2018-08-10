@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.view.CheckQuestionFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionView;
 import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
@@ -67,7 +68,7 @@ public class ChecklistQuestionResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistQuestionWrapper.class)
 	@APIDescription("Gets Checklist questions")
@@ -126,7 +127,7 @@ public class ChecklistQuestionResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ChecklistQuestionView.class)
 	@APIDescription("Gets a checklist question")
@@ -143,7 +144,7 @@ public class ChecklistQuestionResource
 
 	@GET
 	@APIDescription("Exports questions in JSON format.")
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/export")
 	public Response exportQuestions(
@@ -173,7 +174,7 @@ public class ChecklistQuestionResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_CREATE)
 	@APIDescription("Creates a checklist question")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -185,7 +186,7 @@ public class ChecklistQuestionResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_UPDATE)
 	@APIDescription("Updates a checklist question")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -250,7 +251,7 @@ public class ChecklistQuestionResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a Question")
 	@Path("/{questionId}/activate")
@@ -274,7 +275,7 @@ public class ChecklistQuestionResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Check to see if question is in use; returns true if in use or no content if not.")
 	@Path("/{questionId}/inuse")
@@ -296,7 +297,7 @@ public class ChecklistQuestionResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Tag.class)
 	@APIDescription("Gets all distinct tags across questions")
@@ -323,9 +324,9 @@ public class ChecklistQuestionResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)
+	@RequireSecurity(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
-	@APIDescription("Inactivates a question or remove only if not in use")
+	@APIDescription("Inactivates a question or deletes it if the \"force\" query parameter is used")
 	@Path("/{questionId}")
 	public Response deleteChecklistQuestion(
 			@PathParam("questionId") String questionId,
@@ -333,8 +334,22 @@ public class ChecklistQuestionResource
 	)
 	{
 		if (force) {
-			service.getChecklistService().deleteQuestion(questionId);
-			return Response.noContent().build();
+			// Delete the checklist question if force is true
+			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_DELETE)) {
+				// But only if the user has the delete permission
+				service.getChecklistService().deleteQuestion(questionId);
+				return Response.noContent().build();
+			}
+			else {
+				// The user doesn't have delete permission. This probably means that a UI component
+				// doesn't require the delete permission to use this delete endpoint for deletion,
+				// which it should.
+				return Response.status(Response.Status.FORBIDDEN)
+					.type(MediaType.TEXT_PLAIN)
+					.entity("User does not have permission to delete.")
+					.build();
+			}
+		// Just inactivate the question instead of deleting it if the "force" query paramter is not used or is false.
 		} else {
 			return updateStatus(questionId, ChecklistTemplate.INACTIVE_STATUS);
 		}

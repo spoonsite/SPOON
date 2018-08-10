@@ -48,7 +48,7 @@ public class ComponentTrackingResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_READ)
 	@APIDescription("Get the list of tracking details on a specified component passing in a filter.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ComponentTrackingResult.class)
@@ -68,7 +68,7 @@ public class ComponentTrackingResource
 
 	@GET
 	@APIDescription("Exports component tracking information in csv formt (Requires Admin)")
-	@RequireSecurity(SecurityPermission.ADMIN_TRACKING)
+	@RequireSecurity(SecurityPermission.ADMIN_TRACKING_READ)
 	@Produces("text/csv")
 	@Path("/export")
 	public Response exportEntityValues(

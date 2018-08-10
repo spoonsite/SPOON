@@ -56,7 +56,7 @@ public class SystemArchiveResource
 	private static final int MAX_FILENAME = 80;
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_READ)
 	@APIDescription("Gets system archives.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SystemArchiveView.class)
@@ -71,7 +71,7 @@ public class SystemArchiveResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_READ)
 	@APIDescription("Gets system archives")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SystemArchive.class)
@@ -86,7 +86,7 @@ public class SystemArchiveResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_READ)
 	@APIDescription("Gets system archives errors.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SystemArchiveError.class)
@@ -102,7 +102,7 @@ public class SystemArchiveResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_READ)
 	@APIDescription("Downloads the archive")
 	@Produces({MediaType.WILDCARD})
 	@Path("/{archiveId}/download")
@@ -134,7 +134,7 @@ public class SystemArchiveResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_CREATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@APIDescription("Create a new Archive")
@@ -154,7 +154,7 @@ public class SystemArchiveResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ARCHIVE_DELETE)
 	@APIDescription("Delete a system archive")
 	@Path("/{archiveId}")
 	public Response deleteArchive(

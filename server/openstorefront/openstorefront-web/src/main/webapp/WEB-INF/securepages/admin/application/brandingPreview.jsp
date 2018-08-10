@@ -58,10 +58,10 @@
 	<script src="webjars/extjs/6.2.0/build/packages/charts/classic/charts-debug.js" type="text/javascript"></script>
 	
 	<%-- Core Utils --%>	
-	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>	
 	<script src="scripts/util/coreUtil.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/util/dateUtil.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/global/coreService.js?v=${appVersion}" type="text/javascript"></script>		
+	<script src="scripts/global/override.js?v=${appVersion}" type="text/javascript"></script>	
 	
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */

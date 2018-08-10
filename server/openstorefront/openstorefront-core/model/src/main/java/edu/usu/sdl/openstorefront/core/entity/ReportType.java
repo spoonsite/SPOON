@@ -44,6 +44,7 @@ public class ReportType
 	public static final String ACTION_REPORT = "ACTION";
 	public static final String ENTRY_LISTING = "ENTRYLIST";
 	public static final String ENTRY_STATUS = "ENTRYSTATUS";
+	public static final String WORKPLAN_STATUS = "WORKPLANSTATUS";
 
 	private String requiredPermission;
 	private boolean componentReport;
@@ -70,17 +71,19 @@ public class ReportType
 		codeMap.put(COMPONENT_DETAIL, newLookup(ReportType.class, COMPONENT_DETAIL, "Entry Detail", "Exports entry details"));
 		codeMap.put(ENTRY_LISTING, newLookup(ReportType.class, ENTRY_LISTING, "Entry Listing", "List approved entries in a summary"));
 		codeMap.put(ENTRY_STATUS, newLookup(ReportType.class, ENTRY_STATUS, "Entry Status", "Gathers information about entry status for a time period."));
+		codeMap.put(WORKPLAN_STATUS, newLookup(ReportType.class, WORKPLAN_STATUS, "Workplan Status", "Shows the current status of items in workplans"));
 
 		//update metadata
-		((ReportType) codeMap.get(USAGE)).setRequiredPermission(SecurityPermission.ADMIN_TRACKING);
-		((ReportType) codeMap.get(LINK_VALIDATION)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
-		((ReportType) codeMap.get(USER)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
-		((ReportType) codeMap.get(SUBMISSION)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
-		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
-		((ReportType) codeMap.get(EVALUATION_STATUS)).setRequiredPermission(SecurityPermission.EVALUATIONS);
-		((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.REPORT_ACTION_REPORT);
-		((ReportType) codeMap.get(ENTRY_LISTING)).setRequiredPermission(SecurityPermission.REPORT_ENTRY_LISTING_REPORT);
-		((ReportType) codeMap.get(ENTRY_STATUS)).setRequiredPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+		((ReportType) codeMap.get(USAGE)).setRequiredPermission(SecurityPermission.RUN_USAGE_REPORT);
+		((ReportType) codeMap.get(LINK_VALIDATION)).setRequiredPermission(SecurityPermission.RUN_LINK_VALIDATION_REPORT);
+		((ReportType) codeMap.get(USER)).setRequiredPermission(SecurityPermission.RUN_USER_ORG_REPORT);
+		((ReportType) codeMap.get(SUBMISSION)).setRequiredPermission(SecurityPermission.RUN_SUBMISSIONS_REPORT);
+		((ReportType) codeMap.get(ORGANIZATION)).setRequiredPermission(SecurityPermission.RUN_ENTRIES_BY_ORG_REPORT);
+		((ReportType) codeMap.get(EVALUATION_STATUS)).setRequiredPermission(SecurityPermission.RUN_EVAL_STATUS_REPORT);
+		((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.RUN_ACTION_REPORT);
+		((ReportType) codeMap.get(ENTRY_LISTING)).setRequiredPermission(SecurityPermission.RUN_ENTRY_LISTING_REPORT);
+		((ReportType) codeMap.get(ENTRY_STATUS)).setRequiredPermission(SecurityPermission.RUN_ENTRY_STATUS_REPORT);
+		((ReportType) codeMap.get(WORKPLAN_STATUS)).setRequiredPermission(SecurityPermission.RUN_WORKPLAN_STATUS);
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(COMPONENT_ORGANIZATION)).setComponentReport(true);

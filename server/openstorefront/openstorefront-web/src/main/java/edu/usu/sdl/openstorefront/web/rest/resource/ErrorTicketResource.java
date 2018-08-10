@@ -53,7 +53,7 @@ public class ErrorTicketResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET)
 	@APIDescription("Gets all error tickets.  Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ErrorTicketWrapper.class)
@@ -105,7 +105,7 @@ public class ErrorTicketResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET)
 	@APIDescription("Gets an error ticket entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ErrorTicket.class)
@@ -119,7 +119,7 @@ public class ErrorTicketResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET)
 	@APIDescription("Gets error ticket info")
 	@Produces({MediaType.WILDCARD})
 	@Path("/{id}/ticket")
@@ -136,7 +136,7 @@ public class ErrorTicketResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_ERROR_TICKET)
 	@APIDescription("Deletes error tickets")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(MultipleIds.class)

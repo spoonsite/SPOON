@@ -22,6 +22,8 @@ limitations under the License.
 <%@ include file="submissionForm.jsp" %>
 <%@ include file="entryType.jsp" %>
 <%@ include file="evaluation.jsp" %>
+<%@ include file="workPlan.jsp" %>
+<%@ include file="submissionComments.jsp" %>
 
 @media print {
     .pageBreak {		
@@ -555,6 +557,26 @@ table.confluenceTable td.numberingColumn {
 	font-size: 14px;
 }
 
+.entrytype-attribute-assignment-header {
+	background: steelblue;
+}
 
+.permission-row-disabled {
+	pointer-events: none;
+}
 
+.permission-row-disabled .x-grid-checkcolumn {
+	opacity: 0.5;
+}
 
+.permission-row-disabled .x-grid-cell {
+	color: #ccc;
+}
+
+.step-view-container {
+	width: 175px;
+	height: 85px;
+	/* border: 1px solid black; */
+	overflow: visible;
+	white-space: nowrap;
+}

@@ -55,7 +55,7 @@ public class FeedbackResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK_READ)
 	@APIDescription("Gets all error tickets.  Always sorts by create date.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FeedbackTicketWrapper.class)
@@ -107,7 +107,7 @@ public class FeedbackResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK_READ)
 	@APIDescription("Gets a feedback ticket entity")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(FeedbackTicket.class)
@@ -140,7 +140,7 @@ public class FeedbackResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK_UPDATE)
 	@APIDescription("Marks a feedback ticket complete")
 	@Path("/{feedbackId}/markcomplete")
 	public Response markComplete(
@@ -152,7 +152,7 @@ public class FeedbackResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK_UPDATE)
 	@APIDescription("Marks a feedback ticket outstanding")
 	@Path("/{feedbackId}/markoutstanding")
 	public Response markOutstanding(
@@ -179,7 +179,7 @@ public class FeedbackResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK)
+	@RequireSecurity(SecurityPermission.ADMIN_FEEDBACK_DELETE)
 	@APIDescription("Deletes a feedback ticket")
 	@Path("/{feedbackId}")
 	public Response deleteFeedbackTicket(

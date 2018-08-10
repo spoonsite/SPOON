@@ -125,7 +125,7 @@ public class SystemSearchResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_CREATE)
 	@APIDescription("Saves a search")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -138,7 +138,7 @@ public class SystemSearchResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@APIDescription("Updates a search")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
@@ -180,7 +180,7 @@ public class SystemSearchResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_DELETE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Inactivates a search")
 	@Path("/{searchId}")
@@ -201,7 +201,7 @@ public class SystemSearchResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH)
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@APIDescription("Activates a search")
 	@Path("/{searchId}/activate")

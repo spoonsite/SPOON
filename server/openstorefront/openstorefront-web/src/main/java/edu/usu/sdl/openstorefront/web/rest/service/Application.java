@@ -106,7 +106,7 @@ public class Application
 	private CoreSystem coreSystem;
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_STATUS)
 	@APIDescription("Gets the application system status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ApplicationStatus.class)
@@ -172,7 +172,7 @@ public class Application
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_STATUS)
 	@APIDescription("Gets the application system thread and status")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ThreadStatus.class)
@@ -197,7 +197,7 @@ public class Application
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_STATUS)
 	@APIDescription("Attempts to get the full stack of a thread")
 	@Produces({MediaType.TEXT_HTML})
 	@Path("/threads/{threadId}/stack")
@@ -230,7 +230,7 @@ public class Application
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_READ)
 	@APIDescription("Gets config properties")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -287,11 +287,11 @@ public class Application
 			return Response.status(404).build();
 		}
 
-		return Response.ok(temporaryMedia).build();
+		return Response.ok(temporaryMedia).build();                                                                                                                                                                                             
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_READ)
 	@APIDescription("Save a config property")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -317,7 +317,7 @@ public class Application
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_DELETE)
 	@APIDescription("Removes config property (Allow it to fallback to the Default)")
 	@Path("/configproperties/{key}")
 	public void removeConfigProperties(@PathParam("key") String key)
@@ -326,7 +326,7 @@ public class Application
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_LOGGING)
 	@APIDescription("Gets Loggers in the system")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LoggerView.class)
@@ -360,7 +360,7 @@ public class Application
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_LOGGING)
 	@APIDescription("Gets log levels")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -379,7 +379,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_LOGGING)
 	@APIDescription("Sets logger level")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.WILDCARD})
@@ -434,7 +434,7 @@ public class Application
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_LOGGING)
 	@APIDescription("Gets log records")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(DBLogRecord.class)
@@ -489,7 +489,7 @@ public class Application
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_LOGGING)
 	@APIDescription("Clears all DB log records. Doesn't affect server logs. Note: application will automatically clear old records exceeding max allowed.")
 	@Path("/logrecords")
 	public void clearAllDBLogs()
@@ -498,7 +498,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_LOGGING)
 	@APIDescription("Toggle Database logging; pass use=true or use=false")
 	@DataType(LookupModel.class)
 	@Path("/dblogger/{use}")
@@ -527,7 +527,7 @@ public class Application
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_CACHE)
 	@APIDescription("Gets information about system caches.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(CacheView.class)
@@ -560,7 +560,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_CACHE)
 	@APIDescription("Clears cache of records")
 	@Path("/caches/{name}/flush")
 	public Response flushCaches(
@@ -577,7 +577,7 @@ public class Application
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_MANAGERS)
 	@APIDescription("Gets information resource managers")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ManagerView.class)
@@ -592,7 +592,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_MANAGERS)
 	@APIDescription("Starts a manager (It's preferable to use restart rather than stop and starting)")
 	@Path("/managers/{managerClass}/start")
 	public Response startManager(
@@ -610,7 +610,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_MANAGERS)
 	@APIDescription("Stops a manager (It's preferable to use restart rather than stop and starting)")
 	@Path("/managers/{managerClass}/stop")
 	public Response stopManager(
@@ -628,7 +628,7 @@ public class Application
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_MANAGERS)
 	@APIDescription("Restart a manager.")
 	@Path("/managers/{managerClass}/restart")
 	public Response restartManager(
@@ -646,7 +646,7 @@ public class Application
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_MANAGERS)
 	@APIDescription("Restart the application. Note the system will be unavailable until the restart is complete.")
 	@Path("/restart")
 	public Response restartApplication(

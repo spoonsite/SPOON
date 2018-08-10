@@ -141,6 +141,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 					}									
 				},
 				{
+					requiredPermissions: ['ADMIN-WATCHES-UPDATE'],
 					xtype: 'tbseparator'
 				},				
 				{
@@ -149,6 +150,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 					scale: 'medium',
 					disabled: true,
 					iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
+					requiredPermissions: ['ADMIN-WATCHES-UPDATE'],
 					handler: function () {
 						var grid = this.up('grid');
 						var record = this.up('grid').getSelectionModel().getSelection()[0];
@@ -172,6 +174,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 					}									
 				},
 				{
+					requiredPermissions: ['ADMIN-WATCHES-DELETE'],
 					xtype: 'tbfill'
 				},
 				{
@@ -180,6 +183,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 					scale: 'medium',
 					disabled: true,
 					iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
+					requiredPermissions: ['ADMIN-WATCHES-DELETE'],
 					handler: function () {
 						var grid = this.up('grid');
 						var record = this.up('grid').getSelectionModel().getSelection()[0];

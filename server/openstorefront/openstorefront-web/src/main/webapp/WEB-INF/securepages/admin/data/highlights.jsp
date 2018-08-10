@@ -117,6 +117,7 @@
 									scale: 'medium',
 									width: '100px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
+									requiredPermissions: ['ADMIN-HIGHLIGHTS-CREATE'],
 									handler: function () {
 										actionAddHighlight();
 									}
@@ -128,14 +129,17 @@
 									width: '100px',
 									iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
 									disabled: true,
+									requiredPermissions: ['ADMIN-HIGHLIGHTS-UPDATE'],
 									handler: function () {
 										actionEditHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
 									}
 								},
 								{
+									requiredPermissions: ['ADMIN-HIGHLIGHTS-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
+									requiredPermissions: ['ADMIN-HIGHLIGHTS-UPDATE'],
 									xtype: 'label',
 									html: '<strong>Display Position:</strong>'
 								},
@@ -145,6 +149,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-arrow-circle-o-up icon-vertical-correction icon-button-color-default',
 									disabled: true,
+									requiredPermissions: ['ADMIN-HIGHLIGHTS-UPDATE'],
 									handler: function () {
 										actionUpHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
 									}
@@ -155,11 +160,13 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-arrow-circle-o-down icon-vertical-correction icon-button-color-default',
 									disabled: true,
+									requiredPermissions: ['ADMIN-HIGHLIGHTS-UPDATE'],
 									handler: function () {
 										actionDownHighlight(Ext.getCmp('highlightGrid').getSelection()[0]);
 									}
 								},
 								{
+									requiredPermissions: ['ADMIN-HIGHLIGHTS-DELETE'],
 									xtype: 'tbfill'
 								},
 								{
@@ -168,6 +175,7 @@
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-trash icon-vertical-correction icon-button-color-warning',
 									disabled: true,
+									requiredPermissions: ['ADMIN-HIGHLIGHTS-DELETE'],
 									handler: function () {
 										actionDeleteHighlight();
 									}

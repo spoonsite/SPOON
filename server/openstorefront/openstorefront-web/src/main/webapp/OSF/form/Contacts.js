@@ -19,6 +19,10 @@ Ext.define('OSF.form.Contacts', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Contacts',
 
+	requiredPermissions: ['ADMIN-ENTRY-CONTACT-MANAGEMENT'],
+	beforePermissionsCheckFailure: function () { return false; },
+	beforePermissionsCheckSuccess: function () { return false; },
+	preventDefaultAction: true,
 	layout: 'fit',
 	hideSecurityMarking: false,
 

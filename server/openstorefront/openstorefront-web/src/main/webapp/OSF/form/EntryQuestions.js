@@ -21,9 +21,11 @@ Ext.define('OSF.form.EntryQuestions', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.EntryQuestions',
 	
+	requiredPermissions: ['ADMIN-QUESTIONS-READ'],
+	beforePermissionsCheckFailure: function () { return false; },
+	beforePermissionsCheckSuccess: function () { return false; },
+	preventDefaultAction: true,
 	layout: 'fit',
-		
-	
 	initComponent: function () {			
 		this.callParent();
 		
@@ -93,7 +95,7 @@ Ext.define('OSF.form.EntryQuestions', {
 							},
 							forceSelection: true,
 							queryMode: 'local',
-							displayField: 'desc',
+							displayField: 'description',
 							valueField: 'code',
 							value: 'A',
 							listeners: {
@@ -118,10 +120,11 @@ Ext.define('OSF.form.EntryQuestions', {
 							xtype: 'tbseparator'
 						},
 						{
-							text: 'ToggleStatus',
+							text: 'Toggle Status',
 							itemId: 'statusToggleBtn',
 							iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 							disabled: true,
+							requiredPermissions: ['ADMIN-QUESTIONS-UPDATE'],
 							handler: function(){
 								CoreUtil.actionSubComponentToggleStatus(questionPanel.questionGrid, 'questionId', 'questions');
 							}
@@ -186,10 +189,11 @@ Ext.define('OSF.form.EntryQuestions', {
 							xtype: 'toolbar',
 							items: [
 								{
-									text: 'ToggleStatus',
+									text: 'Toggle Status',
 									itemId: 'statusToggleBtn',
 									iconCls: 'fa fa-lg fa-power-off icon-button-color-default',
 									disabled: true,
+									requiredPermissions: ['ADMIN-QUESTIONS-UPDATE'],
 									handler: function(){
 										CoreUtil.actionSubComponentToggleStatus(this.up('grid'), 'questionId', 'questions', 'responseId', 'responses');
 									}

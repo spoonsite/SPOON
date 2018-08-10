@@ -53,7 +53,7 @@ public class NotificationEventResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_READ)
 	@APIDescription("Gets notification event records for all users.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(NotificationEventWrapper.class)
@@ -96,7 +96,7 @@ public class NotificationEventResource
 		notificationEvent = notificationEvent.find();
 		if (notificationEvent != null) {
 
-			response = ownerCheck(notificationEvent, SecurityPermission.ADMIN_MESSAGE_MANAGEMENT);
+			response = ownerCheck(notificationEvent, SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_READ);
 			if (response == null) {
 				return sendSingleEntityResponse(notificationEvent);
 			}
@@ -140,7 +140,7 @@ public class NotificationEventResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT)
+	@RequireSecurity(SecurityPermission.ADMIN_NOTIFICATION_EVENT_CREATE)
 	@APIDescription("Posts a new notification event")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})

@@ -130,7 +130,7 @@ public class ResourceAction
 		return new OpenStorefrontRuntimeException("Resource not Found", "Check resource Id: " + resourceId);
 	}
 
-	@ValidationMethod(on = {"UploadResource", "UploadSubmissionFormResource"})
+	@ValidationMethod(on = {"UploadResource"})
 	public void uploadHook(ValidationErrors errors)
 	{
 		checkUploadSizeValidation(errors, file, "file");
@@ -146,10 +146,10 @@ public class ResourceAction
 			Component component = service.getPersistenceService().findById(Component.class, componentResource.getComponentId());
 			if (component != null) {
 				boolean allow = false;
-				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT)) {
+				if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_RESOURCE_MANAGEMENT)) {
 					allow = true;
 					LOG.log(Level.INFO, () -> SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
-				} else if (SecurityUtil.hasPermission(SecurityPermission.EVALUATIONS)) {
+				} else if (SecurityUtil.hasPermission(SecurityPermission.USER_EVALUATIONS_UPDATE)) {
 					if (ApprovalStatus.APPROVED.equals(component.getApprovalState()) == false) {
 						allow = true;
 					}
