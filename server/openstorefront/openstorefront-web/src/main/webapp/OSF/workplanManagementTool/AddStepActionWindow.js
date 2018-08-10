@@ -272,6 +272,8 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 						var recordToSave = {};
 						recordToSave.actionOrder = formValues.actionOrder;
 						recordToSave.workPlanStepActionType = formValues.workPlanStepActionType;
+						var selectedType = actionWindow.queryById('actionTypeCombo').getSelection();
+						recordToSave.actionTypeDescription = selectedType.get('description');
 						
 						delete formValues.actionOrder;
 						delete formValues.workPlanStepActionType;

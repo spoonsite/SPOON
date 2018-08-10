@@ -294,7 +294,7 @@
 											html: '<div style="width: 100%;">step 4</div>'
 										}
 									]
-								},
+								}
 							]
 						},
 						{
@@ -343,14 +343,14 @@
 									xtype: 'tbseparator'
 								},
 								{
-									text: 'Action',
+									text: 'Assign',
 									id: 'lookupGrid-tools-action',
 									scale: 'medium',
 									disabled: false,
 									requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
 									menu: [
 										{
-											text: 'Assign To Admin',
+											text: 'Assign To Admin Group',
 											id: 'lookupGrid-tools-action-admin-assign',
 											disabled: true,
 											iconCls: 'fa fa-lg fa-user-md icon-small-vertical-correction icon-button-color-default',

@@ -45,8 +45,6 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 	addForm: function() {	
 		var stepFormPanel = this;
 		
-
-		
 		var formItem = {
 			xtype: 'panel',
 			layout: {
@@ -179,7 +177,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 						],
 						handleRecordChange: function (store) {
 
-							var wpWindow = Ext.getCmp('workplanWindow');
+							var wpWindow = stepFormPanel.up('window');
 							wpWindow.getSelectedStep().actions = store.getData().items.map(function (item) {
 								return item.getData();
 							});
@@ -196,7 +194,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 						}
 					},
 					columns: [
-						{ text: 'Action Type', dataIndex: 'workPlanStepActionType' ,flex: 3 },
+						{ text: 'Action Type', dataIndex: 'actionTypeDescription' ,flex: 3 },
 						{ text: 'Options', dataIndex: 'actionOptionDescription', flex: 3 },
 						{ text: 'Order', dataIndex: 'actionOrder', flex: 1 }
 					],
@@ -285,7 +283,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 								iconCls: 'fa fa-2x fa-trash icon-button-color-warning icon-vertical-correction',
 								disabled: true,
 								handler: function () {
-									var grid = this.up('[itemId=stepFormPanel]').down('[itemId=stepActionGrid]');
+									var grid = stepFormPanel.queryById('stepActionGrid');
 									grid.getStore().remove(grid.getSelection());
 
 									grid.down('[itemId=removeActionButton]').disable();

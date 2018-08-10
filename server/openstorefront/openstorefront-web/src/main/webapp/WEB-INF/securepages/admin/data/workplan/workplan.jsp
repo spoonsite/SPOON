@@ -68,15 +68,15 @@
 								return record.getData().defaultWorkPlan ? (value + ' <b>(Default Work Plan)</b>') : value;
 							}
 						},
-						{ text: 'Type', dataIndex: 'workPlanType', flex: 2 },
-						{ text: 'Apply to Sub Entry Types', dataIndex: 'appliesToChildComponentTypes', width: 200 },
+						{ text: 'Type', dataIndex: 'workPlanTypeDescription', flex: 2, align: 'center' },
+						{ text: 'Apply to Sub Entry Types', dataIndex: 'appliesToChildComponentTypes', width: 200, align: 'center' },
 						{
 							text: 'Entry Types',
-							dataIndex: 'componentTypes',
+							dataIndex: 'componentTypes',							
 							flex: 10,
 							renderer: function (value) {
 								return value ? value.map(function (item) {
-									return item.componentType;
+									return item.componentTypeFullDescription;
 								}).join(', ') : '';
 							}
 						},
