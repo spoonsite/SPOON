@@ -181,10 +181,14 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 											xtype: 'tinymce_textarea',
 											name: 'emailMessage',
 											width: '100%',
+											tinyMCEConfig: CoreUtil.tinymceConfigNoMedia(),
 											height: 350,
 											colspan: 2
 										}
 									]);
+									Ext.defer(function(){
+										optionsContainer.updateLayout(true, true);
+									}, 200);
 								}
 							}
 
@@ -206,7 +210,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 					},
 					items: []
 				}
-			],
+			]
 		}
 	],
 	initComponent: function () {
@@ -224,7 +228,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 		if (actionWindow.recordToLoad && actionWindow.isEditing) {
 			var form = actionWindow.down('form');
 
-			for (key in actionWindow.recordToLoad.actionOption) {
+			for (var key in actionWindow.recordToLoad.actionOption) {
 				actionWindow.recordToLoad[key] = actionWindow.recordToLoad.actionOption[key];
 			}
 
@@ -247,7 +251,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 					form.down('[itemId=assignToGroupRadio]').setValue(true);
 				}
 				form.getForm().setValues(actionWindow.recordToLoad);
-			}, 500)
+			}, 500);
 		}
 	},
 	dockedItems: [
@@ -277,7 +281,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 						if (actionWindow.recordToLoad && actionWindow.isEditing) {
 							var indexToInsert = -1;
 							Ext.Array.forEach(actionWindow.stepActionStore.getData().items, function (record, index) {
-								if (record == actionWindow.getStepActionGrid().getSelection()[0]) {
+								if (record === actionWindow.getStepActionGrid().getSelection()[0]) {
 									indexToInsert = index;
 								}
 							});

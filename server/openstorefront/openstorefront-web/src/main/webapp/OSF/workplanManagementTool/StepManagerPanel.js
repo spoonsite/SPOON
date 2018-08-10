@@ -124,10 +124,10 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 						e.preventDefault();
 
 						if (e.getWheelDeltas().y < 0) {
-							stepsContainer.el.scrollTo('left', stepsContainer.el.getScroll().left + 20)
+							stepsContainer.el.scrollTo('left', stepsContainer.el.getScroll().left + 20);
 						}
 						else {
-							stepsContainer.el.scrollTo('left', stepsContainer.el.getScroll().left - 20)
+							stepsContainer.el.scrollTo('left', stepsContainer.el.getScroll().left - 20);
 						}
 					});
 				}
@@ -308,7 +308,7 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			hasError: false,
 			workPlanStepId: CoreUtil.uuidv4(),
 			approvalStateToMatch: 'none'
-		}
+		};
 	},
 	
 	drawSteps: function () {

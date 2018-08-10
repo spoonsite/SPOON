@@ -37,16 +37,6 @@
 
 			Ext.onReady(function () {
 
-				var workplanWindow = Ext.create('OSF.workplanManagementTool.Window', {
-					id: 'workplanWindow',
-					title: 'Add/Edit Workplans',
-					iconCls: 'fa fa-edit icon-button-color-edit',
-					modal: true,
-					width: '75%',
-					height: 840,
-					maximizable: true,
-				});
-
 				var workplanGrid = Ext.create('Ext.grid.Panel', {
 					id: 'workplanGrid',
 					title: 'Workplan Management <i class="fa fa-question-circle" data-qtip="Add, edit, and delete workplans here" ></i>',
@@ -252,6 +242,16 @@
 				var actionAddEdit = function (record) {
 
 					record = record || null;
+					
+					var workplanWindow = Ext.create('OSF.workplanManagementTool.Window', {				
+						title: 'Add/Edit Workplans',
+						iconCls: 'fa fa-edit icon-button-color-edit',
+						modal: true,
+						width: '80%',
+						height: '80%',
+						maximizable: true,
+						closeAction: 'destory'
+					});					
 					workplanWindow
 						.loadWorkplan(record)
 						.show();

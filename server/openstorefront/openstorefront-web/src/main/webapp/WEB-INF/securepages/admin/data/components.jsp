@@ -1279,14 +1279,14 @@
 									width: '100%',
 									displayField: 'Comment displayfield',
 									store: {
-										autoLoad: true,
-									},
+										autoLoad: true
+									}
 								},
 								{
 									xtype: 'hidden',
 									itemId: 'searchCommentId',
 									name: 'commentId'
-								},
+								}
 							],
 							dockedItems: [
 								{
@@ -1344,7 +1344,7 @@
 														});
 													}
 												});
-												this.up('window').close()
+												this.up('window').close();
 											}
 										},
 										{
@@ -1409,14 +1409,14 @@
 									width: '100%',
 									displayField: 'Comment displayfield',
 									store: {
-										autoLoad: true,
-									},
+										autoLoad: true
+									}
 								},
 								{
 									xtype: 'hidden',
 									itemId: 'searchCommentId',
 									name: 'commentId'
-								},
+								}
 							],
 							dockedItems: [
 								{
@@ -1477,7 +1477,7 @@
 														});
 													}
 												});
-												this.up('window').close()
+												this.up('window').close();
 											}
 										},
 										{
