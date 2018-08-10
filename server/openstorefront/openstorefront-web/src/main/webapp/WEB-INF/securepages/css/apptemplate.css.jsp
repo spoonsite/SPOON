@@ -16,14 +16,14 @@ limitations under the License.
 
 <%@page  contentType="text/css" %>
 
-<%@ include file="homePage.jsp" %>
-<%@ include file="searchResultDetail.jsp" %>
-<%@ include file="iconButtons.jsp" %>
-<%@ include file="submissionForm.jsp" %>
-<%@ include file="entryType.jsp" %>
-<%@ include file="evaluation.jsp" %>
-<%@ include file="workPlan.jsp" %>
-<%@ include file="submissionComments.jsp" %>
+<%@ include file="homePage.css.jsp" %>
+<%@ include file="searchResultDetail.css.jsp" %>
+<%@ include file="iconButtons.css.jsp" %>
+<%@ include file="submissionForm.css.jsp" %>
+<%@ include file="entryType.css.jsp" %>
+<%@ include file="evaluation.css.jsp" %>
+<%@ include file="workPlan.css.jsp" %>
+<%@ include file="submissionComments.css.jsp" %>
 
 @media print {
     .pageBreak {		
