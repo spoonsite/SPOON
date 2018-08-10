@@ -268,46 +268,6 @@
 										}
 									}
 								},
-								{
-									xtype: 'container',
-									itemId: 'stepsLegendContainer',
-									id: 'workplan-progress-management-worklink-status-legend',
-									hidden: true,
-									width: 120,
-									padding: '0 0 0 15',
-									style: 'border-right: 1px solid #ccc',
-									layout: {
-										type: 'vbox',
-										pack: 'center'
-									},
-									defaults: {
-										margin: '0 0 10 0'
-									},
-									items: [
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;" data-qtip="The current step of the workplan"><div class="wp-step-lengend current-step"></div>&nbsp;<strong>Current Step</strong></div>'
-										},
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;" data-qtip="This step has been completed or needs to be completed"><div class="wp-step-lengend wp-step"></div>&nbsp;<strong>Step</strong></div>'
-										}
-									]
-								},
-								{
-									// the container will be populated when an item is selected
-									xtype: 'container',
-									itemId: 'workplanStatusContainer',
-									id: 'workplan-progress-management-worklink-status',
-									layout: {
-										type: 'hbox',
-										pack: 'center',
-										scrollable: 'x',
-										height: '100%',
-										padding: '0 30 20 20',
-										cls: 'step-container',
-									}
-								},
 							]
 						},
 						{
@@ -410,6 +370,60 @@
 									]
 								}
 							]
+						},
+						{
+							dock: 'bottom',
+							xtype: 'toolbar',
+							id: 'workplan-status-toolbar',
+							hidden: true,
+							border: false,
+							bodyBorder: false,
+							layout: {
+								pack: 'center'
+							},
+							style: 'border-top: 1px solid #D0D0D0 !important',
+							title: 'Selected Workplan Progress',
+							items: [
+								{
+									xtype: 'container',
+									itemId: 'stepsLegendContainer',
+									id: 'workplan-progress-management-worklink-status-legend',
+									width: 120,
+									padding: '0 0 0 15',
+									style: 'border-right: 1px solid #ccc',
+									layout: {
+										type: 'vbox',
+										pack: 'center'
+									},
+									defaults: {
+										margin: '0 0 10 0'
+									},
+									items: [
+										{
+											xtype: 'container',
+											html: '<div style="width: 100%;" data-qtip="The current step of the workplan"><div class="wp-step-lengend current-step"></div>&nbsp;<strong>Current Step</strong></div>'
+										},
+										{
+											xtype: 'container',
+											html: '<div style="width: 100%;" data-qtip="This step has been completed or needs to be completed"><div class="wp-step-lengend wp-step"></div>&nbsp;<strong>Step</strong></div>'
+										}
+									]
+								},
+								{
+									// the container will be populated when an item is selected
+									xtype: 'container',
+									itemId: 'workplanStatusContainer',
+									id: 'workplan-progress-management-worklink-status',
+									layout: {
+										type: 'hbox',
+										pack: 'center',
+										scrollable: 'x',
+										height: '100%',
+										padding: '0 30 20 20',
+										cls: 'step-container',
+									}
+								},
+							]
 						}
 					],
 					listeners: {
@@ -419,8 +433,8 @@
 							var steps = record.get('steps');
 							var currentStep = record.get('currentStep');
 							var statusCmp = Ext.getCmp('workplan-progress-management-worklink-status');
-							var statusLegendCmp = Ext.getCmp('workplan-progress-management-worklink-status-legend');
-							statusLegendCmp.setVisible(true);
+							var statusToolbarCmp = Ext.getCmp('workplan-status-toolbar');
+							statusToolbarCmp.setVisible(true);
 							statusCmp.removeAll();
 							Ext.Array.forEach(steps, function (el, index) {
 								statusCmp.add({
