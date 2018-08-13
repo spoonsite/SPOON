@@ -52,8 +52,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 		{
 			xtype: 'osf.wp.stepForm',
 			itemId: 'stepForm',
-			region: 'center',
-			width: '100%'
+			region: 'center'
 		}
 	],
 	dockedItems: [
@@ -196,7 +195,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 		
 		// If no record was provided, us the defaultConfig
 		record = Ext.apply(defaultConfig, record);
-		this.unPackFieldsForLoading(record)
+		this.unPackFieldsForLoading(record);
 
 		this.setConfig(record);
 		

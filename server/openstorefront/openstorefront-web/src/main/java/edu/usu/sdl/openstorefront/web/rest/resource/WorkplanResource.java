@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.WorkLinkWrapper;
 import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
+import edu.usu.sdl.openstorefront.core.view.WorkPlanView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -72,13 +73,13 @@ public class WorkplanResource
 	@APIDescription("Gets a list of all Workplans.")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(WorkPlan.class)
+	@DataType(WorkPlanView.class)
 	public Response workplanLookupAll()
 	{
 		WorkPlan workPlanExample = new WorkPlan();
 		List<WorkPlan> workPlans = workPlanExample.findByExample();
 
-		GenericEntity<List<WorkPlan>> entity = new GenericEntity<List<WorkPlan>>(workPlans)
+		GenericEntity<List<WorkPlanView>> entity = new GenericEntity<List<WorkPlanView>>(WorkPlanView.toView(workPlans))
 		{
 		};
 		return sendSingleEntityResponse(entity);
@@ -217,14 +218,19 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_READ)
 	@APIDescription("Gets a single Work Plan")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(WorkPlan.class)
+	@DataType(WorkPlanView.class)
 	@Path("/{id}")
 	public Response workPlanSingleLookup(@PathParam("id") String workPlanId)
 	{
+		WorkPlanView view = null;
+
 		WorkPlan workPlan = new WorkPlan();
 		workPlan.setWorkPlanId(workPlanId);
 		workPlan = workPlan.find();
-		return sendSingleEntityResponse(workPlan);
+		if (workPlan != null) {
+			view = WorkPlanView.toView(workPlan);
+		}
+		return sendSingleEntityResponse(view);
 	}
 
 	@POST
@@ -232,14 +238,14 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_CREATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(WorkPlan.class)
+	@DataType(WorkPlanView.class)
 	public Response createWorkPlan(WorkPlan workPlan)
 	{
 		ValidationResult validationResult = workPlan.validate();
 		if (validationResult.valid()) {
 			workPlan.populateBaseCreateFields();
 			WorkPlan createdWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlan);
-			return sendSingleEntityResponse(createdWorkPlan);
+			return sendSingleEntityResponse(WorkPlanView.toView(createdWorkPlan));
 		} else {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
@@ -250,7 +256,7 @@ public class WorkplanResource
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(WorkPlan.class)
+	@DataType(WorkPlanView.class)
 	public Response updateWorkPlan(
 			WorkPlanModel workPlanModel
 	)
@@ -258,7 +264,7 @@ public class WorkplanResource
 		ValidationResult validationResult = workPlanModel.getWorkPlan().validate();
 		if (validationResult.valid()) {
 			WorkPlan updatedWorkPlan = service.getWorkPlanService().saveWorkPlan(workPlanModel);
-			return sendSingleEntityResponse(updatedWorkPlan);
+			return sendSingleEntityResponse(WorkPlanView.toView(updatedWorkPlan));
 		} else {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
