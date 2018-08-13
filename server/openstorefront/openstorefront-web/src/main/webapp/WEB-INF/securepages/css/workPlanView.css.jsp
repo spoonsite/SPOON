@@ -22,6 +22,6 @@ limitations under the License.
 }
 
 .current-step {
-	background: #8aedff;
+	background: #d479ff;
 	border-radius: 100%;
 }

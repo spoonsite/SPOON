@@ -29,6 +29,7 @@
 			/* global Ext, CoreUtil */
 			// Ext.require('OSF.common.workPlanProgressComment');
 			Ext.require('OSF.workplanProgress.CommentPanel');
+			Ext.require('OSF.workplanProgress.ProgressView');
 			Ext.onReady(function() {
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
@@ -372,83 +373,15 @@
 							]
 						},
 						{
-							dock: 'bottom',
-							xtype: 'toolbar',
-							id: 'workplan-status-toolbar',
-							hidden: true,
-							border: false,
-							bodyBorder: false,
-							layout: {
-								pack: 'center'
-							},
-							style: 'border-top: 1px solid #D0D0D0 !important',
-							title: 'Selected Workplan Progress',
-							items: [
-								{
-									xtype: 'container',
-									itemId: 'stepsLegendContainer',
-									id: 'workplan-progress-management-worklink-status-legend',
-									width: 120,
-									padding: '0 0 0 15',
-									style: 'border-right: 1px solid #ccc',
-									layout: {
-										type: 'vbox',
-										pack: 'center'
-									},
-									defaults: {
-										margin: '0 0 10 0'
-									},
-									items: [
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;" data-qtip="The current step of the workplan"><div class="wp-step-lengend current-step"></div>&nbsp;<strong>Current Step</strong></div>'
-										},
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;" data-qtip="This step has been completed or needs to be completed"><div class="wp-step-lengend wp-step"></div>&nbsp;<strong>Step</strong></div>'
-										}
-									]
-								},
-								{
-									// the container will be populated when an item is selected
-									xtype: 'container',
-									itemId: 'workplanStatusContainer',
-									id: 'workplan-progress-management-worklink-status',
-									layout: {
-										type: 'hbox',
-										pack: 'center',
-										scrollable: 'x',
-										height: '100%',
-										padding: '0 30 20 20',
-										cls: 'step-container',
-									}
-								},
-							]
+							xtype: 'osf.wp.progressView'
 						}
 					],
 					listeners: {
 						selectionchange: function(selectionModel, records, opts){
 							checkGridTools();
 							var record = linkGrid.getSelection()[0];
-							var steps = record.get('steps');
-							var currentStep = record.get('currentStep');
-							var statusCmp = Ext.getCmp('workplan-progress-management-worklink-status');
-							var statusToolbarCmp = Ext.getCmp('workplan-status-toolbar');
-							statusToolbarCmp.setVisible(true);
-							statusCmp.removeAll();
-							Ext.Array.forEach(steps, function (el, index) {
-								statusCmp.add({
-									xtype: 'container',
-									html:	'<div class="step-view-container ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + 
-												'<span class="wp-step-label ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + el.name + '</span>' +
-												'<div data-qtip="' + el.description + '"' + 
-												'class="step-view ' + 
-												(el.workPlanStepId === currentStep.workPlanStepId ? ' current-step ' : ' wp-step ') +
-												(index === steps.length - 1 ? ' last-step ' : ' ') +
-												'"></div>' +
-											'</div>'
-								});
-							});
+							var progressViewCmp = Ext.getCmp('workplan-progress-view');
+							progressViewCmp.addSteps(record);
 						}
 					},
 					bbar: Ext.create('Ext.PagingToolbar', {
