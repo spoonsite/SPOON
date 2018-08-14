@@ -174,7 +174,7 @@ export default {
         })
           .then(response => {
           })
-          .catch(error => console.log(error));
+          .catch(error => console.error(error));
         this.$refs.form.reset();
         this.confirmationDialog = true;
       }
