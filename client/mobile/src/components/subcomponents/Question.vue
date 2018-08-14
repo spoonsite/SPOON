@@ -17,7 +17,7 @@
       </h3>
 
     </div>
-    <v-alert type="warning" :value="question.activeStatus === 'P'">This question is pending admin approval.</v-alert>
+    <v-alert type="warning" class="w-100" :value="question.activeStatus === 'P'">This question is pending admin approval.</v-alert>
     <div class="px-2 pb-2">
       <p class="caption">Asked by <strong>{{ question.createUser }}</strong> on {{ question.createDts | formatDate }} <span v-if="question.createDts !== question.updateDts">(updated on {{ question.updateDts | formatDate }} by <strong>{{ question.updateUser }}</strong>)</span></p>
       <div class="pt-2" style="font-size: 16px;" v-html="question.question"></div>
@@ -67,7 +67,7 @@
         <p>Are you sure you want to delete this question?</p>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="warning" @click="deleteQuestion(answer.responseId)"><v-icon>delete</v-icon> Delete</v-btn>
+        <v-btn color="warning" @click="deleteQuestion(question.questionId)"><v-icon>delete</v-icon> Delete</v-btn>
         <v-btn @click="deleteQuestionDialog = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -180,9 +180,10 @@ export default {
         .then(response => {
           this.deleteQuestionDialog = false;
           this.$toasted.show('Question deleted.');
-          this.$emit('questionDeleted', this.question);
+          // this.$emit('questionDeleted', this.question);
+          this.$emit('questionDeleted');
         })
-        .catch(e => this.$toasted.error('There was a problem deleting the answer.'));
+        .catch(e => this.$toasted.error('There was a problem deleting the question.'));
     },
     editQuestion (qid) {
       let data = {

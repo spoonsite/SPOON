@@ -393,7 +393,7 @@
         <v-card class="grey lighten-5">
           <v-card-text>
             <v-btn color="white" @click="askQuestionDialog = true">Ask a Question</v-btn>
-            <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion" :question="question"></Question>
+            <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
             <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
           </v-card-text>
         </v-card>
@@ -595,7 +595,7 @@ export default {
       }
     },
     deleteQuestion (question) {
-      console.log(question);
+      this.questions = this.questions.filter(el => el.questionId !== question.questionId);
     },
     deleteReviewConfirmation () {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
