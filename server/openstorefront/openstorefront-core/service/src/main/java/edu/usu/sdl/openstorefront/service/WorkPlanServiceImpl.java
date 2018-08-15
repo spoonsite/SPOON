@@ -672,6 +672,7 @@ public class WorkPlanServiceImpl
 		}
 	}
 
+	// this fails for component type COMMUNICATIONS
 	@Override
 	public WorkPlan getWorkPlanForComponentType(String componentType)
 	{
@@ -681,7 +682,7 @@ public class WorkPlanServiceImpl
 		//check cache
 		Element element = OSFCacheManager.getWorkPlanTypeCache().get(componentType);
 		if (element != null) {
-			workPlan = (WorkPlan) element.getObjectValue();
+			workPlan = (WorkPlan) element.getObjectValue(); // returns null
 		} else {
 			WorkPlan workPlanExample = new WorkPlan();
 			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
@@ -804,6 +805,9 @@ public class WorkPlanServiceImpl
 		}
 	}
 
+	// TODO: refactor creation of workplanLink out of get function
+	//       this getter should not have side effects
+	//       lazy initialization fails when users first create a submission
 	@Override
 	public WorkPlanLink getWorkPlanLinkForSubmission(String userSubmissionId)
 	{

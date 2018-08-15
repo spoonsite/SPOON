@@ -224,6 +224,8 @@ public class UserSubmissionResource
 				if (!validateResult.valid()) {
 					response = Response.ok(validateResult.toRestError()).build();
 				} else {
+					// create a worklink
+					service.getWorkPlanService().getWorkPlanLinkForSubmission(submissionId);
 					response = Response.ok().build();
 				}
 			}
