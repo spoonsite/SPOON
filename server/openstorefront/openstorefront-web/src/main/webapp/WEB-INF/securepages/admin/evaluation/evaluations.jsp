@@ -497,7 +497,7 @@
 							},
 							{
 								xtype: 'tbseparator',
-								requiredPermissions: ['USER-EVALUATIONS-ACTIVATE']
+								requiredPermissions: ['USER-EVALUATIONS-UPDATE']
 							},
 							{
 								text: 'Toggle Status',
@@ -505,7 +505,7 @@
 								itemId: 'togglestatus',
 								disabled: true,									
 								scale: 'medium',
-								requiredPermissions: ['USER-EVALUATIONS-ACTIVATE'],
+								requiredPermissions: ['USER-EVALUATIONS-UPDATE'],
 								handler: function(){
 									var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 									actionToggleStatus(record);
