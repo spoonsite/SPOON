@@ -94,12 +94,6 @@ export default {
     }
   },
   methods: {
-    testAPI (event) {
-      console.log('Button Clicked Calling API');
-      if (event) {
-        this.$api.getTest();
-      }
-    },
     getCookie (cname) {
       let name = `${cname}=`;
       let decodedCookie = decodeURIComponent(document.cookie);
@@ -143,7 +137,7 @@ export default {
             }
             this.response = response;
           })
-          .catch(error => console.log(error));
+          .catch(error => console.error(error));
       }
     }
   }
