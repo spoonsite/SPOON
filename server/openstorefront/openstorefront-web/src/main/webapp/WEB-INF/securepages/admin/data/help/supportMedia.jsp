@@ -315,7 +315,7 @@
 									}
 								},
 								{
-									requiredPermissions: ['ADMIN-SUPPORT-CREATE'],
+									requiredPermissions: ['ADMIN-SUPPORT-MEDIA-CREATE'],
 									xtype: 'tbseparator'
 								},
 								{
