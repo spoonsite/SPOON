@@ -29,11 +29,9 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-flex>
-    <!-- </v-layout> -->
 
     <v-divider class="my-2"></v-divider>
 
-    <!-- <v-layout column> -->
       <v-flex pa-3 xs12 md6 offset-md3>
         <h1>Unassigned</h1>
       </v-flex>
