@@ -93,7 +93,6 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 							name: 'name',
 							maxLength: 20,
 							enforceMaxLength: true,
-							canAlertOnChange: true
 						},
 						{
 							xtype: 'ActiveOnMultiCombo',
@@ -106,7 +105,6 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 							fieldLabel: 'Short Description <i class="fa fa-question-circle" data-qtip="A short description of what the step is for" ></i> <span class="field-required" />',
 							name: 'description',
 							allowBlank: false,
-							canAlertOnChange: true
 						},
 						{
 							fieldLabel: 'Role Access <i class="fa fa-question-circle" data-qtip="Roles that will have access to manipulate a record on this step" ></i>',
