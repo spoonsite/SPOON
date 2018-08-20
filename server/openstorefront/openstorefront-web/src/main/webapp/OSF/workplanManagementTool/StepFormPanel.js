@@ -80,7 +80,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 										Ext.apply(wpWindow.getSelectedStep(), stepForm.getValues());
 									}
 									if (field.canAlertOnChange) {
-										wpWindow.stepForm.alert();
+										wpWindow.stepManager.drawSteps();
 									}
 								}
 							}
@@ -93,6 +93,7 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 							name: 'name',
 							maxLength: 20,
 							enforceMaxLength: true,
+							canAlertOnChange: true
 						},
 						{
 							xtype: 'ActiveOnMultiCombo',
