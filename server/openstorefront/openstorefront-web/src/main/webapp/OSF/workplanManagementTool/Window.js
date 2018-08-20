@@ -251,8 +251,8 @@ Ext.define('OSF.workplanManagementTool.Window', {
 		if (arguments.length === 1) {
 			this.workplanConfig = arguments[0];
 		}
-		else if (arguments.length === 2) {
-			if (typeof this[arguments[0]] !== undefined) {
+		else if (arguments.length === 2) {			
+			if (this[arguments[0]]) {
 				this[arguments[0]] = arguments[1];
 			}
 			else {
