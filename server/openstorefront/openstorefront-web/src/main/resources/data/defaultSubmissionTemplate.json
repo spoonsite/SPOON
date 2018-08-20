@@ -55,7 +55,7 @@
       "label" : "Verify / Update your information and hit Next.",
       "labelTooltip" : "",
       "labelAlign" : "",
-      "required" : null,
+      "required" : true,
       "requireComment" : null,
       "showComment" : null,
       "hidePrivateAttributeFlag" : null,
