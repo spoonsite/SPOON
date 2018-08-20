@@ -196,6 +196,7 @@
           <h2>Registration Success!</h2>
           <v-alert
             type="info"
+            style="width: 100%;"
             :value="!$store.state.securitypolicy.autoApproveUsers"
           >You application has been submitted and is awaiting approval by the admin.</v-alert>
         </v-card-title>

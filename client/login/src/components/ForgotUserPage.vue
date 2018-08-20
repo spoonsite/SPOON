@@ -56,7 +56,7 @@ export default {
           this.dialog = true;
           this.loading = false;
         })
-        .catch(error => console.log(error));
+        .catch(error => console.error(error));
     }
   }
 };
