@@ -381,7 +381,11 @@
 							checkGridTools();
 							var record = linkGrid.getSelection()[0];
 							var progressViewCmp = Ext.getCmp('workplan-progress-view');
-							progressViewCmp.addSteps(record);
+							if (record) {
+								progressViewCmp.addSteps(record);
+							} else {
+								progressViewCmp.setVisible(false);
+							}
 						}
 					},
 					bbar: Ext.create('Ext.PagingToolbar', {
