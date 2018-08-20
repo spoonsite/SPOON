@@ -76,7 +76,7 @@
 	border-radius: 100%;
 }
 
-.wp-step-lengend {
+.wp-step-legend {
 	float: left;
 	margin-top: 3px;
 	width: 1em;

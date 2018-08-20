@@ -69,7 +69,7 @@ Ext.define('OSF.workplanProgress.ProgressView', {
             items: [
                 {
                     xtype: 'container',
-                    html: '<div style="width: 100%;" data-qtip="The current step of the workplan"><div class="wp-step-lengend current-step"></div>&nbsp;<strong>Current Step</strong></div>'
+                    html: '<div style="width: 100%;" data-qtip="The current step of the workplan"><div class="wp-step-legend current-step"></div>&nbsp;<strong>Current Step</strong></div>'
                 }
             ]
         },
