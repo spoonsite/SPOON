@@ -98,7 +98,7 @@
 					items: [
 						{
 							text: 'Submissions Form Templates',
-							permission: 'ADMIN-SUBMISSION-FORM-TEMPLATE_PAGE',
+							permission: 'ADMIN-SUBMISSION-FORM-TEMPLATE-PAGE',
 							handler: function(){
 								actionLoadContent('Custom-Forms');
 							}							

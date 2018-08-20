@@ -250,7 +250,7 @@
 						width: '80%',
 						height: '80%',
 						maximizable: true,
-						closeAction: 'destory'
+						closeAction: 'destroy'
 					});					
 					workplanWindow
 						.loadWorkplan(record)

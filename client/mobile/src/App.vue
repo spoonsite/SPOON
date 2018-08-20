@@ -78,7 +78,7 @@
           </v-card-title>
           <v-card-text>
            <p>The mobile version of this application provides convenience on small screens. However, its features are limited compared to the desktop version.</p>
-           <p>If you need more advanced features please <a href="/openstorefront">go to the dekstop version.</a></p>
+           <p>If you need more advanced features please <a href="/openstorefront">go to the desktop version.</a></p>
           </v-card-text>
           <v-card-actions>
             <v-btn @click="firstTimeDialog = false">Close</v-btn>

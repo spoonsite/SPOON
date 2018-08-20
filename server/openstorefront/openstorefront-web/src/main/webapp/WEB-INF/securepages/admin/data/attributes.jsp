@@ -1356,7 +1356,7 @@
 								text: 'Upload Attachment',
 								iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 								formBind: true,	
-								requiredPermissions: ['ADMIN_ATTRIBUTE_MANAGEMENT_CREATE'],
+								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-CREATE'],
 								handler: function() {
 									var record = Ext.getCmp('codesGrid').getSelection()[0];
 									var parentAttributeRecord = attributeGrid.getSelection()[0];

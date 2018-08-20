@@ -44,7 +44,7 @@
 						closeAction: 'destroy',
 						height: 650,
 						layout: 'fit',
-						requiredPermissions: ['ADMIN-SUPPORT-MEDIA'],
+						requiredPermissions: ['ADMIN-SUPPORT-MEDIA-CREATE', 'ADMIN-SUPPORT-MEDIA-UPDATE', 'ADMIN-SUPPORT-MEDIA'], // ADMIN-SUPPORT-MEDIA is a legacy permission
 						items: [
 							{
 								xtype: 'form',
@@ -315,7 +315,7 @@
 									}
 								},
 								{
-									requiredPermissions: ['ADMIN-SUPPORT-CREATE'],
+									requiredPermissions: ['ADMIN-SUPPORT-MEDIA-CREATE'],
 									xtype: 'tbseparator'
 								},
 								{

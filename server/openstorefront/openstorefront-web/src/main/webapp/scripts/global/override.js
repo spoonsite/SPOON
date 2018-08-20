@@ -397,7 +397,7 @@ Ext.onReady(function() {
 			}
 			
 			var feedbackWin = Ext.create('OSF.component.FeedbackWindow',{				
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				hideType: 'Application Issue',
 				labelForDescription: 'Please provide detail as to what you are trying to accomplish',
 				extraDescription: 'Request: ' + requestMessage

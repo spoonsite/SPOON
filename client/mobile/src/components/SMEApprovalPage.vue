@@ -1,72 +1,65 @@
 <template lang="html">
 
   <section class="sme-approval-page">
-    <v-content mt-3 mx-2>
-      <v-layout column>
-        <v-flex pa-3>
-          <h1>Assigned to Me</h1>
-        </v-flex>
+    <v-layout align-center row wrap>
+      <v-flex pa-3 xs12 md6 offset-md3>
+        <h1>Assigned to Me</h1>
+      </v-flex>
 
-        <v-flex xs12 md6 offset-md3>
-          <v-expansion-panel>
-            <v-expansion-panel-content
-              v-for="entry in submissions.data"
-              :key="entry.componentId"
-              v-if="entry.hasOwnProperty('currentUserAssigned') && entry.currentUserAssigned === $store.state.currentUser.username">
-              <div slot="header">{{entry.linkName}}</div>
-              <v-card class="grey lighten-3">
-                <v-card-text>
-                  <strong>Component Type: </strong>
-                  <p>
-                    <!-- <img v-if="entry.componentTypeIconUrl" :src="baseURL + entry.componentTypeIconUrl" width="30" > -->
-                      {{ entry.componentTypeDescription }}
-                  </p>
-                </v-card-text>
-                <v-layout column>
-                  <v-btn @click="viewEntry(entry.componentId)" class="primary">View Entry</v-btn>
-                  <v-btn @click="workView(entry)" class="primary">Work View</v-btn>
-                  <v-btn @click="unassign(entry)" class="primary">Unassign</v-btn>
-                </v-layout>
-              </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-flex>
-      </v-layout>
-    </v-content>
+      <v-flex xs12 md6 offset-md3>
+        <v-expansion-panel popout>
+          <v-expansion-panel-content
+            v-for="entry in submissions.data"
+            :key="entry.componentId"
+            v-if="entry.hasOwnProperty('currentUserAssigned') && entry.currentUserAssigned === $store.state.currentUser.username">
+            <div slot="header">{{entry.linkName}}</div>
+            <v-card class="grey lighten-3">
+              <v-card-text>
+                <strong>Component Type: </strong>
+                <p>
+                    {{ entry.componentTypeDescription }}
+                </p>
+              </v-card-text>
+              <v-layout column>
+                <v-btn @click="viewEntry(entry.componentId)" class="primary">View Entry</v-btn>
+                <v-btn @click="workView(entry)" class="primary">Work View</v-btn>
+                <v-btn @click="unassign(entry)" class="primary">Unassign</v-btn>
+              </v-layout>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-flex>
 
     <v-divider class="my-2"></v-divider>
 
-    <v-content mt-3 mx-2>
-      <v-layout column>
-        <v-flex pa-3>
-          <h1>Unassigned</h1>
-        </v-flex>
+      <v-flex pa-3 xs12 md6 offset-md3>
+        <h1>Unassigned</h1>
+      </v-flex>
 
-        <v-flex xs12 md6 offset-md3>
-          <v-expansion-panel>
-            <v-expansion-panel-content
-              v-for="entry in submissions.data"
-              :key="entry.componentId"
-              v-if="!entry.hasOwnProperty('currentUserAssigned')">
-              <div slot="header">{{entry.linkName}}</div>
-              <v-card class="grey lighten-3">
-                <v-card-text>
-                  <strong>Component Type: </strong>
-                  <p>
-                    {{ entry.componentTypeDescription }}
-                  </p>
-                </v-card-text>
-                <v-layout column>
-                  <v-btn @click="viewEntry(entry.componentId)" class="primary">View Entry</v-btn>
-                  <v-btn @click="assignToMe(entry)" class="primary">Assign to Me</v-btn>
-                </v-layout>
-              </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-flex>
+      <v-flex xs12 md6 offset-md3>
+        <v-expansion-panel popout>
+          <v-expansion-panel-content
+            v-for="entry in submissions.data"
+            :key="entry.componentId"
+            v-if="!entry.hasOwnProperty('currentUserAssigned')">
+            <div slot="header">{{entry.linkName}}</div>
+            <v-card class="grey lighten-3">
+              <v-card-text>
+                <strong>Component Type: </strong>
+                <p>
+                  {{ entry.componentTypeDescription }}
+                </p>
+              </v-card-text>
+              <v-layout column>
+                <v-btn @click="viewEntry(entry.componentId)" class="primary">View Entry</v-btn>
+                <v-btn @click="assignToMe(entry)" class="primary">Assign to Me</v-btn>
+              </v-layout>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-flex>
 
-      </v-layout>
-    </v-content>
+    </v-layout>
 
     <LoadingOverlay v-model="isLoading"></LoadingOverlay>
   </section>
@@ -105,7 +98,7 @@ export default {
         });
     },
     getWorkPlan () {
-      this.$http.get(`/openstorefront/api/v1/resource/workplans/worklinks`) // 5473864f-5dac-4d8d-a07f-b9fa78b46746
+      this.$http.get(`/openstorefront/api/v1/resource/workplans/worklinks`)
         .then(res => {
           this.submissions = res.data;
         });
@@ -132,9 +125,6 @@ export default {
         }
       });
     }
-
-  },
-  computed: {
 
   }
 };

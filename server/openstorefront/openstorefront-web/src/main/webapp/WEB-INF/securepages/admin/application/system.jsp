@@ -1742,7 +1742,7 @@
 									text: 'Upload Plugin',
 									iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 									formBind: true,	
-									requiredPermissions: ['ADMIN_SYSTEM_MANAGEMENT_PLUGIN'],
+									requiredPermissions: ['ADMIN-SYSTEM-MANAGEMENT-PLUGIN'],
 									handler: function() {
 										var form = Ext.getCmp('pluginUploadForm');
 										if (form.isValid()) {
