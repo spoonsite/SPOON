@@ -717,7 +717,7 @@
 												url: 'api/v1/resource/securityroles/' + encodeURIComponent(record.get('roleName')),
 												method: 'PUT',
 												jsonData: data,
-												timeout:120000,
+												timeout: 120000,
 												callback: function(){
 													permissionWin.setLoading(false);
 												},
