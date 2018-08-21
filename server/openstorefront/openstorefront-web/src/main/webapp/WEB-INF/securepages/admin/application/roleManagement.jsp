@@ -712,11 +712,12 @@
 											var data = record.data;
 											data.permissions = permissions;
 											
-											permissionWin.setLoading('Saving Permissions...');
+											permissionWin.setLoading('Saving permissions... <br> This may take a while');
 											Ext.Ajax.request({
 												url: 'api/v1/resource/securityroles/' + encodeURIComponent(record.get('roleName')),
 												method: 'PUT',
 												jsonData: data,
+												timeout: 120000,
 												callback: function(){
 													permissionWin.setLoading(false);
 												},

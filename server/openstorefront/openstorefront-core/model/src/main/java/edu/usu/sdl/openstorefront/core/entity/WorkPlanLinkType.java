@@ -47,9 +47,9 @@ public class WorkPlanLinkType
 	{
 		if (workPlanLink.getComponentId() != null) {
 			return COMPONENT;
-		} else if (workPlanLink.getComponentId() != null) {
+		} else if (workPlanLink.getEvaluationId() != null) {
 			return EVALUTION;
-		} else if (workPlanLink.getComponentId() != null) {
+		} else if (workPlanLink.getUserSubmissionId() != null) {
 			return SUBMISSION;
 		}
 		return OpenStorefrontConstant.NOT_AVAILABLE;
