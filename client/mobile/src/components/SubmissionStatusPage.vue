@@ -7,9 +7,9 @@
       <v-expansion-panel-content v-for="item in data" :key="item.name">
         <div slot="header">
           <h3>
-            <v-icon v-if="item.approvalState === 'N'" color="red darken-2">warning</v-icon>
-            <v-icon v-if="item.approvalState === 'P'" color="orange darken-2">hourglass_empty</v-icon>
-            <v-icon v-if="item.approvalState === 'A'" color="light-green">done_outline</v-icon>
+            <v-icon v-if="item.approvalState === 'N'" color="red darken-2">fas fa-exclamation-triangle</v-icon>
+            <v-icon v-if="item.approvalState === 'P'" color="orange darken-2">far fa-hourglass</v-icon>
+            <v-icon v-if="item.approvalState === 'A'" color="light-green">far fa-check-square</v-icon>
               {{ item.name }}
             </h3>
           </div>

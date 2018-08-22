@@ -224,12 +224,16 @@ export default {
     },
     submitErrorReport () {
       this.errorDialog = false;
-      router.push({
-        name: 'Contact',
-        params: {
-          ticket: this.currentError.statusText
-        }
-      });
+      if (this.currentError) {
+        router.push({
+          name: 'Contact',
+          params: {
+            ticket: this.currentError.statusText
+          }
+        });
+      } else {
+        router.push({name: 'Contact'});
+      }
     },
     checkFirstTime () {
       if (this.$cookies.get('visited') !== 'yes') {
