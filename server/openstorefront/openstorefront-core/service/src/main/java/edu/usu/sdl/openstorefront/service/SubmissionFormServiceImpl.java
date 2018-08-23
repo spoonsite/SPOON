@@ -331,9 +331,11 @@ public class SubmissionFormServiceImpl
 					FileHistoryOption options = new FileHistoryOption();
 					options.setUploadTags(Boolean.TRUE);
 
-					getComponentService().saveFullComponent(componentFormSet.getPrimary(), options);
+					ComponentAll saveComponent = getComponentService().saveFullComponent(componentFormSet.getPrimary(), options);
+					getComponentService().submitComponentSubmission(saveComponent.getComponent().getComponentId());
 					for (ComponentAll componentAll : componentFormSet.getChildren()) {
-						getComponentService().saveFullComponent(componentAll, options);
+						ComponentAll childComponent = getComponentService().saveFullComponent(componentAll, options);
+						getComponentService().submitComponentSubmission(childComponent.getComponent().getComponentId());
 					}
 					internalDeleteUserSubmission(userSubmission.getUserSubmissionId(), false);
 				}
