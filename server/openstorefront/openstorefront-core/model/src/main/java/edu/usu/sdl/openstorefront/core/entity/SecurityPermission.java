@@ -809,7 +809,7 @@ public class SecurityPermission
 
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ, "Provides the ability to read eval template checklist question items", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST_QUESTION));
 		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE, SecurityRole.EVALUATOR_ROLE));
 
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_CREATE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_CREATE, "Provides the ability to create eval template checklist questions", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST_QUESTION));
 		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_CREATE)).setPermissionPredecessor(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ);
