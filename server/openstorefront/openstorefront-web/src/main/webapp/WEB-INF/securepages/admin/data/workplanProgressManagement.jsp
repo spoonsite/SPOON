@@ -381,7 +381,8 @@
 										},
 										{
 											xtype: 'menuseparator',
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY']
+											permissionLogicalOperator: 'AND',
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY', 'ADMIN-ROLE-MANAGEMENT-READ']
 										},                                       
 										{
 											text: 'Reassign',
