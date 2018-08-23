@@ -26,6 +26,7 @@ import java.util.Map;
  *
  * @author dshurtleff
  * @author cyearsley
+ * @author rfrazier
  *
  */
 @SystemTable
@@ -43,52 +44,52 @@ public class SecurityPermission
 	private List<String> defaultRoles;
 
 	//===OLD Permissions===========================================================================================================
-	public static final String GROUPBY_OLD = "Old permissions (to be replaced/renamed)";
-	public static final String ENTRY_TAG = "ENTRY-TAG";
-	public static final String USER_SUBMISSIONS = "USER-SUBMISSIONS";
-	public static final String EVALUATIONS = "EVALUATIONS";
-	public static final String REPORT_ENTRY_LISTING_REPORT = "REPORT-ENTRYLISTING-REPORT";
-	public static final String RELATIONSHIP_VIEW_TOOL = "RELATION-VIEW-TOOL";
-	public static final String ADMIN_USER_MANAGEMENT = "ADMIN-USER-MANAGEMENT";
-	public static final String ADMIN_ENTRY_MANAGEMENT = "ADMIN-ENTRY-MANAGEMENT";
-	public static final String ADMIN_MESSAGE_MANAGEMENT = "ADMIN-MESSAGE-MANAGEMENT";
-	public static final String ADMIN_JOB_MANAGEMENT = "ADMIN-JOB-MANAGEMENT";
-	public static final String ADMIN_INTEGRATION = "ADMIN-INTEGRATION";
-	public static final String ADMIN_WATCHES = "ADMIN-WATCHES";
-	public static final String ADMIN_TRACKING = "ADMIN-TRACKING";
-	public static final String ADMIN_SEARCH = "ADMIN-SEARCH";
-	public static final String ADMIN_USER_MANAGEMENT_PROFILES = "ADMIN-USER-MANAGEMENT-PROFILES";
-	public static final String ADMIN_TEMPMEDIA_MANAGEMENT = "ADMIN-TEMPMEDIA-MANAGEMENT";
-	public static final String ADMIN_ORGANIZATION = "ADMIN-ORGANIZATION";
-	public static final String ADMIN_LOOKUPS = "ADMIN-LOOKUPS";
-	public static final String ADMIN_HIGHLIGHTS = "ADMIN-HIGHLIGHTS";
-	public static final String ADMIN_MEDIA = "ADMIN-MEDIA";
-	public static final String ADMIN_FEEDBACK = "ADMIN-FEEDBACK";
-	public static final String ADMIN_EVALUATION_TEMPLATE = "ADMIN-EVALUATION-TEMPLATE";
-	public static final String ADMIN_BRANDING = "ADMIN-BRANDING";
-	public static final String ADMIN_EVALUATION_TEMPLATE_SECTION = "ADMIN-EVALUATION-TEMPLATE-SECTION";
-	public static final String ADMIN_CONTACT_MANAGEMENT = "ADMIN-CONTACT-MANAGEMENT";
-	public static final String ADMIN_ENTRY_TEMPLATES = "ADMIN-ENTRY-TEMPLATES";
-	public static final String ADMIN_USER_SUBMISSIONS = "ADMIN-USER-SUBMISSIONS";
-	public static final String ADMIN_ENTRY_TYPES = "ADMIN-ENTRY-TYPES";
-	public static final String ADMIN_QUESTIONS = "ADMIN-QUESTIONS";
-	public static final String ADMIN_REVIEW = "ADMIN-REVIEW";
-	public static final String ADMIN_EVALUATION_TEMPLATE_CHECKLIST = "ADMIN-EVALUATION-TEMPLATE-CHECKLIST";
-	public static final String ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION = "ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION";
-	public static final String ADMIN_ATTRIBUTE_MANAGEMENT = "ADMIN-ATTRIBUTE-MANAGEMENT";
-	public static final String ADMIN_ALERT_MANAGEMENT = "ADMIN-ALERT-MANAGEMENT";
-	public static final String ADMIN_EVALUATION_MANAGEMENT = "ADMIN-EVALUATION-MANAGEMENT";
-	public static final String ADMIN_ROLE_MANAGEMENT = "ADMIN-ROLE-MANAGEMENT";
-	public static final String ADMIN_FAQ = "ADMIN-FAQ";
-	public static final String ADMIN_SUBMISSION_FORM_TEMPLATE = "ADMIN-SUBMISSION-FORM-TEMPLATE";
-	public static final String ADMIN_SUPPORT_MEDIA = "ADMIN-SUPPORT-MEDIA";
-	public static final String ALLOW_USER_ATTRIBUTE_TYPE_CREATION = "ALLOW-USER-ATTRIBUTE-TYPE-CREATION";
-	public static final String RELATION_VIEW_TOOL = "RELATION-VIEW-TOOL";
-	public static final String API_DOCS = "API_DOCS";
-	public static final String REPORTS = "REPORTS";
-	public static final String REPORTS_SCHEDULE = "REPORTS-SCHEDULE";
-	public static final String REPORTS_SCHEDULE_UPDATE = "REPORTS-SCHEDULE-UPDATE";
-	public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
+//    public static final String ADMIN_ALERT_MANAGEMENT = "ADMIN-ALERT-MANAGEMENT";
+//    public static final String ADMIN_ATTRIBUTE_MANAGEMENT = "ADMIN-ATTRIBUTE-MANAGEMENT";
+//    public static final String ADMIN_BRANDING = "ADMIN-BRANDING";
+//    public static final String ADMIN_CONTACT_MANAGEMENT = "ADMIN-CONTACT-MANAGEMENT";
+    public static final String ADMIN_ENTRY_MANAGEMENT = "ADMIN-ENTRY-MANAGEMENT";
+//    public static final String ADMIN_ENTRY_TEMPLATES = "ADMIN-ENTRY-TEMPLATES";
+//    public static final String ADMIN_ENTRY_TYPES = "ADMIN-ENTRY-TYPES";
+//    public static final String ADMIN_EVALUATION_MANAGEMENT = "ADMIN-EVALUATION-MANAGEMENT";
+//    public static final String ADMIN_EVALUATION_TEMPLATE = "ADMIN-EVALUATION-TEMPLATE";
+//    public static final String ADMIN_EVALUATION_TEMPLATE_CHECKLIST = "ADMIN-EVALUATION-TEMPLATE-CHECKLIST";
+//    public static final String ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION = "ADMIN-EVALUATION-TEMPLATE-CHECKLIST-QUESTION";
+//    public static final String ADMIN_EVALUATION_TEMPLATE_SECTION = "ADMIN-EVALUATION-TEMPLATE-SECTION";
+//    public static final String ADMIN_FAQ = "ADMIN-FAQ";
+//    public static final String ADMIN_FEEDBACK = "ADMIN-FEEDBACK";
+//    public static final String ADMIN_HIGHLIGHTS = "ADMIN-HIGHLIGHTS";
+//    public static final String ADMIN_INTEGRATION = "ADMIN-INTEGRATION";
+//    public static final String ADMIN_JOB_MANAGEMENT = "ADMIN-JOB-MANAGEMENT";
+//    public static final String ADMIN_LOOKUPS = "ADMIN-LOOKUPS";
+//    public static final String ADMIN_MEDIA = "ADMIN-MEDIA";
+    public static final String ADMIN_MESSAGE_MANAGEMENT = "ADMIN-MESSAGE-MANAGEMENT";
+//    public static final String ADMIN_ORGANIZATION = "ADMIN-ORGANIZATION";
+    public static final String ADMIN_QUESTIONS = "ADMIN-QUESTIONS";
+    public static final String ADMIN_REVIEW = "ADMIN-REVIEW";
+//    public static final String ADMIN_ROLE_MANAGEMENT = "ADMIN-ROLE-MANAGEMENT";
+//    public static final String ADMIN_SEARCH = "ADMIN-SEARCH";
+    public static final String ADMIN_SECURITY = "ADMIN-SECURITY";
+//    public static final String ADMIN_SUBMISSION_FORM_TEMPLATE = "ADMIN-SUBMISSION-FORM-TEMPLATE";
+    public static final String ADMIN_SUPPORT_MEDIA = "ADMIN-SUPPORT-MEDIA";
+//    public static final String ADMIN_TEMPMEDIA_MANAGEMENT = "ADMIN-TEMPMEDIA-MANAGEMENT";
+//    public static final String ADMIN_TRACKING = "ADMIN-TRACKING";
+    public static final String ADMIN_USER_MANAGEMENT = "ADMIN-USER-MANAGEMENT";
+//    public static final String ADMIN_USER_MANAGEMENT_PROFILES = "ADMIN-USER-MANAGEMENT-PROFILES";
+    public static final String ADMIN_USER_SUBMISSIONS = "ADMIN-USER-SUBMISSIONS";
+//    public static final String ADMIN_WATCHES = "ADMIN-WATCHES";
+    public static final String ALLOW_USER_ATTRIBUTE_TYPE_CREATION = "ALLOW-USER-ATTRIBUTE-TYPE-CREATION";
+//    public static final String API_DOCS = "API_DOCS";
+//    public static final String ENTRY_TAG = "ENTRY-TAG";
+    public static final String EVALUATIONS = "EVALUATIONS";
+    public static final String GROUPBY_OLD = "Old permissions (to be replaced/renamed)";
+    public static final String RELATIONSHIP_VIEW_TOOL = "RELATION-VIEW-TOOL";
+//    public static final String RELATION_VIEW_TOOL = "RELATION-VIEW-TOOL";
+    public static final String REPORTS = "REPORTS";
+    public static final String REPORTS_SCHEDULE = "REPORTS-SCHEDULE";
+    public static final String REPORTS_SCHEDULE_UPDATE = "REPORTS-SCHEDULE-UPDATE";
+    public static final String REPORT_ENTRY_LISTING_REPORT = "REPORT-ENTRYLISTING-REPORT";
+    public static final String USER_SUBMISSIONS = "USER-SUBMISSIONS";
 
 	// ========================================================================================================================
 	// Alerts
@@ -1641,9 +1642,9 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(ADMIN_SUPPORT_MEDIA)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_SUPPORT_MEDIA)).setDefaultRoles(null);
 
-		codeMap.put(ENTRY_TAG, newLookup(SecurityPermission.class, ENTRY_TAG, "Entry tag", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ENTRY_TAG)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ENTRY_TAG)).setDefaultRoles(null);
+//		codeMap.put(ENTRY_TAG, newLookup(SecurityPermission.class, ENTRY_TAG, "Entry tag", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ENTRY_TAG)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ENTRY_TAG)).setDefaultRoles(null);
 
 		codeMap.put(USER_SUBMISSIONS, newLookup(SecurityPermission.class, USER_SUBMISSIONS, "User submissions", null, GROUPBY_OLD));
 		((SecurityPermission) codeMap.get(USER_SUBMISSIONS)).setPermissionPredecessor(null);
@@ -1673,81 +1674,81 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(ADMIN_MESSAGE_MANAGEMENT)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_MESSAGE_MANAGEMENT)).setDefaultRoles(null);
 
-		codeMap.put(ADMIN_JOB_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_JOB_MANAGEMENT, "Admin job management", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_JOB_MANAGEMENT)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_JOB_MANAGEMENT)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_INTEGRATION, newLookup(SecurityPermission.class, ADMIN_INTEGRATION, "Admin integration", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_INTEGRATION)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_INTEGRATION)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_WATCHES, newLookup(SecurityPermission.class, ADMIN_WATCHES, "Admin watches", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_WATCHES)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_WATCHES)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_TRACKING, newLookup(SecurityPermission.class, ADMIN_TRACKING, "Admin tracking", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_TRACKING)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_TRACKING)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_SEARCH, newLookup(SecurityPermission.class, ADMIN_SEARCH, "Admin search", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_SEARCH)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_SEARCH)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_USER_MANAGEMENT_PROFILES, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_PROFILES, "Admin user management profiles", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_USER_MANAGEMENT_PROFILES)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_USER_MANAGEMENT_PROFILES)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT, "Admin tempmedia management", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_TEMPMEDIA_MANAGEMENT)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_TEMPMEDIA_MANAGEMENT)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_ORGANIZATION, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION, "Admin organization", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_ORGANIZATION)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_ORGANIZATION)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_LOOKUPS, newLookup(SecurityPermission.class, ADMIN_LOOKUPS, "Admin lookups", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_LOOKUPS)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_LOOKUPS)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_HIGHLIGHTS, newLookup(SecurityPermission.class, ADMIN_HIGHLIGHTS, "Admin highlights", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_HIGHLIGHTS)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_HIGHLIGHTS)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_MEDIA, newLookup(SecurityPermission.class, ADMIN_MEDIA, "Admin media", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_MEDIA)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_MEDIA)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_FEEDBACK, newLookup(SecurityPermission.class, ADMIN_FEEDBACK, "Admin feedback", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_FEEDBACK)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_FEEDBACK)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_EVALUATION_TEMPLATE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE, "Admin evalution template", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_BRANDING, newLookup(SecurityPermission.class, ADMIN_BRANDING, "Admin branding", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_BRANDING)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_BRANDING)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_EVALUATION_TEMPLATE_SECTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_SECTION, "Admin evalution template section", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_SECTION)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_SECTION)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_CONTACT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_CONTACT_MANAGEMENT, "Admin contact management", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_CONTACT_MANAGEMENT)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_CONTACT_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-
-		codeMap.put(ADMIN_ENTRY_TEMPLATES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TEMPLATES, "Admin entry templates", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_ENTRY_TEMPLATES)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_ENTRY_TEMPLATES)).setDefaultRoles(null);
+//		codeMap.put(ADMIN_JOB_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_JOB_MANAGEMENT, "Admin job management", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_JOB_MANAGEMENT)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_JOB_MANAGEMENT)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_INTEGRATION, newLookup(SecurityPermission.class, ADMIN_INTEGRATION, "Admin integration", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_INTEGRATION)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_INTEGRATION)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_WATCHES, newLookup(SecurityPermission.class, ADMIN_WATCHES, "Admin watches", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_WATCHES)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_WATCHES)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_TRACKING, newLookup(SecurityPermission.class, ADMIN_TRACKING, "Admin tracking", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_TRACKING)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_TRACKING)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_SEARCH, newLookup(SecurityPermission.class, ADMIN_SEARCH, "Admin search", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_SEARCH)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_SEARCH)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_USER_MANAGEMENT_PROFILES, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_PROFILES, "Admin user management profiles", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_USER_MANAGEMENT_PROFILES)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_USER_MANAGEMENT_PROFILES)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_TEMPMEDIA_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_TEMPMEDIA_MANAGEMENT, "Admin tempmedia management", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_TEMPMEDIA_MANAGEMENT)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_TEMPMEDIA_MANAGEMENT)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_ORGANIZATION, newLookup(SecurityPermission.class, ADMIN_ORGANIZATION, "Admin organization", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_ORGANIZATION)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_ORGANIZATION)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_LOOKUPS, newLookup(SecurityPermission.class, ADMIN_LOOKUPS, "Admin lookups", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_LOOKUPS)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_LOOKUPS)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_HIGHLIGHTS, newLookup(SecurityPermission.class, ADMIN_HIGHLIGHTS, "Admin highlights", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_HIGHLIGHTS)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_HIGHLIGHTS)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_MEDIA, newLookup(SecurityPermission.class, ADMIN_MEDIA, "Admin media", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_MEDIA)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_MEDIA)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_FEEDBACK, newLookup(SecurityPermission.class, ADMIN_FEEDBACK, "Admin feedback", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_FEEDBACK)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_FEEDBACK)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_EVALUATION_TEMPLATE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE, "Admin evalution template", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_BRANDING, newLookup(SecurityPermission.class, ADMIN_BRANDING, "Admin branding", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_BRANDING)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_BRANDING)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_EVALUATION_TEMPLATE_SECTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_SECTION, "Admin evalution template section", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_SECTION)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_SECTION)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_CONTACT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_CONTACT_MANAGEMENT, "Admin contact management", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_CONTACT_MANAGEMENT)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_CONTACT_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+//
+//		codeMap.put(ADMIN_ENTRY_TEMPLATES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TEMPLATES, "Admin entry templates", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_ENTRY_TEMPLATES)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_ENTRY_TEMPLATES)).setDefaultRoles(null);
 
 		codeMap.put(ADMIN_USER_SUBMISSIONS, newLookup(SecurityPermission.class, ADMIN_USER_SUBMISSIONS, "Admin user submissions", null, GROUPBY_OLD));
 		((SecurityPermission) codeMap.get(ADMIN_USER_SUBMISSIONS)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_USER_SUBMISSIONS)).setDefaultRoles(null);
 
-		codeMap.put(ADMIN_ENTRY_TYPES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TYPES, "Admin entry types", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_ENTRY_TYPES)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_ENTRY_TYPES)).setDefaultRoles(null);
+//		codeMap.put(ADMIN_ENTRY_TYPES, newLookup(SecurityPermission.class, ADMIN_ENTRY_TYPES, "Admin entry types", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_ENTRY_TYPES)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_ENTRY_TYPES)).setDefaultRoles(null);
 
 		codeMap.put(ADMIN_QUESTIONS, newLookup(SecurityPermission.class, ADMIN_QUESTIONS, "Admin questions", null, GROUPBY_OLD));
 		((SecurityPermission) codeMap.get(ADMIN_QUESTIONS)).setPermissionPredecessor(null);
@@ -1757,37 +1758,37 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(ADMIN_REVIEW)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_REVIEW)).setDefaultRoles(null);
 
-		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST, "Admin evalution template checklist", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, "Admin evalution template checklist question", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_ATTRIBUTE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_MANAGEMENT, "Admin attribute management", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_ATTRIBUTE_MANAGEMENT)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_ATTRIBUTE_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-
-		codeMap.put(ADMIN_ALERT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ALERT_MANAGEMENT, "Admin alert management", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_ALERT_MANAGEMENT)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_ALERT_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-
-		codeMap.put(ADMIN_EVALUATION_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_EVALUATION_MANAGEMENT, "Admin evaluation management", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_MANAGEMENT)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_MANAGEMENT)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_ROLE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ROLE_MANAGEMENT, "Admin security role management", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_ROLE_MANAGEMENT)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_ROLE_MANAGEMENT)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_FAQ, newLookup(SecurityPermission.class, ADMIN_FAQ, "Admin FAQ management", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_FAQ)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_FAQ)).setDefaultRoles(null);
-
-		codeMap.put(ADMIN_SUBMISSION_FORM_TEMPLATE, newLookup(SecurityPermission.class, ADMIN_SUBMISSION_FORM_TEMPLATE, "Admin Custom Submission Form management", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(ADMIN_SUBMISSION_FORM_TEMPLATE)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_SUBMISSION_FORM_TEMPLATE)).setDefaultRoles(null);
+//		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST, "Admin evalution template checklist", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION, "Admin evalution template checklist question", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_ATTRIBUTE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ATTRIBUTE_MANAGEMENT, "Admin attribute management", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_ATTRIBUTE_MANAGEMENT)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_ATTRIBUTE_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+//
+//		codeMap.put(ADMIN_ALERT_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ALERT_MANAGEMENT, "Admin alert management", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_ALERT_MANAGEMENT)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_ALERT_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+//
+//		codeMap.put(ADMIN_EVALUATION_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_EVALUATION_MANAGEMENT, "Admin evaluation management", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_MANAGEMENT)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_MANAGEMENT)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_ROLE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_ROLE_MANAGEMENT, "Admin security role management", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_ROLE_MANAGEMENT)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_ROLE_MANAGEMENT)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_FAQ, newLookup(SecurityPermission.class, ADMIN_FAQ, "Admin FAQ management", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_FAQ)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_FAQ)).setDefaultRoles(null);
+//
+//		codeMap.put(ADMIN_SUBMISSION_FORM_TEMPLATE, newLookup(SecurityPermission.class, ADMIN_SUBMISSION_FORM_TEMPLATE, "Admin Custom Submission Form management", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(ADMIN_SUBMISSION_FORM_TEMPLATE)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(ADMIN_SUBMISSION_FORM_TEMPLATE)).setDefaultRoles(null);
 
 		codeMap.put(ADMIN_SECURITY, newLookup(SecurityPermission.class, ADMIN_SECURITY, "Security general permission", null, GROUPBY_OLD));
 		((SecurityPermission) codeMap.get(ADMIN_SECURITY)).setPermissionPredecessor(null);
@@ -1797,13 +1798,13 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(ALLOW_USER_ATTRIBUTE_TYPE_CREATION)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ALLOW_USER_ATTRIBUTE_TYPE_CREATION)).setDefaultRoles(null);
 
-		codeMap.put(RELATION_VIEW_TOOL, newLookup(SecurityPermission.class, RELATION_VIEW_TOOL, "Allows for use of the view tool?", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(RELATION_VIEW_TOOL)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(RELATION_VIEW_TOOL)).setDefaultRoles(null);
-
-		codeMap.put(API_DOCS, newLookup(SecurityPermission.class, API_DOCS, "Allows said user to view API docs", null, GROUPBY_OLD));
-		((SecurityPermission) codeMap.get(API_DOCS)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(API_DOCS)).setDefaultRoles(null);
+//		codeMap.put(RELATION_VIEW_TOOL, newLookup(SecurityPermission.class, RELATION_VIEW_TOOL, "Allows for use of the view tool?", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(RELATION_VIEW_TOOL)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(RELATION_VIEW_TOOL)).setDefaultRoles(null);
+//
+//		codeMap.put(API_DOCS, newLookup(SecurityPermission.class, API_DOCS, "Allows said user to view API docs", null, GROUPBY_OLD));
+//		((SecurityPermission) codeMap.get(API_DOCS)).setPermissionPredecessor(null);
+//		((SecurityPermission) codeMap.get(API_DOCS)).setDefaultRoles(null);
 
 		// ========================================================================================================================
 		return codeMap;
