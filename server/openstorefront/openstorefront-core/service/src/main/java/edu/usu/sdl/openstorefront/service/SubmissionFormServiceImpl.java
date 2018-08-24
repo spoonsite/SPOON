@@ -342,8 +342,10 @@ public class SubmissionFormServiceImpl
 					options.setUploadTags(Boolean.TRUE);
 
 					ComponentAll saveComponent = getComponentService().saveFullComponent(componentFormSet.getPrimary(), options);
+					getComponentService().submitComponentSubmission(saveComponent.getComponent().getComponentId());
 					for (ComponentAll componentAll : componentFormSet.getChildren()) {
-						getComponentService().saveFullComponent(componentAll, options);
+						ComponentAll childComponent = getComponentService().saveFullComponent(componentAll, options);
+						getComponentService().submitComponentSubmission(childComponent.getComponent().getComponentId());
 					}
 
 					copySubmissionCommentToComponent(userSubmission.getUserSubmissionId(), saveComponent.getComponent().getComponentId());

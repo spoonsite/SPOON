@@ -535,6 +535,7 @@
 								title: 'Active Permissions for ' + record.get('roleName'),
 								width: '100%',
 								isDirty: false,
+								bufferedRenderer: false,
 								findSubPermissions: function (record) {
 									return this.getStore().getData().items.filter(function (item) {
 										return item.getData().permissionPredecessor === record.getData().code;

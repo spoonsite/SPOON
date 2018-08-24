@@ -85,7 +85,7 @@ public class SecurityPermission
     public static final String GROUPBY_OLD = "Old permissions (to be replaced/renamed)";
     public static final String RELATIONSHIP_VIEW_TOOL = "RELATION-VIEW-TOOL";
 //    public static final String RELATION_VIEW_TOOL = "RELATION-VIEW-TOOL";
-    public static final String REPORTS = "REPORTS";
+    // public static final String REPORTS = "REPORTS";
     // public static final String REPORTS_SCHEDULE = "REPORTS-SCHEDULE";
     // public static final String REPORTS_SCHEDULE_UPDATE = "REPORTS-SCHEDULE-UPDATE";
     public static final String REPORT_ENTRY_LISTING_REPORT = "REPORT-ENTRYLISTING-REPORT";
@@ -350,6 +350,7 @@ public class SecurityPermission
 
 	// Reports
 	public static final String GROUPBY_REPORTS = "Reports";
+	public static final String REPORTS_READ = "REPORTS-READ";
 	public static final String REPORTS_PAGE = "REPORTS-PAGE";
 	public static final String REPORTS_CREATE = "REPORTS-CREATE"; // not even using this?
 	public static final String REPORTS_DELETE = "REPORTS-DELETE"; // not even using this?
@@ -818,7 +819,7 @@ public class SecurityPermission
 
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ, "Provides the ability to read eval template checklist question items", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST_QUESTION));
 		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE, SecurityRole.EVALUATOR_ROLE));
 
 		codeMap.put(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_CREATE, newLookup(SecurityPermission.class, ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_CREATE, "Provides the ability to create eval template checklist questions", null, GROUPBY_EVALUATION_TEMPLATE_CHECKLIST_QUESTION));
 		((SecurityPermission) codeMap.get(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_CREATE)).setPermissionPredecessor(ADMIN_EVALUATION_TEMPLATE_CHECKLIST_QUESTION_READ);
@@ -1211,10 +1212,6 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(USER_RELATIONSHIPS_PAGE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		// Reports
-		// codeMap.put(REPORTS_SCHEDULE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE, "Reports schedule", null, GROUPBY_REPORTS));
-		// ((SecurityPermission) codeMap.get(REPORTS_SCHEDULE)).setPermissionPredecessor(REPORTS);
-		// ((SecurityPermission) codeMap.get(REPORTS_SCHEDULE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
-
 		codeMap.put(REPORTS_SCHEDULE_CREATE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE_CREATE, "Allows reading of scheduled reports", null, GROUPBY_REPORTS_SCHEDULE));
 		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_CREATE)).setPermissionPredecessor(REPORTS);
 		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_CREATE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
@@ -1231,89 +1228,94 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_DELETE)).setPermissionPredecessor(REPORTS);
 		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
-		codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "General Reports", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(REPORTS)).setPermissionPredecessor(null);
-		((SecurityPermission) codeMap.get(REPORTS)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
+		// codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "General Reports", null, GROUPBY_REPORTS));
+		// ((SecurityPermission) codeMap.get(REPORTS)).setPermissionPredecessor(null);
+		// ((SecurityPermission) codeMap.get(REPORTS)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
+
+		codeMap.put(REPORTS_READ, newLookup(SecurityPermission.class, REPORTS_READ, "General Reports", null, GROUPBY_REPORTS));
+		((SecurityPermission) codeMap.get(REPORTS_READ)).setPermissionPredecessor(null);
+		((SecurityPermission) codeMap.get(REPORTS_READ)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
+
 
 		codeMap.put(REPORTS_PAGE, newLookup(SecurityPermission.class, REPORTS_PAGE, "Provides access to the Reports page", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(REPORTS_PAGE)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORTS_PAGE)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(REPORTS_PAGE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		codeMap.put(REPORTS_CREATE, newLookup(SecurityPermission.class, REPORTS_CREATE, "Allows to create a new report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(REPORTS_CREATE)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORTS_CREATE)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(REPORTS_CREATE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		codeMap.put(REPORTS_DELETE, newLookup(SecurityPermission.class, REPORTS_DELETE, "Allows to delete a report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(REPORTS_DELETE)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORTS_DELETE)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(REPORTS_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		codeMap.put(REPORTS_ALL, newLookup(SecurityPermission.class, REPORTS_ALL, "Reports All - Allows viewing reports from all users", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(REPORTS_ALL)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORTS_ALL)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(REPORTS_ALL)).setDefaultRoles(null);
 
 		codeMap.put(REPORT_OUTPUT_EMAIL_ATTACH, newLookup(SecurityPermission.class, REPORT_OUTPUT_EMAIL_ATTACH, "Allow user to run report as attached email", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(REPORT_OUTPUT_EMAIL_ATTACH)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORT_OUTPUT_EMAIL_ATTACH)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(REPORT_OUTPUT_EMAIL_ATTACH)).setDefaultRoles(null);
 
 		codeMap.put(REPORT_OUTPUT_EMAIL_BODY, newLookup(SecurityPermission.class, REPORT_OUTPUT_EMAIL_BODY, "Allow user to run report as the content of an email body", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(REPORT_OUTPUT_EMAIL_BODY)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORT_OUTPUT_EMAIL_BODY)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(REPORT_OUTPUT_EMAIL_BODY)).setDefaultRoles(null);
 
 		// Reports - run reports
 		codeMap.put(RUN_ACTION_REPORT, newLookup(SecurityPermission.class, RUN_ACTION_REPORT, "Allows user to run the Action report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_ACTION_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_ACTION_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_ACTION_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(RUN_ENTRIES_BY_CAT_REPORT, newLookup(SecurityPermission.class, RUN_ENTRIES_BY_CAT_REPORT, "Allows user to run the Entries by Category report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_ENTRIES_BY_CAT_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_ENTRIES_BY_CAT_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_ENTRIES_BY_CAT_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		codeMap.put(RUN_ENTRIES_BY_ORG_REPORT, newLookup(SecurityPermission.class, RUN_ENTRIES_BY_ORG_REPORT, "Allows user to run the Entries by Organization report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_ENTRIES_BY_ORG_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_ENTRIES_BY_ORG_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_ENTRIES_BY_ORG_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		codeMap.put(RUN_ENTRY_REPORT, newLookup(SecurityPermission.class, RUN_ENTRY_REPORT, "Allows user to run the Entry report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_ENTRY_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_ENTRY_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_ENTRY_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		codeMap.put(RUN_ENTRY_DETAIL_REPORT, newLookup(SecurityPermission.class, RUN_ENTRY_DETAIL_REPORT, "Allows user to run the Entry Detail report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_ENTRY_DETAIL_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_ENTRY_DETAIL_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_ENTRY_DETAIL_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		codeMap.put(RUN_ENTRY_LISTING_REPORT, newLookup(SecurityPermission.class, RUN_ENTRY_LISTING_REPORT, "Allows user to run the Entry Listing report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_ENTRY_LISTING_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_ENTRY_LISTING_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_ENTRY_LISTING_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(RUN_ENTRY_STATUS_REPORT, newLookup(SecurityPermission.class, RUN_ENTRY_STATUS_REPORT, "Allows user to run the Entry Status report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_ENTRY_STATUS_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_ENTRY_STATUS_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_ENTRY_STATUS_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(RUN_EVAL_STATUS_REPORT, newLookup(SecurityPermission.class, RUN_EVAL_STATUS_REPORT, "Allows user to run the Evaluation Status report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_EVAL_STATUS_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_EVAL_STATUS_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_EVAL_STATUS_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.EVALUATOR_ROLE, SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(RUN_LINK_VALIDATION_REPORT, newLookup(SecurityPermission.class, RUN_LINK_VALIDATION_REPORT, "Allows user to run the Link Validation report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_LINK_VALIDATION_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_LINK_VALIDATION_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_LINK_VALIDATION_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(RUN_SUBMISSIONS_REPORT, newLookup(SecurityPermission.class, RUN_SUBMISSIONS_REPORT, "Allows user to run the Sumbissions report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_SUBMISSIONS_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_SUBMISSIONS_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_SUBMISSIONS_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(RUN_USAGE_REPORT, newLookup(SecurityPermission.class, RUN_USAGE_REPORT, "Allows user to run the Usage report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_USAGE_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_USAGE_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_USAGE_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(RUN_USER_REPORT, newLookup(SecurityPermission.class, RUN_USER_REPORT, "Allows user to run the User report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_USER_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_USER_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_USER_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(RUN_USER_ORG_REPORT, newLookup(SecurityPermission.class, RUN_USER_ORG_REPORT, "Allows user to run the User by Organization report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_USER_ORG_REPORT)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_USER_ORG_REPORT)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_USER_ORG_REPORT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(RUN_WORKPLAN_STATUS, newLookup(SecurityPermission.class, RUN_WORKPLAN_STATUS, "Allows user to run the Workplan Status report", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(RUN_WORKPLAN_STATUS)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(RUN_WORKPLAN_STATUS)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(RUN_WORKPLAN_STATUS)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		// Reviews
