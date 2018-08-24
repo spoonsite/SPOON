@@ -263,7 +263,7 @@
 			});		
 			
 			CoreService.userservice.getCurrentUser().then(function(user){
-				if (CoreService.userservice.userHasPermisson(user, "REPORTS")) {
+				if (CoreService.userservice.userHasPermisson(user, "REPORTS-READ")) {
 					Ext.getCmp('tools-menu-reports').setHidden(false);					
 				}
 				if (CoreService.userservice.userHasPermisson(user, "RELATION-VIEW-TOOL")) {

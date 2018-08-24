@@ -1624,8 +1624,7 @@
 									// Place the 'Add' email button
 									CoreService.userservice.getCurrentUser().then(function (user) {
 
-										var userHasEmailPermission = CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-ATTACH') 
-																|| CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-BODY');
+										var userHasEmailPermission = CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-ATTACH') || CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-BODY');
 
 										// remove the "email" option if it exists
 										if (!userHasEmailPermission) {
