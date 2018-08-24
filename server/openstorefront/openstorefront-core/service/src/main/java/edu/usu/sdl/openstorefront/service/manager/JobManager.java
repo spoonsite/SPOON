@@ -535,7 +535,7 @@ public class JobManager
 		try {
 			scheduler.triggerJob(JobKey.jobKey(jobName, groupName));
 		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
+			throw new OpenStorefrontRuntimeException("Unable to run job", "Make sure job exists", ex);
 		}
 	}
 
@@ -553,7 +553,7 @@ public class JobManager
 		try {
 			scheduler.resumeJob(JobKey.jobKey(jobName, group));
 		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to pause job", "Make sure job exists", ex);
+			throw new OpenStorefrontRuntimeException("Unable to resume job", "Make sure job exists", ex);
 		}
 	}
 
