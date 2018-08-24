@@ -57,7 +57,7 @@ public class ScheduledReportResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE_READ)
 	@APIDescription("Gets scheduled report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ScheduledReportView.class)
@@ -91,7 +91,7 @@ public class ScheduledReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE_READ)
 	@APIDescription("Gets a scheduled report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -111,7 +111,7 @@ public class ScheduledReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE_READ)
 	@APIDescription("Gets a scheduled report details.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportDetailView.class)
@@ -132,7 +132,7 @@ public class ScheduledReportResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE_CREATE)
 	@APIDescription("Schedules a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
 	public Response postAlert(ScheduledReport scheduledReport)
@@ -141,7 +141,7 @@ public class ScheduledReportResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE_UPDATE)
 	@APIDescription("Updates a scheduled report record")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/{id}")
@@ -193,8 +193,8 @@ public class ScheduledReportResource
 		}
 	}
 
-	@POST
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
+	@PUT
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE_UPDATE)
 	@APIDescription("Activates a Scheduled Report")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ScheduledReport.class)
@@ -219,7 +219,7 @@ public class ScheduledReportResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE_DELETE)
 	@APIDescription("Inactivates a scheduled report")
 	@Path("/{id}")
 	public void inactiveScheduledReport(
@@ -237,7 +237,7 @@ public class ScheduledReportResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE)
+	@RequireSecurity(SecurityPermission.REPORTS_SCHEDULE_DELETE)
 	@APIDescription("Deletes a scheduled report record")
 	@Path("/{id}/force")
 	public void deleteScheduledReport(

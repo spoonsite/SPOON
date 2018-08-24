@@ -317,7 +317,7 @@
 										},
 										{
 											xtype: 'tbseparator',
-											requiredPermissions: ['REPORTS-SCHEDULE']
+											requiredPermissions: ['REPORTS-SCHEDULE-READ']
 										},
 										{
 											text: 'Add',
@@ -326,7 +326,7 @@
 											width: '100px',
 											iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
 											disabled: false,
-											requiredPermissions: ['REPORTS-SCHEDULE'],
+											requiredPermissions: ['REPORTS-SCHEDULE-CREATE'],
 											handler: function () {
 												scheduleReportAdd();
 											},
@@ -876,7 +876,7 @@
 					scheduleWin.show();
 
 					CoreService.userservice.getCurrentUser().then(function(user){
-					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE")) {
+					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE-READ")) {
 
 						var cbData = [
 							{ code: 'PERIOD', description: 'Periodically'},
@@ -1911,7 +1911,7 @@
 									boxLabel: 'Show Scheduled Only',									
 									margin: '0 20 0 0',
 									enableToggle: true,
-									requiredPermissions: ['REPORTS-SCHEDULE'],
+									requiredPermissions: ['REPORTS-SCHEDULE-READ'],
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											historyRefreshGrid();
@@ -1967,7 +1967,7 @@
 									id: 'scheduledReportBtn',
 									iconCls: 'fa fa-2x fa-clock-o icon-button-color-default icon-vertical-correction',
 									scale: 'medium',
-									requiredPermissions: ['REPORTS-SCHEDULE'],
+									requiredPermissions: ['REPORTS-SCHEDULE-READ'],
 									handler: function () {
 										scheduledReportsWin.show();
 										scheduleReportRefreshGrid();

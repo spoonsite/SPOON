@@ -79,15 +79,15 @@ public class SecurityPermission
     public static final String ADMIN_USER_SUBMISSIONS = "ADMIN-USER-SUBMISSIONS";
 //    public static final String ADMIN_WATCHES = "ADMIN-WATCHES";
     public static final String ALLOW_USER_ATTRIBUTE_TYPE_CREATION = "ALLOW-USER-ATTRIBUTE-TYPE-CREATION";
-//    public static final String API_DOCS = "API_DOCS";
+//    public static final String API_DOCS = "API-DOCS";
 //    public static final String ENTRY_TAG = "ENTRY-TAG";
     public static final String EVALUATIONS = "EVALUATIONS";
     public static final String GROUPBY_OLD = "Old permissions (to be replaced/renamed)";
     public static final String RELATIONSHIP_VIEW_TOOL = "RELATION-VIEW-TOOL";
 //    public static final String RELATION_VIEW_TOOL = "RELATION-VIEW-TOOL";
     public static final String REPORTS = "REPORTS";
-    public static final String REPORTS_SCHEDULE = "REPORTS-SCHEDULE";
-    public static final String REPORTS_SCHEDULE_UPDATE = "REPORTS-SCHEDULE-UPDATE";
+    // public static final String REPORTS_SCHEDULE = "REPORTS-SCHEDULE";
+    // public static final String REPORTS_SCHEDULE_UPDATE = "REPORTS-SCHEDULE-UPDATE";
     public static final String REPORT_ENTRY_LISTING_REPORT = "REPORT-ENTRYLISTING-REPORT";
     public static final String USER_SUBMISSIONS = "USER-SUBMISSIONS";
 
@@ -371,6 +371,13 @@ public class SecurityPermission
 	public static final String RUN_USER_ORG_REPORT = "RUN-USER-ORG-REPORT";
 	public static final String RUN_WORKPLAN_STATUS = "RUN-WORKPLAN-STATUS";
 
+	// Reports Schedule
+	public static final String GROUPBY_REPORTS_SCHEDULE = "Reports Schedule";	
+	public static final String REPORTS_SCHEDULE_CREATE = "REPORTS-SCHEDULE-CREATE";
+	public static final String REPORTS_SCHEDULE_READ = "REPORTS-SCHEDULE-READ";
+	public static final String REPORTS_SCHEDULE_UPDATE = "REPORTS-SCHEDULE-UPDATE";
+	public static final String REPORTS_SCHEDULE_DELETE = "REPORTS-SCHEDULE-DELETE";
+
 	// Reviews
 	public static final String GROUPBY_REVIEW = "Reviews";
 	public static final String USER_REVIEWS_PAGE = "USER-REVIEWS-PAGE";
@@ -463,6 +470,7 @@ public class SecurityPermission
 	public static final String ADMIN_USER_MANAGEMENT_CREATE = "ADMIN-USER-MANAGEMENT-CREATE";
 	public static final String ADMIN_USER_MANAGEMENT_UPDATE = "ADMIN-USER-MANAGEMENT-UPDATE";
 	public static final String ADMIN_USER_MANAGEMENT_DELETE = "ADMIN-USER-MANAGEMENT-DELETE";
+	public static final String ADMIN_USER_MANAGEMENT_APPROVE = "ADMIN-USER-MANAGEMENT-APPROVE";
 
 	// Watches
 	public static final String GROUPBY_WATCHES = "Watches";
@@ -1203,17 +1211,29 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(USER_RELATIONSHIPS_PAGE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		// Reports
+		// codeMap.put(REPORTS_SCHEDULE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE, "Reports schedule", null, GROUPBY_REPORTS));
+		// ((SecurityPermission) codeMap.get(REPORTS_SCHEDULE)).setPermissionPredecessor(REPORTS);
+		// ((SecurityPermission) codeMap.get(REPORTS_SCHEDULE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
+
+		codeMap.put(REPORTS_SCHEDULE_CREATE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE_CREATE, "Allows reading of scheduled reports", null, GROUPBY_REPORTS_SCHEDULE));
+		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_CREATE)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_CREATE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
+
+		codeMap.put(REPORTS_SCHEDULE_READ, newLookup(SecurityPermission.class, REPORTS_SCHEDULE_READ, "Allows reading of scheduled reports", null, GROUPBY_REPORTS_SCHEDULE));
+		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_READ)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_READ)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
+
+		codeMap.put(REPORTS_SCHEDULE_UPDATE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE_UPDATE, "Allows editing of scheduled reports", null, GROUPBY_REPORTS_SCHEDULE));
+		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_UPDATE)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_UPDATE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
+
+		codeMap.put(REPORTS_SCHEDULE_DELETE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE_DELETE, "Allows editing of scheduled reports", null, GROUPBY_REPORTS_SCHEDULE));
+		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_DELETE)).setPermissionPredecessor(REPORTS);
+		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
+
 		codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "General Reports", null, GROUPBY_REPORTS));
 		((SecurityPermission) codeMap.get(REPORTS)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(REPORTS)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
-
-		codeMap.put(REPORTS_SCHEDULE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE, "Reports schedule", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE)).setPermissionPredecessor(REPORTS);
-		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
-
-		codeMap.put(REPORTS_SCHEDULE_UPDATE, newLookup(SecurityPermission.class, REPORTS_SCHEDULE_UPDATE, "Allows editing of scheduled reports", null, GROUPBY_REPORTS));
-		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_UPDATE)).setPermissionPredecessor(REPORTS);
-		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_UPDATE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
 		codeMap.put(REPORTS_PAGE, newLookup(SecurityPermission.class, REPORTS_PAGE, "Provides access to the Reports page", null, GROUPBY_REPORTS));
 		((SecurityPermission) codeMap.get(REPORTS_PAGE)).setPermissionPredecessor(REPORTS);
@@ -1557,6 +1577,10 @@ public class SecurityPermission
 		codeMap.put(ADMIN_USER_MANAGEMENT_DELETE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_DELETE, "Allow admin user submission deleting", null, GROUPBY_USER_MANAGEMENT));
 		((SecurityPermission) codeMap.get(ADMIN_USER_MANAGEMENT_DELETE)).setPermissionPredecessor(ADMIN_USER_MANAGEMENT_READ);
 		((SecurityPermission) codeMap.get(ADMIN_USER_MANAGEMENT_DELETE)).setDefaultRoles(null);
+
+		codeMap.put(ADMIN_USER_MANAGEMENT_APPROVE, newLookup(SecurityPermission.class, ADMIN_USER_MANAGEMENT_APPROVE, "Allow admin user submission deleting", null, GROUPBY_USER_MANAGEMENT));
+		((SecurityPermission) codeMap.get(ADMIN_USER_MANAGEMENT_APPROVE)).setPermissionPredecessor(ADMIN_USER_MANAGEMENT_READ);
+		((SecurityPermission) codeMap.get(ADMIN_USER_MANAGEMENT_APPROVE)).setDefaultRoles(null);
 
 		// Watches
 		codeMap.put(ADMIN_WATCHES_PAGE, newLookup(SecurityPermission.class, ADMIN_WATCHES_PAGE, "Provides access to the admin Watches page", null, GROUPBY_WATCHES));
