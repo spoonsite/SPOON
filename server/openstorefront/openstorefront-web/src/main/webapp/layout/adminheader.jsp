@@ -197,14 +197,14 @@
 					items: [
 						{
 							text: 'Questions',
-							permission: ['ADMIN-QUESTION-PAGE'],
+							permission: ['ADMIN-QUESTIONS-PAGE'],
 							handler: function(){
 								actionLoadContent('Questions');
 							}							
 						},
 						{
 							text: 'Reviews',
-							permission: ['ADMIN-REVIEWS-PAGE'],
+							permission: ['ADMIN-REVIEW-PAGE'],
 							handler: function(){
 								actionLoadContent('Reviews');
 							}							

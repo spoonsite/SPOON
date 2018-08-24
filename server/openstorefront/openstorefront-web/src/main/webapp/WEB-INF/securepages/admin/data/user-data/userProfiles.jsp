@@ -373,7 +373,7 @@
 									}
 								},
 								{
-									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT', 'ADMIN-USER-MANAGEMENT-PROFILES-UPDATE'],
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-PROFILES-UPDATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -490,7 +490,7 @@
 				});
 
 				CoreService.userservice.getCurrentUser().then(function(user){				
-					if (CoreService.userservice.userHasPermisson(user, "ADMIN-MESSAGE-MANAGEMENT")) {
+					if (CoreService.userservice.userHasPermisson(user, "ADMIN-MESSAGE-MANAGEMENT-READ")) {
 						Ext.getCmp('userProfileGrid-tools-message').setHidden(false);
 					}				
 				});

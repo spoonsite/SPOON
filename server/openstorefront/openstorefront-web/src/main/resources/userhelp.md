@@ -1466,7 +1466,7 @@ The page has a drop-down at the top to filter or **Show Entries with:**
 
 
 
-#### 3.2.15.2 Reviews @ADMIN-REVIEW
+#### 3.2.15.2 Reviews @ADMIN-REVIEW-PAGE
 ------
 
 The Reviews section of User Data in Data Management of the Admin Tools displays entry reviews from the website.
@@ -1509,7 +1509,7 @@ The Tags section of User Data in Data Management of the Admin Tools displays a l
  * In the event of a duplicate tag being added to the same entry the added tag will override the existing tag.
 
 
-#### 3.2.15.5 User Profiles @ADMIN-USER-MANAGEMENT
+#### 3.2.15.5 User Profiles @ADMIN-USER-MANAGEMENT-PAGE
 ------
 
 Every user in the system has a user profile.  A user profile contains information
@@ -1589,12 +1589,12 @@ create a partial or incomplete submission.  This tool is here to allow an admin 
 users by allowing an admin to view and re-assign incomplete submissions.
 
 
-## 3.3 Evaluation Management @ADMIN-EVALUATION-MANAGEMENT
+## 3.3 Evaluation Management @ADMIN-EVAL-PAGE
 ------
 
 The Evaluation Management menu is used to navigate the tools for managing Storefront evaluations.
 
-### 3.3.1 Evaluations @ADMIN-EVALUATION-MANAGEMENT 
+### 3.3.1 Evaluations @ADMIN-EVAL-PAGE 
 ------
 
 This section shows a table with each evaluation, published status, assignment, and so forth.  From here you can edit, publish, unpublish, toggle the status, copy, or assign evaluations.  You can also filter by Active Status and Workflow status.
@@ -1626,22 +1626,22 @@ Here you formulate the questions to be asked on a template.
 
 Section templates can be created for further customization.
 
-### 3.3.3 External Docs @ADMIN-EVALUATION-MANAGEMENT
+### 3.3.3 External Docs @ADMIN-EVAL-PAGE
 ------
 
 Links to external documentation refering to Evaluation Management
 
-#### 3.3.3.1 Basic Entry Template For Storefront @ADMIN-EVALUATION-MANAGEMENT
+#### 3.3.3.1 Basic Entry Template For Storefront @ADMIN-EVAL-PAGE
 ------
 
 <a href="http://di2e.github.io/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/" target="_blank">Basic Entry Template For Storefront (di2e.github.io)</a>
 
-#### 3.3.3.2 Create An Evaluation @ADMIN-EVALUATION-MANAGEMENT
+#### 3.3.3.2 Create An Evaluation @ADMIN-EVAL-PAGE
 ------
 
 <a href="http://di2e.github.io/openstorefront/evaluations/librarian/createevaluationguide/" target="_blank">Create An Evaluation (di2e.github.io)</a>
 
-#### 3.3.3.3 Publish An Evaluation @ADMIN-EVALUATION-MANAGEMENT
+#### 3.3.3.3 Publish An Evaluation @ADMIN-EVAL-PAGE
 ------
 
 <a href="http://di2e.github.io/openstorefront/evaluations/librarian/publishinganevaluationguide/" target="_blank">Publish An Evaluation (di2e.github.io)</a>
@@ -1652,7 +1652,7 @@ Links to external documentation refering to Evaluation Management
 The Application Management menu is used to navigate to the Alerts, Branding, Feedback, Jobs, Messages, Reports, System, Tracking, 
 or API Documentations sections.
 
-### 3.4.1 Alerts @ADMIN-ALERT-MANAGEMENT
+### 3.4.1 Alerts @ADMIN-ALERTS-PAGE
 ------
 
 Alerts are triggers set up to watch the data to which an administrator can
@@ -1704,7 +1704,7 @@ Descriptions of Alert Triggers:
 3.  Make desired changes to form and click **Save**.
 
 
-### 3.4.2 Branding @ADMIN-BRANDING
+### 3.4.2 Branding @ADMIN-BRANDING-PAGE
 ------
 
 This area allows for different graphic design and theme characteristics to be 
@@ -1731,7 +1731,7 @@ To make changes to an existing branding, click on the name of the branding and c
 To remove a branding, first select the branding and then click on the **Delete** button in the toolbar.
 
 
-### 3.4.3 Feedback @ADMIN-FEEDBACK
+### 3.4.3 Feedback @ADMIN-FEEDBACK-PAGE
 ------
 
 This area displays the user feedback that users give via the application.  
@@ -1745,7 +1745,7 @@ drop-down arrow under **Active Status**.
 To delete a completed or outstanding feedback ticket, select the ticket and click on **Delete** in the toolbar.
  
 
-### 3.4.4 Jobs @ADMIN-JOB-MANAGEMENT
+### 3.4.4 Jobs @ADMIN-JOBS-PAGE
 ------
 
 The Jobs tool allows for viewing and managing of both scheduled background
@@ -1773,7 +1773,7 @@ services.
 **Note:** the administrator can pause or resume the system job scheduler by clicking on the button
  on the **Pause/Resume Scheduler** button on the right-side of the toolbar. 
 
-### 3.4.5 Messages @ADMIN-MESSAGE-MANAGEMENT
+### 3.4.5 Messages @ADMIN-MESSAGES-PAGE
 ------
 
 There are two tabs that allow you to manage messages.  They are the **User Messages** and **Event Notifications** tabs.
@@ -1947,14 +1947,14 @@ are accessible via the Reports Admin Tool.
 
 -----  
 
-### 3.4.12 User Management @ADMIN-USER-MANAGEMENT  
+### 3.4.12 User Management @ADMIN-USER-MANAGEMENT-PAGE  
 -----   
 
 Administrator can add users, send messages to individual users, approve new user accounts, lock/unlock user accounts, delete user accounts, and manage the roles of users.  
 
 -----  
 
-#### 3.4.12.1 Approving New User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+#### 3.4.12.1 Approving New User Accounts - User Management @ADMIN-USER-MANAGEMENT-PAGE  
 
 The application offers two ways of approving users: auto approval by system or manual approval by administrator. <br>To have the system automatically approve new user accounts do the following:  
 
@@ -1974,7 +1974,7 @@ To approve a new user account:
 
 -----  
 
-#### 3.4.12.2 Locking/Unlocking User Accounts - User Management @ADMIN-USER-MANAGEMENT  
+#### 3.4.12.2 Locking/Unlocking User Accounts - User Management @ADMIN-USER-MANAGEMENT-PAGE  
 
 Locking a user account only deactivates/disables it.  To lock a user account:  
 
@@ -1991,7 +1991,7 @@ To unlock/reactivate an account:
 
 -----  
 
-#### 3.4.12.3 Manage User Roles - User Management @ADMIN-USER-MANAGEMENT  
+#### 3.4.12.3 Manage User Roles - User Management @ADMIN-USER-MANAGEMENT-PAGE  
  
 Administrator can add users to specific groups/roles that have been created in **Security Role Management**.  Each group in **Security Role Management** has a list of permissions and data restrictions.  
 <br>To add a role to a user:
@@ -2009,7 +2009,7 @@ To remove a role from a user:
 
 -----  
 
-#### 3.4.12.4 Adding/Deleting User Accounts - Registrations @ADMIN-USER-MANAGEMENT  
+#### 3.4.12.4 Adding/Deleting User Accounts - Registrations @ADMIN-USER-MANAGEMENT-PAGE  
 
 Administrator can create a user account by doing the following:  
 
@@ -2039,13 +2039,13 @@ This contains the documentation for the Application Programming Interface, or AP
 is viewable in a web page or is printable by clicking on Print View.
 
 
-# 4.  Evaluator Tools @EVALUATIONS 
+# 4.  Evaluator Tools @EVAL-PAGE 
 ------
 
 Allows user with the appropriate permission to create and edit evaluations.
 Evaluations are accessed by going to your username in the upper-right of the browser window.  In the drop-down select Evaluation Tools.  A dashboard is displayed.
 
-## 4.1 Evaluations @EVALUATIONS 
+## 4.1 Evaluations @EVAL-PAGE 
 -----
 
 The evaluations section shows a table of evaluations assigned to you.  Filters can be set for the assigned user, assigned group, and workflow status.
@@ -2056,12 +2056,12 @@ When Editing the evaluation the status can be changed and the various forms, que
 
 The preview button will show what the evaluation will look like when published.  Private information will not be shown.
 
-## 4.2 Evaluators Guide - External Link @EVALUATIONS
+## 4.2 Evaluators Guide - External Link @EVAL-PAGE
 -----
 
 <a href="http://di2e.github.io/openstorefront/evaluations/evaluator/storefront-evaluators-guide/" target="_blank">Evaluators guide (di2e.github.io)</a>
 
-## 4.3 FAQ - External Link @EVALUATIONS
+## 4.3 FAQ - External Link @EVAL-PAGE
 -----
 
 <a href="http://di2e.github.io/openstorefront/evaluations/evaluator/faq/" target="_blank">FAQ (di2e.github.io)</a>

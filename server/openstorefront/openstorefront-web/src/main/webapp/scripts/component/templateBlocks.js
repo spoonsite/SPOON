@@ -893,7 +893,7 @@ Ext.define('OSF.component.template.Reviews', {
 				}
 
 				if (review.username === user.username ||
-						CoreService.userservice.userHasPermisson(user, ['ADMIN-REVIEW'])
+						CoreService.userservice.userHasPermisson(user, ['ADMIN-REVIEW-READ'])
 						) {
 					review.owner = true;
 				}
@@ -1092,7 +1092,7 @@ Ext.define('OSF.component.template.Questions', {
 				Ext.Array.each(question.responses, function (response) {
 					response.questionId = question.questionId;
 					response.componentId = question.componentId;
-					response.owner = (response.username === user.username || CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS']));
+					response.owner = (response.username === user.username || CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS-READ']));
 				});
 
 
@@ -1133,7 +1133,7 @@ Ext.define('OSF.component.template.Questions', {
 					]
 				});
 				if (question.username === user.username ||
-						CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS'])
+						CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS-READ'])
 						)
 				{
 					panel.addDocked(

@@ -76,7 +76,7 @@ public class SupportMediaResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SUPPORT_MEDIA)
+	@RequireSecurity(SecurityPermission.ADMIN_SUPPORT_MEDIA_UPDATE)
 	@APIDescription("Updates the db record only (use Media.action?UploadSupportMedia to upload new media)")
 	@DataType(SupportMediaView.class)
 	@Path("/{supportMediaId}")
@@ -103,7 +103,7 @@ public class SupportMediaResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_SUPPORT_MEDIA)
+	@RequireSecurity(SecurityPermission.ADMIN_SUPPORT_MEDIA_DELETE)
 	@APIDescription("Deletes a support media record. Hard Delete.")
 	@Path("/{supportMediaId}")
 	public void deleteSupportMedia(

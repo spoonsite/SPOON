@@ -38,7 +38,8 @@ Ext.define('OSF.landing.DefaultActions', {
 			//icon: 'fa-file-text-o',
 			imageSrc: 'images/submission.png',
 			tip: 'Add or update entries to the registry',
-			permission: 'USER-SUBMISSIONS',
+			requiredPermissions: ['USER-SUBMISSIONS-UPDATE', 'USER-SUBMISSIONS-CREATE'],
+			permissionLogicalOperator: 'AND',
 			toolBackground: '',
 			link: 'UserTool.action?load=Submissions'
 		},

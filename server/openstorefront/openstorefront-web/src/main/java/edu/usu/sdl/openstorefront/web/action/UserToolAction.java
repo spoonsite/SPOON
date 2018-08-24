@@ -41,7 +41,7 @@ public class UserToolAction
 		pageMap.put("Dashboard", new PageModel("/WEB-INF/securepages/shared/dashboard.jsp", new String[]{SecurityPermission.DASHBOARD_PAGE}));
 		pageMap.put("User-Profile", new PageModel("/WEB-INF/securepages/user/userProfile.jsp", new String[]{SecurityPermission.USER_PROFILE_PAGE}));
 		pageMap.put("Watches", new PageModel("/WEB-INF/securepages/user/watches.jsp", new String[]{SecurityPermission.USER_WATCHES_PAGE}));
-		pageMap.put("Reviews", new PageModel("/WEB-INF/securepages/user/reviews.jsp", new String[]{SecurityPermission.USER_REVIEWS_PAGE}));
+		pageMap.put("Reviews", new PageModel("/WEB-INF/securepages/user/reviews.jsp", new String[]{SecurityPermission.USER_REVIEW_PAGE}));
 		pageMap.put("Questions", new PageModel("/WEB-INF/securepages/user/questions.jsp", new String[]{SecurityPermission.USER_QUESTIONS_PAGE}));
 		pageMap.put("Submissions", new PageModel("/WEB-INF/securepages/user/submissionManagement.jsp", new String[]{SecurityPermission.USER_SUBMISSIONS_PAGE}));
 		pageMap.put("Reports", new PageModel("/WEB-INF/securepages/shared/reports.jsp", new String[]{SecurityPermission.REPORTS_PAGE}));

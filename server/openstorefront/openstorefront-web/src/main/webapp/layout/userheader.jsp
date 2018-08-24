@@ -81,7 +81,7 @@
 			});
 			toolsMenu.push({
 				text: 'Reviews',
-				requiredPermissions: ['USER-REVIEWS-PAGE'],
+				requiredPermissions: ['USER-REVIEW-PAGE'],
 				handler: function(){
 					actionLoadContent('Reviews');
 				}				

@@ -391,7 +391,8 @@ Ext.define('OSF.landing.designer.LiveDesigner', {
 						icon: null,
 						imageSrc: 'images/submission.png',
 						tip: 'Add or update entries to the registry',
-						permission: 'USER-SUBMISSIONS',
+						requiredPermissions: ['USER-SUBMISSIONS-UPDATE', 'USER-SUBMISSIONS-CREATE'],
+						permissionLogicalOperator: 'AND',
 						link: 'UserTool.action?load=Submissions'
 					},
 					{
