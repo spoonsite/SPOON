@@ -498,7 +498,7 @@ question follow the steps below:
 A user can remove an answer or question by clicking on the entry and then clicking
  on the **Delete** button on the right-hand side of the toolbar.
 
-#### 2.3.4.2 Relationships @RELATION-VIEW-TOOL
+#### 2.3.4.2 Relationships @USER-RELATIONSHIPS-PAGE
 --------
 
 This screen shows a graphical representation among entries based on organization, attributes,
