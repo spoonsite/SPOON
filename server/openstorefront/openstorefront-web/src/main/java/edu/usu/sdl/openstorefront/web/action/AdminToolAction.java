@@ -53,7 +53,7 @@ public class AdminToolAction
 		pageMap.put("FAQ", new PageModel("/WEB-INF/securepages/admin/data/faq.jsp", new String[]{SecurityPermission.ADMIN_FAQ_PAGE}));
 		pageMap.put("Organizations", new PageModel("/WEB-INF/securepages/admin/data/organizations.jsp", new String[]{SecurityPermission.ADMIN_ORGANIZATION_PAGE}));
 		pageMap.put("Questions", new PageModel("/WEB-INF/securepages/admin/data/user-data/questions.jsp", new String[]{SecurityPermission.ADMIN_QUESTION_PAGE}));
-		pageMap.put("Reviews", new PageModel("/WEB-INF/securepages/admin/data/user-data/reviews.jsp", new String[]{SecurityPermission.ADMIN_REVIEWS_PAGE}));
+		pageMap.put("Reviews", new PageModel("/WEB-INF/securepages/admin/data/user-data/reviews.jsp", new String[]{SecurityPermission.ADMIN_REVIEW_PAGE}));
 		pageMap.put("Watches", new PageModel("/WEB-INF/securepages/admin/data/user-data/watches.jsp", new String[]{SecurityPermission.ADMIN_WATCHES_PAGE}));
 		pageMap.put("Tags", new PageModel("/WEB-INF/securepages/admin/data/user-data/tags.jsp", new String[]{SecurityPermission.ADMIN_TAGS_PAGE}));
 		pageMap.put("User-Profiles", new PageModel("/WEB-INF/securepages/admin/data/user-data/userProfiles.jsp", new String[]{SecurityPermission.ADMIN_USERPROFILES_PAGE}));

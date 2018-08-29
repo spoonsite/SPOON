@@ -505,6 +505,7 @@ public class EvaluationResource
 				evaluationExisting.setAssignedGroup(evaluation.getAssignedGroup());
 				evaluationExisting.setDataSensitivity(evaluation.getDataSensitivity());
 				evaluationExisting.setSecurityMarkingType(evaluation.getSecurityMarkingType());
+				evaluationExisting.setAssignedUser(evaluation.getAssignedUser());
 				evaluationExisting.populateBaseUpdateFields();
 				evaluationExisting.save();
 

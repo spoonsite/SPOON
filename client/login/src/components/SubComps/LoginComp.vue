@@ -7,6 +7,7 @@
             prepend-icon="person"
             name="username"
             label="Username"
+            autofocus=true
             type="text"
             :rules="usernameRules"
             v-model="username"

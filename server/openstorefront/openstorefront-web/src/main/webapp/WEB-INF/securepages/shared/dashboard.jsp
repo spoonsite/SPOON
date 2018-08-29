@@ -296,7 +296,7 @@
 						if (widget.permissions) {
 							var matchedPermissions = 0;
 							Ext.Array.forEach(widget.permissions, function (permission) {
-								if (CoreService.userservice.userHasPermisson(currentUser, permission)) {
+								if (CoreService.userservice.userHasPermission(currentUser, permission)) {
 									matchedPermissions += 1;
 								}
 							});
@@ -524,7 +524,7 @@
 									
 									// if (config.permissions) {
 									// 	//if the user is no longer admin don't add widget
-									// 	if (CoreService.userservice.userHasPermisson(currentUser, config.permissions)) {
+									// 	if (CoreService.userservice.userHasPermission(currentUser, config.permissions)) {
 									// 		widgetPanel = addWidgetToDashboard(config, noUpdateDash);										
 									// 	} 
 									// } else {

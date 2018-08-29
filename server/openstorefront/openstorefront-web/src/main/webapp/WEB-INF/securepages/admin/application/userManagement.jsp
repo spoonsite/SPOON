@@ -133,7 +133,7 @@
 								},
 								{
 									xtype: 'tbseparator',
-									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE']
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-CREATE']
 								},
 								{
 									text: '&nbsp;Message',
@@ -141,7 +141,7 @@
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-default',
-									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE'],								
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-CREATE'],								
 									handler: function () {
 										var record = registrationGrid.getSelection()[0];
 										actionMessageUser(record);
@@ -742,7 +742,7 @@
 									scale: 'medium',
 									width: '130px',
 									iconCls: 'fa fa-2x fa-envelope-o icon-button-color-default icon-vertical-correction-send',	
-									requiredPermissions: ['ADMIN-USER-MANAGEMENT-UPDATE'],							
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-CREATE'],
 									handler: function () {
 										var record = userGrid.getSelection()[0];
 										actionMessageUser(record);
@@ -1210,7 +1210,7 @@
 				var currentUser;
 				CoreService.userservice.getCurrentUser().then(function(user){
 					currentUser = user;
-					if (CoreService.userservice.userHasPermisson(user, "ADMIN-ROLE-MANAGEMENT")) {
+					if (CoreService.userservice.userHasPermission(user, "ADMIN-ROLES-PAGE")) {
 						userGrid.getComponent('tools').getComponent('role').setHidden(false);					
 					}									
 				});					

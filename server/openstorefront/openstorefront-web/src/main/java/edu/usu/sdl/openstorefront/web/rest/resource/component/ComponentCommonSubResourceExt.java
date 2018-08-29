@@ -1070,7 +1070,7 @@ public abstract class ComponentCommonSubResourceExt
 		example.setComponentId(componentId);
 		ComponentTag componentTag = service.getPersistenceService().queryOneByExample(new QueryByExample<>(example));
 		if (componentTag != null) {
-			response = ownerCheck(componentTag, SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+			response = ownerCheck(componentTag, SecurityPermission.ADMIN_ENTRY_TAG_MANAGEMENT);
 			if (response == null) {
 				service.getComponentService().deleteBaseComponent(ComponentTag.class, tagId);
 			}

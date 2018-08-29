@@ -1,5 +1,7 @@
 <factorypath>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/webjars/font-awesome/4.7.0/font-awesome-4.7.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/webjars/npm/material-icons/0.2.3/material-icons-0.2.3.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/webjars/npm/roboto-fontface/0.9.0/roboto-fontface-0.9.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/samaxes/filter/cachefilter/2.3.0/cachefilter-2.3.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/net/sf/uadetector/uadetector-resources/2014.10/uadetector-resources-2014.10.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/net/sf/uadetector/uadetector-core/0.9.22/uadetector-core-0.9.22.jar" enabled="true" runInBatchMode="false"/>

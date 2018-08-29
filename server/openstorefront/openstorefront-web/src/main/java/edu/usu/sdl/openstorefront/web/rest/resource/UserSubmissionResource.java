@@ -113,7 +113,7 @@ public class UserSubmissionResource
 		userSubmission.setUserSubmissionId(submissionId);
 		userSubmission = userSubmission.find();
 
-		Response response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS);
+		Response response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS_READ);
 		if (response == null) {
 			response = sendSingleEntityResponse(userSubmission);
 		}
@@ -134,7 +134,7 @@ public class UserSubmissionResource
 		userSubmission.setUserSubmissionId(submissionId);
 		userSubmission = userSubmission.find();
 
-		Response response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS);
+		Response response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS_READ);
 		if (response == null) {
 			UserSubmissionMedia media = new UserSubmissionMedia();
 			media.setUserSubmissionId(submissionId);
@@ -218,7 +218,7 @@ public class UserSubmissionResource
 
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		if (existing != null) {
-			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS);
+			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS_UPDATE);
 			if (response == null) {
 				ValidationResult validateResult = service.getSubmissionFormService().submitUserSubmissionForApproval(existing);
 				if (!validateResult.valid()) {
@@ -248,7 +248,7 @@ public class UserSubmissionResource
 
 		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		if (existing != null) {
-			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS);
+			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS_UPDATE);
 			if (response == null) {
 				ValidationResult validateResult = service.getSubmissionFormService().submitChangeRequestForApproval(existing);
 				if (!validateResult.valid()) {
@@ -299,7 +299,7 @@ public class UserSubmissionResource
 
 		Response response = Response.noContent().build();
 		if (userSubmission != null) {
-			response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS);
+			response = ownerCheck(userSubmission, SecurityPermission.ADMIN_USER_SUBMISSIONS_DELETE);
 			if (response == null) {
 				service.getSubmissionFormService().deleteUserSubmission(submissionId);
 				response = Response.noContent().build();
@@ -324,7 +324,7 @@ public class UserSubmissionResource
 
 		Response response = Response.noContent().build();
 		if (userSubmissionMedia != null) {
-			response = ownerCheck(userSubmissionMedia, SecurityPermission.ADMIN_USER_SUBMISSIONS);
+			response = ownerCheck(userSubmissionMedia, SecurityPermission.ADMIN_USER_SUBMISSIONS_DELETE);
 			if (response == null) {
 				service.getSubmissionFormService().deleteUserSubmissionMedia(mediaId);
 				response = Response.noContent().build();

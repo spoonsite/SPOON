@@ -91,7 +91,7 @@
 		</style>
 	</head>
 	<body>
-		<div>
+		<div>		
 			<p>Action Report: ${createTime?datetime}</p>
 			<hr></hr>
 			
@@ -199,7 +199,7 @@
 						<div class="section-indent section-indent-border">
 							<div class="section-user-data">
 								<div>${ticket.getCreateUser()} - ${ticket.getCreateDts()?date}</div>
-								<div><b>Organization</b>: ${ticket.getOrganization()}</div>
+								<div><b>Organization</b>: ${(ticket.getOrganization())!"N/A"}</div>
 								<div><b>Email</b>: ${ticket.getEmail()}</div>
 								<div><b>Summary</b>: ${ticket.getSummary()}</div>
 							</div>

@@ -44,7 +44,7 @@ Ext.define('OSF.component.template.Description', {
 	extend: 'OSF.component.template.BaseBlock',
 	alias: ['widget.templatedescription'],
 
-	title: 'Component Description',
+	title: 'Summary',
 	showDescriptionHeader: false,
 	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
@@ -893,8 +893,9 @@ Ext.define('OSF.component.template.Reviews', {
 				}
 
 				if (review.username === user.username ||
-						CoreService.userservice.userHasPermisson(user, ['ADMIN-REVIEW'])
-						) {
+					(CoreService.userservice.userHasPermission(user, ['ADMIN-REVIEW-UPDATE']) &&
+					CoreService.userservice.userHasPermission(user, ['ADMIN-REVIEW-DELETE']))
+					) {
 					review.owner = true;
 				}
 
@@ -967,8 +968,7 @@ Ext.define('OSF.component.template.Questions', {
 	title: 'Questions & Answers',
 	bodyStyle: 'padding: 10px;',
 	layout: {
-		type: 'vbox',
-		align: 'stretch'
+		type: 'anchor'
 	},
 	dockedItems: [
 		{
@@ -1093,17 +1093,19 @@ Ext.define('OSF.component.template.Questions', {
 				Ext.Array.each(question.responses, function (response) {
 					response.questionId = question.questionId;
 					response.componentId = question.componentId;
-					response.owner = (response.username === user.username || CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS']));
+					response.owner = (response.username === user.username ||
+						(CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-UPDATE']) &&
+						CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE']));
 				});
 
 
 				var panel = Ext.create('Ext.panel.Panel', {
 					titleCollapse: true,
 					collapsible: true,
+					width: '100%',
 					title: text,
 					bodyStyle: 'padding: 10px;',
-					data: question.responses,
-					itemId: 'answerPanel',
+					data: question.responses,					
 					tpl: new Ext.XTemplate(
 							'<tpl for=".">',
 							'	<tpl if="activeStatus === \'A\' || (activeStatus === \'P\' &amp;&amp; owner === true)">',
@@ -1134,8 +1136,9 @@ Ext.define('OSF.component.template.Questions', {
 					]
 				});
 				if (question.username === user.username ||
-						CoreService.userservice.userHasPermisson(user, ['ADMIN-QUESTIONS'])
-						)
+					(CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-UPDATE']) &&
+					CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE']))
+					)
 				{
 					panel.addDocked(
 							{
@@ -1200,7 +1203,10 @@ Ext.define('OSF.component.template.Questions', {
 			processQuestions(entry, user);
 			if (user.isAnonymousUser) {
 				questionPanel.getComponent("btnAskQuestion").setHidden(true);
-				questionPanel.getComponent('answerPanel').getComponent("btnAnswer").setHidden(true);
+				Ext.Array.each(questionPanel.items.items, function(qPanel){
+					qPanel.queryById("btnAnswer").setHidden(true);
+				});
+				
 			}
 		});
 

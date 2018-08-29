@@ -141,7 +141,7 @@ public class SecurityUtil
 	{
 		boolean admin = false;
 		try {
-			admin = hasPermission(SecurityPermission.ADMIN_ENTRY_MANAGEMENT);
+			admin = hasPermission(SecurityPermission.ADMIN_ENTRY_APPROVE);
 		} catch (Exception e) {
 			LOG.log(Level.FINE, "Determining admin user.  No user is logged in.  This is likely an auto process.");
 		}
@@ -157,7 +157,7 @@ public class SecurityUtil
 	{
 		boolean admin = false;
 		try {
-			admin = hasPermission(SecurityPermission.EVALUATIONS);
+			admin = hasPermission(SecurityPermission.USER_EVALUATIONS_UPDATE);
 		} catch (Exception e) {
 			LOG.log(Level.FINE, "Determining evaluator user.  No user is logged in.  This is likely an auto process.");
 		}

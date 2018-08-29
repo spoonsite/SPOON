@@ -63,7 +63,7 @@ var CoreService = {
 		clearUser: function () {
 			sessionStorage.removeItem('user');
 		},
-		userHasPermisson: function (user, permissions, operator) {
+		userHasPermission: function (user, permissions, operator) {
 			var userservice = this;
 			var valid = false;
 			if (Ext.isArray(permissions)) {

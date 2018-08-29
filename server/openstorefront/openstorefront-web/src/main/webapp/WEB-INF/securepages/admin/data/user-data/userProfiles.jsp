@@ -373,7 +373,7 @@
 									}
 								},
 								{
-									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT', 'ADMIN-USER-MANAGEMENT-PROFILES-UPDATE'],
+									requiredPermissions: ['ADMIN-USER-MANAGEMENT-PROFILES-UPDATE', 'ADMIN-MESSAGE-MANAGEMENT-CREATE'],
 									xtype: 'tbseparator'
 								},
 								{
@@ -387,6 +387,7 @@
 									width: '130px',
 									iconCls: 'fa fa-2x fa-envelope-o icon-vertical-correction icon-button-color-save',
 									iconAlign: 'left',
+									requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-CREATE'],
 									handler: function () {
 										var records = Ext.getCmp('userProfileGrid').getSelection();
 										actionMessageUser(records);
@@ -487,12 +488,6 @@
 							}
 						}
 					}
-				});
-
-				CoreService.userservice.getCurrentUser().then(function(user){				
-					if (CoreService.userservice.userHasPermisson(user, "ADMIN-MESSAGE-MANAGEMENT")) {
-						Ext.getCmp('userProfileGrid-tools-message').setHidden(false);
-					}				
 				});
 
 				var actionToggleUser = function actionToggleUser(record) {

@@ -81,7 +81,7 @@
 			});
 			toolsMenu.push({
 				text: 'Reviews',
-				requiredPermissions: ['USER-REVIEWS-PAGE'],
+				requiredPermissions: ['USER-REVIEW-PAGE'],
 				handler: function(){
 					actionLoadContent('Reviews');
 				}				
@@ -263,13 +263,13 @@
 			});		
 			
 			CoreService.userservice.getCurrentUser().then(function(user){
-				if (CoreService.userservice.userHasPermisson(user, "REPORTS")) {
+				if (CoreService.userservice.userHasPermission(user, "REPORTS-READ")) {
 					Ext.getCmp('tools-menu-reports').setHidden(false);					
 				}
-				if (CoreService.userservice.userHasPermisson(user, "RELATION-VIEW-TOOL")) {
+				if (CoreService.userservice.userHasPermission(user, "RELATION-VIEW-TOOL")) {
 					Ext.getCmp('tools-menu-relationships').setHidden(false);
 				} 
-				if (CoreService.userservice.userHasPermisson(user, "USER-SUBMISSIONS")) {
+				if (CoreService.userservice.userHasPermission(user, "USER-SUBMISSIONS-PAGE")) {
 					Ext.getCmp('main-menu-submissions').setHidden(false);
 				}
 			});	

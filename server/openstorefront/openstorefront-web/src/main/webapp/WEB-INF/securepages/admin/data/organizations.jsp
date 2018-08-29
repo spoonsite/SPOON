@@ -256,7 +256,7 @@
 				
 				
 				CoreService.userservice.getCurrentUser().then(function(user){
-					if (CoreService.userservice.userHasPermisson(user, "ADMIN-ORGANIZATION-EXTRACTION")) {
+					if (CoreService.userservice.userHasPermission(user, "ADMIN-ORGANIZATION-EXTRACTION")) {
 						Ext.getCmp('runExtractorBtn').setHidden(false);					
 					}
 				});

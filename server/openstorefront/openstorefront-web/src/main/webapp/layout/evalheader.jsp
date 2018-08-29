@@ -185,7 +185,7 @@
 			});		
 			
 			CoreService.userservice.getCurrentUser().then(function(user){
-				if (CoreService.userservice.userHasPermisson(user, ['REPORTS'])) {
+				if (CoreService.userservice.userHasPermission(user, ['REPORTS-READ'])) {
 					Ext.getCmp('mainViewPortPanel').queryById('main-menu-reports').setHidden(false);					
 				}
 				

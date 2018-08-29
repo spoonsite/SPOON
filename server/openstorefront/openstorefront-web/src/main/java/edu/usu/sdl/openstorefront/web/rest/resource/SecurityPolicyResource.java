@@ -50,7 +50,7 @@ public class SecurityPolicyResource
 	}
 
 	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SECURITY)
+	@RequireSecurity(SecurityPermission.ADMIN_SECURITY_POLICY)
 	@APIDescription("Updates security policy.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})

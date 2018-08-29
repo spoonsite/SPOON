@@ -535,6 +535,7 @@
 								title: 'Active Permissions for ' + record.get('roleName'),
 								width: '100%',
 								isDirty: false,
+								bufferedRenderer: false,
 								findSubPermissions: function (record) {
 									return this.getStore().getData().items.filter(function (item) {
 										return item.getData().permissionPredecessor === record.getData().code;
@@ -712,11 +713,12 @@
 											var data = record.data;
 											data.permissions = permissions;
 											
-											permissionWin.setLoading('Saving Permissions...');
+											permissionWin.setLoading('Saving permissions... <br> This may take a while');
 											Ext.Ajax.request({
 												url: 'api/v1/resource/securityroles/' + encodeURIComponent(record.get('roleName')),
 												method: 'PUT',
 												jsonData: data,
+												timeout: 120000,
 												callback: function(){
 													permissionWin.setLoading(false);
 												},
@@ -1164,14 +1166,7 @@
 					userWin.show();
 					
 				};
-				
-				
-				// CoreService.userservice.getCurrentUser().then(function(user){
-				// 	if (CoreService.userservice.userHasPermisson(user, "ADMIN-USER-MANAGEMENT")) {
-				// 		roleGrid.getComponent('tools').getComponent('users').setHidden(false);					
-				// 	}									
-				// });					
-				
+
 			});
 			
         </script>

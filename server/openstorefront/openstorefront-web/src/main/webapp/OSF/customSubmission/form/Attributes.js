@@ -326,7 +326,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 		
 		CoreService.userservice.getCurrentUser().then(function (user) {
 
-			if (CoreService.userservice.userHasPermisson(user, 'ALLOW-USER-ATTRIBUTE-TYPE-CREATION')) {
+			if (CoreService.userservice.userHasPermission(user, 'ALLOW-USER-ATTRIBUTE-TYPE-CREATION')) {
 				attributePanel.queryById('addAttributeType').setHidden(false);
 			}
 

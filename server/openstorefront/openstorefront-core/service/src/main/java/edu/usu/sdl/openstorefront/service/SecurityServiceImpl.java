@@ -317,7 +317,7 @@ public class SecurityServiceImpl
 
 			boolean autoApproveUser = forceApprove;
 			if (!forceApprove) {
-				autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT);
+				autoApproveUser = getSecurityPolicy().getAutoApproveUsers() || SecurityUtil.hasPermission(SecurityPermission.ADMIN_USER_MANAGEMENT_APPROVE);
 			}
 
 			UserSecurity userSecurity = new UserSecurity();

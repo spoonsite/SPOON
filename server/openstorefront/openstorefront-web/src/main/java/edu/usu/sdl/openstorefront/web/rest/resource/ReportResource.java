@@ -84,7 +84,7 @@ public class ReportResource
 {
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_READ)
 	@APIDescription("Gets report records.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportView.class)
@@ -170,7 +170,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_READ)
 	@APIDescription("Gets a report record.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Report.class)
@@ -190,7 +190,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_READ)
 	@APIDescription("Gets a report details.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportDetailView.class)
@@ -211,7 +211,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_READ)
 	@APIDescription("Gets the actual report")
 	@Produces({MediaType.WILDCARD})
 	@DataType(Report.class)
@@ -264,7 +264,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_READ)
 	@APIDescription("Gets a report type")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportType.class)
@@ -288,7 +288,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_READ)
 	@APIDescription("Gets report supported formats")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(LookupModel.class)
@@ -316,7 +316,7 @@ public class ReportResource
 	}
 
 	@GET
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_READ)
 	@APIDescription("Gets report supported transmissiontypes for report")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(ReportTransmissionType.class)
@@ -334,7 +334,7 @@ public class ReportResource
 	}
 
 	@POST
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_CREATE)
 	@APIDescription("Generates a new report")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
@@ -389,7 +389,7 @@ public class ReportResource
 	}
 
 	@DELETE
-	@RequireSecurity(SecurityPermission.REPORTS)
+	@RequireSecurity(SecurityPermission.REPORTS_DELETE)
 	@APIDescription("Deletes a report")
 	@Path("/{id}")
 	public void deleteReport(
