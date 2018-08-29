@@ -206,7 +206,7 @@ public abstract class ComponentQuestionReviewExt
 		ComponentQuestion componentQuestion = service.getPersistenceService().findById(ComponentQuestion.class, questionId);
 		if (componentQuestion != null) {
 			checkBaseComponentBelongsToComponent(componentQuestion, componentId);
-			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
+			response = ownerCheck(componentQuestion, SecurityPermission.ADMIN_QUESTIONS_DELETE);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentQuestion.class, questionId);
 				response = Response.ok().build();

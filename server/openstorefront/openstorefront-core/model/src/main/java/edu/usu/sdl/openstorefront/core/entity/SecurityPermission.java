@@ -294,6 +294,7 @@ public class SecurityPermission
 	public static final String ADMIN_QUESTION_PAGE = "ADMIN-QUESTIONS-PAGE";
 	public static final String ADMIN_QUESTIONS_READ = "ADMIN-QUESTIONS-READ";
 	public static final String ADMIN_QUESTIONS_UPDATE = "ADMIN-QUESTIONS-UPDATE";
+	public static final String ADMIN_QUESTIONS_DELETE = "ADMIN-QUESTIONS-DELETE";
 
 	//Relationships
 	public static final String GROUPBY_RELATIONSHIPS = "Relationships";
@@ -1157,6 +1158,10 @@ public class SecurityPermission
 		codeMap.put(ADMIN_QUESTIONS_UPDATE, newLookup(SecurityPermission.class, ADMIN_QUESTIONS_UPDATE, "Gives admin ability to update questions on entries", null, GROUPBY_QUESTION));
 		((SecurityPermission) codeMap.get(ADMIN_QUESTIONS_UPDATE)).setPermissionPredecessor(ADMIN_QUESTIONS_READ);
 		((SecurityPermission) codeMap.get(ADMIN_QUESTIONS_UPDATE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
+		codeMap.put(ADMIN_QUESTIONS_DELETE, newLookup(SecurityPermission.class, ADMIN_QUESTIONS_DELETE, "Gives admin ability to delete questions on entries", null, GROUPBY_QUESTION));
+		((SecurityPermission) codeMap.get(ADMIN_QUESTIONS_DELETE)).setPermissionPredecessor(ADMIN_QUESTIONS_READ);
+		((SecurityPermission) codeMap.get(ADMIN_QUESTIONS_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		// Relationships
 		codeMap.put(ADMIN_RELATIONSHIPS_PAGE, newLookup(SecurityPermission.class, ADMIN_RELATIONSHIPS_PAGE, "Provides access to the admin Relationships page", null, GROUPBY_RELATIONSHIPS));

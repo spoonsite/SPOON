@@ -1210,7 +1210,7 @@
 				var currentUser;
 				CoreService.userservice.getCurrentUser().then(function(user){
 					currentUser = user;
-					if (CoreService.userservice.userHasPermission(user, "ADMIN-ROLE-MANAGEMENT")) {
+					if (CoreService.userservice.userHasPermission(user, "ADMIN-ROLES-PAGE")) {
 						userGrid.getComponent('tools').getComponent('role').setHidden(false);					
 					}									
 				});					
