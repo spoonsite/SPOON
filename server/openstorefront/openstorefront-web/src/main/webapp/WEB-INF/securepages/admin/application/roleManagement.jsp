@@ -1166,14 +1166,7 @@
 					userWin.show();
 					
 				};
-				
-				
-				// CoreService.userservice.getCurrentUser().then(function(user){
-				// 	if (CoreService.userservice.userHasPermisson(user, "ADMIN-USER-MANAGEMENT-PAGE")) {
-				// 		roleGrid.getComponent('tools').getComponent('users').setHidden(false);					
-				// 	}									
-				// });					
-				
+
 			});
 			
         </script>

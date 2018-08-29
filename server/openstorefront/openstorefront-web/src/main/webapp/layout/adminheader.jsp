@@ -559,7 +559,7 @@
 							}
 						} else {
 							if (menuItem.permission) {
-								if (CoreService.userservice.userHasPermisson(user, menuItem.permission)) {
+								if (CoreService.userservice.userHasPermission(user, menuItem.permission)) {
 									menuToAddTo.push(menuItem);
 								}						
 							} else {

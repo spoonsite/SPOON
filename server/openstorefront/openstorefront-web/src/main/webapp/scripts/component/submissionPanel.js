@@ -1074,7 +1074,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 			CoreService.userservice.getCurrentUser().then(function (user) {
 
-				if (CoreService.userservice.userHasPermisson(user, 'ALLOW-USER-ATTRIBUTE-TYPE-CREATION')) {
+				if (CoreService.userservice.userHasPermission(user, 'ALLOW-USER-ATTRIBUTE-TYPE-CREATION')) {
 					addWindow.queryById('addAttributeType').setHidden(false);
 				}
 

@@ -184,11 +184,13 @@
 										}
 									},
 									{
-										xtype: 'tbseparator'
+										xtype: 'tbseparator',
+										requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-CREATE']
 									},
 									{
 										text: 'Message Submitter',
 										iconCls: 'fa fa-lg fa-envelope-o icon-button-color-default',
+										requiredPermissions: ['ADMIN-MESSAGE-MANAGEMENT-CREATE'],
 										handler: function() {
 
 											//get submitter
@@ -2038,7 +2040,7 @@
 				addComponentToMainViewPort(componentGrid);
 
 				CoreService.userservice.getCurrentUser().then(function(user){
-					if (CoreService.userservice.userHasPermisson(user, "ADMIN-DATA-IMPORT-EXPORT")) {
+					if (CoreService.userservice.userHasPermission(user, "ADMIN-DATA-IMPORT-EXPORT")) {
 						Ext.getCmp('lookupGrid-tools-import').setHidden(false);
 						Ext.getCmp('lookupGrid-tools-export').setHidden(false);
 					}

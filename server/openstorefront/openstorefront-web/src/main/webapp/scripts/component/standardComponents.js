@@ -821,14 +821,14 @@ Ext.define('OSF.component.UserMenu', {
 
 			];
 
-			if (CoreService.userservice.userHasPermisson(usercontext, permissions, 'OR')) {
+			if (CoreService.userservice.userHasPermission(usercontext, permissions, 'OR')) {
 				var adminmenu = userMenu.getMenu().getComponent('menuAdminTools');
 				if (adminmenu) {
 					adminmenu.setHidden(false);
 				}
 			}
 
-			if (CoreService.userservice.userHasPermisson(usercontext, ['EVAL-PAGE'])) {
+			if (CoreService.userservice.userHasPermission(usercontext, ['EVAL-PAGE'])) {
 				var evalmenu = userMenu.getMenu().getComponent('menuEvalTools');
 				if (evalmenu) {
 					userMenu.getMenu().getComponent('menuEvalTools').setHidden(false);

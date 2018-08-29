@@ -87,7 +87,7 @@ Ext.define('OSF.component.MessageWindow', {
 								}
 							},
 							listeners: {
-								load: function(store, records, successfu, operation, opts) {
+								load: function(store, records, successful, operation, opts) {
 									store.filterBy(function(record){
 										return record.get('email');
 									});

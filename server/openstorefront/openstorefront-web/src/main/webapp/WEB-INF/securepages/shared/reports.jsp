@@ -317,7 +317,7 @@
 										},
 										{
 											xtype: 'tbseparator',
-											requiredPermissions: ['REPORTS-SCHEDULE-READ']
+											requiredPermissions: ['REPORTS-SCHEDULE-CREATE']
 										},
 										{
 											text: 'Add',
@@ -876,7 +876,7 @@
 					scheduleWin.show();
 
 					CoreService.userservice.getCurrentUser().then(function(user){
-					if (CoreService.userservice.userHasPermisson(user, "REPORTS-SCHEDULE-READ")) {
+					if (CoreService.userservice.userHasPermission(user, "REPORTS-SCHEDULE-CREATE")) {
 
 						var cbData = [
 							{ code: 'PERIOD', description: 'Periodically'},
@@ -1443,13 +1443,13 @@
 
 									//check permissions to hide options that require permissions
 									CoreService.userservice.getCurrentUser().then(function(user){
-										if (CoreService.userservice.userHasPermisson(user, "REPORT-OUTPUT-EMAIL-ATTACH")) {
+										if (CoreService.userservice.userHasPermission(user, "REPORT-OUTPUT-EMAIL-ATTACH")) {
 											var allAttached = reportOutputPanel.query('#attachReport');
 											Ext.Array.each(allAttached, function(attached){
 												attached.setHidden(false);
 											});											
 										}
-										if (CoreService.userservice.userHasPermisson(user, "REPORT-OUTPUT-EMAIL-BODY")) {
+										if (CoreService.userservice.userHasPermission(user, "REPORT-OUTPUT-EMAIL-BODY")) {
 											var allAttached = reportOutputPanel.query('#postEmailBody');
 											Ext.Array.each(allAttached, function(attached){
 												attached.setHidden(false);
@@ -1624,7 +1624,7 @@
 									// Place the 'Add' email button
 									CoreService.userservice.getCurrentUser().then(function (user) {
 
-										var userHasEmailPermission = CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-ATTACH') || CoreService.userservice.userHasPermisson(user, 'REPORT-OUTPUT-EMAIL-BODY');
+										var userHasEmailPermission = CoreService.userservice.userHasPermission(user, 'REPORT-OUTPUT-EMAIL-ATTACH') || CoreService.userservice.userHasPermission(user, 'REPORT-OUTPUT-EMAIL-BODY');
 
 										// remove the "email" option if it exists
 										if (!userHasEmailPermission) {

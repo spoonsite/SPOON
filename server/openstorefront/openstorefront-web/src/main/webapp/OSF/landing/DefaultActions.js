@@ -38,8 +38,7 @@ Ext.define('OSF.landing.DefaultActions', {
 			//icon: 'fa-file-text-o',
 			imageSrc: 'images/submission.png',
 			tip: 'Add or update entries to the registry',
-			requiredPermissions: ['USER-SUBMISSIONS-UPDATE', 'USER-SUBMISSIONS-CREATE'],
-			permissionLogicalOperator: 'AND',
+			permission: 'USER-SUBMISSIONS-PAGE',
 			toolBackground: '',
 			link: 'UserTool.action?load=Submissions'
 		},
@@ -122,7 +121,7 @@ Ext.define('OSF.landing.DefaultActions', {
 				Ext.Array.each(actions, function(action){
 					var add = true;
 					if (action.permission) {
-						if (!CoreService.userservice.userHasPermisson(user, action.permission)) {
+						if (!CoreService.userservice.userHasPermission(user, action.permission)) {
 							add = false;
 						}
 					}
