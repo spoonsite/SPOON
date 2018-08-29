@@ -398,7 +398,7 @@ public abstract class ComponentQuestionReviewExt
 		responseExample.setResponseId(responseId);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		if (questionResponse != null) {
-			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS_UPDATE);
+			response = ownerCheck(questionResponse, SecurityPermission.ADMIN_QUESTIONS_DELETE);
 			if (response == null) {
 				service.getComponentService().deactivateBaseComponent(ComponentQuestionResponse.class, responseId);
 				response = Response.ok().build();
