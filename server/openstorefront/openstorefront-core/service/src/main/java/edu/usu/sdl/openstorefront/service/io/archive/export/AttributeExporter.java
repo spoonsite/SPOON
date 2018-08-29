@@ -121,29 +121,32 @@ public class AttributeExporter
 		File files[] = dataDir.listFiles();
 		if (files != null) {
 			for (File dataFile : files) {
-				String className = dataFile.getName().replace(".json", "");
-				try (InputStream in = new TFileInputStream(dataFile)) {
-					archive.setStatusDetails("Importing: " + className);
-					archive.save();
+				if(!dataFile.isDirectory()){
+					String className = dataFile.getName().replace(".json", "");
+					try (InputStream in = new TFileInputStream(dataFile)) {
+						archive.setStatusDetails("Importing: " + className);
+						archive.save();
 
-					AttributeAll attributeAll = StringProcessor.defaultObjectMapper().readValue(in, AttributeAll.class);
+						AttributeAll attributeAll = StringProcessor.defaultObjectMapper().readValue(in, AttributeAll.class);
 
-					List<AttributeAll> attributeAlls = new ArrayList<>();
-					attributeAlls.add(attributeAll);
-					FileHistoryOption options = new FileHistoryOption();
-					ValidationResult validationResult = service.getAttributeService().importAttributes(attributeAlls, options);
-					if (validationResult.valid() == false) {
-						String message = "Failed to import Attribute: {0}<br><br>All imported entries will be missing this attribute<br>Details:<br>{1}";
-						addError(MessageFormat.format(message, className, validationResult.toHtmlString()));
+						List<AttributeAll> attributeAlls = new ArrayList<>();
+						attributeAlls.add(attributeAll);
+						FileHistoryOption options = new FileHistoryOption();
+						ValidationResult validationResult = service.getAttributeService().importAttributes(attributeAlls, options);
+						if (validationResult.valid() == false) {
+							String message = "Failed to import Attribute: {0}<br><br>All imported entries will be missing this attribute<br>Details:<br>{1}";
+							addError(MessageFormat.format(message, className, validationResult.toHtmlString()));
+						}
+
+						archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+						archive.save();
+
+					} catch (Exception ex) {
+						LOG.log(Level.WARNING, "Failed to Load attibutes", ex);
+						addError("Unable to load attributes: " + className);
 					}
-
-					archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
-					archive.save();
-
-				} catch (Exception ex) {
-					LOG.log(Level.WARNING, "Failed to Load attibutes", ex);
-					addError("Unable to load attributes: " + className);
 				}
+				
 			}
 		} else {
 			LOG.log(Level.FINE, "No attibutes to load.");
