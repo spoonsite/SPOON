@@ -454,7 +454,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							handler: function(){
 								var emails = changeRequestWindow.changeGrid.getSelection()[0].get('ownerEmail');
 								var messageWindow = Ext.create('OSF.component.MessageWindow', {					
-									closeAction: 'destory',
+									closeAction: 'destroy',
 									alwaysOnTop: true,
 									initialToUsers: emails
 								}).show();

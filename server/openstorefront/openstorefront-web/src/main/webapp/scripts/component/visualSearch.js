@@ -707,7 +707,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				var prompt = Ext.create('Ext.window.Window', {
 				title: 'Select Entry to View',
 				modal: true,
-				closeMode: 'destory',
+				closeMode: 'destroy',
 				width: 500,
 				height: 200,
 				bodyStyle: 'padding: 10px;',
@@ -841,7 +841,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			var prompt = Ext.create('Ext.window.Window', {
 				title: 'Select Tag to View',
 				modal: true,
-				closeMode: 'destory',
+				closeMode: 'destroy',
 				width: 500,
 				height: 200,
 				bodyStyle: 'padding: 10px;',
@@ -984,7 +984,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			var prompt = Ext.create('Ext.window.Window', {
 				title: 'Select Organization to View',
 				modal: true,
-				closeMode: 'destory',
+				closeMode: 'destroy',
 				width: 500,
 				height: 200,
 				bodyStyle: 'padding: 10px;',
@@ -1105,7 +1105,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			var prompt = Ext.create('Ext.window.Window', {
 				title: 'Select Attribute/Vital to View',
 				modal: true,
-				closeMode: 'destory',
+				closeMode: 'destroy',
 				width: 400,
 				height: 200,
 				bodyStyle: 'padding: 10px;',

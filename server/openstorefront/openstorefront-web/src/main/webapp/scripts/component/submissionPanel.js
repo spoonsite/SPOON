@@ -629,7 +629,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 		var addEditAttribute = function (record) {
 			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>',
@@ -1085,7 +1085,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		var addEditContact = function (record, grid) {
 
 			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				modal: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Contact</span>',
 				alwaysOnTop: true,
@@ -1339,7 +1339,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 		var addEditResource = function (record, grid) {
 			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add External Link</span>',
@@ -1808,7 +1808,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 
 		var addEditDependency = function (record, grid) {
 			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				modal: true,
 				alwaysOnTop: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Dependency</span>',
@@ -1927,7 +1927,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 		var addEditRelationship = function (record, grid) {
 
 			var addWindow = Ext.create('Ext.window.Window', {
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				modal: true,
 				title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Relationship</span>',
 				alwaysOnTop: true,
@@ -2714,7 +2714,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 												};
 
 												var addWindow = Ext.create('Ext.window.Window', {
-													closeAction: 'destory',
+													closeAction: 'destroy',
 													modal: true,
 													alwaysOnTop: true,
 													title: '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Tag</span>',

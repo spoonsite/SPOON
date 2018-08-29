@@ -212,7 +212,7 @@
 														});
 
 														var messageWindow = Ext.create('OSF.component.MessageWindow', {
-															closeAction: 'destory',
+															closeAction: 'destroy',
 															alwaysOnTop: true,
 															initialToUsers: emails
 														}).show();
@@ -221,7 +221,7 @@
 												});
 											} else {
 												var messageWindow = Ext.create('OSF.component.MessageWindow', {
-														closeAction: 'destory',
+														closeAction: 'destroy',
 														alwaysOnTop: true,
 														initialToUsers: emails
 													}).show();

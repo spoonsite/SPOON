@@ -1949,7 +1949,7 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 				width: '70%',
 				height: '50%',
 				maximizable: true,
-				closeAction: 'destory',
+				closeAction: 'destroy',
 				layout: 'fit',
 				items: [
 					{
