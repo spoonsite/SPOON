@@ -98,10 +98,7 @@ public class SecurityService
 		File shiroConfig = FileSystemManager.getInstance().getConfig("shiro.ini");
 
 		try {
-			Files.copy(shiroConfig.toPath(),
-					Paths.get(FileSystemManager.CONFIG_DIR + "/shiro.ini.back"),
-					StandardCopyOption.REPLACE_EXISTING,
-					StandardCopyOption.COPY_ATTRIBUTES);
+			Files.copy(shiroConfig.toPath(), Paths.get(FileSystemManager.getInstance().getBaseDirectory() + FileSystemManager.CONFIG_DIR + "/shiro.ini.back"), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
 
 			try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(shiroConfig)))) {
 				out.write(dataView.getData());
