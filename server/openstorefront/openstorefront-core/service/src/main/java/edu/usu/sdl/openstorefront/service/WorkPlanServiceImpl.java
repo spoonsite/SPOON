@@ -692,7 +692,7 @@ public class WorkPlanServiceImpl
 				if (workPlanItem.getComponentTypes() != null) {
 					for (WorkPlanComponentType workPlanComponentType : workPlanItem.getComponentTypes()) {
 
-						Element cacheElement = new Element(workPlanComponentType.getComponentType(), workPlan);
+						Element cacheElement = new Element(workPlanComponentType.getComponentType(), workPlanItem);
 						OSFCacheManager.getWorkPlanTypeCache().put(cacheElement);
 
 						if (workPlanItem.getAppliesToChildComponentTypes()) {
@@ -705,7 +705,7 @@ public class WorkPlanServiceImpl
 
 							List<String> children = nestedModel.findComponentTypeChildren();
 							for (String childType : children) {
-								cacheElement = new Element(childType, workPlan);
+								cacheElement = new Element(childType, workPlanItem);
 								OSFCacheManager.getWorkPlanTypeCache().put(cacheElement);
 							}
 						}
