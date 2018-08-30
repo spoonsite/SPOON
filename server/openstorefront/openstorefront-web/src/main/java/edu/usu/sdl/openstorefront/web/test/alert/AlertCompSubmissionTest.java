@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeAlertOption;
 import edu.usu.sdl.openstorefront.core.entity.EmailAddress;
 import static edu.usu.sdl.openstorefront.core.entity.StandardEntity.ACTIVE_STATUS;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
@@ -52,13 +53,21 @@ public class AlertCompSubmissionTest extends BaseTestCase
 			inactivateAlerts(alerts);
 		}
 
+		ComponentAll componentAll = getTestComponent();
+
 		alertCompSubmission = new Alert();
 		alertCompSubmission.setName("New Component Submission Alert");
 		alertCompSubmission.setActiveStatus(ACTIVE_STATUS);
 		alertCompSubmission.setAlertType(AlertType.COMPONENT_SUBMISSION);
+		List<ComponentTypeAlertOption> componentTypeOptions = new ArrayList<>();
+		ComponentTypeAlertOption option = new ComponentTypeAlertOption();
+		option.setComponentType(componentAll.getComponent().getComponentType());
+		componentTypeOptions.add(option);
+		alertCompSubmission.setComponentTypeAlertOptions(componentTypeOptions);
+
 		EmailAddress emailAddress = new EmailAddress();
 		emailAddress.setEmail(getSystemEmail());
-		List<EmailAddress> emails = new ArrayList();
+		List<EmailAddress> emails = new ArrayList<>();
 		emails.add(emailAddress);
 		alertCompSubmission.setEmailAddresses(emails);
 
@@ -69,7 +78,6 @@ public class AlertCompSubmissionTest extends BaseTestCase
 		AlertContext alertCont = new AlertContext();
 		alertCont.setAlertType(alertCompSubmission.getAlertType());
 
-		ComponentAll componentAll = getTestComponent();
 		Component componentSub = componentAll.getComponent();
 		componentSub.setName("Component Submission");
 		componentSub.setActiveStatus(Component.ACTIVE_STATUS);

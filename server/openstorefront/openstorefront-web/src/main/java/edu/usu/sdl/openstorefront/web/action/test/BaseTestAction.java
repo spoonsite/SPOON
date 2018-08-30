@@ -262,26 +262,36 @@ public abstract class BaseTestAction
 
 	private void printHtmlSummary(TestSuiteModel testSuiteModel, StringBuilder output)
 	{
-		output.append("<h3>PASSED TESTS</h3><hr><br>");
+		output.append("<h2>").append(testSuiteModel.getName()).append("</h2>");
+		output.append("<h3>PASSED TESTS: </h3><hr><br>");
 		for (BaseTestCase test : testSuiteModel.getTests()) {
 			if (test.isSuccess()) {
 				output.append("Test: <b>")
 						.append(test.getDescription())
 						.append("</b>...")
-						.append("<span style='color: green'> PASSED </span>").append(" <br>");
+						.append("<span style='color: green;'> PASSED </span>").append(" <br>");
 			}
 		}
 
-		output.append("<h3>FAILED TESTS</h3><hr><br>");
+		boolean failures = false;
 		for (BaseTestCase test : testSuiteModel.getTests()) {
 			if (!test.isSuccess()) {
-				output.append("Test: <b>")
-						.append(test.getDescription())
-						.append("</b>...")
-						.append("<span style='color: red'> FAILED </span>")
-						.append(" <br>");
+				failures = true;
 			}
 		}
+		if (failures) {
+			output.append("<h3>FAILED TESTS</h3><hr><br>");
+			for (BaseTestCase test : testSuiteModel.getTests()) {
+				if (!test.isSuccess()) {
+					output.append("Test: <b>")
+							.append(test.getDescription())
+							.append("</b>...")
+							.append("<span style='color: red;'> FAILED </span>")
+							.append(" <br>");
+				}
+			}
+		}
+		output.append("<hr>");
 
 	}
 
