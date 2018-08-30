@@ -251,7 +251,7 @@
 						iconCls: 'fa fa-lg fa-file-text-o',
 						jsClass: 'OSF.widget.Reports',						
 						height: 400,
-						permissions: ['DASHBOARD-WIDGET-REPORTS', 'REPORTS'],
+						permissions: ['DASHBOARD-WIDGET-REPORTS', 'REPORTS-READ'],
 						adminOnly: false,
 						allowMultiples: false,
 						refresh: function(widget) {
