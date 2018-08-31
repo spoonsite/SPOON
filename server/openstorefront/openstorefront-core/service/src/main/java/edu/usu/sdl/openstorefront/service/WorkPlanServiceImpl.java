@@ -284,6 +284,8 @@ public class WorkPlanServiceImpl
 				workPlanLink.setWorkPlanId(newWorkPlan.getWorkPlanId());
 				workPlanLink.setCurrentStepId(stepId);
 				workPlanLink.save();
+				
+				workPlan = newWorkPlan;
 			}
 
 			//Make sure step exists; if not match steps
@@ -672,7 +674,6 @@ public class WorkPlanServiceImpl
 		}
 	}
 
-	// this fails for component type COMMUNICATIONS
 	@Override
 	public WorkPlan getWorkPlanForComponentType(String componentType)
 	{
@@ -698,7 +699,7 @@ public class WorkPlanServiceImpl
 						if (workPlanItem.getAppliesToChildComponentTypes()) {
 							ComponentTypeOptions componentTypeOptions = new ComponentTypeOptions();
 							componentTypeOptions.setPullParents(false);
-							componentTypeOptions.setComponentType(componentType);
+							componentTypeOptions.setComponentType(workPlanComponentType.getComponentType());
 							componentTypeOptions.setPullChildren(true);
 
 							ComponentTypeNestedModel nestedModel = getComponentService().getComponentType(componentTypeOptions);
@@ -805,9 +806,6 @@ public class WorkPlanServiceImpl
 		}
 	}
 
-	// TODO: refactor creation of workplanLink out of get function
-	//       this getter should not have side effects
-	//       lazy initialization fails when users first create a submission
 	@Override
 	public WorkPlanLink getWorkPlanLinkForSubmission(String userSubmissionId)
 	{

@@ -121,14 +121,14 @@ public class WorkplanResource
 		}
 
 		if (!SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_LINK_READ_ALL)) {
-			//get worklinks assigned to them and assigned to there groups (remove other names)
+			//get worklinks assigned to them and assigned to their groups (remove other names)
 			workLinks = workLinks.stream()
 					.filter(link -> {
 						return SecurityUtil.getCurrentUserName().equals(link.getCurrentUserAssigned())
 								|| linkPartOfUserGroup(link);
 					}).collect(Collectors.toList());
 
-			//Remove workflow that in step that current user doesn't have access
+			//Remove worklink in step that current user doesn't have access
 			if (!showAllSteps) {
 				workLinks.removeIf(link -> {
 					return !doesUserHaveAccessToCurrentStep(link, workPlanMap);
