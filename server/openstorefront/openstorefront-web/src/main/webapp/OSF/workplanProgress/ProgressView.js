@@ -43,7 +43,7 @@ Ext.define('OSF.workplanProgress.ProgressView', {
                 html:	'<div class="step-view-container ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + 
                             '<span class="wp-step-label ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + el.name + '</span>' +
                             '<div data-qtip="' + el.description + '"' + 
-                            'class="step-view ' + 
+                            'class="step-view static-step-view ' + 
                             (el.workPlanStepId === currentStep.workPlanStepId ? ' current-step ' : ' wp-step ') +
                             (index === steps.length - 1 ? ' last-step ' : ' ') +
                             '"></div>' +

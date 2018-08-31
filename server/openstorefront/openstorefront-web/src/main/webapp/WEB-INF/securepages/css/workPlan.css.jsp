@@ -24,6 +24,11 @@
 	cursor: pointer;
 }
 
+.static-step-view:hover {
+	opacity: 1 !important;
+	cursor: default !important;
+}
+
 .step-view::after {
 	width: 115px;
 	height: 3px;
