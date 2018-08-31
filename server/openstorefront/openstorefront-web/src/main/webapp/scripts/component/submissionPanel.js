@@ -3184,7 +3184,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 										// Process Complete Record Data
 										data = CoreUtil.processEntry(data);
 
-										CoreUtil.calculateEvalutationScore({
+										CoreUtil.calculateEvaluationScore({
 											fullEvaluations: data.fullEvaluations,
 											evaluation: data.fullEvaluations,
 											success: function (newData) {

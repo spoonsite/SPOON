@@ -39,7 +39,7 @@ var CoreUtil = {
 			caret.setAttribute('data-qtip', 'Collapse panel');
 		}
 	},
-	calculateEvalutationScore: function (obj) {
+	calculateEvaluationScore: function (obj) {
 		// obj.data.fullEvaluation requires the key: checkListAll
 		var fullEvaluations = obj.fullEvaluations;
 		var data = obj.data;
