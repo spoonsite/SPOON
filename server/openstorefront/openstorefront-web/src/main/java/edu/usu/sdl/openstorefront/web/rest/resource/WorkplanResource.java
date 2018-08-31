@@ -287,6 +287,26 @@ public class WorkplanResource
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
+	
+	
+	@PUT
+	@APIDescription("Inativates a Work Plan")
+	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
+	@Path("/{id}/inactivate")
+	public Response inactivateWorkPlan(
+			@PathParam("id") String workPlanId
+	)
+	{
+		WorkPlan workPlan = new WorkPlan();
+		workPlan.setWorkPlanId(workPlanId);
+		workPlan = workPlan.find();
+		if (workPlan != null) {
+			workPlan.setActiveStatus(WorkPlan.INACTIVE_STATUS);
+			workPlan.save();
+			return Response.ok().build();
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
 
 	@PUT
 	@APIDescription("Assigns a workPlanLink to a user and/or group")
