@@ -892,9 +892,10 @@ Ext.define('OSF.component.template.Reviews', {
 					});
 				}
 
-				if (review.username === user.username || 
-					(CoreService.userservice.userHasPermission(user, ['ADMIN-REVIEW-UPDATE']) && 
-					CoreService.userservice.userHasPermission(user, ['ADMIN-REVIEW-DELETE']))) {
+				if (review.username === user.username ||
+					(CoreService.userservice.userHasPermission(user, ['ADMIN-REVIEW-UPDATE']) &&
+					CoreService.userservice.userHasPermission(user, ['ADMIN-REVIEW-DELETE']))
+					) {
 					review.owner = true;
 				}
 
@@ -1094,7 +1095,7 @@ Ext.define('OSF.component.template.Questions', {
 					response.componentId = question.componentId;
 					response.owner = (response.username === user.username ||
 						(CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-UPDATE']) &&
-						CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE']));
+						CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE'])));
 				});
 
 
