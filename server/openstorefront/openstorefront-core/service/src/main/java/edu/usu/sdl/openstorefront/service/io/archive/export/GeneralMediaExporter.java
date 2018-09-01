@@ -97,7 +97,7 @@ public class GeneralMediaExporter
 
 		for (GeneralMedia media : generalMediaRecords) {
 
-			File mediaFile = new TFile(archiveBasePath + MEDIA_DIR + media.getName());
+			File mediaFile = new TFile(archiveBasePath + MEDIA_DIR + media.getFile().getFileName());
 			Path path = media.pathToMedia();
 			if (path != null) {
 				try {
@@ -121,59 +121,60 @@ public class GeneralMediaExporter
 	public void importRecords()
 	{
 		File dataFile = new TFile(archiveBasePath + DATA_DIR + "records.json");
-		try (InputStream in = new TFileInputStream(dataFile)) {
-			archive.setStatusDetails("Importing: " + dataFile.getName());
-			archive.save();
+		if(dataFile.exists()){
+			try (InputStream in = new TFileInputStream(dataFile)) {
+				archive.setStatusDetails("Importing: " + dataFile.getName());
+				archive.save();
 
-			List<GeneralMedia> generalMedia = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<GeneralMedia>>()
-			{
-			});
-			GeneralMedia generalMediaExample = new GeneralMedia();
-			List<GeneralMedia> existingMedia = generalMediaExample.findByExample();
-			Map<String, List<GeneralMedia>> mediaMap = existingMedia.stream()
-					.collect(Collectors.groupingBy(GeneralMedia::getName));
-			
-			List<String> errors = new ArrayList<>();
-			for (GeneralMedia generalMediaRecord : generalMedia) {
-				try {
-					if (mediaMap.containsKey(generalMediaRecord.getName())) {
-						service.getSystemService().removeGeneralMedia(generalMediaRecord.getName());
-					}
-					ValidationResult vr = generalMediaRecord.validate();
-					if (vr.valid()) {
-						generalMediaRecord.save();
-					} else {
-						errors.add(MessageFormat.format("Failed to save general media: {0}<br>{1}", generalMediaRecord.getName(), vr.toHtmlString()));
-					}
-				} catch (OpenStorefrontRuntimeException ex) {
-					LOG.log(Level.WARNING, MessageFormat.format("Failed to save media: {0}", generalMediaRecord.getName()), ex);
-					errors.add(MessageFormat.format("Failed to save general media: {0}", generalMediaRecord.getName()));
-				}
-			}
-			if (errors.size() > 0) {
-				addError(String.join("<br>", errors));
-			}
+				List<GeneralMedia> generalMedia = StringProcessor.defaultObjectMapper().readValue(in, new TypeReference<List<GeneralMedia>>()
+				{
+				});
+				GeneralMedia generalMediaExample = new GeneralMedia();
+				List<GeneralMedia> existingMedia = generalMediaExample.findByExample();
+				Map<String, List<GeneralMedia>> mediaMap = existingMedia.stream()
+						.collect(Collectors.groupingBy(GeneralMedia::getName));
 
-			TFile mediaDir = new TFile(archiveBasePath + MEDIA_DIR);
-			TFile media[] = mediaDir.listFiles();
-			if (media != null) {
-				for (TFile mediaFile : media) {
+				List<String> errors = new ArrayList<>();
+				for (GeneralMedia generalMediaRecord : generalMedia) {
 					try {
-						Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.GENERAL_MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
-
-						archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
-						archive.save();
-					} catch (IOException ex) {
-						LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
-						addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));
+						if (mediaMap.containsKey(generalMediaRecord.getName())) {
+							service.getSystemService().removeGeneralMedia(generalMediaRecord.getName());
+						}
+						ValidationResult vr = generalMediaRecord.validate();
+						if (vr.valid()) {
+							generalMediaRecord.save();
+						} else {
+							errors.add(MessageFormat.format("Failed to save general media: {0}<br>{1}", generalMediaRecord.getName(), vr.toHtmlString()));
+						}
+					} catch (OpenStorefrontRuntimeException ex) {
+						LOG.log(Level.WARNING, MessageFormat.format("Failed to save media: {0}", generalMediaRecord.getName()), ex);
+						errors.add(MessageFormat.format("Failed to save general media: {0}", generalMediaRecord.getName()));
 					}
 				}
-			}
-		} catch (Exception ex) {
-			LOG.log(Level.WARNING, "Failed to Load general media", ex);
-			addError("Unable to load general media: " + dataFile.getName());
-		}
+				if (errors.size() > 0) {
+					addError(String.join("<br>", errors));
+				}
 
+				TFile mediaDir = new TFile(archiveBasePath + MEDIA_DIR);
+				TFile media[] = mediaDir.listFiles();
+				if (media != null) {
+					for (TFile mediaFile : media) {
+						try {
+							Files.copy(mediaFile.toPath(), FileSystemManager.getInstance().getDir(FileSystemManager.GENERAL_MEDIA_DIR).toPath().resolve(mediaFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+
+							archive.setRecordsProcessed(archive.getRecordsProcessed() + 1);
+							archive.save();
+						} catch (IOException ex) {
+							LOG.log(Level.WARNING, MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()), ex);
+							addError(MessageFormat.format("Failed to copy media to path file: {0}", mediaFile.getName()));
+						}
+					}
+				}
+			} catch (Exception ex) {
+				LOG.log(Level.WARNING, "Failed to Load general media", ex);
+				addError("Unable to load general media: " + dataFile.getName());
+			}
+		}
 	}
 
 	@Override
