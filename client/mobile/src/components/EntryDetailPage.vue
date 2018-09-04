@@ -633,7 +633,6 @@ export default {
         .then(response => {
           this.addDetail = response.data;
         })
-        .catch(e => this.errors.push(e))
         .finally(() => {
           this.isLoading = false;
         });

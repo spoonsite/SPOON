@@ -37,6 +37,7 @@
 			/* global Ext, CoreUtil, CoreService */
 			Ext.require('OSF.customSubmission.SubmissionFormFullControl');			
 			Ext.require('OSF.workplanProgress.CommentPanel');
+			Ext.require('OSF.workplanProgress.ProgressView');
 
 			Ext.onReady(function () {
 				
@@ -142,46 +143,8 @@
 							layout: 'fit',
 							itemId: 'previewPanel',
 							items: [
-								previewContents,
+								previewContents
 							]
-//							dockedItems: [
-//								{
-//									xtype: 'toolbar',
-//									dock: 'bottom',
-//									items: [
-//										{
-//											text: 'Previous',
-//											id: 'previewWinTools-previousBtn',
-//											iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
-//											handler: function() {
-//												actionPreviewNextRecord(false);
-//											}									
-//										},
-//										{
-//											xtype: 'tbfill'
-//										},
-//										{
-//											text: 'Close',
-//											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-//											handler: function() {
-//												this.up('window').hide();
-//											}
-//										},
-//										{
-//											xtype: 'tbfill'
-//										},
-//										{
-//											text: 'Next',
-//											id: 'previewWinTools-nextBtn',
-//											iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-//											iconAlign: 'right',
-//											handler: function() {
-//												actionPreviewNextRecord(true);
-//											}									
-//										}
-//									]
-//								}
-//							]
 						}
 					]					
 				});
@@ -298,6 +261,9 @@
 						{ text: 'Last Update Date', align: 'center', dataIndex: 'updateDts', width: 200, xtype: 'datecolumn', format:'m/d/y H:i:s' }
 					],
 					dockedItems: [
+						{
+							xtype: 'osf.wp.progressView'
+						},
 						{
 							dock: 'top',
 							xtype: 'toolbar',
@@ -592,7 +558,6 @@
 									requiredPermissions: ['USER-SUBMISSIONS-DELETE'],
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
-										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
 										
 										Ext.getCmp('changeRequestWindow').deleteChangeRequest(record.get('pendingChangeComponentId'), true);
 									}									
@@ -606,9 +571,53 @@
 						},
 						selectionchange: function(selectionModel, selected, opts){
 							var tools = Ext.getCmp('submissionGrid').getComponent('tools');
+
+							var getWorkLink = function(worklinkType, resourceID) {
+								url = undefined; 
+								if (!resourceID) {
+									console.log('no resource id to fetch');
+									return;
+								}
+								switch (worklinkType) {
+									case 'Submission':
+										console.log('submission');
+										url = 'api/v1/resource/usersubmissions/' + resourceID + '/worklink'
+										break;
+									case 'Component':
+										console.log('component');
+										url = 'api/v1/resource/components/' + resourceID + '/worklink'
+										break;
+									case 'ChangeRequest':
+										console.log('change request');
+										url = 'api/v1/resource/components/' + resourceID + '/worklink'
+										break;
+									default:
+										console.error('No worklink type: ' + worklinkType);
+										break;
+								}
+								if (url) {
+									Ext.Ajax.request({
+										url: url,
+										method: 'GET',
+										success: function(response, opts) {
+											console.log(JSON.parse(response.responseText));
+											// display the ProgressView component
+											record = Ext.data.Record.create(JSON.parse(response.responseText));
+											var progressViewCmp = Ext.getCmp('workplan-progress-view');
+											progressViewCmp.addSteps(record);
+											progressViewCmp.setVisible(true);
+										},
+										failure: function(response, opts) {
+											console.error('failed to fetch resource');
+										}
+									})
+								}
+							}
 							
-							if (selected.length > 0) {	
-								var record = selected[0];	
+							if (selected.length > 0) {
+								var record = selected[0];
+								var worklinkType = undefined;
+								var resourceID = undefined;
 								
 								tools.getComponent('tbEdit').setDisabled(true);
 								tools.getComponent('options').setDisabled(false);
@@ -623,7 +632,9 @@
 								tools.getComponent('tbDelete').setDisabled(true);
 								tools.getComponent('tbUnapprove').setHidden(true);
 								
-								if (record.get('approvalState') === 'A'){	
+								if (record.get('approvalState') === 'A'){
+									worklinkType = 'Component';
+									resourceID = record.get('componentId');
 									tools.getComponent('tbDelete').setHidden(true);
 									tools.getComponent('tbSubmitChange').setHidden(false);
 									tools.getComponent('tbUnapprove').setHidden(false);
@@ -639,6 +650,8 @@
 								}
 								if (record.get('approvalState') === 'P'){
 									//tools.getComponent('tbUnsubmit').setHidden(false);
+									worklinkType = 'Component';
+									resourceID = record.get('componentId');
 									tools.getComponent('tbEdit').setDisabled(false);
 								}
 								if (record.get('approvalState') === 'N'){
@@ -647,12 +660,17 @@
 								}
 								
 								if (record.get('statusOfPendingChange')) {
+									worklinkType = 'ChangeRequest';
+									resourceID = record.get('pendingChangeComponentId');
 									tools.getComponent('tbRemoveChangeRequest').setHidden(false);
 								}
 								
 								if (record.get('userSubmissionId')) {
+									worklinkType = 'Submission';
+									resourceID = record.get('userSubmissionId');
 									tools.getComponent('options').setDisabled(true);
 								}
+								getWorkLink(worklinkType, resourceID);
 								
 							} else {
 								tools.getComponent('tbEdit').setDisabled(true);
@@ -666,6 +684,7 @@
 								tools.getComponent('tbDelete').setHidden(false);
 								tools.getComponent('tbDelete').setDisabled(true);
 								tools.getComponent('tbUnapprove').setHidden(true);
+								Ext.getCmp('workplan-progress-view').setVisible(false);
 							}							
 						}
 					}

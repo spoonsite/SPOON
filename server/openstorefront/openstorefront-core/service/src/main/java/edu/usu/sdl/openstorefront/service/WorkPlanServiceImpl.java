@@ -284,6 +284,8 @@ public class WorkPlanServiceImpl
 				workPlanLink.setWorkPlanId(newWorkPlan.getWorkPlanId());
 				workPlanLink.setCurrentStepId(stepId);
 				workPlanLink.save();
+				
+				workPlan = newWorkPlan;
 			}
 
 			//Make sure step exists; if not match steps
@@ -681,7 +683,7 @@ public class WorkPlanServiceImpl
 		//check cache
 		Element element = OSFCacheManager.getWorkPlanTypeCache().get(componentType);
 		if (element != null) {
-			workPlan = (WorkPlan) element.getObjectValue();
+			workPlan = (WorkPlan) element.getObjectValue(); // returns null
 		} else {
 			WorkPlan workPlanExample = new WorkPlan();
 			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
@@ -691,20 +693,20 @@ public class WorkPlanServiceImpl
 				if (workPlanItem.getComponentTypes() != null) {
 					for (WorkPlanComponentType workPlanComponentType : workPlanItem.getComponentTypes()) {
 
-						Element cacheElement = new Element(workPlanComponentType.getComponentType(), workPlan);
+						Element cacheElement = new Element(workPlanComponentType.getComponentType(), workPlanItem);
 						OSFCacheManager.getWorkPlanTypeCache().put(cacheElement);
 
 						if (workPlanItem.getAppliesToChildComponentTypes()) {
 							ComponentTypeOptions componentTypeOptions = new ComponentTypeOptions();
 							componentTypeOptions.setPullParents(false);
-							componentTypeOptions.setComponentType(componentType);
+							componentTypeOptions.setComponentType(workPlanComponentType.getComponentType());
 							componentTypeOptions.setPullChildren(true);
 
 							ComponentTypeNestedModel nestedModel = getComponentService().getComponentType(componentTypeOptions);
 
 							List<String> children = nestedModel.findComponentTypeChildren();
 							for (String childType : children) {
-								cacheElement = new Element(childType, workPlan);
+								cacheElement = new Element(childType, workPlanItem);
 								OSFCacheManager.getWorkPlanTypeCache().put(cacheElement);
 							}
 						}

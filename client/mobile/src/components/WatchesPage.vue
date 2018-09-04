@@ -7,12 +7,9 @@
     <v-layout v-if="watches.length > 0" mt-3 mx-2>
     <v-flex xs12 md6 offset-md3>
       <v-expansion-panel popout>
-        <v-expansion-panel-content v-for="item in watches" :key="item.componentName">
-          <div slot="header" v-if="item.lastUpdateDts > item.lastViewDts" class="light-green accent-1">
+        <v-expansion-panel-content v-for="item in watches" :key="item.componentName" :class="updateClasses(item)">
+          <div slot="header">
             <strong>{{ item.componentName }}</strong>
-          </div>
-          <div slot="header" v-else>
-            {{ item.componentName }}
           </div>
           <v-card class="grey lighten-5">
             <v-card-text>
@@ -78,10 +75,10 @@ export default {
           id: componentId
         }
       });
+    },
+    updateClasses (item) {
+      return item.lastUpdateDts > item.lastViewDts ? 'light-green accent-1' : '';
     }
-  },
-  computed: {
-
   }
 };
 </script>

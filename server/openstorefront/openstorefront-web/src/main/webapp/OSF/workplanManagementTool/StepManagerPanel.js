@@ -81,23 +81,23 @@ Ext.define('OSF.workplanManagementTool.StepManagerPanel', {
 			items: [
 				{
 					xtype: 'container',
-					html: '<div style="width: 100%;" data-qtip="You just recently inserted this step"><div class="wp-step-lengend wp-step-new"></div>&nbsp;<b>New</b></div>'
+					html: '<div style="width: 100%;" data-qtip="You just recently inserted this step"><div class="wp-step-legend wp-step-new"></div>&nbsp;<b>New</b></div>'
 				},
 				{
 					xtype: 'container',
-					html: '<div style="width: 100%;" data-qtip="This step already existed on workplan modification"><div class="wp-step-lengend wp-step-existing"></div>&nbsp;<b>Existing</b></div>'
+					html: '<div style="width: 100%;" data-qtip="This step already existed on workplan modification"><div class="wp-step-legend wp-step-existing"></div>&nbsp;<b>Existing</b></div>'
 				},
 				{
 					xtype: 'container',
-					html: '<div style="width: 100%;" data-qtip="You have migrated records from a deleted step, to this step"><div class="wp-step-lengend wp-step-migrated"></div>&nbsp;<b>Migrated</b></div>'
+					html: '<div style="width: 100%;" data-qtip="You have migrated records from a deleted step, to this step"><div class="wp-step-legend wp-step-migrated"></div>&nbsp;<b>Migrated</b></div>'
 				},
 				{
 					xtype: 'container',
-					html: '<div style="width: 100%;" data-qtip="You are actively viewing this step"><div class="wp-step-lengend wp-step-active"></div>&nbsp;<b>Active</b></div>'
+					html: '<div style="width: 100%;" data-qtip="You are actively viewing this step"><div class="wp-step-legend wp-step-active"></div>&nbsp;<b>Active</b></div>'
 				},
 				{
 					xtype: 'container',
-					html: '<div style="width: 100%;" data-qtip="There is an error in this step"><div style="border-radius: 100%;" class="wp-step-lengend wp-step-error"></div>&nbsp;<b>Error</b></div>'
+					html: '<div style="width: 100%;" data-qtip="There is an error in this step"><div style="border-radius: 100%;" class="wp-step-legend wp-step-error"></div>&nbsp;<b>Error</b></div>'
 				}
 			]
 		},

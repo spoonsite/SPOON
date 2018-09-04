@@ -51,8 +51,8 @@
 
 <title>${branding.getApplicationName()}</title>
 
-<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css" />
-<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css" />
+<link href="Branding.action?CSS&template=extTritonTheme.css.jsp&v=${appVersion}" rel="stylesheet" type="text/css" />
+<link href="Branding.action?CSS&template=apptemplate.css.jsp&v=${appVersion}" rel="stylesheet" type="text/css" />
 <link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css" />
 <style> 
 	

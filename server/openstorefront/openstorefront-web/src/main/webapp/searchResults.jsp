@@ -170,7 +170,7 @@
 									root = data.componentTypeNestedModel;
 									CoreUtil.traverseNestedModel(root, [], data);
 
-									CoreUtil.calculateEvalutationScore({
+									CoreUtil.calculateEvaluationScore({
 										fullEvaluations: data.fullEvaluations,
 										evaluation: data.fullEvaluations,
 										success: function (newData) {

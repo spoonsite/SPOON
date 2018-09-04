@@ -29,6 +29,7 @@
 			/* global Ext, CoreUtil */
 			// Ext.require('OSF.common.workPlanProgressComment');
 			Ext.require('OSF.workplanProgress.CommentPanel');
+			Ext.require('OSF.workplanProgress.ProgressView');
 			Ext.onReady(function() {
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
@@ -268,33 +269,6 @@
 										}
 									}
 								},
-								{
-									xtype: 'container',
-									itemId: 'workplanStatusContainer',
-									id: 'workplan-progress-management-worklink-status',
-									layout: {
-										type: 'hbox',
-										pack: 'center'
-									},
-									items: [
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;">step 1</div>'
-										},
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;">step 2</div>'
-										},
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;">step 3</div>'
-										},
-										{
-											xtype: 'container',
-											html: '<div style="width: 100%;">step 4</div>'
-										}
-									]
-								}
 							]
 						},
 						{
@@ -398,23 +372,20 @@
 									]
 								}
 							]
+						},
+						{
+							xtype: 'osf.wp.progressView'
 						}
 					],
 					listeners: {
 						selectionchange: function(selectionModel, records, opts){
 							checkGridTools();
-							if (records.length > 0) {
-								var record = linkGrid.getSelection()[0];							
-								var steps = record.get('steps');
-								var currentStep = record.get('currentStop');
-								var statusCmp = Ext.getCmp('workplan-progress-management-worklink-status');
-								statusCmp.removeAll();
-								Ext.Array.forEach(steps, function (el, index) {
-									statusCmp.add({
-										xtype: 'container',
-										html: '<div style="width: 100%; margin-right: 1em;">' + el.name + '</div>'
-									});
-								});
+							var record = linkGrid.getSelection()[0];
+							var progressViewCmp = Ext.getCmp('workplan-progress-view');
+							if (record) {
+								progressViewCmp.addSteps(record);
+							} else {
+								progressViewCmp.setVisible(false);
 							}
 						}
 					},
