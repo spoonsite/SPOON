@@ -468,7 +468,7 @@ public class UserSubmissionResource
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			comment.save();
+			service.getSubmissionFormService().saveUserSubmissionComment(comment);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}

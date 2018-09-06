@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
+import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
@@ -48,6 +49,7 @@ import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.mapping.MappingController;
 import edu.usu.sdl.openstorefront.service.mapping.MappingException;
+import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.IOException;
 import java.io.InputStream;
@@ -676,6 +678,41 @@ public class SubmissionFormServiceImpl
 		}
 
 		return submissionFormTemplate;
+	}
+
+	@Override
+	public void saveUserSubmissionComment(UserSubmissionComment userSubmissionComment)
+	{
+		userSubmissionComment.save();
+		
+//		WorkPlanLink workPlanLink = getWorkPlanService().getWorkPlanForComponent(userSubmissionComment.getUserSubmissionId());
+//		
+//		EmailCommentModel emailCommentModel = new EmailCommentModel();
+//		
+//		emailCommentModel.setComment("TEST_COMMENT");
+//		emailCommentModel.setAuthor("TEST_AUTHOR");
+//		emailCommentModel.setEntryName("TEST_NAME");
+//		emailCommentModel.setCurrentStep("TEST_STEP");
+//		emailCommentModel.setReplyInstructions("TEST_REPLY_INSTS");
+//		emailCommentModel.setEntryType("TEST_TYPE");
+//		emailCommentModel.setChangeRequestInformation("TEST_CHANGE_REQUEST_INFO");
+//		
+//		getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
+////		throw new UnsupportedOperationException("Not fully supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+
+		if (ComponentCommentType.SUBMISSION.equals(userSubmissionComment.getCommentType())) {
+
+			EmailCommentModel emailCommentModel = new EmailCommentModel();
+
+			emailCommentModel.setComment(userSubmissionComment.getComment());
+			emailCommentModel.setCommentEntityId(userSubmissionComment.getUserSubmissionId());
+			emailCommentModel.setPrivateComment(userSubmissionComment.getPrivateComment());
+			emailCommentModel.setAdminComment(userSubmissionComment.getAdminComment());
+
+			getNotificationServicePrivate().emailCommentMessage(emailCommentModel, true);
+
+		}
 	}
 
 }

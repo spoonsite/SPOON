@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.EditSubmissionOptions;
 import edu.usu.sdl.openstorefront.core.model.VerifySubmissionTemplateResult;
@@ -102,6 +103,12 @@ public interface SubmissionFormService
 	 */
 	public void saveSubmissionTemplateAsDefault(SubmissionFormTemplate template);
 
+	/**
+	 * Method to save a user submission comment and then to send it in an email
+	 * @param userSubmissionComment 
+	 */
+	public void saveUserSubmissionComment(UserSubmissionComment userSubmissionComment);
+	
 	/**
 	 * Convert and saves component The user submission is then removed.
 	 *

@@ -23,8 +23,10 @@ import edu.usu.sdl.openstorefront.core.api.NotificationService;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
@@ -45,6 +47,9 @@ import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.service.api.NotificationServicePrivate;
+import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
 
 /**
  * Handles Notification Events
@@ -53,7 +58,7 @@ import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
  */
 public class NotificationServiceImpl
 		extends ServiceProxy
-		implements NotificationService
+		implements NotificationService, NotificationServicePrivate
 {
 
 	private static final String LISTENER_KEY = "NOTIFICATION_LISTENERS";
@@ -284,6 +289,88 @@ public class NotificationServiceImpl
 			throw new OpenStorefrontRuntimeException("Username is required.", "Check data passed in.");
 		}
 
+	}
+
+	@Override
+	public void emailCommentMessage(EmailCommentModel emailCommentModel, boolean isUserSubmission)
+	{
+		
+//		WorkPlanLink workPlanLink = new WorkPlanLink();
+//		
+//		if(isUserSubmission){
+//			workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(emailCommentModel.getCommentEntityId());
+//		}
+//		else {
+//			workPlanLink = getWorkPlanService().getWorkPlanForComponent(emailCommentModel.getCommentEntityId());
+//		}
+//		
+//		Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
+//		
+//		if(!emailCommentModel.isAdminComment()){
+//			// THIS IS AN OWNER COMMENT.
+//			if(StringUtils.isNotEmpty(workPlanLink.getCurrentUserAssigned()) && !SecurityUtil.getCurrentUserName().equals(component.getOwnerUser()) ){
+//				// EMAIL THE ASSIGNEE FROM THE WORKLINK
+//			}
+//			if(StringUtils.isNotEmpty(workPlanLink.getCurrentGroupAssigned())){
+//				// EMAIL THE GROUP
+//			}
+//		}
+//		else{
+//			// THIS IS AN ADMIN COMMENT
+//			if(emailCommentModel.isPrivateComment()){
+//				// THIS IS A PRIVATE COMMENT
+//				if (StringUtils.isNotEmpty(workPlanLink.getCurrentUserAssigned()) && !SecurityUtil.getCurrentUserName().equals(component.getOwnerUser())) {
+//					// EMAIL THE ASSIGNEE FROM THE WORKLINK
+//				}
+//				else{
+//					if (StringUtils.isNotEmpty(workPlanLink.getCurrentGroupAssigned())) {
+//						// EMAIL THE GROUP
+//					}
+//				}
+//				
+//				if(StringUtils.isNotEmpty(workPlanLink.getCurrentGroupAssigned())){
+//					// EMAIL THE GROUP
+//				}
+//				// Send to assignee only if comment Owner is not the assignee
+//			}
+//			else{
+//				// This is a PUBLIC commnent.
+//				if(true){
+//					
+//				}
+//			}
+//		}
+//		
+//		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//		UserProfile userProfile = getUserProfile(username);
+//		if (userProfile != null) {
+//			if (StringUtils.isNotBlank(overrideEmail) || StringUtils.isNotBlank(userProfile.getEmail())) {
+//				if (StringUtils.isNotBlank(overrideEmail)) {
+//					userProfile.setEmail(overrideEmail);
+//				}
+//				TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
+//				Email email = testMessageGenerator.generateMessage();
+//				MailManager.send(email, true);
+//				LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
+//			} else {
+//				throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+//			}
+//		} else {
+//			throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+//		}
+		
+		
+		
 	}
 
 }
