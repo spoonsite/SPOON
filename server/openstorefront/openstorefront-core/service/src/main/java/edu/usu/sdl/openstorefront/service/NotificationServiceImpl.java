@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.sun.tools.javac.tree.JCTree;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
@@ -26,6 +27,9 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
+import static edu.usu.sdl.openstorefront.core.entity.StandardEntity.LOG;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
@@ -49,7 +53,13 @@ import org.apache.commons.lang3.StringUtils;
 import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.NotificationServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
+import edu.usu.sdl.openstorefront.service.message.MessageContext;
+import edu.usu.sdl.openstorefront.service.message.TestMessageGenerator;
 import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
+import java.text.MessageFormat;
+import java.util.logging.Level;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  * Handles Notification Events
@@ -295,82 +305,112 @@ public class NotificationServiceImpl
 	public void emailCommentMessage(EmailCommentModel emailCommentModel, boolean isUserSubmission)
 	{
 		
-//		WorkPlanLink workPlanLink = new WorkPlanLink();
-//		
-//		if(isUserSubmission){
-//			workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(emailCommentModel.getCommentEntityId());
-//		}
-//		else {
-//			workPlanLink = getWorkPlanService().getWorkPlanForComponent(emailCommentModel.getCommentEntityId());
-//		}
-//		
-//		Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
-//		
-//		if(!emailCommentModel.isAdminComment()){
-//			// THIS IS AN OWNER COMMENT.
-//			if(StringUtils.isNotEmpty(workPlanLink.getCurrentUserAssigned()) && !SecurityUtil.getCurrentUserName().equals(component.getOwnerUser()) ){
-//				// EMAIL THE ASSIGNEE FROM THE WORKLINK
-//			}
-//			if(StringUtils.isNotEmpty(workPlanLink.getCurrentGroupAssigned())){
-//				// EMAIL THE GROUP
-//			}
-//		}
-//		else{
-//			// THIS IS AN ADMIN COMMENT
-//			if(emailCommentModel.isPrivateComment()){
-//				// THIS IS A PRIVATE COMMENT
-//				if (StringUtils.isNotEmpty(workPlanLink.getCurrentUserAssigned()) && !SecurityUtil.getCurrentUserName().equals(component.getOwnerUser())) {
-//					// EMAIL THE ASSIGNEE FROM THE WORKLINK
-//				}
-//				else{
-//					if (StringUtils.isNotEmpty(workPlanLink.getCurrentGroupAssigned())) {
-//						// EMAIL THE GROUP
-//					}
-//				}
-//				
-//				if(StringUtils.isNotEmpty(workPlanLink.getCurrentGroupAssigned())){
-//					// EMAIL THE GROUP
-//				}
-//				// Send to assignee only if comment Owner is not the assignee
-//			}
-//			else{
-//				// This is a PUBLIC commnent.
-//				if(true){
-//					
-//				}
-//			}
-//		}
-//		
-//		
+		WorkPlanLink workPlanLink = new WorkPlanLink();
 		
+		if(isUserSubmission){
+			workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(emailCommentModel.getCommentEntityId());
+		}
+		else {
+			workPlanLink = getWorkPlanService().getWorkPlanForComponent(emailCommentModel.getCommentEntityId());
+		}
 		
+		Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
+
+		List<UserRole> userRoles = null;
+		if(!StringUtils.isEmpty(workPlanLink.getCurrentGroupAssigned())){
+			UserRole userRole = new UserRole();
+			userRole.setRole(workPlanLink.getCurrentGroupAssigned());
+			userRole.setActiveStatus(UserRole.ACTIVE_STATUS);
+			userRoles = userRole.findByExample();
+			for(UserRole uRole : userRoles){
+				if(SecurityUtil.getCurrentUserName().equals(uRole.getUsername())){
+					userRoles.remove(uRole); 
+				}			
+			}
+		}
 		
-		
-		
-		
-		
-		
-		
-		
-//		UserProfile userProfile = getUserProfile(username);
-//		if (userProfile != null) {
-//			if (StringUtils.isNotBlank(overrideEmail) || StringUtils.isNotBlank(userProfile.getEmail())) {
-//				if (StringUtils.isNotBlank(overrideEmail)) {
-//					userProfile.setEmail(overrideEmail);
-//				}
-//				TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
-//				Email email = testMessageGenerator.generateMessage();
-//				MailManager.send(email, true);
-//				LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
-//			} else {
-//				throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
-//			}
-//		} else {
-//			throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
-//		}
-		
-		
-		
+		boolean canEmailAssignee = StringUtils.isNotEmpty(workPlanLink.getCurrentUserAssigned()) && !SecurityUtil.getCurrentUserName().equals(workPlanLink.getCurrentUserAssigned());
+		boolean canEmailGroup = userRoles.isEmpty() ? false : true;
+		boolean canEmailOwner = StringUtils.isNotEmpty(component.getOwnerUser()) && !SecurityUtil.getCurrentUserName().equals(component.getOwnerUser());
+
+		if(!emailCommentModel.isAdminComment()){
+			// THIS IS AN OWNER COMMENT.
+			if(canEmailAssignee) {
+				
+				// EMAIL THE ASSIGNEE FROM THE WORKLINK
+				UserProfile userProfile = getUserService().getUserProfile(workPlanLink.getCurrentUserAssigned());
+				if (userProfile != null) {
+					if (StringUtils.isNotBlank(userProfile.getEmail())) {
+						TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
+						Email email = testMessageGenerator.generateMessage();
+						MailManager.send(email, true);
+					} else {
+						throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+					}
+				} else {
+					throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+				}	
+				
+			}
+			else if(canEmailGroup) {
+				// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
+			}
+		}
+		else {
+			// THIS IS AN ADMIN COMMENT
+			if(emailCommentModel.isPrivateComment()){
+				// THIS IS AN ADMIN PRIVATE COMMENT DO NOT EMAIL THE OWNER.
+				if (canEmailAssignee) {
+					
+					// EMAIL THE ASSIGNEE FROM THE WORKLINK
+					UserProfile userProfile = getUserService().getUserProfile(workPlanLink.getCurrentUserAssigned());
+					if (userProfile != null) {
+						if (StringUtils.isNotBlank(userProfile.getEmail())) {
+							TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
+							Email email = testMessageGenerator.generateMessage();
+							MailManager.send(email, true);
+						} else {
+							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+						}
+					} else {
+						throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+					}
+					
+				}
+				else if (canEmailGroup) {
+					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT.
+				}
+			}
+			else {
+				// THIS IS AN ADMIN PUBLIC COMMENT. SEND AN EMAIL TO THE OWNER, GROUP, AND, ASSIGNEE BUT DON'T SEND AN EMAIL TO THE PERSON WHO MADE THE COMMENT.
+				if (canEmailAssignee) {
+
+					// EMAIL THE ASSIGNEE FROM THE WORKLINK
+					UserProfile userProfile = getUserService().getUserProfile(workPlanLink.getCurrentUserAssigned());
+					if (userProfile != null) {
+						if (StringUtils.isNotBlank(userProfile.getEmail())) {
+							TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
+							Email email = testMessageGenerator.generateMessage();
+							MailManager.send(email, true);
+						} else {
+							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+						}
+					} else {
+						throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+					}
+
+				}				
+				else if (canEmailGroup) {
+					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
+				}
+				
+				if(canEmailOwner){
+					// EMAIL THE OWNER
+				}
+				
+				
+			}
+		}
 	}
 
 }

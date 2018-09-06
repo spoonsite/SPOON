@@ -684,22 +684,6 @@ public class SubmissionFormServiceImpl
 	public void saveUserSubmissionComment(UserSubmissionComment userSubmissionComment)
 	{
 		userSubmissionComment.save();
-		
-//		WorkPlanLink workPlanLink = getWorkPlanService().getWorkPlanForComponent(userSubmissionComment.getUserSubmissionId());
-//		
-//		EmailCommentModel emailCommentModel = new EmailCommentModel();
-//		
-//		emailCommentModel.setComment("TEST_COMMENT");
-//		emailCommentModel.setAuthor("TEST_AUTHOR");
-//		emailCommentModel.setEntryName("TEST_NAME");
-//		emailCommentModel.setCurrentStep("TEST_STEP");
-//		emailCommentModel.setReplyInstructions("TEST_REPLY_INSTS");
-//		emailCommentModel.setEntryType("TEST_TYPE");
-//		emailCommentModel.setChangeRequestInformation("TEST_CHANGE_REQUEST_INFO");
-//		
-//		getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
-////		throw new UnsupportedOperationException("Not fully supported yet."); //To change body of generated methods, choose Tools | Templates.
-
 
 		if (ComponentCommentType.SUBMISSION.equals(userSubmissionComment.getCommentType())) {
 
