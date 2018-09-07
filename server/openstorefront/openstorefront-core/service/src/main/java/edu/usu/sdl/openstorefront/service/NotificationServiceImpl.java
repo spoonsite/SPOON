@@ -330,9 +330,9 @@ public class NotificationServiceImpl
 				UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
 				if (userProfile != null) {
 					if (StringUtils.isNotBlank(userProfile.getEmail())) {
-						Email email = MailManager.newEmail();
-						email.setFromAddress("from yours truly", emailCommentModel.getOwnerEmail());
-						email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+						Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+						email.setSubject("Submission Comment was made.");
+						email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
 						MailManager.send(email, true);
 					} else {
 						throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
@@ -344,6 +344,35 @@ public class NotificationServiceImpl
 			}
 			else if(canEmailGroup) {
 				// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
+				for (UserRole uRole : userRoles) {
+
+					UserProfile userProfile = getUserService().getUserProfile(uRole.getUsername());
+					if (userProfile != null) {
+						if (StringUtils.isNotBlank(userProfile.getEmail())) {
+							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+							email.setSubject("Submission Comment was made.");
+							email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
+							MailManager.send(email, true);
+							LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
+						} else {
+							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+						}
+					} else {
+						throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+					}
+
+				}
+				
+			}
+			else {
+				// EMAIL SUPPORT SO THAT THE OWNER ALWAYS HAS A CONTACT. support@spoonsite.com
+				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+				email.setSubject("Owner Comment to Support.");
+//				email.addRecipient("", "support@spoonsite.com", Message.RecipientType.TO); // SWITCH TO THIS WHEN RELEASED.
+				email.addRecipient("", "example@example.com", Message.RecipientType.TO);
+				MailManager.send(email, true);
+				LOG.log(Level.INFO, MessageFormat.format("No one is available, your email was sent test to: {0}", "support@spoonsite.com"));
+
 			}
 		}
 		else {
@@ -356,9 +385,9 @@ public class NotificationServiceImpl
 					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
 					if (userProfile != null) {
 						if (StringUtils.isNotBlank(userProfile.getEmail())) {
-							Email email = MailManager.newEmail();
-							email.setFromAddress("from yours truly", emailCommentModel.getOwnerEmail());
-							email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+							email.setSubject("Submission Comment was made.");
+							email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
 							MailManager.send(email, true);
 						} else {
 							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
@@ -370,6 +399,25 @@ public class NotificationServiceImpl
 				}
 				else if (canEmailGroup) {
 					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT.
+					for (UserRole uRole : userRoles) {
+
+						UserProfile userProfile = getUserService().getUserProfile(uRole.getUsername());
+						if (userProfile != null) {
+							if (StringUtils.isNotBlank(userProfile.getEmail())) {
+								Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+								email.setSubject("Submission Comment was made.");
+								email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
+								MailManager.send(email, true);
+								LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
+							} else {
+								throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+							}
+						} else {
+							throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+						}
+
+					}
+					
 				}
 			}
 			else {
@@ -379,13 +427,10 @@ public class NotificationServiceImpl
 					// EMAIL THE ASSIGNEE FROM THE WORKLINK
 					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
 					if (userProfile != null) {
-						if (StringUtils.isNotBlank(userProfile.getEmail())) {
-//							Email email = MailManager.newEmail();
-//							email.setFromAddress("from yours truly", "brigham.michaelis@sdl.usu.edu");
-							
+						if (StringUtils.isNotBlank(userProfile.getEmail())) {							
 							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-							email.setSubject("email comment stuff");
-							email.addRecipient( "blank", userProfile.getEmail(), Message.RecipientType.TO);
+							email.setSubject("Submission Comment was made.");
+							email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
 							MailManager.send(email, true);
 						} else {
 							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
@@ -397,10 +442,42 @@ public class NotificationServiceImpl
 				}				
 				else if (canEmailGroup) {
 					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
+					for (UserRole uRole : userRoles) {
+
+						UserProfile userProfile = getUserService().getUserProfile(uRole.getUsername());
+						if (userProfile != null) {
+							if (StringUtils.isNotBlank(userProfile.getEmail())) {
+								Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+								email.setSubject("Submission Comment was made.");
+								email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
+								MailManager.send(email, true);
+								LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
+							} else {
+								throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+							}
+						} else {
+							throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+						}
+
+					}
+					
 				}
 				
 				if(canEmailOwner){
 					// EMAIL THE OWNER
+					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getEntryOwner());
+					if (userProfile != null) {
+						if (StringUtils.isNotBlank(userProfile.getEmail())) {
+							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+							email.setSubject("Submission Comment was made.");
+							email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
+							MailManager.send(email, true);
+						} else {
+							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+						}
+					} else {
+						throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+					}
 				}
 				
 				
