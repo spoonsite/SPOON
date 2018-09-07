@@ -2353,20 +2353,21 @@ public class CoreComponentServiceImpl
 				// this requires that we compare both sets of comments 
 				ComponentComment tempComment = new ComponentComment();
 
-				tempComment.setComponentId(mergeComponent.getComponent().getComponentId());
-				List<ComponentComment> comments = tempComment.findByExampleProxy();
-				HashMap<String, ComponentComment> commentsHash = new HashMap<>();
-				for (ComponentComment comment : comments) {
-					commentsHash.put(comment.uniqueKey(), comment);
-				}
-
+				// mergeComponent will be deleted
+				// so go through and see which comments need to be added to the target component
 				tempComment.setComponentId(targetComponent.getComponent().getComponentId());
 				List<ComponentComment> targetComments = tempComment.findByExampleProxy();
-				for (ComponentComment comment : targetComments) {
-					if (!commentsHash.containsKey(comment.uniqueKey())) {
-						ComponentComment newComment = commentsHash.get(comment.uniqueKey());
-						newComment.setComponentId(targetComponentId);
-						persistenceService.persist(newComment);
+				Set<String> targetCommentSet = targetComments.stream().map(comment
+						-> {
+					return comment.uniqueKey();
+				}).collect(Collectors.toSet());
+
+				tempComment.setComponentId(mergeComponent.getComponent().getComponentId());
+				List<ComponentComment> mergeComments = tempComment.findByExampleProxy();
+				for (ComponentComment comment : mergeComments) {
+					if (!targetCommentSet.contains(comment.uniqueKey())) {
+						comment.setComponentId(targetComponentId);
+						persistenceService.persist(comment);
 					}
 				}
 
