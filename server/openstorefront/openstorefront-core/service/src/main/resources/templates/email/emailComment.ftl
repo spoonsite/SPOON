@@ -4,24 +4,22 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>${title}</title>
+		<title>NUNYA BISNISS</title>
 		<meta charset="${charset}">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		</head>
 	<body>
-		<#if username??>
-			Your username is: <br><br> ${username} <br><br>
-						
-			If you have forgotten your password. Click on "Forgot Password" on the login page.<br><br>
-			
-			*Note: There may be multiple accounts associated with your email.<br>
-			If there is an account that you don't recognize contact ${replyName} at ${replyAddress}
-		<#else>
-			<b>Unable to find a username associated with your email.</b> <br><br>
-			The email address must match the email used to create the user. (case sensitive)<br>
-			Email address can be changed on your user profile after logging in.<br><br>
-			
-			Contact ${replyName} at ${replyAddress} for questions.</p>
-        </#if>
+			THIS IS A FLASH TEST!!!!!!!!   COMMENT: <br><br> ${comment} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   author: <br><br> ${author} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   entryName: <br><br> ${entryName} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   currentStep: <br><br> ${currentStep} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   reply Instructions: <br><br> ${replyInstructions} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   assigned user: <br><br> ${assignedUser} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   assigned group: <br><br> ${assignedGroup} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   private comment: <br><br> ${privateComment?c} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   admin comment: <br><br> ${adminComment?c} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   entry owner: <br><br> ${entryOwner} <br><br>
+			THIS IS A FLASH TEST!!!!!!!!   entry owner: <br><br> ${ownerEmail} <br><br>
+
 	</body>
 </html>

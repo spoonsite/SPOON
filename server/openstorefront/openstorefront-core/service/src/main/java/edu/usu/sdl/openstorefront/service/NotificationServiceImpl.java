@@ -59,6 +59,7 @@ import edu.usu.sdl.openstorefront.service.message.TestMessageGenerator;
 import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
 import java.text.MessageFormat;
 import java.util.logging.Level;
+import javax.mail.Message;
 import org.codemonkey.simplejavamail.email.Email;
 
 /**
@@ -304,17 +305,6 @@ public class NotificationServiceImpl
 	@Override
 	public void emailCommentMessage(EmailCommentModel emailCommentModel)
 	{
-		
-//		WorkPlanLink workPlanLink = new WorkPlanLink();
-//		
-//		if(isUserSubmission){
-//			workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(emailCommentModel.getCommentEntityId());
-//		}
-//		else {
-//			workPlanLink = getWorkPlanService().getWorkPlanForComponent(emailCommentModel.getCommentEntityId());
-//		}
-//		
-//		Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
 
 		List<UserRole> userRoles = null;
 		if(!StringUtils.isEmpty(emailCommentModel.getAssignedGroup())){
@@ -326,12 +316,6 @@ public class NotificationServiceImpl
 			userRoles.removeIf( (uRole) -> {
 				return SecurityUtil.getCurrentUserName().equals(uRole.getUsername());
 			} );
-			
-//			for(UserRole uRole : userRoles){
-//				if(SecurityUtil.getCurrentUserName().equals(uRole.getUsername())){
-//					userRoles.remove(uRole); 
-//				}			
-//			}
 		}
 		
 		boolean canEmailAssignee = StringUtils.isNotEmpty(emailCommentModel.getAssignedUser()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getAssignedUser());
@@ -347,6 +331,7 @@ public class NotificationServiceImpl
 				if (userProfile != null) {
 					if (StringUtils.isNotBlank(userProfile.getEmail())) {
 						Email email = MailManager.newEmail();
+						email.setFromAddress("from yours truly", emailCommentModel.getOwnerEmail());
 						email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
 						MailManager.send(email, true);
 					} else {
@@ -371,8 +356,9 @@ public class NotificationServiceImpl
 					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
 					if (userProfile != null) {
 						if (StringUtils.isNotBlank(userProfile.getEmail())) {
-							TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
-							Email email = testMessageGenerator.generateMessage();
+							Email email = MailManager.newEmail();
+							email.setFromAddress("from yours truly", emailCommentModel.getOwnerEmail());
+							email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
 							MailManager.send(email, true);
 						} else {
 							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
@@ -394,8 +380,12 @@ public class NotificationServiceImpl
 					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
 					if (userProfile != null) {
 						if (StringUtils.isNotBlank(userProfile.getEmail())) {
-							TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
-							Email email = testMessageGenerator.generateMessage();
+//							Email email = MailManager.newEmail();
+//							email.setFromAddress("from yours truly", "brigham.michaelis@sdl.usu.edu");
+							
+							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+							email.setSubject("email comment stuff");
+							email.addRecipient( "blank", userProfile.getEmail(), Message.RecipientType.TO);
 							MailManager.send(email, true);
 						} else {
 							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
