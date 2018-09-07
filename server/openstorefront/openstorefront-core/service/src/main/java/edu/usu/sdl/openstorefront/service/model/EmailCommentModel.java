@@ -37,15 +37,15 @@ public class EmailCommentModel
 	
 	private String replyInstructions;
 	
-	private String entryType;
+	private String assignedUser;
 	
-	private String changeRequestInformation;
-	
-	private String commentEntityId;
+	private String assignedGroup;
 	
 	private boolean privateComment;
 	
 	private boolean adminComment;
+	
+	private String entryOwner;
 
 	@Override
 	public String uniqueKey()
@@ -109,24 +109,24 @@ public class EmailCommentModel
 		this.replyInstructions = replyInstructions;
 	}
 
-	public String getEntryType()
+	public String getAssignedUser()
 	{
-		return entryType;
+		return assignedUser;
 	}
 
-	public void setEntryType(String entryType)
+	public void setAssignedUser(String assignedUser)
 	{
-		this.entryType = entryType;
+		this.assignedUser = assignedUser;
 	}
 
-	public String getChangeRequestInformation()
+	public String getAssignedGroup()
 	{
-		return changeRequestInformation;
+		return assignedGroup;
 	}
 
-	public void setChangeRequestInformation(String changeRequestInformation)
+	public void setAssignedGroup(String assignedGroup)
 	{
-		this.changeRequestInformation = changeRequestInformation;
+		this.assignedGroup = assignedGroup;
 	}
 
 	public boolean isPrivateComment()
@@ -149,14 +149,14 @@ public class EmailCommentModel
 		this.adminComment = adminComment;
 	}
 
-	public String getCommentEntityId()
+	public String getEntryOwner()
 	{
-		return commentEntityId;
+		return entryOwner;
 	}
 
-	public void setCommentEntityId(String commentEntityId)
+	public void setEntryOwner(String entryOwner)
 	{
-		this.commentEntityId = commentEntityId;
+		this.entryOwner = entryOwner;
 	}
 
 }

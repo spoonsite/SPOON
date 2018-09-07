@@ -27,6 +27,6 @@ public interface NotificationServicePrivate
 	 * This is going to send an email to a user based on rules.
 	 * @param emailCommentModel 
 	 */
-	void emailCommentMessage(EmailCommentModel emailCommentModel, boolean isUserSubmission);
+	void emailCommentMessage(EmailCommentModel emailCommentModel);
 	
 }

@@ -804,14 +804,28 @@ public class ComponentServiceImpl
 			
 			EmailCommentModel emailCommentModel = new EmailCommentModel();
 			
-			emailCommentModel.setComment(componentComment.getComment());
-			emailCommentModel.setCommentEntityId(componentComment.getComponentId());
+			WorkPlanLink workPlanLink = new WorkPlanLink();
+			workPlanLink = getWorkPlanService().getWorkPlanForComponent(componentComment.getComponentId());
+			Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
+			
+			emailCommentModel.setComment(componentComment.getComment());			
+			if(componentComment.getAdminComment()){
+				emailCommentModel.setAuthor("ADMIN");
+			}
+			else {
+				emailCommentModel.setAuthor(component.getOwnerUser());
+			}	
+			emailCommentModel.setEntryName(component.getName());
+			emailCommentModel.setCurrentStep(workPlanLink.getCurrentStepId());
+			emailCommentModel.setReplyInstructions("Here are your insts for replying!!!!!!!!!");
+			emailCommentModel.setAssignedUser(workPlanLink.getCurrentUserAssigned());
+			emailCommentModel.setAssignedGroup(workPlanLink.getCurrentGroupAssigned());
 			emailCommentModel.setPrivateComment(componentComment.getPrivateComment());
 			emailCommentModel.setAdminComment(componentComment.getAdminComment());
 			
-			getNotificationServicePrivate().emailCommentMessage(emailCommentModel, false);
+			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
 			
 		}
-
+		
 	}
 }

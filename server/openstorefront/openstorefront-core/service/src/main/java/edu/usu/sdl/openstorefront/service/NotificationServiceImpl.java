@@ -302,47 +302,52 @@ public class NotificationServiceImpl
 	}
 
 	@Override
-	public void emailCommentMessage(EmailCommentModel emailCommentModel, boolean isUserSubmission)
+	public void emailCommentMessage(EmailCommentModel emailCommentModel)
 	{
 		
-		WorkPlanLink workPlanLink = new WorkPlanLink();
-		
-		if(isUserSubmission){
-			workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(emailCommentModel.getCommentEntityId());
-		}
-		else {
-			workPlanLink = getWorkPlanService().getWorkPlanForComponent(emailCommentModel.getCommentEntityId());
-		}
-		
-		Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
+//		WorkPlanLink workPlanLink = new WorkPlanLink();
+//		
+//		if(isUserSubmission){
+//			workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(emailCommentModel.getCommentEntityId());
+//		}
+//		else {
+//			workPlanLink = getWorkPlanService().getWorkPlanForComponent(emailCommentModel.getCommentEntityId());
+//		}
+//		
+//		Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
 
 		List<UserRole> userRoles = null;
-		if(!StringUtils.isEmpty(workPlanLink.getCurrentGroupAssigned())){
+		if(!StringUtils.isEmpty(emailCommentModel.getAssignedGroup())){
 			UserRole userRole = new UserRole();
-			userRole.setRole(workPlanLink.getCurrentGroupAssigned());
+			userRole.setRole(emailCommentModel.getAssignedGroup());
 			userRole.setActiveStatus(UserRole.ACTIVE_STATUS);
 			userRoles = userRole.findByExample();
-			for(UserRole uRole : userRoles){
-				if(SecurityUtil.getCurrentUserName().equals(uRole.getUsername())){
-					userRoles.remove(uRole); 
-				}			
-			}
+			
+			userRoles.removeIf( (uRole) -> {
+				return SecurityUtil.getCurrentUserName().equals(uRole.getUsername());
+			} );
+			
+//			for(UserRole uRole : userRoles){
+//				if(SecurityUtil.getCurrentUserName().equals(uRole.getUsername())){
+//					userRoles.remove(uRole); 
+//				}			
+//			}
 		}
 		
-		boolean canEmailAssignee = StringUtils.isNotEmpty(workPlanLink.getCurrentUserAssigned()) && !SecurityUtil.getCurrentUserName().equals(workPlanLink.getCurrentUserAssigned());
+		boolean canEmailAssignee = StringUtils.isNotEmpty(emailCommentModel.getAssignedUser()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getAssignedUser());
 		boolean canEmailGroup = userRoles.isEmpty() ? false : true;
-		boolean canEmailOwner = StringUtils.isNotEmpty(component.getOwnerUser()) && !SecurityUtil.getCurrentUserName().equals(component.getOwnerUser());
+		boolean canEmailOwner = StringUtils.isNotEmpty(emailCommentModel.getEntryOwner()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getEntryOwner());
 
 		if(!emailCommentModel.isAdminComment()){
 			// THIS IS AN OWNER COMMENT.
 			if(canEmailAssignee) {
 				
 				// EMAIL THE ASSIGNEE FROM THE WORKLINK
-				UserProfile userProfile = getUserService().getUserProfile(workPlanLink.getCurrentUserAssigned());
+				UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
 				if (userProfile != null) {
 					if (StringUtils.isNotBlank(userProfile.getEmail())) {
-						TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
-						Email email = testMessageGenerator.generateMessage();
+						Email email = MailManager.newEmail();
+						email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
 						MailManager.send(email, true);
 					} else {
 						throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
@@ -363,7 +368,7 @@ public class NotificationServiceImpl
 				if (canEmailAssignee) {
 					
 					// EMAIL THE ASSIGNEE FROM THE WORKLINK
-					UserProfile userProfile = getUserService().getUserProfile(workPlanLink.getCurrentUserAssigned());
+					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
 					if (userProfile != null) {
 						if (StringUtils.isNotBlank(userProfile.getEmail())) {
 							TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));
@@ -386,7 +391,7 @@ public class NotificationServiceImpl
 				if (canEmailAssignee) {
 
 					// EMAIL THE ASSIGNEE FROM THE WORKLINK
-					UserProfile userProfile = getUserService().getUserProfile(workPlanLink.getCurrentUserAssigned());
+					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
 					if (userProfile != null) {
 						if (StringUtils.isNotBlank(userProfile.getEmail())) {
 							TestMessageGenerator testMessageGenerator = new TestMessageGenerator(new MessageContext(userProfile));

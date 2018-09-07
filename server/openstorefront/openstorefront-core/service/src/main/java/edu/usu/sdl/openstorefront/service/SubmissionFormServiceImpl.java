@@ -686,15 +686,29 @@ public class SubmissionFormServiceImpl
 		userSubmissionComment.save();
 
 		if (ComponentCommentType.SUBMISSION.equals(userSubmissionComment.getCommentType())) {
-
+								
 			EmailCommentModel emailCommentModel = new EmailCommentModel();
-
-			emailCommentModel.setComment(userSubmissionComment.getComment());
-			emailCommentModel.setCommentEntityId(userSubmissionComment.getUserSubmissionId());
+			
+			WorkPlanLink workPlanLink = new WorkPlanLink();
+			workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(userSubmissionComment.getUserSubmissionId());
+			Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
+			
+			emailCommentModel.setComment(userSubmissionComment.getComment());			
+			if(userSubmissionComment.getAdminComment()){
+				emailCommentModel.setAuthor("ADMIN");
+			}
+			else {
+				emailCommentModel.setAuthor(component.getOwnerUser());
+			}	
+			emailCommentModel.setEntryName(component.getName());
+			emailCommentModel.setCurrentStep(workPlanLink.getCurrentStepId());
+			emailCommentModel.setReplyInstructions("Here are your insts for replying!!!!!!!!!");
+			emailCommentModel.setAssignedUser(workPlanLink.getCurrentUserAssigned());
+			emailCommentModel.setAssignedGroup(workPlanLink.getCurrentGroupAssigned());
 			emailCommentModel.setPrivateComment(userSubmissionComment.getPrivateComment());
 			emailCommentModel.setAdminComment(userSubmissionComment.getAdminComment());
-
-			getNotificationServicePrivate().emailCommentMessage(emailCommentModel, true);
+			
+			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
 
 		}
 	}
