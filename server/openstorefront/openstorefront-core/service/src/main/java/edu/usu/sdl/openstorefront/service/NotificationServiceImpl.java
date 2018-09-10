@@ -368,8 +368,7 @@ public class NotificationServiceImpl
 				// EMAIL SUPPORT SO THAT THE OWNER ALWAYS HAS A CONTACT. support@spoonsite.com
 				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
 				email.setSubject("Owner Comment to Support.");
-				email.addRecipient("", "support@spoonsite.com", Message.RecipientType.TO); // SWITCH TO THIS WHEN RELEASED.
-				email.addRecipient("", "example@example.com", Message.RecipientType.TO);
+				email.addRecipient("", "support@spoonsite.com", Message.RecipientType.TO);
 				MailManager.send(email, true);
 				LOG.log(Level.INFO, MessageFormat.format("No one is available, your email was sent test to: {0}", "support@spoonsite.com"));
 
