@@ -813,7 +813,7 @@
 
 					previewComponentWin.setTitle(record.get('fullname'));
 					if(record.get("statusOfPendingChange") === "Pending"){
-						previewComponentWin.setTitle(record.get('fullname'));
+						previewComponentWin.setTitle(record.get('fullname') + " (CHANGE REQUEST)");
 					}
 
 					var isPartialSubmission = record.get('userSubmissionId') ? true : false;
