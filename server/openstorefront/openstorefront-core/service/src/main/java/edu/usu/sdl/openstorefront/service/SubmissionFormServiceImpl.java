@@ -689,8 +689,7 @@ public class SubmissionFormServiceImpl
 								
 			EmailCommentModel emailCommentModel = new EmailCommentModel();
 			
-			WorkPlanLink workPlanLink = new WorkPlanLink();
-			workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(userSubmissionComment.getUserSubmissionId());
+			WorkPlanLink workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(userSubmissionComment.getUserSubmissionId());
 			Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
 			
 			emailCommentModel.setComment(userSubmissionComment.getComment());			

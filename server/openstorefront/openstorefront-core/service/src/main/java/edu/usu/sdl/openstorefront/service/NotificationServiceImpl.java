@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.service;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.sun.tools.javac.tree.JCTree;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
@@ -24,13 +23,11 @@ import edu.usu.sdl.openstorefront.core.api.NotificationService;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
-import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
 import static edu.usu.sdl.openstorefront.core.entity.StandardEntity.LOG;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
-import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
@@ -54,8 +51,6 @@ import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.NotificationServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
-import edu.usu.sdl.openstorefront.service.message.MessageContext;
-import edu.usu.sdl.openstorefront.service.message.TestMessageGenerator;
 import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
 import java.text.MessageFormat;
 import java.util.logging.Level;
@@ -319,7 +314,7 @@ public class NotificationServiceImpl
 		}
 		
 		boolean canEmailAssignee = StringUtils.isNotEmpty(emailCommentModel.getAssignedUser()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getAssignedUser());
-		boolean canEmailGroup = userRoles.isEmpty() ? false : true;
+		boolean canEmailGroup = !(userRoles == null || userRoles.isEmpty());
 		boolean canEmailOwner = StringUtils.isNotEmpty(emailCommentModel.getEntryOwner()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getEntryOwner());
 
 		if(!emailCommentModel.isAdminComment()){

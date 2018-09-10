@@ -75,7 +75,6 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Handles all component related entities
@@ -804,8 +803,7 @@ public class ComponentServiceImpl
 			
 			EmailCommentModel emailCommentModel = new EmailCommentModel();
 			
-			WorkPlanLink workPlanLink = new WorkPlanLink();
-			workPlanLink = getWorkPlanService().getWorkPlanForComponent(componentComment.getComponentId());
+			WorkPlanLink workPlanLink = getWorkPlanService().getWorkPlanForComponent(componentComment.getComponentId());
 			Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
 			
 			emailCommentModel.setComment(componentComment.getComment());			
