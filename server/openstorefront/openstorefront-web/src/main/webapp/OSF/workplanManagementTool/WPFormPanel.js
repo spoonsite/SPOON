@@ -23,6 +23,14 @@ Ext.define('OSF.workplanManagementTool.WPFormPanel', {
 	style: 'background: #fff; border-bottom: 1px solid #ececec',
 	title: 'Workplan Config',
 	width: 300,
+	afterRender: function() {
+		var WPFormPanel = this;
+		WPFormPanel.callParent();
+		var isDefaultPlan = !!WPFormPanel.getWpWindow().getWorkplanConfig().defaultWorkPlan;
+		if (isDefaultPlan) {
+			WPFormPanel.queryById('entryTypeCombo').setDisabled(true);
+		}
+	},
 
 	items: [
 		{

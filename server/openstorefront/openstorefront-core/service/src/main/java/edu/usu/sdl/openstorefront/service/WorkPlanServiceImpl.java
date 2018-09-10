@@ -78,7 +78,7 @@ public class WorkPlanServiceImpl
 		Objects.requireNonNull(workPlan);
 		updateWorkPlanFields(workPlan);
 
-		if (setAsInactive) {
+		if (setAsInactive && !workPlan.getDefaultWorkPlan()) {
 			workPlan.setActiveStatus(StandardEntity.INACTIVE_STATUS);
 		}
 		if (workPlan.getWorkPlanId() != null) {
