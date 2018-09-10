@@ -813,7 +813,7 @@
 
 					previewComponentWin.setTitle(record.get('fullname'));
 					if(record.get("statusOfPendingChange") === "Pending"){
-						previewComponentWin.setTitle(record.get('fullname') + " - - - - - - - YOU ARE CURRENTLY VIEWING A CHANGE REQUEST THAT HAS NOT YET BEEN APPROVED BY AN ADMINISTRATOR.");
+						previewComponentWin.setTitle(record.get('fullname'));
 					}
 
 					var isPartialSubmission = record.get('userSubmissionId') ? true : false;

@@ -617,7 +617,7 @@
 								
 								var html = '';								
 								if (entry.approvalState == 'P') {
-									html = 'This entry has not yet been approved for the site and is still under review.';								
+									html = 'YOU ARE CURRENTLY VIEWING A CHANGE REQUEST THAT HAS NOT YET BEEN APPROVED BY AN ADMINISTRATOR. <br> This entry has not yet been approved for the site and is still under review.';								
 								} else if (entry.approvalState == 'N') {
 									html = 'This entry has not yet been submitted for review. It must be submitted to appear on the Storefront.';
 								}
