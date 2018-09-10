@@ -91,19 +91,16 @@
 							var tools = Ext.getCmp('workplanGrid').getComponent('tools');
 							
 							if (selected.length > 0) {
-								
 								tools.getComponent('edit').setDisabled(false);
 								tools.getComponent('toggleactive').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
 
 								if (selected[0].getData().defaultWorkPlan) {
-
 									tools.getComponent('delete').setDisabled(true);
 									tools.getComponent('toggleactive').setDisabled(true);
 								}
 
 							} else {
-
 								tools.getComponent('edit').setDisabled(true);
 								tools.getComponent('toggleactive').setDisabled(true);
 								tools.getComponent('delete').setDisabled(true);
@@ -247,7 +244,7 @@
 						height: '80%',
 						maximizable: true,
 						closeAction: 'destroy'
-					});					
+					});
 					workplanWindow
 						.loadWorkplan(record)
 						.show();

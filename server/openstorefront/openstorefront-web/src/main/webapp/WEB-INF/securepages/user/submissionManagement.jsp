@@ -330,7 +330,6 @@
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];										
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
 										
 										if (record.get('pendingChangeComponentId')) {
 											editChangeRequest(record.get('pendingChangeComponentId'));
@@ -575,24 +574,19 @@
 							var getWorkLink = function(worklinkType, resourceID) {
 								url = undefined; 
 								if (!resourceID) {
-									console.log('no resource id to fetch');
 									return;
 								}
 								switch (worklinkType) {
 									case 'Submission':
-										console.log('submission');
 										url = 'api/v1/resource/usersubmissions/' + resourceID + '/worklink'
 										break;
 									case 'Component':
-										console.log('component');
 										url = 'api/v1/resource/components/' + resourceID + '/worklink'
 										break;
 									case 'ChangeRequest':
-										console.log('change request');
 										url = 'api/v1/resource/components/' + resourceID + '/worklink'
 										break;
 									default:
-										console.error('No worklink type: ' + worklinkType);
 										break;
 								}
 								if (url) {
@@ -600,9 +594,8 @@
 										url: url,
 										method: 'GET',
 										success: function(response, opts) {
-											console.log(JSON.parse(response.responseText));
 											// display the ProgressView component
-											record = Ext.data.Record.create(JSON.parse(response.responseText));
+											record = Ext.data.Record.create(Ext.JSON.decode(response.responseText));
 											var progressViewCmp = Ext.getCmp('workplan-progress-view');
 											progressViewCmp.addSteps(record);
 											progressViewCmp.setVisible(true);

@@ -1095,7 +1095,7 @@ Ext.define('OSF.component.template.Questions', {
 					response.componentId = question.componentId;
 					response.owner = (response.username === user.username ||
 						(CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-UPDATE']) &&
-						CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE']));
+						CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE'])));
 				});
 
 
