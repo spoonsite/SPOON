@@ -2367,6 +2367,7 @@ public class CoreComponentServiceImpl
 				for (ComponentComment comment : mergeComments) {
 					if (!targetCommentSet.contains(comment.uniqueKey())) {
 						comment.setComponentId(targetComponentId);
+						comment.setEditDeleteLock(false);
 						persistenceService.persist(comment);
 					}
 				}

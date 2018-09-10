@@ -70,7 +70,10 @@ public class UserSubmissionComment
 
 	@ConsumeField
 	@APIDescription("Mark admin submission comments")
-	private Boolean adminComment;
+	private Boolean adminComment;	
+
+	@APIDescription("Comments are locked while in transition state (i.e. a change request)")
+	private Boolean editDeleteLock;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserSubmissionComment()
@@ -98,6 +101,7 @@ public class UserSubmissionComment
 		setComment(componentComment.getComment());
 		setParentCommentId(componentComment.getParentCommentId());
 		setPrivateComment(componentComment.getPrivateComment());
+		setEditDeleteLock(componentComment.getEditDeleteLock());
 	}
 
 	public String getCommentId()
@@ -168,6 +172,16 @@ public class UserSubmissionComment
 	public void setUserSubmissionId(String userSubmissionId)
 	{
 		this.userSubmissionId = userSubmissionId;
+	}
+	
+	public Boolean getEditDeleteLock()
+	{
+		return editDeleteLock;
+	}
+
+	public void setEditDeleteLock(Boolean editDeleteLock)
+	{
+		this.editDeleteLock = editDeleteLock;
 	}
 
 }

@@ -446,6 +446,7 @@ public class SubmissionFormServiceImpl
 		for (ComponentComment comment : comments) {
 			UserSubmissionComment userSubmissionComment = comment.toUserSubmissionComment();
 			userSubmissionComment.setUserSubmissionId(userSubmissionId);
+			userSubmissionComment.setEditDeleteLock(true);
 			persistenceService.persist(userSubmissionComment);
 		}
 	}

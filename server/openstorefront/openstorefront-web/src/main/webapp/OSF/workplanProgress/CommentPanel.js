@@ -100,7 +100,6 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 									iconCls: 'fa fa-lg fa-comment icon-button-color-save',
 									itemId: 'postCommentId',
 									handler: function () {
-
 										this.up('[itemId=comments]').up().saveUpdateComment();
 									}
 								},
@@ -119,8 +118,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 									itemId: 'cancelCommentButton',
 									hidden: true,
 									handler: function () {
-										
-										var commentPanel = this.up('[itemId=comments]').up().resetFormState();
+										this.up('[itemId=comments]').up().resetFormState();
 									}
 								},
 								{
@@ -193,8 +191,15 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 										Ext.create('Ext.menu.Menu', {
 											items: [
 												{
+													text: 'Comment Locked',
+													iconCls: 'fa fa-2x fa-lock',
+													style: 'background-color: #F2DEDE',
+													hidden: commentObj.editDeleteLock ? false : true
+												},
+												{
 													text: 'Edit Comment',
 													iconCls: 'fa fa-2x fa-pencil-square-o',
+													disabled: commentObj.editDeleteLock ? true : false,
 													handler: function () {
 														commentPanel.setEditComment({
 															commentId: commentObj.commentId,
@@ -204,13 +209,13 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 														commentPanel.down('[itemId=commentTextField]').setValue(commentObj.comment);
 														commentPanel.down('[itemId=postCommentId]').hide();
 														commentPanel.down('[itemId=editCommentButton]').show();
-														commentPanel.down('[itemId=cancelCommentButton]').show();
 														commentPanel.down('[itemId=privateCheckbox]').setValue(commentObj.privateComment);
 													}
 												},
 												{
 													text: 'Delete Comment',
 													iconCls: 'fa fa-2x fa-trash',
+													disabled: commentObj.editDeleteLock ? true : false,
 													handler: function () {
 														Ext.Msg.show({
 															title: 'Delete Comment?',
