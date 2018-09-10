@@ -816,8 +816,8 @@ public class ComponentServiceImpl
 				emailCommentModel.setAuthor(component.getOwnerUser());
 			}	
 			emailCommentModel.setEntryName(component.getName());
-			emailCommentModel.setCurrentStep(workPlanLink.getCurrentStepId());
-			emailCommentModel.setReplyInstructions("Here are your insts for replying!!!!!!!!!");
+			emailCommentModel.setCurrentStep(getWorkPlanService().getWorkPlan(workPlanLink.getWorkPlanId()).findWorkPlanStep(workPlanLink.getCurrentStepId()).getName());
+			emailCommentModel.setReplyInstructions("To respond to this comment, please login and go to the submission.");
 			emailCommentModel.setAssignedUser(workPlanLink.getCurrentUserAssigned());
 			emailCommentModel.setAssignedGroup(workPlanLink.getCurrentGroupAssigned());
 			emailCommentModel.setPrivateComment(componentComment.getPrivateComment());
