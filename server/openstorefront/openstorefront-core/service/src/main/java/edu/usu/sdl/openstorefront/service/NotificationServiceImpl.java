@@ -68,6 +68,11 @@ public class NotificationServiceImpl
 {
 
 	private static final String LISTENER_KEY = "NOTIFICATION_LISTENERS";
+	private static final String SUBMISSION_COMMENT_SUBJECT = "Submission Comment was made.";
+	private static final String NO_EMAIL = "User is missing email address.";
+	private static final String NO_EMAIL_SOL = "Add a valid email address.";
+	private static final String NO_USER = "NOTIFICATION_LISTENERS";
+	private static final String NO_USER_SOL = "NOTIFICATION_LISTENERS";
 
 	@Override
 	public NotificationEventWrapper getAllEventsForUser(String username, FilterQueryParams queryParams)
@@ -326,14 +331,14 @@ public class NotificationServiceImpl
 				if (userProfile != null) {
 					if (StringUtils.isNotBlank(userProfile.getEmail())) {
 						Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-						email.setSubject("Submission Comment was made.");
+						email.setSubject(SUBMISSION_COMMENT_SUBJECT);
 						email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
 						MailManager.send(email, true);
 					} else {
-						throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+						throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
 					}
 				} else {
-					throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+					throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
 				}	
 				
 			}
@@ -345,15 +350,14 @@ public class NotificationServiceImpl
 					if (userProfile != null) {
 						if (StringUtils.isNotBlank(userProfile.getEmail())) {
 							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-							email.setSubject("Submission Comment was made.");
+							email.setSubject(SUBMISSION_COMMENT_SUBJECT);
 							email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
 							MailManager.send(email, true);
-							LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
 						} else {
-							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+							throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
 						}
 					} else {
-						throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+						throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
 					}
 
 				}
@@ -365,7 +369,6 @@ public class NotificationServiceImpl
 				email.setSubject("Owner Comment to Support.");
 				email.addRecipient("", "support@spoonsite.com", Message.RecipientType.TO);
 				MailManager.send(email, true);
-				LOG.log(Level.INFO, MessageFormat.format("No one is available, your email was sent test to: {0}", "support@spoonsite.com"));
 
 			}
 		}
@@ -380,14 +383,14 @@ public class NotificationServiceImpl
 					if (userProfile != null) {
 						if (StringUtils.isNotBlank(userProfile.getEmail())) {
 							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-							email.setSubject("Submission Comment was made.");
+							email.setSubject(SUBMISSION_COMMENT_SUBJECT);
 							email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
 							MailManager.send(email, true);
 						} else {
-							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+							throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
 						}
 					} else {
-						throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+						throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
 					}
 					
 				}
@@ -399,15 +402,14 @@ public class NotificationServiceImpl
 						if (userProfile != null) {
 							if (StringUtils.isNotBlank(userProfile.getEmail())) {
 								Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-								email.setSubject("Submission Comment was made.");
+								email.setSubject(SUBMISSION_COMMENT_SUBJECT);
 								email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
 								MailManager.send(email, true);
-								LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
 							} else {
-								throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+								throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
 							}
 						} else {
-							throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+							throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
 						}
 
 					}
@@ -423,14 +425,14 @@ public class NotificationServiceImpl
 					if (userProfile != null) {
 						if (StringUtils.isNotBlank(userProfile.getEmail())) {							
 							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-							email.setSubject("Submission Comment was made.");
+							email.setSubject(SUBMISSION_COMMENT_SUBJECT);
 							email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
 							MailManager.send(email, true);
 						} else {
-							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+							throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
 						}
 					} else {
-						throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+						throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
 					}
 
 				}				
@@ -442,15 +444,14 @@ public class NotificationServiceImpl
 						if (userProfile != null) {
 							if (StringUtils.isNotBlank(userProfile.getEmail())) {
 								Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-								email.setSubject("Submission Comment was made.");
+								email.setSubject(SUBMISSION_COMMENT_SUBJECT);
 								email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
 								MailManager.send(email, true);
-								LOG.log(Level.INFO, MessageFormat.format("Sent test email to: {0}", userProfile.getEmail()));
 							} else {
-								throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+								throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
 							}
 						} else {
-							throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+							throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
 						}
 
 					}
@@ -463,14 +464,14 @@ public class NotificationServiceImpl
 					if (userProfile != null) {
 						if (StringUtils.isNotBlank(userProfile.getEmail())) {
 							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-							email.setSubject("Submission Comment was made.");
+							email.setSubject(SUBMISSION_COMMENT_SUBJECT);
 							email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
 							MailManager.send(email, true);
 						} else {
-							throw new OpenStorefrontRuntimeException("User is missing email address.", "Add a valid email address.");
+							throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
 						}
 					} else {
-						throw new OpenStorefrontRuntimeException("Unable to find user.", "Check username.");
+						throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
 					}
 				}
 				
