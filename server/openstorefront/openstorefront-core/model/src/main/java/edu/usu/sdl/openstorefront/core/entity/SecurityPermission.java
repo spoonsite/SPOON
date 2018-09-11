@@ -1189,14 +1189,9 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_DELETE)).setPermissionPredecessor(REPORTS_READ);
 		((SecurityPermission) codeMap.get(REPORTS_SCHEDULE_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
 
-		// codeMap.put(REPORTS, newLookup(SecurityPermission.class, REPORTS, "General Reports", null, GROUPBY_REPORTS));
-		// ((SecurityPermission) codeMap.get(REPORTS)).setPermissionPredecessor(null);
-		// ((SecurityPermission) codeMap.get(REPORTS)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
-
 		codeMap.put(REPORTS_READ, newLookup(SecurityPermission.class, REPORTS_READ, "General Reports", null, GROUPBY_REPORTS));
 		((SecurityPermission) codeMap.get(REPORTS_READ)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(REPORTS_READ)).setDefaultRoles(Arrays.asList(SecurityRole.DEFAULT_GROUP));
-
 
 		codeMap.put(REPORTS_PAGE, newLookup(SecurityPermission.class, REPORTS_PAGE, "Provides access to the Reports page", null, GROUPBY_REPORTS));
 		((SecurityPermission) codeMap.get(REPORTS_PAGE)).setPermissionPredecessor(REPORTS_READ);
