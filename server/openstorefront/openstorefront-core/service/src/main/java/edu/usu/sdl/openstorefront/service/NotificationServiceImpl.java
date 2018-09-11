@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
-import static edu.usu.sdl.openstorefront.core.entity.StandardEntity.LOG;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -52,8 +51,6 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.NotificationServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
-import java.text.MessageFormat;
-import java.util.logging.Level;
 import javax.mail.Message;
 import org.codemonkey.simplejavamail.email.Email;
 
@@ -301,6 +298,23 @@ public class NotificationServiceImpl
 		}
 
 	}
+	
+	private void sendEmailToProfile(UserProfile userProfile, EmailCommentModel emailCommentModel){
+		
+		if (userProfile != null) {
+			if (StringUtils.isNotBlank(userProfile.getEmail())) {
+				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+				email.setSubject(SUBMISSION_COMMENT_SUBJECT);
+				email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
+				MailManager.send(email, true);
+			} else {
+				throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
+		}
+		
+	}
 
 	@Override
 	public void emailCommentMessage(EmailCommentModel emailCommentModel)
@@ -324,44 +338,15 @@ public class NotificationServiceImpl
 
 		if(!emailCommentModel.isAdminComment()){
 			// THIS IS AN OWNER COMMENT.
-			if(canEmailAssignee) {
-				
+			if(canEmailAssignee) {		
 				// EMAIL THE ASSIGNEE FROM THE WORKLINK
-				UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
-				if (userProfile != null) {
-					if (StringUtils.isNotBlank(userProfile.getEmail())) {
-						Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-						email.setSubject(SUBMISSION_COMMENT_SUBJECT);
-						email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
-						MailManager.send(email, true);
-					} else {
-						throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
-					}
-				} else {
-					throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
-				}	
-				
+				sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);
 			}
 			else if(canEmailGroup) {
 				// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
 				for (UserRole uRole : userRoles) {
-
-					UserProfile userProfile = getUserService().getUserProfile(uRole.getUsername());
-					if (userProfile != null) {
-						if (StringUtils.isNotBlank(userProfile.getEmail())) {
-							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-							email.setSubject(SUBMISSION_COMMENT_SUBJECT);
-							email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
-							MailManager.send(email, true);
-						} else {
-							throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
-						}
-					} else {
-						throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
-					}
-
+					sendEmailToProfile(getUserService().getUserProfile(uRole.getUsername()), emailCommentModel);
 				}
-				
 			}
 			else {
 				// EMAIL SUPPORT SO THAT THE OWNER ALWAYS HAS A CONTACT. support@spoonsite.com
@@ -376,108 +361,34 @@ public class NotificationServiceImpl
 			// THIS IS AN ADMIN COMMENT
 			if(emailCommentModel.isPrivateComment()){
 				// THIS IS AN ADMIN PRIVATE COMMENT DO NOT EMAIL THE OWNER.
-				if (canEmailAssignee) {
-					
+				if (canEmailAssignee) {					
 					// EMAIL THE ASSIGNEE FROM THE WORKLINK
-					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
-					if (userProfile != null) {
-						if (StringUtils.isNotBlank(userProfile.getEmail())) {
-							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-							email.setSubject(SUBMISSION_COMMENT_SUBJECT);
-							email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
-							MailManager.send(email, true);
-						} else {
-							throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
-						}
-					} else {
-						throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
-					}
-					
+					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);					
 				}
 				else if (canEmailGroup) {
 					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT.
 					for (UserRole uRole : userRoles) {
-
-						UserProfile userProfile = getUserService().getUserProfile(uRole.getUsername());
-						if (userProfile != null) {
-							if (StringUtils.isNotBlank(userProfile.getEmail())) {
-								Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-								email.setSubject(SUBMISSION_COMMENT_SUBJECT);
-								email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
-								MailManager.send(email, true);
-							} else {
-								throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
-							}
-						} else {
-							throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
-						}
-
-					}
-					
+						sendEmailToProfile(getUserService().getUserProfile(uRole.getUsername()), emailCommentModel);
+					}				
 				}
 			}
 			else {
 				// THIS IS AN ADMIN PUBLIC COMMENT. SEND AN EMAIL TO THE OWNER, GROUP, AND, ASSIGNEE BUT DON'T SEND AN EMAIL TO THE PERSON WHO MADE THE COMMENT.
 				if (canEmailAssignee) {
-
 					// EMAIL THE ASSIGNEE FROM THE WORKLINK
-					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getAssignedUser());
-					if (userProfile != null) {
-						if (StringUtils.isNotBlank(userProfile.getEmail())) {							
-							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-							email.setSubject(SUBMISSION_COMMENT_SUBJECT);
-							email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
-							MailManager.send(email, true);
-						} else {
-							throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
-						}
-					} else {
-						throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
-					}
-
+					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);
 				}				
 				else if (canEmailGroup) {
 					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
 					for (UserRole uRole : userRoles) {
-
-						UserProfile userProfile = getUserService().getUserProfile(uRole.getUsername());
-						if (userProfile != null) {
-							if (StringUtils.isNotBlank(userProfile.getEmail())) {
-								Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-								email.setSubject(SUBMISSION_COMMENT_SUBJECT);
-								email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
-								MailManager.send(email, true);
-							} else {
-								throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
-							}
-						} else {
-							throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
-						}
-
+						sendEmailToProfile(getUserService().getUserProfile(uRole.getUsername()), emailCommentModel);
 					}
-					
 				}
-				
 				if(canEmailOwner){
 					// EMAIL THE OWNER
-					UserProfile userProfile = getUserService().getUserProfile(emailCommentModel.getEntryOwner());
-					if (userProfile != null) {
-						if (StringUtils.isNotBlank(userProfile.getEmail())) {
-							Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
-							email.setSubject(SUBMISSION_COMMENT_SUBJECT);
-							email.addRecipient( "", userProfile.getEmail(), Message.RecipientType.TO);
-							MailManager.send(email, true);
-						} else {
-							throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
-						}
-					} else {
-						throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
-					}
+					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getEntryOwner()), emailCommentModel);
 				}
-				
-				
 			}
 		}
 	}
-
 }
