@@ -108,7 +108,7 @@
 						})
 					],
 					fields: [
-						{ name: 'currentStepName', mapping: function(data){									
+						{ name: 'currentStepName', mapping: function(data){
 							return data.currentStep ? data.currentStep.name : 'N/A';
 						}},
 						{
@@ -158,7 +158,7 @@
 						{ text: 'Entry Type', dataIndex: 'componentTypeFullDescription', flex: 1, minWidth: 200	}, 						
 						{ text: 'WorkPlan Name', dataIndex: 'workPlanName', width: 175, hidden: true },
 						{ text: 'WorkPlanLink Id', dataIndex: 'workPlanLinkId', width: 175, hidden: true },
-                        { text: 'Current Step', dataIndex: 'currentStepName', width: 175 },
+                        { text: 'Current Step', dataIndex: 'currentStepName', sortable: false, width: 175 },
 						{ text: 'Status Marking', dataIndex: 'subStatusDescription', width: 175,
 							renderer: function(value, meta, record) {
 								if (value) {	
