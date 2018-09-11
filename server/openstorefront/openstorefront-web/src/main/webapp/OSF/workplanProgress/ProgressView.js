@@ -35,8 +35,37 @@ Ext.define('OSF.workplanProgress.ProgressView', {
         var statusCmp = Ext.getCmp('workplan-progress-management-worklink-status');
         var statusToolbarCmp = Ext.getCmp('workplan-progress-view');
 
+        var pendingColor           = record.get('workPlanPendingColor');
+        var progressColor          = record.get('workPlanInProgressColor');
+        var completeColor          = record.get('workPlanCompleteColor');
+        var statusColor            = record.get('workPlanSubStatusColor');
+        var legend                 = Ext.getCmp('stepsLegendContainer');
+
+        var html = '<div style="width: 100%;"><div style="border: 1px solid #222; background: #' + pendingColor + ';" class="wp-step-legend br-100"></div>&nbsp;<strong>Pending</strong></div>' +
+                   '<div style="width: 100%;"><div style="border: 1px solid #222; background: #' + progressColor + ';" class="wp-step-legend br-100"></div>&nbsp;<strong>In Progress</strong></div>' +
+                   '<div style="width: 100%;"><div style="border: 1px solid #222; background: #' + completeColor + ';" class="wp-step-legend br-100"></div>&nbsp;<strong>Complete</strong></div>' +
+                   '<div style="width: 100%;"><div style="border: 1px solid #222; background: #' + statusColor + ';" class="wp-step-legend br-100"></div>&nbsp;<strong>Attention Required</strong></div>'
+        legend.setHtml(html)
+
         statusToolbarCmp.setVisible(true);
         statusCmp.removeAll();
+
+        var stepColors = Array(steps.length); // each color corresponds to a step
+        var beforeCurrentStep = true;
+        Ext.Array.forEach(steps, function (el, index) {
+            stepColors[index] = pendingColor;
+            if (beforeCurrentStep) {
+                stepColors[index] = completeColor;
+            }
+            if (el.workPlanStepId === currentStep.workPlanStepId) {
+                beforeCurrentStep = false;
+                stepColors[index] = progressColor;
+            }
+            if (el.workPlanStepId === currentStep.workPlanStepId && (index + 1) === steps.length) {
+                stepColors[index] = completeColor;
+            }
+        })
+
         Ext.Array.forEach(steps, function (el, index) {
             statusCmp.add({
                 xtype: 'container',
@@ -44,9 +73,11 @@ Ext.define('OSF.workplanProgress.ProgressView', {
                             '<span class="wp-step-label ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + el.name + '</span>' +
                             '<div data-qtip="' + el.description + '"' + 
                             'class="step-view static-step-view ' + 
-                            (el.workPlanStepId === currentStep.workPlanStepId ? ' current-step ' : ' wp-step ') +
+                            ' br-100 ' +
                             (index === steps.length - 1 ? ' last-step ' : ' ') +
-                            '"></div>' +
+                            '" ' + 
+                            ' style="background-color: #' + stepColors[index] + ';"' +
+                            '></div>' +
                         '</div>'
             });
         });
@@ -54,9 +85,8 @@ Ext.define('OSF.workplanProgress.ProgressView', {
     items: [
         {
             xtype: 'container',
-            itemId: 'stepsLegendContainer',
             id: 'workplan-progress-management-worklink-status-legend',
-            width: 120,
+            width: 175,
             padding: '0 0 0 15',
             style: 'border-right: 1px solid #ccc',
             layout: {
@@ -69,7 +99,7 @@ Ext.define('OSF.workplanProgress.ProgressView', {
             items: [
                 {
                     xtype: 'container',
-                    html: '<div style="width: 100%;" data-qtip="The current step of the workplan"><div class="wp-step-legend current-step"></div>&nbsp;<strong>Current Step</strong></div>'
+                    id: 'stepsLegendContainer'
                 }
             ]
         },
