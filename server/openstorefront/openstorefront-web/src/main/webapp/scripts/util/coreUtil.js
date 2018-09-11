@@ -1030,6 +1030,7 @@ var CoreUtil = {
 		return false;		
 	},
 	traverseNestedModel: function(node, parents, target) {
+		if (!node) return;
 		if (target.componentType === node.componentType.componentType) {
 			parents.push({
 				'label': node.componentType.label,
