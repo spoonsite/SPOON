@@ -332,9 +332,9 @@ public class NotificationServiceImpl
 			} );
 		}
 		
-		boolean canEmailAssignee = StringUtils.isNotEmpty(emailCommentModel.getAssignedUser()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getAssignedUser());
+		boolean canEmailAssignee = StringUtils.isNotBlank(emailCommentModel.getAssignedUser()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getAssignedUser());
 		boolean canEmailGroup = !(userRoles == null || userRoles.isEmpty());
-		boolean canEmailOwner = StringUtils.isNotEmpty(emailCommentModel.getEntryOwner()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getEntryOwner());
+		boolean canEmailOwner = StringUtils.isNotBlank(emailCommentModel.getEntryOwner()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getEntryOwner());
 
 		if(!emailCommentModel.isAdminComment()){
 			// THIS IS AN OWNER COMMENT.

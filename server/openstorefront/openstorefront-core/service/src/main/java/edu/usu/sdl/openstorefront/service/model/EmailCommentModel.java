@@ -46,8 +46,6 @@ public class EmailCommentModel
 	private boolean adminComment;
 	
 	private String entryOwner;
-	
-	private String ownerEmail;
 
 	@Override
 	public String uniqueKey()
@@ -159,16 +157,6 @@ public class EmailCommentModel
 	public void setEntryOwner(String entryOwner)
 	{
 		this.entryOwner = entryOwner;
-	}
-
-	public String getOwnerEmail()
-	{
-		return ownerEmail;
-	}
-
-	public void setOwnerEmail(String ownerEmail)
-	{
-		this.ownerEmail = ownerEmail;
 	}
 
 }

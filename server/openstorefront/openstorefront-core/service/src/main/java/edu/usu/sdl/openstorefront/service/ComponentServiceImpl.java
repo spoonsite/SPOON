@@ -821,7 +821,6 @@ public class ComponentServiceImpl
 			emailCommentModel.setPrivateComment(componentComment.getPrivateComment());
 			emailCommentModel.setAdminComment(componentComment.getAdminComment());
 			emailCommentModel.setEntryOwner(component.getOwnerUser());
-			emailCommentModel.setOwnerEmail(getUserService().getUserProfile(emailCommentModel.getAssignedUser()).getEmail());
 			
 			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
 			

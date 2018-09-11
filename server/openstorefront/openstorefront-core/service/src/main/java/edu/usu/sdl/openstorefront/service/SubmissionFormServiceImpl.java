@@ -708,8 +708,7 @@ public class SubmissionFormServiceImpl
 			emailCommentModel.setPrivateComment(userSubmissionComment.getPrivateComment());
 			emailCommentModel.setAdminComment(userSubmissionComment.getAdminComment());
 			emailCommentModel.setEntryOwner(component.getOwnerUser());
-			emailCommentModel.setOwnerEmail(getUserService().getUserProfile(emailCommentModel.getAssignedUser()).getEmail());
-			
+
 			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
 
 		}
