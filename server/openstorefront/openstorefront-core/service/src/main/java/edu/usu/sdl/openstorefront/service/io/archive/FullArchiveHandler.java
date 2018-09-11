@@ -74,10 +74,10 @@ public class FullArchiveHandler
 			try {
 				TFile originDir = new TFile(dir);
 				boolean copy = true;
-				if (FileSystemManager.DB_DIR.replace("/", File.separator).equals(originDir.getPath())) {
+				if(originDir.getPath().endsWith(FileSystemManager.DB_DIR.replace("/", File.separator))){
 					copy = false;
 				}
-				if (FileSystemManager.MAIN_PERM_DIR.replace("/", File.separator).equals(originDir.getPath())) {
+				if (originDir.getPath().endsWith(FileSystemManager.MAIN_PERM_DIR.replace("/", File.separator))) {
 					copy = false;
 
 					//copy all children (expect the archive itself)
