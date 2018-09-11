@@ -37,6 +37,7 @@
 			/* global Ext, CoreUtil, CoreService */
 			Ext.require('OSF.customSubmission.SubmissionFormFullControl');			
 			Ext.require('OSF.workplanProgress.CommentPanel');
+			Ext.require('OSF.workplanProgress.ProgressView');
 
 			Ext.onReady(function () {
 				
@@ -142,46 +143,8 @@
 							layout: 'fit',
 							itemId: 'previewPanel',
 							items: [
-								previewContents,
+								previewContents
 							]
-//							dockedItems: [
-//								{
-//									xtype: 'toolbar',
-//									dock: 'bottom',
-//									items: [
-//										{
-//											text: 'Previous',
-//											id: 'previewWinTools-previousBtn',
-//											iconCls: 'fa fa-lg fa-arrow-left icon-button-color-default',									
-//											handler: function() {
-//												actionPreviewNextRecord(false);
-//											}									
-//										},
-//										{
-//											xtype: 'tbfill'
-//										},
-//										{
-//											text: 'Close',
-//											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-//											handler: function() {
-//												this.up('window').hide();
-//											}
-//										},
-//										{
-//											xtype: 'tbfill'
-//										},
-//										{
-//											text: 'Next',
-//											id: 'previewWinTools-nextBtn',
-//											iconCls: 'fa fa-lg fa-arrow-right icon-button-color-default',
-//											iconAlign: 'right',
-//											handler: function() {
-//												actionPreviewNextRecord(true);
-//											}									
-//										}
-//									]
-//								}
-//							]
 						}
 					]					
 				});
@@ -299,6 +262,9 @@
 					],
 					dockedItems: [
 						{
+							xtype: 'osf.wp.progressView'
+						},
+						{
 							dock: 'top',
 							xtype: 'toolbar',
 							itemId: 'tools',
@@ -364,7 +330,6 @@
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];										
 										var componentId = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('componentId');
-										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
 										
 										if (record.get('pendingChangeComponentId')) {
 											editChangeRequest(record.get('pendingChangeComponentId'));
@@ -592,7 +557,6 @@
 									requiredPermissions: ['USER-SUBMISSIONS-DELETE'],
 									handler: function () {
 										var record = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0];
-										//var name = Ext.getCmp('submissionGrid').getSelectionModel().getSelection()[0].get('name');
 										
 										Ext.getCmp('changeRequestWindow').deleteChangeRequest(record.get('pendingChangeComponentId'), true);
 									}									
@@ -606,9 +570,47 @@
 						},
 						selectionchange: function(selectionModel, selected, opts){
 							var tools = Ext.getCmp('submissionGrid').getComponent('tools');
+
+							var getWorkLink = function(worklinkType, resourceID) {
+								url = undefined; 
+								if (!resourceID) {
+									return;
+								}
+								switch (worklinkType) {
+									case 'Submission':
+										url = 'api/v1/resource/usersubmissions/' + resourceID + '/worklink'
+										break;
+									case 'Component':
+										url = 'api/v1/resource/components/' + resourceID + '/worklink'
+										break;
+									case 'ChangeRequest':
+										url = 'api/v1/resource/components/' + resourceID + '/worklink'
+										break;
+									default:
+										break;
+								}
+								if (url) {
+									Ext.Ajax.request({
+										url: url,
+										method: 'GET',
+										success: function(response, opts) {
+											// display the ProgressView component
+											record = Ext.data.Record.create(Ext.JSON.decode(response.responseText));
+											var progressViewCmp = Ext.getCmp('workplan-progress-view');
+											progressViewCmp.addSteps(record);
+											progressViewCmp.setVisible(true);
+										},
+										failure: function(response, opts) {
+											console.error('failed to fetch resource');
+										}
+									})
+								}
+							}
 							
-							if (selected.length > 0) {	
-								var record = selected[0];	
+							if (selected.length > 0) {
+								var record = selected[0];
+								var worklinkType = undefined;
+								var resourceID = undefined;
 								
 								tools.getComponent('tbEdit').setDisabled(true);
 								tools.getComponent('options').setDisabled(false);
@@ -623,7 +625,9 @@
 								tools.getComponent('tbDelete').setDisabled(true);
 								tools.getComponent('tbUnapprove').setHidden(true);
 								
-								if (record.get('approvalState') === 'A'){	
+								if (record.get('approvalState') === 'A'){
+									worklinkType = 'Component';
+									resourceID = record.get('componentId');
 									tools.getComponent('tbDelete').setHidden(true);
 									tools.getComponent('tbSubmitChange').setHidden(false);
 									tools.getComponent('tbUnapprove').setHidden(false);
@@ -639,6 +643,8 @@
 								}
 								if (record.get('approvalState') === 'P'){
 									//tools.getComponent('tbUnsubmit').setHidden(false);
+									worklinkType = 'Component';
+									resourceID = record.get('componentId');
 									tools.getComponent('tbEdit').setDisabled(false);
 								}
 								if (record.get('approvalState') === 'N'){
@@ -647,12 +653,17 @@
 								}
 								
 								if (record.get('statusOfPendingChange')) {
+									worklinkType = 'ChangeRequest';
+									resourceID = record.get('pendingChangeComponentId');
 									tools.getComponent('tbRemoveChangeRequest').setHidden(false);
 								}
 								
 								if (record.get('userSubmissionId')) {
+									worklinkType = 'Submission';
+									resourceID = record.get('userSubmissionId');
 									tools.getComponent('options').setDisabled(true);
 								}
+								getWorkLink(worklinkType, resourceID);
 								
 							} else {
 								tools.getComponent('tbEdit').setDisabled(true);
@@ -666,6 +677,7 @@
 								tools.getComponent('tbDelete').setHidden(false);
 								tools.getComponent('tbDelete').setDisabled(true);
 								tools.getComponent('tbUnapprove').setHidden(true);
+								Ext.getCmp('workplan-progress-view').setVisible(false);
 							}							
 						}
 					}
@@ -813,7 +825,7 @@
 
 					previewComponentWin.setTitle(record.get('fullname'));
 					if(record.get("statusOfPendingChange") === "Pending"){
-						previewComponentWin.setTitle(record.get('fullname') + " - - - - - - - YOU ARE CURRENTLY VIEWING A CHANGE REQUEST THAT HAS NOT YET BEEN APPROVED BY AN ADMINISTRATOR.");
+						previewComponentWin.setTitle(record.get('fullname') + " (CHANGE REQUEST)");
 					}
 
 					var isPartialSubmission = record.get('userSubmissionId') ? true : false;

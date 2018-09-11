@@ -39,7 +39,7 @@ var CoreUtil = {
 			caret.setAttribute('data-qtip', 'Collapse panel');
 		}
 	},
-	calculateEvalutationScore: function (obj) {
+	calculateEvaluationScore: function (obj) {
 		// obj.data.fullEvaluation requires the key: checkListAll
 		var fullEvaluations = obj.fullEvaluations;
 		var data = obj.data;
@@ -1030,6 +1030,7 @@ var CoreUtil = {
 		return false;		
 	},
 	traverseNestedModel: function(node, parents, target) {
+		if (!node) return;
 		if (target.componentType === node.componentType.componentType) {
 			parents.push({
 				'label': node.componentType.label,

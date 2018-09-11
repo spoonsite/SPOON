@@ -38,8 +38,8 @@
 		<link href="webjars/extjs/6.2.0/build/packages/ux/classic/triton/resources/ux-all-debug.css" rel="stylesheet" type="text/css"/>
 		<link href="webjars/extjs/6.2.0/build/packages/charts/classic/triton/resources/charts-all-debug.css" rel="stylesheet" type="text/css"/>
 		<link href="webjars/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-		<link href="Branding.action?CSS&template=extTritonTheme.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>	
-		<link href="Branding.action?CSS&template=apptemplate.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
+		<link href="Branding.action?CSS&template=extTritonTheme.css.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>	
+		<link href="Branding.action?CSS&template=apptemplate.css.jsp&v=${appVersion}" rel="stylesheet" type="text/css"/>
 		<link href="Branding.action?Override&v=${appVersion}" rel="stylesheet" type="text/css"/>	
 
 		<link rel="shortcut icon" href="${pageContext.request.contextPath}/appicon.png" type="image/x-icon">			

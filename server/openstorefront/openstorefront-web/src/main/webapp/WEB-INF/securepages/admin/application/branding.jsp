@@ -914,7 +914,7 @@
 										scrollable: true,
 										bodyStyle: 'padding: 10px;',										
 										loader: {
-											 url: 'Branding.action?CSS&template=apptemplate.jsp&v=' + (Math.random() * 100000),
+											 url: 'Branding.action?CSS&template=apptemplate.css.jsp&v=' + (Math.random() * 100000),
 											 autoLoad: true,
 											 success: function(loader, response, opts) {
 												var data = response.responseText;

@@ -90,10 +90,12 @@ public class WorkPlanLinkView
 			userSubmission.setUserSubmissionId(workPlanLink.getUserSubmissionId());
 			userSubmission = userSubmission.find();
 
-			view.setLinkName(userSubmission.getSubmissionName());
-			view.setComponentType(userSubmission.getComponentType());
-			view.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
-			view.setComponentTypeFullDescription(service.getComponentService().getComponentTypeParentsString(view.getComponentType(), false));
+			if (userSubmission != null) {
+				view.setLinkName(userSubmission.getSubmissionName());
+				view.setComponentType(userSubmission.getComponentType());
+				view.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
+				view.setComponentTypeFullDescription(service.getComponentService().getComponentTypeParentsString(view.getComponentType(), false));
+			}
 		}
 		//add handling for evaluations
 

@@ -113,7 +113,7 @@ Ext.define('OSF.component.RelationshipVisPanel', {
 						var data = Ext.decode(response.responseText);
 						data = CoreUtil.processEntry(data);
 						
-						CoreUtil.calculateEvalutationScore({
+						CoreUtil.calculateEvaluationScore({
 							fullEvaluations: data.fullEvaluations,
 							evaluation: data.fullEvaluations,
 							success: function (newData) {

@@ -2349,12 +2349,27 @@ public class CoreComponentServiceImpl
 				mergeSubEntities(mergeComponent.getTags(), targetComponent.getTags());
 				mergeSubEntities(mergeComponent.getResources(), targetComponent.getResources());
 
-				ComponentComment commentExample = new ComponentComment();
-				commentExample.setComponentId(mergeComponent.getComponent().getComponentId());
-				List<ComponentComment> comments = commentExample.findByExampleProxy();
-				for (ComponentComment comment : comments) {
-					comment.setComponentId(targetComponentId);
-					persistenceService.persist(comment);
+				// only new comments from the mergeComponent need to be added into the merge
+				// this requires that we compare both sets of comments 
+				ComponentComment tempComment = new ComponentComment();
+
+				// mergeComponent will be deleted
+				// so go through and see which comments need to be added to the target component
+				tempComment.setComponentId(targetComponent.getComponent().getComponentId());
+				List<ComponentComment> targetComments = tempComment.findByExampleProxy();
+				Set<String> targetCommentSet = targetComments.stream().map(comment
+						-> {
+					return comment.uniqueKey();
+				}).collect(Collectors.toSet());
+
+				tempComment.setComponentId(mergeComponent.getComponent().getComponentId());
+				List<ComponentComment> mergeComments = tempComment.findByExampleProxy();
+				for (ComponentComment comment : mergeComments) {
+					if (!targetCommentSet.contains(comment.uniqueKey())) {
+						comment.setComponentId(targetComponentId);
+						comment.setEditDeleteLock(false);
+						persistenceService.persist(comment);
+					}
 				}
 
 				Set<String> targetReviewKey = targetComponent.getReviews().stream().map(review

@@ -64,6 +64,9 @@ public class ComponentComment
 
 	@APIDescription("Mark admin submission comments")
 	private Boolean adminComment;
+	
+	@APIDescription("Comments are locked while in transition state (i.e. a change request)")
+	private Boolean editDeleteLock;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentComment()
@@ -104,6 +107,7 @@ public class ComponentComment
 		setParentCommentId(componentComment.getParentCommentId());
 		setPrivateComment(componentComment.getPrivateComment());
 		setAdminComment(componentComment.getAdminComment());
+		setEditDeleteLock(componentComment.getEditDeleteLock());
 	}
 
 	public String getCommentId()
@@ -164,6 +168,16 @@ public class ComponentComment
 	public void setAdminComment(Boolean adminComment)
 	{
 		this.adminComment = adminComment;
+	}
+	
+	public Boolean getEditDeleteLock()
+	{
+		return editDeleteLock;
+	}
+
+	public void setEditDeleteLock(Boolean editDeleteLock)
+	{
+		this.editDeleteLock = editDeleteLock;
 	}
 
 }

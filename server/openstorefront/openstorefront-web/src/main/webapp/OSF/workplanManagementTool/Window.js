@@ -89,7 +89,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 								step.stepRole = [];
 							}
 							
-							// Configure triigerEvents for save
+							// Configure triggerEvents for save
 							if (step.triggerEvents) {
 								Ext.Array.forEach(step.triggerEvents, function (event, index) {
 									step.triggerEvents[index] = { entityEventType: event };
@@ -107,7 +107,7 @@ Ext.define('OSF.workplanManagementTool.Window', {
 							// Configure emails in action (if there are any)
 							if (step.actions) {
 								Ext.Array.forEach(step.actions, function (action) {
-									if (action.actionOption.fixedEmails) {
+									if (action.actionOption && action.actionOption.fixedEmails) {
 										Ext.Array.forEach(action.actionOption.fixedEmails, function (item, index) {
 											action.actionOption.fixedEmails[index] = { email: item };
 										});

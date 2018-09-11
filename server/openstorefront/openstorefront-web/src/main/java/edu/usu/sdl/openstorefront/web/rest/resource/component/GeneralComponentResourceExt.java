@@ -1002,7 +1002,7 @@ public abstract class GeneralComponentResourceExt
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(UserSubmission.class)
-	@APIDescription("Creates a user submission from an entry (must no be approved). Note: this will remove original entry.")
+	@APIDescription("Creates a user submission from an entry (must not be approved). Note: this will remove original entry.")
 	@Path("/{id}/usersubmission")
 	public Response createUserSubmission(
 			@PathParam("id")

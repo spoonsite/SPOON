@@ -615,7 +615,7 @@
 							
 							if (entry.approvalState !== "A" || entry.activeStatus !== 'A') {
 								
-								var html = '';								
+								var html = '';						
 								if (entry.approvalState == 'P') {
 									html = 'This entry has not yet been approved for the site and is still under review.';								
 								} else if (entry.approvalState == 'N') {

@@ -91,25 +91,18 @@
 							var tools = Ext.getCmp('workplanGrid').getComponent('tools');
 							
 							if (selected.length > 0) {
-								
 								tools.getComponent('edit').setDisabled(false);
-								tools.getComponent('setactive').setDisabled(false);
+								tools.getComponent('toggleactive').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
 
 								if (selected[0].getData().defaultWorkPlan) {
-
 									tools.getComponent('delete').setDisabled(true);
-									tools.getComponent('setactive').setDisabled(true);
-								}
-								
-								if (selected[0].getData().activeStatus === 'A') {
-									tools.getComponent('setactive').setDisabled(true);
+									tools.getComponent('toggleactive').setDisabled(true);
 								}
 
 							} else {
-
 								tools.getComponent('edit').setDisabled(true);
-								tools.getComponent('setactive').setDisabled(true);
+								tools.getComponent('toggleactive').setDisabled(true);
 								tools.getComponent('delete').setDisabled(true);
 							}
 						}
@@ -163,8 +156,8 @@
 									requiredPermissions: ['ADMIN-WORKPLAN-UPDATE'],
 								},
 								{
-									text: 'Set Active',
-									itemId: 'setactive',
+									text: 'Toggle Active',
+									itemId: 'toggleactive',
 									disabled: true,
 									scale: 'medium',
 									iconCls: 'fa fa-2x fa-power-off icon-button-color-default icon-vertical-correction',
@@ -251,17 +244,20 @@
 						height: '80%',
 						maximizable: true,
 						closeAction: 'destroy'
-					});					
+					});
 					workplanWindow
 						.loadWorkplan(record)
 						.show();
 				};
 
 				var actionToggleStatus = function (record) {
+					console.log(record);
+
+					var activate = record.activeStatus === 'A' ? '/inactivate' : '/activate';
 
 					Ext.Ajax.request({
 						method: 'PUT',
-						url: 'api/v1/resource/workplans/' + record.workPlanId + '/activate',
+						url: 'api/v1/resource/workplans/' + record.workPlanId + activate,
 						success: function (res) {
 							Ext.getCmp('workplanGrid').getStore().load();
 						}
