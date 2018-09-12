@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
@@ -178,6 +179,12 @@ public interface ComponentService
 	 * @return Name or null if not found
 	 */
 	public String getComponentName(String componentId);
+	
+	/**
+	 * Method to save a component comment and then email the comment.
+	 * @param comment 
+	 */
+	public void saveComponentComment(ComponentComment componentComment);
 
 	/**
 	 * High-speed component type lookup

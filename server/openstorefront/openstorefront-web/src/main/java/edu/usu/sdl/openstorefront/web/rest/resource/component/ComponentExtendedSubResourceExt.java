@@ -548,7 +548,7 @@ public abstract class ComponentExtendedSubResourceExt
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			comment.save();
+			service.getComponentService().saveComponentComment(comment);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}

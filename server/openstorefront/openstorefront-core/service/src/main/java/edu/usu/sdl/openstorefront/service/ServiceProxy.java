@@ -51,6 +51,7 @@ import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ChangeLogServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ImportServicePrivate;
+import edu.usu.sdl.openstorefront.service.api.NotificationServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.PluginServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.ProxyFactory;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
@@ -94,6 +95,7 @@ public class ServiceProxy
 	private ImportServicePrivate importServicePrivate;
 	private BrandingService brandingService;
 	private NotificationService notificationService;
+	private NotificationServicePrivate notificationServicePrivate;
 	private FeedbackService feedbackService;
 	private ContactService contactService;
 	private EvaluationService evaluationService;
@@ -199,6 +201,7 @@ public class ServiceProxy
 		importServicePrivate = null;
 		brandingService = null;
 		notificationService = null;
+		notificationServicePrivate = null;
 		feedbackService = null;
 		contactService = null;
 		evaluationService = null;
@@ -393,6 +396,14 @@ public class ServiceProxy
 			notificationService = DynamicProxy.newInstance(new NotificationServiceImpl());
 		}
 		return notificationService;
+	}
+	
+	public NotificationServicePrivate getNotificationServicePrivate()
+	{
+		if (notificationServicePrivate == null) {
+			notificationServicePrivate = DynamicProxy.newInstance(new NotificationServiceImpl());
+		}
+		return notificationServicePrivate;
 	}
 
 	@Override

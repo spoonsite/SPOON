@@ -21,6 +21,8 @@ import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
+import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
@@ -42,6 +44,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -67,6 +70,7 @@ import edu.usu.sdl.openstorefront.service.component.ComponentTypeServiceImpl;
 import edu.usu.sdl.openstorefront.service.component.CoreComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.component.IntegrationComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.component.SubComponentServiceImpl;
+import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.InputStream;
 import java.util.List;
@@ -790,4 +794,37 @@ public class ComponentServiceImpl
 		return type.getComponentTypeParentsString(componentTypeId, reverseOrder);
 	}
 
+	@Override
+	public void saveComponentComment(ComponentComment componentComment)
+	{
+		componentComment.save();
+		
+		if(ComponentCommentType.SUBMISSION.equals(componentComment.getCommentType())){
+			
+			EmailCommentModel emailCommentModel = new EmailCommentModel();
+			
+			WorkPlanLink workPlanLink = getWorkPlanService().getWorkPlanForComponent(componentComment.getComponentId());
+			Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
+			
+			emailCommentModel.setComment(componentComment.getComment());			
+			if(componentComment.getAdminComment()){
+				emailCommentModel.setAuthor("ADMIN");
+			}
+			else {
+				emailCommentModel.setAuthor(component.getOwnerUser());
+			}	
+			emailCommentModel.setEntryName(component.getName());
+			emailCommentModel.setCurrentStep(getWorkPlanService().getWorkPlan(workPlanLink.getWorkPlanId()).findWorkPlanStep(workPlanLink.getCurrentStepId()).getName());
+			emailCommentModel.setReplyInstructions("To respond to this comment, please login and go to the submission.");
+			emailCommentModel.setAssignedUser(workPlanLink.getCurrentUserAssigned());
+			emailCommentModel.setAssignedGroup(workPlanLink.getCurrentGroupAssigned());
+			emailCommentModel.setPrivateComment(componentComment.getPrivateComment());
+			emailCommentModel.setAdminComment(componentComment.getAdminComment());
+			emailCommentModel.setEntryOwner(component.getOwnerUser());
+			
+			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
+			
+		}
+		
+	}
 }

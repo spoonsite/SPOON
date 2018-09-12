@@ -25,6 +25,8 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
@@ -45,6 +47,12 @@ import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.service.api.NotificationServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
+import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
+import javax.mail.Message;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  * Handles Notification Events
@@ -53,10 +61,15 @@ import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
  */
 public class NotificationServiceImpl
 		extends ServiceProxy
-		implements NotificationService
+		implements NotificationService, NotificationServicePrivate
 {
 
 	private static final String LISTENER_KEY = "NOTIFICATION_LISTENERS";
+	private static final String SUBMISSION_COMMENT_SUBJECT = "Submission Comment was made.";
+	private static final String NO_EMAIL = "User is missing email address.";
+	private static final String NO_EMAIL_SOL = "Add a valid email address.";
+	private static final String NO_USER = "NOTIFICATION_LISTENERS";
+	private static final String NO_USER_SOL = "NOTIFICATION_LISTENERS";
 
 	@Override
 	public NotificationEventWrapper getAllEventsForUser(String username, FilterQueryParams queryParams)
@@ -285,5 +298,97 @@ public class NotificationServiceImpl
 		}
 
 	}
+	
+	private void sendEmailToProfile(UserProfile userProfile, EmailCommentModel emailCommentModel){
+		
+		if (userProfile != null) {
+			if (StringUtils.isNotBlank(userProfile.getEmail())) {
+				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+				email.setSubject(SUBMISSION_COMMENT_SUBJECT);
+				email.addRecipient("", userProfile.getEmail(), Message.RecipientType.TO);
+				MailManager.send(email, true);
+			} else {
+				throw new OpenStorefrontRuntimeException(NO_EMAIL, NO_EMAIL_SOL);
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
+		}
+		
+	}
 
+	@Override
+	public void emailCommentMessage(EmailCommentModel emailCommentModel)
+	{
+
+		List<UserRole> userRoles = null;
+		if(!StringUtils.isEmpty(emailCommentModel.getAssignedGroup())){
+			UserRole userRole = new UserRole();
+			userRole.setRole(emailCommentModel.getAssignedGroup());
+			userRole.setActiveStatus(UserRole.ACTIVE_STATUS);
+			userRoles = userRole.findByExample();
+			
+			userRoles.removeIf( (uRole) -> {
+				return SecurityUtil.getCurrentUserName().equals(uRole.getUsername());
+			} );
+		}
+		
+		boolean canEmailAssignee = StringUtils.isNotBlank(emailCommentModel.getAssignedUser()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getAssignedUser());
+		boolean canEmailGroup = !(userRoles == null || userRoles.isEmpty());
+		boolean canEmailOwner = StringUtils.isNotBlank(emailCommentModel.getEntryOwner()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getEntryOwner());
+
+		if(!emailCommentModel.isAdminComment()){
+			// THIS IS AN OWNER COMMENT.
+			if(canEmailAssignee) {		
+				// EMAIL THE ASSIGNEE FROM THE WORKLINK
+				sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);
+			}
+			else if(canEmailGroup) {
+				// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
+				for (UserRole uRole : userRoles) {
+					sendEmailToProfile(getUserService().getUserProfile(uRole.getUsername()), emailCommentModel);
+				}
+			}
+			else {
+				// EMAIL SUPPORT SO THAT THE OWNER ALWAYS HAS A CONTACT. support@spoonsite.com
+				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
+				email.setSubject("Owner Comment to Support.");
+				email.addRecipient("", "support@spoonsite.com", Message.RecipientType.TO);
+				MailManager.send(email, true);
+
+			}
+		}
+		else {
+			// THIS IS AN ADMIN COMMENT
+			if(emailCommentModel.isPrivateComment()){
+				// THIS IS AN ADMIN PRIVATE COMMENT DO NOT EMAIL THE OWNER.
+				if (canEmailAssignee) {					
+					// EMAIL THE ASSIGNEE FROM THE WORKLINK
+					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);					
+				}
+				else if (canEmailGroup) {
+					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT.
+					for (UserRole uRole : userRoles) {
+						sendEmailToProfile(getUserService().getUserProfile(uRole.getUsername()), emailCommentModel);
+					}				
+				}
+			}
+			else {
+				// THIS IS AN ADMIN PUBLIC COMMENT. SEND AN EMAIL TO THE OWNER, GROUP, AND, ASSIGNEE BUT DON'T SEND AN EMAIL TO THE PERSON WHO MADE THE COMMENT.
+				if (canEmailAssignee) {
+					// EMAIL THE ASSIGNEE FROM THE WORKLINK
+					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);
+				}				
+				else if (canEmailGroup) {
+					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
+					for (UserRole uRole : userRoles) {
+						sendEmailToProfile(getUserService().getUserProfile(uRole.getUsername()), emailCommentModel);
+					}
+				}
+				if(canEmailOwner){
+					// EMAIL THE OWNER
+					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getEntryOwner()), emailCommentModel);
+				}
+			}
+		}
+	}
 }

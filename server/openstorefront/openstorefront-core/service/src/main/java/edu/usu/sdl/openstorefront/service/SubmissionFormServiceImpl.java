@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
+import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
@@ -48,6 +49,7 @@ import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.mapping.MappingController;
 import edu.usu.sdl.openstorefront.service.mapping.MappingException;
+import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.io.IOException;
 import java.io.InputStream;
@@ -677,6 +679,39 @@ public class SubmissionFormServiceImpl
 		}
 
 		return submissionFormTemplate;
+	}
+
+	@Override
+	public void saveUserSubmissionComment(UserSubmissionComment userSubmissionComment)
+	{
+		userSubmissionComment.save();
+
+		if (ComponentCommentType.SUBMISSION.equals(userSubmissionComment.getCommentType())) {
+								
+			EmailCommentModel emailCommentModel = new EmailCommentModel();
+			
+			WorkPlanLink workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(userSubmissionComment.getUserSubmissionId());
+			Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
+			
+			emailCommentModel.setComment(userSubmissionComment.getComment());			
+			if(userSubmissionComment.getAdminComment()){
+				emailCommentModel.setAuthor("ADMIN");
+			}
+			else {
+				emailCommentModel.setAuthor(component.getOwnerUser());
+			}	
+			emailCommentModel.setEntryName(component.getName());
+			emailCommentModel.setCurrentStep(getWorkPlanService().getWorkPlan(workPlanLink.getWorkPlanId()).findWorkPlanStep(workPlanLink.getCurrentStepId()).getName());
+			emailCommentModel.setReplyInstructions("To respond to this comment, please login and go to the submission.");
+			emailCommentModel.setAssignedUser(workPlanLink.getCurrentUserAssigned());
+			emailCommentModel.setAssignedGroup(workPlanLink.getCurrentGroupAssigned());
+			emailCommentModel.setPrivateComment(userSubmissionComment.getPrivateComment());
+			emailCommentModel.setAdminComment(userSubmissionComment.getAdminComment());
+			emailCommentModel.setEntryOwner(component.getOwnerUser());
+
+			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
+
+		}
 	}
 
 }
