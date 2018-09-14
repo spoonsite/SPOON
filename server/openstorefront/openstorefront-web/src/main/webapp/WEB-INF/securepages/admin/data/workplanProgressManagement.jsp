@@ -310,7 +310,30 @@
 									requiredPermissions: ['WORKFLOW-LINK-UPDATE'],
 									handler: function () {
 										var record = linkGrid.getSelection()[0];
-										actionWorkAndProcessComponent(record);
+										// check the required attributes of the component
+										var submissionId = record.get('userSubmissionId');
+										var componentId = record.get('componentId');
+										if (submissionId) {
+											//check submission
+											actionWorkAndProcessComponent(record, true);
+										} else if (componentId) {
+											//check component
+											Ext.getBody().mask('Checking Entry...');
+											Ext.Ajax.request({
+												url: 'api/v1/resource/components/' + componentId + '/validate',
+												method: 'GET',
+												success: function (response, opts) {
+													Ext.getBody().unmask();
+													invalidEntry = !!response.errors;
+													actionWorkAndProcessComponent(record, invalidEntry);
+												},
+												failure: function (response, opts) {
+													console.error("ERROR: ", response);
+													Ext.getBody().unmask();
+													actionWorkAndProcessComponent(record, true);
+												}
+											});
+										}
 									}
 								},
 								{
@@ -449,11 +472,11 @@
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
 				};
 				
-				var actionWorkAndProcessComponent = function(record){
+				var actionWorkAndProcessComponent = function(record, invalidEntry){
 					
 					var workPlanId = record.get('workPlanId');
 					var workPlanLinkId = record.get('workPlanLinkId');
-										
+
 					var processCompWin = Ext.create('Ext.window.Window', {				
 						title: 'Workflow',
 						iconCls: 'fa fa-lg fa-exchange',
@@ -470,6 +493,9 @@
 								scrollable: true,
 								bodyStyle: 'padding: 10px;',
 								tpl: new Ext.XTemplate(
+									!!invalidEntry ?
+										'<div style="padding: 0.5em;" class="alert-danger"><i class="fa fa-warning text-warning"></i>&nbsp; Unable to process workflow. The component has missing required attributes or has not been submitted. Please contact the owner of this entry or the admin.</div>'
+										: '',
 									'<h1 style="text-align: center">Current Step - {name}</h1>',
 									'<h3>Instructions: </h3>',
 									'{description}'
@@ -487,6 +513,7 @@
 										editable: false,
 										typeAhead: false,																
 										fieldLabel: 'Work State <i class="fa fa-question-circle text-warning" data-qtip="Flags an item with a status to communicate state"></i>',
+										disabled: !!invalidEntry,
 										valueField: 'code',
 										displayField: 'description',
 										queryMode: 'local',
@@ -528,6 +555,7 @@
 									{
 										text: 'Go To Previous Step',
 										iconCls: 'fa fa-lg fa-backward icon-button-color-save',
+										disabled: !!invalidEntry,
 										handler: function(){
 											processCompWin.setLoading('Updating State...');
 											Ext.Ajax.request({
@@ -550,6 +578,7 @@
 									{
 										text: 'Complete This Step',											
 										iconCls: 'fa fa-lg fa-list-alt icon-button-color-save',
+										disabled: !!invalidEntry,
 										handler: function(){
 											processCompWin.setLoading('Updating State...');
 											Ext.Ajax.request({
@@ -680,16 +709,10 @@
 					Ext.Ajax.request({
 						url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assigntome',
 						method: 'PUT',
-						callback: function() {
-							// processCompWin.setLoading(false);
-						},
 						success: function(response, opt) {
 							actionRefreshComponentGrid();
-							// Ext.toast('Successfully Updated Wor');
-							// processCompWin.close();
 						}												
 					});
-					// console.log('AssignToMe', 'api/v1/resource/workplans/{workPlanId}/worklinks/{workLinkId}/assign');	
 				};
 				
 				var actionUnassign = function(){

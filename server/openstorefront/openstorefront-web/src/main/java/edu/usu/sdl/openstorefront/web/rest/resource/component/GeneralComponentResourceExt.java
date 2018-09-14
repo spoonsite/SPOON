@@ -914,6 +914,27 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@GET
+	@APIDescription("Validates the state of a given component")
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(ComponentDetailView.class)
+	@Path("/{id}/validate")
+	public Response getComponentValidation(
+			@PathParam("id")
+			@RequiredParam String componentId
+	)
+	{
+		RequiredForComponent validationModel = new RequiredForComponent();
+		Component tempComponent = service.getPersistenceService().findById(Component.class, componentId);
+		validationModel.setComponent(tempComponent);
+		ValidationResult result = validationModel.checkForComplete();
+		if (result.valid()) {
+			return Response.ok().build();
+		}
+		return Response.ok(result.toRestError()).build();
+	}
+
+
+	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentDetailView.class)
