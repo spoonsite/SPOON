@@ -7,6 +7,7 @@
         <h1 class="title">{{ componentData.name }}</h1>
       </v-card-text>
     </v-card>
+    <v-alert type="warning" :value="invalidEntry"><strong>Unable to process workflow. The component has missing required attributes or has not been submitted. Please contact the owner of this entry or the admin.</strong></v-alert>
     <div v-if="steps.length > 0">
       <v-stepper v-model="currentStep" vertical>
         <template
@@ -19,7 +20,7 @@
           </v-stepper-step>
 
           <v-stepper-content :key="step.name" :step="index + 1">
-            <v-card color="grey lighten-1" class="mb-5"><strong>{{ step.description }}</strong></v-card>
+            <div class="grey lighten-3 mb-4 pa-2"><strong>{{ step.description }}</strong></div>
             <v-btn block color="primary" @click="viewEntry()">View Entry</v-btn>
             <v-layout justify-space-between>
               <v-flex xs-6>
@@ -28,7 +29,7 @@
                   color="primary"
                   @click="nextStep"
                   :loading="continueLoading"
-                  :disabled="continueLoading"><v-icon class="mr-2" small>fa-arrow-circle-down</v-icon>Next</v-btn>
+                  :disabled="continueLoading || invalidEntry"><v-icon class="mr-2" small>fa-arrow-circle-down</v-icon>Next</v-btn>
               </v-flex>
               <v-flex xs-6>
                 <v-btn
@@ -37,7 +38,7 @@
                   color="primary"
                   @click="prevStep"
                   :loading="prevLoading"
-                  :disabled="prevLoading"><v-icon class="mr-2" small>fa-arrow-circle-up</v-icon>Back</v-btn>
+                  :disabled="prevLoading || invalidEntry"><v-icon class="mr-2" small>fa-arrow-circle-up</v-icon>Back</v-btn>
               </v-flex>
             </v-layout>
           </v-stepper-content>
@@ -79,10 +80,23 @@ export default {
       isLoading: false,
       prevLoading: false,
       steps: [],
+      invalidEntry: false,
       workLink: {}
     };
   },
   methods: {
+    validateEntry () {
+      this.isLoading = true;
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.componentData.componentId}/validate`)
+        .then(res => {
+          if (res.data.errors) {
+            this.invalidEntry = false;
+          }
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
+    },
     getWorkLink () {
       this.$http.get(`/openstorefront/api/v1/resource/workplans/worklinks/${this.id}`)
         .then(res => {
@@ -99,6 +113,7 @@ export default {
           this.componentData = response.data;
         })
         .finally(() => {
+          this.validateEntry();
           this.isLoading = false;
         });
     },
