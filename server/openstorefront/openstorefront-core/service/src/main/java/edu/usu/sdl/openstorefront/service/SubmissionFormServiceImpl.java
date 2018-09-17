@@ -694,7 +694,7 @@ public class SubmissionFormServiceImpl
 			UserSubmission userSubmission = getPersistenceService().findById(UserSubmission.class, workPlanLink.getUserSubmissionId());
 			
 			emailCommentModel.setComment(userSubmissionComment.getComment());			
-			if(userSubmissionComment.getAdminComment() != null && (userSubmissionComment.getAdminComment()) ){
+			if(userSubmissionComment.getAdminComment() != null && (userSubmissionComment.getAdminComment())){
 				emailCommentModel.setAuthor("ADMIN");
 			}
 			else {
