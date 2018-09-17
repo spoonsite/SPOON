@@ -30,10 +30,25 @@ Ext.define('OSF.workplanProgress.ProgressView', {
     style: 'border-top: 1px solid #D0D0D0 !important',
     title: 'Selected Workplan Progress',
     addSteps: function(record) {
+        console.log("RECORD: ", record);
         var steps = record.get('steps');
         var currentStep = record.get('currentStep');
+
+        // -----------------------
+        // compute days ago edited
+        // -----------------------
+        var today = new Date();
+        var oneDay = 1000*60*60*24;
+        var updateDts = record.get('updateDts'); 
+        if (typeof updateDts !== "object") {
+            updateDts = Ext.Date.parse(updateDts, 'c');
+        } 
+        var daysAgo = Math.ceil((updateDts - today.getTime())/oneDay) * -1;
+        // -----------------------
         var statusCmp = Ext.getCmp('workplan-progress-management-worklink-status');
         var statusToolbarCmp = Ext.getCmp('workplan-progress-view');
+
+        var subStatusDescription = record.get('subStatusDescription');
 
         var pendingColor           = record.get('workPlanPendingColor');
         var progressColor          = record.get('workPlanInProgressColor');
@@ -69,14 +84,23 @@ Ext.define('OSF.workplanProgress.ProgressView', {
         Ext.Array.forEach(steps, function (el, index) {
             statusCmp.add({
                 xtype: 'container',
-                html:	'<div class="step-view-container ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + 
+                html:	'<div class="step-view-container ' + (index === steps.length - 1 ? 'last-step' : ' ') + ' " ' +
+                        '>' + 
                             '<span class="wp-step-label ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + el.name + '</span>' +
-                            '<div data-qtip="' + el.description + '"' + 
+                            '<div data-qtip="Step Description: ' + el.description +
+                                '<br>Workplan last update: ' + daysAgo + ' days ago' +
+                                ((subStatusDescription && stepColors[index] === progressColor) ?
+                                '<br>Attention Required: ' + subStatusDescription + ' " '  
+                                : ' " ') +
                             'class="step-view static-step-view ' + 
                             ' br-100 ' +
                             (index === steps.length - 1 ? ' last-step ' : ' ') +
                             '" ' + 
-                            ' style="background-color: #' + stepColors[index] + ';"' +
+                            ' style="background-color: #' + stepColors[index] + '; ' +
+                            ((subStatusDescription && stepColors[index] === progressColor) ?
+                            ' box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 #' + statusColor + ';" ' 
+                            : ';" '
+                            ) +
                             '></div>' +
                         '</div>'
             });
