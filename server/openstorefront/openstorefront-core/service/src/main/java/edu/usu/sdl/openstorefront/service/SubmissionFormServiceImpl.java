@@ -694,7 +694,7 @@ public class SubmissionFormServiceImpl
 			UserSubmission userSubmission = getPersistenceService().findById(UserSubmission.class, workPlanLink.getUserSubmissionId());
 			
 			emailCommentModel.setComment(userSubmissionComment.getComment());			
-			if(userSubmissionComment.getAdminComment() != null && (userSubmissionComment.getAdminComment() != false) ){
+			if(userSubmissionComment.getAdminComment() != null && (userSubmissionComment.getAdminComment()) ){
 				emailCommentModel.setAuthor("ADMIN");
 			}
 			else {
@@ -706,7 +706,7 @@ public class SubmissionFormServiceImpl
 			emailCommentModel.setAssignedUser(workPlanLink.getCurrentUserAssigned());
 			emailCommentModel.setAssignedGroup(workPlanLink.getCurrentGroupAssigned());
 			emailCommentModel.setPrivateComment(userSubmissionComment.getPrivateComment());
-			emailCommentModel.setAdminComment((userSubmissionComment.getAdminComment() != null && userSubmissionComment.getAdminComment() != false));
+			emailCommentModel.setAdminComment((userSubmissionComment.getAdminComment() != null && userSubmissionComment.getAdminComment()));
 			emailCommentModel.setEntryOwner(userSubmission.entityOwner());
 
 			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
