@@ -33,7 +33,10 @@ Ext.define('OSF.common.SecurityComponentMixin', { extend: 'Ext.Mixin' }, functio
 
 		Ext.Array.forEach(user.roles, function (role) {
 
-			userPermissions = userPermissions.concat(role.permissions);
+			if(role.permissions){
+				userPermissions = userPermissions.concat(role.permissions);
+			}
+			
 		});
 		Ext.Array.forEach(userPermissions, function (item, index) {
 
