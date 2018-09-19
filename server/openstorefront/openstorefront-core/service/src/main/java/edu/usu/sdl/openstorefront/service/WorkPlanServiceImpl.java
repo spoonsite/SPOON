@@ -747,15 +747,15 @@ public class WorkPlanServiceImpl
 	public void removeComponentTypeFromWorkPlans(String componentType)
 	{
 		WorkPlan workPlanExample = new WorkPlan();
-		List<WorkPlan> workPlans = workPlanExample.findByExampleProxy();
+		List<WorkPlan> workPlans = workPlanExample.findByExample();
 		for (WorkPlan workPlan : workPlans) {
 			boolean save = false;
-			if (workPlan.getComponentTypes() != null) {
-				if (workPlan.getComponentTypes().removeIf(stepRole -> {
-					return stepRole.getComponentType().equals(componentType);
-				})) {
+			if (workPlan.getComponentTypes() != null && !workPlan.getComponentTypes().isEmpty()) {
+				
+				if (workPlan.getComponentTypes().removeIf(stepRole -> {	return stepRole.getComponentType().equals(componentType); })) {
 					save = true;
 				}
+				
 			}
 			if (save) {
 				workPlan.save();
@@ -767,7 +767,7 @@ public class WorkPlanServiceImpl
 	public void removeSecurityRole(String securityRole)
 	{
 		WorkPlan workPlanExample = new WorkPlan();
-		List<WorkPlan> workPlans = workPlanExample.findByExampleProxy();
+		List<WorkPlan> workPlans = workPlanExample.findByExample();
 		for (WorkPlan workPlan : workPlans) {
 			boolean save = false;
 			if (workPlan.getSteps() != null) {

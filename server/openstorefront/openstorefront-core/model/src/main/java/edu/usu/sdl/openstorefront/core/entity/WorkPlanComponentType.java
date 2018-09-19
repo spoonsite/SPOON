@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import java.io.Serializable;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -34,6 +35,7 @@ public class WorkPlanComponentType
 
 	@ConsumeField
 	@FK(value = ComponentType.class, enforce = true)
+	@NotNull
 	private String componentType;
 
 	@Version

@@ -691,23 +691,23 @@ public class SubmissionFormServiceImpl
 			EmailCommentModel emailCommentModel = new EmailCommentModel();
 			
 			WorkPlanLink workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(userSubmissionComment.getUserSubmissionId());
-			Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
+			UserSubmission userSubmission = getPersistenceService().findById(UserSubmission.class, workPlanLink.getUserSubmissionId());
 			
 			emailCommentModel.setComment(userSubmissionComment.getComment());			
-			if(userSubmissionComment.getAdminComment()){
+			if(userSubmissionComment.getAdminComment() != null && (userSubmissionComment.getAdminComment())){
 				emailCommentModel.setAuthor("ADMIN");
 			}
 			else {
-				emailCommentModel.setAuthor(component.getOwnerUser());
+				emailCommentModel.setAuthor(userSubmission.getOwnerUsername());
 			}	
-			emailCommentModel.setEntryName(component.getName());
+			emailCommentModel.setEntryName(userSubmission.getSubmissionName());
 			emailCommentModel.setCurrentStep(getWorkPlanService().getWorkPlan(workPlanLink.getWorkPlanId()).findWorkPlanStep(workPlanLink.getCurrentStepId()).getName());
 			emailCommentModel.setReplyInstructions("To respond to this comment, please login and go to the submission.");
 			emailCommentModel.setAssignedUser(workPlanLink.getCurrentUserAssigned());
 			emailCommentModel.setAssignedGroup(workPlanLink.getCurrentGroupAssigned());
 			emailCommentModel.setPrivateComment(userSubmissionComment.getPrivateComment());
-			emailCommentModel.setAdminComment(userSubmissionComment.getAdminComment());
-			emailCommentModel.setEntryOwner(component.getOwnerUser());
+			emailCommentModel.setAdminComment((userSubmissionComment.getAdminComment() != null && userSubmissionComment.getAdminComment()));
+			emailCommentModel.setEntryOwner(userSubmission.entityOwner());
 
 			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
 
