@@ -36,14 +36,25 @@
 					src: ''
 				});
 
+				var entryCommentsPanel = Ext.create('OSF.workplanProgress.CommentPanel', {
+					region: 'east',
+					width: '30%',
+					animCollapse: false,
+					collapsible: true,
+					collapseDirection: 'left',
+					titleCollapse: true,
+					style: 'background: #ffffff;',
+					itemId: 'entryCommentsPanel'
+				});
+
 				var componentViewWin = Ext.create('Ext.window.Window', {
 					id: 'componentViewWin',
 					title: 'Entry Details',
 					iconCls: 'fa fa-lg fa-exchange',
 					maximizable: true,
+					modal: true,
 					width: '75%',
 					height: '75%',
-					modal: true,
 					defaults: {
 						collapsible: true,
 						split: true,
@@ -51,50 +62,24 @@
 					},
 					layout: 'border',
 					items: [
+						entryCommentsPanel,
 						{
 							xtype: 'panel',
+							title: 'Preview',
 							collapsible: false,
 							region: 'center',
-							margin: '0 0 0 0',
+							margins: '0 0 0 0',
 							width: '75%',
 							height: '80%',
 							title: 'Entry Info',
 							iconCls: 'fa fa-lg fa-eye',
 							layout: 'fit',
+							itemId: 'previewPanel',
 							items: [
 								previewContents
-							],
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Close',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function() {
-												this.up('window').hide();
-											}
-										}
-									]
-								}
 							]
-						},
-						{
-							xtype: 'osf.wp.commentpanel',
-							floatable: false,
-							collapsed: false,
-							collapsible: true,
-							animCollapse: false,
-							titleCollapse: true,
-							width: 500,
-							minWidth: 250,
-							maxWidth: 650,
-							bodyStyle: 'background: white;',
-							region: 'east',
-							itemId: 'commentPanel'
 						}
-					]
+					]	
 				});
 
 				var linkGridStore = Ext.create('Ext.data.Store', {
@@ -444,9 +429,35 @@
 				var actionViewComponent = function(){
 
 					componentViewWin.show();
-					var comp_id = Ext.getCmp('linkGrid').getSelection()[0].data.componentId;
-					componentViewWin.down('[itemId=commentPanel]').loadComponentComments(comp_id);
-					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + comp_id);
+					var record = Ext.getCmp('linkGrid').getSelection()[0];
+					var id;
+					var isPartialSubmission = false;
+					if(record.data){
+						record = record.data;
+						id = record.componentId;
+						if (record.userSubmissionId) {
+							id = record.userSubmissionId;
+							isPartialSubmission = true;
+						}
+					}
+
+					if (!isPartialSubmission) {
+						componentViewWin.getComponent('previewPanel').show();
+						entryCommentsPanel.setWidth('30%');
+						entryCommentsPanel.setIsPartialSubmission(false);
+
+						entryCommentsPanel.loadComponentComments(id);
+						entryCommentsPanel.expand();
+						previewContents.load('view.jsp?id=' + id +'&fullPage=true&embedded=true');
+					}
+					else {
+						componentViewWin.getComponent('previewPanel').hide();
+						entryCommentsPanel.setWidth('100%');
+
+						entryCommentsPanel.setIsPartialSubmission(true);
+						entryCommentsPanel.loadComponentComments(id);
+					}
+					
 				};
 				
 				var actionWorkAndProcessComponent = function(record){
