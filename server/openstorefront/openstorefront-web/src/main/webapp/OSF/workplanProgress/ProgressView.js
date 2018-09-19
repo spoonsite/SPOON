@@ -30,7 +30,6 @@ Ext.define('OSF.workplanProgress.ProgressView', {
     style: 'border-top: 1px solid #D0D0D0 !important',
     title: 'Selected Workplan Progress',
     addSteps: function(record) {
-        console.log("RECORD: ", record);
         var steps = record.get('steps');
         var currentStep = record.get('currentStep');
 
