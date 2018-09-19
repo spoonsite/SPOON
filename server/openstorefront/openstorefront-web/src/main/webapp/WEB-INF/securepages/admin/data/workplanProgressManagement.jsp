@@ -68,7 +68,7 @@
 							title: 'Preview',
 							collapsible: false,
 							region: 'center',
-							margins: '0 0 0 0',
+							margin: '0 0 0 0',
 							width: '75%',
 							height: '80%',
 							title: 'Entry Info',
