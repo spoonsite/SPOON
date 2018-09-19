@@ -923,9 +923,14 @@ public abstract class GeneralComponentResourceExt
 			@RequiredParam String componentId
 	)
 	{
-		RequiredForComponent validationModel = new RequiredForComponent();
 		Component tempComponent = service.getPersistenceService().findById(Component.class, componentId);
+		if (tempComponent == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		List<ComponentAttribute> componentAttributes = service.getComponentService().getAttributesByComponentId(componentId);
+		RequiredForComponent validationModel = new RequiredForComponent();
 		validationModel.setComponent(tempComponent);
+		validationModel.setAttributes(componentAttributes);
 		ValidationResult result = validationModel.checkForComplete();
 		if (result.valid()) {
 			return Response.ok().build();
