@@ -87,8 +87,9 @@ Ext.define('OSF.workplanProgress.ProgressView', {
                 html:	'<div class="step-view-container ' + (index === steps.length - 1 ? 'last-step' : ' ') + ' " ' +
                         '>' + 
                             '<span class="wp-step-label ' + (index === steps.length - 1 ? 'last-step' : ' ') + '">' + el.name + '</span>' +
-                            '<div data-qtip="Step Description: ' + el.description +
-                                '<br>Workplan last update: ' + daysAgo + ' days ago' +
+                            // TODO: replace qtip with a popup with more information about the workplan step
+                            '<div data-qtip=" ' +
+                                'Workplan last update: ' + daysAgo + ' days ago' +
                                 ((subStatusDescription && stepColors[index] === progressColor) ?
                                 '<br>Attention Required: ' + subStatusDescription + ' " '  
                                 : ' " ') +
