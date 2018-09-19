@@ -807,7 +807,7 @@ public class ComponentServiceImpl
 			Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
 			
 			emailCommentModel.setComment(componentComment.getComment());			
-			if(componentComment.getAdminComment()){
+			if(componentComment.getAdminComment() != null && (componentComment.getAdminComment())){
 				emailCommentModel.setAuthor("ADMIN");
 			}
 			else {
@@ -819,8 +819,8 @@ public class ComponentServiceImpl
 			emailCommentModel.setAssignedUser(workPlanLink.getCurrentUserAssigned());
 			emailCommentModel.setAssignedGroup(workPlanLink.getCurrentGroupAssigned());
 			emailCommentModel.setPrivateComment(componentComment.getPrivateComment());
-			emailCommentModel.setAdminComment(componentComment.getAdminComment());
-			emailCommentModel.setEntryOwner(component.getOwnerUser());
+			emailCommentModel.setAdminComment((componentComment.getAdminComment() != null && componentComment.getAdminComment()));
+			emailCommentModel.setEntryOwner(component.entityOwner());
 			
 			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
 			

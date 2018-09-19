@@ -321,7 +321,7 @@ public class NotificationServiceImpl
 	{
 
 		List<UserRole> userRoles = null;
-		if(!StringUtils.isEmpty(emailCommentModel.getAssignedGroup())){
+		if(StringUtils.isNotBlank(emailCommentModel.getAssignedGroup()) && StringUtils.isNotEmpty(emailCommentModel.getAssignedGroup())){
 			UserRole userRole = new UserRole();
 			userRole.setRole(emailCommentModel.getAssignedGroup());
 			userRole.setActiveStatus(UserRole.ACTIVE_STATUS);
