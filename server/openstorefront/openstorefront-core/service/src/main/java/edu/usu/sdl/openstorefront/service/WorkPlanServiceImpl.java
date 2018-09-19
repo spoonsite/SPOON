@@ -753,20 +753,20 @@ public class WorkPlanServiceImpl
 			workPlan.getName();
 			if (workPlan.getComponentTypes() != null && !workPlan.getComponentTypes().isEmpty()) {
 				
-				List<WorkPlanComponentType> wPList = workPlan.getComponentTypes();
-				
-				for(int i = workPlan.getComponentTypes().size() - 1; i >= 0; i--){
-					if(wPList.get(i).getComponentType() != null){
-						if (wPList.get(i).getComponentType().equals(componentType)) {
-							wPList.remove(i);
-							save = true;
-						}
-					}
-				}
-				
-//				if (workPlan.getComponentTypes().removeIf(stepRole -> {	return stepRole.getComponentType().equals(componentType); })) {
-//					save = true;
+//				List<WorkPlanComponentType> wPList = workPlan.getComponentTypes();
+//				
+//				for(int i = workPlan.getComponentTypes().size() - 1; i >= 0; i--){
+//					if(wPList.get(i).getComponentType() != null){
+//						if (wPList.get(i).getComponentType().equals(componentType)) {
+//							wPList.remove(i);
+//							save = true;
+//						}
+//					}
 //				}
+				
+				if (workPlan.getComponentTypes().removeIf(stepRole -> {	return stepRole.getComponentType().equals(componentType); })) {
+					save = true;
+				}
 	
 				
 			}
