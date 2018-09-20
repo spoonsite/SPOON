@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.workplan;
 
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
@@ -41,7 +42,7 @@ public class AssignEntryAction
 			if (StringUtils.isNotBlank(currentStepAction.getActionOption().getAssignGroup())) {
 				workPlanLink.setCurrentGroupAssigned(currentStepAction.getActionOption().getAssignGroup());
 			}
-			if (currentStepAction.getActionOption().getUnassignGroup()) {
+			else if (Convert.toBoolean(currentStepAction.getActionOption().getUnassignGroup())) {
 				workPlanLink.setCurrentGroupAssigned(null);
 			}
 		} else {
