@@ -441,7 +441,7 @@ public class WorkPlanServiceImpl
 		//Check User to make sure
 		boolean proceed = true;
 		if (checkRoles) {
-			proceed = checkRolesOnStep(workPlan, workPlanStepId);
+			proceed = checkRolesOnStep(workPlan, workPlanLink.getCurrentStepId());
 		}
 
 		if (proceed) {
