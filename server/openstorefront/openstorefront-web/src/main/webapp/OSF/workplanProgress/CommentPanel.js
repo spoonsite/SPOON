@@ -126,14 +126,16 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 								},
 								{
 									xtype: 'fieldcontainer',
-									fieldLabel: 'Private <i class="fa fa-question-circle" data-qtip="Private comments are only visable to admins"></i>',
+									fieldLabel: 'Private <i class="fa fa-question-circle" data-qtip="Private comments are only visible to admins"></i>',
 									defaultType: 'checkboxfield',
 									width: '30%',
 									labelWidth: 75,
+									requiredPermissions: ['WORKFLOW-ADMIN-SUBMISSION-COMMENTS'],
 									style: 'float: right;',
 									items: [
 										{
 											inputValue: '1',
+											checked: true,
 											id: 'checkbox1',
 											itemId: 'privateCheckbox'
 										}
@@ -279,9 +281,10 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 
 		var commentsPanel = this;
 		var commentId = commentsPanel.getEditComment().commentId;
+		var hasPermission = CoreService.userservice.userHasPermission(CoreService.userservice.user, 'WORKFLOW-ADMIN-SUBMISSION-COMMENTS');
 		var formValues = Ext.apply(commentsPanel.down('[itemId=form]').getValues(), {
 			commentType: 'SUBMISSION',
-			privateComment: commentsPanel.down('[itemId=privateCheckbox]').getValue()
+			privateComment: hasPermission ? commentsPanel.down('[itemId=privateCheckbox]').getValue() : false,
 		});
 
 		commentsPanel.setLoading('Saving...');
@@ -310,6 +313,6 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 		this.down('[itemId=editCommentButton]').hide();
 		this.down('[itemId=cancelCommentButton]').hide();
 		this.down('[itemId=postCommentId]').show();
-		this.down('[itemId=privateCheckbox]').setValue(false);
+		this.down('[itemId=privateCheckbox]').setValue(true);
 	}
 });
