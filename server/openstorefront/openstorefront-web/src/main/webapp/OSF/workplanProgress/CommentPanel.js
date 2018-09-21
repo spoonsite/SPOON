@@ -136,7 +136,6 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 										{
 											inputValue: '1',
 											checked: true,
-											id: 'checkbox1',
 											itemId: 'privateCheckbox'
 										}
 									]
@@ -168,98 +167,99 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 				commentsContainer.removeAll(true);
 
 				if (res.length > 0) {
-					
-					var commentsToAdd = [];
-					Ext.Array.forEach(res, function (commentObj, index) {
+					CoreService.userservice.getCurrentUser().then(function (user) {
+						
+						var commentsToAdd = [];
+						Ext.Array.forEach(res, function (commentObj, index) {
+							var isOwner = user.username === commentObj.createUser;
+							var commentClass = isOwner ? 'submission-comment-right' : 'submission-comment-left';
+							var privateComment = commentObj.privateComment ? '<b>(Private)</b>' : '';
+							var privateCommentStyle = commentObj.privateComment ? 'alert-warning' : '';
+							var commentContents = [
+								{
+									xtype: 'container',
+									width: '100%',
+									cls: (isOwner ? 'owner-submission-comment ' : ' ') + (res.length === index + 1 ? 'submission-new-comment' : ''),
+									html: 	'<div class="submission-comment ' + commentClass + ' ' + privateCommentStyle + '">' + 
+										'<div class="author-comment">' + commentObj.createUser + ' ' + privateComment + '</div>' +
+										'<div class="time-created-comment">' + (Ext.Date.format(new Date(commentObj.createDts), 'F j, Y, g:ia')) + '</div>' +
+												'<div class="block-comment">' + commentObj.comment + '</div>' +
+											'</div>',
+									listeners: isOwner ? {
+										element: 'el',
+										click: function (event) {
 
-						var isOwner = CoreService.userservice.user.username === commentObj.createUser;
-						var commentClass = isOwner ? 'submission-comment-right' : 'submission-comment-left';
-						var privateComment = commentObj.privateComment ? '<b>(Private)</b>' : '';
-						var privateCommentStyle = commentObj.privateComment ? 'alert-warning' : '';
-						var commentContents = [
-							{
+											Ext.create('Ext.menu.Menu', {
+												items: [
+													{
+														text: 'Comment Locked',
+														iconCls: 'fa fa-2x fa-lock',
+														style: 'background-color: #F2DEDE',
+														hidden: commentObj.editDeleteLock ? false : true
+													},
+													{
+														text: 'Edit Comment',
+														iconCls: 'fa fa-2x fa-pencil-square-o',
+														disabled: commentObj.editDeleteLock ? true : false,
+														handler: function () {
+															commentPanel.setEditComment({
+																commentId: commentObj.commentId,
+																commentText: commentObj.comment
+															});
+
+															commentPanel.down('[itemId=commentTextField]').setValue(commentObj.comment);
+															commentPanel.down('[itemId=postCommentId]').hide();
+															commentPanel.down('[itemId=editCommentButton]').show();
+															commentPanel.down('[itemId=privateCheckbox]').setValue(commentObj.privateComment);
+														}
+													},
+													{
+														text: 'Delete Comment',
+														iconCls: 'fa fa-2x fa-trash',
+														disabled: commentObj.editDeleteLock ? true : false,
+														handler: function () {
+															Ext.Msg.show({
+																title: 'Delete Comment?',
+																message: 'You are about to delete the comment <b><i>"' + Ext.String.ellipsis(commentObj.comment, 100, true) + '"</i></b>.<br><br> Are you sure you want to continue?',
+																buttons: Ext.Msg.YESNO,
+																icon: Ext.Msg.QUESTION,
+																fn: function (btn) {
+																	if (btn === 'yes') {
+																		commentPanel.setLoading('Deleting...');
+																		Ext.Ajax.request({
+																			url: 'api/v1/resource/' + (commentPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentPanel.getRecordId() + '/comments/' + commentObj.commentId,
+																			method: 'DELETE',
+																			callback: function() {
+																				commentPanel.setLoading(true);
+																			},
+																			success: function () {
+																				commentPanel.loadComponentComments(commentPanel.getRecordId());
+																				commentPanel.resetFormState();
+																			}
+																		});
+																	}
+																}
+															});
+														}
+													}
+												]
+											}).showAt(event.clientX, event.clientY);
+										}
+									} : {}
+								}
+							];
+
+							commentsToAdd.push({
 								xtype: 'container',
 								width: '100%',
-								cls: (isOwner ? 'owner-submission-comment ' : ' ') + (res.length === index + 1 ? 'submission-new-comment' : ''),
-								html: 	'<div class="submission-comment ' + commentClass + ' ' + privateCommentStyle + '">' + 
-									'<div class="author-comment">' + commentObj.createUser + ' ' + privateComment + '</div>' +
-									'<div class="time-created-comment">' + (Ext.Date.format(new Date(commentObj.createDts), 'F j, Y, g:ia')) + '</div>' +
-											'<div class="block-comment">' + commentObj.comment + '</div>' +
-										'</div>',
-								listeners: isOwner ? {
-									element: 'el',
-									click: function (event) {
-
-										Ext.create('Ext.menu.Menu', {
-											items: [
-												{
-													text: 'Comment Locked',
-													iconCls: 'fa fa-2x fa-lock',
-													style: 'background-color: #F2DEDE',
-													hidden: commentObj.editDeleteLock ? false : true
-												},
-												{
-													text: 'Edit Comment',
-													iconCls: 'fa fa-2x fa-pencil-square-o',
-													disabled: commentObj.editDeleteLock ? true : false,
-													handler: function () {
-														commentPanel.setEditComment({
-															commentId: commentObj.commentId,
-															commentText: commentObj.comment
-														});
-
-														commentPanel.down('[itemId=commentTextField]').setValue(commentObj.comment);
-														commentPanel.down('[itemId=postCommentId]').hide();
-														commentPanel.down('[itemId=editCommentButton]').show();
-														commentPanel.down('[itemId=privateCheckbox]').setValue(commentObj.privateComment);
-													}
-												},
-												{
-													text: 'Delete Comment',
-													iconCls: 'fa fa-2x fa-trash',
-													disabled: commentObj.editDeleteLock ? true : false,
-													handler: function () {
-														Ext.Msg.show({
-															title: 'Delete Comment?',
-															message: 'You are about to delete the comment <b><i>"' + Ext.String.ellipsis(commentObj.comment, 100, true) + '"</i></b>.<br><br> Are you sure you want to continue?',
-															buttons: Ext.Msg.YESNO,
-															icon: Ext.Msg.QUESTION,
-															fn: function (btn) {
-																if (btn === 'yes') {
-																	commentPanel.setLoading('Deleting...');
-																	Ext.Ajax.request({
-																		url: 'api/v1/resource/' + (commentPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentPanel.getRecordId() + '/comments/' + commentObj.commentId,
-																		method: 'DELETE',
-																		callback: function() {
-																			commentPanel.setLoading(true);
-																		},
-																		success: function () {
-																			commentPanel.loadComponentComments(commentPanel.getRecordId());
-																			commentPanel.resetFormState();
-																		}
-																	});
-																}
-															}
-														});
-													}
-												}
-											]
-										}).showAt(event.clientX, event.clientY);
-									}
-								} : {}
-							}
-						];
-
-						commentsToAdd.push({
-							xtype: 'container',
-							width: '100%',
-							items: commentContents
+								items: commentContents
+							});
 						});
-					});
-					commentsContainer.add(commentsToAdd);
+						commentsContainer.add(commentsToAdd);
 
-					initialLabel.hide();
-					commentsContainer.show();
+						initialLabel.hide();
+						commentsContainer.show();
+					})
 				}
 				else {
 					initialLabel.show();
@@ -281,26 +281,29 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 
 		var commentsPanel = this;
 		var commentId = commentsPanel.getEditComment().commentId;
-		var hasPermission = CoreService.userservice.userHasPermission(CoreService.userservice.user, 'WORKFLOW-ADMIN-SUBMISSION-COMMENTS');
-		var formValues = Ext.apply(commentsPanel.down('[itemId=form]').getValues(), {
-			commentType: 'SUBMISSION',
-			privateComment: hasPermission ? commentsPanel.down('[itemId=privateCheckbox]').getValue() : false,
-		});
 
-		commentsPanel.setLoading('Saving...');
-		Ext.Ajax.request({
-			url: 'api/v1/resource/' + (commentsPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentsPanel.getRecordId() + '/comments' + (commentId ? '/' + commentId : ''),
-			method: commentId ? 'PUT' : 'POST',
-			jsonData: formValues,
-			callback: function() {
-				commentsPanel.setLoading(false);
-			},
-			success: function (res) {
+		CoreService.userservice.getCurrentUser().then(function (user) {
+			var hasPermission = CoreService.userservice.userHasPermission(user, 'WORKFLOW-ADMIN-SUBMISSION-COMMENTS');
+			var formValues = Ext.apply(commentsPanel.down('[itemId=form]').getValues(), {
+				commentType: 'SUBMISSION',
+				privateComment: hasPermission ? commentsPanel.down('[itemId=privateCheckbox]').getValue() : false,
+			});
 
-				var componentId = commentsPanel.getRecordId();
-				commentsPanel.resetFormState();
-				commentsPanel.loadComponentComments(componentId, commentId ? true : false);
-			}
+			commentsPanel.setLoading('Saving...');
+			Ext.Ajax.request({
+				url: 'api/v1/resource/' + (commentsPanel.getIsPartialSubmission() ? 'usersubmissions' : 'components') + '/' + commentsPanel.getRecordId() + '/comments' + (commentId ? '/' + commentId : ''),
+				method: commentId ? 'PUT' : 'POST',
+				jsonData: formValues,
+				callback: function() {
+					commentsPanel.setLoading(false);
+				},
+				success: function (res) {
+
+					var componentId = commentsPanel.getRecordId();
+					commentsPanel.resetFormState();
+					commentsPanel.loadComponentComments(componentId, commentId ? true : false);
+				}
+			});
 		});
 	},
 	resetFormState: function () {
