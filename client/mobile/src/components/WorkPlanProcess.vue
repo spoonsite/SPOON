@@ -7,7 +7,10 @@
         <h1 class="title">{{ componentData.name }}</h1>
       </v-card-text>
     </v-card>
-    <v-alert type="warning" :value="invalidEntry"><strong>Unable to process workflow. The component has missing required attributes or has not been submitted. Please contact the owner of this entry or the admin.</strong></v-alert>
+    <v-alert type="warning" :value="invalidEntry">
+      <strong>Unable to process workflow. The component has missing required attributes or has not been submitted. Please contact the owner of this entry or the admin.</strong>
+      <br/><span v-if="errors && errors.entry">{{ errors.entry[0].value }}</span>
+    </v-alert>
     <div v-if="steps.length > 0">
       <v-stepper v-model="currentStep" vertical>
         <template
@@ -81,6 +84,7 @@ export default {
       prevLoading: false,
       steps: [],
       invalidEntry: false,
+      errors: {},
       workLink: {}
     };
   },
@@ -90,6 +94,9 @@ export default {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.componentData.componentId}/validate`)
         .then(res => {
           if (res.data.errors) {
+            this.errors = res.data.errors;
+            this.invalidEntry = true;
+          } else {
             this.invalidEntry = false;
           }
         })
@@ -114,7 +121,6 @@ export default {
         })
         .finally(() => {
           this.validateEntry();
-          this.isLoading = false;
         });
     },
     nextStep () {

@@ -30,8 +30,6 @@
         </v-expansion-panel>
       </v-flex>
 
-    <v-divider class="my-2"></v-divider>
-
       <v-flex pa-3 xs12 md6 offset-md3>
         <h1>Unassigned</h1>
       </v-flex>
@@ -88,6 +86,7 @@ export default {
   },
   methods: {
     assignToMe (entry) {
+      this.isLoading = true;
       this.$http.put(`/openstorefront/api/v1/resource/workplans/${entry.workPlanId}/worklinks/${entry.workPlanLinkId}/assigntome`)
         .then(res => {
           this.assignedToMe = res.data;
@@ -98,12 +97,15 @@ export default {
         });
     },
     getWorkPlan () {
+      this.isLoading = true;
       this.$http.get(`/openstorefront/api/v1/resource/workplans/worklinks`)
         .then(res => {
           this.submissions = res.data;
+          this.isLoading = false;
         });
     },
     unassign (entry) {
+      this.isLoading = true;
       this.$http.put(`/openstorefront/api/v1/resource/workplans/${entry.workPlanId}/worklinks/${entry.workPlanLinkId}/unassign`)
         .finally(() => {
           this.getWorkPlan();
@@ -129,9 +131,3 @@ export default {
   }
 };
 </script>
-
-<style scoped lang="scss">
-  .sme-approval-page {
-
-  }
-</style>

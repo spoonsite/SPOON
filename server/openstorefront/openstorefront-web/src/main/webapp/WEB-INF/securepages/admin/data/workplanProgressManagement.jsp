@@ -309,8 +309,9 @@
 												method: 'GET',
 												success: function (response, opts) {
 													Ext.getBody().unmask();
-													invalidEntry = !!response.errors;
-													actionWorkAndProcessComponent(record, invalidEntry);
+													var data = response.responseText ? Ext.JSON.decode(response.responseText) : undefined;
+													invalidEntry = data && data.errors;
+													actionWorkAndProcessComponent(record, invalidEntry, data);
 												},
 												failure: function (response, opts) {
 													console.error("ERROR: ", response);
@@ -483,10 +484,12 @@
 					
 				};
 				
-				var actionWorkAndProcessComponent = function(record, invalidEntry){
+				var actionWorkAndProcessComponent = function(record, invalidEntry, responseData){
 					
 					var workPlanId = record.get('workPlanId');
 					var workPlanLinkId = record.get('workPlanLinkId');
+
+					var errorMsg = responseData && responseData.errors && responseData.errors.entry ? responseData.errors.entry[0].value : undefined;
 
 					var processCompWin = Ext.create('Ext.window.Window', {				
 						title: 'Workflow',
@@ -505,7 +508,8 @@
 								bodyStyle: 'padding: 10px;',
 								tpl: new Ext.XTemplate(
 									!!invalidEntry ?
-										'<div style="padding: 0.5em;" class="alert-danger"><i class="fa fa-warning text-warning"></i>&nbsp; Unable to process workflow. The component has missing required attributes or has not been submitted. Please contact the owner of this entry or the admin.</div>'
+										'<div style="padding: 0.5em;" class="alert-danger"><i class="fa fa-warning text-warning"></i>&nbsp; Unable to process workflow. The component has missing required attributes or has not been submitted. Please contact the owner of this entry or the admin.'
+										+ (errorMsg ? '<br/><p>' + errorMsg + '</p></div>' : '</div>')
 										: '',
 									'<h1 style="text-align: center">Current Step - {name}</h1>',
 									'<h3>Instructions: </h3>',
