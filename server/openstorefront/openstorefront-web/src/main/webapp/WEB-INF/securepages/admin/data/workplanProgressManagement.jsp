@@ -489,7 +489,13 @@
 					var workPlanId = record.get('workPlanId');
 					var workPlanLinkId = record.get('workPlanLinkId');
 
-					var errorMsg = responseData && responseData.errors && responseData.errors.entry ? responseData.errors.entry[0].value : undefined;
+					var errors = responseData && responseData.errors && responseData.errors.entry ? responseData.errors.entry : undefined;
+					var errorsHtml = '';
+					if (errors) {
+						Ext.Array.each(errors, function(el) {
+							errorsHtml += '<br/><p>' + el.value + '</p>'
+						})
+					}
 
 					var processCompWin = Ext.create('Ext.window.Window', {				
 						title: 'Workflow',
@@ -509,7 +515,7 @@
 								tpl: new Ext.XTemplate(
 									!!invalidEntry ?
 										'<div style="padding: 0.5em;" class="alert-danger"><i class="fa fa-warning text-warning"></i>&nbsp; Unable to process workflow. The component has missing required attributes or has not been submitted. Please contact the owner of this entry or the admin.'
-										+ (errorMsg ? '<br/><p>' + errorMsg + '</p></div>' : '</div>')
+										+ errorsHtml + '</div>'
 										: '',
 									'<h1 style="text-align: center">Current Step - {name}</h1>',
 									'<h3>Instructions: </h3>',

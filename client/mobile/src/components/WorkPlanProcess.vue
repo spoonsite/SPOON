@@ -9,7 +9,7 @@
     </v-card>
     <v-alert type="warning" :value="invalidEntry">
       <strong>Unable to process workflow. The component has missing required attributes or has not been submitted. Please contact the owner of this entry or the admin.</strong>
-      <br/><span v-if="errors && errors.entry">{{ errors.entry[0].value }}</span>
+      <div v-if="errors && errors.entry" v-for="error in errors.entry" :key="error.key">{{ error.value }}</div>
     </v-alert>
     <div v-if="steps.length > 0">
       <v-stepper v-model="currentStep" vertical>
