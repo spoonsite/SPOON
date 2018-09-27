@@ -324,7 +324,6 @@ public class WorkPlanServiceImpl
 			WorkPlan workPlan = getWorkPlanForComponentType(componentType);
 
 			workPlanLink.setWorkPlanId(workPlan.getWorkPlanId());
-
 			ComponentTypeRoleResolution roleResolution = getComponentService().findRoleGroupsForComponentType(componentType);
 			if (roleResolution != null) {
 				//assign to first group
@@ -332,6 +331,10 @@ public class WorkPlanServiceImpl
 			}
 
 			workPlanLink.setCurrentStepId(matchWorkPlanStepWithStatus(workPlan, componentId));
+			WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(workPlanLink.getCurrentStepId());
+			if (workPlanStep != null) {
+				applyStepActions(workPlanLink, workPlan, workPlanStep);
+			}
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find entry.", "Check data and refresh. ComponentId: " + componentId);
 		}
