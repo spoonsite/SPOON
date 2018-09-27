@@ -62,6 +62,9 @@ public abstract class BaseWorkPlanStepAction
 			case WorkPlanStepActionType.ASSIGN_ENTRY:
 				baseWorkPlanStepAction = new AssignEntryAction(workPlanLink, workPlan, currentStepAction);
 				break;
+			case WorkPlanStepActionType.ASSIGN_ENTRY_TYPE_GROUP:
+				baseWorkPlanStepAction = new AssignEntryTypeGroupAction(workPlanLink, workPlan, currentStepAction);
+				break;
 			case WorkPlanStepActionType.EMAIL:
 				baseWorkPlanStepAction = new EmailStepAction(workPlanLink, workPlan, currentStepAction);
 				break;
