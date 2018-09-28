@@ -111,7 +111,20 @@ Ext.define('OSF.workplanManagementTool.StepFormPanel', {
 							fieldLabel: 'Role Access <i class="fa fa-question-circle" data-qtip="Roles that will have access to manipulate a record on this step" ></i>',
 							xtype: 'RoleGroupMultiSelectComboBox',
 							width: '100%',
-							name: 'stepRole'
+							name: 'stepRole',
+						},
+						{
+							xtype: 'fieldcontainer',
+							fieldLabel: 'Give Role Access to',
+							defaultType: 'checkboxfield',
+							items: [
+								{
+									boxLabel  : 'Entry Type Group',
+									name      : 'UseEntryTypeGroup',
+									inputValue: '1',
+									id        : 'EntryTypeCheckBox'
+								}
+							]
 						},
 						{
 							fieldLabel: 'Approval State to Match <i class="fa fa-question-circle" data-qtip="This will be the <b>default</b> active step for an record that has been assigned to this workplan that has this record status" ></i>',
