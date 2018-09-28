@@ -314,7 +314,20 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							'<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeLabel}" width="40" /></tpl>',
 							'<hr>',
 							'{description}'
-							)
+							),
+					dockedItems: [{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						hidden: !sprite.node.key,
+						items: [{
+							xtype: 'button',
+							text: 'View',
+							iconCls: 'fa fa-lg fa-eye',
+							handler: function () {
+								window.location.href = 'view.jsp?id=' + sprite.node.key + '&fullPage=true'
+							}
+						}]
+					}]
 				});
 
 				var winX = event.pageX;
