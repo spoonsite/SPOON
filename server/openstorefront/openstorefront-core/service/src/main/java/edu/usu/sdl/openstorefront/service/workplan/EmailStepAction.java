@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import java.util.ArrayList;
@@ -39,9 +40,9 @@ public class EmailStepAction
 		extends BaseWorkPlanStepAction
 {
 
-	public EmailStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
+	public EmailStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, WorkPlanStep workPlanStep)
 	{
-		super(workPlanLink, workPlan, currentStepAction);
+		super(workPlanLink, workPlan, currentStepAction, workPlanStep);
 	}
 
 	@Override

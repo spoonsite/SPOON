@@ -77,8 +77,6 @@ Ext.define('OSF.workplanManagementTool.Window', {
 						Ext.Array.forEach(wpWindow.getWorkplanConfig().componentTypes, function (componentType, index) {
 							wpWindow.getWorkplanConfig().componentTypes[index] = { componentType: componentType };
 						});
-
-						console.log(wpWindow);
 						
 						Ext.Array.forEach(wpWindow.getWorkplanConfig().steps, function (step, index) {
 							// Configure stepRoles for save

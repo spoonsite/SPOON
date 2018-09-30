@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.workplan;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,9 +34,9 @@ public class ApproveEntryAction
 
 	private static final Logger LOG = Logger.getLogger(ApproveEntryAction.class.getName());
 
-	public ApproveEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
+	public ApproveEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, WorkPlanStep workPlanStep)
 	{
-		super(workPlanLink, workPlan, currentStepAction);
+		super(workPlanLink, workPlan, currentStepAction, workPlanStep);
 	}
 
 	@Override

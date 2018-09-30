@@ -51,7 +51,7 @@ public class WorkPlanStepActionType
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 		codeMap.put(EMAIL, newLookup(WorkPlanStepActionType.class, EMAIL, "Email"));
 		codeMap.put(ASSIGN_ENTRY, newLookup(WorkPlanStepActionType.class, ASSIGN_ENTRY, "Assign Entry"));
-		codeMap.put(ASSIGN_ENTRY_GROUP, newLookup(WorkPlanStepActionType.class, ASSIGN_ENTRY_GROUP, "Assign Entry to Entry Type Group"));
+		codeMap.put(ASSIGN_ENTRY_GROUP, newLookup(WorkPlanStepActionType.class, ASSIGN_ENTRY_GROUP, "Give Role Access and Assign Entry to Entry Type Group"));
 		codeMap.put(APPROVE_ENTRY, newLookup(WorkPlanStepActionType.class, APPROVE_ENTRY, "Approve Entry"));
 		codeMap.put(PENDING_ENTRY, newLookup(WorkPlanStepActionType.class, PENDING_ENTRY, "Set Entry to Pending"));
 		codeMap.put(INACTIVATE_ENTRY, newLookup(WorkPlanStepActionType.class, INACTIVATE_ENTRY, "Inactivate Entry"));

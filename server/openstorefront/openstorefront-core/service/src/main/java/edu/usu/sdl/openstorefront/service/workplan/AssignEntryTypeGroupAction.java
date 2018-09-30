@@ -15,10 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.service.workplan;
 
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepRole;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeRoleResolution;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -28,9 +34,9 @@ import org.apache.commons.lang3.StringUtils;
 public class AssignEntryTypeGroupAction
 		extends BaseWorkPlanStepAction
 {
-	public AssignEntryTypeGroupAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
+	public AssignEntryTypeGroupAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, WorkPlanStep workPlanStep)
 	{
-		super(workPlanLink, workPlan, currentStepAction);
+		super(workPlanLink, workPlan, currentStepAction, workPlanStep);
 	}
 	
 	@Override
@@ -44,22 +50,18 @@ public class AssignEntryTypeGroupAction
 					if (roleResolution != null) {
 						//assign to first group
 						workPlanLink.setCurrentGroupAssigned(roleResolution.getRoles().get(0));
+						List<WorkPlanStepRole> roleList = new ArrayList<WorkPlanStepRole>();
+						WorkPlanStepRole workPlanStepRole = new WorkPlanStepRole();
+						workPlanStepRole.setSecurityRole(roleResolution.getRoles().get(0));
+						roleList.add(workPlanStepRole);
+						workPlanStep.setStepRole(roleList);
 					}
 				}
 			}
-//			workPlanLink.setCurrentUserAssigned(currentStepAction.getActionOption().getAssignUser());
-//			if (StringUtils.isNotBlank(currentStepAction.getActionOption().getAssignGroup())) {
-//				workPlanLink.setCurrentGroupAssigned(currentStepAction.getActionOption().getAssignGroup());
-//			} else if (Convert.toBoolean(currentStepAction.getActionOption().getUnassignGroup())) {
-//				workPlanLink.setCurrentGroupAssigned(null);
-//			}
 		} else {
 			workPlanLink.setCurrentUserAssigned(null);
 		}
-//
 		workPlanLink.save();
-//
-//		//log workflow change assignment
 	}
 	
 }
