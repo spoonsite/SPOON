@@ -145,7 +145,7 @@
 									xtype: 'textfield',
 									fieldLabel: 'Question <span class="field-required" />',
 									allowBlank: false,
-									maxLength: '80',
+									maxLength: '256',
 									name: 'question'
 								},
 								{
