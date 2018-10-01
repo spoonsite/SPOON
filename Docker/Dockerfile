@@ -1,4 +1,4 @@
-FROM tomcat:7-jre8
+FROM tomcat:8.5.34-jre8
 
 MAINTAINER "Ryan Frazier <ryan.frazier@sdl.usu.edu>"
 
