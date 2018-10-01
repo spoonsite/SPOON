@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.service.workplan;
 
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
-import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepActionType;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
@@ -33,50 +32,47 @@ public abstract class BaseWorkPlanStepAction
 	protected WorkPlan workPlan;
 	protected WorkPlanStepAction currentStepAction;
 	protected ServiceProxy service;
-	protected WorkPlanStep workPlanStep;
 
-	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, WorkPlanStep workPlanStep)
+	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
 	{
 		this.workPlanLink = workPlanLink;
 		this.workPlan = workPlan;
 		this.currentStepAction = currentStepAction;
-		this.workPlanStep = workPlanStep;
 		service = ServiceProxy.getProxy();
 	}
 
-	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, WorkPlanStep workPlanStep, ServiceProxy service)
+	public BaseWorkPlanStepAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, ServiceProxy service)
 	{
 		this.workPlanLink = workPlanLink;
 		this.workPlan = workPlan;
 		this.currentStepAction = currentStepAction;
-		this.workPlanStep = workPlanStep;
 		this.service = service;
 	}
 
-	public static BaseWorkPlanStepAction createAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, WorkPlanStep workPlanStep)
+	public static BaseWorkPlanStepAction createAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
 	{
 		BaseWorkPlanStepAction baseWorkPlanStepAction = null;
 		switch (currentStepAction.getWorkPlanStepActionType()) {
 			case WorkPlanStepActionType.ACTIVATE_ENTRY:
-				baseWorkPlanStepAction = new ActivateEntryAction(workPlanLink, workPlan, currentStepAction, workPlanStep);
+				baseWorkPlanStepAction = new ActivateEntryAction(workPlanLink, workPlan, currentStepAction);
 				break;
 			case WorkPlanStepActionType.APPROVE_ENTRY:
-				baseWorkPlanStepAction = new ApproveEntryAction(workPlanLink, workPlan, currentStepAction, workPlanStep);
+				baseWorkPlanStepAction = new ApproveEntryAction(workPlanLink, workPlan, currentStepAction);
 				break;
 			case WorkPlanStepActionType.ASSIGN_ENTRY:
-				baseWorkPlanStepAction = new AssignEntryAction(workPlanLink, workPlan, currentStepAction, workPlanStep);
+				baseWorkPlanStepAction = new AssignEntryAction(workPlanLink, workPlan, currentStepAction);
 				break;
 			case WorkPlanStepActionType.ASSIGN_ENTRY_GROUP:
-				baseWorkPlanStepAction = new AssignEntryTypeGroupAction(workPlanLink, workPlan, currentStepAction, workPlanStep);
+				baseWorkPlanStepAction = new AssignEntryTypeGroupAction(workPlanLink, workPlan, currentStepAction);
 				break;
 			case WorkPlanStepActionType.EMAIL:
-				baseWorkPlanStepAction = new EmailStepAction(workPlanLink, workPlan, currentStepAction, workPlanStep);
+				baseWorkPlanStepAction = new EmailStepAction(workPlanLink, workPlan, currentStepAction);
 				break;
 			case WorkPlanStepActionType.INACTIVATE_ENTRY:
-				baseWorkPlanStepAction = new InactivateEntryAction(workPlanLink, workPlan, currentStepAction, workPlanStep);
+				baseWorkPlanStepAction = new InactivateEntryAction(workPlanLink, workPlan, currentStepAction);
 				break;
 			case WorkPlanStepActionType.PENDING_ENTRY:
-				baseWorkPlanStepAction = new PendingEntryAction(workPlanLink, workPlan, currentStepAction, workPlanStep);
+				baseWorkPlanStepAction = new PendingEntryAction(workPlanLink, workPlan, currentStepAction);
 				break;
 			default:
 				throw new UnsupportedOperationException("No support for action type: " + currentStepAction.getWorkPlanStepActionType());
@@ -85,9 +81,9 @@ public abstract class BaseWorkPlanStepAction
 		return baseWorkPlanStepAction;
 	}
 
-	public static void createAndPerformAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, WorkPlanStep workPlanStep)
+	public static void createAndPerformAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
 	{
-		BaseWorkPlanStepAction workPlanStepAction = createAction(workPlanLink, workPlan, currentStepAction, workPlanStep);
+		BaseWorkPlanStepAction workPlanStepAction = createAction(workPlanLink, workPlan, currentStepAction);
 		workPlanStepAction.performAction();
 	}
 

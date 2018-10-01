@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
-import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import java.util.logging.Level;
@@ -37,9 +36,9 @@ public class PendingEntryAction
 
 	private static final Logger LOG = Logger.getLogger(PendingEntryAction.class.getName());
 
-	public PendingEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, WorkPlanStep workPlanStep)
+	public PendingEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
 	{
-		super(workPlanLink, workPlan, currentStepAction, workPlanStep);
+		super(workPlanLink, workPlan, currentStepAction);
 	}
 
 	@Override

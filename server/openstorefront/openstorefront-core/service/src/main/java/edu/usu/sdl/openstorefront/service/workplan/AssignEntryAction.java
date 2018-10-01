@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.service.workplan;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
-import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,9 +29,9 @@ public class AssignEntryAction
 		extends BaseWorkPlanStepAction
 {
 
-	public AssignEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction, WorkPlanStep workPlanStep)
+	public AssignEntryAction(WorkPlanLink workPlanLink, WorkPlan workPlan, WorkPlanStepAction currentStepAction)
 	{
-		super(workPlanLink, workPlan, currentStepAction, workPlanStep);
+		super(workPlanLink, workPlan, currentStepAction);
 	}
 
 	@Override

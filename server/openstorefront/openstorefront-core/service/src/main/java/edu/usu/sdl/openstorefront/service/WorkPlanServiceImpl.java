@@ -570,7 +570,7 @@ public class WorkPlanServiceImpl
 	{
 		if (workPlanStep.getActions() != null) {
 			for (WorkPlanStepAction action : workPlanStep.getActions()) {
-				BaseWorkPlanStepAction.createAndPerformAction(workPlanLink, workPlan, action, workPlanStep);
+				BaseWorkPlanStepAction.createAndPerformAction(workPlanLink, workPlan, action);
 			}
 		}
 	}
