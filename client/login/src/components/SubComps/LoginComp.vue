@@ -7,7 +7,7 @@
             prepend-icon="person"
             name="username"
             label="Username"
-            autofocus=true
+            :autofocus="true"
             type="text"
             :rules="usernameRules"
             v-model="username"
@@ -45,7 +45,7 @@
             Login
             </v-btn>
           </v-flex>
-          <v-flex xs12 class="register">
+          <v-flex xs12 class="register" v-if="$store.state.securitypolicy.allowRegistration">
             <router-link :to="{name: 'registration'}" tabindex=4>Register for a new account</router-link>
           </v-flex>
         </v-container>

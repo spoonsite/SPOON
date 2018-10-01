@@ -6,12 +6,20 @@
       >
       <div class="mediaItem">
         <img
+          v-if="item.mediaTypeCode === 'IMG'"
           v-for="(item, index) in list"
           :key="item.link"
           :src="item.link"
           class="mediaImage elevation-4"
           @click="lightboxOn(index)"
         >
+        <video
+          v-else-if="item.mediaTypeCode === 'VID'"
+          :src="item.link"
+          class="mediaImage elevation-4"
+          @click="lightboxOn(index)"
+          style="display: inline-block;"
+        ></video>
       </div>
     </div>
 
@@ -30,7 +38,8 @@
         <transition name="swipe" keep-alive mode="out-in">
           <div :key="currentItem.link" style="margin-bottom: 3em;">
             <p style="color: white;">{{ currentItem.caption}}</p>
-            <img :src="currentItem.link" class="lightboxImage elevation-6">
+            <img v-if="currentItem.mediaTypeCode === 'IMG'" :src="currentItem.link" class="lightboxImage elevation-6">
+            <video controls v-else-if="currentItem.mediaTypeCode === 'VID'" :src="currentItem.link" class="lightboxImage elevation-6"></video>
             <p style="color: white;">
               Image {{ currentIndex + 1 }} of {{ list.length }}
               <v-btn dark small flat icon :href="currentItem.link"><v-icon class="download-icon">fas fa-download</v-icon></v-btn>
