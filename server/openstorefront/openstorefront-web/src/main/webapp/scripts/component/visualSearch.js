@@ -324,7 +324,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							text: 'View',
 							iconCls: 'fa fa-lg fa-eye',
 							handler: function () {
-								window.location.href = 'view.jsp?id=' + sprite.node.key + '&fullPage=true'
+								window.open('view.jsp?id=' + sprite.node.key + '&fullPage=true');
 							}
 						}]
 					}]
