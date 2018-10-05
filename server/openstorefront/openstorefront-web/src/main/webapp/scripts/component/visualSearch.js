@@ -318,13 +318,17 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					dockedItems: [{
 						xtype: 'toolbar',
 						dock: 'bottom',
-						hidden: !sprite.node.key,
+						hidden: !(sprite.node.type === 'component'),
 						items: [{
 							xtype: 'button',
 							text: 'View',
 							iconCls: 'fa fa-lg fa-eye',
 							handler: function () {
-								window.open('view.jsp?id=' + sprite.node.key + '&fullPage=true');
+								if(sprite.node.targetKey){
+									window.open('view.jsp?id=' + sprite.node.targetKey + '&fullPage=true');
+								} else {
+									window.open('view.jsp?id=' + sprite.node.key + '&fullPage=true');
+								}
 							}
 						}]
 					}]
