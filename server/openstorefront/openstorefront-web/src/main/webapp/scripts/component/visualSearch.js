@@ -314,7 +314,24 @@ Ext.define('OSF.component.VisualSearchPanel', {
 							'<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeLabel}" width="40" /></tpl>',
 							'<hr>',
 							'{description}'
-							)
+							),
+					dockedItems: [{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						hidden: !(sprite.node.type === 'component'),
+						items: [{
+							xtype: 'button',
+							text: 'View',
+							iconCls: 'fa fa-lg fa-eye',
+							handler: function () {
+								if(sprite.node.targetKey){
+									window.open('view.jsp?id=' + sprite.node.targetKey + '&fullPage=true');
+								} else {
+									window.open('view.jsp?id=' + sprite.node.key + '&fullPage=true');
+								}
+							}
+						}]
+					}]
 				});
 
 				var winX = event.pageX;
