@@ -82,6 +82,7 @@ public class WorkPlanLink
 
 		WorkPlanLink workPlanLink = (WorkPlanLink) entity;
 
+		this.setWorkPlanId(workPlanLink.getWorkPlanId());
 		this.setCurrentStepId(workPlanLink.getCurrentStepId());
 		this.setCurrentGroupAssigned(workPlanLink.getCurrentGroupAssigned());
 		this.setCurrentUserAssigned(workPlanLink.getCurrentUserAssigned());
