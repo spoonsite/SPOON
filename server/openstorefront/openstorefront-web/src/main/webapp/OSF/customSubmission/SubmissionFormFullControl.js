@@ -144,7 +144,9 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					scale: 'medium',			
 					handler: function() {
 						var submissionFormFullControl = this.up('panel');
-						submissionFormFullControl.saveSubmission();					
+						submissionFormFullControl.saveSubmission();
+						Ext.Msg.alert('Warning', 'Saving does not submit a submission for review.<br/>' +
+							'To submit a submission proceed to the end of the form and click "Submit For Approval"');
 					}
 				},
 				{
@@ -372,7 +374,6 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 				Ext.toast('Saved Successfully');
 			}
 		});
-		
 	},
 	
 	submitSumissionForApproval: function() {
