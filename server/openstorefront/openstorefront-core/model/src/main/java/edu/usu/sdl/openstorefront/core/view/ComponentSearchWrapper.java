@@ -16,6 +16,9 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.model.search.ResultAttributeStat;
+import edu.usu.sdl.openstorefront.core.model.search.ResultOrganizationStat;
+import edu.usu.sdl.openstorefront.core.model.search.ResultTagStat;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +34,9 @@ public class ComponentSearchWrapper
 	@DataType(ComponentSearchView.class)
 	private List<ComponentSearchView> data = new ArrayList<>();
 	private List<ResultTypeStat> resultTypeStats = new ArrayList<>();
+	private List<ResultTagStat> resultTagStats = new ArrayList<>();
+	private List<ResultOrganizationStat> resultOrganizationStats = new ArrayList<>();
+	private List<ResultAttributeStat> resultAttributeStats = new ArrayList<>();
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentSearchWrapper()
@@ -55,6 +61,36 @@ public class ComponentSearchWrapper
 	public void setResultTypeStats(List<ResultTypeStat> resultTypeStats)
 	{
 		this.resultTypeStats = resultTypeStats;
+	}
+
+	public List<ResultTagStat> getResultTagStats()
+	{
+		return resultTagStats;
+	}
+
+	public void setResultTagStats(List<ResultTagStat> resultTagStats)
+	{
+		this.resultTagStats = resultTagStats;
+	}
+
+	public List<ResultOrganizationStat> getResultOrganizationStats()
+	{
+		return resultOrganizationStats;
+	}
+
+	public void setResultOrganizationStats(List<ResultOrganizationStat> resultOrganizationStats)
+	{
+		this.resultOrganizationStats = resultOrganizationStats;
+	}
+
+	public List<ResultAttributeStat> getResultAttributeStats()
+	{
+		return resultAttributeStats;
+	}
+
+	public void setResultAttributeStats(List<ResultAttributeStat> resultAttributeStats)
+	{
+		this.resultAttributeStats = resultAttributeStats;
 	}
 
 }
