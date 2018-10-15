@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
@@ -57,6 +58,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -107,6 +109,46 @@ public class Search
 			return sendSingleEntityResponse(entity);
 		}
 	}
+	
+	
+	
+	
+	@PUT
+	@APIDescription("Options updatesearch for listing ")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(SearchOptions.class)
+	@Path("/updateModel")
+	public Response updateSearchModel(
+			SearchOptions globalSearchOptionsModel)
+	{
+		ValidationResult validationResult = globalSearchOptionsModel.validate();
+		if(!validationResult.valid()){
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		SearchOptions searchOptions = searchOptionsExample.find();
+		
+		if (searchOptions == null) {
+			searchOptions = new SearchOptions();
+		}
+		searchOptions.setCanUseAttributesInSearch(globalSearchOptionsModel.getCanUseAttributesInSearch());
+		searchOptions.setCanUseDescriptionInSearch(globalSearchOptionsModel.getCanUseDescriptionInSearch());
+		searchOptions.setCanUseNameInSearch(globalSearchOptionsModel.getCanUseNameInSearch());
+		searchOptions.setCanUseOrganizationsInSearch(globalSearchOptionsModel.getCanUseOrganizationsInSearch());
+		searchOptions.setCanUseTagsInSearch(globalSearchOptionsModel.getCanUseTagsInSearch());
+		
+		
+		globalSearchOptionsModel.setGlobalFlag(Boolean.TRUE);
+		service.getSearchService().saveSearchOptions(searchOptions);
+		
+		return Response.noContent().build();
+	}
+	
+	
+	
 
 	@POST
 	@APIDescription("Advance search for listing ")

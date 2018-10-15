@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.api;
 
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
@@ -42,6 +43,21 @@ public interface SearchService
 	 * @return
 	 */
 	public List<ComponentSearchView> getAll();
+	
+	/**
+	 * Get the global search options, return default if not
+	 * changed by the administrator
+	 * .
+	 * @return 
+	 */
+	public SearchOptions getSearchOptions();
+	
+	/**
+	 * Saves a search options model. Usually done
+	 * by the administrator.
+	 * @param searchOptions 
+	 */
+	public void saveSearchOptions(SearchOptions searchOptions);
 
 	/**
 	 * Performs a search

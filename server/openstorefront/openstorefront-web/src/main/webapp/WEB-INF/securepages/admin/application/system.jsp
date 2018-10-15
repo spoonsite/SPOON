@@ -2068,6 +2068,80 @@
 									}
 								});
 							}
+						},
+						{
+							xtype: 'fieldset',
+							title: 'Search Control Options',
+							id: 'searchOptionsField',
+							width: '100%',
+							layout: 'anchor',
+							defaults: {
+								width: '100%',
+								labelAlign: 'top'
+							},
+							items: [
+								{
+									xtype: 'fieldcontainer',
+									fieldLabel: 'Categories to include in Searches',
+									defaultType: 'checkboxfield',
+									items: [
+										{
+											boxLabel: 'Organizations',
+											checked: true,
+											id: 'organizationsCheckbox'
+										}, 
+										{
+											boxLabel: 'Tags',
+											checked: true,
+											id: 'tagsCheckbox'
+										}, 
+										{
+											boxLabel: 'Component Names',
+											checked: true,
+											id: 'componentNameCheckbox'
+										},
+										{
+											boxLabel: 'Component Attributes',
+											checked: true,
+											id: 'componentAttributesCheckbox'
+										}, 
+										{
+											boxLabel: 'Component Descriptions',
+											checked: true,
+											id: 'componentDescriptionCheckbox'
+										}
+									]
+								}
+							]
+						},
+						{
+							text: 'Save Search Options',
+							xtype: 'button',
+							scale: 'medium',
+							iconCls: 'fa fa-2x fa-save icon-vertical-correction',
+							tooltip: 'This will apply the above settings to searches.',
+							handler: function () {
+								console.log("Message Confirmation begin the data grabbin!!!");
+								var data = {
+									canUseOrganizationsInSearch: Ext.getCmp('organizationsCheckbox').value,
+									canUseTagsInSearch: Ext.getCmp('tagsCheckbox').value,
+									canUseNameInSearch: Ext.getCmp('componentNameCheckbox').value,
+									canUseAttributesInSearch: Ext.getCmp('componentAttributesCheckbox').value,
+									canUseDescriptionInSearch: Ext.getCmp('componentDescriptionCheckbox').value
+								};
+								console.log(data);
+								Ext.Ajax.request({
+									url: 'api/v1/service/search/updateModel',
+									jsonData: data,
+									method: 'PUT',
+									success: function(response, opt) {
+										Ext.toast('Successfully sent re-index request', '', 'tr');
+									},
+									failure: function(response, opt) {
+										Ext.toast('Failed to send re-index request', '', 'tr');
+									}
+								});
+							}
 						}
 					]
 				});
