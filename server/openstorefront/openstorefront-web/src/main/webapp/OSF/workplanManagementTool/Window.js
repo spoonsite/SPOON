@@ -67,7 +67,6 @@ Ext.define('OSF.workplanManagementTool.Window', {
 					handler: function () {
 
 						var wpWindow = this.up('window');
-						console.log(wpWindow);
 						
 						// set step order
 						Ext.Array.forEach(wpWindow.getWorkplanConfig().steps, function (item, index) {
