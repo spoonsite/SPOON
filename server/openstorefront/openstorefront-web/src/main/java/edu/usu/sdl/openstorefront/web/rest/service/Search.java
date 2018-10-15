@@ -110,11 +110,8 @@ public class Search
 		}
 	}
 	
-	
-	
-	
 	@PUT
-	@APIDescription("Options updatesearch for listing ")
+	@APIDescription("Update the search options for indexing.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
@@ -143,9 +140,6 @@ public class Search
 		
 		return Response.noContent().build();
 	}
-	
-	
-	
 
 	@POST
 	@APIDescription("Advance search for listing ")

@@ -2111,22 +2111,20 @@
 							iconCls: 'fa fa-2x fa-save icon-vertical-correction',
 							tooltip: 'This will apply the above settings to searches.',
 							handler: function () {
-								console.log("Message Confirmation begin the data grabbin!!!");
 								var data = {
 									canUseOrganizationsInSearch: Ext.getCmp('organizationsCheckbox').value,
 									canUseNameInSearch: Ext.getCmp('componentNameCheckbox').value,
 									canUseDescriptionInSearch: Ext.getCmp('componentDescriptionCheckbox').value
 								};
-								console.log(data);
 								Ext.Ajax.request({
 									url: 'api/v1/service/search/updateModel',
 									jsonData: data,
 									method: 'PUT',
 									success: function(response, opt) {
-										Ext.toast('Successfully sent re-index request', '', 'tr');
+										Ext.toast('Successfully applied the search options.', '', 'tr');
 									},
 									failure: function(response, opt) {
-										Ext.toast('Failed to send re-index request', '', 'tr');
+										Ext.toast('Failed to apply the search options.', '', 'tr');
 									}
 								});
 							}
