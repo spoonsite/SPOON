@@ -112,11 +112,9 @@ public class SearchServiceImpl
 		if(searchOptions == null){
 			// Return the default.
 			searchOptions = new SearchOptions();
-			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
 			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
 			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
-			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
 		}		
 		return searchOptions;		
 	}

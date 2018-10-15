@@ -2091,20 +2091,10 @@
 											id: 'organizationsCheckbox'
 										}, 
 										{
-											boxLabel: 'Tags',
-											checked: true,
-											id: 'tagsCheckbox'
-										}, 
-										{
 											boxLabel: 'Component Names',
 											checked: true,
 											id: 'componentNameCheckbox'
 										},
-										{
-											boxLabel: 'Component Attributes',
-											checked: true,
-											id: 'componentAttributesCheckbox'
-										}, 
 										{
 											boxLabel: 'Component Descriptions',
 											checked: true,
@@ -2124,9 +2114,7 @@
 								console.log("Message Confirmation begin the data grabbin!!!");
 								var data = {
 									canUseOrganizationsInSearch: Ext.getCmp('organizationsCheckbox').value,
-									canUseTagsInSearch: Ext.getCmp('tagsCheckbox').value,
 									canUseNameInSearch: Ext.getCmp('componentNameCheckbox').value,
-									canUseAttributesInSearch: Ext.getCmp('componentAttributesCheckbox').value,
 									canUseDescriptionInSearch: Ext.getCmp('componentDescriptionCheckbox').value
 								};
 								console.log(data);

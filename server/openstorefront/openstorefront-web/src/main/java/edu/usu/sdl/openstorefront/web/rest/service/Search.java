@@ -134,12 +134,9 @@ public class Search
 		if (searchOptions == null) {
 			searchOptions = new SearchOptions();
 		}
-		searchOptions.setCanUseAttributesInSearch(globalSearchOptionsModel.getCanUseAttributesInSearch());
 		searchOptions.setCanUseDescriptionInSearch(globalSearchOptionsModel.getCanUseDescriptionInSearch());
 		searchOptions.setCanUseNameInSearch(globalSearchOptionsModel.getCanUseNameInSearch());
 		searchOptions.setCanUseOrganizationsInSearch(globalSearchOptionsModel.getCanUseOrganizationsInSearch());
-		searchOptions.setCanUseTagsInSearch(globalSearchOptionsModel.getCanUseTagsInSearch());
-		
 		
 		globalSearchOptionsModel.setGlobalFlag(Boolean.TRUE);
 		service.getSearchService().saveSearchOptions(searchOptions);

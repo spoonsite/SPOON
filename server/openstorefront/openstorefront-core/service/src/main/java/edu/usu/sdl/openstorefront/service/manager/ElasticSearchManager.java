@@ -384,26 +384,22 @@ public class ElasticSearchManager
 			String allUpperQuery;
 			String allLowerQuery;
 			String properCaseQuery;
-			
-			allUpperQuery = queryString.toString().toUpperCase();
-			allLowerQuery = queryString.toString().toLowerCase();
-			properCaseQuery = toProperCase(queryString.toString());
-			actualQuery = queryString.toString();
 
-//			if (isHyphenatedWithoutSpaces(queryString.toString())) {
-//				// Create custom queries
-//				allUpperQuery = createSubstringOfQuery(queryString.toString().toUpperCase());
-//				allLowerQuery = createSubstringOfQuery(queryString.toString().toLowerCase());
-//				properCaseQuery = createSubstringOfQuery(toProperCase(queryString.toString()));
-//				actualQuery = createSubstringOfQuery(queryString.toString());
-//
-//			} else {
-//				// Create custom queries
-//				allUpperQuery = queryString.toString().toUpperCase();
-//				allLowerQuery = queryString.toString().toLowerCase();
-//				properCaseQuery = toProperCase(queryString.toString());
-//				actualQuery = queryString.toString();
-//			}
+			// This is done becuase searching doesn't properly deal with the hyphens.
+			if (isHyphenatedWithoutSpaces(queryString.toString())) {
+				// Create custom queries
+				allUpperQuery = createSubstringOfQuery(queryString.toString().toUpperCase());
+				allLowerQuery = createSubstringOfQuery(queryString.toString().toLowerCase());
+				properCaseQuery = createSubstringOfQuery(toProperCase(queryString.toString()));
+				actualQuery = createSubstringOfQuery(queryString.toString());
+
+			} else {
+				// Create custom queries
+				allUpperQuery = queryString.toString().toUpperCase();
+				allLowerQuery = queryString.toString().toLowerCase();
+				properCaseQuery = toProperCase(queryString.toString());
+				actualQuery = queryString.toString();
+			}
 			
 			if(searchOptions.getCanUseOrganizationsInSearch()){
 				// Custom query for entry organization

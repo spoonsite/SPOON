@@ -61,14 +61,8 @@ public class SearchOptions
 	@APIDescription("Flag for using Component organizations in searches")
 	private Boolean canUseOrganizationsInSearch;
 	
-	@APIDescription("Flag for using Component tags in searches")
-	private Boolean canUseTagsInSearch;	
-	
 	@APIDescription("Flag for using Component name in searches")
 	private Boolean canUseNameInSearch;
-	
-	@APIDescription("Flag for using Component Attributes in searches")
-	private Boolean canUseAttributesInSearch;
 	
 	@APIDescription("Flag for using Component Description in searches")
 	private Boolean canUseDescriptionInSearch;
@@ -82,9 +76,7 @@ public class SearchOptions
 		setGlobalFlag(searchOptionsModel.getGlobalFlag());
 		setSearchOptionsId(searchOptionsModel.getSearchOptionsId());
 		setCanUseOrganizationsInSearch(searchOptionsModel.getCanUseOrganizationsInSearch());
-		setCanUseTagsInSearch(searchOptionsModel.getCanUseTagsInSearch());
 		setCanUseNameInSearch(searchOptionsModel.getCanUseNameInSearch());
-		setCanUseAttributesInSearch(searchOptionsModel.getCanUseAttributesInSearch());
 		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());
 	}
 	
@@ -98,16 +90,6 @@ public class SearchOptions
 		this.canUseOrganizationsInSearch = canUseOrganizationsInSearch;
 	}
 
-	public Boolean getCanUseTagsInSearch()
-	{
-		return canUseTagsInSearch;
-	}
-
-	public void setCanUseTagsInSearch(Boolean canUseTagsInSearch)
-	{
-		this.canUseTagsInSearch = canUseTagsInSearch;
-	}
-
 	public Boolean getCanUseNameInSearch()
 	{
 		return canUseNameInSearch;
@@ -116,16 +98,6 @@ public class SearchOptions
 	public void setCanUseNameInSearch(Boolean canUseNameInSearch)
 	{
 		this.canUseNameInSearch = canUseNameInSearch;
-	}
-
-	public Boolean getCanUseAttributesInSearch()
-	{
-		return canUseAttributesInSearch;
-	}
-
-	public void setCanUseAttributesInSearch(Boolean canUseAttributesInSearch)
-	{
-		this.canUseAttributesInSearch = canUseAttributesInSearch;
 	}
 
 	public Boolean getCanUseDescriptionInSearch()
