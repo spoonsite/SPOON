@@ -111,6 +111,7 @@ public class Search
 	}
 	
 	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@APIDescription("Get the search options for indexing. (Admin)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
@@ -132,6 +133,7 @@ public class Search
 	}
 	
 	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@APIDescription("Update the search options for indexing.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
