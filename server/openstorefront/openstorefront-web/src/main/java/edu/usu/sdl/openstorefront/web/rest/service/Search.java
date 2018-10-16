@@ -110,6 +110,27 @@ public class Search
 		}
 	}
 	
+	@GET
+	@APIDescription("Get the search options for indexing. (Admin)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(SearchOptions.class)
+	@Path("/updateModel")
+	public Response updateSearchModel()
+	{
+		SearchOptions searchOptionsExample = new SearchOptions();
+		SearchOptions searchOptions = searchOptionsExample.find();
+
+		if (searchOptions == null) {
+			// Return the default.
+			searchOptions = new SearchOptions();
+			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
+			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
+			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+		}
+
+		return Response.ok(searchOptions).build();
+	}
+	
 	@PUT
 	@APIDescription("Update the search options for indexing.")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -117,9 +138,9 @@ public class Search
 	@DataType(SearchOptions.class)
 	@Path("/updateModel")
 	public Response updateSearchModel(
-			SearchOptions globalSearchOptionsModel)
+			SearchOptions incomingSearchOptions)
 	{
-		ValidationResult validationResult = globalSearchOptionsModel.validate();
+		ValidationResult validationResult = incomingSearchOptions.validate();
 		if(!validationResult.valid()){
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
@@ -131,14 +152,14 @@ public class Search
 		if (searchOptions == null) {
 			searchOptions = new SearchOptions();
 		}
-		searchOptions.setCanUseDescriptionInSearch(globalSearchOptionsModel.getCanUseDescriptionInSearch());
-		searchOptions.setCanUseNameInSearch(globalSearchOptionsModel.getCanUseNameInSearch());
-		searchOptions.setCanUseOrganizationsInSearch(globalSearchOptionsModel.getCanUseOrganizationsInSearch());
+		searchOptions.setCanUseDescriptionInSearch(incomingSearchOptions.getCanUseDescriptionInSearch());
+		searchOptions.setCanUseNameInSearch(incomingSearchOptions.getCanUseNameInSearch());
+		searchOptions.setCanUseOrganizationsInSearch(incomingSearchOptions.getCanUseOrganizationsInSearch());
 		
-		globalSearchOptionsModel.setGlobalFlag(Boolean.TRUE);
+		incomingSearchOptions.setGlobalFlag(Boolean.TRUE);
 		service.getSearchService().saveSearchOptions(searchOptions);
 		
-		return Response.noContent().build();
+		return Response.ok(searchOptions).build();
 	}
 
 	@POST

@@ -2086,19 +2086,19 @@
 									defaultType: 'checkboxfield',
 									items: [
 										{
+											xtype: 'checkbox',
 											boxLabel: 'Organizations',
-											checked: true,
-											id: 'organizationsCheckbox'
+											id: 'organizationsCheckbox',
 										}, 
 										{
+											xtype: 'checkbox',
 											boxLabel: 'Component Names',
-											checked: true,
-											id: 'componentNameCheckbox'
+											id: 'componentNameCheckbox',
 										},
 										{
+											xtype: 'checkbox',
 											boxLabel: 'Component Descriptions',
-											checked: true,
-											id: 'componentDescriptionCheckbox'
+											id: 'componentDescriptionCheckbox',
 										}
 									]
 								}
@@ -2130,6 +2130,27 @@
 							}
 						}
 					]
+				});
+
+				searchControlPanel.setLoading(true);
+				Ext.Ajax.request({
+					url: 'api/v1/service/search/updateModel',
+					method: 'GET',
+					callback: function() {
+						searchControlPanel.setLoading(false);
+					},
+					success: function(response, opts){
+						var data = Ext.decode(response.responseText);
+						if(Ext.getCmp('organizationsCheckbox')){
+							Ext.getCmp('organizationsCheckbox').setValue(data.canUseOrganizationsInSearch);
+						}
+						if(Ext.getCmp('componentNameCheckbox')){
+							Ext.getCmp('componentNameCheckbox').setValue(data.canUseNameInSearch);
+						}
+						if(Ext.getCmp('componentDescriptionCheckbox')){
+							Ext.getCmp('componentDescriptionCheckbox').setValue(data.canUseDescriptionInSearch);
+						}
+					}
 				});
 
 				var recentChangesPanel = Ext.create('Ext.panel.Panel', {
