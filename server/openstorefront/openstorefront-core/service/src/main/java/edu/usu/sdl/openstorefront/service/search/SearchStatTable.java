@@ -194,7 +194,8 @@ public class SearchStatTable
 						attrStat.incrementCount();
 					} else {
 						ResultTagStat tagStat = new ResultTagStat();
-						tagStat.setTagCode(key);
+						tagStat.setTagId(key);
+						tagStat.setTagLabel(tag.getText());
 						resultMap.put(key, tagStat);
 					}
 				}

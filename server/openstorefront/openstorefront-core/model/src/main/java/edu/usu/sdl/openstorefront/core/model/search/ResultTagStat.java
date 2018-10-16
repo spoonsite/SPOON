@@ -21,21 +21,32 @@ package edu.usu.sdl.openstorefront.core.model.search;
  */
 public class ResultTagStat
 {
-	private String tagCode;
+	private String tagId;
+	private String tagLabel;
 	private int count = 1;
 	
 	public ResultTagStat()
 	{
 	}
 
-	public String getTagCode()
+	public String getTagId()
 	{
-		return tagCode;
+		return tagId;
 	}
 
-	public void setTagCode(String tagCode)
+	public void setTagId(String tagId)
 	{
-		this.tagCode = tagCode;
+		this.tagId = tagId;
+	}
+	
+	public String getTagLabel()
+	{
+		return tagLabel;
+	}
+
+	public void setTagLabel(String tagLabel)
+	{
+		this.tagLabel = tagLabel;
 	}
 
 	public int getCount()
