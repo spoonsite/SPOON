@@ -2117,7 +2117,7 @@
 									canUseDescriptionInSearch: Ext.getCmp('componentDescriptionCheckbox').value
 								};
 								Ext.Ajax.request({
-									url: 'api/v1/service/search/updateModel',
+									url: 'api/v1/service/search/options',
 									jsonData: data,
 									method: 'PUT',
 									success: function(response, opt) {
@@ -2134,7 +2134,7 @@
 
 				searchControlPanel.setLoading(true);
 				Ext.Ajax.request({
-					url: 'api/v1/service/search/updateModel',
+					url: 'api/v1/service/search/options',
 					method: 'GET',
 					callback: function() {
 						searchControlPanel.setLoading(false);

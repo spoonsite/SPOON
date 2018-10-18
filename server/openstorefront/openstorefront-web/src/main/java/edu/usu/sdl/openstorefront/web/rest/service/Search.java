@@ -115,7 +115,7 @@ public class Search
 	@APIDescription("Get the search options for indexing. (Admin)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
-	@Path("/updateModel")
+	@Path("/options")
 	public Response updateSearchModel()
 	{
 		SearchOptions searchOptionsExample = new SearchOptions();
@@ -138,7 +138,7 @@ public class Search
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
-	@Path("/updateModel")
+	@Path("/options")
 	public Response updateSearchModel(
 			SearchOptions incomingSearchOptions)
 	{

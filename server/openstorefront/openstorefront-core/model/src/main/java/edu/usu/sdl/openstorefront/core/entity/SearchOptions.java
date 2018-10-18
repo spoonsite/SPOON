@@ -26,6 +26,37 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 public class SearchOptions
 		extends StandardEntity<SearchOptions>
 {
+	private Boolean globalFlag;
+
+	@PK(generated = true)
+	private String searchOptionsId;
+
+	@APIDescription("Flag for using Component organizations in searches")
+	private Boolean canUseOrganizationsInSearch;
+
+	@APIDescription("Flag for using Component name in searches")
+	private Boolean canUseNameInSearch;
+
+	@APIDescription("Flag for using Component Description in searches")
+	private Boolean canUseDescriptionInSearch;
+	
+	public SearchOptions()
+	{
+
+	}
+
+	@Override
+	public <T extends StandardEntity> void updateFields(T entity)
+	{
+		super.updateFields(entity);
+		SearchOptions searchOptionsModel = (SearchOptions) entity;
+
+		setGlobalFlag(searchOptionsModel.getGlobalFlag());
+		setSearchOptionsId(searchOptionsModel.getSearchOptionsId());
+		setCanUseOrganizationsInSearch(searchOptionsModel.getCanUseOrganizationsInSearch());
+		setCanUseNameInSearch(searchOptionsModel.getCanUseNameInSearch());
+		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());
+	}
 
 	public Boolean getGlobalFlag()
 	{
@@ -46,38 +77,6 @@ public class SearchOptions
 	public void setSearchOptionsId(String searchOptionsId)
 	{
 		this.searchOptionsId = searchOptionsId;
-	}
-
-	public SearchOptions()
-	{
-		
-	}
-	
-	private Boolean globalFlag;
-	
-	@PK(generated = true)
-	private String searchOptionsId;
-
-	@APIDescription("Flag for using Component organizations in searches")
-	private Boolean canUseOrganizationsInSearch;
-	
-	@APIDescription("Flag for using Component name in searches")
-	private Boolean canUseNameInSearch;
-	
-	@APIDescription("Flag for using Component Description in searches")
-	private Boolean canUseDescriptionInSearch;
-	
-	@Override
-	public <T extends StandardEntity> void updateFields(T entity)
-	{
-		super.updateFields(entity);
-		SearchOptions searchOptionsModel = (SearchOptions) entity;
-		
-		setGlobalFlag(searchOptionsModel.getGlobalFlag());
-		setSearchOptionsId(searchOptionsModel.getSearchOptionsId());
-		setCanUseOrganizationsInSearch(searchOptionsModel.getCanUseOrganizationsInSearch());
-		setCanUseNameInSearch(searchOptionsModel.getCanUseNameInSearch());
-		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());
 	}
 	
 	public Boolean getCanUseOrganizationsInSearch()
