@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.sort.SortUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
@@ -38,6 +39,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentContactView;
 import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
 import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.TagView;
@@ -48,8 +50,10 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -985,6 +989,132 @@ public abstract class ComponentCommonSubResourceExt
 			return service.getComponentService().getTagCloud();
 		}
 	}
+	
+	@GET
+	@APIDescription("Gets related Parent and sibling tags based on entry type.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/{id}/relatedparenttags")
+	public List<ComponentTag> getRelatedFreeFamilyComponentTags(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		Component componentExample = new Component();
+		componentExample.setComponentId(componentId);
+		Component component = componentExample.find();
+//		TreeMap<ComponentTag, Integer> tagValueMap = new TreeMap<ComponentTag, Integer>();
+		if (component != null) {
+			
+			// Get Component Type of the main component
+			ComponentType componentTypeExample = new ComponentType();
+			componentTypeExample.setComponentType(component.getComponentType());
+			ComponentType componentType = componentTypeExample.find();
+			ComponentType parentType = new ComponentType();
+			
+			// Get the parent's component Type.
+			if(!componentType.getParentComponentType().isEmpty()){
+				parentType.setComponentType(componentType.getParentComponentType());
+			}
+			else{
+				parentType = null;
+			}
+			
+			//get list of all components....
+			List<ComponentSearchView> componentSearchViewList = service.getComponentService().getComponents();
+			List<ComponentSearchView> subList = new ArrayList<>();
+			
+			if(!componentSearchViewList.isEmpty()){
+				for(ComponentSearchView componentView : componentSearchViewList){
+					if(componentView.getComponentType().equals(componentType.getComponentType()) || componentView.getComponentType().equals(parentType.getComponentType())){
+						subList.add(componentView);
+					}
+				}
+			}
+			
+			List<ComponentTag> popularFamilyTags = new ArrayList<>();
+			
+			if(!subList.isEmpty()){
+				for(ComponentSearchView subComponentView : subList){
+					if(!subComponentView.getTags().isEmpty()){
+						popularFamilyTags.addAll(subComponentView.getTags());
+					}
+				}
+			}
+
+			// Clean up the family List
+			
+			ComponentTag componentTagExample = new ComponentTag();
+			componentTagExample.setComponentId(componentId);
+			List<ComponentTag> myComponentTags = componentTagExample.findByExample();
+
+//			List<ComponentTag> allTags = service.getComponentService().getTagCloud();
+			List<ComponentTag> filteredFamilyTags = new ArrayList<>();
+
+			for (ComponentTag tag : popularFamilyTags) {
+				boolean pass = true;
+				for (ComponentTag myTag : myComponentTags) {
+					if (myTag.getText().equalsIgnoreCase(tag.getText())) {
+						pass = false;
+						break;
+					}
+				}
+				if (pass) {
+					filteredFamilyTags.add(tag);
+				}
+			}
+			
+			// Now we need to map record how many times, each entry in the filtered list occured.
+//
+//			 
+//			 for(ComponentTag compTag : filteredFamilyTags){
+//				tagValueMap.merge(compTag, 1, Integer::sum);
+//			 }
+			return filteredFamilyTags;
+
+		} else {
+			return service.getComponentService().getTagCloud();
+		}
+	}
+	
+//	@GET
+//	@APIDescription("Gets related tags, all the tags of all the things that have green tags.")
+//	@Produces({MediaType.APPLICATION_JSON})
+//	@DataType(ComponentTag.class)
+//	@Path("/{id}/relatedparenttags")
+//	public List<ComponentTag> getRelatedFreeTagRelatedComponentTags(
+//			@PathParam("id")
+//			@RequiredParam String componentId)
+//	{
+//		Component componentExample = new Component();
+//		componentExample.setComponentId(componentId);
+//		Component component = componentExample.find();
+//
+//		if (component != null) {
+//			ComponentTag componentTagExample = new ComponentTag();
+//			componentTagExample.setComponentId(componentId);
+//			List<ComponentTag> componentTags = componentTagExample.findByExample();
+//
+//			List<ComponentTag> allTags = service.getComponentService().getTagCloud();
+//			List<ComponentTag> filteredTags = new ArrayList<>();
+//
+//			for (ComponentTag tag : allTags) {
+//				boolean pass = true;
+//				for (ComponentTag myTag : componentTags) {
+//					if (myTag.getText().equalsIgnoreCase(tag.getText())) {
+//						pass = false;
+//						break;
+//					}
+//				}
+//				if (pass) {
+//					filteredTags.add(tag);
+//				}
+//			}
+//
+//			return filteredTags;
+//		} else {
+//			return service.getComponentService().getTagCloud();
+//		}
+//	}
 
 	@GET
 	@APIDescription("Get the entire tag list (Tag Cloud)")
