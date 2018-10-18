@@ -30,10 +30,7 @@ public class AdvanceSearchResult
 	private List<ComponentSearchView> results = new ArrayList<>();
 	private ValidationResult validationResult = new ValidationResult();
 	private long totalNumber;
-	private List<ResultTypeStat> resultTypeStats = new ArrayList<>();
-	private List<ResultTagStat> resultTagStats = new ArrayList<>();
-	private List<ResultOrganizationStat> resultOrganizationStats = new ArrayList<>();
-	private List<ResultAttributeStat> resultAttributeStats = new ArrayList<>();
+	private AdvancedSearchMetaData meta = new AdvancedSearchMetaData();
 
 	public AdvanceSearchResult()
 	{
@@ -42,36 +39,6 @@ public class AdvanceSearchResult
 	public List<ComponentSearchView> getResults()
 	{
 		return results;
-	}
-
-	public List<ResultTagStat> getResultTagStats()
-	{
-		return resultTagStats;
-	}
-
-	public void setResultTagStats(List<ResultTagStat> resultTagStats)
-	{
-		this.resultTagStats = resultTagStats;
-	}
-
-	public List<ResultOrganizationStat> getResultOrganizationStats()
-	{
-		return resultOrganizationStats;
-	}
-
-	public void setResultOrganizationStats(List<ResultOrganizationStat> resultOrganizationStats)
-	{
-		this.resultOrganizationStats = resultOrganizationStats;
-	}
-
-	public List<ResultAttributeStat> getResultAttributeStats()
-	{
-		return resultAttributeStats;
-	}
-
-	public void setResultAttributeStats(List<ResultAttributeStat> resultAttributeStats)
-	{
-		this.resultAttributeStats = resultAttributeStats;
 	}
 
 	public void setResults(List<ComponentSearchView> results)
@@ -99,14 +66,16 @@ public class AdvanceSearchResult
 		this.totalNumber = totalNumber;
 	}
 
-	public List<ResultTypeStat> getResultTypeStats()
+	public AdvancedSearchMetaData getMeta()
 	{
-		return resultTypeStats;
+		return meta;
 	}
 
-	public void setResultTypeStats(List<ResultTypeStat> resultTypeStats)
+	public void setMeta(AdvancedSearchMetaData meta)
 	{
-		this.resultTypeStats = resultTypeStats;
+		this.meta = meta;
 	}
+	
+	
 
 }

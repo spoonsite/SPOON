@@ -15,7 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.service.search;
 
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
@@ -145,13 +148,24 @@ public class SearchStatTable
 			List<ComponentAttribute> attributes = attributeMap.get(component);
 			if (attributes != null) {
 				for (ComponentAttribute attribute : attributes) {
-					String key = attribute.getComponentAttributePk().getAttributeCode();
+					String key = attribute.uniqueKey();
 					if(resultMap.containsKey(key)) {
 						ResultAttributeStat attrStat = resultMap.get(key);
 						attrStat.incrementCount();
 					} else {
 						ResultAttributeStat attrStat = new ResultAttributeStat();
-						attrStat.setAttributeLabel(key);
+						Service service = ServiceProxyFactory.getServiceProxy();
+
+						AttributeType type = service.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
+						if (type == null) {
+							type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
+						}
+
+						if (type != null) {
+							attrStat.setAttributeTypeLabel(type.getDescription());
+						}
+						attrStat.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
+						attrStat.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 						resultMap.put(key, attrStat);
 					}
 				}

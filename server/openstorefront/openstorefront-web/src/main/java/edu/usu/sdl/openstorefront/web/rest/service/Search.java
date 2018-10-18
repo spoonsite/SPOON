@@ -148,10 +148,7 @@ public class Search
 				searchWrapper.setData(result.getResults());
 				searchWrapper.setResults(result.getResults().size());
 				searchWrapper.setTotalNumber(result.getTotalNumber());
-				searchWrapper.setResultTypeStats(result.getResultTypeStats());
-				searchWrapper.setResultTagStats(result.getResultTagStats());
-				searchWrapper.setResultOrganizationStats(result.getResultOrganizationStats());
-				searchWrapper.setResultAttributeStats(result.getResultAttributeStats());
+				searchWrapper.setMeta(result.getMeta());
 				return sendSingleEntityResponse(searchWrapper);
 			} else {
 				GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result.getResults())

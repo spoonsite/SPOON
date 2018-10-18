@@ -383,9 +383,9 @@ export default {
         .then(response => {
           that.searchResults = response;
           that.totalSearchResults = response.data.totalNumber;
-          that.organizationsList = _.sortBy(response.data.resultOrganizationStats, [function (o) { return o.organization; }]);
-          that.tagsList = _.sortBy(response.data.resultTagStats, [function (o) { return o.tagLabel; }]);
-          that.componentsList = _.sortBy(response.data.resultTypeStats, [function (o) { return o.componentTypeDescription; }]);
+          that.organizationsList = _.sortBy(response.data.meta.resultOrganizationStats, [function (o) { return o.organization; }]);
+          that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel; }]);
+          that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription; }]);
           that.searchQueryIsDirty = false;
         })
         .catch(e => that.errors.push(e))

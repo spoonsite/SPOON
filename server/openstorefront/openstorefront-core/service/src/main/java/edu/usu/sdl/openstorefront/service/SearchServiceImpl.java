@@ -372,15 +372,15 @@ public class SearchServiceImpl
 						stats.put(view.getComponentType(), stat);
 					}
 				}
-				searchResult.getResultTypeStats().addAll(stats.values());
+				searchResult.getMeta().getResultTypeStats().addAll(stats.values());
 				SearchStatTable statTable = new SearchStatTable();
 				List<ResultOrganizationStat> organizationStats = statTable.getOrganizationStats(componentIds);
 				List<ResultTagStat> tagStats = statTable.getTagStats(componentIds);
 				List<ResultAttributeStat> attributeStats = statTable.getAttributeStats(componentIds);
 
-				searchResult.getResultOrganizationStats().addAll(organizationStats);
-				searchResult.getResultTagStats().addAll(tagStats);
-				searchResult.getResultAttributeStats().addAll(attributeStats);
+				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
+				searchResult.getMeta().getResultTagStats().addAll(tagStats);
+				searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
 				
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 
