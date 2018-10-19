@@ -307,106 +307,11 @@
 				}				
 			}
 			
-			var loadAttributes = function() {
-				Ext.Ajax.request({
-					url: 'api/v1/resource/attributes/attributetypes',
-					success: function(response, opts) {
-						var data = Ext.decode(response.responseText);
-						
-
-						var visible = [];
-						var nonvisible = [];
-						Ext.Array.each(data.data, function(item){
-							
-							var panel = Ext.create('Ext.panel.Panel', {
-								title: item.description,
-								collapsible: true,
-								collapsed: true,
-								margin: '0 0 1 0',
-								titleCollapse: true,
-								animCollapse: false,
-								html: '&nbsp;',
-								listeners: {
-									expand: function(panel, opts){
-										if (!panel.loadedCodes) {
-											panel.loadedCodes = true;
-											panel.setLoading(true);
-											Ext.Ajax.request({
-												url: 'api/v1/resource/attributes/attributetypes/' + panel.attributeItem.attributeType + '/attributecodes',
-												callback: function(){
-													panel.setLoading(false);
-												},
-												success: function(response, opts) {
-													var attributeData = Ext.decode(response.responseText);
-															
-													var checkboxes = [];		
-													Ext.Array.each(attributeData, function(attributeCode){
-														var check = Ext.create('Ext.form.field.Checkbox', {
-															boxLabel: attributeCode.label,
-															attributeCode: attributeCode.attributeCodePk.attributeCode,
-															listeners: {
-																change: function(checkbox, newValue, oldValue, opts) {																	
-																	if (newValue){
-																		
-																		var containsAttribute = false;
-																		Ext.Array.each(attributeFilters, function(item) {
-																			if (item.type === attributeCode.attributeCodePk.attributeType &&
-																				item.code === attributeCode.attributeCodePk.attributeCode) {
-																				containsAttribute = true;
-																			}
-																		});
-																		
-																		if (!containsAttribute) {
-																			attributeFilters.push({
-																				type: attributeCode.attributeCodePk.attributeType,
-																				code: attributeCode.attributeCodePk.attributeCode,
-																				typeLabel: item.description,
-																				label: attributeCode.label,
-																				checkbox: checkbox
-																			});
-																		}
-																	} else {
-																		attributeFilters = Ext.Array.filter(attributeFilters, function(item) {
-																			var keep = true;
-																			if (item.type === attributeCode.attributeCodePk.attributeType &&
-																				item.code === attributeCode.attributeCodePk.attributeCode) {
-																				keep = false;																																								
-																			}
-																			return keep;
-																		});
-																	}
-																	filterResults();
-																}
-															}
-														});	
-														checkboxes.push(check);
-													});													
-													panel.add(checkboxes);
-													panel.updateLayout(true, true);
-												}
-											});
-										}
-									}
-								}
-							});
-							panel.attributeItem = item;
-							if (item.visibleFlg) {
-								visible.push(panel);
-							} else {
-								nonvisible.push(panel);
-							}
-						});						
-						Ext.getCmp('attributeFiltersContainer').add(visible);
-						Ext.getCmp('nonvisibleAttributes').add(nonvisible);						
-					}
-				});
-			};
-			loadAttributes();
-		
 			var attributeFilters = [];
 			var filterPanel = Ext.create('Ext.panel.Panel', {
 				region: 'west',
 				title: 'Filters',
+				id: 'filterPanel',
 				minWidth: 300,
 				collapsible: true,
 				titleCollapse: true,
@@ -424,19 +329,18 @@
 				},
 				items: [
 					{
+						xtype: 'button',
+						text: 'Apply Filters',
+						handler: function() {
+							filterResults();
+						}
+					},
+					{
 						xtype: 'textfield',
 						id: 'filterByName',
 						fieldLabel: 'By Name',						
 						name: 'filterName',								
 						emptyText: 'Filter Search',
-						listeners: {
-							change: {
-								fn: function(field, newValue, oldValue, opts) {
-									filterResults();
-								},
-								buffer: 1000
-							}
-						}
 					},
 					{
 						xtype: 'tagfield',
@@ -446,31 +350,28 @@
 						emptyText: 'Select Tags',
 	 					width: 300,
 						grow: true,
-	 					growMax: 300,
+						growMax: 300,
+						displayField: 'label',
+						valueField: 'value',
+						// load store from search results 
 						store: Ext.create('Ext.data.Store', {
-							autoLoad: true,
-							proxy: {
-								type: 'ajax',
-								url: 'api/v1/resource/components/tags'
-							},
-							sorters: [{
-								property: 'text',
-								direction: 'ASC'
-							}]
+							fields: ['label', 'value'],
 						}),
-						listeners: {
-							change: function(field, newValue, oldValue, opts) {
-								filterPanel.updateLayout(true, true);
-								filterResults();
-							}	
-						}						
+						addStoreItem: function (item) {
+							if (this.getStore().query('value', item.value).items.length === 0) {
+								this.getStore().add(item);
+							}
+						},
+						clearStore: function () {
+							this.getStore().removeAll();
+						}
 					},
 					Ext.create('OSF.component.StandardComboBox', {	
 						id: 'filterByType',
 						fieldLabel: 'By Entry Type',
 						name: 'componentType',						
 						margin: '0 0 10 0',					
-						editable: false,
+						editable: true,
 						typeAhead: false,
 						displayField: 'label',
 						valueField: 'value',
@@ -482,24 +383,22 @@
 							}]
 						}),
 						emptyText: '*ALL*',
-						listeners: {
-							change: function(field, newValue, oldValue, opts) {
-								filterResults();
-							}	
-						},
 						addStoreItem: function (item) {
 							if (this.getStore().query('value', item.value).items.length === 0) {
 								this.getStore().add(item);
 							}
+						},
+						clearStore: function () {
+							this.getStore().removeAll();
 						}
 					}),
 					{
 						xtype: 'label',
-						html: '<b>By User Rating</b>'
+						margin: '8 0 5 0',
+						html: '<b style="font-weight: bold;">By User Rating</b>'
 					},
 					{
 						xtype: 'container',
-						margin: '0 0 10 0',
 						layout: {
 							type: 'hbox'
 						}, 
@@ -507,11 +406,10 @@
 							{
 								xtype: 'button',
 								iconCls: 'fa fa-close',								
-								style: 'border-radius: 15px 15px 15px 15px;',
+								style: 'border-radius: 50%; margin-right: 5px;',
 								handler: function(){
 									var rating = this.up('container').getComponent('filterRating');
 									rating.setValue(null);
-									filterResults();
 								}
 							},
 							{
@@ -521,24 +419,18 @@
 								scale: '200%',
 								overStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
 								selectedStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
-								listeners: {
-									click: {
-										element: 'element',
-										fn: function(){
-											filterResults();
-										}
-									}
-								}
 							}
 						]
 					},
 					{
 						xtype: 'label',
-						html: '<b>By Vitals</b>'
+						margin: '8 0 5 0',
+						html: '<b style="font-weight: bold;">By Vitals</b>'
 					},
 					{
 						xtype: 'container',
 						id: 'attributeFiltersContainer',
+						margin: '0 0 20 0',
 						layout: {
 							type: 'vbox',							
 							align: 'stretch'							
@@ -548,39 +440,8 @@
 								xtype: 'panel',
 								hidden: true
 							}
-						],
-						margin: '0 0 20 0'
+						]
 					},
-					{
-						xtype: 'panel',
-						id: 'nonvisibleAttributes',
-						title: 'More Vitals',
-						iconCls: 'fa fa-filter',
-						header: {
-							cls: 'searchresults-morefilter'
-						},
-						layout: {
-							type: 'vbox',							
-							align: 'stretch'							
-						},						
-						listeners: {
-							expand: function(panel){
-								panel.setTitle('Less Vitals');
-							},
-							collapse: function(panel){
-								panel.setTitle('More Vitals');
-							}
-						},
-						items: [
-							{
-								xtype: 'panel',
-								hidden: true
-							}
-						],						
-						collapsible: true,
-						collapsed: true,						
-						titleCollapse: true	
-					}
 				],
 				dockedItems: [
 					{
@@ -606,8 +467,6 @@
 										filter.checkbox.resumeEvents(true);
 									});
 									attributeFilters = [];
-									
-									filterResults();
 								}
 							},
 							{
@@ -836,12 +695,107 @@
 						reader: {
 						   type: 'json',
 						   rootProperty: 'data',
-						   totalProperty: 'totalNumber'
+						   totalProperty: 'totalNumber',
+						   metaProperty: 'meta'
 						}
 				}),
 				listeners: {
 					beforeload: function(store, operation, opts) {
 						Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
+					},
+					metachange: function(store, meta) {
+						var filterByTypeCombo = Ext.getCmp('filterByType');
+						filterByTypeCombo.clearStore();
+						Ext.Object.each(meta.resultTypeStats, function(key, value, self) {
+							filterByTypeCombo.addStoreItem({
+								label: '(' + value.count + ') ' + value.componentTypeDescription,
+								value: value.componentType
+							});
+						});
+						filterByTypeCombo.setLoading(false);
+						var filterByTagCombo = Ext.getCmp('filterByTag');
+						filterByTagCombo.clearStore();
+						Ext.Object.each(meta.resultTagStats, function(key, value, self) {
+							filterByTagCombo.addStoreItem({
+								label: '(' + value.count + ') ' + value.tagLabel,
+								value: value.tagLabel
+							});
+						});
+						// filterByTagCombo.setDisabled(filterByTagCombo.getStore().data.length === 0);
+
+						// Set Attributes from the search results
+						attributeStats = {};
+						//group the attributes by attributeType
+						Ext.Array.each(meta.resultAttributeStats, function(item) {
+							if (attributeStats[item.attributeTypeLabel]) {
+								attributeStats[item.attributeTypeLabel].push(item);
+							} else {
+								attributeStats[item.attributeTypeLabel] = [item];
+							}
+						})
+
+						var attributeStatContainers = [];
+						
+						Ext.Array.each(Object.keys(attributeStats).sort(), function(key){
+							var panel = Ext.create('Ext.panel.Panel', {
+								title: key,
+								collapsible: true,
+								collapsed: true,
+								margin: '0 0 1 0',
+								titleCollapse: true,
+								animCollapse: false,
+								html: '&nbsp;'
+							});
+
+							var checkboxes = [];		
+							Ext.Array.each(attributeStats[key], function(attribute){
+								var check = Ext.create('Ext.form.field.Checkbox', {
+									boxLabel: '(' + attribute.count + ') ' + attribute.attributeCode,
+									attributeCode: attribute.attributeCode,
+									listeners: {
+										change: function(checkbox, newValue, oldValue, opts) {																	
+											if (newValue){
+
+												var containsAttribute = false;
+												Ext.Array.each(attributeFilters, function(item) {
+													if (item.type === attribute.attributeType &&
+														item.code === attribute.attributeCode) {
+														containsAttribute = true;
+													}
+												});
+												
+												if (!containsAttribute) {
+													attributeFilters.push({
+														type: attribute.attributeType,
+														code: attribute.attributeCode,
+														typeLabel: attribute.attributeTypeLabel,
+														label: attribute.attributeCode,
+														checkbox: checkbox
+													});
+												}
+											} else {
+												attributeFilters = Ext.Array.filter(attributeFilters, function(item) {
+													var keep = true;
+													if (item.type === attribute.attributeType &&
+														item.code === attribute.attributeCode) {
+														keep = false;																																								
+													}
+													return keep;
+												});
+											}
+										}
+									}
+								});	
+								checkboxes.push(check);
+							});													
+							panel.add(checkboxes);
+							panel.updateLayout(true, true);
+
+							attributeStatContainers.push(panel);
+						})
+						Ext.getCmp('attributeFiltersContainer').removeAll();
+						Ext.getCmp('attributeFiltersContainer').add(attributeStatContainers);
+
 					}
 				}
 			});
@@ -1098,7 +1052,7 @@
 
 					return request;
 				};
-				searchResultsStore.loadPage(1);					
+				searchResultsStore.loadPage(1);
 			};
 			
 			
