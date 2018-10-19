@@ -963,9 +963,15 @@
 								],
 								listeners: {
 									beforeclose: function(panel, opts) {
-										var form = panel.queryById('submissionForm');	
+										var form = panel.queryById('submissionForm');
 										if (form.userSubmission && !submissionWin.skipSave) {
 											panel.queryById('controlForm').saveSubmission();
+											Ext.Msg.alert({
+												title: 'Warning',
+												message: 'This entry was never submitted for review.<br>To submit for review proceed to the last page and click submit.',
+												icon: Ext.Msg.WARNING,
+												buttons: Ext.Msg.OK
+											});
 										}
 									}
 								}
