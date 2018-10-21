@@ -50,10 +50,10 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
-import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -1063,13 +1063,29 @@ public abstract class ComponentCommonSubResourceExt
 				}
 			}
 			
+			List<ComponentTag> lastFilteredList = new ArrayList<>();
+			
+//			List<String> al = new ArrayList<>();
+
+			Set<String> tempSet = new HashSet<>();
+//			tempSet.addAll(filteredFamilyTags);
+//			filteredFamilyTags.clear();
+//			filteredFamilyTags.addAll(tempSet);
+			
+			for (ComponentTag tag : filteredFamilyTags){
+				if(tempSet.add(tag.getText())){
+					lastFilteredList.add(tag);
+				}
+			}
+			
+			
 			// Now we need to map record how many times, each entry in the filtered list occured.
 //
 //			 
 //			 for(ComponentTag compTag : filteredFamilyTags){
 //				tagValueMap.merge(compTag, 1, Integer::sum);
 //			 }
-			return filteredFamilyTags;
+			return lastFilteredList;
 
 		} else {
 			return service.getComponentService().getTagCloud();

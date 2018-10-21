@@ -453,7 +453,7 @@
 								layout: 'hbox',
 								id: 'addTagPanel',
 								items: [
-									Ext.create('OSF.component.StandardComboBox', {
+									Ext.create('OSF.component.StandardTagDropDownBox', {
 										name: 'text',	
 										id: 'tagField',																				
 										flex: 1,
@@ -463,6 +463,7 @@
 										displayField: 'text',										
 										margin: '0 10 10 0',
 										maxLength: 120,
+										valueWasSelected: false,
 										storeConfig: {
 											url: 'api/v1/resource/components/' + componentId + '/tagsfree'
 										},
@@ -470,7 +471,7 @@
 											specialkey: function(field, e) {
 												var value = this.getValue();
 												if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
-													actionAddTag(value);
+													actionAddTag(value, Ext.getCmp('tagField').getSelection() ? true : false);
 												}	
 											}
 										}
@@ -484,7 +485,7 @@
 										handler: function(){
 											var tagField = Ext.getCmp('tagField');
 											if (tagField.isValid()) {
-												actionAddTag(tagField.getValue());
+												actionAddTag(tagField.getValue(), Ext.getCmp('tagField').getSelection() ? true : false);
 											}
 										}
 									}
@@ -505,12 +506,109 @@
 				});			
 			}
 			
-			var actionAddTag = function(tag) {
-				
+			var actionAddTag = function(tag, valueWasSelected) {
+
+				if(valueWasSelected){
+					saveTagToComponent(tag);
+				} else {
+
+					var winText = '<h3>Are you sure that you would like to add a new tag? ' + 
+					'Please see other possible matches below.</h3>';
+
+					Ext.create('Ext.window.Window', {
+						id: 'tagCheckerWin',
+						title: 'Are you sure you want to add a new tag? ',
+						width: '70%',
+						height: 450,
+						y: 200,
+						modal: true,
+						layout: 'anchor',
+						
+						items: [
+							{
+								dockedItems: [
+									{
+										xtype: 'panel',
+										dock: 'top',
+										html: winText
+									},
+									{
+										xtype: 'panel'
+									},
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Yes, I am sure, add the new tag.',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save',
+												handler: function(){
+													saveTagToComponent(tag);
+													this.up('window').close();
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'No, I want to use the selected prexisting tag.',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save',
+												disabled: true,
+												handler: function(){
+													this.up('window').close();
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Cancel',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+												handler: function(){
+													this.up('window').close();
+												}
+											}
+										]
+									}
+								]
+							}
+						]
+					});
+
+					var relatedParentTags;
+					Ext.getCmp('tagPanel').setLoading('Checking Sources');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + componentId + '/relatedparenttags',
+						method: 'GET',										
+						success: function(response, opts){
+							Ext.getCmp('tagPanel').setLoading(false);
+							relatedParentTags = Ext.decode(response.responseText);
+							if (Array.isArray(relatedParentTags) && relatedParentTags.length) {
+								Ext.getCmp('tagCheckerWin').show();
+							} else {
+								saveTagToComponent(tag);
+							}
+						},
+						failure: function(){
+							Ext.getCmp('tagPanel').setLoading(false);
+							Ext.toast({
+								title: 'validation error. the server could not process the request. ',
+								html: 'try changing the tag field.',
+								width: 550,
+								autoclosedelay: 10000
+							});
+						}
+					});
+				}
+			};
+
+
+			var saveTagToComponent = function(tag) {
+				// If there are related tags then show the window.
 				if (!tag || tag === '') {
 					Ext.getCmp('tagField').markInvalid('Tag name required');
-				} else {				
-					//add tag
+				} else {	
+					// Otherwise just add the tag.
 					Ext.getCmp('tagPanel').setLoading('Tagging Entry...');
 					Ext.Ajax.request({
 						url: 'api/v1/resource/components/' + componentId + '/tags',
@@ -537,7 +635,8 @@
 						}
 					});	
 				}
-			};
+			}
+
 			
 			var detailPanel = Ext.create('Ext.panel.Panel', {
 				id: 'detailPanel',
@@ -545,8 +644,6 @@
 				bodyStyle: 'padding: 10px;',
 				layout: 'fit'
 			});
-			
-			
 			
 			var contentPanel = Ext.create('Ext.panel.Panel', {
 				region: 'center',
@@ -564,6 +661,7 @@
 					contentPanel
 				]
 			});
+
 			var setHeaderButtons = function(isAnonymousUser)
 			{
 				if(isAnonymousUser)

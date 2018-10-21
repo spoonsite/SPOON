@@ -47,6 +47,36 @@ Ext.define('OSF.component.StandardComboBox', {
 
 });
 
+Ext.define('OSF.component.StandardTagDropDownBox', {
+	extend: 'Ext.form.field.ComboBox',
+	alias: 'widget.StandardTagDropDownBox',
+
+	emptyText: 'Select',
+	labelSeparator: '',
+	width: 175,
+	margin: '0 20 0 0',
+	valueField: 'code',
+	displayField: 'description',
+	typeAhead: true,
+	anyMatch: true,
+	forceSelection: true,
+	queryMode: 'local',
+	labelAlign: 'top',
+
+	initComponent: function () {
+		var me = this;
+
+		if (me.storeConfig)
+		{
+			var cbStore = CoreUtil.lookupStore(me.storeConfig);
+			me.store = cbStore;
+		}
+
+		this.callParent();
+	}
+
+});
+
 /***
  * Creates a combo box that allows selection of multiple users chosen via typing
  * in part of their names or choosing them from a list. 
