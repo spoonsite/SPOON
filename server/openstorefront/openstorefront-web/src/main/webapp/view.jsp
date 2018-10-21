@@ -533,7 +533,73 @@
 										html: winText
 									},
 									{
-										xtype: 'panel'
+										xtype: 'panel',
+										items: [
+											Ext.create('OSF.form.FamilyTags',{
+												id: 'weirdthingthis',
+												sourceComponentId: componentId
+
+											}),
+										]
+										// preventDefaultAction: true,
+										// layout: 'fit',
+										// initComponent: function () {			
+										// 	this.callParent();
+											
+										// 	var tagPanel = this;	
+										// 	tagPanel.tagGrid = Ext.create('Ext.grid.Panel', {
+										// 		columnLines: true,
+										// 		viewConfig: {
+										// 			enableTextSelection: true
+										// 		},
+										// 		store: Ext.create('Ext.data.Store', {
+										// 			fields: [			
+										// 				{
+										// 					name: 'createDts',
+										// 					type:	'date',
+										// 					dateFormat: 'c'
+										// 				}														
+										// 			],
+										// 			autoLoad: false,
+										// 			proxy: {
+										// 				type: 'ajax'							
+										// 			}
+										// 		}),
+										// 		columns: [
+										// 			{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 }
+										// 		],
+										// 		listeners: {
+					
+										// 		}
+										// 	});		
+										// 	tagPanel.add(tagPanel.tagGrid);		
+											
+										// },
+										// loadData: function(evaluationId, componentId, data, opts, callback) {
+											
+										// 	var tagPanel = this;
+											
+										// 	tagPanel.componentId = componentId;
+										// 	tagPanel.tagGrid.componentId = componentId;
+											
+										// 	tagPanel.tagGrid.getStore().load({
+										// 		url: 'api/v1/resource/components/' + componentId + '/tagsview'
+										// 	});		
+											
+										// 	if (callback) {
+										// 		callback();
+										// 	}
+										// }
+
+
+
+
+
+
+
+
+
+
 									},
 									{
 										xtype: 'toolbar',
@@ -574,6 +640,8 @@
 							}
 						]
 					});
+
+					Ext.getCmp('weirdthingthis').loadData(componentId);
 
 					var relatedParentTags;
 					Ext.getCmp('tagPanel').setLoading('Checking Sources');
