@@ -1002,7 +1002,6 @@ public abstract class ComponentCommonSubResourceExt
 		Component componentExample = new Component();
 		componentExample.setComponentId(componentId);
 		Component component = componentExample.find();
-//		TreeMap<ComponentTag, Integer> tagValueMap = new TreeMap<ComponentTag, Integer>();
 		if (component != null) {
 			
 			// Get Component Type of the main component
@@ -1040,14 +1039,10 @@ public abstract class ComponentCommonSubResourceExt
 					}
 				}
 			}
-
-			// Clean up the family List
 			
 			ComponentTag componentTagExample = new ComponentTag();
 			componentTagExample.setComponentId(componentId);
 			List<ComponentTag> myComponentTags = componentTagExample.findByExample();
-
-//			List<ComponentTag> allTags = service.getComponentService().getTagCloud();
 			List<ComponentTag> filteredFamilyTags = new ArrayList<>();
 
 			for (ComponentTag tag : popularFamilyTags) {
@@ -1064,13 +1059,7 @@ public abstract class ComponentCommonSubResourceExt
 			}
 			
 			List<ComponentTag> lastFilteredList = new ArrayList<>();
-			
-//			List<String> al = new ArrayList<>();
-
 			Set<String> tempSet = new HashSet<>();
-//			tempSet.addAll(filteredFamilyTags);
-//			filteredFamilyTags.clear();
-//			filteredFamilyTags.addAll(tempSet);
 			
 			for (ComponentTag tag : filteredFamilyTags){
 				if(tempSet.add(tag.getText())){
@@ -1078,59 +1067,12 @@ public abstract class ComponentCommonSubResourceExt
 				}
 			}
 			
-			
-			// Now we need to map record how many times, each entry in the filtered list occured.
-//
-//			 
-//			 for(ComponentTag compTag : filteredFamilyTags){
-//				tagValueMap.merge(compTag, 1, Integer::sum);
-//			 }
 			return lastFilteredList;
 
 		} else {
 			return service.getComponentService().getTagCloud();
 		}
 	}
-	
-//	@GET
-//	@APIDescription("Gets related tags, all the tags of all the things that have green tags.")
-//	@Produces({MediaType.APPLICATION_JSON})
-//	@DataType(ComponentTag.class)
-//	@Path("/{id}/relatedparenttags")
-//	public List<ComponentTag> getRelatedFreeTagRelatedComponentTags(
-//			@PathParam("id")
-//			@RequiredParam String componentId)
-//	{
-//		Component componentExample = new Component();
-//		componentExample.setComponentId(componentId);
-//		Component component = componentExample.find();
-//
-//		if (component != null) {
-//			ComponentTag componentTagExample = new ComponentTag();
-//			componentTagExample.setComponentId(componentId);
-//			List<ComponentTag> componentTags = componentTagExample.findByExample();
-//
-//			List<ComponentTag> allTags = service.getComponentService().getTagCloud();
-//			List<ComponentTag> filteredTags = new ArrayList<>();
-//
-//			for (ComponentTag tag : allTags) {
-//				boolean pass = true;
-//				for (ComponentTag myTag : componentTags) {
-//					if (myTag.getText().equalsIgnoreCase(tag.getText())) {
-//						pass = false;
-//						break;
-//					}
-//				}
-//				if (pass) {
-//					filteredTags.add(tag);
-//				}
-//			}
-//
-//			return filteredTags;
-//		} else {
-//			return service.getComponentService().getTagCloud();
-//		}
-//	}
 
 	@GET
 	@APIDescription("Get the entire tag list (Tag Cloud)")

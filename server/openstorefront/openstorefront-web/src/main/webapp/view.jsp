@@ -32,6 +32,7 @@
 		
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
+		Ext.require('OSF.form.FamilyTags');
 		
 		var DetailPage = {
 			showRelatedOrganizations: function(organization) {
@@ -523,6 +524,7 @@
 						y: 200,
 						modal: true,
 						layout: 'anchor',
+						scrollable: true,
 						
 						items: [
 							{
@@ -534,114 +536,24 @@
 									},
 									{
 										xtype: 'panel',
-										items: [
-											Ext.create('OSF.form.FamilyTags',{
-												id: 'weirdthingthis',
-												sourceComponentId: componentId
-
-											}),
-										]
-										// preventDefaultAction: true,
-										// layout: 'fit',
-										// initComponent: function () {			
-										// 	this.callParent();
-											
-										// 	var tagPanel = this;	
-										// 	tagPanel.tagGrid = Ext.create('Ext.grid.Panel', {
-										// 		columnLines: true,
-										// 		viewConfig: {
-										// 			enableTextSelection: true
-										// 		},
-										// 		store: Ext.create('Ext.data.Store', {
-										// 			fields: [			
-										// 				{
-										// 					name: 'createDts',
-										// 					type:	'date',
-										// 					dateFormat: 'c'
-										// 				}														
-										// 			],
-										// 			autoLoad: false,
-										// 			proxy: {
-										// 				type: 'ajax'							
-										// 			}
-										// 		}),
-										// 		columns: [
-										// 			{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 }
-										// 		],
-										// 		listeners: {
-					
-										// 		}
-										// 	});		
-										// 	tagPanel.add(tagPanel.tagGrid);		
-											
-										// },
-										// loadData: function(evaluationId, componentId, data, opts, callback) {
-											
-										// 	var tagPanel = this;
-											
-										// 	tagPanel.componentId = componentId;
-										// 	tagPanel.tagGrid.componentId = componentId;
-											
-										// 	tagPanel.tagGrid.getStore().load({
-										// 		url: 'api/v1/resource/components/' + componentId + '/tagsview'
-										// 	});		
-											
-										// 	if (callback) {
-										// 		callback();
-										// 	}
-										// }
-
-
-
-
-
-
-
-
-
-
-									},
-									{
-										xtype: 'toolbar',
 										dock: 'bottom',
 										items: [
-											{
-												text: 'Yes, I am sure, add the new tag.',
-												iconCls: 'fa fa-lg fa-save icon-button-color-save',
-												handler: function(){
-													saveTagToComponent(tag);
-													this.up('window').close();
-												}
-											},
-											{
-												xtype: 'tbfill'
-											},
-											{
-												text: 'No, I want to use the selected prexisting tag.',
-												iconCls: 'fa fa-lg fa-save icon-button-color-save',
-												disabled: true,
-												handler: function(){
-													this.up('window').close();
-												}
-											},
-											{
-												xtype: 'tbfill'
-											},
-											{
-												text: 'Cancel',
-												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-												handler: function(){
-													this.up('window').close();
-												}
-											}
+											Ext.create('OSF.form.FamilyTags',{
+												id: 'weirdthingthis'
+											}),
 										]
 									}
 								]
 							}
-						]
+						],
+						listeners: {
+							close: function(panel, eOpts){
+								this.destroy();
+							}
+						}
 					});
 
-					Ext.getCmp('weirdthingthis').loadData(componentId);
+					Ext.getCmp('weirdthingthis').loadData(componentId, tag);
 
 					var relatedParentTags;
 					Ext.getCmp('tagPanel').setLoading('Checking Sources');

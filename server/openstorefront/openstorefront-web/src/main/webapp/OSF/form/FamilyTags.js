@@ -16,37 +16,51 @@
  * See NOTICE.txt for more information.
  */
 /* global Ext, CoreUtil */
-
 Ext.define('OSF.form.FamilyTags', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.FamilyTags',
 	
-	// requiredPermissions: ['ADMIN-ENTRY-TAG-MANAGEMENT'],
-	// beforePermissionsCheckFailure: function () { return false; },
-	// beforePermissionsCheckSuccess: function () { return false; },
+
 	preventDefaultAction: true,
 	layout: 'fit',
-	sourceComponentId: null,
-	initComponent: function () {
-		console.log(this.sourceComponentId);			
+	initComponent: function () {	
+
 		this.callParent();
-		
 		var tagPanel = this;	
 		
-		// var actionAddTag = function(form) {				
-		// 	var data = form.getValues();
-		// 	var componentId = tagPanel.componentId;
-		// 	CoreUtil.submitForm({
-		// 		url: 'api/v1/resource/components/' + componentId + '/tags',
-		// 		method: 'POST',
-		// 		data: data,
-		// 		form: form,
-		// 		success: function(){
-		// 			tagPanel.tagGrid.getStore().reload();
-		// 			form.reset();
-		// 		}
-		// 	});				
-		// };		
+		var saveTagToComponent = function(tag) {
+			// If there are related tags then show the window.
+			if (!tag || tag === '') {
+				Ext.getCmp('tagField').markInvalid('Tag name required');
+			} else {	
+				// Otherwise just add the tag.
+				Ext.getCmp('tagPanel').setLoading('Tagging Entry...');
+				Ext.Ajax.request({
+					url: 'api/v1/resource/components/' + tagPanel.componentId + '/tags',
+					method: 'POST',
+					jsonData: {
+						text: tag
+					},
+					callback: function(){
+						Ext.getCmp('tagPanel').setLoading(false);
+					},
+					success: function(response, opt){
+						var tag = Ext.decode(response.responseText);
+						var tagField = Ext.getCmp('tagField');
+
+						if (typeof tag.errors === 'undefined') {
+							processTags(tag);
+							tagField.reset();
+							tagField.getStore().load();
+						}
+						else {
+							tagField.reset();
+							tagField.markInvalid(tag.errors.entry[0].value);
+						}
+					}
+				});	
+			}
+		}	
 		
 		tagPanel.tagGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
@@ -67,114 +81,71 @@ Ext.define('OSF.form.FamilyTags', {
 				}
 			}),
 			columns: [
-				{ text: 'Tag', dataIndex: 'text', flex: 1, minWidth: 200 }//,
-				// { text: 'Create User', align: 'center', dataIndex: 'createUser', width: 150 },
-				// { text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
-				// { text: 'Security Marking',  dataIndex: 'securityMarkingDescription', width: 150, hidden: true },
-				// { text: 'Data Sensitivity',  dataIndex: 'dataSensitivity', width: 150, hidden: true }
+				{ text: 'Related Tags', dataIndex: 'text', flex: 1, minWidth: 200 }
 			],
 			listeners: {
 				selectionchange: function(grid, record, index, opts){
-					// var fullgrid = tagPanel.tagGrid;
-					// if (fullgrid.getSelectionModel().getCount() === 1) {
-					// 	fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(false);
-					// } else {
-					// 	fullgrid.down('toolbar').getComponent('removeBtn').setDisabled(true);
-					// }
+					var fullgrid = tagPanel.tagGrid;
+					if (fullgrid.getSelectionModel().getCount() === 1) {
+						fullgrid.down('toolbar').getComponent('useOldTag').setDisabled(false);
+					} else {
+						fullgrid.down('toolbar').getComponent('useOldTag').setDisabled(true);
+					}
 				}						
-			}//,
-			// dockedItems: [
-			// 	{
-			// 		// xtype: 'form',
-			// 		// layout: 'anchor',
-			// 		// padding: 10,
-			// 		// defaults: {
-			// 		// 	labelAlign: 'top',
-			// 		// 	labelSeparator: ''
-			// 		// },
-			// 		// items: [
-			// 		// 	{
-			// 		// 		xtype: 'panel',
-			// 		// 		layout: 'hbox',
-			// 		// 		items: [
-			// 		// 			Ext.create('OSF.component.StandardComboBox', {
-			// 		// 				name: 'text',	
-			// 		// 				itemId: 'tagField',
-			// 		// 				flex: 1,
-			// 		// 				fieldLabel: 'Add Tag',
-			// 		// 				forceSelection: false,
-			// 		// 				valueField: 'text',
-			// 		// 				displayField: 'text',										
-			// 		// 				margin: '0 10 10 0',
-			// 		// 				maxLength: 120,
-			// 		// 				storeConfig: {
-			// 		// 					url: 'api/v1/resource/components/' + tagPanel.componentId + '/tagsfree'
-			// 		// 				},
-			// 		// 				listeners:{
-			// 		// 					specialkey: function(field, e) {
-			// 		// 						var value = this.getValue();
-			// 		// 						if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
-			// 		// 							actionAddTag(this.up('form'));
-			// 		// 						}	
-			// 		// 					}
-			// 		// 				}
-			// 		// 			}),
-			// 		// 			{
-			// 		// 				xtype: 'button',
-			// 		// 				text: 'Add',
-			// 		// 				iconCls: 'fa fa-plus',
-			// 		// 				margin: '30 0 0 0',
-			// 		// 				minWidth: 75,
-			// 		// 				handler: function(){
-			// 		// 					var tagField = this.findParentByType('form').query('[name="text"]')[0];
-			// 		// 					if (tagField.isValid()) {
-			// 		// 						actionAddTag(this.up('form'));
-			// 		// 					}
-			// 		// 				}
-			// 		// 			}
-			// 		// 		]
-			// 		// 	}
-			// 		// ]
-			// 	},						
-			// 	{
-			// 		// xtype: 'toolbar',
-			// 		// items: [							
-			// 		// 	{
-			// 		// 		text: 'Refresh',
-			// 		// 		iconCls: 'fa fa-lg fa-refresh icon-button-color-refresh',
-			// 		// 		handler: function(){
-			// 		// 			this.up('grid').getStore().reload();
-			// 		// 		}
-			// 		// 	},
-			// 		// 	{
-			// 		// 		xtype: 'tbfill'
-			// 		// 	},
-			// 		// 	{
-			// 		// 		text: 'Delete',
-			// 		// 		itemId: 'removeBtn',
-			// 		// 		iconCls: 'fa fa-lg fa-trash icon-button-color-warning',									
-			// 		// 		disabled: true,
-			// 		// 		handler: function(){
-			// 		// 			CoreUtil.actionSubComponentToggleStatus(tagPanel.tagGrid, 'tagId', 'tags');
-			// 		// 		}
-			// 		// 	}
-			// 		// ]
-			// 	}
-			// ]
+			},
+			dockedItems: [
+				{
+					xtype: 'toolbar',
+					dock: 'top',
+					items: [
+						{
+							text: 'Yes, I am sure, add the new tag.',
+							iconCls: 'fa fa-lg fa-save icon-button-color-save',
+							handler: function(){
+								saveTagToComponent(tagPanel.tagGrid.newTag);
+								this.up('window').close();
+							}
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'No, I want to use the selected prexisting tag.',
+							itemId: 'useOldTag',
+							iconCls: 'fa fa-lg fa-save icon-button-color-save',
+							disabled: true,
+							handler: function(){
+								saveTagToComponent(tagPanel.tagGrid.getSelection()[0].data.text);
+								this.up('window').close();
+							}
+						},
+						{
+							xtype: 'tbfill'
+						},
+						{
+							text: 'Cancel',
+							iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+							handler: function(){
+								this.up('window').close();
+							}
+						}
+					]
+				}
+			]
 		});		
 		tagPanel.add(tagPanel.tagGrid);		
 		
 	},
-	loadData: function(componentId) {
+	loadData: function(componentId, newTag) {
 		
 		var tagPanel = this;
 		
 		tagPanel.componentId = componentId;
+		tagPanel.tagGrid.newTag = newTag;
 		tagPanel.tagGrid.componentId = componentId;
-		// console.log(sourceComponentId);
 		
 		tagPanel.tagGrid.getStore().load({
-			url: 'api/v1/resource/components/' + componentId + '/tagsview'
+			url: 'api/v1/resource/components/' + componentId + '/relatedparenttags'
 		});		
 
 	}
