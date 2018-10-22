@@ -32,7 +32,7 @@
 		
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
-		Ext.require('OSF.form.FamilyTags');
+		Ext.require('OSF.form.FamilyTagWindow');
 		
 		var DetailPage = {
 			showRelatedOrganizations: function(organization) {
@@ -513,30 +513,20 @@
 					saveTagToComponent(tag);
 				} else {
 
-					var winText = '<h3> Are you sure that you would like to add a new tag? \n ' + 
-					' Please see other possible matches below.</h3>';
-
-					var tagWindow = Ext.create('Ext.window.Window', {
-						title: 'Are you sure you want to add a new tag? ',
-						width: '70%',
-						height: 450,
-						y: 200,
-						modal: true,
-						layout: 'fit',
-						closeAction: 'destroy',
-						
-						items: [
-							{
-								xtype: 'familyTags',
-								itemId: 'weirdthingthis',
-								saveCallBack: function(inputTag){
-									processTags(inputTag);
-								}
-							}
-						]
+					var tagWindow = Ext.create('OSF.form.FamilyTagWindow', {
+						itemId: 'weirdthingthis',
+						processTagsCallback: function(inputTag){
+							processTags(inputTag);
+						}
 					});
 
-					tagWindow.queryById('weirdthingthis').loadData(componentId, tag);
+
+
+
+					tagWindow.loadData(componentId, tag);
+
+
+					
 
 					var relatedParentTags;
 					Ext.getCmp('tagPanel').setLoading('Checking Sources');
