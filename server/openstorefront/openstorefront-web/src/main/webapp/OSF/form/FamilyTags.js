@@ -20,13 +20,13 @@ Ext.define('OSF.form.FamilyTags', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.FamilyTags',
 	
-
 	preventDefaultAction: true,
 	layout: 'fit',
-	initComponent: function () {	
-
+	saveCallBack: null, // add a callback
+	initComponent: function () {		
 		this.callParent();
-		var tagPanel = this;	
+		
+		var tagPanel = this;
 		
 		var saveTagToComponent = function(tag) {
 			// If there are related tags then show the window.
@@ -49,7 +49,9 @@ Ext.define('OSF.form.FamilyTags', {
 						var tagField = Ext.getCmp('tagField');
 
 						if (typeof tag.errors === 'undefined') {
-							processTags(tag);
+							if(tagPanel.saveCallBack){
+								tagPanel.saveCallBack(tag);
+							}
 							tagField.reset();
 							tagField.getStore().load();
 						}
@@ -145,7 +147,7 @@ Ext.define('OSF.form.FamilyTags', {
 		tagPanel.tagGrid.componentId = componentId;
 		
 		tagPanel.tagGrid.getStore().load({
-			url: 'api/v1/resource/components/' + componentId + '/relatedparenttags'
+			url: 'api/v1/resource/components/' + componentId + '/relatedtags'
 		});		
 
 	}

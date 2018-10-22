@@ -513,11 +513,10 @@
 					saveTagToComponent(tag);
 				} else {
 
-					var winText = '<h3>Are you sure that you would like to add a new tag? ' + 
-					'Please see other possible matches below.</h3>';
+					var winText = '<h3> Are you sure that you would like to add a new tag? \n ' + 
+					' Please see other possible matches below.</h3>';
 
-					Ext.create('Ext.window.Window', {
-						id: 'tagCheckerWin',
+					var tagWindow = Ext.create('Ext.window.Window', {
 						title: 'Are you sure you want to add a new tag? ',
 						width: '70%',
 						height: 450,
@@ -525,6 +524,7 @@
 						modal: true,
 						layout: 'anchor',
 						scrollable: true,
+						closeAction: 'destroy',
 						
 						items: [
 							{
@@ -539,32 +539,30 @@
 										dock: 'bottom',
 										items: [
 											Ext.create('OSF.form.FamilyTags',{
-												id: 'weirdthingthis'
+												itemId: 'weirdthingthis',
+												saveCallBack: function(inputTag){
+													processTags(inputTag);
+												} 
 											}),
 										]
 									}
 								]
 							}
-						],
-						listeners: {
-							close: function(panel, eOpts){
-								this.destroy();
-							}
-						}
+						]
 					});
 
-					Ext.getCmp('weirdthingthis').loadData(componentId, tag);
+					tagWindow.queryById('weirdthingthis').loadData(componentId, tag);
 
 					var relatedParentTags;
 					Ext.getCmp('tagPanel').setLoading('Checking Sources');
 					Ext.Ajax.request({
-						url: 'api/v1/resource/components/' + componentId + '/relatedparenttags',
+						url: 'api/v1/resource/components/' + componentId + '/relatedtags',
 						method: 'GET',										
 						success: function(response, opts){
 							Ext.getCmp('tagPanel').setLoading(false);
 							relatedParentTags = Ext.decode(response.responseText);
 							if (Array.isArray(relatedParentTags) && relatedParentTags.length) {
-								Ext.getCmp('tagCheckerWin').show();
+								tagWindow.show();
 							} else {
 								saveTagToComponent(tag);
 							}
