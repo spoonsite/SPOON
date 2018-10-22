@@ -442,6 +442,15 @@
 							}
 						]
 					},
+					{
+						xtype: 'button',
+						text: 'More Vitals',
+						id: 'moreAttributeFiltersButton',
+						handler: function() {
+							attributeFilterStore.getNextPage();
+						},
+						hidden: true
+					}
 				],
 				dockedItems: [
 					{
@@ -679,8 +688,39 @@
 				}
 				
 			};
+			
+			// custom store for the attribute filters
+			var attributeFilterStore = {
+				attributes : [],
+				pageSize : 20,
+				currentPage : 0,
+				loadData : function(data) {
+					attributeFilterStore.attributes = data;	
+				},
+				clear : function() {
+					Ext.getCmp('attributeFiltersContainer').removeAll();
+					attributeFilterStore.attributes = [];
+					attributeFilterStore.currentPage = 0;
+				},
+				init : function() {
+					if (attributeFilterStore.attributes && attributeFilterStore.attributes.length > 0) {
+						var start = attributeFilterStore.currentPage * attributeFilterStore.pageSize;
+						var end = start + attributeFilterStore.pageSize;
+						if (attributeFilterStore.attributes.length < end) {
+							end = attributeFilterStore.attributes.length
+						}
+						var slice = attributeFilterStore.attributes.slice(start, end);
+						Ext.getCmp('moreAttributeFiltersButton').setHidden(slice.length === 0);
+						Ext.getCmp('attributeFiltersContainer').add(slice);
+					}
+				},
+				getNextPage : function() {
+					attributeFilterStore.currentPage += 1;
+					attributeFilterStore.init();
+				}
+			};
+
 			SearchPage.filterResults = filterResults;
-		
 			var searchResultsStore = Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				pageSize: maxPageSize,
@@ -740,7 +780,7 @@
 							var panel = Ext.create('Ext.panel.Panel', {
 								title: key,
 								collapsible: true,
-								collapsed: true,
+								collapsed: false,
 								margin: '0 0 1 0',
 								titleCollapse: true,
 								animCollapse: false,
@@ -749,53 +789,64 @@
 
 							var checkboxes = [];		
 							Ext.Array.each(attributeStats[key], function(attribute){
-								var check = Ext.create('Ext.form.field.Checkbox', {
-									boxLabel: '(' + attribute.count + ') ' + attribute.attributeCode,
-									attributeCode: attribute.attributeCode,
-									listeners: {
-										change: function(checkbox, newValue, oldValue, opts) {																	
-											if (newValue){
+								var containsAttribute = false;
+								Ext.Array.each(attributeFilters, function(item) {
+									if (item.type === attribute.attributeType &&
+										item.code === attribute.attributeCode) {
+										containsAttribute = true;
+										checkboxes.push(item.checkbox);
+									}
+								});
+								if (!containsAttribute) {
+									panel.setCollapsed(true);
+									var check = Ext.create('Ext.form.field.Checkbox', {
+										boxLabel: '(' + attribute.count + ') ' + attribute.attributeCode,
+										attributeCode: attribute.attributeCode,
+										listeners: {
+											change: function(checkbox, newValue, oldValue, opts) {																	
+												if (newValue){
 
-												var containsAttribute = false;
-												Ext.Array.each(attributeFilters, function(item) {
-													if (item.type === attribute.attributeType &&
-														item.code === attribute.attributeCode) {
-														containsAttribute = true;
+													var containsAttribute = false;
+													Ext.Array.each(attributeFilters, function(item) {
+														if (item.type === attribute.attributeType &&
+															item.code === attribute.attributeCode) {
+															containsAttribute = true;
+														}
+													});
+													
+													if (!containsAttribute) {
+														attributeFilters.push({
+															type: attribute.attributeType,
+															code: attribute.attributeCode,
+															typeLabel: attribute.attributeTypeLabel,
+															label: attribute.attributeCode,
+															checkbox: checkbox
+														});
 													}
-												});
-												
-												if (!containsAttribute) {
-													attributeFilters.push({
-														type: attribute.attributeType,
-														code: attribute.attributeCode,
-														typeLabel: attribute.attributeTypeLabel,
-														label: attribute.attributeCode,
-														checkbox: checkbox
+												} else {
+													attributeFilters = Ext.Array.filter(attributeFilters, function(item) {
+														var keep = true;
+														if (item.type === attribute.attributeType &&
+															item.code === attribute.attributeCode) {
+															keep = false;																																								
+														}
+														return keep;
 													});
 												}
-											} else {
-												attributeFilters = Ext.Array.filter(attributeFilters, function(item) {
-													var keep = true;
-													if (item.type === attribute.attributeType &&
-														item.code === attribute.attributeCode) {
-														keep = false;																																								
-													}
-													return keep;
-												});
 											}
 										}
-									}
-								});	
+									});	
+								}
 								checkboxes.push(check);
-							});													
+							});
 							panel.add(checkboxes);
 							panel.updateLayout(true, true);
 
 							attributeStatContainers.push(panel);
 						})
-						Ext.getCmp('attributeFiltersContainer').removeAll();
-						Ext.getCmp('attributeFiltersContainer').add(attributeStatContainers);
-
+						attributeFilterStore.clear();
+						attributeFilterStore.loadData(attributeStatContainers);
+						attributeFilterStore.init();
 					}
 				}
 			});
