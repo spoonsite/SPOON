@@ -19,14 +19,17 @@
 Ext.define('OSF.form.FamilyTags', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.FamilyTags',
+	xtype: 'familyTags',
 	
 	preventDefaultAction: true,
-	layout: 'fit',
 	saveCallBack: null, // add a callback
+	layout: 'fit',
 	initComponent: function () {		
 		this.callParent();
 		
 		var tagPanel = this;
+		var winText = '<h3> Are you sure that you would like to add a new tag? </br> ' + 
+		' Please see other possible matches below.</h3>';
 		
 		var saveTagToComponent = function(tag) {
 			// If there are related tags then show the window.
@@ -65,7 +68,8 @@ Ext.define('OSF.form.FamilyTags', {
 		}	
 		
 		tagPanel.tagGrid = Ext.create('Ext.grid.Panel', {
-			columnLines: true,
+			layout: 'fit',
+
 			viewConfig: {
 				enableTextSelection: true
 			},
@@ -83,7 +87,7 @@ Ext.define('OSF.form.FamilyTags', {
 				}
 			}),
 			columns: [
-				{ text: 'Related Tags', dataIndex: 'text', flex: 1, minWidth: 200 }
+				{ text: 'Related Tags', dataIndex: 'text', flex: 1, minWidth: 100 }
 			],
 			listeners: {
 				selectionchange: function(grid, record, index, opts){
@@ -97,8 +101,13 @@ Ext.define('OSF.form.FamilyTags', {
 			},
 			dockedItems: [
 				{
-					xtype: 'toolbar',
+					xtype: 'panel',
 					dock: 'top',
+					html: winText
+				},
+				{
+					xtype: 'toolbar',
+					dock: 'bottom',
 					items: [
 						{
 							text: 'Yes, I am sure, add the new tag.',

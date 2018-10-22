@@ -522,31 +522,16 @@
 						height: 450,
 						y: 200,
 						modal: true,
-						layout: 'anchor',
-						scrollable: true,
+						layout: 'fit',
 						closeAction: 'destroy',
 						
 						items: [
 							{
-								dockedItems: [
-									{
-										xtype: 'panel',
-										dock: 'top',
-										html: winText
-									},
-									{
-										xtype: 'panel',
-										dock: 'bottom',
-										items: [
-											Ext.create('OSF.form.FamilyTags',{
-												itemId: 'weirdthingthis',
-												saveCallBack: function(inputTag){
-													processTags(inputTag);
-												} 
-											}),
-										]
-									}
-								]
+								xtype: 'familyTags',
+								itemId: 'weirdthingthis',
+								saveCallBack: function(inputTag){
+									processTags(inputTag);
+								}
 							}
 						]
 					});
