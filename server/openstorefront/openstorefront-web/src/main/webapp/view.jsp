@@ -456,61 +456,15 @@
 								xtype: 'familyTagDropPanel',
 								itemId: 'familyDropTagBox',
 								componentId: componentId,
+								parentPanel: Ext.getCmp('tagPanel'),
 								processTagsCallback: function(inputTag){
 									processTags(inputTag);
 								}
 							}
-							// {
-							// 	xtype: 'panel',
-							// 	layout: 'hbox',
-							// 	id: 'addTagPanel',
-							// 	items: [
-							// 		Ext.create('OSF.component.StandardTagDropDownBox', {
-							// 			name: 'text',	
-							// 			id: 'tagField',																				
-							// 			flex: 1,
-							// 			fieldLabel: 'Add Tag',
-							// 			forceSelection: false,
-							// 			valueField: 'text',
-							// 			displayField: 'text',										
-							// 			margin: '0 10 10 0',
-							// 			maxLength: 120,
-							// 			valueWasSelected: false,
-							// 			storeConfig: {
-							// 				url: 'api/v1/resource/components/' + componentId + '/tagsfree'
-							// 			},
-							// 			listeners:{
-							// 				specialkey: function(field, e) {
-							// 					var value = this.getValue();
-							// 					if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
-							// 						actionAddTag(value, Ext.getCmp('tagField').getSelection() ? true : false);
-							// 					}	
-							// 				}
-							// 			}
-							// 		}),
-							// 		{
-							// 			xtype: 'button',
-							// 			text: 'Add',
-							// 			iconCls: 'fa fa-plus',
-							// 			margin: '30 0 0 0',
-							// 			minWidth: 75,
-							// 			handler: function(){
-							// 				var tagField = Ext.getCmp('tagField');
-							// 				if (tagField.isValid()) {
-							// 					actionAddTag(tagField.getValue(), Ext.getCmp('tagField').getSelection() ? true : false);
-							// 				}
-							// 			}
-							// 		}
-							// 	]
-							// }
 						]
 					}
 				]
 			});
-
-			// GET THIS BY ITEMID IT IS BETTER...
-			// Ext.getCmp('tagPanel').getComponent('familyDropTagBox').loadData(componentId);
-
 			
 			if (fullPage && !hideSecurityBanner) {
 				CoreService.brandingservice.getCurrentBranding().then(function(branding){					
@@ -521,90 +475,6 @@
 					}
 				});			
 			}
-			
-			// var actionAddTag = function(tag, valueWasSelected) {
-
-			// 	if(valueWasSelected){
-			// 		saveTagToComponent(tag);
-			// 	} else {
-
-			// 		var tagWindow = Ext.create('OSF.form.FamilyTagWindow', {
-			// 			itemId: 'weirdthingthis',
-			// 			processTagsCallback: function(inputTag){
-			// 				processTags(inputTag);
-			// 			}
-			// 		});
-
-
-
-
-			// 		tagWindow.loadData(componentId, tag);
-
-
-
-
-			// 		var relatedParentTags;
-			// 		Ext.getCmp('tagPanel').setLoading('Checking Sources');
-			// 		Ext.Ajax.request({
-			// 			url: 'api/v1/resource/components/' + componentId + '/relatedtags',
-			// 			method: 'GET',										
-			// 			success: function(response, opts){
-			// 				Ext.getCmp('tagPanel').setLoading(false);
-			// 				relatedParentTags = Ext.decode(response.responseText);
-			// 				if (Array.isArray(relatedParentTags) && relatedParentTags.length) {
-			// 					tagWindow.show();
-			// 				} else {
-			// 					saveTagToComponent(tag);
-			// 				}
-			// 			},
-			// 			failure: function(){
-			// 				Ext.getCmp('tagPanel').setLoading(false);
-			// 				Ext.toast({
-			// 					title: 'validation error. the server could not process the request. ',
-			// 					html: 'try changing the tag field.',
-			// 					width: 550,
-			// 					autoclosedelay: 10000
-			// 				});
-			// 			}
-			// 		});
-			// 	}
-			// };
-
-
-			// var saveTagToComponent = function(tag) {
-			// 	// If there are related tags then show the window.
-			// 	if (!tag || tag === '') {
-			// 		Ext.getCmp('tagField').markInvalid('Tag name required');
-			// 	} else {	
-			// 		// Otherwise just add the tag.
-			// 		Ext.getCmp('tagPanel').setLoading('Tagging Entry...');
-			// 		Ext.Ajax.request({
-			// 			url: 'api/v1/resource/components/' + componentId + '/tags',
-			// 			method: 'POST',
-			// 			jsonData: {
-			// 				text: tag
-			// 			},
-			// 			callback: function(){
-			// 				Ext.getCmp('tagPanel').setLoading(false);
-			// 			},
-			// 			success: function(response, opt){
-			// 				var tag = Ext.decode(response.responseText);
-			// 				var tagField = Ext.getCmp('tagField');
-
-			// 				if (typeof tag.errors === 'undefined') {
-			// 					processTags(tag);
-			// 					tagField.reset();
-			// 					tagField.getStore().load();
-			// 				}
-			// 				else {
-			// 					tagField.reset();
-			// 					tagField.markInvalid(tag.errors.entry[0].value);
-			// 				}
-			// 			}
-			// 		});	
-			// 	}
-			// }
-
 			
 			var detailPanel = Ext.create('Ext.panel.Panel', {
 				id: 'detailPanel',
