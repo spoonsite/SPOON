@@ -16,6 +16,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
 	<dependencies>
@@ -26,11 +28,19 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>edu.usu.sdl</groupId>
 			<artifactId>openstorefront-core-api</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.simpleframework</groupId>
+            <artifactId>simple-xml</artifactId>
+            <version>2.7.1</version>
+        </dependency>		
 	</dependencies>
+
+<!-- TODO: Add Shade plugin so we can include xml parsing into plugin -->
 
     <build>
         <plugins>
