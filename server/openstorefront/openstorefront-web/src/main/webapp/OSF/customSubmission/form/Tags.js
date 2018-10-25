@@ -39,9 +39,12 @@ Ext.define('OSF.customSubmission.form.Tags', {
 
 		tagPanel.add(
 		{
-			xtype: 'StandardComboBox',	
+			xtype: 'StandardComboBox',
+			itemId: 'osfsubformbox',	
 			name: 'text',
 			allowBlank: false,
+			typeAhead: true,
+			anyMatch: true,
 			margin: '0 0 0 0',
 			fieldLabel: 'Tag<span class="field-required" />',
 			forceSelection: false,

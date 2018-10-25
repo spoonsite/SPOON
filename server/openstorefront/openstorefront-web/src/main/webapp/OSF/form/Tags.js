@@ -20,6 +20,7 @@
 Ext.define('OSF.form.Tags', {
 	extend: 'Ext.panel.Panel',
 	alias: 'osf.form.Tags',
+	requires: ['OSF.component.TagDropDownWithFamilyPanel'],
 	
 	requiredPermissions: ['ADMIN-ENTRY-TAG-MANAGEMENT'],
 	beforePermissionsCheckFailure: function () { return false; },
@@ -31,20 +32,20 @@ Ext.define('OSF.form.Tags', {
 		
 		var tagPanel = this;	
 		
-		var actionAddTag = function(form) {				
-			var data = form.getValues();
-			var componentId = tagPanel.componentId;
-			CoreUtil.submitForm({
-				url: 'api/v1/resource/components/' + componentId + '/tags',
-				method: 'POST',
-				data: data,
-				form: form,
-				success: function(){
-					tagPanel.tagGrid.getStore().reload();
-					form.reset();
-				}
-			});				
-		};		
+		// var actionAddTag = function(form) {				
+		// 	var data = form.getValues();
+		// 	var componentId = tagPanel.componentId;
+		// 	CoreUtil.submitForm({
+		// 		url: 'api/v1/resource/components/' + componentId + '/tags',
+		// 		method: 'POST',
+		// 		data: data,
+		// 		form: form,
+		// 		success: function(){
+		// 			tagPanel.tagGrid.getStore().reload();
+		// 			form.reset();
+		// 		}
+		// 	});				
+		// };		
 		
 		tagPanel.tagGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,
@@ -95,41 +96,50 @@ Ext.define('OSF.form.Tags', {
 							xtype: 'panel',
 							layout: 'hbox',
 							items: [
-								Ext.create('OSF.component.StandardComboBox', {
-									name: 'text',	
-									itemId: 'tagField',
-									flex: 1,
-									fieldLabel: 'Add Tag',
-									forceSelection: false,
-									valueField: 'text',
-									displayField: 'text',										
-									margin: '0 10 10 0',
-									maxLength: 120,
-									storeConfig: {
-										url: 'api/v1/resource/components/' + tagPanel.componentId + '/tagsfree'
-									},
-									listeners:{
-										specialkey: function(field, e) {
-											var value = this.getValue();
-											if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
-												actionAddTag(this.up('form'));
-											}	
-										}
-									}
-								}),
 								{
-									xtype: 'button',
-									text: 'Add',
-									iconCls: 'fa fa-plus',
-									margin: '30 0 0 0',
-									minWidth: 75,
-									handler: function(){
-										var tagField = this.findParentByType('form').query('[name="text"]')[0];
-										if (tagField.isValid()) {
-											actionAddTag(this.up('form'));
-										}
+									xtype: 'familyTagDropPanel',
+									itemId: 'thisthing',
+									componentId: tagPanel.componentId,
+									refreshCallBack: function(){
+										tagPanel.tagGrid.getStore().reload();
+										this.up('form').reset();
 									}
 								}
+								// Ext.create('OSF.component.StandardComboBox', {
+								// 	name: 'text',	
+								// 	itemId: 'tagField',
+								// 	flex: 1,
+								// 	fieldLabel: 'Add Tagwerqwerqwer',
+								// 	forceSelection: false,
+								// 	valueField: 'text',
+								// 	displayField: 'text',										
+								// 	margin: '0 10 10 0',
+								// 	maxLength: 120,
+								// 	storeConfig: {
+								// 		url: 'api/v1/resource/components/' + tagPanel.componentId + '/tagsfree'
+								// 	},
+								// 	listeners:{
+								// 		specialkey: function(field, e) {
+								// 			var value = this.getValue();
+								// 			if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
+								// 				actionAddTag(this.up('form'));
+								// 			}	
+								// 		}
+								// 	}
+								// }),
+								// {
+								// 	xtype: 'button',
+								// 	text: 'Add',
+								// 	iconCls: 'fa fa-plus',
+								// 	margin: '30 0 0 0',
+								// 	minWidth: 75,
+								// 	handler: function(){
+								// 		var tagField = this.findParentByType('form').query('[name="text"]')[0];
+								// 		if (tagField.isValid()) {
+								// 			actionAddTag(this.up('form'));
+								// 		}
+								// 	}
+								// }
 							]
 						}
 					]
@@ -169,6 +179,7 @@ Ext.define('OSF.form.Tags', {
 		
 		tagPanel.componentId = componentId;
 		tagPanel.tagGrid.componentId = componentId;
+		tagPanel.queryById('thisthing').componentId = componentId;
 		
 		tagPanel.tagGrid.getStore().load({
 			url: 'api/v1/resource/components/' + componentId + '/tagsview'

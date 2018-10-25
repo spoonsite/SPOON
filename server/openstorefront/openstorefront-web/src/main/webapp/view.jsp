@@ -27,15 +27,13 @@
 	<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		
 	<script src="scripts/component/reviewWindow.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/questionWindow.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="OSF\comonent\TagDropDownWithFamilyPanel.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="OSF\component\TagDropDownWithFamilyPanel.js?v=${appVersion}" type="text/javascript"></script>
 	
 	
 	<div style="display:none; visibility: hidden;" id="templateHolder"></div>	
 		
 	<script type="text/javascript">
 		/* global Ext, CoreService, CoreApp */	
-		// Ext.require('OSF.component.TagDropDownWithFamilyPanel');
-		// Ext.require('OSF.component.TagDropDownWithFamilyPanel');
 		
 		var DetailPage = {
 			showRelatedOrganizations: function(organization) {
@@ -454,9 +452,8 @@
 						items: [
 							{
 								xtype: 'familyTagDropPanel',
-								itemId: 'familyDropTagBox',
 								componentId: componentId,
-								parentPanel: Ext.getCmp('tagPanel'),
+								parentPanelString: 'tagPanel',
 								processTagsCallback: function(inputTag){
 									processTags(inputTag);
 								}

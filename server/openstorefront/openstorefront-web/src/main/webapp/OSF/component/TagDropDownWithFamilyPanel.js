@@ -25,11 +25,13 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 	componentId: null,
 	processTagsCallback: null,
 	parentPanelString: null,
+	refreshCallBack: null,
 
 	initComponent: function(){
 		this.callParent();
 
 		var tagDropDownWithFamilyPanel = this;
+		// console.log(componentId);
 
         var saveTagToComponent = function(tag){
             // If there are related tags then show the window.
@@ -61,12 +63,15 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
                                 tagDropDownWithFamilyPanel.processTagsCallback(tag);
                             }
                             tagField.reset();
-                            tagField.getStore().load();
+							tagField.getStore().load();
                         }
                         else {
                             tagField.reset();
                             tagField.markInvalid(tag.errors.entry[0].value);
-                        }
+						}
+						if(tagDropDownWithFamilyPanel.refreshCallBack){
+							tagDropDownWithFamilyPanel.refreshCallBack();
+						}
                     }
                 });	
             }
@@ -252,7 +257,6 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 					specialkey: function(field, e) {
 						var value = this.getValue();
 						if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
-							
 							actionAddTag(value, Ext.getCmp('tagField').getSelection() ? true : false);
 						}	
 					}
