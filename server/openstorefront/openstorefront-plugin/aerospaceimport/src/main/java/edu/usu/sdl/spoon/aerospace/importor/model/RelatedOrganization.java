@@ -15,11 +15,82 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import org.simpleframework.xml.Element;
+
 /**
  *
  * @author dshurtleff
  */
 public class RelatedOrganization
 {
+
+	@Element
+	private String key;
+
+	@Element(name = "short_name")
+	private String shortName;
+
+	@Element(name = "long_name")
+	private String longName;
+
+	@Element
+	private String description;
+
+	@Element
+	private String type;
+
+	public RelatedOrganization()
+	{
+	}
+
+	public String getKey()
+	{
+		return key;
+	}
+
+	public void setKey(String key)
+	{
+		this.key = key;
+	}
+
+	public String getShortName()
+	{
+		return shortName;
+	}
+
+	public void setShortName(String shortName)
+	{
+		this.shortName = shortName;
+	}
+
+	public String getLongName()
+	{
+		return longName;
+	}
+
+	public void setLongName(String longName)
+	{
+		this.longName = longName;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(String type)
+	{
+		this.type = type;
+	}
 
 }

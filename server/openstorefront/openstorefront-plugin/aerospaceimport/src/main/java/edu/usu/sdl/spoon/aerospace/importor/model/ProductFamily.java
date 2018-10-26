@@ -15,11 +15,30 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import org.simpleframework.xml.Element;
+
 /**
  *
  * @author dshurtleff
  */
 public class ProductFamily
 {
+
+	@Element(name = "classification")
+	private Classification classification;
+
+	public ProductFamily()
+	{
+	}
+
+	public Classification getClassification()
+	{
+		return classification;
+	}
+
+	public void setClassification(Classification classification)
+	{
+		this.classification = classification;
+	}
 
 }

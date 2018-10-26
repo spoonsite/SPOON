@@ -22,4 +22,64 @@ package edu.usu.sdl.spoon.aerospace.importor.model;
 public class Organization
 {
 
+	private int key;
+	private String shortName;
+	private String longName;
+	private String description;
+	private String type;
+
+	public Organization()
+	{
+	}
+
+	public int getKey()
+	{
+		return key;
+	}
+
+	public void setKey(int key)
+	{
+		this.key = key;
+	}
+
+	public String getShortName()
+	{
+		return shortName;
+	}
+
+	public void setShortName(String shortName)
+	{
+		this.shortName = shortName;
+	}
+
+	public String getLongName()
+	{
+		return longName;
+	}
+
+	public void setLongName(String longName)
+	{
+		this.longName = longName;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(String type)
+	{
+		this.type = type;
+	}
+
 }

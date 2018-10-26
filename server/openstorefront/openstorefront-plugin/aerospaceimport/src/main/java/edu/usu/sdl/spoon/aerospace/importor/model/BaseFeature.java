@@ -22,4 +22,64 @@ package edu.usu.sdl.spoon.aerospace.importor.model;
 public abstract class BaseFeature
 {
 
+	protected String name;
+	protected String description;
+	protected String valueDescription;
+	protected String type;
+	protected String datayType;
+
+	public BaseFeature()
+	{
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	public String getValueDescription()
+	{
+		return valueDescription;
+	}
+
+	public void setValueDescription(String valueDescription)
+	{
+		this.valueDescription = valueDescription;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(String type)
+	{
+		this.type = type;
+	}
+
+	public String getDatayType()
+	{
+		return datayType;
+	}
+
+	public void setDatayType(String datayType)
+	{
+		this.datayType = datayType;
+	}
+
 }

@@ -15,11 +15,82 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import org.simpleframework.xml.Element;
+
 /**
  *
  * @author dshurtleff
  */
 public class RevisionProvenanceDocument
 {
+
+	@Element
+	private int key;
+
+	@Element
+	private String type;
+
+	@Element
+	private String filename;
+
+	@Element
+	private String description;
+
+	@Element
+	private String title;
+
+	public RevisionProvenanceDocument()
+	{
+	}
+
+	public int getKey()
+	{
+		return key;
+	}
+
+	public void setKey(int key)
+	{
+		this.key = key;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setType(String type)
+	{
+		this.type = type;
+	}
+
+	public String getFilename()
+	{
+		return filename;
+	}
+
+	public void setFilename(String filename)
+	{
+		this.filename = filename;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	public String getTitle()
+	{
+		return title;
+	}
+
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
 
 }

@@ -15,11 +15,58 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.ElementList;
+
 /**
  *
  * @author dshurtleff
  */
 class Additional
 {
+
+	@ElementList(name = "float_feature")
+	private List<FloatFeature> floatFeatures = new ArrayList<>();
+
+	@ElementList(name = "int_feature")
+	private List<IntFeature> intFeatures = new ArrayList<>();
+
+	@ElementList(name = "text_feature")
+	private List<TextFeature> textFeatures = new ArrayList<>();
+
+	public Additional()
+	{
+	}
+
+	public List<FloatFeature> getFloatFeatures()
+	{
+		return floatFeatures;
+	}
+
+	public void setFloatFeatures(List<FloatFeature> floatFeatures)
+	{
+		this.floatFeatures = floatFeatures;
+	}
+
+	public List<IntFeature> getIntFeatures()
+	{
+		return intFeatures;
+	}
+
+	public void setIntFeatures(List<IntFeature> intFeatures)
+	{
+		this.intFeatures = intFeatures;
+	}
+
+	public List<TextFeature> getTextFeatures()
+	{
+		return textFeatures;
+	}
+
+	public void setTextFeatures(List<TextFeature> textFeatures)
+	{
+		this.textFeatures = textFeatures;
+	}
 
 }

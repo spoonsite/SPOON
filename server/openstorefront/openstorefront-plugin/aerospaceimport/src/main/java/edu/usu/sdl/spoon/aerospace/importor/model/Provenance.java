@@ -15,11 +15,45 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.ElementList;
+
 /**
  *
  * @author dshurtleff
  */
 public class Provenance
 {
+
+	@ElementList
+	private List<RevisionProvenanceDocument> documents = new ArrayList<>();
+
+	@ElementList
+	private List<RevisionProvenanceWebsite> websites = new ArrayList<>();
+
+	public Provenance()
+	{
+	}
+
+	public List<RevisionProvenanceDocument> getDocuments()
+	{
+		return documents;
+	}
+
+	public void setDocuments(List<RevisionProvenanceDocument> documents)
+	{
+		this.documents = documents;
+	}
+
+	public List<RevisionProvenanceWebsite> getWebsites()
+	{
+		return websites;
+	}
+
+	public void setWebsites(List<RevisionProvenanceWebsite> websites)
+	{
+		this.websites = websites;
+	}
 
 }
