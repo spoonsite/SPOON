@@ -24,7 +24,8 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 	xtype: 'osf-submissionform-tagsgrid',
 	
 	requires: [
-		'OSF.customSubmission.form.Tags'
+		'OSF.customSubmission.form.Tags',
+		'OSF.component.SubmissionFamilyTagWindow'
 	],	
 	
 	title: '',
@@ -77,6 +78,7 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
+										console.log(data);
 										var valueWasSelected = form.queryById('osfsubformbox').getSelection() ? true : false;
 
 
@@ -111,6 +113,31 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 														// familyTagWindow.show();
 														//  open the window, pick an available value
 														//  remember the choice and come back to this point
+														Ext.create('OSF.component.SubmissionFamilyTagWindow', {
+															possibleNewTag: data,
+															componentEntryType: entryTypeOfComponent,
+															returnTagInfo: function(tagOutput){
+																//look for internal duplicates
+																var foundDup = false;
+																grid.getStore().each(function(existing){
+																	if (existing.get('text').toLowerCase() === tagOutput.text.toLowerCase()) {
+																		foundDup = true;
+																	}
+																});
+																
+																if (!foundDup) {
+																	if (record) {
+																		record.set(tagOutput, {
+																			dirty: false
+																		});
+																	} else {
+																		grid.getStore().add(tagOutput);
+																	}
+																}
+																addEditWin.close();
+															}
+														}).show();
+														// this.up('window').close();
 													} else {
 														//look for internal duplicates
 														var foundDup = false;
@@ -129,13 +156,13 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 																grid.getStore().add(data);
 															}
 														}
-														this.up('window').close();
+														addEditWin.close();
 													}
 												},
 												failure: function(){
-													if(tagDropDownWithFamilyPanel.parentPanelString){
-														Ext.getCmp(tagDropDownWithFamilyPanel.parentPanelString).setLoading(false);
-													}
+													// if(tagDropDownWithFamilyPanel.parentPanelString){
+													// 	Ext.getCmp(tagDropDownWithFamilyPanel.parentPanelString).setLoading(false);
+													// }
 													Ext.toast({
 														title: 'validation error. the server could not process the request. ',
 														html: 'try changing the tag field.',

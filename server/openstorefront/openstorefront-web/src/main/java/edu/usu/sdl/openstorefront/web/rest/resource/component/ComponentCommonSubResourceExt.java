@@ -40,7 +40,6 @@ import edu.usu.sdl.openstorefront.core.view.ComponentContactView;
 import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
 import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.TagView;
@@ -1005,8 +1004,6 @@ public abstract class ComponentCommonSubResourceExt
 		ComponentType componentTypeExample = new ComponentType();
 		componentTypeExample.setComponentType(typeCode);
 		ComponentType componentType = componentTypeExample.find();
-		
-		
 		
 		List<String> componentTypesList = new ArrayList<>();
 		componentTypesList.add(componentType.getComponentType());
