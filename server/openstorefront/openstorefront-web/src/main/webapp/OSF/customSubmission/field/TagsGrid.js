@@ -38,7 +38,6 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 	initComponent: function () {
 		var grid = this;
 		grid.callParent();
-		// console.log(grid.section.submissionForm.template.entryType);// THIS CONTAINS THE ENTRY TYPE
 		if (grid.section) {
 			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
 			if (initialData) {
@@ -78,9 +77,12 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
-										console.log(data);
-										var valueWasSelected = form.queryById('osfsubformbox').getSelection() ? true : false;
+										var valueWasSelected = true;
 
+										// Only Flip to false if everything lines up correctly.
+										if(form.queryById('osfsubformbox')){
+											valueWasSelected = form.queryById('osfsubformbox').getSelection() ? true : false;
+										}
 
 										if(valueWasSelected){
 											//look for internal duplicates
@@ -110,9 +112,6 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 												success: function(response, opts){
 													relatedParentTags = Ext.decode(response.responseText);
 													if (Array.isArray(relatedParentTags) && relatedParentTags.length) {
-														// familyTagWindow.show();
-														//  open the window, pick an available value
-														//  remember the choice and come back to this point
 														Ext.create('OSF.component.SubmissionFamilyTagWindow', {
 															possibleNewTag: data,
 															componentEntryType: entryTypeOfComponent,
@@ -137,9 +136,7 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 																addEditWin.close();
 															}
 														}).show();
-														// this.up('window').close();
 													} else {
-														//look for internal duplicates
 														var foundDup = false;
 														grid.getStore().each(function(existing){
 															if (existing.get('text').toLowerCase() === data.text.toLowerCase()) {
@@ -160,9 +157,6 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 													}
 												},
 												failure: function(){
-													// if(tagDropDownWithFamilyPanel.parentPanelString){
-													// 	Ext.getCmp(tagDropDownWithFamilyPanel.parentPanelString).setLoading(false);
-													// }
 													Ext.toast({
 														title: 'validation error. the server could not process the request. ',
 														html: 'try changing the tag field.',

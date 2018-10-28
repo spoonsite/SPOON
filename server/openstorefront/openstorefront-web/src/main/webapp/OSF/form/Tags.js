@@ -100,46 +100,12 @@ Ext.define('OSF.form.Tags', {
 									xtype: 'familyTagDropPanel',
 									itemId: 'thisthing',
 									componentId: tagPanel.componentId,
+									width: '100%',
 									refreshCallBack: function(){
 										tagPanel.tagGrid.getStore().reload();
 										this.up('form').reset();
 									}
 								}
-								// Ext.create('OSF.component.StandardComboBox', {
-								// 	name: 'text',	
-								// 	itemId: 'tagField',
-								// 	flex: 1,
-								// 	fieldLabel: 'Add Tagwerqwerqwer',
-								// 	forceSelection: false,
-								// 	valueField: 'text',
-								// 	displayField: 'text',										
-								// 	margin: '0 10 10 0',
-								// 	maxLength: 120,
-								// 	storeConfig: {
-								// 		url: 'api/v1/resource/components/' + tagPanel.componentId + '/tagsfree'
-								// 	},
-								// 	listeners:{
-								// 		specialkey: function(field, e) {
-								// 			var value = this.getValue();
-								// 			if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
-								// 				actionAddTag(this.up('form'));
-								// 			}	
-								// 		}
-								// 	}
-								// }),
-								// {
-								// 	xtype: 'button',
-								// 	text: 'Add',
-								// 	iconCls: 'fa fa-plus',
-								// 	margin: '30 0 0 0',
-								// 	minWidth: 75,
-								// 	handler: function(){
-								// 		var tagField = this.findParentByType('form').query('[name="text"]')[0];
-								// 		if (tagField.isValid()) {
-								// 			actionAddTag(this.up('form'));
-								// 		}
-								// 	}
-								// }
 							]
 						}
 					]

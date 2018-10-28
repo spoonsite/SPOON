@@ -100,7 +100,6 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 							xtype: 'panel',
 							itemId: 'topPanel',
 							preventDefaultAction: true,
-							// saveCallBack: null, // add a callback
 							layout: 'fit',
 							items: [
 								{

@@ -32,7 +32,6 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
     alwaysOnTop: 9999,
     possibleNewTag: null,
 
-
     initComponent: function(){
         this.callParent();
         var familyTagWindow = this;
@@ -62,7 +61,10 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
                         autoLoad: true,
                         proxy: {
                             type: 'ajax',
-                            url: 'api/v1/resource/components/' + familyTagWindow.componentEntryType + '/relatedtypetags'
+                            url: (familyTagWindow.componentEntryType) ? 
+                            ('api/v1/resource/components/' + familyTagWindow.componentEntryType + '/relatedtypetags') : 
+                            ('api/v1/resource/components/tags')
+                            
                         }
                     }),
                     columns: [
@@ -85,10 +87,7 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
         
         familyTagWindow.add(viewPanel);
 
-
-
-
-        children =  [
+        dockedChildren =  [
             {
                 xtype: 'panel',
                 itemId: 'headerPanel',
@@ -105,7 +104,6 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
                         text: 'Yes, I am sure, add the new tag.',
                         iconCls: 'fa fa-lg fa-save icon-button-color-save',
                         handler: function(){
-                            // saveTagToComponent(tag);
                             if(familyTagWindow.returnTagInfo && familyTagWindow.possibleNewTag){
                                 familyTagWindow.returnTagInfo(familyTagWindow.possibleNewTag);
                             }
@@ -121,7 +119,6 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
                         iconCls: 'fa fa-lg fa-save icon-button-color-save',
                         disabled: true,
                         handler: function(){
-                            // saveTagToComponent(familyTagWindow.getComponent('topPanel').getComponent('gridPanelItemId').getSelection()[0].data.text);
                             if(familyTagWindow.returnTagInfo){
                                 familyTagWindow.returnTagInfo(familyTagWindow.getComponent('topPanel').getComponent('gridPanelItemId').getSelection()[0].data);
                             }
@@ -142,33 +139,10 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
             }
         ],
 
-
-
-        familyTagWindow.addDocked(children);
-
-
-
-
-
-
-
-
-
+        familyTagWindow.addDocked(dockedChildren);
  
     },
 	loadData: function(data) {
-		
-        // var familyTagWindow = this;
-		
-		// familyTagWindow.tagPanel.componentId = componentId;
-		// familyTagWindow.tagPanel.tagGrid.newTag = newTag;
-		// familyTagWindow.tagPanel.tagGrid.componentId = componentId;
-		
-		// familyTagWindow.tagPanel.tagGrid.getStore().load({
-		// 	url: 'api/v1/resource/components/' + componentId + '/relatedtags'
-		// });		
-
 	}
-
 
 });
