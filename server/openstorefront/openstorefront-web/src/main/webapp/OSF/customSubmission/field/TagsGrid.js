@@ -113,6 +113,7 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 													relatedParentTags = Ext.decode(response.responseText);
 													if (Array.isArray(relatedParentTags) && relatedParentTags.length) {
 														Ext.create('OSF.component.SubmissionFamilyTagWindow', {
+															userInputTag: data.text,
 															possibleNewTag: data,
 															componentEntryType: entryTypeOfComponent,
 															returnTagInfo: function(tagOutput){

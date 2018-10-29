@@ -93,8 +93,6 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 					layout: 'fit',
 					closeAction: 'destroy',
 					processTagsCallback: null,
-					winText: '<h3> Are you sure that you would like to add a new tag? </br> ' + 
-					' Please see other possible matches below.</h3>',
 					items: [
 						{
 							xtype: 'panel',
@@ -147,8 +145,10 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 							xtype: 'panel',
 							itemId: 'headerPanel',
 							dock: 'top',
-							html: '<h3> Are you sure that you would like to add a new tag? </br> ' + 
-							' Please see other possible matches below.</h3>'
+							margin: '0 0 0 10',
+							html: '<h3> Are you sure that you would like to add a new tag? </br>' +
+							' Please see other possible matches below. </br>' +
+							' New Tag Name: ' + '<font color="red">' + tag + '</font>' + '</h3>'
 						},
 						{
 							xtype: 'toolbar',
@@ -156,7 +156,7 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 							dock: 'bottom',
 							items: [
 								{
-									text: 'Yes, I am sure, add the new tag.',
+									text: 'Yes I am sure. Add the new tag.',
 									iconCls: 'fa fa-lg fa-save icon-button-color-save',
 									handler: function(){
 										saveTagToComponent(tag);

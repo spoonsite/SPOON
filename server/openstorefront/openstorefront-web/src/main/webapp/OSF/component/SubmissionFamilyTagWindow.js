@@ -31,6 +31,7 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
     componentEntryType: null,
     alwaysOnTop: 9999,
     possibleNewTag: null,
+    userInputTag: 'nullTag',
 
     initComponent: function(){
         this.callParent();
@@ -92,8 +93,10 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
                 xtype: 'panel',
                 itemId: 'headerPanel',
                 dock: 'top',
-                html: '<h3> Are you sure that you would like to add a new tag? </br> ' + 
-                ' Please see other possible matches below.</h3>'
+                margin: '0 0 0 10',
+                html: '<h3> Are you sure that you would like to add a new tag? </br>' +
+                ' Please see other possible matches below. </br>' +
+                ' New Tag Name: ' + '<font color="red">' + familyTagWindow.userInputTag + '</font>' + '</h3>'
             },
             {
                 xtype: 'toolbar',
