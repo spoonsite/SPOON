@@ -30,22 +30,7 @@ Ext.define('OSF.form.Tags', {
 	initComponent: function () {			
 		this.callParent();
 		
-		var tagPanel = this;	
-		
-		// var actionAddTag = function(form) {				
-		// 	var data = form.getValues();
-		// 	var componentId = tagPanel.componentId;
-		// 	CoreUtil.submitForm({
-		// 		url: 'api/v1/resource/components/' + componentId + '/tags',
-		// 		method: 'POST',
-		// 		data: data,
-		// 		form: form,
-		// 		success: function(){
-		// 			tagPanel.tagGrid.getStore().reload();
-		// 			form.reset();
-		// 		}
-		// 	});				
-		// };		
+		var tagPanel = this;		
 		
 		tagPanel.tagGrid = Ext.create('Ext.grid.Panel', {
 			columnLines: true,

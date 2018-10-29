@@ -1044,20 +1044,8 @@ public abstract class ComponentCommonSubResourceExt
 		// All tags of all the above listed component Id's.
 		List<ComponentTag> freeFamilyTags = service.getPersistenceService().queryByExample(queryByExampleComponentTag);
 
-		List<ComponentTag> noDuplicatesTagList = new ArrayList<>();
-		Set<String> tempSet = new HashSet<>();
+		return removeDuplicateTagsByText(freeFamilyTags);
 
-		for (ComponentTag tag : freeFamilyTags){
-			if(tempSet.add(tag.getText())){
-				noDuplicatesTagList.add(tag);
-			}
-		}
-
-		if(!noDuplicatesTagList.isEmpty()){
-			return noDuplicatesTagList;
-		}
-		// Else
-		return service.getComponentService().getTagCloud();
 	}
 	
 	@GET
@@ -1073,7 +1061,6 @@ public abstract class ComponentCommonSubResourceExt
 		componentExample.setComponentId(componentId);
 		Component component = componentExample.find();
 		if (component != null) {
-			
 			
 			List<String> componentTypes = new ArrayList<>();
 			componentTypes.add(component.getComponentType());
@@ -1135,20 +1122,23 @@ public abstract class ComponentCommonSubResourceExt
 				}
 			}
 			
-			List<ComponentTag> noDuplicatesTagList = new ArrayList<>();
-			Set<String> tempSet = new HashSet<>();
-			
-			for (ComponentTag tag : freeFamilyTags){
-				if(tempSet.add(tag.getText())){
-					noDuplicatesTagList.add(tag);
-				}
-			}
-			
-			return noDuplicatesTagList;
-
+			return removeDuplicateTagsByText(freeFamilyTags);
 		} else {
 			return service.getComponentService().getTagCloud();
 		}
+	}
+	
+	private List<ComponentTag> removeDuplicateTagsByText(List<ComponentTag> listWithDuplicates) {
+		List<ComponentTag> noDuplicatesList = new ArrayList<>();
+		Set<String> uniqueSet = new HashSet<>();
+		
+		for (ComponentTag tag : listWithDuplicates){
+			if(uniqueSet.add(tag.getText())){
+				noDuplicatesList.add(tag);
+			}
+		}
+		
+		return noDuplicatesList;
 	}
 
 	@GET

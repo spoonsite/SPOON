@@ -101,7 +101,7 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
                 dock: 'bottom',
                 items: [
                     {
-                        text: 'Yes, I am sure, add the new tag.',
+                        text: 'Yes I am sure. Add the new tag.',
                         iconCls: 'fa fa-lg fa-save icon-button-color-save',
                         handler: function(){
                             if(familyTagWindow.returnTagInfo && familyTagWindow.possibleNewTag){
