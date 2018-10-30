@@ -652,15 +652,15 @@ export default {
         .then(response => {
           this.detail = response.data;
           // parse the description for `Media.action` relative paths and change to absolute paths
-          this.detail.description = this.detail.description.replace(/media\.action/i, '/openstorefront/Media.action');
-          this.detail.resources.forEach(function (el) {
-            el.link = el.link.replace(/resource\.action/i, '/openstorefront/Resource.action');
-          });
-          this.detail.componentMedia.forEach(function (el) {
-            if (el.link) {
-              el.link = el.link.replace(/media\.action/i, '/openstorefront/Media.action');
-            }
-          });
+          // this.detail.description = this.detail.description.replace(/media\.action/i, '/openstorefront/Media.action');
+          // this.detail.resources.forEach(function (el) {
+          //   el.link = el.link.replace(/resource\.action/i, '/openstorefront/Resource.action');
+          // });
+          // this.detail.componentMedia.forEach(function (el) {
+          //   if (el.link) {
+          //     el.link = el.link.replace(/media\.action/i, '/openstorefront/Media.action');
+          //   }
+          // });
         })
         .catch(e => this.errors.push(e))
         .finally(() => {
