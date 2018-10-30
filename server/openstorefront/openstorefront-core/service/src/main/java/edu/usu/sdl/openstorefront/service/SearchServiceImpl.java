@@ -29,6 +29,9 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
+import edu.usu.sdl.openstorefront.core.model.search.ResultAttributeStat;
+import edu.usu.sdl.openstorefront.core.model.search.ResultOrganizationStat;
+import edu.usu.sdl.openstorefront.core.model.search.ResultTagStat;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
@@ -60,6 +63,7 @@ import edu.usu.sdl.openstorefront.service.search.QuestionResponseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.QuestionSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewProConSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewSearchHandler;
+import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.service.search.TagSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.UserRatingSearchHandler;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -321,7 +325,7 @@ public class SearchServiceImpl
 		}
 
 		if (validationResultMain.valid()) {
-			//process groups and aggergate
+			//process groups and aggregate
 			List<String> componentIds = new ArrayList<>();
 			MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
 			for (BaseSearchHandler handler : handlers) {
@@ -390,7 +394,16 @@ public class SearchServiceImpl
 						stats.put(view.getComponentType(), stat);
 					}
 				}
-				searchResult.getResultTypeStats().addAll(stats.values());
+				searchResult.getMeta().getResultTypeStats().addAll(stats.values());
+				SearchStatTable statTable = new SearchStatTable();
+				List<ResultOrganizationStat> organizationStats = statTable.getOrganizationStats(componentIds);
+				List<ResultTagStat> tagStats = statTable.getTagStats(componentIds);
+				List<ResultAttributeStat> attributeStats = statTable.getAttributeStats(componentIds);
+
+				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
+				searchResult.getMeta().getResultTagStats().addAll(tagStats);
+				searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
+				
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 
 				//then sort/window

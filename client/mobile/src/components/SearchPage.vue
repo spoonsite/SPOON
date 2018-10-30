@@ -68,23 +68,42 @@
           <v-select
             v-model="filters.component"
             :items="componentsList"
-            item-text="parentLabel"
+            item-text="componentTypeDescription"
             item-value="componentType"
             label="Category"
             clearable
             multi-line
-          ></v-select>
+          >
+            <template slot="selection" slot-scope="data">
+              ({{ data.item.count }}) {{ data.item.componentTypeDescription }}
+            </template>
+            <template slot="item" slot-scope="data">
+              <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.componentTypeDescription }}</v-list-tile-title></v-list-tile-content>
+            </template>
+          </v-select>
           <v-checkbox label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
           <v-select
             v-model="filters.tags"
             hide-details
             :items="tagsList"
-            item-value="text"
-            label="Tags"
+            :disabled="!tagsList || tagsList.length === 0"
+            item-text="tagLabel"
+            item-value="tagLabel"
+            :label="!tagsList || tagsList.length === 0 ? 'No Tags' : 'Tags'"
             multiple
             chips
             clearable
-          ></v-select>
+          >
+            <template slot="selection" slot-scope="data">
+              <v-chip close  @input="deleteTag(data.item.tagLabel)" >
+                <v-avatar class="grey lighten-1">{{ data.item.count }}</v-avatar>
+                {{ data.item.tagLabel}}
+              </v-chip>
+            </template>
+            <template slot="item" slot-scope="data">
+              <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.tagLabel}}</v-list-tile-title></v-list-tile-content>
+            </template>
+          </v-select>
           <v-radio-group label="Tag Search Condition" v-model="filters.tagCondition">
             <v-radio label="And" value="AND"></v-radio>
             <v-radio label="Or" value="OR"></v-radio>
@@ -92,12 +111,19 @@
           <v-select
             v-model="filters.organization"
             :items="organizationsList"
-            item-text="name"
-            item-value="name"
             label="Organization"
+            item-text="organization"
+            item-value="organization"
             clearable
             autocomplete
-          ></v-select>
+          >
+            <template slot="selection" slot-scope="data">
+              ({{ data.item.count }}) {{ data.item.organization }}
+            </template>
+            <template slot="item" slot-scope="data">
+              <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.organization }}</v-list-tile-title></v-list-tile-content>
+            </template>
+          </v-select>
         </v-card-text>
         <v-card-actions>
           <v-btn @click.stop="showFilters = false">Submit</v-btn>
@@ -255,9 +281,6 @@ export default {
     if (this.$route.query.children) {
       this.filters.children = this.$route.query.children;
     }
-    this.getComponentTypes();
-    this.getTags();
-    this.getOrganizations();
     this.newSearch();
   },
   beforeRouteUpdate (to, from, next) {
@@ -360,42 +383,15 @@ export default {
         .then(response => {
           that.searchResults = response;
           that.totalSearchResults = response.data.totalNumber;
+          that.organizationsList = _.sortBy(response.data.meta.resultOrganizationStats, [function (o) { return o.organization; }]);
+          that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel; }]);
+          that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription; }]);
           that.searchQueryIsDirty = false;
         })
         .catch(e => that.errors.push(e))
         .finally(() => {
           that.searchQueryIsDirty = false;
         });
-    },
-    getComponentTypes () {
-      this.$http
-        .get(
-          '/openstorefront/api/v1/resource/componenttypes'
-        )
-        .then(response => {
-          this.componentsList = response.data;
-        })
-        .catch(e => this.errors.push(e));
-    },
-    getTags () {
-      this.$http
-        .get(
-          '/openstorefront/api/v1/resource/components/tagviews?approvedOnly=true'
-        )
-        .then(response => {
-          this.tagsList = _.sortBy(response.data, [function (o) { return o.text; }]);
-        })
-        .catch(e => this.errors.push(e));
-    },
-    getOrganizations () {
-      this.$http
-        .get(
-          '/openstorefront/api/v1/resource/organizations?componentOnly=true&sortOrder=ASC&sortField=name'
-        )
-        .then(response => {
-          this.organizationsList = response.data.data;
-        })
-        .catch(e => this.errors.push(e));
     },
     getNestedComponentTypes () {
       this.$http

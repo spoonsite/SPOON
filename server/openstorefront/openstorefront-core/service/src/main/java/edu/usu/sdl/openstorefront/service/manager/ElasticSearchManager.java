@@ -40,6 +40,7 @@ import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
+import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -659,6 +660,9 @@ public class ElasticSearchManager
 			componentTag.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			List<ComponentTag> componentTags = componentTag.findByExample();
 			Map<String, List<ComponentTag>> tagMap = componentTags.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
+			
+			SearchStatTable statTable = new SearchStatTable(attributeMap, tagMap);
+			statTable.index();
 
 			for (Component component : components) {
 

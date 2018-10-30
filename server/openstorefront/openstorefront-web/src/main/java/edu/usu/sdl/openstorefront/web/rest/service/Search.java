@@ -204,7 +204,7 @@ public class Search
 				searchWrapper.setData(result.getResults());
 				searchWrapper.setResults(result.getResults().size());
 				searchWrapper.setTotalNumber(result.getTotalNumber());
-				searchWrapper.setResultTypeStats(result.getResultTypeStats());
+				searchWrapper.setMeta(result.getMeta());
 				return sendSingleEntityResponse(searchWrapper);
 			} else {
 				GenericEntity<List<ComponentSearchView>> entity = new GenericEntity<List<ComponentSearchView>>(result.getResults())
@@ -357,7 +357,7 @@ public class Search
 	)
 	{
 		StringWriter writer = new StringWriter();
-		CSVWriter cvsWriter = new CSVWriter(writer);
+		CSVWriter csvWriter = new CSVWriter(writer);
 
 		String header[] = {
 			"Name",
@@ -366,7 +366,7 @@ public class Search
 			"Last Updated Dts",
 			"Entry Type"
 		};
-		cvsWriter.writeNext(header);
+		csvWriter.writeNext(header);
 
 		SimpleDateFormat sdf = TimeUtil.standardDateFormater();
 		List<ComponentSearchView> views = service.getComponentService().getSearchComponentList(ids);
@@ -378,7 +378,7 @@ public class Search
 				sdf.format(view.getLastActivityDts()),
 				view.getComponentTypeDescription()
 			};
-			cvsWriter.writeNext(data);
+			csvWriter.writeNext(data);
 		}
 
 		Response.ResponseBuilder response = Response.ok(writer.toString());
