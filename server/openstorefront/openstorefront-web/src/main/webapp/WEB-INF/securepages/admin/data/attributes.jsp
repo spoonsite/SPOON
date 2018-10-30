@@ -524,7 +524,8 @@
 								listeners: {
 									change: {
 										fn: function(field, newValue, oldValue, opts) {
-											attributeStore.reload();
+											attributeStore.currentPage = 1;
+											attributeStore.load();
 										},
 										buffer: 1500
 									}
