@@ -141,11 +141,6 @@ Ext.define('OSF.component.SubmissionFamilyTagWindow', {
                 ]
             }
         ],
-
         familyTagWindow.addDocked(dockedChildren);
- 
     },
-	loadData: function(data) {
-	}
-
 });

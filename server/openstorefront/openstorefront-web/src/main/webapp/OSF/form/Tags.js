@@ -140,7 +140,5 @@ Ext.define('OSF.form.Tags', {
 			callback();
 		}
 	}
-	
-	
 });
 

@@ -278,6 +278,4 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 		];
 		tagDropDownWithFamilyPanel.add(children);
 	},
-	loadData: function(data){
-	}
 });
