@@ -27,6 +27,8 @@
 	<script src="scripts/component/relationshipVisualization.js?v=${appVersion}" type="text/javascript"></script>		
 	<script src="scripts/component/reviewWindow.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="scripts/component/questionWindow.js?v=${appVersion}" type="text/javascript"></script>
+	<script src="OSF/component/TagDropDownWithFamilyPanel.js?v=${appVersion}" type="text/javascript"></script>
+	
 	
 	<div style="display:none; visibility: hidden;" id="templateHolder"></div>	
 		
@@ -449,46 +451,12 @@
 						hidden: true,
 						items: [
 							{
-								xtype: 'panel',
-								layout: 'hbox',
-								id: 'addTagPanel',
-								items: [
-									Ext.create('OSF.component.StandardComboBox', {
-										name: 'text',	
-										id: 'tagField',																				
-										flex: 1,
-										fieldLabel: 'Add Tag',
-										forceSelection: false,
-										valueField: 'text',
-										displayField: 'text',										
-										margin: '0 10 10 0',
-										maxLength: 120,
-										storeConfig: {
-											url: 'api/v1/resource/components/' + componentId + '/tagsfree'
-										},
-										listeners:{
-											specialkey: function(field, e) {
-												var value = this.getValue();
-												if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
-													actionAddTag(value);
-												}	
-											}
-										}
-									}),
-									{
-										xtype: 'button',
-										text: 'Add',
-										iconCls: 'fa fa-plus',
-										margin: '30 0 0 0',
-										minWidth: 75,
-										handler: function(){
-											var tagField = Ext.getCmp('tagField');
-											if (tagField.isValid()) {
-												actionAddTag(tagField.getValue());
-											}
-										}
-									}
-								]
+								xtype: 'familyTagDropPanel',
+								componentId: componentId,
+								parentPanelString: 'tagPanel',
+								processTagsCallback: function(inputTag){
+									processTags(inputTag);
+								}
 							}
 						]
 					}
@@ -505,48 +473,12 @@
 				});			
 			}
 			
-			var actionAddTag = function(tag) {
-				
-				if (!tag || tag === '') {
-					Ext.getCmp('tagField').markInvalid('Tag name required');
-				} else {				
-					//add tag
-					Ext.getCmp('tagPanel').setLoading('Tagging Entry...');
-					Ext.Ajax.request({
-						url: 'api/v1/resource/components/' + componentId + '/tags',
-						method: 'POST',
-						jsonData: {
-							text: tag
-						},
-						callback: function(){
-							Ext.getCmp('tagPanel').setLoading(false);
-						},
-						success: function(response, opt){
-							var tag = Ext.decode(response.responseText);
-							var tagField = Ext.getCmp('tagField');
-
-							if (typeof tag.errors === 'undefined') {
-								processTags(tag);
-								tagField.reset();
-								tagField.getStore().load();
-							}
-							else {
-								tagField.reset();
-								tagField.markInvalid(tag.errors.entry[0].value);
-							}
-						}
-					});	
-				}
-			};
-			
 			var detailPanel = Ext.create('Ext.panel.Panel', {
 				id: 'detailPanel',
 				region: 'center',				
 				bodyStyle: 'padding: 10px;',
 				layout: 'fit'
 			});
-			
-			
 			
 			var contentPanel = Ext.create('Ext.panel.Panel', {
 				region: 'center',
@@ -564,6 +496,7 @@
 					contentPanel
 				]
 			});
+
 			var setHeaderButtons = function(isAnonymousUser)
 			{
 				if(isAnonymousUser)

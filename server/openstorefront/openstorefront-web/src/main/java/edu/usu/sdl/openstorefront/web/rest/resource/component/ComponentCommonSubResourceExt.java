@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -31,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.sort.SortUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
@@ -49,7 +51,9 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -984,6 +988,157 @@ public abstract class ComponentCommonSubResourceExt
 		} else {
 			return service.getComponentService().getTagCloud();
 		}
+	}
+	
+	
+	@GET
+	@APIDescription("Gets related Parent and sibling tags based on entry type.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/{typeCode}/relatedtypetags")
+	public List<ComponentTag> getEntryTypeRelatedFreeFamilyComponentTags(
+			@PathParam("typeCode")
+			@RequiredParam String typeCode)
+	{
+		ComponentType componentTypeExample = new ComponentType();
+		componentTypeExample.setComponentType(typeCode);
+		ComponentType componentType = componentTypeExample.find();
+		
+		List<String> componentTypesList = new ArrayList<>();
+		componentTypesList.add(componentType.getComponentType());
+		
+		if(componentType.getParentComponentType() != null){
+			componentTypesList.add(componentType.getParentComponentType());
+		}
+
+		Component component = new Component();
+		component.setActiveStatus(Component.ACTIVE_STATUS);
+		component.setApprovalState(ApprovalStatus.APPROVED);
+
+		QueryByExample<Component> queryByExample = new QueryByExample<>(component);
+
+		Component componentInExample = new Component();
+		componentInExample.setComponentType(QueryByExample.STRING_FLAG);
+		queryByExample.setInExample(componentInExample);
+
+		queryByExample.getInExampleOption().setParameterValues(componentTypesList);
+
+		// All components that match myType and my parents type.
+		List<Component> components = service.getPersistenceService().queryByExample(queryByExample);
+
+		// All the Ids of the above list.
+		List<String> componentIds = components.stream().map(Component::getComponentId).collect(Collectors.toList());
+
+		ComponentTag componentTag = new ComponentTag();
+		componentTag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+
+		QueryByExample<ComponentTag> queryByExampleComponentTag = new QueryByExample<>(componentTag);
+
+		ComponentTag componentTagInExample = new ComponentTag();
+		componentTagInExample.setComponentId(QueryByExample.STRING_FLAG);
+		queryByExampleComponentTag.setInExample(componentTagInExample);
+
+		queryByExampleComponentTag.getInExampleOption().setParameterValues(componentIds);
+
+		// All tags of all the above listed component Id's.
+		List<ComponentTag> freeFamilyTags = service.getPersistenceService().queryByExample(queryByExampleComponentTag);
+
+		return removeDuplicateTagsByText(freeFamilyTags);
+
+	}
+	
+	@GET
+	@APIDescription("Gets related Parent and sibling tags based on entry type.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(ComponentTag.class)
+	@Path("/{id}/relatedtags")
+	public List<ComponentTag> getRelatedFreeFamilyComponentTags(
+			@PathParam("id")
+			@RequiredParam String componentId)
+	{
+		Component componentExample = new Component();
+		componentExample.setComponentId(componentId);
+		Component component = componentExample.find();
+		if (component != null) {
+			
+			List<String> componentTypes = new ArrayList<>();
+			componentTypes.add(component.getComponentType());
+			
+			ComponentType componentTypeExample = new ComponentType();
+			componentTypeExample.setComponentType(component.getComponentType());
+			ComponentType myComponentType = componentTypeExample.find();
+			
+			if(myComponentType.getParentComponentType() != null){
+				componentTypes.add(myComponentType.getParentComponentType());
+			}
+
+			component = new Component();
+			component.setActiveStatus(Component.ACTIVE_STATUS);
+			component.setApprovalState(ApprovalStatus.APPROVED);
+			
+			QueryByExample<Component> queryByExample = new QueryByExample<>(component);
+
+			Component componentInExample = new Component();
+			componentInExample.setComponentType(QueryByExample.STRING_FLAG);
+			queryByExample.setInExample(componentInExample);
+
+			queryByExample.getInExampleOption().setParameterValues(componentTypes);
+
+			// All components that match myType and my parents type.
+			List<Component> components = service.getPersistenceService().queryByExample(queryByExample);
+			
+			// All the Ids of the above list.
+			List<String> componentIds = components.stream().map(Component::getComponentId).collect(Collectors.toList());
+			
+			ComponentTag componentTag = new ComponentTag();
+			componentTag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+			
+			QueryByExample<ComponentTag> queryByExampleComponentTag = new QueryByExample<>(componentTag);
+
+			ComponentTag componentTagInExample = new ComponentTag();
+			componentTagInExample.setComponentId(QueryByExample.STRING_FLAG);
+			queryByExampleComponentTag.setInExample(componentTagInExample);
+			
+			queryByExampleComponentTag.getInExampleOption().setParameterValues(componentIds);
+
+			List<ComponentTag> componentsTags = service.getPersistenceService().queryByExample(queryByExampleComponentTag);
+			
+			ComponentTag componentTagExample = new ComponentTag();
+			componentTagExample.setComponentId(componentId);
+			List<ComponentTag> myComponentTags = componentTagExample.findByExample();
+			List<ComponentTag> freeFamilyTags = new ArrayList<>();
+
+			for (ComponentTag tag : componentsTags) {
+				boolean pass = true;
+				for (ComponentTag myTag : myComponentTags) {
+					if (myTag.getText().equalsIgnoreCase(tag.getText())) {
+						pass = false;
+						break;
+					}
+				}
+				if (pass) {
+					freeFamilyTags.add(tag);
+				}
+			}
+			
+			return removeDuplicateTagsByText(freeFamilyTags);
+		} else {
+			return service.getComponentService().getTagCloud();
+		}
+	}
+	
+	private List<ComponentTag> removeDuplicateTagsByText(List<ComponentTag> listWithDuplicates) {
+		List<ComponentTag> noDuplicatesList = new ArrayList<>();
+		Set<String> uniqueSet = new HashSet<>();
+		
+		for (ComponentTag tag : listWithDuplicates){
+			if(uniqueSet.add(tag.getText())){
+				noDuplicatesList.add(tag);
+			}
+		}
+		
+		return noDuplicatesList;
 	}
 
 	@GET
