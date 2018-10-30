@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
@@ -99,6 +100,27 @@ public class SearchServiceImpl
 		List<ComponentSearchView> components = service.getComponentService().getComponents();
 		list.addAll(components);
 		return list;
+	}
+	
+	@Override
+	public SearchOptions getSearchOptions(){
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		SearchOptions searchOptions = searchOptionsExample.find();
+		
+		if(searchOptions == null){
+			// Return the default.
+			searchOptions = new SearchOptions();
+			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
+			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
+			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+		}		
+		return searchOptions;		
+	}
+	
+	public void saveSearchOptions(SearchOptions searchOptions){
+		searchOptions.save();
 	}
 
 	@Override
