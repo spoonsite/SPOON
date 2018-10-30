@@ -1,4 +1,4 @@
-<urlrewrite>
+<urlrewrite use-query-string="true">
     <rule>
         <note>
             The rule means that requests to /test/status/ will be redirected to /rewrite-status
@@ -20,8 +20,8 @@
         <to>/test/status/</to>
     </outbound-rule>
     <rule>
-        <from>/mobile/(Media|Resource)\.action?(.*)</from> <!-- does not capture group 2 -->
-        <to type="redirect">%{context-path}/$1\.action?$2</to>
+        <from>/(.*)/(Media|Resource)\.action?(.*)</from> <!-- does not capture group 2 -->
+        <to type="redirect">%{context-path}/$2\.action$3</to>
     </rule>
 
     <!--
