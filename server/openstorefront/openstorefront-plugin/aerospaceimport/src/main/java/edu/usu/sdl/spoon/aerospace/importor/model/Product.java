@@ -24,7 +24,7 @@ import org.simpleframework.xml.Element;
 public class Product
 {
 
-	@Element
+	@Element(name = "key")
 	private int key;
 
 	@Element(name = "short_name")
@@ -39,13 +39,13 @@ public class Product
 	@Element(name = "model_number")
 	private String modelNumber;
 
-	@Element
+	@Element(name = "description")
 	private String description;
 
 	@Element(name = "product_revision")
 	private ProductRevision productRevision;
 
-	@Element
+	@Element(name = "organizations")
 	private Organizations organizations;
 
 	public Product()

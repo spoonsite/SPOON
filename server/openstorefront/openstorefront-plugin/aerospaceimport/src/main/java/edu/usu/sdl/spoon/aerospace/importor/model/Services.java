@@ -24,11 +24,11 @@ import org.simpleframework.xml.Root;
  *
  * @author dshurtleff
  */
-@Root
+@Root(name = "services")
 public class Services
 {
 
-	@ElementList
+	@ElementList(name = "product", inline = true, required = false)
 	private List<Product> products = new ArrayList<>();
 
 	public Services()
