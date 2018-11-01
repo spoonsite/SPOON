@@ -202,13 +202,12 @@ public class SearchStatTable
 			List<ComponentTag> tags = tagMap.get(component);
 			if (tags != null) {
 				for (ComponentTag tag : tags) {
-					String key = tag.getTagId();
+					String key = tag.getText();
 					if(resultMap.containsKey(key)) {
-						ResultTagStat attrStat = resultMap.get(key);
-						attrStat.incrementCount();
+						resultMap.get(key).incrementCount();
 					} else {
 						ResultTagStat tagStat = new ResultTagStat();
-						tagStat.setTagId(key);
+						tagStat.setTagId(tag.getTagId());
 						tagStat.setTagLabel(tag.getText());
 						resultMap.put(key, tagStat);
 					}
