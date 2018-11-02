@@ -15,11 +15,32 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.ElementList;
+
 /**
  *
  * @author dshurtleff
  */
 public class Organizations
 {
+
+	@ElementList(type = RelatedOrganization.class, name = "related_organization", inline = true, required = false)
+	private List<RelatedOrganization> relatedOrganizations = new ArrayList<>();
+
+	public Organizations()
+	{
+	}
+
+	public List<RelatedOrganization> getRelatedOrganizations()
+	{
+		return relatedOrganizations;
+	}
+
+	public void setRelatedOrganizations(List<RelatedOrganization> relatedOrganizations)
+	{
+		this.relatedOrganizations = relatedOrganizations;
+	}
 
 }

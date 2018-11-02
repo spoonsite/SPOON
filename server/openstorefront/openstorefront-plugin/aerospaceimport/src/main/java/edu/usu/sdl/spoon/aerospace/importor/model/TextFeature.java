@@ -15,25 +15,31 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(name = "text_feature")
 public class TextFeature
+		extends BaseFeature
 {
 
-	private Integer value;
+	@Element(name = "value", required = false)
+	private String value;
 
 	public TextFeature()
 	{
 	}
 
-	public Integer getValue()
+	public String getValue()
 	{
 		return value;
 	}
 
-	public void setValue(Integer value)
+	public void setValue(String value)
 	{
 		this.value = value;
 	}

@@ -16,27 +16,29 @@
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  *
  * @author dshurtleff
  */
+@Root(name = "revision_provenance_document")
 public class RevisionProvenanceDocument
 {
 
-	@Element
+	@Element(name = "key", required = false)
 	private int key;
 
-	@Element
+	@Element(name = "type", required = false)
 	private String type;
 
-	@Element
+	@Element(name = "filename", required = false)
 	private String filename;
 
-	@Element
+	@Element(name = "description", required = false)
 	private String description;
 
-	@Element
+	@Element(name = "title")
 	private String title;
 
 	public RevisionProvenanceDocument()

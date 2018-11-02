@@ -27,19 +27,19 @@ public class Product
 	@Element(name = "key")
 	private int key;
 
-	@Element(name = "short_name")
+	@Element(name = "short_name", required = false)
 	private String shortName;
 
 	@Element(name = "long_name")
 	private String longName;
 
-	@Element(name = "product_source")
+	@Element(name = "product_source", required = false)
 	private String productSource;
 
-	@Element(name = "model_number")
+	@Element(name = "model_number", required = false)
 	private String modelNumber;
 
-	@Element(name = "description")
+	@Element(name = "description", required = false)
 	private String description;
 
 	@Element(name = "product_revision")

@@ -15,7 +15,9 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
-import org.simpleframework.xml.Element;
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.ElementList;
 
 /**
  *
@@ -24,19 +26,19 @@ import org.simpleframework.xml.Element;
 public class ProductFamily
 {
 
-	@Element(name = "classification")
-	private Classification classification;
+	@ElementList(name = "classification", type = Classification.class, inline = true, required = false)
+	private List<Classification> classification = new ArrayList<>();
 
 	public ProductFamily()
 	{
 	}
 
-	public Classification getClassification()
+	public List<Classification> getClassification()
 	{
 		return classification;
 	}
 
-	public void setClassification(Classification classification)
+	public void setClassification(List<Classification> classification)
 	{
 		this.classification = classification;
 	}

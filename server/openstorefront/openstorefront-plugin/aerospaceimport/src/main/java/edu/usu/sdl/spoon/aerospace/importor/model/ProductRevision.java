@@ -24,31 +24,34 @@ import org.simpleframework.xml.Element;
 public class ProductRevision
 {
 
-	@Element(name = "from_date")
+	@Element(name = "from_date", required = false)
 	private String fromDate;
 
-	@Element(name = "thru_date")
+	@Element(name = "thru_date", required = false)
 	private String thruDate;
 
-	@Element
+	@Element(name = "specs", required = false)
 	private Specs specs;
 
-	@Element
+	@Element(name = "shape", required = false)
+	private Shape shape;
+
+	@Element(name = "additional", required = false)
 	private Additional additional;
 
-	@Element(name = "product_type")
+	@Element(name = "product_type", required = false)
 	private ProductType productType;
 
-	@Element(name = "product_family")
+	@Element(name = "product_family", required = false)
 	private ProductFamily productFamily;
 
-	@Element
+	@Element(name = "provenance", required = false)
 	private Provenance provenance;
 
-	@Element(name = "comments")
+	@Element(name = "comments", required = false)
 	private Comment comment;
 
-	@Element(name = "organizations")
+	@Element(name = "organizations", required = false)
 	private Organizations organizations;
 
 	public ProductRevision()
@@ -143,6 +146,16 @@ public class ProductRevision
 	public void setOrganizations(Organizations organizations)
 	{
 		this.organizations = organizations;
+	}
+
+	public Shape getShape()
+	{
+		return shape;
+	}
+
+	public void setShape(Shape shape)
+	{
+		this.shape = shape;
 	}
 
 }

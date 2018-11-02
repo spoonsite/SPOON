@@ -15,15 +15,25 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(name = "float_feature")
 public class FloatFeature
+		extends BaseFeature
 {
 
+	@Element(name = "value", required = false)
 	private Double value;
+
+	@Element(name = "unit", required = false)
 	private String unit;
+
+	@Element(name = "unit_abbr", required = false)
 	private String unitAbbr;
 
 	public FloatFeature()

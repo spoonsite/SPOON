@@ -26,13 +26,13 @@ import org.simpleframework.xml.ElementList;
 class Additional
 {
 
-	@ElementList(name = "float_feature")
+	@ElementList(name = "float_feature", inline = true, required = false)
 	private List<FloatFeature> floatFeatures = new ArrayList<>();
 
-	@ElementList(name = "int_feature")
+	@ElementList(name = "int_feature", inline = true, required = false)
 	private List<IntFeature> intFeatures = new ArrayList<>();
 
-	@ElementList(name = "text_feature")
+	@ElementList(name = "text_feature", inline = true, required = false)
 	private List<TextFeature> textFeatures = new ArrayList<>();
 
 	public Additional()

@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import org.simpleframework.xml.Element;
+
 /**
  *
  * @author dshurtleff
@@ -22,11 +24,20 @@ package edu.usu.sdl.spoon.aerospace.importor.model;
 public abstract class BaseFeature
 {
 
+	@Element(name = "name", required = false)
 	protected String name;
+
+	@Element(name = "description", required = false)
 	protected String description;
+
+	@Element(name = "value_description", required = false)
 	protected String valueDescription;
+
+	@Element(name = "type", required = false)
 	protected String type;
-	protected String datayType;
+
+	@Element(name = "data_type", required = false)
+	private String dataType;
 
 	public BaseFeature()
 	{
@@ -72,14 +83,14 @@ public abstract class BaseFeature
 		this.type = type;
 	}
 
-	public String getDatayType()
+	public String getDataType()
 	{
-		return datayType;
+		return dataType;
 	}
 
-	public void setDatayType(String datayType)
+	public void setDataType(String dataType)
 	{
-		this.datayType = datayType;
+		this.dataType = dataType;
 	}
 
 }

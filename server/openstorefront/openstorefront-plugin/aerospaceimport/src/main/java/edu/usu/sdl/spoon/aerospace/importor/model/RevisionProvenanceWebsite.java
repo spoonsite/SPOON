@@ -16,30 +16,32 @@
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  *
  * @author dshurtleff
  */
+@Root(name = "revision_provenance_website")
 public class RevisionProvenanceWebsite
 {
 
-	@Element
+	@Element(name = "url", required = false)
 	private String url;
 
-	@Element(name = "snapshot_url")
+	@Element(name = "snapshot_url", required = false)
 	private String snapshotUrl;
 
-	@Element(name = "snapshot_id")
+	@Element(name = "snapshot_id", required = false)
 	private String snapshotId;
 
-	@Element
+	@Element(name = "description", required = false)
 	private String description;
 
-	@Element
+	@Element(name = "title", required = false)
 	private String title;
 
-	@Element(name = "last_visited")
+	@Element(name = "last_visited", required = false)
 	private String lastVisited;
 
 	public RevisionProvenanceWebsite()

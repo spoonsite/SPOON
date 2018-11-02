@@ -16,81 +16,44 @@
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  *
  * @author dshurtleff
  */
+@Root(name = "related_organization")
 public class RelatedOrganization
 {
 
-	@Element
-	private String key;
+	@Element(name = "role")
+	private String role;
 
-	@Element(name = "short_name")
-	private String shortName;
-
-	@Element(name = "long_name")
-	private String longName;
-
-	@Element
-	private String description;
-
-	@Element
-	private String type;
+	@Element(name = "organization", required = false)
+	private Organization organization;
 
 	public RelatedOrganization()
 	{
 	}
 
-	public String getKey()
+	public String getRole()
 	{
-		return key;
+		return role;
 	}
 
-	public void setKey(String key)
+	public void setRole(String role)
 	{
-		this.key = key;
+		this.role = role;
 	}
 
-	public String getShortName()
+	public Organization getOrganization()
 	{
-		return shortName;
+		return organization;
 	}
 
-	public void setShortName(String shortName)
+	public void setOrganization(Organization organization)
 	{
-		this.shortName = shortName;
-	}
-
-	public String getLongName()
-	{
-		return longName;
-	}
-
-	public void setLongName(String longName)
-	{
-		this.longName = longName;
-	}
-
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
-
-	public String getType()
-	{
-		return type;
-	}
-
-	public void setType(String type)
-	{
-		this.type = type;
+		this.organization = organization;
 	}
 
 }

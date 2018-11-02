@@ -26,10 +26,10 @@ import org.simpleframework.xml.ElementList;
 public class Provenance
 {
 
-	@ElementList
+	@ElementList(name = "revision_provenance_document", inline = true, required = false)
 	private List<RevisionProvenanceDocument> documents = new ArrayList<>();
 
-	@ElementList
+	@ElementList(name = "revision_provenance_website", inline = true, required = false)
 	private List<RevisionProvenanceWebsite> websites = new ArrayList<>();
 
 	public Provenance()

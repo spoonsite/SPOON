@@ -15,11 +15,32 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.ElementList;
+
 /**
  *
  * @author dshurtleff
  */
 public class Comment
 {
+
+	@ElementList(name = "revision_comment", inline = true, required = false)
+	private List<RevisionComment> comments = new ArrayList<>();
+
+	public Comment()
+	{
+	}
+
+	public List<RevisionComment> getComments()
+	{
+		return comments;
+	}
+
+	public void setComments(List<RevisionComment> comments)
+	{
+		this.comments = comments;
+	}
 
 }

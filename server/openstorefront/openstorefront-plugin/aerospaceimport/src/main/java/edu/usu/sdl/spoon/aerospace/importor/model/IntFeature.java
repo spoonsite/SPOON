@@ -15,15 +15,25 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
 /**
  *
  * @author dshurtleff
  */
+@Root(name = "int_feature")
 public class IntFeature
+		extends BaseFeature
 {
 
+	@Element(name = "value", required = false)
 	private Integer value;
+
+	@Element(name = "unit", required = false)
 	private String unit;
+
+	@Element(name = "unit_abbr", required = false)
 	private String unitAbbr;
 
 	public IntFeature()

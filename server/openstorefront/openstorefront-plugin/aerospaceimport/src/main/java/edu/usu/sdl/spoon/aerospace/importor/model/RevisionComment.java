@@ -16,18 +16,20 @@
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  *
  * @author dshurtleff
  */
+@Root(name = "revision_comment")
 public class RevisionComment
 {
 
-	@Element
+	@Element(name = "title", required = false)
 	private String title;
 
-	@Element
+	@Element(name = "text", required = false)
 	private String text;
 
 	public RevisionComment()

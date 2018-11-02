@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
+import org.simpleframework.xml.Element;
+
 /**
  *
  * @author dshurtleff
@@ -22,10 +24,19 @@ package edu.usu.sdl.spoon.aerospace.importor.model;
 public class Organization
 {
 
+	@Element(name = "key")
 	private int key;
+
+	@Element(name = "short_name", required = false)
 	private String shortName;
+
+	@Element(name = "long_name", required = false)
 	private String longName;
+
+	@Element(name = "description", required = false)
 	private String description;
+
+	@Element(name = "type", required = false)
 	private String type;
 
 	public Organization()

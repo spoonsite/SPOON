@@ -16,15 +16,17 @@
 package edu.usu.sdl.spoon.aerospace.importor.model;
 
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  *
  * @author dshurtleff
  */
+@Root(name = "classification")
 public class Classification
 {
 
-	@Element(name = "category_name")
+	@Element(name = "category_name", required = false)
 	private String categoryName;
 
 	public Classification()
