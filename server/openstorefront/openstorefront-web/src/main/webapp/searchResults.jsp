@@ -912,7 +912,7 @@
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
 				{ text: 'Approved Date', section: 'approve', display: false },
-				{ text: 'Index Relevance', section: 'searchscore', display: true },
+				{ text: 'Relevance', section: 'searchscore', display: true },
 				{ text: 'Breadcrumbs', section: 'breadcrumbs', display: true }
 			];			
 			var allResultsSet;
@@ -1347,7 +1347,7 @@
 											}											
 										},										
 										{
-											label: 'Index Relevance',
+											label: 'Relevance',
 											field: 'searchScore',
 											fieldCode: 'searchScore',
 											dir: 'DESC',
