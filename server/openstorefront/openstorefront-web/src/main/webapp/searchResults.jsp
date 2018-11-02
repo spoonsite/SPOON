@@ -329,13 +329,6 @@
 				},
 				items: [
 					{
-						xtype: 'button',
-						text: 'Apply Filters',
-						handler: function() {
-							filterResults();
-						}
-					},
-					{
 						xtype: 'textfield',
 						id: 'filterByName',
 						fieldLabel: 'By Name',						
@@ -362,8 +355,32 @@
 								this.getStore().add(item);
 							}
 						},
+						checkVisibility: function() {
+							var disable = this.getStore().getData().items.length === 0;
+							this.setDisabled(disable);
+						},
 						clearStore: function () {
+							// don't remove currently selected
+							var value = this.value;
+							var selectedRecords = this.getStore().queryRecordsBy(function(record) {
+								var recordValue = record.getData().value;
+								var keep = false;
+								Ext.Array.each(value, function(el) {
+									if(el === recordValue) {
+										keep = true;
+									}
+								})
+								return keep;
+							})
 							this.getStore().removeAll();
+							var store = this.getStore();
+							var values = [];
+							Ext.Array.each(selectedRecords, function(el){
+								store.add(el);
+								values.push(el.getData().value);
+							})
+							this.clearValue();
+							this.setValue(values);
 						}
 					},
 					Ext.create('OSF.component.StandardComboBox', {	
@@ -387,6 +404,10 @@
 							if (this.getStore().query('value', item.value).items.length === 0) {
 								this.getStore().add(item);
 							}
+						},
+						checkVisibility: function() {
+							var disable = this.getStore().getData().items.length === 0;
+							this.setDisabled(disable);
 						},
 						clearStore: function () {
 							this.getStore().removeAll();
@@ -446,6 +467,7 @@
 						xtype: 'button',
 						text: 'More Vitals',
 						id: 'moreAttributeFiltersButton',
+						margin: '0 0 10 0',
 						handler: function() {
 							attributeFilterStore.getNextPage();
 						},
@@ -455,15 +477,24 @@
 				dockedItems: [
 					{
 						xtype: 'toolbar',
-						dock: 'bottom',
+						dock: 'top',
+						layout: {
+							type: 'vbox',
+							align: 'stretch'
+						},
 						items: [
 							{
-								xtype: 'tbfill'
+								xtype: 'button',
+								text: 'Apply Filters',
+								margin: '10 10 10 0',
+								handler: function() {
+									filterResults();
+								}
 							},
 							{
+								xtype: 'button',
 								text: 'Reset Filters',
-								scale: 'medium',
-								width: '80%',
+								margin: '10 10 10 0',
 								handler: function(){
 									Ext.getCmp('filterByName').reset();
 									Ext.getCmp('filterByTag').reset();
@@ -478,9 +509,6 @@
 									attributeFilters = [];
 								}
 							},
-							{
-								xtype: 'tbfill'
-							}
 						]
 					}
 				]
@@ -698,6 +726,7 @@
 					attributeFilterStore.attributes = data;	
 				},
 				clear : function() {
+					// TODO: don't remove currently selected items
 					Ext.getCmp('attributeFiltersContainer').removeAll();
 					attributeFilterStore.attributes = [];
 					attributeFilterStore.currentPage = 0;
@@ -744,24 +773,40 @@
 						Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
 					},
 					metachange: function(store, meta) {
+						// TODO: use the store sorter attribute
+						var sorterFn = function(key) {
+							return function(a, b) {
+								var nameA = a[key].toUpperCase(); // ignore upper and lowercase
+								var nameB = b[key].toUpperCase(); // ignore upper and lowercase
+								if (nameA < nameB) {
+									return -1;
+								}
+								if (nameA > nameB) {
+									return 1;
+								}
+								// names must be equal
+								return 0;
+							}
+						}
+
 						var filterByTypeCombo = Ext.getCmp('filterByType');
 						filterByTypeCombo.clearStore();
-						Ext.Object.each(meta.resultTypeStats, function(key, value, self) {
+						Ext.Object.each(meta.resultTypeStats.sort(sorterFn('componentTypeDescription')), function(key, value, self) {
 							filterByTypeCombo.addStoreItem({
-								label: '(' + value.count + ') ' + value.componentTypeDescription,
+								label: value.componentTypeDescription + '  (' + value.count + ')',
 								value: value.componentType
 							});
 						});
-						filterByTypeCombo.setLoading(false);
+						filterByTypeCombo.checkVisibility();
 						var filterByTagCombo = Ext.getCmp('filterByTag');
 						filterByTagCombo.clearStore();
-						Ext.Object.each(meta.resultTagStats, function(key, value, self) {
+						Ext.Object.each(meta.resultTagStats.sort(sorterFn('tagLabel')), function(key, value, self) {
 							filterByTagCombo.addStoreItem({
-								label: '(' + value.count + ') ' + value.tagLabel,
+								label:  value.tagLabel + '  (' + value.count + ')',
 								value: value.tagLabel
 							});
 						});
-						// filterByTagCombo.setDisabled(filterByTagCombo.getStore().data.length === 0);
+						filterByTagCombo.checkVisibility();
 
 						// Set Attributes from the search results
 						attributeStats = {};
@@ -794,7 +839,7 @@
 									if (item.type === attribute.attributeType &&
 										item.code === attribute.attributeCode) {
 										containsAttribute = true;
-										checkboxes.push(item.checkbox);
+										checkboxes.push(item.checkbox); // add previously checked boxes
 									}
 								});
 								if (!containsAttribute) {
