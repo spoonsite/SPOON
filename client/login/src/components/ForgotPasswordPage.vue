@@ -57,6 +57,7 @@ import validators from '../util/validators';
 
 export default {
   name: 'ForgotUsernameComp',
+  mixins: [validators],
   data: function () {
     return {
       dialog: false,
