@@ -912,7 +912,7 @@
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
 				{ text: 'Approved Date', section: 'approve', display: false },
-				{ text: 'Index Relevance', section: 'searchscore', display: true },
+				{ text: 'Relevance', section: 'searchscore', display: true },
 				{ text: 'Breadcrumbs', section: 'breadcrumbs', display: true }
 			];			
 			var allResultsSet;
@@ -1151,7 +1151,7 @@
 				'  <br><div class="searchresults-item-update">',
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'  <tpl if="show.searchscore"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'  <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
 				'  <tpl if="show.breadcrumbs">',
 				'    <div style="display:block; font-size:14px; margin-top: 4px;">',
 				'      <tpl for="parents" between="&nbsp; &gt; &nbsp;">',
@@ -1347,7 +1347,7 @@
 											}											
 										},										
 										{
-											label: 'Index Relevance',
+											label: 'Relevance',
 											field: 'searchScore',
 											fieldCode: 'searchScore',
 											dir: 'DESC',

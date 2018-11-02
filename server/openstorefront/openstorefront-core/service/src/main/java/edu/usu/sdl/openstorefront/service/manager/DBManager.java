@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -94,15 +95,7 @@ public class DBManager
 			if (!isStarted()) {
 				try {
 					LOG.info("Starting Orient DB...");
-					server = OServerMain.create();
-
-					String home = fileSystemManager.getDir(FileSystemManager.DB_DIR).getPath();
-					System.setProperty("ORIENTDB_HOME", home);
-					System.setProperty("ORIENTDB_ROOT_PASSWORD", propertiesManager.getValue(PropertiesManager.KEY_DB_AT));
-					server.setServerRootDirectory(home);
-
-					server.startup(fileSystemManager.getConfig(configFile));
-					server.activate();
+					String home = startupServer();
 					this.dbFileDir = home + "/databases/openstorefront";
 					createDatabase();
 					createPool();
@@ -115,6 +108,18 @@ public class DBManager
 				}
 			}
 		}
+	}
+
+	private String startupServer() throws InstantiationException, Exception, NoSuchMethodException, InvocationTargetException, ClassNotFoundException, IllegalAccessException, SecurityException, IllegalArgumentException
+	{
+		server = OServerMain.create();
+		String home = fileSystemManager.getDir(FileSystemManager.DB_DIR).getPath();
+		System.setProperty("ORIENTDB_HOME", home);
+		System.setProperty("ORIENTDB_ROOT_PASSWORD", propertiesManager.getValue(PropertiesManager.KEY_DB_AT));
+		server.setServerRootDirectory(home);
+		server.startup(fileSystemManager.getConfig(configFile));
+		server.activate();
+		return home;
 	}
 
 	/**
@@ -138,14 +143,18 @@ public class DBManager
 		}
 	}
 
-	protected synchronized void createDatabase()
+	protected synchronized void createDatabase() throws Exception
 	{
 		File dbFile = new File(this.dbFileDir);
 		if (dbFile.exists() == false) {
 			LOG.log(Level.INFO, "Creating DB at %s", this.dbFileDir);
-			try (ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + this.dbFileDir)) {
+			try (@SuppressWarnings("deprecation") ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:" + this.dbFileDir)) {
 				db.create();
 			}
+			//shutdown and restart
+			server.shutdown();
+			startupServer();
+
 			LOG.log(Level.INFO, "Done");
 		}
 	}
