@@ -119,9 +119,11 @@
         <entry name="db.pool.max" value="50"/>
 
         <!-- LEVEL1 AND 2 CACHE: enable/disable and set the size as number of entries -->
+		<!-- Not Support in 3.x 
         <entry name="cache.level1.enabled" value="true"/>   
         <entry name="cache.level2.enabled" value="true"/>
         <entry name="cache.level2.size" value="1000"/>
+		-->
 
         <!-- PROFILER: configures the profiler as <seconds-for-snapshot>,<archive-snapshot-size>,<summary-size> -->
         <entry name="profiler.enabled" value="false"/>

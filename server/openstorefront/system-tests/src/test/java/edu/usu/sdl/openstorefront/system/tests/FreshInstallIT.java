@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
@@ -96,7 +95,7 @@ public class FreshInstallIT
 			LOG.info("Starting Server");
 			tomcat.start();
 
-		} catch (LifecycleException | ServletException ex) {
+		} catch (LifecycleException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
