@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
 import edu.usu.sdl.openstorefront.core.model.UserSubmissionAll;
-import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
@@ -130,8 +129,6 @@ public class MappingController
 
 		ComponentAll mainComponent = new ComponentAll();
 		Component component = new Component();
-		component.setCreateUser(SecurityUtil.getCurrentUserName());
-		component.setUpdateUser(SecurityUtil.getCurrentUserName());
 		component.setComponentType(userSubmission.getComponentType());
 		component.setComponentId(userSubmission.getOriginalComponentId());
 		mainComponent.setComponent(component);

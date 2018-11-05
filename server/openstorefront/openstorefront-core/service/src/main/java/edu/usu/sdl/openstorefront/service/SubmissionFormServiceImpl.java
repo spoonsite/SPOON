@@ -346,8 +346,6 @@ public class SubmissionFormServiceImpl
 					ComponentAll saveComponent = getComponentService().saveFullComponent(componentFormSet.getPrimary(), options);
 					getComponentService().submitComponentSubmission(saveComponent.getComponent().getComponentId());
 					for (ComponentAll componentAll : componentFormSet.getChildren()) {
-						componentAll.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
-						componentAll.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 						ComponentAll childComponent = getComponentService().saveFullComponent(componentAll, options);
 						getComponentService().submitComponentSubmission(childComponent.getComponent().getComponentId());
 					}
@@ -534,8 +532,6 @@ public class SubmissionFormServiceImpl
 
 					ComponentAll savedComponentAll = getComponentService().saveFullComponent(componentFormSet.getPrimary(), options);
 					for (ComponentAll componentAll : componentFormSet.getChildren()) {
-						componentAll.getComponent().setCreateUser(SecurityUtil.getCurrentUserName());
-						componentAll.getComponent().setUpdateUser(SecurityUtil.getCurrentUserName());
 						getComponentService().saveFullComponent(componentAll, options);
 					}
 					getComponentService().submitChangeRequest(savedComponentAll.getComponent().getComponentId());
