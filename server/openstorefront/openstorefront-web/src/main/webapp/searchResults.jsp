@@ -349,6 +349,10 @@
 						// load store from search results 
 						store: Ext.create('Ext.data.Store', {
 							fields: ['label', 'value'],
+							sorters: [{
+								property: 'label',
+								direction: 'ASC'	
+							}]
 						}),
 						addStoreItem: function (item) {
 							if (this.getStore().query('value', item.value).items.length === 0) {
@@ -356,8 +360,8 @@
 							}
 						},
 						checkVisibility: function() {
-							var disable = this.getStore().getData().items.length === 0;
-							this.setDisabled(disable);
+							var visible = this.getStore().getData().items.length !== 0;
+							this.setVisible(visible);
 						},
 						clearStore: function () {
 							// don't remove currently selected
@@ -394,6 +398,10 @@
 						valueField: 'value',
 						store: Ext.create('Ext.data.Store', {
 							fields: ['label', 'value'],
+							sorters: [{
+								property: 'label',
+								direction: 'ASC'	
+							}],
 							data: [{
 								label: '*ALL*',
 								value: null
@@ -404,10 +412,6 @@
 							if (this.getStore().query('value', item.value).items.length === 0) {
 								this.getStore().add(item);
 							}
-						},
-						checkVisibility: function() {
-							var disable = this.getStore().getData().items.length === 0;
-							this.setDisabled(disable);
 						},
 						clearStore: function () {
 							this.getStore().removeAll();
@@ -486,6 +490,7 @@
 							{
 								xtype: 'button',
 								text: 'Apply Filters',
+								ui: 'default',
 								margin: '10 10 10 0',
 								handler: function() {
 									filterResults();
@@ -507,6 +512,7 @@
 										filter.checkbox.resumeEvents(true);
 									});
 									attributeFilters = [];
+									filterResults();
 								}
 							},
 						]
@@ -773,34 +779,17 @@
 						Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
 					},
 					metachange: function(store, meta) {
-						// TODO: use the store sorter attribute
-						var sorterFn = function(key) {
-							return function(a, b) {
-								var nameA = a[key].toUpperCase(); // ignore upper and lowercase
-								var nameB = b[key].toUpperCase(); // ignore upper and lowercase
-								if (nameA < nameB) {
-									return -1;
-								}
-								if (nameA > nameB) {
-									return 1;
-								}
-								// names must be equal
-								return 0;
-							}
-						}
-
 						var filterByTypeCombo = Ext.getCmp('filterByType');
 						filterByTypeCombo.clearStore();
-						Ext.Object.each(meta.resultTypeStats.sort(sorterFn('componentTypeDescription')), function(key, value, self) {
+						Ext.Object.each(meta.resultTypeStats, function(key, value, self) {
 							filterByTypeCombo.addStoreItem({
 								label: value.componentTypeDescription + '  (' + value.count + ')',
 								value: value.componentType
 							});
 						});
-						filterByTypeCombo.checkVisibility();
 						var filterByTagCombo = Ext.getCmp('filterByTag');
 						filterByTagCombo.clearStore();
-						Ext.Object.each(meta.resultTagStats.sort(sorterFn('tagLabel')), function(key, value, self) {
+						Ext.Object.each(meta.resultTagStats, function(key, value, self) {
 							filterByTagCombo.addStoreItem({
 								label:  value.tagLabel + '  (' + value.count + ')',
 								value: value.tagLabel
@@ -832,8 +821,27 @@
 								html: '&nbsp;'
 							});
 
-							var checkboxes = [];		
-							Ext.Array.each(attributeStats[key], function(attribute){
+							var checkboxes = [];
+							var sortFn = function(key) {
+								return function(a, b) {
+									var nameA = parseFloat(a[key]);
+									var nameB = parseFloat(b[key]);
+
+									if (nameA === NaN) {
+										var nameA = a[key].toUpperCase(); // ignore upper and lowercase
+										var nameB = b[key].toUpperCase(); // ignore upper and lowercase
+									}
+									if (nameA < nameB) {
+										return -1;
+									}
+									if (nameA > nameB) {
+										return 1;
+									}
+									// names must be equal
+									return 0;
+								}
+							}
+							Ext.Array.each(attributeStats[key].sort(sortFn('attributeCode')), function(attribute){
 								var containsAttribute = false;
 								Ext.Array.each(attributeFilters, function(item) {
 									if (item.type === attribute.attributeType &&
@@ -845,7 +853,7 @@
 								if (!containsAttribute) {
 									panel.setCollapsed(true);
 									var check = Ext.create('Ext.form.field.Checkbox', {
-										boxLabel: '(' + attribute.count + ') ' + attribute.attributeCode,
+										boxLabel: attribute.attributeCode + ' (' + attribute.count + ') ',
 										attributeCode: attribute.attributeCode,
 										listeners: {
 											change: function(checkbox, newValue, oldValue, opts) {																	
@@ -937,7 +945,7 @@
 						var filterByTypeCombo = Ext.getCmp('filterByType');
 						Ext.Object.each(stats, function(key, value, self) {
 							filterByTypeCombo.addStoreItem({
-								label: '(' + value.count + ') ' + value.typeLabel,
+								label: value.typeLabel + '  (' + value.count + ')',
 								value: value.type
 							});
 						});
