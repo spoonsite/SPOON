@@ -22,6 +22,7 @@ package edu.usu.sdl.openstorefront.core.model.search;
 public class ResultAttributeStat
 {
 	private String attributeCode;
+	private String attributeCodeLabel;
 	private String attributeType;
 	private String attributeTypeLabel;
 	private int count = 1;
@@ -38,6 +39,16 @@ public class ResultAttributeStat
 	public void setAttributeCode(String attributeCode)
 	{
 		this.attributeCode = attributeCode;
+	}
+
+	public String getAttributeCodeLabel()
+	{
+		return attributeCodeLabel;
+	}
+
+	public void setAttributeCodeLabel(String attributeCodeLabel)
+	{
+		this.attributeCodeLabel = attributeCodeLabel;
 	}
 
 	public String getAttributeType()

@@ -841,7 +841,7 @@
 									return 0;
 								}
 							}
-							Ext.Array.each(attributeStats[key].sort(sortFn('attributeCode')), function(attribute){
+							Ext.Array.each(attributeStats[key].sort(sortFn('attributeCodeLabel')), function(attribute){
 								var containsAttribute = false;
 								Ext.Array.each(attributeFilters, function(item) {
 									if (item.type === attribute.attributeType &&
@@ -853,7 +853,7 @@
 								if (!containsAttribute) {
 									panel.setCollapsed(true);
 									var check = Ext.create('Ext.form.field.Checkbox', {
-										boxLabel: attribute.attributeCode + ' (' + attribute.count + ') ',
+										boxLabel: attribute.attributeCodeLabel + ' (' + attribute.count + ') ',
 										attributeCode: attribute.attributeCode,
 										listeners: {
 											change: function(checkbox, newValue, oldValue, opts) {																	
@@ -872,7 +872,7 @@
 															type: attribute.attributeType,
 															code: attribute.attributeCode,
 															typeLabel: attribute.attributeTypeLabel,
-															label: attribute.attributeCode,
+															label: attribute.attributeCodeLabel,
 															checkbox: checkbox
 														});
 													}
