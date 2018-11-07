@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.service.search;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -166,6 +168,12 @@ public class SearchStatTable
 						}
 						attrStat.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 						attrStat.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+
+						AttributeCodePk codePk = new AttributeCodePk();
+						codePk.setAttributeCode(attrStat.getAttributeCode());
+						codePk.setAttributeType(attrStat.getAttributeType());
+						AttributeCode attrCode = service.getAttributeService().findCodeForType(codePk);
+						attrStat.setAttributeCodeLabel(attrCode.getLabel());
 						resultMap.put(key, attrStat);
 					}
 				}
