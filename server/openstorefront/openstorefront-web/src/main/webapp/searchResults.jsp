@@ -343,6 +343,7 @@
 						emptyText: 'Select Tags',
 	 					width: 300,
 						grow: true,
+						anyMatch: true,
 						growMax: 300,
 						displayField: 'label',
 						valueField: 'value',

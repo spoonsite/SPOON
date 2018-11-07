@@ -211,9 +211,11 @@
 									var fullName = '';
 								
 									if (data.submissionOriginalComponentId) {
-										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + ' (Incomplete Change Request)';
+										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + '<font color="red"> <strong> Incomplete Change Request </strong></font>';
 									} else if (data.userSubmissionId) {
-										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + ' (Incomplete Submission)';
+										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + '<font color="red"> <strong> Incomplete Submission </strong></font>';
+									} else if (data.evaluationsAttached){
+										fullName = '<i class="fa fa-exclamation-triangle text-warning"></i>' + data.name + '<font color="red"> <strong> Evaluations Are In Progress </strong></font>';
 									} else {
 										fullName = data.name;
 									}
@@ -227,7 +229,7 @@
 						}
 					},
 					columns: [
-						{ text: 'Name', dataIndex: 'fullname', flex: 1, minWidth: 200
+						{ text: 'Name', dataIndex: 'fullname', flex: 1, minWidth: 600
 						},
 						{ text: 'Description', dataIndex: 'description', flex: 2, minWidth: 250,
 						 renderer: function(value){
@@ -312,8 +314,7 @@
 										} else {
 											editExistingEntry(componentId);
 										}
-										
-									}
+									}									
 								},
 								{
 									text: 'Request Change',
@@ -662,6 +663,11 @@
 									worklinkType = 'Submission';
 									resourceID = record.get('userSubmissionId');
 									tools.getComponent('options').setDisabled(true);
+								}
+
+								if(record.get('evaluationsAttached')){
+									tools.getComponent('tbEdit').setDisabled(true);
+									tools.getComponent('tbRemoveChangeRequest').setHidden(true);
 								}
 								getWorkLink(worklinkType, resourceID);
 								
