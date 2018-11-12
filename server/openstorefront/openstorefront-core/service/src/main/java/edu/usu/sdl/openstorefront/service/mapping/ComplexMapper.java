@@ -299,7 +299,7 @@ public class ComplexMapper
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI:
 				case SubmissionFormFieldType.ATTRIBUTE_RADIO:
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
-					mapSinglsAttributes(userSubmissionField, componentFormSet, submissionField);
+					mapSingleAttributes(userSubmissionField, componentFormSet, submissionField);
 					break;
 
 				case SubmissionFormFieldType.CONTACT:
@@ -353,7 +353,7 @@ public class ComplexMapper
 	private void mapRequiredAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
 		List<AttributeType> attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true);
-		// get the attributes who's type matches any of the above attribute types.
+		// get the attributes whose type matches any of the above attribute types.
 		List<ComponentAttribute> completeList = componentFormSet.getPrimary().getAttributes();
 		List<ComponentAttribute> reducedList = new ArrayList<>();
 		
@@ -368,7 +368,7 @@ public class ComplexMapper
 		userSubmissionField.setRawValue(value);
 	}
 	
-	private void mapSinglsAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet, SubmissionFormField submissionField) throws JsonProcessingException
+	private void mapSingleAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet, SubmissionFormField submissionField) throws JsonProcessingException
 	{
 		// get the attributes that match the type in submissionField and pass only those.
 		List<ComponentAttribute> completeList = componentFormSet.getPrimary().getAttributes();
