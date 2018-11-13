@@ -1,4 +1,4 @@
-# desktop
+# Desktop Client for OpenStorefront
 
 ## Project setup
 ```
