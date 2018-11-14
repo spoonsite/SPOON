@@ -8,24 +8,23 @@ export default new Vuex.Store({
   state: {
     currentUser: {},
     branding: {},
-    securitypolicy: {},
-    permissionMap: []
+    securityPolicy: {},
+    permissionMap: [],
+    appVersion: ''
   },
   // mutations must be synchronous
   mutations: {
     setSecurityPolicy (state, response) {
-      state.securitypolicy = response.data
+      state.securityPolicy = response.data
     },
     setCurrentUser (state, response) {
       state.currentUser = response.data
     },
+    setAppVersion (state, response) {
+      state.appVersion = response.data
+    },
     setBranding (state, response) {
       state.branding = response.data
-      for (var key in state.branding) {
-        if (typeof state.branding[key] === 'string') {
-          state.branding[key] = state.branding[key].replace(/branding\.action/ig, '/openstorefront/Branding.action')
-        }
-      }
     },
     setPermissionMap (state, response) {
       response.data.roles.forEach(roles => {
@@ -46,7 +45,7 @@ export default new Vuex.Store({
           context.commit('setSecurityPolicy', response)
         })
     },
-    setCurrentUser (context) {
+    getCurrentUser (context) {
       axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
           context.commit('setCurrentUser', response)
@@ -56,6 +55,12 @@ export default new Vuex.Store({
           if (context.callback) {
             context.callback()
           }
+        })
+    },
+    getAppVersion (context) {
+      axios.get('/openstorefront/api/v1/service/application/version')
+        .then(response => {
+          context.commit('setAppVersion', response)
         })
     },
     getBranding (context, callback) {

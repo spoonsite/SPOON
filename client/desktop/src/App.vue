@@ -157,7 +157,8 @@ export default {
 
     this.checkFirstTime()
     // pass in current axios instance
-    this.$store.dispatch('setCurrentUser', { axios: this.$http, callback: this.checkWatches })
+    this.$store.dispatch('getCurrentUser', { axios: this.$http, callback: this.checkWatches })
+    this.$store.dispatch('getAppVersion')
     this.checkWatches()
   },
   computed: {
