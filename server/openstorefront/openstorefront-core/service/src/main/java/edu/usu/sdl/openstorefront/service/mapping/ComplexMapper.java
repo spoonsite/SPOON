@@ -359,7 +359,7 @@ public class ComplexMapper
 		
 		for (ComponentAttribute componentAttribute : completeList){
 			for (AttributeType attributeType : attributeTypes){
-				if(attributeType.equals(componentAttribute.getComponentAttributePk().getAttributeType())){
+				if(attributeType.getAttributeType().equals(componentAttribute.getComponentAttributePk().getAttributeType())){
 					reducedList.add(componentAttribute);
 				}
 			}
