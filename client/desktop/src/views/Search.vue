@@ -6,7 +6,7 @@
   <div class="clearfix centeralign px-3" style="max-width: 46em;">
     <SearchBar
       v-on:submitSearch="submitSearch()"
-      :hideSuggestions="searchQueryIsDirty"
+      :hideSuggestions="hideSearchSuggestions"
       v-model="searchQuery"
     ></SearchBar>
 
@@ -478,6 +478,9 @@ export default {
   computed: {
     offset () {
       return this.searchPage * this.searchPageSize
+    },
+    hideSearchSuggestions () {
+      return this.searchQueryIsDirty || this.searchQuery.length === 0
     }
   },
   data () {

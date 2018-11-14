@@ -11,8 +11,7 @@
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
       <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), submitQuery()">clear</v-icon>
     </div>
-
-    <v-card v-if="searchSuggestions.length > 0">
+    <v-card v-if="searchSuggestions.length > 0 && !hideSuggestions">
       <v-list dense>
         <v-list-tile v-for="i in searchSuggestions" :key="i.name" @click="submitQuery(i.name);" class="suggestion">
           <v-list-tile-content>
