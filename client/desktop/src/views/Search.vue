@@ -52,6 +52,27 @@
       </v-card>
     </v-dialog>
 
+    <!-- Search Help Dialog -->
+    <v-dialog
+      v-model="showHelp"
+      max-width="300px"
+      >
+      <v-card>
+        <v-card-title>
+          <h2>Search Help</h2>
+        </v-card-title>
+        <v-card-text>
+          <h3>Filter Color Legend</h3>
+          <v-chip close small color="blue-grey lighten-2" text-color="white">Category Shortcode</v-chip>
+          <v-chip close small>Tag</v-chip>
+          <v-chip close small color="indigo lighten-2" text-color="white">Organization</v-chip>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="showHelp = !showHelp">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- Filter pills if there are any -->
     <v-btn small @click="clear()" v-if="(filters.component || filters.organization || filters.tags.length !== 0)">Clear Filters</v-btn>
     <div style="padding: 0 0.5em 0.8em 0.8em;">
@@ -137,27 +158,6 @@
     </v-dialog>
   </div><!-- Search Bar and menu  -->
 
-  <!-- Search Help Dialog -->
-    <v-dialog
-      v-model="showHelp"
-      max-width="300px"
-      >
-      <v-card>
-        <v-card-title>
-          <h2>Search Help</h2>
-        </v-card-title>
-        <v-card-text>
-          <h3>Filter Color Legend</h3>
-          <v-chip close small color="blue-grey lighten-2" text-color="white">Category Shortcode</v-chip>
-          <v-chip close small>Tag</v-chip>
-          <v-chip close small color="indigo lighten-2" text-color="white">Organization</v-chip>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn @click="showHelp = !showHelp">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
   <!-- Search Results -->
   <div v-if="searchResults.data" class="clearfix centeralign px-3" style="max-width: 46em;">
     <h2 style="text-align: center" class="mb-2">Search Results</h2>
@@ -232,6 +232,9 @@
     </v-expansion-panel>
   </div>
 
+  <!-- Allow space for the pagination -->
+  <div class="v-spacer"></div>
+
   <!-- Pagination -->
   <div class="pagination">
     <v-btn
@@ -255,9 +258,6 @@
       <v-icon x-large style="color: #333;">chevron_right</v-icon>
     </v-btn>
   </div>
-
-  <!-- Allow space for the pagination -->
-  <div class="v-spacer"></div>
 
 </div>
 </template>
