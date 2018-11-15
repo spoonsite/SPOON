@@ -11,7 +11,7 @@
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
       <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">clear</v-icon>
     </div>
-    <v-card v-if="searchSuggestions.length > 0 && !hideSuggestions" height="0" style="z-index: 2">
+    <v-card v-if="searchSuggestions.length > 0 && !hideSuggestions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
       <v-list dense class="elevation-1">
         <v-list-tile v-for="i in searchSuggestions" :key="i.name" @click="submitQuery(i.name);" class="suggestion">
           <v-list-tile-content>
@@ -29,7 +29,7 @@ import _ from 'lodash'
 
 export default {
   name: 'SearchBar',
-  props: ['value', 'hideSuggestions'],
+  props: ['value', 'hideSuggestions', 'overlaySuggestions'],
   mounted () {
   },
   data () {
@@ -79,12 +79,13 @@ export default {
 .searchbar {
   border-radius: 2px;
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
-  padding: 0.7em 1.2em;
+  padding: 0.7em 0.7em 0.7em 1.2em;
   margin-bottom: 0.3em;
   margin-left: auto;
   margin-right: auto;
-  font-size: 120%;
+  font-size: 140%;
   transition: box-shadow 0.7s;
+  background-color: #FFF;
 }
 .searchfield {
   display: inline-block;
@@ -92,7 +93,8 @@ export default {
 }
 .search-icon {
   float: right;
-  font-size: 26px !important;
+  font-size: 34px !important;
+  margin-bottom: 0.1em;
 }
 .search-icon:hover {
   cursor: pointer;

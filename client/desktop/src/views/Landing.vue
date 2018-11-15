@@ -1,19 +1,20 @@
 <template lang="html">
   <div>
 
-  <v-container>
-
+  <v-img
+    :src='$store.state.branding.homebackSplashUrl'
+  >
     <SearchBar
       v-on:submitSearch="submitSearch()"
       v-model="searchQuery"
       :hideSuggestions="hideSearchSuggestions"
-      class="my-3 mb-5"
-      style="margin-left: auto; margin-right: auto; max-width: 46em;"
+      style="margin: 6em auto; max-width: 46em;"
+      :overlaySuggestions="true"
     ></SearchBar>
 
-      <h2>Search Tools</h2>
+      <h2><span style="background-color: rgba(255,255,255,0.8);" class="pa-2">Search Tools</span></h2>
 
-      <v-container text-xs-center>
+      <v-container text-xs-center mb-5>
         <v-layout row wrap>
           <v-flex
             v-for="(item,i) in searchToolLinks"
@@ -39,6 +40,8 @@
           </v-flex>
         </v-layout>
       </v-container>
+
+    </v-img>
 
       <h2>Quick Launch</h2>
 
@@ -69,6 +72,7 @@
         </v-layout>
       </v-container>
 
+  <v-container>
       <h2>Highlights</h2>
 
       <v-container>
@@ -98,7 +102,8 @@
       <h2>Browse Topics</h2>
       <!-- Different for SPOON and DI2E -->
 
-      <v-container text-xs-center>
+      <!-- SPOON -->
+      <v-container v-if="$store.state.branding.applicationName==='SPOON'" text-xs-center>
         <v-layout row wrap>
           <v-flex
             v-for="(item,i) in nestedComponentTypesList.children"
@@ -128,11 +133,50 @@
         </v-layout>
       </v-container>
 
+      <!-- DI2E -->
+      <v-container v-else>
+        <v-layout row wrap justify-center>
+          <v-flex
+            v-for="(item,i) in attributes"
+            :key="i"
+            xs6
+            md4
+          >
+            <v-card class="ma-2 elevation-2">
+              <v-toolbar color="primary" dark dense>
+                <v-toolbar-title>{{ item.description }}</v-toolbar-title>
+              </v-toolbar>
+              <v-list dense style="height: 16em; overflow: auto;">
+                <v-hover
+                  v-for="code in item.codes"
+                  :key="code.code"
+                >
+                <a
+                  href="#"
+                  slot-scope="{ hover }"
+                  style="text-decoration:none;"
+                >
+                  <v-list-tile
+                  :class="`${hover ? 'darken' : 0}`"
+                  >
+                    <v-list-tile-content>
+                      {{ code.label }}
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </a>
+                </v-hover>
+              </v-list>
+
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+
   </v-container>
 
     <v-footer color="primary" dark height="auto">
       <v-card color="primary" dark flat class="footer-wrapper">
-        <div v-html="$store.state.branding.landingPageFooter"></div>
+        <div class="footer-block" v-html="$store.state.branding.landingPageFooter"></div>
         <p style="text-align: center;" v-html="$store.state.appVersion"></p>
       </v-card>
     </v-footer>
@@ -152,6 +196,7 @@ export default {
   mounted () {
     this.getNestedComponentTypes()
     this.getHighlights()
+    this.getAttributes()
   },
   data () {
     return {
@@ -159,6 +204,7 @@ export default {
       nestedComponentTypesList: [],
       errors: [],
       highlights: [],
+      attributes: [],
       searchToolLinks: [
         {
           icon: 'cloud',
@@ -230,6 +276,13 @@ export default {
         .then(response => {
           this.highlights = response.data
         })
+    },
+    getAttributes () {
+      this.$http
+        .get('/openstorefront/api/v1/resource/attributes?important=true&page=1&start=0&limit=25')
+        .then(response => {
+          this.attributes = response.data
+        })
     }
   },
   computed: {
@@ -240,12 +293,12 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 h2 {
   text-align: center;
   font-size: 2em;
   margin-bottom: 0;
-  margin-top: 1em;
+  margin-top: 3em;
 }
 .shadow {
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
@@ -265,6 +318,10 @@ h2 {
 .footer-wrapper {
   width: 100%;
 }
+.footer-block a {
+  color: white;
+  text-decoration: none;
+}
 .action-btn {
   border: none;
 }
@@ -272,7 +329,7 @@ h2 {
   /* box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1); */
   filter: brightness(130%);
 }
-.darken:hover {
-  filter: brightness(95%);
+.darken {
+  background-color:rgba(0,0,0,.1);
 }
 </style>
