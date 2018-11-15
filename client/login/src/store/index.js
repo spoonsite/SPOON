@@ -15,11 +15,6 @@ export default new Vuex.Store({
     },
     setBranding (state, response) {
       state.branding = response.data;
-      for (var key in state.branding) {
-        if (typeof state.branding[key] === 'string') {
-          state.branding[key] = state.branding[key].replace(/branding\.action/ig, '/openstorefront/Branding.action');
-        }
-      }
     }
   },
   actions: {
