@@ -6,6 +6,7 @@
   <div class="clearfix centeralign px-3" style="max-width: 46em;">
     <SearchBar
       v-on:submitSearch="submitSearch()"
+      v-on:clear="submitSearch()"
       :hideSuggestions="hideSearchSuggestions"
       v-model="searchQuery"
     ></SearchBar>

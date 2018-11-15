@@ -9,10 +9,10 @@
         placeholder="Search"
       >
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
-      <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), submitQuery()">clear</v-icon>
+      <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">clear</v-icon>
     </div>
-    <v-card v-if="searchSuggestions.length > 0 && !hideSuggestions">
-      <v-list dense>
+    <v-card v-if="searchSuggestions.length > 0 && !hideSuggestions" height="0" style="z-index: 2">
+      <v-list dense class="elevation-1">
         <v-list-tile v-for="i in searchSuggestions" :key="i.name" @click="submitQuery(i.name);" class="suggestion">
           <v-list-tile-content>
             {{ i.name }}
@@ -20,7 +20,6 @@
         </v-list-tile>
       </v-list>
     </v-card>
-
   </form>
 </template>
 
