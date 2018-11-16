@@ -501,8 +501,7 @@
 			{
 				if(isAnonymousUser)
 				{
-					Ext.getCmp('loginBtn').setHidden(false);	
-					Ext.getCmp('addTagPanel').setHidden(true);					
+					Ext.getCmp('loginBtn').setHidden(false);					
 				}
 				else
 				{	
