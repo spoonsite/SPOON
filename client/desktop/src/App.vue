@@ -107,7 +107,9 @@
       </v-dialog>
 
       <!-- First Time User Dialog -->
-      <v-dialog
+      <!-- TODO: welcome user to storefront for the first time -->
+      <!-- TODO: show a tutorial of basic features -->
+      <!-- <v-dialog
         v-model="firstTimeDialog"
         max-width="300px"
         >
@@ -116,14 +118,12 @@
             <h2 v-if="this.$store.state.branding">Welcome to {{ this.$store.state.branding.applicationName }} mobile</h2>
           </v-card-title>
           <v-card-text>
-            <!-- TODO: welcome user to storefront for the first time -->
-            <!-- TODO: show a tutorial of basic features -->
           </v-card-text>
           <v-card-actions>
             <v-btn @click="firstTimeDialog = false">Close</v-btn>
           </v-card-actions>
         </v-card>
-      </v-dialog>
+      </v-dialog> -->
 
       <main class="offset-banner" :class="{ offset: !alert }">
         <router-view/>

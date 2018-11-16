@@ -64,6 +64,7 @@
                   v-for="code in item.codes"
                   :key="code.code"
                 >
+                <!-- TODO: hit search page with the item -->
                 <a
                   href="#"
                   slot-scope="{ hover }"
@@ -72,8 +73,7 @@
                   <v-list-tile
                   :class="`${hover ? 'darken' : 0}`"
                   >
-                    <v-list-tile-content>
-                      {{ code.label }}
+                    <v-list-tile-content v-html="code.label">
                     </v-list-tile-content>
                   </v-list-tile>
                 </a>
@@ -161,7 +161,7 @@
               :key="i"
               light
             >
-              <div slot="default" class="pa-5" style="height: 500px; overflow: auto;">
+              <div slot="default" class="px-5 py-3" style="height: 500px; overflow: auto;">
                 <h3 class="headline" style="text-align: center;">{{ item.title }}</h3>
                 <span v-html="item.description"></span>
                 <v-btn dark :href="item.link">View More</v-btn>
@@ -285,8 +285,8 @@ export default {
         })
     },
     isSpoon () {
-      return this.$store.state.branding.applicationName === 'SPOON'
-      // return false
+      // return this.$store.state.branding.applicationName === 'SPOON'
+      return false
     }
   },
   computed: {
@@ -297,12 +297,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 h2 {
   text-align: center;
   font-size: 2em;
   margin-bottom: 0;
   margin-top: 3em;
+}
+h3 {
+  margin-bottom: 1em;
 }
 .shadow {
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
