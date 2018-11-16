@@ -12,7 +12,82 @@
       :overlaySuggestions="true"
     ></SearchBar>
 
-      <h2><span style="background-color: rgba(255,255,255,0.8);" class="pa-2">Search Tools</span></h2>
+      <h2><span style="background-color: #FAFAFA; border-radius: 1px;" class="pa-2">Browse Topics</span></h2>
+      <!-- Different for SPOON and DI2E -->
+
+      <!-- SPOON -->
+      <v-container v-if="isSpoon()" text-xs-center>
+        <v-layout row wrap>
+          <v-flex
+            v-for="(item,i) in nestedComponentTypesList.children"
+            :key="i"
+            xs6
+            md2
+          >
+            <v-hover>
+            <v-card
+              slot-scope="{ hover }"
+              flat
+              width="150"
+              height="170"
+              :class="`elevation-${hover ? 8 : 0} ma-2 pt-2 px-2`"
+              style="background-color: #FAFAFA;"
+            >
+              <router-link
+                :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
+                style="width: 100%; text-decoration: none;"
+              >
+                <img :src="'/openstorefront/' + item.componentType.iconUrl" width="50" class="icon-img">
+                <v-card-text>{{ item.componentType.label }}</v-card-text>
+              </router-link>
+            </v-card>
+            </v-hover>
+          </v-flex>
+        </v-layout>
+      </v-container>
+
+      <!-- DI2E -->
+      <v-container v-else>
+        <v-layout row wrap justify-center>
+          <v-flex
+            v-for="(item,i) in attributes"
+            :key="i"
+            xs6
+            md4
+          >
+            <v-card class="ma-2 elevation-2">
+              <v-toolbar color="primary" dark dense>
+                <v-toolbar-title>{{ item.description }}</v-toolbar-title>
+              </v-toolbar>
+              <v-list dense style="height: 16em; overflow: auto;">
+                <v-hover
+                  v-for="code in item.codes"
+                  :key="code.code"
+                >
+                <a
+                  href="#"
+                  slot-scope="{ hover }"
+                  style="text-decoration:none;"
+                >
+                  <v-list-tile
+                  :class="`${hover ? 'darken' : 0}`"
+                  >
+                    <v-list-tile-content>
+                      {{ code.label }}
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </a>
+                </v-hover>
+              </v-list>
+
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+
+    </v-img>
+
+      <h2>Search Tools</h2>
 
       <v-container text-xs-center mb-5>
         <v-layout row wrap>
@@ -40,8 +115,6 @@
           </v-flex>
         </v-layout>
       </v-container>
-
-    </v-img>
 
       <h2>Quick Launch</h2>
 
@@ -97,79 +170,6 @@
             </v-carousel-item>
           </v-carousel>
         </v-flex>
-      </v-container>
-
-      <h2>Browse Topics</h2>
-      <!-- Different for SPOON and DI2E -->
-
-      <!-- SPOON -->
-      <v-container v-if="$store.state.branding.applicationName==='SPOON'" text-xs-center>
-        <v-layout row wrap>
-          <v-flex
-            v-for="(item,i) in nestedComponentTypesList.children"
-            :key="i"
-            xs6
-            md3
-          >
-            <v-hover>
-            <v-card
-              slot-scope="{ hover }"
-              flat
-              :class="`elevation-${hover ? 8 : 0} ma-2 pt-2 px-2`"
-              style="background-color: #FAFAFA;"
-            >
-              <router-link
-                :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
-                style="width: 100%; text-decoration: none;"
-              >
-                <img :src="'/openstorefront/' + item.componentType.iconUrl" width="80" class="icon-img">
-                <v-card-title>
-                  <v-card-text>{{ item.componentType.label }}</v-card-text>
-                </v-card-title>
-              </router-link>
-            </v-card>
-            </v-hover>
-          </v-flex>
-        </v-layout>
-      </v-container>
-
-      <!-- DI2E -->
-      <v-container v-else>
-        <v-layout row wrap justify-center>
-          <v-flex
-            v-for="(item,i) in attributes"
-            :key="i"
-            xs6
-            md4
-          >
-            <v-card class="ma-2 elevation-2">
-              <v-toolbar color="primary" dark dense>
-                <v-toolbar-title>{{ item.description }}</v-toolbar-title>
-              </v-toolbar>
-              <v-list dense style="height: 16em; overflow: auto;">
-                <v-hover
-                  v-for="code in item.codes"
-                  :key="code.code"
-                >
-                <a
-                  href="#"
-                  slot-scope="{ hover }"
-                  style="text-decoration:none;"
-                >
-                  <v-list-tile
-                  :class="`${hover ? 'darken' : 0}`"
-                  >
-                    <v-list-tile-content>
-                      {{ code.label }}
-                    </v-list-tile-content>
-                  </v-list-tile>
-                </a>
-                </v-hover>
-              </v-list>
-
-            </v-card>
-          </v-flex>
-        </v-layout>
       </v-container>
 
   </v-container>
@@ -283,6 +283,10 @@ export default {
         .then(response => {
           this.attributes = response.data
         })
+    },
+    isSpoon () {
+      return this.$store.state.branding.applicationName === 'SPOON'
+      // return false
     }
   },
   computed: {
