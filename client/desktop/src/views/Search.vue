@@ -1,8 +1,6 @@
 <template>
 <div class="mt-4">
 
-  <!-- TODO: paging off by 1. Fix the model and what is queried -->
-  <!-- TODO: fix v-pagination to not be so big -->
   <v-container style="max-width: 90%;">
     <v-layout>
     <v-flex xs3 style="border-right: 1px solid #DDD;" class="pr-3">
@@ -191,8 +189,12 @@
   <div class="v-spacer"></div>
 
   <!-- Pagination -->
-  <div class="pagination">
-    <v-pagination v-model="searchPage" :length="getNumPages()"></v-pagination>
+  <div class="pagination text-xs-center">
+    <v-pagination
+      v-model="searchPage"
+      :length="getNumPages()"
+      total-visible="7"
+    ></v-pagination>
   </div>
 
 </div>
@@ -313,7 +315,7 @@ export default {
         .post(
           `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
             that.searchSortField
-          }&sortOrder=${that.searchSortOrder}&offset=${that.searchPage *
+          }&sortOrder=${that.searchSortOrder}&offset=${(that.searchPage - 1) *
             that.searchPageSize}&max=${that.searchPageSize}`,
           {
             searchElements
@@ -343,7 +345,7 @@ export default {
         .catch(e => this.errors.push(e))
     },
     newSearch () {
-      this.searchPage = 0
+      this.searchPage = 1
       this.showFilters = false
       this.submitSearch()
     },
@@ -354,7 +356,7 @@ export default {
     getNumPages () {
       // compute number of pages of data based on page size
       if (this.totalSearchResults % this.searchPageSize === 0) return (this.totalSearchResults / this.searchPageSize) - 1
-      return Math.floor(this.totalSearchResults / this.searchPageSize)
+      return Math.floor(this.totalSearchResults / this.searchPageSize) + 1
     },
     moreInformation (componentId) {
       router.push({
@@ -380,7 +382,7 @@ export default {
   },
   computed: {
     offset () {
-      return this.searchPage * this.searchPageSize
+      return (this.searchPage - 1) * this.searchPageSize
     },
     hideSearchSuggestions () {
       return this.searchQueryIsDirty || this.searchQuery.length === 0
@@ -427,12 +429,6 @@ export default {
 
 <style scoped>
 /* Paging */
-.pageButton {
-  padding: 0.2em 0.8em;
-  margin: 0.4em 0.2em;
-  border-radius: 2px;
-  /* color: rgba(0,0,0,.4); */
-}
 .pagination {
   text-align: center;
   display: block;
@@ -444,12 +440,6 @@ export default {
   background-color: white;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   z-index: 3;
-}
-.activePage {
-  background-color: #e0e0e0;
-}
-.pageButton:hover {
-  background-color: #e0e0e0;
 }
 .v-spacer {
   height: 3.2em;
