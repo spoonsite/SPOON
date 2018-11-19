@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
@@ -43,6 +45,7 @@ import net.sf.ehcache.Element;
  */
 public class SearchStatTable
 {
+	private final static Logger LOG = Logger.getLogger(SearchStatTable.class.getName());
 	private Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 	private Map<String, String> organizationMap = new HashMap<>();
 	private Map<String, List<ComponentTag>> tagMap = new HashMap<>();
@@ -173,7 +176,15 @@ public class SearchStatTable
 						codePk.setAttributeCode(attrStat.getAttributeCode());
 						codePk.setAttributeType(attrStat.getAttributeType());
 						AttributeCode attrCode = service.getAttributeService().findCodeForType(codePk);
-						attrStat.setAttributeCodeLabel(attrCode.getLabel());
+						if(attrCode == null){
+							attrStat.setAttributeCodeLabel("LabelNotAvailable");
+							LOG.log(Level.WARNING, () -> "Could not find Code Label for Component: " 
+									+ service.getComponentService().getComponentName(attribute.getComponentId()) 
+									+ " Component Code: " + attribute.getComponentAttributePk().getAttributeCode() 
+									+ " Component Type: " + attribute.getComponentAttributePk().getAttributeType());	
+						} else {
+							attrStat.setAttributeCodeLabel(attrCode.getLabel());					
+						}
 						resultMap.put(key, attrStat);
 					}
 				}
