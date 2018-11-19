@@ -3,8 +3,8 @@
         <from>/(.*)/(Branding|Media|Resource)\.action?(.*)</from>
         <to type="redirect">%{context-path}/$2\.action$3</to>
     </rule>
-    <!-- <rule>
-        <from>/(.*)/images/(.*)</from>
+    <rule>
+        <from>/(mobile|login)/images/(.*)</from>
         <to type="redirect">%{context-path}/images/$2</to>
-    </rule> -->
+    </rule>
 </urlrewrite>
