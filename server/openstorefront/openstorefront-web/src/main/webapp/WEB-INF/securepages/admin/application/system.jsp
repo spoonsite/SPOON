@@ -2068,8 +2068,89 @@
 									}
 								});
 							}
+						},
+						{
+							xtype: 'fieldset',
+							title: 'Search Control Options',
+							id: 'searchOptionsField',
+							width: '100%',
+							layout: 'anchor',
+							defaults: {
+								width: '100%',
+								labelAlign: 'top'
+							},
+							items: [
+								{
+									xtype: 'fieldcontainer',
+									fieldLabel: 'Categories to include in Searches',
+									defaultType: 'checkboxfield',
+									items: [
+										{
+											xtype: 'checkbox',
+											boxLabel: 'Organizations',
+											id: 'organizationsCheckbox',
+										}, 
+										{
+											xtype: 'checkbox',
+											boxLabel: 'Component Names',
+											id: 'componentNameCheckbox',
+										},
+										{
+											xtype: 'checkbox',
+											boxLabel: 'Component Descriptions',
+											id: 'componentDescriptionCheckbox',
+										}
+									]
+								}
+							]
+						},
+						{
+							text: 'Save Search Options',
+							xtype: 'button',
+							scale: 'medium',
+							iconCls: 'fa fa-2x fa-save icon-vertical-correction',
+							tooltip: 'This will apply the above settings to searches.',
+							handler: function () {
+								var data = {
+									canUseOrganizationsInSearch: Ext.getCmp('organizationsCheckbox').value,
+									canUseNameInSearch: Ext.getCmp('componentNameCheckbox').value,
+									canUseDescriptionInSearch: Ext.getCmp('componentDescriptionCheckbox').value
+								};
+								Ext.Ajax.request({
+									url: 'api/v1/service/search/options',
+									jsonData: data,
+									method: 'PUT',
+									success: function(response, opt) {
+										Ext.toast('Successfully applied the search options.', '', 'tr');
+									},
+									failure: function(response, opt) {
+										Ext.toast('Failed to apply the search options.', '', 'tr');
+									}
+								});
+							}
 						}
 					]
+				});
+
+				searchControlPanel.setLoading(true);
+				Ext.Ajax.request({
+					url: 'api/v1/service/search/options',
+					method: 'GET',
+					callback: function() {
+						searchControlPanel.setLoading(false);
+					},
+					success: function(response, opts){
+						var data = Ext.decode(response.responseText);
+						if(Ext.getCmp('organizationsCheckbox')){
+							Ext.getCmp('organizationsCheckbox').setValue(data.canUseOrganizationsInSearch);
+						}
+						if(Ext.getCmp('componentNameCheckbox')){
+							Ext.getCmp('componentNameCheckbox').setValue(data.canUseNameInSearch);
+						}
+						if(Ext.getCmp('componentDescriptionCheckbox')){
+							Ext.getCmp('componentDescriptionCheckbox').setValue(data.canUseDescriptionInSearch);
+						}
+					}
 				});
 
 				var recentChangesPanel = Ext.create('Ext.panel.Panel', {

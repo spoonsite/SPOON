@@ -14,7 +14,7 @@
               label="Username"
               type="text"
               v-model="username"
-              :rules="usernameRules"
+              :rules="[rules.required]"
             ></v-text-field>
             <v-text-field
               prepend-icon="lock"
@@ -53,20 +53,17 @@
 </template>
 
 <script>
+import validators from '../util/validators';
+
 export default {
   name: 'ForgotUsernameComp',
+  mixins: [validators],
   data: function () {
     return {
       dialog: false,
       valid: false,
       loading: false,
       username: '',
-      usernameRules: [
-        v => !!v || 'Username is required',
-        v =>
-          /^\w+$/.test(v) ||
-          'Username must be valid'
-      ],
       password1: '',
       password2: '',
       password1Rules: [

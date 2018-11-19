@@ -40,6 +40,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
@@ -65,6 +66,7 @@ import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.MultipleEntryAction;
 import edu.usu.sdl.openstorefront.core.view.MultipleIds;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.TagView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -1035,6 +1037,15 @@ public abstract class GeneralComponentResourceExt
 			@RequiredParam String componentId
 	)
 	{
+		Evaluation evaluation = new Evaluation();
+		evaluation.setOriginComponentId(componentId);
+		List<Evaluation> evaluations = evaluation.findByExample();
+		if(!evaluations.isEmpty()){
+			RestErrorModel error = new RestErrorModel();
+			error.getErrors().put("componentId", "Unable to edit due to attached evaluations.");
+			return sendSingleEntityResponse(error);
+		}
+		
 		EditSubmissionOptions options = new EditSubmissionOptions();
 		options.setRemoveComponent(true);
 		return handleCreateUserSubmission(componentId, options);

@@ -67,7 +67,7 @@ Ext.define('OSF.landing.OrganizationSearchView', {
 							var store = orgWin.queryById('dataview').getStore();
 							store.clearFilter();
 							store.filterBy(function(record) {
-								return Ext.String.startsWith(record.get('name'), newValue, true);
+								return record.get('name').toLowerCase().includes(newValue.toLowerCase());
 							});
 						}
 					}

@@ -1,0 +1,10 @@
+<urlrewrite use-query-string="true">
+    <rule>
+        <from>/(.*)/(Branding|Media|Resource)\.action?(.*)</from>
+        <to type="redirect">%{context-path}/$2\.action$3</to>
+    </rule>
+    <rule>
+        <from>/(.*)/images/(.*)</from>
+        <to type="redirect">%{context-path}/images/$2</to>
+    </rule>
+</urlrewrite>
