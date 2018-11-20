@@ -67,120 +67,117 @@
       <v-btn block class="primary" @click="clear()">Clear Filters</v-btn>
     </v-flex>
     <v-flex xs9>
-  <!-- Search Bar and menu  -->
-  <div class="clearfix centeralign px-3" style="max-width: 46em;">
-    <SearchBar
-      v-on:submitSearch="submitSearch()"
-      v-on:clear="submitSearch()"
-      :hideSuggestions="hideSearchSuggestions"
-      v-model="searchQuery"
-    ></SearchBar>
+      <!-- Search Bar and menu  -->
+      <div class="clearfix centeralign px-3" style="max-width: 46em;">
+        <SearchBar
+          v-on:submitSearch="submitSearch()"
+          v-on:clear="submitSearch()"
+          :hideSuggestions="hideSearchSuggestions"
+          v-model="searchQuery"
+        ></SearchBar>
 
-    <!-- SearchBar Menu Buttons -->
-    <div style="display: inline-block; float: right;">
-      <v-btn small flat @click.stop="showOptions = true" icon><v-icon style="font-size: 1.2em;">fas fa-cog</v-icon>
-      </v-btn>
-    </div>
-
-    <!-- Search Options Dialog -->
-    <v-dialog
-      v-model="showOptions"
-      max-width="300px"
-      >
-      <v-card>
-        <v-toolbar color="primary" dark dense>
-          <v-toolbar-title>Search Options</v-toolbar-title>
-        </v-toolbar>
-        <v-card-text>
-          <h3>Sort Order</h3>
-          <v-radio-group v-model="searchSortOrder">
-            <v-radio label="Ascending" value="ASC"></v-radio>
-            <v-radio label="Descending" value="DESC"></v-radio>
-          </v-radio-group>
-          <h3>Sort by:</h3>
-          <v-select
-            v-model="searchSortField"
-            :items="searchSortFields"
-          ></v-select>
-          <h3>Page Size</h3>
-          {{ searchPageSize }}
-          <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn @click.stop="showOptions = false">Close Options</v-btn>
-          <v-btn @click="resetOptions()">Reset Options</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-  </div><!-- Search Bar and menu  -->
-
-  <!-- Search Results -->
-  <div v-if="searchResults.data" class="clearfix centeralign px-3">
-    <h2 style="text-align: center" class="mb-2">Search Results</h2>
-
-    <p v-if="searchResults.data.totalNumber === 0">No Search Results</p>
-    <p v-else-if="!searchQueryIsDirty" class="pl-5 ma-0">
-      {{ offset + 1 }} -
-      {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
-      of
-      {{ searchResults.data.totalNumber }} results
-    </p>
-
-    <!-- SEARCH RESULTS DATA -->
-    <v-layout
-      row
-      justify-center
-      align-center
-      v-if="searchQueryIsDirty"
-    >
-      <v-flex xs1>
-        <v-progress-circular
-          color="primary"
-          :size="60"
-          :width="6"
-          indeterminate
-          class="spinner"
-        ></v-progress-circular>
-      </v-flex>
-    </v-layout>
-    <div
-      v-else
-      v-for="item in searchResults.data.data"
-      :key="item.name"
-      class="mt-4"
-      style="clear: left;"
-    >
-      <img
-        v-if="item.includeIconInSearch && item.componentTypeIconUrl"
-        :src="'/openstorefront/' + item.componentTypeIconUrl"
-        style="max-width: 40px; margin-right: 1em; float: left;"
-      >
-      <div style="float: left;" class="mb-5">
-        <h3>{{ item.name }}</h3>
-        <p class="mb-0">{{ item.organization }}</p>
-        <router-link
-          :to="{ path: 'search', query: { comp: item.componentType }}"
-        >
-          {{ item.componentTypeDescription }}
-        </router-link>
-        <div
-          style="padding-bottom: 1em;"
-          v-if="item.tags.length !== 0"
-        >
-          <span
-            v-for="tag in item.tags"
-            :key="tag.text"
-            style="float: left; margin-right: 0.8em; cursor: pointer;"
-            @click="addTag(tag.text)"
+        <!-- SearchBar Menu Buttons -->
+        <div style="display: inline-block; float: right;">
+          <v-menu
+            v-model="showOptions"
+            offset-y
+            :close-on-content-click="false"
           >
-            <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
-          </span>
+            <v-btn small flat slot="activator" icon>
+              <v-icon small>fas fa-cog</v-icon>
+            </v-btn>
+          <v-card>
+            <v-card-text>
+              <h3>Sort Order</h3>
+              <v-radio-group v-model="searchSortOrder">
+                <v-radio label="Ascending" value="ASC"></v-radio>
+                <v-radio label="Descending" value="DESC"></v-radio>
+              </v-radio-group>
+              <h3>Sort by:</h3>
+              <v-select
+                v-model="searchSortField"
+                :items="searchSortFields"
+              ></v-select>
+              <h3>Page Size</h3>
+              {{ searchPageSize }}
+              <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click.stop="showOptions = false">Close Options</v-btn>
+              <v-btn @click="resetOptions()">Reset Options</v-btn>
+            </v-card-actions>
+          </v-card>
+          </v-menu>
         </div>
-      </div>
-    </div>
 
-  </div>
+      </div><!-- Search Bar and menu  -->
+
+      <!-- Search Results -->
+      <div class="clearfix centeralign px-3">
+        <h2 style="text-align: center" class="mb-2">Search Results</h2>
+
+        <p v-if="searchResults.data && searchResults.data.totalNumber === 0">No Search Results</p>
+        <p v-else-if="searchResults.data && !searchQueryIsDirty" class="pl-5 ma-0">
+          {{ offset + 1 }} -
+          {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
+          of
+          {{ searchResults.data.totalNumber }} results
+        </p>
+
+        <!-- SEARCH RESULTS DATA -->
+        <v-layout
+          row
+          justify-center
+          align-center
+          v-if="searchQueryIsDirty"
+        >
+          <v-flex xs1>
+            <v-progress-circular
+              color="primary"
+              :size="60"
+              :width="6"
+              indeterminate
+              class="spinner"
+            ></v-progress-circular>
+          </v-flex>
+        </v-layout>
+        <div
+          v-else-if="!!searchResults.data"
+          v-for="item in searchResults.data.data"
+          :key="item.name"
+          class="mt-4"
+          style="clear: left;"
+        >
+          <img
+            v-if="item.includeIconInSearch && item.componentTypeIconUrl"
+            :src="'/openstorefront/' + item.componentTypeIconUrl"
+            style="max-width: 40px; margin-right: 1em; float: left;"
+          >
+          <div style="float: left;" class="mb-5">
+            <h3>{{ item.name }}</h3>
+            <p class="mb-0">{{ item.organization }}</p>
+            <router-link
+              :to="{ path: 'search', query: { comp: item.componentType }}"
+            >
+              {{ item.componentTypeDescription }}
+            </router-link>
+            <div
+              style="padding-bottom: 1em;"
+              v-if="item.tags.length !== 0"
+            >
+              <span
+                v-for="tag in item.tags"
+                :key="tag.text"
+                style="float: left; margin-right: 0.8em; cursor: pointer;"
+                @click="addTag(tag.text)"
+              >
+                <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </v-flex>
     </v-layout>
   </v-container>
@@ -370,11 +367,18 @@ export default {
   watch: {
     filters: {
       handler: function () {
-        if (!this.showFilters) {
-          this.newSearch()
-        }
+        this.newSearch()
       },
       deep: true
+    },
+    searchSortField () {
+      this.newSearch()
+    },
+    searchSortOrder () {
+      this.newSearch()
+    },
+    searchPageSize () {
+      this.newSearch()
     },
     searchPage () {
       this.submitSearch()
