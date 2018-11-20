@@ -7,13 +7,41 @@
           <v-spacer></v-spacer>
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
           <v-spacer></v-spacer>
+          <v-toolbar-items>
+          <Notifications/>
+          </v-toolbar-items>
           <!-- <v-toolbar-items>
             <v-btn icon @click="nav('profile')"><v-icon>fas fa-user</v-icon></v-btn>
-          </v-toolbar-items> -->
-          <!-- <v-toolbar-items>
             <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn>
           </v-toolbar-items> -->
-          <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
+          <v-menu offset-y>
+            <v-toolbar-side-icon slot="activator"></v-toolbar-side-icon>
+            <v-list>
+              <!-- Add permissions check. -->
+              <v-list-tile
+                v-for="link in filteredLinks"
+                :key="link.name"
+                class="menu-item"
+                @click="nav(link.link)"
+              >
+                <v-list-tile-action>
+                  <v-icon>fa fa-{{ link.icon }}</v-icon>
+                </v-list-tile-action>
+                <v-content>
+                  <v-list-tile-title>{{ link.name }}</v-list-tile-title>
+                </v-content>
+              </v-list-tile>
+              <v-divider></v-divider>
+              <v-list-tile class="menu-item" @click="logout()">
+                <v-list-tile-action>
+                  <v-icon>fas fa-sign-out-alt</v-icon>
+                </v-list-tile-action>
+                <v-content>
+                  <v-list-tile-title>Logout</v-list-tile-title>
+                </v-content>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
         </v-toolbar>
         </div>
         <v-alert
@@ -22,41 +50,6 @@
           style="margin: 0; height: 30px; text-align: center;"
         >Security Banner</v-alert>
       </header>
-
-      <v-navigation-drawer right fixed width="200" v-model="drawer" class="nav-drawer" touchless temporary>
-        <v-list>
-          <!-- Add permissions check. -->
-          <v-list-tile
-            v-for="link in filteredLinks"
-            :key="link.name"
-            class="menu-item"
-            @click="nav(link.link)"
-          >
-            <v-list-tile-action>
-              <v-icon>fa fa-{{ link.icon }}</v-icon>
-            </v-list-tile-action>
-            <v-content>
-              <v-list-tile-title>{{ link.name }}</v-list-tile-title>
-            </v-content>
-          </v-list-tile>
-          <v-divider></v-divider>
-          <v-list-tile class="menu-item" @click="logout()">
-            <v-list-tile-action>
-              <v-icon>fas fa-sign-out-alt</v-icon>
-            </v-list-tile-action>
-            <v-content>
-              <v-list-tile-title>Logout</v-list-tile-title>
-            </v-content>
-          </v-list-tile>
-          <v-footer absolute height="auto" style="background-color: white;">
-            <v-card flat tile style="margin: auto;">
-              <v-card-text>
-                <a href="/openstorefront">Go to desktop version</a>
-              </v-card-text>
-            </v-card>
-          </v-footer>
-        </v-list>
-      </v-navigation-drawer>
 
       <!-- Request Error Dialog -->
       <v-dialog
@@ -136,9 +129,14 @@
 <script>
 import router from './router.js'
 import safeParse from 'safe-json-parse/callback'
+import permissions from './util/permissions.js'
+import Notifications from './components/Notifications'
 
 export default {
   name: 'App',
+  components: {
+    Notifications
+  },
   mounted () {
     this.$http.interceptors.response.use(response => {
       if (typeof response.data === 'string' &&
@@ -173,6 +171,7 @@ export default {
       errorDialog: false,
       showErrorDetails: false,
       loginExpiredDialog: false,
+      messagesDialog: false,
       firstTimeDialog: false,
       loggingOut: false,
       drawer: false,
@@ -182,17 +181,13 @@ export default {
           icon: 'home',
           name: 'Home',
           permissions: [] },
-        { link: '/watches',
-          icon: 'binoculars',
-          name: 'Watches',
-          permissions: [] },
-        { link: '/sme-approval',
-          icon: 'check',
-          name: 'SME Approval',
-          permissions: [ 'WORKPLAN-PROGRESS-MANAGEMENT-PAGE' ] },
-        { link: '/submission-status',
-          icon: 'sticky-note',
-          name: 'Submission Status',
+        { link: '/admin',
+          icon: 'cog',
+          name: 'Admin Tools',
+          permissions: permissions.ADMIN },
+        { link: '/user',
+          icon: 'user',
+          name: 'User Tools',
           permissions: [] },
         { link: '/faq',
           icon: 'question',
@@ -201,15 +196,27 @@ export default {
         { link: '/contact',
           icon: 'comment',
           name: 'Contact',
-          permissions: [] },
-        { link: '/profile',
-          icon: 'user-edit',
-          name: 'Manage Profile',
-          permissions: [] },
-        { link: '/reset-password',
-          icon: 'key',
-          name: 'Reset Password',
           permissions: [] }
+        // { link: '/watches',
+        //   icon: 'binoculars',
+        //   name: 'Watches',
+        //   permissions: [] },
+        // { link: '/sme-approval',
+        //   icon: 'check',
+        //   name: 'SME Approval',
+        //   permissions: [ 'WORKPLAN-PROGRESS-MANAGEMENT-PAGE' ] },
+        // { link: '/submission-status',
+        //   icon: 'sticky-note',
+        //   name: 'Submission Status',
+        //   permissions: [] },
+        // { link: '/profile',
+        //   icon: 'user-edit',
+        //   name: 'Manage Profile',
+        //   permissions: [] },
+        // { link: '/reset-password',
+        //   icon: 'key',
+        //   name: 'Reset Password',
+        //   permissions: [] }
       ],
       topbarStyle: {
         'border-bottom': `4px solid ${this.$store.state.branding.accentColor}`
