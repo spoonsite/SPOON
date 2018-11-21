@@ -1,186 +1,182 @@
 <template>
-<div class="mt-4">
+<div>
 
-  <v-container style="max-width: 90%;">
-    <v-layout>
-    <v-flex xs3 style="border-right: 1px solid #DDD;" class="pr-3">
-      <h2>Search Filters</h2>
-      <v-select
-        v-model="filters.component"
-        :items="componentsList"
-        item-text="componentTypeDescription"
-        item-value="componentType"
-        label="Category"
-        clearable
-        multi-line
-      >
-        <template slot="selection" slot-scope="data">
-          ({{ data.item.count }}) {{ data.item.componentTypeDescription }}
-        </template>
-        <template slot="item" slot-scope="data">
-          <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.componentTypeDescription }}</v-list-tile-title></v-list-tile-content>
-        </template>
-      </v-select>
-      <v-checkbox class="ma-0" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
-      <v-select
-        v-model="filters.tags"
-        hide-details
-        :items="tagsList"
-        :disabled="!tagsList || tagsList.length === 0"
-        item-text="tagLabel"
-        item-value="tagLabel"
-        :label="!tagsList || tagsList.length === 0 ? 'No Tags' : 'Tags'"
-        multiple
-        small-chips
-        clearable
-      >
-        <template slot="selection" slot-scope="data">
-          <v-chip close small @input="deleteTag(data.item.tagLabel)" >
-            <v-avatar class="grey lighten-1">{{ data.item.count }}</v-avatar>
-            {{ data.item.tagLabel}}
-          </v-chip>
-        </template>
-        <template slot="item" slot-scope="data">
-          <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.tagLabel}}</v-list-tile-title></v-list-tile-content>
-        </template>
-      </v-select>
-      <v-radio-group row label="Tag Search Condition: " v-model="filters.tagCondition">
-        <v-radio label="And" value="AND"></v-radio>
-        <v-radio label="Or" value="OR"></v-radio>
-      </v-radio-group>
-      <v-autocomplete
-        v-model="filters.organization"
-        :items="organizationsList"
-        label="Organization"
-        item-text="organization"
-        item-value="organization"
-        clearable
-      >
-        <template slot="selection" slot-scope="data">
-          ({{ data.item.count }}) {{ data.item.organization }}
-        </template>
-        <template slot="item" slot-scope="data">
-          <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.organization }}</v-list-tile-title></v-list-tile-content>
-        </template>
-      </v-autocomplete>
-      <!-- <v-btn block class="success" @click="submitSearch()">Submit</v-btn> -->
-      <v-btn block class="primary" @click="clear()">Clear Filters</v-btn>
-    </v-flex>
-    <v-flex xs9>
-      <!-- Search Bar and menu  -->
-      <div class="clearfix centeralign px-3" style="max-width: 46em;">
-        <SearchBar
-          v-on:submitSearch="submitSearch()"
-          v-on:clear="submitSearch()"
-          :hideSuggestions="hideSearchSuggestions"
-          v-model="searchQuery"
-        ></SearchBar>
+  <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
+    <div class="side-menu-btns mt-4">
+      <div>
+        <v-btn @click="showFilters = true; showOptions = false;" small fab dark icon :color="`primary ${showFilters ? 'lighten-4' : ''}`"><v-icon dark>fas fa-filter</v-icon></v-btn>
+      </div>
+      <div>
+        <v-btn @click="showOptions = true; showFilters = false;" small fab dark icon :color="`primary ${showOptions ? 'lighten-4' : ''}`"><v-icon dark>fas fa-cog</v-icon></v-btn>
+      </div>
+    </div>
+    <div v-if="showOptions || showFilters" style="width: 100%; text-align: right;">
+      <v-btn style="" icon @click="showOptions = false; showFilters = false;"><v-icon>fas fa-times</v-icon></v-btn>
+    </div>
 
-        <!-- SearchBar Menu Buttons -->
-        <div style="display: inline-block; float: right;">
-          <v-menu
-            v-model="showOptions"
-            offset-y
-            :close-on-content-click="false"
-          >
-            <v-btn small flat slot="activator" icon>
-              <v-icon small>fas fa-cog</v-icon>
-            </v-btn>
-          <v-card>
-            <v-card-text>
-              <h3>Sort Order</h3>
-              <v-radio-group v-model="searchSortOrder">
-                <v-radio label="Ascending" value="ASC"></v-radio>
-                <v-radio label="Descending" value="DESC"></v-radio>
-              </v-radio-group>
-              <h3>Sort by:</h3>
-              <v-select
-                v-model="searchSortField"
-                :items="searchSortFields"
-              ></v-select>
-              <h3>Page Size</h3>
-              {{ searchPageSize }}
-              <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn @click.stop="showOptions = false">Close Options</v-btn>
-              <v-btn @click="resetOptions()">Reset Options</v-btn>
-            </v-card-actions>
-          </v-card>
-          </v-menu>
-        </div>
-
-      </div><!-- Search Bar and menu  -->
-
-      <!-- Search Results -->
-      <div class="clearfix centeralign px-3">
-        <h2 style="text-align: center" class="mb-2">Search Results</h2>
-
-        <p v-if="searchResults.data && searchResults.data.totalNumber === 0">No Search Results</p>
-        <p v-else-if="searchResults.data && !searchQueryIsDirty" class="pl-5 ma-0">
-          {{ offset + 1 }} -
-          {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
-          of
-          {{ searchResults.data.totalNumber }} results
-        </p>
-
-        <!-- SEARCH RESULTS DATA -->
-        <v-layout
-          row
-          justify-center
-          align-center
-          v-if="searchQueryIsDirty"
+    <div :class="`side-menu-content pt-0 ${showFilters || showOptions ? 'db' : 'dn'}`">
+      <div v-if="showOptions">
+        <h2>Search Options</h2>
+        <h3>Sort Order</h3>
+        <v-radio-group v-model="searchSortOrder">
+          <v-radio label="Ascending" value="ASC"></v-radio>
+          <v-radio label="Descending" value="DESC"></v-radio>
+        </v-radio-group>
+        <h3>Sort by:</h3>
+        <v-select
+          v-model="searchSortField"
+          :items="searchSortFields"
+        ></v-select>
+        <h3>Page Size</h3>
+        {{ searchPageSize }}
+        <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
+        <v-btn block class="primary" @click="resetOptions()">Reset Options</v-btn>
+      </div>
+      <div v-if="showFilters">
+        <h2>Search Filters</h2>
+        <v-select
+          v-model="filters.component"
+          :items="componentsList"
+          item-text="componentTypeDescription"
+          item-value="componentType"
+          label="Category"
+          clearable
+          chips
+          multi-line
         >
-          <v-flex xs1>
-            <v-progress-circular
-              color="primary"
-              :size="60"
-              :width="6"
-              indeterminate
-              class="spinner"
-            ></v-progress-circular>
-          </v-flex>
-        </v-layout>
-        <div
-          v-else-if="!!searchResults.data"
-          v-for="item in searchResults.data.data"
-          :key="item.name"
-          class="mt-4"
-          style="clear: left;"
+          <template slot="selection" slot-scope="data">
+            ({{ data.item.count }}) {{ data.item.componentTypeDescription }}
+          </template>
+          <template slot="item" slot-scope="data">
+            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.componentTypeDescription }}</v-list-tile-title></v-list-tile-content>
+          </template>
+        </v-select>
+        <v-checkbox class="ma-0" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
+        <v-select
+          v-model="filters.tags"
+          hide-details
+          :items="tagsList"
+          :disabled="!tagsList || tagsList.length === 0"
+          item-text="tagLabel"
+          item-value="tagLabel"
+          :label="!tagsList || tagsList.length === 0 ? 'No Tags' : 'Tags'"
+          multiple
+          small-chips
+          clearable
         >
-          <img
-            v-if="item.includeIconInSearch && item.componentTypeIconUrl"
-            :src="'/openstorefront/' + item.componentTypeIconUrl"
-            style="max-width: 40px; margin-right: 1em; float: left;"
+          <template slot="selection" slot-scope="data">
+            <v-chip close small @input="deleteTag(data.item.tagLabel)" >
+              <v-avatar class="grey lighten-1">{{ data.item.count }}</v-avatar>
+              {{ data.item.tagLabel}}
+            </v-chip>
+          </template>
+          <template slot="item" slot-scope="data">
+            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.tagLabel}}</v-list-tile-title></v-list-tile-content>
+          </template>
+        </v-select>
+        <v-radio-group row label="Tag Search Condition: " v-model="filters.tagCondition">
+          <v-radio label="And" value="AND"></v-radio>
+          <v-radio label="Or" value="OR"></v-radio>
+        </v-radio-group>
+        <v-autocomplete
+          v-model="filters.organization"
+          :items="organizationsList"
+          label="Organization"
+          item-text="organization"
+          item-value="organization"
+          clearable
+        >
+          <template slot="selection" slot-scope="data">
+            ({{ data.item.count }}) {{ data.item.organization }}
+          </template>
+          <template slot="item" slot-scope="data">
+            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.organization }}</v-list-tile-title></v-list-tile-content>
+          </template>
+        </v-autocomplete>
+        <!-- <v-btn block class="success" @click="submitSearch()">Submit</v-btn> -->
+        <v-btn block class="primary" @click="clear()">Clear Filters</v-btn>
+      </div>
+    </div>
+  </div>
+
+  <div :class="`search-block pt-4 ${showFilters || showOptions ? 'open' : 'closed'}`">
+    <!-- Search Bar and menu  -->
+    <div class="centeralign px-3 mb-5" style="max-width: 46em;">
+      <SearchBar
+        v-on:submitSearch="submitSearch()"
+        v-on:clear="submitSearch()"
+        :hideSuggestions="hideSearchSuggestions"
+        v-model="searchQuery"
+      ></SearchBar>
+    </div><!-- Search Bar and menu  -->
+
+    <!-- Search Results -->
+    <div class="px-3">
+      <h2 style="text-align: center" class="mb-2">Search Results</h2>
+
+      <p v-if="searchResults.data && searchResults.data.totalNumber === 0">No Search Results</p>
+      <p v-else-if="searchResults.data && !searchQueryIsDirty" class="pl-5 ma-0">
+        {{ offset + 1 }} -
+        {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
+        of
+        {{ searchResults.data.totalNumber }} results
+      </p>
+
+      <!-- SEARCH RESULTS DATA -->
+      <v-layout
+        row
+        justify-center
+        align-center
+        v-if="searchQueryIsDirty"
+      >
+        <v-flex xs1>
+          <v-progress-circular
+            color="primary"
+            :size="60"
+            :width="6"
+            indeterminate
+            class="spinner"
+          ></v-progress-circular>
+        </v-flex>
+      </v-layout>
+      <div
+        v-else-if="!!searchResults.data"
+        v-for="item in searchResults.data.data"
+        :key="item.name"
+        class="mt-4"
+        style="clear: left;"
+      >
+        <img
+          v-if="item.includeIconInSearch && item.componentTypeIconUrl"
+          :src="'/openstorefront/' + item.componentTypeIconUrl"
+          style="max-width: 40px; margin-right: 1em; float: left;"
+        >
+        <div style="float: left;" class="mb-5">
+          <h3>{{ item.name }}</h3>
+          <p class="mb-0">{{ item.organization }}</p>
+          <router-link
+            :to="{ path: 'search', query: { comp: item.componentType }}"
           >
-          <div style="float: left;" class="mb-5">
-            <h3>{{ item.name }}</h3>
-            <p class="mb-0">{{ item.organization }}</p>
-            <router-link
-              :to="{ path: 'search', query: { comp: item.componentType }}"
+            {{ item.componentTypeDescription }}
+          </router-link>
+          <div
+            style="padding-bottom: 1em;"
+            v-if="item.tags.length !== 0"
+          >
+            <span
+              v-for="tag in item.tags"
+              :key="tag.text"
+              style="float: left; margin-right: 0.8em; cursor: pointer;"
+              @click="addTag(tag.text)"
             >
-              {{ item.componentTypeDescription }}
-            </router-link>
-            <div
-              style="padding-bottom: 1em;"
-              v-if="item.tags.length !== 0"
-            >
-              <span
-                v-for="tag in item.tags"
-                :key="tag.text"
-                style="float: left; margin-right: 0.8em; cursor: pointer;"
-                @click="addTag(tag.text)"
-              >
-                <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
-              </span>
-            </div>
+              <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
+            </span>
           </div>
         </div>
-
       </div>
-    </v-flex>
-    </v-layout>
-  </v-container>
+
+    </div>
+  </div>
 
   <!-- Allow space for the pagination -->
   <div class="v-spacer"></div>
@@ -343,7 +339,6 @@ export default {
     },
     newSearch () {
       this.searchPage = 1
-      this.showFilters = false
       this.submitSearch()
     },
     searchCategory (category) {
@@ -398,7 +393,7 @@ export default {
       tagsList: [],
       organizationsList: [],
       selected: [],
-      showFilters: false,
+      showFilters: true,
       showOptions: false,
       showHelp: false,
       searchQuery: '',
@@ -445,6 +440,12 @@ export default {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   z-index: 3;
 }
+.dn {
+  display: none;
+}
+.db {
+  display: block;
+}
 .v-spacer {
   height: 3.2em;
 }
@@ -463,5 +464,33 @@ export default {
 hr {
   color: #333;
   margin-bottom: 1em;
+}
+.side-menu {
+  border-right: 1px solid #DDD;
+  position: fixed;
+  height: 100%;
+}
+.side-menu.open {
+  width: 30em;
+}
+.side-menu.closed {
+  width: 5em;
+}
+.side-menu-btns {
+  position: fixed;
+  margin: 0.5em;
+}
+.side-menu-content {
+  position: fixed;
+  height: 100%;
+  max-width: 26em;
+  padding: 0 2em;
+  margin-left: 4em;
+}
+.search-block.open {
+  margin-left: 30em;
+}
+.search-block.closed {
+  margin-left: 5em;
 }
 </style>
