@@ -23,7 +23,7 @@ import org.simpleframework.xml.ElementList;
  *
  * @author dshurtleff
  */
-class Additional
+public class Additional
 {
 
 	@ElementList(name = "float_feature", inline = true, required = false)
