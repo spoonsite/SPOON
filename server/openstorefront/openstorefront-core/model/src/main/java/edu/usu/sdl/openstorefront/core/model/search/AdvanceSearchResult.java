@@ -30,7 +30,7 @@ public class AdvanceSearchResult
 	private List<ComponentSearchView> results = new ArrayList<>();
 	private ValidationResult validationResult = new ValidationResult();
 	private long totalNumber;
-	private List<ResultTypeStat> resultTypeStats = new ArrayList<>();
+	private AdvancedSearchMetaData meta = new AdvancedSearchMetaData();
 
 	public AdvanceSearchResult()
 	{
@@ -66,14 +66,16 @@ public class AdvanceSearchResult
 		this.totalNumber = totalNumber;
 	}
 
-	public List<ResultTypeStat> getResultTypeStats()
+	public AdvancedSearchMetaData getMeta()
 	{
-		return resultTypeStats;
+		return meta;
 	}
 
-	public void setResultTypeStats(List<ResultTypeStat> resultTypeStats)
+	public void setMeta(AdvancedSearchMetaData meta)
 	{
-		this.resultTypeStats = resultTypeStats;
+		this.meta = meta;
 	}
+	
+	
 
 }

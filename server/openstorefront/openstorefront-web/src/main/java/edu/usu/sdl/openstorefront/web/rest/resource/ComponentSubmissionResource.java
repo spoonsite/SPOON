@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
@@ -34,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
+import edu.usu.sdl.openstorefront.core.view.SubmissionView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -73,7 +75,7 @@ public class ComponentSubmissionResource
 	@GET
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_READ)
 	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this is only the top level component object)")
-	@DataType(ComponentView.class)
+	@DataType(SubmissionView.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSubmissionsForUser()
 	{
@@ -87,11 +89,14 @@ public class ComponentSubmissionResource
 			pullOldOwnedComponents(componentExample, components);
 
 			List<ComponentView> views = ComponentView.toViewList(components);
+			
+			
+			List<SubmissionView> submissionViews = flagSubmissionsWithEvaluations(views);
+			processPendingChanges(submissionViews);
+			findUserSubmissionForView(submissionViews);
+			
 
-			processPendingChanges(views);
-			findUserSubmissionForView(views);
-
-			GenericEntity<List<ComponentView>> entity = new GenericEntity<List<ComponentView>>(views)
+			GenericEntity<List<SubmissionView>> entity = new GenericEntity<List<SubmissionView>>(submissionViews)
 			{
 			};
 			return sendSingleEntityResponse(entity);
@@ -99,8 +104,34 @@ public class ComponentSubmissionResource
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
 	}
+	
+	private List<SubmissionView> flagSubmissionsWithEvaluations(List<ComponentView> componentViews){
+		List<String> compIds = componentViews.stream()
+				.filter(viewComponent -> {
+					return ApprovalStatus.PENDING.equals(viewComponent.getApprovalState());
+				})
+				.map(ComponentView::getComponentId)
+				.collect(Collectors.toList());
+			
+			
+		Evaluation evalutation = new Evaluation();
 
-	private void processPendingChanges(List<ComponentView> views)
+		QueryByExample<Evaluation> queryByExample = new QueryByExample<>(evalutation);
+
+		Evaluation evaluationInExample = new Evaluation();
+		evaluationInExample.setOriginComponentId(QueryByExample.STRING_FLAG);
+		queryByExample.setInExample(evaluationInExample);
+
+		queryByExample.getInExampleOption().setParameterValues(compIds);
+
+		// All components that match myType and my parents type.
+		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
+		
+		Map<String, List<Evaluation>> evaluationMap = evaluations.stream().collect(Collectors.groupingBy(Evaluation::getOriginComponentId));
+		return SubmissionView.toView(componentViews, evaluationMap);
+	}
+
+	private void processPendingChanges(List<SubmissionView> views)
 	{
 		Component pendingChangeExample = new Component();
 		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
@@ -126,7 +157,7 @@ public class ComponentSubmissionResource
 		}
 	}
 
-	private void findUserSubmissionForView(List<ComponentView> views)
+	private void findUserSubmissionForView(List<SubmissionView> views)
 	{
 		//get usersubmission and normalize
 		List<UserSubmission> userSubmissions = service.getSubmissionFormService().getUserSubmissions(SecurityUtil.getCurrentUserName());
@@ -135,23 +166,23 @@ public class ComponentSubmissionResource
 		});
 
 		for (UserSubmission userSubmission : userSubmissions) {
-			ComponentView componentView = new ComponentView();
+			SubmissionView submissionView = new SubmissionView();
 
-			componentView.setUserSubmissionId(userSubmission.getUserSubmissionId());
-			componentView.setSubmissionTemplateId(userSubmission.getTemplateId());
+			submissionView.setUserSubmissionId(userSubmission.getUserSubmissionId());
+			submissionView.setSubmissionTemplateId(userSubmission.getTemplateId());
 
-			componentView.setCurrentDataOwner(userSubmission.getOwnerUsername());
-			componentView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
-			componentView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, ApprovalStatus.NOT_SUBMITTED));
-			componentView.setComponentType(userSubmission.getComponentType());
-			componentView.setComponentTypeLabel(TranslateUtil.translateComponentType(userSubmission.getComponentType()));
-			componentView.setName("- " + userSubmission.getSubmissionName());
-			componentView.setSubmissionOriginalComponentId(userSubmission.getOriginalComponentId());
+			submissionView.setCurrentDataOwner(userSubmission.getOwnerUsername());
+			submissionView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+			submissionView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, ApprovalStatus.NOT_SUBMITTED));
+			submissionView.setComponentType(userSubmission.getComponentType());
+			submissionView.setComponentTypeLabel(TranslateUtil.translateComponentType(userSubmission.getComponentType()));
+			submissionView.setName("- " + userSubmission.getSubmissionName());
+			submissionView.setSubmissionOriginalComponentId(userSubmission.getOriginalComponentId());
 
-			componentView.setDescription("(Complete Submission and Submit for Approval)");
-			componentView.setUpdateDts(userSubmission.getUpdateDts());
-			componentView.setUpdateUser(userSubmission.getUpdateUser());
-			views.add(componentView);
+			submissionView.setDescription("(Complete Submission and Submit for Approval)");
+			submissionView.setUpdateDts(userSubmission.getUpdateDts());
+			submissionView.setUpdateUser(userSubmission.getUpdateUser());
+			views.add(submissionView);
 		}
 	}
 

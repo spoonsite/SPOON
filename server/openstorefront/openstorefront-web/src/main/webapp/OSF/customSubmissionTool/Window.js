@@ -115,6 +115,7 @@ Ext.define('OSF.customSubmissionTool.Window', {
 					iconCls: 'fa fa-2x fa-close icon-button-color-warning icon-vertical-correction',
 					handler: function() {
 						var csfWindow = this.up('window');
+						
 						csfWindow.close();
 					}
 				}				

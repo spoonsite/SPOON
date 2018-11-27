@@ -307,106 +307,11 @@
 				}				
 			}
 			
-			var loadAttributes = function() {
-				Ext.Ajax.request({
-					url: 'api/v1/resource/attributes/attributetypes',
-					success: function(response, opts) {
-						var data = Ext.decode(response.responseText);
-						
-
-						var visible = [];
-						var nonvisible = [];
-						Ext.Array.each(data.data, function(item){
-							
-							var panel = Ext.create('Ext.panel.Panel', {
-								title: item.description,
-								collapsible: true,
-								collapsed: true,
-								margin: '0 0 1 0',
-								titleCollapse: true,
-								animCollapse: false,
-								html: '&nbsp;',
-								listeners: {
-									expand: function(panel, opts){
-										if (!panel.loadedCodes) {
-											panel.loadedCodes = true;
-											panel.setLoading(true);
-											Ext.Ajax.request({
-												url: 'api/v1/resource/attributes/attributetypes/' + panel.attributeItem.attributeType + '/attributecodes',
-												callback: function(){
-													panel.setLoading(false);
-												},
-												success: function(response, opts) {
-													var attributeData = Ext.decode(response.responseText);
-															
-													var checkboxes = [];		
-													Ext.Array.each(attributeData, function(attributeCode){
-														var check = Ext.create('Ext.form.field.Checkbox', {
-															boxLabel: attributeCode.label,
-															attributeCode: attributeCode.attributeCodePk.attributeCode,
-															listeners: {
-																change: function(checkbox, newValue, oldValue, opts) {																	
-																	if (newValue){
-																		
-																		var containsAttribute = false;
-																		Ext.Array.each(attributeFilters, function(item) {
-																			if (item.type === attributeCode.attributeCodePk.attributeType &&
-																				item.code === attributeCode.attributeCodePk.attributeCode) {
-																				containsAttribute = true;
-																			}
-																		});
-																		
-																		if (!containsAttribute) {
-																			attributeFilters.push({
-																				type: attributeCode.attributeCodePk.attributeType,
-																				code: attributeCode.attributeCodePk.attributeCode,
-																				typeLabel: item.description,
-																				label: attributeCode.label,
-																				checkbox: checkbox
-																			});
-																		}
-																	} else {
-																		attributeFilters = Ext.Array.filter(attributeFilters, function(item) {
-																			var keep = true;
-																			if (item.type === attributeCode.attributeCodePk.attributeType &&
-																				item.code === attributeCode.attributeCodePk.attributeCode) {
-																				keep = false;																																								
-																			}
-																			return keep;
-																		});
-																	}
-																	filterResults();
-																}
-															}
-														});	
-														checkboxes.push(check);
-													});													
-													panel.add(checkboxes);
-													panel.updateLayout(true, true);
-												}
-											});
-										}
-									}
-								}
-							});
-							panel.attributeItem = item;
-							if (item.visibleFlg) {
-								visible.push(panel);
-							} else {
-								nonvisible.push(panel);
-							}
-						});						
-						Ext.getCmp('attributeFiltersContainer').add(visible);
-						Ext.getCmp('nonvisibleAttributes').add(nonvisible);						
-					}
-				});
-			};
-			loadAttributes();
-		
 			var attributeFilters = [];
 			var filterPanel = Ext.create('Ext.panel.Panel', {
 				region: 'west',
 				title: 'Filters',
+				id: 'filterPanel',
 				minWidth: 300,
 				collapsible: true,
 				titleCollapse: true,
@@ -429,14 +334,6 @@
 						fieldLabel: 'By Name',						
 						name: 'filterName',								
 						emptyText: 'Filter Search',
-						listeners: {
-							change: {
-								fn: function(field, newValue, oldValue, opts) {
-									filterResults();
-								},
-								buffer: 1000
-							}
-						}
 					},
 					{
 						xtype: 'tagfield',
@@ -446,60 +343,88 @@
 						emptyText: 'Select Tags',
 	 					width: 300,
 						grow: true,
-	 					growMax: 300,
+						anyMatch: true,
+						growMax: 300,
+						displayField: 'label',
+						valueField: 'value',
+						// load store from search results 
 						store: Ext.create('Ext.data.Store', {
-							autoLoad: true,
-							proxy: {
-								type: 'ajax',
-								url: 'api/v1/resource/components/tags'
-							},
+							fields: ['label', 'value'],
 							sorters: [{
-								property: 'text',
-								direction: 'ASC'
+								property: 'label',
+								direction: 'ASC'	
 							}]
 						}),
-						listeners: {
-							change: function(field, newValue, oldValue, opts) {
-								filterPanel.updateLayout(true, true);
-								filterResults();
-							}	
-						}						
+						addStoreItem: function (item) {
+							if (this.getStore().query('value', item.value).items.length === 0) {
+								this.getStore().add(item);
+							}
+						},
+						checkVisibility: function() {
+							var visible = this.getStore().getData().items.length !== 0;
+							this.setVisible(visible);
+						},
+						clearStore: function () {
+							// don't remove currently selected
+							var value = this.value;
+							var selectedRecords = this.getStore().queryRecordsBy(function(record) {
+								var recordValue = record.getData().value;
+								var keep = false;
+								Ext.Array.each(value, function(el) {
+									if(el === recordValue) {
+										keep = true;
+									}
+								})
+								return keep;
+							})
+							this.getStore().removeAll();
+							var store = this.getStore();
+							var values = [];
+							Ext.Array.each(selectedRecords, function(el){
+								store.add(el);
+								values.push(el.getData().value);
+							})
+							this.clearValue();
+							this.setValue(values);
+						}
 					},
 					Ext.create('OSF.component.StandardComboBox', {	
 						id: 'filterByType',
 						fieldLabel: 'By Entry Type',
 						name: 'componentType',						
 						margin: '0 0 10 0',					
-						editable: false,
+						editable: true,
 						typeAhead: false,
 						displayField: 'label',
 						valueField: 'value',
 						store: Ext.create('Ext.data.Store', {
 							fields: ['label', 'value'],
+							sorters: [{
+								property: 'label',
+								direction: 'ASC'	
+							}],
 							data: [{
 								label: '*ALL*',
 								value: null
 							}]
 						}),
 						emptyText: '*ALL*',
-						listeners: {
-							change: function(field, newValue, oldValue, opts) {
-								filterResults();
-							}	
-						},
 						addStoreItem: function (item) {
 							if (this.getStore().query('value', item.value).items.length === 0) {
 								this.getStore().add(item);
 							}
+						},
+						clearStore: function () {
+							this.getStore().removeAll();
 						}
 					}),
 					{
 						xtype: 'label',
-						html: '<b>By User Rating</b>'
+						margin: '8 0 5 0',
+						html: '<b style="font-weight: bold;">By User Rating</b>'
 					},
 					{
 						xtype: 'container',
-						margin: '0 0 10 0',
 						layout: {
 							type: 'hbox'
 						}, 
@@ -507,11 +432,10 @@
 							{
 								xtype: 'button',
 								iconCls: 'fa fa-close',								
-								style: 'border-radius: 15px 15px 15px 15px;',
+								style: 'border-radius: 50%; margin-right: 5px;',
 								handler: function(){
 									var rating = this.up('container').getComponent('filterRating');
 									rating.setValue(null);
-									filterResults();
 								}
 							},
 							{
@@ -521,24 +445,18 @@
 								scale: '200%',
 								overStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
 								selectedStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
-								listeners: {
-									click: {
-										element: 'element',
-										fn: function(){
-											filterResults();
-										}
-									}
-								}
 							}
 						]
 					},
 					{
 						xtype: 'label',
-						html: '<b>By Vitals</b>'
+						margin: '8 0 5 0',
+						html: '<b style="font-weight: bold;">By Vitals</b>'
 					},
 					{
 						xtype: 'container',
 						id: 'attributeFiltersContainer',
+						margin: '0 0 20 0',
 						layout: {
 							type: 'vbox',							
 							align: 'stretch'							
@@ -548,52 +466,41 @@
 								xtype: 'panel',
 								hidden: true
 							}
-						],
-						margin: '0 0 20 0'
+						]
 					},
 					{
-						xtype: 'panel',
-						id: 'nonvisibleAttributes',
-						title: 'More Vitals',
-						iconCls: 'fa fa-filter',
-						header: {
-							cls: 'searchresults-morefilter'
+						xtype: 'button',
+						text: 'More Vitals',
+						id: 'moreAttributeFiltersButton',
+						margin: '0 0 10 0',
+						handler: function() {
+							attributeFilterStore.getNextPage();
 						},
-						layout: {
-							type: 'vbox',							
-							align: 'stretch'							
-						},						
-						listeners: {
-							expand: function(panel){
-								panel.setTitle('Less Vitals');
-							},
-							collapse: function(panel){
-								panel.setTitle('More Vitals');
-							}
-						},
-						items: [
-							{
-								xtype: 'panel',
-								hidden: true
-							}
-						],						
-						collapsible: true,
-						collapsed: true,						
-						titleCollapse: true	
+						hidden: true
 					}
 				],
 				dockedItems: [
 					{
 						xtype: 'toolbar',
-						dock: 'bottom',
+						dock: 'top',
+						layout: {
+							type: 'vbox',
+							align: 'stretch'
+						},
 						items: [
 							{
-								xtype: 'tbfill'
+								xtype: 'button',
+								text: 'Apply Filters',
+								ui: 'default',
+								margin: '10 10 10 0',
+								handler: function() {
+									filterResults();
+								}
 							},
 							{
+								xtype: 'button',
 								text: 'Reset Filters',
-								scale: 'medium',
-								width: '80%',
+								margin: '10 10 10 0',
 								handler: function(){
 									Ext.getCmp('filterByName').reset();
 									Ext.getCmp('filterByTag').reset();
@@ -606,13 +513,9 @@
 										filter.checkbox.resumeEvents(true);
 									});
 									attributeFilters = [];
-									
 									filterResults();
 								}
 							},
-							{
-								xtype: 'tbfill'
-							}
 						]
 					}
 				]
@@ -820,8 +723,40 @@
 				}
 				
 			};
+			
+			// custom store for the attribute filters
+			var attributeFilterStore = {
+				attributes : [],
+				pageSize : 20,
+				currentPage : 0,
+				loadData : function(data) {
+					attributeFilterStore.attributes = data;	
+				},
+				clear : function() {
+					// TODO: don't remove currently selected items
+					Ext.getCmp('attributeFiltersContainer').removeAll();
+					attributeFilterStore.attributes = [];
+					attributeFilterStore.currentPage = 0;
+				},
+				init : function() {
+					if (attributeFilterStore.attributes && attributeFilterStore.attributes.length > 0) {
+						var start = attributeFilterStore.currentPage * attributeFilterStore.pageSize;
+						var end = start + attributeFilterStore.pageSize;
+						if (attributeFilterStore.attributes.length < end) {
+							end = attributeFilterStore.attributes.length
+						}
+						var slice = attributeFilterStore.attributes.slice(start, end);
+						Ext.getCmp('moreAttributeFiltersButton').setHidden(slice.length === 0);
+						Ext.getCmp('attributeFiltersContainer').add(slice);
+					}
+				},
+				getNextPage : function() {
+					attributeFilterStore.currentPage += 1;
+					attributeFilterStore.init();
+				}
+			};
+
 			SearchPage.filterResults = filterResults;
-		
 			var searchResultsStore = Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				pageSize: maxPageSize,
@@ -836,12 +771,136 @@
 						reader: {
 						   type: 'json',
 						   rootProperty: 'data',
-						   totalProperty: 'totalNumber'
+						   totalProperty: 'totalNumber',
+						   metaProperty: 'meta'
 						}
 				}),
 				listeners: {
 					beforeload: function(store, operation, opts) {
 						Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
+					},
+					metachange: function(store, meta) {
+						var filterByTypeCombo = Ext.getCmp('filterByType');
+						filterByTypeCombo.clearStore();
+						Ext.Object.each(meta.resultTypeStats, function(key, value, self) {
+							filterByTypeCombo.addStoreItem({
+								label: value.componentTypeDescription + '  (' + value.count + ')',
+								value: value.componentType
+							});
+						});
+						var filterByTagCombo = Ext.getCmp('filterByTag');
+						filterByTagCombo.clearStore();
+						Ext.Object.each(meta.resultTagStats, function(key, value, self) {
+							filterByTagCombo.addStoreItem({
+								label:  value.tagLabel + '  (' + value.count + ')',
+								value: value.tagLabel
+							});
+						});
+						filterByTagCombo.checkVisibility();
+
+						// Set Attributes from the search results
+						attributeStats = {};
+						//group the attributes by attributeType
+						Ext.Array.each(meta.resultAttributeStats, function(item) {
+							if (attributeStats[item.attributeTypeLabel]) {
+								attributeStats[item.attributeTypeLabel].push(item);
+							} else {
+								attributeStats[item.attributeTypeLabel] = [item];
+							}
+						})
+
+						var attributeStatContainers = [];
+						
+						Ext.Array.each(Object.keys(attributeStats).sort(), function(key){
+							var panel = Ext.create('Ext.panel.Panel', {
+								title: key,
+								collapsible: true,
+								collapsed: false,
+								margin: '0 0 1 0',
+								titleCollapse: true,
+								animCollapse: false,
+								html: '&nbsp;'
+							});
+
+							var checkboxes = [];
+							var sortFn = function(key) {
+								return function(a, b) {
+									var nameA = parseFloat(a[key]);
+									var nameB = parseFloat(b[key]);
+
+									if (nameA === NaN) {
+										var nameA = a[key].toUpperCase(); // ignore upper and lowercase
+										var nameB = b[key].toUpperCase(); // ignore upper and lowercase
+									}
+									if (nameA < nameB) {
+										return -1;
+									}
+									if (nameA > nameB) {
+										return 1;
+									}
+									// names must be equal
+									return 0;
+								}
+							}
+							Ext.Array.each(attributeStats[key].sort(sortFn('attributeCodeLabel')), function(attribute){
+								var containsAttribute = false;
+								Ext.Array.each(attributeFilters, function(item) {
+									if (item.type === attribute.attributeType &&
+										item.code === attribute.attributeCode) {
+										containsAttribute = true;
+										checkboxes.push(item.checkbox); // add previously checked boxes
+									}
+								});
+								if (!containsAttribute) {
+									panel.setCollapsed(true);
+									var check = Ext.create('Ext.form.field.Checkbox', {
+										boxLabel: attribute.attributeCodeLabel + ' (' + attribute.count + ') ',
+										attributeCode: attribute.attributeCode,
+										listeners: {
+											change: function(checkbox, newValue, oldValue, opts) {																	
+												if (newValue){
+
+													var containsAttribute = false;
+													Ext.Array.each(attributeFilters, function(item) {
+														if (item.type === attribute.attributeType &&
+															item.code === attribute.attributeCode) {
+															containsAttribute = true;
+														}
+													});
+													
+													if (!containsAttribute) {
+														attributeFilters.push({
+															type: attribute.attributeType,
+															code: attribute.attributeCode,
+															typeLabel: attribute.attributeTypeLabel,
+															label: attribute.attributeCodeLabel,
+															checkbox: checkbox
+														});
+													}
+												} else {
+													attributeFilters = Ext.Array.filter(attributeFilters, function(item) {
+														var keep = true;
+														if (item.type === attribute.attributeType &&
+															item.code === attribute.attributeCode) {
+															keep = false;																																								
+														}
+														return keep;
+													});
+												}
+											}
+										}
+									});	
+								}
+								checkboxes.push(check);
+							});
+							panel.add(checkboxes);
+							panel.updateLayout(true, true);
+
+							attributeStatContainers.push(panel);
+						})
+						attributeFilterStore.clear();
+						attributeFilterStore.loadData(attributeStatContainers);
+						attributeFilterStore.init();
 					}
 				}
 			});
@@ -887,7 +946,7 @@
 						var filterByTypeCombo = Ext.getCmp('filterByType');
 						Ext.Object.each(stats, function(key, value, self) {
 							filterByTypeCombo.addStoreItem({
-								label: '(' + value.count + ') ' + value.typeLabel,
+								label: value.typeLabel + '  (' + value.count + ')',
 								value: value.type
 							});
 						});
@@ -907,7 +966,7 @@
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
 				{ text: 'Approved Date', section: 'approve', display: false },
-				{ text: 'Index Relevance', section: 'searchscore', display: true },
+				{ text: 'Relevance', section: 'searchscore', display: true },
 				{ text: 'Breadcrumbs', section: 'breadcrumbs', display: true }
 			];			
 			var allResultsSet;
@@ -1098,7 +1157,7 @@
 
 					return request;
 				};
-				searchResultsStore.loadPage(1);					
+				searchResultsStore.loadPage(1);
 			};
 			
 			
@@ -1146,7 +1205,7 @@
 				'  <br><div class="searchresults-item-update">',
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'  <tpl if="show.searchscore"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'  <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
 				'  <tpl if="show.breadcrumbs">',
 				'    <div style="display:block; font-size:14px; margin-top: 4px;">',
 				'      <tpl for="parents" between="&nbsp; &gt; &nbsp;">',
@@ -1342,7 +1401,7 @@
 											}											
 										},										
 										{
-											label: 'Index Relevance',
+											label: 'Relevance',
 											field: 'searchScore',
 											fieldCode: 'searchScore',
 											dir: 'DESC',

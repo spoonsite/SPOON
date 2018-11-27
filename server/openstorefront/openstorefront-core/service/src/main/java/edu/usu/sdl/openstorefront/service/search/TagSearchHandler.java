@@ -86,6 +86,7 @@ public class TagSearchHandler
 
 				if (searchElement.getCaseInsensitive()) {
 					likeValue = likeValue.toLowerCase();
+					queryByExample.getFieldOptions().clear();
 					queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
 				}
 				componentTagLike.setText(likeValue);

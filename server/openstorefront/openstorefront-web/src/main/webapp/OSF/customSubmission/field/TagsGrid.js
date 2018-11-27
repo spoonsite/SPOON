@@ -24,7 +24,8 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 	xtype: 'osf-submissionform-tagsgrid',
 	
 	requires: [
-		'OSF.customSubmission.form.Tags'
+		'OSF.customSubmission.form.Tags',
+		'OSF.component.SubmissionFamilyTagWindow'
 	],	
 	
 	title: '',
@@ -37,7 +38,6 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 	initComponent: function () {
 		var grid = this;
 		grid.callParent();
-		
 		if (grid.section) {
 			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
 			if (initialData) {
@@ -77,25 +77,96 @@ Ext.define('OSF.customSubmission.field.TagsGrid', {
 									handler: function () {
 										var form = this.up('form');
 										var data = form.getValues();
-										
-										//look for internal duplicates
-										var foundDup = false;
-										grid.getStore().each(function(existing){
-											if (existing.get('text').toLowerCase() === data.text.toLowerCase()) {
-												foundDup = true;
-											}
-										});
-										
-										if (!foundDup) {
-											if (record) {
-												record.set(data, {
-													dirty: false
-												});
-											} else {
-												grid.getStore().add(data);
-											}
+										var valueWasSelected = true;
+
+										// Only Flip to false if everything lines up correctly.
+										if(form.queryById('osfsubformbox')){
+											valueWasSelected = form.queryById('osfsubformbox').getSelection() ? true : false;
 										}
-										this.up('window').close();
+
+										if(valueWasSelected){
+											//look for internal duplicates
+											var foundDup = false;
+											grid.getStore().each(function(existing){
+												if (existing.get('text').toLowerCase() === data.text.toLowerCase()) {
+													foundDup = true;
+												}
+											});
+											
+											if (!foundDup) {
+												if (record) {
+													record.set(data, {
+														dirty: false
+													});
+												} else {
+													grid.getStore().add(data);
+												}
+											}
+											this.up('window').close();
+										} else {
+											var entryTypeOfComponent = grid.section.submissionForm.template.entryType;
+											var relatedParentTags;
+											Ext.Ajax.request({
+												url: 'api/v1/resource/components/' + entryTypeOfComponent + '/relatedtypetags',
+												method: 'GET',										
+												success: function(response, opts){
+													relatedParentTags = Ext.decode(response.responseText);
+													if (Array.isArray(relatedParentTags) && relatedParentTags.length) {
+														Ext.create('OSF.component.SubmissionFamilyTagWindow', {
+															userInputTag: data.text,
+															possibleNewTag: data,
+															componentEntryType: entryTypeOfComponent,
+															returnTagInfo: function(tagOutput){
+																//look for internal duplicates
+																var foundDup = false;
+																grid.getStore().each(function(existing){
+																	if (existing.get('text').toLowerCase() === tagOutput.text.toLowerCase()) {
+																		foundDup = true;
+																	}
+																});
+																
+																if (!foundDup) {
+																	if (record) {
+																		record.set(tagOutput, {
+																			dirty: false
+																		});
+																	} else {
+																		grid.getStore().add(tagOutput);
+																	}
+																}
+																addEditWin.close();
+															}
+														}).show();
+													} else {
+														var foundDup = false;
+														grid.getStore().each(function(existing){
+															if (existing.get('text').toLowerCase() === data.text.toLowerCase()) {
+																foundDup = true;
+															}
+														});
+														
+														if (!foundDup) {
+															if (record) {
+																record.set(data, {
+																	dirty: false
+																});
+															} else {
+																grid.getStore().add(data);
+															}
+														}
+														addEditWin.close();
+													}
+												},
+												failure: function(){
+													Ext.toast({
+														title: 'validation error. the server could not process the request. ',
+														html: 'try changing the tag field.',
+														width: 550,
+														autoclosedelay: 10000
+													});
+												}
+											});
+										}
 									}
 								},
 								{

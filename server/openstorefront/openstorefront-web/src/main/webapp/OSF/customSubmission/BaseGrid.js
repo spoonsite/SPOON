@@ -223,7 +223,7 @@ Ext.define('OSF.customSubmission.FormWindow', {
 					text: 'Cancel',
 					iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 					handler: function () {
-						var formWindow = this.up('window');		
+						var formWindow = this.up('window');
 						formWindow.close();
 					}
 				}

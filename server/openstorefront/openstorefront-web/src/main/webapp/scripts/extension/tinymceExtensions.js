@@ -613,7 +613,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 			itemSelector: 'div.media-item',
 			tpl: new Ext.XTemplate(
 					'	<tpl for=".">',
-					'		<div class="detail-media-block media-item">',
+					'		<div class="detail-media-block media-item" data-qtip="double click to insert media">',
 					'			<tpl if="mediaTypeCode == \'IMG\'">',
 					'				<img class="x-item" src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}">',
 					'				<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
@@ -626,7 +626,7 @@ Ext.define('OSF.component.MediaInsertWindow', {
 					),
 			store: mediaInsertWindow.mediaSelectionStore,
 			listeners: {
-				itemclick: function (dataView, offRecord, item, index, e, eOpts) {
+				itemdblclick: function (dataView, offRecord, item, index, e, eOpts) {
 					var record = dataView.getStore().getAt(index);
 					if (!record) {
 						record = offRecord;

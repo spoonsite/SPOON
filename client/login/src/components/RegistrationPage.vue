@@ -28,7 +28,11 @@
           <v-toolbar-title>Login Credentials</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
-          <v-form v-model="credentials.valid" ref="credentialsForm">
+          <v-form
+            v-model="credentials.valid"
+            ref="credentialsForm"
+            v-on:submit.prevent
+          >
             <v-layout row>
               <v-text-field
                 prepend-icon="person"
@@ -75,7 +79,11 @@
         <v-toolbar-title>User Information</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
-        <v-form v-model="userInformation.valid" ref="userInformationForm">
+        <v-form
+          v-model="userInformation.valid"
+          ref="userInformationForm"
+          v-on:submit.prevent
+        >
             <v-text-field
               name="firstname"
               label="First Name"
@@ -158,7 +166,11 @@
         <v-toolbar-title>Email Verification Code</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
-        <v-form v-model="verification.valid" ref="verifyForm">
+        <v-form
+          v-model="verification.valid"
+          ref="verifyForm"
+          v-on:submit.prevent
+        >
           <v-btn
             color="accent"
             :disabled="!verificationValid"

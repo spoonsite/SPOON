@@ -24,12 +24,14 @@ import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
+import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
@@ -38,6 +40,7 @@ import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
+import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -301,6 +304,7 @@ public class ElasticSearchManager
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
+		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
 
 		int maxSearchResults = 10000;
 		if (filter.getMax() < maxSearchResults) {
@@ -382,6 +386,7 @@ public class ElasticSearchManager
 			String allLowerQuery;
 			String properCaseQuery;
 
+			// This is done becuase searching doesn't properly deal with the hyphens.
 			if (isHyphenatedWithoutSpaces(queryString.toString())) {
 				// Create custom queries
 				allUpperQuery = createSubstringOfQuery(queryString.toString().toUpperCase());
@@ -396,37 +401,49 @@ public class ElasticSearchManager
 				properCaseQuery = toProperCase(queryString.toString());
 				actualQuery = queryString.toString();
 			}
+			
+			if(searchOptions.getCanUseOrganizationsInSearch()){
+				// Custom query for entry organization
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
+			}
+			
+			if(searchOptions.getCanUseNameInSearch()){
+				// Custom query for entry name
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, actualQuery));
 
-			// Custom query for entry name
-			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
-			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
-			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
-			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+			}
 
-			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
-			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
-			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
-			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
-
-			// Custom query for entry organization
-			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
-			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
-			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
-			esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
-
-			// Custom query for description
-			esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));
-
-			// Fuzzy query on all fields using actual input
-			esQuery.should(QueryBuilders.fuzzyQuery(ELASTICSEARCH_ALL_FIELDS, actualQuery));
+			if(searchOptions.getCanUseDescriptionInSearch()){
+				// Custom query for description
+				esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));				
+			}
 		}
 
 		// Loop Through Search Phrases
 		for (String phrase : searchPhrases) {
+			
+			if (searchOptions.getCanUseOrganizationsInSearch()) {
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
+			}
 
-			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
-			esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
-			esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
+			if (searchOptions.getCanUseNameInSearch()) {
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
+			}
+
+			if (searchOptions.getCanUseDescriptionInSearch()) {
+				esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
+			}
+			
 		}
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
 				//.unmappedType("String") // currently the only fileds we are searching/sorting on are strings
@@ -643,6 +660,9 @@ public class ElasticSearchManager
 			componentTag.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			List<ComponentTag> componentTags = componentTag.findByExample();
 			Map<String, List<ComponentTag>> tagMap = componentTags.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
+			
+			SearchStatTable statTable = new SearchStatTable(attributeMap, tagMap);
+			statTable.index();
 
 			for (Component component : components) {
 
