@@ -93,6 +93,47 @@
             <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.organization }}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-autocomplete>
+        <h3 class="pb-3">Attributes</h3>
+
+        <v-text-field
+          label="Search Attributes"
+          solo
+          v-model="attributeQuery"
+          placeholder="Search Attributes"
+        ></v-text-field>
+        <div v-if="Object.keys(searchResultsAttributes).length !== 0">Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
+        <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
+        <v-expansion-panel v-else>
+          <v-expansion-panel-content
+            v-for="key in attributeKeys"
+            :key="key"
+          >
+            <div slot="header">{{ searchResultsAttributes[key].label }}</div>
+              <v-card>
+                <div
+                  v-for="attribute in (searchResultsAttributes[key].attributes)"
+                  :key="attribute.attributeCode"
+                  v-html="attribute.attributeCodeLabel"
+                ></div>
+              </v-card>
+            <!-- <v-card>
+              <v-card-actions
+              >
+                <v-checkbox
+                  v-for="attribute in naturalSort(searchResultsAttributes[key].attributes)"
+                  :key="attribute.attributeCode"
+                  v-model="filters.attributes"
+                  :value="attribute.attributeCode"
+                  hide-details
+                >
+                  <template slot="label">
+                    <div v-html="attribute.attributeCodeLabel"></div>
+                  </template>
+                </v-checkbox>
+              </v-card-actions>
+            </v-card> -->
+          </v-expansion-panel-content>
+        </v-expansion-panel>
         <!-- <v-btn block class="success" @click="submitSearch()">Submit</v-btn> -->
         <v-btn block class="primary" @click="clear()">Clear Filters</v-btn>
       </div>
@@ -107,6 +148,7 @@
         v-on:clear="submitSearch()"
         :hideSuggestions="hideSearchSuggestions"
         v-model="searchQuery"
+        :overlaySuggestions="true"
       ></SearchBar>
     </div><!-- Search Bar and menu  -->
 
@@ -174,21 +216,24 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- Allow space for the pagination -->
-  <div class="v-spacer"></div>
-
   <!-- Pagination -->
-  <div class="pagination text-xs-center">
-    <v-pagination
-      v-model="searchPage"
-      :length="getNumPages()"
-      total-visible="7"
-    ></v-pagination>
-  </div>
+  <v-footer
+    height="auto"
+    fixed
+    color="#FFF"
+    style="border-top: 1px solid #DDD"
+  >
+    <v-layout justify-center>
+      <v-pagination
+        v-model="searchPage"
+        :length="getNumPages()"
+        total-visible="7"
+      ></v-pagination>
+    </v-layout>
+  </v-footer>
 
 </div>
 </template>
@@ -196,14 +241,12 @@
 <script>
 import _ from 'lodash'
 import SearchBar from '../components/SearchBar'
-import StarRating from 'vue-star-rating'
 import router from '../router.js'
 
 export default {
   name: 'SearchPage',
   components: {
-    SearchBar,
-    StarRating
+    SearchBar
   },
   mounted () {
     if (this.$route.query.q) {
@@ -230,6 +273,26 @@ export default {
     this.newSearch()
   },
   methods: {
+    naturalSort (data) {
+      function compare (a, b) {
+        var itemA
+        var itemB
+        if (isNaN(parseFloat(a.attributeCodeLabel))) {
+          itemA = a.attributeCodeLabel.toUpperCase()
+          itemB = b.attributeCodeLabel.toUpperCase()
+        } else {
+          itemA = parseFloat(a.attributeCodeLabel)
+          itemB = parseFloat(b.attributeCodeLabel)
+        }
+        if (itemA < itemB) {
+          return -1
+        } else if (itemA > itemB) {
+          return 1
+        }
+        return 0
+      }
+      return data.sort(compare)
+    },
     clear () {
       this.filters = {
         component: '',
@@ -251,6 +314,21 @@ export default {
       if (this.filters.tags.indexOf(tag) === -1) {
         this.filters.tags.push(tag)
       }
+    },
+    loadAttributes (attributes) {
+      this.searchResultsAttributes = {}
+      attributes.forEach((el) => {
+        if (el.attributeType in this.searchResultsAttributes) {
+          this.searchResultsAttributes[el.attributeType].attributes.push(el)
+        } else {
+          this.searchResultsAttributes[el.attributeType] = {
+            'label': el.attributeTypeLabel,
+            'attributes': [el]
+          }
+        }
+      })
+    },
+    filterAttributeKeys () {
     },
     submitSearch () {
       let that = this
@@ -321,8 +399,8 @@ export default {
           that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel }])
           that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription }])
           that.searchQueryIsDirty = false
+          this.loadAttributes(response.data.meta.resultAttributeStats)
         })
-        .catch(e => that.errors.push(e))
         .finally(() => {
           that.searchQueryIsDirty = false
         })
@@ -335,7 +413,6 @@ export default {
         .then(response => {
           this.nestedComponentTypesList = response.data.data
         })
-        .catch(e => this.errors.push(e))
     },
     newSearch () {
       this.searchPage = 1
@@ -366,6 +443,12 @@ export default {
       },
       deep: true
     },
+    attributeQuery: _.throttle(function () {
+      console.log('query')
+      var keys = Object.keys(this.searchResultsAttributes)
+      var regEx = RegExp(this.attributeQuery, 'gi')
+      this.attributeKeys = keys.filter((v) => regEx.test(v)).slice(0, 10)
+    }, 1000),
     searchSortField () {
       this.newSearch()
     },
@@ -397,16 +480,19 @@ export default {
       showOptions: false,
       showHelp: false,
       searchQuery: '',
+      attributeQuery: '',
+      attributeKeys: [],
       filters: {
         component: '',
         tags: [],
+        attributes: [],
         organization: '',
         children: false,
         tagCondition: 'AND'
       },
       searchResults: {},
+      searchResultsAttributes: {},
       searchQueryIsDirty: false,
-      errors: [],
       searchPage: 0,
       searchPageSize: 10,
       totalSearchResults: 0,
@@ -427,32 +513,11 @@ export default {
 </script>
 
 <style scoped>
-/* Paging */
-.pagination {
-  text-align: center;
-  display: block;
-  margin: auto;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: white;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  z-index: 3;
-}
 .dn {
   display: none;
 }
 .db {
   display: block;
-}
-.v-spacer {
-  height: 3.2em;
-}
-.clearfix:after {
-  content: '';
-  clear: both;
-  display: table;
 }
 .centeralign {
   margin-right: auto;
@@ -469,6 +534,7 @@ hr {
   border-right: 1px solid #DDD;
   position: fixed;
   height: 100%;
+  padding-bottom: 10em;
 }
 .side-menu.open {
   width: 30em;
@@ -481,11 +547,11 @@ hr {
   margin: 0.5em;
 }
 .side-menu-content {
-  position: fixed;
   height: 100%;
   max-width: 26em;
   padding: 0 2em;
   margin-left: 4em;
+  overflow: auto;
 }
 .search-block.open {
   margin-left: 30em;
