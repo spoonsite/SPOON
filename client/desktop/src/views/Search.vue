@@ -34,6 +34,7 @@
       </div>
       <div v-if="showFilters">
         <h2>Search Filters</h2>
+        <v-btn block class="" @click="clear()">Clear Filters</v-btn>
         <v-select
           v-model="filters.component"
           :items="componentsList"
@@ -103,39 +104,29 @@
         ></v-text-field>
         <div v-if="Object.keys(searchResultsAttributes).length !== 0">Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
-        <v-expansion-panel v-else>
+        <v-expansion-panel v-if="Object.keys(searchResultsAttributes).length !== 0">
           <v-expansion-panel-content
             v-for="key in attributeKeys"
             :key="key"
           >
             <div slot="header">{{ searchResultsAttributes[key].label }}</div>
-              <v-card>
-                <div
+            <v-card>
+              <v-container class="pt-0" fluid>
+                <v-checkbox
                   v-for="attribute in (searchResultsAttributes[key].attributes)"
                   :key="attribute.attributeCode"
-                  v-html="attribute.attributeCodeLabel"
-                ></div>
-              </v-card>
-            <!-- <v-card>
-              <v-card-actions
-              >
-                <v-checkbox
-                  v-for="attribute in naturalSort(searchResultsAttributes[key].attributes)"
-                  :key="attribute.attributeCode"
                   v-model="filters.attributes"
-                  :value="attribute.attributeCode"
+                  :value="JSON.stringify(attribute)"
                   hide-details
                 >
                   <template slot="label">
                     <div v-html="attribute.attributeCodeLabel"></div>
                   </template>
                 </v-checkbox>
-              </v-card-actions>
-            </v-card> -->
+              </v-container>
+            </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
-        <!-- <v-btn block class="success" @click="submitSearch()">Submit</v-btn> -->
-        <v-btn block class="primary" @click="clear()">Clear Filters</v-btn>
       </div>
     </div>
   </div>
@@ -382,6 +373,23 @@ export default {
           }
         )
       }
+      if (that.filters.attributes) {
+        that.filters.attributes.forEach(function (attribute) {
+          var attr = JSON.parse(attribute)
+          searchElements.push(
+            {
+              keyField: attr.attributeType,
+              keyValue: attr.attributeCode,
+              caseInsensitive: true,
+              // mergeCondition: that.filters.attributeCondition,
+              mergeCondition: 'AND',
+              numberOperations: 'EQUALS',
+              searchType: 'ATTRIBUTESET',
+              stringOperation: 'EQUALS'
+            }
+          )
+        })
+      }
       this.$http
         .post(
           `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
@@ -443,12 +451,15 @@ export default {
       },
       deep: true
     },
-    attributeQuery: _.throttle(function () {
-      console.log('query')
+    attributeQuery: _.debounce(function () {
       var keys = Object.keys(this.searchResultsAttributes)
       var regEx = RegExp(this.attributeQuery, 'gi')
-      this.attributeKeys = keys.filter((v) => regEx.test(v)).slice(0, 10)
-    }, 1000),
+      if (this.attributeQuery.trim() === '') {
+        this.attributeKeys = keys.slice(0, 10)
+      } else {
+        this.attributeKeys = keys.filter((v) => regEx.test(v)).slice(0, 10)
+      }
+    }, 500),
     searchSortField () {
       this.newSearch()
     },

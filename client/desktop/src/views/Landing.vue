@@ -285,8 +285,7 @@ export default {
         })
     },
     isSpoon () {
-      // return this.$store.state.branding.applicationName === 'SPOON'
-      return false
+      return this.$store.state.branding.applicationName === 'SPOON'
     }
   },
   computed: {
