@@ -4,7 +4,7 @@
         <to type="redirect">%{context-path}/$2\.action$3</to>
     </rule>
     <rule>
-        <from>/(.*)/images/(.*)</from>
+        <from>/(mobile|login)/images/(.*)</from>
         <to type="redirect">%{context-path}/images/$2</to>
     </rule>
 </urlrewrite>
