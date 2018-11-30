@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +23,13 @@ import org.simpleframework.xml.ElementList;
  *
  * @author dshurtleff
  */
-public class ProductFamily
+public class ProductType
 {
 
 	@ElementList(name = "classification", type = Classification.class, inline = true, required = false)
 	private List<Classification> classification = new ArrayList<>();
 
-	public ProductFamily()
+	public ProductType()
 	{
 	}
 

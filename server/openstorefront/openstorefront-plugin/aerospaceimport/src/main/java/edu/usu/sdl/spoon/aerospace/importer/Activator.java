@@ -1,4 +1,4 @@
-package edu.usu.sdl.spoon.aerospace.importor;
+package edu.usu.sdl.spoon.aerospace.importer;
 
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;

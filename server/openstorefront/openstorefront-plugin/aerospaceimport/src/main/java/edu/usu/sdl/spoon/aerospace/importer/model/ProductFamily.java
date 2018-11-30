@@ -13,34 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
+import java.util.ArrayList;
+import java.util.List;
+import org.simpleframework.xml.ElementList;
 
 /**
  *
  * @author dshurtleff
  */
-@Root(name = "classification")
-public class Classification
+public class ProductFamily
 {
 
-	@Element(name = "category_name", required = false)
-	private String categoryName;
+	@ElementList(name = "classification", type = Classification.class, inline = true, required = false)
+	private List<Classification> classification = new ArrayList<>();
 
-	public Classification()
+	public ProductFamily()
 	{
 	}
 
-	public String getCategoryName()
+	public List<Classification> getClassification()
 	{
-		return categoryName;
+		return classification;
 	}
 
-	public void setCategoryName(String categoryName)
+	public void setClassification(List<Classification> classification)
 	{
-		this.categoryName = categoryName;
+		this.classification = classification;
 	}
 
 }

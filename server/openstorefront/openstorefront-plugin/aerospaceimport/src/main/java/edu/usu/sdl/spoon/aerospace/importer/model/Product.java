@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
 import org.simpleframework.xml.Element;
 
@@ -21,7 +21,7 @@ import org.simpleframework.xml.Element;
  *
  * @author dshurtleff
  */
-public class Organization
+public class Product
 {
 
 	@Element(name = "key")
@@ -30,16 +30,25 @@ public class Organization
 	@Element(name = "short_name", required = false)
 	private String shortName;
 
-	@Element(name = "long_name", required = false)
+	@Element(name = "long_name")
 	private String longName;
+
+	@Element(name = "product_source", required = false)
+	private String productSource;
+
+	@Element(name = "model_number", required = false)
+	private String modelNumber;
 
 	@Element(name = "description", required = false)
 	private String description;
 
-	@Element(name = "type", required = false)
-	private String type;
+	@Element(name = "product_revision")
+	private ProductRevision productRevision;
 
-	public Organization()
+	@Element(name = "organizations")
+	private Organizations organizations;
+
+	public Product()
 	{
 	}
 
@@ -73,6 +82,26 @@ public class Organization
 		this.longName = longName;
 	}
 
+	public String getProductSource()
+	{
+		return productSource;
+	}
+
+	public void setProductSource(String productSource)
+	{
+		this.productSource = productSource;
+	}
+
+	public String getModelNumber()
+	{
+		return modelNumber;
+	}
+
+	public void setModelNumber(String modelNumber)
+	{
+		this.modelNumber = modelNumber;
+	}
+
 	public String getDescription()
 	{
 		return description;
@@ -83,14 +112,24 @@ public class Organization
 		this.description = description;
 	}
 
-	public String getType()
+	public ProductRevision getProductRevision()
 	{
-		return type;
+		return productRevision;
 	}
 
-	public void setType(String type)
+	public void setProductRevision(ProductRevision productRevision)
 	{
-		this.type = type;
+		this.productRevision = productRevision;
+	}
+
+	public Organizations getOrganizations()
+	{
+		return organizations;
+	}
+
+	public void setOrganizations(Organizations organizations)
+	{
+		this.organizations = organizations;
 	}
 
 }

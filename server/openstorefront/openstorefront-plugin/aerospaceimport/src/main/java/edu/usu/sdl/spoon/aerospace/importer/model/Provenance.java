@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,24 +23,37 @@ import org.simpleframework.xml.ElementList;
  *
  * @author dshurtleff
  */
-public class Comment
+public class Provenance
 {
 
-	@ElementList(name = "revision_comment", inline = true, required = false)
-	private List<RevisionComment> comments = new ArrayList<>();
+	@ElementList(name = "revision_provenance_document", inline = true, required = false)
+	private List<RevisionProvenanceDocument> documents = new ArrayList<>();
 
-	public Comment()
+	@ElementList(name = "revision_provenance_website", inline = true, required = false)
+	private List<RevisionProvenanceWebsite> websites = new ArrayList<>();
+
+	public Provenance()
 	{
 	}
 
-	public List<RevisionComment> getComments()
+	public List<RevisionProvenanceDocument> getDocuments()
 	{
-		return comments;
+		return documents;
 	}
 
-	public void setComments(List<RevisionComment> comments)
+	public void setDocuments(List<RevisionProvenanceDocument> documents)
 	{
-		this.comments = comments;
+		this.documents = documents;
+	}
+
+	public List<RevisionProvenanceWebsite> getWebsites()
+	{
+		return websites;
+	}
+
+	public void setWebsites(List<RevisionProvenanceWebsite> websites)
+	{
+		this.websites = websites;
 	}
 
 }
