@@ -102,9 +102,8 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 				
 			}
 		});
-		
-		
 	},
+
 	reviewDisplayValue: function() {
 		var attributePanel = this;
 		
@@ -136,6 +135,7 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 		
 		return template.apply(data);
 	},
+
 	getSubmissionValue: function() {
 		var attributePanel = this;
 
@@ -158,6 +158,11 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 			rawValue: Ext.encode(data)
 		};		
 		return userSubmissionField;			
+	},
+
+	checkIsHidden: function() {
+		var attributePanel = this;
+		return attributePanel.isHidden();
 	}
 	
 });

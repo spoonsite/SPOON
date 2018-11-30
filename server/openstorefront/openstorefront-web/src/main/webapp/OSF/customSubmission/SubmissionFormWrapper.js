@@ -36,11 +36,11 @@ Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
 	initComponent: function () {
 		var submissionField = this;
 		submissionField.callParent();
-		submissionField.display();		
+		submissionField.display();
 	},
 	
 	display: function() {
-		var submissionField = this;		
+		var submissionField = this;
 		
 		submissionField.setTitle(submissionField.createQuestionLabel());
 		
@@ -49,7 +49,14 @@ Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
 			submissionField.actualForm.itemId = 'component';
 			submissionField.add(submissionField.actualForm);
 		}
-				
+	},
+
+	checkHidden: function() {
+		var submissionField = this;
+		var formComponent = submissionField.queryById('component')
+		if (formComponent.checkIsHidden ? formComponent.checkIsHidden() : 'N/A') {
+			submissionField.setHidden(true);
+		}
 	},
 	
 	reviewDisplayValue: function() {
@@ -90,9 +97,9 @@ Ext.define('OSF.customSubmission.SubmissionFormWrapper', {
 
 	getUserData: function() {
 		var submissionField = this;
-		var formComponent = submissionField.queryById('component');		
+		var formComponent = submissionField.queryById('component');
 		return formComponent.getSubmissionValue();
-	}	
+	}
 	
 });
 
