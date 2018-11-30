@@ -27,14 +27,14 @@ import java.io.InputStream;
 public class AerospaceParser
         extends BaseComponentParser {
 
-    public static final String FORMAT_CODE = "SPOONCMP";
+    public static final String FORMAT_CODE = "AEROSPACECMP";
 
     @Override
     public String checkFormat(String mimeType, InputStream input) {
-        if (mimeType.contains("xml")) {
+        if (mimeType.contains("zip")) {
             return "";
         } else {
-            return "Invalid format. Please upload a XML file.";
+            return "Invalid format. Please upload a ZIP file.";
         }
     }
 

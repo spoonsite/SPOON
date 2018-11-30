@@ -12,7 +12,7 @@ public class Activator implements BundleActivator {
     private static final Logger log = Logger.getLogger(Activator.class.getName());
 
    public void start(BundleContext context) throws Exception {
-        log.info("Starting plugin example");
+       log.info("Starting Aerospace Import plugin");
        //Register new parser format
        Service service = ServiceProxyFactory.getServiceProxy();
 
@@ -30,7 +30,7 @@ public class Activator implements BundleActivator {
    }
 
    public void stop(BundleContext context) throws Exception {
-        log.info("Stopping plugin example");
+       log.info("Stopping Aerospace Import plugin");
        Service service = ServiceProxyFactory.getServiceProxy();
 
        if (service.getSystemService().isSystemReady()
