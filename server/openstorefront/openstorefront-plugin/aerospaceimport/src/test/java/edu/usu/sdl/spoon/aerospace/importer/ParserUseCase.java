@@ -5,7 +5,7 @@
  */
 package edu.usu.sdl.spoon.aerospace.importer;
 
-import edu.usu.sdl.spoon.aerospace.importor.model.Services;
+import edu.usu.sdl.spoon.aerospace.importer.model.Services;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;

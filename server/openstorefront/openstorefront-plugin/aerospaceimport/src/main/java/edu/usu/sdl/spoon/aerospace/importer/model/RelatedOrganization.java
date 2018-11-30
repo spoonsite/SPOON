@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
@@ -22,52 +22,38 @@ import org.simpleframework.xml.Root;
  *
  * @author dshurtleff
  */
-@Root(name = "int_feature")
-public class IntFeature
-		extends BaseFeature
+@Root(name = "related_organization")
+public class RelatedOrganization
 {
 
-	@Element(name = "value", required = false)
-	private Integer value;
+	@Element(name = "role")
+	private String role;
 
-	@Element(name = "unit", required = false)
-	private String unit;
+	@Element(name = "organization", required = false)
+	private Organization organization;
 
-	@Element(name = "unit_abbr", required = false)
-	private String unitAbbr;
-
-	public IntFeature()
+	public RelatedOrganization()
 	{
 	}
 
-	public Integer getValue()
+	public String getRole()
 	{
-		return value;
+		return role;
 	}
 
-	public void setValue(Integer value)
+	public void setRole(String role)
 	{
-		this.value = value;
+		this.role = role;
 	}
 
-	public String getUnit()
+	public Organization getOrganization()
 	{
-		return unit;
+		return organization;
 	}
 
-	public void setUnit(String unit)
+	public void setOrganization(Organization organization)
 	{
-		this.unit = unit;
-	}
-
-	public String getUnitAbbr()
-	{
-		return unitAbbr;
-	}
-
-	public void setUnitAbbr(String unitAbbr)
-	{
-		this.unitAbbr = unitAbbr;
+		this.organization = organization;
 	}
 
 }

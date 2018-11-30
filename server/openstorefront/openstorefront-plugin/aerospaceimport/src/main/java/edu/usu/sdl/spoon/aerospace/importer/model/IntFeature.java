@@ -13,36 +13,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 /**
  *
  * @author dshurtleff
  */
-@Root(name = "services")
-public class Services
+@Root(name = "int_feature")
+public class IntFeature
+		extends BaseFeature
 {
 
-	@ElementList(name = "product", inline = true, required = false)
-	private List<Product> products = new ArrayList<>();
+	@Element(name = "value", required = false)
+	private Integer value;
 
-	public Services()
+	@Element(name = "unit", required = false)
+	private String unit;
+
+	@Element(name = "unit_abbr", required = false)
+	private String unitAbbr;
+
+	public IntFeature()
 	{
 	}
 
-	public List<Product> getProducts()
+	public Integer getValue()
 	{
-		return products;
+		return value;
 	}
 
-	public void setProducts(List<Product> products)
+	public void setValue(Integer value)
 	{
-		this.products = products;
+		this.value = value;
+	}
+
+	public String getUnit()
+	{
+		return unit;
+	}
+
+	public void setUnit(String unit)
+	{
+		this.unit = unit;
+	}
+
+	public String getUnitAbbr()
+	{
+		return unitAbbr;
+	}
+
+	public void setUnitAbbr(String unitAbbr)
+	{
+		this.unitAbbr = unitAbbr;
 	}
 
 }

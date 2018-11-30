@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.simpleframework.xml.ElementList;
  *
  * @author dshurtleff
  */
-public class Shape
+public class Additional
 {
 
 	@ElementList(name = "float_feature", inline = true, required = false)
@@ -35,7 +35,7 @@ public class Shape
 	@ElementList(name = "text_feature", inline = true, required = false)
 	private List<TextFeature> textFeatures = new ArrayList<>();
 
-	public Shape()
+	public Additional()
 	{
 	}
 

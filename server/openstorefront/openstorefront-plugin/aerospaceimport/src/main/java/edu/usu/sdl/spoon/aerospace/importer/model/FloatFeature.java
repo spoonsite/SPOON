@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
@@ -22,38 +22,52 @@ import org.simpleframework.xml.Root;
  *
  * @author dshurtleff
  */
-@Root(name = "revision_comment")
-public class RevisionComment
+@Root(name = "float_feature")
+public class FloatFeature
+		extends BaseFeature
 {
 
-	@Element(name = "title", required = false)
-	private String title;
+	@Element(name = "value", required = false)
+	private Double value;
 
-	@Element(name = "text", required = false)
-	private String text;
+	@Element(name = "unit", required = false)
+	private String unit;
 
-	public RevisionComment()
+	@Element(name = "unit_abbr", required = false)
+	private String unitAbbr;
+
+	public FloatFeature()
 	{
 	}
 
-	public String getTitle()
+	public Double getValue()
 	{
-		return title;
+		return value;
 	}
 
-	public void setTitle(String title)
+	public void setValue(Double value)
 	{
-		this.title = title;
+		this.value = value;
 	}
 
-	public String getText()
+	public String getUnit()
 	{
-		return text;
+		return unit;
 	}
 
-	public void setText(String text)
+	public void setUnit(String unit)
 	{
-		this.text = text;
+		this.unit = unit;
+	}
+
+	public String getUnitAbbr()
+	{
+		return unitAbbr;
+	}
+
+	public void setUnitAbbr(String unitAbbr)
+	{
+		this.unitAbbr = unitAbbr;
 	}
 
 }

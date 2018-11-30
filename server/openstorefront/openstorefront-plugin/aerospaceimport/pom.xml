@@ -4,12 +4,12 @@
     <parent>
     <artifactId>openstorefront-plugin</artifactId>
     <groupId>edu.usu.sdl</groupId>
-    <version>2.6.6</version>
+    <version>2.7</version>
   </parent>
 
     <groupId>edu.usu.sdl.spoon</groupId>
     <artifactId>aerospaceimport</artifactId>
-    <version>2.6.6</version>
+    <version>2.7</version>
     <packaging>bundle</packaging>
 
    <name>openstorefront-plugin-aerospace-importer</name>
@@ -40,10 +40,45 @@
         </dependency>		
 	</dependencies>
 
-<!-- TODO: Add Shade plugin so we can include xml parsing into plugin -->
-
     <build>
-        <plugins>
+        <plugins>	
+			<!--		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>	
+				-->			
+					<!--
+					<transformers>
+						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+							<manifestEntries>
+								<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+								<Bundle-Version>${project.version}</Bundle-Version>
+								<Bundle-ManifestVersion>2</Bundle-ManifestVersion>								
+								<Bundle-Activator>edu.usu.sdl.spoon.aerospace.importer.Activator</Bundle-Activator>
+								<Export-Package>
+									edu.usu.sdl.spoon.aerospace.importer;version="${project.version}";uses:="org.osgi.framework"
+								</Export-Package>
+								<Import-Package>*</Import-Package>
+								<Private-Package>edu.usu.sdl.spoon.aerospace.importer.*</Private-Package>
+							</manifestEntries>
+						</transformer>
+					</transformers>	
+					-->	
+			<!--				
+				</configuration>
+				<executions>
+					<execution>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			-->			
+			
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -51,16 +86,19 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-Activator>edu.usu.sdl.spoon.aerospace.importor.Activator</Bundle-Activator>
-                        <Export-Package />
+                        <Bundle-Activator>edu.usu.sdl.spoon.aerospace.importer.Activator</Bundle-Activator>
+                        <Export-Package >edu.usu.sdl.spoon.aerospace.importer</Export-Package>
+                        <Private-Package>edu.usu.sdl.spoon.aerospace.importer.*</Private-Package>						
                     </instructions>
                 </configuration>
-            </plugin>
+            </plugin>					
+			
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.15</version>
             </plugin>
+			
         </plugins>
     </build>
 

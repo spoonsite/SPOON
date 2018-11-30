@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,24 +23,24 @@ import org.simpleframework.xml.ElementList;
  *
  * @author dshurtleff
  */
-public class ProductType
+public class Organizations
 {
 
-	@ElementList(name = "classification", type = Classification.class, inline = true, required = false)
-	private List<Classification> classification = new ArrayList<>();
+	@ElementList(type = RelatedOrganization.class, name = "related_organization", inline = true, required = false)
+	private List<RelatedOrganization> relatedOrganizations = new ArrayList<>();
 
-	public ProductType()
+	public Organizations()
 	{
 	}
 
-	public List<Classification> getClassification()
+	public List<RelatedOrganization> getRelatedOrganizations()
 	{
-		return classification;
+		return relatedOrganizations;
 	}
 
-	public void setClassification(List<Classification> classification)
+	public void setRelatedOrganizations(List<RelatedOrganization> relatedOrganizations)
 	{
-		this.classification = classification;
+		this.relatedOrganizations = relatedOrganizations;
 	}
 
 }

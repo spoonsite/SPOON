@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
@@ -22,57 +22,60 @@ import org.simpleframework.xml.Root;
  *
  * @author dshurtleff
  */
-@Root(name = "revision_provenance_document")
-public class RevisionProvenanceDocument
+@Root(name = "revision_provenance_website")
+public class RevisionProvenanceWebsite
 {
 
-	@Element(name = "key", required = false)
-	private int key;
+	@Element(name = "url", required = false)
+	private String url;
 
-	@Element(name = "type", required = false)
-	private String type;
+	@Element(name = "snapshot_url", required = false)
+	private String snapshotUrl;
 
-	@Element(name = "filename", required = false)
-	private String filename;
+	@Element(name = "snapshot_id", required = false)
+	private String snapshotId;
 
 	@Element(name = "description", required = false)
 	private String description;
 
-	@Element(name = "title")
+	@Element(name = "title", required = false)
 	private String title;
 
-	public RevisionProvenanceDocument()
+	@Element(name = "last_visited", required = false)
+	private String lastVisited;
+
+	public RevisionProvenanceWebsite()
 	{
 	}
 
-	public int getKey()
+	public String getUrl()
 	{
-		return key;
+		return url;
 	}
 
-	public void setKey(int key)
+	public void setUrl(String url)
 	{
-		this.key = key;
+		this.url = url;
 	}
 
-	public String getType()
+	public String getSnapshotUrl()
 	{
-		return type;
+		return snapshotUrl;
 	}
 
-	public void setType(String type)
+	public void setSnapshotUrl(String snapshotUrl)
 	{
-		this.type = type;
+		this.snapshotUrl = snapshotUrl;
 	}
 
-	public String getFilename()
+	public String getSnapshotId()
 	{
-		return filename;
+		return snapshotId;
 	}
 
-	public void setFilename(String filename)
+	public void setSnapshotId(String snapshotId)
 	{
-		this.filename = filename;
+		this.snapshotId = snapshotId;
 	}
 
 	public String getDescription()
@@ -93,6 +96,16 @@ public class RevisionProvenanceDocument
 	public void setTitle(String title)
 	{
 		this.title = title;
+	}
+
+	public String getLastVisited()
+	{
+		return lastVisited;
+	}
+
+	public void setLastVisited(String lastVisited)
+	{
+		this.lastVisited = lastVisited;
 	}
 
 }

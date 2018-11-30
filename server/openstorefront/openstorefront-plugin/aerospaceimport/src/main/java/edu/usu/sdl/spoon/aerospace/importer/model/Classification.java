@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.spoon.aerospace.importor.model;
+package edu.usu.sdl.spoon.aerospace.importer.model;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
@@ -22,38 +22,25 @@ import org.simpleframework.xml.Root;
  *
  * @author dshurtleff
  */
-@Root(name = "related_organization")
-public class RelatedOrganization
+@Root(name = "classification")
+public class Classification
 {
 
-	@Element(name = "role")
-	private String role;
+	@Element(name = "category_name", required = false)
+	private String categoryName;
 
-	@Element(name = "organization", required = false)
-	private Organization organization;
-
-	public RelatedOrganization()
+	public Classification()
 	{
 	}
 
-	public String getRole()
+	public String getCategoryName()
 	{
-		return role;
+		return categoryName;
 	}
 
-	public void setRole(String role)
+	public void setCategoryName(String categoryName)
 	{
-		this.role = role;
-	}
-
-	public Organization getOrganization()
-	{
-		return organization;
-	}
-
-	public void setOrganization(Organization organization)
-	{
-		this.organization = organization;
+		this.categoryName = categoryName;
 	}
 
 }
