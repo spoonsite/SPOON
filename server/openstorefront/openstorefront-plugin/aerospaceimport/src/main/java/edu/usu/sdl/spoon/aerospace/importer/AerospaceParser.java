@@ -27,8 +27,7 @@ import java.io.InputStream;
  * @author rfrazier
  */
 public class AerospaceParser
-		extends BaseComponentParser
-{
+        extends BaseComponentParser {
 
     public static final String FORMAT_CODE = "AEROSPACECMP";
 
@@ -41,29 +40,26 @@ public class AerospaceParser
         }
     }
 
-	@Override
-	protected GenericReader getReader(InputStream in)
-	{
-		//return a product
-		return new XMLMapReader(in);
-	}
+    @Override
+    protected GenericReader getReader(InputStream in) {
+        //return a product
+        return new XMLMapReader(in);
+    }
 
-	@Override
-	@SuppressWarnings("deprecation")
-	protected <T> Object parseRecord(T record)
-	{
+    @Override
+    @SuppressWarnings("deprecation")
+    protected <T> Object parseRecord(T record) {
 
-		Product product = (Product) record;
+        Product product = (Product) record;
 
-		ComponentAll componentAll = defaultComponentAll();
+        ComponentAll componentAll = defaultComponentAll();
 
-		return componentAll;
-	}
+        return componentAll;
+    }
 
-	@Override
-	protected void finishProcessing()
-	{
-		super.finishProcessing(); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    protected void finishProcessing() {
+        super.finishProcessing(); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }
