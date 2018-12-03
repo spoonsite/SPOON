@@ -163,13 +163,24 @@ public class ComponentMapper
 				}
 			}
 
-			//apply attribute mappings
-			if (attributeDataMapper != null) {
-				doAttributeMapping(componentAll);
-			}
-
+			applyAttributeMapping(componentAll);
 		}
 		return componentAll;
+	}
+
+	/**
+	 * This will apply mapping to the ComponentAttributes provided So the input
+	 * Component Attribute should be set to in-coming data values. This will
+	 * only map if the attribute Mapping is available.
+	 *
+	 * @param componentAll
+	 */
+	public void applyAttributeMapping(ComponentAll componentAll)
+	{
+		//apply attribute mappings
+		if (attributeDataMapper != null) {
+			doAttributeMapping(componentAll);
+		}
 	}
 
 	@SuppressWarnings({"squid:S3923", "squid:S1872"})

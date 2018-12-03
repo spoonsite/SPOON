@@ -8,36 +8,43 @@ import java.util.logging.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator {
-    private static final Logger log = Logger.getLogger(Activator.class.getName());
+public class Activator
+		implements BundleActivator
+{
 
-   public void start(BundleContext context) throws Exception {
-       log.info("Starting Aerospace Import plugin");
-       //Register new parser format
-       Service service = ServiceProxyFactory.getServiceProxy();
+	private static final Logger LOG = Logger.getLogger(Activator.class.getName());
 
-       if (service.getSystemService().isSystemReady()
-               || service.getSystemService().isLoadingPluginsReady()) {
-           FileFormat aerospaceFormat = new FileFormat();
-           aerospaceFormat.setCode(AerospaceParser.FORMAT_CODE);
-           aerospaceFormat.setFileType(FileType.COMPONENT);
-           aerospaceFormat.setDescription("Aerospace Import (ZIP)");
-           aerospaceFormat.setSupportsDataMap(true);
-           aerospaceFormat.setParserClass(AerospaceParser.class.getName());
+	@Override
+	public void start(BundleContext context) throws Exception
+	{
+		LOG.info("Starting Aerospace Import plugin");
+		//Register new parser format
+		Service service = ServiceProxyFactory.getServiceProxy();
 
-           service.getImportService().registerFormat(aerospaceFormat, AerospaceParser.class);
-       }
-   }
+		if (service.getSystemService().isSystemReady()
+				|| service.getSystemService().isLoadingPluginsReady()) {
+			FileFormat aerospaceFormat = new FileFormat();
+			aerospaceFormat.setCode(AerospaceParser.FORMAT_CODE);
+			aerospaceFormat.setFileType(FileType.COMPONENT);
+			aerospaceFormat.setDescription("Aerospace Import (ZIP)");
+			aerospaceFormat.setSupportsDataMap(true);
+			aerospaceFormat.setParserClass(AerospaceParser.class.getName());
 
-   public void stop(BundleContext context) throws Exception {
-       log.info("Stopping Aerospace Import plugin");
-       Service service = ServiceProxyFactory.getServiceProxy();
+			service.getImportService().registerFormat(aerospaceFormat, AerospaceParser.class);
+		}
+	}
 
-       if (service.getSystemService().isSystemReady()
-               || service.getSystemService().isLoadingPluginsReady()) {
-           //unregister parsers
-           service.getImportService().unregisterFormat(AerospaceParser.class.getName());
-       }
-   }
+	@Override
+	public void stop(BundleContext context) throws Exception
+	{
+		LOG.info("Stopping Aerospace Import plugin");
+		Service service = ServiceProxyFactory.getServiceProxy();
+
+		if (service.getSystemService().isSystemReady()
+				|| service.getSystemService().isLoadingPluginsReady()) {
+			//unregister parsers
+			service.getImportService().unregisterFormat(AerospaceParser.class.getName());
+		}
+	}
 
 }
