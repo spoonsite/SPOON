@@ -76,6 +76,7 @@
 				var ticketGridStore = Ext.create('Ext.data.Store', {
 					pageSize: 100,
 					autoLoad: true,
+					remoteSort: true,
 					fields: [
 						{
 							name: 'createDts',
@@ -100,7 +101,7 @@
 							type: 'json',
 							rootProperty: 'data',
 							totalProperty: 'totalNumber'
-						}							
+						}			
 					}),
 					listeners: {
 						beforeLoad: function(store, operation, eOpts){
@@ -276,6 +277,7 @@
 						},
 						{
 							xtype: 'pagingtoolbar',
+							id: 'pagingControl',
 							dock: 'bottom',
 							store: ticketGridStore,
 							displayInfo: true
