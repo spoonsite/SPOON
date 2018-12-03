@@ -33,23 +33,24 @@ public class AerospaceParser
 
     @Override
     public String checkFormat(String mimeType, InputStream input) {
-        if (mimeType.contains("zip")) {
+        if (mimeType.contains("txt")) {
             return "";
         } else {
-            return "Invalid format. Please upload a ZIP file.";
+            return "Invalid format. Please upload a TXT file.";
         }
     }
 
     @Override
     protected GenericReader getReader(InputStream in) {
         //return a product
-        return new XMLMapReader(in);
+//          return new XMLMapReader(in);
+        return new SimpleReader(in);
     }
 
     @Override
     @SuppressWarnings("deprecation")
     protected <T> Object parseRecord(T record) {
-
+//      PROCEED NO FURTHER, YOU HAVE BEEN WARNED!!!!
         Product product = (Product) record;
 
         ComponentAll componentAll = defaultComponentAll();
