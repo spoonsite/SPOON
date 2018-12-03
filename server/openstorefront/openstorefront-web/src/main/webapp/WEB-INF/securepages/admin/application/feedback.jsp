@@ -277,7 +277,6 @@
 						},
 						{
 							xtype: 'pagingtoolbar',
-							id: 'pagingControl',
 							dock: 'bottom',
 							store: ticketGridStore,
 							displayInfo: true
