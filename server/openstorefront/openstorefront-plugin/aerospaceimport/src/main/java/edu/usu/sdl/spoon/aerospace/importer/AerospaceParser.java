@@ -33,7 +33,7 @@ public class AerospaceParser
 
     @Override
     public String checkFormat(String mimeType, InputStream input) {
-        if (mimeType.contains("txt")) {
+        if (mimeType.contains("text")) {
             return "";
         } else {
             return "Invalid format. Please upload a TXT file.";
@@ -44,7 +44,7 @@ public class AerospaceParser
     protected GenericReader getReader(InputStream in) {
         //return a product
 //          return new XMLMapReader(in);
-        return new SimpleReader(in);
+        return new CopyReader(in);
     }
 
     @Override
