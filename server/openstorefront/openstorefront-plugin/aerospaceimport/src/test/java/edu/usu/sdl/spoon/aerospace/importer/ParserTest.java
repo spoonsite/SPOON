@@ -103,6 +103,7 @@ public class ParserTest {
     }
     
     @Test
+    @Ignore
     public void testGetComponentTypeMap() throws IOException {
         AerospaceXMLParser parser = new AerospaceXMLParser();
         Map<String, String> map = parser.getComponentTypeMap();
@@ -112,6 +113,7 @@ public class ParserTest {
     }
     
     @Test
+    @Ignore
     public void testGetComponentType() {
         //--- ARRANGE ---
         AerospaceXMLParser parser = new AerospaceXMLParser();

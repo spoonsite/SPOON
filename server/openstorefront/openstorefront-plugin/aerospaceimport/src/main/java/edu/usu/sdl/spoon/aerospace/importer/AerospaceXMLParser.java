@@ -15,8 +15,8 @@
  */
 package edu.usu.sdl.spoon.aerospace.importer;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.spoon.aerospace.importer.model.Classification;
 import edu.usu.sdl.spoon.aerospace.importer.model.Product;
@@ -26,10 +26,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -40,14 +40,14 @@ import org.simpleframework.xml.core.Persister;
  */
 public class AerospaceXMLParser {
     
-    private static final Logger log = Logger.getLogger(Activator.class.getName());
+    private static final Logger LOG = Logger.getLogger(Activator.class.getName());
     private Map<String, String> componentTypeMap;
     
     AerospaceXMLParser() {
         try {
             componentTypeMap = getComponentTypeMap();
         } catch (Exception e) {
-            log.severe("Unable to initialize component type map from CSV: " + e.toString());
+            LOG.log(Level.SEVERE, "Unable to initialize component type map from CSV: {0}", e.toString());
         }
     }
 
@@ -61,16 +61,11 @@ public class AerospaceXMLParser {
      */
     public Map<String, String> getComponentTypeMap() throws FileNotFoundException, IOException {
         Map<String, String> componentTypeMap = new HashMap<>();
+        
+        Service service = ServiceProxyFactory.getServiceProxy();
 
         Reader in = new FileReader(this.getClass().getResource("/componentTypeMapping.csv").getFile());
-        CSVReader reader = new CSVReader(in);
-        
-        String[] record;
-        while ((record = reader.readNext()) != null) {
-            componentTypeMap.put(record[0], record[1]);
-        }
-
-        return componentTypeMap;
+        return service.getImportService().getComponentTypeMapFromCSV(in);
     }
 
     /**
@@ -85,7 +80,7 @@ public class AerospaceXMLParser {
         try(InputStream xmlin = in) {
             services = serializer.read(Services.class, xmlin);
         } catch (Exception e) {
-            System.out.println("Unable to serialize: \n" + e.getMessage());// USER THE LOGGER 
+            LOG.log(Level.SEVERE, "Unable to serialize: {0}", e.getMessage());// USER THE LOGGER 
         }
 
         return services;
@@ -116,9 +111,4 @@ public class AerospaceXMLParser {
         return result;
     }
 
-    public List<ComponentAttribute> getComponentAttributes(Product product) {
-        List<ComponentAttribute> result = new ArrayList();
-
-        return result;
-    }
 }

@@ -16,6 +16,8 @@
 package edu.usu.sdl.spoon.aerospace.importer;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
@@ -32,6 +34,11 @@ public class AerospaceComponentParser
 
     public static final String FORMAT_CODE = "AEROSPACECMP";
     private AerospaceReader reader;
+    private AerospaceXMLParser parser;
+
+    public AerospaceComponentParser() {
+        this.parser = new AerospaceXMLParser();
+    }
 
     @Override
     public String checkFormat(String mimeType, InputStream input) {
@@ -62,8 +69,10 @@ public class AerospaceComponentParser
         // From here build a compall from product
 
         ComponentAll componentAll = defaultComponentAll();
-        
-        // make sure to approve
+        Component component = componentAll.getComponent();
+        component.setActiveStatus(ApprovalStatus.APPROVED); 
+        component.setComponentType(parser.getComponentType(product));
+
 
         return componentAll;
     }
