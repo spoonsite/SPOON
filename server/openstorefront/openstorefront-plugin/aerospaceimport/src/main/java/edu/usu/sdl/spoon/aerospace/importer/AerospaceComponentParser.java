@@ -15,36 +15,42 @@
  */
 package edu.usu.sdl.spoon.aerospace.importer;
 
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
-import edu.usu.sdl.openstorefront.core.spi.parser.reader.XMLMapReader;
 import edu.usu.sdl.spoon.aerospace.importer.model.Product;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
  *
  * @author rfrazier
  */
-public class AerospaceParser
+public class AerospaceComponentParser
         extends BaseComponentParser {
 
     public static final String FORMAT_CODE = "AEROSPACECMP";
+    private AerospaceReader reader;
 
     @Override
     public String checkFormat(String mimeType, InputStream input) {
-        if (mimeType.contains("txt")) {
+        if (mimeType.contains("zip")) {
             return "";
         } else {
-            return "Invalid format. Please upload a TXT file.";
+            return "Invalid format. Please upload a ZIP file.";
         }
     }
 
     @Override
     protected GenericReader getReader(InputStream in) {
-        //return a product
-//          return new XMLMapReader(in);
-        return new SimpleReader(in);
+        try {
+            //return a product
+            reader = new AerospaceReader(in, fileHistoryAll);
+            return reader;
+        } catch (IOException ex) {
+            throw new OpenStorefrontRuntimeException("Could not read file", "check file format, should be zip or permission", ex);
+        }
     }
 
     @Override
@@ -52,8 +58,12 @@ public class AerospaceParser
     protected <T> Object parseRecord(T record) {
 //      PROCEED NO FURTHER, YOU HAVE BEEN WARNED!!!!
         Product product = (Product) record;
+        
+        // From here build a compall from product
 
         ComponentAll componentAll = defaultComponentAll();
+        
+        // make sure to approve
 
         return componentAll;
     }

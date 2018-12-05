@@ -113,6 +113,7 @@ public class OsgiManager
 				+ "edu.usu.sdl.openstorefront.common.manager; version=" + moduleVersion + ", "
 				+ "edu.usu.sdl.openstorefront.validation; version=" + moduleVersion + ", "
 				+ "org.simpleframework.xml; version=2.7.1, "
+				+ "org.simpleframework.xml.core; version=2.7.1, "
 				+ "edu.usu.sdl.openstorefront.security; version=" + moduleVersion
 		);
 		try {

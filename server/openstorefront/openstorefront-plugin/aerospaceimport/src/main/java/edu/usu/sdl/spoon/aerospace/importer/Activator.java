@@ -24,13 +24,13 @@ public class Activator
 		if (service.getSystemService().isSystemReady()
 				|| service.getSystemService().isLoadingPluginsReady()) {
 			FileFormat aerospaceFormat = new FileFormat();
-			aerospaceFormat.setCode(AerospaceParser.FORMAT_CODE);
+			aerospaceFormat.setCode(AerospaceComponentParser.FORMAT_CODE);
 			aerospaceFormat.setFileType(FileType.COMPONENT);
 			aerospaceFormat.setDescription("Aerospace Import (ZIP)");
 			aerospaceFormat.setSupportsDataMap(true);
-			aerospaceFormat.setParserClass(AerospaceParser.class.getName());
+			aerospaceFormat.setParserClass(AerospaceComponentParser.class.getName());
 
-			service.getImportService().registerFormat(aerospaceFormat, AerospaceParser.class);
+			service.getImportService().registerFormat(aerospaceFormat, AerospaceComponentParser.class);
 		}
 	}
 
@@ -43,7 +43,7 @@ public class Activator
 		if (service.getSystemService().isSystemReady()
 				|| service.getSystemService().isLoadingPluginsReady()) {
 			//unregister parsers
-			service.getImportService().unregisterFormat(AerospaceParser.class.getName());
+			service.getImportService().unregisterFormat(AerospaceComponentParser.class.getName());
 		}
 	}
 

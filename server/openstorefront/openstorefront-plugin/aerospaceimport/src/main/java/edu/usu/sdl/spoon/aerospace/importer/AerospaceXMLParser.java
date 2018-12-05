@@ -38,16 +38,12 @@ import org.simpleframework.xml.core.Persister;
  *
  * @author rfrazier
  */
-public class Parser {
-    // map aerospace attributes to our attributes
-    //     get this from the admin UI
-    // map product type to component type
-    //     programmer defined mappings
+public class AerospaceXMLParser {
     
     private static final Logger log = Logger.getLogger(Activator.class.getName());
     private Map<String, String> componentTypeMap;
     
-    Parser() {
+    AerospaceXMLParser() {
         try {
             componentTypeMap = getComponentTypeMap();
         } catch (Exception e) {
@@ -86,10 +82,10 @@ public class Parser {
         Serializer serializer = new Persister();
         Services services = null;
 
-        try {
-            services = serializer.read(Services.class, in);
+        try(InputStream xmlin = in) {
+            services = serializer.read(Services.class, xmlin);
         } catch (Exception e) {
-            System.out.println("Unable to serialize: \n" + e.getMessage());
+            System.out.println("Unable to serialize: \n" + e.getMessage());// USER THE LOGGER 
         }
 
         return services;

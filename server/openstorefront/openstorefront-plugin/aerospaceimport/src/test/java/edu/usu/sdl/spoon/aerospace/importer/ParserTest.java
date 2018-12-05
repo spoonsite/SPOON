@@ -21,7 +21,6 @@ import edu.usu.sdl.spoon.aerospace.importer.model.Product;
 import edu.usu.sdl.spoon.aerospace.importer.model.Services;
 import edu.usu.sdl.spoon.aerospace.importer.model.Shape;
 import edu.usu.sdl.spoon.aerospace.importer.model.Specs;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -57,7 +55,7 @@ public class ParserTest {
     @Test
     public void testParseXML() {
         //--- ARRANGE ---
-        Parser parser = new Parser();
+        AerospaceXMLParser parser = new AerospaceXMLParser();
 
         //--- ACT ---
         Services services = parser.parseXML(this.xmlFileStream);
@@ -91,7 +89,7 @@ public class ParserTest {
     @Ignore
     public void testProductToComponentAll() {
         //--- ARRANGE ---
-        Parser parser = new Parser();
+        AerospaceXMLParser parser = new AerospaceXMLParser();
         Services services = parser.parseXML(this.xmlFileStream);
         List<Product> products = services.getProducts();
         Product product = products.get(0);
@@ -106,7 +104,7 @@ public class ParserTest {
     
     @Test
     public void testGetComponentTypeMap() throws IOException {
-        Parser parser = new Parser();
+        AerospaceXMLParser parser = new AerospaceXMLParser();
         Map<String, String> map = parser.getComponentTypeMap();
         
         String result = map.get("Electrical Power Subsystem (EPS)");
@@ -116,7 +114,7 @@ public class ParserTest {
     @Test
     public void testGetComponentType() {
         //--- ARRANGE ---
-        Parser parser = new Parser();
+        AerospaceXMLParser parser = new AerospaceXMLParser();
         Services services = parser.parseXML(this.xmlFileStream);
         List<Product> products = services.getProducts();
         Product product = products.get(0);

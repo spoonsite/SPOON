@@ -47,42 +47,43 @@
 
     <build>
         <plugins>	
-            <!--		
-    <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>3.2.1</version>
-            <configuration>	
-            -->			
-            <!--
-            <transformers>
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <manifestEntries>
-                                    <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                                    <Bundle-Version>${project.version}</Bundle-Version>
-                                    <Bundle-ManifestVersion>2</Bundle-ManifestVersion>								
-                                    <Bundle-Activator>edu.usu.sdl.spoon.aerospace.importer.Activator</Bundle-Activator>
-                                    <Export-Package>
-                                            edu.usu.sdl.spoon.aerospace.importer;version="${project.version}";uses:="org.osgi.framework"
-                                    </Export-Package>
-                                    <Import-Package>*</Import-Package>
-                                    <Private-Package>edu.usu.sdl.spoon.aerospace.importer.*</Private-Package>
-                            </manifestEntries>
-                    </transformer>
-            </transformers>	
-            -->	
-            <!--				
-                    </configuration>
-                    <executions>
-                            <execution>
-                                    <phase>pre-integration-test</phase>
-                                    <goals>
-                                            <goal>shade</goal>
-                                    </goals>
-                            </execution>
-                    </executions>
-            </plugin>
-            -->			
+	
+<!--							
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>	
+	-->						
+					
+<!--					<transformers>
+						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+							<manifestEntries>
+								<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+								<Bundle-Version>${project.version}</Bundle-Version>
+								<Bundle-ManifestVersion>2</Bundle-ManifestVersion>								
+								<Bundle-Activator>edu.usu.sdl.spoon.aerospace.importer.Activator</Bundle-Activator>
+								<Export-Package>
+									edu.usu.sdl.spoon.aerospace.importer;version="${project.version}";uses:="org.osgi.framework"
+								</Export-Package>
+								<Import-Package>*</Import-Package>
+								<Private-Package>edu.usu.sdl.spoon.aerospace.importer.*</Private-Package>
+							</manifestEntries>
+						</transformer>
+					</transformers>	
+						-->
+<!--							
+				</configuration>
+				<executions>
+					<execution>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+-->						
 			
             <plugin>
                 <groupId>org.apache.felix</groupId>
