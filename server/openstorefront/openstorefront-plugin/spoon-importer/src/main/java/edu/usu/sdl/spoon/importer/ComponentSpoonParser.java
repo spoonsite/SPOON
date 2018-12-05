@@ -76,7 +76,7 @@ public class ComponentSpoonParser
 			try {
 				output = service.getSystemService().toJson(componentAlls.get(0));
 			} catch (Exception ex) {
-				output = "Unable preview attributes.  <br>Trace:<br>" + StringProcessor.parseStackTraceHtml(ex);
+				output = "Unable preview entry.  <br>Trace:<br>" + StringProcessor.parseStackTraceHtml(ex);
 			}
 		}
 		return output;

@@ -15,15 +15,24 @@
  */
 package edu.usu.sdl.spoon.aerospace.importer;
 
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.spoon.aerospace.importer.model.FloatFeature;
 import edu.usu.sdl.spoon.aerospace.importer.model.Product;
 import edu.usu.sdl.spoon.aerospace.importer.model.Services;
 import edu.usu.sdl.spoon.aerospace.importer.model.Shape;
 import edu.usu.sdl.spoon.aerospace.importer.model.Specs;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -31,75 +40,27 @@ import org.junit.Test;
  * @author rfrazier
  */
 public class ParserTest {
+    
+    public InputStream xmlFileStream;
+    
+    /**
+     * 
+     * @throws FileNotFoundException if the test XML cannot be found
+     */
+    @Before
+    public void setup() throws FileNotFoundException {
+        File xmlFile = new File(this.getClass().getResource("/AerospaceTest.xml").getFile());
+        
+        this.xmlFileStream = new FileInputStream(xmlFile);
+    }
 
     @Test
     public void testParseXML() {
         //--- ARRANGE ---
-
-        //  Test XML generated with Python script
-        //  with open("AerospaceTest.xml", 'r') as fin:
-        //     for line in fin:
-        //         print('+ "' + line.strip('\n\r').replace('"','\\"') + '"')
-        String testString
-                = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                + "<services>"
-                + "    <product>"
-                + "        <key>525</key>"
-                + "        <short_name>1.5U CubeSat EPS v10</short_name>"
-                + "        <long_name>1.5U CubeSat EPS 10 Whr Integrated Battery</long_name>"
-                + "        <product_source>Unknown</product_source>"
-                + "        <model_number>CS-1U5EPS2-10</model_number>"
-                + "        <description>"
-                + "            High Efficiency Solar Array Interface "
-                + "        </description>"
-                + "        <product_revision>"
-                + "            <from_date>2014-04-14</from_date>"
-                + "            <thru_date></thru_date>"
-                + "            <specs>"
-                + "                <float_feature>"
-                + "                    <name>Battery Power Capacity</name>"
-                + "                    <description>Battery power capacity (W-hr)</description>"
-                + "                    <value_description></value_description>"
-                + "                    <type>function</type>"
-                + "                    <data_type>float</data_type>"
-                + "                    <value>10.0</value>"
-                + "                    <unit>Watt-hour</unit>"
-                + "                    <unit_abbr>W-hr</unit_abbr>"
-                + "                </float_feature>"
-                + "            </specs>"
-                + "            <shape>"
-                + "                <float_feature>"
-                + "                    <name>Mass</name>"
-                + "                    <description>Product mass</description>"
-                + "                    <value_description></value_description>"
-                + "                    <type>form</type>"
-                + "                    <data_type>float</data_type>"
-                + "                    <value>0.165</value>"
-                + "                    <unit>Kilogram</unit>"
-                + "                    <unit_abbr>kg</unit_abbr>"
-                + "                </float_feature>"
-                + "            </shape>"
-                + "            <product_type>"
-                + "                <classification>"
-                + "                    <category_name>Subsystem</category_name>"
-                + "                </classification>"
-                + "            </product_type>"
-                + "            <product_family>"
-                + "                <classification>"
-                + "                    <category_name>Electrical Power Subsystem (EPS)</category_name>"
-                + "                </classification>"
-                + "            </product_family>"
-                + "        </product_revision>"
-                + "        <organizations></organizations>"
-                + "    </product>"
-                + "</services>";
-
-        byte[] data = testString.getBytes();
-        InputStream input = new ByteArrayInputStream(data);
         Parser parser = new Parser();
 
         //--- ACT ---
-        Services services = parser.parseXML(input);
+        Services services = parser.parseXML(this.xmlFileStream);
         List<Product> products = services.getProducts();
         Product product = products.get(0);
 
@@ -109,12 +70,63 @@ public class ParserTest {
         Shape productRevisionShape = product.getProductRevision().getShape();
         FloatFeature floatFeature2 = productRevisionShape.getFloatFeatures().get(0);
 
+//        String componentType
+//                = product.getProductRevision()
+//                        .getProductFamily()
+//                        .getClassification()
+//                        .get(0)
+//                        .getCategoryName();
+
         //--- ASSERT ---
         assertEquals(product.getKey(), 525);
-        assertEquals(product.getShortName(), "1.5U CubeSat EPS v10");
+        assertEquals(product.getShortName(), "CubeSat");
         assertEquals(product.getProductSource(), "Unknown");
         assertEquals(floatFeature.getValue(), (Double) 10.0);
         assertEquals(floatFeature2.getValue(), (Double) 0.165);
     }
 
+    // productToComponentAll not yet implemented
+    // should fail
+    @Test
+    @Ignore
+    public void testProductToComponentAll() {
+        //--- ARRANGE ---
+        Parser parser = new Parser();
+        Services services = parser.parseXML(this.xmlFileStream);
+        List<Product> products = services.getProducts();
+        Product product = products.get(0);
+
+        //--- ACT ---
+        ComponentAll componentAll = parser.productToComponentAll(product);
+
+        //--- ASSERT ---
+        assertEquals(componentAll.getComponent().getDescription(), "High Efficiency Solar Array Interface");
+        // assertEquals(componentAll.getComponent().getComponentType(), data);
+    }
+    
+    @Test
+    public void testGetComponentTypeMap() throws IOException {
+        Parser parser = new Parser();
+        Map<String, String> map = parser.getComponentTypeMap();
+        
+        String result = map.get("Electrical Power Subsystem (EPS)");
+        assertEquals(result, "POW-DIST");
+    }
+    
+    @Test
+    public void testGetComponentType() {
+        //--- ARRANGE ---
+        Parser parser = new Parser();
+        Services services = parser.parseXML(this.xmlFileStream);
+        List<Product> products = services.getProducts();
+        Product product = products.get(0);
+
+        //--- ACT ---
+        String componentType = parser.getComponentType(product);
+
+
+        //--- ASSERT ---
+        assertEquals(componentType, "POW-DIST" );
+    }
+    
 }

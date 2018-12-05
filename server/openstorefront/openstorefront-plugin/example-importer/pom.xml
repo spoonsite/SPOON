@@ -8,11 +8,11 @@
   </parent>
 
     <groupId>edu.usu.sdl</groupId>
-    <artifactId>spoon-importer</artifactId>
+    <artifactId>example-importer</artifactId>
     <version>2.7</version>
     <packaging>bundle</packaging>
 
-    <name>openstorefront-plugin-spoon-importer</name>
+    <name>openstorefront-plugin-example-importer</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,19 +20,20 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-	<dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
 		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>6.0.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>edu.usu.sdl</groupId>
 			<artifactId>openstorefront-core-api</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
+			<scope>provided</scope>
+		</dependency>		
+    </dependencies>
 
     <build>
         <plugins>
@@ -43,8 +44,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-Activator>edu.usu.sdl.spoon.importer.Activator</Bundle-Activator>					
-                    </instructions>				
+                        <Bundle-Activator>edu.usu.sdl.example.importer.Activator</Bundle-Activator>
+                        <Export-Package />
+                    </instructions>
                 </configuration>
             </plugin>
         </plugins>
