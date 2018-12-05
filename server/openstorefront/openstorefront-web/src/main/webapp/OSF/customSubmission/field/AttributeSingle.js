@@ -125,8 +125,8 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 							attributeTypeView.codes.push({
 								code: null,
 								label: "Select"
-							})
-						};
+							});
+						}
 						displayItems.push({
 							xtype: 'AttributeCodeSelect',
 							name: 'attributeCode',
