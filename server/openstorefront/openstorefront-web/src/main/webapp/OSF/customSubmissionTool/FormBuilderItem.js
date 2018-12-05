@@ -357,14 +357,25 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						],
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/attributes'
-						}				
+							url: 'api/v1/resource/attributes',
+						},
+						listeners:{
+							load: function() {
+								this.data.items.forEach(item => {
+									item.data.codes.push({
+										activeStatus: 'A',
+										code: null,
+										label: 'Select'
+									});
+								});
+							}
+						}
 					}
 				},
 				{
 					xtype: 'combo',
 					hidden: true,
-					optionField: true,			
+					optionField: true,
 					fieldLabel: 'Attribute Code',
 					itemId: 'attributeCode',
 					name: 'attributeCode',
@@ -374,11 +385,11 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					queryMode: 'local',
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
-							var formBuilderItem = this.up().up('panel');	
-							formBuilderItem.syncTemplateField(false);					
+							var formBuilderItem = this.up().up('panel');
+							formBuilderItem.syncTemplateField(false);
 						}
 					},
-					store: {				
+					store: {
 					}
 				},
 				{

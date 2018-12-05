@@ -121,6 +121,13 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 					url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '?view=true',
 					success: function(response, opts) {
 						var attributeTypeView = Ext.decode(response.responseText);
+						if (attributeTypeView.codes) {
+							attributeTypeView.codes.push({
+								activeStatus: "A",
+								code: null,
+								label: "Select"
+							})
+						}
 						displayItems.push({
 							xtype: 'AttributeCodeSelect',
 							name: 'attributeCode',
