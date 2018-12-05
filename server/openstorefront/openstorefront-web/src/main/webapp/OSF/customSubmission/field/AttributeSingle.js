@@ -123,11 +123,10 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 						var attributeTypeView = Ext.decode(response.responseText);
 						if (attributeTypeView.codes) {
 							attributeTypeView.codes.push({
-								activeStatus: "A",
 								code: null,
 								label: "Select"
 							})
-						}
+						};
 						displayItems.push({
 							xtype: 'AttributeCodeSelect',
 							name: 'attributeCode',

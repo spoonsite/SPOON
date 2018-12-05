@@ -357,13 +357,12 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						],
 						proxy: {
 							type: 'ajax',
-							url: 'api/v1/resource/attributes',
+							url: 'api/v1/resource/attributes'
 						},
 						listeners:{
 							load: function() {
 								this.data.items.forEach(item => {
 									item.data.codes.push({
-										activeStatus: 'A',
 										code: null,
 										label: 'Select'
 									});
