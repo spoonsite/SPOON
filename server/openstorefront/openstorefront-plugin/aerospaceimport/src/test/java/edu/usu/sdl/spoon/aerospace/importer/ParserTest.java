@@ -96,7 +96,7 @@ public class ParserTest {
 
         byte[] data = testString.getBytes();
         InputStream input = new ByteArrayInputStream(data);
-        Parser parser = new Parser();
+        AerospaceXMLParser parser = new AerospaceXMLParser();
 
         //--- ACT ---
         Services services = parser.parseXML(input);

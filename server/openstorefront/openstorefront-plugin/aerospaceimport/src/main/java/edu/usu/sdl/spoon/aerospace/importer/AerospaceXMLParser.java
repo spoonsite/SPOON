@@ -26,7 +26,7 @@ import org.simpleframework.xml.core.Persister;
  *
  * @author rfrazier
  */
-public class Parser {
+public class AerospaceXMLParser {
     
     /**
      * 
@@ -37,10 +37,10 @@ public class Parser {
         Serializer serializer = new Persister();
         Services services = null;
 
-        try {
-            services = serializer.read(Services.class, in);
+        try(InputStream xmlin = in) {
+            services = serializer.read(Services.class, xmlin);
         } catch (Exception e) {
-            System.out.println("Unable to serialize: \n" + e.getMessage());
+            System.out.println("Unable to serialize: \n" + e.getMessage());// USER THE LOGGER 
         }
 
         return services;
