@@ -24,10 +24,8 @@ import edu.usu.sdl.spoon.aerospace.importer.model.Specs;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -38,17 +36,17 @@ import org.junit.Test;
  * @author rfrazier
  */
 public class ParserTest {
-    
+
     public InputStream xmlFileStream;
-    
+
     /**
-     * 
+     *
      * @throws FileNotFoundException if the test XML cannot be found
      */
     @Before
     public void setup() throws FileNotFoundException {
         File xmlFile = new File(this.getClass().getResource("/AerospaceTest.xml").getFile());
-        
+
         this.xmlFileStream = new FileInputStream(xmlFile);
     }
 
@@ -74,7 +72,6 @@ public class ParserTest {
 //                        .getClassification()
 //                        .get(0)
 //                        .getCategoryName();
-
         //--- ASSERT ---
         assertEquals(product.getKey(), 525);
         assertEquals(product.getShortName(), "CubeSat");
@@ -101,32 +98,5 @@ public class ParserTest {
         assertEquals(componentAll.getComponent().getDescription(), "High Efficiency Solar Array Interface");
         // assertEquals(componentAll.getComponent().getComponentType(), data);
     }
-    
-    @Test
-    @Ignore
-    public void testGetComponentTypeMap() throws IOException {
-        AerospaceXMLParser parser = new AerospaceXMLParser();
-        Map<String, String> map = parser.getComponentTypeMap();
-        
-        String result = map.get("Electrical Power Subsystem (EPS)");
-        assertEquals(result, "POW-DIST");
-    }
-    
-    @Test
-    @Ignore
-    public void testGetComponentType() {
-        //--- ARRANGE ---
-        AerospaceXMLParser parser = new AerospaceXMLParser();
-        Services services = parser.parseXML(this.xmlFileStream);
-        List<Product> products = services.getProducts();
-        Product product = products.get(0);
 
-        //--- ACT ---
-        String componentType = parser.getComponentType(product);
-
-
-        //--- ASSERT ---
-        assertEquals(componentType, "POW-DIST" );
-    }
-    
 }
