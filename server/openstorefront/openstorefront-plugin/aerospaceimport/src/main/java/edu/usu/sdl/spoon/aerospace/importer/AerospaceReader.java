@@ -23,6 +23,7 @@ import edu.usu.sdl.spoon.aerospace.importer.model.Services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,6 +38,7 @@ import java.util.zip.ZipFile;
 public class AerospaceReader 
         extends GenericReader<Product>
 {
+    private static final Logger LOG = Logger.getLogger(AerospaceReader.class.getName());
     public static final String XMLFILE = "recordsList.xml";
     private ZipFile zipFile;
     private List<Product> productList = new ArrayList<>();
@@ -75,6 +77,40 @@ public class AerospaceReader
     {
         super.close();
         zipFile.close();
+    }
+    
+    public InputStream getZipFileEntry(String entryName) {
+        InputStream in = null;
+        ZipEntry zipEntry = zipFile.getEntry(entryName);
+        
+        if(zipEntry == null) {
+            zipEntry = getFileFromWebKey(entryName);
+        }
+        
+        if(zipEntry != null) {
+            try {
+                in = zipFile.getInputStream(zipEntry);
+            } catch (IOException ex) {
+                LOG.log(Level.WARNING, "cannot read file for ZipEntry; " + entryName, ex);
+            }
+        }
+        
+        return in;
+    }
+    
+    public ZipEntry getFileFromWebKey(String key) {
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        ZipEntry found = null;
+        while(entries.hasMoreElements()) {
+            ZipEntry zipEntry = entries.nextElement();
+            if(zipEntry.getName().startsWith(key)) {
+                found = zipEntry;
+                break;
+            }
+        }
+        
+        return found;
+        
     }
    
     

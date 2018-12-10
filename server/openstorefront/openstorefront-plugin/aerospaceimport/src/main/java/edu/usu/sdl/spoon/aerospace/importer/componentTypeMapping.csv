@@ -1,0 +1,49 @@
+Antenna,COM-ANTAP
+Antenna Element,COM-ANTAP
+Battery,POW-STORE
+Battery Cell,POW-STORE
+Board/Card,CDH-TURNKEY
+Command and Data Handling (C&DH),CNDHE
+Communications: Receiver,COM-RECV
+Communications: Transceiver,COM-TRANC
+Communications: Transmitter,COM-TRAN
+Control Moment Gyroscope (CMG),COM-TRANC
+DC-DC Converter,POW-REG
+Data Recorder,CNDHE
+De-orbit Module,DEORBIT
+Earth Horizon Sensor,GNC-DETSEN
+Electrical Power Subsystem (EPS),POW-DIST
+Electromagnet,STRUCT
+Emitter/Beacon,COM-TRAN
+Encryption/Decryption Device,COM-ENCRYPT
+GPS/GNSS Receiver,GNC-PTS
+Gimbal,GNC-CONACT
+"Guidance, Navigation, and Control (GN&C)",ADACS
+IR-Imager,CDH-FLIPROC
+Inertial Measurement Unit (IMU),GNC-DETSEN
+Integrated Circuit,CNDHE
+Magnetometer,GNC-DETSEN
+Network Device,CNDHE
+Oscillator,POW-REG
+Processor,CDH-FLIPROC
+Propulsion Subsystem,PROP-TURNKEY
+Reaction Wheel,GNC-TURNKEY
+Receiver,COM-RECV
+Small Satellite Kit,SPACEPLAT
+Software,ADD NEW
+Solar Array,POW-GEN
+Solar Cell,POW-GEN
+Star Tracker,GNC-PTS
+Structure,SMM-FRAMES
+Structures and Mechanisms (S&M),STRUCT
+Sun Sensor,GNC-DETSEN
+"Telemetry, Tracking and Command (TT&C)",GDSMO-DISH
+Telescope,MISSIO
+Thermal Control Subsystem (TCS),THERMA
+Thruster,PROP-THRUST
+Torque Rod,SMM-MECHANISMS
+Transceiver,COM-TRANC
+Antenna,COM-ANTAP
+Antenna Element,COM-ANTAP
+Battery,POW-STORE
+Battery Cell,POW-STORE

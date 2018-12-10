@@ -64,7 +64,7 @@ public class AerospaceXMLParser {
         
         Service service = ServiceProxyFactory.getServiceProxy();
 
-        Reader in = new FileReader(this.getClass().getResource("/componentTypeMapping.csv").getFile());
+        Reader in = new FileReader(AerospaceXMLParser.class.getResource("/componentTypeMapping.csv").getFile());
         // the service exposes the OpenCSV parsing
         return service.getImportService().getComponentTypeMapFromCSV(in);
     }

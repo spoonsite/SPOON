@@ -77,7 +77,7 @@ public class ExampleComponentImporter
 
 		componentAll.getAttributes().add(attribute);
 
-		componentMapper.applyAttributeMapping(componentAll);
+		componentMapper.applyAttributeMapping(componentAll, null);
 
 		//Map fields into componentAll
 		//

@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.entity.FileDataMapField;
 import edu.usu.sdl.openstorefront.core.model.DataMapModel;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
@@ -85,8 +87,8 @@ public abstract class BaseMapper<T>
 	public abstract List<T> multiMapData(MapModel input);
 
 	public abstract T singleMapData(MapModel input);
-
-	protected AttributeType createAttributeType(String attributeTypeCode)
+	
+	protected AttributeType createAttributeType(String attributeTypeCode, AttributeContext attributeContext)
 	{
 		AttributeType attributeType = new AttributeType();
 
@@ -104,6 +106,20 @@ public abstract class BaseMapper<T>
 		attributeType.setAllowUserGeneratedCodes(Boolean.FALSE);
 		attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());
 		attributeType.setUpdateUser(fileHistoryAll.getFileHistory().getCreateUser());
+		
+		if(attributeContext != null) {
+			attributeType.setDetailedDescription(attributeContext.getAttributeDescription());
+			attributeType.setAttributeValueType(attributeContext.getAttributeValueType());
+			if(StringUtils.isNotBlank(attributeContext.getComponentType())) {
+				List<ComponentTypeRestriction> optionalAttributes = new ArrayList<>();
+				ComponentTypeRestriction componentTypeRestriction = new ComponentTypeRestriction();
+				componentTypeRestriction.setComponentType(attributeContext.getComponentType());
+				optionalAttributes.add(componentTypeRestriction);
+				attributeType.setOptionalRestrictions(optionalAttributes);
+			}
+		} else {
+			attributeType.setAttributeType(AttributeValueType.TEXT);
+		}
 
 		serviceProxy.getAttributeService().saveAttributeType(attributeType);
 		return attributeType;

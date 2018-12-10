@@ -15,15 +15,40 @@
  */
 package edu.usu.sdl.spoon.aerospace.importer;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.ComponentMapper;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.spi.parser.mapper.AttributeContext;
+import edu.usu.sdl.spoon.aerospace.importer.model.BaseFeature;
+import edu.usu.sdl.spoon.aerospace.importer.model.FloatFeature;
+import edu.usu.sdl.spoon.aerospace.importer.model.IntFeature;
 import edu.usu.sdl.spoon.aerospace.importer.model.Product;
+import edu.usu.sdl.spoon.aerospace.importer.model.RelatedOrganization;
+import edu.usu.sdl.spoon.aerospace.importer.model.RevisionProvenanceDocument;
+import edu.usu.sdl.spoon.aerospace.importer.model.RevisionProvenanceWebsite;
+import edu.usu.sdl.spoon.aerospace.importer.model.TextFeature;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import org.simpleframework.xml.Attribute;
 
 /**
  *
@@ -32,7 +57,13 @@ import java.io.InputStream;
 public class AerospaceComponentParser
         extends BaseComponentParser {
 
+    private static final String UNKNOWN_ORGANIZATION = "Unknown";
+    private static final String MANUFACTURER_ORG = "Manufacturer";
     public static final String FORMAT_CODE = "AEROSPACECMP";
+    private static final String KEY_SPLITTER = "#";
+    
+    private List<String> resourceWebKeys = new ArrayList<String>();
+    private List<String> resourceDocKeys = new ArrayList<String>();
     private AerospaceReader reader;
     private AerospaceXMLParser parser;
 
@@ -63,23 +94,316 @@ public class AerospaceComponentParser
     @Override
     @SuppressWarnings("deprecation")
     protected <T> Object parseRecord(T record) {
-//      PROCEED NO FURTHER, YOU HAVE BEEN WARNED!!!!
-        Product product = (Product) record;
         
-        // From here build a compall from product
-
+        // Set up the product
+        Product product = (Product) record;
+        String descriptionMetaData;
+        
+        // Set up the ComponentMapper
+        ComponentMapper componentMapper = new ComponentMapper(() -> {
+            ComponentAll componentAll = defaultComponentAll();
+            componentAll.getComponent().setDescription(null);
+            return componentAll;
+        }, fileHistoryAll);
+        
+        // Set up a Default ComponentAll
         ComponentAll componentAll = defaultComponentAll();
+        // Shortcut to the component
         Component component = componentAll.getComponent();
-        component.setActiveStatus(ApprovalStatus.APPROVED); 
+        component.setActiveStatus(ApprovalStatus.APPROVED);
+        component.setExternalId(Integer.toString(product.getKey()));
+        component.setName(product.getShortName());
+        
+        descriptionMetaData = "<strong>Long Name: </strong>" + product.getLongName() + "<br>"
+                                + "<strong>Product Source: </strong>" + product.getProductSource() + "<br>"
+                                + "<strong>Model Number: </strong>" + product.getModelNumber()+ "<br>"
+                                + "<strong>Comment: </strong>" + product.getProductRevision().getComment() + "<br>"
+                                + "<strong>From Date: </strong>" + product.getProductRevision().getFromDate() + "<br>"
+                                + "<strong>Through Date: </strong>" + product.getProductRevision().getThruDate() + "<br>";
+        
         component.setComponentType(parser.getComponentType(product));
+        
+        if(product.getProductRevision().getProductType().getClassification().size() > 0) {
+            AttributeCode attributeCode = getAttributeCode("PRODCTTYPE", 
+                    "Product Type", 
+                    product.getProductRevision().getProductType().getClassification().get(0).getCategoryName(), 
+                    product.getProductRevision().getProductType().getClassification().get(0).getCategoryName(), 
+                    component.getComponentType());
+            ComponentAttribute ptattribute = new ComponentAttribute();
+            ComponentAttributePk ptattributePk = new ComponentAttributePk();
+            ptattributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+            ptattributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+            
+            ptattribute.setComponentAttributePk(ptattributePk);
+            componentAll.getAttributes().add(ptattribute);
+        }
+        
+        List<FloatFeature> floatList = new ArrayList<>();
+        List<IntFeature> intList = new ArrayList<>();
+        List<TextFeature> textList = new ArrayList<>();
+      
+        floatList.addAll(product.getProductRevision().getSpecs().getFloatFeatures());
+        floatList.addAll(product.getProductRevision().getShape().getFloatFeatures());
+        floatList.addAll(product.getProductRevision().getAdditional().getFloatFeatures());
+        intList.addAll(product.getProductRevision().getSpecs().getIntFeatures());
+        intList.addAll(product.getProductRevision().getShape().getIntFeatures());
+        intList.addAll(product.getProductRevision().getAdditional().getIntFeatures());
+        textList.addAll(product.getProductRevision().getSpecs().getTextFeatures());
+        textList.addAll(product.getProductRevision().getShape().getTextFeatures());
+        textList.addAll(product.getProductRevision().getAdditional().getTextFeatures());
+        
+        Map<String, AttributeContext> attributeContextMap = new HashMap<>();
+                
+        for(FloatFeature floatFeature : floatList) {
+            ComponentAttribute attribute = new ComponentAttribute();
+            ComponentAttributePk attributePk = new ComponentAttributePk();
+            attributePk.setAttributeType(floatFeature.getName() + "(" + floatFeature.getUnitAbbr() + ")");
+            attributePk.setAttributeCode(floatFeature.getValue().toString());
+            attribute.setComponentAttributePk(attributePk);
+            componentAll.getAttributes().add(attribute);
+            
+            AttributeContext attributeContext = new AttributeContext();
+            attributeContext.setComponentType(component.getComponentType());
+            attributeContext.setAttributeValueType(AttributeValueType.NUMBER);
+            attributeContext.setAttributeDescription("<strong>Name: </strong>" + floatFeature.getName() + "<br>" 
+                                                     + "<strong>Description: </strong>" + floatFeature.getDescription() + "<br>" 
+                                                     + "<strong>Value Description: </strong>" + floatFeature.getValueDescription() + "<br>"
+                                                     + "<strong>Value Type: </strong>" + floatFeature.getType() + "<br>"
+                                                     + "<strong>Unit: </strong>" + floatFeature.getUnit()+ "<br>");
+            attributeContextMap.put(floatFeature.getName(), attributeContext);
+        }
 
+        for(IntFeature intFeature : intList) {
+            ComponentAttribute attribute = new ComponentAttribute();
+            ComponentAttributePk attributePk = new ComponentAttributePk();
+            attributePk.setAttributeType(intFeature.getName() + "(" + intFeature.getUnitAbbr() + ")");
+            attributePk.setAttributeCode(intFeature.getValue().toString());
+            attribute.setComponentAttributePk(attributePk);
+            componentAll.getAttributes().add(attribute);
+            
+            AttributeContext attributeContext = new AttributeContext();
+            attributeContext.setComponentType(component.getComponentType());
+            attributeContext.setAttributeValueType(AttributeValueType.NUMBER);
+            attributeContext.setAttributeDescription("<strong>Name: </strong>" + intFeature.getName() + "<br>"
+                                                    + "<strong>Description: </strong>" + intFeature.getDescription() + "<br>"
+                                                    + "<strong>Value Description: </strong>" + intFeature.getValueDescription() + "<br>"
+                                                    + "<strong>Value Type: </strong>" + intFeature.getType() + "<br>"
+                                                    + "<strong>Unit: </strong>" + intFeature.getUnit() + "<br>");
+            attributeContextMap.put(intFeature.getName(), attributeContext);
+        }
+        
+        for(TextFeature textFeature : textList) {
+            ComponentAttribute attribute = new ComponentAttribute();
+            ComponentAttributePk attributePk = new ComponentAttributePk();
+            attributePk.setAttributeType(textFeature.getName());
+            attributePk.setAttributeCode(textFeature.getValue());
+            attribute.setComponentAttributePk(attributePk);
+            componentAll.getAttributes().add(attribute);
+            
+            AttributeContext attributeContext = new AttributeContext();
+            attributeContext.setComponentType(component.getComponentType());
+            attributeContext.setAttributeValueType(AttributeValueType.TEXT);
+            attributeContext.setAttributeDescription("<strong>Name: </strong>" + textFeature.getName() + "<br>"
+                                                    + "<strong>Description: </strong>" + textFeature.getDescription() + "<br>"
+                                                    + "<strong>Value Description: </strong>" + textFeature.getValueDescription() + "<br>"
+                                                    + "<strong>Value Type: </strong>" + textFeature.getType() + "<br>"
+                                                    + "<strong>Value: </strong>" + textFeature.getValue() + "<br>");
+            attributeContextMap.put(textFeature.getName(), attributeContext);
+        }
+        
+        componentMapper.applyAttributeMapping(componentAll, attributeContextMap);
+        
+        int listSize = product.getOrganizations().getRelatedOrganizations().size();
+        boolean foundManufacturer = false;
+        
+        if(listSize == 0) {
+            component.setOrganization(UNKNOWN_ORGANIZATION);
+        } else if(listSize == 1) {
+            component.setOrganization(product.getOrganizations().getRelatedOrganizations().get(0).getOrganization().getLongName());
+            RelatedOrganization rOrg = product.getOrganizations().getRelatedOrganizations().get(0);
+            descriptionMetaData += "<strong>Organization Short Name: </strong>" + rOrg.getOrganization().getShortName() + "<br>"
+                    + "<strong>Organization Long Name: </strong>" + rOrg.getOrganization().getLongName() + "<br>"
+                    + "<strong>Organization Description: </strong>" + rOrg.getOrganization().getDescription() + "<br>"
+                    + "<strong>Type: </strong>" + rOrg.getOrganization().getType() + "<br>";
+        } else {
+            for(RelatedOrganization relatedOrganization : product.getOrganizations().getRelatedOrganizations()) {
+                if(relatedOrganization.getRole().equals(MANUFACTURER_ORG)) {
+                    component.setOrganization(relatedOrganization.getOrganization().getLongName());
+                    foundManufacturer = true;
+                } else if(!foundManufacturer){
+                    component.setOrganization(relatedOrganization.getOrganization().getLongName());
+                }
+                descriptionMetaData += "<strong>Organization Short Name: </strong>" + relatedOrganization.getOrganization().getShortName() + "<br>"
+                                     + "<strong>Organization Long Name: </strong>" + relatedOrganization.getOrganization().getLongName() + "<br>"
+                                     + "<strong>Organization Description: </strong>" + relatedOrganization.getOrganization().getDescription() + "<br>"
+                                     + "<strong>Type: </strong>" + relatedOrganization.getOrganization().getType() + "<br>";
+            }
+        }
+        
+        component.setDescription(descriptionMetaData + "<br>" + product.getDescription());
+        
+        for(RevisionProvenanceWebsite revisionProvenanceWebsite : product.getProductRevision().getProvenance().getWebsites()) {
+            ComponentResource componentResource = new ComponentResource();
+            boolean snapshotExists = false;
+            String lookUpResourceType = getLookup(ResourceType.class, ResourceType.HOME_PAGE);
+            componentResource.setResourceType(lookUpResourceType);
+            
+            String componentResourceDescription = "<br>";
+            if (!revisionProvenanceWebsite.getSnapshotUrl().isEmpty()) {
+                componentResourceDescription += "<strong>Snapshot URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getSnapshotUrl() + " target=\"_blank\">Click Here</a>" + "<br>";
+                snapshotExists = true;
+            }
+            if(!revisionProvenanceWebsite.getUrl().isEmpty()) {
+                if(snapshotExists){
+                    componentResourceDescription += "<strong>Website URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getUrl() + " target=\"_blank\">Click Here</a>" + "<br>";
+                } else {
+                    componentResource.setLink(revisionProvenanceWebsite.getUrl());
+                }
+                
+            }
 
+            if (!revisionProvenanceWebsite.getSnapshotId().isEmpty()) {
+
+                // ADD TO LIST HERE
+                String key = fileHistoryAll.getFileHistory().getFileHistoryId() + KEY_SPLITTER + revisionProvenanceWebsite.getSnapshotId();
+                componentResource.setExternalId(key);
+                resourceWebKeys.add(key);
+            }
+            if (!revisionProvenanceWebsite.getTitle().isEmpty()) {
+                componentResourceDescription += "<strong>Website Title: </strong>"  + revisionProvenanceWebsite.getTitle() + "<br>";
+            }
+            if (!revisionProvenanceWebsite.getLastVisited().isEmpty()) {
+                componentResourceDescription += "<strong>Last Visited Date: </strong>" + revisionProvenanceWebsite.getLastVisited() + "<br>";
+            }
+            if (!revisionProvenanceWebsite.getDescription().isEmpty()) {
+                componentResourceDescription += "<br><strong>Website Description: </strong>" + revisionProvenanceWebsite.getDescription()  + "<br>";
+            }
+            
+            componentResource.setDescription(componentResourceDescription);
+            componentAll.getResources().add(componentResource);
+        }
+        
+        for (RevisionProvenanceDocument revisionProvenanceDocument : product.getProductRevision().getProvenance().getDocuments()) {
+            ComponentResource componentResource = new ComponentResource();
+            String lookUpResourceType = getLookup(ResourceType.class, ResourceType.DOCUMENT);
+            componentResource.setResourceType(lookUpResourceType);
+            
+            String componentResourceDescription = "<br>";
+
+            if (!revisionProvenanceDocument.getKey().isEmpty()) {
+                // Save key and add to list
+                String key = fileHistoryAll.getFileHistory().getFileHistoryId() + KEY_SPLITTER + revisionProvenanceDocument.getKey();
+                componentResource.setExternalId(key);
+                resourceDocKeys.add(key);
+            }
+            if (!revisionProvenanceDocument.getFilename().isEmpty()) {
+                componentResource.getFile().setOriginalName(revisionProvenanceDocument.getFilename());
+                componentResource.getFile().setMimeType(OpenStorefrontConstant.getMimeForFileExtension(revisionProvenanceDocument.getType()));
+            }
+            if (!revisionProvenanceDocument.getTitle().isEmpty()) {
+                componentResourceDescription += "<strong>Document Title: </strong>" + revisionProvenanceDocument.getTitle() + "<br>";
+            }
+            if (!revisionProvenanceDocument.getDescription().isEmpty()) {
+                componentResourceDescription += "<strong>Document Descritption: </strong>" + revisionProvenanceDocument.getDescription() + "<br>";
+            }
+            
+            
+            
+            componentResource.setDescription(componentResourceDescription);
+            componentAll.getResources().add(componentResource);
+        }
+        
         return componentAll;
     }
+    
+   
 
     @Override
     protected void finishProcessing() {
         super.finishProcessing(); //To change body of generated methods, choose Tools | Templates.
+        
+        for(String key : resourceWebKeys) {
+            ComponentResource componentResource = new ComponentResource();
+            componentResource.setExternalId(key);
+            componentResource = componentResource.find();
+            String webId = key.split(KEY_SPLITTER)[1];
+            ZipEntry zipFileEntry = reader.getFileFromWebKey(webId);
+            if(zipFileEntry != null) {
+                String fileExtension = StringProcessor.getFileExtension(zipFileEntry.getName());
+                
+                InputStream in = reader.getZipFileEntry(webId);
+                service.getComponentService().saveResourceFile(componentResource, in, OpenStorefrontConstant.getMimeForFileExtension(fileExtension), "Snapshot");
+            }
+        }
+        
+        for (String key : resourceDocKeys) {
+            ComponentResource componentResource = new ComponentResource();
+            componentResource.setExternalId(key);
+            componentResource = componentResource.find();
+            
+            String docId = key.split(KEY_SPLITTER)[1];
+            String zipFileName = docId + "_" + componentResource.getFile().getOriginalName();
+            InputStream in = reader.getZipFileEntry(zipFileName);
+            if(in != null) {
+                service.getComponentService().saveResourceFile(componentResource, in, componentResource.getFile().getMimeType(), componentResource.getFile().getOriginalName());
+            }
+
+        }
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

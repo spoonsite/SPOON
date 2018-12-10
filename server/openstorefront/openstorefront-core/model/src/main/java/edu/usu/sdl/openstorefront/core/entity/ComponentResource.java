@@ -103,6 +103,9 @@ public class ComponentResource
 	@APIDescription("Private Flag")
 	private Boolean privateFlag;
 
+	@APIDescription("For mapping to third party information")
+	private String externalId;
+
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentResource()
 	{
@@ -151,6 +154,7 @@ public class ComponentResource
 		this.setResourceType(resource.getResourceType());
 		this.setRestricted(resource.getRestricted());
 		this.setPrivateFlag(resource.getPrivateFlag());
+		this.setExternalId(resource.getExternalId());
 
 	}
 
@@ -322,5 +326,15 @@ public class ComponentResource
 	public void setPrivateFlag(Boolean privateFlag)
 	{
 		this.privateFlag = privateFlag;
+	}
+	
+	public String getExternalId()
+	{
+		return externalId;
+	}
+
+	public void setExternalId(String externalId)
+	{
+		this.externalId = externalId;
 	}
 }

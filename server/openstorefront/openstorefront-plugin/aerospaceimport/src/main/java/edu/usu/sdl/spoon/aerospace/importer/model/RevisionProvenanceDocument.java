@@ -27,7 +27,7 @@ public class RevisionProvenanceDocument
 {
 
 	@Element(name = "key", required = false)
-	private int key;
+	private String key;
 
 	@Element(name = "type", required = false)
 	private String type;
@@ -45,12 +45,12 @@ public class RevisionProvenanceDocument
 	{
 	}
 
-	public int getKey()
+	public String getKey()
 	{
 		return key;
 	}
 
-	public void setKey(int key)
+	public void setKey(String key)
 	{
 		this.key = key;
 	}
