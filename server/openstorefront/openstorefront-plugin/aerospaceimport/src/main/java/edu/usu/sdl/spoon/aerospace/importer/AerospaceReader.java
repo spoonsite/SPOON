@@ -68,7 +68,10 @@ public class AerospaceReader
 
     @Override
     public Product nextRecord() {
-        return productIterator.next();
+        if(productIterator.hasNext()){
+            return productIterator.next();
+        }
+        return null;
     }
     
     

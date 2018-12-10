@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +65,7 @@ public class AerospaceXMLParser {
         
         Service service = ServiceProxyFactory.getServiceProxy();
 
-        Reader in = new FileReader(AerospaceXMLParser.class.getResource("/componentTypeMapping.csv").getFile());
+        Reader in = new InputStreamReader(AerospaceXMLParser.class.getResourceAsStream("/componentTypeMapping.csv"));
         // the service exposes the OpenCSV parsing
         return service.getImportService().getComponentTypeMapFromCSV(in);
     }

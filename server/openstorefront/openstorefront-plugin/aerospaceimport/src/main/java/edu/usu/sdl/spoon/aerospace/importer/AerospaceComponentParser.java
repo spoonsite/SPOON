@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
@@ -112,7 +113,7 @@ public class AerospaceComponentParser
         Component component = componentAll.getComponent();
         component.setActiveStatus(ApprovalStatus.APPROVED);
         component.setExternalId(Integer.toString(product.getKey()));
-        component.setName(product.getShortName());
+        component.setName(product.getShortName());//TODO SETNAME CANNOT BE EMPTY IT WILL THROW AN ERROR!!!
         
         descriptionMetaData = "<strong>Long Name: </strong>" + product.getLongName() + "<br>"
                                 + "<strong>Product Source: </strong>" + product.getProductSource() + "<br>"
@@ -249,11 +250,11 @@ public class AerospaceComponentParser
             componentResource.setResourceType(lookUpResourceType);
             
             String componentResourceDescription = "<br>";
-            if (!revisionProvenanceWebsite.getSnapshotUrl().isEmpty()) {
+            if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getSnapshotUrl())) {
                 componentResourceDescription += "<strong>Snapshot URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getSnapshotUrl() + " target=\"_blank\">Click Here</a>" + "<br>";
                 snapshotExists = true;
             }
-            if(!revisionProvenanceWebsite.getUrl().isEmpty()) {
+            if(StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getUrl())) {
                 if(snapshotExists){
                     componentResourceDescription += "<strong>Website URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getUrl() + " target=\"_blank\">Click Here</a>" + "<br>";
                 } else {
@@ -262,20 +263,20 @@ public class AerospaceComponentParser
                 
             }
 
-            if (!revisionProvenanceWebsite.getSnapshotId().isEmpty()) {
+            if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getSnapshotId())) {
 
                 // ADD TO LIST HERE
                 String key = fileHistoryAll.getFileHistory().getFileHistoryId() + KEY_SPLITTER + revisionProvenanceWebsite.getSnapshotId();
                 componentResource.setExternalId(key);
                 resourceWebKeys.add(key);
             }
-            if (!revisionProvenanceWebsite.getTitle().isEmpty()) {
+            if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getTitle())) {
                 componentResourceDescription += "<strong>Website Title: </strong>"  + revisionProvenanceWebsite.getTitle() + "<br>";
             }
-            if (!revisionProvenanceWebsite.getLastVisited().isEmpty()) {
+            if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getLastVisited())) {
                 componentResourceDescription += "<strong>Last Visited Date: </strong>" + revisionProvenanceWebsite.getLastVisited() + "<br>";
             }
-            if (!revisionProvenanceWebsite.getDescription().isEmpty()) {
+            if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getDescription())) {
                 componentResourceDescription += "<br><strong>Website Description: </strong>" + revisionProvenanceWebsite.getDescription()  + "<br>";
             }
             
@@ -290,20 +291,28 @@ public class AerospaceComponentParser
             
             String componentResourceDescription = "<br>";
 
-            if (!revisionProvenanceDocument.getKey().isEmpty()) {
+            if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getKey())) {
                 // Save key and add to list
                 String key = fileHistoryAll.getFileHistory().getFileHistoryId() + KEY_SPLITTER + revisionProvenanceDocument.getKey();
                 componentResource.setExternalId(key);
                 resourceDocKeys.add(key);
             }
-            if (!revisionProvenanceDocument.getFilename().isEmpty()) {
-                componentResource.getFile().setOriginalName(revisionProvenanceDocument.getFilename());
-                componentResource.getFile().setMimeType(OpenStorefrontConstant.getMimeForFileExtension(revisionProvenanceDocument.getType()));
+            if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getFilename())) {
+//                componentResource.getFile() = n
+
+                MediaFile mediaFile = new MediaFile();
+                mediaFile.setOriginalName(revisionProvenanceDocument.getFilename());
+                mediaFile.setMimeType(OpenStorefrontConstant.getMimeForFileExtension(revisionProvenanceDocument.getType()));
+
+                componentResource.setFile(mediaFile);
+
+//                componentResource.getFile().setOriginalName(revisionProvenanceDocument.getFilename());
+//                componentResource.getFile().setMimeType(OpenStorefrontConstant.getMimeForFileExtension(revisionProvenanceDocument.getType()));
             }
-            if (!revisionProvenanceDocument.getTitle().isEmpty()) {
+            if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getTitle())) {
                 componentResourceDescription += "<strong>Document Title: </strong>" + revisionProvenanceDocument.getTitle() + "<br>";
             }
-            if (!revisionProvenanceDocument.getDescription().isEmpty()) {
+            if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getDescription())) {
                 componentResourceDescription += "<strong>Document Descritption: </strong>" + revisionProvenanceDocument.getDescription() + "<br>";
             }
             
