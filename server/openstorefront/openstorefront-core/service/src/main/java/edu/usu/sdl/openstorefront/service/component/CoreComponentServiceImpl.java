@@ -1884,24 +1884,21 @@ public class CoreComponentServiceImpl
 				approved = true;
 			}
 		} else {
-			if(OSFCacheManager.getComponentApprovalCache().getKeysWithExpiryCheck().isEmpty()){
-				String query = "select componentId, approvalState from " + Component.class.getSimpleName() + " where approvalState = :approvalStateParam and activeStatus = :activeStatusParam";
-				Map<String, Object> parameters = new HashMap<>();
-				parameters.put("approvalStateParam", ApprovalStatus.APPROVED);
-				parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
-				List<ODocument> documents = persistenceService.query(query, parameters);
-				for (ODocument document : documents) {
-					Element newElement = new Element(document.field("componentId"), document.field("approvalState"));
-					if (document.field("componentId").equals(componentId)) {
-						String approvalState = (String) document.field("approvalState");
-						if (StringUtils.isNotBlank(approvalState)) {
-							approved = true;
-						}
+			String query = "select componentId, approvalState from " + Component.class.getSimpleName() + " where approvalState = :approvalStateParam and activeStatus = :activeStatusParam";
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("approvalStateParam", ApprovalStatus.APPROVED);
+			parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
+			List<ODocument> documents = persistenceService.query(query, parameters);
+			for (ODocument document : documents) {
+				Element newElement = new Element(document.field("componentId"), document.field("approvalState"));
+				if (document.field("componentId").equals(componentId)) {
+					String approvalState = (String) document.field("approvalState");
+					if (StringUtils.isNotBlank(approvalState)) {
+						approved = true;
 					}
-					OSFCacheManager.getComponentApprovalCache().put(newElement);
 				}
+				OSFCacheManager.getComponentApprovalCache().put(newElement);
 			}
-
 		}
 		return approved;
 	}
