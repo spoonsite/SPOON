@@ -262,12 +262,14 @@ public class AerospaceComponentParser
             
             String componentResourceDescription = "<br>";
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getSnapshotUrl())) {
-                componentResourceDescription += "<strong>Snapshot URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getSnapshotUrl() + " target='_blank'>Click Here</a>" + "<br>";
+//                componentResourceDescription += "<strong>Snapshot URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getSnapshotUrl() + ">" + revisionProvenanceWebsite.getSnapshotUrl() + "</a>" + "<br>";
+                  componentResourceDescription += "<strong>Snapshot URL: </strong>" + revisionProvenanceWebsite.getSnapshotUrl() + "<br>";
                 snapshotExists = true;
             }
             if(StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getUrl())) {
                 if(snapshotExists){
-                    componentResourceDescription += "<strong>Website URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getUrl() + " target='_blank'>Click Here</a>" + "<br>";
+//                    componentResourceDescription += "<strong>Website URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getUrl() + ">" + revisionProvenanceWebsite.getUrl() + "</a>" + "<br>";
+                      componentResourceDescription += "<strong>Website URL: </strong>" + revisionProvenanceWebsite.getUrl() + "<br>";
                 } else {
                     componentResource.setLink(revisionProvenanceWebsite.getUrl());
                 }
