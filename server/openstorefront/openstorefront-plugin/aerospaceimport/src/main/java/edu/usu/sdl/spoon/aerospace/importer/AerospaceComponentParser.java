@@ -113,7 +113,17 @@ public class AerospaceComponentParser
         Component component = componentAll.getComponent();
         component.setActiveStatus(ApprovalStatus.APPROVED);
         component.setExternalId(Integer.toString(product.getKey()));
-        component.setName(product.getShortName());//TODO SETNAME CANNOT BE EMPTY IT WILL THROW AN ERROR!!!
+        
+        if(StringProcessor.stringIsNotBlank(product.getShortName())){
+            // use short name
+            component.setName(product.getShortName());
+        } else if(StringProcessor.stringIsNotBlank(product.getLongName())) {
+            // use long name
+            component.setName(product.getLongName());
+        } else {
+            component.setName("AeroSpaceImport, name is not available.");
+        }
+        //TODO SETNAME CANNOT BE EMPTY IT WILL THROW AN ERROR!!!
         
         descriptionMetaData = "<strong>Long Name: </strong>" + product.getLongName() + "<br>"
                                 + "<strong>Product Source: </strong>" + product.getProductSource() + "<br>"
@@ -303,7 +313,7 @@ public class AerospaceComponentParser
                 MediaFile mediaFile = new MediaFile();
                 mediaFile.setOriginalName(revisionProvenanceDocument.getFilename());
                 mediaFile.setMimeType(OpenStorefrontConstant.getMimeForFileExtension(revisionProvenanceDocument.getType()));
-
+                
                 componentResource.setFile(mediaFile);
 
 //                componentResource.getFile().setOriginalName(revisionProvenanceDocument.getFilename());
