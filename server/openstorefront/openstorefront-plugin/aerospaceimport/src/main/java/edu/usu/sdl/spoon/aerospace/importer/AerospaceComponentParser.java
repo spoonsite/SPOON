@@ -112,6 +112,7 @@ public class AerospaceComponentParser
         // Shortcut to the component
         Component component = componentAll.getComponent();
         component.setActiveStatus(ApprovalStatus.APPROVED);
+        component.setApprovalState(ApprovalStatus.APPROVED);
         component.setExternalId(Integer.toString(product.getKey()));
         
         if(StringProcessor.stringIsNotBlank(product.getShortName())){
