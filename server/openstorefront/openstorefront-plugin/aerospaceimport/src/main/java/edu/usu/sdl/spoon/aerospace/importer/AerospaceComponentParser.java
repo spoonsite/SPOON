@@ -111,7 +111,7 @@ public class AerospaceComponentParser
         ComponentAll componentAll = defaultComponentAll();
         // Shortcut to the component
         Component component = componentAll.getComponent();
-        component.setActiveStatus(ApprovalStatus.APPROVED);
+        component.setActiveStatus(Component.ACTIVE_STATUS);
         component.setApprovalState(ApprovalStatus.APPROVED);
         component.setExternalId(Integer.toString(product.getKey()));
         
@@ -262,12 +262,12 @@ public class AerospaceComponentParser
             
             String componentResourceDescription = "<br>";
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getSnapshotUrl())) {
-                componentResourceDescription += "<strong>Snapshot URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getSnapshotUrl() + " target=\"_blank\">Click Here</a>" + "<br>";
+                componentResourceDescription += "<strong>Snapshot URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getSnapshotUrl() + " target='_blank'>Click Here</a>" + "<br>";
                 snapshotExists = true;
             }
             if(StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getUrl())) {
                 if(snapshotExists){
-                    componentResourceDescription += "<strong>Website URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getUrl() + " target=\"_blank\">Click Here</a>" + "<br>";
+                    componentResourceDescription += "<strong>Website URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getUrl() + " target='_blank'>Click Here</a>" + "<br>";
                 } else {
                     componentResource.setLink(revisionProvenanceWebsite.getUrl());
                 }
@@ -352,7 +352,7 @@ public class AerospaceComponentParser
                 String fileExtension = StringProcessor.getFileExtension(zipFileEntry.getName());
                 
                 InputStream in = reader.getZipFileEntry(webId);
-                service.getComponentService().saveResourceFile(componentResource, in, OpenStorefrontConstant.getMimeForFileExtension(fileExtension), "Snapshot");
+                service.getComponentService().saveResourceFile(componentResource, in, OpenStorefrontConstant.getMimeForFileExtension(fileExtension), "Snapshot." + fileExtension);
             }
         }
         
