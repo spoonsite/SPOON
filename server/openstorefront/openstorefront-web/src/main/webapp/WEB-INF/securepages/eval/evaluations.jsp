@@ -40,7 +40,8 @@
 			Ext.onReady(function () {
 				var evalGridStore = Ext.create('Ext.data.Store', {
 					pageSize: 100,
-					autoLoad: false,
+					autoLoad: true,
+					remoteSort: true,
 					fields: [
 						{ 
 							name: 'createDts', 
