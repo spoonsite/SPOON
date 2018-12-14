@@ -134,20 +134,34 @@ public class AerospaceComponentParser
                                 + "<strong>Through Date: </strong>" + product.getProductRevision().getThruDate() + "<br>";
         
         component.setComponentType(parser.getComponentType(product));
+        Map<String, AttributeContext> attributeContextMap = new HashMap<>();
         
         if(product.getProductRevision().getProductType().getClassification().size() > 0) {
-            AttributeCode attributeCode = getAttributeCode("PRODCTTYPE", 
-                    "Product Type", 
-                    product.getProductRevision().getProductType().getClassification().get(0).getCategoryName(), 
-                    product.getProductRevision().getProductType().getClassification().get(0).getCategoryName(), 
-                    component.getComponentType());
-            ComponentAttribute ptattribute = new ComponentAttribute();
-            ComponentAttributePk ptattributePk = new ComponentAttributePk();
-            ptattributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-            ptattributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
-            
-            ptattribute.setComponentAttributePk(ptattributePk);
-            componentAll.getAttributes().add(ptattribute);
+//            AttributeCode attributeCode = getAttributeCode("PRODCTTYPE", 
+//                    "Product Type", 
+//                    product.getProductRevision().getProductType().getClassification().get(0).getCategoryName(), 
+//                    product.getProductRevision().getProductType().getClassification().get(0).getCategoryName(), 
+//                    component.getComponentType());
+//            ComponentAttribute ptattribute = new ComponentAttribute();
+//            ComponentAttributePk ptattributePk = new ComponentAttributePk();
+//            ptattributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
+//            ptattributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
+//            
+//            ptattribute.setComponentAttributePk(ptattributePk);
+//            componentAll.getAttributes().add(ptattribute);
+
+            ComponentAttribute attribute = new ComponentAttribute();
+            ComponentAttributePk attributePk = new ComponentAttributePk();
+            attributePk.setAttributeType("Product Type");
+            attributePk.setAttributeCode(product.getProductRevision().getProductType().getClassification().get(0).getCategoryName());
+            attribute.setComponentAttributePk(attributePk);
+            componentAll.getAttributes().add(attribute);
+
+            AttributeContext attributeContext = new AttributeContext();
+            attributeContext.setComponentType(component.getComponentType());
+            attributeContext.setAttributeValueType(AttributeValueType.TEXT);
+            attributeContext.setAttributeDescription("");
+            attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
         List<FloatFeature> floatList = new ArrayList<>();
@@ -163,8 +177,6 @@ public class AerospaceComponentParser
         textList.addAll(product.getProductRevision().getSpecs().getTextFeatures());
         textList.addAll(product.getProductRevision().getShape().getTextFeatures());
         textList.addAll(product.getProductRevision().getAdditional().getTextFeatures());
-        
-        Map<String, AttributeContext> attributeContextMap = new HashMap<>();
                 
         for(FloatFeature floatFeature : floatList) {
             ComponentAttribute attribute = new ComponentAttribute();
@@ -182,7 +194,7 @@ public class AerospaceComponentParser
                                                      + "<strong>Value Description: </strong>" + floatFeature.getValueDescription() + "<br>"
                                                      + "<strong>Value Type: </strong>" + floatFeature.getType() + "<br>"
                                                      + "<strong>Unit: </strong>" + floatFeature.getUnit()+ "<br>");
-            attributeContextMap.put(floatFeature.getName(), attributeContext);
+            attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
 
         for(IntFeature intFeature : intList) {
@@ -201,7 +213,7 @@ public class AerospaceComponentParser
                                                     + "<strong>Value Description: </strong>" + intFeature.getValueDescription() + "<br>"
                                                     + "<strong>Value Type: </strong>" + intFeature.getType() + "<br>"
                                                     + "<strong>Unit: </strong>" + intFeature.getUnit() + "<br>");
-            attributeContextMap.put(intFeature.getName(), attributeContext);
+            attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
         for(TextFeature textFeature : textList) {
@@ -220,7 +232,7 @@ public class AerospaceComponentParser
                                                     + "<strong>Value Description: </strong>" + textFeature.getValueDescription() + "<br>"
                                                     + "<strong>Value Type: </strong>" + textFeature.getType() + "<br>"
                                                     + "<strong>Value: </strong>" + textFeature.getValue() + "<br>");
-            attributeContextMap.put(textFeature.getName(), attributeContext);
+            attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
         componentMapper.applyAttributeMapping(componentAll, attributeContextMap);
