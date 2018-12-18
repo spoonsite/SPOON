@@ -97,7 +97,7 @@ public class AerospaceComponentParser
     protected <T> Object parseRecord(T record) {
         
         // Set up the product
-        Product product = (Product) record;
+        Product product = (Product) record;       
         String descriptionMetaData;
         
         // Set up the ComponentMapper
@@ -124,7 +124,6 @@ public class AerospaceComponentParser
         } else {
             component.setName("AeroSpaceImport, name is not available.");
         }
-        //TODO SETNAME CANNOT BE EMPTY IT WILL THROW AN ERROR!!!
         
         descriptionMetaData = "<strong>Long Name: </strong>" + product.getLongName() + "<br>"
                                 + "<strong>Product Source: </strong>" + product.getProductSource() + "<br>"
@@ -274,13 +273,11 @@ public class AerospaceComponentParser
             
             String componentResourceDescription = "<br>";
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getSnapshotUrl())) {
-//                componentResourceDescription += "<strong>Snapshot URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getSnapshotUrl() + ">" + revisionProvenanceWebsite.getSnapshotUrl() + "</a>" + "<br>";
                   componentResourceDescription += "<strong>Snapshot URL: </strong>" + revisionProvenanceWebsite.getSnapshotUrl() + "<br>";
                 snapshotExists = true;
             }
             if(StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getUrl())) {
                 if(snapshotExists){
-//                    componentResourceDescription += "<strong>Website URL: </strong>" + " <a href=" + revisionProvenanceWebsite.getUrl() + ">" + revisionProvenanceWebsite.getUrl() + "</a>" + "<br>";
                       componentResourceDescription += "<strong>Website URL: </strong>" + revisionProvenanceWebsite.getUrl() + "<br>";
                 } else {
                     componentResource.setLink(revisionProvenanceWebsite.getUrl());
@@ -323,16 +320,12 @@ public class AerospaceComponentParser
                 resourceDocKeys.add(key);
             }
             if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getFilename())) {
-//                componentResource.getFile() = n
 
                 MediaFile mediaFile = new MediaFile();
                 mediaFile.setOriginalName(revisionProvenanceDocument.getFilename());
                 mediaFile.setMimeType(OpenStorefrontConstant.getMimeForFileExtension(revisionProvenanceDocument.getType()));
                 
                 componentResource.setFile(mediaFile);
-
-//                componentResource.getFile().setOriginalName(revisionProvenanceDocument.getFilename());
-//                componentResource.getFile().setMimeType(OpenStorefrontConstant.getMimeForFileExtension(revisionProvenanceDocument.getType()));
             }
             if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getTitle())) {
                 componentResourceDescription += "<strong>Document Title: </strong>" + revisionProvenanceDocument.getTitle() + "<br>";
@@ -341,16 +334,12 @@ public class AerospaceComponentParser
                 componentResourceDescription += "<strong>Document Descritption: </strong>" + revisionProvenanceDocument.getDescription() + "<br>";
             }
             
-            
-            
             componentResource.setDescription(componentResourceDescription);
             componentAll.getResources().add(componentResource);
         }
         
         return componentAll;
     }
-    
-   
 
     @Override
     protected void finishProcessing() {
