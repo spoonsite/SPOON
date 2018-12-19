@@ -110,16 +110,16 @@ public class AerospaceComponentParser
         component.setApprovalState(ApprovalStatus.APPROVED);
         component.setExternalId(Integer.toString(product.getKey()));
         
+        // Get the name of the component.
         if(StringProcessor.stringIsNotBlank(product.getLongName())){
-            // use long name
             component.setName(product.getLongName());
         } else if(StringProcessor.stringIsNotBlank(product.getShortName())) {
-            // use short name
             component.setName(product.getShortName());
         } else {
             component.setName("AeroSpaceImport, name is not available.");
         }
         
+        // Created a String and stored description information.
         descriptionMetaData = "<strong>Long Name: </strong>" + product.getLongName() + "<br>"
                                 + "<strong>Product Source: </strong>" + product.getProductSource() + "<br>"
                                 + "<strong>Model Number: </strong>" + product.getModelNumber()+ "<br>"
@@ -127,6 +127,8 @@ public class AerospaceComponentParser
                                 + "<strong>Through Date: </strong>" + product.getProductRevision().getThruDate() + "<br>";
         
         component.setComponentType(parser.getComponentType(product));
+        
+        // Create an attributeContext that holds information about the attribute. This will be used to create each individual attribute.
         Map<String, AttributeContext> attributeContextMap = new HashMap<>();
         
         if(product.getProductRevision().getProductType().getClassification().size() > 0) {
@@ -148,6 +150,7 @@ public class AerospaceComponentParser
         List<IntFeature> intList = new ArrayList<>();
         List<TextFeature> textList = new ArrayList<>();
       
+        // Gather all the features, these will be turned into attributes.
         floatList.addAll(product.getProductRevision().getSpecs().getFloatFeatures());
         floatList.addAll(product.getProductRevision().getShape().getFloatFeatures());
         floatList.addAll(product.getProductRevision().getAdditional().getFloatFeatures());
@@ -157,7 +160,8 @@ public class AerospaceComponentParser
         textList.addAll(product.getProductRevision().getSpecs().getTextFeatures());
         textList.addAll(product.getProductRevision().getShape().getTextFeatures());
         textList.addAll(product.getProductRevision().getAdditional().getTextFeatures());
-                
+        
+        // Parse the features
         for(FloatFeature floatFeature : floatList) {
             if(floatFeature.getValue() == null) {
                 continue;
@@ -180,6 +184,7 @@ public class AerospaceComponentParser
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
 
+        // Parse the features
         for(IntFeature intFeature : intList) {
             if(intFeature.getValue() == null) {
                 continue;
@@ -202,6 +207,7 @@ public class AerospaceComponentParser
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
+        // Parse the features
         for(TextFeature textFeature : textList) {
             ComponentAttribute attribute = new ComponentAttribute();
             ComponentAttributePk attributePk = new ComponentAttributePk();
@@ -221,11 +227,13 @@ public class AerospaceComponentParser
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
+        // Once we have all the features, then we are going to apply then to the componentAll
         componentMapper.applyAttributeMapping(componentAll, attributeContextMap);
         
         int listSize = product.getOrganizations().getRelatedOrganizations().size();
         boolean foundManufacturer = false;
         
+        // Logic to determine which organization to name
         if(listSize == 0) {
             component.setOrganization(UNKNOWN_ORGANIZATION);
         } else if(listSize == 1) {
@@ -252,6 +260,7 @@ public class AerospaceComponentParser
         
         component.setDescription(descriptionMetaData + "<br>" + product.getDescription());
         
+        // For every piece of provenance documentaton we need to add it as a resource to the component
         for(RevisionProvenanceWebsite revisionProvenanceWebsite : product.getProductRevision().getProvenance().getWebsites()) {
             ComponentResource componentResource = new ComponentResource();
             boolean snapshotExists = false;
@@ -332,6 +341,7 @@ public class AerospaceComponentParser
     protected void finishProcessing() {
         super.finishProcessing(); //To change body of generated methods, choose Tools | Templates.
         
+        // Work through the provenance items and build each resource.
         for(String key : resourceWebKeys) {
             ComponentResource componentResource = new ComponentResource();
             componentResource.setExternalId(key);
@@ -362,58 +372,3 @@ public class AerospaceComponentParser
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
