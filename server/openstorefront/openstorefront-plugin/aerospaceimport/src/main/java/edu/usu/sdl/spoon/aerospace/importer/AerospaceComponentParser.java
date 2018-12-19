@@ -15,12 +15,10 @@
  */
 package edu.usu.sdl.spoon.aerospace.importer;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -33,7 +31,6 @@ import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.ComponentMapper;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.AttributeContext;
-import edu.usu.sdl.spoon.aerospace.importer.model.BaseFeature;
 import edu.usu.sdl.spoon.aerospace.importer.model.FloatFeature;
 import edu.usu.sdl.spoon.aerospace.importer.model.IntFeature;
 import edu.usu.sdl.spoon.aerospace.importer.model.Product;
@@ -43,13 +40,11 @@ import edu.usu.sdl.spoon.aerospace.importer.model.RevisionProvenanceWebsite;
 import edu.usu.sdl.spoon.aerospace.importer.model.TextFeature;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
-import org.simpleframework.xml.Attribute;
 
 /**
  *
@@ -115,12 +110,12 @@ public class AerospaceComponentParser
         component.setApprovalState(ApprovalStatus.APPROVED);
         component.setExternalId(Integer.toString(product.getKey()));
         
-        if(StringProcessor.stringIsNotBlank(product.getShortName())){
-            // use short name
-            component.setName(product.getShortName());
-        } else if(StringProcessor.stringIsNotBlank(product.getLongName())) {
+        if(StringProcessor.stringIsNotBlank(product.getLongName())){
             // use long name
             component.setName(product.getLongName());
+        } else if(StringProcessor.stringIsNotBlank(product.getShortName())) {
+            // use short name
+            component.setName(product.getShortName());
         } else {
             component.setName("AeroSpaceImport, name is not available.");
         }
@@ -128,7 +123,6 @@ public class AerospaceComponentParser
         descriptionMetaData = "<strong>Long Name: </strong>" + product.getLongName() + "<br>"
                                 + "<strong>Product Source: </strong>" + product.getProductSource() + "<br>"
                                 + "<strong>Model Number: </strong>" + product.getModelNumber()+ "<br>"
-                                + "<strong>Comment: </strong>" + product.getProductRevision().getComment() + "<br>"
                                 + "<strong>From Date: </strong>" + product.getProductRevision().getFromDate() + "<br>"
                                 + "<strong>Through Date: </strong>" + product.getProductRevision().getThruDate() + "<br>";
         
@@ -136,19 +130,6 @@ public class AerospaceComponentParser
         Map<String, AttributeContext> attributeContextMap = new HashMap<>();
         
         if(product.getProductRevision().getProductType().getClassification().size() > 0) {
-//            AttributeCode attributeCode = getAttributeCode("PRODCTTYPE", 
-//                    "Product Type", 
-//                    product.getProductRevision().getProductType().getClassification().get(0).getCategoryName(), 
-//                    product.getProductRevision().getProductType().getClassification().get(0).getCategoryName(), 
-//                    component.getComponentType());
-//            ComponentAttribute ptattribute = new ComponentAttribute();
-//            ComponentAttributePk ptattributePk = new ComponentAttributePk();
-//            ptattributePk.setAttributeCode(attributeCode.getAttributeCodePk().getAttributeCode());
-//            ptattributePk.setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
-//            
-//            ptattribute.setComponentAttributePk(ptattributePk);
-//            componentAll.getAttributes().add(ptattribute);
-
             ComponentAttribute attribute = new ComponentAttribute();
             ComponentAttributePk attributePk = new ComponentAttributePk();
             attributePk.setAttributeType("Product Type");
@@ -178,10 +159,13 @@ public class AerospaceComponentParser
         textList.addAll(product.getProductRevision().getAdditional().getTextFeatures());
                 
         for(FloatFeature floatFeature : floatList) {
+            if(floatFeature.getValue() == null) {
+                continue;
+            }
             ComponentAttribute attribute = new ComponentAttribute();
             ComponentAttributePk attributePk = new ComponentAttributePk();
             attributePk.setAttributeType(floatFeature.getName() + "(" + floatFeature.getUnitAbbr() + ")");
-            attributePk.setAttributeCode(floatFeature.getValue().toString());
+            attributePk.setAttributeCode(floatFeature.getValue().toString());            
             attribute.setComponentAttributePk(attributePk);
             componentAll.getAttributes().add(attribute);
             
@@ -197,6 +181,9 @@ public class AerospaceComponentParser
         }
 
         for(IntFeature intFeature : intList) {
+            if(intFeature.getValue() == null) {
+                continue;
+            }
             ComponentAttribute attribute = new ComponentAttribute();
             ComponentAttributePk attributePk = new ComponentAttributePk();
             attributePk.setAttributeType(intFeature.getName() + "(" + intFeature.getUnitAbbr() + ")");

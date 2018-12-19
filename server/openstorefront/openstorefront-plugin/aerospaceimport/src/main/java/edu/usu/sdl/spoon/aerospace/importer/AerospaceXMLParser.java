@@ -22,7 +22,6 @@ import edu.usu.sdl.spoon.aerospace.importer.model.Classification;
 import edu.usu.sdl.spoon.aerospace.importer.model.Product;
 import edu.usu.sdl.spoon.aerospace.importer.model.Services;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

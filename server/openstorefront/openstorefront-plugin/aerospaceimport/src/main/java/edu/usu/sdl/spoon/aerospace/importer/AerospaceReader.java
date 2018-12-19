@@ -62,8 +62,6 @@ public class AerospaceReader
             Logger.getLogger(AerospaceReader.class.getName()).log(Level.SEVERE, null, ex);
         }
        
-       
-       
    }
 
     @Override

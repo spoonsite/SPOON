@@ -43,6 +43,7 @@ Thermal Control Subsystem (TCS),THERMA
 Thruster,PROP-THRUST
 Torque Rod,SMM-MECHANISMS
 Transceiver,COM-TRANC
+Transmitter,COM-TRAN
 Antenna,COM-ANTAP
 Antenna Element,COM-ANTAP
 Battery,POW-STORE
