@@ -16,8 +16,14 @@
 package edu.usu.sdl.spoon.aerospace.importer;
 
 
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
+import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.spoon.aerospace.importer.model.Product;
 import edu.usu.sdl.spoon.aerospace.importer.model.Services;
 import java.io.IOException;
@@ -43,6 +49,9 @@ public class AerospaceReader
     private ZipFile zipFile;
     private List<Product> productList = new ArrayList<>();
     private Iterator<Product> productIterator;
+    protected Service service = ServiceProxyFactory.getServiceProxy();
+    
+    public List<String> masterComponentList = new ArrayList<>();
 
     public AerospaceReader(InputStream in, FileHistoryAll fileHistoryAll) throws IOException {
         super(in);
@@ -58,6 +67,21 @@ public class AerospaceReader
             Services services = aeroXMLParser.parseXML(zipFile.getInputStream(zipEntry));
             productList.addAll(services.getProducts());
             productIterator = productList.iterator();
+            
+            ComponentFilterParams filterQueryParams = new ComponentFilterParams();
+            filterQueryParams.setMax(10000);
+            filterQueryParams.setApprovalState(ComponentFilterParams.FILTER_ALL);
+            filterQueryParams.setComponentType(ComponentFilterParams.FILTER_ALL);
+            filterQueryParams.setSortField("name");
+            filterQueryParams.setStatus(ComponentFilterParams.FILTER_ALL);
+            filterQueryParams.setName("");
+            filterQueryParams.setComponentName("");
+            ComponentAdminWrapper componentAdminWrapper = service.getComponentService().getFilteredComponents(filterQueryParams, null);
+            
+            for(ComponentAdminView componentAdminView : componentAdminWrapper.getComponents()) {
+                masterComponentList.add(componentAdminView.getComponent().getName().toLowerCase());
+            }              
+            
         } catch (IOException ex) {
             Logger.getLogger(AerospaceReader.class.getName()).log(Level.SEVERE, null, ex);
         }

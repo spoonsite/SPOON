@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
 /**
@@ -53,6 +55,7 @@ import java.util.zip.ZipEntry;
 public class AerospaceComponentParser
         extends BaseComponentParser {
 
+    private static final Logger LOG = Logger.getLogger(AerospaceReader.class.getName());
     private static final String UNKNOWN_ORGANIZATION = "Unknown";
     private static final String MANUFACTURER_ORG = "Manufacturer";
     public static final String FORMAT_CODE = "AEROSPACECMP";
@@ -119,6 +122,11 @@ public class AerospaceComponentParser
             component.setName("AeroSpaceImport, name is not available.");
         }
         
+        if(reader.masterComponentList.contains(component.getName().toLowerCase())) {
+            LOG.log(Level.WARNING, "THIS ENTRY MAY ALREADY EXIST: " + component.getName() + " Key: " + product.getKey());
+            return null;
+        }
+
         // Created a String and stored description information.
         descriptionMetaData = "<strong>Long Name: </strong>" + product.getLongName() + "<br>"
                                 + "<strong>Product Source: </strong>" + product.getProductSource() + "<br>"
@@ -209,6 +217,9 @@ public class AerospaceComponentParser
         
         // Parse the features
         for(TextFeature textFeature : textList) {
+            if(textFeature.getValue() == null) {
+                continue;
+            }
             ComponentAttribute attribute = new ComponentAttribute();
             ComponentAttributePk attributePk = new ComponentAttributePk();
             attributePk.setAttributeType(textFeature.getName());

@@ -30,7 +30,7 @@ Propulsion Subsystem,PROP-TURNKEY
 Reaction Wheel,GNC-TURNKEY
 Receiver,COM-RECV
 Small Satellite Kit,SPACEPLAT
-Software,ADD NEW
+Software,CDH-FLISOFT
 Solar Array,POW-GEN
 Solar Cell,POW-GEN
 Star Tracker,GNC-PTS
@@ -48,3 +48,6 @@ Antenna,COM-ANTAP
 Antenna Element,COM-ANTAP
 Battery,POW-STORE
 Battery Cell,POW-STORE
+VIS-Imager,CDH-FLIPROC
+UV-Imager,CDH-FLIPROC
+Transponder,COM-TRANC
