@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.ComponentMapper;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.AttributeContext;
+import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.spoon.aerospace.importer.model.FloatFeature;
 import edu.usu.sdl.spoon.aerospace.importer.model.IntFeature;
 import edu.usu.sdl.spoon.aerospace.importer.model.Product;
@@ -122,10 +123,40 @@ public class AerospaceComponentParser
             component.setName("AeroSpaceImport, name is not available.");
         }
         
-        if(reader.masterComponentList.contains(component.getName().toLowerCase())) {
-            LOG.log(Level.WARNING, "THIS ENTRY MAY ALREADY EXIST: " + component.getName() + " Key: " + product.getKey());
-            return null;
+        for(ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
+            if((componentAdminView.getComponent().getName().toLowerCase().equals(component.getName().toLowerCase())) 
+                    && (!componentAdminView.getComponent().getName().equals(component.getName()) )) {
+                LOG.log(Level.WARNING, "THIS ENTRY MAY ALREADY EXIST: " + component.getName() + " Key: " + product.getKey());
+                return null;
+            }
         }
+        
+        // Now, if we are an updated version of a component
+        
+        
+        
+        
+        
+        
+        for (ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
+            if((componentAdminView.getComponent().getName().equals(component.getName())) 
+                    && (!componentAdminView.getComponent().getCurrentDataOwner().equals("SYSTEM"))) {
+                LOG.log(Level.WARNING, "THIS ENTRY APPEARS TO BE MAINTAINED BY ANOTHER THIRD PARTY: " + component.getName() + " Key: " + product.getKey());
+                return null;
+            }
+        }
+        // Otherwise we have ownership and can update the silly thing as needed.
+        
+        
+        
+        
+        
+//        
+//        if(reader.masterComponentAdminViewList.contains(component.getName().toLowerCase())) {
+//            LOG.log(Level.WARNING, "THIS ENTRY MAY ALREADY EXIST: " + component.getName() + " Key: " + product.getKey());
+//            return null;
+//        }
+//        component.setOwnerUser("AEROIMPORTER");
 
         // Created a String and stored description information.
         descriptionMetaData = "<strong>Long Name: </strong>" + product.getLongName() + "<br>"

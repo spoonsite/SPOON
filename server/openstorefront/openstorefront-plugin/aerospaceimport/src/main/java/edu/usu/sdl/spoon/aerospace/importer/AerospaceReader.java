@@ -51,7 +51,7 @@ public class AerospaceReader
     private Iterator<Product> productIterator;
     protected Service service = ServiceProxyFactory.getServiceProxy();
     
-    public List<String> masterComponentList = new ArrayList<>();
+    public List<ComponentAdminView> masterComponentAdminViewList = new ArrayList<>();
 
     public AerospaceReader(InputStream in, FileHistoryAll fileHistoryAll) throws IOException {
         super(in);
@@ -79,7 +79,10 @@ public class AerospaceReader
             ComponentAdminWrapper componentAdminWrapper = service.getComponentService().getFilteredComponents(filterQueryParams, null);
             
             for(ComponentAdminView componentAdminView : componentAdminWrapper.getComponents()) {
-                masterComponentList.add(componentAdminView.getComponent().getName().toLowerCase());
+//                if(componentAdminView.getComponent().getCurrentDataOwner() == "SYSTEM") {
+//                    
+//                }
+                masterComponentAdminViewList.add(componentAdminView);
             }              
             
         } catch (IOException ex) {
@@ -128,7 +131,7 @@ public class AerospaceReader
         ZipEntry found = null;
         while(entries.hasMoreElements()) {
             ZipEntry zipEntry = entries.nextElement();
-            if(zipEntry.getName().startsWith(key)) {
+            if(zipEntry.getName().contains(key)) {
                 found = zipEntry;
                 break;
             }
