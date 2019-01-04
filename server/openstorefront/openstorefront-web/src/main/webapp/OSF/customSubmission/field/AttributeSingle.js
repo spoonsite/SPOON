@@ -392,7 +392,13 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		//values 
 		var responseValue = 'No Data Entered';
 		
-		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE' || panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
+		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
+			var allValues = [];
+			Ext.Object.each(panel.selectedValue.value, function(key, value, myself) {
+				allValues.push(value);
+			});
+			responseValue = allValues.join(',<br>');
+		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
 			if (panel.selectedValue) {
 				responseValue = panel.selectedValue.label;
 			}
