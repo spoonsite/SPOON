@@ -23,7 +23,6 @@ import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.spoon.aerospace.importer.model.Product;
 import edu.usu.sdl.spoon.aerospace.importer.model.Services;
 import java.io.IOException;
@@ -46,6 +45,9 @@ public class AerospaceReader
 {
     private static final Logger LOG = Logger.getLogger(AerospaceReader.class.getName());
     public static final String XMLFILE = "recordsList.xml";
+    private static final String NAME_SORT_FIELD = "name";
+    private static final String PRODUCT_IMAGES_FOLDER_NAME  = "product_images/";
+    
     private ZipFile zipFile;
     private List<Product> productList = new ArrayList<>();
     private Iterator<Product> productIterator;
@@ -66,22 +68,20 @@ public class AerospaceReader
             ZipEntry zipEntry = zipFile.getEntry(XMLFILE);
             Services services = aeroXMLParser.parseXML(zipFile.getInputStream(zipEntry));
             productList.addAll(services.getProducts());
+            totalRecords = productList.size();
             productIterator = productList.iterator();
             
             ComponentFilterParams filterQueryParams = new ComponentFilterParams();
-            filterQueryParams.setMax(10000);
+            filterQueryParams.setMax(20000);
             filterQueryParams.setApprovalState(ComponentFilterParams.FILTER_ALL);
             filterQueryParams.setComponentType(ComponentFilterParams.FILTER_ALL);
-            filterQueryParams.setSortField("name");
+            filterQueryParams.setSortField(NAME_SORT_FIELD);
             filterQueryParams.setStatus(ComponentFilterParams.FILTER_ALL);
             filterQueryParams.setName("");
             filterQueryParams.setComponentName("");
             ComponentAdminWrapper componentAdminWrapper = service.getComponentService().getFilteredComponents(filterQueryParams, null);
             
             for(ComponentAdminView componentAdminView : componentAdminWrapper.getComponents()) {
-//                if(componentAdminView.getComponent().getCurrentDataOwner() == "SYSTEM") {
-//                    
-//                }
                 masterComponentAdminViewList.add(componentAdminView);
             }              
             
@@ -94,6 +94,7 @@ public class AerospaceReader
     @Override
     public Product nextRecord() {
         if(productIterator.hasNext()){
+            currentRecordNumber++;
             return productIterator.next();
         }
         return null;
@@ -119,19 +120,19 @@ public class AerospaceReader
             try {
                 in = zipFile.getInputStream(zipEntry);
             } catch (IOException ex) {
-                LOG.log(Level.WARNING, "cannot read file for ZipEntry; " + entryName, ex);
+                LOG.log(Level.WARNING, "Cannot read file for ZipEntry; " + entryName, ex);
             }
         }
         
         return in;
     }
     
-    public ZipEntry getFileFromWebKey(String key) {
+    public ZipEntry getFileFromWebKey(String fileName) {
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         ZipEntry found = null;
         while(entries.hasMoreElements()) {
             ZipEntry zipEntry = entries.nextElement();
-            if(zipEntry.getName().contains(key)) {
+            if(zipEntry.getName().contains(fileName)) {
                 found = zipEntry;
                 break;
             }
@@ -139,6 +140,25 @@ public class AerospaceReader
         
         return found;
         
+    }
+    
+    public String checkForProductImage(int pk) {
+        String mediaName = "";
+        Integer productKey = pk;
+        String stringKey = productKey.toString();
+        stringKey+= "_";
+        
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry zipEntry = entries.nextElement();
+            String fileName = zipEntry.getName();
+            if(fileName.contains(PRODUCT_IMAGES_FOLDER_NAME) && fileName.substring(PRODUCT_IMAGES_FOLDER_NAME.length()).startsWith(stringKey)) {
+                mediaName = fileName.substring(PRODUCT_IMAGES_FOLDER_NAME.length());
+                break;
+            }
+        }
+              
+        return mediaName;
     }
    
     

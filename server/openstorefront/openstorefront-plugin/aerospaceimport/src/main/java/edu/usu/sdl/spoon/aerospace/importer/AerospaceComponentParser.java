@@ -23,14 +23,19 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
+import edu.usu.sdl.openstorefront.core.entity.DataSource;
+import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
+import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.ResourceType;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.spi.parser.BaseComponentParser;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.ComponentMapper;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.AttributeContext;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.spoon.aerospace.importer.model.FloatFeature;
 import edu.usu.sdl.spoon.aerospace.importer.model.IntFeature;
@@ -61,9 +66,16 @@ public class AerospaceComponentParser
     private static final String MANUFACTURER_ORG = "Manufacturer";
     public static final String FORMAT_CODE = "AEROSPACECMP";
     private static final String KEY_SPLITTER = "#";
+    private static final String SITE_DELISTED = "[SITE DELISTED]";
+    private static final String SYSTEM_DATA_OWNER = "SYSTEM";
+    private static final String PRODUCT_TYPE_ATTRIBUTE = "Product Type";
+    private static final String SNAPSHOT_FILE_NAME = "Snapshot.";
+    private static final String HTTP_PREPENDER = "http://";
+    private static final String AEROSPACE_IMPORT_KEY_PREPENDER = "AEROSPACE_IMPORT#";
     
     private List<String> resourceWebKeys = new ArrayList<String>();
     private List<String> resourceDocKeys = new ArrayList<String>();
+    private List<String> resourceMediaKeys = new ArrayList<String>();
     private AerospaceReader reader;
     private AerospaceXMLParser parser;
 
@@ -112,7 +124,10 @@ public class AerospaceComponentParser
         Component component = componentAll.getComponent();
         component.setActiveStatus(Component.ACTIVE_STATUS);
         component.setApprovalState(ApprovalStatus.APPROVED);
-        component.setExternalId(Integer.toString(product.getKey()));
+        component.setExternalId(AEROSPACE_IMPORT_KEY_PREPENDER + Integer.toString(product.getKey()));
+        
+        String lookUpDataSourceType = getLookup(DataSource.class, AEROSPACE_IMPORT_KEY_PREPENDER);
+        component.setDataSource(lookUpDataSourceType);
         
         // Get the name of the component.
         if(StringProcessor.stringIsNotBlank(product.getLongName())){
@@ -120,50 +135,69 @@ public class AerospaceComponentParser
         } else if(StringProcessor.stringIsNotBlank(product.getShortName())) {
             component.setName(product.getShortName());
         } else {
-            component.setName("AeroSpaceImport, name is not available.");
+            LOG.log(Level.WARNING, "This product does not have any associated name. Entry cannot be created. " + "Key: " + product.getKey());
+            return null;
         }
         
-        for(ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
-            if((componentAdminView.getComponent().getName().toLowerCase().equals(component.getName().toLowerCase())) 
-                    && (!componentAdminView.getComponent().getName().equals(component.getName()) )) {
-                LOG.log(Level.WARNING, "THIS ENTRY MAY ALREADY EXIST: " + component.getName() + " Key: " + product.getKey());
-                return null;
+        // Verify that the product is not from delisted site.
+        if(component.getName().startsWith(SITE_DELISTED)) {  
+            for (ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
+                if((componentAdminView.getComponent().getExternalId() != null) 
+                        && componentAdminView.getComponent().getExternalId().equals(component.getExternalId())) {
+                    componentAdminView.getComponent().setActiveStatus(Component.INACTIVE_STATUS);
+                    componentAdminView.getComponent().save();
+                }
             }
+            LOG.log(Level.WARNING, "THIS RECORD HAS BEEN DELISTED AND WAS NOT IMPORTED. "
+                    + "THE CORRESPONDING ENTRY (IF ANY) HAS BEEN INACTIVATED." + component.getName() + " Key: " + product.getKey());
+            fileHistoryAll.addError(FileHistoryErrorType.WARNING, "This record has been delisted and was not imported. "
+                    + "The corresponding entry (if any) has been inactivated. " + component.getName() + " Key: " + product.getKey());
+            return null;            
         }
         
-        // Now, if we are an updated version of a component
-        
-        
-        
-        
-        
-        
+        // Verify conditions are correct to import/update the product.
         for (ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
-            if((componentAdminView.getComponent().getName().equals(component.getName())) 
-                    && (!componentAdminView.getComponent().getCurrentDataOwner().equals("SYSTEM"))) {
-                LOG.log(Level.WARNING, "THIS ENTRY APPEARS TO BE MAINTAINED BY ANOTHER THIRD PARTY: " + component.getName() + " Key: " + product.getKey());
+            if((componentAdminView.getComponent().getExternalId() != null)
+                    && (componentAdminView.getComponent().getExternalId().equals(component.getExternalId())) 
+                    && (!componentAdminView.getComponent().getCurrentDataOwner().equals(SYSTEM_DATA_OWNER))) {
+                LOG.log(Level.WARNING, ""
+                        + "THIS RECORD WAS PREVIOUSLY IMPORTED AND IS NOW BEING MAINTAINED BY A THIRD PARTY. "
+                        + "THE RECORD WAS NOT IMPORTED/UPDATED. " + component.getName() + " Key: " + product.getKey());
+                fileHistoryAll.addError(FileHistoryErrorType.WARNING, ""
+                        + "This record was previously imported and is now being maintained by a third party. "
+                        + "The record was not imported/updated. " + component.getName() + " Key: " + product.getKey());
+                return null;
+            }
+            
+            if ((componentAdminView.getComponent().getName().toLowerCase().equals(component.getName().toLowerCase()))
+                    && (!componentAdminView.getComponent().getName().equals(component.getName()))) {
+                LOG.log(Level.WARNING, ""
+                        + "THIS ENTRY ALREADY EXISTS, AND HAS A NAME-CASE DIFFERENCE. "
+                        + "THE RECORD WAS NOT IMPORTED. " + component.getName() + " Key: " + product.getKey());
+                fileHistoryAll.addError(FileHistoryErrorType.WARNING, ""
+                        + "This entry already exists, and has a name-case difference. "
+                        + "The record was not imported. " + component.getName() + " Key: " + product.getKey());
+                return null;
+            }
+            
+            if ((componentAdminView.getComponent().getName().equals(component.getName()))
+                    && (!componentAdminView.getComponent().getCurrentDataOwner().equals(SYSTEM_DATA_OWNER))) {
+                LOG.log(Level.WARNING, ""
+                        + "THIS ENTRY ALREADY EXISTS, AND IS BEING MAINTAINED BY A THIRD PARTY. "
+                        + "THE RECORD WAS NOT IMPORTED. " + component.getName() + " Key: " + product.getKey());
+                fileHistoryAll.addError(FileHistoryErrorType.WARNING, ""
+                        + "This entry already exists, and is being maintained by a third party. "
+                        + "The record was not imported. " + component.getName() + " Key: " + product.getKey());
                 return null;
             }
         }
-        // Otherwise we have ownership and can update the silly thing as needed.
+        // If we made it this far we have ownership and can import/update the entry as needed.
         
-        
-        
-        
-        
-//        
-//        if(reader.masterComponentAdminViewList.contains(component.getName().toLowerCase())) {
-//            LOG.log(Level.WARNING, "THIS ENTRY MAY ALREADY EXIST: " + component.getName() + " Key: " + product.getKey());
-//            return null;
-//        }
-//        component.setOwnerUser("AEROIMPORTER");
-
         // Created a String and stored description information.
-        descriptionMetaData = "<strong>Long Name: </strong>" + product.getLongName() + "<br>"
-                                + "<strong>Product Source: </strong>" + product.getProductSource() + "<br>"
-                                + "<strong>Model Number: </strong>" + product.getModelNumber()+ "<br>"
-                                + "<strong>From Date: </strong>" + product.getProductRevision().getFromDate() + "<br>"
-                                + "<strong>Through Date: </strong>" + product.getProductRevision().getThruDate() + "<br>";
+        descriptionMetaData = "<strong>Product Name: </strong>" + component.getName() + "<br>";
+        if(StringProcessor.stringIsNotBlank(product.getModelNumber())){
+            descriptionMetaData += "<strong>Model Number: </strong>" + product.getModelNumber()+ "<br>";
+        }
         
         component.setComponentType(parser.getComponentType(product));
         
@@ -173,7 +207,7 @@ public class AerospaceComponentParser
         if(product.getProductRevision().getProductType().getClassification().size() > 0) {
             ComponentAttribute attribute = new ComponentAttribute();
             ComponentAttributePk attributePk = new ComponentAttributePk();
-            attributePk.setAttributeType("Product Type");
+            attributePk.setAttributeType(PRODUCT_TYPE_ATTRIBUTE);
             attributePk.setAttributeCode(product.getProductRevision().getProductType().getClassification().get(0).getCategoryName());
             attribute.setComponentAttributePk(attributePk);
             componentAll.getAttributes().add(attribute);
@@ -215,11 +249,31 @@ public class AerospaceComponentParser
             AttributeContext attributeContext = new AttributeContext();
             attributeContext.setComponentType(component.getComponentType());
             attributeContext.setAttributeValueType(AttributeValueType.NUMBER);
-            attributeContext.setAttributeDescription("<strong>Name: </strong>" + floatFeature.getName() + "<br>" 
-                                                     + "<strong>Description: </strong>" + floatFeature.getDescription() + "<br>" 
-                                                     + "<strong>Value Description: </strong>" + floatFeature.getValueDescription() + "<br>"
-                                                     + "<strong>Value Type: </strong>" + floatFeature.getType() + "<br>"
-                                                     + "<strong>Unit: </strong>" + floatFeature.getUnit()+ "<br>");
+            
+            String attrDescription = "";
+            
+            if(StringProcessor.stringIsNotBlank(floatFeature.getName())) {
+                attrDescription += "<strong>Name: </strong>" + floatFeature.getName() + "<br>";
+            }
+            if(StringProcessor.stringIsNotBlank(floatFeature.getDescription())) {
+                attrDescription += "<strong>Description: </strong>" + floatFeature.getDescription() + "<br>";
+            }            
+            if(StringProcessor.stringIsNotBlank(floatFeature.getValueDescription())) {
+                attrDescription += "<strong>Value Description: </strong>" + floatFeature.getValueDescription() + "<br>";
+            }            
+            if(StringProcessor.stringIsNotBlank(floatFeature.getType())) {
+                attrDescription += "<strong>Value Type: </strong>" + floatFeature.getType() + "<br>";
+            }            
+            if(StringProcessor.stringIsNotBlank(floatFeature.getUnit())) {
+                attrDescription += "<strong>Unit: </strong>" + floatFeature.getUnit()+ "<br>";
+            }                        
+            
+//            attributeContext.setAttributeDescription("<strong>Name: </strong>" + floatFeature.getName() + "<br>" 
+//                                                     + "<strong>Description: </strong>" + floatFeature.getDescription() + "<br>" 
+//                                                     + "<strong>Value Description: </strong>" + floatFeature.getValueDescription() + "<br>"
+//                                                     + "<strong>Value Type: </strong>" + floatFeature.getType() + "<br>"
+//                                                     + "<strong>Unit: </strong>" + floatFeature.getUnit()+ "<br>");
+            attributeContext.setAttributeDescription(attrDescription);
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
 
@@ -238,11 +292,31 @@ public class AerospaceComponentParser
             AttributeContext attributeContext = new AttributeContext();
             attributeContext.setComponentType(component.getComponentType());
             attributeContext.setAttributeValueType(AttributeValueType.NUMBER);
-            attributeContext.setAttributeDescription("<strong>Name: </strong>" + intFeature.getName() + "<br>"
-                                                    + "<strong>Description: </strong>" + intFeature.getDescription() + "<br>"
-                                                    + "<strong>Value Description: </strong>" + intFeature.getValueDescription() + "<br>"
-                                                    + "<strong>Value Type: </strong>" + intFeature.getType() + "<br>"
-                                                    + "<strong>Unit: </strong>" + intFeature.getUnit() + "<br>");
+            
+            String attrDescription = "";
+            
+            if(StringProcessor.stringIsNotBlank(intFeature.getName())) {
+                attrDescription += "<strong>Name: </strong>" + intFeature.getName() + "<br>";
+            }
+            if(StringProcessor.stringIsNotBlank(intFeature.getDescription())) {
+                attrDescription += "<strong>Description: </strong>" + intFeature.getDescription() + "<br>";
+            }            
+            if(StringProcessor.stringIsNotBlank(intFeature.getValueDescription())) {
+                attrDescription += "<strong>Value Description: </strong>" + intFeature.getValueDescription() + "<br>";
+            }            
+            if(StringProcessor.stringIsNotBlank(intFeature.getType())) {
+                attrDescription += "<strong>Value Type: </strong>" + intFeature.getType() + "<br>";
+            }            
+            if(StringProcessor.stringIsNotBlank(intFeature.getUnit())) {
+                attrDescription += "<strong>Unit: </strong>" + intFeature.getUnit() + "<br>";
+            }
+            
+//            attributeContext.setAttributeDescription("<strong>Name: </strong>" + intFeature.getName() + "<br>"
+//                                                    + "<strong>Description: </strong>" + intFeature.getDescription() + "<br>"
+//                                                    + "<strong>Value Description: </strong>" + intFeature.getValueDescription() + "<br>"
+//                                                    + "<strong>Value Type: </strong>" + intFeature.getType() + "<br>"
+//                                                    + "<strong>Unit: </strong>" + intFeature.getUnit() + "<br>");
+            attributeContext.setAttributeDescription(attrDescription);
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
@@ -261,11 +335,31 @@ public class AerospaceComponentParser
             AttributeContext attributeContext = new AttributeContext();
             attributeContext.setComponentType(component.getComponentType());
             attributeContext.setAttributeValueType(AttributeValueType.TEXT);
-            attributeContext.setAttributeDescription("<strong>Name: </strong>" + textFeature.getName() + "<br>"
-                                                    + "<strong>Description: </strong>" + textFeature.getDescription() + "<br>"
-                                                    + "<strong>Value Description: </strong>" + textFeature.getValueDescription() + "<br>"
-                                                    + "<strong>Value Type: </strong>" + textFeature.getType() + "<br>"
-                                                    + "<strong>Value: </strong>" + textFeature.getValue() + "<br>");
+            
+            String attrDescription = "";
+
+            if (StringProcessor.stringIsNotBlank(textFeature.getName())) {
+                attrDescription += "<strong>Name: </strong>" + textFeature.getName() + "<br>";
+            }
+            if (StringProcessor.stringIsNotBlank(textFeature.getDescription())) {
+                attrDescription += "<strong>Description: </strong>" + textFeature.getDescription() + "<br>";
+            }
+            if (StringProcessor.stringIsNotBlank(textFeature.getValueDescription())) {
+                attrDescription += "<strong>Value Description: </strong>" + textFeature.getValueDescription() + "<br>";
+            }
+            if (StringProcessor.stringIsNotBlank(textFeature.getType())) {
+                attrDescription += "<strong>Value Type: </strong>" + textFeature.getType() + "<br>";
+            }
+            if (StringProcessor.stringIsNotBlank(textFeature.getValue())) {
+                attrDescription += "<strong>Value: </strong>" + textFeature.getValue() + "<br>";
+            }
+            
+//            attributeContext.setAttributeDescription("<strong>Name: </strong>" + textFeature.getName() + "<br>"
+//                                                    + "<strong>Description: </strong>" + textFeature.getDescription() + "<br>"
+//                                                    + "<strong>Value Description: </strong>" + textFeature.getValueDescription() + "<br>"
+//                                                    + "<strong>Value Type: </strong>" + textFeature.getType() + "<br>"
+//                                                    + "<strong>Value: </strong>" + textFeature.getValue() + "<br>");
+            attributeContext.setAttributeDescription(attrDescription);
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
@@ -281,10 +375,25 @@ public class AerospaceComponentParser
         } else if(listSize == 1) {
             component.setOrganization(product.getOrganizations().getRelatedOrganizations().get(0).getOrganization().getLongName());
             RelatedOrganization rOrg = product.getOrganizations().getRelatedOrganizations().get(0);
-            descriptionMetaData += "<strong>Organization Short Name: </strong>" + rOrg.getOrganization().getShortName() + "<br>"
-                    + "<strong>Organization Long Name: </strong>" + rOrg.getOrganization().getLongName() + "<br>"
-                    + "<strong>Organization Description: </strong>" + rOrg.getOrganization().getDescription() + "<br>"
-                    + "<strong>Type: </strong>" + rOrg.getOrganization().getType() + "<br>";
+            
+            if(StringProcessor.stringIsNotBlank(rOrg.getOrganization().getShortName())) {
+                descriptionMetaData += "<strong>Organization Short Name: </strong>" + rOrg.getOrganization().getShortName() + "<br>";
+            }
+            if(StringProcessor.stringIsNotBlank(rOrg.getOrganization().getLongName())) {
+                descriptionMetaData += "<strong>Organization Long Name: </strong>" + rOrg.getOrganization().getLongName() + "<br>";
+            }
+            if(StringProcessor.stringIsNotBlank(rOrg.getOrganization().getDescription())) {
+                descriptionMetaData += "<strong>Organization Description: </strong>" + rOrg.getOrganization().getDescription() + "<br>";
+            }
+            if(StringProcessor.stringIsNotBlank(rOrg.getOrganization().getType())) {
+                descriptionMetaData += "<strong>Type: </strong>" + rOrg.getOrganization().getType() + "<br>";
+            }
+            
+//            descriptionMetaData += "<strong>Organization Short Name: </strong>" + rOrg.getOrganization().getShortName() + "<br>"
+//                    + "<strong>Organization Long Name: </strong>" + rOrg.getOrganization().getLongName() + "<br>"
+//                    + "<strong>Organization Description: </strong>" + rOrg.getOrganization().getDescription() + "<br>"
+//                    + "<strong>Type: </strong>" + rOrg.getOrganization().getType() + "<br>";
+            
         } else {
             for(RelatedOrganization relatedOrganization : product.getOrganizations().getRelatedOrganizations()) {
                 if(relatedOrganization.getRole().equals(MANUFACTURER_ORG)) {
@@ -293,10 +402,25 @@ public class AerospaceComponentParser
                 } else if(!foundManufacturer){
                     component.setOrganization(relatedOrganization.getOrganization().getLongName());
                 }
-                descriptionMetaData += "<strong>Organization Short Name: </strong>" + relatedOrganization.getOrganization().getShortName() + "<br>"
-                                     + "<strong>Organization Long Name: </strong>" + relatedOrganization.getOrganization().getLongName() + "<br>"
-                                     + "<strong>Organization Description: </strong>" + relatedOrganization.getOrganization().getDescription() + "<br>"
-                                     + "<strong>Type: </strong>" + relatedOrganization.getOrganization().getType() + "<br>";
+                
+                if (StringProcessor.stringIsNotBlank(relatedOrganization.getOrganization().getShortName())) {
+                    descriptionMetaData += "<strong>Organization Short Name: </strong>" + relatedOrganization.getOrganization().getShortName() + "<br>";
+                }
+                if (StringProcessor.stringIsNotBlank(relatedOrganization.getOrganization().getLongName())) {
+                    descriptionMetaData += "<strong>Organization Long Name: </strong>" + relatedOrganization.getOrganization().getLongName() + "<br>";
+                }
+                if (StringProcessor.stringIsNotBlank(relatedOrganization.getOrganization().getDescription())) {
+                    descriptionMetaData += "<strong>Organization Description: </strong>" + relatedOrganization.getOrganization().getDescription() + "<br>";
+                }
+                if (StringProcessor.stringIsNotBlank(relatedOrganization.getOrganization().getType())) {
+                    descriptionMetaData += "<strong>Type: </strong>" + relatedOrganization.getOrganization().getType() + "<br>";
+                }
+                
+//                descriptionMetaData += "<strong>Organization Short Name: </strong>" + relatedOrganization.getOrganization().getShortName() + "<br>"
+//                                     + "<strong>Organization Long Name: </strong>" + relatedOrganization.getOrganization().getLongName() + "<br>"
+//                                     + "<strong>Organization Description: </strong>" + relatedOrganization.getOrganization().getDescription() + "<br>"
+//                                     + "<strong>Type: </strong>" + relatedOrganization.getOrganization().getType() + "<br>";
+                
             }
         }
         
@@ -311,14 +435,19 @@ public class AerospaceComponentParser
             
             String componentResourceDescription = "<br>";
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getSnapshotUrl())) {
-                  componentResourceDescription += "<strong>Snapshot URL: </strong>" + revisionProvenanceWebsite.getSnapshotUrl() + "<br>";
+                componentResourceDescription += "<strong>Snapshot URL: </strong>" + revisionProvenanceWebsite.getSnapshotUrl() + "<br>";
                 snapshotExists = true;
             }
             if(StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getUrl())) {
                 if(snapshotExists){
-                      componentResourceDescription += "<strong>Website URL: </strong>" + revisionProvenanceWebsite.getUrl() + "<br>";
+                    componentResourceDescription += "<strong>Website URL: </strong>" + revisionProvenanceWebsite.getUrl() + "<br>";
                 } else {
-                    componentResource.setLink(revisionProvenanceWebsite.getUrl());
+                    if(revisionProvenanceWebsite.getUrl().startsWith("https:") || revisionProvenanceWebsite.getUrl().startsWith("http:")){
+                       componentResource.setLink(revisionProvenanceWebsite.getUrl());
+                    }
+                    // otherwise use a prepend
+                    String linkUrl = HTTP_PREPENDER + revisionProvenanceWebsite.getUrl();
+                    componentResource.setLink(linkUrl);
                 }
                 
             }
@@ -369,11 +498,54 @@ public class AerospaceComponentParser
                 componentResourceDescription += "<strong>Document Title: </strong>" + revisionProvenanceDocument.getTitle() + "<br>";
             }
             if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getDescription())) {
-                componentResourceDescription += "<strong>Document Descritption: </strong>" + revisionProvenanceDocument.getDescription() + "<br>";
+                componentResourceDescription += "<strong>Document Description: </strong>" + revisionProvenanceDocument.getDescription() + "<br>";
             }
             
             componentResource.setDescription(componentResourceDescription);
             componentAll.getResources().add(componentResource);
+        }
+        
+        // We need to check if there is an image or images for us to use.
+        String imageFileName = reader.checkForProductImage(product.getKey());
+        if(StringProcessor.stringIsNotBlank(imageFileName)) {
+
+            ComponentMedia componentMedia = new ComponentMedia();
+            String lookUpMediaCode = getLookup(MediaType.class, MediaType.IMAGE);
+            componentMedia.setMediaTypeCode(lookUpMediaCode);
+            componentMedia.setCaption(imageFileName);
+            componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);            
+
+            String key = fileHistoryAll.getFileHistory().getFileHistoryId() + KEY_SPLITTER + imageFileName;
+            componentMedia.setExternalId(key);
+            resourceMediaKeys.add(key);
+
+            MediaFile mediaFile = new MediaFile();
+            mediaFile.setOriginalName(imageFileName);
+            mediaFile.setMimeType(OpenStorefrontConstant.getMimeForFileExtension(StringProcessor.getFileExtension(imageFileName)));
+            mediaFile.setFileType(MediaFileType.MEDIA);
+
+            componentMedia.setFile(mediaFile);
+            
+            componentAll.getMedia().add(componentMedia);
+
+//            ComponentResource componentResource = new ComponentResource();
+//            String lookUpResourceType = getLookup(ResourceType.class, ResourceType.DOCUMENT);
+//            componentResource.setResourceType(lookUpResourceType);
+//
+//            // Save key and add to list
+//            String key = fileHistoryAll.getFileHistory().getFileHistoryId() + KEY_SPLITTER + imageFileName;
+//            componentResource.setExternalId(key);
+//            resourceMediaKeys.add(key);
+//
+//            MediaFile mediaFile = new MediaFile();
+//            mediaFile.setOriginalName(imageFileName);
+//            mediaFile.setMimeType(OpenStorefrontConstant.getMimeForFileExtension(imageFileName));
+//
+//            componentResource.setFile(mediaFile);
+//
+//            componentResource.setDescription("Referance Image File");
+//            componentAll.getResources().add(componentResource);
+            
         }
         
         return componentAll;
@@ -394,7 +566,7 @@ public class AerospaceComponentParser
                 String fileExtension = StringProcessor.getFileExtension(zipFileEntry.getName());
                 
                 InputStream in = reader.getZipFileEntry(webId);
-                service.getComponentService().saveResourceFile(componentResource, in, OpenStorefrontConstant.getMimeForFileExtension(fileExtension), "Snapshot." + fileExtension);
+                service.getComponentService().saveResourceFile(componentResource, in, OpenStorefrontConstant.getMimeForFileExtension(fileExtension), SNAPSHOT_FILE_NAME + fileExtension);
             }
         }
         
@@ -408,6 +580,21 @@ public class AerospaceComponentParser
             InputStream in = reader.getZipFileEntry(zipFileName);
             if(in != null) {
                 service.getComponentService().saveResourceFile(componentResource, in, componentResource.getFile().getMimeType(), componentResource.getFile().getOriginalName());
+            }
+
+        }
+        
+        for (String key : resourceMediaKeys) {
+            ComponentMedia componentMedia = new ComponentMedia();
+            componentMedia.setExternalId(key);
+            componentMedia = componentMedia.find();
+
+            String zipFileName = key.split(KEY_SPLITTER)[1];
+            InputStream in = reader.getZipFileEntry(zipFileName);
+            if (in != null) {
+//                service.getComponentService().saveResourceFile(componentResource, in, componentResource.getFile().getMimeType(), componentResource.getFile().getOriginalName());
+                  service.getComponentService().saveMediaFile(componentMedia, in, componentMedia.getFile().getMimeType(), componentMedia.getFile().getOriginalName());
+//                service.getComponentService().saveComponentMedia(componentMedia);
             }
 
         }
