@@ -268,11 +268,6 @@ public class AerospaceComponentParser
                 attrDescription += "<strong>Unit: </strong>" + floatFeature.getUnit()+ "<br>";
             }                        
             
-//            attributeContext.setAttributeDescription("<strong>Name: </strong>" + floatFeature.getName() + "<br>" 
-//                                                     + "<strong>Description: </strong>" + floatFeature.getDescription() + "<br>" 
-//                                                     + "<strong>Value Description: </strong>" + floatFeature.getValueDescription() + "<br>"
-//                                                     + "<strong>Value Type: </strong>" + floatFeature.getType() + "<br>"
-//                                                     + "<strong>Unit: </strong>" + floatFeature.getUnit()+ "<br>");
             attributeContext.setAttributeDescription(attrDescription);
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
@@ -310,12 +305,7 @@ public class AerospaceComponentParser
             if(StringProcessor.stringIsNotBlank(intFeature.getUnit())) {
                 attrDescription += "<strong>Unit: </strong>" + intFeature.getUnit() + "<br>";
             }
-            
-//            attributeContext.setAttributeDescription("<strong>Name: </strong>" + intFeature.getName() + "<br>"
-//                                                    + "<strong>Description: </strong>" + intFeature.getDescription() + "<br>"
-//                                                    + "<strong>Value Description: </strong>" + intFeature.getValueDescription() + "<br>"
-//                                                    + "<strong>Value Type: </strong>" + intFeature.getType() + "<br>"
-//                                                    + "<strong>Unit: </strong>" + intFeature.getUnit() + "<br>");
+
             attributeContext.setAttributeDescription(attrDescription);
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
@@ -354,11 +344,6 @@ public class AerospaceComponentParser
                 attrDescription += "<strong>Value: </strong>" + textFeature.getValue() + "<br>";
             }
             
-//            attributeContext.setAttributeDescription("<strong>Name: </strong>" + textFeature.getName() + "<br>"
-//                                                    + "<strong>Description: </strong>" + textFeature.getDescription() + "<br>"
-//                                                    + "<strong>Value Description: </strong>" + textFeature.getValueDescription() + "<br>"
-//                                                    + "<strong>Value Type: </strong>" + textFeature.getType() + "<br>"
-//                                                    + "<strong>Value: </strong>" + textFeature.getValue() + "<br>");
             attributeContext.setAttributeDescription(attrDescription);
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
@@ -389,11 +374,6 @@ public class AerospaceComponentParser
                 descriptionMetaData += "<strong>Type: </strong>" + rOrg.getOrganization().getType() + "<br>";
             }
             
-//            descriptionMetaData += "<strong>Organization Short Name: </strong>" + rOrg.getOrganization().getShortName() + "<br>"
-//                    + "<strong>Organization Long Name: </strong>" + rOrg.getOrganization().getLongName() + "<br>"
-//                    + "<strong>Organization Description: </strong>" + rOrg.getOrganization().getDescription() + "<br>"
-//                    + "<strong>Type: </strong>" + rOrg.getOrganization().getType() + "<br>";
-            
         } else {
             for(RelatedOrganization relatedOrganization : product.getOrganizations().getRelatedOrganizations()) {
                 if(relatedOrganization.getRole().equals(MANUFACTURER_ORG)) {
@@ -414,13 +394,7 @@ public class AerospaceComponentParser
                 }
                 if (StringProcessor.stringIsNotBlank(relatedOrganization.getOrganization().getType())) {
                     descriptionMetaData += "<strong>Type: </strong>" + relatedOrganization.getOrganization().getType() + "<br>";
-                }
-                
-//                descriptionMetaData += "<strong>Organization Short Name: </strong>" + relatedOrganization.getOrganization().getShortName() + "<br>"
-//                                     + "<strong>Organization Long Name: </strong>" + relatedOrganization.getOrganization().getLongName() + "<br>"
-//                                     + "<strong>Organization Description: </strong>" + relatedOrganization.getOrganization().getDescription() + "<br>"
-//                                     + "<strong>Type: </strong>" + relatedOrganization.getOrganization().getType() + "<br>";
-                
+                } 
             }
         }
         
@@ -527,24 +501,6 @@ public class AerospaceComponentParser
             componentMedia.setFile(mediaFile);
             
             componentAll.getMedia().add(componentMedia);
-
-//            ComponentResource componentResource = new ComponentResource();
-//            String lookUpResourceType = getLookup(ResourceType.class, ResourceType.DOCUMENT);
-//            componentResource.setResourceType(lookUpResourceType);
-//
-//            // Save key and add to list
-//            String key = fileHistoryAll.getFileHistory().getFileHistoryId() + KEY_SPLITTER + imageFileName;
-//            componentResource.setExternalId(key);
-//            resourceMediaKeys.add(key);
-//
-//            MediaFile mediaFile = new MediaFile();
-//            mediaFile.setOriginalName(imageFileName);
-//            mediaFile.setMimeType(OpenStorefrontConstant.getMimeForFileExtension(imageFileName));
-//
-//            componentResource.setFile(mediaFile);
-//
-//            componentResource.setDescription("Referance Image File");
-//            componentAll.getResources().add(componentResource);
             
         }
         
@@ -592,9 +548,7 @@ public class AerospaceComponentParser
             String zipFileName = key.split(KEY_SPLITTER)[1];
             InputStream in = reader.getZipFileEntry(zipFileName);
             if (in != null) {
-//                service.getComponentService().saveResourceFile(componentResource, in, componentResource.getFile().getMimeType(), componentResource.getFile().getOriginalName());
                   service.getComponentService().saveMediaFile(componentMedia, in, componentMedia.getFile().getMimeType(), componentMedia.getFile().getOriginalName());
-//                service.getComponentService().saveComponentMedia(componentMedia);
             }
 
         }
