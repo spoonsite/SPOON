@@ -548,7 +548,7 @@ public class AerospaceComponentParser
             String zipFileName = key.split(KEY_SPLITTER)[1];
             InputStream in = reader.getZipFileEntry(zipFileName);
             if (in != null) {
-                  service.getComponentService().saveMediaFile(componentMedia, in, componentMedia.getFile().getMimeType(), componentMedia.getFile().getOriginalName());
+                service.getComponentService().saveMediaFile(componentMedia, in, componentMedia.getFile().getMimeType(), componentMedia.getFile().getOriginalName());
             }
 
         }
