@@ -353,7 +353,7 @@ public class PropertiesManager
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
 			defaults.put(KEY_REPORT_LIFETIME, REPORT_HISTORY_DAYS_TO_LIVE);
 			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
-			defaults.put(KEY_MAX_POST_SIZE, "1024"); // 1GB
+			defaults.put(KEY_MAX_POST_SIZE, "2048"); // 2GB
 
 			String propertiesFilename = fileSystemManager.getConfig(getPropertiesFile()).getPath();
 
