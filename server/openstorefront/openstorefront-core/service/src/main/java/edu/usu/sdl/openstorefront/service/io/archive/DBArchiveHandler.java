@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.service.io.archive;
 
 import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class DBArchiveHandler
 	public void performExport(File exportFile)
 	{
 		try {
-			DBManager.getInstance().exportDB(new TFileOutputStream(exportFile));
+			OrientDBManager.getInstance().exportDB(new TFileOutputStream(exportFile));
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, "DB Export failed", ex);
 			addError("Fail to create export. See log for more details.");
@@ -102,7 +102,7 @@ public class DBArchiveHandler
 				Thread.currentThread().interrupt();
 			}
 
-			DBManager.getInstance().importDB(new TFileInputStream(importFile));
+			OrientDBManager.getInstance().importDB(new TFileInputStream(importFile));
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, "DB Import failed", ex);
 			addError("Failed to import database. See log for more details.");

@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -268,7 +268,7 @@ public class LookupServiceImpl
 	{
 		LookupEntity lookupEntity = null;
 		try {
-			Class lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
+			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
 			lookupEntity = getLookupEnity(lookupClass, code);
 		} catch (ClassNotFoundException ex) {
 			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");
@@ -308,7 +308,7 @@ public class LookupServiceImpl
 	{
 		LookupEntity lookupEntity = null;
 		try {
-			Class lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
+			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
 			lookupEntity = getLookupEnityByDesc(lookupClass, description);
 		} catch (ClassNotFoundException ex) {
 			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");

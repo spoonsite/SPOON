@@ -21,7 +21,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,7 +69,7 @@ public class UserLookupTypeExporter
 	{
 		super.exporterInit();
 
-		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
+		Collection<Class<?>> entityClasses = OrientDBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
 			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubLookupEntity(entityClass)) {

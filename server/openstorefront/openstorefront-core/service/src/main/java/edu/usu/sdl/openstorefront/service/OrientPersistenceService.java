@@ -41,7 +41,7 @@ import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -77,9 +77,9 @@ public class OrientPersistenceService
 	private static final String PARAM_NAME_SEPARATOR = "1";
 
 	private OObjectDatabaseTx transaction;
-	private final DBManager manager;
+	private final OrientDBManager manager;
 
-	public OrientPersistenceService(DBManager manager)
+	public OrientPersistenceService(OrientDBManager manager)
 	{
 		this.manager = manager;
 	}

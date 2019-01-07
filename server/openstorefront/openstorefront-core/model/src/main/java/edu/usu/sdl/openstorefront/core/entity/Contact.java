@@ -122,7 +122,7 @@ public class Contact
 	}
 
 	@Override
-	public void setChangeParent(ChangeLog changeLog)
+	public void updateChangeParent(ChangeLog changeLog)
 	{
 		//top-level
 	}

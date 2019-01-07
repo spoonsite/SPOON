@@ -137,7 +137,7 @@ public class ContentSectionMedia
 	}
 
 	@Override
-	public void setChangeParent(ChangeLog changeLog)
+	public void updateChangeParent(ChangeLog changeLog)
 	{
 		changeLog.setParentEntity(ContentSection.class.getSimpleName());
 		changeLog.setParentEntityId(getContentSectionId());

@@ -115,7 +115,7 @@ import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -1160,7 +1160,7 @@ public class CoreComponentServiceImpl
 		Objects.requireNonNull(componentId, "Component Id is required.");
 		LOG.log(Level.INFO, MessageFormat.format("Attempting to Removing component: {0}", componentId));
 
-		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
+		Collection<Class<?>> entityClasses = OrientDBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
 			if (ReflectionUtil.BASECOMPONENT_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, entityClass)) {

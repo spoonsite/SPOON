@@ -18,7 +18,7 @@ package edu.usu.sdl.openstorefront.service;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.service.manager.MemoryDBManager;
 import edu.usu.sdl.openstorefront.service.testModels.TestChild;
 import edu.usu.sdl.openstorefront.service.testModels.TestParent;
@@ -60,22 +60,22 @@ public class PersistUseCase
 		testPropertiesManager.setVersionFile("/unittest-version.properties");
 		testPropertiesManager.setPropertiesFile("unittest.properties");
 
-		DBManager.getInstance().shutdown();
+		OrientDBManager.getInstance().shutdown();
 		String modelPackage = "edu.usu.sdl.openstorefront.service.testModels";
 		String configFile = "test-orientdb-server-config.xml";
-		DBManager manager = MemoryDBManager.getInstance(URL, modelPackage, configFile, testFileSystemManager, testPropertiesManager);
-//		//NOTE: (KB) this will fail if DBManager is alreay initilzed
+		OrientDBManager manager = MemoryDBManager.getInstance(URL, modelPackage, configFile, testFileSystemManager, testPropertiesManager);
+//		//NOTE: (KB) this will fail if OrientDBManager is alreay initilzed
 		Assert.assertEquals(modelPackage, manager.getEntityModelPackage());
 		if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_AT) == null) {
 			PropertiesManager.getInstance().setProperty(PropertiesManager.KEY_DB_AT, "pass");
 		}
-		DBManager.getInstance().initialize();
+		OrientDBManager.getInstance().initialize();
 	}
 
 	@AfterClass
 	public static void cleanup()
 	{
-		DBManager.getInstance().shutdown();
+		OrientDBManager.getInstance().shutdown();
 
 		LOG.info("Clean up temp data folder");
 		File file = new File(testDir);
@@ -95,7 +95,7 @@ public class PersistUseCase
 		System.out.println("persist - NestedObjects");
 
 		//Act
-		OrientPersistenceService service = new OrientPersistenceService(DBManager.getInstance());
+		OrientPersistenceService service = new OrientPersistenceService(OrientDBManager.getInstance());
 		TestParent p = new TestParent();
 		p.setParentId(service.generateId());
 		p.setChild(new TestChild());
@@ -114,7 +114,7 @@ public class PersistUseCase
 		System.out.println("persist - SharedObjects");
 
 		//Act
-		OrientPersistenceService service = new OrientPersistenceService(DBManager.getInstance());
+		OrientPersistenceService service = new OrientPersistenceService(OrientDBManager.getInstance());
 		service.begin();
 
 		TestParent p1 = new TestParent();

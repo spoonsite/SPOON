@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.web.test.lookup;
 
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +34,7 @@ public class FindLookupTest
 	@SuppressWarnings("squid:S1872")
 	protected void runInternalTest()
 	{
-		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
+		Collection<Class<?>> entityClasses = OrientDBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
 		for (Class entityClass : entityClasses) {
 			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubLookupEntity(entityClass)) {

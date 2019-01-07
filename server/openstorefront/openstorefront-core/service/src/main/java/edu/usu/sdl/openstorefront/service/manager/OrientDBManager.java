@@ -43,11 +43,11 @@ import java.util.logging.Logger;
  *
  * @author dshurtleff
  */
-public class DBManager
+public class OrientDBManager
 		implements Initializable
 {
 
-	private static final Logger LOG = Logger.getLogger(DBManager.class.getName());
+	private static final Logger LOG = Logger.getLogger(OrientDBManager.class.getName());
 
 	private AtomicBoolean started = new AtomicBoolean(false);
 	private OServer server;
@@ -60,12 +60,12 @@ public class DBManager
 	private PropertiesManager propertiesManager;
 
 	// <editor-fold defaultstate="collapsed" desc="Singleton getInstance() Methods">
-	protected static DBManager singleton = null;
+	protected static OrientDBManager singleton = null;
 
-	public static DBManager getInstance()
+	public static OrientDBManager getInstance()
 	{
 		if (singleton == null) {
-			singleton = new DBManager("remote:localhost/openstorefront",
+			singleton = new OrientDBManager("remote:localhost/openstorefront",
 					"edu.usu.sdl.openstorefront.core.entity",
 					"orientdb-server-config.xml",
 					FileSystemManager.getInstance(),
@@ -76,7 +76,7 @@ public class DBManager
 	}
 
 	// </editor-fold>
-	protected DBManager(String url, String entityModelPackage, String configFile, FileSystemManager fileSystemManager, PropertiesManager propertiesManager)
+	protected OrientDBManager(String url, String entityModelPackage, String configFile, FileSystemManager fileSystemManager, PropertiesManager propertiesManager)
 	{
 		this.url = url;
 		this.entityModelPackage = entityModelPackage;

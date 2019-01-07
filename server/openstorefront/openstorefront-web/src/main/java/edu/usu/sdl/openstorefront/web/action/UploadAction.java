@@ -40,7 +40,7 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -148,7 +148,7 @@ public class UploadAction
 			StringBuilder errorsMessages = new StringBuilder();
 			try (CSVReader reader = new CSVReader(new InputStreamReader(uploadFile.getInputStream()))) {
 
-				lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + entityName);
+				lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + entityName);
 				List<String[]> allData = reader.readAll();
 				for (String data[] : allData) {
 					try {
