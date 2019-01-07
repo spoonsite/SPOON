@@ -398,7 +398,10 @@ public class AerospaceComponentParser
             }
         }
         
-        component.setDescription(descriptionMetaData + "<br>" + product.getDescription());
+        if(StringProcessor.stringIsNotBlank(product.getDescription())){
+            component.setDescription(descriptionMetaData + "<br>" + product.getDescription());
+        }
+
         
         // For every piece of provenance documentaton we need to add it as a resource to the component
         for(RevisionProvenanceWebsite revisionProvenanceWebsite : product.getProductRevision().getProvenance().getWebsites()) {
