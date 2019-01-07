@@ -74,8 +74,8 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				labelAlign: 'top',
 				hidden: panel.fieldTemplate.showComment ? false : true	
 			});
-		};		
-
+		};	
+		
 		var checkForRequiredComment = function(value) {
 			if (panel.fieldTemplate.requiredCommentOnValue &&
 					panel.fieldTemplate.requiredCommentOnValue === value) {
@@ -97,6 +97,11 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		var decodedData = null;
 		if (initialData) {
 			decodedData = Ext.decode(initialData);
+			if (decodedData[0].comment) {
+				if (!decodedData[0].comment.includes("<div>")) {
+					decodedData[0].comment = decodedData[0].comment.replace(/<br>/g, "\n")
+				}
+			}
 		}			
 		
 				
@@ -151,7 +156,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 						});	
 						addCommentField(displayItems);
 						panel.add(displayItems);
-						
+
 						//init
 						if (decodedData) {
 							var record = Ext.create('Ext.data.Model', {						
@@ -420,7 +425,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		if (values.comment && values.comment  !== '') {
 			data.push({
 				label: 'Comment',
-				value: values.comment
+				value: values.comment.replace(/\n/g, "<br>")
 			});		
 		}
 
@@ -454,7 +459,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 							attributeType: panel.fieldTemplate.attributeType,
 							attributeCode: value
 						},
-						comment: values.comment,
+						comment: values.comment.replace(/\n/g, "<br>"),
 						privateFlag: values.privateFlag					
 					};
 					if (componentAttribute.comment === '') {
@@ -471,7 +476,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 						attributeType: panel.fieldTemplate.attributeType,
 						attributeCode: panel.fieldTemplate.attributeCode
 					},
-					comment: values.comment,
+					comment: values.comment.replace(/\n/g, "<br>"),
 					privateFlag: values.privateFlag					
 				};
 				if (componentAttribute.comment === '') {
@@ -489,7 +494,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 						attributeType: panel.fieldTemplate.attributeType,
 						attributeCode: panel.selectedValue.value
 					},
-					comment: values.comment,
+					comment: values.comment.replace(/\n/g, "<br>"),
 					privateFlag: values.privateFlag					
 				};
 				if (componentAttribute.comment === '') {
@@ -508,7 +513,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 						attributeType: panel.fieldTemplate.attributeType,
 						attributeCode: value
 					},
-					comment: values.comment,
+					comment: values.comment.replace(/\n/g, "<br>"),
 					privateFlag: values.privateFlag					
 				};
 				if (componentAttribute.comment === '') {
