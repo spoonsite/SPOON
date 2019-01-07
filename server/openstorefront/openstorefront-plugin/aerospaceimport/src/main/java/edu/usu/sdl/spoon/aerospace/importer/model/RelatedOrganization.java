@@ -26,7 +26,7 @@ import org.simpleframework.xml.Root;
 public class RelatedOrganization
 {
 
-	@Element(name = "role")
+	@Element(name = "role", required = false)
 	private String role;
 
 	@Element(name = "organization", required = false)

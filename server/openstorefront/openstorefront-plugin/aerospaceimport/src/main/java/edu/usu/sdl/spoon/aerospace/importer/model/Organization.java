@@ -24,7 +24,7 @@ import org.simpleframework.xml.Element;
 public class Organization
 {
 
-	@Element(name = "key")
+	@Element(name = "key", required = false)
 	private int key;
 
 	@Element(name = "short_name", required = false)
