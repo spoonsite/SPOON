@@ -15,11 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import com.mongodb.client.MongoClient;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
+ * Handles Mongo DB Resource Keep in mind; we only Mongo connect as a client;
+ * Mongo is expected to be running prior to the application
  *
  * @author dshurtleff
  */
@@ -28,21 +32,56 @@ public class MongoDBManager
 {
 
 	private static final Logger LOG = Logger.getLogger(MongoDBManager.class.getName());
+	private static final String DEFAULT_DATABASE = "storefront";
 
 	private AtomicBoolean started = new AtomicBoolean(false);
+
+	private MongoClient mongoClient;
+	private PropertiesManager propertiesManager;
+
+	protected static MongoDBManager singleton = null;
+
+	public static MongoDBManager getInstance()
+	{
+		if (singleton == null) {
+			singleton = new MongoDBManager(PropertiesManager.getInstance());
+		}
+		return singleton;
+	}
+
+	public MongoDBManager(PropertiesManager propertiesManager)
+	{
+		this.mongoClient = mongoClient;
+		this.propertiesManager = propertiesManager;
+	}
 
 	@Override
 	public void initialize()
 	{
 		//connect and create client
+		synchronized (this) {
+			if (!isStarted()) {
 
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+			}
+		}
 	}
 
 	@Override
 	public void shutdown()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		synchronized (this) {
+			if (isStarted()) {
+				if (mongoClient != null) {
+					LOG.info("Shutting down Mongo Client...");
+					mongoClient.close();
+					started.set(false);
+					LOG.info("Finished. (Get a new Instance and initialize) ");
+				}
+				singleton = null;
+			} else {
+				LOG.info("Mongo Client already shutdown.");
+			}
+		}
 	}
 
 	@Override
@@ -51,4 +90,5 @@ public class MongoDBManager
 		return started.get();
 	}
 
+	//get a database (
 }

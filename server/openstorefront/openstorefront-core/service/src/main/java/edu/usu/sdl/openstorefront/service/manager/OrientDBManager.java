@@ -39,7 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Handles DB Resource
+ * Handles Orient DB Resource
  *
  * @author dshurtleff
  */
