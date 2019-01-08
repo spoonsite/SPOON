@@ -389,6 +389,7 @@
 							return value + warning;
 						}
 					},
+					{text: 'Unit', dataIndex: 'attributeUnit', flex: 1},
 					{text: 'Type Code', dataIndex: 'attributeType', flex: 1.5},
 					{
 						text: 'Required',
@@ -716,7 +717,7 @@
 
 				Ext.getCmp('editAttributeForm-defaultCode').show();				
 				Ext.getCmp('editAttributeForm-code').setEditable(false);
-				// Retreive codes to populate form options
+				// Retrieve codes to populate form options
 				var url = 'api/v1/resource/attributes/attributetypes/';
 				url += record.data.attributeType;
 				url += '/attributecodeviews';
@@ -1868,7 +1869,7 @@
 												if (formData.label !== formData.typeCode) {
 													Ext.Msg.show({
 														title:'Validation',
-														message: 'Type Code must match label for numberic attribute types',
+														message: 'Type Code must match label for numeric attribute types',
 														buttons: Ext.Msg.OK,
 														icon: Ext.Msg.ERROR,
 														fn: function(btn) {															
@@ -2209,7 +2210,67 @@
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/lookuptypes/AttributeValueType'
+										},
+										// on change check value
+										// if number
+											// Ext.getCmp('attributeUnitDefault').setHidden(false);
+											// Ext.getCmp('attributeUnitCheck').setHidden(false);
+											// hidden: Ext.getCmp('attributeValueType').getValue() === 'NUMBER',
+									}
+								},
+								// admin enters a unit string i.e. "mm", "N", "km"
+								// hide if value type not a number
+								{
+									id: 'attributeUnitDefault',
+									xtype: 'textfield',
+									fieldLabel: 'Default Unit',
+									name: 'attributeUnit'
+								},
+								{
+									xtype: 'panel',
+									id: 'attributeUnitCheckOutput',
+									name: 'attributeUnitCheckOutput',
+									bodyStyle: 'font-size: 16px; line-height: 1.2em; padding-bottom: 10px;',
+									html: ''
+								},
+								// check the unit string to see if it parses correctly
+								// hide if value type not a number
+								{
+									id: 'attributeUnitCheck',
+									xtype: 'button',
+									text: 'Check Unit',
+									fieldLabel: 'Check Unit',
+									name: 'attributeUnitCheck',
+									handler: function() {
+										var value = Ext.getCmp('attributeUnitDefault').getValue();
+										// ajax check if it can parse the unit
+										var data = {
+											attributeUnit: value
 										}
+										Ext.Ajax.request({
+											url: 'api/v1/resource/attributes/unitcheck',
+											method: 'POST',
+											jsonData: data,
+											success: function(response, opts) {
+												try {
+													var res = JSON.parse(response.responseText);
+													var html = "<em>Unit:</em> " + res.unit + "<br>"
+															 + "<em>SI Unit:</em> " + res.standardUnit + "<br>"
+															 + "<em>Dimension:</em> " + res.dimension;
+													if (res.error) {
+														html = "<em style='color: red;'>Failed to parse unit</em>";
+													}
+													Ext.getCmp('attributeUnitCheckOutput').setHtml(html);
+												} catch {
+													console.error('Failed to parse JSON response.');
+												}
+											},
+											failure: function(response, opts) {
+												Ext.toast('An Attribute Failed To Update', 'Error');
+
+												console.error(response);
+											}
+										});
 									}
 								},
 								{

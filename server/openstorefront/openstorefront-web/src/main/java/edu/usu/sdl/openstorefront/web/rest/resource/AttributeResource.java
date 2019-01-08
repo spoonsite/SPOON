@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
@@ -72,6 +73,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.measure.unit.NonSI;
+import static javax.measure.unit.NonSI.BYTE;
+import javax.measure.unit.Unit;
+import javax.measure.unit.UnitFormat;
+import javax.measure.unit.SI;
+import static javax.measure.unit.SI.KILO;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -1218,6 +1226,66 @@ public class AttributeResource
 			@RequiredParam String type)
 	{
 		service.getAttributeService().deleteAttributeXrefType(type);
+	}
+
+	@POST
+	@APIDescription("Check the unit parsing")
+	@Path("/unitcheck")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response checkUnit(
+			String request)
+	{
+		UnitFormat instance = UnitFormat.getInstance();
+		instance.alias(NonSI.BYTE.times(1.0E3), "KB");
+		instance.alias(NonSI.BYTE.times(1.0E6), "MB");
+		instance.alias(NonSI.BYTE.times(1.0E9), "GB");
+		instance.alias(NonSI.BYTE.times(1.0E12), "TB");
+		instance.alias(NonSI.BYTE.times(1.0E15), "PB");
+
+		instance.alias(SI.BIT.times(1.0E3),   "Kb");
+		instance.alias(SI.BIT.times(1.0E6),  "Mb");
+		instance.alias(SI.BIT.times(1.0E9),  "Gb");
+		instance.alias(SI.BIT.times(1.0E12), "Tb");
+		instance.alias(SI.BIT.times(1.0E15), "Pb");
+
+		instance.alias(SI.BIT.times(1.0E3).divide(SI.SECOND), "kbps");
+		instance.alias(SI.BIT.divide(SI.SECOND), "bps");
+
+		instance.alias(NonSI.INCH, "inch");
+		
+		HashMap<String,Object> result;
+		try {
+			result = new ObjectMapper().readValue(request, HashMap.class);
+		} catch (Exception e) {
+			return Response.status(500).build();
+		}		
+		
+		String attributeUnit = result.get("attributeUnit").toString();
+
+		Unit unit;
+		try {
+			unit = Unit.valueOf(attributeUnit);
+		} catch (IllegalArgumentException e) {
+			String error = Json.createObjectBuilder()
+				.add("error", "unable to parse unit")
+				.build()
+				.toString();
+			return Response.ok(error).build();
+		}
+		
+		String unitString = unit.toString();
+		String dimension = unit.getDimension().toString();
+		String standardUnit = unit.getStandardUnit().toString();
+		
+		String JSON = Json.createObjectBuilder()
+				.add("unit", unitString)
+				.add("dimension", dimension)
+				.add("standardUnit", standardUnit)
+				.build()
+				.toString();
+		
+		return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
 	}
 
 }
