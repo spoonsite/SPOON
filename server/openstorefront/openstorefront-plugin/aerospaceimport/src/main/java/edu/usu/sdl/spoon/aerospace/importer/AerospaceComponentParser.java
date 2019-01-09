@@ -426,8 +426,7 @@ public class AerospaceComponentParser
                         String linkUrl = HTTP_PREPENDER + revisionProvenanceWebsite.getUrl();
                         componentResource.setLink(linkUrl);
                     }
-                }
-                
+                }              
             }
 
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getSnapshotId())) {
