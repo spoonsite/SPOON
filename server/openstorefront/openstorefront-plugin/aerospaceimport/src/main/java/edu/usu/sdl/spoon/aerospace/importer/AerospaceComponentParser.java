@@ -421,9 +421,11 @@ public class AerospaceComponentParser
                     if(revisionProvenanceWebsite.getUrl().startsWith("https:") || revisionProvenanceWebsite.getUrl().startsWith("http:")){
                        componentResource.setLink(revisionProvenanceWebsite.getUrl());
                     }
-                    // otherwise use a prepend
-                    String linkUrl = HTTP_PREPENDER + revisionProvenanceWebsite.getUrl();
-                    componentResource.setLink(linkUrl);
+                    else {
+                        // otherwise use a prepend
+                        String linkUrl = HTTP_PREPENDER + revisionProvenanceWebsite.getUrl();
+                        componentResource.setLink(linkUrl);
+                    }
                 }
                 
             }
