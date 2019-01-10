@@ -15,14 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 
 /**
- * Handles Mongo DB Resource Keep in mind; we only Mongo connect as a client;
+ * Handles Mongo DB Resource Keep in mind; we only connect to Mongo as a client;
  * Mongo is expected to be running prior to the application
  *
  * @author dshurtleff
@@ -38,6 +46,7 @@ public class MongoDBManager
 
 	private MongoClient mongoClient;
 	private PropertiesManager propertiesManager;
+	private CodecRegistry pojoCodecRegistry;
 
 	protected static MongoDBManager singleton = null;
 
@@ -61,7 +70,13 @@ public class MongoDBManager
 		//connect and create client
 		synchronized (this) {
 			if (!isStarted()) {
+				String connectionUrl = propertiesManager.getValueDefinedDefault(PropertiesManager.KEY_MONGO_CONNECTION_URL);
+				mongoClient = MongoClients.create(connectionUrl);
 
+				pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
+						fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+
+				started.set(true);
 			}
 		}
 	}
@@ -75,7 +90,7 @@ public class MongoDBManager
 					LOG.info("Shutting down Mongo Client...");
 					mongoClient.close();
 					started.set(false);
-					LOG.info("Finished. (Get a new Instance and initialize) ");
+					LOG.info("Finished. (Get a new Instance and initialize for futher use)");
 				}
 				singleton = null;
 			} else {
@@ -91,4 +106,17 @@ public class MongoDBManager
 	}
 
 	//get a database (
+	public MongoDatabase getConnection()
+	{
+		MongoDatabase db = null;
+		if (mongoClient != null) {
+			db = mongoClient
+					.getDatabase(propertiesManager.getValue(PropertiesManager.KEY_MONGO_DATABASE, DEFAULT_DATABASE))
+					.withCodecRegistry(pojoCodecRegistry);
+		} else {
+			throw new OpenStorefrontRuntimeException("Client is not initialized", "Make sure Mongo Manager is started");
+		}
+		return db;
+	}
+
 }

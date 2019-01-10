@@ -62,6 +62,12 @@ public class PropertiesManager
 	public static final String KEY_SOLR_URL = "solr.server.url";
 	public static final String KEY_SOLR_USE_XML = "solr.server.usexml";
 
+	//MONGO Properties
+	//See http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/
+	//https://docs.mongodb.com/manual/reference/connection-string/
+	public static final String KEY_MONGO_CONNECTION_URL = "mongo.connection.url";
+	public static final String KEY_MONGO_DATABASE = "mongo.database";
+
 	public static final String KEY_ELASTIC_HOST = "elastic.server.host";
 	public static final String KEY_ELASTIC_PORT = "elastic.server.port";
 	public static final String KEY_ELASTIC_SEARCH_POOL = "elastic.connectionpool.size";
@@ -354,6 +360,7 @@ public class PropertiesManager
 			defaults.put(KEY_REPORT_LIFETIME, REPORT_HISTORY_DAYS_TO_LIVE);
 			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
 			defaults.put(KEY_MAX_POST_SIZE, "1024"); // 1GB
+			defaults.put(KEY_MONGO_CONNECTION_URL, "mongodb://localhost:27017");
 
 			String propertiesFilename = fileSystemManager.getConfig(getPropertiesFile()).getPath();
 
