@@ -5,6 +5,7 @@ import math
 import signal
 import sys
 import csv
+import html
 
 # TODO:
 # set XML and CSV files relative to the repo
@@ -303,12 +304,24 @@ def process_xml():
     tree.write(OUTPUT_FILENAME)
 
 def inspect_escape_characters():
-    filename = r"\\hera\C4ISR_NSS\SPOON\projects\aerospace-import\preprocessor\products_091118-preprocessed.xml"
+    filename = r"\\hera\C4ISR_NSS\SPOON\projects\aerospace-import\preprocessor\products_091118-preprocessed_escaped.xml"
     print(f'XML file: {filename}')
     tree = ET.parse(filename)
     root = tree.getroot()
     all_descriptions = []
     count = 0
+    html_style = """
+    <style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 15px;
+}
+    </style>
+    """
+    html_string = f'<html><head>{html_style}</head><body><table><tr><th>encoding</th><th>character</th><th>text body</th><tr>'
     for product in root:
         descriptions = product.findall('description')
         all_descriptions += descriptions
@@ -319,21 +332,25 @@ def inspect_escape_characters():
             words = encoded.replace(b'&#160;', b' ').split()
             uwords = text.split()
             for i in range(len(words)):
-                if b'&#65533;' in words[i]:
+                if b'&#' in words[i] or b'?' in words[i]:
                     count += 1
                     print('----------------------------------------------------------------------')
                     print()
                     print(f'Escape character: {words[i].decode("utf-8")} -> {uwords[i]}')
+                    html_string += f'<tr><td>{html.escape(words[i].decode("utf-8"))}</td><td>{uwords[i]}</td><td>{text}</td></tr>'
                     print()
-                    print()
-                    print('DESCRIPTION TEXT')
-                    print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
-                    print(text)
-                    print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                    # print()
+                    # print('DESCRIPTION TEXT')
+                    # print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
+                    # print(text)
+                    # print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                     print('----------------------------------------------------------------------')
     print()
     print(f'Found {count} escaped characters')
     print()
+    html_string += '</table></body></html>'
+    with open('index.html', 'w') as fout:
+        fout.write(html_string)
 
 def intro_prompt():
     print('What would you like to do?')
