@@ -70,7 +70,13 @@
 			<artifactId>glassfish-embedded-all</artifactId>
 			<version>4.1.2</version>
 			<scope>test</scope>
-		</dependency>								
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jscience/jscience -->
+		<dependency>
+			<groupId>org.jscience</groupId>
+			<artifactId>jscience</artifactId>
+			<version>4.3.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

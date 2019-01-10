@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.AttributeUnit;
 import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
@@ -60,6 +61,7 @@ public class AttributeTypeView
 	private String detailedDescription;
 	private String attributeValueType;
 	private String attributeValueTypeDescription;
+	private String attributeUnit;
 
 	@NotNull
 	private String activeStatus;
@@ -97,6 +99,7 @@ public class AttributeTypeView
 		attributeTypeView.setOptionalRestrictions(attributeType.getOptionalRestrictions());
 		attributeTypeView.setAttributeValueType(attributeType.getAttributeValueType());
 		attributeTypeView.setAttributeValueTypeDescription(TranslateUtil.translate(AttributeValueType.class, attributeType.getAttributeValueType()));
+		attributeTypeView.setAttributeUnit(attributeType.getAttributeUnit());
 
 		attributeTypeView.toStandardView(attributeType);
 
@@ -277,6 +280,16 @@ public class AttributeTypeView
 	public void setAttributeValueTypeDescription(String attributeValueTypeDescription)
 	{
 		this.attributeValueTypeDescription = attributeValueTypeDescription;
+	}
+
+	public String getAttributeUnit()
+	{
+		return attributeUnit;
+	}
+
+	public void setAttributeUnit(String attributeUnit)
+	{
+		this.attributeUnit = attributeUnit;
 	}
 
 }

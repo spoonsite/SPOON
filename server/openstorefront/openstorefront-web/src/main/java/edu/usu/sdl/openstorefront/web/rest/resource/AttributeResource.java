@@ -75,11 +75,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 import javax.json.Json;
 import javax.measure.unit.NonSI;
-import static javax.measure.unit.NonSI.BYTE;
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
 import javax.measure.unit.SI;
-import static javax.measure.unit.SI.KILO;
+import org.jscience.physics.amount.Amount;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -99,6 +98,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.commons.lang.StringUtils;
+import org.jscience.economics.money.Currency;
+import static org.jscience.physics.amount.Constants.π;
 
 /**
  *
@@ -1236,23 +1237,44 @@ public class AttributeResource
 	public Response checkUnit(
 			String request)
 	{
+		// TODO:
+		// move all the unit aliases out into a separate service called on application start
 		UnitFormat instance = UnitFormat.getInstance();
-		instance.alias(NonSI.BYTE.times(1.0E3), "KB");
-		instance.alias(NonSI.BYTE.times(1.0E6), "MB");
-		instance.alias(NonSI.BYTE.times(1.0E9), "GB");
+		instance.alias(NonSI.BYTE.times(1.0E3),  "KB");
+		instance.alias(NonSI.BYTE.times(1.0E6),  "MB");
+		instance.alias(NonSI.BYTE.times(1.0E9),  "GB");
 		instance.alias(NonSI.BYTE.times(1.0E12), "TB");
 		instance.alias(NonSI.BYTE.times(1.0E15), "PB");
-
-		instance.alias(SI.BIT.times(1.0E3),   "Kb");
-		instance.alias(SI.BIT.times(1.0E6),  "Mb");
-		instance.alias(SI.BIT.times(1.0E9),  "Gb");
-		instance.alias(SI.BIT.times(1.0E12), "Tb");
-		instance.alias(SI.BIT.times(1.0E15), "Pb");
-
+		instance.alias(SI.BIT.times(1.0E3),      "Kb");
+		instance.alias(SI.BIT.times(1.0E6),      "Mb");
+		instance.alias(SI.BIT.times(1.0E9),      "Gb");
+		instance.alias(SI.BIT.times(1.0E12),     "Tb");
+		instance.alias(SI.BIT.times(1.0E15),     "Pb");
 		instance.alias(SI.BIT.times(1.0E3).divide(SI.SECOND), "kbps");
+		instance.alias(SI.BIT.times(1.0E6).divide(SI.SECOND), "Mbps");
 		instance.alias(SI.BIT.divide(SI.SECOND), "bps");
-
+		instance.alias(NonSI.REVOLUTION.divide(NonSI.MINUTE), "rpm");
+		instance.alias(NonSI.REVOLUTION.divide(NonSI.MINUTE), "RPM");
 		instance.alias(NonSI.INCH, "inch");
+		instance.alias(NonSI.SECOND_ANGLE, "arcsec");
+		instance.alias(NonSI.MINUTE_ANGLE, "arcmin");
+		instance.alias(NonSI.G, "Grav"); // G is the Gauss, need to disambiguate
+		instance.alias(NonSI.G.times(1.0E-3), "mGrav");
+		instance.alias(NonSI.GAUSS.times(1.0E-3), "mG");
+		instance.alias(Unit.valueOf("°"), "deg");
+		instance.alias(NonSI.DECIBEL.times(SI.WATT), "dBW");
+		instance.alias(NonSI.DECIBEL.times(SI.WATT.times(1.0E-3)), "dBm"); // dB milli-Watts
+		instance.alias(NonSI.DECIBEL, "dBi");
+		instance.alias(NonSI.DECIBEL, "dBd");
+		instance.alias(NonSI.DECIBEL, "dBc");
+		instance.alias(NonSI.DECIBEL, "dBC");
+		instance.alias(NonSI.HOUR, "hr");
+		instance.alias(NonSI.HOUR, "hour");
+		instance.alias(SI.METER.times(1.0E-6), "micron");
+		instance.alias(Currency.USD, "$");
+		instance.alias(SI.SECOND.pow(-1).times(1.0E6), "MIPS");
+		instance.alias(NonSI.G.pow(2).divide(SI.HERTZ), "grms"); // G_rms root mean square of power spectral density
+		instance.alias(NonSI.G.pow(2).divide(SI.HERTZ), "Grms");
 		
 		HashMap<String,Object> result;
 		try {
