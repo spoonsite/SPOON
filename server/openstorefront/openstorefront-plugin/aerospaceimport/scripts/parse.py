@@ -4,6 +4,10 @@ import copy
 import math
 import signal
 import sys
+import csv
+
+# TODO:
+# set XML and CSV files relative to the repo
 
 def list_columns(obj, cols=3, columnwise=True, gap=4, numbers=True):
     """
@@ -190,6 +194,39 @@ def build_org_map(root):
 
     return get_map_keys(org_map)
 
+def build_category_set(root):
+    cat_set = set()
+    for product in root:
+        category_name = product\
+            .find('product_revision')\
+            .find('product_family')\
+            .find('classification')\
+            .find('category_name')\
+            .text
+        cat_set.add(category_name)
+    return cat_set
+
+def print_missing_mappings():
+    filename = r"\\hera\C4ISR_NSS\SPOON\projects\aerospace-import\preprocessor\products_091118-preprocessed.xml"
+    print(f'XML file: {filename}')
+    tree = ET.parse(filename)
+    root = tree.getroot()
+    category_set = build_category_set(root)
+
+    csv_filename = r"C:\dev\openstorefront\server\openstorefront\openstorefront-plugin\aerospaceimport\src\main\resources\componentTypeMapping.csv"
+    print(f'Comparing with: {csv_filename}')
+    csv_set = set()
+    with open(csv_filename) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count != 0:
+                csv_set.add(row[0])
+            line_count += 1
+    print('Set difference between mapping and XML file: ', csv_set.difference(category_set))
+    print()
+
+
 def update_org_map(org_map, new_org):
     key = new_org[0].find('organization').find('short_name').text
     if key:
@@ -201,8 +238,6 @@ def get_map_keys(org_map):
     keys = list(org_map.keys())
     keys.sort()
     return (org_map, keys)
-
-
 
 def process_xml():
     filename = 'products_091118.xml'
@@ -267,8 +302,77 @@ def process_xml():
     print('Writing the new XML to {}'.format(OUTPUT_FILENAME))
     tree.write(OUTPUT_FILENAME)
 
+def inspect_escape_characters():
+    filename = r"\\hera\C4ISR_NSS\SPOON\projects\aerospace-import\preprocessor\products_091118-preprocessed.xml"
+    print(f'XML file: {filename}')
+    tree = ET.parse(filename)
+    root = tree.getroot()
+    all_descriptions = []
+    count = 0
+    for product in root:
+        descriptions = product.findall('description')
+        all_descriptions += descriptions
+    for description in all_descriptions:
+        text = description.text
+        if text:
+            encoded = text.encode('ascii', 'xmlcharrefreplace')
+            words = encoded.replace(b'&#160;', b' ').split()
+            uwords = text.split()
+            for i in range(len(words)):
+                if b'&#65533;' in words[i]:
+                    count += 1
+                    print('----------------------------------------------------------------------')
+                    print()
+                    print(f'Escape character: {words[i].decode("utf-8")} -> {uwords[i]}')
+                    print()
+                    print()
+                    print('DESCRIPTION TEXT')
+                    print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
+                    print(text)
+                    print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                    print('----------------------------------------------------------------------')
+    print()
+    print(f'Found {count} escaped characters')
+    print()
+
+def intro_prompt():
+    print('What would you like to do?')
+    print('\t1. Clean XML')
+    print('\t2. Check CSV entry mappings')
+    print('\t3. Inspect escape characters')
+    print('\t4. Quit')
+    user_input = input('>>> ')
+    if user_input == '1':
+        process_xml()
+        return
+    elif user_input == '2':
+        print_missing_mappings()
+        return intro_prompt()
+    elif user_input == '3':
+        inspect_escape_characters()
+        return intro_prompt()
+    elif user_input == '4':
+        return
+    else:
+        print('invalid choice')
+        return intro_prompt()
+
 
 if __name__ == "__main__":
-    process_xml()
-    # org = create_new_org('AAC', 'Acme Air Commercial')
-    # ET.dump(org)
+    intro_text = r"""
+   ___                                                                          
+  / _ |___ _______                                                              
+ / __ / -_) __/ _ \                                                             
+/_/ |_\__/_/_ \___/                                                             
+     / ___/ /__ ___ ____  __ _____                                              
+    / /__/ / -_) _ `/ _ \/ // / _ \                                             
+    \___/_/\__/\_,_/_//_/\_,_/ .__/                                             
+         ____        _      /_/                                                 
+        / __/_______(_)__  / /_                                                 
+       _\ \/ __/ __/ / _ \/ __/                                                 
+      /___/\__/_/ /_/ .__/\__/                                                  
+                   /_/                                                          
+
+    """
+    print(intro_text)
+    intro_prompt()
