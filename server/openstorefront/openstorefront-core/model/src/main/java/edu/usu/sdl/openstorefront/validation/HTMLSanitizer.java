@@ -41,7 +41,7 @@ public class HTMLSanitizer
 							"i", "img", "li", "ol", "p", "pre", "q", "small", "strike", "strong",
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
 							"ul", "label", "video", "audio", "source", "track", "font")
-					.addAttributes("a", "href", "title")
+					.addAttributes("a", "href", "title", "target")
 					.addAttributes("div", "ng-show", "class")
 					.addAttributes("p", "data-attributelabel", "class")
 					.addAttributes("blockquote", "cite")
