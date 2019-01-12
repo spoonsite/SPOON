@@ -97,10 +97,8 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		var decodedData = null;
 		if (initialData) {
 			decodedData = Ext.decode(initialData);
-			if (decodedData[0].comment) {
-				if (!decodedData[0].comment.includes("<div>")) {
-					decodedData[0].comment = decodedData[0].comment.replace(/<br>/g, "\n")
-				}
+			if (decodedData[0].comment && !decodedData[0].comment.includes("<div>")) {
+				decodedData[0].comment = decodedData[0].comment.replace(/<br>/g, "\n")
 			}
 		}			
 		
