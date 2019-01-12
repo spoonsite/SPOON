@@ -92,7 +92,7 @@ For more information see <a href="https://github.com/di2e/openstorefront/release
 * Issues fixed with contact us form.
 * Video support added for media on mobile.
 
-### 1.5.1 Administrator Notes for v2.6.6
+### 1.5.1 Administrator Notes for v2.6.6 @ADMIN-SYSTEM-MANAGEMENT
 -----
 
 * SME WorkPlan approval now added to mobile.
