@@ -215,12 +215,15 @@ def print_missing_mappings():
     tree = ET.parse(filename)
     root = tree.getroot()
     category_set = build_category_set(root)
-    print('all categories in XML')
-    for i in sorted(category_set):
-        print(i)
+    # print('all categories in XML')
+    # for i in sorted(category_set):
+    #     print(i)
 
     # the parse file r'server\openstorefront\openstorefront-plugin\aerospaceimport\scripts\parse.py'
     csv_filename = r'..\src\main\resources\componentTypeMapping.csv'
+    user_input = input(f'Provide a csv file for current mappings: [{csv_filename}]')
+    if user_input != '':
+        csv_filename = user_input
     print(f'Comparing with: {csv_filename}')
     csv_set = set()
     with open(csv_filename) as csv_file:
