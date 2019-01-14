@@ -51,3 +51,6 @@ Battery Cell,POW-STORE
 VIS-Imager,CDH-FLIPROC
 UV-Imager,CDH-FLIPROC
 Transponder,COM-TRAN
+Propellant Tank,PROP-TANKS
+Payload Deployment Mechanism,SMM-MECHANISMS
+Radar,GNC-PTS
