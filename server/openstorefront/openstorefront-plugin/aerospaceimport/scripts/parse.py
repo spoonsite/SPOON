@@ -6,6 +6,7 @@ import signal
 import sys
 import csv
 import html
+from entry_types import get_componentTypes 
 
 # TODO:
 # set XML and CSV files relative to the repo
@@ -208,24 +209,61 @@ def build_category_set(root):
     return cat_set
 
 def print_missing_mappings():
-    filename = r"\\hera\C4ISR_NSS\SPOON\projects\aerospace-import\preprocessor\products_091118-preprocessed.xml"
+    user_input = input('Provide an XML file to check mappings (use absolute path): ')
+    filename = user_input
     print(f'XML file: {filename}')
     tree = ET.parse(filename)
     root = tree.getroot()
     category_set = build_category_set(root)
+    print('all categories in XML')
+    for i in sorted(category_set):
+        print(i)
 
-    csv_filename = r"C:\dev\openstorefront\server\openstorefront\openstorefront-plugin\aerospaceimport\src\main\resources\componentTypeMapping.csv"
+    # the parse file r'server\openstorefront\openstorefront-plugin\aerospaceimport\scripts\parse.py'
+    csv_filename = r'..\src\main\resources\componentTypeMapping.csv'
     print(f'Comparing with: {csv_filename}')
     csv_set = set()
     with open(csv_filename) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
-            if line_count != 0:
+            if line_count != 0 and row:
                 csv_set.add(row[0])
             line_count += 1
+    for i in sorted(csv_set):
+        print(i)
+    difference = category_set.difference(csv_set)
+    new_mappings = []
+    if len(difference) != 0:
+        new_mappings = prompt_new_mapping(difference, [])
+
+        print(f'Appending csv row to {csv_filename}')
+        with open(csv_filename, 'a') as fout:
+            csv_writer = csv.writer(fout)
+            for row in new_mappings:
+                csv_writer.writerow(row)
+
     print('Set difference between mapping and XML file: ', csv_set.difference(category_set))
     print()
+
+def prompt_new_mapping(difference, new_mappings):
+    print(f'You are missing a mapping for:')
+    print(difference)
+    for item in difference:
+        user_input = input(f'List all components? [yN]')
+        if user_input == 'y' or user_input == 'Y':
+            componentTypes = get_componentTypes()
+            for i in range(len(componentTypes)):
+                print(f'{i}. LABEL: {componentTypes[i][1]}')
+                print(f'     CODE:  {componentTypes[i][0]}')
+        user_input = input(f'Choose an existing entry type for {item}: ')
+        if user_input.isalpha() or int(user_input) > len(componentTypes) or int(user_input) < 0:
+            print('bad index. Try again.')
+            return prompt_new_mapping(difference, new_mappings)
+        else:
+            new_mappings.append((item, componentTypes[int(user_input)][0]))
+    return new_mappings
+    
 
 
 def update_org_map(org_map, new_org):
@@ -304,7 +342,8 @@ def process_xml():
     tree.write(OUTPUT_FILENAME)
 
 def inspect_escape_characters():
-    filename = r"\\hera\C4ISR_NSS\SPOON\projects\aerospace-import\preprocessor\products_091118-preprocessed_escaped.xml"
+    user_input = input('Provide an XML file to check mappings (use absolute path): ')
+    filename = user_input
     print(f'XML file: {filename}')
     tree = ET.parse(filename)
     root = tree.getroot()
@@ -350,11 +389,15 @@ th, td {
     print()
     html_string += '</table></body></html>'
     with open('index.html', 'w') as fout:
-        fout.write(html_string)
+        try:
+            fout.write(html_string)
+        except UnicodeEncodeError as e:
+            print('Unable to write out the html file')
+            print('ERROR: ', e)
 
 def intro_prompt():
     print('What would you like to do?')
-    print('\t1. Clean XML')
+    print('\t1. Provide missing organizations to XML')
     print('\t2. Check CSV entry mappings')
     print('\t3. Inspect escape characters')
     print('\t4. Quit')
