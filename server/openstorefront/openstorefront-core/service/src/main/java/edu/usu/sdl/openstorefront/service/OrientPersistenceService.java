@@ -510,7 +510,7 @@ public class OrientPersistenceService
 		return count;
 	}
 
-	public List<ODocument> dbCommandQuery(String query, Map<String, Object> params)
+	private List<ODocument> dbCommandQuery(String query, Map<String, Object> params)
 	{
 		List<ODocument> documents = new ArrayList<>();
 		OObjectDatabaseTx db = getConnection();

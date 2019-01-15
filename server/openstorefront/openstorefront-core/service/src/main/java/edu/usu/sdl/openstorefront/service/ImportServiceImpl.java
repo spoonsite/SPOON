@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
@@ -462,22 +461,18 @@ public class ImportServiceImpl
 	{
 		Map<String, List<FileHistoryError>> errorMap = new HashMap<>();
 
-		String query = "select fileHistoryId, fileHistoryErrorType from " + FileHistoryError.class.getSimpleName();
+		FileHistoryError errorExample = new FileHistoryError();
 
-		List<ODocument> results = persistenceService.query(query, new HashMap<>());
-		for (ODocument result : results) {
-			String fileHistoryId = result.field("fileHistoryId");
-			String fileHistoryErrorType = result.field("fileHistoryErrorType");
-			FileHistoryError error = new FileHistoryError();
-			error.setFileHistoryId(fileHistoryId);
-			error.setFileHistoryErrorType(fileHistoryErrorType);
+		//REFACTOR: Note this isn't very efficient; Refactor to hold stats in the file record.
+		List<FileHistoryError> results = errorExample.findByExample();
+		for (FileHistoryError error : results) {
 
-			if (errorMap.containsKey(fileHistoryId)) {
-				errorMap.get(fileHistoryId).add(error);
+			if (errorMap.containsKey(error.getFileHistoryId())) {
+				errorMap.get(error.getFileHistoryId()).add(error);
 			} else {
 				List<FileHistoryError> fileHistoryErrors = new ArrayList<>();
 				fileHistoryErrors.add(error);
-				errorMap.put(fileHistoryId, fileHistoryErrors);
+				errorMap.put(error.getFileHistoryId(), fileHistoryErrors);
 			}
 		}
 
