@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.core.view;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
-import edu.usu.sdl.openstorefront.core.entity.AttributeUnit;
 import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;

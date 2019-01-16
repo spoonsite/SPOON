@@ -2258,7 +2258,7 @@
 															 + "<em>SI Unit:</em> " + res.standardUnit + "<br>"
 															 + "<em>Dimension:</em> " + res.dimension;
 													if (res.error) {
-														html = "<em style='color: red;'>Failed to parse unit</em>";
+														html = "<em style='color: red;'>Failed to parse unit.</em> Will assume the unit is dimensionless.";
 													}
 													Ext.getCmp('attributeUnitCheckOutput').setHtml(html);
 												} catch {
