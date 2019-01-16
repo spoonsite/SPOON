@@ -126,11 +126,11 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 		);
 
 		var data = [];
-		
+
 		Ext.Array.each(attributePanel.items.items, function(field) {
 			data.push({
 				label: field.attributeTypeView.description,
-				value: field.getValue()
+				value: field.getField().getDisplayValue()
 			});
 		});
 		
