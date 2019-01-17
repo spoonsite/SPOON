@@ -190,6 +190,17 @@ public class AerospaceComponentParser
                         + "The record was not imported. " + component.getName() + " Key: " + product.getKey());
                 return null;
             }
+            
+            if (componentAdminView.getComponent().getName().equals(component.getName())) {
+                LOG.log(Level.WARNING, ""
+                        + "THIS ENTRY ALREADY EXISTS, AND HAS THE EXACT SAME NAME! "
+                        + "THE RECORD WAS NOT IMPORTED. " + component.getName() + " Key: " + product.getKey());
+                fileHistoryAll.addError(FileHistoryErrorType.WARNING, ""
+                        + "This entry already exists, and has the exact same name "
+                        + "The record was not imported. " + component.getName() + " Key: " + product.getKey());
+                return null;
+            }
+            
         }
         // If we made it this far we have ownership and can import/update the entry as needed.
         
