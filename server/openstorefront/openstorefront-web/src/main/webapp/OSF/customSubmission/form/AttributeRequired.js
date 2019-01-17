@@ -44,7 +44,8 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 				var attributeTypes = Ext.decode(response.responseText);
 				
 				if (attributeTypes.length === 0) {
-					formPanel.setHidden(true);
+					//hide parent
+					formPanel.up().setHidden(true);
 				}
 				
 				var fields = [];
