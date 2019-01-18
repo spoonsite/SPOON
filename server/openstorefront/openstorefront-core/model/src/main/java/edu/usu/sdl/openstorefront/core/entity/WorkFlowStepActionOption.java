@@ -27,6 +27,7 @@ import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 import javax.validation.constraints.Size;
 
 /**
@@ -79,6 +80,9 @@ public class WorkFlowStepActionOption
 
 	@ConsumeField
 	private Boolean unassignGroup;
+	
+	@Version
+	private String storageVersion;
 
 	public WorkFlowStepActionOption()
 	{
@@ -182,6 +186,16 @@ public class WorkFlowStepActionOption
 	public void setEmailSubject(String emailSubject)
 	{
 		this.emailSubject = emailSubject;
+	}
+	
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
 	}
 
 }

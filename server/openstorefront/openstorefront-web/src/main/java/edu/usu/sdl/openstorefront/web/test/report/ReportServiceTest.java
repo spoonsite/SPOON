@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.entity.ReportOutput;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.ReportType;
-import static edu.usu.sdl.openstorefront.core.entity.ReportType.COMPONENT;
 import static edu.usu.sdl.openstorefront.core.entity.RunStatus.PENDING;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -32,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static edu.usu.sdl.openstorefront.core.entity.ReportType.ENTRY_REPORT;
 
 /**
  * This runs all report for view only and for one format only Still this is
@@ -106,9 +106,9 @@ public class ReportServiceTest extends BaseTestCase
 		results.append("Scheduling a report...<br>");
 
 		schedule = new ScheduledReport();
-		schedule.setReportType(COMPONENT);
+		schedule.setReportType(ENTRY_REPORT);
 
-		List<ReportFormat> formats = service.getReportService().getSupportedFormats(COMPONENT, ReportTransmissionType.VIEW);
+		List<ReportFormat> formats = service.getReportService().getSupportedFormats(ENTRY_REPORT, ReportTransmissionType.VIEW);
 		ReportOutput reportOutput = new ReportOutput();
 		reportOutput.setReportTransmissionType(ReportTransmissionType.VIEW);
 		ReportTransmissionOption options = new ReportTransmissionOption();
@@ -122,7 +122,7 @@ public class ReportServiceTest extends BaseTestCase
 		schedule = service.getReportService().saveScheduledReport(schedule);
 
 		ScheduledReport scheduledReportCheck = new ScheduledReport();
-		scheduledReportCheck.setReportType(COMPONENT);
+		scheduledReportCheck.setReportType(ENTRY_REPORT);
 		scheduledReportCheck.setScheduleIntervalDays(1);
 		scheduledReportCheck.setCreateUser(SecurityUtil.getCurrentUserName());
 		scheduledReportCheck = scheduledReportCheck.find();
