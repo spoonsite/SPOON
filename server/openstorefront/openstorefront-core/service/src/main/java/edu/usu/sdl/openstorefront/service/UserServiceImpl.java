@@ -992,7 +992,7 @@ public class UserServiceImpl
 			}
 			for (UserProfile userProfile : userProfiles) {
 				if (activeUserMap.containsKey(userProfile.getUsername()) == false) {
-					LOG.log(Level.INFO, "User not found in external user management, Inactvativating user. (Sync Service)");
+					LOG.log(Level.INFO, "User not found in external user management, Inactivating user. (Sync Service)");
 					deleteProfile(userProfile.getUsername());
 				} else {
 					//check for syncing; if the user can't edit they should be syncing
