@@ -364,7 +364,7 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 								this.data.items.forEach(item => {
 									item.data.codes.push({
 										code: null,
-										label: 'Select'
+										label: 'Select (null)'
 									});
 								});
 							}

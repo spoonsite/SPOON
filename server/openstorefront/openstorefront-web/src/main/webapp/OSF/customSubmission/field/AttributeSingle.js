@@ -121,12 +121,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 					url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '?view=true',
 					success: function(response, opts) {
 						var attributeTypeView = Ext.decode(response.responseText);
-						if (attributeTypeView.codes) {
-							attributeTypeView.codes.push({
-								code: null,
-								label: "Select"
-							});
-						}
+
 						displayItems.push({
 							xtype: 'AttributeCodeSelect',
 							name: 'attributeCode',
@@ -216,6 +211,19 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '/attributecodes',
 				success: function(response, opts) {
 					var attributeCodes = Ext.decode(response.responseText);
+
+					if (attributeCodes && panel.fieldTemplate.required === undefined) {
+						attributeCodes.push({
+							activeStatus: "A",
+							code: null,
+							label: "N/A",
+							type: "attributeCode",
+							attributeCodePk: {
+							  storageVersion: "0",
+							  attributeCode: null,
+							}
+						});
+					}
 
 					//display all active
 					Ext.Array.each(attributeCodes, function(code){
