@@ -55,22 +55,22 @@
 						Ext.create('Ext.window.Window', Ext.apply({items: data}, windowConfig)).show();
 					}
 					else {
-
+						var baseURL = 'api/v1/resource/userprofiles/lookup';
+						var url = baseURL + '?'
+						// build the query string -- a list of usernames
+						Ext.Array.forEach(data, function(el) {
+							url += ('username=' + el + '&')
+						}) 
 						Ext.Ajax.request({
-							url: 'api/v1/resource/userprofiles/lookup',
+							url: url,
 							success: function (response) {
+								var users = Ext.decode(response.responseText);
+								var items = []
+								Ext.Array.forEach(users, function(el) {
+									items.push({html: el.description, padding: 15})
+								});
 
-								var allUsers = Ext.decode(response.responseText);
-								for (var i = 0; i < allUsers.length; i += 1) {
-									for (var j = 0; j < data.length; j += 1) {
-
-										if (allUsers[i].code === data[j]) {
-											data[j] = {html: allUsers[i].description, padding: 15};
-										}
-									}
-								}
-
-								Ext.create('Ext.window.Window', Ext.apply({items: data}, windowConfig)).show();
+								Ext.create('Ext.window.Window', Ext.apply({items: items}, windowConfig)).show();
 							}
 						});
 					}
@@ -170,7 +170,6 @@
 									xtype: 'UserMultiSelectComboBox',
 									width: '100%',
 									name: 'assignedUsers',
-									queryMode: 'local'
 								},
 								{
 									fieldLabel: 'Assigned Group(s)',

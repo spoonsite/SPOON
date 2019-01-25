@@ -180,14 +180,15 @@
 								name: 'assignedUser',
 								fieldLabel: 'Assign to User',
 								displayField: 'description',
-								valueField: 'code',								
+								valueField: 'code',
+								queryMode: 'remote',
 								emptyText: 'Unassigned',
 								typeAhead: true,
 								forceSelection: true,
 								editable: true,
 								anyMatch: true,
 								requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER'],
-								store: {									
+								store: {
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
@@ -776,6 +777,7 @@
 									xtype: 'combobox',
 									name: 'assignedUser',
 									fieldLabel: 'Assign to User',
+									queryMode: 'remote',
 									displayField: 'description',
 									valueField: 'code',								
 									emptyText: 'Unassigned',

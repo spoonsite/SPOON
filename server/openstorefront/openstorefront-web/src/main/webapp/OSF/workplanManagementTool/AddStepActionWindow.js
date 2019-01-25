@@ -144,6 +144,7 @@ Ext.define('OSF.workplanManagementTool.AddStepActionWindow', {
 									optionsContainer.add({
 										xtype: 'combo',
 										itemId: 'userGroupCombo',
+										queryMode: 'remote',
 										valueField: 'code',
 										displayField: 'description',
 										forceSelection: true,

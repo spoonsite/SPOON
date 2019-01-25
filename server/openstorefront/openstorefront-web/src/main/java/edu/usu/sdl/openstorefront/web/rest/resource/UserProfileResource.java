@@ -181,7 +181,8 @@ public class UserProfileResource
 	@DataType(LookupModel.class)
 	@Path("/lookup")
 	public Response userProfilesLookup(
-			@QueryParam("query") String query
+			@QueryParam("query") String query,
+			@QueryParam("username") List<String> usernames
 	)
 	{
 		List<LookupModel> profiles = new ArrayList<>();
@@ -201,11 +202,28 @@ public class UserProfileResource
 			lookupModel.setDescription(name + email);
 			profiles.add(lookupModel);
 		}
-		if (query != null) {
-			if (StringUtils.isBlank(query)) {
+		if (query != null || usernames != null) {
+			// 4 combinations of query params
+			if (StringUtils.isBlank(query) && usernames.isEmpty()) {
 				//match nothing
 				profiles.clear();
+			} else if (!StringUtils.isBlank(query) && usernames.isEmpty()) {
+				profiles.removeIf((lookup) -> {
+					return !(lookup.getDescription().toLowerCase().contains(query.toLowerCase()));
+				});
+			} else if (!usernames.isEmpty() && StringUtils.isBlank(query)){
+				// go through the list of usernames and filter the result
+				profiles.removeIf((lookup) -> {
+					boolean foundUsername = false;
+					for (String username : usernames ) {
+						if (lookup.getCode().toLowerCase().equals(username.toLowerCase())) {
+							foundUsername = true;
+						}
+					}
+					return !foundUsername;
+				});
 			} else {
+				// if both provided default to query the description
 				profiles.removeIf((lookup) -> {
 					return !(lookup.getDescription().toLowerCase().contains(query.toLowerCase()));
 				});
