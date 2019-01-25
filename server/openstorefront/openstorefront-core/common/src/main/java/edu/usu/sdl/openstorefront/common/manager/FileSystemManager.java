@@ -243,6 +243,7 @@ public class FileSystemManager
 		fileSystemManager.getDir(FileSystemManager.RESOURCE_DIR);
 		fileSystemManager.getDir(FileSystemManager.REPORT_DIR);
 		fileSystemManager.getDir(FileSystemManager.IMPORT_HISTORY_DIR);
+		fileSystemManager.getDir(FileSystemManager.ERROR_TICKET_DIR);
 
 		started.set(true);
 	}
