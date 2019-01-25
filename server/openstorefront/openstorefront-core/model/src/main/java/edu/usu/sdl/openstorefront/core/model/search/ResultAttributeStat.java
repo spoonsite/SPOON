@@ -25,6 +25,7 @@ public class ResultAttributeStat
 	private String attributeCodeLabel;
 	private String attributeType;
 	private String attributeTypeLabel;
+	private String attributeUnit;
 	private int count = 1;
 	
 	public ResultAttributeStat()
@@ -84,5 +85,15 @@ public class ResultAttributeStat
 	public void incrementCount()
 	{
 		this.count += 1;
+	}
+
+	public String getAttributeUnit()
+	{
+		return attributeUnit;
+	}
+
+	public void setAttributeUnit(String attributeUnit)
+	{
+		this.attributeUnit = attributeUnit;
 	}
 }

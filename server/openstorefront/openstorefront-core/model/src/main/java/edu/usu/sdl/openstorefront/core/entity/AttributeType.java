@@ -135,7 +135,6 @@ public class AttributeType
 	@ConsumeField
 	@APIDescription("Unit of measure information")
 	@ManyToOne(cascade = {CascadeType.ALL})
-	//private AttributeUnit attributeUnit;
 	private String attributeUnit;
 
 	public static final String TYPE = "TYPE";

@@ -162,20 +162,22 @@ public class SearchStatTable
 						Service service = ServiceProxyFactory.getServiceProxy();
 
 						AttributeType type = service.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
+
 						if (type == null) {
 							type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
-						}
-
-						if (type != null) {
+						} else {
 							attrStat.setAttributeTypeLabel(type.getDescription());
 						}
+
 						attrStat.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
 						attrStat.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
 
 						AttributeCodePk codePk = new AttributeCodePk();
 						codePk.setAttributeCode(attrStat.getAttributeCode());
 						codePk.setAttributeType(attrStat.getAttributeType());
+
 						AttributeCode attrCode = service.getAttributeService().findCodeForType(codePk);
+
 						if(attrCode == null){
 							attrStat.setAttributeCodeLabel("LabelNotAvailable");
 							LOG.log(Level.WARNING, () -> "Could not find Code Label for Component: " 
@@ -185,6 +187,9 @@ public class SearchStatTable
 						} else {
 							attrStat.setAttributeCodeLabel(attrCode.getLabel());					
 						}
+
+						attrStat.setAttributeUnit(type.getAttributeUnit());
+
 						resultMap.put(key, attrStat);
 					}
 				}
