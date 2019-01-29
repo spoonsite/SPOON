@@ -31,7 +31,7 @@
         {{ searchPageSize }}
         <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
         <v-btn block class="primary" @click="resetOptions()">Reset Options</v-btn>
-      </div>
+      </div><!-- SEARCH OPTIONS -->
       <div v-if="showFilters">
         <h2>Search Filters</h2>
         <v-btn block class="" @click="clear()">Clear Filters</v-btn>
@@ -102,6 +102,30 @@
           v-model="attributeQuery"
           placeholder="Search Attributes"
         ></v-text-field>
+        <div>
+          <h3 class="pb-3">Select Attribute Range</h3>
+          <v-text-field
+            label="Low"
+            placeholder="value"
+            style="margin-right: 1em; width: 4em; display: inline-block;"
+          ></v-text-field>
+          <span
+            style="margin-right: 1em;"
+          >
+            to
+          </span>
+          <v-text-field
+            label="High"
+            placeholder="value"
+            style="margin-right: 1em; width: 4em; display: inline-block;"
+          ></v-text-field>
+          <v-combobox
+            :items="['kg', 'mg', 'μg', 'g', 'lbs', 'oz']"
+            label="Unit"
+            style="width: 6em; display: inline-block;"
+          >
+          </v-combobox>
+        </div>
         <div v-if="Object.keys(searchResultsAttributes).length !== 0">Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
         <v-expansion-panel v-if="Object.keys(searchResultsAttributes).length !== 0">
@@ -127,9 +151,9 @@
             </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
-      </div>
-    </div>
-  </div>
+      </div><!-- SEARCH FILTERS -->
+    </div><!-- SIDE MENU CONTENT -->
+  </div><!--SIDE MENU -->
 
   <div :class="`search-block pt-4 ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- Search Bar and menu  -->
@@ -207,7 +231,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div><!-- Search Results -->
   </div>
 
   <!-- Pagination -->
