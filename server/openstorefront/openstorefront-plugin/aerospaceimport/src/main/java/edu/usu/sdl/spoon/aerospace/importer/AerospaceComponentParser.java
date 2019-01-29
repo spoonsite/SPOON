@@ -191,12 +191,13 @@ public class AerospaceComponentParser
                 return null;
             }
             
-            if (componentAdminView.getComponent().getName().equals(component.getName())) {
+            if (componentAdminView.getComponent().getName().equals(component.getName())
+                    && (!componentAdminView.getComponent().getExternalId().equals(component.getExternalId()))) {
                 LOG.log(Level.WARNING, ""
-                        + "THIS ENTRY ALREADY EXISTS, AND HAS THE EXACT SAME NAME! "
+                        + "THIS ENTRY ALREADY EXISTS, AND HAS THE EXACT SAME NAME BUT A DIFFERENT KEY! "
                         + "THE RECORD WAS NOT IMPORTED. " + component.getName() + " Key: " + product.getKey());
                 fileHistoryAll.addError(FileHistoryErrorType.WARNING, ""
-                        + "This entry already exists, and has the exact same name "
+                        + "This entry already exists, and has the exact same name but a different key! "
                         + "The record was not imported. " + component.getName() + " Key: " + product.getKey());
                 return null;
             }
@@ -369,22 +370,7 @@ public class AerospaceComponentParser
         if(listSize == 0) {
             component.setOrganization(UNKNOWN_ORGANIZATION);
         } else if(listSize == 1) {
-            component.setOrganization(product.getOrganizations().getRelatedOrganizations().get(0).getOrganization().getLongName());
-            RelatedOrganization rOrg = product.getOrganizations().getRelatedOrganizations().get(0);
-            
-            if(StringProcessor.stringIsNotBlank(rOrg.getOrganization().getShortName())) {
-                descriptionMetaData += "<strong>Organization Short Name: </strong>" + rOrg.getOrganization().getShortName() + "<br>";
-            }
-            if(StringProcessor.stringIsNotBlank(rOrg.getOrganization().getLongName())) {
-                descriptionMetaData += "<strong>Organization Long Name: </strong>" + rOrg.getOrganization().getLongName() + "<br>";
-            }
-            if(StringProcessor.stringIsNotBlank(rOrg.getOrganization().getDescription())) {
-                descriptionMetaData += "<strong>Organization Description: </strong>" + rOrg.getOrganization().getDescription() + "<br>";
-            }
-            if(StringProcessor.stringIsNotBlank(rOrg.getOrganization().getType())) {
-                descriptionMetaData += "<strong>Type: </strong>" + rOrg.getOrganization().getType() + "<br>";
-            }
-            
+            component.setOrganization(product.getOrganizations().getRelatedOrganizations().get(0).getOrganization().getLongName());            
         } else {
             for(RelatedOrganization relatedOrganization : product.getOrganizations().getRelatedOrganizations()) {
                 if(relatedOrganization.getRole().equals(MANUFACTURER_ORG)) {
@@ -449,9 +435,6 @@ public class AerospaceComponentParser
             }
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getTitle())) {
                 componentResourceDescription += "<strong>Website Title: </strong>"  + revisionProvenanceWebsite.getTitle() + "<br>";
-            }
-            if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getLastVisited())) {
-                componentResourceDescription += "<strong>Last Visited Date: </strong>" + revisionProvenanceWebsite.getLastVisited() + "<br>";
             }
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getDescription())) {
                 componentResourceDescription += "<br><strong>Website Description: </strong>" + revisionProvenanceWebsite.getDescription()  + "<br>";
