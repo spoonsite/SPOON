@@ -18,7 +18,6 @@
 		color: #fff;
 	}
 	.cell-button {
-		width: 100%;
 		border: 1px solid rgb(210,210,210);
 		padding: 4px;
 		margin: 3px;
@@ -38,12 +37,12 @@
 				<tpl if='data.length &gt; 1'>
 				<i class="fa fa-sitemap inherit-symbol" 
 					style="margin-top: 1em;"
-					data-qtip="<tpl if="type=='roles'">Group(s)<tpl else>User(s)</tpl> inherited from '<b>{rootNode.data.componentType.componentType}</b>'">
+					data-qtip="Group(s) inherited from <b>{rootNode.data.componentType.componentType}</b>">
 				</i>
 				<tpl else>
 					<i class="fa fa-sitemap inherit-symbol" 
 						style="margin-top: 0em;"
-						data-qtip="<tpl if="type=='roles'">Group(s)<tpl else>User(s)</tpl> inherited from '<b>{rootNode.data.componentType.componentType}</b>'">
+						data-qtip="Group(s) inherited from <b>{rootNode.data.componentType.componentType}</b>">
 					</i>
 				</tpl>	
 			</div>
@@ -51,24 +50,16 @@
 		<tpl if="!cameFromAncestor">
 			<div>
 				<tpl if='data.length &gt; 1 && !cameFromAncestor'>
-				<button class="cell-button" style="margin-top: 1em;" onclick="
-					window.entryTypeAssignedRender('{data}', '{type}');
-				">					
-					<tpl if="type == 'roles'">
+					<button class="cell-button" style="margin-top: 1em;" onclick="
+						window.entryTypeAssignedRender('{data}');
+					">					
 						View Groups
-					<tpl else>
-						View Users
-					</tpl>
-				</button>
+					</button>
 				<tpl else>
 					<button class="cell-button" style="margin-top: 0em;" onclick="
-					window.entryTypeAssignedRender('{data}', '{type}');
+					window.entryTypeAssignedRender('{data}');
 					">					
-						<tpl if="type == 'roles'">
-							View Groups
-						<tpl else>
-							View Users
-						</tpl>
+						View Groups
 					</button>
 				</tpl>	
 			</div>

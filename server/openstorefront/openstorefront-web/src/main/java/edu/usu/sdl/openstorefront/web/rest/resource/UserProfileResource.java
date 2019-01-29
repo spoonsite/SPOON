@@ -181,8 +181,7 @@ public class UserProfileResource
 	@DataType(LookupModel.class)
 	@Path("/lookup")
 	public Response userProfilesLookup(
-			@QueryParam("query") String query,
-			@QueryParam("username") List<String> usernames
+			@QueryParam("query") String query
 	)
 	{
 		List<LookupModel> profiles = new ArrayList<>();
@@ -190,7 +189,7 @@ public class UserProfileResource
 		UserProfile userProfileExample = new UserProfile();
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
 
-		List<UserProfile> userProfiles = userProfileExample.findByExample();
+		List<UserProfile> userProfiles = userProfileExample.findByExample(); // Cache this in the service layer
 		for (UserProfile userProfile : userProfiles) {
 			LookupModel lookupModel = new LookupModel();
 			lookupModel.setCode(userProfile.getUsername());
@@ -202,28 +201,11 @@ public class UserProfileResource
 			lookupModel.setDescription(name + email);
 			profiles.add(lookupModel);
 		}
-		if (query != null || usernames != null) {
-			// 4 combinations of query params
-			if (StringUtils.isBlank(query) && usernames.isEmpty()) {
+		if (query != null) {
+			if (StringUtils.isBlank(query)) {
 				//match nothing
 				profiles.clear();
-			} else if (!StringUtils.isBlank(query) && usernames.isEmpty()) {
-				profiles.removeIf((lookup) -> {
-					return !(lookup.getDescription().toLowerCase().contains(query.toLowerCase()));
-				});
-			} else if (!usernames.isEmpty() && StringUtils.isBlank(query)){
-				// go through the list of usernames and filter the result
-				profiles.removeIf((lookup) -> {
-					boolean foundUsername = false;
-					for (String username : usernames ) {
-						if (lookup.getCode().toLowerCase().equals(username.toLowerCase())) {
-							foundUsername = true;
-						}
-					}
-					return !foundUsername;
-				});
 			} else {
-				// if both provided default to query the description
 				profiles.removeIf((lookup) -> {
 					return !(lookup.getDescription().toLowerCase().contains(query.toLowerCase()));
 				});
