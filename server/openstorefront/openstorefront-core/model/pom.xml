@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<shiro.verison>1.3.2</shiro.verison>
+		<shiro.version>1.3.2</shiro.version>
 		<maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
 	</properties>
 
@@ -31,12 +31,12 @@
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-core</artifactId>
-			<version>${shiro.verison}</version>
+			<version>${shiro.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-web</artifactId>
-			<version>${shiro.verison}</version>
+			<version>${shiro.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
