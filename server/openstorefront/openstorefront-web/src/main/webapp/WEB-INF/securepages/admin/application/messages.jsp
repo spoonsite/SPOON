@@ -566,7 +566,7 @@
 
 					var sendAdminMsgWin = Ext.create('Ext.window.Window', {
 						id: 'sendAdminMsgWin',
-						title: 'Send Admin Message', // change to remote query
+						title: 'Send Admin Message',
 						iconCls: 'fa fa-envelope-o',
 						width: '30%',
 						minHeight: 350,
