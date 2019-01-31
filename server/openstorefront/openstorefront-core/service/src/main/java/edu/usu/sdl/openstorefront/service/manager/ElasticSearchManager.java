@@ -670,7 +670,9 @@ public class ElasticSearchManager
 				componentAttributes = attributeMap.getOrDefault(component.getComponentId(), new ArrayList<>());
 				componentReviews = reviewMap.getOrDefault(component.getComponentId(), new ArrayList<>());
 				componentTags = tagMap.getOrDefault(component.getComponentId(), new ArrayList<>());
-
+//				component.setDescription(StringProcessor.truncateHTML(component.getDescription(), 7000));
+				component.setDescription(StringProcessor.stripHtml(component.getDescription()));
+				component.setDescription(StringProcessor.ellipseString(component.getDescription(), 8000));
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
 				try {
 					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
