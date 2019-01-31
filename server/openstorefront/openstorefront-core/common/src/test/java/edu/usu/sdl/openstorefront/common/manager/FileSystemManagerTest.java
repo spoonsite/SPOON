@@ -139,7 +139,8 @@ public class FileSystemManagerTest
 		LOG.info("Scenario 1: Default no exclude");
 		List<String> expResult = Arrays.asList(
 				testFileSystemManager.getBaseDirectory() + FileSystemManager.IMPORT_DIR.replace("/", File.separator),
-				testFileSystemManager.getBaseDirectory() + FileSystemManager.MAIN_PERM_DIR.replace("/", File.separator)
+				testFileSystemManager.getBaseDirectory() + FileSystemManager.MAIN_PERM_DIR.replace("/", File.separator),
+				testFileSystemManager.getBaseDirectory() + FileSystemManager.MAIN_TEMP_DIR.replace("/", File.separator)
 		);
 		testFileSystemManager.initialize();
 
@@ -151,7 +152,8 @@ public class FileSystemManagerTest
 
 		LOG.info("Scenario 2: Test Exclude");
 		expResult = Arrays.asList(
-				testFileSystemManager.getBaseDirectory() + FileSystemManager.MAIN_PERM_DIR.replace("/", File.separator)
+				testFileSystemManager.getBaseDirectory() + FileSystemManager.MAIN_PERM_DIR.replace("/", File.separator),
+				testFileSystemManager.getBaseDirectory() + FileSystemManager.MAIN_TEMP_DIR.replace("/", File.separator)
 		);
 
 		result = testFileSystemManager.getTopLevelDirectories(exclude);
