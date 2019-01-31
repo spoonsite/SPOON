@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
-import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -94,7 +93,7 @@ public class ElasticSearchManager
 
 	private static final String INDEX = "openstorefront";
 	private static final String INDEX_TYPE = "component";
-	private static final String ELASTICSEARCH_ALL_FIELDS = "_all";
+	private static final int MAX_DESCRIPTION_INDEX_SIZE = 8000;
 	private static final String DEFAULT_POOL_SIZE = "40";
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
@@ -670,9 +669,8 @@ public class ElasticSearchManager
 				componentAttributes = attributeMap.getOrDefault(component.getComponentId(), new ArrayList<>());
 				componentReviews = reviewMap.getOrDefault(component.getComponentId(), new ArrayList<>());
 				componentTags = tagMap.getOrDefault(component.getComponentId(), new ArrayList<>());
-//				component.setDescription(StringProcessor.truncateHTML(component.getDescription(), 7000));
 				component.setDescription(StringProcessor.stripHtml(component.getDescription()));
-				component.setDescription(StringProcessor.ellipseString(component.getDescription(), 8000));
+				component.setDescription(StringProcessor.ellipseString(component.getDescription(), MAX_DESCRIPTION_INDEX_SIZE));
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
 				try {
 					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
