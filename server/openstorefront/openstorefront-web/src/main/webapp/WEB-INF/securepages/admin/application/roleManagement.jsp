@@ -1076,37 +1076,14 @@
 										layout: 'anchor',
 										items: [
 											{
-												xtype: 'combobox',
+												xtype: 'UserSingleSelectComboBox',
 												name: 'username',
-												width: '100%',
-												valueField: 'username',
-												tpl: Ext.create('Ext.XTemplate',
-													'<ul class="x-list-plain"><tpl for=".">',
-														'<li role="option" class="x-boundlist-item">{username} <span style="color: #a8a8a8;"> - {email}</span></li>',
-													'</tpl></ul>'
-												),											
-												displayTpl: Ext.create('Ext.XTemplate',
-													'<tpl for=".">',
-														'{username}',
-													'</tpl>'
-												),
-												labelAlign: 'top',												
+												valueField: 'code',
 												fieldLabel: 'Add User <span class="field-required" />',
-												allowBlank: false,
-												forceSelection: true,
-												queryMode: 'remote',
-												store: {
-													autoLoad: false,
-													proxy: {
-														type: 'ajax',
-														url: 'api/v1/resource/userprofiles',
-														reader: {
-															type: 'json',
-															rootProperty: 'data',
-															totalProperty: 'totalNumber'
-														}
-													}
-												}
+												addAll: false,
+												width: '100%',
+												labelAlign: 'top',
+												forceSelection: true
 											}
 										],
 										dockedItems: [

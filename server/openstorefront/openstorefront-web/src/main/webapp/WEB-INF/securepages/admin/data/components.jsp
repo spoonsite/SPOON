@@ -2134,31 +2134,11 @@
 									bodyStyle: 'padding: 10px',
 									items: [
 										{
-											xtype: 'combobox',
+											xtype: 'UserSingleSelectComboBox',
 											fieldLabel: 'Username <span class="field-required" />',
 											labelAlign: 'top',
-											labelSeparator: '',
-											typeAhead: true,
-											editable: true,
-											allowBlank: false,
 											name: 'currentDataOwner',
 											width: '100%',
-											valueField: 'username',
-											forceSelection: false,
-											queryMode: 'local',
-											displayField: 'username',
-											store: {
-												autoLoad: true,
-												proxy: {
-													type: 'ajax',
-													url: 'api/v1/resource/userprofiles',
-													reader: {
-														type: 'json',
-														rootProperty: 'data',
-														totalProperty: 'totalNumber'
-													}
-												}
-											}
 										},
 										{
 											xtype: 'osf-common-validhtmleditor',

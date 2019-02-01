@@ -159,33 +159,12 @@
 							dock: 'top',	 
 							items: [
 								{
-									xtype: 'combobox',
+									xtype: 'UserSingleSelectComboBox',
 									id: 'filterAssignedUser',
 									name: 'assignedUser',
 									fieldLabel: 'Assigned User',
-									displayField: 'description',
-									valueField: 'code',								
-									emptyText: 'All',
-									labelAlign: 'top',
-									typeAhead: true,
+									addAll: true,
 									width: 250,
-									editable: true,
-									forceSelection: true,
-									store: {									
-										autoLoad: true,
-										proxy: {
-											type: 'ajax',
-											url: 'api/v1/resource/userprofiles/lookup'
-										},
-										listeners: {
-											load: function(store, records, opts) {
-												store.add({
-													code: null,
-													description: 'All'
-												});
-											}
-										}									
-									},
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefresh();
@@ -370,7 +349,8 @@
 										name: 'assignedUser',
 										fieldLabel: 'Assign to User',
 										displayField: 'description',
-										valueField: 'code',								
+										valueField: 'code',					
+										queryMode: 'remote',
 										emptyText: 'Unassigned',
 										labelAlign: 'top',
 										width: '100%',

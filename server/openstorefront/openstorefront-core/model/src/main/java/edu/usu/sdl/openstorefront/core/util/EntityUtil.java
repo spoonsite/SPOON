@@ -96,7 +96,8 @@ public class EntityUtil
 		} else if (original == null && compare != null) {
 			changed = true;
 		} else if (original != null && compare != null) {
-			if (original.getClass().isInstance(compare)) {
+			// need to compare both ways because a child cannot compare with inherited parent
+			if (original.getClass().isInstance(compare) || compare.getClass().isInstance(original)) {
 				List<Field> fields = getAllFields(original.getClass());
 				for (Field field : fields) {
 					boolean check = true;
@@ -140,7 +141,8 @@ public class EntityUtil
 		} else if (original == null && compare != null) {
 			value = 1;
 		} else if (original != null && compare != null) {
-			if (original.getClass().isInstance(compare)) {
+			// need to compare both ways because a child cannot compare with inherited parent
+			if (original.getClass().isInstance(compare) || compare.getClass().isInstance(original)) {
 				List<Field> fields = getAllFields(original.getClass());
 				for (Field field : fields) {
 					ConsumeField consume = (ConsumeField) field.getAnnotation(ConsumeField.class);
