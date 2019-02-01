@@ -130,14 +130,14 @@ public class EvaluationResource
 		Evaluation endExample = new Evaluation();
 		endExample.setUpdateDts(evaluationFilterParams.getEnd());
 
-		QueryByExample queryByExample = new QueryByExample(evaluationExample);
+		QueryByExample<Evaluation> queryByExample = new QueryByExample<>(evaluationExample);
 
-		SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel();
+		SpecialOperatorModel<Evaluation> specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(startExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		specialOperatorModel = new SpecialOperatorModel();
+		specialOperatorModel = new SpecialOperatorModel<>();
 		specialOperatorModel.setExample(endExample);
 		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
@@ -151,7 +151,7 @@ public class EvaluationResource
 			Component componentLikeExample = new Component();
 			componentLikeExample.setName("%" + evaluationFilterParams.getComponentName().toLowerCase() + "%");
 
-			QueryByExample componentQueryByExample = new QueryByExample(new Component());
+			QueryByExample<Component> componentQueryByExample = new QueryByExample<>(new Component());
 			componentQueryByExample.setLikeExample(componentLikeExample);
 			// Define Lookup Operation (ILIKE)
 			componentQueryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
@@ -163,17 +163,17 @@ public class EvaluationResource
 			if (!ids.isEmpty()) {
 				Evaluation idInExample = new Evaluation();
 				idInExample.setComponentId(QueryByExample.STRING_FLAG);
-				SpecialOperatorModel componentIdGroup = new SpecialOperatorModel(idInExample);
+				SpecialOperatorModel<Evaluation> componentIdGroup = new SpecialOperatorModel<>(idInExample);
 				componentIdGroup.getGenerateStatementOption().setParameterValues(ids);
 				componentIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
 
 				Evaluation originIdInExample = new Evaluation();
 				originIdInExample.setOriginComponentId(QueryByExample.STRING_FLAG);
-				SpecialOperatorModel originIdGroup = new SpecialOperatorModel(originIdInExample);
+				SpecialOperatorModel<Evaluation> originIdGroup = new SpecialOperatorModel<>(originIdInExample);
 				originIdGroup.getGenerateStatementOption().setParameterValues(ids);
 				originIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
 
-				WhereClauseGroup group = new WhereClauseGroup();
+				WhereClauseGroup<Evaluation> group = new WhereClauseGroup<>();
 				group.getStatementOption().setCondition(GenerateStatementOption.CONDITION_OR);
 				group.getExtraWhereClause().add(componentIdGroup);
 				group.getExtraWhereClause().add(originIdGroup);
@@ -195,7 +195,7 @@ public class EvaluationResource
 
 				Evaluation idInExample = new Evaluation();
 				idInExample.setTemplateId(QueryByExample.STRING_FLAG);
-				SpecialOperatorModel templateIdGroup = new SpecialOperatorModel(idInExample);
+				SpecialOperatorModel<Evaluation> templateIdGroup = new SpecialOperatorModel<>(idInExample);
 				templateIdGroup.getGenerateStatementOption().setParameterValues(ids);
 				templateIdGroup.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_IN);
 
@@ -453,14 +453,28 @@ public class EvaluationResource
 
 	@PUT
 	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_ASSIGN_USER)
-	@Produces({ MediaType.APPLICATION_JSON })
-	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@APIDescription("Updates the assigned user to unassign")
+	@DataType(Evaluation.class)
+	@Path("/{evaluationId}/assignuser")
+	public Response updateEvaluationAssignedUser(
+			@PathParam("evaluationId") String evaluationId
+	)
+	{
+		return updateEvaluationAssignedUser(evaluationId, null);
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.USER_EVALUATIONS_ASSIGN_USER)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
 	@APIDescription("Updates the assigned user for an evaluation.")
 	@DataType(Evaluation.class)
 	@Path("/{evaluationId}/assignuser/{username}")
 	public Response updateEvaluationAssignedUser(
-		@PathParam("evaluationId") String evaluationId,
-		@PathParam("username") String username
+			@PathParam("evaluationId") String evaluationId,
+			@PathParam("username") String username
 	)
 	{
 		Evaluation evaluationExisting = new Evaluation();
@@ -469,11 +483,11 @@ public class EvaluationResource
 
 		if (evaluationExisting != null) {
 
-				evaluationExisting.setAssignedUser(username);
-				evaluationExisting.populateBaseUpdateFields();
-				evaluationExisting.save();
+			evaluationExisting.setAssignedUser(username);
+			evaluationExisting.populateBaseUpdateFields();
+			evaluationExisting.save();
 
-				return Response.ok(evaluationExisting).build();
+			return Response.ok(evaluationExisting).build();
 		} else {
 			return sendSingleEntityResponse(evaluationExisting);
 		}

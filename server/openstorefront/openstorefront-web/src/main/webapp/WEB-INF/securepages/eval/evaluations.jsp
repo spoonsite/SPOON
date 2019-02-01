@@ -165,6 +165,18 @@
 									fieldLabel: 'Assigned User',
 									addAll: true,
 									width: 250,
+									emptyText: 'All',
+									typeAhead: true,
+									editable: true,
+									forceSelection: true,
+									anyMatch: true,	
+									store: {
+										autoLoad: true,
+										proxy: {
+											type: 'ajax',
+											url: 'api/v1/resource/userprofiles/lookup'
+										}
+									},									
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefresh();
@@ -357,6 +369,7 @@
 										typeAhead: true,
 										editable: true,
 										forceSelection: true,
+										hideTrigger: true,
 										store: {									
 											autoLoad: true,
 											proxy: {
@@ -419,12 +432,15 @@
 							}
 						]
 					});
-					assignWin.show();					
+					assignWin.show();	
+					
+					assignWin.queryById('form').loadRecord(record);		
+					
 				};				
 				
 				CoreService.userservice.getCurrentUser().then(function(user){
 					Ext.getCmp('filterAssignedUser').setValue(user.username);
-					actionRefresh();
+					//actionRefresh();
 				});
 				
 				var previewContents = Ext.create('OSF.ux.IFrame', {

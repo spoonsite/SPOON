@@ -45,7 +45,6 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.security.UserProfileRequireHandler;
-import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -76,7 +75,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import net.sf.ehcache.Element;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -93,7 +91,6 @@ public class UserProfileResource
 {
 
 	private static final Logger LOG = Logger.getLogger(UserProfileResource.class.getName());
-	private static final String ALL_ACTIVE_USERS = "ALL_ACTIVE_USERS";
 
 	@GET
 	@APIDescription("Get a list of user profiles")
@@ -187,30 +184,8 @@ public class UserProfileResource
 			@QueryParam("query") String query
 	)
 	{
-		List<LookupModel> profiles = new ArrayList<>();
-		List<UserProfile> userProfiles;
+		List<LookupModel> profiles = service.getUserService().getProfilesForLookup();
 
-		Element element = OSFCacheManager.getApplicationCache().get(ALL_ACTIVE_USERS);
-		if (element == null) {
-			// get all active user profiles
-			userProfiles = service.getUserService().getAllProfiles(true);
-			element = new Element(ALL_ACTIVE_USERS, userProfiles);
-			OSFCacheManager.getApplicationCache().put(element);
-		} else {
-			userProfiles = (List<UserProfile>) element.getObjectValue();
-		}
-
-		for (UserProfile userProfile : userProfiles) {
-			LookupModel lookupModel = new LookupModel();
-			lookupModel.setCode(userProfile.getUsername());
-			String name = userProfile.getUsername();
-			if (StringUtils.isNotBlank(userProfile.getFirstName())) {
-				name = userProfile.getFirstName() + ", " + userProfile.getLastName();
-			}
-			String email = StringUtils.isNotBlank(userProfile.getEmail()) ? " (" + userProfile.getEmail() + ")" : "";
-			lookupModel.setDescription(name + email);
-			profiles.add(lookupModel);
-		}
 		if (query != null) {
 			if (StringUtils.isBlank(query)) {
 				//match nothing
@@ -707,7 +682,8 @@ public class UserProfileResource
 		} else {
 
 			// Get All User Profiles
-			userProfiles = service.getUserService().getAllProfiles(Boolean.TRUE);
+			UserProfile userProfileExample = new UserProfile();
+			userProfiles = userProfileExample.findByExample();
 		}
 
 		// Get User Profile Views

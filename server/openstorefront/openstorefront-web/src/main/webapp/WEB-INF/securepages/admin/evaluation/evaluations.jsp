@@ -187,6 +187,7 @@
 								forceSelection: true,
 								editable: true,
 								anyMatch: true,
+								hideTrigger: true,
 								requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER'],
 								store: {
 									autoLoad: true,
@@ -787,6 +788,7 @@
 									editable: true,
 									forceSelection: true,
 									anyMatch: true,
+									hideTrigger: true,
 									store: {									
 										autoLoad: true,
 										proxy: {
