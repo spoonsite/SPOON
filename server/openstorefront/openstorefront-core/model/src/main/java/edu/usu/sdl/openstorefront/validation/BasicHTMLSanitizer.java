@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 
 /**
@@ -34,11 +35,15 @@ public class BasicHTMLSanitizer
 		if (fieldData == null) {
 			return fieldData;
 		} else {
-			String safe = Jsoup.clean(fieldData.toString(), Whitelist.basic()
-					.addTags("div")
-					.addTags("font")
-					.addAttributes("font", "color", "face", "size", "style")
-					.addAttributes(":all", "style")
+			String safe = Jsoup.clean(
+					fieldData.toString(),
+					"",
+					Whitelist.basic()
+							.addTags("div")
+							.addTags("font")
+							.addAttributes("font", "color", "face", "size", "style")
+							.addAttributes(":all", "style"),
+					new Document.OutputSettings().prettyPrint(false)
 			);
 			safe = StringProcessor.removeBadStyles(safe);
 			// this is a hidden white space "Line Seperator" not an empty string

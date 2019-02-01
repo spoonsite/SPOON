@@ -97,7 +97,11 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		var decodedData = null;
 		if (initialData) {
 			decodedData = Ext.decode(initialData);
-			if (decodedData[0].comment && !decodedData[0].comment.includes("<div>")) {
+			if (decodedData && 
+				decodedData.length > 0 &&					
+				decodedData[0].comment && 
+				!panel.fieldTemplate.allowHTMLInComment) {
+			
 				decodedData[0].comment = decodedData[0].comment.replace(/<br>/g, "\n");
 			}
 		}			
@@ -124,6 +128,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 					url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '?view=true',
 					success: function(response, opts) {
 						var attributeTypeView = Ext.decode(response.responseText);
+						panel.attributeTypeView = attributeTypeView;
 						displayItems.push({
 							xtype: 'AttributeCodeSelect',
 							name: 'attributeCode',
@@ -213,7 +218,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '/attributecodes',
 				success: function(response, opts) {
 					var attributeCodes = Ext.decode(response.responseText);
-
+					
 					//display all active
 					Ext.Array.each(attributeCodes, function(code){
 						displayItems.push({
@@ -286,6 +291,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '/attributecodes',
 				success: function(response, opts) {					
 					var attributeCodes = Ext.decode(response.responseText);
+					panel.attributeCodes = attributeCodes;
 
 					Ext.Array.each(attributeCodes, function(code){
 						displayItems.push({
@@ -397,10 +403,22 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		
 		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
 			var allValues = [];
-			Ext.Object.each(panel.selectedValue.value, function(key, value, myself) {
-				allValues.push(value);
-			});
-			responseValue = allValues.join(',<br>');
+			if (Ext.isArray(panel.selectedValue.value)) {
+				Ext.Object.each(panel.selectedValue.value, function(key, value, myself) {
+					//get the appropriate labels					
+					var label;
+					Ext.Array.each(panel.attributeTypeView.codes, function(code) {
+						if (value === code.code) {
+							label = code.label;
+						}						
+					});
+					
+					allValues.push(label);					
+				});
+				responseValue = allValues.join(',<br>');
+			} else {
+				responseValue = panel.selectedValue.label;
+			}
 		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
 			if (panel.selectedValue) {
 				responseValue = panel.selectedValue.label;
@@ -408,7 +426,14 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_MCHECKBOX') {			
 			var allValues = [];
 			Ext.Object.each(panel.selectedValue, function(key, value, myself) {
-				allValues.push(value);
+				//get the appropriate labels
+				var label;
+				Ext.Array.each(panel.attributeCodes, function(code) {
+					if (value === code.attributeCodePk.attributeCode) {
+						label = code.label;
+					}
+				});
+				allValues.push(label);
 			});
 			responseValue = allValues.join(',<br>');
 		}
