@@ -398,11 +398,11 @@ public class SearchServiceImpl
 				SearchStatTable statTable = new SearchStatTable();
 				List<ResultOrganizationStat> organizationStats = statTable.getOrganizationStats(componentIds);
 				List<ResultTagStat> tagStats = statTable.getTagStats(componentIds);
-				List<ResultAttributeStat> attributeStats = statTable.getAttributeStats(componentIds);
+				Map<String, ResultAttributeStat> attributeStats = statTable.getAttributeStats(componentIds);
 
 				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
 				searchResult.getMeta().getResultTagStats().addAll(tagStats);
-				searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
+				searchResult.getMeta().setResultAttributeStats(attributeStats);
 				
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 

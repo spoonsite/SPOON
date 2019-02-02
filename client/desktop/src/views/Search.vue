@@ -133,18 +133,18 @@
             v-for="key in attributeKeys"
             :key="key"
           >
-            <div slot="header">{{ searchResultsAttributes[key].label }}</div>
+            <div slot="header">{{ searchResultsAttributes[key].attributeTypeLabel }}</div>
             <v-card>
               <v-container class="pt-0" fluid>
                 <v-checkbox
-                  v-for="attribute in (searchResultsAttributes[key].attributes)"
-                  :key="attribute.attributeCode"
+                  v-for="code in (searchResultsAttributes[key].codeMap)"
+                  :key="code.codeLabel"
                   v-model="filters.attributes"
-                  :value="JSON.stringify(attribute)"
+                  :value="{ 'type': key, 'code': code.codeLabel }"
                   hide-details
                 >
                   <template slot="label">
-                    <div v-html="attribute.attributeCodeLabel"></div>
+                    <div v-html="code.codeLabel"></div>
                   </template>
                 </v-checkbox>
               </v-container>
@@ -331,17 +331,7 @@ export default {
       }
     },
     loadAttributes (attributes) {
-      this.searchResultsAttributes = {}
-      attributes.forEach((el) => {
-        if (el.attributeType in this.searchResultsAttributes) {
-          this.searchResultsAttributes[el.attributeType].attributes.push(el)
-        } else {
-          this.searchResultsAttributes[el.attributeType] = {
-            'label': el.attributeTypeLabel,
-            'attributes': [el]
-          }
-        }
-      })
+      this.searchResultsAttributes = this.$jsonparse(attributes)
     },
     filterAttributeKeys () {
     },
@@ -398,12 +388,11 @@ export default {
         )
       }
       if (that.filters.attributes) {
-        that.filters.attributes.forEach(function (attribute) {
-          var attr = JSON.parse(attribute)
+        that.filters.attributes.forEach(function (attr) {
           searchElements.push(
             {
-              keyField: attr.attributeType,
-              keyValue: attr.attributeCode,
+              keyField: attr.type,
+              keyValue: attr.code,
               caseInsensitive: true,
               // mergeCondition: that.filters.attributeCondition,
               mergeCondition: 'AND',

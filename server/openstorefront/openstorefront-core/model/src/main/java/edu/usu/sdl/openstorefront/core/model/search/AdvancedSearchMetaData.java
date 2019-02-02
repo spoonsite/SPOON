@@ -16,7 +16,10 @@
 package edu.usu.sdl.openstorefront.core.model.search;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -27,7 +30,9 @@ public class AdvancedSearchMetaData
 	private List<ResultTypeStat> resultTypeStats = new ArrayList<>();
 	private List<ResultTagStat> resultTagStats = new ArrayList<>();
 	private List<ResultOrganizationStat> resultOrganizationStats = new ArrayList<>();
-	private List<ResultAttributeStat> resultAttributeStats = new ArrayList<>();
+	
+	@XmlJavaTypeAdapter(ResultAttributeStatsAdapter.class)
+	private Map<String, ResultAttributeStat> resultAttributeStats = new HashMap<>();
 	
 	public AdvancedSearchMetaData()
 	{
@@ -63,12 +68,12 @@ public class AdvancedSearchMetaData
 		this.resultOrganizationStats = resultOrganizationStats;
 	}
 
-	public List<ResultAttributeStat> getResultAttributeStats()
+	public Map<String, ResultAttributeStat> getResultAttributeStats()
 	{
 		return resultAttributeStats;
 	}
 
-	public void setResultAttributeStats(List<ResultAttributeStat> resultAttributeStats)
+	public void setResultAttributeStats(Map<String, ResultAttributeStat> resultAttributeStats)
 	{
 		this.resultAttributeStats = resultAttributeStats;
 	}

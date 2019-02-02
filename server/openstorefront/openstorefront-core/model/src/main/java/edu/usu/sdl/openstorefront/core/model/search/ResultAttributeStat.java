@@ -15,14 +15,16 @@
  */
 package edu.usu.sdl.openstorefront.core.model.search;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author rfrazier
  */
 public class ResultAttributeStat
 {
-	private String attributeCode;
-	private String attributeCodeLabel;
+	private Map<String, ResultCodeStat> codeMap = new HashMap<>();
 	private String attributeType;
 	private String attributeTypeLabel;
 	private String attributeUnit;
@@ -32,24 +34,14 @@ public class ResultAttributeStat
 	{
 	}
 
-	public String getAttributeCode()
+	public Map<String, ResultCodeStat> getCodeMap()
 	{
-		return attributeCode;
+		return codeMap;
 	}
 
-	public void setAttributeCode(String attributeCode)
+	public void setCodeMap(Map<String, ResultCodeStat> codeMap)
 	{
-		this.attributeCode = attributeCode;
-	}
-
-	public String getAttributeCodeLabel()
-	{
-		return attributeCodeLabel;
-	}
-
-	public void setAttributeCodeLabel(String attributeCodeLabel)
-	{
-		this.attributeCodeLabel = attributeCodeLabel;
+		this.codeMap = codeMap;
 	}
 
 	public String getAttributeType()

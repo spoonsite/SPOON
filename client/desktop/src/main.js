@@ -39,6 +39,16 @@ axios.interceptors.request.use(
 )
 Vue.prototype.$http = axios
 
+Vue.prototype.$jsonparse = (json) => {
+  let parsed = {}
+  try {
+    parsed = JSON.parse(json)
+  } catch (e) {
+    console.log('Failed to parse json: ', e)
+  }
+  return parsed
+}
+
 Vue.use(Toasted, {
   iconPack: 'fontawesome',
   duration: 5000
