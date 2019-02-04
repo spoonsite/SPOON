@@ -127,7 +127,16 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				Ext.Ajax.request({
 					url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '?view=true',
 					success: function(response, opts) {
-						var attributeTypeView = Ext.decode(response.responseText);
+						var attributeTypeView = Ext.decode(response.responseText);						
+									
+						if (attributeTypeView && !panel.fieldTemplate.required && !attributeTypeView.allowMultipleFlg) {
+							attributeTypeView.codes.push({
+								activeStatus: "A",
+								code: null,
+								label: '-Select-'								
+							});
+						}
+						
 						panel.attributeTypeView = attributeTypeView;
 						displayItems.push({
 							xtype: 'AttributeCodeSelect',
@@ -137,7 +146,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 							attributeTypeView: attributeTypeView,
 							required: panel.fieldTemplate.required,
 							width: '100%',
-							maxWidth: 800,
+							maxWidth: 800,						
 							fieldListeners: {
 								change: function(field, newValue, oldValue) {
 									
@@ -218,7 +227,19 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(panel.fieldTemplate.attributeType) + '/attributecodes',
 				success: function(response, opts) {
 					var attributeCodes = Ext.decode(response.responseText);
-					
+
+					if (attributeCodes && !panel.fieldTemplate.required) {
+						attributeCodes.push({
+							activeStatus: "A",
+							code: null,
+							label: "-N/A-",
+							type: "attributeCode",
+							attributeCodePk: {							 
+							  attributeCode: null
+							}
+						});
+					}
+
 					//display all active
 					Ext.Array.each(attributeCodes, function(code){
 						displayItems.push({
@@ -399,7 +420,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 		var data = [];
 		
 		//values 
-		var responseValue = 'No Data Entered';
+		var responseValue;
 		
 		if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_SINGLE') {
 			var allValues = [];
@@ -408,7 +429,7 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 					//get the appropriate labels					
 					var label;
 					Ext.Array.each(panel.attributeTypeView.codes, function(code) {
-						if (value === code.code) {
+						if (value && value === code.code) {
 							label = code.label;
 						}						
 					});
@@ -417,10 +438,12 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 				});
 				responseValue = allValues.join(',<br>');
 			} else {
-				responseValue = panel.selectedValue.label;
+				if (panel.selectedValue && panel.selectedValue.value) {
+					responseValue = panel.selectedValue.label;
+				}
 			}
 		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {
-			if (panel.selectedValue) {
+			if (panel.selectedValue && panel.selectedValue.value) {
 				responseValue = panel.selectedValue.label;
 			}
 		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_MCHECKBOX') {			

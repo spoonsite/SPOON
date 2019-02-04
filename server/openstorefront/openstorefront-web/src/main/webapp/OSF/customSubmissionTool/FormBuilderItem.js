@@ -327,8 +327,19 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 								codeField.clearValue();
 								requireValueField.clearValue();					
 		
-								codeField.getStore().loadData(Ext.Array.clone(record.data.codes));
-								requireValueField.getStore().loadData(Ext.Array.clone(record.data.codes));
+								var newCodeList = Ext.Array.clone(record.data.codes);	
+								newCodeList.push({
+									code: null,
+									label: '-Select-'
+								});								
+								codeField.getStore().loadData(newCodeList);
+								
+								var newRequireCodeList = Ext.Array.clone(record.data.codes);
+								newRequireCodeList.push({
+									code: null,
+									label: '-Select-'
+								});									
+								requireValueField.getStore().loadData(newRequireCodeList);
 								
 								
 								codeField.setValue(formBuilderItem.templateField.attributeCode);								
@@ -358,13 +369,13 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						proxy: {
 							type: 'ajax',
 							url: 'api/v1/resource/attributes'
-						}				
+						}
 					}
 				},
 				{
 					xtype: 'combo',
 					hidden: true,
-					optionField: true,			
+					optionField: true,
 					fieldLabel: 'Attribute Code',
 					itemId: 'attributeCode',
 					name: 'attributeCode',
@@ -374,11 +385,11 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 					queryMode: 'local',
 					listeners: {
 						change: function (combo, newVal, oldValue, opts) {
-							var formBuilderItem = this.up().up('panel');	
-							formBuilderItem.syncTemplateField(false);					
+							var formBuilderItem = this.up().up('panel');
+							formBuilderItem.syncTemplateField(false);
 						}
 					},
-					store: {				
+					store: {
 					}
 				},
 				{
