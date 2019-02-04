@@ -47,6 +47,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.select.Elements;
 
 /**
@@ -658,13 +659,17 @@ public class StringProcessor
 		final String value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
 		return new AbstractMap.SimpleImmutableEntry<>(key, value);
 	}
-        
-        public static String removeBadStyles(String html)
+
+	public static String removeBadStyles(String html)
 	{
 		String safe;
 		Map<String, List<String>> badStyles = getBadStyles();
 		if (!badStyles.isEmpty()) {
 			Document doc = Jsoup.parse(html);
+			OutputSettings outputSettings = new OutputSettings();
+			outputSettings.prettyPrint(false);
+			doc.outputSettings(outputSettings);
+
 			badStyles.forEach((key, value) -> {
 				value.forEach(styleValue -> {
 					List<String> styleList = getStyleVariations(key, styleValue);

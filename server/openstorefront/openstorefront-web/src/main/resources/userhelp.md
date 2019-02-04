@@ -38,7 +38,7 @@ a given entry type.
 
 * Multiple Entry types/Topics can now be selected in the search
 
-### 1.1.1 Administrator Release Notes, v2.5 @ADMIN-SYSTEM-MANAGEMENT
+### 1.1.1 Administrator Release Notes, v2.6 @ADMIN-SYSTEM-MANAGEMENT
 -----
 
 *What's new in v2.6*
@@ -53,6 +53,64 @@ a given entry type.
 * Entry type can now have sub type and be nested.
  
 For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.6" target="_blank">v2.6</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+
+## 1.2 Release Notes for v2.6.2 @ADMIN-SYSTEM-MANAGEMENT
+-----
+
+* Some adjustments to the Custom SubmissionForm
+
+## 1.3 Release Notes for v2.6.3
+-----
+
+* New login page released.
+* New mobile site released.
+* Users can view entries on mobile and adjust their account settings such as changing a password, or email.
+* Mobile site supports viewing updates on watches, requesting feedback, registering for an account, updating account information, and more.
+
+### 1.3.1 Administrator Notes for v2.6.3 @ADMIN-SYSTEM-MANAGEMENT
+-----
+
+* Administrators now have limited functionality on mobile.
+
+## 1.4 Release Notes for v2.6.5
+-----
+
+* Users can now see current WorkPlan state of submissions.
+* Users and reviewers can now communicate dirrectly through comments on submissions.
+* Minor bug fixes on both desktop and mobile.
+
+### 1.4.1 Administrator Notes for v2.6.5 @ADMIN-SYSTEM-MANAGEMENT
+-----
+
+* New Workflow Management page added.
+* New WorkPlan Progress page added.
+* Assigned user roles will now have access to WorkPlan Progress page. Submissions assigned to them will show and can be moved to next state.
+
+## 1.5 Release Notes for v2.6.6
+-----
+
+* Issues fixed with contact us form.
+* Video support added for media on mobile.
+
+### 1.5.1 Administrator Notes for v2.6.6 @ADMIN-SYSTEM-MANAGEMENT
+-----
+
+* SME WorkPlan approval now added to mobile.
+* Additional user roles defined and created.
+
+## 1.6 Release Notes for v2.7
+-----
+
+* Improved feedback to users about submission status while editing a submission.
+* Major improvements to search including better search filters.
+* Fixed issues with reports.
+* Mobile search filters improved.
+
+### 1.6.1 Administrator Release Notes, v2.7 @ADMIN-SYSTEM-MANAGEMENT
+-----
+
+* Various improvements to Entries admin page.
+
  
 
 # 2. User Features

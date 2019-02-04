@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
 import edu.usu.sdl.openstorefront.core.model.Dashboard;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingResult;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import java.util.Date;
@@ -99,12 +100,12 @@ public interface UserService
 	public UserProfile getUserProfile(String userId);
 
 	/**
-	 * Get the user profile based on the userID
+	 * This will get cache set of lookup(code, description) values This pulls
+	 * active only
 	 *
-	 * @param all
 	 * @return
 	 */
-	public List<UserProfile> getAllProfiles(Boolean all);
+	public List<LookupModel> getProfilesForLookup();
 
 	/**
 	 * Get the last login for a group of users.
@@ -260,35 +261,36 @@ public interface UserService
 
 	/**
 	 * Saves a user Search
-	 * 
+	 *
 	 * @param userSavedSearch
 	 * @return the saved search record
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public UserSavedSearch saveUserSearch(UserSavedSearch userSavedSearch);
-	
+
 	/**
 	 * Removes saved search
-	 * 
-	 * @param userSearchId 
+	 *
+	 * @param userSearchId
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void deleteUserSearch(String userSearchId);
-	
+
 	/**
-	 * Get a dashboard for a user.  
-	 * If the user doesn't have a dashboard it creates one.
+	 * Get a dashboard for a user. If the user doesn't have a dashboard it
+	 * creates one.
+	 *
 	 * @param username
-	 * @return 
+	 * @return
 	 */
 	public Dashboard getDashboard(String username);
-	
+
 	/**
-	 *  Saves a dashboard and all it of widgets.
-	 *  Note: this clear the old widgets replaces with the new widgets.
-	 * 
+	 * Saves a dashboard and all it of widgets. Note: this clear the old widgets
+	 * replaces with the new widgets.
+	 *
 	 * @param dashboard
-	 * @return 
+	 * @return
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public Dashboard saveDashboard(Dashboard dashboard);

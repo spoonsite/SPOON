@@ -483,7 +483,7 @@ var CoreUtil = {
 	tinymceConfigNoMedia: function (additionalPlugins) {
 		var defaultConfig = {
 			plugins: [
-				"advlist autolink lists link charmap print preview hr anchor pagebreak",
+				"advlist lists link charmap print preview hr anchor pagebreak",
 				"searchreplace wordcount visualblocks visualchars code osffullscreen",
 				"insertdatetime media nonbreaking save table contextmenu directionality",
 				"emoticons template paste textcolor placeholder"
@@ -499,7 +499,9 @@ var CoreUtil = {
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 					+ ' table[class] td[class] th[class] tr[class]',
-			table_default_styles: {border: 'solid 1px #ddd'}
+			table_default_styles: {border: 'solid 1px #ddd'},
+			target_list: [ {title: 'New page', value: '_blank'} ],
+			default_link_target: '_blank'
 		};
 
 		if (additionalPlugins) {
@@ -518,7 +520,7 @@ var CoreUtil = {
 	tinymceConfig: function (additionalPlugins) {
 		var defaultConfig = {
 			plugins: [
-				"advlist autolink lists link image charmap print preview hr anchor pagebreak",
+				"advlist lists link image charmap print preview hr anchor pagebreak",
 				"searchreplace wordcount visualblocks visualchars code osffullscreen",
 				"insertdatetime media nonbreaking save table contextmenu directionality",
 				"emoticons template paste textcolor placeholder osfmediainserter osfvideoinserter"
@@ -533,8 +535,11 @@ var CoreUtil = {
 			skin: 'openstorefront',
 			toolbar_items_size: 'small',
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
-					+ ' table[class] td[class] th[class] tr[class]',
+					+ ' table[class] td[class] th[class] tr[class]'
+					+ ' a[href|target=_blank]',
 			table_default_styles: {border: 'solid 1px #ddd'},
+			target_list: [ {title: 'New page', value: '_blank'} ],
+			default_link_target: '_blank',
 			paste_data_images: true
 		};
 
@@ -552,7 +557,7 @@ var CoreUtil = {
 	tinymceSearchEntryConfig: function (additionalPlugins) {
 		var searchEntryConfig = {
 			plugins: [
-				"advlist autolink lists link image charmap print preview hr anchor pagebreak",
+				"advlist lists link image charmap print preview hr anchor pagebreak",
 				"searchreplace wordcount visualblocks visualchars code osffullscreen",
 				"insertdatetime media nonbreaking save table contextmenu directionality",
 				"emoticons template paste textcolor placeholder savedsearchlink osfmediainserter osfvideoinserter"
@@ -569,6 +574,8 @@ var CoreUtil = {
 			extended_valid_elements: 'img[data-storefront-ignore|src|border=0|alt|title|hspace|vspace|width|height|align|name]'
 					+ ' table[class] td[class] th[class] tr[class]',
 			table_default_styles: {border: 'solid 1px #ddd'},
+			target_list: [ {title: 'New page', value: '_blank'} ],
+			default_link_target: '_blank',
 			paste_data_images: true
 
 		};
