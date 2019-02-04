@@ -220,8 +220,10 @@ Ext.define('OSF.component.template.Vitals', {
 			'			<td class="details-table"><b>{label}</b>',
 			'				<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>',
 			'           </td>',
-			'			<td class="details-table highlight-{highlightStyle}"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="#" class="details-table" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\', \'{codeHasAttachment}\');"><b>{value}</b></a><tpl if="codeHasAttachment"> <a href="api/v1/resource/attributes/attributetypes/{type}/attributecodes/{code}/attachment"><i class="fa fa-paperclip"></i> </a></tpl>', 
-			'				<tpl if="comment"><hr>Comment: {comment}</tpl>',
+			'			<td class="details-table highlight-{highlightStyle}">',
+			'				<tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
+			'				{value}',
+			'				<tpl if="comment"><hr><b>Comment:</b> <br> {comment}</tpl>',
 			'			</td>',
 			'		</tr>',
 			'	</tpl>',
@@ -238,44 +240,121 @@ Ext.define('OSF.component.template.Vitals', {
 			this.setHidden(true);
 		}
 
-		//normalize and sort
+		//normalize and sort 
 		var vitals = [];
 		if (entry.attributes) {
+			
+			//group attributes by type; array of values
+			var typeMap = {};
 			Ext.Array.each(entry.attributes, function (item) {
+				if (!typeMap[item.type]) {
+					typeMap[item.type] = [];
+				}
+				typeMap[item.type].push(item);				
+			});
+			
+			Ext.Object.each(typeMap, function(key, values) {				
+				var maintype = values[0];
+				
+				
+				var topHighLightStyle = null;
+				if (values.length == 1) {
+					topHighLightStyle = values[0].highlightStyle;
+				} 
+				
+				//if 1 then set to fill background 
+				//if more than one then style the codes 
+				
+				var processedValues = '';
+				var commonComment = null;
+				var anyPrivate = false;
+				Ext.Array.each(values, function (item) {
+					if (item.privateFlag) {
+						anyPrivate = true;
+					}
+					if (item.comment) {
+						// (ONLY allow one comment per type)
+						//take the last non-null one
+						commonComment = item.comment;
+					}
+					var tip = item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription;
+					
+					processedValues += '<a href="#" class="details-table highlight-' + 
+											item.highlightStyle 
+											+ '" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'' 
+											+ item.type 
+											+ '\',\'' 
+											+ item.code 
+											+ '\',\''
+											+ item.typeDescription + ' - '
+											+ item.codeDescription + '\', \'ATTRIBUTE\', \'' 
+											+ (tip ? tip : '') + '\', \'' 
+											+ entry.componentId +'\', \'' 
+											+ item.codeHasAttachment +'\');">'									
+											+ '<b>' + item.codeDescription + '</b>'
+										    + '</a>';
+					if (item.codeHasAttachment) {
+						processedValues += '<a href="api/v1/resource/attributes/attributetypes/{' + item.type + '}/attributecodes/{' + item.code + '}/attachment"><i class="fa fa-paperclip"></i> </a>';
+					}
+					processedValues += ', ';					
+					
+				});
+				processedValues = processedValues.substring(0, processedValues.length-2);
+				
+				
 				vitals.push({
 					componentId: entry.componentId,
-					label: item.typeDescription,
-					value: item.codeDescription,
-					highlightStyle: item.highlightStyle,
-					type: item.type,
-					code: item.code,
-					privateFlag: item.privateFlag,
-					comment: item.comment,
-					updateDts: item.updateDts,
-					securityMarkingType: item.securityMarkingType,
-					codeHasAttachment: item.codeHasAttachment,
-					vitalType: 'ATTRIBUTE',
-					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription
+					label: maintype.typeDescription,
+					value: processedValues,
+					highlightStyle: topHighLightStyle,
+					type: maintype.type,
+					code: maintype.code,
+					privateFlag: anyPrivate,
+					comment: commonComment,
+					updateDts: maintype.updateDts,
+					securityMarkingType: maintype.securityMarkingType,
+					codeHasAttachment: maintype.codeHasAttachment,
+					vitalType: 'ATTRIBUTE'
 				});
+				
 			});
+			
+			
+//			Ext.Array.each(entry.attributes, function (item) {
+//				vitals.push({
+//					componentId: entry.componentId,
+//					label: item.typeDescription,
+//					value: item.codeDescription,
+//					highlightStyle: item.highlightStyle,
+//					type: item.type,
+//					code: item.code,
+//					privateFlag: item.privateFlag,
+//					comment: item.comment,
+//					updateDts: item.updateDts,
+//					securityMarkingType: item.securityMarkingType,
+//					codeHasAttachment: item.codeHasAttachment,
+//					vitalType: 'ATTRIBUTE',
+//					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription
+//				});
+//			});
 		}
 
-		if (entry.metadata) {
-			Ext.Array.each(entry.metadata, function (item) {
-				vitals.push({
-					componentId: entry.componentId,
-					label: item.label,
-					value: item.value,
-					type: item.label,
-					code: item.value,
-					privateFlag: false,
-					comment: null,
-					vitalType: 'METADATA',
-					securityMarkingType: item.securityMarkingType,
-					updateDts: item.updateDts
-				});
-			});
-		}
+//		if (entry.metadata) {
+//			Ext.Array.each(entry.metadata, function (item) {
+//				vitals.push({
+//					componentId: entry.componentId,
+//					label: item.label,
+//					value: item.value,
+//					type: item.label,
+//					code: item.value,
+//					privateFlag: false,
+//					comment: null,
+//					vitalType: 'METADATA',
+//					securityMarkingType: item.securityMarkingType,
+//					updateDts: item.updateDts
+//				});
+//			});
+//		}
 
 		Ext.Array.sort(vitals, function (a, b) {
 			return a.label.localeCompare(b.label);

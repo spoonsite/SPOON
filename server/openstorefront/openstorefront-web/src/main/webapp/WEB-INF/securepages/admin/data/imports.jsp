@@ -471,7 +471,11 @@
 															proxy: {
 																type: 'ajax',
 																url: 'api/v1/service/datamapping/entityfields/{entity}'
-															}
+															},
+															sorters: [{
+																		property: 'description',
+																		direction: 'ASC'
+															}]
 														},
 														editable: false,
 														typeAhead: false												

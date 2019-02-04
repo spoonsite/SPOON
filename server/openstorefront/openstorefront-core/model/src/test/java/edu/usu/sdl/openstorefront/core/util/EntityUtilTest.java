@@ -75,6 +75,31 @@ public class EntityUtilTest
 		result = EntityUtil.isObjectsDifferent(userRecord1, userRecord2, false);
 		assertEquals(expResult, result);		
 	}
+	
+	/**
+	 * Test failure isObjectsDifferent method
+	 * should throw exception if objects are different
+	 */
+	@Test(expected = OpenStorefrontRuntimeException.class)
+	public void testIsObjectsDifferentFailure()
+	{
+		System.out.println("isObjectsDifferent");
+		
+		UserRecord userRecord1 = new UserRecord();
+		userRecord1.setFirstName("Bob");
+		userRecord1.setLastName("Test");
+		userRecord1.setOrganization("Test");
+		userRecord1.setEmail("Check@test.com");
+		userRecord1.setPhone("555-555-5555");
+		userRecord1.setUsername("Check");
+		
+		Component component = new Component();
+		component.setName("Test");		
+		
+		boolean expResult = true;
+		boolean result = EntityUtil.isObjectsDifferent(userRecord1, component, false);
+		assertEquals(expResult, result);		
+	}
 
 	/**
 	 * Test of compareConsumeFields method, of class EntityUtil.

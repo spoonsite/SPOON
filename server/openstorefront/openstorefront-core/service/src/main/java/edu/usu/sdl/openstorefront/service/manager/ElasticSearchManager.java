@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
-import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
@@ -94,8 +93,11 @@ public class ElasticSearchManager
 
 	private static final String INDEX = "openstorefront";
 	private static final String INDEX_TYPE = "component";
-	private static final String ELASTICSEARCH_ALL_FIELDS = "_all";
+	private static final int MAX_DESCRIPTION_INDEX_SIZE = 8000;
 	private static final String DEFAULT_POOL_SIZE = "40";
+
+	//TODO: Add back search all field as an option
+	private static final String ELASTICSEARCH_ALL_FIELDS = "_all";
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 	private static AtomicBoolean indexCreated = new AtomicBoolean(false);
@@ -401,16 +403,16 @@ public class ElasticSearchManager
 				properCaseQuery = toProperCase(queryString.toString());
 				actualQuery = queryString.toString();
 			}
-			
-			if(searchOptions.getCanUseOrganizationsInSearch()){
+
+			if (searchOptions.getCanUseOrganizationsInSearch()) {
 				// Custom query for entry organization
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
 			}
-			
-			if(searchOptions.getCanUseNameInSearch()){
+
+			if (searchOptions.getCanUseNameInSearch()) {
 				// Custom query for entry name
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
@@ -423,15 +425,15 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
 			}
 
-			if(searchOptions.getCanUseDescriptionInSearch()){
+			if (searchOptions.getCanUseDescriptionInSearch()) {
 				// Custom query for description
-				esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));				
+				esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));
 			}
 		}
 
 		// Loop Through Search Phrases
 		for (String phrase : searchPhrases) {
-			
+
 			if (searchOptions.getCanUseOrganizationsInSearch()) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
 			}
@@ -443,7 +445,7 @@ public class ElasticSearchManager
 			if (searchOptions.getCanUseDescriptionInSearch()) {
 				esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
 			}
-			
+
 		}
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
 				//.unmappedType("String") // currently the only fileds we are searching/sorting on are strings
@@ -660,7 +662,7 @@ public class ElasticSearchManager
 			componentTag.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			List<ComponentTag> componentTags = componentTag.findByExample();
 			Map<String, List<ComponentTag>> tagMap = componentTags.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
-			
+
 			SearchStatTable statTable = new SearchStatTable(attributeMap, tagMap);
 			statTable.index();
 
@@ -670,7 +672,8 @@ public class ElasticSearchManager
 				componentAttributes = attributeMap.getOrDefault(component.getComponentId(), new ArrayList<>());
 				componentReviews = reviewMap.getOrDefault(component.getComponentId(), new ArrayList<>());
 				componentTags = tagMap.getOrDefault(component.getComponentId(), new ArrayList<>());
-
+				component.setDescription(StringProcessor.stripHtml(component.getDescription()));
+				component.setDescription(StringProcessor.ellipseString(component.getDescription(), MAX_DESCRIPTION_INDEX_SIZE));
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
 				try {
 					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId())

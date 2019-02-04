@@ -78,6 +78,7 @@
                       style="margin-bottom:2em;"
                       :disabled="!valid"
                       @click="submit"
+                      :loading="isLoading"
                       >Submit</v-btn>
                   </v-flex>
                 </v-layout>
@@ -118,6 +119,7 @@ export default {
   data: () => ({
     valid: true,
     confirmationDialog: false,
+    isLoading: false,
     contactType: null,
     contactTypeRules: [
       v => !!v || 'Type is required'
@@ -146,17 +148,18 @@ export default {
     email: '',
     phone: '',
     phoneRules: [
-      v => v.length <= 80 || 'Maximum length for this field is 80'
+      v => (v || ' ').length <= 80 || 'Maximum length for this field is 80'
     ],
     organization: '',
     organizationRules: [
-      v => (v.length <= 120) || 'Maximum length for this field is 120'
+      v => (v || ' ').length <= 120 || 'Maximum length for this field is 120'
     ]
   }),
   methods: {
     submit () {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
+        this.isLoading = true;
         this.$http.post('/openstorefront/api/v1/resource/feedbacktickets', {
           summary: this.subject,
           description: this.description,
@@ -173,10 +176,11 @@ export default {
           }
         })
           .then(response => {
+            this.isLoading = false;
+            this.$refs.form.reset();
+            this.confirmationDialog = true;
           })
           .catch(error => console.error(error));
-        this.$refs.form.reset();
-        this.confirmationDialog = true;
       }
     },
     cancel () {

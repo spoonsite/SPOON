@@ -353,24 +353,29 @@ Ext.onReady(function() {
 		//When logout with OPEN AM it cause a CORS failure in which redirect to login
 		//this also occurs on timeout or loss connection
 		if (response.status === 0) {
-			Ext.Msg.show({
-				title: 'Logged Out/Timeout?',
-				message: 'You may need to login to continue.',
-				buttons: Ext.MessageBox.YESNO,	
-				buttonText: {
-					yes: 'Login',
-					no: 'Cancel'
-				},
-				icon: Ext.Msg.Error,
-				fn: function (btn) {
-					if (btn === 'yes') {
-						var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
-						currentlocation = currentlocation + window.parent.location.search;
+//			Ext.Msg.show({
+//				title: 'Logged Out/Timeout?',
+//				message: 'You may need to login to continue.',
+//				buttons: Ext.MessageBox.YESNO,	
+//				buttonText: {
+//					yes: 'Login',
+//					no: 'Cancel'
+//				},
+//				icon: Ext.Msg.Error,
+//				fn: function (btn) {
+//					if (btn === 'yes') {
+//						var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
+//						currentlocation = currentlocation + window.parent.location.search;
+//			
+//						window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);					
+//					}
+//				}
+//			});	
 			
-						window.parent.location.href = "/openstorefront/Login.action?gotoPage="+encodeURIComponent(currentlocation);					
-					}
-				}
-			});				
+			var currentlocation = window.parent.location.pathname.replace('/openstorefront', '');
+			currentlocation = currentlocation + window.parent.location.search;
+			
+			Ext.toast('You may need to login to continue.<br><a href="/openstorefront/Login.action?gotoPage="' + encodeURIComponent(currentlocation) + '">Login</a>', 'Logged Out/Timeout?', 'br');
 		}
 		
 		var feedbackButtonConfig = {

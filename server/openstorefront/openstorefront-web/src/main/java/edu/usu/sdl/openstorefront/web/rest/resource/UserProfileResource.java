@@ -184,23 +184,8 @@ public class UserProfileResource
 			@QueryParam("query") String query
 	)
 	{
-		List<LookupModel> profiles = new ArrayList<>();
+		List<LookupModel> profiles = service.getUserService().getProfilesForLookup();
 
-		UserProfile userProfileExample = new UserProfile();
-		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
-
-		List<UserProfile> userProfiles = userProfileExample.findByExample();
-		for (UserProfile userProfile : userProfiles) {
-			LookupModel lookupModel = new LookupModel();
-			lookupModel.setCode(userProfile.getUsername());
-			String name = userProfile.getUsername();
-			if (StringUtils.isNotBlank(userProfile.getFirstName())) {
-				name = userProfile.getFirstName() + ", " + userProfile.getLastName();
-			}
-			String email = StringUtils.isNotBlank(userProfile.getEmail()) ? " (" + userProfile.getEmail() + ")" : "";
-			lookupModel.setDescription(name + email);
-			profiles.add(lookupModel);
-		}
 		if (query != null) {
 			if (StringUtils.isBlank(query)) {
 				//match nothing
@@ -697,7 +682,8 @@ public class UserProfileResource
 		} else {
 
 			// Get All User Profiles
-			userProfiles = service.getUserService().getAllProfiles(Boolean.TRUE);
+			UserProfile userProfileExample = new UserProfile();
+			userProfiles = userProfileExample.findByExample();
 		}
 
 		// Get User Profile Views

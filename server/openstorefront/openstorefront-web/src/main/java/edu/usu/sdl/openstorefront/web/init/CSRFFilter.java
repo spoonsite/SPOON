@@ -78,6 +78,7 @@ public class CSRFFilter
 			}
 		}
 
+		boolean valid = true;
 		if (!safeMethods.contains(httpRequest.getMethod()) && !upload) {
 
 			if (SecurityUtil.isLoggedIn()) {
@@ -88,8 +89,8 @@ public class CSRFFilter
 					//check session for token
 					String token = (String) httpRequest.getSession().getAttribute(CSRF_TOKEN);
 					if (token != null) {
-						boolean valid = false;
-
+						valid = false;
+						
 						String tokenFromHeader = httpRequest.getHeader(X_CSRF_TOKEN);
 						if (StringUtils.isNotBlank(tokenFromHeader)) {
 							if (tokenFromHeader.equals(token)) {
@@ -129,7 +130,9 @@ public class CSRFFilter
 			}
 		}
 
-		chain.doFilter(request, response);
+		if (valid) {
+			chain.doFilter(request, response);
+		} // Otherwise do nothing. See javax serverlet FilterChain
 	}
 
 	@Override

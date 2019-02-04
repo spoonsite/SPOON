@@ -1899,9 +1899,8 @@ public class CoreComponentServiceImpl
 						}
 					}
 					OSFCacheManager.getComponentApprovalCache().put(newElement);
-				}
+				}				
 			}
-
 		}
 		return approved;
 	}

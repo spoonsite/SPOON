@@ -41,6 +41,7 @@
 				var evalGridStore = Ext.create('Ext.data.Store', {
 					pageSize: 100,
 					autoLoad: false,
+					remoteSort: true,
 					fields: [
 						{ 
 							name: 'createDts', 
@@ -159,33 +160,24 @@
 							dock: 'top',	 
 							items: [
 								{
-									xtype: 'combobox',
+									xtype: 'UserSingleSelectComboBox',
 									id: 'filterAssignedUser',
 									name: 'assignedUser',
 									fieldLabel: 'Assigned User',
-									displayField: 'description',
-									valueField: 'code',								
-									emptyText: 'All',
-									labelAlign: 'top',
-									typeAhead: true,
+									addAll: true,
 									width: 250,
+									emptyText: 'All',
+									typeAhead: true,
 									editable: true,
 									forceSelection: true,
-									store: {									
+									anyMatch: true,	
+									store: {
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/userprofiles/lookup'
-										},
-										listeners: {
-											load: function(store, records, opts) {
-												store.add({
-													code: null,
-													description: 'All'
-												});
-											}
-										}									
-									},
+										}
+									},									
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefresh();
@@ -370,13 +362,15 @@
 										name: 'assignedUser',
 										fieldLabel: 'Assign to User',
 										displayField: 'description',
-										valueField: 'code',								
+										valueField: 'code',					
+										queryMode: 'remote',
 										emptyText: 'Unassigned',
 										labelAlign: 'top',
 										width: '100%',
 										typeAhead: true,
 										editable: true,
 										forceSelection: true,
+										hideTrigger: true,
 										store: {									
 											autoLoad: true,
 											proxy: {
@@ -439,12 +433,15 @@
 							}
 						]
 					});
-					assignWin.show();					
+					assignWin.show();	
+					
+					assignWin.queryById('form').loadRecord(record);		
+					
 				};				
 				
 				CoreService.userservice.getCurrentUser().then(function(user){
 					Ext.getCmp('filterAssignedUser').setValue(user.username);
-					actionRefresh();
+					//actionRefresh();
 				});
 				
 				var previewContents = Ext.create('OSF.ux.IFrame', {
