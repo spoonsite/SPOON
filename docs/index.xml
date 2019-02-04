@@ -75,6 +75,16 @@ The process for submission depends on the type of entry you want to submit and h
     </item>
     
     <item>
+      <title>Docker</title>
+      <link>/openstorefront/systemadmin/docker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/openstorefront/systemadmin/docker/</guid>
+      <description>The Open Storefront application contains a Dockerfile in order to build Docker images. There are two dockerfiles in the repo. One is for development which is used by Jenkins to deploy the application for testing of new features. The other dockerfile is for the release build. These can be found in the repo at https://github.com/di2e/openstorefront/tree/master/Docker.
+Open Storefront also automatically builds release versions of the application for consumption by users. These builds are available on Docker Hub.</description>
+    </item>
+    
+    <item>
       <title>Front-end Code Standards</title>
       <link>/openstorefront/dev/front-end-code-standard/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -84,19 +94,6 @@ The process for submission depends on the type of entry you want to submit and h
 Safari, Opera or others (should work but, we are not testing for them)
 Project Specific  Use the Ext.js docs. Look at them first for utility functions as they are normalize for the browser. (format, string manipulation, etc&amp;hellip;).
  When making reusable components don&amp;rsquo;t use &amp;ldquo;ID&amp;rdquo;s properties. Ids are OK on individual pages; must be unique; &amp;ldquo;ID&amp;rdquo; properties are Global.</description>
-    </item>
-    
-    <item>
-      <title>Using Docker</title>
-      <link>/openstorefront/systemadmin/docker/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/openstorefront/systemadmin/docker/</guid>
-      <description>The Open Storefront application contains a Dockerfile in order to build Docker images.
-Open Storefront also automatically builds release versions of the application for consumption by users. These builds are available on Docker Hub.
-Using Docker Hub Command Line To pull the latest version:
-docker pull flammablefork/openstorefront:latest  To pull a specific version:
-docker pull flammablefork/openstorefront:v2.2.1  Kitematic When using a GUI application, such as Kitematic, simply search Docker Hub for &amp;lsquo;openstorefront&amp;rsquo; (without quotes).</description>
     </item>
     
     <item>
