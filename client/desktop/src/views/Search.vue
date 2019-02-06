@@ -64,6 +64,7 @@
           multiple
           small-chips
           clearable
+          class="pb-3"
         >
           <template slot="selection" slot-scope="data">
             <v-chip close small @input="deleteTag(data.item.tagLabel)" >
@@ -75,10 +76,10 @@
             <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.tagLabel}}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-select>
-        <v-radio-group row label="Tag Search Condition: " v-model="filters.tagCondition">
+        <!-- <v-radio-group label="Tag Search Condition: " v-model="filters.tagCondition">
           <v-radio label="And" value="AND"></v-radio>
           <v-radio label="Or" value="OR"></v-radio>
-        </v-radio-group>
+        </v-radio-group> -->
         <v-autocomplete
           v-model="filters.organization"
           :items="organizationsList"
@@ -103,48 +104,42 @@
           placeholder="Search Attributes"
         ></v-text-field>
         <div>
-          <h3 class="pb-3">Select Attribute Range</h3>
-          <v-text-field
-            label="Low"
-            placeholder="value"
-            style="margin-right: 1em; width: 4em; display: inline-block;"
-          ></v-text-field>
-          <span
-            style="margin-right: 1em;"
+          <v-chip
+            close
+            v-for="attr in filters.attributes"
+            :key="attr"
+            @input="removeAttributeFilter(attr)"
           >
-            to
-          </span>
-          <v-text-field
-            label="High"
-            placeholder="value"
-            style="margin-right: 1em; width: 4em; display: inline-block;"
-          ></v-text-field>
-          <v-combobox
-            :items="['kg', 'mg', 'μg', 'g', 'lbs', 'oz']"
-            label="Unit"
-            style="width: 6em; display: inline-block;"
-          >
-          </v-combobox>
+            {{ printAttribute(attr) }}
+          </v-chip>
         </div>
         <div v-if="Object.keys(searchResultsAttributes).length !== 0">Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
         <v-expansion-panel v-if="Object.keys(searchResultsAttributes).length !== 0">
+          <!-- need the v-if with the v-for because the data sometimes gets out of sync -->
+          <!-- eslint-disable vue/no-use-v-if-with-v-for -->
           <v-expansion-panel-content
             v-for="key in attributeKeys"
             :key="key"
+            v-if="searchResultsAttributes[key]"
           >
-            <div slot="header">{{ searchResultsAttributes[key].attributeTypeLabel }}</div>
+          <!-- eslint-enable vue/no-use-v-if-with-v-for -->
+            <div slot="header"
+              v-html="searchResultsAttributes[key].attributeTypeLabel + (searchResultsAttributes[key].attributeUnit ? ' (' + searchResultsAttributes[key].attributeUnit + ') ' : '')"
+            >
+            </div>
             <v-card>
               <v-container class="pt-0" fluid>
+                <!-- <attribute-range/> -->
                 <v-checkbox
                   v-for="code in (searchResultsAttributes[key].codeMap)"
                   :key="code.codeLabel"
                   v-model="filters.attributes"
-                  :value="{ 'type': key, 'code': code.codeLabel }"
+                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].attributeTypeLabel, 'code': code.codeLabel })"
                   hide-details
                 >
                   <template slot="label">
-                    <div v-html="code.codeLabel"></div>
+                    <div>{{ code.codeLabel }}</div>
                   </template>
                 </v-checkbox>
               </v-container>
@@ -256,12 +251,14 @@
 <script>
 import _ from 'lodash'
 import SearchBar from '../components/SearchBar'
+// import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
 
 export default {
   name: 'SearchPage',
   components: {
     SearchBar
+    // AttributeRange
   },
   mounted () {
     if (this.$route.query.q) {
@@ -310,6 +307,7 @@ export default {
     },
     clear () {
       this.filters = {
+        attributes: [],
         component: '',
         tags: [],
         organization: '',
@@ -388,19 +386,22 @@ export default {
         )
       }
       if (that.filters.attributes) {
-        that.filters.attributes.forEach(function (attr) {
-          searchElements.push(
-            {
-              keyField: attr.type,
-              keyValue: attr.code,
-              caseInsensitive: true,
-              // mergeCondition: that.filters.attributeCondition,
-              mergeCondition: 'AND',
-              numberOperations: 'EQUALS',
-              searchType: 'ATTRIBUTESET',
-              stringOperation: 'EQUALS'
-            }
-          )
+        that.filters.attributes.forEach(function (attribute) {
+          let attr = that.$jsonparse(attribute)
+          if (attr !== '') {
+            searchElements.push(
+              {
+                keyField: attr.type,
+                keyValue: attr.code,
+                caseInsensitive: true,
+                // mergeCondition: that.filters.attributeCondition,
+                mergeCondition: 'AND',
+                numberOperations: 'EQUALS',
+                searchType: 'ATTRIBUTESET',
+                stringOperation: 'EQUALS'
+              }
+            )
+          }
         })
       }
       this.$http
@@ -455,6 +456,14 @@ export default {
           id: componentId
         }
       })
+    },
+    removeAttributeFilter (attribute) {
+      this.filters.attributes.splice(this.filters.attributes.indexOf(attribute), 1)
+      this.filters.attributes = [...this.filters.attributes]
+    },
+    printAttribute (attribute) {
+      let attr = this.$jsonparse(attribute)
+      return `${attr.typelabel} : ${attr.code} ${attr.unit}`
     }
   },
   watch: {
