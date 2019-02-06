@@ -59,6 +59,7 @@ import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
+import edu.usu.sdl.openstorefront.service.repo.SearchOrientRepoImpl;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -272,7 +273,13 @@ public class ServiceProxy
 	public SearchService getSearchService()
 	{
 		if (searchService == null) {
-			searchService = DynamicProxy.newInstance(new SearchServiceImpl());
+
+			//Add Properity to allow switching DB implementation
+			SearchServiceImpl searchImpl = new SearchServiceImpl();
+			searchImpl.setSearchRepo(new SearchOrientRepoImpl());
+
+			searchService = DynamicProxy.newInstance(searchImpl);
+
 		}
 		return searchService;
 	}
@@ -397,7 +404,7 @@ public class ServiceProxy
 		}
 		return notificationService;
 	}
-	
+
 	public NotificationServicePrivate getNotificationServicePrivate()
 	{
 		if (notificationServicePrivate == null) {

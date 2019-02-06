@@ -20,12 +20,12 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.repo.SearchRepo;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
@@ -96,6 +96,8 @@ public class SearchServiceImpl
 	private static final String SPECIAL_ARCH_SEARCH_CODE = "0";
 	private static final int MAX_SEARCH_DESCRIPTION = 500;
 
+	private SearchRepo searchRepo;
+
 	@Override
 	public List<ComponentSearchView> getAll()
 	{
@@ -105,25 +107,27 @@ public class SearchServiceImpl
 		list.addAll(components);
 		return list;
 	}
-	
+
 	@Override
-	public SearchOptions getSearchOptions(){
+	public SearchOptions getSearchOptions()
+	{
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		SearchOptions searchOptions = searchOptionsExample.find();
-		
-		if(searchOptions == null){
+
+		if (searchOptions == null) {
 			// Return the default.
 			searchOptions = new SearchOptions();
 			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
 			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
-		}		
-		return searchOptions;		
+		}
+		return searchOptions;
 	}
-	
-	public void saveSearchOptions(SearchOptions searchOptions){
+
+	public void saveSearchOptions(SearchOptions searchOptions)
+	{
 		searchOptions.save();
 	}
 
@@ -371,12 +375,11 @@ public class SearchServiceImpl
 				searchResult.setTotalNumber(resultMap.size());
 
 				//get review average
-				query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " group by componentId ";
-				List<ODocument> resultsRatings = persistenceService.query(query, new HashMap<>());
-				for (ODocument doc : resultsRatings) {
-					ComponentSearchView view = resultMap.get(doc.field("componentId").toString());
+				Map<String, Integer> ratingsMap = searchRepo.findAverageUserRatingForEntries();
+				for (String componentId : ratingsMap.keySet()) {
+					ComponentSearchView view = resultMap.get(componentId);
 					if (view != null) {
-						view.setAverageRating(doc.field("rating"));
+						view.setAverageRating(ratingsMap.get(componentId));
 					}
 				}
 
@@ -403,7 +406,7 @@ public class SearchServiceImpl
 				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
 				searchResult.getMeta().getResultTagStats().addAll(tagStats);
 				searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
-				
+
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 
 				//then sort/window
@@ -547,6 +550,11 @@ public class SearchServiceImpl
 	public void activateSearch(String searchId)
 	{
 		toggleStatusOnSearch(searchId, SystemSearch.ACTIVE_STATUS);
+	}
+
+	public void setSearchRepo(SearchRepo searchRepo)
+	{
+		this.searchRepo = searchRepo;
 	}
 
 }
