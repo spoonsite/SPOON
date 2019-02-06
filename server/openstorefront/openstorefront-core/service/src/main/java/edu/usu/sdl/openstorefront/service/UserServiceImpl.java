@@ -55,12 +55,14 @@ import edu.usu.sdl.openstorefront.core.model.Dashboard;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.UserTrackingResult;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.security.UserRecord;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
+import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import edu.usu.sdl.openstorefront.service.message.ApprovalMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.BaseMessageGenerator;
@@ -96,6 +98,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Message;
 import javax.servlet.http.HttpServletRequest;
+import net.sf.ehcache.Element;
 import net.sf.uadetector.ReadableUserAgent;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -114,6 +117,7 @@ public class UserServiceImpl
 {
 
 	private static final Logger LOG = Logger.getLogger(UserServiceImpl.class.getName());
+	private static final String ALL_ACTIVE_USERS_CACHE_KEY = "ALL_ACTIVE_USERS";
 
 	@Override
 	public List<UserWatch> getWatches(String userId)
@@ -171,13 +175,42 @@ public class UserServiceImpl
 	}
 
 	@Override
-	public List<UserProfile> getAllProfiles(Boolean all)
+	@SuppressWarnings("unchecked")
+	public List<LookupModel> getProfilesForLookup()
 	{
-		UserProfile example = new UserProfile();
-		if (!all) {
+		List<LookupModel> profiles = new ArrayList<>();
+
+		Element element = OSFCacheManager.getApplicationCache().get(ALL_ACTIVE_USERS_CACHE_KEY);
+		if (element == null) {
+			// get all active user profiles
+			UserProfile example = new UserProfile();
 			example.setActiveStatus(UserProfile.ACTIVE_STATUS);
+			List<UserProfile> userProfiles = example.findByExample();
+
+			for (UserProfile userProfile : userProfiles) {
+				LookupModel lookupModel = new LookupModel();
+				lookupModel.setCode(userProfile.getUsername());
+				String name = userProfile.getUsername();
+				if (StringUtils.isNotBlank(userProfile.getFirstName())) {
+					name = userProfile.getFirstName() + ", " + userProfile.getLastName();
+				}
+				String email = StringUtils.isNotBlank(userProfile.getEmail()) ? " (" + userProfile.getEmail() + ")" : "";
+				lookupModel.setDescription(name + email);
+				profiles.add(lookupModel);
+			}
+
+			element = new Element(ALL_ACTIVE_USERS_CACHE_KEY, profiles);
+			OSFCacheManager.getApplicationCache().put(element);
+		} else {
+			profiles = (List<LookupModel>) element.getObjectValue();
 		}
-		return persistenceService.queryByExample(new QueryByExample<>(example));
+		//return copy (so the list can be modified; however the elements are still shared...just FYI)
+		return new ArrayList<>(profiles);
+	}
+
+	private void clearCache()
+	{
+		OSFCacheManager.getApplicationCache().remove(ALL_ACTIVE_USERS_CACHE_KEY);
 	}
 
 	@Override
@@ -226,6 +259,8 @@ public class UserServiceImpl
 				}
 			}
 		}
+		clearCache();
+
 		return userProfile;
 	}
 
@@ -288,6 +323,8 @@ public class UserServiceImpl
 
 			getReportService().disableAllScheduledReportsForUser(username);
 			getComponentServicePrivate().removeUserFromComponentType(username);
+
+			clearCache();
 		}
 	}
 
@@ -309,9 +346,10 @@ public class UserServiceImpl
 			userwatchSetExample.setUpdateDts(TimeUtil.currentDate());
 			userwatchSetExample.setUpdateUser(SecurityUtil.getCurrentUserName());
 
+			//Inactive Schedules reports for the user will stay inactive; user should activate the ones they want.
 			persistenceService.updateByExample(UserWatch.class, userwatchSetExample, userwatchExample);
 
-			//Inactive Schedules reports for the user will stay inactive; user should activate the ones they want.
+			clearCache();
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to reactivate profile.  Userprofile not found: " + username, "Check userprofiles and username");
 		}
@@ -992,7 +1030,7 @@ public class UserServiceImpl
 			}
 			for (UserProfile userProfile : userProfiles) {
 				if (activeUserMap.containsKey(userProfile.getUsername()) == false) {
-					LOG.log(Level.INFO, "User not found in external user management, Inactvativating user. (Sync Service)");
+					LOG.log(Level.INFO, "User not found in external user management, Inactivating user. (Sync Service)");
 					deleteProfile(userProfile.getUsername());
 				} else {
 					//check for syncing; if the user can't edit they should be syncing

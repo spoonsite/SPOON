@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.validation;
 
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.safety.Whitelist;
 
 /**
@@ -35,13 +36,14 @@ public class HTMLSanitizer
 		if (fieldData == null) {
 			return fieldData;
 		} else {
-			String safe = Jsoup.clean(fieldData.toString(), new Whitelist().preserveRelativeLinks(true)
+			Whitelist whitelist = new Whitelist()
+					.preserveRelativeLinks(true)
 					.addTags("a", "base", "b", "blockquote", "br", "caption", "cite", "code", "col",
 							"colgroup", "dd", "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6",
 							"i", "img", "li", "ol", "p", "pre", "q", "small", "strike", "strong",
 							"sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u",
 							"ul", "label", "video", "audio", "source", "track", "font")
-					.addAttributes("a", "href", "title")
+					.addAttributes("a", "href", "title", "target")
 					.addAttributes("div", "ng-show", "class")
 					.addAttributes("p", "data-attributelabel", "class")
 					.addAttributes("blockquote", "cite")
@@ -70,7 +72,13 @@ public class HTMLSanitizer
 					.addAttributes("component-list", "hide-more", "click-callback", "class-list", "title", "data", "cols", "type", "filters", "set-filters", "code")
 					//.addAttributes("a", "ng-click", "id")
 					.addAttributes(":all", "style")
-					.addEnforcedAttribute("a", "rel", "nofollow")
+					.addEnforcedAttribute("a", "rel", "nofollow");
+
+			String safe = Jsoup.clean(
+					fieldData.toString(),
+					"",
+					whitelist,
+					new OutputSettings().prettyPrint(false)
 			);
 			safe = StringProcessor.removeBadStyles(safe);
 			// this is a hidden white space "Line Seperator" not an empty string

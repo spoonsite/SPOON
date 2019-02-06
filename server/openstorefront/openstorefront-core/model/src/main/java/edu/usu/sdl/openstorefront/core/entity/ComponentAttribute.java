@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.model.FieldChangeModel;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
-import edu.usu.sdl.openstorefront.validation.TextSanitizer;
+import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Embedded;
@@ -52,7 +52,7 @@ public class ComponentAttribute
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
-	@Sanitize(TextSanitizer.class)
+	@Sanitize(HTMLSanitizer.class)
 	private String comment;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})

@@ -44,7 +44,8 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 				var attributeTypes = Ext.decode(response.responseText);
 				
 				if (attributeTypes.length === 0) {
-					formPanel.setHidden(true);
+					//hide parent
+					formPanel.up().setHidden(true);
 				}
 				
 				var fields = [];
@@ -126,11 +127,11 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 		);
 
 		var data = [];
-		
+
 		Ext.Array.each(attributePanel.items.items, function(field) {
 			data.push({
 				label: field.attributeTypeView.description,
-				value: field.getValue()
+				value: field.getField().getDisplayValue()
 			});
 		});
 		

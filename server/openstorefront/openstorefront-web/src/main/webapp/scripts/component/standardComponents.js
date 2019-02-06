@@ -70,6 +70,7 @@ Ext.define('OSF.component.UserMultiSelectComboBox', {
 	anyMatch: true,
 	editable: true,
 	forceSelection: true,
+	hideTrigger: true,
 	
 	queryMode: 'remote',
 	addAll: false,	
@@ -112,6 +113,7 @@ Ext.define('OSF.component.UserSingleSelectComboBox', {
 	anyMatch: true,
 	editable: true,
 	forceSelection: true,
+	hideTrigger: true,
 	
 	queryMode: 'remote',
 	addAll: false,

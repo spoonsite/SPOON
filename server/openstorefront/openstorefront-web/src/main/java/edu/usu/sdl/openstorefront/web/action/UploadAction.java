@@ -436,7 +436,7 @@ public class UploadAction
 
 		File tempFile = null;
 		try {
-			tempFile = File.createTempFile("import-", "tmp", FileSystemManager.getInstance().getDir(FileSystemManager.MAIN_TEMP_DIR));
+			tempFile = new File(FileSystemManager.SYSTEM_TEMP_DIR + "/" + StringProcessor.uniqueId() + ".tmp");
 			uploadFile.save(tempFile);
 
 			try (InputStream input = new FileInputStream(tempFile)) {

@@ -5,9 +5,9 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.46" />
+<meta name="generator" content="Hugo 0.31.1" />
 
-<title>Using Docker :: Storefront Docs</title>
+<title>Docker :: Storefront Docs</title>
 <link rel="shortcut icon" href="/openstorefront/images/favicon.png" type="image/x-icon" />
 <link href="/openstorefront/css/nucleus.css" rel="stylesheet">
 <link href="/openstorefront/css/font-awesome.min.css" rel="stylesheet">
@@ -158,7 +158,7 @@
     </li>
       <li data-nav-id="/systemadmin/docker/" class="dd-item active">
         <a href="/openstorefront/systemadmin/docker/">
-          <span>Using Docker</span><i class="fa fa-circle-thin read-icon"></i>
+          <span>Docker</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
       <li data-nav-id="/systemadmin/administratorguide/" class="dd-item">
@@ -210,9 +210,9 @@
     </ul>
 
  <section id="footer"><div style="color: #E0E0DA;">
-    <p>OpenStoreFront version 2.6.5</p>
-    <p>Documentation generated on Sep 25, 2018</p>
-    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.46</p>
+    <p>OpenStoreFront version 2.7.4</p>
+    <p>Documentation generated on Feb 4, 2019</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
   </div>
@@ -250,7 +250,7 @@
 
 
 
- <a href='/openstorefront/'>OpenStoreFront Documentation</a> > <a href='/openstorefront/systemadmin/'>System Admin</a> > Using Docker
+ <a href='/openstorefront/'>OpenStoreFront Documentation</a> > <a href='/openstorefront/systemadmin/'>System Admin</a> > Docker
 
  
 
@@ -267,20 +267,8 @@
 <ul>
 <li>
 <ul>
-<li><a href="#using-docker-hub">Using Docker Hub</a>
-<ul>
-<li><a href="#command-line">Command Line</a></li>
-<li><a href="#kitematic">Kitematic</a></li>
-<li><a href="#upgrading">Upgrading</a></li>
-<li><a href="#using-dockerfile">Using Dockerfile</a>
-<ul>
-<li><a href="#build">Build</a></li>
-<li><a href="#run">Run</a></li>
-<li><a href="#stop">Stop</a></li>
-<li><a href="#start">Start</a></li>
-<li><a href="#upgrading-1">Upgrading</a></li>
-</ul></li>
-</ul></li>
+<li><a href="#release-docker-container">Release Docker Container</a></li>
+<li><a href="#development-docker-container">Development Docker Container</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -293,7 +281,7 @@
 
 <div id="body-inner">
   
-    <h1>Using Docker</h1>
+    <h1>Docker</h1>
   
 
 
@@ -303,124 +291,62 @@
     
     
 
-<p>The Open Storefront application contains a Dockerfile in order to build Docker images.</p>
+<p>The Open Storefront application contains a Dockerfile in order to build Docker images. There are two dockerfiles in the repo. One is for development which is used by Jenkins to deploy the application for testing of new features. The other dockerfile is for the release build. These can be found in the repo at <a href="https://github.com/di2e/openstorefront/tree/master/Docker">https://github.com/di2e/openstorefront/tree/master/Docker</a>.</p>
 
 <p>Open Storefront also automatically builds release versions of the application for consumption by users.  These builds are available on <a href="http://hub.docker.com">Docker Hub</a>.</p>
 
-<h2 id="using-docker-hub">Using Docker Hub</h2>
+<h2 id="release-docker-container">Release Docker Container</h2>
 
-<h3 id="command-line">Command Line</h3>
+<p>To run the latest release container from Docker Hub run the following:</p>
 
-<p>To pull the latest version:</p>
-
-<pre><code class="language-bash">docker pull flammablefork/openstorefront:latest
+<pre><code class="language-bash">docker run -p 9050:8080 openstorefront/openstorefront
 </code></pre>
 
-<p>To pull a specific version:</p>
+<p>To run a specific version of the application run:</p>
 
-<pre><code class="language-bash">docker pull flammablefork/openstorefront:v2.2.1
+<pre><code class="language-bash">docker run -p 9050:8080 openstorefront/openstorefront:release-2.7.3
 </code></pre>
 
-<h3 id="kitematic">Kitematic</h3>
+<p>For available tags for the Docker container please see <a href="https://hub.docker.com/r/openstorefront/openstorefront/tags/">https://hub.docker.com/r/openstorefront/openstorefront/tags/</a></p>
 
-<p>When using a GUI application, such as Kitematic, simply search Docker Hub for &lsquo;openstorefront&rsquo; (without quotes). Kitematic will return the matching results, and you can download the latest version (default). The container will start automatically, and you can use the controls in the application to start, stop and delete the container.</p>
+<p>The only thing required to build the release docker container is the dockerfile found at <code>openstorefront/Docker/release</code>.</p>
 
-<p>Kitematic will automatically assign a random port for you to access the web application in your browser. Click on the screen shot to launch a browser to the appropriate port. If the browser is not automatically launched, view the settings for the container and locate the random port (the container will always have the port 8080, so use the other port). Open a browser, and navigate to the appropriate page:</p>
+<h2 id="development-docker-container">Development Docker Container</h2>
 
-<pre><code class="language-bash">http://localhost:[Random Port]
+<p>To build the container you will need:</p>
+
+<ul>
+<li>a zip of an openstorefront database</li>
+<li>the startup.sh</li>
+<li>the tomcat-users.xml</li>
+</ul>
+
+<p>The <code>startup.sh</code> and <code>tomcat-users.xml</code> can be found at <a href="https://github.com/di2e/openstorefront/tree/master/Docker/develop">https://github.com/di2e/openstorefront/tree/master/Docker/develop</a>. To obtain the database take the database folder from a previous running instance of Storefront and zip the folder. Place all three items in the same directory as the dockerfile when building the image. To build the image run:</p>
+
+<pre><code class="language-bash">docker build -t some-tag .
 </code></pre>
 
-<h3 id="upgrading">Upgrading</h3>
+<p>To run the container you will need:</p>
 
-<p>The Docker containers have the ability to upgrade to more recent versions.</p>
+<ul>
+<li>a war file to mount to the container</li>
+</ul>
 
-<p>For cross-platform compatibility, the database for the web application is stored, by default, in the container itself.  Downloading the latest image and creating a new container will not re-use any existing data in the application. You must upgrade the container to use your existing data with a newer version of the application.</p>
+<p>Run the container as a detached process with:</p>
 
-<p>In Kitematic, select the option to execute inside the running container. Once the terminal opens up, run the following command:</p>
-
-<pre><code class="language-bash">./upgrade.sh --to-version=[Desired Version]
+<pre><code class="language-bash">docker run -d \
+-v $(pwd)/openstorefront.war:/usr/local/tomcat/webapps/openstorefront.war \
+-p 8081:8080 \
+openstorefront
 </code></pre>
 
-<p>For example, if I wanted to upgrade to version 2.2.1, execute:</p>
+<p>Since there is already a dataset built into the container, in order to run the application on an empty database point the database location to a different location with:</p>
 
-<pre><code class="language-bash">./upgrade.sh --to-version=2.2.1
-</code></pre>
-
-<h3 id="using-dockerfile">Using Dockerfile</h3>
-
-<p>The Dockerfile contained in GitHub is configured for development purposes. It expects to find a WAR file built in the path of the downloaded source. This WAR file is not included when the source code is checked out. You, as a developer, must build the project first, in order to create the necessary WAR file prior to attempting to build the Docker image.  Once the WAR file is built, the build process for the Docker image will import the WAR file you have created.</p>
-
-<h4 id="build">Build</h4>
-
-<p>To build the Docker image:</p>
-
-<pre><code class="language-bash">docker build -t [Tag] [Repository Name]/[Application Name] [Path To Dockerfile]
-</code></pre>
-
-<p>For example, if I had navigated to the folder containing the Dockerfile, and was wanting to build the &lsquo;development&rsquo; version for the repository above, I would use the following example command:</p>
-
-<pre><code class="language-bash">docker build -t development flammablefork/openstorefront .
-</code></pre>
-
-<h4 id="run">Run</h4>
-
-<p>To create and run a Docker container:</p>
-
-<pre><code class="language-bash">docker run [Options] [Repository Name]/[Application Name]
-</code></pre>
-
-<p>After building, I would need to then create and run a Docker container from the image:</p>
-
-<pre><code class="language-bash">docker run -d -p 8080:8080 flammablefork/openstorefront:development
-</code></pre>
-
-<p>(This will create and run a Docker container using the flammablefork/openstorefront image. &lsquo;-d&rsquo; means the container would detach from the terminal, running it in the background. It would also expose port 8080 on my development workstation, which maps to the container&rsquo;s internal port of 8080)</p>
-
-<h4 id="stop">Stop</h4>
-
-<p>In order to stop a container, you will need the container ID:</p>
-
-<pre><code class="language-bash">docker ps
-</code></pre>
-
-<p>To stop a running container:</p>
-
-<pre><code class="language-bash">docker stop [Container ID]
-</code></pre>
-
-<h4 id="start">Start</h4>
-
-<p><strong>docker run always creates a new container - Do not use it to simply start a container</strong></p>
-
-<p>In order to start a container, you will need the container ID:</p>
-
-<pre><code class="language-bash">docker ps -a
-</code></pre>
-
-<p>To start an existing container:</p>
-
-<pre><code class="language-bash">docker start [Container ID]
-</code></pre>
-
-<h4 id="upgrading-1">Upgrading</h4>
-
-<p>The Docker containers have the ability to upgrade to more recent versions.</p>
-
-<p>For cross-platform compatibility, the database for the web application is stored, by default, in the container itself.  Downloading the latest image and creating a new container will not re-use any existing data in the application. You must upgrade the container to use your existing data with a newer version of the application.</p>
-
-<p>To upgrade the container:</p>
-
-<pre><code class="language-bash">docker exec -d [Container ID] upgrade.sh --to-version=[Desired Version]
-</code></pre>
-
-<p>To get the container ID:</p>
-
-<pre><code class="language-bash">docker ps
-</code></pre>
-
-<p>For example, if I wanted to upgrade to version 2.2.1:</p>
-
-<pre><code class="language-bash">docker exec -d [Container ID] upgrade.sh --to-version=2.2.1
+<pre><code class="language-bash">docker run -d \
+-v $(pwd)/openstorefront.war:/usr/local/tomcat/webapps/openstorefront.war \
+-p 8081:8080 \
+--env CATALINA_OPTS=&quot;-Xmx2048m -Dapplication.datadir=/var/selenium&quot; \
+openstorefront
 </code></pre>
 
 
