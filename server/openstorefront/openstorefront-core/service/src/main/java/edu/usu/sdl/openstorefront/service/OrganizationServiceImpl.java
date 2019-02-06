@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.AttachedReferencesException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.Convert;
@@ -174,13 +173,27 @@ public class OrganizationServiceImpl
 
 	private void extractOrg(Class organizationClass)
 	{
-		LOG.log(Level.FINE, MessageFormat.format("Extracting Orgs from {0}", organizationClass.getSimpleName()));
-		List<ODocument> documents = persistenceService.query("Select DISTINCT(organization) as organization from " + organizationClass.getSimpleName(), new HashMap<>());
-		LOG.log(Level.FINE, MessageFormat.format("Found: {0}", documents.size()));
-		documents.forEach(document -> {
-			String org = document.field("organization");
-			addOrganization(org);
-		});
+		try {
+			LOG.log(Level.FINE, MessageFormat.format("Extracting Orgs from {0}", organizationClass.getSimpleName()));
+
+			StandardEntity standardEntityExample = (StandardEntity) organizationClass.newInstance();
+			QueryByExample<StandardEntity> queryByExample = new QueryByExample<>(standardEntityExample);
+			queryByExample.setDistinctField(OrganizationModel.FIELD_ORGANIZATION);
+
+			List<StandardEntity> orgModels = persistenceService.queryByExample(queryByExample);
+			for (StandardEntity entity : orgModels) {
+				addOrganization(((OrganizationModel) entity).getOrganization());
+			}
+
+//			List<ODocument> documents = persistenceService.query("Select DISTINCT(organization) as organization from " + organizationClass.getSimpleName(), new HashMap<>());
+//			LOG.log(Level.FINE, MessageFormat.format("Found: {0}", documents.size()));
+//			documents.forEach(document -> {
+//				String org = document.field("organization");
+//				addOrganization(org);
+//			});
+		} catch (InstantiationException | IllegalAccessException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to create an Organization Model (sub)-class", "Check class passed: " + organizationClass.getName(), ex);
+		}
 	}
 
 	@Override

@@ -120,7 +120,7 @@ public class ChangeLogServiceImpl
 	{
 		if (original instanceof LoggableModel) {
 			LoggableModel loggableModel = (LoggableModel) original;
-			loggableModel.updateChangeParent(changeLog);
+			loggableModel.setChangeParent(changeLog);
 		}
 	}
 
