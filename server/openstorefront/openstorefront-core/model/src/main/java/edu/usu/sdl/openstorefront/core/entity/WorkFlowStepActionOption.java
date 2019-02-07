@@ -198,13 +198,4 @@ public class WorkFlowStepActionOption
 		this.storageVersion = storageVersion;
 	}
 
-	public String getStorageVersion()
-	{
-		return storageVersion;
-	}
-
-	public void setStorageVersion(String storageVersion)
-	{
-		this.storageVersion = storageVersion;
-	}
 }
