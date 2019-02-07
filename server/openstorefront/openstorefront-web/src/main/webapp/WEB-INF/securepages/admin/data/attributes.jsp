@@ -2245,7 +2245,7 @@
 										var value = Ext.getCmp('attributeUnitDefault').getValue();
 										// ajax check if it can parse the unit
 										var data = {
-											attributeUnit: value
+											unit: value
 										}
 										Ext.Ajax.request({
 											url: 'api/v1/resource/attributes/unitcheck',
@@ -2258,9 +2258,63 @@
 															 + "<em>SI Unit:</em> " + res.standardUnit + "<br>"
 															 + "<em>Dimension:</em> " + res.dimension;
 													if (res.error) {
-														html = "<em style='color: red;'>Failed to parse unit.</em> Will assume the unit is dimensionless.";
+														html = "<em style='color: red;'>" + res.error + "</em> Will assume the unit is dimensionless.";
 													}
 													Ext.getCmp('attributeUnitCheckOutput').setHtml(html);
+												} catch {
+													console.error('Failed to parse JSON response.');
+												}
+											},
+											failure: function(response, opts) {
+												Ext.toast('An Attribute Failed To Update', 'Error');
+
+												console.error(response);
+											}
+										});
+									}
+								},
+								{
+									id: 'attributeUnitList',
+									xtype: 'textfield',
+									fieldLabel: 'Compatible Unit List',
+									name: 'attributeUnitList'
+								},
+								{
+									xtype: 'panel',
+									id: 'attributeUnitListCheckOutput',
+									name: 'attributeUnitListCheckOutput',
+									bodyStyle: 'font-size: 16px; line-height: 1.2em; padding-bottom: 10px;',
+									html: ''
+								},
+								// check the unit list to see if dimensions match the base unit 
+								{
+									id: 'attributeUnitListCheck',
+									xtype: 'button',
+									text: 'Check Unit List',
+									fieldLabel: 'Check Unit List',
+									name: 'attributeUnitListCheck',
+									handler: function() {
+										var unitList = Ext.getCmp('attributeUnitList').getValue();
+										var baseUnit = Ext.getCmp('attributeUnitDefault').getValue();
+										var units = unitList.split(',');
+										var data = {
+											baseUnit : baseUnit,
+											units : units
+										}
+										// ajax check if it can parse the unit
+										Ext.Ajax.request({
+											url: 'api/v1/resource/attributes/unitlistcheck',
+											method: 'POST',
+											jsonData: data,
+											success: function(response, opts) {
+												try {
+													var res = JSON.parse(response.responseText);
+													var html = "<em>SI Unit:</em> " + res.standardUnit + "<br>"
+															 + "<em>Dimension:</em> " + res.dimension;
+													if (res.error) {
+														html = "<em style='color: red;'>" + res.error + "</em>";
+													}
+													Ext.getCmp('attributeUnitListCheckOutput').setHtml(html);
 												} catch {
 													console.error('Failed to parse JSON response.');
 												}
