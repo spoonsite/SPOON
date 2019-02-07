@@ -1279,40 +1279,112 @@ public class AttributeResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response checkUnit(
-			String request)
+		@RequiredParam UnitView unitView)
 	{
-		HashMap<String,Object> result;
-		try {
-			result = new ObjectMapper().readValue(request, HashMap.class);
-		} catch (Exception e) {
-			return Response.status(500).build();
-		}		
+		ValidationModel validationModel = new ValidationModel(unitView.getUnit());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
 		
-		String attributeUnit = result.get("attributeUnit").toString();
+		if (validationResult.valid()) {
+			String attributeUnit = unitView.getUnit();
 
-		Unit unit;
-		try {
-			unit = Unit.valueOf(attributeUnit);
-		} catch (IllegalArgumentException e) {
-			String error = Json.createObjectBuilder()
-				.add("error", "unable to parse unit")
-				.build()
-				.toString();
-			return Response.ok(error).build();
+			Unit unit;
+			try {
+				unit = Unit.valueOf(attributeUnit);
+			} catch (IllegalArgumentException e) {
+				String error = Json.createObjectBuilder()
+					.add("error", "unable to parse unit")
+					.build()
+					.toString();
+				return Response.ok(error).build();
+			}
+
+			String unitString = unit.toString();
+			String dimension = unit.getDimension().toString();
+			String standardUnit = unit.getStandardUnit().toString();
+
+			String JSON = Json.createObjectBuilder()
+					.add("unit", unitString)
+					.add("dimension", dimension)
+					.add("standardUnit", standardUnit)
+					.build()
+					.toString();
+
+			return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
 		}
+	
+	}
+	
+	@POST
+	@APIDescription("Check the unit parsing")
+	@Path("/unitlistcheck")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response checkUnitList(
+		@RequiredParam UnitListView unitListView)
+	{
+		ValidationModel validationModel = new ValidationModel(unitListView.getBaseUnit());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
+
+		validationModel = new ValidationModel(unitListView.getUnits());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult listValidationResult = ValidationUtil.validate(validationModel);
+		validationResult.merge(listValidationResult);
 		
-		String unitString = unit.toString();
-		String dimension = unit.getDimension().toString();
-		String standardUnit = unit.getStandardUnit().toString();
-		
-		String JSON = Json.createObjectBuilder()
-				.add("unit", unitString)
-				.add("dimension", dimension)
-				.add("standardUnit", standardUnit)
-				.build()
-				.toString();
-		
-		return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
+		if (validationResult.valid()) {
+			String baseUnit = unitListView.getBaseUnit();
+
+			Unit unit;
+			try {
+				unit = Unit.valueOf(baseUnit);
+			} catch (IllegalArgumentException e) {
+				String error = Json.createObjectBuilder()
+					.add("error", "unable to parse unit: " + baseUnit)
+					.build()
+					.toString();
+				return Response.ok(error).build();
+			}
+
+			String dimension = unit.getDimension().toString();
+			String standardUnit = unit.getStandardUnit().toString();
+						
+			// verify all the units in the list are the same dimension
+			// verify they all match the base unit
+			for (String unitString : unitListView.getUnits()) {
+				Unit tempUnit;
+				try {
+					tempUnit = Unit.valueOf(unitString);
+				} catch (IllegalArgumentException e) {
+					String error = Json.createObjectBuilder()
+						.add("error", "unable to parse unit: " + baseUnit)
+						.build()
+						.toString();
+					return Response.ok(error).build();
+				}
+				
+				if (!tempUnit.getDimension().equals(unit.getDimension())) {
+					String error = Json.createObjectBuilder()
+						.add("error", "Base unit " + baseUnit + " (" + dimension +") dimension does not match unit " + unitString + " (" + tempUnit.getDimension() + ")")
+						.build()
+						.toString();
+					return Response.ok(error).build();
+				}
+			}
+
+			String JSON = Json.createObjectBuilder()
+					.add("dimension", dimension)
+					.add("standardUnit", standardUnit)
+					.build()
+					.toString();
+
+			return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	
 	}
 
 }
