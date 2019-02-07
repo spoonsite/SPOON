@@ -137,6 +137,11 @@ public class AttributeType
 	@ManyToOne(cascade = {CascadeType.ALL})
 	private String attributeUnit;
 
+	@ConsumeField
+	@APIDescription("Compatible Unit List for attribute")
+	@ManyToOne(cascade = {CascadeType.ALL})
+	private List<String> attributeUnitList;
+
 	public static final String TYPE = "TYPE";
 	public static final String DI2ELEVEL = "DI2ELEVEL";
 
@@ -191,6 +196,7 @@ public class AttributeType
 		setAttributeValueType(attributeTypeUpdate.getAttributeValueType());
 		setOptionalRestrictions(attributeTypeUpdate.getOptionalRestrictions());
 		setAttributeUnit(attributeTypeUpdate.getAttributeUnit());
+		setAttributeUnitList(attributeTypeUpdate.getAttributeUnitList());
 	}
 
 	public ValidationResult customValidation()
@@ -458,4 +464,15 @@ public class AttributeType
 	{
 		this.attributeUnit = attributeUnit;
 	}
+
+	public List<String> getAttributeUnitList()
+	{
+		return attributeUnitList;
+	}
+
+	public void setAttributeUnitList(List<String> attributeUnitList)
+	{
+		this.attributeUnitList = attributeUnitList;
+	}
+	
 }

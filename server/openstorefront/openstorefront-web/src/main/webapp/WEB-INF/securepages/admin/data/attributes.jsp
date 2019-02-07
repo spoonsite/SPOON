@@ -2276,7 +2276,7 @@
 								{
 									id: 'attributeUnitList',
 									xtype: 'textfield',
-									fieldLabel: 'Compatible Unit List',
+									fieldLabel: 'Compatible Unit List (comma separated)',
 									name: 'attributeUnitList'
 								},
 								{
@@ -2301,7 +2301,6 @@
 											baseUnit : baseUnit,
 											units : units
 										}
-										// ajax check if it can parse the unit
 										Ext.Ajax.request({
 											url: 'api/v1/resource/attributes/unitlistcheck',
 											method: 'POST',
@@ -2514,6 +2513,8 @@
 															componentType: typeRecord.get('code')
 														});
 													});													
+													// split the unit list
+													data.attributeType.attributeUnitList = data.attributeType.attributeUnitList.split(",");
 
 													CoreUtil.submitForm({
 														url: url,
