@@ -43,7 +43,7 @@ public class ComponentAttributePk
 
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_510)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@Sanitize(CleanKeySanitizer.class)
 	@FK(AttributeType.class)
 	private String attributeType;
@@ -51,7 +51,7 @@ public class ComponentAttributePk
 	//Delay sanitizing user created codes until before saving
 	@NotNull
 	@ConsumeField
-	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_510)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_255)
 	@FK(AttributeCode.class)
 	private String attributeCode;
 
