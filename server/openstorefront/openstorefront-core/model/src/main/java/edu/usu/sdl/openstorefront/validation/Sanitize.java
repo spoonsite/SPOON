@@ -34,4 +34,5 @@ public @interface Sanitize
 {
 
 	Class<? extends Sanitizer>[] value();
+	boolean prettyPrintOff = false;
 }

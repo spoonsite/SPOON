@@ -34,7 +34,7 @@
 			
 			Ext.onReady(function(){	
 				
-				window.entryTypeAssignedRender = function (data, type) {
+				window.entryTypeAssignedRender = function (data) {
 					data = data.split(',');
 					var windowConfig = {
 						modal: true,
@@ -45,35 +45,13 @@
 								this.removeCls("x-unselectable");    
 							}
 						},
-						title: type === 'roles' ? 'Assigned Groups' : 'Assigned Users'
+						title: 'Assigned Groups'
 					};
 
-					if (type === 'roles') {
-						Ext.Array.forEach(data, function (el, index) {
-							data[index] = {html: el, xtype: 'container', padding: 15};
-						});
-						Ext.create('Ext.window.Window', Ext.apply({items: data}, windowConfig)).show();
-					}
-					else {
-
-						Ext.Ajax.request({
-							url: 'api/v1/resource/userprofiles/lookup',
-							success: function (response) {
-
-								var allUsers = Ext.decode(response.responseText);
-								for (var i = 0; i < allUsers.length; i += 1) {
-									for (var j = 0; j < data.length; j += 1) {
-
-										if (allUsers[i].code === data[j]) {
-											data[j] = {html: allUsers[i].description, padding: 15};
-										}
-									}
-								}
-
-								Ext.create('Ext.window.Window', Ext.apply({items: data}, windowConfig)).show();
-							}
-						});
-					}
+					Ext.Array.forEach(data, function (el, index) {
+						data[index] = {html: el, xtype: 'container', padding: 15};
+					});
+					Ext.create('Ext.window.Window', Ext.apply({items: data}, windowConfig)).show();
 				};				
 				
 				var entryTypeAssignedCellTemplate = new Ext.XTemplate(						
@@ -169,8 +147,7 @@
 									fieldLabel: 'Assigned User(s)',
 									xtype: 'UserMultiSelectComboBox',
 									width: '100%',
-									name: 'assignedUsers',
-									queryMode: 'local'
+									name: 'assignedUsers'
 								},
 								{
 									fieldLabel: 'Assigned Group(s)',
@@ -521,22 +498,6 @@
 								else {
 									return templateData.label;
 								}
-							}
-						},
-						{ 
-							text: 'Assigned User',
-							align: 'center',
-							sortable: false,
-							flex: 15,
-							renderer: function (componentType, rowData) {
-
-								var rowRecord = entryGrid.getStore().getData().items[rowData.rowIndex];
-
-								var userData = getAssignedData(rowRecord, false, 'users');
-
-								userData.type = 'users';
-
-								return entryTypeAssignedCellTemplate.apply(userData);
 							}
 						},
 						{ 

@@ -99,43 +99,43 @@ public abstract class BaseReport<T extends BaseReportModel>
 		BaseReport baseReport = null;
 		if (null != report.getReportType()) {
 			switch (report.getReportType()) {
-				case ReportType.COMPONENT:
+				case ReportType.ENTRY_REPORT:
 					baseReport = new ComponentReport(report);
 					break;
-				case ReportType.USAGE:
+				case ReportType.USAGE_REPORT:
 					baseReport = new UsageReport(report);
 					break;
-				case ReportType.ORGANIZATION:
+				case ReportType.USER_ORG_REPORT:
 					baseReport = new OrganizationReport(report);
 					break;
-				case ReportType.COMPONENT_ORGANIZATION:
+				case ReportType.ENTRIES_BY_ORG_REPORT:
 					baseReport = new ComponentOrganizationReport(report);
 					break;
-				case ReportType.USER:
+				case ReportType.USER_REPORT:
 					baseReport = new UserReport(report);
 					break;
-				case ReportType.LINK_VALIDATION:
+				case ReportType.LINK_VALIDATION_REPORT:
 					baseReport = new ExternalLinkValidationReport(report);
 					break;
-				case ReportType.SUBMISSION:
+				case ReportType.SUBMISSIONS_REPORT:
 					baseReport = new SubmissionsReport(report);
 					break;
-				case ReportType.CATEGORY_COMPONENT:
+				case ReportType.ENTRIES_BY_CAT_REPORT:
 					baseReport = new CategoryComponentReport(report);
 					break;
-				case ReportType.COMPONENT_DETAIL:
+				case ReportType.ENTRY_DETAIL_REPORT:
 					baseReport = new ComponentDetailReport(report);
 					break;
-				case ReportType.EVALUATION_STATUS:
+				case ReportType.EVAL_STATUS_REPORT:
 					baseReport = new EvaluationStatusReport(report);
 					break;
 				case ReportType.ACTION_REPORT:
 					baseReport = new AdminActionReport(report);
 					break;
-				case ReportType.ENTRY_LISTING:
+				case ReportType.ENTRY_LISTING_REPORT:
 					baseReport = new EntryListingReport(report);
 					break;
-				case ReportType.ENTRY_STATUS:
+				case ReportType.ENTRY_STATUS_REPORT:
 					baseReport = new EntryStatusReport(report);
 					break;
 				case ReportType.WORKPLAN_STATUS:

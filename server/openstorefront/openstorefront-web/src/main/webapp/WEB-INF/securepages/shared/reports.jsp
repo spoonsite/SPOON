@@ -1226,6 +1226,7 @@
 								fieldLabel: 'Assigned User',
 								displayField: 'description',
 								valueField: 'code',
+								queryMode: 'remote',
 								emptyText: 'All',
 								typeAhead: true,
 								editable: true,							

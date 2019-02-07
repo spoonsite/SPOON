@@ -1,6 +1,6 @@
 FROM tomcat:8.5.34-jre8
 
-MAINTAINER "Ryan Frazier <ryan.frazier@sdl.usu.edu>"
+LABEL maintainer="Ryan Frazier <ryan.frazier@sdl.usu.edu>"
 
 RUN apt-get update && apt-get install -y unzip tar wget procps
 

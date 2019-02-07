@@ -358,49 +358,51 @@
 						<div class="evaluation-section">
 							
 							<!--Reusability Factors-->
-							<#if eval.checkListAll.scores()?has_content>
-								<h3 class="eval-header">Reusability Factors (5 = best)</h3>
-								<#assign scoreColumns = (eval.checkListAll.scores()?size/10.0)?ceiling>
-								<#list eval.checkListAll.scores()?keys as sectionName>
-									<div class="detail-eval-item">
-										<span class="detail-eval-label">${sectionName!} </span>
-										<span class="detail-eval-score" data-qtip="${eval.checkListAll.scores()[sectionName]!}">
-											<#if eval.checkListAll.scores()[sectionName]?is_number && eval.checkListAll.scores()[sectionName] != 0>
-												<#list 2..eval.checkListAll.scores()[sectionName]?number + 1 as ii>
-													<i class="score-circle">*</i>
-												</#list>
-											<#else>
-												<b>N/A</b>
-											</#if>
-										</span>
-										<div class="score-average">Average: ${eval.checkListAll.scores()[sectionName]!}</div>
-									</div>
-								</#list>
-							</#if>
-							
-							<!--Checklist summary-->
-							<#if eval.checkListAll.evaluationChecklist.summary?has_content>
-								<h3 class="eval-header">Checklist Summary</h3>
-								${eval.checkListAll.evaluationChecklist.summary!}
-							</#if>
-
-							<!--Checklist recommendations-->
-							<#if eval.checkListAll.recommendations?has_content>
-								<h3 class="eval-header">Evaluation Recommendations</h3>
-								<table>
-									<tr>
-										<th>Type</th>
-										<th>Recommendation</th>
-										<th>Reason</th>
-									</tr>
-									<#list eval.checkListAll.recommendations as rec>
-										<tr>
-											<td style="width: 15%;">${rec.recommendationTypeDescription!}</td>
-											<td style="width: 39%;">${rec.recommendation!}</td>
-											<td style="width: 45%;">${rec.reason!}</td>
-										</tr>
+							<#if eval.checkListAll??>
+								<#if eval.checkListAll.scores()?has_content>
+									<h3 class="eval-header">Reusability Factors (5 = best)</h3>
+									<#assign scoreColumns = (eval.checkListAll.scores()?size/10.0)?ceiling>
+									<#list eval.checkListAll.scores()?keys as sectionName>
+										<div class="detail-eval-item">
+											<span class="detail-eval-label">${sectionName!} </span>
+											<span class="detail-eval-score" data-qtip="${eval.checkListAll.scores()[sectionName]!}">
+												<#if eval.checkListAll.scores()[sectionName]?is_number && eval.checkListAll.scores()[sectionName] != 0>
+													<#list 2..eval.checkListAll.scores()[sectionName]?number + 1 as ii>
+														<i class="score-circle">*</i>
+													</#list>
+												<#else>
+													<b>N/A</b>
+												</#if>
+											</span>
+											<div class="score-average">Average: ${eval.checkListAll.scores()[sectionName]!}</div>
+										</div>
 									</#list>
-								</table>
+								</#if>
+
+								<!--Checklist summary-->
+								<#if eval.checkListAll.evaluationChecklist.summary?has_content>
+									<h3 class="eval-header">Checklist Summary</h3>
+									${eval.checkListAll.evaluationChecklist.summary!}
+								</#if>
+
+								<!--Checklist recommendations-->
+								<#if eval.checkListAll.recommendations?has_content>
+									<h3 class="eval-header">Evaluation Recommendations</h3>
+									<table>
+										<tr>
+											<th>Type</th>
+											<th>Recommendation</th>
+											<th>Reason</th>
+										</tr>
+										<#list eval.checkListAll.recommendations as rec>
+											<tr>
+												<td style="width: 15%;">${rec.recommendationTypeDescription!}</td>
+												<td style="width: 39%;">${rec.recommendation!}</td>
+												<td style="width: 45%;">${rec.reason!}</td>
+											</tr>
+										</#list>
+									</table>
+								</#if>
 							</#if>
 						</div>
 					</#if>

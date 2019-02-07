@@ -62,71 +62,15 @@ Ext.define('OSF.component.MessageWindow', {
 				alwaysOnTop: true,
 				layout: 'fit',
 				closeAction: 'destroy',
-				items: [
-					{
-						xtype: 'grid',
-						itemId: 'userGrid',
-						columnLine: true,
-						selModel: {
-							selType: 'checkboxmodel'
-						},
-						store: {
-							fields: [
-								"firstName",
-								"lastName",
-								"email"
-							],
-							autoLoad: true,
-							proxy: {
-								type: 'ajax',
-								url: 'api/v1/resource/userprofiles',
-								reader: {
-									type: 'json',
-									rootProperty: 'data',
-									totalProperty: 'totalNumber'
-								}
-							},
-							listeners: {
-								load: function(store, records, successful, operation, opts) {
-									store.filterBy(function(record){
-										return record.get('email');
-									});
-								}
-							}
-						},
-						columns: [
-							{ text: 'User', dataIndex: '', flex: 1,
-								renderer: function(value, metaData, record) {
-									var display = '';
-									if (record.get('email')) {
-										if (record.get('firstName')) {
-											display += record.get('firstName') + ' ';
-										}
-										if (record.get('lastName')) {
-											display += record.get('lastName');
-										}
-										if (record.get('email')) {
-											display += '<br><span style="color: grey;">' + 
-													record.get('email') +
-													'</span>';
-										}
-									}
-									return display;
-								}
-							}
-						]
-					}
-				],
 				dockedItems: [
 					{
-						xtype: 'textfield',
-						emptyText: 'Search',											
+						xtype: 'UserSingleSelectComboBox',
+						itemId: 'selectUser',
+						name: 'selectUser',
+						fieldLabel: 'Search Users',
+						emptyText: 'All',
+						addAll: true,
 						width: '100%',
-						listeners: {
-							change: function(field, newValue, oldValue, eOpts){
-								field.up('window').getComponent('userGrid').getStore().filter("firstName", newValue);
-							}
-						}
 					},
 					{
 						xtype: 'toolbar',
@@ -137,27 +81,27 @@ Ext.define('OSF.component.MessageWindow', {
 								iconCls: 'fa fa-lg fa-plus icon-button-color-save',
 								handler: function(){
 									var toText = emailField;
+									var SEPARATOR = "; "
 									
-									if (toText.getValue()){
-										toText.setValue(toText.getValue() + "; ");
+									if (toText.getValue() && !toText.getValue().trim().endsWith(SEPARATOR.trim())){
+										toText.setValue(toText.getValue() + SEPARATOR); // append the separator if missing
 									}
 
-									var selected = this.up('window').getComponent('userGrid').getSelectionModel().getSelection();
-									var addresses = "";
-
-									Ext.Array.each(selected, function(record){
-										addresses += record.get('email') + "; ";
-									});
-
-									toText.setValue(toText.getValue() + addresses);																												
-									this.up('window').close();
+									var selected = this.up('window').getComponent('selectUser').getSelection();
+									if (selected) {
+										// the description is in the form: Johnson, John (john.johnson@john.com)
+										var description = selected.data.description
+										var regExp = /\(([^)]+)\)/;
+										var matches = regExp.exec(description);
+										toText.setValue(toText.getValue() + matches[1] + SEPARATOR);																												
+									}
 								}
 							},
 							{
 								xtype: 'tbfill'
 							},
 							{
-								text: 'Cancel',
+								text: 'Close',
 								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								handler: function(){
 									this.up('window').close();

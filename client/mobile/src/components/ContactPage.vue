@@ -58,6 +58,7 @@
                 style="margin-bottom:2em;"
                 :disabled="!valid"
                 @click="submit"
+                :loading="isLoading"
                 >Submit</v-btn>
             </v-flex>
             <v-flex xs12 pt-0 pb-0>
@@ -99,6 +100,7 @@ export default {
     ticket: '',
     valid: true,
     confirmationDialog: false,
+    isLoading: false,
     contactType: null,
     contactTypeRules: [
       v => !!v || 'Type is required'
@@ -124,6 +126,7 @@ export default {
     submit () {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
+        this.isLoading = true;
         this.$http.post('/openstorefront/api/v1/resource/feedbacktickets', {
           summary: this.subject,
           description: this.description,
@@ -142,6 +145,7 @@ export default {
           .then(response => {
             this.$refs.form.reset();
             this.confirmationDialog = true;
+            this.isLoading = false;
           });
       }
     },

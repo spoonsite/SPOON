@@ -187,6 +187,16 @@ public class WorkFlowStepActionOption
 	{
 		this.emailSubject = emailSubject;
 	}
+	
+	public String getStorageVersion()
+	{
+		return storageVersion;
+	}
+
+	public void setStorageVersion(String storageVersion)
+	{
+		this.storageVersion = storageVersion;
+	}
 
 	public String getStorageVersion()
 	{

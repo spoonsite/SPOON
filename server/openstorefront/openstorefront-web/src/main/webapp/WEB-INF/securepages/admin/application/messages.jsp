@@ -560,36 +560,6 @@
 				};
 
 				//
-				//  Send to Users list
-				//
-				var userStore = Ext.create('Ext.data.Store', {
-					id: 'userStore',
-					autoLoad: true,
-					remoteSort: true,
-					sorters: [
-						new Ext.util.Sorter({
-							property: 'username',
-							direction: 'ASC'
-						})
-					],
-					fields: [
-						{name: 'username', mapping: function (data) {
-								return data.username;
-							}}
-					],
-					proxy: CoreUtil.pagingProxy({
-						url: 'api/v1/resource/userprofiles/',
-						method: 'GET',
-						jsonData: '"all":true',
-						reader: {
-							type: 'json',
-							rootProperty: 'data',
-							totalProperty: 'totalNumber'
-						}
-					})
-				});
-
-				//
 				//  Send an Admin Message Window
 				//
 				var nAdminMessage = function () {
@@ -606,18 +576,19 @@
 						maximizable: false,
 						closeAction: 'destroy',
 						layout: 'vbox',
-						items: [{
-								xtype: 'combobox',
-								id: 'username_combo',
-								name: 'username',
-								fieldLabel: 'Send to',
-								width: '100%',
-								displayField: 'username',
-								valueField: 'username',
-								value: 'All Users',
-								editable: false,
-								store: userStore
-							},
+						items: [
+								{
+									xtype: 'UserSingleSelectComboBox',
+									id: 'username_combo',
+									name: 'username',
+									valueField: 'code',
+									fieldLabel: 'Send to',
+									addAll: true,
+									value: 'All Users',
+									width: '100%',
+									labelAlign: 'top',
+									forceSelection: true
+								},
 							{
 								xtype: 'textareafield',
 								id: 'message_adm',
@@ -639,7 +610,7 @@
 										handler: function () {
 											var msgtosend = {};
 
-											if (Ext.getCmp('username_combo').value !== 'All Users') {
+											if (Ext.getCmp('username_combo').value) {
 												msgtosend.username = Ext.getCmp('username_combo').value;
 											}
 
@@ -653,6 +624,7 @@
 
 											msgtosend.message = Ext.getCmp('message_adm').value;
 											Ext.toast('Sending Admin Message..');
+
 											Ext.Ajax.request({
 												url: 'api/v1/resource/notificationevent',
 												method: 'POST',
