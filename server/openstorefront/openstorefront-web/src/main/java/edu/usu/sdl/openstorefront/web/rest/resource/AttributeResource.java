@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
@@ -1359,7 +1358,7 @@ public class AttributeResource
 					tempUnit = Unit.valueOf(unitString);
 				} catch (IllegalArgumentException e) {
 					String error = Json.createObjectBuilder()
-						.add("error", "unable to parse unit: " + baseUnit)
+						.add("error", "unable to parse unit: " + unitString)
 						.build()
 						.toString();
 					return Response.ok(error).build();

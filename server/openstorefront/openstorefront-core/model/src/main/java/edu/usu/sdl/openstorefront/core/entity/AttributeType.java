@@ -139,8 +139,7 @@ public class AttributeType
 
 	@ConsumeField
 	@APIDescription("Compatible Unit List for attribute")
-	@ManyToOne(cascade = {CascadeType.ALL})
-	private List<String> attributeUnitList;
+	private Set<String> attributeUnitList;
 
 	public static final String TYPE = "TYPE";
 	public static final String DI2ELEVEL = "DI2ELEVEL";
@@ -465,12 +464,12 @@ public class AttributeType
 		this.attributeUnit = attributeUnit;
 	}
 
-	public List<String> getAttributeUnitList()
+	public Set<String> getAttributeUnitList()
 	{
 		return attributeUnitList;
 	}
 
-	public void setAttributeUnitList(List<String> attributeUnitList)
+	public void setAttributeUnitList(Set<String> attributeUnitList)
 	{
 		this.attributeUnitList = attributeUnitList;
 	}

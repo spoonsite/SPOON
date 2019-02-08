@@ -2255,7 +2255,7 @@
 												try {
 													var res = JSON.parse(response.responseText);
 													var html = "<em>Unit:</em> " + res.unit + "<br>"
-															 + "<em>SI Unit:</em> " + res.standardUnit + "<br>"
+															 + "<em>Standard SI Unit:</em> " + res.standardUnit + "<br>"
 															 + "<em>Dimension:</em> " + res.dimension;
 													if (res.error) {
 														html = "<em style='color: red;'>" + res.error + "</em> Will assume the unit is dimensionless.";
@@ -2308,7 +2308,7 @@
 											success: function(response, opts) {
 												try {
 													var res = JSON.parse(response.responseText);
-													var html = "<em>SI Unit:</em> " + res.standardUnit + "<br>"
+													var html = "<em>Standard SI Unit:</em> " + res.standardUnit + "<br>"
 															 + "<em>Dimension:</em> " + res.dimension;
 													if (res.error) {
 														html = "<em style='color: red;'>" + res.error + "</em>";
@@ -2514,7 +2514,9 @@
 														});
 													});													
 													// split the unit list
-													data.attributeType.attributeUnitList = data.attributeType.attributeUnitList.split(",");
+													data.attributeType.attributeUnitList = data.attributeType.attributeUnitList
+																								.split(",")
+																								.map(Function.prototype.call, String.prototype.trim);
 
 													CoreUtil.submitForm({
 														url: url,

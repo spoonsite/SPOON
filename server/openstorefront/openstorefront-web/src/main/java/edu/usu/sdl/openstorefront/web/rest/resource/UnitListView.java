@@ -18,7 +18,7 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
-import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -30,7 +30,7 @@ public class UnitListView
 	private String baseUnit;
 	
 	@ConsumeField
-	private List<String> units;
+	private Set<String> units;
 
 	public String getBaseUnit()
 	{
@@ -42,12 +42,12 @@ public class UnitListView
 		this.baseUnit = baseUnit;
 	}
 
-	public List<String> getUnits()
+	public Set<String> getUnits()
 	{
 		return units;
 	}
 
-	public void setUnits(List<String> units)
+	public void setUnits(Set<String> units)
 	{
 		this.units = units;
 	}
