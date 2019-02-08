@@ -46,6 +46,8 @@ import edu.usu.sdl.spoon.aerospace.importer.model.RevisionProvenanceWebsite;
 import edu.usu.sdl.spoon.aerospace.importer.model.TextFeature;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +55,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -217,18 +220,19 @@ public class AerospaceComponentParser
         Map<String, AttributeContext> attributeContextMap = new HashMap<>();
         
         if(product.getProductRevision().getProductType().getClassification().size() > 0) {
-            ComponentAttribute attribute = new ComponentAttribute();
-            ComponentAttributePk attributePk = new ComponentAttributePk();
-            attributePk.setAttributeType(PRODUCT_TYPE_ATTRIBUTE);
-            attributePk.setAttributeCode(product.getProductRevision().getProductType().getClassification().get(0).getCategoryName());
-            attribute.setComponentAttributePk(attributePk);
-            componentAll.getAttributes().add(attribute);
+        
+                ComponentAttribute attribute = new ComponentAttribute();
+                ComponentAttributePk attributePk = new ComponentAttributePk();
+                attributePk.setAttributeType(PRODUCT_TYPE_ATTRIBUTE);
+                attributePk.setAttributeCode(product.getProductRevision().getProductType().getClassification().get(0).getCategoryName());
+                attribute.setComponentAttributePk(attributePk);
+                componentAll.getAttributes().add(attribute);
+                AttributeContext attributeContext = new AttributeContext();
+                attributeContext.setComponentType(component.getComponentType());
+                attributeContext.setAttributeValueType(AttributeValueType.TEXT);
+                attributeContext.setAttributeDescription("");
+                attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
 
-            AttributeContext attributeContext = new AttributeContext();
-            attributeContext.setComponentType(component.getComponentType());
-            attributeContext.setAttributeValueType(AttributeValueType.TEXT);
-            attributeContext.setAttributeDescription("");
-            attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
         List<FloatFeature> floatList = new ArrayList<>();

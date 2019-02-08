@@ -52,7 +52,7 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_EMAIL = 250;
 	public static final int FIELD_SIZE_EMAIL_LIST_SIZE = 32000;
 	public static final int FIELD_SIZE_ORGANIZATION = 120;
-	public static final int FIELD_SIZE_CODE = 100;
+	public static final int FIELD_SIZE_CODE = 20;
 	public static final int FIELD_SIZE_PHONE = 80;
 	public static final int FIELD_SIZE_DESCRIPTION = 255;
 	public static final int FIELD_SIZE_COMPONENT_NAME = 255;
