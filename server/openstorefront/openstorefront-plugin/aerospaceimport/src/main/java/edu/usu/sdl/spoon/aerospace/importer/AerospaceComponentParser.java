@@ -46,8 +46,6 @@ import edu.usu.sdl.spoon.aerospace.importer.model.RevisionProvenanceWebsite;
 import edu.usu.sdl.spoon.aerospace.importer.model.TextFeature;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +53,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -221,17 +218,17 @@ public class AerospaceComponentParser
         
         if(product.getProductRevision().getProductType().getClassification().size() > 0) {
         
-                ComponentAttribute attribute = new ComponentAttribute();
-                ComponentAttributePk attributePk = new ComponentAttributePk();
-                attributePk.setAttributeType(PRODUCT_TYPE_ATTRIBUTE);
-                attributePk.setAttributeCode(product.getProductRevision().getProductType().getClassification().get(0).getCategoryName());
-                attribute.setComponentAttributePk(attributePk);
-                componentAll.getAttributes().add(attribute);
-                AttributeContext attributeContext = new AttributeContext();
-                attributeContext.setComponentType(component.getComponentType());
-                attributeContext.setAttributeValueType(AttributeValueType.TEXT);
-                attributeContext.setAttributeDescription("");
-                attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
+            ComponentAttribute attribute = new ComponentAttribute();
+            ComponentAttributePk attributePk = new ComponentAttributePk();
+            attributePk.setAttributeType(PRODUCT_TYPE_ATTRIBUTE);
+            attributePk.setAttributeCode(product.getProductRevision().getProductType().getClassification().get(0).getCategoryName());
+            attribute.setComponentAttributePk(attributePk);
+            componentAll.getAttributes().add(attribute);
+            AttributeContext attributeContext = new AttributeContext();
+            attributeContext.setComponentType(component.getComponentType());
+            attributeContext.setAttributeValueType(AttributeValueType.TEXT);
+            attributeContext.setAttributeDescription("");
+            attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
 
         }
         
@@ -264,27 +261,8 @@ public class AerospaceComponentParser
             
             AttributeContext attributeContext = new AttributeContext();
             attributeContext.setComponentType(component.getComponentType());
-            attributeContext.setAttributeValueType(AttributeValueType.NUMBER);
-            
-            String attrDescription = "";
-            
-            if(StringProcessor.stringIsNotBlank(floatFeature.getName())) {
-                attrDescription += "<strong>Name: </strong>" + floatFeature.getName() + "<br>";
-            }
-            if(StringProcessor.stringIsNotBlank(floatFeature.getDescription())) {
-                attrDescription += "<strong>Description: </strong>" + floatFeature.getDescription() + "<br>";
-            }            
-            if(StringProcessor.stringIsNotBlank(floatFeature.getValueDescription())) {
-                attrDescription += "<strong>Value Description: </strong>" + floatFeature.getValueDescription() + "<br>";
-            }            
-            if(StringProcessor.stringIsNotBlank(floatFeature.getType())) {
-                attrDescription += "<strong>Value Type: </strong>" + floatFeature.getType() + "<br>";
-            }            
-            if(StringProcessor.stringIsNotBlank(floatFeature.getUnit())) {
-                attrDescription += "<strong>Unit: </strong>" + floatFeature.getUnit()+ "<br>";
-            }                        
-            
-            attributeContext.setAttributeDescription(attrDescription);
+            attributeContext.setAttributeValueType(AttributeValueType.NUMBER);          
+         
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
 
@@ -304,25 +282,6 @@ public class AerospaceComponentParser
             attributeContext.setComponentType(component.getComponentType());
             attributeContext.setAttributeValueType(AttributeValueType.NUMBER);
             
-            String attrDescription = "";
-            
-            if(StringProcessor.stringIsNotBlank(intFeature.getName())) {
-                attrDescription += "<strong>Name: </strong>" + intFeature.getName() + "<br>";
-            }
-            if(StringProcessor.stringIsNotBlank(intFeature.getDescription())) {
-                attrDescription += "<strong>Description: </strong>" + intFeature.getDescription() + "<br>";
-            }            
-            if(StringProcessor.stringIsNotBlank(intFeature.getValueDescription())) {
-                attrDescription += "<strong>Value Description: </strong>" + intFeature.getValueDescription() + "<br>";
-            }            
-            if(StringProcessor.stringIsNotBlank(intFeature.getType())) {
-                attrDescription += "<strong>Value Type: </strong>" + intFeature.getType() + "<br>";
-            }            
-            if(StringProcessor.stringIsNotBlank(intFeature.getUnit())) {
-                attrDescription += "<strong>Unit: </strong>" + intFeature.getUnit() + "<br>";
-            }
-
-            attributeContext.setAttributeDescription(attrDescription);
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
@@ -342,25 +301,6 @@ public class AerospaceComponentParser
             attributeContext.setComponentType(component.getComponentType());
             attributeContext.setAttributeValueType(AttributeValueType.TEXT);
             
-            String attrDescription = "";
-
-            if (StringProcessor.stringIsNotBlank(textFeature.getName())) {
-                attrDescription += "<strong>Name: </strong>" + textFeature.getName() + "<br>";
-            }
-            if (StringProcessor.stringIsNotBlank(textFeature.getDescription())) {
-                attrDescription += "<strong>Description: </strong>" + textFeature.getDescription() + "<br>";
-            }
-            if (StringProcessor.stringIsNotBlank(textFeature.getValueDescription())) {
-                attrDescription += "<strong>Value Description: </strong>" + textFeature.getValueDescription() + "<br>";
-            }
-            if (StringProcessor.stringIsNotBlank(textFeature.getType())) {
-                attrDescription += "<strong>Value Type: </strong>" + textFeature.getType() + "<br>";
-            }
-            if (StringProcessor.stringIsNotBlank(textFeature.getValue())) {
-                attrDescription += "<strong>Value: </strong>" + textFeature.getValue() + "<br>";
-            }
-            
-            attributeContext.setAttributeDescription(attrDescription);
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
         
