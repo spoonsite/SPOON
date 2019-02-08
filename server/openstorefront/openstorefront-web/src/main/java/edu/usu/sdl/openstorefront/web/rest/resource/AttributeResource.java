@@ -63,6 +63,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -72,7 +73,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import javafx.util.Pair;
 import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
@@ -1386,4 +1389,84 @@ public class AttributeResource
 	
 	}
 
+		@POST
+	@APIDescription("Given a bass unit and a list of compatible units return the list of conversion factors")
+	@Path("/unitconversionlist")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response unitConversionList(
+		@RequiredParam UnitListView unitListView)
+	{
+		List<Pair<String, Double>> factors = new ArrayList<>();
+		
+		ValidationModel validationModel = new ValidationModel(unitListView.getBaseUnit());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
+
+		validationModel = new ValidationModel(unitListView.getUnits());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult listValidationResult = ValidationUtil.validate(validationModel);
+		validationResult.merge(listValidationResult);
+		
+		if (validationResult.valid()) {
+			String baseUnit = unitListView.getBaseUnit();
+
+			Unit unit;
+			try {
+				unit = Unit.valueOf(baseUnit);
+			} catch (IllegalArgumentException e) {
+				String error = Json.createObjectBuilder()
+					.add("error", "unable to parse unit: " + baseUnit)
+					.build()
+					.toString();
+				return Response.ok(error).build();
+			}
+
+			String dimension = unit.getDimension().toString();
+						
+			// verify all the units in the list are the same dimension
+			// verify they all match the base unit
+			for (String unitString : unitListView.getUnits()) {
+				Unit tempUnit;
+				try {
+					tempUnit = Unit.valueOf(unitString);
+					Amount<?> factor = Amount.valueOf(1, unit).to(tempUnit);
+					
+					factors.add(new Pair<String, Double>(unitString, factor.getExactValue()));
+					
+				} catch (IllegalArgumentException e) {
+					String error = Json.createObjectBuilder()
+						.add("error", "unable to parse unit: " + unitString)
+						.build()
+						.toString();
+					return Response.ok(error).build();
+				}
+				
+				if (!tempUnit.getDimension().equals(unit.getDimension())) {
+					String error = Json.createObjectBuilder()
+						.add("error", "Base unit " + baseUnit + " (" + dimension +") dimension does not match unit " + unitString + " (" + tempUnit.getDimension() + ")")
+						.build()
+						.toString();
+					return Response.ok(error).build();
+				}
+			}
+
+			// respond with all the units and their conversion
+			JsonObjectBuilder jsonFactors = Json.createObjectBuilder();
+			for (Pair<String, Double> pair : factors) {
+				jsonFactors.add(pair.getKey(), pair.getValue());
+			}
+			String JSON = Json.createObjectBuilder()
+					.add("baseUnit", baseUnit)
+					.add("units", jsonFactors)
+					.build()
+					.toString();
+
+
+			return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	
+	}
 }
