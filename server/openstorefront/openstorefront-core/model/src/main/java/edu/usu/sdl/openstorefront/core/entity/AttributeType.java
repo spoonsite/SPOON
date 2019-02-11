@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -73,7 +75,7 @@ public class AttributeType
 
 	@NotNull
 	@ConsumeField
-	@APIDescription("(Depreciated) A component is required to have this attribute; see requiredRestrictions")
+	@APIDescription("(Deprecated) A component is required to have this attribute; see requiredRestrictions")
 	private Boolean requiredFlg;
 
 	@DataType(ComponentTypeRestriction.class)
@@ -83,7 +85,7 @@ public class AttributeType
 
 	@DataType(ComponentTypeRestriction.class)
 	@ConsumeField
-	@APIDescription("(Depreciated) The component/entry types for which this attribute is available; see optionalRestrictions")
+	@APIDescription("(Deprecated) The component/entry types for which this attribute is available; see optionalRestrictions")
 	@OneToMany(orphanRemoval = true)
 	private List<ComponentTypeRestriction> associatedComponentTypes;
 
@@ -129,6 +131,15 @@ public class AttributeType
 	@ValidValueType(value = {}, lookupClass = AttributeValueType.class)
 	@FK(AttributeValueType.class)
 	private String attributeValueType;
+	
+	@ConsumeField
+	@APIDescription("Unit of measure information")
+	@ManyToOne(cascade = {CascadeType.ALL})
+	private String attributeUnit;
+
+	@ConsumeField
+	@APIDescription("Compatible Unit List for attribute")
+	private Set<String> attributeUnitList;
 
 	public static final String TYPE = "TYPE";
 	public static final String DI2ELEVEL = "DI2ELEVEL";
@@ -183,7 +194,8 @@ public class AttributeType
 		setAssociatedComponentTypes(attributeTypeUpdate.getAssociatedComponentTypes());
 		setAttributeValueType(attributeTypeUpdate.getAttributeValueType());
 		setOptionalRestrictions(attributeTypeUpdate.getOptionalRestrictions());
-
+		setAttributeUnit(attributeTypeUpdate.getAttributeUnit());
+		setAttributeUnitList(attributeTypeUpdate.getAttributeUnitList());
 	}
 
 	public ValidationResult customValidation()
@@ -442,4 +454,24 @@ public class AttributeType
 		this.optionalRestrictions = optionalRestrictions;
 	}
 
+	public String getAttributeUnit()
+	{
+		return attributeUnit;
+	}
+
+	public void setAttributeUnit(String attributeUnit)
+	{
+		this.attributeUnit = attributeUnit;
+	}
+
+	public Set<String> getAttributeUnitList()
+	{
+		return attributeUnitList;
+	}
+
+	public void setAttributeUnitList(Set<String> attributeUnitList)
+	{
+		this.attributeUnitList = attributeUnitList;
+	}
+	
 }

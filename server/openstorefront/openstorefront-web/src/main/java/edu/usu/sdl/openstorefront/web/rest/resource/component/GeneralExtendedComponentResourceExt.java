@@ -116,7 +116,7 @@ public abstract class GeneralExtendedComponentResourceExt
 	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_VERSION_READ)
 	@DataType(ComponentDetailView.class)
 	@Path("/{id}/versionhistory/{versionHistoryId}/view")
-	public Response viewComponentVerison(
+	public Response viewComponentVersion(
 			@PathParam("id")
 			@RequiredParam String componentId,
 			@PathParam("versionHistoryId")

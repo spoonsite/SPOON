@@ -63,6 +63,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -72,6 +73,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import javafx.util.Pair;
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
+import javax.measure.unit.UnitFormat;
+import javax.measure.unit.SI;
+import org.jscience.physics.amount.Amount;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -91,6 +100,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.commons.lang.StringUtils;
+import org.jscience.economics.money.Currency;
+import static org.jscience.physics.amount.Constants.π;
 
 /**
  *
@@ -735,6 +746,50 @@ public class AttributeResource
 		}
 	}
 
+	// TODO:
+	// This does not work yet. It is a copy and paste from the method above.
+	@DELETE
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_UPDATE)
+	@APIDescription("Delete a type and migrate all the data for the type to a new attribute.  Runs in a background task.")
+	@Path("/attributetypes/{type}/migrate/{toType}")
+	public void migrateDeleteAttributeType(
+			@PathParam("type")
+			@RequiredParam String type,
+			@PathParam("toType")
+			@RequiredParam String toType)
+	{
+		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if (attributeType != null) {
+			service.getPersistenceService().setStatusOnEntity(AttributeType.class, type, AttributeType.PENDING_STATUS);
+
+			TaskRequest taskRequest = new TaskRequest();
+			taskRequest.setAllowMultiple(false);
+			taskRequest.setQueueable(true);
+			taskRequest.setName("Deleting Attribute Type");
+			taskRequest.setDetails("Attribute Type: " + type);
+			taskRequest.getTaskData().put("Type", type);
+			taskRequest.getTaskData().put("Status", attributeType.getActiveStatus());
+			taskRequest.setCallback(new AsyncTaskCallback()
+			{
+
+				@Override
+				public void beforeExecute(TaskFuture taskFuture)
+				{
+				}
+
+				@Override
+				public void afterExecute(TaskFuture taskFuture)
+				{
+					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+						service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
+					}
+				}
+
+			});
+			service.getAsyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(type);
+		}
+	}
+
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_CREATE)
 	@APIDescription("Activate a type.  Note: this activates all attribute type associations. Runs in a background task.")
@@ -1220,4 +1275,198 @@ public class AttributeResource
 		service.getAttributeService().deleteAttributeXrefType(type);
 	}
 
+	@POST
+	@APIDescription("Check the unit parsing")
+	@Path("/unitcheck")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response checkUnit(
+		@RequiredParam UnitView unitView)
+	{
+		ValidationModel validationModel = new ValidationModel(unitView.getUnit());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
+		
+		if (validationResult.valid()) {
+			String attributeUnit = unitView.getUnit();
+
+			Unit unit;
+			try {
+				unit = Unit.valueOf(attributeUnit);
+			} catch (IllegalArgumentException e) {
+				String error = Json.createObjectBuilder()
+					.add("error", "unable to parse unit")
+					.build()
+					.toString();
+				return Response.ok(error).build();
+			}
+
+			String unitString = unit.toString();
+			String dimension = unit.getDimension().toString();
+			String standardUnit = unit.getStandardUnit().toString();
+
+			String JSON = Json.createObjectBuilder()
+					.add("unit", unitString)
+					.add("dimension", dimension)
+					.add("standardUnit", standardUnit)
+					.build()
+					.toString();
+
+			return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	
+	}
+	
+	@POST
+	@APIDescription("Check the unit parsing")
+	@Path("/unitlistcheck")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response checkUnitList(
+		@RequiredParam UnitListView unitListView)
+	{
+		ValidationModel validationModel = new ValidationModel(unitListView.getBaseUnit());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
+
+		validationModel = new ValidationModel(unitListView.getUnits());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult listValidationResult = ValidationUtil.validate(validationModel);
+		validationResult.merge(listValidationResult);
+		
+		if (validationResult.valid()) {
+			String baseUnit = unitListView.getBaseUnit();
+
+			Unit unit;
+			try {
+				unit = Unit.valueOf(baseUnit);
+			} catch (IllegalArgumentException e) {
+				String error = Json.createObjectBuilder()
+					.add("error", "unable to parse unit: " + baseUnit)
+					.build()
+					.toString();
+				return Response.ok(error).build();
+			}
+
+			String dimension = unit.getDimension().toString();
+			String standardUnit = unit.getStandardUnit().toString();
+						
+			// verify all the units in the list are the same dimension
+			// verify they all match the base unit
+			for (String unitString : unitListView.getUnits()) {
+				Unit tempUnit;
+				try {
+					tempUnit = Unit.valueOf(unitString);
+				} catch (IllegalArgumentException e) {
+					String error = Json.createObjectBuilder()
+						.add("error", "unable to parse unit: " + unitString)
+						.build()
+						.toString();
+					return Response.ok(error).build();
+				}
+				
+				if (!tempUnit.getDimension().equals(unit.getDimension())) {
+					String error = Json.createObjectBuilder()
+						.add("error", "Base unit " + baseUnit + " (" + dimension +") dimension does not match unit " + unitString + " (" + tempUnit.getDimension() + ")")
+						.build()
+						.toString();
+					return Response.ok(error).build();
+				}
+			}
+
+			String JSON = Json.createObjectBuilder()
+					.add("dimension", dimension)
+					.add("standardUnit", standardUnit)
+					.build()
+					.toString();
+
+			return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	
+	}
+
+		@POST
+	@APIDescription("Given a bass unit and a list of compatible units return the list of conversion factors")
+	@Path("/unitconversionlist")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response unitConversionList(
+		@RequiredParam UnitListView unitListView)
+	{
+		List<Pair<String, Double>> factors = new ArrayList<>();
+		
+		ValidationModel validationModel = new ValidationModel(unitListView.getBaseUnit());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
+
+		validationModel = new ValidationModel(unitListView.getUnits());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult listValidationResult = ValidationUtil.validate(validationModel);
+		validationResult.merge(listValidationResult);
+		
+		if (validationResult.valid()) {
+			String baseUnit = unitListView.getBaseUnit();
+
+			Unit unit;
+			try {
+				unit = Unit.valueOf(baseUnit);
+			} catch (IllegalArgumentException e) {
+				String error = Json.createObjectBuilder()
+					.add("error", "unable to parse unit: " + baseUnit)
+					.build()
+					.toString();
+				return Response.ok(error).build();
+			}
+
+			String dimension = unit.getDimension().toString();
+						
+			// verify all the units in the list are the same dimension
+			// verify they all match the base unit
+			for (String unitString : unitListView.getUnits()) {
+				Unit tempUnit;
+				try {
+					tempUnit = Unit.valueOf(unitString);
+					Amount<?> factor = Amount.valueOf(1, unit).to(tempUnit);
+					
+					factors.add(new Pair<String, Double>(unitString, factor.getExactValue()));
+					
+				} catch (IllegalArgumentException e) {
+					String error = Json.createObjectBuilder()
+						.add("error", "unable to parse unit: " + unitString)
+						.build()
+						.toString();
+					return Response.ok(error).build();
+				}
+				
+				if (!tempUnit.getDimension().equals(unit.getDimension())) {
+					String error = Json.createObjectBuilder()
+						.add("error", "Base unit " + baseUnit + " (" + dimension +") dimension does not match unit " + unitString + " (" + tempUnit.getDimension() + ")")
+						.build()
+						.toString();
+					return Response.ok(error).build();
+				}
+			}
+
+			// respond with all the units and their conversion
+			JsonObjectBuilder jsonFactors = Json.createObjectBuilder();
+			for (Pair<String, Double> pair : factors) {
+				jsonFactors.add(pair.getKey(), pair.getValue());
+			}
+			String JSON = Json.createObjectBuilder()
+					.add("baseUnit", baseUnit)
+					.add("units", jsonFactors)
+					.build()
+					.toString();
+
+
+			return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	
+	}
 }

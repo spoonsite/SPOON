@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.model.search.ResultAttributeStat;
+import edu.usu.sdl.openstorefront.core.model.search.ResultCodeStat;
 import edu.usu.sdl.openstorefront.core.model.search.ResultOrganizationStat;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTagStat;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
@@ -144,8 +145,11 @@ public class SearchStatTable
 		organizationMap.clear();
 		attributeMap.clear();
 	}
-	
-	public List<ResultAttributeStat> getAttributeStats(List<String> components)
+
+	/**
+	 * @return map of attribute stats where the attribute uniqueKey is the key
+	 */
+	public Map<String, ResultAttributeStat> getAttributeStats(List<String> components)
 	{
 		Map<String, ResultAttributeStat> resultMap = new HashMap<>();
 		
@@ -153,45 +157,79 @@ public class SearchStatTable
 			List<ComponentAttribute> attributes = attributeMap.get(component);
 			if (attributes != null) {
 				for (ComponentAttribute attribute : attributes) {
-					String key = attribute.uniqueKey();
+					// for every attribute store the stat
+					// the codes(i.e. attribute values) are stored in a separate map inside ResultAttributeStat
+					String key = attribute.getComponentAttributePk().getAttributeType(); //gather stats by attributeType
 					if(resultMap.containsKey(key)) {
 						ResultAttributeStat attrStat = resultMap.get(key);
+						Map<String, ResultCodeStat> codeMap = attrStat.getCodeMap();
+
+						attrStat.setCodeMap(updateCodeStatMap(codeMap, attribute));	
 						attrStat.incrementCount();
 					} else {
+						// create a new attribute stat
 						ResultAttributeStat attrStat = new ResultAttributeStat();
-						Service service = ServiceProxyFactory.getServiceProxy();
 
+						Service service = ServiceProxyFactory.getServiceProxy();
 						AttributeType type = service.getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
 						if (type == null) {
 							type = service.getPersistenceService().findById(AttributeType.class, attribute.getComponentAttributePk().getAttributeType());
-						}
-
-						if (type != null) {
+						} else {
 							attrStat.setAttributeTypeLabel(type.getDescription());
 						}
-						attrStat.setAttributeCode(attribute.getComponentAttributePk().getAttributeCode());
-						attrStat.setAttributeType(attribute.getComponentAttributePk().getAttributeType());
+						String attributeUnit = type.getAttributeUnit();
+						String attributeType = attribute.getComponentAttributePk().getAttributeType();
 
-						AttributeCodePk codePk = new AttributeCodePk();
-						codePk.setAttributeCode(attrStat.getAttributeCode());
-						codePk.setAttributeType(attrStat.getAttributeType());
-						AttributeCode attrCode = service.getAttributeService().findCodeForType(codePk);
-						if(attrCode == null){
-							attrStat.setAttributeCodeLabel("LabelNotAvailable");
-							LOG.log(Level.WARNING, () -> "Could not find Code Label for Component: " 
-									+ service.getComponentService().getComponentName(attribute.getComponentId()) 
-									+ " Component Code: " + attribute.getComponentAttributePk().getAttributeCode() 
-									+ " Component Type: " + attribute.getComponentAttributePk().getAttributeType());	
-						} else {
-							attrStat.setAttributeCodeLabel(attrCode.getLabel());					
-						}
+						attrStat.setAttributeUnit(attributeUnit);
+						attrStat.setAttributeType(attributeType);
+
+						// for every attribute code (i.e. attribute value) store the result in the map
+						Map<String, ResultCodeStat> codeMap = attrStat.getCodeMap();
+						attrStat.setCodeMap(updateCodeStatMap(codeMap, attribute));	
+
 						resultMap.put(key, attrStat);
 					}
 				}
 			}
 		}
 
-		return new ArrayList<ResultAttributeStat>(resultMap.values());	
+		return resultMap;
+	}
+
+	private Map<String, ResultCodeStat> updateCodeStatMap(Map<String, ResultCodeStat> codeMap, ComponentAttribute attribute)
+	{
+		Service service = ServiceProxyFactory.getServiceProxy();
+		String attributeCode = attribute.getComponentAttributePk().getAttributeCode();
+		String attributeType = attribute.getComponentAttributePk().getAttributeType();
+		
+		ResultCodeStat codeStat;
+		if (codeMap.containsKey(attributeCode)) {
+			codeStat = codeMap.get(attributeCode);
+			codeStat.incrementCount();
+		} else {
+			codeStat = new ResultCodeStat();
+			// populate the new code stat with the value
+			AttributeCodePk codePk = new AttributeCodePk();
+			codePk.setAttributeCode(attributeCode);
+			codePk.setAttributeType(attributeType);
+
+			AttributeCode attrCode = service.getAttributeService().findCodeForType(codePk);
+
+			if(attrCode == null){
+				codeStat.setCodeLabel("LabelNotAvailable");	
+				LOG.log(Level.WARNING, () ->
+					"Could not find Code Label for Component: " +
+					" Component Code: " + attribute.getComponentAttributePk().getAttributeCode() + 
+					" Component Type: " + attribute.getComponentAttributePk().getAttributeType()
+				);
+			} else {
+				codeStat.setCodeLabel(attrCode.getLabel());					
+			}
+
+			codeMap.put(attributeCode, codeStat);
+		}
+
+		return codeMap;
 	}
 	
 	public List<ResultOrganizationStat> getOrganizationStats(List<String> components)
