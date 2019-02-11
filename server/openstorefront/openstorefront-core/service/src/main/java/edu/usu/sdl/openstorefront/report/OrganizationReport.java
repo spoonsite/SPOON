@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.model.OrganizationReportLineModel;
 import edu.usu.sdl.openstorefront.report.model.OrganizationReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
+import edu.usu.sdl.openstorefront.service.repo.ReportOrientRepoImpl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,31 +112,9 @@ public class OrganizationReport
 	private long getRecordCounts(Class recordClass, List<UserProfile> userProfiles, String trackCodeType)
 	{
 		long count = 0;
-
-		List<String> userIds = new ArrayList<>();
-		for (UserProfile userProfile : userProfiles) {
-			userIds.add(userProfile.getUsername());
-		}
-
-		if (userIds.isEmpty() == false) {
-			StringBuilder query = new StringBuilder();
-			query.append("select count(*) from ")
-					.append(recordClass.getSimpleName())
-					.append(" where ").append(" createUser IN :createUserListParam ");
-
-			if (StringUtils.isNotBlank(trackCodeType)) {
-				query.append(" AND trackEventTypeCode = :eventCodeParam ");
-			}
-
-			Map<String, Object> paramMap = new HashMap<>();
-			paramMap.put("createUserListParam", userIds);
-			paramMap.put("eventCodeParam", trackCodeType);
-
-			List<ODocument> documents = service.getPersistenceService().query(query.toString(), paramMap);
-			if (documents.isEmpty() == false) {
-				count = documents.get(0).field("count");
-			}
-		}
+		
+		ReportOrientRepoImpl reportImpl = new ReportOrientRepoImpl();
+		count = reportImpl.getRecordCounts(recordClass, userProfiles, trackCodeType);
 
 		return count;
 	}
