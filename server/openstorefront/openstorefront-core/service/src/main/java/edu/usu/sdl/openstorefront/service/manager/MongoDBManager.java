@@ -119,4 +119,14 @@ public class MongoDBManager
 		return db;
 	}
 
+	public MongoClient getClient()
+	{
+		if (mongoClient != null) {
+			return mongoClient;
+		} else {
+			started.set(false);
+			throw new OpenStorefrontRuntimeException("Client is not initialized", "Make sure Mongo Manager is started");
+		}
+	}
+
 }
