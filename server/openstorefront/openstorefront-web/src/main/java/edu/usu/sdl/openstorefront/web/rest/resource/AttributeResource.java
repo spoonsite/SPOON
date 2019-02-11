@@ -1432,7 +1432,7 @@ public class AttributeResource
 					tempUnit = Unit.valueOf(unitString);
 					Amount<?> factor = Amount.valueOf(1, unit).to(tempUnit);
 					
-					factors.add(new Pair<String, Double>(unitString, factor.getExactValue()));
+					factors.add(new Pair<String, Double>(unitString, factor.getEstimatedValue()));
 					
 				} catch (IllegalArgumentException e) {
 					String error = Json.createObjectBuilder()
@@ -1444,7 +1444,7 @@ public class AttributeResource
 				
 				if (!tempUnit.getDimension().equals(unit.getDimension())) {
 					String error = Json.createObjectBuilder()
-						.add("error", "Base unit " + baseUnit + " (" + dimension +") dimension does not match unit " + unitString + " (" + tempUnit.getDimension() + ")")
+						.add("error", "Base unit " + baseUnit + " (" + dimension + ") dimension does not match unit " + unitString + " (" + tempUnit.getDimension() + ")")
 						.build()
 						.toString();
 					return Response.ok(error).build();

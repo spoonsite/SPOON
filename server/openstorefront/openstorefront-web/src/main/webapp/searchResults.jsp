@@ -312,7 +312,7 @@
 				region: 'west',
 				title: 'Filters',
 				id: 'filterPanel',
-				minWidth: 300,
+				minWidth: 350,
 				collapsible: true,
 				titleCollapse: true,
 				animCollapse: false,
@@ -798,22 +798,16 @@
 						});
 						filterByTagCombo.checkVisibility();
 
+						// TODO: set directly from REST response
 						// Set Attributes from the search results
 						attributeStats = {};
-						//group the attributes by attributeType
-						Ext.Array.each(meta.resultAttributeStats, function(item) {
-							if (attributeStats[item.attributeTypeLabel]) {
-								attributeStats[item.attributeTypeLabel].push(item);
-							} else {
-								attributeStats[item.attributeTypeLabel] = [item];
-							}
-						})
+						attributeStats = JSON.parse(meta.resultAttributeStats);
 
 						var attributeStatContainers = [];
 						
 						Ext.Array.each(Object.keys(attributeStats).sort(), function(key){
 							var panel = Ext.create('Ext.panel.Panel', {
-								title: key,
+								title: attributeStats[key].attributeTypeLabel + (attributeStats[key].attributeUnit ? " (" + attributeStats[key].attributeUnit + ")" : ""),
 								collapsible: true,
 								collapsed: false,
 								margin: '0 0 1 0',
@@ -842,11 +836,12 @@
 									return 0;
 								}
 							}
-							Ext.Array.each(attributeStats[key].sort(sortFn('attributeCodeLabel')), function(attribute){
+							Ext.Array.each(Object.keys(attributeStats[key].codeMap), function(attrKey){
 								var containsAttribute = false;
+								var attribute = attributeStats[key].codeMap[attrKey];
 								Ext.Array.each(attributeFilters, function(item) {
-									if (item.type === attribute.attributeType &&
-										item.code === attribute.attributeCode) {
+									if (item.type === attributeStats[key].attributeType &&
+										item.code === attrKey) {
 										containsAttribute = true;
 										checkboxes.push(item.checkbox); // add previously checked boxes
 									}
@@ -854,34 +849,34 @@
 								if (!containsAttribute) {
 									panel.setCollapsed(true);
 									var check = Ext.create('Ext.form.field.Checkbox', {
-										boxLabel: attribute.attributeCodeLabel + ' (' + attribute.count + ') ',
-										attributeCode: attribute.attributeCode,
+										boxLabel: attribute.codeLabel + ' (' + attribute.count + ') ',
+										attributeCode: attrKey,
 										listeners: {
 											change: function(checkbox, newValue, oldValue, opts) {																	
 												if (newValue){
 
 													var containsAttribute = false;
 													Ext.Array.each(attributeFilters, function(item) {
-														if (item.type === attribute.attributeType &&
-															item.code === attribute.attributeCode) {
+														if (item.type === attributeStats[key].attributeType &&
+															item.code === attrKey) {
 															containsAttribute = true;
 														}
 													});
 													
 													if (!containsAttribute) {
 														attributeFilters.push({
-															type: attribute.attributeType,
-															code: attribute.attributeCode,
-															typeLabel: attribute.attributeTypeLabel,
-															label: attribute.attributeCodeLabel,
+															type: attributeStats[key].attributeType,
+															code: attrKey,
+															typeLabel: attributeStats[key].attributeTypeLabel,
+															label: attributeStats[key].codeMap[attrKey].codeLabel,
 															checkbox: checkbox
 														});
 													}
 												} else {
 													attributeFilters = Ext.Array.filter(attributeFilters, function(item) {
 														var keep = true;
-														if (item.type === attribute.attributeType &&
-															item.code === attribute.attributeCode) {
+														if (item.type === attributeStats[key].attributeType &&
+															item.code === attrKey) {
 															keep = false;																																								
 														}
 														return keep;
