@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -45,6 +46,7 @@ public class ComponentAttributeView
 	private String typeLongDescription;
 	private String codeLongDescription;
 	private String unit;
+	private Set<String> unitList;
 	private String externalLink;
 	private boolean visibleFlg;
 	private boolean requiredFlg;
@@ -147,6 +149,7 @@ public class ComponentAttributeView
 		view.setType(type.getAttributeType());
 		view.setCode(code.getAttributeCodePk().getAttributeCode());
 		view.setUnit(type.getAttributeUnit());
+		view.setUnitList(type.getAttributeUnitList());
 		view.setBadgeUrl(code.getBadgeUrl());
 		view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
 		view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
@@ -223,6 +226,16 @@ public class ComponentAttributeView
 	public void setUnit(String unit)
 	{
 		this.unit = unit;
+	}
+
+	public Set<String> getUnitList()
+	{
+		return unitList;
+	}
+
+	public void setUnitList(Set<String> unitList)
+	{
+		this.unitList = unitList;
 	}
 
 	public boolean isImportantFlg()

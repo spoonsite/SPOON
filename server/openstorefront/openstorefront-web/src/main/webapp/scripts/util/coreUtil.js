@@ -777,6 +777,7 @@ var CoreUtil = {
 					highlightStyle: item.highlightStyle,
 					type: item.type,
 					code: item.code,
+					unit: item.unit,
 					privateFlag: item.privateFlag,
 					comment: item.comment,
 					updateDts: item.updateDts,

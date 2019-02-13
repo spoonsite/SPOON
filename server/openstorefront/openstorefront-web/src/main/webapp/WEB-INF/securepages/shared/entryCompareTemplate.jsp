@@ -122,10 +122,10 @@ limitations under the License.
 		max-height: 0;
 		opacity: 0;
         overflow-y: hidden;
-        -webkit-transition: all 1.0s ease-in-out;
-        -moz-transition: all 1.0s ease-in-out;
-        -o-transition: all 1.0s ease-in-out;
-        transition: all 1.0s ease-in-out;
+        -webkit-transition: all 0.3s ease-in;
+        -moz-transition:    all 0.3s ease-in;
+        -o-transition:      all 0.3s ease-in;
+        transition:         all 0.3s ease-in;
 	}
 	.eval-visible-true {
 		max-height: 9999px;
@@ -331,13 +331,24 @@ limitations under the License.
 			<h3 class="quickView toggle-collapse">Entry Vitals <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<table class="quickView-table" border="1">
+					<tr>
+						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Label</th>
+						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Value</th>
+						<th class="quickView-tableheader quickView-tableall quickView-table-padding">Unit</th>
+					</tr>
 					<tpl for="vitals">
 						<tr class="quickView-table">
 							<td class="quickView-tableall" style="width: 30%;"><b>{label}</b>
 								<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>
 							</td>
-							<td class="quickView-tableall"><b>{value}</b>
+							<td class="quickView-tableall">
+								<b>{value}</b>
 								<tpl if="comment"><hr>Comment: {comment}</tpl>
+							</td>
+							<td class="quickView-tableall">
+								<tpl if="unit">
+									<b>{unit}</b>
+								</tpl>
 							</td>
 						</tr>
 					</tpl>
