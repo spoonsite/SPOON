@@ -185,8 +185,6 @@ limitations under the License.
 		<h3 class="quickView toggle-collapse">Description <div data-qtip="Collapse panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-top eval-toggle-caret" role="presentation"></div></h3>
 		<section class="eval-visible-true">
 			<p>{description}</p>
-			<br>
-			<br>
 		</section>
 	</div>
 	<tpl if="evaluation.evaluationSections && evaluation.evaluationSections.length &gt; 0">
@@ -550,4 +548,6 @@ limitations under the License.
 			</div>
 		</div>
 	</tpl>
+	<!-- BOTTOM SPACER -->
+	<div style="margin-bottom: 1em;"></div>
 </tpl>
