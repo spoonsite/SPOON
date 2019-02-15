@@ -47,22 +47,24 @@ public class UnitManager
 	public void initialize()
 	{
 		UnitFormat instance = UnitFormat.getInstance();
-		instance.alias(NonSI.BYTE.times(1.0E3),  "KB");
+		instance.alias(NonSI.BYTE.times(1.0E3),  "kB");
 		instance.alias(NonSI.BYTE.times(1.0E6),  "MB");
 		instance.alias(NonSI.BYTE.times(1.0E9),  "GB");
 		instance.alias(NonSI.BYTE.times(1.0E12), "TB");
 		instance.alias(NonSI.BYTE.times(1.0E15), "PB");
-		instance.alias(SI.BIT.times(1.0E3),      "Kb");
+		instance.alias(SI.BIT.times(1.0E3),      "kb");
 		instance.alias(SI.BIT.times(1.0E6),      "Mb");
 		instance.alias(SI.BIT.times(1.0E9),      "Gb");
 		instance.alias(SI.BIT.times(1.0E12),     "Tb");
 		instance.alias(SI.BIT.times(1.0E15),     "Pb");
 		instance.alias(SI.BIT.times(1.0E3).divide(SI.SECOND), "kbps");
 		instance.alias(SI.BIT.times(1.0E6).divide(SI.SECOND), "Mbps");
+		instance.alias(SI.BIT.times(1.0E6).divide(SI.SECOND), "Gbps");
 		instance.alias(SI.BIT.divide(SI.SECOND), "bps");
 		instance.alias(NonSI.REVOLUTION.divide(NonSI.MINUTE), "rpm");
-		// instance.alias(NonSI.REVOLUTION.divide(NonSI.MINUTE), "RPM");
+		instance.alias(NonSI.REVOLUTION.divide(NonSI.MINUTE), "RPM");
 		instance.alias(NonSI.INCH, "inch");
+		instance.alias(NonSI.POUND_FORCE.divide(NonSI.INCH.pow(2)), "psi");
 		instance.alias(NonSI.SECOND_ANGLE, "arcsec");
 		instance.alias(NonSI.MINUTE_ANGLE, "arcmin");
 		instance.alias(NonSI.G, "Grav"); // G is the Gauss, need to disambiguate
@@ -85,6 +87,7 @@ public class UnitManager
 		instance.alias(SI.MICRO(SI.METER), "μm");
 		instance.alias(SI.MICRO(SI.GRAM), "μg");
 		instance.alias(SI.MICRO(SI.NEWTON), "μN");
+		instance.alias(SI.MICRO(SI.SECOND), "μs");
 
 		started.set(true);
 	}
