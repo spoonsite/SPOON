@@ -63,17 +63,6 @@ public interface PersistenceService
 
 	void endTransaction();
 
-	/**
-	 * This only works on managed objects
-	 *
-	 * @param <T>
-	 * @param entityClass
-	 * @param primaryKey (DB RID not our Entity PK)
-	 * @return
-	 */
-	@SuppressWarnings(value = "unchecked")
-	<T> T find(Class<T> entityClass, Object primaryKey);
-
 	<T> T findById(Class<T> entity, Object id);
 
 	String generateId();
@@ -153,18 +142,6 @@ public interface PersistenceService
 	void rollback();
 
 	<T> int runDbCommand(String query, Map<String, Object> queryParams);
-
-	/**
-	 * This is used for non-base entity object. Keep in mind they still need to
-	 * be registered with the DB.
-	 *
-	 * @param <T>
-	 * @param entity
-	 * @return
-	 */
-	<T> T saveNonBaseEntity(T entity);
-
-	<T extends BaseEntity> T saveNonPkEntity(T entity);
 
 	<T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus);
 

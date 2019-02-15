@@ -73,11 +73,11 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -632,7 +632,7 @@ public class SystemServiceImpl
 	public void addLogRecord(DBLogRecord logRecord)
 	{
 		logRecord.setLogId(persistenceService.generateId());
-		persistenceService.saveNonBaseEntity(logRecord);
+		persistenceService.persist(logRecord);
 	}
 
 	@Override
@@ -692,7 +692,7 @@ public class SystemServiceImpl
 
 		List<HelpSection> allHelpSections = persistenceService.queryByExample(helpSectionExample);
 		List<HelpSection> helpSections = Collections.emptyList();
-		
+
 		UserContext userContext = SecurityUtil.getUserContext();
 
 		// Filter out help items the user does not have access to
@@ -756,16 +756,14 @@ public class SystemServiceImpl
 						HelpSection childHelp = new HelpSection();
 						childHelp.setSectionNumber(compare);
 
-						for (HelpSection each : allHelpSections)
-						{
-							// Make sure that every section has the correct title. 
+						for (HelpSection each : allHelpSections) {
+							// Make sure that every section has the correct title.
 							// Even sections that are otherwise blank due to not having permission to view the contents should have the correct title.
-							if (each.getSectionNumber().equals(compare))
-							{
+							if (each.getSectionNumber().equals(compare)) {
 								String title = each.getTitle();
-								// Strip off the section number. 
+								// Strip off the section number.
 								// NOTE: Substring is inclusive, so adding one to get all characters from AFTER the last period to end of line
-								title = title.substring(title.lastIndexOf('.') + 1); 
+								title = title.substring(title.lastIndexOf('.') + 1);
 								childHelp.setTitle(title);
 								childHelp.setContent(each.getContent());
 								break;
@@ -816,7 +814,7 @@ public class SystemServiceImpl
 				}
 				restOfTitle.append(titleSplit[i]);
 			}
-			
+
 			helpSection.getHelpSection().setTitle(titleNumber + restOfTitle.toString());
 
 			if (titleNumber.endsWith(". ") == false) {

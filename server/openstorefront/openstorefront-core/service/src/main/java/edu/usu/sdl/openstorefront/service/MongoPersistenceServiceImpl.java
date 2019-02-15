@@ -15,18 +15,24 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.UpdateResult;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.MongoDBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -38,8 +44,11 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 
 /**
  *
@@ -119,7 +128,9 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public long countByExample(BaseEntity example)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		QueryByExample queryByExample = new QueryByExample<>(example);
+		queryByExample.setQueryType(QueryType.COUNT);
+		return countByExample(queryByExample);
 	}
 
 	@Override
@@ -131,19 +142,30 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public long countClass(Class entityClass)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MongoCollection collection = dbManager.getConnection().getCollection(entityClass.getSimpleName());
+		return collection.countDocuments();
 	}
 
 	@Override
 	public <T> void delete(T entity)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (entity != null && (entity instanceof BaseEntity)) {
+			MongoCollection collection = dbManager.getConnection().getCollection(entity.getClass().getSimpleName());
+			collection.deleteOne(constructPKFilter((BaseEntity) entity));
+
+			EntityEventModel entityModel = new EntityEventModel();
+			entityModel.setEntityChanged(entity);
+			entityModel.setEventType(EntityEventType.DELETE);
+			if (ServiceProxy.getProxy().getEntityEventService() != null) {
+				ServiceProxy.getProxy().getEntityEventService().processEvent(entityModel);
+			}
+		}
 	}
 
 	@Override
 	public <T> int deleteByExample(BaseEntity example)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return deleteByExample(new QueryByExample<>(example));
 	}
 
 	@Override
@@ -155,19 +177,16 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public int deleteByQuery(Class entityClass, String whereClause, Map<String, Object> queryParams)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+		//REPLACE usage and Remove
 
-	@Override
-	public <T> T find(Class<T> entityClass, Object primaryKey)
-	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
 	public <T> T findById(Class<T> entity, Object id)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MongoCollection<T> collection = getCollectionForEntity(entity);
+		return collection.find(constructPKFilter(entity, id)).first();
 	}
 
 	@Override
@@ -185,40 +204,92 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public <T> List<T> queryByExample(BaseEntity baseEntity)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return queryByExample(new QueryByExample<>(baseEntity));
 	}
 
 	@Override
 	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
+		//MongoCollection<T> collection = getCollectionForEntity(queryByExample.get);
+		//collection.
+
+		//determine query type
+		//generate param (field coord query construction)
+		//grouping* and sorting
+		//apply results restrictions
+		//queryByExample.
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
+
 	public <T> T queryOneByExample(BaseEntity baseEntity)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return queryOneByExample(new QueryByExample<>(baseEntity));
 	}
 
 	@Override
 	public <T> T queryOneByExample(QueryByExample queryByExample)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<T> results = queryByExample(queryByExample);
+		if (!results.isEmpty()) {
+			return results.get(0);
+		}
+		return null;
 	}
 
+	/**
+	 * Run any database query; Avoid usage except in special cases; (Consider
+	 * Replacing and Removing); DB manager should handle database specific
+	 * commands.
+	 *
+	 * @param <T>
+	 * @param query
+	 * @param queryParams
+	 * @return 1 on success or else will it likely throw an error. However it
+	 * may not include the failed result.
+	 */
 	@Override
 	public <T> int runDbCommand(String query, Map<String, Object> queryParams)
 	{
-		throw new UnsupportedOperationException("Not supported");
+		int successFulCall = 1;
+
+		/* http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/commands/
+		   https://docs.mongodb.com/manual/reference/command/
+		 */
+		Document results = dbManager.getConnection().runCommand(new BasicDBObject(queryParams));
+
+		if (LOG.isLoggable(Level.FINEST)) {
+			LOG.log(Level.FINEST, results.toJson());
+		}
+
+		return successFulCall;
+	}
+
+	private <T extends BaseEntity> Bson constructPKFilter(T entity)
+	{
+		return constructPKFilter(entity.getClass(), EntityUtil.getPKFieldObjectValue(entity));
+	}
+
+	private <T> Bson constructPKFilter(Class<T> entity, Object id)
+	{
+		Map<String, Object> pkFields = EntityUtil.findIdField(entity, id);
+		return new BasicDBObject(pkFields);
+	}
+
+	private <T> MongoCollection<T> getCollectionForEntity(T entity)
+	{
+		return getCollectionForEntity(entity.getClass());
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> MongoCollection<T> getCollectionForEntity(Class entityClass)
+	{
+		return dbManager.getConnection().getCollection(entityClass.getSimpleName(), entityClass);
 	}
 
 	@Override
 	public <T extends BaseEntity> T persist(T entity)
-	{
-		return persist(entity, entity.getClass());
-	}
-
-	private <T extends BaseEntity> T persist(T entity, Class entityClass)
 	{
 		Objects.requireNonNull(entity, "Unable to persist a NULL entity.");
 
@@ -229,9 +300,20 @@ public class MongoPersistenceServiceImpl
 			validationModel.setSantize(false);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
-				@SuppressWarnings("unchecked")
-				MongoCollection<T> collection = dbManager.getConnection().getCollection(entity.getClass().getSimpleName(), entityClass);
-				collection.insertOne(entity);
+				MongoCollection<T> collection = getCollectionForEntity(entity);
+
+				UpdateResult updateResult = collection.replaceOne(
+						constructPKFilter(entity),
+						entity,
+						ReplaceOptions.createReplaceOptions(new UpdateOptions().upsert(true))
+				);
+				if (LOG.isLoggable(Level.FINEST)) {
+					LOG.log(Level.FINEST, ()
+							-> "Updated Collection: " + entity.getClass().getSimpleName()
+							+ " Modification Count: " + updateResult.getModifiedCount()
+							+ " Match Count: " + updateResult.getMatchedCount()
+							+ " Mongo Id: " + updateResult.getUpsertedId());
+				}
 
 				//This obviously won't catch everything but it will catch all common cases
 				EntityEventModel entityModel = new EntityEventModel();
@@ -259,45 +341,18 @@ public class MongoPersistenceServiceImpl
 	}
 
 	@Override
-	public <T> T saveNonBaseEntity(T entity)
-	{
-		return saveNonBaseEntity(entity, entity.getClass());
-	}
-
-	private <T> T saveNonBaseEntity(T entity, Class entityClass)
-	{
-		Objects.requireNonNull(entity, "Unable to persist a NULL entity.");
-
-		T t = null;
-		try {
-			ValidationModel validationModel = new ValidationModel(entity);
-			validationModel.setSantize(false);
-			ValidationResult validationResult = ValidationUtil.validate(validationModel);
-			if (validationResult.valid()) {
-				@SuppressWarnings("unchecked")
-				MongoCollection<T> collection = dbManager.getConnection().getCollection(entity.getClass().getSimpleName(), entityClass);
-				collection.insertOne(entity);
-
-				t = entity;
-			} else {
-				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
-			}
-		} catch (OpenStorefrontRuntimeException e) {
-			throw new OpenStorefrontRuntimeException("Unable to save record: " + StringProcessor.printObject(entity), e);
-		}
-		return t;
-	}
-
-	@Override
-	public <T extends BaseEntity> T saveNonPkEntity(T entity)
-	{
-		return saveNonBaseEntity(entity);
-	}
-
-	@Override
 	public <T extends StandardEntity> T setStatusOnEntity(Class<T> entity, Object id, String activeStatus)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		T found = findById(entity, id);
+		if (found != null) {
+			found.setUpdateUser(SecurityUtil.getCurrentUserName());
+			found.populateBaseUpdateFields();
+			found.setActiveStatus(activeStatus);
+			persist(found);
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find entity to set status on.", "Check Input: " + entity.getSimpleName() + " id: " + id);
+		}
+		return found;
 	}
 
 	@Override

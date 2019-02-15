@@ -15,14 +15,21 @@
  */
 package edu.usu.sdl.openstorefront.usecase;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.UpdateOptions;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanComponentType;
@@ -73,7 +80,13 @@ public class MongoDBUseCase
 		component.setUpdateUser("ds");
 		component.setUpdateDts(TimeUtil.currentDate());
 
-		collection.insertOne(component);
+		//collection.insertOne(component);
+		//Try the replace and see add or update
+		collection.replaceOne(
+				Filters.eq("componentId", component.getComponentId()),
+				component,
+				ReplaceOptions.createReplaceOptions(new UpdateOptions().upsert(true))
+		);
 
 		Component myComponent = collection.find().first();
 		System.out.println(myComponent.getName());
@@ -110,11 +123,36 @@ public class MongoDBUseCase
 			});
 		}
 
+		AttributeCode attributeCode = new AttributeCode();
+		AttributeCodePk attributeCodePK = new AttributeCodePk();
+		attributeCodePK.setAttributeCode("apple");
+		attributeCodePK.setAttributeType("fruit");
+		attributeCode.setAttributeCodePk(attributeCodePK);
+
+		MongoCollection<AttributeCode> collectionAttribute = database.getCollection("attribute-test", AttributeCode.class);
+
+		collectionAttribute.insertOne(attributeCode);
+
+		BasicDBObject query = new BasicDBObject("attributeCodePk.attributeCode", "apple");
+		AttributeCode foundAttribute = collectionAttribute.find(Filters.eq("attributeCodePk.attributeCode", "apple")).first();
+		System.out.println("Attribute Found: " + foundAttribute);
+
 		// Clean up
 		database.drop();
 
 		// release resources
 		mongoClient.close();
+
+	}
+
+	@Test
+	public void testAssignmentCheck()
+	{
+		Component component = new Component();
+
+		System.out.println((component instanceof BaseEntity)); //true
+		System.out.println(component.getClass().isAssignableFrom(BaseEntity.class)); //false (goes from Super to child)
+		System.out.println(BaseEntity.class.isAssignableFrom(Component.class)); //true
 
 	}
 
