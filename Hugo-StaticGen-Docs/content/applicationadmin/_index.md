@@ -1,9 +1,6 @@
 +++
 title = "Application Admin"
-description = ""
+description = "The application administrator is the DI2E website adminsitrator."
 weight = 40
 +++
-
-### The Application Administrator is the admin for the DI2E Storefront site.  
-
-#### This section will outline help for this administrator.
+ 

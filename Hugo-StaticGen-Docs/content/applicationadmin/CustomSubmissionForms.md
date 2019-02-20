@@ -1,11 +1,9 @@
 +++
-title = "CustomSubmissionForms"
+title = "Custom Submission Forms"
 description = ""
-weight = 10
-date = 2019-02-20T15:00:47-07:00
-draft = true
-markup = "mmark"
+weight = 2
 +++
 
+## Yo, hey you!
 
-## Let's talk about custom submission forms!
+#### Let's talk about custom submission forms!
