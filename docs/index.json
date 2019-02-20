@@ -147,6 +147,13 @@
 	"content": ""
 },
 {
+	"uri": "/openstorefront/applicationadmin/",
+	"title": "Application Admin",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
 	"uri": "/openstorefront/systemadmin/",
 	"title": "System Admin",
 	"tags": [],
