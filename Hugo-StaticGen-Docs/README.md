@@ -18,13 +18,11 @@ If creating a new page use the Hugo cli with `hugo new path/to/new-doc.md` and H
 
 ## Development Environment
 
-The latest version of Hugo to work with the DocDock theme is v0.49.2. Download Hugo on the releases page https://github.com/gohugoio/hugo/releases/tag/v0.49.2 and add the binary to your path.
+Download the latest release of Hugo at https://github.com/gohugoio/hugo/releases and add the binary to your path.
 
 Hugo provides a live development server for viewing changes as you are editing the files. Go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo server --baseURL localhost:1313 --watch`. This will run a local dev server at `localhost:1313`, any changes made to the files will trigger a rebuild and refresh your browser.
 
 ## How to build the Documentation
-
-The latest release of Hugo to work with the theme is v0.49.2. Get it at https://github.com/gohugoio/hugo/releases/tag/v0.49.2
 
 This should only be done once per release.  For Development use `hugo server -b localhost:1313 -w` which will run a live reloading development server. To see perform a build run `hugo` from `openstorefront/Hugo-StaticGen-Docs/` which will build to the `./build` by default which is in the gitignore.
 
