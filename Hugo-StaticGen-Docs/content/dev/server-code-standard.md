@@ -105,7 +105,7 @@ Except as noted below, it is very rarely correct to do nothing in response to a 
 
 When it truly is appropriate to take no action whatsoever in a catch block, the reason this is justified is explained in a comment.
 
-```
+```js
 try {
   int i = Integer.parseInt(response);
   return handleNumericResponse(i);
@@ -119,7 +119,7 @@ return handleTextResponse(response);
 
 When a reference to a static class member must be qualified, it is qualified with that class's name, not with a reference or expression of that class's type.
 
-```
+```js
 Foo aFoo = ...;
 Foo.aStaticMethod(); // good
 aFoo.aStaticMethod(); // bad

@@ -14,7 +14,7 @@ For existing applications:
 
 Add:
 
-```
+```ini
 /login/** = anon 
 /mobile/** = authc 
 /api/v1/resource/branding/current = anon 
@@ -137,7 +137,7 @@ elasticsearch service command reference (elasticsearch should be running at this
 **Test:** curl -XGET 'localhost:9200/?pretty'
 
 should give you a response something like this:
-```
+```json
 {
   "name" : "Cp8oag6",
   "cluster_name" : "elasticsearch",
