@@ -14,7 +14,9 @@ Before a form can be designed, any needed required or custom attributes should b
         a. Navigate to <b>Admin Tools</b> if you are not already there (click on your username in the upper-right, then Admin Tools) 
    <br> b. Select <b>Data Management &rarr; Attributes</b>
    <br> c. Click <b>+Add New Type</b> and fill out the form as required for all attributes (required and optional) you will need to build your custom entry form in the next step.
-        ![screenshot](/images/blah.png)
+   
+![AddAttrib](/static/images/AppAdmin/AddAttrib.png)
+
    <br> d. 
    <br> e. 
    <br> f. 
