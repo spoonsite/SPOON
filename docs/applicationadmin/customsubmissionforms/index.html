@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="generator" content="Hugo 0.49.2" />
 
-<title>Data Migration Guide :: Storefront Docs</title>
+<title>Custom Submission Forms :: Storefront Docs</title>
 <link rel="shortcut icon" href="/openstorefront/images/favicon.png" type="image/x-icon" />
 <link href="/openstorefront/css/nucleus.css" rel="stylesheet">
 <link href="/openstorefront/css/font-awesome.min.css" rel="stylesheet">
@@ -30,7 +30,7 @@
 
     
   </head>
-  <body data-url="/systemadmin/datamigrationguide/">
+  <body data-url="/applicationadmin/customsubmissionforms/">
     
       <div id="headermain"></div>
 <nav id="sidebar" class="showVisitedLinks">
@@ -145,22 +145,22 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/applicationadmin/" class="dd-item">
+    <li data-nav-id="/applicationadmin/" class="dd-item parent">
       <a href="/openstorefront/applicationadmin/">
-        <span>Application Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+        <span>Application Admin</span>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </a>
         <ul>
-      <li data-nav-id="/applicationadmin/customsubmissionforms/" class="dd-item">
+      <li data-nav-id="/applicationadmin/customsubmissionforms/" class="dd-item active">
         <a href="/openstorefront/applicationadmin/customsubmissionforms/">
           <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
         </ul>
     </li>
-    <li data-nav-id="/systemadmin/" class="dd-item parent">
+    <li data-nav-id="/systemadmin/" class="dd-item">
       <a href="/openstorefront/systemadmin/">
-        <span>System Admin</span>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+        <span>System Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </a>
         <ul>
       <li data-nav-id="/systemadmin/setup/" class="dd-item">
@@ -178,7 +178,7 @@
           <span>Administrator Guide</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
-      <li data-nav-id="/systemadmin/datamigrationguide/" class="dd-item active">
+      <li data-nav-id="/systemadmin/datamigrationguide/" class="dd-item">
         <a href="/openstorefront/systemadmin/datamigrationguide/">
           <span>Data Migration Guide</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
@@ -242,7 +242,7 @@
       
       
     <div id="top-github-link">
-      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/systemadmin/DataMigrationGuide.md" target="blank">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/applicationadmin/CustomSubmissionForms.md" target="blank">
         <i class="fa fa-code-fork"></i>
         Edit page
       </a>
@@ -262,7 +262,7 @@
 
 
 
- <a href='/openstorefront/'>OpenStoreFront Documentation</a> > <a href='/openstorefront/systemadmin/'>System Admin</a> > Data Migration Guide
+ <a href='/openstorefront/'>OpenStoreFront Documentation</a> > <a href='/openstorefront/applicationadmin/'>Application Admin</a> > Custom Submission Forms
 
  
 
@@ -279,24 +279,13 @@
 <ul>
 <li>
 <ul>
-<li><a href="#1-importing-export-third-parties">1. Importing/Export  (Third parties)</a>
+<li><a href="#1-create-a-custom-form-to-be-used">1. Create a Custom Form to be used</a>
 <ul>
-<li><a href="#1-1-custom-mapping">1.1 Custom Mapping *</a></li>
+<li><a href="#1-1-create-needed-attributes">1.1 Create Needed Attributes</a></li>
+<li><a href="#1-2-create-design-the-form">1.2  Create/Design The Form</a></li>
 </ul></li>
-<li><a href="#2-system-archives-system-to-system-restore">2. System Archives (System to System / restore)</a></li>
-<li><a href="#3-full-system-manual-migration-system-admin">3. Full System / Manual Migration (System Admin)</a></li>
-<li><a href="#4-scenarios">4. Scenarios</a>
-<ul>
-<li>
-<ul>
-<li><a href="#scenario-1">Scenario 1</a></li>
-<li><a href="#scenario-2">Scenario 2</a></li>
-<li><a href="#scenario-3">Scenario 3:</a></li>
-<li><a href="#scenario-4">Scenario 4</a></li>
-<li><a href="#scenario-5">Scenario 5</a></li>
-<li><a href="#scenario-6">Scenario 6</a></li>
-</ul></li>
-</ul></li>
+<li><a href="#2-verify-the-form-and-activate-it">2. Verify the form and activate it.</a></li>
+<li><a href="#3-using-the-form-view-the-custom-submission">3. Using the form, view the custom submission.</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -309,7 +298,7 @@
 
 <div id="body-inner">
   
-    <h1>Data Migration Guide</h1>
+    <h1>Custom Submission Forms</h1>
   
 
 
@@ -319,153 +308,61 @@
     
     
 
-<p>This guide provide help for importing data from external sources as well as
-moving data from one instance to another instance.</p>
+<p>Custom Submission Forms are used when you want to present a custom look and feel to the user when they submit an entry.  You can add a form with many required or optional fields depending on the Entry Type of the submission.</p>
 
-<h2 id="1-importing-export-third-parties">1. Importing/Export  (Third parties)</h2>
+<h2 id="1-create-a-custom-form-to-be-used">1. Create a Custom Form to be used</h2>
 
-<p>The application provides set of standard format that it accepts to import Attributes/Categories
-as well as Entries.  It also provides a set of custom formats that can have mappings applied. These
-custom formats allow taking a variety of data with so simple handling.</p>
+<h3 id="1-1-create-needed-attributes">1.1 Create Needed Attributes</h3>
 
-<p>See Admin Tools -&gt; Data Management -&gt; Imports</p>
+<p>Before a form can be designed, any needed required or custom attributes should be added.  To do this:
+<p style="margin-left: 40px">
+        a. Navigate to <b>Admin Tools</b> if you are not already there (click on your username in the upper-right, then Admin Tools)
+   <br> b. Select <b>Data Management &rarr; Attributes</b>
+   <br> c. Click <b>+Add New Type</b> and fill out the form as required for all attributes (required and optional) you will need to build your custom entry form in the next step.
+   <br> d. You may wish to enter some codes for the attribute by selecting it and then clicking <b>Manage Codes</b>.  This is critical for attributes that do not Allow User Created Codes as there is no way to enter those, and will cause problems on required attributes.
+</p></p>
 
-<h3 id="1-1-custom-mapping">1.1 Custom Mapping *</h3>
+<p><img src="/openstorefront/images/AppAdmin/AddAttrib.png" alt="AddAttrib" />
+<img src="/openstorefront/images/AppAdmin/AddAttrib.jpg" alt="AddAttrib" /></p>
 
-<p>An admin can create field mapping from a file field to a field in application.
-Some pre-defined transformation can be applied such as lowercasing the field.</p>
+<h3 id="1-2-create-design-the-form">1.2  Create/Design The Form</h3>
 
-<p>In some cases, field mapping is insufficient to import a source.  A plugin can be
-created to provide more handling control (see Developer Guide)</p>
+<p style="margin-left: 40px">
+        a. Navigate to <b>Admin Tools</b> if you are not already there (click on your username in the upper-right, then Admin Tools) 
+   <br> b. Select Data Management &rarr; <b>Submissions &rarr; Submissions Form Templates</b>
+   <br> c. Click the <b>+ Add Form</b> button.  Fill in the Form Name, Description, and Entry Type.  Remember that these custom submission forms are tied to a specific entry type(s).  If needed, create a new entry type and then navigate back here (Data Mangement &rarr; Entry Types).  Click <b>Create Form.</b>
+   <br> d. In the Form Builder Tool Window add sections as needed.  Add fields, paragraphs, horizontal rules, images, and so forth. 
+   <br> e. Note the <b>Mappings</b> tab.  The Mappable Fields <b>MUST</b> be on the form as well as the Required Attributes.  These sections will have a red x or a green checkmark, depending on if they have been added to the form. <br>
+   <br> f. To add a mappable field: 
+   <p style="margin-left: 80px">
+              i. Click the <b>Add a field</b> button at the bottom of the form then <b>Mappable Field OR Attribute</b>.  
+        <br> ii. Above in the form select the <b>Map To Field:</b> drop-down</b> OR the <b>Attribute Type:</b> drop down to select the attribute.  
+        <br>iii. Be sure to check the <b>Required</b> box if the field or attribute is a required one.
+        <br> iv.  When you have finished the form and there are no more red checkmarks on the Mappings tab, save the form and close it.
+   </p>
+</p>
 
-<p>*This feature is in beta</p>
+<h2 id="2-verify-the-form-and-activate-it">2. Verify the form and activate it.</h2>
 
-<h2 id="2-system-archives-system-to-system-restore">2. System Archives (System to System / restore)</h2>
+<p style="margin-left: 40px">
+        a. When you are finished with the form, from the main Custom Forms page, select the Form and then click on the <b>Verify</b> button.  This will prompt you to enter data to verify the validity of the form, that all of the required fields are able to be entered, and so forth.  
+   <br> b. When the form is in the status of <b><line style="color:green">Verified</line></b>, be sure to select it, then click <b>Toggle Active Status</b> so that <b>"A"</b> appears in the Active Status Column.
+   <br> c. If you get a message indicating that a custom form is already active for that entry type, deactivate (Toggle Active Status) the other custom form then activate yours that was just created.  An entry type cannot have more than one active custom form at any given time.
+</p>
+ 
 
-<p>See Admin Tools -&gt; Application Management -&gt; System Archives</p>
+<h2 id="3-using-the-form-view-the-custom-submission">3. Using the form, view the custom submission.</h2>
 
-<p>System archive are meant for storefront application to storefront application
-data migration or for saving and restoring data.  The application will package all
-of the different data parts needed to fully reconstruct the data.</p>
-
-<p>The application supports several different archive types:</p>
-
-<p><strong>DB Export</strong> - This just export database (no media or local resources). This exports the whole database.</p>
-
-<div class="notices warning" ><p>On import note the application will be unavailable until import completes.</p>
-</div>
-
-
-<p><strong>Full Export</strong> - This packages a database export with all file (*expect system archives to avoid excessive disk space requirements)
-<em>Also see &ldquo;Post Cleanup Considerations&rdquo; in section 3</em>.</p>
-
-<div class="notices warning" ><p>On import note the application will be unavailable until import completes.</p>
-</div>
-
-
-<p><strong>General Export</strong> - This export allow for selective exporting.  Keep in mind it will
- export related data as needed to complete the export.</p>
-
-<h2 id="3-full-system-manual-migration-system-admin">3. Full System / Manual Migration (System Admin)</h2>
-
-<p>Note: This will copy everything: Database, local resources, and configuration</p>
-
-<ol>
-<li>Stop the application (Generally done by stopping tomcat)</li>
-<li>Copy /var/openstorefront directory and all sub-directories. (*location of directory may be different depending on configuration)</li>
-</ol>
-
-<p>Post Cleanup Considerations:</p>
-
-<ol>
-<li>User profiles should be in-activated to avoid sending notifications to users.</li>
-<li>If using built in security then users may need to be in-activated or removed to prevent access.</li>
-<li>Alerts should be look at to make sure they still valid for the new setup.</li>
-<li>Scheduled report should be turn off or looked at to see if they are valid.</li>
-<li>Check branding and system configuration to make sure things are valid for the new instance.</li>
-</ol>
-
-<h2 id="4-scenarios">4. Scenarios</h2>
-
-<p>In all cases, please be mindful of the disk space requirements.  All archive will need to be build on the originating system.</p>
-
-<h4 id="scenario-1">Scenario 1</h4>
-
-<p>External data that I need loading into the application.</p>
-
-<p><strong>Solution:</strong></p>
-
-<p>Use the Admin Tools -&gt; Data Management -&gt; Imports and depending on originating file form
-create custom mapping or a plugin to match up the data.</p>
-
-<hr />
-
-<h4 id="scenario-2">Scenario 2</h4>
-
-<p>Export entries to use in another application.</p>
-
-<p><strong>Solution:</strong></p>
-
-<p>Export the entry via the Admin Tools -&gt; Data Management -&gt; Entries.<br />
-Select entries and export.</p>
-
-<div class="notices warning" ><p>This export will NOT export evaluations associated with the entry; only the entry.
-If evaluations are needed then use the System Export General Export to get all information.</p>
-</div>
-
-
-<hr />
-
-<h4 id="scenario-3">Scenario 3:</h4>
-
-<p>Export entries in another format for use in another application.</p>
-
-<p><strong>Solution:</strong></p>
-
-<p>Export the entry via the Admin Tools -&gt; Data Management -&gt; Entries.<br />
-Select entries and select different supported format.</p>
-
-<p><strong>Note</strong> if a export format is not support. Request development for a the new format.
-Please provide specs, if available, for the format.</p>
-
-<hr />
-
-<h4 id="scenario-4">Scenario 4</h4>
-
-<p>I need to move entries and evaluation to another storefront application.</p>
-
-<p><strong>Solution:</strong></p>
-
-<p>Use the System Archive: General to select entries to export then import on desired system.</p>
-
-<div class="notices warning" ><p>compatibility is only tests for same version of the application.  IE. export from 2.5 to import 2.5.
-Imports from other version may or may not work.  Contact developer/support for help.</p>
-</div>
-
-
-<hr />
-
-<h4 id="scenario-5">Scenario 5</h4>
-
-<p>I need a full backup.</p>
-
-<p><strong>Solution:</strong></p>
-
-<p>Use System Archive - Full Backup  or  Full System / Manual Migration</p>
-
-<div class="notices warning" ><p>Make sure the system has enough space to run this.  Require about the same space free as it&rsquo;s currently using.</p>
-</div>
-
-
-<hr />
-
-<h4 id="scenario-6">Scenario 6</h4>
-
-<p>I want a copy of all entries.</p>
-
-<p><strong>Solution:</strong></p>
-
-<p>Use System Archive - General Export with all entries selected.</p>
+<p style="margin-left: 40px">
+        a. Click on your <b>username</b> in the upper-right then <b>User Tools &rarr; Submissions &rarr; + New Submission </b>
+   <br> b. From the <b>Select Entry Type Form</b> box select the Entry Type that you created your custom form for.  
+   <br> c. Click <b>+ Create</b> and then enter a unique initial submission name and click <b>Ok</b>
+   <br> d. The submission form loads with your customization attributes and fields as designed prior.  Answer the required questions/fields and confirm on the <b>Review Submission</b> section that the entry has no red "x" marks, but only green checkmarks.  
+   <br> e. Click <b>Submit for Approval</b>
+   <br> f. Navigate to <b>Admin Tools &rarr; Data Management &rarr; Entries</b>  Sort by <b>Last Activity Date</b> descending to see the entry just entered at the top of the list.  Select the entry.
+   <br> g. Click on <b>Approve.</b>
+   <br> h. As a final check, go to the home page and <b>Search</b> for the new entry to ensure it is activated and has the custom information.
+</p>
 
 
     
@@ -477,8 +374,8 @@ Imports from other version may or may not work.  Contact developer/support for h
 </div>
 
 <div id="navigation">
-<a class="nav nav-prev" href="/openstorefront/systemadmin/administratorguide/" title="Administrator Guide"> <i class="fa fa-chevron-left"></i></a>
-    <a class="nav nav-next" href="/openstorefront/systemadmin/versionmigrationguide/" title="Version Migration" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/openstorefront/applicationadmin/" title="Application Admin"> <i class="fa fa-chevron-left"></i></a>
+    <a class="nav nav-next" href="/openstorefront/systemadmin/" title="System Admin" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
 
 </section>
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">

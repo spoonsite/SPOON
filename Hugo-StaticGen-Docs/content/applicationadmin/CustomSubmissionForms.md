@@ -16,7 +16,9 @@ Before a form can be designed, any needed required or custom attributes should b
    <br> c. Click <b>+Add New Type</b> and fill out the form as required for all attributes (required and optional) you will need to build your custom entry form in the next step.
    <br> d. You may wish to enter some codes for the attribute by selecting it and then clicking <b>Manage Codes</b>.  This is critical for attributes that do not Allow User Created Codes as there is no way to enter those, and will cause problems on required attributes. 
 </p>
-![AddAttrib](/images/AppAdmin/AddAttrib.png)
+
+![AddAttrib](../../static/images/AppAdmin/AddAttrib.png)
+![AddAttrib](images/AppAdmin/AddAttrib.jpg)
 
 ### 1.2  Create/Design The Form
 

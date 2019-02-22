@@ -6,9 +6,20 @@
     <description>Recent content in Application Admin on Storefront Docs</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Wed, 20 Feb 2019 15:27:58 -0700</lastBuildDate>
     
 	<atom:link href="/openstorefront/applicationadmin/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Custom Submission Forms</title>
+      <link>/openstorefront/applicationadmin/customsubmissionforms/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/openstorefront/applicationadmin/customsubmissionforms/</guid>
+      <description>Custom Submission Forms are used when you want to present a custom look and feel to the user when they submit an entry. You can add a form with many required or optional fields depending on the Entry Type of the submission.
+1. Create a Custom Form to be used 1.1 Create Needed Attributes Before a form can be designed, any needed required or custom attributes should be added. To do this: a.</description>
+    </item>
     
   </channel>
 </rss>
