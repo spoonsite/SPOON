@@ -14,9 +14,9 @@ Before a form can be designed, any needed required or custom attributes should b
         a. Navigate to <b>Admin Tools</b> if you are not already there (click on your username in the upper-right, then Admin Tools) 
    <br> b. Select <b>Data Management &rarr; Attributes</b>
    <br> c. Click <b>+Add New Type</b> and fill out the form as required for all attributes (required and optional) you will need to build your custom entry form in the next step.
-			<img src="/images/AddAttrib.JPG" alt="add an attribute" style ="width:60%" />
+			<img src="/images/AppAdmin/AddAttrib.JPG" alt="add an attribute" style ="width:60%" />
    <br> d. You may wish to enter some codes for the attribute by selecting it and then clicking <b>Manage Codes</b>.  This is critical for attributes that do not Allow User Created Codes as there is no way to enter those, and will cause problems on required attributes. 
-			<img src="/images/ManageCodes.JPG" alt="manage codes" style ="width:60%" />
+			<img src="/images/AppAdmin/ManageCodes.JPG" alt="manage codes" style ="width:60%" />
 </p>
 
 ### 1.2  Create/Design The Form
@@ -25,11 +25,11 @@ Before a form can be designed, any needed required or custom attributes should b
         a. Navigate to <b>Admin Tools</b> if you are not already there (click on your username in the upper-right, then Admin Tools) 
    <br> b. Select Data Management &rarr; <b>Submissions &rarr; Submissions Form Templates</b>
    <br> c. Click the <b>+ Add Form</b> button.  Select an Entry Type.  Fill in the Form Name, Description, and Entry Type.  Remember that these custom submission forms are tied to a specific entry type(s).  If needed, create a new entry type and then navigate back here (Data Mangement &rarr; Entry Types).  Click <b>Create Form.</b>
-   			<img src="/images/addTemplate.JPG" alt="add a template" style ="width:40%" />
+   			<img src="/images/AppAdmin/addTemplate.JPG" alt="add a template" style ="width:40%" />
    <br> d. In the Form Builder Tool Window add sections as needed.  Add fields, paragraphs, horizontal rules, images, and so forth. 
-			<img src="/images/customForm.JPG" alt="customForm" style ="width:75%" />
+			<img src="/images/AppAdmin/customForm.JPG" alt="customForm" style ="width:75%" />
    <br> e. Note the <b>Mappings</b> tab.  The Mappable Fields <b>MUST</b> be on the form as well as the Required Attributes.  These sections will have a red x or a green checkmark, depending on if they have been added to the form. <br>
-			<img src="/images/mappingsTab.JPG" alt="mappingsTab" style ="width:75%" />
+			<img src="/images/AppAdmin/mappingsTab.JPG" alt="mappingsTab" style ="width:75%" />
    <br> f. To add a mappable field: 
    <p style="margin-left: 80px">
               i. Click the <b>Add a field</b> button at the bottom of the form then <b>Mappable Field OR Attribute</b>.  
