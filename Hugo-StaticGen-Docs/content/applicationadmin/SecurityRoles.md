@@ -38,7 +38,7 @@ STOREFRONT-Admin | Website administrator, super permissions group | ALL Permissi
 5.  The pre-made groups shown above (STOREFRONT-Admin, etc.) are now reset to their new installation defaults.
 {{% /notice %}}
 
-**[GO TO TOP]({{<relref "toc">}})**
+**[GO TO TOP]({{<relref "#toc">}})**
 
  
 ## 2. Default Permissions
@@ -368,7 +368,7 @@ View ALL Workflow Links | {{<icon name="fa-close" color="red">}} | {{<icon name=
 Update Workflows | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
 View Workplan Progress Management Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
 
-**[GO TO TOP]({{<relref "toc">}})**
+**[GO TO TOP]({{<relref "#toc">}})**
 
 
 ## 3. Overlapping Permissions
@@ -420,4 +420,4 @@ ENABLED|CODE|DESCRIPTION
 {{<icon name="fa-close" color="red">}} |  SENSITIVE | Sensitive Information Marking
 
 
-**[GO TO TOP]({{<relref "toc">}})**
+**[GO TO TOP]({{<relref "#toc">}})**
