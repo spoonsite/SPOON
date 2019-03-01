@@ -59,7 +59,6 @@ d.  If you get a message indicating that a custom form is already active for tha
  
 ## 3. Entry and Approval using the Custom Form
 
-
 a.  Click on your **username** in the upper-right then **User Tools &rarr; Submissions &rarr; + New Submission **
 
 b.  From the **Select Entry Type Form** box select the Entry Type that you created your custom form for.  
@@ -77,9 +76,3 @@ g.  Click on **Approve.**
 h.  As a final check, go to the home page and **Search** for the new entry to ensure it is indexed and searchable.
 
 ![CustomSubmission](/images/AppAdmin/CustomSubmission.JPG)
-
-
-
-
-
-
