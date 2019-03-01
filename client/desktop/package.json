@@ -1,0 +1,43 @@
+{
+  "name": "desktop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "test:e2e": "vue-cli-service test:e2e",
+    "test:unit": "vue-cli-service test:unit"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "babel-polyfill": "^6.26.0",
+    "date-fns": "^1.29.0",
+    "js-cookie": "^2.2.0",
+    "lodash": "^4.17.11",
+    "node-sass": "^4.10.0",
+    "safe-json-parse": "^4.0.0",
+    "sass-loader": "^7.1.0",
+    "vue": "^2.5.17",
+    "vue-quill-editor": "^3.0.6",
+    "vue-router": "^3.0.1",
+    "vue-star-rating": "^1.6.1",
+    "vue-toasted": "^1.1.25",
+    "vue-truncate-filter": "^1.1.7",
+    "vuetify": "^1.3.8",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.1.1",
+    "@vue/cli-plugin-e2e-nightwatch": "^3.1.1",
+    "@vue/cli-plugin-eslint": "^3.1.5",
+    "@vue/cli-plugin-unit-mocha": "^3.1.1",
+    "@vue/cli-service": "^3.1.4",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "chai": "^4.2.0",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0-0",
+    "vue-template-compiler": "^2.5.17"
+  }
+}

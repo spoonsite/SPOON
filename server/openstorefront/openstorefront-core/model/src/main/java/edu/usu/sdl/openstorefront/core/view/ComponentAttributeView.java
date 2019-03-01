@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -44,6 +45,8 @@ public class ComponentAttributeView
 	private String codeDescription;
 	private String typeLongDescription;
 	private String codeLongDescription;
+	private String unit;
+	private Set<String> unitList;
 	private String externalLink;
 	private boolean visibleFlg;
 	private boolean requiredFlg;
@@ -89,29 +92,9 @@ public class ComponentAttributeView
 		view.setComment(attribute.getComment());
 
 		if (code != null && type != null) {
-			view.setRequiredRestrictions(type.getRequiredRestrictions());
-			view.setExternalLink(code.getDetailUrl());
-			view.setCodeDescription(code.getLabel());
-			view.setCodeLongDescription(code.getDescription());
-			view.setTypeDescription(type.getDescription());
-			view.setTypeLongDescription(type.getDetailedDescription());
-			view.setType(type.getAttributeType());
-			view.setCode(code.getAttributeCodePk().getAttributeCode());
-			view.setBadgeUrl(code.getBadgeUrl());
-			view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
-			view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
-			view.setAllowUserCodes(Convert.toBoolean(type.getAllowUserGeneratedCodes()));
-			view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
-			view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
-			view.setDefaultAttributeCode(type.getDefaultAttributeCode());
-			view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
-			view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
-			view.setUpdateDts(attribute.getUpdateDts());
-			view.setSortOrder(code.getSortOrder());
-			view.setGroupCode(code.getGroupCode());
 			view.setHighlightStyle(code.getHighlightStyle());
-			view.setActiveStatus(attribute.getActiveStatus());
-			view.toStandardView(code, type);
+			view.setRequiredRestrictions(type.getRequiredRestrictions());
+			view = buildView(view, code, type, attribute);
 
 			if (code.getAttachmentFileName() != null && !code.getAttachmentFileName().isEmpty()) {
 				view.setCodeHasAttachment(true);
@@ -149,30 +132,44 @@ public class ComponentAttributeView
 		AttributeType type = service.getAttributeService().findType(attribute.getAttributeCodePk().getAttributeType());
 
 		if (code != null && type != null) {
-			view.setExternalLink(code.getDetailUrl());
-			view.setCodeDescription(code.getLabel());
-			view.setCodeLongDescription(code.getDescription());
-			view.setTypeDescription(type.getDescription());
-			view.setTypeLongDescription(type.getDetailedDescription());
-			view.setType(type.getAttributeType());
-			view.setCode(code.getAttributeCodePk().getAttributeCode());
-			view.setBadgeUrl(code.getBadgeUrl());
-			view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
-			view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
-			view.setAllowUserCodes(Convert.toBoolean(type.getAllowUserGeneratedCodes()));
-			view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
-			view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
-			view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
-			view.setDefaultAttributeCode(type.getDefaultAttributeCode());
-			view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
-			view.setUpdateDts(attribute.getUpdateDts());
-			view.setSortOrder(code.getSortOrder());
-			view.setGroupCode(code.getGroupCode());
-			view.setActiveStatus(attribute.getActiveStatus());
-			view.toStandardView(code, type);
+			view = buildView(view, code, type, null);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find code and/or type.");
 		}
+		return view;
+	}
+
+	private static ComponentAttributeView buildView(ComponentAttributeView view, AttributeCode code, AttributeType type, ComponentAttribute attribute)
+	{
+		view.setExternalLink(code.getDetailUrl());
+		view.setCodeDescription(code.getLabel());
+		view.setCodeLongDescription(code.getDescription());
+		view.setTypeDescription(type.getDescription());
+		view.setTypeLongDescription(type.getDetailedDescription());
+		view.setType(type.getAttributeType());
+		view.setCode(code.getAttributeCodePk().getAttributeCode());
+		view.setUnit(type.getAttributeUnit());
+		view.setUnitList(type.getAttributeUnitList());
+		view.setBadgeUrl(code.getBadgeUrl());
+		view.setImportantFlg(Convert.toBoolean(type.getImportantFlg()));
+		view.setRequiredFlg(Convert.toBoolean(type.getRequiredFlg()));
+		view.setAllowUserCodes(Convert.toBoolean(type.getAllowUserGeneratedCodes()));
+		view.setAllowMultipleFlg(Convert.toBoolean(type.getAllowMultipleFlg()));
+		view.setArchitectureFlg(Convert.toBoolean(type.getArchitectureFlg()));
+		view.setHideOnSubmission(Convert.toBoolean(type.getHideOnSubmission()));
+		view.setDefaultAttributeCode(type.getDefaultAttributeCode());
+		view.setVisibleFlg(Convert.toBoolean(type.getVisibleFlg()));
+		view.setSortOrder(code.getSortOrder());
+		view.setGroupCode(code.getGroupCode());
+		view.toStandardView(code, type);
+		if (attribute != null) {
+			view.setUpdateDts(attribute.getUpdateDts());
+			view.setActiveStatus(attribute.getActiveStatus());
+		} else {
+			view.setUpdateDts(code.getUpdateDts());
+			view.setActiveStatus(code.getActiveStatus());
+		}
+
 		return view;
 	}
 
@@ -219,6 +216,26 @@ public class ComponentAttributeView
 	public void setCodeLongDescription(String codeLongDescription)
 	{
 		this.codeLongDescription = codeLongDescription;
+	}
+
+	public String getUnit()
+	{
+		return unit;
+	}
+
+	public void setUnit(String unit)
+	{
+		this.unit = unit;
+	}
+
+	public Set<String> getUnitList()
+	{
+		return unitList;
+	}
+
+	public void setUnitList(Set<String> unitList)
+	{
+		this.unitList = unitList;
 	}
 
 	public boolean isImportantFlg()

@@ -968,7 +968,7 @@
 										{
 											text: 'Create Snapshot',
 											iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction',
-											tooltip: 'Creates snapshot of the current verison',
+											tooltip: 'Creates snapshot of the current version',
 											requiredPermissions: ['ADMIN-ENTRY-VERSION-CREATE'],
 											handler: function(){
 												var versionWin = this.up('window');
@@ -2535,7 +2535,7 @@
 						url: 'api/v1/resource/components/' + componentId + '/versionhistory'
 					});
 
-					//load current verison
+					//load current version
 					versionLoadCurrent();
 				};
 

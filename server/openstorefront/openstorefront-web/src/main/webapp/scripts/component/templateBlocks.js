@@ -164,7 +164,7 @@ Ext.define('OSF.component.template.Contacts', {
 			'		<tr class="details-table">',
 			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b> <br> ({organization})</td>',
 			'			<td class="details-table">{positionDescription}</td>',
-			'			<td class="details-table"><tpl if="phone">{phone}</tpl><tpl if="!phone">—</tpl></td>',
+			'			<td class="details-table"><tpl if="phone"><a href="tel:{phone}" class="details-table">{phone}</a></tpl><tpl if="!phone">—</tpl></td>',
 			'			<td class="details-table"><a href="mailto:{email}" class="details-table">{email}</a></td>',
 			'		</tr>',
 			'	</tpl>',
@@ -214,16 +214,26 @@ Ext.define('OSF.component.template.Vitals', {
 	title: 'Entry Vitals',
 
 	tpl: new Ext.XTemplate(
-			' <table class="details-table" width="100%">',
+			'<table class="details-table" width="100%">',
+			'	<tr><th class="details-table">Label</th><th class="details-table">Value</th><th class="details-table">Unit</th></tr>',
 			'	<tpl for="vitals">',
 			'		<tr class="details-table">',
-			'			<td class="details-table"><b>{label}</b>',
+			'			<td class="details-table">',
+			'				<b>{label}</b>',
 			'				<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>',
 			'           </td>',
 			'			<td class="details-table highlight-{highlightStyle}">',
-			'				<tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
-			'				{value}',
-			'				<tpl if="comment"><hr><b>Comment:</b> <br> {comment}</tpl>',
+			'               <tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
+			'               <a href="#" class="details-table" title="Show related entries"',
+			'                   onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\', \'{codeHasAttachment}\');"',
+			'					>',
+			'					<b>{value}</b>',
+			'				</a>',
+			'               <tpl if="codeHasAttachment"><a href="api/v1/resource/attributes/attributetypes/{type}/attributecodes/{code}/attachment"><i class="fa fa-paperclip"></i></a></tpl>', 
+			'				<tpl if="comment"><hr>Comment: {comment}</tpl>',
+			'			</td>',
+			'			<td class="details-table">',
+			'				<tpl if="unit"><b>{unit}</b></tpl>',
 			'			</td>',
 			'		</tr>',
 			'	</tpl>',
@@ -247,61 +257,28 @@ Ext.define('OSF.component.template.Vitals', {
 			//group attributes by type; array of values
 			var typeMap = {};
 			Ext.Array.each(entry.attributes, function (item) {
-				if (!typeMap[item.type]) {
-					typeMap[item.type] = [];
-				}
-				typeMap[item.type].push(item);				
-			});
-			
-			Ext.Object.each(typeMap, function(key, values) {				
-				var maintype = values[0];
-				
-				
-				var topHighLightStyle = null;
-				if (values.length == 1) {
-					topHighLightStyle = values[0].highlightStyle;
-				} 
-				
-				//if 1 then set to fill background 
-				//if more than one then style the codes 
-				
-				var processedValues = '';
-				var commonComment = null;
-				var anyPrivate = false;
-				Ext.Array.each(values, function (item) {
-					if (item.privateFlag) {
-						anyPrivate = true;
-					}
-					if (item.comment) {
-						// (ONLY allow one comment per type)
-						//take the last non-null one
-						commonComment = item.comment;
-					}
-					var tip = item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription;
-					
-					processedValues += '<a href="#" class="details-table highlight-' + 
-											item.highlightStyle 
-											+ '" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'' 
-											+ item.type 
-											+ '\',\'' 
-											+ item.code 
-											+ '\',\''
-											+ item.typeDescription + ' - '
-											+ item.codeDescription + '\', \'ATTRIBUTE\', \'' 
-											+ (tip ? tip : '') + '\', \'' 
-											+ entry.componentId +'\', \'' 
-											+ item.codeHasAttachment +'\');">'									
-											+ '<b>' + item.codeDescription + '</b>'
-										    + '</a>';
-					if (item.codeHasAttachment) {
-						processedValues += '<a href="api/v1/resource/attributes/attributetypes/{' + item.type + '}/attributecodes/{' + item.code + '}/attachment"><i class="fa fa-paperclip"></i> </a>';
-					}
-					processedValues += ', ';					
-					
+				vitals.push({
+					componentId: entry.componentId,
+					label: item.typeDescription,
+					value: item.codeDescription,
+					highlightStyle: item.highlightStyle,
+					type: item.type,
+					code: item.code,
+					unit: item.unit,
+					privateFlag: item.privateFlag,
+					comment: item.comment,
+					updateDts: item.updateDts,
+					securityMarkingType: item.securityMarkingType,
+					codeHasAttachment: item.codeHasAttachment,
+					vitalType: 'ATTRIBUTE',
+					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription
 				});
-				processedValues = processedValues.substring(0, processedValues.length-2);
-				
-				
+			});
+			console.log(entry);
+		}
+
+		if (entry.metadata) {
+			Ext.Array.each(entry.metadata, function (item) {
 				vitals.push({
 					componentId: entry.componentId,
 					label: maintype.typeDescription,

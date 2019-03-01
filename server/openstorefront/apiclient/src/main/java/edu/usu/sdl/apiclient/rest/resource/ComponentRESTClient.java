@@ -872,7 +872,7 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response viewComponentVerison(String componentId, String versionHistoryId)
+	public Response viewComponentVersion(String componentId, String versionHistoryId)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
