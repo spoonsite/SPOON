@@ -795,7 +795,7 @@ Ext.define('OSF.component.template.Reviews', {
 			tpl: new Ext.XTemplate(
 					'<tpl for=".">',
 					'<div class="review-section">',
-					'	<tpl if="activeStatus == \'P\'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Review pending admin approval before being made public.</div></tpl>',
+					'	<tpl if="activeStatus == \'P\'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Review pending moderator approval before being made public.</div></tpl>',
 					'	<div class="details">',
 					'		<div class="title"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title}</div>',
 					'		<div class="rating"><tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',
@@ -1162,7 +1162,7 @@ Ext.define('OSF.component.template.Questions', {
 				var pendingNotice = "";
 				if (question.activeStatus === "P")
 				{
-					pendingNotice = '<div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div>';
+					pendingNotice = '<div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Question pending moderator approval before being made public.</div>';
 				}
 				var text = '<div class="question-question">' + pendingNotice + '<span class="question-response-letter-q">Q.</span> ' + questionSecurity + question.question + '</div>';
 				text += '<div class="question-info">' +
