@@ -390,7 +390,7 @@ View the Evaluation Status Widget | {{<icon name="fa-close" color="red">}} | {{<
 View the Questions Widget | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
 Allow Evaluator to Edit an Evaluation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
 
-**[GO TO TOP]({{<relref "toc">}})**
+**[GO TO TOP]({{<relref "#toc">}})**
 
 
 ## 4. Default Data Restrictions
