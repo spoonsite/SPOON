@@ -52,6 +52,7 @@ public class PropertiesManager
 	public static final String KEY_ENABLE_WEBSOCKETS = "websockets.enabled";
 
 	public static final String KEY_USE_REST_PROXY = "service.rest.proxy";
+	public static final String KEY_DB_USE_MONGO = "db.use.mongo";
 	public static final String KEY_DB_CONNECT_MIN = "db.connectionpool.min";
 	public static final String KEY_DB_CONNECT_MAX = "db.connectionpool.max";
 	public static final String KEY_DB_USER = "db.user";

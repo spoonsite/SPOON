@@ -59,7 +59,7 @@ import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
-import edu.usu.sdl.openstorefront.service.repo.SearchOrientRepoImpl;
+import edu.usu.sdl.openstorefront.service.repo.RepoFactory;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -116,6 +116,7 @@ public class ServiceProxy
 
 	private FilterEngine filterEngine;
 	private static ProxyFactory proxyFactory = null;
+	private RepoFactory repoFactory;
 
 	public ServiceProxy()
 	{
@@ -124,6 +125,7 @@ public class ServiceProxy
 		} else if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
+		repoFactory = new RepoFactory();
 	}
 
 	public ServiceProxy(String modificationType)
@@ -135,6 +137,7 @@ public class ServiceProxy
 		} else if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
+		repoFactory = new RepoFactory();
 	}
 
 	public ServiceProxy(PersistenceService persistenceService)
@@ -274,10 +277,8 @@ public class ServiceProxy
 	{
 		if (searchService == null) {
 
-			//Add Properity to allow switching DB implementation
 			SearchServiceImpl searchImpl = new SearchServiceImpl();
-			searchImpl.setSearchRepo(new SearchOrientRepoImpl());
-
+			searchImpl.setSearchRepo(repoFactory.getSearchRepo());
 			searchService = DynamicProxy.newInstance(searchImpl);
 
 		}
@@ -614,6 +615,11 @@ public class ServiceProxy
 	public void setPersistenceService(PersistenceService persistenceService)
 	{
 		this.persistenceService = persistenceService;
+	}
+
+	public void setRepoFactory(RepoFactory repoFactory)
+	{
+		this.repoFactory = repoFactory;
 	}
 
 }

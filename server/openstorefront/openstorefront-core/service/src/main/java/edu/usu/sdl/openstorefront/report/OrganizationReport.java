@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.report;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -110,33 +109,7 @@ public class OrganizationReport
 
 	private long getRecordCounts(Class recordClass, List<UserProfile> userProfiles, String trackCodeType)
 	{
-		long count = 0;
-
-		List<String> userIds = new ArrayList<>();
-		for (UserProfile userProfile : userProfiles) {
-			userIds.add(userProfile.getUsername());
-		}
-
-		if (userIds.isEmpty() == false) {
-			StringBuilder query = new StringBuilder();
-			query.append("select count(*) from ")
-					.append(recordClass.getSimpleName())
-					.append(" where ").append(" createUser IN :createUserListParam ");
-
-			if (StringUtils.isNotBlank(trackCodeType)) {
-				query.append(" AND trackEventTypeCode = :eventCodeParam ");
-			}
-
-			Map<String, Object> paramMap = new HashMap<>();
-			paramMap.put("createUserListParam", userIds);
-			paramMap.put("eventCodeParam", trackCodeType);
-
-			List<ODocument> documents = service.getPersistenceService().query(query.toString(), paramMap);
-			if (documents.isEmpty() == false) {
-				count = documents.get(0).field("count");
-			}
-		}
-
+		long count = repoFactory.getReportRepo().getRecordCounts(recordClass, userProfiles, trackCodeType);
 		return count;
 	}
 
