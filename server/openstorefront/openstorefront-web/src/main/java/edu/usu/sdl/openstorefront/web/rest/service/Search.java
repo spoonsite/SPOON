@@ -145,7 +145,17 @@ public class Search
 		ValidationResult validationResult = incomingSearchOptions.validate();
 		if(!validationResult.valid()){
 			return sendSingleEntityResponse(validationResult.toRestError());
+		}		
+		SearchOptions searchOptionForList = new SearchOptions();
+		
+		List<SearchOptions> listOfOptionsToDelete = searchOptionForList.findByExample();
+		
+		if(!listOfOptionsToDelete.isEmpty()){
+			for( SearchOptions searchOption : listOfOptionsToDelete){
+				searchOption.delete();
+			}
 		}
+		
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
