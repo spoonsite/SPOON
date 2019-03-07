@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.service.repo;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.core.api.repo.ReportRepo;
+import edu.usu.sdl.openstorefront.core.api.repo.StandardEntityRepo;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,16 +28,17 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author jstrong
  */
-public class ReportOrientRepoImpl
+public class StandardEntityOrientRepoImpl
 		extends BaseOrientRepo
-		implements ReportRepo
+		implements StandardEntityRepo
 {
+
 	@Override
-	public long getRecordCounts(Class recordClass, List<UserProfile> userProfiles, String trackCodeType)
+	public long getRecordCountsByUsers(Class recordClass, List<UserProfile> userProfiles, String trackCodeType)
 	{
 		long count = 0;
-		
-				List<String> userIds = new ArrayList<>();
+
+		List<String> userIds = new ArrayList<>();
 		for (UserProfile userProfile : userProfiles) {
 			userIds.add(userProfile.getUsername());
 		}
@@ -47,7 +48,6 @@ public class ReportOrientRepoImpl
 			query.append("select count(*) from ")
 					.append(recordClass.getSimpleName())
 					.append(" where ").append(" createUser IN :createUserListParam ");
-			
 
 			if (StringUtils.isNotBlank(trackCodeType)) {
 				query.append(" AND trackEventTypeCode = :eventCodeParam ");
@@ -62,8 +62,8 @@ public class ReportOrientRepoImpl
 				count = documents.get(0).field("count");
 			}
 		}
-		
+
 		return count;
 	}
-	
+
 }

@@ -15,21 +15,24 @@
  */
 package edu.usu.sdl.openstorefront.core.api.repo;
 
-import java.util.Map;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public interface SearchRepo
+public interface StandardEntityRepo
 {
 
 	/**
-	 * Finds average rating for All Entries
+	 * Finds record count for a set of users
 	 *
-	 * @param resultMap
-	 * @return
+	 * @param recordClass (Entity Class)
+	 * @param userProfiles
+	 * @param trackCodeType (only applicable when searching track records
+	 * @return count
 	 */
-	public Map<String, Integer> findAverageUserRatingForEntries();
+	public long getRecordCountsByUsers(Class recordClass, List<UserProfile> userProfiles, String trackCodeType);
 
 }

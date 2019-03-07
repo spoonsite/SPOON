@@ -20,12 +20,12 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.api.repo.SearchRepo;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
@@ -96,14 +96,11 @@ public class SearchServiceImpl
 	private static final String SPECIAL_ARCH_SEARCH_CODE = "0";
 	private static final int MAX_SEARCH_DESCRIPTION = 500;
 
-	private SearchRepo searchRepo;
-
 	@Override
 	public List<ComponentSearchView> getAll()
 	{
-		ServiceProxy service = new ServiceProxy();
 		List<ComponentSearchView> list = new ArrayList<>();
-		List<ComponentSearchView> components = service.getComponentService().getComponents();
+		List<ComponentSearchView> components = getComponentService().getComponents();
 		list.addAll(components);
 		return list;
 	}
@@ -126,6 +123,7 @@ public class SearchServiceImpl
 		return searchOptions;
 	}
 
+	@Override
 	public void saveSearchOptions(SearchOptions searchOptions)
 	{
 		searchOptions.save();
@@ -176,7 +174,7 @@ public class SearchServiceImpl
 			attributeCodeLikeExample.setAttributeCodePk(attributePkLikeExample);
 		}
 
-		QueryByExample queryByExample = new QueryByExample(attributeExample);
+		QueryByExample<AttributeCode> queryByExample = new QueryByExample<>(attributeExample);
 
 		//check for like skip
 		if (SPECIAL_ARCH_SEARCH_CODE.equals(pk.getAttributeCode()) == false) {
@@ -184,19 +182,28 @@ public class SearchServiceImpl
 		}
 
 		List<AttributeCode> attributeCodes = persistenceService.queryByExample(queryByExample);
-		List<String> ids = new ArrayList();
+		List<String> ids = new ArrayList<>();
 		attributeCodes.forEach(code -> {
 			ids.add(code.getAttributeCodePk().getAttributeCode());
 		});
 
 		if (ids.isEmpty() == false) {
 
-			String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
+			ComponentAttribute componentAttributeExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(pk.getAttributeType());
+			componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
-			Map<String, Object> params = new HashMap<>();
-			params.put("attributeType", pk.getAttributeType());
-			params.put("attributeCodeIdListParam", ids);
-			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery, params);
+			ComponentAttribute componentAttributeInExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributeInPk = new ComponentAttributePk();
+			componentAttributePk.setAttributeCode(QueryByExample.STRING_FLAG);
+			componentAttributeInExample.setComponentAttributePk(componentAttributeInPk);
+
+			QueryByExample<ComponentAttribute> queryChildCodes = new QueryByExample<>(componentAttributeExample);
+			queryChildCodes.setInExample(componentAttributeInExample);
+			queryChildCodes.getInExampleOption().getParameterValues().addAll(ids);
+
+			List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(queryChildCodes);
 			Set<String> uniqueComponents = new HashSet<>();
 			componentAttributes.forEach(componentAttribute -> {
 				uniqueComponents.add(componentAttribute.getComponentId());
@@ -375,7 +382,7 @@ public class SearchServiceImpl
 				searchResult.setTotalNumber(resultMap.size());
 
 				//get review average
-				Map<String, Integer> ratingsMap = searchRepo.findAverageUserRatingForEntries();
+				Map<String, Integer> ratingsMap = getRepoFactory().getComponentRepo().findAverageUserRatingForComponents();
 				for (String componentId : ratingsMap.keySet()) {
 					ComponentSearchView view = resultMap.get(componentId);
 					if (view != null) {
@@ -550,11 +557,6 @@ public class SearchServiceImpl
 	public void activateSearch(String searchId)
 	{
 		toggleStatusOnSearch(searchId, SystemSearch.ACTIVE_STATUS);
-	}
-
-	public void setSearchRepo(SearchRepo searchRepo)
-	{
-		this.searchRepo = searchRepo;
 	}
 
 }

@@ -276,11 +276,7 @@ public class ServiceProxy
 	public SearchService getSearchService()
 	{
 		if (searchService == null) {
-
-			SearchServiceImpl searchImpl = new SearchServiceImpl();
-			searchImpl.setSearchRepo(repoFactory.getSearchRepo());
-			searchService = DynamicProxy.newInstance(searchImpl);
-
+			searchService = DynamicProxy.newInstance(new SearchServiceImpl());
 		}
 		return searchService;
 	}
@@ -615,6 +611,11 @@ public class ServiceProxy
 	public void setPersistenceService(PersistenceService persistenceService)
 	{
 		this.persistenceService = persistenceService;
+	}
+
+	public RepoFactory getRepoFactory()
+	{
+		return repoFactory;
 	}
 
 	public void setRepoFactory(RepoFactory repoFactory)

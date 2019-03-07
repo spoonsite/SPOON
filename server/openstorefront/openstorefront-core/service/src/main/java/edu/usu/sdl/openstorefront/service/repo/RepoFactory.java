@@ -17,8 +17,10 @@ package edu.usu.sdl.openstorefront.service.repo;
 
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.core.api.repo.ReportRepo;
-import edu.usu.sdl.openstorefront.core.api.repo.SearchRepo;
+import edu.usu.sdl.openstorefront.core.api.repo.ComponentRepo;
+import edu.usu.sdl.openstorefront.core.api.repo.NotificationRepo;
+import edu.usu.sdl.openstorefront.core.api.repo.OrganizationRepo;
+import edu.usu.sdl.openstorefront.core.api.repo.StandardEntityRepo;
 
 /**
  *
@@ -44,26 +46,48 @@ public class RepoFactory
 		return Convert.toBoolean(propertiesManager.getValue(PropertiesManager.KEY_DB_USE_MONGO, "false"));
 	}
 
-	public ReportRepo getReportRepo()
+	public StandardEntityRepo getStandardEntityRepo()
 	{
-		ReportRepo reportRepo;
+		StandardEntityRepo standardEntityRepo;
 		if (useMongo()) {
-			reportRepo = null;
+			standardEntityRepo = null;
 		} else {
-			reportRepo = new ReportOrientRepoImpl();
+			standardEntityRepo = new StandardEntityOrientRepoImpl();
 		}
-		return reportRepo;
+		return standardEntityRepo;
 	}
 
-	public SearchRepo getSearchRepo()
+	public ComponentRepo getComponentRepo()
 	{
-		SearchRepo searchRepo;
+		ComponentRepo componentRepo;
 		if (useMongo()) {
-			searchRepo = null;
+			componentRepo = null;
 		} else {
-			searchRepo = new SearchOrientRepoImpl();
+			componentRepo = new ComponentOrientRepoImpl();
 		}
-		return searchRepo;
+		return componentRepo;
+	}
+
+	public NotificationRepo getNotificationRepo()
+	{
+		NotificationRepo notificationRepo;
+		if (useMongo()) {
+			notificationRepo = null;
+		} else {
+			notificationRepo = new NotificationOrientRepoImpl();
+		}
+		return notificationRepo;
+	}
+
+	public OrganizationRepo getOrganizationRepo()
+	{
+		OrganizationRepo organizationRepo;
+		if (useMongo()) {
+			organizationRepo = null;
+		} else {
+			organizationRepo = new OrganizationOrientRepoImpl();
+		}
+		return organizationRepo;
 	}
 
 }

@@ -109,7 +109,7 @@ public class OrganizationReport
 
 	private long getRecordCounts(Class recordClass, List<UserProfile> userProfiles, String trackCodeType)
 	{
-		long count = repoFactory.getReportRepo().getRecordCounts(recordClass, userProfiles, trackCodeType);
+		long count = repoFactory.getStandardEntityRepo().getRecordCountsByUsers(recordClass, userProfiles, trackCodeType);
 		return count;
 	}
 

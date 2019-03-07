@@ -15,34 +15,24 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.core.api.repo.SearchRepo;
-import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.api.repo.OrganizationRepo;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
  * @author dshurtleff
  */
-public class SearchOrientRepoImpl
+public class OrganizationOrientRepoImpl
 		extends BaseOrientRepo
-		implements SearchRepo
+		implements OrganizationRepo
 {
 
 	@Override
-	public Map<String, Integer> findAverageUserRatingForEntries()
+	public <T> List<T> findReferencesNoOrg(T entity)
 	{
-		Map<String, Integer> componentRatingsMap = new HashMap<>();
-
-		String query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " group by componentId ";
-		List<ODocument> resultsRatings = service.getPersistenceService().query(query, new HashMap<>());
-		resultsRatings.forEach(document -> {
-			componentRatingsMap.put(document.field("componentId"), document.field("rating"));
-		});
-
-		return componentRatingsMap;
+		String query = "select from " + entity.getClass().getSimpleName() + " where organization is null ";
+		return service.getPersistenceService().query(query, new HashMap<>());
 	}
 
 }

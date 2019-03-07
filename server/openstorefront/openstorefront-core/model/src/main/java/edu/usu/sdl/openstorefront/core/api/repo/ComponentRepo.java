@@ -15,11 +15,32 @@
  */
 package edu.usu.sdl.openstorefront.core.api.repo;
 
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  *
  * @author dshurtleff
  */
 public interface ComponentRepo
 {
+
+	/**
+	 * Finds average rating for All Entries
+	 *
+	 * @param resultMap
+	 * @return
+	 */
+	public Map<String, Integer> findAverageUserRatingForComponents();
+
+	/**
+	 * Groups components by Org (Only Active and Approved) Warning: Component
+	 * may not by completely populated
+	 *
+	 * @return
+	 */
+	public Map<String, List<Component>> getComponentByOrganization(Set<String> componentIds);
 
 }

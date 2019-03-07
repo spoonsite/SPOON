@@ -15,11 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.core.api.repo;
 
+import java.util.List;
+
 /**
  *
  * @author dshurtleff
  */
 public interface OrganizationRepo
 {
+
+	<T> List<T> findReferencesNoOrg(T entity);
 
 }

@@ -47,7 +47,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -243,6 +242,7 @@ public class OrganizationServiceImpl
 			LOG.log(Level.FINE, MessageFormat.format("Updating organizations on {0}", entityExample.getClass().getSimpleName()));
 			((OrganizationModel) entityExample).setOrganization(existingOrgName);
 
+			@SuppressWarnings("unchecked")
 			List<T> entities = entityExample.findByExampleProxy();
 			for (T entity : entities) {
 				((OrganizationModel) entity).setOrganization(organizationTarget.getName());
@@ -409,11 +409,8 @@ public class OrganizationServiceImpl
 			queryByExample.getFieldOptions().put(OrganizationModel.FIELD_ORGANIZATION, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 
 			entities = persistenceService.queryByExample(queryByExample);
-
 		} else {
-			//Search for records with no org
-			String query = "select from " + entity.getClass().getSimpleName() + " where organization is null ";
-			entities = persistenceService.query(query, new HashMap<>());
+			entities = getRepoFactory().getOrganizationRepo().findReferencesNoOrg(entity);
 		}
 		entities.forEach(entityFound -> {
 			OrgReference reference = tranformer.transform(entityFound);

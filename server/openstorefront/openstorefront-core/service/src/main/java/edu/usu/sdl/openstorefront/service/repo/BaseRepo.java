@@ -15,12 +15,40 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
+import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.filter.FilterEngine;
+import edu.usu.sdl.openstorefront.service.ServiceProxy;
+
 /**
  *
  * @author dshurtleff
  */
-public abstract class BaseOrientRepo
-		extends BaseRepo
+public abstract class BaseRepo
 {
+
+	protected FilterEngine filterEngine;
+	protected Service service;
+
+	public BaseRepo()
+	{
+		service = ServiceProxy.getProxy();
+		filterEngine = FilterEngine.getInstance();
+	}
+
+	public BaseRepo(Service service, FilterEngine filterEngine)
+	{
+		this.service = service;
+		this.filterEngine = filterEngine;
+	}
+
+	public FilterEngine getFilterEngine()
+	{
+		return filterEngine;
+	}
+
+	public void setFilterEngine(FilterEngine filterEngine)
+	{
+		this.filterEngine = filterEngine;
+	}
 
 }
