@@ -119,6 +119,8 @@ public class Search
 	public Response updateSearchModel()
 	{
 		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		SearchOptions searchOptions = searchOptionsExample.find();
 
 		if (searchOptions == null) {
@@ -145,30 +147,28 @@ public class Search
 		ValidationResult validationResult = incomingSearchOptions.validate();
 		if(!validationResult.valid()){
 			return sendSingleEntityResponse(validationResult.toRestError());
-		}		
-		SearchOptions searchOptionForList = new SearchOptions();
-		
-		List<SearchOptions> listOfOptionsToDelete = searchOptionForList.findByExample();
-		
-		if(!listOfOptionsToDelete.isEmpty()){
-			for( SearchOptions searchOption : listOfOptionsToDelete){
-				searchOption.delete();
-			}
 		}
-		
+		incomingSearchOptions.setGlobalFlag(Boolean.TRUE);
+		incomingSearchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		SearchOptions searchOptions = searchOptionsExample.find();
-		
+				
 		if (searchOptions == null) {
 			searchOptions = new SearchOptions();
+		} else {
+			incomingSearchOptions.setSearchOptionsId(searchOptions.getSearchOptionsId());
 		}
+
+		searchOptions.updateFields(incomingSearchOptions);
+
 		searchOptions.setCanUseDescriptionInSearch(incomingSearchOptions.getCanUseDescriptionInSearch());
 		searchOptions.setCanUseNameInSearch(incomingSearchOptions.getCanUseNameInSearch());
 		searchOptions.setCanUseOrganizationsInSearch(incomingSearchOptions.getCanUseOrganizationsInSearch());
-		
-		incomingSearchOptions.setGlobalFlag(Boolean.TRUE);
+		searchOptions.setGlobalFlag(Boolean.TRUE);
+
 		service.getSearchService().saveSearchOptions(searchOptions);
 		
 		return Response.ok(searchOptions).build();

@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
 {
 
     @GET
-	// @RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@APIDescription("Get the search options for indexing. (Admin)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
@@ -49,6 +49,8 @@ import javax.ws.rs.core.Response;
 	public Response updateSearchModel()
 	{
 		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		SearchOptions searchOptions = searchOptionsExample.find();
 
 		if (searchOptions == null) {
@@ -60,7 +62,7 @@ import javax.ws.rs.core.Response;
 		}
 
 		return Response.ok(searchOptions).build();
-    }
+	}
     
     @PUT
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
@@ -71,37 +73,29 @@ import javax.ws.rs.core.Response;
 	@Path("/global")
 	public Response updateSearchModel(
 			SearchOptions incomingSearchOptions)
-	{
-		ValidationResult validationResult = incomingSearchOptions.validate();
-		if(!validationResult.valid()){
-			return sendSingleEntityResponse(validationResult.toRestError());
-		}		
-		SearchOptions searchOptionForList = new SearchOptions();
-		
-		List<SearchOptions> listOfOptionsToDelete = searchOptionForList.findByExample();
-		
-		if(!listOfOptionsToDelete.isEmpty()){
-			for( SearchOptions searchOption : listOfOptionsToDelete){
-				searchOption.delete();
-			}
-		}
-		
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		SearchOptions searchOptions = searchOptionsExample.find();
-		
-		if (searchOptions == null) {
-			searchOptions = new SearchOptions();
-		}
-		searchOptions.setCanUseDescriptionInSearch(incomingSearchOptions.getCanUseDescriptionInSearch());
-		searchOptions.setCanUseNameInSearch(incomingSearchOptions.getCanUseNameInSearch());
-		searchOptions.setCanUseOrganizationsInSearch(incomingSearchOptions.getCanUseOrganizationsInSearch());
-		
-		incomingSearchOptions.setGlobalFlag(Boolean.TRUE);
-		service.getSearchService().saveSearchOptions(searchOptions);
-		
-		return Response.ok(searchOptions).build();
-	}
+    {
+        ValidationResult validationResult = incomingSearchOptions.validate();
+        if(!validationResult.valid()){
+            return sendSingleEntityResponse(validationResult.toRestError());
+        }
+
+        SearchOptions searchOptionsExample = new SearchOptions();
+        searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+        searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+        SearchOptions searchOptions = searchOptionsExample.find();
+                
+        if (searchOptions == null) {
+            searchOptions = new SearchOptions();
+        }
+
+        searchOptions.setCanUseDescriptionInSearch(incomingSearchOptions.getCanUseDescriptionInSearch());
+        searchOptions.setCanUseNameInSearch(incomingSearchOptions.getCanUseNameInSearch());
+        searchOptions.setCanUseOrganizationsInSearch(incomingSearchOptions.getCanUseOrganizationsInSearch());
+        searchOptions.setGlobalFlag(Boolean.TRUE);
+        
+        service.getSearchService().saveSearchOptions(searchOptions);
+        
+        return Response.ok(searchOptions).build();
+    }
 
 }
