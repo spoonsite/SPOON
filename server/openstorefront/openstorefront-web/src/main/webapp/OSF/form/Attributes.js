@@ -291,7 +291,7 @@ Ext.define('OSF.form.Attributes', {
 									},
 									store: {
 										autoLoad: false,
-										// the proxy is being written over in loadData function 
+										// the store is being loaded in the in loadData callback
 										proxy: {
 											type: 'ajax'
 										}
