@@ -256,6 +256,7 @@ public class AttributeResource
 					relationship.setTargetKey(attributeType.getAttributeType());
 					relationship.setTargetName(attributeType.getDescription());
 					relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+					relationship.setUnit(attributeType.getAttributeUnit());
 
 					relationships.add(relationship);
 				}
