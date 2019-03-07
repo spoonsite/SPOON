@@ -798,8 +798,9 @@
 						});
 						filterByTagCombo.checkVisibility();
 
-						// TODO: set directly from REST response
-						// Set Attributes from the search results
+						// result attribute stats is a JSON encoded string
+						// MOXY couldn't serialize the model to key:value pairs
+						// Jaxson could parse the model to JSON
 						attributeStats = {};
 						attributeStats = JSON.parse(meta.resultAttributeStats);
 
