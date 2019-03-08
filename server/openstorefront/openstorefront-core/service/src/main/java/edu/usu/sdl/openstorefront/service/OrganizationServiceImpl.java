@@ -183,13 +183,6 @@ public class OrganizationServiceImpl
 			for (StandardEntity entity : orgModels) {
 				addOrganization(((OrganizationModel) entity).getOrganization());
 			}
-
-//			List<ODocument> documents = persistenceService.query("Select DISTINCT(organization) as organization from " + organizationClass.getSimpleName(), new HashMap<>());
-//			LOG.log(Level.FINE, MessageFormat.format("Found: {0}", documents.size()));
-//			documents.forEach(document -> {
-//				String org = document.field("organization");
-//				addOrganization(org);
-//			});
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to create an Organization Model (sub)-class", "Check class passed: " + organizationClass.getName(), ex);
 		}

@@ -15,15 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service.search;
 
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -33,8 +33,9 @@ import org.apache.commons.lang.StringUtils;
 public class AttributeSetSearchHandler
 		extends BaseSearchHandler
 {
+
 	private static final String ATTRIBUTE_CODE_SEPARATOR = ",";
-	
+
 	public AttributeSetSearchHandler(List<SearchElement> searchElements)
 	{
 		super(searchElements);
@@ -51,7 +52,7 @@ public class AttributeSetSearchHandler
 			}
 			if (StringUtils.isBlank(searchElement.getKeyValue())) {
 				validationResult.getRuleResults().add(getRuleResult("keyValue", "Required"));
-			}			
+			}
 		}
 
 		return validationResult;
@@ -63,25 +64,30 @@ public class AttributeSetSearchHandler
 		List<String> foundIds = new ArrayList<>();
 		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
 		for (SearchElement searchElement : searchElements) {
-	
+
 			List<ComponentAttribute> attributes = new ArrayList<>();
 			if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
 				String attributeCodes[] = searchElement.getKeyValue().split(ATTRIBUTE_CODE_SEPARATOR);
-				
-				String query = "select from " + 
-						ComponentAttribute.class.getSimpleName() +
-						" where activeStatus = :activeStatusParam AND "
-						+ "componentAttributePk.attributeType = :attributeTypeParam AND "
-						+ "componentAttributePk.attributeCode IN :attributeCodesParam " ; 
-				
-				Map<String, Object> paramMap = new HashMap<>();
-				paramMap.put("activeStatusParam", ComponentAttribute.ACTIVE_STATUS);
-				paramMap.put("attributeTypeParam", searchElement.getKeyField());
-				paramMap.put("attributeCodesParam", Arrays.asList(attributeCodes));								
-				
-				attributes = serviceProxy.getPersistenceService().query(query, paramMap);
+
+				ComponentAttribute componentAttributeExample = new ComponentAttribute();
+				componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+				componentAttributePk.setAttributeType(searchElement.getKeyField());
+				componentAttributeExample.setComponentAttributePk(componentAttributePk);
+
+				ComponentAttribute componentAttributeInExample = new ComponentAttribute();
+				ComponentAttributePk componentAttributeInPk = new ComponentAttributePk();
+				componentAttributePk.setAttributeCode(QueryByExample.STRING_FLAG);
+				componentAttributeInExample.setComponentAttributePk(componentAttributeInPk);
+
+				QueryByExample<ComponentAttribute> queryByExampleCodes = new QueryByExample<>(componentAttributeExample);
+				queryByExampleCodes.setInExample(componentAttributeInExample);
+				queryByExampleCodes.getInExampleOption().getParameterValues().addAll(Arrays.asList(attributeCodes));
+
+				attributes = serviceProxy.getPersistenceService().queryByExample(queryByExampleCodes);
+
 			}
-			
+
 			List<String> results = new ArrayList<>();
 			for (ComponentAttribute attribute : attributes) {
 				results.add(attribute.getComponentId());

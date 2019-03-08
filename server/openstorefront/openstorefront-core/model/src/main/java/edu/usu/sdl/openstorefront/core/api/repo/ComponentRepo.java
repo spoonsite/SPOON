@@ -16,6 +16,8 @@
 package edu.usu.sdl.openstorefront.core.api.repo;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,8 +32,7 @@ public interface ComponentRepo
 	/**
 	 * Finds average rating for All Entries
 	 *
-	 * @param resultMap
-	 * @return
+	 * @return ComponentId, rating
 	 */
 	public Map<String, Integer> findAverageUserRatingForComponents();
 
@@ -39,8 +40,23 @@ public interface ComponentRepo
 	 * Groups components by Org (Only Active and Approved) Warning: Component
 	 * may not by completely populated
 	 *
+	 * @param componentIds
 	 * @return
 	 */
 	public Map<String, List<Component>> getComponentByOrganization(Set<String> componentIds);
+
+	/**
+	 * This pull components (may be partially populated)
+	 *
+	 * @return map grouped by ComponentId, View
+	 */
+	public Map<String, ComponentSearchView> getIntermidateSearchResults(Set<String> componentIds);
+
+	/**
+	 * Groups all active reviews but rating
+	 *
+	 * @return Rating, List of ComponentIds
+	 */
+	public Map<Integer, List<String>> getAverageRatingForComponents(int maxRating, SearchOperation.NumberOperation numberOperation);
 
 }

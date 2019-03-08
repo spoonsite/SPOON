@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.AsyncTask;
@@ -350,10 +351,18 @@ public class SystemServiceImpl
 
 		if (count > max) {
 
-			//query ticket
 			long limit = count - max;
-			String query = "SELECT FROM ErrorTicket ORDER BY updateDts ASC LIMIT " + limit;
-			List<ErrorTicket> errorTickets = persistenceService.query(query, null);
+
+			ErrorTicket errorTicketExample = new ErrorTicket();
+			QueryByExample<ErrorTicket> queryByExample = new QueryByExample<>(errorTicketExample);
+			queryByExample.setMaxResults((int) limit);
+
+			ErrorTicket errorTicketOrderByExample = new ErrorTicket();
+			errorTicketOrderByExample.setUpdateDts(QueryByExample.DATE_FLAG);
+			queryByExample.setOrderBy(errorTicketOrderByExample);
+			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_ASCENDING);
+
+			List<ErrorTicket> errorTickets = persistenceService.queryByExample(queryByExample);
 			performDelete(errorTickets);
 		}
 	}
@@ -651,8 +660,17 @@ public class SystemServiceImpl
 			if (limit < 0) {
 				limit = 1;
 			}
-			String query = "SELECT FROM DBLogRecord ORDER BY eventDts ASC LIMIT " + limit;
-			List<DBLogRecord> logRecords = persistenceService.query(query, null);
+
+			DBLogRecord dBLogRecordExample = new DBLogRecord();
+			QueryByExample<DBLogRecord> queryByExample = new QueryByExample<>(dBLogRecordExample);
+			queryByExample.setMaxResults((int) limit);
+
+			DBLogRecord dbLogOrderBy = new DBLogRecord();
+			dbLogOrderBy.setEventDts(QueryByExample.DATE_FLAG);
+			queryByExample.setOrderBy(dbLogOrderBy);
+			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_ASCENDING);
+
+			List<DBLogRecord> logRecords = persistenceService.queryByExample(queryByExample);
 			logRecords.stream().forEach((record)
 					-> {
 				persistenceService.delete(record);

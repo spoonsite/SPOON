@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.api.repo.ComponentRepo;
 import edu.usu.sdl.openstorefront.core.api.repo.NotificationRepo;
 import edu.usu.sdl.openstorefront.core.api.repo.OrganizationRepo;
 import edu.usu.sdl.openstorefront.core.api.repo.StandardEntityRepo;
+import edu.usu.sdl.openstorefront.core.api.repo.UserRepo;
 
 /**
  *
@@ -88,6 +89,17 @@ public class RepoFactory
 			organizationRepo = new OrganizationOrientRepoImpl();
 		}
 		return organizationRepo;
+	}
+
+	public UserRepo getUserRepo()
+	{
+		UserRepo userRepo;
+		if (useMongo()) {
+			userRepo = null;
+		} else {
+			userRepo = new UserOrientRepoImpl();
+		}
+		return userRepo;
 	}
 
 }

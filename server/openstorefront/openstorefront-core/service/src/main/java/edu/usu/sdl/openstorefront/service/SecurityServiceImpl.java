@@ -791,21 +791,8 @@ public class SecurityServiceImpl
 					.map(u -> u.getUsername())
 					.collect(Collectors.toSet());
 
-			String query = "select from " + UserProfile.class.getSimpleName()
-					+ " where username in :usernameList ";
-
-			Map<String, Object> parameterMap = new HashMap<>();
-			parameterMap.put("usernameList", usernames);
-
-			if (StringUtils.isNotBlank(queryParams.getSearchField())
-					&& StringUtils.isNotBlank(queryParams.getSearchValue())
-					&& !UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField())) {
-				query += " and " + queryParams.getSearchField() + ".toLowerCase() like :searchValue";
-				parameterMap.put("searchValue", queryParams.getSearchValue().toLowerCase() + "%");
-			}
-
-			List<UserProfile> userProfiles = persistenceService.query(query, parameterMap);
-			Map<String, List<UserProfile>> profileMap = userProfiles.stream().collect(Collectors.groupingBy(UserProfile::getUsername));
+			List<UserProfile> userProfiles = getRepoFactory().getUserRepo().getUserProfilesBaseOnSearch(usernames, queryParams);
+			Map< String, List<UserProfile>> profileMap = userProfiles.stream().collect(Collectors.groupingBy(UserProfile::getUsername));
 			for (UserSecurity userSecurity : users) {
 				List<UserProfile> profiles = profileMap.getOrDefault(userSecurity.getUsername(), new ArrayList<>());
 				if (!profiles.isEmpty()) {

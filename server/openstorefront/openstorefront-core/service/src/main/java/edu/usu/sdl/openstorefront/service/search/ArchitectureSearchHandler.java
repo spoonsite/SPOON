@@ -19,13 +19,12 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -96,12 +95,22 @@ public class ArchitectureSearchHandler
 			List<ComponentAttribute> attributes = new ArrayList<>();
 			if (ids.isEmpty() == false) {
 
-				String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where activeStatus = :activeStatus and componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
-				Map<String, Object> params = new HashMap<>();
-				params.put("activeStatus", ComponentAttribute.ACTIVE_STATUS);
-				params.put("attributeType", searchElement.getKeyField());
-				params.put("attributeCodeIdListParam", ids);
-				attributes = serviceProxy.getPersistenceService().query(componentAttributeQuery, params);
+				ComponentAttribute componentAttributeExample = new ComponentAttribute();
+				componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+				componentAttributePk.setAttributeType(searchElement.getKeyField());
+				componentAttributeExample.setComponentAttributePk(componentAttributePk);
+
+				ComponentAttribute componentAttributeInExample = new ComponentAttribute();
+				ComponentAttributePk componentAttributeInPk = new ComponentAttributePk();
+				componentAttributePk.setAttributeCode(QueryByExample.STRING_FLAG);
+				componentAttributeInExample.setComponentAttributePk(componentAttributeInPk);
+
+				QueryByExample<ComponentAttribute> queryByExampleCodes = new QueryByExample<>(componentAttributeExample);
+				queryByExampleCodes.setInExample(componentAttributeInExample);
+				queryByExampleCodes.getInExampleOption().getParameterValues().addAll(ids);
+
+				attributes = serviceProxy.getPersistenceService().queryByExample(queryByExampleCodes);
 			}
 
 			List<String> results = new ArrayList<>();

@@ -20,6 +20,8 @@ import edu.usu.sdl.openstorefront.core.api.repo.ComponentRepo;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
+import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,6 +101,64 @@ public class ComponentOrientRepoImpl
 		});
 
 		return componentRatingsMap;
+	}
+
+	@Override
+	public Map<String, ComponentSearchView> getIntermidateSearchResults(Set<String> componentIds)
+	{
+		String dataFilterRestriction = getFilterEngine().queryComponentRestriction();
+		if (StringUtils.isNotBlank(dataFilterRestriction)) {
+			dataFilterRestriction += " and ";
+		}
+
+		String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from "
+				+ Component.class.getSimpleName()
+				+ " where "
+				+ dataFilterRestriction
+				+ " componentId in :idList";
+
+		Map<String, Object> parameterMap = new HashMap<>();
+		parameterMap.put("idList", componentIds);
+		List<ODocument> results = service.getPersistenceService().query(query, parameterMap);
+
+		Map<String, ComponentSearchView> resultMap = new HashMap<>();
+		for (ODocument doc : results) {
+			if (Component.ACTIVE_STATUS.equals(doc.field("activeStatus"))
+					&& ApprovalStatus.APPROVED.equals(doc.field("approvalState"))) {
+				ComponentSearchView view = new ComponentSearchView();
+				view.setComponentId(doc.field("componentId"));
+				view.setName(doc.field("name"));
+				view.setComponentType(doc.field("componentType"));
+				view.setLastActivityDts(doc.field("lastUpdateDts"));
+				resultMap.put(view.getComponentId(), view);
+			}
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<Integer, List<String>> getAverageRatingForComponents(int maxRating, SearchOperation.NumberOperation numberOperation)
+	{
+		Map<Integer, List<String>> ratingMap = new HashMap<>();
+
+		String query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " where activeStatus='" + ComponentReview.ACTIVE_STATUS + "' group by componentId ";
+
+		List<ODocument> queryResults = service.getPersistenceService().query(query, new HashMap<>());
+
+		for (ODocument oDocument : queryResults) {
+			Integer value = oDocument.field("rating");
+			String componentId = oDocument.field("componentId");
+			if (numberOperation.pass(value, maxRating)) {
+				if (ratingMap.containsKey(value)) {
+					ratingMap.get(value).add(componentId);
+				} else {
+					List<String> componentIds = new ArrayList<>();
+					componentIds.add(componentId);
+					ratingMap.put(value, componentIds);
+				}
+			}
+		}
+		return ratingMap;
 	}
 
 }

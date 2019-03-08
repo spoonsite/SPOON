@@ -24,6 +24,13 @@ import java.util.List;
 public interface OrganizationRepo
 {
 
+	/**
+	 * Find References that have no organization
+	 *
+	 * @param <T>
+	 * @param entity
+	 * @return
+	 */
 	<T> List<T> findReferencesNoOrg(T entity);
 
 }

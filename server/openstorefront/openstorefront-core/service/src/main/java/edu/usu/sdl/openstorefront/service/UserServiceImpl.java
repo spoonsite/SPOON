@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
@@ -32,7 +31,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.DashboardWidget;
@@ -632,12 +630,7 @@ public class UserServiceImpl
 				}
 			}
 
-			StringBuilder query = new StringBuilder();
-			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList OR email IN :userList2");
-			Map<String, Object> params = new HashMap<>();
-			params.put("userList", emailList);
-			params.put("userList2", emailList);
-			usersToSend = persistenceService.query(query.toString(), params);
+			usersToSend = getRepoFactory().getUserRepo().findUsersFromEmails(emailList);
 			for (String email : emailList) {
 				Boolean found = false;
 				for (UserProfile user : usersToSend) {
@@ -846,12 +839,19 @@ public class UserServiceImpl
 		RecentChangeMessage recentChangeMessage = new RecentChangeMessage();
 		recentChangeMessage.setLastRunDts(lastRunDts);
 
-		String componentQuery = "select from " + Component.class.getSimpleName() + " where lastActivityDts > :lastActivityParam and activeStatus = :activeStatusParam";
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		QueryByExample<Component> componentQuery = new QueryByExample<>(componentExample);
 
-		Map<String, Object> queryParams = new HashMap<>();
-		queryParams.put("lastActivityParam", lastRunDts);
-		queryParams.put("activeStatusParam", Component.ACTIVE_STATUS);
-		List<Component> components = persistenceService.query(componentQuery, queryParams);
+		Component componentLastActivityExample = new Component();
+		componentLastActivityExample.setLastActivityDts(lastRunDts);
+
+		SpecialOperatorModel<Component> specialOperatorModel = new SpecialOperatorModel<>();
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		specialOperatorModel.setExample(componentLastActivityExample);
+		componentQuery.getExtraWhereCauses().add(specialOperatorModel);
+
+		List<Component> components = persistenceService.queryByExample(componentExample);
 		for (Component component : components) {
 			if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
 				if (component.getApprovedDts() != null
@@ -863,11 +863,19 @@ public class UserServiceImpl
 			}
 		}
 
-		String highlightQuery = "select from " + Highlight.class.getSimpleName() + " where updateDts > :updateDtsParam and activeStatus = :activeStatusParam";
-		queryParams = new HashMap<>();
-		queryParams.put("updateDtsParam", lastRunDts);
-		queryParams.put("activeStatusParam", AttributeCode.ACTIVE_STATUS);
-		List<Highlight> highLights = persistenceService.query(highlightQuery, queryParams);
+		Highlight highlightExample = new Highlight();
+		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
+		QueryByExample<Highlight> highlightQuery = new QueryByExample<>(highlightExample);
+
+		Highlight highlightUpdateExample = new Highlight();
+		highlightUpdateExample.setUpdateDts(lastRunDts);
+
+		SpecialOperatorModel<Highlight> specialOperatorModelHighlight = new SpecialOperatorModel<>();
+		specialOperatorModelHighlight.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		specialOperatorModelHighlight.setExample(highlightUpdateExample);
+		highlightQuery.getExtraWhereCauses().add(specialOperatorModelHighlight);
+
+		List<Highlight> highLights = persistenceService.queryByExample(highlightQuery);
 		for (Highlight highLight : highLights) {
 			if (highLight.getCreateDts().after(lastRunDts)) {
 				recentChangeMessage.getHighlightsAdded().add(highLight);
@@ -916,31 +924,7 @@ public class UserServiceImpl
 	@Override
 	public Map<String, Date> getLastLogin(List<UserProfile> userProfiles)
 	{
-		Map<String, Date> userLoginMap = new HashMap<>();
-
-		if (userProfiles.isEmpty() == false) {
-			StringBuilder query = new StringBuilder();
-			query.append("select MAX(eventDts), createUser from ").append(UserTracking.class.getSimpleName());
-			query.append(" where activeStatus = :userTrackingActiveStatusParam  and  trackEventTypeCode = :trackEventCodeParam and createUser IN :userListParam");
-
-			List<String> usernames = new ArrayList<>();
-			userProfiles.stream().forEach((userProfile) -> {
-				usernames.add(userProfile.getUsername());
-			});
-			query.append(" group by createUser");
-
-			if (usernames.isEmpty() == false) {
-				Map<String, Object> paramMap = new HashMap<>();
-				paramMap.put("userTrackingActiveStatusParam", UserTracking.ACTIVE_STATUS);
-				paramMap.put("trackEventCodeParam", TrackEventCode.LOGIN);
-				paramMap.put("userListParam", usernames);
-				List<ODocument> documents = persistenceService.query(query.toString(), paramMap);
-				documents.stream().forEach((document) -> {
-					userLoginMap.put(document.field("createUser"), document.field("MAX"));
-				});
-			}
-		}
-
+		Map<String, Date> userLoginMap = getRepoFactory().getUserRepo().getLastLoginFromTracking(userProfiles);
 		return userLoginMap;
 	}
 

@@ -15,12 +15,10 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -352,33 +350,7 @@ public class SearchServiceImpl
 
 			//get intermediate Results
 			if (!masterResults.isEmpty()) {
-				String dataFilterRestriction = getFilterEngine().queryComponentRestriction();
-				if (StringUtils.isNotBlank(dataFilterRestriction)) {
-					dataFilterRestriction += " and ";
-				}
-
-				String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from "
-						+ Component.class.getSimpleName()
-						+ " where "
-						+ dataFilterRestriction
-						+ " componentId in :idList";
-
-				Map<String, Object> parameterMap = new HashMap<>();
-				parameterMap.put("idList", masterResults);
-				List<ODocument> results = persistenceService.query(query, parameterMap);
-
-				Map<String, ComponentSearchView> resultMap = new HashMap<>();
-				for (ODocument doc : results) {
-					if (Component.ACTIVE_STATUS.equals(doc.field("activeStatus"))
-							&& ApprovalStatus.APPROVED.equals(doc.field("approvalState"))) {
-						ComponentSearchView view = new ComponentSearchView();
-						view.setComponentId(doc.field("componentId"));
-						view.setName(doc.field("name"));
-						view.setComponentType(doc.field("componentType"));
-						view.setLastActivityDts(doc.field("lastUpdateDts"));
-						resultMap.put(view.getComponentId(), view);
-					}
-				}
+				Map<String, ComponentSearchView> resultMap = getRepoFactory().getComponentRepo().getIntermidateSearchResults(masterResults);
 				searchResult.setTotalNumber(resultMap.size());
 
 				//get review average
