@@ -68,12 +68,11 @@ import javax.ws.rs.core.Response;
             return sendSingleEntityResponse(validationResult.toRestError());
         }
 
-        SearchOptions searchOptions = service.getSearchService().getSearchOptions();
-        searchOptions.updateFields(incomingSearchOptions);
-
-        service.getSearchService().saveSearchOptions(searchOptions);
+        // SearchOptions searchOptions = service.getSearchService().getSearchOptions();
+        // searchOptions.updateFields(incomingSearchOptions);
+        // service.getSearchService().saveGlobalSearchOptions(incomingSearchOptions);
         
-        return Response.ok(searchOptions).build();
+        return Response.ok(service.getSearchService().saveGlobalSearchOptions(incomingSearchOptions)).build();
     }
 
 }

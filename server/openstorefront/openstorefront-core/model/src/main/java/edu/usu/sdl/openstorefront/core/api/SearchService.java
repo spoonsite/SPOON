@@ -57,7 +57,7 @@ public interface SearchService
 	 * by the administrator.
 	 * @param searchOptions 
 	 */
-	public void saveSearchOptions(SearchOptions searchOptions);
+	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions)
 
 	/**
 	 * Performs a search

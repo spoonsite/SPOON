@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 
 /**
  *
@@ -32,12 +33,15 @@ public class SearchOptions
 	private String searchOptionsId;
 
 	@APIDescription("Flag for using Component organizations in searches")
+	@ConsumeField
 	private Boolean canUseOrganizationsInSearch;
 
 	@APIDescription("Flag for using Component name in searches")
+	@ConsumeField
 	private Boolean canUseNameInSearch;
 
 	@APIDescription("Flag for using Component Description in searches")
+	@ConsumeField
 	private Boolean canUseDescriptionInSearch;
 	
 	public SearchOptions()
@@ -51,16 +55,12 @@ public class SearchOptions
 		super.updateFields(entity);
 		SearchOptions searchOptionsModel = (SearchOptions) entity;
 
-		if(searchOptionsModel.getGlobalFlag()!=null){
-			setGlobalFlag(searchOptionsModel.getGlobalFlag());
-		}
-		if(searchOptionsModel.getSearchOptionsId()!=null){
-			setSearchOptionsId(searchOptionsModel.getSearchOptionsId());
-		}
 		setCanUseOrganizationsInSearch(searchOptionsModel.getCanUseOrganizationsInSearch());
 		setCanUseNameInSearch(searchOptionsModel.getCanUseNameInSearch());
 		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());
 	}
+
+	//TODO: create populateCreateFields() method
 
 	public Boolean getGlobalFlag()
 	{
