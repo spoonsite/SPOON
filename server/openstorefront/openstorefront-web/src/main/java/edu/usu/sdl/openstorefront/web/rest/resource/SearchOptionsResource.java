@@ -48,18 +48,7 @@ import javax.ws.rs.core.Response;
 	@Path("/global")
 	public Response updateSearchModel()
 	{
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		SearchOptions searchOptions = searchOptionsExample.find();
-
-		if (searchOptions == null) {
-			// Return the default.
-			searchOptions = new SearchOptions();
-			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
-			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
-			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
-		}
+		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
 
 		return Response.ok(searchOptions).build();
 	}
