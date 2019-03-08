@@ -51,8 +51,12 @@ public class SearchOptions
 		super.updateFields(entity);
 		SearchOptions searchOptionsModel = (SearchOptions) entity;
 
-		setGlobalFlag(searchOptionsModel.getGlobalFlag());
-		setSearchOptionsId(searchOptionsModel.getSearchOptionsId());
+		if(searchOptionsModel.getGlobalFlag()!=null){
+			setGlobalFlag(searchOptionsModel.getGlobalFlag());
+		}
+		if(searchOptionsModel.getSearchOptionsId()!=null){
+			setSearchOptionsId(searchOptionsModel.getSearchOptionsId());
+		}
 		setCanUseOrganizationsInSearch(searchOptionsModel.getCanUseOrganizationsInSearch());
 		setCanUseNameInSearch(searchOptionsModel.getCanUseNameInSearch());
 		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());

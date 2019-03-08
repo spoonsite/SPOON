@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import edu.usu.sdl.openstorefront.service.SearchServiceImpl;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -118,18 +119,7 @@ public class Search
 	@Path("/options")
 	public Response updateSearchModel()
 	{
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		SearchOptions searchOptions = searchOptionsExample.find();
-
-		if (searchOptions == null) {
-			// Return the default.
-			searchOptions = new SearchOptions();
-			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
-			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
-			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
-		}
+		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
 
 		return Response.ok(searchOptions).build();
 	}
@@ -148,26 +138,9 @@ public class Search
 		if(!validationResult.valid()){
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
-		incomingSearchOptions.setGlobalFlag(Boolean.TRUE);
-		incomingSearchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		SearchOptions searchOptions = searchOptionsExample.find();
-				
-		if (searchOptions == null) {
-			searchOptions = new SearchOptions();
-		} else {
-			incomingSearchOptions.setSearchOptionsId(searchOptions.getSearchOptionsId());
-		}
-
+		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
 		searchOptions.updateFields(incomingSearchOptions);
-
-		searchOptions.setCanUseDescriptionInSearch(incomingSearchOptions.getCanUseDescriptionInSearch());
-		searchOptions.setCanUseNameInSearch(incomingSearchOptions.getCanUseNameInSearch());
-		searchOptions.setCanUseOrganizationsInSearch(incomingSearchOptions.getCanUseOrganizationsInSearch());
-		searchOptions.setGlobalFlag(Boolean.TRUE);
 
 		service.getSearchService().saveSearchOptions(searchOptions);
 		

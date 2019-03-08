@@ -68,20 +68,9 @@ import javax.ws.rs.core.Response;
             return sendSingleEntityResponse(validationResult.toRestError());
         }
 
-        SearchOptions searchOptionsExample = new SearchOptions();
-        searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-        searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-        SearchOptions searchOptions = searchOptionsExample.find();
-                
-        if (searchOptions == null) {
-            searchOptions = new SearchOptions();
-        }
+        SearchOptions searchOptions = service.getSearchService().getSearchOptions();
+        searchOptions.updateFields(incomingSearchOptions);
 
-        searchOptions.setCanUseDescriptionInSearch(incomingSearchOptions.getCanUseDescriptionInSearch());
-        searchOptions.setCanUseNameInSearch(incomingSearchOptions.getCanUseNameInSearch());
-        searchOptions.setCanUseOrganizationsInSearch(incomingSearchOptions.getCanUseOrganizationsInSearch());
-        searchOptions.setGlobalFlag(Boolean.TRUE);
-        
         service.getSearchService().saveSearchOptions(searchOptions);
         
         return Response.ok(searchOptions).build();
