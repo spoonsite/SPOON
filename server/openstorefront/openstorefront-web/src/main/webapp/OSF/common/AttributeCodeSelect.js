@@ -27,7 +27,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	alias: 'widget.AttributeCodeSelect',
 		
 	/**
-	 * Applies to underly field
+	 * Applies to underlying field
 	 */	
 	fieldConfig: {},
 	
@@ -85,7 +85,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					
 					Ext.Array.each(values, function(value) {
 						if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
-							//check percision; this will enforce max allowed
+							//check precision; this will enforce max allowed
 							if (Ext.String.endsWith(value, ".")) {
 								valid = 'Number must not have a decimal point or have at least one digit after the decimal point.';
 							}
@@ -124,7 +124,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				margin: '0 0 5 0',
 				allowBlank: !attributePanel.required,					
 				labelWidth: 300,
-				labelSepartor: '',
+				labelSeparator: '',
 				valueField: 'code',
 				displayField: 'label',
 				listeners: attributePanel.fieldListeners,
@@ -155,7 +155,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	/**
 	 * Get the value of the files
 	 * @param {boolean} convertNumbers 
-	 * @returns Array of codes; reguardless of unlying type
+	 * @returns Array of codes; regardless of underlying type
 	 */
 	getValue: function(convertNumbers) {
 		var attributePanel = this;
@@ -198,7 +198,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 		
 		Ext.Array.each(values, function(value){
 			if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
-			    //check percision; this will enforce max allowed
+			    //check precision; this will enforce max allowed
 				if (Ext.String.endsWith(value, ".")) {
 					valid = false;
 					form.getForm().markInvalid({
