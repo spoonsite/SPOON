@@ -7,7 +7,7 @@ markup="mmark"
 
 Custom Submission Forms are used when you want to present a custom look and feel to the user when they submit an entry.  You can add a form with many required or optional fields depending on the Entry Type of the submission.  This form is then shown to the user when they are presented with the fields for a new entry of that type.
 
-## 1. Create a Custom Form to be used
+## 1. Create a Custom Form to be used ---
 
 ### 1.1 Create Needed Attributes
 
