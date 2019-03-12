@@ -71,8 +71,6 @@ import edu.usu.sdl.openstorefront.core.view.TagView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.io.export.DescribeExport;
-import edu.usu.sdl.openstorefront.service.io.export.Exporter;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -484,34 +482,6 @@ public abstract class GeneralComponentResourceExt
 			throw new OpenStorefrontRuntimeException("Unable to export components.", io);
 		}
 		return archiveName;
-	}
-
-	@POST
-	@APIDescription("Exports a set of components. In describe record format.")
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EXPORT)
-	@Produces({MediaType.WILDCARD})
-	@DataType(ComponentAll.class)
-	@Path("/export/describe")
-	public Response getComponentExportDescribe(
-			@FormParam("id")
-			@RequiredParam List<String> ids
-	)
-	{
-		List<ComponentAll> fullComponents = new ArrayList<>();
-		for (String componentId : ids) {
-			ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
-			fullComponents.add(componentAll);
-		}
-
-		Exporter exporter = new DescribeExport();
-		File exportFile = exporter.export(fullComponents);
-
-		Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
-			Files.copy(exportFile.toPath(), output);
-		});
-		response.header(HEADER_CONTENT_TYPE, "application/zip");
-		response.header(HEADER_CONTENT_DISPOSITION, "attachment; filename=\"ExportedComponents.zip\"");
-		return response.build();
 	}
 
 	@GET
@@ -940,7 +910,6 @@ public abstract class GeneralComponentResourceExt
 		return Response.ok(result.toRestError()).build();
 	}
 
-
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1040,12 +1009,12 @@ public abstract class GeneralComponentResourceExt
 		Evaluation evaluation = new Evaluation();
 		evaluation.setOriginComponentId(componentId);
 		List<Evaluation> evaluations = evaluation.findByExample();
-		if(!evaluations.isEmpty()){
+		if (!evaluations.isEmpty()) {
 			RestErrorModel error = new RestErrorModel();
 			error.getErrors().put("componentId", "Unable to edit due to attached evaluations.");
 			return sendSingleEntityResponse(error);
 		}
-		
+
 		EditSubmissionOptions options = new EditSubmissionOptions();
 		options.setRemoveComponent(true);
 		return handleCreateUserSubmission(componentId, options);

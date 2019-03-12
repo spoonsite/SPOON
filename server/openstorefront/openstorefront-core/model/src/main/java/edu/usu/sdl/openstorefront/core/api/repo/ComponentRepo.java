@@ -16,8 +16,12 @@
 package edu.usu.sdl.openstorefront.core.api.repo;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +52,7 @@ public interface ComponentRepo
 	/**
 	 * This pull components (may be partially populated)
 	 *
+	 * @param componentIds
 	 * @return map grouped by ComponentId, View
 	 */
 	public Map<String, ComponentSearchView> getIntermidateSearchResults(Set<String> componentIds);
@@ -55,8 +60,57 @@ public interface ComponentRepo
 	/**
 	 * Groups all active reviews but rating
 	 *
+	 * @param maxRating
+	 * @param numberOperation
 	 * @return Rating, List of ComponentIds
 	 */
 	public Map<Integer, List<String>> getAverageRatingForComponents(int maxRating, SearchOperation.NumberOperation numberOperation);
+
+	/**
+	 * Searches component tracking record based on filter
+	 *
+	 * @param filter
+	 * @param componentId
+	 * @return
+	 */
+	public List<ComponentTracking> searchComponentTractor(FilterQueryParams filter, String componentId);
+
+	/**
+	 * Find all components that have datasources or datasensitivity
+	 *
+	 * @return componentId, componentSensitivityModel
+	 */
+	public Map<String, ComponentSensitivityModel> findComponentsWithDataRestrictions();
+
+	/**
+	 * Find all components that have no data restriction
+	 *
+	 * @return componentId, componentSensitivityModel
+	 */
+	public Map<String, ComponentSensitivityModel> findComponentsWithNoDataRestrictions();
+
+	/**
+	 * Find the most view components
+	 *
+	 * @param maxRecords
+	 * @return
+	 */
+	public List<ComponentRecordStatistic> findTopViewedComponents(Integer maxRecords);
+
+	/**
+	 * Finds recently Approved components
+	 *
+	 * @param maxResults
+	 * @return
+	 */
+	public List<Component> findRecentlyAdded(int maxResults);
+
+	/**
+	 * find component names that contain the search name
+	 *
+	 * @param search
+	 * @return
+	 */
+	public List<Component> searchComponentByName(String search, int maxResults);
 
 }

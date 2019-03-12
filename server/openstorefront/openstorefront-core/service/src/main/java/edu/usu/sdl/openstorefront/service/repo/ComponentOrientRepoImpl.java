@@ -20,8 +20,12 @@ import edu.usu.sdl.openstorefront.core.api.repo.ComponentRepo;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
+import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
+import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -159,6 +163,157 @@ public class ComponentOrientRepoImpl
 			}
 		}
 		return ratingMap;
+	}
+
+	@Override
+	public List<ComponentTracking> searchComponentTractor(FilterQueryParams filter, String componentId)
+	{
+		List<String> componentIdInResults = new ArrayList<>();
+		if (StringUtils.isNotBlank(filter.getComponentName())) {
+			String query = "select componentId from " + Component.class.getSimpleName() + " where name.toLowerCase() like :componentName ";
+			Map<String, Object> parameterMap = new HashMap<>();
+			parameterMap.put("componentName", "%" + filter.getComponentName().toLowerCase().trim() + "%");
+
+			List<ODocument> documents = service.getPersistenceService().query(query, parameterMap);
+			for (ODocument document : documents) {
+				componentIdInResults.add(document.field("componentId"));
+			}
+		}
+
+		Map<String, Object> parameterMap = new HashMap<>();
+		StringBuilder primaryQuery = new StringBuilder();
+		primaryQuery.append("select from ").append(ComponentTracking.class.getSimpleName()).append(" where ");
+		primaryQuery.append(" activeStatus = :activeStatus ");
+
+		parameterMap.put("activeStatus", filter.getStatus());
+
+		if (StringUtils.isNotBlank(componentId)) {
+			primaryQuery.append(" and componentId = :componentId ");
+			parameterMap.put("componentId", componentId);
+		}
+
+		if (filter.getStartDts() != null && filter.getStartDts().getDate() != null) {
+			primaryQuery.append(" and eventDts >= :startDts ");
+			parameterMap.put("startDts", filter.getStartDts().getDate());
+		}
+
+		if (filter.getEndDts() != null && filter.getEndDts().getDate() != null) {
+			primaryQuery.append(" and eventDts <= :endDts ");
+			parameterMap.put("endDts", filter.getEndDts().getDate());
+		}
+
+		if (StringUtils.isNotBlank(filter.getName())) {
+			primaryQuery.append(" and updateUser.toLowerCase() like :nameSearch ");
+			parameterMap.put("nameSearch", "%" + filter.getName().toLowerCase().trim() + "%");
+		}
+
+		if (!componentIdInResults.isEmpty()) {
+			primaryQuery.append(" and componentId IN :componentIdList ");
+			parameterMap.put("componentIdList", componentIdInResults);
+		}
+
+		if (StringUtils.isNotBlank(filter.getSortField()) && StringUtils.isNotBlank(filter.getSortOrder())) {
+			primaryQuery.append(" ORDER BY ");
+			primaryQuery.append(filter.getSortField());
+			primaryQuery.append(" ");
+			primaryQuery.append(filter.getSortOrder());
+		}
+
+		List<ComponentTracking> componentTrackings = service.getPersistenceService().query(primaryQuery.toString(), parameterMap);
+		return componentTrackings;
+	}
+
+	@Override
+	public Map<String, ComponentSensitivityModel> findComponentsWithDataRestrictions()
+	{
+		Map<String, ComponentSensitivityModel> componentRestrictionMap = new HashMap<>();
+
+		String query = "select componentId, dataSource, dataSensitivity from " + Component.class.getSimpleName() + " where dataSource IS NOT NULL OR dataSensitivity IS NOT NULL";
+		Map<String, Object> parameters = new HashMap<>();
+
+		List<ODocument> documents = service.getPersistenceService().query(query, parameters);
+		for (ODocument document : documents) {
+			ComponentSensitivityModel cacheSensitivityModel = new ComponentSensitivityModel();
+			cacheSensitivityModel.setComponentId(document.field("componentId"));
+			cacheSensitivityModel.setDataSensitivity(document.field("dataSensitivity"));
+			cacheSensitivityModel.setDataSource(document.field("dataSource"));
+
+			componentRestrictionMap.put(document.field("componentId"), cacheSensitivityModel);
+		}
+
+		return componentRestrictionMap;
+	}
+
+	@Override
+	public Map<String, ComponentSensitivityModel> findComponentsWithNoDataRestrictions()
+	{
+		Map<String, ComponentSensitivityModel> componentRestrictionMap = new HashMap<>();
+
+		String query = "select componentId from " + Component.class.getSimpleName() + " where dataSource IS NULL AND dataSensitivity IS NULL";
+		List<ODocument> documents = service.getPersistenceService().query(query, null);
+		for (ODocument document : documents) {
+			String foundId = document.field("componentId");
+			ComponentSensitivityModel cacheSensitivityModel = new ComponentSensitivityModel();
+			cacheSensitivityModel.setComponentId(foundId);
+			componentRestrictionMap.put(foundId, cacheSensitivityModel);
+		}
+
+		return componentRestrictionMap;
+	}
+
+	@Override
+	public List<ComponentRecordStatistic> findTopViewedComponents(Integer maxRecords)
+	{
+		List<ComponentRecordStatistic> recordStatistics = new ArrayList<>();
+
+		String limit = "";
+		if (maxRecords != null) {
+			limit = "LIMIT " + maxRecords;
+		}
+
+		String query = "select count(*) as views, componentId from " + ComponentTracking.class.getSimpleName() + " group by componentId order by views DESC " + limit;
+
+		List<ODocument> documents = service.getPersistenceService().query(query, null);
+		for (ODocument document : documents) {
+			ComponentRecordStatistic componentRecordStatistic = new ComponentRecordStatistic();
+			componentRecordStatistic.setComponentId(document.field("componentId"));
+			componentRecordStatistic.setViews(document.field("views"));
+			componentRecordStatistic.setComponentName(service.getComponentService().getComponentName(componentRecordStatistic.getComponentId()));
+			recordStatistics.add(componentRecordStatistic);
+		}
+
+		return recordStatistics;
+	}
+
+	@Override
+	public List<Component> findRecentlyAdded(int maxResults)
+	{
+		String dataFilterRestriction = filterEngine.queryComponentRestriction();
+		if (StringUtils.isNotBlank(dataFilterRestriction)) {
+			dataFilterRestriction = " and " + dataFilterRestriction;
+		}
+
+		String query = "select from Component where activeStatus = :activeStatusParam "
+				+ " and approvalState = :approvedStateParam "
+				+ dataFilterRestriction
+				+ " order by approvedDts DESC LIMIT " + maxResults;
+
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("activeStatusParam", Component.ACTIVE_STATUS);
+		parameters.put("approvedStateParam", ApprovalStatus.APPROVED);
+
+		return service.getPersistenceService().query(query, parameters);
+	}
+
+	@Override
+	public List<Component> searchComponentByName(String search, int maxResults)
+	{
+		Map<String, Object> params = new HashMap<>();
+		search = "%" + search.toLowerCase() + "%";
+		params.put("search", search);
+		String query = "SELECT FROM " + Component.class.getSimpleName() + " WHERE name.toLowerCase() LIKE :search LIMIT " + maxResults;
+		List<Component> components = service.getPersistenceService().query(query, params);
+		return components;
 	}
 
 }

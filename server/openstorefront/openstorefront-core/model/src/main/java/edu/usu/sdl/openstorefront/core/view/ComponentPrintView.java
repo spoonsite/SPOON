@@ -59,7 +59,6 @@ public class ComponentPrintView
 	private List<ComponentQuestionView> questions = new ArrayList<>();
 	private List<ComponentAttributeView> attributes = new ArrayList<>();
 	private List<ComponentTag> tags = new ArrayList<>();
-	private List<ComponentMetadataView> metadata = new ArrayList<>();
 	private List<ComponentMediaView> componentMedia = new ArrayList<>();
 	private List<ComponentContactView> contacts = new ArrayList<>();
 	private List<ComponentResourceView> resources = new ArrayList<>();
@@ -118,7 +117,6 @@ public class ComponentPrintView
 		view.setQuestions(component.getQuestions());
 		view.setAttributes(component.getAttributes());
 		view.setTags(component.getTags());
-		view.setMetadata(component.getMetadata());
 		view.setComponentMedia(component.getComponentMedia());
 		view.setContacts(component.getContacts());
 		view.setResources(component.getResources());
@@ -309,22 +307,6 @@ public class ComponentPrintView
 	public void setTags(List<ComponentTag> tags)
 	{
 		this.tags = tags;
-	}
-
-	/**
-	 * @return the metadata
-	 */
-	public List<ComponentMetadataView> getMetadata()
-	{
-		return metadata;
-	}
-
-	/**
-	 * @param metadata the metadata to set
-	 */
-	public void setMetadata(List<ComponentMetadataView> metadata)
-	{
-		this.metadata = metadata;
 	}
 
 	/**

@@ -56,7 +56,6 @@ import edu.usu.sdl.openstorefront.service.search.EntryTypeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.EvaluationScoreSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.MetaDataSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.QuestionResponseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.QuestionSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewProConSearchHandler;
@@ -292,9 +291,6 @@ public class SearchServiceImpl
 				case INDEX:
 					indexSearches.addAll(searchElements);
 					handlers.add(new IndexSearchHandler(searchElements));
-					break;
-				case METADATA:
-					handlers.add(new MetaDataSearchHandler(searchElements));
 					break;
 				case REVIEW:
 					handlers.add(new ReviewSearchHandler(searchElements));

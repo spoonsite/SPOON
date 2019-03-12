@@ -584,8 +584,8 @@ public class SystemServiceImpl
 	public void cleanUpOldTemporaryMedia()
 	{
 
-		String query = "SELECT FROM " + TemporaryMedia.class.getSimpleName();
-		List<TemporaryMedia> allTemporaryMedia = persistenceService.query(query, null);
+		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
+		List<TemporaryMedia> allTemporaryMedia = temporaryMediaExample.findByExample();
 		int maxDays = Convert.toInteger(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.TEMPORARY_MEDIA_KEEP_DAYS));
 
 		for (TemporaryMedia media : allTemporaryMedia) {

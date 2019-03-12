@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
-import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
@@ -179,10 +178,11 @@ public interface ComponentService
 	 * @return Name or null if not found
 	 */
 	public String getComponentName(String componentId);
-	
+
 	/**
 	 * Method to save a component comment and then email the comment.
-	 * @param comment 
+	 *
+	 * @param componentComment
 	 */
 	public void saveComponentComment(ComponentComment componentComment);
 
@@ -216,16 +216,19 @@ public interface ComponentService
 	 *
 	 * @param componentTypeId
 	 * @param reverseOrder
-	 * @return Sorted list of component types (Is sorted as child <- parent[0] <- ... <- parent[n])
+	 * @return Sorted list of component types (Is sorted as child <- parent[0]
+	 * <- ... <- parent[n])
 	 */
 	public List<ComponentType> getComponentTypeParents(String componentTypeId, Boolean reverseOrder);
 
 	/**
-	 * Queries a list which consists of a component type and it's parents (stringified).
+	 * Queries a list which consists of a component type and it's parents
+	 * (stringified).
 	 *
 	 * @param componentTypeId
 	 * @param reverseOrder
-	 * @return Sorted String (list) of component types (Is sorted as child <- parent[0] <- ... <- parent[n])
+	 * @return Sorted String (list) of component types (Is sorted as child <-
+	 * parent[0] <- ... <- parent[n])
 	 */
 	public String getComponentTypeParentsString(String componentTypeId, Boolean reverseOrder);
 
@@ -358,13 +361,6 @@ public interface ComponentService
 	public List<ComponentTag> getTagCloud();
 
 	/**
-	 * Gets all unique metadata
-	 *
-	 * @return
-	 */
-	public List<ComponentMetadata> getMetadata();
-
-	/**
 	 * Saves a component Attribute
 	 *
 	 * @param attribute
@@ -443,13 +439,6 @@ public interface ComponentService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public ComponentMedia saveComponentMedia(ComponentMedia media);
-
-	/**
-	 *
-	 * @param metadata
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void saveComponentMetadata(ComponentMetadata metadata);
 
 	/**
 	 *
