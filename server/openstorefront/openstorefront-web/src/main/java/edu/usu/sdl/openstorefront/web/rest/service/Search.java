@@ -110,42 +110,6 @@ public class Search
 			return sendSingleEntityResponse(entity);
 		}
 	}
-	
-	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
-	@APIDescription("Get the search options for indexing. (Admin)")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(SearchOptions.class)
-	@Path("/options")
-	public Response updateSearchModel()
-	{
-		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
-
-		return Response.ok(searchOptions).build();
-	}
-	
-	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
-	@APIDescription("Update the search options for indexing.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(SearchOptions.class)
-	@Path("/options")
-	public Response updateSearchModel(
-			SearchOptions incomingSearchOptions)
-	{
-		ValidationResult validationResult = incomingSearchOptions.validate();
-		if(!validationResult.valid()){
-			return sendSingleEntityResponse(validationResult.toRestError());
-		}
-
-		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
-		searchOptions.updateFields(incomingSearchOptions);
-
-		service.getSearchService().saveSearchOptions(searchOptions);
-		
-		return Response.ok(searchOptions).build();
-	}
 
 	@POST
 	@APIDescription("Advance search for listing ")

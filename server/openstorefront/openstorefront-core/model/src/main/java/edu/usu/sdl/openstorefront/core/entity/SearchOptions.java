@@ -60,7 +60,15 @@ public class SearchOptions
 		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());
 	}
 
-	//TODO: create populateCreateFields() method
+	@Override
+	public void populateBaseCreateFields()
+	{		
+		super.populateBaseCreateFields();
+
+		setCanUseDescriptionInSearch(Boolean.TRUE);
+		setCanUseNameInSearch(Boolean.TRUE);
+		setCanUseOrganizationsInSearch(Boolean.TRUE);
+	}
 
 	public Boolean getGlobalFlag()
 	{
