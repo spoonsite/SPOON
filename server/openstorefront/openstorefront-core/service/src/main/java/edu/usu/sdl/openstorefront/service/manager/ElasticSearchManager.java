@@ -306,7 +306,7 @@ public class ElasticSearchManager
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
-		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
+		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
 
 		int maxSearchResults = 10000;
 		if (filter.getMax() < maxSearchResults) {
@@ -445,7 +445,6 @@ public class ElasticSearchManager
 			if (searchOptions.getCanUseDescriptionInSearch()) {
 				esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
 			}
-
 		}
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
 				//.unmappedType("String") // currently the only fileds we are searching/sorting on are strings

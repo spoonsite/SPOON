@@ -2129,7 +2129,7 @@
 									canUseAttributesInSearch: Ext.getCmp('componentAttributesCheckbox').value
 								};
 								Ext.Ajax.request({
-									url: 'api/v1/service/search/options',
+									url: 'api/v1/resource/searchoptions/global',
 									jsonData: data,
 									method: 'PUT',
 									success: function(response, opt) {
@@ -2146,7 +2146,7 @@
 
 				searchControlPanel.setLoading(true);
 				Ext.Ajax.request({
-					url: 'api/v1/service/search/options',
+					url: 'api/v1/resource/searchoptions/global',
 					method: 'GET',
 					callback: function() {
 						searchControlPanel.setLoading(false);
