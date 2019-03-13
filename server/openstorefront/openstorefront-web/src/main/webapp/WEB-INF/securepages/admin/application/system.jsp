@@ -2099,6 +2099,16 @@
 											xtype: 'checkbox',
 											boxLabel: 'Component Descriptions',
 											id: 'componentDescriptionCheckbox',
+										},
+										{
+											xtype: 'checkbox',
+											boxLabel: 'Component Tags',
+											id: 'componentTagsCheckbox',
+										},
+										{
+											xtype: 'checkbox',
+											boxLabel: 'Component Attributes',
+											id: 'componentAttributesCheckbox',
 										}
 									]
 								}
@@ -2114,7 +2124,9 @@
 								var data = {
 									canUseOrganizationsInSearch: Ext.getCmp('organizationsCheckbox').value,
 									canUseNameInSearch: Ext.getCmp('componentNameCheckbox').value,
-									canUseDescriptionInSearch: Ext.getCmp('componentDescriptionCheckbox').value
+									canUseDescriptionInSearch: Ext.getCmp('componentDescriptionCheckbox').value, 
+									canUseTagsInSearch: Ext.getCmp('componentTagsCheckbox').value,
+									canUseAttributesInSearch: Ext.getCmp('componentAttributesCheckbox').value
 								};
 								Ext.Ajax.request({
 									url: 'api/v1/service/search/options',
@@ -2149,6 +2161,12 @@
 						}
 						if(Ext.getCmp('componentDescriptionCheckbox')){
 							Ext.getCmp('componentDescriptionCheckbox').setValue(data.canUseDescriptionInSearch);
+						}
+						if(Ext.getCmp('componentTagsCheckbox')){
+							Ext.getCmp('componentTagsCheckbox').setValue(data.canUseTagsInSearch);
+						}
+						if(Ext.getCmp('componentAttributesCheckbox')){
+							Ext.getCmp('componentAttributesCheckbox').setValue(data.canUseAttributesInSearch);
 						}
 					}
 				});
