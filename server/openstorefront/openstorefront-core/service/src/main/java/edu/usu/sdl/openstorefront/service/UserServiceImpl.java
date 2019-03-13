@@ -589,16 +589,25 @@ public class UserServiceImpl
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);
 		archiveTime = archiveTime.truncatedTo(ChronoUnit.DAYS);
-		String deleteQuery = "updateDts < :maxUpdateDts AND activeStatus = :activeStatusParam";
 
 		ZonedDateTime zdt = archiveTime.atZone(ZoneId.systemDefault());
 		Date archiveDts = Date.from(zdt.toInstant());
 
-		Map<String, Object> queryParams = new HashMap<>();
-		queryParams.put("maxUpdateDts", archiveDts);
-		queryParams.put("activeStatusParam", UserMessage.INACTIVE_STATUS);
+		UserMessage userMessageExample = new UserMessage();
+		userMessageExample.setActiveStatus(UserMessage.INACTIVE_STATUS);
 
-		persistenceService.deleteByQuery(UserMessage.class, deleteQuery, queryParams);
+		UserMessage userMessageMaxExample = new UserMessage();
+		userMessageMaxExample.setUpdateDts(archiveDts);
+
+		QueryByExample<UserMessage> query = new QueryByExample<>(userMessageExample);
+
+		SpecialOperatorModel<UserMessage> specialOperatorModel = new SpecialOperatorModel<>();
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN);
+		specialOperatorModel.setExample(userMessageMaxExample);
+		query.getExtraWhereCauses().add(specialOperatorModel);
+
+		persistenceService.deleteByExample(query);
+
 	}
 
 	@Override

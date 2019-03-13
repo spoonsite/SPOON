@@ -76,7 +76,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -681,7 +680,8 @@ public class SystemServiceImpl
 	@Override
 	public void clearAllLogRecord()
 	{
-		int recordsRemoved = persistenceService.deleteByQuery(DBLogRecord.class, "", new HashMap<>());
+		DBLogRecord dbLogRecordExample = new DBLogRecord();
+		int recordsRemoved = persistenceService.deleteByExample(dbLogRecordExample);
 		LOG.log(Level.WARNING, MessageFormat.format("DB log records were cleared.  Records cleared: {0}", recordsRemoved));
 	}
 
@@ -690,7 +690,8 @@ public class SystemServiceImpl
 	{
 		Objects.requireNonNull(helpSections, "Help sections required");
 
-		int recordsRemoved = persistenceService.deleteByQuery(HelpSection.class, "", new HashMap<>());
+		HelpSection helpSectionExample = new HelpSection();
+		int recordsRemoved = persistenceService.deleteByExample(helpSectionExample);
 		LOG.log(Level.FINE, MessageFormat.format("Help records were cleared.  Records cleared: {0}", recordsRemoved));
 
 		LOG.log(Level.FINE, MessageFormat.format("Saving new Help records: {0}", helpSections.size()));

@@ -691,12 +691,16 @@ public class SecurityServiceImpl
 				}
 			}
 
-			String query = "update " + Evaluation.class.getSimpleName() + " set assignedGroup = null where assignedGroup = :rolename";
-			Map<String, Object> evalQueryParams = new HashMap<>();
-			evalQueryParams.put("rolename", securityRole.getRoleName());
+			Evaluation evaluationExample = new Evaluation();
+			evaluationExample.setAssignedGroup(securityRole.getRoleName());
 
-			int updatedCount = persistenceService.runDbCommand(query, evalQueryParams);
-			LOG.log(Level.FINE, MessageFormat.format("{0} evaluation(s) were unassigned from  group {1}", new Object[]{updatedCount, securityRole.getRoleName()}));
+			List<Evaluation> evalsToUpdate = evaluationExample.findByExampleProxy();
+			for (Evaluation evaluation : evalsToUpdate) {
+				evaluation.setAssignedGroup(null);
+				persistenceService.persist(evaluation);
+			}
+
+			LOG.log(Level.FINE, MessageFormat.format("{0} evaluation(s) were unassigned from  group {1}", new Object[]{evalsToUpdate.size(), securityRole.getRoleName()}));
 
 			getComponentServicePrivate().removeRoleFromComponentType(securityRole.getRoleName());
 			LOG.log(Level.FINE, "Removed Role from entry type");

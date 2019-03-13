@@ -24,6 +24,9 @@ import edu.usu.sdl.openstorefront.common.util.RetryUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.ImportService;
+import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.FileAttributeMap;
@@ -384,15 +387,22 @@ public class ImportServiceImpl
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);
 		archiveTime = archiveTime.truncatedTo(ChronoUnit.DAYS);
-		String deleteQuery = "updateDts < :maxUpdateDts";
 
 		ZonedDateTime zdt = archiveTime.atZone(ZoneId.systemDefault());
 		Date archiveDts = Date.from(zdt.toInstant());
 
-		Map<String, Object> queryParams = new HashMap<>();
-		queryParams.put("maxUpdateDts", archiveDts);
+		FileHistory fileHistoryExample = new FileHistory();
+		FileHistory fileHistoryDateExample = new FileHistory();
+		fileHistoryDateExample.setUpdateDts(archiveDts);
 
-		persistenceService.deleteByQuery(FileHistory.class, deleteQuery, queryParams);
+		QueryByExample<FileHistory> query = new QueryByExample<>(fileHistoryExample);
+
+		SpecialOperatorModel<FileHistory> specialOperatorModel = new SpecialOperatorModel<>();
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN);
+		specialOperatorModel.setExample(fileHistoryDateExample);
+		query.getExtraWhereCauses().add(specialOperatorModel);
+
+		persistenceService.deleteByExample(query);
 	}
 
 	@Override

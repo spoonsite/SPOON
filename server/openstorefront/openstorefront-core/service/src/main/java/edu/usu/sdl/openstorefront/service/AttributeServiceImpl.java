@@ -1024,23 +1024,7 @@ public class AttributeServiceImpl
 	@Override
 	public void changeAttributeCode(AttributeCodePk attributeCodePk, String newCode)
 	{
-
-		String query = "Update " + ComponentAttributePk.class.getSimpleName() + " set attributeCode = :attributeCodeParamReplace where attributeCode = :oldCodeParam and attributeType = :attributeTypeParam";
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("attributeCodeParamReplace", newCode);
-		parameters.put("oldCodeParam", attributeCodePk.getAttributeCode());
-		parameters.put("attributeTypeParam", attributeCodePk.getAttributeType());
-
-		persistenceService.runDbCommand(query, parameters);
-
-		query = "Update " + AttributeCodePk.class.getSimpleName() + " set attributeCode = :attributeCodeParamReplace where attributeCode = :oldCodeParam and attributeType = :attributeTypeParam";
-		parameters = new HashMap<>();
-		parameters.put("attributeCodeParamReplace", newCode);
-		parameters.put("oldCodeParam", attributeCodePk.getAttributeCode());
-		parameters.put("attributeTypeParam", attributeCodePk.getAttributeType());
-
-		persistenceService.runDbCommand(query, parameters);
-
+		getRepoFactory().getAttributeRepo().changeAttributeCode(attributeCodePk, newCode);
 		cleanCaches(attributeCodePk.getAttributeType());
 	}
 
