@@ -107,7 +107,7 @@ public class SearchServiceImpl
 	}
 	
 	@Override
-	public SearchOptions getSearchOptions(){
+	public SearchOptions getGlobalSearchOptions(){
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);

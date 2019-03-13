@@ -46,16 +46,16 @@ public interface SearchService
 	
 	/**
 	 * Get the global search options, return default if not
-	 * changed by the administrator
-	 * .
-	 * @return 
+	 * changed by the administrator.
+	 * @return the found searchOptions
 	 */
-	public SearchOptions getSearchOptions();
+	public SearchOptions getGlobalSearchOptions();
 	
 	/**
 	 * Saves a search options model. Usually done
 	 * by the administrator.
 	 * @param searchOptions 
+	 * @return the saved searchOptions
 	 */
 	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions);
 

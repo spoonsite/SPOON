@@ -29,7 +29,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 /**
- *
+ * Search Resource
+ * 
  * @author gfowler
  */
 
@@ -47,7 +48,7 @@ import javax.ws.rs.core.Response;
 	@Path("/global")
 	public Response updateSearchModel()
 	{
-		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
+		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
 
 		return Response.ok(searchOptions).build();
 	}
@@ -66,11 +67,7 @@ import javax.ws.rs.core.Response;
         if(!validationResult.valid()){
             return sendSingleEntityResponse(validationResult.toRestError());
         }
-
-        // SearchOptions searchOptions = service.getSearchService().getSearchOptions();
-        // searchOptions.updateFields(incomingSearchOptions);
-        // service.getSearchService().saveGlobalSearchOptions(incomingSearchOptions);
-        
+       
         return Response.ok(service.getSearchService().saveGlobalSearchOptions(incomingSearchOptions)).build();
     }
 
