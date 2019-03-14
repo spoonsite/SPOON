@@ -43,6 +43,14 @@ public class SearchOptions
 	@APIDescription("Flag for using Component Description in searches")
 	@ConsumeField
 	private Boolean canUseDescriptionInSearch;
+
+	@APIDescription("Flag for using Component Tags in searches")
+	@ConsumeField
+	private Boolean canUseTagsInSearch;
+
+	@APIDescription("Flag for using Component Attributes in searches")
+	@ConsumeField
+	private Boolean canUseAttributesInSearch;
 	
 	public SearchOptions()
 	{
@@ -58,6 +66,8 @@ public class SearchOptions
 		setCanUseOrganizationsInSearch(searchOptionsModel.getCanUseOrganizationsInSearch());
 		setCanUseNameInSearch(searchOptionsModel.getCanUseNameInSearch());
 		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());
+		setCanUseTagsInSearch(searchOptionsModel.getCanUseTagsInSearch());
+		setCanUseAttributesInSearch(searchOptionsModel.getCanUseAttributesInSearch());
 	}
 
 	@Override
@@ -68,6 +78,8 @@ public class SearchOptions
 		setCanUseDescriptionInSearch(Boolean.TRUE);
 		setCanUseNameInSearch(Boolean.TRUE);
 		setCanUseOrganizationsInSearch(Boolean.TRUE);
+		setCanUseTagsInSearch(Boolean.TRUE);
+		setCanUseAttributesInSearch(Boolean.TRUE);
 	}
 
 	public Boolean getGlobalFlag()
@@ -80,7 +92,6 @@ public class SearchOptions
 		this.globalFlag = globalFlag;
 	}
 
-
 	public String getSearchOptionsId()
 	{
 		return searchOptionsId;
@@ -90,6 +101,7 @@ public class SearchOptions
 	{
 		this.searchOptionsId = searchOptionsId;
 	}
+
 	
 	public Boolean getCanUseOrganizationsInSearch()
 	{
@@ -120,5 +132,24 @@ public class SearchOptions
 	{
 		this.canUseDescriptionInSearch = canUseDescriptionInSearch;
 	}
-	
+
+	public Boolean getCanUseTagsInSearch()
+	{
+		return canUseTagsInSearch;
+	}
+
+	public void setCanUseTagsInSearch(Boolean canUseTagsInSearch)
+	{
+		this.canUseTagsInSearch = canUseTagsInSearch;
+	}
+
+	public Boolean getCanUseAttributesInSearch()
+	{
+		return canUseAttributesInSearch;
+	}
+
+	public void setCanUseAttributesInSearch(Boolean canUseAttributesInSearch)
+	{
+		this.canUseAttributesInSearch = canUseAttributesInSearch;
+	}	
 }

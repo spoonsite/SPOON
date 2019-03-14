@@ -119,6 +119,8 @@ public class SearchServiceImpl
 			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
 			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
 		}		
 		return searchOptions;		
 	}
@@ -254,6 +256,8 @@ public class SearchServiceImpl
 		Objects.requireNonNull(searchModel, "Search Model Required");
 
 		AdvanceSearchResult searchResult = new AdvanceSearchResult();
+
+		SearchOptions searchOptions = getSearchService().getGlobalSearchOptions();
 
 		//each user may get different results depending on security roles
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
