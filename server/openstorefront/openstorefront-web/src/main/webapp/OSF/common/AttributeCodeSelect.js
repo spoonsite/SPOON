@@ -82,24 +82,17 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				validator = function(valueRaw) {
 					var values = attributePanel.getValue();	
 					var valid = true;
+					var msg = ''
 					
 					Ext.Array.each(values, function(value) {
 						if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
 							//check precision; this will enforce max allowed
-							if (Ext.String.endsWith(value, ".")) {
-								valid = 'Number must not have a decimal point or have at least one digit after the decimal point.';
-							}
-							try {
-								var valueNumber = Number(value);
-								if (isNaN(valueNumber)) {						
-									valid = 'Value must be a valid number';
-								}
-							} catch (e) {
-								valid = 'Number must not have a decimal point or have at least one digit after the decimal point.';
-							}
+							validatorResponse = CoreUtil.validateNumber(value);
+							valid = validatorResponse.valid;
+							msg = validatorResponse.msg;
 						}
 					});	
-					return valid;	
+					return valid ? valid : msg;	
 				};
 			} 
 			numberVType = undefined;
@@ -192,28 +185,20 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	},
 	valid: function(form) {
 		var valid = true;
+		var msg = '';
 		var attributePanel = this;
 				
 		var values = attributePanel.getValue();
 		
 		Ext.Array.each(values, function(value){
 			if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
-			    //check precision; this will enforce max allowed
-				if (Ext.String.endsWith(value, ".")) {
-					valid = false;
+				//check precision; this will enforce max allowed
+				var validatorResponse = CoreUtil.validateNumber(value);
+				valid = validatorResponse.valid;
+				msg = validatorResponse.msg;
+				if (!valid) {
 					form.getForm().markInvalid({
-						attributeCode: 'Number must not have a decimal point or have at least one digit after the decimal point.'
-					});
-				}
-				try {
-					var valueNumber = Number(value);
-					if (isNaN(valueNumber)) {						
-						valid = false;
-					}
-				} catch (e) {
-					valid = false;
-					form.getForm().markInvalid({
-						attributeCode: 'Number must not have a decimal point or have at least one digit after the decimal point.'
+						attributeCode: msg;
 					});
 				}
 			}
