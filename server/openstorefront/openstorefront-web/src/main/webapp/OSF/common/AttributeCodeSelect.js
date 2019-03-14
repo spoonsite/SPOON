@@ -198,7 +198,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				msg = validatorResponse.msg;
 				if (!valid) {
 					form.getForm().markInvalid({
-						attributeCode: msg;
+						attributeCode: msg
 					});
 				}
 			}
