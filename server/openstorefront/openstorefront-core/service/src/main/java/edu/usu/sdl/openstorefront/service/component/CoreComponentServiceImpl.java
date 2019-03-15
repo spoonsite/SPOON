@@ -1268,7 +1268,7 @@ public class CoreComponentServiceImpl
 			componentInExample.setComponentId(QueryByExample.STRING_FLAG);
 
 			QueryByExample<Component> componentQuery = new QueryByExample<>(componentExample);
-			componentQuery.setInExample(componentExample);
+			componentQuery.setInExample(componentInExample);
 			componentQuery.getInExampleOption().setParameterValues(componentIds);
 
 			List<Component> components = persistenceService.queryByExample(componentQuery);
