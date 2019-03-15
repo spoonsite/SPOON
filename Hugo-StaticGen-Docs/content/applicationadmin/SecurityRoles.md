@@ -25,13 +25,10 @@ SECURITY ROLE NAME | EXPLANATION | DEFAULT PERMISSIONS NOTES
 ------------------:|-----------|----------------------------
 GUEST-GROUP | Permissions for guest when they come to the site directly via URL, such as to view an entry. | NO Extra Permissions
 DEFAULT-GROUP | What all users get and are a member of.  Baseline permissions. | A few, limited Permissions
-INTERNAL_REVIEWER_ROLE | This role is for individuals to do a simple content check on submissions. | Workplan Management Permissions
-FINAL_REVIEWER_ROLE | This role is for perofrming a final check to see if the content is ready to publish/Approve | Workplan Management Permissions
-SME_(*Entry Type Name*) | SME Role for the Corssesponding Entry Type | View, Edit, Comment on Submissions 
+SME_(*Entry Type Name*) | SME Role for the Corresponding Entry Type for Workplans | View, Edit, Comment on Submissions.  Workplans. 
 SPOON-Support | Permissions consistent with a tech support user. | Administration of User Management tools
-SPOON-Evaluators | This group writes evaluations of the entries | Evaluations Permissions
-SPOON-Librarian | Data management librarian permissions | Many Administrator Permissions
-SPOON-Admin | Website administrator, super permissions group | ALL Permissions
+STOREFRONT-Librarian | Data management librarian permissions | Many Administrator Permissions
+STOREFRONT-Admin | Website administrator, super permissions group | ALL Permissions
 
 {{% notice note %}}
 **If these permisions get changed and you would like to reset them to the default (new installatin) defaults, please do the following:**
@@ -44,333 +41,330 @@ SPOON-Admin | Website administrator, super permissions group | ALL Permissions
 
 **[GO TO TOP]({{<relref "#toc">}})**
 
- 
 ## 2. Default Permissions
 The following details the default permissions and what users in these security role groups can do.
 
 <!--   Please SAVE these for copying and pasting in the table below.				        -->
 <!--          -->
-<!--   **SECTION NAME** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin -->
 
-
-ABILITY OR PERMISSION TO: | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-------------------------: | :---------: | :-----------: | :--------------: | :-------------: | :---------:
+ABILITY OR PERMISSION TO: | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+------------------------: | :---------: | :-----------: | :----------------: | :-----------: | :------------------: | :--------------:
 **API** |
-Ability to see API documentation |  |  |  |  | 
-**ALERTS** |
-Ability to Read all Alerts|  |  |  |  | 
-Ability to Create new Alerts|  |  |  |  | 
-Ability to Delete Alerts |  |  |  |  | 
-Ability to Update Alerts |  |  |  |  | 
-Access the admin Alerts Page |  |  |  |  | 
+Ability to see API documentation | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
+**ALERTS** | 
+Ability to Read all Alerts|  {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
+Ability to Create new Alerts    | 
+Ability to Delete Alerts  | 
+Ability to Update Alerts  | 
+Access the admin Alerts Page  | 
 **ATTRIBUTES** | 
-Create new Attributes |  |  |  |  | 
-Delete existing Atrributes |  |  |  |  | 
-Update existing Attributes |  |  |  |  | 
-Access to the admin Attribute page |  |  |  |  | 
-Manage attributes on entries from the admin tools manageme assignments tool |  |  |  |  | 
-Create attribute types |  |  |  |  | 
-**BRANDING** |  GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Create new Brandings |  |  |  |  | 
-Delete Brandings |  |  |  |  | 
-Access to the admin Branding page |  |  |  |  | 
-Update Brandings |  |  |  |  | 
+Create new Attributes  | 
+Delete existing Atrributes  | 
+Update existing Attributes  | 
+Access to the admin Attribute page  | 
+Manage attributes on entries from the admin tools manageme assignments tool  | 
+Create attribute types  | 
+**BRANDING** |  GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Create new Brandings  | 
+Delete Brandings  | 
+Access to the admin Branding page  | 
+Update Brandings  | 
 **CONTACTS** |
-Create Contacts |  |  |  |  | 
-Delete Contacts |  |  |  |  | 
-Update existing Contacts |  |  |  |  | 
-Access to the admin Contacts page |  |  |  |  | 
-**DASHBOARD** |  GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access to the Dashboard Page |  |  |  |  | 
-View the Entry Status Widget |  |  |  |  | 
-View the Evaluation Status Widget |  |  |  |  | 
-View the Notifications Widget |  |  |  |  | 
-View the Outstanding Feedback Widget |  |  |  |  | 
-View the Pending Approvals Requests widget |  |  |  |  | 
-View the Questions Widget |  |  |  |  | 
-View the Reports Widget |  |  |  |  | 
-View the Saved Search Widget |  |  |  |  | 
-View the Submission Status Widget |  |  |  |  | 
-View the System Status Widget |  |  |  |  | 
-View the Recent User Data Widget |  |  |  |  | 
-View the User Status Widget |  |  |  |  | 
-View the Watches Widget |  |  |  |  | 
-**ENTRIES** |  GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access to the Admin Entries Page |  |  |  |  | 
-Ability to Approve an Entry |   |  |  |  | 
-Ability to Read Entries |  |  |  |  | 
-Approve an Entry |  |  |  |  | 
-Assign a Librarian to a Component (Entry) |  |  |  |  | 
-Atrribute Management of Entry |  |  |  |  | 
-Change Owner of the Entry |  |  |  |  | 
-Manage Change Requests |  |  |  |  | 
-Change an Entry Type |  |  |  |  | 
-Manage Entry Comments |  |  |  |  | 
-Conact Management |  |  |  |  | 
-Create Entries |  |  |  |  | 
-Delete and Existing Entry |  |  |  |  | 
-Manage Evaluation Sections |  |  |  |  | 
-Export an Entry |  |  |  |  | 
-Media Management |  |  |  |  | 
-Merge two Entries Together |  |  |  |  | 
-Read Pendig Changes |  |  |  |  | 
-Relationship Management for Entries |  |  |  |  | 
-Resource Management for Entries |  |  |  |  | 
-Tag Management |  |  |  |  | 
-Toggle Status (Active/Inactive) of an Entry |  |  |  |  | 
-Update Existing Entry |  |  |  |  | 
-Delete Entry Version |  |  |  |  | 
-Read Entry Version |  |  |  |  | 
-ReSPOON Entry Version |  |  |  |  | 
-**ENTRY TEMPLATES** |  GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Read Entry Templates |  |  |  |  | 
-Create Entry Templates |  |  |  |  |  
-Read Entry Templates |  |  |  |  | 
-Update Entry Templates |  |  |  |  | 
-Access to Entry Templates Page |  |  |  |  | 
+Create Contacts  | 
+Delete Contacts  | 
+Update existing Contacts  | 
+Access to the admin Contacts page  | 
+**DASHBOARD** |  GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Dashboard Page  | 
+View the Entry Status Widget  | 
+View the Evaluation Status Widget  | 
+View the Notifications Widget  | 
+View the Outstanding Feedback Widget  | 
+View the Pending Approvals Requests widget  | 
+View the Questions Widget  | 
+View the Reports Widget  | 
+View the Saved Search Widget  | 
+View the Submission Status Widget  | 
+View the System Status Widget  | 
+View the Recent User Data Widget  | 
+View the User Status Widget  | 
+View the Watches Widget  | 
+**ENTRIES** |  GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Admin Entries Page  | 
+Ability to Approve an Entry |      
+Ability to Read Entries  | 
+Approve an Entry  | 
+Assign a Librarian to a Component (Entry)  | 
+Atrribute Management of Entry  | 
+Change Owner of the Entry  | 
+Manage Change Requests  | 
+Change an Entry Type  | 
+Manage Entry Comments  | 
+Conact Management  | 
+Create Entries  | 
+Delete and Existing Entry  | 
+Manage Evaluation Sections  | 
+Export an Entry  | 
+Media Management  | 
+Merge two Entries Together  | 
+Read Pendig Changes  | 
+Relationship Management for Entries  | 
+Resource Management for Entries  | 
+Tag Management  | 
+Toggle Status (Active/Inactive) of an Entry  | 
+Update Existing Entry  | 
+Delete Entry Version  | 
+Read Entry Version  | 
+ReSPOON Entry Version  | 
+**ENTRY TEMPLATES** |  GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Read Entry Templates  | 
+Create Entry Templates  |  
+Read Entry Templates  | 
+Update Entry Templates  | 
+Access to Entry Templates Page  | 
 **ENTRY TYPES** | 
-Create Entry Types |  |  |  |  | 
-Delete Entry types |  |  |  |  | 
-Update Entry Types |  |  |  |  | 
-Access Admin Entry Types Page |  |  |  |  | 
+Create Entry Types  | 
+Delete Entry types  | 
+Update Entry Types  | 
+Access Admin Entry Types Page  | 
 **EVALUATION (ADMIN)** |
-Access to the Admin Evaluator Management Page |  |  |  |  | 
-Activate an Evaluation |  |  |  |  | 
-Allow New Sections |  |  |  |  | 
-Allow Question Management |  |  |  |  | 
-Delete a Comment |  |  |  |  | 
-Create an Evaluation |  |  |  |  | 
-Delete a Evaluation |  |  |  |  | 
-Publsh just the Summary |  |  |  |  | 
-Publish or Unplublish an Evaluation |  |  |  |  | 
-**EVALUATION (USER)** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access to the Evaluator Management Page |  |  |  |  | 
-Allow Evaluator to View an Evaluation |  |  |  |  | 
-Allow Evaluator to Assign a User to an Evaluation |  |  |  |  | 
-Allow Evaluator to Edit an Evaluation |  |  |  |  | 
+Access to the Admin Evaluator Management Page  | 
+Activate an Evaluation  | 
+Allow New Sections  | 
+Allow Question Management  | 
+Delete a Comment  | 
+Create an Evaluation  | 
+Delete a Evaluation  | 
+Publsh just the Summary  | 
+Publish or Unplublish an Evaluation  | 
+**EVALUATION (USER)** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Evaluator Management Page  | 
+Allow Evaluator to View an Evaluation  | 
+Allow Evaluator to Assign a User to an Evaluation  | 
+Allow Evaluator to Edit an Evaluation  | 
 **EVALUATION TEMPLATES** |
-Access to the Evaluation Templates Page |  |  |  |  | 
-Read Evaluation Templates |  |  |  |  | 
-Create Evaluation Templates |  |  |  |  | 
-Delete Evaluation Templates |  |  |  |  | 
-Update Evaluation Templates |  |  |  |  | 
+Access to the Evaluation Templates Page  | 
+Read Evaluation Templates  | 
+Create Evaluation Templates  | 
+Delete Evaluation Templates  | 
+Update Evaluation Templates  | 
 **EVALUATION TEMPLATES CHECKLIST QUESTIONS** |
-Access to the Evaluation Templates Checklist Questions Page |  |  |  |  | 
-Read Eval Template Checklist Question Items  |  |  |  |  | 
-Create Template Checklist Questions |  |  |  |  | 
-Delete Template Checklist Questions |  |  |  |  | 
-Update Template Checklist Questions |  |  |  |  | 
-**EVALUATION TEMPLATES CHECKLISTS** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access to the Evaluation Templates Checklists Page |  |  |  |  | 
-Read Evaluation Template Checklist Items |  |  |  |  | 
-Create Evaluation Template Checklist Items |  |  |  |  | 
-Delete Evaluation Template Checklist Items |  |  |  |  | 
-Update Evaluation Template Checklist Items |  |  |  |  | 
+Access to the Evaluation Templates Checklist Questions Page  | 
+Read Eval Template Checklist Question Items   | 
+Create Template Checklist Questions  | 
+Delete Template Checklist Questions  | 
+Update Template Checklist Questions  | 
+**EVALUATION TEMPLATES CHECKLISTS** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Evaluation Templates Checklists Page  | 
+Read Evaluation Template Checklist Items  | 
+Create Evaluation Template Checklist Items  | 
+Delete Evaluation Template Checklist Items  | 
+Update Evaluation Template Checklist Items  | 
 **EVALUATION TEMPLATES SECTIONS** | 
-Access to the Evaluation Section Page |  |  |  |  | 
-Read Evaluation Template Checklist Items |  |  |  |  | 
-Create Evaluation Template Sections |  |  |  |  | 
-Delete Evaluation Template Sections |  |  |  |  | 
-Update Evaluation Template Sections |  |  |  |  | 
-**FAQs** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access to the Admin FAQ page |  |  |  |  | 
-Read FAQs |  |  |  |  | 
-Create FAQs |  |  |  |  | 
-Delete FAQs |  |  |  |  | 
-Update FAQs |  |  |  |  | 
+Access to the Evaluation Section Page  | 
+Read Evaluation Template Checklist Items  | 
+Create Evaluation Template Sections  | 
+Delete Evaluation Template Sections  | 
+Update Evaluation Template Sections  | 
+**FAQs** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Admin FAQ page  | 
+Read FAQs  | 
+Create FAQs  | 
+Delete FAQs  | 
+Update FAQs  | 
 **FEEDBACK** | 
-Access Admin Feedback Page |  |  |  |  | 
-Read Feedback |  |  |  |  | 
-Remove Feedback |  |  |  |  | 
-Modify Feedback |  |  |  |  | 
+Access Admin Feedback Page  | 
+Read Feedback  | 
+Remove Feedback  | 
+Modify Feedback  | 
 **HIGHLIGHTS** |
-Create Highlights |  |  |  |  | 
-Delete Highlights |  |  |  |  | 
-Access to the Highlights page |  |  |  |  | 
-Update Highlights |  |  |  |  | 
+Create Highlights  | 
+Delete Highlights  | 
+Access to the Highlights page  | 
+Update Highlights  | 
 **IMPORT / EXPORT** |
-Ability to Import and Export |  |  |  |  | 
-Access to the admin Import Export Page |  |  |  |  | 
-**INTEGRATIONS** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access to the Integration Page |  |  |  |  | 
-Read Integration |  |  |  |  | 
-Create Integration |  |  |  |  | 
-Remove Integration |  |  |  |  | 
-Ability to Integrate with external sources |  |  |  |  | 
-Run all Integrations |  |  |  |  | 
-Run the Integration Configuration |  |  |  |  | 
-Allows for Running One Integration |  |  |  |  | 
-Toggle Active/Inactive Integration Status |  |  |  |  | 
-Update Integration |  |  |  |  | 
+Ability to Import and Export  | 
+Access to the admin Import Export Page  | 
+**INTEGRATIONS** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Integration Page  | 
+Read Integration  | 
+Create Integration  | 
+Remove Integration  | 
+Ability to Integrate with external sources  | 
+Run all Integrations  | 
+Run the Integration Configuration  | 
+Allows for Running One Integration  | 
+Toggle Active/Inactive Integration Status  | 
+Update Integration  | 
 **JOBS** | 
-Read Jobs |  |  |  |  | 
-Perform some action with a Job |  |  |  |  | 
-Remove a Job |  |  |  |  | 
-Access to Admin Jobs Page |  |  |  |  | 
-**LOOKUPS** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access the Lookups Page |  |  |  |  | 
-Read Lookups |  |  |  |  | 
-Create Lookups |  |  |  |  | 
-Delete Lookups |  |  |  |  | 
-Update a Lookup |  |  |  |  | 
+Read Jobs  | 
+Perform some action with a Job  | 
+Remove a Job  | 
+Access to Admin Jobs Page  | 
+**LOOKUPS** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access the Lookups Page  | 
+Read Lookups  | 
+Create Lookups  | 
+Delete Lookups  | 
+Update a Lookup  | 
 **MEDIA** |
-Delete Media |  |  |  |  | 
-Access to the admin Media Page |  |  |  |  | 
-Upload Media as Admin |  |  |  |  | 
-Upload Support Media |  |  |  |  | 
+Delete Media  | 
+Access to the admin Media Page  | 
+Upload Media as Admin  | 
+Upload Support Media  | 
 **MESSAGES** |
-Read User Notifcation Data |  |  |  |  | 
-Post New User Notification Event |  |  |  |  | 
-Delete User Notification Event |  |  |  |  | 
-Update User Notification Event |  |  |  |  | 
-Access to the admin Messages/Notification page |  |  |  |  | 
+Read User Notifcation Data  | 
+Post New User Notification Event  | 
+Delete User Notification Event  | 
+Update User Notification Event  | 
+Access to the admin Messages/Notification page  | 
 **NOTIFICATION EVENTS** | 
-Post New Admin Notification Event |  |  |  |  | 
-Delete Admin Notification Event |   |  |  |  | 
-**ORGANIZATIONS** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Create Organization |   |  |  |  | 
-Delete Organization |   |  |  |  | 
-Organization Extraction |  |  |  |  | 
-Merge Two Organizations |  |  |  |  | 
-Acces the Admin Organiation Page |  |  |  |  | a
-Update Organization |   |  |  |  | 
+Post New Admin Notification Event  | 
+Delete Admin Notification Event |      
+**ORGANIZATIONS** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Create Organization |      
+Delete Organization |      
+Organization Extraction  | 
+Merge Two Organizations  | 
+Acces the Admin Organiation Page  | 
+Update Organization |      
 **PROFILE MANAGEMENT** |
-Read User Profiles |  |  |  |  | 
-Delete User Profile |  |  |  |  | 
-Update User Profile |  |  |  |  | 
-Access to admin User Profiles Page |  |  |  |  | 
-Access to User Profile Page |  |  |  |  | 
-**QUESTIONS** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access admin Questions Page|  |  |  |  | 
-Read Questions on Entries |  |  |  |  | 
-Delete Questions on Entries |  |  |  |  | 
-Update Questions on Entries |  |  |  |  | 
-Access to the User Questions Page |  |  |  |  | 
+Read User Profiles  | 
+Delete User Profile  | 
+Update User Profile  | 
+Access to admin User Profiles Page  | 
+Access to User Profile Page  | 
+**QUESTIONS** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access admin Questions Page    | 
+Read Questions on Entries  | 
+Delete Questions on Entries  | 
+Update Questions on Entries  | 
+Access to the User Questions Page  | 
 **RELATIONSHIPS** |
-Access to the admin Relationships Page |  |  |  |  | 
-Access to the User Relationships Page |  |  |  |  | 
-**REPORTS** |  GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-General Reports Read |  |  |  |  | 
-User Run Report as Attached Email |  |  |  |  | 
-User Run Report as Content of Email body |  |  |  |  | 
-View Reports From All Users |  |  |  |  | 
-Create New Report |  |  |  |  | 
-Delete a Report |  |  |  |  | 
-Access to the Reports Page |  |  |  |  | 
-Run the Action Report |  |   |  |  | 
-Run Entries by Category Report |  |  |  |  | 
-Run Entries by Organization Report |   |  |  |  | 
-Run Entry Detail Report |   |  |  |  | 
-Run Entry Listing Report |  |  |  |  | 
-Run the Entry Report |  |  |  |  | 
-Run the Entry Status Report |  |  |  |  | 
-Run the Evaluation Status Report |  |  |  |  | 
-Run the Link Validation Report |  |  |  |  | 
-Run the Sumissions Report |  |  |  |  | 
-Run the Useage Report |  |  |  |  | 
-Run the User by Organiation Repeat |  |  |  |  | 
-Run the User Report |  |  |  |  | 
-Run the Workplan Status Report |  |  |  |  | 
-**REPORTS SCHEDULE** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Create Scheduled Reports |  |  |  |  | 
-Delete Scheduled Reports |  |  |  |  | 
-Read Scheduled Reports |  |  |  |  | 
-Edit Scheduled Reports |  |  |  |  | 
+Access to the admin Relationships Page  | 
+Access to the User Relationships Page  | 
+**REPORTS** |  GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+General Reports Read  | 
+User Run Report as Attached Email  | 
+User Run Report as Content of Email body  | 
+View Reports From All Users  | 
+Create New Report  | 
+Delete a Report  | 
+Access to the Reports Page  | 
+Run the Action Report   | 
+Run Entries by Category Report  | 
+Run Entries by Organization Report |      
+Run Entry Detail Report |      
+Run Entry Listing Report  | 
+Run the Entry Report  | 
+Run the Entry Status Report  | 
+Run the Evaluation Status Report  | 
+Run the Link Validation Report  | 
+Run the Sumissions Report  | 
+Run the Useage Report  | 
+Run the User by Organiation Repeat  | 
+Run the User Report  | 
+Run the Workplan Status Report  | 
+**REPORTS SCHEDULE** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Create Scheduled Reports  | 
+Delete Scheduled Reports  | 
+Read Scheduled Reports  | 
+Edit Scheduled Reports  | 
 **REVIEWS** |
-Access to the Admin Reviews Page |  |  |  |  | 
-Read Reviews |   |  |  |  | 
-Delete Reviews |   |  |  |  | 
-Update Reviews |  |  |  |  | 
-Access to the Reviews Page |   |  |  |  | 
+Access to the Admin Reviews Page  | 
+Read Reviews |      
+Delete Reviews |      
+Update Reviews  | 
+Access to the Reviews Page |      
 **ROLES** |
-Ability to Read Security Roles |  |  |  |  | 
-Create Security Roles |  |  |  |  | 
-Delete Security Roles |  |  |  |  | 
-Update Security Roles |  |  |  |  | 
-Access to Admin Security Roles Page |  |  |  |  | 
-**SEARCH MANAGEMENT** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Read all Searches |   |  |  |  | 
-Create a Search |   |  |  |  | 
-Delete a Search |   |  |  |  | 
-Update a Search |   |  |  |  | 
-Search Page (User) |  |  |  |  | 
+Ability to Read Security Roles  | 
+Create Security Roles  | 
+Delete Security Roles  | 
+Update Security Roles  | 
+Access to Admin Security Roles Page  | 
+**SEARCH MANAGEMENT** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Read all Searches |      
+Create a Search |      
+Delete a Search |      
+Update a Search |      
+Search Page (User)  | 
 **SECURITY** | 
-Access to the Admin Security Page |  |  |  |  | 
-Access to the Security Policy Tab |  |  |  |  | 
-Access to the Shiro Config Tab |  |  |  |  | 
-**SUBMISSIONS (ADMIN)** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access to Partial Submissions Page |  |  |  |  | 
-Access to Admin Custom Submission Form Template Page |  |  |  |  | 
-Read Submission Form Templates |  |  |  |  | 
-Create Submission Form Templates |  |  |  |  | 
-Delete Submission Form Templates |  |  |  |  | 
-Update Submission Form Templates |  |  |  |  | 
-Read User Sumissions |  |  |  |  | 
-Delete User Submissions |  |  |  |  | 
-Update User Submissions |  |  |  |  | 
+Access to the Admin Security Page  | 
+Access to the Security Policy Tab  | 
+Access to the Shiro Config Tab  | 
+**SUBMISSIONS (ADMIN)** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to Partial Submissions Page  | 
+Access to Admin Custom Submission Form Template Page  | 
+Read Submission Form Templates  | 
+Create Submission Form Templates  | 
+Delete Submission Form Templates  | 
+Update Submission Form Templates  | 
+Read User Sumissions  | 
+Delete User Submissions  | 
+Update User Submissions  | 
 **SUBMISSIONS (USER)** | 
-Access to the User Submissions Page |  |  |  |  | 
-Read User Submissions |  |  |  |  | 
-Create Change Requests |  |  |  |  | 
-Create User Submissions |  |  |  |  | 
-Delete User Submissions |  |  |  |  | 
-Update User Submissions |  |  |  |  | 
-**SYSTEM** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access to the Admin System Archives Page |  |  |  |  | 
-General System Administration Permission |  |  |  |  | 
-Update Applicaiton Properties |  |  |  |  | 
-Create System Archives |  |  |  |  | 
-Delete System Archives |  |  |  |  | 
-Manage System Archives |  |  |  |  | 
-Access to System Cache |  |  |  |  | 
-Remove/ Clear Operations for the System |  |  |  |  | 
-Read Application Meta Data |  |  |  |  | 
-Update System Configuration |  |  |  |  | 
-Error Ticket Mangaement |  |  |  |  | 
-Permission Logging |  |  |  |  | 
-System Managers |  |  |  |  | 
-Management of Plugins |  |  |  | {{<icon name="fa-close"color="red">}} | 
-System Recent Changes |  |  |  |  | 
-System Search Management |  |  |  |  | 
-System Stand By |  |  |  |  | 
-System Status |  |  |  |  | 
-Access the Admin System Page |  |  |  |  | 
-**TAGS** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin
-Access to the Admin Tags Page |  |  |  |  | 
+Access to the User Submissions Page  | 
+Read User Submissions  | 
+Create Change Requests  | 
+Create User Submissions  | 
+Delete User Submissions  | 
+Update User Submissions  | 
+**SYSTEM** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Admin System Archives Page  | 
+General System Administration Permission  | 
+Update Applicaiton Properties  | 
+Create System Archives  | 
+Delete System Archives  | 
+Manage System Archives  | 
+Access to System Cache  | 
+Remove/ Clear Operations for the System  | 
+Read Application Meta Data  | 
+Update System Configuration  | 
+Error Ticket Mangaement  | 
+Permission Logging  | 
+System Managers  | 
+Management of Plugins   |   
+System Recent Changes  | 
+System Search Management  | 
+System Stand By  | 
+System Status  | 
+Access the Admin System Page  | 
+**TAGS** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Admin Tags Page  | 
 **TRACKING** | 
-Access to the Admin Tracking Page |  |  |  |  | 
-Read Tracking |  |  |  |  | 
-Delete Tracking from an Item |  |  |  |  | 
-Update Tracking on an Item |  |  |  |  | 
+Access to the Admin Tracking Page  | 
+Read Tracking  | 
+Delete Tracking from an Item  | 
+Update Tracking on an Item  | 
 **USER MANAGEMENT** | 
-Access to the Admin User Management Page |  |  |  |  | 
-Read other User's Submissions |  |  |  |  | 
-Approve other User's Submissions |  |  |  |  | 
-Create Submissions for Users |  |  |  |  | 
-Delete other User's Submissions |  |  |  |  | 
-Update other User's Submissions |  |  |  |  | 
+Access to the Admin User Management Page  | 
+Read other User's Submissions  | 
+Approve other User's Submissions  | 
+Create Submissions for Users  | 
+Delete other User's Submissions  | 
+Update other User's Submissions  | 
 **WATCHES** | 
-Access to Admin Watches Page |  |  |  |  | 
-Read Watches |  |  |  |  | 
-Delete Watches |  |  |  |  | 
-Update WAtches |  |  |  |  | 
-Access to the User Watches Page |  |  |  |  | 
-**WORKPLAN** | GUEST-GROUP | DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | SPOON-Admin 
-Create Workplans |  |  |  |  | 
-Delete Workplans |  |  |  |  | 
-Access to the Workplans Page |  |  |  |  | 
-Read Workplans as Administrator |  |  |  |  | 
-Update Workplans |  |  |  |  | 
-User can view current status of selected record in a workplan |  |  |  |  | 
+Access to Admin Watches Page  | 
+Read Watches  | 
+Delete Watches  | 
+Update WAtches  | 
+Access to the User Watches Page  | 
+**WORKPLAN** | GUEST-GROUP | DEFAULT-GROUP | SME-(*Entry Type*) | SPOON-Support | STOREFRONT-Librarian | STOREFRONT-Admin 
+Create Workplans  | 
+Delete Workplans  | 
+Access to the Workplans Page  | 
+Read Workplans as Administrator  | 
+Update Workplans  | 
+User can view current status of selected record in a workplan  | 
 **WORKPLAN PROGRESS MANAGEMENT** | 
-Get Submission Comments for Role |  |  |  |  | 
-Enable Assigning and Unassigning to Admin |  |  |  |  | 
-Assign Any Entry to Any User |  |  |  |  | 
-Enable Updating of Workflows |  |  |  |  | 
-View Your Group Workflow Links |  |  |  |  | 
-View ALL Workflow Links |  |  |  |  | 
-Update Workflows |  |  |  |  | 
-View Workplan Progress Management Page |  |  |  |  | 
+Get Submission Comments for Role  | 
+Enable Assigning and Unassigning to Admin  | 
+Assign Any Entry to Any User  | 
+Enable Updating of Workflows  | 
+View Your Group Workflow Links  | 
+View ALL Workflow Links  | 
+Update Workflows  | 
+View Workplan Progress Management Page  | 
 
 **[GO TO TOP]({{<relref "#toc">}})**
 
@@ -389,10 +383,10 @@ Note the permissions table below:
 
 ABILITY OR PERMISSION TO: |  DEFAULT-GROUP | SPOON-Evaluators | SPOON-Librarian | Bob Smith's (ANDed) Access
 ------------------------: | :------------: | :-------------------: | :------------------: | :----------------: 
-View the System Status Widget |  |  |  | 
-View the Evaluation Status Widget |  |  |  | 
-View the Questions Widget |  |  |  | 
-Allow Evaluator to Edit an Evaluation |  |  |  | 
+View the System Status Widget    
+View the Evaluation Status Widget    
+View the Questions Widget    
+Allow Evaluator to Edit an Evaluation    
 
 **[GO TO TOP]({{<relref "#toc">}})**
 
