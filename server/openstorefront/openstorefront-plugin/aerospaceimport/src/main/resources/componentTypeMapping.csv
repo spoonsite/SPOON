@@ -54,3 +54,4 @@ Transponder,COM-TRAN
 Propellant Tank,PROP-TANKS
 Payload Deployment Mechanism,SMM-MECHANISMS
 Radar,GNC-PTS
+IR-Radiometer,CDH-FLIPROC
