@@ -122,7 +122,7 @@ public class AerospaceComponentParser
         ComponentAll componentAll = defaultComponentAll();
         // Shortcut to the component
         Component component = componentAll.getComponent();
-        component.setActiveStatus(Component.ACTIVE_STATUS);
+        component.setActiveStatus(Component.INACTIVE_STATUS);
         component.setApprovalState(ApprovalStatus.APPROVED);
         component.setExternalId(AEROSPACE_IMPORT_KEY_PREPENDER + Integer.toString(product.getKey()));
         
