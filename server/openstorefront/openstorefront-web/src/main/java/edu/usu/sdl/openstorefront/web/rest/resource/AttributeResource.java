@@ -32,6 +32,8 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
@@ -47,6 +49,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeDetail;
 import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeListMerge;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeMetadata;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
@@ -551,6 +554,157 @@ public class AttributeResource
 		attributeType.setRequiredRestrictions(attributeTypeSave.getRequiredComponentType());
 		attributeType.setOptionalRestrictions(attributeTypeSave.getOptionalComponentTypes());
 		return handleAttributePostPutType(attributeType, true);
+	}
+	
+	@POST
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_CREATE)
+	@APIDescription("Adds a new attribute type and deletes a list of other types")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/listmergeattributetypes")
+	public Response listMergeAttributeTypes(AttributeTypeListMerge attributeTypeListMerge)
+	{
+		/**
+		 * To pull this off you need to build the object with js and hit the server.
+		 * Make sure to findout what the object looks like by creating a new attribute and then
+		 * copying source request payload, not that parsed garbage.
+		 * And that is all there is to it. Now we are going to run from the assumption that
+		 * we have a valid attributeTypeListMerge and program from there.
+		 * 
+		 * 
+		 * 
+		 * 
+		 * ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		 * componentAttributeExample.setComponentAttributePk(AttributeTypeCode);
+		 *	
+		 * List of ComponentID's = service.getPersistenceService().queryByExample(componentAttributeExample);
+		 * 
+		 * 
+		 * 
+		 */
+		
+		// 1. Verify that all the attributes are compatible.
+		// I need a list of all the attributetype.attributeunit
+		//AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
+		if(!unitsAreCompatible(attributeTypeListMerge)) {
+			String error = Json.createObjectBuilder()
+					.add("error", " unable to parse units: ")
+					.build()
+					.toString();
+			return Response.ok(error).build();
+		}
+		
+		if(!attributeTypeWasCreated(attributeTypeListMerge)) {
+			String error = Json.createObjectBuilder()
+					.add("error", " unable to create new attribute type ")
+					.build()
+					.toString();
+			return Response.ok(error).build();
+		}
+		
+		
+		for(String attributeType : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
+			
+			
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(attributeType);
+			ComponentAttribute componentAttribute = new ComponentAttribute();
+			componentAttribute.setComponentAttributePk(componentAttributePk);
+			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(componentAttribute);
+			
+		}
+
+		
+		
+		
+		
+//		Unit unit;
+//		unit.AttributeType attributeType = attributeTypeSave.getAttributeType();
+//		attributeType.setRequiredRestrictions(attributeTypeSave.getRequiredComponentType());
+//		attributeType.setOptionalRestrictions(attributeTypeSave.getOptionalComponentTypes());
+//		return handleAttributePostPutType(attributeType, true);
+		return Response.status(Response.Status.OK).build();
+	}
+	
+	private Boolean unitsAreCompatible(AttributeTypeListMerge attributeTypeListMerge) {
+		
+		List<String> unitsList = new ArrayList<>();
+		String baseUnit;
+
+		for (String attrTypeName : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
+			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, attrTypeName);
+			if (attributeType != null) {
+				if (!attributeType.getAttributeUnit().isEmpty()) {
+					unitsList.add(attributeType.getAttributeUnit());
+				}
+			}
+		}
+		
+		if(!attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit().isEmpty()) {
+			baseUnit = attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit();
+		}
+		else{
+			return false;
+		}
+		
+		Unit unit;
+		for(String attributeUnit : unitsList) {
+			try {
+				unit = Unit.valueOf(attributeUnit);
+			} catch (IllegalArgumentException e) {
+				return false;						
+			}
+		}
+		
+		try {
+			unit = Unit.valueOf(baseUnit);
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+
+		// verify all the units in the list are the same dimension
+		// verify they all match the base unit
+		/**
+		 * TODO:
+		 * We need to implement dimensionless functionality!
+		 */
+		for (String unitString : unitsList) {
+			Unit tempUnit;
+			try {
+				tempUnit = Unit.valueOf(unitString);
+			} catch (IllegalArgumentException e) {
+				return false;
+			}
+
+			if (!tempUnit.getDimension().equals(unit.getDimension())) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private Boolean attributeTypeWasCreated(AttributeTypeListMerge attributeTypeListMerge) {
+		// create the new attribute
+		AttributeType attributeType = attributeTypeListMerge.getAttributeTypeSave().getAttributeType();
+		attributeType.setRequiredRestrictions(attributeTypeListMerge.getAttributeTypeSave().getRequiredComponentType());
+		attributeType.setOptionalRestrictions(attributeTypeListMerge.getAttributeTypeSave().getOptionalComponentTypes());
+
+		attributeType.updateNullFlags();
+
+		ValidationModel validationModel = new ValidationModel(attributeType);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		validationResult.merge(attributeType.customValidation());
+		if (validationResult.valid()) {
+			attributeType.setActiveStatus(LookupEntity.ACTIVE_STATUS);
+			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
+			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
+			service.getAttributeService().saveAttributeType(attributeType, false);
+		} else {
+			return false;
+		}
+		
+		return true;
 	}
 
 	@POST

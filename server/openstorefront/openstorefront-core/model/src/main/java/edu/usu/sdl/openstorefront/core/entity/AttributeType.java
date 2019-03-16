@@ -133,12 +133,12 @@ public class AttributeType
 	private String attributeValueType;
 	
 	@ConsumeField
-	@APIDescription("Unit of measure information")
+	@APIDescription("Base Unit of measure for the attribute  ie... meters")
 	@ManyToOne(cascade = {CascadeType.ALL})
 	private String attributeUnit;
 
 	@ConsumeField
-	@APIDescription("Compatible Unit List for attribute")
+	@APIDescription("Compatible Unit List for attribute ie... ft in cm m")
 	private Set<String> attributeUnitList;
 
 	public static final String TYPE = "TYPE";
