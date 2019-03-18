@@ -419,11 +419,6 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
-			} else {
-				esQuery.mustNot(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
-				esQuery.mustNot(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
-				esQuery.mustNot(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
-				esQuery.mustNot(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
 			}
 
 			if (searchOptions.getCanUseNameInSearch()) {
@@ -437,23 +432,11 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
-			} else {
-				esQuery.mustNot(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
-				esQuery.mustNot(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
-				esQuery.mustNot(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
-				esQuery.mustNot(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, actualQuery));
-
-				esQuery.mustNot(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
-				esQuery.mustNot(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
-				esQuery.mustNot(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
-				esQuery.mustNot(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
 			}
 
 			if (searchOptions.getCanUseDescriptionInSearch()) {
 				// Custom query for description
 				esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));
-			} else {
-				esQuery.mustNot(QueryBuilders.matchPhraseQuery("description", actualQuery));	
 			}
 		}
 
@@ -462,24 +445,18 @@ public class ElasticSearchManager
 
 			if (searchOptions.getCanUseOrganizationsInSearch()) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
-			} else {
-				esQuery.mustNot(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
 			}
 
 			if (searchOptions.getCanUseNameInSearch()) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
-			} else {
-				esQuery.mustNot(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
 			}
 
 			if (searchOptions.getCanUseDescriptionInSearch()) {
 				esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
-			} else {
-				esQuery.mustNot(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
 			}
 		}
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
-				//.unmappedType("String") // currently the only fileds we are searching/sorting on are strings
+				//.unmappedType("String") // currently the only fields we are searching/sorting on are strings
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC : SortOrder.DESC);
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
