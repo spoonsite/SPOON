@@ -2107,7 +2107,7 @@
 										},
 										{
 											xtype: 'checkbox',
-											boxLabel: 'Component Attributes',
+											boxLabel: 'Component Vitals',
 											id: 'componentAttributesCheckbox',
 										}
 									]

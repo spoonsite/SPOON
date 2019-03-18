@@ -48,8 +48,8 @@ public class ComponentSearchView
 	public static final String FIELD_ORGANIZATION = "organization";
 	public static final String FIELD_SEARCH_SCORE = "searchScore";
 
-	public static final String FIELD_TAGS = 'tags.text';
-	public static final String FIELD_ATTRIBUTES = 'attributes.label';
+	public static final String FIELD_TAGS = "tags.text";
+	public static final String FIELD_ATTRIBUTES = "attributes.label";
 
 	private String listingType;
 	private String componentId;
