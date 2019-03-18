@@ -309,7 +309,9 @@ public class ElasticSearchManager
 
 		if(!searchOptions.getCanUseDescriptionInSearch() && 
 			!searchOptions.getCanUseNameInSearch() &&
-			!searchOptions.getCanUseOrganizationsInSearch()){
+			!searchOptions.getCanUseOrganizationsInSearch() &&
+			!searchOptions.getCanUseTagsInSearch()&&
+			!searchOptions.getCanUseAttributesInSearch()){
 				
 				IndexSearchResult blankIndexSearchResult = new IndexSearchResult();
 				return blankIndexSearchResult;

@@ -2123,9 +2123,11 @@
 							handler: function () {
 								if(!Ext.getCmp('organizationsCheckbox').value &&
 									!Ext.getCmp('componentNameCheckbox').value&&
-									!Ext.getCmp('componentDescriptionCheckbox').value){
+									!Ext.getCmp('componentDescriptionCheckbox').value &&
+									!Ext.getCmp('componentTagsCheckbox').value &&
+									!Ext.getCmp('componentAttributesCheckbox').value){
 										Ext.toast({
-											html: '<b>If no catagories are selected, the index search will not return any results.</b>',
+											html: '<b>If no categories are selected, the index search will not return any results.</b>',
 											align: 'tr',
 											autoCloseDelay: 5000
 										})
