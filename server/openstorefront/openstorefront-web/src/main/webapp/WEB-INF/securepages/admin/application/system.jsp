@@ -2121,6 +2121,15 @@
 							iconCls: 'fa fa-2x fa-save icon-vertical-correction',
 							tooltip: 'This will apply the above settings to searches.',
 							handler: function () {
+								if(!Ext.getCmp('organizationsCheckbox').value &&
+									!Ext.getCmp('componentNameCheckbox').value&&
+									!Ext.getCmp('componentDescriptionCheckbox').value){
+										Ext.toast({
+											html: '<b>If no catagories are selected, the index search will not return any results.</b>',
+											align: 'tr',
+											autoCloseDelay: 5000
+										})
+								}
 								var data = {
 									canUseOrganizationsInSearch: Ext.getCmp('organizationsCheckbox').value,
 									canUseNameInSearch: Ext.getCmp('componentNameCheckbox').value,

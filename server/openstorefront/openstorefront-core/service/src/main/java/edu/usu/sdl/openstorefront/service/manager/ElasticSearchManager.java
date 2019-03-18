@@ -305,8 +305,17 @@ public class ElasticSearchManager
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
-		IndexSearchResult indexSearchResult = new IndexSearchResult();
 		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
+
+		if(!searchOptions.getCanUseDescriptionInSearch() && 
+			!searchOptions.getCanUseNameInSearch() &&
+			!searchOptions.getCanUseOrganizationsInSearch()){
+				
+				IndexSearchResult blankIndexSearchResult = new IndexSearchResult();
+				return blankIndexSearchResult;
+		}
+
+		IndexSearchResult indexSearchResult = new IndexSearchResult();
 
 		int maxSearchResults = 10000;
 		if (filter.getMax() < maxSearchResults) {
@@ -473,7 +482,7 @@ public class ElasticSearchManager
 			}
 		}
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
-				//.unmappedType("String") // currently the only fileds we are searching/sorting on are strings
+				//.unmappedType("String") // currently the only fields we are searching/sorting on are strings
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC : SortOrder.DESC);
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
