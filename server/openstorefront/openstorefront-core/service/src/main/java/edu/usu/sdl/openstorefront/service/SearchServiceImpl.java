@@ -257,8 +257,6 @@ public class SearchServiceImpl
 
 		AdvanceSearchResult searchResult = new AdvanceSearchResult();
 
-		SearchOptions searchOptions = getSearchService().getGlobalSearchOptions();
-
 		//each user may get different results depending on security roles
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
 			Element element = OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
