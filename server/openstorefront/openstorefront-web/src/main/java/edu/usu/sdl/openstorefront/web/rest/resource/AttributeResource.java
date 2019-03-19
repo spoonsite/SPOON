@@ -609,7 +609,7 @@ public class AttributeResource
 			componentAttributePk.setAttributeType(attributeType);
 			ComponentAttribute componentAttribute = new ComponentAttribute();
 			componentAttribute.setComponentAttributePk(componentAttributePk);
-			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(componentAttribute);
+//			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(componentAttribute);
 			
 		}
 
