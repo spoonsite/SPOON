@@ -30,7 +30,7 @@ STOREFRONT-Librarian | Data management librarian permissions | Many Administrato
 STOREFRONT-Admin | Website administrator, super permissions group | ALL Permissions
 
 {{% notice note %}}
-**If these permisions get changed and you would like to reset them to the default (new installatin) defaults, please do the following:**
+**If these permissions get changed and you would like to reset them to the default (new installation) defaults, please do the following:**
 1.  Go to **Admin Tools &rarr; Application Management &rarr; System** and click on the **Application State Properties** tab.
 2.  Locate the Key **Security-Init_v2_LASTRUN_DTS** and click **Edit**
 3.  Delete all of the text in the value box and click **Save**
@@ -48,17 +48,17 @@ ABILITY OR PERMISSION TO: | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFR
 **API** |
 Ability to see API documentation | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
 **ALERTS** | 
-Ability to Read all Alerts | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
-Ability to Create new Alerts | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
-Ability to Delete Alerts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
-Ability to Update Alerts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
-Access the admin Alerts Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
+Ability to Read all Alerts | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Ability to Create new Alerts | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Ability to Delete Alerts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Ability to Update Alerts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Access the admin Alerts Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 **ATTRIBUTES** | 
-Create new Attributes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
-Delete existing Atrributes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
-Update existing Attributes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
-Access to the admin Attribute page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}}
-Manage attributes on entries from the admin tools manageme assignments tool  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
+Create new Attributes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Delete existing Attributes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Update existing Attributes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Access to the admin Attribute page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Manage attributes on entries from the admin tools manage assignments tool  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Create attribute types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
 **BRANDING** |  GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin
 Create new Brandings  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
@@ -66,102 +66,102 @@ Delete Brandings  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
 Access to the admin Branding page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Update Brandings  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **CONTACTS** |
-Create Contacts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete Contacts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Update existing Contacts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Access to the admin Contacts page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create Contacts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Contacts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update existing Contacts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the admin Contacts page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **DASHBOARD** |  GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
 Access to the Dashboard Page  | {{<x>}} | {{<c>}} | {{<c>}} | {{<x>}} | {{<c>}} 
-View the Entry Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-View the Evaluation Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View the Entry Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+View the Evaluation Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 View the Notifications Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-View the Outstanding Feedback Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-View the Pending Approvals Requests widget  | {{<x>}} | {{<x>}} | {{<c>}} | {{<x>}} | {{<c>}} 
+View the Outstanding Feedback Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+View the Pending Approvals Requests widget  | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
 View the Questions Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 View the Reports Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 View the Saved Search Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 View the Submission Status Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 View the System Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-View the Recent User Data Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View the Recent User Data Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 View the User Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 View the Watches Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **ENTRIES** |  GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
-Access to the Admin Entries Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Ability to Approve an Entry | {{<x>}} | {{<x>}} | {{<c>}} | {{<x>}} | {{<c>}} 
-Ability to Read Entries  | {{<x>}} | {{<x>}} | {{<c>}} | {{<x>}} | {{<c>}} 
-Approve an Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Assign a Librarian to a Component (Entry)  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Atrribute Management of Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Change Owner of the Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Manage Change Requests  | {{<x>}} | {{<x>}} | {{<c>}} | {{<x>}} | {{<c>}} 
-Change an Entry Type  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Manage Entry Comments  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Conact Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Create Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete and Existing Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Manage Evaluation Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Export an Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Media Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Merge two Entries Together  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Read Pendig Changes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Relationship Management for Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Resource Management for Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Tag Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Toggle Status (Active/Inactive) of an Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Update Existing Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete Entry Version  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Read Entry Version  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-ReSPOON Entry Version  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Admin Entries Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Ability to Approve an Entry | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
+Ability to Read Entries  | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
+Approve an Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Assign a Librarian to a Component (Entry)  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Attribute Management of Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Change Owner of the Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Manage Change Requests  | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
+Change an Entry Type  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Manage Entry Comments  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Contact Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete and Existing Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Manage Evaluation Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Export an Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Media Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Merge two Entries Together  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Pending Changes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Relationship Management for Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Resource Management for Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Tag Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Toggle Status (Active/Inactive) of an Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Existing Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Entry Version  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Entry Version  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+ReSPOON Entry Version  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **ENTRY TEMPLATES** |  GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin  
-Read Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Create Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}  
-Read Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Update Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Access to Entry Templates Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}  
+Read Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to Entry Templates Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **ENTRY TYPES** | 
-Create Entry Types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete Entry types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Update Entry Types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Access Admin Entry Types Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create Entry Types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Entry types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Entry Types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access Admin Entry Types Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION (ADMIN)** |
-Access to the Admin Evaluator Management Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Activate an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Allow New Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Allow Question Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete a Comment  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Create an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete a Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Publsh just the Summary  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Publish or Unplublish an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Admin Evaluator Management Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Activate an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow New Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow Question Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete a Comment  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete a Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Publish just the Summary  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Publish or Unplublish an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION (USER)** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
-Access to the Evaluator Management Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Allow Evaluator to View an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Allow Evaluator to Assign a User to an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Allow Evaluator to Edit an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Evaluator Management Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow Evaluator to View an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow Evaluator to Assign a User to an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow Evaluator to Edit an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION TEMPLATES** |
-Access to the Evaluation Templates Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Read Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Create Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Update Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Evaluation Templates Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION TEMPLATES CHECKLIST QUESTIONS** |
-Access to the Evaluation Templates Checklist Questions Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Read Eval Template Checklist Question Items   | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Create Template Checklist Questions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete Template Checklist Questions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Update Template Checklist Questions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Evaluation Templates Checklist Questions Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Eval Template Checklist Question Items   | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Template Checklist Questions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Template Checklist Questions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Template Checklist Questions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION TEMPLATES CHECKLISTS** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin  
-Access to the Evaluation Templates Checklists Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Read Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Create Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Update Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Evaluation Templates Checklists Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION TEMPLATES SECTIONS** | 
-Access to the Evaluation Section Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Read Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Create Evaluation Template Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Delete Evaluation Template Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Update Evaluation Template Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Evaluation Section Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Evaluation Template Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Evaluation Template Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Evaluation Template Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **FAQs** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
 Access to the Admin FAQ page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Read FAQs  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
@@ -209,7 +209,7 @@ Access to the admin Media Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}
 Upload Media as Admin  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 Upload Support Media  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **MESSAGES** |
-Read User Notifcation Data  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read User Notification Data  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Post New User Notification Event  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Delete User Notification Event  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Update User Notification Event  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
@@ -222,7 +222,7 @@ Create Organization  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Delete Organization  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 Organization Extraction  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 Merge Two Organizations  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
-Acces the Admin Organiation Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access the Admin Organization Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 Update Organization  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **PROFILE MANAGEMENT** |
 Read User Profiles  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
@@ -256,9 +256,9 @@ Run the Entry Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
 Run the Entry Status Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 Run the Evaluation Status Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 Run the Link Validation Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
-Run the Sumissions Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
-Run the Useage Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
-Run the User by Organiation Repeat  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the Submissions Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the Usage Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the User by Organization Repeat  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 Run the User Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 Run the Workplan Status Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **REPORTS SCHEDULE** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
@@ -295,7 +295,7 @@ Read Submission Form Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}
 Create Submission Form Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Delete Submission Form Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Update Submission Form Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Read User Sumissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read User Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Delete User Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Update User Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **SUBMISSIONS (USER)** | 
@@ -308,7 +308,7 @@ Update User Submissions  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}}
 **SYSTEM** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
 Access to the Admin System Archives Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 General System Administration Permission  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Update Applicaiton Properties  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update Application Properties  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Create System Archives  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Delete System Archives  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Manage System Archives  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
@@ -316,7 +316,7 @@ Access to System Cache  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
 Remove/ Clear Operations for the System  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Read Application Meta Data  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Update System Configuration  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
-Error Ticket Mangaement  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Error Ticket Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Permission Logging  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 System Managers  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 Management of Plugins   | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}   
@@ -368,22 +368,17 @@ View Workplan Progress Management Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 ## 3. Overlapping Permissions
 
 {{% notice info %}}
-**What happens if a user is a part of more than *one* Security Role?  If a user is part of multiple security roles, such as a SME_Approver and STOREFRONT-Librarian (and the Default Group as all users are) then if a particular permission is granted to one group, it is grandted (ANDed) to the user.  For example:**
+**What happens if a user is a part of more than *one* Security Role?  If a user is part of multiple security roles, such as a SME-Approver and STOREFRONT-Librarian (and the Default Group as all users are) then if a particular permission is granted to one group, it is granted (ANDed) to the user.  For example:**
 
- * If user "bobsmith" has the Security Roles of SME_Approver **and** STOREFRONT-Librarian he will see,
- * BOTH the 
- * asdf
-
-
-Note the permissions table below:
+If user "bobsmith" has the Security Roles of SME_Approver **and** STOREFRONT-Librarian he will see anything that *either* of these roles have permission to such as the User Watches Page, the Ability to Approve an Entry, or Change the Ownder of the Entry.  See table below.
 {{% /notice %}}
 
-ABILITY OR PERMISSION TO: | DEFAULT-GROUP | SME_Approver | SPOON-Librarian | Bob Smith's (ANDed) Access
+ABILITY OR PERMISSION TO: | DEFAULT-GROUP | SME-Approver | SPOON-Librarian | Bob Smith's (ANDed) Access
 ------------------------: | :-----------: | :----------: | :-------------: | :----------------: 
-|
-|
-|
-|
+Access to the User Watches Page  | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Ability to Approve an Entry  | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
+Change Owner of the Entry  | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access Admin Jobs Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} 
 
 **[GO TO TOP]({{<relref "#toc">}})**
 
