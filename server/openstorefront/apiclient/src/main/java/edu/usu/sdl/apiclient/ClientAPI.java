@@ -49,7 +49,7 @@ import org.apache.http.util.EntityUtils;
 public class ClientAPI
 {
 
-	private static Logger log = Logger.getLogger(AbstractService.class.getName());
+	private static final Logger LOG = Logger.getLogger(AbstractService.class.getName());
 
 	private static final String MEDIA_TYPE_JSON = "application/json";
 	private static final String CONTENT_TYPE = "Content-Type";
@@ -116,19 +116,22 @@ public class ClientAPI
 		this.loginModel = loginModel;
 		//get the initial cookies
 		HttpGet httpget = new HttpGet(loginModel.getServerUrl());
+
+		RequestConfig requestConfig = RequestConfig.custom().setCircularRedirectsAllowed(true).bui‌​ld();
+		httpget.setConfig(requestConfig);
 		try (CloseableHttpResponse response = httpclient.execute(httpget)) {
 			HttpEntity entity = response.getEntity();
 
-			log.log(Level.FINE, "Login form get: {0}", response.getStatusLine());
+			LOG.log(Level.FINE, "Login form get: {0}", response.getStatusLine());
 			EntityUtils.consume(entity);
 
-			log.log(Level.FINEST, "Initial set of cookies:");
+			LOG.log(Level.FINEST, "Initial set of cookies:");
 			List<Cookie> cookies = cookieStore.getCookies();
 			if (cookies.isEmpty()) {
-				log.log(Level.FINEST, "None");
+				LOG.log(Level.FINEST, "None");
 			} else {
 				for (Cookie cookie : cookies) {
-					log.log(Level.FINEST, () -> "- " + cookie);
+					LOG.log(Level.FINEST, () -> "- " + cookie);
 				}
 			}
 		} catch (IOException ex) {
@@ -145,16 +148,16 @@ public class ClientAPI
 			try (CloseableHttpResponse response = httpclient.execute(login)) {
 				HttpEntity entity = response.getEntity();
 
-				log.log(Level.FINE, "Login form get: {0}", response.getStatusLine());
+				LOG.log(Level.FINE, "Login form get: {0}", response.getStatusLine());
 				EntityUtils.consume(entity);
 
-				log.log(Level.FINEST, "Post logon cookies:");
+				LOG.log(Level.FINEST, "Post logon cookies:");
 				List<Cookie> cookies = cookieStore.getCookies();
 				if (cookies.isEmpty()) {
-					log.log(Level.FINEST, "None");
+					LOG.log(Level.FINEST, "None");
 				} else {
 					for (Cookie cookie : cookies) {
-						log.log(Level.FINEST, "- {0}", cookie.toString());
+						LOG.log(Level.FINEST, "- {0}", cookie.toString());
 					}
 				}
 			}
@@ -170,7 +173,7 @@ public class ClientAPI
 					.build();
 
 			try (CloseableHttpResponse response = httpclient.execute(data)) {
-				log.log(Level.FINE, "Response Status from connection: {0}  {1}", new Object[]{response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase()});
+				LOG.log(Level.FINE, "Response Status from connection: {0}  {1}", new Object[]{response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase()});
 				HttpEntity entity1 = response.getEntity();
 				EntityUtils.consume(entity1);
 			}
@@ -192,7 +195,7 @@ public class ClientAPI
 				httpclient = null;
 				connected = false;
 			} catch (IOException ex) {
-				log.log(Level.SEVERE, "Unable to close client", ex);
+				LOG.log(Level.SEVERE, "Unable to close client", ex);
 			}
 		}
 	}
@@ -284,7 +287,7 @@ public class ClientAPI
 					.setCircularRedirectsAllowed(true).build();
 
 			RequestBuilder builder = RequestBuilder.post()
-					.setUri(new URI(loginModel.getServerUrl() + apiPath))
+					.post(new URI(loginModel.getServerUrl() + apiPath))
 					.addHeader(CONTENT_TYPE, MEDIA_TYPE_JSON)
 					.addHeader(CSRF_TOKEN, getCookieValue(CSRF_TOKEN))
 					.setConfig(defaultRequestConfig)
@@ -415,6 +418,11 @@ public class ClientAPI
 		}
 
 		return response;
+	}
+
+	public CloseableHttpClient getHttpclient()
+	{
+		return httpclient;
 	}
 
 }

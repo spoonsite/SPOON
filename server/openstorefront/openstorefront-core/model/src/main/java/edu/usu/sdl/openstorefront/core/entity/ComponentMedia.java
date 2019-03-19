@@ -114,6 +114,9 @@ public class ComponentMedia
 	@APIDescription("Specific the media to be used as an icon; Only one active icon should exist.")
 	@DefaultValue("false")
 	private Boolean iconFlag;
+	
+	@APIDescription("For mapping to third party information")
+	private String externalId;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentMedia()
@@ -161,7 +164,18 @@ public class ComponentMedia
 			this.setFileName(media.getFileName());
 			this.setOriginalName(media.getOriginalName());
 			this.setMimeType(media.getMimeType());
-			this.setFile(media.getFile());
+			/**
+			 * This change was added to prevent duplicate files being created from proxying the database.
+			 */
+			if(this.getFile() != null) {
+				this.getFile().setFileName(media.getFile().getFileName());
+				this.getFile().setOriginalName(media.getFile().getOriginalName());
+				this.getFile().setMimeType(media.getFile().getMimeType());
+				this.getFile().setFileType(media.getFile().getFileType());
+			} else {
+				this.setFile(media.getFile());
+			}
+
 		}
 		this.setCaption(media.getCaption());
 		this.setLink(media.getLink());
@@ -349,5 +363,15 @@ public class ComponentMedia
 	public void setFile(MediaFile file)
 	{
 		this.file = file;
+	}
+	
+	public String getExternalId()
+	{
+		return externalId;
+	}
+
+	public void setExternalId(String externalId)
+	{
+		this.externalId = externalId;
 	}
 }
