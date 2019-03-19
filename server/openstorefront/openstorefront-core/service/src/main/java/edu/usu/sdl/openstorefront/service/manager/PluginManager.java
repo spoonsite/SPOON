@@ -50,16 +50,16 @@ public class PluginManager
 
 	private static final Logger log = Logger.getLogger(PluginManager.class.getName());
 
-	private static AtomicBoolean loadingPlugins = new AtomicBoolean(false);	
+	private static AtomicBoolean loadingPlugins = new AtomicBoolean(false);
 	private static Map<String, Bundle> externalBundles = new ConcurrentHashMap<>();
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	public static void init()
 	{
 		ServiceProxy service = ServiceProxy.getProxy();
-		
+
 		loadingPlugins.set(true);
-		
+
 		//start any stopped bundles
 		Bundle bundles[] = OsgiManager.getInstance().getFelix().getBundleContext().getBundles();
 		for (Bundle bundle : bundles) {
@@ -76,7 +76,7 @@ public class PluginManager
 
 		//Reload any external bundles
 		service.getSystemService().saveProperty(ApplicationProperty.PLUGIN_LAST_LOAD_MAP, null);
-		
+
 		AddJobModel job = new AddJobModel();
 		job.setJobClass(PluginScanJob.class);
 		job.setJobName(PluginScanJob.class.getSimpleName());
@@ -84,7 +84,7 @@ public class PluginManager
 		job.setSeconds(10);
 		job.setRepeatForever(true);
 		JobManager.addJob(job);
-		
+
 		loadingPlugins.set(false);
 	}
 
@@ -99,8 +99,9 @@ public class PluginManager
 	{
 		boolean success = false;
 
+		Bundle bundle = null;
 		try (InputStream in = bundleStream) {
-			Bundle bundle = OsgiManager.getInstance().getFelix().getBundleContext().getBundle(location);
+			bundle = OsgiManager.getInstance().getFelix().getBundleContext().getBundle(location);
 			if (bundle == null
 					|| Bundle.UNINSTALLED == bundle.getState()) {
 				bundle = OsgiManager.getInstance().getFelix().getBundleContext().installBundle(location, in);
@@ -128,8 +129,16 @@ public class PluginManager
 				}
 			}
 		} catch (IOException | BundleException ex) {
-			log.log(Level.SEVERE, MessageFormat.format("Unable to load plugin: {0}", location));
-                        throw new OpenStorefrontRuntimeException(MessageFormat.format("Unable to install or load plugin: {0}", location), ex);
+			if (bundle != null) {
+				//try to clean up the record
+				try {
+					bundle.uninstall();
+				} catch (BundleException ex1) {
+					//ignore
+				}
+			}
+			log.log(Level.SEVERE, MessageFormat.format("Unable to load plugin: {0}", location), ex);
+			throw new OpenStorefrontRuntimeException(MessageFormat.format("Unable to install or load plugin: {0}", location), ex);
 		}
 
 		return success;
@@ -301,8 +310,8 @@ public class PluginManager
 			}
 		}
 	}
-	
-	public static boolean isLoadingPlugins() 
+
+	public static boolean isLoadingPlugins()
 	{
 		return loadingPlugins.get();
 	}
@@ -320,11 +329,11 @@ public class PluginManager
 		PluginManager.cleanup();
 		started.set(false);
 	}
-	
+
 	@Override
 	public boolean isStarted()
 	{
 		return started.get();
-	}	
+	}
 
 }

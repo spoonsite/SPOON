@@ -133,6 +133,10 @@ public class ServiceTest
 		testSuiteModel.setName("Report Tests");
 		testSuiteModels.add(testSuiteModel);
 
+		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.submission");
+		testSuiteModel.setName("Submission Tests");
+		testSuiteModels.add(testSuiteModel);
+
 		testSuiteModel = new TestSuiteModel("edu.usu.sdl.openstorefront.web.test.highlight");
 		testSuiteModel.setName("Highlight Tests");
 		testSuiteModels.add(testSuiteModel);

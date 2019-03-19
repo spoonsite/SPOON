@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
@@ -56,6 +57,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -697,4 +699,16 @@ public class ImportServiceImpl
 		return fileDataMap;
 	}
 
+	@Override
+	public Map<String, String> getComponentTypeMapFromCSV(Reader in) throws IOException {
+		Map<String, String> componentTypeMap = new HashMap<>();
+		CSVReader reader = new CSVReader(in);
+		
+		String[] record;
+        while ((record = reader.readNext()) != null) {
+            componentTypeMap.put(record[0], record[1]);
+        }
+
+        return componentTypeMap;
+	}
 }
