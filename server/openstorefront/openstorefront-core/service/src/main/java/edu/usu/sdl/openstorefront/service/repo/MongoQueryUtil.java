@@ -15,24 +15,23 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.core.api.repo.OrganizationRepo;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author dshurtleff
  */
-public class OrganizationOrientRepoImpl
-		extends BaseRepo
-		implements OrganizationRepo
+public class MongoQueryUtil
 {
 
-	@Override
-	public <T> List<T> findReferencesNoOrg(T entity)
+	//generate example query filter / document
+	//find field name; for complexy <parent_field>.<child field>
+	public static Map<String, Object> generateFieldMap(Object entity)
 	{
-		String query = "select from " + entity.getClass().getSimpleName() + " where organization is null ";
-		return service.getPersistenceService().query(query, new HashMap<>());
+		Map<String, Object> fieldValueMap = new HashMap<>();
+
+		return fieldValueMap;
 	}
 
 }

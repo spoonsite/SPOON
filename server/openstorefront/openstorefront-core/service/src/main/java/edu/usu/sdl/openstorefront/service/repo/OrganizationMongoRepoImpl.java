@@ -15,12 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
+import edu.usu.sdl.openstorefront.core.api.repo.OrganizationRepo;
+import java.util.List;
+
 /**
  *
  * @author dshurtleff
  */
-public abstract class BaseOrientRepo
+public class OrganizationMongoRepoImpl
 		extends BaseRepo
+		implements OrganizationRepo
 {
+
+	@Override
+	public <T> List<T> findReferencesNoOrg(T entity)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 
 }

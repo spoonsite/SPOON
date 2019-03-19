@@ -38,7 +38,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author dshurtleff
  */
 public class ComponentOrientRepoImpl
-		extends BaseOrientRepo
+		extends BaseRepo
 		implements ComponentRepo
 {
 

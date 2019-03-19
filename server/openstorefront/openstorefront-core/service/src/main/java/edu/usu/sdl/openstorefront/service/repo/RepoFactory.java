@@ -52,7 +52,7 @@ public class RepoFactory
 	{
 		StandardEntityRepo standardEntityRepo;
 		if (useMongo()) {
-			standardEntityRepo = null;
+			standardEntityRepo = new StandardEntityMongoRepoImpl();
 		} else {
 			standardEntityRepo = new StandardEntityOrientRepoImpl();
 		}
@@ -63,7 +63,7 @@ public class RepoFactory
 	{
 		ComponentRepo componentRepo;
 		if (useMongo()) {
-			componentRepo = null;
+			componentRepo = new ComponentMongoRepoImpl();
 		} else {
 			componentRepo = new ComponentOrientRepoImpl();
 		}
@@ -74,7 +74,7 @@ public class RepoFactory
 	{
 		NotificationRepo notificationRepo;
 		if (useMongo()) {
-			notificationRepo = null;
+			notificationRepo = new NotificationMongoRepoImpl();
 		} else {
 			notificationRepo = new NotificationOrientRepoImpl();
 		}
@@ -85,7 +85,7 @@ public class RepoFactory
 	{
 		OrganizationRepo organizationRepo;
 		if (useMongo()) {
-			organizationRepo = null;
+			organizationRepo = new OrganizationMongoRepoImpl();
 		} else {
 			organizationRepo = new OrganizationOrientRepoImpl();
 		}
@@ -96,7 +96,7 @@ public class RepoFactory
 	{
 		UserRepo userRepo;
 		if (useMongo()) {
-			userRepo = null;
+			userRepo = new UserMongoRepoImpl();
 		} else {
 			userRepo = new UserOrientRepoImpl();
 		}
@@ -107,7 +107,7 @@ public class RepoFactory
 	{
 		AttributeRepo attributeRepo;
 		if (useMongo()) {
-			attributeRepo = null;
+			attributeRepo = new AttributeMongoRepoImpl();
 		} else {
 			attributeRepo = new AttributeOrientRepoImpl();
 		}

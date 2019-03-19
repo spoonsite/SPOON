@@ -35,7 +35,7 @@ import org.apache.commons.lang.StringUtils;
  * @author dshurtleff
  */
 public class UserOrientRepoImpl
-		extends BaseOrientRepo
+		extends BaseRepo
 		implements UserRepo
 {
 

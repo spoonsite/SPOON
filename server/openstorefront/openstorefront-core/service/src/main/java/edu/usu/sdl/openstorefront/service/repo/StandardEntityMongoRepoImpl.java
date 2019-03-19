@@ -15,24 +15,23 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.core.api.repo.OrganizationRepo;
-import java.util.HashMap;
+import edu.usu.sdl.openstorefront.core.api.repo.StandardEntityRepo;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public class OrganizationOrientRepoImpl
+public class StandardEntityMongoRepoImpl
 		extends BaseRepo
-		implements OrganizationRepo
+		implements StandardEntityRepo
 {
 
 	@Override
-	public <T> List<T> findReferencesNoOrg(T entity)
+	public long getRecordCountsByUsers(Class recordClass, List<UserProfile> userProfiles, String trackCodeType)
 	{
-		String query = "select from " + entity.getClass().getSimpleName() + " where organization is null ";
-		return service.getPersistenceService().query(query, new HashMap<>());
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }

@@ -31,7 +31,7 @@ import java.util.Set;
  * @author dshurtleff
  */
 public class NotificationOrientRepoImpl
-		extends BaseOrientRepo
+		extends BaseRepo
 		implements NotificationRepo
 {
 

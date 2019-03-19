@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author jstrong
  */
 public class StandardEntityOrientRepoImpl
-		extends BaseOrientRepo
+		extends BaseRepo
 		implements StandardEntityRepo
 {
 

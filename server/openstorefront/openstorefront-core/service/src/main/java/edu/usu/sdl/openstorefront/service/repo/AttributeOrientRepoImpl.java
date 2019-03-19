@@ -26,7 +26,7 @@ import java.util.Map;
  * @author dshurtleff
  */
 public class AttributeOrientRepoImpl
-		extends BaseOrientRepo
+		extends BaseRepo
 		implements AttributeRepo
 {
 

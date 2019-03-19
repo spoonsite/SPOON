@@ -15,24 +15,22 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.core.api.repo.OrganizationRepo;
-import java.util.HashMap;
-import java.util.List;
+import edu.usu.sdl.openstorefront.core.api.repo.AttributeRepo;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 
 /**
  *
  * @author dshurtleff
  */
-public class OrganizationOrientRepoImpl
+public class AttributeMongoRepoImpl
 		extends BaseRepo
-		implements OrganizationRepo
+		implements AttributeRepo
 {
 
 	@Override
-	public <T> List<T> findReferencesNoOrg(T entity)
+	public void changeAttributeCode(AttributeCodePk attributeCodePk, String newCode)
 	{
-		String query = "select from " + entity.getClass().getSimpleName() + " where organization is null ";
-		return service.getPersistenceService().query(query, new HashMap<>());
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }
