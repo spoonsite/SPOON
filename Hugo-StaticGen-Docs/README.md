@@ -1,4 +1,4 @@
-# Open Storefront Documentation
+# SPOON Documentation
 
 This documentation is built with [Hugo](https://gohugo.io), a static website generator.
 
