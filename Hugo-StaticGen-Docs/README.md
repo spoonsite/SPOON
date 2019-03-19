@@ -2,7 +2,7 @@
 
 This documentation is built with [Hugo](https://gohugo.io), a static website generator.
 
-To install Hugo follow the directions [here](https://gohugo.io/getting-started/installing/) or download the latest release and put it in your path. [here](https://github.com/gohugoio/hugo/releases).
+To install Hugo follow the directions [here](https://gohugo.io/getting-started/installing/) or download the latest release and put it in your path [here](https://github.com/gohugoio/hugo/releases).
 
 The theme used for this documentation is [DocDock](http://docdock.netlify.com). Refer to the DocDock documentation for information on the theme such as shortcodes available, configuration, and site organization.
 
@@ -10,7 +10,7 @@ The theme used for this documentation is [DocDock](http://docdock.netlify.com). 
 
 The files to edit are found in `openstorefront/Hugo-StaticGen-Docs/content`. Hugo uses this content to generate the website.
 
-You have two flavors of markdown available provided by Hugo: standard github style markdown and [mmark](https://github.com/miekg/mmark/wiki/Syntax). To use mmark create a file with the `.mmark` extension or specify `markup = "mmark"` in the toml front matter of the markdown file. Mmark adds several features such as figures, citations, and different ordered list styles (i.e. 1,2,3 or a,b,c or A,B,C).
+You have two flavors of markdown available provided by Hugo: standard github style markdown and [mmark](https://mmark.nl/post/syntax/). To use mmark create a file with the `.mmark` extension or specify `markup = "mmark"` in the toml front matter of the markdown file. Mmark adds several features such as figures, citations, and different ordered list styles (i.e. 1,2,3 or a,b,c or A,B,C).
 
 Images should be placed in `openstorefront/Hugo-StaticGen-Docs/static/images`. When you reference an image in the markdown file use the relative path for example `![My Image](/images/some-image.png)`.
 

@@ -1,18 +1,18 @@
-baseURL = "/openstorefront/"
+baseURL = "/SPOON/"
 canonifyURLs = "true"
 languageCode = "en-us"
 DefaultContentLanguage = "en"
 pygmentsCodeFences = true
 pygmentsStyle = "monokai"
 
-title = "Storefront Docs"
+title = "Open Storefront Documentation"
 theme = "docdock"
 #publishDir = "/build"
 enableGitInfo = "true"
 
 [params]
 StoreFrontVersion = "2.7.4"
-editURL = "https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/"
+editURL = "https://github.com/spoonsite/spoon/edit/master/Hugo-StaticGen-Docs/content/"
 showVisitedLinks = true # default is false
 themeStyle = "original" # "original" or "flex" # default "original"
 themeVariant = "blue" # choose theme variant "green", "gold" , "gray", "blue" (default)
@@ -29,10 +29,10 @@ home = [ "HTML", "RSS", "JSON"]
 pre = "<h3>More</h3>"
 name = "<i class='fa fa-github'></i> Github repo"
 identifier = "ds"
-url = "https://github.com/di2e/openstorefront/tree/master"
+url = "https://github.com/spoonsite/spoon/tree/master"
 weight = 10
 
 [[menu.shortcuts]]
 name = "<i class='fa fa-download'></i> Releases"
-url = "https://github.com/di2e/openstorefront/releases"
+url = "https://github.com/spoonsite/spoon/releases"
 weight = 11
