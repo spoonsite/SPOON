@@ -482,6 +482,14 @@ public class ElasticSearchManager
 			if (searchOptions.getCanUseDescriptionInSearch()) {
 				esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
 			}
+
+			if (searchOptions.getCanUseTagsInSearch()) {
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, phrase));
+			}
+
+			if (searchOptions.getCanUseAttributesInSearch()) {
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, phrase));
+			}
 		}
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
 				//.unmappedType("String") // currently the only fields we are searching/sorting on are strings
