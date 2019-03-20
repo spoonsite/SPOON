@@ -18,6 +18,67 @@
 
 /* global Ext, CoreUtil */
 
+var checkBoxes = {
+	array: [
+		{
+			xtype: 'checkbox',
+			text: 'Organizations',
+			id: 'organizationsCheckbox',
+			leaf:true,
+			checked:false
+		},
+		{
+			xtype: 'checkbox',
+			boxLabel: 'Tags',
+			id: 'tagsCheckbox'
+		},
+		{
+			xtype: 'checkbox',
+			boxLabel: 'Tags',
+			id: 'tagsCheckbox'
+		},
+		{
+			xtype: 'checkbox',
+			boxLabel: 'Tags',
+			id: 'tagsCheckbox'
+		},
+		{
+			xtype: 'checkbox',
+			boxLabel: 'Tags',
+			id: 'tagsCheckbox'
+		}
+	],
+};
+var labels = {
+	array: [
+		{
+			xtype: 'checkbox',
+			boxLabel: 'Organizations',
+			id: 'organizationsCheckbox'
+		},
+		{
+			xtype: 'checkbox',
+			boxLabel: 'Tags',
+			id: 'tagsCheckbox'
+		},
+		{
+			xtype: 'checkbox',
+			boxLabel: 'Tags',
+			id: 'tagsCheckbox'
+		},
+		{
+			xtype: 'checkbox',
+			boxLabel: 'Tags',
+			id: 'tagsCheckbox'
+		},
+		{
+			xtype: 'checkbox',
+			boxLabel: 'Tags',
+			id: 'tagsCheckbox'
+		}
+	],
+};
+
 Ext.define('OSF.landing.DefaultSearch', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-defaultsearch',
@@ -160,7 +221,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 								this.canCloseMenu = false;
 							}
 							else {
-								button.setIconCls('fa fa-chevron-down');	
+								button.setIconCls('fa fa-chevron-down');
 								this.canCloseMenu = true;
 							}
 						}
@@ -177,6 +238,25 @@ Ext.define('OSF.landing.DefaultSearch', {
 								xtype: 'treepanel',
 								cls: 'entry-type-tree-panel-menu',
 								maxHeight: 500,
+								scrollable: false,
+								rootVisible: false,
+								checkPropagation: 'both',
+								store: {
+									xtype: 'treestore',
+									root: {
+										children: checkBoxes.array
+									}
+								}
+							},
+							{
+								xtype: 'label',
+								html: '<b>Category Filter</b>',
+								// focusable: false
+							},
+							{
+								xtype: 'treepanel',
+								cls: 'entry-type-tree-panel-menu',
+								maxHeight: 500,
 								scrollable: true,
 								rootVisible: false,
 								checkPropagation: 'both',
@@ -184,7 +264,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 									beforeitemcollapse: function () {
 										return false;
 									},
-									itemclick: function (view, record, element, index, e, opts) {										
+									itemclick: function (view, record, element, index, e, opts) {
 										if (e.target.className.indexOf('checkbox') === -1) {
 											if (record.get('checked')) {
 												record.set('checked', false);
@@ -193,10 +273,10 @@ Ext.define('OSF.landing.DefaultSearch', {
 											}
 										}
 
-										var entryTypeButton = this.up('[itemId=entryType]');										
+										var entryTypeButton = this.up('[itemId=entryType]');
 										entryTypeButton.setCheckedDisplay(this.getStore());
 										entryTypeButton.setItemsSelected(this.getStore());
-										
+
 									}
 								},
 								store: {
@@ -248,7 +328,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					hideTrigger: true,
 					valueField: 'query',
 					displayField: 'name',
-					autoSelect: false,	
+					autoSelect: false,
 					style: 'border-left: none;',
 					store: {
 						autoLoad: false,
