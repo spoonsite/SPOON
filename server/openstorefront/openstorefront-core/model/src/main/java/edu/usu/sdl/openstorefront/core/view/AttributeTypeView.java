@@ -22,12 +22,20 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
+import javax.measure.unit.Unit;
+
 import javax.validation.constraints.NotNull;
+import org.jscience.physics.amount.Amount;
 
 public class AttributeTypeView
 		extends StandardEntityView
 {
+
+	private static final Logger LOG = Logger.getLogger(AttributeTypeView.class.getName());
 
 	@NotNull
 	private String attributeType;
@@ -61,6 +69,9 @@ public class AttributeTypeView
 	private String attributeValueType;
 	private String attributeValueTypeDescription;
 	private String attributeUnit;
+
+	@DataType(AttributeUnitView.class)
+	private Set<AttributeUnitView> attributeUnitList = new HashSet<>();
 
 	@NotNull
 	private String activeStatus;
@@ -99,6 +110,28 @@ public class AttributeTypeView
 		attributeTypeView.setAttributeValueType(attributeType.getAttributeValueType());
 		attributeTypeView.setAttributeValueTypeDescription(TranslateUtil.translate(AttributeValueType.class, attributeType.getAttributeValueType()));
 		attributeTypeView.setAttributeUnit(attributeType.getAttributeUnit());
+
+		// compute conversion factors to send back to the client
+		Set<String> unitList = attributeType.getAttributeUnitList();
+		Set<AttributeUnitView> conversionList = new HashSet<AttributeUnitView>();
+
+		if (unitList != null) {
+			for (String unit : unitList) {
+				// get the conversion factor between the base unit and the compatible unit
+				Unit tempUnit;
+				try {
+					Unit baseUnit = Unit.valueOf(attributeType.getAttributeUnit());
+					tempUnit = Unit.valueOf(unit);
+					Amount<?> factor = Amount.valueOf(1, baseUnit).to(tempUnit);
+					AttributeUnitView unitView = new AttributeUnitView(unit, factor.getEstimatedValue());
+					conversionList.add(unitView);
+				} catch (IllegalArgumentException e) {
+					LOG.warning(e.toString());
+				}
+			}	
+		}
+
+		attributeTypeView.setAttributeUnitList(conversionList);
 
 		attributeTypeView.toStandardView(attributeType);
 
@@ -289,6 +322,16 @@ public class AttributeTypeView
 	public void setAttributeUnit(String attributeUnit)
 	{
 		this.attributeUnit = attributeUnit;
+	}
+
+	public Set<AttributeUnitView> getAttributeUnitList()
+	{
+		return attributeUnitList;
+	}
+
+	public void setAttributeUnitList(Set<AttributeUnitView> attributeUnitList)
+	{
+		this.attributeUnitList = attributeUnitList;
 	}
 
 }
