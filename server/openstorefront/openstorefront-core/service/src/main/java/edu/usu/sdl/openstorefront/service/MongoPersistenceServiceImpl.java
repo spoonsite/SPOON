@@ -17,6 +17,8 @@ package edu.usu.sdl.openstorefront.service;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.DistinctIterable;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
@@ -34,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.MongoDBManager;
+import edu.usu.sdl.openstorefront.service.repo.MongoQueryUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -41,9 +44,11 @@ import edu.usu.sdl.openstorefront.validation.exception.OpenStorefrontValidationE
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -61,11 +66,19 @@ public class MongoPersistenceServiceImpl
 	private static final Logger LOG = Logger.getLogger(MongoPersistenceServiceImpl.class.getName());
 
 	private MongoDBManager dbManager;
+	private MongoQueryUtil queryUtil;
 	private ClientSession session;
 
 	public MongoPersistenceServiceImpl(MongoDBManager dbManager)
 	{
 		this.dbManager = dbManager;
+		this.queryUtil = new MongoQueryUtil(SecurityUtil.getUserContext(), dbManager);
+	}
+
+	public MongoPersistenceServiceImpl(MongoDBManager dBManager, MongoQueryUtil queryUtil)
+	{
+		this.dbManager = dbManager;
+		this.queryUtil = queryUtil;
 	}
 
 	@Override
@@ -151,7 +164,7 @@ public class MongoPersistenceServiceImpl
 	{
 		if (entity != null && (entity instanceof BaseEntity)) {
 			MongoCollection collection = dbManager.getConnection().getCollection(entity.getClass().getSimpleName());
-			collection.deleteOne(constructPKFilter((BaseEntity) entity));
+			collection.deleteOne(queryUtil.constructPKFilter((BaseEntity) entity));
 
 			EntityEventModel entityModel = new EntityEventModel();
 			entityModel.setEntityChanged(entity);
@@ -178,15 +191,14 @@ public class MongoPersistenceServiceImpl
 	public int deleteByQuery(Class entityClass, String whereClause, Map<String, Object> queryParams)
 	{
 		//REPLACE usage and Remove
-
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported With Mongo."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	@Override
 	public <T> T findById(Class<T> entity, Object id)
 	{
-		MongoCollection<T> collection = getCollectionForEntity(entity);
-		return collection.find(constructPKFilter(entity, id)).first();
+		MongoCollection<T> collection = queryUtil.getCollectionForEntity(entity);
+		return collection.find(queryUtil.constructPKFilter(entity, id)).first();
 	}
 
 	@Override
@@ -208,17 +220,48 @@ public class MongoPersistenceServiceImpl
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public <T> List<T> queryByExample(QueryByExample queryByExample)
 	{
-		//MongoCollection<T> collection = getCollectionForEntity(queryByExample.get);
-		//collection.
+		//Only handle select
+		if (!QueryType.SELECT.equals(queryByExample.getQueryType())) {
+			throw new UnsupportedOperationException("This method only support Read/Select.");
+		}
 
-		//determine query type
-		//generate param (field coord query construction)
-		//grouping* and sorting
-		//apply results restrictions
-		//queryByExample.
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MongoCollection<T> collection = queryUtil.getCollectionForEntity((T) queryByExample.getExample());
+
+		Bson filter = queryUtil.generateFilters(queryByExample);
+
+		if (queryByExample.isParallelQuery()) {
+			LOG.log(Level.FINER, "Parallel Queries not supported in Mongo");
+		}
+
+		if (StringUtils.isNotBlank(queryByExample.getDistinctField())) {
+			@SuppressWarnings("unchecked")
+			DistinctIterable<T> distinctIterable = collection.distinct(queryByExample.getDistinctField(), filter, (Class<T>) queryByExample.getExample().getClass());
+			if (queryByExample.getTimeout() != null && queryByExample.getTimeout() > 0) {
+				distinctIterable.maxTime(queryByExample.getTimeout(), TimeUnit.SECONDS);
+			}
+			return distinctIterable.into(new ArrayList<>());
+		} else {
+			FindIterable<T> findIterable = collection.find(filter);
+
+			if (queryByExample.getFirstResult() != null && queryByExample.getFirstResult() > 0) {
+				findIterable.skip(queryByExample.getFirstResult());
+			}
+			if (queryByExample.getMaxResults() != null && queryByExample.getMaxResults() > 0) {
+				findIterable.limit(queryByExample.getMaxResults());
+			}
+			if (queryByExample.getTimeout() != null && queryByExample.getTimeout() > 0) {
+				findIterable.maxTime(queryByExample.getTimeout(), TimeUnit.SECONDS);
+			}
+			if (queryByExample.getOrderBy() != null) {
+				findIterable.sort(queryUtil.generateSortFilter(queryByExample));
+			}
+
+			return findIterable.into(new ArrayList<>());
+		}
+
 	}
 
 	@Override
@@ -266,28 +309,6 @@ public class MongoPersistenceServiceImpl
 		return successFulCall;
 	}
 
-	private <T extends BaseEntity> Bson constructPKFilter(T entity)
-	{
-		return constructPKFilter(entity.getClass(), EntityUtil.getPKFieldObjectValue(entity));
-	}
-
-	private <T> Bson constructPKFilter(Class<T> entity, Object id)
-	{
-		Map<String, Object> pkFields = EntityUtil.findIdField(entity, id);
-		return new BasicDBObject(pkFields);
-	}
-
-	private <T> MongoCollection<T> getCollectionForEntity(T entity)
-	{
-		return getCollectionForEntity(entity.getClass());
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T> MongoCollection<T> getCollectionForEntity(Class entityClass)
-	{
-		return dbManager.getConnection().getCollection(entityClass.getSimpleName(), entityClass);
-	}
-
 	@Override
 	public <T extends BaseEntity> T persist(T entity)
 	{
@@ -300,10 +321,10 @@ public class MongoPersistenceServiceImpl
 			validationModel.setSantize(false);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
-				MongoCollection<T> collection = getCollectionForEntity(entity);
+				MongoCollection<T> collection = queryUtil.getCollectionForEntity(entity);
 
 				UpdateResult updateResult = collection.replaceOne(
-						constructPKFilter(entity),
+						queryUtil.constructPKFilter(entity),
 						entity,
 						ReplaceOptions.createReplaceOptions(new UpdateOptions().upsert(true))
 				);

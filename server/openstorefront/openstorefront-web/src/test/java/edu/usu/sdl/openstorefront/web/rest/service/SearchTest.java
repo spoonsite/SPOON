@@ -24,7 +24,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -123,13 +123,13 @@ public class SearchTest extends JerseyShiroTest
 //		comp4.setComponentType("Test Component");
 //		comp4.setLastActivityDts(activityDate);
 //		comp4.setOrganization("My Test Org.");
-//		comp4.setDescription("<p>This is my page.</p>\n" +
-//							"<p>&nbsp;<img src=\"Media.action?SectionMedia&amp;mediaId=09660868-4267-46db-a282-ed455bc3c359\" alt=\"\" /></p>\n" +
-//							"<ul>\n" +
-//							"<li>this is an&nbsp;unorderd&nbsp;list</li>\n" +
-//							"<li>list item</li>\n" +
-//							"</ul>\n" +
-//							"<p><strong>this is bold</strong></p>");
+//		comp4.setDescription("<p>This is my page.</p>\n"
+//				+ "<p>&nbsp;<img src=\"Media.action?SectionMedia&amp;mediaId=09660868-4267-46db-a282-ed455bc3c359\" alt=\"\" /></p>\n"
+//				+ "<ul>\n"
+//				+ "<li>this is an&nbsp;unorderd&nbsp;list</li>\n"
+//				+ "<li>list item</li>\n"
+//				+ "</ul>\n"
+//				+ "<p><strong>this is bold</strong></p>");
 //		persistenceService.addQuery("select from Component where activeStatus='A'and approvalState='A' and ( dataSensitivity IS NULL ) and ( dataSource IS NULL ) and  componentId IN :componentIdsParams", Arrays.asList(comp1, comp2, comp3, comp4));
 //
 //		ODocument componentAttributePk1 = Mockito.mock(ODocument.class);
