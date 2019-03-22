@@ -36,14 +36,13 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	 */
 	attributeTypeView: null,
 	required: true,
-	width: '100%',
-	layout: 'fit',	
+	layout: 'hbox',	
 	showLabel: true,
 	
 	initComponent: function () {		
 		this.callParent();
 		var attributePanel = this;
-		
+
 		if (attributePanel.attributeTypeView) {
 			
 			attributePanel.createField(attributePanel.attributeTypeView);
@@ -115,6 +114,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				typeAhead: typeAhead,
 				filterPickList: true,
 				margin: '0 0 5 0',
+				flex: 3,
 				allowBlank: !attributePanel.required,					
 				labelWidth: 300,
 				labelSeparator: '',
@@ -131,13 +131,87 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				}
 			}, attributePanel.fieldConfig, extraCfg));
 
-		attributePanel.add(attributePanel.field);		
+		if (attributePanel.attributeUnit && attributePanel.attributeUnitList) {
+			var unitList = attributePanel.attributeUnitList;
+			var baseUnit = {
+				"conversionFactor": 1,
+				"unit": attributePanel.attributeUnit,
+				"description": "Default Unit"
+			};
+
+			// remove the base unit if in the list
+			unitList = unitList.filter(function(el) { return el.unit !== baseUnit.unit })
+			unitList.push(baseUnit);
+
+			var processList = function(list) {
+				var data = [];
+				Ext.Array.forEach(list, function(el) {
+					data.push({
+						'value': el.unit,
+						'text': el.unit,
+						'conversionFactor': el.conversionFactor,
+						'description': el.description
+					})
+				})
+				return data;
+			}
+
+			var storeList = processList(unitList);
+			attributePanel.unit = Ext.create('Ext.form.field.ComboBox',{
+					// fieldLabel: "Unit",
+					allowBlank: false,
+					editable: false,
+					margin: '0 0 5 0',
+					queryMode: 'local',
+					flex: 1,
+					// labelWidth: 300,
+					store: Ext.create('Ext.data.Store', {
+						fields: [
+							'value',
+							'text',
+							'conversionFactor',
+							'description'
+						],
+						data: storeList
+					}),
+					listConfig: {
+						getInnerTpl: function () {
+							return '{text} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+						}
+					}
+				}
+			)
+		}
+
+		attributePanel.add(attributePanel.field);
+		if (attributePanel.unit) {
+			attributePanel.unit.setValue(baseUnit.unit);
+			attributePanel.add(attributePanel.unit);
+		}
 		
 	},
 	
 	getField: function() {
 		var attributePanel = this;
 		return attributePanel.field;
+	},
+
+	getUnit: function() {
+		var attributePanel = this;
+		if (attributePanel.unit) {
+			return attributePanel.unit.getValue();
+		} else {
+			return '';
+		}
+	},
+
+	getConversionFactor: function() {
+		var attributePanel = this;
+		if (attributePanel.unit) {
+			return attributePanel.unit.getSelectedRecord().data.conversionFactor;
+		} else {
+			return '';
+		}
 	},
 	
 	getSelection: function() {
