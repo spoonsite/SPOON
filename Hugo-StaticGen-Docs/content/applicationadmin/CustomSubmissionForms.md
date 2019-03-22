@@ -24,7 +24,7 @@ d)  You may wish to enter some codes for the attribute by selecting it and then 
 
 a.  Navigate to **Admin Tools** if you are not already there (click on your username in the upper-right, then Admin Tools) 
 b.  Select Data Management &rarr; **Submissions &rarr; Submissions Form Templates**
-c.  Click the **+ Add Form** button.  Select an Entry Type.  Fill in the Form Name, Description, and Entry Type.  Remember that these custom submission forms are tied to a specific entry type(s).  If needed, create a new entry type and then navigate back here (Data Mangement &rarr; Entry Types).  Click **Create Form.**
+c.  Click the **+ Add Form** button.  Select an Entry Type.  Fill in the Form Name, Description, and Entry Type.  Remember that these custom submission forms are tied to a specific entry type(s).  If needed, create a new entry type and then navigate back here (Data Management &rarr; Entry Types).  Click **Create Form.**
 ![addTemplate](/images/AppAdmin/addTemplate.JPG)
 d.  In the Form Builder Tool Window add sections as needed.  Add fields, paragraphs, horizontal rules, images, and so forth. 
 ![customForm](/images/AppAdmin/customForm.JPG)
@@ -46,7 +46,7 @@ b.  On the final page, **Review Submission** ensure that all of the sections hav
 **If you have all green checkmarks on the Review Submission page, but still get an error like the one below when Verifying:**
 1.  Go back to Admin Tools and **Edit** the form
 2.  Go to the Mappings tab 
-3.  Ensure that the Mappaple Fields AND the Required Attributes sub-tabs are green- they have all been accounted for on the form.
+3.  Ensure that the Mappable Fields AND the Required Attributes sub-tabs are green- they have all been accounted for on the form.
 ![submitError](/images/AppAdmin/submitError.JPG)
 {{% /notice %}}
 

@@ -1,4 +1,4 @@
-{{ if .IsNamedParams }}
+﻿{{ if .IsNamedParams }}
     {{if not (hasPrefix (.Get "name") "fa-") }}
         <span class="glyphicon glyphicon-{{.Get "name"}}" style="{{with .Get "color"}}color:{{.}}{{end}} {{with .Get "size"}}font-size:{{.}}{{end}}" aria-hidden="true"></span>
     {{else}}
