@@ -62,6 +62,7 @@ public abstract class StandardEntity<T>
 	public static final String FIELD_ACTIVE_STATUS = "activeStatus";
 	public static final String FIELD_CREATE_DTS = "createDts";
 	public static final String FIELD_UPDATE_DTS = "updateDts";
+	public static final String FIELD_DATA_SENSITIVITY = "dataSensitivity";
 
 	@Sanitize({TextSanitizer.class, BlankSantizer.class})
 	@ConsumeField

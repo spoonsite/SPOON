@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.repo;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.query.ComplexFieldStack;
@@ -24,6 +25,8 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
+import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.MongoDBManager;
@@ -31,6 +34,8 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 import org.bson.conversions.Bson;
 
 /**
@@ -40,7 +45,9 @@ import org.bson.conversions.Bson;
 public class MongoQueryUtil
 {
 
+	private static final String JAVA_CLASS = "class";
 	private static final String PARAM_NAME_SEPARATOR = ".";
+	private static final String LIKE_QUERY_CHARACTER = "%";
 	private static final int SORT_ASCENDING = 1;
 	private static final int SORT_DESCENDING = -1;
 
@@ -57,6 +64,54 @@ public class MongoQueryUtil
 	public <T extends BaseEntity> Bson generateFilters(QueryByExample<T> queryRequest)
 	{
 		Map<String, Object> exampleMap = generateFieldMap(queryRequest.getExample(), new ComplexFieldStack(), queryRequest.getExampleOption(), queryRequest.getFieldOptions());
+
+		Bson query = new BasicDBObject(exampleMap);
+
+		if (queryRequest.getInExample() != null) {
+			Map<String, Object> inMap = generateFieldMap(queryRequest.getInExample(), new ComplexFieldStack(), queryRequest.getInExampleOption(), new HashMap<>());
+
+			for (String fieldName : inMap.keySet()) {
+				if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getInExampleOption().getCondition())) {
+					query = Filters.or(query, Filters.in(fieldName, inMap.get(fieldName)));
+				} else {
+					query = Filters.and(query, Filters.in(fieldName, inMap.get(fieldName)));
+				}
+			}
+		}
+
+		if (queryRequest.getLikeExample() != null) {
+			Map<String, Object> likeMap = generateFieldMap(queryRequest.getLikeExample(), new ComplexFieldStack(), queryRequest.getLikeExampleOption(), new HashMap<>());
+
+			for (String fieldName : likeMap.keySet()) {
+				String value = likeMap.get(fieldName).toString();
+
+				//deterime starts with (a% = ^a), endwith (%a = a$) and contains (a)
+				if (value.startsWith(LIKE_QUERY_CHARACTER) && value.endsWith(LIKE_QUERY_CHARACTER)) {
+					value = value.replace(LIKE_QUERY_CHARACTER, "");
+				} else if (value.startsWith(LIKE_QUERY_CHARACTER)) {
+					value = value.replace(LIKE_QUERY_CHARACTER, "");
+					value = "^" + value;
+				} else if (value.endsWith(LIKE_QUERY_CHARACTER)) {
+					value = value.replace(LIKE_QUERY_CHARACTER, "");
+					value = value + "$";
+				}
+
+				Pattern pattern;
+				if (GenerateStatementOption.METHOD_LOWER_CASE.equals(queryRequest.getInExampleOption().getMethod())
+						|| GenerateStatementOption.METHOD_UPPER_CASE.equals(queryRequest.getInExampleOption().getMethod())) {
+					pattern = Pattern.compile(value, Pattern.CASE_INSENSITIVE);
+				} else {
+					pattern = Pattern.compile(value);
+				}
+
+				if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getInExampleOption().getCondition())) {
+					query = Filters.or(query, Filters.regex(fieldName, pattern));
+				} else {
+					query = Filters.and(query, Filters.regex(fieldName, pattern));
+				}
+			}
+
+		}
 
 		return null;
 	}
@@ -89,7 +144,7 @@ public class MongoQueryUtil
 			List<Field> fields = ReflectionUtil.getAllFields(example.getClass());
 			for (Field field : fields) {
 
-				if ("class".equalsIgnoreCase(field.getName()) == false) {
+				if (JAVA_CLASS.equalsIgnoreCase(field.getName()) == false) {
 					field.setAccessible(true);
 
 					Object value = field.get(example);
@@ -123,81 +178,49 @@ public class MongoQueryUtil
 
 	public <T extends BaseEntity> Bson componentRestrictionFilter()
 	{
+		Bson query = standardRestrictionFilter();
 
-//		StringBuilder query = new StringBuilder();
-//		query.append(standardRestrictionFilter(userContext));
-//
-//		if (userContext != null) {
-//
-//			if (query.length() > 0) {
-//				query.append(" and ");
-//			}
-//
-//			query.append("(");
-//
-//			if (userContext.allowUnspecifiedDataSources()) {
-//				query.append(" " + FIELD_DATA_SOURCE + " IS NULL ");
-//			} else {
-//				query.append(" " + FIELD_DATA_SOURCE + " IS NOT NULL ");
-//			}
-//
-//			Set<String> datasources = userContext.dataSources();
-//			if (!datasources.isEmpty()) {
-//				if (userContext.allowUnspecifiedDataSources()) {
-//					query.append(" OR ");
-//				} else {
-//					query.append(" AND ");
-//				}
-//
-//				query.append(FIELD_DATA_SOURCE + " IN [");
-//
-//				List<String> dataSourceList = new ArrayList<>();
-//				datasources.forEach((dataSource) -> {
-//					dataSourceList.add("'" + dataSource + "'");
-//				});
-//				query.append(String.join(",", dataSourceList));
-//				query.append("]");
-//			}
-//			query.append(")");
-//		}
+		if (userContext != null) {
+
+			if (userContext.allowUnspecifiedDataSources()) {
+				query = Filters.and(query, Filters.eq(Component.FIELD_DATA_SOURCE, null));
+			} else {
+				query = Filters.and(query, Filters.ne(Component.FIELD_DATA_SOURCE, null));
+			}
+
+			Set<String> datasources = userContext.dataSources();
+			if (!datasources.isEmpty()) {
+				if (userContext.allowUnspecifiedDataSources()) {
+					query = Filters.or(query, Filters.in(Component.FIELD_DATA_SOURCE, datasources));
+				} else {
+					query = Filters.and(query, Filters.in(Component.FIELD_DATA_SOURCE, datasources));
+				}
+			}
+		}
 		return null;
 	}
 
 	public <T extends BaseEntity> Bson standardRestrictionFilter()
 	{
-//		StringBuilder query = new StringBuilder();
-//
-//		if (userContext != null) {
-//			query.append("(");
-//
-//			if (userContext.allowUnspecifiedDataSensitivty()) {
-//				query.append(" " + FIELD_DATA_SENSITIVITY + " IS NULL ");
-//			} else {
-//				query.append(" " + FIELD_DATA_SENSITIVITY + " IS NOT NULL ");
-//			}
-//
-//			Set<String> dataSensitivity = userContext.dataSensitivity();
-//			if (!dataSensitivity.isEmpty()) {
-//				if (userContext.allowUnspecifiedDataSensitivty()) {
-//					query.append(" OR ");
-//				} else {
-//					query.append(" AND ");
-//				}
-//
-//				query.append(FIELD_DATA_SENSITIVITY + " IN [");
-//
-//				List<String> dataSensitivityList = new ArrayList<>();
-//				dataSensitivity.forEach((dsCode) -> {
-//					dataSensitivityList.add("'" + dsCode + "'");
-//				});
-//				query.append(String.join(",", dataSensitivityList));
-//				query.append("]");
-//			}
-//			query.append(")");
-//		}
-//
-//		return query.toString();
-		return null;
+		Bson query = new BasicDBObject();
+
+		if (userContext != null) {
+			if (userContext.allowUnspecifiedDataSensitivty()) {
+				query = Filters.eq(StandardEntity.FIELD_DATA_SENSITIVITY, null);
+			} else {
+				query = Filters.ne(StandardEntity.FIELD_DATA_SENSITIVITY, null);
+			}
+
+			Set<String> dataSensitivity = userContext.dataSensitivity();
+			if (!dataSensitivity.isEmpty()) {
+				if (userContext.allowUnspecifiedDataSensitivty()) {
+					query = Filters.or(query, Filters.in(StandardEntity.FIELD_DATA_SENSITIVITY, dataSensitivity));
+				} else {
+					query = Filters.and(query, Filters.in(StandardEntity.FIELD_DATA_SENSITIVITY, dataSensitivity));
+				}
+			}
+		}
+		return query;
 	}
 
 	public <T extends BaseEntity> Bson constructPKFilter(T entity)

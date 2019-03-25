@@ -25,6 +25,8 @@ import edu.usu.sdl.openstorefront.service.repo.MongoQueryUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.Test;
 
 /**
@@ -84,6 +86,28 @@ public class MongoQueryGeneratorUseCase
 		workPlan.setComponentTypes(componentTypes);
 
 		return workPlan;
+	}
+
+	@Test
+	public void testRegex()
+	{
+		String testMessage = "This is a fruit called an apple";
+
+		Pattern pattern = Pattern.compile("^this", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(testMessage);
+
+		System.out.println(matcher.find());
+
+		pattern = Pattern.compile("aPple$", Pattern.CASE_INSENSITIVE);
+		matcher = pattern.matcher(testMessage);
+
+		System.out.println(matcher.find());
+
+		pattern = Pattern.compile("fruit", Pattern.CASE_INSENSITIVE);
+		matcher = pattern.matcher(testMessage);
+
+		System.out.println(matcher.find());
+
 	}
 
 }
