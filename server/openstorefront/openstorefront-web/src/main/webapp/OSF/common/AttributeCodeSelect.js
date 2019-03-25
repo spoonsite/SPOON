@@ -184,7 +184,20 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 		}
 
 		attributePanel.add(attributePanel.field);
-		if (attributePanel.unit) {
+
+		if (attributePanel.unit
+		    && attributePanel.attributeUnitList
+			&& (attributePanel.attributeUnitList.length === 1
+				|| attributePanel.attributeUnitList.length === 0 
+			)
+		) {
+			attributePanel.add(Ext.create('Ext.panel.Panel', {
+				html: baseUnit.unit,
+				style: 'padding-left: 10px;',
+				flex: 1
+			}))
+
+		} else if (attributePanel.unit) {
 			attributePanel.unit.setValue(baseUnit.unit);
 			attributePanel.add(attributePanel.unit);
 		}
