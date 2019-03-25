@@ -181,6 +181,8 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					}
 				}
 			)
+			// set the default value
+			attributePanel.unit.setValue(baseUnit.unit);
 		}
 
 		attributePanel.add(attributePanel.field);
@@ -191,8 +193,6 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				|| attributePanel.attributeUnitList.length === 0 
 			)
 		) {
-			// set for getUnit
-			attributePanel.unit.setValue(baseUnit.unit);
 			attributePanel.add(Ext.create('Ext.panel.Panel', {
 				html: baseUnit.unit,
 				style: 'padding-left: 10px;',
@@ -200,7 +200,6 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 			}))
 
 		} else if (attributePanel.unit) {
-			attributePanel.unit.setValue(baseUnit.unit);
 			attributePanel.add(attributePanel.unit);
 		}
 		
