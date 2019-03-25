@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 
 import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.StringUtils;
 import org.jscience.physics.amount.Amount;
 
 public class AttributeTypeView
@@ -118,6 +119,9 @@ public class AttributeTypeView
 		if (unitList != null) {
 			for (String unit : unitList) {
 				// get the conversion factor between the base unit and the compatible unit
+				if (!StringUtils.isNotBlank(unit)) {
+					continue;
+				}
 				Unit tempUnit;
 				try {
 					Unit baseUnit = Unit.valueOf(attributeType.getAttributeUnit());
