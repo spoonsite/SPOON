@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
@@ -51,6 +52,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -243,6 +245,25 @@ public class MongoPersistenceServiceImpl
 				distinctIterable.maxTime(queryByExample.getTimeout(), TimeUnit.SECONDS);
 			}
 			return distinctIterable.into(new ArrayList<>());
+		} else if (queryByExample.getGroupBy() != null) {
+			List<Bson> pipeline = new ArrayList<>();
+
+			pipeline.add(queryUtil.generateFilters(queryByExample));
+			pipeline.add(queryUtil.generateSortFilter(queryByExample));
+			pipeline.add(queryUtil.generateGroupByFilter(queryByExample));
+
+			AggregateIterable<T> aggregateIterable = collection.aggregate(pipeline, (Class<T>) queryByExample.getExample().getClass());
+			if (queryByExample.getTimeout() != null && queryByExample.getTimeout() > 0) {
+				aggregateIterable.maxTime(queryByExample.getTimeout(), TimeUnit.SECONDS);
+			}
+
+			List<T> results = aggregateIterable.into(new ArrayList<>());
+			if (queryByExample.getMaxResults() != null && queryByExample.getMaxResults() > 0) {
+				results = results.stream()
+						.limit(queryByExample.getMaxResults())
+						.collect(Collectors.toList());
+			}
+			return results;
 		} else {
 			FindIterable<T> findIterable = collection.find(filter);
 

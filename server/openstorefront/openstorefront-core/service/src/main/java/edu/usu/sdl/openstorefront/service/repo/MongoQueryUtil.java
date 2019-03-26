@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.repo;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
@@ -24,6 +25,9 @@ import edu.usu.sdl.openstorefront.core.api.query.ComplexFieldStack;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
+import edu.usu.sdl.openstorefront.core.api.query.WhereClause;
+import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
@@ -84,17 +88,7 @@ public class MongoQueryUtil
 
 			for (String fieldName : likeMap.keySet()) {
 				String value = likeMap.get(fieldName).toString();
-
-				//deterime starts with (a% = ^a), endwith (%a = a$) and contains (a)
-				if (value.startsWith(LIKE_QUERY_CHARACTER) && value.endsWith(LIKE_QUERY_CHARACTER)) {
-					value = value.replace(LIKE_QUERY_CHARACTER, "");
-				} else if (value.startsWith(LIKE_QUERY_CHARACTER)) {
-					value = value.replace(LIKE_QUERY_CHARACTER, "");
-					value = "^" + value;
-				} else if (value.endsWith(LIKE_QUERY_CHARACTER)) {
-					value = value.replace(LIKE_QUERY_CHARACTER, "");
-					value = value + "$";
-				}
+				value = convertSQLLikeCharacterToRegex(value);
 
 				Pattern pattern;
 				if (GenerateStatementOption.METHOD_LOWER_CASE.equals(queryRequest.getInExampleOption().getMethod())
@@ -110,10 +104,91 @@ public class MongoQueryUtil
 					query = Filters.and(query, Filters.regex(fieldName, pattern));
 				}
 			}
-
 		}
 
-		return null;
+		for (WhereClause whereClause : queryRequest.getExtraWhereCauses()) {
+			if (whereClause instanceof SpecialOperatorModel) {
+				SpecialOperatorModel specialOperatorModel = (SpecialOperatorModel) whereClause;
+				query = handleSpecialOperator(query, specialOperatorModel);
+			} else if (whereClause instanceof WhereClauseGroup) {
+
+			}
+		}
+
+		return query;
+	}
+
+	private String convertSQLLikeCharacterToRegex(String value)
+	{
+		//deterime starts with (a% = ^a), endwith (%a = a$) and contains (a)
+		if (value.startsWith(LIKE_QUERY_CHARACTER) && value.endsWith(LIKE_QUERY_CHARACTER)) {
+			value = value.replace(LIKE_QUERY_CHARACTER, "");
+		} else if (value.startsWith(LIKE_QUERY_CHARACTER)) {
+			value = value.replace(LIKE_QUERY_CHARACTER, "");
+			value = "^" + value;
+		} else if (value.endsWith(LIKE_QUERY_CHARACTER)) {
+			value = value.replace(LIKE_QUERY_CHARACTER, "");
+			value = value + "$";
+		}
+		return value;
+	}
+
+	private Bson handleSpecialOperator(Bson query, SpecialOperatorModel specialOperatorModel)
+	{
+		Map<String, Object> specialMap = generateFieldMap(specialOperatorModel.getExample(), new ComplexFieldStack(), specialOperatorModel.getGenerateStatementOption(), new HashMap<>());
+
+		//typically there only one field set in this cases of mulitple set option on all
+		Bson specialFilters = new BasicDBObject();
+
+		//handle operators (all AND)
+		for (String key : specialMap.keySet()) {
+
+			Bson internalFilter = new BasicDBObject();
+			switch (specialOperatorModel.getGenerateStatementOption().getOperation()) {
+				case GenerateStatementOption.OPERATION_EQUALS:
+					internalFilter = Filters.eq(key, specialMap.get(key));
+					break;
+				case GenerateStatementOption.OPERATION_NOT_EQUALS:
+					internalFilter = Filters.ne(key, specialMap.get(key));
+					break;
+				case GenerateStatementOption.OPERATION_LIKE:
+					internalFilter = Filters.regex(key, convertSQLLikeCharacterToRegex(specialMap.get(key).toString()));
+					break;
+				case GenerateStatementOption.OPERATION_NOT_NULL:
+					internalFilter = Filters.ne(key, null);
+					break;
+				case GenerateStatementOption.OPERATION_NULL:
+					internalFilter = Filters.eq(key, null);
+					break;
+				case GenerateStatementOption.OPERATION_LESS_THAN_EQUAL:
+					internalFilter = Filters.lte(key, specialMap.get(key));
+					break;
+				case GenerateStatementOption.OPERATION_LESS_THAN:
+					internalFilter = Filters.lt(key, specialMap.get(key));
+					break;
+				case GenerateStatementOption.OPERATION_GREATER_THAN:
+					internalFilter = Filters.gt(key, specialMap.get(key));
+					break;
+				case GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL:
+					internalFilter = Filters.gte(key, specialMap.get(key));
+					break;
+				case GenerateStatementOption.OPERATION_IN:
+					internalFilter = Filters.in(key, specialMap.get(key));
+					break;
+				case GenerateStatementOption.OPERATION_NOT_IN:
+					internalFilter = Filters.nin(key, specialMap.get(key));
+					break;
+			}
+			specialFilters = Filters.and(specialFilters, internalFilter);
+		}
+
+		//condition with current query
+		if (GenerateStatementOption.CONDITION_OR.equals(specialOperatorModel.getGenerateStatementOption().getCondition())) {
+			query = Filters.or(query, specialFilters);
+		} else {
+			query = Filters.and(query, specialFilters);
+		}
+		return query;
 	}
 
 	public <T extends BaseEntity> Bson generateSortFilter(QueryByExample<T> queryRequest)
@@ -129,6 +204,27 @@ public class MongoQueryUtil
 		}
 
 		return new BasicDBObject(exampleMap);
+	}
+
+	public <T extends BaseEntity> Bson generateGroupByFilter(QueryByExample<T> queryRequest)
+	{
+		Map<String, Object> exampleMap = generateFieldMap(queryRequest.getGroupBy());
+
+		BasicDBObject groupQuery = new BasicDBObject();
+
+		if (exampleMap.keySet().size() > 1) {
+			DBObject fields = new BasicDBObject();
+			for (String key : exampleMap.keySet()) {
+				fields.put(key, "$" + key);
+			}
+			DBObject groupFields = new BasicDBObject("_id", fields);
+			groupQuery.put("$group", groupFields);
+		} else if (exampleMap.keySet().size() == 1) {
+			DBObject groupFields = new BasicDBObject("_id", "$" + exampleMap.keySet().stream().findFirst().get());
+			groupQuery.put("$group", groupFields);
+		}
+
+		return groupQuery;
 	}
 
 	//find field name; for complexy <parent_field>.<child field>
@@ -197,7 +293,7 @@ public class MongoQueryUtil
 				}
 			}
 		}
-		return null;
+		return query;
 	}
 
 	public <T extends BaseEntity> Bson standardRestrictionFilter()
