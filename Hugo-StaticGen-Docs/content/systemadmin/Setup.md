@@ -169,13 +169,15 @@ http://localhost:9200 should return some json with stats.
 
 3. Configure OpenStorefront to point to Solr by going to: /var/openstorefront/config/openstorefront.properties or System admin screen
 
-		Add/Set: (adjust as needed to match url and ports)
-	
-		search.server=elasticsearch
+```ini
+# Add/Set: (adjust as needed to match url and ports)
 
-		elastic.server.host=localhost
+search.server=elasticsearch
 
-		elastic.server.port=9200
+elastic.server.host=localhost
+
+elastic.server.port=9200
+```
 
 4. Resync data 
 
@@ -508,7 +510,7 @@ On initial setup modify the following:
 
     b.  Edit shiro.ini under the config directory
 
-    ```
+    ```ini
     under [main]
 
     uncomment (remove \#)
@@ -714,7 +716,7 @@ apache service command reference (apache should be running at this point):
 **Test:** curl localhost | grep 'Apache HTTP server'
 
 should give you a response something like this:
-```
+```bash
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100  4897  100  4897    0     0   928k      0 --:--:-- --:--:-- --:--:--  956k
@@ -726,15 +728,15 @@ should give you a response something like this:
 2)	Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, 
 for example /etc/yum.repos.d/elasticsearch.repo
 
-```
-[elasticsearch-6.x] 
-name=Elasticsearch repository for 6.x packages 
-baseurl=https://artifacts.elastic.co/packages/6.x/yum 
-gpgcheck=1 
-gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch 
-enabled=1 
-autorefresh=1 
-type=rpm-md 
+```ini
+[elasticsearch-6.x]
+name=Elasticsearch repository for 6.x packages
+baseurl=https://artifacts.elastic.co/packages/6.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
 ```
 
 3)	yum install elasticsearch
@@ -751,7 +753,7 @@ elasticsearch service command reference (elasticsearch should be running at this
 **Test:** curl -XGET 'localhost:9200/?pretty'
 
 should give you a response something like this:
-```
+```json
 {
   "name" : "Cp8oag6",
   "cluster_name" : "elasticsearch",
@@ -785,7 +787,7 @@ tomcat service command reference (tomcat should be running at this point):
 **Test:** curl localhost:8080 | grep 'successfully installed Tomcat'
 
 should give you a response something like this:
-```
+```bash
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100 11197    0 11197    0     0   850k      0 --:--:-- --:--:-- --:--:--  911k
@@ -800,7 +802,7 @@ should give you a response something like this:
 
 **Add:**
 
-```
+```apache
 <VirtualHost *:80>
    ProxyPreserveHost On	    
    RewriteEngine on
@@ -822,7 +824,9 @@ should give you a response something like this:
 
 *It suggested to disable SELinux unless you know what you doing. It can cause a lot of permission issues. (https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/sect-security-enhanced_linux-enabling_and_disabling_selinux-disabling_selinux)*
 
-    a)	/usr/sbin/setsebool -P httpd_can_network_connect 1  
+```bash
+/usr/sbin/setsebool -P httpd_can_network_connect 1  
+```
 
     
 5) 	systemctl restart httpd
@@ -840,8 +844,8 @@ JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx
 **Update networking**
 
 2)	nano /usr/share/tomcat/conf/server.xml
-		edit: <Connector port="8080"     to 
-```	
+```apache
+	# edit: <Connector port="8080" to 
 	<Connector port="8080" protocol="org.apache.coyote.http11.Http11NioProtocol"
                connectionTimeout="20000"
                maxThreads="250" minSpareThreads="25"

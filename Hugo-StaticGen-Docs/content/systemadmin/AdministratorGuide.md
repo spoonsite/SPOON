@@ -111,6 +111,7 @@ Also, need to adjust the open am agent filter
 
 Change:
 
+```xml
     <filter-mapping>
         <filter-name>Agent</filter-name>
         <url-pattern>/*</url-pattern>
@@ -119,15 +120,18 @@ Change:
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
+```
 
 To
 
+```xml
     <filter-mapping>
         <filter-name>Agent</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
+```
 
 
 ### 2.1.2 User Types

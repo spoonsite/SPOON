@@ -2,6 +2,8 @@ baseURL = "/openstorefront/"
 canonifyURLs = "true"
 languageCode = "en-us"
 DefaultContentLanguage = "en"
+pygmentsCodeFences = true
+pygmentsStyle = "monokai"
 
 title = "Storefront Docs"
 theme = "docdock"

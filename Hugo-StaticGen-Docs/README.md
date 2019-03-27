@@ -18,12 +18,16 @@ If creating a new page use the Hugo cli with `hugo new path/to/new-doc.md` and H
 
 ## Development Environment
 
+Download the latest release of Hugo at https://github.com/gohugoio/hugo/releases and add the binary to your path.
+
 Hugo provides a live development server for viewing changes as you are editing the files. Go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo server --baseURL localhost:1313 --watch`. This will run a local dev server at `localhost:1313`, any changes made to the files will trigger a rebuild and refresh your browser.
 
 ## How to build the Documentation
 
-This should only be done once per release.  For Development use `hugo server -b localhost:1313 -w` which will build to the build folder which is ignored.
+This should only be done once per release.  For Development use `hugo server -b localhost:1313 -w` which will run a live reloading development server. To see perform a build run `hugo` from `openstorefront/Hugo-StaticGen-Docs/` which will build to the `./build` by default which is in the gitignore.
 
-1. Delete docs folder
+To deploy the docs to github do the following:
 
-2. In the terminal go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo -d ../docs`. This will build the website in `openstorefront/docs`.
+1. Delete docs folder at `openstorefront/docs/`
+
+2. In the terminal go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo -d ../docs`. This will build the website in `openstorefront/docs`. The build can then be committed and merged to the release.

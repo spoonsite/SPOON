@@ -42,14 +42,15 @@ import java.util.List;
  * @author dshurtleff
  */
 public class ComponentSpoonParser
-	extends BaseComponentParser
+		extends BaseComponentParser
 {
+
 	public static final String FORMAT_CODE = "SPOONCMP";
 	private static final String EQUIPMENT_TYPE = "EQUIPTYPE";
-	
+
 	private List<ResourceAttachment> attachments = new ArrayList<>();
 	private List<ComponentAll> componentAlls;
-	
+
 	@Override
 	public String checkFormat(String mimeType, InputStream input)
 	{
@@ -64,141 +65,144 @@ public class ComponentSpoonParser
 	protected GenericReader getReader(InputStream in)
 	{
 		return new XMLMapReader(in);
-	}	
-	
+	}
+
 	@Override
 	protected String handlePreviewOfRecord(Object data)
 	{
 		String output = "";
-		if (componentAlls != null && 
-			!componentAlls.isEmpty()) {
-			try {			
+		if (componentAlls != null
+				&& !componentAlls.isEmpty()) {
+			try {
 				output = service.getSystemService().toJson(componentAlls.get(0));
 			} catch (Exception ex) {
-				output = "Unable preview attributes.  <br>Trace:<br>" + StringProcessor.parseStackTraceHtml(ex);
+				output = "Unable preview entry.  <br>Trace:<br>" + StringProcessor.parseStackTraceHtml(ex);
 			}
 		}
 		return output;
 	}
-	
+
 	@Override
+	@SuppressWarnings("deprecation")
 	protected <T> Object parseRecord(T record)
 	{
 		MapModel mapModel = (MapModel) record;
-		
+
 		ComponentMapper componentMapper = new ComponentMapper(() -> {
 			ComponentAll componentAll = defaultComponentAll();
-			componentAll.getComponent().setDescription(null);			
+			componentAll.getComponent().setDescription(null);
 			return componentAll;
 		}, fileHistoryAll);
-		
+
 		componentAlls = componentMapper.multiMapData(mapModel);
-		
+
 		int realRecordNumber = 0;
 		for (ComponentAll componentAll : componentAlls) {
 			realRecordNumber++;
-		
+
 			//add missing information
 			Component component = componentAll.getComponent();
-			if (StringProcessor.stringIsNotBlank(component.getName()) &&					
-				StringProcessor.stringIsNotBlank(component.getOrganization()) == false)	{
+			if (StringProcessor.stringIsNotBlank(component.getName())
+					&& StringProcessor.stringIsNotBlank(component.getOrganization()) == false) {
 				String nameSplit[] = component.getName().split(" ");
-				
-				component.setOrganization(nameSplit[0]);				
-			}		
-			
-			if (StringProcessor.stringIsNotBlank(component.getDescription()) == false)	{
-				component.setDescription(component.getName());				
+
+				component.setOrganization(nameSplit[0]);
 			}
-			
+
+			if (StringProcessor.stringIsNotBlank(component.getDescription()) == false) {
+				component.setDescription(component.getName());
+			}
+
 			String fileNameSplit[] = fileHistoryAll.getFileHistory().getOriginalFilename().split("_");
-						
+
 			String entryTypeLabel = fileNameSplit[0] + " " + fileNameSplit[1];
 			component.setComponentType(getEntryType(entryTypeLabel));
-			
+
 			StringBuilder equipmentLabel = new StringBuilder();
-			for (int i = 2; i<fileNameSplit.length; i++) {
+			for (int i = 2; i < fileNameSplit.length; i++) {
 				equipmentLabel.append(fileNameSplit[i]).append(" ");
 			}
 			String equipLabel = equipmentLabel.toString().replace(".xml", "");
-			
+
 			AttributeCode equipmentTypeCode = getAttributeCode(EQUIPMENT_TYPE, equipLabel.trim());
-			
+
 			if (equipmentTypeCode != null) {
 				ComponentAttribute componentAttribute = new ComponentAttribute();
 				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-				componentAttributePk.setAttributeCode(equipmentTypeCode.getAttributeCodePk().getAttributeCode());				
-				componentAttributePk.setAttributeType(equipmentTypeCode.getAttributeCodePk().getAttributeType());							
+				componentAttributePk.setAttributeCode(equipmentTypeCode.getAttributeCodePk().getAttributeCode());
+				componentAttributePk.setAttributeType(equipmentTypeCode.getAttributeCodePk().getAttributeType());
 				componentAttribute.setComponentAttributePk(componentAttributePk);
-				
+
 				componentAll.getAttributes().add(componentAttribute);
 			}
-			
+
 			for (ComponentResource componentResource : componentAll.getResources()) {
 				componentResource.setResourceType(getLookup(ResourceType.class, ResourceType.DOCUMENT));
-			}			
-						
+			}
+
 			ValidationResult validationResult = componentAll.validate();
 			if (validationResult.valid()) {
-				
+
 				for (ComponentResource componentResource : componentAll.getResources()) {
 					if (StringProcessor.stringIsNotBlank(componentResource.getFileName())) {
 						ResourceAttachment attachment = new ResourceAttachment();
 						attachment.setComponentName(component.getName());
 						attachment.setFileData(componentResource.getFileName());
 						attachment.setResourceOriginalName(componentResource.getOriginalName());
-						
+
 						componentResource.setFileName(null);
-												
+
 						attachments.add(attachment);
 					}
 				}
-				
-								
+
 				addRecordToStorage(componentAll);
 			} else {
 				fileHistoryAll.addError(FileHistoryErrorType.VALIDATION, validationResult.toHtmlString(), realRecordNumber);
 			}
 		}
-				
+
 		return null;
 	}
-	
+
 	@Override
+	@SuppressWarnings("deprecation")
 	protected void finishProcessing()
 	{
 		for (ResourceAttachment attachment : attachments) {
-			
+
 			Component component = new Component();
-			component.setName(attachment.getComponentName());			
+			component.setName(attachment.getComponentName());
 			component = component.find();
-			
+
 			ComponentResource componentResource = new ComponentResource();
 			componentResource.setComponentId(component.getComponentId());
 			componentResource.setOriginalName(attachment.getResourceOriginalName());
-						
+
 			//There may be more than one; pick one and remove others.
 			List<ComponentResource> componentResources = componentResource.findByExample();
 			ComponentResource pickedResource = null;
 			for (ComponentResource componentResourceFound : componentResources) {
 				if (pickedResource == null) {
 					pickedResource = componentResourceFound;
-					pickedResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);					
+					pickedResource.setActiveStatus(ComponentResource.ACTIVE_STATUS);
 				} else {
-					service.getComponentService().deleteBaseComponent(ComponentResource.class, componentResourceFound.getResourceId());					
+					service.getComponentService().deleteBaseComponent(ComponentResource.class, componentResourceFound.getResourceId());
 				}
-			}			
-			pickedResource.setOriginalName(attachment.getResourceOriginalName());			
-			pickedResource.setMimeType(
-				OpenStorefrontConstant.getMimeForFileExtension(
-						StringProcessor.getFileExtension(attachment.getResourceOriginalName())
-				)					
-			);
-						
-			byte[] fileData = Base64.getMimeDecoder().decode(attachment.getFileData());			
-			service.getComponentService().saveResourceFile(pickedResource, new ByteArrayInputStream(fileData));
-			
-		}		
-	}	
-	
+			}
+			if (pickedResource != null) {
+				pickedResource.setOriginalName(attachment.getResourceOriginalName());
+				pickedResource.setMimeType(
+						OpenStorefrontConstant.getMimeForFileExtension(
+								StringProcessor.getFileExtension(attachment.getResourceOriginalName())
+						)
+				);
+
+				byte[] fileData = Base64.getMimeDecoder().decode(attachment.getFileData());
+				service.getComponentService().saveResourceFile(pickedResource, new ByteArrayInputStream(fileData), pickedResource.getMimeType(), pickedResource.getOriginalName());
+			}
+
+		}
+	}
+
 }

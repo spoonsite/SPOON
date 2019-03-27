@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<services>
+    <product>
+        <key>525</key>
+        <short_name>CubeSat</short_name>
+        <long_name>1.5U CubeSat EPS 10 Whr Integrated Battery</long_name>
+        <product_source>Unknown</product_source>
+        <model_number>CS-1U5EPS2-10</model_number>
+        <description>
+            High Efficiency Solar Array Interface 
+        </description>
+        <product_revision>
+            <from_date>2014-04-14</from_date>
+            <thru_date></thru_date>
+            <specs>
+                <float_feature>
+                    <name>Battery Power Capacity</name>
+                    <description>Battery power capacity (W-hr)</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>10.0</value>
+                    <unit>Watt-hour</unit>
+                    <unit_abbr>W-hr</unit_abbr>
+                </float_feature>
+            </specs>
+            <shape>
+                <float_feature>
+                    <name>Mass</name>
+                    <description>Product mass</description>
+                    <value_description></value_description>
+                    <type>form</type>
+                    <data_type>float</data_type>
+                    <value>0.165</value>
+                    <unit>Kilogram</unit>
+                    <unit_abbr>kg</unit_abbr>
+                </float_feature>
+            </shape>
+            <product_type>
+                <classification>
+                    <category_name>Subsystem</category_name>
+                </classification>
+            </product_type>
+            <product_family>
+                <classification>
+                    <category_name>Electrical Power Subsystem (EPS)</category_name>
+                </classification>
+            </product_family>
+        </product_revision>
+        <organizations></organizations>
+    </product>
+    <product>
+        <key>1182</key>
+        <short_name>AAC Microtec Micro PCDU</short_name>
+        <long_name>AAC Microtec Micro Power Conditioning and Distribution Unit (PCDU)</long_name>
+        <product_source>COTS</product_source>
+        <model_number>PS-MS01</model_number>
+        <description>This is a state-of-the-art spacecraft architecture designed for innovative low cost research missions.</description>
+        <product_revision>
+            <from_date></from_date>
+            <thru_date></thru_date>
+            <specs>
+                <float_feature>
+                    <name>Power (Output, average)</name>
+                    <description>Average output power from product</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>80.0</value>
+                    <unit>Watt</unit>
+                    <unit_abbr>W</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Power (Output, peak)</name>
+                    <description>Peak output power from product</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>120.0</value>
+                    <unit>Watt</unit>
+                    <unit_abbr>W</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Voltage (Output, max)</name>
+                    <description>Product maximum output voltage</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>28.0</value>
+                    <unit>Volt</unit>
+                    <unit_abbr>V</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Voltage (Output, min)</name>
+                    <description>Product minimum output voltage</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>5.0</value>
+                    <unit>Volt</unit>
+                    <unit_abbr>V</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Solar Array Efficiency</name>
+                    <description>Efficiency of a solar array unit</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>96.0</value>
+                    <unit>Percent</unit>
+                    <unit_abbr>%</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Power (Input, average)</name>
+                    <description>Average input power required by product</description>
+                    <value_description>Idle power consumption</value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>4.0</value>
+                    <unit>Watt</unit>
+                    <unit_abbr>W</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Operating Temperature (min)</name>
+                    <description>Minimum operating temperature of product</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>-30.0</value>
+                    <unit>Degree Celsius</unit>
+                    <unit_abbr>degrees Celsius</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Operating Temperature (max)</name>
+                    <description>Maximum operating temperature of product</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>60.0</value>
+                    <unit>Degree Celsius</unit>
+                    <unit_abbr>degrees Celsius</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Total Ionizing Dose (TID)</name>
+                    <description>Radiation dose for TID (krads)</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>20.0</value>
+                    <unit>Kilorad</unit>
+                    <unit_abbr>krad</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Battery Power Capacity</name>
+                    <description>Battery power capacity (W-hr)</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>float</data_type>
+                    <value>160.0</value>
+                    <unit>Watt-hour</unit>
+                    <unit_abbr>W-hr</unit_abbr>
+                </float_feature>
+                <text_feature>
+                    <name>Data Interface Type</name>
+                    <description>Type of data interface</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>text</data_type>
+                    <value>RS485 serial interface, Flash-based FPGA controller</value>
+                </text_feature>
+                <text_feature>
+                    <name>Battery Cell Type</name>
+                    <description>Type based on cell chemistry: Lithium Ion, Li-Polymer</description>
+                    <value_description></value_description>
+                    <type>function</type>
+                    <data_type>text</data_type>
+                    <value>Li-Ion</value>
+                </text_feature>
+            </specs>
+            <shape>
+                <float_feature>
+                    <name>Mass</name>
+                    <description>Product mass</description>
+                    <value_description></value_description>
+                    <type>form</type>
+                    <data_type>float</data_type>
+                    <value>2.45</value>
+                    <unit>Kilogram</unit>
+                    <unit_abbr>kg</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Length</name>
+                    <description>Length measure</description>
+                    <value_description></value_description>
+                    <type>form</type>
+                    <data_type>float</data_type>
+                    <value>267.0</value>
+                    <unit>Millimeter</unit>
+                    <unit_abbr>mm</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Width</name>
+                    <description>Width measure</description>
+                    <value_description></value_description>
+                    <type>form</type>
+                    <data_type>float</data_type>
+                    <value>167.0</value>
+                    <unit>Millimeter</unit>
+                    <unit_abbr>mm</unit_abbr>
+                </float_feature>
+                <float_feature>
+                    <name>Height</name>
+                    <description>Height measure</description>
+                    <value_description></value_description>
+                    <type>form</type>
+                    <data_type>float</data_type>
+                    <value>89.0</value>
+                    <unit>Millimeter</unit>
+                    <unit_abbr>mm</unit_abbr>
+                </float_feature>
+            </shape>
+            <additional>
+                <float_feature>
+                    <name>Design Life</name>
+                    <description>Product design life (years)</description>
+                    <value_description>LEO</value_description>
+                    <type>general</type>
+                    <data_type>float</data_type>
+                    <value>5.0</value>
+                    <unit>Year</unit>
+                    <unit_abbr>yr</unit_abbr>
+                </float_feature>
+            </additional>
+            <product_type>
+                <classification>
+                    <category_name>Subsystem</category_name>
+                </classification>
+            </product_type>
+            <product_family>
+                <classification>
+                    <category_name>Electrical Power Subsystem (EPS)</category_name>
+                </classification>
+            </product_family>
+            <provenance>
+                <revision_provenance_document>
+                    <key>681</key>
+                    <type>.pdf</type>
+                    <filename>AAC Microtec Micro PCDU.pdf</filename>
+                    <description></description>
+                    <title>AAC Microtec Micro PCDU Data Sheet - Apr 2018</title>
+                </revision_provenance_document>
+            </provenance>
+            <comments></comments>
+        </product_revision>
+        <organizations>
+            <related_organization>
+                <role>Manufacturer</role>
+                <organization>
+                    <key>89</key>
+                    <short_name></short_name>
+                    <long_name>AAC Microtec</long_name>
+                    <description>info@aacmicrotecus.com
+
+AC US Headquarters are located at NASA Ames Research Park in the heart of Silicon Valley.</description>
+                    <type>Commercial-Industrial</type>
+                </organization>
+            </related_organization>
+        </organizations>
+    </product>
+    <product>
+        <key>1032</key>
+        <short_name>MPS-110</short_name>
+        <long_name>Aerojet Rocketdyne - Propulsion Unit for Cubesats (PUC) - MPS-110</long_name>
+        <product_source>COTS</product_source>
+        <model_number>MPS-110</model_number>
+        <description>MPS-110 (tm) is a scalable 0.5U to 1U cold gas propulsion system that provides primary propulsion for CubeSats.</description>
+        <product_revision>
+            <from_date></from_date>
+            <thru_date></thru_date>
+            <specs></specs>
+            <shape></shape>
+            <additional></additional>
+            <product_type>
+                <classification>
+                    <category_name>Subsystem</category_name>
+                </classification>
+            </product_type>
+            <product_family>
+                <classification>
+                    <category_name>Propulsion Subsystem</category_name>
+                </classification>
+            </product_family>
+            <provenance>
+                <revision_provenance_website>
+                    <url>http://www.rocket.com/cubesat</url>
+                    <snapshot_url></snapshot_url>
+                    <snapshot_id></snapshot_id>
+                    <description></description>
+                    <title>Cubesat page</title>
+                    <last_visited>2018-04-02</last_visited>
+                </revision_provenance_website>
+                <revision_provenance_document>
+                    <key>467</key>
+                    <type>.docx</type>
+                    <filename>mps-110.docx</filename>
+                    <description></description>
+                    <title>MPS-110 Page View</title>
+                </revision_provenance_document>
+                <revision_provenance_document>
+                    <key>468</key>
+                    <type>.pdf</type>
+                    <filename>AIAA-2012-4269.pdf</filename>
+                    <description></description>
+                    <title>AIAA-2012-4269</title>
+                </revision_provenance_document>
+                <revision_provenance_document>
+                    <key>469</key>
+                    <type>.pdf</type>
+                    <filename>SSC11-X-4.pdf</filename>
+                    <description></description>
+                    <title>SSC11-X-4</title>
+                </revision_provenance_document>
+            </provenance>
+            <comments></comments>
+        </product_revision>
+        <organizations>
+            <related_organization>
+                <role>Manufacturer</role>
+                <organization>
+                    <key>61</key>
+                    <short_name></short_name>
+                    <long_name>Aerojet Rocketdyne</long_name>
+                    <description></description>
+                    <type>Commercial-Industrial</type>
+                </organization>
+            </related_organization>
+        </organizations>
+    </product>
+</services>
