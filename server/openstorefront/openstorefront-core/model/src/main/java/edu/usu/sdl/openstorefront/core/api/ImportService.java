@@ -24,7 +24,9 @@ import edu.usu.sdl.openstorefront.core.model.FileFormatCheck;
 import edu.usu.sdl.openstorefront.core.model.FileHistoryAll;
 import edu.usu.sdl.openstorefront.core.model.ImportContext;
 import edu.usu.sdl.openstorefront.core.spi.parser.mapper.FieldDefinition;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
@@ -188,5 +190,15 @@ public interface ImportService
 	 * @return copy data map
 	 */
 	public FileDataMap copyDataMap(String fileDataMapId);
-	
+
+
+	/**
+	 * Returns a map of componentTypeFrom -> componentTypeTo
+	 * Needed for the Aerospace data import
+	 * This method exposes the OpenCSV functionality to the plugin
+	 * 
+	 * @param in
+	 * @return 
+	 */
+	public Map<String, String> getComponentTypeMapFromCSV(Reader in) throws IOException;
 }
