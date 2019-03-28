@@ -1506,7 +1506,25 @@
 										Ext.getCmp('resultsDisplayPanel').body.scrollTo('top', 0);
 									}
 								}
-							})
+							}),
+							{
+								xtype:"tbspacer",
+								flex:1							
+							},
+							{
+								// xtype: 'panel',
+								html:'<span style="display:block;float:right;font-style:italic;">Disclaimer</span>',
+								listeners:{
+									click:function(){
+										Ext.Msg.alert('SPOON Disclaimer', 
+										'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i><br> All of the entries available on SPOON are user-submitted. While some preliminary checks are made on data submitted to the site,\
+										SPOON does not exhaustively examine or test any of the products displayed here and thus make no promise or guarrentee about the veracity \
+										any of the data available here. You, the user, are advised to contact vendor representives and conduct their own research before acting on any\
+										product information made available through SPOON.<br><br>',
+										 Ext.emptyFn);
+									}
+								}
+							}
 						]
 					}
 				],
