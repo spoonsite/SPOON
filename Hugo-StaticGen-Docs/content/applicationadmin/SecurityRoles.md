@@ -1,6 +1,6 @@
 +++
 title = "Security Roles"
-description = ""
+description = "Security Roles"
 weight = 8
 date = 2019-02-27T11:30:53-07:00
 markup = "mmark"
@@ -19,354 +19,348 @@ markup = "mmark"
  
  
 ## 1. Default Roles and Resetting to Default
-When setting up an instance of Storefront it comes with a few default roles as described below and as shown in **Admin Tools &rarr; Application Management &rarr; Security Roles** on the website *(must be logged in as an administrator to view)*
+When setting up an instance of SPOON it comes with a few default roles as described below and as shown in **Admin Tools &rarr; Application Management &rarr; Security Roles** on the website *(must be logged in as an administrator to view)*
 
 SECURITY ROLE NAME | EXPLANATION | DEFAULT PERMISSIONS NOTES
-------------------:|-----------|----------------------------
+-----------------: | ----------- | -------------------------
 GUEST-GROUP | Permissions for guest when they come to the site directly via URL, such as to view an entry. | NO Extra Permissions
 DEFAULT-GROUP | What all users get and are a member of.  Baseline permissions. | A few, limited Permissions
-STOREFRONT-Evaluators | This group writes evaluations of the entries | Evaluations Permissions
+SME_Approver | SME Role for Approving Entries | See dashboard pending requests.  Approve Requests for new entries and change requests.
 STOREFRONT-Librarian | Data management librarian permissions | Many Administrator Permissions
 STOREFRONT-Admin | Website administrator, super permissions group | ALL Permissions
 
 {{% notice note %}}
-**If these permisions get changed and you would like to reset them to the default (new installatin) defaults, please do the following:**
+**If these permissions get changed and you would like to reset them to the default (new installation) defaults, please do the following:**
 1.  Go to **Admin Tools &rarr; Application Management &rarr; System** and click on the **Application State Properties** tab.
 2.  Locate the Key **Security-Init_v2_LASTRUN_DTS** and click **Edit**
 3.  Delete all of the text in the value box and click **Save**
 4.  Repeat the prior two steps for the **Security-Init_v2_STATUS** key.
-5.  The pre-made groups shown above (STOREFRONT-Admin, etc.) are now reset to their new installation defaults.
+5.  The pre-made groups shown above (SPOON-Admin, etc.) are now reset to their new installation defaults.
 {{% /notice %}}
 
 **[GO TO TOP]({{<relref "#toc">}})**
 
- 
 ## 2. Default Permissions
 The following details the default permissions and what users in these security role groups can do.
 
-<!--   Please SAVE these for copying and pasting in the table below.				        -->
-<!--   {{<icon name="fa-check" color="green">}}  {{<icon name="fa-close" color="red">}}     -->
-<!--   **SECTION NAME** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin -->
-
-
-ABILITY OR PERMISSION TO: | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-------------------------: | :---------: | :-----------: | :------------------: | :-------------------: | :--------------:
+ABILITY OR PERMISSION TO: | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+------------------------: | :---------: | :-----------: | :----------: | :------------------: | :--------------: | 
 **API** |
-Ability to see API documentation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**ALERTS** |
-Ability to Read all Alerts| {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Ability to Create new Alerts| {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Ability to Delete Alerts | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Ability to Update Alerts | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access the admin Alerts Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Ability to see API documentation | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
+**ALERTS** | 
+Ability to Read all Alerts | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Ability to Create new Alerts | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Ability to Delete Alerts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Ability to Update Alerts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Access the admin Alerts Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 **ATTRIBUTES** | 
-Create new Attributes | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete existing Atrributes | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update existing Attributes | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the admin Attribute page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Manage attributes on entries from the admin tools manageme assignments tool | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create attribute types | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**BRANDING** |  GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Create new Brandings | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete Brandings | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Access to the admin Branding page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update Brandings | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Create new Attributes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Delete existing Attributes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Update existing Attributes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Access to the admin Attribute page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Manage attributes on entries from the admin tools manage assignments tool  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Create attribute types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}
+**BRANDING** |  GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin
+Create new Brandings  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete Brandings  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the admin Branding page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update Brandings  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **CONTACTS** |
-Create Contacts | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Contacts | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update existing Contacts | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the admin Contacts page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-**DASHBOARD** |  GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access to the Dashboard Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-View the Entry Status Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-View the Evaluation Status Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-View the Notifications Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-View the Outstanding Feedback Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-View the Pending Approvals Requests widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-View the Questions Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-View the Reports Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-View the Saved Search Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-View the Submission Status Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-View the System Status Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-View the Recent User Data Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-View the User Status Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-View the Watches Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**ENTRIES** |  GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access to the Admin Entries Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Ability to Approve an Entry |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Ability to Read Entries | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Approve an Entry | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Assign a Librarian to a Component (Entry) | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Atrribute Management of Entry | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Change Owner of the Entry | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Manage Change Requests | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Change an Entry Type | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Manage Entry Comments | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Conact Management | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create Entries | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete and Existing Entry | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Manage Evaluation Sections | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Export an Entry | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Media Management | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Merge two Entries Together | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Pendig Changes | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Relationship Management for Entries | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Resource Management for Entries | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Tag Management | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Toggle Status (Active/Inactive) of an Entry | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Existing Entry | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Entry Version | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Entry Version | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Restore Entry Version | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-**ENTRY TEMPLATES** |  GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Read Entry Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create Entry Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} 
-Read Entry Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Entry Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to Entry Templates Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Create Contacts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Contacts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update existing Contacts  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the admin Contacts page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+**DASHBOARD** |  GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Dashboard Page  | {{<x>}} | {{<c>}} | {{<c>}} | {{<x>}} | {{<c>}} 
+View the Entry Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+View the Evaluation Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+View the Notifications Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View the Outstanding Feedback Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+View the Pending Approvals Requests widget  | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
+View the Questions Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View the Reports Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View the Saved Search Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View the Submission Status Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View the System Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View the Recent User Data Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+View the User Status Widget  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View the Watches Widget  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+**ENTRIES** |  GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Admin Entries Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Ability to Approve an Entry | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
+Ability to Read Entries  | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
+Approve an Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Assign a Librarian to a Component (Entry)  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Attribute Management of Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Change Owner of the Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Manage Change Requests  | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
+Change an Entry Type  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Manage Entry Comments  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Contact Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete and Existing Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Manage Evaluation Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Export an Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Media Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Merge two Entries Together  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Pending Changes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Relationship Management for Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Resource Management for Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Tag Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Toggle Status (Active/Inactive) of an Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Existing Entry  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Entry Version  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Entry Version  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+ReSPOON Entry Version  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+**ENTRY TEMPLATES** |  GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin  
+Read Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}  
+Read Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Entry Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to Entry Templates Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **ENTRY TYPES** | 
-Create Entry Types | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Entry types | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Entry Types | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access Admin Entry Types Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Create Entry Types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Entry types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Entry Types  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access Admin Entry Types Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION (ADMIN)** |
-Access to the Admin Evaluator Management Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Activate an Evaluation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Allow New Sections | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Allow Question Management | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete a Comment | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create an Evaluation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete a Evaluation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Publsh just the Summary | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Publish or Unplublish an Evaluation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-**EVALUATION (USER)** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access to the Evaluator Management Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Allow Evaluator to View an Evaluation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Allow Evaluator to Assign a User to an Evaluation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Allow Evaluator to Edit an Evaluation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Access to the Admin Evaluator Management Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Activate an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow New Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow Question Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete a Comment  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete a Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Publish just the Summary  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Publish or Unplublish an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+**EVALUATION (USER)** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Evaluator Management Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow Evaluator to View an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow Evaluator to Assign a User to an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allow Evaluator to Edit an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION TEMPLATES** |
-Access to the Evaluation Templates Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Evaluation Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create Evaluation Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Evaluation Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Evaluation Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Access to the Evaluation Templates Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Evaluation Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION TEMPLATES CHECKLIST QUESTIONS** |
-Access to the Evaluation Templates Checklist Questions Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Eval Template Checklist Question Items  | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create Template Checklist Questions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Template Checklist Questions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Template Checklist Questions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-**EVALUATION TEMPLATES CHECKLISTS** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access to the Evaluation Templates Checklists Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Evaluation Template Checklist Items | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create Evaluation Template Checklist Items | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Evaluation Template Checklist Items | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Evaluation Template Checklist Items | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Access to the Evaluation Templates Checklist Questions Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Eval Template Checklist Question Items   | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Template Checklist Questions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Template Checklist Questions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Template Checklist Questions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+**EVALUATION TEMPLATES CHECKLISTS** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin  
+Access to the Evaluation Templates Checklists Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **EVALUATION TEMPLATES SECTIONS** | 
-Access to the Evaluation Section Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Evaluation Template Checklist Items | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create Evaluation Template Sections | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Evaluation Template Sections | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Evaluation Template Sections | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-**FAQs** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access to the Admin FAQ page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Read FAQs | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Create FAQs | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete FAQs | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update FAQs | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Access to the Evaluation Section Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Evaluation Template Checklist Items  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Evaluation Template Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Evaluation Template Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Evaluation Template Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+**FAQs** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Admin FAQ page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read FAQs  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create FAQs  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete FAQs  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update FAQs  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **FEEDBACK** | 
-Access Admin Feedback Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Feedback | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Remove Feedback | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Modify Feedback | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Access Admin Feedback Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Feedback  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Remove Feedback  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Modify Feedback  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **HIGHLIGHTS** |
-Create Highlights | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Highlights | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the Highlights page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Highlights | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Create Highlights  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Highlights  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the Highlights page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Highlights  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **IMPORT / EXPORT** |
-Ability to Import and Export | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the admin Import Export Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-**INTEGRATIONS** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access to the Integration Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Integration | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create Integration | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Remove Integration | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Ability to Integrate with external sources | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run all Integrations | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run the Integration Configuration | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Allows for Running One Integration | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Toggle Active/Inactive Integration Status | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Integration | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Ability to Import and Export  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the admin Import Export Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+**INTEGRATIONS** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Integration Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Integration  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Integration  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Remove Integration  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Ability to Integrate with external sources  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run all Integrations  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the Integration Configuration  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Allows for Running One Integration  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Toggle Active/Inactive Integration Status  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Integration  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **JOBS** | 
-Read Jobs | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Perform some action with a Job | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Remove a Job | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to Admin Jobs Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-**LOOKUPS** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access the Lookups Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Lookups | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create Lookups | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Lookups | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update a Lookup | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Read Jobs  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Perform some action with a Job  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Remove a Job  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to Admin Jobs Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+**LOOKUPS** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access the Lookups Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Lookups  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Create Lookups  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Lookups  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update a Lookup  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **MEDIA** |
-Delete Media | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the admin Media Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Upload Media as Admin | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Upload Support Media | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Delete Media  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the admin Media Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Upload Media as Admin  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Upload Support Media  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **MESSAGES** |
-Read User Notifcation Data | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Post New User Notification Event | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete User Notification Event | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update User Notification Event | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Access to the admin Messages/Notification page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Read User Notification Data  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Post New User Notification Event  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete User Notification Event  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update User Notification Event  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the admin Messages/Notification page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **NOTIFICATION EVENTS** | 
-Post New Admin Notification Event | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete Admin Notification Event |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**ORGANIZATIONS** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Create Organization |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Organization |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Organization Extraction | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Merge Two Organizations | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Acces the Admin Organiation Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}a
-Update Organization |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Post New Admin Notification Event  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete Admin Notification Event |      
+**ORGANIZATIONS** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Create Organization  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Organization  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Organization Extraction  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Merge Two Organizations  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access the Admin Organization Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Organization  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **PROFILE MANAGEMENT** |
-Read User Profiles | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete User Profile | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update User Profile | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to admin User Profiles Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to User Profile Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**QUESTIONS** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access admin Questions Page| {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Questions on Entries | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Questions on Entries | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Questions on Entries | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the User Questions Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Read User Profiles  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete User Profile  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update User Profile  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to admin User Profiles Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to User Profile Page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+**QUESTIONS** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin  
+Access admin Questions Page    | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Questions on Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Questions on Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Questions on Entries  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the User Questions Page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **RELATIONSHIPS** |
-Access to the admin Relationships Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the User Relationships Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**REPORTS** |  GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-General Reports Read | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-User Run Report as Attached Email | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-User Run Report as Content of Email body | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-View Reports From All Users | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Create New Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete a Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Access to the Reports Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Run the Action Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}}  | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run Entries by Category Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Run Entries by Organization Report |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Run Entry Detail Report |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Run Entry Listing Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run the Entry Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Run the Entry Status Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run the Evaluation Status Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run the Link Validation Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run the Sumissions Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run the Useage Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run the User by Organiation Repeat | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run the User Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Run the Workplan Status Report | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-**REPORTS SCHEDULE** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Create Scheduled Reports | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete Scheduled Reports | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Read Scheduled Reports | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Edit Scheduled Reports | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Access to the admin Relationships Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the User Relationships Page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+**REPORTS** |  GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin  
+General Reports Read  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+User Run Report as Attached Email  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+User Run Report as Content of Email body  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+View Reports From All Users  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create New Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete a Report  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Reports Page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Run the Action Report   | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run Entries by Category Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Run Entries by Organization Report | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Run Entry Detail Report | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Run Entry Listing Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the Entry Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Run the Entry Status Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the Evaluation Status Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the Link Validation Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the Submissions Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the Usage Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the User by Organization Repeat  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the User Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Run the Workplan Status Report  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+**REPORTS SCHEDULE** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Create Scheduled Reports  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete Scheduled Reports  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read Scheduled Reports  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Edit Scheduled Reports  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **REVIEWS** |
-Access to the Admin Reviews Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Reviews |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Reviews |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Reviews | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the Reviews Page |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Access to the Admin Reviews Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Reviews  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}      
+Delete Reviews  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}       
+Update Reviews  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the Reviews Page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}}      
 **ROLES** |
-Ability to Read Security Roles | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Create Security Roles | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete Security Roles | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update Security Roles | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Access to Admin Security Roles Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**SEARCH MANAGEMENT** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Read all Searches |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Create a Search |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete a Search |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update a Search |  {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Search Page (User) | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Ability to Read Security Roles  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create Security Roles  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete Security Roles  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update Security Roles  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to Admin Security Roles Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+**SEARCH MANAGEMENT** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Read all Searches  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}      
+Create a Search  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete a Search  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update a Search  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Search Page (User)  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **SECURITY** | 
-Access to the Admin Security Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Access to the Security Policy Tab | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Access to the Shiro Config Tab | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**SUBMISSIONS (ADMIN)** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access to Partial Submissions Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Access to Admin Custom Submission Form Template Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Read Submission Form Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Create Submission Form Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete Submission Form Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update Submission Form Templates | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Read User Sumissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete User Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update User Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Access to the Admin Security Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Security Policy Tab  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to the Shiro Config Tab  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+**SUBMISSIONS (ADMIN)** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to Partial Submissions Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to Admin Custom Submission Form Template Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read Submission Form Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create Submission Form Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete Submission Form Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update Submission Form Templates  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read User Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete User Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update User Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **SUBMISSIONS (USER)** | 
-Access to the User Submissions Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Read User Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Create Change Requests | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Create User Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete User Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update User Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**SYSTEM** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access to the Admin System Archives Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-General System Administration Permission | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update Applicaiton Properties | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Create System Archives | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete System Archives | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Manage System Archives | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Access to System Cache | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Remove/ Clear Operations for the System | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Read Application Meta Data | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update System Configuration | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Error Ticket Mangaement | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Permission Logging | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-System Managers | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Management of Plugins | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close"color="red">}} | {{<icon name="fa-check" color="green">}}
-System Recent Changes | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-System Search Management | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-System Stand By | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-System Status | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Access the Admin System Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**TAGS** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin
-Access to the Admin Tags Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Access to the User Submissions Page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read User Submissions  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create Change Requests  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create User Submissions  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete User Submissions  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update User Submissions  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+**SYSTEM** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Admin System Archives Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+General System Administration Permission  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update Application Properties  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create System Archives  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete System Archives  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Manage System Archives  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access to System Cache  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Remove/ Clear Operations for the System  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read Application Meta Data  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update System Configuration  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Error Ticket Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Permission Logging  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+System Managers  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Management of Plugins   | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}   
+System Recent Changes  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+System Search Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+System Stand By  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+System Status  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Access the Admin System Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+**TAGS** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Access to the Admin Tags Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 **TRACKING** | 
-Access to the Admin Tracking Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Read Tracking | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete Tracking from an Item | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update Tracking on an Item | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Access to the Admin Tracking Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read Tracking  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete Tracking from an Item  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update Tracking on an Item  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **USER MANAGEMENT** | 
-Access to the Admin User Management Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Read other User's Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Approve other User's Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Create Submissions for Users | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Delete other User's Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Update other User's Submissions | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Access to the Admin User Management Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Read other User's Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Approve other User's Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Create Submissions for Users  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Delete other User's Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Update other User's Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **WATCHES** | 
-Access to Admin Watches Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Watches | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Watches | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update WAtches | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the User Watches Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-**WORKPLAN** | GUEST-GROUP | DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | STOREFRONT-Admin 
-Create Workplans | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Delete Workplans | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Access to the Workplans Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Read Workplans as Administrator | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Workplans | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-User can view current status of selected record in a workplan | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
+Access to Admin Watches Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Watches  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Watches  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update WAtches  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the User Watches Page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+**WORKPLAN** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin 
+Create Workplans  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Delete Workplans  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access to the Workplans Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Read Workplans as Administrator  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Workplans  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+User can view current status of selected record in a workplan  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
 **WORKPLAN PROGRESS MANAGEMENT** | 
-Get Submission Comments for Role | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Enable Assigning and Unassigning to Admin | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Assign Any Entry to Any User | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Enable Updating of Workflows | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-View Your Group Workflow Links | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-View ALL Workflow Links | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-Update Workflows | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-View Workplan Progress Management Page | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+Get Submission Comments for Role  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Enable Assigning and Unassigning to Admin  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Assign Any Entry to Any User  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Enable Updating of Workflows  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+View Your Group Workflow Links  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+View ALL Workflow Links  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Update Workflows  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+View Workplan Progress Management Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
 
 **[GO TO TOP]({{<relref "#toc">}})**
 
@@ -374,21 +368,17 @@ View Workplan Progress Management Page | {{<icon name="fa-close" color="red">}} 
 ## 3. Overlapping Permissions
 
 {{% notice info %}}
-**What happens if a user is a part of more than *one* Security Role?  If a user is part of multiple security roles, such as an Evaluator AND a Librarian (and the Default Group as all users are) then if a particular permission is granted to one group, it is grandted (ANDed) to the user.  For example:**
+**What happens if a user is a part of more than *one* Security Role?  If a user is part of multiple security roles, such as a SME-Approver and STOREFRONT-Librarian (and the Default Group as all users are) then if a particular permission is granted to one group, it is granted (ANDed) to the user.  For example:**
 
- * If user "bobsmith" has the Security Roles of Evaluator AND Librarian he will see,
- * BOTH the Evaluation Status Widget AND the Notifications Widget on the User Dashboard
- * If the user chooses to add it to his/her dashboard.  Both with be available to add.
-
-Note the permissions table below:
+If user "bobsmith" has the Security Roles of SME_Approver **and** STOREFRONT-Librarian he will see anything that *either* of these roles have permission to such as the User Watches Page, the Ability to Approve an Entry, or Change the Ownder of the Entry.  See table below.
 {{% /notice %}}
 
-ABILITY OR PERMISSION TO: |  DEFAULT-GROUP | STOREFRONT-Evaluators | STOREFRONT-Librarian | Bob Smith's (ANDed) Access
-------------------------: | :------------: | :-------------------: | :------------------: | :----------------: 
-View the System Status Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}}
-View the Evaluation Status Widget | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
-View the Questions Widget | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}}
-Allow Evaluator to Edit an Evaluation | {{<icon name="fa-close" color="red">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}} | {{<icon name="fa-check" color="green">}}
+ABILITY OR PERMISSION TO: | DEFAULT-GROUP | SME-Approver | SPOON-Librarian | Bob Smith's (ANDed) Access
+------------------------: | :-----------: | :----------: | :-------------: | :----------------: 
+Access to the User Watches Page  | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}} 
+Ability to Approve an Entry  | {{<x>}} | {{<c>}} | {{<c>}} | {{<c>}} 
+Change Owner of the Entry  | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}} 
+Access Admin Jobs Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} 
 
 **[GO TO TOP]({{<relref "#toc">}})**
 
@@ -403,21 +393,22 @@ Data restrictions, if used, restrict users to seeing certain entries.  These are
 #### Data Sources
 ENABLED|CODE|DESCRIPTION
 :-----:|:--:|:---------:
-{{<icon name="fa-close" color="red">}} | DI2E | DI2E Component Entry
-{{<icon name="fa-close" color="red">}} | ER2 | ER2 Asset
+ {{<x>}} | AEROSPACE_IMPORT | Aerospace Import Entries 
+ {{<x>}} | DI2E | DI2E Component Entry
+ {{<x>}} | ER2 | ER2 Asset
 
 #### Data Sensitivity
 ENABLED|CODE|DESCRIPTION
 :-----:|:--:|:---------:
-{{<icon name="fa-close" color="red">}} |  DISTRO A | Government Distribution A
-{{<icon name="fa-close" color="red">}} |  DISTRO B | Government Distribution B
-{{<icon name="fa-close" color="red">}} |  DISTRO C | Government Distribution C
-{{<icon name="fa-close" color="red">}} |  DISTRO D | Government Distribution D
-{{<icon name="fa-close" color="red">}} |  DISTRO E | Government Distribution E
-{{<icon name="fa-close" color="red">}} |  DISTRO F | Government Distribution F
-{{<icon name="fa-close" color="red">}} |  ITAR | Internation Traffic in Arms Regulations
-{{<icon name="fa-close" color="red">}} |  PUBLIC | Available to the Public
-{{<icon name="fa-close" color="red">}} |  SENSITIVE | Sensitive Information Marking
+{{<x>}} |  DISTRO A | Government Distribution A
+{{<x>}} |  DISTRO B | Government Distribution B
+{{<x>}}  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}  DISTRO C | Government Distribution C
+{{<x>}}  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}  DISTRO D | Government Distribution D
+{{<x>}}  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}  DISTRO E | Government Distribution E
+{{<x>}} |  DISTRO F | Government Distribution F
+{{<x>}}  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}  ITAR | Internation Traffic in Arms Regulations
+{{<x>}}  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}  PUBLIC | Available to the Public
+{{<x>}}  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}}  SENSITIVE | Sensitive Information Marking
 
 
 **[GO TO TOP]({{<relref "#toc">}})**
