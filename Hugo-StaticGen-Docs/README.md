@@ -26,8 +26,42 @@ Hugo provides a live development server for viewing changes as you are editing t
 
 This should only be done once per release.  For Development use `hugo server -b localhost:1313 -w` which will run a live reloading development server. To see perform a build run `hugo` from `openstorefront/Hugo-StaticGen-Docs/` which will build to the `./build` by default which is in the gitignore.
 
-To deploy the docs to github do the following:
+The documentation is hosted at https://spoonsite.github.io using github pages. To create a new build clone spoonsite.github.io
 
-1. Delete docs folder at `openstorefront/docs/`
+1. Clone spoonsite.github.io
 
-2. In the terminal go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo -d ../docs`. This will build the website in `openstorefront/docs`. The build can then be committed and merged to the release.
+2. Build the documentation in the spoonsite repo
+
+3. Remove the contents of spoonsite.github.io and replace it with the new build
+
+4. Commit and push the new build
+
+This process can be automated with the following script:
+
+```bash
+#!/bin/bash
+
+# The location of the spoonsite repo
+SPOON="/c/dev/spoonsite"
+
+cd $SPOON/Hugo-StaticGen-Docs
+
+# Also assumes spoonsite.github.io has also been cloned
+DEPLOY="../../spoonsite.github.io"
+DATE=$(date)
+
+echo "building site"
+rm -r public/*
+hugo
+
+echo "cleaning out old site"
+rm -r $DEPLOY/*
+
+echo "copying build to $DEPLOY"
+cp -r public/* $DEPLOY
+
+cd $DEPLOY
+git add -A
+git commit -m "Build on $DATE"
+git push
+```
