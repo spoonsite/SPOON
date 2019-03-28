@@ -1,4 +1,4 @@
-baseURL = "/SPOON/"
+baseURL = "/"
 canonifyURLs = "true"
 languageCode = "en-us"
 DefaultContentLanguage = "en"
