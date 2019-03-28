@@ -18,67 +18,6 @@
 
 /* global Ext, CoreUtil */
 
-var checkBoxes = {
-	array: [
-		{
-			xtype: 'checkbox',
-			text: 'Organizations',
-			id: 'organizationsCheckbox',
-			leaf:true,
-			checked:false
-		},
-		{
-			xtype: 'checkbox',
-			boxLabel: 'Tags',
-			id: 'tagsCheckbox'
-		},
-		{
-			xtype: 'checkbox',
-			boxLabel: 'Tags',
-			id: 'tagsCheckbox'
-		},
-		{
-			xtype: 'checkbox',
-			boxLabel: 'Tags',
-			id: 'tagsCheckbox'
-		},
-		{
-			xtype: 'checkbox',
-			boxLabel: 'Tags',
-			id: 'tagsCheckbox'
-		}
-	],
-};
-var labels = {
-	array: [
-		{
-			xtype: 'checkbox',
-			boxLabel: 'Organizations',
-			id: 'organizationsCheckbox'
-		},
-		{
-			xtype: 'checkbox',
-			boxLabel: 'Tags',
-			id: 'tagsCheckbox'
-		},
-		{
-			xtype: 'checkbox',
-			boxLabel: 'Tags',
-			id: 'tagsCheckbox'
-		},
-		{
-			xtype: 'checkbox',
-			boxLabel: 'Tags',
-			id: 'tagsCheckbox'
-		},
-		{
-			xtype: 'checkbox',
-			boxLabel: 'Tags',
-			id: 'tagsCheckbox'
-		}
-	],
-};
-
 Ext.define('OSF.landing.DefaultSearch', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.osf-defaultsearch',
@@ -175,7 +114,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 			items: [
 				{
 					xtype: 'button',
-					text: 'Entry Types (All)',
+					text: 'Search Options',
 					itemId: 'entryType',
 					margin: 0,
 					enableToggle: true,
@@ -187,20 +126,20 @@ Ext.define('OSF.landing.DefaultSearch', {
 					selectedItems: [],
 					setCheckedDisplay: function (treeStore) {
 
-						var itemsSelected = 0;
+						// var itemsSelected = 0;
 
-						Ext.Array.forEach(treeStore.getData().items, function (item) {
-							if (item.getData().checked) {
-								itemsSelected += 1;
-							}
-						});
+						// Ext.Array.forEach(treeStore.getData().items, function (item) {
+						// 	if (item.getData().checked) {
+						// 		itemsSelected += 1;
+						// 	}
+						// });
 
-						if (itemsSelected > 0) {
-							this.setText('Entry Types (' + itemsSelected + ' selected)');
-						}
-						else {
-							this.setText('Entry Types (All)');
-						}
+						// if (itemsSelected > 0) {
+						// 	this.setText('Entry Types (' + itemsSelected + ' selected)');
+						// }
+						// else {
+						// 	this.setText('Entry Types (All)');
+						// }
 					},
 					setItemsSelected: function (treeStore) {
 
@@ -240,22 +179,69 @@ Ext.define('OSF.landing.DefaultSearch', {
 								maxHeight: 500,
 								scrollable: false,
 								rootVisible: false,
-								checkPropagation: 'both',
+								listeners: {
+									load: function () {
+										var checkBoxes = {
+											array: [
+												{
+													xtype: 'checkbox',
+													text: 'Organizations',
+													id: 'organizationsCheckbox',
+													leaf: true,
+													checked: false
+												},
+												{
+													xtype: 'checkbox',
+													text: 'Component Names',
+													id: 'namesCheckbox',
+													leaf: true,
+													checked: false
+												},
+												{
+													xtype: 'checkbox',
+													text: 'Component Descriptions',
+													id: 'descriptionsCheckbox',
+													leaf: true,
+													checked: false
+												},
+												{
+													xtype: 'checkbox',
+													text: 'Component Tags',
+													id: 'tagsCheckbox',
+													leaf: true,
+													checked: false
+												},
+												{
+													xtype: 'checkbox',
+													text: 'Component Attributes',
+													id: 'attributesCheckbox',
+													leaf: true,
+													checked: false
+												},
+											],
+										};
+									},
+									itemclick: function (view, record, element, index, e, opts) {
+										console.log(view, record, element, index, e, opts);
+									}
+								},
 								store: {
 									xtype: 'treestore',
+									fields: ['searchoptions'],
 									root: {
 										children: checkBoxes.array
 									}
 								}
 							},
-							{
-								xtype: 'label',
-								html: '<b>Category Filter</b>',
-								// focusable: false
-							},
+							// {
+							// 	xtype: 'label',
+							// 	html: '<b>Category Filter</b>',
+							// 	// focusable: false
+							// },
 							{
 								xtype: 'treepanel',
 								cls: 'entry-type-tree-panel-menu',
+								label: 'something',
 								maxHeight: 500,
 								scrollable: true,
 								rootVisible: false,
