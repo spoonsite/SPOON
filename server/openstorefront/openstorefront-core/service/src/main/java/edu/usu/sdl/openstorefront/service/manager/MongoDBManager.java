@@ -40,7 +40,7 @@ public class MongoDBManager
 {
 
 	private static final Logger LOG = Logger.getLogger(MongoDBManager.class.getName());
-	private static final String DEFAULT_DATABASE = "storefront";
+	public static final String DEFAULT_DATABASE = "storefront";
 
 	private AtomicBoolean started = new AtomicBoolean(false);
 

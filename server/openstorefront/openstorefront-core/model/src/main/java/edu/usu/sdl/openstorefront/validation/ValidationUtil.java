@@ -44,6 +44,7 @@ public class ValidationUtil
 {
 
 	private static final Logger LOG = Logger.getLogger(ValidationUtil.class.getName());
+	private static boolean skipValidationForTesting = false;
 
 	private static final List<BaseRule> RULES = Arrays.asList(
 			new MaxValueRule(),
@@ -71,6 +72,11 @@ public class ValidationUtil
 		Objects.requireNonNull(validateModel);
 
 		ValidationResult validationResult = new ValidationResult();
+
+		if (skipValidationForTesting) {
+			return validationResult;
+		}
+
 		if (validateModel.getDataObject() == null
 				&& validateModel.isAcceptNull() == false) {
 			RuleResult ruleResult = new RuleResult();
@@ -232,6 +238,11 @@ public class ValidationUtil
 		}
 
 		return ruleResults;
+	}
+
+	public static void setSkipValidationForTesting(boolean aSkipValidationForTesting)
+	{
+		skipValidationForTesting = aSkipValidationForTesting;
 	}
 
 }
