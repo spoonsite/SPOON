@@ -4,7 +4,7 @@ description = ""
 weight = 3
 +++
 
-The SPOON application contains a Dockerfile in order to build Docker images. There are two dockerfiles in the repo. One is for development which is used by Jenkins to deploy the application for testing of new features. The other dockerfile is for the release build. These can be found in the repo at https://github.com/di2e/openstorefront/tree/master/Docker.
+The SPOON application contains a Dockerfile in order to build Docker images. There are two dockerfiles in the repo. One is for development which is used by Jenkins to deploy the application for testing of new features. The other dockerfile is for the release build. These can be found in the repo at https://github.com/spoonsite/spoon/tree/master/Docker.
 
 SPOON also automatically builds release versions of the application for consumption by users.  These builds are available on [Docker Hub](http://hub.docker.com).
 

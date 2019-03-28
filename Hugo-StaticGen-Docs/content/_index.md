@@ -12,4 +12,6 @@ See [spoonsite.github.io](https://spoonsite.github.io) for documentation on the 
 
 An instance of this application is running at [spoonsite.com](https://spoonsite.com/openstorefront/login/index.html)
 
+SPOON was initially developed as [Openstorefront for DI2E](https://github.com/di2e/openstorefront). This documentation uses SPOON, Storefront, and Openstorefront interchangeably.
+
 **SPOON is developed by Space Dynamics Laboratory and is licensed under GPL V3 (See [NOTICE.txt](https://github.com/di2e/openstorefront/blob/STORE-587_report-history-lifecycle/NOTICE.txt)).**
