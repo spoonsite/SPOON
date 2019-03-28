@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.repo;
+package edu.usu.sdl.openstorefront.service.repo.api;
 
-import edu.usu.sdl.openstorefront.service.repo.api.OrganizationRepo;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public class OrganizationMongoRepoImpl
-		extends BaseRepo
-		implements OrganizationRepo
+public interface StandardEntityRepo
 {
 
-	@Override
-	public <T> List<T> findReferencesNoOrg(T entity)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+	/**
+	 * Finds record count for a set of users
+	 *
+	 * @param recordClass (Entity Class)
+	 * @param userProfiles
+	 * @param trackCodeType (only applicable when searching track records
+	 * @return count
+	 */
+	public long getRecordCountsByUsers(Class recordClass, List<UserProfile> userProfiles, String trackCodeType);
 
 }

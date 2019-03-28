@@ -61,6 +61,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
@@ -813,4 +814,11 @@ public class ComponentServiceImpl
 		}
 
 	}
+
+	@Override
+	public ListingStats getComponentListingStats()
+	{
+		return core.getComponentListingStats();
+	}
+
 }

@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.core.api.repo.OrganizationRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.OrganizationRepo;
 import java.util.HashMap;
 import java.util.List;
 

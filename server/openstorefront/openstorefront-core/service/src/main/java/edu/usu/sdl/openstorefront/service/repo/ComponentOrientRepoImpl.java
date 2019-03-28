@@ -16,7 +16,8 @@
 package edu.usu.sdl.openstorefront.service.repo;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.core.api.repo.ComponentRepo;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -25,7 +26,9 @@ import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
+import edu.usu.sdl.openstorefront.service.repo.api.ComponentRepo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -314,6 +317,22 @@ public class ComponentOrientRepoImpl
 		String query = "SELECT FROM " + Component.class.getSimpleName() + " WHERE name.toLowerCase() LIKE :search LIMIT " + maxResults;
 		List<Component> components = service.getPersistenceService().query(query, params);
 		return components;
+	}
+
+	@Override
+	public ListingStats getComponentListingStats()
+	{
+		ListingStats listingStats = new ListingStats();
+
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		componentExample.setApprovalState(ApprovalStatus.APPROVED);
+		QueryByExample<Component> queryByExample = new QueryByExample<>(QueryType.COUNT, componentExample);
+		queryByExample.setAdditionalWhere(filterEngine.queryComponentRestriction());
+		long numberOfActiveComponents = service.getPersistenceService().countByExample(queryByExample);
+		listingStats.setNumberOfComponents(numberOfActiveComponents);
+
+		return listingStats;
 	}
 
 }

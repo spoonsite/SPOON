@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.api.repo;
+package edu.usu.sdl.openstorefront.service.repo.api;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import java.util.List;
 import java.util.Map;
@@ -106,11 +107,19 @@ public interface ComponentRepo
 	public List<Component> findRecentlyAdded(int maxResults);
 
 	/**
-	 * find component names that contain the search name
+	 * Find component names that contain the search name
 	 *
 	 * @param search
+	 * @param maxResults
 	 * @return
 	 */
 	public List<Component> searchComponentByName(String search, int maxResults);
+
+	/**
+	 * This calculate listing stats
+	 *
+	 * @return
+	 */
+	public ListingStats getComponentListingStats();
 
 }

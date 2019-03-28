@@ -17,13 +17,9 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
-import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
-import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
-import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistTemplate;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
@@ -35,7 +31,6 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +49,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -79,50 +73,7 @@ public class ChecklistQuestionResource
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		ChecklistQuestion checklistExample = new ChecklistQuestion();
-		checklistExample.setActiveStatus(filterQueryParams.getStatus());
-
-		ChecklistQuestion checklistStartExample = new ChecklistQuestion();
-		checklistStartExample.setUpdateDts(filterQueryParams.getStart());
-
-		ChecklistQuestion checklistEndExample = new ChecklistQuestion();
-		checklistEndExample.setUpdateDts(filterQueryParams.getEnd());
-
-		QueryByExample<ChecklistQuestion> queryByExample = new QueryByExample<>(checklistExample);
-
-		SpecialOperatorModel<ChecklistQuestion> specialOperatorModel = new SpecialOperatorModel<>();
-		specialOperatorModel.setExample(checklistStartExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		specialOperatorModel = new SpecialOperatorModel<>();
-		specialOperatorModel.setExample(checklistEndExample);
-		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
-		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-		if (!filterQueryParams.getTags().isEmpty()) {
-			queryByExample.setAdditionalWhere(" tags in :tagsParams ");
-			queryByExample.getExtraParamMapping().put("tagsParams", filterQueryParams.getTags());
-		}
-
-		queryByExample.setMaxResults(filterQueryParams.getMax());
-		queryByExample.setFirstResult(filterQueryParams.getOffset());
-		queryByExample.setSortDirection(filterQueryParams.getSortOrder());
-
-		ChecklistQuestion checklistQuestionSortExample = new ChecklistQuestion();
-		Field sortField = ReflectionUtil.getField(checklistQuestionSortExample, filterQueryParams.getSortField());
-		if (sortField != null) {
-			BeanUtil.setPropertyValue(sortField.getName(), checklistQuestionSortExample, QueryByExample.getFlagForType(sortField.getType()));
-			queryByExample.setOrderBy(checklistQuestionSortExample);
-		}
-
-		List<ChecklistQuestion> questions = service.getPersistenceService().queryByExample(queryByExample);
-
-		ChecklistQuestionWrapper checklistQuestionWrapper = new ChecklistQuestionWrapper();
-		checklistQuestionWrapper.getData().addAll(ChecklistQuestionView.toView(questions));
-		checklistQuestionWrapper.setTotalNumber(service.getPersistenceService().countByExample(queryByExample));
-
+		ChecklistQuestionWrapper checklistQuestionWrapper = service.getEvaluationService().findChecklistQuestions(filterQueryParams);
 		return sendSingleEntityResponse(checklistQuestionWrapper);
 	}
 
@@ -339,17 +290,16 @@ public class ChecklistQuestionResource
 				// But only if the user has the delete permission
 				service.getChecklistService().deleteQuestion(questionId);
 				return Response.noContent().build();
-			}
-			else {
+			} else {
 				// The user doesn't have delete permission. This probably means that a UI component
 				// doesn't require the delete permission to use this delete endpoint for deletion,
 				// which it should.
 				return Response.status(Response.Status.FORBIDDEN)
-					.type(MediaType.TEXT_PLAIN)
-					.entity("User does not have permission to delete.")
-					.build();
+						.type(MediaType.TEXT_PLAIN)
+						.entity("User does not have permission to delete.")
+						.build();
 			}
-		// Just inactivate the question instead of deleting it if the "force" query paramter is not used or is false.
+			// Just inactivate the question instead of deleting it if the "force" query paramter is not used or is false.
 		} else {
 			return updateStatus(questionId, ChecklistTemplate.INACTIVE_STATUS);
 		}

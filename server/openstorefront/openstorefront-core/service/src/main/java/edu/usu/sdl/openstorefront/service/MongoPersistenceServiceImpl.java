@@ -23,6 +23,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
@@ -77,7 +78,7 @@ public class MongoPersistenceServiceImpl
 		this.queryUtil = new MongoQueryUtil(SecurityUtil.getUserContext(), dbManager);
 	}
 
-	public MongoPersistenceServiceImpl(MongoDBManager dBManager, MongoQueryUtil queryUtil)
+	public MongoPersistenceServiceImpl(MongoDBManager dbManager, MongoQueryUtil queryUtil)
 	{
 		this.dbManager = dbManager;
 		this.queryUtil = queryUtil;
@@ -151,7 +152,12 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public long countByExample(QueryByExample queryByExample)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MongoCollection collection = queryUtil.getCollectionForEntity(queryByExample.getExample());
+
+		@SuppressWarnings("unchecked")
+		Bson filter = queryUtil.generateFilters(queryByExample);
+
+		return collection.countDocuments(filter);
 	}
 
 	@Override
@@ -186,14 +192,21 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public <T> int deleteByExample(QueryByExample queryByExample)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		@SuppressWarnings("unchecked")
+		MongoCollection<T> collection = queryUtil.getCollectionForEntity((T) queryByExample.getExample());
+
+		@SuppressWarnings("unchecked")
+		Bson filter = queryUtil.generateFilters(queryByExample);
+
+		DeleteResult deleteResult = collection.deleteMany(filter);
+		return (int) deleteResult.getDeletedCount();
 	}
 
 	@Override
 	public int deleteByQuery(Class entityClass, String whereClause, Map<String, Object> queryParams)
 	{
 		//REPLACE usage and Remove
-		throw new UnsupportedOperationException("Not supported With Mongo."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported With Mongo.");
 	}
 
 	@Override
@@ -206,13 +219,13 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public <T> List<T> query(String query, Map<String, Object> parameterMap)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported with Mongo.");
 	}
 
 	@Override
 	public <T> List<T> query(String query, Map<String, Object> parameterMap, boolean unwrap)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		throw new UnsupportedOperationException("Not supported with Mongo.");
 	}
 
 	@Override
@@ -400,7 +413,23 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public <T> int updateByExample(Class<T> entityClass, T exampleSet, T exampleWhere)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MongoCollection<T> collection = queryUtil.getCollectionForEntity(entityClass);
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> exampleMap = queryUtil.generateFieldMap(exampleWhere);
+		Bson updateMatch = new BasicDBObject(exampleMap);
+
+		Map<String, Object> exampleSetMap = queryUtil.generateFieldMap(exampleSet);
+		Bson updateSet = new BasicDBObject(exampleSetMap);
+
+		UpdateResult updateResult = collection.updateMany(updateMatch, updateSet);
+
+		if (LOG.isLoggable(Level.FINEST)) {
+			LOG.log(Level.FINEST, () -> "Matched Count:" + updateResult.getMatchedCount());
+			LOG.log(Level.FINEST, () -> "Modified Count:" + updateResult.getModifiedCount());
+		}
+
+		return (int) updateResult.getModifiedCount();
 	}
 
 	private <T extends BaseEntity> void updatePKFieldValue(T entity) throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException, InvocationTargetException

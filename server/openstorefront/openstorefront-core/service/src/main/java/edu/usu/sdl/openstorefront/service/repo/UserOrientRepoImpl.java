@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.service.repo;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.core.api.repo.UserRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.UserRepo;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;

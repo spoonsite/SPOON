@@ -17,12 +17,13 @@ package edu.usu.sdl.openstorefront.service.repo;
 
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.core.api.repo.AttributeRepo;
-import edu.usu.sdl.openstorefront.core.api.repo.ComponentRepo;
-import edu.usu.sdl.openstorefront.core.api.repo.NotificationRepo;
-import edu.usu.sdl.openstorefront.core.api.repo.OrganizationRepo;
-import edu.usu.sdl.openstorefront.core.api.repo.StandardEntityRepo;
-import edu.usu.sdl.openstorefront.core.api.repo.UserRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.AttributeRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.ComponentRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.EvaluationRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.NotificationRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.OrganizationRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.StandardEntityRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.UserRepo;
 
 /**
  *
@@ -112,6 +113,17 @@ public class RepoFactory
 			attributeRepo = new AttributeOrientRepoImpl();
 		}
 		return attributeRepo;
+	}
+
+	public EvaluationRepo getEvaluationRepo()
+	{
+		EvaluationRepo evaluationRepo;
+		if (useMongo()) {
+			evaluationRepo = new EvaluationMongoRepoImpl();
+		} else {
+			evaluationRepo = new EvaluationOrientRepoImpl();
+		}
+		return evaluationRepo;
 	}
 
 }

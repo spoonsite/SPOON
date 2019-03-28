@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.core.api.repo.AttributeRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.AttributeRepo;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import java.util.HashMap;

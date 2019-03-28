@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.api.repo;
+package edu.usu.sdl.openstorefront.service.repo.api;
 
-import java.util.List;
+import edu.usu.sdl.openstorefront.core.view.CheckQuestionFilterParams;
+import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
 
 /**
  *
  * @author dshurtleff
  */
-public interface OrganizationRepo
+public interface EvaluationRepo
 {
 
 	/**
-	 * Find References that have no organization
+	 * Searches all checklist questions based on filter
 	 *
-	 * @param <T>
-	 * @param entity
+	 * @param filterQueryParams
 	 * @return
 	 */
-	<T> List<T> findReferencesNoOrg(T entity);
+	public ChecklistQuestionWrapper findChecklistQuestions(CheckQuestionFilterParams filterQueryParams);
 
 }

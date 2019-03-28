@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.service.repo;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.core.api.repo.NotificationRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.NotificationRepo;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;

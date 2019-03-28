@@ -44,6 +44,8 @@ import edu.usu.sdl.openstorefront.core.model.ContentSectionAll;
 import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.core.view.CheckQuestionFilterParams;
+import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
 import edu.usu.sdl.openstorefront.core.view.ChecklistResponseView;
 import edu.usu.sdl.openstorefront.core.view.EvaluationChecklistRecommendationView;
 import java.text.MessageFormat;
@@ -825,6 +827,12 @@ public class EvaluationServiceImpl
 			throw new OpenStorefrontRuntimeException("Unable find evaluation to approve summary on.", "Check input");
 		}
 
+	}
+
+	@Override
+	public ChecklistQuestionWrapper findChecklistQuestions(CheckQuestionFilterParams filterQueryParams)
+	{
+		return getRepoFactory().getEvaluationRepo().findChecklistQuestions(filterQueryParams);
 	}
 
 }

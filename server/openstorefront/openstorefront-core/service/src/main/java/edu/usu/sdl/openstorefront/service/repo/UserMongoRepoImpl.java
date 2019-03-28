@@ -15,7 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.core.api.repo.UserRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.UserRepo;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
 import java.util.Date;

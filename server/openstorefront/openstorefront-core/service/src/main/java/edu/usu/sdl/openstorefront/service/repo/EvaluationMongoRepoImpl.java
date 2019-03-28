@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.api.repo;
+package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.core.entity.UserProfile;
-import java.util.List;
+import edu.usu.sdl.openstorefront.core.view.CheckQuestionFilterParams;
+import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
+import edu.usu.sdl.openstorefront.service.repo.api.EvaluationRepo;
 
 /**
  *
  * @author dshurtleff
  */
-public interface StandardEntityRepo
+public class EvaluationMongoRepoImpl
+		extends BaseRepo
+		implements EvaluationRepo
 {
 
-	/**
-	 * Finds record count for a set of users
-	 *
-	 * @param recordClass (Entity Class)
-	 * @param userProfiles
-	 * @param trackCodeType (only applicable when searching track records
-	 * @return count
-	 */
-	public long getRecordCountsByUsers(Class recordClass, List<UserProfile> userProfiles, String trackCodeType);
+	@Override
+	public ChecklistQuestionWrapper findChecklistQuestions(CheckQuestionFilterParams filterQueryParams)
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 
 }

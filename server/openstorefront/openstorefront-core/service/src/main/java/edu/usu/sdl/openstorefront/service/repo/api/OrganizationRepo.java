@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.repo;
+package edu.usu.sdl.openstorefront.service.repo.api;
 
-import edu.usu.sdl.openstorefront.service.repo.api.OrganizationRepo;
 import java.util.List;
 
 /**
  *
  * @author dshurtleff
  */
-public class OrganizationMongoRepoImpl
-		extends BaseRepo
-		implements OrganizationRepo
+public interface OrganizationRepo
 {
 
-	@Override
-	public <T> List<T> findReferencesNoOrg(T entity)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+	/**
+	 * Find References that have no organization
+	 *
+	 * @param <T>
+	 * @param entity
+	 * @return
+	 */
+	<T> List<T> findReferencesNoOrg(T entity);
 
 }

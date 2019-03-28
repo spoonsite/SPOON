@@ -16,7 +16,7 @@
 package edu.usu.sdl.openstorefront.service.repo;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.core.api.repo.StandardEntityRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.StandardEntityRepo;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import java.util.ArrayList;
 import java.util.HashMap;

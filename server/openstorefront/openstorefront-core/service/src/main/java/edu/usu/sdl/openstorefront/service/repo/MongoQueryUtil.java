@@ -111,7 +111,15 @@ public class MongoQueryUtil
 				SpecialOperatorModel specialOperatorModel = (SpecialOperatorModel) whereClause;
 				query = handleSpecialOperator(query, specialOperatorModel);
 			} else if (whereClause instanceof WhereClauseGroup) {
+				WhereClauseGroup clauseGroup = (WhereClauseGroup) whereClause;
 
+				for (Object operatorModel : clauseGroup.getExtraWhereClause()) {
+					if (GenerateStatementOption.CONDITION_OR.equals(clauseGroup.getStatementOption().getCondition())) {
+						query = Filters.or(query, handleSpecialOperator(query, (SpecialOperatorModel) operatorModel));
+					} else {
+						query = Filters.and(query, handleSpecialOperator(query, (SpecialOperatorModel) operatorModel));
+					}
+				}
 			}
 		}
 

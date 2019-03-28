@@ -105,6 +105,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentTrackingCompleteWrapper;
 import edu.usu.sdl.openstorefront.core.view.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
@@ -2577,6 +2578,11 @@ public class CoreComponentServiceImpl
 
 		}
 		return iconMediaId;
+	}
+
+	public ListingStats getComponentListingStats()
+	{
+		return componentService.getRepoFactory().getComponentRepo().getComponentListingStats();
 	}
 
 }
