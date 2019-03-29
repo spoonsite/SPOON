@@ -39,7 +39,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	layout: 'hbox',	
 	showLabel: true,
 	
-	initComponent: function () {		
+	initComponent: function () {
 		this.callParent();
 		var attributePanel = this;
 
@@ -133,6 +133,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 
 		if (attributePanel.attributeUnit && attributePanel.attributeUnitList) {
 			var unitList = attributePanel.attributeUnitList;
+			var preferredUnit = attributePanel.preferredUnit;
 			var baseUnit = {
 				"conversionFactor": 1,
 				"unit": attributePanel.attributeUnit,
@@ -158,13 +159,11 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 
 			var storeList = processList(unitList);
 			attributePanel.unit = Ext.create('Ext.form.field.ComboBox',{
-					// fieldLabel: "Unit",
 					allowBlank: false,
 					editable: false,
 					margin: '0 0 5 0',
 					queryMode: 'local',
 					flex: 1,
-					// labelWidth: 300,
 					store: Ext.create('Ext.data.Store', {
 						fields: [
 							'value',
@@ -181,7 +180,11 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					}
 				}
 			)
-			// set the default value
+
+			// set the default unit value
+			// Will later get replaced in AttributeSuggested.js
+			// if a preferred unit is found.
+			// If no code is found, the base unit will be set for the user.
 			attributePanel.unit.setValue(baseUnit.unit);
 		}
 
@@ -215,7 +218,14 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 		if (attributePanel.unit) {
 			return attributePanel.unit.getValue();
 		} else {
-			return '';
+			return null;
+		}
+	},
+
+	setUnit: function(unit) {
+		var attributePanel = this;
+		if (attributePanel.unit) {
+			attributePanel.unit.setValue(unit);
 		}
 	},
 
@@ -224,7 +234,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 		if (attributePanel.unit) {
 			return attributePanel.unit.getSelectedRecord().data.conversionFactor;
 		} else {
-			return '';
+			return null;
 		}
 	},
 	

@@ -61,7 +61,7 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 				formPanel.add(fields);
 				formPanel.updateLayout(true, true);
 				
-				
+				// rawValue
 				var initialData = formPanel.section.submissionForm.getFieldData(formPanel.fieldTemplate.fieldId);
 				if (initialData) {
 					var data = Ext.decode(initialData);				
