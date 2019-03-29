@@ -229,7 +229,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			if (navButton.sectionIndex === currentSectionIndex) {
 				navButton.addCls('submission-section-nav-select');	
 				
-				//auto scroll is problemmatic
+				//auto scroll is problematic
 				//54 - relative offset
 				//var newY = navButton.getY() - (navPanel.getY() + 54);
 				//navPanel.scrollTo(0, newY, true);								
@@ -485,7 +485,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						var data;
 						try {
 							data = Ext.decode(response.responseText);
-						} catch(e){						
+						} catch(e){
 						}
 						if (data && !data.success) {
 							var errorMessage = '';
