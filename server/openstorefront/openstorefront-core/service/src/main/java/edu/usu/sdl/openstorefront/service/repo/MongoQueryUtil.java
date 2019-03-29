@@ -19,6 +19,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.query.ComplexFieldStack;
@@ -35,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.MongoDBManager;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -233,6 +235,19 @@ public class MongoQueryUtil
 		}
 
 		return groupQuery;
+	}
+
+	public Bson generateUpdateSet(Object example)
+	{
+		Map<String, Object> exampleSetMap = generateFieldMap(example);
+
+		Bson updateQuery;
+		List<Bson> updateSetFields = new ArrayList<>();
+		for (String key : exampleSetMap.keySet()) {
+			updateSetFields.add(Updates.set(key, exampleSetMap.get(key)));
+		}
+		updateQuery = Updates.combine(updateSetFields);
+		return updateQuery;
 	}
 
 	//find field name; for complexy <parent_field>.<child field>

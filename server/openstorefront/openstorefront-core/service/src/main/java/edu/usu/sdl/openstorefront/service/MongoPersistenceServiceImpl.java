@@ -419,9 +419,7 @@ public class MongoPersistenceServiceImpl
 		Map<String, Object> exampleMap = queryUtil.generateFieldMap(exampleWhere);
 		Bson updateMatch = new BasicDBObject(exampleMap);
 
-		Map<String, Object> exampleSetMap = queryUtil.generateFieldMap(exampleSet);
-		Bson updateSet = new BasicDBObject(exampleSetMap);
-
+		Bson updateSet = queryUtil.generateUpdateSet(exampleSet);
 		UpdateResult updateResult = collection.updateMany(updateMatch, updateSet);
 
 		if (LOG.isLoggable(Level.FINEST)) {

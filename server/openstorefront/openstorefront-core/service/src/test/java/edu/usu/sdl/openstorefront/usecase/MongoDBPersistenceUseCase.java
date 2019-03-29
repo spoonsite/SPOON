@@ -19,8 +19,19 @@ import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
+import edu.usu.sdl.openstorefront.core.entity.EmailAddress;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.WorkFlowStepActionOption;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanComponentType;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepEvent;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepRole;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.MongoPersistenceServiceImpl;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
@@ -93,8 +104,16 @@ public class MongoDBPersistenceUseCase
 			persistenceService.persist(component);
 		});
 
-		//attributes
-		//workplans
+		List<AttributeCode> attributes = generateAttributeCodes();
+		attributes.forEach(attribute -> {
+			persistenceService.persist(attribute);
+		});
+
+		List<WorkPlan> workPlans = generateWorkPlan();
+		workPlans.forEach(workPlan -> {
+			persistenceService.persist(workPlan);
+		});
+
 	}
 
 	private List<Component> generateComponents()
@@ -108,6 +127,7 @@ public class MongoDBPersistenceUseCase
 		component.setComponentType("DI2E Component");
 		component.setApprovalState(ApprovalStatus.APPROVED);
 		component.setDescription("This is test A");
+		//component.setDataSource("Junk");
 		component.setCreateDts(TimeUtil.currentDate());
 		component.setCreateUser("Test");
 		component.setUpdateDts(TimeUtil.currentDate());
@@ -122,6 +142,7 @@ public class MongoDBPersistenceUseCase
 		component.setComponentType("DI2E Component");
 		component.setApprovalState(ApprovalStatus.PENDING);
 		component.setDescription("This is test B");
+		//component.setDataSource("Junk");
 		component.setCreateDts(TimeUtil.currentDate());
 		component.setCreateUser("Test");
 		component.setUpdateDts(TimeUtil.currentDate());
@@ -142,12 +163,115 @@ public class MongoDBPersistenceUseCase
 		component.setUpdateUser("Test");
 
 		components.add(component);
-
-		//Three components
 		return components;
 	}
 
+	private List<AttributeCode> generateAttributeCodes()
+	{
+		List<AttributeCode> attributeCodes = new ArrayList<>();
+
+		AttributeCode attributeCode = new AttributeCode();
+		attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode("APPLE");
+		attributeCodePk.setAttributeType("FRUIT");
+		attributeCode.setAttributeCodePk(attributeCodePk);
+		attributeCode.setLabel("Test A");
+		attributeCode.setCreateDts(TimeUtil.currentDate());
+		attributeCode.setCreateUser("Test");
+		attributeCode.setUpdateDts(TimeUtil.currentDate());
+		attributeCode.setUpdateUser("Test");
+
+		attributeCodes.add(attributeCode);
+
+		attributeCode = new AttributeCode();
+		attributeCode.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+		attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode("BANANA");
+		attributeCodePk.setAttributeType("FRUIT");
+		attributeCode.setAttributeCodePk(attributeCodePk);
+		attributeCode.setLabel("Test B");
+		attributeCode.setCreateDts(TimeUtil.currentDate());
+		attributeCode.setCreateUser("Test");
+		attributeCode.setUpdateDts(TimeUtil.currentDate());
+		attributeCode.setUpdateUser("Test");
+
+		attributeCodes.add(attributeCode);
+
+		return attributeCodes;
+	}
+
+	private List<WorkPlan> generateWorkPlan()
+	{
+		List<WorkPlan> workPlans = new ArrayList<>();
+
+		WorkPlan workPlan = new WorkPlan();
+		workPlan.setName("A");
+		workPlan.setActiveStatus(WorkPlan.ACTIVE_STATUS);
+		workPlan.setDefaultWorkPlan(Boolean.FALSE);
+		workPlan.setCreateDts(TimeUtil.currentDate());
+		workPlan.setCreateUser("Test");
+		workPlan.setUpdateDts(TimeUtil.currentDate());
+		workPlan.setUpdateUser("Test");
+
+		List<WorkPlanComponentType> componentTypes = new ArrayList<>();
+		WorkPlanComponentType componentType = new WorkPlanComponentType();
+		componentType.setComponentType(ComponentType.COMPONENT);
+		componentTypes.add(componentType);
+
+		componentType.setComponentType(ComponentType.ARTICLE);
+		componentTypes.add(componentType);
+		workPlan.setComponentTypes(componentTypes);
+
+		List<WorkPlanStep> steps = new ArrayList<>();
+		WorkPlanStep workPlanStep = new WorkPlanStep();
+		workPlanStep.setName("Step 1");
+		workPlanStep.setDescription("Check step 1");
+
+		List<WorkPlanStepAction> actions = new ArrayList<>();
+		WorkPlanStepAction stepAction = new WorkPlanStepAction();
+		stepAction.setActionOrder(1);
+		WorkFlowStepActionOption workFlowStepActionOption = new WorkFlowStepActionOption();
+		workFlowStepActionOption.setEmailMessage("Test Message");
+		workFlowStepActionOption.setEmailSubject("Subject");
+		List<EmailAddress> emailAddresses = new ArrayList<>();
+		EmailAddress email = new EmailAddress();
+		email.setEmail("test@test.com");
+		emailAddresses.add(email);
+		workFlowStepActionOption.setFixedEmails(emailAddresses);
+		stepAction.setActionOption(workFlowStepActionOption);
+		actions.add(stepAction);
+
+		workPlanStep.setActions(actions);
+
+		List<WorkPlanStepRole> roles = new ArrayList<>();
+		WorkPlanStepRole role = new WorkPlanStepRole();
+		role.setSecurityRole("TEST-ROLE");
+		roles.add(role);
+		workPlanStep.setStepRole(roles);
+
+		List<WorkPlanStepEvent> events = new ArrayList<>();
+		WorkPlanStepEvent event = new WorkPlanStepEvent();
+		event.setEntityEventType("Event");
+		events.add(event);
+		workPlanStep.setTriggerEvents(events);
+
+		steps.add(workPlanStep);
+		workPlan.setSteps(steps);
+
+		workPlans.add(workPlan);
+
+		return workPlans;
+	}
+
 	private void queryTests(MongoPersistenceServiceImpl persistenceService)
+	{
+		componentQueries(persistenceService);
+		attributeQueries(persistenceService);
+		//workPlanQueries(persistenceService);
+	}
+
+	private void componentQueries(MongoPersistenceServiceImpl persistenceService)
 	{
 		Component componentExample = new Component();
 		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
@@ -156,6 +280,53 @@ public class MongoDBPersistenceUseCase
 
 		//should be  A, B
 		foundRecords.forEach(c -> System.out.println("Found: " + c.getName()));
+
+		Component foundById = persistenceService.findById(Component.class, foundRecords.get(0).getComponentId());
+		System.out.println("Found By Id: " + foundById.getName());
+
+		//count
+		long count = persistenceService.countByExample(componentExample);
+		System.out.println("Active Record count: " + count);
+
+		//update
+		foundById.setUpdateDts(TimeUtil.currentDate());
+		foundById.setUpdateUser("New User");
+		foundById.setDescription("Updated record");
+		persistenceService.persist(foundById);
+
+		foundById = persistenceService.findById(Component.class, foundRecords.get(0).getComponentId());
+		System.out.println("Updated Record " + foundById.getName() + " Description: " + foundById.getDescription());
+
+		//update by example
+		Component componentUpdateExample = new Component();
+		componentUpdateExample.setDataSource("BulkUpdate");
+		persistenceService.updateByExample(Component.class, componentUpdateExample, componentExample);
+
+		foundRecords = persistenceService.queryByExample(componentExample);
+		foundRecords.forEach(c -> System.out.println("Found: " + c.getName() + " Datasource: " + c.getDataSource()));
+
+		//delete by example
+		persistenceService.deleteByExample(componentExample);
+
+		count = persistenceService.countByExample(componentExample);
+		System.out.println("Record count after delete: " + count);
+	}
+
+	private void attributeQueries(MongoPersistenceServiceImpl persistenceService)
+	{
+		AttributeCode example = new AttributeCode();
+		AttributeCodePk attributeCodePk = new AttributeCodePk();
+		attributeCodePk.setAttributeCode("APPLE");
+		attributeCodePk.setAttributeType("FRUIT");
+		example.setAttributeCodePk(attributeCodePk);
+
+		List<AttributeCode> attributes = persistenceService.queryByExample(example);
+		attributes.forEach(a -> System.out.println("Found: " + a.getLabel()));
+
+	}
+
+	private void workPlanQueries(MongoPersistenceServiceImpl persistenceService)
+	{
 
 	}
 
