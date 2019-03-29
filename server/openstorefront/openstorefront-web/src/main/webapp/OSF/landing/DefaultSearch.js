@@ -250,6 +250,8 @@ Ext.define('OSF.landing.DefaultSearch', {
 					displayField: 'name',
 					autoSelect: false,	
 					style: 'border-left: none;',
+					maxLength: 200,
+					enforceMaxLength: true,
 					store: {
 						autoLoad: false,
 						proxy: {

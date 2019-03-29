@@ -279,7 +279,11 @@ public abstract class BaseComponentParser
 			attributeType.setRequiredFlg(Boolean.FALSE);
 			attributeType.setVisibleFlg(Boolean.FALSE);
 			attributeType.setAllowUserGeneratedCodes(Boolean.FALSE);
-			attributeType.addOptionalComponentType(componentType);
+			List<ComponentTypeRestriction> optionalAttributes = new ArrayList<>();
+			ComponentTypeRestriction componentTypeRestriction = new ComponentTypeRestriction();
+			componentTypeRestriction.setComponentType(componentType);
+			optionalAttributes.add(componentTypeRestriction);
+			attributeType.setOptionalRestrictions(optionalAttributes);			
 
 			attributeType.setDescription(attributeTypeDescription);
 			attributeType.setCreateUser(fileHistoryAll.getFileHistory().getCreateUser());

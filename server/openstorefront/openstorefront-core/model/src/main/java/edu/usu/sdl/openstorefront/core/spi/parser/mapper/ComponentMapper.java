@@ -68,14 +68,14 @@ public class ComponentMapper
 		//apply attribute mappings
 		if (attributeDataMapper != null) {
 			for (ComponentAll componentAll : mappedComponents) {
-				doAttributeMapping(componentAll);
+				doAttributeMapping(componentAll, null);
 			}
 		}
 
 		return mappedComponents;
 	}
 
-	private void doAttributeMapping(ComponentAll componentAll)
+	private void doAttributeMapping(ComponentAll componentAll, Map<String, AttributeContext> attributeContextMap)
 	{
 		for (ComponentAttribute componentAttribute : componentAll.getAttributes()) {
 			AttributeTypeMapper attributeTypeMapper = attributeDataMapper.getAttributeMap().get(componentAttribute.getComponentAttributePk().getAttributeType());
@@ -93,7 +93,14 @@ public class ComponentMapper
 				}
 
 			} else if (attributeDataMapper.getAddMissingAttributeTypeFlg()) {
-				AttributeType attributeType = createAttributeType(componentAttribute.getComponentAttributePk().getAttributeType());
+				
+				AttributeContext attributeContext = null;
+				
+				if(attributeContextMap != null){
+					attributeContext = attributeContextMap.get(componentAttribute.getComponentAttributePk().getAttributeType());
+				}
+				AttributeType attributeType = createAttributeType(componentAttribute.getComponentAttributePk().getAttributeType(), attributeContext);		
+				
 				AttributeCode attributeCode = createAttributeCode(attributeType.getAttributeType(), componentAttribute.getComponentAttributePk().getAttributeCode());
 
 				componentAttribute.getComponentAttributePk().setAttributeType(attributeCode.getAttributeCodePk().getAttributeType());
@@ -163,13 +170,25 @@ public class ComponentMapper
 				}
 			}
 
-			//apply attribute mappings
-			if (attributeDataMapper != null) {
-				doAttributeMapping(componentAll);
-			}
-
+			applyAttributeMapping(componentAll, null);
 		}
 		return componentAll;
+	}
+	
+	/**
+	 * This will apply mapping to the ComponentAttributes provided So the input
+	 * Component Attribute should be set to in-coming data values. This will
+	 * only map if the attribute Mapping is available.
+	 *
+	 * @param componentAll
+	 * @param attributeContextMap 
+	 */
+	public void applyAttributeMapping(ComponentAll componentAll, Map<String, AttributeContext> attributeContextMap)
+	{
+		//apply attribute mappings
+		if (attributeDataMapper != null) {
+			doAttributeMapping(componentAll, attributeContextMap);
+		}
 	}
 
 	@SuppressWarnings({"squid:S3923", "squid:S1872"})
