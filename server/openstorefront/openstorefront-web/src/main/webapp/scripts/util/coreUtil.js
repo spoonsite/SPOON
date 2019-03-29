@@ -1041,7 +1041,10 @@ var CoreUtil = {
 		var valid = true;
 		var msg = '';
 
-		if (Ext.String.endsWith(value.trim(), ".")) {
+		if (Number(value)
+			&& typeof value === 'string'
+			&& Ext.String.endsWith(value.trim(), ".")
+			) {
 			valid = false;
 			msg = 'Number must not have a decimal point or have at least one digit after the decimal point.';
 		}
