@@ -264,7 +264,7 @@ Ext.define('OSF.component.ReviewWindow', {
 			if (property.description === "false")
 			{
 				reviewWindow.getComponent('pendingNotice').update('<h3 class="alert-warning" style="text-align: center;">' +
-						'<i class="fa fa-warning"></i> All reviews need admin approval before being made public.</h3>');
+						'<i class="fa fa-warning"></i> All reviews need moderator approval before being made public.</h3>');
 			}
 		});
 		

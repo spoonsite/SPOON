@@ -262,7 +262,7 @@ limitations under the License.
 						<td class="quickView-tableall">{organization}</td>
 						<td class="quickView-tableall">
 					<tpl if="activeStatus == 'P'">
-						<span class="alert-warning"><i class="fa fa-warning"></i> Review pending admin approval before being made public.</span><br>
+						<span class="alert-warning"><i class="fa fa-warning"></i> Review pending moderator approval before being made public.</span><br>
 					</tpl>
 					{title}<br>
 					{rating}<br><br>
@@ -301,7 +301,7 @@ limitations under the License.
 						<td class="quickView-tableall">{username}</td>
 						<td class="quickView-tableall">{organization}</td>
 						<td class="quickView-tableall">
-					<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div></tpl>
+					<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Question pending moderator approval before being made public.</div></tpl>
 
 					{question}<br><br>
 					<b>Responses</b>
