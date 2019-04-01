@@ -162,7 +162,12 @@ public class MongoQueryUtil
 					internalFilter = Filters.ne(key, specialMap.get(key));
 					break;
 				case GenerateStatementOption.OPERATION_LIKE:
-					internalFilter = Filters.regex(key, convertSQLLikeCharacterToRegex(specialMap.get(key).toString()));
+					if (GenerateStatementOption.METHOD_LOWER_CASE.equals(specialOperatorModel.getGenerateStatementOption().getMethod())
+							|| GenerateStatementOption.METHOD_UPPER_CASE.equals(specialOperatorModel.getGenerateStatementOption().getMethod())) {
+						internalFilter = Filters.regex(key, Pattern.compile(convertSQLLikeCharacterToRegex(specialMap.get(key).toString()), Pattern.CASE_INSENSITIVE));
+					} else {
+						internalFilter = Filters.regex(key, convertSQLLikeCharacterToRegex(specialMap.get(key).toString()));
+					}
 					break;
 				case GenerateStatementOption.OPERATION_NOT_NULL:
 					internalFilter = Filters.ne(key, null);

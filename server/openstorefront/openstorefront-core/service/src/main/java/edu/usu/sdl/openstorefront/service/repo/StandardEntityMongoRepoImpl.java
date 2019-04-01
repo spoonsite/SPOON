@@ -15,23 +15,49 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.service.repo.api.StandardEntityRepo;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.service.repo.api.StandardEntityRepo;
+import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.bson.conversions.Bson;
 
 /**
  *
  * @author dshurtleff
  */
 public class StandardEntityMongoRepoImpl
-		extends BaseRepo
+		extends BaseMongoRepo
 		implements StandardEntityRepo
 {
 
 	@Override
 	public long getRecordCountsByUsers(Class recordClass, List<UserProfile> userProfiles, String trackCodeType)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		long count = 0;
+
+		List<String> userIds = new ArrayList<>();
+		for (UserProfile userProfile : userProfiles) {
+			userIds.add(userProfile.getUsername());
+		}
+
+		if (userIds.isEmpty() == false) {
+
+			MongoCollection collection = getQueryUtil().getCollectionForEntity(recordClass);
+
+			Bson filter = Filters.in(StandardEntity.FIELD_CREATE_USER, userIds);
+
+			if (StringUtils.isNotBlank(trackCodeType)) {
+				filter = Filters.and(filter, Filters.eq(trackCodeType));
+			}
+			count = collection.countDocuments(filter);
+		}
+
+		return count;
+
 	}
 
 }

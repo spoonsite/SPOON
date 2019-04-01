@@ -84,6 +84,11 @@ public class MongoPersistenceServiceImpl
 		this.queryUtil = queryUtil;
 	}
 
+	public MongoQueryUtil getQueryUtil()
+	{
+		return queryUtil;
+	}
+
 	@Override
 	public String generateId()
 	{

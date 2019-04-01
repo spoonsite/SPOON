@@ -15,27 +15,48 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.service.repo.api.UserRepo;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import edu.usu.sdl.openstorefront.core.entity.OrganizationModel;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
+import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
 import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
+import edu.usu.sdl.openstorefront.service.repo.api.UserRepo;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
+import org.bson.conversions.Bson;
 
 /**
  *
  * @author dshurtleff
  */
 public class UserMongoRepoImpl
-		extends BaseRepo
+		extends BaseMongoRepo
 		implements UserRepo
 {
 
 	@Override
 	public List<UserProfile> getUserProfilesBaseOnSearch(Set<String> usernames, UserFilterParams queryParams)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MongoCollection<UserProfile> collection = getQueryUtil().getCollectionForEntity(UserProfile.class);
+
+		Bson filter = Filters.in(UserProfile.FIELD_USERNAME, usernames);
+
+		if (StringUtils.isNotBlank(queryParams.getSearchField())
+				&& StringUtils.isNotBlank(queryParams.getSearchValue())
+				&& !UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField())) {
+//			query += " and " + queryParams.getSearchField() + ".toLowerCase() like :searchValue";
+//			parameterMap.put("searchValue", queryParams.getSearchValue().toLowerCase() + "%");
+		}
+
+		FindIterable<UserProfile> findIterable = collection.find(Filters.eq(OrganizationModel.FIELD_ORGANIZATION, null));
+
+		return findIterable.into(new ArrayList<>());
 	}
 
 	@Override

@@ -15,22 +15,53 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.service.repo.api.AttributeRepo;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
+import edu.usu.sdl.openstorefront.service.repo.api.AttributeRepo;
 
 /**
  *
  * @author dshurtleff
  */
 public class AttributeMongoRepoImpl
-		extends BaseRepo
+		extends BaseMongoRepo
 		implements AttributeRepo
 {
 
 	@Override
 	public void changeAttributeCode(AttributeCodePk attributeCodePk, String newCode)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+		//update Component Attribute (old code to new code)
+		ComponentAttribute componentAttributeExample = new ComponentAttribute();
+		ComponentAttributePk componentAttributePkExample = new ComponentAttributePk();
+		componentAttributePkExample.setAttributeCode(attributeCodePk.getAttributeCode());
+		componentAttributePkExample.setAttributeType(attributeCodePk.getAttributeType());
+		componentAttributeExample.setComponentAttributePk(componentAttributePkExample);
+
+		ComponentAttribute componentAttributeSetExample = new ComponentAttribute();
+		ComponentAttributePk componentAttributePkSetExample = new ComponentAttributePk();
+		componentAttributePkSetExample.setAttributeCode(newCode);
+		componentAttributeSetExample.setComponentAttributePk(componentAttributePkSetExample);
+
+		service.getPersistenceService().updateByExample(ComponentAttribute.class, componentAttributeSetExample, componentAttributeExample);
+
+		//update Attribute (old code to new code)
+		AttributeCode attributeCodeExample = new AttributeCode();
+		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
+		attributeCodePkExample.setAttributeCode(attributeCodePk.getAttributeCode());
+		attributeCodePkExample.setAttributeType(attributeCodePk.getAttributeType());
+		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
+
+		AttributeCode attributeCodeSetExample = new AttributeCode();
+		AttributeCodePk attributeCodePkSetExample = new AttributeCodePk();
+		attributeCodePkSetExample.setAttributeCode(newCode);
+		attributeCodeSetExample.setAttributeCodePk(attributeCodePkSetExample);
+
+		service.getPersistenceService().updateByExample(AttributeCode.class, attributeCodeSetExample, attributeCodeExample);
+
 	}
 
 }

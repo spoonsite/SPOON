@@ -15,29 +15,20 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
-import edu.usu.sdl.openstorefront.core.entity.OrganizationModel;
-import edu.usu.sdl.openstorefront.service.repo.api.OrganizationRepo;
-import java.util.ArrayList;
-import java.util.List;
+import edu.usu.sdl.openstorefront.service.MongoPersistenceServiceImpl;
 
 /**
  *
  * @author dshurtleff
  */
-public class OrganizationMongoRepoImpl
-		extends BaseMongoRepo
-		implements OrganizationRepo
+public abstract class BaseMongoRepo
+		extends BaseRepo
 {
 
-	@Override
-	public <T> List<T> findReferencesNoOrg(T entity)
+	protected MongoQueryUtil getQueryUtil()
 	{
-		MongoCollection<T> collection = getQueryUtil().getCollectionForEntity(entity);
-		FindIterable<T> findIterable = collection.find(Filters.eq(OrganizationModel.FIELD_ORGANIZATION, null));
-		return findIterable.into(new ArrayList<>());
+		MongoQueryUtil queryUtil = ((MongoPersistenceServiceImpl) service.getPersistenceService()).getQueryUtil();
+		return queryUtil;
 	}
 
 }

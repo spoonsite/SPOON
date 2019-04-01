@@ -38,6 +38,7 @@ public class UserProfile
 {
 
 	private static final long serialVersionUID = 1L;
+	public static final String FIELD_USERNAME = "username";
 
 	@PK
 	@NotNull
