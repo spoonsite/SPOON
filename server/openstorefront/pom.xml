@@ -29,7 +29,6 @@
 		<module>tinymcetextarea</module>
 		<module>selenium-tests</module>
 		<!-- <module>dataupdater</module> -->
-		<module>apiclient-generator</module>
 		<module>system-tests</module>
 		<module>openstorefront-client-login</module>
 		<module>openstorefront-client-mobile</module>

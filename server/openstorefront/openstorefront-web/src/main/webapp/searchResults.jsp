@@ -334,6 +334,8 @@
 						fieldLabel: 'By Name',						
 						name: 'filterName',								
 						emptyText: 'Filter Search',
+						maxLength: 200,
+						enforceMaxLength: true,
 					},
 					{
 						xtype: 'tagfield',
@@ -1641,6 +1643,8 @@
 											displayField: 'name',
 											id: 'searchTextFieldResults',
 											autoSelect: false,
+											maxLength: 200,
+											enforceMaxLength: true,
 											store: {
 												autoLoad: false,
 												proxy: {
