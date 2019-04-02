@@ -1512,8 +1512,13 @@
 								flex:1							
 							},
 							{
-								// xtype: 'panel',
-								html:'<span style="display:block;float:right;font-style:italic;">Disclaimer</span>',
+								xtype: 'button',
+								html:'<span style="font-style:italic;">Disclaimer</span>',
+								//text:"Disclaimer",
+								style:{
+									'text-align':'right',
+									'margin-right':'1em'
+								},
 								listeners:{
 									click:function(){
 										Ext.Msg.alert('SPOON Disclaimer', 

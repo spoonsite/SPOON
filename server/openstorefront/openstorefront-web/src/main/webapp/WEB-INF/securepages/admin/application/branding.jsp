@@ -250,6 +250,22 @@
 														xtype: 'checkbox',
 														name: 'showLinkToMobile',
 														boxLabel: 'Show link to mobile site in menu'													 	
+													},
+													{
+														xtype: 'checkbox',
+														name: 'enableDisclaimerWithEntries',
+														boxLabel: 'Enabel Disclaimer in the Search Results and Print View?'													 	
+													},
+													{
+														xtype: 'htmleditor',
+														fieldLabel: 'Disclaimer Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottome right of the Search Results." ></i>',
+														name: 'disclaimerMessage',
+														width: '100%',
+														resizable: {
+															handles: 's'
+														},
+														allowBlank: true,
+														maxLength: 255
 													}
 
 												]
@@ -1006,6 +1022,8 @@
 				var actionSaveBranding = function(form, successHandler, template) {
 					var data = form.getValues();
 					
+					//VERBOSE DELETE LATER
+					console.log(data)
 					var method='POST';
 					var endUrl = '';
 					if (data.brandingId) {

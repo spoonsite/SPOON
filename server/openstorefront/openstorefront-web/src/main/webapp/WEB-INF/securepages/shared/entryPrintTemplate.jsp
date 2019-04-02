@@ -498,3 +498,4 @@ limitations under the License.
 		</tpl>
 	</div>
 </tpl>
+<i style="font-style: italic; text-align:right; ">Discliamer blabdflasbf</i>

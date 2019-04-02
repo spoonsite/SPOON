@@ -137,6 +137,10 @@
 				success: function(response, opts){
 					printTemplate.set(response.responseText, true);
 					loadEntry();
+				},
+				//TODO: add graceful failure message to users
+				failure: function(response, opts) {
+					console.log('server-side failure; response code withheld for security');
 				}
 			});	
 			
