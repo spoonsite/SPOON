@@ -17,17 +17,23 @@ package edu.usu.sdl.openstorefront.service.repo;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
-import edu.usu.sdl.openstorefront.core.entity.OrganizationModel;
+import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserSecurity;
+import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.view.UserFilterParams;
 import edu.usu.sdl.openstorefront.service.repo.api.UserRepo;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.bson.conversions.Bson;
 
@@ -50,11 +56,12 @@ public class UserMongoRepoImpl
 		if (StringUtils.isNotBlank(queryParams.getSearchField())
 				&& StringUtils.isNotBlank(queryParams.getSearchValue())
 				&& !UserSecurity.FIELD_USERNAME.equals(queryParams.getSearchField())) {
-//			query += " and " + queryParams.getSearchField() + ".toLowerCase() like :searchValue";
-//			parameterMap.put("searchValue", queryParams.getSearchValue().toLowerCase() + "%");
+
+			String likeValue = getQueryUtil().convertSQLLikeCharacterToRegex(queryParams.getSearchValue().toLowerCase());
+			filter = Filters.and(filter, Filters.regex(queryParams.getSearchField(), Pattern.compile(likeValue, Pattern.CASE_INSENSITIVE)));
 		}
 
-		FindIterable<UserProfile> findIterable = collection.find(Filters.eq(OrganizationModel.FIELD_ORGANIZATION, null));
+		FindIterable<UserProfile> findIterable = collection.find(filter);
 
 		return findIterable.into(new ArrayList<>());
 	}
@@ -62,13 +69,43 @@ public class UserMongoRepoImpl
 	@Override
 	public List<UserProfile> findUsersFromEmails(List<String> userNameOrEmails)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MongoCollection<UserProfile> collection = getQueryUtil().getCollectionForEntity(UserProfile.class);
+
+		Bson filter = Filters.ne(UserProfile.FIELD_EMAIL, null);
+
+		filter = Filters.and(
+				filter,
+				Filters.or(
+						Filters.in(UserProfile.FIELD_USERNAME, userNameOrEmails),
+						Filters.in(UserProfile.FIELD_EMAIL, userNameOrEmails)
+				)
+		);
+
+		FindIterable<UserProfile> findIterable = collection.find(filter);
+		return findIterable.into(new ArrayList<>());
 	}
 
 	@Override
 	public Map<String, Date> getLastLoginFromTracking(List<UserProfile> userProfiles)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Map<String, Date> userLoginMap = new HashMap<>();
+
+		MongoCollection<UserTracking> collection = getQueryUtil().getCollectionForEntity(UserTracking.class);
+
+		List<Bson> pipeline = Arrays.asList(
+				Aggregates.group(UserTracking.FIELD_CREATE_USER, Accumulators.max(UserTracking.FIELD_EVENTDTS, "$date")),
+				Filters.and(
+						Filters.eq(UserTracking.FIELD_ACTIVE_STATUS, UserTracking.ACTIVE_STATUS),
+						Filters.eq(UserTracking.FIELD_TRACK_EVENT_TYPE_CODE, TrackEventCode.LOGIN),
+						Filters.in(UserTracking.FIELD_CREATE_USER, userProfiles)
+				)
+		);
+		List<UserTracking> trackingFound = collection.aggregate(pipeline).into(new ArrayList<>());
+		for (UserTracking tracking : trackingFound) {
+			userLoginMap.put(tracking.getCreateUser(), tracking.getEventDts());
+		}
+
+		return userLoginMap;
 	}
 
 }

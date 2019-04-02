@@ -128,7 +128,7 @@ public class MongoQueryUtil
 		return query;
 	}
 
-	private String convertSQLLikeCharacterToRegex(String value)
+	public String convertSQLLikeCharacterToRegex(String value)
 	{
 		//deterime starts with (a% = ^a), endwith (%a = a$) and contains (a)
 		if (value.startsWith(LIKE_QUERY_CHARACTER) && value.endsWith(LIKE_QUERY_CHARACTER)) {
