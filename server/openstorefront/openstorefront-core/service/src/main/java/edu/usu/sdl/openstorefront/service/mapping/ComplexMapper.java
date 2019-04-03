@@ -86,6 +86,7 @@ public class ComplexMapper
 					case SubmissionFormFieldType.ATTRIBUTE:
 					case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
 					case SubmissionFormFieldType.ATTRIBUTE_MULTI:
+					case SubmissionFormFieldType.ATTRIBUTE_SUGGESTED:
 					case SubmissionFormFieldType.ATTRIBUTE_RADIO:
 					case SubmissionFormFieldType.ATTRIBUTE_REQUIRED:
 					case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
@@ -292,7 +293,11 @@ public class ComplexMapper
 					break;
 					
 				case SubmissionFormFieldType.ATTRIBUTE_REQUIRED:
-					mapRequiredAttributes(userSubmissionField, componentFormSet);
+					mapRequiredAttributes(userSubmissionField, componentFormSet, true);
+					break;
+
+				case SubmissionFormFieldType.ATTRIBUTE_SUGGESTED:
+					mapRequiredAttributes(userSubmissionField, componentFormSet, false);
 					break;
 					
 				case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
@@ -350,9 +355,16 @@ public class ComplexMapper
 		return userSubmissionFieldMedia;
 	}
 	
-	private void mapRequiredAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+	// used for required and suggested attribute mapping 
+	private void mapRequiredAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet, Boolean required) throws JsonProcessingException
 	{
-		List<AttributeType> attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true);
+		List<AttributeType> attributeTypes;
+		if (required) {
+			attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true);
+		} else {
+			attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findOptionalAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true);
+		}
+				
 		// get the attributes whose type matches any of the above attribute types.
 		List<ComponentAttribute> completeList = componentFormSet.getPrimary().getAttributes();
 		List<ComponentAttribute> reducedList = new ArrayList<>();
@@ -364,7 +376,10 @@ public class ComplexMapper
 				}
 			}
 		}
-		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(reducedList));
+		// the preferredUnit gets set to a AttributeUnitView in rawValue
+		// the preferredUnit should be a string not an object in rawValue
+		// the front end will need to handle both cases (object and string) of preferredUnit
+		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(reducedList)); // can't go backwards preferredUnit is a typeof String
 		userSubmissionField.setRawValue(value);
 	}
 	

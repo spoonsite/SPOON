@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
+import javax.measure.unit.Unit;
+import org.jscience.physics.amount.Amount;
 
 /**
  *
@@ -37,6 +40,7 @@ public class ComponentAttributeView
 		extends StandardEntityView
 {
 
+	private static Logger LOG = Logger.getLogger(ComponentAttributeView.class.getName());
 	public static final String TYPE_DESCRIPTION_FIELD = "typeDescription";
 
 	private String type;
@@ -47,6 +51,7 @@ public class ComponentAttributeView
 	private String codeLongDescription;
 	private String unit;
 	private Set<String> unitList;
+	private AttributeUnitView preferredUnit;
 	private String externalLink;
 	private boolean visibleFlg;
 	private boolean requiredFlg;
@@ -170,6 +175,22 @@ public class ComponentAttributeView
 			view.setActiveStatus(code.getActiveStatus());
 		}
 
+		String preferredUnit = attribute.getPreferredUnit();
+		String baseUnit = type.getAttributeUnit();
+		if (preferredUnit != null && baseUnit != null) {
+			try {
+				// get the conversion factor between the baseUnit and the preferredUnit
+				Unit tempUnit = Unit.valueOf(preferredUnit);
+				Unit unit = Unit.valueOf(baseUnit);
+				Amount<?> factor = Amount.valueOf(1, unit).to(tempUnit);
+				AttributeUnitView unitView = new AttributeUnitView(attribute.getPreferredUnit(), factor.getEstimatedValue());
+				view.setPreferredUnit(unitView);
+			} catch (IllegalArgumentException e) {
+				LOG.warning("Unable to process unit conversion factors for: " + preferredUnit + " and " + baseUnit + "\n" + e.toString());
+			}
+		}
+		
+
 		return view;
 	}
 
@@ -236,6 +257,16 @@ public class ComponentAttributeView
 	public void setUnitList(Set<String> unitList)
 	{
 		this.unitList = unitList;
+	}
+
+	public AttributeUnitView getPreferredUnit()
+	{
+		return preferredUnit;
+	}
+
+	public void setPreferredUnit(AttributeUnitView preferredUnit)
+	{
+		this.preferredUnit = preferredUnit;
 	}
 
 	public boolean isImportantFlg()

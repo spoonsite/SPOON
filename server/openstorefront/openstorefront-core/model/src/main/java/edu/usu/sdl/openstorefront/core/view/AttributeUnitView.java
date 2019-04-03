@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
-import javax.validation.constraints.NotNull;
 
 /**
  *

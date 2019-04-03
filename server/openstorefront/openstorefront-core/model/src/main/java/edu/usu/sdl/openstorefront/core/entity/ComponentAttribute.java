@@ -54,6 +54,9 @@ public class ComponentAttribute
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)
 	private String comment;
+	
+	@ConsumeField
+	private String preferredUnit;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ComponentAttribute()
@@ -142,6 +145,16 @@ public class ComponentAttribute
 	public void setComment(String comment)
 	{
 		this.comment = comment;
+	}
+
+	public String getPreferredUnit()
+	{
+		return preferredUnit;
+	}
+
+	public void setPreferredUnit(String preferredUnit)
+	{
+		this.preferredUnit = preferredUnit;
 	}
 
 }
