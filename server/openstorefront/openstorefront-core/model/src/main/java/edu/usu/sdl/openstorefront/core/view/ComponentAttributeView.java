@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 import org.jscience.physics.amount.Amount;
@@ -186,7 +187,7 @@ public class ComponentAttributeView
 				AttributeUnitView unitView = new AttributeUnitView(attribute.getPreferredUnit(), factor.getEstimatedValue());
 				view.setPreferredUnit(unitView);
 			} catch (IllegalArgumentException e) {
-				LOG.warning("Unable to process unit conversion factors for: " + preferredUnit + " and " + baseUnit + "\n" + e.toString());
+				LOG.log(Level.WARNING, "Unable to process unit conversion factors for: {0} and {1}\n{2}", new Object[]{preferredUnit, baseUnit, e.toString()});
 			}
 		}
 		
