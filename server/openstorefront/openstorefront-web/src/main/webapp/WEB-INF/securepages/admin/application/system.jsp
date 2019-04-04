@@ -2083,7 +2083,7 @@
 								{
 									xtype: 'label',
 									id: 'searchOptionsWarning',
-									text: 'Warning',
+									text: '',
 									style: {
 										color:'red',
 										'font-weight':'bold'
@@ -2122,12 +2122,11 @@
 							handler: function () {
 								if(!Ext.getCmp('organizationsCheckbox').value &&
 									!Ext.getCmp('componentNameCheckbox').value&&
-									!Ext.getCmp('componentDescriptionCheckbox').value){
-										Ext.toast({
-											html: '<b>If no catagories are selected, the index search will not return any results.</b>',
-											align: 'tr',
-											autoCloseDelay: 5000
-										})
+									!Ext.getCmp('componentDescriptionCheckbox').value
+								){
+										Ext.getCmp('searchOptionsWarning').setText('If no catagories are selected, the index search will not return any results.');
+								} else {
+									Ext.getCmp('searchOptionsWarning').setText('');
 								}
 								var data = {
 									canUseOrganizationsInSearch: Ext.getCmp('organizationsCheckbox').value,
@@ -2159,6 +2158,7 @@
 					},
 					success: function(response, opts){
 						var data = Ext.decode(response.responseText);
+
 						if(Ext.getCmp('organizationsCheckbox')){
 							Ext.getCmp('organizationsCheckbox').setValue(data.canUseOrganizationsInSearch);
 						}
@@ -2167,6 +2167,15 @@
 						}
 						if(Ext.getCmp('componentDescriptionCheckbox')){
 							Ext.getCmp('componentDescriptionCheckbox').setValue(data.canUseDescriptionInSearch);
+						}
+
+						if( !Ext.getCmp('organizationsCheckbox').value &&
+							!Ext.getCmp('componentNameCheckbox').value &&
+							!Ext.getCmp('componentDescriptionCheckbox').value
+						){
+							Ext.getCmp('searchOptionsWarning').setText('If no catagories are selected, the index search will not return any results.');
+						} else {
+							Ext.getCmp('searchOptionsWarning').setText('');
 						}
 					}
 				});
