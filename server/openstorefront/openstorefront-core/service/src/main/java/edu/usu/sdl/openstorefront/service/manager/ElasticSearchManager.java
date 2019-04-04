@@ -307,9 +307,7 @@ public class ElasticSearchManager
 	{
 		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
 
-		if(!searchOptions.getCanUseDescriptionInSearch() && 
-			!searchOptions.getCanUseNameInSearch() &&
-			!searchOptions.getCanUseOrganizationsInSearch()){
+		if(searchOptions.areAllOptionsOff()){
 				
 				IndexSearchResult blankIndexSearchResult = new IndexSearchResult();
 				return blankIndexSearchResult;

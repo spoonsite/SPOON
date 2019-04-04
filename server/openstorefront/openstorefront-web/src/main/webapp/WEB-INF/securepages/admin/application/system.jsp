@@ -2081,6 +2081,15 @@
 							},
 							items: [
 								{
+									xtype: 'label',
+									id: 'searchOptionsWarning',
+									text: 'Warning',
+									style: {
+										color:'red',
+										'font-weight':'bold'
+									}
+								},
+								{
 									xtype: 'fieldcontainer',
 									fieldLabel: 'Categories to include in Searches',
 									defaultType: 'checkboxfield',

@@ -138,7 +138,7 @@ public class SearchServiceImpl
 		} else {
 						searchOptions.setSearchOptionsId(persistenceService.generateId());
 						searchOptions.setGlobalFlag(true);
-						searchOptions.populateBaseCreateFields();
+						searchOptions.setDefaultSearchOptions();
 						existing = persistenceService.persist(searchOptions);
 		}
 		return existing;

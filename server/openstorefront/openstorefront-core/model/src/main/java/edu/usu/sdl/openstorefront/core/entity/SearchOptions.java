@@ -40,7 +40,7 @@ public class SearchOptions
 	@ConsumeField
 	private Boolean canUseNameInSearch;
 
-	@APIDescription("Flag for using Component Description in searches")
+	@APIDescription("Flag for using Component description in searches")
 	@ConsumeField
 	private Boolean canUseDescriptionInSearch;
 	
@@ -60,14 +60,22 @@ public class SearchOptions
 		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());
 	}
 
-	@Override
-	public void populateBaseCreateFields()
+	public void setDefaultSearchOptions()
 	{		
-		super.populateBaseCreateFields();
+		setActiveStatus(SearchOptions.ACTIVE_STATUS);
 
 		setCanUseDescriptionInSearch(Boolean.TRUE);
 		setCanUseNameInSearch(Boolean.TRUE);
 		setCanUseOrganizationsInSearch(Boolean.TRUE);
+	}
+
+	public Boolean areAllOptionsOff()
+	{
+		return(
+			!canUseOrganizationsInSearch && 
+			!canUseNameInSearch && 
+			!canUseDescriptionInSearch
+		);
 	}
 
 	public Boolean getGlobalFlag()
