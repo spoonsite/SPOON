@@ -15,10 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.service.repo.api.NotificationRepo;
+import com.mongodb.client.MongoCollection;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.service.repo.api.NotificationRepo;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -28,14 +29,18 @@ import java.util.Set;
  * @author dshurtleff
  */
 public class NotificationMongoRepoImpl
-		extends BaseRepo
+		extends BaseMongoRepo
 		implements NotificationRepo
 {
 
 	@Override
 	public long getTotalNotificationsForUser(String username)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		long totalCount = 0;
+
+		MongoCollection<NotificationEvent> collection = getQueryUtil().getCollectionForEntity(NotificationEvent.class);
+
+		return totalCount;
 	}
 
 	@Override
