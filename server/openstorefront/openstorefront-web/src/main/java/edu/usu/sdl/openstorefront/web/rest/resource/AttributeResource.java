@@ -73,10 +73,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 import javax.measure.unit.Unit;
-import org.jscience.physics.amount.Amount;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -96,8 +93,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 /**
  *
@@ -1234,12 +1229,12 @@ public class AttributeResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response checkUnit(
-		@RequiredParam UnitView unitView)
+			@RequiredParam UnitView unitView)
 	{
 		ValidationModel validationModel = new ValidationModel(unitView.getUnit());
 		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
-		
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
 		if (validationResult.valid()) {
 			String attributeUnit = unitView.getUnit();
 
@@ -1255,38 +1250,35 @@ public class AttributeResource
 			String dimension = unit.getDimension().toString();
 			String standardUnit = unit.getStandardUnit().toString();
 
-			//TODO: refactor to use a model class
-			String JSON = Json.createObjectBuilder()
-					.add("unit", unitString)
-					.add("dimension", dimension)
-					.add("standardUnit", standardUnit)
-					.build()
-					.toString();
+			UnitView response = new UnitView();
+			response.setUnit(unitString);
+			response.setDimension(dimension);
+			response.setStandardUnit(standardUnit);
 
-			return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
+			return Response.ok(response, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-	
+
 	}
-	
+
 	@POST
 	@APIDescription("Check a given unit list against a base unit")
 	@Path("/unitlistcheck")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response checkUnitList(
-		@RequiredParam UnitListView unitListView)
+			@RequiredParam UnitListView unitListView)
 	{
 		ValidationModel validationModel = new ValidationModel(unitListView.getBaseUnit());
 		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 
 		validationModel = new ValidationModel(unitListView.getUnits());
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult listValidationResult = ValidationUtil.validate(validationModel);
 		validationResult.merge(listValidationResult);
-		
+
 		if (validationResult.valid()) {
 			String baseUnit = unitListView.getBaseUnit();
 			Unit unit;
@@ -1311,81 +1303,16 @@ public class AttributeResource
 				SimpleRestError error = new SimpleRestError("unable to parse unit");
 				return Response.ok(error, MediaType.APPLICATION_JSON).build();
 			}
-			// TODO: refactor to use a model class
-			String JSON = Json.createObjectBuilder()
-					.add("dimension", dimension)
-					.add("standardUnit", standardUnit)
-					.build()
-					.toString();
 
-			return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
+			UnitView response = new UnitView();
+			response.setUnit(baseUnit);
+			response.setDimension(dimension);
+			response.setStandardUnit(standardUnit);
+
+			return Response.ok(response, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
-	
 	}
 
-	@POST
-	@APIDescription("Given a bass unit and a list of compatible units return the list of conversion factors")
-	@Path("/unitconversionlist")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({MediaType.APPLICATION_JSON})
-	public Response unitConversionList(
-		@RequiredParam UnitListView unitListView)
-	{
-		List<Pair<String, Double>> factors = new ArrayList<>();
-		
-		ValidationModel validationModel = new ValidationModel(unitListView.getBaseUnit());
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);		
-
-		validationModel = new ValidationModel(unitListView.getUnits());
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult listValidationResult = ValidationUtil.validate(validationModel);
-		validationResult.merge(listValidationResult);
-		
-		if (validationResult.valid()) {
-			String baseUnit = unitListView.getBaseUnit();
-			Unit unit;
-			String dimension = "";
-			try {
-				unit = Unit.valueOf(baseUnit);
-				dimension = unit.getDimension().toString();
-				for (String unitString : unitListView.getUnits()) {
-					Unit tempUnit;
-					tempUnit = Unit.valueOf(unitString);
-					Amount<?> factor = Amount.valueOf(1, unit).to(tempUnit);
-
-					factors.add(new ImmutablePair<String, Double>(unitString, factor.getEstimatedValue()));
-					
-					// verify all the units in the list are the same dimension
-					// verify they all match the base unit
-					if (!tempUnit.getDimension().equals(unit.getDimension())) {
-						SimpleRestError error = new SimpleRestError("Base unit " + baseUnit + " (" + dimension + ") dimension does not match unit " + unitString + " (" + tempUnit.getDimension() + ")");
-						return Response.ok(error, MediaType.APPLICATION_JSON).build();
-					}
-				}
-			} catch (IllegalArgumentException e) {
-				SimpleRestError error = new SimpleRestError("unable to parse unit");
-				return Response.ok(error, MediaType.APPLICATION_JSON).build();
-			}
-						
-			// respond with all the units and their conversion
-			JsonObjectBuilder jsonFactors = Json.createObjectBuilder();
-			for (Pair<String, Double> pair : factors) {
-				jsonFactors.add(pair.getKey(), pair.getValue());
-			}
-			//TODO: refactor to use model class
-			String JSON = Json.createObjectBuilder()
-					.add("baseUnit", baseUnit)
-					.add("units", jsonFactors)
-					.build()
-					.toString();
-
-			return Response.ok(JSON, MediaType.APPLICATION_JSON).build();
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-	
-	}
 }
