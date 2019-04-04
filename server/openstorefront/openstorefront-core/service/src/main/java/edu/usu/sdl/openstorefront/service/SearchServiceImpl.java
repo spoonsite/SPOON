@@ -126,7 +126,9 @@ public class SearchServiceImpl
 	}
 
 	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions){
-                                                                
+		
+		OSFCacheManager.getSearchCache().removeAll();
+
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);                     
 		SearchOptions existing = searchOptionsExample.findProxy();                   
@@ -138,7 +140,7 @@ public class SearchServiceImpl
 		} else {
 						searchOptions.setSearchOptionsId(persistenceService.generateId());
 						searchOptions.setGlobalFlag(true);
-						searchOptions.populateBaseCreateFields();
+						searchOptions.setDefaultSearchOptions();
 						existing = persistenceService.persist(searchOptions);
 		}
 		return existing;

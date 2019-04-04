@@ -2085,6 +2085,15 @@
 							},
 							items: [
 								{
+									xtype: 'label',
+									id: 'searchOptionsWarning',
+									text: '',
+									style: {
+										color:'red',
+										'font-weight':'bold'
+									}
+								},
+								{
 									xtype: 'form',
 									fieldLabel: 'Categories to include in Searches',
 									id: 'checkboxForm',
@@ -2146,12 +2155,11 @@
 									!form.canUseNameInSearch &&
 									!form.componentDescriptionCheckbox &&
 									!form.canUseDescriptionInSearch && 
-									!form.canUseAttributesInSearch){
-										Ext.toast({
-											html: '<b>If no categories are selected, the index search will not return any results.</b>',
-											align: 'tr',
-											autoCloseDelay: 5000
-										})
+									!form.canUseAttributesInSearch
+								){
+									Ext.getCmp('searchOptionsWarning').setText('If no catagories are selected, the index search will not return any results.');
+								} else {
+									Ext.getCmp('searchOptionsWarning').setText('');
 								}
 								
 								Ext.Ajax.request({
@@ -2179,6 +2187,7 @@
 					},
 					success: function(response, opts){
 						var data = Ext.decode(response.responseText);
+
 						if(Ext.getCmp('organizationsCheckbox')){
 							Ext.getCmp('organizationsCheckbox').setValue(data.canUseOrganizationsInSearch);
 						}
@@ -2193,6 +2202,17 @@
 						}
 						if(Ext.getCmp('componentAttributesCheckbox')){
 							Ext.getCmp('componentAttributesCheckbox').setValue(data.canUseAttributesInSearch);
+						}
+
+						if( !Ext.getCmp('organizationsCheckbox').value &&
+							!Ext.getCmp('componentNameCheckbox').value &&
+							!Ext.getCmp('componentDescriptionCheckbox').value &&
+							!Ext.getCmp('componentTagsCheckbox').value &&
+							!Ext.getCmp('componentAttributesCheckbox').value
+						){
+							Ext.getCmp('searchOptionsWarning').setText('If no catagories are selected, the index search will not return any results.');
+						} else {
+							Ext.getCmp('searchOptionsWarning').setText('');
 						}
 					}
 				});
