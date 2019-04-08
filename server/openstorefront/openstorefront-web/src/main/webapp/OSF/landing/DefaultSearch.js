@@ -86,6 +86,8 @@ Ext.define('OSF.landing.DefaultSearch', {
 					});
 				});
 
+				var searchOptions;
+
 				var searchRequest;
 				if (entryTypeCB.selectedItems.length > 0) {
 					var searchObj = {
@@ -184,11 +186,57 @@ Ext.define('OSF.landing.DefaultSearch', {
 								xtype: 'checkboxgroup',
 								columns: 1,
 								vertical: true,
+								allowBlank: false,
 								items: [
-									{boxLabel: 'Item1'},
-									{boxLabel: 'Item2'},
-									{boxLabel: 'Item3'},
-								]
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Organizations',
+										id: 'organizationsCheckbox',
+										name: 'canUseOrganizationsInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									}, 
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Component Names',
+										id: 'componentNameCheckbox',
+										name: 'canUseNameInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									},
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Component Descriptions',
+										id: 'componentDescriptionCheckbox',
+										name: 'canUseDescriptionInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									},
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Component Tags',
+										id: 'componentTagsCheckbox',
+										name: 'canUseTagsInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									},
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Component Vitals',
+										id: 'componentAttributesCheckbox',
+										name: 'canUseAttributesInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									}
+								],
+								listeners: {
+									onload: function(){
+
+									},
+									change: function(checkBox, newVal, oldVal){
+										console.log(checkBox);
+									}
+								}
 							},
 							{
 								xtype: 'label',
