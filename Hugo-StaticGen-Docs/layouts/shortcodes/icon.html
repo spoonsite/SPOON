@@ -1,0 +1,15 @@
+﻿{{ if .IsNamedParams }}
+    {{if not (hasPrefix (.Get "name") "fa-") }}
+        <span class="glyphicon glyphicon-{{.Get "name"}}" style="{{with .Get "color"}}color:{{.}}{{end}} {{with .Get "size"}}font-size:{{.}}{{end}}" aria-hidden="true"></span>
+    {{else}}
+        <span class="fa {{.Get "name"}}"  style="{{with .Get "color"}}color:{{.}}{{end}} {{with .Get "size"}}font-size:{{.}}{{end}}" aria-hidden="true"></span>
+    {{end}}
+    {{ if .Get "color" }}
+    {{end}}
+{{else}}
+    {{if not (hasPrefix (.Get 0) "fa-") }}
+        <span class="glyphicon glyphicon-{{.Get 0}}" aria-hidden="true"></span>
+    {{else}}
+        <span class="fa {{.Get 0}}" aria-hidden="true"></span>
+    {{end}}
+{{end}}

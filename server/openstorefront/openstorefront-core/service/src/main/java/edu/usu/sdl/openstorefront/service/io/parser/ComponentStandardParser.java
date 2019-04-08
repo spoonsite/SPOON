@@ -101,7 +101,7 @@ public class ComponentStandardParser
 
 					TFile archive = new TFile(fileHistoryAll.getFileHistory().pathToFileName().toFile().toString());
 					if (archive == null || archive.listFiles() == null) {
-						throw new OpenStorefrontRuntimeException("Unsupported format.", "Check file; this format only accpets JSON or ZIP with vaild JSON record.");
+						throw new OpenStorefrontRuntimeException("Unsupported format.", "Check file. this format only accpets JSON or ZIP with vaild JSON record.");
 					}
 
 					TFile archiveFiles[] = archive.listFiles();

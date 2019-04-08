@@ -389,3 +389,25 @@ functionality on top.
 
 -   See [Orient DB Studio](http://orientdb.com/docs/2.1.x/Home-page.html) for
     more information about Studio
+
+
+
+## 3.4 Aerospace Import istructions
+
+1. Go to https://desktop.pingone.com/Aerospace
+  1. Sign in with the proper credentials. If you don't have credentials find someone who does so that they can get you access.
+
+2. Once you are logged in click on the NASAS3VI Image/Link and verify with MFA to get to the data page.
+
+3. On that page click on the Datasets link in the top left hand corner, select SmallSatelliteProducts, select the appropriate month data type and download the zipped directory.
+
+4. In general a few things need to happen here. We need to prepare a directory to feed to the aerospace importer on spoonsite.
+  1. We only need the updated xml file. This file will be a few hundred KiloBytes large. The complete data set file is not needed it is about 4.6 MB.
+  2. In addition to the update xml file we also need the provenance documents directory (if it is supplied) and the product images directory (if it is supplied).
+  3. In order to preprocess the data, we need to run a python script that is located spoon\server\openstorefront\openstorefront-plugin\aerospaceimport\scripts\parse.py.
+  Using this script you can fill in missing organizations as appropriate, remove escape characters and verify the entry types are complete.
+  4. Once the xml file is ready it needs to be renamed to "recordsList.xml" (without quotes) the product_images folder must be named "product_images" (without quotes).
+  5. Once those 3 files are ready, they should be zipped up into a directory and now they are ready to be imported.
+
+5. On spoonsite, go to admin->data management->imports. Fill in the required information, provide the appropriate mapping file and select import.
+6. You are done, after a period of time the import will bring in the appropriate data and the entries.
