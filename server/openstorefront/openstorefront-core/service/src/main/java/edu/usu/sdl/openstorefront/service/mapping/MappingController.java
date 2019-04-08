@@ -214,7 +214,7 @@ public class MappingController
 
 			for (SubmissionFormSection section : template.getSections()) {
 				try {
-					mapTemplateFieldsForSubmission(section.getFields(), componentFormSet, userSubmissionAll);
+					mapTemplateFieldsForSubmission(section.getFields(), componentFormSet, userSubmissionAll, template);
 				} catch (MappingException ex) {
 					ex.setSectionName(section.getName());
 					throw ex;
@@ -223,12 +223,12 @@ public class MappingController
 		}
 	}
 
-	private void mapTemplateFieldsForSubmission(List<SubmissionFormField> fields, ComponentFormSet componentFormSet, UserSubmissionAll userSubmissionAll) throws MappingException
+	private void mapTemplateFieldsForSubmission(List<SubmissionFormField> fields, ComponentFormSet componentFormSet, UserSubmissionAll userSubmissionAll, SubmissionFormTemplate template) throws MappingException
 	{
 		if (fields != null) {
 			for (SubmissionFormField field : fields) {
 				BaseMapper mapper = mapperFactory.getMapperForField(field.getMappingType());
-				UserSubmissionFieldMedia userSubmissionFieldMedia = mapper.mapComponentToSubmission(field, componentFormSet);
+				UserSubmissionFieldMedia userSubmissionFieldMedia = mapper.mapComponentToSubmission(field, componentFormSet, template);
 				if (userSubmissionFieldMedia != null) {
 					userSubmissionAll.getUserSubmission().getFields().add(userSubmissionFieldMedia.getUserSubmissionField());
 					userSubmissionAll.getMedia().addAll(userSubmissionFieldMedia.getMedia());

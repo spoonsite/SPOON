@@ -940,7 +940,6 @@ public abstract class GeneralComponentResourceExt
 		return Response.ok(result.toRestError()).build();
 	}
 
-
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1027,6 +1026,27 @@ public abstract class GeneralComponentResourceExt
 		return response;
 	}
 
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(UserSubmission.class)
+	@APIDescription("Return a user submission view of the component. User Submission is not save...so this is a ready only version.")
+	@Path("/{id}/usersubmission")
+	public Response convertToUserSubmission(
+			@PathParam("id")
+			@RequiredParam String componentId
+	)
+	{
+		UserSubmission userSubmission = null;
+
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if (component != null) {
+			userSubmission = service.getSubmissionFormService().componentToSubmission(componentId);
+		}
+		return sendSingleEntityResponse(userSubmission);
+	}
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(UserSubmission.class)
@@ -1040,12 +1060,12 @@ public abstract class GeneralComponentResourceExt
 		Evaluation evaluation = new Evaluation();
 		evaluation.setOriginComponentId(componentId);
 		List<Evaluation> evaluations = evaluation.findByExample();
-		if(!evaluations.isEmpty()){
+		if (!evaluations.isEmpty()) {
 			RestErrorModel error = new RestErrorModel();
 			error.getErrors().put("componentId", "Unable to edit due to attached evaluations.");
 			return sendSingleEntityResponse(error);
 		}
-		
+
 		EditSubmissionOptions options = new EditSubmissionOptions();
 		options.setRemoveComponent(true);
 		return handleCreateUserSubmission(componentId, options);

@@ -301,9 +301,10 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				attributePanel.setLoading(false);
 			},
 			success: function(response, opts) {
-				var attributeTypes = Ext.decode(response.responseText);				
+				var attributeTypes = Ext.decode(response.responseText);							
+		
 				attributePanel.queryById('attributeTypeCB').getStore().loadData(attributeTypes);
-				
+								
 				if (attributePanel.section) {
 					var initialData = attributePanel.section.submissionForm.getFieldData(attributePanel.fieldTemplate.fieldId);
 					if (initialData) {
