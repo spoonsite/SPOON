@@ -2041,7 +2041,6 @@
 						}
 					]
 				});	
-				
 
 				var searchControlPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Search Control',
@@ -2081,24 +2080,58 @@
 							},
 							items: [
 								{
-									xtype: 'fieldcontainer',
+									xtype: 'label',
+									id: 'searchOptionsWarning',
+									text: '',
+									style: {
+										color:'red',
+										'font-weight':'bold'
+									}
+								},
+								{
+									xtype: 'form',
 									fieldLabel: 'Categories to include in Searches',
-									defaultType: 'checkboxfield',
+									id: 'checkboxForm',
 									items: [
 										{
 											xtype: 'checkbox',
 											boxLabel: 'Organizations',
 											id: 'organizationsCheckbox',
+											name: 'canUseOrganizationsInSearch',
+											inputValue: true,
+											uncheckedValue: false
 										}, 
 										{
 											xtype: 'checkbox',
 											boxLabel: 'Component Names',
 											id: 'componentNameCheckbox',
+											name: 'canUseNameInSearch',
+											inputValue: true,
+											uncheckedValue: false
 										},
 										{
 											xtype: 'checkbox',
 											boxLabel: 'Component Descriptions',
 											id: 'componentDescriptionCheckbox',
+											name: 'canUseDescriptionInSearch',
+											inputValue: true,
+											uncheckedValue: false
+										},
+										{
+											xtype: 'checkbox',
+											boxLabel: 'Component Tags',
+											id: 'componentTagsCheckbox',
+											name: 'canUseTagsInSearch',
+											inputValue: true,
+											uncheckedValue: false
+										},
+										{
+											xtype: 'checkbox',
+											boxLabel: 'Component Vitals',
+											id: 'componentAttributesCheckbox',
+											name: 'canUseAttributesInSearch',
+											inputValue: true,
+											uncheckedValue: false
 										}
 									]
 								}
@@ -2111,14 +2144,22 @@
 							iconCls: 'fa fa-2x fa-save icon-vertical-correction',
 							tooltip: 'This will apply the above settings to searches.',
 							handler: function () {
-								var data = {
-									canUseOrganizationsInSearch: Ext.getCmp('organizationsCheckbox').value,
-									canUseNameInSearch: Ext.getCmp('componentNameCheckbox').value,
-									canUseDescriptionInSearch: Ext.getCmp('componentDescriptionCheckbox').value
-								};
+								var form = Ext.getCmp('checkboxForm').getValues();
+								
+								if( !form.canUseOrganizationsInSearch &&
+									!form.canUseNameInSearch &&
+									!form.componentDescriptionCheckbox &&
+									!form.canUseDescriptionInSearch && 
+									!form.canUseAttributesInSearch
+								){
+									Ext.getCmp('searchOptionsWarning').setText('If no catagories are selected, the index search will not return any results.');
+								} else {
+									Ext.getCmp('searchOptionsWarning').setText('');
+								}
+								
 								Ext.Ajax.request({
-									url: 'api/v1/service/search/options',
-									jsonData: data,
+									url: 'api/v1/resource/searchoptions/global',
+									jsonData: form,
 									method: 'PUT',
 									success: function(response, opt) {
 										Ext.toast('Successfully applied the search options.', '', 'tr');
@@ -2134,13 +2175,14 @@
 
 				searchControlPanel.setLoading(true);
 				Ext.Ajax.request({
-					url: 'api/v1/service/search/options',
+					url: 'api/v1/resource/searchoptions/global',
 					method: 'GET',
 					callback: function() {
 						searchControlPanel.setLoading(false);
 					},
 					success: function(response, opts){
 						var data = Ext.decode(response.responseText);
+
 						if(Ext.getCmp('organizationsCheckbox')){
 							Ext.getCmp('organizationsCheckbox').setValue(data.canUseOrganizationsInSearch);
 						}
@@ -2149,6 +2191,23 @@
 						}
 						if(Ext.getCmp('componentDescriptionCheckbox')){
 							Ext.getCmp('componentDescriptionCheckbox').setValue(data.canUseDescriptionInSearch);
+						}
+						if(Ext.getCmp('componentTagsCheckbox')){
+							Ext.getCmp('componentTagsCheckbox').setValue(data.canUseTagsInSearch);
+						}
+						if(Ext.getCmp('componentAttributesCheckbox')){
+							Ext.getCmp('componentAttributesCheckbox').setValue(data.canUseAttributesInSearch);
+						}
+
+						if( !Ext.getCmp('organizationsCheckbox').value &&
+							!Ext.getCmp('componentNameCheckbox').value &&
+							!Ext.getCmp('componentDescriptionCheckbox').value &&
+							!Ext.getCmp('componentTagsCheckbox').value &&
+							!Ext.getCmp('componentAttributesCheckbox').value
+						){
+							Ext.getCmp('searchOptionsWarning').setText('If no catagories are selected, the index search will not return any results.');
+						} else {
+							Ext.getCmp('searchOptionsWarning').setText('');
 						}
 					}
 				});
