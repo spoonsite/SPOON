@@ -167,6 +167,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					},
 					menu: {
 						width: 400,
+						scrollable: true,
 						listeners: {
 							beforehide: function () {
 								return this.up().canCloseMenu;
@@ -174,76 +175,34 @@ Ext.define('OSF.landing.DefaultSearch', {
 						},
 						items: [
 							{
-								xtype: 'treepanel',
-								cls: 'entry-type-tree-panel-menu',
-								maxHeight: 500,
-								scrollable: false,
-								rootVisible: false,
-								listeners: {
-									load: function () {
-										var checkBoxes = {
-											array: [
-												{
-													xtype: 'checkbox',
-													text: 'Organizations',
-													id: 'organizationsCheckbox',
-													leaf: true,
-													checked: false
-												},
-												{
-													xtype: 'checkbox',
-													text: 'Component Names',
-													id: 'namesCheckbox',
-													leaf: true,
-													checked: false
-												},
-												{
-													xtype: 'checkbox',
-													text: 'Component Descriptions',
-													id: 'descriptionsCheckbox',
-													leaf: true,
-													checked: false
-												},
-												{
-													xtype: 'checkbox',
-													text: 'Component Tags',
-													id: 'tagsCheckbox',
-													leaf: true,
-													checked: false
-												},
-												{
-													xtype: 'checkbox',
-													text: 'Component Attributes',
-													id: 'attributesCheckbox',
-													leaf: true,
-													checked: false
-												},
-											],
-										};
-									},
-									itemclick: function (view, record, element, index, e, opts) {
-										console.log(view, record, element, index, e, opts);
-									}
-								},
-								store: {
-									xtype: 'treestore',
-									fields: ['searchoptions'],
-									root: {
-										children: checkBoxes.array
-									}
+								xtype: 'label',
+								text: 'Search Options',
+								style: {
+									'font-weight': 'bold'
 								}
 							},
-							// {
-							// 	xtype: 'label',
-							// 	html: '<b>Category Filter</b>',
-							// 	// focusable: false
-							// },
+							{
+								xtype: 'checkboxgroup',
+								columns: 1,
+								vertical: true,
+								items: [
+									{boxLabel: 'Item1'},
+									{boxLabel: 'Item2'},
+									{boxLabel: 'Item3'},
+								]
+							},
+							{
+								xtype: 'label',
+								text: 'Entry Types',
+								style: {
+									'font-weight': 'bold'
+								}
+							},
 							{
 								xtype: 'treepanel',
 								cls: 'entry-type-tree-panel-menu',
 								label: 'something',
 								maxHeight: 500,
-								scrollable: true,
 								rootVisible: false,
 								checkPropagation: 'both',
 								listeners: {
