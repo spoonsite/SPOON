@@ -2041,11 +2041,6 @@
 						}
 					]
 				});	
-				// { boxLabel:'Organizations',name:'organizationsCheckbox', inputValue:true },
-				// 						{ boxLabel:'Component Names',name:'componentNameCheckbox', inputValue:true },
-				// 						{ boxLabel:'Component Descriptions',name:'componentDescriptionCheckbox', inputValue:true },
-				// 						{ boxLabel:'Component Tags',name:'componentTagsCheckbox', inputValue:true },
-				// 						{ boxLabel:'Component Vitals',name:'componentAttributesCheckbox', inputValue:true },
 
 				var searchControlPanel = Ext.create('Ext.panel.Panel', {
 					title: 'Search Control',
