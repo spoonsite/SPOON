@@ -167,7 +167,6 @@ Ext.define('OSF.landing.DefaultSearch', {
 					},
 					menu: {
 						width: 400,
-						scrollable: true,
 						listeners: {
 							beforehide: function () {
 								return this.up().canCloseMenu;
@@ -203,6 +202,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 								cls: 'entry-type-tree-panel-menu',
 								label: 'something',
 								maxHeight: 500,
+								scrollable: true,
 								rootVisible: false,
 								checkPropagation: 'both',
 								listeners: {
