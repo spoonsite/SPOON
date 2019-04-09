@@ -93,6 +93,7 @@ Ext.define('OSF.customSubmission.field.ContactsGrid', {
 					fieldTemplate: grid.fieldTemplate,
 					originalRecord: record,
 					scrollable: true,
+					showEditFlag: false,
 					dockedItems: [
 						{
 							xtype: 'toolbar',

@@ -19,6 +19,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
@@ -28,6 +30,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldType;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -38,8 +41,6 @@ import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
 import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
 import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
-import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -274,7 +275,7 @@ public class ComplexMapper
 	}
 
 	@Override
-	public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet, SubmissionFormTemplate template) throws MappingException
 	{
 		UserSubmissionFieldMedia userSubmissionFieldMedia = new UserSubmissionFieldMedia();
 
@@ -287,16 +288,21 @@ public class ComplexMapper
 		try {
 			switch (fieldType) {
 
+				//this is single attribute form
 				case SubmissionFormFieldType.ATTRIBUTE:
 					mapAttributes(userSubmissionField, componentFormSet);
 					break;
-					
+
 				case SubmissionFormFieldType.ATTRIBUTE_REQUIRED:
-					mapRequiredAttributes(userSubmissionField, componentFormSet);
+					mapRequiredAttributes(userSubmissionField, componentFormSet, template);
 					break;
-					
-				case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
+
+				//this includes optional minus any attributes are matched by other fields
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI:
+					mapOptionalAttributes(userSubmissionField, componentFormSet, template);
+					break;
+
+				case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
 				case SubmissionFormFieldType.ATTRIBUTE_RADIO:
 				case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
 					mapSingleAttributes(userSubmissionField, componentFormSet, submissionField);
@@ -349,43 +355,62 @@ public class ComplexMapper
 
 		return userSubmissionFieldMedia;
 	}
-	
-	private void mapRequiredAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
+
+	private void mapRequiredAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet, SubmissionFormTemplate template) throws JsonProcessingException
 	{
-		List<AttributeType> attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true);
+		mapRestrictedAttributes(userSubmissionField, componentFormSet, template, true);
+	}
+
+	private void mapRestrictedAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet, SubmissionFormTemplate template, boolean required) throws JsonProcessingException
+	{
+		List<AttributeType> attributeTypes;
+		if (required) {
+			attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true, template.getSubmissionTemplateId());
+		} else {
+			attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findOptionalAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true, template.getSubmissionTemplateId());
+		}
+
 		// get the attributes whose type matches any of the above attribute types.
 		List<ComponentAttribute> completeList = componentFormSet.getPrimary().getAttributes();
 		List<ComponentAttribute> reducedList = new ArrayList<>();
-		
-		for (ComponentAttribute componentAttribute : completeList){
-			for (AttributeType attributeType : attributeTypes){
-				if(attributeType.getAttributeType().equals(componentAttribute.getComponentAttributePk().getAttributeType())){
+
+		for (ComponentAttribute componentAttribute : completeList) {
+			for (AttributeType attributeType : attributeTypes) {
+				if (attributeType.getAttributeType().equals(componentAttribute.getComponentAttributePk().getAttributeType())) {
 					reducedList.add(componentAttribute);
 				}
 			}
 		}
 		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(reducedList));
 		userSubmissionField.setRawValue(value);
+
 	}
-	
+
 	private void mapSingleAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet, SubmissionFormField submissionField) throws JsonProcessingException
 	{
 		// get the attributes that match the type in submissionField and pass only those.
 		List<ComponentAttribute> completeList = componentFormSet.getPrimary().getAttributes();
 		List<ComponentAttribute> reducedList = new ArrayList<>();
-		
-		for (ComponentAttribute componentAttribute : completeList){
-			if ( componentAttribute.getComponentAttributePk().getAttributeType().equals(submissionField.getAttributeType())){
+
+		for (ComponentAttribute componentAttribute : completeList) {
+			if (componentAttribute.getComponentAttributePk().getAttributeType().equals(submissionField.getAttributeType())) {
 				reducedList.add(componentAttribute);
 			}
 		}
-		
+
 		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(reducedList));
 		userSubmissionField.setRawValue(value);
 	}
 
+	private void mapOptionalAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet, SubmissionFormTemplate template) throws JsonProcessingException
+	{
+		mapRestrictedAttributes(userSubmissionField, componentFormSet, template, false);
+	}
+
 	private void mapAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
+		//This grab all?
+
 		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(componentFormSet.getPrimary().getAttributes()));
 		userSubmissionField.setRawValue(value);
 	}

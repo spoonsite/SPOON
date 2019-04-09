@@ -129,8 +129,8 @@ public class AttributeResource
 		List<AttributeType> attributeTypes = new ArrayList<>();
 
 		if (StringUtils.isNotBlank(componentType)) {
-			attributeTypes.addAll(service.getAttributeService().findRequiredAttributes(componentType, true));
-			attributeTypes.addAll(service.getAttributeService().findOptionalAttributes(componentType, true));
+			attributeTypes.addAll(service.getAttributeService().findRequiredAttributes(componentType, false, null));
+			attributeTypes.addAll(service.getAttributeService().findOptionalAttributes(componentType, false, null));
 		} else {
 			attributeTypes = service.getPersistenceService().queryByExample(attributeTypeExample);
 		}
@@ -151,10 +151,11 @@ public class AttributeResource
 	@Path("/optional")
 	public List<AttributeTypeView> getOptionalAttributeView(
 			@QueryParam("componentType") String componentType,
-			@QueryParam("submissionOnly") boolean submissionOnly
+			@QueryParam("submissionOnly") boolean submissionOnly,
+			@QueryParam("submissionTemplateId") String submissionTemplateId
 	)
 	{
-		List<AttributeType> optionalAttributes = service.getAttributeService().findOptionalAttributes(componentType, submissionOnly);
+		List<AttributeType> optionalAttributes = service.getAttributeService().findOptionalAttributes(componentType, submissionOnly, submissionTemplateId);
 		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
 		return createAttributeTypeViews(attributeCodesAll, optionalAttributes);
 	}
@@ -205,10 +206,11 @@ public class AttributeResource
 	public List<AttributeTypeView> getRequiredAttributeTypes(
 			@QueryParam("componentType") String componentType,
 			@QueryParam("submissionOnly") boolean submissionOnly,
-			@QueryParam("skipFilterNoCodes") boolean skipFilterNoCodes
+			@QueryParam("skipFilterNoCodes") boolean skipFilterNoCodes,
+			@QueryParam("submissionTemplateId") String submissionTemplateId
 	)
 	{
-		List<AttributeType> requiredAttributes = service.getAttributeService().findRequiredAttributes(componentType, submissionOnly, skipFilterNoCodes);
+		List<AttributeType> requiredAttributes = service.getAttributeService().findRequiredAttributes(componentType, submissionOnly, skipFilterNoCodes, submissionTemplateId);
 		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
 		return createAttributeTypeViews(attributeCodesAll, requiredAttributes);
 	}

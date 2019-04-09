@@ -294,17 +294,18 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 		];
 		
 		//load optional types
-		attributePanel.setLoading(true);
+		attributePanel.setLoading(true);		
 		Ext.Ajax.request({
-			url: 'api/v1/resource/attributes/optional?componentType=' + attributePanel.componentType.componentType + '&submissionOnly=true',
+			url: 'api/v1/resource/attributes/optional?componentType=' + attributePanel.componentType.componentType + '&submissionOnly=true&submissionTemplateId=' + attributePanel.section.submissionForm.template.submissionTemplateId,
 			callback: function() {
 				attributePanel.setLoading(false);
 			},
 			success: function(response, opts) {
-				var attributeTypes = Ext.decode(response.responseText);				
+				var attributeTypes = Ext.decode(response.responseText);							
+		
 				attributePanel.queryById('attributeTypeCB').getStore().loadData(attributeTypes);
-				
-				if (attributePanel.section) {
+								
+				if (attributePanel.section && attributePanel.fieldTemplate) {
 					var initialData = attributePanel.section.submissionForm.getFieldData(attributePanel.fieldTemplate.fieldId);
 					if (initialData) {
 						var data = Ext.decode(initialData);
