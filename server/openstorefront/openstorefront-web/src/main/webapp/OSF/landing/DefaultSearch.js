@@ -246,7 +246,8 @@ Ext.define('OSF.landing.DefaultSearch', {
 										var isMyObjectEmpty = !Object.keys(values).length;
 										console.log(isMyObjectEmpty);
 										if (isMyObjectEmpty){
-											
+											var searchButton = this.up().up().up().query('#searchButton')[0];
+											searchButton.disable();
 										}
 										
 										if(!values.canUseOrganizationsInSearch){
@@ -409,6 +410,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					tooltip: 'Keyword Search',
 					iconCls: 'fa fa-2x fa-search icon-search-adjustment',
 					style: 'border-radius: 0px 3px 3px 0px;',
+					itemId: 'searchButton',
 					width: 50,
 					handler: function () {
 						var query = this.up('panel').getComponent('searchText').getValue();
