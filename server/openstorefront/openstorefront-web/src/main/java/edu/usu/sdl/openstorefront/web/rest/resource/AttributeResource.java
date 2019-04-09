@@ -651,6 +651,7 @@ public class AttributeResource
 			try {
 				unit = Unit.valueOf(attributeUnit);
 			} catch (IllegalArgumentException e) {
+				// Could not parse the attribute unit
 				return false;						
 			}
 		}
@@ -658,6 +659,7 @@ public class AttributeResource
 		try {
 			unit = Unit.valueOf(baseUnit);
 		} catch (IllegalArgumentException e) {
+			// Could not parse the base unit
 			return false;
 		}
 
