@@ -72,14 +72,6 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 					dock: 'bottom',
 					layout: 'anchor',
 					items: [
-						// {
-						// 	xtype: 'hidden',
-						// 	name: 'commentId'
-						// },
-						// {
-						// 	xtype: 'hidden',
-						// 	name: 'replyCommentId'
-						// },
 						{
 							xtype: 'htmleditor',
 							name: 'comment',
@@ -95,7 +87,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 							{
 								xtype: 'label',
 								html: '<b>This comment will be sent to the vendor.</b>',
-								id: 'publicCommentWarning',
+								itemId: 'publicCommentWarning',
 								style: {
 									color:'red',
 									display: 'block',
@@ -155,7 +147,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 											itemId: 'privateCheckbox',
 											listeners: {
 												change: function(checkbox, newVal){
-													Ext.getCmp('publicCommentWarning').setHidden(newVal);
+													(Ext.ComponentQuery.query('#publicCommentWarning')[0]).setHidden(newVal);
 												}
 											}
 										}
