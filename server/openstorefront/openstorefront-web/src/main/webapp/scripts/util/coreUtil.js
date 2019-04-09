@@ -784,6 +784,7 @@ var CoreUtil = {
 					highlightStyle: item.highlightStyle,
 					type: item.type,
 					code: item.code,
+					unit: item.unit,
 					privateFlag: item.privateFlag,
 					comment: item.comment,
 					updateDts: item.updateDts,
@@ -1035,6 +1036,29 @@ var CoreUtil = {
 			return true;
 		}      
 		return false;		
+	},
+	validateNumber: function(value) {
+		var valid = true;
+		var msg = '';
+
+		if (Number(value)
+			&& typeof value === 'string'
+			&& Ext.String.endsWith(value.trim(), ".")
+			) {
+			valid = false;
+			msg = 'Number must not have a decimal point or have at least one digit after the decimal point.';
+		}
+		try {
+			var valueNumber = Number(value);
+			if (isNaN(valueNumber)) {						
+				valid = false;
+				msg = "Value must be a valid number."
+			}
+		} catch (e) {
+			valid = false;
+			msg = 'Number must not have a decimal point or have at least one digit after the decimal point.'
+		}
+		return { valid: valid, msg : msg }
 	},
 	traverseNestedModel: function(node, parents, target) {
 		if (!node) return;

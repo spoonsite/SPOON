@@ -259,6 +259,7 @@ public class AttributeResource
 					relationship.setTargetKey(attributeType.getAttributeType());
 					relationship.setTargetName(attributeType.getDescription());
 					relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+					relationship.setUnit(attributeType.getAttributeUnit());
 
 					relationships.add(relationship);
 				}
@@ -902,50 +903,6 @@ public class AttributeResource
 		}
 	}
 
-	// TODO:
-	// This does not work yet. It is a copy and paste from the method above.
-	@DELETE
-	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_UPDATE)
-	@APIDescription("Delete a type and migrate all the data for the type to a new attribute.  Runs in a background task.")
-	@Path("/attributetypes/{type}/migrate/{toType}")
-	public void migrateDeleteAttributeType(
-			@PathParam("type")
-			@RequiredParam String type,
-			@PathParam("toType")
-			@RequiredParam String toType)
-	{
-		AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
-		if (attributeType != null) {
-			service.getPersistenceService().setStatusOnEntity(AttributeType.class, type, AttributeType.PENDING_STATUS);
-
-			TaskRequest taskRequest = new TaskRequest();
-			taskRequest.setAllowMultiple(false);
-			taskRequest.setQueueable(true);
-			taskRequest.setName("Deleting Attribute Type");
-			taskRequest.setDetails("Attribute Type: " + type);
-			taskRequest.getTaskData().put("Type", type);
-			taskRequest.getTaskData().put("Status", attributeType.getActiveStatus());
-			taskRequest.setCallback(new AsyncTaskCallback()
-			{
-
-				@Override
-				public void beforeExecute(TaskFuture taskFuture)
-				{
-				}
-
-				@Override
-				public void afterExecute(TaskFuture taskFuture)
-				{
-					if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
-						service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
-					}
-				}
-
-			});
-			service.getAsyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(type);
-		}
-	}
-
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_CREATE)
 	@APIDescription("Activate a type.  Note: this activates all attribute type associations. Runs in a background task.")
@@ -1476,7 +1433,7 @@ public class AttributeResource
 	}
 	
 	@POST
-	@APIDescription("Check the unit parsing")
+	@APIDescription("Check a given unit list against a base unit")
 	@Path("/unitlistcheck")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})
@@ -1545,7 +1502,7 @@ public class AttributeResource
 	
 	}
 
-		@POST
+	@POST
 	@APIDescription("Given a bass unit and a list of compatible units return the list of conversion factors")
 	@Path("/unitconversionlist")
 	@Consumes(MediaType.APPLICATION_JSON)

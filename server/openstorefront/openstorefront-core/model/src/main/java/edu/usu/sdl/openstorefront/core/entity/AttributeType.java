@@ -134,7 +134,6 @@ public class AttributeType
 	
 	@ConsumeField
 	@APIDescription("Base Unit of measure for the attribute  ie... meters")
-	@ManyToOne(cascade = {CascadeType.ALL})
 	private String attributeUnit;
 
 	@ConsumeField

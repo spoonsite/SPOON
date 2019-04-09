@@ -84,6 +84,7 @@ Ext.define('OSF.form.Attributes', {
 					"code",
 					"typeDescription",
 					"codeDescription",
+					"unit",
 					"orphan",
 					"activeStatus",
 					{
@@ -100,6 +101,7 @@ Ext.define('OSF.form.Attributes', {
 			columns: [
 				{text: 'Attribute Type', dataIndex: 'typeDescription', width: 200},
 				{text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200},
+				{text: 'Attribute Unit', dataIndex: 'unit', flex: 1, minWidth: 200},
 				{text: 'Comment', dataIndex: 'comment', flex: 2, minWidth: 200},
 				{text: 'Private Flag', dataIndex: 'privateFlag', width: 150},
 				{text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
@@ -258,6 +260,7 @@ Ext.define('OSF.form.Attributes', {
 							}
 						}
 					],
+					// looks like a copy and paste from attributeAssignment.js
 					items: [
 						{
 							xtype: 'panel',
@@ -283,14 +286,14 @@ Ext.define('OSF.form.Attributes', {
 									flex: 1,
 									listConfig: {
 										getInnerTpl: function () {
-											return '{description} <tpl if="detailedDescription"><i class="fa fa-question-circle" data-qtip=\'{detailedDescription}\'></i></tpl>';
+											return '{description} <tpl if="attributeUnit">({attributeUnit})</tpl> <tpl if="detailedDescription"><i class="fa fa-question-circle" data-qtip=\'{detailedDescription}\'></i></tpl>';
 										}
 									},
 									store: {
 										autoLoad: false,
+										// the store is being loaded in the in loadData callback
 										proxy: {
-											type: 'ajax',
-											url: 'api/v1/resource/attributes'
+											type: 'ajax'
 										}
 									},
 									listeners: {
@@ -298,131 +301,30 @@ Ext.define('OSF.form.Attributes', {
 											var cbox = field.up('form').getComponent('attributeCodeCB');
 											cbox.clearValue();
 
+											var unitDisplay = field.up('form').getComponent('attributeUnit');
+
 											var record = field.getSelection();
 											if (record) {
 												cbox.getStore().loadData(record.data.codes);
 												cbox.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
 												cbox.setEditable(record.get("allowUserGeneratedCodes"));
+
+												unitDisplay.setValue(record.data.attributeUnit);
 											} else {
 												cbox.getStore().removeAll();
 												cbox.vtype = undefined;
 											}
 										}
 									}
-								},
-								{
-									xtype: 'button',
-									itemId: 'addAttributeType',
-									text: 'Add',
-									iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-									minWidth: 100,
-									hidden: true,
-									handler: function () {
-										var attributeTypeCb = attributePanel.queryById('attributeTypeCB');
-
-
-										var addTypeWin = Ext.create('Ext.window.Window', {
-											title: 'Add Type',
-											iconCls: 'fa fa-plus',
-											closeAction: 'destroy',
-											alwaysOnTop: true,
-											modal: true,
-											width: 400,
-											height: 380,
-											layout: 'fit',
-											items: [
-												{
-													xtype: 'form',
-													scrollable: true,
-													layout: 'anchor',
-													bodyStyle: 'padding: 10px',
-													defaults: {
-														labelAlign: 'top',
-														labelSeparator: '',
-														width: '100%'
-													},
-													items: [
-														{
-															xtype: 'textfield',
-															name: 'label',
-															fieldLabel: 'Label <span class="field-required" />',
-															allowBlank: false,
-															maxLength: 255
-														},
-														{
-															xtype: 'textarea',
-															name: 'detailedDescription',
-															fieldLabel: 'Description',
-															maxLength: 255
-														},
-														{
-															xtype: 'combobox',
-															fieldLabel: 'Code Label Value Type <span class="field-required" />',
-															displayField: 'description',
-															valueField: 'code',
-															typeAhead: false,
-															editable: false,
-															allowBlank: false,
-															name: 'attributeValueType',
-															store: {
-																autoLoad: true,
-																proxy: {
-																	type: 'ajax',
-																	url: 'api/v1/resource/lookuptypes/AttributeValueType'
-																}
-															}
-														}
-													],
-													dockedItems: [
-														{
-															xtype: 'toolbar',
-															dock: 'bottom',
-															items: [
-																{
-																	text: 'Save',
-																	formBind: true,
-																	iconCls: 'fa fa-lg fa-save icon-button-color-save',
-																	handler: function () {
-																		var form = this.up('form');
-																		var data = form.getValues();
-																		var addTypeWin = this.up('window');
-
-																		CoreUtil.submitForm({
-																			url: 'api/v1/resource/attributes/attributetypes/metadata?componentType=' + encodeURIComponent(attributePanel.component.componentType),
-																			method: 'POST',
-																			data: data,
-																			form: form,
-																			success: function (response, opts) {
-																				attributeTypeCb.getStore().load({
-																					url: 'api/v1/resource/attributes/optional?componentType=' + encodeURIComponent(attributePanel.component.componentType)
-																				});
-																				addTypeWin.close();
-																			}
-																		});
-
-																	}
-																},
-																{
-																	xtype: 'tbfill'
-																},
-																{
-																	text: 'Cancel',
-																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-																	handler: function () {
-																		this.up('window').close();
-																	}
-																}
-															]
-														}
-													]
-												}
-											]
-										});
-										addTypeWin.show();
-
-									}
 								}
 							]
+						},
+						{
+							xtype: 'textfield',
+							itemId: 'attributeUnit',
+							fieldLabel: 'Attribute Unit',
+							labelWidth: 150,
+							editable: false
 						},
 						{
 							xtype: 'combobox',
