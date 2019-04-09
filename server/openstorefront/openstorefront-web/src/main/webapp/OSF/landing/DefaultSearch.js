@@ -231,10 +231,39 @@ Ext.define('OSF.landing.DefaultSearch', {
 								],
 								listeners: {
 									onload: function(){
-
+										// TODO: Get user search options
+										// 		if none make SO from global
 									},
 									change: function(checkBox, newVal, oldVal){
-										console.log(checkBox);
+										var searchOptions = {
+											canUseOrganizationsInSearch: true, 
+											canUseNameInSearch: true, 
+											canUseDescriptionInSearch: true, 
+											canUseTagsInSearch: true, 
+											canUseAttributesInSearch: true
+										}
+										values = checkBox.getValue();
+										var isMyObjectEmpty = !Object.keys(values).length;
+										console.log(isMyObjectEmpty);
+										if (isMyObjectEmpty){
+											
+										}
+										
+										if(!values.canUseOrganizationsInSearch){
+											searchOptions.canUseOrganizationsInSearch = false;
+										}
+										if(!values.canUseNameInSearch){
+											searchOptions.canUseNameInSearch = false;
+										}
+										if(!values.canUseDescriptionInSearch){
+											searchOptions.canUseDescriptionInSearch = false;
+										}
+										if(!values.canUseTagsInSearch){
+											searchOptions.canUseTagsInSearch = false;
+										}
+										if(!values.canUseAttributesInSearch){
+											searchOptions.canUseAttributesInSearch = false;
+										}
 									}
 								}
 							},

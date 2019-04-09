@@ -139,7 +139,46 @@ public class SearchServiceImpl
 						persistenceService.persist(existing);
 		} else {
 						searchOptions.setSearchOptionsId(persistenceService.generateId());
-						searchOptions.setGlobalFlag(true);
+						searchOptions.setGlobalFlag(Boolean.TRUE);
+						searchOptions.setDefaultSearchOptions();
+						existing = persistenceService.persist(searchOptions);
+		}
+		return existing;
+	}
+
+	public SearchOptions getUserSearchOptions(){
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		SearchOptions searchOptions = searchOptionsExample.find();
+		
+		if(searchOptions == null){
+			// Return the default.
+			searchOptions = new SearchOptions();
+			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
+			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
+			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
+		}		
+		return searchOptions;		
+	}
+
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions){
+		
+		OSFCacheManager.getSearchCache().removeAll();
+
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);                     
+		SearchOptions existing = searchOptionsExample.findProxy();                   
+		
+		if (existing != null) {
+						searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+						existing.updateFields(searchOptions);
+						persistenceService.persist(existing);
+		} else {
+						searchOptions.setSearchOptionsId(persistenceService.generateId());
+						searchOptions.setGlobalFlag(Boolean.FALSE);
 						searchOptions.setDefaultSearchOptions();
 						existing = persistenceService.persist(searchOptions);
 		}
