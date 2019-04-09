@@ -139,9 +139,9 @@ public class RequiredForComponentTest
 
 		List<AttributeType> requiredAttributes = new ArrayList<>();
 		requiredAttributes.add(attributeType);
-		Mockito.when(attributeService.findRequiredAttributes("B", false)).thenReturn(requiredAttributes);
-		Mockito.when(attributeService.findRequiredAttributes("C", false)).thenReturn(requiredAttributes);
-		Mockito.when(attributeService.findRequiredAttributes("A", false)).thenReturn(new ArrayList<>());
+		Mockito.when(attributeService.findRequiredAttributes("B", false, null)).thenReturn(requiredAttributes);
+		Mockito.when(attributeService.findRequiredAttributes("C", false, null)).thenReturn(requiredAttributes);
+		Mockito.when(attributeService.findRequiredAttributes("A", false, null)).thenReturn(new ArrayList<>());
 
 		ComponentTypeNestedModel nestedModel = new ComponentTypeNestedModel();
 

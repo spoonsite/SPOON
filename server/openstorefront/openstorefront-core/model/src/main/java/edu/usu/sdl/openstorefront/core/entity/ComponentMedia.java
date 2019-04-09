@@ -161,7 +161,19 @@ public class ComponentMedia
 			this.setFileName(media.getFileName());
 			this.setOriginalName(media.getOriginalName());
 			this.setMimeType(media.getMimeType());
-			this.setFile(media.getFile());
+
+			/**
+			 * This change was added to prevent duplicate files being created
+			 * from proxying the database.
+			 */
+			if (this.getFile() != null) {
+				this.getFile().setFileName(media.getFile().getFileName());
+				this.getFile().setOriginalName(media.getFile().getOriginalName());
+				this.getFile().setMimeType(media.getFile().getMimeType());
+				this.getFile().setFileType(media.getFile().getFileType());
+			} else {
+				this.setFile(media.getFile());
+			}
 		}
 		this.setCaption(media.getCaption());
 		this.setLink(media.getLink());
