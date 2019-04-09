@@ -91,13 +91,13 @@
 							hidden:true,
 
 							beforeRender:function(){
-										CoreService.brandingservice.getCurrentBranding().then(function(branding){
-											if(branding.disclaimerMessage){
-												console.log("branding.disclaimerMessage:")
-												Ext.getCmp("disclaimerPanel").setVisible(true);
-											}
-										});
+								//if there is a disclaimer message, show the element
+								CoreService.brandingservice.getCurrentBranding().then(function(branding){
+									if(branding.disclaimerMessage){
+										Ext.getCmp("disclaimerPanel").setVisible(true);
 									}
+								});
+							}
 							
 							
 						}
