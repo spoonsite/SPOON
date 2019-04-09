@@ -15,41 +15,41 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import java.io.Serializable;
 
 /**
  *
  * @author rfrazier
  */
-public class AttributeUnitView
+public class SimpleRestError
 {
-	private String unit;
-	private Double conversionFactor;
+	private boolean success = false;
+	private String error = "";
 	
-	AttributeUnitView() {}
+	public SimpleRestError() {}
 	
-	AttributeUnitView(String unit, Double conversionFactor) {
-		this.unit = unit;
-		this.conversionFactor = conversionFactor;
+	public SimpleRestError(String error) {
+		this.error = error;
 	}
 
-	public String getUnit()
+	public boolean isSuccess()
 	{
-		return unit;
+		return success;
 	}
 
-	public void setUnit(String unit)
+	public void setSuccess(boolean success)
 	{
-		this.unit = unit;
+		this.success = success;
 	}
 
-	public Double getConversionFactor()
+	public String getError()
 	{
-		return conversionFactor;
+		return error;
 	}
 
-	public void setConversionFactor(Double conversionFactor)
+	public void setError(String error)
 	{
-		this.conversionFactor = conversionFactor;
+		this.error = error;
 	}
 	
 }

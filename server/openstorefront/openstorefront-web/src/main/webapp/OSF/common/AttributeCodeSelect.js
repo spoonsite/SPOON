@@ -133,7 +133,6 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 
 		if (attributePanel.attributeUnit && attributePanel.attributeUnitList) {
 			var unitList = attributePanel.attributeUnitList;
-			var preferredUnit = attributePanel.preferredUnit;
 			var baseUnit = {
 				"conversionFactor": 1,
 				"unit": attributePanel.attributeUnit,
