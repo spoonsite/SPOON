@@ -214,6 +214,9 @@
 									{ text: 'Vitals', section: 'vitals' }
 								];
 
+								//Disclaimer 
+								entry.disclaimerMessage = CoreService.brandingservice.branding.disclaimerMessage;
+
 								// for each evaluation of this component, add a section for it (indicating it's version)
 								for (var ii = 0; ii < entry.fullEvaluations.length; ii += 1) {
 									var evalVersion = entry.fullEvaluations.length > 1 ? ' - version: ' + entry.fullEvaluations[ii].evaluation.version : '';

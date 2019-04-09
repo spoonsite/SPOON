@@ -249,9 +249,6 @@ public class Branding
 	@ConsumeField
 	private Boolean showLinkToMobile;
 	
-	@ConsumeField
-	private Boolean showDisclaimerFlg;
-	
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
@@ -322,7 +319,6 @@ public class Branding
 		setOverrideCSS(branding.getOverrideCSS());
 
 		setShowLinkToMobile(branding.getShowLinkToMobile());
-		setShowDisclaimer(branding.getShowDisclaimer());
 		setDisclaimerMessage(branding.getDisclaimerMessage());
 		setUseDefaultLandingPage(branding.getUseDefaultLandingPage());
 		setLandingTemplate(branding.getLandingTemplate());
@@ -825,16 +821,6 @@ public class Branding
 	public void setShowLinkToMobile(Boolean showLinkToMobile)
 	{
 		this.showLinkToMobile = showLinkToMobile;
-	}
-	
-	public Boolean getShowDisclaimer()
-	{
-		return showDisclaimerFlg;
-	}
-	
-	public void setShowDisclaimer(Boolean showDisclaimerFlg)
-	{
-		this.showDisclaimerFlg = showDisclaimerFlg;
 	}
 	
 	public String getDisclaimerMessage()

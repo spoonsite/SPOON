@@ -1513,8 +1513,8 @@
 							},
 							{
 								xtype: 'button',
+								//hidden:true,
 								html:'<span style="font-style:italic;">Disclaimer</span>',
-								//text:"Disclaimer",
 								style:{
 									'text-align':'right',
 									'margin-right':'1em'
@@ -1522,13 +1522,22 @@
 								listeners:{
 									click:function(){
 										Ext.Msg.alert('SPOON Disclaimer', 
-										'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i><br> All of the entries available on SPOON are user-submitted. While some preliminary checks are made on data submitted to the site,\
-										SPOON does not exhaustively examine or test any of the products displayed here and thus make no promise or guarrentee about the veracity \
-										any of the data available here. You, the user, are advised to contact vendor representives and conduct their own research before acting on any\
-										product information made available through SPOON.<br><br>',
+										'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i>' + 
+										CoreService.brandingservice.branding.disclaimerMessage +
+										'<br><br>',
 										 Ext.emptyFn);
-									}
-								}
+									},
+									// afterrender: function(){
+									// 	// If there is a disclaimer, show the disclaimer button.
+									// 	CoreService.brandingservice.getCurrentBranding().then(function(branding){
+									// 		console.log("the afterrender was fired.")
+									// 		if(branding.disclaimerMessage){
+									// 			console.log("branding.disclaimerMessage exsists.")
+									// 			this.hidden = false;
+									// 		}
+									// 	});
+									// }
+								}								
 							}
 						]
 					}

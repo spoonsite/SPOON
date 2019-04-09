@@ -318,6 +318,15 @@ limitations under the License.
 	text-decoration: none;
 }
 
+.home-footer-disclaimer-text{
+	color:white;
+	font-style: italic;
+	display:block;
+	 font-align:center;
+	 padding-left:20%;
+	 padding-right:20%;
+}
+
 .home-page-top-logo {
 	z-index: 10;
 	position: fixed !important;

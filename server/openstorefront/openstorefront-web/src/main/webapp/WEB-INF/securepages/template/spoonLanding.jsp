@@ -30,7 +30,6 @@
 
 	Ext.onReady(function(){
 
-	
 		
 
 		Ext.create('Ext.container.Viewport', {			
@@ -81,7 +80,25 @@
 						{
 							xtype: 'osf-defaultversion',
 							bodyStyle: 'padding-bottom: 20px;'
-						}	
+						},
+						{
+							xtype: 'osf-defaultdisclaimer',
+							bodyStyle: 'padding-bottom: 20px;',
+							hidden:true,
+							afterRender: function(){
+								// If there is a disclaimer, show the disclaimer button.
+								var disclaimer = this;
+
+								// CoreService.brandingservice.getCurrentBranding().then(function(branding){
+								// 	console.log("the afterrender was fired.")
+								// 	if(branding.disclaimerMessage){
+								// 		console.log(this.getComponent("disclaimer"));
+								// 		console.log("branding.disclaimerMessage exsists.");
+								// 		this.hidden = false;
+								// 	}
+								// });
+							}
+						}
 					]
 				}
 
