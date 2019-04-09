@@ -78,7 +78,7 @@ following steps:
 
     http://localhost:8983 should bring up the admin consol if it's working.
 
-4.  Configure OpenStorefront to point to Solr by going to:
+4.  Configure SPOON to point to Solr by going to:
     /var/openstorefront/config/openstorefront.properties
 
 5.  Edit 
@@ -167,7 +167,7 @@ service solr start|stop
 	
 http://localhost:9200 should return some json with stats.
 
-3. Configure OpenStorefront to point to Solr by going to: /var/openstorefront/config/openstorefront.properties or System admin screen
+3. Configure SPOON to point to Solr by going to: /var/openstorefront/config/openstorefront.properties or System admin screen
 
 ```ini
 # Add/Set: (adjust as needed to match url and ports)
@@ -194,7 +194,7 @@ elastic.server.port=9200
 
     http://localhost:9200 should return some json with stats.
 
-3. Configure OpenStorefront to point to elastisearch by going to: /var/openstorefront/config/openstorefront.properties or System admin screen->system properties 
+3. Configure SPOON to point to elastisearch by going to: /var/openstorefront/config/openstorefront.properties or System admin screen->system properties 
 
 4. Add/Set: (adjust as needed to match url and ports) 
 

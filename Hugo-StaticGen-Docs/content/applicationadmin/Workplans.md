@@ -10,7 +10,7 @@ weight = 2
 ### 1.1 Create the Workplan
 
 1. Navigate to __Admin Tools__ if you are not already there (click on your username in the upper-right, then Admin Tools)
-2. Select __Data Management &rarr; Workplan Progress__
+2. Select __Data Management &rarr; Workplan Management__
 3. Click __+Add Workplan__ ![Workplan Creation Tool](/images/AppAdmin/AddWorkplan.JPG)
 4. First fill in the Workplan Config Section
   * Workplan Name: Unique Workplan name

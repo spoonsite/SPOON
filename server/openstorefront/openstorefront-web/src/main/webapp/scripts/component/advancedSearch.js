@@ -163,7 +163,8 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							width: '100%',
 							fieldLabel: 'Value  <span class="field-required" />',
 							allowBlank: false,
-							maxLength: 1024
+							maxLength: 200,
+							enforceMaxLength: true,
 						},	
 						{
 							xtype: 'combobox', 
@@ -539,7 +540,8 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							name: 'value',
 							width: '100%',
 							fieldLabel: 'Value',							
-							maxLength: 1024
+							maxLength: 200,
+							enforceMaxLength: true
 						}						
 					]
 				});
@@ -563,7 +565,8 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							width: '100%',
 							fieldLabel: 'Value <span class="field-required" />',
 							allowBlank: false,
-							maxLength: 1024
+							maxLength: 200,
+							enforceMaxLength: true
 						},
 						{
 							xtype: 'checkbox',
@@ -694,7 +697,8 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							width: '100%',
 							fieldLabel: 'Value  <span class="field-required" />',
 							allowBlank: false,
-							maxLength: 1024
+							maxLength: 200,
+							enforceMaxLength: true
 						},						
 						{
 							xtype: 'combobox', 
@@ -832,7 +836,8 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							width: '100%',
 							fieldLabel: 'Value  <span class="field-required" />',
 							allowBlank: false,
-							maxLength: 1024
+							maxLength: 200,
+							enforceMaxLength: true
 						},	
 						{
 							xtype: 'combobox', 
@@ -959,7 +964,8 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							width: '100%',
 							fieldLabel: 'Value <span class="field-required" />',
 							allowBlank: false,
-							maxLength: 1024
+							maxLength: 200,
+							enforceMaxLength: true
 						},
 						{
 							xtype: 'checkbox',
@@ -1003,7 +1009,8 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							width: '100%',
 							fieldLabel: 'Value <span class="field-required" />',
 							allowBlank: false,
-							maxLength: 1024
+							maxLength: 200,
+							enforceMaxLength: true
 						},
 						{
 							xtype: 'checkbox',
@@ -1108,7 +1115,8 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							width: '100%',
 							fieldLabel: 'Value  <span class="field-required" />',
 							allowBlank: false,
-							maxLength: 1024
+							maxLength: 200,
+							enforceMaxLength: true
 						},	
 						{
 							xtype: 'combobox', 
@@ -1266,7 +1274,8 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							width: '100%',
 							fieldLabel: 'Value  <span class="field-required" />',
 							allowBlank: false,
-							maxLength: 1024
+							maxLength: 200,
+							enforceMaxLength: true
 						},	
 						{
 							xtype: 'combobox', 

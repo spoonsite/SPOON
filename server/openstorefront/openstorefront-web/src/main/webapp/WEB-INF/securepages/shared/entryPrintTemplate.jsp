@@ -323,7 +323,7 @@ limitations under the License.
 			<hr>
 			<tpl for="reviews">
 				<table style="width:100%">
-					<tpl if="activeStatus == 'P'"><tr><td colspan="3" class="alert-warning" style="text-align: center; font-size: 1.5em; font-weight: bold;"><i class="fa fa-warning"></i> Review pending admin approval before being made public.</td></tr></tpl>
+					<tpl if="activeStatus == 'P'"><tr><td colspan="3" class="alert-warning" style="text-align: center; font-size: 1.5em; font-weight: bold;"><i class="fa fa-warning"></i> Review pending moderator approval before being made public.</td></tr></tpl>
 					<tr>
 						<td valign="top">
 							<h1><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title} <br> <tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></h1>								
@@ -359,7 +359,7 @@ limitations under the License.
 			<h2>Questions</h2>
 			<hr>
 			<tpl for="questions">
-				<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-size: 1.5em; font-weight: bold;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div></tpl>
+				<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-size: 1.5em; font-weight: bold;"><i class="fa fa-warning"></i> Question pending moderator approval before being made public.</div></tpl>
 				<div class="question-question"><span class="question-response-letter-q">Q.</span> <tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{question}</b></div>
 				<div class="question-info">
 					{username} ({userType}) - {[Ext.util.Format.date(values.questionUpdateDts, "m/Y")]}
