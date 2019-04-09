@@ -1102,13 +1102,13 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly)
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, String submissionTemplateId)
 	{
-		return findRequiredAttributes(componentType, submissionTypesOnly, false);
+		return findRequiredAttributes(componentType, submissionTypesOnly, false, submissionTemplateId);
 	}
 
 	@Override
-	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes)
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes, String submissionTemplateId)
 	{
 		List<AttributeType> requiredAttributes = new ArrayList<>();
 
@@ -1129,9 +1129,13 @@ public class AttributeServiceImpl
 			});
 
 			//filter out attribute already on submission form
-			SubmissionFormTemplate template = getSubmissionFormService().findTemplateForComponentType(componentType);
-			Set<String> alreadyInForm = findSingleAttributeTypesInForm(template);
-			requiredAttributes.removeIf(type -> alreadyInForm.contains(type.getAttributeType()));
+			if (StringUtils.isNotBlank(submissionTemplateId)) {
+				SubmissionFormTemplate template = persistenceService.findById(SubmissionFormTemplate.class, submissionTemplateId);
+				if (template != null) {
+					Set<String> alreadyInForm = findSingleAttributeTypesInForm(template);
+					requiredAttributes.removeIf(type -> alreadyInForm.contains(type.getAttributeType()));
+				}
+			}
 		}
 		return requiredAttributes;
 	}
@@ -1175,7 +1179,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<AttributeType> findOptionalAttributes(String componentType, boolean submissionTypesOnly)
+	public List<AttributeType> findOptionalAttributes(String componentType, boolean submissionTypesOnly, String submissionTemplateId)
 	{
 		List<AttributeType> optionalAttributes = new ArrayList<>();
 
@@ -1202,9 +1206,13 @@ public class AttributeServiceImpl
 			});
 
 			//filter out attribute already on submission form
-			SubmissionFormTemplate template = getSubmissionFormService().findTemplateForComponentType(componentType);
-			Set<String> alreadyInForm = findSingleAttributeTypesInForm(template);
-			optionalAttributes.removeIf(type -> alreadyInForm.contains(type.getAttributeType()));
+			if (StringUtils.isNotBlank(submissionTemplateId)) {
+				SubmissionFormTemplate template = persistenceService.findById(SubmissionFormTemplate.class, submissionTemplateId);
+				if (template != null) {
+					Set<String> alreadyInForm = findSingleAttributeTypesInForm(template);
+					optionalAttributes.removeIf(type -> alreadyInForm.contains(type.getAttributeType()));
+				}
+			}
 		}
 		return optionalAttributes;
 	}

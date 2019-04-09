@@ -30,7 +30,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldType;
-import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
@@ -45,10 +44,8 @@ import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -368,14 +365,10 @@ public class ComplexMapper
 	{
 		List<AttributeType> attributeTypes;
 		if (required) {
-			attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true);
+			attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true, template.getSubmissionTemplateId());
 		} else {
-			attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findOptionalAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true);
+			attributeTypes = ServiceProxyFactory.getServiceProxy().getAttributeService().findOptionalAttributes(componentFormSet.getPrimary().getComponent().getComponentType(), true, template.getSubmissionTemplateId());
 		}
-
-		//remove required attribute all ready in the form
-		Set<String> alreadyInForm = findSingleAttributeTypesInForm(template);
-		attributeTypes.removeIf(type -> alreadyInForm.contains(type.getAttributeType()));
 
 		// get the attributes whose type matches any of the above attribute types.
 		List<ComponentAttribute> completeList = componentFormSet.getPrimary().getAttributes();
@@ -391,27 +384,6 @@ public class ComplexMapper
 		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(reducedList));
 		userSubmissionField.setRawValue(value);
 
-	}
-
-	private Set<String> findSingleAttributeTypesInForm(SubmissionFormTemplate template)
-	{
-		Set<String> attributeTypesInForm = new HashSet<>();
-
-		for (SubmissionFormSection section : template.getSections()) {
-			for (SubmissionFormField field : section.getFields()) {
-
-				switch (field.getFieldType()) {
-
-					case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
-					case SubmissionFormFieldType.ATTRIBUTE_RADIO:
-					case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
-						attributeTypesInForm.add(field.getAttributeType());
-						break;
-				}
-
-			}
-		}
-		return attributeTypesInForm;
 	}
 
 	private void mapSingleAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet, SubmissionFormField submissionField) throws JsonProcessingException

@@ -699,7 +699,7 @@ public abstract class GeneralComponentResourceExt
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 
-			List<AttributeType> requiredAttributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponent().getComponentType(), false);
+			List<AttributeType> requiredAttributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponent().getComponentType(), false, null);
 			Set<String> requiredTypeSet = requiredAttributeTypes.stream()
 					.map(AttributeType::getAttributeType)
 					.collect(Collectors.toSet());
