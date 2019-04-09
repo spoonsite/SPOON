@@ -23,6 +23,9 @@
 Ext.define('OSF.customSubmission.form.Attributes', {
 	extend: 'OSF.customSubmission.SubmissionBaseForm',
 	alias: 'widget.osf-submissionform-attribute',
+	requires: [
+		'OSF.customSubmission.form.AddAttribute'
+	],
 	
 	layout: 'anchor',
 	bodyStyle: 'padding: 10px',
@@ -126,132 +129,19 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 									codeField.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
 								} else {
 
-									// Nothing Selcted, Remove All Codes
+									// Nothing Selected, Remove All Codes
 									codeField.getStore().removeAll();
 									codeField.vtype = undefined;
 								}
 							}
 						}						
 					},
-					{
-						xtype: 'button',
-						itemId: 'addAttributeType',
-						text: 'Add',
-						iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-						minWidth: 100,
-						hidden: true,
-						handler: function () {
-							var attributeTypeCb = attributePanel.queryById('attributeTypeCB');
-
-
-							var addTypeWin = Ext.create('Ext.window.Window', {
-								title: 'Add Type',
-								iconCls: 'fa fa-plus',
-								closeAction: 'destroy',
-								alwaysOnTop: 9999,								
-								modal: true,
-								width: 400,
-								height: 380,
-								layout: 'fit',
-								items: [
-									{
-										xtype: 'form',
-										scrollable: true,
-										layout: 'anchor',
-										bodyStyle: 'padding: 10px',
-										defaults: {
-											labelAlign: 'top',
-											labelSeparator: '',
-											width: '100%'
-										},
-										items: [
-											{
-												xtype: 'textfield',
-												name: 'label',
-												fieldLabel: 'Label <span class="field-required" />',
-												allowBlank: false,
-												maxLength: 255
-											},
-											{
-												xtype: 'textarea',
-												name: 'detailedDescription',
-												fieldLabel: 'Description',
-												maxLength: 255
-											},
-											{
-												xtype: 'combobox',
-												fieldLabel: 'Code Label Value Type <span class="field-required" />',
-												displayField: 'description',
-												valueField: 'code',
-												typeAhead: false,
-												editable: false,
-												allowBlank: false,
-												name: 'attributeValueType',
-												store: {
-													autoLoad: true,
-													proxy: {
-														type: 'ajax',
-														url: 'api/v1/resource/lookuptypes/AttributeValueType'
-													}
-												}
-											}
-										],
-										dockedItems: [
-											{
-												xtype: 'toolbar',
-												dock: 'bottom',
-												items: [
-													{
-														text: 'Save',
-														formBind: true,
-														iconCls: 'fa fa-lg fa-save icon-button-color-save',
-														handler: function () {
-															var form = this.up('form');
-															var data = form.getValues();
-															var addTypeWin = this.up('window');
-
-															var componentType = attributePanel.componentType.componentType;
-															if (componentType) {
-																componentType = encodeURIComponent(componentType);
-															} else {
-																componentType = '';
-															}
-
-															CoreUtil.submitForm({
-																url: 'api/v1/resource/attributes/attributetypes/metadata?componentType=' + componentType,
-																method: 'POST',
-																data: data,
-																form: form,
-																success: function (response, opts) {
-																	
-																	var newAttribute = Ext.decode(response.responseText);
-																	attributeTypeCb.getStore().add(newAttribute);
-																	addTypeWin.close();
-																}
-															});
-
-														}
-													},
-													{
-														xtype: 'tbfill'
-													},
-													{
-														text: 'Cancel',
-														iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-														handler: function () {
-															this.up('window').close();
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							});
-							addTypeWin.show();
-
-						}
-					}
+					// Current policy is that users cannot create new attributes
+					// {
+					// 	xtype: 'osf-submissionform-add-attribute',
+					// 	componentType: attributePanel.componentType,
+					// 	attributeTypeCB: this..queryById('attributeTypeCB');
+					// }
 				]
 			},
 			{
