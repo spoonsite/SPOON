@@ -1513,7 +1513,8 @@
 							},
 							{
 								xtype: 'button',
-								//hidden:true,
+								id: 'disclaimerButton',
+								hidden:true,
 								html:'<span style="font-style:italic;">Disclaimer</span>',
 								style:{
 									'text-align':'right',
@@ -1527,16 +1528,13 @@
 										'<br><br>',
 										 Ext.emptyFn);
 									},
-									// afterrender: function(){
-									// 	// If there is a disclaimer, show the disclaimer button.
-									// 	CoreService.brandingservice.getCurrentBranding().then(function(branding){
-									// 		console.log("the afterrender was fired.")
-									// 		if(branding.disclaimerMessage){
-									// 			console.log("branding.disclaimerMessage exsists.")
-									// 			this.hidden = false;
-									// 		}
-									// 	});
-									// }
+									beforeRender:function(){
+										CoreService.brandingservice.getCurrentBranding().then(function(branding){
+											if(branding.disclaimerMessage){
+												Ext.getCmp("disclaimerButton").setVisible(true);
+											}
+										});
+									}
 								}								
 							}
 						]

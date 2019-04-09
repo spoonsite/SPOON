@@ -157,10 +157,6 @@ public class BrandingServiceImpl
 					branding.setFeedbackHandler(FeedbackHandleType.JIRA);
 				}
 
-				if (branding.getShowDisclaimer() == null){
-					branding.setShowDisclaimer(true);
-				}
-
 				if (branding.getDisclaimerMessage() == null){
 					branding.setDisclaimerMessage("Disclaimer: This organization provides no guarantees for the validity of the data provided.");
 				}

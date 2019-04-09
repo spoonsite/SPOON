@@ -87,14 +87,17 @@
 						{
 							xtype: 'osf-defaultdisclaimer',
 							bodyStyle: 'padding-bottom: 20px;',
+							id: 'disclaimerPanel',
 							hidden:true,
 
-							// beforeRender: function(){
-							// 	disclaimerElement = this;
-							// 	this.hidden = false;
-							// 	//if disclaimer message exists, show the message text panel
-							// 	console.log(CoreService.brandingservice.getCurrentBranding())
-							// }
+							beforeRender:function(){
+										CoreService.brandingservice.getCurrentBranding().then(function(branding){
+											if(branding.disclaimerMessage){
+												console.log("branding.disclaimerMessage:")
+												Ext.getCmp("disclaimerPanel").setVisible(true);
+											}
+										});
+									}
 							
 							
 						}

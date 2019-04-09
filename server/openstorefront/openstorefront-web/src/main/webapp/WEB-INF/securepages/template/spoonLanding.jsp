@@ -85,18 +85,15 @@
 							xtype: 'osf-defaultdisclaimer',
 							bodyStyle: 'padding-bottom: 20px;',
 							hidden:true,
-							afterRender: function(){
-								// If there is a disclaimer, show the disclaimer button.
-								var disclaimer = this;
-
-								// CoreService.brandingservice.getCurrentBranding().then(function(branding){
-								// 	console.log("the afterrender was fired.")
-								// 	if(branding.disclaimerMessage){
-								// 		console.log(this.getComponent("disclaimer"));
-								// 		console.log("branding.disclaimerMessage exsists.");
-								// 		this.hidden = false;
-								// 	}
-								// });
+							id: 'disclaimerPanel',
+							beforeRender:function(){
+								//if there is a disclaimer message in branding, show it
+								CoreService.brandingservice.getCurrentBranding().then(function(branding){
+									if(branding.disclaimerMessage){
+										console.log("branding.disclaimerMessage:", branding.disclaimerMessage)
+										Ext.getCmp("disclaimerPanel").setVisible(true);
+									}
+								});
 							}
 						}
 					]

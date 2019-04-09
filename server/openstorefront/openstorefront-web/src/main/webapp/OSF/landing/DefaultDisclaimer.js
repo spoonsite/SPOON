@@ -40,21 +40,20 @@ Ext.define('OSF.landing.DefaultDisclaimer', {
 
 	initComponent: function () {
 
-        console.log("pleas work")
 		this.callParent();	
         var disclaimerPanel = this;
 		
-		// CoreService.brandingservice.getCurrentBranding().then(function(branding){
-		// 	disclaimerPanel.getComponent('disclaimer').update(
-        //         '<i>' + branding.disclaimerMessage + '</i>'
-        //         );	
-        //     disclaimerPanel.ownerCt.bodyCls = disclaimerPanel.ownerCt.bodyCls + "home-footer-disclaimer";
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){console.log("fired")
+			disclaimerPanel.getComponent('disclaimer').update(
+                '<i>' + branding.disclaimerMessage + '</i>'
+                );	
+            disclaimerPanel.ownerCt.bodyCls = disclaimerPanel.ownerCt.bodyCls + "home-footer-disclaimer";
             
-        //     if(branding.disclaimerMessage){
-        //         disclaimerPanel.ownerCt.hidden = false;
-        //     }
+            if(branding.disclaimerMessage){
+                disclaimerPanel.ownerCt.hidden = false;
+            }
 
-		// });
+		});
 		
 	}
 	
