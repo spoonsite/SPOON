@@ -147,7 +147,7 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 											itemId: 'privateCheckbox',
 											listeners: {
 												change: function(checkbox, newVal){
-													(Ext.ComponentQuery.query('#publicCommentWarning')[0]).setHidden(newVal);
+													checkbox.up('form').queryById('publicCommentWarning').setHidden(newVal);
 												}
 											}
 										}
