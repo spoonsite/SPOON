@@ -116,6 +116,7 @@ public class SearchServiceImpl
 		if(searchOptions == null){
 			// Return the default.
 			searchOptions = new SearchOptions();
+			searchOptions.setUsername(null);
 			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
 			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
@@ -130,7 +131,7 @@ public class SearchServiceImpl
 		OSFCacheManager.getSearchCache().removeAll();
 
 		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);                     
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		SearchOptions existing = searchOptionsExample.findProxy();                   
 		
 		if (existing != null) {
@@ -140,6 +141,7 @@ public class SearchServiceImpl
 		} else {
 						searchOptions.setSearchOptionsId(persistenceService.generateId());
 						searchOptions.setGlobalFlag(Boolean.TRUE);
+						searchOptions.setUsername(null);
 						searchOptions.setDefaultSearchOptions();
 						existing = persistenceService.persist(searchOptions);
 		}
@@ -147,6 +149,7 @@ public class SearchServiceImpl
 	}
 
 	public SearchOptions getUserSearchOptions(){
+		
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
@@ -166,7 +169,7 @@ public class SearchServiceImpl
 
 	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions){
 		
-		OSFCacheManager.getSearchCache().removeAll();
+		//clear users cache
 
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);                     

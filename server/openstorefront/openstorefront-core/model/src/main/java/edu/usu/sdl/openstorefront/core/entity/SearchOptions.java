@@ -32,6 +32,10 @@ public class SearchOptions
 	@PK(generated = true)
 	private String searchOptionsId;
 
+	@APIDescription("Username for saving user searches")
+	@ConsumeField
+	private String username;
+
 	@APIDescription("Flag for using Component organizations in searches")
 	@ConsumeField
 	private Boolean canUseOrganizationsInSearch;
@@ -112,6 +116,15 @@ public class SearchOptions
 		this.searchOptionsId = searchOptionsId;
 	}
 
+	public String getUsername()
+	{
+		return username;
+	}
+
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
 	
 	public Boolean getCanUseOrganizationsInSearch()
 	{

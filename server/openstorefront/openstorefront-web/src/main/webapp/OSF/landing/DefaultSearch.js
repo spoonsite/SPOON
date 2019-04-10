@@ -59,6 +59,46 @@ Ext.define('OSF.landing.DefaultSearch', {
 				align: 'stretch'
 			},
 			performSearch: function (query) {
+
+				//save search options
+				var searchOptions = {
+					canUseOrganizationsInSearch: true, 
+					canUseNameInSearch: true, 
+					canUseDescriptionInSearch: true, 
+					canUseTagsInSearch: true, 
+					canUseAttributesInSearch: true
+				}
+
+				if(!values.canUseOrganizationsInSearch){
+					searchOptions.canUseOrganizationsInSearch = false;
+				}
+				if(!values.canUseNameInSearch){
+					searchOptions.canUseNameInSearch = false;
+				}
+				if(!values.canUseDescriptionInSearch){
+					searchOptions.canUseDescriptionInSearch = false;
+				}
+				if(!values.canUseTagsInSearch){
+					searchOptions.canUseTagsInSearch = false;
+				}
+				if(!values.canUseAttributesInSearch){
+					searchOptions.canUseAttributesInSearch = false;
+				}
+				console.log(searchOptions);
+
+				Ext.Ajax.request({
+					url: 'api/v1/resource/searchoptions/user',
+					jsonData: searchOptions,
+					method: 'PUT',
+					success: function(response, opt) {
+						Ext.toast('Successfully applied the search options.', '', 'tr');
+					},
+					failure: function(response, opt) {
+						Ext.toast('Failed to apply the search options.', '', 'tr');
+					}
+				});
+
+
 				if (!query || Ext.isEmpty(query)) {
 					query = '*';
 				}
@@ -86,8 +126,6 @@ Ext.define('OSF.landing.DefaultSearch', {
 						"mergeCondition": "OR"
 					});
 				});
-
-				var searchOptions;
 
 				var searchRequest;
 				if (entryTypeCB.selectedItems.length > 0) {
@@ -129,13 +167,13 @@ Ext.define('OSF.landing.DefaultSearch', {
 					selectedItems: [],
 					setCheckedDisplay: function (treeStore) {
 
-						// var itemsSelected = 0;
+						var itemsSelected = 0;
 
-						// Ext.Array.forEach(treeStore.getData().items, function (item) {
-						// 	if (item.getData().checked) {
-						// 		itemsSelected += 1;
-						// 	}
-						// });
+						Ext.Array.forEach(treeStore.getData().items, function (item) {
+							if (item.getData().checked) {
+								itemsSelected += 1;
+							}
+						});
 
 						// if (itemsSelected > 0) {
 						// 	this.setText('Entry Types (' + itemsSelected + ' selected)');
@@ -185,6 +223,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 							},
 							{
 								xtype: 'checkboxgroup',
+								itemId: 'searchOptionsGroup',
 								columns: 1,
 								vertical: true,
 								allowBlank: false,
@@ -231,9 +270,37 @@ Ext.define('OSF.landing.DefaultSearch', {
 									}
 								],
 								listeners: {
-									onload: function(){
-										// TODO: Get user search options
-										// 		if none make SO from global
+									added: function(){
+										Ext.Ajax.request({
+											url: 'api/v1/resource/searchoptions/global',
+											method: 'GET',
+											success: function(response, opts){
+												var data = Ext.decode(response.responseText);
+						
+												if(Ext.getCmp('organizationsCheckbox')){
+													Ext.getCmp('organizationsCheckbox').setValue(data.canUseOrganizationsInSearch);
+												}
+												if(Ext.getCmp('componentNameCheckbox')){
+													Ext.getCmp('componentNameCheckbox').setValue(data.canUseNameInSearch);
+												}
+												if(Ext.getCmp('componentDescriptionCheckbox')){
+													Ext.getCmp('componentDescriptionCheckbox').setValue(data.canUseDescriptionInSearch);
+												}
+												if(Ext.getCmp('componentTagsCheckbox')){
+													Ext.getCmp('componentTagsCheckbox').setValue(data.canUseTagsInSearch);
+												}
+												if(Ext.getCmp('componentAttributesCheckbox')){
+													Ext.getCmp('componentAttributesCheckbox').setValue(data.canUseAttributesInSearch);
+												}
+											},
+											failure: function(response, opts){
+												Ext.getCmp('organizationsCheckbox').setValue(true);
+												Ext.getCmp('componentNameCheckbox').setValue(true);
+												Ext.getCmp('componentDescriptionCheckbox').setValue(true);
+												Ext.getCmp('componentTagsCheckbox').setValue(true);
+												Ext.getCmp('componentAttributesCheckbox').setValue(true);
+											}
+										});
 									},
 									change: function(checkBox, newVal, oldVal){
 										var searchOptions = {

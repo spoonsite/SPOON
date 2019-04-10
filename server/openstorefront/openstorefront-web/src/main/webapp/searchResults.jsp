@@ -1103,6 +1103,7 @@
 				}
 				else {
 					var searchRequest = CoreUtil.sessionStorage().getItem('searchRequest');
+					console.log(searchRequest.query);
 					if (searchRequest) {
 						searchRequest = Ext.decode(searchRequest);
 						if (searchRequest.type === 'SIMPLE') {
