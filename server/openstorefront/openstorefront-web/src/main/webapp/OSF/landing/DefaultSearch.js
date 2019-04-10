@@ -24,6 +24,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 
 	width: '100%',
 	layout: 'hbox',
+	id: 'defaultSearch',
 	listeners: {
 		resize: function (mainPanel, width, height, oldWidth, oldHeight, eOpts) {
 			var searchBar = mainPanel.queryById('searchBar');
@@ -244,10 +245,19 @@ Ext.define('OSF.landing.DefaultSearch', {
 										}
 										values = checkBox.getValue();
 										var isMyObjectEmpty = !Object.keys(values).length;
-										console.log(isMyObjectEmpty);
+										var searchButton = Ext.getCmp('defaultSearch').queryById('searchButton');
 										if (isMyObjectEmpty){
-											var searchButton = this.up().up().up().query('#searchButton')[0];
 											searchButton.disable();
+											Ext.Msg.show({
+												title:'Search Options',
+												message: 'No search options are selected, please select at least one option.',
+												buttons: Ext.Msg.OK,
+												icon: Ext.Msg.ERROR,
+												fn: function(btn) {
+												}
+											});	
+										} else {
+											searchButton.enable();
 										}
 										
 										if(!values.canUseOrganizationsInSearch){
