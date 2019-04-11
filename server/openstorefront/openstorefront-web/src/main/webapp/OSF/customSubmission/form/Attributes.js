@@ -133,6 +133,29 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 									codeField.getStore().removeAll();
 									codeField.vtype = undefined;
 								}
+
+								// Fetch the unit and unitList for the componentType
+								// then set the Unit ComboBox
+								var unitField = this.up('form').getComponent('attributeUnitCB');
+								unitField.clearValue();
+								Ext.Ajax.request({
+									url: 'api/v1/resource/attributes/attributetypes/' + newValue + '?view=true',
+									callback: function () {
+										unitField.setLoading(false);
+									},
+									success: function (response, opts) {
+										var attributeView = Ext.decode(response.responseText);
+										if (attributeView.attributeUnit) {
+											unitField.getStore().loadData(attributeView.attributeUnitList);
+											unitField.setValue(attributeView.attributeUnit);
+											unitField.allowBlank = false;
+											unitField.setHidden(false);
+										} else {
+											unitField.allowBlank = true;
+											unitField.setHidden(true);
+										}
+									}
+								});
 							}
 						}						
 					},
@@ -140,9 +163,36 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 					// {
 					// 	xtype: 'osf-submissionform-add-attribute',
 					// 	componentType: attributePanel.componentType,
-					// 	attributeTypeCB: this..queryById('attributeTypeCB');
+					// 	attributeTypeCB: this
 					// }
 				]
+			},
+			// show the available unit list if there is one
+			// if user create codes is disabled just show the default unit
+			{
+				xtype: 'combobox',
+				itemId: 'attributeUnitCB',
+				fieldLabel: 'Attribute Code <span class="field-required" />',
+				name: 'unit',
+				hidden: true, // will show if a unit is found for the attribute
+				queryMode: 'local',
+				labelWidth: 150,
+				editable: false,
+				typeAhead: false,
+				allowBlank: false,
+				valueField: 'unit',
+				displayField: 'unit',
+				listConfig: {
+					getInnerTpl: function () {
+						return '{unit} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+					}
+				},
+				store: Ext.create('Ext.data.Store', {
+					fields: [
+						"unit",
+						"conversionFactor"
+					]
+				})	
 			},
 			{
 				xtype: 'combobox',
@@ -257,7 +307,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 			'			</td>' +
 			'			<td class="submission-review-data" style="min-width: 150px">' +
 			'				{value}' +
-			'			</td>' +			
+			'			</td>' +
 			'		</tr>' +
 			'	</tpl>'+
 			'</tbody>' +

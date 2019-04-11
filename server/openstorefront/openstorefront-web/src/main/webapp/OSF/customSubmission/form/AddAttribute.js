@@ -30,7 +30,7 @@ Ext.define('OSF.customSubmission.form.AddAttribute', {
     hidden: true,
     handler: function () {
         var addAttributeBtn = this;
-        var attributeTypeCB = addAttributeBtn.attributeTypeCB;
+        var attributeTypeCB = addAttributeBtn.attributeTypeCB.queryById('attributeTypeCB');
 
 
         var addTypeWin = Ext.create('Ext.window.Window', {
