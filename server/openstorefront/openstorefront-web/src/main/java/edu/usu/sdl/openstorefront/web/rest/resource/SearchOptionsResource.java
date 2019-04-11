@@ -19,11 +19,13 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -75,8 +77,10 @@ import javax.ws.rs.core.Response;
 	@APIDescription("Get the search options for indexing. (User)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
-	@Path("/user")
-	public Response updateSearchModelUser()
+	@Path("/user/{username}")
+	public Response updateSearchModelUser(
+			@PathParam("username")
+			@RequiredParam String username)
 	{
 		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
 
@@ -88,8 +92,10 @@ import javax.ws.rs.core.Response;
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
-	@Path("/user")
+	@Path("/user/{username}")
 	public Response updateSearchModelUser(
+			@PathParam("username")
+			@RequiredParam String username,
 			SearchOptions incomingSearchOptions)
     {
         ValidationResult validationResult = incomingSearchOptions.validate();
@@ -97,7 +103,7 @@ import javax.ws.rs.core.Response;
             return sendSingleEntityResponse(validationResult.toRestError());
         }
        
-        return Response.ok(service.getSearchService().saveGlobalSearchOptions(incomingSearchOptions)).build();
+        return Response.ok(service.getSearchService().saveUserSearchOptions(incomingSearchOptions, username)).build();
     }
 
 }

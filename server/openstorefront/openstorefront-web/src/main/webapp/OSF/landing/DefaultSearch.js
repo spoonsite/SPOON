@@ -86,19 +86,6 @@ Ext.define('OSF.landing.DefaultSearch', {
 				}
 				console.log(searchOptions);
 
-				Ext.Ajax.request({
-					url: 'api/v1/resource/searchoptions/user',
-					jsonData: searchOptions,
-					method: 'PUT',
-					success: function(response, opt) {
-						Ext.toast('Successfully applied the search options.', '', 'tr');
-					},
-					failure: function(response, opt) {
-						Ext.toast('Failed to apply the search options.', '', 'tr');
-					}
-				});
-
-
 				if (!query || Ext.isEmpty(query)) {
 					query = '*';
 				}
@@ -148,9 +135,33 @@ Ext.define('OSF.landing.DefaultSearch', {
 					};
 				}
 
-				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+				var username = "";
+				Ext.Ajax.request({
+					url: 'api/v1/resource/userprofiles/currentuser',
+					success: function(response, opts){
+						username = Ext.decode(response.responseText).username;
+						Ext.Ajax.request({
+							url: "api/v1/resource/searchoptions/user/" + username,
+							jsonData: searchOptions,
+							method: 'PUT',
+							success: function(response, opt) {
+								Ext.toast('Successfully applied the search options.', '', 'tr');
+								CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+		
+								window.location.href = 'searchResults.jsp';
+							},
+							failure: function(response, opt) {
+								console.log(response);
+								Ext.toast('Failed to apply the search options.', '', 'tr');
+							}
+						});
+					}
+				});
+				
 
-				window.location.href = 'searchResults.jsp';
+				
+
+				
 			},
 			items: [
 				{
@@ -291,7 +302,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 												}
 												if(Ext.getCmp('componentAttributesCheckbox')){
 													Ext.getCmp('componentAttributesCheckbox').setValue(data.canUseAttributesInSearch);
-												}
+												};
 											},
 											failure: function(response, opts){
 												Ext.getCmp('organizationsCheckbox').setValue(true);

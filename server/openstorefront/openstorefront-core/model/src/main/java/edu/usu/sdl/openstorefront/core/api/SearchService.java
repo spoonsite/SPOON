@@ -70,7 +70,7 @@ public interface SearchService
 	 * @param searchOptions 
 	 * @return the saved searchOptions
 	 */
-	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions);
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions, String username);
 
 	/**
 	 * Performs a search

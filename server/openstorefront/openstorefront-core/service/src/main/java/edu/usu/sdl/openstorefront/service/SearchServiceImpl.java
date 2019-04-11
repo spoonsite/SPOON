@@ -167,12 +167,13 @@ public class SearchServiceImpl
 		return searchOptions;		
 	}
 
-	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions){
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions, String username){
 		
 		//clear users cache
 
 		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);                     
+		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
+		searchOptionsExample.setUsername(username);
 		SearchOptions existing = searchOptionsExample.findProxy();                   
 		
 		if (existing != null) {
