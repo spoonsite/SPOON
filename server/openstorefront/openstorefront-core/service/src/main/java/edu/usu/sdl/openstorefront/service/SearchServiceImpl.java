@@ -178,6 +178,7 @@ public class SearchServiceImpl
 		
 		if (existing != null) {
 						searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+						searchOptions.setGlobalFlag(true);
 						existing.updateFields(searchOptions);
 						persistenceService.persist(existing);
 		} else {
