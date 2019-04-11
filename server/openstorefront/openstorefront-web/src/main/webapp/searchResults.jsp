@@ -1511,11 +1511,11 @@
 							}),
 							{
 								xtype:"tbspacer",
-								flex:1							
+								flex:1
 							},
 							{
 								xtype: 'button',
-								id: 'disclaimerButton',
+								itemId: 'disclaimerButton',
 								hidden:true,
 								html:'<span style="font-style:italic;">Disclaimer</span>',
 								style:{
@@ -1533,7 +1533,7 @@
 									beforeRender:function(){
 										CoreService.brandingservice.getCurrentBranding().then(function(branding){
 											if(branding.disclaimerMessage){
-												Ext.getCmp("disclaimerButton").setVisible(true);
+												Ext.getCmp("searchResultsPanel").queryById('disclaimerButton').setVisible(true);
 											}
 										});
 									}

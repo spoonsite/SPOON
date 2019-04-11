@@ -140,7 +140,7 @@
 				},
 				//TODO: add graceful failure message to users
 				failure: function(response, opts) {
-					console.log('server-side failure; response code withheld for security');
+					alert('The Print View failed to load!')
 				}
 			});	
 			

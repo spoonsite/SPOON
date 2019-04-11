@@ -90,7 +90,6 @@
 								//if there is a disclaimer message in branding, show it
 								CoreService.brandingservice.getCurrentBranding().then(function(branding){
 									if(branding.disclaimerMessage){
-										console.log("branding.disclaimerMessage:", branding.disclaimerMessage)
 										Ext.getCmp("disclaimerPanel").setVisible(true);
 									}
 								});

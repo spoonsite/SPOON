@@ -25,7 +25,6 @@ Ext.define('OSF.landing.DefaultDisclaimer', {
     bodyCls: 'home-footer',
 	layout: 'center',
     width: '100%',
-    // hidden:true,
     
 	items: [
 		{
@@ -43,16 +42,11 @@ Ext.define('OSF.landing.DefaultDisclaimer', {
 		this.callParent();	
         var disclaimerPanel = this;
 		
-		CoreService.brandingservice.getCurrentBranding().then(function(branding){console.log("fired")
+		CoreService.brandingservice.getCurrentBranding().then(function(branding){
 			disclaimerPanel.getComponent('disclaimer').update(
                 '<i>' + branding.disclaimerMessage + '</i>'
                 );	
             disclaimerPanel.ownerCt.bodyCls = disclaimerPanel.ownerCt.bodyCls + "home-footer-disclaimer";
-            
-            if(branding.disclaimerMessage){
-                disclaimerPanel.ownerCt.hidden = false;
-            }
-
 		});
 		
 	}

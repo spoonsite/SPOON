@@ -37,6 +37,7 @@
 
 		Ext.create('Ext.container.Viewport', {			
 			cls: 'home-viewport',
+			id: 'defaultLandingView',
 			layout: 'border',
 			listeners: {
 				resize: function(view, width, height, oldWidth, oldHeight, eOpts) {								
@@ -94,7 +95,7 @@
 								//if there is a disclaimer message, show the element
 								CoreService.brandingservice.getCurrentBranding().then(function(branding){
 									if(branding.disclaimerMessage){
-										Ext.getCmp("disclaimerPanel").setVisible(true);
+										Ext.getCmp("defaultLandingView").queryById('disclaimerButton').setVisible(true);
 									}
 								});
 							}
