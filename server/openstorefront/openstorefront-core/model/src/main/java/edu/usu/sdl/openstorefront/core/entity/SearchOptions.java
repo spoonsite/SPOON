@@ -71,7 +71,9 @@ public class SearchOptions
 	}
 
 	public void setDefaultSearchOptions()
-	{		
+	{
+		super.populateBaseCreateFields();
+
 		setActiveStatus(SearchOptions.ACTIVE_STATUS);
 
 		setCanUseDescriptionInSearch(Boolean.TRUE);
