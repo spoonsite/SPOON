@@ -54,6 +54,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeTypeMetadata;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeWrapper;
+import edu.usu.sdl.openstorefront.core.view.AttributeUnitView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
@@ -67,8 +68,10 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,6 +99,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.commons.lang.StringUtils;
+import org.jscience.physics.amount.Amount;
 
 /**
  *
@@ -578,21 +582,32 @@ public class AttributeResource
 		// I need a list of all the attributetype.attributeunit
 		//AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, type);
 		if(!unitsAreCompatible(attributeTypeListMerge)) {
-			String error = Json.createObjectBuilder()
-					.add("error", " unable to parse units: ")
-					.build()
-					.toString();
+//			String error = Json.createObjectBuilder()
+//					.add("error", " unable to parse units: ")
+//					.build()
+//					.toString();
+			String error = "BROKEN";
 			return Response.ok(error).build();
 		}
 		
 		if(!attributeTypeWasCreated(attributeTypeListMerge)) {
-			String error = Json.createObjectBuilder()
-					.add("error", " unable to create new attribute type ")
-					.build()
-					.toString();
+//			String error = Json.createObjectBuilder()
+//					.add("error", " unable to create new attribute type ")
+//					.build()
+//					.toString();
+			String error = "BROKEN";
 			return Response.ok(error).build();
 		}
 		
+		
+		
+		
+		String baseUnitString = new String();
+		baseUnitString = attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit();
+
+		Unit baseUnit;
+		baseUnit = Unit.valueOf(baseUnitString);
+
 		
 		for(String attributeType : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
 			
@@ -601,12 +616,154 @@ public class AttributeResource
 			componentAttributePk.setAttributeType(attributeType);
 			ComponentAttribute componentAttribute = new ComponentAttribute();
 			componentAttribute.setComponentAttributePk(componentAttributePk);
-//			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(componentAttribute);
+			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttribute);
+			
+			
+			
+			
+			AttributeType attributeTypenew = service.getPersistenceService().findById(AttributeType.class, attributeType);
+//			if (!attributeTypenew.getAttributeUnit().isEmpty()) {
+//				unitsList.add(attributeTypenew.getAttributeUnit());
+//			}
+
+			Unit tempUnit;
+//			try {
+				tempUnit = Unit.valueOf(attributeTypenew.getAttributeUnit());
+				Amount<?> factor = Amount.valueOf(1, tempUnit).to(baseUnit);
+//				AttributeUnitView unitView = new AttributeUnitView(unit, factor.getEstimatedValue());
+//				conversionList.add(unitView);
+				System.out.println(factor);
+//			} catch (IllegalArgumentException e) {
+//				LOG.warning(e.toString());
+//			}
+			
+			
+			
+			BigDecimal bigDecimal2 = new BigDecimal(factor.getMaximumValue());
+			
+			
+			for(ComponentAttribute compattr : componentAttributes) {
+				String numericValue = compattr.getComponentAttributePk().getAttributeCode();
+				AttributeCode attributeCode = new AttributeCode();
+				// I need to convert the value here
+//				double tempthing = numericValue.sto
+				BigDecimal bigDecimal1 = new BigDecimal(numericValue);
+				
+				BigDecimal result = new BigDecimal(0);
+				result = bigDecimal1.multiply(bigDecimal2);
+				
+				DecimalFormat df = new DecimalFormat("0.0000E0");
+//				System.out.println(df.format(number));
+				attributeCode.setLabel(df.format(result).toString()); // and use it here
+
+				AttributeCodePk attributeCodePk = new AttributeCodePk();
+
+				attributeCode.setAttributeCodePk(attributeCodePk);
+				attributeCode.getAttributeCodePk().setAttributeType(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeType());
+				attributeCode.getAttributeCodePk().setAttributeCode(df.format(result).toString());
+				attributeCode.updateFields(attributeCode);
+//			attributeCode.save();
+				handleAttributeCode(attributeCode, true);
+				
+				
+				
+				
+				ComponentAttribute componentAttributeToAdd = new ComponentAttribute();
+				ComponentAttributePk componentAttributePKToAdd = new ComponentAttributePk();
+				componentAttributeToAdd.setComponentAttributePk(componentAttributePKToAdd);
+				componentAttributeToAdd.setComment("ADDED BY SYSTEM");
+				componentAttributeToAdd.getComponentAttributePk().setAttributeCode(df.format(result).toString());
+				componentAttributeToAdd.getComponentAttributePk().setAttributeType(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeType());
+				
+				
+				
+				componentAttributeToAdd.setComponentId(compattr.getComponentId());
+				componentAttributeToAdd.getComponentAttributePk().setComponentId(compattr.getComponentId());
+
+				ValidationModel validationModel = new ValidationModel(componentAttributeToAdd);
+				validationModel.setConsumeFieldsOnly(true);
+				ValidationResult validationResult = ValidationUtil.validate(validationModel);
+				validationResult.merge(service.getComponentService().checkComponentAttribute(componentAttributeToAdd));
+				if (validationResult.valid()) {
+					service.getComponentService().saveComponentAttribute(componentAttributeToAdd);
+				}
+				
+			}
+
+			
+
+			
+//			List<String> unitsList = new ArrayList<>();
+
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+			
+			
+			
+
+			
+			
+//			
+//			
+			
+			
+			
+			/**
+			 * For each componentAttribute that I have found I need to replace it a new code from my NAT
+			 * 
+			 *	1. for each componentattribute add the equivalent NatCode to the component 
+			 */
+			System.out.println("No Way Jose!!!");
 			
 		}
 
 		
-		
+		for (String deleteThisType : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
+			AttributeType attributeTypeToDelete = service.getPersistenceService().findById(AttributeType.class, deleteThisType);
+			if (attributeTypeToDelete != null) {
+				service.getPersistenceService().setStatusOnEntity(AttributeType.class, deleteThisType, AttributeType.PENDING_STATUS);
+
+				TaskRequest taskRequest = new TaskRequest();
+				taskRequest.setAllowMultiple(false);
+				taskRequest.setQueueable(true);
+				taskRequest.setName("Deleting Attribute Type");
+				taskRequest.setDetails("Attribute Type: " + deleteThisType);
+				taskRequest.getTaskData().put("Type", deleteThisType);
+				taskRequest.getTaskData().put("Status", attributeTypeToDelete.getActiveStatus());
+				taskRequest.setCallback(new AsyncTaskCallback()
+				{
+					@Override
+					public void beforeExecute(TaskFuture taskFuture)
+					{
+					}
+
+					@Override
+					public void afterExecute(TaskFuture taskFuture)
+					{
+						if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+							service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
+						}
+					}
+
+				});
+				service.getAsyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(deleteThisType);
+			}
+		}
+
 		
 		
 //		Unit unit;
@@ -617,6 +774,35 @@ public class AttributeResource
 		return Response.status(Response.Status.OK).build();
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	private Boolean handleAttributeCode(AttributeCode attributeCode, boolean post) {
+		ValidationModel validationModel = new ValidationModel(attributeCode);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			validationResult = service.getAttributeService().saveAttributeCode(attributeCode, false);
+		}
+		if (!validationResult.valid()) {
+//			return Response.ok(validationResult.toRestError()).build();
+			return false;
+		} else if (post) {
+			AttributeCode attributeCodeCreated = service.getPersistenceService().findById(AttributeCode.class, attributeCode.getAttributeCodePk());
+//			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
+//					+ StringProcessor.urlEncode(attributeCode.getAttributeCodePk().getAttributeType())
+//					+ "/attributecodes/"
+//					+ StringProcessor.urlEncode(attributeCode.getAttributeCodePk().getAttributeCode()))).entity(attributeCodeCreated).build();
+			return true;
+		} else {
+//			return Response.ok(attributeCode).build();
+			return true;
+		}
+	}
 	private Boolean unitsAreCompatible(AttributeTypeListMerge attributeTypeListMerge) {
 		
 		List<String> unitsList = new ArrayList<>();
@@ -655,17 +841,12 @@ public class AttributeResource
 			return false;
 		}
 
-		// verify all the units in the list are the same dimension
-		// verify they all match the base unit
-		/**
-		 * TODO:
-		 * We need to implement dimensionless functionality!
-		 */
 		for (String unitString : unitsList) {
 			Unit tempUnit;
 			try {
 				tempUnit = Unit.valueOf(unitString);
 			} catch (IllegalArgumentException e) {
+				// Could not parse
 				return false;
 			}
 
