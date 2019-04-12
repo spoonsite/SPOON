@@ -54,8 +54,8 @@ public class MongoQueryUtil
 	private static final String JAVA_CLASS = "class";
 	private static final String PARAM_NAME_SEPARATOR = ".";
 	private static final String LIKE_QUERY_CHARACTER = "%";
-	private static final int SORT_ASCENDING = 1;
-	private static final int SORT_DESCENDING = -1;
+	public static final int MONGO_SORT_ASCENDING = 1;
+	public static final int MONGO_SORT_DESCENDING = -1;
 
 	private UserContext userContext;
 	private MongoDBManager dbManager;
@@ -211,9 +211,9 @@ public class MongoQueryUtil
 		Map<String, Object> exampleMap = generateFieldMap(queryRequest.getOrderBy());
 
 		for (String key : exampleMap.keySet()) {
-			int sortDirection = SORT_ASCENDING;
+			int sortDirection = MONGO_SORT_ASCENDING;
 			if (OpenStorefrontConstant.SORT_DESCENDING.equals(queryRequest.getSortDirection())) {
-				sortDirection = SORT_DESCENDING;
+				sortDirection = MONGO_SORT_DESCENDING;
 			}
 			exampleMap.put(key, sortDirection);
 		}

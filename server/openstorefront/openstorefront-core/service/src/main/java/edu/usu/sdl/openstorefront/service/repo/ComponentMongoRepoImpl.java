@@ -15,6 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTracking;
 import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
@@ -24,16 +29,20 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.service.repo.api.ComponentRepo;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import org.bson.conversions.Bson;
 
 /**
  *
  * @author dshurtleff
  */
 public class ComponentMongoRepoImpl
-		extends BaseRepo
+		extends BaseMongoRepo
 		implements ComponentRepo
 {
 
@@ -70,7 +79,16 @@ public class ComponentMongoRepoImpl
 	@Override
 	public Map<String, ComponentSensitivityModel> findComponentsWithDataRestrictions()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Map<String, ComponentSensitivityModel> componentRestrictionMap = new HashMap<>();
+
+		MongoCollection<Component> collection = getQueryUtil().getCollectionForEntity(Component.class);
+		Bson filter = Filters.or(
+				Filters.ne(Component.FIELD_DATA_SOURCE, null),
+				Filters.ne(Component.FIELD_DATA_SENSITIVITY, null)
+		);
+		//TODO: FINSIH
+
+		return componentRestrictionMap;
 	}
 
 	@Override
@@ -88,19 +106,55 @@ public class ComponentMongoRepoImpl
 	@Override
 	public List<Component> findRecentlyAdded(int maxResults)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MongoCollection<Component> collection = getQueryUtil().getCollectionForEntity(Component.class);
+
+		Bson filter = Filters.and(
+				Filters.eq(Component.FIELD_ACTIVE_STATUS, Component.ACTIVE_STATUS),
+				Filters.eq(Component.FIELD_APPROVAL_STATE, ApprovalStatus.APPROVED)
+		);
+		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter());
+
+		BasicDBObject sort = new BasicDBObject();
+		sort.append(Component.FIELD_APPROVED_DTS, MongoQueryUtil.MONGO_SORT_DESCENDING);
+
+		FindIterable<Component> findIterable = collection.find(filter)
+				.sort(filter)
+				.limit(maxResults);
+
+		return findIterable.into(new ArrayList<>());
 	}
 
 	@Override
 	public List<Component> searchComponentByName(String search, int maxResults)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		MongoCollection<Component> collection = getQueryUtil().getCollectionForEntity(Component.class);
+
+		FindIterable<Component> findIterable = collection.find(
+				Filters.regex(
+						Component.FIELD_NAME,
+						Pattern.compile(getQueryUtil().convertSQLLikeCharacterToRegex(search), Pattern.CASE_INSENSITIVE)
+				)
+		).limit(maxResults);
+
+		return findIterable.into(new ArrayList<>());
 	}
 
 	@Override
 	public ListingStats getComponentListingStats()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ListingStats listingStats = new ListingStats();
+
+		MongoCollection<Component> collection = getQueryUtil().getCollectionForEntity(Component.class);
+
+		Bson filter = Filters.and(
+				Filters.eq(Component.FIELD_ACTIVE_STATUS, Component.ACTIVE_STATUS),
+				Filters.eq(Component.FIELD_APPROVAL_STATE, ApprovalStatus.APPROVED)
+		);
+		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter());
+		long numberOfActiveComponents = collection.countDocuments(filter);
+		listingStats.setNumberOfComponents(numberOfActiveComponents);
+
+		return listingStats;
 	}
 
 }
