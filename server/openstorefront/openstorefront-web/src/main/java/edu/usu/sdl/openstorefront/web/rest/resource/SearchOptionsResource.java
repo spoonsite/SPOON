@@ -77,12 +77,10 @@ import javax.ws.rs.core.Response;
 	@APIDescription("Get the search options for indexing. (User)")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
-	@Path("/user/{username}")
-	public Response updateSearchModelUser(
-			@PathParam("username")
-			@RequiredParam String username)
+	@Path("/user")
+	public Response updateSearchModelUser()
 	{
-		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
+		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
 
 		return Response.ok(searchOptions).build();
 	}
@@ -93,17 +91,14 @@ import javax.ws.rs.core.Response;
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
 	@Path("/user/{username}")
-	public Response updateSearchModelUser(
-			@PathParam("username")
-			@RequiredParam String username,
-			SearchOptions incomingSearchOptions)
+	public Response updateSearchModelUser(SearchOptions incomingSearchOptions)
     {
         ValidationResult validationResult = incomingSearchOptions.validate();
         if(!validationResult.valid()){
             return sendSingleEntityResponse(validationResult.toRestError());
         }
        
-        return Response.ok(service.getSearchService().saveUserSearchOptions(incomingSearchOptions, username)).build();
+        return Response.ok(service.getSearchService().saveUserSearchOptions(incomingSearchOptions)).build();
     }
 
 }

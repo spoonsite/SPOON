@@ -33,7 +33,6 @@ public class SearchOptions
 	private String searchOptionsId;
 
 	@APIDescription("Username for saving user searches")
-	@ConsumeField
 	private String username;
 
 	@APIDescription("Flag for using Component organizations in searches")

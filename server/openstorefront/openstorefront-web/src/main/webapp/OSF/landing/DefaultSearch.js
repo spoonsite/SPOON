@@ -145,7 +145,6 @@ Ext.define('OSF.landing.DefaultSearch', {
 							jsonData: searchOptions,
 							method: 'PUT',
 							success: function(response, opt) {
-								Ext.toast('Successfully applied the search options.', '', 'tr');
 								CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 		
 								window.location.href = 'searchResults.jsp';
@@ -283,7 +282,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 								listeners: {
 									added: function(){
 										Ext.Ajax.request({
-											url: 'api/v1/resource/searchoptions/global',
+											url: 'api/v1/resource/searchoptions/user/',
 											method: 'GET',
 											success: function(response, opts){
 												var data = Ext.decode(response.responseText);

@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
@@ -149,10 +150,13 @@ public class SearchServiceImpl
 	}
 
 	public SearchOptions getUserSearchOptions(){
+
+		String username = SecurityUtil.getCurrentUserName();
 		
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		searchOptionsExample.setUsername(username);
 		SearchOptions searchOptions = searchOptionsExample.find();
 		
 		if(searchOptions == null){
@@ -167,9 +171,11 @@ public class SearchServiceImpl
 		return searchOptions;		
 	}
 
-	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions, String username){
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions){
 		
 		//clear users cache
+		
+		String username = SecurityUtil.getCurrentUserName();
 
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
@@ -180,11 +186,13 @@ public class SearchServiceImpl
 						searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 						searchOptions.setGlobalFlag(true);
 						existing.updateFields(searchOptions);
+						existing.setUsername(username);
 						persistenceService.persist(existing);
 		} else {
 						searchOptions.setSearchOptionsId(persistenceService.generateId());
 						searchOptions.setGlobalFlag(Boolean.FALSE);
 						searchOptions.setDefaultSearchOptions();
+						searchOptions.setUsername(username);
 						existing = persistenceService.persist(searchOptions);
 		}
 		return existing;
