@@ -90,7 +90,7 @@ import javax.ws.rs.core.Response;
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@DataType(SearchOptions.class)
-	@Path("/user/{username}")
+	@Path("/user")
 	public Response updateSearchModelUser(SearchOptions incomingSearchOptions)
     {
         ValidationResult validationResult = incomingSearchOptions.validate();

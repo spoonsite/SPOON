@@ -282,7 +282,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 								listeners: {
 									added: function(){
 										Ext.Ajax.request({
-											url: 'api/v1/resource/searchoptions/user/',
+											url: 'api/v1/resource/searchoptions/user',
 											method: 'GET',
 											success: function(response, opts){
 												var data = Ext.decode(response.responseText);

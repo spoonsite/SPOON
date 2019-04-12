@@ -535,8 +535,32 @@ public class SearchServiceImpl
 		searchResult.setValidationResult(validationResultMain);
 
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
-			Element element = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
-			OSFCacheManager.getSearchCache().put(element);
+			String username = SecurityUtil.getCurrentUserName();
+			String key = searchModel.getUserSessionKey() + searchModel.searchKey();
+			// Element element = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
+			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+			if(userSearchElementResult!=null){
+				// append to list and add to search cache
+				if(userSearchElementResult.getObjectValue()!=null){
+					List<String> listOfkeys = (List<String>) userSearchElementResult.getObjectValue();
+					if(listOfkeys.contains(key)){
+						//search through searchcache to get search
+					} else {
+						// add to list and add to searchcache
+					}
+				} 
+				else {
+					//make new list and add elements to it
+				}
+			}
+			else {
+				//add username in cache and create list and put that in as key
+				//add to search cache
+			}
+			Element userSearchElement = new Element(username, searchModel.getUserSessionKey() + searchModel.searchKey());
+			Element searchElement = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
+			OSFCacheManager.getUserSearchCache().put(userSearchElement);
+			OSFCacheManager.getSearchCache().put(searchElement);
 		}
 		return searchResult;
 	}
