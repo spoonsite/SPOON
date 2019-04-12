@@ -370,10 +370,10 @@ public class AttributeResource
 			@PathParam("type")
 			@RequiredParam String type,
 			@QueryParam("view")
-			@APIDescription("Setting forces the attribute to return the view model.")
+			@APIDescription("Forces the attribute to return the view model.")
 			@DefaultValue("false") boolean view,
 			@QueryParam("all")
-			@APIDescription("Setting forces the attribute to return the view model.")
+			@APIDescription("Returns a view model with all codes.")
 			@DefaultValue("false") boolean all)
 	{
 		if (!view) {

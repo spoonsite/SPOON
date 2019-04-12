@@ -134,6 +134,8 @@ public class AttributeTypeView
 				}
 			}	
 		}
+		String baseUnit = attributeType.getAttributeUnit();
+		conversionList.add(new AttributeUnitView(baseUnit, 1.0));
 
 		attributeTypeView.setAttributeUnitList(conversionList);
 

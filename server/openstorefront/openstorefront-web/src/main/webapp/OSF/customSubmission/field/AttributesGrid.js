@@ -32,7 +32,8 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 	
 	columns: [
 		{ text: 'Type', dataIndex: 'typeDescription', flex: 1, minWidth: 200 },
-		{ text: 'Code', dataIndex: 'codeDescription', flex: 2, minWidth: 200 }
+		{ text: 'Code', dataIndex: 'codeDescription', flex: 2, minWidth: 200 },
+		{ text: 'Unit', dataIndex: 'unit', flex: 1, minWidth: 200 }
 	],
 	
 	initComponent: function () {
@@ -44,7 +45,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
 			if (initialData) {
 				var data = Ext.decode(initialData);				
-				//separate hidden and required from editible
+				//separate hidden and required from editable
 				grid.hiddenAttributes = [];
 				var editable = [];
 				Ext.Array.each(data, function(attributeView){
