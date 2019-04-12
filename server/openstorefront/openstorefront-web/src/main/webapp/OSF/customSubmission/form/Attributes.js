@@ -148,9 +148,11 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 										if (attributeView.attributeUnit) {
 											unitField.getStore().loadData(attributeView.attributeUnitList);
 											unitField.setValue(attributeView.attributeUnit);
+											// make the field required
 											unitField.allowBlank = false;
 											unitField.setHidden(false);
 										} else {
+											// don't require the unit field and hide it
 											unitField.allowBlank = true;
 											unitField.setHidden(true);
 										}

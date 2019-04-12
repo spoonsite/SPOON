@@ -201,7 +201,7 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 						// in JS '1.0' * 1 -> 1
 						// if user created codes is disabled
 						// a value of 1 will fail where '1.0' is expected
-						var code = field.getConversionFactor() != 1 ? value * field.getConversionFactor() : value;
+						var code = field.getConversionFactor() != 1 ? value / field.getConversionFactor() : value;
 						codeData = {
 							componentAttributePk: {
 									attributeType: field.attributeTypeView.attributeType,
