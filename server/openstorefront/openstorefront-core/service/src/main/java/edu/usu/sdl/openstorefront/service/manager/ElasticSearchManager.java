@@ -305,8 +305,14 @@ public class ElasticSearchManager
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
+		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
+
+		if(searchOptions.areAllOptionsOff()){
+				IndexSearchResult blankIndexSearchResult = new IndexSearchResult();
+				return blankIndexSearchResult;
+		}
+
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
-		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
 
 		int maxSearchResults = 10000;
 		if (filter.getMax() < maxSearchResults) {
@@ -429,6 +435,32 @@ public class ElasticSearchManager
 				// Custom query for description
 				esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));
 			}
+
+			if(searchOptions.getCanUseTagsInSearch()) {
+				// Custom query for Tags
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+			}
+
+			if(searchOptions.getCanUseAttributesInSearch()) {
+				// Custom query for Attributes
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
+
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
+			}
 		}
 
 		// Loop Through Search Phrases
@@ -446,9 +478,16 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
 			}
 
+			if (searchOptions.getCanUseTagsInSearch()) {
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, phrase));
+			}
+
+			if (searchOptions.getCanUseAttributesInSearch()) {
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, phrase));
+			}
 		}
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
-				//.unmappedType("String") // currently the only fileds we are searching/sorting on are strings
+				//.unmappedType("String") // currently the only fields we are searching/sorting on are strings
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC : SortOrder.DESC);
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
