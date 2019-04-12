@@ -772,19 +772,29 @@ public class AttributeResource
 	
 	private Boolean attributeTypeWasCreated(AttributeTypeListMerge attributeTypeListMerge) {
 		
-		Set<String> CompatibleUnitsList = new HashSet<String>();
+		Set<String> compatibleUnitsList = new HashSet<>();
 		
 		for(String attributeType : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
 			AttributeType deletionAttributeType = service.getPersistenceService().findById(AttributeType.class, attributeType);
 			if(!deletionAttributeType.getAttributeUnit().isEmpty()){
-				CompatibleUnitsList.add(deletionAttributeType.getAttributeUnit());
+				compatibleUnitsList.add(deletionAttributeType.getAttributeUnit());
 			}
 			if(!deletionAttributeType.getAttributeUnitList().isEmpty()) {
-				CompatibleUnitsList.addAll(deletionAttributeType.getAttributeUnitList());
+				compatibleUnitsList.addAll(deletionAttributeType.getAttributeUnitList());
 			}
+		}
+		if (!attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit().isEmpty()) {
+			compatibleUnitsList.add(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit());
+		}
+		if (!attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnitList().isEmpty()) {
+			compatibleUnitsList.addAll(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnitList());
+		}
+		if(compatibleUnitsList.contains("")) {
+			compatibleUnitsList.remove("");
 		}
 		
 		AttributeType attributeType = attributeTypeListMerge.getAttributeTypeSave().getAttributeType();
+		attributeType.setAttributeUnitList(compatibleUnitsList);
 		attributeType.setRequiredRestrictions(attributeTypeListMerge.getAttributeTypeSave().getRequiredComponentType());
 		attributeType.setOptionalRestrictions(attributeTypeListMerge.getAttributeTypeSave().getOptionalComponentTypes());
 		attributeType.updateNullFlags();
