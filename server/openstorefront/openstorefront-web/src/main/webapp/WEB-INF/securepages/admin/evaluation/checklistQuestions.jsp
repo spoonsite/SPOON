@@ -608,7 +608,8 @@
 					} else {
 						Ext.getCmp('questionGrid').getSelectionModel().selectPrevious();						
 					}
-					viewWin.update(Ext.getCmp('questionGrid').getSelection()[0]);					
+					viewWin.update(Ext.getCmp('questionGrid').getSelection()[0]);
+					previewCheckButtons();
 				};
 				
 				var previewCheckButtons = function() {	
@@ -626,7 +627,7 @@
 						tools.getComponent('viewWinTools-nextBtn').setDisabled(true);
 					}					
 				};				
-				
+				 
 				var viewWin = Ext.create('Ext.window.Window', {
 					title: 'Question View',
 					iconCls: 'fa fa-eye',

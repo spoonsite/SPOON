@@ -209,6 +209,13 @@
 									}
 								},
 								{
+									xtype: 'label',
+									html: '<b>If a workplan is edited it will automatically be deactivated, please toggle as active when finished editing.</b>',
+									style: {
+										color: 'red'
+									}
+								},
+								{
 									xtype: 'tbfill'
 								},
 								{

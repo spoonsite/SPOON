@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import edu.usu.sdl.openstorefront.service.SearchServiceImpl;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -108,60 +109,6 @@ public class Search
 			};
 			return sendSingleEntityResponse(entity);
 		}
-	}
-	
-	@GET
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
-	@APIDescription("Get the search options for indexing. (Admin)")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(SearchOptions.class)
-	@Path("/options")
-	public Response updateSearchModel()
-	{
-		SearchOptions searchOptionsExample = new SearchOptions();
-		SearchOptions searchOptions = searchOptionsExample.find();
-
-		if (searchOptions == null) {
-			// Return the default.
-			searchOptions = new SearchOptions();
-			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
-			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
-			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
-		}
-
-		return Response.ok(searchOptions).build();
-	}
-	
-	@PUT
-	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
-	@APIDescription("Update the search options for indexing.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
-	@DataType(SearchOptions.class)
-	@Path("/options")
-	public Response updateSearchModel(
-			SearchOptions incomingSearchOptions)
-	{
-		ValidationResult validationResult = incomingSearchOptions.validate();
-		if(!validationResult.valid()){
-			return sendSingleEntityResponse(validationResult.toRestError());
-		}
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		SearchOptions searchOptions = searchOptionsExample.find();
-		
-		if (searchOptions == null) {
-			searchOptions = new SearchOptions();
-		}
-		searchOptions.setCanUseDescriptionInSearch(incomingSearchOptions.getCanUseDescriptionInSearch());
-		searchOptions.setCanUseNameInSearch(incomingSearchOptions.getCanUseNameInSearch());
-		searchOptions.setCanUseOrganizationsInSearch(incomingSearchOptions.getCanUseOrganizationsInSearch());
-		
-		incomingSearchOptions.setGlobalFlag(Boolean.TRUE);
-		service.getSearchService().saveSearchOptions(searchOptions);
-		
-		return Response.ok(searchOptions).build();
 	}
 
 	@POST

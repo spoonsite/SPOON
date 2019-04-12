@@ -107,7 +107,7 @@ public class SearchServiceImpl
 	}
 	
 	@Override
-	public SearchOptions getSearchOptions(){
+	public SearchOptions getGlobalSearchOptions(){
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
@@ -119,13 +119,34 @@ public class SearchServiceImpl
 			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
 			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
 		}		
 		return searchOptions;		
 	}
-	
-	public void saveSearchOptions(SearchOptions searchOptions){
-		searchOptions.save();
-	}
+
+	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions){
+		
+		OSFCacheManager.getSearchCache().removeAll();
+
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);                     
+		SearchOptions existing = searchOptionsExample.findProxy();                   
+		
+		if (existing != null) {
+						searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+						searchOptions.setGlobalFlag(true);
+						existing.updateFields(searchOptions);
+						persistenceService.persist(existing);
+		} else {
+						searchOptions.setSearchOptionsId(persistenceService.generateId());
+						searchOptions.setGlobalFlag(true);
+						searchOptions.setDefaultSearchOptions();
+						existing = persistenceService.persist(searchOptions);
+		}
+		return existing;
+}
+
 
 	@Override
 	public ComponentSearchWrapper getSearchItems(SearchQuery query, FilterQueryParams filter)

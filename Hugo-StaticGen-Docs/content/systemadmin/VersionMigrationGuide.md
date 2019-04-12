@@ -153,7 +153,7 @@ should give you a response something like this:
 }
 ```
 
-Getting everything setup in the Open Storefront
+Getting everything setup in the SPOON
 1. In Openstorefront, navigate to Admin Tools -> Application Management -> System -> Search Control
 2. Click "Re-Index Listings"
 3. (optional) if you haven't set the elastic.server.port to 9200, you can do so now from **Admin Tools** -> **App Management** -> **System** -> **System Configuration Properties**
