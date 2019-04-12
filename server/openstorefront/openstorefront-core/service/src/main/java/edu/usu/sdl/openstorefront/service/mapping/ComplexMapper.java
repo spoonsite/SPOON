@@ -161,6 +161,11 @@ public class ComplexMapper
 			List<ComponentContact> contacts = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentContact>>()
 			{
 			});
+			//clear ids
+			for (ComponentContact contact : contacts) {
+				contact.setComponentContactId(null);
+			}
+
 			componentAll.getContacts().addAll(contacts);
 		}
 	}
@@ -171,6 +176,10 @@ public class ComplexMapper
 			List<ComponentExternalDependency> dependencies = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentExternalDependency>>()
 			{
 			});
+			//clear ids
+			for (ComponentExternalDependency dependency : dependencies) {
+				dependency.setDependencyId(null);
+			}
 			componentAll.getExternalDependencies().addAll(dependencies);
 		}
 	}
@@ -182,6 +191,10 @@ public class ComplexMapper
 			List<ComponentMedia> mediaRecords = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentMedia>>()
 			{
 			});
+			//clear ids
+			for (ComponentMedia media : mediaRecords) {
+				media.setComponentMediaId(null);
+			}
 			mapMedia(userSubmissionField, mediaRecords);
 
 			componentAll.getMedia().addAll(mediaRecords);
@@ -221,6 +234,10 @@ public class ComplexMapper
 			List<ComponentResource> resourceRecords = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentResource>>()
 			{
 			});
+			//clear ids
+			for (ComponentResource resource : resourceRecords) {
+				resource.setResourceId(null);
+			}
 			mapResource(userSubmissionField, resourceRecords);
 
 			componentAll.getResources().addAll(resourceRecords);
@@ -260,6 +277,11 @@ public class ComplexMapper
 			List<ComponentTag> tags = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentTag>>()
 			{
 			});
+			//clear ids
+			for (ComponentTag tag : tags) {
+				tag.setTagId(null);
+			}
+
 			componentAll.getTags().addAll(tags);
 		}
 	}
@@ -270,6 +292,11 @@ public class ComplexMapper
 			List<ComponentRelationship> relationships = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentRelationship>>()
 			{
 			});
+			//clear ids
+			for (ComponentRelationship relationship : relationships) {
+				relationship.setComponentRelationshipId(null);
+			}
+
 			componentAll.getRelationships().addAll(relationships);
 		}
 	}
@@ -409,21 +436,34 @@ public class ComplexMapper
 
 	private void mapAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		//This grab all?
-
+		//This grab all?; Note this is currently used
 		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(componentFormSet.getPrimary().getAttributes()));
 		userSubmissionField.setRawValue(value);
 	}
 
 	private void mapContacts(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(ComponentContactView.toViewList(componentFormSet.getPrimary().getContacts()));
+		List<ComponentContactView> views = ComponentContactView.toViewList(componentFormSet.getPrimary().getContacts());
+
+		//remove ids that causes issue with change requests.
+		for (ComponentContactView view : views) {
+			view.setComponentContactId(null);
+		}
+
+		String value = objectMapper.writeValueAsString(views);
 		userSubmissionField.setRawValue(value);
 	}
 
 	private void mapDependencies(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(ComponentExternalDependencyView.toViewList(componentFormSet.getPrimary().getExternalDependencies()));
+		List<ComponentExternalDependencyView> views = ComponentExternalDependencyView.toViewList(componentFormSet.getPrimary().getExternalDependencies());
+
+		//remove ids that causes issue with change requests.
+		for (ComponentExternalDependencyView view : views) {
+			view.setDependencyId(null);
+		}
+
+		String value = objectMapper.writeValueAsString(views);
 		userSubmissionField.setRawValue(value);
 	}
 
@@ -441,7 +481,14 @@ public class ComplexMapper
 				media.setFile(userSubmissionMedia.getFile());
 			}
 		}
-		String value = objectMapper.writeValueAsString(ComponentMediaView.toViewList(componentFormSet.getPrimary().getMedia()));
+
+		List<ComponentMediaView> views = ComponentMediaView.toViewList(componentFormSet.getPrimary().getMedia());
+		//remove ids that causes issue with change requests.
+		for (ComponentMediaView view : views) {
+			view.setComponentMediaId(null);
+		}
+
+		String value = objectMapper.writeValueAsString(views);
 		userSubmissionField.setRawValue(value);
 
 		return userSubmissionMediaRecords;
@@ -461,7 +508,12 @@ public class ComplexMapper
 				resource.setFile(userSubmissionMedia.getFile());
 			}
 		}
-		String value = objectMapper.writeValueAsString(ComponentResourceView.toViewList(componentFormSet.getPrimary().getResources()));
+		List<ComponentResourceView> views = ComponentResourceView.toViewList(componentFormSet.getPrimary().getResources());
+		for (ComponentResourceView view : views) {
+			view.setResourceId(null);
+		}
+
+		String value = objectMapper.writeValueAsString(views);
 		userSubmissionField.setRawValue(value);
 
 		return userSubmissionMediaRecords;
@@ -469,13 +521,28 @@ public class ComplexMapper
 
 	private void mapTags(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(componentFormSet.getPrimary().getTags());
+		List<ComponentTag> existTags = componentFormSet.getPrimary().getTags();
+
+		//avoid change the original
+		List<ComponentTag> copyTags = new ArrayList<>();
+		for (ComponentTag tag : existTags) {
+			ComponentTag newTag = new ComponentTag();
+			newTag.setText(tag.getText());
+			copyTags.add(tag);
+		}
+
+		String value = objectMapper.writeValueAsString(copyTags);
 		userSubmissionField.setRawValue(value);
 	}
 
 	private void mapRelationships(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		String value = objectMapper.writeValueAsString(ComponentRelationshipView.toViewList(componentFormSet.getPrimary().getRelationships()));
+		List<ComponentRelationshipView> views = ComponentRelationshipView.toViewList(componentFormSet.getPrimary().getRelationships());
+		for (ComponentRelationshipView view : views) {
+			view.setRelationshipId(null);
+		}
+
+		String value = objectMapper.writeValueAsString(views);
 		userSubmissionField.setRawValue(value);
 	}
 
