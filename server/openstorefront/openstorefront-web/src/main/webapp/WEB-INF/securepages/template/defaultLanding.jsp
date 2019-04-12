@@ -37,7 +37,6 @@
 
 		Ext.create('Ext.container.Viewport', {			
 			cls: 'home-viewport',
-			id: 'defaultLandingView',
 			layout: 'border',
 			listeners: {
 				resize: function(view, width, height, oldWidth, oldHeight, eOpts) {								
@@ -90,12 +89,14 @@
 							bodyStyle: 'padding-bottom: 20px;',
 							itemId: 'disclaimerPanel',
 							hidden:true,
+							reference:'disclaimerPanel',
 
 							beforeRender:function(){
 								//if there is a disclaimer message, show the element
+								var that = this;
 								CoreService.brandingservice.getCurrentBranding().then(function(branding){
 									if(branding.disclaimerMessage){
-										Ext.getCmp("defaultLandingView").queryById('disclaimerPanel').setVisible(true);
+										that.up().queryById('disclaimerPanel').setVisible(true);
 									}
 								});
 							}

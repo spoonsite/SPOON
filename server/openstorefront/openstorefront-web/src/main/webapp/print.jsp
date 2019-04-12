@@ -138,7 +138,6 @@
 					printTemplate.set(response.responseText, true);
 					loadEntry();
 				},
-				//TODO: add graceful failure message to users
 				failure: function(response, opts) {
 					alert('The Print View failed to load!')
 				}
