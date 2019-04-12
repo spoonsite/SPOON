@@ -47,12 +47,14 @@ public class UnitManager
 	public void initialize()
 	{
 		UnitFormat instance = UnitFormat.getInstance();
-		instance.alias(NonSI.BYTE.times(1.0E3),  "kB");
+		instance.alias(NonSI.BYTE.times(1.0E3),  "kB"); // SI is lower case k
+		instance.alias(NonSI.BYTE.times(1.0E3),  "KB"); // also allow upper case K
 		instance.alias(NonSI.BYTE.times(1.0E6),  "MB");
 		instance.alias(NonSI.BYTE.times(1.0E9),  "GB");
 		instance.alias(NonSI.BYTE.times(1.0E12), "TB");
 		instance.alias(NonSI.BYTE.times(1.0E15), "PB");
-		instance.alias(SI.BIT.times(1.0E3),      "kb");
+		instance.alias(SI.BIT.times(1.0E3),      "kb"); // SI is lower case k
+		instance.alias(SI.BIT.times(1.0E3),      "Kb");
 		instance.alias(SI.BIT.times(1.0E6),      "Mb");
 		instance.alias(SI.BIT.times(1.0E9),      "Gb");
 		instance.alias(SI.BIT.times(1.0E12),     "Tb");
