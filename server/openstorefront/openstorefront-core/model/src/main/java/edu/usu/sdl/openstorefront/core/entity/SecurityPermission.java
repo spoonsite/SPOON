@@ -62,7 +62,7 @@ public class SecurityPermission
 	public static final String ADMIN_ATTRIBUTE_MANAGEMENT_UPDATE = "ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE";
 	public static final String ADMIN_ATTRIBUTE_MANAGEMENT_DELETE = "ADMIN-ATTRIBUTE-MANAGEMENT-DELETE";
 	public static final String ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT = "ADMIN-COMPONENT-ATTRIBUTE-MANAGEMENT";
-    public static final String ALLOW_USER_ATTRIBUTE_TYPE_CREATION = "ALLOW-USER-ATTRIBUTE-TYPE-CREATION";
+	public static final String ALLOW_USER_ATTRIBUTE_TYPE_CREATION = "ALLOW-USER-ATTRIBUTE-TYPE-CREATION";
 
 	// Branding
 	public static final String GROUPBY_BRANDING = "Branding";
@@ -326,7 +326,7 @@ public class SecurityPermission
 	public static final String RUN_WORKPLAN_STATUS = "RUN-WORKPLAN-STATUS";
 
 	// Reports Schedule
-	public static final String GROUPBY_REPORTS_SCHEDULE = "Reports Schedule";	
+	public static final String GROUPBY_REPORTS_SCHEDULE = "Reports Schedule";
 	public static final String REPORTS_SCHEDULE_CREATE = "REPORTS-SCHEDULE-CREATE";
 	public static final String REPORTS_SCHEDULE_READ = "REPORTS-SCHEDULE-READ";
 	public static final String REPORTS_SCHEDULE_UPDATE = "REPORTS-SCHEDULE-UPDATE";
@@ -441,6 +441,7 @@ public class SecurityPermission
 	public static final String ADMIN_WORKPLAN_CREATE = "ADMIN-WORKPLAN-CREATE";
 	public static final String ADMIN_WORKPLAN_UPDATE = "ADMIN-WORKPLAN-UPDATE";
 	public static final String ADMIN_WORKPLAN_DELETE = "ADMIN-WORKPLAN-DELETE";
+	public static final String ADMIN_WORKPLAN_COPY = "ADMIN-WORKPLAN-COPY";
 	public static final String USER_WORKPLAN_READ = "USER-WORKPLAN-READ";
 
 	// Workplan Progress Management
@@ -505,7 +506,7 @@ public class SecurityPermission
 		codeMap.put(ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT, newLookup(SecurityPermission.class, ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT, "Gives ability to manage attributes on entries from the admin tools manage assignments tool", null, GROUPBY_ATTRIBUTE));
 		((SecurityPermission) codeMap.get(ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_COMPONENT_ATTRIBUTE_MANAGEMENT)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
-			
+
 		codeMap.put(ALLOW_USER_ATTRIBUTE_TYPE_CREATION, newLookup(SecurityPermission.class, ALLOW_USER_ATTRIBUTE_TYPE_CREATION, "Allows for creating attribute types", null, GROUPBY_ATTRIBUTE));
 		((SecurityPermission) codeMap.get(ALLOW_USER_ATTRIBUTE_TYPE_CREATION)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ALLOW_USER_ATTRIBUTE_TYPE_CREATION)).setDefaultRoles(null);
@@ -1581,6 +1582,10 @@ public class SecurityPermission
 		codeMap.put(ADMIN_WORKPLAN_DELETE, newLookup(SecurityPermission.class, ADMIN_WORKPLAN_DELETE, "Provides access to delete workplans", null, GROUPBY_WORKPLAN));
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_DELETE)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_DELETE)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
+		codeMap.put(ADMIN_WORKPLAN_COPY, newLookup(SecurityPermission.class, ADMIN_WORKPLAN_COPY, "Provides access to copy workplans", null, GROUPBY_WORKPLAN));
+		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_COPY)).setPermissionPredecessor(null);
+		((SecurityPermission) codeMap.get(ADMIN_WORKPLAN_COPY)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(USER_WORKPLAN_READ, newLookup(SecurityPermission.class, USER_WORKPLAN_READ, "Allows users to view current 'status' of selected record in a workplan", null, GROUPBY_WORKPLAN));
 		((SecurityPermission) codeMap.get(USER_WORKPLAN_READ)).setPermissionPredecessor(null);

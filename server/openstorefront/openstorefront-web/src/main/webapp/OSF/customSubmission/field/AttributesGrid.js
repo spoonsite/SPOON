@@ -92,6 +92,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 					scrollable: true,
 					originalRecord: record,
 					componentType: grid.componentType,
+					section: grid.section,
 					dockedItems: [
 						{
 							xtype: 'toolbar',

@@ -669,7 +669,7 @@ public abstract class GeneralComponentResourceExt
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 
-			List<AttributeType> requiredAttributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponent().getComponentType(), false);
+			List<AttributeType> requiredAttributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponent().getComponentType(), false, null);
 			Set<String> requiredTypeSet = requiredAttributeTypes.stream()
 					.map(AttributeType::getAttributeType)
 					.collect(Collectors.toSet());
@@ -994,6 +994,27 @@ public abstract class GeneralComponentResourceExt
 		Component component = service.getComponentService().createPendingChangeComponent(componentId);
 		response = Response.created(URI.create(BASE_RESOURCE_PATH + component.getComponentId())).entity(component).build();
 		return response;
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(UserSubmission.class)
+	@APIDescription("Return a user submission view of the component. User Submission is not save...so this is a ready only version.")
+	@Path("/{id}/usersubmission")
+	public Response convertToUserSubmission(
+			@PathParam("id")
+			@RequiredParam String componentId
+	)
+	{
+		UserSubmission userSubmission = null;
+
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if (component != null) {
+			userSubmission = service.getSubmissionFormService().componentToSubmission(componentId);
+		}
+		return sendSingleEntityResponse(userSubmission);
 	}
 
 	@POST

@@ -148,7 +148,7 @@ public class Component
 	@ConsumeField
 	@ValidValueType(value
 			= {}, lookupClass = DataSource.class)
-	@FK(ApprovalStatus.class)
+	@FK(DataSource.class)
 	private String dataSource;
 
 	@ValidValueType(value
@@ -156,7 +156,7 @@ public class Component
 	@FK(ModificationType.class)
 	private String lastModificationType;
 
-	@FK(ModificationType.class)
+	@FK(FileHistory.class)
 	private String fileHistoryId;
 
 	@APIDescription("Overall record version for the component")
