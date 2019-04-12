@@ -562,20 +562,14 @@ public class AttributeResource
 	{
 		// 1. Verify that all the units are compatible
 		if(!unitsAreCompatible(attributeTypeListMerge)) {
-			String error = Json.createObjectBuilder()
-					.add("error", " unable to parse units: ")
-					.build()
-					.toString();
-			return Response.ok(error).build();
+			SimpleRestError error = new SimpleRestError("Unable to parse units.");
+			return Response.ok(error, MediaType.APPLICATION_JSON).build();
 		}
 		
 		// 2. Verify that the attributetype was created.
 		if(!attributeTypeWasCreated(attributeTypeListMerge)) {
-			String error = Json.createObjectBuilder()
-					.add("error", " unable to create new attribute type ")
-					.build()
-					.toString();
-			return Response.ok(error).build();
+			SimpleRestError error = new SimpleRestError("Unable to create new attribute type.");
+			return Response.ok(error, MediaType.APPLICATION_JSON).build();
 		}
 		
 		// 3. Get unit name of base unit
@@ -604,11 +598,8 @@ public class AttributeResource
 				tempUnit = Unit.valueOf(deletionAttributeType.getAttributeUnit());
 				conversionFactor = Amount.valueOf(1, tempUnit).to(baseUnit);
 			} catch (IllegalArgumentException e) {
-				String error = Json.createObjectBuilder()
-						.add("error", " unable to create conversion factor: ")
-						.build()
-						.toString();
-				return Response.ok(error).build();
+				SimpleRestError error = new SimpleRestError("Unable to create conversion factor.");
+				return Response.ok(error, MediaType.APPLICATION_JSON).build();
 			}
 
 			BigDecimal bdConversionFactor = new BigDecimal(conversionFactor.getMaximumValue());
@@ -632,11 +623,8 @@ public class AttributeResource
 				attributeCode.getAttributeCodePk().setAttributeCode(df.format(result));
 				attributeCode.updateFields(attributeCode);
 				if(!attributeCodeWasCreated(attributeCode, true)) {
-					String error = Json.createObjectBuilder()
-						.add("error", " unable to create new attributeCode: ")
-						.build()
-						.toString();
-					return Response.ok(error).build();
+					SimpleRestError error = new SimpleRestError("Unable to create new attribute code.");
+					return Response.ok(error, MediaType.APPLICATION_JSON).build();
 				}
 				
 				
@@ -657,9 +645,11 @@ public class AttributeResource
 				if (validationResult.valid()) {
 					service.getComponentService().saveComponentAttribute(componentAttributeToAdd);
 				}
-				
+				else {
+					SimpleRestError error = new SimpleRestError("Unable to save new component attribute.");
+					return Response.ok(error, MediaType.APPLICATION_JSON).build();
+				}
 			}
-			
 		}
 
 		// 9. Delete all the old attributetypes
@@ -680,12 +670,6 @@ public class AttributeResource
 			return false;
 		}
 		return true;
-//		AttributeCode attributeCodeCreated = service.getPersistenceService().findById(AttributeCode.class, attributeCode.getAttributeCodePk());
-////			return Response.created(URI.create("v1/resource/attributes/attributetypes/"
-////					+ StringProcessor.urlEncode(attributeCode.getAttributeCodePk().getAttributeType())
-////					+ "/attributecodes/"
-////					+ StringProcessor.urlEncode(attributeCode.getAttributeCodePk().getAttributeCode()))).entity(attributeCodeCreated).build();
-
 	}
 	
 	private void cascadeDeleteAttributeTypesList(List<String> attributeTypesToDelete) {

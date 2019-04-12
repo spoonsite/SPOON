@@ -133,7 +133,7 @@ public class AttributeType
 	private String attributeValueType;
 	
 	@ConsumeField
-	@APIDescription("Base Unit of measure for the attribute  ie... meters")
+	@APIDescription("Base Unit of measure for the attribute  ie... m (parsable to meters)")
 	private String attributeUnit;
 
 	@ConsumeField
