@@ -88,14 +88,14 @@
 						{
 							xtype: 'osf-defaultdisclaimer',
 							bodyStyle: 'padding-bottom: 20px;',
-							id: 'disclaimerPanel',
+							itemId: 'disclaimerPanel',
 							hidden:true,
 
 							beforeRender:function(){
 								//if there is a disclaimer message, show the element
 								CoreService.brandingservice.getCurrentBranding().then(function(branding){
 									if(branding.disclaimerMessage){
-										Ext.getCmp("defaultLandingView").queryById('disclaimerButton').setVisible(true);
+										Ext.getCmp("defaultLandingView").queryById('disclaimerPanel').setVisible(true);
 									}
 								});
 							}
