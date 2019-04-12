@@ -2146,6 +2146,46 @@ Contains definitions of terms used in the application and in the help documentat
 -  **Job**              -  A scheduled unit of work.
 -  **Task**             -  Background process; used for long-running operations.
 
+## 5.3 Units Legend
+-----------------
+
+<table>
+  <tr>
+    <td>
+      Item
+    </td>
+    <td>
+      Item
+    </td>
+    <td>
+      Item
+    </td>
+  </tr>
+  <table>
+
+  | Header 1 | Header 2 | Header 3 |
+| --------- | --------- | --------- |
+| 123456789 | \-         | 123456789 |
+
+| Attribute    | Description |
+|--------------|-------------|
+|testing | testing |
+
+Symbol | Base unit | Description
+-----------|----------|----------
+'kB' or 'KB' |  Byte | Kilobyte: 1 000 bytes
+'MB' | Byte | Megabyte: 1 000 000 bytes
+'GB' | Byte | Gigabyte: 1 000 000 000 bytes
+'TB' | Byte | Terabyte: 1 000 000 000 000 bytes
+'PB' | Byte | Petabyte: 1 000 000 000 000 000 bytes
+'kb' or 'Kb' |  Byte | Kilobyte: 1 000 bytes
+'Mb' | Byte | Megabyte: 1 000 000 bytes
+'Gb' | Byte | Gigabyte: 1 000 000 000 bytes
+'Tb' | Byte | Terabyte: 1 000 000 000 000 bytes
+'Pb' | Byte | Petabyte: 1 000 000 000 000 000 bytes
+
+
+
 # 6. Guides @ADMIN-ENTRIES-PAGE
 ------
 
