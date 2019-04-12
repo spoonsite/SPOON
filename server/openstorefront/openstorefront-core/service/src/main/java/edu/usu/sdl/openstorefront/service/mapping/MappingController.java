@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.mapping;
 
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
@@ -138,6 +139,17 @@ public class MappingController
 		componentFormSet.setPrimary(mainComponent);
 
 		mapTemplateSections(template, componentFormSet, userSubmission);
+
+		//de-dup contacts here since multiple field could
+		//(Allows for less ideal submission forms)
+		Map<String, ComponentContact> contactMap = new HashMap<>();
+		for (ComponentContact contact : componentFormSet.getPrimary().getContacts()) {
+			String key = contact.getContactType() + contact.getFirstName() + contact.getLastName() + contact.getEmail();
+			if (!contactMap.containsKey(key)) {
+				contactMap.put(key, contact);
+			}
+		}
+		componentFormSet.getPrimary().setContacts(new ArrayList<>(contactMap.values()));
 
 		return componentFormSet;
 	}

@@ -166,16 +166,7 @@ public class ComplexMapper
 				contact.setComponentContactId(null);
 			}
 
-			//De-dup (Allows for less ideal submission forms)
-			Map<String, ComponentContact> contactMap = new HashMap<>();
-			for (ComponentContact contact : contacts) {
-				String key = contact.getContactType() + contact.getFirstName() + contact.getLastName() + contact.getEmail();
-				if (!contactMap.containsKey(key)) {
-					contactMap.put(key, contact);
-				}
-			}
-
-			componentAll.getContacts().addAll(contactMap.values());
+			componentAll.getContacts().addAll(contacts);
 		}
 	}
 
