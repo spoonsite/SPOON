@@ -179,7 +179,7 @@ public class HelpImporter
 		if (helpSection != null) {
 			addHelpSection(helpSections, helpSection);
 		}
-
+		LOG.info(helpSection.toString());
 		return helpSections;
 	}
 
