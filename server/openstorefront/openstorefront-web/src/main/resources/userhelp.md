@@ -2149,10 +2149,42 @@ Contains definitions of terms used in the application and in the help documentat
 ## 5.3 Units Legend
 -----------------
 
-<!-- <style>
-  th, td {border: 1px solid #ddd;}
-  tr:nth-child(even){background-color: #f2f2f2;}
-</style> -->
+==Table Header
+This, is, a, bunch of columns
+This, is, a, bunch of columns
+This, is, a, bunch of columns
+
+ |   1   |   2   |   3   |   4   |   5   |
+ | :---: | :---: | :---: | :---: | :---: |
+ |  one         ||  two                |||
+
+|  		  	  |  		 Grouping			||
+First Header  | Second Header | Third Header |
+ ------------ | :-----------: | -----------: |
+Content       |          *Long Cell*   		||
+Content       |   **Cell**    |         Cell |
+
+New section   |     More      |         Data |
+And more      |            And more          ||
+[Prototype table]
+
+| | Grouping || First Header | Second Header | Third Header | | ---------- | :-----------: | -----------: | Content | Long Cell || Content | Cell | Cell |
+
+<table>
+    <tbody>
+        <tr>
+            <td><p>'kB' or 'KB'</p></td>
+        </tr>
+    </tbody>
+</table>
+
+<table>
+    <tbody>
+        <tr>
+            <td><div>'kB' or 'KB'</div></td>
+        </tr>
+    </tbody>
+</table>
 
 <table>
     <thead>
@@ -2249,7 +2281,7 @@ Contains definitions of terms used in the application and in the help documentat
             <td>1 pound per square inch</td>
         </tr>
         <tr>
-            <td>'°' or 'deg'</td>
+            <td>'&#176;' or 'deg'</td>
             <td>Degree</td>
             <td>1 degree</td>
         </tr>
