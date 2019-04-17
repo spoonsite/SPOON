@@ -2090,7 +2090,7 @@ Ext.define('OSF.component.SubmissionPanel', {
 						{
 							xtype: 'grid',
 							itemId: 'optionalAttributes',
-							title: 'Additional Attributes <i class="fa fa-question-circle"  data-qtip="Attributes are filterable metadata about the entry."></i>',
+							title: 'Additional Attributesasdf <i class="fa fa-question-circle"  data-qtip="Attributes are filterable metadata about the entry."></i>',
 							collapsible: true,
 							titleCollapse: true,
 							margin: '0 0 20 0',
