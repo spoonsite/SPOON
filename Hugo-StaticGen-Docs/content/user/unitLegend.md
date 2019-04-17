@@ -2,40 +2,36 @@
 title = "Unit Legend"
 description = ""
 weight = 3
+hasMath = true
+markup = "mmark"
 +++
-
-
-$ 1^3 $
-$$ 1^3 $$
-1^3^
-
 
 |Symbol|Base unit|Description|
 |--- |--- |--- |
-|'kB' or 'KB'|Byte|Kilobyte: $$ 1x10^3 $$ bytes|
-|'MB'|Byte|Megabyte: 1 000 000 bytes|
-|'GB'|Byte|Gigabyte: 1 000 000 000 bytes|
-|'TB'|Byte|Terabyte: 1 000 000 000 000 bytes|
-|'PB'|Byte|Petabyte: 1 000 000 000 000 000 bytes|
-|'kb' or 'Kb'|Bit|Kilobit: 1 000 bits|
-|'Mb'|Bit|Megabit: 1 000 000 bits|
-|'Gb'|Bit|Gigabit: 1 000 000 000 bits|
-|'Tb'|Bit|Terabit: 1 000 000 000 000 bits|
-|'Pb'|Bit|Petabit: 1 000 000 000 000 000 bits|
+|'kB' or 'KB'|Byte|Kilobyte: $10^3$ bytes|
+|'MB'|Byte|Megabyte: $10^6$ bytes|
+|'GB'|Byte|Gigabyte: $10^9$ bytes|
+|'TB'|Byte|Terabyte: $10^{12}$ bytes|
+|'PB'|Byte|Petabyte: $10^{15}$ bytes|
+|'kb' or 'Kb'|Bit|Kilobit: $10^3$ bits|
+|'Mb'|Bit|Megabit: $10^6$ bits|
+|'Gb'|Bit|Gigabit: $10^9$ bits|
+|'Tb'|Bit|Terabit: $10^{12}$ bits|
+|'Pb'|Bit|Petabit: $10^{15}$ bits|
 |'bps'|Bit Per Second|1 bit per second|
-|'kbps'|Bit Per Second|1 000 bits per second|
-|'Mbps'|Bit Per Second|1 000 000 bits per second|
-|'Gbps'|Bit Per Second|1 000 000 000 bits per second|
+|'kbps'|Bit Per Second|$10^3 \frac{\text{bits}}{\text{sec}}$|
+|'Mbps'|Bit Per Second|$10^6 \frac{\text{bits}}{\text{sec}}$|
+|'Gbps'|Bit Per Second|$10^9 \frac{\text{bits}}{\text{sec}}$|
 |'rpm' or 'RPM'|Revolution Per Minute|1 revolution Per Minute|
 |'inch'|inch|1 inch|
-|'psi'|Pounds Per Square Inch|1 pound per square inch|
+|'psi'|Pounds Per Square Inch|1 $\frac{\text{lbs}}{\text{in}^2}$|
 |'°' or 'deg'|Degree|1 degree|
 |'arcsec'|Degree|1/3600 degree|
 |'arcsmin'|Degree|1/60 degree|
 |'G'|Gauss|1 Gauss|
 |'mG'|microGauss|1 000 Gauss|
 |'Grav'|Newtonian constant of gravitation|
-|'mGrav'|microGrav|0.000 001 Grav|
+|'mGrav'|microGrav|$10^{-6}$ Grav|
 |'grms' or 'Grms'|Root-Mean-Square Acceleration|
 |'g'|Gram|1 gram|
 |'dBW'|Decibel Watt|1 decibel Watt|
