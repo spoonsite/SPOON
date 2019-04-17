@@ -245,7 +245,39 @@
 					items: [	
 						comparePanelItemGenerator('compareAPanel', 'componentA','left'),
 						comparePanelItemGenerator('compareBPanel', 'componentB', 'right')
-					]
+					],
+					dockedItems: [
+						{
+							xtype: 'panel',
+							dock: 'bottom',
+							html: 'Hiya buckaroo!',
+							itemid: 'hyrdacopter'
+						}
+					],
+					listeners: {
+						// afterrender: function() {
+						// 	console.log("Shoot is Hitting the Fan!!!");
+						// },
+						mouseover: {
+							element: 'body', //bind to the underlying el property on the panel
+							fn: function(){
+								var win = this;
+								var arrayOne = [];
+								var arrayTwo = [];
+								// console.log(win);
+								win.component.items.items[1].data.attributes.forEach(function(elim) {
+									arrayOne.push(elim);
+								});
+								win.component.items.items[3].data.attributes.forEach(function(elim) {
+									arrayTwo.push(elim);
+								});
+								console.log(arrayOne);
+								console.log(arrayTwo);
+								// win.component.items.items[1].data.attributes
+								// win.component.dockedItems.items[1].setHtml('booky dooky!!!!');
+							}
+						}
+					}
 				});				
 				compareWin.show();
 				
