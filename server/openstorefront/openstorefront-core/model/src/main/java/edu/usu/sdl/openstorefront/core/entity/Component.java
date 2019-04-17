@@ -60,6 +60,7 @@ public class Component
 	public static final String FIELD_LAST_ACTIVITY_DTS = "lastActivityDts";
 	public static final String FIELD_RELEASE_DATE = "releaseDate";
 	public static final String FIELD_DATA_SOURCE = "dataSource";
+	public static final String FIELD_COMPONENT_ID = "componentId";
 
 	@PK(generated = true)
 	@NotNull

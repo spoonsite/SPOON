@@ -169,7 +169,7 @@ public class ComponentOrientRepoImpl
 	}
 
 	@Override
-	public List<ComponentTracking> searchComponentTractor(FilterQueryParams filter, String componentId)
+	public List<ComponentTracking> searchComponentTracking(FilterQueryParams filter, String componentId)
 	{
 		List<String> componentIdInResults = new ArrayList<>();
 		if (StringUtils.isNotBlank(filter.getComponentName())) {

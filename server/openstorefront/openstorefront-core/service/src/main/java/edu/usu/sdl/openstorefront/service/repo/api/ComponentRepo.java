@@ -74,7 +74,7 @@ public interface ComponentRepo
 	 * @param componentId
 	 * @return
 	 */
-	public List<ComponentTracking> searchComponentTractor(FilterQueryParams filter, String componentId);
+	public List<ComponentTracking> searchComponentTracking(FilterQueryParams filter, String componentId);
 
 	/**
 	 * Find all components that have datasources or datasensitivity

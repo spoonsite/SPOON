@@ -60,7 +60,6 @@ public class MongoDBManager
 
 	public MongoDBManager(PropertiesManager propertiesManager)
 	{
-		this.mongoClient = mongoClient;
 		this.propertiesManager = propertiesManager;
 	}
 

@@ -1470,7 +1470,7 @@ public class CoreComponentServiceImpl
 	{
 		ComponentTrackingResult result = new ComponentTrackingResult();
 
-		List<ComponentTracking> componentTrackings = componentService.getRepoFactory().getComponentRepo().searchComponentTractor(filter, componentId);
+		List<ComponentTracking> componentTrackings = componentService.getRepoFactory().getComponentRepo().searchComponentTracking(filter, componentId);
 
 		result.setCount(componentTrackings.size());
 		for (ComponentTracking item : componentTrackings) {
