@@ -84,12 +84,12 @@ public class ContentSectionServiceImpl
 				ContentSubSection existing = subSectionMap.get(subSection.getSubSectionId()).get(0);
 				subSection.setContent(parseTemporaryMedia(contentSection.getContentSectionId(), subSection.getContent()));
 				existing.updateFields(subSection);
-				persistenceService.persist(existing);
+				getPersistenceService().persist(existing);
 			} else {
 				subSection.setContentSectionId(contentSection.getContentSectionId());
 				subSection.setContent(parseTemporaryMedia(contentSection.getContentSectionId(), subSection.getContent()));
 				subSection.populateBaseCreateFields();
-				persistenceService.persist(subSection);
+				getPersistenceService().persist(subSection);
 			}
 		}
 
@@ -121,12 +121,12 @@ public class ContentSectionServiceImpl
 				String tempMediaId = url.substring(url.indexOf("&name=") + "&name=".length());
 				tempMediaId = StringProcessor.urlDecode(tempMediaId);
 
-				TemporaryMedia existingTemporaryMedia = persistenceService.findById(TemporaryMedia.class, tempMediaId);
+				TemporaryMedia existingTemporaryMedia = getPersistenceService().findById(TemporaryMedia.class, tempMediaId);
 				if (existingTemporaryMedia != null) {
 					// Check map if we've already processed this temporary media, otherwise, do conversion
 					ContentSectionMedia contentSectionMedia;
 					if (processedConversions.containsKey(tempMediaId)) {
-						contentSectionMedia = persistenceService.findById(ContentSectionMedia.class, processedConversions.get(tempMediaId));
+						contentSectionMedia = getPersistenceService().findById(ContentSectionMedia.class, processedConversions.get(tempMediaId));
 					} else {
 						contentSectionMedia = new ContentSectionMedia();
 						contentSectionMedia.setActiveStatus(Component.ACTIVE_STATUS);
@@ -157,12 +157,12 @@ public class ContentSectionServiceImpl
 
 						Path path = existingTemporaryMedia.pathToMedia();
 						try (InputStream in = new FileInputStream(path.toFile())) {
-							contentSectionMedia.setContentSectionMediaId(persistenceService.generateId());
+							contentSectionMedia.setContentSectionMediaId(getPersistenceService().generateId());
 							contentSectionMedia.populateBaseCreateFields();
 							contentSectionMedia.setFile(saveMediaFile(new MediaFile(), in, existingTemporaryMedia.getMimeType(), existingTemporaryMedia.getOriginalFileName()));
-							persistenceService.persist(contentSectionMedia);
+							getPersistenceService().persist(contentSectionMedia);
 							//NOTE: (KB) commit so that we can find section media via sql
-							persistenceService.commit();
+							getPersistenceService().commit();
 							processedConversions.put(tempMediaId, contentSectionMedia.getContentSectionMediaId());
 						} catch (IOException ex) {
 							throw new OpenStorefrontRuntimeException("Failed to convert temporary media to section media", ex);
@@ -233,7 +233,7 @@ public class ContentSectionServiceImpl
 		}
 		try {
 			savedMedia.setFile(saveMediaFile(savedMedia.getFile(), fileInput, mimeType, originalFileName));
-			persistenceService.persist(savedMedia);
+			getPersistenceService().persist(savedMedia);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
@@ -252,7 +252,7 @@ public class ContentSectionServiceImpl
 		if (media == null) {
 			media = new MediaFile();
 		}
-		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
+		media.setFileName(getPersistenceService().generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
 		media.setMimeType(mimeType);
 		media.setOriginalName(originalFileName);
 		media.setFileType(MediaFileType.MEDIA);
@@ -264,10 +264,10 @@ public class ContentSectionServiceImpl
 	@Override
 	public void deleteMedia(String contentSectionMediaId)
 	{
-		ContentSectionMedia existing = persistenceService.findById(ContentSectionMedia.class, contentSectionMediaId);
+		ContentSectionMedia existing = getPersistenceService().findById(ContentSectionMedia.class, contentSectionMediaId);
 		if (existing != null) {
 			removeLocalMedia(existing);
-			persistenceService.delete(existing);
+			getPersistenceService().delete(existing);
 			getChangeLogService().removeEntityChange(ContentSectionMedia.class, existing);
 		}
 	}
@@ -275,14 +275,14 @@ public class ContentSectionServiceImpl
 	@Override
 	public String saveSectionTemplate(ContentSectionTemplateView templateView)
 	{
-		ContentSectionTemplate template = persistenceService.findById(ContentSectionTemplate.class, templateView.getContentSectionTemplate().getTemplateId());
+		ContentSectionTemplate template = getPersistenceService().findById(ContentSectionTemplate.class, templateView.getContentSectionTemplate().getTemplateId());
 		if (template != null) {
 			template.updateFields(templateView.getContentSectionTemplate());
-			template = persistenceService.persist(template);
+			template = getPersistenceService().persist(template);
 		} else {
-			templateView.getContentSectionTemplate().setTemplateId(persistenceService.generateId());
+			templateView.getContentSectionTemplate().setTemplateId(getPersistenceService().generateId());
 			templateView.getContentSectionTemplate().populateBaseCreateFields();
-			template = persistenceService.persist(templateView.getContentSectionTemplate());
+			template = getPersistenceService().persist(templateView.getContentSectionTemplate());
 		}
 
 		//for this case we need to do full refresh of sub-sections only
@@ -294,11 +294,11 @@ public class ContentSectionServiceImpl
 		if (contentSectionExisting != null) {
 			ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
 			contentSectionMedia.setContentSectionId(contentSectionExisting.getContentSectionId());
-			persistenceService.deleteByExample(contentSectionMedia);
+			getPersistenceService().deleteByExample(contentSectionMedia);
 
 			ContentSubSection contentSubSection = new ContentSubSection();
 			contentSubSection.setContentSectionId(contentSectionExisting.getContentSectionId());
-			persistenceService.deleteByExample(contentSubSection);
+			getPersistenceService().deleteByExample(contentSubSection);
 		}
 
 		ContentSectionAll contentSectionAll = new ContentSectionAll();
@@ -320,7 +320,7 @@ public class ContentSectionServiceImpl
 
 		ContentSectionMedia contentSectionMedia = new ContentSectionMedia();
 		contentSectionMedia.setContentSectionId(contentSectionId);
-		List<ContentSectionMedia> media = persistenceService.queryByExample(contentSectionMedia);
+		List<ContentSectionMedia> media = getPersistenceService().queryByExample(contentSectionMedia);
 		if (media != null) {
 			media.forEach(item -> {
 				deleteMedia(item.getContentSectionMediaId());
@@ -329,11 +329,11 @@ public class ContentSectionServiceImpl
 
 		ContentSubSection contentSubSection = new ContentSubSection();
 		contentSubSection.setContentSectionId(contentSectionId);
-		persistenceService.deleteByExample(contentSubSection);
+		getPersistenceService().deleteByExample(contentSubSection);
 
-		ContentSection contentSection = persistenceService.findById(ContentSection.class, contentSectionId);
+		ContentSection contentSection = getPersistenceService().findById(ContentSection.class, contentSectionId);
 		if (contentSection != null) {
-			persistenceService.delete(contentSection);
+			getPersistenceService().delete(contentSection);
 			getChangeLogService().removeEntityChange(ContentSection.class, contentSection);
 		}
 	}
@@ -346,9 +346,9 @@ public class ContentSectionServiceImpl
 			example.setFile(new MediaFile());
 			example.getFile().setMediaFileId(componentMedia.getFile().getMediaFileId());
 
-			long count = persistenceService.countByExample(example);
+			long count = getPersistenceService().countByExample(example);
 			if (count == 1) {
-				MediaFile mediaFile = persistenceService.findById(MediaFile.class, componentMedia.getFile().getMediaFileId());
+				MediaFile mediaFile = getPersistenceService().findById(MediaFile.class, componentMedia.getFile().getMediaFileId());
 				if (mediaFile != null) {
 					Path path = mediaFile.path();
 					if (path != null) {
@@ -358,7 +358,7 @@ public class ContentSectionServiceImpl
 							}
 						}
 					}
-					persistenceService.delete(mediaFile);
+					getPersistenceService().delete(mediaFile);
 				}
 			}
 		}
@@ -388,7 +388,7 @@ public class ContentSectionServiceImpl
 		if (isContentTemplateBeingUsed(templateId)) {
 			throw new OpenStorefrontRuntimeException("Unable to remove content template.", "Remove all ties to the template (see evaluation templates)");
 		} else {
-			ContentSectionTemplate template = persistenceService.findById(ContentSectionTemplate.class, templateId);
+			ContentSectionTemplate template = getPersistenceService().findById(ContentSectionTemplate.class, templateId);
 			if (template != null) {
 
 				ContentSection contentSectionExample = new ContentSection();
@@ -400,7 +400,7 @@ public class ContentSectionServiceImpl
 					deleteContentSection(contentSection.getContentSectionId());
 				}
 
-				persistenceService.delete(template);
+				getPersistenceService().delete(template);
 			}
 		}
 	}
@@ -412,7 +412,7 @@ public class ContentSectionServiceImpl
 		Objects.requireNonNull(entityId);
 		Objects.requireNonNull(sectionTemplateId);
 
-		ContentSectionTemplate template = persistenceService.findById(ContentSectionTemplate.class, sectionTemplateId);
+		ContentSectionTemplate template = getPersistenceService().findById(ContentSectionTemplate.class, sectionTemplateId);
 		if (template != null) {
 
 			ContentSection templateSection = new ContentSection();
@@ -426,7 +426,7 @@ public class ContentSectionServiceImpl
 			}
 
 			ContentSection contentSection = new ContentSection();
-			contentSection.setContentSectionId(persistenceService.generateId());
+			contentSection.setContentSectionId(getPersistenceService().generateId());
 			contentSection.setEntity(entity);
 			contentSection.setEntityId(entityId);
 			contentSection.setTitle(templateSection.getTitle());
@@ -436,7 +436,7 @@ public class ContentSectionServiceImpl
 			contentSection.setWorkflowStatus(initialStatus.getCode());
 			contentSection.setTemplateId(sectionTemplateId);
 			contentSection.populateBaseCreateFields();
-			contentSection = persistenceService.persist(contentSection);
+			contentSection = getPersistenceService().persist(contentSection);
 
 			//copy media
 			ContentSectionMedia templateSectionMedia = new ContentSectionMedia();
@@ -452,7 +452,7 @@ public class ContentSectionServiceImpl
 
 				ContentSubSection subSection = new ContentSubSection();
 				subSection.setContentSectionId(contentSection.getContentSectionId());
-				subSection.setSubSectionId(persistenceService.generateId());
+				subSection.setSubSectionId(getPersistenceService().generateId());
 				subSection.setTitle(templateSubSection.getTitle());
 				subSection.setContent(templateSubSection.getContent());
 				subSection.setNoContent(templateSubSection.getNoContent());
@@ -461,7 +461,7 @@ public class ContentSectionServiceImpl
 				subSection.setPrivateSection(templateSubSection.getPrivateSection());
 				subSection.setCustomFields(templateSubSection.getCustomFields());
 				subSection.populateBaseCreateFields();
-				persistenceService.persist(subSection);
+				getPersistenceService().persist(subSection);
 
 			}
 
@@ -480,7 +480,7 @@ public class ContentSectionServiceImpl
 			sectionMedia.setContentSectionId(newSection.getContentSectionId());
 			sectionMedia.setMediaTypeCode(templateMedia.getMediaTypeCode());
 			if (templateMedia.getFile() != null) {
-				MediaFile file = persistenceService.findById(MediaFile.class, templateMedia.getFile().getMediaFileId());
+				MediaFile file = getPersistenceService().findById(MediaFile.class, templateMedia.getFile().getMediaFileId());
 				sectionMedia.setFile(file);
 			}
 			if (sectionMedia.getPrivateMedia() == null) {

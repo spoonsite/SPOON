@@ -150,14 +150,14 @@ public class SecurityServiceImpl
 	@Override
 	public SecurityPolicy updateSecurityPolicy(SecurityPolicy securityPolicy)
 	{
-		SecurityPolicy existing = persistenceService.findById(SecurityPolicy.class, securityPolicy.getPolicyId());
+		SecurityPolicy existing = getPersistenceService().findById(SecurityPolicy.class, securityPolicy.getPolicyId());
 		if (existing != null) {
 			existing.updateFields(securityPolicy);
-			securityPolicy = persistenceService.persist(existing);
+			securityPolicy = getPersistenceService().persist(existing);
 		} else {
-			securityPolicy.setPolicyId(persistenceService.generateId());
+			securityPolicy.setPolicyId(getPersistenceService().generateId());
 			securityPolicy.populateBaseCreateFields();
-			securityPolicy = persistenceService.persist(securityPolicy);
+			securityPolicy = getPersistenceService().persist(securityPolicy);
 		}
 		//Make sure we have a copy as we may cache it.
 		SecurityPolicy securityPolicyNew = securityPolicy.copy();
@@ -248,13 +248,13 @@ public class SecurityServiceImpl
 		if (validationResult.valid()) {
 
 			UserRegistration existing = (userRegistration.getRegistrationId() != null && !userRegistration.getRegistrationId().isEmpty())
-					? persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId()) : null;
+					? getPersistenceService().findById(UserRegistration.class, userRegistration.getRegistrationId()) : null;
 
 			if (existing != null) {
 				existing.updateFields(userRegistration);
 				userRegistration = existing;
 			} else {
-				userRegistration.setRegistrationId(persistenceService.generateId());
+				userRegistration.setRegistrationId(getPersistenceService().generateId());
 				userRegistration.populateBaseCreateFields();
 			}
 			if (sendEmail) {
@@ -275,7 +275,7 @@ public class SecurityServiceImpl
 					LOG.log(Level.WARNING, "Missing email address unable to send verification code");
 				}
 			}
-			persistenceService.persist(userRegistration);
+			getPersistenceService().persist(userRegistration);
 		}
 		return validationResult;
 	}
@@ -306,7 +306,7 @@ public class SecurityServiceImpl
 		Objects.requireNonNull(userRegistration);
 		ValidationResult validationResult = validateRegistration(userRegistration);
 		if (validationResult.valid()) {
-			UserRegistration existing = persistenceService.findById(UserRegistration.class, userRegistration.getRegistrationId());
+			UserRegistration existing = getPersistenceService().findById(UserRegistration.class, userRegistration.getRegistrationId());
 
 			if (existing != null) {
 				existing.updateFields(userRegistration);
@@ -337,7 +337,7 @@ public class SecurityServiceImpl
 				userSecurity.setApprovalStatus(UserApprovalStatus.PENDING);
 				userSecurity.setActiveStatus(UserSecurity.INACTIVE_STATUS);
 			}
-			persistenceService.persist(userSecurity);
+			getPersistenceService().persist(userSecurity);
 
 			UserProfile userProfile = new UserProfile();
 			if (autoApproveUser) {
@@ -361,7 +361,7 @@ public class SecurityServiceImpl
 			UserProfile savedUserProfile = getUserService().saveUserProfile(userProfile);
 
 			userRegistration.setUserProfileId(savedUserProfile.getInternalGuid());
-			persistenceService.persist(userRegistration);
+			getPersistenceService().persist(userRegistration);
 
 			AlertContext alertContext = new AlertContext();
 			alertContext.setAlertType(AlertType.USER_MANAGEMENT);
@@ -390,7 +390,7 @@ public class SecurityServiceImpl
 			userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
 			userSecurity.setApprovalStatus(UserApprovalStatus.APPROVED);
 			userSecurity.populateBaseUpdateFields();
-			persistenceService.persist(userSecurity);
+			getPersistenceService().persist(userSecurity);
 
 			UserProfile userProfile = new UserProfile();
 			userProfile.setUsername(username);
@@ -420,14 +420,14 @@ public class SecurityServiceImpl
 		userSecurity = userSecurity.findProxy();
 		if (userSecurity != null) {
 
-			String rawApprovalCode = persistenceService.generateId();
+			String rawApprovalCode = getPersistenceService().generateId();
 
 			DefaultPasswordService passwordService = new DefaultPasswordService();
 			String encryptedValue = passwordService.encryptPassword(password);
 			userSecurity.setTempPassword(encryptedValue);
 			userSecurity.setPasswordChangeApprovalCode(rawApprovalCode);
 			userSecurity.populateBaseUpdateFields();
-			persistenceService.persist(userSecurity);
+			getPersistenceService().persist(userSecurity);
 
 			//Send the user an email
 			UserProfile userProfile = new UserProfile();
@@ -469,7 +469,7 @@ public class SecurityServiceImpl
 			userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
 			userSecurity.setUsingDefaultPassword(Boolean.FALSE);
 			userSecurity.populateBaseUpdateFields();
-			persistenceService.persist(userSecurity);
+			getPersistenceService().persist(userSecurity);
 			success = true;
 		} else {
 			LOG.log(Level.WARNING, MessageFormat.format("Unable to find user with password approval code: ", approvalCode));
@@ -495,7 +495,7 @@ public class SecurityServiceImpl
 				userSecurity.setPasswordUpdateDts(TimeUtil.currentDate());
 				userSecurity.setUsingDefaultPassword(Boolean.FALSE);
 				userSecurity.populateBaseUpdateFields();
-				persistenceService.persist(userSecurity);
+				getPersistenceService().persist(userSecurity);
 				LOG.log(Level.INFO, MessageFormat.format("User {0} password was reset by: {1}", username, SecurityUtil.getCurrentUserName()));
 			} else {
 				throw new OpenStorefrontRuntimeException("Password is not valid", validationResult.toString());
@@ -519,7 +519,7 @@ public class SecurityServiceImpl
 			userSecurity.setActiveStatus(UserSecurity.ACTIVE_STATUS);
 			userSecurity.setFailedLoginAttempts(0);
 			userSecurity.populateBaseUpdateFields();
-			persistenceService.persist(userSecurity);
+			getPersistenceService().persist(userSecurity);
 			LOG.log(Level.INFO, MessageFormat.format("user {0} was unlocked by: {1}", username, SecurityUtil.getCurrentUserName()));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to unlock.", "Check input: " + username);
@@ -539,7 +539,7 @@ public class SecurityServiceImpl
 		if (userSecurity != null) {
 			userSecurity.setFailedLoginAttempts(0);
 			userSecurity.populateBaseUpdateFields();
-			persistenceService.persist(userSecurity);
+			getPersistenceService().persist(userSecurity);
 			LOG.log(Level.INFO, MessageFormat.format("user {0} failed attempts was reset by: {1}", username, SecurityUtil.getCurrentUserName()));
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user to reset failed attempts.", "Check input: " + username);
@@ -560,7 +560,7 @@ public class SecurityServiceImpl
 			userSecurity.setActiveStatus(UserSecurity.INACTIVE_STATUS);
 			userSecurity.setFailedLoginAttempts(0);
 			userSecurity.populateBaseUpdateFields();
-			persistenceService.persist(userSecurity);
+			getPersistenceService().persist(userSecurity);
 
 			getUserService().deleteProfile(username);
 
@@ -581,7 +581,7 @@ public class SecurityServiceImpl
 
 		QueryByExample<SecurityRole> example = new QueryByExample<>(existing);
 		example.getFieldOptions().put(SecurityRole.FIELD_ROLENAME, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
-		existing = persistenceService.queryOneByExample(example);
+		existing = getPersistenceService().queryOneByExample(example);
 		if (existing != null) {
 			RuleResult result = new RuleResult();
 			result.setFieldName(SecurityRole.FIELD_ROLENAME);
@@ -599,15 +599,15 @@ public class SecurityServiceImpl
 	{
 		Objects.requireNonNull(securityRole);
 
-		SecurityRole existing = persistenceService.findById(SecurityRole.class, securityRole.getRoleName());
+		SecurityRole existing = getPersistenceService().findById(SecurityRole.class, securityRole.getRoleName());
 		if (existing != null) {
 			existing.updateFields(securityRole);
-			securityRole = persistenceService.persist(existing);
+			securityRole = getPersistenceService().persist(existing);
 		} else {
 			securityRole.populateBaseCreateFields();
-			securityRole = persistenceService.persist(securityRole);
+			securityRole = getPersistenceService().persist(securityRole);
 		}
-		securityRole = persistenceService.unwrapProxyObject(securityRole);
+		securityRole = getPersistenceService().unwrapProxyObject(securityRole);
 		LOG.log(Level.INFO, MessageFormat.format("Security Role {0} was created/updated by: {1}", securityRole.getRoleName(), SecurityUtil.getCurrentUserName()));
 		return securityRole;
 	}
@@ -635,9 +635,9 @@ public class SecurityServiceImpl
 				userRole.setRole(role);
 				userRole.setUsername(username);
 				userRole.setKeep(Boolean.TRUE);
-				userRole.setUserRoleId(persistenceService.generateId());
+				userRole.setUserRoleId(getPersistenceService().generateId());
 				userRole.populateBaseCreateFields();
-				persistenceService.persist(userRole);
+				getPersistenceService().persist(userRole);
 
 				LOG.log(Level.INFO, MessageFormat.format("Role {0} was added to user: {1} by {2}", role, username, SecurityUtil.getCurrentUserName()));
 			}
@@ -658,7 +658,7 @@ public class SecurityServiceImpl
 
 		userRoleExample = userRoleExample.findProxy();
 		if (userRoleExample != null) {
-			persistenceService.delete(userRoleExample);
+			getPersistenceService().delete(userRoleExample);
 			LOG.log(Level.INFO, MessageFormat.format("Role {0} was removed from user: {1} by {2}", role, username, SecurityUtil.getCurrentUserName()));
 		}
 	}
@@ -676,7 +676,7 @@ public class SecurityServiceImpl
 	@Override
 	public void deleteSecurityRole(String roleName, String moveUserToRole)
 	{
-		SecurityRole securityRole = persistenceService.findById(SecurityRole.class, roleName);
+		SecurityRole securityRole = getPersistenceService().findById(SecurityRole.class, roleName);
 		if (securityRole != null) {
 			UserRole userRoleExample = new UserRole();
 			userRoleExample.setRole(roleName);
@@ -685,9 +685,9 @@ public class SecurityServiceImpl
 				if (StringUtils.isNotBlank(moveUserToRole)) {
 					userRole.setRole(moveUserToRole);
 					userRole.populateBaseUpdateFields();
-					persistenceService.persist(userRole);
+					getPersistenceService().persist(userRole);
 				} else {
-					persistenceService.delete(userRole);
+					getPersistenceService().delete(userRole);
 				}
 			}
 
@@ -697,7 +697,7 @@ public class SecurityServiceImpl
 			List<Evaluation> evalsToUpdate = evaluationExample.findByExampleProxy();
 			for (Evaluation evaluation : evalsToUpdate) {
 				evaluation.setAssignedGroup(null);
-				persistenceService.persist(evaluation);
+				getPersistenceService().persist(evaluation);
 			}
 
 			LOG.log(Level.FINE, MessageFormat.format("{0} evaluation(s) were unassigned from  group {1}", new Object[]{evalsToUpdate.size(), securityRole.getRoleName()}));
@@ -708,7 +708,7 @@ public class SecurityServiceImpl
 			getWorkPlanService().removeSecurityRole(securityRole.getRoleName());
 			LOG.log(Level.FINE, "Removed Role from work plan");
 
-			persistenceService.delete(securityRole);
+			getPersistenceService().delete(securityRole);
 
 			LOG.log(Level.INFO, MessageFormat.format("Role {0} was deleted by {2}. "
 					+ (StringUtils.isNotBlank(moveUserToRole) ? " users were move to: "
@@ -788,7 +788,7 @@ public class SecurityServiceImpl
 			}
 		}
 
-		List<UserSecurity> users = persistenceService.queryByExample(queryByExample);
+		List<UserSecurity> users = getPersistenceService().queryByExample(queryByExample);
 		if (!users.isEmpty()) {
 
 			Set<String> usernames = users.stream()
@@ -817,7 +817,7 @@ public class SecurityServiceImpl
 	{
 		UserRegistration userRegistration = new UserRegistration();
 		userRegistration.setRegistrationId(userRegistrationId);
-		persistenceService.deleteByExample(userRegistration);
+		getPersistenceService().deleteByExample(userRegistration);
 	}
 
 	@Override
@@ -830,18 +830,18 @@ public class SecurityServiceImpl
 
 			UserRole userRole = new UserRole();
 			userRole.setUsername(username);
-			persistenceService.deleteByExample(userRole);
-			UserProfile userProfile = persistenceService.findById(UserProfile.class, username);
+			getPersistenceService().deleteByExample(userRole);
+			UserProfile userProfile = getPersistenceService().findById(UserProfile.class, username);
 			if (userProfile != null) {
 				UserRegistration userRegistration = new UserRegistration();
 				userRegistration.setUserProfileId(userProfile.getInternalGuid());
-				persistenceService.deleteByExample(userRegistration);
+				getPersistenceService().deleteByExample(userRegistration);
 			}
 
 			getUserService().deleteProfile(username);
 
 			//Evaluation assigned to user should be fine and can be reassigned later. Their profile will just be inactive.
-			persistenceService.delete(userSecurity);
+			getPersistenceService().delete(userSecurity);
 
 			LOG.log(Level.INFO, MessageFormat.format("User {0} was deleted by {1}. ", username, SecurityUtil.getCurrentUserName()));
 		}
@@ -860,7 +860,7 @@ public class SecurityServiceImpl
 		Set<String> keepSet = new HashSet<>();
 		for (UserRole role : userRoles) {
 			if (!Convert.toBoolean(role.getKeep())) {
-				persistenceService.delete(role);
+				getPersistenceService().delete(role);
 			} else {
 				keepSet.add(role.getRole());
 			}
@@ -881,9 +881,9 @@ public class SecurityServiceImpl
 					userRole = new UserRole();
 					userRole.setRole(group);
 					userRole.setUsername(username);
-					userRole.setUserRoleId(persistenceService.generateId());
+					userRole.setUserRoleId(getPersistenceService().generateId());
 					userRole.populateBaseCreateFields();
-					persistenceService.persist(userRole);
+					getPersistenceService().persist(userRole);
 				}
 			} else {
 				LOG.log(Level.FINER, MessageFormat.format("No Matching Role for group: {0}", group));

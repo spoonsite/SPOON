@@ -96,7 +96,7 @@ public class ImportServiceImpl
 
 		//create history record
 		FileHistory fileHistory = importContext.getFileHistoryAll().getFileHistory();
-		fileHistory.setFileHistoryId(persistenceService.generateId());
+		fileHistory.setFileHistoryId(getPersistenceService().generateId());
 		String extension = StringProcessor.getFileExtension(importContext.getFileHistoryAll().getFileHistory().getOriginalFilename());
 		fileHistory.setFilename(fileHistory.getFileHistoryId() + "." + extension);
 		fileHistory.setRecordsStored(0);
@@ -145,14 +145,14 @@ public class ImportServiceImpl
 	@Override
 	public void reprocessFile(String fileHistoryId)
 	{
-		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryId);
+		FileHistory fileHistory = getPersistenceService().findById(FileHistory.class, fileHistoryId);
 		if (fileHistory == null) {
 			throw new OpenStorefrontRuntimeException("Unable to find file history.", "Check id: " + fileHistoryId + " it may have been deleted.");
 		}
 
 		FileHistoryError fileHistoryError = new FileHistoryError();
 		fileHistoryError.setFileHistoryId(fileHistoryId);
-		persistenceService.deleteByExample(fileHistoryError);
+		getPersistenceService().deleteByExample(fileHistoryError);
 
 		fileHistory.setStartDts(null);
 		fileHistory.setCompleteDts(null);
@@ -160,7 +160,7 @@ public class ImportServiceImpl
 		fileHistory.setRecordsProcessed(0);
 		fileHistory.setRecordsStored(0);
 		fileHistory.populateBaseUpdateFields();
-		persistenceService.persist(fileHistory);
+		getPersistenceService().persist(fileHistory);
 		LOG.log(Level.FINE, "Queued:  {0} to be reprocessed.", fileHistory.getOriginalFilename());
 	}
 
@@ -199,7 +199,7 @@ public class ImportServiceImpl
 	public void processImport(String fileHistoryId)
 	{
 		FileHistoryAll fileHistoryAll = new FileHistoryAll();
-		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryId);
+		FileHistory fileHistory = getPersistenceService().findById(FileHistory.class, fileHistoryId);
 		if (fileHistory == null) {
 			throw new OpenStorefrontRuntimeException("Unable to find file history.", "Check id: " + fileHistoryId + " it may have been deleted.");
 		}
@@ -207,7 +207,7 @@ public class ImportServiceImpl
 
 		fileHistory.setStartDts(TimeUtil.currentDate());
 		fileHistory.populateBaseUpdateFields();
-		fileHistory = persistenceService.persist(fileHistory);
+		fileHistory = getPersistenceService().persist(fileHistory);
 
 		//Get Parser for format
 		ExternalFormat externalFormat = handleFindFileFormat(fileHistory.getFileFormat());
@@ -250,31 +250,31 @@ public class ImportServiceImpl
 		Objects.requireNonNull(fileHistoryAll.getFileHistory());
 		Objects.requireNonNull(fileHistoryAll.getErrors());
 
-		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
+		FileHistory fileHistory = getPersistenceService().findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
 		if (fileHistory != null) {
 			RetryUtil.retryAction(2, () -> {
-				FileHistory fileHistoryLocal = persistenceService.findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
+				FileHistory fileHistoryLocal = getPersistenceService().findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
 				fileHistoryLocal.updateFields(fileHistoryAll.getFileHistory());
-				persistenceService.persist(fileHistoryLocal);
+				getPersistenceService().persist(fileHistoryLocal);
 			});
 		} else {
 			if (StringUtils.isBlank(fileHistoryAll.getFileHistory().getFileHistoryId())) {
-				fileHistoryAll.getFileHistory().setFileHistoryId(persistenceService.generateId());
+				fileHistoryAll.getFileHistory().setFileHistoryId(getPersistenceService().generateId());
 			}
 			fileHistoryAll.getFileHistory().populateBaseCreateFields();
-			fileHistory = persistenceService.persist(fileHistoryAll.getFileHistory());
+			fileHistory = getPersistenceService().persist(fileHistoryAll.getFileHistory());
 		}
 
 		//replace errors
 		FileHistoryError fileHistoryError = new FileHistoryError();
 		fileHistoryError.setFileHistoryId(fileHistory.getFileHistoryId());
-		persistenceService.deleteByExample(fileHistoryError);
+		getPersistenceService().deleteByExample(fileHistoryError);
 
 		for (FileHistoryError error : fileHistoryAll.getErrors()) {
-			error.setFileHistoryErrorId(persistenceService.generateId());
+			error.setFileHistoryErrorId(getPersistenceService().generateId());
 			error.setFileHistoryId(fileHistory.getFileHistoryId());
 			error.populateBaseCreateFields();
-			persistenceService.persist(error);
+			getPersistenceService().persist(error);
 		}
 
 		return fileHistory;
@@ -285,11 +285,11 @@ public class ImportServiceImpl
 	{
 		Objects.requireNonNull(fileHistoryId, "File History Id is required");
 
-		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryId);
+		FileHistory fileHistory = getPersistenceService().findById(FileHistory.class, fileHistoryId);
 
 		FileHistoryError fileHistoryError = new FileHistoryError();
 		fileHistoryError.setFileHistoryId(fileHistoryId);
-		persistenceService.deleteByExample(fileHistoryError);
+		getPersistenceService().deleteByExample(fileHistoryError);
 
 		if (fileHistory != null) {
 			String filename = fileHistory.getFilename();
@@ -302,7 +302,7 @@ public class ImportServiceImpl
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to delete file history raw input. Path: {0}", path.toString()));
 				}
 			}
-			persistenceService.delete(fileHistory);
+			getPersistenceService().delete(fileHistory);
 
 			String removalUser = OpenStorefrontConstant.SYSTEM_USER;
 			if (SecurityUtil.isLoggedIn()) {
@@ -402,7 +402,7 @@ public class ImportServiceImpl
 		specialOperatorModel.setExample(fileHistoryDateExample);
 		query.getExtraWhereCauses().add(specialOperatorModel);
 
-		persistenceService.deleteByExample(query);
+		getPersistenceService().deleteByExample(query);
 	}
 
 	@Override
@@ -410,7 +410,7 @@ public class ImportServiceImpl
 	{
 		Objects.requireNonNull(fileHistoryId, "File History Id is required");
 
-		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryId);
+		FileHistory fileHistory = getPersistenceService().findById(FileHistory.class, fileHistoryId);
 		if (fileHistory != null) {
 
 			LOG.log(Level.INFO, MessageFormat.format("(Undo) Rolling back of import: {0}", TimeUtil.dateToString(fileHistory.getUpdateDts())));
@@ -426,7 +426,7 @@ public class ImportServiceImpl
 				ComponentVersionHistory componentVersionHistory = new ComponentVersionHistory();
 				componentVersionHistory.setFileHistoryId(fileHistoryId);
 
-				List<ComponentVersionHistory> versionHistories = persistenceService.queryByExample(componentVersionHistory);
+				List<ComponentVersionHistory> versionHistories = getPersistenceService().queryByExample(componentVersionHistory);
 				versionHistories.sort(new BeanComparator<>(OpenStorefrontConstant.SORT_ASCENDING, ComponentVersionHistory.FIELD_CREATE_DTS));
 
 				ComponentVersionHistory batchVersion = null;
@@ -494,14 +494,14 @@ public class ImportServiceImpl
 	{
 		Objects.requireNonNull(dataMapModel.getFileDataMap());
 
-		FileDataMap existingFileDataMap = persistenceService.findById(FileDataMap.class, dataMapModel.getFileDataMap().getFileDataMapId());
+		FileDataMap existingFileDataMap = getPersistenceService().findById(FileDataMap.class, dataMapModel.getFileDataMap().getFileDataMapId());
 		if (existingFileDataMap != null) {
 			existingFileDataMap.updateFields(dataMapModel.getFileDataMap());
-			existingFileDataMap = persistenceService.persist(existingFileDataMap);
+			existingFileDataMap = getPersistenceService().persist(existingFileDataMap);
 		} else {
-			dataMapModel.getFileDataMap().setFileDataMapId(persistenceService.generateId());
+			dataMapModel.getFileDataMap().setFileDataMapId(getPersistenceService().generateId());
 			dataMapModel.getFileDataMap().populateBaseCreateFields();
-			existingFileDataMap = persistenceService.persist(dataMapModel.getFileDataMap());
+			existingFileDataMap = getPersistenceService().persist(dataMapModel.getFileDataMap());
 		}
 
 		if (dataMapModel.getFileAttributeMap() != null) {
@@ -509,12 +509,12 @@ public class ImportServiceImpl
 			String fieldMapId = dataMapModel.getFileDataMap().getFileDataMapId();
 			FileAttributeMap deleteFileAttributeMap = new FileAttributeMap();
 			deleteFileAttributeMap.setFileDataMapId(fieldMapId);
-			persistenceService.deleteByExample(deleteFileAttributeMap);
+			getPersistenceService().deleteByExample(deleteFileAttributeMap);
 
-			dataMapModel.getFileAttributeMap().setFileAttributeMapId(persistenceService.generateId());
+			dataMapModel.getFileAttributeMap().setFileAttributeMapId(getPersistenceService().generateId());
 			dataMapModel.getFileAttributeMap().setFileDataMapId(fieldMapId);
 			dataMapModel.getFileAttributeMap().populateBaseCreateFields();
-			persistenceService.persist(dataMapModel.getFileAttributeMap());
+			getPersistenceService().persist(dataMapModel.getFileAttributeMap());
 		}
 
 		return existingFileDataMap;
@@ -523,7 +523,7 @@ public class ImportServiceImpl
 	@Override
 	public void removeFileDataMap(String fileDataMapId)
 	{
-		FileDataMap fileDataMap = persistenceService.findById(FileDataMap.class, fileDataMapId);
+		FileDataMap fileDataMap = getPersistenceService().findById(FileDataMap.class, fileDataMapId);
 		if (fileDataMap != null) {
 
 			//delete Attribute Maps if the exist
@@ -531,10 +531,10 @@ public class ImportServiceImpl
 			fileAttributeMap.setFileDataMapId(fileDataMapId);
 			List<FileAttributeMap> attributeMaps = fileAttributeMap.findByExampleProxy();
 			for (FileAttributeMap attributeMap : attributeMaps) {
-				persistenceService.delete(attributeMap);
+				getPersistenceService().delete(attributeMap);
 			}
 
-			persistenceService.delete(fileDataMap);
+			getPersistenceService().delete(fileDataMap);
 		}
 	}
 
@@ -632,10 +632,10 @@ public class ImportServiceImpl
 		Objects.requireNonNull(fileHistoryAll);
 		Objects.requireNonNull(fileHistoryAll.getFileHistory());
 
-		FileHistory fileHistory = persistenceService.findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
+		FileHistory fileHistory = getPersistenceService().findById(FileHistory.class, fileHistoryAll.getFileHistory().getFileHistoryId());
 		if (fileHistory != null) {
 			fileHistory.updateFields(fileHistoryAll.getFileHistory());
-			persistenceService.persist(fileHistory);
+			getPersistenceService().persist(fileHistory);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find file history record to update.", "System error");
 		}

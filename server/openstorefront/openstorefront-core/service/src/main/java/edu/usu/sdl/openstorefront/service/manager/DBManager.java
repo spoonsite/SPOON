@@ -83,7 +83,11 @@ public class DBManager
 	@Override
 	public void shutdown()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		Initializable actualManager = getActiveDatabaseManager();
+		if (actualManager != null) {
+			actualManager.shutdown();
+		}
+		started.set(false);
 	}
 
 	@Override

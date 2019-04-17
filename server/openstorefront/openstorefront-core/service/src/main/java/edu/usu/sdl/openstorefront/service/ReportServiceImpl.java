@@ -67,11 +67,11 @@ public class ReportServiceImpl
 	{
 		Objects.requireNonNull(report, "Report is required");
 
-		report.setReportId(persistenceService.generateId());
+		report.setReportId(getPersistenceService().generateId());
 		report.setRunStatus(RunStatus.PENDING);
 		report.populateBaseCreateFields();
-		report = persistenceService.persist(report);
-		report = persistenceService.deattachAll(report);
+		report = getPersistenceService().persist(report);
+		report = getPersistenceService().deattachAll(report);
 		return report;
 	}
 
@@ -85,9 +85,9 @@ public class ReportServiceImpl
 		Report managedReport;
 		if (StringUtils.isBlank(report.getReportId())) {
 			queueReport(report);
-			managedReport = persistenceService.findById(Report.class, report.getReportId());
+			managedReport = getPersistenceService().findById(Report.class, report.getReportId());
 		} else {
-			managedReport = persistenceService.findById(Report.class, report.getReportId());
+			managedReport = getPersistenceService().findById(Report.class, report.getReportId());
 		}
 		if (managedReport == null) {
 			throw new OpenStorefrontRuntimeException("Unable to find report.", "Check report id: " + report.getReportId());
@@ -96,7 +96,7 @@ public class ReportServiceImpl
 		managedReport.setRunStatus(RunStatus.WORKING);
 		managedReport.setUpdateDts(TimeUtil.currentDate());
 		managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-		persistenceService.persist(managedReport);
+		getPersistenceService().persist(managedReport);
 
 		//run report
 		try {
@@ -106,11 +106,11 @@ public class ReportServiceImpl
 			//retry if out of date (for some reason DB may not be in sync at this point...find pulls an old record; cache delay?)
 			for (int i = 0; i < MAX_RETRIES; i++) {
 				try {
-					managedReport = persistenceService.findById(Report.class, managedReport.getReportId());
+					managedReport = getPersistenceService().findById(Report.class, managedReport.getReportId());
 					managedReport.setRunStatus(RunStatus.COMPLETE);
 					managedReport.setUpdateDts(TimeUtil.currentDate());
 					managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-					persistenceService.persist(managedReport);
+					getPersistenceService().persist(managedReport);
 					break;
 				} catch (Exception e) {
 					if (i == (MAX_RETRIES - 1)) {
@@ -130,11 +130,11 @@ public class ReportServiceImpl
 			}
 
 		} catch (Exception e) {
-			managedReport = persistenceService.findById(Report.class, managedReport.getReportId());
+			managedReport = getPersistenceService().findById(Report.class, managedReport.getReportId());
 			managedReport.setRunStatus(RunStatus.ERROR);
 			managedReport.setUpdateDts(TimeUtil.currentDate());
 			managedReport.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-			persistenceService.persist(managedReport);
+			getPersistenceService().persist(managedReport);
 
 			ErrorInfo errorInfo = new ErrorInfo(e, null);
 			errorInfo.setErrorTypeCode(ErrorTypeCode.REPORT);
@@ -150,7 +150,7 @@ public class ReportServiceImpl
 	@Override
 	public void deleteReport(String reportId)
 	{
-		Report existingReport = persistenceService.findById(Report.class, reportId);
+		Report existingReport = getPersistenceService().findById(Report.class, reportId);
 		if (existingReport != null) {
 
 			Path path = existingReport.pathToReport();
@@ -162,7 +162,7 @@ public class ReportServiceImpl
 					}
 				}
 			}
-			persistenceService.delete(existingReport);
+			getPersistenceService().delete(existingReport);
 		}
 	}
 
@@ -193,14 +193,14 @@ public class ReportServiceImpl
 	{
 		Objects.requireNonNull(scheduledReport, "Schedule report is required");
 
-		ScheduledReport existing = persistenceService.findById(ScheduledReport.class, scheduledReport.getScheduleReportId());
+		ScheduledReport existing = getPersistenceService().findById(ScheduledReport.class, scheduledReport.getScheduleReportId());
 		if (existing != null) {
 			existing.updateFields(scheduledReport);
-			persistenceService.persist(existing);
+			getPersistenceService().persist(existing);
 		} else {
-			scheduledReport.setScheduleReportId(persistenceService.generateId());
+			scheduledReport.setScheduleReportId(getPersistenceService().generateId());
 			scheduledReport.populateBaseCreateFields();
-			persistenceService.persist(scheduledReport);
+			getPersistenceService().persist(scheduledReport);
 		}
 
 		if (StringUtils.isNotBlank(scheduledReport.getScheduleIntervalCron())) {
@@ -217,9 +217,9 @@ public class ReportServiceImpl
 	@Override
 	public void deleteScheduledReport(String scheduledReportId)
 	{
-		ScheduledReport scheduledReport = persistenceService.findById(ScheduledReport.class, scheduledReportId);
+		ScheduledReport scheduledReport = getPersistenceService().findById(ScheduledReport.class, scheduledReportId);
 		if (scheduledReport != null) {
-			persistenceService.delete(scheduledReport);
+			getPersistenceService().delete(scheduledReport);
 		}
 	}
 
@@ -262,7 +262,7 @@ public class ReportServiceImpl
 		ScheduledReport scheduledReportSetExample = new ScheduledReport();
 		scheduledReportSetExample.setActiveStatus(ScheduledReport.INACTIVE_STATUS);
 		scheduledReportSetExample.populateBaseUpdateFields();
-		persistenceService.updateByExample(ScheduledReport.class, scheduledReportSetExample, scheduledReportExample);
+		getPersistenceService().updateByExample(ScheduledReport.class, scheduledReportSetExample, scheduledReportExample);
 	}
 
 	@Override
@@ -285,7 +285,7 @@ public class ReportServiceImpl
 		Report reportProcessed = generateReport(reportHistory);
 
 		//repull as the report may be inactive or delete while this was running
-		ScheduledReport existingReport = persistenceService.findById(ScheduledReport.class, scheduledReport.getScheduleReportId());
+		ScheduledReport existingReport = getPersistenceService().findById(ScheduledReport.class, scheduledReport.getScheduleReportId());
 
 		if (existingReport != null) {
 			scheduledReport.setLastRanDts(TimeUtil.currentDate());
@@ -306,7 +306,7 @@ public class ReportServiceImpl
 		Objects.requireNonNull(scheduledReportId);
 		Objects.requireNonNull(activeStatus);
 
-		ScheduledReport report = persistenceService.findById(ScheduledReport.class, scheduledReportId);
+		ScheduledReport report = getPersistenceService().findById(ScheduledReport.class, scheduledReportId);
 		if (report != null) {
 
 			boolean updateRecord = true;
@@ -327,7 +327,7 @@ public class ReportServiceImpl
 			if (updateRecord) {
 				report.setActiveStatus(activeStatus);
 				report.populateBaseUpdateFields();
-				persistenceService.persist(report);
+				getPersistenceService().persist(report);
 			}
 
 			if (addJob

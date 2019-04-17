@@ -88,10 +88,10 @@ public class WorkPlanServiceImpl
 			workPlanExample = workPlanExample.findProxy();
 			if (workPlanExample != null) {
 				workPlanExample.updateFields(workPlan);
-				persistenceService.persist(workPlanExample);
+				getPersistenceService().persist(workPlanExample);
 			}
 		} else {
-			workPlan.setWorkPlanId(persistenceService.generateId());
+			workPlan.setWorkPlanId(getPersistenceService().generateId());
 			workPlan.populateBaseCreateFields();
 
 			workPlan.save();
@@ -122,7 +122,7 @@ public class WorkPlanServiceImpl
 
 			step.getActions().forEach(action -> {
 				action.populateBaseCreateFields();
-				action.setWorkPlanStepActionId(persistenceService.generateId());
+				action.setWorkPlanStepActionId(getPersistenceService().generateId());
 			});
 		});
 	}
@@ -180,7 +180,7 @@ public class WorkPlanServiceImpl
 	@Override
 	public void resolveWorkPlanStepMigration(String workPlanId, List<WorkPlanStepMigration> migrations)
 	{
-		WorkPlan workPlan = persistenceService.findById(WorkPlan.class, workPlanId);
+		WorkPlan workPlan = getPersistenceService().findById(WorkPlan.class, workPlanId);
 		if (workPlan != null) {
 
 			if (migrations != null) {
@@ -221,7 +221,7 @@ public class WorkPlanServiceImpl
 	@Override
 	public void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration)
 	{
-		WorkPlan workPlan = persistenceService.findById(WorkPlan.class, workPlanId);
+		WorkPlan workPlan = getPersistenceService().findById(WorkPlan.class, workPlanId);
 		if (workPlan != null) {
 
 			if (workPlanRemoveMigration != null) {
@@ -243,16 +243,16 @@ public class WorkPlanServiceImpl
 					}
 
 					workPlanLink.populateBaseUpdateFields();
-					persistenceService.persist(workPlanLink);
+					getPersistenceService().persist(workPlanLink);
 				}
 			}
 
 			//remove links
 			WorkPlanLink workplanLink = new WorkPlanLink();
 			workplanLink.setWorkPlanId(workPlan.getWorkPlanId());
-			persistenceService.deleteByExample(workplanLink);
+			getPersistenceService().deleteByExample(workplanLink);
 
-			persistenceService.delete(workPlan);
+			getPersistenceService().delete(workPlan);
 
 			clearCache();
 		}
@@ -316,7 +316,7 @@ public class WorkPlanServiceImpl
 	{
 		WorkPlanLink workPlanLink = new WorkPlanLink();
 		workPlanLink.setComponentId(componentId);
-		workPlanLink.setWorkPlanLinkId(persistenceService.generateId());
+		workPlanLink.setWorkPlanLinkId(getPersistenceService().generateId());
 
 		//get workplan
 		String componentType = getComponentService().getComponentTypeForComponent(componentId);
@@ -382,7 +382,7 @@ public class WorkPlanServiceImpl
 			if (StringUtils.isNotBlank(roleGroup)) {
 				workPlanLink.setCurrentGroupAssigned(roleGroup);
 			}
-			persistenceService.persist(workPlanLink);
+			getPersistenceService().persist(workPlanLink);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find Work Plan Link");
 		}
@@ -523,7 +523,7 @@ public class WorkPlanServiceImpl
 	private void logWorkPlanChange(WorkPlanLink workPlanLink, WorkPlan workPlan, String oldStepId, WorkPlanStep workPlanStep)
 	{
 		ChangeLog changeLog = new ChangeLog();
-		changeLog.setChangeLogId(persistenceService.generateId());
+		changeLog.setChangeLogId(getPersistenceService().generateId());
 		changeLog.setChangeType(ChangeType.WORKPLAN_CHANGE);
 		if (workPlanLink.getComponentId() != null) {
 			changeLog.setEntity(Component.class.getSimpleName());
@@ -584,7 +584,7 @@ public class WorkPlanServiceImpl
 		LOG.log(Level.FINER, "Syncing component worklinks.");
 
 		Component componentExample = new Component();
-		long totalCount = persistenceService.countByExample(componentExample);
+		long totalCount = getPersistenceService().countByExample(componentExample);
 
 		int startIndex = 0;
 		int synced = 0;
@@ -594,7 +594,7 @@ public class WorkPlanServiceImpl
 			queryByExample.setFirstResult(startIndex);
 			queryByExample.setMaxResults(maxResultsToProcess);
 
-			List<Component> components = persistenceService.queryByExample(queryByExample);
+			List<Component> components = getPersistenceService().queryByExample(queryByExample);
 			for (Component component : components) {
 				//critical loop
 				try {
@@ -816,15 +816,15 @@ public class WorkPlanServiceImpl
 
 		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 		workPlanLinkExample.setComponentId(componentId);
-		persistenceService.deleteByExample(workPlanLinkExample);
+		getPersistenceService().deleteByExample(workPlanLinkExample);
 	}
 
 	@Override
 	public void removeWorkPlanLink(String workPlanLinkId)
 	{
-		WorkPlanLink workPlanLink = persistenceService.findById(WorkPlanLink.class, workPlanLinkId);
+		WorkPlanLink workPlanLink = getPersistenceService().findById(WorkPlanLink.class, workPlanLinkId);
 		if (workPlanLink != null) {
-			persistenceService.delete(workPlanLink);
+			getPersistenceService().delete(workPlanLink);
 		}
 	}
 
@@ -838,11 +838,11 @@ public class WorkPlanServiceImpl
 		workPlanLink = workPlanLink.find();
 		if (workPlanLink == null) {
 
-			UserSubmission userSubmission = persistenceService.findById(UserSubmission.class, userSubmissionId);
+			UserSubmission userSubmission = getPersistenceService().findById(UserSubmission.class, userSubmissionId);
 
 			WorkPlanLink workPlanLinkNew = new WorkPlanLink();
 			workPlanLinkNew.setUserSubmissionId(userSubmissionId);
-			workPlanLinkNew.setWorkPlanLinkId(persistenceService.generateId());
+			workPlanLinkNew.setWorkPlanLinkId(getPersistenceService().generateId());
 
 			//get workplan
 			String componentType = userSubmission.getComponentType();
@@ -878,7 +878,7 @@ public class WorkPlanServiceImpl
 
 		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 		workPlanLinkExample.setUserSubmissionId(userSubmissionId);
-		persistenceService.deleteByExample(workPlanLinkExample);
+		getPersistenceService().deleteByExample(workPlanLinkExample);
 	}
 
 }

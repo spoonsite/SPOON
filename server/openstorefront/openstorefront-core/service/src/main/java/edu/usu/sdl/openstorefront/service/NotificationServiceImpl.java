@@ -128,16 +128,16 @@ public class NotificationServiceImpl
 	@Override
 	public NotificationEvent postEvent(NotificationEvent notificationEvent)
 	{
-		notificationEvent.setEventId(persistenceService.generateId());
+		notificationEvent.setEventId(getPersistenceService().generateId());
 		notificationEvent.populateBaseCreateFields();
-		notificationEvent = persistenceService.persist(notificationEvent);
+		notificationEvent = getPersistenceService().persist(notificationEvent);
 
 		Element element = OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
 		if (element != null) {
 			@SuppressWarnings("unchecked")
 			List<NotificationEventListener> listerners = (List<NotificationEventListener>) element.getObjectValue();
 			for (NotificationEventListener listerner : listerners) {
-				listerner.processEvent(persistenceService.deattachAll(notificationEvent));
+				listerner.processEvent(getPersistenceService().deattachAll(notificationEvent));
 			}
 		}
 		return notificationEvent;
@@ -146,14 +146,14 @@ public class NotificationServiceImpl
 	@Override
 	public void deleteEvent(String eventId)
 	{
-		NotificationEvent notificationEvent = persistenceService.findById(NotificationEvent.class, eventId);
+		NotificationEvent notificationEvent = getPersistenceService().findById(NotificationEvent.class, eventId);
 		if (notificationEvent != null) {
 
 			NotificationEventReadStatus notificationEventReadStatus = new NotificationEventReadStatus();
 			notificationEventReadStatus.setEventId(eventId);
-			persistenceService.deleteByExample(notificationEventReadStatus);
+			getPersistenceService().deleteByExample(notificationEventReadStatus);
 
-			persistenceService.delete(notificationEvent);
+			getPersistenceService().delete(notificationEvent);
 		}
 	}
 
@@ -179,11 +179,11 @@ public class NotificationServiceImpl
 		Objects.requireNonNull(username);
 
 		NotificationEventReadStatus notificationEventReadStatus = new NotificationEventReadStatus();
-		notificationEventReadStatus.setReadStatusId(persistenceService.generateId());
+		notificationEventReadStatus.setReadStatusId(getPersistenceService().generateId());
 		notificationEventReadStatus.setEventId(eventId);
 		notificationEventReadStatus.setUsername(username);
 
-		persistenceService.persist(notificationEventReadStatus);
+		getPersistenceService().persist(notificationEventReadStatus);
 	}
 
 	@Override
@@ -198,7 +198,7 @@ public class NotificationServiceImpl
 
 		NotificationEventReadStatus temp = notificationEventReadStatus.findProxy();
 
-		persistenceService.delete(temp);
+		getPersistenceService().delete(temp);
 	}
 
 	@Override
@@ -217,7 +217,7 @@ public class NotificationServiceImpl
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NULL);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<NotificationEvent> notificationEvents = persistenceService.queryByExample(queryByExample);
+			List<NotificationEvent> notificationEvents = getPersistenceService().queryByExample(queryByExample);
 			for (NotificationEvent notificationEvent : notificationEvents) {
 				markEventAsRead(notificationEvent.getEventId(), username);
 			}
@@ -225,7 +225,7 @@ public class NotificationServiceImpl
 			//delete user events
 			NotificationEvent notificationEvent = new NotificationEvent();
 			notificationEvent.setUsername(username);
-			persistenceService.deleteByExample(notificationEvent);
+			getPersistenceService().deleteByExample(notificationEvent);
 		} else {
 			throw new OpenStorefrontRuntimeException("Username is required.", "Check data passed in.");
 		}
@@ -253,7 +253,7 @@ public class NotificationServiceImpl
 	public void emailCommentMessage(EmailCommentModel emailCommentModel)
 	{
 
-		List<UserRole> userRoles = null;
+		List<UserRole> userRoles = new ArrayList<>();
 		if (StringUtils.isNotBlank(emailCommentModel.getAssignedGroup()) && StringUtils.isNotEmpty(emailCommentModel.getAssignedGroup())) {
 			UserRole userRole = new UserRole();
 			userRole.setRole(emailCommentModel.getAssignedGroup());
@@ -266,7 +266,7 @@ public class NotificationServiceImpl
 		}
 
 		boolean canEmailAssignee = StringUtils.isNotBlank(emailCommentModel.getAssignedUser()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getAssignedUser());
-		boolean canEmailGroup = !(userRoles == null || userRoles.isEmpty());
+		boolean canEmailGroup = !userRoles.isEmpty();
 		boolean canEmailOwner = StringUtils.isNotBlank(emailCommentModel.getEntryOwner()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getEntryOwner());
 
 		if (!emailCommentModel.isAdminComment()) {

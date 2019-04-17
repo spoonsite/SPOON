@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.api.AlertService;
 import edu.usu.sdl.openstorefront.core.api.AsyncService;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
@@ -58,6 +60,7 @@ import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.MongoDBManager;
 import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.service.repo.RepoFactory;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
@@ -76,7 +79,7 @@ public class ServiceProxy
 
 	private String modificationType = ModificationType.API;
 
-	protected PersistenceService persistenceService = new OrientPersistenceService(OrientDBManager.getInstance());
+	private PersistenceService persistenceService;
 	private LookupService lookupService;
 	private AttributeService attributeService;
 	private AttributeServicePrivate attributeServicePrivate;
@@ -185,7 +188,7 @@ public class ServiceProxy
 	@Override
 	public void reset()
 	{
-		setPersistenceService(getNewPersistenceService());
+		persistenceService = null;
 		lookupService = null;
 		attributeService = null;
 		attributeServicePrivate = null;
@@ -228,14 +231,35 @@ public class ServiceProxy
 	@Override
 	public PersistenceService getPersistenceService()
 	{
-
+		if (persistenceService == null) {
+			persistenceService = createPersistenceService();
+		}
 		return persistenceService;
 	}
 
 	@Override
 	public PersistenceService getNewPersistenceService()
 	{
-		return Test.isTestPersistenceService.get() ? new TestPersistenceService() : new OrientPersistenceService(OrientDBManager.getInstance());
+		return createPersistenceService();
+	}
+
+	protected PersistenceService createPersistenceService()
+	{
+		PersistenceService persistenceServiceLocal;
+
+		if (Test.isTestPersistenceService.get()) {
+			persistenceServiceLocal = new TestPersistenceService();
+		} else {
+			boolean useMongo = Convert.toBoolean(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_USE_MONGO, "false"));
+
+			if (useMongo) {
+				persistenceServiceLocal = new MongoPersistenceServiceImpl(MongoDBManager.getInstance());
+			} else {
+				persistenceServiceLocal = new OrientPersistenceService(OrientDBManager.getInstance());
+			}
+		}
+
+		return persistenceServiceLocal;
 	}
 
 	@Override

@@ -30,12 +30,12 @@ import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.ConfluenceManager;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
+import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.LDAPManager;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
-import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.service.manager.OsgiManager;
 import edu.usu.sdl.openstorefront.service.manager.PluginManager;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
@@ -77,7 +77,7 @@ public class CoreSystem
 	private static List<Initializable> managers = Arrays.asList(PropertiesManager.getInstance(),
 			OsgiManager.getInstance(),
 			FileSystemManager.getInstance(),
-			OrientDBManager.getInstance(),
+			DBManager.getInstance(),
 			SearchServerManager.getInstance(),
 			new OSFCacheManager(),
 			new JiraManager(),

@@ -123,17 +123,17 @@ public class SubmissionFormServiceImpl
 		}
 		template.setActiveStatus(SubmissionFormTemplate.INACTIVE_STATUS);
 
-		SubmissionFormTemplate existing = persistenceService.findById(SubmissionFormTemplate.class, template.getSubmissionTemplateId());
+		SubmissionFormTemplate existing = getPersistenceService().findById(SubmissionFormTemplate.class, template.getSubmissionTemplateId());
 		if (existing != null) {
 			existing.updateFields(template);
-			template = persistenceService.persist(existing);
+			template = getPersistenceService().persist(existing);
 		} else {
-			template.setSubmissionTemplateId(persistenceService.generateId());
+			template.setSubmissionTemplateId(getPersistenceService().generateId());
 			template.populateBaseCreateFields();
 			template.updateSectionLinks();
-			template = persistenceService.persist(template);
+			template = getPersistenceService().persist(template);
 		}
-		template = persistenceService.unwrapProxyObject(template);
+		template = getPersistenceService().unwrapProxyObject(template);
 		return template;
 	}
 
@@ -143,24 +143,24 @@ public class SubmissionFormServiceImpl
 		template.setDefaultTemplate(Boolean.TRUE);
 		template.setTemplateStatus(SubmissionTemplateStatus.VERIFIED);
 
-		SubmissionFormTemplate existing = persistenceService.findById(SubmissionFormTemplate.class, template.getSubmissionTemplateId());
+		SubmissionFormTemplate existing = getPersistenceService().findById(SubmissionFormTemplate.class, template.getSubmissionTemplateId());
 		if (existing != null) {
 			existing.updateFields(template);
-			persistenceService.persist(existing);
+			getPersistenceService().persist(existing);
 		} else {
-			template.setSubmissionTemplateId(persistenceService.generateId());
+			template.setSubmissionTemplateId(getPersistenceService().generateId());
 			template.populateBaseCreateFields();
 			template.updateSectionLinks();
-			persistenceService.persist(template);
+			getPersistenceService().persist(template);
 		}
 	}
 
 	@Override
 	public void deleteSubmissionFormTemplate(String templateId)
 	{
-		SubmissionFormTemplate existing = persistenceService.findById(SubmissionFormTemplate.class, templateId);
+		SubmissionFormTemplate existing = getPersistenceService().findById(SubmissionFormTemplate.class, templateId);
 		if (existing != null) {
-			persistenceService.delete(existing);
+			getPersistenceService().delete(existing);
 		}
 	}
 
@@ -183,12 +183,12 @@ public class SubmissionFormServiceImpl
 	@Override
 	public UserSubmission saveUserSubmission(UserSubmission userSubmission)
 	{
-		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmission.getUserSubmissionId());
+		UserSubmission existing = getPersistenceService().findById(UserSubmission.class, userSubmission.getUserSubmissionId());
 		if (existing != null) {
 			existing.updateFields(userSubmission);
-			existing = persistenceService.persist(existing);
+			existing = getPersistenceService().persist(existing);
 		} else {
-			userSubmission.setUserSubmissionId(persistenceService.generateId());
+			userSubmission.setUserSubmissionId(getPersistenceService().generateId());
 			userSubmission.populateBaseCreateFields();
 			if (userSubmission.getOwnerUsername() == null) {
 				userSubmission.setOwnerUsername(SecurityUtil.getCurrentUserName());
@@ -199,23 +199,23 @@ public class SubmissionFormServiceImpl
 			populateComponentNameField(userSubmission);
 
 			for (UserSubmissionField field : userSubmission.getFields()) {
-				field.setFieldId(persistenceService.generateId());
+				field.setFieldId(getPersistenceService().generateId());
 			}
 
-			existing = persistenceService.persist(userSubmission);
+			existing = getPersistenceService().persist(userSubmission);
 
 			EntityEventModel entityEventModel = new EntityEventModel();
 			entityEventModel.setEventType(EntityEventType.NEW_SUBMISSION_NOT_SUBMITTTED);
 			entityEventModel.setEntityChanged(existing);
 			getEntityEventService().processEvent(entityEventModel);
 		}
-		existing = persistenceService.unwrapProxyObject(existing);
+		existing = getPersistenceService().unwrapProxyObject(existing);
 		return existing;
 	}
 
 	private void populateComponentNameField(UserSubmission userSubmission)
 	{
-		SubmissionFormTemplate template = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
+		SubmissionFormTemplate template = getPersistenceService().findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
 		if (template != null) {
 			//prepopulate
 			SubmissionFormField nameField = null;
@@ -260,17 +260,17 @@ public class SubmissionFormServiceImpl
 			userSubmissionMedia = new UserSubmissionMedia();
 			userSubmissionMedia.setTemplateFieldId(templateFieldId);
 			userSubmissionMedia.setUserSubmissionId(userSubmissionId);
-			userSubmissionMedia.setSubmissionMediaId(persistenceService.generateId());
+			userSubmissionMedia.setSubmissionMediaId(getPersistenceService().generateId());
 
-			mediaFile.setMediaFileId(persistenceService.generateId());
-			mediaFile.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mediaFile.getMimeType()));
+			mediaFile.setMediaFileId(getPersistenceService().generateId());
+			mediaFile.setFileName(getPersistenceService().generateId() + OpenStorefrontConstant.getFileExtensionForMime(mediaFile.getMimeType()));
 			mediaFile.setFileType(MediaFileType.MEDIA);
 			Path path = Paths.get(MediaFileType.MEDIA.getPath(), mediaFile.getFileName());
 			Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
 
 			userSubmissionMedia.setFile(mediaFile);
 			userSubmissionMedia.populateBaseCreateFields();
-			userSubmissionMedia = persistenceService.persist(userSubmissionMedia);
+			userSubmissionMedia = getPersistenceService().persist(userSubmissionMedia);
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
 		}
@@ -284,7 +284,7 @@ public class SubmissionFormServiceImpl
 
 		VerifySubmissionTemplateResult verifySubmissionTemplateResult = new VerifySubmissionTemplateResult();
 
-		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
+		SubmissionFormTemplate formTemplate = getPersistenceService().findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
 		if (formTemplate != null) {
 			try {
 				ComponentFormSet componentFormSet = mappingController.mapUserSubmissionToEntry(formTemplate, userSubmission);
@@ -297,7 +297,7 @@ public class SubmissionFormServiceImpl
 				if (validationResult.valid()) {
 					formTemplate.setTemplateStatus(SubmissionTemplateStatus.VERIFIED);
 					formTemplate.populateBaseUpdateFields();
-					persistenceService.persist(formTemplate);
+					getPersistenceService().persist(formTemplate);
 
 					deleteUserSubmission(userSubmission.getUserSubmissionId());
 				}
@@ -327,7 +327,7 @@ public class SubmissionFormServiceImpl
 
 		ValidationResult validationResult = new ValidationResult();
 
-		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
+		SubmissionFormTemplate formTemplate = getPersistenceService().findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
 		if (formTemplate != null) {
 			try {
 				ComponentFormSet componentFormSet = mappingController.mapUserSubmissionToEntry(formTemplate, userSubmission);
@@ -420,10 +420,10 @@ public class SubmissionFormServiceImpl
 
 		userSubmission = saveUserSubmission(userSubmissionAll.getUserSubmission());
 		for (UserSubmissionMedia media : userSubmissionAll.getMedia()) {
-			media.setSubmissionMediaId(persistenceService.generateId());
+			media.setSubmissionMediaId(getPersistenceService().generateId());
 			media.setUserSubmissionId(userSubmission.getUserSubmissionId());
 			media.populateBaseCreateFields();
-			persistenceService.persist(media);
+			getPersistenceService().persist(media);
 		}
 
 		copyCommentsToSubmission(componentId, userSubmission.getUserSubmissionId());
@@ -451,7 +451,7 @@ public class SubmissionFormServiceImpl
 			UserSubmissionComment userSubmissionComment = comment.toUserSubmissionComment();
 			userSubmissionComment.setUserSubmissionId(userSubmissionId);
 			userSubmissionComment.setEditDeleteLock(true);
-			persistenceService.persist(userSubmissionComment);
+			getPersistenceService().persist(userSubmissionComment);
 		}
 	}
 
@@ -484,7 +484,7 @@ public class SubmissionFormServiceImpl
 		for (UserSubmissionComment comment : comments) {
 			ComponentComment componentComment = comment.toComponentComment();
 			componentComment.setComponentId(componentId);
-			persistenceService.persist(componentComment);
+			getPersistenceService().persist(componentComment);
 		}
 
 	}
@@ -552,13 +552,13 @@ public class SubmissionFormServiceImpl
 
 		ValidationResult validationResult = new ValidationResult();
 
-		SubmissionFormTemplate formTemplate = persistenceService.findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
+		SubmissionFormTemplate formTemplate = getPersistenceService().findById(SubmissionFormTemplate.class, userSubmission.getTemplateId());
 		if (formTemplate != null) {
 			try {
 				ComponentFormSet componentFormSet = mappingController.mapUserSubmissionToEntry(formTemplate, userSubmission);
 
 				componentFormSet.getPrimary().getComponent().setApprovalState(ApprovalStatus.PENDING);
-				componentFormSet.getPrimary().getComponent().setComponentId(persistenceService.generateId());
+				componentFormSet.getPrimary().getComponent().setComponentId(getPersistenceService().generateId());
 				componentFormSet.getPrimary().getComponent().setPendingChangeId(userSubmission.getOriginalComponentId());
 
 				validationResult.merge(componentFormSet.getPrimary().validate());
@@ -600,11 +600,11 @@ public class SubmissionFormServiceImpl
 	{
 		Objects.requireNonNull(userSubmissionId);
 
-		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmissionId);
+		UserSubmission existing = getPersistenceService().findById(UserSubmission.class, userSubmissionId);
 		if (existing != null) {
 			existing.setOwnerUsername(newOwnerUsername);
 			existing.populateBaseUpdateFields();
-			persistenceService.persist(existing);
+			getPersistenceService().persist(existing);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find user submission. Id: " + userSubmissionId, "Check Id and refresh");
 		}
@@ -618,7 +618,7 @@ public class SubmissionFormServiceImpl
 
 	private void internalDeleteUserSubmission(String userSubmissionId, boolean deleteActualMedia)
 	{
-		UserSubmission existing = persistenceService.findById(UserSubmission.class, userSubmissionId);
+		UserSubmission existing = getPersistenceService().findById(UserSubmission.class, userSubmissionId);
 		if (existing != null) {
 
 			UserSubmissionMedia userSubmissionMedia = new UserSubmissionMedia();
@@ -629,16 +629,16 @@ public class SubmissionFormServiceImpl
 				if (deleteActualMedia) {
 					handleMediaDelete(media);
 				}
-				persistenceService.delete(media);
+				getPersistenceService().delete(media);
 			}
 
 			UserSubmissionComment commentExample = new UserSubmissionComment();
 			commentExample.setUserSubmissionId(userSubmissionId);
-			persistenceService.deleteByExample(commentExample);
+			getPersistenceService().deleteByExample(commentExample);
 
 			getWorkPlanService().removeWorkPlanLinkForSubmission(userSubmissionId);
 
-			persistenceService.delete(existing);
+			getPersistenceService().delete(existing);
 		}
 	}
 
@@ -665,11 +665,11 @@ public class SubmissionFormServiceImpl
 	@Override
 	public void deleteUserSubmissionMedia(String submissionMediaId)
 	{
-		UserSubmissionMedia existing = persistenceService.findById(UserSubmissionMedia.class, submissionMediaId);
+		UserSubmissionMedia existing = getPersistenceService().findById(UserSubmissionMedia.class, submissionMediaId);
 		if (existing != null) {
 
 			handleMediaDelete(existing);
-			persistenceService.delete(existing);
+			getPersistenceService().delete(existing);
 		}
 
 	}
@@ -680,7 +680,7 @@ public class SubmissionFormServiceImpl
 		Objects.requireNonNull(submissionTemplateId);
 		Objects.requireNonNull(submissionTemplateId);
 
-		SubmissionFormTemplate targetSubmissionFormTemplate = persistenceService.findById(SubmissionFormTemplate.class, submissionTemplateId);
+		SubmissionFormTemplate targetSubmissionFormTemplate = getPersistenceService().findById(SubmissionFormTemplate.class, submissionTemplateId);
 
 		// if activating a template, inactivate other templates that have same entry type
 		if (SubmissionFormTemplate.ACTIVE_STATUS.equals(newStatus) && targetSubmissionFormTemplate.getEntryType() != null) {
@@ -692,14 +692,14 @@ public class SubmissionFormServiceImpl
 			affectedTemplates.forEach(template -> {
 				if (!template.getSubmissionTemplateId().equals(submissionTemplateId)) {
 					template.setActiveStatus(SubmissionFormTemplate.INACTIVE_STATUS);
-					persistenceService.persist(template);
+					getPersistenceService().persist(template);
 				}
 			});
 		}
 
 		targetSubmissionFormTemplate.setActiveStatus(newStatus);
 		targetSubmissionFormTemplate.populateBaseUpdateFields();
-		persistenceService.persist(targetSubmissionFormTemplate);
+		getPersistenceService().persist(targetSubmissionFormTemplate);
 	}
 
 	@Override

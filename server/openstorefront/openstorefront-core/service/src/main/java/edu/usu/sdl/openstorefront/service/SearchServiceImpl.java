@@ -152,9 +152,9 @@ public class SearchServiceImpl
 		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 		attributeCodeExample.setArchitectureCode(pk.getAttributeCode());
 
-		AttributeCode attributeCode = persistenceService.queryOneByExample(attributeCodeExample);
+		AttributeCode attributeCode = getPersistenceService().queryOneByExample(attributeCodeExample);
 		if (attributeCode == null) {
-			attributeCode = persistenceService.findById(AttributeCode.class, pk);
+			attributeCode = getPersistenceService().findById(AttributeCode.class, pk);
 		}
 
 		AttributeCode attributeExample = new AttributeCode();
@@ -178,7 +178,7 @@ public class SearchServiceImpl
 			queryByExample.setLikeExample(attributeCodeLikeExample);
 		}
 
-		List<AttributeCode> attributeCodes = persistenceService.queryByExample(queryByExample);
+		List<AttributeCode> attributeCodes = getPersistenceService().queryByExample(queryByExample);
 		List<String> ids = new ArrayList<>();
 		attributeCodes.forEach(code -> {
 			ids.add(code.getAttributeCodePk().getAttributeCode());
@@ -200,7 +200,7 @@ public class SearchServiceImpl
 			queryChildCodes.setInExample(componentAttributeInExample);
 			queryChildCodes.getInExampleOption().getParameterValues().addAll(ids);
 
-			List<ComponentAttribute> componentAttributes = persistenceService.queryByExample(queryChildCodes);
+			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(queryChildCodes);
 			Set<String> uniqueComponents = new HashSet<>();
 			componentAttributes.forEach(componentAttribute -> {
 				uniqueComponents.add(componentAttribute.getComponentId());
@@ -487,16 +487,16 @@ public class SearchServiceImpl
 	{
 		Objects.requireNonNull(systemSearch);
 
-		SystemSearch existing = persistenceService.findById(SystemSearch.class, systemSearch.getSearchId());
+		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, systemSearch.getSearchId());
 		if (existing != null) {
 			existing.updateFields(systemSearch);
-			systemSearch = persistenceService.persist(existing);
+			systemSearch = getPersistenceService().persist(existing);
 		} else {
 			if (StringUtil.isBlank(systemSearch.getSearchId())) {
-				systemSearch.setSearchId(persistenceService.generateId());
+				systemSearch.setSearchId(getPersistenceService().generateId());
 			}
 			systemSearch.populateBaseCreateFields();
-			systemSearch = persistenceService.persist(systemSearch);
+			systemSearch = getPersistenceService().persist(systemSearch);
 		}
 		return systemSearch;
 	}
@@ -511,11 +511,11 @@ public class SearchServiceImpl
 	{
 		Objects.requireNonNull(searchId);
 
-		SystemSearch existing = persistenceService.findById(SystemSearch.class, searchId);
+		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, searchId);
 		if (existing != null) {
 			existing.setActiveStatus(newStatus);
 			existing.populateBaseUpdateFields();
-			persistenceService.persist(existing);
+			getPersistenceService().persist(existing);
 		} else {
 			throw new OpenStorefrontRuntimeException("Search not found", "Check Id: " + searchId);
 		}

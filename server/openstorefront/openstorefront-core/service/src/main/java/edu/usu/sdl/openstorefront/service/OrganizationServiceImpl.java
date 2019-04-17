@@ -73,7 +73,7 @@ public class OrganizationServiceImpl
 	public void addOrganization(String organizationName)
 	{
 		if (StringUtils.isNotBlank(organizationName)) {
-			Organization organizationExisting = persistenceService.findById(Organization.class, Organization.toKey(organizationName));
+			Organization organizationExisting = getPersistenceService().findById(Organization.class, Organization.toKey(organizationName));
 			if (organizationExisting == null) {
 				Organization organizationNew = new Organization();
 				organizationNew.setName(organizationName);
@@ -90,9 +90,9 @@ public class OrganizationServiceImpl
 
 		Organization savedOrganization;
 
-		Organization organizationExisting = persistenceService.findById(Organization.class, organization.getOrganizationId());
+		Organization organizationExisting = getPersistenceService().findById(Organization.class, organization.getOrganizationId());
 		if (organizationExisting == null) {
-			organizationExisting = persistenceService.findById(Organization.class, organization.nameToKey());
+			organizationExisting = getPersistenceService().findById(Organization.class, organization.nameToKey());
 		}
 
 		if (organizationExisting != null) {
@@ -117,11 +117,11 @@ public class OrganizationServiceImpl
 			}
 
 			organizationExisting.updateFields(organization);
-			savedOrganization = persistenceService.persist(organizationExisting);
+			savedOrganization = getPersistenceService().persist(organizationExisting);
 		} else {
 			organization.setOrganizationId(organization.nameToKey());
 			organization.populateBaseCreateFields();
-			savedOrganization = persistenceService.persist(organization);
+			savedOrganization = getPersistenceService().persist(organization);
 		}
 
 		return savedOrganization;
@@ -137,12 +137,12 @@ public class OrganizationServiceImpl
 		Objects.requireNonNull(organization.getLogoMimeType());
 		Objects.requireNonNull(fileInput);
 
-		Organization savedOrganization = persistenceService.findById(Organization.class, organization.getOrganizationId());
+		Organization savedOrganization = getPersistenceService().findById(Organization.class, organization.getOrganizationId());
 		savedOrganization.setLogoMimeType(organization.getLogoMimeType());
 		savedOrganization.setLogoOriginalFileName(organization.getLogoOriginalFileName());
 		savedOrganization.setLogoFileName(organization.nameToKey());
 		savedOrganization.populateBaseUpdateFields();
-		persistenceService.persist(savedOrganization);
+		getPersistenceService().persist(savedOrganization);
 
 		try (InputStream in = fileInput) {
 			Files.copy(in, savedOrganization.pathToLogo(), StandardCopyOption.REPLACE_EXISTING);
@@ -179,7 +179,7 @@ public class OrganizationServiceImpl
 			QueryByExample<StandardEntity> queryByExample = new QueryByExample<>(standardEntityExample);
 			queryByExample.setDistinctField(OrganizationModel.FIELD_ORGANIZATION);
 
-			List<StandardEntity> orgModels = persistenceService.queryByExample(queryByExample);
+			List<StandardEntity> orgModels = getPersistenceService().queryByExample(queryByExample);
 			for (StandardEntity entity : orgModels) {
 				addOrganization(((OrganizationModel) entity).getOrganization());
 			}
@@ -194,8 +194,8 @@ public class OrganizationServiceImpl
 		Objects.requireNonNull(targetOrganizationId);
 		Objects.requireNonNull(toMergeOrganizationId);
 
-		Organization organizationTarget = persistenceService.findById(Organization.class, targetOrganizationId);
-		Organization organizationMerge = persistenceService.findById(Organization.class, toMergeOrganizationId);
+		Organization organizationTarget = getPersistenceService().findById(Organization.class, targetOrganizationId);
+		Organization organizationMerge = getPersistenceService().findById(Organization.class, toMergeOrganizationId);
 
 		if (organizationTarget != null) {
 			if (organizationMerge != null) {
@@ -218,7 +218,7 @@ public class OrganizationServiceImpl
 				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationMerge.getName(), organizationTarget);
 				clearOrganizationCaches();
 
-				persistenceService.delete(organizationMerge);
+				getPersistenceService().delete(organizationMerge);
 
 			} else {
 				throw new OpenStorefrontRuntimeException("Organization to Merge does not exist.", "Check data and refresh to make sure merge organization still exists");
@@ -240,7 +240,7 @@ public class OrganizationServiceImpl
 			for (T entity : entities) {
 				((OrganizationModel) entity).setOrganization(organizationTarget.getName());
 				((StandardEntity) entity).populateBaseUpdateFields();
-				persistenceService.persist(entity);
+				getPersistenceService().persist(entity);
 				changedRecords++;
 			}
 			LOG.log(Level.FINE, MessageFormat.format("Updated: ", entities.size()));
@@ -256,7 +256,7 @@ public class OrganizationServiceImpl
 		List<OrgReference> references = new ArrayList<>();
 
 		if (StringUtils.isNotBlank(organization)) {
-			Organization organizationEntity = persistenceService.findById(Organization.class, organization);
+			Organization organizationEntity = getPersistenceService().findById(Organization.class, organization);
 			if (organizationEntity == null) {
 				organizationEntity = new Organization();
 				organizationEntity.setName(organization);
@@ -401,7 +401,7 @@ public class OrganizationServiceImpl
 			QueryByExample<BaseEntity> queryByExample = new QueryByExample<>((BaseEntity) entity);
 			queryByExample.getFieldOptions().put(OrganizationModel.FIELD_ORGANIZATION, new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 
-			entities = persistenceService.queryByExample(queryByExample);
+			entities = getPersistenceService().queryByExample(queryByExample);
 		} else {
 			entities = getRepoFactory().getOrganizationRepo().findReferencesNoOrg(entity);
 		}
@@ -419,10 +419,10 @@ public class OrganizationServiceImpl
 	{
 		List<OrgReference> references = findReferences(organizationId, false, false);
 		if (references.isEmpty()) {
-			Organization organizationFound = persistenceService.findById(Organization.class, organizationId);
+			Organization organizationFound = getPersistenceService().findById(Organization.class, organizationId);
 			if (organizationFound != null) {
 				deleteOrganizationLogo(organizationId);
-				persistenceService.delete(organizationFound);
+				getPersistenceService().delete(organizationFound);
 			}
 		} else {
 			throw new AttachedReferencesException();
@@ -432,7 +432,7 @@ public class OrganizationServiceImpl
 	@Override
 	public void deleteOrganizationLogo(String organizationId)
 	{
-		Organization organizationFound = persistenceService.findById(Organization.class, organizationId);
+		Organization organizationFound = getPersistenceService().findById(Organization.class, organizationId);
 		if (organizationFound != null) {
 			Path path = organizationFound.pathToLogo();
 			if (path != null) {
@@ -446,7 +446,7 @@ public class OrganizationServiceImpl
 			organizationFound.setLogoMimeType(null);
 			organizationFound.setLogoOriginalFileName(null);
 			organizationFound.populateBaseUpdateFields();
-			persistenceService.persist(organizationFound);
+			getPersistenceService().persist(organizationFound);
 		} else {
 			LOG.log(Level.WARNING, MessageFormat.format("Unable to find organization. Check Id: ", organizationId));
 		}
