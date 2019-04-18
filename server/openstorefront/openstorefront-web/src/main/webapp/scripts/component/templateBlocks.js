@@ -228,7 +228,7 @@ Ext.define('OSF.component.template.Vitals', {
 			'		</tr>',
 			'	</tpl>',
 			'</table>',
-			'<a href="https://spoonsite.github.io/user/" target="_blank">Units Legend</a>'
+			'<a href="https://spoonsite.github.io/user/unitlegend/" target="_blank">Units Legend</a>'
 			),
 
 	initComponent: function () {
