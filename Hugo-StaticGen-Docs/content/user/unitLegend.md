@@ -6,44 +6,44 @@ hasMath = true
 markup = "mmark"
 +++
 
-|Symbol|Base unit|Description|
-|--- |--- |--- |
-|'kB' or 'KB'|Byte|Kilobyte: $10^3$ bytes|
-|'MB'|Byte|Megabyte: $10^6$ bytes|
-|'GB'|Byte|Gigabyte: $10^9$ bytes|
-|'TB'|Byte|Terabyte: $10^{12}$ bytes|
-|'PB'|Byte|Petabyte: $10^{15}$ bytes|
-|'kb' or 'Kb'|Bit|Kilobit: $10^3$ bits|
-|'Mb'|Bit|Megabit: $10^6$ bits|
-|'Gb'|Bit|Gigabit: $10^9$ bits|
-|'Tb'|Bit|Terabit: $10^{12}$ bits|
-|'Pb'|Bit|Petabit: $10^{15}$ bits|
-|'bps'|Bit Per Second|1 bit per second|
-|'kbps'|Bit Per Second|$10^3 \frac{\text{bits}}{\text{sec}}$|
-|'Mbps'|Bit Per Second|$10^6 \frac{\text{bits}}{\text{sec}}$|
-|'Gbps'|Bit Per Second|$10^9 \frac{\text{bits}}{\text{sec}}$|
-|'rpm' or 'RPM'|Revolution Per Minute|1 revolution Per Minute|
-|'inch'|inch|1 inch|
-|'psi'|Pounds Per Square Inch|1 $\frac{\text{lbs}}{\text{in}^2}$|
-|'°' or 'deg'|Degree|1 degree|
-|'arcsec'|Degree|1/3600 degree|
-|'arcsmin'|Degree|1/60 degree|
-|'G'|Gauss|1 Gauss|
-|'mG'|microGauss|1 000 Gauss|
-|'Grav'|Newtonian constant of gravitation|
-|'mGrav'|microGrav|$10^{-6}$ Grav|
-|'grms' or 'Grms'|Root-Mean-Square Acceleration|
-|'g'|Gram|1 gram|
-|'dBW'|Decibel Watt|1 decibel Watt|
-|'dBm'|Decibel milli-Watt|1 decibel milli-Watt|
-|'dbi'|Decibel|1 Decibel|
-|'dbd'|Decibel|1 Decibel|
-|'dbc'|Decibel|1 Decibel|
-|'dbC'|Decibel|1 Decibel|
-|'hr' or 'hour'|Hour|1 hour|
-|'$'|US Dollar|1 US dollar|
-|'MIPS'|Million of Instructions Per Second|1 million of instructions per second|
-|'micron' or 'μm'|Micrometer|1 micrometer|
-|'μm'|Microgram|1 microgram|
-|'μN'|MicroNewton|1 microNewton|
-|'μs'|Microsecond|1 microsecond|
+| Symbol           | Base unit                          | Description                                       |
+| ---------------- | ---------------------------------- | ------------------------------------------------- |
+| '$'              | US Dollar                          | 1 US dollar                                       |
+| 'G'              | Gauss                              | 1 Gauss                                           |
+| 'GB'             | Byte                               | $10^9$ bytes (Gigabyte)                           |
+| 'Gb'             | Bit                                | $10^9$ bits (Gigabit)                             |
+| 'Gbps'           | Bit Per Second                     | $10^9 \frac{\text{bits}}{\text{sec}}$             |
+| 'Grav'           | Newtonian constant of gravitation  |
+| 'MB'             | Byte                               | $10^6$ bytes (Megabyte)                           |
+| 'MIPS'           | Million of Instructions Per Second | $10^6$ $\frac{\text{instruction}}{\text{second}}$ |
+| 'Mb'             | Bit                                | $10^6$ bits (Megabit)                             |
+| 'Mbps'           | Bit Per Second                     | $10^6 \frac{\text{bits}}{\text{sec}}$             |
+| 'PB'             | Byte                               | $10^{15}$ bytes (Petabyte)                        |
+| 'Pb'             | Bit                                | $10^{15}$ bits (Petabit)                          |
+| 'TB'             | Byte                               | $10^{12}$ bytes (Terabyte)                        |
+| 'Tb'             | Bit                                | $10^{12}$ bits (Terabit)                          |
+| 'arcsec'         | Degree                             | $\frac{1}{3600}$ degree                           |
+| 'arcsmin'        | Degree                             | $\frac{1}{60}$ degree                             |
+| 'bps'            | Bit Per Second                     | 1 $\frac{\text{bit}}{\text{sec}}$                 |
+| 'dBW'            | Decibel Watt                       | 1 decibel Watt                                    |
+| 'dBm'            | Decibel Watt                       | $10^{-6}$ decibel Watt (Decibel milli-Watt)       |
+| 'dbC'            | Decibel                            | 1 Decibel                                         |
+| 'dbc'            | Decibel                            | 1 Decibel                                         |
+| 'dbd'            | Decibel                            | 1 Decibel                                         |
+| 'dbi'            | Decibel                            | 1 Decibel                                         |
+| 'deg' or '°'     | Degree                             | 1 degree                                          |
+| 'g'              | Gram                               | 1 gram                                            |
+| 'grms' or 'Grms' | Root-Mean-Square Acceleration      |
+| 'hr' or 'hour'   | Hour                               | 1 hour                                            |
+| 'inch'           | inch                               | 1 inch                                            |
+| 'kB' or 'KB'     | Byte                               | $10^3$ bytes (Kilobyte)                           |
+| 'kb' or 'Kb'     | Bit                                | $10^3$ bits (Kilobit)                             |
+| 'kbps'           | Bit Per Second                     | $10^3 \frac{\text{bits}}{\text{sec}}$             |
+| 'mG'             | Gauss                              | $10^{-6}$ Gauss (microGauss)                      |
+| 'mGrav'          | Grav                               | $10^{-6}$ Grav (microGrav)                        |
+| 'micron' or 'μm' | Meter                              | $10^{-6}$ meter (micrometer)                      |
+| 'psi'            | Pounds Per Square Inch             | 1 $\frac{\text{lbs}}{\text{in}^2}$                |
+| 'rpm' or 'RPM'   | Revolution Per Minute              | 1 $\frac{\text{revolution}}{\text{Minute}}$       |
+| 'μN'             | Newton                             | $10^{-6}$ Newton (microNewton)                    |
+| 'μm'             | Gram                               | $10^{-6}$ gram (Microgram)                        |
+| 'μs'             | Second                             | $10^{-6}$ second (Microsecond)                    |
