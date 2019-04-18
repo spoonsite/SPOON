@@ -150,7 +150,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 	},
 	getUserData: function() {
 		var grid = this;
-		
+
 		var data = [];
 		
 		var allAttributes = [];
@@ -166,8 +166,9 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 			data.push(Ext.apply(dataItem, {				
 				componentAttributePk: {
 					attributeType: dataItem.type,
-					attributeCode: dataItem.code
-				}
+					attributeCode: dataItem.code // TODO: normalize and multiply by factor
+				},
+				preferredUnit: dataItem.unit
 			}));
 		});	
 		
