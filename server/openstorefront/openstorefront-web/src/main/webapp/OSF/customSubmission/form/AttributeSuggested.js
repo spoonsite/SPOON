@@ -18,12 +18,17 @@
 
 /* global Ext, fieldPanel */
 
-// copy of AttributeRequired.js
-// TODO:
-//     - fetch list of related attributes for entry type
-//     - allow submitter to select preferred unit from list of compatible units
-//     - allow submitter to add any other attribute like the optional attributes
-//     - Request New Attribute from the admin if attribute not found in global list
+/* 
+ * This file was initially a copy of AttributeRequired.js
+ *
+ * The suggested attribute form field does the following:
+ * 
+ *    - fetch list of related attributes for entry type
+ *    - allow submitter to select preferred unit from list of compatible units
+ *    - allow submitter to add any other attribute like the optional attributes
+ *    - request New Attribute from the admin if attribute not found in global list
+ */
+
 Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 	extend: 'OSF.customSubmission.SubmissionBaseForm',	
 	xtype: 'osf-submissionform-attributesuggested',
@@ -226,7 +231,7 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 			templateFieldId: attributePanel.fieldTemplate.fieldId,
 			rawValue: Ext.encode(data)
 		};
-		return userSubmissionField;			
+		return userSubmissionField;
 	}
 	
 });
