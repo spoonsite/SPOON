@@ -130,22 +130,117 @@
 			
 			var searchtoolsWin;
 			
-			var compareViewTemplate = new Ext.XTemplate(						
-			);
+			var compareViewTemplate = new Ext.XTemplate();
 		
 			Ext.Ajax.request({
 				url: 'Router.action?page=shared/entryCompareTemplate.jsp',
 				success: function(response, opts){
 					compareViewTemplate.set(response.responseText, true);
 				}
-			});			
+			});
+			
+			var compareAttrTemplate = new Ext.XTemplate();
 
+			Ext.Ajax.request({
+				url: 'Router.action?page=shared/attributeCompareTemplate.jsp',
+				success: function(response, opts){
+					compareAttrTemplate.set(response.responseText, true);
+				}
+			});
+
+
+			var getArrayCommonalities = function(arrOne, arrTwo){
+				var nonUniqueArray = [];
+				var uniqueCommonalityArray = [];
+				arrOne.forEach(function(arrOneElement) {
+					arrTwo.forEach(function(arrTwoElement) {
+						if(arrOneElement.type == arrTwoElement.type){
+							nonUniqueArray.push(arrOneElement.type);
+						}
+					});
+				});
+
+				for(var i = 0; i < nonUniqueArray.length; i++){
+					if(uniqueCommonalityArray.indexOf(nonUniqueArray[i]) == -1){
+						uniqueCommonalityArray.push(nonUniqueArray[i])
+					}
+				}
+				// console.log("UFC::::   ",uniqueCommonalityArray);
+				uniqueCommonalityArray = uniqueCommonalityArray.reverse();
+				return uniqueCommonalityArray;
+			}
+
+			var percolateValueUp = function(arrOne, commonElementString){
+				var index = 0;
+				for(var i = 0; i < arrOne.length; i++){
+					if(arrOne[i].type == commonElementString){
+						index = i;
+						break;
+					}
+				}
+				
+				var temp = {};
+				for(var i = arrOne.length - 1; i >= 0; i--) {
+					if((index == i) && i != 0){
+						// Found it so swap with above
+						temp = arrOne[i-1];
+						arrOne[i-1] = arrOne[i];
+						arrOne[i] = temp;
+						index = index - 1;
+						temp = {};
+					}
+				}
+				return arrOne;
+			};
+
+
+
+			var buildHTMLTableFromArrays = function(arrOne, arrTwo){
+				var finalString = "";
+
+				return finalString;
+			}
+
+
+			// var makeHTMLCompareTableString = function(arrOne, arrTwo){
+			var makeHTMLCompareTableString = function(dataRays){
+				/**
+				 *  1. Find the commonalities between the two lists.
+				 *  2. With the commonalities, apply a sorting to the two lists
+				 *     Such that the commonalities are listed at the top of the two lists.
+				 *  3. Print the lists out side by side.
+				 */
+				var htmlTableString = "";
+				var commonalityArray = getArrayCommonalities(dataRays.one, dataRays.two);
+				commonalityArray.forEach(function(commonElement){
+					dataRays.one.forEach(function(arrOneElement){
+						if(arrOneElement.type == commonElement) {
+							dataRays.one = percolateValueUp(dataRays.one, commonElement);
+						}
+					});
+					dataRays.two.forEach(function(arrTwoElement){
+						if(arrTwoElement.type == commonElement) {
+							dataRays.two = percolateValueUp(dataRays.two, commonElement);
+						}
+					});
+				});
+				// console.log(dataRays.one);
+				// console.log(dataRays.two);
+				// htmlTableString = buildHTMLTableFromArrays(arrOne, arrTwo);
+				// return htmlTableString;
+			}
+
+			var compareWindowChanged = false;
+			var changeIsStaged = true;
 			
 			var compareEntries = function(menu) {
 				
 				var changeComparePanelListenerGenerator = function(name) {
 					return function(cb, newValue, oldValue, opts) {
+						compareWindowChanged = true;
+						changeIsStaged = true;
 						var comparePanel = this.up('panel');
+						console.log("wtf panel     ",comparePanel, "  nv-> ", newValue, "  ov-->", oldValue, "  opts->",opts);
 						if (newValue) {	
 							var otherStore = comparePanel.up('panel').getComponent(name).getComponent("cb").getStore();
 							otherStore.clearFilter();
@@ -165,7 +260,9 @@
 								}, 
 								success: function(response, opts) {
 									var data = Ext.decode(response.responseText);
+									// console.log("DATUM!!!!:::   ", data);
 									data = CoreUtil.processEntry(data);
+									console.log("data    ", data);
 
 									root = data.componentTypeNestedModel;
 									CoreUtil.traverseNestedModel(root, [], data);
@@ -222,10 +319,10 @@
 					}
 					if (side === 'left') {
 						result.width = '50%';
-						result.bodyStyle = 'padding: 10px';
+						result.bodyStyle = 'padding: 0px';
 					} else if (side === 'right') {
 						result.flex = 1;
-						result.bodyStyle = 'padding: 20px';
+						result.bodyStyle = 'padding: 0px';
 					}
 					return result;
 				}
@@ -250,6 +347,12 @@
 						{
 							xtype: 'panel',
 							dock: 'bottom',
+							tpl: compareAttrTemplate,
+							// // width: '100%',
+							// // height: '30%',
+							// style: 'max-height: 30em; overflow:auto; ',
+							// // autoScroll: true,
+							// // scrollable: true,
 							html: 'Hiya buckaroo!',
 							itemid: 'hyrdacopter'
 						}
@@ -261,20 +364,52 @@
 						mouseover: {
 							element: 'body', //bind to the underlying el property on the panel
 							fn: function(){
-								var win = this;
-								var arrayOne = [];
-								var arrayTwo = [];
-								// console.log(win);
-								win.component.items.items[1].data.attributes.forEach(function(elim) {
-									arrayOne.push(elim);
-								});
-								win.component.items.items[3].data.attributes.forEach(function(elim) {
-									arrayTwo.push(elim);
-								});
-								console.log(arrayOne);
-								console.log(arrayTwo);
-								// win.component.items.items[1].data.attributes
-								// win.component.dockedItems.items[1].setHtml('booky dooky!!!!');
+								if(this.component.items.items[1].data && this.component.items.items[3].data && compareWindowChanged){
+									var win = this;
+									var arrayOne = [];
+									var arrayTwo = [];
+									// console.log(win);
+									win.component.items.items[1].data.vitals.forEach(function(elim) {
+										arrayOne.push(elim);
+									});
+									win.component.items.items[3].data.vitals.forEach(function(elim) {
+										arrayTwo.push(elim);
+									});
+									// console.log(arrayOne);
+									// console.log(arrayTwo);
+
+
+
+									var dataRays = {};
+									dataRays.one = arrayOne;
+									dataRays.two = arrayTwo;
+									makeHTMLCompareTableString(dataRays);
+									console.log(win);
+									console.log("datarays!!!    ",dataRays);
+									win.component.items.items[1].data.vitals = dataRays.one;
+									win.component.items.items[3].data.vitals = dataRays.two;
+									win.component.items.items[1].data = CoreUtil.processEntry(win.component.items.items[1].data);
+									win.component.items.items[1].udpate(win.component.items.items[1].data);
+									// var printString = makeHTMLCompareTableString(arrayOne, arrayTwo);
+									// win.component.dockedItems.items[1].setHtml(printString);
+									win.component.dockedItems.items[1].data = dataRays.one;
+
+									win.component.dockedItems.items[1].update(dataRays.one);
+
+
+
+									// win.component.items.items[1].data.attributes
+									// win.component.dockedItems.items[1].setHtml('booky dooky!!!!');
+									if(!changeIsStaged){
+										compareWindowChanged = false;
+									}
+									if(changeIsStaged){
+										changeIsStaged = false;
+									}
+
+								} else{
+
+								}
 							}
 						}
 					}
