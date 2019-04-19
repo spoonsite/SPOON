@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.EmailAddress;
-import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.WorkFlowStepActionOption;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanComponentType;
@@ -32,7 +31,6 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepAction;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepEvent;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepRole;
-import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.MongoPersistenceServiceImpl;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.api.ProxyFactory;
@@ -55,14 +53,7 @@ public class MongoDBPersistenceUseCase
 	public void testPersistenceEngine()
 	{
 		MongoDBManager dbManager = initialize();
-
-		UserContext userContext = new UserContext();
-		UserProfile userProfile = new UserProfile();
-		userProfile.setUsername("GUEST");
-		userContext.setUserProfile(userProfile);
-		userContext.setGuest(true);
-
-		MongoQueryUtil queryUtil = new MongoQueryUtil(userContext, dbManager);
+		MongoQueryUtil queryUtil = new MongoQueryUtil(dbManager);
 
 		MongoPersistenceServiceImpl persistenceService = new MongoPersistenceServiceImpl(dbManager, queryUtil);
 		try {

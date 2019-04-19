@@ -19,11 +19,11 @@ import au.com.bytecode.opencsv.CSVReader;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
-import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,10 +31,10 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sourceforge.stripes.util.ResolverUtil;
 
 /**
  *
@@ -57,8 +57,15 @@ public class LookupImporter
 
 			List<File> lookupCodeFiles = new ArrayList<>();
 
-			Collection<Class<?>> entityClasses = OrientDBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
-			for (Class entityClass : entityClasses) {
+			ResolverUtil resolverUtil = new ResolverUtil();
+			try {
+				resolverUtil.find(new ResolverUtil.IsA(LookupEntity.class), OpenStorefrontConstant.ENTITY_PACKAGE);
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, "Unable resolve all lookup classes; may have partial results.");
+			}
+
+			for (Object entityClassObject : resolverUtil.getClasses()) {
+				Class entityClass = (Class) entityClassObject;
 				if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 					if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 						@SuppressWarnings("unchecked")
@@ -78,8 +85,15 @@ public class LookupImporter
 			filesUpdatedOrAdded(lookupCodeFiles.toArray(new File[0]));
 		} else {
 			//Put in defaults, if needed
-			Collection<Class<?>> entityClasses = OrientDBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
-			for (Class entityClass : entityClasses) {
+			ResolverUtil resolverUtil = new ResolverUtil();
+			try {
+				resolverUtil.find(new ResolverUtil.IsA(LookupEntity.class), OpenStorefrontConstant.ENTITY_PACKAGE);
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, "Unable resolve all lookup classes; may have partial results.");
+			}
+
+			for (Object entityClassObject : resolverUtil.getClasses()) {
+				Class entityClass = (Class) entityClassObject;
 				if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 					if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 						@SuppressWarnings("unchecked")
@@ -127,7 +141,7 @@ public class LookupImporter
 		Class lookupClass = null;
 		try (CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(file)))) {
 
-			lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + className);
+			lookupClass = Class.forName(OpenStorefrontConstant.ENTITY_PACKAGE + "." + className);
 			@SuppressWarnings("unchecked")
 			SystemTable systemTable = (SystemTable) lookupClass.getAnnotation(SystemTable.class);
 			if (systemTable == null) {

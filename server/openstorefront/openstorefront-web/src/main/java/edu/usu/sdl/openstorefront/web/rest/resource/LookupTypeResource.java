@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -31,14 +32,14 @@ import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -53,6 +54,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -66,6 +68,8 @@ public class LookupTypeResource
 		extends BaseResource
 {
 
+	private static final Logger LOG = Logger.getLogger(LookupTypeResource.class.getName());
+
 	@GET
 	@APIDescription("Get a list of available lookup entities")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -77,8 +81,16 @@ public class LookupTypeResource
 	{
 		List<LookupModel> lookupModels = new ArrayList<>();
 
-		Collection<Class<?>> entityClasses = OrientDBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
-		for (Class entityClass : entityClasses) {
+		ResolverUtil resolverUtil = new ResolverUtil();
+		try {
+			resolverUtil.find(new ResolverUtil.IsA(LookupEntity.class), OpenStorefrontConstant.ENTITY_PACKAGE);
+		} catch (Exception e) {
+			LOG.log(Level.WARNING, "Unable resolve all lookup classes; may have partial results.");
+		}
+
+		for (Object entityClassObject : resolverUtil.getClasses()) {
+			Class entityClass = (Class) entityClassObject;
+
 			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 					boolean add = true;
@@ -133,7 +145,7 @@ public class LookupTypeResource
 
 		List<LookupEntity> lookups = new ArrayList<>();
 		try {
-			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + entityName);
+			Class lookupClass = Class.forName(OpenStorefrontConstant.ENTITY_PACKAGE + "." + entityName);
 			lookups = service.getLookupService().findLookup(lookupClass, filterQueryParams.getStatus());
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException(" (System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
@@ -176,7 +188,7 @@ public class LookupTypeResource
 		StringBuilder data = new StringBuilder();
 		List<LookupEntity> lookups = new ArrayList<>();
 		try {
-			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + entityName);
+			Class lookupClass = Class.forName(OpenStorefrontConstant.ENTITY_PACKAGE + "." + entityName);
 			lookups = service.getLookupService().findLookup(lookupClass, filterQueryParams.getStatus());
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException(" (System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
@@ -212,7 +224,7 @@ public class LookupTypeResource
 
 		List<LookupModel> lookupViews = new ArrayList<>();
 		try {
-			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + entityName);
+			Class lookupClass = Class.forName(OpenStorefrontConstant.ENTITY_PACKAGE + "." + entityName);
 			@SuppressWarnings("unchecked")
 			List<LookupEntity> lookups = service.getLookupService().findLookup(lookupClass, filterQueryParams.getStatus());
 			lookups.sort(new LookupComparator<>());
@@ -254,7 +266,7 @@ public class LookupTypeResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			try {
-				Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + entityName);
+				Class lookupClass = Class.forName(OpenStorefrontConstant.ENTITY_PACKAGE + "." + entityName);
 				LookupEntity newLookupEntity = (LookupEntity) lookupClass.newInstance();
 				newLookupEntity.setCode(lookupEntity.getCode());
 				newLookupEntity.setDescription(lookupEntity.getDescription());
@@ -300,7 +312,7 @@ public class LookupTypeResource
 		checkEntity(entityName);
 		PersistenceService persistenceService = service.getPersistenceService();
 		try {
-			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + entityName);
+			Class lookupClass = Class.forName(OpenStorefrontConstant.ENTITY_PACKAGE + "." + entityName);
 			@SuppressWarnings("unchecked")
 			Object value = persistenceService.findById(lookupClass, code);
 			if (value != null) {
@@ -352,7 +364,7 @@ public class LookupTypeResource
 	{
 		LookupEntity lookupEntity = null;
 		try {
-			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + entityName);
+			Class lookupClass = Class.forName(OpenStorefrontConstant.ENTITY_PACKAGE + "." + entityName);
 			@SuppressWarnings("unchecked")
 			Object value = service.getPersistenceService().findById(lookupClass, code);
 			if (value != null) {
@@ -382,7 +394,7 @@ public class LookupTypeResource
 	{
 		checkEntity(entityName);
 		try {
-			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + entityName);
+			Class lookupClass = Class.forName(OpenStorefrontConstant.ENTITY_PACKAGE + "." + entityName);
 			service.getLookupService().removeValue(lookupClass, code);
 		} catch (ClassNotFoundException e) {
 			throw new OpenStorefrontRuntimeException("(System Issue) Unable to find entity: " + entityName, "System error...contact support.", e);
@@ -394,7 +406,7 @@ public class LookupTypeResource
 		boolean valid = false;
 		if (ReflectionUtil.LOOKUP_ENTITY.equals(entityName) == false) {
 			try {
-				Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + entityName);
+				Class lookupClass = Class.forName(OpenStorefrontConstant.ENTITY_PACKAGE + "." + entityName);
 				valid = ReflectionUtil.isSubLookupEntity(lookupClass);
 			} catch (ClassNotFoundException e) {
 				valid = false;

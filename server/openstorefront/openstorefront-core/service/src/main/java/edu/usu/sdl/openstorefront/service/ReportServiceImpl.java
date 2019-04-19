@@ -138,7 +138,7 @@ public class ReportServiceImpl
 
 			ErrorInfo errorInfo = new ErrorInfo(e, null);
 			errorInfo.setErrorTypeCode(ErrorTypeCode.REPORT);
-			errorInfo.setInputData("Report: " + managedReport.getReportType() + " Format: " + managedReport.getReportFormat() + " Report Id: " + managedReport.getReportId() + " Create Date: " + managedReport.getCreateDts());
+			errorInfo.setInputData("Report: " + managedReport.getReportType() + " Report Id: " + managedReport.getReportId() + " Create Date: " + managedReport.getCreateDts());
 			getSystemService().generateErrorTicket(errorInfo);
 
 			//Note: we don't need to rethrow as we want to track report error separately.
@@ -274,7 +274,6 @@ public class ReportServiceImpl
 		Report reportHistory = new Report();
 		reportHistory.setScheduled(true);
 		reportHistory.setScheduledId(scheduledReport.getScheduleReportId());
-		reportHistory.setReportFormat(scheduledReport.getReportFormat());
 		reportHistory.setReportType(scheduledReport.getReportType());
 		reportHistory.setReportOption(scheduledReport.getReportOption());
 		reportHistory.setCreateUser(scheduledReport.getCreateUser());

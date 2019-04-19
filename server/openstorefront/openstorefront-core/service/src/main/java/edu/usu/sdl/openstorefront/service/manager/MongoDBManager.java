@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
@@ -23,6 +24,7 @@ import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeExceptio
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -47,6 +49,7 @@ public class MongoDBManager
 	private MongoClient mongoClient;
 	private PropertiesManager propertiesManager;
 	private CodecRegistry pojoCodecRegistry;
+	private boolean supportsTransactions;
 
 	protected static MongoDBManager singleton = null;
 
@@ -74,6 +77,22 @@ public class MongoDBManager
 
 				pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
 						fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+
+				//check for transaction support; only supported in certain cases
+				LOG.log(Level.INFO, "Checking for Transaction Support");
+
+				try (ClientSession session = mongoClient.startSession()) {
+					session.startTransaction();
+					session.commitTransaction();
+					supportsTransactions = true;
+				} catch (Exception e) {
+					LOG.log(Level.WARNING, () -> "Transaction Support will be disabled. " + e.getMessage());
+				}
+				if (supportsTransactions) {
+					LOG.log(Level.INFO, "Transactions supported");
+				} else {
+					LOG.log(Level.INFO, "Transactions not supported");
+				}
 
 				started.set(true);
 			}
@@ -126,6 +145,11 @@ public class MongoDBManager
 			started.set(false);
 			throw new OpenStorefrontRuntimeException("Client is not initialized", "Make sure Mongo Manager is started");
 		}
+	}
+
+	public boolean supportTransactions()
+	{
+		return supportsTransactions;
 	}
 
 }

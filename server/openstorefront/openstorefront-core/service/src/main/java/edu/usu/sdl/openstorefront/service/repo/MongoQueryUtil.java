@@ -57,12 +57,10 @@ public class MongoQueryUtil
 	public static final int MONGO_SORT_ASCENDING = 1;
 	public static final int MONGO_SORT_DESCENDING = -1;
 
-	private UserContext userContext;
 	private MongoDBManager dbManager;
 
-	public MongoQueryUtil(UserContext userContext, MongoDBManager dbManager)
+	public MongoQueryUtil(MongoDBManager dbManager)
 	{
-		this.userContext = userContext;
 		this.dbManager = dbManager;
 	}
 
@@ -125,6 +123,19 @@ public class MongoQueryUtil
 			}
 		}
 
+//		//$and/$or/$nor must be a nonempty array  (See if this is need...it seems most case the query can adjusted)
+//		BsonDocument andOrFilterDoc = query.toBsonDocument(BsonDocument.class, MongoClientSettings.getDefaultCodecRegistry());
+//		if (andOrFilterDoc.get("$and") != null) {
+//			if (andOrFilterDoc.get("$and").asArray().isEmpty()) {
+//				//send back an empty doc
+//				query = new BasicDBObject();
+//			}
+//		} else if (andOrFilterDoc.get("$or") != null) {
+//			if (andOrFilterDoc.get("$or").asArray().isEmpty()) {
+//				//send back an empty doc
+//				query = new BasicDBObject();
+//			}
+//		}
 		return query;
 	}
 
@@ -134,11 +145,13 @@ public class MongoQueryUtil
 		if (value.startsWith(LIKE_QUERY_CHARACTER) && value.endsWith(LIKE_QUERY_CHARACTER)) {
 			value = value.replace(LIKE_QUERY_CHARACTER, "");
 		} else if (value.startsWith(LIKE_QUERY_CHARACTER)) {
-			value = value.replace(LIKE_QUERY_CHARACTER, "");
-			value = "^" + value;
-		} else if (value.endsWith(LIKE_QUERY_CHARACTER)) {
+			//end
 			value = value.replace(LIKE_QUERY_CHARACTER, "");
 			value = value + "$";
+		} else if (value.endsWith(LIKE_QUERY_CHARACTER)) {
+			//start
+			value = value.replace(LIKE_QUERY_CHARACTER, "");
+			value = "^" + value;
 		}
 		return value;
 	}
@@ -264,6 +277,9 @@ public class MongoQueryUtil
 	public <T> Map<String, Object> generateFieldMap(T example, ComplexFieldStack complexFieldStack, GenerateStatementOption generateStatementOption, Map<String, GenerateStatementOption> fieldOptions)
 	{
 		Map<String, Object> parameterMap = new HashMap<>();
+		if (example == null) {
+			return parameterMap;
+		}
 		try {
 			List<Field> fields = ReflectionUtil.getAllFields(example.getClass());
 			for (Field field : fields) {
@@ -300,11 +316,11 @@ public class MongoQueryUtil
 		return parameterMap;
 	}
 
-	public <T extends BaseEntity> Bson componentRestrictionFilter()
+	public <T extends BaseEntity> Bson componentRestrictionFilter(UserContext userContext)
 	{
-		Bson query = standardRestrictionFilter();
+		Bson query = standardRestrictionFilter(userContext);
 
-		if (userContext != null) {
+		if (userContext != null && !userContext.isSystemUser()) {
 
 			if (userContext.allowUnspecifiedDataSources()) {
 				query = Filters.and(query, Filters.eq(Component.FIELD_DATA_SOURCE, null));
@@ -324,11 +340,11 @@ public class MongoQueryUtil
 		return query;
 	}
 
-	public <T extends BaseEntity> Bson standardRestrictionFilter()
+	public <T extends BaseEntity> Bson standardRestrictionFilter(UserContext userContext)
 	{
 		Bson query = new BasicDBObject();
 
-		if (userContext != null) {
+		if (userContext != null && !userContext.isSystemUser()) {
 			if (userContext.allowUnspecifiedDataSensitivty()) {
 				query = Filters.eq(StandardEntity.FIELD_DATA_SENSITIVITY, null);
 			} else {

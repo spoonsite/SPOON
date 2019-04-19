@@ -17,8 +17,9 @@ package edu.usu.sdl.openstorefront.service.io.archive;
 
 import edu.usu.sdl.core.CoreSystem;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
-import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
+import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -65,11 +66,16 @@ public class DBArchiveHandler
 
 	public void performExport(File exportFile)
 	{
-		try {
-			OrientDBManager.getInstance().exportDB(new TFileOutputStream(exportFile));
-		} catch (IOException ex) {
-			LOG.log(Level.SEVERE, "DB Export failed", ex);
-			addError("Fail to create export. See log for more details.");
+		if (DBManager.getInstance().usingOrient()) {
+			try {
+				OrientDBManager.getInstance().exportDB(new TFileOutputStream(exportFile));
+			} catch (IOException ex) {
+				LOG.log(Level.SEVERE, "DB Export failed", ex);
+				addError("Fail to create export. See log for more details.");
+			}
+		} else {
+			LOG.log(Level.WARNING, "Mongo export is not supported.");
+			addError("Mongo export is not supported.  Use external mongo tooling.");
 		}
 	}
 
@@ -89,26 +95,31 @@ public class DBArchiveHandler
 
 	public void performImport(File importFile)
 	{
-		try {
-			CoreSystem.standby("Importing Database...(This may take several minutes)");
-			JobManager.pauseScheduler();
+		if (DBManager.getInstance().usingOrient()) {
 			try {
-				//Give the application a bit of time to complete any running job
-				//Obvisiously this will not catch every thing. This is expected.
-				//The user has been warned.
-				Thread.sleep(2000);
-			} catch (InterruptedException ex) {
-				LOG.log(Level.WARNING, "Interrupted DB Import", ex);
-				Thread.currentThread().interrupt();
-			}
+				CoreSystem.standby("Importing Database...(This may take several minutes)");
+				JobManager.pauseScheduler();
+				try {
+					//Give the application a bit of time to complete any running job
+					//Obvisiously this will not catch every thing. This is expected.
+					//The user has been warned.
+					Thread.sleep(2000);
+				} catch (InterruptedException ex) {
+					LOG.log(Level.WARNING, "Interrupted DB Import", ex);
+					Thread.currentThread().interrupt();
+				}
 
-			OrientDBManager.getInstance().importDB(new TFileInputStream(importFile));
-		} catch (IOException ex) {
-			LOG.log(Level.SEVERE, "DB Import failed", ex);
-			addError("Failed to import database. See log for more details.");
-		} finally {
-			JobManager.resumeScheduler();
-			CoreSystem.resume("Completed Import Database");
+				OrientDBManager.getInstance().importDB(new TFileInputStream(importFile));
+			} catch (IOException ex) {
+				LOG.log(Level.SEVERE, "DB Import failed", ex);
+				addError("Failed to import database. See log for more details.");
+			} finally {
+				JobManager.resumeScheduler();
+				CoreSystem.resume("Completed Import Database");
+			}
+		} else {
+			LOG.log(Level.WARNING, "Mongo export is not supported.");
+			addError("Mongo export is not supported.  Use external mongo tooling.");
 		}
 	}
 

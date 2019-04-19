@@ -70,13 +70,10 @@ public class ReportView
 			view.setReportLifetimeMax(Integer.parseInt(PropertiesManager.REPORT_HISTORY_DAYS_TO_LIVE));
 		}
 
-		@SuppressWarnings("deprecation")
-		String format = report.getReportFormat();
-		if (StringUtils.isBlank(format)) {
-			for (ReportOutput output : report.getReportOutputs()) {
-				if (ReportTransmissionType.VIEW.equals(output.getReportTransmissionType())) {
-					format = output.getReportTransmissionOption().getReportFormat();
-				}
+		String format = null;
+		for (ReportOutput output : report.getReportOutputs()) {
+			if (ReportTransmissionType.VIEW.equals(output.getReportTransmissionType())) {
+				format = output.getReportTransmissionOption().getReportFormat();
 			}
 		}
 

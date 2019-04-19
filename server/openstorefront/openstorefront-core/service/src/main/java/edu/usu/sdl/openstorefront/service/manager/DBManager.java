@@ -67,6 +67,16 @@ public class DBManager
 		started.set(true);
 	}
 
+	public boolean usingMongo()
+	{
+		return mongoDBManager != null;
+	}
+
+	public boolean usingOrient()
+	{
+		return orientDBManager != null;
+	}
+
 	/**
 	 *
 	 * @return Active manager instance or null if neither is active

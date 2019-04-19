@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.SystemManager;
 import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -61,6 +62,7 @@ import net.sourceforge.stripes.util.ResolverUtil;
  * @author dshurtleff
  */
 public class CoreSystem
+		implements SystemManager
 {
 
 	private static final Logger LOG = Logger.getLogger(CoreSystem.class.getName());
@@ -74,7 +76,8 @@ public class CoreSystem
 	}
 
 	//Order is important
-	private static List<Initializable> managers = Arrays.asList(PropertiesManager.getInstance(),
+	private static List<Initializable> managers = Arrays.asList(
+			PropertiesManager.getInstance(),
 			OsgiManager.getInstance(),
 			FileSystemManager.getInstance(),
 			DBManager.getInstance(),
@@ -352,6 +355,12 @@ public class CoreSystem
 	public static void setDetailedStatus(String aDetailedStatus)
 	{
 		detailedStatus = aDetailedStatus;
+	}
+
+	@Override
+	public boolean managerStarted()
+	{
+		return CoreSystem.isStarted();
 	}
 
 }

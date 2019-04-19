@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2019 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.core.entity;
+package edu.usu.sdl.openstorefront.core.api;
 
 /**
  *
- * @author cyearsley
+ * @author dshurtleff
  */
-public interface MediaModel
+public interface SystemManager
 {
 
 	/**
-	 * Saves a MediaFile and sets the MediaFile
+	 * Is the Manager started?
 	 *
-	 * @param mediaFile
+	 * @return
 	 */
-	public void setFile(MediaFile mediaFile);
-
-	/**
-	 * Gets the appropriate MediaFile
-	 *
-	 * @return the components mediaFile
-	 */
-	public MediaFile getFile();
+	public boolean managerStarted();
 
 }

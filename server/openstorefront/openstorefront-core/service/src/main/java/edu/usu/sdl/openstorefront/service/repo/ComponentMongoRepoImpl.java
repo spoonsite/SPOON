@@ -32,6 +32,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.repo.api.ComponentRepo;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class ComponentMongoRepoImpl
 				Filters.eq(Component.FIELD_ACTIVE_STATUS, Component.ACTIVE_STATUS),
 				Filters.eq(Component.FIELD_APPROVAL_STATE, ApprovalStatus.APPROVED)
 		);
-		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter());
+		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter(SecurityUtil.getUserContext()));
 
 		if (componentIds != null && !componentIds.isEmpty()) {
 			filter = Filters.and(filter, Filters.in(Component.FIELD_COMPONENT_ID, componentIds));
@@ -143,15 +144,13 @@ public class ComponentMongoRepoImpl
 		MongoCollection<Component> collection = getQueryUtil().getCollectionForEntity(Component.class);
 
 		Bson filter = Filters.and(
-				getQueryUtil().componentRestrictionFilter(),
+				getQueryUtil().componentRestrictionFilter(SecurityUtil.getUserContext()),
 				Filters.in(Component.FIELD_COMPONENT_ID, componentIds)
 		);
-		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter());
-
-		BasicDBObject sort = new BasicDBObject();
-		sort.append(Component.FIELD_APPROVED_DTS, MongoQueryUtil.MONGO_SORT_DESCENDING);
+		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter(SecurityUtil.getUserContext()));
 
 		FindIterable<Component> findIterable = collection.find(filter);
+
 		Map<String, ComponentSearchView> resultMap = new HashMap<>();
 		for (Component component : findIterable) {
 			if (Component.ACTIVE_STATUS.equals(component.getActiveStatus())
@@ -375,13 +374,13 @@ public class ComponentMongoRepoImpl
 				Filters.eq(Component.FIELD_ACTIVE_STATUS, Component.ACTIVE_STATUS),
 				Filters.eq(Component.FIELD_APPROVAL_STATE, ApprovalStatus.APPROVED)
 		);
-		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter());
+		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter(SecurityUtil.getUserContext()));
 
 		BasicDBObject sort = new BasicDBObject();
 		sort.append(Component.FIELD_APPROVED_DTS, MongoQueryUtil.MONGO_SORT_DESCENDING);
 
 		FindIterable<Component> findIterable = collection.find(filter)
-				.sort(filter)
+				.sort(sort)
 				.limit(maxResults);
 
 		return findIterable.into(new ArrayList<>());
@@ -413,7 +412,7 @@ public class ComponentMongoRepoImpl
 				Filters.eq(Component.FIELD_ACTIVE_STATUS, Component.ACTIVE_STATUS),
 				Filters.eq(Component.FIELD_APPROVAL_STATE, ApprovalStatus.APPROVED)
 		);
-		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter());
+		filter = Filters.and(filter, getQueryUtil().componentRestrictionFilter(SecurityUtil.getUserContext()));
 		long numberOfActiveComponents = collection.countDocuments(filter);
 		listingStats.setNumberOfComponents(numberOfActiveComponents);
 

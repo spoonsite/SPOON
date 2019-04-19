@@ -75,7 +75,7 @@ public class MongoPersistenceServiceImpl
 	public MongoPersistenceServiceImpl(MongoDBManager dbManager)
 	{
 		this.dbManager = dbManager;
-		this.queryUtil = new MongoQueryUtil(SecurityUtil.getUserContext(), dbManager);
+		this.queryUtil = new MongoQueryUtil(dbManager);
 	}
 
 	public MongoPersistenceServiceImpl(MongoDBManager dbManager, MongoQueryUtil queryUtil)
@@ -98,10 +98,12 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public void begin()
 	{
-		if (session == null) {
-			session = dbManager.getClient().startSession();
-		} else {
-			throw new OpenStorefrontRuntimeException("Already in a Transaction", "Commit or rollback transaction action before beginning a new one.");
+		if (dbManager.supportTransactions()) {
+			if (session == null) {
+				session = dbManager.getClient().startSession();
+			} else {
+				throw new OpenStorefrontRuntimeException("Already in a Transaction", "Commit or rollback transaction action before beginning a new one.");
+			}
 		}
 
 	}
@@ -109,30 +111,35 @@ public class MongoPersistenceServiceImpl
 	@Override
 	public void commit()
 	{
-		if (session != null) {
-			session.commitTransaction();
-		} else {
-			throw new OpenStorefrontRuntimeException("Not in a transaction", "Begin a new one.");
+		if (dbManager.supportTransactions()) {
+			if (session != null) {
+				session.commitTransaction();
+			} else {
+				throw new OpenStorefrontRuntimeException("Not in a transaction", "Begin a new one.");
+			}
 		}
 	}
 
 	@Override
 	public void rollback()
 	{
-		if (session != null) {
-			session.abortTransaction();
-		} else {
-			throw new OpenStorefrontRuntimeException("Not in a transaction", "Begin a new one.");
+		if (dbManager.supportTransactions()) {
+			if (session != null) {
+				session.abortTransaction();
+			} else {
+				throw new OpenStorefrontRuntimeException("Not in a transaction", "Begin a new one.");
+			}
 		}
 	}
 
 	@Override
 	public void endTransaction()
 	{
-		if (session != null) {
-			session.close();
-		} else {
-			throw new OpenStorefrontRuntimeException("Not in a transaction", "Begin a new one.");
+		if (dbManager.supportTransactions()) {
+			if (session != null) {
+				session.close();
+				session = null;
+			}
 		}
 	}
 

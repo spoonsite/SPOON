@@ -39,7 +39,7 @@ public class MongoQueryGeneratorUseCase
 	@Test
 	public void testGenerateFieldsMap()
 	{
-		MongoQueryUtil queryUtil = new MongoQueryUtil(null, null);
+		MongoQueryUtil queryUtil = new MongoQueryUtil(null);
 
 		Map<String, Object> fieldMap = queryUtil.generateFieldMap(getComponentExample());
 		System.out.println("Component");

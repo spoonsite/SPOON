@@ -42,6 +42,7 @@ public class OpenStorefrontConstant
 	public static final String GENERAL_KEY_SEPARATOR = ":";
 	public static final String AND_CONDITION = "AND";
 	public static final String OR_CONDITION = "OR";
+	public static final String ENTITY_PACKAGE = "edu.usu.sdl.openstorefront.core.entity";
 
 	//Field Max Sizes
 	public static final int FIELD_SIZE_CRON = 250;
