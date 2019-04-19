@@ -1,7 +1,7 @@
 import requests
 import json
 import sys
-from common_functions import getUnit, getUnitList, computeDuplicates, checkUnit, checkUnitList
+from common_functions import computeDuplicates, checkUnit, checkUnitList, TOKEN, SESSION_ID
 
 """
 This script will get duplicate attributes and then accept user
@@ -12,8 +12,8 @@ This script can only parse items that are both numbers or both text.
 They cannot have different types or it could break the system. 
 """
 
-SESSION_ID = '1748FC3E7D9F377904991BC7833D0E6E'
-TOKEN = ''
+# SESSION_ID = '1748FC3E7D9F377904991BC7833D0E6E'
+# TOKEN = ''
 
 COOKIES = {
     'JSESSIONID': SESSION_ID,
@@ -37,50 +37,70 @@ def askToMerge(dups, attributes):
     val = ''
     count = 0
     dict = {}
+
     defaults = {}
+    default = {
+        'type': '',
+        'detailedDescription':'',
+        "attributeUnit": '', 
+        "attributeUnitList": [],
+        "optionalRestrictions": [],
+        "requiredRestrictions": []
+    }
+    for i in dups:
+        defaults[i] = {
+            'type': '',
+            'detailedDescription':'',
+            "attributeUnit": '', 
+            "attributeUnitList": [],
+            "optionalRestrictions": [],
+            "requiredRestrictions": []
+        }
+
+    """
+    This checks to see if there are any old values that can be used
+    in the new attribute.
+    """
+
     for i in attributes:
         try:
             val = i['attributeValueType']
         except:
             val = ''
         if i['description'] in dups and val == 'NUMBER':
-            print(val)
-            prev = cur
-            cur = i['description']
-            if prev != cur:
-                count += 1
-                print()
-                print(f'---- {count:>2} ----------------------------------')
-            unit = i['attributeUnit'] if 'attributeUnit' in i.keys() else None
-            print()
-            print(f"Description:      {i['description']}")
-            print(f"Unit:             {unit}")
-            print(f"Type:             {i['attributeType']}")
-            if unit: checkUnit(unit, dimension=True)
-            try:
-                defaults[i['description']] = {
-                    'type': i['attributeType'],
-                    "detailedDescription": i['detailedDescription'],
-                    "optionalRestrictions": i['optionalRestrictions'],
-                    "requiredRestrictions": i['requiredRestrictions']
-                }
-            except:
-                print('this')
+            if defaults[i['description']]['type'] == '':
+                defaults[i['description']]['type'] = i['attributeType']
 
+            if defaults[i['description']]['detailedDescription'] == '' and 'detailedDescription' in i.keys():
+                defaults[i['description']]['detailedDescription'] = i['detailedDescription']
+            
+            if defaults[i['description']]['attributeUnit'] == '' and 'attributeUnit' in i.keys():
+                defaults[i['description']]['attributeUnit'] = i['attributeUnit']
+            
+            if defaults[i['description']]['requiredRestrictions'] == [] and 'requiredRestrictions' in i.keys():
+                defaults[i['description']]['requiredRestrictions'] = i['requiredRestrictions']
+            
+            if defaults[i['description']]['optionalRestrictions'] == [] and 'optionalRestrictions' in i.keys():
+                defaults[i['description']]['optionalRestrictions'] = i['optionalRestrictions']
+            
+            if defaults[i['description']]['attributeUnitList'] == [] and 'attributeUnitList' in i.keys():
+                defaults[i['description']]['attributeUnitList'] = i['attributeUnitList']
+            
             try: 
                 dict[i['description']].append(i['attributeType'])
             except:
                 dict[i['description']] = [i['attributeType']]
-    # print(dict)
-    # for i in dict:
-    #     print(dict[i])
+
+
     for i in dict:
         if len(dict[i]) > 1:
             current = {
-                    'type': '',
-                    "detailedDescription": '',
-                    "optionalRestrictions": [],
-                    "requiredRestrictions": []
+                'type': '',
+                'detailedDescription':'',
+                "attributeUnit": '', 
+                "attributeUnitList": [],
+                "optionalRestrictions": [],
+                "requiredRestrictions": []
             }
             if i in defaults:
                 current = defaults[i]
@@ -100,16 +120,24 @@ def askToMerge(dups, attributes):
                     detailedDescription = input(f"Enter a detailed description, leave blank for \'{current['detailedDescription']}\' ")
                     if len(detailedDescription) == 0:
                         detailedDescription = current['detailedDescription']
-                    attributeUnit = input("Enter an attribute unit ")
+                    attributeUnit = input(f"Enter an attribute unit, leave blank for \'{current['attributeUnit']}\' ")
+                    if len(attributeUnit) == 0:
+                        attributeUnit = current['attributeUnit']
                     checkUnit(attributeUnit)
                     attributeUnitList = []
                     tempUnit = ""
                     while True:
-                        tempUnit = input(f"Enter a compatible unit (\'exit\' to end) ")
-                        if tempUnit != "exit":
+                        tempUnit = input(f"Enter a compatible unit (\'exit\' to end), leave blank for \'{current['attributeUnitList']}\' ")
+                        if tempUnit == '':
+                            attributeUnitList = current['attributeUnitList']
+                            break
+                        elif tempUnit != "exit":
                             attributeUnitList.append(tempUnit)
                         else:
                             break
+                    if attributeUnitList == ['']:
+                        attributeUnitList = []
+                    print(attributeUnitList)
                     checkUnitList(attributeUnit, attributeUnitList)
                     data = {
                         'attributeTypeSave': {
@@ -129,15 +157,14 @@ def askToMerge(dups, attributes):
                         },
                         'attributesTypesToBeDeleted': dict[i]
                     }
-                    print(json.dumps(data))
+                    print(json.dumps(data, indent=4))
                     # post to endpoint
                     tempGoodInput = input("Does this new attribute look right? (Y/N) ")
                     if tempGoodInput == 'Y' or tempGoodInput == 'y':
                         goodInput = True
-
+                        print('Posting...')
                         res = requests.post(f'{BASE_URL}/api/v1/resource/attributes/listmergeattributetypes', data=json.dumps(data), cookies=COOKIES, headers=HEADERS)
                         print(res)
-                        # hit endpoint
                         break
                 else:
                     break
@@ -177,7 +204,7 @@ def main():
         ##########################
         # GENERATE A REPORT      #
         ##########################
-        print(f"Number of attributes: {len(parsed['data'])}")
+        print("Found duplicates: ")
         count = 0
         for attribute in parsed['data']:
             if 'attributeValueType' in attribute.keys()\
@@ -189,7 +216,6 @@ def main():
         print('---------------------------')
         print(dups)
         print('---------------------------')
-        print()
         print()
         askToMerge(dups, parsed['data'])
 
