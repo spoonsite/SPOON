@@ -25,6 +25,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 	
 	layout: 'hbox',
 	bodyStyle: 'padding: 10px',
+	showEditFlag: true,
 	
 	initComponent: function () {
 		this.callParent();
@@ -44,7 +45,7 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 		
 		var disableField = false;		
 		
-		if (!contactPanel.fieldTemplate.required) {
+		if (!contactPanel.fieldTemplate.required && contactPanel.showEditFlag) {
 			disableField = true;
 			
 			formItems.push({
@@ -295,6 +296,11 @@ Ext.define('OSF.customSubmission.form.Contacts', {
 					record.set(data[0]);
 				}				
 				contactPanel.loadRecord(record);
+				
+				var editCheckBox = contactPanel.queryById('fillInCB');
+				if (record.get('firstName') && editCheckBox) {
+					editCheckBox.setValue(true);
+				}
 				
 				if (!contactPanel.fieldTemplate.hideExistingContactPicker) {	
 					contactPanel.contactId = record.data.contactId;		

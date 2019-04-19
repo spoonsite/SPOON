@@ -36,7 +36,7 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 		
 		formPanel.setLoading(true);
 		Ext.Ajax.request({
-			url: 'api/v1/resource/attributes/required?componentType=' + formPanel.componentType.componentType + '&submissionOnly=true',
+			url: 'api/v1/resource/attributes/required?componentType=' + formPanel.componentType.componentType + '&submissionOnly=true&submissionTemplateId=' + formPanel.section.submissionForm.template.submissionTemplateId,
 			callback: function() {
 				formPanel.setLoading(false);
 			},

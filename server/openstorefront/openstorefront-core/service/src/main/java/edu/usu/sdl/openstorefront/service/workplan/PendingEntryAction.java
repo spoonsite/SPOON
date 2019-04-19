@@ -55,6 +55,9 @@ public class PendingEntryAction
 
 			component.setApprovalState(ApprovalStatus.PENDING);
 
+			String pendingLogMessage = "Saving Component Id - " + workPlanLink.getComponentId() + " name: " + component.getName() + " change request id: " + component.getPendingChangeId();
+			LOG.log(Level.FINEST, () -> pendingLogMessage);
+
 			RequiredForComponent requiredForComponent = new RequiredForComponent();
 			requiredForComponent.setComponent(component);
 			requiredForComponent.setAttributes(service.getComponentService().getAttributesByComponentId(workPlanLink.getComponentId()));
