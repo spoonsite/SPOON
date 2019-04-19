@@ -3,6 +3,7 @@ import json
 import sys
 import pickle
 from parens import find_parens
+from common_functions import getUnit, getUnitList, computeDuplicates, checkUnit, checkUnitList
 
 
 """
@@ -27,7 +28,7 @@ This script can (1) generate a report and (2) process attributes.
 
 # Get your SESSION_ID from the web page after you login to the
 # application
-SESSION_ID = 'YOUR-SESSION-ID'
+SESSION_ID = '8976097DDA38E0B2E7830A925FBD6D9C'
 TOKEN = ''
 
 COOKIES = {
@@ -52,51 +53,21 @@ def prettyPrint(r):
     parsed = json.loads(r.text)
     print(json.dumps(parsed, indent=4))
 
-def checkUnit(unit, dimension=False):
-    data = {
-        'unit': unit
-    }
-    res = requests.post(BASE_URL + '/api/v1/resource/attributes/unitcheck', data=json.dumps(data), cookies=COOKIES, headers=HEADERS)
-    try:
-        parsed = json.loads(res.text)
-        if dimension:
-            print(f"Dimension:        {parsed['dimension']}")
-        else:
-            print('<---------- Unit check ---------->')
-            print(f"Unit:          {parsed['unit']}")
-            print(f"Dimension:     {parsed['dimension']}")
-            print(f"SI Unit:       {parsed['standardUnit']}")
-    except:
-        print('Something went wrong')
-        print(res.text)
 
-def checkUnitList(unit, unit_list):
-    data = {
-        'baseUnit': unit,
-        'units': unit_list
-    }
-    res = requests.post(BASE_URL + '/api/v1/resource/attributes/unitlistcheck', data=json.dumps(data), cookies=COOKIES, headers=HEADERS)
-    try:
-        parsed = json.loads(res.text)
-        print('<---------- Unit List Check ---------->')
-        print(f"Dimension:        {parsed['dimension']}")
-        print(f"SI Unit:       {parsed['standardUnit']}")
-    except:
-        print('Something went wrong')
-        print(res.text)
 
+####################### Post to endpoint with the striped unit ###############################
 def updateAttribute(original_description, attribute):
     global ATTRIBUTE_MAP
     global UNIT_LIST_MAP
     attributeType = attribute['attributeType']
     data = {
         'attributeType': {
-            'allowMultipleFlg'       : attribute['allowMultipleFlg'],
-            'allowUserGeneratedCodes': attribute['allowUserGeneratedCodes'],
+            'allowMultipleFlg'       : True,
+            'allowUserGeneratedCodes': True,
             'attributeType'          : attribute['attributeType'],
             'attributeUnit'          : attribute['attributeUnit'],
             'attributeUnitList'      : attribute['attributeUnitList'] if 'attributeUnitList' in attribute.keys() else '',
-            'attributeValueType'     : attribute['attributeValueType'] if 'attributeValueType' in attribute.keys() else '',
+            'attributeValueType'     : 'NUMBER',             # attribute['attributeValueType'] if 'attributeValueType' in attribute.keys() else '',
             'defaultAttributeCode'   : attribute['defaultAttributeCode'] if 'defaultAttributeCode' in attribute.keys() else '',
             'description'            : attribute['description'] if 'description' in attribute.keys() else '',
             'detailedDescription'    : attribute['detailedDescription'] if 'detailedDescription' in attribute.keys() and len(attribute['detailedDescription']) < 200 else '',
@@ -115,6 +86,7 @@ def updateAttribute(original_description, attribute):
     except:
         print('unable to parse the response')
 
+########################## Entry Point for dealing with attributes ##########################
 def prompt(attribute):
     unit = ''
     des = attribute['description']
@@ -159,82 +131,7 @@ def prompt(attribute):
     getUnit(des, attribute, unit, description)
 
 
-def getUnit(original_description, attribute, unit, description):
-    old_unit = unit
-    old_description = description
-    user_input = input('Use the suggested description and unit? [Yns]')
-    if user_input == 'N' or user_input == 'n':
-        unit        = input(f'Unit [{old_unit}]: ')
-        description = input(f'Description [{old_description}]: ')
-    if user_input == 'S' or user_input == 's' or user_input == 'skip':
-        print('skipping attribute')
-        with open(SKIPPED_FILENAME, 'a') as fout:
-            fout.write(f"{attribute['attributeType']}\n")
-        return
-    if unit == '':
-        unit = old_unit
-    if description == '':
-        description = old_description
-    attribute['attributeUnit'] = unit
-    attribute['description'] = description
-
-    print()
-    print(f'Unit:            {unit}')
-    print(f'Description:     {description}')
-    checkUnit(unit)
-    user_input = input('Is this correct? [Yn]')
-    if user_input == 'N' or user_input == 'n':
-        return getUnit(original_description, attribute, old_unit, old_description)
-    else:
-        getUnitList(original_description, attribute, unit)
-
-def getUnitList(original_description, attribute, unit, old_unit_list=[]):
-    global ATTRIBUTE_MAP
-    global UNIT_LIST_MAP
-    unit_list = []
-    if unit in UNIT_LIST_MAP.keys():
-        unit_list = UNIT_LIST_MAP[unit]
-        print(f'Unit List: {unit_list}')
-        user_input = input('Use the suggested unit list? [Yn]')
-
-        if user_input == 'N' or user_input == 'n':
-            unit_list = input(f'Unit List {old_unit_list}: ')
-            unit_list = [ i.strip() for i in unit_list.split(',') ]
-            UNIT_LIST_MAP[unit] = unit_list
-        if unit_list == [""]:
-            unit_list = old_unit_list
-        attribute['attributeUnitList'] = unit_list
-    else:
-        unit_list = input(f'Provide a comman separated unit list: ')
-        unit_list = [ i.strip() for i in unit_list.split(',') ]
-        attribute['attributeUnitList'] = unit_list
-        UNIT_LIST_MAP[unit] = unit_list
-
-    print()
-    print(f'Unit List:            {unit_list}')
-    checkUnitList(unit, unit_list)
-    user_input = input('Is this correct? [Yn]')
-    if user_input == 'N' or user_input == 'n':
-        return getUnitList(original_description, attribute, unit, old_unit_list)
-    else:
-        updateAttribute(original_description, attribute)
-
-
-def computeDuplicates(attributes):
-    seen = {}
-    attr = {} 
-    dupes = []
-
-    for attribute in attributes:
-        des = attribute['description']
-        if des not in seen:
-            seen[des] = 1
-        else:
-            if seen[des] == 1:
-                dupes.append(des)
-            seen[des] += 1
-    return dupes
-
+######################### print duplicates #########################
 def printDups(dups, attributes):
     print(f'Found {len(dups)} duplicates')
     prev = ''
@@ -254,6 +151,7 @@ def printDups(dups, attributes):
             print(f"Unit:             {unit}")
             print(f"Type:             {i['attributeType']}")
             if unit: checkUnit(unit, dimension=True)
+
 
 def main():
     global ATTRIBUTE_MAP
@@ -311,18 +209,15 @@ def main():
         ##########################
         # GENERATE A REPORT      #
         ##########################
-        # print(f"Number of attributes: {len(parsed['data'])}")
-        # count = 0
-        # for attribute in parsed['data']:
-        #     if 'attributeValueType' in attribute.keys()\
-        #        and attribute['attributeValueType'] == 'NUMBER'\
-        #        and attribute['attributeType'] in skipped:
-        #         count+=1
-        #         print(f'{count:>2}. {attribute["attributeType"]:.<35} {attribute["description"]}')
-        # dups = computeDuplicates(parsed['data'])
-        # print()
-        # print()
-        # printDups(dups, parsed['data'])
+        print(f"Number of attributes: {len(parsed['data'])}")
+        count = 0
+        for attribute in parsed['data']:
+            if 'attributeValueType' in attribute.keys()\
+               and attribute['attributeValueType'] == 'NUMBER'\
+               and attribute['attributeType'] in skipped:
+                count+=1
+                print(f'{count:>2}. {attribute["attributeType"]:.<35} {attribute["description"]}')
+        dups = computeDuplicates(parsed['data'])
 
         # uncomment to process attributes
         ##########################
