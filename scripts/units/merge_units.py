@@ -32,6 +32,7 @@ SKIPPED_FILENAME = 'skipped.txt'
 UNIT_LIST_MAP = {}
 ATTRIBUTE_MAP = {}
 
+# return if two units are compatible
 def checkUnitPassFail(unit, unit_list):
     data = {
         'baseUnit': unit,
@@ -49,10 +50,9 @@ def checkUnitPassFail(unit, unit_list):
 def askToMerge(dups, attributes):
     print(f'Found {len(dups)} duplicates')
     val = ''
-    dict = {}
+    typeCodes = {}
     units = {}
     listOfCompatible=[]
-
     defaults = {}
     default = {
         'type': '',
@@ -62,6 +62,8 @@ def askToMerge(dups, attributes):
         "optionalRestrictions": [],
         "requiredRestrictions": []
     }
+
+    # set up dictionary for all duplicate descriptions
     for i in dups:
         defaults[i] = {
             'type': '',
@@ -72,11 +74,10 @@ def askToMerge(dups, attributes):
             "requiredRestrictions": []
         }
 
-    """
-    This checks to see if there are any old values that can be used
-    in the new attribute.
-    """
-
+    
+    # This checks to see if there are any old values that can be used
+    # in the new attribute.
+    
     for i in attributes:
         try:
             val = i['attributeValueType']
@@ -101,10 +102,13 @@ def askToMerge(dups, attributes):
             if defaults[i['description']]['attributeUnitList'] == [] and 'attributeUnitList' in i.keys():
                 defaults[i['description']]['attributeUnitList'] = i['attributeUnitList']
             
+            # create mapping for descriptions to typecodes
             try: 
-                dict[i['description']].append(i['attributeType'])
+                typeCodes[i['description']].append(i['attributeType'])
             except:
-                dict[i['description']] = [i['attributeType']]
+                typeCodes[i['description']] = [i['attributeType']]
+            
+            # create maping for typecodes to units
             try:
                 units[i['attributeType']] = i['attributeUnit']
             except:
@@ -112,8 +116,8 @@ def askToMerge(dups, attributes):
 
 
 
-    for i in dict:
-        if len(dict[i]) > 1:
+    for i in typeCodes:
+        if len(typeCodes[i]) > 1:
             listOfCompatible=[]
             current = {
                 'type': '',
@@ -164,7 +168,8 @@ def askToMerge(dups, attributes):
                     print(attributeUnitList)
                     checkUnitList(attributeUnit, attributeUnitList)
 
-                    for j in dict[i]:
+                    # checks if units from attributes with the same description are compatible
+                    for j in typeCodes[i]:
                         if checkUnitPassFail('G', [units[j]]):
                             listOfCompatible.append(j)
                     print(f"Compatible units: {listOfCompatible}")
@@ -191,6 +196,8 @@ def askToMerge(dups, attributes):
                     print(json.dumps(data, indent=4))
                     # post to endpoint
                     tempGoodInput = input("Does this new attribute look right? (Y/N) ")
+
+                    # sends data to server
                     if tempGoodInput == 'Y' or tempGoodInput == 'y':
                         goodInput = True
                         print('Posting...')
