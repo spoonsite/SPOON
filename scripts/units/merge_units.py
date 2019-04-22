@@ -10,6 +10,9 @@ all of the codes from all the old attributes.
 
 This script can only parse items that are both numbers or both text. 
 They cannot have different types or it could break the system. 
+
+
+Adding WSL to VS Code: "terminal.integrated.shell.windows": "C:\\WINDOWS\\sysnative\\bash.exe"
 """
 
 # SESSION_ID = '1748FC3E7D9F377904991BC7833D0E6E'
@@ -29,14 +32,26 @@ SKIPPED_FILENAME = 'skipped.txt'
 UNIT_LIST_MAP = {}
 ATTRIBUTE_MAP = {}
 
+def checkUnitPassFail(unit, unit_list):
+    data = {
+        'baseUnit': unit,
+        'units': unit_list
+    }
+    res = requests.post(BASE_URL + '/api/v1/resource/attributes/unitlistcheck', data=json.dumps(data), cookies=COOKIES, headers=HEADERS)
+    try:
+        parsed = json.loads(res.text)['dimension']
+        return True
+    except:
+        pass
+    return False
+
 ######################### merge duplicates duplicates #########################
 def askToMerge(dups, attributes):
     print(f'Found {len(dups)} duplicates')
-    prev = ''
-    cur  = ''
     val = ''
-    count = 0
     dict = {}
+    units = {}
+    listOfCompatible=[]
 
     defaults = {}
     default = {
@@ -90,10 +105,16 @@ def askToMerge(dups, attributes):
                 dict[i['description']].append(i['attributeType'])
             except:
                 dict[i['description']] = [i['attributeType']]
+            try:
+                units[i['attributeType']] = i['attributeUnit']
+            except:
+                units[i['attributeType']] = ''
+
 
 
     for i in dict:
         if len(dict[i]) > 1:
+            listOfCompatible=[]
             current = {
                 'type': '',
                 'detailedDescription':'',
@@ -102,11 +123,14 @@ def askToMerge(dups, attributes):
                 "optionalRestrictions": [],
                 "requiredRestrictions": []
             }
+
             if i in defaults:
                 current = defaults[i]
             else: 
                 print('could not find default')
+
             goodInput = False
+
             answer = input(f"Do you want to merge the attributes with the name {i}? (Y/N) ")
             while not goodInput:
                 if answer == 'y' or answer == 'Y':
@@ -139,6 +163,13 @@ def askToMerge(dups, attributes):
                         attributeUnitList = []
                     print(attributeUnitList)
                     checkUnitList(attributeUnit, attributeUnitList)
+
+                    for j in dict[i]:
+                        if checkUnitPassFail('G', [units[j]]):
+                            listOfCompatible.append(j)
+                    print(f"Compatible units: {listOfCompatible}")
+
+                    input('Press enter to continue...')
                     data = {
                         'attributeTypeSave': {
                             "attributeType":{
@@ -155,7 +186,7 @@ def askToMerge(dups, attributes):
                             "requiredComponentType": current['requiredRestrictions'],
                             "optionalComponentTypes": current['optionalRestrictions']
                         },
-                        'attributesTypesToBeDeleted': dict[i]
+                        'attributesTypesToBeDeleted': listOfCompatible
                     }
                     print(json.dumps(data, indent=4))
                     # post to endpoint
@@ -196,7 +227,6 @@ def main():
         print('bad SESSION_ID or token')
         print('try again')
     else:
-        # prettyPrint(res)
         parsed = json.loads(res.text)
         # prettyPrint(res)
 
@@ -212,11 +242,13 @@ def main():
                and attribute['attributeType'] in skipped:
                 count+=1
                 print(f'{count:>2}. {attribute["attributeType"]:.<35} {attribute["description"]}')
+
         dups = computeDuplicates(parsed['data'])
         print('---------------------------')
         print(dups)
         print('---------------------------')
         print()
+
         askToMerge(dups, parsed['data'])
 
 if __name__ == "__main__":
