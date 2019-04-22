@@ -12,7 +12,7 @@ This script can only parse items that are both numbers or both text.
 They cannot have different types or it could break the system. 
 """
 
-# SESSION_ID = '1748FC3E7D9F377904991BC7833D0E6E'
+# SESSION_ID = ''
 # TOKEN = ''
 
 COOKIES = {
