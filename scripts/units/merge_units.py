@@ -1,6 +1,7 @@
 import requests
 import json
 import sys
+import pickle
 from common_functions import computeDuplicates, checkUnit, checkUnitList, TOKEN, SESSION_ID
 
 """
@@ -10,6 +11,9 @@ all of the codes from all the old attributes.
 
 This script can only parse items that are both numbers or both text. 
 They cannot have different types or it could break the system. 
+
+
+Adding WSL to VS Code: "terminal.integrated.shell.windows": "C:\\WINDOWS\\sysnative\\bash.exe"
 """
 
 # SESSION_ID = ''
@@ -29,15 +33,27 @@ SKIPPED_FILENAME = 'skipped.txt'
 UNIT_LIST_MAP = {}
 ATTRIBUTE_MAP = {}
 
+# return if two units are compatible
+def checkUnitPassFail(unit, unit_list):
+    data = {
+        'baseUnit': unit,
+        'units': unit_list
+    }
+    res = requests.post(BASE_URL + '/api/v1/resource/attributes/unitlistcheck', data=json.dumps(data), cookies=COOKIES, headers=HEADERS)
+    try:
+        parsed = json.loads(res.text)['dimension']
+        return True
+    except:
+        pass
+    return False
+
 ######################### merge duplicates duplicates #########################
 def askToMerge(dups, attributes):
     print(f'Found {len(dups)} duplicates')
-    prev = ''
-    cur  = ''
     val = ''
-    count = 0
-    dict = {}
-
+    typeCodes = {}
+    units = {}
+    listOfCompatible=[]
     defaults = {}
     default = {
         'type': '',
@@ -47,6 +63,9 @@ def askToMerge(dups, attributes):
         "optionalRestrictions": [],
         "requiredRestrictions": []
     }
+    actions = []
+
+    # set up dictionary for all duplicate descriptions
     for i in dups:
         defaults[i] = {
             'type': '',
@@ -57,11 +76,10 @@ def askToMerge(dups, attributes):
             "requiredRestrictions": []
         }
 
-    """
-    This checks to see if there are any old values that can be used
-    in the new attribute.
-    """
-
+    
+    # This checks to see if there are any old values that can be used
+    # in the new attribute.
+    
     for i in attributes:
         try:
             val = i['attributeValueType']
@@ -86,14 +104,23 @@ def askToMerge(dups, attributes):
             if defaults[i['description']]['attributeUnitList'] == [] and 'attributeUnitList' in i.keys():
                 defaults[i['description']]['attributeUnitList'] = i['attributeUnitList']
             
+            # create mapping for descriptions to typecodes
             try: 
-                dict[i['description']].append(i['attributeType'])
+                typeCodes[i['description']].append(i['attributeType'])
             except:
-                dict[i['description']] = [i['attributeType']]
+                typeCodes[i['description']] = [i['attributeType']]
+            
+            # create maping for typecodes to units
+            try:
+                units[i['attributeType']] = i['attributeUnit']
+            except:
+                units[i['attributeType']] = ''
 
 
-    for i in dict:
-        if len(dict[i]) > 1:
+
+    for i in typeCodes:
+        if len(typeCodes[i]) > 1:
+            listOfCompatible=[]
             current = {
                 'type': '',
                 'detailedDescription':'',
@@ -102,11 +129,14 @@ def askToMerge(dups, attributes):
                 "optionalRestrictions": [],
                 "requiredRestrictions": []
             }
+
             if i in defaults:
                 current = defaults[i]
             else: 
                 print('could not find default')
+
             goodInput = False
+
             answer = input(f"Do you want to merge the attributes with the name {i}? (Y/N) ")
             while not goodInput:
                 if answer == 'y' or answer == 'Y':
@@ -139,6 +169,16 @@ def askToMerge(dups, attributes):
                         attributeUnitList = []
                     print(attributeUnitList)
                     checkUnitList(attributeUnit, attributeUnitList)
+
+                    # checks if units from attributes with the same description are compatible
+                    for j in typeCodes[i]:
+                        if checkUnitPassFail(attributeUnit, [units[j]]):
+                            listOfCompatible.append(j)
+
+                    deleteList = [x for x in listOfCompatible if not x == attributeType]
+                    print(f"Attributes to be deleted: {deleteList}")
+
+                    input('Press enter to continue...')
                     data = {
                         'attributeTypeSave': {
                             "attributeType":{
@@ -155,21 +195,39 @@ def askToMerge(dups, attributes):
                             "requiredComponentType": current['requiredRestrictions'],
                             "optionalComponentTypes": current['optionalRestrictions']
                         },
-                        'attributesTypesToBeDeleted': dict[i]
+                        'attributesTypesToBeDeleted': listOfCompatible
                     }
                     print(json.dumps(data, indent=4))
                     # post to endpoint
                     tempGoodInput = input("Does this new attribute look right? (Y/N) ")
+
+                    # sends data to server
                     if tempGoodInput == 'Y' or tempGoodInput == 'y':
                         goodInput = True
                         print('Posting...')
                         res = requests.post(f'{BASE_URL}/api/v1/resource/attributes/listmergeattributetypes', data=json.dumps(data), cookies=COOKIES, headers=HEADERS)
                         print(res)
+                        MERGED_UNITS.append(data)
+                        with open(MERGED_PICKLE, 'wb') as fout:
+                            pickle.dump(MERGED_UNITS, fout)
                         break
                 else:
                     break
+    
+
+def usePickledActions():
+    try:
+        print(MERGED_UNITS)
+        for action in MERGED_UNITS:
+            res = requests.post(f'{BASE_URL}/api/v1/resource/attributes/listmergeattributetypes', data=json.dumps(action), cookies=COOKIES, headers=HEADERS)
+            print(res)
+    except:
+        pass
 
 def main():
+    global MERGED_UNITS
+    global MERGED_PICKLE
+
     banner = r"""
                                                        _               
  _ __ ___   ___ _ __ __ _  ___   _ __  _   _ _ __ ___ | |__   ___ _ __ 
@@ -185,38 +243,36 @@ def main():
                        
     """
     print(banner)
+
+    MERGED_PICKLE = 'merged.pickle'
+    try:
+        with open(MERGED_PICKLE, 'rb') as fin:
+            MERGED_UNITS = pickle.load(fin)
+        print(f'Loaded {MERGED_PICKLE} file')
+    except:
+        MERGED_UNITS =[]
+        print(f'No {MERGED_PICKLE} file')
+    
+    usePickledActions()
+
     print(f'fetching all attributes from {ENDPOINT}...')
     print()
+
     res = requests.get(BASE_URL + ENDPOINT, cookies=COOKIES, headers=HEADERS)
-    skipped = []
-    with open(SKIPPED_FILENAME, 'r') as fin:
-        for line in fin:
-            skipped.append(line.strip())
+
     if '***USER-NOT-LOGIN***' in res.text:
         print('bad SESSION_ID or token')
         print('try again')
     else:
-        # prettyPrint(res)
         parsed = json.loads(res.text)
         # prettyPrint(res)
 
-        # uncomment to generate a report
-        ##########################
-        # GENERATE A REPORT      #
-        ##########################
-        print("Found duplicates: ")
-        count = 0
-        for attribute in parsed['data']:
-            if 'attributeValueType' in attribute.keys()\
-               and attribute['attributeValueType'] == 'NUMBER'\
-               and attribute['attributeType'] in skipped:
-                count+=1
-                print(f'{count:>2}. {attribute["attributeType"]:.<35} {attribute["description"]}')
         dups = computeDuplicates(parsed['data'])
-        print('---------------------------')
+        print('------------Duplicates---------------')
         print(dups)
-        print('---------------------------')
+        print('-------------------------------------')
         print()
+
         askToMerge(dups, parsed['data'])
 
 if __name__ == "__main__":
