@@ -1,6 +1,7 @@
 import requests
 import json
 import sys
+import pickle
 from common_functions import computeDuplicates, checkUnit, checkUnitList, TOKEN, SESSION_ID
 
 """
@@ -62,6 +63,7 @@ def askToMerge(dups, attributes):
         "optionalRestrictions": [],
         "requiredRestrictions": []
     }
+    actions = []
 
     # set up dictionary for all duplicate descriptions
     for i in dups:
@@ -170,9 +172,11 @@ def askToMerge(dups, attributes):
 
                     # checks if units from attributes with the same description are compatible
                     for j in typeCodes[i]:
-                        if checkUnitPassFail('G', [units[j]]):
+                        if checkUnitPassFail(attributeUnit, [units[j]]):
                             listOfCompatible.append(j)
-                    print(f"Compatible units: {listOfCompatible}")
+
+                    deleteList = [x for x in listOfCompatible if not x == attributeType]
+                    print(f"Attributes to be deleted: {deleteList}")
 
                     input('Press enter to continue...')
                     data = {
@@ -203,11 +207,27 @@ def askToMerge(dups, attributes):
                         print('Posting...')
                         res = requests.post(f'{BASE_URL}/api/v1/resource/attributes/listmergeattributetypes', data=json.dumps(data), cookies=COOKIES, headers=HEADERS)
                         print(res)
+                        MERGED_UNITS.append(data)
+                        with open(MERGED_PICKLE, 'wb') as fout:
+                            pickle.dump(MERGED_UNITS, fout)
                         break
                 else:
                     break
+    
+
+def usePickledActions():
+    try:
+        print(MERGED_UNITS)
+        for action in MERGED_UNITS:
+            res = requests.post(f'{BASE_URL}/api/v1/resource/attributes/listmergeattributetypes', data=json.dumps(action), cookies=COOKIES, headers=HEADERS)
+            print(res)
+    except:
+        pass
 
 def main():
+    global MERGED_UNITS
+    global MERGED_PICKLE
+
     banner = r"""
                                                        _               
  _ __ ___   ___ _ __ __ _  ___   _ __  _   _ _ __ ___ | |__   ___ _ __ 
@@ -223,13 +243,23 @@ def main():
                        
     """
     print(banner)
+
+    MERGED_PICKLE = 'merged.pickle'
+    try:
+        with open(MERGED_PICKLE, 'rb') as fin:
+            MERGED_UNITS = pickle.load(fin)
+        print(f'Loaded {MERGED_PICKLE} file')
+    except:
+        MERGED_UNITS =[]
+        print(f'No {MERGED_PICKLE} file')
+    
+    usePickledActions()
+
     print(f'fetching all attributes from {ENDPOINT}...')
     print()
+
     res = requests.get(BASE_URL + ENDPOINT, cookies=COOKIES, headers=HEADERS)
-    skipped = []
-    with open(SKIPPED_FILENAME, 'r') as fin:
-        for line in fin:
-            skipped.append(line.strip())
+
     if '***USER-NOT-LOGIN***' in res.text:
         print('bad SESSION_ID or token')
         print('try again')
@@ -237,23 +267,10 @@ def main():
         parsed = json.loads(res.text)
         # prettyPrint(res)
 
-        # uncomment to generate a report
-        ##########################
-        # GENERATE A REPORT      #
-        ##########################
-        print("Found duplicates: ")
-        count = 0
-        for attribute in parsed['data']:
-            if 'attributeValueType' in attribute.keys()\
-               and attribute['attributeValueType'] == 'NUMBER'\
-               and attribute['attributeType'] in skipped:
-                count+=1
-                print(f'{count:>2}. {attribute["attributeType"]:.<35} {attribute["description"]}')
-
         dups = computeDuplicates(parsed['data'])
-        print('---------------------------')
+        print('------------Duplicates---------------')
         print(dups)
-        print('---------------------------')
+        print('-------------------------------------')
         print()
 
         askToMerge(dups, parsed['data'])
