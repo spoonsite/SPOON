@@ -195,9 +195,173 @@
 
 
 
-			var buildHTMLTableFromArrays = function(arrOne, arrTwo){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			var buildMasterArrayThing = function(arrOne, arrTwo){
+				var retArray = [];
+
+				// console.log("ONE   ",arrOne,"TWO  ",arrTwo);
+				
+				if((arrOne.length == 0) && (arrTwo.length == 0)){
+					return retArray;
+				}
+
+				var sameCount = 0;
+				if(arrOne.length == arrTwo.length){
+					// it doesnt matter
+					for(var i = 0; i < arrOne.length; i++){
+						if(arrOne[i].label === arrTwo[i].label){
+							sameCount++;
+						}
+					}
+				}else if(arrOne.length > arrTwo.length){
+					// use arrOne
+					for(var i = 0; i < arrOne.length; i++){
+						if(i >= arrTwo.length){
+							continue;
+						}
+						if(arrOne[i].label === arrTwo[i].label){
+							sameCount++;
+						}
+					}
+				}
+				else {
+					// use arrTwo
+					for(var i = 0; i < arrTwo.length; i++){
+						if(i >= arrOne.length){
+							continue;
+						}
+						if(arrTwo[i].label === arrOne[i].label){
+							sameCount++;
+						}
+					}
+				}
+
+				var totalRows = arrOne.length + arrTwo.length - sameCount;
+
+				for(var i = 0; i < sameCount; i++){
+					var dataRow = {};
+					dataRow.attributeName = arrOne[i].label;
+					dataRow.unit = "";
+					dataRow.entryOne = "";
+					dataRow.entryTwo = "";
+					if(arrOne[i].unit !== undefined){
+						dataRow.unit = arrOne[i].unit;
+					}
+					if(arrOne[i].value !== undefined){
+						dataRow.entryOne = arrOne[i].value;
+					}
+					if(arrTwo[i].value != undefined){
+						dataRow.entryTwo = arrTwo[i].value;
+					}
+					retArray.push(dataRow);
+				}
+
+
+				for(var i = sameCount; i < totalRows; i++){
+					if(i >= arrOne.length){
+							continue;
+					}
+					var dataRow = {};
+					dataRow.attributeName = arrOne[i].label;
+					dataRow.unit = "";
+					dataRow.entryOne = "";
+					dataRow.entryTwo = "";
+					if(arrOne[i].unit !== undefined){
+						dataRow.unit = arrOne[i].unit;
+					}
+					if(arrOne[i].value !== undefined){
+						dataRow.entryOne = arrOne[i].value;
+					}
+					retArray.push(dataRow);
+				}
+
+				for(var i = sameCount; i < totalRows; i++){
+					if(i >= arrTwo.length){
+						continue;
+					}
+					var dataRow = {};
+					dataRow.attributeName = arrTwo[i].label;
+					dataRow.unit = "";
+					dataRow.entryOne = "";
+					dataRow.entryTwo = "";
+					if(arrTwo[i].unit !== undefined){
+						dataRow.unit = arrTwo[i].unit;
+					}
+					if(arrTwo[i].value !== undefined){
+						dataRow.entryTwo = arrTwo[i].value;
+					}
+					retArray.push(dataRow);
+				}
+
+				// console.log("RetARR ",retArray);
+				
+				return retArray;
+			}
+
+
+
+
+
+			var makeTheFinalSubtableString = function(masterArray){
+				var returnString = "";
+				// console.log("masterarr    ", masterArray);
+
+				for(var i = 0; i < masterArray.length; i++){
+					var subString = "";
+					subString += "<tr>";
+					
+					subString += "<td>" + masterArray[i].attributeName + "</td><td>" + masterArray[i].unit + "</td><td>" + masterArray[i].entryOne + "</td><td>" + masterArray[i].entryTwo + "</td>";
+
+					subString += "</tr>";
+					returnString += subString;
+				}
+
+
+				return returnString;
+			};
+
+
+
+
+			var buildHTMLTableFromArrays = function(dataRays){
 				var finalString = "";
 
+				// console.log(dataRays);
+
+				// I need a list of attributes such that, 
+				var masterTableArray = [];
+				masterTableArray = buildMasterArrayThing(dataRays.one,dataRays.two);
+
+				var subTDString = "";
+				subTDString = makeTheFinalSubtableString(masterTableArray);
+
+
+
+				// var finalString = arrOne[0].label.toString(); 
+				finalString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse;  width: 100%;}td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px;}tr:nth-child(even) {  background-color: #dddddd;}</style>";
+				finalString += "<h2>HTML Table</h2>";
+				finalString += "<table><tr><th>Attribute</th><th>Unit</th><th>"+dataRays.nameOne+"</th><th>"+dataRays.nameTwo+"</th></tr>" + subTDString;
+							//  " <tr><td>Alfreds Futterkiste</td><td>Maria Anders</td><td>Germany</td><td>Germany</td></tr>" + 
+							//  " <tr><td>Centro comercial Moctezuma</td>    <td>Francisco Chang</td>    <td>Mexico</td><td>Mexico</td>   </tr>  <tr>    <td>Ernst Handel</td>    <td>Roland Mendel</td>    <td>Austria</td>  </tr>  <tr>    <td>Island Trading</td>    <td>Helen Bennett</td>    <td>UK</td>  </tr>  <tr>    <td>Laughing Bacchus Winecellars</td>    <td>Yoshi Tannamuri</td>    <td>Canada</td>  </tr>  <tr>    <td>Magazzini Alimentari Riuniti</td>    <td>Giovanni Rovelli</td>    <td>Italy</td>  </tr></table>";
 				return finalString;
 			}
 
@@ -230,6 +394,13 @@
 				// return htmlTableString;
 			}
 
+			var makeAnotherString = function(dataRays){
+				var returnString = "";
+
+				returnString = buildHTMLTableFromArrays(dataRays);
+				return returnString;
+			};
+
 			var compareWindowChanged = false;
 			var changeIsStaged = true;
 			
@@ -240,7 +411,7 @@
 						compareWindowChanged = true;
 						changeIsStaged = true;
 						var comparePanel = this.up('panel');
-						console.log("wtf panel     ",comparePanel, "  nv-> ", newValue, "  ov-->", oldValue, "  opts->",opts);
+						// console.log("wtf panel     ",comparePanel, "  nv-> ", newValue, "  ov-->", oldValue, "  opts->",opts);
 						if (newValue) {	
 							var otherStore = comparePanel.up('panel').getComponent(name).getComponent("cb").getStore();
 							otherStore.clearFilter();
@@ -262,7 +433,7 @@
 									var data = Ext.decode(response.responseText);
 									// console.log("DATUM!!!!:::   ", data);
 									data = CoreUtil.processEntry(data);
-									console.log("data    ", data);
+									// console.log("data    ", data);
 
 									root = data.componentTypeNestedModel;
 									CoreUtil.traverseNestedModel(root, [], data);
@@ -348,19 +519,10 @@
 							xtype: 'panel',
 							dock: 'bottom',
 							tpl: compareAttrTemplate,
-							// // width: '100%',
-							// // height: '30%',
-							// style: 'max-height: 30em; overflow:auto; ',
-							// // autoScroll: true,
-							// // scrollable: true,
-							html: 'Hiya buckaroo!',
 							itemid: 'hyrdacopter'
 						}
 					],
 					listeners: {
-						// afterrender: function() {
-						// 	console.log("Shoot is Hitting the Fan!!!");
-						// },
 						mouseover: {
 							element: 'body', //bind to the underlying el property on the panel
 							fn: function(){
@@ -375,33 +537,22 @@
 									win.component.items.items[3].data.vitals.forEach(function(elim) {
 										arrayTwo.push(elim);
 									});
-									// console.log(arrayOne);
-									// console.log(arrayTwo);
-
 
 
 									var dataRays = {};
 									dataRays.one = arrayOne;
 									dataRays.two = arrayTwo;
 									makeHTMLCompareTableString(dataRays);
-									console.log(win);
-									console.log("datarays!!!    ",dataRays);
-									win.component.items.items[1].data.vitals = dataRays.one;
-									win.component.items.items[3].data.vitals = dataRays.two;
-									win.component.items.items[1].data = CoreUtil.processEntry(win.component.items.items[1].data);
-									win.component.items.items[1].udpate(win.component.items.items[1].data);
-									// var printString = makeHTMLCompareTableString(arrayOne, arrayTwo);
-									// win.component.dockedItems.items[1].setHtml(printString);
-									win.component.dockedItems.items[1].data = dataRays.one;
+									// console.log(win);
+									// console.log("datarays!!!    ",dataRays);
 
-									win.component.dockedItems.items[1].update(dataRays.one);
-
-
-
-									// win.component.items.items[1].data.attributes
-									// win.component.dockedItems.items[1].setHtml('booky dooky!!!!');
+									dataRays.nameOne = win.component.items.items[1].data.name;
+									dataRays.nameTwo = win.component.items.items[3].data.name;
 									if(!changeIsStaged){
 										compareWindowChanged = false;
+										var printAnotherString = "";
+										printAnotherString = makeAnotherString(dataRays);
+										win.component.dockedItems.items[1].update(printAnotherString);
 									}
 									if(changeIsStaged){
 										changeIsStaged = false;
