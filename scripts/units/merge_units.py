@@ -120,7 +120,7 @@ def askToMerge(dups, attributes):
 
     for i in typeCodes:
         if len(typeCodes[i]) > 1:
-            listOfCompatible=[]
+            
             current = {
                 'type': '',
                 'detailedDescription':'',
@@ -171,6 +171,8 @@ def askToMerge(dups, attributes):
                     checkUnitList(attributeUnit, attributeUnitList)
 
                     # checks if units from attributes with the same description are compatible
+                    listOfCompatible=[]
+                    deleteList=[]
                     for j in typeCodes[i]:
                         if checkUnitPassFail(attributeUnit, [units[j]]):
                             listOfCompatible.append(j)
@@ -178,7 +180,16 @@ def askToMerge(dups, attributes):
                     deleteList = [x for x in listOfCompatible if not x == attributeType]
                     print(f"Attributes to be deleted: {deleteList}")
 
-                    input('Press enter to continue...')
+                    temp = input('Press enter to continue...')
+                    if temp == 'm' or temp == 'M':
+                        deleteList=[]
+                        inputVar = ''
+                        while True:
+                            inputVar = input('attribute to be deleted ')
+                            if inputVar == 'exit':
+                                break
+                            deleteList.append(inputVar)
+
                     data = {
                         'attributeTypeSave': {
                             "attributeType":{
@@ -195,7 +206,7 @@ def askToMerge(dups, attributes):
                             "requiredComponentType": current['requiredRestrictions'],
                             "optionalComponentTypes": current['optionalRestrictions']
                         },
-                        'attributesTypesToBeDeleted': listOfCompatible
+                        'attributesTypesToBeDeleted': deleteList
                     }
                     print(json.dumps(data, indent=4))
                     # post to endpoint
@@ -217,8 +228,11 @@ def askToMerge(dups, attributes):
 
 def usePickledActions():
     try:
-        print(MERGED_UNITS)
+        # print(MERGED_UNITS)
+        count = 0
         for action in MERGED_UNITS:
+            count = count+1
+            print(f'Posting via pickle file data... {count}')
             res = requests.post(f'{BASE_URL}/api/v1/resource/attributes/listmergeattributetypes', data=json.dumps(action), cookies=COOKIES, headers=HEADERS)
             print(res)
     except:
