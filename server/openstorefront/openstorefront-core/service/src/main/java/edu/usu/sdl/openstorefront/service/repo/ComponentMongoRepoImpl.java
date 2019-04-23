@@ -36,7 +36,6 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.repo.api.ComponentRepo;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -344,9 +343,9 @@ public class ComponentMongoRepoImpl
 		BasicDBObject sortFields = new BasicDBObject("count", MongoQueryUtil.MONGO_SORT_DESCENDING);
 		BasicDBObject sort = new BasicDBObject("$sort", sortFields);
 
-		List<Bson> pipeline = Arrays.asList(
-				group, sort
-		);
+		List<Bson> pipeline = new ArrayList<>();
+		pipeline.add(group);
+		pipeline.add(sort);
 
 		if (maxRecords != null) {
 			pipeline.add(Aggregates.limit(maxRecords));

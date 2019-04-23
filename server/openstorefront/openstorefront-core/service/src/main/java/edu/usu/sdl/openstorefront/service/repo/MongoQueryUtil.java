@@ -109,15 +109,24 @@ public class MongoQueryUtil
 		for (WhereClause whereClause : queryRequest.getExtraWhereCauses()) {
 			if (whereClause instanceof SpecialOperatorModel) {
 				SpecialOperatorModel specialOperatorModel = (SpecialOperatorModel) whereClause;
-				query = handleSpecialOperator(query, specialOperatorModel);
+				Map<String, Object> specialMap = generateFieldMap(specialOperatorModel.getExample(), new ComplexFieldStack(), specialOperatorModel.getGenerateStatementOption(), new HashMap<>());
+
+				if (!specialMap.isEmpty()) {
+					query = handleSpecialOperator(query, specialOperatorModel);
+				}
 			} else if (whereClause instanceof WhereClauseGroup) {
 				WhereClauseGroup clauseGroup = (WhereClauseGroup) whereClause;
 
 				for (Object operatorModel : clauseGroup.getExtraWhereClause()) {
-					if (GenerateStatementOption.CONDITION_OR.equals(clauseGroup.getStatementOption().getCondition())) {
-						query = Filters.or(query, handleSpecialOperator(query, (SpecialOperatorModel) operatorModel));
-					} else {
-						query = Filters.and(query, handleSpecialOperator(query, (SpecialOperatorModel) operatorModel));
+					SpecialOperatorModel specialOperatorModel = (SpecialOperatorModel) operatorModel;
+					Map<String, Object> specialMap = generateFieldMap(specialOperatorModel.getExample(), new ComplexFieldStack(), specialOperatorModel.getGenerateStatementOption(), new HashMap<>());
+
+					if (!specialMap.isEmpty()) {
+						if (GenerateStatementOption.CONDITION_OR.equals(clauseGroup.getStatementOption().getCondition())) {
+							query = Filters.or(query, handleSpecialOperator(query, specialOperatorModel));
+						} else {
+							query = Filters.and(query, handleSpecialOperator(query, specialOperatorModel));
+						}
 					}
 				}
 			}
@@ -240,15 +249,30 @@ public class MongoQueryUtil
 
 		BasicDBObject groupQuery = new BasicDBObject();
 
-		if (exampleMap.keySet().size() > 1) {
+		BasicDBObject groupFields = new BasicDBObject();;
+		if (!exampleMap.keySet().isEmpty()) {
 			DBObject fields = new BasicDBObject();
 			for (String key : exampleMap.keySet()) {
 				fields.put(key, "$" + key);
 			}
-			DBObject groupFields = new BasicDBObject("_id", fields);
-			groupQuery.put("$group", groupFields);
+			groupFields = new BasicDBObject("_id", fields);
 		} else if (exampleMap.keySet().size() == 1) {
-			DBObject groupFields = new BasicDBObject("_id", "$" + exampleMap.keySet().stream().findFirst().get());
+			groupFields = new BasicDBObject("_id", "$" + exampleMap.keySet().stream().findFirst().get());
+		}
+
+		//add all fields as that is the expected behavior of the application
+		//activeStatus: { $first: "$activeStatus" },
+		//clientIp: { $first: "$clientIp" },
+		//complex should be pull by this as expected
+		if (!exampleMap.keySet().isEmpty()) {
+			List<Field> fields = ReflectionUtil.getAllFields(queryRequest.getExample().getClass());
+			for (Field field : fields) {
+				if (JAVA_CLASS.equalsIgnoreCase(field.getName()) == false) {
+					BasicDBObject fieldProjection = new BasicDBObject();
+					fieldProjection.put("$first", "$" + field.getName());
+					groupFields.put(field.getName(), fieldProjection);
+				}
+			}
 			groupQuery.put("$group", groupFields);
 		}
 

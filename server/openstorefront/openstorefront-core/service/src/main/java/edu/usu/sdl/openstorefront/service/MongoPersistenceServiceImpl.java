@@ -21,6 +21,7 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
@@ -53,7 +54,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -273,9 +273,22 @@ public class MongoPersistenceServiceImpl
 		} else if (queryByExample.getGroupBy() != null) {
 			List<Bson> pipeline = new ArrayList<>();
 
-			pipeline.add(queryUtil.generateFilters(queryByExample));
-			pipeline.add(queryUtil.generateSortFilter(queryByExample));
+			if (queryByExample.getExample() != null) {
+				pipeline.add(Aggregates.match(queryUtil.generateFilters(queryByExample)));
+			}
 			pipeline.add(queryUtil.generateGroupByFilter(queryByExample));
+
+			if (queryByExample.getOrderBy() != null) {
+				pipeline.add(Aggregates.sort(queryUtil.generateSortFilter(queryByExample)));
+			}
+
+			if (queryByExample.getFirstResult() != null && queryByExample.getFirstResult() > 0) {
+				pipeline.add(Aggregates.skip(queryByExample.getFirstResult()));
+			}
+
+			if (queryByExample.getMaxResults() != null && queryByExample.getMaxResults() > 0) {
+				pipeline.add(Aggregates.limit(queryByExample.getMaxResults()));
+			}
 
 			AggregateIterable<T> aggregateIterable = collection.aggregate(pipeline, (Class<T>) queryByExample.getExample().getClass());
 			if (queryByExample.getTimeout() != null && queryByExample.getTimeout() > 0) {
@@ -283,11 +296,6 @@ public class MongoPersistenceServiceImpl
 			}
 
 			List<T> results = aggregateIterable.into(new ArrayList<>());
-			if (queryByExample.getMaxResults() != null && queryByExample.getMaxResults() > 0) {
-				results = results.stream()
-						.limit(queryByExample.getMaxResults())
-						.collect(Collectors.toList());
-			}
 			return results;
 		} else {
 			FindIterable<T> findIterable = collection.find(filter);

@@ -15,9 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.bson.conversions.Bson;
 
@@ -92,13 +93,33 @@ public class UserMongoRepoImpl
 
 		MongoCollection<UserTracking> collection = getQueryUtil().getCollectionForEntity(UserTracking.class);
 
+		Set<String> userNames = userProfiles.stream()
+				.map(UserProfile::getUsername)
+				.collect(Collectors.toSet());
+
+		BasicDBObject groupQuery = new BasicDBObject();
+
+		BasicDBObject groupFields = new BasicDBObject();
+		groupFields = new BasicDBObject("_id", "$" + UserTracking.FIELD_CREATE_USER);
+
+		BasicDBObject maxProjection = new BasicDBObject();
+		maxProjection.put("$max", "$" + UserTracking.FIELD_EVENTDTS);
+		groupFields.put(UserTracking.FIELD_EVENTDTS, maxProjection);
+
+		BasicDBObject fieldProjection = new BasicDBObject();
+		fieldProjection.put("$first", "$" + UserTracking.FIELD_CREATE_USER);
+		groupFields.put(UserTracking.FIELD_CREATE_USER, fieldProjection);
+		groupQuery.put("$group", groupFields);
+
 		List<Bson> pipeline = Arrays.asList(
-				Aggregates.group(UserTracking.FIELD_CREATE_USER, Accumulators.max(UserTracking.FIELD_EVENTDTS, "$date")),
-				Filters.and(
-						Filters.eq(UserTracking.FIELD_ACTIVE_STATUS, UserTracking.ACTIVE_STATUS),
-						Filters.eq(UserTracking.FIELD_TRACK_EVENT_TYPE_CODE, TrackEventCode.LOGIN),
-						Filters.in(UserTracking.FIELD_CREATE_USER, userProfiles)
-				)
+				Aggregates.match(
+						Filters.and(
+								Filters.eq(UserTracking.FIELD_ACTIVE_STATUS, UserTracking.ACTIVE_STATUS),
+								Filters.eq(UserTracking.FIELD_TRACK_EVENT_TYPE_CODE, TrackEventCode.LOGIN),
+								Filters.in(UserTracking.FIELD_CREATE_USER, userNames)
+						)
+				),
+				groupQuery
 		);
 		List<UserTracking> trackingFound = collection.aggregate(pipeline).into(new ArrayList<>());
 		for (UserTracking tracking : trackingFound) {
