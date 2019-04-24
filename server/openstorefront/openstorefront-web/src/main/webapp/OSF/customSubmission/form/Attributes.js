@@ -105,6 +105,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 										Ext.Array.each(attributeCodes, function (attributeCode) {
 											lookUpCodes.push({
 												code: attributeCode.attributeCodePk.attributeCode,
+												// baseUnit: attributeCode.baseUnit, // TODO: this data is not yet available
 												label: attributeCode.label,
 												description: attributeCode.description
 											});
@@ -174,7 +175,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 			{
 				xtype: 'combobox',
 				itemId: 'attributeUnitCB',
-				fieldLabel: 'Attribute Code <span class="field-required" />',
+				fieldLabel: 'Attribute Unit <span class="field-required" />',
 				name: 'unit',
 				hidden: true, // will show if a unit is found for the attribute
 				queryMode: 'local',
@@ -243,7 +244,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 				attributePanel.setLoading(false);
 			},
 			success: function(response, opts) {
-				var attributeTypes = Ext.decode(response.responseText);				
+				var attributeTypes = Ext.decode(response.responseText);
 				attributePanel.queryById('attributeTypeCB').getStore().loadData(attributeTypes);
 				
 				if (attributePanel.section) {

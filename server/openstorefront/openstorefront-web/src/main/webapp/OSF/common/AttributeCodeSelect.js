@@ -68,6 +68,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 			typeAhead=true;	
 		}			
 		
+		// TODO: The validator fails on 1e-10 which is valid
 		var numberVType = attributePanel.attributeTypeView.attributeValueType === 'NUMBER' ? 'AttributeNumber' : undefined;			
 			
 		var extraCfg = {};
@@ -77,7 +78,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 			
 			
 			var validator = undefined;
-			if (numberVType){			
+			if (numberVType){
 				validator = function(valueRaw) {
 					var values = attributePanel.getValue();	
 					var valid = true;
