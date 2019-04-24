@@ -345,15 +345,35 @@
 				return returnString;
 			};
 
-			var compareWindowChanged = false;
-			var changeIsStaged = true;
+			var updateComparisonBox = function(cb){
+				var win = cb.up().up().up();
+				if(win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data && 
+					win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data){
+					var arrayOne = [];
+					var arrayTwo = [];
+					win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data.vitals.forEach(function(elim) {
+						arrayOne.push(elim);
+					});
+					win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data.vitals.forEach(function(elim) {
+						arrayTwo.push(elim);
+					});
+
+					var dataRays = {};
+					dataRays.one = arrayOne;
+					dataRays.two = arrayTwo;
+					dataRays.nameOne = win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data.name;
+					dataRays.nameTwo = win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data.name;
+
+					var htmlDataString = "";
+					htmlDataString = buildHTMLDataString(dataRays);
+					win.getComponent('attributeCompareItemId').update(htmlDataString);
+				}
+			}
 			
 			var compareEntries = function(menu) {
 				
 				var changeComparePanelListenerGenerator = function(name) {
 					return function(cb, newValue, oldValue, opts) {
-						compareWindowChanged = true;
-						changeIsStaged = true;
 						var comparePanel = this.up('panel');
 						if (newValue) {	
 							var otherStore = comparePanel.up('panel').getComponent(name).getComponent("cb").getStore();
@@ -375,7 +395,6 @@
 								success: function(response, opts) {
 									var data = Ext.decode(response.responseText);
 									data = CoreUtil.processEntry(data);
-
 									root = data.componentTypeNestedModel;
 									CoreUtil.traverseNestedModel(root, [], data);
 
@@ -385,6 +404,7 @@
 										success: function (newData) {
 											data.fullEvaluations = newData.fullEvaluations;
 											comparePanel.update(data);
+											updateComparisonBox(cb);
 
 											// Add event listeners for toggle-able containers
 											var toggleElements = document.querySelectorAll('.toggle-collapse');
@@ -448,63 +468,39 @@
 					maximizable: true,
 					closeAction: 'destroy',
 					layout: {
-						type: 'hbox',
+						type: 'border',
 						align: 'stretch'
 					},				
-					items: [	
-						comparePanelItemGenerator('compareAPanel', 'componentA','left'),
-						comparePanelItemGenerator('compareBPanel', 'componentB', 'right')
-					],
-					dockedItems: [
+					items: [
+						{
+							xtype: 'panel',
+							region: 'center',
+							itemId: 'subComparePanelItemId',
+							layout: {
+								type: 'hbox',
+								align: 'stretch'
+							},
+							items:[
+								comparePanelItemGenerator('compareAPanel', 'componentA','left'),
+								comparePanelItemGenerator('compareBPanel', 'componentB', 'right')
+							]
+						},
 						{
 							xtype: 'panel',
 							dock: 'bottom',
-							tpl: compareAttrTemplate,
-							itemid: 'hyrdacopter'
+							region: 'south',
+							split: true,
+							border: true,
+							height: '30%',
+							scrollable: true,
+							itemId: 'attributeCompareItemId'
 						}
-					],
-					listeners: {
-						mouseover: {
-							element: 'body', //bind to the underlying el property on the panel
-							fn: function(){
-								if(this.component.items.items[1].data && this.component.items.items[3].data && compareWindowChanged){
-									if(!changeIsStaged){
-										var win = this;
-										var arrayOne = [];
-										var arrayTwo = [];
-										win.component.items.items[1].data.vitals.forEach(function(elim) {
-											arrayOne.push(elim);
-										});
-										win.component.items.items[3].data.vitals.forEach(function(elim) {
-											arrayTwo.push(elim);
-										});
-
-										var dataRays = {};
-										dataRays.one = arrayOne;
-										dataRays.two = arrayTwo;
-										dataRays.nameOne = win.component.items.items[1].data.name;
-										dataRays.nameTwo = win.component.items.items[3].data.name;
-
-										compareWindowChanged = false;
-										var htmlDataString = "";
-										htmlDataString = buildHTMLDataString(dataRays);
-										win.component.dockedItems.items[1].update(htmlDataString);
-									}
-									if(changeIsStaged){
-										changeIsStaged = false;
-									}
-
-								} else{
-
-								}
-							}
-						}
-					}
+					]
 				});				
 				compareWin.show();
 				
-				var compareAcb = compareWin.getComponent('compareAPanel').getComponent('cb');
-				var compareBcb = compareWin.getComponent('compareBPanel').getComponent('cb');
+				var compareAcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareAPanel').getComponent('cb');
+				var compareBcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareBPanel').getComponent('cb');
 
 				compareAcb.setValue(null);
 				compareBcb.setValue(null);
