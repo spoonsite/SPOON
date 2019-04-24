@@ -54,6 +54,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -264,12 +265,25 @@ public class MongoPersistenceServiceImpl
 		}
 
 		if (StringUtils.isNotBlank(queryByExample.getDistinctField())) {
+			//distinct only return one field however, the expect behavior is a full entity
+			//Note this set to String...for custom case outside of this case; use the repos.
 			@SuppressWarnings("unchecked")
-			DistinctIterable<T> distinctIterable = collection.distinct(queryByExample.getDistinctField(), filter, (Class<T>) queryByExample.getExample().getClass());
+			DistinctIterable<String> distinctIterable = collection.distinct(queryByExample.getDistinctField(), filter, String.class);
 			if (queryByExample.getTimeout() != null && queryByExample.getTimeout() > 0) {
 				distinctIterable.maxTime(queryByExample.getTimeout(), TimeUnit.SECONDS);
 			}
-			return distinctIterable.into(new ArrayList<>());
+
+			List<T> entities = new ArrayList<>();
+			for (String value : distinctIterable) {
+				try {
+					T entity = (T) queryByExample.getExample().getClass().newInstance();
+					BeanUtils.setProperty(entity, queryByExample.getDistinctField(), value);
+					entities.add(entity);
+				} catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+					throw new OpenStorefrontRuntimeException(ex);
+				}
+			}
+			return entities;
 		} else if (queryByExample.getGroupBy() != null) {
 			List<Bson> pipeline = new ArrayList<>();
 

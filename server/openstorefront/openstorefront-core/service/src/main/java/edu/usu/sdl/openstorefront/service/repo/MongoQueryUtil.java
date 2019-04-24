@@ -69,43 +69,31 @@ public class MongoQueryUtil
 	{
 		Map<String, Object> exampleMap = generateFieldMap(queryRequest.getExample(), new ComplexFieldStack(), queryRequest.getExampleOption(), queryRequest.getFieldOptions());
 
+		//pull out the field that have options on them handle them seperately
 		Bson query = new BasicDBObject(exampleMap);
 
-		if (queryRequest.getInExample() != null) {
-			Map<String, Object> inMap = generateFieldMap(queryRequest.getInExample(), new ComplexFieldStack(), queryRequest.getInExampleOption(), new HashMap<>());
+		query = handleInExample(queryRequest, query);
+		query = handleLikeExample(queryRequest, query);
+		query = handleSpecialWhereClause(queryRequest, query);
 
-			for (String fieldName : inMap.keySet()) {
-				if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getInExampleOption().getCondition())) {
-					query = Filters.or(query, Filters.in(fieldName, inMap.get(fieldName)));
-				} else {
-					query = Filters.and(query, Filters.in(fieldName, inMap.get(fieldName)));
-				}
-			}
-		}
+//		//$and/$or/$nor must be a nonempty array  (See if this is need...it seems most case the query can adjusted)
+//		BsonDocument andOrFilterDoc = query.toBsonDocument(BsonDocument.class, MongoClientSettings.getDefaultCodecRegistry());
+//		if (andOrFilterDoc.get("$and") != null) {
+//			if (andOrFilterDoc.get("$and").asArray().isEmpty()) {
+//				//send back an empty doc
+//				query = new BasicDBObject();
+//			}
+//		} else if (andOrFilterDoc.get("$or") != null) {
+//			if (andOrFilterDoc.get("$or").asArray().isEmpty()) {
+//				//send back an empty doc
+//				query = new BasicDBObject();
+//			}
+//		}
+		return query;
+	}
 
-		if (queryRequest.getLikeExample() != null) {
-			Map<String, Object> likeMap = generateFieldMap(queryRequest.getLikeExample(), new ComplexFieldStack(), queryRequest.getLikeExampleOption(), new HashMap<>());
-
-			for (String fieldName : likeMap.keySet()) {
-				String value = likeMap.get(fieldName).toString();
-				value = convertSQLLikeCharacterToRegex(value);
-
-				Pattern pattern;
-				if (GenerateStatementOption.METHOD_LOWER_CASE.equals(queryRequest.getInExampleOption().getMethod())
-						|| GenerateStatementOption.METHOD_UPPER_CASE.equals(queryRequest.getInExampleOption().getMethod())) {
-					pattern = Pattern.compile(value, Pattern.CASE_INSENSITIVE);
-				} else {
-					pattern = Pattern.compile(value);
-				}
-
-				if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getInExampleOption().getCondition())) {
-					query = Filters.or(query, Filters.regex(fieldName, pattern));
-				} else {
-					query = Filters.and(query, Filters.regex(fieldName, pattern));
-				}
-			}
-		}
-
+	private <T extends BaseEntity> Bson handleSpecialWhereClause(QueryByExample<T> queryRequest, Bson query)
+	{
 		for (WhereClause whereClause : queryRequest.getExtraWhereCauses()) {
 			if (whereClause instanceof SpecialOperatorModel) {
 				SpecialOperatorModel specialOperatorModel = (SpecialOperatorModel) whereClause;
@@ -131,20 +119,50 @@ public class MongoQueryUtil
 				}
 			}
 		}
+		return query;
+	}
 
-//		//$and/$or/$nor must be a nonempty array  (See if this is need...it seems most case the query can adjusted)
-//		BsonDocument andOrFilterDoc = query.toBsonDocument(BsonDocument.class, MongoClientSettings.getDefaultCodecRegistry());
-//		if (andOrFilterDoc.get("$and") != null) {
-//			if (andOrFilterDoc.get("$and").asArray().isEmpty()) {
-//				//send back an empty doc
-//				query = new BasicDBObject();
-//			}
-//		} else if (andOrFilterDoc.get("$or") != null) {
-//			if (andOrFilterDoc.get("$or").asArray().isEmpty()) {
-//				//send back an empty doc
-//				query = new BasicDBObject();
-//			}
-//		}
+	private <T extends BaseEntity> Bson handleLikeExample(QueryByExample<T> queryRequest, Bson query)
+	{
+		if (queryRequest.getLikeExample() != null) {
+			Map<String, Object> likeMap = generateFieldMap(queryRequest.getLikeExample(), new ComplexFieldStack(), queryRequest.getLikeExampleOption(), new HashMap<>());
+
+			for (String fieldName : likeMap.keySet()) {
+				String value = likeMap.get(fieldName).toString();
+				value = convertSQLLikeCharacterToRegex(value);
+
+				Pattern pattern;
+				if (GenerateStatementOption.METHOD_LOWER_CASE.equals(queryRequest.getInExampleOption().getMethod())
+						|| GenerateStatementOption.METHOD_UPPER_CASE.equals(queryRequest.getInExampleOption().getMethod())) {
+					pattern = Pattern.compile(value, Pattern.CASE_INSENSITIVE);
+				} else {
+					pattern = Pattern.compile(value);
+				}
+
+				if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getInExampleOption().getCondition())) {
+					query = Filters.or(query, Filters.regex(fieldName, pattern));
+				} else {
+					query = Filters.and(query, Filters.regex(fieldName, pattern));
+				}
+			}
+		}
+		return query;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends BaseEntity> Bson handleInExample(QueryByExample<T> queryRequest, Bson query)
+	{
+		if (queryRequest.getInExample() != null) {
+			Map<String, Object> inMap = generateFieldMap(queryRequest.getInExample(), new ComplexFieldStack(), queryRequest.getInExampleOption(), new HashMap<>());
+
+			for (String fieldName : inMap.keySet()) {
+				if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getInExampleOption().getCondition())) {
+					query = Filters.or(query, Filters.in(fieldName, (Iterable) inMap.get(fieldName)));
+				} else {
+					query = Filters.and(query, Filters.in(fieldName, (Iterable) inMap.get(fieldName)));
+				}
+			}
+		}
 		return query;
 	}
 
@@ -165,6 +183,7 @@ public class MongoQueryUtil
 		return value;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Bson handleSpecialOperator(Bson query, SpecialOperatorModel specialOperatorModel)
 	{
 		Map<String, Object> specialMap = generateFieldMap(specialOperatorModel.getExample(), new ComplexFieldStack(), specialOperatorModel.getGenerateStatementOption(), new HashMap<>());
@@ -210,10 +229,10 @@ public class MongoQueryUtil
 					internalFilter = Filters.gte(key, specialMap.get(key));
 					break;
 				case GenerateStatementOption.OPERATION_IN:
-					internalFilter = Filters.in(key, specialMap.get(key));
+					internalFilter = Filters.in(key, (Iterable) specialMap.get(key));
 					break;
 				case GenerateStatementOption.OPERATION_NOT_IN:
-					internalFilter = Filters.nin(key, specialMap.get(key));
+					internalFilter = Filters.nin(key, (Iterable) specialMap.get(key));
 					break;
 			}
 			specialFilters = Filters.and(specialFilters, internalFilter);
@@ -249,7 +268,7 @@ public class MongoQueryUtil
 
 		BasicDBObject groupQuery = new BasicDBObject();
 
-		BasicDBObject groupFields = new BasicDBObject();;
+		BasicDBObject groupFields = new BasicDBObject();
 		if (!exampleMap.keySet().isEmpty()) {
 			DBObject fields = new BasicDBObject();
 			for (String key : exampleMap.keySet()) {
