@@ -54,7 +54,9 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 					fields.push({
 						xtype: 'AttributeCodeSelect',
 						attributeType: attributeType.attributeType,
-						attributeTypeView: attributeType
+						attributeTypeView: attributeType,
+						attributeUnit: attributeType.attributeUnit,
+						attributeUnitList: attributeType.attributeUnitList
 					});										
 					
 				});
@@ -111,6 +113,17 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 		
 		var template = new Ext.XTemplate(
 			'<table class="submission-review-table">' + 
+			'<thead>' +
+			'	<th class="submission-review-header">' + 
+			'		Type' + 
+			'	</th>' + 
+			'	<th class="submission-review-header">' + 
+			'		Value' + 
+			'	</th>' + 
+			'	<th class="submission-review-header">' + 
+			'		Unit' + 
+			'	</th>' + 			
+			'</thead>' +			
 			'<tbody>' + 
 			'	<tpl for=".">'+
 			'		<tr class="submission-review-row">' +

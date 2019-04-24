@@ -45,7 +45,7 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 		//load required for entry type and generate form
 		formPanel.setLoading(true);
 		Ext.Ajax.request({
-			url: 'api/v1/resource/attributes/optional?componentType=' + formPanel.componentType.componentType + '&submissionOnly=true',
+			url: 'api/v1/resource/attributes/optional?componentType=' + formPanel.componentType.componentType + '&submissionOnly=true&submissionTemplateId=' + formPanel.section.submissionForm.template.submissionTemplateId,
 			callback: function() {
 				formPanel.setLoading(false);
 			},
@@ -112,7 +112,7 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 							if (el.unit === unit) {
 								result = el.conversionFactor;
 							}
-						})
+						});
 						return result;
 					}
 					var convertWithPrecision = function(num, factor) {
@@ -161,7 +161,18 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 		var attributePanel = this;
 		
 		var template = new Ext.XTemplate(
-			'<table class="submission-review-table">' + 
+			'<table class="submission-review-table">' +
+			'<thead>' +
+			'	<th class="submission-review-header">' + 
+			'		Type' + 
+			'	</th>' + 
+			'	<th class="submission-review-header">' + 
+			'		Value' + 
+			'	</th>' + 
+			'	<th class="submission-review-header">' + 
+			'		Unit' + 
+			'	</th>' + 			
+			'</thead>' +				
 			'<tbody>' + 
 			'	<tpl for=".">'+
 			'		<tr class="submission-review-row">' +
