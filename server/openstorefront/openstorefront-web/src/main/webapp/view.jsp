@@ -531,7 +531,6 @@
 						},
 						success: function(response, opts) {
 							entry = Ext.decode(response.responseText);
-							// console.log(entry.contacts[0].email)
 							componentId = entry.componentId;
 
 							root = entry.componentTypeNestedModel;
