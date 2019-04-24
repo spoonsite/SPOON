@@ -229,7 +229,7 @@
 							'Organization: <b><a href="#" class="a.details-table" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="releaseDate"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
 							'<div class="details-title-info" style="margin: 8px 0;">',
-							'Contact Vendor: <tpl if="contacts.length &lt; 1">support@spoonsite.com</tpl><tpl for="contacts"><tpl if="[xindex] == \'1\'">{email}</tpl></tpl>',
+							'Contact Vendor: <div style="font-weight: bold; color: #555555;"><tpl if="contacts.length &lt; 1">support@spoonsite.com</tpl><tpl for="contacts"><tpl if="[xindex] == \'1\'">{email}</tpl></tpl></div>',
 							'</div>',
 							'  <tpl for="attributes">',
 							'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>',
