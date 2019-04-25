@@ -138,16 +138,6 @@
 					compareViewTemplate.set(response.responseText, true);
 				}
 			});
-			
-			var compareAttrTemplate = new Ext.XTemplate();
-
-			Ext.Ajax.request({
-				url: 'Router.action?page=shared/attributeCompareTemplate.jsp',
-				success: function(response, opts){
-					compareAttrTemplate.set(response.responseText, true);
-				}
-			});
-
 
 			var getArrayCommonalities = function(arrOne, arrTwo){
 				var nonUniqueArray = [];
@@ -482,7 +472,8 @@
 							},
 							items:[
 								comparePanelItemGenerator('compareAPanel', 'componentA','left'),
-								comparePanelItemGenerator('compareBPanel', 'componentB', 'right')
+								comparePanelItemGenerator('compareBPanel', 'componentB', 'right'),
+								comparePanelItemGenerator('compareCPanel', 'componentC', 'right')
 							]
 						},
 						{
@@ -501,15 +492,17 @@
 				
 				var compareAcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareAPanel').getComponent('cb');
 				var compareBcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareBPanel').getComponent('cb');
+				var compareCcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareCPanel').getComponent('cb');
 
 				compareAcb.setValue(null);
 				compareBcb.setValue(null);
+				compareCcb.setValue(null);
 
 				var selectedComponents = [];
 				menu.items.each(function(item) {
 					if (item.componentId) {
-						var record = Ext.create('Ext.data.Model', {													
-						});
+						console.log(item.text);
+						var record = Ext.create('Ext.data.Model', {});
 						record.set({
 							componentId: item.componentId,
 							name: item.text
@@ -522,6 +515,7 @@
 				//if nothing selected
 				if(selectedComponents.length > 0) {
 					if (selectedComponents.length === 1) {
+						console.log(compareAcb);
 						compareAcb.getStore().loadRecords(selectedComponents);
 						compareAcb.setValue(selectedComponents[0].get('componentId'));
 
@@ -537,9 +531,11 @@
 					} else if (selectedComponents.length > 1) {
 						compareAcb.getStore().loadRecords(selectedComponents);	
 						compareBcb.getStore().loadRecords(selectedComponents);
+						compareCcb.getStore().loadRecords(selectedComponents);
 
 						compareAcb.setValue(selectedComponents[0].get('componentId'));
-						compareBcb.setValue(selectedComponents[1].get('componentId'));																							
+						compareBcb.setValue(selectedComponents[1].get('componentId'));		
+						compareCcb.setValue(selectedComponents[0].get('componentId'));																					
 
 					}											
 				} else {
@@ -1679,6 +1675,7 @@
 											var menu = this.up('menu');
 											
 											var itemsToRemove = [];
+
 											menu.items.each(function(item) {
 												if (item.componentId) {
 													item.chkField.checked = false;
@@ -1698,6 +1695,7 @@
 								listeners: {
 									click: function(){
 										var menu = this.getMenu();										
+										console.log(menu);
 										compareEntries(menu);
 									}
 								}								
