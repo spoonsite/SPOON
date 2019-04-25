@@ -237,8 +237,8 @@
 					var dataRow = {};
 					dataRow.attributeName = arrOne[i].label;
 					dataRow.unit = "N/A";
-					dataRow.entryOne = "N/A";
-					dataRow.entryTwo = "N/A";
+					dataRow.entryOne = "-";
+					dataRow.entryTwo = "-";
 					if(arrOne[i].unit !== undefined){
 						dataRow.unit = arrOne[i].unit;
 					}
@@ -258,8 +258,8 @@
 					var dataRow = {};
 					dataRow.attributeName = arrOne[i].label;
 					dataRow.unit = "N/A";
-					dataRow.entryOne = "N/A";
-					dataRow.entryTwo = "N/A";
+					dataRow.entryOne = "-";
+					dataRow.entryTwo = "-";
 					if(arrOne[i].unit !== undefined){
 						dataRow.unit = arrOne[i].unit;
 					}
@@ -276,8 +276,8 @@
 					var dataRow = {};
 					dataRow.attributeName = arrTwo[i].label;
 					dataRow.unit = "N/A";
-					dataRow.entryOne = "N/A";
-					dataRow.entryTwo = "N/A";
+					dataRow.entryOne = "-";
+					dataRow.entryTwo = "-";
 					if(arrTwo[i].unit !== undefined){
 						dataRow.unit = arrTwo[i].unit;
 					}
