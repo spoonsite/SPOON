@@ -2,7 +2,7 @@ import requests
 import json
 import sys
 
-SESSION_ID = ''
+SESSION_ID = 'C2097055B1D357FEDB7CE53C40693306'
 TOKEN = ''
 
 COOKIES = {
