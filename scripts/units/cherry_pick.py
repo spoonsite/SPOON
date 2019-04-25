@@ -9,14 +9,14 @@ def cherrypick(dups, attributes):
     units = {}
     opRestrictions = {}
     reqRestrictions = {}
+    attributeValueType = ''
 
     for attribute in attributes:
         try:
-            attributeValueType = i['attributeValueType']
+            attributeValueType = attribute['attributeValueType']
         except:
             attributeValueType = ''
         if attribute['description'] in dups and attributeValueType == 'NUMBER':
-
             # set up dictionaries
             try: 
                 typecodes[attribute['description']].append(attribute['attributeType'])
@@ -163,7 +163,6 @@ def main():
         print(dups)
         print('-------------------------------------')
         print()
-
         cherrypick(dups, parsed['data'])
 
 if __name__ == "__main__":
