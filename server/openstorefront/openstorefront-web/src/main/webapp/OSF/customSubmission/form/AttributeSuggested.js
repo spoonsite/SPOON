@@ -114,7 +114,8 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 							}
 						});
 						return result;
-					}
+					};
+					
 					var convertWithPrecision = function(num, factor) {
 
 					}
@@ -139,7 +140,7 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 											} else {
 												return el;
 											}
-										})
+										});
 									} else if (Number(value)) {
 										// convert single value
 										// *** check user created codes ***
@@ -194,14 +195,19 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 		var data = [];
 
 		Ext.Array.each(attributePanel.items.items, function(field) {
-			data.push({
-				label: field.attributeTypeView.description,
-				value: field.getField().getDisplayValue(),
-				unit: field.getUnit()
-			});
+			if (field.getField().getDisplayValue()) {
+				data.push({
+					label: field.attributeTypeView.description,
+					value: field.getField().getDisplayValue(),
+					unit: field.getUnit()
+				});
+			}
 		});
-		
-		return template.apply(data);
+		if (data.length === 0) {
+			return '(No Data Entered)';
+		} else {		
+			return template.apply(data);
+		}
 	},
 	getSubmissionValue: function() {
 		var attributePanel = this;
@@ -217,21 +223,21 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 						// in JS '1.0' * 1 -> 1
 						// if user created codes is disabled
 						// a value of 1 will fail where '1.0' is expected
-						var code = field.getConversionFactor() != 1 ? value / field.getConversionFactor() : value;
+						var code = field.getConversionFactor() !== 1 ? value / field.getConversionFactor() : value;
 						codeData = {
 							componentAttributePk: {
 									attributeType: field.attributeTypeView.attributeType,
 									attributeCode: code
 								},
 								preferredUnit: field.getUnit()
-							}
+							};
 					} else {
 						codeData = {
 							componentAttributePk: {
 									attributeType: field.attributeTypeView.attributeType,
 									attributeCode: value
 								}
-							}
+							};
 					}
 					data.push(codeData);
 				}
