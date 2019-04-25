@@ -77,7 +77,7 @@ public class AttributeSetSearchHandler
 
 				ComponentAttribute componentAttributeInExample = new ComponentAttribute();
 				ComponentAttributePk componentAttributeInPk = new ComponentAttributePk();
-				componentAttributePk.setAttributeCode(QueryByExample.STRING_FLAG);
+				componentAttributeInPk.setAttributeCode(QueryByExample.STRING_FLAG);
 				componentAttributeInExample.setComponentAttributePk(componentAttributeInPk);
 
 				QueryByExample<ComponentAttribute> queryByExampleCodes = new QueryByExample<>(componentAttributeExample);

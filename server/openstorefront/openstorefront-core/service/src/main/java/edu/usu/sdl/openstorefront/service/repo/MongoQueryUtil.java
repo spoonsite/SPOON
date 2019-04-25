@@ -70,13 +70,22 @@ public class MongoQueryUtil
 		Map<String, Object> exampleMap = generateFieldMap(queryRequest.getExample(), new ComplexFieldStack(), queryRequest.getExampleOption(), queryRequest.getFieldOptions());
 
 		//pull out the field that have options on them handle them seperately
+		Map<String, Object> specialFieldHandleMap = new HashMap<>();
+		for (String fieldName : exampleMap.keySet()) {
+			if (queryRequest.getFieldOptions().containsKey(fieldName)) {
+				specialFieldHandleMap.put(fieldName, exampleMap.get(fieldName));
+				exampleMap.remove(fieldName);
+			}
+		}
+
 		Bson query = new BasicDBObject(exampleMap);
 
+		query = handleSpecialFields(queryRequest, query, specialFieldHandleMap);
 		query = handleInExample(queryRequest, query);
 		query = handleLikeExample(queryRequest, query);
 		query = handleSpecialWhereClause(queryRequest, query);
 
-//		//$and/$or/$nor must be a nonempty array  (See if this is need...it seems most case the query can adjusted)
+//		//$and/$or/$nor must be a nonempty array  (See if this is need...it seems most cases the query can adjusted)
 //		BsonDocument andOrFilterDoc = query.toBsonDocument(BsonDocument.class, MongoClientSettings.getDefaultCodecRegistry());
 //		if (andOrFilterDoc.get("$and") != null) {
 //			if (andOrFilterDoc.get("$and").asArray().isEmpty()) {
@@ -90,6 +99,74 @@ public class MongoQueryUtil
 //			}
 //		}
 		return query;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends BaseEntity> Bson handleSpecialFields(QueryByExample<T> queryRequest, Bson query, Map<String, Object> specialFieldHandleMap)
+	{
+		if (specialFieldHandleMap.isEmpty()) {
+			return query;
+		}
+
+		Bson specialFilters = new BasicDBObject();
+
+		//handle operators (all AND)
+		for (String fieldName : specialFieldHandleMap.keySet()) {
+
+			GenerateStatementOption option = queryRequest.getFieldOptions().get(fieldName);
+
+			Bson internalFilter = new BasicDBObject();
+			switch (option.getOperation()) {
+				case GenerateStatementOption.OPERATION_EQUALS:
+					//handled cases where just case insensitivity is needed.
+					if (GenerateStatementOption.METHOD_LOWER_CASE.equals(option.getMethod())
+							|| GenerateStatementOption.METHOD_UPPER_CASE.equals(option.getMethod())) {
+						internalFilter = Filters.regex(fieldName, Pattern.compile(convertSQLLikeCharacterToRegex(specialFieldHandleMap.get(fieldName).toString()), Pattern.CASE_INSENSITIVE));
+					} else {
+						internalFilter = Filters.eq(fieldName, specialFieldHandleMap.get(fieldName));
+					}
+
+					break;
+				case GenerateStatementOption.OPERATION_NOT_EQUALS:
+					internalFilter = Filters.ne(fieldName, specialFieldHandleMap.get(fieldName));
+					break;
+				case GenerateStatementOption.OPERATION_LIKE:
+					if (GenerateStatementOption.METHOD_LOWER_CASE.equals(option.getMethod())
+							|| GenerateStatementOption.METHOD_UPPER_CASE.equals(option.getMethod())) {
+						internalFilter = Filters.regex(fieldName, Pattern.compile(convertSQLLikeCharacterToRegex(specialFieldHandleMap.get(fieldName).toString()), Pattern.CASE_INSENSITIVE));
+					} else {
+						internalFilter = Filters.regex(fieldName, convertSQLLikeCharacterToRegex(specialFieldHandleMap.get(fieldName).toString()));
+					}
+					break;
+				case GenerateStatementOption.OPERATION_NOT_NULL:
+					internalFilter = Filters.ne(fieldName, null);
+					break;
+				case GenerateStatementOption.OPERATION_NULL:
+					internalFilter = Filters.eq(fieldName, null);
+					break;
+				case GenerateStatementOption.OPERATION_LESS_THAN_EQUAL:
+					internalFilter = Filters.lte(fieldName, specialFieldHandleMap.get(fieldName));
+					break;
+				case GenerateStatementOption.OPERATION_LESS_THAN:
+					internalFilter = Filters.lt(fieldName, specialFieldHandleMap.get(fieldName));
+					break;
+				case GenerateStatementOption.OPERATION_GREATER_THAN:
+					internalFilter = Filters.gt(fieldName, specialFieldHandleMap.get(fieldName));
+					break;
+				case GenerateStatementOption.OPERATION_GREATER_THAN_EQUAL:
+					internalFilter = Filters.gte(fieldName, specialFieldHandleMap.get(fieldName));
+					break;
+				case GenerateStatementOption.OPERATION_IN:
+					internalFilter = Filters.in(fieldName, (Iterable) specialFieldHandleMap.get(fieldName));
+					break;
+				case GenerateStatementOption.OPERATION_NOT_IN:
+					internalFilter = Filters.nin(fieldName, (Iterable) specialFieldHandleMap.get(fieldName));
+					break;
+			}
+
+			specialFilters = Filters.and(specialFilters, internalFilter);
+		}
+		return specialFilters;
 	}
 
 	private <T extends BaseEntity> Bson handleSpecialWhereClause(QueryByExample<T> queryRequest, Bson query)

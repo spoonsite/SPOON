@@ -115,9 +115,7 @@ public class OrganizationServiceImpl
 				updateOrganizationOnEntity(new ComponentQuestionResponse(), organizationExisting.getName(), organization);
 				clearOrganizationCaches();
 			}
-
-			organizationExisting.updateFields(organization);
-			savedOrganization = getPersistenceService().persist(organizationExisting);
+			savedOrganization = getRepoFactory().getOrganizationRepo().handleOrganizationUpdate(getPersistenceService(), organizationExisting, organization);
 		} else {
 			organization.setOrganizationId(organization.nameToKey());
 			organization.populateBaseCreateFields();

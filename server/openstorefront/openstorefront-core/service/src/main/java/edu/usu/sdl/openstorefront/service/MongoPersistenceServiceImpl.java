@@ -22,6 +22,8 @@ import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Collation;
+import com.mongodb.client.model.CollationStrength;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
@@ -325,6 +327,11 @@ public class MongoPersistenceServiceImpl
 			}
 			if (queryByExample.getOrderBy() != null) {
 				findIterable.sort(queryUtil.generateSortFilter(queryByExample));
+				Collation caseInsensitive = Collation.builder()
+						.locale("en")
+						.collationStrength(CollationStrength.SECONDARY)
+						.build();
+				findIterable.collation(caseInsensitive);
 			}
 
 			return findIterable.into(new ArrayList<>());

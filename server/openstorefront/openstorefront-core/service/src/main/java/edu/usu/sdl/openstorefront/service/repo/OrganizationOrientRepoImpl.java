@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service.repo;
 
+import edu.usu.sdl.openstorefront.core.api.PersistenceService;
+import edu.usu.sdl.openstorefront.core.entity.Organization;
 import edu.usu.sdl.openstorefront.service.repo.api.OrganizationRepo;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +35,13 @@ public class OrganizationOrientRepoImpl
 	{
 		String query = "select from " + entity.getClass().getSimpleName() + " where organization is null ";
 		return service.getPersistenceService().query(query, new HashMap<>());
+	}
+
+	@Override
+	public Organization handleOrganizationUpdate(PersistenceService persistenceService, Organization existing, Organization updateOrganization)
+	{
+		existing.updateFields(updateOrganization);
+		return persistenceService.persist(existing);
 	}
 
 }

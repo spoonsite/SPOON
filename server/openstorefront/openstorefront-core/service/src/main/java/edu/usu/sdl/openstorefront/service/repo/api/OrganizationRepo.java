@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service.repo.api;
 
+import edu.usu.sdl.openstorefront.core.api.PersistenceService;
+import edu.usu.sdl.openstorefront.core.entity.Organization;
 import java.util.List;
 
 /**
@@ -32,5 +34,14 @@ public interface OrganizationRepo
 	 * @return
 	 */
 	<T> List<T> findReferencesNoOrg(T entity);
+
+	/**
+	 * Organization update requires special handling to deal with
+	 *
+	 * @param existing
+	 * @param updateOrganization
+	 * @return
+	 */
+	Organization handleOrganizationUpdate(PersistenceService persistenceService, Organization existing, Organization updateOrganization);
 
 }
