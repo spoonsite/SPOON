@@ -59,8 +59,6 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 				
 				var fields = [];
 				Ext.Array.each(attributeTypes, function(attributeType){
-				//TODO: update other spots that use the AttributeCodeSelect
-				//      to use attribute units and the unit list
 					fields.push({
 						xtype: 'AttributeCodeSelect',
 						required: false,
@@ -116,9 +114,6 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 						return result;
 					};
 					
-					var convertWithPrecision = function(num, factor) {
-
-					}
 					//find field and set values
 					Ext.Object.each(typeGroup, function(key, value){
 						Ext.Array.each(formPanel.items.items, function(field){
@@ -126,12 +121,12 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 								var unit = typeGroupUnit[key];
 								var conversionFactor = 1;
 								if (field.attributeTypeView && field.attributeTypeView.attributeUnitList) {
-									conversionFactor = getConversionFactor(unit, field.attributeTypeView.attributeUnitList)
+									conversionFactor = getConversionFactor(unit, field.attributeTypeView.attributeUnitList);
 								}
 								// in JS '1.0' * 1 -> 1
 								// if user created codes is disabled
 								// a value of 1 will fail where '1.0' is expected
-								if (conversionFactor != 1) {
+								if (conversionFactor !== 1) {
 									if (Array.isArray(value)) {
 										// convert list of values
 										value = value.map(function(el) {
@@ -195,10 +190,14 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 		var data = [];
 
 		Ext.Array.each(attributePanel.items.items, function(field) {
-			if (field.getField().getDisplayValue()) {
+			var actualDisplayValue = field.getField().getDisplayValue() ? field.getField().getDisplayValue() : field.getField().getValue();
+			if (actualDisplayValue && 
+					(!Ext.isArray(actualDisplayValue) ||
+					(Ext.isArray(actualDisplayValue) && actualDisplayValue.length > 0)
+			)) {
 				data.push({
 					label: field.attributeTypeView.description,
-					value: field.getField().getDisplayValue(),
+					value: actualDisplayValue,
 					unit: field.getUnit()
 				});
 			}

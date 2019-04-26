@@ -32,7 +32,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 	
 	columns: [
 		{ text: 'Type', dataIndex: 'typeDescription', flex: 1, minWidth: 200 },
-		{ text: 'Code', dataIndex: 'codeDescription', flex: 2, minWidth: 200 },
+		{ text: 'Value', dataIndex: 'codeDescription', flex: 2, minWidth: 200 },
 		{ text: 'Unit', dataIndex: 'unit', flex: 1, minWidth: 200 }
 	],
 	

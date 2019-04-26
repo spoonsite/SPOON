@@ -91,7 +91,13 @@ Ext.define('OSF.form.Attributes', {
 						name: 'updateDts',
 						type: 'date',
 						dateFormat: 'c'
-					}
+					},
+					{ name: 'vendorUnit', mapping: function(data) {
+						if (data.preferredUnit){
+							return data.preferredUnit.unit;
+						}
+						return null;
+					}}
 				],
 				autoLoad: false,
 				proxy: {
@@ -102,6 +108,7 @@ Ext.define('OSF.form.Attributes', {
 				{text: 'Attribute Type', dataIndex: 'typeDescription', width: 200},
 				{text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200},
 				{text: 'Attribute Unit', dataIndex: 'unit', flex: 1, minWidth: 200},
+				{text: 'Vendor Unit', dataIndex: 'vendorUnit', flex: 1, minWidth: 200},
 				{text: 'Comment', dataIndex: 'comment', flex: 2, minWidth: 200},
 				{text: 'Private Flag', dataIndex: 'privateFlag', width: 150},
 				{text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s'}

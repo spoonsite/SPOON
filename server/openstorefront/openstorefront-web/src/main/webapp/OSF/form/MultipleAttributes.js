@@ -155,10 +155,12 @@ Ext.define('OSF.form.MultipleAttributes', {
 				var attributes = Ext.decode(response.responseText);
 				var valueTypes = [];
 				Ext.Array.forEach(attributes, function (attribute, key) {
-					var label = attribute.description;
-					if (attribute.detailedDescription !== undefined)
-					{
-						label = Ext.String.format('{0} <i class="fa fa-question-circle"  data-qtip="{1}"></i>', attribute.description, attribute.detailedDescription.replace(/"/g, '&quot;'));
+					var units = attribute.attributeUnit ? ' (' + attribute.attributeUnit + ')' : '';
+					
+					var label = attribute.description + units;
+					if (attribute.detailedDescription)
+					{	
+						label = Ext.String.format('{0} {2} <i class="fa fa-question-circle"  data-qtip="{1}"></i>', label, attribute.detailedDescription.replace(/"/g, '&quot;'), units);
 					}
 					var vtype = undefined;
 					if (attribute.attributeValueType === 'NUMBER')

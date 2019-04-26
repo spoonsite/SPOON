@@ -21,7 +21,7 @@
  * 
  */
 
-/* global Ext */
+/* global Ext, CoreUtil */
 Ext.define('OSF.common.AttributeCodeSelect', {
 	extend: 'Ext.container.Container',
 	alias: 'widget.AttributeCodeSelect',
@@ -82,7 +82,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				validator = function(valueRaw) {
 					var values = attributePanel.getValue();	
 					var valid = true;
-					var msg = ''
+					var msg = '';
 					
 					Ext.Array.each(values, function(value) {
 						if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
@@ -107,6 +107,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 		attributePanel.field = Ext.create(xtype, Ext.apply({
 				fieldLabel: attributePanel.showLabel ? attributePanel.attributeTypeView.description + requireType : '',
 				forceSelection: forceSelection,
+				fullAttributeField: attributePanel,
 				name: attributePanel.name ? attributePanel.name : 'attributeCode',
 				queryMode: 'local',
 				vtype: numberVType,
@@ -141,21 +142,21 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 			};
 
 			// remove the base unit if in the list
-			unitList = unitList.filter(function(el) { return el.unit !== baseUnit.unit })
+			unitList = unitList.filter(function(el) { return el.unit !== baseUnit.unit; });
 			unitList.push(baseUnit);
 
 			var processList = function(list) {
 				var data = [];
 				Ext.Array.forEach(list, function(el) {
 					data.push({
-						'value': el.unit,
-						'text': el.unit,
-						'conversionFactor': el.conversionFactor,
-						'description': el.description
-					})
-				})
+						value: el.unit,
+						text: el.unit,
+						conversionFactor: el.conversionFactor,
+						description: el.description
+					});
+				});
 				return data;
-			}
+			};
 
 			var storeList = processList(unitList);
 			attributePanel.unit = Ext.create('Ext.form.field.ComboBox',{
@@ -164,13 +165,8 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					margin: '0 0 5 0',
 					queryMode: 'local',
 					flex: 1,
-					store: Ext.create('Ext.data.Store', {
-						fields: [
-							'value',
-							'text',
-							'conversionFactor',
-							'description'
-						],
+					valueField: 'value',
+					store: Ext.create('Ext.data.Store', {						
 						data: storeList
 					}),
 					listConfig: {
@@ -179,7 +175,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 						}
 					}
 				}
-			)
+			);
 
 			// set the default unit value
 			// Will later get replaced in AttributeSuggested.js
@@ -200,7 +196,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				html: baseUnit.unit,
 				style: 'padding-left: 10px;',
 				flex: 1
-			}))
+			}));
 
 		} else if (attributePanel.unit) {
 			attributePanel.add(attributePanel.unit);

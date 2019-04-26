@@ -41,7 +41,7 @@ public class ComponentAttributeView
 		extends StandardEntityView
 {
 
-	private static Logger LOG = Logger.getLogger(ComponentAttributeView.class.getName());
+	private static final Logger LOG = Logger.getLogger(ComponentAttributeView.class.getName());
 	public static final String TYPE_DESCRIPTION_FIELD = "typeDescription";
 
 	private String type;
@@ -171,26 +171,29 @@ public class ComponentAttributeView
 		if (attribute != null) {
 			view.setUpdateDts(attribute.getUpdateDts());
 			view.setActiveStatus(attribute.getActiveStatus());
+
+			if (attribute.getPreferredUnit() != null) {
+				String preferredUnit = attribute.getPreferredUnit();
+				String baseUnit = type.getAttributeUnit();
+				if (preferredUnit != null && baseUnit != null) {
+					try {
+						// get the conversion factor between the baseUnit and the preferredUnit
+						Unit tempUnit = Unit.valueOf(preferredUnit);
+						Unit unit = Unit.valueOf(baseUnit);
+						@SuppressWarnings("unchecked")
+						Amount factor = Amount.valueOf(1, unit).to(tempUnit);
+						AttributeUnitView unitView = new AttributeUnitView(attribute.getPreferredUnit(), factor.getEstimatedValue());
+						view.setPreferredUnit(unitView);
+					} catch (IllegalArgumentException e) {
+						LOG.log(Level.WARNING, "Unable to process unit conversion factors for: {0} and {1}\n{2}", new Object[]{preferredUnit, baseUnit, e.toString()});
+					}
+				}
+			}
+
 		} else {
 			view.setUpdateDts(code.getUpdateDts());
 			view.setActiveStatus(code.getActiveStatus());
 		}
-
-		String preferredUnit = attribute.getPreferredUnit();
-		String baseUnit = type.getAttributeUnit();
-		if (preferredUnit != null && baseUnit != null) {
-			try {
-				// get the conversion factor between the baseUnit and the preferredUnit
-				Unit tempUnit = Unit.valueOf(preferredUnit);
-				Unit unit = Unit.valueOf(baseUnit);
-				Amount<?> factor = Amount.valueOf(1, unit).to(tempUnit);
-				AttributeUnitView unitView = new AttributeUnitView(attribute.getPreferredUnit(), factor.getEstimatedValue());
-				view.setPreferredUnit(unitView);
-			} catch (IllegalArgumentException e) {
-				LOG.log(Level.WARNING, "Unable to process unit conversion factors for: {0} and {1}\n{2}", new Object[]{preferredUnit, baseUnit, e.toString()});
-			}
-		}
-		
 
 		return view;
 	}
