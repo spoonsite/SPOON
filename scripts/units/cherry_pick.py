@@ -36,7 +36,8 @@ def cherrypick(dups, attributes):
                     reqRestrictions[attribute['description']] = attribute['requiredRestrictions']
 
     # print(typecodes)
-    for desc in typecodes:
+    not_skipped = filter(lambda x: x not in SKIPPED_ATTR, typecodes.keys())
+    for desc in not_skipped:
         acceptedInput = False
         while not acceptedInput:
             deleteList = []
@@ -49,6 +50,8 @@ def cherrypick(dups, attributes):
             # get information for deletelist
             merging = input("Which attributes do you want to merge? (ex: 1,2,4) '0' to exit ")
             if merging == '0':
+                with open(SKIPPED_ATTR_FILENAME, 'a') as fout:
+                    fout.write(desc + '\n')
                 break
             currentmerging = merging.split(",")
             print(currentmerging)
@@ -58,11 +61,16 @@ def cherrypick(dups, attributes):
                 except:
                     pass
             print(f"Parts to be deleted: {deleteList}")
+            user_input = input(f"Append to list? [yN]").lower()
+            if 'y' in user_input:
+                new_list = input(f"Enter comma separated list of Type Codes: ")
+                deleteList += [code.strip() for code in new_list.split(',')]
+                print(f"Parts to be deleted: {deleteList}")
 
             # get information for new attributetypesave
             description = input("Enter a description: ")
             attributeType = input("Enter an attributeType: ")
-            attributeType.upper()
+            attributeType = attributeType.upper()
             detailedDescription = input("Enter a detailed description: ")
             attributeUnit = input("Enter an attribute unit: ")
             checkUnit(attributeUnit)
@@ -80,7 +88,7 @@ def cherrypick(dups, attributes):
                         "description":f"{description}",
                         "attributeType":f"{attributeType}",
                         "defaultAttributeCode":"",
-                        "detailedDescription":f"<p>{detailedDescription}</p>",
+                        "detailedDescription":f"{detailedDescription}",
                         "attributeValueType":"NUMBER",
                         "attributeUnit":f"{attributeUnit}",
                         "attributeUnitList": attributeUnitList,
@@ -122,6 +130,8 @@ def usePickledActions():
 def main():
     global CHERRY_PICKLE
     global CHERRY_MERGED_UNITS
+    global SKIPPED_ATTR_FILENAME
+    global SKIPPED_ATTR
 
     banner = """
   ___  _   _  ____  ____  ____  _  _    ____  ____  ___  _  _    __  __  ____  ____   ___  ____ 
@@ -145,6 +155,16 @@ def main():
 
     # Use the pickled actions
     usePickledActions()
+
+    # Load previously skipped attribute groupings
+    SKIPPED_ATTR_FILENAME = 'skipped_cherrypick_attributes.txt'
+    SKIPPED_ATTR = []
+    try:
+        with open(SKIPPED_ATTR_FILENAME, 'r') as fin:
+            for line in fin:
+                SKIPPED_ATTR.append(line.strip())
+    except:
+        print(f'No {SKIPPED_ATTR_FILENAME} file')
 
     print(f'fetching all attributes from {ENDPOINT}...')
     print()
