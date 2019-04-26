@@ -74,8 +74,11 @@ public class MongoQueryUtil
 		for (String fieldName : exampleMap.keySet()) {
 			if (queryRequest.getFieldOptions().containsKey(fieldName)) {
 				specialFieldHandleMap.put(fieldName, exampleMap.get(fieldName));
-				exampleMap.remove(fieldName);
 			}
+		}
+		//remove all fields with special handling
+		for (String fieldName : specialFieldHandleMap.keySet()) {
+			exampleMap.remove(fieldName);
 		}
 
 		Bson query = new BasicDBObject(exampleMap);
