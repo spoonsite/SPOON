@@ -1469,12 +1469,23 @@
 					{
 						xtype: 'toolbar',
 						dock: 'bottom',
+						overflowHandler:'menu',
 						items: [
+							
+
 							Ext.create('Ext.PagingToolbar', {
 								store: searchResultsStore,
 								displayInfo: true,
 								displayMsg: '{0} - {1} of {2}',
 								emptyMsg: "No entries to display",
+								listeners:{
+									clapse:function(){
+										console.log("This is an event listener that detected that there was a clapse in the toolbar")
+									},
+									expand:function(){
+										console.log("This is an event listener that detected that there was an expansion.");
+									}
+								},
 								items: [
 									{
 										xtype: 'tbseparator'
@@ -1501,10 +1512,12 @@
 											exportFormIds.innerHTML = ids;
 											exportForm.submit();
 										}
-									}
+									},
+									
 								],
 								listeners: {
 									change: function (me) {
+										console.log(".")
 										Ext.getCmp('resultsDisplayPanel').body.scrollTo('top', 0);
 									}
 								}
@@ -1513,10 +1526,38 @@
 								xtype:"tbspacer",
 								flex:1
 							},
+							// {
+							// 	xtype: 'button',
+							// 	itemId: 'disclaimerButton',
+							// 	hidden:true,
+							// 	html:'<span style="font-style:italic;">Disclaimer</span>',
+							// 	style:{
+							// 		'text-align':'right',
+							// 		'margin-right':'1em'
+							// 	},
+							// 	listeners:{
+							// 		click:function(){
+							// 			Ext.Msg.alert('SPOON Disclaimer', 
+							// 			'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i>' + 
+							// 			CoreService.brandingservice.branding.disclaimerMessage +
+							// 			'<br><br>',
+							// 			 Ext.emptyFn);
+							// 		},
+							// 		beforeRender:function(){
+							// 			CoreService.brandingservice.getCurrentBranding().then(function(branding){
+							// 				if(branding.disclaimerMessage){
+							// 					Ext.getCmp("searchResultsPanel").queryById('disclaimerButton').setVisible(true);
+							// 				}
+							// 			});
+							// 		}
+							// 	}								
+							// },
+							
 							{
 								xtype: 'button',
 								itemId: 'disclaimerButton',
-								hidden:true,
+								// hidden:true,
+								hidden: false,
 								html:'<span style="font-style:italic;">Disclaimer</span>',
 								style:{
 									'text-align':'right',
@@ -1528,7 +1569,7 @@
 										'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i>' + 
 										CoreService.brandingservice.branding.disclaimerMessage +
 										'<br><br>',
-										 Ext.emptyFn);
+										Ext.emptyFn);
 									},
 									beforeRender:function(){
 										CoreService.brandingservice.getCurrentBranding().then(function(branding){
@@ -1539,7 +1580,14 @@
 									}
 								}								
 							}
-						]
+
+						],
+						listeners:
+						{
+							change:function(){
+								console.log("*")
+							}
+						}
 					}
 				],
 				items: [
