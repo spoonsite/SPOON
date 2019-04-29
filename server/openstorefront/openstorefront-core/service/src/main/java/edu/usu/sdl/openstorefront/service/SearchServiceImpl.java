@@ -173,14 +173,28 @@ public class SearchServiceImpl
 
 	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions){
 		
-		//clear users cache
-		
 		String username = SecurityUtil.getCurrentUserName();
 
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
 		searchOptionsExample.setUsername(username);
-		SearchOptions existing = searchOptionsExample.findProxy();                   
+		SearchOptions existing = searchOptionsExample.findProxy();
+
+		// If the search options changed clear the cache
+		if(existing!=searchOptions){
+			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+			if(userSearchElementResult!=null){
+				@SuppressWarnings("unchecked")
+				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+				if(listOfKeys != null){
+					for(String key : listOfKeys){
+						OSFCacheManager.getSearchCache().remove(key);
+					}
+				}
+				Element afterDeletedKeys = new Element(username, null);
+				OSFCacheManager.getUserSearchCache().put(afterDeletedKeys);
+			}
+		}
 		
 		if (existing != null) {
 						searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
@@ -311,12 +325,20 @@ public class SearchServiceImpl
 
 		AdvanceSearchResult searchResult = new AdvanceSearchResult();
 
-		//each user may get different results depending on security roles
-		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
-			Element element = OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
-			if (element != null) {
-				searchResult = (AdvanceSearchResult) element.getObjectValue();
-				return searchResult;
+		//getting cached result
+		String username = SecurityUtil.getCurrentUserName();
+		String key = searchModel.getUserSessionKey() + searchModel.searchKey();
+		Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+
+		if(userSearchElementResult!=null){
+			@SuppressWarnings("unchecked")
+			List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+			if(listOfKeys.contains(key)){
+				Element cachedSearchResult = OSFCacheManager.getSearchCache().get(key);
+				if(cachedSearchResult!=null){
+					searchResult = (AdvanceSearchResult) cachedSearchResult.getObjectValue();
+					return searchResult;
+				}
 			}
 		}
 
@@ -534,33 +556,39 @@ public class SearchServiceImpl
 		}
 		searchResult.setValidationResult(validationResultMain);
 
+		// Adding searchResult to the search caches
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
-			String username = SecurityUtil.getCurrentUserName();
-			String key = searchModel.getUserSessionKey() + searchModel.searchKey();
-			// Element element = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
-			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+
+			username = SecurityUtil.getCurrentUserName();
+			key = searchModel.getUserSessionKey() + searchModel.searchKey();
+			userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+
 			if(userSearchElementResult!=null){
-				// append to list and add to search cache
-				if(userSearchElementResult.getObjectValue()!=null){
-					List<String> listOfkeys = (List<String>) userSearchElementResult.getObjectValue();
-					if(listOfkeys.contains(key)){
-						//search through searchcache to get search
-					} else {
-						// add to list and add to searchcache
-					}
-				} 
-				else {
-					//make new list and add elements to it
-				}
-			}
+
+				@SuppressWarnings("unchecked")
+				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+				listOfKeys.add(key);
+
+				Element searchElement = new Element(key, searchResult);
+				OSFCacheManager.getSearchCache().put(searchElement);
+
+				Element userSearchElement = new Element(username, listOfKeys);
+				OSFCacheManager.getUserSearchCache().put(userSearchElement);
+			} 
 			else {
+
+				String newKey = searchModel.getUserSessionKey() + searchModel.searchKey();
 				//add username in cache and create list and put that in as key
-				//add to search cache
+				List<String> newListOfKeys = new ArrayList<String>();
+				newListOfKeys.add(newKey);
+
+				Element newUserSearchElement = new Element(username, newListOfKeys);
+				OSFCacheManager.getUserSearchCache().put(newUserSearchElement);
+				
+				//add result to search cache
+				Element searchElement = new Element(newKey, searchResult);
+				OSFCacheManager.getSearchCache().put(searchElement);
 			}
-			Element userSearchElement = new Element(username, searchModel.getUserSessionKey() + searchModel.searchKey());
-			Element searchElement = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
-			OSFCacheManager.getUserSearchCache().put(userSearchElement);
-			OSFCacheManager.getSearchCache().put(searchElement);
 		}
 		return searchResult;
 	}

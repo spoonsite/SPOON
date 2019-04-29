@@ -135,25 +135,18 @@ Ext.define('OSF.landing.DefaultSearch', {
 					};
 				}
 
-				var username = "";
 				Ext.Ajax.request({
-					url: 'api/v1/resource/userprofiles/currentuser',
-					success: function(response, opts){
-						username = Ext.decode(response.responseText).username;
-						Ext.Ajax.request({
-							url: "api/v1/resource/searchoptions/user/" + username,
-							jsonData: searchOptions,
-							method: 'PUT',
-							success: function(response, opt) {
-								CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-		
-								window.location.href = 'searchResults.jsp';
-							},
-							failure: function(response, opt) {
-								console.log(response);
-								Ext.toast('Failed to apply the search options.', '', 'tr');
-							}
-						});
+					url: "api/v1/resource/searchoptions/user",
+					jsonData: searchOptions,
+					method: 'PUT',
+					success: function(response, opt) {
+						CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+
+						window.location.href = 'searchResults.jsp';
+					},
+					failure: function(response, opt) {
+						console.log(response);
+						Ext.toast('Failed to apply the search options.', '', 'tr');
 					}
 				});
 				
