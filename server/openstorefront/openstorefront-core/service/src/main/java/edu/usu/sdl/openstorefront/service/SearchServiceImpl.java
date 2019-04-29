@@ -333,7 +333,7 @@ public class SearchServiceImpl
 		if(userSearchElementResult!=null){
 			@SuppressWarnings("unchecked")
 			List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
-			if(listOfKeys.contains(key)){
+			if(listOfKeys != null && listOfKeys.contains(key)){
 				Element cachedSearchResult = OSFCacheManager.getSearchCache().get(key);
 				if(cachedSearchResult!=null){
 					searchResult = (AdvanceSearchResult) cachedSearchResult.getObjectValue();
@@ -567,8 +567,10 @@ public class SearchServiceImpl
 
 				@SuppressWarnings("unchecked")
 				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+				if(listOfKeys == null){
+					listOfKeys = new ArrayList<String>();
+				}
 				listOfKeys.add(key);
-
 				Element searchElement = new Element(key, searchResult);
 				OSFCacheManager.getSearchCache().put(searchElement);
 
