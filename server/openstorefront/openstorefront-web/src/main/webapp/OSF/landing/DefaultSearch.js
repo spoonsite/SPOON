@@ -177,13 +177,6 @@ Ext.define('OSF.landing.DefaultSearch', {
 								itemsSelected += 1;
 							}
 						});
-
-						// if (itemsSelected > 0) {
-						// 	this.setText('Entry Types (' + itemsSelected + ' selected)');
-						// }
-						// else {
-						// 	this.setText('Entry Types (All)');
-						// }
 					},
 					setItemsSelected: function (treeStore) {
 
@@ -211,6 +204,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					},
 					menu: {
 						width: 400,
+						itemId: 'searchOptionMenu',
 						listeners: {
 							beforehide: function () {
 								return this.up().canCloseMenu;

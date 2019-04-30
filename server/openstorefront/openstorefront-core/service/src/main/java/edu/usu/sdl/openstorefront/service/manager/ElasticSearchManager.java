@@ -305,7 +305,11 @@ public class ElasticSearchManager
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
-		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
+		// look for user search options if none user global
+		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
+		if(searchOptions==null){
+			searchOptions = service.getSearchService().getGlobalSearchOptions();
+		}
 
 		if(searchOptions.areAllOptionsOff()){
 				IndexSearchResult blankIndexSearchResult = new IndexSearchResult();

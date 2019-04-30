@@ -175,13 +175,10 @@ public class SearchServiceImpl
 		
 		String username = SecurityUtil.getCurrentUserName();
 
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
-		searchOptionsExample.setUsername(username);
-		SearchOptions existing = searchOptionsExample.findProxy();
+		SearchOptions existing = getUserSearchOptions();
 
 		// If the search options changed clear the cache
-		if(existing!=searchOptions){
+		if(!existing.compare(searchOptions)){
 			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
 			if(userSearchElementResult!=null){
 				@SuppressWarnings("unchecked")
@@ -196,19 +193,9 @@ public class SearchServiceImpl
 			}
 		}
 		
-		if (existing != null) {
-						searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-						searchOptions.setGlobalFlag(true);
-						existing.updateFields(searchOptions);
-						existing.setUsername(username);
-						persistenceService.persist(existing);
-		} else {
-						searchOptions.setSearchOptionsId(persistenceService.generateId());
-						searchOptions.setGlobalFlag(Boolean.FALSE);
-						searchOptions.setDefaultSearchOptions();
-						searchOptions.setUsername(username);
-						existing = persistenceService.persist(searchOptions);
-		}
+		existing.updateFields(searchOptions);
+		persistenceService.persist(existing);
+
 		return existing;
 }
 

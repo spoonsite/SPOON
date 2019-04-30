@@ -23,6 +23,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
  *
  * @author bmichaelis
  */
+
 @APIDescription("Search options are set by the application administrator.")
 public class SearchOptions
 		extends StandardEntity<SearchOptions>
@@ -95,6 +96,20 @@ public class SearchOptions
 			!canUseAttributesInSearch &&
 			!canUseTagsInSearch
 		);
+	}
+
+	public Boolean compare(SearchOptions incoming){
+		Boolean isSame = false;
+		if(
+			incoming.getCanUseAttributesInSearch() == getCanUseAttributesInSearch() &&
+			incoming.getCanUseDescriptionInSearch() == getCanUseDescriptionInSearch() &&
+			incoming.getCanUseNameInSearch() == getCanUseNameInSearch() &&
+			incoming.getCanUseOrganizationsInSearch() == getCanUseOrganizationsInSearch() &&
+			incoming.getCanUseTagsInSearch() == getCanUseTagsInSearch()
+		){
+			isSame = true;
+		}
+		return isSame;
 	}
 
 	public Boolean getGlobalFlag()
