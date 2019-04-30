@@ -553,7 +553,8 @@ public class AttributeResource
 	
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_CREATE)
-	@APIDescription("Adds a new attribute type and deletes a list of other types")
+	@APIDescription("Adds a new attribute type and deletes a list of other types. WARNING: Any and all attributes in the " +
+	"AttributesTypesToBeDeleted object will get deleted, this does include the object attributeTypeSave object.")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/listmergeattributetypes")
 	public Response listMergeAttributeTypes(AttributeTypeListMerge attributeTypeListMerge)

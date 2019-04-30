@@ -1,0 +1,13 @@
+Accelerometer bias (incompatible)
+accuracy (incompatible)
+Adv
+altitude
+antenna area (unit that needs parsing)
+bias (incompatible)
+cost (incompatible)
+CPU speed (incompatible)
+Data rate receive (i)
+Data rate transmit (i)
+IMU Range (i)
+linear moments (look at)
+Magnometer: Number of Axes (i)
