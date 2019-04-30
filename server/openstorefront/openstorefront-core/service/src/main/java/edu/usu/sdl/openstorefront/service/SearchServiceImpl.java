@@ -177,7 +177,19 @@ public class SearchServiceImpl
 
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setUsername(username);
-		SearchOptions existing = searchOptionsExample.findProxy();  
+		SearchOptions existing = searchOptionsExample.findProxy();
+
+		if (existing != null) {
+			searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+			existing.updateFields(searchOptions);
+			persistenceService.persist(existing);
+		} else {
+			searchOptions.setSearchOptionsId(persistenceService.generateId());
+			searchOptions.setGlobalFlag(Boolean.FALSE);
+			searchOptions.setUsername(username);
+			searchOptions.setDefaultSearchOptions();
+			existing = persistenceService.persist(searchOptions);
+		}
 
 		// If the search options changed clear the cache
 		if(!existing.compare(searchOptions)){
@@ -194,9 +206,6 @@ public class SearchServiceImpl
 				OSFCacheManager.getUserSearchCache().put(afterDeletedKeys);
 			}
 		}
-
-		existing.updateFields(searchOptions);
-		persistenceService.persist(existing);
 
 		return existing;
 }
