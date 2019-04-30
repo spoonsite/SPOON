@@ -21,13 +21,13 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeValueType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import javax.measure.unit.Unit;
-
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jscience.physics.amount.Amount;
@@ -126,16 +126,17 @@ public class AttributeTypeView
 				try {
 					Unit baseUnit = Unit.valueOf(attributeType.getAttributeUnit());
 					tempUnit = Unit.valueOf(unit);
+					@SuppressWarnings("unchecked")
 					Amount<?> factor = Amount.valueOf(1, baseUnit).to(tempUnit);
-					AttributeUnitView unitView = new AttributeUnitView(unit, factor.getEstimatedValue());
+					AttributeUnitView unitView = new AttributeUnitView(unit, BigDecimal.valueOf(factor.getEstimatedValue()));
 					conversionList.add(unitView);
 				} catch (IllegalArgumentException e) {
 					LOG.warning(e.toString());
 				}
-			}	
+			}
 		}
 		String baseUnit = attributeType.getAttributeUnit();
-		conversionList.add(new AttributeUnitView(baseUnit, 1.0));
+		conversionList.add(new AttributeUnitView(baseUnit, BigDecimal.valueOf(1.0)));
 
 		attributeTypeView.setAttributeUnitList(conversionList);
 

@@ -65,6 +65,10 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 						if (required) {
 							grid.hiddenAttributes.push(attributeView);
 						} else{
+							//switch unit and preferred units
+							if (attributeView.preferredUnit && attributeView.preferredUnit.unit) {
+								attributeView.unit = attributeView.preferredUnit.unit;
+							}							
 							editable.push(attributeView);
 						}
 					}

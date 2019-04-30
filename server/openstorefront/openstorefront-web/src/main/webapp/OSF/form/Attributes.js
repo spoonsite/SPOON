@@ -68,7 +68,7 @@ Ext.define('OSF.form.Attributes', {
 						} 
 					});
 					optionalAttributes.reverse();
-					attributePanel.attributeGrid.getStore().loadData(optionalAttributes);
+					attributePanel.attributeGrid.getStore().loadRawData(optionalAttributes);
 				}
 			});
 		};
@@ -92,9 +92,15 @@ Ext.define('OSF.form.Attributes', {
 						type: 'date',
 						dateFormat: 'c'
 					},
-					{ name: 'vendorUnit', mapping: function(data) {
+					{ name: 'vendorUnitOnly', mapping: function(data) {
 						if (data.preferredUnit){
 							return data.preferredUnit.unit;
+						}
+						return null;
+					}},
+					{ name: 'vendorUnit', mapping: function(data) {
+						if (data.preferredUnit){
+							return data.preferredUnit.unit + ' (' + data.preferredUnit.convertedValue +  ')';
 						}
 						return null;
 					}}
@@ -159,7 +165,7 @@ Ext.define('OSF.form.Attributes', {
 								data.componentAttributePk = {
 									attributeType: data.attributeType,
 									attributeCode: data.attributeCode
-								};
+								};							
 								var valid = true;
 								var selectedAttributes = form.queryById('attributeTypeCB').getSelection();
 								var attributeType = selectedAttributes.data;
@@ -269,6 +275,10 @@ Ext.define('OSF.form.Attributes', {
 					],
 					// looks like a copy and paste from attributeAssignment.js
 					items: [
+						{
+							xtype: 'hidden',
+							name: 'preferredUnit'
+						},
 						{
 							xtype: 'panel',
 							layout: 'hbox',
@@ -455,7 +465,8 @@ Ext.define('OSF.form.Attributes', {
 		var actionEdit = function(record) {
 			record.set({
 				attributeType: record.get('type'),
-				attributeCode: record.get('code')				
+				attributeCode: record.get('code'),
+				preferredUnit: record.get('vendorUnitOnly')
 			});			
 			attributePanel.attributeGrid.queryById('form').loadRecord(record);			
 		};

@@ -142,7 +142,8 @@
 													}
 												}
 											},
-											attributeTypeView: record.data,											
+											attributeTypeView: record.data,	
+											showDefaultUnit: true,
 											record: record
 									});																				
 									record.formField = field;

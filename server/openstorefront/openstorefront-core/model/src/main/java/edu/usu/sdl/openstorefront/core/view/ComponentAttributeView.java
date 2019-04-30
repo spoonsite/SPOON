@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -173,19 +174,24 @@ public class ComponentAttributeView
 			view.setActiveStatus(attribute.getActiveStatus());
 
 			if (attribute.getPreferredUnit() != null) {
-				String preferredUnit = attribute.getPreferredUnit();
-				String baseUnit = type.getAttributeUnit();
-				if (preferredUnit != null && baseUnit != null) {
+				String preferredUnitUOM = attribute.getPreferredUnit();
+				String baseUnitUOM = type.getAttributeUnit();
+				if (preferredUnitUOM != null && baseUnitUOM != null) {
 					try {
 						// get the conversion factor between the baseUnit and the preferredUnit
-						Unit tempUnit = Unit.valueOf(preferredUnit);
-						Unit unit = Unit.valueOf(baseUnit);
+						Unit userUnit = Unit.valueOf(preferredUnitUOM);
+						Unit baseUnit = Unit.valueOf(baseUnitUOM);
 						@SuppressWarnings("unchecked")
-						Amount factor = Amount.valueOf(1, unit).to(tempUnit);
-						AttributeUnitView unitView = new AttributeUnitView(attribute.getPreferredUnit(), factor.getEstimatedValue());
+						Amount factor = Amount.valueOf(1, baseUnit).to(userUnit);
+						AttributeUnitView unitView = new AttributeUnitView(attribute.getPreferredUnit(), BigDecimal.valueOf(factor.getEstimatedValue()));
+
+						//Convert user unit to base (multiply)
+						BigDecimal originalValue = Convert.toBigDecimal(view.getCode());
+						unitView.setConvertedValue(originalValue.multiply(unitView.getConversionFactor()));
 						view.setPreferredUnit(unitView);
+
 					} catch (IllegalArgumentException e) {
-						LOG.log(Level.WARNING, "Unable to process unit conversion factors for: {0} and {1}\n{2}", new Object[]{preferredUnit, baseUnit, e.toString()});
+						LOG.log(Level.WARNING, "Unable to process unit conversion factors for: {0} and {1}\n{2}", new Object[]{preferredUnitUOM, baseUnitUOM, e.toString()});
 					}
 				}
 			}

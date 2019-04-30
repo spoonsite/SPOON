@@ -38,6 +38,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	required: true,
 	layout: 'hbox',	
 	showLabel: true,
+	showDefaultUnit: false,
 	
 	initComponent: function () {
 		this.callParent();
@@ -104,8 +105,13 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 			};
 		} 
 
+		var fieldLabel = attributePanel.showLabel ? attributePanel.attributeTypeView.description + requireType : '';
+		if (attributePanel.showDefaultUnit && attributePanel.attributeTypeView.attributeUnit) {			
+			fieldLabel += ' (' + attributePanel.attributeTypeView.attributeUnit + ')';
+		}
+
 		attributePanel.field = Ext.create(xtype, Ext.apply({
-				fieldLabel: attributePanel.showLabel ? attributePanel.attributeTypeView.description + requireType : '',
+				fieldLabel: fieldLabel,
 				forceSelection: forceSelection,
 				fullAttributeField: attributePanel,
 				name: attributePanel.name ? attributePanel.name : 'attributeCode',

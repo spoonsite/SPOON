@@ -119,29 +119,29 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 						Ext.Array.each(formPanel.items.items, function(field){
 							if (field.attributeType === key) {
 								var unit = typeGroupUnit[key];
-								var conversionFactor = 1;
-								if (field.attributeTypeView && field.attributeTypeView.attributeUnitList) {
-									conversionFactor = getConversionFactor(unit, field.attributeTypeView.attributeUnitList);
-								}
-								// in JS '1.0' * 1 -> 1
-								// if user created codes is disabled
-								// a value of 1 will fail where '1.0' is expected
-								if (conversionFactor !== 1) {
-									if (Array.isArray(value)) {
-										// convert list of values
-										value = value.map(function(el) {
-											if (Number(el)) {
-												return el * conversionFactor;
-											} else {
-												return el;
-											}
-										});
-									} else if (Number(value)) {
-										// convert single value
-										// *** check user created codes ***
-										value = value * conversionFactor;
-									}
-								}
+//								var conversionFactor = 1;
+//								if (field.attributeTypeView && field.attributeTypeView.attributeUnitList) {
+//									conversionFactor = getConversionFactor(unit, field.attributeTypeView.attributeUnitList);
+//								}
+//								// in JS '1.0' * 1 -> 1
+//								// if user created codes is disabled
+//								// a value of 1 will fail where '1.0' is expected
+//								if (conversionFactor !== 1) {
+//									if (Array.isArray(value)) {
+//										// convert list of values
+//										value = value.map(function(el) {
+//											if (Number(el)) {
+//												return el * conversionFactor;
+//											} else {
+//												return el;
+//											}
+//										});
+//									} else if (Number(value)) {
+//										// convert single value
+//										// *** check user created codes ***
+//										value = value * conversionFactor;
+//									}
+//								}
 								field.setValue(value);
 								field.setUnit(unit);
 							}
@@ -222,11 +222,11 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 						// in JS '1.0' * 1 -> 1
 						// if user created codes is disabled
 						// a value of 1 will fail where '1.0' is expected
-						var code = field.getConversionFactor() !== 1 ? value / field.getConversionFactor() : value;
+						//var code = field.getConversionFactor() !== 1 ? value / field.getConversionFactor() : value;
 						codeData = {
 							componentAttributePk: {
 									attributeType: field.attributeTypeView.attributeType,
-									attributeCode: code
+									attributeCode: value
 								},
 								preferredUnit: field.getUnit()
 							};

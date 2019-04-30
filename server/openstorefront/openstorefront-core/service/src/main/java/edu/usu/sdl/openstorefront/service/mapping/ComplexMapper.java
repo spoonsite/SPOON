@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.service.mapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -42,12 +43,17 @@ import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
 import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.unit.Unit;
+import org.apache.commons.lang3.StringUtils;
+import org.jscience.physics.amount.Amount;
 
 /**
  * This maps complex object back into entities; use for contacts, media etc.
@@ -152,6 +158,26 @@ public class ComplexMapper
 			List<ComponentAttribute> componentAttributes = objectMapper.readValue(userSubmissionField.getRawValue(), new TypeReference<List<ComponentAttribute>>()
 			{
 			});
+
+			//Handle conversions (userUnit to base unit)
+			for (ComponentAttribute attribute : componentAttributes) {
+				AttributeType type = ServiceProxyFactory.getServiceProxy().getAttributeService().findType(attribute.getComponentAttributePk().getAttributeType());
+				if (StringUtils.isNotBlank(type.getAttributeUnit())
+						&& StringUtils.isNotBlank(attribute.getPreferredUnit())
+						&& !type.getAttributeUnit().equals(attribute.getPreferredUnit())) {
+					Unit userUnit = Unit.valueOf(attribute.getPreferredUnit());
+					Unit baseUnit = Unit.valueOf(type.getAttributeUnit());
+					@SuppressWarnings("unchecked")
+					Amount factor = Amount.valueOf(1, baseUnit).to(userUnit);
+
+					BigDecimal originalValue = Convert.toBigDecimal(attribute.getComponentAttributePk().getAttributeCode());
+					BigDecimal conversionFactor = BigDecimal.valueOf(factor.getEstimatedValue());
+
+					BigDecimal newValue = originalValue.divide(conversionFactor, MathContext.DECIMAL64);
+					attribute.getComponentAttributePk().setAttributeCode(newValue.stripTrailingZeros().toPlainString());
+				}
+			}
+
 			componentAll.getAttributes().addAll(componentAttributes);
 		}
 	}
@@ -416,7 +442,7 @@ public class ComplexMapper
 		// the preferredUnit gets set to a AttributeUnitView in rawValue
 		// the preferredUnit should be a string not an object in rawValue
 		// the front end will need to handle both cases (object and string) of preferredUnit
-		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(reducedList)); // can't go backwards preferredUnit is a typeof String
+		String value = objectMapper.writeValueAsString(convertBaseUnitToUserUnits(ComponentAttributeView.toViewList(reducedList))); // can't go backwards preferredUnit is a typeof String
 		userSubmissionField.setRawValue(value);
 
 	}
@@ -433,7 +459,7 @@ public class ComplexMapper
 			}
 		}
 
-		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(reducedList));
+		String value = objectMapper.writeValueAsString(convertBaseUnitToUserUnits(ComponentAttributeView.toViewList(reducedList)));
 		userSubmissionField.setRawValue(value);
 	}
 
@@ -444,9 +470,22 @@ public class ComplexMapper
 
 	private void mapAttributes(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
 	{
-		//This grab all?; Note this is currently used
-		String value = objectMapper.writeValueAsString(ComponentAttributeView.toViewList(componentFormSet.getPrimary().getAttributes()));
+		//This grabs all?; Note this is NOT currently used; if at some point it is used adjusted to pull only what is needed
+		String value = objectMapper.writeValueAsString(convertBaseUnitToUserUnits(ComponentAttributeView.toViewList(componentFormSet.getPrimary().getAttributes())));
 		userSubmissionField.setRawValue(value);
+	}
+
+	private List<ComponentAttributeView> convertBaseUnitToUserUnits(List<ComponentAttributeView> attributeViews)
+	{
+		//Handle conversions (base unit to userUnit)
+		//just need shift the converted unit to code field
+		for (ComponentAttributeView view : attributeViews) {
+			if (view.getPreferredUnit() != null) {
+				view.setCode(view.getPreferredUnit().getConvertedValue().stripTrailingZeros().toPlainString());
+				view.setCodeDescription(view.getPreferredUnit().getConvertedValue().stripTrailingZeros().toPlainString());
+			}
+		}
+		return attributeViews;
 	}
 
 	private void mapContacts(UserSubmissionField userSubmissionField, ComponentFormSet componentFormSet) throws JsonProcessingException
@@ -531,7 +570,7 @@ public class ComplexMapper
 	{
 		List<ComponentTag> existTags = componentFormSet.getPrimary().getTags();
 
-		//avoid change the original
+		//avoid changing the original
 		List<ComponentTag> copyTags = new ArrayList<>();
 		for (ComponentTag tag : existTags) {
 			ComponentTag newTag = new ComponentTag();
