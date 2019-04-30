@@ -307,13 +307,13 @@ public class ElasticSearchManager
 	{
 		// look for user search options if none user global
 		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
-		if(searchOptions==null){
+		if (searchOptions == null) {
 			searchOptions = service.getSearchService().getGlobalSearchOptions();
 		}
 
-		if(searchOptions.areAllOptionsOff()){
-				IndexSearchResult blankIndexSearchResult = new IndexSearchResult();
-				return blankIndexSearchResult;
+		if (searchOptions.areAllOptionsOff()) {
+			IndexSearchResult blankIndexSearchResult = new IndexSearchResult();
+			return blankIndexSearchResult;
 		}
 
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
@@ -440,7 +440,7 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));
 			}
 
-			if(searchOptions.getCanUseTagsInSearch()) {
+			if (searchOptions.getCanUseTagsInSearch()) {
 				// Custom query for Tags
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
@@ -453,7 +453,7 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
 			}
 
-			if(searchOptions.getCanUseAttributesInSearch()) {
+			if (searchOptions.getCanUseAttributesInSearch()) {
 				// Custom query for Attributes
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));

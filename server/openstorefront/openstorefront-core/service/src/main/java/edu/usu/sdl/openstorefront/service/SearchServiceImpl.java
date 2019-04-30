@@ -106,15 +106,16 @@ public class SearchServiceImpl
 		list.addAll(components);
 		return list;
 	}
-	
+
 	@Override
-	public SearchOptions getGlobalSearchOptions(){
+	public SearchOptions getGlobalSearchOptions()
+	{
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		SearchOptions searchOptions = searchOptionsExample.find();
-		
-		if(searchOptions == null){
+
+		if (searchOptions == null) {
 			// Return the default.
 			searchOptions = new SearchOptions();
 			searchOptions.setUsername(null);
@@ -123,43 +124,45 @@ public class SearchServiceImpl
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
 			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
 			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
-		}		
-		return searchOptions;		
+		}
+		return searchOptions;
 	}
 
-	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions){
-		
+	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions)
+	{
+
 		OSFCacheManager.getSearchCache().removeAll();
 
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-		SearchOptions existing = searchOptionsExample.findProxy();                   
-		
+		SearchOptions existing = searchOptionsExample.findProxy();
+
 		if (existing != null) {
-						searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-						existing.updateFields(searchOptions);
-						persistenceService.persist(existing);
+			searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+			existing.updateFields(searchOptions);
+			persistenceService.persist(existing);
 		} else {
-						searchOptions.setSearchOptionsId(persistenceService.generateId());
-						searchOptions.setGlobalFlag(Boolean.TRUE);
-						searchOptions.setUsername(null);
-						searchOptions.setDefaultSearchOptions();
-						existing = persistenceService.persist(searchOptions);
+			searchOptions.setSearchOptionsId(persistenceService.generateId());
+			searchOptions.setGlobalFlag(Boolean.TRUE);
+			searchOptions.setUsername(null);
+			searchOptions.setDefaultSearchOptions();
+			existing = persistenceService.persist(searchOptions);
 		}
 		return existing;
 	}
 
-	public SearchOptions getUserSearchOptions(){
+	public SearchOptions getUserSearchOptions()
+	{
 
 		String username = SecurityUtil.getCurrentUserName();
-		
+
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		searchOptionsExample.setUsername(username);
 		SearchOptions searchOptions = searchOptionsExample.find();
-		
-		if(searchOptions == null){
+
+		if (searchOptions == null) {
 			// Return the default.
 			searchOptions = new SearchOptions();
 			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
@@ -167,12 +170,13 @@ public class SearchServiceImpl
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
 			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
 			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
-		}		
-		return searchOptions;		
+		}
+		return searchOptions;
 	}
 
-	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions){
-		
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions)
+	{
+
 		String username = SecurityUtil.getCurrentUserName();
 
 		SearchOptions searchOptionsExample = new SearchOptions();
@@ -192,13 +196,13 @@ public class SearchServiceImpl
 		}
 
 		// If the search options changed clear the cache
-		if(!existing.compare(searchOptions)){
+		if (!existing.compare(searchOptions)) {
 			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
-			if(userSearchElementResult!=null){
+			if (userSearchElementResult != null) {
 				@SuppressWarnings("unchecked")
 				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
-				if(listOfKeys != null){
-					for(String key : listOfKeys){
+				if (listOfKeys != null) {
+					for (String key : listOfKeys) {
 						OSFCacheManager.getSearchCache().remove(key);
 					}
 				}
@@ -208,8 +212,7 @@ public class SearchServiceImpl
 		}
 
 		return existing;
-}
-
+	}
 
 	@Override
 	public ComponentSearchWrapper getSearchItems(SearchQuery query, FilterQueryParams filter)
@@ -328,12 +331,12 @@ public class SearchServiceImpl
 		String key = searchModel.getUserSessionKey() + searchModel.searchKey();
 		Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
 
-		if(userSearchElementResult!=null){
+		if (userSearchElementResult != null) {
 			@SuppressWarnings("unchecked")
 			List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
-			if(listOfKeys != null && listOfKeys.contains(key)){
+			if (listOfKeys != null && listOfKeys.contains(key)) {
 				Element cachedSearchResult = OSFCacheManager.getSearchCache().get(key);
-				if(cachedSearchResult!=null){
+				if (cachedSearchResult != null) {
 					searchResult = (AdvanceSearchResult) cachedSearchResult.getObjectValue();
 					return searchResult;
 				}
@@ -495,7 +498,7 @@ public class SearchServiceImpl
 				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
 				searchResult.getMeta().getResultTagStats().addAll(tagStats);
 				searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
-				
+
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 
 				//then sort/window
@@ -561,11 +564,11 @@ public class SearchServiceImpl
 			key = searchModel.getUserSessionKey() + searchModel.searchKey();
 			userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
 
-			if(userSearchElementResult!=null){
+			if (userSearchElementResult != null) {
 
 				@SuppressWarnings("unchecked")
 				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
-				if(listOfKeys == null){
+				if (listOfKeys == null) {
 					listOfKeys = new ArrayList<String>();
 				}
 				listOfKeys.add(key);
@@ -574,8 +577,7 @@ public class SearchServiceImpl
 
 				Element userSearchElement = new Element(username, listOfKeys);
 				OSFCacheManager.getUserSearchCache().put(userSearchElement);
-			} 
-			else {
+			} else {
 
 				String newKey = searchModel.getUserSessionKey() + searchModel.searchKey();
 				//add username in cache and create list and put that in as key
@@ -584,7 +586,7 @@ public class SearchServiceImpl
 
 				Element newUserSearchElement = new Element(username, newListOfKeys);
 				OSFCacheManager.getUserSearchCache().put(newUserSearchElement);
-				
+
 				//add result to search cache
 				Element searchElement = new Element(newKey, searchResult);
 				OSFCacheManager.getSearchCache().put(searchElement);

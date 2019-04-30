@@ -23,11 +23,11 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
  *
  * @author bmichaelis
  */
-
 @APIDescription("Search options are set by the application administrator.")
 public class SearchOptions
 		extends StandardEntity<SearchOptions>
 {
+
 	private Boolean globalFlag;
 
 	@PK(generated = true)
@@ -55,7 +55,7 @@ public class SearchOptions
 	@APIDescription("Flag for using Component Attributes in searches")
 	@ConsumeField
 	private Boolean canUseAttributesInSearch;
-	
+
 	public SearchOptions()
 	{
 
@@ -89,24 +89,21 @@ public class SearchOptions
 
 	public Boolean areAllOptionsOff()
 	{
-		return(
-			!canUseOrganizationsInSearch && 
-			!canUseNameInSearch && 
-			!canUseDescriptionInSearch && 
-			!canUseAttributesInSearch &&
-			!canUseTagsInSearch
-		);
+		return (!canUseOrganizationsInSearch
+				&& !canUseNameInSearch
+				&& !canUseDescriptionInSearch
+				&& !canUseAttributesInSearch
+				&& !canUseTagsInSearch);
 	}
 
-	public Boolean compare(SearchOptions incoming){
+	public Boolean compare(SearchOptions incoming)
+	{
 		Boolean isSame = false;
-		if(
-			incoming.getCanUseAttributesInSearch() == getCanUseAttributesInSearch() &&
-			incoming.getCanUseDescriptionInSearch() == getCanUseDescriptionInSearch() &&
-			incoming.getCanUseNameInSearch() == getCanUseNameInSearch() &&
-			incoming.getCanUseOrganizationsInSearch() == getCanUseOrganizationsInSearch() &&
-			incoming.getCanUseTagsInSearch() == getCanUseTagsInSearch()
-		){
+		if (incoming.getCanUseAttributesInSearch() == getCanUseAttributesInSearch()
+				&& incoming.getCanUseDescriptionInSearch() == getCanUseDescriptionInSearch()
+				&& incoming.getCanUseNameInSearch() == getCanUseNameInSearch()
+				&& incoming.getCanUseOrganizationsInSearch() == getCanUseOrganizationsInSearch()
+				&& incoming.getCanUseTagsInSearch() == getCanUseTagsInSearch()) {
 			isSame = true;
 		}
 		return isSame;
@@ -141,7 +138,7 @@ public class SearchOptions
 	{
 		this.username = username;
 	}
-	
+
 	public Boolean getCanUseOrganizationsInSearch()
 	{
 		return canUseOrganizationsInSearch;
@@ -190,5 +187,5 @@ public class SearchOptions
 	public void setCanUseAttributesInSearch(Boolean canUseAttributesInSearch)
 	{
 		this.canUseAttributesInSearch = canUseAttributesInSearch;
-	}	
+	}
 }
