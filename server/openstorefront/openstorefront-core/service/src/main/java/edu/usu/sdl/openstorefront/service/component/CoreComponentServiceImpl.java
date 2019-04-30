@@ -113,7 +113,6 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
-import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -127,7 +126,6 @@ import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -146,6 +144,7 @@ import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
 import net.sf.ehcache.Element;
+import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -1147,8 +1146,16 @@ public class CoreComponentServiceImpl
 		Objects.requireNonNull(componentId, "Component Id is required.");
 		LOG.log(Level.INFO, MessageFormat.format("Attempting to Removing component: {0}", componentId));
 
-		Collection<Class<?>> entityClasses = OrientDBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
-		for (Class entityClass : entityClasses) {
+		ResolverUtil resolverUtil = new ResolverUtil();
+		try {
+			resolverUtil.find(new ResolverUtil.IsA(BaseComponent.class), OpenStorefrontConstant.ENTITY_PACKAGE);
+		} catch (Exception e) {
+			LOG.log(Level.WARNING, "Unable resolve all BaseComponent classes; may have partial results.");
+		}
+
+		for (Object entityClassObject : resolverUtil.getClasses()) {
+			Class entityClass = (Class) entityClassObject;
+
 			if (ReflectionUtil.BASECOMPONENT_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubClass(ReflectionUtil.BASECOMPONENT_ENTITY, entityClass)) {
 					if (option.getIgnoreClasses().contains(entityClass.getSimpleName()) == false) {

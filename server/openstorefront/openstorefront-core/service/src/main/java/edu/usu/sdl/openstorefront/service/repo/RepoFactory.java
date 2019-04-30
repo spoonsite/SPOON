@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.service.repo.api.AttributeRepo;
 import edu.usu.sdl.openstorefront.service.repo.api.ComponentRepo;
 import edu.usu.sdl.openstorefront.service.repo.api.EvaluationRepo;
+import edu.usu.sdl.openstorefront.service.repo.api.MediaFileRepo;
 import edu.usu.sdl.openstorefront.service.repo.api.NotificationRepo;
 import edu.usu.sdl.openstorefront.service.repo.api.OrganizationRepo;
 import edu.usu.sdl.openstorefront.service.repo.api.StandardEntityRepo;
@@ -124,6 +125,17 @@ public class RepoFactory
 			evaluationRepo = new EvaluationOrientRepoImpl();
 		}
 		return evaluationRepo;
+	}
+
+	public MediaFileRepo getMediaFileRepo()
+	{
+		MediaFileRepo mediaFileRepo;
+		if (useMongo()) {
+			mediaFileRepo = new MediaFileMongoRepoImpl();
+		} else {
+			mediaFileRepo = new MediaFileOrientRepoImpl();
+		}
+		return mediaFileRepo;
 	}
 
 }

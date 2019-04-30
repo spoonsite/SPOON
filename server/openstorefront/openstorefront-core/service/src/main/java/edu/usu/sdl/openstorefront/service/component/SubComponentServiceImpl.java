@@ -861,6 +861,7 @@ public class SubComponentServiceImpl
 
 		Path path = Paths.get(type.getPath() + "/" + media.getFileName());
 		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
+		componentService.getRepoFactory().getMediaFileRepo().handleMediFileSave(persistenceService, media);
 		return media;
 	}
 

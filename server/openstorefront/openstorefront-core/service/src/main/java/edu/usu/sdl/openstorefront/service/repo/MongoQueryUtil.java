@@ -20,6 +20,7 @@ import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.api.query.ComplexFieldStack;
@@ -41,6 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.bson.conversions.Bson;
 
@@ -50,6 +53,8 @@ import org.bson.conversions.Bson;
  */
 public class MongoQueryUtil
 {
+
+	private static final Logger LOG = Logger.getLogger(MongoQueryUtil.class.getName());
 
 	private static final String JAVA_CLASS = "class";
 	private static final String PARAM_NAME_SEPARATOR = ".";
@@ -236,10 +241,18 @@ public class MongoQueryUtil
 			Map<String, Object> inMap = generateFieldMap(queryRequest.getInExample(), new ComplexFieldStack(), queryRequest.getInExampleOption(), new HashMap<>());
 
 			for (String fieldName : inMap.keySet()) {
-				if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getInExampleOption().getCondition())) {
-					query = Filters.or(query, Filters.in(fieldName, (Iterable) inMap.get(fieldName)));
+				if (inMap.get(fieldName) instanceof Iterable) {
+					if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getInExampleOption().getCondition())) {
+						query = Filters.or(query, Filters.in(fieldName, (Iterable) inMap.get(fieldName)));
+					} else {
+						query = Filters.and(query, Filters.in(fieldName, (Iterable) inMap.get(fieldName)));
+					}
 				} else {
-					query = Filters.and(query, Filters.in(fieldName, (Iterable) inMap.get(fieldName)));
+					LOG.log(Level.WARNING, () -> "IN query with empty set of values; Query may not work as expect. (Set log level to finest to throw error) FieldName: " + fieldName);
+
+					if (LOG.isLoggable(Level.FINEST)) {
+						throw new OpenStorefrontRuntimeException("IN query with empty set of value", "See Trace to know what cause it");
+					}
 				}
 			}
 		}
