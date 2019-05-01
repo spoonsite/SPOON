@@ -176,33 +176,40 @@ public class SearchServiceImpl
 
 	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions)
 	{
-
+		Boolean forceCacheClear = false;
 		String username = SecurityUtil.getCurrentUserName();
 
 		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		searchOptionsExample.setUsername(username);
 		SearchOptions existing = searchOptionsExample.findProxy();
+		
+		if(existing == null){
+			forceCacheClear = true;
+			searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+			searchOptionsExample.setUsername(null);
+			existing = searchOptionsExample.findProxy();
 
-		if (existing != null) {
-			searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-			existing.updateFields(searchOptions);
-			persistenceService.persist(existing);
-		} else {
-			searchOptions.setSearchOptionsId(persistenceService.generateId());
-			searchOptions.setGlobalFlag(Boolean.FALSE);
-			searchOptions.setUsername(username);
-			searchOptions.setDefaultSearchOptions();
-			existing = persistenceService.persist(searchOptions);
+			if(existing == null){
+				existing = new SearchOptions();
+				existing.setSearchOptionsId(persistenceService.generateId());
+				existing.setDefaultSearchOptions();
+			}
 		}
 
 		// If the search options changed clear the cache
-		if (!existing.compare(searchOptions)) {
+		if (!existing.compare(searchOptions) || forceCacheClear) 
+		{
 			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
-			if (userSearchElementResult != null) {
+			if (userSearchElementResult != null)
+			{
 				@SuppressWarnings("unchecked")
 				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
-				if (listOfKeys != null) {
-					for (String key : listOfKeys) {
+
+				if (listOfKeys != null)
+				{
+					for (String key : listOfKeys)
+					{
 						OSFCacheManager.getSearchCache().remove(key);
 					}
 				}
@@ -210,6 +217,15 @@ public class SearchServiceImpl
 				OSFCacheManager.getUserSearchCache().put(afterDeletedKeys);
 			}
 		}
+
+		forceCacheClear = false;
+
+		searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		searchOptions.setUsername(username);
+		searchOptions.setGlobalFlag(Boolean.FALSE);
+		existing.updateFields(searchOptions);
+		persistenceService.persist(existing);
+
 
 		return existing;
 	}
