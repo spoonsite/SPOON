@@ -35,7 +35,7 @@ limitations under the License.
 		float: right;
 		position: relative;
 		left: -1px;
-		width: 250px;		
+		width: 275px;		
 	}
 
 	.print-left-block {
@@ -106,6 +106,9 @@ limitations under the License.
 				<tpl if="vitals && vitals.length &gt; 0">		
 					<h3>Vitals:</h3>
 					<table class="print-table" style="width: 100%">
+						<th class="details-table">Label</th>
+						<th class="details-table">Value</th>
+						<th class="details-table">Unit</th>
 						<tpl for="vitals">
 							<tr class="print-table">
 								<td class="print-table">
@@ -115,6 +118,9 @@ limitations under the License.
 								<td class="print-table alert-{highlightStyle}">
 									<tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{value}</b>
 									<tpl if="comment"><hr>Comment: {comment}</tpl>
+								</td>
+								<td class="print-table">
+									<b>{unit}</b>
 								</td>
 							</tr>
 						</tpl>					
