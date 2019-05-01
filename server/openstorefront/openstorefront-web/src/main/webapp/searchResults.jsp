@@ -1508,7 +1508,6 @@
 								],
 								listeners: {
 									change: function (me) {
-										console.log(".")
 										Ext.getCmp('resultsDisplayPanel').body.scrollTo('top', 0);
 									}
 								}
