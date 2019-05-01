@@ -220,9 +220,9 @@ public class SearchServiceImpl
 
 		forceCacheClear = false;
 
-		searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		searchOptions.setUsername(username);
-		searchOptions.setGlobalFlag(Boolean.FALSE);
+		existing.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		existing.setUsername(username);
+		existing.setGlobalFlag(Boolean.FALSE);
 		existing.updateFields(searchOptions);
 		persistenceService.persist(existing);
 
