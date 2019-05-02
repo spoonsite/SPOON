@@ -18,29 +18,35 @@
 
 /* global Ext, CoreService */
 
-Ext.define('OSF.landing.DefaultFooter', {
+Ext.define('OSF.landing.DefaultDisclaimer', {
 	extend: 'Ext.panel.Panel',
-	alias: 'widget.osf-defaultfooter',
-	
-	bodyCls: 'home-footer',	
+    alias: 'widget.osf-defaultdisclaimer',
+    
+    bodyCls: 'home-footer',
 	layout: 'center',
-	width: '100%',
+    width: '100%',
+    
 	items: [
 		{
 			xtype: 'panel',
-			itemId: 'footer',
-			bodyCls: 'home-footer-item',
+            itemId: 'disclaimer',
+            //css classes are only effective when applied here
+            bodyCls: 'home-footer home-footer-disclaimer-text',
 			width: '100%',
-			html: '<b>Test</b>'
+            html: '<b>Disclaimer</b>',
 		}
-	],
+    ],
 
 	initComponent: function () {
+
 		this.callParent();	
-		var footerPanel = this;
+        var disclaimerPanel = this;
 		
 		CoreService.brandingservice.getCurrentBranding().then(function(branding){
-			footerPanel.getComponent('footer').update(branding.landingPageFooter); 
+			disclaimerPanel.getComponent('disclaimer').update(
+                '<i>' + branding.disclaimerMessage + '</i>'
+                );	
+            disclaimerPanel.ownerCt.bodyCls = disclaimerPanel.ownerCt.bodyCls + "home-footer-disclaimer";
 		});
 		
 	}

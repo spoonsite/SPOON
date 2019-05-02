@@ -2033,11 +2033,53 @@
 							]
 						},
 						{
-							xtype: 'pagingtoolbar',
+							xtype:'toolbar',
 							dock: 'bottom',
-							store: historyGridStore,
-							displayInfo: true
-						}
+							items: [
+								{
+									xtype: 'pagingtoolbar',
+									dock: 'bottom',
+									store: historyGridStore,
+									displayInfo: true,
+									scope: this,
+									style:{
+										border:'None'
+									}
+								},
+								{
+									xtype:"tbspacer",
+									flex:1
+								},
+								{
+								xtype: 'button',
+								itemId: 'disclaimerButton',
+								hidden:true,
+								html:'<span style="font-style:italic;">Disclaimer</span>',
+								style:{
+									'text-align':'right',
+									'margin-right':'1em'
+									},
+								listeners:{
+									click:function(){
+										Ext.Msg.alert('SPOON Disclaimer', 
+										'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i>' + 
+										CoreService.brandingservice.branding.disclaimerMessage +
+										'<br><br>',
+										 Ext.emptyFn);
+									},
+									beforeRender:function(){
+										var that = this;
+										CoreService.brandingservice.getCurrentBranding().then(function(branding){
+											if(branding.disclaimerMessage){
+												that.setVisible(true);
+											}
+											});
+									}
+									}								
+								}
+							]
+						},
+						
 					],
 					viewConfig: {
 						getRowClass: function (record) {
