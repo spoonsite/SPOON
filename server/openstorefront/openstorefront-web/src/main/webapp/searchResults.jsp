@@ -394,7 +394,7 @@
 										success: function (newData) {
 											data.fullEvaluations = newData.fullEvaluations;
 											comparePanel.update(data);
-											updateComparisonBox(cb);
+											// updateComparisonBox(cb);
 
 											// Add event listeners for toggle-able containers
 											var toggleElements = document.querySelectorAll('.toggle-collapse');
@@ -444,10 +444,23 @@
 						result.bodyStyle = 'padding: 0px';
 					} else if (side === 'right') {
 						result.flex = 1;
+						result.width = '50%';
 						result.bodyStyle = 'padding: 0px';
 					}
 					return result;
 				}
+
+				var selectedComponents = [];
+				menu.items.each(function(item) {
+					if (item.componentId) {
+						var record = Ext.create('Ext.data.Model', {});
+						record.set({
+							componentId: item.componentId,
+							name: item.text
+						});
+						selectedComponents.push(record);
+					}
+				});
 
 				var compareWin = Ext.create('Ext.window.Window', {
 					title: 'Compare',
@@ -466,14 +479,15 @@
 							xtype: 'panel',
 							region: 'center',
 							itemId: 'subComparePanelItemId',
+							overflowX: 'scroll',
 							layout: {
 								type: 'hbox',
-								align: 'stretch'
+								// align: 'stretch'
 							},
 							items:[
-								comparePanelItemGenerator('compareAPanel', 'componentA','left'),
-								comparePanelItemGenerator('compareBPanel', 'componentB', 'right'),
-								comparePanelItemGenerator('compareCPanel', 'componentC', 'right')
+								// comparePanelItemGenerator('compareAPanel', 'componentA', 'left'),
+								// comparePanelItemGenerator('compareBPanel', 'componentB', 'left'),
+								// comparePanelItemGenerator('compareCPanel', 'componentC', 'left')
 							]
 						},
 						{
@@ -489,64 +503,102 @@
 					]
 				});				
 				compareWin.show();
-				
-				var compareAcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareAPanel').getComponent('cb');
-				var compareBcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareBPanel').getComponent('cb');
-				var compareCcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareCPanel').getComponent('cb');
 
-				compareAcb.setValue(null);
-				compareBcb.setValue(null);
-				compareCcb.setValue(null);
+				var panelString = 'panelNumber';
+				var compString = 'componentNumber';
 
-				var selectedComponents = [];
-				menu.items.each(function(item) {
-					if (item.componentId) {
-						console.log(item.text);
-						var record = Ext.create('Ext.data.Model', {});
-						record.set({
-							componentId: item.componentId,
-							name: item.text
-						});
-						selectedComponents.push(record);
-					}
+				for(var i = 0; i < selectedComponents.length; i++){
+					compareWin.getComponent('subComparePanelItemId').add(comparePanelItemGenerator(panelString + i.toString(), compString + i.toString(), 'left'));
+				}
+
+				var panelArray = [];
+				for(var i = 0; i < selectedComponents.length; i++){
+					var comparePanelTemp = {};
+					comparePanelTemp = compareWin.getComponent('subComparePanelItemId').getComponent(panelString + i.toString()).getComponent('cb');
+					comparePanelTemp.setValue(null);
+					panelArray.push(comparePanelTemp);
+				}
+
+
+				var records = [];
+				searchResultsStore.each(function(record) {
+					records.push(record);
 				});
+				Ext.Array.sort(records, function(a, b){
+					return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
+				});
+
+				// compareWin.getComponent('subComparePanelItemId').add(comparePanelItemGenerator('compareAPanel', 'componentA', 'left'));
+				// compareWin.getComponent('subComparePanelItemId').add(comparePanelItemGenerator('compareBPanel', 'componentB', 'left'));
+				// compareWin.getComponent('subComparePanelItemId').add(comparePanelItemGenerator('compareCPanel', 'componentC', 'left'));
+
+				// compareWin.show();
+
+
+
+
+				// var compareAcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareAPanel').getComponent('cb');
+				// var compareBcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareBPanel').getComponent('cb');
+				// var compareCcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareCPanel').getComponent('cb');
+
+				// compareAcb.setValue(null);
+				// compareBcb.setValue(null);
+				// compareCcb.setValue(null);
+
+				// var selectedComponents = [];
+				// menu.items.each(function(item) {
+				// 	if (item.componentId) {
+				// 		console.log("item.text: " + item.text);
+				// 		var record = Ext.create('Ext.data.Model', {});
+				// 		record.set({
+				// 			componentId: item.componentId,
+				// 			name: item.text
+				// 		});
+				// 		selectedComponents.push(record);
+				// 	}
+				// });
 
 
 				//if nothing selected
 				if(selectedComponents.length > 0) {
 					if (selectedComponents.length === 1) {
-						console.log(compareAcb);
 						compareAcb.getStore().loadRecords(selectedComponents);
 						compareAcb.setValue(selectedComponents[0].get('componentId'));
 
-						var records = [];
-						searchResultsStore.each(function(record) {
-							records.push(record);
-						});
-						Ext.Array.sort(records, function(a, b){
-							return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
-						});
+						// var records = [];
+						// searchResultsStore.each(function(record) {
+						// 	records.push(record);
+						// });
+						// Ext.Array.sort(records, function(a, b){
+						// 	return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
+						// });
 						compareBcb.getStore().loadRecords(records);
 
 					} else if (selectedComponents.length > 1) {
-						compareAcb.getStore().loadRecords(selectedComponents);	
-						compareBcb.getStore().loadRecords(selectedComponents);
-						compareCcb.getStore().loadRecords(selectedComponents);
+						panelArray.forEach(function(pnlLmnt){
+							pnlLmnt.getStore().loadRecords(records);
+						});
+						for(var i = 0; i < selectedComponents.length; i++){
+							panelArray[i].setValue(selectedComponents[i].get('componentId'));
+						}
+						// compareAcb.getStore().loadRecords(selectedComponents);	
+						// compareBcb.getStore().loadRecords(selectedComponents);
+						// compareCcb.getStore().loadRecords(selectedComponents);
 
-						compareAcb.setValue(selectedComponents[0].get('componentId'));
-						compareBcb.setValue(selectedComponents[1].get('componentId'));		
-						compareCcb.setValue(selectedComponents[0].get('componentId'));																					
+						// compareAcb.setValue(selectedComponents[0].get('componentId'));
+						// compareBcb.setValue(selectedComponents[1].get('componentId'));		
+						// compareCcb.setValue(selectedComponents[2].get('componentId'));																					
 
 					}											
 				} else {
 
-					var records = [];
-					searchResultsStore.each(function(record) {
-						records.push(record);
-					});
-					Ext.Array.sort(records, function(a, b){
-						return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
-					});
+					// var records = [];
+					// searchResultsStore.each(function(record) {
+					// 	records.push(record);
+					// });
+					// Ext.Array.sort(records, function(a, b){
+					// 	return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
+					// });
 
 					compareAcb.getStore().loadRecords(records);
 					compareBcb.getStore().loadRecords(records);
@@ -1694,9 +1746,13 @@
 								],
 								listeners: {
 									click: function(){
-										var menu = this.getMenu();										
-										console.log(menu);
-										compareEntries(menu);
+										var menu = this.getMenu();
+										if(menu.items.length <= 3){
+											Ext.Msg.alert('Comparison Error', 'Please select at least two entries to compare.');
+										}
+										else{
+											compareEntries(menu);
+										}										
 									}
 								}								
 							},
