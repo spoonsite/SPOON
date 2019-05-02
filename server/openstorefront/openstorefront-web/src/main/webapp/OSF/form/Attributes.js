@@ -92,6 +92,14 @@ Ext.define('OSF.form.Attributes', {
 						type: 'date',
 						dateFormat: 'c'
 					},
+					{
+						name: 'convertedValue', mapping: function(data) {
+							if (data.preferredUnit){
+								return data.preferredUnit.convertedValue;
+							}
+							return null;
+						}
+					},
 					{ name: 'vendorUnitOnly', mapping: function(data) {
 						if (data.preferredUnit){
 							return data.preferredUnit.unit;
@@ -113,8 +121,8 @@ Ext.define('OSF.form.Attributes', {
 			columns: [
 				{text: 'Attribute Type', dataIndex: 'typeDescription', width: 200},
 				{text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200},
-				{text: 'Attribute Unit', dataIndex: 'unit', flex: 1, minWidth: 200},
-				{text: 'Vendor Unit', dataIndex: 'vendorUnit', flex: 1, minWidth: 200},
+				{text: 'Attribute Base Unit', dataIndex: 'unit', flex: 1, minWidth: 200},
+				{text: 'Preferred Unit', dataIndex: 'vendorUnit', flex: 1, minWidth: 200},
 				{text: 'Comment', dataIndex: 'comment', flex: 2, minWidth: 200},
 				{text: 'Private Flag', dataIndex: 'privateFlag', width: 150},
 				{text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
@@ -274,11 +282,7 @@ Ext.define('OSF.form.Attributes', {
 						}
 					],
 					// looks like a copy and paste from attributeAssignment.js
-					items: [
-						{
-							xtype: 'hidden',
-							name: 'preferredUnit'
-						},
+					items: [						
 						{
 							xtype: 'panel',
 							layout: 'hbox',
@@ -319,6 +323,7 @@ Ext.define('OSF.form.Attributes', {
 											cbox.clearValue();
 
 											var unitDisplay = field.up('form').getComponent('attributeUnit');
+											var preferredUnits = field.up('form').queryById('preferredUnitCB');
 
 											var record = field.getSelection();
 											if (record) {
@@ -327,6 +332,17 @@ Ext.define('OSF.form.Attributes', {
 												cbox.setEditable(record.get("allowUserGeneratedCodes"));
 
 												unitDisplay.setValue(record.data.attributeUnit);
+												var unitValues = [];
+												if (record.data.attributeUnitList) {
+													Ext.Array.each(record.data.attributeUnitList, function(unitItem){
+														unitValues.push({
+															code: unitItem.unit,
+															label: unitItem.unit
+														});
+													});
+												}																								
+												preferredUnits.getStore().loadRawData(unitValues);
+												
 											} else {
 												cbox.getStore().removeAll();
 												cbox.vtype = undefined;
@@ -339,8 +355,9 @@ Ext.define('OSF.form.Attributes', {
 						{
 							xtype: 'textfield',
 							itemId: 'attributeUnit',
-							fieldLabel: 'Attribute Unit',
+							fieldLabel: 'Attribute Base Unit',							
 							labelWidth: 150,
+							style: 'background: lightgrey;',
 							editable: false
 						},
 						{
@@ -365,6 +382,21 @@ Ext.define('OSF.form.Attributes', {
 									"code",
 									"label"
 								]
+							})
+						},
+						{
+							xtype: 'combobox',
+							itemId: 'preferredUnitCB',
+							fieldLabel: 'Preferred Unit',
+							name: 'preferredUnit',
+							queryMode: 'local',
+							editable: false,
+							typeAhead: false,
+							allowBlank: true,
+							valueField: 'code',
+							displayField: 'label',
+							labelWidth: 150,							
+							store: Ext.create('Ext.data.Store', {
 							})
 						},						
 						{
@@ -463,12 +495,19 @@ Ext.define('OSF.form.Attributes', {
 		});
 		
 		var actionEdit = function(record) {
+			var codeValue = record.get('code');
+			if (record.get('convertedValue')) {
+				codeValue = record.get('convertedValue');
+			}			
 			record.set({
 				attributeType: record.get('type'),
-				attributeCode: record.get('code'),
+				attributeCode: codeValue,
 				preferredUnit: record.get('vendorUnitOnly')
 			});			
-			attributePanel.attributeGrid.queryById('form').loadRecord(record);			
+			attributePanel.attributeGrid.queryById('form').loadRecord(record);	
+			
+			//make sure this is set since the change event on the attribute type will effect this
+			attributePanel.attributeGrid.queryById('preferredUnitCB').setValue(record.get('vendorUnitOnly'));
 		};
 
 		attributePanel.add(attributePanel.attributeGrid);

@@ -294,7 +294,7 @@ Ext.define('OSF.component.template.Vitals', {
 					}					
 					
 					var unitToShow = '';
-					if (item.unit) {
+					if (unit) {
 						unitToShow =  ' (' + unit + ')';
 					}
 					

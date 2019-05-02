@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.service.mapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -36,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.ComponentFormSet;
+import edu.usu.sdl.openstorefront.core.util.UnitConvertUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.core.view.ComponentContactView;
 import edu.usu.sdl.openstorefront.core.view.ComponentExternalDependencyView;
@@ -43,17 +43,13 @@ import edu.usu.sdl.openstorefront.core.view.ComponentMediaView;
 import edu.usu.sdl.openstorefront.core.view.ComponentRelationshipView;
 import edu.usu.sdl.openstorefront.core.view.ComponentResourceView;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.Unit;
 import org.apache.commons.lang3.StringUtils;
-import org.jscience.physics.amount.Amount;
 
 /**
  * This maps complex object back into entities; use for contacts, media etc.
@@ -165,16 +161,14 @@ public class ComplexMapper
 				if (StringUtils.isNotBlank(type.getAttributeUnit())
 						&& StringUtils.isNotBlank(attribute.getPreferredUnit())
 						&& !type.getAttributeUnit().equals(attribute.getPreferredUnit())) {
-					Unit userUnit = Unit.valueOf(attribute.getPreferredUnit());
-					Unit baseUnit = Unit.valueOf(type.getAttributeUnit());
-					@SuppressWarnings("unchecked")
-					Amount factor = Amount.valueOf(1, baseUnit).to(userUnit);
 
-					BigDecimal originalValue = Convert.toBigDecimal(attribute.getComponentAttributePk().getAttributeCode());
-					BigDecimal conversionFactor = BigDecimal.valueOf(factor.getEstimatedValue());
-
-					BigDecimal newValue = originalValue.divide(conversionFactor, MathContext.DECIMAL64);
-					attribute.getComponentAttributePk().setAttributeCode(newValue.stripTrailingZeros().toPlainString());
+					attribute.getComponentAttributePk().setAttributeCode(
+							UnitConvertUtil.convertUserUnitToBaseUnit(
+									type.getAttributeUnit(),
+									attribute.getPreferredUnit(),
+									attribute.getComponentAttributePk().getAttributeCode()
+							)
+					);
 				}
 			}
 

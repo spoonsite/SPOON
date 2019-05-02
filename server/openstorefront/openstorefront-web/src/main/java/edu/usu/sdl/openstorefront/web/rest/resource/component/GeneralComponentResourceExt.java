@@ -47,6 +47,7 @@ import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.EditSubmissionOptions;
+import edu.usu.sdl.openstorefront.core.util.UnitConvertUtil;
 import edu.usu.sdl.openstorefront.core.view.ChangeEntryTypeAction;
 import edu.usu.sdl.openstorefront.core.view.ChangeOwnerAction;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
@@ -121,6 +122,7 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Note: This is a chained inheritance which is exception to the general case
@@ -657,6 +659,8 @@ public abstract class GeneralComponentResourceExt
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+
+			//Convert attribute Unit if needed (from user to base)
 			RequiredForComponent savedComponent = service.getComponentService().saveComponent(component);
 			return Response.created(URI.create(BASE_RESOURCE_PATH + savedComponent.getComponent().getComponentId())).entity(savedComponent).build();
 		} else {
@@ -699,6 +703,23 @@ public abstract class GeneralComponentResourceExt
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 
+			//convert Units on incoming attributes only
+			for (ComponentAttribute incomingAttribute : component.getAttributes()) {
+				AttributeType type = service.getAttributeService().findType(incomingAttribute.getComponentAttributePk().getAttributeType());
+				if (StringUtils.isNotBlank(type.getAttributeUnit())
+						&& StringUtils.isNotBlank(incomingAttribute.getPreferredUnit())
+						&& !type.getAttributeUnit().equals(incomingAttribute.getPreferredUnit())) {
+
+					incomingAttribute.getComponentAttributePk().setAttributeCode(
+							UnitConvertUtil.convertUserUnitToBaseUnit(
+									type.getAttributeUnit(),
+									incomingAttribute.getPreferredUnit(),
+									incomingAttribute.getComponentAttributePk().getAttributeCode()
+							)
+					);
+				}
+			}
+
 			List<AttributeType> requiredAttributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponent().getComponentType(), false, null);
 			Set<String> requiredTypeSet = requiredAttributeTypes.stream()
 					.map(AttributeType::getAttributeType)
@@ -721,7 +742,6 @@ public abstract class GeneralComponentResourceExt
 				}
 			}
 
-			//if attribute do
 			service.getComponentService().saveComponent(component);
 			Component updatedComponent = new Component();
 			updatedComponent.setComponentId(componentId);

@@ -137,13 +137,23 @@
 													change: function(fieldLocal, newValue, oldValue, opts) {
 														var recordLocal = fieldLocal.record;
 														if (recordLocal) {
-															recordLocal.set('attributeCode', newValue);
+															recordLocal.set('attributeCode', newValue);															
+														}
+													}
+												},
+												unitListeners: {
+													change: function(fieldLocal, newValue, oldValue, opts) {
+														var recordLocal = fieldLocal.record;
+														if (recordLocal) {															
+															recordLocal.set('preferredUnit', fieldLocal.fullAttributeField.getUnit());
 														}
 													}
 												}
 											},
 											attributeTypeView: record.data,	
 											showDefaultUnit: true,
+											attributeUnit: record.data.attributeUnit,
+											attributeUnitList: record.data.attributeUnitList,
 											record: record
 									});																				
 									record.formField = field;
@@ -283,7 +293,8 @@
 															componentAttributePk: {
 																attributeType: record.get('attributeType'),
 																attributeCode: code
-															}
+															},
+															preferredUnit: record.get('preferredUnit')
 														});
 													});
 												} else {
@@ -291,7 +302,8 @@
 														componentAttributePk: {
 															attributeType: record.get('attributeType'),
 															attributeCode: record.get('attributeCode')
-														}
+														},
+														preferredUnit: record.get('preferredUnit')
 													});
 												}												
 											});
@@ -691,8 +703,17 @@
 											
 											requiredStore.each(function(record){
 												if (record.get('attributeType') === attribute.type) {
-													record.set('attributeCode', value, { dirty: false });
-													record.formField.setValue(value);
+													
+													if (attribute.preferredUnit && attribute.preferredUnit.unit) {
+														record.formField.setUnit(attribute.preferredUnit.unit);
+														record.set('attributeCode', attribute.preferredUnit.convertedValue, { dirty: false });
+														record.set('preferredUnit', attribute.preferredUnit.unit, { dirty: false });
+														record.formField.setValue(attribute.preferredUnit.convertedValue);
+													} else {
+														record.set('attributeCode', value, { dirty: false });
+														record.formField.setValue(value);
+													}
+													
 												}
 											});
 
@@ -2152,7 +2173,7 @@
 											fieldLabel: 'Username <span class="field-required" />',
 											labelAlign: 'top',
 											name: 'currentDataOwner',
-											width: '100%',
+											width: '100%'
 										},
 										{
 											xtype: 'osf-common-validhtmleditor',

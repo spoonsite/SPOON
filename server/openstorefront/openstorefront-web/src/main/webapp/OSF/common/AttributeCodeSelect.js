@@ -172,6 +172,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					queryMode: 'local',
 					flex: 1,
 					valueField: 'value',
+					listeners: attributePanel.unitListeners,
 					store: Ext.create('Ext.data.Store', {						
 						data: storeList
 					}),

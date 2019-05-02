@@ -24,15 +24,12 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeRestriction;
-import java.math.BigDecimal;
+import edu.usu.sdl.openstorefront.core.util.UnitConvertUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.Unit;
-import org.jscience.physics.amount.Amount;
 
 /**
  *
@@ -176,24 +173,7 @@ public class ComponentAttributeView
 			if (attribute.getPreferredUnit() != null) {
 				String preferredUnitUOM = attribute.getPreferredUnit();
 				String baseUnitUOM = type.getAttributeUnit();
-				if (preferredUnitUOM != null && baseUnitUOM != null) {
-					try {
-						// get the conversion factor between the baseUnit and the preferredUnit
-						Unit userUnit = Unit.valueOf(preferredUnitUOM);
-						Unit baseUnit = Unit.valueOf(baseUnitUOM);
-						@SuppressWarnings("unchecked")
-						Amount factor = Amount.valueOf(1, baseUnit).to(userUnit);
-						AttributeUnitView unitView = new AttributeUnitView(attribute.getPreferredUnit(), BigDecimal.valueOf(factor.getEstimatedValue()));
-
-						//Convert user unit to base (multiply)
-						BigDecimal originalValue = Convert.toBigDecimal(view.getCode());
-						unitView.setConvertedValue(originalValue.multiply(unitView.getConversionFactor()));
-						view.setPreferredUnit(unitView);
-
-					} catch (IllegalArgumentException e) {
-						LOG.log(Level.WARNING, "Unable to process unit conversion factors for: {0} and {1}\n{2}", new Object[]{preferredUnitUOM, baseUnitUOM, e.toString()});
-					}
-				}
+				view.setPreferredUnit(UnitConvertUtil.convertBaseUnitToUserUnit(baseUnitUOM, preferredUnitUOM, view.getCode()));
 			}
 
 		} else {

@@ -62,6 +62,8 @@ Ext.define('OSF.form.MultipleAttributes', {
 					}
 					if (valid)
 					{
+						//TODO: capture units
+						
 						postData.push({
 							attributeType: key,
 							attributeCode: value,
@@ -168,7 +170,9 @@ Ext.define('OSF.form.MultipleAttributes', {
 						vtype = 'AttributeNumber';
 						valueTypes[attribute.attributeType] = attribute.attributeValueType;
 					}
-					var item = {
+					var item;
+					
+					var attributeCB = {
 						name: attribute.attributeType,
 						itemId: 'multiAttributeCode_' + attribute.attributeType,
 						width: '98%',
@@ -197,6 +201,48 @@ Ext.define('OSF.form.MultipleAttributes', {
 							}
 						}
 					};
+					
+					if (attribute.attributeUnit) {
+						//panel (type and unit select) 
+						
+						var unitValues = [];
+						if (attribute.attributeUnitList) {
+							Ext.Array.each(attribute.attributeUnitList, function(unitItem){
+								unitValues.push({
+									code: unitItem.unit,
+									label: unitItem.unit
+								});
+							});
+						}
+						
+						attributeCB.flex = 1;
+						item = {
+							xtype: 'panel',
+							width: '100%',
+							layout: 'hbox',
+							items: [
+								attributeCB,
+								{
+									xtype: 'combobox',
+									width: 100,
+									margin: '10 0 10 0',
+									name: attribute.attributeType + '-PREFERREDUNITS',
+									value: attribute.attributeUnit,
+									valueField: 'code',
+									displayField: 'label',
+									queryMode: 'local',
+									store: {
+										data: unitValues
+									}
+								}
+							]
+							
+						};
+						
+					} else {
+						item = attributeCB;
+					}
+					
 					if (attrForm.viewHiddenAttributes || !attribute.hideOnSubmission) {
 						items.push(item);
 					}
