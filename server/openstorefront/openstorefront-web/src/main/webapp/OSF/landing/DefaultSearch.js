@@ -62,29 +62,28 @@ Ext.define('OSF.landing.DefaultSearch', {
 
 				//save search options
 				var searchOptions = {
-					canUseOrganizationsInSearch: true, 
-					canUseNameInSearch: true, 
-					canUseDescriptionInSearch: true, 
-					canUseTagsInSearch: true, 
+					canUseOrganizationsInSearch: true,
+					canUseNameInSearch: true,
+					canUseDescriptionInSearch: true,
+					canUseTagsInSearch: true,
 					canUseAttributesInSearch: true
 				}
 
-				if(!values.canUseOrganizationsInSearch){
+				if (!values.canUseOrganizationsInSearch) {
 					searchOptions.canUseOrganizationsInSearch = false;
 				}
-				if(!values.canUseNameInSearch){
+				if (!values.canUseNameInSearch) {
 					searchOptions.canUseNameInSearch = false;
 				}
-				if(!values.canUseDescriptionInSearch){
+				if (!values.canUseDescriptionInSearch) {
 					searchOptions.canUseDescriptionInSearch = false;
 				}
-				if(!values.canUseTagsInSearch){
+				if (!values.canUseTagsInSearch) {
 					searchOptions.canUseTagsInSearch = false;
 				}
-				if(!values.canUseAttributesInSearch){
+				if (!values.canUseAttributesInSearch) {
 					searchOptions.canUseAttributesInSearch = false;
 				}
-				console.log(searchOptions);
 
 				if (!query || Ext.isEmpty(query)) {
 					query = '*';
@@ -139,12 +138,12 @@ Ext.define('OSF.landing.DefaultSearch', {
 					url: "api/v1/resource/searchoptions/user",
 					jsonData: searchOptions,
 					method: 'PUT',
-					success: function(response, opt) {
+					success: function (response, opt) {
 						CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 
 						window.location.href = 'searchResults.jsp';
 					},
-					failure: function(response, opt) {
+					failure: function (response, opt) {
 						console.log(response);
 						Ext.toast('Failed to apply the search options.', '', 'tr');
 					}
@@ -232,7 +231,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 										name: 'canUseOrganizationsInSearch',
 										inputValue: true,
 										uncheckedValue: false
-									}, 
+									},
 									{
 										xtype: 'checkbox',
 										boxLabel: 'Component Names',
@@ -267,30 +266,30 @@ Ext.define('OSF.landing.DefaultSearch', {
 									}
 								],
 								listeners: {
-									added: function(){
+									added: function () {
 										Ext.Ajax.request({
 											url: 'api/v1/resource/searchoptions/user',
 											method: 'GET',
-											success: function(response, opts){
+											success: function (response, opts) {
 												var data = Ext.decode(response.responseText);
-						
-												if(Ext.getCmp('organizationsCheckbox')){
+
+												if (Ext.getCmp('organizationsCheckbox')) {
 													Ext.getCmp('organizationsCheckbox').setValue(data.canUseOrganizationsInSearch);
 												}
-												if(Ext.getCmp('componentNameCheckbox')){
+												if (Ext.getCmp('componentNameCheckbox')) {
 													Ext.getCmp('componentNameCheckbox').setValue(data.canUseNameInSearch);
 												}
-												if(Ext.getCmp('componentDescriptionCheckbox')){
+												if (Ext.getCmp('componentDescriptionCheckbox')) {
 													Ext.getCmp('componentDescriptionCheckbox').setValue(data.canUseDescriptionInSearch);
 												}
-												if(Ext.getCmp('componentTagsCheckbox')){
+												if (Ext.getCmp('componentTagsCheckbox')) {
 													Ext.getCmp('componentTagsCheckbox').setValue(data.canUseTagsInSearch);
 												}
-												if(Ext.getCmp('componentAttributesCheckbox')){
+												if (Ext.getCmp('componentAttributesCheckbox')) {
 													Ext.getCmp('componentAttributesCheckbox').setValue(data.canUseAttributesInSearch);
 												};
 											},
-											failure: function(response, opts){
+											failure: function (response, opts) {
 												Ext.getCmp('organizationsCheckbox').setValue(true);
 												Ext.getCmp('componentNameCheckbox').setValue(true);
 												Ext.getCmp('componentDescriptionCheckbox').setValue(true);
@@ -299,44 +298,44 @@ Ext.define('OSF.landing.DefaultSearch', {
 											}
 										});
 									},
-									change: function(checkBox, newVal, oldVal){
+									change: function (checkBox, newVal, oldVal) {
 										var searchOptions = {
-											canUseOrganizationsInSearch: true, 
-											canUseNameInSearch: true, 
-											canUseDescriptionInSearch: true, 
-											canUseTagsInSearch: true, 
+											canUseOrganizationsInSearch: true,
+											canUseNameInSearch: true,
+											canUseDescriptionInSearch: true,
+											canUseTagsInSearch: true,
 											canUseAttributesInSearch: true
 										}
 										values = checkBox.getValue();
 										var isMyObjectEmpty = !Object.keys(values).length;
 										var searchButton = Ext.getCmp('defaultSearch').queryById('searchButton');
-										if (isMyObjectEmpty){
+										if (isMyObjectEmpty) {
 											searchButton.disable();
 											Ext.Msg.show({
-												title:'Search Options',
+												title: 'Search Options',
 												message: 'No search options are selected, please select at least one option.',
 												buttons: Ext.Msg.OK,
 												icon: Ext.Msg.ERROR,
-												fn: function(btn) {
+												fn: function (btn) {
 												}
-											});	
+											});
 										} else {
 											searchButton.enable();
 										}
-										
-										if(!values.canUseOrganizationsInSearch){
+
+										if (!values.canUseOrganizationsInSearch) {
 											searchOptions.canUseOrganizationsInSearch = false;
 										}
-										if(!values.canUseNameInSearch){
+										if (!values.canUseNameInSearch) {
 											searchOptions.canUseNameInSearch = false;
 										}
-										if(!values.canUseDescriptionInSearch){
+										if (!values.canUseDescriptionInSearch) {
 											searchOptions.canUseDescriptionInSearch = false;
 										}
-										if(!values.canUseTagsInSearch){
+										if (!values.canUseTagsInSearch) {
 											searchOptions.canUseTagsInSearch = false;
 										}
-										if(!values.canUseAttributesInSearch){
+										if (!values.canUseAttributesInSearch) {
 											searchOptions.canUseAttributesInSearch = false;
 										}
 									}

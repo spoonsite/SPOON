@@ -98,8 +98,7 @@ public class SearchServiceImpl
 	private static final int MAX_SEARCH_DESCRIPTION = 500;
 
 	@Override
-	public List<ComponentSearchView> getAll()
-	{
+	public List<ComponentSearchView> getAll(){
 		ServiceProxy service = new ServiceProxy();
 		List<ComponentSearchView> list = new ArrayList<>();
 		List<ComponentSearchView> components = service.getComponentService().getComponents();
@@ -108,8 +107,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public SearchOptions getGlobalSearchOptions()
-	{
+	public SearchOptions getGlobalSearchOptions() {
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
@@ -128,8 +126,7 @@ public class SearchServiceImpl
 		return searchOptions;
 	}
 
-	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions)
-	{
+	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions) {
 
 		OSFCacheManager.getSearchCache().removeAll();
 
@@ -151,8 +148,7 @@ public class SearchServiceImpl
 		return existing;
 	}
 
-	public SearchOptions getUserSearchOptions()
-	{
+	public SearchOptions getUserSearchOptions() {
 
 		String username = SecurityUtil.getCurrentUserName();
 
@@ -174,8 +170,8 @@ public class SearchServiceImpl
 		return searchOptions;
 	}
 
-	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions)
-	{
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions) {
+
 		Boolean forceCacheClear = false;
 		String username = SecurityUtil.getCurrentUserName();
 
@@ -183,14 +179,14 @@ public class SearchServiceImpl
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		searchOptionsExample.setUsername(username);
 		SearchOptions existing = searchOptionsExample.findProxy();
-		
-		if(existing == null){
+
+		if (existing == null) {
 			forceCacheClear = true;
 			searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 			searchOptionsExample.setUsername(null);
 			existing = searchOptionsExample.findProxy();
 
-			if(existing == null){
+			if (existing == null) {
 				existing = new SearchOptions();
 				existing.setSearchOptionsId(persistenceService.generateId());
 				existing.setDefaultSearchOptions();
@@ -198,18 +194,14 @@ public class SearchServiceImpl
 		}
 
 		// If the search options changed clear the cache
-		if (!existing.compare(searchOptions) || forceCacheClear) 
-		{
+		if (!existing.compare(searchOptions) || forceCacheClear) {
 			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
-			if (userSearchElementResult != null)
-			{
+			if (userSearchElementResult != null) {
 				@SuppressWarnings("unchecked")
 				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
 
-				if (listOfKeys != null)
-				{
-					for (String key : listOfKeys)
-					{
+				if (listOfKeys != null) {
+					for (String key : listOfKeys) {
 						OSFCacheManager.getSearchCache().remove(key);
 					}
 				}
@@ -225,7 +217,6 @@ public class SearchServiceImpl
 		existing.setGlobalFlag(Boolean.FALSE);
 		existing.updateFields(searchOptions);
 		persistenceService.persist(existing);
-
 
 		return existing;
 	}
@@ -342,7 +333,7 @@ public class SearchServiceImpl
 
 		AdvanceSearchResult searchResult = new AdvanceSearchResult();
 
-		//getting cached result
+		// getting cached result
 		String username = SecurityUtil.getCurrentUserName();
 		String key = searchModel.getUserSessionKey() + searchModel.searchKey();
 		Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
@@ -596,14 +587,14 @@ public class SearchServiceImpl
 			} else {
 
 				String newKey = searchModel.getUserSessionKey() + searchModel.searchKey();
-				//add username in cache and create list and put that in as key
+				// add username in cache and create list and put that in as key
 				List<String> newListOfKeys = new ArrayList<String>();
 				newListOfKeys.add(newKey);
 
 				Element newUserSearchElement = new Element(username, newListOfKeys);
 				OSFCacheManager.getUserSearchCache().put(newUserSearchElement);
 
-				//add result to search cache
+				// add result to search cache
 				Element searchElement = new Element(newKey, searchResult);
 				OSFCacheManager.getSearchCache().put(searchElement);
 			}

@@ -56,14 +56,12 @@ public class SearchOptions
 	@ConsumeField
 	private Boolean canUseAttributesInSearch;
 
-	public SearchOptions()
-	{
+	public SearchOptions() {
 
 	}
 
 	@Override
-	public <T extends StandardEntity> void updateFields(T entity)
-	{
+	public <T extends StandardEntity> void updateFields(T entity) {
 		super.updateFields(entity);
 		SearchOptions searchOptionsModel = (SearchOptions) entity;
 
@@ -74,8 +72,7 @@ public class SearchOptions
 		setCanUseAttributesInSearch(searchOptionsModel.getCanUseAttributesInSearch());
 	}
 
-	public void setDefaultSearchOptions()
-	{
+	public void setDefaultSearchOptions() {
 		super.populateBaseCreateFields();
 
 		setActiveStatus(SearchOptions.ACTIVE_STATUS);
@@ -87,17 +84,12 @@ public class SearchOptions
 		setCanUseAttributesInSearch(Boolean.TRUE);
 	}
 
-	public Boolean areAllOptionsOff()
-	{
-		return (!canUseOrganizationsInSearch
-				&& !canUseNameInSearch
-				&& !canUseDescriptionInSearch
-				&& !canUseAttributesInSearch
-				&& !canUseTagsInSearch);
+	public Boolean areAllOptionsOff() {
+		return (!canUseOrganizationsInSearch && !canUseNameInSearch && !canUseDescriptionInSearch
+				&& !canUseAttributesInSearch && !canUseTagsInSearch);
 	}
 
-	public Boolean compare(SearchOptions incoming)
-	{
+	public Boolean compare(SearchOptions incoming) {
 		Boolean isSame = false;
 		if (incoming.getCanUseAttributesInSearch() == getCanUseAttributesInSearch()
 				&& incoming.getCanUseDescriptionInSearch() == getCanUseDescriptionInSearch()
