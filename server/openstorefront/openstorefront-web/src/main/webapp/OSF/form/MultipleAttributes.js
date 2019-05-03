@@ -44,8 +44,8 @@ Ext.define('OSF.form.MultipleAttributes', {
 			var rawData = attrForm.getValues();
 			var componentId = attrForm.componentId;
 			Ext.Object.each(rawData, function (key, value) {
-				if (value)
-				{
+				if (value && !Ext.String.endsWith(key, '-PREFERREDUNITS'))
+				{	
 					if (this.valueTypes[key] === 'NUMBER' && Ext.String.endsWith(value, ".")) { //check percision; this will enforce max allowed
 						try {
 							var valueNumber = new Number(value);
@@ -62,7 +62,13 @@ Ext.define('OSF.form.MultipleAttributes', {
 					}
 					if (valid)
 					{
-						//TODO: capture units
+						//Find unit for attribute 						
+						var preferredUnit;
+						Ext.Object.each(rawData, function (keyUnit, valueUnit) {
+							if (keyUnit === (key + '-PREFERREDUNITS')) {
+								preferredUnit = valueUnit;
+							}
+						});
 						
 						postData.push({
 							attributeType: key,
@@ -70,7 +76,8 @@ Ext.define('OSF.form.MultipleAttributes', {
 							componentAttributePk: {
 								attributeType: key,
 								attributeCode: value
-							}
+							},
+							preferredUnit: preferredUnit
 						});
 					}
 				}
