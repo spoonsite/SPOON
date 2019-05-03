@@ -47,10 +47,10 @@
 		
         <title>Openstorefront - Standby</title>
 		<style>
-			body{
-				background: whitesmoke;
+			body{			
 				font-family: sans-serif;
-				background-image: url(images/grid.png);
+				background-image: linear-gradient(lightgrey, white);
+				background-repeat: no-repeat;
 				margin: 50px;
 			}
 			
