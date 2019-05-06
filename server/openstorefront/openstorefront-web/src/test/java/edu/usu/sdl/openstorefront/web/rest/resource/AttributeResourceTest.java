@@ -96,7 +96,7 @@ public class AttributeResourceTest extends JerseyShiroTest
 		attributeCodes.add(code);
 
 		Mockito.when(attributeService.findCodesForType(Mockito.anyString())).thenReturn(attributeCodes);
-		Mockito.when(attributeService.findRequiredAttributes("ARTICLE", false, false)).thenCallRealMethod();
+		Mockito.when(attributeService.findRequiredAttributes("ARTICLE", false, false, null)).thenCallRealMethod();
 
 		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
 		Mockito.when(attributeService.getComponentService()).thenReturn(componentService);
@@ -378,7 +378,7 @@ public class AttributeResourceTest extends JerseyShiroTest
 		Mockito.when(attributeService.getAllAttributeCodes(AttributeCode.ACTIVE_STATUS)).thenReturn(attributeCodes);
 		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
 
-		Mockito.when(attributeService.findOptionalAttributes("ARTICLE", false)).thenCallRealMethod();
+		Mockito.when(attributeService.findOptionalAttributes("ARTICLE", false, null)).thenCallRealMethod();
 		Mockito.when(attributeService.getComponentService()).thenReturn(componentService);
 
 		//	persistenceService.addQuery(AttributeCode.class, Arrays.asList(code1, code2, code3, code4));

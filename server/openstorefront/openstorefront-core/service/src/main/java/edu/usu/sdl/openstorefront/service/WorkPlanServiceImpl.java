@@ -284,7 +284,7 @@ public class WorkPlanServiceImpl
 				workPlanLink.setWorkPlanId(newWorkPlan.getWorkPlanId());
 				workPlanLink.setCurrentStepId(stepId);
 				workPlanLink.save();
-				
+
 				workPlan = newWorkPlan;
 			}
 
@@ -581,7 +581,7 @@ public class WorkPlanServiceImpl
 		//process all entries (x at time)
 		int maxResultsToProcess = 200;
 
-		LOG.log(Level.FINE, "Syncing component worklinks.");
+		LOG.log(Level.FINER, "Syncing component worklinks.");
 
 		Component componentExample = new Component();
 		long totalCount = persistenceService.countByExample(componentExample);
@@ -596,29 +596,46 @@ public class WorkPlanServiceImpl
 
 			List<Component> components = persistenceService.queryByExample(queryByExample);
 			for (Component component : components) {
-				//ignore return
-				getWorkPlanForComponent(component.getComponentId());
-
-				synced++;
+				//critical loop
+				try {
+					//ignore return
+					getWorkPlanForComponent(component.getComponentId());
+					synced++;
+				} catch (Exception e) {
+					String componentName = getComponentService().getComponentName(component.getComponentId());
+					String changeRequestId = "";
+					if (component.getPendingChangeId() != null) {
+						changeRequestId = getComponentService().getComponentName(component.getPendingChangeId()) + " - " + component.getPendingChangeId();
+					}
+					String message = "Unable to sync Component: " + componentName + " Id: " + component.getComponentId() + " Change Request: " + changeRequestId + " (record may be bad)";
+					LOG.log(Level.WARNING, () -> message);
+					LOG.log(Level.FINER, "Error", e);
+				}
 			}
 
 			startIndex += maxResultsToProcess;
 		}
 		final int totalSync = synced;
-		LOG.log(Level.FINE, () -> "Synced " + totalSync + " component worklinks.");
+		LOG.log(Level.FINER, () -> "Synced " + totalSync + " component worklinks.");
 
 		//Sync Evaluations: Future
-		LOG.log(Level.FINE, "Syncing user submisssions.");
+		LOG.log(Level.FINER, "Syncing user submisssions.");
 		UserSubmission userSubmissionExample = new UserSubmission();
 		List<UserSubmission> userSubmissions = userSubmissionExample.findByExample();
 		synced = 0;
 		for (UserSubmission userSubmission : userSubmissions) {
 			//ignore return
-			getWorkPlanLinkForSubmission(userSubmission.getUserSubmissionId());
-			synced++;
+			try {
+				getWorkPlanLinkForSubmission(userSubmission.getUserSubmissionId());
+				synced++;
+			} catch (Exception e) {
+				String message = "Unable to sync Submission: " + userSubmission.getSubmissionName() + " Id: " + userSubmission.getUserSubmissionId();
+				LOG.log(Level.WARNING, () -> message);
+				LOG.log(Level.FINER, "Error", e);
+			}
 		}
 		final int totalSyncSubmission = synced;
-		LOG.log(Level.FINE, () -> "Synced " + totalSyncSubmission + " component worklinks.");
+		LOG.log(Level.FINER, () -> "Synced " + totalSyncSubmission + " Partial Submission worklinks.");
 
 	}
 
@@ -754,11 +771,13 @@ public class WorkPlanServiceImpl
 		for (WorkPlan workPlan : workPlans) {
 			boolean save = false;
 			if (workPlan.getComponentTypes() != null && !workPlan.getComponentTypes().isEmpty()) {
-				
-				if (workPlan.getComponentTypes().removeIf(stepRole -> {	return stepRole.getComponentType().equals(componentType); })) {
+
+				if (workPlan.getComponentTypes().removeIf(stepRole -> {
+					return stepRole.getComponentType().equals(componentType);
+				})) {
 					save = true;
 				}
-				
+
 			}
 			if (save) {
 				workPlan.save();

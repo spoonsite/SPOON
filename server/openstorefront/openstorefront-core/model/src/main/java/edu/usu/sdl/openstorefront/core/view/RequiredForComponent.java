@@ -58,7 +58,7 @@ public class RequiredForComponent
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		List<AttributeType> requireds = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(component.getComponentType(), false);
+		List<AttributeType> requireds = ServiceProxyFactory.getServiceProxy().getAttributeService().findRequiredAttributes(component.getComponentType(), false, null);
 
 		Map<String, AttributeType> requiredTypeMap = new HashMap<>();
 		for (AttributeType attributeType : requireds) {

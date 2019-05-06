@@ -39,6 +39,10 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ScheduledReport;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormFieldType;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormSection;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.Architecture;
 import edu.usu.sdl.openstorefront.core.model.AttributeAll;
@@ -1098,13 +1102,13 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly)
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, String submissionTemplateId)
 	{
-		return findRequiredAttributes(componentType, submissionTypesOnly, false);
+		return findRequiredAttributes(componentType, submissionTypesOnly, false, submissionTemplateId);
 	}
 
 	@Override
-	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes)
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes, String submissionTemplateId)
 	{
 		List<AttributeType> requiredAttributes = new ArrayList<>();
 
@@ -1123,8 +1127,38 @@ public class AttributeServiceImpl
 			requiredAttributes.removeIf((attribute) -> {
 				return Convert.toBoolean(attribute.getHideOnSubmission());
 			});
+
+			//filter out attribute already on submission form
+			if (StringUtils.isNotBlank(submissionTemplateId)) {
+				SubmissionFormTemplate template = persistenceService.findById(SubmissionFormTemplate.class, submissionTemplateId);
+				if (template != null) {
+					Set<String> alreadyInForm = findSingleAttributeTypesInForm(template);
+					requiredAttributes.removeIf(type -> alreadyInForm.contains(type.getAttributeType()));
+				}
+			}
 		}
 		return requiredAttributes;
+	}
+
+	private Set<String> findSingleAttributeTypesInForm(SubmissionFormTemplate template)
+	{
+		Set<String> attributeTypesInForm = new HashSet<>();
+
+		for (SubmissionFormSection section : template.getSections()) {
+			for (SubmissionFormField field : section.getFields()) {
+
+				switch (field.getFieldType()) {
+
+					case SubmissionFormFieldType.ATTRIBUTE_SINGLE:
+					case SubmissionFormFieldType.ATTRIBUTE_RADIO:
+					case SubmissionFormFieldType.ATTRIBUTE_MULTI_CHECKBOX:
+						attributeTypesInForm.add(field.getAttributeType());
+						break;
+				}
+
+			}
+		}
+		return attributeTypesInForm;
 	}
 
 	private void filterRequiredAttributes(AttributeType attributeType, String componentType, boolean skipFilterNoCodes, List<AttributeType> requiredAttributes)
@@ -1145,7 +1179,7 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public List<AttributeType> findOptionalAttributes(String componentType, boolean submissionTypesOnly)
+	public List<AttributeType> findOptionalAttributes(String componentType, boolean submissionTypesOnly, String submissionTemplateId)
 	{
 		List<AttributeType> optionalAttributes = new ArrayList<>();
 
@@ -1170,6 +1204,15 @@ public class AttributeServiceImpl
 			optionalAttributes.removeIf((attribute) -> {
 				return Convert.toBoolean(attribute.getHideOnSubmission());
 			});
+
+			//filter out attribute already on submission form
+			if (StringUtils.isNotBlank(submissionTemplateId)) {
+				SubmissionFormTemplate template = persistenceService.findById(SubmissionFormTemplate.class, submissionTemplateId);
+				if (template != null) {
+					Set<String> alreadyInForm = findSingleAttributeTypesInForm(template);
+					optionalAttributes.removeIf(type -> alreadyInForm.contains(type.getAttributeType()));
+				}
+			}
 		}
 		return optionalAttributes;
 	}

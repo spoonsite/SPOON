@@ -360,6 +360,11 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 	saveSubmission: function() {
 		var submissionFormFullControl = this;
 		
+		if (submissionFormFullControl.previewMode) {
+			//don't save			
+			return;
+		}
+		
 		var form = submissionFormFullControl.queryById('submissionForm');						
 		var userSubmission = form.getUserData();		
 		

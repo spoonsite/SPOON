@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import java.math.BigDecimal;
 
 /**
  *
@@ -22,12 +23,17 @@ package edu.usu.sdl.openstorefront.core.view;
  */
 public class AttributeUnitView
 {
+
 	private String unit;
-	private Double conversionFactor;
-	
-	AttributeUnitView() {}
-	
-	AttributeUnitView(String unit, Double conversionFactor) {
+	private BigDecimal conversionFactor;
+	private BigDecimal convertedValue;
+
+	public AttributeUnitView()
+	{
+	}
+
+	public AttributeUnitView(String unit, BigDecimal conversionFactor)
+	{
 		this.unit = unit;
 		this.conversionFactor = conversionFactor;
 	}
@@ -42,14 +48,24 @@ public class AttributeUnitView
 		this.unit = unit;
 	}
 
-	public Double getConversionFactor()
+	public BigDecimal getConversionFactor()
 	{
 		return conversionFactor;
 	}
 
-	public void setConversionFactor(Double conversionFactor)
+	public void setConversionFactor(BigDecimal conversionFactor)
 	{
 		this.conversionFactor = conversionFactor;
 	}
-	
+
+	public BigDecimal getConvertedValue()
+	{
+		return convertedValue;
+	}
+
+	public void setConvertedValue(BigDecimal convertedValue)
+	{
+		this.convertedValue = convertedValue;
+	}
+
 }

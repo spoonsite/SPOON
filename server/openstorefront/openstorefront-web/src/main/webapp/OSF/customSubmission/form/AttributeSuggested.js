@@ -45,7 +45,7 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 		//load required for entry type and generate form
 		formPanel.setLoading(true);
 		Ext.Ajax.request({
-			url: 'api/v1/resource/attributes/optional?componentType=' + formPanel.componentType.componentType + '&submissionOnly=true',
+			url: 'api/v1/resource/attributes/optional?componentType=' + formPanel.componentType.componentType + '&submissionOnly=true&submissionTemplateId=' + formPanel.section.submissionForm.template.submissionTemplateId,
 			callback: function() {
 				formPanel.setLoading(false);
 			},
@@ -59,8 +59,6 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 				
 				var fields = [];
 				Ext.Array.each(attributeTypes, function(attributeType){
-				//TODO: update other spots that use the AttributeCodeSelect
-				//      to use attribute units and the unit list
 					fields.push({
 						xtype: 'AttributeCodeSelect',
 						required: false,
@@ -112,40 +110,38 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 							if (el.unit === unit) {
 								result = el.conversionFactor;
 							}
-						})
+						});
 						return result;
-					}
-					var convertWithPrecision = function(num, factor) {
-
-					}
+					};
+					
 					//find field and set values
 					Ext.Object.each(typeGroup, function(key, value){
 						Ext.Array.each(formPanel.items.items, function(field){
 							if (field.attributeType === key) {
 								var unit = typeGroupUnit[key];
-								var conversionFactor = 1;
-								if (field.attributeTypeView && field.attributeTypeView.attributeUnitList) {
-									conversionFactor = getConversionFactor(unit, field.attributeTypeView.attributeUnitList)
-								}
-								// in JS '1.0' * 1 -> 1
-								// if user created codes is disabled
-								// a value of 1 will fail where '1.0' is expected
-								if (conversionFactor != 1) {
-									if (Array.isArray(value)) {
-										// convert list of values
-										value = value.map(function(el) {
-											if (Number(el)) {
-												return el * conversionFactor;
-											} else {
-												return el;
-											}
-										})
-									} else if (Number(value)) {
-										// convert single value
-										// *** check user created codes ***
-										value = value * conversionFactor;
-									}
-								}
+//								var conversionFactor = 1;
+//								if (field.attributeTypeView && field.attributeTypeView.attributeUnitList) {
+//									conversionFactor = getConversionFactor(unit, field.attributeTypeView.attributeUnitList);
+//								}
+//								// in JS '1.0' * 1 -> 1
+//								// if user created codes is disabled
+//								// a value of 1 will fail where '1.0' is expected
+//								if (conversionFactor !== 1) {
+//									if (Array.isArray(value)) {
+//										// convert list of values
+//										value = value.map(function(el) {
+//											if (Number(el)) {
+//												return el * conversionFactor;
+//											} else {
+//												return el;
+//											}
+//										});
+//									} else if (Number(value)) {
+//										// convert single value
+//										// *** check user created codes ***
+//										value = value * conversionFactor;
+//									}
+//								}
 								field.setValue(value);
 								field.setUnit(unit);
 							}
@@ -161,7 +157,18 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 		var attributePanel = this;
 		
 		var template = new Ext.XTemplate(
-			'<table class="submission-review-table">' + 
+			'<table class="submission-review-table">' +
+			'<thead>' +
+			'	<th class="submission-review-header">' + 
+			'		Type' + 
+			'	</th>' + 
+			'	<th class="submission-review-header">' + 
+			'		Value' + 
+			'	</th>' + 
+			'	<th class="submission-review-header">' + 
+			'		Unit' + 
+			'	</th>' + 			
+			'</thead>' +				
 			'<tbody>' + 
 			'	<tpl for=".">'+
 			'		<tr class="submission-review-row">' +
@@ -183,14 +190,23 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 		var data = [];
 
 		Ext.Array.each(attributePanel.items.items, function(field) {
-			data.push({
-				label: field.attributeTypeView.description,
-				value: field.getField().getDisplayValue(),
-				unit: field.getUnit()
-			});
+			var actualDisplayValue = field.getField().getDisplayValue() ? field.getField().getDisplayValue() : field.getField().getValue();
+			if (actualDisplayValue && 
+					(!Ext.isArray(actualDisplayValue) ||
+					(Ext.isArray(actualDisplayValue) && actualDisplayValue.length > 0)
+			)) {
+				data.push({
+					label: field.attributeTypeView.description,
+					value: actualDisplayValue,
+					unit: field.getUnit()
+				});
+			}
 		});
-		
-		return template.apply(data);
+		if (data.length === 0) {
+			return '(No Data Entered)';
+		} else {		
+			return template.apply(data);
+		}
 	},
 	getSubmissionValue: function() {
 		var attributePanel = this;
@@ -206,21 +222,21 @@ Ext.define('OSF.customSubmission.form.AttributeSuggested', {
 						// in JS '1.0' * 1 -> 1
 						// if user created codes is disabled
 						// a value of 1 will fail where '1.0' is expected
-						var code = field.getConversionFactor() != 1 ? value / field.getConversionFactor() : value;
+						//var code = field.getConversionFactor() !== 1 ? value / field.getConversionFactor() : value;
 						codeData = {
 							componentAttributePk: {
 									attributeType: field.attributeTypeView.attributeType,
-									attributeCode: code
+									attributeCode: value
 								},
 								preferredUnit: field.getUnit()
-							}
+							};
 					} else {
 						codeData = {
 							componentAttributePk: {
 									attributeType: field.attributeTypeView.attributeType,
 									attributeCode: value
 								}
-							}
+							};
 					}
 					data.push(codeData);
 				}
