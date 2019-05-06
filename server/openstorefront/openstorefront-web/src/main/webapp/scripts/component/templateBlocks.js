@@ -240,10 +240,8 @@ Ext.define('OSF.component.template.Vitals', {
 		'</table>',
 		{
 			newFunction: function (str) {
-				console.log(str);
 
 				const regex = /(\w{2,})+/gu;
-				var newStr = str;
 
 				while ((m = regex.exec(str)) !== null) {
 					if (m.index === regex.lastIndex) {
@@ -254,12 +252,10 @@ Ext.define('OSF.component.template.Vitals', {
 					if (match.length != str.length) {
 						parenMatch = "(" + match + ")";
 						str = str.replace(match, parenMatch);
-						console.log(str);
 					}
 				}
 
 				var katex = Window.renderAsciiMath(str, { displayMode: true })
-				console.log(katex);
 				return katex;
 			}
 		}
