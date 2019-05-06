@@ -139,21 +139,39 @@
 				}
 			});
 
-			var getArrayCommonalities = function(arrOne, arrTwo){
-				var nonUniqueArray = [];
+			var isItemInList = function(item, vitalsList){
+				for(var i = 0; i < vitalsList.length; i++){
+					if(item == vitalsList[i].type){
+						return true;
+					}
+				}
+				return false;
+			}
+
+			var getArrayCommonalities = function(compViewArray){
+				var bucket = [];
 				var uniqueCommonalityArray = [];
-				// 1. Make a list of every commonality between the two lists
-				arrOne.forEach(function(arrOneElement) {
-					arrTwo.forEach(function(arrTwoElement) {
-						if(arrOneElement.type == arrTwoElement.type){
-							nonUniqueArray.push(arrOneElement.type);
+
+				for(var i = 0; i < compViewArray[0].vitals.length; i++){
+					bucket.push(compViewArray[0].vitals[i].type);
+				}
+
+				compViewArray.forEach(function(componentView){
+					for(var i = bucket.length - 1; i >= 0; i--){
+						var bucketItemIsInList = isItemInList(bucket[i], componentView.vitals);
+						if(!bucketItemIsInList){
+							var index = i;
+							if (index > -1) {
+								bucket.splice(index, 1);
+							}
 						}
-					});
+					}
 				});
+
 				// 2. Remove the duplicates
-				for(var i = 0; i < nonUniqueArray.length; i++){
-					if(uniqueCommonalityArray.indexOf(nonUniqueArray[i]) == -1){
-						uniqueCommonalityArray.push(nonUniqueArray[i])
+				for(var i = 0; i < bucket.length; i++){
+					if(uniqueCommonalityArray.indexOf(bucket[i]) == -1){
+						uniqueCommonalityArray.push(bucket[i])
 					}
 				}
 				// 3. Reverse the array to preserve original ordering for percolation
@@ -300,67 +318,168 @@
 				return returnString;
 			};
 
-			var buildHTMLTableFromData = function(dataRays){
+			var getFirstRow = function(compViewArray){
+				var firstRowString = '';
+				firstRowString += '<tr>';
+					firstRowString += '<th>';
+					firstRowString += '';
+					firstRowString += '</th>';
+				compViewArray.forEach(function(singleComponentView){
+					firstRowString += '<th>';
+					firstRowString += singleComponentView.name;
+					firstRowString += '</th>';
+				});
+				firstRowString += '</tr>'
+
+				return firstRowString;
+			};
+
+			var getRandomRow = function(compViewArray){
+				var firstRowString = '';
+				firstRowString += '<tr>';
+					firstRowString += '<td>';
+					firstRowString += '';
+					firstRowString += '</td>';
+				compViewArray.forEach(function(singleComponentView){
+					firstRowString += '<td>';
+					firstRowString += singleComponentView.name;
+					firstRowString += '</td>';
+				});
+				firstRowString += '</tr>'
+
+				return firstRowString;
+			};
+
+
+
+
+			var buildHTMLTableFromData = function(compViewArray){
+
 				var htmlTableString = "";
+				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px;}tr:nth-child(even) {  background-color: #dddddd;}tr,th{min-width: 40em;}</style>";
+				htmlTableString += "<h2>Comparison Table</h2>";
 
-				var refinedDataTable = [];
-				refinedDataTable = buildRefinedDataTable(dataRays.one,dataRays.two);
+				var firstHtmlRow = getFirstRow(compViewArray);
+				var randomRow = getRandomRow(compViewArray);
 
-				var allTheTableRows = "";
-				allTheTableRows = buildTheTableRows(refinedDataTable);
+				htmlTableString += "<table>";
+				htmlTableString += firstHtmlRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
+				htmlTableString += randomRow;
 
-				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse;  width: 100%;}td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px;}tr:nth-child(even) {  background-color: #dddddd;}</style>";
-				htmlTableString += "<h2>Attribute Comparison Table</h2>";
-				htmlTableString += "<table><tr><th>Attribute</th><th>Unit</th><th>"+dataRays.nameOne+"</th><th>"+dataRays.nameTwo+"</th></tr>" + allTheTableRows;
+				// htmlTableString += "<tr><th>FIGHTTHEPOWER!</th><th>Unit</th><th>"+dataRays.nameOne+"</th><th>"+dataRays.nameTwo+"</th></tr>";// + allTheTableRows;
+
+
+
+
+
+				htmlTableString += "</table>";
+				// var refinedDataTable = [];
+				// refinedDataTable = buildRefinedDataTable(dataRays.one,dataRays.two);
+
+				// var allTheTableRows = "";
+				// allTheTableRows = buildTheTableRows(refinedDataTable);
+
+				console.log(htmlTableString);
+				
 				return htmlTableString;
 			};
 
-			var buildHTMLDataString = function(dataRays){
-				var commonalityArray = getArrayCommonalities(dataRays.one, dataRays.two);
-				commonalityArray.forEach(function(commonElement){
-					dataRays.one.forEach(function(arrOneElement){
-						if(arrOneElement.type == commonElement) {
-							dataRays.one = percolateValueUp(dataRays.one, commonElement);
-						}
-					});
-					dataRays.two.forEach(function(arrTwoElement){
-						if(arrTwoElement.type == commonElement) {
-							dataRays.two = percolateValueUp(dataRays.two, commonElement);
-						}
+			var buildHTMLDataString = function(compViewArray){
+
+				var commonalityArray = getArrayCommonalities(compViewArray);
+
+				compViewArray.forEach(function(singleComponentView){
+					commonalityArray.forEach(function(commonElement){
+						singleComponentView.vitals.forEach(function(arrOneElement){
+							if(arrOneElement.type == commonElement){
+								singleComponentView.vitals = percolateValueUp(singleComponentView.vitals, commonElement);
+							}
+						});
 					});
 				});
 
 				var returnString = "";
-				returnString = buildHTMLTableFromData(dataRays);
+				returnString = buildHTMLTableFromData(compViewArray);
 				return returnString;
+
 			};
 
-			var updateComparisonBox = function(cb){
+			var updateComparisonBox = function(cb,listSize,panelString){
 				var win = cb.up().up().up();
-				if(win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data && 
-					win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data){
-					var arrayOne = [];
-					var arrayTwo = [];
-					win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data.vitals.forEach(function(elim) {
-						arrayOne.push(elim);
-					});
-					win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data.vitals.forEach(function(elim) {
-						arrayTwo.push(elim);
-					});
 
-					var dataRays = {};
-					dataRays.one = arrayOne;
-					dataRays.two = arrayTwo;
-					dataRays.nameOne = win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data.name;
-					dataRays.nameTwo = win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data.name;
-
-					var htmlDataString = "";
-					htmlDataString = buildHTMLDataString(dataRays);
-					win.getComponent('attributeCompareItemId').update(htmlDataString);
+				var panelNames = [];
+				for(var i = 0; i < listSize; i++){
+					var panelNameString = {};
+					panelNameString = panelString + i.toString();
+					panelNames.push(panelNameString);
 				}
+
+				var compViewArray = [];
+
+				for(var i = 0; i < panelNames.length; i++){
+					var tempCompView = {};
+					tempCompView = win.getComponent('subComparePanelItemId').getComponent(panelNames[i]).data
+					compViewArray.push(tempCompView);
+				}
+
+				for(var i = 0; i < compViewArray.length; i++){
+					if(compViewArray[i] == null){
+						return;
+					}
+				}
+				
+				var htmlDataString = "";
+				htmlDataString = buildHTMLDataString(compViewArray);
+				win.getComponent('attributeCompareItemId').update(htmlDataString);
+
+				// if(win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data && 
+				// 	win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data){
+				// 	var arrayOne = [];
+				// 	var arrayTwo = [];
+				// 	win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data.vitals.forEach(function(elim) {
+				// 		arrayOne.push(elim);
+				// 	});
+				// 	win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data.vitals.forEach(function(elim) {
+				// 		arrayTwo.push(elim);
+				// 	});
+
+				// 	var dataRays = {};
+				// 	dataRays.one = arrayOne;
+				// 	dataRays.two = arrayTwo;
+				// 	dataRays.nameOne = win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data.name;
+				// 	dataRays.nameTwo = win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data.name;
+
+				// 	var htmlDataString = "";
+				// 	htmlDataString = buildHTMLDataString(dataRays);
+				// 	win.getComponent('attributeCompareItemId').update(htmlDataString);
+				// }
 			}
 			
 			var compareEntries = function(menu) {
+
+				var selectedComponents = [];
+				menu.items.each(function(item) {
+					if (item.componentId) {
+						var record = Ext.create('Ext.data.Model', {});
+						record.set({
+							componentId: item.componentId,
+							name: item.text
+						});
+						selectedComponents.push(record);
+					}
+				});
 				
 				var changeComparePanelListenerGenerator = function(name) {
 					return function(cb, newValue, oldValue, opts) {
@@ -394,7 +513,7 @@
 										success: function (newData) {
 											data.fullEvaluations = newData.fullEvaluations;
 											comparePanel.update(data);
-											// updateComparisonBox(cb);
+											updateComparisonBox(cb,selectedComponents.length,'panelNumber');
 
 											// Add event listeners for toggle-able containers
 											var toggleElements = document.querySelectorAll('.toggle-collapse');
@@ -411,6 +530,7 @@
 						}
 					}
 				}
+
 				var comparePanelItemGenerator = function(itemId, name, side) {
 					result = {
 						xtype: 'panel',
@@ -450,18 +570,6 @@
 					return result;
 				}
 
-				var selectedComponents = [];
-				menu.items.each(function(item) {
-					if (item.componentId) {
-						var record = Ext.create('Ext.data.Model', {});
-						record.set({
-							componentId: item.componentId,
-							name: item.text
-						});
-						selectedComponents.push(record);
-					}
-				});
-
 				var compareWin = Ext.create('Ext.window.Window', {
 					title: 'Compare',
 					iconCls: 'fa fa-columns',
@@ -497,6 +605,7 @@
 							split: true,
 							border: true,
 							height: '30%',
+							overflowX: 'scroll',
 							scrollable: true,
 							itemId: 'attributeCompareItemId'
 						}
