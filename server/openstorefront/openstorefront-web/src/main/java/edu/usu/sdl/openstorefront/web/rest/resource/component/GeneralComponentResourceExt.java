@@ -1049,7 +1049,7 @@ public abstract class GeneralComponentResourceExt
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(UserSubmission.class)
-	@APIDescription("Return a user submission view of the component. User Submission is not save...so this is a ready only version.")
+	@APIDescription("Return a user submission view of the component. User Submission is not saved...so this is a read-only version.")
 	@Path("/{id}/usersubmission")
 	public Response convertToUserSubmission(
 			@PathParam("id")
