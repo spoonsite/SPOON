@@ -29,7 +29,6 @@
 	<script src="scripts/component/questionWindow.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="OSF/component/TagDropDownWithFamilyPanel.js?v=${appVersion}" type="text/javascript"></script>
 	
-	
 	<div style="display:none; visibility: hidden;" id="templateHolder"></div>	
 		
 	<script type="text/javascript">

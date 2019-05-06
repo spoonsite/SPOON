@@ -49,7 +49,7 @@ Ext.define('OSF.component.template.Description', {
 	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 			'<div><tpl if="showDescriptionHeader"><h2><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description</h2></tpl>',
-			'	{description}',
+			'	`1+3`{description}',
 			'</div>'
 			),
 
@@ -214,31 +214,37 @@ Ext.define('OSF.component.template.Vitals', {
 	title: 'Entry Vitals',
 
 	tpl: new Ext.XTemplate(
-			'<table class="details-table" width="100%">',
-			'	<tr><th class="details-table">Label</th><th class="details-table">Value</th><th class="details-table">Unit</th></tr>',
-			'	<tpl for="vitals">',
-			'		<tr class="details-table">',
-			'			<td class="details-table">',
-			'				<b>{label}</b>',
-			'				<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>',
-			'           </td>',
-			'			<td class="details-table highlight-{highlightStyle}">',
-			'               <tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
-			'               <a href="#" class="details-table" title="Show related entries"',
-			'                   onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\', \'{codeHasAttachment}\');"',
-			'					>',
-			'					<b>{value}</b>',
-			'				</a>',
-			'               <tpl if="codeHasAttachment"><a href="api/v1/resource/attributes/attributetypes/{type}/attributecodes/{code}/attachment"><i class="fa fa-paperclip"></i></a></tpl>', 
-			'				<tpl if="comment"><hr>Comment: {comment}</tpl>',
-			'			</td>',
-			'			<td class="details-table">',
-			'				<tpl if="unit"><b>{unit}</b></tpl>',
-			'			</td>',
-			'		</tr>',
-			'	</tpl>',
-			'</table>'
-			),
+		'<table class="details-table" width="100%">',
+		'	<tr><th class="details-table">Label</th><th class="details-table">Value</th><th class="details-table">Unit</th></tr>',
+		'	<tpl for="vitals">',
+		'		<tr class="details-table">',
+		'			<td class="details-table">',
+		'				<b>{label}</b>',
+		'				<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>',
+		'           </td>',
+		'			<td class="details-table highlight-{highlightStyle}">',
+		'               <tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
+		'               <a href="#" class="details-table" title="Show related entries"',
+		'                   onclick="CoreUtil.showRelatedVitalWindow(\'{type}\',\'{code}\',\'{label} - {value}\', \'{vitalType}\', \'{tip}\', \'{componentId}\', \'{codeHasAttachment}\');"',
+		'					>',
+		'					<b>{value}</b>',
+		'				</a>',
+		'               <tpl if="codeHasAttachment"><a href="api/v1/resource/attributes/attributetypes/{type}/attributecodes/{code}/attachment"><i class="fa fa-paperclip"></i></a></tpl>',
+		'				<tpl if="comment"><hr>Comment: {comment}</tpl>',
+		'			</td>',
+		'			<td class="details-table">',
+		'				<tpl if="unit"><b>{[this.newFunction(unit)]}</b></tpl>',
+		'			</td>',
+		'		</tr>',
+		'	</tpl>',
+		'</table>',
+		{
+			newFunction: function (text) {
+				console.log(text);
+				return text;
+			}
+		}
+	),
 
 	initComponent: function () {
 		this.callParent();
