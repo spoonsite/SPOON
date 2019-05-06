@@ -89,10 +89,9 @@
 	<script src="webjars/tinymcetextarea/5.1/tinymce/tinymce.min.js" type="text/javascript"></script>
 	<script src="webjars/tinymcetextarea/5.1/TinyMCETextArea.js" type="text/javascript"></script>	
 
-	<%-- Math Rendering --%>	
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.css" integrity="sha384-b/NoaeRXkMxyKcrDw2KtVtYKkVg3dA0rTRgLoV7W2df3MzeR1eHLTi+l4//4fMwk" crossorigin="anonymous">
-	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.js" integrity="sha384-ern5NCRqs6nJ/a4Ik0nB9hnKVH5HwV2XRUYdQl09OB/vvd1Lmmqbg1Mh+mYUclXx" crossorigin="anonymous"></script>
-
+	<%-- Math Rendering --%>
+	<link rel="stylesheet" href="scripts/mathRender/katex.min.css"/>
+	<script src="scripts/mathRender/katex.min.js"></script>
 	
 	<title>${appTitle}</title>
         <stripes:layout-component name="html_head"/>

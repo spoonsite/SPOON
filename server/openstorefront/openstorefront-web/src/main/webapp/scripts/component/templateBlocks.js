@@ -49,7 +49,7 @@ Ext.define('OSF.component.template.Description', {
 	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
 			'<div><tpl if="showDescriptionHeader"><h2><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description</h2></tpl>',
-			'	`1+3`{description}',
+			'	{description}',
 			'</div>'
 			),
 
@@ -233,15 +233,34 @@ Ext.define('OSF.component.template.Vitals', {
 		'				<tpl if="comment"><hr>Comment: {comment}</tpl>',
 		'			</td>',
 		'			<td class="details-table">',
-		'				<tpl if="unit"><b>{[this.newFunction(unit)]}</b></tpl>',
+		'				<tpl if="unit"><b>{[this.newFunction(values.unit)]}</b></tpl>',
 		'			</td>',
 		'		</tr>',
 		'	</tpl>',
 		'</table>',
 		{
-			newFunction: function (text) {
-				console.log(text);
-				return text;
+			newFunction: function (str) {
+				console.log(str);
+
+				const regex = /(\w{2,})+/gu;
+				var newStr = str;
+
+				while ((m = regex.exec(str)) !== null) {
+					if (m.index === regex.lastIndex) {
+						regex.lastIndex++;
+					}
+
+					match = m[0];
+					if (match.length != str.length) {
+						parenMatch = "(" + match + ")";
+						str = str.replace(match, parenMatch);
+						console.log(str);
+					}
+				}
+
+				var katex = Window.renderAsciiMath(str, { displayMode: true })
+				console.log(katex);
+				return katex;
 			}
 		}
 	),
