@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTypeTemplate;
 import edu.usu.sdl.openstorefront.core.entity.ComponentVersionHistory;
 import edu.usu.sdl.openstorefront.core.entity.ContentSectionMedia;
@@ -152,7 +153,7 @@ public class OrientToMongoMigration
 
 		CoreSystem.resume("Done with DB Migration");
 		LOG.log(Level.INFO, "Done with DB Migration");
-		return "Transfered: " + tablesTransered;
+		return "Transfered: " + tablesTransered + " entities";
 	}
 
 	private void updateStatus(String message)
@@ -190,6 +191,7 @@ public class OrientToMongoMigration
 				"ComponentQuestion",
 				"ComponentQuestionResponse",
 				"ComponentRelationship",
+				ComponentResource.class.getSimpleName(),
 				"ComponentReview",
 				"ComponentReviewCon",
 				"ComponentReviewPro",
