@@ -58,7 +58,7 @@ Ext.define('OSF.component.template.Description', {
 	},
 
 	updateHandler: function (entry) {
-		// Ext escape dose not properly escape Apostrophes for display on an html page 
+		// Ext escape does not properly escape Apostrophes for display on an html page 
 		// so we need to replace \' with the proper html escape of &apos;
 		entry.description = Ext.util.Format.escape(entry.description).replace(/\n/g, '').replace(/\r/g, '').replace(/\\'/g, '&apos;');
 
@@ -228,13 +228,13 @@ Ext.define('OSF.component.template.Vitals', {
 			'				<tpl if="comment"><hr><b>Comment:</b> <br> {comment}</tpl>',
 			'			</td>',
 			'			<td class="details-table" width="75px" style="text-align: center;">',
-			'				<tpl if="unit">{[this.newFunction(values.unit)]}</tpl>',
+			'				<tpl if="unit">{[this.asciiToKatex(values.unit)]}</tpl>',
 			'			</td>',
 			'		</tr>',
 			'	</tpl>',
 			'</table>',
 		{
-			newFunction: function (str) {
+			asciiToKatex: function (str) {
 				// regex for placing parentheses in str before parsing to katex to ensure sub-units are grouped right 
 				// ex: kg/m -> (kg)/m
 

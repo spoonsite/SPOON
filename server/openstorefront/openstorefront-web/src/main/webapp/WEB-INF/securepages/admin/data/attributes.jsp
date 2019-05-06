@@ -390,6 +390,52 @@
 						}
 					},
 					{text: 'Unit', dataIndex: 'attributeUnit', flex: 1},
+					{
+						text: 'Display Unit1',
+						xtype: 'templatecolumn',
+						tpl: ['{[this.asciiToKatex(values.attributeUnit)]}',
+							{
+								asciiToKatex: function (str) {
+									// regex for placing parentheses in str before parsing to katex to ensure sub-units are grouped right 
+									// ex: kg/m -> (kg)/m
+
+									const regex = /(\w{1,})+/gu;
+
+									var array = [];
+
+									if (str !== undefined) {
+										while ((m = regex.exec(str)) !== null) {
+											if (m.index === regex.lastIndex) {
+												regex.lastIndex++;
+											}
+
+											// replacement with parenthesized versions of the sub-units
+											// with check to see if the sub-unit is the whole unit
+											// ex: kg
+											match = m[0];
+											array.push(match);
+											// parenMatch = '"' + match + '"';
+											// str = str.replace(match, parenMatch);
+										}
+										array.forEach(function (match) {
+											parenMatch = '"' + match + '"';
+											str = str.replace(match, parenMatch);
+											console.log(str);
+										})
+
+										// method for converting ascii to katex
+										if (str == '$') {
+											str = '"\\$"';
+										}
+										var katex = str;
+										var katex = Window.renderAsciiMath(str, { displayMode: false })
+										return katex;
+									} else {
+										return "";
+									}
+								}
+							}]
+					},
 					{text: 'Type Code', dataIndex: 'attributeType', flex: 1.5},
 					{
 						text: 'Required',
