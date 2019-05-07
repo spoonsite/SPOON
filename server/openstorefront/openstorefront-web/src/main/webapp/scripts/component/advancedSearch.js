@@ -164,7 +164,7 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							fieldLabel: 'Value  <span class="field-required" />',
 							allowBlank: false,
 							maxLength: 200,
-							enforceMaxLength: true,
+							enforceMaxLength: true
 						},	
 						{
 							xtype: 'combobox', 
@@ -280,13 +280,20 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 							width: '100%',
 							name: 'keyField',
 							fieldLabel: 'Attribute Category <span class="field-required" />',
-							editable: false,
+							editable: true,
+							typeAhead: true,
 							forceSelection: true,
 							allowBlank: false,
 							displayField: 'description',
 							valueField: 'attributeType',
-							queryMode: 'remote',
+							queryMode: 'local',
+							listConfig: {
+								getInnerTpl: function () {
+									return '{description} <tpl if="attributeUnit"> ({attributeUnit})</tpl>';
+								}
+							},
 							store: {
+								autoLoad: true,
 								proxy: {
 									type: 'ajax',
 									url: 'api/v1/resource/attributes/attributetypes',
@@ -294,7 +301,7 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 										type: 'json',
 										rootProperty: 'data',
 										totalProperty: 'totalNumber'
-									}
+									}									
 								}
 							},
 							listeners: {
@@ -506,7 +513,7 @@ Ext.define('OSF.component.AdvancedSearchPanel', {
 								store: {
 									proxy: {
 										type: 'ajax',
-										url: 'api/v1/resource/componenttypes/lookup',
+										url: 'api/v1/resource/componenttypes/lookup'
 									},
 									autoLoad: true
 								}

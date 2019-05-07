@@ -15,12 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * See NOTICE.txt for more information.
  */
-/* global Ext */
+/* global Ext, CoreUtil */
 
 Ext.define('OSF.component.EntryChangeRequestWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.EntryChangeRequestWindow',
-	requires: ['OSF.common.ValidHtmlEditor'],
+	requires: [
+		'OSF.common.ValidHtmlEditor',
+		'OSF.customSubmission.SubmissionFormFullControl'
+	],
 	title: 'Change Requests',
 	modal: true,
 	maximizable: true,
@@ -92,14 +95,14 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							width: '100%',
 							displayField: 'Comment displayfield',
 							store: {
-								autoLoad: true,
-							},
+								autoLoad: true
+							}
 						},
 						{
 							xtype: 'hidden',
 							itemId: 'searchCommentId',
 							name: 'commentId'
-						},
+						}
 					],
 					dockedItems: [
 						{
@@ -143,7 +146,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 																	title: 'Validation Error. The Server could not process the comment request. ',
 																	html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
 																	width: 550,
-																	autoCloseDelay: 10000,
+																	autoCloseDelay: 10000
 																});
 															}
 
@@ -153,7 +156,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 																title: 'Validation Error. The Server could not process the request.',
 																html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
 																width: 500,
-																autoCloseDelay: 10000,
+																autoCloseDelay: 10000
 															});
 														}
 													});	
@@ -379,13 +382,17 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						tools.getComponent('unsubmitBtn').setDisabled(false);
 						tools.getComponent('removeBtn').setDisabled(false);
 						tools.getComponent('tool-approveBtn').setDisabled(false);
-						tools.getComponent('messageBtn').setDisabled(false);
+						tools.queryById('actionBtn').setDisabled(false);
+						tools.queryById('messageBtn').setDisabled(false);
+						tools.queryById('viewSubmissionBtn').setDisabled(false);						
 					} else {
 						tools.getComponent('editBtn').setDisabled(true);
 						tools.getComponent('unsubmitBtn').setDisabled(true);
 						tools.getComponent('removeBtn').setDisabled(true);
 						tools.getComponent('tool-approveBtn').setDisabled(true);
-						tools.getComponent('messageBtn').setDisabled(true);
+						tools.queryById('actionBtn').setDisabled(false);
+						tools.queryById('messageBtn').setDisabled(true);
+						tools.queryById('viewSubmissionBtn').setDisabled(false);
 					}
 
 					//load preview
@@ -446,19 +453,90 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							}
 						}, 
 						{
-							text: 'Message',
-							itemId: 'messageBtn',
-							iconCls: 'fa fa-lg fa-envelope-o',
-							disabled: true,
+							text: 'Action',
+							itemId: 'actionBtn',
 							hidden: true,
-							handler: function(){
-								var emails = changeRequestWindow.changeGrid.getSelection()[0].get('ownerEmail');
-								var messageWindow = Ext.create('OSF.component.MessageWindow', {					
-									closeAction: 'destroy',
-									alwaysOnTop: true,
-									initialToUsers: emails
-								}).show();
-							}
+							disabled: true,
+							menu: [
+								{
+									text: 'Message',
+									itemId: 'messageBtn',
+									iconCls: 'fa fa-lg fa-envelope-o',
+									disabled: true,
+									hidden: true,
+									handler: function(){
+										var emails = changeRequestWindow.changeGrid.getSelection()[0].get('ownerEmail');
+										var messageWindow = Ext.create('OSF.component.MessageWindow', {					
+											closeAction: 'destroy',
+											alwaysOnTop: true,
+											initialToUsers: emails
+										}).show();
+									}
+								},								
+								{
+									text: 'View Submission form',
+									itemId: 'viewSubmissionBtn',
+									disabled: true,
+									iconCls: 'fa fa-eye icon-button-color-view',									
+									handler: function() {
+										var record = changeRequestWindow.changeGrid.getSelection()[0];
+										
+										var previewWin = Ext.create('Ext.window.Window', {
+											title: 'Preview',
+											layout: 'fit',
+											modal: true,
+											closeAction: 'destroy',
+											width: '80%',
+											height: '80%',
+											maximizable: true,
+											dockedItems: [
+												{
+													xtype: 'panel',
+													dock: 'top',
+													html: '<div class="submission-form-preview alert-warning">Preview Mode - (Changes will NOT be saved)</div>'
+												}
+											],
+											items: [
+												{
+													xtype: 'osf-customSubmission-SubmissionformFullControl',
+													itemId: 'form',
+													showCustomButton: true,
+													previewMode: true,
+													hideSave: true,
+													customButtonHandler: function() {
+														previewWin.close();
+													}								
+												}
+											]
+										});
+										previewWin.show();
+
+										previewWin.setLoading('Loading Submission Form data...');
+										Ext.Ajax.request({
+											url: 'api/v1/resource/components/' + record.get('componentId') + '/usersubmission',
+											callback: function() {
+												previewWin.setLoading(false);
+											},
+											success: function(response, opts) {							
+												var userSubmission = Ext.decode(response.responseText);
+
+												previewWin.setLoading('Loading Submission Form template...');
+												Ext.Ajax.request({
+													url: 'api/v1/resource/submissiontemplates/' + userSubmission.templateId,
+													callback: function() {
+														previewWin.setLoading(false);
+													},
+													success: function(responseTemplate, opts) {
+														var template = Ext.decode(responseTemplate.responseText);
+
+														previewWin.queryById('form').load(template, record.get('componentType'), userSubmission);
+													}
+												});							
+											}
+										});										
+									}
+								}
+							]
 						},
 						{
 							text: 'Unsubmit',
@@ -549,7 +627,8 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 			tools.getComponent('newBtn').setHidden(true);	
 			tools.getComponent('unsubmitBtn').setHidden(true);	
 			tools.getComponent('tool-approveBtn').setHidden(false);
-			tools.getComponent('messageBtn').setHidden(false);
+			tools.queryById('actionBtn').setHidden(false);
+			tools.queryById('messageBtn').setHidden(false);
 		} 
 		
 	},
