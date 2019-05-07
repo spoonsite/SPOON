@@ -50,4 +50,4 @@ markup = "mmark"
 
 ## JScience Semantics
 
-When attempting to use a superscript fraction as an attribute (ex. 'deg/(hr^(1/2))'), it will not be able to parse that. In order to get it to parse you must use a colon (ex. 'deg/(hr^(1:2))'). This will result in it parsing correctly and it will render as $deg/(hr^{1/2})$.
+When attempting to use a superscript fraction as an attribute (ex. 'deg/(hr^(1/2))'), it will not be able to parse that. In order to get it to parse you must use a colon (ex. 'deg/(hr^1:2)'). This will result in it parsing correctly and it will render as $deg/(hr^{1/2})$.
