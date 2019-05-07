@@ -397,15 +397,12 @@
 
 
 			var getRelevantDataPiece = function(vitalsList, vitalNameToGet){
-				// console.log('vitalsList: ',vitalsList, ' name: ', vitalNameToGet);
+
 				var foundVal = false;
 				vitalsList.forEach(function(entryVital){
-					
-					// console.log('outed: ---->',entryVital.label, '<-----comped: ', vitalNameToGet);
+
 					if(entryVital.label == vitalNameToGet){
 						foundVal = entryVital.value;
-						// console.log('FOUND A MATCH', entryVital.value);
-						// return entryVital.value;
 					}
 				});
 				if(foundVal){
@@ -416,7 +413,6 @@
 
 			var getVitalsBody = function(compViewArray){
 				// 1. Make a set of all the vitals by type. (dups included)
-
 				var vitalSet = [];
 				compViewArray.forEach(function(singleComponentView){
 					singleComponentView.vitals.forEach(function(entryVital){
@@ -428,19 +424,8 @@
 						}
 					});
 				});
-				// console.log(vitalSet);
+				console.log(vitalSet);
 
-				// for(var i = 0; i < vitalSet.length; i++){
-				// 	for(var j = 0; j < compViewArray.length; j++){
-				// 		for(var k = 0; k < compViewArray[j].vitals.length; k++){
-				// 			if(vitalSet[i] == compViewArray[j].vitals[k].label){
-				// 				// do stuff
-				// 				break;
-
-				// 			}
-				// 		}
-				// 	}
-				// }
 				var vitalsHtmlBody = '';
 
 				vitalSet.forEach(function(vitalSetItem){
@@ -451,31 +436,18 @@
 					rowString += '</td>';
 					compViewArray.forEach(function(singleComponentView){
 						rowString += '<td>';
-						// rowString += getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name);
-						// console.log('MAGIC: ',getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name));
 						rowString += getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name);
 						rowString += '</td>';
 					});
 					rowString += '</tr>'
 					vitalsHtmlBody += rowString;
-
-
-					// compViewArray.forEach(function(singleComponentView){
-					// 	singleComponentView.vitals.forEach(function(entryVital){
-					// 		if(entryVital.label = vitalSetItem){
-
-					// 		}
-					// 	});
-					// });
 				});
-				// console.log('BODY: ',vitalsHtmlBody);
 				return vitalsHtmlBody;
 			}
 
 			var buildHTMLTableFromData = function(compViewArray){
 
 				var htmlTableString = "";
-				// htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px;}tr:nth-child(even) {  background-color: #dddddd;}tr,th{min-width: 40em;}</style>";
 				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px; min-width: 40em;}tr:nth-child(even) {  background-color: #dddddd;}</style>";
 				htmlTableString += "<h2>Comparison Table</h2>";
 
@@ -488,21 +460,7 @@
 				htmlTableString += mainTableBody;
 				htmlTableString += vitalsBody;
 
-				// htmlTableString += "<tr><th>FIGHTTHEPOWER!</th><th>Unit</th><th>"+dataRays.nameOne+"</th><th>"+dataRays.nameTwo+"</th></tr>";// + allTheTableRows;
-
-
-
-
-
 				htmlTableString += "</table>";
-				// var refinedDataTable = [];
-				// refinedDataTable = buildRefinedDataTable(dataRays.one,dataRays.two);
-
-				// var allTheTableRows = "";
-				// allTheTableRows = buildTheTableRows(refinedDataTable);
-
-				// console.log(htmlTableString);
-				// console.log(compViewArray);
 				
 				return htmlTableString;
 			};
@@ -554,28 +512,6 @@
 				var htmlDataString = "";
 				htmlDataString = buildHTMLDataString(compViewArray);
 				win.getComponent('attributeCompareItemId').update(htmlDataString);
-
-				// if(win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data && 
-				// 	win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data){
-				// 	var arrayOne = [];
-				// 	var arrayTwo = [];
-				// 	win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data.vitals.forEach(function(elim) {
-				// 		arrayOne.push(elim);
-				// 	});
-				// 	win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data.vitals.forEach(function(elim) {
-				// 		arrayTwo.push(elim);
-				// 	});
-
-				// 	var dataRays = {};
-				// 	dataRays.one = arrayOne;
-				// 	dataRays.two = arrayTwo;
-				// 	dataRays.nameOne = win.getComponent('subComparePanelItemId').getComponent('compareAPanel').data.name;
-				// 	dataRays.nameTwo = win.getComponent('subComparePanelItemId').getComponent('compareBPanel').data.name;
-
-				// 	var htmlDataString = "";
-				// 	htmlDataString = buildHTMLDataString(dataRays);
-				// 	win.getComponent('attributeCompareItemId').update(htmlDataString);
-				// }
 			}
 			
 			var compareEntries = function(menu) {
@@ -696,26 +632,24 @@
 					items: [
 						{
 							xtype: 'panel',
-							region: 'center',
+							region: 'north',
+							height: 0,
 							itemId: 'subComparePanelItemId',
 							overflowX: 'scroll',
 							layout: {
 								type: 'hbox',
-								// align: 'stretch'
 							},
 							items:[
-								// comparePanelItemGenerator('compareAPanel', 'componentA', 'left'),
-								// comparePanelItemGenerator('compareBPanel', 'componentB', 'left'),
-								// comparePanelItemGenerator('compareCPanel', 'componentC', 'left')
+
 							]
 						},
 						{
 							xtype: 'panel',
-							dock: 'bottom',
-							region: 'south',
-							split: true,
-							border: true,
-							height: '30%',
+							// dock: 'bottom',
+							region: 'center',
+							// split: true,
+							// border: true,
+							// height: '30%',
 							overflowX: 'scroll',
 							scrollable: true,
 							itemId: 'attributeCompareItemId'
@@ -748,81 +682,16 @@
 					return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
 				});
 
-				// compareWin.getComponent('subComparePanelItemId').add(comparePanelItemGenerator('compareAPanel', 'componentA', 'left'));
-				// compareWin.getComponent('subComparePanelItemId').add(comparePanelItemGenerator('compareBPanel', 'componentB', 'left'));
-				// compareWin.getComponent('subComparePanelItemId').add(comparePanelItemGenerator('compareCPanel', 'componentC', 'left'));
-
-				// compareWin.show();
-
-
-
-
-				// var compareAcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareAPanel').getComponent('cb');
-				// var compareBcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareBPanel').getComponent('cb');
-				// var compareCcb = compareWin.getComponent('subComparePanelItemId').getComponent('compareCPanel').getComponent('cb');
-
-				// compareAcb.setValue(null);
-				// compareBcb.setValue(null);
-				// compareCcb.setValue(null);
-
-				// var selectedComponents = [];
-				// menu.items.each(function(item) {
-				// 	if (item.componentId) {
-				// 		console.log("item.text: " + item.text);
-				// 		var record = Ext.create('Ext.data.Model', {});
-				// 		record.set({
-				// 			componentId: item.componentId,
-				// 			name: item.text
-				// 		});
-				// 		selectedComponents.push(record);
-				// 	}
-				// });
-
-
-				//if nothing selected
-				if(selectedComponents.length > 0) {
-					if (selectedComponents.length === 1) {
-						compareAcb.getStore().loadRecords(selectedComponents);
-						compareAcb.setValue(selectedComponents[0].get('componentId'));
-
-						// var records = [];
-						// searchResultsStore.each(function(record) {
-						// 	records.push(record);
-						// });
-						// Ext.Array.sort(records, function(a, b){
-						// 	return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
-						// });
-						compareBcb.getStore().loadRecords(records);
-
-					} else if (selectedComponents.length > 1) {
-						panelArray.forEach(function(pnlLmnt){
-							pnlLmnt.getStore().loadRecords(records);
-						});
-						for(var i = 0; i < selectedComponents.length; i++){
-							panelArray[i].setValue(selectedComponents[i].get('componentId'));
-						}
-						// compareAcb.getStore().loadRecords(selectedComponents);	
-						// compareBcb.getStore().loadRecords(selectedComponents);
-						// compareCcb.getStore().loadRecords(selectedComponents);
-
-						// compareAcb.setValue(selectedComponents[0].get('componentId'));
-						// compareBcb.setValue(selectedComponents[1].get('componentId'));		
-						// compareCcb.setValue(selectedComponents[2].get('componentId'));																					
-
-					}											
-				} else {
-
-					// var records = [];
-					// searchResultsStore.each(function(record) {
-					// 	records.push(record);
-					// });
-					// Ext.Array.sort(records, function(a, b){
-					// 	return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
-					// });
-
-					compareAcb.getStore().loadRecords(records);
-					compareBcb.getStore().loadRecords(records);
-				}				
+				
+				if (selectedComponents.length > 1) {
+					panelArray.forEach(function(pnlLmnt){
+						pnlLmnt.getStore().loadRecords(records);
+					});
+					for(var i = 0; i < selectedComponents.length; i++){
+						panelArray[i].setValue(selectedComponents[i].get('componentId'));
+					}
+				}											
+							
 			}
 			
 			var attributeFilters = [];
