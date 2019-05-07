@@ -46,7 +46,7 @@ Ext.define('OSF.form.MultipleAttributes', {
 			Ext.Object.each(rawData, function (key, value) {
 				if (value && !Ext.String.endsWith(key, '-PREFERREDUNITS'))
 				{	
-					if (this.valueTypes[key] === 'NUMBER' && Ext.String.endsWith(value, ".")) { //check percision; this will enforce max allowed
+					if (this.valueTypes[key] === 'NUMBER' && Ext.String.endsWith(value, ".")) { //check precision; this will enforce max allowed
 						try {
 							var valueNumber = new Number(value);
 							if (isNaN(valueNumber)) {
