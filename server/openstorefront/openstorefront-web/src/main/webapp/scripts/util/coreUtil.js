@@ -1178,29 +1178,29 @@ var CoreUtil = {
 
 		const regex = /(\w{1,})+/gu;
 
-		// regex for JUnit edge case
-		const jUnitRegex = /((\d+):(\d+))+/g;
+		// regex for JScience edge case
+		const JScienceRegex = /((\d+):(\d+))+/g;
 
 		var regexArray = [];
-		var jUnitRegexArray = [];
+		var JScienceRegexArray = [];
 
 		if (str !== undefined) {
-			// This is for a specific JUnit case where ^1/2 is resolved as 1:2, 
+			// This is for a specific JScience case where ^1/2 is resolved as 1:2, 
 			// this is not a recognized ascii math method so it is changed 
 			// back to 1/2 so katex can understand it.
-			while ((m = jUnitRegex.exec(str)) !== null) {
-				if (m.index === jUnitRegex.lastIndex) {
-					jUnitRegex.lastIndex++;
+			while ((m = JScienceRegex.exec(str)) !== null) {
+				if (m.index === JScienceRegex.lastIndex) {
+					JScienceRegex.lastIndex++;
 				}
 				// replacement with parenthesized versions of the sub-units
 				// with check to see if the sub-unit is the whole unit
 				// ex: kg
-				jUnitRegexArray.push(m[0]);
+				JScienceRegexArray.push(m[0]);
 
 			}
 			// iterate over found matches and place parenthesis around 
 			// the matches in the current string
-			jUnitRegexArray.forEach(function (match) {
+			JScienceRegexArray.forEach(function (match) {
 				newSubStr = "(" + match.replace(":", "/") + ")";
 				str = str.replace(match, newSubStr)
 			})
@@ -1226,7 +1226,7 @@ var CoreUtil = {
 
 			// Katex does not allow $ when converting so this is the way 
 			// of fixing that edge case. (cases like this should not 
-			// be in the database through)
+			// be in the database though)
 			if (str == '$') {
 				return ("$");
 			}
