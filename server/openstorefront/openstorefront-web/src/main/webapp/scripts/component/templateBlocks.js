@@ -228,7 +228,7 @@ Ext.define('OSF.component.template.Vitals', {
 			'				<tpl if="comment"><hr><b>Comment:</b> <br> {comment}</tpl>',
 			'			</td>',
 			'			<td class="details-table" width="75px" style="text-align: center;">',
-			'				<tpl if="unit">{[this.asciiToKatex(values.unit)]}</tpl>',
+			'				<tpl if="unit">{[this.asciiToKatex(values.unit, false)]}</tpl>',
 			'			</td>',
 			'		</tr>',
 			'	</tpl>',

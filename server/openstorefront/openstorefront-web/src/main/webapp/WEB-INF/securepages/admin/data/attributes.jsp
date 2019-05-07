@@ -393,7 +393,7 @@
 					{
 						text: 'Display Unit',
 						xtype: 'templatecolumn',
-						tpl: ['{[this.asciiToKatex(values.attributeUnit)]}',
+						tpl: ['{[this.asciiToKatex(values.attributeUnit, false)]}',
 							{
 								asciiToKatex: CoreUtil.asciiToKatex
 							}]
@@ -2256,6 +2256,10 @@
 									bodyStyle: 'font-size: 16px; line-height: 1.2em; padding-bottom: 10px;',
 									html: ''
 								},
+								{
+									xtype: 'panel',
+									id: 'displayUnit'
+								},
 								// check the unit string to see if it parses correctly
 								// hide if value type not a number
 								{
@@ -2266,6 +2270,7 @@
 									name: 'attributeUnitCheck',
 									handler: function() {
 										var value = Ext.getCmp('attributeUnitDefault').getValue();
+										Ext.getCmp('displayUnit').update(this.asciiToKatex(value));
 										// ajax check if it can parse the unit
 										var data = {
 											unit: value
@@ -2294,6 +2299,13 @@
 												console.error(response);
 											}
 										});
+									}, 
+									asciiToKatex: function (value) {
+										var newHtml;
+										var header = '<p><b>Displayed Unit</b></p>';
+										var katex = '<style>.katex { font-size: 2em !important; } </style><p>' + CoreUtil.asciiToKatex(value, false) + '</p>';
+										newHtml = header + katex;
+										return newHtml;
 									}
 								},
 								{

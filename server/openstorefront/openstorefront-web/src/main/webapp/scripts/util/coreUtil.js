@@ -1172,7 +1172,8 @@ var CoreUtil = {
 		return v.toString(16);
 	  });
 	},
-	asciiToKatex: function (str) {
+	asciiToKatex: function (str, block) {
+		// if block == true it will return a block element, else it will return an inline element
 		// regex for placing parentheses in str before parsing to katex to ensure sub-units are grouped right 
 		// ex: kg/m -> (kg)/m
 
@@ -1232,7 +1233,7 @@ var CoreUtil = {
 			}
 
 			// method for converting ascii to katex
-			var katex = Window.renderAsciiMath(str, { displayMode: false })
+			var katex = Window.renderAsciiMath(str, { displayMode: block })
 			return katex;
 		} else {
 			return "";
