@@ -48,17 +48,17 @@ Ext.define('OSF.component.template.Description', {
 	showDescriptionHeader: false,
 	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
-			'<div><tpl if="showDescriptionHeader"><h2><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description</h2></tpl>',
-			'	{description}',
-			'</div>'
-			),
+		'<div><tpl if="showDescriptionHeader"><h2><tpl if="componentSecurityMarkingType">({componentSecurityMarkingType}) </tpl>Description</h2></tpl>',
+		'	{description}',
+		'</div>'
+	),
 
 	initComponent: function () {
 		this.callParent();
 	},
 
 	updateHandler: function (entry) {
-		// Ext escape dose not properly escape Apostrophes for display on an html page 
+		// Ext escape does not properly escape Apostrophes for display on an html page 
 		// so we need to replace \' with the proper html escape of &apos;
 		entry.description = Ext.util.Format.escape(entry.description).replace(/\n/g, '').replace(/\r/g, '').replace(/\\'/g, '&apos;');
 
@@ -74,7 +74,7 @@ Ext.define('OSF.component.template.Description', {
 			// Set targets
 			Ext.Array.each(links, function (item) {
 				if (item.getAttribute && item.getAttribute('href')) {
-					item.set({target: '_blank'});
+					item.set({ target: '_blank' });
 				}
 			});
 
@@ -83,7 +83,7 @@ Ext.define('OSF.component.template.Description', {
 				if (item.getAttribute('href') && item.getAttribute('href').indexOf('searchResults.jsp') !== -1) {
 					var searchId = item.getAttribute('href').substr(item.getAttribute('href').indexOf('savedSearchId='), item.getAttribute('href').length);
 					searchId = searchId.replace('savedSearchId=', '');
-					item.set({'onclick': "CoreUtil.showSavedSearchWindow('" + searchId + "'); return false;"});
+					item.set({ 'onclick': "CoreUtil.showSavedSearchWindow('" + searchId + "'); return false;" });
 				}
 			});
 		}
@@ -104,19 +104,19 @@ Ext.define('OSF.component.template.Resources', {
 	title: 'Location of Entry Artifacts',
 
 	tpl: new Ext.XTemplate(
-			' <table class="details-table" width="100%">',
-			'	<tr><th class="details-table">Name</th><th class="details-table">Link</th></tr>',
-			'	<tpl for="resources">',
-			'		<tr class="details-table">',
-			'			<td class="details-table"><b>{resourceTypeDesc}</b>',
-			'                   <tpl if="description"><br>{description}</tpl>',
-			'					<tpl if="privateFlag"><br><span class="private-badge">private</span></tpl>',
-			'           </td>',
-			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="{actualLink}" class="details-table" target="_blank">{link}</a></td>',
-			'		</tr>',
-			'	</tpl>',
-			'</table>'
-			),
+		' <table class="details-table" width="100%">',
+		'	<tr><th class="details-table">Name</th><th class="details-table">Link</th></tr>',
+		'	<tpl for="resources">',
+		'		<tr class="details-table">',
+		'			<td class="details-table"><b>{resourceTypeDesc}</b>',
+		'                   <tpl if="description"><br>{description}</tpl>',
+		'					<tpl if="privateFlag"><br><span class="private-badge">private</span></tpl>',
+		'           </td>',
+		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><a href="{actualLink}" class="details-table" target="_blank">{link}</a></td>',
+		'		</tr>',
+		'	</tpl>',
+		'</table>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -158,18 +158,18 @@ Ext.define('OSF.component.template.Contacts', {
 	title: 'Points of Contact',
 
 	tpl: new Ext.XTemplate(
-			' <table class="details-table" width="100%">',
-			'	<tr><th class="details-table">Name</th><th class="details-table">Position</th><th class="details-table">Phone</th><th class="details-table">Email</th></tr>',
-			'	<tpl for="contacts">',
-			'		<tr class="details-table">',
-			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b> <br> ({organization})</td>',
-			'			<td class="details-table">{positionDescription}</td>',
-			'			<td class="details-table"><tpl if="phone"><a href="tel:{phone}" class="details-table">{phone}</a></tpl><tpl if="!phone">—</tpl></td>',
-			'			<td class="details-table"><a href="mailto:{email}" class="details-table">{email}</a></td>',
-			'		</tr>',
-			'	</tpl>',
-			'</table>'
-			),
+		' <table class="details-table" width="100%">',
+		'	<tr><th class="details-table">Name</th><th class="details-table">Position</th><th class="details-table">Phone</th><th class="details-table">Email</th></tr>',
+		'	<tpl for="contacts">',
+		'		<tr class="details-table">',
+		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b> <br> ({organization})</td>',
+		'			<td class="details-table">{positionDescription}</td>',
+		'			<td class="details-table"><tpl if="phone"><a href="tel:{phone}" class="details-table">{phone}</a></tpl><tpl if="!phone">—</tpl></td>',
+		'			<td class="details-table"><a href="mailto:{email}" class="details-table">{email}</a></td>',
+		'		</tr>',
+		'	</tpl>',
+		'</table>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -228,12 +228,15 @@ Ext.define('OSF.component.template.Vitals', {
 			'				<tpl if="comment"><hr><b>Comment:</b> <br> {comment}</tpl>',
 			'			</td>',
 			'			<td class="details-table" width="75px" style="text-align: center;">',
-			'				<tpl if="unit"><b>{unit}</b></tpl>',
+			'				<tpl if="unit">{[this.asciiToKatex(values.unit)]}</tpl>',
 			'			</td>',
 			'		</tr>',
 			'	</tpl>',
-			'</table>'
-			),
+			'</table>',
+		{
+			asciiToKatex: CoreUtil.asciiToKatex
+		}
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -241,32 +244,32 @@ Ext.define('OSF.component.template.Vitals', {
 
 	updateHandler: function (entry) {
 		if ((!entry.attributes || entry.attributes.length === 0) &&
-				(!entry.metadata || entry.metadata.length === 0)) {
+			(!entry.metadata || entry.metadata.length === 0)) {
 			this.setHidden(true);
 		}
 
 		//normalize and sort 
 		var vitals = [];
 		if (entry.attributes) {
-			
+
 			//group attributes by type; array of values
 			var typeMap = {};
 			Ext.Array.each(entry.attributes, function (item) {
 				if (!typeMap[item.type]) {
 					typeMap[item.type] = [];
 				}
-				typeMap[item.type].push(item);				
+				typeMap[item.type].push(item);
 			});
-			
-			Ext.Object.each(typeMap, function(key, values) {				
+
+			Ext.Object.each(typeMap, function (key, values) {
 				var maintype = values[0];
 				
 				
 				var topHighLightStyle = null;
 				if (values.length === 1) {
 					topHighLightStyle = values[0].highlightStyle;
-				} 
-				
+				}
+
 				//if 1 then set to fill background 
 				//if more than one then style the codes 
 				
@@ -337,7 +340,7 @@ Ext.define('OSF.component.template.Vitals', {
 					codeHasAttachment: maintype.codeHasAttachment,
 					vitalType: 'ATTRIBUTE'
 				});
-				
+
 			});
 						
 		}
@@ -371,17 +374,17 @@ Ext.define('OSF.component.template.Dependencies', {
 	title: 'External Dependencies',
 
 	tpl: new Ext.XTemplate(
-			' <table class="details-table" width="100%">',
-			'	<tpl for="dependencies">',
-			'		<tr class="details-table">',
-			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{dependencyName} {version}</b> <br>',
-			'			<tpl if="dependancyReferenceLink"><a href="{dependancyReferenceLink}" class="details-table" target="_blank">{dependancyReferenceLink}</a><br></tpl> ',
-			'			<tpl if="comment">{comment}</tpl> ',
-			'			</td>',
-			'		</tr>',
-			'	</tpl>',
-			'</table>'
-			),
+		' <table class="details-table" width="100%">',
+		'	<tpl for="dependencies">',
+		'		<tr class="details-table">',
+		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{dependencyName} {version}</b> <br>',
+		'			<tpl if="dependancyReferenceLink"><a href="{dependancyReferenceLink}" class="details-table" target="_blank">{dependancyReferenceLink}</a><br></tpl> ',
+		'			<tpl if="comment">{comment}</tpl> ',
+		'			</td>',
+		'		</tr>',
+		'	</tpl>',
+		'</table>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -419,27 +422,27 @@ Ext.define('OSF.component.template.DI2EEvalLevel', {
 	title: 'DI2E Evaluation Level',
 
 	tpl: new Ext.XTemplate(
-			' <table class="details-table" width="100%">',
-			'		<tpl if="evalLevels.level">',
-			'			<tr class="details-table">',
-			'				<th class="details-table"><b>{evalLevels.level.typeDesciption}</b></th>',
-			'				<td class="details-table highlight-{evalLevels.level.highlightStyle}" ><h3>{evalLevels.level.label}</h3>{evalLevels.level.description}</td>',
-			'			</tr>',
-			'		</tpl>',
-			'		<tpl if="evalLevels.state">',
-			'			<tr class="details-table">',
-			'				<th class="details-table"><b>{evalLevels.state.typeDesciption}</b></th>',
-			'				<td class="details-table highlight-{evalLevels.state.highlightStyle}" ><h3>{evalLevels.state.label}</h3>{evalLevels.state.description}</td>',
-			'			</tr>',
-			'		</tpl>',
-			'		<tpl if="evalLevels.intent">',
-			'			<tr class="details-table">',
-			'				<th class="details-table"><b>{evalLevels.intent.typeDesciption}</b></th>',
-			'				<td class="details-table highlight-{evalLevels.intent.highlightStyle}" ><h3>{evalLevels.intent.label}</h3>{evalLevels.intent.description}</td>',
-			'			</tr>',
-			'		</tpl>',
-			'</table>'
-			),
+		' <table class="details-table" width="100%">',
+		'		<tpl if="evalLevels.level">',
+		'			<tr class="details-table">',
+		'				<th class="details-table"><b>{evalLevels.level.typeDesciption}</b></th>',
+		'				<td class="details-table highlight-{evalLevels.level.highlightStyle}" ><h3>{evalLevels.level.label}</h3>{evalLevels.level.description}</td>',
+		'			</tr>',
+		'		</tpl>',
+		'		<tpl if="evalLevels.state">',
+		'			<tr class="details-table">',
+		'				<th class="details-table"><b>{evalLevels.state.typeDesciption}</b></th>',
+		'				<td class="details-table highlight-{evalLevels.state.highlightStyle}" ><h3>{evalLevels.state.label}</h3>{evalLevels.state.description}</td>',
+		'			</tr>',
+		'		</tpl>',
+		'		<tpl if="evalLevels.intent">',
+		'			<tr class="details-table">',
+		'				<th class="details-table"><b>{evalLevels.intent.typeDesciption}</b></th>',
+		'				<td class="details-table highlight-{evalLevels.intent.highlightStyle}" ><h3>{evalLevels.intent.label}</h3>{evalLevels.intent.description}</td>',
+		'			</tr>',
+		'		</tpl>',
+		'</table>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -509,19 +512,19 @@ Ext.define('OSF.component.template.EvaluationSummary', {
 	title: 'Reusability Factors (5=best)',
 
 	tpl: new Ext.XTemplate(
-			'<div class="rolling-container">',
-			'	<div class="rolling-container-row">',
-			'		<tpl for="evaluation.evaluationSections">',
-			'			<div class="rolling-container-block">',
-			'				<div class="detail-eval-item ">',
-			'					<span class="detail-eval-label">{name} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>',
-			'					<span class="detail-eval-score" data-qtip="{actualScore}">{display}</span>',
-			'				</div>',
-			'			</div>',
-			'		</tpl>',
-			'	</div>',
-			'</div>'
-			),
+		'<div class="rolling-container">',
+		'	<div class="rolling-container-row">',
+		'		<tpl for="evaluation.evaluationSections">',
+		'			<div class="rolling-container-block">',
+		'				<div class="detail-eval-item ">',
+		'					<span class="detail-eval-label">{name} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>',
+		'					<span class="detail-eval-score" data-qtip="{actualScore}">{display}</span>',
+		'				</div>',
+		'			</div>',
+		'		</tpl>',
+		'	</div>',
+		'</div>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -572,29 +575,29 @@ Ext.define('OSF.component.template.Media', {
 	style: 'height: auto !important;',
 
 	tpl: new Ext.XTemplate(
-			' <h2>Screenshots / Media</h2>',
-			'	<tpl for="componentMedia">',
-			'       <tpl if="typeof(hideInDisplay) == \'undefined\' || hideInDisplay !== true">',
-			'		<div class="detail-media-block">',
-			'		<tpl switch="mediaTypeCode">',
-			'				<tpl case="IMG">',
-			'					<img src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'<tpl if="caption">{caption}</tpl>\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');" />',
-			'				<tpl case="AUD">',
-			'					<i class="fa fa-file-sound-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
-			'				<tpl case="VID">',
-			'					<video onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');" height="130" src="{link}#t=10" onloadedmetadata="this.currentTime=10;" ></video><br><br>',
-			'				<tpl case="ARC">',
-			'					<i class="fa fa-file-archive-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
-			'				<tpl case="TEX">',
-			'					<i class="fa fa-file-text-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
-			'				<tpl default>',
-			'					<i class="fa fa-file-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
-			'			</tpl>',
-			'			<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
-			'		</div>',
-			'       </tpl>',
-			'	</tpl>'
-			),
+		' <h2>Screenshots / Media</h2>',
+		'	<tpl for="componentMedia">',
+		'       <tpl if="typeof(hideInDisplay) == \'undefined\' || hideInDisplay !== true">',
+		'		<div class="detail-media-block">',
+		'		<tpl switch="mediaTypeCode">',
+		'				<tpl case="IMG">',
+		'					<img src="{link}" height="150" alt="{[values.caption ? values.caption : values.filename]}" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'<tpl if="caption">{caption}</tpl>\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');" />',
+		'				<tpl case="AUD">',
+		'					<i class="fa fa-file-sound-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
+		'				<tpl case="VID">',
+		'					<video onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');" height="130" src="{link}#t=10" onloadedmetadata="this.currentTime=10;" ></video><br><br>',
+		'				<tpl case="ARC">',
+		'					<i class="fa fa-file-archive-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
+		'				<tpl case="TEX">',
+		'					<i class="fa fa-file-text-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
+		'				<tpl default>',
+		'					<i class="fa fa-file-o" style="font-size: 11em;" onclick="MediaViewer.showMedia(\'{mediaTypeCode}\', \'{link}\', \'{caption}\', \'{filename}\', \'{mimeType}\', \'{componentMediaId}\');"></i><br><br>',
+		'			</tpl>',
+		'			<tpl if="caption || securityMarkingType"><p class="detail-media-caption"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{caption}</p></tpl>',
+		'		</div>',
+		'       </tpl>',
+		'	</tpl>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -656,17 +659,17 @@ Ext.define('OSF.component.template.Relationships', {
 					itemId: 'relationTable',
 					title: 'Table',
 					tpl: new Ext.XTemplate(
-							' <table class="details-table" width="100%">',
-							'	<tr><th class="details-table">Entry</th><th class="details-table">Relationship Type</th><th class="details-table">Related Entry</th></tr>',
-							'	<tpl for="relationships">',
-							'		<tr class="details-table">',
-							'			<td class="details-table">{ownerComponentName}</td>',
-							'			<td class="details-table" align="center"><b>{relationshipTypeDescription}</b></td>',
-							'			<td class="details-table"><a href="view.jsp?id={targetComponentId}" class="details-table" target="_blank">{targetComponentName}</a></td>',
-							'		</tr>',
-							'	</tpl>',
-							'</table>'
-							)
+						' <table class="details-table" width="100%">',
+						'	<tr><th class="details-table">Entry</th><th class="details-table">Relationship Type</th><th class="details-table">Related Entry</th></tr>',
+						'	<tpl for="relationships">',
+						'		<tr class="details-table">',
+						'			<td class="details-table">{ownerComponentName}</td>',
+						'			<td class="details-table" align="center"><b>{relationshipTypeDescription}</b></td>',
+						'			<td class="details-table"><a href="view.jsp?id={targetComponentId}" class="details-table" target="_blank">{targetComponentName}</a></td>',
+						'		</tr>',
+						'	</tpl>',
+						'</table>'
+					)
 				}
 			]
 		});
@@ -745,31 +748,31 @@ Ext.define('OSF.component.template.Reviews', {
 			margin: '0 0 1 0',
 			bodyStyle: 'padding: 10px;',
 			tpl: new Ext.XTemplate(
-					'<div class="review-summary">',
-					'	<div class="details">',
-					'		<tpl if="totalReviews && totalReviews &gt; 0">',
-					'		    <div class="review-summary-rating">Average Rating: <tpl for="averageRatingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',
-					'			<div><span class="label">{recommended} out of {totalReviews} ({[Math.round((values.recommended/values.totalReviews)*100)]}%)</span> reviewers recommended</div>',
-					'		</tpl>',
-					'	</div>',
-					'	<div class="pros">',
-					'		<tpl if="pros.length &gt; 0">',
-					'			<div class="review-pro-con-header">Pros</div>',
-					'			<tpl for="pros">',
-					'				- {text} <span class="review-summary-count">({count})</span><br>',
-					'			</tpl>',
-					'		</tpl>',
-					'	</div>',
-					'	<div class="cons">',
-					'		<tpl if="cons.length &gt; 0">',
-					'			<div class="review-pro-con-header">Cons</div>',
-					'			<tpl for="cons">',
-					'				- {text} <span class="review-summary-count">({count})</span><br>',
-					'			</tpl>',
-					'		</tpl>',
-					'	</div>',
-					'</div>'
-					)
+				'<div class="review-summary">',
+				'	<div class="details">',
+				'		<tpl if="totalReviews && totalReviews &gt; 0">',
+				'		    <div class="review-summary-rating">Average Rating: <tpl for="averageRatingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',
+				'			<div><span class="label">{recommended} out of {totalReviews} ({[Math.round((values.recommended/values.totalReviews)*100)]}%)</span> reviewers recommended</div>',
+				'		</tpl>',
+				'	</div>',
+				'	<div class="pros">',
+				'		<tpl if="pros.length &gt; 0">',
+				'			<div class="review-pro-con-header">Pros</div>',
+				'			<tpl for="pros">',
+				'				- {text} <span class="review-summary-count">({count})</span><br>',
+				'			</tpl>',
+				'		</tpl>',
+				'	</div>',
+				'	<div class="cons">',
+				'		<tpl if="cons.length &gt; 0">',
+				'			<div class="review-pro-con-header">Cons</div>',
+				'			<tpl for="cons">',
+				'				- {text} <span class="review-summary-count">({count})</span><br>',
+				'			</tpl>',
+				'		</tpl>',
+				'	</div>',
+				'</div>'
+			)
 		},
 		{
 			xtype: 'panel',
@@ -780,41 +783,41 @@ Ext.define('OSF.component.template.Reviews', {
 			collapsible: true,
 			bodyStyle: 'padding: 10px;',
 			tpl: new Ext.XTemplate(
-					'<tpl for=".">',
-					'<div class="review-section">',
-					'	<tpl if="activeStatus == \'P\'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Review pending moderator approval before being made public.</div></tpl>',
-					'	<div class="details">',
-					'		<div class="title"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title}</div>',
-					'		<div class="rating"><tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',
-					'		<div class="review-who-section">',
-					'			{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <strong>Recommend</strong></tpl>',
-					'			<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.reviewActions.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.reviewActions.deleteReview(\'{reviewId}\', \'{componentId}\')"> Delete</i></tpl>',
-					'		</div>',
-					'		<div><span class="label">Organization:</span> {organization}</div>',
-					'		<div><span class="label">Experience:</span> {userTimeDescription}</div>',
-					'		<div><span class="label">Last Used:</span> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}</div>',
-					'	</div>',
-					'	<div class="pros">',
-					'		<tpl if="pros.length &gt; 0">',
-					'		<div class="review-pro-con-header">Pros</div>',
-					'		<tpl for="pros">',
-					'			- {text}<br>',
-					'		</tpl></tpl>',
-					'	</div>',
-					'	<div class="cons">',
-					'		<tpl if="cons.length &gt; 0">',
-					'		<div class="review-pro-con-header">Cons</div>',
-					'		<tpl for="cons">',
-					'			- {text}<br>',
-					'		</tpl></tpl>',
-					'	</div>',
-					'	<div class="comments">',
-					'		<span class="label">Comments:</span>',
-					'		<div>{comment}</div>',
-					'	</div>',
-					'</div>',
-					'</tpl>'
-					)
+				'<tpl for=".">',
+				'<div class="review-section">',
+				'	<tpl if="activeStatus == \'P\'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Review pending moderator approval before being made public.</div></tpl>',
+				'	<div class="details">',
+				'		<div class="title"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{title}</div>',
+				'		<div class="rating"><tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>',
+				'		<div class="review-who-section">',
+				'			{username} ({userTypeCode}) - {[Ext.util.Format.date(values.updateDate, "m/d/y")]}<tpl if="recommend"> - <strong>Recommend</strong></tpl>',
+				'			<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.reviewActions.editReview(\'{reviewId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.reviewActions.deleteReview(\'{reviewId}\', \'{componentId}\')"> Delete</i></tpl>',
+				'		</div>',
+				'		<div><span class="label">Organization:</span> {organization}</div>',
+				'		<div><span class="label">Experience:</span> {userTimeDescription}</div>',
+				'		<div><span class="label">Last Used:</span> {[Ext.util.Format.date(values.lastUsed, "m/Y")]}</div>',
+				'	</div>',
+				'	<div class="pros">',
+				'		<tpl if="pros.length &gt; 0">',
+				'		<div class="review-pro-con-header">Pros</div>',
+				'		<tpl for="pros">',
+				'			- {text}<br>',
+				'		</tpl></tpl>',
+				'	</div>',
+				'	<div class="cons">',
+				'		<tpl if="cons.length &gt; 0">',
+				'		<div class="review-pro-con-header">Cons</div>',
+				'		<tpl for="cons">',
+				'			- {text}<br>',
+				'		</tpl></tpl>',
+				'	</div>',
+				'	<div class="comments">',
+				'		<span class="label">Comments:</span>',
+				'		<div>{comment}</div>',
+				'	</div>',
+				'</div>',
+				'</tpl>'
+			)
 		}
 	],
 
@@ -960,8 +963,8 @@ Ext.define('OSF.component.template.Reviews', {
 
 				if (review.username === user.username ||
 					(CoreService.userservice.userHasPermission(user, ['ADMIN-REVIEW-UPDATE']) &&
-					CoreService.userservice.userHasPermission(user, ['ADMIN-REVIEW-DELETE']))
-					) {
+						CoreService.userservice.userHasPermission(user, ['ADMIN-REVIEW-DELETE']))
+				) {
 					review.owner = true;
 				}
 
@@ -983,18 +986,18 @@ Ext.define('OSF.component.template.Reviews', {
 
 			var fullStars = Math.floor(averageRating);
 			for (var i = 1; i <= fullStars; i++) {
-				summaryData.averageRatingStars.push({star: 'star'});
+				summaryData.averageRatingStars.push({ star: 'star' });
 			}
 
 			// If the amount over the integer is at least 0.5 they get a half star, otherwise no half star.
 			var halfStar = Math.abs(fullStars - averageRating) >= 0.5;
 			if (halfStar) {
-				summaryData.averageRatingStars.push({star: 'star-half-o'});
+				summaryData.averageRatingStars.push({ star: 'star-half-o' });
 			}
 
 			// Add empty stars until there are 5 stars total.
 			while (summaryData.averageRatingStars.length < 5) {
-				summaryData.averageRatingStars.push({star: 'star-o'});
+				summaryData.averageRatingStars.push({ star: 'star-o' });
 			}
 
 
@@ -1147,21 +1150,20 @@ Ext.define('OSF.component.template.Questions', {
 					questionSecurity = '(' + question.securityMarkingType + ') ';
 				}
 				var pendingNotice = "";
-				if (question.activeStatus === "P")
-				{
+				if (question.activeStatus === "P") {
 					pendingNotice = '<div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Question pending moderator approval before being made public.</div>';
 				}
 				var text = '<div class="question-question">' + pendingNotice + '<span class="question-response-letter-q">Q.</span> ' + questionSecurity + question.question + '</div>';
 				text += '<div class="question-info">' +
-						question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
-						'</div>';
+					question.username + ' (' + question.userType + ') - ' + Ext.util.Format.date(question.questionUpdateDts, "m/d/Y") +
+					'</div>';
 
 				Ext.Array.each(question.responses, function (response) {
 					response.questionId = question.questionId;
 					response.componentId = question.componentId;
 					response.owner = (response.username === user.username ||
 						(CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-UPDATE']) &&
-						CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE'])));
+							CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE'])));
 				});
 
 
@@ -1171,18 +1173,18 @@ Ext.define('OSF.component.template.Questions', {
 					width: '100%',
 					title: text,
 					bodyStyle: 'padding: 10px;',
-					data: question.responses,					
+					data: question.responses,
 					tpl: new Ext.XTemplate(
-							'<tpl for=".">',
-							'	<tpl if="activeStatus === \'A\' || (activeStatus === \'P\' &amp;&amp; owner === true)">',
-							'		<tpl if="activeStatus === \'P\'"><div class="alert-warning" style="text-align: center;font-size:1.25em"><i class="fa fa-warning"></i> Answer pending admin approval before being made public.</div></tpl>',
-							'		<div class="question-response"><span class="question-response-letter">A.</span><tpl if="securityMarkingType">({securityMarkingType}) </tpl> {response}</div>',
-							'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.questionActions.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.questionActions.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Delete</i></tpl>',
-							'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',
-							'		<hr>',
-							'	</tpl>',
-							'</tpl>'
-							),
+						'<tpl for=".">',
+						'	<tpl if="activeStatus === \'A\' || (activeStatus === \'P\' &amp;&amp; owner === true)">',
+						'		<tpl if="activeStatus === \'P\'"><div class="alert-warning" style="text-align: center;font-size:1.25em"><i class="fa fa-warning"></i> Answer pending admin approval before being made public.</div></tpl>',
+						'		<div class="question-response"><span class="question-response-letter">A.</span><tpl if="securityMarkingType">({securityMarkingType}) </tpl> {response}</div>',
+						'		<tpl if="owner"><i class="fa fa-edit small-button-normal" title="Edit" onclick="CoreUtil.pageActions.questionActions.editResponse(\'{responseId}\')"> Edit</i> <i class="fa fa-trash small-button-danger" title="Delete" onclick="CoreUtil.pageActions.questionActions.deleteResponse(\'{responseId}\', \'{questionId}\', \'{componentId}\')"> Delete</i></tpl>',
+						'		<div class="question-info">{username} ({userType}) - {[Ext.util.Format.date(values.answeredDate, "m/d/Y")]}</div><br>',
+						'		<hr>',
+						'	</tpl>',
+						'</tpl>'
+					),
 					dockedItems: [
 						{
 							xtype: 'button',
@@ -1203,56 +1205,55 @@ Ext.define('OSF.component.template.Questions', {
 				});
 				if (question.username === user.username ||
 					(CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-UPDATE']) &&
-					CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE']))
-					)
-				{
+						CoreService.userservice.userHasPermission(user, ['ADMIN-QUESTIONS-DELETE']))
+				) {
 					panel.addDocked(
-							{
-								xtype: 'toolbar',
-								dock: 'top',
-								items: [
-									{
-										text: 'Edit',
-										tooltip: 'Edit Question',
-										iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
-										handler: function () {
-											questionActions.questionWindow.show();
+						{
+							xtype: 'toolbar',
+							dock: 'top',
+							items: [
+								{
+									text: 'Edit',
+									tooltip: 'Edit Question',
+									iconCls: 'fa fa-lg fa-edit icon-button-color-edit',
+									handler: function () {
+										questionActions.questionWindow.show();
 
-											var record = Ext.create('Ext.data.Model');
-											record.set(question);
-											questionActions.questionWindow.edit(record);
-										}
-									},
-									{
-										text: 'Delete',
-										tooltip: 'Delete Question',
-										iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
-										handler: function () {
-											Ext.Msg.show({
-												title: 'Delete Question?',
-												message: 'Are you sure you want to delete this Question?',
-												buttons: Ext.Msg.YESNO,
-												icon: Ext.Msg.QUESTION,
-												fn: function (btn) {
-													if (btn === 'yes') {
-														questionPanel.setLoading("Deleting...");
-														Ext.Ajax.request({
-															url: 'api/v1/resource/components/' + questionPanel.componentId + '/questions/' + question.questionId,
-															method: 'DELETE',
-															callback: function () {
-																questionPanel.setLoading(false);
-															},
-															success: function () {
-																questionActions.refreshQuestions();
-															}
-														});
-													}
-												}
-											});
-										}
+										var record = Ext.create('Ext.data.Model');
+										record.set(question);
+										questionActions.questionWindow.edit(record);
 									}
-								]
-							}
+								},
+								{
+									text: 'Delete',
+									tooltip: 'Delete Question',
+									iconCls: 'fa fa-lg fa-trash icon-button-color-warning',
+									handler: function () {
+										Ext.Msg.show({
+											title: 'Delete Question?',
+											message: 'Are you sure you want to delete this Question?',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,
+											fn: function (btn) {
+												if (btn === 'yes') {
+													questionPanel.setLoading("Deleting...");
+													Ext.Ajax.request({
+														url: 'api/v1/resource/components/' + questionPanel.componentId + '/questions/' + question.questionId,
+														method: 'DELETE',
+														callback: function () {
+															questionPanel.setLoading(false);
+														},
+														success: function () {
+															questionActions.refreshQuestions();
+														}
+													});
+												}
+											}
+										});
+									}
+								}
+							]
+						}
 					);
 				}
 
@@ -1269,10 +1270,10 @@ Ext.define('OSF.component.template.Questions', {
 			processQuestions(entry, user);
 			if (user.isAnonymousUser) {
 				questionPanel.getComponent("btnAskQuestion").setHidden(true);
-				Ext.Array.each(questionPanel.items.items, function(qPanel){
+				Ext.Array.each(questionPanel.items.items, function (qPanel) {
 					qPanel.queryById("btnAnswer").setHidden(true);
 				});
-				
+
 			}
 		});
 
@@ -1309,14 +1310,14 @@ Ext.define('OSF.component.template.RelatedAttributes', {
 						"sortField": "name",
 						"sortDirection": "ASC",
 						"searchElements": [{
-								"searchType": "ATTRIBUTE",
-								"keyField": record.get('type'),
-								"keyValue": record.get('code'),
-								"caseInsensitive": true,
-								"numberOperation": "EQUALS",
-								"stringOperation": "EQUALS",
-								"mergeCondition": "OR"
-							}]
+							"searchType": "ATTRIBUTE",
+							"keyField": record.get('type'),
+							"keyValue": record.get('code'),
+							"caseInsensitive": true,
+							"numberOperation": "EQUALS",
+							"stringOperation": "EQUALS",
+							"mergeCondition": "OR"
+						}]
 					};
 
 					var store = relatedPanel.getComponent('grid').getStore();
@@ -1362,7 +1363,7 @@ Ext.define('OSF.component.template.RelatedAttributes', {
 				})
 			],
 			proxy: CoreUtil.pagingProxy({
-				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				actionMethods: { create: 'POST', read: 'POST', update: 'POST', destroy: 'POST' },
 				reader: {
 					type: 'json',
 					rootProperty: 'data',
@@ -1385,19 +1386,21 @@ Ext.define('OSF.component.template.RelatedAttributes', {
 			columnLines: true,
 			store: relatedPanel.relatedStore,
 			columns: [
-				{text: 'Name', dataIndex: 'name', flex: 2, minWidth: 250, cellWrap: true,
+				{
+					text: 'Name', dataIndex: 'name', flex: 2, minWidth: 250, cellWrap: true,
 					renderer: function (value, meta, record) {
 						return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>';
 					}
 				},
-				{text: 'Description', dataIndex: 'description', flex: 2,
+				{
+					text: 'Description', dataIndex: 'description', flex: 2,
 					cellWrap: true,
 					renderer: function (value) {
 						value = Ext.util.Format.stripTags(value);
 						return Ext.String.ellipsis(value, 300);
 					}
 				},
-				{text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150}
+				{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }
 			],
 			dockedItems: [
 				{
@@ -1468,7 +1471,7 @@ Ext.define('OSF.component.template.RelatedOrganization', {
 				})
 			],
 			proxy: CoreUtil.pagingProxy({
-				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				actionMethods: { create: 'POST', read: 'POST', update: 'POST', destroy: 'POST' },
 				reader: {
 					type: 'json',
 					rootProperty: 'data',
@@ -1491,19 +1494,21 @@ Ext.define('OSF.component.template.RelatedOrganization', {
 			columnLines: true,
 			store: relatedPanel.relatedStore,
 			columns: [
-				{text: 'Name', dataIndex: 'name', flex: 2, minWidth: 250, cellWrap: true,
+				{
+					text: 'Name', dataIndex: 'name', flex: 2, minWidth: 250, cellWrap: true,
 					renderer: function (value, meta, record) {
 						return '<a class="details-table" href="view.jsp?id=' + record.get('componentId') + '&fullPage=true" target="_blank">' + value + '</a>';
 					}
 				},
-				{text: 'Description', dataIndex: 'description', flex: 2,
+				{
+					text: 'Description', dataIndex: 'description', flex: 2,
 					cellWrap: true,
 					renderer: function (value) {
 						value = Ext.util.Format.stripTags(value);
 						return Ext.String.ellipsis(value, 300);
 					}
 				},
-				{text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150}
+				{ text: 'Type', align: 'center', dataIndex: 'componentTypeDescription', width: 150 }
 			],
 			dockedItems: [
 				{
@@ -1525,14 +1530,14 @@ Ext.define('OSF.component.template.RelatedOrganization', {
 			"sortField": "name",
 			"sortDirection": "ASC",
 			"searchElements": [{
-					"searchType": 'COMPONENT',
-					"field": 'organization',
-					"value": entry.organization,
-					"caseInsensitive": true,
-					"numberOperation": "EQUALS",
-					"stringOperation": "EQUALS",
-					"mergeCondition": "OR"
-				}]
+				"searchType": 'COMPONENT',
+				"field": 'organization',
+				"value": entry.organization,
+				"caseInsensitive": true,
+				"numberOperation": "EQUALS",
+				"stringOperation": "EQUALS",
+				"mergeCondition": "OR"
+			}]
 		};
 
 		var store = relatedPanel.getComponent('grid').getStore();
@@ -1670,17 +1675,17 @@ Ext.define('OSF.component.template.EvaluationSections', {
 						margin: '0 0 20 0',
 						bodyCls: 'text-readable',
 						tpl: new Ext.XTemplate(
-								'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',
-								'	<tpl if="section.content">{section.content}</tpl>',
-								'	<tpl for="subsections">',
-								'		<tpl if="title && hideTitle == false"><h3>{title}</h3></tpl>',
-								'		<tpl if="content">{content}</tpl>',
-								'		<tpl for="customFields">',
-								'			<b>{label}:</b> {value}',
-								'		</tpl>',
-								'	</tpl>',
-								'</div>'
-								)
+							'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',
+							'	<tpl if="section.content">{section.content}</tpl>',
+							'	<tpl for="subsections">',
+							'		<tpl if="title && hideTitle == false"><h3>{title}</h3></tpl>',
+							'		<tpl if="content">{content}</tpl>',
+							'		<tpl for="customFields">',
+							'			<b>{label}:</b> {value}',
+							'		</tpl>',
+							'	</tpl>',
+							'</div>'
+						)
 					});
 
 				});
@@ -1721,17 +1726,17 @@ Ext.define('OSF.component.template.EvaluationSectionByTitle', {
 	sectionTitle: '',
 	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
-			'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',
-			'	<tpl if="section.content">{section.content}</tpl>',
-			'	<tpl for="subsections">',
-			'		<tpl if="title && hideTitle == false"><h3>{title}</h3></tpl>',
-			'		<tpl if="content">{content}</tpl>',
-			'		<tpl for="customFields">',
-			'			<b>{label}:</b> {value}',
-			'		</tpl>',
-			'	</tpl>',
-			'</div>'
-			),
+		'<div><h2><tpl if="section.securityMarkingType">({section.securityMarkingType})</tpl></h2>',
+		'	<tpl if="section.content">{section.content}</tpl>',
+		'	<tpl for="subsections">',
+		'		<tpl if="title && hideTitle == false"><h3>{title}</h3></tpl>',
+		'		<tpl if="content">{content}</tpl>',
+		'		<tpl for="customFields">',
+		'			<b>{label}:</b> {value}',
+		'		</tpl>',
+		'	</tpl>',
+		'</div>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -1782,10 +1787,10 @@ Ext.define('OSF.component.template.EvaluationChecklistSummary', {
 	title: 'Evaluation Checklist Summary',
 	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
-			'<div><h2><tpl if="checkListAll.evaluationChecklist.securityMarkingType">({checkListAll.evaluationChecklist.securityMarkingType})</tpl></h2>',
-			'	<tpl if="checkListAll.evaluationChecklist.summary">{checkListAll.evaluationChecklist.summary}</tpl>',
-			'</div>'
-			),
+		'<div><h2><tpl if="checkListAll.evaluationChecklist.securityMarkingType">({checkListAll.evaluationChecklist.securityMarkingType})</tpl></h2>',
+		'	<tpl if="checkListAll.evaluationChecklist.summary">{checkListAll.evaluationChecklist.summary}</tpl>',
+		'</div>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -1800,8 +1805,8 @@ Ext.define('OSF.component.template.EvaluationChecklistSummary', {
 
 			var updateSection = function (evaluation) {
 				if (evaluation.checkListAll &&
-						evaluation.checkListAll.evaluationChecklist &&
-						evaluation.checkListAll.evaluationChecklist.summary) {
+					evaluation.checkListAll.evaluationChecklist &&
+					evaluation.checkListAll.evaluationChecklist.summary) {
 
 					checklistPanel.setHidden(false);
 					checklistPanel.update(evaluation);
@@ -1862,7 +1867,8 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 			},
 			plugins: 'gridfilters',
 			columns: [
-				{text: 'QID', dataIndex: 'qid', width: 75, align: 'center', flex: 1,
+				{
+					text: 'QID', dataIndex: 'qid', width: 75, align: 'center', flex: 1,
 					renderer: function (value, meta, record) {
 						meta.tdCls = 'text-readable';
 						var link = '<a href="#" style="text-decoration: none;" onclick="CoreUtil.pageActions.checklistDetail.showQuestionDetails(\'' + record.get('questionId') + '\')">';
@@ -1871,7 +1877,8 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 						return link;
 					}
 				},
-				{text: 'Section', dataIndex: 'evaluationSectionDescription', width: 175, align: 'center', cellWrap: true, flex: 3,
+				{
+					text: 'Section', dataIndex: 'evaluationSectionDescription', width: 175, align: 'center', cellWrap: true, flex: 3,
 					filter: {
 						type: 'list'
 					},
@@ -1880,13 +1887,15 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 						return value;
 					}
 				},
-				{text: 'Question', dataIndex: 'question', cellWrap: true, flex: 6,
+				{
+					text: 'Question', dataIndex: 'question', cellWrap: true, flex: 6,
 					renderer: function (value, meta, record) {
 						meta.tdCls = 'text-readable';
 						return value;
 					}
 				},
-				{text: 'Score', dataIndex: 'score', width: 75, align: 'center', flex: 2,
+				{
+					text: 'Score', dataIndex: 'score', width: 75, align: 'center', flex: 2,
 					filter: {
 						type: 'list'
 					},
@@ -1902,7 +1911,8 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 						return link;
 					}
 				},
-				{text: 'Response', dataIndex: 'response', cellWrap: true, flex: 10,
+				{
+					text: 'Response', dataIndex: 'response', cellWrap: true, flex: 10,
 					renderer: function (value, meta, record) {
 						meta.tdCls = 'text-readable';
 						return value;
@@ -1977,12 +1987,12 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 								},
 								data: question,
 								tpl: new Ext.XTemplate(
-										'<tpl if="objective"><b>Question Objective:</b> <br><br>',
-										'{objective}<br><br></tpl>',
-										'<tpl if="narrative"><b>Narrative:</b><br><br>',
-										'{narrative}</tpl>',
-										'<tpl if="!objective && !narrative">No addtional details</tpl>'
-										),
+									'<tpl if="objective"><b>Question Objective:</b> <br><br>',
+									'{objective}<br><br></tpl>',
+									'<tpl if="narrative"><b>Narrative:</b><br><br>',
+									'{narrative}</tpl>',
+									'<tpl if="!objective && !narrative">No addtional details</tpl>'
+								),
 								dockedItems: [
 									{
 										xtype: 'toolbar',
@@ -2028,10 +2038,10 @@ Ext.define('OSF.component.template.EvaluationChecklistDetail', {
 								},
 								data: question,
 								tpl: new Ext.XTemplate(
-										'<tpl if="scoreCriteria"><b>Scoring Criteria:</b> <br><br>',
-										'{scoreCriteria}<br><br></tpl>',
-										'<tpl if="!scoreCriteria">No addtional details</tpl>'
-										),
+									'<tpl if="scoreCriteria"><b>Scoring Criteria:</b> <br><br>',
+									'{scoreCriteria}<br><br></tpl>',
+									'<tpl if="!scoreCriteria">No addtional details</tpl>'
+								),
 								dockedItems: [
 									{
 										xtype: 'toolbar',
@@ -2085,20 +2095,20 @@ Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 	title: 'Evaluation Recommendations',
 	bodyCls: 'text-readable',
 	tpl: new Ext.XTemplate(
-			' <table class="details-table" width="100%">',
-			'	<tpl for="checkListAll.recommendations">',
-			'		<tr class="details-table">',
-			'			<td class="details-table" width="230"><b>{recommendationTypeDescription}</b></td>',
-			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
-			'				<tpl if="recommendation">{recommendation}</tpl>',
-			'			</td>',
-			'			<tpl if="reason"><td class="details-table">',
-			'				{reason}',
-			'			</td></tpl>',
-			'		</tr>',
-			'	</tpl>',
-			'</table>'
-			),
+		' <table class="details-table" width="100%">',
+		'	<tpl for="checkListAll.recommendations">',
+		'		<tr class="details-table">',
+		'			<td class="details-table" width="230"><b>{recommendationTypeDescription}</b></td>',
+		'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
+		'				<tpl if="recommendation">{recommendation}</tpl>',
+		'			</td>',
+		'			<tpl if="reason"><td class="details-table">',
+		'				{reason}',
+		'			</td></tpl>',
+		'		</tr>',
+		'	</tpl>',
+		'</table>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -2113,7 +2123,7 @@ Ext.define('OSF.component.template.EvaluationChecklistRecommendation', {
 
 			var updateSection = function (evaluation) {
 				if (!evaluation.checkListAll ||
-						!evaluation.checkListAll.recommendations) {
+					!evaluation.checkListAll.recommendations) {
 					recomendationPanel.setHidden(true);
 				} else {
 					if (!evaluation.checkListAll.recommendations || evaluation.checkListAll.recommendations.length === 0) {
@@ -2144,19 +2154,19 @@ Ext.define('OSF.component.template.EvaluationChecklistScores', {
 	collapsible: true,
 	title: 'Reusability Factors (5=best)',
 	tpl: new Ext.XTemplate(
-			'<div class="rolling-container">',
-			'	<div class="rolling-container-row">',
-			'		<tpl for=".">',
-			'			<div class="rolling-container-block">',
-			'				<div class="detail-eval-item ">',
-			'					<span class="detail-eval-label">{title} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>',
-			'					<span class="detail-eval-score" data-qtip="{average}">{display}</span>',
-			'				</div>',
-			'			</div>',
-			'		</tpl>',
-			'	</div>',
-			'</div>'
-			),
+		'<div class="rolling-container">',
+		'	<div class="rolling-container-row">',
+		'		<tpl for=".">',
+		'			<div class="rolling-container-block">',
+		'				<div class="detail-eval-item ">',
+		'					<span class="detail-eval-label">{title} <tpl if="sectionDescription"><i class="fa fa-question-circle" data-qtip="{sectionDescription}" data-qtitle="{name}" data-qalignTarget="bl-tl" data-qclosable="true" ></i></tpl></span>',
+		'					<span class="detail-eval-score" data-qtip="{average}">{display}</span>',
+		'				</div>',
+		'			</div>',
+		'		</tpl>',
+		'	</div>',
+		'</div>'
+	),
 
 	initComponent: function () {
 		this.callParent();
@@ -2172,7 +2182,7 @@ Ext.define('OSF.component.template.EvaluationChecklistScores', {
 			var updateSection = function (evaluation) {
 
 				if (evaluation.checkListAll &&
-						evaluation.checkListAll.responses) {
+					evaluation.checkListAll.responses) {
 
 					Ext.Ajax.request({
 						url: 'api/v1/resource/lookuptypes/EvaluationSection',

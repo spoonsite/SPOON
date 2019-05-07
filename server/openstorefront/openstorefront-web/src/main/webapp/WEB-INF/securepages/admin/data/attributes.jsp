@@ -390,6 +390,14 @@
 						}
 					},
 					{text: 'Unit', dataIndex: 'attributeUnit', flex: 1},
+					{
+						text: 'Display Unit',
+						xtype: 'templatecolumn',
+						tpl: ['{[this.asciiToKatex(values.attributeUnit)]}',
+							{
+								asciiToKatex: CoreUtil.asciiToKatex
+							}]
+					},
 					{text: 'Type Code', dataIndex: 'attributeType', flex: 1.5},
 					{
 						text: 'Required',
