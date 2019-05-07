@@ -60,6 +60,19 @@ public interface SearchService
 	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions);
 
 	/**
+	 * Get the user specific Search Options
+	 * @return the found searchOptions
+	 */
+	public SearchOptions getUserSearchOptions();
+	
+	/**
+	 * Saves a search options model for a the user
+	 * @param searchOptions 
+	 * @return the saved searchOptions
+	 */
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions);
+
+	/**
 	 * Performs a search
 	 *
 	 * @param query
