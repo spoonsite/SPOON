@@ -70,27 +70,6 @@ public class Branding
 	@ConsumeField
 	private String loginFooter;
 
-	/**
-	 * warning banner in the center of the login page
-	 *
-	 * @deprecated As of 2.5-s, replaced by {@link #loginFooter}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
-	@Sanitize(HTMLSanitizer.class)
-	@ConsumeField
-	private String loginWarning;
-
-	/**
-	 * Logo section in the main section of the page
-	 *
-	 * @deprecated As of 2.5-s, replaced by {@link #loginContentBlock}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
-	@ConsumeField
-	private String loginLogoBlock;
-
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@ConsumeField
 	private String loginContentBlock;
@@ -281,8 +260,6 @@ public class Branding
 		setHomebackSplashUrl(branding.getHomebackSplashUrl());
 		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
 
-		setLoginWarning(branding.getLoginWarning());
-		setLoginLogoBlock(branding.getLoginLogoBlock());
 		setLoginLogoUrl(branding.getLoginLogoUrl());
 		setLoginContentBlock(branding.getLoginContentBlock());
 		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
@@ -356,30 +333,6 @@ public class Branding
 	public void setSecondaryLogoUrl(String secondaryLogoUrl)
 	{
 		this.secondaryLogoUrl = secondaryLogoUrl;
-	}
-
-	/**
-	 * warning banner in the center of the login page
-	 *
-	 * @return logo image with image map
-	 * @deprecated As of 2.5-s, replaced by {@link #getLoginFooter()}
-	 */
-	@Deprecated
-	public String getLoginWarning()
-	{
-		return loginWarning;
-	}
-
-	/**
-	 * warning banner in the center of the login page
-	 *
-	 * @param loginWarning warning text
-	 * @deprecated As of 2.5-s, replaced by {@link #setLoginFooter(String)}
-	 */
-	@Deprecated
-	public void setLoginWarning(String loginWarning)
-	{
-		this.loginWarning = loginWarning;
 	}
 
 	public String getApplicationName()
@@ -720,31 +673,6 @@ public class Branding
 	public void setLoginFooter(String loginFooter)
 	{
 		this.loginFooter = loginFooter;
-	}
-
-	/**
-	 * Logo section in the main section of the page
-	 *
-	 * @return logo image with image map
-	 * @deprecated As of 2.5-s, replaced by {@link #getLoginContentBlock()}
-	 */
-	@Deprecated
-	public String getLoginLogoBlock()
-	{
-		return loginLogoBlock;
-	}
-
-	/**
-	 * Logo section in the main section of the page
-	 *
-	 * @param loginLogoBlock logo image with optional image map
-	 * @deprecated As of 2.5-s, replaced by
-	 * {@link #setLoginContentBlock(String)}
-	 */
-	@Deprecated
-	public void setLoginLogoBlock(String loginLogoBlock)
-	{
-		this.loginLogoBlock = loginLogoBlock;
 	}
 
 	public Boolean getShowSupportMedia()

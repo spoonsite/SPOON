@@ -21,9 +21,6 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
-import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.api.query.QueryType;
-import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
@@ -109,7 +106,7 @@ public class Search
 			return sendSingleEntityResponse(entity);
 		}
 	}
-	
+
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@APIDescription("Get the search options for indexing. (Admin)")
@@ -131,7 +128,7 @@ public class Search
 
 		return Response.ok(searchOptions).build();
 	}
-	
+
 	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@APIDescription("Update the search options for indexing.")
@@ -143,24 +140,24 @@ public class Search
 			SearchOptions incomingSearchOptions)
 	{
 		ValidationResult validationResult = incomingSearchOptions.validate();
-		if(!validationResult.valid()){
+		if (!validationResult.valid()) {
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		SearchOptions searchOptions = searchOptionsExample.find();
-		
+
 		if (searchOptions == null) {
 			searchOptions = new SearchOptions();
 		}
 		searchOptions.setCanUseDescriptionInSearch(incomingSearchOptions.getCanUseDescriptionInSearch());
 		searchOptions.setCanUseNameInSearch(incomingSearchOptions.getCanUseNameInSearch());
 		searchOptions.setCanUseOrganizationsInSearch(incomingSearchOptions.getCanUseOrganizationsInSearch());
-		
+
 		incomingSearchOptions.setGlobalFlag(Boolean.TRUE);
 		service.getSearchService().saveSearchOptions(searchOptions);
-		
+
 		return Response.ok(searchOptions).build();
 	}
 
@@ -334,16 +331,7 @@ public class Search
 	@Path("/stats")
 	public Response getListingStats()
 	{
-		ListingStats listingStats = new ListingStats();
-
-		Component componentExample = new Component();
-		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		QueryByExample queryByExample = new QueryByExample(QueryType.COUNT, componentExample);
-		queryByExample.setAdditionalWhere(filterEngine.queryComponentRestriction());
-		long numberOfActiveComponents = service.getPersistenceService().countByExample(queryByExample);
-		listingStats.setNumberOfComponents(numberOfActiveComponents);
-
+		ListingStats listingStats = service.getComponentService().getComponentListingStats();
 		return Response.ok(listingStats).build();
 	}
 

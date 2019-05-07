@@ -19,10 +19,14 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -102,7 +106,7 @@ public class EntityUtil
 				for (Field field : fields) {
 					boolean check = true;
 					if (consumeFieldsOnly) {
-						ConsumeField consume = (ConsumeField) field.getAnnotation(ConsumeField.class);
+						ConsumeField consume = field.getAnnotation(ConsumeField.class);
 						if (consume == null) {
 							check = false;
 						}
@@ -133,6 +137,7 @@ public class EntityUtil
 	 * @param compare
 	 * @return compare value (0 if equals)
 	 */
+	@SuppressWarnings("unchecked")
 	public static int compareConsumeFields(Object original, Object compare)
 	{
 		int value = 0;
@@ -145,7 +150,7 @@ public class EntityUtil
 			if (original.getClass().isInstance(compare) || compare.getClass().isInstance(original)) {
 				List<Field> fields = getAllFields(original.getClass());
 				for (Field field : fields) {
-					ConsumeField consume = (ConsumeField) field.getAnnotation(ConsumeField.class);
+					ConsumeField consume = field.getAnnotation(ConsumeField.class);
 					if (consume != null) {
 						try {
 							field.setAccessible(true);
@@ -233,6 +238,31 @@ public class EntityUtil
 	}
 
 	/**
+	 * Get the value of the PK field
+	 *
+	 * @param <T>
+	 * @param entity
+	 * @return PK value which can be null; for composite PKs it should be whole
+	 * object
+	 */
+	public static <T extends BaseEntity> Object getPKFieldObjectValue(T entity)
+	{
+		Object value = null;
+		Field field = getPKField(entity);
+		if (field != null) {
+			field.setAccessible(true);
+			try {
+				value = field.get(entity);
+			} catch (IllegalArgumentException | IllegalAccessException ex) {
+				throw new OpenStorefrontRuntimeException("Unable to get value on " + entity.getClass().getName(), "Check entity passed in.");
+			}
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find PK for enity: " + entity.getClass().getName(), "Check entity passed in.");
+		}
+		return value;
+	}
+
+	/**
 	 * This only support updating NON-composite keys.
 	 *
 	 * @param <T>
@@ -256,6 +286,50 @@ public class EntityUtil
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find PK for enity: " + entity.getClass().getName(), "Check entity passed in.");
 		}
+	}
+
+	/**
+	 * Finds the PK field and the query fieldname
+	 *
+	 * @param entityClass
+	 * @param id
+	 * @return Map of field name and value (for compound keys
+	 * "parentFieldname.fieldname"
+	 */
+	public static Map<String, Object> findIdField(Class entityClass, Object id)
+	{
+		Map<String, Object> fieldValueMap = new HashMap<>();
+
+		//Start at the root (The first Id found wins ...there should only be one)
+		if (entityClass.getSuperclass() != null) {
+			fieldValueMap = findIdField(entityClass.getSuperclass(), id);
+		}
+		if (fieldValueMap.isEmpty()) {
+			for (Field field : entityClass.getDeclaredFields()) {
+				PK idAnnotation = field.getAnnotation(PK.class);
+				if (idAnnotation != null) {
+					if (ReflectionUtil.isComplexClass(field.getType())) {
+						//PK class should only be one level deep
+						for (Field pkField : field.getType().getDeclaredFields()) {
+							try {
+								if (Modifier.isStatic(pkField.getModifiers()) == false
+										&& Modifier.isFinal(pkField.getModifiers()) == false) {
+									Method method = id.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
+									Object returnObj = method.invoke(id, (Object[]) null);
+									fieldValueMap.put(field.getName() + "." + pkField.getName(), returnObj);
+								}
+							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+								throw new OpenStorefrontRuntimeException(ex);
+							}
+						}
+					} else {
+						fieldValueMap.put(field.getName(), id);
+						break;
+					}
+				}
+			}
+		}
+		return fieldValueMap;
 	}
 
 	/**

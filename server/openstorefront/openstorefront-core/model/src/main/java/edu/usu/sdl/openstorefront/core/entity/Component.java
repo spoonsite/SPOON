@@ -54,9 +54,13 @@ public class Component
 	private static final long serialVersionUID = 1L;
 
 	public static final String FIELD_NAME = "name";
+	public static final String FIELD_APPROVAL_STATE = "approvalState";
+	public static final String FIELD_APPROVED_DTS = "approvedDts";
 	public static final String FIELD_DESCRIPTION = "description";
 	public static final String FIELD_LAST_ACTIVITY_DTS = "lastActivityDts";
 	public static final String FIELD_RELEASE_DATE = "releaseDate";
+	public static final String FIELD_DATA_SOURCE = "dataSource";
+	public static final String FIELD_COMPONENT_ID = "componentId";
 
 	@PK(generated = true)
 	@NotNull
@@ -282,7 +286,7 @@ public class Component
 	}
 
 	@Override
-	public void setChangeParent(ChangeLog changeLog)
+	public void updateChangeParent(ChangeLog changeLog)
 	{
 		//top-level
 	}

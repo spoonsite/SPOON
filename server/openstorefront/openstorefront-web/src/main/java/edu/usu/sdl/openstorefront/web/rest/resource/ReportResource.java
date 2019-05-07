@@ -233,12 +233,10 @@ public class ReportResource
 
 				if (path.toFile().exists()) {
 
-					String format = report.getReportFormat();
-					if (StringUtils.isBlank(format)) {
-						for (ReportOutput output : report.getReportOutputs()) {
-							if (ReportTransmissionType.VIEW.equals(output.getReportTransmissionType())) {
-								format = output.getReportTransmissionOption().getReportFormat();
-							}
+					String format = null;
+					for (ReportOutput output : report.getReportOutputs()) {
+						if (ReportTransmissionType.VIEW.equals(output.getReportTransmissionType())) {
+							format = output.getReportTransmissionOption().getReportFormat();
 						}
 					}
 

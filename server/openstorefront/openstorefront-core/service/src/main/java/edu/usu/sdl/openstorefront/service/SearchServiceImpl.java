@@ -15,17 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
@@ -58,7 +56,6 @@ import edu.usu.sdl.openstorefront.service.search.EntryTypeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.EvaluationScoreSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.MetaDataSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.QuestionResponseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.QuestionSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewProConSearchHandler;
@@ -99,31 +96,33 @@ public class SearchServiceImpl
 	@Override
 	public List<ComponentSearchView> getAll()
 	{
-		ServiceProxy service = new ServiceProxy();
 		List<ComponentSearchView> list = new ArrayList<>();
-		List<ComponentSearchView> components = service.getComponentService().getComponents();
+		List<ComponentSearchView> components = getComponentService().getComponents();
 		list.addAll(components);
 		return list;
 	}
-	
+
 	@Override
-	public SearchOptions getSearchOptions(){
+	public SearchOptions getSearchOptions()
+	{
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		SearchOptions searchOptions = searchOptionsExample.find();
-		
-		if(searchOptions == null){
+
+		if (searchOptions == null) {
 			// Return the default.
 			searchOptions = new SearchOptions();
 			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
 			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
-		}		
-		return searchOptions;		
+		}
+		return searchOptions;
 	}
-	
-	public void saveSearchOptions(SearchOptions searchOptions){
+
+	@Override
+	public void saveSearchOptions(SearchOptions searchOptions)
+	{
 		searchOptions.save();
 	}
 
@@ -153,9 +152,9 @@ public class SearchServiceImpl
 		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 		attributeCodeExample.setArchitectureCode(pk.getAttributeCode());
 
-		AttributeCode attributeCode = persistenceService.queryOneByExample(attributeCodeExample);
+		AttributeCode attributeCode = getPersistenceService().queryOneByExample(attributeCodeExample);
 		if (attributeCode == null) {
-			attributeCode = persistenceService.findById(AttributeCode.class, pk);
+			attributeCode = getPersistenceService().findById(AttributeCode.class, pk);
 		}
 
 		AttributeCode attributeExample = new AttributeCode();
@@ -172,27 +171,36 @@ public class SearchServiceImpl
 			attributeCodeLikeExample.setAttributeCodePk(attributePkLikeExample);
 		}
 
-		QueryByExample queryByExample = new QueryByExample(attributeExample);
+		QueryByExample<AttributeCode> queryByExample = new QueryByExample<>(attributeExample);
 
 		//check for like skip
 		if (SPECIAL_ARCH_SEARCH_CODE.equals(pk.getAttributeCode()) == false) {
 			queryByExample.setLikeExample(attributeCodeLikeExample);
 		}
 
-		List<AttributeCode> attributeCodes = persistenceService.queryByExample(queryByExample);
-		List<String> ids = new ArrayList();
+		List<AttributeCode> attributeCodes = getPersistenceService().queryByExample(queryByExample);
+		List<String> ids = new ArrayList<>();
 		attributeCodes.forEach(code -> {
 			ids.add(code.getAttributeCodePk().getAttributeCode());
 		});
 
 		if (ids.isEmpty() == false) {
 
-			String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
+			ComponentAttribute componentAttributeExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(pk.getAttributeType());
+			componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
-			Map<String, Object> params = new HashMap<>();
-			params.put("attributeType", pk.getAttributeType());
-			params.put("attributeCodeIdListParam", ids);
-			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery, params);
+			ComponentAttribute componentAttributeInExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributeInPk = new ComponentAttributePk();
+			componentAttributePk.setAttributeCode(QueryByExample.STRING_FLAG);
+			componentAttributeInExample.setComponentAttributePk(componentAttributeInPk);
+
+			QueryByExample<ComponentAttribute> queryChildCodes = new QueryByExample<>(componentAttributeExample);
+			queryChildCodes.setInExample(componentAttributeInExample);
+			queryChildCodes.getInExampleOption().getParameterValues().addAll(ids);
+
+			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(queryChildCodes);
 			Set<String> uniqueComponents = new HashSet<>();
 			componentAttributes.forEach(componentAttribute -> {
 				uniqueComponents.add(componentAttribute.getComponentId());
@@ -284,9 +292,6 @@ public class SearchServiceImpl
 					indexSearches.addAll(searchElements);
 					handlers.add(new IndexSearchHandler(searchElements));
 					break;
-				case METADATA:
-					handlers.add(new MetaDataSearchHandler(searchElements));
-					break;
 				case REVIEW:
 					handlers.add(new ReviewSearchHandler(searchElements));
 					break;
@@ -341,42 +346,15 @@ public class SearchServiceImpl
 
 			//get intermediate Results
 			if (!masterResults.isEmpty()) {
-				String dataFilterRestriction = getFilterEngine().queryComponentRestriction();
-				if (StringUtils.isNotBlank(dataFilterRestriction)) {
-					dataFilterRestriction += " and ";
-				}
-
-				String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from "
-						+ Component.class.getSimpleName()
-						+ " where "
-						+ dataFilterRestriction
-						+ " componentId in :idList";
-
-				Map<String, Object> parameterMap = new HashMap<>();
-				parameterMap.put("idList", masterResults);
-				List<ODocument> results = persistenceService.query(query, parameterMap);
-
-				Map<String, ComponentSearchView> resultMap = new HashMap<>();
-				for (ODocument doc : results) {
-					if (Component.ACTIVE_STATUS.equals(doc.field("activeStatus"))
-							&& ApprovalStatus.APPROVED.equals(doc.field("approvalState"))) {
-						ComponentSearchView view = new ComponentSearchView();
-						view.setComponentId(doc.field("componentId"));
-						view.setName(doc.field("name"));
-						view.setComponentType(doc.field("componentType"));
-						view.setLastActivityDts(doc.field("lastUpdateDts"));
-						resultMap.put(view.getComponentId(), view);
-					}
-				}
+				Map<String, ComponentSearchView> resultMap = getRepoFactory().getComponentRepo().getIntermidateSearchResults(masterResults);
 				searchResult.setTotalNumber(resultMap.size());
 
 				//get review average
-				query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " group by componentId ";
-				List<ODocument> resultsRatings = persistenceService.query(query, new HashMap<>());
-				for (ODocument doc : resultsRatings) {
-					ComponentSearchView view = resultMap.get(doc.field("componentId").toString());
+				Map<String, Integer> ratingsMap = getRepoFactory().getComponentRepo().findAverageUserRatingForComponents();
+				for (String componentId : ratingsMap.keySet()) {
+					ComponentSearchView view = resultMap.get(componentId);
 					if (view != null) {
-						view.setAverageRating(doc.field("rating"));
+						view.setAverageRating(ratingsMap.get(componentId));
 					}
 				}
 
@@ -403,7 +381,7 @@ public class SearchServiceImpl
 				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
 				searchResult.getMeta().getResultTagStats().addAll(tagStats);
 				searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
-				
+
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 
 				//then sort/window
@@ -509,16 +487,16 @@ public class SearchServiceImpl
 	{
 		Objects.requireNonNull(systemSearch);
 
-		SystemSearch existing = persistenceService.findById(SystemSearch.class, systemSearch.getSearchId());
+		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, systemSearch.getSearchId());
 		if (existing != null) {
 			existing.updateFields(systemSearch);
-			systemSearch = persistenceService.persist(existing);
+			systemSearch = getPersistenceService().persist(existing);
 		} else {
 			if (StringUtil.isBlank(systemSearch.getSearchId())) {
-				systemSearch.setSearchId(persistenceService.generateId());
+				systemSearch.setSearchId(getPersistenceService().generateId());
 			}
 			systemSearch.populateBaseCreateFields();
-			systemSearch = persistenceService.persist(systemSearch);
+			systemSearch = getPersistenceService().persist(systemSearch);
 		}
 		return systemSearch;
 	}
@@ -533,11 +511,11 @@ public class SearchServiceImpl
 	{
 		Objects.requireNonNull(searchId);
 
-		SystemSearch existing = persistenceService.findById(SystemSearch.class, searchId);
+		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, searchId);
 		if (existing != null) {
 			existing.setActiveStatus(newStatus);
 			existing.populateBaseUpdateFields();
-			persistenceService.persist(existing);
+			getPersistenceService().persist(existing);
 		} else {
 			throw new OpenStorefrontRuntimeException("Search not found", "Check Id: " + searchId);
 		}

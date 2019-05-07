@@ -36,11 +36,6 @@
 			</p>
 		</form>
 
-		<form name="exportFormDescribe" action="api/v1/resource/components/export/describe" method="POST" >
-			<p style="display: none;" id="exportFormDescribeIds">
-			</p>
-		</form>
-
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.require('OSF.common.AttributeCodeSelect');
@@ -2015,21 +2010,8 @@
 									iconCls: 'fa fa-2x fa-download icon-button-color-default',
 									scale: 'medium',
 									disabled: true,
-									menu: {
-										items: [
-											{
-												text: 'Standard',
-												handler: function() {
-													actionExportComponents('exportForm');
-												}
-											},
-											{
-												text: 'Describe',
-												handler: function() {
-													actionExportComponents('exportFormDescribe');
-												}
-											}
-										]
+									handler: function () {
+										actionExportComponents('exportForm');
 									}
 								}
 							]

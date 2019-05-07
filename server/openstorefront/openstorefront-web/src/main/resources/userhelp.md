@@ -1,7 +1,7 @@
 
 <span style="font-size: 24px;">User Guide</span>
 
-Version 2.6
+Version 2.8
                                                      
 
 # 1. Overview
@@ -51,8 +51,7 @@ a given entry type.
 * Attribute can now be flagged private and have comments 
 * Resources can now be marked private
 * Entry type can now have sub type and be nested.
- 
-For more information see <a href="https://github.com/di2e/openstorefront/releases/tag/v2.6" target="_blank">v2.6</a>, or to see information on all releases, please see the <a href="https://github.com/di2e/openstorefront/releases" target="_blank">releases page</a> in GitHub.
+
 
 ## 1.2 Release Notes for v2.6.2 @ADMIN-SYSTEM-MANAGEMENT
 -----
@@ -111,7 +110,11 @@ For more information see <a href="https://github.com/di2e/openstorefront/release
 
 * Various improvements to Entries admin page.
 
- 
+### 1.7 Administrator Release Notes, v2.8 @ADMIN-SYSTEM-MANAGEMENT
+-----
+
+Added Mongo DB support.
+
 
 # 2. User Features
 ------
