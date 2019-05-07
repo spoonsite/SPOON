@@ -334,49 +334,159 @@
 				return firstRowString;
 			};
 
-			var getRandomRow = function(compViewArray){
-				var firstRowString = '';
-				firstRowString += '<tr>';
-					firstRowString += '<td>';
-					firstRowString += '';
-					firstRowString += '</td>';
-				compViewArray.forEach(function(singleComponentView){
-					firstRowString += '<td>';
-					firstRowString += singleComponentView.name;
-					firstRowString += '</td>';
-				});
-				firstRowString += '</tr>'
+			var getMainBody = function(compViewArray){
+				var rowString = '';
 
-				return firstRowString;
+				rowString += '<tr>';
+					rowString += '<td>';
+					rowString += 'Bread Crumb';
+					rowString += '</td>';
+				compViewArray.forEach(function(singleComponentView){
+					rowString += '<td>';
+					rowString += singleComponentView.componentTypeLabel;
+					rowString += '</td>';
+				});
+				rowString += '</tr>'
+
+				rowString += '<tr>';
+					rowString += '<td>';
+					rowString += 'Description';
+					rowString += '</td>';
+				compViewArray.forEach(function(singleComponentView){
+					rowString += '<td>';
+					rowString += singleComponentView.description;
+					rowString += '</td>';
+				});
+				rowString += '</tr>'
+
+				rowString += '<tr>';
+					rowString += '<td>';
+					rowString += 'Organization';
+					rowString += '</td>';
+				compViewArray.forEach(function(singleComponentView){
+					rowString += '<td>';
+					rowString += singleComponentView.organization;
+					rowString += '</td>';
+				});
+				rowString += '</tr>'
+
+				// rowString += '<tr>';
+				// 	rowString += '<td>';
+				// 	rowString += 'Title';
+				// 	rowString += '</td>';
+				// compViewArray.forEach(function(singleComponentView){
+				// 	rowString += '<td>';
+				// 	rowString += singleComponentView.name;
+				// 	rowString += '</td>';
+				// });
+				// rowString += '</tr>'
+
+				// rowString += '<tr>';
+				// 	rowString += '<td>';
+				// 	rowString += 'Title';
+				// 	rowString += '</td>';
+				// compViewArray.forEach(function(singleComponentView){
+				// 	rowString += '<td>';
+				// 	rowString += singleComponentView.name;
+				// 	rowString += '</td>';
+				// });
+				// rowString += '</tr>'
+
+				return rowString;
 			};
 
 
+			var getRelevantDataPiece = function(vitalsList, vitalNameToGet){
+				// console.log('vitalsList: ',vitalsList, ' name: ', vitalNameToGet);
+				var foundVal = false;
+				vitalsList.forEach(function(entryVital){
+					
+					// console.log('outed: ---->',entryVital.label, '<-----comped: ', vitalNameToGet);
+					if(entryVital.label == vitalNameToGet){
+						foundVal = entryVital.value;
+						// console.log('FOUND A MATCH', entryVital.value);
+						// return entryVital.value;
+					}
+				});
+				if(foundVal){
+					return foundVal;
+				}
+				return '---'
+			};
 
+			var getVitalsBody = function(compViewArray){
+				// 1. Make a set of all the vitals by type. (dups included)
+
+				var vitalSet = [];
+				compViewArray.forEach(function(singleComponentView){
+					singleComponentView.vitals.forEach(function(entryVital){
+						if(vitalSet.indexOf(entryVital.label) == -1){
+							vitalSet.push({
+								name: entryVital.label,
+								unit: entryVital.unit
+							});
+						}
+					});
+				});
+				// console.log(vitalSet);
+
+				// for(var i = 0; i < vitalSet.length; i++){
+				// 	for(var j = 0; j < compViewArray.length; j++){
+				// 		for(var k = 0; k < compViewArray[j].vitals.length; k++){
+				// 			if(vitalSet[i] == compViewArray[j].vitals[k].label){
+				// 				// do stuff
+				// 				break;
+
+				// 			}
+				// 		}
+				// 	}
+				// }
+				var vitalsHtmlBody = '';
+
+				vitalSet.forEach(function(vitalSetItem){
+					var rowString = '';
+					rowString += '<tr>';
+					rowString += '<td>';
+					rowString += vitalSetItem.name + ' in ' + vitalSetItem.unit;
+					rowString += '</td>';
+					compViewArray.forEach(function(singleComponentView){
+						rowString += '<td>';
+						// rowString += getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name);
+						// console.log('MAGIC: ',getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name));
+						rowString += getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name);
+						rowString += '</td>';
+					});
+					rowString += '</tr>'
+					vitalsHtmlBody += rowString;
+
+
+					// compViewArray.forEach(function(singleComponentView){
+					// 	singleComponentView.vitals.forEach(function(entryVital){
+					// 		if(entryVital.label = vitalSetItem){
+
+					// 		}
+					// 	});
+					// });
+				});
+				// console.log('BODY: ',vitalsHtmlBody);
+				return vitalsHtmlBody;
+			}
 
 			var buildHTMLTableFromData = function(compViewArray){
 
 				var htmlTableString = "";
-				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px;}tr:nth-child(even) {  background-color: #dddddd;}tr,th{min-width: 40em;}</style>";
+				// htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px;}tr:nth-child(even) {  background-color: #dddddd;}tr,th{min-width: 40em;}</style>";
+				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px; min-width: 40em;}tr:nth-child(even) {  background-color: #dddddd;}</style>";
 				htmlTableString += "<h2>Comparison Table</h2>";
 
 				var firstHtmlRow = getFirstRow(compViewArray);
-				var randomRow = getRandomRow(compViewArray);
+				var mainTableBody = getMainBody(compViewArray);
+				var vitalsBody = getVitalsBody(compViewArray);
 
 				htmlTableString += "<table>";
 				htmlTableString += firstHtmlRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
-				htmlTableString += randomRow;
+				htmlTableString += mainTableBody;
+				htmlTableString += vitalsBody;
 
 				// htmlTableString += "<tr><th>FIGHTTHEPOWER!</th><th>Unit</th><th>"+dataRays.nameOne+"</th><th>"+dataRays.nameTwo+"</th></tr>";// + allTheTableRows;
 
@@ -391,7 +501,8 @@
 				// var allTheTableRows = "";
 				// allTheTableRows = buildTheTableRows(refinedDataTable);
 
-				console.log(htmlTableString);
+				// console.log(htmlTableString);
+				// console.log(compViewArray);
 				
 				return htmlTableString;
 			};
