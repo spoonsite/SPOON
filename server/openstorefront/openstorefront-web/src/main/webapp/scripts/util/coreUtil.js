@@ -1192,19 +1192,19 @@ var CoreUtil = {
 				if (m.index === jUnitRegex.lastIndex) {
 					jUnitRegex.lastIndex++;
 				}
-// replacement with parenthesized versions of the sub-units
+				// replacement with parenthesized versions of the sub-units
 				// with check to see if the sub-unit is the whole unit
 				// ex: kg
 				jUnitRegexArray.push(m[0]);
-				
+
 			}
 			// iterate over found matches and place parenthesis around 
 			// the matches in the current string
-			jUnitRegexArray.forEach(function(match){
+			jUnitRegexArray.forEach(function (match) {
 				newSubStr = "(" + match.replace(":", "/") + ")";
 				str = str.replace(match, newSubStr)
 			})
-			
+
 			// this is the regex for any text in the units
 			while ((m = regex.exec(str)) !== null) {
 				if (m.index === regex.lastIndex) {
@@ -1223,12 +1223,12 @@ var CoreUtil = {
 				parenMatch = '"' + match + '"';
 				str = str.replace(match, parenMatch);
 			})
-			
+
 			// Katex does not allow $ when converting so this is the way 
 			// of fixing that edge case. (cases like this should not 
 			// be in the database through)
 			if (str == '$') {
-				return("$");
+				return ("$");
 			}
 
 			// method for converting ascii to katex
@@ -1238,5 +1238,4 @@ var CoreUtil = {
 			return "";
 		}
 	}
-  
 };
