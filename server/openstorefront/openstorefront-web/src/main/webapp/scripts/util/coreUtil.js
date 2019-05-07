@@ -1178,9 +1178,34 @@ var CoreUtil = {
 
 		const regex = /(\w{1,})+/gu;
 
-		var array = [];
+		// regex for JUnit edge case
+		const jUnitRegex = /((\d+):(\d+))+/g;
+
+		var regexArray = [];
+		var jUnitRegexArray = [];
 
 		if (str !== undefined) {
+			// This is for a specific JUnit case where ^1/2 is resolved as 1:2, 
+			// this is not a recognized ascii math method so it is changed 
+			// back to 1/2 so katex can understand it.
+			while ((m = jUnitRegex.exec(str)) !== null) {
+				if (m.index === jUnitRegex.lastIndex) {
+					jUnitRegex.lastIndex++;
+				}
+// replacement with parenthesized versions of the sub-units
+				// with check to see if the sub-unit is the whole unit
+				// ex: kg
+				jUnitRegexArray.push(m[0]);
+				
+			}
+			// iterate over found matches and place parenthesis around 
+			// the matches in the current string
+			jUnitRegexArray.forEach(function(match){
+				newSubStr = "(" + match.replace(":", "/") + ")";
+				str = str.replace(match, newSubStr)
+			})
+			
+			// this is the regex for any text in the units
 			while ((m = regex.exec(str)) !== null) {
 				if (m.index === regex.lastIndex) {
 					regex.lastIndex++;
@@ -1189,20 +1214,23 @@ var CoreUtil = {
 				// replacement with parenthesized versions of the sub-units
 				// with check to see if the sub-unit is the whole unit
 				// ex: kg
-				match = m[0];
-				array.push(match);
+				regexArray.push(m[0]);
 			}
 
 			// iterate over found matches and place parenthesis around 
 			// the matches in the current string
-			array.forEach(function (match) {
+			regexArray.forEach(function (match) {
 				parenMatch = '"' + match + '"';
 				str = str.replace(match, parenMatch);
 			})
 			
+			// Katex does not allow $ when converting so this is the way 
+			// of fixing that edge case. (cases like this should not 
+			// be in the database through)
 			if (str == '$') {
 				return("$");
 			}
+
 			// method for converting ascii to katex
 			var katex = Window.renderAsciiMath(str, { displayMode: false })
 			return katex;
