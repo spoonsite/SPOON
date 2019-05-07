@@ -2035,7 +2035,13 @@
 						displayInfo: true,
 						displayMsg: 'Displaying Entries {0} - {1} of {2}',
 						emptyMsg: "No entries to display"
-					})
+					}),
+					// Set Default Loading Mask
+					masked: {
+						xtype: 'loadmask',
+						message: 'Pizza is good.',
+						bodyStyle: 'background-color: purple'
+					}
 				});
 
 				addComponentToMainViewPort(componentGrid);
@@ -2463,52 +2469,66 @@
 							if (btn === 'yes') {
 
 								// Indicate To User Deletion Is Occurring
-								Ext.getCmp('componentGrid').setLoading(true);
+								var loadingMask = Ext.getCmp('componentGrid').setLoading(true);
 
-								// Initialize Update Counter
-								var componentDeleteCount = 0;
-
-								// Loop Through Selection
-								for (i = 0; i < selected; i++) {
-
-									// Get Component ID
-									var componentId = selection[i].get('componentId');
-
-									// Make Request
-									Ext.Ajax.request({
-
-										url: 'api/v1/resource/components/' + componentId + '/cascade',
-										method: 'DELETE',
-										success: function(response, opts) {
-
-											// Check For Errors
-											if (response.responseText.indexOf('errors') !== -1) {
-
-												// Provide Error Notification
-												Ext.toast('An Entry Failed To Delete', 'Error');
-
-												// Provide Log Information
-												console.log(response);
-											}
-
-											// Check If We Are On The Final Request
-											if (++componentDeleteCount === selected) {
-
-												// Provide Success Notification
-												Ext.toast('Selected entries have been deleted', 'Success');
-
-												// Refresh Grid
-												actionRefreshComponentGrid();
-
-												// Unmask Grid
-												Ext.getCmp('componentGrid').setLoading(false);
-											}
-										}
-									});
-								}
+								// Show Progress Bar
+								
+								console.debug();
+								
+								// Make Request
+								sendDeleteRequests(selected, selection);
+								
 							}
 						}
-					});
+					}); // End Message Box
+
+					// Recursive Function To Send Delete Requests
+					//	iter - current componet to delete #
+					//	selection - array of components to delete
+					function sendDeleteRequests(iter, selection){
+						Ext.Ajax.request({
+
+						url: 'api/v1/resource/components/' + selection[iter-1].get('componentId') + '/cascade',
+						method: 'DELETE',
+						success: function(response, opts) {
+
+							// Check For Errors
+							if (response.responseText.indexOf('errors') !== -1) {
+
+								// Provide Error Notification
+								Ext.toast('An Entry Failed To Delete', 'Error');
+
+								// Provide Log Information
+								console.log(response);
+							}
+
+							console.log("Successfully deleted 1 component. On iteration: ",iter-1," using the array ", selection)
+
+							// Check If We Are On The Final Request
+							if (iter - 1  == 0) {
+
+								// Provide Success Notification
+								Ext.toast('Selected entries have been deleted', 'Success');
+
+								// Refresh Grid
+								actionRefreshComponentGrid();
+
+								// Unmask Grid
+								Ext.getCmp('componentGrid').setLoading(false);
+							}
+							else {
+								// Increment the Progress Bar
+
+								// Send Next Request
+								sendDeleteRequests(iter-1, selection)
+							}
+						}, // End Success Condition
+						failure:{
+							//TODO: ADD SOMETHING HERE
+						} // End Failure
+						}); // End Ajax
+					} // End sendDeleteRequest
+
 				};
 
 				var actionCopyComponent = function() {
