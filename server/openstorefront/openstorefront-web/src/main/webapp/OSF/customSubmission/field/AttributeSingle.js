@@ -144,6 +144,8 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 							itemId: 'attributeCodeSingle',
 							showLabel: false,
 							attributeTypeView: attributeTypeView,
+							attributeUnit: attributeTypeView.attributeUnit,
+							attributeUnitList: attributeTypeView.attributeUnitList,
 							required: panel.fieldTemplate.required,
 							width: '100%',
 							maxWidth: 800,						
@@ -160,7 +162,8 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 																	
 									panel.selectedValue = {
 										label: processValue,
-										value: field.getValue()
+										value: field.getValue(),
+										attributeField: field.fullAttributeField
 									};									
 									checkForRequiredComment(newValue);
 								} 
@@ -440,6 +443,9 @@ Ext.define('OSF.customSubmission.field.AttributeSingle', {
 			} else {
 				if (panel.selectedValue && panel.selectedValue.value) {
 					responseValue = panel.selectedValue.label;
+					if (panel.selectedValue.attributeField && panel.selectedValue.attributeField.getUnit()) {
+						responseValue += ' ' + panel.selectedValue.attributeField.getUnit();
+					}
 				}
 			}
 		} else if (panel.fieldTemplate.fieldType === 'ATTRIBUTE_RADIO') {

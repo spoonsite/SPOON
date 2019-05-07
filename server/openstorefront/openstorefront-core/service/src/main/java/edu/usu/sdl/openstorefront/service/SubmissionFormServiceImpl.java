@@ -507,6 +507,44 @@ public class SubmissionFormServiceImpl
 	}
 
 	@Override
+	public UserSubmission componentToSubmission(String componentId)
+	{
+		Objects.requireNonNull(componentId);
+
+		ComponentFormSet componentFormSet = new ComponentFormSet();
+		ComponentAll componentAll = getComponentService().getFullComponent(componentId);
+		if (componentAll == null || componentAll.getComponent() == null) {
+			throw new OpenStorefrontRuntimeException("Unable to find Component", "Check Id: " + componentId);
+		}
+		componentFormSet.setPrimary(componentAll);
+
+		ComponentType componentType = new ComponentType();
+		componentType.setComponentType(componentAll.getComponent().getComponentType());
+		componentType = componentType.find();
+
+		SubmissionFormTemplate formTemplate;
+		if (componentType != null) {
+			formTemplate = findTemplateForComponentType(componentType.getComponentType());
+		} else {
+			throw new OpenStorefrontRuntimeException("Unable to find component Type", "Check Data");
+		}
+
+		for (ComponentRelationship relationship : componentAll.getRelationships()) {
+			componentFormSet.getChildren().add(getComponentService().getFullComponent(relationship.getRelatedComponentId()));
+		}
+
+		UserSubmissionAll userSubmissionAll;
+		try {
+			userSubmissionAll = mappingController.mapEntriesToUserSubmission(formTemplate, componentFormSet);
+		} catch (MappingException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to map entry to submission.", "Check error ticket/logs", ex);
+		}
+		userSubmissionAll.getUserSubmission().setSubmissionName(componentAll.getComponent().getName());
+
+		return userSubmissionAll.getUserSubmission();
+	}
+
+	@Override
 	public ValidationResult submitChangeRequestForApproval(UserSubmission userSubmission)
 	{
 		Objects.requireNonNull(userSubmission);
@@ -691,19 +729,18 @@ public class SubmissionFormServiceImpl
 		userSubmissionComment.save();
 
 		if (ComponentCommentType.SUBMISSION.equals(userSubmissionComment.getCommentType())) {
-								
+
 			EmailCommentModel emailCommentModel = new EmailCommentModel();
-			
+
 			WorkPlanLink workPlanLink = getWorkPlanService().getWorkPlanLinkForSubmission(userSubmissionComment.getUserSubmissionId());
 			UserSubmission userSubmission = getPersistenceService().findById(UserSubmission.class, workPlanLink.getUserSubmissionId());
-			
-			emailCommentModel.setComment(userSubmissionComment.getComment());			
-			if(userSubmissionComment.getAdminComment() != null && (userSubmissionComment.getAdminComment())){
+
+			emailCommentModel.setComment(userSubmissionComment.getComment());
+			if (userSubmissionComment.getAdminComment() != null && (userSubmissionComment.getAdminComment())) {
 				emailCommentModel.setAuthor("ADMIN");
-			}
-			else {
+			} else {
 				emailCommentModel.setAuthor(userSubmission.getOwnerUsername());
-			}	
+			}
 			emailCommentModel.setEntryName(userSubmission.getSubmissionName());
 			emailCommentModel.setCurrentStep(getWorkPlanService().getWorkPlan(workPlanLink.getWorkPlanId()).findWorkPlanStep(workPlanLink.getCurrentStepId()).getName());
 			emailCommentModel.setReplyInstructions("To respond to this comment, please login and go to the submission.");

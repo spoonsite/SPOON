@@ -294,11 +294,13 @@ public interface AttributeService
 	 *
 	 * @param componentType
 	 * @param submissionTypesOnly
+	 * @param submissionTemplateId
 	 * @return
 	 */
-	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly);
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, String submissionTemplateId);
 
 	/**
+	 * @param submissionTemplateId
 	 * @See findRequiredAttributes(String componentType, boolean
 	 * submissionTypesOnly)
 	 * @param componentType
@@ -306,15 +308,16 @@ public interface AttributeService
 	 * @param skipFilterNoCodes
 	 * @return
 	 */
-	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes);
+	public List<AttributeType> findRequiredAttributes(String componentType, boolean submissionTypesOnly, boolean skipFilterNoCodes, String submissionTemplateId);
 
 	/**
 	 * gets the optional attributes giving a component type
 	 *
 	 * @param componentType
 	 * @param submissionTypesOnly
+	 * @param submissionTemplateId
 	 * @return
 	 */
-	public List<AttributeType> findOptionalAttributes(String componentType, boolean submissionTypesOnly);
+	public List<AttributeType> findOptionalAttributes(String componentType, boolean submissionTypesOnly, String submissionTemplateId);
 
 }

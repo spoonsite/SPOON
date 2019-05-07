@@ -47,6 +47,7 @@ import edu.usu.sdl.openstorefront.core.entity.TrackEventCode;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.EditSubmissionOptions;
+import edu.usu.sdl.openstorefront.core.util.UnitConvertUtil;
 import edu.usu.sdl.openstorefront.core.view.ChangeEntryTypeAction;
 import edu.usu.sdl.openstorefront.core.view.ChangeOwnerAction;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
@@ -121,6 +122,7 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Note: This is a chained inheritance which is exception to the general case
@@ -657,6 +659,8 @@ public abstract class GeneralComponentResourceExt
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
+
+			//Convert attribute Unit if needed (from user to base)
 			RequiredForComponent savedComponent = service.getComponentService().saveComponent(component);
 			return Response.created(URI.create(BASE_RESOURCE_PATH + savedComponent.getComponent().getComponentId())).entity(savedComponent).build();
 		} else {
@@ -699,7 +703,24 @@ public abstract class GeneralComponentResourceExt
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 
-			List<AttributeType> requiredAttributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponent().getComponentType(), false);
+			//convert Units on incoming attributes only
+			for (ComponentAttribute incomingAttribute : component.getAttributes()) {
+				AttributeType type = service.getAttributeService().findType(incomingAttribute.getComponentAttributePk().getAttributeType());
+				if (StringUtils.isNotBlank(type.getAttributeUnit())
+						&& StringUtils.isNotBlank(incomingAttribute.getPreferredUnit())
+						&& !type.getAttributeUnit().equals(incomingAttribute.getPreferredUnit())) {
+
+					incomingAttribute.getComponentAttributePk().setAttributeCode(
+							UnitConvertUtil.convertUserUnitToBaseUnit(
+									type.getAttributeUnit(),
+									incomingAttribute.getPreferredUnit(),
+									incomingAttribute.getComponentAttributePk().getAttributeCode()
+							)
+					);
+				}
+			}
+
+			List<AttributeType> requiredAttributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponent().getComponentType(), false, null);
 			Set<String> requiredTypeSet = requiredAttributeTypes.stream()
 					.map(AttributeType::getAttributeType)
 					.collect(Collectors.toSet());
@@ -721,7 +742,6 @@ public abstract class GeneralComponentResourceExt
 				}
 			}
 
-			//if attribute do
 			service.getComponentService().saveComponent(component);
 			Component updatedComponent = new Component();
 			updatedComponent.setComponentId(componentId);
@@ -940,7 +960,6 @@ public abstract class GeneralComponentResourceExt
 		return Response.ok(result.toRestError()).build();
 	}
 
-
 	@GET
 	@APIDescription("Gets full component details (This the packed view for displaying)")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1027,6 +1046,27 @@ public abstract class GeneralComponentResourceExt
 		return response;
 	}
 
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@DataType(UserSubmission.class)
+	@APIDescription("Return a user submission view of the component. User Submission is not saved...so this is a read-only version.")
+	@Path("/{id}/usersubmission")
+	public Response convertToUserSubmission(
+			@PathParam("id")
+			@RequiredParam String componentId
+	)
+	{
+		UserSubmission userSubmission = null;
+
+		Component component = new Component();
+		component.setComponentId(componentId);
+		component = component.find();
+		if (component != null) {
+			userSubmission = service.getSubmissionFormService().componentToSubmission(componentId);
+		}
+		return sendSingleEntityResponse(userSubmission);
+	}
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(UserSubmission.class)
@@ -1040,12 +1080,12 @@ public abstract class GeneralComponentResourceExt
 		Evaluation evaluation = new Evaluation();
 		evaluation.setOriginComponentId(componentId);
 		List<Evaluation> evaluations = evaluation.findByExample();
-		if(!evaluations.isEmpty()){
+		if (!evaluations.isEmpty()) {
 			RestErrorModel error = new RestErrorModel();
 			error.getErrors().put("componentId", "Unable to edit due to attached evaluations.");
 			return sendSingleEntityResponse(error);
 		}
-		
+
 		EditSubmissionOptions options = new EditSubmissionOptions();
 		options.setRemoveComponent(true);
 		return handleCreateUserSubmission(componentId, options);
