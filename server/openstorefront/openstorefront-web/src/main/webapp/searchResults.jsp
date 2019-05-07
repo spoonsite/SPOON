@@ -411,20 +411,41 @@
 				return '---'
 			};
 
+			var removeDupObjectsFromArray = function(objArray){
+				var uniqueArray = [];
+				for(var i = 0; i < objArray.length; i++){
+					var temp = objArray[i].name;
+					found = false;
+					for(var j = 0; j < uniqueArray.length; j++){
+						if(uniqueArray[j].name == objArray[i].name){
+							found = true;
+						}
+					}
+					if(found){
+						continue;
+					} else{
+						uniqueArray.push(objArray[i]);
+					}
+				}
+				return uniqueArray;
+			};
+
 			var getVitalsBody = function(compViewArray){
 				// 1. Make a set of all the vitals by type. (dups included)
+				var tempVitalSet = [];
 				var vitalSet = [];
+
 				compViewArray.forEach(function(singleComponentView){
 					singleComponentView.vitals.forEach(function(entryVital){
-						if(vitalSet.indexOf(entryVital.label) == -1){
-							vitalSet.push({
+						if(tempVitalSet.indexOf(entryVital.label) == -1){
+							tempVitalSet.push({
 								name: entryVital.label,
 								unit: entryVital.unit
 							});
 						}
 					});
 				});
-				console.log(vitalSet);
+				vitalSet = removeDupObjectsFromArray(tempVitalSet);
 
 				var vitalsHtmlBody = '';
 
