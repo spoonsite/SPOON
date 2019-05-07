@@ -834,6 +834,9 @@ var CoreUtil = {
 						unitToShow =  ' ' + unit + '';
 					}
 					
+					if(unitToShow != ''){
+						unitToShow = " " + CoreUtil.asciiToKatex(unitToShow, false);
+					}
 					processedValues += '<b>' + codeValue + unitToShow + '</b>';					
 					processedValues += ', ';		
 					baseUnitValues += '<b>' + item.codeDescription + (item.unit ? ' ' + item.unit : '') + '</b>';					
