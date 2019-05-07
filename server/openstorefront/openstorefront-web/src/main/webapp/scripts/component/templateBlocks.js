@@ -234,44 +234,7 @@ Ext.define('OSF.component.template.Vitals', {
 			'	</tpl>',
 			'</table>',
 		{
-			asciiToKatex: function (str) {
-				// regex for placing parentheses in str before parsing to katex to ensure sub-units are grouped right 
-				// ex: kg/m -> (kg)/m
-
-				const regex = /(\w{1,})+/gu;
-
-				var array = [];
-
-				if (str !== undefined) {
-					while ((m = regex.exec(str)) !== null) {
-						if (m.index === regex.lastIndex) {
-							regex.lastIndex++;
-						}
-
-						// replacement with parenthesized versions of the sub-units
-						// with check to see if the sub-unit is the whole unit
-						// ex: kg
-						match = m[0];
-						array.push(match);
-					}
-
-					// iterate over found matches and place parenthesis around 
-					// the matches in the current string
-					array.forEach(function (match) {
-						parenMatch = '"' + match + '"';
-						str = str.replace(match, parenMatch);
-					})
-					
-					if (str == '$') {
-						return("$");
-					}
-					// method for converting ascii to katex
-					var katex = Window.renderAsciiMath(str, { displayMode: false })
-					return katex;
-				} else {
-					return "";
-				}
-			}
+			asciiToKatex: CoreUtil.asciiToKatex
 		}
 	),
 
