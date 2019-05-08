@@ -54,7 +54,7 @@
 				var label = Ext.get(labelId);
 				var componentNameElm = Ext.get(nameId);
 				if (chk.checked) {
-					label.setHtml("Delete from Compare");
+					label.setHtml(" Delete from Compare");
 					
 					Ext.getCmp('compareBtn').getMenu().add({
 						componentId: componentId,
@@ -68,7 +68,7 @@
 					});
 					
 				} else {					
-					label.setHtml("Add to Compare");
+					label.setHtml(" Add to Compare");
 					var menuItemToRemove;
 					Ext.getCmp('compareBtn').getMenu().items.each(function(item){
 						if (item.componentId === componentId) {
@@ -77,7 +77,7 @@
 					});
 					if (menuItemToRemove) {
 						menuItemToRemove.chkField.checked = false;
-						menuItemToRemove.labelElm.setHtml("Add to Compare");
+						menuItemToRemove.labelElm.setHtml(" Add to Compare");
 						Ext.getCmp('compareBtn').getMenu().remove(menuItemToRemove);
 					}
 				}
@@ -407,7 +407,7 @@
 					if(entryVital.label == vitalNameToGet){
 						foundVal = entryVital.value;
 						if(vitalUnit !== undefined){
-							foundVal += vitalUnit;
+							foundVal += ' ' + vitalUnit;
 						}
 					}
 				});
@@ -476,7 +476,7 @@
 			var buildHTMLTableFromData = function(compViewArray){
 
 				var htmlTableString = "";
-				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px; min-width: 17em; vertical-align: top; } th { font-size: 180%; font-weight: bold; } tr:nth-child(even) {  background-color: #dddddd;} .tooltip {  position: relative; } .tooltip .tooltiptext {  visibility: hidden; background-color: #747474;  color: #fff;  text-align: center;  border-radius: 6px;  padding: 5px;    /* Position the tooltip */  position: absolute;  z-index: 1;  top: 100%;  left: 50%;  margin-left: -60px;} .tooltip:hover .tooltiptext {  visibility: visible;} </style>";
+				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px; min-width: 17em; vertical-align: top; line-height: normal;} th { font-size: 180%; font-weight: bold; } tr:nth-child(even) {  background-color: #dddddd;} .tooltip {  position: relative; } .tooltip .tooltiptext {  visibility: hidden; background-color: #747474;  color: #fff;  text-align: center;  border-radius: 6px;  padding: 5px;    /* Position the tooltip */  position: absolute;  z-index: 1;  top: 100%;  left: 50%;  margin-left: -60px;} .tooltip:hover .tooltiptext {  visibility: visible;} </style>";
 				// htmlTableString += "<h2>Comparison Table</h2>";
 
 				var firstHtmlRow = getFirstRow(compViewArray);
@@ -1621,7 +1621,7 @@
 				'  <br><div class="searchresults-item-update">',
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'  <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" style="transform: scale(1.5);" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare" style="font-size:160%; font-weight:bold; color:#555555">Add to Compare</span></span></div>',
+				'  <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" style="transform: scale(1.2);" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare" style="font-size:135%; font-weight:bold; color:#555555"> Add to Compare</span></span></div>',
 				'  <tpl if="show.breadcrumbs">',
 				'    <div style="display:block; font-size:14px; margin-top: 4px;">',
 				'      <tpl for="parents" between="&nbsp; &gt; &nbsp;">',
