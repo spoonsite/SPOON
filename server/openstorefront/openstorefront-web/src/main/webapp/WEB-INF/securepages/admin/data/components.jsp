@@ -2496,9 +2496,6 @@
 							}
 
 							
-
-							console.log("Successfully deleted 1 component. On iteration: ",iter-1," using the array ", selection)
-
 							// Check If We Are On The Final Request
 							if (iter - 1  == 0) {
 								// Increment the Progress Bar, One Last Time...
@@ -2524,7 +2521,6 @@
 							}
 						}, // End Success Condition
 						failure:function(response, opts){
-								console.log("There was an error, response:",response,"opts: ",opts)
 								ProgBarManager.fail("There was an internal error that occured in the server; spesific error code restricted for security.",iter,selection)
 							}
 						 
@@ -2597,7 +2593,6 @@
 
 							// Unmask Grid
 							Ext.getCmp('componentGrid').setLoading(false);
-							console.log("There was an error while attempting to delete an Entry.")
 						}
 					}
 
