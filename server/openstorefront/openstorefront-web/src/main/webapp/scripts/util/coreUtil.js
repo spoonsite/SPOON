@@ -1202,7 +1202,7 @@ var CoreUtil = {
 				JScienceRegexArray.push(m[0]);
 
 			}
-			// iterate over found matches and place parenthesis around 
+			// iterate over found matches and place quotes around 
 			// the matches in the current string
 			JScienceRegexArray.forEach(function (match) {
 				newSubStr = "(" + match.replace(":", "/") + ")";
