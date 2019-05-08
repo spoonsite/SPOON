@@ -203,126 +203,126 @@
 				return arrOne;
 			};
 
-			var buildRefinedDataTable = function(arrOne, arrTwo){
-				var returnArray = [];
+			// var buildRefinedDataTable = function(arrOne, arrTwo){
+			// 	var returnArray = [];
 
-				if((arrOne.length == 0) && (arrTwo.length == 0)){
-					return returnArray;
-				}
+			// 	if((arrOne.length == 0) && (arrTwo.length == 0)){
+			// 		return returnArray;
+			// 	}
 
-				var sameCount = 0;
-				// 1. Get the count of the number of commonalities
-				if(arrOne.length == arrTwo.length){
-					for(var i = 0; i < arrOne.length; i++){
-						if(arrOne[i].label === arrTwo[i].label){
-							sameCount++;
-						}
-					}
-				}else if(arrOne.length > arrTwo.length){
-					for(var i = 0; i < arrOne.length; i++){
-						if(i >= arrTwo.length){
-							break;
-						}
-						if(arrOne[i].label === arrTwo[i].label){
-							sameCount++;
-						}
-					}
-				}
-				else {
-					for(var i = 0; i < arrTwo.length; i++){
-						if(i >= arrOne.length){
-							break;
-						}
-						if(arrTwo[i].label === arrOne[i].label){
-							sameCount++;
-						}
-					}
-				}
+			// 	var sameCount = 0;
+			// 	// 1. Get the count of the number of commonalities
+			// 	if(arrOne.length == arrTwo.length){
+			// 		for(var i = 0; i < arrOne.length; i++){
+			// 			if(arrOne[i].label === arrTwo[i].label){
+			// 				sameCount++;
+			// 			}
+			// 		}
+			// 	}else if(arrOne.length > arrTwo.length){
+			// 		for(var i = 0; i < arrOne.length; i++){
+			// 			if(i >= arrTwo.length){
+			// 				break;
+			// 			}
+			// 			if(arrOne[i].label === arrTwo[i].label){
+			// 				sameCount++;
+			// 			}
+			// 		}
+			// 	}
+			// 	else {
+			// 		for(var i = 0; i < arrTwo.length; i++){
+			// 			if(i >= arrOne.length){
+			// 				break;
+			// 			}
+			// 			if(arrTwo[i].label === arrOne[i].label){
+			// 				sameCount++;
+			// 			}
+			// 		}
+			// 	}
 
-				var totalRows = arrOne.length + arrTwo.length - sameCount;
-				// 2. List the commonalities first
-				for(var i = 0; i < sameCount; i++){
-					var dataRow = {};
-					dataRow.attributeName = arrOne[i].label;
-					dataRow.unit = "N/A";
-					dataRow.entryOne = "-";
-					dataRow.entryTwo = "-";
-					if(arrOne[i].unit !== undefined){
-						dataRow.unit = arrOne[i].unit;
-					}
-					if(arrOne[i].value !== undefined){
-						dataRow.entryOne = arrOne[i].value;
-					}
-					if(arrTwo[i].value != undefined){
-						dataRow.entryTwo = arrTwo[i].value;
-					}
-					returnArray.push(dataRow);
-				}
-				// 3. Then grab the arrayOne elements
-				for(var i = sameCount; i < totalRows; i++){
-					if(i >= arrOne.length){
-						break;
-					}
-					var dataRow = {};
-					dataRow.attributeName = arrOne[i].label;
-					dataRow.unit = "N/A";
-					dataRow.entryOne = "-";
-					dataRow.entryTwo = "-";
-					if(arrOne[i].unit !== undefined){
-						dataRow.unit = arrOne[i].unit;
-					}
-					if(arrOne[i].value !== undefined){
-						dataRow.entryOne = arrOne[i].value;
-					}
-					returnArray.push(dataRow);
-				}
-				// 4. Then grab the array two elements
-				for(var i = sameCount; i < totalRows; i++){
-					if(i >= arrTwo.length){
-						break;
-					}
-					var dataRow = {};
-					dataRow.attributeName = arrTwo[i].label;
-					dataRow.unit = "N/A";
-					dataRow.entryOne = "-";
-					dataRow.entryTwo = "-";
-					if(arrTwo[i].unit !== undefined){
-						dataRow.unit = arrTwo[i].unit;
-					}
-					if(arrTwo[i].value !== undefined){
-						dataRow.entryTwo = arrTwo[i].value;
-					}
-					returnArray.push(dataRow);
-				}
+			// 	var totalRows = arrOne.length + arrTwo.length - sameCount;
+			// 	// 2. List the commonalities first
+			// 	for(var i = 0; i < sameCount; i++){
+			// 		var dataRow = {};
+			// 		dataRow.attributeName = arrOne[i].label;
+			// 		dataRow.unit = "N/A";
+			// 		dataRow.entryOne = "-";
+			// 		dataRow.entryTwo = "-";
+			// 		if(arrOne[i].unit !== undefined){
+			// 			dataRow.unit = arrOne[i].unit;
+			// 		}
+			// 		if(arrOne[i].value !== undefined){
+			// 			dataRow.entryOne = arrOne[i].value;
+			// 		}
+			// 		if(arrTwo[i].value != undefined){
+			// 			dataRow.entryTwo = arrTwo[i].value;
+			// 		}
+			// 		returnArray.push(dataRow);
+			// 	}
+			// 	// 3. Then grab the arrayOne elements
+			// 	for(var i = sameCount; i < totalRows; i++){
+			// 		if(i >= arrOne.length){
+			// 			break;
+			// 		}
+			// 		var dataRow = {};
+			// 		dataRow.attributeName = arrOne[i].label;
+			// 		dataRow.unit = "N/A";
+			// 		dataRow.entryOne = "-";
+			// 		dataRow.entryTwo = "-";
+			// 		if(arrOne[i].unit !== undefined){
+			// 			dataRow.unit = arrOne[i].unit;
+			// 		}
+			// 		if(arrOne[i].value !== undefined){
+			// 			dataRow.entryOne = arrOne[i].value;
+			// 		}
+			// 		returnArray.push(dataRow);
+			// 	}
+			// 	// 4. Then grab the array two elements
+			// 	for(var i = sameCount; i < totalRows; i++){
+			// 		if(i >= arrTwo.length){
+			// 			break;
+			// 		}
+			// 		var dataRow = {};
+			// 		dataRow.attributeName = arrTwo[i].label;
+			// 		dataRow.unit = "N/A";
+			// 		dataRow.entryOne = "-";
+			// 		dataRow.entryTwo = "-";
+			// 		if(arrTwo[i].unit !== undefined){
+			// 			dataRow.unit = arrTwo[i].unit;
+			// 		}
+			// 		if(arrTwo[i].value !== undefined){
+			// 			dataRow.entryTwo = arrTwo[i].value;
+			// 		}
+			// 		returnArray.push(dataRow);
+			// 	}
 
-				return returnArray;
-			};
+			// 	return returnArray;
+			// };
 
-			var buildTheTableRows = function(masterArray){
-				var returnString = "";
+			// var buildTheTableRows = function(masterArray){
+			// 	var returnString = "";
 
-				for(var i = 0; i < masterArray.length; i++){
-					var subString = "";
-					subString += "<tr>";
+			// 	for(var i = 0; i < masterArray.length; i++){
+			// 		var subString = "";
+			// 		subString += "<tr>";
 					
-					subString += "<td>" + masterArray[i].attributeName + "</td><td>" + 
-											masterArray[i].unit + "</td><td>" + 
-											masterArray[i].entryOne + "</td><td>" + 
-											masterArray[i].entryTwo + 
-											"</td>";
+			// 		subString += "<td>" + masterArray[i].attributeName + "</td><td>" + 
+			// 								masterArray[i].unit + "</td><td>" + 
+			// 								masterArray[i].entryOne + "</td><td>" + 
+			// 								masterArray[i].entryTwo + 
+			// 								"</td>";
 
-					subString += "</tr>";
-					returnString += subString;
-				}
+			// 		subString += "</tr>";
+			// 		returnString += subString;
+			// 	}
 
-				return returnString;
-			};
+			// 	return returnString;
+			// };
 
 			var getFirstRow = function(compViewArray){
 				var firstRowString = '';
 				firstRowString += '<tr>';
 					firstRowString += '<th>';
-					firstRowString += '';
+					firstRowString += 'Entry Name';
 					firstRowString += '</th>';
 				compViewArray.forEach(function(singleComponentView){
 					firstRowString += '<th>';
@@ -338,34 +338,37 @@
 				var rowString = '';
 
 				rowString += '<tr>';
-					rowString += '<td>';
-					rowString += 'Bread Crumb';
+					rowString += '<td style="font-size: 120%; font-weight: bold;">';
+					rowString += 'Entry Type';
 					rowString += '</td>';
 				compViewArray.forEach(function(singleComponentView){
 					rowString += '<td>';
-					rowString += singleComponentView.componentTypeLabel;
+					var tableElement = '<div class="tooltip">' + singleComponentView.componentTypeLabel + '<span class="tooltiptext">Entry Type of ' + singleComponentView.name + '</span></div>';
+					rowString += tableElement;
 					rowString += '</td>';
 				});
 				rowString += '</tr>'
 
 				rowString += '<tr>';
-					rowString += '<td>';
+					rowString += '<td style="font-size: 120%; font-weight: bold;">';
 					rowString += 'Description';
 					rowString += '</td>';
 				compViewArray.forEach(function(singleComponentView){
 					rowString += '<td>';
-					rowString += singleComponentView.description;
+					var tableElement = '<div class="tooltip">' + singleComponentView.description.replace(/<img .*?>/g,"") + '<span class="tooltiptext">Description of ' + singleComponentView.name + '</span></div>';
+					rowString += tableElement;
 					rowString += '</td>';
 				});
 				rowString += '</tr>'
 
 				rowString += '<tr>';
-					rowString += '<td>';
+					rowString += '<td style="font-size: 120%; font-weight: bold;">';
 					rowString += 'Organization';
 					rowString += '</td>';
 				compViewArray.forEach(function(singleComponentView){
 					rowString += '<td>';
-					rowString += singleComponentView.organization;
+					var tableElement = '<div class="tooltip">' + singleComponentView.organization + '<span class="tooltiptext">Organization of ' + singleComponentView.name + '</span></div>';
+					rowString += tableElement;
 					rowString += '</td>';
 				});
 				rowString += '</tr>'
@@ -396,13 +399,16 @@
 			};
 
 
-			var getRelevantDataPiece = function(vitalsList, vitalNameToGet){
+			var getRelevantDataPiece = function(vitalsList, vitalNameToGet, vitalUnit){
 
 				var foundVal = false;
 				vitalsList.forEach(function(entryVital){
 
 					if(entryVital.label == vitalNameToGet){
 						foundVal = entryVital.value;
+						if(vitalUnit !== undefined){
+							foundVal += vitalUnit;
+						}
 					}
 				});
 				if(foundVal){
@@ -452,12 +458,13 @@
 				vitalSet.forEach(function(vitalSetItem){
 					var rowString = '';
 					rowString += '<tr>';
-					rowString += '<td>';
-					rowString += vitalSetItem.name + ' in ' + vitalSetItem.unit;
+					rowString += '<td style="font-size: 120%; font-weight: bold;">';
+					rowString += vitalSetItem.name;
 					rowString += '</td>';
 					compViewArray.forEach(function(singleComponentView){
 						rowString += '<td>';
-						rowString += getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name);
+						var tableElement = '<div class="tooltip">' + getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name, vitalSetItem.unit) + '<span class="tooltiptext">'+vitalSetItem.name+' of ' + singleComponentView.name + '</span></div>';
+						rowString += tableElement;
 						rowString += '</td>';
 					});
 					rowString += '</tr>'
@@ -469,8 +476,8 @@
 			var buildHTMLTableFromData = function(compViewArray){
 
 				var htmlTableString = "";
-				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px; min-width: 40em;}tr:nth-child(even) {  background-color: #dddddd;}</style>";
-				htmlTableString += "<h2>Comparison Table</h2>";
+				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px; min-width: 17em; vertical-align: top; } th { font-size: 180%; font-weight: bold; } tr:nth-child(even) {  background-color: #dddddd;} .tooltip {  position: relative; } .tooltip .tooltiptext {  visibility: hidden; background-color: #747474;  color: #fff;  text-align: center;  border-radius: 6px;  padding: 5px;    /* Position the tooltip */  position: absolute;  z-index: 1;  top: 100%;  left: 50%;  margin-left: -60px;} .tooltip:hover .tooltiptext {  visibility: visible;} </style>";
+				// htmlTableString += "<h2>Comparison Table</h2>";
 
 				var firstHtmlRow = getFirstRow(compViewArray);
 				var mainTableBody = getMainBody(compViewArray);
@@ -479,10 +486,11 @@
 				htmlTableString += "<table>";
 				htmlTableString += firstHtmlRow;
 				htmlTableString += mainTableBody;
+				htmlTableString += '<tr><td colspan="'+(compViewArray.length+1)+'"style="font-size: 120%; font-weight: bold;"><h2>Attributes</h2></td></tr>'
 				htmlTableString += vitalsBody;
 
 				htmlTableString += "</table>";
-				
+
 				return htmlTableString;
 			};
 
@@ -532,6 +540,7 @@
 				
 				var htmlDataString = "";
 				htmlDataString = buildHTMLDataString(compViewArray);
+				win.setLoading(false);
 				win.getComponent('attributeCompareItemId').update(htmlDataString);
 			}
 			
@@ -678,6 +687,7 @@
 					]
 				});				
 				compareWin.show();
+				compareWin.setLoading(true);
 
 				var panelString = 'panelNumber';
 				var compString = 'componentNumber';
@@ -1611,7 +1621,7 @@
 				'  <br><div class="searchresults-item-update">',
 				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'  <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'  <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" style="transform: scale(1.5);" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare" style="font-size:160%; font-weight:bold; color:#555555">Add to Compare</span></span></div>',
 				'  <tpl if="show.breadcrumbs">',
 				'    <div style="display:block; font-size:14px; margin-top: 4px;">',
 				'      <tpl for="parents" between="&nbsp; &gt; &nbsp;">',
