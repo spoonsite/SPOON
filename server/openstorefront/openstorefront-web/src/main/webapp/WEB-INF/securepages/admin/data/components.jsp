@@ -2476,8 +2476,6 @@
 					}); // End Message Box
 
 					// Recursive Function To Send Delete Requests
-					//	iter - current componet to delete #
-					//	selection - array of components to delete
 					function sendDeleteRequests(iter, selection){
 
 						Ext.Ajax.request({
