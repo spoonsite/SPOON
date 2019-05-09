@@ -54,7 +54,7 @@
 				var label = Ext.get(labelId);
 				var componentNameElm = Ext.get(nameId);
 				if (chk.checked) {
-					label.setHtml("Delete from Compare");
+					label.setHtml(" Delete from Compare");
 					
 					Ext.getCmp('compareBtn').getMenu().add({
 						componentId: componentId,
@@ -68,7 +68,7 @@
 					});
 					
 				} else {					
-					label.setHtml("Add to Compare");
+					label.setHtml(" Add to Compare");
 					var menuItemToRemove;
 					Ext.getCmp('compareBtn').getMenu().items.each(function(item){
 						if (item.componentId === componentId) {
@@ -77,7 +77,7 @@
 					});
 					if (menuItemToRemove) {
 						menuItemToRemove.chkField.checked = false;
-						menuItemToRemove.labelElm.setHtml("Add to Compare");
+						menuItemToRemove.labelElm.setHtml(" Add to Compare");
 						Ext.getCmp('compareBtn').getMenu().remove(menuItemToRemove);
 					}
 				}
@@ -130,18 +130,305 @@
 			
 			var searchtoolsWin;
 			
-			var compareViewTemplate = new Ext.XTemplate(						
-			);
+			var compareViewTemplate = new Ext.XTemplate();
 		
 			Ext.Ajax.request({
 				url: 'Router.action?page=shared/entryCompareTemplate.jsp',
 				success: function(response, opts){
 					compareViewTemplate.set(response.responseText, true);
 				}
-			});			
+			});
 
+			var isItemInList = function(item, vitalsList){
+				for(var i = 0; i < vitalsList.length; i++){
+					if(item == vitalsList[i].type){
+						return true;
+					}
+				}
+				return false;
+			}
+
+			var getArrayCommonalities = function(compViewArray){
+				var bucket = [];
+				var uniqueCommonalityArray = [];
+
+				// 1. Introduce a minimal set into the common bucket.
+				for(var i = 0; i < compViewArray[0].vitals.length; i++){
+					bucket.push(compViewArray[0].vitals[i].type);
+				}
+
+				// 2. Because we are splicing, we need to go through the bucket in reverse order.
+				compViewArray.forEach(function(componentView){
+					for(var i = bucket.length - 1; i >= 0; i--){
+						var bucketItemIsInList = isItemInList(bucket[i], componentView.vitals);
+						if(!bucketItemIsInList){
+							var index = i;
+							if (index > -1) {
+								bucket.splice(index, 1);
+							}
+						}
+					}
+				});
+
+				// 3. Remove the duplicates
+				for(var i = 0; i < bucket.length; i++){
+					if(uniqueCommonalityArray.indexOf(bucket[i]) == -1){
+						uniqueCommonalityArray.push(bucket[i])
+					}
+				}
+
+				// 4. Reverse the array to preserve original ordering for percolation
+				uniqueCommonalityArray = uniqueCommonalityArray.reverse();
+				return uniqueCommonalityArray;
+			}
+
+			var percolateValueUp = function(arrOne, commonElementString){
+				// 1. Find where the commonality occurs in the list
+				var index = 0;
+				for(var i = 0; i < arrOne.length; i++){
+					if(arrOne[i].type == commonElementString){
+						index = i;
+						break;
+					}
+				}
+				// 2. In reverse order percolate the value to the top of the list.
+				var temp = {};
+				for(var i = arrOne.length - 1; i >= 0; i--) {
+					if((index == i) && i != 0){
+						// Found it so swap with above
+						temp = arrOne[i-1];
+						arrOne[i-1] = arrOne[i];
+						arrOne[i] = temp;
+						index = index - 1;
+						temp = {};
+					}
+				}
+				return arrOne;
+			};
+
+			var getFirstRow = function(compViewArray){
+				var firstRowString = '';
+				firstRowString += '<tr>';
+					firstRowString += '<th>';
+					firstRowString += 'Entry Name';
+					firstRowString += '</th>';
+				compViewArray.forEach(function(singleComponentView){
+					firstRowString += '<th>';
+					firstRowString += singleComponentView.name;
+					firstRowString += '</th>';
+				});
+				firstRowString += '</tr>'
+
+				return firstRowString;
+			};
+
+			var getMainBody = function(compViewArray){
+				var rowString = '';
+
+				rowString += '<tr>';
+					rowString += '<td style="font-size: 120%; font-weight: bold;">';
+					rowString += 'Entry Type';
+					rowString += '</td>';
+				compViewArray.forEach(function(singleComponentView){
+					rowString += '<td>';
+					var tableElement = '<div class="tooltip">' + singleComponentView.componentTypeLabel + '<span class="tooltiptext">Entry Type of ' + singleComponentView.name + '</span></div>';
+					rowString += tableElement;
+					rowString += '</td>';
+				});
+				rowString += '</tr>'
+
+				rowString += '<tr>';
+					rowString += '<td style="font-size: 120%; font-weight: bold;">';
+					rowString += 'Description';
+					rowString += '</td>';
+				compViewArray.forEach(function(singleComponentView){
+					rowString += '<td>';
+					var tableElement = '<div class="tooltip">' + singleComponentView.description.replace(/<img .*?>/g,"") + '<span class="tooltiptext">Description of ' + singleComponentView.name + '</span></div>';
+					rowString += tableElement;
+					rowString += '</td>';
+				});
+				rowString += '</tr>'
+
+				rowString += '<tr>';
+					rowString += '<td style="font-size: 120%; font-weight: bold;">';
+					rowString += 'Organization';
+					rowString += '</td>';
+				compViewArray.forEach(function(singleComponentView){
+					rowString += '<td>';
+					var tableElement = '<div class="tooltip">' + singleComponentView.organization + '<span class="tooltiptext">Organization of ' + singleComponentView.name + '</span></div>';
+					rowString += tableElement;
+					rowString += '</td>';
+				});
+				rowString += '</tr>'
+
+				return rowString;
+			};
+
+
+			var getRelevantDataPiece = function(vitalsList, vitalNameToGet, vitalUnit){
+
+				var foundVal = false;
+				vitalsList.forEach(function(entryVital){
+					if(entryVital.label == vitalNameToGet){
+						foundVal = entryVital.value;
+					}
+				});
+				if(foundVal){
+					return foundVal;
+				}
+				return '&mdash;'
+			};
+
+			var removeDupObjectsFromArray = function(objArray){
+				var uniqueArray = [];
+				for(var i = 0; i < objArray.length; i++){
+					var temp = objArray[i].name;
+					found = false;
+					for(var j = 0; j < uniqueArray.length; j++){
+						if(uniqueArray[j].name == objArray[i].name){
+							found = true;
+						}
+					}
+					if(found){
+						continue;
+					} else{
+						uniqueArray.push(objArray[i]);
+					}
+				}
+				return uniqueArray;
+			};
+
+			var getVitalsBody = function(compViewArray){
+				
+				var tempVitalSet = [];
+				var vitalSet = [];
+				// 1. Make a set of all the vitals by type. (dups included)
+				compViewArray.forEach(function(singleComponentView){
+					singleComponentView.vitals.forEach(function(entryVital){
+						if(tempVitalSet.indexOf(entryVital.label) == -1){
+							tempVitalSet.push({
+								name: entryVital.label,
+								unit: entryVital.unit
+							});
+						}
+					});
+				});
+				// 2. Remove the duplicates
+				vitalSet = removeDupObjectsFromArray(tempVitalSet);
+
+				var vitalsHtmlBody = '';
+
+				// 3. For each vital that is going to the screen, each entry needs to report 
+				// what it has for that vital. Either an actual value or nothing.
+				vitalSet.forEach(function(vitalSetItem){
+					var rowString = '';
+					rowString += '<tr>';
+					rowString += '<td style="font-size: 120%; font-weight: bold;">';
+					rowString += vitalSetItem.name;
+					rowString += '</td>';
+					compViewArray.forEach(function(singleComponentView){
+						rowString += '<td>';
+						var tableElement = '<div class="tooltip">' + getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name, vitalSetItem.unit) + '<span class="tooltiptext">'+vitalSetItem.name+' of ' + singleComponentView.name + '</span></div>';
+						rowString += tableElement;
+						rowString += '</td>';
+					});
+					rowString += '</tr>'
+					vitalsHtmlBody += rowString;
+				});
+				return vitalsHtmlBody;
+			}
+
+			var buildHTMLTableFromData = function(compViewArray){
+
+				var htmlTableString = "";
+				htmlTableString += "<style>";
+				htmlTableString += "table {  font-family: arial, sans-serif; border-collapse: collapse; }";
+				htmlTableString += "td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px; min-width: 17em; vertical-align: top; line-height: normal;}";
+				htmlTableString += "th { font-size: 180%; font-weight: bold; }";
+				htmlTableString += "tr:nth-child(even) {  background-color: #dddddd;}";
+				htmlTableString += ".tooltip {  position: relative; }";
+				htmlTableString += ".tooltip .tooltiptext {  visibility: hidden; background-color: #747474;  color: #fff;  text-align: center;  border-radius: 6px;  padding: 5px; /* Position the tooltip */ position: absolute;  z-index: 1;  top: 100%;  left: 50%;  margin-left: -60px;}";
+				htmlTableString += ".tooltip:hover .tooltiptext {  visibility: visible;}";
+				htmlTableString += "</style>";
+
+				var firstHtmlRow = getFirstRow(compViewArray);
+				var mainTableBody = getMainBody(compViewArray);
+				var vitalsBody = getVitalsBody(compViewArray);
+
+				htmlTableString += "<table>";
+				htmlTableString += firstHtmlRow;
+				htmlTableString += mainTableBody;
+				htmlTableString += '<tr><td colspan="'+(compViewArray.length+1)+'"style="font-size: 120%; font-weight: bold;"><h2>Attributes</h2></td></tr>'
+				htmlTableString += vitalsBody;
+
+				htmlTableString += "</table>";
+
+				return htmlTableString;
+			};
+
+			var buildHTMLDataString = function(compViewArray){
+
+				var commonalityArray = getArrayCommonalities(compViewArray);
+
+				compViewArray.forEach(function(singleComponentView){
+					commonalityArray.forEach(function(commonElement){
+						singleComponentView.vitals.forEach(function(arrOneElement){
+							if(arrOneElement.type == commonElement){
+								singleComponentView.vitals = percolateValueUp(singleComponentView.vitals, commonElement);
+							}
+						});
+					});
+				});
+
+				var returnString = "";
+				returnString = buildHTMLTableFromData(compViewArray);
+				return returnString;
+
+			};
+
+			var updateComparisonBox = function(cb,listSize,panelString){
+				var win = cb.up().up().up();
+
+				var panelNames = [];
+				for(var i = 0; i < listSize; i++){
+					var panelNameString = {};
+					panelNameString = panelString + i.toString();
+					panelNames.push(panelNameString);
+				}
+
+				var compViewArray = [];
+
+				for(var i = 0; i < panelNames.length; i++){
+					var tempCompView = {};
+					tempCompView = win.getComponent('subComparePanelItemId').getComponent(panelNames[i]).data
+					compViewArray.push(tempCompView);
+				}
+
+				for(var i = 0; i < compViewArray.length; i++){
+					if(compViewArray[i] == null){
+						return;
+					}
+				}
+				
+				var htmlDataString = "";
+				htmlDataString = buildHTMLDataString(compViewArray);
+				win.setLoading(false);
+				win.getComponent('attributeCompareItemId').update(htmlDataString);
+			}
 			
 			var compareEntries = function(menu) {
+
+				var selectedComponents = [];
+				menu.items.each(function(item) {
+					if (item.componentId) {
+						var record = Ext.create('Ext.data.Model', {});
+						record.set({
+							componentId: item.componentId,
+							name: item.text
+						});
+						selectedComponents.push(record);
+					}
+				});
 				
 				var changeComparePanelListenerGenerator = function(name) {
 					return function(cb, newValue, oldValue, opts) {
@@ -166,7 +453,6 @@
 								success: function(response, opts) {
 									var data = Ext.decode(response.responseText);
 									data = CoreUtil.processEntry(data);
-
 									root = data.componentTypeNestedModel;
 									CoreUtil.traverseNestedModel(root, [], data);
 
@@ -176,6 +462,7 @@
 										success: function (newData) {
 											data.fullEvaluations = newData.fullEvaluations;
 											comparePanel.update(data);
+											updateComparisonBox(cb,selectedComponents.length,'panelNumber');
 
 											// Add event listeners for toggle-able containers
 											var toggleElements = document.querySelectorAll('.toggle-collapse');
@@ -192,6 +479,7 @@
 						}
 					}
 				}
+
 				var comparePanelItemGenerator = function(itemId, name, side) {
 					result = {
 						xtype: 'panel',
@@ -222,10 +510,11 @@
 					}
 					if (side === 'left') {
 						result.width = '50%';
-						result.bodyStyle = 'padding: 10px';
+						result.bodyStyle = 'padding: 0px';
 					} else if (side === 'right') {
 						result.flex = 1;
-						result.bodyStyle = 'padding: 20px';
+						result.width = '50%';
+						result.bodyStyle = 'padding: 0px';
 					}
 					return result;
 				}
@@ -239,72 +528,69 @@
 					maximizable: true,
 					closeAction: 'destroy',
 					layout: {
-						type: 'hbox',
+						type: 'border',
 						align: 'stretch'
 					},				
-					items: [	
-						comparePanelItemGenerator('compareAPanel', 'componentA','left'),
-						comparePanelItemGenerator('compareBPanel', 'componentB', 'right')
+					items: [
+						{
+							xtype: 'panel',
+							region: 'north',
+							height: 0,
+							itemId: 'subComparePanelItemId',
+							overflowX: 'scroll',
+							layout: {
+								type: 'hbox',
+							},
+							items:[
+
+							]
+						},
+						{
+							xtype: 'panel',
+							region: 'center',
+							overflowX: 'scroll',
+							scrollable: true,
+							itemId: 'attributeCompareItemId'
+						}
 					]
 				});				
 				compareWin.show();
-				
-				var compareAcb = compareWin.getComponent('compareAPanel').getComponent('cb');
-				var compareBcb = compareWin.getComponent('compareBPanel').getComponent('cb');
+				compareWin.setLoading(true);
 
-				compareAcb.setValue(null);
-				compareBcb.setValue(null);
+				var panelString = 'panelNumber';
+				var compString = 'componentNumber';
 
-				var selectedComponents = [];
-				menu.items.each(function(item) {
-					if (item.componentId) {
-						var record = Ext.create('Ext.data.Model', {													
-						});
-						record.set({
-							componentId: item.componentId,
-							name: item.text
-						});
-						selectedComponents.push(record);
-					}
+				for(var i = 0; i < selectedComponents.length; i++){
+					compareWin.getComponent('subComparePanelItemId').add(comparePanelItemGenerator(panelString + i.toString(), compString + i.toString(), 'left'));
+				}
+
+				var panelArray = [];
+				for(var i = 0; i < selectedComponents.length; i++){
+					var comparePanelTemp = {};
+					comparePanelTemp = compareWin.getComponent('subComparePanelItemId').getComponent(panelString + i.toString()).getComponent('cb');
+					comparePanelTemp.setValue(null);
+					panelArray.push(comparePanelTemp);
+				}
+
+
+				var records = [];
+				searchResultsStore.each(function(record) {
+					records.push(record);
+				});
+				Ext.Array.sort(records, function(a, b){
+					return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
 				});
 
-
-				//if nothing selected
-				if(selectedComponents.length > 0) {
-					if (selectedComponents.length === 1) {
-						compareAcb.getStore().loadRecords(selectedComponents);
-						compareAcb.setValue(selectedComponents[0].get('componentId'));
-
-						var records = [];
-						searchResultsStore.each(function(record) {
-							records.push(record);
-						});
-						Ext.Array.sort(records, function(a, b){
-							return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
-						});
-						compareBcb.getStore().loadRecords(records);
-
-					} else if (selectedComponents.length > 1) {
-						compareAcb.getStore().loadRecords(selectedComponents);	
-						compareBcb.getStore().loadRecords(selectedComponents);
-
-						compareAcb.setValue(selectedComponents[0].get('componentId'));
-						compareBcb.setValue(selectedComponents[1].get('componentId'));																							
-
-					}											
-				} else {
-
-					var records = [];
-					searchResultsStore.each(function(record) {
-						records.push(record);
+				
+				if (selectedComponents.length > 1) {
+					panelArray.forEach(function(pnlLmnt){
+						pnlLmnt.getStore().loadRecords(records);
 					});
-					Ext.Array.sort(records, function(a, b){
-						return a.get('name').toLowerCase().localeCompare(b.get('name').toLowerCase());
-					});
-
-					compareAcb.getStore().loadRecords(records);
-					compareBcb.getStore().loadRecords(records);
-				}				
+					for(var i = 0; i < selectedComponents.length; i++){
+						panelArray[i].setValue(selectedComponents[i].get('componentId'));
+					}
+				}											
+							
 			}
 			
 			var attributeFilters = [];
@@ -312,7 +598,7 @@
 				region: 'west',
 				title: 'Filters',
 				id: 'filterPanel',
-				minWidth: 300,
+				minWidth: 350,
 				collapsible: true,
 				titleCollapse: true,
 				animCollapse: false,
@@ -800,22 +1086,17 @@
 						});
 						filterByTagCombo.checkVisibility();
 
-						// Set Attributes from the search results
+						// result attribute stats is a JSON encoded string
+						// MOXY couldn't serialize the model to key:value pairs
+						// Jaxson could parse the model to JSON
 						attributeStats = {};
-						//group the attributes by attributeType
-						Ext.Array.each(meta.resultAttributeStats, function(item) {
-							if (attributeStats[item.attributeTypeLabel]) {
-								attributeStats[item.attributeTypeLabel].push(item);
-							} else {
-								attributeStats[item.attributeTypeLabel] = [item];
-							}
-						})
+						attributeStats = JSON.parse(meta.resultAttributeStats);
 
 						var attributeStatContainers = [];
 						
 						Ext.Array.each(Object.keys(attributeStats).sort(), function(key){
 							var panel = Ext.create('Ext.panel.Panel', {
-								title: key,
+								title: attributeStats[key].attributeTypeLabel + (attributeStats[key].attributeUnit ? " (" + attributeStats[key].attributeUnit + ")" : ""),
 								collapsible: true,
 								collapsed: false,
 								margin: '0 0 1 0',
@@ -844,11 +1125,12 @@
 									return 0;
 								}
 							}
-							Ext.Array.each(attributeStats[key].sort(sortFn('attributeCodeLabel')), function(attribute){
+							Ext.Array.each(Object.keys(attributeStats[key].codeMap), function(attrKey){
 								var containsAttribute = false;
+								var attribute = attributeStats[key].codeMap[attrKey];
 								Ext.Array.each(attributeFilters, function(item) {
-									if (item.type === attribute.attributeType &&
-										item.code === attribute.attributeCode) {
+									if (item.type === attributeStats[key].attributeType &&
+										item.code === attrKey) {
 										containsAttribute = true;
 										checkboxes.push(item.checkbox); // add previously checked boxes
 									}
@@ -856,34 +1138,34 @@
 								if (!containsAttribute) {
 									panel.setCollapsed(true);
 									var check = Ext.create('Ext.form.field.Checkbox', {
-										boxLabel: attribute.attributeCodeLabel + ' (' + attribute.count + ') ',
-										attributeCode: attribute.attributeCode,
+										boxLabel: attribute.codeLabel + ' (' + attribute.count + ') ',
+										attributeCode: attrKey,
 										listeners: {
 											change: function(checkbox, newValue, oldValue, opts) {																	
 												if (newValue){
 
 													var containsAttribute = false;
 													Ext.Array.each(attributeFilters, function(item) {
-														if (item.type === attribute.attributeType &&
-															item.code === attribute.attributeCode) {
+														if (item.type === attributeStats[key].attributeType &&
+															item.code === attrKey) {
 															containsAttribute = true;
 														}
 													});
 													
 													if (!containsAttribute) {
 														attributeFilters.push({
-															type: attribute.attributeType,
-															code: attribute.attributeCode,
-															typeLabel: attribute.attributeTypeLabel,
-															label: attribute.attributeCodeLabel,
+															type: attributeStats[key].attributeType,
+															code: attrKey,
+															typeLabel: attributeStats[key].attributeTypeLabel,
+															label: attributeStats[key].codeMap[attrKey].codeLabel,
 															checkbox: checkbox
 														});
 													}
 												} else {
 													attributeFilters = Ext.Array.filter(attributeFilters, function(item) {
 														var keep = true;
-														if (item.type === attribute.attributeType &&
-															item.code === attribute.attributeCode) {
+														if (item.type === attributeStats[key].attributeType &&
+															item.code === attrKey) {
 															keep = false;																																								
 														}
 														return keep;
@@ -1204,10 +1486,18 @@
 				'			</tpl>',
 				'		</tpl>',
 				'	</tpl>',
-				'  <br><div class="searchresults-item-update">',
-				'  <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
-				'  <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
-				'  <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl> <span style="float: right"><input type="checkbox" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')"></input><span id="result{#}compare">Add to Compare</span></span></div>',
+				'  <br>',
+				'  <div class="searchresults-item-update">',
+				'    <tpl if="show.approve"> <b>Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
+				'    <tpl if="show.update"> <b>Last Updated:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
+				'    <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl>',
+				'    <span style="float: right">',
+				'		  <input type="checkbox" style="transform: scale(1.2);" onclick="SearchPage.addRemoveCompare(this, \'result{#}compare\', \'{componentId}\', \'{[ this.escape(values.name) ]}\', \'result{#}name\')">',
+				'		  </input>',
+				'  		  <span id="result{#}compare" style="font-size:135%; font-weight:bold; color:#555555"> Add to Compare',
+				'	  	  </span>',
+				'    </span>',
+				'  </div>',
 				'  <tpl if="show.breadcrumbs">',
 				'    <div style="display:block; font-size:14px; margin-top: 4px;">',
 				'      <tpl for="parents" between="&nbsp; &gt; &nbsp;">',
@@ -1433,6 +1723,7 @@
 											var menu = this.up('menu');
 											
 											var itemsToRemove = [];
+
 											menu.items.each(function(item) {
 												if (item.componentId) {
 													item.chkField.checked = false;
@@ -1451,8 +1742,13 @@
 								],
 								listeners: {
 									click: function(){
-										var menu = this.getMenu();										
-										compareEntries(menu);
+										var menu = this.getMenu();
+										if(menu.items.length <= 3){
+											Ext.Msg.alert('Comparison Error', 'Please select at least two entries to compare.');
+										}
+										else{
+											compareEntries(menu);
+										}										
 									}
 								}								
 							},

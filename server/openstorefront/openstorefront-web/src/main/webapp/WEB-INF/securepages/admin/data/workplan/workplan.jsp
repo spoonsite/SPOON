@@ -91,6 +91,7 @@
 							var tools = Ext.getCmp('workplanGrid').getComponent('tools');
 							
 							if (selected.length > 0) {
+								tools.getComponent('copy').setDisabled(false);
 								tools.getComponent('edit').setDisabled(false);
 								tools.getComponent('toggleactive').setDisabled(false);
 								tools.getComponent('delete').setDisabled(false);
@@ -101,6 +102,7 @@
 								}
 
 							} else {
+								tools.getComponent('copy').setDisabled(true);
 								tools.getComponent('edit').setDisabled(true);
 								tools.getComponent('toggleactive').setDisabled(true);
 								tools.getComponent('delete').setDisabled(true);
@@ -128,8 +130,7 @@
 								},
 								{
 									text: 'Add Workplan',
-									itemId: 'add',
-									id: 'faqMngAddBtn',
+									itemId: 'add',									
 									scale: 'medium',
 									width: '175px',
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon-vertical-correction',
@@ -139,8 +140,7 @@
 									}
 								},
 								{
-									text: 'Edit',
-									id: 'faqMngEditBtn',
+									text: 'Edit',									
 									itemId: 'edit',
 									scale: 'medium',
 									width: '100px',
@@ -209,12 +209,21 @@
 									}
 								},
 								{
-									xtype: 'label',
-									html: '<b>If a workplan is edited it will automatically be deactivated, please toggle as active when finished editing.</b>',
-									style: {
-										color: 'red'
-									}
+									requiredPermissions: ['ADMIN-WORKPLAN-COPY'],
+									xtype: 'tbseparator'
 								},
+								{
+									text: 'Copy',									
+									itemId: 'copy',
+									scale: 'medium',
+									width: '100px',
+									disabled: true,
+									iconCls: 'fa fa-2x fa-copy icon-button-color-default icon-vertical-correction',
+									requiredPermissions: ['ADMIN-WORKPLAN-COPY'],
+									handler: function () {
+										actionCopy(Ext.getCmp('workplanGrid').getSelectionModel().getSelection()[0].getData());
+									}
+								},								
 								{
 									xtype: 'tbfill'
 								},
@@ -230,6 +239,11 @@
 									}
 								}
 							]
+						},
+						{
+							xtype: 'panel',
+							dock: 'bottom',
+							html: '<div style="color: red"><b>If a workplan is edited it will automatically be deactivated, please toggle as active when finished editing.</b></div>'
 						}
 					]
 				});
@@ -257,8 +271,7 @@
 						.show();
 				};
 
-				var actionToggleStatus = function (record) {
-					console.log(record);
+				var actionToggleStatus = function (record) {					
 
 					var activate = record.activeStatus === 'A' ? '/inactivate' : '/activate';
 
@@ -277,6 +290,23 @@
 						xtype: 'osf.wp.workPlanMigrationWindow',
 						workplanGrid: workplanGrid
 					}).show();
+				};
+				
+				var actionCopy = function(workplan) {
+					//this actually a workplan view but it should be compatible
+					workplan.workPlanId = null;
+					workplan.name += '-copy';
+					workplan.defaultWorkPlan = false;
+					
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'api/v1/resource/workplans',
+						jsonData: workplan,
+						success: function (res) {
+							Ext.getCmp('workplanGrid').getStore().load();
+						}
+					});					
+										
 				};
 
 				addComponentToMainViewPort(workplanGrid);

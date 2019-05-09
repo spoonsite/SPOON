@@ -184,7 +184,17 @@ Ext.define('OSF.customSubmissionTool.FloatingMenu', {
 											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
 										}
 									}
-								},								
+								},
+								{
+									text: 'Suggested Attributes',
+									fieldType: 'ATTRIBUTE_SUGGESTED',
+									mappingType: 'COMPLEX',
+									listeners: {
+										click: function (menuItem, e, opts) {
+											floatingMenuPanel.addNewItem(menuItem, menuItem.fieldType, menuItem.mappingType, menuItem.options);
+										}
+									}
+								},
 								{
 									text: 'Attributes (Optional)',
 									fieldType: 'ATTRIBUTE_MULTI',

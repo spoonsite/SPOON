@@ -278,12 +278,12 @@ Ext.define('Override.form.field.VTypes', {
 	// Any number of digits on whole nuumbers and 0-20 digits for decimal precision
 	AttributeNumberRe: /^-?\d*(\.\d{0,20})?$/,
 	AttributeNumberText: 'Must be numeric with decimal precision less than or equal to 20.'
-			// Mask forces only charaters meeting the regular expersion are
-			// allowed to be entered. We decided to not to enforce a mask so 
-			// useres can tell the difference between readOnly fields and 
-			// incorrect input
+	// Mask forces that only characters meeting the regular expression are
+	// allowed to be entered. We decided to not to enforce a mask so 
+	// users can tell the difference between readOnly fields and 
+	// incorrect input.
 
-			// AttributeNumberMask: /[\d\.]/i
+	// AttributeNumberMask: /[\d\.]/i
 });
 
 

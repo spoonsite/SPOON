@@ -164,7 +164,7 @@ Ext.define('OSF.component.template.Contacts', {
 			'		<tr class="details-table">',
 			'			<td class="details-table"><tpl if="securityMarkingType">({securityMarkingType}) </tpl><b>{name}</b> <br> ({organization})</td>',
 			'			<td class="details-table">{positionDescription}</td>',
-			'			<td class="details-table"><tpl if="phone">{phone}</tpl><tpl if="!phone">—</tpl></td>',
+			'			<td class="details-table"><tpl if="phone"><a href="tel:{phone}" class="details-table">{phone}</a></tpl><tpl if="!phone">—</tpl></td>',
 			'			<td class="details-table"><a href="mailto:{email}" class="details-table">{email}</a></td>',
 			'		</tr>',
 			'	</tpl>',
@@ -214,16 +214,21 @@ Ext.define('OSF.component.template.Vitals', {
 	title: 'Entry Vitals',
 
 	tpl: new Ext.XTemplate(
-			' <table class="details-table" width="100%">',
+			'<table class="details-table" width="100%">',
+			'	<tr><th class="details-table" width="30%">Label</th><th class="details-table">Value</th><th class="details-table" width="75px" style="text-align: center;">Unit</th></tr>',
 			'	<tpl for="vitals">',
 			'		<tr class="details-table">',
-			'			<td class="details-table"><b>{label}</b>',
+			'			<td class="details-table" width="30%">',
+			'				<b>{label}</b>',
 			'				<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>',
 			'           </td>',
 			'			<td class="details-table highlight-{highlightStyle}">',
-			'				<tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
+			'               <tpl if="securityMarkingType">({securityMarkingType}) </tpl>',
 			'				{value}',
 			'				<tpl if="comment"><hr><b>Comment:</b> <br> {comment}</tpl>',
+			'			</td>',
+			'			<td class="details-table" width="75px" style="text-align: center;">',
+			'				<tpl if="unit"><b>{unit}</b></tpl>',
 			'			</td>',
 			'		</tr>',
 			'	</tpl>',
@@ -258,7 +263,7 @@ Ext.define('OSF.component.template.Vitals', {
 				
 				
 				var topHighLightStyle = null;
-				if (values.length == 1) {
+				if (values.length === 1) {
 					topHighLightStyle = values[0].highlightStyle;
 				} 
 				
@@ -268,6 +273,7 @@ Ext.define('OSF.component.template.Vitals', {
 				var processedValues = '';
 				var commonComment = null;
 				var anyPrivate = false;
+				var unit = '';
 				Ext.Array.each(values, function (item) {
 					if (item.privateFlag) {
 						anyPrivate = true;
@@ -279,6 +285,19 @@ Ext.define('OSF.component.template.Vitals', {
 					}
 					var tip = item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription;
 					
+					var codeValue =	item.codeDescription;	
+					if (item.preferredUnit) {
+						unit = item.preferredUnit.unit; 
+						codeValue = item.preferredUnit.convertedValue;
+					} else if (item.unit){
+						unit = item.unit;
+					}					
+					
+					var unitToShow = '';
+					if (unit) {
+						unitToShow =  ' (' + unit + ')';
+					}
+					
 					processedValues += '<a href="#" class="details-table highlight-' + 
 											item.highlightStyle 
 											+ '" title="Show related entries" onclick="CoreUtil.showRelatedVitalWindow(\'' 
@@ -286,12 +305,12 @@ Ext.define('OSF.component.template.Vitals', {
 											+ '\',\'' 
 											+ item.code 
 											+ '\',\''
-											+ item.typeDescription + ' - '
-											+ item.codeDescription + '\', \'ATTRIBUTE\', \'' 
+											+ item.typeDescription + unitToShow + ' - '
+											+ codeValue + '\', \'ATTRIBUTE\', \'' 
 											+ (tip ? tip : '') + '\', \'' 
 											+ entry.componentId +'\', \'' 
 											+ item.codeHasAttachment +'\');">'									
-											+ '<b>' + item.codeDescription + '</b>'
+											+ '<b>' + codeValue + '</b>'
 										    + '</a>';
 					if (item.codeHasAttachment) {
 						processedValues += '<a href="api/v1/resource/attributes/attributetypes/{' + item.type + '}/attributecodes/{' + item.code + '}/attachment"><i class="fa fa-paperclip"></i> </a>';
@@ -300,6 +319,7 @@ Ext.define('OSF.component.template.Vitals', {
 					
 				});
 				processedValues = processedValues.substring(0, processedValues.length-2);
+				
 				
 				
 				vitals.push({
@@ -311,6 +331,7 @@ Ext.define('OSF.component.template.Vitals', {
 					code: maintype.code,
 					privateFlag: anyPrivate,
 					comment: commonComment,
+					unit: unit,
 					updateDts: maintype.updateDts,
 					securityMarkingType: maintype.securityMarkingType,
 					codeHasAttachment: maintype.codeHasAttachment,
@@ -318,43 +339,9 @@ Ext.define('OSF.component.template.Vitals', {
 				});
 				
 			});
-			
-			
-//			Ext.Array.each(entry.attributes, function (item) {
-//				vitals.push({
-//					componentId: entry.componentId,
-//					label: item.typeDescription,
-//					value: item.codeDescription,
-//					highlightStyle: item.highlightStyle,
-//					type: item.type,
-//					code: item.code,
-//					privateFlag: item.privateFlag,
-//					comment: item.comment,
-//					updateDts: item.updateDts,
-//					securityMarkingType: item.securityMarkingType,
-//					codeHasAttachment: item.codeHasAttachment,
-//					vitalType: 'ATTRIBUTE',
-//					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription
-//				});
-//			});
+						
 		}
 
-//		if (entry.metadata) {
-//			Ext.Array.each(entry.metadata, function (item) {
-//				vitals.push({
-//					componentId: entry.componentId,
-//					label: item.label,
-//					value: item.value,
-//					type: item.label,
-//					code: item.value,
-//					privateFlag: false,
-//					comment: null,
-//					vitalType: 'METADATA',
-//					securityMarkingType: item.securityMarkingType,
-//					updateDts: item.updateDts
-//				});
-//			});
-//		}
 
 		Ext.Array.sort(vitals, function (a, b) {
 			return a.label.localeCompare(b.label);

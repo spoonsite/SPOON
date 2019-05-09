@@ -114,10 +114,11 @@ public class MappingControllerTest
 					}
 
 					@Override
-					public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSe) throws MappingException
+					public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet, SubmissionFormTemplate template) throws MappingException
 					{
 						throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 					}
+
 				};
 			}
 

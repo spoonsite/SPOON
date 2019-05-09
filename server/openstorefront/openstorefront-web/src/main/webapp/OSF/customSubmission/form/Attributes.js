@@ -23,6 +23,9 @@
 Ext.define('OSF.customSubmission.form.Attributes', {
 	extend: 'OSF.customSubmission.SubmissionBaseForm',
 	alias: 'widget.osf-submissionform-attribute',
+	requires: [
+		'OSF.customSubmission.form.AddAttribute'
+	],
 	
 	layout: 'anchor',
 	bodyStyle: 'padding: 10px',
@@ -102,6 +105,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 										Ext.Array.each(attributeCodes, function (attributeCode) {
 											lookUpCodes.push({
 												code: attributeCode.attributeCodePk.attributeCode,
+												// baseUnit: attributeCode.baseUnit, // TODO: this data is not yet available
 												label: attributeCode.label,
 												description: attributeCode.description
 											});
@@ -126,133 +130,72 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 									codeField.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
 								} else {
 
-									// Nothing Selcted, Remove All Codes
+									// Nothing Selected, Remove All Codes
 									codeField.getStore().removeAll();
 									codeField.vtype = undefined;
 								}
+
+								// Fetch the unit and unitList for the componentType
+								// then set the Unit ComboBox
+								var unitField = this.up('form').getComponent('attributeUnitCB');
+								unitField.clearValue();
+								Ext.Ajax.request({
+									url: 'api/v1/resource/attributes/attributetypes/' + newValue + '?view=true',
+									callback: function () {
+										unitField.setLoading(false);
+									},
+									success: function (response, opts) {
+										var attributeView = Ext.decode(response.responseText);
+										if (attributeView.attributeUnit) {
+											unitField.getStore().loadData(attributeView.attributeUnitList);
+											unitField.setValue(attributeView.attributeUnit);
+											// make the field required
+											unitField.allowBlank = false;
+											unitField.setHidden(false);
+										} else {
+											// don't require the unit field and hide it
+											unitField.allowBlank = true;
+											unitField.setHidden(true);
+										}
+									}
+								});
 							}
 						}						
-					},
-					{
-						xtype: 'button',
-						itemId: 'addAttributeType',
-						text: 'Add',
-						iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-						minWidth: 100,
-						hidden: true,
-						handler: function () {
-							var attributeTypeCb = attributePanel.queryById('attributeTypeCB');
-
-
-							var addTypeWin = Ext.create('Ext.window.Window', {
-								title: 'Add Type',
-								iconCls: 'fa fa-plus',
-								closeAction: 'destroy',
-								alwaysOnTop: 9999,								
-								modal: true,
-								width: 400,
-								height: 380,
-								layout: 'fit',
-								items: [
-									{
-										xtype: 'form',
-										scrollable: true,
-										layout: 'anchor',
-										bodyStyle: 'padding: 10px',
-										defaults: {
-											labelAlign: 'top',
-											labelSeparator: '',
-											width: '100%'
-										},
-										items: [
-											{
-												xtype: 'textfield',
-												name: 'label',
-												fieldLabel: 'Label <span class="field-required" />',
-												allowBlank: false,
-												maxLength: 255
-											},
-											{
-												xtype: 'textarea',
-												name: 'detailedDescription',
-												fieldLabel: 'Description',
-												maxLength: 255
-											},
-											{
-												xtype: 'combobox',
-												fieldLabel: 'Code Label Value Type <span class="field-required" />',
-												displayField: 'description',
-												valueField: 'code',
-												typeAhead: false,
-												editable: false,
-												allowBlank: false,
-												name: 'attributeValueType',
-												store: {
-													autoLoad: true,
-													proxy: {
-														type: 'ajax',
-														url: 'api/v1/resource/lookuptypes/AttributeValueType'
-													}
-												}
-											}
-										],
-										dockedItems: [
-											{
-												xtype: 'toolbar',
-												dock: 'bottom',
-												items: [
-													{
-														text: 'Save',
-														formBind: true,
-														iconCls: 'fa fa-lg fa-save icon-button-color-save',
-														handler: function () {
-															var form = this.up('form');
-															var data = form.getValues();
-															var addTypeWin = this.up('window');
-
-															var componentType = attributePanel.componentType.componentType;
-															if (componentType) {
-																componentType = encodeURIComponent(componentType);
-															} else {
-																componentType = '';
-															}
-
-															CoreUtil.submitForm({
-																url: 'api/v1/resource/attributes/attributetypes/metadata?componentType=' + componentType,
-																method: 'POST',
-																data: data,
-																form: form,
-																success: function (response, opts) {
-																	
-																	var newAttribute = Ext.decode(response.responseText);
-																	attributeTypeCb.getStore().add(newAttribute);
-																	addTypeWin.close();
-																}
-															});
-
-														}
-													},
-													{
-														xtype: 'tbfill'
-													},
-													{
-														text: 'Cancel',
-														iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-														handler: function () {
-															this.up('window').close();
-														}
-													}
-												]
-											}
-										]
-									}
-								]
-							});
-							addTypeWin.show();
-
-						}
 					}
+					// Current policy is that users cannot create new attributes
+					// {
+					// 	xtype: 'osf-submissionform-add-attribute',
+					// 	componentType: attributePanel.componentType,
+					// 	attributeTypeCB: this
+					// }
 				]
+			},
+			// show the available unit list if there is one
+			// if user create codes is disabled just show the default unit
+			{
+				xtype: 'combobox',
+				itemId: 'attributeUnitCB',
+				fieldLabel: 'Attribute Unit <span class="field-required" />',
+				name: 'unit',
+				hidden: true, // will show if a unit is found for the attribute
+				queryMode: 'local',
+				labelWidth: 150,
+				editable: false,
+				typeAhead: false,
+				allowBlank: false,
+				valueField: 'unit',
+				displayField: 'unit',
+				listConfig: {
+					getInnerTpl: function () {
+						return '{unit} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+					}
+				},
+				store: Ext.create('Ext.data.Store', {
+					fields: [
+						"unit",
+						"conversionFactor"
+					]
+				})	
 			},
 			{
 				xtype: 'combobox',
@@ -294,17 +237,18 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 		];
 		
 		//load optional types
-		attributePanel.setLoading(true);
+		attributePanel.setLoading(true);		
 		Ext.Ajax.request({
-			url: 'api/v1/resource/attributes/optional?componentType=' + attributePanel.componentType.componentType + '&submissionOnly=true',
+			url: 'api/v1/resource/attributes/optional?componentType=' + attributePanel.componentType.componentType + '&submissionOnly=true&submissionTemplateId=' + attributePanel.section.submissionForm.template.submissionTemplateId,
 			callback: function() {
 				attributePanel.setLoading(false);
 			},
 			success: function(response, opts) {
-				var attributeTypes = Ext.decode(response.responseText);				
+
+				var attributeTypes = Ext.decode(response.responseText);							
 				attributePanel.queryById('attributeTypeCB').getStore().loadData(attributeTypes);
-				
-				if (attributePanel.section) {
+								
+				if (attributePanel.section && attributePanel.fieldTemplate) {
 					var initialData = attributePanel.section.submissionForm.getFieldData(attributePanel.fieldTemplate.fieldId);
 					if (initialData) {
 						var data = Ext.decode(initialData);
@@ -367,7 +311,7 @@ Ext.define('OSF.customSubmission.form.Attributes', {
 			'			</td>' +
 			'			<td class="submission-review-data" style="min-width: 150px">' +
 			'				{value}' +
-			'			</td>' +			
+			'			</td>' +
 			'		</tr>' +
 			'	</tpl>'+
 			'</tbody>' +

@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.MediaType;
 import edu.usu.sdl.openstorefront.core.entity.SubmissionFormField;
+import edu.usu.sdl.openstorefront.core.entity.SubmissionFormTemplate;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionField;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -105,7 +106,7 @@ public class ComponentFieldMapper
 	}
 
 	@Override
-	public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet) throws MappingException
+	public UserSubmissionFieldMedia mapComponentToSubmission(SubmissionFormField submissionField, ComponentFormSet componentFormSet, SubmissionFormTemplate template) throws MappingException
 	{
 		UserSubmissionFieldMedia userSubmissionFieldMedia = new UserSubmissionFieldMedia();
 
