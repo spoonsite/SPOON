@@ -250,6 +250,18 @@
 														xtype: 'checkbox',
 														name: 'showLinkToMobile',
 														boxLabel: 'Show link to mobile site in menu'													 	
+													},
+													
+													{
+														xtype: 'htmleditor',
+														fieldLabel: 'Disclaimer Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottome right of the Search Results." ></i>',
+														name: 'disclaimerMessage',
+														width: '100%',
+														resizable: {
+															handles: 's'
+														},
+														allowBlank: true,
+														maxLength: 255
 													}
 
 												]

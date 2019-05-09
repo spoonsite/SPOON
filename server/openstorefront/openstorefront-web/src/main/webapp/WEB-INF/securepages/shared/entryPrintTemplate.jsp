@@ -498,3 +498,4 @@ limitations under the License.
 		</tpl>
 	</div>
 </tpl>
+<i class="disclaimer-text" >{disclaimerMessage}</i>

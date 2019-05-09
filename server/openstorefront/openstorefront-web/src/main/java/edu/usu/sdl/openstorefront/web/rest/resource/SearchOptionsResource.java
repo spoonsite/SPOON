@@ -28,47 +28,69 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 /**
  * Search Options Resource
  * 
  * @author gfowler
  */
 
- @Path("v1/resource/searchoptions")
- @APIDescription("Provides access to search options (Admin)")
- public class SearchOptionsResource
-        extends BaseResource
-{
+@Path("v1/resource/searchoptions")
+@APIDescription("Provides access to search options (Admin)")
+public class SearchOptionsResource extends BaseResource {
 
-    @GET
+	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@APIDescription("Get the search options for indexing. (Admin)")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
 	@DataType(SearchOptions.class)
 	@Path("/global")
-	public Response updateSearchModel()
-	{
+	public Response updateSearchModel() {
 		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
 
 		return Response.ok(searchOptions).build();
 	}
-    
-    @PUT
+
+	@PUT
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
 	@APIDescription("Update the search options for indexing. (Admin)")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_JSON })
 	@DataType(SearchOptions.class)
 	@Path("/global")
-	public Response updateSearchModel(
-			SearchOptions incomingSearchOptions)
-    {
-        ValidationResult validationResult = incomingSearchOptions.validate();
-        if(!validationResult.valid()){
-            return sendSingleEntityResponse(validationResult.toRestError());
-        }
-       
-        return Response.ok(service.getSearchService().saveGlobalSearchOptions(incomingSearchOptions)).build();
-    }
+	public Response updateSearchModel(SearchOptions incomingSearchOptions) {
+		ValidationResult validationResult = incomingSearchOptions.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		return Response.ok(service.getSearchService().saveGlobalSearchOptions(incomingSearchOptions)).build();
+	}
+
+	@GET
+	@APIDescription("Get the search options for indexing. (User)")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@DataType(SearchOptions.class)
+	@Path("/user")
+	public Response updateSearchModelUser() {
+		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
+
+		return Response.ok(searchOptions).build();
+	}
+
+	@PUT
+	@APIDescription("Update the search options for indexing. (User)")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@DataType(SearchOptions.class)
+	@Path("/user")
+	public Response updateSearchModelUser(SearchOptions incomingSearchOptions) {
+		ValidationResult validationResult = incomingSearchOptions.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+
+		return Response.ok(service.getSearchService().saveUserSearchOptions(incomingSearchOptions)).build();
+	}
 
 }
