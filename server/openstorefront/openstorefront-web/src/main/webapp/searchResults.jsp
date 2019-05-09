@@ -305,6 +305,7 @@
 				
 				var tempVitalSet = [];
 				var vitalSet = [];
+				// 1. Make a set of all the vitals by type. (dups included)
 				compViewArray.forEach(function(singleComponentView){
 					singleComponentView.vitals.forEach(function(entryVital){
 						if(tempVitalSet.indexOf(entryVital.label) == -1){
@@ -315,10 +316,13 @@
 						}
 					});
 				});
+				// 2. Remove the duplicates
 				vitalSet = removeDupObjectsFromArray(tempVitalSet);
 
 				var vitalsHtmlBody = '';
 
+				// 3. For each vital that is going to the screen, each entry needs to report 
+				// what it has for that vital. Either an actual value or nothing.
 				vitalSet.forEach(function(vitalSetItem){
 					var rowString = '';
 					rowString += '<tr>';
