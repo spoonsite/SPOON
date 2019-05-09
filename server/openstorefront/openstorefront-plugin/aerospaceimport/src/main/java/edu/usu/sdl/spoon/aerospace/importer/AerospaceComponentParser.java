@@ -144,19 +144,19 @@ public class AerospaceComponentParser
             for (ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
                 if((componentAdminView.getComponent().getExternalId() != null) 
                         && componentAdminView.getComponent().getExternalId().equals(component.getExternalId())) {
-//                    Component exampleComponent = new Component();
-//                    exampleComponent.setComponentId(componentAdminView.getComponent().getComponentId());
-//                    List<Component> foundComponents = new ArrayList<>();
-//                    foundComponents = exampleComponent.findByExample();
-//                    
-//                    if(foundComponents != null){
-//                        for(Component comp : foundComponents){
-////                            comp.setActiveStatus(Component.INACTIVE_STATUS);
-////                            comp.save();
-//                            service.getComponentService().cascadeDeleteOfComponent(comp.getComponentId());
-////                            comp.delete();
-//                        }
-//                    }
+                    Component exampleComponent = new Component();
+                    exampleComponent.setComponentId(componentAdminView.getComponent().getComponentId());
+                    List<Component> foundComponents = new ArrayList<>();
+                    foundComponents = exampleComponent.findByExample();
+                    
+                    if(foundComponents != null){
+                        for(Component comp : foundComponents){
+                            comp.setActiveStatus(Component.INACTIVE_STATUS);
+                            comp.save();
+                            service.getComponentService().cascadeDeleteOfComponent(comp.getComponentId());
+                            comp.delete();
+                        }
+                    }
                 }
             }
             LOG.log(Level.WARNING, "THIS RECORD HAS BEEN DELISTED AND WAS NOT IMPORTED. "

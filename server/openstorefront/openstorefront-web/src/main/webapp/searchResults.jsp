@@ -152,10 +152,12 @@
 				var bucket = [];
 				var uniqueCommonalityArray = [];
 
+				// 1. Introduce a minimal set into the common bucket.
 				for(var i = 0; i < compViewArray[0].vitals.length; i++){
 					bucket.push(compViewArray[0].vitals[i].type);
 				}
 
+				// 2. Because we are splicing, we need to go through the bucket in reverse order.
 				compViewArray.forEach(function(componentView){
 					for(var i = bucket.length - 1; i >= 0; i--){
 						var bucketItemIsInList = isItemInList(bucket[i], componentView.vitals);
@@ -168,13 +170,14 @@
 					}
 				});
 
-				// 2. Remove the duplicates
+				// 3. Remove the duplicates
 				for(var i = 0; i < bucket.length; i++){
 					if(uniqueCommonalityArray.indexOf(bucket[i]) == -1){
 						uniqueCommonalityArray.push(bucket[i])
 					}
 				}
-				// 3. Reverse the array to preserve original ordering for percolation
+
+				// 4. Reverse the array to preserve original ordering for percolation
 				uniqueCommonalityArray = uniqueCommonalityArray.reverse();
 				return uniqueCommonalityArray;
 			}
@@ -202,121 +205,6 @@
 				}
 				return arrOne;
 			};
-
-			// var buildRefinedDataTable = function(arrOne, arrTwo){
-			// 	var returnArray = [];
-
-			// 	if((arrOne.length == 0) && (arrTwo.length == 0)){
-			// 		return returnArray;
-			// 	}
-
-			// 	var sameCount = 0;
-			// 	// 1. Get the count of the number of commonalities
-			// 	if(arrOne.length == arrTwo.length){
-			// 		for(var i = 0; i < arrOne.length; i++){
-			// 			if(arrOne[i].label === arrTwo[i].label){
-			// 				sameCount++;
-			// 			}
-			// 		}
-			// 	}else if(arrOne.length > arrTwo.length){
-			// 		for(var i = 0; i < arrOne.length; i++){
-			// 			if(i >= arrTwo.length){
-			// 				break;
-			// 			}
-			// 			if(arrOne[i].label === arrTwo[i].label){
-			// 				sameCount++;
-			// 			}
-			// 		}
-			// 	}
-			// 	else {
-			// 		for(var i = 0; i < arrTwo.length; i++){
-			// 			if(i >= arrOne.length){
-			// 				break;
-			// 			}
-			// 			if(arrTwo[i].label === arrOne[i].label){
-			// 				sameCount++;
-			// 			}
-			// 		}
-			// 	}
-
-			// 	var totalRows = arrOne.length + arrTwo.length - sameCount;
-			// 	// 2. List the commonalities first
-			// 	for(var i = 0; i < sameCount; i++){
-			// 		var dataRow = {};
-			// 		dataRow.attributeName = arrOne[i].label;
-			// 		dataRow.unit = "N/A";
-			// 		dataRow.entryOne = "-";
-			// 		dataRow.entryTwo = "-";
-			// 		if(arrOne[i].unit !== undefined){
-			// 			dataRow.unit = arrOne[i].unit;
-			// 		}
-			// 		if(arrOne[i].value !== undefined){
-			// 			dataRow.entryOne = arrOne[i].value;
-			// 		}
-			// 		if(arrTwo[i].value != undefined){
-			// 			dataRow.entryTwo = arrTwo[i].value;
-			// 		}
-			// 		returnArray.push(dataRow);
-			// 	}
-			// 	// 3. Then grab the arrayOne elements
-			// 	for(var i = sameCount; i < totalRows; i++){
-			// 		if(i >= arrOne.length){
-			// 			break;
-			// 		}
-			// 		var dataRow = {};
-			// 		dataRow.attributeName = arrOne[i].label;
-			// 		dataRow.unit = "N/A";
-			// 		dataRow.entryOne = "-";
-			// 		dataRow.entryTwo = "-";
-			// 		if(arrOne[i].unit !== undefined){
-			// 			dataRow.unit = arrOne[i].unit;
-			// 		}
-			// 		if(arrOne[i].value !== undefined){
-			// 			dataRow.entryOne = arrOne[i].value;
-			// 		}
-			// 		returnArray.push(dataRow);
-			// 	}
-			// 	// 4. Then grab the array two elements
-			// 	for(var i = sameCount; i < totalRows; i++){
-			// 		if(i >= arrTwo.length){
-			// 			break;
-			// 		}
-			// 		var dataRow = {};
-			// 		dataRow.attributeName = arrTwo[i].label;
-			// 		dataRow.unit = "N/A";
-			// 		dataRow.entryOne = "-";
-			// 		dataRow.entryTwo = "-";
-			// 		if(arrTwo[i].unit !== undefined){
-			// 			dataRow.unit = arrTwo[i].unit;
-			// 		}
-			// 		if(arrTwo[i].value !== undefined){
-			// 			dataRow.entryTwo = arrTwo[i].value;
-			// 		}
-			// 		returnArray.push(dataRow);
-			// 	}
-
-			// 	return returnArray;
-			// };
-
-			// var buildTheTableRows = function(masterArray){
-			// 	var returnString = "";
-
-			// 	for(var i = 0; i < masterArray.length; i++){
-			// 		var subString = "";
-			// 		subString += "<tr>";
-					
-			// 		subString += "<td>" + masterArray[i].attributeName + "</td><td>" + 
-			// 								masterArray[i].unit + "</td><td>" + 
-			// 								masterArray[i].entryOne + "</td><td>" + 
-			// 								masterArray[i].entryTwo + 
-			// 								"</td>";
-
-			// 		subString += "</tr>";
-			// 		returnString += subString;
-			// 	}
-
-			// 	return returnString;
-			// };
 
 			var getFirstRow = function(compViewArray){
 				var firstRowString = '';
@@ -373,28 +261,6 @@
 				});
 				rowString += '</tr>'
 
-				// rowString += '<tr>';
-				// 	rowString += '<td>';
-				// 	rowString += 'Title';
-				// 	rowString += '</td>';
-				// compViewArray.forEach(function(singleComponentView){
-				// 	rowString += '<td>';
-				// 	rowString += singleComponentView.name;
-				// 	rowString += '</td>';
-				// });
-				// rowString += '</tr>'
-
-				// rowString += '<tr>';
-				// 	rowString += '<td>';
-				// 	rowString += 'Title';
-				// 	rowString += '</td>';
-				// compViewArray.forEach(function(singleComponentView){
-				// 	rowString += '<td>';
-				// 	rowString += singleComponentView.name;
-				// 	rowString += '</td>';
-				// });
-				// rowString += '</tr>'
-
 				return rowString;
 			};
 
@@ -403,7 +269,6 @@
 
 				var foundVal = false;
 				vitalsList.forEach(function(entryVital){
-
 					if(entryVital.label == vitalNameToGet){
 						foundVal = entryVital.value;
 						if(vitalUnit !== undefined){
@@ -414,7 +279,7 @@
 				if(foundVal){
 					return foundVal;
 				}
-				return '---'
+				return '&mdash;'
 			};
 
 			var removeDupObjectsFromArray = function(objArray){
@@ -437,10 +302,10 @@
 			};
 
 			var getVitalsBody = function(compViewArray){
-				// 1. Make a set of all the vitals by type. (dups included)
+				
 				var tempVitalSet = [];
 				var vitalSet = [];
-
+				// 1. Make a set of all the vitals by type. (dups included)
 				compViewArray.forEach(function(singleComponentView){
 					singleComponentView.vitals.forEach(function(entryVital){
 						if(tempVitalSet.indexOf(entryVital.label) == -1){
@@ -476,8 +341,15 @@
 			var buildHTMLTableFromData = function(compViewArray){
 
 				var htmlTableString = "";
-				htmlTableString += "<style>table {  font-family: arial, sans-serif; border-collapse: collapse; }td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px; min-width: 17em; vertical-align: top; line-height: normal;} th { font-size: 180%; font-weight: bold; } tr:nth-child(even) {  background-color: #dddddd;} .tooltip {  position: relative; } .tooltip .tooltiptext {  visibility: hidden; background-color: #747474;  color: #fff;  text-align: center;  border-radius: 6px;  padding: 5px;    /* Position the tooltip */  position: absolute;  z-index: 1;  top: 100%;  left: 50%;  margin-left: -60px;} .tooltip:hover .tooltiptext {  visibility: visible;} </style>";
-				// htmlTableString += "<h2>Comparison Table</h2>";
+				htmlTableString += "<style>";
+				htmlTableString += "table {  font-family: arial, sans-serif; border-collapse: collapse; }";
+				htmlTableString += "td, th {  border: 1px solid #dddddd;  text-align: left;  padding: 8px; min-width: 17em; vertical-align: top; line-height: normal;}";
+				htmlTableString += "th { font-size: 180%; font-weight: bold; }";
+				htmlTableString += "tr:nth-child(even) {  background-color: #dddddd;}";
+				htmlTableString += ".tooltip {  position: relative; }";
+				htmlTableString += ".tooltip .tooltiptext {  visibility: hidden; background-color: #747474;  color: #fff;  text-align: center;  border-radius: 6px;  padding: 5px; /* Position the tooltip */ position: absolute;  z-index: 1;  top: 100%;  left: 50%;  margin-left: -60px;}";
+				htmlTableString += ".tooltip:hover .tooltiptext {  visibility: visible;}";
+				htmlTableString += "</style>";
 
 				var firstHtmlRow = getFirstRow(compViewArray);
 				var mainTableBody = getMainBody(compViewArray);
@@ -675,11 +547,7 @@
 						},
 						{
 							xtype: 'panel',
-							// dock: 'bottom',
 							region: 'center',
-							// split: true,
-							// border: true,
-							// height: '30%',
 							overflowX: 'scroll',
 							scrollable: true,
 							itemId: 'attributeCompareItemId'
