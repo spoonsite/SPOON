@@ -1231,9 +1231,11 @@ var CoreUtil = {
 			// Katex does not allow $ when converting so this is the way 
 			// of fixing that edge case. (cases like this should not 
 			// be in the database though)
-			if (str == '$') {
+			str = '"' + str.trim() + '"'; 
+			if (str == '"$"' || str == '$') {
 				return ("$");
 			}
+			str = str.slice(1, -1);
 
 			// method for converting ascii to katex
 			var katex = Window.renderAsciiMath(str, { displayMode: block })
