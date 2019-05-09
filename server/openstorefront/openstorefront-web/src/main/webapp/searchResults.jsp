@@ -334,6 +334,8 @@
 						fieldLabel: 'By Name',						
 						name: 'filterName',								
 						emptyText: 'Filter Search',
+						maxLength: 200,
+						enforceMaxLength: true,
 					},
 					{
 						xtype: 'tagfield',
@@ -1462,7 +1464,10 @@
 					{
 						xtype: 'toolbar',
 						dock: 'bottom',
+						overflowHandler:'menu',
 						items: [
+							
+
 							Ext.create('Ext.PagingToolbar', {
 								store: searchResultsStore,
 								displayInfo: true,
@@ -1494,14 +1499,56 @@
 											exportFormIds.innerHTML = ids;
 											exportForm.submit();
 										}
-									}
+									},				
 								],
 								listeners: {
 									change: function (me) {
 										Ext.getCmp('resultsDisplayPanel').body.scrollTo('top', 0);
 									}
 								}
-							})
+							}),
+							{
+								xtype:"tbspacer",
+								flex:1
+							},
+							{
+								xtype:'container',
+								items:[
+									{
+										xtype: 'button',
+										itemId: 'disclaimerButton',
+										
+										// hack id, so that direct DOM manipulation can happen
+										// Ext.toolbar creates a new copy of this button when
+										// the panel collapses, therefore a handle that is a 
+										// class is nessesary
+										cls:'displayHandle-searchResultsPage',
+
+										html:'<span style="font-style:italic;">Disclaimer</span>',
+										style:{
+											'float':'right',
+											'margin':'2px 2px 2px 0'
+										},
+										listeners:{
+											click:function(){
+												Ext.Msg.alert('SPOON Disclaimer', 
+												'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i>' + 
+												CoreService.brandingservice.branding.disclaimerMessage +
+												'<br><br>',
+												Ext.emptyFn);
+											},
+											afterRender:function(){
+												CoreService.brandingservice.getCurrentBranding().then(function(branding){
+													if(!branding.disclaimerMessage){
+														//direct DOM manipulation can work after page is already rendered, via .select
+														Ext.select('.displayHandle-searchResultsPage').setStyle('display','none');				
+													}
+												});
+											},
+										}
+									},
+								]
+							}
 						]
 					}
 				],
@@ -1636,6 +1683,8 @@
 											displayField: 'name',
 											id: 'searchTextFieldResults',
 											autoSelect: false,
+											maxLength: 200,
+											enforceMaxLength: true,
 											store: {
 												autoLoad: false,
 												proxy: {

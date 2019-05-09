@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 
 /**
  *
@@ -26,36 +27,78 @@ import edu.usu.sdl.openstorefront.core.annotation.PK;
 public class SearchOptions
 		extends StandardEntity<SearchOptions>
 {
+
 	private Boolean globalFlag;
 
 	@PK(generated = true)
 	private String searchOptionsId;
 
+	@APIDescription("Username for saving user searches")
+	private String username;
+
 	@APIDescription("Flag for using Component organizations in searches")
+	@ConsumeField
 	private Boolean canUseOrganizationsInSearch;
 
 	@APIDescription("Flag for using Component name in searches")
+	@ConsumeField
 	private Boolean canUseNameInSearch;
 
-	@APIDescription("Flag for using Component Description in searches")
+	@APIDescription("Flag for using Component description in searches")
+	@ConsumeField
 	private Boolean canUseDescriptionInSearch;
-	
-	public SearchOptions()
-	{
+
+	@APIDescription("Flag for using Component Tags in searches")
+	@ConsumeField
+	private Boolean canUseTagsInSearch;
+
+	@APIDescription("Flag for using Component Attributes in searches")
+	@ConsumeField
+	private Boolean canUseAttributesInSearch;
+
+	public SearchOptions() {
 
 	}
 
 	@Override
-	public <T extends StandardEntity> void updateFields(T entity)
-	{
+	public <T extends StandardEntity> void updateFields(T entity) {
 		super.updateFields(entity);
 		SearchOptions searchOptionsModel = (SearchOptions) entity;
 
-		setGlobalFlag(searchOptionsModel.getGlobalFlag());
-		setSearchOptionsId(searchOptionsModel.getSearchOptionsId());
 		setCanUseOrganizationsInSearch(searchOptionsModel.getCanUseOrganizationsInSearch());
 		setCanUseNameInSearch(searchOptionsModel.getCanUseNameInSearch());
 		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());
+		setCanUseTagsInSearch(searchOptionsModel.getCanUseTagsInSearch());
+		setCanUseAttributesInSearch(searchOptionsModel.getCanUseAttributesInSearch());
+	}
+
+	public void setDefaultSearchOptions() {
+		super.populateBaseCreateFields();
+
+		setActiveStatus(SearchOptions.ACTIVE_STATUS);
+
+		setCanUseDescriptionInSearch(Boolean.TRUE);
+		setCanUseNameInSearch(Boolean.TRUE);
+		setCanUseOrganizationsInSearch(Boolean.TRUE);
+		setCanUseTagsInSearch(Boolean.TRUE);
+		setCanUseAttributesInSearch(Boolean.TRUE);
+	}
+
+	public Boolean areAllOptionsOff() {
+		return (!canUseOrganizationsInSearch && !canUseNameInSearch && !canUseDescriptionInSearch
+				&& !canUseAttributesInSearch && !canUseTagsInSearch);
+	}
+
+	public Boolean compare(SearchOptions incoming) {
+		Boolean isSame = false;
+		if (incoming.getCanUseAttributesInSearch() == getCanUseAttributesInSearch()
+				&& incoming.getCanUseDescriptionInSearch() == getCanUseDescriptionInSearch()
+				&& incoming.getCanUseNameInSearch() == getCanUseNameInSearch()
+				&& incoming.getCanUseOrganizationsInSearch() == getCanUseOrganizationsInSearch()
+				&& incoming.getCanUseTagsInSearch() == getCanUseTagsInSearch()) {
+			isSame = true;
+		}
+		return isSame;
 	}
 
 	public Boolean getGlobalFlag()
@@ -68,7 +111,6 @@ public class SearchOptions
 		this.globalFlag = globalFlag;
 	}
 
-
 	public String getSearchOptionsId()
 	{
 		return searchOptionsId;
@@ -78,7 +120,17 @@ public class SearchOptions
 	{
 		this.searchOptionsId = searchOptionsId;
 	}
-	
+
+	public String getUsername()
+	{
+		return username;
+	}
+
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
+
 	public Boolean getCanUseOrganizationsInSearch()
 	{
 		return canUseOrganizationsInSearch;
@@ -108,5 +160,24 @@ public class SearchOptions
 	{
 		this.canUseDescriptionInSearch = canUseDescriptionInSearch;
 	}
-	
+
+	public Boolean getCanUseTagsInSearch()
+	{
+		return canUseTagsInSearch;
+	}
+
+	public void setCanUseTagsInSearch(Boolean canUseTagsInSearch)
+	{
+		this.canUseTagsInSearch = canUseTagsInSearch;
+	}
+
+	public Boolean getCanUseAttributesInSearch()
+	{
+		return canUseAttributesInSearch;
+	}
+
+	public void setCanUseAttributesInSearch(Boolean canUseAttributesInSearch)
+	{
+		this.canUseAttributesInSearch = canUseAttributesInSearch;
+	}
 }

@@ -368,7 +368,7 @@ limitations under the License.
 			<section class="eval-visible-false">
 				<tpl for="reviews">
 					<div class="review-section">
-						<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Review pending admin approval before being made public.</div></tpl>
+						<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center;"><i class="fa fa-warning"></i> Review pending moderator approval before being made public.</div></tpl>
 						<div class="details">
 							<div class="title">{title}</div>
 							<div class="rating"><tpl for="ratingStars"><i class="fa fa-{star} rating-star-color"></i></tpl></div>
@@ -407,7 +407,7 @@ limitations under the License.
 			<h3 class="quickView toggle-collapse">User Questions <div data-qtip="Expand panel" style="float: right;" data-ref="toolEl" class=" x-tool-tool-el x-tool-img x-tool-expand-bottom eval-toggle-caret" role="presentation"></div></h3>
 			<section class="eval-visible-false">
 				<tpl for="questions">
-					<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-weight: bold;"><i class="fa fa-warning"></i> Question pending admin approval before being made public.</div></tpl>
+					<tpl if="activeStatus == 'P'"><div class="alert-warning" style="text-align: center; font-weight: bold;"><i class="fa fa-warning"></i> Question pending moderator approval before being made public.</div></tpl>
 					<div class="question-question"><span class="question-response-letter-q">Q.</span> <b>{question}</b></div>
 					<div class="question-info">
 						{username} ({userType}) - {[Ext.util.Format.date(values.questionUpdateDts, "m/Y")]}

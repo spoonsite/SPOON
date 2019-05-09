@@ -24,6 +24,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 
 	width: '100%',
 	layout: 'hbox',
+	id: 'defaultSearch',
 	listeners: {
 		resize: function (mainPanel, width, height, oldWidth, oldHeight, eOpts) {
 			var searchBar = mainPanel.queryById('searchBar');
@@ -58,6 +59,32 @@ Ext.define('OSF.landing.DefaultSearch', {
 				align: 'stretch'
 			},
 			performSearch: function (query) {
+
+				//save search options
+				var searchOptions = {
+					canUseOrganizationsInSearch: true,
+					canUseNameInSearch: true,
+					canUseDescriptionInSearch: true,
+					canUseTagsInSearch: true,
+					canUseAttributesInSearch: true
+				}
+
+				if (!values.canUseOrganizationsInSearch) {
+					searchOptions.canUseOrganizationsInSearch = false;
+				}
+				if (!values.canUseNameInSearch) {
+					searchOptions.canUseNameInSearch = false;
+				}
+				if (!values.canUseDescriptionInSearch) {
+					searchOptions.canUseDescriptionInSearch = false;
+				}
+				if (!values.canUseTagsInSearch) {
+					searchOptions.canUseTagsInSearch = false;
+				}
+				if (!values.canUseAttributesInSearch) {
+					searchOptions.canUseAttributesInSearch = false;
+				}
+
 				if (!query || Ext.isEmpty(query)) {
 					query = '*';
 				}
@@ -107,14 +134,30 @@ Ext.define('OSF.landing.DefaultSearch', {
 					};
 				}
 
-				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
+				Ext.Ajax.request({
+					url: "api/v1/resource/searchoptions/user",
+					jsonData: searchOptions,
+					method: 'PUT',
+					success: function (response, opt) {
+						CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 
-				window.location.href = 'searchResults.jsp';
+						window.location.href = 'searchResults.jsp';
+					},
+					failure: function (response, opt) {
+						console.log(response);
+						Ext.toast('Failed to apply the search options.', '', 'tr');
+					}
+				});
+				
+
+				
+
+				
 			},
 			items: [
 				{
 					xtype: 'button',
-					text: 'Entry Types (All)',
+					text: 'Search Options',
 					itemId: 'entryType',
 					margin: 0,
 					enableToggle: true,
@@ -133,13 +176,6 @@ Ext.define('OSF.landing.DefaultSearch', {
 								itemsSelected += 1;
 							}
 						});
-
-						if (itemsSelected > 0) {
-							this.setText('Entry Types (' + itemsSelected + ' selected)');
-						}
-						else {
-							this.setText('Entry Types (All)');
-						}
 					},
 					setItemsSelected: function (treeStore) {
 
@@ -160,13 +196,14 @@ Ext.define('OSF.landing.DefaultSearch', {
 								this.canCloseMenu = false;
 							}
 							else {
-								button.setIconCls('fa fa-chevron-down');	
+								button.setIconCls('fa fa-chevron-down');
 								this.canCloseMenu = true;
 							}
 						}
 					},
 					menu: {
 						width: 400,
+						itemId: 'searchOptionMenu',
 						listeners: {
 							beforehide: function () {
 								return this.up().canCloseMenu;
@@ -174,8 +211,147 @@ Ext.define('OSF.landing.DefaultSearch', {
 						},
 						items: [
 							{
+								xtype: 'label',
+								text: 'Search Options',
+								style: {
+									'font-weight': 'bold'
+								}
+							},
+							{
+								xtype: 'checkboxgroup',
+								itemId: 'searchOptionsGroup',
+								columns: 1,
+								vertical: true,
+								allowBlank: false,
+								items: [
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Organizations',
+										id: 'organizationsCheckbox',
+										name: 'canUseOrganizationsInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									},
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Component Names',
+										id: 'componentNameCheckbox',
+										name: 'canUseNameInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									},
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Component Descriptions',
+										id: 'componentDescriptionCheckbox',
+										name: 'canUseDescriptionInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									},
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Component Tags',
+										id: 'componentTagsCheckbox',
+										name: 'canUseTagsInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									},
+									{
+										xtype: 'checkbox',
+										boxLabel: 'Component Vitals',
+										id: 'componentAttributesCheckbox',
+										name: 'canUseAttributesInSearch',
+										inputValue: true,
+										uncheckedValue: false
+									}
+								],
+								listeners: {
+									added: function () {
+										Ext.Ajax.request({
+											url: 'api/v1/resource/searchoptions/user',
+											method: 'GET',
+											success: function (response, opts) {
+												var data = Ext.decode(response.responseText);
+
+												if (Ext.getCmp('organizationsCheckbox')) {
+													Ext.getCmp('organizationsCheckbox').setValue(data.canUseOrganizationsInSearch);
+												}
+												if (Ext.getCmp('componentNameCheckbox')) {
+													Ext.getCmp('componentNameCheckbox').setValue(data.canUseNameInSearch);
+												}
+												if (Ext.getCmp('componentDescriptionCheckbox')) {
+													Ext.getCmp('componentDescriptionCheckbox').setValue(data.canUseDescriptionInSearch);
+												}
+												if (Ext.getCmp('componentTagsCheckbox')) {
+													Ext.getCmp('componentTagsCheckbox').setValue(data.canUseTagsInSearch);
+												}
+												if (Ext.getCmp('componentAttributesCheckbox')) {
+													Ext.getCmp('componentAttributesCheckbox').setValue(data.canUseAttributesInSearch);
+												};
+											},
+											failure: function (response, opts) {
+												Ext.getCmp('organizationsCheckbox').setValue(true);
+												Ext.getCmp('componentNameCheckbox').setValue(true);
+												Ext.getCmp('componentDescriptionCheckbox').setValue(true);
+												Ext.getCmp('componentTagsCheckbox').setValue(true);
+												Ext.getCmp('componentAttributesCheckbox').setValue(true);
+											}
+										});
+									},
+									change: function (checkBox, newVal, oldVal) {
+										var searchOptions = {
+											canUseOrganizationsInSearch: true,
+											canUseNameInSearch: true,
+											canUseDescriptionInSearch: true,
+											canUseTagsInSearch: true,
+											canUseAttributesInSearch: true
+										}
+										values = checkBox.getValue();
+										var isMyObjectEmpty = !Object.keys(values).length;
+										var searchButton = Ext.getCmp('defaultSearch').queryById('searchButton');
+										if (isMyObjectEmpty) {
+											searchButton.disable();
+											Ext.Msg.show({
+												title: 'Search Options',
+												message: 'No search options are selected, please select at least one option.',
+												buttons: Ext.Msg.OK,
+												icon: Ext.Msg.ERROR,
+												fn: function (btn) {
+												}
+											});
+										} else {
+											searchButton.enable();
+										}
+
+										if (!values.canUseOrganizationsInSearch) {
+											searchOptions.canUseOrganizationsInSearch = false;
+										}
+										if (!values.canUseNameInSearch) {
+											searchOptions.canUseNameInSearch = false;
+										}
+										if (!values.canUseDescriptionInSearch) {
+											searchOptions.canUseDescriptionInSearch = false;
+										}
+										if (!values.canUseTagsInSearch) {
+											searchOptions.canUseTagsInSearch = false;
+										}
+										if (!values.canUseAttributesInSearch) {
+											searchOptions.canUseAttributesInSearch = false;
+										}
+									}
+								}
+							},
+							{
+								xtype: 'label',
+								text: 'Entry Types',
+								style: {
+									'font-weight': 'bold'
+								}
+							},
+							{
 								xtype: 'treepanel',
 								cls: 'entry-type-tree-panel-menu',
+								label: 'something',
 								maxHeight: 500,
 								scrollable: true,
 								rootVisible: false,
@@ -184,7 +360,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 									beforeitemcollapse: function () {
 										return false;
 									},
-									itemclick: function (view, record, element, index, e, opts) {										
+									itemclick: function (view, record, element, index, e, opts) {
 										if (e.target.className.indexOf('checkbox') === -1) {
 											if (record.get('checked')) {
 												record.set('checked', false);
@@ -193,10 +369,10 @@ Ext.define('OSF.landing.DefaultSearch', {
 											}
 										}
 
-										var entryTypeButton = this.up('[itemId=entryType]');										
+										var entryTypeButton = this.up('[itemId=entryType]');
 										entryTypeButton.setCheckedDisplay(this.getStore());
 										entryTypeButton.setItemsSelected(this.getStore());
-										
+
 									}
 								},
 								store: {
@@ -248,8 +424,10 @@ Ext.define('OSF.landing.DefaultSearch', {
 					hideTrigger: true,
 					valueField: 'query',
 					displayField: 'name',
-					autoSelect: false,	
+					autoSelect: false,
 					style: 'border-left: none;',
+					maxLength: 200,
+					enforceMaxLength: true,
 					store: {
 						autoLoad: false,
 						proxy: {
@@ -305,6 +483,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					tooltip: 'Keyword Search',
 					iconCls: 'fa fa-2x fa-search icon-search-adjustment',
 					style: 'border-radius: 0px 3px 3px 0px;',
+					itemId: 'searchButton',
 					width: 50,
 					handler: function () {
 						var query = this.up('panel').getComponent('searchText').getValue();

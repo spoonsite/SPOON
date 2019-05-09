@@ -29,7 +29,8 @@ public class EntryTypeAttributeReportUseCase
 
 		System.out.println("Connecting to API...");
 		ClientAPI clientAPI = new ClientAPI(objectMapper);
-		clientAPI.connect("", "", "http://spoonsite.usurf.usu.edu/openstorefront"); //"https://spoonsite.com/openstorefront"  //Cert issue
+		// fill in your username and password to connect
+		clientAPI.connect("USERNAME", "PASSWORD", "http://spoonsite.usurf.usu.edu/openstorefront"); //"https://spoonsite.com/openstorefront"  //Cert issue
 		System.out.println("Connected");
 
 		System.out.println("Pulling all components..");
@@ -72,7 +73,8 @@ public class EntryTypeAttributeReportUseCase
 
 			csvWriter.writeNext(new String[]{
 				"Entry Type",
-				"Attribute"
+				"Attribute",
+				"Unit"
 			});
 
 			for (String entryType : entryTypeMap.keySet()) {
@@ -87,13 +89,15 @@ public class EntryTypeAttributeReportUseCase
 						ComponentAttributeView attributeView = attributeMap.get(attributeKey);
 						csvWriter.writeNext(new String[]{
 							"",
-							attributeView.getTypeDescription()
+							attributeView.getTypeDescription(),
+							attributeView.getUnit()
 						});
 					}
 				} else {
 					csvWriter.writeNext(new String[]{
 						"",
-						"No Attributes Found"
+						"No Attributes Found",
+						""
 					});
 				}
 				csvWriter.writeNext(new String[]{
