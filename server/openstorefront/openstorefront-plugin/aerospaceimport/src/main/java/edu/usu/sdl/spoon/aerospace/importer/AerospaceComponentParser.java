@@ -151,8 +151,8 @@ public class AerospaceComponentParser
                     
                     if(foundComponents != null){
                         for(Component comp : foundComponents){
-                            comp.setActiveStatus(Component.INACTIVE_STATUS);
-                            comp.save();
+//                            comp.setActiveStatus(Component.INACTIVE_STATUS);
+//                            comp.save();
                             service.getComponentService().cascadeDeleteOfComponent(comp.getComponentId());
                             comp.delete();
                         }
