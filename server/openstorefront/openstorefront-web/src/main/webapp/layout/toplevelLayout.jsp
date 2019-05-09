@@ -88,6 +88,10 @@
 	<script src="scripts/extension/tinymceExtensions.js?v=${appVersion}" type="text/javascript"></script>
 	<script src="webjars/tinymcetextarea/5.1/tinymce/tinymce.min.js" type="text/javascript"></script>
 	<script src="webjars/tinymcetextarea/5.1/TinyMCETextArea.js" type="text/javascript"></script>	
+
+	<%-- Math Rendering (see scripts/asciiToKatex for more information) --%>
+	<link rel="stylesheet" href="scripts/mathRender/katex.min.css"/>
+	<script src="scripts/mathRender/asciiToKatex.js"></script>
 	
 	<title>${appTitle}</title>
         <stripes:layout-component name="html_head"/>
