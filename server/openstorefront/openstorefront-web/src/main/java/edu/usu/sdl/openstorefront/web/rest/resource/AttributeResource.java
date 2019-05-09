@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sun.corba.se.spi.logging.CORBALogDomains;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
@@ -45,7 +44,6 @@ import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
-import edu.usu.sdl.openstorefront.core.util.UnitConvertUtil;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
@@ -72,7 +70,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
