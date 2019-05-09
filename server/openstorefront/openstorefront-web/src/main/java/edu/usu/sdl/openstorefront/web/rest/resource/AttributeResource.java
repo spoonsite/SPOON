@@ -44,6 +44,7 @@ import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
+import edu.usu.sdl.openstorefront.core.util.UnitConvertUtil;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
@@ -586,8 +587,15 @@ public class AttributeResource
 			componentAttribute.setComponentAttributePk(componentAttributePk);
 			
 			// 4. Get list of all instances of the attribute that will be deleted
+			/**
+			 * With regards to obtaining conversion factors there is a utility
+			 * that was created called UnitConvertUtil.java I am following and
+			 * reusing a few pieces of the code but not enough to warrant
+			 * incorporating it and instantiating it here. If you desire to
+			 * invoke the utility it can be done as seen below:
+			 *			UnitConvertUtil.convertBaseUnitToUserUnit(baseUnitString, baseUnitString, attributeType);
+			 */
 			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttribute);
-
 			// 5. Get the conversion factor to go from the unit that will be deleted to the new base unit
 			AttributeType deletionAttributeType = service.getPersistenceService().findById(AttributeType.class, attributeType);
 			Unit tempUnit;
