@@ -1832,8 +1832,8 @@
 										},
 										listeners:{
 											click:function(){
-												Ext.Msg.alert('SPOON Disclaimer', 
-												'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i>' + 
+												Ext.Msg.alert('<i class="fa fa-exclamation-triangle 3x" display:inline-block; text-align:left; font-size: 5em";"></i>  &nbsp;&nbsp;Disclaimer', 
+												'' + 
 												CoreService.brandingservice.branding.disclaimerMessage +
 												'<br><br>',
 												Ext.emptyFn);
