@@ -101,7 +101,13 @@
 
 			display: none;
 		}
-		
+
+		.fs2 .katex {
+
+    		font-size: 2em !important;
+
+		}
+
 	</style>
 
 	<script type="text/javascript">
@@ -2303,7 +2309,7 @@
 									asciiToKatex: function (value) {
 										var newHtml;
 										var header = '<p><b>Displayed Unit</b></p>';
-										var katex = '<style>.katex { font-size: 2em !important; } </style><p>' + CoreUtil.asciiToKatex(value, false) + '</p>';
+										var katex = '<p class="fs2">' + CoreUtil.asciiToKatex(value, false) + '</p>';
 										newHtml = header + katex;
 										return newHtml;
 									}
