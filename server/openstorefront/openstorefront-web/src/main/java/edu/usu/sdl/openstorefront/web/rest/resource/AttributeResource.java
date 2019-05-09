@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sun.corba.se.spi.logging.CORBALogDomains;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant.TaskStatus;
@@ -44,6 +45,7 @@ import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
+import edu.usu.sdl.openstorefront.core.util.UnitConvertUtil;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
@@ -578,10 +580,8 @@ public class AttributeResource
 
 		Unit baseUnit;
 		baseUnit = Unit.valueOf(baseUnitString);
-
 		
 		for(String attributeType : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
-			
 			
 			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 			componentAttributePk.setAttributeType(attributeType);
@@ -603,7 +603,7 @@ public class AttributeResource
 				return Response.ok(error, MediaType.APPLICATION_JSON).build();
 			}
 
-			BigDecimal bdConversionFactor = new BigDecimal(conversionFactor.getMaximumValue());
+			BigDecimal bdConversionFactor = new BigDecimal(conversionFactor.getEstimatedValue());
 			
 			// 6. Now that we have the conversionFactor we need to replace all the old
 			// componentAttributes with new equivalent componentAttributes.
@@ -613,28 +613,24 @@ public class AttributeResource
 				BigDecimal unitValueToDelete = new BigDecimal(numericStringValue);
 				BigDecimal result = unitValueToDelete.multiply(bdConversionFactor);
 				
-				DecimalFormat df = new DecimalFormat("0.0000E0");
-				
 				// 7. Build the new attributeCode for the new attribute type
 				AttributeCode attributeCode = new AttributeCode();
 				AttributeCodePk attributeCodePk = new AttributeCodePk();
 				attributeCode.setAttributeCodePk(attributeCodePk);
-				attributeCode.setLabel(df.format(result));			
+				attributeCode.setLabel(result.stripTrailingZeros().toPlainString());			
 				attributeCode.getAttributeCodePk().setAttributeType(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeType());
-				attributeCode.getAttributeCodePk().setAttributeCode(df.format(result));
+				attributeCode.getAttributeCodePk().setAttributeCode(result.stripTrailingZeros().toPlainString());
 				attributeCode.updateFields(attributeCode);
 				if(!attributeCodeWasCreated(attributeCode, true)) {
 					SimpleRestError error = new SimpleRestError("Unable to create new attribute code.");
 					return Response.ok(error, MediaType.APPLICATION_JSON).build();
 				}
 				
-				
 				// 8. Add the new ComponentAttribute to the matching component.
 				ComponentAttribute componentAttributeToAdd = new ComponentAttribute();
 				ComponentAttributePk componentAttributePKToAdd = new ComponentAttributePk();
 				componentAttributeToAdd.setComponentAttributePk(componentAttributePKToAdd);
-				componentAttributeToAdd.setComment("ADDED BY SYSTEM");
-				componentAttributeToAdd.getComponentAttributePk().setAttributeCode(df.format(result));
+				componentAttributeToAdd.getComponentAttributePk().setAttributeCode(result.stripTrailingZeros().toPlainString());
 				componentAttributeToAdd.getComponentAttributePk().setAttributeType(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeType());
 				componentAttributeToAdd.setComponentId(compattr.getComponentId());
 				componentAttributeToAdd.getComponentAttributePk().setComponentId(compattr.getComponentId());
