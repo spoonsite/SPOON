@@ -141,26 +141,30 @@ public class AerospaceComponentParser
         
         // Verify that the product is not from delisted site.
         if(component.getName().startsWith(SITE_DELISTED)) {  
-            for (ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
-                if((componentAdminView.getComponent().getExternalId() != null) 
-                        && componentAdminView.getComponent().getExternalId().equals(component.getExternalId())) {
-                    Component exampleComponent = new Component();
-                    exampleComponent.setComponentId(componentAdminView.getComponent().getComponentId());
-                    List<Component> foundComponents = new ArrayList<>();
-                    foundComponents = exampleComponent.findByExample();
-                    
-                    if(foundComponents != null){
-                        for(Component comp : foundComponents){
-                            comp.setActiveStatus(Component.INACTIVE_STATUS);
-                            comp.save();
-                        }
-                    }
-                }
-            }
+            /**
+             * Code has been removed to help improve basic importing functionality.
+             * Code is being preserved as it shows the proper way to delete components that are already existing.
+             */
+//            for (ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
+//                if((componentAdminView.getComponent().getExternalId() != null) 
+//                        && componentAdminView.getComponent().getExternalId().equals(component.getExternalId())) {
+//                    Component exampleComponent = new Component();
+//                    exampleComponent.setComponentId(componentAdminView.getComponent().getComponentId());
+//                    List<Component> foundComponents = new ArrayList<>();
+//                    foundComponents = exampleComponent.findByExample();
+//                    
+//                    if(foundComponents != null){
+//                        for(Component comp : foundComponents){
+//                            service.getComponentService().cascadeDeleteOfComponent(comp.getComponentId());
+//                            comp.delete();
+//                        }
+//                    }
+//                }
+//            }
             LOG.log(Level.WARNING, "THIS RECORD HAS BEEN DELISTED AND WAS NOT IMPORTED. "
-                    + "THE CORRESPONDING ENTRY (IF ANY) HAS BEEN INACTIVATED." + component.getName() + " Key: " + product.getKey());
+                    + "THE CORRESPONDING ENTRY (IF ANY) HAS NOT BEEN DELETED." + component.getName() + " Key: " + product.getKey());
             fileHistoryAll.addError(FileHistoryErrorType.WARNING, "This record has been delisted and was not imported. "
-                    + "The corresponding entry (if any) has been inactivated. " + component.getName() + " Key: " + product.getKey());
+                    + "The corresponding entry (if any) has not been deleted. " + component.getName() + " Key: " + product.getKey());
             return null;            
         }
         
