@@ -151,18 +151,16 @@ public class AerospaceComponentParser
                     
                     if(foundComponents != null){
                         for(Component comp : foundComponents){
-//                            comp.setActiveStatus(Component.INACTIVE_STATUS);
-//                            comp.save();
-                            service.getComponentService().cascadeDeleteOfComponent(comp.getComponentId());
-                            comp.delete();
+                            comp.setActiveStatus(Component.INACTIVE_STATUS);
+                            comp.save();
                         }
                     }
                 }
             }
             LOG.log(Level.WARNING, "THIS RECORD HAS BEEN DELISTED AND WAS NOT IMPORTED. "
-                    + "THE CORRESPONDING ENTRY (IF ANY) HAS BEEN DELETED." + component.getName() + " Key: " + product.getKey());
+                    + "THE CORRESPONDING ENTRY (IF ANY) HAS BEEN INACTIVATED." + component.getName() + " Key: " + product.getKey());
             fileHistoryAll.addError(FileHistoryErrorType.WARNING, "This record has been delisted and was not imported. "
-                    + "The corresponding entry (if any) has been deleted. " + component.getName() + " Key: " + product.getKey());
+                    + "The corresponding entry (if any) has been inactivated. " + component.getName() + " Key: " + product.getKey());
             return null;            
         }
         
