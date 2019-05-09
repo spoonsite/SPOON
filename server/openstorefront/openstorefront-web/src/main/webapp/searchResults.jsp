@@ -305,7 +305,6 @@
 				
 				var tempVitalSet = [];
 				var vitalSet = [];
-				// 1. Make a set of all the vitals by type. (dups included)
 				compViewArray.forEach(function(singleComponentView){
 					singleComponentView.vitals.forEach(function(entryVital){
 						if(tempVitalSet.indexOf(entryVital.label) == -1){
