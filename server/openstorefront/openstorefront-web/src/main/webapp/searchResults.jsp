@@ -271,9 +271,6 @@
 				vitalsList.forEach(function(entryVital){
 					if(entryVital.label == vitalNameToGet){
 						foundVal = entryVital.value;
-						if(vitalUnit !== undefined){
-							foundVal += ' ' + vitalUnit;
-						}
 					}
 				});
 				if(foundVal){
