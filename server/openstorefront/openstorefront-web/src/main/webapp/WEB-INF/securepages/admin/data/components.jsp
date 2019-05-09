@@ -2465,136 +2465,127 @@
 								// Indicate To User Deletion Is Occurring
 								Ext.getCmp('componentGrid').setLoading(true);
 
-								// Show Progress Bar
-								ProgBarManager.setupBar(selection.length);
-
-								// Recursive Delete Requests
-								sendDeleteRequests(selected, selection)
-								
-							}
-						}
-					}); // End Message Box
-
-					// Recursive Function To Send Delete Requests
-					function sendDeleteRequests(iter, selection){
-
-						Ext.Ajax.request({
-						url: 'api/v1/resource/components/' + selection[iter-1].get('componentId') + '/cascade',
-						method: 'DELETE',
-						success: function(response, opts) {
-
-							// Check For Errors
-							if (response.responseText.indexOf('errors') !== -1) {
-								// Fail The Progress Bar
-								ProgBarManager.fail("There was an internal error that occured on the server. Please contact SPOON support via the Contact Us button in your site menu found in the top right part of the screen.")
-
-								// Provide Error Notification
-								Ext.toast('An Entry Failed To Delete', 'Error');
-
-								// Provide Log Information
-								console.log(response);
-							}
-
-							
-							// Check If We Are On The Final Request
-							if (iter - 1  == 0) {
-								// Increment the Progress Bar, One Last Time...
-								ProgBarManager.growBar();
-
-								// Provide Success Notification
-								Ext.toast('Selected entries have been deleted', 'Success');
-
-								// Refresh Grid
-								actionRefreshComponentGrid();
-
-								// Unmask Grid
-								Ext.getCmp('componentGrid').setLoading(false);
-							}
-							else {
-								// Increment the Progress Bar
-								ProgBarManager.growBar();
-
-								// Send Next Request
-								if(!ProgBarManager.isFailed){
-									sendDeleteRequests(iter-1, selection)
-								}
-							}
-						}, // End Success Condition
-						failure:function(response, opts){
-								ProgBarManager.fail("There was an internal error that occured in the server; spesific error code restricted for security.",iter,selection)
-							}
-						 
-						});
-					}
-
-					// -Responsible for Incrementing ProgBar
-					var ProgBarManager = {
-						currentValue: 0,
-						// Constructor-like, initialize math 
-						setupBar: function(quantityOfSelected){
-							this.total = quantityOfSelected;
-							this.incrQuant = 1/quantityOfSelected;
-
-							// Show Empty Progress Bar to Screen
-							Ext.MessageBox.show({
-										msg : 'Deleting, please wait...  If you leave this page, the delete order will be canceled.',
+								// Show Empty Progress Bar
+								Ext.MessageBox.show({
+										msg : 'Deleting, please wait...  If you leave this webpage, the delete order will be canceled.',
 										progressText : '0% complete',
 										progress: true,
 										closable: true,
 										value: 0
 								});
-							
-						},
-						// Shows Progress Advancing
-						growBar:function(){
-							// Maths Current Value
-							this.currentValue += this.incrQuant;
-							// If Complete, Exit With Mesage
-							if (this.currentValue === 1) {
-								Ext.MessageBox.hide();
-								Ext.Msg.show({
-									title:'Done', 
-									message:this.total + ' Item(s) Successfuly Deleted.',
-									buttons: Ext.Msg.OK
-								});
+
+								// Recursive Delete Requests
+								sendDeleteRequests(selection, selection.length)
+								
 							}
-							else { 
-							// Increment By One Unit 
-							Ext.MessageBox.updateProgress(this.currentValue, Math.round(100*this.currentValue)+'% completed');
-							}
-						},
-						// In event of an error, fail gracefully
-						fail:function(reason, iterOfFail, selection){
-							this.isFailed = true;
-							// if extra params were passed, show which item was lasted deleted, and what the error was.
-							reason = reason || "The client canceled the delete order"
-							// Establish where the deletion failed
-							errorOn = "";
-							if (iterOfFail && selection){
-								try{
-									errorOn = selection[iterOfFail].data.name || "";
-									if (errorOn){
-										errorOn = " The issue occured while attempting to delete an Entry named "+errorOn;
+						}
+					}); // End Message Box
+
+					/**
+					 * Recursive Function To Send Delete Requests
+					 * 
+					 * @param {Array} selection -  list of elements from the grid that have been check-box'd as needing to be deleted
+					 * @param {Array} originalTotal - length of selection.
+					 */ 
+					function sendDeleteRequests(selection, originalTotal){
+						if (selection.length != 0){
+							Ext.Ajax.request({
+							url: 'api/v1/resource/components/' + selection[0].get('componentId') + '/cascade',
+							method: 'DELETE',
+							success: function(response, opts) {
+
+								// Check For Errors
+								if (response.responseText.indexOf('errors') != -1) {
+									// Fail The Progress Bar
+									deleteRequestFail("There was an internal error that occured on the server. Please contact SPOON support via the Contact Us button in your site menu found in the top right part of the screen.",selection[0])
+
+
+									// Provide Error Notification
+									Ext.toast('An Entry Failed To Delete', 'Error');
+
+									// Provide Log Information
+									console.error(response);
+								}
+								else {
+									// Increment the Progress Bar
+									percent = (originalTotal-selection.length+1)/originalTotal;
+									Ext.MessageBox.updateProgress(percent, percent*100+'% completed');
+
+									// Send Next Request
+									if(sendDeleteRequests.hasFailed != true){
+										selection.shift();
+										sendDeleteRequests(selection,originalTotal);
 									}
 								}
-								catch(err){
-									errorOn = ""
+							}, // End Success Condition
+							failure:function(response, opts){
+									deleteRequestFail("There was an internal error that occured in the server.",selection[0],response)
 								}
-							}
-							// Kill Exsisting Progress Bar
-							Ext.MessageBox.hide()
-
-							// Inform User Of Fail
-							Ext.Msg.show({title:"Deletion Halted", message:"There was an error which interrupted the delete order. Reasons: "+reason+errorOn})
 							
-							// Unlock the Screen
+							});
+						}
+						// Else there are no more elements to delete, Inform User 
+						else{
+							Ext.MessageBox.hide();
+							Ext.Msg.show({
+								title:'Done', 
+								message: originalTotal + ' Item(s) Successfuly Deleted.',
+								buttons: Ext.Msg.OK
+							});
+
+							// Provide Success Notification
+							Ext.toast('Selected entries have been deleted', 'Success');
+
 							// Refresh Grid
 							actionRefreshComponentGrid();
 
 							// Unmask Grid
 							Ext.getCmp('componentGrid').setLoading(false);
+
+
 						}
+
+
 					}
+						
+						
+					var deleteRequestFail = function(reason, failedElement, serverResponse){
+						// Halt Deletion By Setting External Flag
+						sendDeleteRequests.hasFailed = true;
+						
+						// Build String To Pass Additional Information - On Whose End The Issue Originated? 
+						reason = reason || " Unknown.";
+						
+						// Build String To Pass Additional Information - Which Element Could Not Be Deleted?
+						errorOn = "";
+						try{
+							errorOn = " The issue occured while attempting to delete an Entry named " + failedElement.data.name;
+						}
+						catch(err){
+							errorOn = ""
+						}
+
+						// Build String To Pass Additional Information - What HTTP Status The Server Returned?
+						try{
+							var serverResponse = " The server returned status: " + serverResponse.status + " - " + serverResponse.statusText;
+						}
+						catch(err){
+							var serverResponse = "";
+						}
+						// Kill Exsisting Progress Bar
+						Ext.MessageBox.hide()
+
+						// Inform User Of Fail
+						Ext.Msg.show({title:"Deletion Halted", message:"There was an error which interrupted the delete order. Reasons: "+reason+errorOn+serverResponse})
+						
+						// Unlock the Screen
+						// Refresh Grid
+						actionRefreshComponentGrid();
+
+						// Unmask Grid
+						Ext.getCmp('componentGrid').setLoading(false);
+					}
+					
 
 				};
 
