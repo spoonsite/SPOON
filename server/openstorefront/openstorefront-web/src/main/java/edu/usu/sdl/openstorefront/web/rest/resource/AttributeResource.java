@@ -70,7 +70,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -578,10 +577,8 @@ public class AttributeResource
 
 		Unit baseUnit;
 		baseUnit = Unit.valueOf(baseUnitString);
-
 		
 		for(String attributeType : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
-			
 			
 			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 			componentAttributePk.setAttributeType(attributeType);
@@ -589,8 +586,15 @@ public class AttributeResource
 			componentAttribute.setComponentAttributePk(componentAttributePk);
 			
 			// 4. Get list of all instances of the attribute that will be deleted
+			/**
+			 * With regards to obtaining conversion factors there is a utility
+			 * that was created called UnitConvertUtil.java I am following and
+			 * reusing a few pieces of the code but not enough to warrant
+			 * incorporating it and instantiating it here. If you desire to
+			 * invoke the utility it can be done as seen below:
+			 *			UnitConvertUtil.convertBaseUnitToUserUnit(baseUnitString, baseUnitString, attributeType);
+			 */
 			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttribute);
-
 			// 5. Get the conversion factor to go from the unit that will be deleted to the new base unit
 			AttributeType deletionAttributeType = service.getPersistenceService().findById(AttributeType.class, attributeType);
 			Unit tempUnit;
@@ -603,7 +607,7 @@ public class AttributeResource
 				return Response.ok(error, MediaType.APPLICATION_JSON).build();
 			}
 
-			BigDecimal bdConversionFactor = new BigDecimal(conversionFactor.getMaximumValue());
+			BigDecimal bdConversionFactor = new BigDecimal(conversionFactor.getEstimatedValue());
 			
 			// 6. Now that we have the conversionFactor we need to replace all the old
 			// componentAttributes with new equivalent componentAttributes.
@@ -613,28 +617,24 @@ public class AttributeResource
 				BigDecimal unitValueToDelete = new BigDecimal(numericStringValue);
 				BigDecimal result = unitValueToDelete.multiply(bdConversionFactor);
 				
-				DecimalFormat df = new DecimalFormat("0.0000E0");
-				
 				// 7. Build the new attributeCode for the new attribute type
 				AttributeCode attributeCode = new AttributeCode();
 				AttributeCodePk attributeCodePk = new AttributeCodePk();
 				attributeCode.setAttributeCodePk(attributeCodePk);
-				attributeCode.setLabel(df.format(result));			
+				attributeCode.setLabel(result.stripTrailingZeros().toPlainString());			
 				attributeCode.getAttributeCodePk().setAttributeType(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeType());
-				attributeCode.getAttributeCodePk().setAttributeCode(df.format(result));
+				attributeCode.getAttributeCodePk().setAttributeCode(result.stripTrailingZeros().toPlainString());
 				attributeCode.updateFields(attributeCode);
 				if(!attributeCodeWasCreated(attributeCode, true)) {
 					SimpleRestError error = new SimpleRestError("Unable to create new attribute code.");
 					return Response.ok(error, MediaType.APPLICATION_JSON).build();
 				}
 				
-				
 				// 8. Add the new ComponentAttribute to the matching component.
 				ComponentAttribute componentAttributeToAdd = new ComponentAttribute();
 				ComponentAttributePk componentAttributePKToAdd = new ComponentAttributePk();
 				componentAttributeToAdd.setComponentAttributePk(componentAttributePKToAdd);
-				componentAttributeToAdd.setComment("ADDED BY SYSTEM");
-				componentAttributeToAdd.getComponentAttributePk().setAttributeCode(df.format(result));
+				componentAttributeToAdd.getComponentAttributePk().setAttributeCode(result.stripTrailingZeros().toPlainString());
 				componentAttributeToAdd.getComponentAttributePk().setAttributeType(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeType());
 				componentAttributeToAdd.setComponentId(compattr.getComponentId());
 				componentAttributeToAdd.getComponentAttributePk().setComponentId(compattr.getComponentId());
