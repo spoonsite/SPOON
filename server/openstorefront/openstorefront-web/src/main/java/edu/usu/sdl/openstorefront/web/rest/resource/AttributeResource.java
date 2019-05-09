@@ -44,7 +44,6 @@ import edu.usu.sdl.openstorefront.core.sort.AttributeCodeArchViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeCodeViewComparator;
 import edu.usu.sdl.openstorefront.core.sort.AttributeTypeViewComparator;
-import edu.usu.sdl.openstorefront.core.util.UnitConvertUtil;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
