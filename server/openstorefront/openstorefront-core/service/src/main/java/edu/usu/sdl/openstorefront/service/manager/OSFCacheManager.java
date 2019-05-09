@@ -50,6 +50,7 @@ public class OSFCacheManager
 	private static Cache componentIconCache;
 	private static Cache applicationCache;
 	private static Cache contactCache;
+	private static Cache userSearchCache;
 	private static Cache searchCache;
 	private static Cache checklistQuestionCache;
 	private static Cache workPlanTypeCache;
@@ -122,6 +123,10 @@ public class OSFCacheManager
 			memoryOnlyCache = new Cache("contactCache", 5000, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
 			contactCache = singletonManager.getCache("contactCache");
+
+			memoryOnlyCache = new Cache("userSearchCache", 250, false, false, 1800, 1800);
+			singletonManager.addCache(memoryOnlyCache);
+			userSearchCache = singletonManager.getCache("userSearchCache");
 
 			memoryOnlyCache = new Cache("searchCache", 250, false, false, 1800, 1800);
 			singletonManager.addCache(memoryOnlyCache);
@@ -214,6 +219,11 @@ public class OSFCacheManager
 	public static Cache getContactCache()
 	{
 		return contactCache;
+	}
+
+	public static Cache getUserSearchCache()
+	{
+		return userSearchCache;
 	}
 
 	public static Cache getSearchCache()

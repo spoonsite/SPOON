@@ -171,7 +171,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 			data.push(Ext.apply(dataItem, {				
 				componentAttributePk: {
 					attributeType: dataItem.type,
-					attributeCode: dataItem.code // TODO: normalize and multiply by factor
+					attributeCode: dataItem.code
 				},
 				preferredUnit: dataItem.unit
 			}));
