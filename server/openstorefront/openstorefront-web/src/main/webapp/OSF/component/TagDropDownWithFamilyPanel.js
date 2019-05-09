@@ -34,7 +34,7 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 		// console.log(componentId);
 
         var saveTagToComponent = function(tag){
-            // If there are related tags then show the window.
+            //check again for null tag
             if (!tag || tag === '') {
                 Ext.getCmp('tagField').markInvalid('Tag name required');
             } else {	
@@ -72,7 +72,10 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 						if(tagDropDownWithFamilyPanel.refreshCallBack){
 							tagDropDownWithFamilyPanel.refreshCallBack();
 						}
-                    }
+                    },
+					failure: function(response, opts){
+						Ext.getCmp('tagField').markInvalid('Save Failed! Try Again');
+					}
                 });	
             }
         }
@@ -255,9 +258,9 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 				listeners:{
 					specialkey: function(field, e) {
 						var value = this.getValue();
-						if (e.getKey() === e.ENTER && !Ext.isEmpty(value)) {
-							actionAddTag(value, Ext.getCmp('tagField').getSelection() ? true : false);
-						}	
+						if (e.getKey() === e.ENTER) {
+							validateTagNameThenAddTag(this);
+						}
 					}
 					
 				}
@@ -270,12 +273,41 @@ Ext.define('OSF.component.TagDropDownWithFamilyPanel', {
 				minWidth: 75,
 				handler: function(){
 					var tagField = Ext.getCmp('tagField');
-					if (tagField.isValid()) {
-						actionAddTag(tagField.getValue(), Ext.getCmp('tagField').getSelection() ? true : false);
-					}
+					validateTagNameThenAddTag(tagField);
 				}
 			}
 		];
+
+		var validateTagNameThenAddTag = function(tagField){
+			//checks the combo box for a valid Tag name
+			//checks for blanks
+			if (tagField.isValid() && tagField.value != null) {
+				//checks for duplicates recursively
+				function isDuplic(nextCmp, tagname){
+					if(nextCmp != null){
+						if(nextCmp.text === tagField.value){  
+							return true;  
+						}
+						else{	
+							return isDuplic(nextCmp.next(), tagname);
+						}
+					}
+					else{
+						return false;
+					}
+				}
+
+				isDuplic = isDuplic(tagField.up().next(), tagField.value);
+				if(!isDuplic){
+					actionAddTag(tagField.getValue(), Ext.getCmp('tagField').getSelection() ? true : false);
+				}
+				else{
+					tagField.markInvalid(tagField.value + ' is already assigned');
+				}
+			} else{
+				tagField.markInvalid('Tag name required/Tag name incompatible');
+			}
+		}
 		tagDropDownWithFamilyPanel.add(children);
 	},
 });

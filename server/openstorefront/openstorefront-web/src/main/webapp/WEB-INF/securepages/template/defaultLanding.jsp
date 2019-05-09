@@ -28,6 +28,7 @@
 	Ext.require('OSF.landing.DefaultCategory');	
 	Ext.require('OSF.landing.StaticInfo');	
 	Ext.require('OSF.landing.DefaultInfo');	
+	Ext.require('OSF.landing.DefaultDisclaimer')
 	
 	Ext.onReady(function(){
 
@@ -82,7 +83,26 @@
 						{
 							xtype: 'osf-defaultversion',
 							bodyStyle: 'padding-bottom: 20px;'
-						}	
+						},
+						{
+							xtype: 'osf-defaultdisclaimer',
+							bodyStyle: 'padding-bottom: 20px;',
+							itemId: 'disclaimerPanel',
+							hidden:true,
+							reference:'disclaimerPanel',
+
+							beforeRender:function(){
+								//if there is a disclaimer message, show the element
+								var that = this;
+								CoreService.brandingservice.getCurrentBranding().then(function(branding){
+									if(branding.disclaimerMessage){
+										that.up().queryById('disclaimerPanel').setVisible(true);
+									}
+								});
+							}
+							
+							
+						}
 					]
 				}
 
