@@ -2210,12 +2210,27 @@
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/lookuptypes/AttributeValueType'
-										},
-										// on change check value
-										// if number
-											// Ext.getCmp('attributeUnitDefault').setHidden(false);
-											// Ext.getCmp('attributeUnitCheck').setHidden(false);
-											// hidden: Ext.getCmp('attributeValueType').getValue() === 'NUMBER',
+										}
+									},
+									listeners: {
+										change: function(el, newValue, oldValue) {
+											// hide or show unit tools based on attribute type
+											if (newValue === 'NUMBER') {
+												Ext.getCmp('attributeUnitDefault').setHidden(false);
+												Ext.getCmp('attributeUnitCheckOutput').setHidden(false);
+												Ext.getCmp('attributeUnitCheck').setHidden(false);
+												Ext.getCmp('attributeUnitList').setHidden(false);
+												Ext.getCmp('attributeUnitListCheck').setHidden(false);
+												Ext.getCmp('attributeUnitListCheckOutput').setHidden(false);
+											} else {
+												Ext.getCmp('attributeUnitDefault').setHidden(true);
+												Ext.getCmp('attributeUnitCheckOutput').setHidden(true);
+												Ext.getCmp('attributeUnitCheck').setHidden(true);
+												Ext.getCmp('attributeUnitList').setHidden(true);
+												Ext.getCmp('attributeUnitListCheck').setHidden(true);
+												Ext.getCmp('attributeUnitListCheckOutput').setHidden(true);
+											}
+										}
 									}
 								},
 								// admin enters a unit string i.e. "mm", "N", "km"

@@ -32,7 +32,8 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 	
 	columns: [
 		{ text: 'Type', dataIndex: 'typeDescription', flex: 1, minWidth: 200 },
-		{ text: 'Code', dataIndex: 'codeDescription', flex: 2, minWidth: 200 }
+		{ text: 'Value', dataIndex: 'codeDescription', flex: 2, minWidth: 200 },
+		{ text: 'Unit', dataIndex: 'unit', flex: 1, minWidth: 200 }
 	],
 	
 	initComponent: function () {
@@ -44,7 +45,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 			var initialData = grid.section.submissionForm.getFieldData(grid.fieldTemplate.fieldId);
 			if (initialData) {
 				var data = Ext.decode(initialData);				
-				//separate hidden and required from editible
+				//separate hidden and required from editable
 				grid.hiddenAttributes = [];
 				var editable = [];
 				Ext.Array.each(data, function(attributeView){
@@ -64,6 +65,10 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 						if (required) {
 							grid.hiddenAttributes.push(attributeView);
 						} else{
+							//switch unit and preferred units
+							if (attributeView.preferredUnit && attributeView.preferredUnit.unit) {
+								attributeView.unit = attributeView.preferredUnit.unit;
+							}							
 							editable.push(attributeView);
 						}
 					}
@@ -92,6 +97,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 					scrollable: true,
 					originalRecord: record,
 					componentType: grid.componentType,
+					section: grid.section,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -149,7 +155,7 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 	},
 	getUserData: function() {
 		var grid = this;
-		
+
 		var data = [];
 		
 		var allAttributes = [];
@@ -165,8 +171,9 @@ Ext.define('OSF.customSubmission.field.AttributesGrid', {
 			data.push(Ext.apply(dataItem, {				
 				componentAttributePk: {
 					attributeType: dataItem.type,
-					attributeCode: dataItem.code
-				}
+					attributeCode: dataItem.code // TODO: normalize and multiply by factor
+				},
+				preferredUnit: dataItem.unit
 			}));
 		});	
 		

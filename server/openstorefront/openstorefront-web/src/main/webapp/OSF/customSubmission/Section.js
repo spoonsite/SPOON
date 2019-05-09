@@ -24,6 +24,7 @@ Ext.define('OSF.customSubmission.Section', {
 	alias: 'widget.osf-submissionform-section',
 	requires: [		
 		'OSF.customSubmission.form.AttributeRequired',
+		'OSF.customSubmission.form.AttributeSuggested',
 		'OSF.customSubmission.field.AttributesGrid',
 		'OSF.customSubmission.field.ContactsGrid',
 		'OSF.customSubmission.SubmissionFormWrapper',
@@ -132,6 +133,16 @@ Ext.define('OSF.customSubmission.Section', {
 						xtype: 'osf-submissionform-formwrapper',
 						actualForm: {
 							xtype: 'osf-submissionform-attributerequired',
+							componentType: section.componentType,
+							section: section
+						}						
+					}));
+				break;
+				case 'ATTRIBUTE_SUGGESTED':
+					itemsToAdd.push(Ext.apply(defaults, {
+						xtype: 'osf-submissionform-formwrapper',
+						actualForm: {
+							xtype: 'osf-submissionform-attributesuggested',
 							componentType: section.componentType,
 							section: section
 						}						

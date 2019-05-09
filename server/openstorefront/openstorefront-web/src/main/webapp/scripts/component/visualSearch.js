@@ -310,7 +310,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					bodyStyle: 'padding: 5px;',
 					maximizable: true,
 					tpl: new Ext.XTemplate(
-							'<h1 style="line-height: 1em;">{name}</h1><i>{componentTypeLabel}</i>',
+							'<h1 style="line-height: 1em;">{name} <tpl if="attributeUnit">({attributeUnit})</tpl></h1><i>{componentTypeLabel}</i>',
 							'<tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeLabel}" width="40" /></tpl>',
 							'<hr>',
 							'{description}'
@@ -1085,27 +1085,32 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					var foundNode = Ext.Array.findBy(visPanel.viewData, function (node) {
 						return (attributeType === node.key || attributeType === node.targetKey || attributeType === node.nodeId);
 					});
-					if (!foundNode) {
-						viewData.push({
-							type: 'attribute',
-							key: attributeType,
-							label: attributeName,
-							isHub: true
-						});
-					}
+					var unit = undefined;
 					if (data.length !== 0) {
 						Ext.Array.each(data, function (attributeRelationship) {
+							unit = attributeRelationship.unit;
 							viewData.push({
 								type: 'attribute',
 								nodeId: attributeRelationship.key,
 								key: attributeRelationship.targetKey,
-								label: attributeRelationship.targetName,
+								label: attributeRelationship.targetName + (unit ? ' (' + unit + ')' : ''),
 								relationshipLabel: attributeRelationship.relationshipLabel,
 								targetKey: attributeRelationship.key,
-								targetName: attributeRelationship.name,
+								targetName: attributeRelationship.name + (unit ? ' (' + unit + ')' : ''),
 								relationType: attributeRelationship.relationType,
-								targetType: 'attribute'
+								targetType: 'attribute',
+								unit: unit
 							});
+						});
+					}
+					if (!foundNode) {
+						// a visual node
+						viewData.push({
+							type: 'attribute',
+							key: attributeType,
+							label: attributeName + (unit ? ' (' + unit + ')' : ''),
+							isHub: true,
+							unit: unit
 						});
 					}
 					visPanel.viewData = visPanel.viewData.concat(viewData);
@@ -1233,6 +1238,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					type: node.type,
 					detail: node.relationType === "ATTRIBUTE_CODE" && node.type === "attribute" ? "ATTRIBUTE_TYPE" : undefined,
 					isHub: node.isHub,
+					unit: node.unit,
 					edges: []
 				});
 				nodeKeys[node.key] = true;
@@ -1244,6 +1250,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					type: node.targetType,
 					detail: node.relationType,
 					isHub: false,
+					unit: node.unit,
 					edges: []
 				});
 				nodeKeys[node.targetKey] = true;
@@ -1591,7 +1598,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 				node: node,
 				r: node.nodeSize,
 				size: node.nodeSize
-						//fillStyle: hubFillStyle
+				//fillStyle: hubFillStyle
 			}, baseNode);
 			sprites.push(nodeSprite);
 			hub.addNode(nodeSprite);
@@ -1607,7 +1614,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 			hub.addNode(nodeTextSprite);
 
 			var rotation = 0;
-			var rotationIncroment = 45;
+			var rotationIncrement = 45;
 			var usedRotations = [];
 			usedRotations.push(rotation);
 			var distanceFromHub = componentNode.r * 10;
@@ -1671,12 +1678,12 @@ Ext.define('OSF.component.VisualSearchPanel', {
 					hub.addNode(targetNodeTextSprite);
 					do
 					{
-						if ((rotation + rotationIncroment) >= 360) {
+						if ((rotation + rotationIncrement) >= 360) {
 							generation++;
 							rotation = 0;
-							rotationIncroment /= 2;
+							rotationIncrement /= 2;
 						}
-						rotation += rotationIncroment;
+						rotation += rotationIncrement;
 					} while (Ext.Array.contains(usedRotations, rotation));
 					usedRotations.push(rotation);
 
@@ -1945,7 +1952,7 @@ Ext.define('OSF.component.VisualSearchPanel', {
 						shadowOffsetY: 4,
 						text: Ext.util.Format.ellipsis(relationship.relationshipLabel, 20),
 						relationShipText: true
-								//rotationRads: theta
+						//rotationRads: theta
 					}, relationshipText));
 				}
 			}

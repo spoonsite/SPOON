@@ -45,6 +45,7 @@ public class SubmissionFormFieldType
 	public static final String ATTRIBUTE_SINGLE = "ATTRIBUTE_SINGLE";
 	public static final String ATTRIBUTE_RADIO = "ATTRIBUTE_RADIO";
 	public static final String ATTRIBUTE_REQUIRED = "ATTRIBUTE_REQUIRED";
+	public static final String ATTRIBUTE_SUGGESTED = "ATTRIBUTE_SUGGESTED";
 	public static final String ATTRIBUTE_MULTI_CHECKBOX = "ATTRIBUTE_MCHECKBOX";
 	public static final String CONTACT = "CONTACT";
 	public static final String CONTACT_MULTI = "CONTACT_MULTI";
@@ -85,6 +86,7 @@ public class SubmissionFormFieldType
 		codeMap.put(ATTRIBUTE_MULTI, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_MULTI, "Attribute Multiple"));
 		codeMap.put(ATTRIBUTE_RADIO, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_RADIO, "Attribute Radio"));
 		codeMap.put(ATTRIBUTE_REQUIRED, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_REQUIRED, "Attribute Required"));
+		codeMap.put(ATTRIBUTE_SUGGESTED, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_SUGGESTED, "Attribute Suggested"));
 		codeMap.put(ATTRIBUTE_SINGLE, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_SINGLE, "Attribute Single"));
 		codeMap.put(ATTRIBUTE_MULTI_CHECKBOX, newLookup(SubmissionFormFieldType.class, ATTRIBUTE_MULTI_CHECKBOX, "Attribute Multiple Checkbox"));
 

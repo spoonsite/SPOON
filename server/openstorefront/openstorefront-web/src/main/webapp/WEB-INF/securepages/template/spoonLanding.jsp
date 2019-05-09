@@ -27,6 +27,7 @@
 	Ext.require('OSF.landing.DefaultActions');
 	Ext.require('OSF.landing.DefaultInfo');	
 	Ext.require('OSF.landing.EntryTypeTopics');
+	Ext.require('OSF.landing.DefaultDisclaimer')
 
 	Ext.onReady(function(){
 

@@ -505,8 +505,9 @@ public class SearchServiceImpl
 				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
 				searchResult.getMeta().getResultTagStats().addAll(tagStats);
 				searchResult.getMeta().setResultAttributeStats(attributeStats);
-				
-				// searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
+				// MERGE CONFLICT BELOW
+				// not sure what the difference is
+				//searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
 
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 

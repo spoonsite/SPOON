@@ -42,6 +42,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -123,8 +124,8 @@ public class RelationshipService
 							relationship.setEntityType(RelationshipView.ENTITY_TYPE_COMPONENT);
 							relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
 							relationship.setTargetKey(attributeCode.getAttributeCodePk().toKey());
-							relationship.setRelationshipLabel(attributeType.getDescription());
-							relationship.setTargetName(attributeCode.getLabel());
+							relationship.setRelationshipLabel(attributeType.getDescription() + (StringUtils.isNotBlank(attributeType.getAttributeUnit()) ? " (" + attributeType.getAttributeUnit() + ")" : ""));
+							relationship.setTargetName(attributeCode.getLabel() + (StringUtils.isNotBlank(attributeType.getAttributeUnit()) ? " (" + attributeType.getAttributeUnit() + ")" : ""));
 							relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
 
 							views.add(relationship);

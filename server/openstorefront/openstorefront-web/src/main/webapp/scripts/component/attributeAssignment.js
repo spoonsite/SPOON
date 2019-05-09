@@ -61,6 +61,11 @@ Ext.define('OSF.component.AttributeAssignment', {
 							displayField: 'description',
 							width: '100%',
 							labelWidth: 175,
+							listConfig: {
+								getInnerTpl: function () {
+									return '{description} <tpl if="attributeUnit">({attributeUnit})</tpl> <tpl if="detailedDescription"><i class="fa fa-question-circle" data-qtip=\'{detailedDescription}\'></i></tpl>';
+								}
+							},
 							store: {
 								autoLoad: true,
 								proxy: {
@@ -73,15 +78,24 @@ Ext.define('OSF.component.AttributeAssignment', {
 									var panel = field.up('panel');
 									panel.getComponent('attributeCodeCB').clearValue();
 
+									var unitDisplay = panel.getComponent('attributeUnit');
+
 									var record = field.getSelection();		
 									if (record) {
 										panel.getComponent('attributeCodeCB').getStore().loadData(record.data.codes);
-																																							
+										unitDisplay.setValue(record.data.attributeUnit);
 									} else {
 										panel.getComponent('attributeCodeCB').getStore().removeAll();
 									}
 								}
 							}
+						},
+						{
+							xtype: 'textfield',
+							itemId: 'attributeUnit',
+							fieldLabel: 'Attribute Unit',
+							labelWidth: 175,
+							editable: false
 						},
 						{
 							xtype: 'combobox',

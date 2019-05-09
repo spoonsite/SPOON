@@ -38,6 +38,7 @@ public class RelationshipView
 	private String targetKey;
 	private String targetName;
 	private String targetEntityType;
+	private String unit;
 
 	public String getKey()
 	{
@@ -117,6 +118,16 @@ public class RelationshipView
 	public void setRelationshipLabel(String relationshipLabel)
 	{
 		this.relationshipLabel = relationshipLabel;
+	}
+
+	public String getUnit()
+	{
+		return unit;
+	}
+
+	public void setUnit(String unit)
+	{
+		this.unit = unit;
 	}
 
 }

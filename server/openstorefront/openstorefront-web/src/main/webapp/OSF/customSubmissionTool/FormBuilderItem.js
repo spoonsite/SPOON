@@ -81,6 +81,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 						if(fieldType === 'ATTRIBUTE_REQUIRED'){
 							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Attributes(Required)"></i>';
 						}
+						if(fieldType === 'ATTRIBUTE_SUGGESTED'){
+							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Suggested Attributes"></i>';
+						}
 						if(fieldType === 'ATTRIBUTE_MULTI'){
 							return '<i style="color:#5179ba;" class="fa fa-table fa-2x" aria-hidden="true" data-qtip="Grid Attributes(Optional)"></i>';
 						}
@@ -783,6 +786,9 @@ Ext.define('OSF.customSubmissionTool.FormBuilderItem', {
 				formBuilderItem.getForm().findField('hidePrivateAttributeFlag').setHidden(false);
 			break;
 			case 'ATTRIBUTE_REQUIRED':
+				formBuilderItem.templateField.mappingType = 'COMPLEX';
+			break;			
+			case 'ATTRIBUTE_SUGGESTED':
 				formBuilderItem.templateField.mappingType = 'COMPLEX';
 			break;			
 			case 'ATTRIBUTE_MULTI':

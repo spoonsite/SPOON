@@ -138,7 +138,7 @@ public abstract class BaseTestCase
 			}
 			componentAll.setComponent(component);
 
-			List<AttributeType> attributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponentType(), false);
+			List<AttributeType> attributeTypes = service.getAttributeService().findRequiredAttributes(component.getComponentType(), false, null);
 			for (AttributeType type : attributeTypes) {
 				ComponentAttribute componentAttribute = new ComponentAttribute();
 				componentAttribute.setCreateUser(TEST_USER);

@@ -27,6 +27,8 @@ public class UnitView
 {
 	@ConsumeField
 	private String unit;
+	private String dimension;
+	private String standardUnit;
 
 	public String getUnit()
 	{
@@ -36,6 +38,26 @@ public class UnitView
 	public void setUnit(String unit)
 	{
 		this.unit = unit;
+	}
+
+	public String getDimension()
+	{
+		return dimension;
+	}
+
+	public void setDimension(String dimension)
+	{
+		this.dimension = dimension;
+	}
+
+	public String getStandardUnit()
+	{
+		return standardUnit;
+	}
+
+	public void setStandardUnit(String standardUnit)
+	{
+		this.standardUnit = standardUnit;
 	}
 	
 }

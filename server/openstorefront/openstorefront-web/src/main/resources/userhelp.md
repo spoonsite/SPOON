@@ -1183,7 +1183,7 @@ New with v2.1 Entry Types can now be **removed**.  When you remove a type the sy
           Removing entry type that has attribute restriction can change the behavior of the require
           attributes. It may only be required for entries of type A but when type A is removed then
           the attribute will be required for all entries. 
-          (It will require an admin to manually update the attributed if that is not the correct behavior).  
+          (It will require an admin to manually update the attribute if that is not the correct behavior).  
 
 -----  
 		  

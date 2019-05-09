@@ -1074,6 +1074,7 @@
 						{text: 'Logger Name', dataIndex: 'loggerName', flex: 4, cellWrap: true},
 						{text: 'Message', dataIndex: 'message', flex: 9, cellWrap: true}
 					],
+					bufferedRenderer: false,
 					dockedItems: [
 						{
 							xtype: 'toolbar',
@@ -1252,6 +1253,11 @@
 					modal: true,
 					maximizable: false,
 					layout: 'vbox',
+					listeners: {
+						show: function() {        
+							this.removeCls('x-unselectable');    
+						}
+					},					
 					items: [
 						{
 							xtype: 'panel',
