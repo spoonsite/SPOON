@@ -168,7 +168,7 @@ user profile in the application will be deactivated.
 
 The Security Policy in the application now allows for disabling user information editing. (Optional)
 This allow the external LDAP/Active Directory to be sole source of user information.
-Information will be synced at login and periodically according to teh user sync job.
+Information will be synced at login and periodically according to the user sync job.
 
 Warning: This will not prevent login! Upon login the user profile will
 be reactivated. To prevent login, refer to the external user management
@@ -205,9 +205,12 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 
 -  **tools.login.user** -               Login Credentials for Integrations (currently just for jira)   
 -  **tools.login.pw** -                 Login Credentials for Integrations (currently just for jira)   
--  **jra.connectionpool.size** -       Resource pool size                                             ( **20** )
+-  **jra.connectionpool.size** -        Resource pool size                                             ( **20** )
 -  **jira.connection.wait.seconds** -   Wait time if the pool is empty                                 ( **60** )
 -  **jira.server.url** -                Jira server to connect to                                      ( **https://jira.di2e.net** )
+-  **jira.feedback.project** -          What Jira project to post feedback ticket to     ( **STORE** )
+-  **jira.feedback.issuetype** -        What issue type to post feedback to (issue type must exist in the project   ( **Help Desk Ticket** )
+
 
 ## 2.4 Confluence Integration
 
@@ -237,7 +240,21 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 -  **mail.reply.address** -   Reply email (usually display at the bottom the message)        ( **helpdesk@di2e.net** )
 -  **test.email** -           Set for automated testing only; the email to use for testing
 
-## 2.6 Other Application Properties
+## 2.6 Mongo Integration
+
+Configure in: `/var/openstorefront/config/openstorefront.properties`
+
+-  **db.use.mongo**-			Must be set to **true** to use mongo ( **false** )	
+-  **mongo.connection.url** -	Defines where/how to connect to mongo    ( **mongodb://localhost:27017** )                          
+-  **mongo.database**-			set the database name to use  ( **storefront** )   
+
+For the url see:
+
+http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/
+https://docs.mongodb.com/manual/reference/connection-string/
+
+
+## 2.7 Other Application Properties
 
 Configure in: `/var/openstorefront/config/openstorefront.properties`
 
@@ -279,7 +296,7 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 -  **elastic.connectionpool.size** - Set the connection pool size ( **30**)
 -  **elastic.connection.wait.seconds** - Max time to wait for an open connection. ( **60**)
 
-# 3. Database Management
+# 3. Orient Database Management
 
 The application handles all database interaction transparently, so
 direct database access and manipulation is not needed.  
@@ -395,3 +412,12 @@ functionality on top.
 
 -   See [Orient DB Studio](http://orientdb.com/docs/2.2.x/Home-page.html) for
     more information about Studio
+
+# 4. Mongo Database Management
+
+Mongo DB is supported as of version 2.8
+
+It's expected that Mongo will be managed externally.  
+As such an administrator should follow the guides/tools for their specific setup.
+
+

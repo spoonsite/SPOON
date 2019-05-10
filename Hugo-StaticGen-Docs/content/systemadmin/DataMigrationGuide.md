@@ -43,6 +43,10 @@ The application supports several different archive types:
 On import note the application will be unavailable until import completes. 
 {{% /notice %}}
 
+{{% notice warning %}}
+DB Exports are Not Support with Mongo;  Use external Mongo tools to create export/import <a href="https://docs.mongodb.com/manual/reference/program/mongoexport/" target="_blank">https://docs.mongodb.com/manual/reference/program/mongoexport/</a>
+{{% /notice %}}
+
 **Full Export** - This packages a database export with all file (*expect system archives to avoid excessive disk space requirements) 
 *Also see "Post Cleanup Considerations" in section 3*.
 
@@ -146,3 +150,16 @@ I want a copy of all entries.
 **Solution:**
 
 Use System Archive - General Export with all entries selected.
+
+----
+#### Scenario 7
+
+Copy every including configuration
+
+**Solution:**
+
+1. Login to system.  
+
+2. Shutdown application
+
+3. copy /var/openstorefront  (this copy everything; except for external resource like Elasticsearch/Mongo if not set to store in that location.

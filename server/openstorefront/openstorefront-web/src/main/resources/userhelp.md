@@ -113,7 +113,11 @@ a given entry type.
 ### 1.7 Administrator Release Notes, v2.8 @ADMIN-SYSTEM-MANAGEMENT
 -----
 
-Added Mongo DB support.
+Added Mongo DB support.  (See <a href="http://di2e.github.io/openstorefront/systemadmin/administratorguide/" target="_blank">admin guide</a> for information on configuration) 
+
+**Known limitation:**
+
+Mongo doesn't support System Archives DB Export/Import.  Use external Mongo tools to support that need. 
 
 
 # 2. User Features

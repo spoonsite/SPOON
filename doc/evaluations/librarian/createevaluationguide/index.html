@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Storefront Docs</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.31.1" />
+
+<title>Create an Evaluation :: Storefront Docs</title>
+<link rel="shortcut icon" href="/openstorefront/images/favicon.png" type="image/x-icon" />
+<link href="/openstorefront/css/nucleus.css" rel="stylesheet">
+<link href="/openstorefront/css/font-awesome.min.css" rel="stylesheet">
+<link href="/openstorefront/css/hybrid.css" rel="stylesheet">
+<link href="/openstorefront/css/featherlight.min.css" rel="stylesheet">
+<link href="/openstorefront/css/auto-complete.css" rel="stylesheet">
+<link href="/openstorefront/theme-original/style.css" rel="stylesheet">
+
+  <link href="/openstorefront/theme-original/variant-blue.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/openstorefront/css/bootstrap.min.css">
+<script src="/openstorefront/js/jquery-2.x.min.js"></script>
+<style type="text/css">
+  :root #header + #content > #left > #rlblock_left {
+    display:none !important;
+  }
+</style>
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/evaluations/librarian/createevaluationguide/">
+    
+      <div id="headermain"></div>
+<nav id="sidebar" class="showVisitedLinks">
+
+
+
+<div class="highlightable">
+  <div id="header-wrapper">
+    <div id="header">
+      
+	
+  
+    <h4 style="color:white;">Open Storefront Documentation</h4>
+
+  
+
+    </div>
+        <div class="searchbox">
+		    <label for="search-by"><i class="fa fa-search"></i></label>
+		    <input data-search-input id="search-by" type="text" placeholder="Search...">
+		    <span data-search-clear=""><i class="fa fa-close"></i></span>
+		</div>
+		<script type="text/javascript" src="/openstorefront/js/lunr.min.js"></script>
+		<script type="text/javascript" src="/openstorefront/js/auto-complete.js"></script>
+		<script type="text/javascript">
+        
+            var baseurl = "\/openstorefront\/";
+        
+		</script>
+		<script type="text/javascript" src="/openstorefront/js/search.js"></script>
+  </div>
+
+      <ul class="topics">
+            <li data-nav-id="/" class="dd-item">
+            <a href="/openstorefront/"><i class="fa fa-fw fa-home"></i></a>
+            </li>
+    <li data-nav-id="/evaluations/" class="dd-item parent">
+      <a href="/openstorefront/evaluations/">
+        <span>Evaluations</span>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+    <li data-nav-id="/evaluations/evaluator/" class="dd-item">
+      <a href="/openstorefront/evaluations/evaluator/">
+        <span>Evaluator</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/evaluations/evaluator/storefront-evaluators-guide/" class="dd-item">
+        <a href="/openstorefront/evaluations/evaluator/storefront-evaluators-guide/">
+          <span>Evaluators Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/evaluator/faq/" class="dd-item">
+        <a href="/openstorefront/evaluations/evaluator/faq/">
+          <span>FAQ</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/evaluations/librarian/" class="dd-item parent">
+      <a href="/openstorefront/evaluations/librarian/">
+        <span>Librarian</span>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/evaluations/librarian/basic-entry-template-for-storefront/" class="dd-item">
+        <a href="/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/">
+          <span>Basic Entry Template for Storefront</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/librarian/createevaluationguide/" class="dd-item active">
+        <a href="/openstorefront/evaluations/librarian/createevaluationguide/">
+          <span>Create an Evaluation</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/evaluations/librarian/publishinganevaluationguide/" class="dd-item">
+        <a href="/openstorefront/evaluations/librarian/publishinganevaluationguide/">
+          <span>Publish an Evaluation</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/dev/" class="dd-item">
+      <a href="/openstorefront/dev/">
+        <span>Developer</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/dev/developersguide/" class="dd-item">
+        <a href="/openstorefront/dev/developersguide/">
+          <span>Developer Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/architecture/" class="dd-item">
+        <a href="/openstorefront/dev/architecture/">
+          <span>Architecture</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/front-end-code-standard/" class="dd-item">
+        <a href="/openstorefront/dev/front-end-code-standard/">
+          <span>Front-end Code Standards</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/uiguide/" class="dd-item">
+        <a href="/openstorefront/dev/uiguide/">
+          <span>User Interface Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/dev/server-code-standard/" class="dd-item">
+        <a href="/openstorefront/dev/server-code-standard/">
+          <span>Server Code Standard</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/applicationadmin/" class="dd-item">
+      <a href="/openstorefront/applicationadmin/">
+        <span>Application Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/applicationadmin/customsubmissionforms/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/customsubmissionforms/">
+          <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/workplans/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/workplans/">
+          <span>Workplans</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/securityroles/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/securityroles/">
+          <span>Security Roles</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/systemadmin/" class="dd-item">
+      <a href="/openstorefront/systemadmin/">
+        <span>System Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/systemadmin/setup/" class="dd-item">
+        <a href="/openstorefront/systemadmin/setup/">
+          <span>Setup</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/docker/" class="dd-item">
+        <a href="/openstorefront/systemadmin/docker/">
+          <span>Docker</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/administratorguide/" class="dd-item">
+        <a href="/openstorefront/systemadmin/administratorguide/">
+          <span>Administrator Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/datamigrationguide/" class="dd-item">
+        <a href="/openstorefront/systemadmin/datamigrationguide/">
+          <span>Data Migration Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/systemadmin/versionmigrationguide/" class="dd-item">
+        <a href="/openstorefront/systemadmin/versionmigrationguide/">
+          <span>Version Migration</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/user/" class="dd-item">
+      <a href="/openstorefront/user/">
+        <span>User</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/user/userguide/" class="dd-item">
+        <a href="/openstorefront/user/userguide/">
+          <span>User Guide</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/user/quick-overview-of-submitting-a-new-component/" class="dd-item">
+        <a href="/openstorefront/user/quick-overview-of-submitting-a-new-component/">
+          <span>Submitting a New Component</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
+
+
+
+        <section id="shortcuts">
+                <li class="" role=""><h3>More</h3><a href="https://github.com/di2e/openstorefront/tree/master" target="_blank" rel="noopener"><i class='fa fa-github'></i> Github repo</a></li>
+                <li class="" role=""><a href="https://github.com/di2e/openstorefront/releases" target="_blank" rel="noopener"><i class='fa fa-download'></i> Releases</a></li>
+        </section>
+            <a id="clear-history" class="" href="#" data-clear-history-toggle=""><i class="fa  fa-history"></i> Clear History</a>
+
+    <hr />
+    <li></li>
+    
+    </ul>
+
+ <section id="footer"><div style="color: #E0E0DA;">
+    <p>OpenStoreFront version 2.8</p>
+    <p>Documentation generated on May 10, 2019</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
+</div>
+    </section>
+  </div>
+</nav>
+
+
+
+<section id="body">
+<div id="overlay"></div>
+<div class="padding highlightable">
+
+  <div id="top-bar">
+    
+      
+      
+      
+    <div id="top-github-link">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/evaluations/librarian/CreateEvaluationGuide.md" target="blank">
+        <i class="fa fa-code-fork"></i>
+        Edit page
+      </a>
+    </div><div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+        <span id="sidebar-toggle-span">
+          <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+            <i class="fa fa-bars"></i>
+          </a>
+        </span>
+        <span id="toc-menu"><i class="fa fa-list-alt"></i></span>
+        <span class="links">
+        
+
+
+
+
+
+
+
+
+
+
+ <a href='/openstorefront/'>OpenStoreFront Documentation</a> > <a href='/openstorefront/evaluations/'>Evaluations</a> > <a href='/openstorefront/evaluations/librarian/'>Librarian</a> > Create an Evaluation
+
+ 
+
+ 
+
+ 
+
+   
+        </span>
+    </div>
+    
+    
+    <div class="progress">
+        <div class="wrapper">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#who-is-this-for">Who is this for?</a></li>
+<li><a href="#before-starting-an-evaluation">Before Starting an Evaluation</a></li>
+<li><a href="#step-1-creating-a-section-template">Step 1: Creating a Section Template</a></li>
+<li><a href="#step-2-adding-checklist-questions">Step 2: Adding Checklist Questions</a></li>
+<li><a href="#step-3-creating-checklist-templates">Step 3: Creating Checklist Templates</a></li>
+<li><a href="#step-4-creating-evaluation-templates">Step 4: Creating Evaluation Templates</a></li>
+<li><a href="#step-5-create-evaluation">Step 5: Create Evaluation</a></li>
+<li><a href="#copying-an-evaluation">Copying an Evaluation</a></li>
+</ul></li>
+</ul>
+</nav>
+        </div>
+    </div>
+    
+
+  </div>
+
+
+<div id="body-inner">
+  
+    <h1>Create an Evaluation</h1>
+  
+
+
+
+    
+    
+    
+    
+
+<h2 id="overview">Overview</h2>
+
+<p>This guide goes over creating Section templates, Checklist questions and templates, and Evaluation templates.  This guide assumes a librarian has a basic understanding of what an entry is and has an entry that needs to be evaluated.  Once the librarian has created checklists and templates, an evaluation can be created.</p>
+
+<h2 id="who-is-this-for">Who is this for?</h2>
+
+<p>This guide is for anyone with the role of librarian or administrator.  If unsure of current role(s), contact an administrator.</p>
+
+<h2 id="before-starting-an-evaluation">Before Starting an Evaluation</h2>
+
+<p>Librarian has an entry that needs to be evaluated or reevaluated.</p>
+
+<h2 id="step-1-creating-a-section-template">Step 1: Creating a Section Template</h2>
+
+<p><em>Go to Evaluation Management &rarr; Templates &rarr; Section Templates</em></p>
+
+<p>A Section template allows a librarian to create a custom layout for an evaluation
+form.  The librarian can give each section a title and a description of the section.
+Subsections can be added to individual sections and require the librarian to enter a title.<br />
+The <em>Private</em>, <em>Hide Title</em>, and <em>No Content</em> flags are optional.  The Default Content
+section is for the librarian to give instructions to an evaluator.  The Default Content
+text area is optional but recommended.  A librarian is able top add custom fields
+to a subsection by clicking on the Add Custom Field button.</p>
+
+<p><strong>Description of Flags:</strong></p>
+
+<ul>
+<li><em>Private:</em> section/subsection will be filled out by an evaluator but content will be hidden from the user.</li>
+<li><em>Hide Title:</em> title of section/subsection will be hidden from user.</li>
+<li><em>No Content:</em> removes the evaluator&rsquo;s ability to input content under a section header.</li>
+</ul>
+
+<h2 id="step-2-adding-checklist-questions">Step 2: Adding Checklist Questions</h2>
+
+<p><em>Go to Evaluation Management &rarr; Templates &rarr; Checklist Questions</em></p>
+
+<p>Before creating a Checklist Template, the librarian will need to create a question pool.  A question
+will be answered by an evaluator when performing an evaluation on an entry.
+To create a question, the librarian will fill out an <strong>Add/Edit Question</strong> form.  The following
+is a detailed list of the fields on the form:</p>
+
+<ul>
+<li><strong>QID:</strong> an identifier that is unique across all evaluations (Required Field)</li>
+<li><strong>Add Tag:</strong> allows a librarian to categorize sets of questions.  This helps a librarian to
+create a checklist template based on a specific category.  Tags are not visible to
+evaluators and end users.</li>
+<li><strong>Section:</strong> a way to categorize question for the end user.  These sections are created under
+the Lookups section of the application.</li>
+<li><strong>Question:</strong> text area for the actual question.</li>
+<li><strong>Narrative:</strong> a detailed explanation about the question.</li>
+<li><strong>Objective:</strong> the purpose or goal of the question.</li>
+<li><strong>Score Criteria:</strong> a definition of what scores mean (Example: 5 = Excellent, 4 = Good, 3 = Average, 2 = Below Average, 1 = Poor).<br />
+By default the scores are 1-5 without meaning.</li>
+</ul>
+
+<p>Save the question when form complete.</p>
+
+<p><strong>Note:</strong> Changing/editing a question will affect both published and unpublished evaluations.
+This is helpful if a question needs only a minor change, such as a typo.  If you are going to
+completely reword the question or change its meaning, it is recommended that a new question
+be created.</p>
+
+<h2 id="step-3-creating-checklist-templates">Step 3: Creating Checklist Templates</h2>
+
+<p><em>Go to Evaluation Management &rarr; Templates &rarr; Checklist Templates</em></p>
+
+<p>A Checklist template allows a librarian to group questions related to a particular evaluation.
+Under the <strong>Details</strong> tab of the <strong>Add/Edit Checklist Template</strong> form, the librarian gives the
+template a name and a description of the template&rsquo;s purpose.  An optional text area exists if
+the librarian would like to provide further instructions to an evaluator on what to fill in. Instructions are optional.<br />
+There is an optional checkbox called &ldquo;Update unpublished Evaluations.&rdquo;  If checked, any changes
+made to the checklist template will be applied to any unpublished evaluation using the template.
+Under the <strong>Questions</strong> tab of the <strong>Add/Edit Checklist Template</strong> for, the librarian will drag questions
+from the <strong>Question Pool</strong> to <strong>Questions in Template</strong>.  Questions can be filtered based on a specific category or tag name.
+Questions can be rearranged by dragging and dropping them in any order.</p>
+
+<p>Once the form is complete, save the template.</p>
+
+<h2 id="step-4-creating-evaluation-templates">Step 4: Creating Evaluation Templates</h2>
+
+<p><em>Go to Evaluation Management &rarr; Templates &rarr; Evaluation Templates</em></p>
+
+<p>The Evaluation template is a snapshot of what the evaluation will look like to an evaluator.
+On the <strong>Add/Edit Evaluation Template</strong> form, the librarian will first give the template a name and
+description.  The second thing is to select the appropriate Checklist Template for this evaluation.  If
+the librarian would like future changes/edits to the template to be reflected on unpublished evaluations, the <strong>Update
+unpublished Evaluations</strong> box should be selected, otherwise leave unchecked.  The last thing the librarian will
+need to do is select the type of sections that will appear in the evaluation.  Drag and drop sections from the <strong>Section Pool</strong>
+to the <strong>Sections in Template</strong> to add a section to evaluation.  Under <strong>Sections In Template</strong>, the librarian can rearrange the order
+in which sections will appear on the evaluation by dragging and dropping.  Once the form is filled out completely, save the template.</p>
+
+<h2 id="step-5-create-evaluation">Step 5: Create Evaluation</h2>
+
+<p><em>Go to Evaluation Management &rarr; Evaluation</em></p>
+
+<p>To add an evaluation, the librarian will fill out the <strong>Create Evaluation</strong> form.  An evaluation requires there to
+be an entry.  The librarian will select an evaluation template and give the version number of the evaluation.  It is
+recommended that the version number match the entry&rsquo;s version number.  A status is applied to the evaluation and the
+types of statuses are controlled in the Lookup section of the application.</p>
+
+<p>The librarian can then assign the evaluation to a specific group and/or user.  By checking the <strong>Allow Adding Sections</strong> box,
+the librarian is giving permission to the evaluator to add sections/subsections to the evaluation as he or she deems necessary.
+By checking the <strong>Allow Question Management</strong> checkbox, the librarian is giving permission to an evaluator to add questions
+from the question pool to the evaluation and/or to remove questions currently assigned to the evaluation.</p>
+
+<p>When the <strong>Create Evaluation</strong> form is complete, save the evaluation.</p>
+
+<h2 id="copying-an-evaluation">Copying an Evaluation</h2>
+
+<p>Librarians have the ability to make copies of both published and unpublished evaluations.</p>
+
+<p><strong>NOTE:</strong> Copying an unpublished evaluation will NOT copy the entry changes.  The copy only points back to the entry in its original state.</p>
+
+
+    
+    
+          <footer class=" footline" >
+	
+</footer>
+  </div>
+</div>
+
+<div id="navigation">
+<a class="nav nav-prev" href="/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/" title="Basic Entry Template for Storefront"> <i class="fa fa-chevron-left"></i></a>
+    <a class="nav nav-next" href="/openstorefront/evaluations/librarian/publishinganevaluationguide/" title="Publish an Evaluation" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
+
+</section>
+<div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+  <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+</div>    
+
+<script src="/openstorefront/js/clipboard.min.js"></script>
+<script src="/openstorefront/js/featherlight.min.js"></script>
+<script src="/openstorefront/js/html5shiv-printshiv.min.js"></script>
+<script src="/openstorefront/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script src="/openstorefront/js/modernizr.custom.71422.js"></script>
+<script src="/openstorefront/js/docdock.js"></script>
+<script src="/openstorefront/theme-original/script.js"></script>
+
+
+    
+
+    
+    
+
+    
+  </body>
+</html>
