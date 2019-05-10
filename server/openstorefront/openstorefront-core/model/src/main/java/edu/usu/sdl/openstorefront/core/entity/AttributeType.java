@@ -61,7 +61,7 @@ public class AttributeType
 	@ConsumeField
 	private String description;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DESCRIPTION)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_DETAILED_DESCRIPTION)
 	@Sanitize(BasicHTMLSanitizer.class)
 	@ConsumeField
 	private String detailedDescription;

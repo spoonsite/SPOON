@@ -2186,14 +2186,43 @@
 									html: '<b>Detailed Description</b>'
 								},
 								{
-									xtype: 'tinymce_textarea',
-									fieldStyle: 'font-family: Courier New; font-size: 12px;',
-									style: {border: '0'},
-									name: 'detailedDescription',
-									width: '100%',
-									height: 300,
-									maxLength: 255,
-									tinyMCEConfig: CoreUtil.tinymceConfigNoMedia()
+									xtype: 'panel',
+									items: [
+									{
+										xtype: 'tinymce_textarea',
+										fieldStyle: 'font-family: Courier New; font-size: 12px;',
+										style: {border: '0'},
+										name: 'detailedDescription',
+										width: '100%',
+										height: 300,
+										maxLength: 4096,
+										enforceMaxLength: true,
+										tinyMCEConfig: CoreUtil.tinymceConfigNoMedia(),
+										listeners: {
+											change: function(field, newValue, oldValue) {
+												var charactersLeft = field.up().queryById('descriptionCounter');
+												charactersLeft.setText(newValue.length.toString()+'/4096');
+												if ((newValue.length) > 4096){
+													charactersLeft.setStyle({
+														color:'red',
+														'text-align':'right',
+														display: 'block'
+													});
+												} else {
+													charactersLeft.setStyle({
+														color:'Lightgrey',
+														'text-align':'right',
+														display: 'block'
+													});
+												}
+											}
+										}
+									},{
+										xtype: 'label',
+										itemId: 'descriptionCounter',
+										text: '0/4096',
+										style: 'color:Lightgrey;text-align:right;display:block;'
+									}]
 								},
 								{
 									id: 'attributeValueType',
