@@ -2489,6 +2489,8 @@
 					 * 
 					 * @param {Array} selection -  list of elements from the grid that have been check-box'd as needing to be deleted
 					 * @param {Array} originalTotal - length of selection.
+					 * 
+					 * @returns {undefined} Void function
 					 */
 					function sendDeleteRequests(selection, originalTotal) {
 						if (selection.length !== 0)
@@ -2499,10 +2501,11 @@
 								success: function (response, opts) {
 
 									// Check For Errors
-									if (response.responseText.indexOf('errors') != -1)
+									if (response.responseText.indexOf('errors') !== -1)
 									{
 										// Fail The Progress Bar
 										deleteRequestFail("There was an internal error that occured on the server. Please contact SPOON support via the Contact Us button in your site menu found in the top right part of the screen.", selection[0]);
+										
 										// Provide Error Notification
 										Ext.toast('An Entry Failed To Delete', 'Error');
 
@@ -2528,8 +2531,7 @@
 								}
 							});
 						}
-						// Else there are no more elements to delete, Inform User 
-						else
+						else // Else there are no more elements to delete, Inform User 
 						{
 							Ext.MessageBox.hide();
 							Ext.Msg.show({
@@ -2550,11 +2552,13 @@
 					}
 						
 					/**
-					 * Displays error message to user, exits the screen overlay saftely, in case of problems.
+					 * Displays error message to user, exits the screen overlay safely, in case of problems.
 					 * 
 					 * @params {String} reason - custom message to help user know On Whose End The Issue Originated?
 					 * @params {Object} failedElement - the element that failed to successfully delete
 					 * @params {Object} serverResponse - the Ajax response, gives info on why it failed
+					 * 
+					 * @returns {undefined} This is a Void function.  
 					 */
 					var deleteRequestFail = function(reason, failedElement, serverResponse){
 						// Halt Deletion By Setting External Flag
@@ -2583,7 +2587,7 @@
 						Ext.MessageBox.hide()
 
 						// Inform User Of Fail
-						Ext.Msg.show({title:"Deletion Halted", message:"There was an error which interrupted the delete order. Reasons: "+reason+errorOn+serverResponse})
+						Ext.Msg.show({title:"Deletion Halted", message:"There was an error which interrupted the delete order. Reasons: " + reason + errorOn + serverResponse})
 						
 						// Unlock the Screen
 						// Refresh Grid
