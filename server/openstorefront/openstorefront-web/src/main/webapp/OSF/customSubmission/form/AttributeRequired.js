@@ -131,7 +131,7 @@ Ext.define('OSF.customSubmission.form.AttributeRequired', {
 		Ext.Array.each(attributePanel.items.items, function(field) {
 			data.push({
 				label: field.attributeTypeView.description,
-				value: field.getField().getDisplayValue()
+				value: field.getField().getDisplayValue() ? field.getField().getDisplayValue() : field.getField().getValue()
 			});
 		});
 		
