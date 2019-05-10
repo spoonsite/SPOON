@@ -218,7 +218,7 @@ public class StringProcessor
 
 		if (o != null) {
 			try {
-				Map fieldMap = BeanUtils.describe(o);
+				Map<String, String> fieldMap = BeanUtils.describe(o);
 				fieldMap.keySet().stream().forEach((key) -> {
 					sb.append(key).append(" = ").append(fieldMap.get(key)).append("\n");
 				});
@@ -462,7 +462,7 @@ public class StringProcessor
 	public static String cleanEntityKey(String key)
 	{
 		if (StringUtils.isNotBlank(key)) {
-			List<String> badChars = Arrays.asList(" ", "/", "?", "&", "[", "]", "@", "!", "$", "'", "(", ")", "*", "+", ",", ";", "=", "%", ":", "~", "#");
+			List<String> badChars = Arrays.asList(" ", "/", "?", "&", "[", "]", "@", "!", "$", "'", "(", ")", "*", "+", ",", ";", "=", "%", ":", "~", "#", "<", ">");
 			for (String badChar : badChars) {
 				key = key.replace(badChar, "");
 			}
@@ -691,7 +691,7 @@ public class StringProcessor
 
 	private static List<String> getStyleVariations(String styleName, String styleValue)
 	{
-		List<String> styleList = new ArrayList();
+		List<String> styleList = new ArrayList<>();
 		styleList.add(String.format("%s:%s", styleName, styleValue));
 		styleList.add(String.format("%s :%s", styleName, styleValue));
 		styleList.add(String.format("%s: %s", styleName, styleValue));
@@ -702,7 +702,7 @@ public class StringProcessor
 	private static Map<String, List<String>> getBadStyles()
 	{
 		Map<String, List<String>> badStyles = new HashMap<>();
-		List<String> positionValues = new ArrayList();
+		List<String> positionValues = new ArrayList<>();
 		positionValues.add("absolute;");
 		positionValues.add("fixed;");
 		positionValues.add("static;");
