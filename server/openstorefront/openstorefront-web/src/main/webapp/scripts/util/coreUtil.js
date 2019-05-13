@@ -1180,10 +1180,10 @@ var CoreUtil = {
 		// regex for placing parentheses in str before parsing to katex to ensure sub-units are grouped right 
 		// ex: kg/m -> (kg)/m
 
-		const regex = /(\w{1,})+/gu;
+		const regex = new RegExp("(\\w{1,})+", "gu");
 
 		// regex for JScience edge case
-		const JScienceRegex = /((\d+):(\d+))+/g;
+		const JScienceRegex = new RegExp("((\\d+):(\\d+))+", "g");
 
 		var regexArray = [];
 		var JScienceRegexArray = [];
