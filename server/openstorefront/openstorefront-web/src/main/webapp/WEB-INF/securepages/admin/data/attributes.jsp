@@ -2295,8 +2295,8 @@
 														html = "<em style='color: red;'>" + res.error + "</em> Will assume the unit is dimensionless.";
 													}
 													Ext.getCmp('attributeUnitCheckOutput').setHtml(html);
-												} catch {
-													console.error('Failed to parse JSON response.');
+												} catch (err) {
+													console.error(err);
 												}
 											},
 											failure: function(response, opts) {
@@ -2355,8 +2355,8 @@
 														html = "<em style='color: red;'>" + res.error + "</em>";
 													}
 													Ext.getCmp('attributeUnitListCheckOutput').setHtml(html);
-												} catch {
-													console.error('Failed to parse JSON response.');
+												} catch (err) {
+													console.error(err);
 												}
 											},
 											failure: function(response, opts) {
