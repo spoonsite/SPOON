@@ -217,14 +217,14 @@ public class MongoQueryUtil
 				value = convertSQLLikeCharacterToRegex(value);
 
 				Pattern pattern;
-				if (GenerateStatementOption.METHOD_LOWER_CASE.equals(queryRequest.getInExampleOption().getMethod())
-						|| GenerateStatementOption.METHOD_UPPER_CASE.equals(queryRequest.getInExampleOption().getMethod())) {
+				if (GenerateStatementOption.METHOD_LOWER_CASE.equals(queryRequest.getLikeExampleOption().getMethod())
+						|| GenerateStatementOption.METHOD_UPPER_CASE.equals(queryRequest.getLikeExampleOption().getMethod())) {
 					pattern = Pattern.compile(value, Pattern.CASE_INSENSITIVE);
 				} else {
 					pattern = Pattern.compile(value);
 				}
 
-				if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getInExampleOption().getCondition())) {
+				if (GenerateStatementOption.CONDITION_OR.equals(queryRequest.getLikeExampleOption().getCondition())) {
 					query = Filters.or(query, Filters.regex(fieldName, pattern));
 				} else {
 					query = Filters.and(query, Filters.regex(fieldName, pattern));

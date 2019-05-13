@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.Test;
 
 /**
@@ -68,6 +70,22 @@ public class UseCase
 			);
 		}
 
+	}
+
+	@Test
+	public void matchTest()
+	{
+		String stringToSearch = "1Test";
+
+		Pattern p = Pattern.compile("Test", Pattern.CASE_INSENSITIVE);   // the pattern to search for
+		Matcher m = p.matcher(stringToSearch);
+
+		// now try to find at least one match
+		if (m.find()) {
+			System.out.println("Found a match");
+		} else {
+			System.out.println("Did not find a match");
+		}
 	}
 
 	private class DataModel
