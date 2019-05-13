@@ -110,7 +110,6 @@ public class MongoDBManager
 					started.set(false);
 					LOG.info("Finished. (Get a new Instance and initialize for futher use)");
 				}
-				singleton = null;
 			} else {
 				LOG.info("Mongo Client already shutdown.");
 			}

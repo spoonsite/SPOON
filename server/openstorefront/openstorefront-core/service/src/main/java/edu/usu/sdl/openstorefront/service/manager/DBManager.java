@@ -96,6 +96,8 @@ public class DBManager
 		Initializable actualManager = getActiveDatabaseManager();
 		if (actualManager != null) {
 			actualManager.shutdown();
+			orientDBManager = null;
+			mongoDBManager = null;
 		}
 		started.set(false);
 	}

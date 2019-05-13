@@ -177,7 +177,6 @@ public class OrientDBManager
 				started.set(false);
 				LOG.info("Finished.");
 			}
-			singleton = null;
 		}
 	}
 
