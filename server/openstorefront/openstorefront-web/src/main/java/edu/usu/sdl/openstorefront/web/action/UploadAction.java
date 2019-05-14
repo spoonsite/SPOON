@@ -54,8 +54,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -93,7 +95,8 @@ public class UploadAction
 		"ImportData",
 		"DataMapFields",
 		"PreviewMapping",
-		"ImportMapping"
+		"ImportMapping",
+		"BulkUpload"
 	})
 	private FileBean uploadFile;
 
@@ -595,7 +598,6 @@ public class UploadAction
 		File fullArchive = path.toFile();
 
 		try {
-
 			uploadFile.save(fullArchive);
 			service.getSystemArchiveService().queueArchiveRequest(systemArchive);
 
@@ -611,6 +613,54 @@ public class UploadAction
 		}
 
 		return streamErrorResponse(errors, true);
+	}
+
+	// TODO: not done yet
+	//       this code doesn't work
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
+	@HandlesEvent("BulkUpload")
+	public Resolution bulkUpload()
+	{
+		Map<String, String> errors = new HashMap<>();
+		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+
+		File tempFile = null;
+		try {
+			// save to file system under username
+			String timeStamp = new SimpleDateFormat("dd-MM-YYYY").format(new Date());
+			tempFile = new File(FileSystemManager.BULK_UPLOAD_DIR + "/" + StringProcessor.uniqueId() + "_" + timeStamp + ".zip");
+			uploadFile.save(tempFile);
+
+			try (InputStream input = new FileInputStream(tempFile)) {
+				// validate that the file is zip type
+				// .zip mime types  ---> application/zip, application/octet-stream, application/x-zip-compressed, multipart/x-zip
+				FileFormatCheck fileFormatCheck = new FileFormatCheck();
+				fileFormatCheck.setMimeType(uploadFile.getContentType());
+				fileFormatCheck.setFileFormat(fileFormat);
+				fileFormatCheck.setInput(input);
+
+				String formatError = service.getImportService().checkFormat(fileFormatCheck);
+				if (StringUtils.isNotBlank(formatError)) {
+					errors.put("uploadFile", formatError);
+				}
+			} catch (IOException ioe) {
+				throw ioe;
+			}
+		} catch (IOException ex) {
+			LOG.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+			errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
+		} finally {
+			try {
+				if (uploadFile != null) {
+					uploadFile.delete();
+				}
+			} catch (IOException ex) {
+				LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+			}
+		}
+
+		// if successful send an email to SPOON support notifying of bulk upload and link to file path
+		return streamUploadResponse(errors);
 	}
 
 	@SuppressWarnings("serial")
