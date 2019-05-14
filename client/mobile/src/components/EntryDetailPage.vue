@@ -69,6 +69,7 @@
               <template slot="items" slot-scope="props">
                 <td>{{ props.item.typeDescription }}</td>
                 <td class="text-xs-right">{{ props.item.codeDescription }}</td>
+                <td><span v-if="props.item.unit" v-html="$ascii2katex(props.item.unit)"></span></td>
               </template>
             </v-data-table>
           </v-card-text>
@@ -529,13 +530,9 @@ export default {
         'OTH': 'file'
       },
       attributeTableHeaders: [
-        {
-          text: 'Attribute Type',
-          align: 'left',
-          sortable: true,
-          value: 'typeDescription'
-        },
-        { text: 'Value', value: 'codeDescription' }
+        { text: 'Attribute Type', value: 'typeDescription' },
+        { text: 'Value', value: 'codeDescription'},
+        { text: 'Unit', value: 'unit'}
       ]
 
     };
