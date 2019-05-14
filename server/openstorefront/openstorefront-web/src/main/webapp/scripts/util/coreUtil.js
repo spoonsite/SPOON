@@ -1176,70 +1176,35 @@ var CoreUtil = {
 	  });
 	},
 	asciiToKatex: function (str, block) {
-		// if block == true it will return a block element, else it will return an inline element
-		// regex for placing parentheses in str before parsing to katex to ensure sub-units are grouped right 
-		// ex: kg/m -> (kg)/m
-
-		const regex = new RegExp("(\\w{1,})+", "gu");
-
-		// regex for JScience edge case
-		const JScienceRegex = new RegExp("((\\d+):(\\d+))+", "g");
-
-		var regexArray = [];
-		var JScienceRegexArray = [];
-
 		if (str !== undefined) {
+
+			// if block == true it will return a block element, else it will return an inline element
+			// regex for placing quotes in str before parsing to katex to ensure sub-units are grouped right 
+			// ex: kg/m -> "kg"/"m"
+			const regex = new RegExp("([a-zA-Z$]{1,})+", "gu");
+			str = str.replace(regex, '"$&"');
+
 			// This is for a specific JScience case where ^1/2 is resolved as 1:2, 
 			// this is not a recognized ascii math method so it is changed 
 			// back to 1/2 so katex can understand it.
-			while ((m = JScienceRegex.exec(str)) !== null) {
-				if (m.index === JScienceRegex.lastIndex) {
-					JScienceRegex.lastIndex++;
-				}
-				// replacement with parenthesized versions of the sub-units
-				// with check to see if the sub-unit is the whole unit
-				// ex: kg
-				JScienceRegexArray.push(m[0]);
-
-			}
-			// iterate over found matches and place quotes around 
-			// the matches in the current string
-			JScienceRegexArray.forEach(function (match) {
-				newSubStr = "(" + match.replace(":", "/") + ")";
-				str = str.replace(match, newSubStr)
-			})
-
-			// this is the regex for any text in the units
-			while ((m = regex.exec(str)) !== null) {
-				if (m.index === regex.lastIndex) {
-					regex.lastIndex++;
-				}
-
-				// replacement with parenthesized versions of the sub-units
-				// with check to see if the sub-unit is the whole unit
-				// ex: kg
-				regexArray.push(m[0]);
-			}
-
-			// iterate over found matches and place parenthesis around 
-			// the matches in the current string
-			regexArray.forEach(function (match) {
-				parenMatch = '"' + match + '"';
-				str = str.replace(match, parenMatch);
-			})
+			const JScienceRegex = new RegExp("((\\d+):(\\d+))+", "g");
+			str = str.replace(JScienceRegex, '($2/$3)');
 
 			// Katex does not allow $ when converting so this is the way 
 			// of fixing that edge case. (cases like this should not 
 			// be in the database though)
-			str = '"' + str.trim() + '"'; 
-			if (str == '"$"' || str == '$') {
+			if (str == '"$"') {
 				return ("$");
 			}
-			str = str.slice(1, -1);
 
 			// method for converting ascii to katex
-			var katex = Window.renderAsciiMath(str, { displayMode: block })
-			return katex;
+			try {
+				var katex = Window.renderAsciiMath(str, { displayMode: !!block, throwOnError: true })
+				return katex;
+			} catch (err) {
+				return err;
+			}
+			
 		} else {
 			return "";
 		}
