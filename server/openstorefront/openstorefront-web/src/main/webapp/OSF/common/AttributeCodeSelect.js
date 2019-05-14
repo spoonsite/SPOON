@@ -21,13 +21,13 @@
  * 
  */
 
-/* global Ext */
+/* global Ext, CoreUtil */
 Ext.define('OSF.common.AttributeCodeSelect', {
 	extend: 'Ext.container.Container',
 	alias: 'widget.AttributeCodeSelect',
 		
 	/**
-	 * Applies to underly field
+	 * Applies to underlying field
 	 */	
 	fieldConfig: {},
 	
@@ -36,14 +36,14 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	 */
 	attributeTypeView: null,
 	required: true,
-	width: '100%',
-	layout: 'fit',	
+	layout: 'hbox',	
 	showLabel: true,
+	showDefaultUnit: false,
 	
-	initComponent: function () {		
+	initComponent: function () {
 		this.callParent();
 		var attributePanel = this;
-		
+
 		if (attributePanel.attributeTypeView) {
 			
 			attributePanel.createField(attributePanel.attributeTypeView);
@@ -69,6 +69,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 			typeAhead=true;	
 		}			
 		
+		// TODO: The validator fails on 1e-10 which is valid
 		var numberVType = attributePanel.attributeTypeView.attributeValueType === 'NUMBER' ? 'AttributeNumber' : undefined;			
 			
 		var extraCfg = {};
@@ -78,28 +79,21 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 			
 			
 			var validator = undefined;
-			if (numberVType){			
+			if (numberVType){
 				validator = function(valueRaw) {
 					var values = attributePanel.getValue();	
 					var valid = true;
+					var msg = '';
 					
 					Ext.Array.each(values, function(value) {
 						if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
-							//check percision; this will enforce max allowed
-							if (Ext.String.endsWith(value, ".")) {
-								valid = 'Number must not have a decimal point or have at least one digit after the decimal point.';
-							}
-							try {
-								var valueNumber = Number(value);
-								if (isNaN(valueNumber)) {						
-									valid = 'Value must be a valid number';
-								}
-							} catch (e) {
-								valid = 'Number must not have a decimal point or have at least one digit after the decimal point.';
-							}
+							//check precision; this will enforce max allowed
+							validatorResponse = CoreUtil.validateNumber(value);
+							valid = validatorResponse.valid;
+							msg = validatorResponse.msg;
 						}
 					});	
-					return valid;	
+					return valid ? valid : msg;	
 				};
 			} 
 			numberVType = undefined;
@@ -111,9 +105,15 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 			};
 		} 
 
+		var fieldLabel = attributePanel.showLabel ? attributePanel.attributeTypeView.description + requireType : '';
+		if (attributePanel.showDefaultUnit && attributePanel.attributeTypeView.attributeUnit) {			
+			fieldLabel += ' (' + attributePanel.attributeTypeView.attributeUnit + ')';
+		}
+
 		attributePanel.field = Ext.create(xtype, Ext.apply({
-				fieldLabel: attributePanel.showLabel ? attributePanel.attributeTypeView.description + requireType : '',
+				fieldLabel: fieldLabel,
 				forceSelection: forceSelection,
+				fullAttributeField: attributePanel,
 				name: attributePanel.name ? attributePanel.name : 'attributeCode',
 				queryMode: 'local',
 				vtype: numberVType,
@@ -122,9 +122,10 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				typeAhead: typeAhead,
 				filterPickList: true,
 				margin: '0 0 5 0',
+				flex: 3,
 				allowBlank: !attributePanel.required,					
 				labelWidth: 300,
-				labelSepartor: '',
+				labelSeparator: '',
 				valueField: 'code',
 				displayField: 'label',
 				listeners: attributePanel.fieldListeners,
@@ -138,13 +139,106 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				}
 			}, attributePanel.fieldConfig, extraCfg));
 
-		attributePanel.add(attributePanel.field);		
+		if (attributePanel.attributeUnit && attributePanel.attributeUnitList) {
+			var unitList = attributePanel.attributeUnitList;
+			var baseUnit = {
+				"conversionFactor": 1,
+				"unit": attributePanel.attributeUnit,
+				"description": "Default Unit"
+			};
+
+			// remove the base unit if in the list
+			unitList = unitList.filter(function(el) { return el.unit !== baseUnit.unit; });
+			unitList.push(baseUnit);
+
+			var processList = function(list) {
+				var data = [];
+				Ext.Array.forEach(list, function(el) {
+					data.push({
+						value: el.unit,
+						text: el.unit,
+						conversionFactor: el.conversionFactor,
+						description: el.description
+					});
+				});
+				return data;
+			};
+
+			var storeList = processList(unitList);
+			attributePanel.unit = Ext.create('Ext.form.field.ComboBox',{
+					allowBlank: false,
+					editable: false,
+					margin: '0 0 5 0',
+					queryMode: 'local',
+					flex: 1,
+					valueField: 'value',
+					listeners: attributePanel.unitListeners,
+					store: Ext.create('Ext.data.Store', {						
+						data: storeList
+					}),
+					listConfig: {
+						getInnerTpl: function () {
+							return '{text} <tpl if="description"><i class="fa fa-question-circle" data-qtip=\'{description}\'></i></tpl>';
+						}
+					}
+				}
+			);
+
+			// set the default unit value
+			// Will later get replaced in AttributeSuggested.js
+			// if a preferred unit is found.
+			// If no code is found, the base unit will be set for the user.
+			attributePanel.unit.setValue(baseUnit.unit);
+		}
+
+		attributePanel.add(attributePanel.field);
+
+		if (attributePanel.unit
+		    && attributePanel.attributeUnitList
+			&& (attributePanel.attributeUnitList.length === 1
+				|| attributePanel.attributeUnitList.length === 0 
+			)
+		) {
+			attributePanel.add(Ext.create('Ext.panel.Panel', {
+				html: baseUnit.unit,
+				style: 'padding-left: 10px;',
+				flex: 1
+			}));
+
+		} else if (attributePanel.unit) {
+			attributePanel.add(attributePanel.unit);
+		}
 		
 	},
 	
 	getField: function() {
 		var attributePanel = this;
 		return attributePanel.field;
+	},
+
+	getUnit: function() {
+		var attributePanel = this;
+		if (attributePanel.unit) {
+			return attributePanel.unit.getValue();
+		} else {
+			return null;
+		}
+	},
+
+	setUnit: function(unit) {
+		var attributePanel = this;
+		if (attributePanel.unit) {
+			attributePanel.unit.setValue(unit);
+		}
+	},
+
+	getConversionFactor: function() {
+		var attributePanel = this;
+		if (attributePanel.unit) {
+			return attributePanel.unit.getSelectedRecord().data.conversionFactor;
+		} else {
+			return null;
+		}
 	},
 	
 	getSelection: function() {
@@ -155,7 +249,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	/**
 	 * Get the value of the files
 	 * @param {boolean} convertNumbers 
-	 * @returns Array of codes; reguardless of unlying type
+	 * @returns Array of codes; regardless of underlying type
 	 */
 	getValue: function(convertNumbers) {
 		var attributePanel = this;
@@ -192,28 +286,20 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 	},
 	valid: function(form) {
 		var valid = true;
+		var msg = '';
 		var attributePanel = this;
 				
 		var values = attributePanel.getValue();
 		
 		Ext.Array.each(values, function(value){
 			if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
-			    //check percision; this will enforce max allowed
-				if (Ext.String.endsWith(value, ".")) {
-					valid = false;
+				//check precision; this will enforce max allowed
+				var validatorResponse = CoreUtil.validateNumber(value);
+				valid = validatorResponse.valid;
+				msg = validatorResponse.msg;
+				if (!valid) {
 					form.getForm().markInvalid({
-						attributeCode: 'Number must not have a decimal point or have at least one digit after the decimal point.'
-					});
-				}
-				try {
-					var valueNumber = Number(value);
-					if (isNaN(valueNumber)) {						
-						valid = false;
-					}
-				} catch (e) {
-					valid = false;
-					form.getForm().markInvalid({
-						attributeCode: 'Number must not have a decimal point or have at least one digit after the decimal point.'
+						attributeCode: msg
 					});
 				}
 			}

@@ -105,10 +105,11 @@ public interface SubmissionFormService
 
 	/**
 	 * Method to save a user submission comment and then to send it in an email
-	 * @param userSubmissionComment 
+	 *
+	 * @param userSubmissionComment
 	 */
 	public void saveUserSubmissionComment(UserSubmissionComment userSubmissionComment);
-	
+
 	/**
 	 * Convert and saves component The user submission is then removed.
 	 *
@@ -124,11 +125,19 @@ public interface SubmissionFormService
 	 * It will resolve the appropriate template base on the entry type.
 	 *
 	 * @param componentId
-	 * @param forChangeRequest
-	 * @param removeComponent
+	 * @param options
 	 * @return
 	 */
 	public UserSubmission editComponentForSubmission(String componentId, EditSubmissionOptions options);
+
+	/**
+	 * This creates a submission form from a component but doesn't save
+	 * submission or modify the component
+	 *
+	 * @param componentId
+	 * @return
+	 */
+	public UserSubmission componentToSubmission(String componentId);
 
 	/**
 	 * Creates a change request from a submission
@@ -164,6 +173,7 @@ public interface SubmissionFormService
 	 * Only one submission form should be active per entry type
 	 *
 	 * @param submissionTemplateId
+	 * @param newStatus
 	 */
 	public void toggleActiveStatus(String submissionTemplateId, String newStatus);
 

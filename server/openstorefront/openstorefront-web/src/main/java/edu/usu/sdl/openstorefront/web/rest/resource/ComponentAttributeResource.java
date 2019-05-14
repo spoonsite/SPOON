@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -64,6 +65,7 @@ public class ComponentAttributeResource
 	public Response getComponentsWithAttributeCode(
 			@QueryParam("attributeType") String type,
 			@QueryParam("attributeCode") String code,
+			@QueryParam("active") @DefaultValue("true") Boolean active,
 			@BeanParam ComponentFilterParams filterParams)
 	{
 		ValidationResult validationResult = filterParams.validate();
@@ -79,7 +81,11 @@ public class ComponentAttributeResource
 		ComponentAttributePk componentAttributePk = new ComponentAttributePk();
 		componentAttributePk.setAttributeType(type);
 		componentAttributePk.setAttributeCode(code);
-		componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		if (active) {
+			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+		} else {
+			componentAttributeExample.setActiveStatus(ComponentAttribute.INACTIVE_STATUS);
+		}
 		componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
 		List<ComponentAttribute> attributeComponents = componentAttributeExample.findByExample();

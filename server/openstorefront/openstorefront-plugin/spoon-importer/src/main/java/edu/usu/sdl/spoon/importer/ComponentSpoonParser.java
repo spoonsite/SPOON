@@ -31,7 +31,6 @@ import edu.usu.sdl.openstorefront.core.spi.parser.mapper.MapModel;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.GenericReader;
 import edu.usu.sdl.openstorefront.core.spi.parser.reader.XMLMapReader;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -190,17 +189,17 @@ public class ComponentSpoonParser
 					service.getComponentService().deleteBaseComponent(ComponentResource.class, componentResourceFound.getResourceId());
 				}
 			}
-			if (pickedResource != null) {
-				pickedResource.setOriginalName(attachment.getResourceOriginalName());
-				pickedResource.setMimeType(
-						OpenStorefrontConstant.getMimeForFileExtension(
-								StringProcessor.getFileExtension(attachment.getResourceOriginalName())
-						)
-				);
 
-				byte[] fileData = Base64.getMimeDecoder().decode(attachment.getFileData());
-				service.getComponentService().saveResourceFile(pickedResource, new ByteArrayInputStream(fileData), pickedResource.getMimeType(), pickedResource.getOriginalName());
-			}
+			pickedResource.setOriginalName(attachment.getResourceOriginalName());
+			pickedResource.setMimeType(
+					OpenStorefrontConstant.getMimeForFileExtension(
+							StringProcessor.getFileExtension(attachment.getResourceOriginalName())
+					)
+			);
+
+			byte[] fileData = Base64.getMimeDecoder().decode(attachment.getFileData());
+			//FIXME: this changed
+			//	service.getComponentService().saveResourceFile(pickedResource, new ByteArrayInputStream(fileData));
 
 		}
 	}

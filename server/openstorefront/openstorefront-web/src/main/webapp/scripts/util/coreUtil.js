@@ -777,31 +777,91 @@ var CoreUtil = {
 
 		var vitals = [];
 		if (entry.attributes) {
+			
+			//group attributes by type; array of values
+			var typeMap = {};
 			Ext.Array.each(entry.attributes, function (item) {
-				vitals.push({
-					label: item.typeDescription,
-					value: item.codeDescription,
-					highlightStyle: item.highlightStyle,
-					type: item.type,
-					code: item.code,
-					privateFlag: item.privateFlag,
-					comment: item.comment,
-					updateDts: item.updateDts,
-					securityMarkingType: item.securityMarkingType,
-					tip: item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '') : item.codeLongDescription
-				});
+				if (!typeMap[item.type]) {
+					typeMap[item.type] = [];
+				}
+				typeMap[item.type].push(item);				
 			});
-		}
-
-		if (entry.metadata) {
-			Ext.Array.each(entry.metadata, function (item) {
-				vitals.push({
-					label: item.label,
-					value: item.value,
-					securityMarkingType: item.securityMarkingType,
-					updateDts: item.updateDts
+			
+			Ext.Object.each(typeMap, function(key, values) {				
+				var maintype = values[0];
+				
+				
+				var topHighLightStyle = null;
+				if (values.length === 1) {
+					topHighLightStyle = values[0].highlightStyle;
+				} 
+				
+				//if 1 then set to fill background 
+				//if more than one then style the codes 
+				
+				var processedValues = '';
+				var baseUnitValues = '';
+				var commonComment = null;
+				var anyPrivate = false;
+				var unit = '';
+				var allTips = '';
+				Ext.Array.each(values, function (item) {
+					if (item.privateFlag) {
+						anyPrivate = true;
+					}
+					if (item.comment) {
+						// (ONLY allow one comment per type)
+						//take the last non-null one
+						commonComment = item.comment;
+					}
+					var tip = item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription;
+				
+					
+					var codeValue =	item.codeDescription;					
+					if (item.preferredUnit) {
+						unit = item.preferredUnit.unit; 
+						codeValue = item.preferredUnit.convertedValue;
+					} else if (item.unit){
+						unit = item.unit;
+					}					
+					
+					if (tip && tip !== '') {
+						allTips += '<b>' + codeValue + '</b>: ' + tip + '<br>';
+					}
+					
+					var unitToShow = '';
+					if (unit) {
+						unitToShow =  ' ' + unit + '';
+					}
+					
+					if(unitToShow != ''){
+						unitToShow = " " + CoreUtil.asciiToKatex(unitToShow, false);
+					}
+					processedValues += '<b>' + codeValue + unitToShow + '</b>';					
+					processedValues += ', ';		
+					baseUnitValues += '<b>' + item.codeDescription + (item.unit ? ' ' + item.unit : '') + '</b>';					
+					baseUnitValues += ', ';	
+					
 				});
-			});
+				processedValues = processedValues.substring(0, processedValues.length-2);
+	
+				vitals.push({
+					label: maintype.typeDescription,
+					value: processedValues,
+					baseUnitValue: baseUnitValues,
+					highlightStyle: topHighLightStyle,
+					type: maintype.type,
+					code: maintype.code,
+					unit: maintype.unit,
+					privateFlag: anyPrivate,
+					comment: commonComment,
+					updateDts: maintype.updateDts,
+					securityMarkingType: maintype.securityMarkingType,
+					tip: allTips
+				});				
+				
+			});			
+			
 		}
 
 		Ext.Array.sort(vitals, function (a, b) {
@@ -1036,6 +1096,29 @@ var CoreUtil = {
 		}      
 		return false;		
 	},
+	validateNumber: function(value) {
+		var valid = true;
+		var msg = '';
+
+		if (Number(value)
+			&& typeof value === 'string'
+			&& Ext.String.endsWith(value.trim(), ".")
+			) {
+			valid = false;
+			msg = 'Number must not have a decimal point or have at least one digit after the decimal point.';
+		}
+		try {
+			var valueNumber = Number(value);
+			if (isNaN(valueNumber)) {						
+				valid = false;
+				msg = "Value must be a valid number.";
+			}
+		} catch (e) {
+			valid = false;
+			msg = 'Number must not have a decimal point or have at least one digit after the decimal point.';
+		}
+		return { valid: valid, msg : msg };
+	},
 	traverseNestedModel: function(node, parents, target) {
 		if (!node) return;
 		if (target.componentType === node.componentType.componentType) {
@@ -1091,6 +1174,39 @@ var CoreUtil = {
 		var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
 		return v.toString(16);
 	  });
-  }
-  
+	},
+	asciiToKatex: function (str, block) {
+		if (str !== undefined) {
+
+			// if block == true it will return a block element, else it will return an inline element
+			// regex for placing quotes in str before parsing to katex to ensure sub-units are grouped right 
+			// ex: kg/m -> "kg"/"m"
+			const regex = new RegExp("([a-zA-Z$]{1,})+", "gu");
+			str = str.replace(regex, '"$&"');
+
+			// This is for a specific JScience case where ^1/2 is resolved as 1:2, 
+			// this is not a recognized ascii math method so it is changed 
+			// back to 1/2 so katex can understand it.
+			const JScienceRegex = new RegExp("((\\d+):(\\d+))+", "g");
+			str = str.replace(JScienceRegex, '($2/$3)');
+
+			// Katex does not allow $ when converting so this is the way 
+			// of fixing that edge case. (cases like this should not 
+			// be in the database though)
+			if (str == '"$"') {
+				return ("$");
+			}
+
+			// method for converting ascii to katex
+			try {
+				var katex = Window.renderAsciiMath(str, { displayMode: !!block, throwOnError: true })
+				return katex;
+			} catch (err) {
+				return err;
+			}
+			
+		} else {
+			return "";
+		}
+	}
 };

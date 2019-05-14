@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
@@ -97,23 +98,67 @@ public class SearchServiceImpl
 	private static final int MAX_SEARCH_DESCRIPTION = 500;
 
 	@Override
-	public List<ComponentSearchView> getAll()
-	{
+	public List<ComponentSearchView> getAll(){
 		ServiceProxy service = new ServiceProxy();
 		List<ComponentSearchView> list = new ArrayList<>();
 		List<ComponentSearchView> components = service.getComponentService().getComponents();
 		list.addAll(components);
 		return list;
 	}
-	
+
 	@Override
-	public SearchOptions getGlobalSearchOptions(){
+	public SearchOptions getGlobalSearchOptions() {
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
 		SearchOptions searchOptions = searchOptionsExample.find();
-		
-		if(searchOptions == null){
+
+		if (searchOptions == null) {
+			// Return the default.
+			searchOptions = new SearchOptions();
+			searchOptions.setUsername(null);
+			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
+			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
+			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
+		}
+		return searchOptions;
+	}
+
+	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions) {
+
+		OSFCacheManager.getSearchCache().removeAll();
+
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		SearchOptions existing = searchOptionsExample.findProxy();
+
+		if (existing != null) {
+			searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+			existing.updateFields(searchOptions);
+			persistenceService.persist(existing);
+		} else {
+			searchOptions.setSearchOptionsId(persistenceService.generateId());
+			searchOptions.setGlobalFlag(Boolean.TRUE);
+			searchOptions.setUsername(null);
+			searchOptions.setDefaultSearchOptions();
+			existing = persistenceService.persist(searchOptions);
+		}
+		return existing;
+	}
+
+	public SearchOptions getUserSearchOptions() {
+
+		String username = SecurityUtil.getCurrentUserName();
+
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		searchOptionsExample.setUsername(username);
+		SearchOptions searchOptions = searchOptionsExample.find();
+
+		if (searchOptions == null) {
 			// Return the default.
 			searchOptions = new SearchOptions();
 			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
@@ -121,32 +166,60 @@ public class SearchServiceImpl
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
 			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
 			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
-		}		
-		return searchOptions;		
+		}
+		return searchOptions;
 	}
 
-	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions){
-		
-		OSFCacheManager.getSearchCache().removeAll();
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions) {
+
+		Boolean forceCacheClear = false;
+		String username = SecurityUtil.getCurrentUserName();
 
 		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);                     
-		SearchOptions existing = searchOptionsExample.findProxy();                   
-		
-		if (existing != null) {
-						searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-						searchOptions.setGlobalFlag(true);
-						existing.updateFields(searchOptions);
-						persistenceService.persist(existing);
-		} else {
-						searchOptions.setSearchOptionsId(persistenceService.generateId());
-						searchOptions.setGlobalFlag(true);
-						searchOptions.setDefaultSearchOptions();
-						existing = persistenceService.persist(searchOptions);
-		}
-		return existing;
-}
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		searchOptionsExample.setUsername(username);
+		SearchOptions existing = searchOptionsExample.findProxy();
 
+		if (existing == null) {
+			forceCacheClear = true;
+			searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+			searchOptionsExample.setUsername(null);
+			existing = searchOptionsExample.findProxy();
+
+			if (existing == null) {
+				existing = new SearchOptions();
+				existing.setSearchOptionsId(persistenceService.generateId());
+				existing.setDefaultSearchOptions();
+			}
+		}
+
+		// If the search options changed clear the cache
+		if (!existing.compare(searchOptions) || forceCacheClear) {
+			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+			if (userSearchElementResult != null) {
+				@SuppressWarnings("unchecked")
+				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+
+				if (listOfKeys != null) {
+					for (String key : listOfKeys) {
+						OSFCacheManager.getSearchCache().remove(key);
+					}
+				}
+				Element afterDeletedKeys = new Element(username, null);
+				OSFCacheManager.getUserSearchCache().put(afterDeletedKeys);
+			}
+		}
+
+		forceCacheClear = false;
+
+		existing.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		existing.setUsername(username);
+		existing.setGlobalFlag(Boolean.FALSE);
+		existing.updateFields(searchOptions);
+		persistenceService.persist(existing);
+
+		return existing;
+	}
 
 	@Override
 	public ComponentSearchWrapper getSearchItems(SearchQuery query, FilterQueryParams filter)
@@ -260,12 +333,20 @@ public class SearchServiceImpl
 
 		AdvanceSearchResult searchResult = new AdvanceSearchResult();
 
-		//each user may get different results depending on security roles
-		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
-			Element element = OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
-			if (element != null) {
-				searchResult = (AdvanceSearchResult) element.getObjectValue();
-				return searchResult;
+		// getting cached result
+		String username = SecurityUtil.getCurrentUserName();
+		String key = searchModel.getUserSessionKey() + searchModel.searchKey();
+		Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+
+		if (userSearchElementResult != null) {
+			@SuppressWarnings("unchecked")
+			List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+			if (listOfKeys != null && listOfKeys.contains(key)) {
+				Element cachedSearchResult = OSFCacheManager.getSearchCache().get(key);
+				if (cachedSearchResult != null) {
+					searchResult = (AdvanceSearchResult) cachedSearchResult.getObjectValue();
+					return searchResult;
+				}
 			}
 		}
 
@@ -419,12 +500,15 @@ public class SearchServiceImpl
 				SearchStatTable statTable = new SearchStatTable();
 				List<ResultOrganizationStat> organizationStats = statTable.getOrganizationStats(componentIds);
 				List<ResultTagStat> tagStats = statTable.getTagStats(componentIds);
-				List<ResultAttributeStat> attributeStats = statTable.getAttributeStats(componentIds);
+				Map<String, ResultAttributeStat> attributeStats = statTable.getAttributeStats(componentIds);
 
 				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
 				searchResult.getMeta().getResultTagStats().addAll(tagStats);
-				searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
-				
+				searchResult.getMeta().setResultAttributeStats(attributeStats);
+				// MERGE CONFLICT BELOW
+				// not sure what the difference is
+				//searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
+
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 
 				//then sort/window
@@ -483,9 +567,40 @@ public class SearchServiceImpl
 		}
 		searchResult.setValidationResult(validationResultMain);
 
+		// Adding searchResult to the search caches
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
-			Element element = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
-			OSFCacheManager.getSearchCache().put(element);
+
+			username = SecurityUtil.getCurrentUserName();
+			key = searchModel.getUserSessionKey() + searchModel.searchKey();
+			userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+
+			if (userSearchElementResult != null) {
+
+				@SuppressWarnings("unchecked")
+				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+				if (listOfKeys == null) {
+					listOfKeys = new ArrayList<String>();
+				}
+				listOfKeys.add(key);
+				Element searchElement = new Element(key, searchResult);
+				OSFCacheManager.getSearchCache().put(searchElement);
+
+				Element userSearchElement = new Element(username, listOfKeys);
+				OSFCacheManager.getUserSearchCache().put(userSearchElement);
+			} else {
+
+				String newKey = searchModel.getUserSessionKey() + searchModel.searchKey();
+				// add username in cache and create list and put that in as key
+				List<String> newListOfKeys = new ArrayList<String>();
+				newListOfKeys.add(newKey);
+
+				Element newUserSearchElement = new Element(username, newListOfKeys);
+				OSFCacheManager.getUserSearchCache().put(newUserSearchElement);
+
+				// add result to search cache
+				Element searchElement = new Element(newKey, searchResult);
+				OSFCacheManager.getSearchCache().put(searchElement);
+			}
 		}
 		return searchResult;
 	}

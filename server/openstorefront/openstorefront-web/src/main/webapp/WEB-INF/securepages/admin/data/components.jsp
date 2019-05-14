@@ -56,6 +56,7 @@
 			Ext.require('OSF.form.Tags');
 			Ext.require('OSF.form.Comments');
 			Ext.require('OSF.common.ValidHtmlEditor');
+			Ext.require('OSF.customSubmission.SubmissionFormFullControl');
 			
 			Ext.onReady(function() {
 				//Add/Edit forms ------>
@@ -136,12 +137,23 @@
 													change: function(fieldLocal, newValue, oldValue, opts) {
 														var recordLocal = fieldLocal.record;
 														if (recordLocal) {
-															recordLocal.set('attributeCode', newValue);
+															recordLocal.set('attributeCode', newValue);															
+														}
+													}
+												},
+												unitListeners: {
+													change: function(fieldLocal, newValue, oldValue, opts) {
+														var recordLocal = fieldLocal.record;
+														if (recordLocal) {															
+															recordLocal.set('preferredUnit', fieldLocal.fullAttributeField.getUnit());
 														}
 													}
 												}
 											},
-											attributeTypeView: record.data,											
+											attributeTypeView: record.data,	
+											showDefaultUnit: true,
+											attributeUnit: record.data.attributeUnit,
+											attributeUnitList: record.data.attributeUnitList,
 											record: record
 									});																				
 									record.formField = field;
@@ -281,7 +293,8 @@
 															componentAttributePk: {
 																attributeType: record.get('attributeType'),
 																attributeCode: code
-															}
+															},
+															preferredUnit: record.get('preferredUnit')
 														});
 													});
 												} else {
@@ -289,7 +302,8 @@
 														componentAttributePk: {
 															attributeType: record.get('attributeType'),
 															attributeCode: record.get('attributeCode')
-														}
+														},
+														preferredUnit: record.get('preferredUnit')
 													});
 												}												
 											});
@@ -689,8 +703,17 @@
 											
 											requiredStore.each(function(record){
 												if (record.get('attributeType') === attribute.type) {
-													record.set('attributeCode', value, { dirty: false });
-													record.formField.setValue(value);
+													
+													if (attribute.preferredUnit && attribute.preferredUnit.unit) {
+														record.formField.setUnit(attribute.preferredUnit.unit);
+														record.set('attributeCode', attribute.preferredUnit.convertedValue, { dirty: false });
+														record.set('preferredUnit', attribute.preferredUnit.unit, { dirty: false });
+														record.formField.setValue(attribute.preferredUnit.convertedValue);
+													} else {
+														record.set('attributeCode', value, { dirty: false });
+														record.formField.setValue(value);
+													}
+													
 												}
 											});
 
@@ -968,7 +991,7 @@
 										{
 											text: 'Create Snapshot',
 											iconCls: 'fa fa-lg fa-plus icon-button-color-save icon-small-vertical-correction',
-											tooltip: 'Creates snapshot of the current verison',
+											tooltip: 'Creates snapshot of the current version',
 											requiredPermissions: ['ADMIN-ENTRY-VERSION-CREATE'],
 											handler: function(){
 												var versionWin = this.up('window');
@@ -1843,15 +1866,27 @@
 									}
 								},
 								{
-									text: 'View',
+									xtype: 'splitbutton',
+									text: 'View',									
 									id: 'lookupGrid-tools-preview',
-									scale: 'medium',
-									width: '100px',
+									scale: 'medium',									
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
 									requiredPermissions: ['ADMIN-ENTRY-READ'],
 									handler: function () {
 										actionPreviewComponent(Ext.getCmp('componentGrid').getSelection()[0].get('componentId'));
+									},
+									menu: {
+										items: [
+											{
+												text: 'View Submission Form',
+												iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+												handler: function() {
+													var record = Ext.getCmp('componentGrid').getSelection()[0];
+													actionViewSubmission(record);
+												}
+											}
+										]
 									}
 								},
 								{
@@ -2138,7 +2173,7 @@
 											fieldLabel: 'Username <span class="field-required" />',
 											labelAlign: 'top',
 											name: 'currentDataOwner',
-											width: '100%',
+											width: '100%'
 										},
 										{
 											xtype: 'osf-common-validhtmleditor',
@@ -2535,7 +2570,7 @@
 						url: 'api/v1/resource/components/' + componentId + '/versionhistory'
 					});
 
-					//load current verison
+					//load current version
 					versionLoadCurrent();
 				};
 
@@ -2589,6 +2624,65 @@
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + id);
 					previewCheckButtons();
 				};
+				
+				var actionViewSubmission = function(record) {
+					
+					var previewWin = Ext.create('Ext.window.Window', {
+						title: 'Preview',
+						layout: 'fit',
+						modal: true,
+						closeAction: 'destroy',
+						width: '80%',
+						height: '80%',
+						maximizable: true,
+						dockedItems: [
+							{
+								xtype: 'panel',
+								dock: 'top',
+								html: '<div class="submission-form-preview alert-warning">Preview Mode - (Changes will NOT be saved)</div>'
+							}
+						],
+						items: [
+							{
+								xtype: 'osf-customSubmission-SubmissionformFullControl',
+								itemId: 'form',
+								showCustomButton: true,
+								previewMode: true,
+								hideSave: true,
+								customButtonHandler: function() {
+									previewWin.close();
+								}								
+							}
+						]
+					});
+					previewWin.show();
+
+
+					previewWin.setLoading('Loading Submission Form data...');
+					Ext.Ajax.request({
+						url: 'api/v1/resource/components/' + record.get('componentId') + '/usersubmission',
+						callback: function() {
+							previewWin.setLoading(false);
+						},
+						success: function(response, opts) {							
+							var userSubmission = Ext.decode(response.responseText);
+							
+							previewWin.setLoading('Loading Submission Form template...');
+							Ext.Ajax.request({
+								url: 'api/v1/resource/submissiontemplates/' + userSubmission.templateId,
+								callback: function() {
+									previewWin.setLoading(false);
+								},
+								success: function(responseTemplate, opts) {
+									var template = Ext.decode(responseTemplate.responseText);
+									
+									previewWin.queryById('form').load(template, record.get('componentType'), userSubmission);
+								}
+							});							
+						}
+					});		
+				};
+				
 
 			});
 

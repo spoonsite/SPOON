@@ -67,6 +67,6 @@ export default new Vuex.Store({
   },
   getters: {
     // call this.$store.getters.hasPermission('ADMIN-...')
-    hasPermission: (state) => (search) => state.permissionMap.indexOf(search)
+    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0
   }
 });

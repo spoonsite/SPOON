@@ -1,0 +1,22 @@
+{
+  "name": "asciimath-to-katex",
+  "version": "0.1.0",
+  "description": "A test of asciimath to katex",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx browserify index.js -o bundle.js",
+    "minify": "npx uglifyjs bundle.js -o bundle.min.js"
+  },
+  "author": "Ryan Frazier",
+  "license": "MIT",
+  "dependencies": {
+    "asciimath-to-latex": "^0.3.2",
+    "browserify": "^16.2.3",
+    "katex": "^0.10.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.5",
+    "uglify-js": "^3.5.10"
+  }
+}

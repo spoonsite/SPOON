@@ -32,6 +32,8 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefMap;
 import edu.usu.sdl.openstorefront.core.entity.AttributeXRefType;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
@@ -47,6 +49,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeCodeView;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeWrapper;
 import edu.usu.sdl.openstorefront.core.view.AttributeDetail;
 import edu.usu.sdl.openstorefront.core.view.AttributeFilterParams;
+import edu.usu.sdl.openstorefront.core.view.AttributeTypeListMerge;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeMetadata;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeSave;
 import edu.usu.sdl.openstorefront.core.view.AttributeTypeView;
@@ -55,6 +58,7 @@ import edu.usu.sdl.openstorefront.core.view.AttributeXRefView;
 import edu.usu.sdl.openstorefront.core.view.AttributeXrefMapView;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.RelationshipView;
+import edu.usu.sdl.openstorefront.core.view.SimpleRestError;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -63,6 +67,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -72,6 +77,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import javax.measure.unit.Unit;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -91,6 +97,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import org.apache.commons.lang.StringUtils;
+import org.jscience.physics.amount.Amount;
 
 /**
  *
@@ -129,8 +136,8 @@ public class AttributeResource
 		List<AttributeType> attributeTypes = new ArrayList<>();
 
 		if (StringUtils.isNotBlank(componentType)) {
-			attributeTypes.addAll(service.getAttributeService().findRequiredAttributes(componentType, true));
-			attributeTypes.addAll(service.getAttributeService().findOptionalAttributes(componentType, true));
+			attributeTypes.addAll(service.getAttributeService().findRequiredAttributes(componentType, false, null));
+			attributeTypes.addAll(service.getAttributeService().findOptionalAttributes(componentType, false, null));
 		} else {
 			attributeTypes = service.getPersistenceService().queryByExample(attributeTypeExample);
 		}
@@ -151,10 +158,11 @@ public class AttributeResource
 	@Path("/optional")
 	public List<AttributeTypeView> getOptionalAttributeView(
 			@QueryParam("componentType") String componentType,
-			@QueryParam("submissionOnly") boolean submissionOnly
+			@QueryParam("submissionOnly") boolean submissionOnly,
+			@QueryParam("submissionTemplateId") String submissionTemplateId
 	)
 	{
-		List<AttributeType> optionalAttributes = service.getAttributeService().findOptionalAttributes(componentType, submissionOnly);
+		List<AttributeType> optionalAttributes = service.getAttributeService().findOptionalAttributes(componentType, submissionOnly, submissionTemplateId);
 		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
 		return createAttributeTypeViews(attributeCodesAll, optionalAttributes);
 	}
@@ -205,10 +213,11 @@ public class AttributeResource
 	public List<AttributeTypeView> getRequiredAttributeTypes(
 			@QueryParam("componentType") String componentType,
 			@QueryParam("submissionOnly") boolean submissionOnly,
-			@QueryParam("skipFilterNoCodes") boolean skipFilterNoCodes
+			@QueryParam("skipFilterNoCodes") boolean skipFilterNoCodes,
+			@QueryParam("submissionTemplateId") String submissionTemplateId
 	)
 	{
-		List<AttributeType> requiredAttributes = service.getAttributeService().findRequiredAttributes(componentType, submissionOnly, skipFilterNoCodes);
+		List<AttributeType> requiredAttributes = service.getAttributeService().findRequiredAttributes(componentType, submissionOnly, skipFilterNoCodes, submissionTemplateId);
 		List<AttributeCode> attributeCodesAll = service.getAttributeService().getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
 		return createAttributeTypeViews(attributeCodesAll, requiredAttributes);
 	}
@@ -245,6 +254,7 @@ public class AttributeResource
 					relationship.setTargetKey(attributeType.getAttributeType());
 					relationship.setTargetName(attributeType.getDescription());
 					relationship.setTargetEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
+					relationship.setUnit(attributeType.getAttributeUnit());
 
 					relationships.add(relationship);
 				}
@@ -359,10 +369,10 @@ public class AttributeResource
 			@PathParam("type")
 			@RequiredParam String type,
 			@QueryParam("view")
-			@APIDescription("Setting forces the attribute to return the view model.")
+			@APIDescription("Forces the attribute to return the view model.")
 			@DefaultValue("false") boolean view,
 			@QueryParam("all")
-			@APIDescription("Setting forces the attribute to return the view model.")
+			@APIDescription("Returns a view model with all codes.")
 			@DefaultValue("false") boolean all)
 	{
 		if (!view) {
@@ -540,6 +550,252 @@ public class AttributeResource
 		attributeType.setRequiredRestrictions(attributeTypeSave.getRequiredComponentType());
 		attributeType.setOptionalRestrictions(attributeTypeSave.getOptionalComponentTypes());
 		return handleAttributePostPutType(attributeType, true);
+	}
+	
+	@POST
+	@RequireSecurity(SecurityPermission.ADMIN_ATTRIBUTE_MANAGEMENT_CREATE)
+	@APIDescription("Adds a new attribute type and deletes a list of other types. WARNING: Any and all attributes in the " +
+	"AttributesTypesToBeDeleted object will get deleted, this does include the object attributeTypeSave object.")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/listmergeattributetypes")
+	public Response listMergeAttributeTypes(AttributeTypeListMerge attributeTypeListMerge)
+	{
+		// 1. Verify that all the units are compatible
+		if(!unitsAreCompatible(attributeTypeListMerge)) {
+			SimpleRestError error = new SimpleRestError("Unable to parse units.");
+			return Response.ok(error, MediaType.APPLICATION_JSON).build();
+		}
+		
+		// 2. Verify that the attributetype was created.
+		if(!attributeTypeWasCreated(attributeTypeListMerge)) {
+			SimpleRestError error = new SimpleRestError("Unable to create new attribute type.");
+			return Response.ok(error, MediaType.APPLICATION_JSON).build();
+		}
+		
+		// 3. Get unit name of base unit
+		String baseUnitString = attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit();
+
+		Unit baseUnit;
+		baseUnit = Unit.valueOf(baseUnitString);
+		
+		for(String attributeType : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
+			
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(attributeType);
+			ComponentAttribute componentAttribute = new ComponentAttribute();
+			componentAttribute.setComponentAttributePk(componentAttributePk);
+			
+			// 4. Get list of all instances of the attribute that will be deleted
+			/**
+			 * With regards to obtaining conversion factors there is a utility
+			 * that was created called UnitConvertUtil.java I am following and
+			 * reusing a few pieces of the code but not enough to warrant
+			 * incorporating it and instantiating it here. If you desire to
+			 * invoke the utility it can be done as seen below:
+			 *			UnitConvertUtil.convertBaseUnitToUserUnit(baseUnitString, baseUnitString, attributeType);
+			 */
+			List<ComponentAttribute> componentAttributes = service.getPersistenceService().queryByExample(componentAttribute);
+			// 5. Get the conversion factor to go from the unit that will be deleted to the new base unit
+			AttributeType deletionAttributeType = service.getPersistenceService().findById(AttributeType.class, attributeType);
+			Unit tempUnit;
+			Amount <?> conversionFactor;
+			try {
+				tempUnit = Unit.valueOf(deletionAttributeType.getAttributeUnit());
+				conversionFactor = Amount.valueOf(1, tempUnit).to(baseUnit);
+			} catch (IllegalArgumentException e) {
+				SimpleRestError error = new SimpleRestError("Unable to create conversion factor.");
+				return Response.ok(error, MediaType.APPLICATION_JSON).build();
+			}
+
+			BigDecimal bdConversionFactor = new BigDecimal(conversionFactor.getEstimatedValue());
+			
+			// 6. Now that we have the conversionFactor we need to replace all the old
+			// componentAttributes with new equivalent componentAttributes.
+			for(ComponentAttribute compattr : componentAttributes) {
+				String numericStringValue = compattr.getComponentAttributePk().getAttributeCode();
+
+				BigDecimal unitValueToDelete = new BigDecimal(numericStringValue);
+				BigDecimal result = unitValueToDelete.multiply(bdConversionFactor);
+				
+				// 7. Build the new attributeCode for the new attribute type
+				AttributeCode attributeCode = new AttributeCode();
+				AttributeCodePk attributeCodePk = new AttributeCodePk();
+				attributeCode.setAttributeCodePk(attributeCodePk);
+				attributeCode.setLabel(result.stripTrailingZeros().toPlainString());			
+				attributeCode.getAttributeCodePk().setAttributeType(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeType());
+				attributeCode.getAttributeCodePk().setAttributeCode(result.stripTrailingZeros().toPlainString());
+				attributeCode.updateFields(attributeCode);
+				if(!attributeCodeWasCreated(attributeCode, true)) {
+					SimpleRestError error = new SimpleRestError("Unable to create new attribute code.");
+					return Response.ok(error, MediaType.APPLICATION_JSON).build();
+				}
+				
+				// 8. Add the new ComponentAttribute to the matching component.
+				ComponentAttribute componentAttributeToAdd = new ComponentAttribute();
+				ComponentAttributePk componentAttributePKToAdd = new ComponentAttributePk();
+				componentAttributeToAdd.setComponentAttributePk(componentAttributePKToAdd);
+				componentAttributeToAdd.getComponentAttributePk().setAttributeCode(result.stripTrailingZeros().toPlainString());
+				componentAttributeToAdd.getComponentAttributePk().setAttributeType(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeType());
+				componentAttributeToAdd.setComponentId(compattr.getComponentId());
+				componentAttributeToAdd.getComponentAttributePk().setComponentId(compattr.getComponentId());
+
+				ValidationModel validationModel = new ValidationModel(componentAttributeToAdd);
+				validationModel.setConsumeFieldsOnly(true);
+				ValidationResult validationResult = ValidationUtil.validate(validationModel);
+				validationResult.merge(service.getComponentService().checkComponentAttribute(componentAttributeToAdd));
+				if (validationResult.valid()) {
+					service.getComponentService().saveComponentAttribute(componentAttributeToAdd);
+				}
+				else {
+					SimpleRestError error = new SimpleRestError("Unable to save new component attribute.");
+					return Response.ok(error, MediaType.APPLICATION_JSON).build();
+				}
+			}
+		}
+
+		// 9. Delete all the old attributetypes
+		cascadeDeleteAttributeTypesList(attributeTypeListMerge.getAttributesTypesToBeDeleted());
+		
+		return Response.status(Response.Status.OK).build();
+	}
+	
+	
+	private Boolean attributeCodeWasCreated(AttributeCode attributeCode, boolean post) {
+		ValidationModel validationModel = new ValidationModel(attributeCode);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			validationResult = service.getAttributeService().saveAttributeCode(attributeCode, false);
+		}
+		if (!validationResult.valid()) {
+			return false;
+		}
+		return true;
+	}
+	
+	private void cascadeDeleteAttributeTypesList(List<String> attributeTypesToDelete) {
+		
+		for (String deleteThisType : attributeTypesToDelete) {
+			AttributeType attributeTypeToDelete = service.getPersistenceService().findById(AttributeType.class, deleteThisType);
+			if (attributeTypeToDelete != null) {
+				service.getPersistenceService().setStatusOnEntity(AttributeType.class, deleteThisType, AttributeType.PENDING_STATUS);
+
+				TaskRequest taskRequest = new TaskRequest();
+				taskRequest.setAllowMultiple(false);
+				taskRequest.setQueueable(true);
+				taskRequest.setName("Deleting Attribute Type");
+				taskRequest.setDetails("Attribute Type: " + deleteThisType);
+				taskRequest.getTaskData().put("Type", deleteThisType);
+				taskRequest.getTaskData().put("Status", attributeTypeToDelete.getActiveStatus());
+				taskRequest.setCallback(new AsyncTaskCallback()
+				{
+					@Override
+					public void beforeExecute(TaskFuture taskFuture)
+					{
+					}
+
+					@Override
+					public void afterExecute(TaskFuture taskFuture)
+					{
+						if (TaskStatus.FAILED.equals(taskFuture.getStatus())) {
+							service.getPersistenceService().setStatusOnEntity(AttributeType.class, (String) taskFuture.getTaskData().get("Type"), (String) taskFuture.getTaskData().get("Status"));
+						}
+					}
+
+				});
+				service.getAsyncProxy(service.getAttributeService(), taskRequest).cascadeDeleteAttributeType(deleteThisType);
+			}
+		}
+	}	
+	
+	private Boolean unitsAreCompatible(AttributeTypeListMerge attributeTypeListMerge) {
+		
+		List<String> unitsList = new ArrayList<>();
+		String baseUnitStringName;
+
+		for (String attrTypeName : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
+			AttributeType attributeType = service.getPersistenceService().findById(AttributeType.class, attrTypeName);
+			if (attributeType != null) {
+				if (!attributeType.getAttributeUnit().isEmpty()) {
+					unitsList.add(attributeType.getAttributeUnit());
+				}
+			}
+		}
+		
+		if(!attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit().isEmpty()) {
+			baseUnitStringName = attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit();
+		}
+		else{
+			return false;
+		}
+		
+		Unit baseUnit;
+		try {
+			baseUnit = Unit.valueOf(baseUnitStringName);
+		} catch (IllegalArgumentException e) {
+			// Could not parse the base unit
+			return false;
+		}
+		
+		Unit deletionCandidateUnit;
+		for(String attributeUnit : unitsList) {
+			try {
+				deletionCandidateUnit = Unit.valueOf(attributeUnit);
+			} catch (IllegalArgumentException e) {
+				// Could not parse the attribute unit
+				return false;						
+			}
+			
+			if (!deletionCandidateUnit.getDimension().equals(baseUnit.getDimension())) {
+				// The dimensions are not the same.
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private Boolean attributeTypeWasCreated(AttributeTypeListMerge attributeTypeListMerge) {
+		
+		Set<String> compatibleUnitsList = new HashSet<>();
+		
+		for(String attributeType : attributeTypeListMerge.getAttributesTypesToBeDeleted()) {
+			AttributeType deletionAttributeType = service.getPersistenceService().findById(AttributeType.class, attributeType);
+			if(!deletionAttributeType.getAttributeUnit().isEmpty()){
+				compatibleUnitsList.add(deletionAttributeType.getAttributeUnit());
+			}
+			if(!deletionAttributeType.getAttributeUnitList().isEmpty()) {
+				compatibleUnitsList.addAll(deletionAttributeType.getAttributeUnitList());
+			}
+		}
+		if (!attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit().isEmpty()) {
+			compatibleUnitsList.add(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnit());
+		}
+		if (!attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnitList().isEmpty()) {
+			compatibleUnitsList.addAll(attributeTypeListMerge.getAttributeTypeSave().getAttributeType().getAttributeUnitList());
+		}
+		if(compatibleUnitsList.contains("")) {
+			compatibleUnitsList.remove("");
+		}
+		
+		AttributeType attributeType = attributeTypeListMerge.getAttributeTypeSave().getAttributeType();
+		attributeType.setAttributeUnitList(compatibleUnitsList);
+		attributeType.setRequiredRestrictions(attributeTypeListMerge.getAttributeTypeSave().getRequiredComponentType());
+		attributeType.setOptionalRestrictions(attributeTypeListMerge.getAttributeTypeSave().getOptionalComponentTypes());
+		attributeType.updateNullFlags();
+		ValidationModel validationModel = new ValidationModel(attributeType);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		validationResult.merge(attributeType.customValidation());
+		if (validationResult.valid()) {
+			attributeType.setActiveStatus(LookupEntity.ACTIVE_STATUS);
+			attributeType.setCreateUser(SecurityUtil.getCurrentUserName());
+			attributeType.setUpdateUser(SecurityUtil.getCurrentUserName());
+			service.getAttributeService().saveAttributeType(attributeType, false);
+		} else {
+			return false;
+		}
+		return true;
 	}
 
 	@POST
@@ -1218,6 +1474,98 @@ public class AttributeResource
 			@RequiredParam String type)
 	{
 		service.getAttributeService().deleteAttributeXrefType(type);
+	}
+
+	@POST
+	@APIDescription("Check the unit parsing")
+	@Path("/unitcheck")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response checkUnit(
+			@RequiredParam UnitView unitView)
+	{
+		ValidationModel validationModel = new ValidationModel(unitView.getUnit());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		if (validationResult.valid()) {
+			String attributeUnit = unitView.getUnit();
+
+			Unit unit;
+			try {
+				unit = Unit.valueOf(attributeUnit);
+			} catch (IllegalArgumentException e) {
+				SimpleRestError error = new SimpleRestError("unable to parse unit: " + attributeUnit);
+				return Response.ok(error, MediaType.APPLICATION_JSON).build();
+			}
+
+			String unitString = unit.toString();
+			String dimension = unit.getDimension().toString();
+			String standardUnit = unit.getStandardUnit().toString();
+
+			UnitView response = new UnitView();
+			response.setUnit(unitString);
+			response.setDimension(dimension);
+			response.setStandardUnit(standardUnit);
+
+			return Response.ok(response, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+
+	}
+
+	@POST
+	@APIDescription("Check a given unit list against a base unit")
+	@Path("/unitlistcheck")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response checkUnitList(
+			@RequiredParam UnitListView unitListView)
+	{
+		ValidationModel validationModel = new ValidationModel(unitListView.getBaseUnit());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+
+		validationModel = new ValidationModel(unitListView.getUnits());
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult listValidationResult = ValidationUtil.validate(validationModel);
+		validationResult.merge(listValidationResult);
+
+		if (validationResult.valid()) {
+			String baseUnit = unitListView.getBaseUnit();
+			Unit unit;
+			String dimension = "";
+			String standardUnit = "";
+			try {
+				unit = Unit.valueOf(baseUnit);
+				dimension = unit.getDimension().toString();
+				standardUnit = unit.getStandardUnit().toString();
+				for (String unitString : unitListView.getUnits()) {
+					Unit tempUnit;
+					tempUnit = Unit.valueOf(unitString);
+
+					// verify all the units in the list are the same dimension
+					// verify they all match the base unit
+					if (!tempUnit.getDimension().equals(unit.getDimension())) {
+						SimpleRestError error = new SimpleRestError("Base unit " + baseUnit + " (" + dimension + ") dimension does not match unit " + unitString + " (" + tempUnit.getDimension() + ")");
+						return Response.ok(error, MediaType.APPLICATION_JSON).build();
+					}
+				}
+			} catch (IllegalArgumentException e) {
+				SimpleRestError error = new SimpleRestError("unable to parse unit");
+				return Response.ok(error, MediaType.APPLICATION_JSON).build();
+			}
+
+			UnitView response = new UnitView();
+			response.setUnit(baseUnit);
+			response.setDimension(dimension);
+			response.setStandardUnit(standardUnit);
+
+			return Response.ok(response, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 }

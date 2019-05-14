@@ -68,7 +68,7 @@ Ext.define('OSF.form.Attributes', {
 						} 
 					});
 					optionalAttributes.reverse();
-					attributePanel.attributeGrid.getStore().loadData(optionalAttributes);
+					attributePanel.attributeGrid.getStore().loadRawData(optionalAttributes);
 				}
 			});
 		};
@@ -84,13 +84,34 @@ Ext.define('OSF.form.Attributes', {
 					"code",
 					"typeDescription",
 					"codeDescription",
+					"unit",
 					"orphan",
 					"activeStatus",
 					{
 						name: 'updateDts',
 						type: 'date',
 						dateFormat: 'c'
-					}
+					},
+					{
+						name: 'convertedValue', mapping: function(data) {
+							if (data.preferredUnit){
+								return data.preferredUnit.convertedValue;
+							}
+							return null;
+						}
+					},
+					{ name: 'vendorUnitOnly', mapping: function(data) {
+						if (data.preferredUnit){
+							return data.preferredUnit.unit;
+						}
+						return null;
+					}},
+					{ name: 'vendorUnit', mapping: function(data) {
+						if (data.preferredUnit){
+							return data.preferredUnit.unit + ' (' + data.preferredUnit.convertedValue +  ')';
+						}
+						return null;
+					}}
 				],
 				autoLoad: false,
 				proxy: {
@@ -100,6 +121,8 @@ Ext.define('OSF.form.Attributes', {
 			columns: [
 				{text: 'Attribute Type', dataIndex: 'typeDescription', width: 200},
 				{text: 'Attribute Code', dataIndex: 'codeDescription', flex: 1, minWidth: 200},
+				{text: 'Attribute Base Unit', dataIndex: 'unit', flex: 1, minWidth: 200},
+				{text: 'Preferred Unit', dataIndex: 'vendorUnit', flex: 1, minWidth: 200},
 				{text: 'Comment', dataIndex: 'comment', flex: 2, minWidth: 200},
 				{text: 'Private Flag', dataIndex: 'privateFlag', width: 150},
 				{text: 'Update Date', dataIndex: 'updateDts', width: 175, xtype: 'datecolumn', format: 'm/d/y H:i:s'}
@@ -150,7 +173,7 @@ Ext.define('OSF.form.Attributes', {
 								data.componentAttributePk = {
 									attributeType: data.attributeType,
 									attributeCode: data.attributeCode
-								};
+								};							
 								var valid = true;
 								var selectedAttributes = form.queryById('attributeTypeCB').getSelection();
 								var attributeType = selectedAttributes.data;
@@ -258,7 +281,8 @@ Ext.define('OSF.form.Attributes', {
 							}
 						}
 					],
-					items: [
+					// looks like a copy and paste from attributeAssignment.js
+					items: [						
 						{
 							xtype: 'panel',
 							layout: 'hbox',
@@ -283,14 +307,14 @@ Ext.define('OSF.form.Attributes', {
 									flex: 1,
 									listConfig: {
 										getInnerTpl: function () {
-											return '{description} <tpl if="detailedDescription"><i class="fa fa-question-circle" data-qtip=\'{detailedDescription}\'></i></tpl>';
+											return '{description} <tpl if="attributeUnit">({attributeUnit})</tpl> <tpl if="detailedDescription"><i class="fa fa-question-circle" data-qtip=\'{detailedDescription}\'></i></tpl>';
 										}
 									},
 									store: {
 										autoLoad: false,
+										// the store is being loaded in the in loadData callback
 										proxy: {
-											type: 'ajax',
-											url: 'api/v1/resource/attributes'
+											type: 'ajax'
 										}
 									},
 									listeners: {
@@ -298,131 +322,43 @@ Ext.define('OSF.form.Attributes', {
 											var cbox = field.up('form').getComponent('attributeCodeCB');
 											cbox.clearValue();
 
+											var unitDisplay = field.up('form').getComponent('attributeUnit');
+											var preferredUnits = field.up('form').queryById('preferredUnitCB');
+
 											var record = field.getSelection();
 											if (record) {
 												cbox.getStore().loadData(record.data.codes);
 												cbox.vtype = (record.data.attributeValueType === 'NUMBER') ? 'AttributeNumber' : undefined;
 												cbox.setEditable(record.get("allowUserGeneratedCodes"));
+
+												unitDisplay.setValue(record.data.attributeUnit);
+												var unitValues = [];
+												if (record.data.attributeUnitList) {
+													Ext.Array.each(record.data.attributeUnitList, function(unitItem){
+														unitValues.push({
+															code: unitItem.unit,
+															label: unitItem.unit
+														});
+													});
+												}																								
+												preferredUnits.getStore().loadRawData(unitValues);
+												
 											} else {
 												cbox.getStore().removeAll();
 												cbox.vtype = undefined;
 											}
 										}
 									}
-								},
-								{
-									xtype: 'button',
-									itemId: 'addAttributeType',
-									text: 'Add',
-									iconCls: 'fa fa-lg fa-plus icon-button-color-save',
-									minWidth: 100,
-									hidden: true,
-									handler: function () {
-										var attributeTypeCb = attributePanel.queryById('attributeTypeCB');
-
-
-										var addTypeWin = Ext.create('Ext.window.Window', {
-											title: 'Add Type',
-											iconCls: 'fa fa-plus',
-											closeAction: 'destroy',
-											alwaysOnTop: true,
-											modal: true,
-											width: 400,
-											height: 380,
-											layout: 'fit',
-											items: [
-												{
-													xtype: 'form',
-													scrollable: true,
-													layout: 'anchor',
-													bodyStyle: 'padding: 10px',
-													defaults: {
-														labelAlign: 'top',
-														labelSeparator: '',
-														width: '100%'
-													},
-													items: [
-														{
-															xtype: 'textfield',
-															name: 'label',
-															fieldLabel: 'Label <span class="field-required" />',
-															allowBlank: false,
-															maxLength: 255
-														},
-														{
-															xtype: 'textarea',
-															name: 'detailedDescription',
-															fieldLabel: 'Description',
-															maxLength: 255
-														},
-														{
-															xtype: 'combobox',
-															fieldLabel: 'Code Label Value Type <span class="field-required" />',
-															displayField: 'description',
-															valueField: 'code',
-															typeAhead: false,
-															editable: false,
-															allowBlank: false,
-															name: 'attributeValueType',
-															store: {
-																autoLoad: true,
-																proxy: {
-																	type: 'ajax',
-																	url: 'api/v1/resource/lookuptypes/AttributeValueType'
-																}
-															}
-														}
-													],
-													dockedItems: [
-														{
-															xtype: 'toolbar',
-															dock: 'bottom',
-															items: [
-																{
-																	text: 'Save',
-																	formBind: true,
-																	iconCls: 'fa fa-lg fa-save icon-button-color-save',
-																	handler: function () {
-																		var form = this.up('form');
-																		var data = form.getValues();
-																		var addTypeWin = this.up('window');
-
-																		CoreUtil.submitForm({
-																			url: 'api/v1/resource/attributes/attributetypes/metadata?componentType=' + encodeURIComponent(attributePanel.component.componentType),
-																			method: 'POST',
-																			data: data,
-																			form: form,
-																			success: function (response, opts) {
-																				attributeTypeCb.getStore().load({
-																					url: 'api/v1/resource/attributes/optional?componentType=' + encodeURIComponent(attributePanel.component.componentType)
-																				});
-																				addTypeWin.close();
-																			}
-																		});
-
-																	}
-																},
-																{
-																	xtype: 'tbfill'
-																},
-																{
-																	text: 'Cancel',
-																	iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-																	handler: function () {
-																		this.up('window').close();
-																	}
-																}
-															]
-														}
-													]
-												}
-											]
-										});
-										addTypeWin.show();
-
-									}
 								}
 							]
+						},
+						{
+							xtype: 'textfield',
+							itemId: 'attributeUnit',
+							fieldLabel: 'Attribute Base Unit',							
+							labelWidth: 150,
+							style: 'background: lightgrey;',
+							editable: false
 						},
 						{
 							xtype: 'combobox',
@@ -446,6 +382,21 @@ Ext.define('OSF.form.Attributes', {
 									"code",
 									"label"
 								]
+							})
+						},
+						{
+							xtype: 'combobox',
+							itemId: 'preferredUnitCB',
+							fieldLabel: 'Preferred Unit',
+							name: 'preferredUnit',
+							queryMode: 'local',
+							editable: false,
+							typeAhead: false,
+							allowBlank: true,
+							valueField: 'code',
+							displayField: 'label',
+							labelWidth: 150,							
+							store: Ext.create('Ext.data.Store', {
 							})
 						},						
 						{
@@ -544,11 +495,19 @@ Ext.define('OSF.form.Attributes', {
 		});
 		
 		var actionEdit = function(record) {
+			var codeValue = record.get('code');
+			if (record.get('convertedValue')) {
+				codeValue = record.get('convertedValue');
+			}			
 			record.set({
 				attributeType: record.get('type'),
-				attributeCode: record.get('code')				
+				attributeCode: codeValue,
+				preferredUnit: record.get('vendorUnitOnly')
 			});			
-			attributePanel.attributeGrid.queryById('form').loadRecord(record);			
+			attributePanel.attributeGrid.queryById('form').loadRecord(record);	
+			
+			//make sure this is set since the change event on the attribute type will effect this
+			attributePanel.attributeGrid.queryById('preferredUnitCB').setValue(record.get('vendorUnitOnly'));
 		};
 
 		attributePanel.add(attributePanel.attributeGrid);

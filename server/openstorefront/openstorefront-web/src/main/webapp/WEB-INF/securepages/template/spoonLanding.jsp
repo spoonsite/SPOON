@@ -27,10 +27,10 @@
 	Ext.require('OSF.landing.DefaultActions');
 	Ext.require('OSF.landing.DefaultInfo');	
 	Ext.require('OSF.landing.EntryTypeTopics');
+	Ext.require('OSF.landing.DefaultDisclaimer')
 
 	Ext.onReady(function(){
 
-	
 		
 
 		Ext.create('Ext.container.Viewport', {			
@@ -81,7 +81,22 @@
 						{
 							xtype: 'osf-defaultversion',
 							bodyStyle: 'padding-bottom: 20px;'
-						}	
+						},
+						{
+							xtype: 'osf-defaultdisclaimer',
+							bodyStyle: 'padding-bottom: 20px;',
+							hidden:true,
+							itemId: 'disclaimerPanel',
+							beforeRender:function(){
+								//if there is a disclaimer message, show the element
+								var that = this;
+								CoreService.brandingservice.getCurrentBranding().then(function(branding){
+									if(branding.disclaimerMessage){
+										that.up().queryById('disclaimerPanel').setVisible(true);
+									}
+								});
+							}
+						}
 					]
 				}
 

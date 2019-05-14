@@ -114,7 +114,7 @@ public class ComponentMedia
 	@APIDescription("Specific the media to be used as an icon; Only one active icon should exist.")
 	@DefaultValue("false")
 	private Boolean iconFlag;
-	
+
 	@APIDescription("For mapping to third party information")
 	private String externalId;
 
@@ -164,10 +164,12 @@ public class ComponentMedia
 			this.setFileName(media.getFileName());
 			this.setOriginalName(media.getOriginalName());
 			this.setMimeType(media.getMimeType());
+
 			/**
-			 * This change was added to prevent duplicate files being created from proxying the database.
+			 * This change was added to prevent duplicate files being created
+			 * from proxying the database.
 			 */
-			if(this.getFile() != null) {
+			if (this.getFile() != null) {
 				this.getFile().setFileName(media.getFile().getFileName());
 				this.getFile().setOriginalName(media.getFile().getOriginalName());
 				this.getFile().setMimeType(media.getFile().getMimeType());
@@ -175,7 +177,6 @@ public class ComponentMedia
 			} else {
 				this.setFile(media.getFile());
 			}
-
 		}
 		this.setCaption(media.getCaption());
 		this.setLink(media.getLink());
@@ -246,6 +247,7 @@ public class ComponentMedia
 	 * {@link #getFile().setOriginalName(String originalName)}
 	 */
 	@Deprecated
+	@Override
 	public void setOriginalName(String originalName)
 	{
 		this.originalName = originalName;
@@ -278,6 +280,7 @@ public class ComponentMedia
 	 * {@link #getFile().setMimeType(String mimeType)}
 	 */
 	@Deprecated
+	@Override
 	public void setMimeType(String mimeType)
 	{
 		this.mimeType = mimeType;
@@ -320,6 +323,7 @@ public class ComponentMedia
 	 * {@link #getFile().setFileName(String fileName)}
 	 */
 	@Deprecated
+	@Override
 	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
@@ -355,16 +359,18 @@ public class ComponentMedia
 		this.iconFlag = iconFlag;
 	}
 
+	@Override
 	public MediaFile getFile()
 	{
 		return file;
 	}
 
+	@Override
 	public void setFile(MediaFile file)
 	{
 		this.file = file;
 	}
-	
+
 	public String getExternalId()
 	{
 		return externalId;

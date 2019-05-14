@@ -29,6 +29,7 @@ Ext.define('OSF.landing.DefaultFooter', {
 		{
 			xtype: 'panel',
 			itemId: 'footer',
+			bodyCls: 'home-footer-item',
 			width: '100%',
 			html: '<b>Test</b>'
 		}
@@ -39,7 +40,7 @@ Ext.define('OSF.landing.DefaultFooter', {
 		var footerPanel = this;
 		
 		CoreService.brandingservice.getCurrentBranding().then(function(branding){
-			footerPanel.getComponent('footer').update(branding.landingPageFooter);			
+			footerPanel.getComponent('footer').update(branding.landingPageFooter); 
 		});
 		
 	}

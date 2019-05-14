@@ -137,6 +137,9 @@
 				success: function(response, opts){
 					printTemplate.set(response.responseText, true);
 					loadEntry();
+				},
+				failure: function(response, opts) {
+					alert('The Print View failed to load!')
 				}
 			});	
 			
@@ -209,6 +212,9 @@
 									{ text: 'Views', section: 'views' },
 									{ text: 'Vitals', section: 'vitals' }
 								];
+
+								//Disclaimer 
+								entry.disclaimerMessage = CoreService.brandingservice.branding.disclaimerMessage;
 
 								// for each evaluation of this component, add a section for it (indicating it's version)
 								for (var ii = 0; ii < entry.fullEvaluations.length; ii += 1) {
