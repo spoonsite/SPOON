@@ -319,7 +319,7 @@ header {
   background-color: white;
   z-index: 999;
 }
-.katex-html {
+.katex-mathml {
   visibility: hidden;
   display: none;
 }

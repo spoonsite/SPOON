@@ -1195,41 +1195,6 @@ var CoreUtil = {
 			// back to 1/2 so katex can understand it.
 			const JScienceRegex = new RegExp("((\\d+):(\\d+))+", "g");
 			str = str.replace(JScienceRegex, '($2/$3)');
-			while ((m = JScienceRegex.exec(str)) !== null) {
-				if (m.index === JScienceRegex.lastIndex) {
-					JScienceRegex.lastIndex++;
-				}
-				// replacement with parenthesized versions of the sub-units
-				// with check to see if the sub-unit is the whole unit
-				// ex: kg
-				JScienceRegexArray.push(m[0]);
-
-			}
-			// iterate over found matches and place quotes around 
-			// the matches in the current string
-			JScienceRegexArray.forEach(function (match) {
-				newSubStr = "(" + match.replace(":", "/") + ")";
-				str = str.replace(match, newSubStr)
-			})
-
-			// this is the regex for any text in the units
-			while ((m = regex.exec(str)) !== null) {
-				if (m.index === regex.lastIndex) {
-					regex.lastIndex++;
-				}
-
-				// replacement with parenthesized versions of the sub-units
-				// with check to see if the sub-unit is the whole unit
-				// ex: kg
-				regexArray.push(m[0]);
-			}
-
-			// iterate over found matches and place parenthesis around 
-			// the matches in the current string
-			regexArray.forEach(function (match) {
-				var parenMatch = '"' + match + '"';
-				str = str.replace(match, parenMatch);
-			})
 
 			// Katex does not allow $ when converting so this is the way 
 			// of fixing that edge case. (cases like this should not 
