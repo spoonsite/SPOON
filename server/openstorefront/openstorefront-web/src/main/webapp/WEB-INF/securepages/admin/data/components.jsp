@@ -1688,7 +1688,9 @@
 						{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true },
 						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true },
 						{ text: 'Organization', dataIndex: 'organization', width: 175, hidden: true},
-						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true, sortable: false }
+						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true, sortable: false },
+						{ text: 'Data Source', dataIndex: 'dataSource', width: 175, hidden: true, sortable: false },
+						{ text: 'Data Sensitivity', dataIndex: 'dataSensitivity', width: 175, hidden: true, sortable: false }
 					],
 					dockedItems: [
 						{
@@ -2133,7 +2135,7 @@
 											fieldLabel: 'Username <span class="field-required" />',
 											labelAlign: 'top',
 											name: 'currentDataOwner',
-											width: '100%',
+											width: '100%'
 										},
 										{
 											xtype: 'osf-common-validhtmleditor',

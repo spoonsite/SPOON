@@ -101,6 +101,13 @@ public class FilterEngine
 	public <T extends StandardEntity> List<T> filter(List<T> dataItems, boolean checkParentComponent)
 	{
 		if (isFilterable(dataItems)) {
+
+			for (T data : dataItems) {
+				if (filter(data, checkParentComponent) == null) {
+					System.out.println("Filtered: " + data);
+				}
+			}
+
 			dataItems = dataItems.stream()
 					.filter(data -> filter(data, checkParentComponent) != null)
 					.collect(Collectors.toList());

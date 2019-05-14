@@ -458,20 +458,23 @@ public class MongoQueryUtil
 
 		if (userContext != null && !userContext.isSystemUser()) {
 
+			Bson queryDataSource;
 			if (userContext.allowUnspecifiedDataSources()) {
-				query = Filters.and(query, Filters.eq(Component.FIELD_DATA_SOURCE, null));
+				queryDataSource = Filters.eq(Component.FIELD_DATA_SOURCE, null);
 			} else {
-				query = Filters.and(query, Filters.ne(Component.FIELD_DATA_SOURCE, null));
+				queryDataSource = Filters.ne(Component.FIELD_DATA_SOURCE, null);
 			}
 
 			Set<String> datasources = userContext.dataSources();
 			if (!datasources.isEmpty()) {
 				if (userContext.allowUnspecifiedDataSources()) {
-					query = Filters.or(query, Filters.in(Component.FIELD_DATA_SOURCE, datasources));
+					queryDataSource = Filters.or(queryDataSource, Filters.in(Component.FIELD_DATA_SOURCE, datasources));
 				} else {
-					query = Filters.and(query, Filters.in(Component.FIELD_DATA_SOURCE, datasources));
+					queryDataSource = Filters.and(queryDataSource, Filters.in(Component.FIELD_DATA_SOURCE, datasources));
 				}
 			}
+			query = Filters.and(query, queryDataSource);
+
 		}
 		return query;
 	}

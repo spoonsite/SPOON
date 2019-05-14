@@ -35,7 +35,6 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeCondition;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.sort.RelevanceComparator;
@@ -256,23 +255,13 @@ public class SearchServiceImpl
 			}
 		}
 
-		//group
-		Map<SearchType, List<SearchElement>> searchGroup = new HashMap<>();
-		for (SearchElement searchElement : searchModel.getSearchElements()) {
-			if (searchGroup.containsKey(searchElement.getSearchType())) {
-				searchGroup.get(searchElement.getSearchType()).add(searchElement);
-			} else {
-				List<SearchElement> searchElements = new ArrayList<>();
-				searchElements.add(searchElement);
-				searchGroup.put(searchElement.getSearchType(), searchElements);
-			}
-		}
-
+		//Keep order
 		List<SearchElement> indexSearches = new ArrayList<>();
 		List<BaseSearchHandler> handlers = new ArrayList<>();
-		for (SearchType searchType : searchGroup.keySet()) {
-			List<SearchElement> searchElements = searchGroup.get(searchType);
-			switch (searchType) {
+		for (SearchElement searchElement : searchModel.getSearchElements()) {
+			List<SearchElement> searchElements = new ArrayList<>();
+			searchElements.add(searchElement);
+			switch (searchElement.getSearchType()) {
 				case ARCHITECTURE:
 					handlers.add(new ArchitectureSearchHandler(searchElements));
 					break;
@@ -318,7 +307,7 @@ public class SearchServiceImpl
 					handlers.add(new EntryTypeSearchHandler(searchElements));
 					break;
 				default:
-					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchType, "Add support; programming error");
+					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchElement.getSearchType(), "Add support; programming error");
 			}
 		}
 
@@ -330,7 +319,7 @@ public class SearchServiceImpl
 		}
 
 		if (validationResultMain.valid()) {
-			//process groups and aggregate
+			//process and aggregate
 			List<String> componentIds = new ArrayList<>();
 			MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
 			for (BaseSearchHandler handler : handlers) {

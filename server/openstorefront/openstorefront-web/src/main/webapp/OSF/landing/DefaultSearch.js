@@ -69,7 +69,7 @@ Ext.define('OSF.landing.DefaultSearch', {
 					{
 						"searchType": 'INDEX',
 						"field": null,
-						"value": query,
+						"value": CoreUtil.searchQueryAdjustment(query),
 						"mergeCondition": "AND"
 					}
 				];
