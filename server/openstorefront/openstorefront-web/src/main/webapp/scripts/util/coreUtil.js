@@ -1175,6 +1175,12 @@ var CoreUtil = {
 		return v.toString(16);
 	  });
 	},
+	/**
+	 * 
+	 * @param {String} str input asciimath string to pass to katex
+	 * @param {Boolean} block configure katex block element
+	 * @returns render katex html
+	 */
 	asciiToKatex: function (str, block) {
 		if (str !== undefined) {
 

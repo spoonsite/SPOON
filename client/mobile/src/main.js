@@ -4,6 +4,7 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 import store from './store';
+import asciiToKatex from './util/ascii2latex';
 
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
@@ -15,6 +16,7 @@ import Cookies from 'js-cookie';
 import VueQuillEditor from 'vue-quill-editor';
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
+import 'katex/dist/katex.min.js';
 import Toasted from 'vue-toasted';
 
 Vue.config.productionTip = false;
@@ -40,6 +42,8 @@ axios.interceptors.request.use(
   }
 );
 Vue.prototype.$http = axios;
+
+Vue.prototype.$ascii2katex = asciiToKatex;
 
 Vue.use(Toasted, {
   iconPack: 'fontawesome',

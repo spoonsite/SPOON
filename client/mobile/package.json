@@ -15,10 +15,12 @@
     "copy": "node build/copy.js"
   },
   "dependencies": {
+    "asciimath-to-latex": "^0.3.2",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "date-fns": "^1.29.0",
     "js-cookie": "^2.2.0",
+    "katex": "^0.10.1",
     "lodash": "^4.17.10",
     "safe-json-parse": "^4.0.0",
     "vue": "^2.5.2",
@@ -89,7 +91,7 @@
     "vue-template-compiler": "^2.5.2",
     "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^2.9.0",
-    "webpack-dev-server": "^3.1.11",
+    "webpack-dev-server": "^2.9.1",
     "webpack-merge": "^4.1.0"
   },
   "engines": {
