@@ -234,7 +234,13 @@ Ext.define('OSF.component.template.Vitals', {
 			'	</tpl>',
 			'</table>',
 		{
-			asciiToKatex: CoreUtil.asciiToKatex
+			asciiToKatex: function(unit){
+				if (Ext.isIE){
+					return unit;
+				} else {
+					return CoreUtil.asciiToKatex(unit);
+				}
+			}
 		}
 	),
 

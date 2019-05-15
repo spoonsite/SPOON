@@ -401,7 +401,13 @@
 						xtype: 'templatecolumn',
 						tpl: ['{[this.asciiToKatex(values.attributeUnit, false)]}',
 							{
-								asciiToKatex: CoreUtil.asciiToKatex
+								asciiToKatex: function (unit) {
+									if (Ext.isIE) {
+										return unit;
+									} else {
+										return CoreUtil.asciiToKatex(unit);
+									}
+								}
 							}]
 					},
 					{text: 'Type Code', dataIndex: 'attributeType', flex: 1.5},
