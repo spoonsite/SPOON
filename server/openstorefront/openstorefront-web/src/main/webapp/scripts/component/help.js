@@ -67,6 +67,7 @@ Ext.define('OSF.component.HelpPanel', {
 								if (records && records.length > 0) {
 									helpPanel.navPanel.getComponent('tree').expandAll();
 									helpPanel.navPanel.getComponent('tree').collapseAll();
+									helpPanel.contentPanel.update(records[0].get('helpSection'));
 								}								
 								var response = operation.getResponse();
 								if (response && response.responseText){
