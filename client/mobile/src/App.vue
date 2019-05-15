@@ -319,4 +319,8 @@ header {
   background-color: white;
   z-index: 999;
 }
+.katex-mathml {
+  visibility: hidden;
+  display: none;
+}
 </style>
