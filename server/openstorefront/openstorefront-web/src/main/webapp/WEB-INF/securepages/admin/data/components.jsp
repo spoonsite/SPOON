@@ -2469,7 +2469,7 @@
 					Ext.getCmp('toggleWin').show();
 				};
 
-				var actionDeleteComponent = function() {
+				var actionDeleteComponent = function () {
 
 					// Get Selection
 					var selection = Ext.getCmp('componentGrid').getSelection();
@@ -2478,11 +2478,13 @@
 					var selected = componentGrid.getSelectionModel().getCount();
 
 					// Check If Only One Record Selected
-					if (selected === 1) {
+					if (selected === 1)
+					{
 
 						var name = selection[0].get('name');
 					}
-					else {
+					else
+					{
 
 						var name = selected + ' Records';
 					}
@@ -2490,60 +2492,147 @@
 					// Confirm Delete Operation
 					Ext.Msg.show({
 						title: 'Delete Component?',
-						message: 'Are you sure you want to delete:  ' + name +' ?',
+						message: 'Are you sure you want to delete:  ' + name + ' ?',
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
-						fn: function(btn) {
+						fn: function (btn) {
 
-							if (btn === 'yes') {
+							if (btn === 'yes')
+							{
 
 								// Indicate To User Deletion Is Occurring
 								Ext.getCmp('componentGrid').setLoading(true);
 
-								// Initialize Update Counter
-								var componentDeleteCount = 0;
+								// Show Empty Progress Bar
+								Ext.MessageBox.show({
+									msg: 'Deleting, please wait...  If you leave this webpage, the delete order will be canceled.',
+									progressText: '0% complete',
+									progress: true,
+									closable: true,
+									value: 0
+								});
 
-								// Loop Through Selection
-								for (i = 0; i < selected; i++) {
+								// Recursive Delete Requests
+								sendDeleteRequests(selection, selection.length)
 
-									// Get Component ID
-									var componentId = selection[i].get('componentId');
-
-									// Make Request
-									Ext.Ajax.request({
-
-										url: 'api/v1/resource/components/' + componentId + '/cascade',
-										method: 'DELETE',
-										success: function(response, opts) {
-
-											// Check For Errors
-											if (response.responseText.indexOf('errors') !== -1) {
-
-												// Provide Error Notification
-												Ext.toast('An Entry Failed To Delete', 'Error');
-
-												// Provide Log Information
-												console.log(response);
-											}
-
-											// Check If We Are On The Final Request
-											if (++componentDeleteCount === selected) {
-
-												// Provide Success Notification
-												Ext.toast('Selected entries have been deleted', 'Success');
-
-												// Refresh Grid
-												actionRefreshComponentGrid();
-
-												// Unmask Grid
-												Ext.getCmp('componentGrid').setLoading(false);
-											}
-										}
-									});
-								}
 							}
 						}
-					});
+					}); // End Message Box
+
+					/**
+					 * Recursive Function To Send Delete Requests
+					 * 
+					 * @param {Array} selection -  list of elements from the grid that have been check-box'd as needing to be deleted
+					 * @param {Array} originalTotal - length of selection.
+					 * 
+					 * @returns {undefined} Void function
+					 */
+					function sendDeleteRequests(selection, originalTotal) {
+						if (selection.length !== 0)
+						{
+							Ext.Ajax.request({
+								url: 'api/v1/resource/components/' + selection[0].get('componentId') + '/cascade',
+								method: 'DELETE',
+								success: function (response, opts) {
+
+									// Check For Errors
+									if (response.responseText.indexOf('errors') !== -1)
+									{
+										// Fail The Progress Bar
+										deleteRequestFail("There was an internal error that occured on the server. Please contact SPOON support via the Contact Us button in your site menu found in the top right part of the screen.", selection[0]);
+										
+										// Provide Error Notification
+										Ext.toast('An Entry Failed To Delete', 'Error');
+
+										// Provide Log Information
+										console.error(response);
+									}
+									else
+									{
+										// Increment the Progress Bar
+										percent = (originalTotal - selection.length + 1) / originalTotal;
+										Ext.MessageBox.updateProgress(percent, percent * 100 + '% completed');
+
+										// Send Next Request
+										if (!sendDeleteRequests.hasFailed)
+										{
+											selection.shift();
+											sendDeleteRequests(selection, originalTotal);
+										}
+									}
+								}, // End Success Condition
+								failure: function (response, opts) {
+									deleteRequestFail("There was an internal error that occured in the server.", selection[0], response)
+								}
+							});
+						}
+						else // Else there are no more elements to delete, Inform User 
+						{
+							Ext.MessageBox.hide();
+							Ext.Msg.show({
+								title: 'Done',
+								message: originalTotal + ' Item(s) Successfuly Deleted.',
+								buttons: Ext.Msg.OK
+							});
+
+							// Provide Success Notification
+							Ext.toast('Selected entries have been deleted', 'Success');
+
+							// Refresh Grid
+							actionRefreshComponentGrid();
+
+							// Unmask Grid
+							Ext.getCmp('componentGrid').setLoading(false);
+						}
+					}
+						
+					/**
+					 * Displays error message to user, exits the screen overlay safely, in case of problems.
+					 * 
+					 * @params {String} reason - custom message to help user know On Whose End The Issue Originated?
+					 * @params {Object} failedElement - the element that failed to successfully delete
+					 * @params {Object} serverResponse - the Ajax response, gives info on why it failed
+					 * 
+					 * @returns {undefined} This is a Void function.  
+					 */
+					var deleteRequestFail = function(reason, failedElement, serverResponse){
+						// Halt Deletion By Setting External Flag
+						sendDeleteRequests.hasFailed = true;
+						
+						// Build String To Pass Additional Information - On Whose End The Issue Originated? 
+						reason = reason || " Unknown.";
+						
+						// Build String To Pass Additional Information - Which Element Could Not Be Deleted?
+						errorOn = "";
+						try{
+							errorOn = " The issue occured while attempting to delete an Entry named " + failedElement.data.name;
+						}
+						catch(err){
+							errorOn = ""
+						}
+
+						// Build String To Pass Additional Information - What HTTP Status The Server Returned?
+						try{
+							var serverResponse = " The server returned status: " + serverResponse.status + " - " + serverResponse.statusText;
+						}
+						catch(err){
+							var serverResponse = "";
+						}
+						// Kill Exsisting Progress Bar
+						Ext.MessageBox.hide()
+
+						// Inform User Of Fail
+						Ext.Msg.show({title:"Deletion Halted", message:"There was an error which interrupted the delete order. Reasons: " + reason + errorOn + serverResponse})
+						
+						// Unlock the Screen
+						// Refresh Grid
+						actionRefreshComponentGrid();
+
+						// Unmask Grid
+						Ext.getCmp('componentGrid').setLoading(false);
+					}
+					
+
 				};
 
 				var actionCopyComponent = function() {
