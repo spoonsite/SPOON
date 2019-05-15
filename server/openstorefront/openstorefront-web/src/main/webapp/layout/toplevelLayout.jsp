@@ -92,6 +92,12 @@
 	<%-- Math Rendering (see scripts/asciiToKatex for more information) --%>
 	<link rel="stylesheet" href="scripts/mathRender/katex.min.css"/>
 	<script src="scripts/mathRender/asciiToKatex.js"></script>
+	<style>
+		.katex-mathml {
+			visibility: hidden;
+			display: none;
+		}
+	</style>
 	
 	<title>${appTitle}</title>
         <stripes:layout-component name="html_head"/>
