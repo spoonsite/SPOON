@@ -210,20 +210,24 @@ public class ComponentOrientRepoImpl
 			parameterMap.put("nameSearch", "%" + filter.getName().toLowerCase().trim() + "%");
 		}
 
-		if (!componentIdInResults.isEmpty()) {
-			primaryQuery.append(" and componentId IN :componentIdList ");
-			parameterMap.put("componentIdList", componentIdInResults);
-		}
+		if (StringUtils.isNotBlank(filter.getComponentName()) && componentIdInResults.isEmpty()) {
+			return new ArrayList<>();
+		} else {
+			if (!componentIdInResults.isEmpty()) {
+				primaryQuery.append(" and componentId IN :componentIdList ");
+				parameterMap.put("componentIdList", componentIdInResults);
+			}
 
-		if (StringUtils.isNotBlank(filter.getSortField()) && StringUtils.isNotBlank(filter.getSortOrder())) {
-			primaryQuery.append(" ORDER BY ");
-			primaryQuery.append(filter.getSortField());
-			primaryQuery.append(" ");
-			primaryQuery.append(filter.getSortOrder());
-		}
+			if (StringUtils.isNotBlank(filter.getSortField()) && StringUtils.isNotBlank(filter.getSortOrder())) {
+				primaryQuery.append(" ORDER BY ");
+				primaryQuery.append(filter.getSortField());
+				primaryQuery.append(" ");
+				primaryQuery.append(filter.getSortOrder());
+			}
 
-		List<ComponentTracking> componentTrackings = service.getPersistenceService().query(primaryQuery.toString(), parameterMap);
-		return componentTrackings;
+			List<ComponentTracking> componentTrackings = service.getPersistenceService().query(primaryQuery.toString(), parameterMap);
+			return componentTrackings;
+		}
 	}
 
 	@Override

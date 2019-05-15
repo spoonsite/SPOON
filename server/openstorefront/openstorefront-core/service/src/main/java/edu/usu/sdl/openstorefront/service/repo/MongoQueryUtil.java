@@ -261,6 +261,11 @@ public class MongoQueryUtil
 
 	public String convertSQLLikeCharacterToRegex(String value)
 	{
+		if (value == null) {
+			value = "";
+		}
+		value = value.replace("\\", "");
+
 		//deterime starts with (a% = ^a), endwith (%a = a$) and contains (a)
 		if (value.startsWith(LIKE_QUERY_CHARACTER) && value.endsWith(LIKE_QUERY_CHARACTER)) {
 			value = value.replace(LIKE_QUERY_CHARACTER, "");

@@ -264,20 +264,24 @@ public class ComponentMongoRepoImpl
 			);
 		}
 
-		if (!componentIdInResults.isEmpty()) {
-			queryFilter = Filters.and(
-					queryFilter,
-					Filters.in(Component.FIELD_COMPONENT_ID, componentIdInResults)
-			);
+		if (StringUtils.isNotBlank(filter.getComponentName()) && componentIdInResults.isEmpty()) {
+			return new ArrayList<>();
+		} else {
+			if (!componentIdInResults.isEmpty()) {
+				queryFilter = Filters.and(
+						queryFilter,
+						Filters.in(Component.FIELD_COMPONENT_ID, componentIdInResults)
+				);
+			}
+
+			BasicDBObject sort = new BasicDBObject();
+			sort.append(filter.getSortField(), MongoQueryUtil.MONGO_SORT_DESCENDING);
+
+			FindIterable<ComponentTracking> findIterable = trackingCollection.find(queryFilter)
+					.sort(sort);
+
+			return findIterable.into(new ArrayList<>());
 		}
-
-		BasicDBObject sort = new BasicDBObject();
-		sort.append(filter.getSortField(), MongoQueryUtil.MONGO_SORT_DESCENDING);
-
-		FindIterable<ComponentTracking> findIterable = trackingCollection.find(queryFilter)
-				.sort(sort);
-
-		return findIterable.into(new ArrayList<>());
 	}
 
 	@Override
