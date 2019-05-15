@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class AttributeCodeView
 		AttributeCodeView attributeCodeView = new AttributeCodeView();
 		attributeCodeView.setCode(attributeCode.getAttributeCodePk().getAttributeCode());
 		attributeCodeView.setLabel(attributeCode.getLabel());
-		attributeCodeView.setDescription(attributeCode.getDescription());
+		attributeCodeView.setDescription(StringProcessor.escapeHtmlQuotes(attributeCode.getDescription()));
 		attributeCodeView.setGroupCode(attributeCode.getGroupCode());
 		attributeCodeView.setSortOrder(attributeCode.getSortOrder());
 		attributeCodeView.setHighlightStyle(attributeCode.getHighlightStyle());

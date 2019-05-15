@@ -710,4 +710,14 @@ public class StringProcessor
 		return badStyles;
 	}
 
+	public static String escapeHtmlQuotes(String input)
+	{
+		if (StringUtils.isNotBlank(input)) {
+
+			input = input.replace("'", "&#39;");
+			input = input.replace("\"", "&#34;");
+		}
+		return input;
+	}
+
 }

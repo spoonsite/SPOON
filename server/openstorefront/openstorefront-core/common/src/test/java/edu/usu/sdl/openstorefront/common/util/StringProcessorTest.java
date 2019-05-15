@@ -712,4 +712,12 @@ public class StringProcessorTest
 		}
 	}
 
+	@Test
+	public void testEscapeHtmlQuotes()
+	{
+		assertEquals("a", StringProcessor.escapeHtmlQuotes("a"));
+		assertEquals("a&#39;t", StringProcessor.escapeHtmlQuotes("a't"));
+		assertEquals("a&#34;t", StringProcessor.escapeHtmlQuotes("a\"t"));
+	}
+
 }
