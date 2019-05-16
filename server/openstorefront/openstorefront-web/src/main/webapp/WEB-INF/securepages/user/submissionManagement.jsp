@@ -762,13 +762,17 @@
 									width: '100%'
 								},
 								items: [
+									// {
+									// 	xtype: 'filefield',
+									// 	name: 'uploadFile',
+									// 	width: '100%',
+									// 	allowBlank: false,
+									// 	fieldLabel: 'Upload ZIP',
+									// 	buttonText: 'Select File...'
+									// },
 									{
-										xtype: 'filefield',
-										name: 'uploadFile',
-										width: '100%',
-										allowBlank: false,
-										fieldLabel: 'Upload ZIP',
-										buttonText: 'Select File...'
+										xtype: 'fileFieldMaxLabel', 
+										name: 'uploadFile'
 									}
 								],
 								dockedItems: [
@@ -798,10 +802,9 @@
 														submitEmptyText: false,
 														url: 'Upload.action?BulkUpload',	// change this to BulkUpload
 														success: function(form, action) {
-															Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');	
-															actionRefresh();
-															importWin.close();
+															Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');
 															progressMsg.hide();
+															importWin.close();
 														}, 
 														failure: function(form, action) {
 															progressMsg.hide();
