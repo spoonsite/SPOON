@@ -792,7 +792,7 @@
 													});
 													uploadForm.submit({
 														submitEmptyText: false,
-														url: 'Upload.action?BulkUpload',	// change this to BulkUpload
+														url: 'Upload.action?BulkUpload',
 														success: function(form, action) {
 															Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');
 															progressMsg.hide();

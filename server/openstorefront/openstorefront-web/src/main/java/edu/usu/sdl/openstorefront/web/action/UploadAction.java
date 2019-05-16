@@ -50,7 +50,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -631,17 +630,17 @@ public class UploadAction
 		String mimeType = uploadFile.getContentType();
 
 		// Check if the uploaded file is a zip file
-		Boolean isZip = extension.equals("zip") && (mimeType.equals("application/x-zip-compressed") ||
-		mimeType.equals("application/zip") ||
-		mimeType.equals("application/octet-stream") ||
-		mimeType.equals("multipart/x-zip"));
+		Boolean isZip = (extension.equals("zip")
+				&& (mimeType.equals("application/x-zip-compressed") || mimeType.equals("application/zip") || 
+				mimeType.equals("application/octet-stream") || mimeType.equals("multipart/x-zip")));
 
-		if(isZip){
+		if (isZip) {
 			String username = SecurityUtil.getCurrentUserName();
 
 			File tempFile = null;
 			String timeStamp = new SimpleDateFormat("dd-MM-YYYY").format(new Date());
-			String filePath = FileSystemManager.getInstance().getDir(FileSystemManager.BULK_UPLOAD_DIR).toString() + "\\" + username + "\\" + timeStamp + "_" + StringProcessor.uniqueId() + ".zip";
+			String filePath = FileSystemManager.getInstance().getDir(FileSystemManager.BULK_UPLOAD_DIR).toString()
+					+ "\\" + username + "\\" + timeStamp + "_" + StringProcessor.uniqueId() + ".zip";
 			try {
 				// save to file system under username
 				tempFile = new File(filePath);
@@ -650,7 +649,8 @@ public class UploadAction
 			} catch (IOException ex) {
 				// If the file is unreadable
 				LOG.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
-				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName()
+						+ " Make sure the file in the proper format.");
 			} finally {
 				try {
 					if (uploadFile != null) {
@@ -661,8 +661,8 @@ public class UploadAction
 				}
 			}
 
-			if(errors.isEmpty()){
-				// Send email to spoon support telling them that there is a new uploaded file. 
+			if (errors.isEmpty()) {
+				// Send email to spoon support telling them that there is a new uploaded file.
 				Email email = MailManager.newEmail();
 				email.setSubject("SpoonSite bulk Upload");
 				email.setText("There is a new bulk upload to be reviewed at " + filePath);
