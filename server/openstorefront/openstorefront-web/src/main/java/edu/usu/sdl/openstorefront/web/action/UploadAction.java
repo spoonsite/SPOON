@@ -620,8 +620,6 @@ public class UploadAction
 		return streamErrorResponse(errors, true);
 	}
 
-	// TODO: not done yet
-	//       this code doesn't work
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
 	@HandlesEvent("BulkUpload")
 	public Resolution bulkUpload()
@@ -632,6 +630,7 @@ public class UploadAction
 		String extension = FilenameUtils.getExtension(uploadFile.getFileName()).toString();
 		String mimeType = uploadFile.getContentType();
 
+		// Check if the uploaded file is a zip file
 		Boolean isZip = extension.equals("zip") && (mimeType.equals("application/x-zip-compressed") ||
 		mimeType.equals("application/zip") ||
 		mimeType.equals("application/octet-stream") ||
@@ -649,6 +648,7 @@ public class UploadAction
 				uploadFile.save(tempFile);
 
 			} catch (IOException ex) {
+				// If the file is unreadable
 				LOG.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
 				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName() + " Make sure the file in the proper format.");
 			} finally {
@@ -662,6 +662,7 @@ public class UploadAction
 			}
 
 			if(errors.isEmpty()){
+				// Send email to spoon support telling them that there is a new uploaded file. 
 				Email email = MailManager.newEmail();
 				email.setSubject("SpoonSite bulk Upload");
 				email.setText("There is a new bulk upload to be reviewed at " + filePath);
@@ -672,7 +673,7 @@ public class UploadAction
 		} else {
 			errors.put("uploadFile", "Uploaded file was not a zip file");
 		}
-		
+
 		return streamUploadResponse(errors);
 	}
 

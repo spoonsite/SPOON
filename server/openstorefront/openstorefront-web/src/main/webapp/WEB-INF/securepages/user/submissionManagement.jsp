@@ -762,14 +762,6 @@
 									width: '100%'
 								},
 								items: [
-									// {
-									// 	xtype: 'filefield',
-									// 	name: 'uploadFile',
-									// 	width: '100%',
-									// 	allowBlank: false,
-									// 	fieldLabel: 'Upload ZIP',
-									// 	buttonText: 'Select File...'
-									// },
 									{
 										xtype: 'fileFieldMaxLabel', 
 										name: 'uploadFile'
