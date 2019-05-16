@@ -1605,7 +1605,10 @@
 											outputToAdd.push({
 												text: avaliable.description,											
 												transmissionType: avaliable.code,
-												handler: function() {	
+												handler: function() {
+													if (!outputs) {
+														outputs = [];
+													}
 													outputs.push({
 														outputId: Ext.id(),
 														reportTransmissionType: avaliable.code,

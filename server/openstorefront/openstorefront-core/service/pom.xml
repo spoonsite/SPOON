@@ -88,12 +88,12 @@
 		<dependency>
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-core</artifactId>
-            <version>9.1.9</version>
+            <version>9.1.18</version>
         </dependency>
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
-            <artifactId>flying-saucer-pdf</artifactId>
-            <version>9.1.9</version>
+            <artifactId>flying-saucer-pdf-openpdf</artifactId>
+            <version>9.1.18</version>
         </dependency>  
 		
 		<dependency>
