@@ -835,7 +835,11 @@ var CoreUtil = {
 					}
 					
 					if(unitToShow != ''){
-						unitToShow = " " + CoreUtil.asciiToKatex(unitToShow, false);
+						if (Ext.isIE) {
+							unitToShow = " " + unitToShow;
+						} else {
+							unitToShow = " " + CoreUtil.asciiToKatex(unitToShow, false);
+						}
 					}
 					processedValues += '<b>' + codeValue + unitToShow + '</b>';					
 					processedValues += ', ';		
