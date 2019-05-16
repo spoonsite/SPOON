@@ -5,7 +5,7 @@ DefaultContentLanguage = "en"
 pygmentsCodeFences = true
 pygmentsStyle = "monokai"
 
-title = "SPOONsite"
+title = "SPOON Site Documentation"
 theme = "docdock"
 #publishDir = "/build"
 enableGitInfo = "true"
