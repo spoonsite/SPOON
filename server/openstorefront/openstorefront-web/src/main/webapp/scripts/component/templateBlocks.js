@@ -233,9 +233,10 @@ Ext.define('OSF.component.template.Vitals', {
 			'		</tr>',
 			'	</tpl>',
 			'</table>',
+			'<a href="https://spoonsite.github.io/user/unitlegend/" target="_blank">Units Legend</a>',
 		{
-			asciiToKatex: function(unit){
-				if (Ext.isIE){
+			asciiToKatex: function (unit) {
+				if (Ext.isIE) {
 					return unit;
 				} else {
 					return CoreUtil.asciiToKatex(unit);

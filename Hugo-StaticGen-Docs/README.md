@@ -10,11 +10,13 @@ The theme used for this documentation is [DocDock](http://docdock.netlify.com). 
 
 The files to edit are found in `openstorefront/Hugo-StaticGen-Docs/content`. Hugo uses this content to generate the website.
 
-You have two flavors of markdown available provided by Hugo: standard github style markdown and [mmark](https://mmark.nl/post/syntax/). To use mmark create a file with the `.mmark` extension or specify `markup = "mmark"` in the toml front matter of the markdown file. Mmark adds several features such as figures, citations, and different ordered list styles (i.e. 1,2,3 or a,b,c or A,B,C).
+You have two flavors of markdown available provided by Hugo: standard github style markdown and [mmark](https://mmark.nl/post/syntax/). To use mmark create a file with the `.mmark` extension or specify `markup = "mmark"` in the toml front matter of the markdown file. Mmark adds several features such as figures, citations, and different ordered list styles (i.e. 1,2,3 or a,b,c or A,B,C). See [this blog post](https://miek.nl/2016/march/05/mmark-syntax-document/) for more a tutorial on mmark.
 
 Images should be placed in `openstorefront/Hugo-StaticGen-Docs/static/images`. When you reference an image in the markdown file use the relative path for example `![My Image](/images/some-image.png)`.
 
 If creating a new page use the Hugo cli with `hugo new path/to/new-doc.md` and Hugo will generate a new file with front matter at the specified path.
+
+If you need math support, Katex can be enabled for that page by specifying `hasMath = true` in the header meta data. You can then use latex math in the markdown. Examples are $x \times \y$ (inline element) and $$x \times y$$ (block element).
 
 ## Development Environment
 
@@ -65,3 +67,39 @@ git add -A
 git commit -m "Build on $DATE"
 git push
 ```
+
+## The DocDock Theme
+
+The following changes have been made the theme. If updating the theme be sure these changes are applied to the theme.
+
+- Footer of the left global menu displays the Application Version
+
+```html
+<!-- themes/docdock/layouts/partials/original/head.html -->
+<div style="color: #E0E0DA;">
+    <p>OpenStoreFront version {{ .Site.Params.StoreFrontVersion }}</p>
+    <p>Documentation generated on {{ now.Format "Jan 2, 2006" }}</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version {{ .Hugo.Version }}</p>
+</div>
+```
+
+- Katex support was added to render math
+
+```html
+<!-- \themes\docdock\layouts\partials\original\head.html -->
+{{ if .Params.hasMath }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css" integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.js" integrity="sha384-2BKqo+exmr9su6dir+qCw08N2ZKRucY4PrGQPPWU1A7FtlCGjmEGFqXCv5nyM5Ij" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+    onload="renderMathInElement(document.body,
+      { delimiters:
+          [ { left: '$$', right: '$$', display: true }
+          , { left: '\\(', right: '\\)', display: true }
+          , { left: '$', right: '$', display: false }
+          ]});
+      "
+  ></script>
+{{ end }}
+```
+
+Mmark translates $$ \latext $$ to \( \latex \). So we need to tell Katex to parse that as a block element.
