@@ -1,9 +1,7 @@
 {{- if in (.Get 0) "/_index.md" -}}
-	{{- $paths := (split (.Get 0) "_index.md") -}}
-	{{- $pagepath := index $paths 0 -}}
-	{{- $anchor := index $paths 1 -}}
-	{{- with .Site.GetPage "section" (trim $pagepath "/") -}}
-		{{- ( printf "%s%s" $pagepath $anchor ) | relLangURL -}}
+	{{- $path := (trim (.Get 0) "_index.md") -}}
+	{{- with .Site.GetPage "section" (trim $path "/") -}}
+		{{- .URL -}}
 	{{- end -}}
 {{- else -}}
 	{{- with .Site.GetPage "section" (.Get 0) }}

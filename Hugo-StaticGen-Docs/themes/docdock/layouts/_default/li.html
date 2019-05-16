@@ -3,7 +3,8 @@
         <h2 class="post-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>{{ .Summary }} <a class="read-more" href="{{.RelPermalink}}">&raquo;</a></p>
+        <p>{{ with .Param "description" }}<span class="post-description">{{ . }}</span>{{end}}</p>
+        <p><span style="font-style:normal;font-weight: bold">Preview: </span>{{ .Summary }} <a class="read-more" href="{{.RelPermalink}}">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          

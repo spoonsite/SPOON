@@ -5,7 +5,7 @@ DefaultContentLanguage = "en"
 pygmentsCodeFences = true
 pygmentsStyle = "monokai"
 
-title = "Open Storefront Documentation"
+title = "SPOONsite"
 theme = "docdock"
 #publishDir = "/build"
 enableGitInfo = "true"
