@@ -1673,7 +1673,7 @@
 									});
 
 									// if there are no email transmission types, ensure 'Notify Me' checkbox is enabled.
-									if (emailOutputTypes === 0 && notifyMeField.length) {
+									if (emailOutputTypes === 0 && notifyMeField && notifyMeField.length) {
 										notifyMeField.setDisabled(false);
 									}
 
