@@ -1217,9 +1217,9 @@ var CoreUtil = {
 	},
 
 	/**
-	 * 
-	 * @param {String} inputNumber This could be a number or some text if it is a 
-	 * number we are going to crush it's print out size to something more manageable. 
+	 * This method will check if the inputNumber is actually a number
+	 * and if it is, it will reduce it's length in a meaningful way.
+	 * @param {String} inputNumber 
 	 */
 	crushNumericString: function(inputNumber) {
 
@@ -1248,10 +1248,8 @@ var CoreUtil = {
 			if(inputNumber.indexOf('.') != -1){
 				if((numberLength - inputNumber.indexOf('.')) > 5){
 					// only show 3 decimal places after the decimal point
-					console.log(inputNumber, ' |VS| ', inputNumber.slice(0, inputNumber.indexOf('.') + 4));
-					return                             inputNumber.slice(0, inputNumber.indexOf('.') + 4);
+					return inputNumber.slice(0, inputNumber.indexOf('.') + 4);
 				}
-				console.log(inputNumber, ' |VS| ', inputNumber);
 				return inputNumber;
 			}
 		}
@@ -1268,13 +1266,10 @@ var CoreUtil = {
 				break;
 			}
 			if(numberLength - firstNonZeroIndex > 5){
-				console.log(inputNumber, ' |VS| ', inputNumber.slice(0, firstNonZeroIndex + 4));
-				return                             inputNumber.slice(0, firstNonZeroIndex + 4);
+				return inputNumber.slice(0, firstNonZeroIndex + 4);
 			}
-			console.log(inputNumber, ' |VS| ', inputNumber);
 			return inputNumber;
 		}
-		console.log(inputNumber, ' |VSBADDDDDDDDD| ', inputNumber);
 		return inputNumber;
 	}
 };

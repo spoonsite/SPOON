@@ -1025,6 +1025,12 @@ public abstract class GeneralComponentResourceExt
 		}
 	}
 	
+	/**
+	 * This method will reduce the size of the inputNumber in a meaningful way
+	 * if it is possible to do so.
+	 * @param inputNumber 
+	 * @return 
+	 */
 	private static String crushNumericString(String inputNumber){
 
 		// If the number contains an E or e return.
