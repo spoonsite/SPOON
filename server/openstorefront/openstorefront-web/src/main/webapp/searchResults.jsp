@@ -1128,6 +1128,7 @@
 							Ext.Array.each(Object.keys(attributeStats[key].codeMap), function(attrKey){
 								var containsAttribute = false;
 								var attribute = attributeStats[key].codeMap[attrKey];
+								attribute.codeLabel = CoreUtil.crushNumericString(attribute.codeLabel);
 								Ext.Array.each(attributeFilters, function(item) {
 									if (item.type === attributeStats[key].attributeType &&
 										item.code === attrKey) {

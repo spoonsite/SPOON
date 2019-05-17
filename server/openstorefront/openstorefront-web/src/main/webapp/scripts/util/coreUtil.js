@@ -1214,5 +1214,67 @@ var CoreUtil = {
 		} else {
 			return "";
 		}
+	},
+
+	/**
+	 * 
+	 * @param {String} inputNumber This could be a number or some text if it is a 
+	 * number we are going to crush it's print out size to something more manageable. 
+	 */
+	crushNumericString: function(inputNumber) {
+
+		// If inputNumber is not a number return.
+		if(isNaN(inputNumber)){
+			return inputNumber;
+		}
+		// If it contains an E or e don't touch it and return.
+		if(inputNumber.indexOf('E') != -1){
+			return inputNumber;
+		}
+		if(inputNumber.indexOf('e') != -1){
+			return inputNumber;
+		}
+		
+		var magnitudeIsGreaterThanOne = false;
+		var numberLength = inputNumber.length;
+
+		// Is the absolute value of this number bigger than one?
+		if(Math.abs(inputNumber) > 1){
+			magnitudeIsGreaterThanOne = true;
+		}
+
+		// If it is take this route
+		if(magnitudeIsGreaterThanOne){
+			if(inputNumber.indexOf('.') != -1){
+				if((numberLength - inputNumber.indexOf('.')) > 5){
+					// only show 3 decimal places after the decimal point
+					console.log(inputNumber, ' |VS| ', inputNumber.slice(0, inputNumber.indexOf('.') + 4));
+					return                             inputNumber.slice(0, inputNumber.indexOf('.') + 4);
+				}
+				console.log(inputNumber, ' |VS| ', inputNumber);
+				return inputNumber;
+			}
+		}
+
+		// Otherwise take this route
+		if(!magnitudeIsGreaterThanOne){
+			// Find first non zero thing after the decimal and show 3 decimal places after it.
+			var firstNonZeroIndex;
+			for(var i = 0; i < numberLength; i++){
+				if((inputNumber[i] == '-') || (inputNumber[i] == '.') || (inputNumber[i] == '0')){
+					continue;
+				}
+				firstNonZeroIndex = i;
+				break;
+			}
+			if(numberLength - firstNonZeroIndex > 5){
+				console.log(inputNumber, ' |VS| ', inputNumber.slice(0, firstNonZeroIndex + 4));
+				return                             inputNumber.slice(0, firstNonZeroIndex + 4);
+			}
+			console.log(inputNumber, ' |VS| ', inputNumber);
+			return inputNumber;
+		}
+		console.log(inputNumber, ' |VSBADDDDDDDDD| ', inputNumber);
+		return inputNumber;
 	}
 };

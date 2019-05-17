@@ -52,6 +52,7 @@ import edu.usu.sdl.openstorefront.core.view.ChangeEntryTypeAction;
 import edu.usu.sdl.openstorefront.core.view.ChangeOwnerAction;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
+import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ComponentLookupModel;
@@ -85,6 +86,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -1002,12 +1004,80 @@ public abstract class GeneralComponentResourceExt
 		}
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
 		if (componentDetail != null) {
+
+			for(ComponentAttributeView attrView : componentDetail.getAttributes()){
+				try {
+					// Try to cast... if this fails then catch the error.
+					BigDecimal bigDecimal = new BigDecimal(attrView.getCode());
+					String numericString = attrView.getCode();
+					numericString = crushNumericString(numericString);
+					attrView.setCodeDescription(numericString);
+				} catch (NumberFormatException e) {
+					continue;
+				}
+			}
+
 			return sendSingleEntityResponse(componentDetail);
 		} else if (componentPrint != null) {
 			return sendSingleEntityResponse(componentPrint);
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
+	}
+	
+	private static String crushNumericString(String inputNumber){
+
+		// If the number contains an E or e return.
+		if (inputNumber.indexOf('E') != -1) {
+			return inputNumber;
+		}
+		if (inputNumber.indexOf('e') != -1) {
+			return inputNumber;
+		}
+
+		Boolean magnitudeIsGreaterThanOne = false;
+		int numberLength = inputNumber.length();
+		
+		BigDecimal bigDecimalCast = new BigDecimal(inputNumber);
+		BigDecimal oneValue = new BigDecimal(1);
+		
+		int result = bigDecimalCast.abs().compareTo(oneValue);
+		// result =  0; if bigDecimalCast and oneValue are equal.
+		// result =  1; if bigDecimalCast is greater than oneValue.
+		// result = -1; if bigDecimalCast is less than oneValue.
+		
+		// Is bigDecimalCast greater than one?
+		if(result >= 0){
+			magnitudeIsGreaterThanOne = true;
+		}
+		
+
+		if (magnitudeIsGreaterThanOne) {
+			if (inputNumber.indexOf('.') != -1) {
+				if ((numberLength - inputNumber.indexOf('.')) > 5) {
+					// only show 3 decimal places after the decimal point
+					return inputNumber.substring(0, inputNumber.indexOf('.') + 4);
+				}
+				return inputNumber;
+			}
+		}
+
+		if (!magnitudeIsGreaterThanOne) {
+			// Find first non zero thing after the decimal and show 3 decimal places after it.
+			int firstNonZeroIndex = 0;
+			for (int i = 0; i < numberLength; i++) {
+				if ((inputNumber.charAt(i) == '-') || (inputNumber.charAt(i) == '.') || (inputNumber.charAt(i) == '0')) {
+					continue;
+				}
+				firstNonZeroIndex = i;
+				break;
+			}
+			if (numberLength - firstNonZeroIndex > 5) {
+				return inputNumber.substring(0, firstNonZeroIndex + 4);
+			}
+			return inputNumber;
+		}
+		return inputNumber;
 	}
 
 	@DELETE
