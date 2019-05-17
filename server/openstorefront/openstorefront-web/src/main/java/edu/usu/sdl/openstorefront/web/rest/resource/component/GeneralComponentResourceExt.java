@@ -1004,86 +1004,15 @@ public abstract class GeneralComponentResourceExt
 		}
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
 		if (componentDetail != null) {
-
 			for(ComponentAttributeView attrView : componentDetail.getAttributes()){
-				try {
-					// Try to cast... if this fails then catch the error.
-					BigDecimal bigDecimal = new BigDecimal(attrView.getCode());
-					String numericString = attrView.getCode();
-					numericString = crushNumericString(numericString);
-					attrView.setCodeDescription(numericString);
-				} catch (NumberFormatException e) {
-					continue;
-				}
+				attrView.setCodeDescription(service.getAttributeService().crushGeneralNumericString(attrView.getCode()));
 			}
-
 			return sendSingleEntityResponse(componentDetail);
 		} else if (componentPrint != null) {
 			return sendSingleEntityResponse(componentPrint);
 		} else {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-	}
-	
-	/**
-	 * This method will reduce the size of the inputNumber in a meaningful way
-	 * if it is possible to do so.
-	 * @param inputNumber 
-	 * @return The modified string if able to modify, otherwise return original inputNumber
-	 */
-	private static String crushNumericString(String inputNumber){
-
-		// If the number contains an E or e return.
-		if (inputNumber.indexOf('E') != -1) {
-			return inputNumber;
-		}
-		if (inputNumber.indexOf('e') != -1) {
-			return inputNumber;
-		}
-
-		Boolean magnitudeIsGreaterThanOne = false;
-		int numberLength = inputNumber.length();
-		
-		BigDecimal bigDecimalCast = new BigDecimal(inputNumber);
-		BigDecimal oneValue = new BigDecimal(1);
-		
-		int result = bigDecimalCast.abs().compareTo(oneValue);
-		// result =  0; if bigDecimalCast and oneValue are equal.
-		// result =  1; if bigDecimalCast is greater than oneValue.
-		// result = -1; if bigDecimalCast is less than oneValue.
-		
-		// Is bigDecimalCast greater than one?
-		if(result >= 0){
-			magnitudeIsGreaterThanOne = true;
-		}
-		
-
-		if (magnitudeIsGreaterThanOne) {
-			if (inputNumber.indexOf('.') != -1) {
-				if ((numberLength - inputNumber.indexOf('.')) > 5) {
-					// only show 3 decimal places after the decimal point
-					return inputNumber.substring(0, inputNumber.indexOf('.') + 4);
-				}
-				return inputNumber;
-			}
-		}
-
-		if (!magnitudeIsGreaterThanOne) {
-			// Find first non zero thing after the decimal and show 3 decimal places after it.
-			int firstNonZeroIndex = 0;
-			for (int i = 0; i < numberLength; i++) {
-				if ((inputNumber.charAt(i) == '-') || (inputNumber.charAt(i) == '.') || (inputNumber.charAt(i) == '0')) {
-					continue;
-				}
-				firstNonZeroIndex = i;
-				break;
-			}
-			if (numberLength - firstNonZeroIndex > 5) {
-				return inputNumber.substring(0, firstNonZeroIndex + 4);
-			}
-			return inputNumber;
-		}
-		return inputNumber;
 	}
 
 	@DELETE

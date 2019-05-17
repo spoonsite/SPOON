@@ -71,6 +71,14 @@ public interface AttributeService
 	 * @return true if code the code exists for the given type
 	 */
 	public Boolean checkIfCodeExistsForType(String type, String code);
+	
+	/**
+	 * This method will reduce the size of the inputNumber in a meaningful way
+	 * if it is possible to do so.
+	 * @param inputNumber 
+	 * @return The modified string if able to modify, otherwise return original inputNumber
+	 */
+	public String crushGeneralNumericString(String inputNumber);
 
 	/**
 	 * Gets the codes for a type Note active codes are cached.
