@@ -73,8 +73,7 @@ public interface AttributeService
 	public Boolean checkIfCodeExistsForType(String type, String code);
 	
 	/**
-	 * This method will reduce the size of the inputNumber in a meaningful way
-	 * if it is possible to do so.
+	 * Crush the size of inputNumber in a meaningful way if it is possible to do so.
 	 * 
 	 * @param inputNumber 
 	 * @return The modified string if able to modify, otherwise return original inputNumber
