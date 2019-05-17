@@ -5,11 +5,7 @@ DefaultContentLanguage = "en"
 pygmentsCodeFences = true
 pygmentsStyle = "monokai"
 
-<<<<<<< HEAD
 title = "SPOON Site Documentation"
-=======
-title = "Open Storefront Documentation"
->>>>>>> parent of 65610377e... SPOON-972 Add simple stylistic improvements for readability of docs, imported from previous Hugo assignments given by Ryan F
 theme = "docdock"
 #publishDir = "/build"
 enableGitInfo = "true"

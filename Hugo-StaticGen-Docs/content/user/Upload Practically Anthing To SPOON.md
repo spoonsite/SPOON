@@ -10,7 +10,6 @@ SPOON site is a free, effective way to advertise your small satellite part to th
 
 **tl;dr** - You can now bulk upload any kind of file directly to SPOON, and workers at SPOON will enter your setup SPOON part entries for you.
 
-<<<<<<< HEAD
 1. Sign up, if you haven't already -
 ![Lock Screen of Spoon](/images/BulkUpload/login.png)
 2. Login, and go to "User Tools"
@@ -29,9 +28,3 @@ published on SPOON, click "Review Submission", and then CLICK Submit For Approva
 ![The User Tools button](/images/BulkUpload/final.png)
 9. Hereafter you should recieve emails detailing where your entry is in the approval process. Your entry will be seen by a Subject Matter Expert(SME), who is generally somone in the aerospace industry (typically an employee of NASA or AFRL). This ensures that there are no basic or obvious error in parts submittted to SPOONsite, increasing qualitiy and relability for the users who use it to find parts for their spacecraft. Upon his/her approval, your part will be viewable on SPOONsite. You will get emails informing you as your submission passes layers of approval, and after the last reviewer has signed off on your part you will recieve an email stating that "The submission has been approved and is now a searchable entry on the spoon site.". 
 
-=======
-Fortunately, you can now bulk upload any kind of file directly to SPOON, and SPOON's administrators will enter your setup SPOON part entries for you!
-[see the ponies](www.example.com "What is this")
-
-![Workplan Creation Tool](/images/AppAdmin/AddWorkplan.JPG)
->>>>>>> parent of 65610377e... SPOON-972 Add simple stylistic improvements for readability of docs, imported from previous Hugo assignments given by Ryan F
