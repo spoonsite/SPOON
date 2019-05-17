@@ -4,7 +4,12 @@ description = "Bulk Upload Instructions - upload pdfs, Excel spreadsheets, etc, 
 weight = 1
 +++
 
-You can now bulk upload any kind of file to SPOON inside of a zipped folder. SPOON support will enter your SPOON part entries for you. This is useful if you have many parts or enter in SPOON, and you already have their details in files of varying type. File types could be files with .pdf, .docx, .xls, .xml, extensions, and more. 
+
+
+
+You can bulk upload any kind of file to SPOON inside of a zipped folder.<!--more--> 
+
+SPOON support will enter your SPOON part entries for you. This is useful if you have many parts to enter in SPOON, and you already have their details in files of varying type. File types could be files with .pdf, .docx, .xls, .xml, extensions, and more. 
 
 1. Sign up, if you haven't already.
 ![Lock Screen of Spoon](/images/BulkUpload/login.png)
