@@ -16,33 +16,46 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 
 /**
  *
  * @author bmichaelis
+ * @author dshurtleff
  */
-@APIDescription("Search options are set by the application administrator.")
+@APIDescription("Search options controls which fields the index search searches.")
 public class SearchOptions
 		extends StandardEntity<SearchOptions>
 {
-	private Boolean globalFlag;
 
 	@PK(generated = true)
 	private String searchOptionsId;
 
+	private Boolean globalFlag;
+
 	@APIDescription("Flag for using Component organizations in searches")
-	private Boolean canUseOrganizationsInSearch;
+	@ConsumeField
+	private Boolean searchOrganization;
 
 	@APIDescription("Flag for using Component name in searches")
-	private Boolean canUseNameInSearch;
+	@ConsumeField
+	private Boolean searchName;
 
 	@APIDescription("Flag for using Component Description in searches")
-	private Boolean canUseDescriptionInSearch;
-	
+	@ConsumeField
+	private Boolean searchDescription;
+
+	@APIDescription("Flag for using Component Attributes in searches")
+	@ConsumeField
+	private Boolean searchAttributes;
+
+	@APIDescription("Flag for using Component Tags in searches")
+	@ConsumeField
+	private Boolean searchTags;
+
 	public SearchOptions()
 	{
-
 	}
 
 	@Override
@@ -51,11 +64,11 @@ public class SearchOptions
 		super.updateFields(entity);
 		SearchOptions searchOptionsModel = (SearchOptions) entity;
 
-		setGlobalFlag(searchOptionsModel.getGlobalFlag());
-		setSearchOptionsId(searchOptionsModel.getSearchOptionsId());
-		setCanUseOrganizationsInSearch(searchOptionsModel.getCanUseOrganizationsInSearch());
-		setCanUseNameInSearch(searchOptionsModel.getCanUseNameInSearch());
-		setCanUseDescriptionInSearch(searchOptionsModel.getCanUseDescriptionInSearch());
+		this.setSearchOrganization(searchOptionsModel.getSearchOrganization());
+		this.setSearchName(searchOptionsModel.getSearchName());
+		this.setSearchDescription(searchOptionsModel.getSearchDescription());
+		this.setSearchAttributes(searchOptionsModel.getSearchAttributes());
+		this.setSearchTags(searchOptionsModel.getSearchTags());
 	}
 
 	public Boolean getGlobalFlag()
@@ -68,7 +81,6 @@ public class SearchOptions
 		this.globalFlag = globalFlag;
 	}
 
-
 	public String getSearchOptionsId()
 	{
 		return searchOptionsId;
@@ -78,35 +90,55 @@ public class SearchOptions
 	{
 		this.searchOptionsId = searchOptionsId;
 	}
-	
-	public Boolean getCanUseOrganizationsInSearch()
+
+	public Boolean getSearchOrganization()
 	{
-		return canUseOrganizationsInSearch;
+		return searchOrganization;
 	}
 
-	public void setCanUseOrganizationsInSearch(Boolean canUseOrganizationsInSearch)
+	public void setSearchOrganization(Boolean searchOrganization)
 	{
-		this.canUseOrganizationsInSearch = canUseOrganizationsInSearch;
+		this.searchOrganization = searchOrganization;
 	}
 
-	public Boolean getCanUseNameInSearch()
+	public Boolean getSearchName()
 	{
-		return canUseNameInSearch;
+		return searchName;
 	}
 
-	public void setCanUseNameInSearch(Boolean canUseNameInSearch)
+	public void setSearchName(Boolean searchName)
 	{
-		this.canUseNameInSearch = canUseNameInSearch;
+		this.searchName = searchName;
 	}
 
-	public Boolean getCanUseDescriptionInSearch()
+	public Boolean getSearchDescription()
 	{
-		return canUseDescriptionInSearch;
+		return searchDescription;
 	}
 
-	public void setCanUseDescriptionInSearch(Boolean canUseDescriptionInSearch)
+	public void setSearchDescription(Boolean searchDescription)
 	{
-		this.canUseDescriptionInSearch = canUseDescriptionInSearch;
+		this.searchDescription = searchDescription;
 	}
-	
+
+	public Boolean getSearchAttributes()
+	{
+		return searchAttributes;
+	}
+
+	public void setSearchAttributes(Boolean searchAttributes)
+	{
+		this.searchAttributes = searchAttributes;
+	}
+
+	public Boolean getSearchTags()
+	{
+		return searchTags;
+	}
+
+	public void setSearchTags(Boolean searchTags)
+	{
+		this.searchTags = searchTags;
+	}
+
 }

@@ -102,7 +102,7 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public SearchOptions getSearchOptions()
+	public SearchOptions getGlobalSearchOptions()
 	{
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
@@ -112,17 +112,31 @@ public class SearchServiceImpl
 		if (searchOptions == null) {
 			// Return the default.
 			searchOptions = new SearchOptions();
-			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
-			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
-			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+			searchOptions.setSearchDescription(Boolean.TRUE);
+			searchOptions.setSearchName(Boolean.TRUE);
+			searchOptions.setSearchOrganization(Boolean.TRUE);
+			searchOptions.setSearchAttributes(Boolean.TRUE);
+			searchOptions.setSearchTags(Boolean.TRUE);
 		}
 		return searchOptions;
 	}
 
 	@Override
-	public void saveSearchOptions(SearchOptions searchOptions)
+	public void saveGlobalSearchOptions(SearchOptions searchOptions)
 	{
-		searchOptions.save();
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		SearchOptions existing = searchOptionsExample.find();
+		if (existing != null) {
+			existing.updateFields(searchOptions);
+			getPersistenceService().persist(existing);
+		} else {
+			searchOptions.setSearchOptionsId(getPersistenceService().generateId());
+			searchOptions.setGlobalFlag(Boolean.TRUE);
+			searchOptions.populateBaseCreateFields();
+			getPersistenceService().persist(searchOptions);
+		}
 	}
 
 	@Override
