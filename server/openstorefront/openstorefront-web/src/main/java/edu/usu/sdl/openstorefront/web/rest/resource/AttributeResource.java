@@ -271,7 +271,7 @@ public class AttributeResource
 	 * This method will reduce the size of the inputNumber in a meaningful way
 	 * if it is possible to do so.
 	 * @param inputNumber 
-	 * @return 
+	 * @return The modified string if able to modify, otherwise return original inputNumber
 	 */
 	private static String crushGeneralNumericString(String inputNumber)
 	{

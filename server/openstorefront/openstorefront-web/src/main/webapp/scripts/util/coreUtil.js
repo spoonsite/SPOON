@@ -1220,6 +1220,7 @@ var CoreUtil = {
 	 * This method will check if the inputNumber is actually a number
 	 * and if it is, it will reduce it's length in a meaningful way.
 	 * @param {String} inputNumber 
+	 * @returns {String} The modified string if able to modify, otherwise return original inputNumber
 	 */
 	crushNumericString: function(inputNumber) {
 
