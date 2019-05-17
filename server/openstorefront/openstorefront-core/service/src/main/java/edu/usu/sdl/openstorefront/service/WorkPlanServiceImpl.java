@@ -737,6 +737,9 @@ public class WorkPlanServiceImpl
 			element = OSFCacheManager.getWorkPlanTypeCache().get(componentType);
 			if (element != null) {
 				workPlan = (WorkPlan) element.getObjectValue();
+			} else {
+				Element cacheElement = new Element(componentType, null);
+				OSFCacheManager.getWorkPlanTypeCache().put(cacheElement);
 			}
 		}
 

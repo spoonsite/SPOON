@@ -207,6 +207,7 @@ public class SectionTemplateExporter
 				});
 				for (ContentSectionMedia media : sectionMedia) {
 					media.save();
+					service.getRepoFactory().getMediaFileRepo().handleMediaFileSave(service.getPersistenceService(), media.getFile());
 				}
 
 				TFile mediaDir = new TFile(archiveBasePath + DATA_SECTION_MEDIA_DIR);

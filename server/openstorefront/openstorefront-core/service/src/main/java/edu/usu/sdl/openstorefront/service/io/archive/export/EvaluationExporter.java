@@ -217,6 +217,7 @@ public class EvaluationExporter
 							});
 							for (ContentSectionMedia media : allMediaRecords) {
 								media.save();
+								service.getRepoFactory().getMediaFileRepo().handleMediaFileSave(service.getPersistenceService(), media.getFile());
 							}
 
 						} catch (Exception ex) {
