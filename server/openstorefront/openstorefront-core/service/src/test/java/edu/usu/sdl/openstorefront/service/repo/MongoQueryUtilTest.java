@@ -13,26 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.service.repo.api;
+package edu.usu.sdl.openstorefront.service.repo;
 
-import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
+import edu.usu.sdl.openstorefront.core.util.MediaFileType;
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
  * @author dshurtleff
  */
-public interface MediaFileRepo
+public class MongoQueryUtilTest
 {
 
-	/**
-	 * Orient will create a Media file collection/table automatically However,
-	 * Mongo see it as embedded which is fine but the application is set to
-	 * query the Media files as if it was a separate table. This is used to
-	 * normalize the behavior
-	 *
-	 * @param mediaFile
-	 */
-	public void handleMediaFileSave(PersistenceService persistenceService, MediaFile mediaFile);
+	@Test
+	public void checkMediaFileQuery()
+	{
+		MediaFile example = new MediaFile();
+		example.setFileName("Test.txt");
+		example.setFileType(MediaFileType.GENERAL);
+
+		MongoQueryUtil mongoQueryUtil = new MongoQueryUtil(null);
+
+		Map<String, Object> parameters = mongoQueryUtil.generateFieldMap(example);
+
+		Assert.assertEquals("GENERAL", parameters.get("fileType"));
+
+	}
 
 }

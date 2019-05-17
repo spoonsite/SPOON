@@ -461,6 +461,11 @@ public class SubComponentServiceImpl
 			componentService.getChangeLogService().addEntityChange(media);
 		}
 
+		//handle media file (make sure it's saved; in-cases of imports)
+		if (media.getFile() != null) {
+			componentService.getRepoFactory().getMediaFileRepo().handleMediaFileSave(persistenceService, media.getFile());
+		}
+
 		if (updateLastActivity) {
 			updateComponentLastActivity(media.getComponentId());
 		}
@@ -588,6 +593,11 @@ public class SubComponentServiceImpl
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 			componentService.getChangeLogService().addEntityChange(resource);
+		}
+
+		//handle media file (make sure it's saved; in-cases of imports)
+		if (resource.getFile() != null) {
+			componentService.getRepoFactory().getMediaFileRepo().handleMediaFileSave(persistenceService, resource.getFile());
 		}
 
 		if (updateLastActivity) {
@@ -861,7 +871,7 @@ public class SubComponentServiceImpl
 
 		Path path = Paths.get(type.getPath() + "/" + media.getFileName());
 		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
-		componentService.getRepoFactory().getMediaFileRepo().handleMediFileSave(persistenceService, media);
+		componentService.getRepoFactory().getMediaFileRepo().handleMediaFileSave(persistenceService, media);
 		return media;
 	}
 

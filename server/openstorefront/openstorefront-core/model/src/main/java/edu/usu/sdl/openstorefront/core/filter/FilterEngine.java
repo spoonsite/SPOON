@@ -102,9 +102,11 @@ public class FilterEngine
 	{
 		if (isFilterable(dataItems)) {
 
-			for (T data : dataItems) {
-				if (filter(data, checkParentComponent) == null) {
-					System.out.println("Filtered: " + data);
+			if (LOG.isLoggable(Level.FINEST)) {
+				for (T data : dataItems) {
+					if (filter(data, checkParentComponent) == null) {
+						LOG.log(Level.FINEST, () -> "Filtered: " + data);
+					}
 				}
 			}
 

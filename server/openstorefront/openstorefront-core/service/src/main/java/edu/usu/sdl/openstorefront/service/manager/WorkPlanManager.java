@@ -132,7 +132,8 @@ public class WorkPlanManager
 			component = (Component) entityEventModel.getEntityChanged();
 		}
 
-		if (component != null) {
+		if (component != null && (!EntityEventType.DELETE.equals(entityEventModel.getEventType())
+				&& !EntityEventType.ENTRY_DELETE.equals(entityEventModel.getEventType()))) {
 			ServiceProxy service = ServiceProxy.getProxy();
 			WorkPlanLink workPlanLink = service.getWorkPlanService().getWorkPlanForComponent(component.getComponentId());
 

@@ -267,7 +267,7 @@ public class SubmissionFormServiceImpl
 			mediaFile.setFileType(MediaFileType.MEDIA);
 			Path path = Paths.get(MediaFileType.MEDIA.getPath(), mediaFile.getFileName());
 			Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
-			getRepoFactory().getMediaFileRepo().handleMediFileSave(getPersistenceService(), mediaFile);
+			getRepoFactory().getMediaFileRepo().handleMediaFileSave(getPersistenceService(), mediaFile);
 
 			userSubmissionMedia.setFile(mediaFile);
 			userSubmissionMedia.populateBaseCreateFields();

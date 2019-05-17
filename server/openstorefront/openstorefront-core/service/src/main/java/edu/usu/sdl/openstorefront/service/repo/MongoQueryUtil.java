@@ -430,6 +430,10 @@ public class MongoQueryUtil
 
 					Object value = field.get(example);
 					if (value != null) {
+						if (value instanceof Enum<?>) {
+							value = value.toString();
+						}
+
 						GenerateStatementOption fieldOperation = generateStatementOption;
 						if (fieldOptions != null && fieldOptions.containsKey(field.toString())) {
 							fieldOperation = fieldOptions.get(field.toString());

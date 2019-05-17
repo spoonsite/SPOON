@@ -258,7 +258,7 @@ public class ContentSectionServiceImpl
 		media.setFileType(MediaFileType.MEDIA);
 		Path path = Paths.get(MediaFileType.MEDIA.getPath() + "/" + media.getFileName());
 		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
-		getRepoFactory().getMediaFileRepo().handleMediFileSave(getPersistenceService(), media);
+		getRepoFactory().getMediaFileRepo().handleMediaFileSave(getPersistenceService(), media);
 		return media;
 	}
 

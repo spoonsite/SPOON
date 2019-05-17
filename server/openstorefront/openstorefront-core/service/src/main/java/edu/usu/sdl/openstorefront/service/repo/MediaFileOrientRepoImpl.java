@@ -29,7 +29,7 @@ public class MediaFileOrientRepoImpl
 {
 
 	@Override
-	public void handleMediFileSave(PersistenceService persistenceService, MediaFile mediaFile)
+	public void handleMediaFileSave(PersistenceService persistenceService, MediaFile mediaFile)
 	{
 		//pass through;  Intentionally blank as there is nothing to do.
 	}

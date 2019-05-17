@@ -29,7 +29,7 @@ public class MediaFileMongoRepoImpl
 {
 
 	@Override
-	public void handleMediFileSave(PersistenceService persistenceService, MediaFile mediaFile)
+	public void handleMediaFileSave(PersistenceService persistenceService, MediaFile mediaFile)
 	{
 		persistenceService.persist(mediaFile);
 	}
