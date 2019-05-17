@@ -73,6 +73,10 @@
 									//var html = '<div id="print" onclick="window.focus();window.print();"></div>';
 									//	html += Ext.getCmp('contentInfo').body.getHtml();									
 									var html = Ext.getCmp('contentInfo').body.getHtml();
+
+									console.log(html);
+
+									var katexStyle = "<style>.katex-mathml {visibility: hidden;display: none;}</style>";
 									
 									if (Ext.isIE) {
 										var printForm = Ext.getDom('printForm');
@@ -85,11 +89,12 @@
 										}	
 										xtoken.value = token;
 										
-										var completeHtml = '<!DOCTYPE html> ' + html;
+										var completeHtml = '<!DOCTYPE html> ' + katexStyle + html;
 										
 										printContent.value = completeHtml;										
 										printForm.submit();
-									} else {									
+									} else {
+										html = katexStyle + html;						
 										frame.contentWindow.document.open();
 										frame.contentWindow.document.write(html);
 										frame.contentWindow.document.close();

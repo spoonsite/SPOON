@@ -179,7 +179,6 @@ public class HelpImporter
 		if (helpSection != null) {
 			addHelpSection(helpSections, helpSection);
 		}
-
 		return helpSections;
 	}
 
