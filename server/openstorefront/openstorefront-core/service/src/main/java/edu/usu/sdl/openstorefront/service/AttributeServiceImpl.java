@@ -69,6 +69,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -132,6 +133,67 @@ public class AttributeServiceImpl
 			}
 		}
 		return false;
+	}
+	
+	@Override 
+	public String crushGeneralNumericString(String inputNumber){
+		try {
+			// Try to cast... if this fails then catch the error.
+			BigDecimal bigDecimal = new BigDecimal(inputNumber);
+		} catch (NumberFormatException e) {
+			return inputNumber;
+		}
+		// If the number contains an E or e return.
+		if (inputNumber.indexOf('E') != -1) {
+			return inputNumber;
+		}
+		if (inputNumber.indexOf('e') != -1) {
+			return inputNumber;
+		}
+
+		Boolean magnitudeIsGreaterThanOne = false;
+		int numberLength = inputNumber.length();
+		
+		BigDecimal bigDecimalCast = new BigDecimal(inputNumber);
+		BigDecimal oneValue = new BigDecimal(1);
+		
+		int result = bigDecimalCast.abs().compareTo(oneValue);
+		// result =  0; if bigDecimalCast and oneValue are equal.
+		// result =  1; if bigDecimalCast is greater than oneValue.
+		// result = -1; if bigDecimalCast is less than oneValue.
+		
+		// Is bigDecimalCast greater than one?
+		if(result >= 0){
+			magnitudeIsGreaterThanOne = true;
+		}
+		
+
+		if (magnitudeIsGreaterThanOne) {
+			if (inputNumber.indexOf('.') != -1) {
+				if ((numberLength - inputNumber.indexOf('.')) > 5) {
+					// only show 3 decimal places after the decimal point
+					return inputNumber.substring(0, inputNumber.indexOf('.') + 4);
+				}
+				return inputNumber;
+			}
+		}
+
+		if (!magnitudeIsGreaterThanOne) {
+			// Find first non zero thing after the decimal and show 3 decimal places after it.
+			int firstNonZeroIndex = 0;
+			for (int i = 0; i < numberLength; i++) {
+				if ((inputNumber.charAt(i) == '-') || (inputNumber.charAt(i) == '.') || (inputNumber.charAt(i) == '0')) {
+					continue;
+				}
+				firstNonZeroIndex = i;
+				break;
+			}
+			if (numberLength - firstNonZeroIndex > 5) {
+				return inputNumber.substring(0, firstNonZeroIndex + 4);
+			}
+			return inputNumber;
+		}
+		return inputNumber;
 	}
 
 	@Override

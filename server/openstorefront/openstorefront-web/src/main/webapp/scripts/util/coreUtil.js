@@ -1214,5 +1214,64 @@ var CoreUtil = {
 		} else {
 			return "";
 		}
+	},
+
+	/**
+	 * This method will check if the inputNumber is actually a number
+	 * and if it is, it will reduce it's length in a meaningful way.
+	 * 
+	 * @param {String} inputNumber 
+	 * @returns {String} The modified string if able to modify, otherwise return original inputNumber
+	 */
+	crushNumericString: function(inputNumber) {
+
+		// If inputNumber is not a number return.
+		if(isNaN(inputNumber)){
+			return inputNumber;
+		}
+		// If it contains an E or e don't touch it and return.
+		if(inputNumber.indexOf('E') != -1){
+			return inputNumber;
+		}
+		if(inputNumber.indexOf('e') != -1){
+			return inputNumber;
+		}
+		
+		var magnitudeIsGreaterThanOne = false;
+		var numberLength = inputNumber.length;
+
+		// Is the absolute value of this number bigger than one?
+		if(Math.abs(inputNumber) > 1){
+			magnitudeIsGreaterThanOne = true;
+		}
+
+		// If it is take this route
+		if(magnitudeIsGreaterThanOne){
+			if(inputNumber.indexOf('.') != -1){
+				if((numberLength - inputNumber.indexOf('.')) > 5){
+					// only show 3 decimal places after the decimal point
+					return inputNumber.slice(0, inputNumber.indexOf('.') + 4);
+				}
+				return inputNumber;
+			}
+		}
+
+		// Otherwise take this route
+		if(!magnitudeIsGreaterThanOne){
+			// Find first non zero thing after the decimal and show 3 decimal places after it.
+			var firstNonZeroIndex;
+			for(var i = 0; i < numberLength; i++){
+				if((inputNumber[i] == '-') || (inputNumber[i] == '.') || (inputNumber[i] == '0')){
+					continue;
+				}
+				firstNonZeroIndex = i;
+				break;
+			}
+			if(numberLength - firstNonZeroIndex > 5){
+				return inputNumber.slice(0, firstNonZeroIndex + 4);
+			}
+			return inputNumber;
+		}
+		return inputNumber;
 	}
 };
