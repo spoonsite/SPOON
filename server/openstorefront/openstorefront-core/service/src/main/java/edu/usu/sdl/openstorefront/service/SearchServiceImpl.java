@@ -137,6 +137,7 @@ public class SearchServiceImpl
 			searchOptions.populateBaseCreateFields();
 			getPersistenceService().persist(searchOptions);
 		}
+		OSFCacheManager.getSearchCache().removeAll();
 	}
 
 	@Override
