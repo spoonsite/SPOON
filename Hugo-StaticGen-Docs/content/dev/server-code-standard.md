@@ -4,6 +4,9 @@ description = ""
 weight = 7
 +++
 
+These are special notes when making additions to the server-side code.
+<!--more-->
+
 ## Java Style Guide 
 
 For most part applying the IDE Formating and it's default warning are sufficient 

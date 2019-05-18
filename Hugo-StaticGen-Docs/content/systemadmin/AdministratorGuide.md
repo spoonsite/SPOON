@@ -1,8 +1,11 @@
-+++
+ +++
 title = "Administrator Guide"
 description = ""
 weight = 4
 +++
+
+This article gives further instructions on setting up and configuring the website.
+<!--more-->
 
 
 # 1. Other Guides

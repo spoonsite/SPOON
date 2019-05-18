@@ -4,6 +4,9 @@ description = ""
 weight = 3
 +++
 
+These are the agreed-upon standards for this project.
+<!--more-->
+
 ## Style
 
 Currently supporting IE 11, EDGE, Chrome, Firefox (latest LTS release)

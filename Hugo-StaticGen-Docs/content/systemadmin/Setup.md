@@ -5,6 +5,10 @@ weight = 1
 markup = "mmark"
 +++
 
+
+These are instructions on how to get an instance of the site to run on your personal machine.
+<!--more-->
+
 # 1.  Installation
 
 ## 1.1  High level instructions for a fresh install

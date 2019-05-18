@@ -4,6 +4,8 @@ description = ""
 weight = 2
 +++
  
+ This guide reviews how to create and manage a workplan.
+ <!--more-->
 
 ## 1. Create a new Workplan
 

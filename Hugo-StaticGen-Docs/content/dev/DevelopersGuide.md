@@ -4,6 +4,9 @@ description = "Developer Setup Guide"
 weight = 1
 +++
 
+This guide goes over various issues developers would be concerned with, such as how to setup their IDE, what libraries are used, etc.
+<!--more-->
+
 # 1. Internal Development
 
 See [User Interface Guide](/dev/uiguide), [Server Code Standard](/dev/server-code-standard), and [Front-end Code Standards](/dev/front-end-code-standard) for Coding and Style guides.
