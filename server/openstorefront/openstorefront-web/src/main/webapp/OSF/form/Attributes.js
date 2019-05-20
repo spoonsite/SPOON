@@ -203,6 +203,9 @@ Ext.define('OSF.form.Attributes', {
 											form.reset();
 										}
 									});
+
+									// re-disable Preferred Units combobox
+									attributePanel.attributeGrid.queryById('preferredUnitCB').setDisabled(true)
 								}
 							}
 						},
@@ -341,7 +344,15 @@ Ext.define('OSF.form.Attributes', {
 														});
 													});
 												}																								
-												preferredUnits.getStore().loadRawData(unitValues);
+												// If there are preferred, alt units possible, make those selectable
+												if (unitValues.length > 0 && record.data.attributeUnit){
+													preferredUnits.getStore().loadRawData(unitValues);
+													preferredUnits.setDisabled(false);
+												}
+												else {
+													preferredUnits.setDisabled(true);
+												}
+												
 												
 											} else {
 												cbox.getStore().removeAll();
@@ -397,7 +408,8 @@ Ext.define('OSF.form.Attributes', {
 							displayField: 'label',
 							labelWidth: 150,							
 							store: Ext.create('Ext.data.Store', {
-							})
+							}),
+							disabled: true						
 						},						
 						{
 							xtype: 'textarea',
@@ -508,6 +520,9 @@ Ext.define('OSF.form.Attributes', {
 			
 			//make sure this is set since the change event on the attribute type will effect this
 			attributePanel.attributeGrid.queryById('preferredUnitCB').setValue(record.get('vendorUnitOnly'));
+			if(record.get('unit')){
+				attributePanel.attributeGrid.queryById('preferredUnitCB').setDisabled(false);
+			}
 		};
 
 		attributePanel.add(attributePanel.attributeGrid);
