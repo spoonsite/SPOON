@@ -267,10 +267,18 @@
 
 			var getRelevantDataPiece = function(vitalsList, vitalNameToGet, vitalUnit){
 
+				// Add multiples and sutff
+
 				var foundVal = false;
+				console.log('vitalsList1');
+				console.log(vitalsList);
+				console.log('vitalNameToGet');
+				console.log(vitalNameToGet);
+				console.log('vitalUnit');
+				console.log(vitalUnit);
 				vitalsList.forEach(function(entryVital){
-					if(entryVital.label == vitalNameToGet){
-						foundVal = entryVital.value;
+					if(entryVital.typeDescription == vitalNameToGet){
+						foundVal = "<b>" + entryVital.codeDescription + CoreUtil.asciiToKatex(entryVital.unit) +"</b>"
 					}
 				});
 				if(foundVal){
@@ -327,8 +335,10 @@
 					rowString += vitalSetItem.name;
 					rowString += '</td>';
 					compViewArray.forEach(function(singleComponentView){
+						console.log('singleComponentView');
+						console.log(singleComponentView);
 						rowString += '<td>';
-						var tableElement = '<div class="tooltip">' + getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name, vitalSetItem.unit) + '<span class="tooltiptext">'+vitalSetItem.name+' of ' + singleComponentView.name + '</span></div>';
+						var tableElement = '<div class="tooltip">' + getRelevantDataPiece(singleComponentView.attributes, vitalSetItem.name, vitalSetItem.unit) + '<span class="tooltiptext">'+vitalSetItem.name+' of ' + singleComponentView.name + '</span></div>';
 						rowString += tableElement;
 						rowString += '</td>';
 					});
@@ -339,6 +349,8 @@
 			}
 
 			var buildHTMLTableFromData = function(compViewArray){
+				console.log('compViewArray');
+				console.log(compViewArray);
 
 				var htmlTableString = "";
 				htmlTableString += "<style>";
