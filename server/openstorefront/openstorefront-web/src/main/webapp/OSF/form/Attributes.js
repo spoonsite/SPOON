@@ -345,15 +345,13 @@ Ext.define('OSF.form.Attributes', {
 													});
 												}																								
 												// If there are preferred, alt units possible, make those selectable
-												if (unitValues.length > 0 && record.data.attributeUnit){
+												if (unitValues.length > 0 && record.data.attributeUnit) {
 													preferredUnits.getStore().loadRawData(unitValues);
 													preferredUnits.setDisabled(false);
 												}
 												else {
 													preferredUnits.setDisabled(true);
 												}
-												
-												
 											} else {
 												cbox.getStore().removeAll();
 												cbox.vtype = undefined;
@@ -520,7 +518,9 @@ Ext.define('OSF.form.Attributes', {
 			
 			//make sure this is set since the change event on the attribute type will effect this
 			attributePanel.attributeGrid.queryById('preferredUnitCB').setValue(record.get('vendorUnitOnly'));
-			if(record.get('unit')){ // only enable Preferred Unit combobox if would have selectable values
+			
+			// only enable Preferred Unit combobox if would have selectable values
+			if (record.get('unit')) { 
 				attributePanel.attributeGrid.queryById('preferredUnitCB').setDisabled(false);
 			}
 		};
