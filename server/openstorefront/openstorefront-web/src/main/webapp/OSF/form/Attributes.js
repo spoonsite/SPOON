@@ -520,7 +520,7 @@ Ext.define('OSF.form.Attributes', {
 			
 			//make sure this is set since the change event on the attribute type will effect this
 			attributePanel.attributeGrid.queryById('preferredUnitCB').setValue(record.get('vendorUnitOnly'));
-			if(record.get('unit')){
+			if(record.get('unit')){ // only enable Preferred Unit combobox if would have selectable values
 				attributePanel.attributeGrid.queryById('preferredUnitCB').setDisabled(false);
 			}
 		};
