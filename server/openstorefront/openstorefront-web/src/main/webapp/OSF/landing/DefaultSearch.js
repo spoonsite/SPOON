@@ -65,17 +65,10 @@ Ext.define('OSF.landing.DefaultSearch', {
 				var containerPanel = this;
 				var entryTypeCB = containerPanel.getComponent('entryType');
 
-				var searchElements = [
-					{
-						"searchType": 'INDEX',
-						"field": null,
-						"value": CoreUtil.searchQueryAdjustment(query),
-						"mergeCondition": "AND"
-					}
-				];
 
+				var subSearchElements = [];
 				Ext.Array.forEach(entryTypeCB.selectedItems, function (entryType) {
-					searchElements.push({
+					subSearchElements.push({
 						"searchType": "COMPONENT",
 						"field": 'componentType',
 						"value": entryType,
@@ -85,6 +78,16 @@ Ext.define('OSF.landing.DefaultSearch', {
 						"mergeCondition": "OR"
 					});
 				});
+				
+				var searchElements = [
+					{
+						"searchType": 'INDEX',
+						"field": null,
+						"value": CoreUtil.searchQueryAdjustment(query),
+						"mergeCondition": "AND",
+						"searchElements": subSearchElements
+					}
+				];				
 
 				var searchRequest;
 				if (entryTypeCB.selectedItems.length > 0) {

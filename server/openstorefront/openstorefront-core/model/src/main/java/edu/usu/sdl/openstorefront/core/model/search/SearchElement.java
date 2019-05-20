@@ -22,13 +22,16 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeConditi
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.NumberOperation;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.StringOperation;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author dshurtleff
  */
+@APIDescription("Contain the options for a search type. SearchElements can be nested using an list/array under (SearchElement).searchElements")
 public class SearchElement
 {
 
@@ -81,10 +84,14 @@ public class SearchElement
 	@ValidValueType(value = {}, enumClass = MergeCondition.class)
 	@ConsumeField
 	private MergeCondition mergeCondition = MergeCondition.OR;
-	
+
 	@APIDescription("Used to indicate whether or not to query all children")
 	@ConsumeField
 	private boolean searchChildren;
+
+	@APIDescription("Allows for Grouping of searches to perform more complex queries")
+	//This can't be a consume field as it will cause a loop in the api documentation processing
+	private List<SearchElement> searchElements = new ArrayList<>();
 
 	public SearchElement()
 	{
@@ -95,7 +102,7 @@ public class SearchElement
 	{
 		return "SearchElement{" + "searchType=" + searchType + ", field=" + field + ", value=" + value + ", keyField=" + keyField + ", keyValue=" + keyValue + ", startDate=" + startDate + ", endDate=" + endDate + ", caseInsensitive=" + caseInsensitive + ", numberOperation=" + numberOperation + ", stringOperation=" + stringOperation + ", mergeCondition=" + mergeCondition + "searchChildren=" + searchChildren + '}';
 	}
-	
+
 	public String getField()
 	{
 		return field;
@@ -206,7 +213,7 @@ public class SearchElement
 		this.mergeCondition = mergeCondition;
 	}
 
-	public void setSearchChildren(boolean searchChildren) 
+	public void setSearchChildren(boolean searchChildren)
 	{
 		this.searchChildren = searchChildren;
 	}
@@ -214,5 +221,15 @@ public class SearchElement
 	public boolean getSearchChildren()
 	{
 		return searchChildren;
+	}
+
+	public List<SearchElement> getSearchElements()
+	{
+		return searchElements;
+	}
+
+	public void setSearchElements(List<SearchElement> searchElements)
+	{
+		this.searchElements = searchElements;
 	}
 }

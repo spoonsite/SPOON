@@ -33,8 +33,8 @@ import edu.usu.sdl.openstorefront.core.model.search.ResultTagStat;
 import edu.usu.sdl.openstorefront.core.model.search.ResultTypeStat;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeCondition;
+import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
 import edu.usu.sdl.openstorefront.core.sort.RelevanceComparator;
@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
+import edu.usu.sdl.openstorefront.service.model.SearchHandlingResult;
 import edu.usu.sdl.openstorefront.service.search.ArchitectureSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.AttributeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.AttributeSetSearchHandler;
@@ -72,6 +73,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
@@ -127,7 +129,7 @@ public class SearchServiceImpl
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		SearchOptions existing = searchOptionsExample.find();
+		SearchOptions existing = searchOptionsExample.findProxy();
 		if (existing != null) {
 			existing.updateFields(searchOptions);
 			getPersistenceService().persist(existing);
@@ -270,83 +272,10 @@ public class SearchServiceImpl
 			}
 		}
 
-		//Keep order
-		List<SearchElement> indexSearches = new ArrayList<>();
-		List<BaseSearchHandler> handlers = new ArrayList<>();
-		for (SearchElement searchElement : searchModel.getSearchElements()) {
-			List<SearchElement> searchElements = new ArrayList<>();
-			searchElements.add(searchElement);
-			switch (searchElement.getSearchType()) {
-				case ARCHITECTURE:
-					handlers.add(new ArchitectureSearchHandler(searchElements));
-					break;
-				case ATTRIBUTE:
-					handlers.add(new AttributeSearchHandler(searchElements));
-					break;
-				case ATTRIBUTESET:
-					handlers.add(new AttributeSetSearchHandler(searchElements));
-					break;
-				case COMPONENT:
-					handlers.add(new ComponentSearchHandler(searchElements));
-					break;
-				case CONTACT:
-					handlers.add(new ContactSearchHandler(searchElements));
-					break;
-				case INDEX:
-					indexSearches.addAll(searchElements);
-					handlers.add(new IndexSearchHandler(searchElements));
-					break;
-				case REVIEW:
-					handlers.add(new ReviewSearchHandler(searchElements));
-					break;
-				case TAG:
-					handlers.add(new TagSearchHandler(searchElements));
-					break;
-				case USER_RATING:
-					handlers.add(new UserRatingSearchHandler(searchElements));
-					break;
-				case EVALUTATION_SCORE:
-					handlers.add(new EvaluationScoreSearchHandler(searchElements));
-					break;
-				case QUESTION:
-					handlers.add(new QuestionSearchHandler(searchElements));
-					break;
-				case QUESTION_RESPONSE:
-					handlers.add(new QuestionResponseSearchHandler(searchElements));
-					break;
-				case REVIEWCON:
-				case REVIEWPRO:
-					handlers.add(new ReviewProConSearchHandler(searchElements));
-					break;
-				case ENTRYTYPE:
-					handlers.add(new EntryTypeSearchHandler(searchElements));
-					break;
-				default:
-					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchElement.getSearchType(), "Add support; programming error");
-			}
-		}
+		SearchHandlingResult handlingResults = preformSearch(searchModel.getSearchElements(), MergeCondition.OR);
 
-		//validate
-		ValidationResult validationResultMain = new ValidationResult();
-		for (BaseSearchHandler handler : handlers) {
-			ValidationResult validationResult = handler.validate();
-			validationResultMain.merge(validationResult);
-		}
-
-		if (validationResultMain.valid()) {
-			//process and aggregate
-			List<String> componentIds = new ArrayList<>();
-			MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-			for (BaseSearchHandler handler : handlers) {
-				List<String> foundIds = handler.processSearch();
-
-				componentIds = mergeCondition.apply(componentIds, foundIds);
-
-				//merge
-				mergeCondition = handler.getNextMergeCondition();
-			}
-			Set<String> masterResults = new HashSet<>();
-			masterResults.addAll(componentIds);
+		if (handlingResults.getValidationResult().valid()) {
+			Set<String> masterResults = handlingResults.getFoundEntriesIds();
 
 			//get intermediate Results
 			if (!masterResults.isEmpty()) {
@@ -377,6 +306,7 @@ public class SearchServiceImpl
 					}
 				}
 				searchResult.getMeta().getResultTypeStats().addAll(stats.values());
+				List<String> componentIds = new ArrayList<>(masterResults);
 				SearchStatTable statTable = new SearchStatTable();
 				List<ResultOrganizationStat> organizationStats = statTable.getOrganizationStats(componentIds);
 				List<ResultTagStat> tagStats = statTable.getTagStats(componentIds);
@@ -394,7 +324,7 @@ public class SearchServiceImpl
 				}
 
 				List<String> idsToResolve = new ArrayList<>();
-				if (indexSearches.isEmpty()) {
+				if (handlingResults.getIndexSearchElements().isEmpty()) {
 					if (searchModel.getStartOffset() < intermediateViews.size() && searchModel.getMax() > 0) {
 						int count = 0;
 						for (int i = searchModel.getStartOffset(); i < intermediateViews.size(); i++) {
@@ -414,9 +344,9 @@ public class SearchServiceImpl
 				//resolve results
 				List<ComponentSearchView> views = getComponentService().getSearchComponentList(idsToResolve);
 
-				if (!indexSearches.isEmpty()) {
+				if (!handlingResults.getIndexSearchElements().isEmpty()) {
 					//only the first one counts
-					String indexQuery = indexSearches.get(0).getValue();
+					String indexQuery = handlingResults.getIndexSearchElements().get(0).getValue();
 					SearchServerManager.getInstance().getSearchServer().updateSearchScore(indexQuery, views);
 				}
 
@@ -429,7 +359,7 @@ public class SearchServiceImpl
 					Collections.sort(views, new RelevanceComparator<>());
 				}
 
-				if (!indexSearches.isEmpty()) {
+				if (!handlingResults.getIndexSearchElements().isEmpty()) {
 					views = windowData(views, searchModel.getStartOffset(), searchModel.getMax());
 				}
 
@@ -442,13 +372,119 @@ public class SearchServiceImpl
 				searchResult.getResults().addAll(views);
 			}
 		}
-		searchResult.setValidationResult(validationResultMain);
+		searchResult.setValidationResult(searchResult.getValidationResult());
 
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
 			Element element = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
 			OSFCacheManager.getSearchCache().put(element);
 		}
 		return searchResult;
+	}
+
+	private SearchHandlingResult preformSearch(List<SearchElement> searchElements, MergeCondition mergeCondition)
+	{
+		SearchHandlingResult searchResult = new SearchHandlingResult();
+
+		List<BaseSearchHandler> handlers = convertToSearchHandlers(searchElements);
+		searchResult.setIndexSearchElements(findAllIndexSearchHandlers(searchElements));
+		validateSearchHandlers(handlers);
+		processSearches(searchResult, handlers, mergeCondition);
+
+		return searchResult;
+	}
+
+	private List<BaseSearchHandler> convertToSearchHandlers(List<SearchElement> inSearchElements)
+	{
+		List<BaseSearchHandler> handlers = new ArrayList<>();
+		for (SearchElement searchElement : inSearchElements) {
+
+			switch (searchElement.getSearchType()) {
+				case ARCHITECTURE:
+					handlers.add(new ArchitectureSearchHandler(searchElement));
+					break;
+				case ATTRIBUTE:
+					handlers.add(new AttributeSearchHandler(searchElement));
+					break;
+				case ATTRIBUTESET:
+					handlers.add(new AttributeSetSearchHandler(searchElement));
+					break;
+				case COMPONENT:
+					handlers.add(new ComponentSearchHandler(searchElement));
+					break;
+				case CONTACT:
+					handlers.add(new ContactSearchHandler(searchElement));
+					break;
+				case INDEX:
+					handlers.add(new IndexSearchHandler(searchElement));
+					break;
+				case REVIEW:
+					handlers.add(new ReviewSearchHandler(searchElement));
+					break;
+				case TAG:
+					handlers.add(new TagSearchHandler(searchElement));
+					break;
+				case USER_RATING:
+					handlers.add(new UserRatingSearchHandler(searchElement));
+					break;
+				case EVALUTATION_SCORE:
+					handlers.add(new EvaluationScoreSearchHandler(searchElement));
+					break;
+				case QUESTION:
+					handlers.add(new QuestionSearchHandler(searchElement));
+					break;
+				case QUESTION_RESPONSE:
+					handlers.add(new QuestionResponseSearchHandler(searchElement));
+					break;
+				case REVIEWCON:
+				case REVIEWPRO:
+					handlers.add(new ReviewProConSearchHandler(searchElement));
+					break;
+				case ENTRYTYPE:
+					handlers.add(new EntryTypeSearchHandler(searchElement));
+					break;
+				default:
+					throw new OpenStorefrontRuntimeException("No handler defined for Search Type: " + searchElement.getSearchType(), "Add support; programming error");
+			}
+		}
+		return handlers;
+	}
+
+	private List<SearchElement> findAllIndexSearchHandlers(List<SearchElement> inSearchElements)
+	{
+		return inSearchElements
+				.stream()
+				.filter(s -> SearchType.INDEX.equals(s.getSearchType()))
+				.collect(Collectors.toList());
+	}
+
+	private ValidationResult validateSearchHandlers(List<BaseSearchHandler> searchHandlers)
+	{
+		ValidationResult validationResultMain = new ValidationResult();
+		for (BaseSearchHandler handler : searchHandlers) {
+			ValidationResult validationResult = handler.validate();
+			validationResultMain.merge(validationResult);
+		}
+
+		return validationResultMain;
+	}
+
+	private void processSearches(SearchHandlingResult searchResult, List<BaseSearchHandler> searchHandlers, MergeCondition mergeCondition)
+	{
+		//process and aggregate
+		List<String> componentIds = new ArrayList<>();
+		for (BaseSearchHandler handler : searchHandlers) {
+			List<String> foundIds = handler.processSearch();
+			componentIds = mergeCondition.apply(componentIds, foundIds);
+
+			//run sub-elements
+			if (!handler.getChildren().isEmpty()) {
+				SearchHandlingResult childrenResult = preformSearch(handler.getChildren(), MergeCondition.OR);
+				componentIds = handler.getTopMergeCondition().apply(componentIds, new ArrayList<>(childrenResult.getFoundEntriesIds()));
+			}
+
+			mergeCondition = handler.getNextMergeCondition();
+		}
+		searchResult.getFoundEntriesIds().addAll(componentIds);
 	}
 
 	private List<ComponentSearchView> windowData(List<ComponentSearchView> data, int offset, int max)

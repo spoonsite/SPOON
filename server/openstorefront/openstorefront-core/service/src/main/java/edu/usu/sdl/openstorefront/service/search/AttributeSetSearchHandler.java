@@ -19,7 +19,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,9 +35,9 @@ public class AttributeSetSearchHandler
 
 	private static final String ATTRIBUTE_CODE_SEPARATOR = ",";
 
-	public AttributeSetSearchHandler(List<SearchElement> searchElements)
+	public AttributeSetSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
@@ -46,13 +45,11 @@ public class AttributeSetSearchHandler
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		for (SearchElement searchElement : searchElements) {
-			if (StringUtils.isBlank(searchElement.getKeyField())) {
-				validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
-			}
-			if (StringUtils.isBlank(searchElement.getKeyValue())) {
-				validationResult.getRuleResults().add(getRuleResult("keyValue", "Required"));
-			}
+		if (StringUtils.isBlank(searchElement.getKeyField())) {
+			validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
+		}
+		if (StringUtils.isBlank(searchElement.getKeyValue())) {
+			validationResult.getRuleResults().add(getRuleResult("keyValue", "Required"));
 		}
 
 		return validationResult;
@@ -61,41 +58,35 @@ public class AttributeSetSearchHandler
 	@Override
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-		for (SearchElement searchElement : searchElements) {
 
-			List<ComponentAttribute> attributes = new ArrayList<>();
-			if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
-				String attributeCodes[] = searchElement.getKeyValue().split(ATTRIBUTE_CODE_SEPARATOR);
+		List<ComponentAttribute> attributes = new ArrayList<>();
+		if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
+			String attributeCodes[] = searchElement.getKeyValue().split(ATTRIBUTE_CODE_SEPARATOR);
 
-				ComponentAttribute componentAttributeExample = new ComponentAttribute();
-				componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-				ComponentAttributePk componentAttributePk = new ComponentAttributePk();
-				componentAttributePk.setAttributeType(searchElement.getKeyField());
-				componentAttributeExample.setComponentAttributePk(componentAttributePk);
+			ComponentAttribute componentAttributeExample = new ComponentAttribute();
+			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(searchElement.getKeyField());
+			componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
-				ComponentAttribute componentAttributeInExample = new ComponentAttribute();
-				ComponentAttributePk componentAttributeInPk = new ComponentAttributePk();
-				componentAttributeInPk.setAttributeCode(QueryByExample.STRING_FLAG);
-				componentAttributeInExample.setComponentAttributePk(componentAttributeInPk);
+			ComponentAttribute componentAttributeInExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributeInPk = new ComponentAttributePk();
+			componentAttributeInPk.setAttributeCode(QueryByExample.STRING_FLAG);
+			componentAttributeInExample.setComponentAttributePk(componentAttributeInPk);
 
-				QueryByExample<ComponentAttribute> queryByExampleCodes = new QueryByExample<>(componentAttributeExample);
-				queryByExampleCodes.setInExample(componentAttributeInExample);
-				queryByExampleCodes.getInExampleOption().getParameterValues().addAll(Arrays.asList(attributeCodes));
+			QueryByExample<ComponentAttribute> queryByExampleCodes = new QueryByExample<>(componentAttributeExample);
+			queryByExampleCodes.setInExample(componentAttributeInExample);
+			queryByExampleCodes.getInExampleOption().getParameterValues().addAll(Arrays.asList(attributeCodes));
 
-				attributes = serviceProxy.getPersistenceService().queryByExample(queryByExampleCodes);
+			attributes = serviceProxy.getPersistenceService().queryByExample(queryByExampleCodes);
 
-			}
-
-			List<String> results = new ArrayList<>();
-			for (ComponentAttribute attribute : attributes) {
-				results.add(attribute.getComponentId());
-			}
-			foundIds = mergeCondition.apply(foundIds, results);
-			mergeCondition = searchElement.getMergeCondition();
 		}
-		return foundIds;
+
+		List<String> results = new ArrayList<>();
+		for (ComponentAttribute attribute : attributes) {
+			results.add(attribute.getComponentId());
+		}
+		return results;
 	}
 
 }
