@@ -4,7 +4,7 @@ description = ""
 weight = 4
 +++
 
-This article gives further instructions on setting up and configuring the website.
+This article gives further instructions on setting up and configuring the web application.
 <!--more-->
 
 

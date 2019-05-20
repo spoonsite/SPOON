@@ -6,7 +6,7 @@ weight = 2
 +++
 
 
-This guide goes over the server and client architecture from a very high-level perspective. 
+This guide describes the high-level design of the server and client architecture. 
 <!--more-->
 
 # 1.  Client Architecture

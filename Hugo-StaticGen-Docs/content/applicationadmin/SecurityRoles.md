@@ -6,7 +6,7 @@ date = 2019-02-27T11:30:53-07:00
 markup = "mmark"
 +++
 
-Security Roles define what users get what permissions in the application.  Several default roles are set up with default permissions and are listed below.  These can be reset to default or altered as needed.  New roles can also be added.
+Security Roles define what permissions users get in the application.  Several default roles are set up with default permissions and are listed below.  These can be reset to default or altered as needed.  New roles can also be added.
 <!--more-->
 
 ## TOC

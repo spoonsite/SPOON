@@ -4,7 +4,7 @@ description = ""
 weight = 10
 +++
 
-This is a complete overview of the user interface used for, and process of making, an Evaluation on SPOON.
+This is a complete overview of the user interface to make an Evaluation on SPOON.
 <!--more-->
 **Note:** 2.6 Introduced some UI changes however, processes and concepts are the same.
 
