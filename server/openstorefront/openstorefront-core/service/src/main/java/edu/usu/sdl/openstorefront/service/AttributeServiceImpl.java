@@ -70,6 +70,8 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -144,11 +146,12 @@ public class AttributeServiceImpl
 			return inputNumber;
 		}
 		// If the number contains an E or e return.
+		Boolean inputNumberIsScientificNotation = false;
 		if (inputNumber.indexOf('E') != -1) {
-			return inputNumber;
+			inputNumberIsScientificNotation = true;
 		}
 		if (inputNumber.indexOf('e') != -1) {
-			return inputNumber;
+			inputNumberIsScientificNotation = true;
 		}
 
 		Boolean magnitudeIsGreaterThanOne = false;
@@ -167,7 +170,13 @@ public class AttributeServiceImpl
 			magnitudeIsGreaterThanOne = true;
 		}
 		
+		if(inputNumberIsScientificNotation){
+			inputNumber = bigDecimalCast.toPlainString();
+			numberLength = inputNumber.length();
+		}
 
+		BigDecimal formattedBigDecimal = new BigDecimal(0);
+		
 		if (magnitudeIsGreaterThanOne) {
 			if (inputNumber.indexOf('.') != -1) {
 				if ((numberLength - inputNumber.indexOf('.')) > 5) {
@@ -189,7 +198,8 @@ public class AttributeServiceImpl
 				break;
 			}
 			if (numberLength - firstNonZeroIndex > 5) {
-				return inputNumber.substring(0, firstNonZeroIndex + 4);
+				BigDecimal bd = new BigDecimal(Double.parseDouble(inputNumber.substring(0, firstNonZeroIndex + 4))).setScale(firstNonZeroIndex+1, RoundingMode.HALF_UP);
+				return Double.toString(bd.doubleValue());
 			}
 			return inputNumber;
 		}
