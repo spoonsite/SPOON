@@ -70,7 +70,6 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -174,8 +173,6 @@ public class AttributeServiceImpl
 			inputNumber = bigDecimalCast.toPlainString();
 			numberLength = inputNumber.length();
 		}
-
-		BigDecimal formattedBigDecimal = new BigDecimal(0);
 		
 		if (magnitudeIsGreaterThanOne) {
 			if (inputNumber.indexOf('.') != -1) {
