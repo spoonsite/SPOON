@@ -7,11 +7,9 @@ weight = 1
 
 
 
-Note: The user guide is the in application help system. The files are machine read so changes to content needs to follow these guidelines:
+The user guide is now in the application help system.
 <!--more-->
 
--  ~~[src root]/server/openstorefront/openstorefront-web/src/main/resources/userhelp.md~~ \[EDIT: Not updated for SPOON. \]
--  Sections are read from header to header
--  The header level determines the nesting level.  (Eg. h1, h2..etc)
--  Image locations are adjusted they should follow what is currently in the document
--  Set the security permission required on the header @ADMIN-SYSTEM-PAGE
+Navigate to the application help system by clicking on your username in the top right corner and selecting either "Help" or "Tutorials", depending on what you need instructions on doing. 
+
+![alt text](../../static/images/Screenshots/Private Notes.png "Logo Title Text 1")
