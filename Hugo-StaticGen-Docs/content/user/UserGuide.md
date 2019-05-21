@@ -12,4 +12,4 @@ The user guide is now in the application help system.
 
 Navigate to the application help system by clicking on your username in the top right corner and selecting either "Help" or "Tutorials", depending on what you need instructions on doing. 
 
-![alt text](../../static/images/Screenshots/Private Notes.png "Logo Title Text 1")
+![Where to get help](/images/Screenshots/helpsection.png "Where to get the Help Section")
