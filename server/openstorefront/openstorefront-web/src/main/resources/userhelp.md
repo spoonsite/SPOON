@@ -111,7 +111,13 @@ For more information see <a href="https://github.com/di2e/openstorefront/release
 
 * Various improvements to Entries admin page.
 
- 
+## 1.7 Release Notes for v2.8
+-----
+
+* Added a unit field to attributes.
+* Changed the format of the comparison view.
+* Added support for rendering units in a pretty format.
+* Added a bulk upload tool for zipped files.
 
 # 2. User Features
 ------
