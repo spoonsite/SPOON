@@ -6,6 +6,7 @@ weight = 5
 
 This guide provide help for importing data from external sources as well as 
 moving data from one instance to another instance.
+<!--more-->
 
 ## 1. Importing/Export  (Third parties)
 

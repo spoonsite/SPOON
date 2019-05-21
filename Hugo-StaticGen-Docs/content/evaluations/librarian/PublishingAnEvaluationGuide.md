@@ -4,9 +4,9 @@ description = ""
 weight = 14
 +++
 
-## Overview
 
 This guide goes over the different types of publishing and the various scenarios a librarian may run into when publishing an entry/evaluation.
+<!--more-->
 
 Different types of publishing:
 

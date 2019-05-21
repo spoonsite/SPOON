@@ -5,6 +5,10 @@ description = ""
 weight = 2
 +++
 
+
+This guide describes the high-level design of the server and client architecture. 
+<!--more-->
+
 # 1.  Client Architecture
 
 ## 1.1 Client Architecture Diagram
@@ -19,7 +23,6 @@ The client core structure is based on Ext.js which provides UI components and ut
 
 Added to that is application specific overrides and high-level components created to facilitate re-use.
 The application is composed by stripes layouts with a top-level page and fragment tool pages.
-
 # 2.  Server Architecture
 
 ## 2.1 Server Architecture Diagram

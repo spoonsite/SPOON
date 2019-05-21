@@ -6,6 +6,9 @@ hasMath = true
 markup = "mmark"
 +++
 
+This is the legend for commonly confused unit names and acronyms. 
+<!--more-->
+
 | Symbol           | Base unit                          | Description                                       |
 | ---------------- | ---------------------------------- | ------------------------------------------------- |
 | '$'              | US Dollar                          | 1 US dollar                                       |

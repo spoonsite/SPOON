@@ -4,6 +4,9 @@ description = ""
 weight = 6
 +++
 
+These are general guidelines on what the look of SPOON should be.
+<!--more-->
+
 ## General Items
 1. Remember this is a guide there can be variations as appropriate to the feature.  Focus on the usability and having a clear workflow.
 2. Dialog bodies should be padded 10px

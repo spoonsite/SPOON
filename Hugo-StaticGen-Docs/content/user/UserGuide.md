@@ -7,10 +7,9 @@ weight = 1
 
 
 
-Note: The user guide is the in application help system. The files are machine read so changes to content needs to following guidelines:
+The user guide is in the application help system.
+<!--more-->
 
--  [src root]/server/openstorefront/openstorefront-web/src/main/resources/userhelp.md
--  Sections are read from header to header
--  The header level determines the nesting level.  (Eg. h1, h2..etc)
--  Image locations are adjusted they should follow what is currently in the document
--  Set the security permission required on the header @ADMIN-SYSTEM-PAGE
+Navigate to the application help system by clicking on your username in the top right corner and selecting either "Help" or "Tutorials", depending on what you need instructions on doing. 
+
+![Where to get help](/images/Screenshots/helpsection.png "Where to get the Help Section")

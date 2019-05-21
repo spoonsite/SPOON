@@ -4,6 +4,9 @@ description = ""
 weight = 2
 +++
 
+This article briefly explains how to submit an entry onto SPOON
+<!--more-->
+
 To get to the User Tools section, click on your user name in the upper right corner of the page and then select User Tools from the drop down menu. Once at the User Tools sections, click on the Submissions button and then click the New Submission button.
 
 The process for submission depends on the type of entry you want to submit and how admin has configured your environment.
