@@ -1180,7 +1180,7 @@ var CoreUtil = {
 	  });
 	},
 	/**
-	 * This method will return HTML that beautifies units
+	 * Returns HTML that beautifies units
 	 * 
 	 * @param {String} str input asciimath string to pass to katex
 	 * @param {Boolean} block configure katex block element
