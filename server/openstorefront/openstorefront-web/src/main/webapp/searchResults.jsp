@@ -206,6 +206,12 @@
 				return arrOne;
 			};
 
+			/**
+			 * Sets the headers for the comparison table
+			 * 
+			 * @param compViewArray  object of the components being compared
+			 * @return               HTML code of the headers
+			 */ 
 			var getFirstRow = function(compViewArray){
 				var firstRowString = '';
 				firstRowString += '<tr>';
@@ -222,6 +228,12 @@
 				return firstRowString;
 			};
 
+			/**
+			 * Creates the main body of the comparison table
+			 * 
+			 * @param compViewArray  object of the components being compared
+			 * @return               HTML code of the main body
+			 */
 			var getMainBody = function(compViewArray){
 				var rowString = '';
 
@@ -264,26 +276,32 @@
 				return rowString;
 			};
 
+			/**
+			 * Returns HTMLified version version of attributes for comparison table
+			 * 
+			 * @param attributeList: list of attributes
+			 * @param attributeNameToGet: the specific attribute that is being looked for
+			 * @param attributeUnit: the base unit that matches the attributeNameToGet
+			 * 
+			 * @return foundVal: HTML that represents the attribute codes
+			 */
+			var getRelevantDataPiece = function(attributeList, attributeNameToGet, attributeUnit){
 
-			var getRelevantDataPiece = function(vitalsList, vitalNameToGet, vitalUnit){
-
-				// Add multiples and sutff
-
-				var foundVal = false;
-				console.log('vitalsList1');
-				console.log(vitalsList);
-				console.log('vitalNameToGet');
-				console.log(vitalNameToGet);
-				console.log('vitalUnit');
-				console.log(vitalUnit);
-				vitalsList.forEach(function(entryVital){
-					if(entryVital.typeDescription == vitalNameToGet){
-						foundVal = "<b>" + entryVital.codeDescription + CoreUtil.asciiToKatex(entryVital.unit) +"</b>"
+				var foundVal = "";
+				attributeList.forEach(function(entryAttribute){
+					if(entryAttribute.typeDescription == attributeNameToGet && entryAttribute.unit == attributeUnit){
+						if (foundVal != ""){
+							foundVal += ", ";
+						}
+						foundVal += CoreUtil.crushNumericString(entryAttribute.codeDescription);
 					}
 				});
-				if(foundVal){
+
+				if(foundVal != ""){
+					foundVal = "<b>" + " " + foundVal + (attributeUnit ? " " + CoreUtil.asciiToKatex(attributeUnit) : "") + "</b>";
 					return foundVal;
 				}
+
 				return '&mdash;'
 			};
 
@@ -335,8 +353,6 @@
 					rowString += vitalSetItem.name;
 					rowString += '</td>';
 					compViewArray.forEach(function(singleComponentView){
-						console.log('singleComponentView');
-						console.log(singleComponentView);
 						rowString += '<td>';
 						var tableElement = '<div class="tooltip">' + getRelevantDataPiece(singleComponentView.attributes, vitalSetItem.name, vitalSetItem.unit) + '<span class="tooltiptext">'+vitalSetItem.name+' of ' + singleComponentView.name + '</span></div>';
 						rowString += tableElement;
@@ -348,9 +364,13 @@
 				return vitalsHtmlBody;
 			}
 
+			/**
+			 * Builds the comparison table
+			 * 
+			 * @param compViewArray  object of the components being compared
+			 * @return               HTML code for the whole table
+			 */ 
 			var buildHTMLTableFromData = function(compViewArray){
-				console.log('compViewArray');
-				console.log(compViewArray);
 
 				var htmlTableString = "";
 				htmlTableString += "<style>";
