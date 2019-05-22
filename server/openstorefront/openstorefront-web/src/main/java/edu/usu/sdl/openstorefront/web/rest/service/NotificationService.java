@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.model.AdminMessage;
 import edu.usu.sdl.openstorefront.core.view.RecentChangesStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -42,7 +43,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.mail.Message;
 import org.apache.commons.lang.StringUtils;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  * Notification Services
@@ -115,6 +118,37 @@ public class NotificationService
 			throw new OpenStorefrontRuntimeException("Unable to parse last run dts", "Check last run dts param format (MM/dd/yyyy) ");
 		}
 		return Response.ok().build();
+	}
+
+	@POST
+	@APIDescription("Sends an email to a vendor")
+	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
+	@Path("/contact-vendor")
+	public Response contactVendor(
+			@RequiredParam String sendToEmail,
+			@RequiredParam String message
+			)
+	{
+		String fromAddress = "";
+		ValidationModel validationModel = new ValidationModel(sendToEmail);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			Email email = MailManager.newEmail();
+			email.setSubject(message);
+			email.setText("SpoonSite Request for information");
+			email.addRecipient("", sendToEmail, Message.RecipientType.TO);
+			email.setFromAddress("", fromAddress);
+
+			try {
+				MailManager.send(email, true);
+			} catch (Exception e) {
+				return Response.ok(e.toString()).build();
+			}
+			return Response.ok().build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 	@GET

@@ -1311,5 +1311,83 @@ var CoreUtil = {
 			return parseFloat(inputNumber);
 		}
 		return parseFloat(inputNumber);
+	},
+
+	/**
+	 * Creates a window to contact the vendor of an entry
+	 * 
+	 * @param {string} sendToEmail : the email to send the message to
+	 */
+	showContactVendorWindow: function (sendToEmail) {
+		console.log(sendToEmail);
+		CoreService.userservice.getCurrentUser().then(function (name) {
+			console.log(name);
+			var contactVendorWindow = Ext.create('Ext.window.Window', {
+				title: 'Contact Vendor',
+				width: 400,
+				bodyPadding: 10,
+				items: [{
+					xtype: 'textfield',
+					name: 'toEmail',
+					fieldLabel: 'To:',
+					width: 350,
+					vtype: 'email',
+					editable: false,
+					value: sendToEmail
+				},
+				{
+					xtype: 'textfield',
+					name: 'email',
+					fieldLabel: 'From:',
+					width: 350,
+					vtype: 'fromEmail',
+					editable: false,
+					value: name.email
+				},
+				{
+					xtype: 'textareafield',
+					grow: true,
+					name: 'message',
+					fieldLabel: 'Message',
+					width: 350,
+					height: 200
+				}],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						border: false,
+						items: [
+							{
+								text: 'Send',
+								iconCls: 'fa fa-lg fa-paper-plane-o icon-button-color-save',
+								handler: function () {
+									console.log("send");
+									Ext.Ajax.request({
+										url: 'api/v1/service/notification/contact-vendor',
+										method: 'POST',
+										jsonData: {sendToEmail: "gavin.fowler@sdl.usu.edu", message: "this is a test message"},
+										success: function(response, opts){
+											Ext.toast('Sent message successfully<br> Individual email delivery success will depend on the email servers.');
+											contactVendorWindow.close();
+										}
+									});
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Cancel',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+								handler: function () {
+									contactVendorWindow.close();
+								}
+							}
+						]
+					}]
+			});
+			contactVendorWindow.show();
+		})
 	}
 };
