@@ -480,6 +480,9 @@ public class SearchServiceImpl
 			if (!handler.getChildren().isEmpty()) {
 				SearchHandlingResult childrenResult = preformSearch(handler.getChildren(), MergeCondition.OR);
 				componentIds = handler.getTopMergeCondition().apply(componentIds, new ArrayList<>(childrenResult.getFoundEntriesIds()));
+
+				searchResult.getIndexSearchElements().addAll(childrenResult.getIndexSearchElements());
+				searchResult.getValidationResult().merge(childrenResult.getValidationResult());
 			}
 
 			mergeCondition = handler.getNextMergeCondition();

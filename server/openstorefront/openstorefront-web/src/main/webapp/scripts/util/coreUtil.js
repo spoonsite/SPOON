@@ -935,10 +935,13 @@ var CoreUtil = {
 					desc += '<b>String Operation: </b>' + element.stringOperation + '<br>';
 				}
 
-				if (count !== 0) {
+				if (count < searchElements.length-1 || (element.searchElements && element.searchElements.length > 0)) {
 					desc += '<br>' + element.mergeCondition + '<br><br>';
 				}
-
+								
+				if (element.searchElements) {
+					desc += '<b>(</b> ' + CoreUtil.descriptionOfAdvancedSearch(element.searchElements) + '<b>)</b> ';
+				}
 				count++;
 			});
 			return desc;
