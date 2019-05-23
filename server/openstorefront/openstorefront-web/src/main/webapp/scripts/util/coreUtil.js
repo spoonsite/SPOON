@@ -1320,9 +1320,17 @@ var CoreUtil = {
 	 */
 	showContactVendorWindow: function (sendToEmail) {
 		CoreService.userservice.getCurrentUser().then(function (currUser) {
+
+			// Users logging in through a service account should be able to change the email
+			serviceAccounts = ["nasaames_serviceacct"];
+			var isServiceAccount = false;
+			if(serviceAccounts.indexOf(currUser.username) != -1){
+				isServiceAccount = true;
+			}
+
 			var contactVendorWindow = Ext.create('Ext.window.Window', {
 				title: 'Contact Vendor',
-				width: 400,
+				width: 600,
 				bodyPadding: 10,
 				items: [{
 					xtype: 'form',
@@ -1332,10 +1340,10 @@ var CoreUtil = {
 							name: 'email',
 							fieldLabel: 'From:',
 							allowblank: false,
-							width: 350,
+							width: '97%',
 							vtype: 'email',
-							editable: false,
-							value: currUser.email
+							disabled: !isServiceAccount,
+							value: (isServiceAccount ? '' : currUser.email)
 						},
 						{
 							xtype: 'textareafield',
@@ -1343,7 +1351,7 @@ var CoreUtil = {
 							name: 'message',
 							fieldLabel: 'Message',
 							allowblank: false,
-							width: 350,
+							width: '97%',
 							height: 200
 						}
 					]
@@ -1363,6 +1371,11 @@ var CoreUtil = {
 									var win = this.up().up();
 									var form = win.down('form');
 									var values = form.getForm().getValues();
+									if (values.email === undefined) {
+										values.email = currUser.email;
+										console.log('user undefined');
+									}
+									console.log(values);
 									contactVendorWindow.close();
 									Ext.Ajax.request({
 										url: 'api/v1/service/notification/contact-vendor',

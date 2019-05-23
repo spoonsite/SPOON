@@ -295,7 +295,6 @@ Ext.define('OSF.component.template.Vitals', {
 					}
 					var tip = item.codeLongDescription ? Ext.util.Format.escape(item.codeLongDescription).replace(/"/g, '').replace(/'/g, '').replace(/\n/g, '').replace(/\r/g, '') : item.codeLongDescription;
 					
-					console.log(item);
 					var codeValue =	item.codeDescription;
 					if (item.preferredUnit) {
 						unit = item.preferredUnit.unit; 

@@ -149,6 +149,7 @@ public class NotificationService
 			email.addRecipient("", toEmail, Message.RecipientType.TO);
 			// email.setFromAddress("", "gavin.fowler@sdl.usu.edu");
 			email.setFromAddress("", fromEmail);
+			email.setReplyToAddress("", fromEmail);
 
 			MailManager.send(email, true);
 		} catch (Exception e) {
