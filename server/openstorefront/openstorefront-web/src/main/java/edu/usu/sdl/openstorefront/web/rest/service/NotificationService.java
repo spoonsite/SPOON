@@ -145,9 +145,8 @@ public class NotificationService
 			if (adminMessage.getCcEmails().size() > 0) {
 				fromEmail = adminMessage.getCcEmails().get(0);
 			}
-			// email.addRecipient("", "gavin.fowler@sdl.usu.edu", Message.RecipientType.TO);
+			
 			email.addRecipient("", toEmail, Message.RecipientType.TO);
-			// email.setFromAddress("", "gavin.fowler@sdl.usu.edu");
 			email.setFromAddress("", fromEmail);
 			email.setReplyToAddress("", fromEmail);
 

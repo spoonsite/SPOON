@@ -1373,9 +1373,7 @@ var CoreUtil = {
 									var values = form.getForm().getValues();
 									if (values.email === undefined) {
 										values.email = currUser.email;
-										console.log('user undefined');
 									}
-									console.log(values);
 									contactVendorWindow.close();
 									Ext.Ajax.request({
 										url: 'api/v1/service/notification/contact-vendor',
