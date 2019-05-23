@@ -1004,7 +1004,7 @@ public abstract class GeneralComponentResourceExt
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
 		if (componentDetail != null) {
 			for(ComponentAttributeView attrView : componentDetail.getAttributes()){
-				attrView.setCode(service.getAttributeService().crushGeneralNumericString(attrView.getCode()));
+				attrView.setCodeDescription(service.getAttributeService().crushGeneralNumericString(attrView.getCodeDescription()));
 			}
 			return sendSingleEntityResponse(componentDetail);
 		} else if (componentPrint != null) {

@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
 import edu.usu.sdl.openstorefront.core.view.RecentChangesStatus;
+import edu.usu.sdl.openstorefront.core.view.SimpleRestError;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
@@ -43,9 +44,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.mail.Message;
 import org.apache.commons.lang.StringUtils;
 import org.codemonkey.simplejavamail.email.Email;
+import javax.mail.Message;
 
 /**
  * Notification Services
@@ -122,33 +123,41 @@ public class NotificationService
 
 	@POST
 	@APIDescription("Sends an email to a vendor")
-	@RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
+	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
 	@Path("/contact-vendor")
 	public Response contactVendor(
-			@RequiredParam String sendToEmail,
-			@RequiredParam String message
-			)
+			@RequiredParam AdminMessage adminMessage)
 	{
-		String fromAddress = "";
-		ValidationModel validationModel = new ValidationModel(sendToEmail);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			Email email = MailManager.newEmail();
-			email.setSubject(message);
-			email.setText("SpoonSite Request for information");
-			email.addRecipient("", sendToEmail, Message.RecipientType.TO);
-			email.setFromAddress("", fromAddress);
+		try {
 
-			try {
-				MailManager.send(email, true);
-			} catch (Exception e) {
-				return Response.ok(e.toString()).build();
+			Email email = MailManager.newEmail();
+			// subject
+			email.setSubject("SpoonSite User Request for Information");
+			// message
+			email.setText(adminMessage.getMessage());
+			
+			// to and from
+			String toEmail = "";
+			if (adminMessage.getUsersToEmail().size() > 0) {
+				toEmail = adminMessage.getUsersToEmail().get(0);
 			}
-			return Response.ok().build();
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
+			String fromEmail = "";
+			if (adminMessage.getCcEmails().size() > 0) {
+				fromEmail = adminMessage.getCcEmails().get(0);
+			}
+			// email.addRecipient("", "gavin.fowler@sdl.usu.edu", Message.RecipientType.TO);
+			email.addRecipient("", toEmail, Message.RecipientType.TO);
+			// email.setFromAddress("", "gavin.fowler@sdl.usu.edu");
+			email.setFromAddress("", fromEmail);
+
+			MailManager.send(email, true);
+		} catch (Exception e) {
+			SimpleRestError simpleRestError = new SimpleRestError();
+			simpleRestError.setError(e.toString());
+			return Response.ok(simpleRestError).build();
 		}
+
+		return Response.ok().build();
 	}
 
 	@GET
