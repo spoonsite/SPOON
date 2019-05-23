@@ -1316,7 +1316,8 @@ var CoreUtil = {
 	/**
 	 * Creates a window to contact the vendor of an entry
 	 * 
-	 * @param {string} sendToEmail : the email to send the message to
+	 * @param {string} sendToEmail : The email to send the message to
+	 * @returns void : It creates the contact vendor window
 	 */
 	showContactVendorWindow: function (sendToEmail) {
 		CoreService.userservice.getCurrentUser().then(function (currUser) {
@@ -1332,30 +1333,32 @@ var CoreUtil = {
 				title: 'Contact Vendor',
 				width: 600,
 				bodyPadding: 10,
-				items: [{
-					xtype: 'form',
-					items: [
-						{
-							xtype: 'textfield',
-							name: 'email',
-							fieldLabel: 'From:',
-							allowblank: false,
-							width: '97%',
-							vtype: 'email',
-							disabled: !isServiceAccount,
-							value: (isServiceAccount ? '' : currUser.email)
-						},
-						{
-							xtype: 'textareafield',
-							grow: true,
-							name: 'message',
-							fieldLabel: 'Message',
-							allowblank: false,
-							width: '97%',
-							height: 200
-						}
-					]
-				}],
+				items: [
+					{
+						xtype: 'form',
+						items: [
+							{
+								xtype: 'textfield',
+								name: 'email',
+								fieldLabel: 'From:',
+								allowblank: false,
+								width: '97%',
+								vtype: 'email',
+								disabled: (serviceAccounts.indexOf(currUser.username) != -1) ? true : false,
+								value: isServiceAccount ? '' : currUser.email
+							},
+							{
+								xtype: 'textareafield',
+								grow: true,
+								name: 'message',
+								fieldLabel: 'Message',
+								allowblank: false,
+								width: '97%',
+								height: 200
+							}
+						]
+					}
+				],
 				dockedItems: [
 					{
 						xtype: 'toolbar',

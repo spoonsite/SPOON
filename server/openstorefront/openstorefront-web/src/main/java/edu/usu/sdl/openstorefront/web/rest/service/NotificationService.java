@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
+import edu.usu.sdl.openstorefront.core.model.ContactVendorMessage;
 import edu.usu.sdl.openstorefront.core.view.RecentChangesStatus;
 import edu.usu.sdl.openstorefront.core.view.SimpleRestError;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
@@ -126,38 +127,37 @@ public class NotificationService
 	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
 	@Path("/contact-vendor")
 	public Response contactVendor(
-			@RequiredParam AdminMessage adminMessage)
+			@RequiredParam ContactVendorMessage contactVendorMessage)
 	{
-		try {
-
+		ValidationModel validationModel = new ValidationModel(contactVendorMessage);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
 			Email email = MailManager.newEmail();
 			// subject
 			email.setSubject("SpoonSite User Request for Information");
 			// message
-			email.setText(adminMessage.getMessage());
+			email.setText(contactVendorMessage.getMessage());
 			
 			// to and from
-			String toEmail = "";
-			if (adminMessage.getUsersToEmail().size() > 0) {
-				toEmail = adminMessage.getUsersToEmail().get(0);
-			}
-			String fromEmail = "";
-			if (adminMessage.getCcEmails().size() > 0) {
-				fromEmail = adminMessage.getCcEmails().get(0);
-			}
-			
+			String toEmail = contactVendorMessage.getUserToEmail();
+
+			String fromEmail = contactVendorMessage.getUserFromEmail();
+
 			email.addRecipient("", toEmail, Message.RecipientType.TO);
 			email.setFromAddress("", fromEmail);
 			email.setReplyToAddress("", fromEmail);
-
-			MailManager.send(email, true);
-		} catch (Exception e) {
-			SimpleRestError simpleRestError = new SimpleRestError();
-			simpleRestError.setError(e.toString());
-			return Response.ok(simpleRestError).build();
+			try {
+				MailManager.send(email, true);
+			} catch (Exception e) {
+				SimpleRestError simpleRestError = new SimpleRestError();
+				simpleRestError.setError(e.toString());
+				return Response.ok(simpleRestError).build();
+			}
+			return Response.ok().build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
 		}
-
-		return Response.ok().build();
 	}
 
 	@GET
