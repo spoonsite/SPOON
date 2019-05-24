@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -40,9 +39,9 @@ public class QuestionSearchHandler
 		extends BaseSearchHandler
 {
 
-	public QuestionSearchHandler(List<SearchElement> searchElements)
+	public QuestionSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
@@ -51,38 +50,36 @@ public class QuestionSearchHandler
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		for (SearchElement searchElement : searchElements) {
-			if (StringUtils.isBlank(searchElement.getField())) {
-				validationResult.getRuleResults().add(getRuleResult("field", "Required"));
-			}
-			boolean checkValue = true;
-			Field field = ReflectionUtil.getField(new ComponentQuestion(), searchElement.getField());
-			if (field == null) {
-				validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on question"));
-			} else {
-				Class type = field.getType();
-				if (type.isAssignableFrom(String.class)) {
-					//Nothing to check
-				} else if (type.isAssignableFrom(Integer.class)) {
-					if (StringUtils.isNumeric(searchElement.getValue()) == false) {
-						validationResult.getRuleResults().add(getRuleResult("value", "Value should be an integer for this field"));
-					}
-				} else if (type.isAssignableFrom(Date.class)) {
-					checkValue = false;
-					if (searchElement.getStartDate() == null && searchElement.getEndDate() == null) {
-						validationResult.getRuleResults().add(getRuleResult("startDate", "Start or End date should be entered for this field"));
-						validationResult.getRuleResults().add(getRuleResult("endDate", "Start or End date should be entered for this field"));
-					}
-				} else if (type.isAssignableFrom(Boolean.class)) {
-					//Nothing to check
-				} else {
-					validationResult.getRuleResults().add(getRuleResult("field", "Field type handling not supported"));
+		if (StringUtils.isBlank(searchElement.getField())) {
+			validationResult.getRuleResults().add(getRuleResult("field", "Required"));
+		}
+		boolean checkValue = true;
+		Field field = ReflectionUtil.getField(new ComponentQuestion(), searchElement.getField());
+		if (field == null) {
+			validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on question"));
+		} else {
+			Class type = field.getType();
+			if (type.isAssignableFrom(String.class)) {
+				//Nothing to check
+			} else if (type.isAssignableFrom(Integer.class)) {
+				if (StringUtils.isNumeric(searchElement.getValue()) == false) {
+					validationResult.getRuleResults().add(getRuleResult("value", "Value should be an integer for this field"));
 				}
+			} else if (type.isAssignableFrom(Date.class)) {
+				checkValue = false;
+				if (searchElement.getStartDate() == null && searchElement.getEndDate() == null) {
+					validationResult.getRuleResults().add(getRuleResult("startDate", "Start or End date should be entered for this field"));
+					validationResult.getRuleResults().add(getRuleResult("endDate", "Start or End date should be entered for this field"));
+				}
+			} else if (type.isAssignableFrom(Boolean.class)) {
+				//Nothing to check
+			} else {
+				validationResult.getRuleResults().add(getRuleResult("field", "Field type handling not supported"));
 			}
+		}
 
-			if (checkValue && StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}
+		if (checkValue && StringUtils.isBlank(searchElement.getValue())) {
+			validationResult.getRuleResults().add(getRuleResult("value", "Required"));
 		}
 
 		return validationResult;
@@ -92,86 +89,81 @@ public class QuestionSearchHandler
 	@SuppressWarnings("unchecked")
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-		for (SearchElement searchElement : searchElements) {
 
-			try {
-				ComponentQuestion componentQuestion = new ComponentQuestion();
-				componentQuestion.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
+		try {
+			ComponentQuestion componentQuestion = new ComponentQuestion();
+			componentQuestion.setActiveStatus(ComponentQuestion.ACTIVE_STATUS);
 
-				Field field = ReflectionUtil.getField(new ComponentQuestion(), searchElement.getField());
-				field.setAccessible(true);
-				QueryByExample<ComponentQuestion> queryByExample = new QueryByExample<>(componentQuestion);
+			Field field = ReflectionUtil.getField(new ComponentQuestion(), searchElement.getField());
+			field.setAccessible(true);
+			QueryByExample<ComponentQuestion> queryByExample = new QueryByExample<>(componentQuestion);
 
-				Class type = field.getType();
-				if (type.isAssignableFrom(String.class)) {
-					String likeValue = null;
-					switch (searchElement.getStringOperation()) {
-						case EQUALS:
-							String value = searchElement.getValue();
-							if (searchElement.getCaseInsensitive()) {
-								queryByExample.getFieldOptions().put(field.getName(),
-										new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
-								value = value.toLowerCase();
-							}
-							field.set(componentQuestion, value);
-							break;
-						default:
-							likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
-							break;
-					}
-
-					if (likeValue != null) {
-						ComponentQuestion componentQuestionLike = new ComponentQuestion();
+			Class type = field.getType();
+			if (type.isAssignableFrom(String.class)) {
+				String likeValue = null;
+				switch (searchElement.getStringOperation()) {
+					case EQUALS:
+						String value = searchElement.getValue();
 						if (searchElement.getCaseInsensitive()) {
-							likeValue = likeValue.toLowerCase();
-							queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+							queryByExample.getFieldOptions().put(field.getName(),
+									new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+							value = value.toLowerCase();
 						}
-						field.set(componentQuestionLike, likeValue);
-						queryByExample.setLikeExample(componentQuestionLike);
+						field.set(componentQuestion, value);
+						break;
+					default:
+						likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
+						break;
+				}
+
+				if (likeValue != null) {
+					ComponentQuestion componentQuestionLike = new ComponentQuestion();
+					if (searchElement.getCaseInsensitive()) {
+						likeValue = likeValue.toLowerCase();
+						queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
 					}
-				} else if (type.isAssignableFrom(Integer.class)) {
-					field.set(componentQuestion, Convert.toInteger(searchElement.getValue()));
-					queryByExample.getFieldOptions().put(field.getName(),
-							new GenerateStatementOptionBuilder().setOperation(searchElement.getNumberOperation().toQueryOperation()).build());
-				} else if (type.isAssignableFrom(Date.class)) {
-
-					ComponentQuestion componentQuestionStartExample = new ComponentQuestion();
-
-					field.set(componentQuestionStartExample, searchElement.getStartDate());
-					SpecialOperatorModel<ComponentQuestion> specialOperatorModel = new SpecialOperatorModel<>();
-					specialOperatorModel.setExample(componentQuestionStartExample);
-					specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
-					queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-					ComponentQuestion componentQuestionEndExample = new ComponentQuestion();
-
-					field.set(componentQuestionEndExample, searchElement.getEndDate());
-					specialOperatorModel = new SpecialOperatorModel<>();
-					specialOperatorModel.setExample(componentQuestionEndExample);
-					specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
-					specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
-					queryByExample.getExtraWhereCauses().add(specialOperatorModel);
-
-				} else if (type.isAssignableFrom(Boolean.class)) {
-					field.set(componentQuestion, Convert.toBoolean(searchElement.getValue()));
-				} else {
-					throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");
+					field.set(componentQuestionLike, likeValue);
+					queryByExample.setLikeExample(componentQuestionLike);
 				}
+			} else if (type.isAssignableFrom(Integer.class)) {
+				field.set(componentQuestion, Convert.toInteger(searchElement.getValue()));
+				queryByExample.getFieldOptions().put(field.getName(),
+						new GenerateStatementOptionBuilder().setOperation(searchElement.getNumberOperation().toQueryOperation()).build());
+			} else if (type.isAssignableFrom(Date.class)) {
 
-				List<ComponentQuestion> questions = serviceProxy.getPersistenceService().queryByExample(queryByExample);
-				List<String> results = new ArrayList<>();
-				for (ComponentQuestion question : questions) {
-					results.add(question.getComponentId());
-				}
-				foundIds = mergeCondition.apply(foundIds, results);
-				mergeCondition = searchElement.getMergeCondition();
-			} catch (SecurityException | IllegalArgumentException | IllegalAccessException | OpenStorefrontRuntimeException e) {
-				throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
+				ComponentQuestion componentQuestionStartExample = new ComponentQuestion();
+
+				field.set(componentQuestionStartExample, searchElement.getStartDate());
+				SpecialOperatorModel<ComponentQuestion> specialOperatorModel = new SpecialOperatorModel<>();
+				specialOperatorModel.setExample(componentQuestionStartExample);
+				specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+				queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+				ComponentQuestion componentQuestionEndExample = new ComponentQuestion();
+
+				field.set(componentQuestionEndExample, searchElement.getEndDate());
+				specialOperatorModel = new SpecialOperatorModel<>();
+				specialOperatorModel.setExample(componentQuestionEndExample);
+				specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN_EQUAL);
+				specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
+				queryByExample.getExtraWhereCauses().add(specialOperatorModel);
+
+			} else if (type.isAssignableFrom(Boolean.class)) {
+				field.set(componentQuestion, Convert.toBoolean(searchElement.getValue()));
+			} else {
+				throw new OpenStorefrontRuntimeException("Type: " + type.getSimpleName() + " is not support in this query handler", "Add support");
 			}
+
+			List<ComponentQuestion> questions = serviceProxy.getPersistenceService().queryByExample(queryByExample);
+			List<String> results = new ArrayList<>();
+			for (ComponentQuestion question : questions) {
+				results.add(question.getComponentId());
+			}
+			return results;
+		} catch (SecurityException | IllegalArgumentException | IllegalAccessException | OpenStorefrontRuntimeException e) {
+			throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
 		}
-		return foundIds;
+
 	}
 
 }

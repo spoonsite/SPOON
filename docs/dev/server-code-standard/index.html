@@ -146,6 +146,28 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/applicationadmin/" class="dd-item">
+      <a href="/openstorefront/applicationadmin/">
+        <span>Application Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/applicationadmin/customsubmissionforms/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/customsubmissionforms/">
+          <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/workplans/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/workplans/">
+          <span>Workplans</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/securityroles/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/securityroles/">
+          <span>Security Roles</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
     <li data-nav-id="/systemadmin/" class="dd-item">
       <a href="/openstorefront/systemadmin/">
         <span>System Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
@@ -210,8 +232,8 @@
     </ul>
 
  <section id="footer"><div style="color: #E0E0DA;">
-    <p>OpenStoreFront version 2.7.4</p>
-    <p>Documentation generated on Feb 4, 2019</p>
+    <p>OpenStoreFront version 2.8</p>
+    <p>Documentation generated on May 24, 2019</p>
     <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
@@ -468,11 +490,12 @@ On</p>
 <ol>
 <li>Business logic, Transactions, rules should be handled in the service code. (core-service)</li>
 <li>API Interface should have documentation (javadocs)</li>
-<li>SimpleDateFormat is not thread-safe create new instances; don&rsquo;t make static.</li>
+<li>SimpleDateFormat is not thread-safe create new instances; don&rsquo;t make it static.</li>
 <li>For decimal numbers use BigDecimal and use valueOf to instantiate.</li>
 <li>Make sure any new code is placed in the appropriate module. Be cautious of dependencies.</li>
 <li>External resources should be handled by a Manager that in-turn handles the life-cycle.</li>
-<li>Use example query framework where possible. Keep custom queries to a minimum as this allow for greater flexibility as well as type safety on the query.  Which in turn make refactoring easier and reduces errors.</li>
+<li>Use example query framework where possible. Keep custom queries to a minimum as this allow for greater flexibility as well as type safety on the query.  Which in turn make refactoring easier and reduces errors.
+7.1 For complex queries and more involved handling create Repo methods to abstract the code.  (See Service module; Repos)</li>
 <li>Beware of any potential infinite loops.</li>
 <li>Pay attention to Transaction boundaries. For the most part it&rsquo;s automatic but, you can carrier over transaction where it&rsquo;s unintended.</li>
 <li>Prefer constants over hard coded strings. Keep constants with entity/object they relate to.  For general constants use OpenstorefrontConstant.</li>
@@ -484,12 +507,12 @@ On</p>
 <ol>
 <li>Entities should have all validation annotations marked and have documentation annotations as well.</li>
 <li>Use &lsquo;get&rsquo; and &lsquo;set&rsquo; and not &lsquo;is&rsquo; as there&rsquo;s a lot of automatic processing (reflection) on entities.</li>
-<li>Most entities should extends the standard entity.</li>
-<li>Preference is to keep model flat there cases where complex is fine. (meaning care should be taken with embedded complex classes) * Revisit in orient 3.0
-If there is embedded entities, make to use Casacde, OneToX annotation.  Also, beware of db issues.  Note, the DB and moxy doesn&rsquo;t handling List of primatives (Meaning Boxed primatives) well.  Eg. List<String> should be List<EmailAddresses></li>
+<li>Most entities should extends the StandardEntity.</li>
+<li>Preference is to keep the data model flat there&rsquo;s cases where complex model (nested) is fine. (meaning care should be taken with embedded complex classes) * Revisit in orient 3.0
+If there is embedded entities, make to use Casacde, OneToX annotation.  Also, beware of db issues.  Note, the DB and moxy doesn&rsquo;t handling List of primatives (Meaning Boxed primatives) well.  Eg. List<String> should be List<EmailAddresses>;  However later versions 2.2.x support List<String></li>
 <li>Document Entities with @APIdocument to update the api docs.</li>
 <li>Prefer composition of entities in view rather than inheritance. Use inheritance for substitutability.</li>
-<li>All storage entities must be registered with the DB.  This automatic for class in the entity package of the api module.</li>
+<li>All storage entities must be registered with the DB.  This automatic for class in the entity package of the api module.  (Orient Only; Still keep all entities in the same package)</li>
 </ol>
 
 <h2 id="rest-api">REST API</h2>
@@ -561,7 +584,7 @@ Keep mind the logger may be set at a different level.</p>
 
 <h2 id="cross-cutting-concerns">Cross Cutting Concerns</h2>
 
-<p>Design template ask about these item.</p>
+<p>The developer design template asks about these items.  (See Confluence for the project; if avaliable)</p>
 
 <p><strong>Security</strong> - Make sure permission are applied to the REST/External API and UI features.</p>
 
@@ -586,7 +609,7 @@ Keep mind the logger may be set at a different level.</p>
 
 <div id="navigation">
 <a class="nav nav-prev" href="/openstorefront/dev/uiguide/" title="User Interface Guide"> <i class="fa fa-chevron-left"></i></a>
-    <a class="nav nav-next" href="/openstorefront/systemadmin/" title="System Admin" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/openstorefront/applicationadmin/" title="Application Admin" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
 
 </section>
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">

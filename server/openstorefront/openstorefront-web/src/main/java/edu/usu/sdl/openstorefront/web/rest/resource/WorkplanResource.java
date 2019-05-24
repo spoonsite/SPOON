@@ -287,8 +287,7 @@ public class WorkplanResource
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
-	
-	
+
 	@PUT
 	@APIDescription("Inativates a Work Plan")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
@@ -396,7 +395,7 @@ public class WorkplanResource
 				} else {
 					UserSubmissionComment userSubmissionComment = comment.toUserSubmissionComment();
 					userSubmissionComment.setUserSubmissionId(workPlanLink.getUserSubmissionId());
-					comment.save();
+					userSubmissionComment.save();
 				}
 			}
 		}

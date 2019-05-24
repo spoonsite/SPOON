@@ -8,6 +8,17 @@ The Open Storefront application contains a Dockerfile in order to build Docker i
 
 Open Storefront also automatically builds release versions of the application for consumption by users.  These builds are available on [Docker Hub](http://hub.docker.com).
 
+By default Orient will be used as the database.  
+
+If using Mongo is desired then the suggest path:
+
+1. Pull docker image for Mongo (use dockerhub)
+
+2. Create modify openstorefront.properties files from an existing install and use that to rebuild a new image.
+
+*No Environment variable are exposed to allow changing the configuration at this point.
+
+
 ## Release Docker Container
 
 To run the latest release container from Docker Hub run the following:

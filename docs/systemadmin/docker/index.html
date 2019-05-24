@@ -145,6 +145,28 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/applicationadmin/" class="dd-item">
+      <a href="/openstorefront/applicationadmin/">
+        <span>Application Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/applicationadmin/customsubmissionforms/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/customsubmissionforms/">
+          <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/workplans/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/workplans/">
+          <span>Workplans</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/securityroles/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/securityroles/">
+          <span>Security Roles</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
     <li data-nav-id="/systemadmin/" class="dd-item parent">
       <a href="/openstorefront/systemadmin/">
         <span>System Admin</span>
@@ -210,8 +232,8 @@
     </ul>
 
  <section id="footer"><div style="color: #E0E0DA;">
-    <p>OpenStoreFront version 2.7.4</p>
-    <p>Documentation generated on Feb 4, 2019</p>
+    <p>OpenStoreFront version 2.8</p>
+    <p>Documentation generated on May 24, 2019</p>
     <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
@@ -294,6 +316,18 @@
 <p>The Open Storefront application contains a Dockerfile in order to build Docker images. There are two dockerfiles in the repo. One is for development which is used by Jenkins to deploy the application for testing of new features. The other dockerfile is for the release build. These can be found in the repo at <a href="https://github.com/di2e/openstorefront/tree/master/Docker">https://github.com/di2e/openstorefront/tree/master/Docker</a>.</p>
 
 <p>Open Storefront also automatically builds release versions of the application for consumption by users.  These builds are available on <a href="http://hub.docker.com">Docker Hub</a>.</p>
+
+<p>By default Orient will be used as the database.</p>
+
+<p>If using Mongo is desired then the suggest path:</p>
+
+<ol>
+<li><p>Pull docker image for Mongo (use dockerhub)</p></li>
+
+<li><p>Create modify openstorefront.properties files from an existing install and use that to rebuild a new image.</p></li>
+</ol>
+
+<p>*No Environment variable are exposed to allow changing the configuration at this point.</p>
 
 <h2 id="release-docker-container">Release Docker Container</h2>
 

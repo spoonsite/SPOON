@@ -306,7 +306,7 @@ public class ElasticSearchManager
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
 	{
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
-		SearchOptions searchOptions = service.getSearchService().getSearchOptions();
+		SearchOptions searchOptions = service.getSearchService().getGlobalSearchOptions();
 
 		int maxSearchResults = 10000;
 		if (filter.getMax() < maxSearchResults) {
@@ -404,7 +404,7 @@ public class ElasticSearchManager
 				actualQuery = queryString.toString();
 			}
 
-			if (searchOptions.getCanUseOrganizationsInSearch()) {
+			if (Convert.toBoolean(searchOptions.getSearchOrganization())) {
 				// Custom query for entry organization
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
@@ -412,7 +412,7 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
 			}
 
-			if (searchOptions.getCanUseNameInSearch()) {
+			if (Convert.toBoolean(searchOptions.getSearchName())) {
 				// Custom query for entry name
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
@@ -425,25 +425,60 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
 			}
 
-			if (searchOptions.getCanUseDescriptionInSearch()) {
+			if (Convert.toBoolean(searchOptions.getSearchDescription())) {
 				// Custom query for description
-				esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, actualQuery));
 			}
+
+			if (Convert.toBoolean(searchOptions.getSearchTags())) {
+				// Custom query for Tags
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+			}
+
+			if (Convert.toBoolean(searchOptions.getSearchAttributes())) {
+				// Custom query for Attributes
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
+				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
+
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
+			}
+
 		}
 
 		// Loop Through Search Phrases
 		for (String phrase : searchPhrases) {
 
-			if (searchOptions.getCanUseOrganizationsInSearch()) {
+			if (Convert.toBoolean(searchOptions.getSearchOrganization())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
 			}
 
-			if (searchOptions.getCanUseNameInSearch()) {
+			if (Convert.toBoolean(searchOptions.getSearchName())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
 			}
 
-			if (searchOptions.getCanUseDescriptionInSearch()) {
-				esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
+			if (Convert.toBoolean(searchOptions.getSearchDescription())) {
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, phrase.toLowerCase()));
+			}
+
+			if (Convert.toBoolean(searchOptions.getSearchTags())) {
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, phrase));
+			}
+
+			if (Convert.toBoolean(searchOptions.getSearchAttributes())) {
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, phrase));
 			}
 
 		}

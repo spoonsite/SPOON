@@ -33,7 +33,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
-import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
@@ -462,33 +461,15 @@ public class SubComponentServiceImpl
 			componentService.getChangeLogService().addEntityChange(media);
 		}
 
+		//handle media file (make sure it's saved; in-cases of imports)
+		if (media.getFile() != null) {
+			componentService.getRepoFactory().getMediaFileRepo().handleMediaFileSave(persistenceService, media.getFile());
+		}
+
 		if (updateLastActivity) {
 			updateComponentLastActivity(media.getComponentId());
 		}
 		return newMedia;
-	}
-
-	public void saveComponentMetadata(ComponentMetadata metadata)
-	{
-		saveComponentMetadata(metadata, true);
-	}
-
-	void saveComponentMetadata(ComponentMetadata metadata, boolean updateLastActivity)
-	{
-		ComponentMetadata oldMetadata = persistenceService.findById(ComponentMetadata.class, metadata.getMetadataId());
-		if (oldMetadata != null) {
-			oldMetadata.updateFields(metadata);
-			persistenceService.persist(oldMetadata);
-		} else {
-			metadata.setMetadataId(persistenceService.generateId());
-			metadata.populateBaseCreateFields();
-			persistenceService.persist(metadata);
-			componentService.getChangeLogService().addEntityChange(metadata);
-		}
-
-		if (updateLastActivity) {
-			updateComponentLastActivity(metadata.getComponentId());
-		}
 	}
 
 	public ComponentRelationship saveComponentRelationship(ComponentRelationship componentRelationship)
@@ -612,6 +593,11 @@ public class SubComponentServiceImpl
 			resource.populateBaseCreateFields();
 			persistenceService.persist(resource);
 			componentService.getChangeLogService().addEntityChange(resource);
+		}
+
+		//handle media file (make sure it's saved; in-cases of imports)
+		if (resource.getFile() != null) {
+			componentService.getRepoFactory().getMediaFileRepo().handleMediaFileSave(persistenceService, resource.getFile());
 		}
 
 		if (updateLastActivity) {
@@ -774,16 +760,16 @@ public class SubComponentServiceImpl
 
 	public List<ComponentTag> getTagCloud()
 	{
-		String query = "select * from ComponentTag where activeStatus='A' GROUP BY text";
-		List<ComponentTag> tags = persistenceService.query(query, null);
+		ComponentTag componentTag = new ComponentTag();
+		componentTag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+		QueryByExample<ComponentTag> tagQuery = new QueryByExample<>(componentTag);
+		ComponentTag componentTagGroupBy = new ComponentTag();
+		componentTagGroupBy.setText(QueryByExample.STRING_FLAG);
+		tagQuery.setGroupBy(componentTagGroupBy);
+
+		List<ComponentTag> tags = persistenceService.queryByExample(tagQuery);
 		tags = filterEngine.filter(tags, true);
 		return tags;
-	}
-
-	public List<ComponentMetadata> getMetadata()
-	{
-		String query = "SELECT * FROM ComponentMetadata LET $component = (SELECT name, activeStatus, approvalState FROM Component WHERE componentId = $parent.current.componentId LIMIT 1) WHERE activeStatus = 'A' AND $component[0].activeStatus = 'A' AND $component[0].approvalState = 'A' ORDER BY label ASC, componentId ASC";
-		return persistenceService.query(query, null);
 	}
 
 	public List<ComponentReviewView> getReviewByUser(String username)
@@ -879,12 +865,13 @@ public class SubComponentServiceImpl
 		media.setMimeType(mimeType);
 		media.setOriginalName(originalFileName);
 		media.setFileType(type);
-		if(StringUtils.isBlank(media.getMediaFileId())){
+		if (StringUtils.isBlank(media.getMediaFileId())) {
 			media.setMediaFileId(persistenceService.generateId());
 		}
 
 		Path path = Paths.get(type.getPath() + "/" + media.getFileName());
 		Files.copy(fileInput, path, StandardCopyOption.REPLACE_EXISTING);
+		componentService.getRepoFactory().getMediaFileRepo().handleMediaFileSave(persistenceService, media);
 		return media;
 	}
 

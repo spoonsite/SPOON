@@ -43,21 +43,21 @@ public interface SearchService
 	 * @return
 	 */
 	public List<ComponentSearchView> getAll();
-	
+
 	/**
-	 * Get the global search options, return default if not
-	 * changed by the administrator
-	 * .
-	 * @return 
+	 * Get the global search options, return default if not changed by the
+	 * administrator .
+	 *
+	 * @return
 	 */
-	public SearchOptions getSearchOptions();
-	
+	public SearchOptions getGlobalSearchOptions();
+
 	/**
-	 * Saves a search options model. Usually done
-	 * by the administrator.
-	 * @param searchOptions 
+	 * Saves the global search options model. Usually done by the administrator.
+	 *
+	 * @param searchOptions
 	 */
-	public void saveSearchOptions(SearchOptions searchOptions);
+	public void saveGlobalSearchOptions(SearchOptions searchOptions);
 
 	/**
 	 * Performs a search

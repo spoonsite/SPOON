@@ -21,8 +21,6 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.MergeCondition;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.StringOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
@@ -38,28 +36,25 @@ public class EntryTypeSearchHandler
 		extends BaseSearchHandler
 {
 
-	public EntryTypeSearchHandler(List<SearchElement> searchElements)
+	public EntryTypeSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
 	protected ValidationResult internalValidate()
 	{
 		ValidationResult validationResult = new ValidationResult();
+		if (StringUtils.isBlank(searchElement.getValue())) {
+			validationResult.getRuleResults().add(getRuleResult("value", "Required"));
+		}
 
-		for (SearchElement searchElement : searchElements) {
-			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}
+		if (searchElement.getCaseInsensitive()) {
+			validationResult.getRuleResults().add(getRuleResult("caseInsensitive", "Not Supported"));
+		}
 
-			if (searchElement.getCaseInsensitive()) {
-				validationResult.getRuleResults().add(getRuleResult("caseInsensitive", "Not Supported"));
-			}
-
-			if (!searchElement.getStringOperation().equals(StringOperation.EQUALS)) {
-				validationResult.getRuleResults().add(getRuleResult("stringOperation", "Only supports EQUALS"));
-			}
+		if (!searchElement.getStringOperation().equals(StringOperation.EQUALS)) {
+			validationResult.getRuleResults().add(getRuleResult("stringOperation", "Only supports EQUALS"));
 		}
 
 		return validationResult;
@@ -68,47 +63,40 @@ public class EntryTypeSearchHandler
 	@Override
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
 
-		for (SearchElement searchElement : searchElements) {
+		// Get children componentTypes (including the parent componentType)
+		ComponentTypeOptions componentTypeOptions = new ComponentTypeOptions();
+		componentTypeOptions.setComponentType(searchElement.getValue());
+		componentTypeOptions.setPullParents(Boolean.FALSE);
 
-			// Get children componentTypes (including the parent componentType)
-			ComponentTypeOptions componentTypeOptions = new ComponentTypeOptions();
-			componentTypeOptions.setComponentType(searchElement.getValue());
-			componentTypeOptions.setPullParents(Boolean.FALSE);
-
-			List<String> componentTypes;
-			if (searchElement.getSearchChildren()) {
-				ComponentTypeNestedModel nestedModel = serviceProxy.getComponentService().getComponentType(componentTypeOptions);
-				componentTypes = nestedModel.findComponentTypeChildren();
-			} else {
-				componentTypes = Arrays.asList(searchElement.getValue());
-			}
-
-			// set component example
-			Component component = new Component();
-			component.setActiveStatus(Component.ACTIVE_STATUS);
-			component.setApprovalState(ApprovalStatus.APPROVED);
-
-			QueryByExample<Component> queryByExample = new QueryByExample<>(component);
-
-			Component componentInExample = new Component();
-			componentInExample.setComponentType(QueryByExample.STRING_FLAG);
-			queryByExample.setInExample(componentInExample);
-
-			// sets the parameter (componetType in this case) values
-			queryByExample.getInExampleOption().setParameterValues(componentTypes);
-
-			// query components
-			List<Component> components = serviceProxy.getPersistenceService().queryByExample(queryByExample);
-			List<String> results = new ArrayList<>();
-			for (Component queriedComponent : components) {
-				results.add(queriedComponent.getComponentId());
-			}
-			foundIds = mergeCondition.apply(foundIds, results);
+		List<String> componentTypes;
+		if (searchElement.getSearchChildren()) {
+			ComponentTypeNestedModel nestedModel = serviceProxy.getComponentService().getComponentType(componentTypeOptions);
+			componentTypes = nestedModel.findComponentTypeChildren();
+		} else {
+			componentTypes = Arrays.asList(searchElement.getValue());
 		}
 
-		return foundIds;
+		// set component example
+		Component component = new Component();
+		component.setActiveStatus(Component.ACTIVE_STATUS);
+		component.setApprovalState(ApprovalStatus.APPROVED);
+
+		QueryByExample<Component> queryByExample = new QueryByExample<>(component);
+
+		Component componentInExample = new Component();
+		componentInExample.setComponentType(QueryByExample.STRING_FLAG);
+		queryByExample.setInExample(componentInExample);
+
+		// sets the parameter (componetType in this case) values
+		queryByExample.getInExampleOption().setParameterValues(componentTypes);
+
+		// query components
+		List<Component> components = serviceProxy.getPersistenceService().queryByExample(queryByExample);
+		List<String> results = new ArrayList<>();
+		for (Component queriedComponent : components) {
+			results.add(queriedComponent.getComponentId());
+		}
+		return results;
 	}
 }

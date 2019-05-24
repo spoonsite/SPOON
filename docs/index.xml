@@ -22,7 +22,8 @@
  JDK 8
  Elasticsearch/Solr
  OpenAM (Configurable, default is property based log in.)
-  The application is a JEE servlet-container webapp, so any JEE 6 servlet-container compliant server should work with some server configuration. The current deployment target is Tomcat 7.</description>
+ Mongo DB support was add v2.8 as option
+  The application is a JEE servlet-container webapp, so any JEE 6 servlet-container compliant server should work with some server configuration.</description>
     </item>
     
     <item>
@@ -35,7 +36,7 @@
  Setup VM
  Install Java JDK 1.8
  Install Tomcat 7
- Integrate OpenAM Agent
+ Integrate OpenAM Agent (Optional)
  Deploy Application
  Configure Application
  Restart Tomcat (To pick up configuration changes)
@@ -65,6 +66,16 @@ Added to that is application specific overrides and high-level components create
     </item>
     
     <item>
+      <title>Custom Submission Forms</title>
+      <link>/openstorefront/applicationadmin/customsubmissionforms/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/openstorefront/applicationadmin/customsubmissionforms/</guid>
+      <description>Custom Submission Forms are used when you want to present a custom look and feel to the user when they submit an entry. You can add a form with many required or optional fields depending on the Entry Type of the submission. This form is then shown to the user when they are presented with the fields for a new entry of that type.
+1. Create a Custom Form to be used 1.</description>
+    </item>
+    
+    <item>
       <title>Submitting a New Component</title>
       <link>/openstorefront/user/quick-overview-of-submitting-a-new-component/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -72,6 +83,15 @@ Added to that is application specific overrides and high-level components create
       <guid>/openstorefront/user/quick-overview-of-submitting-a-new-component/</guid>
       <description>To get to the User Tools section, click on your user name in the upper right corner of the page and then select User Tools from the drop down menu. Once at the User Tools sections, click on the Submissions button and then click the New Submission button.
 The process for submission depends on the type of entry you want to submit and how admin has configured your environment. The application will provide a form which will guide you through the process.</description>
+    </item>
+    
+    <item>
+      <title>Workplans</title>
+      <link>/openstorefront/applicationadmin/workplans/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/openstorefront/applicationadmin/workplans/</guid>
+      <description>1. Create a new Workplan 1.1 Create the Workplan  Navigate to Admin Tools if you are not already there (click on your username in the upper-right, then Admin Tools) Select Data Management &amp;rarr; Workplan Progress Click +Add Workplan  First fill in the Workplan Config Section  Workplan Name: Unique Workplan name Workplan Admin Role: Choose the user group that will have access to entries in this workplan Workplan For: Entry Entry Type: Choose the entry type that this workplan will apply to   1.</description>
     </item>
     
     <item>
@@ -140,10 +160,8 @@ See Admin Tools -&amp;gt; Data Management -&amp;gt; Imports</description>
       
       <guid>/openstorefront/systemadmin/versionmigrationguide/</guid>
       <description>In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4) That way data migrations will occur in the proper order. If you start from the lastest version and have no data then migration is not needed.
-Note: 2.6.3 For existing applications:
-(Update var/openstorefront/config/shiro.ini)
-Add:
-/login/** = anon /mobile/** = authc /api/v1/resource/branding/current = anon /api/v1/resource/securitypolicy = anon /api/v1/resource/faq/* = anon /api/v1/resource/faq = anon /api/v1/resource/feedbacktickets = anon  Note: 2.</description>
+Note: 2.8 Mongo DB support was added. Orient is still used the default Database unless configured otherwise.
+To Migrated from an existing Orient install to Mongo the following needs to be done:</description>
     </item>
     
     <item>
@@ -154,6 +172,20 @@ Add:
       <guid>/openstorefront/dev/server-code-standard/</guid>
       <description>Java Style Guide For most part applying the IDE Formating and it&amp;rsquo;s default warning are sufficient to follow and keep the code in-line. However, here is a lists of items to follow. Borrows ideas from https://google.github.io/styleguide/javaguide.html
 Special escape sequences For any character that has a special escape sequence (\b, \t, \n, \f, \r, \&amp;ldquo;, \&amp;rsquo; and \), that sequence is used rather than the corresponding octal (e.g. \012) or Unicode (e.</description>
+    </item>
+    
+    <item>
+      <title>Security Roles</title>
+      <link>/openstorefront/applicationadmin/securityroles/</link>
+      <pubDate>Wed, 27 Feb 2019 11:30:53 -0700</pubDate>
+      
+      <guid>/openstorefront/applicationadmin/securityroles/</guid>
+      <description>Security Roles define what users get what permissions in the application. Several default roles are set up with default permissions and are listed below. These can be reset to default or altered as needed. New roles can also be added.
+TOC 1. Default Roles and Resetting to Default
+2. Default Permissions (300+)
+3. Overlapping Permissions
+4. Default Data Restrictions
+1. Default Roles and Resetting to Default When setting up an instance of Storefront it comes with a few default roles as described below and as shown in Admin Tools &amp;rarr; Application Management &amp;rarr; Security Roles on the website (must be logged in as an administrator to view)</description>
     </item>
     
     <item>

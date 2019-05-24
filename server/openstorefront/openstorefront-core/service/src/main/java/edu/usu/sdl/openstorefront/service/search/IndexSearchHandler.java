@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.service.search;
 
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
@@ -30,9 +29,9 @@ public class IndexSearchHandler
 		extends BaseSearchHandler
 {
 
-	public IndexSearchHandler(List<SearchElement> searchElements)
+	public IndexSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
@@ -46,21 +45,14 @@ public class IndexSearchHandler
 	@Override
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-		for (SearchElement searchElement : searchElements) {
+		IndexSearchResult searchResult = serviceProxy.getSearchServicePrivate().doIndexSearch(searchElement.getValue(), FilterQueryParams.defaultFilter());
 
-			IndexSearchResult searchResult = serviceProxy.getSearchServicePrivate().doIndexSearch(searchElement.getValue(), FilterQueryParams.defaultFilter());
-
-			List<String> results = new ArrayList<>();
-			for (SolrComponentModel componentModel : searchResult.getResultsList()) {
-				results.add(componentModel.getId());
-			}
-
-			foundIds = mergeCondition.apply(foundIds, results);
-			mergeCondition = searchElement.getMergeCondition();
+		List<String> results = new ArrayList<>();
+		for (SolrComponentModel componentModel : searchResult.getResultsList()) {
+			results.add(componentModel.getId());
 		}
-		return foundIds;
+
+		return results;
 	}
 
 }

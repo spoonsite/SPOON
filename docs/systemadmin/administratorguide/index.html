@@ -145,6 +145,28 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/applicationadmin/" class="dd-item">
+      <a href="/openstorefront/applicationadmin/">
+        <span>Application Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </a>
+        <ul>
+      <li data-nav-id="/applicationadmin/customsubmissionforms/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/customsubmissionforms/">
+          <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/workplans/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/workplans/">
+          <span>Workplans</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/securityroles/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/securityroles/">
+          <span>Security Roles</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+        </ul>
+    </li>
     <li data-nav-id="/systemadmin/" class="dd-item parent">
       <a href="/openstorefront/systemadmin/">
         <span>System Admin</span>
@@ -210,8 +232,8 @@
     </ul>
 
  <section id="footer"><div style="color: #E0E0DA;">
-    <p>OpenStoreFront version 2.7.4</p>
-    <p>Documentation generated on Feb 4, 2019</p>
+    <p>OpenStoreFront version 2.8</p>
+    <p>Documentation generated on May 24, 2019</p>
     <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
@@ -282,14 +304,17 @@
 <li><a href="#2-3-jira-integration">2.3 Jira Integration</a></li>
 <li><a href="#2-4-confluence-integration">2.4 Confluence Integration</a></li>
 <li><a href="#2-5-mail-server">2.5 Mail Server</a></li>
-<li><a href="#2-6-other-application-properties">2.6 Other Application Properties</a></li>
+<li><a href="#2-6-mongo-integration">2.6 Mongo Integration</a></li>
+<li><a href="#2-7-other-application-properties">2.7 Other Application Properties</a></li>
 </ul></li>
-<li><a href="#3-database-management">3. Database Management</a>
+<li><a href="#3-orient-database-management">3. Orient Database Management</a>
 <ul>
 <li><a href="#3-1-refreshing-the-database">3.1 Refreshing the Database</a></li>
 <li><a href="#3-2-installing-database-console">3.2 Installing Database Console</a></li>
 <li><a href="#3-3-installing-database-studio">3.3 Installing Database Studio</a></li>
 </ul></li>
+<li><a href="#4-mongo-database-management">4. Mongo Database Management</a></li>
+<li><a href="#5-troubleshooting">5. Troubleshooting</a></li>
 </ul>
 </nav>
         </div>
@@ -475,7 +500,7 @@ user profile in the application will be deactivated.</p>
 
 <p>The Security Policy in the application now allows for disabling user information editing. (Optional)
 This allow the external LDAP/Active Directory to be sole source of user information.
-Information will be synced at login and periodically according to teh user sync job.</p>
+Information will be synced at login and periodically according to the user sync job.</p>
 
 <p>Warning: This will not prevent login! Upon login the user profile will
 be reactivated. To prevent login, refer to the external user management
@@ -514,9 +539,11 @@ there.</p>
 <ul>
 <li><strong>tools.login.user</strong> -               Login Credentials for Integrations (currently just for jira)<br /></li>
 <li><strong>tools.login.pw</strong> -                 Login Credentials for Integrations (currently just for jira)<br /></li>
-<li><strong>jra.connectionpool.size</strong> -       Resource pool size                                             ( <strong>20</strong> )</li>
+<li><strong>jra.connectionpool.size</strong> -        Resource pool size                                             ( <strong>20</strong> )</li>
 <li><strong>jira.connection.wait.seconds</strong> -   Wait time if the pool is empty                                 ( <strong>60</strong> )</li>
 <li><strong>jira.server.url</strong> -                Jira server to connect to                                      ( <strong><a href="https://jira.di2e.net">https://jira.di2e.net</a></strong> )</li>
+<li><strong>jira.feedback.project</strong> -          What Jira project to post feedback ticket to     ( <strong>STORE</strong> )</li>
+<li><strong>jira.feedback.issuetype</strong> -        What issue type to post feedback to (issue type must exist in the project   ( <strong>Help Desk Ticket</strong> )</li>
 </ul>
 
 <h2 id="2-4-confluence-integration">2.4 Confluence Integration</h2>
@@ -550,7 +577,22 @@ there.</p>
 <li><strong>test.email</strong> -           Set for automated testing only; the email to use for testing</li>
 </ul>
 
-<h2 id="2-6-other-application-properties">2.6 Other Application Properties</h2>
+<h2 id="2-6-mongo-integration">2.6 Mongo Integration</h2>
+
+<p>Configure in: <code>/var/openstorefront/config/openstorefront.properties</code></p>
+
+<ul>
+<li><strong>db.use.mongo</strong>-            Must be set to <strong>true</strong> to use mongo ( <strong>false</strong> )<br /></li>
+<li><strong>mongo.connection.url</strong> -   Defines where/how to connect to mongo    ( <strong>mongodb://localhost:27017</strong> )<br /></li>
+<li><strong>mongo.database</strong>-          set the database name to use  ( <strong>storefront</strong> )<br /></li>
+</ul>
+
+<p>For the url see:</p>
+
+<p><a href="http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/">http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/</a>
+<a href="https://docs.mongodb.com/manual/reference/connection-string/">https://docs.mongodb.com/manual/reference/connection-string/</a></p>
+
+<h2 id="2-7-other-application-properties">2.7 Other Application Properties</h2>
 
 <p>Configure in: <code>/var/openstorefront/config/openstorefront.properties</code></p>
 
@@ -594,7 +636,7 @@ there.</p>
 <li><strong>elastic.connection.wait.seconds</strong> - Max time to wait for an open connection. ( <strong>60</strong>)</li>
 </ul>
 
-<h1 id="3-database-management">3. Database Management</h1>
+<h1 id="3-orient-database-management">3. Orient Database Management</h1>
 
 <p>The application handles all database interaction transparently, so
 direct database access and manipulation is not needed.</p>
@@ -727,6 +769,46 @@ functionality on top.</p>
 <li>See <a href="http://orientdb.com/docs/2.2.x/Home-page.html">Orient DB Studio</a> for
 more information about Studio</li>
 </ul>
+
+<h1 id="4-mongo-database-management">4. Mongo Database Management</h1>
+
+<p>Mongo DB is supported as of version 2.8</p>
+
+<p>It&rsquo;s expected that Mongo will be managed externally.<br />
+As such an administrator should follow the guides/tools for their specific setup.</p>
+
+<h1 id="5-troubleshooting">5. Troubleshooting</h1>
+
+<p>If elasticsearch detects low disk space it will change into Read-Only mode.
+At which point the index records can&rsquo;t be changed which cause with searching and updating records.</p>
+
+<p>To resolve:</p>
+
+<ol>
+<li><p>Correct the disk space issue</p></li>
+
+<li><p>issue a PUT to <a href="http://localhost:9200/openstorefront/_settings">http://localhost:9200/openstorefront/_settings</a>
+with this as the body (Content-type=application/json):</p></li>
+</ol>
+
+<pre><code>    {
+    &quot;index&quot;: {
+    &quot;blocks&quot;: {
+    &quot;read_only_allow_delete&quot;: &quot;false&quot;
+    }
+    }
+    }
+</code></pre>
+
+<p>You can use Curl or some other tool to issue the command.</p>
+
+<p>Elasticsearch should respond with:</p>
+
+<p>{
+    &ldquo;acknowledged&rdquo;: true
+}</p>
+
+<p>See <a href="https://discuss.elastic.co/t/forbidden-12-index-read-only-allow-delete-api/110282/4">https://discuss.elastic.co/t/forbidden-12-index-read-only-allow-delete-api/110282/4</a></p>
 
 
     

@@ -48,10 +48,18 @@ public class SearchModel
 	{
 		StringBuilder key = new StringBuilder();
 		key.append(toString());
+		key.append(processElementForKey(searchElements));
+		return key.toString();
+	}
+
+	private StringBuilder processElementForKey(List<SearchElement> searchElements)
+	{
+		StringBuilder key = new StringBuilder();
 		for (SearchElement searchElement : searchElements) {
 			key.append(searchElement.toString());
+			key.append(processElementForKey(searchElement.getSearchElements()));
 		}
-		return key.toString();
+		return key;
 	}
 
 	@Override

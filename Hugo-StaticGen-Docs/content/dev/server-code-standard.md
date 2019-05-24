@@ -154,11 +154,12 @@ Any of the standard "block tags" that are used appear in the order @param, @retu
 
 1. Business logic, Transactions, rules should be handled in the service code. (core-service)
 2. API Interface should have documentation (javadocs)
-3. SimpleDateFormat is not thread-safe create new instances; don't make static.
+3. SimpleDateFormat is not thread-safe create new instances; don't make it static.
 4. For decimal numbers use BigDecimal and use valueOf to instantiate.
 5. Make sure any new code is placed in the appropriate module. Be cautious of dependencies. 
 6. External resources should be handled by a Manager that in-turn handles the life-cycle.
 7. Use example query framework where possible. Keep custom queries to a minimum as this allow for greater flexibility as well as type safety on the query.  Which in turn make refactoring easier and reduces errors.
+7.1 For complex queries and more involved handling create Repo methods to abstract the code.  (See Service module; Repos)
 8. Beware of any potential infinite loops.
 9. Pay attention to Transaction boundaries. For the most part it's automatic but, you can carrier over transaction where it's unintended. 
 10. Prefer constants over hard coded strings. Keep constants with entity/object they relate to.  For general constants use OpenstorefrontConstant.
@@ -168,12 +169,12 @@ Any of the standard "block tags" that are used appear in the order @param, @retu
 
 1. Entities should have all validation annotations marked and have documentation annotations as well.
 2. Use 'get' and 'set' and not 'is' as there's a lot of automatic processing (reflection) on entities.
-3. Most entities should extends the standard entity.
-4. Preference is to keep model flat there cases where complex is fine. (meaning care should be taken with embedded complex classes) * Revisit in orient 3.0
-  If there is embedded entities, make to use Casacde, OneToX annotation.  Also, beware of db issues.  Note, the DB and moxy doesn't handling List of primatives (Meaning Boxed primatives) well.  Eg. List<String> should be List<EmailAddresses> 
+3. Most entities should extends the StandardEntity.
+4. Preference is to keep the data model flat there's cases where complex model (nested) is fine. (meaning care should be taken with embedded complex classes) * Revisit in orient 3.0
+  If there is embedded entities, make to use Casacde, OneToX annotation.  Also, beware of db issues.  Note, the DB and moxy doesn't handling List of primatives (Meaning Boxed primatives) well.  Eg. List<String> should be List<EmailAddresses>;  However later versions 2.2.x support List<String> 
 5. Document Entities with @APIdocument to update the api docs.
 6. Prefer composition of entities in view rather than inheritance. Use inheritance for substitutability.
-7. All storage entities must be registered with the DB.  This automatic for class in the entity package of the api module.
+7. All storage entities must be registered with the DB.  This automatic for class in the entity package of the api module.  (Orient Only; Still keep all entities in the same package)
 
 
 ## REST API
@@ -241,7 +242,7 @@ Note the logging.properties file (currently not loaded) sets defaults. By defaul
 
 ## Cross Cutting Concerns
 
-Design template ask about these item.
+The developer design template asks about these items.  (See Confluence for the project; if avaliable)
 
 **Security** - Make sure permission are applied to the REST/External API and UI features.
 

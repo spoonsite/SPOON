@@ -44,6 +44,8 @@ public class ComponentReview
 		implements OrganizationModel, LoggableModel<ComponentReview>
 {
 
+	public static final String FIELD_RATING = "rating";
+
 	@PK(generated = true)
 	@NotNull
 	private String componentReviewId;

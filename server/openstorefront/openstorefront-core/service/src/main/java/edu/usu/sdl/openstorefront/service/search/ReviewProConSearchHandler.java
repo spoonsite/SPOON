@@ -24,7 +24,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReviewConPk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewPro;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReviewProPk;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation.SearchType;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
@@ -39,9 +38,9 @@ public class ReviewProConSearchHandler
 		extends BaseSearchHandler
 {
 
-	public ReviewProConSearchHandler(List<SearchElement> searchElements)
+	public ReviewProConSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
@@ -49,128 +48,119 @@ public class ReviewProConSearchHandler
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		for (SearchElement searchElement : searchElements) {					
-			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}
+		if (StringUtils.isBlank(searchElement.getValue())) {
+			validationResult.getRuleResults().add(getRuleResult("value", "Required"));
 		}
 
 		return validationResult;
-		
+
 	}
 
 	@Override
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-		for (SearchElement searchElement : searchElements) {
 
-			if (SearchType.REVIEWPRO.equals(searchElement.getSearchType())) {
-				try {
-					ComponentReviewPro componentReviewPro = new ComponentReviewPro();					
-					ComponentReviewProPk componentReviewProPk = new ComponentReviewProPk();
-					componentReviewPro.setComponentReviewProPk(componentReviewProPk);
-					componentReviewPro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
-					
-					QueryByExample queryByExample = new QueryByExample(componentReviewPro);
+		if (SearchType.REVIEWPRO.equals(searchElement.getSearchType())) {
+			try {
+				ComponentReviewPro componentReviewPro = new ComponentReviewPro();
+				ComponentReviewProPk componentReviewProPk = new ComponentReviewProPk();
+				componentReviewPro.setComponentReviewProPk(componentReviewProPk);
+				componentReviewPro.setActiveStatus(ComponentReviewPro.ACTIVE_STATUS);
 
-					String likeValue = null;
-					switch (searchElement.getStringOperation()) {
-						case EQUALS:
-							String value = searchElement.getValue();
-							if (searchElement.getCaseInsensitive()) {
-								queryByExample.getFieldOptions().put(ComponentReviewProPk.FIELD_REVIEW_PRO,
-									new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
-								
-								value = value.toLowerCase();
-							}
-							componentReviewProPk.setReviewPro(value);
-							break;
-						default:
-							likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
-							break;
-					}
+				QueryByExample<ComponentReviewPro> queryByExample = new QueryByExample<>(componentReviewPro);
 
-					if (likeValue != null) {
-						ComponentReviewPro componentReviewLike = new ComponentReviewPro();
-						ComponentReviewProPk componentReviewProLikePk = new ComponentReviewProPk();
-						componentReviewLike.setComponentReviewProPk(componentReviewProLikePk);					
+				String likeValue = null;
+				switch (searchElement.getStringOperation()) {
+					case EQUALS:
+						String value = searchElement.getValue();
 						if (searchElement.getCaseInsensitive()) {
-							likeValue = likeValue.toLowerCase();
-							componentReviewProLikePk.setReviewPro(likeValue);
-							
-							queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
-						}
-
-						queryByExample.setLikeExample(componentReviewLike);
-					}
-
-
-					List<ComponentReviewPro> pros = serviceProxy.getPersistenceService().queryByExample(queryByExample);
-					List<String> results = new ArrayList<>();
-					for (ComponentReviewPro pro : pros) {
-						results.add(pro.getComponentId());
-					}
-					foundIds = mergeCondition.apply(foundIds, results);
-					mergeCondition = searchElement.getMergeCondition();
-				} catch (SecurityException | IllegalArgumentException | OpenStorefrontRuntimeException e) {
-					throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
-				}						
-			} else if (SearchType.REVIEWCON.equals(searchElement.getSearchType())) {
-				try {
-					ComponentReviewCon componentReviewCon = new ComponentReviewCon();
-					ComponentReviewConPk componentReviewConPk = new ComponentReviewConPk();
-					componentReviewCon.setComponentReviewConPk(componentReviewConPk);
-					componentReviewCon.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
-										
-					QueryByExample queryByExample = new QueryByExample(componentReviewCon);
-
-					String likeValue = null;
-					switch (searchElement.getStringOperation()) {
-						case EQUALS:
-							String value = searchElement.getValue();
-							if (searchElement.getCaseInsensitive()) {
-								queryByExample.getFieldOptions().put(ComponentReviewConPk.FIELD_REVIEW_CON,
+							queryByExample.getFieldOptions().put(ComponentReviewProPk.FIELD_REVIEW_PRO,
 									new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
-								
-								value = value.toLowerCase();
-							}
-							componentReviewConPk.setReviewCon(value);
-							break;
-						default:
-							likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
-							break;
-					}
 
-					if (likeValue != null) {
-						ComponentReviewCon componentReviewLike = new ComponentReviewCon();
-						ComponentReviewConPk componentReviewConLikePk = new ComponentReviewConPk();
-						componentReviewLike.setComponentReviewConPk(componentReviewConLikePk);					
-						if (searchElement.getCaseInsensitive()) {
-							likeValue = likeValue.toLowerCase();
-							componentReviewConLikePk.setReviewCon(likeValue);
-							
-							queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+							value = value.toLowerCase();
 						}
+						componentReviewProPk.setReviewPro(value);
+						break;
+					default:
+						likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
+						break;
+				}
 
-						queryByExample.setLikeExample(componentReviewLike);
+				if (likeValue != null) {
+					ComponentReviewPro componentReviewLike = new ComponentReviewPro();
+					ComponentReviewProPk componentReviewProLikePk = new ComponentReviewProPk();
+					componentReviewLike.setComponentReviewProPk(componentReviewProLikePk);
+					if (searchElement.getCaseInsensitive()) {
+						likeValue = likeValue.toLowerCase();
+						componentReviewProLikePk.setReviewPro(likeValue);
+
+						queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
 					}
 
-					List<ComponentReviewCon> cons = serviceProxy.getPersistenceService().queryByExample(queryByExample);
-					List<String> results = new ArrayList<>();
-					for (ComponentReviewCon con : cons) {
-						results.add(con.getComponentId());
-					}
-					foundIds = mergeCondition.apply(foundIds, results);
-					mergeCondition = searchElement.getMergeCondition();
-				} catch (SecurityException | IllegalArgumentException | OpenStorefrontRuntimeException e) {
-					throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
-				}			
+					queryByExample.setLikeExample(componentReviewLike);
+				}
+
+				List<ComponentReviewPro> pros = serviceProxy.getPersistenceService().queryByExample(queryByExample);
+				List<String> results = new ArrayList<>();
+				for (ComponentReviewPro pro : pros) {
+					results.add(pro.getComponentId());
+				}
+				return results;
+			} catch (SecurityException | IllegalArgumentException | OpenStorefrontRuntimeException e) {
+				throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
 			}
+		} else if (SearchType.REVIEWCON.equals(searchElement.getSearchType())) {
+			try {
+				ComponentReviewCon componentReviewCon = new ComponentReviewCon();
+				ComponentReviewConPk componentReviewConPk = new ComponentReviewConPk();
+				componentReviewCon.setComponentReviewConPk(componentReviewConPk);
+				componentReviewCon.setActiveStatus(ComponentReviewCon.ACTIVE_STATUS);
 
+				QueryByExample<ComponentReviewCon> queryByExample = new QueryByExample<>(componentReviewCon);
+
+				String likeValue = null;
+				switch (searchElement.getStringOperation()) {
+					case EQUALS:
+						String value = searchElement.getValue();
+						if (searchElement.getCaseInsensitive()) {
+							queryByExample.getFieldOptions().put(ComponentReviewConPk.FIELD_REVIEW_CON,
+									new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
+
+							value = value.toLowerCase();
+						}
+						componentReviewConPk.setReviewCon(value);
+						break;
+					default:
+						likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
+						break;
+				}
+
+				if (likeValue != null) {
+					ComponentReviewCon componentReviewLike = new ComponentReviewCon();
+					ComponentReviewConPk componentReviewConLikePk = new ComponentReviewConPk();
+					componentReviewLike.setComponentReviewConPk(componentReviewConLikePk);
+					if (searchElement.getCaseInsensitive()) {
+						likeValue = likeValue.toLowerCase();
+						componentReviewConLikePk.setReviewCon(likeValue);
+
+						queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+					}
+
+					queryByExample.setLikeExample(componentReviewLike);
+				}
+
+				List<ComponentReviewCon> cons = serviceProxy.getPersistenceService().queryByExample(queryByExample);
+				List<String> results = new ArrayList<>();
+				for (ComponentReviewCon con : cons) {
+					results.add(con.getComponentId());
+				}
+				return results;
+			} catch (SecurityException | IllegalArgumentException | OpenStorefrontRuntimeException e) {
+				throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
+			}
 		}
-		return foundIds;		
+
+		return new ArrayList<>();
 	}
-	
+
 }

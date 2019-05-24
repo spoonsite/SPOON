@@ -143,8 +143,6 @@ public class EvaluationResource
 		specialOperatorModel.getGenerateStatementOption().setParameterSuffix(GenerateStatementOption.PARAMETER_SUFFIX_END_RANGE);
 		queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-		queryByExample.setAdditionalWhere(filterEngine.queryStandardRestriction());
-
 		//get component ids
 		if (StringUtils.isNotBlank(evaluationFilterParams.getComponentName())) {
 			// If given, filter the search by name
@@ -208,14 +206,15 @@ public class EvaluationResource
 
 		if (sortField != null) {
 
-			queryByExample.setMaxResults(evaluationFilterParams.getMax());
-			queryByExample.setFirstResult(evaluationFilterParams.getOffset());
 			queryByExample.setSortDirection(evaluationFilterParams.getSortOrder());
 			BeanUtil.setPropertyValue(sortField.getName(), evaluationSortExample, QueryByExample.getFlagForType(sortField.getType()));
 			queryByExample.setOrderBy(evaluationSortExample);
 		}
 
 		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
+		evaluations = filterEngine.filter(evaluations);
+		evaluations = evaluationFilterParams.filter(evaluations);
+
 		List<EvaluationView> views = EvaluationView.toView(evaluations);
 
 		if (sortField == null) {

@@ -56,27 +56,6 @@ public class GeneralMedia
 	@ConsumeField
 	private Boolean allowInBranding;
 
-	/**
-	 * @deprecated As of release 2.5, replaced by {@link #file}
-	 */
-	@Deprecated
-	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
-	private String fileName;
-
-	/**
-	 * @deprecated As of release 2.5, replaced by {@link #file}
-	 */
-	@Deprecated
-	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
-	private String originalFileName;
-
-	/**
-	 * @deprecated As of release 2.5, replaced by {@link #file}
-	 */
-	@Deprecated
-	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
-	private String mimeType;
-
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public GeneralMedia()
 	{
@@ -123,72 +102,6 @@ public class GeneralMedia
 	public void setAllowInBranding(Boolean allowInBranding)
 	{
 		this.allowInBranding = allowInBranding;
-	}
-
-	/**
-	 * @return name of the file on the file system
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().getFileName()}
-	 */
-	@Deprecated
-	public String getFileName()
-	{
-		return fileName;
-	}
-
-	/**
-	 * @param fileName name of the file on the file system
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().setFileName(String fileName)}
-	 */
-	@Deprecated
-	public void setFileName(String fileName)
-	{
-		this.fileName = fileName;
-	}
-
-	/**
-	 * @return filename used by the original source
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().getOriginalName()}
-	 */
-	@Deprecated
-	public String getOriginalFileName()
-	{
-		return originalFileName;
-	}
-
-	/**
-	 * @param originalFileName filename used by the original source
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().setOriginalName(String originalName)}
-	 */
-	@Deprecated
-	public void setOriginalName(String originalFileName)
-	{
-		this.originalFileName = originalFileName;
-	}
-
-	/**
-	 * @return the mime type encoding of the file
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().getMimeType()}
-	 */
-	@Deprecated
-	public String getMimeType()
-	{
-		return mimeType;
-	}
-
-	/**
-	 * @param mimeType the mime type encoding of the file
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().setMimeType(String mimeType)}
-	 */
-	@Deprecated
-	public void setMimeType(String mimeType)
-	{
-		this.mimeType = mimeType;
 	}
 
 }

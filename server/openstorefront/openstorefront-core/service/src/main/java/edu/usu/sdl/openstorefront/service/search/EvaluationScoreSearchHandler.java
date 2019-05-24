@@ -21,7 +21,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSectionPk;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +34,9 @@ public class EvaluationScoreSearchHandler
 		extends BaseSearchHandler
 {
 
-	public EvaluationScoreSearchHandler(List<SearchElement> searchElements)
+	public EvaluationScoreSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
@@ -45,52 +44,44 @@ public class EvaluationScoreSearchHandler
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		for (SearchElement searchElement : searchElements) {
-			if (StringUtils.isBlank(searchElement.getKeyField())) {
-				validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
-			}
-			
-			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}			
+		if (StringUtils.isBlank(searchElement.getKeyField())) {
+			validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
 		}
 
-		return validationResult;		
+		if (StringUtils.isBlank(searchElement.getValue())) {
+			validationResult.getRuleResults().add(getRuleResult("value", "Required"));
+		}
+
+		return validationResult;
 	}
 
 	@Override
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-		for (SearchElement searchElement : searchElements) {
-			
-			try {
-				ComponentEvaluationSection evaluationSection = new ComponentEvaluationSection();
-				ComponentEvaluationSectionPk evaluationSectionPk = new ComponentEvaluationSectionPk();
-				evaluationSectionPk.setEvaluationSection(searchElement.getKeyField());
-				evaluationSection.setComponentEvaluationSectionPk(evaluationSectionPk);
-				evaluationSection.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
-				
-				QueryByExample queryByExample = new QueryByExample(evaluationSection);
 
-				List<ComponentEvaluationSection> sections = serviceProxy.getPersistenceService().queryByExample(queryByExample);
-				List<String> results = new ArrayList<>();
-				for (ComponentEvaluationSection section : sections) {
-					if (Convert.toBoolean(section.getNotAvailable()) == false) {
-						if (searchElement.getNumberOperation().pass(section.getActualScore(), Convert.toBigDecimal(searchElement.getValue()))) {
-							results.add(section.getComponentId());
-						}
+		try {
+			ComponentEvaluationSection evaluationSection = new ComponentEvaluationSection();
+			ComponentEvaluationSectionPk evaluationSectionPk = new ComponentEvaluationSectionPk();
+			evaluationSectionPk.setEvaluationSection(searchElement.getKeyField());
+			evaluationSection.setComponentEvaluationSectionPk(evaluationSectionPk);
+			evaluationSection.setActiveStatus(ComponentEvaluationSection.ACTIVE_STATUS);
+
+			QueryByExample<ComponentEvaluationSection> queryByExample = new QueryByExample<>(evaluationSection);
+
+			List<ComponentEvaluationSection> sections = serviceProxy.getPersistenceService().queryByExample(queryByExample);
+			List<String> results = new ArrayList<>();
+			for (ComponentEvaluationSection section : sections) {
+				if (Convert.toBoolean(section.getNotAvailable()) == false) {
+					if (searchElement.getNumberOperation().pass(section.getActualScore(), Convert.toBigDecimal(searchElement.getValue()))) {
+						results.add(section.getComponentId());
 					}
 				}
-				foundIds = mergeCondition.apply(foundIds, results);
-				mergeCondition = searchElement.getMergeCondition();
+			}
+			return results;
 
-			} catch (SecurityException | IllegalArgumentException | OpenStorefrontRuntimeException e) {
-				throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
-			}			
+		} catch (SecurityException | IllegalArgumentException | OpenStorefrontRuntimeException e) {
+			throw new OpenStorefrontRuntimeException("Unable to handle search request", e);
 		}
-		return foundIds;
 	}
-	
+
 }

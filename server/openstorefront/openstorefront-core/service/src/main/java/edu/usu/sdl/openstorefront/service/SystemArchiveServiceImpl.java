@@ -50,7 +50,7 @@ public class SystemArchiveServiceImpl
 	@Override
 	public void deleteArchive(String archiveId)
 	{
-		SystemArchive archive = persistenceService.findById(SystemArchive.class, archiveId);
+		SystemArchive archive = getPersistenceService().findById(SystemArchive.class, archiveId);
 		if (archive != null) {
 
 			if (RunStatus.COMPLETE.equals(archive.getRunStatus())
@@ -59,9 +59,9 @@ public class SystemArchiveServiceImpl
 				deleteArchiveRemoveFile(path);
 				SystemArchiveError systemArchiveError = new SystemArchiveError();
 				systemArchiveError.setArchiveId(archiveId);
-				persistenceService.deleteByExample(systemArchiveError);
+				getPersistenceService().deleteByExample(systemArchiveError);
 
-				persistenceService.delete(archive);
+				getPersistenceService().delete(archive);
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable delete system archive that is currently in process.",
 						"Check status on archive.  If the archive is stuck (meaning application was stopped in the middle. Wait for the system to auto-correct after processing timeout has occured)."
@@ -85,11 +85,11 @@ public class SystemArchiveServiceImpl
 		if (StringUtils.isNotBlank(message)) {
 
 			SystemArchiveError systemArchiveError = new SystemArchiveError();
-			systemArchiveError.setArchiveErrorId(persistenceService.generateId());
+			systemArchiveError.setArchiveErrorId(getPersistenceService().generateId());
 			systemArchiveError.setArchiveId(archiveId);
 			systemArchiveError.setMessage(message);
 			systemArchiveError.populateBaseCreateFields();
-			persistenceService.persist(systemArchiveError);
+			getPersistenceService().persist(systemArchiveError);
 
 		} else {
 			LOG.log(Level.FINEST, "Unable to add empty error message to system archive. SKIPING");

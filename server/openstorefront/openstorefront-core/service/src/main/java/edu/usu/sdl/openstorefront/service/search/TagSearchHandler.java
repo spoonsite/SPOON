@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +33,9 @@ public class TagSearchHandler
 		extends BaseSearchHandler
 {
 
-	public TagSearchHandler(List<SearchElement> searchElements)
+	public TagSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
@@ -44,10 +43,8 @@ public class TagSearchHandler
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		for (SearchElement searchElement : searchElements) {
-			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}
+		if (StringUtils.isBlank(searchElement.getValue())) {
+			validationResult.getRuleResults().add(getRuleResult("value", "Required"));
 		}
 
 		return validationResult;
@@ -56,53 +53,47 @@ public class TagSearchHandler
 	@Override
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-		for (SearchElement searchElement : searchElements) {
 
-			ComponentTag componentTag = new ComponentTag();
-			componentTag.setActiveStatus(ComponentTag.ACTIVE_STATUS);			
-			QueryByExample queryByExample = new QueryByExample(componentTag);
+		ComponentTag componentTag = new ComponentTag();
+		componentTag.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+		QueryByExample<ComponentTag> queryByExample = new QueryByExample<>(componentTag);
 
-			String tagValue = searchElement.getValue();
-			if (searchElement.getCaseInsensitive()) {
-				tagValue = tagValue.toLowerCase();
-				queryByExample.getFieldOptions().put(ComponentTag.FIELD_TEXT,
+		String tagValue = searchElement.getValue();
+		if (searchElement.getCaseInsensitive()) {
+			tagValue = tagValue.toLowerCase();
+			queryByExample.getFieldOptions().put(ComponentTag.FIELD_TEXT,
 					new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 
-			}
-			String likeValue = null;
-			switch (searchElement.getStringOperation()) {
-				case EQUALS:
-					componentTag.setText(tagValue);
-					break;
-				default:
-					likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
-					break;
-			}
-
-			if (likeValue != null) {
-				ComponentTag componentTagLike = new ComponentTag();
-
-				if (searchElement.getCaseInsensitive()) {
-					likeValue = likeValue.toLowerCase();
-					queryByExample.getFieldOptions().clear();
-					queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
-				}
-				componentTagLike.setText(likeValue);
-
-				queryByExample.setLikeExample(componentTagLike);
-			}
-
-			List<ComponentTag> componentTags = serviceProxy.getPersistenceService().queryByExample(queryByExample);
-			List<String> results = new ArrayList<>();
-			for (ComponentTag tag : componentTags) {
-				results.add(tag.getComponentId());
-			}
-			foundIds = mergeCondition.apply(foundIds, results);
-			mergeCondition = searchElement.getMergeCondition();
 		}
-		return foundIds;
+		String likeValue = null;
+		switch (searchElement.getStringOperation()) {
+			case EQUALS:
+				componentTag.setText(tagValue);
+				break;
+			default:
+				likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
+				break;
+		}
+
+		if (likeValue != null) {
+			ComponentTag componentTagLike = new ComponentTag();
+
+			if (searchElement.getCaseInsensitive()) {
+				likeValue = likeValue.toLowerCase();
+				queryByExample.getFieldOptions().clear();
+				queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+			}
+			componentTagLike.setText(likeValue);
+
+			queryByExample.setLikeExample(componentTagLike);
+		}
+
+		List<ComponentTag> componentTags = serviceProxy.getPersistenceService().queryByExample(queryByExample);
+		List<String> results = new ArrayList<>();
+		for (ComponentTag tag : componentTags) {
+			results.add(tag.getComponentId());
+		}
+		return results;
 	}
 
 }

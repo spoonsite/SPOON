@@ -15,15 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.service.search;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -34,9 +31,9 @@ public class UserRatingSearchHandler
 		extends BaseSearchHandler
 {
 
-	public UserRatingSearchHandler(List<SearchElement> searchElements)
+	public UserRatingSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
@@ -44,13 +41,11 @@ public class UserRatingSearchHandler
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		for (SearchElement searchElement : searchElements) {
-			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}
-			if (StringUtils.isNumeric(searchElement.getValue()) == false) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Must be a integer number"));
-			}
+		if (StringUtils.isBlank(searchElement.getValue())) {
+			validationResult.getRuleResults().add(getRuleResult("value", "Required"));
+		}
+		if (StringUtils.isNumeric(searchElement.getValue()) == false) {
+			validationResult.getRuleResults().add(getRuleResult("value", "Must be a integer number"));
 		}
 
 		return validationResult;
@@ -59,29 +54,18 @@ public class UserRatingSearchHandler
 	@Override
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-		for (SearchElement searchElement : searchElements) {
-
-			String query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " where activeStatus='" + ComponentReview.ACTIVE_STATUS + "' group by componentId ";
-
-			Integer checkValue = Convert.toInteger(searchElement.getValue());
-			if (checkValue == null) {
-				checkValue = 0;
-			}
-
-			List<ODocument> queryResults = serviceProxy.getPersistenceService().query(query, new HashMap<>());
-			List<String> results = new ArrayList<>();
-			for (ODocument oDocument : queryResults) {
-				Integer value = oDocument.field("rating");
-				if (searchElement.getNumberOperation().pass(value, checkValue)) {
-					results.add(oDocument.field("componentId"));
-				}
-			}
-			foundIds = mergeCondition.apply(foundIds, results);
-			mergeCondition = searchElement.getMergeCondition();
+		Integer checkValue = Convert.toInteger(searchElement.getValue());
+		if (checkValue == null) {
+			checkValue = 0;
 		}
-		return foundIds;
+
+		List<String> results = new ArrayList<>();
+		Map<Integer, List<String>> ratingMap = serviceProxy.getRepoFactory().getComponentRepo().getAverageRatingForComponents(checkValue, searchElement.getNumberOperation());
+		for (List<String> values : ratingMap.values()) {
+			results.addAll(values);
+		}
+
+		return results;
 	}
 
 }

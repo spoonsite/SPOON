@@ -16,11 +16,14 @@
 package edu.usu.sdl.core;
 
 import edu.usu.sdl.core.init.ApplyOnceInit;
+import edu.usu.sdl.core.init.PostInitApplyOnce;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
+import edu.usu.sdl.openstorefront.core.api.SystemManager;
 import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -47,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,6 +65,7 @@ import net.sourceforge.stripes.util.ResolverUtil;
  * @author dshurtleff
  */
 public class CoreSystem
+		implements SystemManager
 {
 
 	private static final Logger LOG = Logger.getLogger(CoreSystem.class.getName());
@@ -116,7 +121,7 @@ public class CoreSystem
 		boolean startedAllManagers = loadAllManagers();
 		boolean allInitsApplied = true;
 		if (startedAllManagers) {
-			allInitsApplied = appyInits();
+			allInitsApplied = appyInits(ApplyOnceInit.class);
 		}
 		if (startedAllManagers
 				&& allInitsApplied) {
@@ -127,6 +132,22 @@ public class CoreSystem
 			if (startupHandler != null) {
 				startupHandler.postStartupHandler();
 			}
+
+			//run post int after everything else is started
+			Timer t = new java.util.Timer();
+			t.schedule(
+					new java.util.TimerTask()
+			{
+				@Override
+				public void run()
+				{
+					appyInits(PostInitApplyOnce.class);
+					t.cancel();
+				}
+			},
+					100
+			);
+
 		}
 	}
 
@@ -148,18 +169,24 @@ public class CoreSystem
 	}
 
 	@SuppressWarnings("squid:S1872")
-	private static boolean appyInits()
+	private static boolean appyInits(Class applyTypeClass)
 	{
 		boolean allInitsCreated = true;
 
 		ResolverUtil resolverUtil = new ResolverUtil();
-		resolverUtil.find(new ResolverUtil.IsA(ApplyOnceInit.class), "edu.usu.sdl.core.init");
+		resolverUtil.find(new ResolverUtil.IsA(applyTypeClass), "edu.usu.sdl.core.init");
 
 		List<ApplyOnceInit> initSetups = new ArrayList<>();
 		for (Object testObject : resolverUtil.getClasses()) {
 			Class testClass = (Class) testObject;
+			if (ApplyOnceInit.class.getSimpleName().equals(applyTypeClass.getSimpleName())) {
+				if (ReflectionUtil.isSubClass(PostInitApplyOnce.class.getSimpleName(), testClass)) {
+					break;
+				}
+			}
 			try {
-				if (ApplyOnceInit.class.getSimpleName().equals(testClass.getSimpleName()) == false) {
+				if (ApplyOnceInit.class.getSimpleName().equals(testClass.getSimpleName()) == false
+						&& PostInitApplyOnce.class.getSimpleName().equals(testClass.getSimpleName()) == false) {
 					systemStatus = "Checking data init: " + testClass.getSimpleName();
 					initSetups.add((ApplyOnceInit) testClass.newInstance());
 				}
@@ -236,6 +263,7 @@ public class CoreSystem
 		if (manager.isStarted() == false) {
 			systemStatus = MessageFormat.format("Starting up:{0}", managerClassName);
 			manager.initialize();
+			LOG.log(Level.INFO, () -> "Started: " + managerClassName);
 		}
 	}
 
@@ -262,6 +290,7 @@ public class CoreSystem
 		if (manager.isStarted()) {
 			systemStatus = MessageFormat.format("Shutting down:{0}", managerClassName);
 			manager.shutdown();
+			LOG.log(Level.INFO, () -> "Stopped: " + managerClassName);
 		}
 	}
 
@@ -351,6 +380,12 @@ public class CoreSystem
 	public static void setDetailedStatus(String aDetailedStatus)
 	{
 		detailedStatus = aDetailedStatus;
+	}
+
+	@Override
+	public boolean managerStarted()
+	{
+		return CoreSystem.isStarted();
 	}
 
 }

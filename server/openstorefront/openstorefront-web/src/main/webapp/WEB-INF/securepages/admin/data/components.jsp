@@ -36,11 +36,6 @@
 			</p>
 		</form>
 
-		<form name="exportFormDescribe" action="api/v1/resource/components/export/describe" method="POST" >
-			<p style="display: none;" id="exportFormDescribeIds">
-			</p>
-		</form>
-
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.require('OSF.common.AttributeCodeSelect');
@@ -1693,7 +1688,9 @@
 						{ text: 'Create User', dataIndex: 'createUser', width: 175, hidden: true },
 						{ text: 'Component Id', dataIndex: 'componentId', width: 175, hidden: true },
 						{ text: 'Organization', dataIndex: 'organization', width: 175, hidden: true},
-						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true, sortable: false }
+						{ text: 'Security Marking', dataIndex: 'securityMarkingDescription', width: 175, hidden: true, sortable: false },
+						{ text: 'Data Source', dataIndex: 'dataSource', width: 175, hidden: true, sortable: false },
+						{ text: 'Data Sensitivity', dataIndex: 'dataSensitivity', width: 175, hidden: true, sortable: false }
 					],
 					dockedItems: [
 						{
@@ -2015,21 +2012,8 @@
 									iconCls: 'fa fa-2x fa-download icon-button-color-default',
 									scale: 'medium',
 									disabled: true,
-									menu: {
-										items: [
-											{
-												text: 'Standard',
-												handler: function() {
-													actionExportComponents('exportForm');
-												}
-											},
-											{
-												text: 'Describe',
-												handler: function() {
-													actionExportComponents('exportFormDescribe');
-												}
-											}
-										]
+									handler: function () {
+										actionExportComponents('exportForm');
 									}
 								}
 							]
@@ -2151,7 +2135,7 @@
 											fieldLabel: 'Username <span class="field-required" />',
 											labelAlign: 'top',
 											name: 'currentDataOwner',
-											width: '100%',
+											width: '100%'
 										},
 										{
 											xtype: 'osf-common-validhtmleditor',

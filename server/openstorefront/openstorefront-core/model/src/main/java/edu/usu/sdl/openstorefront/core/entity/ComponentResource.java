@@ -50,30 +50,6 @@ public class ComponentResource
 	@NotNull
 	private String resourceId;
 
-	/**
-	 * @deprecated As of release 2.5, replaced by {@link #file}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
-	private String fileName;
-
-	/**
-	 * @deprecated As of release 2.5, replaced by {@link #file}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
-	private String originalName;
-
-	/**
-	 * @deprecated As of release 2.5, replaced by {@link #file}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
-	private String mimeType;
-
 	@APIDescription("A local resource file")
 	private MediaFile file;
 
@@ -136,14 +112,8 @@ public class ComponentResource
 		super.updateFields(entity);
 
 		if (StringUtils.isNotBlank(resource.getLink())) {
-			this.setFileName(null);
-			this.setOriginalName(null);
-			this.setMimeType(null);
 			this.setFile(null);
 		} else {
-			this.setFileName(resource.getFileName());
-			this.setOriginalName(resource.getOriginalName());
-			this.setMimeType(resource.getMimeType());
 			this.setFile(resource.getFile());
 		}
 		this.setDescription(resource.getDescription());
@@ -238,77 +208,13 @@ public class ComponentResource
 		this.restricted = restricted;
 	}
 
-	/**
-	 * @return name of the file on the file system
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().getFileName()}
-	 */
-	@Deprecated
-	public String getFileName()
-	{
-		return fileName;
-	}
-
-	/**
-	 * @param fileName name of the file on the file system
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().setFileName(String fileName)}
-	 */
-	@Deprecated
-	public void setFileName(String fileName)
-	{
-		this.fileName = fileName;
-	}
-
-	/**
-	 * @return filename used by the original source
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().getOriginalName()}
-	 */
-	@Deprecated
-	public String getOriginalName()
-	{
-		return originalName;
-	}
-
-	/**
-	 * @param originalName filename used by the original source
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().setOriginalName(String originalName)}
-	 */
-	@Deprecated
-	public void setOriginalName(String originalName)
-	{
-		this.originalName = originalName;
-	}
-
-	/**
-	 * @return the mime type encoding of the file
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().getMimeType()}
-	 */
-	@Deprecated
-	public String getMimeType()
-	{
-		return mimeType;
-	}
-
-	/**
-	 * @param mimeType the mime type encoding of the file
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().setMimeType(String mimeType)}
-	 */
-	@Deprecated
-	public void setMimeType(String mimeType)
-	{
-		this.mimeType = mimeType;
-	}
-
+	@Override
 	public MediaFile getFile()
 	{
 		return file;
 	}
 
+	@Override
 	public void setFile(MediaFile file)
 	{
 		this.file = file;

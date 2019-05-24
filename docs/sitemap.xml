@@ -23,11 +23,19 @@
   </url>
   
   <url>
+    <loc>/openstorefront/applicationadmin/customsubmissionforms/</loc>
+  </url>
+  
+  <url>
     <loc>/openstorefront/evaluations/librarian/</loc>
   </url>
   
   <url>
     <loc>/openstorefront/user/quick-overview-of-submitting-a-new-component/</loc>
+  </url>
+  
+  <url>
+    <loc>/openstorefront/applicationadmin/workplans/</loc>
   </url>
   
   <url>
@@ -59,6 +67,11 @@
   </url>
   
   <url>
+    <loc>/openstorefront/applicationadmin/securityroles/</loc>
+    <lastmod>2019-02-27T11:30:53-07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/openstorefront/evaluations/evaluator/storefront-evaluators-guide/</loc>
   </url>
   
@@ -84,6 +97,11 @@
   
   <url>
     <loc>/openstorefront/dev/</loc>
+  </url>
+  
+  <url>
+    <loc>/openstorefront/applicationadmin/</loc>
+    <lastmod>2019-02-27T11:30:53-07:00</lastmod>
   </url>
   
   <url>

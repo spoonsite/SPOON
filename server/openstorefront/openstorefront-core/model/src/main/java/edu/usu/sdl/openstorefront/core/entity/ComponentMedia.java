@@ -54,22 +54,6 @@ public class ComponentMedia
 	@NotNull
 	private String componentMediaId;
 
-	/**
-	 * @deprecated As of release 2.5, replaced by {@link #file}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
-	private String fileName;
-
-	/**
-	 * @deprecated As of release 2.5, replaced by {@link #file}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
-	private String originalName;
-
 	@ManyToOne(cascade = {CascadeType.ALL})
 	@APIDescription("A local media file")
 	private MediaFile file;
@@ -80,14 +64,6 @@ public class ComponentMedia
 	@ConsumeField
 	@FK(MediaType.class)
 	private String mediaTypeCode;
-
-	/**
-	 * @deprecated As of release 2.5, replaced by {@link #file}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@APIDescription("Deprecated as of release 2.5, replaced by MediaFile")
-	private String mimeType;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_URL)
 	@ConsumeField
@@ -153,14 +129,8 @@ public class ComponentMedia
 		super.updateFields(entity);
 
 		if (StringUtils.isNotBlank(media.getLink())) {
-			this.setFileName(null);
-			this.setOriginalName(null);
-			this.setMimeType(null);
 			this.setFile(null);
 		} else {
-			this.setFileName(media.getFileName());
-			this.setOriginalName(media.getOriginalName());
-			this.setMimeType(media.getMimeType());
 
 			/**
 			 * This change was added to prevent duplicate files being created
@@ -227,28 +197,6 @@ public class ComponentMedia
 		this.componentMediaId = componentMediaId;
 	}
 
-	/**
-	 * @return filename used by the original source
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().getOriginalName()}
-	 */
-	@Deprecated
-	public String getOriginalName()
-	{
-		return originalName;
-	}
-
-	/**
-	 * @param originalName filename used by the original source
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().setOriginalName(String originalName)}
-	 */
-	@Deprecated
-	public void setOriginalName(String originalName)
-	{
-		this.originalName = originalName;
-	}
-
 	public String getMediaTypeCode()
 	{
 		return mediaTypeCode;
@@ -257,28 +205,6 @@ public class ComponentMedia
 	public void setMediaTypeCode(String mediaTypeCode)
 	{
 		this.mediaTypeCode = mediaTypeCode;
-	}
-
-	/**
-	 * @return the mime type encoding of the file
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().getMimeType()}
-	 */
-	@Deprecated
-	public String getMimeType()
-	{
-		return mimeType;
-	}
-
-	/**
-	 * @param mimeType the mime type encoding of the file
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().setMimeType(String mimeType)}
-	 */
-	@Deprecated
-	public void setMimeType(String mimeType)
-	{
-		this.mimeType = mimeType;
 	}
 
 	public String getLink()
@@ -299,28 +225,6 @@ public class ComponentMedia
 	public void setCaption(String caption)
 	{
 		this.caption = caption;
-	}
-
-	/**
-	 * @return name of the file on the file system
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().getFileName()}
-	 */
-	@Deprecated
-	public String getFileName()
-	{
-		return fileName;
-	}
-
-	/**
-	 * @param fileName name of the file on the file system
-	 * @deprecated As of release 2.5, replaced by
-	 * {@link #getFile().setFileName(String fileName)}
-	 */
-	@Deprecated
-	public void setFileName(String fileName)
-	{
-		this.fileName = fileName;
 	}
 
 	public Boolean getHideInDisplay()
@@ -353,11 +257,13 @@ public class ComponentMedia
 		this.iconFlag = iconFlag;
 	}
 
+	@Override
 	public MediaFile getFile()
 	{
 		return file;
 	}
 
+	@Override
 	public void setFile(MediaFile file)
 	{
 		this.file = file;

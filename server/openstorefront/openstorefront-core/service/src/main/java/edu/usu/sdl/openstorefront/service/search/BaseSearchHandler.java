@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,32 +31,37 @@ import java.util.List;
 public abstract class BaseSearchHandler
 {
 
-	protected List<SearchElement> searchElements = new ArrayList<>();
+	protected SearchElement searchElement;
 
 	protected ServiceProxy serviceProxy = ServiceProxy.getProxy();
 
-	public BaseSearchHandler(List<SearchElement> searchElements)
+	public BaseSearchHandler(SearchElement searchElement)
 	{
-		this.searchElements.addAll(searchElements);
+		this.searchElement = searchElement;
+	}
+
+	public MergeCondition getTopMergeCondition()
+	{
+		return searchElement.getMergeCondition();
 	}
 
 	public MergeCondition getNextMergeCondition()
 	{
-		if (searchElements.isEmpty()) {
-			//default Merge
-			return MergeCondition.OR;
+		if (searchElement.getSearchElements().isEmpty()) {
+			return searchElement.getMergeCondition();
 		}
-		return searchElements.get(searchElements.size() - 1).getMergeCondition();
+		return searchElement.getSearchElements().get(searchElement.getSearchElements().size() - 1).getMergeCondition();
+	}
+
+	public List<SearchElement> getChildren()
+	{
+		return searchElement.getSearchElements();
 	}
 
 	protected ValidationResult validateDefaults()
 	{
 		ValidationResult validationResult = new ValidationResult();
-
-		for (SearchElement searchElement : searchElements) {
-			validationResult.merge(ValidationUtil.validate(new ValidationModel(searchElement)));
-		}
-
+		validationResult.merge(ValidationUtil.validate(new ValidationModel(searchElement)));
 		return validationResult;
 	}
 

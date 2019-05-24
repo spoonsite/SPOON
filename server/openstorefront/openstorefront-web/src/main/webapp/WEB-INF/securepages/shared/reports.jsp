@@ -1605,7 +1605,10 @@
 											outputToAdd.push({
 												text: avaliable.description,											
 												transmissionType: avaliable.code,
-												handler: function() {	
+												handler: function() {
+													if (!outputs) {
+														outputs = [];
+													}
 													outputs.push({
 														outputId: Ext.id(),
 														reportTransmissionType: avaliable.code,
@@ -1670,7 +1673,7 @@
 									});
 
 									// if there are no email transmission types, ensure 'Notify Me' checkbox is enabled.
-									if (emailOutputTypes === 0 && notifyMeField.length) {
+									if (emailOutputTypes === 0 && notifyMeField && notifyMeField.length) {
 										notifyMeField.setDisabled(false);
 									}
 

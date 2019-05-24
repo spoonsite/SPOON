@@ -19,13 +19,11 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -36,9 +34,9 @@ public class ArchitectureSearchHandler
 		extends BaseSearchHandler
 {
 
-	public ArchitectureSearchHandler(List<SearchElement> searchElements)
+	public ArchitectureSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
@@ -46,10 +44,8 @@ public class ArchitectureSearchHandler
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		for (SearchElement searchElement : searchElements) {
-			if (StringUtils.isBlank(searchElement.getKeyField())) {
-				validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
-			}
+		if (StringUtils.isBlank(searchElement.getKeyField())) {
+			validationResult.getRuleResults().add(getRuleResult("keyField", "Required"));
 		}
 
 		return validationResult;
@@ -58,61 +54,65 @@ public class ArchitectureSearchHandler
 	@Override
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-		for (SearchElement searchElement : searchElements) {
 
-			AttributeCode attributeCodeExample = new AttributeCode();
-			AttributeCodePk attributeCodePkExample = new AttributeCodePk();
-			attributeCodePkExample.setAttributeType(searchElement.getKeyField());
-			attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
+		AttributeCode attributeCodeExample = new AttributeCode();
+		AttributeCodePk attributeCodePkExample = new AttributeCodePk();
+		attributeCodePkExample.setAttributeType(searchElement.getKeyField());
+		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 
-			QueryByExample<AttributeCode> queryByExample = new QueryByExample<>(attributeCodeExample);
+		QueryByExample<AttributeCode> queryByExample = new QueryByExample<>(attributeCodeExample);
 
-			if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
-				String likeValue = null;
-				switch (searchElement.getStringOperation()) {
-					case EQUALS:
-						attributeCodeExample.setArchitectureCode(searchElement.getKeyValue());
-						break;
-					default:
-						likeValue = searchElement.getStringOperation().toQueryString(searchElement.getKeyValue());
-						break;
-				}
-
-				if (likeValue != null) {
-					AttributeCode attributeCodeLike = new AttributeCode();
-					attributeCodeLike.setArchitectureCode(likeValue);
-					queryByExample.setLikeExample(attributeCodeLike);
-				}
+		if (StringUtils.isNotBlank(searchElement.getKeyValue())) {
+			String likeValue = null;
+			switch (searchElement.getStringOperation()) {
+				case EQUALS:
+					attributeCodeExample.setArchitectureCode(searchElement.getKeyValue());
+					break;
+				default:
+					likeValue = searchElement.getStringOperation().toQueryString(searchElement.getKeyValue());
+					break;
 			}
 
-			List<AttributeCode> attributeCodes = serviceProxy.getPersistenceService().queryByExample(queryByExample);
-			List<String> ids = new ArrayList<>();
-			attributeCodes.forEach(code -> {
-				ids.add(code.getAttributeCodePk().getAttributeCode());
-			});
-
-			List<ComponentAttribute> attributes = new ArrayList<>();
-			if (ids.isEmpty() == false) {
-
-				String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where activeStatus = :activeStatus and componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
-				Map<String, Object> params = new HashMap<>();
-				params.put("activeStatus", ComponentAttribute.ACTIVE_STATUS);
-				params.put("attributeType", searchElement.getKeyField());
-				params.put("attributeCodeIdListParam", ids);
-				attributes = serviceProxy.getPersistenceService().query(componentAttributeQuery, params);
+			if (likeValue != null) {
+				AttributeCode attributeCodeLike = new AttributeCode();
+				attributeCodeLike.setArchitectureCode(likeValue);
+				queryByExample.setLikeExample(attributeCodeLike);
 			}
-
-			List<String> results = new ArrayList<>();
-			for (ComponentAttribute attribute : attributes) {
-				results.add(attribute.getComponentId());
-			}
-			foundIds = mergeCondition.apply(foundIds, results);
-			mergeCondition = searchElement.getMergeCondition();
-
 		}
-		return foundIds;
+
+		List<AttributeCode> attributeCodes = serviceProxy.getPersistenceService().queryByExample(queryByExample);
+		List<String> ids = new ArrayList<>();
+		attributeCodes.forEach(code -> {
+			ids.add(code.getAttributeCodePk().getAttributeCode());
+		});
+
+		List<ComponentAttribute> attributes = new ArrayList<>();
+		if (ids.isEmpty() == false) {
+
+			ComponentAttribute componentAttributeExample = new ComponentAttribute();
+			componentAttributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(searchElement.getKeyField());
+			componentAttributeExample.setComponentAttributePk(componentAttributePk);
+
+			ComponentAttribute componentAttributeInExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributeInPk = new ComponentAttributePk();
+			componentAttributeInPk.setAttributeCode(QueryByExample.STRING_FLAG);
+			componentAttributeInExample.setComponentAttributePk(componentAttributeInPk);
+
+			QueryByExample<ComponentAttribute> queryByExampleCodes = new QueryByExample<>(componentAttributeExample);
+			queryByExampleCodes.setInExample(componentAttributeInExample);
+			queryByExampleCodes.getInExampleOption().getParameterValues().addAll(ids);
+
+			attributes = serviceProxy.getPersistenceService().queryByExample(queryByExampleCodes);
+		}
+
+		List<String> results = new ArrayList<>();
+		for (ComponentAttribute attribute : attributes) {
+			results.add(attribute.getComponentId());
+		}
+
+		return results;
 	}
 
 }

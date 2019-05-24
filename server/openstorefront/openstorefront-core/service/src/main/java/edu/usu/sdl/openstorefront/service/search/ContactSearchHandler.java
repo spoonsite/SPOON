@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOptionBuilder;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
-import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -37,9 +36,9 @@ public class ContactSearchHandler
 		extends BaseSearchHandler
 {
 
-	public ContactSearchHandler(List<SearchElement> searchElements)
+	public ContactSearchHandler(SearchElement searchElement)
 	{
-		super(searchElements);
+		super(searchElement);
 	}
 
 	@Override
@@ -47,18 +46,16 @@ public class ContactSearchHandler
 	{
 		ValidationResult validationResult = new ValidationResult();
 
-		for (SearchElement searchElement : searchElements) {
-			if (StringUtils.isBlank(searchElement.getField())) {
-				validationResult.getRuleResults().add(getRuleResult("field", "Required"));
-			}
-			if (StringUtils.isBlank(searchElement.getValue())) {
-				validationResult.getRuleResults().add(getRuleResult("value", "Required"));
-			}
+		if (StringUtils.isBlank(searchElement.getField())) {
+			validationResult.getRuleResults().add(getRuleResult("field", "Required"));
+		}
+		if (StringUtils.isBlank(searchElement.getValue())) {
+			validationResult.getRuleResults().add(getRuleResult("value", "Required"));
+		}
 
-			Field field = ReflectionUtil.getField(new ComponentContact(), searchElement.getField());
-			if (field == null) {
-				validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on contact"));
-			}
+		Field field = ReflectionUtil.getField(new ComponentContact(), searchElement.getField());
+		if (field == null) {
+			validationResult.getRuleResults().add(getRuleResult("field", "Doesn't exist on contact"));
 		}
 
 		return validationResult;
@@ -67,57 +64,51 @@ public class ContactSearchHandler
 	@Override
 	public List<String> processSearch()
 	{
-		List<String> foundIds = new ArrayList<>();
-		SearchOperation.MergeCondition mergeCondition = SearchOperation.MergeCondition.OR;
-		for (SearchElement searchElement : searchElements) {
 
-			ComponentContact componentContact = new ComponentContact();
-			componentContact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
-			
-			Field field = ReflectionUtil.getField(new ComponentContact(), searchElement.getField());
-			field.setAccessible(true);
-			QueryByExample queryByExample = new QueryByExample(componentContact);
-			try {
-				//all fields are strings
-				String likeValue = null;
-				switch (searchElement.getStringOperation()) {
-					case EQUALS:
-						String value = searchElement.getValue();
-						if (searchElement.getCaseInsensitive()) {
-							queryByExample.getFieldOptions().put(field.getName(), 
+		ComponentContact componentContact = new ComponentContact();
+		componentContact.setActiveStatus(ComponentContact.ACTIVE_STATUS);
+
+		Field field = ReflectionUtil.getField(new ComponentContact(), searchElement.getField());
+		field.setAccessible(true);
+		QueryByExample<ComponentContact> queryByExample = new QueryByExample<>(componentContact);
+		try {
+			//all fields are strings
+			String likeValue = null;
+			switch (searchElement.getStringOperation()) {
+				case EQUALS:
+					String value = searchElement.getValue();
+					if (searchElement.getCaseInsensitive()) {
+						queryByExample.getFieldOptions().put(field.getName(),
 								new GenerateStatementOptionBuilder().setMethod(GenerateStatementOption.METHOD_LOWER_CASE).build());
 
-							value = value.toLowerCase();
-						}
-						field.set(componentContact, value);
-						break;
-					default:
-						likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
-						break;
-				}
-
-				if (likeValue != null) {
-					ComponentContact componentContactLike = new ComponentContact();
-					if (searchElement.getCaseInsensitive()) {
-						likeValue = likeValue.toLowerCase();
-						queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+						value = value.toLowerCase();
 					}
-					field.set(componentContactLike, likeValue);
-					queryByExample.setLikeExample(componentContactLike);
-				}
-			} catch (IllegalArgumentException | IllegalAccessException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to set value on field for a contact search.", ex);
+					field.set(componentContact, value);
+					break;
+				default:
+					likeValue = searchElement.getStringOperation().toQueryString(searchElement.getValue());
+					break;
 			}
 
-			List<ComponentContact> componentContacts = serviceProxy.getPersistenceService().queryByExample(queryByExample);
-			List<String> results = new ArrayList<>();
-			for (ComponentContact contact : componentContacts) {
-				results.add(contact.getComponentId());
+			if (likeValue != null) {
+				ComponentContact componentContactLike = new ComponentContact();
+				if (searchElement.getCaseInsensitive()) {
+					likeValue = likeValue.toLowerCase();
+					queryByExample.getLikeExampleOption().setMethod(GenerateStatementOption.METHOD_LOWER_CASE);
+				}
+				field.set(componentContactLike, likeValue);
+				queryByExample.setLikeExample(componentContactLike);
 			}
-			foundIds = mergeCondition.apply(foundIds, results);
-			mergeCondition = searchElement.getMergeCondition();
+		} catch (IllegalArgumentException | IllegalAccessException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to set value on field for a contact search.", ex);
 		}
-		return foundIds;
+
+		List<ComponentContact> componentContacts = serviceProxy.getPersistenceService().queryByExample(queryByExample);
+		List<String> results = new ArrayList<>();
+		for (ComponentContact contact : componentContacts) {
+			results.add(contact.getComponentId());
+		}
+		return results;
 	}
 
 }

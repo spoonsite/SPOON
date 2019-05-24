@@ -439,27 +439,29 @@
 							</#if>
 							
 							<!--Checklist Details-->
-							<#if eval.checkListAll.responses?has_content>
-								<h3 class="eval-header">Evaluation Checklist Details</h3>
-								<table>
-									<tr>
-										<th style="width: 2.5%;">QID</th>
-										<th style="width: 5%;">Section</th>
-										<th style="width: 45%;">Question</th>
-										<th style="width: 2.5%;">Score</th>
-										<th style="width: 45%;">Response</th>
-									</tr>
-									<#list eval.checkListAll.responses as detail>
+							<#if eval.checkListAll??>			
+								<#if eval.checkListAll.responses?has_content>
+									<h3 class="eval-header">Evaluation Checklist Details</h3>
+									<table>
 										<tr>
-											<td><#if detail.question.qid?has_content>${detail.question.qid}</#if></td>
-											<td><#if detail.question.evaluationSectionDescription?has_content>${detail.question.evaluationSectionDescription}</#if></td>
-											<td><#if detail.question.question?has_content>${detail.question.question}</#if></td>
-											<td><#if detail.score?has_content && detail.notApplicable?has_content == false>${detail.score}</#if><#if detail.notApplicable?has_content>N/A</#if></td>
-											<td><#if detail.response?has_content>${detail.response}</#if></td>
+											<th style="width: 2.5%;">QID</th>
+											<th style="width: 5%;">Section</th>
+											<th style="width: 45%;">Question</th>
+											<th style="width: 2.5%;">Score</th>
+											<th style="width: 45%;">Response</th>
 										</tr>
-									</#list>
-								</table>
-							</#if>
+										<#list eval.checkListAll.responses as detail>
+											<tr>
+												<td><#if detail.question.qid?has_content>${detail.question.qid}</#if></td>
+												<td><#if detail.question.evaluationSectionDescription?has_content>${detail.question.evaluationSectionDescription}</#if></td>
+												<td><#if detail.question.question?has_content>${detail.question.question}</#if></td>
+												<td><#if detail.score?has_content && detail.notApplicable?has_content == false>${detail.score}</#if><#if detail.notApplicable?has_content>N/A</#if></td>
+												<td><#if detail.response?has_content>${detail.response}</#if></td>
+											</tr>
+										</#list>
+									</table>
+								</#if>
+							</#if>	
 						</div>
 					</#if>
 

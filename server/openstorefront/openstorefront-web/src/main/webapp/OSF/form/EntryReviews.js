@@ -99,7 +99,7 @@ Ext.define('OSF.form.EntryReviews', {
 							},
 							forceSelection: true,
 							queryMode: 'local',
-							displayField: 'desc',
+							displayField: 'description',
 							valueField: 'code',
 							value: 'A',
 							listeners: {

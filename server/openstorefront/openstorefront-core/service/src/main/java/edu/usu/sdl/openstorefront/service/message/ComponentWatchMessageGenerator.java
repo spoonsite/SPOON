@@ -103,11 +103,6 @@ public class ComponentWatchMessageGenerator
 			changes = true;
 		}
 
-		if (changed(componentAll.getMetadata(), userWatch.getLastViewDts())) {
-			message.append(" - Metadata<br>");
-			changes = true;
-		}
-
 		if (changed(componentAll.getTags(), userWatch.getLastViewDts())) {
 			message.append(" - Tags<br>");
 			changes = true;

@@ -28,6 +28,8 @@ The application is composed by stripes layouts with a top-level page and fragmen
 
 Figure 2. Server Architecture Diagram
 
+Version 2.8 - Mongo DB support was added. Orient DB is now optional can be switched with Mongo
+
 ## 2.2 Server Details
 
 Component definitions are as shown below:
@@ -52,6 +54,8 @@ The server build environment relies on the following platforms/tools:
 
 ![storage](/images/storage.png)
 
+Version 2.8 - Mongo DB support was added. Orient DB is now optional can be switched with Mongo
+
 **File System**  - Holds configuration, resources, media, imports, reports and plugins.  By default under: /var/openstorefront it can be changed by setting the system property -Dapplication.datadir=<directory> on the command line. 
 
 **Solr or Elasticsearch** - Use to do fuzzy index searches across the entries.  It's kept in sync by the application.
@@ -66,6 +70,8 @@ The server build environment relies on the following platforms/tools:
 ![deployarch](/images/deployarch.png)
 
 Figure 3 . Runtime Environment diagram
+
+If using Mongo then Mongo would be externally deploy under the default port of **27017**
 
 ## 3.2 Runtime Details
 
@@ -83,6 +89,8 @@ The runtime environment relies upon the following applications:
 ![component vectors](/images/civarch.png)
 
 Figure 4. Runtime Component Integration Vectors
+
+If using Mongo then Mongo would be a Class C (External Application) and Orient DB (class B) would not be used.
 
 ## 3.4 Component Integration Vectors Details
 
@@ -103,10 +111,14 @@ The component integration vectors (CIV) are show below.
  **Target Component**:      Solr or Elasticsearch                 
 **Notes**: JEE Application Server   Currently configured to deploy on Tomcat
 
- **Source Component**:    Orient DB           
+ **Source Component**:    Orient DB (OPTIONAL)         
  **Class**:  B  
  **Target Component**:     openstorefront                
 **Notes**: Embedded
+
+ **Source Component**:    MONGO DB (OPTIONAL)         
+ **Class**:  C  
+ **Target Component**:     openstorefront                
 
  **Source Component**:   JEE Application Server           
  **Class**:  A  
@@ -150,12 +162,16 @@ The applicable ports are shown below:
 **Type:** Inbound  (Open if not using 8080)
 
 **Port (Defaults):**  2424
-**Description:** OrientDB
+**Description:** OrientDB  (Optional)
 **Type:** Internal  (Shouldn't be exposed externally)
 
 **Port (Defaults):**  2480
-**Description:** OrientDB
+**Description:** OrientDB (Optional)
 **Type:** Internal  (Shouldn't be exposed externally)
+
+**Port (Defaults):**  27017
+**Description:** Mongo DB (Optional)
+**Type:** Outbound (Used internally does not need to be exposed outside the system)
 
 **Port (Defaults):**  8983
 **Description:** Solr (If used)

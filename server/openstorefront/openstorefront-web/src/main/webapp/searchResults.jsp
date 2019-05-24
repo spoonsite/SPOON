@@ -1243,7 +1243,9 @@
 								title: 'Search Criteria',  
 								closable: true,
 								html: CoreUtil.descriptionOfAdvancedSearch(originalSearchRequest.query.searchElements),
-								width: 300								
+								width: 300,
+								maxHeight: 600,
+								scrollable: true
 							});
 							tip.showAt(tool.getXY());
 						}

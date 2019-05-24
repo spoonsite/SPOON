@@ -7,6 +7,50 @@ markup = "mmark"
 
 In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.
 
+## Note: 2.8
+
+Mongo DB support was added.  Orient is still used the default Database unless configured otherwise.
+
+To Migrated from an existing Orient install to Mongo the following needs to be done:
+
+1. Install Mongo or point to existing install.  (See Setup documentation for Centos 7 install of Mongo)
+
+2. Update Application Configuration
+
+edit /var/openstorefront/config/openstorefront.properties
+
+Add/edit properties:
+	
+```	
+	db.use.mongo=true
+    mongo.connection.url=mongodb://localhost:27017
+```
+For connection URLs see below to set up a connect that requires an user/passwordhttps://docs.mongodb.com/manual/reference/connection-string/
+http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/
+
+3. Either deploy 2.8 or if already deployed then restart server for the change to take affect.
+
+The data migration process will apply automatically if the following conditions are met:
+
+a) Configured to use Mongo
+
+b) There was an previous Orient Install (as determined by the db file directory)
+
+c) If the migration hasn't already been applied.  
+	
+	To force it to re-apply remove the following Application Properites from the database by using the application system UI or by using an external tool
+
+	Remove Keys: DB-MIGRATION-Mongo_STATUS, DB-MIGRATION-Mongo_LASTRUN_DTS
+
+**WARNING:** The Data migration will remove existing Mongo "Storefront" database collections and replace the content from the equivalent Orient data. 
+Orient's data is not effected by the migration.  So the process can be repeated.
+
+Generally the migration process is expect to only take about 1-2 minutes but, it depends on the size of database and system resources.
+
+
+
+
+
 ## Note: 2.6.3
 
 For existing applications:  

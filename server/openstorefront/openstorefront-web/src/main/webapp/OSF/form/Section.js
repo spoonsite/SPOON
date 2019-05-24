@@ -729,7 +729,7 @@ Ext.define('OSF.form.Section', {
 							border: border,
 							subsection: subsection,
 							layout: 'anchor',
-							itemId: 'subSectionPanel',
+							itemId: 'subSectionPanel-' + subsection.subSectionId,
 							defaults: {
 								labelAlign: 'right',
 								width: '100%'
@@ -753,8 +753,8 @@ Ext.define('OSF.form.Section', {
 						});
 						items.push(subSectionPanel);
 					});
-
-					contentPanel.add(items);
+					
+					contentPanel.add(items);					
 					sectionForm.add(contentPanel);
 				} else {
 					if (originalData.section.noContent) {
@@ -895,8 +895,8 @@ Ext.define('OSF.form.Section', {
 							sectionForm.getComponent('contentPanel').getComponent('content').setValue(newContentSectionAll.section.content);
 						}
 						Ext.Array.each(newContentSectionAll.subsections, function (subsection) {
-							if (sectionForm.getComponent('contentPanel').getComponent('subSectionPanel')) {
-								var subSectionPanel =sectionForm.getComponent('contentPanel').getComponent('subSectionPanel');
+							if (sectionForm.getComponent('contentPanel').getComponent('subSectionPanel-' + subsection.subSectionId)) {
+								var subSectionPanel = sectionForm.getComponent('contentPanel').getComponent('subSectionPanel-' + subsection.subSectionId);
 								if (subSectionPanel.getComponent('subcontent-' + subsection.subSectionId)) {
 									subSectionPanel.getComponent('subcontent-' + subsection.subSectionId).setValue(subsection.content);
 								}

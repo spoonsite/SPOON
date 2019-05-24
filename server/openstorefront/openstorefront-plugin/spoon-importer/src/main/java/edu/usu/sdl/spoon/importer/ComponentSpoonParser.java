@@ -195,9 +195,9 @@ public class ComponentSpoonParser
 			);
 
 			byte[] fileData = Base64.getMimeDecoder().decode(attachment.getFileData());
-			//FIXME: this changed
-			//	service.getComponentService().saveResourceFile(pickedResource, new ByteArrayInputStream(fileData));
 
+			//FIX if this importer is needed
+			//service.getComponentService().saveResourceFile(pickedResource, new ByteArrayInputStream(fileData));
 		}
 	}
 

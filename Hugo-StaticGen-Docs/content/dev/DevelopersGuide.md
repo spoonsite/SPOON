@@ -18,6 +18,8 @@ The following components were used in the development:
 
 -   OpenAM (Configurable, default is property based log in.)
 
+-   Mongo DB support was add v2.8 as option
+
 The application is a JEE servlet-container webapp, so any JEE 6 servlet-container
 compliant server should work with some server configuration. The current
 deployment target is Tomcat 7.
@@ -157,7 +159,7 @@ the version of the application.
 
 ## 1.11 Licensing
 
-The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.
+The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is to allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.
 
 ## 1.12 Security
 
@@ -282,7 +284,9 @@ The developer has access to the filehistory record and the service proxy.
 {{% /notice %}}
 
 
-# 3. Database Management
+# 3. Orient Database Management
+
+Embedded Orient is used by default.  However, Mongo DB is support in version 2.8.
 
 The application handles all database interaction transparently, so
 direct database access and manipulation is not needed.  
@@ -389,3 +393,56 @@ functionality on top.
 
 -   See [Orient DB Studio](http://orientdb.com/docs/2.1.x/Home-page.html) for
     more information about Studio
+
+# 4. Mongo Database Management
+
+Mongo DB is supported as of version 2.8
+
+
+## 4.1 Setup Mongo for Local Development
+
+This is install instructions for Windows with no security.
+
+1) **Download Mongo (mongodb.com)**
+
+4.0.4 (Current as of this writing, 4.0.x should be compatible)
+
+
+2) **Run:**  (Point to var/openstorefront/db-mongo) *Create directory first
+
+**From bin directory: (server)**
+
+.\mongod --dbpath=\var\openstorefront\db-mongo
+
+
+**(Client CLI)**: .\mongo
+
+
+
+**To Stop:**
+
+kill process  (it has shutdown hooks that will run when it's gets a sigterm event) 
+
+
+## 4.2 Configuring Environment for Mongo
+
+Edit /var/openstorefront/config/openstorefront.properties
+	
+Add/edit:
+
+```
+db.use.mongo=true
+mongo.connection.url=mongodb://localhost:27017
+```
+
+
+## 4.3 Database Tools
+
+Download Mongo Compass Community Edition and then will allow for querying/managing data.
+
+https://www.mongodb.com/download-center/compass?jmp=hero
+
+
+
+
+

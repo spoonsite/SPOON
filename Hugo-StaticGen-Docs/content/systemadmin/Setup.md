@@ -18,7 +18,7 @@ running. Then, perform the following steps:
 
 3.  Install Tomcat 7
 
-4.  Integrate OpenAM Agent
+4.  Integrate OpenAM Agent (Optional)
 
 5.  Deploy Application
 
@@ -58,6 +58,9 @@ The Storefront relies upon the following external dependencies:
 	-   **Elasticsearch 5.6.x *Recommended for simple install*  Recommended search server**
 	
 *Support for ESA 1.0 and Solr 4.3.1 has been dropped*
+
+-   Mongo Database (optional supported as of Version 2.8)
+	-  Mongo version 4.0.x is compatible
 
 
 ### 1.4.1 To Use Solr (Optional)
@@ -214,6 +217,76 @@ http://localhost:9200 should return some json with stats.
 1. Use Admin->Application Management->System to set the system config properties 
 
 2. On Managers tab -> Restart Search Server Managers
+
+
+### 1.4.4 To Use Mongo DB (Optional)
+
+#### Installing Mongo on Centos 7
+
+----
+
+Compatible with Mongo 4.0.x
+Tested with Mongo 4.0.4
+
+Start: systemctl start mongod
+Stop: systemctl stop mongod
+
+
+Follow https://www.howtoforge.com/tutorial/how-to-install-and-configure-mongodb-on-centos-7/
+
+Run as sudo unless otherwise noted.
+
+1) Add the MongoDB YUM Repository in CentOS   
+https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/
+
+Create a /etc/yum.repos.d/mongodb-org-4.0.repo file so that you can install MongoDB directly using yum:
+
+```
+	nano /etc/yum.repos.d/mongodb-org-4.0.repo
+```
+	
+
+```
+[mongodb-org-4.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
+```
+
+2) sudo yum install -y mongodb-org
+
+Currently installs 4.0.9 as of 5/7/2019
+
+	1. Start mongo
+	systemctl start mongod
+	
+	2. Check that it's running
+	Check that MongoDB is running by checking that the port '27017' is open.
+	netstat -plntu
+	systemctl status mongod
+	
+	From <https://www.howtoforge.com/tutorial/how-to-install-and-configure-mongodb-on-centos-7/> 
+	(note: you can skip the step 3 Fix a MongoDB Error;  I'm not seeing that message)
+	
+	In production security MUST be set up.  However, the security may depend on the environment.
+	
+	
+	Strofront Application Configuration: 
+	nano /var/openstorefront/config/openstorefront.properties
+	
+	Add/edit:
+	
+	db.use.mongo=true
+	mongo.connection.url=mongodb://localhost:27017
+	
+	
+For connection URLs see below to set up a connect that requires an user/password
+
+https://docs.mongodb.com/manual/reference/connection-string/
+
+http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/
 
 
 

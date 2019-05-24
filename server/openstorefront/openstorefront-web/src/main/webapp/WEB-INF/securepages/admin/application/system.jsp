@@ -2077,85 +2077,88 @@
 						},
 						{
 							xtype: 'fieldset',
-							title: 'Search Control Options',
-							id: 'searchOptionsField',
+							title: 'Index Fields To Search',						
 							width: '100%',
-							layout: 'anchor',
-							defaults: {
-								width: '100%',
-								labelAlign: 'top'
-							},
+							layout: 'anchor',							
 							items: [
 								{
-									xtype: 'fieldcontainer',
-									fieldLabel: 'Categories to include in Searches',
-									defaultType: 'checkboxfield',
+									xtype: 'form',
+									itemId: 'searchOptionForm',									
 									items: [
 										{
-											xtype: 'checkbox',
-											boxLabel: 'Organizations',
-											id: 'organizationsCheckbox',
-										}, 
-										{
-											xtype: 'checkbox',
-											boxLabel: 'Component Names',
-											id: 'componentNameCheckbox',
+											xtype: 'panel',
+											html: '<i class="fa fa-warning"></i><span style="color: red; font-weight: bold"> If no search fields are selected, the index search will always return all entries.</span>'
 										},
 										{
 											xtype: 'checkbox',
-											boxLabel: 'Component Descriptions',
-											id: 'componentDescriptionCheckbox',
+											name: 'searchName',
+											boxLabel: 'Entry Names'
+										},
+										{
+											xtype: 'checkbox',
+											name: 'searchDescription',
+											boxLabel: 'Entry Descriptions'
+										},
+										{
+											xtype: 'checkbox',
+											name: 'searchOrganization',
+											boxLabel: 'Entry Organizations'								
+										}, 										
+										{
+											xtype: 'checkbox',
+											name: 'searchAttributes',
+											boxLabel: 'Attributes'
+										},
+										{
+											xtype: 'checkbox',
+											name: 'searchTags',
+											boxLabel: 'Tags'
+										},
+										{
+											text: 'Save Search Options',
+											xtype: 'button',
+											scale: 'medium',
+											iconCls: 'fa fa-2x fa-save icon-vertical-correction',
+											tooltip: 'This will apply the above settings to searches.',
+											handler: function () {
+												var form = searchControlPanel.queryById('searchOptionForm');
+												var data = searchControlPanel.queryById('searchOptionForm').getValues();
+												CoreUtil.submitForm({
+													url: 'api/v1/resource/searchoptions/global',	
+													method: 'PUT',
+													removeBlankDataItems: true,													
+													form: form,
+													data: data,
+													success: function (response, opts) {
+														Ext.toast('Successfully applied the search options.', '', 'tr');
+													},
+													failure: function (response, opts) {
+														Ext.toast('Failed to apply the search options.', '', 'tr');
+													}
+												});												
+												
+											}
 										}
 									]
 								}
 							]
-						},
-						{
-							text: 'Save Search Options',
-							xtype: 'button',
-							scale: 'medium',
-							iconCls: 'fa fa-2x fa-save icon-vertical-correction',
-							tooltip: 'This will apply the above settings to searches.',
-							handler: function () {
-								var data = {
-									canUseOrganizationsInSearch: Ext.getCmp('organizationsCheckbox').value,
-									canUseNameInSearch: Ext.getCmp('componentNameCheckbox').value,
-									canUseDescriptionInSearch: Ext.getCmp('componentDescriptionCheckbox').value
-								};
-								Ext.Ajax.request({
-									url: 'api/v1/service/search/options',
-									jsonData: data,
-									method: 'PUT',
-									success: function(response, opt) {
-										Ext.toast('Successfully applied the search options.', '', 'tr');
-									},
-									failure: function(response, opt) {
-										Ext.toast('Failed to apply the search options.', '', 'tr');
-									}
-								});
-							}
-						}
+						}						
 					]
 				});
 
 				searchControlPanel.setLoading(true);
 				Ext.Ajax.request({
-					url: 'api/v1/service/search/options',
+					url: 'api/v1/resource/searchoptions/global',
 					method: 'GET',
 					callback: function() {
 						searchControlPanel.setLoading(false);
 					},
 					success: function(response, opts){
 						var data = Ext.decode(response.responseText);
-						if(Ext.getCmp('organizationsCheckbox')){
-							Ext.getCmp('organizationsCheckbox').setValue(data.canUseOrganizationsInSearch);
-						}
-						if(Ext.getCmp('componentNameCheckbox')){
-							Ext.getCmp('componentNameCheckbox').setValue(data.canUseNameInSearch);
-						}
-						if(Ext.getCmp('componentDescriptionCheckbox')){
-							Ext.getCmp('componentDescriptionCheckbox').setValue(data.canUseDescriptionInSearch);
-						}
+						
+						var record = Ext.create('Ext.data.Model', {});
+						record.set(data);						
+						searchControlPanel.queryById('searchOptionForm').loadRecord(record);
 					}
 				});
 
