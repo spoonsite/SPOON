@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.49.2" />
+<meta name="generator" content="Hugo 0.31.1" />
 
 <title>Setup :: Storefront Docs</title>
 <link rel="shortcut icon" href="/openstorefront/images/favicon.png" type="image/x-icon" />
@@ -155,6 +155,16 @@
           <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
+      <li data-nav-id="/applicationadmin/workplans/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/workplans/">
+          <span>Workplans</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/securityroles/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/securityroles/">
+          <span>Security Roles</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
         </ul>
     </li>
     <li data-nav-id="/systemadmin/" class="dd-item parent">
@@ -222,9 +232,9 @@
     </ul>
 
  <section id="footer"><div style="color: #E0E0DA;">
-    <p>OpenStoreFront version 2.7.4</p>
-    <p>Documentation generated on Feb 22, 2019</p>
-    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.49.2</p>
+    <p>OpenStoreFront version 2.8</p>
+    <p>Documentation generated on May 24, 2019</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
   </div>
@@ -307,7 +317,7 @@ running. Then, perform the following steps:</p>
 
 <li><p>Install Tomcat 7</p></li>
 
-<li><p>Integrate OpenAM Agent</p></li>
+<li><p>Integrate OpenAM Agent (Optional)</p></li>
 
 <li><p>Deploy Application</p></li>
 
@@ -361,6 +371,14 @@ running. Then, perform the following steps:</p>
 </ul>
 
 <p><em>Support for ESA 1.0 and Solr 4.3.1 has been dropped</em></p>
+
+<ul>
+<li>Mongo Database (optional supported as of Version 2.8)
+
+<ul>
+<li>Mongo version 4.0.x is compatible</li>
+</ul></li>
+</ul>
 
 <h3 id="141-to-use-solr-optional">1.4.1 To Use Solr (Optional)</h3>
 
@@ -530,6 +548,75 @@ elastic.server.port=9200
 
 <li><p>On Managers tab -&gt; Restart Search Server Managers</p></li>
 </ol>
+
+<h3 id="144-to-use-mongo-db-optional">1.4.4 To Use Mongo DB (Optional)</h3>
+
+<h4 id="installing-mongo-on-centos-7">Installing Mongo on Centos 7</h4>
+
+<hr>
+
+<p>Compatible with Mongo 4.0.x
+Tested with Mongo 4.0.4</p>
+
+<p>Start: systemctl start mongod
+Stop: systemctl stop mongod</p>
+
+<p>Follow <a href="https://www.howtoforge.com/tutorial/how-to-install-and-configure-mongodb-on-centos-7/">https://www.howtoforge.com/tutorial/how-to-install-and-configure-mongodb-on-centos-7/</a></p>
+
+<p>Run as sudo unless otherwise noted.</p>
+
+<ol>
+<li>Add the MongoDB YUM Repository in CentOS<br>
+<a href="https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/">https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/</a></li>
+</ol>
+
+<p>Create a /etc/yum.repos.d/mongodb-org-4.0.repo file so that you can install MongoDB directly using yum:</p>
+
+<pre><code>    nano /etc/yum.repos.d/mongodb-org-4.0.repo
+</code></pre>
+
+<pre><code>[mongodb-org-4.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
+</code></pre>
+
+<ol start="2">
+<li>sudo yum install -y mongodb-org</li>
+</ol>
+
+<p>Currently installs 4.0.9 as of 5/7/2019</p>
+
+<pre><code>1. Start mongo
+systemctl start mongod
+
+2. Check that it's running
+Check that MongoDB is running by checking that the port '27017' is open.
+netstat -plntu
+systemctl status mongod
+
+From &lt;https://www.howtoforge.com/tutorial/how-to-install-and-configure-mongodb-on-centos-7/&gt; 
+(note: you can skip the step 3 Fix a MongoDB Error;  I'm not seeing that message)
+
+In production security MUST be set up.  However, the security may depend on the environment.
+
+
+Strofront Application Configuration: 
+nano /var/openstorefront/config/openstorefront.properties
+
+Add/edit:
+
+db.use.mongo=true
+mongo.connection.url=mongodb://localhost:27017
+</code></pre>
+
+<p>For connection URLs see below to set up a connect that requires an user/password</p>
+
+<p><a href="https://docs.mongodb.com/manual/reference/connection-string/">https://docs.mongodb.com/manual/reference/connection-string/</a></p>
+
+<p><a href="http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/">http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/</a></p>
 
 <h2 id="15--system-setup">1.5  System Setup</h2>
 

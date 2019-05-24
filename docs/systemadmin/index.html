@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.49.2" />
+<meta name="generator" content="Hugo 0.31.1" />
 
 <title>System Admin :: Storefront Docs</title>
 <link rel="shortcut icon" href="/openstorefront/images/favicon.png" type="image/x-icon" />
@@ -155,6 +155,16 @@
           <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
+      <li data-nav-id="/applicationadmin/workplans/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/workplans/">
+          <span>Workplans</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/securityroles/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/securityroles/">
+          <span>Security Roles</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
         </ul>
     </li>
     <li data-nav-id="/systemadmin/" class="dd-item parent active">
@@ -222,9 +232,9 @@
     </ul>
 
  <section id="footer"><div style="color: #E0E0DA;">
-    <p>OpenStoreFront version 2.7.4</p>
-    <p>Documentation generated on Feb 22, 2019</p>
-    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.49.2</p>
+    <p>OpenStoreFront version 2.8</p>
+    <p>Documentation generated on May 24, 2019</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
   </div>
@@ -310,7 +320,7 @@
  Setup VM
  Install Java JDK 1.8
  Install Tomcat 7
- Integrate OpenAM Agent
+ Integrate OpenAM Agent (Optional)
  Deploy Application
  Configure Application
  Restart Tomcat (To pick up configuration changes)
@@ -395,10 +405,8 @@ See Admin Tools -&gt; Data Management -&gt; Imports <a class="read-more" href="/
     </header>
     <section class="post-excerpt">
         <p>In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4) That way data migrations will occur in the proper order. If you start from the lastest version and have no data then migration is not needed.
-Note: 2.6.3 For existing applications:
-(Update var/openstorefront/config/shiro.ini)
-Add:
-/login/** = anon /mobile/** = authc /api/v1/resource/branding/current = anon /api/v1/resource/securitypolicy = anon /api/v1/resource/faq/* = anon /api/v1/resource/faq = anon /api/v1/resource/feedbacktickets = anon  Note: 2. <a class="read-more" href="/openstorefront/systemadmin/versionmigrationguide/">&raquo;</a></p>
+Note: 2.8 Mongo DB support was added. Orient is still used the default Database unless configured otherwise.
+To Migrated from an existing Orient install to Mongo the following needs to be done: <a class="read-more" href="/openstorefront/systemadmin/versionmigrationguide/">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          
@@ -431,7 +439,7 @@ Add:
 </div>
 
 <div id="navigation">
-<a class="nav nav-prev" href="/openstorefront/applicationadmin/customsubmissionforms/" title="Custom Submission Forms"> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-prev" href="/openstorefront/applicationadmin/securityroles/" title="Security Roles"> <i class="fa fa-chevron-left"></i></a>
     <a class="nav nav-next" href="/openstorefront/systemadmin/setup/" title="Setup" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
 
 </section>

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.49.2" />
+<meta name="generator" content="Hugo 0.31.1" />
 
 <title>Developer Guide :: Storefront Docs</title>
 <link rel="shortcut icon" href="/openstorefront/images/favicon.png" type="image/x-icon" />
@@ -156,6 +156,16 @@
           <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
+      <li data-nav-id="/applicationadmin/workplans/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/workplans/">
+          <span>Workplans</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/securityroles/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/securityroles/">
+          <span>Security Roles</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
         </ul>
     </li>
     <li data-nav-id="/systemadmin/" class="dd-item">
@@ -222,9 +232,9 @@
     </ul>
 
  <section id="footer"><div style="color: #E0E0DA;">
-    <p>OpenStoreFront version 2.7.4</p>
-    <p>Documentation generated on Feb 22, 2019</p>
-    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.49.2</p>
+    <p>OpenStoreFront version 2.8</p>
+    <p>Documentation generated on May 24, 2019</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
   </div>
@@ -305,11 +315,17 @@
 <li><a href="#2-2-3-parser-class">2.2.3 Parser Class</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#3-database-management">3. Database Management</a>
+<li><a href="#3-orient-database-management">3. Orient Database Management</a>
 <ul>
 <li><a href="#3-1-refreshing-the-database">3.1 Refreshing the Database</a></li>
 <li><a href="#3-2-installing-database-console">3.2 Installing Database Console</a></li>
 <li><a href="#3-3-installing-database-studio">3.3 Installing Database Studio</a></li>
+</ul></li>
+<li><a href="#4-mongo-database-management">4. Mongo Database Management</a>
+<ul>
+<li><a href="#4-1-setup-mongo-for-local-development">4.1 Setup Mongo for Local Development</a></li>
+<li><a href="#4-2-configuring-environment-for-mongo">4.2 Configuring Environment for Mongo</a></li>
+<li><a href="#4-3-database-tools">4.3 Database Tools</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -346,6 +362,8 @@
 <li><p>Elasticsearch/Solr</p></li>
 
 <li><p>OpenAM (Configurable, default is property based log in.)</p></li>
+
+<li><p>Mongo DB support was add v2.8 as option</p></li>
 </ul>
 
 <p>The application is a JEE servlet-container webapp, so any JEE 6 servlet-container
@@ -533,7 +551,7 @@ the version of the application.</p>
 
 <h2 id="1-11-licensing">1.11 Licensing</h2>
 
-<p>The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.</p>
+<p>The project as a whole (front-end and server code) is GPL V3 but, individual parts may use compatible licenses. This is in compliance with the licensing.  Mark UI code that uses EXT JS with the GPL header.  Mark server code and other code as Apache V2. See NOTICE.txt for more information.  Our goal is to allow for broader usage when other requirements are met.  This also clarifies how individual pieces can be used.</p>
 
 <h2 id="1-12-security">1.12 Security</h2>
 
@@ -664,7 +682,9 @@ All other third-party libraries must be included with your JAR.</p>
 </div>
 
 
-<h1 id="3-database-management">3. Database Management</h1>
+<h1 id="3-orient-database-management">3. Orient Database Management</h1>
+
+<p>Embedded Orient is used by default.  However, Mongo DB is support in version 2.8.</p>
 
 <p>The application handles all database interaction transparently, so
 direct database access and manipulation is not needed.</p>
@@ -792,6 +812,46 @@ functionality on top.</p>
 <li>See <a href="http://orientdb.com/docs/2.1.x/Home-page.html">Orient DB Studio</a> for
 more information about Studio</li>
 </ul>
+
+<h1 id="4-mongo-database-management">4. Mongo Database Management</h1>
+
+<p>Mongo DB is supported as of version 2.8</p>
+
+<h2 id="4-1-setup-mongo-for-local-development">4.1 Setup Mongo for Local Development</h2>
+
+<p>This is install instructions for Windows with no security.</p>
+
+<p>1) <strong>Download Mongo (mongodb.com)</strong></p>
+
+<p>4.0.4 (Current as of this writing, 4.0.x should be compatible)</p>
+
+<p>2) <strong>Run:</strong>  (Point to var/openstorefront/db-mongo) *Create directory first</p>
+
+<p><strong>From bin directory: (server)</strong></p>
+
+<p>.\mongod &ndash;dbpath=\var\openstorefront\db-mongo</p>
+
+<p><strong>(Client CLI)</strong>: .\mongo</p>
+
+<p><strong>To Stop:</strong></p>
+
+<p>kill process  (it has shutdown hooks that will run when it&rsquo;s gets a sigterm event)</p>
+
+<h2 id="4-2-configuring-environment-for-mongo">4.2 Configuring Environment for Mongo</h2>
+
+<p>Edit /var/openstorefront/config/openstorefront.properties</p>
+
+<p>Add/edit:</p>
+
+<pre><code>db.use.mongo=true
+mongo.connection.url=mongodb://localhost:27017
+</code></pre>
+
+<h2 id="4-3-database-tools">4.3 Database Tools</h2>
+
+<p>Download Mongo Compass Community Edition and then will allow for querying/managing data.</p>
+
+<p><a href="https://www.mongodb.com/download-center/compass?jmp=hero">https://www.mongodb.com/download-center/compass?jmp=hero</a></p>
 
 
     

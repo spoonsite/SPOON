@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="generator" content="Hugo 0.31.1" />
 
-<title>Version Migration :: Storefront Docs</title>
+<title>Workplans :: Storefront Docs</title>
 <link rel="shortcut icon" href="/openstorefront/images/favicon.png" type="image/x-icon" />
 <link href="/openstorefront/css/nucleus.css" rel="stylesheet">
 <link href="/openstorefront/css/font-awesome.min.css" rel="stylesheet">
@@ -30,7 +30,7 @@
 
     
   </head>
-  <body data-url="/systemadmin/versionmigrationguide/">
+  <body data-url="/applicationadmin/workplans/">
     
       <div id="headermain"></div>
 <nav id="sidebar" class="showVisitedLinks">
@@ -145,9 +145,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/applicationadmin/" class="dd-item">
+    <li data-nav-id="/applicationadmin/" class="dd-item parent">
       <a href="/openstorefront/applicationadmin/">
-        <span>Application Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+        <span>Application Admin</span>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </a>
         <ul>
       <li data-nav-id="/applicationadmin/customsubmissionforms/" class="dd-item">
@@ -155,7 +156,7 @@
           <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
-      <li data-nav-id="/applicationadmin/workplans/" class="dd-item">
+      <li data-nav-id="/applicationadmin/workplans/" class="dd-item active">
         <a href="/openstorefront/applicationadmin/workplans/">
           <span>Workplans</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
@@ -167,10 +168,9 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/systemadmin/" class="dd-item parent">
+    <li data-nav-id="/systemadmin/" class="dd-item">
       <a href="/openstorefront/systemadmin/">
-        <span>System Admin</span>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+        <span>System Admin</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </a>
         <ul>
       <li data-nav-id="/systemadmin/setup/" class="dd-item">
@@ -193,7 +193,7 @@
           <span>Data Migration Guide</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
-      <li data-nav-id="/systemadmin/versionmigrationguide/" class="dd-item active">
+      <li data-nav-id="/systemadmin/versionmigrationguide/" class="dd-item">
         <a href="/openstorefront/systemadmin/versionmigrationguide/">
           <span>Version Migration</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
@@ -233,7 +233,7 @@
 
  <section id="footer"><div style="color: #E0E0DA;">
     <p>OpenStoreFront version 2.8</p>
-    <p>Documentation generated on May 10, 2019</p>
+    <p>Documentation generated on May 24, 2019</p>
     <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
@@ -252,7 +252,7 @@
       
       
     <div id="top-github-link">
-      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/systemadmin/VersionMigrationGuide.md" target="blank">
+      <a class="github-link" href="https://github.com/di2e/openstorefront/edit/master/Hugo-StaticGen-Docs/content/applicationadmin/Workplans.md" target="blank">
         <i class="fa fa-code-fork"></i>
         Edit page
       </a>
@@ -272,7 +272,7 @@
 
 
 
- <a href='/openstorefront/'>OpenStoreFront Documentation</a> > <a href='/openstorefront/systemadmin/'>System Admin</a> > Version Migration
+ <a href='/openstorefront/'>OpenStoreFront Documentation</a> > <a href='/openstorefront/applicationadmin/'>Application Admin</a> > Workplans
 
  
 
@@ -285,7 +285,20 @@
     
     <div class="progress">
         <div class="wrapper">
-    
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#1-create-a-new-workplan">1. Create a new Workplan</a>
+<ul>
+<li><a href="#1-1-create-the-workplan">1.1 Create the Workplan</a></li>
+<li><a href="#1-2-define-workplan-steps">1.2  Define Workplan Steps</a></li>
+</ul></li>
+<li><a href="#2-workplan-progress-for-admins-and-smes">2. Workplan Progress For Admins and SMEs</a></li>
+<li><a href="#3-for-submission-owners">3. For Submission Owners</a></li>
+</ul></li>
+</ul>
+</nav>
         </div>
     </div>
     
@@ -295,7 +308,7 @@
 
 <div id="body-inner">
   
-    <h1>Version Migration</h1>
+    <h1>Workplans</h1>
   
 
 
@@ -303,262 +316,57 @@
     
     
     
-    <p>In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4)  That way data migrations will occur in the proper order.  If you start from the lastest version and have no data then migration is not needed.</p>
+    
 
-<h2 id="note-28">Note: 2.8</h2>
+<h2 id="1-create-a-new-workplan">1. Create a new Workplan</h2>
 
-<p>Mongo DB support was added.  Orient is still used the default Database unless configured otherwise.</p>
-
-<p>To Migrated from an existing Orient install to Mongo the following needs to be done:</p>
+<h3 id="1-1-create-the-workplan">1.1 Create the Workplan</h3>
 
 <ol>
-<li><p>Install Mongo or point to existing install.  (See Setup documentation for Centos 7 install of Mongo)</p></li>
-
-<li><p>Update Application Configuration</p></li>
-</ol>
-
-<p>edit /var/openstorefront/config/openstorefront.properties</p>
-
-<p>Add/edit properties:</p>
-
-<pre><code>    db.use.mongo=true
-    mongo.connection.url=mongodb://localhost:27017
-</code></pre>
-
-<p>For connection URLs see below to set up a connect that requires an user/password<a href="https://docs.mongodb.com/manual/reference/connection-string/">https://docs.mongodb.com/manual/reference/connection-string/</a>
-<a href="http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/">http://mongodb.github.io/mongo-java-driver/3.9/driver/tutorials/connect-to-mongodb/</a></p>
-
-<ol start="3">
-<li>Either deploy 2.8 or if already deployed then restart server for the change to take affect.</li>
-</ol>
-
-<p>The data migration process will apply automatically if the following conditions are met:</p>
-
-<p>a) Configured to use Mongo</p>
-
-<p>b) There was an previous Orient Install (as determined by the db file directory)</p>
-
-<p>c) If the migration hasn't already been applied.</p>
-
-<pre><code>To force it to re-apply remove the following Application Properites from the database by using the application system UI or by using an external tool
-
-Remove Keys: DB-MIGRATION-Mongo_STATUS, DB-MIGRATION-Mongo_LASTRUN_DTS
-</code></pre>
-
-<p><strong>WARNING:</strong> The Data migration will remove existing Mongo &quot;Storefront&quot; database collections and replace the content from the equivalent Orient data.
-Orient's data is not effected by the migration.  So the process can be repeated.</p>
-
-<p>Generally the migration process is expect to only take about 1-2 minutes but, it depends on the size of database and system resources.</p>
-
-<h2 id="note-263">Note: 2.6.3</h2>
-
-<p>For existing applications:<br>
-(Update <strong>var/openstorefront/config/shiro.ini</strong>)</p>
-
-<p>Add:</p>
-
-<pre><code>/login/** = anon 
-/mobile/** = authc 
-/api/v1/resource/branding/current = anon 
-/api/v1/resource/securitypolicy = anon 
-/api/v1/resource/faq/* = anon 
-/api/v1/resource/faq = anon 
-/api/v1/resource/feedbacktickets = anon 
-</code></pre>
-
-<h2 id="note-26">Note: 2.6</h2>
-
-<p>Some feature such as custom submission require new permission (See Admin -&gt; Security Roles to add new permissions)</p>
-
-<h2 id="note-243">Note: 2.4.3</h2>
-
-<p>This includes the database upgrade.  Note: rollback to pervious storefront version will require restore from a backup proir to 2.4.3 for existing data to work for that version.</p>
-
-<p><strong>2.4.2</strong> Must be deployed before 2.4.3 if you have existing data.</p>
-
-<h2 id="note-242">Note: 2.4.2</h2>
-
-<p>Includes a database export and import in preparation for 2.4.3 upgrade of DB.  If you have an existing database install 2.4.2 before 2.4.3.</p>
-
-<ol>
-<li>Shutdown app server</li>
-<li>Backup /var/openstorefront/db directory</li>
-<li>install/deploy 2.4.2</li>
-<li>Start app server</li>
-</ol>
-
-<p>You need to wait for 5-20 minutes (Depending on size of DB) for the update to occur. At this time the application will be unavailable.</p>
-
-<p>To manually export/import:</p>
-
-<ol>
-<li>install orient 2.1.25 to system to use console tool
-a.) Shutdown app server</li>
-</ol>
-
-<p>From Orient</p>
-
-<pre><code class="language-bash">$ cd bin
-$ ./console.sh (or bin/console.bat under Windows)
-orientdb&gt; CONNECT plocal:/var/openstorefront/db/openstorefront &lt;DBuser&gt; &lt;db password
-orientdb&gt; EXPORT DATABASE /temp/mydb.json.gz
-orientdb&gt; DISCONNECT
-orientdb&gt; CREATE DATABASE plocal:/var/openstorefront/db/openstorefront only do this if you have move the old one out of the way)
-orientdb&gt; IMPORT DATABASE /temp/mydb.json.gz
-</code></pre>
-
-<h2 id="upgrading-from-24-to-25">Upgrading from 2.4 to 2.5</h2>
-
-<p>Pre-Deployment</p>
-
-<p><strong>Elastic Search</strong></p>
-
-<p>Change the value of <strong>elastic.server.port</strong> in /var/openstorefront/config/<strong>openstorefront.properties</strong> from <strong>9300</strong> to <strong>9200</strong></p>
-
-<p>Windows (manually)</p>
-
-<ol>
-<li>Install and extract Elasticsearch 5.6.3 on the system</li>
-<li>Remove/delete the root directory of Elasticsearch 2.x from the system</li>
-<li>Start Elasticsearch 5.6.3 (by running the elasticsearch-5.6.3/elasticsearch-5.6.3/elasticsearch.bat file)</li>
-</ol>
-
-<p>CentOS using Yum</p>
-
-<p><em>Documentation on installation: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html">https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html</a></em></p>
-
-<ol>
-<li>Download and install the public signing key</li>
-</ol>
-
-<pre><code class="language-bash">$ rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-</code></pre>
-
-<ol start="2">
-<li>Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example /etc/yum.repos.d/elasticsearch.repo</li>
-</ol>
-
-<pre><code class="language-ini">[elasticsearch-6.x]
-name=Elasticsearch repository for 6.x packages
-baseurl=https://artifacts.elastic.co/packages/6.x/yum
-gpgcheck=1
-gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
-enabled=1
-autorefresh=1
-type=rpm-md
-</code></pre>
-
-<ol start="3">
-<li>Install Elasticsearch</li>
-</ol>
-
-<pre><code class="language-bash">$ sudo yum install elasticsearch
-</code></pre>
-
-<ol start="4">
-<li>Run Elasticsearch (with <strong>SysV init</strong>)<br></li>
-</ol>
-
-<pre><code class="language-bash"># on system boot
-$ sudo chkconfig --add elasticsearch
-
-# manually
-$ sudo -i service elasticsearch start
-$ sudo -i service elasticsearch stop
-</code></pre>
-
-<ol start="5">
-<li>Run Elasticsearch (with <strong>systemd</strong>)</li>
-</ol>
-
-<pre><code class="language-bash"># on system boot
-$ sudo /bin/systemctl daemon-reload
-$ sudo /bin/systemctl enable elasticsearch.service
-
-#manually
-$ sudo systemctl start elasticsearch.service
-$ sudo systemctl stop elasticsearch.service
-</code></pre>
-
-<p>elasticsearch service command reference (elasticsearch should be running at this point):</p>
-
-<p><strong>Start:</strong> systemctl start elasticsearch.service</p>
-
-<p><strong>Stop:</strong>  systemctl stop elasticsearch.service</p>
-
-<p><strong>Test:</strong> curl -XGET 'localhost:9200/?pretty'</p>
-
-<p>should give you a response something like this:</p>
-
-<pre><code>{
-  &quot;name&quot; : &quot;Cp8oag6&quot;,
-  &quot;cluster_name&quot; : &quot;elasticsearch&quot;,
-  &quot;cluster_uuid&quot; : &quot;AT69_T_DTp-1qgIJlatQqA&quot;,
-  &quot;version&quot; : {
-    &quot;number&quot; : &quot;5.4.3&quot;,
-    &quot;build_hash&quot; : &quot;f27399d&quot;,
-    &quot;build_date&quot; : &quot;2016-03-30T09:51:41.449Z&quot;,
-    &quot;build_snapshot&quot; : false,
-    &quot;lucene_version&quot; : &quot;6.5.0&quot;
-  },
-  &quot;tagline&quot; : &quot;You Know, for Search&quot;
-}
-</code></pre>
-
-<p>Getting everything setup in the Open Storefront</p>
-
-<ol>
-<li>In Openstorefront, navigate to Admin Tools -&gt; Application Management -&gt; System -&gt; Search Control</li>
-<li>Click &quot;Re-Index Listings&quot;</li>
-<li>(optional) if you haven't set the elastic.server.port to 9200, you can do so now from <strong>Admin Tools</strong> -&gt; <strong>App Management</strong> -&gt; <strong>System</strong> -&gt; <strong>System Configuration Properties</strong></li>
-</ol>
-
-<h2 id="upgrading-from-23-to-24">Upgrading from 2.3 to 2.4</h2>
-
-<div class="notices note" ><p>As part of the upgrade, Metadata will be automatically converted to Attributes.  This may take a while, if there is a lot of Metadata associated with the entries.  The server won't be avaliable until the migration is complete.</p>
-</div>
-
-
-<p>Pre-Deployment</p>
+<li>Navigate to <strong>Admin Tools</strong> if you are not already there (click on your username in the upper-right, then Admin Tools)</li>
+<li>Select <strong>Data Management &rarr; Workplan Progress</strong></li>
+<li>Click <strong>+Add Workplan</strong> <img src="/openstorefront/images/AppAdmin/AddWorkplan.JPG" alt="Workplan Creation Tool" /></li>
+<li>First fill in the Workplan Config Section
 
 <ul>
-<li>Edit /var/openstorefront/config/shiro.ini</li>
-<li>under [url] section:
-Confirm line &quot;/images&quot; is
-<code>/images/* = anon</code></li>
-<li>If not then update it.</li>
-<li>Then restart server if it's running to apply changes.</li>
-</ul>
-
-<h2 id="upgrading-from-22-to-23">Upgrading from 2.2 to 2.3</h2>
-
-<p>DI2E environments that use open am should follow JIRA ticket STORE-1243.</p>
-
-<ol>
-<li><p><strong>Update Security</strong>  - If you haven't done any customization then the easiest
-upgrade path is to just remove the the existing shiro.ini.</p>
-
-<ol type="a">
-<li>Delete /var/openstorefront/config/shiro.ini</li>
-<li>On next server restart the application will pull the default
-<br></li>
+<li>Workplan Name: Unique Workplan name</li>
+<li>Workplan Admin Role: Choose the user group that will have access to entries in this workplan</li>
+<li>Workplan For: Entry</li>
+<li>Entry Type: Choose the entry type that this workplan will apply to</li>
+</ul></li>
 </ol>
 
-<p>Keep in mind this is for environments that use the built in user management rather then an external user management.
-The default shiro config is set for the built in user management.</p></li>
+<h3 id="1-2-define-workplan-steps">1.2  Define Workplan Steps</h3>
 
-<li><p><strong>Update Database</strong> - 2.3 includes a update to the database.</p>
-
-<ol type="a">
-<li>Make sure tomcat is shutdown</li>
-<li>Make a backup of existing db
+<p>It is a good idea to define the steps to be taken with each entry before creating the actual steps.</p>
 
 <ol>
-<li>Copy /var/openstorefront/db directory to backup location</li>
-</ol></li>
-<li>Delete all /var/openstorefront/db/databases/openstorefront/openstorefront.*.wal files (just the WAL files there maybe 1 or more) (This appears to be optional)</li>
-</ol></li>
+<li>Click <strong>Create Step</strong> <img src="/openstorefront/images/AppAdmin/WorkplanCreateStep.JPG" alt="Workplan Add Step" /></li>
+
+<li><p>Step Configuration:</p>
+
+<ul>
+<li>Step name: Unique step name</li>
+<li>Short Description: A description of the step. Keep it brief, but be sure to include enough information for the person responsible for the step</li>
+<li>Approval State to Match: This will be the status of a entry while it is in this step</li>
+<li>Active On: The state that an entry is currently in when it is assigned to that step</li>
+<li>Role Access: What role group will be able to view this entry in their Workplan Progress page</li>
+</ul></li>
+
+<li><p>Step Actions: Step Actions are events that will occur when a step becomes active</p></li>
 </ol>
+
+<h2 id="2-workplan-progress-for-admins-and-smes">2. Workplan Progress For Admins and SMEs</h2>
+
+<p>Each step of a workplan will be assigned to a certain group. That group will see the entries that are assigned to them when they access the Workplan Progress page (<strong>Data Management &rarr; Workplan Progress</strong>). Each group will complete the task assigned to them. Once completed it will move to the next group.</p>
+
+<p>The comments feature has two uses. First to enable communication between reviewers, SMEs, and admins. To do this when viewing a submission and commenting, keep the <strong>Private</strong> box checked. The second use is to communicate with the submission owner.</p>
+
+<p>The <strong>Assign</strong> box has a number of operations used to assign a submission to an admin, unassign or assign it to yourself, or reassign it to another user.</p>
+
+<h2 id="3-for-submission-owners">3. For Submission Owners</h2>
+
+<p>Submission owners will get notifications of comments on their submissions. Owners are expected to update material as recommended by SMEs and reviewers.</p>
 
 
     
@@ -570,8 +378,8 @@ The default shiro config is set for the built in user management.</p></li>
 </div>
 
 <div id="navigation">
-<a class="nav nav-prev" href="/openstorefront/systemadmin/datamigrationguide/" title="Data Migration Guide"> <i class="fa fa-chevron-left"></i></a>
-    <a class="nav nav-next" href="/openstorefront/user/" title="User" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/openstorefront/applicationadmin/customsubmissionforms/" title="Custom Submission Forms"> <i class="fa fa-chevron-left"></i></a>
+    <a class="nav nav-next" href="/openstorefront/applicationadmin/securityroles/" title="Security Roles" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a></div>
 
 </section>
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">

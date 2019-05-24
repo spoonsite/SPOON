@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.49.2" />
+<meta name="generator" content="Hugo 0.31.1" />
 
 <title>Architecture :: Storefront Docs</title>
 <link rel="shortcut icon" href="/openstorefront/images/favicon.png" type="image/x-icon" />
@@ -72,45 +72,6 @@
         <span>Evaluations</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </a>
         <ul>
-    <li data-nav-id="/evaluations/evaluator/" class="dd-item">
-      <a href="/openstorefront/evaluations/evaluator/">
-        <span>Evaluator</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </a>
-        <ul>
-      <li data-nav-id="/evaluations/evaluator/storefront-evaluators-guide/" class="dd-item">
-        <a href="/openstorefront/evaluations/evaluator/storefront-evaluators-guide/">
-          <span>Evaluators Guide</span><i class="fa fa-circle-thin read-icon"></i>
-        </a>
-    </li>
-      <li data-nav-id="/evaluations/evaluator/faq/" class="dd-item">
-        <a href="/openstorefront/evaluations/evaluator/faq/">
-          <span>FAQ</span><i class="fa fa-circle-thin read-icon"></i>
-        </a>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/evaluations/librarian/" class="dd-item">
-      <a href="/openstorefront/evaluations/librarian/">
-        <span>Librarian</span><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </a>
-        <ul>
-      <li data-nav-id="/evaluations/librarian/basic-entry-template-for-storefront/" class="dd-item">
-        <a href="/openstorefront/evaluations/librarian/basic-entry-template-for-storefront/">
-          <span>Basic Entry Template for Storefront</span><i class="fa fa-circle-thin read-icon"></i>
-        </a>
-    </li>
-      <li data-nav-id="/evaluations/librarian/createevaluationguide/" class="dd-item">
-        <a href="/openstorefront/evaluations/librarian/createevaluationguide/">
-          <span>Create an Evaluation</span><i class="fa fa-circle-thin read-icon"></i>
-        </a>
-    </li>
-      <li data-nav-id="/evaluations/librarian/publishinganevaluationguide/" class="dd-item">
-        <a href="/openstorefront/evaluations/librarian/publishinganevaluationguide/">
-          <span>Publish an Evaluation</span><i class="fa fa-circle-thin read-icon"></i>
-        </a>
-    </li>
-        </ul>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/dev/" class="dd-item parent">
@@ -154,6 +115,16 @@
       <li data-nav-id="/applicationadmin/customsubmissionforms/" class="dd-item">
         <a href="/openstorefront/applicationadmin/customsubmissionforms/">
           <span>Custom Submission Forms</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/workplans/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/workplans/">
+          <span>Workplans</span><i class="fa fa-circle-thin read-icon"></i>
+        </a>
+    </li>
+      <li data-nav-id="/applicationadmin/securityroles/" class="dd-item">
+        <a href="/openstorefront/applicationadmin/securityroles/">
+          <span>Security Roles</span><i class="fa fa-circle-thin read-icon"></i>
         </a>
     </li>
         </ul>
@@ -222,9 +193,9 @@
     </ul>
 
  <section id="footer"><div style="color: #E0E0DA;">
-    <p>OpenStoreFront version 2.7.4</p>
-    <p>Documentation generated on Feb 22, 2019</p>
-    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.49.2</p>
+    <p>OpenStoreFront version 2.8</p>
+    <p>Documentation generated on May 24, 2019</p>
+    <p>Created using <a href="https://gohugo.io/">Hugo</a> version 0.31.1</p>
 </div>
     </section>
   </div>
@@ -340,6 +311,8 @@ The application is composed by stripes layouts with a top-level page and fragmen
 
 <p>Figure 2. Server Architecture Diagram</p>
 
+<p>Version 2.8 - Mongo DB support was added. Orient DB is now optional can be switched with Mongo</p>
+
 <h2 id="2-2-server-details">2.2 Server Details</h2>
 
 <p>Component definitions are as shown below:</p>
@@ -375,6 +348,8 @@ The application is composed by stripes layouts with a top-level page and fragmen
 
 <p><img src="/openstorefront/images/storage.png" alt="storage" /></p>
 
+<p>Version 2.8 - Mongo DB support was added. Orient DB is now optional can be switched with Mongo</p>
+
 <p><strong>File System</strong>  - Holds configuration, resources, media, imports, reports and plugins.  By default under: /var/openstorefront it can be changed by setting the system property -Dapplication.datadir=<directory> on the command line.</p>
 
 <p><strong>Solr or Elasticsearch</strong> - Use to do fuzzy index searches across the entries.  It&rsquo;s kept in sync by the application.</p>
@@ -388,6 +363,8 @@ The application is composed by stripes layouts with a top-level page and fragmen
 <p><img src="/openstorefront/images/deployarch.png" alt="deployarch" /></p>
 
 <p>Figure 3 . Runtime Environment diagram</p>
+
+<p>If using Mongo then Mongo would be externally deploy under the default port of <strong>27017</strong></p>
 
 <h2 id="3-2-runtime-details">3.2 Runtime Details</h2>
 
@@ -408,6 +385,8 @@ The application is composed by stripes layouts with a top-level page and fragmen
 
 <p>Figure 4. Runtime Component Integration Vectors</p>
 
+<p>If using Mongo then Mongo would be a Class C (External Application) and Orient DB (class B) would not be used.</p>
+
 <h2 id="3-4-component-integration-vectors-details">3.4 Component Integration Vectors Details</h2>
 
 <p>The component integration vectors (CIV) are show below.</p>
@@ -427,10 +406,14 @@ The application is composed by stripes layouts with a top-level page and fragmen
  <strong>Target Component</strong>:      Solr or Elasticsearch<br />
 <strong>Notes</strong>: JEE Application Server   Currently configured to deploy on Tomcat</p>
 
-<p><strong>Source Component</strong>:    Orient DB<br />
+<p><strong>Source Component</strong>:    Orient DB (OPTIONAL)<br />
  <strong>Class</strong>:  B<br />
  <strong>Target Component</strong>:     openstorefront<br />
 <strong>Notes</strong>: Embedded</p>
+
+<p><strong>Source Component</strong>:    MONGO DB (OPTIONAL)<br />
+ <strong>Class</strong>:  C<br />
+ <strong>Target Component</strong>:     openstorefront</p>
 
 <p><strong>Source Component</strong>:   JEE Application Server<br />
  <strong>Class</strong>:  A<br />
@@ -476,12 +459,16 @@ component that offers data from B).</p></li>
 <strong>Type:</strong> Inbound  (Open if not using 8080)</p>
 
 <p><strong>Port (Defaults):</strong>  2424
-<strong>Description:</strong> OrientDB
+<strong>Description:</strong> OrientDB  (Optional)
 <strong>Type:</strong> Internal  (Shouldn&rsquo;t be exposed externally)</p>
 
 <p><strong>Port (Defaults):</strong>  2480
-<strong>Description:</strong> OrientDB
+<strong>Description:</strong> OrientDB (Optional)
 <strong>Type:</strong> Internal  (Shouldn&rsquo;t be exposed externally)</p>
+
+<p><strong>Port (Defaults):</strong>  27017
+<strong>Description:</strong> Mongo DB (Optional)
+<strong>Type:</strong> Outbound (Used internally does not need to be exposed outside the system)</p>
 
 <p><strong>Port (Defaults):</strong>  8983
 <strong>Description:</strong> Solr (If used)

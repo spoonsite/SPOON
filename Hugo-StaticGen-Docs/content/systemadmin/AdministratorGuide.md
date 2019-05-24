@@ -420,4 +420,36 @@ Mongo DB is supported as of version 2.8
 It's expected that Mongo will be managed externally.  
 As such an administrator should follow the guides/tools for their specific setup.
 
+# 5. Troubleshooting
+
+If elasticsearch detects low disk space it will change into Read-Only mode.
+At which point the index records can't be changed which cause with searching and updating records.
+
+To resolve:
+
+1. Correct the disk space issue
+
+2. issue a PUT to http://localhost:9200/openstorefront/_settings
+with this as the body (Content-type=application/json):
+
+```
+    {
+	"index": {
+	"blocks": {
+	"read_only_allow_delete": "false"
+	}
+    }
+    }
+```
+
+You can use Curl or some other tool to issue the command.
+
+Elasticsearch should respond with:
+
+{
+    "acknowledged": true
+}
+
+
+See https://discuss.elastic.co/t/forbidden-12-index-read-only-allow-delete-api/110282/4
 
