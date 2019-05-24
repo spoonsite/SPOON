@@ -247,7 +247,7 @@ public class AttributeResource
 				for (AttributeCode attributeCode : attributeCodes) {
 					RelationshipView relationship = new RelationshipView();
 					relationship.setKey(attributeCode.getAttributeCodePk().toKey());
-					relationship.setName(attributeCode.getLabel());
+					relationship.setName(service.getAttributeService().crushGeneralNumericString(attributeCode.getLabel()));
 					relationship.setEntityType(RelationshipView.ENTITY_TYPE_ATTRIBUTE);
 					relationship.setRelationType(RelationshipView.ATTRIBUTE_CODE_RELATION);
 					relationship.setRelationshipLabel(attributeType.getDescription());
@@ -265,7 +265,7 @@ public class AttributeResource
 		{
 		};
 		return sendSingleEntityResponse(entity);
-	}
+	}	
 
 	public void buildRelations(List<RelationshipView> relationships, Architecture architecture, Architecture parent)
 	{

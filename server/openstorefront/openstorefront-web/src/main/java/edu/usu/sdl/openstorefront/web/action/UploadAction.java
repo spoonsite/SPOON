@@ -41,6 +41,7 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.parser.MainAttributeParser;
 import edu.usu.sdl.openstorefront.service.io.parser.OldBaseAttributeParser;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -54,8 +55,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +74,10 @@ import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.validation.Validate;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codemonkey.simplejavamail.email.Email;
+import javax.mail.Message;
 
 /**
  *
@@ -93,7 +99,8 @@ public class UploadAction
 		"ImportData",
 		"DataMapFields",
 		"PreviewMapping",
-		"ImportMapping"
+		"ImportMapping",
+		"BulkUpload"
 	})
 	private FileBean uploadFile;
 
@@ -595,7 +602,6 @@ public class UploadAction
 		File fullArchive = path.toFile();
 
 		try {
-
 			uploadFile.save(fullArchive);
 			service.getSystemArchiveService().queueArchiveRequest(systemArchive);
 
@@ -611,6 +617,64 @@ public class UploadAction
 		}
 
 		return streamErrorResponse(errors, true);
+	}
+
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
+	@HandlesEvent("BulkUpload")
+	public Resolution bulkUpload()
+	{
+		Map<String, String> errors = new HashMap<>();
+		LOG.log(Level.INFO, SecurityUtil.adminAuditLogMessage(getContext().getRequest()));
+
+		String extension = FilenameUtils.getExtension(uploadFile.getFileName()).toString();
+		String mimeType = uploadFile.getContentType();
+
+		// Check if the uploaded file is a zip file
+		Boolean isZip = (extension.equals("zip")
+				&& (mimeType.equals("application/x-zip-compressed") || mimeType.equals("application/zip") || 
+				mimeType.equals("application/octet-stream") || mimeType.equals("multipart/x-zip")));
+
+		if (isZip) {
+			String username = SecurityUtil.getCurrentUserName();
+
+			File tempFile = null;
+			String timeStamp = new SimpleDateFormat("dd-MM-YYYY").format(new Date());
+			String filePath = FileSystemManager.getInstance().getDir(FileSystemManager.BULK_UPLOAD_DIR).toString()
+					+ "\\" + username + "\\" + timeStamp + "_" + StringProcessor.uniqueId() + ".zip";
+			try {
+				// save to file system under username
+				tempFile = new File(filePath);
+				uploadFile.save(tempFile);
+
+			} catch (IOException ex) {
+				// If the file is unreadable
+				LOG.log(Level.FINE, "Unable to read file: " + uploadFile.getFileName(), ex);
+				errors.put("uploadFile", "Unable to read file: " + uploadFile.getFileName()
+						+ " Make sure the file in the proper format.");
+			} finally {
+				try {
+					if (uploadFile != null) {
+						uploadFile.delete();
+					}
+				} catch (IOException ex) {
+					LOG.log(Level.WARNING, "Unable to remove temp upload file.", ex);
+				}
+			}
+
+			if (errors.isEmpty()) {
+				// Send email to spoon support telling them that there is a new uploaded file.
+				Email email = MailManager.newEmail();
+				email.setSubject("SpoonSite bulk Upload");
+				email.setText("There is a new bulk upload to be reviewed at " + filePath);
+				email.addRecipient("", "support@spoonsite.com", Message.RecipientType.TO);
+
+				MailManager.send(email, true);
+			}
+		} else {
+			errors.put("uploadFile", "Uploaded file was not a zip file");
+		}
+
+		return streamUploadResponse(errors);
 	}
 
 	@SuppressWarnings("serial")

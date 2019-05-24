@@ -72,6 +72,7 @@ public class FileSystemManager
 	public static final String COMPONENT_VERSION_DIR = MAIN_PERM_DIR + "/componentversion";
 	public static final String PLUGIN_UNINSTALLED_DIR = MAIN_PERM_DIR + "/plugins/uninstalled";
 	public static final String PLUGIN_FAILED_DIR = MAIN_PERM_DIR + "/plugins/failed";
+	public static final String BULK_UPLOAD_DIR = MAIN_PERM_DIR + "/bulkupload";
 	public static final String DB_DIR = "/db";
 
 	private static final int BUFFER_SIZE = 8192;

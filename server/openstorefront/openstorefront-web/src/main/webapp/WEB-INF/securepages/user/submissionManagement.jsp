@@ -298,6 +298,16 @@
 									}
 								},
 								{
+									text: 'Bulk Upload',
+									itemId: 'bulkUpload',
+									scale: 'medium',
+									iconCls: 'fa fa-2x fa-upload icon-button-color-save icon-vertical-correction',									
+									requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
+									handler: function () {
+										actionBulkUpload();
+									}
+								},
+								{
 									text: 'Edit',
 									itemId: 'tbEdit',
 									scale: 'medium',	
@@ -732,6 +742,86 @@
 				};
 				loadAvailableSubmissionForms();
 								
+				var actionBulkUpload = function() {
+					var importWin = Ext.create('Ext.window.Window', {
+						title: 'Bulk Upload',
+						modal: true,
+						closeAction: 'destroy',
+						width: 500,
+						height: 260,
+						layout: 'fit',
+						items: [
+							{
+								xtype: 'form',
+								scollable: true,
+								bodyStyle: 'padding: 10px;',
+								layout: 'anchor',
+								defaults: {
+									labelAlign: 'top',
+									labelSeparator: '',
+									width: '100%'
+								},
+								items: [
+									{
+										xtype: 'fileFieldMaxLabel', 
+										name: 'uploadFile'
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Import',
+												iconCls: 'fa fa-lg fa-upload icon-button-color-default',
+												formBind: true,
+												requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
+												handler: function() {
+													var uploadForm = this.up('form');
+													//var data = uploadForm.getValues();
+													var progressMsg = Ext.MessageBox.show({
+														title: 'Archive Import',
+														msg: 'Importing archive please wait...',
+														width: 300,
+														height: 150,
+														closable: false,
+														progressText: 'Importing...',
+														wait: true,
+														waitConfig: {interval: 300}
+													});
+													uploadForm.submit({
+														submitEmptyText: false,
+														url: 'Upload.action?BulkUpload',
+														success: function(form, action) {
+															Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');
+															progressMsg.hide();
+															importWin.close();
+														}, 
+														failure: function(form, action) {
+															progressMsg.hide();
+														}
+													});	
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',											
+												handler: function() {
+													this.up('window').close();
+												}												
+											}
+										]
+									}
+								]
+							}							
+						]
+					});
+					importWin.show();		
+				};				
 				var actionNewSubmission = function() {
 					
 					var entryTypeSelectWin = Ext.create('Ext.window.Window', {

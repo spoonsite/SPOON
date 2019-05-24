@@ -2313,9 +2313,15 @@
 										});
 									}, 
 									asciiToKatex: function (value) {
+										var unit = "";
+										if (Ext.isIE) {
+											unit = value;
+										} else {
+											unit =  CoreUtil.asciiToKatex(value, false);
+										}
 										var newHtml;
 										var header = '<p><b>Displayed Unit</b></p>';
-										var katex = '<p class="fs2">' + CoreUtil.asciiToKatex(value, false) + '</p>';
+										var katex = '<p class="fs2">' + unit + '</p>';
 										newHtml = header + katex;
 										return newHtml;
 									}

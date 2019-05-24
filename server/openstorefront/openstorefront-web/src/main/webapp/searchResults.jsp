@@ -206,6 +206,12 @@
 				return arrOne;
 			};
 
+			/**
+			 * Sets the headers for the comparison table
+			 * 
+			 * @param compViewArray  object of the components being compared
+			 * @return               HTML code of the headers
+			 */ 
 			var getFirstRow = function(compViewArray){
 				var firstRowString = '';
 				firstRowString += '<tr>';
@@ -222,6 +228,12 @@
 				return firstRowString;
 			};
 
+			/**
+			 * Creates the main body of the comparison table
+			 * 
+			 * @param compViewArray  object of the components being compared
+			 * @return               HTML code of the main body
+			 */
 			var getMainBody = function(compViewArray){
 				var rowString = '';
 
@@ -264,18 +276,32 @@
 				return rowString;
 			};
 
+			/**
+			 * Returns HTMLified version version of attributes for comparison table
+			 * 
+			 * @param attributeList: list of attributes
+			 * @param attributeNameToGet: the specific attribute that is being looked for
+			 * @param attributeUnit: the base unit that matches the attributeNameToGet
+			 * 
+			 * @return foundVal: HTML that represents the attribute codes
+			 */
+			var getRelevantDataPiece = function(attributeList, attributeNameToGet, attributeUnit){
 
-			var getRelevantDataPiece = function(vitalsList, vitalNameToGet, vitalUnit){
-
-				var foundVal = false;
-				vitalsList.forEach(function(entryVital){
-					if(entryVital.label == vitalNameToGet){
-						foundVal = entryVital.value;
+				var foundVal = "";
+				attributeList.forEach(function(entryAttribute){
+					if(entryAttribute.typeDescription == attributeNameToGet && entryAttribute.unit == attributeUnit){
+						if (foundVal != ""){
+							foundVal += ", ";
+						}
+						foundVal += CoreUtil.crushNumericString(entryAttribute.codeDescription);
 					}
 				});
-				if(foundVal){
+
+				if(foundVal != ""){
+					foundVal = "<b>" + " " + foundVal + (attributeUnit ? " " + CoreUtil.asciiToKatex(attributeUnit) : "") + "</b>";
 					return foundVal;
 				}
+
 				return '&mdash;'
 			};
 
@@ -328,7 +354,7 @@
 					rowString += '</td>';
 					compViewArray.forEach(function(singleComponentView){
 						rowString += '<td>';
-						var tableElement = '<div class="tooltip">' + getRelevantDataPiece(singleComponentView.vitals, vitalSetItem.name, vitalSetItem.unit) + '<span class="tooltiptext">'+vitalSetItem.name+' of ' + singleComponentView.name + '</span></div>';
+						var tableElement = '<div class="tooltip">' + getRelevantDataPiece(singleComponentView.attributes, vitalSetItem.name, vitalSetItem.unit) + '<span class="tooltiptext">'+vitalSetItem.name+' of ' + singleComponentView.name + '</span></div>';
 						rowString += tableElement;
 						rowString += '</td>';
 					});
@@ -338,6 +364,12 @@
 				return vitalsHtmlBody;
 			}
 
+			/**
+			 * Builds the comparison table
+			 * 
+			 * @param compViewArray  object of the components being compared
+			 * @return               HTML code for the whole table
+			 */ 
 			var buildHTMLTableFromData = function(compViewArray){
 
 				var htmlTableString = "";
@@ -1128,6 +1160,7 @@
 							Ext.Array.each(Object.keys(attributeStats[key].codeMap), function(attrKey){
 								var containsAttribute = false;
 								var attribute = attributeStats[key].codeMap[attrKey];
+								attribute.codeLabel = CoreUtil.crushNumericString(attribute.codeLabel);
 								Ext.Array.each(attributeFilters, function(item) {
 									if (item.type === attributeStats[key].attributeType &&
 										item.code === attrKey) {

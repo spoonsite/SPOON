@@ -52,6 +52,7 @@ import edu.usu.sdl.openstorefront.core.view.ChangeEntryTypeAction;
 import edu.usu.sdl.openstorefront.core.view.ChangeOwnerAction;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminView;
 import edu.usu.sdl.openstorefront.core.view.ComponentAdminWrapper;
+import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
 import edu.usu.sdl.openstorefront.core.view.ComponentDetailView;
 import edu.usu.sdl.openstorefront.core.view.ComponentFilterParams;
 import edu.usu.sdl.openstorefront.core.view.ComponentLookupModel;
@@ -1002,6 +1003,9 @@ public abstract class GeneralComponentResourceExt
 		}
 		service.getComponentService().setLastViewDts(componentId, SecurityUtil.getCurrentUserName());
 		if (componentDetail != null) {
+			for(ComponentAttributeView attrView : componentDetail.getAttributes()){
+				attrView.setCode(service.getAttributeService().crushGeneralNumericString(attrView.getCode()));
+			}
 			return sendSingleEntityResponse(componentDetail);
 		} else if (componentPrint != null) {
 			return sendSingleEntityResponse(componentPrint);
