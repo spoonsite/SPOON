@@ -1344,7 +1344,7 @@ var CoreUtil = {
 								allowblank: false,
 								width: '97%',
 								vtype: 'email',
-								disabled: (serviceAccounts.indexOf(currUser.username) != -1) ? true : false,
+								disabled: (serviceAccounts.indexOf(currUser.username) != -1) ? false : true,
 								value: isServiceAccount ? '' : currUser.email
 							},
 							{
@@ -1352,7 +1352,7 @@ var CoreUtil = {
 								grow: true,
 								name: 'message',
 								fieldLabel: 'Message',
-								allowblank: false,
+								allowBlank: false,
 								width: '97%',
 								height: 200
 							}
@@ -1370,31 +1370,40 @@ var CoreUtil = {
 								formBind: true,
 								iconCls: 'fa fa-lg fa-envelope-o icon-button-color-save',
 								handler: function () {
-									Ext.toast('Message queued for sending.');
 									var win = this.up().up();
 									var form = win.down('form');
 									var values = form.getForm().getValues();
 									if (values.email === undefined) {
 										values.email = currUser.email;
 									}
-									contactVendorWindow.close();
-									Ext.Ajax.request({
-										url: 'api/v1/service/notification/contact-vendor',
-										method: 'POST',
-										jsonData: {usersToEmail: sendToEmail, ccEmails: values.email,  message: values.message},
-										success: function(response, opts){
-											if (response.status == 200) {
-												Ext.toast('Sent message successfully<br> Individual email delivery success will depend on the email servers.');
-											} else {
-												Ext.toast('Message failed to send');
-											}
-											form.getForm().reset();
-										},
-										failure: function(response, opts){
-											Ext.toast('Message failed to send');
-											form.getForm().reset();
+									if (values.email.length < 1 || values.message.length < 1) {
+										Ext.toast('Unable to send message, Please check for blank fields.');
+									} else {
+										var data = {
+											userToEmail: sendToEmail,
+											userFromEmail: values.email,
+											message: values.message
 										}
-									});
+										Ext.toast('Message queued for sending.');
+										contactVendorWindow.close();
+										Ext.Ajax.request({
+											url: 'api/v1/service/notification/contact-vendor',
+											method: 'POST',
+											jsonData: data,
+											success: function (response, opts) {
+												if (response.responseText == "") {
+													Ext.toast('Sent message successfully<br> Individual email delivery success will depend on the email servers.');
+												} else {
+													Ext.toast('Message failed to send');
+												}
+												form.getForm().reset();
+											},
+											failure: function (response, opts) {
+												Ext.toast('Message failed to send');
+												form.getForm().reset();
+											}
+										});
+									}
 								}
 							},
 							{

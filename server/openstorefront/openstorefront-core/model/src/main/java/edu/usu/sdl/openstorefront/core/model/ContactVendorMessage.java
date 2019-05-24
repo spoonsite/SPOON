@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * Holds admin message information
+ * Holds information for users contacting vendors.
  *
  * @author gfowler
  */
@@ -36,7 +36,7 @@ public class ContactVendorMessage
 	@ConsumeField
     private String userToEmail = new String();
     
-    @APIDescription("Email addresses that the message is coming from (To Field)")
+    @APIDescription("Email addresses that the message is coming from (From Field)")
 	@ConsumeField
 	private String userFromEmail = new String();
 
