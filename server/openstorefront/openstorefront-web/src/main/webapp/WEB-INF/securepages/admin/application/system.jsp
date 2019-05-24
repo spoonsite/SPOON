@@ -2087,7 +2087,7 @@
 									items: [
 										{
 											xtype: 'panel',
-											html: '<i class="fa fa-warning"></i><span style="color: red; font-weight: bold"> If no catagories are selected, the index search will not return any results.</span>'
+											html: '<i class="fa fa-warning"></i><span style="color: red; font-weight: bold"> If no search fields are selected, the index search will always return all entries.</span>'
 										},
 										{
 											xtype: 'checkbox',
