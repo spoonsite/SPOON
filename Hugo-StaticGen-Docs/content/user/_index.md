@@ -1,5 +1,5 @@
 +++
 title = "User"
 description = ""
-weight = 50
+weight = 10
 +++
