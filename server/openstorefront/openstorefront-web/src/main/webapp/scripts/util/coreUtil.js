@@ -1311,5 +1311,118 @@ var CoreUtil = {
 			return parseFloat(inputNumber);
 		}
 		return parseFloat(inputNumber);
+	},
+
+	/**
+	 * Creates a window to contact the vendor of an entry
+	 * 
+	 * @param {string} sendToEmail : The email to send the message to
+	 * @returns void : It creates the contact vendor window
+	 */
+	showContactVendorWindow: function (sendToEmail) {
+		CoreService.userservice.getCurrentUser().then(function (currUser) {
+
+			// Users logging in through a service account should be able to change the email
+			serviceAccounts = ["nasaames_serviceacct"];
+			var isServiceAccount = false;
+			if(serviceAccounts.indexOf(currUser.username) != -1){
+				isServiceAccount = true;
+			}
+
+			var contactVendorWindow = Ext.create('Ext.window.Window', {
+				title: 'Contact Vendor',
+				width: 600,
+				bodyPadding: 10,
+				items: [
+					{
+						xtype: 'form',
+						items: [
+							{
+								xtype: 'textfield',
+								name: 'email',
+								fieldLabel: 'From:',
+								allowblank: false,
+								width: '97%',
+								vtype: 'email',
+								disabled: (serviceAccounts.indexOf(currUser.username) != -1) ? false : true,
+								value: isServiceAccount ? '' : currUser.email
+							},
+							{
+								xtype: 'textareafield',
+								grow: true,
+								name: 'message',
+								fieldLabel: 'Message',
+								allowBlank: false,
+								width: '97%',
+								height: 200
+							}
+						]
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						border: false,
+						items: [
+							{
+								text: 'Send',
+								formBind: true,
+								iconCls: 'fa fa-lg fa-envelope-o icon-button-color-save',
+								handler: function () {
+									var win = this.up().up();
+									var form = win.down('form');
+									var values = form.getForm().getValues();
+									if (values.email === undefined) {
+										values.email = currUser.email;
+									}
+									if (values.email.length < 1 || values.message.length < 1) {
+										Ext.toast('Unable to send message, Please check for blank fields.');
+									} else {
+										var data = {
+											userToEmail: sendToEmail,
+											userFromEmail: values.email,
+											message: values.message
+										}
+										Ext.toast('Message queued for sending.');
+										contactVendorWindow.close();
+										Ext.Ajax.request({
+											url: 'api/v1/service/notification/contact-vendor',
+											method: 'POST',
+											jsonData: data,
+											success: function (response, opts) {
+												if (response.responseText == "") {
+													Ext.toast('Sent message successfully<br> Individual email delivery success will depend on the email servers.');
+												} else {
+													Ext.toast('Message failed to send');
+												}
+												form.getForm().reset();
+											},
+											failure: function (response, opts) {
+												Ext.toast('Message failed to send');
+												form.getForm().reset();
+											}
+										});
+									}
+								}
+							},
+							{
+								xtype: 'tbfill'
+							},
+							{
+								text: 'Cancel',
+								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+								handler: function () {
+									var win = this.up().up();
+									var form = win.down('form');
+									form.getForm().reset();
+									contactVendorWindow.close();
+								}
+							}
+						]
+					}]
+			});
+			contactVendorWindow.show();
+		})
 	}
 };
