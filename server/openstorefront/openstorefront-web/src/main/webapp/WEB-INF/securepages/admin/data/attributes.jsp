@@ -399,6 +399,7 @@
 					{
 						text: 'Display Unit',
 						xtype: 'templatecolumn',
+						sortable: false,
 						tpl: ['{[this.asciiToKatex(values.attributeUnit, false)]}',
 							{
 								asciiToKatex: function (unit) {
