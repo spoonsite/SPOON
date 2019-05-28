@@ -1,5 +1,5 @@
 +++
 title = "Developer"
 description = ""
-weight = 30
+weight = 40
 +++

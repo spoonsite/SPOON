@@ -1,7 +1,7 @@
 +++
 title = "Evaluations"
 description = ""
-weight = 20
+weight = 50
 +++
 
 ## [Evaluator](/evaluations/evaluator/)
