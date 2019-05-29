@@ -239,7 +239,7 @@
 									if(contacts.length > 0){
 										sendToEmail = contacts[0].email;
 									}
-									return '<a onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
+									return '<a style="cursor: pointer;" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
 								}
 							}
 						)
