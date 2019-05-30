@@ -58,7 +58,7 @@
 											requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 											handler: function () {
 												var uploadForm = this.up('form');
-												//var data = uploadForm.getValues();
+
 												var progressMsg = Ext.MessageBox.show({
 													title: 'Bulk Upload',
 													msg: 'Uploading file please wait...',
@@ -69,6 +69,7 @@
 													wait: true,
 													waitConfig: { interval: 500 }
 												});
+
 												uploadForm.submit({
 													submitEmptyText: false,
 													url: 'Upload.action?BulkUpload',
