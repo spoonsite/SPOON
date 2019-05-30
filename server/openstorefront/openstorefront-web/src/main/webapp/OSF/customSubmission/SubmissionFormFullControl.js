@@ -518,15 +518,14 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 
 				Ext.Msg.show({
 					title: 'Entry Submission Queued',
-					message: 'Your entry has been queued.<br>This may take a while.',
+					message: 'Your entry has been queued for processing.<br>Processing your entry may take a while.<br>Once processed, you may need to reload the page.',
 					buttons: Ext.Msg.OK,
 					icon: Ext.Msg.OK,
 					fn: function(btn) {
 						if (submissionFormFullControl.submissionSuccess) {
 							submissionFormFullControl.submissionSuccess();
 						}
-					},
-					width: 300
+					}
 				});
 			}
 		}

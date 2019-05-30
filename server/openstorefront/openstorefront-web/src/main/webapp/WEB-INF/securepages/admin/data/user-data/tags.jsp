@@ -364,11 +364,24 @@
 								// Check For Components Associated With Tag
 								if (tagData.components.length > 0) {
 
+								// Initialize Array of Components Associated with Tag that are Missing
+								var missingComponents =[]
+
 									// Loop Through Components
 									for (i = 0; i < tagData.components.length; i++) {
 
 										// Lookup Matching Components
 										var matchedComponents = store_components_local.query('id', tagData.components[i].id, false, true, true);
+
+										// Check Associated Components List 
+										if (matchedComponents.items.length === 0 ){
+											matchedComponents = store_tagComponents_local.query('id', tagData.components[i].id, false, true, true);
+											
+											//In case Entry is STILL missing
+											if (matchedComponents.items.length === 0){
+												missingComponents.push(tagData.components[i].name);
+											}
+										}
 
 										// Loop Through Matched Components
 										for (j = 0; j < matchedComponents.items.length; j++) {
@@ -398,6 +411,11 @@
 											// Remove Component From Component Grid
 											store_components_local.remove(store_components_local.createModel(component));
 										}
+									}
+
+									if(missingComponents.length > 0){
+										// Announce Missing Components Associated with current Tag
+										Ext.toast("The Tag you just selected has " + missingComponents.length + " Entries that are either not submitted, pending, inactive, or not approved.");
 									}
 								}
 								else {

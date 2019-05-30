@@ -26,9 +26,12 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
+import edu.usu.sdl.openstorefront.core.model.ContactVendorMessage;
 import edu.usu.sdl.openstorefront.core.view.RecentChangesStatus;
+import edu.usu.sdl.openstorefront.core.view.SimpleRestError;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -43,6 +46,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
+import org.codemonkey.simplejavamail.email.Email;
+import javax.mail.Message;
 
 /**
  * Notification Services
@@ -115,6 +120,44 @@ public class NotificationService
 			throw new OpenStorefrontRuntimeException("Unable to parse last run dts", "Check last run dts param format (MM/dd/yyyy) ");
 		}
 		return Response.ok().build();
+	}
+
+	@POST
+	@APIDescription("Sends an email to a vendor")
+	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
+	@Path("/contact-vendor")
+	public Response contactVendor(
+			@RequiredParam ContactVendorMessage contactVendorMessage)
+	{
+		ValidationModel validationModel = new ValidationModel(contactVendorMessage);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			Email email = MailManager.newEmail();
+			// subject
+			email.setSubject("SpoonSite User Request for Information");
+			// message
+			email.setText(contactVendorMessage.getMessage());
+			
+			// to and from
+			String toEmail = contactVendorMessage.getUserToEmail();
+
+			String fromEmail = contactVendorMessage.getUserFromEmail();
+
+			email.addRecipient("", toEmail, Message.RecipientType.TO);
+			email.setFromAddress("", fromEmail);
+			email.setReplyToAddress("", fromEmail);
+			try {
+				MailManager.send(email, true);
+			} catch (Exception e) {
+				SimpleRestError simpleRestError = new SimpleRestError();
+				simpleRestError.setError(e.toString());
+				return Response.ok(simpleRestError).build();
+			}
+			return Response.ok().build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
 	}
 
 	@GET

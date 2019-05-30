@@ -228,11 +228,20 @@
 							'Organization: <b><a href="#" class="a.details-table" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="releaseDate"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
 							'<div class="details-title-info" style="margin: 8px 0;">',
-							'<div style="font-weight: bold;"><tpl if="contacts.length &lt; 1"><a href="mailto:support&#64;spoonsite.com">Contact Vendor</a></tpl><tpl for="contacts"><tpl if="[xindex] == \'1\'"><a href="mailto:{email}">Contact Vendor</a></tpl></tpl></div>',
+							'<div style="font-weight: bold; color: #551A8B;">{[this.contactVendor(values.contacts)]}</div>',
 							'</div>',
 							'  <tpl for="attributes">',
 							'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>',
-							'  </tpl>'
+							'  </tpl>',
+							{
+								contactVendor: function(contacts){
+									sendToEmail = "support@spoonsite.com";
+									if(contacts.length > 0){
+										sendToEmail = contacts[0].email;
+									}
+									return '<a style="cursor: pointer;" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
+								}
+							}
 						)
 					},
 					{
