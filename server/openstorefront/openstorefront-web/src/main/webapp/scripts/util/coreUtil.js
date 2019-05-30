@@ -1251,7 +1251,7 @@ var CoreUtil = {
 			number = coeff_array.join('') + new Array(l + 1).join(zero);
 		  }
 		}
-		return `${sign}${number}`;
+		return sign + number;
 	},
 
 	/**
