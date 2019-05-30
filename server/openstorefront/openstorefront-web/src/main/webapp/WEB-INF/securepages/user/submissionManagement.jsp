@@ -304,10 +304,9 @@
 									iconCls: 'fa fa-2x fa-upload icon-button-color-save icon-vertical-correction',									
 									requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 									handler: function () {
-										//note to self: pass params through by appending ?x= myVar 
-										var uploadWin = window.open('bulkUpload.jsp', 'printwin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=840, height=840');
-										if (!printWin) {
-											uploadWin = window.open('print.jsp?id=' + componentId, 'printwin');
+										var uploadWin = window.open('bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=250');
+										if (!uploadWin) {
+											uploadWin = window.open('bulkUpload.jsp', 'uploadWin');
 										}
 									}
 								},
