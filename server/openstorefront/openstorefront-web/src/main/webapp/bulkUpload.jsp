@@ -20,47 +20,15 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="layout/toplevelLayout.jsp">
-    <stripes:layout-component name="contents">
-	
-	
-		
-	<!-- <form id="printForm" action="Router.action?Echo&print=true"  method="POST">		
-		<input type="hidden" name="content" id="printContent" />
-		<input type="hidden" name="X-Csrf-Token" id="xtoken" />
-	</form> -->
-	
-	<script type="text/javascript">
-		/* global Ext, CoreService, CoreApp */				
-	
-		
-		Ext.onReady(function(){
+	<stripes:layout-component name="contents">
 
-			// var printTemplate = new Ext.XTemplate();
-			// Ext.Ajax.request({
-			// 	url: 'Router.action?page=shared/entryPrintTemplate.jsp',
-			// 	success: function(response, opts){
-			// 		printTemplate.set(response.responseText, true);
-			// 		loadEntry();
-			// 	},
-			// 	failure: function(response, opts) {
-			// 		alert('The Print View failed to load!')
-			// 	}
-			// });	
-			
-		
-			
-				// var importWin = Ext.create('Ext.window.Window', {
-					// title: 'Bulk Upload',
-					// modal: true,
-					// closeAction: 'destroy',
-					// width: 500,
-					// height: 260,
-					// layout: 'fit',
-					// items: [
+		<script type="text/javascript">
+			/* global Ext, CoreService, CoreApp */
+
+			Ext.onReady(function () {
 				var inputForm = Ext.create('Ext.panel.Panel', {
-					title:'Bulk Uploads',
-					width:	500,
-					height: 310,
+					title: 'Bulk Uploads',
+					width: 500,
 					items: [
 						{
 							xtype: 'form',
@@ -74,7 +42,7 @@
 							},
 							items: [
 								{
-									xtype: 'fileFieldMaxLabel', 
+									xtype: 'fileFieldMaxLabel',
 									name: 'uploadFile'
 								}
 							],
@@ -84,35 +52,34 @@
 									dock: 'bottom',
 									items: [
 										{
-											text: 'Import',
+											text: 'Upload',
 											iconCls: 'fa fa-lg fa-upload icon-button-color-default',
 											formBind: true,
 											requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
-											handler: function() {
+											handler: function () {
 												var uploadForm = this.up('form');
 												//var data = uploadForm.getValues();
 												var progressMsg = Ext.MessageBox.show({
-													title: 'Archive Import',
-													msg: 'Importing archive please wait...',
+													title: 'Bulk Upload',
+													msg: 'Uploading file please wait...',
 													width: 300,
 													height: 150,
 													closable: false,
-													progressText: 'Importing...',
+													progressText: 'Uploading...',
 													wait: true,
-													waitConfig: {interval: 300}
+													waitConfig: { interval: 500 }
 												});
 												uploadForm.submit({
 													submitEmptyText: false,
 													url: 'Upload.action?BulkUpload',
-													success: function(form, action) {
-														Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');
+													success: function (form, action) {
 														progressMsg.hide();
-														importWin.close();
-													}, 
-													failure: function(form, action) {
+														Ext.Msg.alert('Bulk Upload', 'File uploaded successfully.', function () { window.close(); });
+													},
+													failure: function (form, action) {
 														progressMsg.hide();
 													}
-												});	
+												});
 											}
 										},
 										{
@@ -120,34 +87,27 @@
 										},
 										{
 											text: 'Close',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',											
-											handler: function() {
-												this.up('window').close();
-											}												
+											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+											handler: function () {
+												window.close();
+											}
 										}
 									]
 								}
 							]
-						}	
+						}
 					]
-				});		
-					// ]
-				// });
-				// importWin.show();		
-						
+				});
 
-			var viewport = Ext.create('Ext.container.Viewport', {
-				layout: 'border',
-				cls: 'printBody',
-				style: 'background: white !important;',
-				items: [
-					inputForm
-				]
-			});		
-			
-			
-		});
-	</script>		
-		
+				var viewport = Ext.create('Ext.container.Viewport', {
+					layout: 'border',
+					cls: 'printBody',
+					style: 'background: white !important;',
+					items: [
+						inputForm
+					]
+				});
+			});
+		</script>
 	</stripes:layout-component>
-</stripes:layout-render>	
+</stripes:layout-render>
