@@ -781,10 +781,16 @@
 										width: '100%',										
 										fieldLabel: 'Group/Role <span class="field-required" />',
 										queryMode: 'local',
+										displayField:'description',
+			    						valueField:'code',
 										storeConfig: {
 											url: 'api/v1/resource/securityroles/lookup'
 										},
 										listeners: {
+											beforerender:function(){
+												var record = linkGrid.getSelection()[0];
+												this.select(record.data.currentGroupAssigned);
+											},
 											change: function(filter, newValue, oldValue, opts){
 												userAssignWin.queryById('assignUserId').getStore().load({
 													url: 'api/v1/resource/securityroles/'+ encodeURIComponent(newValue) +'/users',
