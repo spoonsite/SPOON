@@ -198,7 +198,7 @@ public class SecurityRoleResource
 			@PathParam("rolename") String rolename
 	)
 	{
-		UserRole userRole = new UserRole();
+		UserRole userRole = new UserRole();//rolename = Java.net.URLDecoder.decode(rolename);
 		userRole.setRole(rolename);
 		userRole.setActiveStatus(UserRole.ACTIVE_STATUS);
 		List<UserRole> userRoles = userRole.findByExample();

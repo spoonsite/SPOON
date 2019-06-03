@@ -788,8 +788,14 @@
 										},
 										listeners: {
 											beforerender:function(){
-												var record = linkGrid.getSelection()[0];
-												this.select(record.data.currentGroupAssigned);
+												var currentgroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
+												if(currentgroupAssigned){
+													this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
+													this.setDisabled(true)
+												} else {
+													
+												}
+												
 											},
 											change: function(filter, newValue, oldValue, opts){
 												userAssignWin.queryById('assignUserId').getStore().load({
