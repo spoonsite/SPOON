@@ -104,9 +104,7 @@
 					layout: 'border',
 					cls: 'printBody',
 					style: 'background: white !important;',
-					items: [
-						inputForm
-					]
+					items: [ inputForm ]
 				});
 			});
 		</script>
