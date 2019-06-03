@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultAttributeStat;
 import edu.usu.sdl.openstorefront.core.model.search.ResultOrganizationStat;
@@ -98,7 +99,8 @@ public class SearchServiceImpl
 	private static final int MAX_SEARCH_DESCRIPTION = 500;
 
 	@Override
-	public List<ComponentSearchView> getAll(){
+	public List<ComponentSearchView> getAll()
+	{
 		ServiceProxy service = new ServiceProxy();
 		List<ComponentSearchView> list = new ArrayList<>();
 		List<ComponentSearchView> components = service.getComponentService().getComponents();
@@ -107,7 +109,8 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public SearchOptions getGlobalSearchOptions() {
+	public SearchOptions getGlobalSearchOptions()
+	{
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
 		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
@@ -126,7 +129,8 @@ public class SearchServiceImpl
 		return searchOptions;
 	}
 
-	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions) {
+	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions)
+	{
 
 		OSFCacheManager.getSearchCache().removeAll();
 
@@ -148,7 +152,8 @@ public class SearchServiceImpl
 		return existing;
 	}
 
-	public SearchOptions getUserSearchOptions() {
+	public SearchOptions getUserSearchOptions()
+	{
 
 		String username = SecurityUtil.getCurrentUserName();
 
@@ -170,7 +175,8 @@ public class SearchServiceImpl
 		return searchOptions;
 	}
 
-	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions) {
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions)
+	{
 
 		Boolean forceCacheClear = false;
 		String username = SecurityUtil.getCurrentUserName();
@@ -232,6 +238,15 @@ public class SearchServiceImpl
 	{
 		if (!components.isEmpty()) {
 			SearchServerManager.getInstance().getSearchServer().index(components);
+			OSFCacheManager.getSearchCache().removeAll();
+		}
+	}
+
+	@Override
+	public void indexFullComponents(List<ComponentAll> componentAlls)
+	{
+		if (!componentAlls.isEmpty()) {
+			SearchServerManager.getInstance().getSearchServer().indexFullComponents(componentAlls);
 			OSFCacheManager.getSearchCache().removeAll();
 		}
 	}

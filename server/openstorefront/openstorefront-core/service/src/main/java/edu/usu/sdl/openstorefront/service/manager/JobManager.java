@@ -34,6 +34,7 @@ import edu.usu.sdl.openstorefront.service.job.ScheduledReportJob;
 import edu.usu.sdl.openstorefront.service.job.SystemArchiveJob;
 import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
+import edu.usu.sdl.openstorefront.service.job.UpdateSearchStatsJob;
 import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;
 import edu.usu.sdl.openstorefront.service.manager.model.AddJobModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
@@ -124,6 +125,7 @@ public class JobManager
 		addUserProfileSyncjob();
 		addImportJob();
 		addArchiveJob();
+		addSearchStatsJob();
 	}
 
 	private static void addComponentIntegrationJobs() throws SchedulerException
@@ -525,6 +527,26 @@ public class JobManager
 				.withSchedule(simpleSchedule()
 						.withIntervalInSeconds(5)
 						.repeatForever())
+				.build();
+
+		scheduler.scheduleJob(job, trigger);
+	}
+
+	private static void addSearchStatsJob() throws SchedulerException
+	{
+		LOG.log(Level.INFO, "Adding Search Stats Job");
+
+		JobDetail job = JobBuilder.newJob(UpdateSearchStatsJob.class)
+				.withIdentity("SearchStatsJob", JOB_GROUP_SYSTEM)
+				.withDescription("This batches the archives so they run one at time.")
+				.build();
+
+		Trigger trigger = newTrigger()
+				.withIdentity("SearchStatsJob", JOB_GROUP_SYSTEM)
+				.startNow()
+				.withSchedule(simpleSchedule()
+						.withIntervalInSeconds(1)
+						.withRepeatCount(0))
 				.build();
 
 		scheduler.scheduleJob(job, trigger);

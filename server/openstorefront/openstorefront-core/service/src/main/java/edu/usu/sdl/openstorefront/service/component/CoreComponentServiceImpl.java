@@ -1033,9 +1033,9 @@ public class CoreComponentServiceImpl
 			componentService.getUserService().checkComponentWatches(component);
 
 			if (updateIndex) {
-				List<Component> componentsToIndex = new ArrayList<>();
-				componentsToIndex.add(component);
-				componentService.getSearchService().indexComponents(componentsToIndex);
+				List<ComponentAll> componentsToIndex = new ArrayList<>();
+				componentsToIndex.add(componentAll);
+				componentService.getSearchService().indexFullComponents(componentsToIndex);
 			}
 		}
 
@@ -1884,7 +1884,7 @@ public class CoreComponentServiceImpl
 				approved = true;
 			}
 		} else {
-			if(OSFCacheManager.getComponentApprovalCache().getKeysWithExpiryCheck().isEmpty()){
+			if (OSFCacheManager.getComponentApprovalCache().getKeysWithExpiryCheck().isEmpty()) {
 				String query = "select componentId, approvalState from " + Component.class.getSimpleName() + " where approvalState = :approvalStateParam and activeStatus = :activeStatusParam";
 				Map<String, Object> parameters = new HashMap<>();
 				parameters.put("approvalStateParam", ApprovalStatus.APPROVED);
@@ -1899,7 +1899,7 @@ public class CoreComponentServiceImpl
 						}
 					}
 					OSFCacheManager.getComponentApprovalCache().put(newElement);
-				}				
+				}
 			}
 		}
 		return approved;
@@ -2352,7 +2352,7 @@ public class CoreComponentServiceImpl
 				mergeSubEntities(mergeComponent.getResources(), targetComponent.getResources());
 
 				// only new comments from the mergeComponent need to be added into the merge
-				// this requires that we compare both sets of comments 
+				// this requires that we compare both sets of comments
 				ComponentComment tempComment = new ComponentComment();
 
 				// mergeComponent will be deleted

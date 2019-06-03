@@ -30,6 +30,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
@@ -268,6 +269,12 @@ public class SolrManager
 		}
 		componentSearchWrapper.setTotalNumber(totalFound);
 		return componentSearchWrapper;
+	}
+
+	@Override
+	public void indexFullComponents(List<ComponentAll> componentAlls)
+	{
+		throw new UnsupportedOperationException("SOLR really supported anymore; If support is desire implement this.");
 	}
 
 	@Override
