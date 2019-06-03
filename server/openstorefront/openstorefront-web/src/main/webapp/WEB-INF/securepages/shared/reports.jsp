@@ -1746,14 +1746,19 @@
 							}
 
 							//restore outputs						
-							outputs = data.reportOutputs;						
+							outputs = data.reportOutputs;
 							showOutputs(genform, data.reportType);
+
+							// Updates validation for each field once the fields have loaded
+							genform.items.items.forEach(function (element) {
+								try {
+									item.validate();
+								} catch (e) { }
+							});
 							
 							reportTypeField.finishLoading = null;
-						};						
-						
-					} 
-					
+						};
+					}
 				};
 
 				var historyGridStore = Ext.create('Ext.data.Store', {
