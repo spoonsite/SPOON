@@ -439,10 +439,15 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			
 		} else {				
 			if (userSubmission.originalComponentId) {
+				
+				submissionFormFullControl.setLoading("Submitting Request; please wait...");
 				Ext.Ajax.request({
 					url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitchangeforapproval',
 					method: 'PUT',
 					jsonData: userSubmission,
+					callback: function() {		
+						submissionFormFullControl.setLoading(false);
+					},					
 					success: function(response, opts) {
 						var data;
 						try {
@@ -467,28 +472,21 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						} 
 						else {	
 							Ext.toast('Change Request Submitted Successfully');
+							submissionFormFullControl.submissionSuccess();
 						}
 					}
 				});
-
-				Ext.Msg.show({
-					title: 'Change Request Queued',
-					message: 'Your change request has been queued.<br>This may take a while.',
-					buttons: Ext.Msg.OK,
-					icon: Ext.Msg.OK,
-					fn: function(btn) {
-						if (submissionFormFullControl.submissionSuccess) {
-							submissionFormFullControl.submissionSuccess();
-						}
-					},
-					width: 300
-				});
+	
 
 			} else {
+				submissionFormFullControl.setLoading("Submitting Entry; please wait...");
 				Ext.Ajax.request({
 					url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitforapproval',
 					method: 'PUT',
 					jsonData: userSubmission,
+					callback: function() {		
+						submissionFormFullControl.setLoading(false);
+					},					
 					success: function(response, opts) {
 						var data;
 						try {
@@ -512,21 +510,11 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 
 						} else {						
 							Ext.toast('Entry Submitted Successfully');
-						}
-					}
-				});
-
-				Ext.Msg.show({
-					title: 'Entry Submission Queued',
-					message: 'Your entry has been queued for processing.<br>Processing your entry may take a while.<br>Once processed, you may need to reload the page.',
-					buttons: Ext.Msg.OK,
-					icon: Ext.Msg.OK,
-					fn: function(btn) {
-						if (submissionFormFullControl.submissionSuccess) {
 							submissionFormFullControl.submissionSuccess();
 						}
 					}
 				});
+				
 			}
 		}
 		
