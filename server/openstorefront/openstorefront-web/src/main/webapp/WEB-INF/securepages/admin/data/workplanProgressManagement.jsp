@@ -337,7 +337,7 @@
 											id: 'lookupGrid-tools-action-me-assign',
 											disabled: true,
 											iconCls: 'fa fa-lg fas fa-user-circle icon-small-vertical-correction icon-button-color-default',
-											permissionLogicalOperator: 'AND',
+											permissionLogicalOperator: 'OR',
 											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-SELF', 'WORKFLOW-LINK-ASSIGN-ANY'],
 											handler: function(){
 												actionAssignToMe();
