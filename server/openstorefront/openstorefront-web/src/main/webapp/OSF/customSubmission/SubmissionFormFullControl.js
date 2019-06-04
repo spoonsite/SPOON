@@ -439,14 +439,15 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			
 		} else {				
 			if (userSubmission.originalComponentId) {
-				submissionFormFullControl.setLoading("Submitting Change Request...");
+				
+				submissionFormFullControl.setLoading("Submitting Request; please wait...");
 				Ext.Ajax.request({
 					url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitchangeforapproval',
 					method: 'PUT',
 					jsonData: userSubmission,
 					callback: function() {		
 						submissionFormFullControl.setLoading(false);
-					},
+					},					
 					success: function(response, opts) {
 						var data;
 						try {
@@ -470,22 +471,21 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 
 						} else {	
 							Ext.toast('Change Request Submitted Successfully');
-
-							if (submissionFormFullControl.submissionSuccess) {
-								submissionFormFullControl.submissionSuccess();
-							}
-						}	
+							submissionFormFullControl.submissionSuccess();
+						}
 					}
 				});
-			} else {		
-				submissionFormFullControl.setLoading("Submitting Entry...");
+	
+
+			} else {
+				submissionFormFullControl.setLoading("Submitting Entry; please wait...");
 				Ext.Ajax.request({
 					url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitforapproval',
 					method: 'PUT',
 					jsonData: userSubmission,
 					callback: function() {		
 						submissionFormFullControl.setLoading(false);
-					},
+					},					
 					success: function(response, opts) {
 						var data;
 						try {
@@ -510,13 +510,11 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						} else {
 
 							Ext.toast('Entry Submitted Successfully');
-
-							if (submissionFormFullControl.submissionSuccess) {
-								submissionFormFullControl.submissionSuccess();
-							}
+							submissionFormFullControl.submissionSuccess();
 						}
 					}
 				});
+				
 			}
 		}
 	}
