@@ -1629,8 +1629,6 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(WORKFLOW_ADMIN_SUBMISSION_COMMENTS)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(WORKFLOW_ADMIN_SUBMISSION_COMMENTS)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
-		
-
 		return codeMap;
 	}
 
