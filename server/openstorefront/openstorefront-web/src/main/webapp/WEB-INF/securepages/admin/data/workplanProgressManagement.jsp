@@ -773,7 +773,8 @@
 								items: [
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'roleGroup',	
-										itemId: 'assignGroupId',								
+										itemId: 'assignGroupId',
+										//hidden: true,								
 										allowBlank: false,
 										editable: false,
 										typeAhead: false,
@@ -791,8 +792,10 @@
 												var currentgroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
 												if(currentgroupAssigned){
 													this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
-													this.setDisabled(true)
+													this.setDisabled(true);
+													userAssignWin.queryById('assignUserId').fieldLabel += '<h2 style="display:inline;">'+ linkGrid.getSelection()[0].data.currentGroupAssigned +'</h2>';
 												} else {
+													this.hidden = false;
 													userAssignWin.queryById('reassignWarning').setVisible(true);
 												}
 											},
@@ -824,8 +827,8 @@
 												editable: false,
 												typeAhead: false,
 												margin: '0 0 5 0',
-												flex: 1,												
-												fieldLabel: 'Assign User',
+												flex: 1,
+												fieldLabel: 'Assign User from Group ',
 												displayField: 'username',
 												valueField: 'username',
 												queryMode: 'local',
@@ -835,6 +838,19 @@
 														type: 'ajax',
 														url: 'api/v1/resource/securityroles'
 													}											
+												},
+												listeners:{
+													beforerender:function(){
+													var currentgroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
+													if(currentgroupAssigned){
+														this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
+														this.setDisabled(true);
+														userAssignWin.queryById('assignUserId').fieldLabel += '<h2 style="display:inline;">'+ linkGrid.getSelection()[0].data.currentGroupAssigned +'</h2>';
+													} else {
+														this.hidden = false;
+														userAssignWin.queryById('reassignWarning').setVisible(true);
+													}
+												}
 												}
 											}),
 											{
@@ -868,6 +884,8 @@
 													var queryParams =  '?roleGroup=' + queryData.roleGroup + '&username=' + queryData.username;
 													
 													userAssignWin.setLoading('Assigning...');
+													console.log("The request to assign a person is about to go out. it was sent this endpoint:",
+													'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assign' + queryParams,"internal vars: userAssignWin",userAssignWin)
 													Ext.Ajax.request({
 														url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assign' + queryParams,
 														method: 'PUT',
