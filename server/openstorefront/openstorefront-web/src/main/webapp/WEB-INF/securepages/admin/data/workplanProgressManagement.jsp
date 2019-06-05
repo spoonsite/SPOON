@@ -793,9 +793,8 @@
 													this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
 													this.setDisabled(true)
 												} else {
-													
+													userAssignWin.queryById('reassignWarning').setVisible(true);
 												}
-												
 											},
 											change: function(filter, newValue, oldValue, opts){
 												userAssignWin.queryById('assignUserId').getStore().load({
@@ -808,6 +807,12 @@
 											}
 										}
 									}),
+									{
+										xtype: 'container',
+										itemId: 'reassignWarning',
+										hidden:true,
+										html:'<i class="fa fa-exclamation-triangle 3x" display:inline-block; text-align:left; font-size: 5em";"></i> SPOON Administrators: Be care which Group/Role you select, since once choosen, there is no way to edit the assignment without SPOON Support assistance.'
+									},
 									{
 										xtype: 'panel',
 										layout: 'hbox',
