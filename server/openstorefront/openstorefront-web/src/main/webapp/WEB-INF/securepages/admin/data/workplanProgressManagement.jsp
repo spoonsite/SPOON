@@ -774,7 +774,7 @@
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'roleGroup',	
 										itemId: 'assignGroupId',
-										//hidden: true,								
+										hidden: true,								
 										allowBlank: false,
 										editable: false,
 										typeAhead: false,
@@ -789,10 +789,10 @@
 										},
 										listeners: {
 											beforerender:function(){
-												var currentgroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
-												if(currentgroupAssigned){
+												var currentGroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
+												if(currentGroupAssigned && currentGroupAssigned != 'undefined'){
 													this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
-													this.setDisabled(true);
+													// this.setDisabled(true);
 													userAssignWin.queryById('assignUserId').fieldLabel += '<h2 style="display:inline;">'+ linkGrid.getSelection()[0].data.currentGroupAssigned +'</h2>';
 												} else {
 													this.hidden = false;
@@ -838,19 +838,6 @@
 														type: 'ajax',
 														url: 'api/v1/resource/securityroles'
 													}											
-												},
-												listeners:{
-													beforerender:function(){
-													var currentgroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
-													if(currentgroupAssigned){
-														this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
-														this.setDisabled(true);
-														userAssignWin.queryById('assignUserId').fieldLabel += '<h2 style="display:inline;">'+ linkGrid.getSelection()[0].data.currentGroupAssigned +'</h2>';
-													} else {
-														this.hidden = false;
-														userAssignWin.queryById('reassignWarning').setVisible(true);
-													}
-												}
 												}
 											}),
 											{

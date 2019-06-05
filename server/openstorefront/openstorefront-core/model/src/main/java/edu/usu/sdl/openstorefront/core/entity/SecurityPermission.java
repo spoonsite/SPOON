@@ -454,6 +454,7 @@ public class SecurityPermission
 	public static final String WORKFLOW_LINK_ASSIGN = "WORKFLOW-LINK-ASSIGN";
 	public static final String WORKFLOW_LINK_ASSIGN_ANY = "WORKFLOW-LINK-ASSIGN-ANY";
 	public static final String WORKFLOW_ADMIN_SUBMISSION_COMMENTS = "WORKFLOW-ADMIN-SUBMISSION-COMMENTS";
+	public static final String WORKFLOW_GROUP_ASSIGN = "WORKFLOW_GROUP_ASSIGN";
 
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()
@@ -1619,6 +1620,10 @@ public class SecurityPermission
 		codeMap.put(WORKFLOW_LINK_ASSIGN_ANY, newLookup(SecurityPermission.class, WORKFLOW_LINK_ASSIGN_ANY, "Assign any entry to any user", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_ASSIGN_ANY)).setPermissionPredecessor(WORKFLOW_LINK_ASSIGN);
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_ASSIGN_ANY)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
+
+		codeMap.put(WORKFLOW_GROUP_ASSIGN, newLookup(SecurityPermission.class, WORKFLOW_GROUP_ASSIGN, "See groups available to assign to", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
+		((SecurityPermission) codeMap.get(WORKFLOW_GROUP_ASSIGN)).setPermissionPredecessor(WORKFLOW_GROUP_ASSIGN);
+		((SecurityPermission) codeMap.get(WORKFLOW_GROUP_ASSIGN)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(WORKFLOW_ADMIN_SUBMISSION_COMMENTS, newLookup(SecurityPermission.class, WORKFLOW_ADMIN_SUBMISSION_COMMENTS, "Get comments for role", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
 		((SecurityPermission) codeMap.get(WORKFLOW_ADMIN_SUBMISSION_COMMENTS)).setPermissionPredecessor(null);
