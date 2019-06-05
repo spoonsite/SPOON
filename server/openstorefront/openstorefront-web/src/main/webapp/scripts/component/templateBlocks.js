@@ -205,6 +205,32 @@ Ext.define('OSF.component.template.Contacts', {
 
 });
 
+Ext.define('OSF.component.template.PartType', {
+	extend: 'OSF.component.template.BaseBlock',
+	alias: 'osf.widget.template.PartType',
+
+	titleCollapse: true,
+	collapsible: true,
+	title: 'Part Type',
+
+	tpl: new Ext.XTemplate(
+		'<h3><tpl if="partType">({partType}) </tpl></h3>'
+	),
+
+	initComponent: function () {
+		this.callParent();
+	},
+
+	updateHandler: function (entry) {
+		entry.attributes.forEach((element, index) => {
+			if(element.type == "PARTTYPE"){
+				entry.partType = element.codeDescription;
+			}
+		});
+		return entry;
+	}
+});
+
 Ext.define('OSF.component.template.Vitals', {
 	extend: 'OSF.component.template.BaseBlock',
 	alias: 'osf.widget.template.Vitals',
@@ -331,22 +357,23 @@ Ext.define('OSF.component.template.Vitals', {
 				processedValues = processedValues.substring(0, processedValues.length-2);
 				
 				
-				
-				vitals.push({
-					componentId: entry.componentId,
-					label: maintype.typeDescription,
-					value: processedValues,
-					highlightStyle: topHighLightStyle,
-					type: maintype.type,
-					code: maintype.code,
-					privateFlag: anyPrivate,
-					comment: commonComment,
-					unit: unit,
-					updateDts: maintype.updateDts,
-					securityMarkingType: maintype.securityMarkingType,
-					codeHasAttachment: maintype.codeHasAttachment,
-					vitalType: 'ATTRIBUTE'
-				});
+				if (maintype.type != "PARTTYPE") {
+					vitals.push({
+						componentId: entry.componentId,
+						label: maintype.typeDescription,
+						value: processedValues,
+						highlightStyle: topHighLightStyle,
+						type: maintype.type,
+						code: maintype.code,
+						privateFlag: anyPrivate,
+						comment: commonComment,
+						unit: unit,
+						updateDts: maintype.updateDts,
+						securityMarkingType: maintype.securityMarkingType,
+						codeHasAttachment: maintype.codeHasAttachment,
+						vitalType: 'ATTRIBUTE'
+					});
+				}
 
 			});
 						
