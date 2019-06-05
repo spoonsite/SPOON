@@ -84,10 +84,6 @@
 					margin: '0 0 20 0'
 				});
 
-				var partType = Ext.create('OSF.component.template.PartType', {					
-					margin: '0 0 20 0'
-				});
-
 				var relationships = Ext.create('OSF.component.template.Relationships', {					
 					margin: '0 0 20 0'
 				});	
@@ -96,7 +92,6 @@
 					title: 'Details',
 					items: [
 						description,
-						partType,
 						media,
 						dependencies,
 						di2elevel,
