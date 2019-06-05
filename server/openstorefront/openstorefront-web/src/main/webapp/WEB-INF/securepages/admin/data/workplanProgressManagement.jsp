@@ -771,10 +771,30 @@
 								itemId: 'reassignForm',
 								bodyStyle: 'padding: 10px',
 								items: [
+									{
+										xtype: 'panel',
+										text: 'gjlkjhlk',
+										requiredPermissions: ['WORKFLOW-GROUP-ASSIGN'],
+												
+											
+										
+									},
+									{
+										xtype: 'button',
+										text: 'asdfasfd',
+										requiredPermissions: ['WORKFLOW-LINK-ASSIGN'],
+												
+											
+										
+									},
+									{
+										xtype: 'button',
+										text: 'owkowfjowjeo',
+										
+									},
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'roleGroup',	
-										itemId: 'assignGroupId',
-										hidden: true,								
+										itemId: 'assignGroupId',								
 										allowBlank: false,
 										editable: false,
 										typeAhead: false,
@@ -783,16 +803,20 @@
 										fieldLabel: 'Group/Role <span class="field-required" />',
 										queryMode: 'local',
 										displayField:'description',
-			    						valueField:'code',
+										valueField:'code',
+										requiredPermissions: ['WORKFLOW-GROUP-ASSIGN'],
 										storeConfig: {
 											url: 'api/v1/resource/securityroles/lookup'
 										},
 										listeners: {
 											beforerender:function(){
+												//VERBOSE DELETE LATER
+												console.log("assignGroupID's beforerender fired! ")
+												console.log("assignGroupId component:", this)
+
 												var currentGroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
 												if(currentGroupAssigned && currentGroupAssigned != 'undefined'){
 													this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
-													// this.setDisabled(true);
 													userAssignWin.queryById('assignUserId').fieldLabel += '<h2 style="display:inline;">'+ linkGrid.getSelection()[0].data.currentGroupAssigned +'</h2>';
 												} else {
 													this.hidden = false;
@@ -815,6 +839,7 @@
 										itemId: 'reassignWarning',
 										hidden:true,
 										html:'<i class="fa fa-exclamation-triangle 3x" display:inline-block; text-align:left; font-size: 5em";"></i> SPOON Administrators: Be care which Group/Role you select, since once choosen, there is no way to edit the assignment without SPOON Support assistance.'
+										//if permissions work, change the message here to something like, " There are no individuals assigned to this permissions catagory. Add them at blah.com"
 									},
 									{
 										xtype: 'panel',

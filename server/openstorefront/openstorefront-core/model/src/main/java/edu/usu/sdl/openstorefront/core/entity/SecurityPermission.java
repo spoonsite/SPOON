@@ -1622,7 +1622,7 @@ public class SecurityPermission
 		((SecurityPermission) codeMap.get(WORKFLOW_LINK_ASSIGN_ANY)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(WORKFLOW_GROUP_ASSIGN, newLookup(SecurityPermission.class, WORKFLOW_GROUP_ASSIGN, "See groups available to assign to", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
-		((SecurityPermission) codeMap.get(WORKFLOW_GROUP_ASSIGN)).setPermissionPredecessor(WORKFLOW_GROUP_ASSIGN);
+		((SecurityPermission) codeMap.get(WORKFLOW_GROUP_ASSIGN)).setPermissionPredecessor(null);
 		((SecurityPermission) codeMap.get(WORKFLOW_GROUP_ASSIGN)).setDefaultRoles(Arrays.asList(SecurityRole.LIBRARIAN_ROLE));
 
 		codeMap.put(WORKFLOW_ADMIN_SUBMISSION_COMMENTS, newLookup(SecurityPermission.class, WORKFLOW_ADMIN_SUBMISSION_COMMENTS, "Get comments for role", null, GROUPBY_WORKPLAN_PROGRESS_MANAGEMENT));
