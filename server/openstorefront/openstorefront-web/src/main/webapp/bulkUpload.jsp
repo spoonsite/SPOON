@@ -42,6 +42,10 @@
 							},
 							items: [
 								{
+									xtype:'label',
+									html: 'Upload a zip file.<br><strong style="color:red;">Do not upload any propriety or ITAR information.</strong><br><br>Once your information is entered you will need to come back<br>to this page and approve the entry.'
+								},
+								{
 									xtype: 'fileFieldMaxLabel',
 									name: 'uploadFile'
 								}

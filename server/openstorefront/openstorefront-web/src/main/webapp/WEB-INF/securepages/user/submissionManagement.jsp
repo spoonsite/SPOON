@@ -305,7 +305,7 @@
 									requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 									handler: function () {
 										// Opens new window for bulk upload tool
-										var uploadWin = window.open('bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=250');
+										var uploadWin = window.open('bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=300');
 										if (!uploadWin) {
 											uploadWin = window.open('bulkUpload.jsp', 'uploadWin');
 										}
