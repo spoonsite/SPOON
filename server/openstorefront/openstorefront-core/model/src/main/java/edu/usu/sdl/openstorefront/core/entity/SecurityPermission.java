@@ -454,7 +454,7 @@ public class SecurityPermission
 	public static final String WORKFLOW_LINK_ASSIGN = "WORKFLOW-LINK-ASSIGN";
 	public static final String WORKFLOW_LINK_ASSIGN_ANY = "WORKFLOW-LINK-ASSIGN-ANY";
 	public static final String WORKFLOW_ADMIN_SUBMISSION_COMMENTS = "WORKFLOW-ADMIN-SUBMISSION-COMMENTS";
-	public static final String WORKFLOW_GROUP_ASSIGN = "WORKFLOW_GROUP_ASSIGN";
+	public static final String WORKFLOW_GROUP_ASSIGN = "WORKFLOW-GROUP-ASSIGN";
 
 	@Override
 	protected Map<String, LookupEntity> systemCodeMap()

@@ -771,27 +771,6 @@
 								itemId: 'reassignForm',
 								bodyStyle: 'padding: 10px',
 								items: [
-									{
-										xtype: 'panel',
-										text: 'gjlkjhlk',
-										requiredPermissions: ['WORKFLOW-GROUP-ASSIGN'],
-												
-											
-										
-									},
-									{
-										xtype: 'button',
-										text: 'asdfasfd',
-										requiredPermissions: ['WORKFLOW-LINK-ASSIGN'],
-												
-											
-										
-									},
-									{
-										xtype: 'button',
-										text: 'owkowfjowjeo',
-										
-									},
 									Ext.create('OSF.component.StandardComboBox', {
 										name: 'roleGroup',	
 										itemId: 'assignGroupId',								
@@ -814,16 +793,36 @@
 												console.log("assignGroupID's beforerender fired! ")
 												console.log("assignGroupId component:", this)
 
+												// Get Permissions Group for Entry
 												var currentGroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
+												
+												// Check If Permissions Group is Set
 												if(currentGroupAssigned && currentGroupAssigned != 'undefined'){
+
+													// Set StandardCombobox With Default Perm. Group
 													this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
-													userAssignWin.queryById('assignUserId').fieldLabel += '<h2 style="display:inline;">'+ linkGrid.getSelection()[0].data.currentGroupAssigned +'</h2>';
-												} else {
-													this.hidden = false;
-													userAssignWin.queryById('reassignWarning').setVisible(true);
+
+													//Check If User Cant See Combobox
+													if(this.hidden){
+														// console.log(this.hidden)
+														// console.log("why is the name showing if the top box is visibel? here is the top box, hidden is true.= ",this)
+														// Show Group Name To User
+														//userAssignWin.queryById('assignUserId').fieldLabel += '<h2 style="display:inline;">'+ linkGrid.getSelection()[0].data.currentGroupAssigned +'</h2>';
+														
+													}
 												}
+
+												// Permission Group is undefined, fire change event maunually
+												else {
+													this.fireEvent("change")
+												}
+												
 											},
 											change: function(filter, newValue, oldValue, opts){
+												// Disappear reassignWarning
+												userAssignWin.queryById('reassignWarning').setVisible(false);
+
+												// Request Members Of Group
 												userAssignWin.queryById('assignUserId').getStore().load({
 													url: 'api/v1/resource/securityroles/'+ encodeURIComponent(newValue) +'/users',
 													callback: function(){
@@ -831,6 +830,24 @@
 														userAssignWin.queryById('assignUserId-clear').setDisabled(false);														
 													}
 												});
+
+												// Show Appropriate Labeling/Warning
+												document.getElementById("workPlanProgressManagement-changelabel").innerHTML = newValue;
+												console.log("")
+												setTimeout(function(){
+													console.log("setTimeout fired!")
+													// Check If Users Are Available After Load
+													if(userAssignWin.queryById('assignUserId').store.data.items.length == 0){
+														// Show Warning
+														userAssignWin.queryById('reassignWarning').setVisible(true);
+
+
+													} else{
+														console.log("After _ time, we found that there were so many user to the current group: ",userAssignWin.queryById('assignUserId').store.data.items.length);
+														console.log('And reference var for that is: ',userAssignWin.queryById('assignUserId').store.data.items)
+													}
+												},
+												1500);
 											}
 										}
 									}),
@@ -838,8 +855,7 @@
 										xtype: 'container',
 										itemId: 'reassignWarning',
 										hidden:true,
-										html:'<i class="fa fa-exclamation-triangle 3x" display:inline-block; text-align:left; font-size: 5em";"></i> SPOON Administrators: Be care which Group/Role you select, since once choosen, there is no way to edit the assignment without SPOON Support assistance.'
-										//if permissions work, change the message here to something like, " There are no individuals assigned to this permissions catagory. Add them at blah.com"
+										html:'<i class="fa fa-exclamation-triangle 3x" display:inline-block; text-align:left; font-size: 5em";"></i> SPOON Administrators: It appears there are no users assigned to this Permissions Group. Add users <a href="AdminTool.action?load=User-Management">here</a>, or change your <a href="AdminTool.action?load=Security-Roles">permissions</a> to be able change which group this entry is assigned to.'
 									},
 									{
 										xtype: 'panel',
@@ -853,7 +869,7 @@
 												typeAhead: false,
 												margin: '0 0 5 0',
 												flex: 1,
-												fieldLabel: 'Assign User from Group ',
+												fieldLabel: 'Assign User from Group <h2 id="workPlanProgressManagement-changelabel" style="display:inline"></h2>',
 												displayField: 'username',
 												valueField: 'username',
 												queryMode: 'local',
