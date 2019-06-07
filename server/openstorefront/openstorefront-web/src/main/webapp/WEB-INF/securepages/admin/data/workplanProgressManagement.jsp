@@ -342,23 +342,28 @@
 									requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
 									menu: [
 										{
-											text: 'Assign To Admin Group',
-											id: 'lookupGrid-tools-action-admin-assign',
-											disabled: true,
-											iconCls: 'fa fa-lg fa-user-md icon-small-vertical-correction icon-button-color-default',
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN'],
-											handler: function(){
-												actionAssignToAdmin();
-											}
-										},
-										{
 											text: 'Assign To Me',
 											id: 'lookupGrid-tools-action-me-assign',
 											disabled: true,
 											iconCls: 'fa fa-lg fas fa-user-circle icon-small-vertical-correction icon-button-color-default',
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN'],
+											permissionLogicalOperator: 'OR',
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-SELF', 'WORKFLOW-LINK-ASSIGN-ANY'],
 											handler: function(){
 												actionAssignToMe();
+											}
+										},
+										{
+											xtype: 'menuseparator',
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY']
+										},
+										{
+											text: 'Assign To Admin Group',
+											id: 'lookupGrid-tools-action-admin-assign',
+											disabled: true,
+											iconCls: 'fa fa-lg fa-user-md icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
+											handler: function(){
+												actionAssignToAdmin();
 											}
 										},
 										{
@@ -366,15 +371,10 @@
 											id: 'lookupGrid-tools-action-unassign',
 											disabled: true,
 											iconCls: 'fa fa-lg fas fa-user-times icon-small-vertical-correction icon-button-color-default',
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN'],
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
 											handler: function () {
 												actionUnassign();
 											}
-										},
-										{
-											xtype: 'menuseparator',
-											permissionLogicalOperator: 'AND',
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY', 'ADMIN-ROLE-MANAGEMENT-READ']
 										},                                       
 										{
 											text: 'Reassign',
