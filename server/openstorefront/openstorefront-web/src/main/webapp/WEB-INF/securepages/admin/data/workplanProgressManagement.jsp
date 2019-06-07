@@ -802,7 +802,7 @@
 
 												// Permission Group is undefined, fire change event maunually
 												else {
-													this.fireEvent("change")
+													this.fireEvent("change");
 												}
 											},
 											change: function(filter, newValue, oldValue, opts){
