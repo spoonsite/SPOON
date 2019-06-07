@@ -47,6 +47,15 @@ Ext.define('OSF.component.StandardComboBox', {
 
 });
 
+// Add Method to add Field Label of individual StandardComboBox fields (Not every label of every StandardComboBox)
+Ext.override(OSF.component.StandardComboBox, {
+	setFieldLabel : function(text) {//.up('.x-form-item', 10, true)
+		console.log("in override function, x-form-item is ", this.el.up('.x-form-item'),this.el.up('.x-form-item', 10).child('.x-form-item-label-text'))
+	   this.el.up('.x-form-item', 10).child('.x-form-item-label-text').update(text);
+	}
+ });
+ 
+
 /***
  * Creates a combo box that allows selection of multiple users chosen via typing
  * in part of their names or choosing them from a list. 

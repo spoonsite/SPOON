@@ -30,6 +30,15 @@
 			// Ext.require('OSF.common.workPlanProgressComment');
 			Ext.require('OSF.workplanProgress.CommentPanel');
 			Ext.require('OSF.workplanProgress.ProgressView');
+			
+			// Reassign Window Fix
+			Ext.override(Ext.form.Field, {
+   setFieldLabel : function(text) {
+      this.el.up('.x-form-item', 10, true).child('.x-form-item-label').update(text);
+   }
+});
+
+
 			Ext.onReady(function() {
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
@@ -761,7 +770,7 @@
 						title: 'Change Group/Assignee - ',
 						iconCls: 'fa fa-lg fa-user',
 						width: '50%',
-						height: 250,						
+						autoHeight: true,						
 						closeAction: 'destroy',
 						modal: true,
 						layout: 'fit',
@@ -789,9 +798,6 @@
 										},
 										listeners: {
 											beforerender:function(){
-												//VERBOSE DELETE LATER
-												console.log("assignGroupID's beforerender fired! ")
-												console.log("assignGroupId component:", this)
 
 												// Get Permissions Group for Entry
 												var currentGroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
@@ -801,22 +807,12 @@
 
 													// Set StandardCombobox With Default Perm. Group
 													this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
-
-													//Check If User Cant See Combobox
-													if(this.hidden){
-														// console.log(this.hidden)
-														// console.log("why is the name showing if the top box is visibel? here is the top box, hidden is true.= ",this)
-														// Show Group Name To User
-														//userAssignWin.queryById('assignUserId').fieldLabel += '<h2 style="display:inline;">'+ linkGrid.getSelection()[0].data.currentGroupAssigned +'</h2>';
-														
-													}
 												}
 
 												// Permission Group is undefined, fire change event maunually
 												else {
 													this.fireEvent("change")
 												}
-												
 											},
 											change: function(filter, newValue, oldValue, opts){
 												// Disappear reassignWarning
@@ -827,32 +823,21 @@
 													url: 'api/v1/resource/securityroles/'+ encodeURIComponent(newValue) +'/users',
 													callback: function(){
 														userAssignWin.queryById('assignUserId').setDisabled(false);
-														userAssignWin.queryById('assignUserId-clear').setDisabled(false);														
+														userAssignWin.queryById('assignUserId-clear').setDisabled(false);
+														
+														// Show Appropriate Labeling/Warning
+														// Check If Users Are Available After Load
+														if(userAssignWin.queryById('assignUserId').store.data.items.length == 0){
+															// Show Warning
+															userAssignWin.queryById('reassignWarning').setVisible(true);
+														}
 													}
 												});
-
-												// Show Appropriate Labeling/Warning
-												document.getElementById("workPlanProgressManagement-changelabel").innerHTML = newValue;
-												console.log("")
-												setTimeout(function(){
-													console.log("setTimeout fired!")
-													// Check If Users Are Available After Load
-													if(userAssignWin.queryById('assignUserId').store.data.items.length == 0){
-														// Show Warning
-														userAssignWin.queryById('reassignWarning').setVisible(true);
-
-
-													} else{
-														console.log("After _ time, we found that there were so many user to the current group: ",userAssignWin.queryById('assignUserId').store.data.items.length);
-														console.log('And reference var for that is: ',userAssignWin.queryById('assignUserId').store.data.items)
-													}
-												},
-												1500);
 											}
 										}
 									}),
 									{
-										xtype: 'container',
+										xtype: 'label',
 										itemId: 'reassignWarning',
 										hidden:true,
 										html:'<i class="fa fa-exclamation-triangle 3x" display:inline-block; text-align:left; font-size: 5em";"></i> SPOON Administrators: It appears there are no users assigned to this Permissions Group. Add users <a href="AdminTool.action?load=User-Management">here</a>, or change your <a href="AdminTool.action?load=Security-Roles">permissions</a> to be able change which group this entry is assigned to.'
@@ -869,7 +854,7 @@
 												typeAhead: false,
 												margin: '0 0 5 0',
 												flex: 1,
-												fieldLabel: 'Assign User from Group <h2 id="workPlanProgressManagement-changelabel" style="display:inline"></h2>',
+												fieldLabel: 'Assign User from Group <span class="field-required" />',
 												displayField: 'username',
 												valueField: 'username',
 												queryMode: 'local',
@@ -912,8 +897,7 @@
 													var queryParams =  '?roleGroup=' + queryData.roleGroup + '&username=' + queryData.username;
 													
 													userAssignWin.setLoading('Assigning...');
-													console.log("The request to assign a person is about to go out. it was sent this endpoint:",
-													'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assign' + queryParams,"internal vars: userAssignWin",userAssignWin)
+
 													Ext.Ajax.request({
 														url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assign' + queryParams,
 														method: 'PUT',
