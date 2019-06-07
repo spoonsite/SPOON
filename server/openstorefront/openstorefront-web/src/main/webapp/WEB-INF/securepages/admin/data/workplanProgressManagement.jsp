@@ -30,15 +30,6 @@
 			// Ext.require('OSF.common.workPlanProgressComment');
 			Ext.require('OSF.workplanProgress.CommentPanel');
 			Ext.require('OSF.workplanProgress.ProgressView');
-			
-			// Reassign Window Fix
-			Ext.override(Ext.form.Field, {
-   setFieldLabel : function(text) {
-      this.el.up('.x-form-item', 10, true).child('.x-form-item-label').update(text);
-   }
-});
-
-
 			Ext.onReady(function() {
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
@@ -854,7 +845,7 @@
 												typeAhead: false,
 												margin: '0 0 5 0',
 												flex: 1,
-												fieldLabel: 'Assign User from Group <span class="field-required" />',
+												fieldLabel: 'Assign User from Group',
 												displayField: 'username',
 												valueField: 'username',
 												queryMode: 'local',
