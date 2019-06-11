@@ -274,7 +274,7 @@ public class SolrManager
 	@Override
 	public void indexFullComponents(List<ComponentAll> componentAlls)
 	{
-		throw new UnsupportedOperationException("SOLR really supported anymore; If support is desire implement this.");
+		throw new UnsupportedOperationException("SOLR is not supported. If support is desired implement this.");
 	}
 
 	@Override

@@ -109,9 +109,9 @@ public class AttributeServiceImpl
 		if (element != null) {
 			attributeCodes = (List<AttributeCode>) element.getObjectValue();
 		} else {
-			//This may pull all of records (right now we are try to cache everything to speed lookup
-			//through out the system.  Later, you can consider improving effeciency by determining the
-			//set of data really need to be gathered.
+			// This may pull all of records (right now we are try to cache everything to speed lookup
+			// throughout the system.  Later, you can consider improving effeciency by determining the
+			// set of data really need to be gathered.
 			attributeCodes = persistenceService.queryByExample(new AttributeCode());
 			element = new Element(OSFCacheManager.ALLCODE_KEY, attributeCodes);
 			OSFCacheManager.getAttributeCodeAllCache().put(element);

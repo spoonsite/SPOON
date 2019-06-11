@@ -147,9 +147,6 @@ public class SearchStatTable
 
 				startIndex += MAX_ATTRIBUTE_QUERY_RESULTS;
 			}
-
-//			List<ComponentAttribute> attributes = attributeExample.findByExample();
-//			attributeMap = buildMap(attributes, ComponentAttribute::getComponentId);
 			changed = true;
 		}
 
