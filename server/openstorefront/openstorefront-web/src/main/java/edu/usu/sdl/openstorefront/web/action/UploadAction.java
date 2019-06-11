@@ -640,7 +640,7 @@ public class UploadAction
 			File tempFile = null;
 			String timeStamp = new SimpleDateFormat("dd-MM-YYYY").format(new Date());
 			String filePath = FileSystemManager.getInstance().getDir(FileSystemManager.BULK_UPLOAD_DIR).toString()
-					+ "\\" + username + "\\" + timeStamp + "_" + StringProcessor.uniqueId() + ".zip";
+					+ File.separator + username + File.separator + timeStamp + "_" + StringProcessor.uniqueId() + ".zip";
 			try {
 				// save to file system under username
 				tempFile = new File(filePath);

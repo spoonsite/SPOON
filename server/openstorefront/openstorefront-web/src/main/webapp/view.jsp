@@ -224,6 +224,9 @@
 								'<a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
 							'</tpl>',
 							'</div>',
+							'<div class="details-title-info" style="margin: 8px 0;">',
+							'	{[this.partType(values.attributes)]}',
+							'</div>',
 							'<div class="details-title-info">',							
 							'Organization: <b><a href="#" class="a.details-table" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="releaseDate"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
@@ -240,6 +243,18 @@
 										sendToEmail = contacts[0].email;
 									}
 									return '<a style="cursor: pointer;" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
+								},
+								partType: function (attributes) {
+									partType = ""
+									attributes.forEach(element => {
+										if (element.type == "PARTTYPE") {
+											partType = element.codeDescription;
+										}
+									});
+									if(partType != ""){
+										partType = 'Part Type: <b style="color: #551A8B;">' + partType + '</b>';
+									}
+									return partType;
 								}
 							}
 						)

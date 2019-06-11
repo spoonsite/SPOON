@@ -331,22 +331,23 @@ Ext.define('OSF.component.template.Vitals', {
 				processedValues = processedValues.substring(0, processedValues.length-2);
 				
 				
-				
-				vitals.push({
-					componentId: entry.componentId,
-					label: maintype.typeDescription,
-					value: processedValues,
-					highlightStyle: topHighLightStyle,
-					type: maintype.type,
-					code: maintype.code,
-					privateFlag: anyPrivate,
-					comment: commonComment,
-					unit: unit,
-					updateDts: maintype.updateDts,
-					securityMarkingType: maintype.securityMarkingType,
-					codeHasAttachment: maintype.codeHasAttachment,
-					vitalType: 'ATTRIBUTE'
-				});
+				if (maintype.type != "PARTTYPE") {
+					vitals.push({
+						componentId: entry.componentId,
+						label: maintype.typeDescription,
+						value: processedValues,
+						highlightStyle: topHighLightStyle,
+						type: maintype.type,
+						code: maintype.code,
+						privateFlag: anyPrivate,
+						comment: commonComment,
+						unit: unit,
+						updateDts: maintype.updateDts,
+						securityMarkingType: maintype.securityMarkingType,
+						codeHasAttachment: maintype.codeHasAttachment,
+						vitalType: 'ATTRIBUTE'
+					});
+				}
 
 			});
 						

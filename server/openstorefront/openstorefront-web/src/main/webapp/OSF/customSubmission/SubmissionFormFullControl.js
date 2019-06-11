@@ -439,15 +439,14 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			
 		} else {				
 			if (userSubmission.originalComponentId) {
-				
-				submissionFormFullControl.setLoading("Submitting Request; please wait...");
+				submissionFormFullControl.setLoading("Submitting Change Request...");
 				Ext.Ajax.request({
 					url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitchangeforapproval',
 					method: 'PUT',
 					jsonData: userSubmission,
 					callback: function() {		
 						submissionFormFullControl.setLoading(false);
-					},					
+					},
 					success: function(response, opts) {
 						var data;
 						try {
@@ -471,26 +470,27 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 
 						} else {	
 							Ext.toast('Change Request Submitted Successfully');
-							submissionFormFullControl.submissionSuccess();
-						}
+
+							if (submissionFormFullControl.submissionSuccess) {
+								submissionFormFullControl.submissionSuccess();
+							}
+						}	
 					}
 				});
-	
-
-			} else {
-				submissionFormFullControl.setLoading("Submitting Entry; please wait...");
+			} else {		
+				submissionFormFullControl.setLoading("Submitting Entry...");
 				Ext.Ajax.request({
 					url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitforapproval',
 					method: 'PUT',
 					jsonData: userSubmission,
 					callback: function() {		
 						submissionFormFullControl.setLoading(false);
-					},					
+					},
 					success: function(response, opts) {
 						var data;
 						try {
 							data = Ext.decode(response.responseText);
-						} catch(e){
+						} catch(e){						
 						}
 						if (data && !data.success) {
 							var errorMessage = '';
@@ -507,10 +507,13 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 								}
 							});
 
-						} else {
+						} else {						
 
 							Ext.toast('Entry Submitted Successfully');
-							submissionFormFullControl.submissionSuccess();
+
+							if (submissionFormFullControl.submissionSuccess) {
+								submissionFormFullControl.submissionSuccess();
+							}
 						}
 					}
 				});

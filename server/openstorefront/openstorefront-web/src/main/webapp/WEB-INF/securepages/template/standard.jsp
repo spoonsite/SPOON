@@ -82,11 +82,11 @@
 				
 				var vitals = Ext.create('OSF.component.template.Vitals', {					
 					margin: '0 0 20 0'
-				});								
-				
+				});
+
 				var relationships = Ext.create('OSF.component.template.Relationships', {					
 					margin: '0 0 20 0'
-				});					
+				});	
 				
 				var detailPanel = Ext.create('OSF.component.template.LayoutScroll', {
 					title: 'Details',
