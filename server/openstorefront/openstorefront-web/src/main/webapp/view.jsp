@@ -270,7 +270,17 @@
 								xtype: 'panel',
 								itemId: 'updatedInfo',
 								dock: 'bottom',
-								tpl: '<span class="details-title-info" style="font-size: 10px">Updated: <b>{[Ext.util.Format.date(values.lastActivityDts, "m/d/y H:i:s")]}</b><tpl if="securityMarkingType"><br>Highest Classification:  <b>(<span title="{securityMarkingDescription}">{securityMarkingType}</span>)</b></span></tpl>'
+								tpl: new Ext.XTemplate(
+									'<span class="details-title-info" style="font-size: 10px">\
+										Last Update by Vendor Approved: <b>{[Ext.util.Format.date(values.approvedDate, "m/d/y H:i:s T")]}</b><br>\
+										Last System Update: <b>{[Ext.util.Format.date(values.lastActivityDts, "m/d/y H:i:s T")]}</b>\
+											<tpl if="securityMarkingType">\
+												<br>\
+												Highest Classification:  \
+												<b>(<span title="{securityMarkingDescription}">{securityMarkingType}</span>)</b>\
+											</tpl>\
+									</span>'
+								)
 							}
 						],
 						items: [
