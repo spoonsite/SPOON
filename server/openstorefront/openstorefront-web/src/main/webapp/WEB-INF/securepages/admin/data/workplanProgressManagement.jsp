@@ -333,23 +333,28 @@
 									requiredPermissions: ['WORKFLOW-LINK-ASSIGN', 'WORKFLOW-LINK-ASSIGN-ANY'],
 									menu: [
 										{
-											text: 'Assign To Admin Group',
-											id: 'lookupGrid-tools-action-admin-assign',
-											disabled: true,
-											iconCls: 'fa fa-lg fa-user-md icon-small-vertical-correction icon-button-color-default',
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN'],
-											handler: function(){
-												actionAssignToAdmin();
-											}
-										},
-										{
 											text: 'Assign To Me',
 											id: 'lookupGrid-tools-action-me-assign',
 											disabled: true,
 											iconCls: 'fa fa-lg fas fa-user-circle icon-small-vertical-correction icon-button-color-default',
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN'],
+											permissionLogicalOperator: 'OR',
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-SELF', 'WORKFLOW-LINK-ASSIGN-ANY'],
 											handler: function(){
 												actionAssignToMe();
+											}
+										},
+										{
+											xtype: 'menuseparator',
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY']
+										},
+										{
+											text: 'Assign To Admin Group',
+											id: 'lookupGrid-tools-action-admin-assign',
+											disabled: true,
+											iconCls: 'fa fa-lg fa-user-md icon-small-vertical-correction icon-button-color-default',
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
+											handler: function(){
+												actionAssignToAdmin();
 											}
 										},
 										{
@@ -357,15 +362,10 @@
 											id: 'lookupGrid-tools-action-unassign',
 											disabled: true,
 											iconCls: 'fa fa-lg fas fa-user-times icon-small-vertical-correction icon-button-color-default',
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN'],
+											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY'],
 											handler: function () {
 												actionUnassign();
 											}
-										},
-										{
-											xtype: 'menuseparator',
-											permissionLogicalOperator: 'AND',
-											requiredPermissions: ['WORKFLOW-LINK-ASSIGN-ANY', 'ADMIN-ROLE-MANAGEMENT-READ']
 										},                                       
 										{
 											text: 'Reassign',
@@ -761,7 +761,7 @@
 						title: 'Change Group/Assignee - ',
 						iconCls: 'fa fa-lg fa-user',
 						width: '50%',
-						height: 250,						
+						autoHeight: true,						
 						closeAction: 'destroy',
 						modal: true,
 						layout: 'fit',
@@ -781,21 +781,58 @@
 										width: '100%',										
 										fieldLabel: 'Group/Role <span class="field-required" />',
 										queryMode: 'local',
+										displayField:'description',
+										valueField:'code',
+										requiredPermissions: ['WORKFLOW-GROUP-ASSIGN'],
 										storeConfig: {
 											url: 'api/v1/resource/securityroles/lookup'
 										},
 										listeners: {
+											beforerender:function(){
+
+												// Get Permissions Group for Entry
+												var currentGroupAssigned = linkGrid.getSelection()[0].data.currentGroupAssigned;
+												
+												// Check If Permissions Group is Set
+												if(currentGroupAssigned && currentGroupAssigned != 'undefined'){
+
+													// Set StandardCombobox With Default Perm. Group
+													this.select(linkGrid.getSelection()[0].data.currentGroupAssigned);
+												}
+
+												// Permission Group is undefined, fire change event maunually
+												else {
+													this.fireEvent("change");
+												}
+											},
 											change: function(filter, newValue, oldValue, opts){
+												// Disappear reassignWarning
+												userAssignWin.queryById('reassignWarning').setVisible(false);
+
+												// Request Members Of Group
 												userAssignWin.queryById('assignUserId').getStore().load({
 													url: 'api/v1/resource/securityroles/'+ encodeURIComponent(newValue) +'/users',
 													callback: function(){
 														userAssignWin.queryById('assignUserId').setDisabled(false);
-														userAssignWin.queryById('assignUserId-clear').setDisabled(false);														
+														userAssignWin.queryById('assignUserId-clear').setDisabled(false);
+														
+														// Show Appropriate Labeling/Warning
+														// Check If Users Are Available After Load
+														if(userAssignWin.queryById('assignUserId').store.data.items.length == 0){
+															// Show Warning
+															userAssignWin.queryById('reassignWarning').setVisible(true);
+														}
 													}
 												});
 											}
 										}
 									}),
+									{
+										xtype: 'label',
+										itemId: 'reassignWarning',
+										hidden:true,
+										html:'<i class="fa fa-exclamation-triangle 3x" display:inline-block; text-align:left; font-size: 5em";"></i> SPOON Administrators: It appears there are no users assigned to this Permissions Group. Add users <a href="AdminTool.action?load=User-Management">here</a>, or change your <a href="AdminTool.action?load=Security-Roles">permissions</a> to be able change which group this entry is assigned to.'
+									},
 									{
 										xtype: 'panel',
 										layout: 'hbox',
@@ -807,8 +844,8 @@
 												editable: false,
 												typeAhead: false,
 												margin: '0 0 5 0',
-												flex: 1,												
-												fieldLabel: 'Assign User',
+												flex: 1,
+												fieldLabel: 'Assign User from Group',
 												displayField: 'username',
 												valueField: 'username',
 												queryMode: 'local',
@@ -851,6 +888,7 @@
 													var queryParams =  '?roleGroup=' + queryData.roleGroup + '&username=' + queryData.username;
 													
 													userAssignWin.setLoading('Assigning...');
+
 													Ext.Ajax.request({
 														url: 'api/v1/resource/workplans/' + workPlanId + '/worklinks/' + workPlanLinkId + '/assign' + queryParams,
 														method: 'PUT',
