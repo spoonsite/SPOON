@@ -116,7 +116,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				fullAttributeField: attributePanel,
 				name: attributePanel.name ? attributePanel.name : 'attributeCode',
 				queryMode: 'local',
-				maskRe: new RegExp("([^\\\/])"),
+				maskRe: new RegExp("([^\\\\/])"),
 				vtype: numberVType,
 				selectOnFocus: false,
 				editable: editable,
