@@ -111,7 +111,7 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 		}
 
 		attributePanel.field = Ext.create(xtype, Ext.apply({
-				fieldLabel: "fieldLabel",
+				fieldLabel: fieldLabel,
 				forceSelection: forceSelection,
 				fullAttributeField: attributePanel,
 				name: attributePanel.name ? attributePanel.name : 'attributeCode',
