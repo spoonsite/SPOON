@@ -246,11 +246,16 @@
 								},
 								partType: function (attributes) {
 									partType = ""
-									attributes.forEach(element => {
-										if (element.type == "PARTTYPE") {
-											partType = element.codeDescription;
+									// attributes.forEach(element => {
+									// 	if (element.type == "PARTTYPE") {
+									// 		partType = element.codeDescription;
+									// 	}
+									// });
+									for(i=0; i<attributes.length; i++){
+										if(attributes[i].type == "PARTTYPE"){
+											partType = attributes[i].codeDescription;
 										}
-									});
+									}
 									if(partType != ""){
 										partType = 'Part Type: <b style="color: #551A8B;">' + partType + '</b>';
 									}
