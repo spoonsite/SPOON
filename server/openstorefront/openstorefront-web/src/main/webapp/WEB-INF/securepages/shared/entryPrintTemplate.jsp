@@ -165,7 +165,8 @@ limitations under the License.
 				<b>Entry:</b> {name}<br>
 				<b>Organization:</b> {organization}<br>
 				<tpl for="parents" between="&nbsp; &gt; &nbsp;">{label}</tpl><br>
-				<b>Last Activity Date:</b> {lastActivityDts:date("m/d/Y H:i:s")}<br>
+				<b>Last Activity Date by System:</b> {lastActivityDts:date("m/d/Y H:i:s T")}<br>
+				<b>Last Vendor Update Approved Date:</b> {approvedDate:date("m/d/Y H:i:s T")}<br>
 				<tpl if="show.views">
 					<b>Views:</b> {componentViews}<br>
 				</tpl>
