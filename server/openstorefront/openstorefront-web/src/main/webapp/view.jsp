@@ -245,12 +245,7 @@
 									return '<a style="cursor: pointer;" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
 								},
 								partType: function (attributes) {
-									partType = ""
-									// attributes.forEach(element => {
-									// 	if (element.type == "PARTTYPE") {
-									// 		partType = element.codeDescription;
-									// 	}
-									// });
+									partType = "";
 									for(i=0; i<attributes.length; i++){
 										if(attributes[i].type == "PARTTYPE"){
 											partType = attributes[i].codeDescription;
