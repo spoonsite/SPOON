@@ -246,7 +246,7 @@
 								},
 								partType: function (attributes) {
 									partType = "";
-									for(i=0; i<attributes.length; i++){
+									for(var i=0; i<attributes.length; i++){
 										if(attributes[i].type == "PARTTYPE"){
 											partType = attributes[i].codeDescription;
 										}
