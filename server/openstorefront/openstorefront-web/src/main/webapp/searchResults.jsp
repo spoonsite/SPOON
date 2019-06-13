@@ -1282,7 +1282,7 @@
 				{ text: 'Vitals', section: 'attributes', display: false },
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
-				{ text: 'Approved Date', section: 'approve', display: false },
+				{ text: 'Vendor Approved Date', section: 'approve', display: false },
 				{ text: 'Relevance', section: 'searchscore', display: true },
 				{ text: 'Breadcrumbs', section: 'breadcrumbs', display: true }
 			];			
@@ -1521,7 +1521,7 @@
 				'	</tpl>',
 				'  <br>',
 				'  <div class="searchresults-item-update">',
-				'    <tpl if="show.approve"> <b>Last Updated By Vendor and Approved Date:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
+				'    <tpl if="show.approve"> <b>Last Vendor Update Approved:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl>',
 				'    <tpl if="show.update"> <b>Last Updated by System:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}</tpl>',
 				'    <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl>',
 				'    <span style="float: right">',
