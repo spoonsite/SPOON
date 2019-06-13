@@ -1666,7 +1666,7 @@
 											}											
 										},										
 										{
-											label: 'Last Update (Newest)',
+											label: 'Last System Update (Newest)',
 											field: 'lastActivityDts',
 											fieldCode: 'lastUpdateDts',
 											dir: 'DESC',
@@ -1681,7 +1681,7 @@
 											}											
 										},
 										{
-											label: 'Last Update (Oldest)',
+											label: 'Last System Update (Oldest)',
 											field: 'lastActivityDts',
 											fieldCode: 'lastUpdateDts-desc',
 											dir: 'ASC',
@@ -1696,7 +1696,7 @@
 											}											
 										},
 										{
-											label: 'Approval Date (Newest)',
+											label: 'Vendor Approved Date (Newest)',
 											field: 'approvedDts',
 											fieldCode: 'approvedDts',
 											dir: 'DESC',
@@ -1711,7 +1711,7 @@
 											}											
 										},
 										{
-											label: 'Approval Date (Oldest)',
+											label: 'Vendor Approved Date (Oldest)',
 											field: 'approvedDts',
 											fieldCode: 'approvedDts-desc',
 											dir: 'ASC',
