@@ -1278,11 +1278,11 @@
 				{ text: 'Organization', section: 'organization', display: true },
 				{ text: 'Badges', section: 'badges', display: true },
 				{ text: 'Description', section: 'description', display: true },
-				{ text: 'Last Update', section: 'update', display: true },	
+				{ text: 'Last System Update', section: 'update', display: true },	
 				{ text: 'Vitals', section: 'attributes', display: false },
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
-				{ text: 'Vendor Approved Date', section: 'approve', display: false },
+				{ text: 'Last Vendor Update Approved', section: 'approve', display: false },
 				{ text: 'Relevance', section: 'searchscore', display: true },
 				{ text: 'Breadcrumbs', section: 'breadcrumbs', display: true }
 			];			
@@ -1666,7 +1666,7 @@
 											}											
 										},										
 										{
-											label: 'Last Update (Newest)',
+											label: 'Last System Update (Newest)',
 											field: 'lastActivityDts',
 											fieldCode: 'lastUpdateDts',
 											dir: 'DESC',
@@ -1681,7 +1681,7 @@
 											}											
 										},
 										{
-											label: 'Last Update (Oldest)',
+											label: 'Last System Update (Oldest)',
 											field: 'lastActivityDts',
 											fieldCode: 'lastUpdateDts-desc',
 											dir: 'ASC',
@@ -1696,7 +1696,7 @@
 											}											
 										},
 										{
-											label: 'Approval Date (Newest)',
+											label: 'Last Vendor Update Approved (Newest)',
 											field: 'approvedDts',
 											fieldCode: 'approvedDts',
 											dir: 'DESC',
@@ -1711,7 +1711,7 @@
 											}											
 										},
 										{
-											label: 'Approval Date (Oldest)',
+											label: 'Last Vendor Update Approval (Oldest)',
 											field: 'approvedDts',
 											fieldCode: 'approvedDts-desc',
 											dir: 'ASC',
