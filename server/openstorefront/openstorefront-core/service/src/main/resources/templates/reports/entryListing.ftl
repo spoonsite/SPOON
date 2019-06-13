@@ -83,6 +83,7 @@
 						<th>Name</th>
 						<th>Description</th>
 						<th>Entry Type</th>
+						<th>Last Vender Update Approved</th>
 						<th>Last Updated</th>
 						<th>Evaluation Status</th>
 					</tr>	
@@ -98,6 +99,9 @@
 							</td>
 							<td style="width: 200px; text-align: center;">
 								${listing.entryType}
+							</td>							
+							<td style="width: 200px; text-align: center;">
+								${listing.lastVendorUpdateApprovedDate?date}
 							</td>							
 							<td style="width: 200px; text-align: center;">
 								${listing.lastUpdatedDts?date}

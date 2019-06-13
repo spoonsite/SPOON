@@ -178,6 +178,15 @@ public class EntryListingReport
 		return entryListingReportModel;
 	}
 
+	/**
+	 *  Loads information from the component object into LineModel object.
+	 *  (later in other functions this object of the EntryListingReportLineModel class is
+	 * 	 used to load information into the user's view.)
+	 * @param component
+	 * @param viewLinkBase
+	 * @param evalMap
+	 * @return EntryListingReportLineModel
+	 */
 	private EntryListingReportLineModel componentToLineModel(Component component, String viewLinkBase, Map<String, List<Evaluation>> evalMap)
 	{
 		EntryListingReportLineModel lineModel = new EntryListingReportLineModel();
@@ -191,6 +200,8 @@ public class EntryListingReport
 		lineModel.setEntryType(entryType);
 
 		lineModel.setLastUpdatedDts(component.getLastActivityDts());
+
+		lineModel.setlastVendorUpdateApprovedDate(component.getApprovedDts());
 
 		String name = ConfluenceClient.confluenceEscapeCharater(component.getName());
 		lineModel.setName(name);
