@@ -28,6 +28,8 @@ public class EntryStatusDetailModel
 	private String description;
 	private String createUser;
 	private Date createDts;	
+	private Date lastVendorUpdateApproveDate;
+	private Date lastSystemUpdDate;
 	private String createUserEmail;
 	private String createUserOrganization;
 	private String status;
@@ -87,6 +89,22 @@ public class EntryStatusDetailModel
 	public void setCreateDts(Date createDts)
 	{
 		this.createDts = createDts;
+	}
+
+	public Date getLastVendorUpdateApproveDate() {
+		return this.lastVendorUpdateApproveDate;
+	}
+
+	public void setLastVendorUpdateApproveDate(Date lastVendorUpdateApproveDate) {
+		this.lastVendorUpdateApproveDate = lastVendorUpdateApproveDate;
+	}
+
+	public Date getLastSystemUpdDate() {
+		return this.lastSystemUpdDate;
+	}
+
+	public void setLastSystemUpdDate(Date lastSystemUpdDate) {
+		this.lastSystemUpdDate = lastSystemUpdDate;
 	}
 
 	public String getCreateUserEmail()
