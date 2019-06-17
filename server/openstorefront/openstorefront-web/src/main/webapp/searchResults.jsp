@@ -1278,11 +1278,11 @@
 				{ text: 'Organization', section: 'organization', display: true },
 				{ text: 'Badges', section: 'badges', display: true },
 				{ text: 'Description', section: 'description', display: true },
-				{ text: 'Last System Update', section: 'update', display: true },	
+				{ text: 'Last System Update', section: 'update', display: false },	
 				{ text: 'Vitals', section: 'attributes', display: false },
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
-				{ text: 'Last Vendor Update Approved', section: 'approve', display: false },
+				{ text: 'Last Vendor Update Approved', section: 'approve', display: true },
 				{ text: 'Relevance', section: 'searchscore', display: true },
 				{ text: 'Breadcrumbs', section: 'breadcrumbs', display: true }
 			];			
