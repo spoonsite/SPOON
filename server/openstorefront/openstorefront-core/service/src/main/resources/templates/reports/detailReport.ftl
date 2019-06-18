@@ -359,10 +359,6 @@
 			</table>
 		</#if>
 		
-		<#-- <#if line.component.approvedDate?has_content > && reportOptions.displayDates-->
-			
-		<#--  </#if>  -->
-
 		<!--Evaluation-->
 		<#if line.component.fullEvaluations?has_content && (reportOptions.displayEvalSummary || reportOptions.displayEvalDetails)>
 			<#assign flag = true>

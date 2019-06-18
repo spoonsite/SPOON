@@ -348,7 +348,7 @@ public class EntryStatusReport
 	}
 	
 	/**
-	 * writeDetails function, like all 'write-'-esque functions, ... is used in .writeCSV() exensively.
+	 * writeDetails function is used in .writeCSV() exensively.
 	 * 
 	 * @param generator
 	 * Currently it doesn't matter what you pass through this parameter, this funcion defines and uses it's own CSV generator to
