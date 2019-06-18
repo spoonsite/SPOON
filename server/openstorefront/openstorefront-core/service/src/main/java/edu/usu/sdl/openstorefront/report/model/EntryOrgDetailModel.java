@@ -26,6 +26,7 @@ public class EntryOrgDetailModel
 
 	private String name;
 	private Date lastActivityDts;
+	private Date approvedDts;
 	private String approvalState;
 
 	public EntryOrgDetailModel()
@@ -50,6 +51,14 @@ public class EntryOrgDetailModel
 	public void setLastActivityDts(Date lastActivityDts)
 	{
 		this.lastActivityDts = lastActivityDts;
+	}
+
+	public Date getApprovedDts() {
+		return this.approvedDts;
+	}
+
+	public void setApprovedDts(Date approvedDts) {
+		this.approvedDts = approvedDts;
 	}
 
 	public String getApprovalState()
