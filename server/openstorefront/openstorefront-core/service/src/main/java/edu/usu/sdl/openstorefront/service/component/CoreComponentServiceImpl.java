@@ -2536,6 +2536,7 @@ public class CoreComponentServiceImpl
 				componentService.getEntityEventService().processEvent(entityEventModel);
 			}
 		}
+		componentService.getChangeLogService().logOtherChange(component, ChangeType.APPROVED, "User submission approved");
 		return component;
 	}
 
@@ -2606,6 +2607,7 @@ public class CoreComponentServiceImpl
 				mergedComponent.setNotifyOfApprovalEmail(pendingChangeComponent.getNotifyOfApprovalEmail());
 				sendChangeRequestNotification(mergedComponent);
 
+				componentService.getChangeLogService().logOtherChange(mergedComponent, ChangeType.APPROVED, "User change request approved");
 			} else {
 				LOG.log(Level.WARNING, "Parent component doesn't exist unable to merge pending change. (Removing pending change)");
 				cascadeDeleteOfComponent(componentIdOfPendingChange);

@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.SubmissionFormService;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.ChangeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
@@ -356,6 +357,7 @@ public class SubmissionFormServiceImpl
 					copySubmissionWorkLinkToComponent(userSubmission.getUserSubmissionId(), saveComponent.getComponent().getComponentId());
 
 					internalDeleteUserSubmission(userSubmission.getUserSubmissionId(), false);
+					getChangeLogService().logOtherChange(saveComponent.getComponent(), ChangeType.SUBMITTED, "User submission submitted");
 				}
 
 			} catch (MappingException ex) {
