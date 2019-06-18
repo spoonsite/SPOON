@@ -176,10 +176,7 @@ public class ComponentOrganizationReport
 			cvsGenerator.addLine(lineModel.getOrganization());
 
 			for (EntryOrgDetailModel detailModel : lineModel.getEntries()) {
-				cvsGenerator.addLine("");
-				cvsGenerator.addLine(detailModel.getName());
-				cvsGenerator.addLine(sdf.format(detailModel.getLastActivityDts()));
-				cvsGenerator.addLine(detailModel.getApprovalState());
+				cvsGenerator.addLine("",detailModel.getName(),sdf.format(detailModel.getLastActivityDts()),detailModel.getApprovalState());
 			}
 			cvsGenerator.addLine("Total", lineModel.getEntries().size());
 			cvsGenerator.addLine("");

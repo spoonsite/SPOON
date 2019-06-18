@@ -366,7 +366,27 @@ public class EntryStatusReport
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		cvsGenerator.addLine(sectionName);
-		cvsGenerator.addLine(
+		
+		// If this is the Entries Create section, show an extra two columns, "Last Vendor Update Approved" and
+		// "Last System Update", else dont show those extra columns. The cvsGenerator object does not have support
+		// for anything like a .appendLine, therefore some duplicate code is nessisary. 
+		if ( sectionName == "Entries Created"){
+			cvsGenerator.addLine(
+				"Name",
+				"Entry Type",
+				"Description",
+				"Status",
+				"Create User",
+				"Create Date",
+				"Create User Email",
+				"Create User Organization",
+				"Last Vendor Update Approved",
+				"Last System Update",
+				submitted ? "Submission Date" : ""
+			);
+		}
+		else {
+			cvsGenerator.addLine(
 				"Name",
 				"Entry Type",
 				"Description",
@@ -376,31 +396,39 @@ public class EntryStatusReport
 				"Create User Email",
 				"Create User Organization",
 				submitted ? "Submission Date" : ""
-		);
-		if ( sectionName == "Entries Created"){
-			cvsGenerator.addLine(
-				"Last Vendor Update Approved",
-				"Last System Update"
 			);
 		}
 				
 		for (EntryStatusDetailModel detailModel : details) {
-			cvsGenerator.addLine(
-					detailModel.getName(),
-					detailModel.getEntryType(),
-					detailModel.getDescription(),
-					detailModel.getStatus(),
-					detailModel.getCreateUser(),
-					sdf.format(detailModel.getCreateDts()),
-					detailModel.getCreateUserEmail(),
-					detailModel.getCreateUserOrganization(),
-					submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
-			);
+			
+			// If "Entries Created" section, display extra columns.
 			if ( sectionName == "Entries Created"){
 				cvsGenerator.addLine(
-					detailModel.getLastVendorUpdateApproveDate(),
-					detailModel.getLastSystemUpdDate(),
-				);
+						detailModel.getName(),
+						detailModel.getEntryType(),
+						detailModel.getDescription(),
+						detailModel.getStatus(),
+						detailModel.getCreateUser(),
+						sdf.format(detailModel.getCreateDts()),
+						detailModel.getCreateUserEmail(),
+						detailModel.getCreateUserOrganization(),
+						detailModel.getLastVendorUpdateApproveDate(),
+						detailModel.getLastSystemUpdDate(),
+						submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
+					);
+			}
+			else {
+				cvsGenerator.addLine(
+						detailModel.getName(),
+						detailModel.getEntryType(),
+						detailModel.getDescription(),
+						detailModel.getStatus(),
+						detailModel.getCreateUser(),
+						sdf.format(detailModel.getCreateDts()),
+						detailModel.getCreateUserEmail(),
+						detailModel.getCreateUserOrganization(),
+						submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
+					);
 			}
 		}
 

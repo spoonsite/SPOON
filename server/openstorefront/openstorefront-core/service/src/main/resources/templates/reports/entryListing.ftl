@@ -101,10 +101,10 @@
 								${listing.entryType}
 							</td>							
 							<td style="width: 200px; text-align: center;">
-								${listing.lastVendorUpdateApprovedDate?date}
+								${listing.lastVendorUpdateApprovedDate?string('yyyy MMMM dd hh\x3Amm\x3Ass a zzz')}
 							</td>							
 							<td style="width: 200px; text-align: center;">
-								${listing.lastUpdatedDts?date}
+								${listing.lastUpdatedDts?string('yyyy MMMM dd hh\x3Amm\x3Ass a zzz')}
 							</td>
 							<td style="width: 200px; text-align: center;">
 								${listing.evaluationStatus}

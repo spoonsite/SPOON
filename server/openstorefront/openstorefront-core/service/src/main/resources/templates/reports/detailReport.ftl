@@ -341,7 +341,28 @@
 				</div>
 			</#list>
 		</#if>
+		
+		<!--Timestamps -->
+		<#if line.component.approvedDate?has_content && reportOptions.displayDates>
+			<h2>Timestamps</h2>
+		
+			<table>
+				<tr>
+					<th>Last Vendor Update Approved Date</th>
+					<th>Last System Update Date</th>
+					
+				</tr>
+					<tr style="text-align:center;">
+						<td>${line.component.approvedDate?string('yyyy MMMM dd hh\x3Amm\x3Ass a zzz') }</td> 
+						<td>${line.component.lastActivityDts?string('yyyy MMMM ddd hh\x3Amm\x3Ass a zzz')}</td>
+					</tr>
+			</table>
+		</#if>
+		
+		<#-- <#if line.component.approvedDate?has_content > && reportOptions.displayDates-->
 			
+		<#--  </#if>  -->
+
 		<!--Evaluation-->
 		<#if line.component.fullEvaluations?has_content && (reportOptions.displayEvalSummary || reportOptions.displayEvalDetails)>
 			<#assign flag = true>
