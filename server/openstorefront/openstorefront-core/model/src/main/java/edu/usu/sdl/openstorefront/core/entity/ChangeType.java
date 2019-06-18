@@ -39,6 +39,8 @@ public class ChangeType
 	public static final String WORKPLAN_CHANGE = "WORKPLAN_CHANGE";
 	public static final String APPROVED = "APPROVED";
 	public static final String SUBMITTED = "SUBMITTED";
+	public static final String ACTIVATED = "ACTIVATED";
+	public static final String INACTIVATED = "INACTIVATED";
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ChangeType()
@@ -57,6 +59,8 @@ public class ChangeType
 		codeMap.put(WORKPLAN_CHANGE, newLookup(ChangeType.class, WORKPLAN_CHANGE, "WorkPlan Change"));
 		codeMap.put(APPROVED, newLookup(ChangeType.class, APPROVED, "Approved"));
 		codeMap.put(SUBMITTED, newLookup(ChangeType.class, SUBMITTED, "Submitted"));
+		codeMap.put(ACTIVATED, newLookup(ChangeType.class, ACTIVATED, "Activated"));
+		codeMap.put(INACTIVATED, newLookup(ChangeType.class, INACTIVATED, "Inactivated"));
 		return codeMap;
 	}
 
