@@ -84,7 +84,6 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					var values = attributePanel.getValue();	
 					var valid = true;
 					var msg = '';
-					console.log(values);
 					
 					Ext.Array.each(values, function(value) {
 						if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
@@ -93,15 +92,11 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 							valid = valid ? validatorResponse.valid : false;
 							msg = validatorResponse.msg;
 						}
-						console.log(value);
-						console.log(isNaN(value));
 						if(isNaN(value) || value.trim() == ""){
 							valid = false;
 							msg = "Values must be a number."
 						}
-						console.log("valid: ",valid);
-					});	
-					console.log("final valid: ",valid);
+					});
 					return valid ? valid : msg;	
 				};
 			} else {
