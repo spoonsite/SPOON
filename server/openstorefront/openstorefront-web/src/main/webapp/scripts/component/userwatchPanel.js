@@ -36,7 +36,12 @@ Ext.define('OSF.component.UserWatchPanel', {
 				dateFormat: 'c'
 			},
 			{
-				name: 'lastUpdateDts',
+				name: 'lastVendorUpdateApprovedDate',
+				type:	'date',
+				dateFormat: 'c'
+			},
+			{
+				name: 'lastUpdate',
 				type:	'date',
 				dateFormat: 'c'
 			},
@@ -54,29 +59,41 @@ Ext.define('OSF.component.UserWatchPanel', {
 	columns: [
 		{ text: 'Entry', dataIndex: 'componentName', flex: 1, minWidth: 200, 
 			renderer: function(value, meta, record) {
-				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
+				if (record.get('lastVendorUpdateApprovedDate') > record.get('lastViewDts')) {
 					return '<span class="label-text-bold">' + value + '</span><span class="updated-watch text-success"> UPDATED </span>';
 				} else {
 					return '<span class="label-text-bold">' + value + '</span>';
 				}
 			}
 		},	
+		{ text: 'Last Vendor Update Approved', align: 'center', dataIndex: 'lastVendorUpdateApprovedDate', width: 230,
+			renderer: function(value, meta, record) {
+				// console.log('what triggered this?');
+				if (record.get('lastVendorUpdateApprovedDate') > record.get('lastViewDts')) {
+					meta.tdCls = 'alert-success';
+				}
+				// console.log("debuging renderer functions, values value:",value,"meta: ",meta, "record: ",record)
+				return Ext.util.Format.date(value, 'm/d/y H:i:s');
+			}
+		},
 		{ text: 'Entry Last Update Date', align: 'center', dataIndex: 'lastUpdateDts', width: 200,
 			renderer: function(value, meta, record) {
-				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
+				// console.log("Entry Last Update Date column's listener was called!--")
+				// console.log("debuging renderer functions, values value:",value,"meta: ",meta, "record: ",record)
+				if (record.get('lastVendorUpdateApprovedDate') > record.get('lastViewDts')) {
 					meta.tdCls = 'alert-success';
 				}
 				return Ext.util.Format.date(value, 'm/d/y H:i:s');
 			}
 		},
-		{ text: 'Last View Date', align: 'center', dataIndex: 'lastViewDts', width: 200,
+		{ text: 'Last Date Viewed By You', align: 'center', dataIndex: 'lastViewDts', width: 200,
 			renderer: function(value, meta, record) {
 				return Ext.util.Format.date(value, 'm/d/y H:i:s');
 			}			
 		},
 		{ text: 'Send Email Notification', align: 'center', dataIndex: 'notifyFlg', width: 200,
 			renderer: function(value, meta, record) {
-				if (value) {
+				if (value) {//note to self: change the bool vale of what the server is sending for this here to reflect the promoting of 'lastvendorupdateaproved'
 					meta.tdCls = 'alert-success';
 					return '<i class="fa fa-lg fa-check"></i>';
 				} else {
@@ -243,7 +260,10 @@ Ext.define('OSF.component.UserWatchPanel', {
 	actionRefresh: function() {
 		var watchPanel = this;		
 		watchPanel.getStore().load({
-			url: 'api/v1/resource/userprofiles/'+ watchPanel.user +'/watches/'
+			url: 'api/v1/resource/userprofiles/'+ watchPanel.user +'/watches/',
+			callback: function(records, operation, success){
+				console.log("The grid Store was loaded. Callback params passed:\nrecords:",records,"operation:",operation, "success",success)
+			}
 		});
 	}
 	

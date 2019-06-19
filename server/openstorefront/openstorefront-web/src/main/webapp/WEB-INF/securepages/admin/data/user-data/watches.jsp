@@ -30,6 +30,14 @@
 			
 			var activeRequests = 0;
 	
+			/**
+			 * 
+			 * Note to self: The tricky part here, on the admin version of this page, is gettting te Green UPDATED text to only 
+			 * focus on the Last Vendor Update APproved column, and then get the email to be triggered by that instead of the Last System Update .
+			 * 
+			 * 
+			/
+
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 				
@@ -44,6 +52,11 @@
 					fields: [
 						{
 							name: 'createDts',
+							type:	'date',
+							dateFormat: 'c'
+						},
+						{
+							name: 'lastVendorUpdateApproved',
 							type:	'date',
 							dateFormat: 'c'
 						},
@@ -96,6 +109,17 @@
 								}
 							}
 						},	
+						{ text: 'Last Vendor Update Approved Date', align: 'center', dataIndex: 'lastVendorUpdateApproved', width: 200,
+							renderer: function(value, meta, record) {
+								console.log('what triggered this?');
+								// if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
+								// 	//meta.tdCls = 'alert-success';
+									
+								// }
+								console.log("debuging renderer functions, values value:",value,"meta: ",meta, "record: ",record)
+								return Ext.util.Format.date(value, 'm/d/y H:i:s');
+							}
+						},
 						{ text: 'Entry Last Update Date', align: 'center', dataIndex: 'lastUpdateDts', width: 200,
 							renderer: function(value, meta, record) {
 								if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
