@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
+import edu.usu.sdl.openstorefront.core.entity.ChangeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
@@ -1163,6 +1164,11 @@ public abstract class GeneralComponentResourceExt
 	)
 	{
 		return entryActionWithComment((component) -> {
+			String comment = changeOwnerAction.getComment().getComment();
+			if (comment == null){
+				comment = "";
+			}
+			service.getChangeLogService().logOtherChange(component, ChangeType.APPROVED, "Owner changed to " + changeOwnerAction.getNewOwner() + "<br>" + comment);
 			service.getComponentService().changeOwner(component.getComponentId(), changeOwnerAction.getNewOwner());
 		}, changeOwnerAction);
 	}
@@ -1224,9 +1230,15 @@ public abstract class GeneralComponentResourceExt
 	)
 	{
 		return entryActionWithComment((component) -> {
+			String comment = multipleEntryAction.getComment().getComment();
+			if (comment == null){
+				comment = "";
+			}
 			if (Component.ACTIVE_STATUS.equals(component.getActiveStatus())) {
+				service.getChangeLogService().logOtherChange(component, ChangeType.INACTIVATED, comment);
 				service.getComponentService().deactivateComponent(component.getComponentId());
 			} else {
+				service.getChangeLogService().logOtherChange(component, ChangeType.ACTIVATED, comment);
 				service.getComponentService().activateComponent(component.getComponentId());
 			}
 		}, multipleEntryAction);
