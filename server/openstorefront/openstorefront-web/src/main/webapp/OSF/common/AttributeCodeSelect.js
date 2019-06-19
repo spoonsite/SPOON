@@ -84,18 +84,42 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					var values = attributePanel.getValue();	
 					var valid = true;
 					var msg = '';
+					console.log(values);
 					
 					Ext.Array.each(values, function(value) {
 						if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
 							//check precision; this will enforce max allowed
 							validatorResponse = CoreUtil.validateNumber(value);
-							valid = validatorResponse.valid;
+							valid = valid ? validatorResponse.valid : false;
 							msg = validatorResponse.msg;
 						}
+						console.log(value);
+						console.log(isNaN(value));
+						if(isNaN(value) || value.trim() == ""){
+							valid = false;
+							msg = "Values must be a number."
+						}
+						console.log("valid: ",valid);
 					});	
+					console.log("final valid: ",valid);
 					return valid ? valid : msg;	
 				};
-			} 
+			} else {
+				validator = function(valueRaw) {
+					var values = attributePanel.getValue();	
+					var valid = true;
+					var msg = '';
+
+					Ext.Array.each(values, function(value) {
+						if(value.trim() == ""){
+							valid = false;
+							msg = "Values cannot be only spaces."
+						}
+					});
+					
+					return valid ? valid : msg;	
+				}
+			}
 			numberVType = undefined;
 			
 			extraCfg = {
@@ -116,7 +140,6 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 				fullAttributeField: attributePanel,
 				name: attributePanel.name ? attributePanel.name : 'attributeCode',
 				queryMode: 'local',
-				maskRe: new RegExp("([^\\\\/])"),
 				vtype: numberVType,
 				selectOnFocus: false,
 				editable: editable,
