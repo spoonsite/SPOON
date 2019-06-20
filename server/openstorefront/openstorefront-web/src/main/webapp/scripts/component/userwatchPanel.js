@@ -256,10 +256,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 	actionRefresh: function() {
 		var watchPanel = this;		
 		watchPanel.getStore().load({
-			url: 'api/v1/resource/userprofiles/'+ watchPanel.user +'/watches/',
-			callback: function(records, operation, success){
-				console.log("The grid Store was loaded. Callback params passed:\nrecords:",records,"operation:",operation, "success",success)
-			}
+			url: 'api/v1/resource/userprofiles/'+ watchPanel.user +'/watches/'
 		});
 	}
 	
