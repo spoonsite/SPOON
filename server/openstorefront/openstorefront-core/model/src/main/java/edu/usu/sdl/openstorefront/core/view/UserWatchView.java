@@ -40,7 +40,7 @@ public class UserWatchView
 	private String watchId;
 
 	@NotNull
-	private Date lastVendorUpdateApprovedDate;
+	private Date lastSubmitDts;
 
 	@NotNull
 	private Date lastUpdateDts;
@@ -74,7 +74,7 @@ public class UserWatchView
 		if (component != null) {
 			view.setComponentName(component.getName());
 			view.setLastUpdateDts(component.getLastActivityDts());
-			view.setLastVendorUpdateApprovedDate(component.getApprovedDts());
+			view.setLastSubmitDts(component.getSubmittedDts());
 		}
 		view.setLastViewDts(watch.getLastViewDts());
 		view.setNotifyFlg(watch.getNotifyFlg());
@@ -122,12 +122,12 @@ public class UserWatchView
 		this.watchId = watchId;
 	}
 
-	public Date getLastVendorUpdateApprovedDate() {
-		return this.lastVendorUpdateApprovedDate;
+	public Date getLastSubmitDts() {
+		return this.lastSubmitDts;
 	}
 
-	public void setLastVendorUpdateApprovedDate(Date lastVendorUpdateApprovedDate) {
-		this.lastVendorUpdateApprovedDate = lastVendorUpdateApprovedDate;
+	public void setLastSubmitDts(Date lastSubmitDts) {
+		this.lastSubmitDts = lastSubmitDts;
 	}
 
 	public Date getLastUpdateDts()

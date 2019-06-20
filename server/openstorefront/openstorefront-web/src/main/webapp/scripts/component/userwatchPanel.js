@@ -36,7 +36,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 				dateFormat: 'c'
 			},
 			{
-				name: 'lastVendorUpdateApprovedDate',
+				name: 'lastSubmitDts',
 				type:	'date',
 				dateFormat: 'c'
 			},
@@ -59,28 +59,24 @@ Ext.define('OSF.component.UserWatchPanel', {
 	columns: [
 		{ text: 'Entry', dataIndex: 'componentName', flex: 1, minWidth: 200, 
 			renderer: function(value, meta, record) {
-				if (record.get('lastVendorUpdateApprovedDate') > record.get('lastViewDts')) {
+				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
 					return '<span class="label-text-bold">' + value + '</span><span class="updated-watch text-success"> UPDATED </span>';
 				} else {
 					return '<span class="label-text-bold">' + value + '</span>';
 				}
 			}
 		},	
-		{ text: 'Last Vendor Update Approved', align: 'center', dataIndex: 'lastVendorUpdateApprovedDate', width: 230,
+		{ text: 'Last Vendor Update', align: 'center', dataIndex: 'lastSubmitDts', width: 230,
 			renderer: function(value, meta, record) {
-				// console.log('what triggered this?');
-				if (record.get('lastVendorUpdateApprovedDate') > record.get('lastViewDts')) {
+				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
 					meta.tdCls = 'alert-success';
 				}
-				// console.log("debuging renderer functions, values value:",value,"meta: ",meta, "record: ",record)
 				return Ext.util.Format.date(value, 'm/d/y H:i:s');
 			}
 		},
-		{ text: 'Entry Last Update Date', align: 'center', dataIndex: 'lastUpdateDts', width: 200,
+		{ text: 'Vendor Update Approved Date', align: 'center', dataIndex: 'lastUpdateDts', width: 200,
 			renderer: function(value, meta, record) {
-				// console.log("Entry Last Update Date column's listener was called!--")
-				// console.log("debuging renderer functions, values value:",value,"meta: ",meta, "record: ",record)
-				if (record.get('lastVendorUpdateApprovedDate') > record.get('lastViewDts')) {
+				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
 					meta.tdCls = 'alert-success';
 				}
 				return Ext.util.Format.date(value, 'm/d/y H:i:s');
@@ -93,7 +89,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 		},
 		{ text: 'Send Email Notification', align: 'center', dataIndex: 'notifyFlg', width: 200,
 			renderer: function(value, meta, record) {
-				if (value) {//note to self: change the bool vale of what the server is sending for this here to reflect the promoting of 'lastvendorupdateaproved'
+				if (value) {
 					meta.tdCls = 'alert-success';
 					return '<i class="fa fa-lg fa-check"></i>';
 				} else {
