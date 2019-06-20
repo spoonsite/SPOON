@@ -56,7 +56,7 @@
 							dateFormat: 'c'
 						},
 						{
-							name: 'lastVendorUpdateApproved',
+							name: 'lastSubmitDts',
 							type:	'date',
 							dateFormat: 'c'
 						},
@@ -109,18 +109,20 @@
 								}
 							}
 						},	
-						{ text: 'Last Vendor Update Approved Date', align: 'center', dataIndex: 'lastVendorUpdateApproved', width: 200,
+						{ text: 'Last Vendor Update', align: 'center', dataIndex: 'lastSubmitDts', width: 200,
 							renderer: function(value, meta, record) {
-								console.log('what triggered this?');
-								// if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
-								// 	//meta.tdCls = 'alert-success';
-									
-								// }
-								console.log("debuging renderer functions, values value:",value,"meta: ",meta, "record: ",record)
+								
+								// Check Last Vendor Update Date for existance, add green-bg class if later than user view
+								if(!value || value == 'undefined' || value == null){
+									return "Imported / NA";
+								}
+								 else if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
+									meta.tdCls = 'alert-success';
+								}
 								return Ext.util.Format.date(value, 'm/d/y H:i:s');
 							}
 						},
-						{ text: 'Entry Last Update Date', align: 'center', dataIndex: 'lastUpdateDts', width: 200,
+						{ text: 'Vendor Update Approved And Published', align: 'center', dataIndex: 'lastUpdateDts', width: 200,
 							renderer: function(value, meta, record) {
 								if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
 									meta.tdCls = 'alert-success';
