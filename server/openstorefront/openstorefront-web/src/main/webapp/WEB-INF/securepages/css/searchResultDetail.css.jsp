@@ -144,6 +144,20 @@ limitations under the License.
 	color: rgba(68,30,90,.6) !important;
 }
 
+.details-date-info {
+	font-size: 12px;
+	color:#555555
+}
+
+.details-org-info {
+	font-size: 12px;
+	color:#404040
+}
+
+.contact-vendor {
+	text-decoration: underline;
+}
+
 .review-summary-rating {
 	font-size: 20px;
 }

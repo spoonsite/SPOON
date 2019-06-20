@@ -227,11 +227,11 @@
 							'<div class="details-title-info" style="margin: 8px 0;">',
 							'	{[this.partType(values.attributes)]}',
 							'</div>',
-							'<div class="details-title-info">',							
+							'<div class="details-org-info">',
 							'Organization: <b><a href="#" class="a.details-table" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="releaseDate"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
 							'<div class="details-title-info" style="margin: 8px 0;">',
-							'<div style="font-weight: bold; color: #551A8B;">{[this.contactVendor(values.contacts)]}</div>',
+							'<div class="a.details-table contact-vendor">{[this.contactVendor(values.contacts)]}</div>',
 							'</div>',
 							'  <tpl for="attributes">',
 							'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>',
@@ -271,12 +271,12 @@
 								itemId: 'updatedInfo',
 								dock: 'bottom',
 								tpl: new Ext.XTemplate(
-									'<span class="details-title-info" style="font-size: 10px">' +
-										'Last Update by Vendor Approved: ' +
-										'<b>{[Ext.util.Format.date(values.approvedDate, "m/d/y H:i:s T")]}</b>' +
+									'<span class="details-date-info">' +
+										'<b>Last Vendor Update Provided: </b>' +
+										'{[Ext.util.Format.date(values.approvedDate, "m/d/y")]}' +
 										'<br>' +
-										'Last System Update: ' +
-										'<b>{[Ext.util.Format.date(values.lastActivityDts, "m/d/y H:i:s T")]}</b>' +
+										'<b>Last System Update: </b>' +
+										'{[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}' +
 											'<tpl if="securityMarkingType">' +
 												'<br>' +
 												'Highest Classification: ' +
