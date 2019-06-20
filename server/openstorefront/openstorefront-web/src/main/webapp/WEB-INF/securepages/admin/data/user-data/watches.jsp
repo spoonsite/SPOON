@@ -30,14 +30,6 @@
 			
 			var activeRequests = 0;
 	
-			/**
-			 * 
-			 * Note to self: The tricky part here, on the admin version of this page, is gettting te Green UPDATED text to only 
-			 * focus on the Last Vendor Update APproved column, and then get the email to be triggered by that instead of the Last System Update .
-			 * 
-			 * 
-			/
-
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
 				
