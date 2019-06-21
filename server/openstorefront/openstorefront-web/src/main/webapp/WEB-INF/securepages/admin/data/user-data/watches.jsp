@@ -104,7 +104,7 @@
 						{ text: 'Last Vendor Update', align: 'center', dataIndex: 'lastSubmitDts', width: 200,
 							renderer: function(value, meta, record) {
 								
-								// Check Last Vendor Update Date for existance, add green-bg class if later than user view
+								// Check Last Vendor Update Date exists, if the date is later than last user view, add class to grab attention/show green bg
 								if(!value || value == 'undefined' || value == null){
 									return "Imported / NA";
 								}
