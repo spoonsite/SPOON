@@ -273,7 +273,7 @@
 								tpl: new Ext.XTemplate(
 									'<span class="details-date-info">' +
 										'<b>Last Vendor Update Provided: </b>' +
-										'{[Ext.util.Format.date(values.approvedDate, "m/d/y")]}' +
+										'{[Ext.util.Format.date(values.lastSubmitDts, "m/d/y")]}' +
 										'<br>' +
 										'<b>Last System Update: </b>' +
 										'{[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}' +

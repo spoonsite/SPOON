@@ -1282,7 +1282,7 @@
 				{ text: 'Vitals', section: 'attributes', display: false },
 				{ text: 'Tags', section: 'tags', display: false },
 				{ text: 'Average User Rating', section: 'rating', display: false },
-				{ text: 'Last Vendor Update Approved', section: 'approve', display: true },
+				{ text: 'Last Vendor Update', section: 'approve', display: true },
 				{ text: 'Relevance', section: 'searchscore', display: true },
 				{ text: 'Breadcrumbs', section: 'breadcrumbs', display: true }
 			];			
@@ -1522,7 +1522,7 @@
 				'	</tpl>',
 				'  <br>',
 				'  <div class="searchresults-item-update details-date-info">',
-				'    <tpl if="show.approve"> <b>Last Vendor Update Approved:</b> {[Ext.util.Format.date(values.approvedDts, "m/d/y")]}<br></tpl>',
+				'    <tpl if="show.approve"> <b>Last Vendor Update:</b> {[Ext.util.Format.date(values.lastSubmitDts, "m/d/y")]}<br></tpl>',
 				'    <tpl if="show.update"> <b>Last Updated by System:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}<br></tpl>',
 				'    <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl>',
 				'    <span style="float: right">',
@@ -1697,7 +1697,7 @@
 											}											
 										},
 										{
-											label: 'Last Vendor Update Approved (Newest)',
+											label: 'Last Vendor Update (Newest)',
 											field: 'approvedDts',
 											fieldCode: 'approvedDts',
 											dir: 'DESC',
@@ -1712,7 +1712,7 @@
 											}											
 										},
 										{
-											label: 'Last Vendor Update Approval (Oldest)',
+											label: 'Last Vendor Update (Oldest)',
 											field: 'approvedDts',
 											fieldCode: 'approvedDts-desc',
 											dir: 'ASC',
