@@ -54,7 +54,6 @@ jstl	CDDL 1.0
 slf4j-jdk14	MIT
 jersey	CDDL 1.1/GPL V2 class path exception which is compatible with GPL V3
 jsoup	MIT
-solr-solrj Apache V2
 opencsv	Apache V2
 shiro	Apache V2
 commons-beanutils	Apache V2
