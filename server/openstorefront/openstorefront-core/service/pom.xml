@@ -277,13 +277,7 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jdk14</artifactId>
 			<version>1.7.13</version>
-		</dependency>		
-		<dependency>
-			<groupId>org.apache.solr</groupId>
-			<artifactId>solr-solrj</artifactId>			 
-			<version>6.1.0</version>
-			<type>jar</type>			  
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.codemonkey.simplejavamail</groupId>
 			<artifactId>simple-java-mail</artifactId>
