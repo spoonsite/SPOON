@@ -299,7 +299,6 @@ public class ComponentSearchView
 		this.lastSubmitDts = lastSubmitDts;
 	}
 
-
 	public void setReleaseDate(Date releaseDate)
 	{
 		this.releaseDate = releaseDate;
