@@ -17,13 +17,13 @@ package edu.usu.sdl.openstorefront.service.search;
 
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import java.util.Date;
-import org.apache.solr.client.solrj.beans.Field;
 
 /**
  *
  * @author gbagley
+ * ElasticsearchComponentModel
  */
-public class SolrComponentModel
+public class ElasticsearchComponentModel
 {
 
 	public static final String ID_FIELD = "id";
@@ -35,83 +35,83 @@ public class SolrComponentModel
 
 	public static final String FIELD_SEARCH_WEIGHT = "searchWeight";
 
-	@Field
+	// @Field
 	private String id;
 
 	private String componentId;
 
-	@Field("isComponentSearch_b_is")
+	// @Field("isComponentSearch_b_is")
 	private Boolean isComponent;
 
-	@Field("title")
+	// @Field("title")
 	private String name;
 
-	@Field("content_text")
+	// @Field("content_text")
 	private String description;
 
-	@Field("content_tags")
+	// @Field("content_tags")
 	private String tags;
 
-	@Field("content_raw")
+	// @Field("content_raw")
 	private String attributes;
 
-	@Field("articleHtml_text")
+	// @Field("articleHtml_text")
 	private String articleHtml;
 
 	private String queryString;
 
 	private String guid;
 
-	@Field("organization_s_is")
+	// @Field("organization_s_is")
 	private String organization;
 
 	private Date releaseDate;
 
-	@Field("modified")
+	// @Field("modified")
 	private Date updateDts;
 
 	private String version;
 
-	@Field("idInt_i_is")
+	// @Field("idInt_i_is")
 	private int idInt;
 
-	@Field("name_s_is")
+	// @Field("name_s_is")
 	private String nameString;
 
-	@Field("componentType_s_is")
+	// @Field("componentType_s_is")
 	private String componentType;
 
-	@Field("datasource_s_is")
+	// @Field("datasource_s_is")
 	private String dataSource;
 
-	@Field("datasensitivy_s_is")
+	// @Field("datasensitivy_s_is")
 	private String dataSensitivity;
 
 	private int searchWeight;
 	private float queryScore;
 
-	public SolrComponentModel()
+	public ElasticsearchComponentModel()
 	{
 	}
 
-	public static SolrComponentModel fromComponentSearchView(ComponentSearchView view)
+	public static ElasticsearchComponentModel fromComponentSearchView(ComponentSearchView view)
 	{
-		SolrComponentModel solrComponentModel = new SolrComponentModel();
+		ElasticsearchComponentModel ElasticsearchComponentModel = new ElasticsearchComponentModel();
 
-		solrComponentModel.setId(view.getComponentId());
-		solrComponentModel.setComponentId(view.getComponentId());
-		solrComponentModel.setDescription(view.getDescription());
-		solrComponentModel.setName(view.getName());
-		solrComponentModel.setOrganization(view.getOrganization());
-		solrComponentModel.setVersion(view.getVersion());
-		solrComponentModel.setReleaseDate(view.getReleaseDate());
-		solrComponentModel.setUpdateDts(view.getUpdateDts());
-		solrComponentModel.setGuid(view.getGuid());
-		solrComponentModel.setDataSource(view.getDataSource());
-		solrComponentModel.setDataSensitivity(view.getDataSensitivity());
-		solrComponentModel.setComponentType(view.getComponentType());
+		ElasticsearchComponentModel.setId(view.getComponentId());
+		ElasticsearchComponentModel.setComponentId(view.getComponentId());
+		ElasticsearchComponentModel.setDescription(view.getDescription());
+		ElasticsearchComponentModel.setName(view.getName());
+		ElasticsearchComponentModel.setOrganization(view.getOrganization());
+		ElasticsearchComponentModel.setVersion(view.getVersion());
+		ElasticsearchComponentModel.setReleaseDate(view.getReleaseDate());
+		ElasticsearchComponentModel.setUpdateDts(view.getUpdateDts());
+		ElasticsearchComponentModel.setGuid(view.getGuid());
+		ElasticsearchComponentModel.setDataSource(view.getDataSource());
+		ElasticsearchComponentModel.setDataSensitivity(view.getDataSensitivity());
+		ElasticsearchComponentModel.setComponentType(view.getComponentType());
 
-		return solrComponentModel;
+		return ElasticsearchComponentModel;
 	}
 
 	public String getId()
