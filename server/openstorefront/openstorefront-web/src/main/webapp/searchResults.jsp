@@ -1522,7 +1522,11 @@
 				'	</tpl>',
 				'  <br>',
 				'  <div class="searchresults-item-update details-date-info">',
-				'    <tpl if="show.approve"> <b>Last Vendor Update:</b> {[Ext.util.Format.date(values.lastSubmitDts, "m/d/y")]}<br></tpl>',
+				'    <tpl if="show.approve"> <b>Last Vendor Update:</b>',
+							// Imported entries lack lastSubmitDts, replace w/ lastApprovedDts
+				'		<tpl if="values.lastSubmitDts">{[Ext.util.Format.date(values.lastSubmitDts, "m/d/y")]}',
+				'		<tpl else>{[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl><br>',
+				'	 </tpl>',
 				'    <tpl if="show.update"> <b>Last Updated by System:</b> {[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}<br></tpl>',
 				'    <tpl if="show.searchscore && values.searchScore != 0"><b>Relevance:</b> {[Ext.util.Format.percent(values.searchScore)]}</tpl>',
 				'    <span style="float: right">',
