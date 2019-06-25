@@ -182,6 +182,9 @@ public class EntryListingReport
 	 *  Loads information from the component object into LineModel object.
 	 *  (later in other functions this object of the EntryListingReportLineModel class is
 	 * 	 used to load information into the user's view.)
+	 * 	This function maps information from the Component to the EntryListingReportLineModel
+	 *  object. If you need to change what data is found in the EntryListingReportLineModel
+	 *  object, you should do that here. 
 	 * @param component
 	 * @param viewLinkBase
 	 * @param evalMap
@@ -199,8 +202,9 @@ public class EntryListingReport
 		);
 		lineModel.setEntryType(entryType);
 
+		// Set time/date properties
+		lineModel.setLastSubmitDts(component.getSubmittedDts());
 		lineModel.setLastUpdatedDts(component.getLastActivityDts());
-
 		lineModel.setlastVendorUpdateApprovedDate(component.getApprovedDts());
 
 		String name = ConfluenceClient.confluenceEscapeCharater(component.getName());
