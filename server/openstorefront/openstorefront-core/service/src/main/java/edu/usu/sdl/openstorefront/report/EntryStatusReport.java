@@ -98,6 +98,7 @@ public class EntryStatusReport
 			detailModel.setName(component.getName());
 			detailModel.setCreateUser(component.getCreateUser());
 			detailModel.setCreateDts(component.getCreateDts());
+			detailModel.setLastSubmitDate(component.getSubmittedDts());
 			detailModel.setLastVendorUpdateApproveDate(component.getApprovedDts());
 			detailModel.setLastSystemUpdDate(component.getLastActivityDts());
 			String description = StringProcessor.ellipseString(StringProcessor.stripHtml(component.getDescription()), MAX_DESCRIPTION_SIZE);
@@ -367,7 +368,7 @@ public class EntryStatusReport
 
 		cvsGenerator.addLine(sectionName);
 		
-		// If this is the Entries Create section, show an extra two columns, "Last Vendor Update Approved" and
+		// If this is the Entries Create section, show an extra three columns, "Last Vendor Update", "Last Vendor Update Approved",
 		// "Last System Update", else dont show those extra columns. The cvsGenerator object does not have support
 		// for anything like a .appendLine, therefore some duplicate code is nessisary. 
 		if ( sectionName == "Entries Created"){
@@ -380,6 +381,7 @@ public class EntryStatusReport
 				"Create Date",
 				"Create User Email",
 				"Create User Organization",
+				"Last Vendor Update",
 				"Last Vendor Update Approved",
 				"Last System Update",
 				submitted ? "Submission Date" : ""
@@ -412,6 +414,7 @@ public class EntryStatusReport
 						sdf.format(detailModel.getCreateDts()),
 						detailModel.getCreateUserEmail(),
 						detailModel.getCreateUserOrganization(),
+						detailModel.getLastSubmitDate(),
 						detailModel.getLastVendorUpdateApproveDate(),
 						detailModel.getLastSystemUpdDate(),
 						submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
