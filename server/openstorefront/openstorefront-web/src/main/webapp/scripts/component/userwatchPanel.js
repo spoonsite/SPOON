@@ -69,7 +69,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 		{ text: 'Last Vendor Update', align: 'center', dataIndex: 'lastSubmitDts', width: 230,
 			renderer: function(value, meta, record) {
 				
-				// Check Last Vendor Update Date for existance, add green-bg class if later than user view
+				// Check Last Vendor Update Date @see{Component#SubmittedDts}, add green-bg class if later than user view
 				if(!value || value == 'undefined' || value == null){
 					return "Imported / NA";
 				}
