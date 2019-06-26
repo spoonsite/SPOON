@@ -356,7 +356,7 @@
 						<td>
 							<#----Imported entries lack submittedDts---->
 							<#if line.component.submittedDts?has_content>
-								${line.component.submittedDts?string('MMMM dd, yyyy hh\x3Amm\x3Ass a zzz') }
+								${line.component.submittedDts?string('MMMM dd, yyyy hh\x3Amm\x3Ass a zzz') } <#--\x3A is unicode for ':'-->
 							<#else>
 								Imported? See Last Vendor Update Approved Date.
 							</#if>

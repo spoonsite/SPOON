@@ -343,11 +343,13 @@ public class EntryListingReport
 	}
 
 	/**
-	 * For modularity this function was created, it generates the actual report the user sees in HTMl code string. All the other 'write-' functions above-
-	 * writeHtml, writeConfluenceHtml, writePdf - they all take the HTML document string this generates and then go the extra step of converting html into pdf/
-	 * confluence/etc... 
+	 * This exists for modularity, it generates the actual report the user sees in HTMl code string. All the other 'write-' functions above-
+	 * writeHtml, writeConfluenceHtml, writePdf - they all take the HTML document string this generates and then go the extra step of converting
+	 * html into pdf/confluence/etc... 
 	 * @param reportModel
 	 * @param templateFile
+	 * Path to the .ftl file that contains the actual HTML layout of the report
+	 * 
 	 * @return String of HTML that is used for the actual report the user sees. 
 	 */
 	private String createHtml(EntryListingReportModel reportModel, String templateFile)
