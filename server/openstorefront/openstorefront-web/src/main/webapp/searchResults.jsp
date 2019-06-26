@@ -1523,7 +1523,7 @@
 				'  <br>',
 				'  <div class="searchresults-item-update details-date-info">',
 				'    <tpl if="show.approve"> <b>Last Vendor Update:</b>',
-							// Imported entries lack lastSubmitDts, replace w/ lastApprovedDts
+							// Imported entries lack lastSubmitDts, replace w/ lastApprovedDts @see{Component#submittedDts}
 				'		<tpl if="values.lastSubmitDts">{[Ext.util.Format.date(values.lastSubmitDts, "m/d/y")]}',
 				'		<tpl else>{[Ext.util.Format.date(values.approvedDts, "m/d/y")]}</tpl><br>',
 				'	 </tpl>',

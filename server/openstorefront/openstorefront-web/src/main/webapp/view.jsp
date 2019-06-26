@@ -273,9 +273,9 @@
 								tpl: new Ext.XTemplate(
 									'<span class="details-date-info">' +
 										'<b>Last Vendor Update Provided: </b>' +
-										// Some Entries are Imports, were never touched by a human, thus don't have lastSubmitDts
+										// Some Entries don't have lastSubmitDts @see{Component#submittedDts}
 										'<tpl if="values.lastSubmitDts">{[Ext.util.Format.date(values.lastSubmitDts, "m/d/y")]}' +
-										// Solution: show lastApprovedDate, since that is a rightous subsitute
+										// Solution: show lastApprovedDate instead
 										'<tpl else>{[Ext.util.Format.date(values.approvedDate, "m/d/y")]}</tpl>' +
 										'<br>' +
 										'<b>Last System Update: </b>' +

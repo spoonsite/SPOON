@@ -166,7 +166,7 @@ limitations under the License.
 				<b>Organization:</b> {organization}<br>
 				<tpl for="parents" between="&nbsp; &gt; &nbsp;">{label}</tpl><br>
 				<b>Last Vendor Update:</b>
-					<!-- Parts may not have a user submitted date if they were imported and directly approved. -->
+					<!-- Parts may not have a user submitted date if they were imported and directly approved. @see{Component#submittedDts} -->
 					<tpl if="lastSubmitDts">{lastSubmitDts:date("m/d/Y H:i:s T")}<tpl else>Imported / NA</tpl><br> 
 				<b>Last Activity Date by System:</b> {lastActivityDts:date("m/d/Y H:i:s T")}<br>
 				<b>Last Vendor Update Approved Date:</b> {approvedDate:date("m/d/Y H:i:s T")}<br>
