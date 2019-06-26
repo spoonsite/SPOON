@@ -567,10 +567,8 @@ public abstract class ComponentExtendedSubResourceExt
 	public Response createComponentComment(
 			@PathParam("id")
 			@RequiredParam String componentId,
-			@RequiredParam ComponentComment comment,
-			Boolean willSendEmail)
+			@RequiredParam ComponentComment comment)
 	{
-		willSendEmail = true;
 		Component component = new Component();
 		component.setComponentId(componentId);
 		component = component.find();
@@ -588,10 +586,11 @@ public abstract class ComponentExtendedSubResourceExt
 			}
 
 			String vendor = component.getOwnerUser();
-			if (willSendEmail && vendor != null){
+			if (comment.getWillSendEmail() && vendor != null) {
 				Email email = MailManager.newEmail();
 				email.setSubject("SPOON Entry Change Request Approved");
-				email.setText("Your entry change request for " + component.getName() + ", on spoonsite.com, has been approved by a system administrator. ");
+				email.setText("Your entry change request for " + component.getName()
+						+ ", on spoonsite.com, has been approved by a system administrator. ");
 				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
 				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
 				MailManager.send(email, true);

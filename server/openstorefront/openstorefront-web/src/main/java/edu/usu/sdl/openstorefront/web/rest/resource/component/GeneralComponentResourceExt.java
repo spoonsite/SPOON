@@ -755,10 +755,11 @@ public abstract class GeneralComponentResourceExt
 			Set<String> permissions = SecurityUtil.getUserContext().permissions();
 			Boolean hasPermission = permissions.contains(SecurityPermission.ADMIN_ENTRY_UPDATE);
 			String vendor = updatedComponent.getOwnerUser();
-			if(hasPermission && vendor != null){
+			if (hasPermission && vendor != null) {
 				Email email = MailManager.newEmail();
 				email.setSubject("SPOON Entry Updated");
-				email.setText("Your entry, " + updatedComponent.getName() + ", on spoonsite.com, has been updated by a system administrator. ");
+				email.setText("Your entry, " + updatedComponent.getName()
+						+ ", on spoonsite.com, has been updated by a system administrator. ");
 				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
 				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
 				MailManager.send(email, true);
