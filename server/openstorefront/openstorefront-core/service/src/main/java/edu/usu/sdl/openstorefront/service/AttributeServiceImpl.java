@@ -109,6 +109,9 @@ public class AttributeServiceImpl
 		if (element != null) {
 			attributeCodes = (List<AttributeCode>) element.getObjectValue();
 		} else {
+			// This may pull all of records (right now we are try to cache everything to speed lookup
+			// throughout the system.  Later, you can consider improving effeciency by determining the
+			// set of data really need to be gathered.
 			attributeCodes = persistenceService.queryByExample(new AttributeCode());
 			element = new Element(OSFCacheManager.ALLCODE_KEY, attributeCodes);
 			OSFCacheManager.getAttributeCodeAllCache().put(element);
@@ -135,9 +138,10 @@ public class AttributeServiceImpl
 		}
 		return false;
 	}
-	
-	@Override 
-	public String crushGeneralNumericString(String inputNumber){
+
+	@Override
+	public String crushGeneralNumericString(String inputNumber)
+	{
 		try {
 			// Try to cast... if this fails then catch the error.
 			BigDecimal bigDecimal = new BigDecimal(inputNumber);
@@ -155,25 +159,25 @@ public class AttributeServiceImpl
 
 		Boolean magnitudeIsGreaterThanOne = false;
 		int numberLength = inputNumber.length();
-		
+
 		BigDecimal bigDecimalCast = new BigDecimal(inputNumber);
 		BigDecimal oneValue = new BigDecimal(1);
-		
+
 		int result = bigDecimalCast.abs().compareTo(oneValue);
 		// result =  0; if bigDecimalCast and oneValue are equal.
 		// result =  1; if bigDecimalCast is greater than oneValue.
 		// result = -1; if bigDecimalCast is less than oneValue.
-		
+
 		// Is bigDecimalCast greater than one?
-		if(result >= 0){
+		if (result >= 0) {
 			magnitudeIsGreaterThanOne = true;
 		}
-		
-		if(inputNumberIsScientificNotation){
+
+		if (inputNumberIsScientificNotation) {
 			inputNumber = bigDecimalCast.toPlainString();
 			numberLength = inputNumber.length();
 		}
-		
+
 		if (magnitudeIsGreaterThanOne) {
 			if (inputNumber.indexOf('.') != -1) {
 				if ((numberLength - inputNumber.indexOf('.')) > 5) {
@@ -195,7 +199,7 @@ public class AttributeServiceImpl
 				break;
 			}
 			if (numberLength - firstNonZeroIndex > 5) {
-				BigDecimal bd = new BigDecimal(Double.parseDouble(inputNumber.substring(0, firstNonZeroIndex + 4))).setScale(firstNonZeroIndex+1, RoundingMode.HALF_UP);
+				BigDecimal bd = new BigDecimal(Double.parseDouble(inputNumber.substring(0, firstNonZeroIndex + 4))).setScale(firstNonZeroIndex + 1, RoundingMode.HALF_UP);
 				return Double.toString(bd.doubleValue());
 			}
 			return inputNumber;

@@ -84,7 +84,12 @@ public class WorkPlanLinkView
 			view.setLinkName(service.getComponentService().getComponentName(workPlanLink.getComponentId()));
 			view.setComponentType(service.getComponentService().getComponentTypeForComponent(workPlanLink.getComponentId()));
 			view.setComponentTypeDescription(TranslateUtil.translateComponentType(view.getComponentType()));
-			view.setComponentTypeFullDescription(service.getComponentService().getComponentTypeParentsString(view.getComponentType(), false));
+			if (view.getComponentType() != null) {
+				view.setComponentTypeFullDescription(service.getComponentService().getComponentTypeParentsString(view.getComponentType(), false));
+			} else {
+				//worklink may out of sync at this point
+				view.setComponentTypeFullDescription(view.getComponentTypeDescription());
+			}
 		} else if (workPlanLink.getUserSubmissionId() != null) {
 			UserSubmission userSubmission = new UserSubmission();
 			userSubmission.setUserSubmissionId(workPlanLink.getUserSubmissionId());

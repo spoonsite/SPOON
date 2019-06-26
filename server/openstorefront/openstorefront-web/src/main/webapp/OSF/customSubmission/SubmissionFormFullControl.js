@@ -517,9 +517,8 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						}
 					}
 				});
+				
 			}
 		}
-		
-	}	
-	
+	}
 });

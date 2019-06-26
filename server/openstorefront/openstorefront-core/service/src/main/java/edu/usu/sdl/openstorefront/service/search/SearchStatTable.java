@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.search;
 
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
@@ -46,19 +47,23 @@ import net.sf.ehcache.Element;
  */
 public class SearchStatTable
 {
+
 	private final static Logger LOG = Logger.getLogger(SearchStatTable.class.getName());
 	private Map<String, List<ComponentAttribute>> attributeMap = new HashMap<>();
 	private Map<String, String> organizationMap = new HashMap<>();
 	private Map<String, List<ComponentTag>> tagMap = new HashMap<>();
 
 	private static final String CACHE_KEY = "SearchStatTable";
-	
-	public SearchStatTable() {
+	private static final int MAX_ATTRIBUTE_QUERY_RESULTS = 5000;
+	private static final int MAX_TAG_QUERY_RESULTS = 1000;
+
+	public SearchStatTable()
+	{
 		// pull hashMaps from the cache
 		Cache appCache = OSFCacheManager.getApplicationCache();
 		Element element = appCache.get(CACHE_KEY);
 		if (element != null) {
-			SearchStatTable cachedTable = (SearchStatTable)element.getObjectValue();
+			SearchStatTable cachedTable = (SearchStatTable) element.getObjectValue();
 			this.attributeMap = cachedTable.getAttributeMap();
 			this.organizationMap = cachedTable.getOrganizationMap();
 			this.tagMap = cachedTable.getTagMap();
@@ -66,19 +71,22 @@ public class SearchStatTable
 			index();
 		}
 	}
-	
-	public SearchStatTable(Map<String, List<ComponentAttribute>> attributeMap, Map<String, List<ComponentTag>> tagMap) {
+
+	public SearchStatTable(Map<String, List<ComponentAttribute>> attributeMap, Map<String, List<ComponentTag>> tagMap)
+	{
 		this.attributeMap = attributeMap;
 		this.tagMap = tagMap;
 	}
-	
-	public SearchStatTable(Map<String, List<ComponentAttribute>> attributeMap, Map<String, List<ComponentTag>> tagMap, Map<String, String> organizationMap) {
+
+	public SearchStatTable(Map<String, List<ComponentAttribute>> attributeMap, Map<String, List<ComponentTag>> tagMap, Map<String, String> organizationMap)
+	{
 		this.attributeMap = attributeMap;
 		this.tagMap = tagMap;
 		this.organizationMap = organizationMap;
 	}
-	
-	public SearchStatTable getTable() {
+
+	public SearchStatTable getTable()
+	{
 		Cache appCache = OSFCacheManager.getApplicationCache();
 		Element element = appCache.get(CACHE_KEY);
 		if (element == null) {
@@ -87,48 +95,86 @@ public class SearchStatTable
 		}
 		return (SearchStatTable) element.getObjectValue();
 	}
+
 	/**
-	 * Creates an index of tags, attributes, and organizations.
-	 * The StatTable is then stored in the applicationCache.
-	 * To be called with the search engine index.
+	 * Creates an index of tags, attributes, and organizations. The StatTable is
+	 * then stored in the applicationCache. To be called with the search engine
+	 * index.
 	 */
 	public void index()
 	{
-		if(tagMap.isEmpty()) {
+		boolean changed = false;
+
+		Service service = ServiceProxyFactory.getServiceProxy();
+
+		if (tagMap.isEmpty()) {
+			//window query 0 to total 1000 at a time
+
 			ComponentTag tagExample = new ComponentTag();
 			tagExample.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-			List<ComponentTag> tags = tagExample.findByExample();
-			tagMap = buildMap(tags, ComponentTag::getComponentId);
+
+			long maxTags = service.getPersistenceService().countByExample(tagExample);
+
+			int startIndex = 0;
+			while (startIndex < maxTags) {
+				QueryByExample<ComponentTag> queryByExample = new QueryByExample<>(tagExample);
+				queryByExample.setFirstResult(startIndex);
+				queryByExample.setMaxResults(MAX_ATTRIBUTE_QUERY_RESULTS);
+				List<ComponentTag> tags = service.getPersistenceService().queryByExample(queryByExample);
+				tagMap.putAll(buildMap(tags, ComponentTag::getComponentId));
+
+				startIndex += MAX_ATTRIBUTE_QUERY_RESULTS;
+			}
+
+			//List<ComponentTag> tags = tagExample.findByExample();
+			//tagMap = buildMap(tags, ComponentTag::getComponentId);
+			changed = true;
 		}
 
 		if (attributeMap.isEmpty()) {
+			//window query 0 to total 5000 at a time
 			ComponentAttribute attributeExample = new ComponentAttribute();
 			attributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-			List<ComponentAttribute> attributes = attributeExample.findByExample();
-			attributeMap = buildMap(attributes, ComponentAttribute::getComponentId);
+			long maxAttributes = service.getPersistenceService().countByExample(attributeExample);
+
+			int startIndex = 0;
+			while (startIndex < maxAttributes) {
+				QueryByExample<ComponentAttribute> queryByExample = new QueryByExample<>(attributeExample);
+				queryByExample.setFirstResult(startIndex);
+				queryByExample.setMaxResults(MAX_ATTRIBUTE_QUERY_RESULTS);
+				List<ComponentAttribute> attributes = service.getPersistenceService().queryByExample(queryByExample);
+				attributeMap.putAll(buildMap(attributes, ComponentAttribute::getComponentId));
+
+				startIndex += MAX_ATTRIBUTE_QUERY_RESULTS;
+			}
+			changed = true;
 		}
-		
+
 		if (organizationMap.isEmpty()) {
 			Component componentExample = new Component();
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 			componentExample.setApprovalState(ApprovalStatus.APPROVED);
 			List<Component> components = componentExample.findByExample(); // for organizations -- get approved status
-			
-			for(Component component : components) {
+
+			for (Component component : components) {
 				organizationMap.put(component.getComponentId(), component.getOrganization());
 			}
+			changed = true;
 		}
 
-		Element element = new Element(CACHE_KEY, this);
-		Cache appCache = OSFCacheManager.getApplicationCache();
-		appCache.remove(CACHE_KEY);
-		OSFCacheManager.getApplicationCache().put(element);	
+		if (changed) {
+			Element element = new Element(CACHE_KEY, this);
+			Cache appCache = OSFCacheManager.getApplicationCache();
+			appCache.remove(CACHE_KEY);
+			OSFCacheManager.getApplicationCache().put(element);
+		}
 	}
 
-	private <T> Map<String, List<T>> buildMap(List<T> components, Function<T, String> getComponentId) {
+	private <T> Map<String, List<T>> buildMap(List<T> components, Function<T, String> getComponentId)
+	{
 		Map<String, List<T>> result = new HashMap<>();
-		for(T component : components) {
-			if(result.containsKey(getComponentId.apply(component))) {
+		for (T component : components) {
+			if (result.containsKey(getComponentId.apply(component))) {
 				List<T> tempList = result.get(getComponentId.apply(component));
 				tempList.add(component);
 				result.put(getComponentId.apply(component), tempList);
@@ -152,19 +198,19 @@ public class SearchStatTable
 	public Map<String, ResultAttributeStat> getAttributeStats(List<String> components)
 	{
 		Map<String, ResultAttributeStat> resultMap = new HashMap<>();
-		
-		for(String component : components) {
+
+		for (String component : components) {
 			List<ComponentAttribute> attributes = attributeMap.get(component);
 			if (attributes != null) {
 				for (ComponentAttribute attribute : attributes) {
 					// for every attribute store the stat
 					// the codes(i.e. attribute values) are stored in a separate map inside ResultAttributeStat
 					String key = attribute.getComponentAttributePk().getAttributeType(); //gather stats by attributeType
-					if(resultMap.containsKey(key)) {
+					if (resultMap.containsKey(key)) {
 						ResultAttributeStat attrStat = resultMap.get(key);
 						Map<String, ResultCodeStat> codeMap = attrStat.getCodeMap();
 
-						attrStat.setCodeMap(updateCodeStatMap(codeMap, attribute));	
+						attrStat.setCodeMap(updateCodeStatMap(codeMap, attribute));
 						attrStat.incrementCount();
 					} else {
 						// create a new attribute stat
@@ -185,7 +231,7 @@ public class SearchStatTable
 
 						// for every attribute code (i.e. attribute value) store the result in the map
 						Map<String, ResultCodeStat> codeMap = attrStat.getCodeMap();
-						attrStat.setCodeMap(updateCodeStatMap(codeMap, attribute));	
+						attrStat.setCodeMap(updateCodeStatMap(codeMap, attribute));
 
 						resultMap.put(key, attrStat);
 					}
@@ -201,7 +247,7 @@ public class SearchStatTable
 		Service service = ServiceProxyFactory.getServiceProxy();
 		String attributeCode = attribute.getComponentAttributePk().getAttributeCode();
 		String attributeType = attribute.getComponentAttributePk().getAttributeType();
-		
+
 		ResultCodeStat codeStat;
 		if (codeMap.containsKey(attributeCode)) {
 			codeStat = codeMap.get(attributeCode);
@@ -215,15 +261,15 @@ public class SearchStatTable
 
 			AttributeCode attrCode = service.getAttributeService().findCodeForType(codePk);
 
-			if(attrCode == null){
-				codeStat.setCodeLabel("LabelNotAvailable");	
-				LOG.log(Level.WARNING, () ->
-					"Could not find Code Label for Component: " +
-					" Component Code: " + attribute.getComponentAttributePk().getAttributeCode() + 
-					" Component Type: " + attribute.getComponentAttributePk().getAttributeType()
+			if (attrCode == null) {
+				codeStat.setCodeLabel("LabelNotAvailable");
+				LOG.log(Level.WARNING, ()
+						-> "Could not find Code Label for Component: "
+						+ " Component Code: " + attribute.getComponentAttributePk().getAttributeCode()
+						+ " Component Type: " + attribute.getComponentAttributePk().getAttributeType()
 				);
 			} else {
-				codeStat.setCodeLabel(attrCode.getLabel());					
+				codeStat.setCodeLabel(attrCode.getLabel());
 			}
 
 			codeMap.put(attributeCode, codeStat);
@@ -231,14 +277,14 @@ public class SearchStatTable
 
 		return codeMap;
 	}
-	
+
 	public List<ResultOrganizationStat> getOrganizationStats(List<String> components)
 	{
 		Map<String, ResultOrganizationStat> resultMap = new HashMap<>();
-		
-		for(String component : components) {
+
+		for (String component : components) {
 			String key = organizationMap.get(component);
-			if(resultMap.containsKey(key)) {
+			if (resultMap.containsKey(key)) {
 				ResultOrganizationStat orgStat = resultMap.get(key);
 				orgStat.incrementCount();
 			} else {
@@ -248,19 +294,19 @@ public class SearchStatTable
 			}
 		}
 
-		return new ArrayList<ResultOrganizationStat>(resultMap.values());
+		return new ArrayList<>(resultMap.values());
 	}
-	
+
 	public List<ResultTagStat> getTagStats(List<String> components)
 	{
 		Map<String, ResultTagStat> resultMap = new HashMap<>();
-		
-		for(String component : components) {
+
+		for (String component : components) {
 			List<ComponentTag> tags = tagMap.get(component);
 			if (tags != null) {
 				for (ComponentTag tag : tags) {
 					String key = tag.getText();
-					if(resultMap.containsKey(key)) {
+					if (resultMap.containsKey(key)) {
 						resultMap.get(key).incrementCount();
 					} else {
 						ResultTagStat tagStat = new ResultTagStat();
@@ -272,7 +318,7 @@ public class SearchStatTable
 			}
 		}
 
-		return new ArrayList<ResultTagStat>(resultMap.values());	
+		return new ArrayList<>(resultMap.values());
 	}
 
 	public Map<String, List<ComponentAttribute>> getAttributeMap()

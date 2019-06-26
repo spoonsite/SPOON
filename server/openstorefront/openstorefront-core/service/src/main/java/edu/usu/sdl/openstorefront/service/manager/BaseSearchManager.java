@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
@@ -78,6 +79,13 @@ public abstract class BaseSearchManager
 	 * @param components
 	 */
 	public abstract void index(List<Component> components);
+
+	/**
+	 * These entities can be indexed more efficiently
+	 *
+	 * @param componentAlls
+	 */
+	public abstract void indexFullComponents(List<ComponentAll> componentAlls);
 
 	/**
 	 * Delete an index by the Index id
