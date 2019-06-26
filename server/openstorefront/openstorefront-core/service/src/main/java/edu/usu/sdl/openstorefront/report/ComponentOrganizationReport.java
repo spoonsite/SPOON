@@ -61,7 +61,9 @@ public class ComponentOrganizationReport
 
 		String restrictionQuery = filterEngine.queryComponentRestriction();
 
-		List<ODocument> documents = service.getPersistenceService().query("Select organization, name, name.toLowerCase() as sortname, securityMarkingType, submittedDts, lastActivityDts, approvedDts, approvalState from " + Component.class.getSimpleName()
+		List<ODocument> documents = service.getPersistenceService().query(
+				"Select organization, name, name.toLowerCase()"
+				+ " as sortname, securityMarkingType, submittedDts, lastActivityDts, approvedDts, approvalState from " + Component.class.getSimpleName()
 				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
 				+ (StringUtils.isNotBlank(restrictionQuery) ? restrictionQuery + " and " : "")
 				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' " + componentFilter + " order by sortname", params);

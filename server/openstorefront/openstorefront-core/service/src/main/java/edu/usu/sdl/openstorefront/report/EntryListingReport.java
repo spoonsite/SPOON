@@ -179,15 +179,18 @@ public class EntryListingReport
 	}
 
 	/**
-	 *  Loads information from the component object into LineModel object.
-	 *  (later in other functions this object of the EntryListingReportLineModel class is
-	 * 	 used to load information into the user's view.)
-	 * 	This function maps information from the Component to the EntryListingReportLineModel
-	 *  object. If you need to change what data is found in the EntryListingReportLineModel
-	 *  object, you should do that here. 
+	 * Loads information from the component object into LineModel object.
+	 *  
 	 * @param component
 	 * @param viewLinkBase
+	 * viewLinkBase is the first half of a url that is intended to help create a url link 
+	 * in the LineModel to a webpage about the component in question. 
+	 * 
 	 * @param evalMap
+	 * evalMap maps Component ID's to lists of Evaluation objects. It is a list of every
+	 * single component on SPOON site that has an evaluation on it, paired with every 
+	 * active evaluation assigned to that component-ID. 
+	 * 
 	 * @return EntryListingReportLineModel
 	 */
 	private EntryListingReportLineModel componentToLineModel(Component component, String viewLinkBase, Map<String, List<Evaluation>> evalMap)

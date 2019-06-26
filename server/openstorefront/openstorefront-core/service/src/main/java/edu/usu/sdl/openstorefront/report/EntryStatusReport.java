@@ -349,16 +349,18 @@ public class EntryStatusReport
 	}
 	
 	/**
-	 * writeDetails function is used in .writeCSV() exensively.
+	 * writeDetails function is used in .writeCSV() extensively.
 	 * 
 	 * @param generator
-	 * Currently it doesn't matter what you pass through this parameter, this funcion defines and uses it's own CSV generator to
-	 * use and does nothing with the parameter passed through to it. Having this parameter here make it extenable for if this report
-	 * needs to be extended to other formats in the future,  however.  
+	 * Currently it doesn't matter what you pass through this parameter, this function defines and uses it's own CSV generator to
+	 * use and does nothing with the parameter passed through to it. Having this parameter here make it extendable for if this report
+	 * needs to be extended to other formats in the future, however.  
+	 * 
 	 * @param sectionName
-	 * Conditional logic has been added  to only write a "Create User Organization","Last Vendor Update Approved" column if the 
-	 * second parameter being passed (the sectionName parameter) is equal to "Entries Created". Those columns are really only needed
-	 * for that particular case. 
+	 * Conditional logic has been added  to only write a "Last Vendor Update", "Last Vendor Update Approved","Last System Update" 
+	 * column if the second parameter being passed (the sectionName parameter) is equal to "Entries Created". Those columns are 
+	 * really only needed for that particular case. 
+	 * 
 	 * @param details
 	 * @param submitted
 	 */
@@ -370,7 +372,7 @@ public class EntryStatusReport
 		
 		// If this is the Entries Create section, show an extra three columns, "Last Vendor Update", "Last Vendor Update Approved",
 		// "Last System Update", else dont show those extra columns. The cvsGenerator object does not have support
-		// for anything like a .appendLine, therefore some duplicate code is nessisary. 
+		// for anything like a .appendLine, therefore some duplicate code is necessary. 
 		if ( sectionName == "Entries Created"){
 			cvsGenerator.addLine(
 				"Name",
@@ -406,32 +408,32 @@ public class EntryStatusReport
 			// If "Entries Created" section, display extra columns.
 			if ( sectionName == "Entries Created"){
 				cvsGenerator.addLine(
-						detailModel.getName(),
-						detailModel.getEntryType(),
-						detailModel.getDescription(),
-						detailModel.getStatus(),
-						detailModel.getCreateUser(),
-						sdf.format(detailModel.getCreateDts()),
-						detailModel.getCreateUserEmail(),
-						detailModel.getCreateUserOrganization(),
-						detailModel.getLastSubmitDate(),
-						detailModel.getLastVendorUpdateApproveDate(),
-						detailModel.getLastSystemUpdDate(),
-						submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
-					);
+					detailModel.getName(),
+					detailModel.getEntryType(),
+					detailModel.getDescription(),
+					detailModel.getStatus(),
+					detailModel.getCreateUser(),
+					sdf.format(detailModel.getCreateDts()),
+					detailModel.getCreateUserEmail(),
+					detailModel.getCreateUserOrganization(),
+					detailModel.getLastSubmitDate(),
+					detailModel.getLastVendorUpdateApproveDate(),
+					detailModel.getLastSystemUpdDate(),
+					submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
+				);
 			}
 			else {
 				cvsGenerator.addLine(
-						detailModel.getName(),
-						detailModel.getEntryType(),
-						detailModel.getDescription(),
-						detailModel.getStatus(),
-						detailModel.getCreateUser(),
-						sdf.format(detailModel.getCreateDts()),
-						detailModel.getCreateUserEmail(),
-						detailModel.getCreateUserOrganization(),
-						submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
-					);
+					detailModel.getName(),
+					detailModel.getEntryType(),
+					detailModel.getDescription(),
+					detailModel.getStatus(),
+					detailModel.getCreateUser(),
+					sdf.format(detailModel.getCreateDts()),
+					detailModel.getCreateUserEmail(),
+					detailModel.getCreateUserOrganization(),
+					submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
+				);
 			}
 		}
 
