@@ -220,7 +220,8 @@ public class UserSubmissionResource
 		if (existing != null) {
 			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS_UPDATE);
 			if (response == null) {
-				ValidationResult validateResult = service.getSubmissionFormService().submitUserSubmissionForApproval(existing);
+				UserSubmission savedSubmission = service.getSubmissionFormService().queueEntry(existing);
+				ValidationResult validateResult = service.getSubmissionFormService().submitUserSubmissionForApproval(savedSubmission);
 				if (!validateResult.valid()) {
 					response = Response.ok(validateResult.toRestError()).build();
 				} else {
