@@ -181,6 +181,7 @@ public class ComponentDetailReport
 				"Entry Name",
 				"Entry Organization",
 				"Entry Description",
+				"Last Vendor Update",
 				"Last Vendor Approved Update",
 				"Last System Update"
 		);
@@ -191,6 +192,7 @@ public class ComponentDetailReport
 					lineModel.getComponent().getName(),
 					lineModel.getComponent().getOrganization(),
 					StringProcessor.stripHtml(lineModel.getComponent().getDescription()),
+					lineModel.getComponent().getSubmittedDts(),
 					lineModel.getComponent().getApprovedDate(),
 					lineModel.getComponent().getLastActivityDts()
 			);

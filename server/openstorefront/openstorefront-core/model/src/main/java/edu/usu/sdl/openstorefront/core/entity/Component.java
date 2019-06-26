@@ -136,6 +136,15 @@ public class Component
 	@APIDescription("Updated when any of the component's related data has changed.  Used for watches.")
 	private Date lastActivityDts;
 
+	/**
+	 * SubmittedDts was meant to be a date that would change every time the user
+	 * 'touched' a component submission/entry. So if the user created a submission
+	 * today, edited it some more tomarrow, then after it was approved, put a 
+	 * change request edit on it next Thursday - then the submittedDts would be 
+	 * set each of those occasions, ending on the time next Thursday. 
+	 * When we mass import entries at once, they are never touched by a user 
+	 * before being approved, hence this can be null. 
+	 */
 	@APIDescription("Indicates a user submission and when it was submitted")
 	private Date submittedDts;
 

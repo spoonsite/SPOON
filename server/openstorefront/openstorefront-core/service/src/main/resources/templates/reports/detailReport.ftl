@@ -343,18 +343,26 @@
 		</#if>
 		
 		<!--Timestamps -->
-		<#if line.component.approvedDate?has_content && reportOptions.displayDates>
+		<#if line.component.lastActivityDts?has_content && reportOptions.displayDates>
 			<h2>Timestamps</h2>
 		
 			<table>
 				<tr>
+					<th>Last Vendor Update</th>
 					<th>Last Vendor Update Approved Date</th>
 					<th>Last System Update Date</th>
-					
 				</tr>
 					<tr style="text-align:center;">
-						<td>${line.component.approvedDate?string('yyyy MMMM dd hh\x3Amm\x3Ass a zzz') }</td> 
-						<td>${line.component.lastActivityDts?string('yyyy MMMM ddd hh\x3Amm\x3Ass a zzz')}</td>
+						<td>
+							<#----Imported entries lack submittedDts---->
+							<#if line.component.submittedDts?has_content>
+								${line.component.submittedDts?string('MMMM dd, yyyy hh\x3Amm\x3Ass a zzz') }
+							<#else>
+								Imported? See Last Vendor Update Approved Date.
+							</#if>
+						</td>
+						<td>${line.component.approvedDate?string('MMMM dd, yyyy hh\x3Amm\x3Ass a zzz') }</td> 
+						<td>${line.component.lastActivityDts?string('MMMM dd, yyyy hh\x3Amm\x3Ass a zzz')}</td>
 					</tr>
 			</table>
 		</#if>

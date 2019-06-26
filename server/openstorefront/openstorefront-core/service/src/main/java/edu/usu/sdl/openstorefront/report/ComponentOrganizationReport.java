@@ -61,7 +61,7 @@ public class ComponentOrganizationReport
 
 		String restrictionQuery = filterEngine.queryComponentRestriction();
 
-		List<ODocument> documents = service.getPersistenceService().query("Select organization, name, name.toLowerCase() as sortname, securityMarkingType, lastActivityDts, approvedDts, approvalState from " + Component.class.getSimpleName()
+		List<ODocument> documents = service.getPersistenceService().query("Select organization, name, name.toLowerCase() as sortname, securityMarkingType, submittedDts, lastActivityDts, approvedDts, approvalState from " + Component.class.getSimpleName()
 				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
 				+ (StringUtils.isNotBlank(restrictionQuery) ? restrictionQuery + " and " : "")
 				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' " + componentFilter + " order by sortname", params);
@@ -94,6 +94,7 @@ public class ComponentOrganizationReport
 			for (ODocument document : orgMap.get(organization)) {
 				EntryOrgDetailModel detailModel = new EntryOrgDetailModel();
 				detailModel.setName(document.field("name"));
+				detailModel.setLastSubmitDts(document.field("submittedDts"));
 				detailModel.setLastActivityDts(document.field("lastActivityDts"));
 				detailModel.setApprovedDts(document.field("approvedDts"));
 				detailModel.setApprovalState(document.field("approvalState"));
@@ -169,6 +170,7 @@ public class ComponentOrganizationReport
 		cvsGenerator.addLine(
 				"Organization",
 				"Entry Name",
+				"Last Vendor Update",
 				"Last Vendor Update Approved Date",
 				"Last System Update",
 				"Approve Status"
@@ -178,7 +180,14 @@ public class ComponentOrganizationReport
 			cvsGenerator.addLine(lineModel.getOrganization());
 
 			for (EntryOrgDetailModel detailModel : lineModel.getEntries()) {
-				cvsGenerator.addLine("",detailModel.getName(),sdf.format(detailModel.getApprovedDts()),sdf.format(detailModel.getLastActivityDts()),detailModel.getApprovalState());
+				cvsGenerator.addLine(
+					"",
+					detailModel.getName(),
+					// Imported entries dont have lastSubmitDts @see{Component#submittedDts}
+					detailModel.getLastSubmitDts() == null ? null : sdf.format(detailModel.getLastSubmitDts()),
+					sdf.format(detailModel.getApprovedDts()),
+					sdf.format(detailModel.getLastActivityDts()),
+					detailModel.getApprovalState());
 			}
 			cvsGenerator.addLine("Total", lineModel.getEntries().size());
 			cvsGenerator.addLine("");
