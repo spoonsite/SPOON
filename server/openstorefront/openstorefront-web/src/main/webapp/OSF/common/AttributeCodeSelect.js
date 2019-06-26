@@ -89,14 +89,23 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 						if (attributePanel.attributeTypeView.attributeValueType === 'NUMBER') {			
 							//check precision; this will enforce max allowed
 							validatorResponse = CoreUtil.validateNumber(value);
-							valid = valid ? validatorResponse.valid : false;
+
+							// If there are any invalid values, the whole field should be invalid
+							if (valid){
+								valid = validatorResponse.valid;
+							} else {
+								valid = false;
+							}
+
 							msg = validatorResponse.msg;
 						}
+						// If the value is not a number and the type is number or the value is just spaces, the value is invalid
 						if(isNaN(value) || value.trim() == ""){
 							valid = false;
 							msg = "Values must be a number."
 						}
 					});
+					// An Extjs validator function returns either true or a message to display as an error to the user. 
 					return valid ? valid : msg;	
 				};
 			} else {
@@ -105,13 +114,14 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					var valid = true;
 					var msg = '';
 
+					// Check for values that are only spaces
 					Ext.Array.each(values, function(value) {
 						if(value.trim() == ""){
 							valid = false;
 							msg = "Values cannot be only spaces."
 						}
 					});
-					
+					// An Extjs validator function returns either true or a message to display as an error to the user. 
 					return valid ? valid : msg;	
 				}
 			}
