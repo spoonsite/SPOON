@@ -40,6 +40,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -47,6 +48,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.mail.Message;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -61,6 +63,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *
@@ -564,8 +567,10 @@ public abstract class ComponentExtendedSubResourceExt
 	public Response createComponentComment(
 			@PathParam("id")
 			@RequiredParam String componentId,
-			@RequiredParam ComponentComment comment)
+			@RequiredParam ComponentComment comment,
+			Boolean willSendEmail)
 	{
+		willSendEmail = true;
 		Component component = new Component();
 		component.setComponentId(componentId);
 		component = component.find();
@@ -580,6 +585,16 @@ public abstract class ComponentExtendedSubResourceExt
 			if (SecurityUtil.hasPermission(SecurityPermission.ADMIN_ENTRY_COMMENT_MANAGEMENT)
 					|| SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
 				comment.setAdminComment(true);
+			}
+
+			String vendor = component.getOwnerUser();
+			if (willSendEmail && vendor != null){
+				Email email = MailManager.newEmail();
+				email.setSubject("SPOON Entry Change Request Approved");
+				email.setText("Your entry change request for " + component.getName() + ", on spoonsite.com, has been approved by a system administrator. ");
+				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
+				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
+				MailManager.send(email, true);
 			}
 			return saveComment(comment, true);
 		} else {
