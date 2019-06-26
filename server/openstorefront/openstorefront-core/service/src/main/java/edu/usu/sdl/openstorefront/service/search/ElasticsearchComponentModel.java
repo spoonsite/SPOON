@@ -35,56 +35,42 @@ public class ElasticsearchComponentModel
 
 	public static final String FIELD_SEARCH_WEIGHT = "searchWeight";
 
-	// @Field
 	private String id;
 
 	private String componentId;
 
-	// @Field("isComponentSearch_b_is")
 	private Boolean isComponent;
 
-	// @Field("title")
 	private String name;
 
-	// @Field("content_text")
 	private String description;
 
-	// @Field("content_tags")
 	private String tags;
 
-	// @Field("content_raw")
 	private String attributes;
 
-	// @Field("articleHtml_text")
 	private String articleHtml;
 
 	private String queryString;
 
 	private String guid;
 
-	// @Field("organization_s_is")
 	private String organization;
 
 	private Date releaseDate;
 
-	// @Field("modified")
 	private Date updateDts;
 
 	private String version;
 
-	// @Field("idInt_i_is")
 	private int idInt;
 
-	// @Field("name_s_is")
 	private String nameString;
 
-	// @Field("componentType_s_is")
 	private String componentType;
 
-	// @Field("datasource_s_is")
 	private String dataSource;
 
-	// @Field("datasensitivy_s_is")
 	private String dataSensitivity;
 
 	private int searchWeight;
