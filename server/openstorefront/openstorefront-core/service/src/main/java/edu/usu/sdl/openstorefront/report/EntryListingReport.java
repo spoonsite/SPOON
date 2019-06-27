@@ -183,11 +183,11 @@ public class EntryListingReport
 	 *  
 	 * @param component
 	 * @param viewLinkBase
-	 * viewLinkBase is the first half of a url that is intended to help create a url link 
+	 * is the first half of a url that is intended to help create a url link 
 	 * in the LineModel to a webpage about the component in question. 
 	 * 
 	 * @param evalMap
-	 * evalMap maps Component ID's to lists of Evaluation objects. It is a list of every
+	 * maps Component ID's to lists of Evaluation objects. It is a list of every
 	 * single component on SPOON site that has an evaluation on it, paired with every 
 	 * active evaluation assigned to that component-ID. 
 	 * 
@@ -350,7 +350,8 @@ public class EntryListingReport
 	 * @param templateFile
 	 * Path to the .ftl file that contains the actual HTML layout of the report
 	 * 
-	 * @return String of HTML that is used for the actual report the user sees. 
+	 * @return String renderedTemplate
+	 * of HTML that is used for the actual report the user sees. 
 	 */
 	private String createHtml(EntryListingReportModel reportModel, String templateFile)
 	{
