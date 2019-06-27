@@ -41,6 +41,8 @@ public class UserSubmission
 
 	private static final long serialVersionUID = 1L;
 
+	private Boolean isQueued = false;
+
 	@PK(generated = true)
 	@NotNull
 	private String userSubmissionId;
@@ -100,6 +102,7 @@ public class UserSubmission
 			}
 		}
 		this.setSubmissionName(userSubmission.getSubmissionName());
+		this.setIsQueued(userSubmission.getIsQueued());
 	}
 
 	public String getUserSubmissionId()
@@ -172,4 +175,11 @@ public class UserSubmission
 		this.submissionName = submissionName;
 	}
 
+	public Boolean getIsQueued() {
+		return isQueued;
+	}
+
+	public void setIsQueued(Boolean isQueued) {
+		this.isQueued = isQueued;
+	}
 }

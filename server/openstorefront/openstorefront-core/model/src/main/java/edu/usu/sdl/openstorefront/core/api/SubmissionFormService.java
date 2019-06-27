@@ -111,6 +111,14 @@ public interface SubmissionFormService
 	public void saveUserSubmissionComment(UserSubmissionComment userSubmissionComment);
 
 	/**
+	 * Queues a user submission for approval, mostly for front-end
+	 *
+	 * @param userSubmission
+	 * @return UserSubmission
+	 */
+	public UserSubmission queueEntry(UserSubmission userSubmission);
+
+	/**
 	 * Convert and saves component The user submission is then removed.
 	 *
 	 * @param userSubmission

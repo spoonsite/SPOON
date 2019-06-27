@@ -33,6 +33,7 @@ public class ApprovalStatus
 	public static final String APPROVED = "A";
 	public static final String PENDING = "P";
 	public static final String NOT_SUBMITTED = "N";
+	public static final String QUEUED = "Q";
 
 	//this is just for filtering
 	public static final String FILTER_ALL = "ALL";
@@ -49,6 +50,7 @@ public class ApprovalStatus
 		codeMap.put(PENDING, newLookup(ApprovalStatus.class, PENDING, "Pending"));
 		codeMap.put(APPROVED, newLookup(ApprovalStatus.class, APPROVED, "Approved"));
 		codeMap.put(NOT_SUBMITTED, newLookup(ApprovalStatus.class, NOT_SUBMITTED, "Not Submitted"));
+		codeMap.put(QUEUED, newLookup(ApprovalStatus.class, QUEUED, "Queued"));
 		return codeMap;
 	}
 
