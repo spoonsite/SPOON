@@ -145,7 +145,7 @@ limitations under the License.
 }
 
 .davy-grey {
-	color:#555555
+	color:#555
 }
 
 .fs-12 {
@@ -156,8 +156,13 @@ limitations under the License.
 	font-size: 14px;
 }
 
-.m-L8px {
-	margin: 8px 0;
+.my-8 {
+    margin-left: 8px;
+   margin-right: 8px;
+}
+.mx-0 {
+    margin-top: 0;
+	margin-bottom: 0;
 }
 
 .pointer {
