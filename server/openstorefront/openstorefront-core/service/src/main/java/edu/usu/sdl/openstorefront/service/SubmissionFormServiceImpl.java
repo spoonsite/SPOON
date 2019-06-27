@@ -321,6 +321,14 @@ public class SubmissionFormServiceImpl
 		return new OpenStorefrontRuntimeException("Unable to find form template. Template Id: " + templateId, "Check Data");
 	}
 
+	public UserSubmission queueEntry(UserSubmission userSubmission){
+		Objects.requireNonNull(userSubmission);
+
+		userSubmission.setIsQueued(true);
+		UserSubmission savedSubmission = getSubmissionFormService().saveUserSubmission(userSubmission);
+		return savedSubmission;
+	}
+
 	@Override
 	public ValidationResult submitUserSubmissionForApproval(UserSubmission userSubmission)
 	{

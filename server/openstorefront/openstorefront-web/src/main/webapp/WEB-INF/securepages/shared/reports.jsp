@@ -1078,6 +1078,11 @@
 																boxLabel: 'Q/A',
 																name: 'displayQA',
 																itemId: 'displayQA'
+															},
+															{
+																boxLabel: 'TimeStamps',
+																name: 'displayDates',
+																itemId: 'displayDates'
 															}
 														]
 													}

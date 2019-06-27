@@ -32,6 +32,7 @@ public class EntryDetailsOptions
 	private boolean displayEvalVersions;
 	private boolean displayOrgData;
 	private boolean displayQA;
+	private boolean displayDates;
 	private boolean displayRelationships;
 	private boolean displayReportReviews;
 	private boolean displayResources;
@@ -48,6 +49,7 @@ public class EntryDetailsOptions
 		displayEvalVersions = reportOption.getDisplayEvalVersions();
 		displayOrgData = reportOption.getDisplayOrgData();
 		displayQA = reportOption.getDisplayQA();
+		displayDates = reportOption.getDisplayDates();
 		displayRelationships = reportOption.getDisplayRelationships();
 		displayReportReviews = reportOption.getDisplayReportReviews();
 		displayResources = reportOption.getDisplayResources();
@@ -129,6 +131,15 @@ public class EntryDetailsOptions
 	{
 		return displayQA;
 	}
+
+	public boolean isDisplayDates() {
+		return this.displayDates;
+	}
+
+	public void setDisplayDates(boolean displayDates) {
+		this.displayDates = displayDates;
+	}
+
 
 	public void setDisplayQA(boolean displayQA)
 	{

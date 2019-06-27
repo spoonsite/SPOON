@@ -68,6 +68,9 @@ public class ReportOption
 	private boolean displayQA;
 
 	@ConsumeField
+	private boolean displayDates;
+
+	@ConsumeField
 	private boolean displayRelationships;
 
 	@ConsumeField
@@ -270,6 +273,14 @@ public class ReportOption
 	public void setDisplayQA(boolean displayQA)
 	{
 		this.displayQA = displayQA;
+	}
+
+	public boolean getDisplayDates() {
+		return this.displayDates;
+	}
+
+	public void setDisplayDates(boolean displayDates) {
+		this.displayDates = displayDates;
 	}
 
 	public boolean getDisplayRelationships()

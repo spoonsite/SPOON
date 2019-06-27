@@ -76,6 +76,7 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.export.DescribeExport;
 import edu.usu.sdl.openstorefront.service.io.export.Exporter;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -101,6 +102,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.mail.Message;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -125,6 +127,7 @@ import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
 import org.apache.commons.lang3.StringUtils;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  * Note: This is a chained inheritance which is exception to the general case
@@ -671,7 +674,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@APIDescription("Updates a component")
+	@APIDescription("Updates a component and emails the vendor")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Response updateComponent(
@@ -748,6 +751,25 @@ public abstract class GeneralComponentResourceExt
 			Component updatedComponent = new Component();
 			updatedComponent.setComponentId(componentId);
 			updatedComponent = updatedComponent.find();
+
+			Set<String> permissions = SecurityUtil.getUserContext().permissions();
+			Boolean hasPermission = permissions.contains(SecurityPermission.ADMIN_ENTRY_UPDATE);
+			String vendor = updatedComponent.getOwnerUser();
+			String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
+
+			if (hasPermission && vendor != null) {
+
+				Email email = MailManager.newEmail();
+				email.setSubject("SPOON Entry Updated");
+				email.setText(
+					"Your entry, " + 
+					updatedComponent.getName() +
+					", on spoonsite.com, has been updated by a system administrator. "
+				);
+				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
+
+				MailManager.send(email, true);
+			}
 
 			return Response.ok(updatedComponent).build();
 		} else {
