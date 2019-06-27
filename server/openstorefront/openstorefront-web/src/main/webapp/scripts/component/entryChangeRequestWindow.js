@@ -93,7 +93,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							{
 								xtype: 'osf-common-validhtmleditor',
 								itemId: 'searchComment',
-								fieldLabel: 'Comments (<span style="color:red;">This will be visible to the vendor</span>) <span class="field-required">',
+								fieldLabel: 'Comments (<span class="red">This will be visible to the vendor</span>) <span class="field-required"/>',
 								labelAlign: 'top',
 								name: 'Comment name',
 								width: '100%',
