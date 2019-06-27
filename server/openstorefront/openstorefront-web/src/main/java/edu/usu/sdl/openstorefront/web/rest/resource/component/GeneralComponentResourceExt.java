@@ -674,7 +674,7 @@ public abstract class GeneralComponentResourceExt
 	}
 
 	@PUT
-	@APIDescription("Updates a component")
+	@APIDescription("Updates a component and emails the vendor")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
 	public Response updateComponent(
@@ -755,13 +755,19 @@ public abstract class GeneralComponentResourceExt
 			Set<String> permissions = SecurityUtil.getUserContext().permissions();
 			Boolean hasPermission = permissions.contains(SecurityPermission.ADMIN_ENTRY_UPDATE);
 			String vendor = updatedComponent.getOwnerUser();
+			String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
+
 			if (hasPermission && vendor != null) {
+
 				Email email = MailManager.newEmail();
 				email.setSubject("SPOON Entry Updated");
-				email.setText("Your entry, " + updatedComponent.getName()
-						+ ", on spoonsite.com, has been updated by a system administrator. ");
-				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
+				email.setText(
+					"Your entry, " + 
+					updatedComponent.getName() +
+					", on spoonsite.com, has been updated by a system administrator. "
+				);
 				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
+
 				MailManager.send(email, true);
 			}
 

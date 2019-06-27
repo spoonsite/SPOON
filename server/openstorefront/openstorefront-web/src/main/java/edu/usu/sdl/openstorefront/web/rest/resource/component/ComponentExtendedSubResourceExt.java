@@ -559,7 +559,7 @@ public abstract class ComponentExtendedSubResourceExt
 	}
 
 	@POST
-	@APIDescription("Add a single comment to the specified component")
+	@APIDescription("Add a single comment to the specified component and email vendor with the comment")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentComment.class)
@@ -589,9 +589,11 @@ public abstract class ComponentExtendedSubResourceExt
 			if (comment.getWillSendEmail() && vendor != null) {
 				
 				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
-				String emailText = "Your entry change request for " + component.getName() + 
-					", on spoonsite.com, has been approved by a system administrator.\n\n";
+				String emailText = "Your entry change request for " + 
+										component.getName() + 
+										", on spoonsite.com, has been approved by a system administrator.\n\n";
 				String changeRequestComment = comment.getComment();
+
 				if (changeRequestComment != null || changeRequestComment != ""){
 					emailText = emailText + "Comment left by approver: " + changeRequestComment;
 				}
