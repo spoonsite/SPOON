@@ -40,6 +40,7 @@ import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -47,6 +48,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.mail.Message;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -61,6 +63,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.codemonkey.simplejavamail.email.Email;
 
 /**
  *
@@ -556,7 +559,7 @@ public abstract class ComponentExtendedSubResourceExt
 	}
 
 	@POST
-	@APIDescription("Add a single comment to the specified component")
+	@APIDescription("Add a single comment to the specified component and email vendor with the comment")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(ComponentComment.class)
@@ -581,15 +584,33 @@ public abstract class ComponentExtendedSubResourceExt
 					|| SecurityUtil.hasPermission(SecurityPermission.WORKFLOW_ADMIN_SUBMISSION_COMMENTS)) {
 				comment.setAdminComment(true);
 			}
+
+			String vendor = component.getOwnerUser();
+			if (comment.getWillSendEmail() && vendor != null) {
+				
+				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
+				String emailText = "Your entry change request for " + 
+										component.getName() + 
+										", on spoonsite.com, has been approved by a system administrator.\n\n";
+				String changeRequestComment = comment.getComment();
+
+				if (changeRequestComment != null || changeRequestComment != ""){
+					emailText = emailText + "Comment left by approver: " + changeRequestComment;
+				}
+
+				Email email = MailManager.newEmail();
+				email.setSubject("SPOON Entry Change Request Approved");
+				email.setText(emailText);
+				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
+
+				MailManager.send(email, true);
+			}
 			return saveComment(comment, true);
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
 	}
-	// </editor-fold>
 
-	//Deprecated: in future version
-	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
 	@APIDescription("Get the entire metadata list")
 	@Produces({MediaType.APPLICATION_JSON})
