@@ -71,6 +71,7 @@ public class ComponentSearchView
 	private Date releaseDate;
 	private Date approvedDts;
 	private Date lastActivityDts;
+	private Date lastSubmitDts;
 	private String listingSecurityMarkingType;
 	private String listingSecurityMarkingDescription;
 	private Integer listingSecurityMarkingRank;
@@ -118,6 +119,7 @@ public class ComponentSearchView
 		view.setGuid(component.getGuid());
 		view.setApprovalState(component.getApprovalState());
 		view.setApprovedDts(component.getApprovedDts());
+		view.setLastSubmitDts(component.getSubmittedDts());
 		view.setApprovedUser(component.getApprovedUser());
 		view.setLastActivityDts(component.getLastActivityDts());
 		view.setOrganization(component.getOrganization());
@@ -287,6 +289,14 @@ public class ComponentSearchView
 	public Date getReleaseDate()
 	{
 		return releaseDate;
+	}
+
+	public Date getLastSubmitDts() {
+		return this.lastSubmitDts;
+	}
+
+	public void setLastSubmitDts(Date lastSubmitDts) {
+		this.lastSubmitDts = lastSubmitDts;
 	}
 
 	public void setReleaseDate(Date releaseDate)

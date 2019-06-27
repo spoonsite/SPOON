@@ -26,7 +26,9 @@ public class CategoryComponentReportLineModel
 
 	private String name;
 	private String decription;
+	private Date lastSubmitDts;
 	private Date lastActivityDts;
+	private Date lastVendorUpdateApproveDate;
 	private String categoryLabel;
 	private String categoryDescription;
 
@@ -54,6 +56,14 @@ public class CategoryComponentReportLineModel
 		this.decription = decription;
 	}
 
+	public Date getLastSubmitDts() {
+		return this.lastSubmitDts;
+	}
+
+	public void setLastSubmitDts(Date lastSubmitDts) {
+		this.lastSubmitDts = lastSubmitDts;
+	}
+
 	public Date getLastActivityDts()
 	{
 		return lastActivityDts;
@@ -62,6 +72,16 @@ public class CategoryComponentReportLineModel
 	public void setLastActivityDts(Date lastActivityDts)
 	{
 		this.lastActivityDts = lastActivityDts;
+	}
+
+	public Date getLastVendorApproveDate()
+	{
+		return lastVendorUpdateApproveDate;
+	}
+
+	public void setLastVendorApprovedDate(Date lastVendorUpdateApprovedDate)
+	{
+		this.lastVendorUpdateApproveDate = lastVendorUpdateApprovedDate;
 	}
 
 	public String getCategoryLabel()

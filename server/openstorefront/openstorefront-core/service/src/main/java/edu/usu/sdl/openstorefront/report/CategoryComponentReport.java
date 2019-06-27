@@ -89,6 +89,8 @@ public class CategoryComponentReport
 				CategoryComponentReportLineModel lineModel = new CategoryComponentReportLineModel();
 				lineModel.setName(component.getName());
 				lineModel.setDecription(component.getDescription());
+				lineModel.setLastSubmitDts(component.getSubmittedDts());
+				lineModel.setLastVendorApprovedDate(component.getApprovedDts());
 				lineModel.setLastActivityDts(component.getLastActivityDts());
 				reportModel.getData().add(lineModel);
 			}
@@ -151,6 +153,8 @@ public class CategoryComponentReport
 							CategoryComponentReportLineModel lineModel = new CategoryComponentReportLineModel();
 							lineModel.setName(component.getName());
 							lineModel.setDecription(component.getDescription());
+							lineModel.setLastSubmitDts(component.getSubmittedDts());
+							lineModel.setLastVendorApprovedDate(component.getApprovedDts());
 							lineModel.setLastActivityDts(component.getLastActivityDts());
 							lineModel.setCategoryLabel(code.getLabel());
 							lineModel.setCategoryDescription(code.getDescription());
@@ -231,7 +235,9 @@ public class CategoryComponentReport
 				"Category Description",
 				"Entry Name",
 				"Entry Description",
-				"Last Update Date"
+				"Last Vendor Update",
+				"Last Vender Update Approved Date",
+				"Last System Update"
 		);
 
 		//Note: the details should be grouped by code by default
@@ -241,6 +247,8 @@ public class CategoryComponentReport
 					StringProcessor.stripHtml(lineModel.getCategoryDescription()),
 					lineModel.getName(),
 					StringProcessor.ellipseString(StringProcessor.stripHtml(lineModel.getDecription()), 300),
+					sdf.format(lineModel.getLastSubmitDts()),
+					sdf.format(lineModel.getLastVendorApproveDate()),
 					sdf.format(lineModel.getLastActivityDts())
 			);
 		}

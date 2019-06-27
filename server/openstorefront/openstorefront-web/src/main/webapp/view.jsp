@@ -219,19 +219,19 @@
 						minHeight: 125,						
 						tpl: new Ext.XTemplate(
 							'<div class="details-title-name">{name}</div>',
-							'<div class="breadcrumbs" style="display: block; font-size: 14px; margin: 8px 0;">',
+							'<div class="breadcrumbs fs-14 my-8 mx-0" style="display: block;">',
 							'<tpl for="parents" between="&nbsp; &gt; &nbsp;">',
 								'<a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">{label}</a>',
 							'</tpl>',
 							'</div>',
-							'<div class="details-title-info" style="margin: 8px 0;">',
+							'<div class="dark-purple my-8 mx-0">',
 							'	{[this.partType(values.attributes)]}',
 							'</div>',
-							'<div class="details-title-info">',							
-							'Organization: <b><a href="#" class="a.details-table" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></b><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="releaseDate"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
+							'<div class="davy-grey fs-12">',
+							'Organization: <strong><a href="#" class="a.details-table" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">{organization}</a></strong><tpl if="version"> Version: <b>{version}</b></tpl><tpl if="releaseDate"> Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b></tpl>',							
 							'</div>',
-							'<div class="details-title-info" style="margin: 8px 0;">',
-							'<div style="font-weight: bold; color: #551A8B;">{[this.contactVendor(values.contacts)]}</div>',
+							'<div class="dark-purple my-8 mx-0">',
+							'<div class="a.details-table underline">{[this.contactVendor(values.contacts)]}</div>',
 							'</div>',
 							'  <tpl for="attributes">',
 							'    <tpl if="badgeUrl"><img src="{badgeUrl}" title="{codeDescription}" width="40" /></tpl>',
@@ -242,7 +242,7 @@
 									if(contacts.length > 0){
 										sendToEmail = contacts[0].email;
 									}
-									return '<a style="cursor: pointer;" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
+									return '<a class="pointer" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
 								},
 								partType: function (attributes) {
 									partType = "";
@@ -252,7 +252,7 @@
 										}
 									}
 									if(partType != ""){
-										partType = 'Part Type: <b style="color: #551A8B;">' + partType + '</b>';
+										partType = 'Part Type: <strong class="dark-purple">' + partType + '</strong>';
 									}
 									return partType;
 								}
@@ -271,12 +271,15 @@
 								itemId: 'updatedInfo',
 								dock: 'bottom',
 								tpl: new Ext.XTemplate(
-									'<span class="details-title-info" style="font-size: 10px">' +
-										'Last Update by Vendor Approved: ' +
-										'<b>{[Ext.util.Format.date(values.approvedDate, "m/d/y H:i:s T")]}</b>' +
+									'<span class="davy-grey fs-12">' +
+										'<b>Last Vendor Update Provided: </b>' +
+										// Some Entries don't have lastSubmitDts @see{Component#submittedDts}
+										'<tpl if="values.lastSubmitDts">{[Ext.util.Format.date(values.lastSubmitDts, "m/d/y")]}' +
+										// Solution: show lastApprovedDate instead
+										'<tpl else>{[Ext.util.Format.date(values.approvedDate, "m/d/y")]}</tpl>' +
 										'<br>' +
-										'Last System Update: ' +
-										'<b>{[Ext.util.Format.date(values.lastActivityDts, "m/d/y H:i:s T")]}</b>' +
+										'<b>Last System Update: </b>' +
+										'{[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}' +
 											'<tpl if="securityMarkingType">' +
 												'<br>' +
 												'Highest Classification: ' +

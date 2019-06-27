@@ -394,8 +394,8 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		var form = submissionFormFullControl.queryById('submissionForm');
 		
 		
-		var userSubmission = form.getUserData();	
-		
+		var userSubmission = form.getUserData();
+
 		if (submissionFormFullControl.verifyMode) {
 			
 			submissionFormFullControl.setLoading("Verify Submission...");
@@ -477,15 +477,23 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						}	
 					}
 				});
-			} else {		
-				submissionFormFullControl.setLoading("Submitting Entry...");
+			} else {
+				Ext.Msg.show({
+					title: "Entry Queued for processing",
+					message: 'Your entry has been queued for processing.<br><br>' + 
+							'During this time, it may not show up on the submissions screen.<br><br>' + 
+							'Once the entry has finished processing, you may need to reload the submissions page',
+					buttons: Ext.Msg.OK,
+					icon: Ext.Msg.INFO,
+					fn: function(btn) {
+					}
+				});
+				
 				Ext.Ajax.request({
 					url: 'api/v1/resource/usersubmissions/' + userSubmission.userSubmissionId + '/submitforapproval',
 					method: 'PUT',
 					jsonData: userSubmission,
-					callback: function() {		
-						submissionFormFullControl.setLoading(false);
-					},
+					timeout: 999999,
 					success: function(response, opts) {
 						var data;
 						try {
@@ -499,7 +507,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 							});
 
 							Ext.Msg.show({
-								title: 'Unable to Submit Entry',
+								title: 'Unable to Submit Entry - ' + userSubmission.submissionName,
 								message: 'Check input and adjust the following.<br><br>' + errorMessage,
 								buttons: Ext.Msg.OK,
 								icon: Ext.Msg.ERROR,
@@ -508,16 +516,17 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 							});
 
 						} else {						
-
 							Ext.toast('Entry Submitted Successfully');
-
-							if (submissionFormFullControl.submissionSuccess) {
-								submissionFormFullControl.submissionSuccess();
+							if (submissionFormFullControl.submissionFinished){
+								submissionFormFullControl.submissionFinished();
 							}
 						}
 					}
 				});
 				
+				if (submissionFormFullControl.submissionSuccess) {
+					submissionFormFullControl.submissionSuccess();
+				}
 			}
 		}
 	}
