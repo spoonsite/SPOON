@@ -173,6 +173,10 @@ limitations under the License.
 	text-decoration: underline;
 }
 
+.block {
+	display: block;
+}
+
 .review-summary-rating {
 	font-size: 20px;
 }

@@ -221,7 +221,7 @@
 							'<div class="details-title-name">',
 							'	{name}',
 							'</div>',
-							'<div class="breadcrumbs fs-14 my-8 mx-0" style="display: block;">',
+							'<div class="breadcrumbs fs-14 my-8 mx-0 block">',
 							'	<tpl for="parents" between="&nbsp; &gt; &nbsp;">',
 							'		<a class="a.details-table" target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch(\'{componentType}\')" href="searchResults.jsp">',
 							'			{label}',
@@ -248,7 +248,7 @@
 							'	</tpl>',							
 							'</div>',
 							'<div class="dark-purple fs-13 my-8 mx-3">',
-							'	<div class="a.details-table underline">',
+							'	<div class="a.details-table">',
 							'		{[this.contactVendor(values.contacts)]}',
 							'	</div>',
 							'</div>',
@@ -263,7 +263,7 @@
 									if(contacts.length > 0){
 										sendToEmail = contacts[0].email;
 									}
-									return '<a class="pointer dark-purple" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
+									return '<u class="pointer dark-purple" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</u>'
 								},
 								partType: function (attributes) {
 									partType = "";
