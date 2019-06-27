@@ -228,14 +228,16 @@
 							'		</a>',
 							'	</tpl>',
 							'</div>',
-							'<div class="dark-purple my-8 mx-0">',
+							'<div class="dark-purple fs-13 my-8 mx-3">',
 							'	{[this.partType(values.attributes)]}',
 							'</div>',
-							'<div class="davy-grey fs-12">',
+							'<div class="davy-grey fs-13 my-8 mx-3">',
 							'	Organization: ',
 							'	<strong>',
 							'		<a href="#" class="a.details-table" onclick="DetailPage.showRelatedOrganizations(\'{organization}\')">',
-							'			{organization}',
+							'			<span class="dark-purple">',
+							'				{organization}',
+							'			</span>',
 							'		</a>',
 							'	</strong>',
 							'	<tpl if="version"> ',
@@ -245,7 +247,7 @@
 							'		Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b>',
 							'	</tpl>',							
 							'</div>',
-							'<div class="dark-purple my-8 mx-0">',
+							'<div class="dark-purple fs-13 my-8 mx-3">',
 							'	<div class="a.details-table underline">',
 							'		{[this.contactVendor(values.contacts)]}',
 							'	</div>',
@@ -261,7 +263,7 @@
 									if(contacts.length > 0){
 										sendToEmail = contacts[0].email;
 									}
-									return '<a class="pointer" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
+									return '<a class="pointer dark-purple" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</a>'
 								},
 								partType: function (attributes) {
 									partType = "";
