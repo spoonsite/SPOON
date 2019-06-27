@@ -85,7 +85,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						items: [ 
 							{
 								xtype	  : 'checkboxfield',
-								boxLabel  : 'Send Email to Notify Vendor of Approval?',
+								boxLabel  : 'Send Email to Notify Vendor of Approval',
 								name      : 'SendEmail',
 								inputValue: '1',
 								itemId    : 'sendEmailToVendorBool'
@@ -93,7 +93,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							{
 								xtype: 'osf-common-validhtmleditor',
 								itemId: 'searchComment',
-								fieldLabel: 'Optional Comments',
+								fieldLabel: 'Comments <span class="field-required">',
 								labelAlign: 'top',
 								name: 'Comment name',
 								width: '100%',
@@ -121,14 +121,17 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 
 											// Get Form
 											var form = this.up('form');
+											var comment = form.queryById('searchComment').value;
+											if (comment == null){
+												comment = "";
+											}
+
 											var data = {
 												commentId: form.queryById('searchCommentId').value,
 												commentType: "ADMIN",
-												comment: form.queryById('searchComment').value,
-												willSendEmail: form.queryById('sendEmailToVendorBool').value //new guy
+												comment: comment,
+												willSendEmail: form.queryById('sendEmailToVendorBool').value 
 											};
-
-											console.log("The Approve Change button was pressed!");
 
 											var changeRequestComponentId = changeRequestWindow.changeGrid.getSelection()[0].get('componentId');
 
@@ -140,9 +143,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 													changeRequestWindow.setLoading(false);
 												},
 												success: function(response, opts) {
-													console.log("mulling over the decision to send data to the /comment endpoint...\ndata.comment:",data.comment,"data.willsendEmail: ",data.willSendEmail)
 													if(data.comment != '' || data.willSendEmail != false){
-														console.log("we're sending of a /comments endpoint request! POST")
 														Ext.Ajax.request({
 															url: 'api/v1/resource/components/' + changeRequestWindow.currentComponentId + '/comments',
 															method: 'POST',
@@ -162,7 +163,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 															},
 															failure: function(){
 																Ext.toast({
-																	title: 'Validation Error. The Server could not process the request.',
+																	title: 'Validation Error. The server could not process the request.',
 																	html: 'Try changing the comment field. The comment field cannot be empty and must have a size smaller than 4096.',
 																	width: 500,
 																	autoCloseDelay: 10000
