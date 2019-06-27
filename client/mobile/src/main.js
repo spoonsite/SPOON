@@ -16,7 +16,7 @@ import Cookies from 'js-cookie';
 import VueQuillEditor from 'vue-quill-editor';
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
-import 'katex/dist/katex.js';
+import katex from 'katex';
 import Toasted from 'vue-toasted';
 
 Vue.config.productionTip = false;
