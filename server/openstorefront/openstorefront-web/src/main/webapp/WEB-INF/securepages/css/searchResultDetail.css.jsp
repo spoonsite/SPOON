@@ -140,21 +140,31 @@ limitations under the License.
 	padding-bottom: 10px;
 }
 
-.details-title-info {
-	color: rgba(68,30,90,.6) !important;
+.dark-purple {
+	color: #441e5a;
 }
 
-.details-date-info {
-	font-size: 12px;
+.davy-grey {
 	color:#555555
 }
 
-.details-org-info {
+.fs-12 {
 	font-size: 12px;
-	color:#404040
 }
 
-.contact-vendor {
+.fs-14 {
+	font-size: 14px;
+}
+
+.m-L8px {
+	margin: 8px 0;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.underline {
 	text-decoration: underline;
 }
 
