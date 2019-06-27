@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
@@ -688,33 +689,20 @@ public class ElasticSearchManager
 			ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
 			BulkRequest bulkRequest = new BulkRequest();
 
-			//pull attribute and map
-			ComponentAttribute componentAttribute = new ComponentAttribute();
-			componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
-			List<ComponentAttribute> componentAttributes = componentAttribute.findByExample();
-			Map<String, List<ComponentAttribute>> attributeMap = componentAttributes.stream().collect(Collectors.groupingBy(ComponentAttribute::getComponentId));
-
 			//pull reviews and map
 			ComponentReview componentReview = new ComponentReview();
 			componentReview.setActiveStatus(ComponentReview.ACTIVE_STATUS);
 			List<ComponentReview> componentReviews = componentReview.findByExample();
 			Map<String, List<ComponentReview>> reviewMap = componentReviews.stream().collect(Collectors.groupingBy(ComponentReview::getComponentId));
 
-			//pull tags and map
-			ComponentTag componentTag = new ComponentTag();
-			componentTag.setActiveStatus(ComponentReview.ACTIVE_STATUS);
-			List<ComponentTag> componentTags = componentTag.findByExample();
-			Map<String, List<ComponentTag>> tagMap = componentTags.stream().collect(Collectors.groupingBy(ComponentTag::getComponentId));
-
-			SearchStatTable statTable = new SearchStatTable(attributeMap, tagMap);
-			statTable.index();
-
+			//This should be initialized (if not this will be slow)
+			SearchStatTable statTable = new SearchStatTable();
 			for (Component component : components) {
 
 				//convert to search result object
-				componentAttributes = attributeMap.getOrDefault(component.getComponentId(), new ArrayList<>());
+				List<ComponentAttribute> componentAttributes = statTable.getAttributeMap().getOrDefault(component.getComponentId(), new ArrayList<>());
 				componentReviews = reviewMap.getOrDefault(component.getComponentId(), new ArrayList<>());
-				componentTags = tagMap.getOrDefault(component.getComponentId(), new ArrayList<>());
+				List<ComponentTag> componentTags = statTable.getTagMap().getOrDefault(component.getComponentId(), new ArrayList<>());
 				component.setDescription(StringProcessor.stripHtml(component.getDescription()));
 				component.setDescription(StringProcessor.ellipseString(component.getDescription(), MAX_DESCRIPTION_INDEX_SIZE));
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
@@ -726,23 +714,65 @@ public class ElasticSearchManager
 				}
 			}
 
-			BulkResponse bulkResponse;
-			try (ElasticSearchClient client = singleton.getClient()) {
-				bulkResponse = client.getInstance().bulk(bulkRequest);
-
-				if (bulkResponse.hasFailures()) {
-					bulkResponse.forEach(response -> {
-						if (StringUtils.isNotBlank(response.getFailureMessage())) {
-							LOG.log(Level.WARNING, MessageFormat.format("A component failed to index: {0}", response.getFailureMessage()));
-						}
-					});
-				} else {
-					LOG.log(Level.FINE, "Index components successfully");
-				}
-			} catch (IOException ex) {
-				LOG.log(Level.SEVERE, null, ex);
-			}
+			executeIndexRequest(bulkRequest);
 		}
+	}
+
+	private void executeIndexRequest(BulkRequest bulkRequest)
+	{
+		BulkResponse bulkResponse;
+		try (ElasticSearchClient client = singleton.getClient()) {
+			bulkResponse = client.getInstance().bulk(bulkRequest);
+
+			if (bulkResponse.hasFailures()) {
+				bulkResponse.forEach(response -> {
+					if (StringUtils.isNotBlank(response.getFailureMessage())) {
+						LOG.log(Level.WARNING, MessageFormat.format("A component failed to index: {0}", response.getFailureMessage()));
+					}
+				});
+			} else {
+				LOG.log(Level.FINE, "Index components successfully");
+			}
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+		}
+	}
+
+	@Override
+	public void indexFullComponents(List<ComponentAll> componentAlls)
+	{
+		Objects.requireNonNull(componentAlls);
+
+		if (!componentAlls.isEmpty()) {
+			ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+			BulkRequest bulkRequest = new BulkRequest();
+			for (ComponentAll componentAll : componentAlls) {
+
+				Component component = componentAll.getComponent();
+
+				List<ComponentReview> reviews = componentAll.getReviews().stream()
+						.map(r -> r.getComponentReview())
+						.collect(Collectors.toList());
+
+				//convert to search result object
+				component.setDescription(StringProcessor.stripHtml(component.getDescription()));
+				component.setDescription(StringProcessor.ellipseString(component.getDescription(), MAX_DESCRIPTION_INDEX_SIZE));
+				ComponentSearchView componentSearchView = ComponentSearchView.toView(
+						component,
+						componentAll.getAttributes(),
+						reviews,
+						componentAll.getTags()
+				);
+				try {
+					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
+							.source(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON));
+				} catch (JsonProcessingException ex) {
+					LOG.log(Level.SEVERE, null, ex);
+				}
+			}
+			executeIndexRequest(bulkRequest);
+		}
+
 	}
 
 	@Override

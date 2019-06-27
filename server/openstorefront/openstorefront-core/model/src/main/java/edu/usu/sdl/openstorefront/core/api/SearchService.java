@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
+import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
 import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
@@ -43,31 +44,34 @@ public interface SearchService
 	 * @return
 	 */
 	public List<ComponentSearchView> getAll();
-	
+
 	/**
-	 * Get the global search options, return default if not
-	 * changed by the administrator.
+	 * Get the global search options, return default if not changed by the
+	 * administrator.
+	 *
 	 * @return the found searchOptions
 	 */
 	public SearchOptions getGlobalSearchOptions();
-	
+
 	/**
-	 * Saves a search options model. Usually done
-	 * by the administrator.
-	 * @param searchOptions 
+	 * Saves a search options model. Usually done by the administrator.
+	 *
+	 * @param searchOptions
 	 * @return the saved searchOptions
 	 */
 	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions);
 
 	/**
 	 * Get the user specific Search Options
+	 *
 	 * @return the found searchOptions
 	 */
 	public SearchOptions getUserSearchOptions();
-	
+
 	/**
 	 * Saves a search options model for a the user
-	 * @param searchOptions 
+	 *
+	 * @param searchOptions
 	 * @return the saved searchOptions
 	 */
 	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions);
@@ -105,6 +109,14 @@ public interface SearchService
 	 * @param components
 	 */
 	public void indexComponents(List<Component> components);
+
+	/**
+	 * Indexes a full component (Expected that the component all has all
+	 * information needed)
+	 *
+	 * @param componentAlls
+	 */
+	public void indexFullComponents(List<ComponentAll> componentAlls);
 
 	/**
 	 * Removes a search index
