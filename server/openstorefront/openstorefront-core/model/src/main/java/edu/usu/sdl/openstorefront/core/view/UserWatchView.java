@@ -40,6 +40,9 @@ public class UserWatchView
 	private String watchId;
 
 	@NotNull
+	private Date lastSubmitDts;
+
+	@NotNull
 	private Date lastUpdateDts;
 
 	@NotNull
@@ -71,6 +74,7 @@ public class UserWatchView
 		if (component != null) {
 			view.setComponentName(component.getName());
 			view.setLastUpdateDts(component.getLastActivityDts());
+			view.setLastSubmitDts(component.getSubmittedDts());
 		}
 		view.setLastViewDts(watch.getLastViewDts());
 		view.setNotifyFlg(watch.getNotifyFlg());
@@ -116,6 +120,14 @@ public class UserWatchView
 	public void setWatchId(String watchId)
 	{
 		this.watchId = watchId;
+	}
+
+	public Date getLastSubmitDts() {
+		return this.lastSubmitDts;
+	}
+
+	public void setLastSubmitDts(Date lastSubmitDts) {
+		this.lastSubmitDts = lastSubmitDts;
 	}
 
 	public Date getLastUpdateDts()
