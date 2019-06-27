@@ -85,7 +85,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 						items: [ 
 							{
 								xtype	  : 'checkboxfield',
-								boxLabel  : 'Send Email to Notify Vendor of Approval',
+								boxLabel  : 'Send email to notify vendor of approval',
 								name      : 'SendEmail',
 								inputValue: '1',
 								itemId    : 'sendEmailToVendorBool'
@@ -93,7 +93,7 @@ Ext.define('OSF.component.EntryChangeRequestWindow', {
 							{
 								xtype: 'osf-common-validhtmleditor',
 								itemId: 'searchComment',
-								fieldLabel: 'Comments <span class="field-required">',
+								fieldLabel: 'Comments (<span style="color:red;">This will be visible to the vendor</span>) <span class="field-required">',
 								labelAlign: 'top',
 								name: 'Comment name',
 								width: '100%',
