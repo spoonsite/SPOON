@@ -587,12 +587,20 @@ public abstract class ComponentExtendedSubResourceExt
 
 			String vendor = component.getOwnerUser();
 			if (comment.getWillSendEmail() && vendor != null) {
+				
+				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
+				String emailText = "Your entry change request for " + component.getName() + 
+					", on spoonsite.com, has been approved by a system administrator.\n\n";
+				String changeRequestComment = comment.getComment();
+				if (changeRequestComment != null || changeRequestComment != ""){
+					emailText = emailText + "Comment left by approver: " + changeRequestComment;
+				}
+
 				Email email = MailManager.newEmail();
 				email.setSubject("SPOON Entry Change Request Approved");
-				email.setText("Your entry change request for " + component.getName()
-						+ ", on spoonsite.com, has been approved by a system administrator. ");
-				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
+				email.setText(emailText);
 				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
+
 				MailManager.send(email, true);
 			}
 			return saveComment(comment, true);
@@ -600,10 +608,7 @@ public abstract class ComponentExtendedSubResourceExt
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
 	}
-	// </editor-fold>
 
-	//Deprecated: in future version
-	// <editor-fold defaultstate="collapsed"  desc="ComponentRESTResource METADATA section">
 	@GET
 	@APIDescription("Get the entire metadata list")
 	@Produces({MediaType.APPLICATION_JSON})
