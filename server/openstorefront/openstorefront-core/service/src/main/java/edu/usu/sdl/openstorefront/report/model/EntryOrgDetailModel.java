@@ -25,7 +25,9 @@ public class EntryOrgDetailModel
 {
 
 	private String name;
+	private Date lastSubmitDts;
 	private Date lastActivityDts;
+	private Date approvedDts;
 	private String approvalState;
 
 	public EntryOrgDetailModel()
@@ -42,6 +44,14 @@ public class EntryOrgDetailModel
 		this.name = name;
 	}
 
+	public Date getLastSubmitDts() {
+		return this.lastSubmitDts;
+	}
+
+	public void setLastSubmitDts(Date lastSubmitDts) {
+		this.lastSubmitDts = lastSubmitDts;
+	}
+
 	public Date getLastActivityDts()
 	{
 		return lastActivityDts;
@@ -50,6 +60,14 @@ public class EntryOrgDetailModel
 	public void setLastActivityDts(Date lastActivityDts)
 	{
 		this.lastActivityDts = lastActivityDts;
+	}
+
+	public Date getApprovedDts() {
+		return this.approvedDts;
+	}
+
+	public void setApprovedDts(Date approvedDts) {
+		this.approvedDts = approvedDts;
 	}
 
 	public String getApprovalState()
