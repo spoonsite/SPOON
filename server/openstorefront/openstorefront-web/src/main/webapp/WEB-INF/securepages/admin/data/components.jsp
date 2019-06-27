@@ -2551,7 +2551,7 @@
 									{
 										// Increment the Progress Bar
 										percent = (originalTotal - selection.length + 1) / originalTotal;
-										Ext.MessageBox.updateProgress(percent, percent * 100 + '% completed');
+										Ext.MessageBox.updateProgress(percent, parseInt(percent * 100) + '% completed');
 
 										// Send Next Request
 										if (!sendDeleteRequests.hasFailed)
