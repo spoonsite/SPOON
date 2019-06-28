@@ -134,6 +134,10 @@ Ext.define('OSF.landing.DefaultSearch', {
 					};
 				}
 
+				// Save the searchOptions in the searchRequest so they can be retrieved from
+				// session storage instead of only being retrievable by the api endpoint in the request.
+				searchRequest.searchOptions = searchOptions;
+
 				Ext.Ajax.request({
 					url: "api/v1/resource/searchoptions/user",
 					jsonData: searchOptions,

@@ -1422,7 +1422,7 @@
 						searchRequest = Ext.decode(searchRequest);
 						if (searchRequest.type === 'SIMPLE') {
 							Ext.getCmp('searchResultsPanel').setTitle('Search Results - ' + searchRequest.query);
-							searchRequest.query = 	{							
+							searchRequest.query = 	{
 								"searchElements": [{
 									"searchType": "INDEX",									
 									"value": searchRequest.query
@@ -1430,6 +1430,28 @@
 							};
 						} else {						
 							Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced');
+						}
+
+						console.log(searchRequest)
+						var optionsPanel = Ext.getCmp('searchOptions')
+
+						for (var option in searchRequest.searchOptions) {															
+							var cb = Ext.create("Ext.form.field.Checkbox")							
+							cb.setBoxLabel(option.replace("canUse", "").replace("InSearch", ""))
+							cb.setValue(searchRequest.searchOptions[option])
+							cb.setReadOnly(true)
+							cb.setMargin("2 2 2 10")
+							optionsPanel.add(cb)
+						}
+
+						var components = Array.from(searchRequest.query.searchElements).filter(e=>e.searchType == "COMPONENT")
+						for (var comp in components) {
+							var cb = Ext.create("Ext.form.field.Checkbox")
+							cb.setBoxLabel(components[comp].value)
+							cb.setValue(true)
+							cb.setReadOnly(true)
+							cb.setMargin("2 2 2 10")
+							optionsPanel.add(cb)
 						}
 					}
 					else {
@@ -1784,6 +1806,23 @@
 										}										
 									}
 								}								
+							},
+							{
+								xtype: 'panel',
+								items: [
+									{
+										xtype: "label",
+										text: "Search options used:"
+									},
+									{
+										id: 'searchOptions',
+										layout: {
+											type: 'hbox',
+											pack: 'start',
+											align: 'start'
+										}
+									}
+								]								
 							},
 							{
 								xtype: 'tbfill'
