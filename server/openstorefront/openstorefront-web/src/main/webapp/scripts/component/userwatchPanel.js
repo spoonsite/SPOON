@@ -41,7 +41,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 				dateFormat: 'c'
 			},
 			{
-				name: 'lastUpdate',
+				name: 'lastUpdateDts',
 				type:	'date',
 				dateFormat: 'c'
 			},
@@ -176,6 +176,21 @@ Ext.define('OSF.component.UserWatchPanel', {
 							record.set('notifyFlg', true);
 						}
 						grid.setLoading("Updating...");
+						console.log("data objects from Toggle Email button",record)
+						console.log("the sent thing: ",record.data)
+						//verbose delete later
+
+						//record.data.lastUpdate = "1886-05-10T16:10:20.617-06:00";
+						//record.data.lastSubmitDts = "1830-05-10T16:10:20.617-06:00";
+						// server can't handle null members - some entries lack dates
+						if(!record.data.lastSubmitDts){
+							// server can handle undefined
+							record.data.lastSubmitDts = undefined
+						}
+						record.data.lastSubmitDts = "butckets";
+
+						//end verbose 
+
 						Ext.Ajax.request({
 							url:'api/v1/resource/userprofiles/'+grid.user+'/watches/'+record.get('watchId'),
 							method: 'PUT',
