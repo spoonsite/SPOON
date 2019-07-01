@@ -245,7 +245,7 @@
 							'	</tpl>',
 							'	<tpl if="releaseDate">',
 							'		Release Date: <b>{[Ext.util.Format.date(values.releaseDate)]}</b>',
-							'	</tpl>',							
+							'	</tpl>',
 							'</div>',
 							'<div class="dark-purple fs-13 my-8 mx-3">',
 							'	<div class="a.details-table">',
