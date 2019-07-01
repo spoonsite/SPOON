@@ -1437,7 +1437,7 @@
 
 						for (var option in searchRequest.searchOptions) {															
 							var cb = Ext.create("Ext.form.field.Checkbox")							
-							cb.setBoxLabel(option.replace("canUse", "").replace("InSearch", ""))
+							cb.setBoxLabel("<small>" + option.replace("canUse", "").replace("InSearch", "") + "</small>")
 							cb.setValue(searchRequest.searchOptions[option])
 							cb.setReadOnly(true)
 							cb.setMargin("2 2 2 10")
