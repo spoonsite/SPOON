@@ -67,14 +67,7 @@ public class SearchServerManager
 		String searchImplementation = propertiesManager.getValue(PropertiesManager.KEY_SEARCH_SERVER, ELASTICSEARCH).toLowerCase();
 
 		LOG.log(Level.INFO, () -> "Using " + searchImplementation + " as search server.");
-		switch (searchImplementation) {
-			case ELASTICSEARCH:
-				searchServer = ElasticSearchManager.getInstance(propertiesManager);
-				break;
-			default:
-				LOG.config("Unsupported Search Server. Switching to Elasticsearch.");
-				searchServer = ElasticSearchManager.getInstance(propertiesManager);
-		}
+		searchServer = ElasticSearchManager.getInstance(propertiesManager);
 		((Initializable) searchServer).initialize();
 	}
 
