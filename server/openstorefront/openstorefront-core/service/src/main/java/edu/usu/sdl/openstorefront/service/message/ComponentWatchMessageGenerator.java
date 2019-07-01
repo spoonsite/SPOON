@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.message;
 
-import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
@@ -163,13 +162,6 @@ public class ComponentWatchMessageGenerator
 		message.append("<br>Last viewed on: <b>").append(sdf.format(userWatch.getLastViewDts())).append("</b><br>");
 
 		message.append("<br>");
-
-		// Insert link to component View & Watches page
-		String viewLink = PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL) + 
-								"/View.action?id=" +
-								userMessage.getComponentId();
-
-		message.append("You can see the new changes here: " + viewLink + "<br>");
 
 		if (changes) {
 			return message.toString();
