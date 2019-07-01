@@ -161,7 +161,7 @@ public class ComponentWatchMessageGenerator
 		}
 		message.append("<br>Last viewed on: <b>").append(sdf.format(userWatch.getLastViewDts())).append("</b><br>");
 
-		message.append("<br>");
+		message.append("Please login to view the changes.<br>");
 
 		if (changes) {
 			return message.toString();
