@@ -2173,6 +2173,7 @@
 											fieldLabel: 'Username <span class="field-required" />',
 											labelAlign: 'top',
 											name: 'currentDataOwner',
+											allowBlank: false,
 											width: '100%'
 										},
 										{
@@ -2209,11 +2210,15 @@
 														});
 														var form = this.up('form');
 														var username = form.getForm().findField('currentDataOwner').getValue();
+														var adminComment = form.queryById('searchComment').getValue();
+														if (adminComment.trim() == "" || adminComment == null){
+															adminComment = "No comment given"
+														}
 														var data = {
 															componentIds: componentIds,
 															comment: {
 																commentType: 'ADMIN',
-																comment: form.queryById('searchComment').getValue()
+																comment: adminComment
 															},
 															newOwner: username
 														};
