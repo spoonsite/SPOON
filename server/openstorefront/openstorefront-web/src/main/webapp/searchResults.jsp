@@ -1706,9 +1706,9 @@
 											fieldCode: 'approvedDts',
 											dir: 'DESC',
 											compare: function(b, a){
-												if (a.approvedDts > b.approvedDts) {
+												if (a.lastSubmitDts > b.lastSubmitDts) {
 													return 1;
-												} else if (a.approvedDts < b.approvedDts) {
+												} else if (a.lastSubmitDts < b.lastSubmitDts) {
 													return -1;
 												} else {
 													return 0;
@@ -1721,9 +1721,9 @@
 											fieldCode: 'approvedDts-desc',
 											dir: 'ASC',
 											compare: function(a, b){
-												if (a.approvedDts > b.approvedDts) {
+												if (a.lastSubmitDts > b.lastSubmitDts) {
 													return 1;
-												} else if (a.approvedDts < b.approvedDts) {
+												} else if (a.lastSubmitDts < b.lastSubmitDts) {
 													return -1;
 												} else {
 													return 0;

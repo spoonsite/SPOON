@@ -152,17 +152,17 @@ limitations under the License.
 	font-size: 12px;
 }
 
-.fs-14 {
-	font-size: 14px;
+.fs-13 {
+	font-size: 13px;
 }
 
 .my-8 {
     margin-left: 8px;
    margin-right: 8px;
 }
-.mx-0 {
-    margin-top: 0;
-	margin-bottom: 0;
+.mx-3 {
+    margin-top: 3px;
+	margin-bottom: 3px;
 }
 
 .pointer {
@@ -171,6 +171,10 @@ limitations under the License.
 
 .underline {
 	text-decoration: underline;
+}
+
+.block {
+	display: block;
 }
 
 .review-summary-rating {
