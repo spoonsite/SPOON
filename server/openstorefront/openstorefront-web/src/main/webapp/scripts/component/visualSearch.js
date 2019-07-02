@@ -2335,7 +2335,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 					text: 'Download Image',
 					iconCls: 'fa fa-lg fa-download icon-button-color-default',
 					handler: function () {
-						var containerPanel = this.up('panel');
+						var containerPanel = this.up('viewport').queryById('containerPanel');
 						var data = containerPanel.visualPanel.getImage('png');
 
 						var token = Ext.util.Cookies.get('X-Csrf-Token');
@@ -2362,6 +2362,8 @@ Ext.define('OSF.component.VisualContainerPanel', {
 		this.callParent();
 
 		var containerPanel = this;
+
+		containerPanel.id = "containerPanel";
 
 		containerPanel.visualPanel = Ext.create('OSF.component.VisualSearchPanel', Ext.apply(containerPanel.visualPanelConfig, {
 			completedInit: function (nodes) {
