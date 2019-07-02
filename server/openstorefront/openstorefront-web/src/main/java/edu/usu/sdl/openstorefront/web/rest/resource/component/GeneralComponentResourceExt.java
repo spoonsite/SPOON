@@ -758,7 +758,6 @@ public abstract class GeneralComponentResourceExt
 
 			if (hasPermission && vendor != null) {
 
-				
 				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
 				Email email = MailManager.newEmail();
 				email.setSubject("SPOON Entry Updated");
