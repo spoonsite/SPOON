@@ -2363,7 +2363,7 @@ Ext.define('OSF.component.VisualContainerPanel', {
 
 		var containerPanel = this;
 
-		containerPanel.id = "containerPanel";
+		containerPanel.itemId = "containerPanel";
 
 		containerPanel.visualPanel = Ext.create('OSF.component.VisualSearchPanel', Ext.apply(containerPanel.visualPanelConfig, {
 			completedInit: function (nodes) {
