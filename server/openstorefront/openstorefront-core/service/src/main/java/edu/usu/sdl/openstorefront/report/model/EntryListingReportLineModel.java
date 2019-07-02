@@ -30,7 +30,9 @@ public class EntryListingReportLineModel
 	private String name;
 	private String shortDescription;
 	private String entryType;
+	private Date lastSubmitDts;
 	private Date lastUpdatedDts;
+	private Date lastVendorUpdateApprovedDate;
 	private String evaluationStatus;
 	private String viewLink;
 
@@ -78,6 +80,14 @@ public class EntryListingReportLineModel
 		this.entryType = entryType;
 	}
 
+	public Date getLastSubmitDts() {
+		return this.lastSubmitDts;
+	}
+
+	public void setLastSubmitDts(Date lastSubmitDts) {
+		this.lastSubmitDts = lastSubmitDts;
+	}
+
 	public Date getLastUpdatedDts()
 	{
 		return lastUpdatedDts;
@@ -86,6 +96,16 @@ public class EntryListingReportLineModel
 	public void setLastUpdatedDts(Date lastUpdatedDts)
 	{
 		this.lastUpdatedDts = lastUpdatedDts;
+	}
+
+	public Date getlastVendorUpdateApprovedDate()
+	{
+		return lastVendorUpdateApprovedDate;
+	}
+
+	public void setlastVendorUpdateApprovedDate(Date lastVendorUpdateApprovedDate)
+	{
+		this.lastVendorUpdateApprovedDate = lastVendorUpdateApprovedDate;
 	}
 
 	public String getEvaluationStatus()

@@ -178,6 +178,21 @@ public class EntryListingReport
 		return entryListingReportModel;
 	}
 
+	/**
+	 * Loads information from the component object into LineModel object.
+	 *  
+	 * @param component
+	 * @param viewLinkBase
+	 * is the first half of a url that is intended to help create a url link 
+	 * in the LineModel to a webpage about the component in question. 
+	 * 
+	 * @param evalMap
+	 * maps Component ID's to lists of Evaluation objects. It is a list of every
+	 * single component on SPOON site that has an evaluation on it, paired with every 
+	 * active evaluation assigned to that component-ID. 
+	 * 
+	 * @return EntryListingReportLineModel
+	 */
 	private EntryListingReportLineModel componentToLineModel(Component component, String viewLinkBase, Map<String, List<Evaluation>> evalMap)
 	{
 		EntryListingReportLineModel lineModel = new EntryListingReportLineModel();
@@ -190,7 +205,10 @@ public class EntryListingReport
 		);
 		lineModel.setEntryType(entryType);
 
+		// Set time/date properties
+		lineModel.setLastSubmitDts(component.getSubmittedDts());
 		lineModel.setLastUpdatedDts(component.getLastActivityDts());
+		lineModel.setlastVendorUpdateApprovedDate(component.getApprovedDts());
 
 		String name = ConfluenceClient.confluenceEscapeCharater(component.getName());
 		lineModel.setName(name);
@@ -324,6 +342,17 @@ public class EntryListingReport
 		pdfGenerator.savePdfDocument(renderedTemplate);
 	}
 
+	/**
+	 * This exists for modularity, it generates the actual report the user sees in HTMl code string. All the other 'write-' functions above-
+	 * writeHtml, writeConfluenceHtml, writePdf - they all take the HTML document string this generates and then go the extra step of converting
+	 * html into pdf/confluence/etc... 
+	 * @param reportModel
+	 * @param templateFile
+	 * Path to the .ftl file that contains the actual HTML layout of the report
+	 * 
+	 * @return String renderedTemplate
+	 * of HTML that is used for the actual report the user sees. 
+	 */
 	private String createHtml(EntryListingReportModel reportModel, String templateFile)
 	{
 		String renderedTemplate = null;

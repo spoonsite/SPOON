@@ -16,7 +16,8 @@
 					<th>Name</th>
 					<th>Description</th>
 					<th style="text-align: center;">Entry Type</th>
-					<th style="text-align: center;">Last Updated</th>
+					<th style="text-align: center;">Last Vender Update Approved</th>
+					<th style="text-align: center;">Last System Update</th>
 					<th style="text-align: center;">Evaluation Status</th>
 				</tr>	
 			</thead>
@@ -31,7 +32,10 @@
 						</td>
 						<td style="width: 150px; text-align: center;">
 							${listing.entryType}
-						</td>							
+						</td>		
+						<td style="width: 150px; text-align: center;">
+							${listing.lastVendorUpdateApprovedDate?date}
+						</td>					
 						<td style="width: 150px; text-align: center;">
 							${listing.lastUpdatedDts?date}
 						</td>
@@ -57,7 +61,8 @@
 					<th>Name</th>
 					<th>Description</th>
 					<th style="text-align: center;">Entry Type</th>
-					<th style="text-align: center;">Last Updated</th>
+					<th style="text-align: center;">Last Vendor Update Approved</th>
+					<th style="text-align: center;">Last System Update</th>
 					<th style="text-align: center;">Evaluation Status</th>
 				</tr>	
 			</thead>
@@ -72,6 +77,9 @@
 						</td>
 						<td style="width: 150px; text-align: center;">
 							${listing.entryType}
+						</td>
+						<td style="width: 225px; text-align: center;">
+							${listing.lastVendorUpdateApprovedDate?date}
 						</td>							
 						<td style="width: 225px; text-align: center;">
 							${listing.lastUpdatedDts?date}
@@ -98,7 +106,8 @@
 						<th>Name</th>
 						<th>Description</th>
 						<th style="text-align: center;">Entry Type</th>
-						<th style="text-align: center;">Last Updated</th>
+						<th style="text-align: center;">Last Vendor Update Approved</th>
+						<th style="text-align: center;">Last System Update</th>
 						<th style="text-align: center;">Evaluation Status</th>
 					</tr>	
 				</thead>
@@ -114,7 +123,10 @@
 								</td>
 								<td style="width: 150px; text-align: center;">
 									${listing.entryType}
-								</td>							
+								</td>	
+								<td style="width: 150px; text-align: center;">
+									${listing.lastVendorUpdateApprovedDate?date}
+								</td>						
 								<td style="width: 150px; text-align: center;">
 									${listing.lastUpdatedDts?date}
 								</td>

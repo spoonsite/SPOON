@@ -98,6 +98,9 @@ public class EntryStatusReport
 			detailModel.setName(component.getName());
 			detailModel.setCreateUser(component.getCreateUser());
 			detailModel.setCreateDts(component.getCreateDts());
+			detailModel.setLastSubmitDate(component.getSubmittedDts());
+			detailModel.setLastVendorUpdateApproveDate(component.getApprovedDts());
+			detailModel.setLastSystemUpdDate(component.getLastActivityDts());
 			String description = StringProcessor.ellipseString(StringProcessor.stripHtml(component.getDescription()), MAX_DESCRIPTION_SIZE);
 			detailModel.setDescription(description);
 
@@ -344,13 +347,50 @@ public class EntryStatusReport
 		writeDetails(generator, "Evaluations Published in Period", model.getEvaluationsPublished(), false);
 
 	}
-
+	
+	/**
+	 * writeDetails function is used in .writeCSV() extensively.
+	 * 
+	 * @param generator
+	 * Currently it doesn't matter what you pass through this parameter, this function defines and uses it's own CSV generator to
+	 * use and does nothing with the parameter passed through to it. Having this parameter here make it extendable for if this report
+	 * needs to be extended to other formats in the future, however.  
+	 * 
+	 * @param sectionName
+	 * Conditional logic has been added  to only write a "Last Vendor Update", "Last Vendor Update Approved","Last System Update" 
+	 * column if the second parameter being passed (the sectionName parameter) is equal to "Entries Created". Those columns are 
+	 * really only needed for that particular case. 
+	 * 
+	 * @param details
+	 * @param submitted
+	 */
 	private void writeDetails(BaseGenerator generator, String sectionName, List<EntryStatusDetailModel> details, boolean submitted)
 	{
 		CSVGenerator cvsGenerator = (CSVGenerator) generator;
 
 		cvsGenerator.addLine(sectionName);
-		cvsGenerator.addLine(
+		
+		// If this is the Entries Create section, show an extra three columns, "Last Vendor Update", "Last Vendor Update Approved",
+		// "Last System Update", else dont show those extra columns. The cvsGenerator object does not have support
+		// for anything like a .appendLine, therefore some duplicate code is necessary. 
+		if ( sectionName == "Entries Created"){
+			cvsGenerator.addLine(
+				"Name",
+				"Entry Type",
+				"Description",
+				"Status",
+				"Create User",
+				"Create Date",
+				"Create User Email",
+				"Create User Organization",
+				"Last Vendor Update",
+				"Last Vendor Update Approved",
+				"Last System Update",
+				submitted ? "Submission Date" : ""
+			);
+		}
+		else {
+			cvsGenerator.addLine(
 				"Name",
 				"Entry Type",
 				"Description",
@@ -360,9 +400,30 @@ public class EntryStatusReport
 				"Create User Email",
 				"Create User Organization",
 				submitted ? "Submission Date" : ""
-		);
+			);
+		}
+				
 		for (EntryStatusDetailModel detailModel : details) {
-			cvsGenerator.addLine(
+			
+			// If "Entries Created" section, display extra columns.
+			if ( sectionName == "Entries Created"){
+				cvsGenerator.addLine(
+					detailModel.getName(),
+					detailModel.getEntryType(),
+					detailModel.getDescription(),
+					detailModel.getStatus(),
+					detailModel.getCreateUser(),
+					sdf.format(detailModel.getCreateDts()),
+					detailModel.getCreateUserEmail(),
+					detailModel.getCreateUserOrganization(),
+					detailModel.getLastSubmitDate(),
+					detailModel.getLastVendorUpdateApproveDate(),
+					detailModel.getLastSystemUpdDate(),
+					submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
+				);
+			}
+			else {
+				cvsGenerator.addLine(
 					detailModel.getName(),
 					detailModel.getEntryType(),
 					detailModel.getDescription(),
@@ -372,7 +433,8 @@ public class EntryStatusReport
 					detailModel.getCreateUserEmail(),
 					detailModel.getCreateUserOrganization(),
 					submitted ? sdf.format(detailModel.getSubmissionDate()) : ""
-			);
+				);
+			}
 		}
 
 	}

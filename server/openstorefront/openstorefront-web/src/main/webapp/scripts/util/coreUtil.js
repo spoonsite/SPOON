@@ -1123,6 +1123,27 @@ var CoreUtil = {
 		}
 		return { valid: valid, msg : msg };
 	},
+	validateText: function(rawValue){
+		var valid = true;
+		var msg = '';
+
+		var sanitizedValue = rawValue;
+		var invalidChars = "~,!,@,#,$,%,&,*,(,),[,],=,:,;,',/,?,+".split(",").concat(",");
+
+		for(var i=0;i<=invalidChars.length;i++){
+			sanitizedValue = sanitizedValue.replace(invalidChars[i], "");
+		}
+		if(sanitizedValue == null || sanitizedValue == ""){
+			valid = false;
+			msg = "Values cannot contain only: " + "'" + invalidChars.join("', '") + "'";
+		}
+		if(rawValue.trim() == ""){
+			valid = false;
+			msg = "Values cannot be only spaces.";
+		}
+
+		return { valid: valid, msg : msg };
+	},
 	traverseNestedModel: function(node, parents, target) {
 		if (!node) return;
 		if (target.componentType === node.componentType.componentType) {

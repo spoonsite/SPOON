@@ -83,7 +83,7 @@
 						<th>Name</th>
 						<th>Description</th>
 						<th>Entry Type</th>
-						<th>Last Updated</th>
+						<th>Last Vendor Update / Update Approved On</th>
 						<th>Evaluation Status</th>
 					</tr>	
 				</thead>
@@ -96,13 +96,22 @@
 							<td>
 								${listing.shortDescription}
 							</td>
-							<td style="width: 200px; text-align: center;">
+							<td style="text-align: center;">
 								${listing.entryType}
 							</td>							
-							<td style="width: 200px; text-align: center;">
-								${listing.lastUpdatedDts?date}
+							<td style="text-align: center;">
+								<table style="border:0;margin:0;">
+									<tr>
+										<td> <#--Imported Entries lack a lastSubmitDts-->
+											<#if listing.lastSubmitDts?has_content>
+												${listing.lastSubmitDts?string('MMMM dd, yyyy hh\x3Amm\x3Ass a zzz')}
+											<#else>Imported On</#if>
+										</td>
+									</tr>
+									<tr><td>${listing.lastVendorUpdateApprovedDate?string('MMMM dd, yyyy hh\x3Amm\x3Ass a zzz')}</td><tr>
+								</table>
 							</td>
-							<td style="width: 200px; text-align: center;">
+							<td style="text-align: center;">
 								${listing.evaluationStatus}
 							</td>
 						</tr>		
@@ -119,7 +128,8 @@
 						<th>Name</th>
 						<th>Description</th>
 						<th>Entry Type</th>
-						<th>Last Updated</th>
+						<th>Last Vender Update Approved</th>
+						<th>Last System Update</th>
 						<th>Evaluation Status</th>
 					</tr>	
 				</thead>
@@ -134,7 +144,10 @@
 							</td>
 							<td style="width: 200px; text-align: center;">
 								${listing.entryType}
-							</td>							
+							</td>		
+							<td style="width: 200px; text-align: center;">
+								${listing.lastVendorUpdateApprovedDate?date}
+							</td>					
 							<td style="width: 200px; text-align: center;">
 								${listing.lastUpdatedDts?date}
 							</td>
@@ -157,7 +170,7 @@
 								<th>Name</th>
 								<th>Description</th>
 								<th>Entry Type</th>
-								<th>Last Updated</th>
+								<th>Last Vendor Update / Approved On</th>
 								<th>Evaluation Status</th>
 							</tr>	
 						</thead>
@@ -170,13 +183,22 @@
 									<td>
 										${listing.shortDescription}
 									</td>
-									<td style="width: 200px; text-align: center;">
+									<td style=" text-align: center;">
 										${listing.entryType}
-									</td>							
+									</td>	
 									<td style="width: 200px; text-align: center;">
-										${listing.lastUpdatedDts?date}
+										<table style="border:0;margin:0;">
+											<tr>
+												<td> <#--Imported Entries lack a lastSubmitDts-->
+													<#if listing.lastSubmitDts?has_content>
+														${listing.lastSubmitDts?string('MMMM dd, yyyy hh\x3Amm\x3Ass a zzz')}
+													<#else>Imported On</#if>
+												</td>
+											</tr>
+											<tr><td>${listing.lastVendorUpdateApprovedDate?string('MMMM dd, yyyy hh\x3Amm\x3Ass a zzz')}</td><tr>
+										</table>
 									</td>
-									<td style="width: 200px; text-align: center;">
+									<td style=" text-align: center;">
 										${listing.evaluationStatus}
 									</td>
 								</tr>		

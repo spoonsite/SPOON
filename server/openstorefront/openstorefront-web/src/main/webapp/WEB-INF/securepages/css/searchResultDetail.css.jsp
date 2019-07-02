@@ -140,8 +140,41 @@ limitations under the License.
 	padding-bottom: 10px;
 }
 
-.details-title-info {
-	color: rgba(68,30,90,.6) !important;
+.dark-purple {
+	color: #441e5a;
+}
+
+.davy-grey {
+	color:#555
+}
+
+.fs-12 {
+	font-size: 12px;
+}
+
+.fs-13 {
+	font-size: 13px;
+}
+
+.my-8 {
+    margin-left: 8px;
+   margin-right: 8px;
+}
+.mx-3 {
+    margin-top: 3px;
+	margin-bottom: 3px;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.underline {
+	text-decoration: underline;
+}
+
+.block {
+	display: block;
 }
 
 .review-summary-rating {
