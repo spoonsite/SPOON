@@ -1432,26 +1432,30 @@
 							Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced');
 						}
 
-						console.log(searchRequest)
-						var optionsPanel = Ext.getCmp('searchOptions')
-
-						for (var option in searchRequest.searchOptions) {															
-							var cb = Ext.create("Ext.form.field.Checkbox")							
-							cb.setBoxLabel("<small>" + option.replace("canUse", "").replace("InSearch", "") + "</small>")
-							cb.setValue(searchRequest.searchOptions[option])
-							cb.setReadOnly(true)
-							cb.setMargin("2 2 2 10")
-							optionsPanel.add(cb)
+						if (!(searchRequest.searchOptions)) {
+							Ext.getCmp('searchOptionsUsedLabel').setVisible(false)
 						}
+						else {
+							var optionsPanel = Ext.getCmp('searchOptions')
 
-						var components = Array.from(searchRequest.query.searchElements).filter(e=>e.searchType == "COMPONENT")
-						for (var comp in components) {
-							var cb = Ext.create("Ext.form.field.Checkbox")
-							cb.setBoxLabel(components[comp].value)
-							cb.setValue(true)
-							cb.setReadOnly(true)
-							cb.setMargin("2 2 2 10")
-							optionsPanel.add(cb)
+							for (var option in searchRequest.searchOptions) {															
+								var cb = Ext.create("Ext.form.field.Checkbox")							
+								cb.setBoxLabel("<small>" + option.replace("canUse", "").replace("InSearch", "") + "</small>")
+								cb.setValue(searchRequest.searchOptions[option])
+								cb.setReadOnly(true)
+								cb.setMargin("2 2 2 10")
+								optionsPanel.add(cb)
+							}
+
+							var components = Array.from(searchRequest.query.searchElements).filter(e=>e.searchType == "COMPONENT")
+							for (var comp in components) {
+								var cb = Ext.create("Ext.form.field.Checkbox")
+								cb.setBoxLabel(components[comp].value)
+								cb.setValue(true)
+								cb.setReadOnly(true)
+								cb.setMargin("2 2 2 10")
+								optionsPanel.add(cb)
+							}
 						}
 					}
 					else {
@@ -1809,8 +1813,10 @@
 							},
 							{
 								xtype: 'panel',
-								items: [
+								items: [								
 									{
+										// Give it an ID so it can be hidden
+										id: 'searchOptionsUsedLabel',
 										xtype: "label",
 										text: "Search options used:"
 									},
