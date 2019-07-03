@@ -53,9 +53,14 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 				var form = submissionFormFullControl.queryById('submissionForm');
 				submissionFormFullControl.checkNextPrevious();
 				
-				if (form.userSubmission && !initialDisplay) {
-					submissionFormFullControl.saveSubmission();
-				}
+				// This caused a bug where a Submission's data would be deleted if the user
+				// changed sections on the Submission edit form too quickly because it caused not-yet-loaded data
+				// to be saved, nullifying the whole section's data.
+				// We decided it's better to just not automatically save- the form has a Save button for a reason.
+
+				// if (form.userSubmission && !initialDisplay) {
+				// 	submissionFormFullControl.saveSubmission();
+				// }
 			}
 		},
 		{
