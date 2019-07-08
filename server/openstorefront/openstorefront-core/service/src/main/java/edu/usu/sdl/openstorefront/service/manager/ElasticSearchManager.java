@@ -906,10 +906,10 @@ public class ElasticSearchManager
 				//	Use low-level REST client to perform re-mapping
 				StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
 
-				//	Perform a PUT request to update the description mapping
+				// Perform a PUT request to update the description mapping.
 				client.getInstance()
 						.getLowLevelClient()
-						.performRequest("PUT", "/" + INDEX + "/_mapping/" + INDEX_TYPE + "?update_all_types", Collections.emptyMap(), entity);
+						.performRequest("PUT", "/" + INDEX + "/_mapping/", Collections.emptyMap(), entity);
 			}
 
 		} catch (IOException ex) {
