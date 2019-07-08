@@ -252,7 +252,10 @@
 								} else if (value === 'N') {
 									metaData.tdCls = 'alert-danger';
 									text = 'Not Submitted';
-								}
+								} else if (value === 'Q') {
+									text = 'Queued';
+									metaData.tdCls = 'alert-info';
+								} 
 								return text;
 							}
 						},
@@ -978,6 +981,9 @@
 											actionRefreshSubmission();
 											submissionWin.skipSave = true;
 											submissionWin.close();
+										},
+										submissionFinished: function(){
+											actionRefreshSubmission();
 										}
 									}
 								],

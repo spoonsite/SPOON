@@ -78,6 +78,8 @@ public class ComponentDetailView
 
 	private Date today;
 
+	private Date lastSubmitDts;
+
 	@NotNull
 	private String createUser;
 
@@ -203,6 +205,7 @@ public class ComponentDetailView
 		submittedDts = component.getSubmittedDts();
 		notifyOfApprovalEmail = component.getNotifyOfApprovalEmail();
 		lastActivityDts = component.getLastActivityDts();
+		lastSubmitDts = component.getSubmittedDts();
 		componentType = component.getComponentType();
 		dataSource = component.getDataSource();
 		storageVersion = component.getStorageVersion();
@@ -360,6 +363,15 @@ public class ComponentDetailView
 	{
 		this.updateDts = updateDts;
 	}
+
+	public Date getLastSubmitDts() {
+		return this.lastSubmitDts;
+	}
+
+	public void setLastSubmitDts(Date lastSubmitDts) {
+		this.lastSubmitDts = lastSubmitDts;
+	}
+
 
 	public ComponentEvaluationView getEvaluation()
 	{

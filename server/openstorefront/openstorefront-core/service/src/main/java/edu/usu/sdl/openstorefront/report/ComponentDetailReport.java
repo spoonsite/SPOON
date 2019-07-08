@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -179,7 +180,10 @@ public class ComponentDetailReport
 		cvsGenerator.addLine(
 				"Entry Name",
 				"Entry Organization",
-				"Entry Description"
+				"Entry Description",
+				"Last Vendor Update",
+				"Last Vendor Approved Update",
+				"Last System Update"
 		);
 
 		for (ComponentDetailReportLineModel lineModel : reportModel.getData()) {
@@ -187,7 +191,10 @@ public class ComponentDetailReport
 			cvsGenerator.addLine(
 					lineModel.getComponent().getName(),
 					lineModel.getComponent().getOrganization(),
-					StringProcessor.stripHtml(lineModel.getComponent().getDescription())
+					StringProcessor.stripHtml(lineModel.getComponent().getDescription()),
+					lineModel.getComponent().getSubmittedDts(),
+					lineModel.getComponent().getApprovedDate(),
+					lineModel.getComponent().getLastActivityDts()
 			);
 
 			List<ComponentAttributeView> attributes = lineModel.getComponent().getAttributes();
@@ -280,7 +287,11 @@ public class ComponentDetailReport
 	{
 		String renderedTemplate = null;
 		try {
+			// Initialize hashmap of variables that will be inserted into the HTML template
 			Map<String, Object> root = new HashMap<>();
+
+			// bind values to variables
+			root.put("createTime",LocalDateTime.now());
 			root.put("baseUrl", PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL));
 
 			EntryDetailsOptions options = new EntryDetailsOptions(report.getReportOption());

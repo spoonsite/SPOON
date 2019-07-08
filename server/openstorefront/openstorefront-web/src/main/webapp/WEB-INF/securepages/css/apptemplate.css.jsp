@@ -582,3 +582,7 @@ table.confluenceTable td.numberingColumn {
 	overflow: visible;
 	white-space: nowrap;
 }
+
+.red {
+    color: #F44;
+}

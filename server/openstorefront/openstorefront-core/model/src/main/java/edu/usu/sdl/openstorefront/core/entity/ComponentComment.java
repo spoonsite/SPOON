@@ -56,6 +56,10 @@ public class ComponentComment
 	private String comment;
 
 	@ConsumeField
+	@APIDescription("If used in the context of a change request, this will send an email to the vendor")
+	private Boolean willSendEmail;
+
+	@ConsumeField
 	private String parentCommentId;
 
 	@ConsumeField
@@ -64,13 +68,12 @@ public class ComponentComment
 
 	@APIDescription("Mark admin submission comments")
 	private Boolean adminComment;
-	
+
 	@APIDescription("Comments are locked while in transition state (i.e. a change request)")
 	private Boolean editDeleteLock;
 
-	@SuppressWarnings({"squid:S2637", "squid:S1186"})
-	public ComponentComment()
-	{
+	@SuppressWarnings({ "squid:S2637", "squid:S1186" })
+	public ComponentComment() {
 	}
 
 	public UserSubmissionComment toUserSubmissionComment()
@@ -108,6 +111,14 @@ public class ComponentComment
 		setPrivateComment(componentComment.getPrivateComment());
 		setAdminComment(componentComment.getAdminComment());
 		setEditDeleteLock(componentComment.getEditDeleteLock());
+	}
+
+	public Boolean getWillSendEmail() {
+		return willSendEmail;
+	}
+
+	public void setWillSendEmail(Boolean willSendEmail) {
+		this.willSendEmail = willSendEmail;
 	}
 
 	public String getCommentId()

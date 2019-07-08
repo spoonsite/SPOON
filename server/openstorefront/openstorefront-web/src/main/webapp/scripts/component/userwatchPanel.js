@@ -36,7 +36,12 @@ Ext.define('OSF.component.UserWatchPanel', {
 				dateFormat: 'c'
 			},
 			{
-				name: 'lastUpdateDts',
+				name: 'lastSubmitDts',
+				type:	'date',
+				dateFormat: 'c'
+			},
+			{
+				name: 'lastUpdate',
 				type:	'date',
 				dateFormat: 'c'
 			},
@@ -61,7 +66,20 @@ Ext.define('OSF.component.UserWatchPanel', {
 				}
 			}
 		},	
-		{ text: 'Entry Last Update Date', align: 'center', dataIndex: 'lastUpdateDts', width: 200,
+		{ text: 'Last Vendor Update', align: 'center', dataIndex: 'lastSubmitDts', width: 230,
+			renderer: function(value, meta, record) {
+				
+				// Check Last Vendor Update Date @see{Component#SubmittedDts}, add green-bg class if later than user view
+				if(!value || value == 'undefined' || value == null){
+					return "Imported / NA";
+				}
+				else if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
+					meta.tdCls = 'alert-success';
+				}
+				return Ext.util.Format.date(value, 'm/d/y H:i:s');
+			}
+		},
+		{ text: 'Vendor Update Approved Date', align: 'center', dataIndex: 'lastUpdateDts', width: 200,
 			renderer: function(value, meta, record) {
 				if (record.get('lastUpdateDts') > record.get('lastViewDts')) {
 					meta.tdCls = 'alert-success';
@@ -69,7 +87,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 				return Ext.util.Format.date(value, 'm/d/y H:i:s');
 			}
 		},
-		{ text: 'Last View Date', align: 'center', dataIndex: 'lastViewDts', width: 200,
+		{ text: 'Last Date Viewed By You', align: 'center', dataIndex: 'lastViewDts', width: 200,
 			renderer: function(value, meta, record) {
 				return Ext.util.Format.date(value, 'm/d/y H:i:s');
 			}			
