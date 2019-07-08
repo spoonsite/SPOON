@@ -113,13 +113,20 @@ Ext.define('OSF.common.AttributeCodeSelect', {
 					var values = attributePanel.getValue();	
 					var valid = true;
 					var msg = '';
+					var validatorResponse;
 
 					// Check for values that are only spaces
 					Ext.Array.each(values, function(value) {
-						if(value.trim() == ""){
+						validatorResponse = CoreUtil.validateText(value);
+						
+						// If there are any invalid values, the whole field should be invalid
+						if (valid){
+							valid = validatorResponse.valid;
+						} else {
 							valid = false;
-							msg = "Values cannot be only spaces."
 						}
+
+						msg = validatorResponse.msg;
 					});
 					// An Extjs validator function returns either true or a message to display as an error to the user. 
 					return valid ? valid : msg;	

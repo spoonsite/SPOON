@@ -82,16 +82,20 @@ public class UnitConvertUtil
 	 */
 	public static String convertUserUnitToBaseUnit(String baseUnitUOM, String userUnitUOM, String originalValue)
 	{
-		Unit userUnit = Unit.valueOf(userUnitUOM);
-		Unit baseUnit = Unit.valueOf(baseUnitUOM);
-		@SuppressWarnings("unchecked")
-		Amount factor = Amount.valueOf(1, baseUnit).to(userUnit);
+		try {
+			Unit userUnit = Unit.valueOf(userUnitUOM);
+			Unit baseUnit = Unit.valueOf(baseUnitUOM);
+			@SuppressWarnings("unchecked")
+			Amount factor = Amount.valueOf(1, baseUnit).to(userUnit);
 
-		BigDecimal originalValueNumber = Convert.toBigDecimal(originalValue);
-		BigDecimal conversionFactor = BigDecimal.valueOf(factor.getEstimatedValue());
+			BigDecimal originalValueNumber = Convert.toBigDecimal(originalValue);
+			BigDecimal conversionFactor = BigDecimal.valueOf(factor.getEstimatedValue());
 
-		BigDecimal newValue = originalValueNumber.divide(conversionFactor, MathContext.DECIMAL64);
-		return newValue.stripTrailingZeros().toPlainString();
+			BigDecimal newValue = originalValueNumber.divide(conversionFactor, MathContext.DECIMAL64);
+			return newValue.stripTrailingZeros().toPlainString();
+		} catch (Exception e) {
+			return originalValue;
+		}
 	}
 
 }
