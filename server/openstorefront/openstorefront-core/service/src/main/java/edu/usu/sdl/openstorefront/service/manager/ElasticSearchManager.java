@@ -41,7 +41,7 @@ import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
-import edu.usu.sdl.openstorefront.service.search.SolrComponentModel;
+import edu.usu.sdl.openstorefront.service.search.ElasticsearchComponentModel;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -544,7 +544,7 @@ public class ElasticSearchManager
 				if (service.getComponentService().checkComponentApproval(view.getComponentId())) {
 					view.setSearchScore(hit.getScore());
 					indexSearchResult.getSearchViews().add(view);
-					indexSearchResult.getResultsList().add(SolrComponentModel.fromComponentSearchView(view));
+					indexSearchResult.getResultsList().add(ElasticsearchComponentModel.fromComponentSearchView(view));
 				} else {
 					LOG.log(Level.FINER, MessageFormat.format("Component is no longer approved and active.  Removing index.  {0}", view.getComponentId()));
 					indexSearchResult.setTotalResults(indexSearchResult.getTotalResults() - 1);
@@ -612,9 +612,9 @@ public class ElasticSearchManager
 
 		//query everything we can
 		String extraFields[] = {
-			SolrComponentModel.FIELD_NAME,
-			SolrComponentModel.FIELD_ORGANIZATION,
-			SolrComponentModel.FIELD_DESCRIPTION
+			ElasticsearchComponentModel.FIELD_NAME,
+			ElasticsearchComponentModel.FIELD_ORGANIZATION,
+			ElasticsearchComponentModel.FIELD_DESCRIPTION
 		};
 		IndexSearchResult indexSearchResult = doIndexSearch(query, filter, extraFields);
 
@@ -639,7 +639,7 @@ public class ElasticSearchManager
 
 		//apply weight to items
 		String queryNoWild = query.replace("*", "").toLowerCase();
-		for (SolrComponentModel model : indexSearchResult.getResultsList()) {
+		for (ElasticsearchComponentModel model : indexSearchResult.getResultsList()) {
 			int score = 0;
 
 			if (StringUtils.isNotBlank(model.getName())
@@ -659,12 +659,12 @@ public class ElasticSearchManager
 		}
 
 		//sort
-		indexSearchResult.getResultsList().sort((SolrComponentModel o1, SolrComponentModel o2) -> Integer.compare(o2.getSearchWeight(), o1.getSearchWeight()));
+		indexSearchResult.getResultsList().sort((ElasticsearchComponentModel o1, ElasticsearchComponentModel o2) -> Integer.compare(o2.getSearchWeight(), o1.getSearchWeight()));
 
 		//window
-		List<SolrComponentModel> topItems = indexSearchResult.getResultsList().stream().limit(maxResult).collect(Collectors.toList());
+		List<ElasticsearchComponentModel> topItems = indexSearchResult.getResultsList().stream().limit(maxResult).collect(Collectors.toList());
 
-		for (SolrComponentModel model : topItems) {
+		for (ElasticsearchComponentModel model : topItems) {
 
 			SearchSuggestion suggestion = new SearchSuggestion();
 			suggestion.setName(model.getName());

@@ -19,7 +19,7 @@ package edu.usu.sdl.openstorefront.core.view;
  *
  * @author gbagley
  */
-public class SolrAttributeCodeTypeModel
+public class ElasticsearchAttributeCodeTypeModel
 {
 // private variables
 

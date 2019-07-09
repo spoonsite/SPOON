@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class IndexSearchResult
 {
 
-	private List<SolrComponentModel> resultsList = new ArrayList<>();
+	private List<ElasticsearchComponentModel> resultsList = new ArrayList<>();
 	private List<ComponentSearchView> searchViews = new ArrayList<>();
 	private long totalResults = 0;
 	private float maxScore;
@@ -111,12 +111,12 @@ public class IndexSearchResult
 		}
 	}
 
-	public List<SolrComponentModel> getResultsList()
+	public List<ElasticsearchComponentModel> getResultsList()
 	{
 		return resultsList;
 	}
 
-	public void setResultsList(List<SolrComponentModel> resultsList)
+	public void setResultsList(List<ElasticsearchComponentModel> resultsList)
 	{
 		this.resultsList = resultsList;
 	}
