@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -67,12 +68,20 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.ElasticsearchClient;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.DeleteByQueryAction;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.index.reindex.DeleteByQueryRequestBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -201,30 +210,37 @@ public class ElasticSearchManager
 		//	As of now (Elasticsearch 5.6.3), the best way to check if an index exists is to try and create it!
 		//	... then catch the error if thrown... High/Low-level REST client doesn't support checking the existence indices.
 		//		per: https://discuss.elastic.co/t/high-level-rest-client-admin-api/100461
-		if (!indexCreated.get()) {
+
+		if(indexCreated.get()){
 			try (ElasticSearchClient client = justGetClient();) {
 
-				XContentBuilder source = JsonXContent.contentBuilder().startObject().endObject();
+				GetIndexRequest indexRequest = new GetIndexRequest(INDEX);
+				boolean exists = client.getInstance().indices().exists(indexRequest, RequestOptions.DEFAULT);
+				LOG.log(Level.INFO, "Could not find index: " + INDEX);
 
-				// StringEntity entity = new StringEntity(source.toString(), ContentType.APPLICATION_JSON);
-				//	Perform a request attempting to create an index
-				// Response response = client
-				// 		.getInstance()
-				// 		.getLowLevelClient()
-				// 		.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
+				if (!exists){
+					try{
 
-				IndexRequest request = new IndexRequest(INDEX);
-				request.source(source);
-				IndexResponse indexResponse = client.getInstance().index(request, RequestOptions.DEFAULT);
+						CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX);
+						client.getInstance().indices().create(createIndexRequest, RequestOptions.DEFAULT);
+						LOG.log(Level.INFO, "Created index: " + INDEX);
+						indexCreated.set(true);
 
-				LOG.log(Level.INFO, "Search index: " + INDEX + " has been created. " + indexResponse.status().getStatus());
-				indexCreated.set(true);
+					} catch (ElasticsearchException e){
+						LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+						indexCreated.set(false);
+					}
 
-			} catch (ElasticsearchException e) {
-				//	Index was already created...
-				indexCreated.set(true);
+				} else {
+					indexCreated.set(true);
+				}
+
 			} catch (IOException e) {
 				LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+				indexCreated.set(false);
+			} catch (OpenStorefrontRuntimeException e){
+				LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+				indexCreated.set(false);
 			}
 		}
 	}
@@ -795,61 +811,86 @@ public class ElasticSearchManager
 	@Override
 	public void deleteAll()
 	{
-		//query all (delete in groups)
-		int start = 0;
-		int max = 1000;
-		long total = max;
 
-		int maxRetries = 5;
-		int retries = 0;
+		try (ElasticSearchClient client = singleton.getClient()) {
+			DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest(INDEX);
+			deleteByQueryRequest.setQuery(QueryBuilders.matchAllQuery());
 
-		while (start < total) {
+			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest();
+			deleteIndexRequest.indices(INDEX);
+			client.getInstance().indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
+			// client.getInstance().deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
 
-			//	Create the search request
-			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder()
-					.query(QueryBuilders.matchAllQuery())
-					.from(start)
-					.size(max);
-			SearchRequest searchRequest = new SearchRequest(INDEX)
-					.source(sourceBuilder);
+			// Long deleted = response.getDeleted();
 
-			SearchResponse response;
-			try (ElasticSearchClient client = singleton.getClient()) {
-				response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
+		} catch (ElasticsearchStatusException ex) {
+			LOG.log(Level.WARNING, "Index is not found. Skipping delete.");
+			LOG.log(Level.FINER, null, ex);
+			indexCreated.set(false);
 
-				SearchHits searchHits = response.getHits();
-				BulkRequest bulkRequest = new BulkRequest();
-				if (searchHits.getTotalHits().value > 0) {
-					//bulk delete results
-					searchHits.forEach(hit -> {
-						bulkRequest.add(new DeleteRequest(INDEX, hit.getId()));
-					});
-
-					//	Process the bulk request (ensure there were no failures)
-					BulkResponse bulkResponse = client.getInstance().bulk(bulkRequest, RequestOptions.DEFAULT);
-					if (bulkResponse.hasFailures()) {
-						bulkResponse.forEach(br -> {
-							if (StringUtils.isNotBlank(br.getFailureMessage())) {
-								LOG.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
-							}
-						});
-					}
-				}
-				start += searchHits.getHits().length;
-				total = searchHits.getTotalHits().value;
-			} catch (ElasticsearchStatusException ex) {
-				LOG.log(Level.WARNING, "Index is not found. Skipping delete.");
-				LOG.log(Level.FINER, null, ex);
-				indexCreated.set(false);
-
-				retries++;
-				if (retries == maxRetries) {
-					throw new OpenStorefrontRuntimeException("Unable to correct index/search error on detail. Giving up.", "Check elasticsearch", ex);
-				}
-			} catch (IOException ex) {
-				LOG.log(Level.SEVERE, null, ex);
-			}
+			throw new OpenStorefrontRuntimeException("Unable to correct index/search error on detail. Giving up.", "Check elasticsearch", ex);
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
 		}
+
+
+		// //query all (delete in groups)
+		// int start = 0;
+		// int max = 1000;
+		// long total = max;
+
+		// int maxRetries = 5;
+		// int retries = 0;
+
+		// while (start < total) {
+
+		// 	//	Create the search request
+		// 	SearchSourceBuilder sourceBuilder = new SearchSourceBuilder()
+		// 			.query(QueryBuilders.matchAllQuery())
+		// 			.from(start)
+		// 			.size(max);
+
+		// 	SearchRequest searchRequest = new SearchRequest(INDEX)
+		// 			.source(sourceBuilder);
+
+		// 	SearchResponse response;
+		// 	try (ElasticSearchClient client = singleton.getClient()) {
+		// 		LOG.log(Level.INFO, "Before search");
+		// 		response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
+		// 		LOG.log(Level.INFO, "After search");
+		// 		SearchHits searchHits = response.getHits();
+		// 		BulkRequest bulkRequest = new BulkRequest();
+		// 		if (searchHits.getTotalHits().value > 0) {
+		// 			//bulk delete results
+		// 			searchHits.forEach(hit -> {
+		// 				bulkRequest.add(new DeleteRequest(INDEX, hit.getId()));
+		// 			});
+
+		// 			//	Process the bulk request (ensure there were no failures)
+		// 			BulkResponse bulkResponse = client.getInstance().bulk(bulkRequest, RequestOptions.DEFAULT);
+		// 			if (bulkResponse.hasFailures()) {
+		// 				bulkResponse.forEach(br -> {
+		// 					if (StringUtils.isNotBlank(br.getFailureMessage())) {
+		// 						LOG.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
+		// 					}
+		// 				});
+		// 			}
+		// 		}
+		// 		start += searchHits.getHits().length;
+		// 		total = searchHits.getTotalHits().value;
+		// 	} catch (ElasticsearchStatusException ex) {
+		// 		LOG.log(Level.WARNING, "Index is not found. Skipping delete.");
+		// 		LOG.log(Level.FINER, null, ex);
+		// 		indexCreated.set(false);
+
+		// 		retries++;
+		// 		if (retries == maxRetries) {
+		// 			throw new OpenStorefrontRuntimeException("Unable to correct index/search error on detail. Giving up.", "Check elasticsearch", ex);
+		// 		}
+		// 	} catch (IOException ex) {
+		// 		LOG.log(Level.SEVERE, null, ex);
+		// 	}
+		// }
 	}
 
 	@Override
@@ -867,6 +908,7 @@ public class ElasticSearchManager
 	public void resetIndexer()
 	{
 		deleteAll();
+		checkSearchIndexCreation();
 		saveAll();
 		updateMapping();
 	}
