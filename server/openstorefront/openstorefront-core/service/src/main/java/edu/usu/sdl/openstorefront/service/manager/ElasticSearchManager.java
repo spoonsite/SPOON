@@ -59,31 +59,24 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.ElasticsearchClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.reindex.BulkByScrollResponse;
-import org.elasticsearch.index.reindex.DeleteByQueryAction;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
-import org.elasticsearch.index.reindex.DeleteByQueryRequestBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -188,7 +181,7 @@ public class ElasticSearchManager
 		}
 
 		if (clientPool.isEmpty()) {
-			throw new OpenStorefrontRuntimeException("No elasticsearch client avaliable for searching", "Check pool size and restart search server (system admin)");
+			throw new OpenStorefrontRuntimeException("No elasticsearch client available for searching", "Check pool size and restart search server (system admin)");
 		}
 
 		int waitTimeSeconds = Convert.toInteger(propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_CONNECTION_WAIT_TIME, "60"));
@@ -322,9 +315,9 @@ public class ElasticSearchManager
 	}
 
 	@Override
-	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] additionalFieldsToReturn)
 	{
-		// look for user search options if none user global
+		// look for user search options if none are found use global search options
 		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
 		if (searchOptions == null) {
 			searchOptions = service.getSearchService().getGlobalSearchOptions();
@@ -417,7 +410,7 @@ public class ElasticSearchManager
 			String allLowerQuery;
 			String properCaseQuery;
 
-			// This is done becuase searching doesn't properly deal with the hyphens.
+			// This is done because searching doesn't properly deal with the hyphens.
 			if (isHyphenatedWithoutSpaces(queryString.toString())) {
 				// Create custom queries
 				allUpperQuery = createSubstringOfQuery(queryString.toString().toUpperCase());
@@ -518,28 +511,49 @@ public class ElasticSearchManager
 				.from(filter.getOffset())
 				.size(maxSearchResults)
 				.sort(sort);
-		SearchRequest searchRequest = new SearchRequest(INDEX)
-				.source(searchSourceBuilder);
 
-		try {
-			performIndexSearch(searchRequest, indexSearchResult);
-		} catch (IOException ex) {
-			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (ElasticsearchStatusException e) {
+		/*****************************TEST*********************************/
+		IndexSearchResult indexSearchResult1 = new IndexSearchResult();
+		QueryBuilder simpleStringQuery = QueryBuilders.simpleQueryStringQuery(query);
+		SearchSourceBuilder searchSourceBuilder1 = new SearchSourceBuilder()
+			.query(simpleStringQuery)
+			.size(maxSearchResults)
+			.sort(sort);
+			
+		SearchRequest searchRequest1 = new SearchRequest(INDEX)
+			.source(searchSourceBuilder1);
 
-			//	if a status exception occurs, it is likely the fielddata == false for description.
-			//		Thus, update the mapping.
-			updateMapping();
-
-			//	try to perform the index search one more time...
 			try {
-				performIndexSearch(searchRequest, indexSearchResult);
-			} catch (IOException | ElasticsearchStatusException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to perform search!", "check index [" + INDEX + "] mapping", ex);
+				performIndexSearch(searchRequest1, indexSearchResult1);
+			} catch (IOException ex) {
+				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (ElasticsearchStatusException e) {
+				Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, e);
 			}
-		}
+		/*************************END TEST*********************************/
 
-		return indexSearchResult;
+		// SearchRequest searchRequest = new SearchRequest(INDEX)
+		// 		.source(searchSourceBuilder);
+
+		// try {
+		// 	performIndexSearch(searchRequest, indexSearchResult);
+		// } catch (IOException ex) {
+		// 	Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+		// } catch (ElasticsearchStatusException e) {
+
+		// 	//	if a status exception occurs, it is likely the fielddata == false for description.
+		// 	//		Thus, update the mapping.
+		// 	updateMapping();
+
+		// 	//	try to perform the index search one more time...
+		// 	try {
+		// 		performIndexSearch(searchRequest, indexSearchResult);
+		// 	} catch (IOException | ElasticsearchStatusException ex) {
+		// 		throw new OpenStorefrontRuntimeException("Unable to perform search!", "check index [" + INDEX + "] mapping", ex);
+		// 	}
+		// }
+
+		return indexSearchResult1;
 	}
 
 	private void performIndexSearch(SearchRequest searchRequest, IndexSearchResult indexSearchResult) throws IOException, ElasticsearchStatusException
@@ -811,17 +825,12 @@ public class ElasticSearchManager
 	@Override
 	public void deleteAll()
 	{
-
 		try (ElasticSearchClient client = singleton.getClient()) {
+
 			DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest(INDEX);
 			deleteByQueryRequest.setQuery(QueryBuilders.matchAllQuery());
 
-			DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest();
-			deleteIndexRequest.indices(INDEX);
-			client.getInstance().indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
-			// client.getInstance().deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
-
-			// Long deleted = response.getDeleted();
+			client.getInstance().deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
 
 		} catch (ElasticsearchStatusException ex) {
 			LOG.log(Level.WARNING, "Index is not found. Skipping delete.");
@@ -832,65 +841,6 @@ public class ElasticSearchManager
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
 		}
-
-
-		// //query all (delete in groups)
-		// int start = 0;
-		// int max = 1000;
-		// long total = max;
-
-		// int maxRetries = 5;
-		// int retries = 0;
-
-		// while (start < total) {
-
-		// 	//	Create the search request
-		// 	SearchSourceBuilder sourceBuilder = new SearchSourceBuilder()
-		// 			.query(QueryBuilders.matchAllQuery())
-		// 			.from(start)
-		// 			.size(max);
-
-		// 	SearchRequest searchRequest = new SearchRequest(INDEX)
-		// 			.source(sourceBuilder);
-
-		// 	SearchResponse response;
-		// 	try (ElasticSearchClient client = singleton.getClient()) {
-		// 		LOG.log(Level.INFO, "Before search");
-		// 		response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
-		// 		LOG.log(Level.INFO, "After search");
-		// 		SearchHits searchHits = response.getHits();
-		// 		BulkRequest bulkRequest = new BulkRequest();
-		// 		if (searchHits.getTotalHits().value > 0) {
-		// 			//bulk delete results
-		// 			searchHits.forEach(hit -> {
-		// 				bulkRequest.add(new DeleteRequest(INDEX, hit.getId()));
-		// 			});
-
-		// 			//	Process the bulk request (ensure there were no failures)
-		// 			BulkResponse bulkResponse = client.getInstance().bulk(bulkRequest, RequestOptions.DEFAULT);
-		// 			if (bulkResponse.hasFailures()) {
-		// 				bulkResponse.forEach(br -> {
-		// 					if (StringUtils.isNotBlank(br.getFailureMessage())) {
-		// 						LOG.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
-		// 					}
-		// 				});
-		// 			}
-		// 		}
-		// 		start += searchHits.getHits().length;
-		// 		total = searchHits.getTotalHits().value;
-		// 	} catch (ElasticsearchStatusException ex) {
-		// 		LOG.log(Level.WARNING, "Index is not found. Skipping delete.");
-		// 		LOG.log(Level.FINER, null, ex);
-		// 		indexCreated.set(false);
-
-		// 		retries++;
-		// 		if (retries == maxRetries) {
-		// 			throw new OpenStorefrontRuntimeException("Unable to correct index/search error on detail. Giving up.", "Check elasticsearch", ex);
-		// 		}
-		// 	} catch (IOException ex) {
-		// 		LOG.log(Level.SEVERE, null, ex);
-		// 	}
-		// }
 	}
 
 	@Override
@@ -908,7 +858,6 @@ public class ElasticSearchManager
 	public void resetIndexer()
 	{
 		deleteAll();
-		checkSearchIndexCreation();
 		saveAll();
 		updateMapping();
 	}
