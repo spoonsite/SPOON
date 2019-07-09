@@ -41,7 +41,7 @@ Ext.define('OSF.component.UserWatchPanel', {
 				dateFormat: 'c'
 			},
 			{
-				name: 'lastUpdate',
+				name: 'lastUpdateDts',
 				type:	'date',
 				dateFormat: 'c'
 			},
@@ -176,6 +176,13 @@ Ext.define('OSF.component.UserWatchPanel', {
 							record.set('notifyFlg', true);
 						}
 						grid.setLoading("Updating...");
+						
+						// server can't handle null members - some entries lack dates
+						if(!record.data.lastSubmitDts){
+							// server can handle undefined
+							record.data.lastSubmitDts = undefined
+						}
+						
 						Ext.Ajax.request({
 							url:'api/v1/resource/userprofiles/'+grid.user+'/watches/'+record.get('watchId'),
 							method: 'PUT',
