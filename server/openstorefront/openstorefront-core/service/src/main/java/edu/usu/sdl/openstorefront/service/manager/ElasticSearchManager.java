@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,18 +57,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
@@ -207,18 +205,22 @@ public class ElasticSearchManager
 			try (ElasticSearchClient client = justGetClient();) {
 
 				XContentBuilder source = JsonXContent.contentBuilder().startObject().endObject();
-				StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
 
+				// StringEntity entity = new StringEntity(source.toString(), ContentType.APPLICATION_JSON);
 				//	Perform a request attempting to create an index
-				Response response = client
-						.getInstance()
-						.getLowLevelClient()
-						.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
+				// Response response = client
+				// 		.getInstance()
+				// 		.getLowLevelClient()
+				// 		.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
 
-				LOG.log(Level.INFO, () -> "Search index: " + INDEX + " has been created. " + response.getStatusLine().getStatusCode());
+				IndexRequest request = new IndexRequest(INDEX);
+				request.source(source);
+				IndexResponse indexResponse = client.getInstance().index(request, RequestOptions.DEFAULT);
+
+				LOG.log(Level.INFO, "Search index: " + INDEX + " has been created. " + indexResponse.status().getStatus());
 				indexCreated.set(true);
 
-			} catch (ResponseException e) {
+			} catch (ElasticsearchException e) {
 				//	Index was already created...
 				indexCreated.set(true);
 			} catch (IOException e) {
@@ -529,10 +531,10 @@ public class ElasticSearchManager
 		// perform search
 		SearchResponse response;
 		try (ElasticSearchClient client = singleton.getClient()) {
-			response = client.getInstance().search(searchRequest);
+			response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
 		}
 
-		indexSearchResult.setTotalResults(response.getHits().getTotalHits());
+		indexSearchResult.setTotalResults(response.getHits().getTotalHits().value);
 		indexSearchResult.setMaxScore(response.getHits().getMaxScore());
 
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
@@ -707,7 +709,8 @@ public class ElasticSearchManager
 				component.setDescription(StringProcessor.ellipseString(component.getDescription(), MAX_DESCRIPTION_INDEX_SIZE));
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
 				try {
-					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
+					bulkRequest.add(new IndexRequest(INDEX)
+							.id(componentSearchView.getComponentId())
 							.source(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON));
 				} catch (JsonProcessingException ex) {
 					LOG.log(Level.SEVERE, null, ex);
@@ -722,7 +725,7 @@ public class ElasticSearchManager
 	{
 		BulkResponse bulkResponse;
 		try (ElasticSearchClient client = singleton.getClient()) {
-			bulkResponse = client.getInstance().bulk(bulkRequest);
+			bulkResponse = client.getInstance().bulk(bulkRequest, RequestOptions.DEFAULT);
 
 			if (bulkResponse.hasFailures()) {
 				bulkResponse.forEach(response -> {
@@ -764,7 +767,8 @@ public class ElasticSearchManager
 						componentAll.getTags()
 				);
 				try {
-					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
+					bulkRequest.add(new IndexRequest(INDEX)
+							.id(componentSearchView.getComponentId())
 							.source(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON));
 				} catch (JsonProcessingException ex) {
 					LOG.log(Level.SEVERE, null, ex);
@@ -778,10 +782,10 @@ public class ElasticSearchManager
 	@Override
 	public void deleteById(String id)
 	{
-		DeleteRequest deleteRequest = new DeleteRequest(INDEX, INDEX_TYPE, id);
+		DeleteRequest deleteRequest = new DeleteRequest(INDEX, id);
 		DeleteResponse response;
 		try (ElasticSearchClient client = singleton.getClient()) {
-			response = client.getInstance().delete(deleteRequest);
+			response = client.getInstance().delete(deleteRequest, RequestOptions.DEFAULT);
 			LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.getId()));
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
@@ -807,23 +811,22 @@ public class ElasticSearchManager
 					.from(start)
 					.size(max);
 			SearchRequest searchRequest = new SearchRequest(INDEX)
-					.types(INDEX_TYPE)
 					.source(sourceBuilder);
 
 			SearchResponse response;
 			try (ElasticSearchClient client = singleton.getClient()) {
-				response = client.getInstance().search(searchRequest);
+				response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
 
 				SearchHits searchHits = response.getHits();
 				BulkRequest bulkRequest = new BulkRequest();
-				if (searchHits.getTotalHits() > 0) {
+				if (searchHits.getTotalHits().value > 0) {
 					//bulk delete results
 					searchHits.forEach(hit -> {
-						bulkRequest.add(new DeleteRequest(INDEX, INDEX_TYPE, hit.getId()));
+						bulkRequest.add(new DeleteRequest(INDEX, hit.getId()));
 					});
 
 					//	Process the bulk request (ensure there were no failures)
-					BulkResponse bulkResponse = client.getInstance().bulk(bulkRequest);
+					BulkResponse bulkResponse = client.getInstance().bulk(bulkRequest, RequestOptions.DEFAULT);
 					if (bulkResponse.hasFailures()) {
 						bulkResponse.forEach(br -> {
 							if (StringUtils.isNotBlank(br.getFailureMessage())) {
@@ -833,7 +836,7 @@ public class ElasticSearchManager
 					}
 				}
 				start += searchHits.getHits().length;
-				total = searchHits.getTotalHits();
+				total = searchHits.getTotalHits().value;
 			} catch (ElasticsearchStatusException ex) {
 				LOG.log(Level.WARNING, "Index is not found. Skipping delete.");
 				LOG.log(Level.FINER, null, ex);
@@ -904,12 +907,15 @@ public class ElasticSearchManager
 						.endObject();
 
 				//	Use low-level REST client to perform re-mapping
-				StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
 
 				// Perform a PUT request to update the description mapping.
-				client.getInstance()
-						.getLowLevelClient()
-						.performRequest("PUT", "/" + INDEX + "/_mapping/", Collections.emptyMap(), entity);
+				// client.getInstance()
+				// 		.getLowLevelClient()
+				// 		.performRequest("PUT", "/" + INDEX + "/_mapping/", Collections.emptyMap(), entity);
+				
+				IndexRequest request = new IndexRequest(INDEX);
+				request.source(source);
+				client.getInstance().index(request, RequestOptions.DEFAULT);
 			}
 
 		} catch (IOException ex) {
