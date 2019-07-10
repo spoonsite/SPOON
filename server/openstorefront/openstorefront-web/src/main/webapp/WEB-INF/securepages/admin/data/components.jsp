@@ -2162,6 +2162,11 @@
 							y: 200,
 							modal: true,
 							layout: 'fit',
+							listeners: {
+								show: function(obj, eOpts){
+									obj.down('UserSingleSelectComboBox').setValue("");
+								}
+							},
 							items: [
 								{
 									xtype: 'form',
@@ -2170,7 +2175,7 @@
 									items: [
 										{
 											xtype: 'UserSingleSelectComboBox',
-											fieldLabel: 'Username <span class="field-required" />',
+											fieldLabel: 'User Name <span class="field-required" />',
 											labelAlign: 'top',
 											name: 'currentDataOwner',
 											allowBlank: false,
@@ -2210,10 +2215,12 @@
 														});
 														var form = this.up('form');
 														var username = form.getForm().findField('currentDataOwner').getValue();
+
 														var adminComment = form.queryById('searchComment').getValue();
 														if (adminComment.trim() == "" || adminComment == null){
 															adminComment = "No comment given"
 														}
+
 														var data = {
 															componentIds: componentIds,
 															comment: {
@@ -2237,8 +2244,8 @@
 																	if( response.responseText.indexOf('errors') !== -1) {
 																	// provide error notification
 																		Ext.toast({
-																			title: 'validation error. the server could not process the request. ',
-																			html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																			title: 'Validation error, the server could not process the request. ',
+																			html: 'The comment field must have a size smaller than 4096.',
 																			width: 550,
 																			autoclosedelay: 10000
 																		});
@@ -2249,8 +2256,8 @@
 															},
 															failure: function(){
 																Ext.toast({
-																	title: 'validation error. the server could not process the request. ',
-																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
+																	title: 'Validation error, the server could not process the request. ',
+																	html: 'The comment field must have a size smaller than 4096.',
 																	width: 550,
 																	autoclosedelay: 10000
 																});
