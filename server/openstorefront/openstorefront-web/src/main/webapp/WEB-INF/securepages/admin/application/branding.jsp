@@ -251,7 +251,6 @@
 														name: 'showLinkToMobile',
 														boxLabel: 'Show link to mobile site in menu'													 	
 													},
-													
 													{
 														xtype: 'htmleditor',
 														fieldLabel: 'Disclaimer Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottome right of the Search Results." ></i>',
@@ -262,8 +261,18 @@
 														},
 														allowBlank: true,
 														maxLength: 255
+													},
+													{
+														xtype: 'htmleditor',
+														fieldLabel: 'Bulk Upload Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup box when a vendor uses the Bulk Upload tool." ></i>',
+														name: 'bulkUploadMessage',
+														width: '100%',
+														resizable: {
+															handles: 's'
+														},
+														allowBlank: true,
+														maxLength: 4096
 													}
-
 												]
 											},
 											{
