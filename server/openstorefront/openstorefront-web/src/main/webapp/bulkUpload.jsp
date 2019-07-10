@@ -43,7 +43,16 @@
 							items: [
 								{
 									xtype:'label',
-									html: 'Upload a zip file.<br><strong style="color:red;">Do not upload any propriety or ITAR information.</strong><br><br>Once your information is entered you will need to come back<br>to this page and approve the entry.'
+									html: 'This bulk upload tool is designed to help you submit a part or parts into our database.  '+
+											'You can upload a zip file containing PDFs, excel spreadsheets, or other human readable files.  '+
+											'The SPOON support team will then do all the data entry for you.<br><br>'+
+
+											'Once SPOON support is done entering your information, you will then need to review and submit '+
+											'the information for Subject Matter Expert (SME) review.  Once the SME has approved your '+
+											'information your part will become searchable on the site.<br><br>'+
+
+											'<strong style="color:red;">The information submitted to this site will be made publicly available.  Please do not submit '+
+											'any sensitive information such as proprietary or ITAR restricted information.</strong><br><br>'
 								},
 								{
 									xtype: 'fileFieldMaxLabel',
