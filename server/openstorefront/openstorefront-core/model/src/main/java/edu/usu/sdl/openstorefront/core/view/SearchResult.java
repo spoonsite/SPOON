@@ -64,8 +64,8 @@ public class SearchResult
 
 	//  @DataType(SearchResultAttribute.class)
 	// private List<SearchResultAttribute> attributes = new ArrayList<>();
-	@DataType(SolrAttributeCodeTypeModel.class)
-	private List<SolrAttributeCodeTypeModel> attributes = new ArrayList<>();
+	@DataType(ElasticsearchAttributeCodeTypeModel.class)
+	private List<ElasticsearchAttributeCodeTypeModel> attributes = new ArrayList<>();
 
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
@@ -190,19 +190,12 @@ public class SearchResult
 		this.totalNumberOfReviews = totalNumberOfReviews;
 	}
 
-//    public List<SearchResultAttribute> getAttributes() {
-//        return attributes;
-//    }
-//
-//    public void setAttributes(List<SearchResultAttribute> attributes) {
-//        this.attributes = attributes;
-//    }
-	public List<SolrAttributeCodeTypeModel> getAttributes()
+	public List<ElasticsearchAttributeCodeTypeModel> getAttributes()
 	{
 		return attributes;
 	}
 
-	public void setAttributes(List<SolrAttributeCodeTypeModel> attributes)
+	public void setAttributes(List<ElasticsearchAttributeCodeTypeModel> attributes)
 	{
 		this.attributes = attributes;
 	}

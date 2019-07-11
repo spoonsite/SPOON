@@ -36,10 +36,6 @@ public class SearchClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public Response clearSolr()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
 
 	public Response export(List<String> ids)
 	{
@@ -62,11 +58,6 @@ public class SearchClient
 	}
 
 	public List<SearchSuggestion> getSearchSuggestions(String query, int maxResults)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	public Response resetSolr()
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

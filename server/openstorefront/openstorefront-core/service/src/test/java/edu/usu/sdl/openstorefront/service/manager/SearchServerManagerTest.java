@@ -58,29 +58,6 @@ public class SearchServerManagerTest
 	 * Test of initialize method, of class SearchServerManager.
 	 */
 	@Test
-	public void testInitializeSolr()
-	{
-		LOG.info("initialize: Solr");
-
-		PropertiesManager propertiesManager = Mockito.mock(PropertiesManager.class);
-		Mockito.when(propertiesManager.getValue(Mockito.any())).thenReturn(SearchServerManager.SOLR);
-		Mockito.when(propertiesManager.getValue(Mockito.any(), Mockito.any())).thenReturn(SearchServerManager.SOLR);
-
-		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_SOLR_URL), Mockito.anyString())).thenReturn("dummy");
-		Mockito.when(propertiesManager.getValue(Mockito.eq(PropertiesManager.KEY_SOLR_USE_XML), Mockito.anyString())).thenReturn("true");
-
-		SearchServerManager instance = new SearchServerManager(propertiesManager);
-		instance.initialize();
-		BaseSearchManager searchManager = instance.getSearchServer();
-		if (!(searchManager instanceof SolrManager)) {
-			fail("Expected Solr Manager");
-		}
-	}
-
-	/**
-	 * Test of initialize method, of class SearchServerManager.
-	 */
-	@Test
 	public void testInitializeDefault()
 	{
 		LOG.info("initialize: Default");
