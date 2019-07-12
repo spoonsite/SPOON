@@ -2,6 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Landing from './views/Landing.vue'
 import Search from './views/Search.vue'
+import FAQ from './views/FAQ.vue'
+import ContactUs from './views/ContactUs.vue'
+
 
 Vue.use(Router)
 
@@ -16,6 +19,16 @@ export default new Router({
       path: '/search',
       name: 'Search',
       component: Search
+    },
+    {
+      path: '/faq',
+      name: 'FAQ',
+      component: FAQ
+    },
+    {
+      path: '/contact',
+      name: 'Contact',
+      component: ContactUs
     }
     // {
     //   path: '/about',
