@@ -1,5 +1,6 @@
 module.exports = {
   devServer: {
+    port: 3000,
     proxy: {
       '/openstorefront': {
         // ***PRODUCTION INSTANCES***
