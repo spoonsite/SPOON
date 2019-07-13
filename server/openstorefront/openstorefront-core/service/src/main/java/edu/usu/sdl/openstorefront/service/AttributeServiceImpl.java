@@ -61,6 +61,7 @@ import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -255,6 +256,9 @@ public class AttributeServiceImpl
 	public void saveAttributeType(AttributeType attributeType, boolean updateIndexes)
 	{
 		getAttributeServicePrivate().performSaveAttributeType(attributeType);
+
+		// the advanced search filter needs a way to know when to refresh it's cache @see{SearchStatTable#isThereNewAttributeTypeSaved}
+		SearchStatTable.setThereIsNewAttributeTypeSaved(true);
 
 		if (updateIndexes) {
 			ComponentAttributePk componentAttributePk = new ComponentAttributePk();

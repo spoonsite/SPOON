@@ -57,6 +57,16 @@ public class SearchStatTable
 	private static final int MAX_ATTRIBUTE_QUERY_RESULTS = 5000;
 	private static final int MAX_TAG_QUERY_RESULTS = 1000;
 
+	/**
+	 * Flag of when a Component is approved for knowing when to refresh the cache
+	 * Refreshing the cache every time a new component is approved allows for tags, Units/Attributes,
+	 *  & organizations to be instantly searchable, with search performance tradeoff if components are
+	 * approved right in the middle of it. 
+	 * 
+	 */
+	private static boolean isThereNewAttributeTypeSaved = false;
+	private static boolean isThereNewTagSaved = false;
+
 	public SearchStatTable()
 	{
 		// pull hashMaps from the cache
@@ -64,9 +74,24 @@ public class SearchStatTable
 		Element element = appCache.get(CACHE_KEY);
 		if (element != null) {
 			SearchStatTable cachedTable = (SearchStatTable) element.getObjectValue();
-			this.attributeMap = cachedTable.getAttributeMap();
+			
+			if (isThereNewAttributeTypeSaved){
+				isThereNewAttributeTypeSaved = false;
+				index(false, true, false);
+			} else {
+				this.attributeMap = cachedTable.getAttributeMap();
+			}
+			
+			if (isThereNewTagSaved){
+				isThereNewTagSaved = false;
+				index(true, false, false);
+			} else {
+				this.tagMap = cachedTable.getTagMap();
+			}
+			
+			// Organization are currently not a searchable feature on the search page, therefore we defer this
 			this.organizationMap = cachedTable.getOrganizationMap();
-			this.tagMap = cachedTable.getTagMap();
+			
 		} else {
 			index();
 		}
@@ -101,13 +126,17 @@ public class SearchStatTable
 	 * then stored in the applicationCache. To be called with the search engine
 	 * index.
 	 */
-	public void index()
+	public void index(){
+		index(true,true,true);
+	}
+
+	public void index(boolean doTags, boolean doAttributes, boolean doOrganizations)
 	{
 		boolean changed = false;
 
 		Service service = ServiceProxyFactory.getServiceProxy();
 
-		if (tagMap.isEmpty()) {
+		if (tagMap.isEmpty() && doTags) {
 			//window query 0 to total 1000 at a time
 
 			ComponentTag tagExample = new ComponentTag();
@@ -131,7 +160,7 @@ public class SearchStatTable
 			changed = true;
 		}
 
-		if (attributeMap.isEmpty()) {
+		if (attributeMap.isEmpty() && doAttributes) {
 			//window query 0 to total 5000 at a time
 			ComponentAttribute attributeExample = new ComponentAttribute();
 			attributeExample.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
@@ -150,7 +179,7 @@ public class SearchStatTable
 			changed = true;
 		}
 
-		if (organizationMap.isEmpty()) {
+		if (organizationMap.isEmpty() && doOrganizations) {
 			Component componentExample = new Component();
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 			componentExample.setApprovalState(ApprovalStatus.APPROVED);
@@ -334,6 +363,23 @@ public class SearchStatTable
 	public Map<String, List<ComponentTag>> getTagMap()
 	{
 		return tagMap;
+	}
+
+	// Static methods 
+	public static boolean isThereNewAttributeTypeSaved() {
+		return isThereNewAttributeTypeSaved;
+	}
+
+	public static void setThereIsNewAttributeTypeSaved(boolean isNewApprovedComponentsFlag) {
+		isThereNewAttributeTypeSaved = isNewApprovedComponentsFlag;
+	}
+
+	public boolean getIsThereNewTagSaved() {
+		return isThereNewTagSaved;
+	}
+
+	public void setIsThereNewTagSaved(boolean NewTagSaved) {
+		isThereNewTagSaved = NewTagSaved;
 	}
 
 }

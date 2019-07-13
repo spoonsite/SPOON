@@ -728,6 +728,12 @@ public class SubComponentServiceImpl
 			componentService.getChangeLogService().addEntityChange(tag);
 		}
 		handleUserDataAlert(tag);
+		
+		//bbblah blah 
+		
+		if(persistenceService.countByExample(tag) > 0 ){
+			
+		}
 
 		if (updateLastActivity) {
 			updateComponentLastActivity(tag.getComponentId());
