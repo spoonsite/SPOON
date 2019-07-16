@@ -946,7 +946,7 @@
 					processResults(filterSet);
 					
 				} else { 
-					//server side										
+					//server side
 					var searchRequest = Ext.clone(originalSearchRequest);
 					
 					//the last element should be an AND
@@ -963,6 +963,23 @@
 							field: 'name',
 							dir: 'ASC'
 						};
+					}
+
+					var base = CoreUtil.sessionStorage().getItem('searchRequest')
+					var options = JSON.parse(base).searchOptions;
+
+					for (var i in options) {
+						if (options[i]) {
+							// originalSearchRequest.query.searchElements.splice(1, 0, {
+							originalSearchRequest.query.searchElements.push({
+								searchType: 'SEARCH OPTION',
+								field: 'searchOption',
+								value: i,
+								caseInsensitive: true,
+								stringOperation: 'CONTAINS',
+								mergeCondition: 'AND'
+							});
+						}
 					}
 					
 					//Transform Filters into search elements.
@@ -1432,31 +1449,6 @@
 							Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced');
 						}
 
-						if (!(searchRequest.searchOptions)) {
-							Ext.getCmp('searchOptionsUsedLabel').setVisible(false)
-						}
-						else {
-							var optionsPanel = Ext.getCmp('searchOptions')
-
-							for (var option in searchRequest.searchOptions) {															
-								var cb = Ext.create("Ext.form.field.Checkbox")							
-								cb.setBoxLabel("<small>" + option.replace("canUse", "").replace("InSearch", "") + "</small>")
-								cb.setValue(searchRequest.searchOptions[option])
-								cb.setReadOnly(true)
-								cb.setMargin("2 2 2 10")
-								optionsPanel.add(cb)
-							}
-
-							var components = Array.from(searchRequest.query.searchElements).filter(e=>e.searchType == "COMPONENT")
-							for (var comp in components) {
-								var cb = Ext.create("Ext.form.field.Checkbox")
-								cb.setBoxLabel(components[comp].value)
-								cb.setValue(true)
-								cb.setReadOnly(true)
-								cb.setMargin("2 2 2 10")
-								optionsPanel.add(cb)
-							}
-						}
 					}
 					else {
 						//search all					
@@ -1591,8 +1583,11 @@
 						callback: function(panel, tool, event) {
 							
 							var tip = Ext.create('Ext.tip.ToolTip', {
-								title: 'Search Criteria',  
+								title: 'Search Criteria',
+								autoHide: false,
 								closable: true,
+								height: 500,
+								scrollable: "y",
 								html: CoreUtil.descriptionOfAdvancedSearch(originalSearchRequest.query.searchElements),
 								width: 300								
 							});
@@ -1810,25 +1805,6 @@
 										}										
 									}
 								}								
-							},
-							{
-								xtype: 'panel',
-								items: [								
-									{
-										// Give it an ID so it can be hidden
-										id: 'searchOptionsUsedLabel',
-										xtype: "label",
-										text: "Search options used:"
-									},
-									{
-										id: 'searchOptions',
-										layout: {
-											type: 'hbox',
-											pack: 'start',
-											align: 'start'
-										}
-									}
-								]								
 							},
 							{
 								xtype: 'tbfill'
