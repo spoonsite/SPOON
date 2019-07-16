@@ -52,15 +52,6 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 				var submissionFormFullControl = this.up('panel');
 				var form = submissionFormFullControl.queryById('submissionForm');
 				submissionFormFullControl.checkNextPrevious();
-				
-				// This caused a bug where a Submission's data would be deleted if the user
-				// changed sections on the Submission edit form too quickly because it caused not-yet-loaded data
-				// to be saved, nullifying the whole section's data.
-				// We decided it's better to just not automatically save- the form has a Save button for a reason.
-
-				// if (form.userSubmission && !initialDisplay) {
-				// 	submissionFormFullControl.saveSubmission();
-				// }
 			}
 		},
 		{
@@ -122,7 +113,6 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						var submissionFormFullControl = this.up('panel');
 						var form = submissionFormFullControl.queryById('submissionForm');
 						form.previousSection();
-						submissionFormFullControl.checkNextPrevious();
 					}
 				},
 				{
@@ -184,8 +174,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					handler: function() {
 						var submissionFormFullControl = this.up('panel');
 						var form = submissionFormFullControl.queryById('submissionForm');
-						form.nextSection();	
-						submissionFormFullControl.checkNextPrevious();
+						form.nextSection();
 					}					
 				}
 			]
@@ -269,8 +258,9 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 			if (!submissionFormFullControl.hideSave) {
 				submissionFormFullControl.queryById('save').setHidden(true);
 				submissionFormFullControl.queryById('submitApproval').setHidden(false);
+				submissionFormFullControl.saveSubmission();
 			}
-			
+
 			if (!section.component.allSectionsValid()) {
 				submissionFormFullControl.queryById('submitApproval').setDisabled(true);
 			} else {
@@ -303,7 +293,6 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						section: section,
 						handler: function() {							
 							form.jumpToSection(this.sectionIndex);
-							submissionFormFullControl.checkNextPrevious();
 						}
 					});
 					index++;
@@ -326,7 +315,6 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 						section: section,
 						handler: function() {							
 							form.jumpToSection(this.sectionIndex);
-							submissionFormFullControl.checkNextPrevious();
 						}
 					};
 					
