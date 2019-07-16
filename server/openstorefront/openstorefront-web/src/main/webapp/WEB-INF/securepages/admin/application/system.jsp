@@ -2063,7 +2063,7 @@
 							tooltip: 'This will re-index the listings. The search results will be affected while running.',
 							handler: function () {
 								Ext.Ajax.request({
-									url: 'api/v1/service/search/resetSolr',
+									url: 'api/v1/service/search/resetElasticsearch',
 									method: 'POST',
 									success: function(response, opt) {
 										Ext.toast('Successfully sent re-index request', '', 'tr');

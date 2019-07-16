@@ -172,7 +172,11 @@ public class ComponentSubmissionResource
 			submissionView.setSubmissionTemplateId(userSubmission.getTemplateId());
 
 			submissionView.setCurrentDataOwner(userSubmission.getOwnerUsername());
-			submissionView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+			if(userSubmission.getIsQueued() == false){
+				submissionView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
+			} else {
+				submissionView.setApprovalState(ApprovalStatus.QUEUED);
+			}
 			submissionView.setApprovalStateLabel(TranslateUtil.translate(ApprovalStatus.class, ApprovalStatus.NOT_SUBMITTED));
 			submissionView.setComponentType(userSubmission.getComponentType());
 			submissionView.setComponentTypeLabel(TranslateUtil.translateComponentType(userSubmission.getComponentType()));

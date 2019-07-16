@@ -252,7 +252,10 @@
 								} else if (value === 'N') {
 									metaData.tdCls = 'alert-danger';
 									text = 'Not Submitted';
-								}
+								} else if (value === 'Q') {
+									text = 'Queued';
+									metaData.tdCls = 'alert-info';
+								} 
 								return text;
 							}
 						},
@@ -305,7 +308,7 @@
 									requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
 									handler: function () {
 										// Opens new window for bulk upload tool
-										var uploadWin = window.open('bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=300');
+										var uploadWin = window.open('bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440');
 										if (!uploadWin) {
 											uploadWin = window.open('bulkUpload.jsp', 'uploadWin');
 										}
@@ -978,6 +981,9 @@
 											actionRefreshSubmission();
 											submissionWin.skipSave = true;
 											submissionWin.close();
+										},
+										submissionFinished: function(){
+											actionRefreshSubmission();
 										}
 									}
 								],

@@ -119,6 +119,14 @@ For more information see <a href="https://github.com/di2e/openstorefront/release
 * Added support for rendering units in a pretty format.
 * Added a bulk upload tool for zipped files.
 
+## 1.8 Release Notes for v2.9
+-----
+
+* Added a Vendor Last Update date to all entries.
+* Vendor Last Update date is shown on all entry views.
+* Emails are sent when a entry or change request is approved.
+* User submissions will now enter a queued state while being processed. 
+
 # 2. User Features
 ------
 
