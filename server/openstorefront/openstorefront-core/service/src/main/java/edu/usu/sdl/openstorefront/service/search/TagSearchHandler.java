@@ -27,7 +27,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *
+ * For finding components that have have a given tag. 
+ * <p>
+ * ...
  * @author dshurtleff
  */
 public class TagSearchHandler
@@ -52,7 +54,10 @@ public class TagSearchHandler
 
 		return validationResult;
 	}
-
+	
+	/**
+	 * @return The Id's of the Components that have the tag in a List of Strings
+	 */
 	@Override
 	public List<String> processSearch()
 	{

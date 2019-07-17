@@ -75,6 +75,8 @@ public class SearchStatTable
 		if (element != null) {
 			SearchStatTable cachedTable = (SearchStatTable) element.getObjectValue();
 			
+			// Return cached info unless data has changed
+			// Attribute Types 
 			if (isThereNewAttributeTypeSaved){
 				isThereNewAttributeTypeSaved = false;
 				index(false, true, false);
@@ -82,6 +84,7 @@ public class SearchStatTable
 				this.attributeMap = cachedTable.getAttributeMap();
 			}
 			
+			// Tags
 			if (isThereNewTagSaved){
 				isThereNewTagSaved = false;
 				index(true, false, false);
@@ -89,10 +92,12 @@ public class SearchStatTable
 				this.tagMap = cachedTable.getTagMap();
 			}
 			
-			// Organization are currently not a searchable feature on the search page, therefore we defer this
+			// Organization are currently not a searchable feature on the search page, therefore we don't check if
+			// there are new organizations added since the server started.
 			this.organizationMap = cachedTable.getOrganizationMap();
 			
 		} else {
+			// First time search, index entire search results
 			index();
 		}
 	}
@@ -374,12 +379,12 @@ public class SearchStatTable
 		isThereNewAttributeTypeSaved = isNewApprovedComponentsFlag;
 	}
 
-	public boolean getIsThereNewTagSaved() {
+	public static boolean getIsThereNewTagSaved() {
 		return isThereNewTagSaved;
 	}
 
-	public void setIsThereNewTagSaved(boolean NewTagSaved) {
+	public static void setThereIsNewTagSaved(boolean NewTagSaved) {
 		isThereNewTagSaved = NewTagSaved;
 	}
-
+	// End static methods
 }
