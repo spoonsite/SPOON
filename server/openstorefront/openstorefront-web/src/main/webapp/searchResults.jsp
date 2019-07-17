@@ -965,16 +965,15 @@
 						};
 					}
 
-					var base = CoreUtil.sessionStorage().getItem('searchRequest')
-					var options = JSON.parse(base).searchOptions;
+					var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
+					var searchOptions = JSON.parse(sessionInfo).searchOptions;
 
-					for (var i in options) {
-						if (options[i]) {
-							// originalSearchRequest.query.searchElements.splice(1, 0, {
+					for (var searchOption in searchOptions) {
+						if (options[searchOption]) {
 							originalSearchRequest.query.searchElements.push({
 								searchType: 'SEARCH OPTION',
 								field: 'searchOption',
-								value: i,
+								value: searchOption,
 								caseInsensitive: true,
 								stringOperation: 'CONTAINS',
 								mergeCondition: 'AND'
@@ -1592,7 +1591,7 @@
 								autoHide: false,
 								closable: true,
 								height: 500,
-								scrollable: "y",
+								scrollable: "y", // this means that it is scrollable in the y direction
 								html: CoreUtil.descriptionOfAdvancedSearch(originalSearchRequest.query.searchElements),
 								width: 300								
 							});
