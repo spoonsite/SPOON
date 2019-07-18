@@ -75,6 +75,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -503,6 +504,21 @@ public class ElasticSearchManager
 				.sort(sort);
 
 		/*****************************TEST*********************************/
+		MatchQueryBuilder query1 = new MatchQueryBuilder("organization", "Blue Canyon Technologies");
+		SearchRequest searchRequest1 = new SearchRequest(INDEX);
+		SearchSourceBuilder searchSourceBuilder1 = new SearchSourceBuilder();
+		searchSourceBuilder1.query(query1);
+		searchRequest1.source(searchSourceBuilder1);
+
+		try {
+			performIndexSearch(searchRequest1, indexSearchResult);
+			LOG.log(Level.INFO, "Performed search.");
+		} catch (IOException ex) {
+			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ElasticsearchStatusException e) {
+			throw new OpenStorefrontRuntimeException("Unable to perform search!", "check index [" + INDEX + "] mapping", e);
+		}
+
 		// IndexSearchResult indexSearchResult1 = new IndexSearchResult();
 		// QueryBuilder simpleStringQuery = QueryBuilders.simpleQueryStringQuery(query);
 		// SearchSourceBuilder searchSourceBuilder1 = new SearchSourceBuilder()
@@ -851,11 +867,16 @@ public class ElasticSearchManager
 	@Override
 	public void deleteById(String id)
 	{
-		DeleteRequest deleteRequest = new DeleteRequest(INDEX, id);
-		DeleteResponse response;
-		try (ElasticSearchClient client = singleton.getClient()) {
-			response = client.getInstance().delete(deleteRequest, RequestOptions.DEFAULT);
-			LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.getId()));
+		try (ElasticSearchClient client = justGetClient();) {
+
+			GetIndexRequest indexRequest = new GetIndexRequest(INDEX);
+			boolean exists = client.getInstance().indices().exists(indexRequest, RequestOptions.DEFAULT);
+			if (exists) {
+				DeleteRequest deleteRequest = new DeleteRequest(INDEX, id);
+				DeleteResponse response;
+				response = client.getInstance().delete(deleteRequest, RequestOptions.DEFAULT);
+				LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.getId()));
+			}
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
 		}
@@ -959,11 +980,9 @@ public class ElasticSearchManager
 	@Override
 	public void resetIndexer()
 	{
-		LOG.log(Level.INFO, "Before");
 		deleteAll();
 		saveAll();
 		updateMapping();
-		LOG.log(Level.INFO, "After");
 	}
 
 	@Override
