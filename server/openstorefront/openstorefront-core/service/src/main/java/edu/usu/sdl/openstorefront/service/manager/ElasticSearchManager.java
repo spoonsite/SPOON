@@ -202,30 +202,29 @@ public class ElasticSearchManager
 	 */
 	private void checkSearchIndexCreation()
 	{
-		if(indexCreated.get()){
-			try (ElasticSearchClient client = justGetClient();) {
+		try (ElasticSearchClient client = justGetClient();) {
 
-				GetIndexRequest indexRequest = new GetIndexRequest(INDEX);
-				boolean exists = client.getInstance().indices().exists(indexRequest, RequestOptions.DEFAULT);
-				if (!exists){
-					try{
-						CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX);
-						client.getInstance().indices().create(createIndexRequest, RequestOptions.DEFAULT);
-						LOG.log(Level.INFO, "Created index: " + INDEX);
+			GetIndexRequest indexRequest = new GetIndexRequest(INDEX);
+			boolean exists = client.getInstance().indices().exists(indexRequest, RequestOptions.DEFAULT);
+			LOG.log(Level.INFO, "Does index exists: " + Boolean.toString(exists));
+			if (!exists){
+				try{
+					CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX);
+					client.getInstance().indices().create(createIndexRequest, RequestOptions.DEFAULT);
+					LOG.log(Level.INFO, "Created index: " + INDEX);
 
-					} catch (ElasticsearchException e){
-						LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
-					}
-				} else {
-					LOG.log(Level.INFO, "[" + INDEX + "] already exists.");
+				} catch (ElasticsearchException e){
+					LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 				}
-			} catch (IOException e) {
-				LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
-				indexCreated.set(false);
-			} catch (OpenStorefrontRuntimeException e){
-				LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
-				indexCreated.set(false);
+			} else {
+				LOG.log(Level.INFO, "[" + INDEX + "] already exists.");
 			}
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+			indexCreated.set(false);
+		} catch (OpenStorefrontRuntimeException e){
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+			indexCreated.set(false);
 		}
 	}
 
@@ -885,9 +884,10 @@ public class ElasticSearchManager
 	public SearchResponse getAll(){
 		SearchResponse searchResponse = new SearchResponse();
 		try (ElasticSearchClient client = singleton.getClient()) {
-			SearchRequest searchRequest = new SearchRequest(); 
+			SearchRequest searchRequest = new SearchRequest(INDEX); 
 			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
 			searchSourceBuilder.query(QueryBuilders.matchAllQuery()); 
+			searchSourceBuilder.size(10000);
 			searchRequest.source(searchSourceBuilder);
 
 			searchResponse = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
@@ -903,9 +903,24 @@ public class ElasticSearchManager
 	@Override
 	public void deleteAll()
 	{
-		checkSearchIndexCreation();
-		deleteIndex();
-		checkSearchIndexCreation();
+		try (ElasticSearchClient client = justGetClient();) {
+
+			GetIndexRequest indexRequest = new GetIndexRequest(INDEX);
+			boolean exists = client.getInstance().indices().exists(indexRequest, RequestOptions.DEFAULT);
+			if (exists) {
+				deleteIndex();
+			}
+			try {
+				CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX);
+				client.getInstance().indices().create(createIndexRequest, RequestOptions.DEFAULT);
+				LOG.log(Level.INFO, "Created index: " + INDEX);
+
+			} catch (ElasticsearchException e) {
+				LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+			}
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+		} 
 	}
 
 	/**
@@ -944,14 +959,11 @@ public class ElasticSearchManager
 	@Override
 	public void resetIndexer()
 	{
-		deleteByIdTest();
-		deleteByIdTest();
-		deleteByIdTest();
-		deleteByIdTest();
-		deleteByIdTest();
+		LOG.log(Level.INFO, "Before");
 		deleteAll();
 		saveAll();
 		updateMapping();
+		LOG.log(Level.INFO, "After");
 	}
 
 	@Override
