@@ -903,11 +903,6 @@ public class ElasticSearchManager
 	@Override
 	public void deleteAll()
 	{
-		deleteByIdTest();
-		deleteByIdTest();
-		deleteByIdTest();
-		deleteByIdTest();
-		deleteByIdTest();
 		checkSearchIndexCreation();
 		deleteIndex();
 		checkSearchIndexCreation();
@@ -949,6 +944,11 @@ public class ElasticSearchManager
 	@Override
 	public void resetIndexer()
 	{
+		deleteByIdTest();
+		deleteByIdTest();
+		deleteByIdTest();
+		deleteByIdTest();
+		deleteByIdTest();
 		deleteAll();
 		saveAll();
 		updateMapping();
