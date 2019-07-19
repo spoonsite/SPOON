@@ -2162,6 +2162,12 @@
 							y: 200,
 							modal: true,
 							layout: 'fit',
+							listeners: {
+								show: function(obj, eOpts){
+									obj.down('UserSingleSelectComboBox').setValue("");
+									obj.down('osf-common-validhtmleditor').setValue("");
+								}
+							},
 							items: [
 								{
 									xtype: 'form',
@@ -2170,7 +2176,7 @@
 									items: [
 										{
 											xtype: 'UserSingleSelectComboBox',
-											fieldLabel: 'Username <span class="field-required" />',
+											fieldLabel: 'User Name <span class="field-required" />',
 											labelAlign: 'top',
 											name: 'currentDataOwner',
 											width: '100%'
@@ -2203,55 +2209,76 @@
 													formBind: true,
 													iconCls: 'fa fa-lg fa-save icon-button-color-save',
 													handler: function(){
+														// get component Id
 														Ext.getCmp('componentGrid').setLoading('Changing the owner for the selected entries...');
 														var componentIds = Ext.getCmp('componentGrid').getSelection().map(function (item) {
 															return item.getData().componentId;
 														});
+
 														var form = this.up('form');
-														var username = form.getForm().findField('currentDataOwner').getValue();
-														var data = {
-															componentIds: componentIds,
-															comment: {
-																commentType: 'ADMIN',
-																comment: form.queryById('searchComment').getValue()
-															},
-															newOwner: username
-														};
-														if(data.comment.comment === ''){
-															data.comment = null;
+
+														// get username, check for null/empty string, reset to blank
+														var usernameField = form.getForm().findField('currentDataOwner');
+														var username = usernameField.getValue();
+														usernameField.setValue("");
+
+														// get admin comment, fix if null, reset to blank
+														var adminCommentField = form.queryById('searchComment');
+														var adminComment = adminCommentField.getValue();
+														adminCommentField.setValue("");
+														if (adminComment.trim() == "" || adminComment == null) {
+															adminComment = "No comment given"
 														}
-														Ext.Ajax.request({
-															url: 'api/v1/resource/components/changeowner',
-															method: 'PUT',
-															jsonData: data,
-															callback: function(){
-																Ext.getCmp('componentGrid').setLoading(false);
-															},
-															success: function(response, opts) {
-																if (response.responseText !== '') {
-																	if( response.responseText.indexOf('errors') !== -1) {
-																	// provide error notification
-																		Ext.toast({
-																			title: 'validation error. the server could not process the request. ',
-																			html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
-																			width: 550,
-																			autoclosedelay: 10000
-																		});
-																	}
-																}
-																actionRefreshComponentGrid();
-																form.reset();
-															},
-															failure: function(){
-																Ext.toast({
-																	title: 'validation error. the server could not process the request. ',
-																	html: 'try changing the comment field. the comment field cannot be empty and must have a size smaller than 4096.',
-																	width: 550,
-																	autoclosedelay: 10000
-																});
+
+														if(username == null || username == "") {
+															Ext.Msg.alert('Alert', 'Please enter a valid user.', Ext.emptyFn);
+														} else {
+
+															var data = {
+																componentIds: componentIds,
+																comment: {
+																	commentType: 'ADMIN',
+																	comment: adminComment
+																},
+																newOwner: username
+															};
+															if(data.comment.comment === ''){
+																data.comment = null;
 															}
-														});
-														this.up('window').close();
+
+															Ext.Ajax.request({
+																url: 'api/v1/resource/components/changeowner',
+																method: 'PUT',
+																jsonData: data,
+																callback: function(){
+																	Ext.getCmp('componentGrid').setLoading(false);
+																},
+																success: function(response, opts) {
+																	if (response.responseText !== '') {
+																		if( response.responseText.indexOf('errors') !== -1) {
+																		// provide error notification
+																			Ext.toast({
+																				title: 'Validation error, the server could not process the request. ',
+																				html: 'The comment field must have a size smaller than 4096.',
+																				width: 550,
+																				autoclosedelay: 10000
+																			});
+																		}
+																	}
+																	actionRefreshComponentGrid();
+																	form.reset();
+																},
+																failure: function(){
+																	Ext.toast({
+																		title: 'Validation error, the server could not process the request. ',
+																		html: 'The comment field must have a size smaller than 4096.',
+																		width: 550,
+																		autoclosedelay: 10000
+																	});
+																}
+															});
+															this.up('window').close();
+														}
 													}
 												},
 												{
@@ -2261,6 +2288,7 @@
 													text: 'Cancel',
 													iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 													handler: function(){
+														Ext.getCmp('componentGrid').setLoading(false);
 														this.up('window').close();
 													}
 												}

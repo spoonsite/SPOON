@@ -32,7 +32,6 @@ public class SearchServerManager
 
 	private static final Logger LOG = Logger.getLogger(SearchServerManager.class.getName());
 
-	public static final String SOLR = "solr";
 	public static final String ELASTICSEARCH = "elasticsearch";
 
 	private AtomicBoolean started = new AtomicBoolean(false);
@@ -68,18 +67,7 @@ public class SearchServerManager
 		String searchImplementation = propertiesManager.getValue(PropertiesManager.KEY_SEARCH_SERVER, ELASTICSEARCH).toLowerCase();
 
 		LOG.log(Level.INFO, () -> "Using " + searchImplementation + " as search server.");
-		switch (searchImplementation) {
-			case SOLR:
-				searchServer = SolrManager.getInstance(propertiesManager, null);
-				break;
-
-			case ELASTICSEARCH:
-				searchServer = ElasticSearchManager.getInstance(propertiesManager);
-				break;
-			default:
-				LOG.config("Unsupported Search Server. Switching to Elasticsearch.");
-				searchServer = ElasticSearchManager.getInstance(propertiesManager);
-		}
+		searchServer = ElasticSearchManager.getInstance(propertiesManager);
 		((Initializable) searchServer).initialize();
 	}
 

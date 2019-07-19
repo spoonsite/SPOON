@@ -253,6 +253,11 @@ public class Branding
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String disclaimerMessage;
+
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
+	@Sanitize(HTMLSanitizer.class)
+	@ConsumeField
+	private String bulkUploadMessage;
 	
 	@ConsumeField
 	@Embedded
@@ -320,6 +325,7 @@ public class Branding
 
 		setShowLinkToMobile(branding.getShowLinkToMobile());
 		setDisclaimerMessage(branding.getDisclaimerMessage());
+		setBulkUploadMessage(branding.getBulkUploadMessage());
 		setUseDefaultLandingPage(branding.getUseDefaultLandingPage());
 		setLandingTemplate(branding.getLandingTemplate());
 	}
@@ -831,5 +837,13 @@ public class Branding
 	public void setDisclaimerMessage(String disclaimerMessage)
 	{
 		this.disclaimerMessage = disclaimerMessage;
+	}
+
+	public String getBulkUploadMessage() {
+		return bulkUploadMessage;
+	}
+
+	public void setBulkUploadMessage(String bulkUploadMessage) {
+		this.bulkUploadMessage = bulkUploadMessage;
 	}
 }
