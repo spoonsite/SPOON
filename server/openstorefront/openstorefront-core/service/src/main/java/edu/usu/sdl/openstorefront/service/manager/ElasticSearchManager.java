@@ -508,6 +508,7 @@ public class ElasticSearchManager
 		SearchRequest searchRequest1 = new SearchRequest(INDEX);
 		SearchSourceBuilder searchSourceBuilder1 = new SearchSourceBuilder();
 		searchSourceBuilder1.query(query1);
+		searchSourceBuilder1.size(maxSearchResults);
 		searchRequest1.source(searchSourceBuilder1);
 
 		try {
@@ -518,6 +519,8 @@ public class ElasticSearchManager
 		} catch (ElasticsearchStatusException e) {
 			throw new OpenStorefrontRuntimeException("Unable to perform search!", "check index [" + INDEX + "] mapping", e);
 		}
+
+		return indexSearchResult;
 
 		// IndexSearchResult indexSearchResult1 = new IndexSearchResult();
 		// QueryBuilder simpleStringQuery = QueryBuilders.simpleQueryStringQuery(query);
@@ -583,28 +586,28 @@ public class ElasticSearchManager
 		// 	}
 		/*************************END TEST*********************************/
 
-		SearchRequest searchRequest = new SearchRequest(INDEX)
-				.source(searchSourceBuilder);
+		// SearchRequest searchRequest = new SearchRequest(INDEX)
+		// 		.source(searchSourceBuilder);
 
-		try {
-			performIndexSearch(searchRequest, indexSearchResult);
-		} catch (IOException ex) {
-			Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (ElasticsearchStatusException e) {
+		// try {
+		// 	performIndexSearch(searchRequest, indexSearchResult);
+		// } catch (IOException ex) {
+		// 	Logger.getLogger(ElasticSearchManager.class.getName()).log(Level.SEVERE, null, ex);
+		// } catch (ElasticsearchStatusException e) {
 
-			//	if a status exception occurs, it is likely the fielddata == false for description.
-			//		Thus, update the mapping.
-			updateMapping();
+		// 	//	if a status exception occurs, it is likely the fielddata == false for description.
+		// 	//		Thus, update the mapping.
+		// 	updateMapping();
 
-			//	try to perform the index search one more time...
-			try {
-				performIndexSearch(searchRequest, indexSearchResult);
-			} catch (IOException | ElasticsearchStatusException ex) {
-				throw new OpenStorefrontRuntimeException("Unable to perform search!", "check index [" + INDEX + "] mapping", ex);
-			}
-		}
+		// 	//	try to perform the index search one more time...
+		// 	try {
+		// 		performIndexSearch(searchRequest, indexSearchResult);
+		// 	} catch (IOException | ElasticsearchStatusException ex) {
+		// 		throw new OpenStorefrontRuntimeException("Unable to perform search!", "check index [" + INDEX + "] mapping", ex);
+		// 	}
+		// }
 
-		return indexSearchResult;
+		// return indexSearchResult;
 	}
 
 	private void performIndexSearch(SearchRequest searchRequest, IndexSearchResult indexSearchResult) throws IOException, ElasticsearchStatusException
