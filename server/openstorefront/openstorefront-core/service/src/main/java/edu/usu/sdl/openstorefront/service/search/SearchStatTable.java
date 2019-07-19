@@ -92,7 +92,7 @@ public class SearchStatTable
 				this.tagMap = cachedTable.getTagMap();
 			}
 			
-			// Organization are currently not a searchable feature on the search page, therefore we don't check if
+			// Organization are currently not a filterable category on the search page, therefore we don't check if
 			// there are new organizations added since the server started.
 			this.organizationMap = cachedTable.getOrganizationMap();
 			

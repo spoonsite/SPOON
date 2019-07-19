@@ -733,18 +733,25 @@ public class SubComponentServiceImpl
 		}
 		handleUserDataAlert(tag);
 		
-		// Check if this is the first-of-it's kind tag; first populate example tag
+		// Check if this is the first-of-it's kind tag; first populate example tag;
+		// In the future, this could be refactored to be a SQL query that only find the number of existing tags, 
+		// rather than the list of existing tags
 		SearchElement ExampleTag = new SearchElement();
-		ExampleTag.setSearchType(SearchOperation.SearchType.COMPONENT);
-		ExampleTag.setValue(tag.getTagId());
+
+		ExampleTag.setSearchType(SearchOperation.SearchType.TAG);
+		ExampleTag.setValue(tag.getText());
+		ExampleTag.setCaseInsensitive(false);
+		ExampleTag.setStringOperation(SearchOperation.StringOperation.EQUALS);
+		ExampleTag.setMergeCondition(SearchOperation.MergeCondition.AND);		
+		
 		List<SearchElement> ExampleTagList = new ArrayList<SearchElement>();
 		ExampleTagList.add(ExampleTag);
 
 		TagSearchHandler tagSearchHandler = new TagSearchHandler(ExampleTagList);
 		List<String> OtherComponentsToThisTag = tagSearchHandler.processSearch();
-		if(OtherComponentsToThisTag.isEmpty()){
-			// Alert advanced search cache that it needs to refresh itself now that there is a new Tag in town
-			SearchStatTable.setThereIsNewTagSaved(true);
+		if(!OtherComponentsToThisTag.isEmpty()){
+			// Alert advanced search cache that it needs to refresh it's Tag list now that there is a new Tag in town
+			SearchStatTable.setThereIsNewAttributeTypeSaved(true);
 		}
 
 		if (updateLastActivity) {
