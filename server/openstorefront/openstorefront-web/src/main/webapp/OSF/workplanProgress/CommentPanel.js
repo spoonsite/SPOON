@@ -142,8 +142,8 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 									style: 'float: right;',
 									items: [
 										{
-											inputValue: '1',
 											checked: false,
+											name: 'privateCheckbox',
 											itemId: 'privateCheckbox',
 											listeners: {
 												change: function(checkbox, newVal){
@@ -297,10 +297,19 @@ Ext.define('OSF.workplanProgress.CommentPanel', {
 
 		CoreService.userservice.getCurrentUser().then(function (user) {
 			var hasPermission = CoreService.userservice.userHasPermission(user, 'WORKFLOW-ADMIN-SUBMISSION-COMMENTS');
-			var formValues = Ext.apply(commentsPanel.down('[itemId=form]').getValues(), {
+
+			var form = commentsPanel.down('[itemId=form]').getValues();
+
+			var privateComment = false;
+			if (form.privateCheckbox == "true"){
+				privateComment = true;
+			}
+			var formValues = {
+				comment: form.comment,
 				commentType: 'SUBMISSION',
-				privateComment: hasPermission ? commentsPanel.down('[itemId=privateCheckbox]').getValue() : false,
-			});
+				privateComment: hasPermission ? privateComment : false,
+				willSendEmail: false,
+			};
 
 			commentsPanel.setLoading('Saving...');
 			Ext.Ajax.request({
