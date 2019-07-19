@@ -751,7 +751,7 @@ public class SubComponentServiceImpl
 		List<String> OtherComponentsToThisTag = tagSearchHandler.processSearch();
 		if(OtherComponentsToThisTag.isEmpty()){
 			// Alert advanced search cache that it needs to refresh it's Tag list now that there is a new Tag in town
-			SearchStatTable.setThereIsNewAttributeTypeSaved(true);
+			SearchStatTable.setThereIsNewTagSaved(true);
 		}
 
 		if (updateLastActivity) {
