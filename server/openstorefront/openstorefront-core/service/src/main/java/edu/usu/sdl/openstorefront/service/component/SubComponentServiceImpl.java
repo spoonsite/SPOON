@@ -734,8 +734,8 @@ public class SubComponentServiceImpl
 		handleUserDataAlert(tag);
 		
 		// Check if this is the first-of-it's kind tag; first populate example tag;
-		// In the future, this could be refactored to be a SQL query that only find the number of existing tags, 
-		// rather than the list of existing tags
+		// Possible future speed optimization: a SQL query that only find the number of existing tags, 
+		// rather than the list of existing tags, if that would be faster. 
 		SearchElement ExampleTag = new SearchElement();
 
 		ExampleTag.setSearchType(SearchOperation.SearchType.TAG);

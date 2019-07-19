@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * For finding components that have have a given tag. 
  * <p>
- * ...
+ * For examples on how this class is used, see @see{AdvanceSearchTest.java}
  * @author dshurtleff
  */
 public class TagSearchHandler
