@@ -81,10 +81,11 @@ public class APIResponse
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T extends Object> T getList(TypeReference valueTypeRef)
 	{
 		try {
-			T dataModel = objectMapper.readValue(this.getResponseBody(), valueTypeRef);
+			T dataModel = (T) objectMapper.readValue(this.getResponseBody(), valueTypeRef);
 			return dataModel;
 		} catch (IOException ex) {
 			throw new HandlingException(ex);
