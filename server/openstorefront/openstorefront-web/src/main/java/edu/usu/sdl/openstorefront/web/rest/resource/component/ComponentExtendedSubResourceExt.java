@@ -586,7 +586,7 @@ public abstract class ComponentExtendedSubResourceExt
 			}
 
 			String vendor = component.getOwnerUser();
-			if (comment.getWillSendEmail() && vendor != null) {
+			if (Boolean.TRUE.equals(comment.getWillSendEmail()) && vendor != null) {
 				
 				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
 				String emailText = "Your entry change request for " + 

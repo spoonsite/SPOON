@@ -946,7 +946,7 @@
 					processResults(filterSet);
 					
 				} else { 
-					//server side										
+					//server side
 					var searchRequest = Ext.clone(originalSearchRequest);
 					
 					//the last element should be an AND
@@ -963,6 +963,22 @@
 							field: 'name',
 							dir: 'ASC'
 						};
+					}
+
+					var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
+					var searchOptions = JSON.parse(sessionInfo).searchOptions;
+
+					for (var searchOption in searchOptions) {
+						if (options[searchOption]) {
+							originalSearchRequest.query.searchElements.push({
+								searchType: 'SEARCH OPTION',
+								field: 'searchOption',
+								value: searchOption,
+								caseInsensitive: true,
+								stringOperation: 'CONTAINS',
+								mergeCondition: 'AND'
+							});
+						}
 					}
 					
 					//Transform Filters into search elements.
@@ -1422,7 +1438,7 @@
 						searchRequest = Ext.decode(searchRequest);
 						if (searchRequest.type === 'SIMPLE') {
 							Ext.getCmp('searchResultsPanel').setTitle('Search Results - ' + searchRequest.query);
-							searchRequest.query = 	{							
+							searchRequest.query = 	{
 								"searchElements": [{
 									"searchType": "INDEX",									
 									"value": searchRequest.query
@@ -1431,6 +1447,7 @@
 						} else {						
 							Ext.getCmp('searchResultsPanel').setTitle('Search Results - Advanced');
 						}
+
 					}
 					else {
 						//search all					
@@ -1570,8 +1587,11 @@
 						callback: function(panel, tool, event) {
 							
 							var tip = Ext.create('Ext.tip.ToolTip', {
-								title: 'Search Criteria',  
+								title: 'Search Criteria',
+								autoHide: false,
 								closable: true,
+								height: 500,
+								scrollable: "y", // this means that it is scrollable in the y direction
 								html: CoreUtil.descriptionOfAdvancedSearch(originalSearchRequest.query.searchElements),
 								width: 300								
 							});
