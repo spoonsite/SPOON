@@ -53,7 +53,7 @@ public class IndexSearchHandler
 			IndexSearchResult searchResult = serviceProxy.getSearchServicePrivate().doIndexSearch(searchElement.getValue(), FilterQueryParams.defaultFilter());
 
 			List<String> results = new ArrayList<>();
-			for (SolrComponentModel componentModel : searchResult.getResultsList()) {
+			for (ElasticsearchComponentModel componentModel : searchResult.getResultsList()) {
 				results.add(componentModel.getId());
 			}
 

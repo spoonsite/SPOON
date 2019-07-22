@@ -26,89 +26,105 @@
 			/* global Ext, CoreService, CoreApp */
 
 			Ext.onReady(function () {
-				var inputForm = Ext.create('Ext.panel.Panel', {
-					title: 'Bulk Uploads',
-					width: 500,
-					items: [
-						{
-							xtype: 'form',
-							scollable: true,
-							bodyStyle: 'padding: 10px;',
-							layout: 'anchor',
-							defaults: {
-								labelAlign: 'top',
-								labelSeparator: '',
-								width: '100%'
-							},
-							items: [
-								{
-									xtype:'label',
-									html: 'Upload a zip file.<br><strong style="color:red;">Do not upload any propriety or ITAR information.</strong><br><br>Once your information is entered you will need to come back<br>to this page and approve the entry.'
+				CoreService.brandingservice.getCurrentBranding().then(function(branding){
+					var defaultMessage = 'This bulk upload tool is designed to help you submit a part or parts into our database.  '+
+												'You can upload a zip file containing PDFs, excel spreadsheets, or other human readable files.  '+
+												'The SPOON support team will then do all the data entry for you.<br><br>'+
+
+												'Once SPOON support is done entering your information, you will then need to review and submit '+
+												'the information for Subject Matter Expert (SME) review.  Once the SME has approved your '+
+												'information your part will become searchable on the site.<br><br>'+
+
+												'<strong style="color:red;">The information submitted to this site will be made publicly available.  Please do not submit '+
+												'any sensitive information such as proprietary or ITAR restricted information.</strong><br><br>'
+					var message = branding.bulkUploadMessage;
+					if (message == null || message == ""){
+						message = defaultMessage;
+					}
+					var inputForm = Ext.create('Ext.panel.Panel', {
+						title: 'Bulk Uploads',
+						width: 500,
+						items: [
+							{
+								xtype: 'form',
+								scollable: true,
+								bodyStyle: 'padding: 10px;',
+								layout: 'anchor',
+								defaults: {
+									labelAlign: 'top',
+									labelSeparator: '',
+									width: '100%'
 								},
-								{
-									xtype: 'fileFieldMaxLabel',
-									name: 'uploadFile'
-								}
-							],
-							dockedItems: [
-								{
-									xtype: 'toolbar',
-									dock: 'bottom',
-									items: [
-										{
-											text: 'Upload',
-											iconCls: 'fa fa-lg fa-upload icon-button-color-default',
-											formBind: true,
-											requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
-											handler: function () {
-												var uploadForm = this.up('form');
+								items: [
+									{
+										xtype:'label',
+										html: message
+									},
+									{
+										xtype: 'fileFieldMaxLabel',
+										name: 'uploadFile'
+									}
+								],
+								dockedItems: [
+									{
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
+											{
+												text: 'Upload',
+												iconCls: 'fa fa-lg fa-upload icon-button-color-default',
+												formBind: true,
+												requiredPermissions: ['USER-SUBMISSIONS-CREATE'],
+												handler: function () {
+													var uploadForm = this.up('form');
 
-												var progressMsg = Ext.MessageBox.show({
-													title: 'Bulk Upload',
-													msg: 'Uploading file please wait...',
-													width: 300,
-													height: 150,
-													closable: false,
-													progressText: 'Uploading...',
-													wait: true,
-													waitConfig: { interval: 500 }
-												});
+													var progressMsg = Ext.MessageBox.show({
+														title: 'Bulk Upload',
+														msg: 'Uploading file please wait...',
+														width: 300,
+														height: 150,
+														closable: false,
+														progressText: 'Uploading...',
+														wait: true,
+														waitConfig: { interval: 500 }
+													});
 
-												uploadForm.submit({
-													submitEmptyText: false,
-													url: 'Upload.action?BulkUpload',
-													success: function (form, action) {
-														progressMsg.hide();
-														Ext.Msg.alert('Bulk Upload', 'File uploaded successfully.', function () { window.close(); });
-													},
-													failure: function (form, action) {
-														progressMsg.hide();
-													}
-												});
+													uploadForm.submit({
+														submitEmptyText: false,
+														url: 'Upload.action?BulkUpload',
+														success: function (form, action) {
+															progressMsg.hide();
+															Ext.Msg.alert('Bulk Upload', 'File uploaded successfully.', function () { window.close(); });
+														},
+														failure: function (form, action) {
+															progressMsg.hide();
+														}
+													});
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
+												handler: function () {
+													window.close();
+												}
 											}
-										},
-										{
-											xtype: 'tbfill'
-										},
-										{
-											text: 'Close',
-											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
-											handler: function () {
-												window.close();
-											}
-										}
-									]
-								}
-							]
-						}
-					]
-				});
+										]
+									}
+								]
+							}
+						]
+					});
 
-				var viewport = Ext.create('Ext.container.Viewport', {
-					layout: 'border',
-					cls: 'printBody',
-					style: 'background: white !important;',
-					items: [ inputForm ]
+					var viewport = Ext.create('Ext.container.Viewport', {
+						layout: 'border',
+						cls: 'printBody',
+						style: 'background: white !important;',
+						items: [ inputForm ]
+					});
 				});
 			});
 		</script>

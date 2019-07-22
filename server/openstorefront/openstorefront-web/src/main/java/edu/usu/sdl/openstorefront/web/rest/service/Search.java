@@ -165,8 +165,8 @@ public class Search
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_DELETE)
 	@APIDescription("Removes all indexes from the search engine")
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/clearSolr")
-	public Response clearSolr()
+	@Path("/clearElasticsearch")
+	public Response clearElasticsearch()
 	{
 		service.getSearchService().deleteAll();
 		return Response.noContent().build();
@@ -174,9 +174,9 @@ public class Search
 
 	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
-	@APIDescription("Removes all indexes from Solr and then reindexes current components and articles")
-	@Path("/resetSolr")
-	public Response resetSolr()
+	@APIDescription("Removes all indexes from Elasticsearch and then reindexes current components and articles")
+	@Path("/resetElasticsearch")
+	public Response resetElasticsearch()
 	{
 		TaskRequest taskRequest = new TaskRequest();
 		taskRequest.setAllowMultiple(false);
