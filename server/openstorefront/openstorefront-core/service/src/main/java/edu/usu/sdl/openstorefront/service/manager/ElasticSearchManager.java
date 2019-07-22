@@ -504,7 +504,7 @@ public class ElasticSearchManager
 				.sort(sort);
 
 		/*****************************TEST*********************************/
-		MatchQueryBuilder query1 = new MatchQueryBuilder("organization", "Blue Canyon Technologies");
+		MatchQueryBuilder query1 = new MatchQueryBuilder("name", query);
 		SearchRequest searchRequest1 = new SearchRequest(INDEX);
 		SearchSourceBuilder searchSourceBuilder1 = new SearchSourceBuilder();
 		searchSourceBuilder1.query(query1);
