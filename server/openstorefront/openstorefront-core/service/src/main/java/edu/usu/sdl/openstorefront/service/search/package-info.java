@@ -4,3 +4,5 @@
  * 
  */
 package edu.usu.sdl.openstorefront.service.search;
+
+// This file is for generating descriptive JavaDocs and has no impact on function whatsoever
