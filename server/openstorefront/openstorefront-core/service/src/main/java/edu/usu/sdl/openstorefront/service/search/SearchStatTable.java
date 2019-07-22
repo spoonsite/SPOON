@@ -131,7 +131,8 @@ public class SearchStatTable
 	 * then stored in the applicationCache. To be called with the search engine
 	 * index.
 	 */
-	public void index(){
+	public void index()
+	{
 		index(true,true,true);
 	}
 

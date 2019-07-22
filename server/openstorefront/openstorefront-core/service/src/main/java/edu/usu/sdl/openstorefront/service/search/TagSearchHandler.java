@@ -104,7 +104,7 @@ public class TagSearchHandler
 			for (ComponentTag tag : componentTags) {
 				results.add(tag.getComponentId());
 			}
-			foundIds = mergeCondition.apply(foundIds, results);//why is this line before the next? 
+			foundIds = mergeCondition.apply(foundIds, results);
 			mergeCondition = searchElement.getMergeCondition();
 		}
 		return foundIds;
