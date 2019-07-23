@@ -1,5 +1,8 @@
 <template>
   <form v-on:submit.prevent="submitQuery()">
+    <div class="searchbar-button">
+      <v-icon @click="showOptions=!showOptions" class="search-icon search-options-icon">expand_more</v-icon>
+    </div>
     <div class="searchbar">
       <input
         :value="value"
@@ -7,6 +10,7 @@
         class="searchfield"
         type="text"
         placeholder="Search"
+        @click="showOptions=false"
       >
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
       <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">clear</v-icon>
@@ -16,6 +20,29 @@
         <v-list-tile v-for="i in searchSuggestions" :key="i.name" @click="submitQuery(i.name);" class="suggestion">
           <v-list-tile-content>
             {{ i.name }}
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-card>
+    <v-card v-if="hideSuggestions && showOptions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
+      <v-list dense class="elevation-1">
+        <h4 class="search-option-titles">Search Options</h4>
+        <v-list-tile v-for="(e,index) in searchOptionsSource" v-bind:key="index" class="suggestion">
+          <v-list-tile-content>
+            <v-checkbox
+              :ripple="false"
+              :key="index"
+              v-model="searchOptions"
+              :value="e"
+              :label="e"></v-checkbox>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+      <v-list dense class="elevation-1">
+        <h4 class="search-option-titles">Entry Types</h4>
+        <v-list-tile v-for="i in this.entryTypes" :key="i.componentType.label" class="suggestion">
+          <v-list-tile-content>
+            <v-checkbox :label=i.componentType.label :ripple="false"></v-checkbox>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -34,11 +61,17 @@ export default {
   },
   data () {
     return {
-      searchSuggestions: []
+      entryTypes: {},
+      searchSuggestions: [],
+      showOptions: false,
+      searchOptionsSource: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
+      searchOptions: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
+      searchOptionsId: ''
     }
   },
   methods: {
     submitQuery (query) {
+      this.saveSearchOptions()
       if (query) {
         this.$emit('input', query)
       }
@@ -57,6 +90,20 @@ export default {
           })
           .catch(e => this.errors.push(e))
       }
+      console.log(this.entryTypes.children)
+    },
+    saveSearchOptions () {
+      this.$http.put('/openstorefront/api/v1/resource/searchoptions/user',
+        {
+          globalFlag: false,
+          username: this.$store.state.currentUser.username,
+          searchOptionsId: this.searchOptionsId,
+          canUseNameInSearch: this.searchOptions.includes('Name'),
+          canUseDescriptionInSearch: this.searchOptions.includes('Organization'),
+          canUseOrganizationsInSearch: this.searchOptions.includes('Description'),
+          canUseAttributesInSearch: this.searchOptions.includes('Vitals'),
+          canUseTagsInSearch: this.searchOptions.includes('Tags')
+        })
     }
   },
   computed: {
@@ -70,43 +117,97 @@ export default {
         this.getSearchSuggestions()
       }
     }, 400)
+  },
+  created: function () {
+    this.$http
+      .get('/openstorefront/api/v1/resource/searchoptions/user')
+      .then(response => {
+        this.searchOptionsId = response.data.searchOptionsId
+        this.searchOptions = []
+        if (response.data.canUseNameInSearch) {
+          this.searchOptions.push('Name')
+        }
+        if (response.data.canUseDescriptionInSearch) {
+          this.searchOptions.push('Description')
+        }
+        if (response.data.canUseOrganizationsInSearch) {
+          this.searchOptions.push('Organization')
+        }
+        if (response.data.canUseAttributesInSearch) {
+          this.searchOptions.push('Vitals')
+        }
+        if (response.data.canUseTagsInSearch) {
+          this.searchOptions.push('Tags')
+        }
+      })
+    this.$http
+      .get(
+        '/openstorefront/api/v1/resource/componenttypes/nested'
+      )
+      .then(response => {
+        this.entryTypes = response.data.children
+      })
   }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import "../assets/scss/colors.scss";
 /* Search Bar */
 .searchbar {
   border-radius: 2px;
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
-  padding: 0.7em 0.7em 0.7em 1.2em;
+  padding: 0.7em 0.7em 0.7em 0.7em;
   margin-bottom: 0.3em;
   margin-left: auto;
   margin-right: auto;
   font-size: 140%;
   transition: box-shadow 0.7s;
-  background-color: #FFF;
+  background-color: $white;
+}
+.searchbar-button {
+  border-radius: 2px;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+  /* padding: 0.7em 0.7em 0.7em 0.7em; */
+  margin-bottom: 0.3em;
+  font-size: 140%;
+  transition: box-shadow 0.7s;
+  background-color: $white;
+  width: 3em;
 }
 .searchfield {
   display: inline-block;
   width: 80%;
+  padding-left: .7em;
 }
 .search-icon {
   float: right;
   font-size: 34px !important;
   margin-bottom: 0.1em;
 }
+.search-options-icon {
+  float: left !important;
+  padding: 0em 0.3em;
+  height: 1.66em;
+  background-color: rgba(0,0,0,.12);
+  /* border-radius: 2px; */
+  /* box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12); */
+}
+.search-option-titles {
+  padding-left: 0.7em;
+}
 .search-icon:hover {
   cursor: pointer;
 }
 input {
-    caret-color: #3467C0;
+    caret-color: $blue;
+    padding-left: 0.3em;
 }
 input:focus {
   outline: none;
 }
 input:focus + .icon {
-  color: #3467C0;
+  color: $blue;
 }
 .myicon {
   font-size: 14px;

@@ -11,7 +11,6 @@
       style="margin: 6em auto; max-width: 46em;"
       :overlaySuggestions="true"
     ></SearchBar>
-
       <h2><span style="background-color: #FAFAFA; border-radius: 1px;" class="pa-2">Browse Topics</span></h2>
       <!-- Different for SPOON and DI2E -->
 
