@@ -257,7 +257,8 @@ public class AttributeServiceImpl
 	{
 		getAttributeServicePrivate().performSaveAttributeType(attributeType);
 
-		// the advanced search filter needs a way to know when to refresh it's cache @see{SearchStatTable#isThereNewAttributeTypeSaved}
+		// the advanced search filter needs a way to know when to refresh it's cache 
+		// @see{SearchStatTable#isThereNewAttributeTypeSaved}
 		SearchStatTable.setThereIsNewAttributeTypeSaved(true);
 
 		if (updateIndexes) {

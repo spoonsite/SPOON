@@ -371,7 +371,6 @@ public class SearchStatTable
 		return tagMap;
 	}
 
-	// Static methods 
 	public static boolean isThereNewAttributeTypeSaved() {
 		return isThereNewAttributeTypeSaved;
 	}
@@ -387,5 +386,4 @@ public class SearchStatTable
 	public static void setThereIsNewTagSaved(boolean NewTagSaved) {
 		isThereNewTagSaved = NewTagSaved;
 	}
-	// End static methods
 }
