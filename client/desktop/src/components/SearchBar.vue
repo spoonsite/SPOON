@@ -31,18 +31,24 @@
           <v-list-tile-content>
             <v-checkbox
               :ripple="false"
-              :key="index"
               v-model="searchOptions"
               :value="e"
-              :label="e"></v-checkbox>
+              :label="e"
+            ></v-checkbox>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
       <v-list dense class="elevation-1">
         <h4 class="search-option-titles">Entry Types</h4>
-        <v-list-tile v-for="i in this.entryTypes" :key="i.componentType.label" class="suggestion">
+        <v-list-tile v-for="(e,index) in entryTypes" v-bind:key="index" class="suggestion">
           <v-list-tile-content>
-            <v-checkbox :label=i.componentType.label :ripple="false"></v-checkbox>
+            <v-checkbox
+              :ripple="false"
+              :key="index"
+              v-model="selectedEntryTypes"
+              :value="e.componentType.componentType"
+              :label="e.componentType.label"
+            ></v-checkbox>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -63,6 +69,7 @@ export default {
     return {
       entryTypes: {},
       searchSuggestions: [],
+      selectedEntryTypes: [],
       showOptions: false,
       searchOptionsSource: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptions: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
@@ -76,7 +83,8 @@ export default {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      this.$emit('submitSearch')
+      console.log('&comp=' + this.selectedEntryTypes.toString() + '&children=true')
+      this.$emit('submitSearch', { opts: '&comp=' + this.selectedEntryTypes.toString() + '&children=true' })
       // this.$router.push(`/search?q=${this.value}`)
     },
     getSearchSuggestions () {

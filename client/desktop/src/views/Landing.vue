@@ -5,7 +5,7 @@
     :src='$store.state.branding.homebackSplashUrl'
   >
     <SearchBar
-      v-on:submitSearch="submitSearch()"
+      v-on:submitSearch="submitSearch(additionalOptions)"
       v-model="searchQuery"
       :hideSuggestions="hideSearchSuggestions"
       style="margin: 6em auto; max-width: 46em;"
@@ -254,8 +254,10 @@ export default {
     link (query) {
       return `/search?q=${query}`
     },
-    submitSearch () {
-      this.$router.push(`/search?q=${this.searchQuery}`)
+    submitSearch (additionalOptions) {
+      console.log(additionalOptions)
+      console.log(additionalOptions)
+      this.$router.push(`/search?q=${this.searchQuery}` + additionalOptions)
     },
     getNestedComponentTypes () {
       this.$http
