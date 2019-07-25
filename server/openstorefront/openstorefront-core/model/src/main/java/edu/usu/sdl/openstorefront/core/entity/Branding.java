@@ -259,6 +259,10 @@ public class Branding
 	@ConsumeField
 	private String bulkUploadMessage;
 	
+	/**
+	 * @deprecated in v2.10, as part of removal of custom Landing Page feature. 
+	 */
+	@Deprecated
 	@ConsumeField
 	@Embedded
 	@OneToOne(orphanRemoval = true)
@@ -326,8 +330,13 @@ public class Branding
 		setShowLinkToMobile(branding.getShowLinkToMobile());
 		setDisclaimerMessage(branding.getDisclaimerMessage());
 		setBulkUploadMessage(branding.getBulkUploadMessage());
-		setUseDefaultLandingPage(branding.getUseDefaultLandingPage());
-		setLandingTemplate(branding.getLandingTemplate());
+		
+		/**
+		 * The custom Landing Page feature was deprecated in v2.10,
+		 * therefore these options are negated.
+		 */
+		setUseDefaultLandingPage(true);
+		setLandingTemplate(null);
 	}
 
 	public String getBrandingId()
@@ -694,11 +703,18 @@ public class Branding
 		this.secondaryColor = secondaryColor;
 	}
 
+	/**
+	 * @deprecated in v2.10, as part of removal of custom Landing Page feature. 
+	 */
 	public Boolean getUseDefaultLandingPage()
 	{
 		return useDefaultLandingPage;
 	}
 
+	/**
+	 * @deprecated in v2.10, as part of removal of custom Landing Page feature.
+	 * @param useDefaultLandingPage
+	 */
 	public void setUseDefaultLandingPage(Boolean useDefaultLandingPage)
 	{
 		this.useDefaultLandingPage = useDefaultLandingPage;
