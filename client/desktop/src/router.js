@@ -5,14 +5,13 @@ import Search from './views/Search.vue'
 import FAQ from './views/FAQ.vue'
 import ContactUs from './views/ContactUs.vue'
 
-
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Landing',
+      name: 'Home',
       component: Landing
     },
     {

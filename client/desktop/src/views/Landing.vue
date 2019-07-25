@@ -4,34 +4,37 @@
   <v-img
     :src='$store.state.branding.homebackSplashUrl'
   >
-    <SearchBar
-      v-on:submitSearch="submitSearch()"
-      v-model="searchQuery"
-      :hideSuggestions="hideSearchSuggestions"
-      style="margin: 6em auto; max-width: 46em;"
-      :overlaySuggestions="true"
-    ></SearchBar>
+    <div class="mx-3">
+      <SearchBar
+        v-on:submitSearch="submitSearch()"
+        v-model="searchQuery"
+        :hideSuggestions="hideSearchSuggestions"
+        style="margin: 6em auto; max-width: 46em;"
+        :overlaySuggestions="true"
+      ></SearchBar>
+    </div>
 
-      <h2><span style="background-color: #FAFAFA; border-radius: 1px;" class="pa-2">Browse Topics</span></h2>
-      <!-- Different for SPOON and DI2E -->
-
-      <!-- SPOON -->
+      <h2>
+        <span style="background-color: #FAFAFA; border-radius: 1px;" class="pa-2">
+          Browse Topics
+        </span>
+      </h2>
       <v-container v-if="isSpoon()" text-xs-center>
         <v-layout row wrap>
           <v-flex
             v-for="(item,i) in nestedComponentTypesList.children"
+            class="mb-2"
             :key="i"
             xs6
+            sm4
             md2
           >
             <v-hover>
             <v-card
               slot-scope="{ hover }"
               flat
-              width="150"
-              height="170"
               :class="`elevation-${hover ? 8 : 0} ma-2 pt-2 px-2`"
-              style="background-color: #FAFAFA;"
+              style="background-color: #FAFAFA; height: 100%;"
             >
               <router-link
                 :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
@@ -45,109 +48,42 @@
           </v-flex>
         </v-layout>
       </v-container>
-
-      <!-- DI2E -->
-      <v-container v-else>
-        <v-layout row wrap justify-center>
-          <v-flex
-            v-for="(item,i) in attributes"
-            :key="i"
-            xs6
-            md4
-          >
-            <v-card class="ma-2 elevation-2">
-              <v-toolbar color="primary" dark dense>
-                <v-toolbar-title>{{ item.description }}</v-toolbar-title>
-              </v-toolbar>
-              <v-list dense style="height: 16em; overflow: auto;">
-                <v-hover
-                  v-for="code in item.codes"
-                  :key="code.code"
-                >
-                <!-- TODO: hit search page with the item -->
-                <a
-                  href="#"
-                  slot-scope="{ hover }"
-                  style="text-decoration:none;"
-                >
-                  <v-list-tile
-                  :class="`${hover ? 'darken' : 0}`"
-                  >
-                    <v-list-tile-content v-html="code.label">
-                    </v-list-tile-content>
-                  </v-list-tile>
-                </a>
-                </v-hover>
-              </v-list>
-
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-
     </v-img>
 
-      <h2>Search Tools</h2>
-
-      <v-container text-xs-center mb-5>
-        <v-layout row wrap>
-          <v-flex
-            v-for="(item,i) in searchToolLinks"
-            :key="i"
-            xs
-            xs6
-            sm3
+    <h2>Quick Launch</h2>
+    <v-container text-xs-center>
+      <v-layout row wrap>
+        <v-flex
+          v-for="(item,i) in quickLaunchLinks"
+          :key="i"
+          xs12
+          sm6
+          md4
+        >
+          <v-hover>
+          <v-card
+            slot-scope="{ hover }"
+            :class="`elevation-${hover ? 12 : 2} ma-2 pt-2 px-2`"
           >
-            <v-hover>
-            <v-card
-              slot-scope="{ hover }"
-              :class="`elevation-${hover ? 12 : 2} ma-2`"
-              dark
-            >
-              <button @click="action(item.title)" class="action-btn pa-4 primary" style="width: 100%;">
-                <i :class="'fas fa-6x fa-' + item.icon"></i>
-                <v-card-title primary-title>
-                  <v-card-text class="headline pa-0">{{ item.title }}</v-card-text>
-                </v-card-title>
-              </button>
-            </v-card>
-            </v-hover>
-          </v-flex>
-        </v-layout>
-      </v-container>
-
-      <h2>Quick Launch</h2>
-
-      <v-container text-xs-center>
-        <v-layout row wrap>
-          <v-flex
-            v-for="(item,i) in quickLaunchLinks"
-            :key="i"
-            xs6
-            md3
-          >
-            <v-hover>
-            <v-card
-              slot-scope="{ hover }"
-              :class="`elevation-${hover ? 12 : 2} ma-2 pt-2 px-2`">
-            <a :href="item.href" class="" style="text-decoration: none;">
+          <a :href="item.href" class="" style="text-decoration: none;">
+            <div style="max-width: 200px; margin: auto;">
               <img
                 :src="item.img"
                 width="100%"
               />
-              <v-card-title primary-title>
-                <v-card-text class="headline pa-0">{{ item.title }}</v-card-text>
-              </v-card-title>
-            </a>
-            </v-card>
-            </v-hover>
-          </v-flex>
-        </v-layout>
-      </v-container>
+            </div>
+            <v-card-title primary-title>
+              <v-card-text class="headline pa-0">{{ item.title }}</v-card-text>
+            </v-card-title>
+          </a>
+          </v-card>
+          </v-hover>
+        </v-flex>
+      </v-layout>
+    </v-container>
 
   <v-container>
       <h2>Highlights</h2>
-
       <v-container>
         <v-flex xs10 offset-xs1>
           <v-carousel
@@ -155,6 +91,7 @@
             height="500"
             light
             hide-delimiters
+            :cycle="false"
           >
             <v-carousel-item
               v-for="(item,i) in highlights"
@@ -239,13 +176,8 @@ export default {
           title: 'Submissions'
         },
         {
-          img: '/openstorefront/images/savedsearch.png',
-          href: '/openstorefront/UserTool.action?load=Searches',
-          title: 'My Searches'
-        },
-        {
           img: '/openstorefront/images/dash.png',
-          href: '/openstorefront/feedback.jsp', // we have a feedback page in client/mobile
+          href: '#/contact', // we have a feedback page in client/mobile
           title: 'Feedback'
         }
       ]
