@@ -608,7 +608,7 @@ export default {
 $side-menu-width: 24em;
 $side-menu-width-medium: 30em;
 $side-menu-width-large: 34em;
-$closed-width: 4em;
+$closed-width: 5em;
 $footer-height: 10em;
 
 .dn {
@@ -638,7 +638,7 @@ hr {
   width: $side-menu-width;
 }
 .side-menu.closed {
-  width: $closed-width + 1em;
+  width: $closed-width;
 }
 .side-menu-btns {
   position: fixed;
@@ -647,7 +647,7 @@ hr {
 .side-menu-content {
   height: 100%;
   max-width: $side-menu-width;
-  padding: 0 2em;
+  padding-right: 2em;
   margin-left: $closed-width;
   overflow: auto;
 }
