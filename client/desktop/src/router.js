@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Landing from './views/Landing.vue'
+import Profile from './views/Profile.vue'
 import Search from './views/Search.vue'
 import FAQ from './views/FAQ.vue'
 import ContactUs from './views/ContactUs.vue'
@@ -28,6 +29,11 @@ export default new Router({
       path: '/contact',
       name: 'Contact',
       component: ContactUs
+    },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile
     }
     // {
     //   path: '/about',
