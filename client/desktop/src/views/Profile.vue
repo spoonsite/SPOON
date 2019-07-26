@@ -63,7 +63,7 @@
     ></v-text-field>
   </v-flex>
   <v-flex xs12 pt-0 pb-0>
-    <v-select
+    <v-combobox
       ref="user_org"
       :items="organizations"
       name="organization"
@@ -75,10 +75,9 @@
       label="Select an Organization"
       required
       maxLength="120"
-      combobox
       hint="Type to filter or click to select"
       :disabled="disableForm"
-    ></v-select>
+    ></v-combobox>
   </v-flex>
   <v-flex xs12 pt-0 pb-0>
     <v-text-field
