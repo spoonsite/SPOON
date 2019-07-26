@@ -2,6 +2,7 @@
 <div>
 
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
+    <!-- CONTROLS -->
     <div class="side-menu-btns mt-4">
       <div>
         <v-btn @click="showFilters = true; showOptions = false;" small fab dark icon :color="`primary ${showFilters ? 'lighten-4' : ''}`"><v-icon dark>fas fa-filter</v-icon></v-btn>
@@ -10,10 +11,13 @@
         <v-btn @click="showOptions = true; showFilters = false;" small fab dark icon :color="`primary ${showOptions ? 'lighten-4' : ''}`"><v-icon dark>fas fa-cog</v-icon></v-btn>
       </div>
     </div>
-    <div v-if="showOptions || showFilters" style="width: 100%; text-align: right;">
-      <v-btn style="" icon @click="showOptions = false; showFilters = false;"><v-icon>fas fa-times</v-icon></v-btn>
-    </div>
 
+    <div v-if="showOptions || showFilters" style="width: 100%; text-align: right;">
+      <v-btn icon @click="showOptions = false; showFilters = false;"><v-icon>fas fa-times</v-icon></v-btn>
+    </div>
+    <!-- END CONTROLS -->
+
+    <!-- SEARCH OPTIONS -->
     <div :class="`side-menu-content pt-0 ${showFilters || showOptions ? 'db' : 'dn'}`">
       <div v-if="showOptions">
         <h2>Search Options</h2>
@@ -32,6 +36,8 @@
         <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
         <v-btn block class="primary" @click="resetOptions()">Reset Options</v-btn>
       </div><!-- SEARCH OPTIONS -->
+
+      <!-- SEARCH FILTERS -->
       <div v-if="showFilters">
         <h2>Search Filters</h2>
         <v-btn block class="" @click="clear()">Clear Filters</v-btn>
@@ -160,6 +166,34 @@
         v-model="searchQuery"
         :overlaySuggestions="true"
       ></SearchBar>
+      <!-- SEARCH FILTERS PILLS -->
+      <v-chip
+        color="teal"
+        text-color="white"
+        v-if="filters.component"
+      >
+        {{ getComponentName(filters.component) }}
+        <div class="v-chip__close"><v-icon right @click="filters.component = ''">cancel</v-icon></div>
+      </v-chip>
+      <v-chip
+        v-for="tag in filters.tags"
+        :key="tag"
+      >
+        <v-avatar left>
+          <v-icon small>fas fa-tag</v-icon>
+        </v-avatar>
+        {{ tag }}
+        <div class="v-chip__close"><v-icon right @click="removeTag(tag)">cancel</v-icon></div>
+      </v-chip>
+      <v-chip
+        v-if="filters.organization"
+        color="indigo"
+        text-color="white"
+      >
+        {{ filters.organization }}
+        <div class="v-chip__close"><v-icon right @click="filters.organization = ''">cancel</v-icon></div>
+      </v-chip>
+      <!-- SEARCH FILTERS PILLS -->
     </div><!-- Search Bar and menu  -->
 
     <!-- Search Results -->
@@ -240,10 +274,10 @@
       <v-pagination
         v-model="searchPage"
         :length="getNumPages()"
-        total-visible="7"
-      ></v-pagination>
-    </v-layout>
-  </v-footer>
+        total-visible="5"
+      ></v-pagination>,
+    </v-layout>,
+  </v-footer>,
 
 </div>
 </template>
@@ -285,6 +319,20 @@ export default {
     this.newSearch()
   },
   methods: {
+    getComponentName (code) {
+      let name = ''
+      this.componentsList.forEach(comp => {
+        if (comp.componentType === code) {
+          name = comp.componentTypeDescription
+        }
+      })
+      return name
+    },
+    removeTag (tag) {
+      this.filters.tags = this.filters.tags.filter((el) => {
+        return el !== tag
+      })
+    },
     naturalSort (data) {
       function compare (a, b) {
         var itemA
@@ -509,7 +557,7 @@ export default {
       tagsList: [],
       organizationsList: [],
       selected: [],
-      showFilters: true,
+      showFilters: false,
       showOptions: false,
       showHelp: false,
       searchQuery: '',
@@ -545,7 +593,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+$side-menu-width: 30em;
+$closed-width: 5em;
+$footer-height: 10em;
+
 .dn {
   display: none;
 }
@@ -567,13 +619,13 @@ hr {
   border-right: 1px solid #DDD;
   position: fixed;
   height: 100%;
-  padding-bottom: 10em;
+  padding-bottom: $footer-height;
 }
 .side-menu.open {
-  width: 30em;
+  width: $side-menu-width;
 }
 .side-menu.closed {
-  width: 5em;
+  width: $closed-width;
 }
 .side-menu-btns {
   position: fixed;
@@ -581,15 +633,15 @@ hr {
 }
 .side-menu-content {
   height: 100%;
-  max-width: 26em;
+  max-width: $side-menu-width - $closed-width;
   padding: 0 2em;
-  margin-left: 4em;
+  margin-left: $closed-width - 1em;
   overflow: auto;
 }
 .search-block.open {
-  margin-left: 30em;
+  margin-left: $side-menu-width;
 }
 .search-block.closed {
-  margin-left: 5em;
+  margin-left: $closed-width;
 }
 </style>
