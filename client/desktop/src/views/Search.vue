@@ -275,9 +275,9 @@
         v-model="searchPage"
         :length="getNumPages()"
         total-visible="5"
-      ></v-pagination>,
-    </v-layout>,
-  </v-footer>,
+      ></v-pagination>
+    </v-layout>
+  </v-footer>
 
 </div>
 </template>
@@ -594,7 +594,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$side-menu-width: 30em;
+$side-menu-width: 24em;
+$side-menu-width-medium: 30em;
+$side-menu-width-large: 34em;
 $closed-width: 5em;
 $footer-height: 10em;
 
@@ -638,10 +640,36 @@ hr {
   margin-left: $closed-width - 1em;
   overflow: auto;
 }
+.search-block {
+  min-width: 24em;
+}
 .search-block.open {
   margin-left: $side-menu-width;
 }
 .search-block.closed {
   margin-left: $closed-width;
+}
+
+@media only screen and (min-width: 800px) {
+  .search-block.open {
+    margin-left: $side-menu-width-medium;
+  }
+  .side-menu-content {
+    max-width: $side-menu-width-medium - $closed-width;
+  }
+  .side-menu.open {
+    width: $side-menu-width-medium;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .search-block.open {
+    margin-left: $side-menu-width-large;
+  }
+  .side-menu-content {
+    max-width: $side-menu-width-large - $closed-width;
+  }
+  .side-menu.open {
+    width: $side-menu-width-large;
+  }
 }
 </style>
