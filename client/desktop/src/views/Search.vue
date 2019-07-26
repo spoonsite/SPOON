@@ -121,7 +121,7 @@
         </div>
         <div v-if="Object.keys(searchResultsAttributes).length !== 0">Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
-        <v-expansion-panel v-if="Object.keys(searchResultsAttributes).length !== 0">
+        <v-expansion-panel class="mb-4" v-if="Object.keys(searchResultsAttributes).length !== 0">
           <!-- need the v-if with the v-for because the data sometimes gets out of sync -->
           <!-- eslint-disable vue/no-use-v-if-with-v-for -->
           <v-expansion-panel-content
@@ -192,6 +192,14 @@
       >
         {{ filters.organization }}
         <div class="v-chip__close"><v-icon right @click="filters.organization = ''">cancel</v-icon></div>
+      </v-chip>
+      <v-chip
+        close
+        v-for="attr in filters.attributes"
+        :key="attr"
+        @input="removeAttributeFilter(attr)"
+      >
+        {{ printAttribute(attr) }}
       </v-chip>
       <!-- SEARCH FILTERS PILLS -->
     </div><!-- Search Bar and menu  -->
@@ -378,6 +386,9 @@ export default {
     },
     loadAttributes (attributes) {
       this.searchResultsAttributes = this.$jsonparse(attributes)
+      // initialize the attributes
+      var keys = Object.keys(this.searchResultsAttributes)
+      this.attributeKeys = keys.slice(0, 10)
     },
     filterAttributeKeys () {
     },
@@ -597,7 +608,7 @@ export default {
 $side-menu-width: 24em;
 $side-menu-width-medium: 30em;
 $side-menu-width-large: 34em;
-$closed-width: 5em;
+$closed-width: 4em;
 $footer-height: 10em;
 
 .dn {
@@ -627,7 +638,7 @@ hr {
   width: $side-menu-width;
 }
 .side-menu.closed {
-  width: $closed-width;
+  width: $closed-width + 1em;
 }
 .side-menu-btns {
   position: fixed;
@@ -635,9 +646,9 @@ hr {
 }
 .side-menu-content {
   height: 100%;
-  max-width: $side-menu-width - $closed-width;
+  max-width: $side-menu-width;
   padding: 0 2em;
-  margin-left: $closed-width - 1em;
+  margin-left: $closed-width;
   overflow: auto;
 }
 .search-block {
