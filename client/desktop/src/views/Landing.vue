@@ -14,50 +14,18 @@
       ></SearchBar>
     </div>
 
-      <h2>
-        <span style="background-color: #FAFAFA; border-radius: 1px;" class="pa-2">
-          Browse Topics
-        </span>
-      </h2>
-      <v-container v-if="isSpoon()" text-xs-center>
-        <v-layout row wrap>
-          <v-flex
-            v-for="(item,i) in nestedComponentTypesList.children"
-            class="mb-2"
-            :key="i"
-            xs6
-            sm4
-            md2
-          >
-            <v-hover>
-            <v-card
-              slot-scope="{ hover }"
-              flat
-              :class="`elevation-${hover ? 8 : 0} ma-2 pt-2 px-2`"
-              style="background-color: #FAFAFA; height: 100%;"
-            >
-              <router-link
-                :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
-                style="width: 100%; text-decoration: none;"
-              >
-                <img :src="'/openstorefront/' + item.componentType.iconUrl" width="50" class="icon-img">
-                <v-card-text>{{ item.componentType.label }}</v-card-text>
-              </router-link>
-            </v-card>
-            </v-hover>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-img>
-
-    <h2>Quick Launch</h2>
+    <h2>
+      <span style="background-color: #FAFAFA; border-radius: 1px;" class="pa-2">
+      Quick Launch
+      </span>
+    </h2>
     <v-container text-xs-center>
       <v-layout row wrap>
         <v-flex
           v-for="(item,i) in quickLaunchLinks"
           :key="i"
           xs12
-          sm6
+          sm4
           md4
         >
           <v-hover>
@@ -81,6 +49,41 @@
         </v-flex>
       </v-layout>
     </v-container>
+
+    </v-img>
+
+      <h2>
+          Browse Topics
+      </h2>
+      <v-container v-if="isSpoon()" text-xs-center>
+        <v-layout row wrap>
+          <v-flex
+            v-for="(item,i) in nestedComponentTypesList.children"
+            class="mb-2"
+            :key="i"
+            xs6
+            sm4
+            md2
+          >
+            <v-hover>
+            <v-card
+              slot-scope="{ hover }"
+              flat
+              :class="`elevation-${hover ? 8 : 0} ma-2 pt-2 px-2`"
+              style="background-color: rgba(0,0,0,0);"
+            >
+              <router-link
+                :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
+                style="width: 100%; text-decoration: none;"
+              >
+                <img :src="'/openstorefront/' + item.componentType.iconUrl" width="50" class="icon-img">
+                <v-card-text>{{ item.componentType.label }}</v-card-text>
+              </router-link>
+            </v-card>
+            </v-hover>
+          </v-flex>
+        </v-layout>
+      </v-container>
 
   <v-container>
       <h2>Highlights</h2>
