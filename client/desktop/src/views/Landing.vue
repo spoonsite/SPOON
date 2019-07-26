@@ -34,12 +34,7 @@
             :class="`elevation-${hover ? 12 : 2} ma-2 pt-2 px-2`"
           >
           <a :href="item.href" class="" style="text-decoration: none;">
-            <div style="max-width: 200px; margin: auto;">
-              <img
-                :src="item.img"
-                width="100%"
-              />
-            </div>
+            <v-icon class="launch-icon">fas fa-{{ item.icon }}</v-icon>
             <v-card-title primary-title>
               <v-card-text class="headline pa-0">{{ item.title }}</v-card-text>
             </v-card-title>
@@ -171,17 +166,20 @@ export default {
         {
           img: '/openstorefront/images/dash.png',
           href: '/openstorefront/UserTool.action?load=Dashboard',
-          title: 'Dashboard'
+          title: 'Dashboard',
+          icon: 'chart-line'
         },
         {
           img: '/openstorefront/images/submission.png',
           href: '/openstorefront/UserTool.action?load=Submissions',
-          title: 'Submissions'
+          title: 'Submissions',
+          icon: 'file-upload'
         },
         {
           img: '/openstorefront/images/dash.png',
           href: '#/contact', // we have a feedback page in client/mobile
-          title: 'Feedback'
+          title: 'Feedback',
+          icon: 'comments'
         }
       ]
     }
@@ -272,5 +270,9 @@ h3 {
 }
 .darken {
   background-color:rgba(0,0,0,.1);
+}
+.launch-icon {
+  color:#333 !important;
+  font-size: 64px;
 }
 </style>
