@@ -62,7 +62,7 @@ import _ from 'lodash'
 
 export default {
   name: 'SearchBar',
-  props: ['value', 'hideSuggestions', 'overlaySuggestions'],
+  props: ['value', 'hideSuggestions', 'overlaySuggestions', 'submittedEntryTypes'],
   mounted () {
   },
   data () {
@@ -73,7 +73,8 @@ export default {
       showOptions: false,
       searchOptionsSource: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptions: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
-      searchOptionsId: ''
+      searchOptionsId: '',
+      submittedEntries: ''
     }
   },
   methods: {
@@ -125,6 +126,8 @@ export default {
     }, 400)
   },
   created: function () {
+    console.log(this.$route.query.comp)
+    
     this.$http
       .get('/openstorefront/api/v1/resource/searchoptions/user')
       .then(response => {
