@@ -965,24 +965,26 @@
 						};
 					}
 
-					// var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
-					// if(sessionInfo){
-					// 	var searchOptions = JSON.parse(sessionInfo).searchOptions;
+					console.log("Hit the 'server' side of the if statement");
+					var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
+					if(sessionInfo){
+						var searchOptions = JSON.parse(sessionInfo).searchOptions;
+						debugger;
+						SearchPage.queryOfSearchArray = [];
 
-
-					// 	for (var searchOption in searchOptions) {
-					// 		if (searchOptions[searchOption]) {
-					// 			originalSearchRequest.query.searchElements.push({
-					// 				searchType: 'SEARCH OPTION',
-					// 				field: 'searchOption',
-					// 				value: searchOption,
-					// 				caseInsensitive: true,
-					// 				stringOperation: 'CONTAINS',
-					// 				mergeCondition: 'AND'
-					// 			});
-					// 		}
-					// 	}
-					// }
+						for (var searchOption in searchOptions) {
+							if (searchOptions[searchOption]) {
+								SearchPage.queryOfSearchArray.push({
+									searchType: 'SEARCH OPTION',
+									field: 'searchOption',
+									value: searchOption,
+									caseInsensitive: true,
+									stringOperation: 'CONTAINS',
+									mergeCondition: 'AND'
+								});
+							}
+						}
+					}
 					
 					//Transform Filters into search elements.
 					if (filter.name && filter.name !== '') {
@@ -1595,8 +1597,8 @@
 								closable: true,
 								height: 500,
 								scrollable: "y", // this means that it is scrollable in the y direction
-								html: CoreUtil.descriptionOfAdvancedSearch(originalSearchRequest.query.searchElements),
-								width: 300								
+								html: CoreUtil.descriptionOfAdvancedSearch(SearchPage.queryOfSearchArray),
+								width: 300
 							});
 							tip.showAt(tool.getXY());
 						}
