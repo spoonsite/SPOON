@@ -965,21 +965,24 @@
 						};
 					}
 
-					var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
-					var searchOptions = JSON.parse(sessionInfo).searchOptions;
+					// var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
+					// if(sessionInfo){
+					// 	var searchOptions = JSON.parse(sessionInfo).searchOptions;
 
-					for (var searchOption in searchOptions) {
-						if (options[searchOption]) {
-							originalSearchRequest.query.searchElements.push({
-								searchType: 'SEARCH OPTION',
-								field: 'searchOption',
-								value: searchOption,
-								caseInsensitive: true,
-								stringOperation: 'CONTAINS',
-								mergeCondition: 'AND'
-							});
-						}
-					}
+
+					// 	for (var searchOption in searchOptions) {
+					// 		if (searchOptions[searchOption]) {
+					// 			originalSearchRequest.query.searchElements.push({
+					// 				searchType: 'SEARCH OPTION',
+					// 				field: 'searchOption',
+					// 				value: searchOption,
+					// 				caseInsensitive: true,
+					// 				stringOperation: 'CONTAINS',
+					// 				mergeCondition: 'AND'
+					// 			});
+					// 		}
+					// 	}
+					// }
 					
 					//Transform Filters into search elements.
 					if (filter.name && filter.name !== '') {
