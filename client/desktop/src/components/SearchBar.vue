@@ -83,8 +83,7 @@ export default {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      console.log('&comp=' + this.selectedEntryTypes.toString() + '&children=true')
-      this.$emit('submitSearch', { opts: '&comp=' + this.selectedEntryTypes.toString() + '&children=true' })
+      this.$emit('submitSearch', '&comp=' + this.selectedEntryTypes.toString() + '&children=true')
       // this.$router.push(`/search?q=${this.value}`)
     },
     getSearchSuggestions () {
@@ -98,7 +97,6 @@ export default {
           })
           .catch(e => this.errors.push(e))
       }
-      console.log(this.entryTypes.children)
     },
     saveSearchOptions () {
       this.$http.put('/openstorefront/api/v1/resource/searchoptions/user',
