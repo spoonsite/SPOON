@@ -10,12 +10,13 @@
         class="searchfield"
         type="text"
         placeholder="Search"
-        @click="showOptions=false"
+        @click="searchBarFocused"
+        @blur="searchBarBlur"
       >
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
       <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">clear</v-icon>
     </div>
-    <v-card v-if="searchSuggestions.length > 0 && !hideSuggestions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
+    <v-card v-if="searchSuggestions.length > 0 && !hideSearchSuggestions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
       <v-list dense class="elevation-1">
         <v-list-tile v-for="i in searchSuggestions" :key="i.name" @click="submitQuery(i.name);" class="suggestion">
           <v-list-tile-content>
@@ -24,7 +25,7 @@
         </v-list-tile>
       </v-list>
     </v-card>
-    <v-card v-if="hideSuggestions && showOptions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
+    <v-card v-if="hideSearchSuggestions && showOptions && canShowOptions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
       <v-list dense class="elevation-1">
         <h4 class="search-option-titles">Search Options</h4>
         <v-list-tile v-for="(e,index) in searchOptionsSource" v-bind:key="index" class="suggestion">
@@ -67,10 +68,12 @@ export default {
   },
   data () {
     return {
+      hideSearchSuggestions: true,
       entryTypes: {},
       searchSuggestions: [],
       selectedEntryTypes: [],
       showOptions: false,
+      canShowOptions: true,
       searchOptionsSource: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptions: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptionsId: '',
@@ -78,6 +81,15 @@ export default {
     }
   },
   methods: {
+    searchBarFocused () {
+      this.hideSearchSuggestions = false
+      this.canShowOptions = false
+      this.showOptions = false
+    },
+    searchBarBlur () {
+      this.hideSearchSuggestions = true
+      this.canShowOptions = true
+    },
     submitQuery (query) {
       this.saveSearchOptions()
       if (query) {
@@ -88,7 +100,7 @@ export default {
       // this.$router.push(`/search?q=${this.value}`)
     },
     getSearchSuggestions () {
-      if (!this.hideSuggestions) {
+      if (!this.hideSearchSuggestions) {
         axios
           .get(
             `/openstorefront/api/v1/service/search/suggestions?query=${this.value}&componentType=`
@@ -111,6 +123,9 @@ export default {
           canUseAttributesInSearch: this.searchOptions.includes('Vitals'),
           canUseTagsInSearch: this.searchOptions.includes('Tags')
         })
+    },
+    populateEntryTypes (entryTypes) {
+      this.selectedEntryTypes = entryTypes.split(',')
     }
   },
   computed: {
@@ -126,8 +141,11 @@ export default {
     }, 400)
   },
   created: function () {
-    console.log(this.$route.query.comp)
-    
+    var components = this.$route.query.comp
+    if (components !== undefined) {
+      this.populateEntryTypes(components)
+    }
+
     this.$http
       .get('/openstorefront/api/v1/resource/searchoptions/user')
       .then(response => {
