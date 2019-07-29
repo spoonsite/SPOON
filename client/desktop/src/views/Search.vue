@@ -48,15 +48,25 @@
           item-value="componentType"
           label="Category"
           clearable
+          multiple
           chips
           multi-line
         >
           <template slot="selection" slot-scope="data">
+            <v-chip close small @input="deleteTag(data.item.componentTypeDescription)" >
+              <v-avatar class="grey lighten-1">{{ data.item.count }}</v-avatar>
+              {{ data.item.componentTypeDescription}}
+            </v-chip>
+          </template>
+          <template slot="item" slot-scope="data">
+            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.componentTypeDescription}}</v-list-tile-title></v-list-tile-content>
+          </template>
+          <!-- <template slot="selection" slot-scope="data">
             ({{ data.item.count }}) {{ data.item.componentTypeDescription }}
           </template>
           <template slot="item" slot-scope="data">
             <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.componentTypeDescription }}</v-list-tile-title></v-list-tile-content>
-          </template>
+          </template> -->
         </v-select>
         <v-checkbox class="ma-0" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
         <v-select
@@ -166,7 +176,7 @@
         v-model="searchQuery"
         :overlaySuggestions="true"
       ></SearchBar>
-      <!-- SEARCH FILTERS PILLS -->
+      <!-- SEARCH FILTERS PILLS --> //pill here
       <v-chip
         color="teal"
         text-color="white"
