@@ -347,7 +347,9 @@ export default {
         }
       ]
       if (that.filters.component) {
-        searchElements.push(
+        var entryTypes = that.filters.component.split(',')
+        entryTypes.forEach((entryType) => {
+          searchElements.push(
           {
             caseInsensitive: false,
             field: 'componentType',
@@ -355,9 +357,9 @@ export default {
             searchType: 'ENTRYTYPE',
             searchChildren: that.filters.children,
             stringOperation: 'EQUALS',
-            value: that.filters.component
-          }
-        )
+            value: entryType
+          })
+        })
       }
       if (that.filters.tags) {
         that.filters.tags.forEach(function (tag) {
