@@ -814,7 +814,8 @@
 								ui: 'default',
 								margin: '10 10 10 0',
 								handler: function() {
-									filterResults();
+
+									filterResults('CLIENT');
 								}
 							},
 							{
@@ -843,7 +844,9 @@
 			SearchPage.filterPanel = filterPanel;
 
 			var filterMode;
-			var filterResults = function() {
+			var filterResults = function(filterMode) {
+
+				debugger;
 				
 				//construct filter object
 				var filter = {
@@ -969,20 +972,25 @@
 					var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
 					if(sessionInfo){
 						var searchOptions = JSON.parse(sessionInfo).searchOptions;
-						debugger;
-						SearchPage.queryOfSearchArray = [];
+						if (searchOptions){
+							SearchPage.queryOfSearchArray = [];
 
-						for (var searchOption in searchOptions) {
-							if (searchOptions[searchOption]) {
-								SearchPage.queryOfSearchArray.push({
-									searchType: 'SEARCH OPTION',
-									field: 'searchOption',
-									value: searchOption,
-									caseInsensitive: true,
-									stringOperation: 'CONTAINS',
-									mergeCondition: 'AND'
-								});
+							for (var searchOption in searchOptions) {
+								if (searchOptions[searchOption]) {
+									SearchPage.queryOfSearchArray.push({
+										searchType: 'SEARCH OPTION',
+										field: 'searchOption',
+										value: searchOption,
+										caseInsensitive: true,
+										stringOperation: 'CONTAINS',
+										mergeCondition: 'AND'
+									});
+								}
 							}
+						}
+						else {
+							// typically this state fires during a second, third, so on, search
+							SearchPage.queryOfSearchArray = [JSON.parse(sessionInfo)];
 						}
 					}
 					
@@ -1401,7 +1409,9 @@
 					
 			});
 			
-			var originalSearchRequest;
+			var originalSearchRequest; 
+			//verbose delete later
+			console.log("originalSearchRequest:",originalSearchRequest);
 			var performSearch = function(){
 				Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
 				// First, check if we should load a savedSearch as given by an ID. If not,
@@ -1484,6 +1494,10 @@
 						max: operation.getLimit()
 					}, operation.getParams());
 					params = Ext.applyIf(initialParams, searchResultsStore.getProxy().getExtraParams() || {});
+
+					//verbose delete later
+					// console.log("=========doSearch sent params- params: ",params,"\n--->operations:", operation)
+					debugger;
 
 					var request = new Ext.data.Request({
 						url: 'api/v1/service/search/advance',
@@ -1592,7 +1606,7 @@
 						callback: function(panel, tool, event) {
 							
 							var tip = Ext.create('Ext.tip.ToolTip', {
-								title: 'Search Criteria',
+								title: 'Original Search Criteria',
 								autoHide: false,
 								closable: true,
 								height: 500,
