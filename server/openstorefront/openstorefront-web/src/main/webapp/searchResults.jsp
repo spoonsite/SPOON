@@ -814,8 +814,8 @@
 								ui: 'default',
 								margin: '10 10 10 0',
 								handler: function() {
-
-									filterResults('CLIENT');
+									// 
+									filterResults(/*'CLIENT'*/);
 								}
 							},
 							{
@@ -844,7 +844,19 @@
 			SearchPage.filterPanel = filterPanel;
 
 			var filterMode;
-			var filterResults = function(filterMode) {
+
+			/**
+			 * Filters the results show to the user.
+			 * The CLIENT mode (which is faster for filtering as it does not require a lengthy
+			 * request to the server) only filters the results that show on the current "page" of results,
+			 * not all the "pages" of results. <br>
+			 * For example, if there are 54 pages of results and you filter for a certain tag, it will
+			 * only show the results from page 1 that have the certain tag, and omit the results on the 
+			 * other 53 pages with tags.
+			 * Therefore a filterMode parameter was removed, to always use the 'REMOTE' mode that
+			 * sends a request to the server. 
+			 */
+			var filterResults = function() {
 				
 				//construct filter object
 				var filter = {
