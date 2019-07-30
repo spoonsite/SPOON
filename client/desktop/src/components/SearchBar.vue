@@ -28,7 +28,7 @@
     <v-card v-if="hideSearchSuggestions && showOptions && canShowOptions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
       <v-list dense class="elevation-1">
         <h4 class="search-option-titles">Search Options</h4>
-        <v-list-tile v-for="(e,index) in searchOptionsSource" v-bind:key="index" class="suggestion">
+        <v-list-tile v-for="(e,index) in searchOptionsSource" v-bind:key="index" class="suggestion" height="100px">
           <v-list-tile-content>
             <v-checkbox
               :ripple="false"

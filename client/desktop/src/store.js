@@ -10,7 +10,8 @@ export default new Vuex.Store({
     branding: {},
     securityPolicy: {},
     permissionMap: [],
-    appVersion: ''
+    appVersion: '',
+    componentTypeList: []
   },
   // mutations must be synchronous
   mutations: {
@@ -36,6 +37,9 @@ export default new Vuex.Store({
           if (!found) state.permissionMap.push(permission.permission)
         })
       })
+    },
+    setComponentTypeList (state, response) {
+      state.componentTypeList = response.data
     }
   },
   actions: {
@@ -72,6 +76,12 @@ export default new Vuex.Store({
           if (callback) {
             callback()
           }
+        })
+    },
+    getComponentTypeList (context) {
+      axios.get('/openstorefront/api/v1/resource/componenttypes')
+        .then(response => {
+          context.commit('setComponentTypeList', response)
         })
     }
   },

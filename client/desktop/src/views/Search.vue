@@ -42,7 +42,7 @@
         <h2>Search Filters</h2>
         <v-btn block class="" @click="clear()">Clear Filters</v-btn>
         <v-select
-          v-model="filters.component"
+          v-model="filters.components"
           :items="componentsList"
           item-text="componentTypeDescription"
           item-value="componentType"
@@ -53,7 +53,7 @@
           multi-line
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="deleteTag(data.item.componentTypeDescription)" >
+            <v-chip close small @input="removeComponent(data.item.componentType)" >
               <v-avatar class="grey lighten-1">{{ data.item.count }}</v-avatar>
               {{ data.item.componentTypeDescription}}
             </v-chip>
@@ -176,15 +176,27 @@
         v-model="searchQuery"
         :overlaySuggestions="true"
       ></SearchBar>
-      <!-- SEARCH FILTERS PILLS --> //pill here
+      <!-- SEARCH FILTERS PILLS -->
       <v-chip
+        color="teal"
+        text-color="white"
+        v-for="component in filters.components"
+        :key="component"
+      >
+        <!-- <v-avatar left>
+          <v-icon small>fas fa-tag</v-icon>
+        </v-avatar> -->
+        {{ getComponentName(component) }}
+        <div class="v-chip__close"><v-icon right @click="removeComponent(component)">cancel</v-icon></div>
+      </v-chip>
+      <!-- <v-chip
         color="teal"
         text-color="white"
         v-if="filters.component"
       >
         {{ getComponentName(filters.component) }}
         <div class="v-chip__close"><v-icon right @click="filters.component = ''">cancel</v-icon></div>
-      </v-chip>
+      </v-chip> -->
       <v-chip
         v-for="tag in filters.tags"
         :key="tag"
@@ -317,7 +329,8 @@ export default {
       this.searchQuery = this.$route.query.q
     }
     if (this.$route.query.comp) {
-      this.filters.component = this.$route.query.comp
+      this.filters.components = this.$route.query.comp.split(',')
+      this.$route.query.comp = 'ADACS'
     }
     if (this.$route.query.children) {
       this.filters.children = this.$route.query.children
@@ -329,7 +342,7 @@ export default {
       this.searchQuery = to.query.q
     }
     if (to.query.comp) {
-      this.filters.component = to.query.comp
+      this.filters.components = to.query.comp.split(',')
     }
     if (to.query.children) {
       this.filters.children = to.query.children
@@ -339,9 +352,9 @@ export default {
   methods: {
     getComponentName (code) {
       let name = ''
-      this.componentsList.forEach(comp => {
+      this.$store.state.componentTypeList.forEach(comp => {
         if (comp.componentType === code) {
-          name = comp.componentTypeDescription
+          name = comp.parentLabel
         }
       })
       return name
@@ -349,6 +362,11 @@ export default {
     removeTag (tag) {
       this.filters.tags = this.filters.tags.filter((el) => {
         return el !== tag
+      })
+    },
+    removeComponent (component) {
+      this.filters.components = this.filters.components.filter((el) => {
+        return el !== component
       })
     },
     naturalSort (data) {
@@ -389,6 +407,9 @@ export default {
     deleteTag (tag) {
       this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
     },
+    deleteCompnent (component) {
+      this.filters.components = _.remove(this.filters.components, n => n !== component)
+    },
     addTag (tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
         this.filters.tags.push(tag)
@@ -415,19 +436,19 @@ export default {
           value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
         }
       ]
-      if (that.filters.component) {
-        var entryTypes = that.filters.component.split(',')
-        entryTypes.forEach((entryType) => {
+      if (that.filters.components) {
+        that.filters.components.forEach(function (entryType) {
           searchElements.push(
-          {
-            caseInsensitive: false,
-            field: 'componentType',
-            mergeCondition: 'AND',
-            searchType: 'ENTRYTYPE',
-            searchChildren: that.filters.children,
-            stringOperation: 'EQUALS',
-            value: entryType
-          })
+            {
+              caseInsensitive: false,
+              field: 'componentType',
+              mergeCondition: 'AND',
+              searchType: 'ENTRYTYPE',
+              searchChildren: that.filters.children,
+              stringOperation: 'EQUALS',
+              value: entryType
+            }
+          )
         })
       }
       if (that.filters.tags) {
@@ -490,6 +511,7 @@ export default {
           that.totalSearchResults = response.data.totalNumber
           that.organizationsList = _.sortBy(response.data.meta.resultOrganizationStats, [function (o) { return o.organization }])
           that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel }])
+          // this may not return full list of all components
           that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription }])
           that.searchQueryIsDirty = false
           this.loadAttributes(response.data.meta.resultAttributeStats)
@@ -587,7 +609,7 @@ export default {
       attributeQuery: '',
       attributeKeys: [],
       filters: {
-        component: '',
+        components: [],
         tags: [],
         attributes: [],
         organization: '',

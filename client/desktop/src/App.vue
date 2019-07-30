@@ -155,6 +155,7 @@ export default {
     // pass in current axios instance
     this.$store.dispatch('getCurrentUser', { axios: this.$http, callback: this.checkWatches })
     this.$store.dispatch('getAppVersion')
+    this.$store.dispatch('getComponentTypeList')
     this.checkWatches()
   },
   computed: {
