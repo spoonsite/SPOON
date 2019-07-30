@@ -814,8 +814,7 @@
 								ui: 'default',
 								margin: '10 10 10 0',
 								handler: function() {
-									// 
-									filterResults(/*'CLIENT'*/);
+									filterResults();
 								}
 							},
 							{
