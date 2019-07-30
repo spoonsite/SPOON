@@ -158,15 +158,15 @@
 </template>
 
 <script lang="js">
-import validators from '../util/validators';
+import validators from '../util/validators'
 
 export default {
   name: 'profile',
   mixins: [validators],
   mounted () {
-    this.setUserInfo();
-    this.getOrgs();
-    this.getRoles();
+    this.setUserInfo()
+    this.getOrgs()
+    this.getRoles()
   },
   data () {
     return {
@@ -190,63 +190,63 @@ export default {
       valid: true,
       formChanged: false,
       notificationDialog: false
-    };
+    }
   },
   computed: {
     disableForm () {
-      return !!this.$store.state.securityPolicy.disableUserInfoEdit;
+      return !!this.$store.state.securityPolicy.disableUserInfoEdit
     }
   },
   watch: {
     user: {
       handler (after, before) {
-        this.formChanged = JSON.stringify(this.user) !== JSON.stringify(this.cachedUser);
+        this.formChanged = JSON.stringify(this.user) !== JSON.stringify(this.cachedUser)
       },
       deep: true
     }
   },
   methods: {
     setUserInfo () {
-      this.user.firstName = this.$store.state.currentUser.firstName;
-      this.user.lastName = this.$store.state.currentUser.lastName;
-      this.user.email = this.$store.state.currentUser.email;
-      this.user.phone = this.$store.state.currentUser.phone;
-      this.user.currentOrg = {code: '', description: this.$store.state.currentUser.organization};
-      this.user.position = this.$store.state.currentUser.positionTitle;
-      this.user.userTypeCode = this.$store.state.currentUser.userTypeDescription;
-      this.user.notify = this.$store.state.currentUser.notifyOfNew;
+      this.user.firstName = this.$store.state.currentUser.firstName
+      this.user.lastName = this.$store.state.currentUser.lastName
+      this.user.email = this.$store.state.currentUser.email
+      this.user.phone = this.$store.state.currentUser.phone
+      this.user.currentOrg = {code: '', description: this.$store.state.currentUser.organization}
+      this.user.position = this.$store.state.currentUser.positionTitle
+      this.user.userTypeCode = this.$store.state.currentUser.userTypeDescription
+      this.user.notify = this.$store.state.currentUser.notifyOfNew
 
-      this.username = this.$store.state.currentUser.username;
+      this.username = this.$store.state.currentUser.username
 
-      this.cachedUser = JSON.parse(JSON.stringify(this.user));
+      this.cachedUser = JSON.parse(JSON.stringify(this.user))
     },
     orgFilter (item, queryText, itemText) {
-      const hasValue = val => val != null ? val : '';
-      const text = hasValue(item.description);
-      const query = hasValue(queryText);
+      const hasValue = val => val != null ? val : ''
+      const text = hasValue(item.description)
+      const query = hasValue(queryText)
       return text.toString()
         .toLowerCase()
-        .indexOf(query.toString().toLowerCase()) > -1;
+        .indexOf(query.toString().toLowerCase()) > -1
     },
     getOrgs () {
       this.$http
         .get('/openstorefront/api/v1/resource/organizations/lookup')
         .then(response => {
-          this.organizations = response.data;
-        });
+          this.organizations = response.data
+        })
     },
     getRoles () {
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/UserTypeCode')
         .then(response => {
           this.userTypeCodes = response.data.filter(item => {
-            return item.activeStatus === 'A';
-          });
-        });
+            return item.activeStatus === 'A'
+          })
+        })
     },
     updateProfile () {
       if (this.$refs.form.validate()) {
-        this.saving = true;
+        this.saving = true
         let newProfile = {
           'firstName': this.user.firstName,
           'lastName': this.user.lastName,
@@ -256,30 +256,30 @@ export default {
           'positionTitle': this.user.position,
           'userTypeCode': this.userTypeCodes.find(each => each.description === this.user.userTypeCode).code, // User Role
           'notifyOfNew': this.user.notify
-        };
+        }
 
         this.$http
           .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, newProfile)
           .then(response => {
             // resyncing the user data
             this.$store.dispatch('setCurrentUser', () => {
-              this.setUserInfo();
-            });
-            this.$toasted.show('Profile updated');
-            this.saving = false;
-            this.formChanged = false;
+              this.setUserInfo()
+            })
+            this.$toasted.show('Profile updated')
+            this.saving = false
+            this.formChanged = false
           })
           .catch(e => {
-            this.$toasted.error('Error updating profile');
-            this.saving = false;
-          });
+            this.$toasted.error('Error updating profile')
+            this.saving = false
+          })
       }
     },
     reset () {
-      this.user = JSON.parse(JSON.stringify(this.cachedUser));
+      this.user = JSON.parse(JSON.stringify(this.cachedUser))
     }
   }
-};
+}
 </script>
 
 <style scoped lang="scss">
