@@ -350,14 +350,6 @@ export default {
     this.newSearch()
   },
   methods: {
-    addHashToLocation(params) {
-      console.log(this.filters.components.join(','))
-      history.pushState(
-        {},
-        null,
-        this.$route.path + '?q=' + this.$route.query.q +'&comp=' + this.filters.components.join(',') + '&children=true'
-      )
-    },
     getComponentName (code) {
       // this.addHashToLocation(code)
       let name = ''
@@ -541,7 +533,6 @@ export default {
     newSearch () {
       this.searchPage = 1
       this.submitSearch()
-      this.addHashToLocation('temp')
     },
     searchCategory (category) {
       this.filters.component = category
