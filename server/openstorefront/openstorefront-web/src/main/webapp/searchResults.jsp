@@ -845,8 +845,6 @@
 
 			var filterMode;
 			var filterResults = function(filterMode) {
-
-				debugger;
 				
 				//construct filter object
 				var filter = {
@@ -968,7 +966,6 @@
 						};
 					}
 
-					console.log("Hit the 'server' side of the if statement");
 					var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
 					if(sessionInfo){
 						var searchOptions = JSON.parse(sessionInfo).searchOptions;
@@ -1410,8 +1407,6 @@
 			});
 			
 			var originalSearchRequest; 
-			//verbose delete later
-			console.log("originalSearchRequest:",originalSearchRequest);
 			var performSearch = function(){
 				Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
 				// First, check if we should load a savedSearch as given by an ID. If not,
@@ -1494,10 +1489,6 @@
 						max: operation.getLimit()
 					}, operation.getParams());
 					params = Ext.applyIf(initialParams, searchResultsStore.getProxy().getExtraParams() || {});
-
-					//verbose delete later
-					// console.log("=========doSearch sent params- params: ",params,"\n--->operations:", operation)
-					debugger;
 
 					var request = new Ext.data.Request({
 						url: 'api/v1/service/search/advance',
