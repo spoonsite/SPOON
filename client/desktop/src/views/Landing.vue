@@ -6,7 +6,7 @@
   >
     <div class="mx-3">
       <SearchBar
-        v-on:submitSearch="submitSearch"
+        @submitSearch="submitSearch"
         v-model="searchQuery"
         :hideSuggestions="hideSearchSuggestions"
         style="margin: 6em auto; max-width: 46em;"

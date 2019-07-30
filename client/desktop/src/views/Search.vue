@@ -61,12 +61,6 @@
           <template slot="item" slot-scope="data">
             <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.componentTypeDescription}}</v-list-tile-title></v-list-tile-content>
           </template>
-          <!-- <template slot="selection" slot-scope="data">
-            ({{ data.item.count }}) {{ data.item.componentTypeDescription }}
-          </template>
-          <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.componentTypeDescription }}</v-list-tile-title></v-list-tile-content>
-          </template> -->
         </v-select>
         <v-checkbox class="ma-0" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
         <v-select
@@ -330,7 +324,6 @@ export default {
     }
     if (this.$route.query.comp) {
       this.filters.components = this.$route.query.comp.split(',')
-      this.$route.query.comp = 'ADACS'
     }
     if (this.$route.query.children) {
       this.filters.children = this.$route.query.children
@@ -361,12 +354,12 @@ export default {
       return name
     },
     removeTag (tag) {
-      this.filters.tags = this.filters.tags.filter((el) => {
+      this.filters.tags = this.filters.tags.filter(el => {
         return el !== tag
       })
     },
     removeComponent (component) {
-      this.filters.components = this.filters.components.filter((el) => {
+      this.filters.components = this.filters.components.filter(el => {
         return el !== component
       })
     },
