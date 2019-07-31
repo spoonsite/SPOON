@@ -12,7 +12,7 @@
       </div>
       <div>
         <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
-        <input type="text" value="https://spoonsite.com" id="urlForClipboard" style="display: none">
+        <input type="text" value="https://spoonsite.com" id="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
       </div>
     </div>
 
@@ -566,18 +566,22 @@ export default {
       return `${attr.typelabel} : ${attr.code} ${attr.unit}`
     },
     copyUrlToClipboard () {
-      var copyText = document.getElementById('urlForClipboard')
-      copyText.select()
-      document.execCommand('copy')
-      var url = window.location.origin + this.$route.path +
+      var urlBeginning
+      window.location.href.match(/(.*?)\?/m).forEach(element => {
+        urlBeginning = element
+      })
+      var url = encodeURI(urlBeginning +
           '?q=' + this.searchQuery +
           '&comp=' + this.filters.components.join(',') +
           '&children=' + this.filters.children.toString() +
           '&tags=' + this.filters.tags.join(',') +
           '&orgs=' + this.filters.organization +
-          '&attributes=' + this.filters.attributes.join(',')
-      console.log(url)
-      console.log(encodeURI(url))
+          '&attributes=' + this.filters.attributes.join(','))
+
+      var copyText = document.getElementById('urlForClipboard')
+      copyText.value = url
+      copyText.select()
+      document.execCommand('copy')
       alert('Copied the text: ' + copyText.value)
     }
   },
