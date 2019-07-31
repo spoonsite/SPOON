@@ -190,7 +190,7 @@ export default {
       return `/search?q=${query}`
     },
     submitSearch (additionalOptions) {
-      this.$router.push(`/search?q=${this.searchQuery}` + additionalOptions)
+      this.$router.push(encodeURI(`/search?q=${this.searchQuery}`) + additionalOptions)
     },
     getNestedComponentTypes () {
       this.$http

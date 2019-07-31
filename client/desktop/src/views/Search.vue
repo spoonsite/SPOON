@@ -11,7 +11,8 @@
         <v-btn @click="showOptions = !showOptions; showFilters = false;" small fab dark icon :color="`primary ${showOptions ? 'lighten-4' : ''}`"><v-icon dark>fas fa-cog</v-icon></v-btn>
       </div>
       <div>
-        <v-btn @click="copyUrlToClipboard" small fab icon :color="`primary`"><v-icon>fas fa-share-alt</v-icon></v-btn>
+        <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
+        <input type="text" value="https://spoonsite.com" id="urlForClipboard" style="display: none">
       </div>
     </div>
 
@@ -186,7 +187,7 @@
       <v-chip
         color="light-blue lighten-2"
         text-color="white"
-        v-if="this.filters.children && this.filters.components.length > 0"
+        v-if="this.filters.children && !!this.filters.components && this.filters.components.length > 0"
       >
         Include Sub-Catagories
         <div class="v-chip__close"><v-icon right @click="filters.children = !filters.children">cancel</v-icon></div>
@@ -327,6 +328,18 @@ export default {
     }
     if (this.$route.query.children) {
       this.filters.children = this.$route.query.children
+    }
+    if (this.$route.query.tags) {
+      this.filters.tags = this.$route.query.tags.split(',')
+    }
+    if (this.$route.query.orgs) {
+      this.filters.organization = this.$route.query.orgs
+    }
+    if (this.$route.query.attributes) {
+      this.filters.attributes = []
+      this.$route.query.attributes.match(/({.*?})/gm).forEach(attribute => {
+        this.filters.attributes.push(attribute)
+      })
     }
     this.newSearch()
   },
@@ -553,9 +566,19 @@ export default {
       return `${attr.typelabel} : ${attr.code} ${attr.unit}`
     },
     copyUrlToClipboard () {
-      navigator.permissions.query({name: "clipboard-read"}).then(result => {
-        console.log(result)
-      })
+      var copyText = document.getElementById('urlForClipboard')
+      copyText.select()
+      document.execCommand('copy')
+      var url = window.location.origin + this.$route.path +
+          '?q=' + this.searchQuery +
+          '&comp=' + this.filters.components.join(',') +
+          '&children=' + this.filters.children.toString() +
+          '&tags=' + this.filters.tags.join(',') +
+          '&orgs=' + this.filters.organization +
+          '&attributes=' + this.filters.attributes.join(',')
+      console.log(url)
+      console.log(encodeURI(url))
+      alert('Copied the text: ' + copyText.value)
     }
   },
   watch: {
