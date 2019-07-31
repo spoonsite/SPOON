@@ -195,7 +195,6 @@ export default {
 .searchbar-button {
   border-radius: 2px;
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
-  /* padding: 0.7em 0.7em 0.7em 0.7em; */
   margin-bottom: 0.3em;
   font-size: 140%;
   transition: box-shadow 0.7s;
@@ -217,8 +216,6 @@ export default {
   padding: 0em 0.3em;
   height: 1.66em;
   background-color: rgba(0,0,0,.12);
-  /* border-radius: 2px; */
-  /* box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12); */
 }
 .search-option-titles {
   padding-left: 0.7em;
