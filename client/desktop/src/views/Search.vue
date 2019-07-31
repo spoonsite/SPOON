@@ -582,7 +582,8 @@ export default {
       copyText.value = url
       copyText.select()
       document.execCommand('copy')
-      alert('Copied the text: ' + copyText.value)
+      this.$toasted.show('Search url copied to clip board', {position: 'top-left', duration : 3000})
+      // alert('Copied the text: ' + copyText.value)
     }
   },
   watch: {

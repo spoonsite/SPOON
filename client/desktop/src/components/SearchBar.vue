@@ -239,7 +239,7 @@ input:focus + .icon {
 .myicon {
   font-size: 14px;
 }
-.fade-enter-active, {
+.fade-enter-active {
   transition: opacity .2s;
 }
 .fade-leave-active {
