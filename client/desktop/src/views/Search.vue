@@ -177,20 +177,17 @@
         v-for="component in filters.components"
         :key="component"
       >
-        <!-- <v-avatar left>
-          <v-icon small>fas fa-tag</v-icon>
-        </v-avatar> -->
         {{ getComponentName(component) }}
         <div class="v-chip__close"><v-icon right @click="removeComponent(component)">cancel</v-icon></div>
       </v-chip>
-      <!-- <v-chip
-        color="teal"
+      <v-chip
+        color="light-blue lighten-2"
         text-color="white"
-        v-if="filters.component"
+        v-if="this.filters.children && this.filters.components.length > 0"
       >
-        {{ getComponentName(filters.component) }}
-        <div class="v-chip__close"><v-icon right @click="filters.component = ''">cancel</v-icon></div>
-      </v-chip> -->
+        Include Sub-Catagories
+        <div class="v-chip__close"><v-icon right @click="filters.children = !filters.children">cancel</v-icon></div>
+      </v-chip>
       <v-chip
         v-for="tag in filters.tags"
         :key="tag"
