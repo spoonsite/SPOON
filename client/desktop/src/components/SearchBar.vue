@@ -25,7 +25,7 @@
         </v-list-tile>
       </v-list>
     </v-card>
-    <v-card v-if="hideSearchSuggestions && showOptions && canShowOptions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
+    <v-card v-if="hideSearchSuggestions && showOptions && canShowOptions" :height="overlaySuggestions ? 0 : 'auto'" style="position:relative; z-index:9999">
       <v-list dense class="elevation-1">
         <h4 class="search-option-titles">Search Options</h4>
         <v-list-tile v-for="(e,index) in searchOptionsSource" v-bind:key="index" class="suggestion" height="100px">

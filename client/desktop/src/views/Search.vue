@@ -10,6 +10,9 @@
       <div>
         <v-btn @click="showOptions = !showOptions; showFilters = false;" small fab dark icon :color="`primary ${showOptions ? 'lighten-4' : ''}`"><v-icon dark>fas fa-cog</v-icon></v-btn>
       </div>
+      <div>
+        <v-btn @click="copyUrlToClipboard" small fab icon :color="`primary`"><v-icon>fas fa-share-alt</v-icon></v-btn>
+      </div>
     </div>
 
     <div v-if="showOptions || showFilters" style="width: 100%; text-align: right;">
@@ -548,6 +551,11 @@ export default {
     printAttribute (attribute) {
       let attr = this.$jsonparse(attribute)
       return `${attr.typelabel} : ${attr.code} ${attr.unit}`
+    },
+    copyUrlToClipboard () {
+      navigator.permissions.query({name: "clipboard-read"}).then(result => {
+        console.log(result)
+      })
     }
   },
   watch: {

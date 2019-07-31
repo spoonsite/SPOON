@@ -3,6 +3,7 @@
 
   <v-img
     :src='$store.state.branding.homebackSplashUrl'
+    style="overflow: visible; position:relative; z-index:1"
   >
     <div class="mx-3">
       <SearchBar
