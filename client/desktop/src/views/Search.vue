@@ -12,7 +12,7 @@
       </div>
       <div>
         <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
-        <input type="text" value="https://spoonsite.com" id="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
+        <input type="text" value="https://spoonsite.com" ref="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
       </div>
     </div>
 
@@ -590,7 +590,7 @@ export default {
           '&orgs=' + this.filters.organization +
           '&attributes=' + this.filters.attributes.join(','))
 
-      var copyText = document.getElementById('urlForClipboard')
+      var copyText = this.$refs.urlForClipboard
       copyText.value = url
       copyText.select()
       document.execCommand('copy')
