@@ -43,9 +43,7 @@ export default new Vuex.Store({
       state.componentTypeList = response.data
     },
     setSelectedComponentTypes (state, response) {
-      console.log(response)
       state.selectedComponentTypes = response.data
-      console.log(state.selectedComponentTypes)
     }
   },
   actions: {

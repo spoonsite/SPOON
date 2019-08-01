@@ -321,6 +321,13 @@ export default {
     SearchBar
     // AttributeRange
   },
+  created () {
+    this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
+      if (this.selectedEntryTypes !== newValue) {
+        this.filters.components = newValue
+      }
+    })
+  },
   mounted () {
     if (this.$route.query.q) {
       this.searchQuery = this.$route.query.q
@@ -360,7 +367,6 @@ export default {
   methods: {
     componentsChange (data) {
       this.filters.components = data
-      console.log(this.filters.components)
     },
     getComponentName (code) {
       // this.addHashToLocation(code)
@@ -619,6 +625,9 @@ export default {
     },
     searchPage () {
       this.submitSearch()
+    },
+    componentTypeListComputed: function () {
+      this.$store.commit('setSelectedComponentTypes', { data: this.componentTypeListComputed })
     }
   },
   computed: {
@@ -627,6 +636,9 @@ export default {
     },
     hideSearchSuggestions () {
       return this.searchQueryIsDirty || this.searchQuery.length === 0
+    },
+    componentTypeListComputed () {
+      return this.filters.components
     }
   },
   data () {

@@ -145,7 +145,6 @@ export default {
     }, 400),
     selectedEntryTypes: function () {
       if (this.$store.getters.getSelectedComponentTypes !== this.selectedEntryTypes) {
-        console.log('Committed to store')
         this.$store.commit('setSelectedComponentTypes', { data: this.selectedEntryTypes })
       }
     }
@@ -160,7 +159,6 @@ export default {
 
     this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
       if (this.selectedEntryTypes !== newValue) {
-        console.log('store changed search bar state')
         this.selectedEntryTypes = newValue
       }
     })
