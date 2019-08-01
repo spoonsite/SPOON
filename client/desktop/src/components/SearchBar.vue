@@ -25,7 +25,7 @@
         </v-list-tile>
       </v-list>
     </v-card>
-    <v-card v-if="hideSearchSuggestions && showOptions && canShowOptions" :height="overlaySuggestions ? 0 : 'auto'" style="position:relative; z-index:9999">
+    <v-card v-if="hideSearchSuggestions && showOptions && canShowOptions" :height="overlaySuggestions ? 0 : 'auto'" style="position:relative; z-index:5">
       <v-list dense class="elevation-1">
         <h4 class="search-option-titles">Search Options</h4>
         <v-list-tile v-for="(e,index) in searchOptionsSource" v-bind:key="index" class="suggestion" height="100px">
@@ -63,7 +63,7 @@ import _ from 'lodash'
 
 export default {
   name: 'SearchBar',
-  props: ['value', 'hideSuggestions', 'overlaySuggestions', 'submittedEntryTypes'],
+  props: ['value', 'hideSuggestions', 'overlaySuggestions'],
   mounted () {
   },
   data () {
@@ -125,7 +125,11 @@ export default {
         })
     },
     populateEntryTypes (entryTypes) {
-      this.selectedEntryTypes = entryTypes.split(',')
+      if (entryTypes != null && entryTypes !== '') {
+        this.selectedEntryTypes = entryTypes.split(',')
+      } else {
+        this.selectedEntryTypes = []
+      }
     }
   },
   computed: {
@@ -138,13 +142,28 @@ export default {
       } else if (!this.searchQueryIsDirty) {
         this.getSearchSuggestions()
       }
-    }, 400)
+    }, 400),
+    selectedEntryTypes: function () {
+      if (this.$store.getters.getSelectedComponentTypes !== this.selectedEntryTypes) {
+        console.log('Committed to store')
+        this.$store.commit('setSelectedComponentTypes', { data: this.selectedEntryTypes })
+      }
+    }
   },
   created: function () {
     var components = this.$route.query.comp
     if (components !== undefined) {
       this.populateEntryTypes(components)
     }
+
+    this.$store.commit('setSelectedComponentTypes', { data: this.selectedEntryTypes })
+
+    this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
+      if (this.selectedEntryTypes !== newValue) {
+        console.log('store changed search bar state')
+        this.selectedEntryTypes = newValue
+      }
+    })
 
     this.$http
       .get('/openstorefront/api/v1/resource/searchoptions/user')

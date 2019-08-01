@@ -173,6 +173,8 @@
         :hideSuggestions="hideSearchSuggestions"
         v-model="searchQuery"
         :overlaySuggestions="true"
+        :submittedEntryTypes="this.$route.query.comp.split(',')"
+        @componentsChange="componentsChange"
       ></SearchBar>
       <!-- SEARCH FILTERS PILLS -->
       <v-chip
@@ -186,7 +188,7 @@
       </v-chip>
       <v-chip
         color="light-blue lighten-2"
-        text-color="white"
+        text-color="black"
         v-if="this.filters.children && !!this.filters.components && this.filters.components.length > 0"
       >
         Include Sub-Catagories
@@ -356,6 +358,10 @@ export default {
     this.newSearch()
   },
   methods: {
+    componentsChange (data) {
+      this.filters.components = data
+      console.log(this.filters.components)
+    },
     getComponentName (code) {
       // this.addHashToLocation(code)
       let name = ''
@@ -582,7 +588,7 @@ export default {
       copyText.value = url
       copyText.select()
       document.execCommand('copy')
-      this.$toasted.show('Search url copied to clip board', {position: 'top-left', duration : 3000})
+      this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
       // alert('Copied the text: ' + copyText.value)
     }
   },
