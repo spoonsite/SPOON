@@ -979,7 +979,7 @@
 
 					var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
 					if(sessionInfo){
-						var searchOptions = JSON.parse(sessionInfo).searchOptions;
+						var searchOptions = Ext.JSON.decode(sessionInfo).searchOptions;
 						if (searchOptions){
 							SearchPage.queryOfSearchArray = [];
 
@@ -998,7 +998,7 @@
 						}
 						else {
 							// typically this state fires during a second, third, so on, search
-							SearchPage.queryOfSearchArray = [JSON.parse(sessionInfo)];
+							SearchPage.queryOfSearchArray = [Ext.JSON.decode(sessionInfo)];
 						}
 					}
 					
@@ -1159,7 +1159,7 @@
 						// MOXY couldn't serialize the model to key:value pairs
 						// Jaxson could parse the model to JSON
 						attributeStats = {};
-						attributeStats = JSON.parse(meta.resultAttributeStats);
+						attributeStats = Ext.JSON.decode(meta.resultAttributeStats);
 
 						var attributeStatContainers = [];
 						
@@ -1417,7 +1417,7 @@
 					
 			});
 			
-			var originalSearchRequest; 
+			var originalSearchRequest;
 			var performSearch = function(){
 				Ext.getCmp('resultsDisplayPanel').setLoading("Searching...");
 				// First, check if we should load a savedSearch as given by an ID. If not,
