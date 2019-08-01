@@ -211,7 +211,7 @@ export default {
       this.user.lastName = this.$store.state.currentUser.lastName
       this.user.email = this.$store.state.currentUser.email
       this.user.phone = this.$store.state.currentUser.phone
-      this.user.currentOrg = {code: '', description: this.$store.state.currentUser.organization}
+      this.user.currentOrg = { code: '', description: this.$store.state.currentUser.organization }
       this.user.position = this.$store.state.currentUser.positionTitle
       this.user.userTypeCode = this.$store.state.currentUser.userTypeDescription
       this.user.notify = this.$store.state.currentUser.notifyOfNew
