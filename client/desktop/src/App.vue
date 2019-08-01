@@ -185,7 +185,7 @@ export default {
           icon: 'cog',
           name: 'Admin Tools',
           permissions: permissions.ADMIN },
-        { href: '/openstorefront/UserTool.action/user',
+        { href: '/openstorefront/UserTool.action',
           icon: 'user',
           name: 'User Tools',
           permissions: [] },
