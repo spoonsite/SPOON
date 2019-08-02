@@ -12,7 +12,7 @@
       </div>
     </div>
 
-    <div v-if="showOptions || showFilters" style="width: 100%; text-align: right;">
+    <div v-if="showOptions || showFilters" class="close-btn">
       <v-btn icon @click="showOptions = false; showFilters = false;"><v-icon>fas fa-times</v-icon></v-btn>
     </div>
     <!-- END CONTROLS -->
@@ -629,10 +629,20 @@ hr {
   margin-bottom: 1em;
 }
 .side-menu {
+  // background-color: blue;
   border-right: 1px solid #DDD;
-  position: fixed;
   height: 100%;
+  overflow: auto;
+  position: fixed;
+  padding-top: 50px;
+  left: 0;
+  top: 0;
+  bottom: 0;
   padding-bottom: $footer-height;
+}
+.close-btn {
+  width: 100%;
+  text-align: right;
 }
 .side-menu.open {
   width: $side-menu-width;
@@ -641,18 +651,23 @@ hr {
   width: $closed-width;
 }
 .side-menu-btns {
-  position: fixed;
+  position: absolute;
+  padding-top: 40px;
+  top: 0;
+  left: 0;
   margin: 0.5em;
 }
 .side-menu-content {
-  height: 100%;
   max-width: $side-menu-width;
   padding-right: 2em;
   margin-left: $closed-width;
-  overflow: auto;
+  overflow-y: auto;
 }
 .search-block {
   min-width: 24em;
+  margin-top: 40px;
+  overflow-y: auto;
+  height: 100vh;
 }
 .search-block.open {
   margin-left: $side-menu-width;
@@ -660,7 +675,6 @@ hr {
 .search-block.closed {
   margin-left: $closed-width;
 }
-
 @media only screen and (min-width: 800px) {
   .search-block.open {
     margin-left: $side-menu-width-medium;
