@@ -1,7 +1,7 @@
 <template>
   <form v-on:submit.prevent="submitQuery()">
     <div class="searchbar-button">
-      <v-icon @click="showOptions=!showOptions" class="search-icon search-options-icon">expand_more</v-icon>
+      <v-icon @click="showOptions=!showOptions" class="search-icon search-options-icon">{{ (showOptions ? 'fa-chevron-down' : 'fa-chevron-up')}}</v-icon>
     </div>
     <div class="searchbar">
       <input
@@ -25,9 +25,9 @@
         </v-list-tile>
       </v-list>
     </v-card>
-    <v-card 
-      v-if="hideSearchSuggestions && showOptions && canShowOptions" 
-      :height="overlaySuggestions ? 0 : 'auto'" 
+    <v-card
+      v-if="hideSearchSuggestions && showOptions && canShowOptions"
+      :height="overlaySuggestions ? 0 : 'auto'"
       style="position:relative; z-index:5"
     >
       <v-list dense class="elevation-1">
