@@ -66,6 +66,8 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
+import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
@@ -322,9 +324,35 @@ public class ElasticSearchManager
 		return componentSearchWrapper;
 	}
 
-	public String indexSearchV2(SearchFilters searchFilters){
+	@Override
+	public String indexSearchV2(SearchFilters searchFilters)
+	{
 
-		return "";
+		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
+		if (searchOptions == null) {
+			searchOptions = service.getSearchService().getGlobalSearchOptions();
+		}
+
+		if (searchOptions.areAllOptionsOff()) {
+			return "";
+		}
+
+		MultiSearchRequest request = new MultiSearchRequest();
+		SearchRequest firstSearchRequest = new SearchRequest(INDEX);
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
+		firstSearchRequest.source(searchSourceBuilder);
+		request.add(firstSearchRequest);
+
+		MultiSearchResponse response;
+
+		try (ElasticSearchClient client = singleton.getClient()) {
+			response = client.getInstance().msearch(request, RequestOptions.DEFAULT);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to handle search result", "check index database", ex);
+		}
+
+		return response.toString();
 	}
 
 	/**
