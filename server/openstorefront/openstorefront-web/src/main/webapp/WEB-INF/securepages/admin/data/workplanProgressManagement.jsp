@@ -505,6 +505,22 @@
 						closeAction: 'destroy',
 						layout: 'fit',						
 						modal: true,
+						listeners: {
+							afterRender: function(){
+								var neededRoles = record.get("currentStep").roles;
+								var userRoles = CoreService.userservice.getCurrentUser().owner.completionValue.roles;
+
+								for(i in neededRoles){
+									for(j in userRoles){
+										if(neededRoles[i].securityRole === userRoles[j].roleName){
+											this.queryById('complete').show();
+											this.queryById('previous').show();
+											break;
+										}
+									}
+								}
+							}
+						},
 						items: [
 							{
 								xtype: 'panel',
@@ -576,7 +592,9 @@
 									{
 										text: 'Go To Previous Step',
 										iconCls: 'fa fa-lg fa-backward icon-button-color-save',
+										itemId: 'previous',
 										disabled: !!invalidEntry,
+										hidden: true,
 										handler: function(){
 											processCompWin.setLoading('Updating State...');
 											Ext.Ajax.request({
@@ -599,7 +617,9 @@
 									{
 										text: 'Complete This Step',											
 										iconCls: 'fa fa-lg fa-list-alt icon-button-color-save',
+										itemId:"complete",
 										disabled: !!invalidEntry,
+										hidden: true,
 										handler: function(){
 											processCompWin.setLoading('Updating State...');
 											Ext.Ajax.request({
