@@ -36,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.SearchFilters;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
@@ -319,6 +320,11 @@ public class ElasticSearchManager
 		componentSearchWrapper.setTotalNumber(indexSearchResult.getTotalResults());
 
 		return componentSearchWrapper;
+	}
+
+	public String indexSearchV2(SearchFilters searchFilters){
+
+		return "";
 	}
 
 	/**

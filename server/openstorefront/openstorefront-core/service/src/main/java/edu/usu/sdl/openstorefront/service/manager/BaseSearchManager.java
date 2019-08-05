@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.SearchFilters;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.core.view.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
@@ -63,6 +64,12 @@ public abstract class BaseSearchManager
 	 * @return
 	 */
 	public abstract IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn);
+
+	/**
+	 * Version 2 of the search, used for the Vue site
+	 * 
+	 */
+	public abstract String indexSearchV2(SearchFilters searchFilters);
 
 	/**
 	 * Finds search suggestions
