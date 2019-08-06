@@ -25,14 +25,14 @@
             </v-flex>
 
             <v-flex  xs12 md6 pt-0 pb-0>
-              <v-text-field
+              <v-textarea
                 v-model="description"
                 :rules="descriptionRules"
                 :counter="4096"
                 label="Description"
-                textarea
+                outline
                 required
-              ></v-text-field>
+              ></v-textarea>
             </v-flex>
 
             <v-flex  xs12 md6 pt-0 pb-0>

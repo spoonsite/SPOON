@@ -141,28 +141,6 @@ export default {
       errors: [],
       highlights: [],
       attributes: [],
-      searchToolLinks: [
-        {
-          icon: 'cloud',
-          href: '#', // open tag cloud
-          title: 'Tags'
-        },
-        {
-          icon: 'sitemap',
-          href: '#', // search by organization popup selector
-          title: 'Organizations'
-        },
-        {
-          icon: 'share-alt',
-          href: '#', // relationship view picker popup -> /openstorefront/UserTool.action?load=Relationships&viewType={type}&entityId={id}&entityName={name}
-          title: 'Relationships'
-        },
-        {
-          icon: 'search-plus',
-          href: '#', // advanced search creator popup
-          title: 'Advanced'
-        }
-      ],
       quickLaunchLinks: [
         {
           img: '/openstorefront/images/dash.png',
