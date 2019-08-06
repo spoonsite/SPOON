@@ -4,7 +4,6 @@
       <header>
         <div :style="topbarStyle">
         <v-toolbar color="primary" dense dark flat>
-          <v-btn icon @click="nav('/')"><v-icon>fas fa-home</v-icon></v-btn>
           <v-spacer></v-spacer>
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -176,10 +175,10 @@ export default {
       drawer: false,
       watchNumber: 0,
       links: [ // Leave a permission array empty if no permissions are needed.
-        // { link: '/',
-        //   icon: 'home',
-        //   name: 'Home',
-        //   permissions: [] },
+        { link: '/',
+          icon: 'home',
+          name: 'Home',
+          permissions: [] },
         { link: '/admin',
           icon: 'cog',
           name: 'Admin Tools',
