@@ -35,8 +35,6 @@
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 
-			Ext.require('OSF.landing.designer.Designer');
-
 			Ext.onReady(function () {
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
@@ -917,9 +915,6 @@
 												html: '<b>Read-Only</b>'
 											}
 										]
-									},
-									{
-										xtype:'LiveDesigner'
 									}
 								]
 							}
