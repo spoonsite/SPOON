@@ -8,9 +8,9 @@
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-          <Notifications/>
-          <v-btn icon @click="nav('profile')"><v-icon>fas fa-user</v-icon></v-btn>
-          <!-- <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn> -->
+            <Notifications/>
+            <v-btn icon @click="nav('profile')"><v-icon>fas fa-user</v-icon></v-btn>
+            <!-- <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn> -->
           </v-toolbar-items>
           <v-menu offset-y>
             <v-toolbar-side-icon slot="activator"></v-toolbar-side-icon>
@@ -187,6 +187,10 @@ export default {
           icon: 'user',
           name: 'User Tools',
           permissions: [] },
+        { link: '/watches',
+          icon: 'binoculars',
+          name: 'Watches',
+          permissions: [] },
         { link: '/faq',
           icon: 'question',
           name: 'F.A.Q.',
@@ -194,11 +198,7 @@ export default {
         { link: '/contact',
           icon: 'comment',
           name: 'Contact',
-          permissions: [] }
-        // { link: '/watches',
-        //   icon: 'binoculars',
-        //   name: 'Watches',
-        //   permissions: [] },
+          permissions: [] },
         // { link: '/sme-approval',
         //   icon: 'check',
         //   name: 'SME Approval',
