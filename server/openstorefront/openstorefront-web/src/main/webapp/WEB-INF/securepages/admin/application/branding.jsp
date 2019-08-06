@@ -941,7 +941,10 @@
 							record.data.loginLogoBlock = "";
 						}
 						
-						// Ensures the first tab is the displayed one?
+						// Load branding data into form
+						addEditBrandingWin.queryById('brandingForm').loadRecord(record);
+
+						// Ensures the first tab is the one that is displayed on render?
 						addEditBrandingWin.queryById('tabpanel').setActiveTab(0);
 					}
 					
