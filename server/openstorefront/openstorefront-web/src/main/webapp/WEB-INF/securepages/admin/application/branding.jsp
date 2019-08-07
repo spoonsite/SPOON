@@ -85,7 +85,7 @@
 
 					var addEditBrandingWin = Ext.create('Ext.window.Window', {
 						id: 'addEditBrandingWin',
-						title: 'Add/Edit Branding',
+						title: 'Add/Edit Branding - ' + (!!record ? record.data.name : "Unsaved, Untitled Branding"),
 						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 						modal: true,
 						closeAction: 'destroy',
@@ -107,16 +107,16 @@
 							}
 						},						
 						items: [
+							
 							{
-								xtype: 'tabpanel',
-								itemId: 'tabpanel',
+								xtype: 'form',
+								itemId: 'brandingForm',
+								scrollable: true,
+								trackResetOnLoad: true,
 								items: [
 									{
-										xtype: 'form',
-										title: 'Branding',
-										itemId: 'brandingForm',
-										scrollable: true,
-										trackResetOnLoad: true,
+										xtype: 'tabpanel',
+										itemId: 'tabpanel',
 										items: [
 											{
 												xtype: 'panel',
@@ -641,7 +641,7 @@
 																fieldLabel: 'Primary Logo URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Home page Logo (625w x 200h)" ></i>',
 																name: 'primaryLogoUrl',
 																allowBlank: false,
-																emptyText: 'Branding.action?GeneralMedia&name=logo',											
+																emptyText: 'example: Branding.action?GeneralMedia&name=logo',											
 																maxLength: 255,																
 																flex: 4
 															},
@@ -679,7 +679,7 @@
 																fieldLabel: 'Secondary Logo URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Top corner Logo (181w x 53h)" ></i>',
 																name: 'secondaryLogoUrl',
 																allowBlank: false,
-																emptyText: 'Branding.action?GeneralMedia&name=logo',											
+																emptyText: 'example: Branding.action?GeneralMedia&name=logo',											
 																maxLength: 255,																
 																flex: 4
 															},
@@ -717,7 +717,7 @@
 																fieldLabel: 'Backsplash URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Top corner Logo ~(4000w x 1000h)" ></i>',
 																name: 'homebackSplashUrl',
 																allowBlank: false,
-																emptyText: 'Branding.action?GeneralMedia&name=logo',											
+																emptyText: 'example: Branding.action?GeneralMedia&name=logo',											
 																maxLength: 255,																
 																flex: 4
 															},
@@ -821,98 +821,99 @@
 														maxLength: 1048576
 													}
 												]
-											}
-										],
-										dockedItems: [
+											},
 											{
-												xtype: 'toolbar',
-												dock: 'bottom',
-												items: [
+												xtype: 'panel',
+												title: 'Current CSS',
+												scrollable: true,
+												bodyStyle: 'padding: 10px;',										
+												loader: {
+													url: 'Branding.action?CSS&template=apptemplate.css.jsp&v=' + (Math.random() * 100000),
+													autoLoad: true,
+													success: function(loader, response, opts) {
+														var data = response.responseText;
+														
+														data = '<pre>' + data + '</pre>';	
+														loader.getTarget().update(data);
+												}
+												},
+												dockedItems: [
 													{
-														text: 'Save',
-														iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
-														scale: 'medium',
-														formBind: true,
-														handler: function () {
-															var win = this.up('window');
-															var form = this.up('form');
-
-															actionSaveBranding(form, function(response, opt){	
-																var rootItems = form.items.items;
-
-																// When the form is saved, reset all original values for checkboxes
-																for (var ii = 0; ii < rootItems.length; ii += 1) {
-																	
-																	var subItems = rootItems[ii].items.items;
-																	for (var jj = 0; jj < subItems.length; jj += 1) {
-																		if (form.items.items[ii].items.items[jj].xtype === 'checkbox') {
-																			subItems[jj].originalValue = subItems[jj].getValue();
-																		}
-																	}
-																}
-															});
-														}
-													},
-													{
-														xtype: 'tbfill'
-													},
-													{
-														text: 'Preview',
-														tooltip: 'Saves and preview',
-														iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-small-vertical-correction',
-														scale: 'medium',
-														formBind: true,											
-														handler: function () {												
-															var form = this.up('form');
-
-															actionSaveBranding(form, function(response, opt){
-																var branding = Ext.decode(response.responseText);
-
-																previewWin.show();													
-																previewContents.load('Branding.action?Preview&brandingId=' + branding.brandingId);
-															});												
-
-														}
-													},
-													{
-														xtype: 'tbfill'
-													},
-													{
-														text: 'Close',
-														iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
-														scale: 'medium',
-														handler: function () {
-															
-															//check for unsaved state
-															var form = this.up('form');
-															
-															this.up('window').close();
-														}
+														xtype: 'panel',
+														dock: 'top',
+														html: '<b>Read-Only</b>'
 													}
 												]
 											}
-										]
-									},
+										],
+										
+									}
+								],
+								dockedItems: [
 									{
-										xtype: 'panel',
-										title: 'Current CSS',
-										scrollable: true,
-										bodyStyle: 'padding: 10px;',										
-										loader: {
-											 url: 'Branding.action?CSS&template=apptemplate.css.jsp&v=' + (Math.random() * 100000),
-											 autoLoad: true,
-											 success: function(loader, response, opts) {
-												var data = response.responseText;
-												 
-												data = '<pre>' + data + '</pre>';	
-												loader.getTarget().update(data);
-											 }
-										},
-										dockedItems: [
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
 											{
-												xtype: 'panel',
-												dock: 'top',
-												html: '<b>Read-Only</b>'
+												text: 'Save',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
+												scale: 'medium',
+												formBind: true,
+												handler: function () {
+													var win = this.up('window');
+													var form = this.up('form');
+
+													actionSaveBranding(form, function(response, opt){	
+														var rootItems = form.items.items;
+
+														// When the form is saved, reset all original values for checkboxes
+														for (var ii = 0; ii < rootItems.length; ii += 1) {
+															
+															var subItems = rootItems[ii].items.items;
+															for (var jj = 0; jj < subItems.length; jj += 1) {
+																if (form.items.items[ii].items.items[jj].xtype === 'checkbox') {
+																	subItems[jj].originalValue = subItems[jj].getValue();
+																}
+															}
+														}
+													});
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Preview',
+												tooltip: 'Saves and preview',
+												iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-small-vertical-correction',
+												scale: 'medium',
+												formBind: true,											
+												handler: function () {												
+													var form = this.up('form');
+
+													actionSaveBranding(form, function(response, opt){
+														var branding = Ext.decode(response.responseText);
+
+														previewWin.show();													
+														previewContents.load('Branding.action?Preview&brandingId=' + branding.brandingId);
+													});												
+
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
+												scale: 'medium',
+												handler: function () {
+													
+													//check for unsaved state
+													var form = this.up('form');
+													
+													this.up('window').close();
+												}
 											}
 										]
 									}
