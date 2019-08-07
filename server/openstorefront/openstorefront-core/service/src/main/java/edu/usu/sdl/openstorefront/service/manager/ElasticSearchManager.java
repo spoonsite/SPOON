@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
+import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -342,11 +343,58 @@ public class ElasticSearchManager
 		SearchRequest searchRequest = new SearchRequest(INDEX);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
+		//query based on search options
+		String query = searchFilters.getQuery();
+
+		if(searchOptions.getCanUseNameInSearch()){
+			searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.query(QueryBuilders.matchQuery("name", query));
+			searchRequest.source(searchSourceBuilder);
+			request.add(searchRequest);
+		}
+		if(searchOptions.getCanUseOrganizationsInSearch()){
+			searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.query(QueryBuilders.matchQuery("organization", query));
+			searchRequest.source(searchSourceBuilder);
+			request.add(searchRequest);
+		}
+		if(searchOptions.getCanUseDescriptionInSearch()){
+			searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.query(QueryBuilders.matchQuery("description", query));
+			searchRequest.source(searchSourceBuilder);
+			request.add(searchRequest);
+		}
+		if(searchOptions.getCanUseTagsInSearch()){
+			searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.query(QueryBuilders.matchQuery("tags.text", query));
+			searchRequest.source(searchSourceBuilder);
+			request.add(searchRequest);
+		}
+		if(searchOptions.getCanUseAttributesInSearch()){
+			searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.label", query));
+			searchRequest.source(searchSourceBuilder);
+			request.add(searchRequest);
+		}
+
+		//Component Type
 		List<String> componentTypes = searchFilters.getComponentTypes();
 
 		if(componentTypes != null){
 			for(String componentType : componentTypes){
-				searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
+				if(searchFilters.getIncludeChildren()){
+					List<ComponentType> allComponentTypes = service.getComponentService().getAllComponentTypes();
+					for(ComponentType allComponentType : allComponentTypes){
+						if(allComponentType.getParentComponentType() == componentType){
+							searchSourceBuilder = new SearchSourceBuilder();
+							searchSourceBuilder.query(QueryBuilders.matchQuery("componentType", allComponentType.getComponentType()));
+							searchRequest.source(searchSourceBuilder);
+							request.add(searchRequest);
+						}
+					}
+				}
+				searchSourceBuilder = new SearchSourceBuilder();
+				searchSourceBuilder.query(QueryBuilders.matchQuery("componentType", componentType));
 				searchRequest.source(searchSourceBuilder);
 				request.add(searchRequest);
 			}
