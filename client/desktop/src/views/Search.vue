@@ -178,19 +178,21 @@
       ></SearchBar>
       <!-- SEARCH FILTERS PILLS -->
       <v-chip
-        color="teal"
-        text-color="white"
         v-for="component in filters.components"
         :key="component"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-cubes</v-icon>
+        </v-avatar>
         {{ getComponentName(component) }}
         <div class="v-chip__close"><v-icon right @click="removeComponent(component)">cancel</v-icon></div>
       </v-chip>
       <v-chip
-        color="light-blue lighten-2"
-        text-color="black"
         v-if="this.filters.children && !!this.filters.components && this.filters.components.length > 0"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-check-square</v-icon>
+        </v-avatar>
         Include Sub-Catagories
         <div class="v-chip__close"><v-icon right @click="filters.children = !filters.children">cancel</v-icon></div>
       </v-chip>
@@ -206,9 +208,10 @@
       </v-chip>
       <v-chip
         v-if="filters.organization"
-        color="indigo"
-        text-color="white"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-university</v-icon>
+        </v-avatar>
         {{ filters.organization }}
         <div class="v-chip__close"><v-icon right @click="filters.organization = ''">cancel</v-icon></div>
       </v-chip>
@@ -218,6 +221,9 @@
         :key="attr"
         @input="removeAttributeFilter(attr)"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-clipboard-list</v-icon>
+        </v-avatar>
         {{ printAttribute(attr) }}
       </v-chip>
       <!-- SEARCH FILTERS PILLS -->
@@ -335,8 +341,10 @@ export default {
     if (this.$route.query.comp) {
       this.filters.components = this.$route.query.comp.split(',')
     }
-    if (this.$route.query.children) {
-      this.filters.children = this.$route.query.children
+    if (this.$route.query.children === 'false') {
+      this.filters.children = false
+    } else {
+      this.filters.children = true
     }
     if (this.$route.query.tags) {
       this.filters.tags = this.$route.query.tags.split(',')
@@ -575,6 +583,9 @@ export default {
     },
     printAttribute (attribute) {
       let attr = this.$jsonparse(attribute)
+      if (attr === null) {
+        attr.unit = ''
+      }
       return `${attr.typelabel} : ${attr.code} ${attr.unit}`
     },
     copyUrlToClipboard () {
@@ -582,14 +593,14 @@ export default {
       window.location.href.match(/(.*?)\?/m).forEach(element => {
         urlBeginning = element
       })
-      var url = encodeURI(urlBeginning +
-          '?q=' + this.searchQuery +
+      var urlEnding = '?q=' + this.searchQuery +
           '&comp=' + this.filters.components.join(',') +
           '&children=' + this.filters.children.toString() +
           '&tags=' + this.filters.tags.join(',') +
           '&orgs=' + this.filters.organization +
-          '&attributes=' + this.filters.attributes.join(','))
+          '&attributes=' + this.filters.attributes.join(',')
 
+      var url = encodeURI(urlBeginning + urlEnding)
       var copyText = this.$refs.urlForClipboard
       copyText.value = url
       copyText.select()

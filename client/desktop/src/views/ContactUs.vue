@@ -93,9 +93,9 @@ export default {
   props: [],
   mounted () {
     if (this.$route.params.ticket) {
-      this.ticket = this.$route.params.ticket;
-      this.description = 'Error Description: ' + this.ticket;
-      this.contactType = 'Report Issue';
+      this.ticket = this.$route.params.ticket
+      this.description = 'Error Description: ' + this.ticket
+      this.contactType = 'Report Issue'
     }
   },
   data: () => ({
@@ -128,7 +128,7 @@ export default {
     submit () {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
-        this.isLoading = true;
+        this.isLoading = true
         this.$http
           .post('/openstorefront/api/v1/resource/feedbacktickets', {
             summary: this.subject,
@@ -144,23 +144,23 @@ export default {
               referrer: navigator.referrer,
               screenResolution: 'Height: ' + window.innerHeight + ', Width:' + window.innerWidth
             }
-        })
+          })
           .then(response => {
-            this.$refs.form.reset();
-            this.confirmationDialog = true;
-            this.isLoading = false;
-          });
+            this.$refs.form.reset()
+            this.confirmationDialog = true
+            this.isLoading = false
+          })
       }
     },
     cancel () {
-      this.$refs.form.reset();
+      this.$refs.form.reset()
     }
 
   },
   computed: {
 
   }
-};
+}
 </script>
 
 <style scoped lang="scss">
