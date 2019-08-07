@@ -112,14 +112,6 @@ public class SearchFilters
 		this.includeChildren = includeChildren;
 	}
 
-	public List<String> getOrganizations() {
-		return organizations;
-	}
-
-	public void setOrganizations(List<String> organizations) {
-		this.organizations = organizations;
-	}
-
 	public String getOrganization() {
 		return organization;
 	}

@@ -333,16 +333,24 @@ public class ElasticSearchManager
 			searchOptions = service.getSearchService().getGlobalSearchOptions();
 		}
 
+		// If all options are off, return everything
 		if (searchOptions.areAllOptionsOff()) {
-			return "";
+			return getAll().toString();
 		}
 
 		MultiSearchRequest request = new MultiSearchRequest();
-		SearchRequest firstSearchRequest = new SearchRequest(INDEX);
+		SearchRequest searchRequest = new SearchRequest(INDEX);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
-		firstSearchRequest.source(searchSourceBuilder);
-		request.add(firstSearchRequest);
+
+		List<String> componentTypes = searchFilters.getComponentTypes();
+
+		if(componentTypes != null){
+			for(String componentType : componentTypes){
+				searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
+				searchRequest.source(searchSourceBuilder);
+				request.add(searchRequest);
+			}
+		}
 
 		MultiSearchResponse response;
 
