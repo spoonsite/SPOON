@@ -3,7 +3,7 @@
 
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- CONTROLS -->
-    <div class="side-menu-btns mt-4">
+    <div class="side-menu-btns">
       <div>
         <v-btn @click="showFilters = !showFilters; showOptions = false;" small fab dark icon :color="`primary ${showFilters ? 'lighten-4' : ''}`"><v-icon dark>fas fa-filter</v-icon></v-btn>
       </div>
@@ -102,13 +102,17 @@
           </template>
         </v-autocomplete>
         <h3 class="pb-3">Attributes</h3>
-
-        <v-text-field
-          label="Search Attributes"
-          solo
-          v-model="attributeQuery"
-          placeholder="Search Attributes"
-        ></v-text-field>
+        <div class="searchbar">
+          <input
+            type="text"
+            label="Search Attributes"
+            solo
+            v-model="attributeQuery"
+            placeholder="Search Attributes"
+            ref="attributeBar"
+          >
+          <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="function(){attributeQuery='';}">clear</v-icon>
+        </div>
         <div>
           <v-chip
             close
@@ -273,7 +277,6 @@
 
   <!-- Pagination -->
   <v-footer
-    height="auto"
     fixed
     color="#FFF"
     style="border-top: 1px solid #DDD"
@@ -605,11 +608,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/scss/variables.scss';
+
 $side-menu-width: 24em;
 $side-menu-width-medium: 30em;
 $side-menu-width-large: 34em;
 $closed-width: 5em;
-$footer-height: 10em;
+$footer-height: 42.4px;
+
+.searchbar {
+  border-radius: 2px;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+  padding: 0.7em 0.7em 0.7em 1.2em;
+  margin-bottom: 0.3em;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 140%;
+  transition: box-shadow 0.7s;
+  background-color: #FFF;
+}
 
 .dn {
   display: none;
@@ -631,14 +648,11 @@ hr {
 .side-menu {
   // background-color: blue;
   border-right: 1px solid #DDD;
-  height: 100%;
-  overflow: auto;
+  overflow-y: auto;
   position: fixed;
-  padding-top: 50px;
   left: 0;
-  top: 0;
-  bottom: 0;
-  padding-bottom: $footer-height;
+  top: $header-height;
+  bottom: $footer-height;
 }
 .close-btn {
   width: 100%;
@@ -651,9 +665,8 @@ hr {
   width: $closed-width;
 }
 .side-menu-btns {
-  position: absolute;
-  padding-top: 40px;
-  top: 0;
+  position: fixed;
+  top: $header-height;
   left: 0;
   margin: 0.5em;
 }
@@ -664,16 +677,22 @@ hr {
   overflow-y: auto;
 }
 .search-block {
+  position: fixed;
   min-width: 24em;
-  margin-top: 40px;
-  overflow-y: auto;
-  height: 100vh;
+  overflow-y: scroll;
+  top: $header-height;
+  bottom: $footer-height;
+  right: 0;
+  left: 0;
 }
 .search-block.open {
   margin-left: $side-menu-width;
 }
 .search-block.closed {
   margin-left: $closed-width;
+}
+.v-footer {
+  height: $footer-height !important;
 }
 @media only screen and (min-width: 800px) {
   .search-block.open {
