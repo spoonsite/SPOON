@@ -105,12 +105,19 @@
     ></v-select>
   </v-flex>
   <!-- Notification Checkboxes -->
-  <v-flex xs2>
-    <v-icon class="info-icon" @click="notificationDialog = true">fas fa-question-circle</v-icon>
-    <v-dialog
-      v-model="notificationDialog"
-      max-width="300px"
-      >
+  <v-flex xs12>
+    <v-badge right color="#fafafa">
+      <v-icon class="info-icon" slot="badge" @click="notificationDialog = true">fas fa-question-circle</v-icon>
+      <v-switch
+        ref="periodic_notify"
+        label="Notify about Updates"
+        ripple
+        v-model="user.notify"
+        id="notify"
+        :disabled="disableForm"
+      ></v-switch>
+    </v-badge>
+    <v-dialog v-model="notificationDialog" max-width="300px">
       <v-card>
         <v-card-text>
           Receive a periodic email about recent changes.
@@ -121,16 +128,7 @@
       </v-card>
     </v-dialog>
   </v-flex>
-  <v-flex xs10>
-    <v-switch
-      ref="periodic_notify"
-      label="Notify about Updates"
-      ripple
-      v-model="user.notify"
-      id="notify"
-      :disabled="disableForm"
-    ></v-switch>
-  </v-flex>
+
   <!-- Save Button -->
   <v-flex xs12 sm10>
     <v-btn
@@ -285,5 +283,9 @@ export default {
 <style scoped lang="scss">
 .info-icon:hover {
   cursor: pointer;
+}
+.v-input--switch {
+  margin: 0px;
+  padding: 0px;
 }
 </style>

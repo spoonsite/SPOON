@@ -322,6 +322,9 @@ $banner-height: 30px;
 $offset: $toolbar-height + $goldbar-height;
 $offset-banner: $offset + $banner-height;
 
+html {
+  overflow: auto !important;
+}
 #app {
   font-family: "Roboto";
   color: #333;
