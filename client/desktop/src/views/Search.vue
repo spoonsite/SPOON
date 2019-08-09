@@ -111,7 +111,7 @@
             placeholder="Search Attributes"
             ref="attributeBar"
           >
-          <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="function(){attributeQuery='';}">clear</v-icon>
+          <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery=''">clear</v-icon>
         </div>
         <div>
           <v-chip
