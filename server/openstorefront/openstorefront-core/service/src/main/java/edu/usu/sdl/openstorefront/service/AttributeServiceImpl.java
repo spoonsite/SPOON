@@ -260,7 +260,7 @@ public class AttributeServiceImpl
 		// the advanced search filter needs a way to know when to refresh it's cache 
 		// @see{SearchStatTable#isThereNewAttributeTypeSaved}
 		// SearchStatTable.setThereIsNewAttributeTypeSaved(true);
-		SearchStatTable.isThereNewAttributeTypeSaved = true;
+		SearchStatTable.setThereIsNewAttributeTypeSaved(true);
 
 		if (updateIndexes) {
 			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
