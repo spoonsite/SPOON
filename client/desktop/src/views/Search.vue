@@ -436,73 +436,30 @@ export default {
       // sometimes 2 POST requests get sent out together
       if (that.searchQueryIsDirty) return
       that.searchQueryIsDirty = true
-      let searchElements = [
-        {
-          mergeCondition: 'AND',
-          searchType: 'INDEX',
-          value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
-        }
-      ]
-      if (that.filters.components) {
-        that.filters.components.forEach(function (entryType) {
-          searchElements.push(
-            {
-              caseInsensitive: false,
-              field: 'componentType',
-              mergeCondition: 'AND',
-              searchType: 'ENTRYTYPE',
-              searchChildren: that.filters.children,
-              stringOperation: 'EQUALS',
-              value: entryType
-            }
-          )
-        })
+      
+      //build search request here
+      var searchFilters = {
+        'query': '',
+        'page': 0,
+        'pageSize': 10,
+        'componentTypes': [],
+        'includeChildren': true,
+        'organization': '',
+        'attributes': [],
+        'tags': []
       }
-      if (that.filters.tags) {
-        that.filters.tags.forEach(function (tag) {
-          searchElements.push(
-            {
-              caseInsensitive: true,
-              mergeCondition: that.filters.tagCondition,
-              searchType: 'TAG',
-              stringOperation: 'EQUALS',
-              value: tag
-            }
-          )
-        })
-      }
-      if (that.filters.organization) {
-        searchElements.push(
-          {
-            caseInsensitive: false,
-            mergeCondition: 'AND',
-            searchType: 'COMPONENT',
-            numberOperation: 'EQUALS',
-            stringOperation: 'EQUALS',
-            field: 'organization',
-            value: that.filters.organization
-          }
-        )
-      }
-      if (that.filters.attributes) {
-        that.filters.attributes.forEach(function (attribute) {
-          let attr = that.$jsonparse(attribute)
-          if (attr !== '') {
-            searchElements.push(
-              {
-                keyField: attr.type,
-                keyValue: attr.code,
-                caseInsensitive: true,
-                // mergeCondition: that.filters.attributeCondition,
-                mergeCondition: 'AND',
-                numberOperations: 'EQUALS',
-                searchType: 'ATTRIBUTESET',
-                stringOperation: 'EQUALS'
-              }
-            )
-          }
-        })
-      }
+
+      searchFilters.query = ( this.searchQuery ? this.searchQuery : searchFilters.query )
+      searchFilters.page = ( this.searchPage ? this.searchPage : searchFilters.page )
+      searchFilters.pageSize = ( this.searchPageSize ? this.searchPageSize : searchFilters.pageSize )
+      searchFilters.componentTypes = ( this.filters.components ? this.filters.components : searchFilters.componentTypes )
+      searchFilters.includeChildren = ( this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren )
+      searchFilters.organization = ( this.filters.organization ? this.filters.organization : searchFilters.organization )
+      searchFilters.attributes = ( this.filters.attributes ? this.filters.attributes : searchFilters.attributes )
+      searchFilters.tags = ( this.filters.tags ? this.filters.tags : searchFilters.tags )
+
+      console.log(searchFilters)
+
       this.$http
         .post(
           `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
@@ -510,7 +467,7 @@ export default {
           }&sortOrder=${that.searchSortOrder}&offset=${(that.searchPage - 1) *
             that.searchPageSize}&max=${that.searchPageSize}`,
           {
-            searchElements
+            'searchFilters': searchElements
           }
         )
         .then(response => {

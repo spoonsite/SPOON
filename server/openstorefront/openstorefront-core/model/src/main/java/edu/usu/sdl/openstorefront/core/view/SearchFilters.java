@@ -22,6 +22,7 @@ import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 
+import edu.usu.sdl.openstorefront.core.entity.AttributeSearchType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -60,7 +61,10 @@ public class SearchFilters
     private String organization;
 
     @QueryParam("attributes")
-    private List<String> attributes;
+	private List<AttributeSearchType> attributes;
+	
+	@QueryParam("Tags")
+	private List<String> tags;
 
     //TODO add highlighting support https://www.elastic.co/guide/en/elasticsearch/client/java-rest/7.2/java-rest-high-search.html#java-rest-high-search-response-highlighting
     //TODO add sort variable
@@ -120,12 +124,20 @@ public class SearchFilters
 		this.organization = organization;
 	}
 
-	public List<String> getAttributes() {
+	public List<AttributeSearchType> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<String> attributes) {
+	public void setAttributes(List<AttributeSearchType> attributes) {
 		this.attributes = attributes;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 
 }

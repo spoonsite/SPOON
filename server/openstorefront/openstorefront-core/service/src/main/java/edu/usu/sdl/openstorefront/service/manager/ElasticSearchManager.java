@@ -25,6 +25,8 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.Attribute;
+import edu.usu.sdl.openstorefront.core.entity.AttributeSearchType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -399,6 +401,37 @@ public class ElasticSearchManager
 				request.add(searchRequest);
 			}
 		}
+
+		// organization
+		String organization = searchFilters.getOrganization();
+
+		if (organization != null){
+			searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.query(QueryBuilders.matchQuery("organization", organization));
+			searchRequest.source(searchSourceBuilder);
+			request.add(searchRequest);
+		}
+
+		// attributes
+		List<AttributeSearchType> attributes = searchFilters.getAttributes();
+		if(attributes != null){
+			for(AttributeSearchType attribute : attributes){
+				searchSourceBuilder = new SearchSourceBuilder();
+				searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.type", attribute.getType()));
+				searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.label", attribute.getCode()));
+				searchRequest.source(searchSourceBuilder);
+				request.add(searchRequest);
+			}
+		}
+
+		// tags
+
+		// Pagination
+		searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.from(searchFilters.getPage());
+		searchSourceBuilder.size(searchFilters.getPageSize());
+		searchRequest.source(searchSourceBuilder);
+		request.add(searchRequest);
 
 		MultiSearchResponse response;
 
