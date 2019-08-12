@@ -521,7 +521,10 @@ public class UserServiceImpl
 	public String getEmailFromUserProfile(String username)
 	{
 		UserProfile userProfile = getUserProfile(username);
-		return userProfile.getEmail();
+		if(userProfile != null){
+			return userProfile.getEmail();
+		}
+		return "";
 	}
 
 	@Override

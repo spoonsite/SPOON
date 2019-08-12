@@ -602,8 +602,9 @@ public abstract class ComponentExtendedSubResourceExt
 				email.setSubject("SPOON Entry Change Request Approved");
 				email.setText(emailText);
 				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
-
-				MailManager.send(email, true);
+				if(vendorEmail != "" && vendorEmail != null){
+					MailManager.send(email, true);
+				}
 			}
 			return saveComment(comment, true);
 		} else {

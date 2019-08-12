@@ -768,7 +768,9 @@ public abstract class GeneralComponentResourceExt
 				);
 				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
 
-				MailManager.send(email, true);
+				if(vendorEmail != "" && vendorEmail != null){
+					MailManager.send(email, true);
+				}
 			}
 
 			return Response.ok(updatedComponent).build();
