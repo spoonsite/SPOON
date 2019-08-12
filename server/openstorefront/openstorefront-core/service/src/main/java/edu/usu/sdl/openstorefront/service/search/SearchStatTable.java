@@ -64,7 +64,7 @@ public class SearchStatTable
 	 * approved right in the middle of it. 
 	 * 
 	 */
-	private static boolean isThereNewAttributeTypeSaved = false;
+	public static boolean isThereNewAttributeTypeSaved = false;
 	private static boolean isThereNewTagSaved = false;
 
 	public SearchStatTable()
