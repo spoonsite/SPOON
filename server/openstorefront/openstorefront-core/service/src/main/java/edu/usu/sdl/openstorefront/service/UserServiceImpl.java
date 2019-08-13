@@ -524,7 +524,7 @@ public class UserServiceImpl
 		if(userProfile != null){
 			return userProfile.getEmail();
 		}
-		return "";
+		return null;
 	}
 
 	@Override
