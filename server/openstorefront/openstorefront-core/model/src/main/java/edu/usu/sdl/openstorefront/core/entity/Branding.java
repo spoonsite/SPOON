@@ -333,7 +333,12 @@ public class Branding
 		
 		/**
 		 * The custom Landing Page feature was deprecated in v2.10,
-		 * therefore these options are negated.
+		 * therefore these options are negated; this 'updateFields'
+		 * function will no longer transfer these properties from 
+		 * an object to another object, attempting to do so will
+		 * result in the subject object's defaultLandingPage &
+		 * LandingTemplate members becoming true and null, 
+		 * respectively. 
 		 */
 		setUseDefaultLandingPage(true);
 		setLandingTemplate(null);

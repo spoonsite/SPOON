@@ -48,34 +48,7 @@ public class LandingAction
 	@DefaultHandler
 	public Resolution landingPage()
 	{
-		/**
-		 * As of v2.10, the custom Landing page feature has been deprecated, 
-		 * therefore the logic for that feature in this function has been removed.
-		 */
-		// appVersion = getApplicationVersion();
-		// Branding branding = loadBranding();
-		// LandingTemplate landingTemplateFull = branding.getLandingTemplate();
-		// boolean useDefault = true;
-		// if (getLandingTemplate() != null
-		// 		|| Convert.toBoolean(branding.getUseDefaultLandingPage()) == false) {
-
-		// 	if (landingTemplateFull != null) {
-		// 		String fullTemplate = landingTemplateFull.fullTemplate();
-		// 		if (StringUtils.isNotBlank(fullTemplate)) {
-		// 			useDefault = false;
-		// 		}
-		// 	}
-		// }
-		// if (!useDefault) {
-		// 	String fullTemplate = landingTemplateFull.fullTemplate();
-		// 	setLandingTemplate(fullTemplate);
-		// } else {
-			String defaultLanding = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_UI_DEFAULTLANDING_TEMPLATE, "defaultLanding.jsp");
-			if (StringUtils.isBlank(defaultLanding)) {
-				defaultLanding = "defaultLanding.jsp";
-			}
-			setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/" + defaultLanding));
-		// }
+		setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/defaultLanding.jsp"));
 
 		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
 	}
