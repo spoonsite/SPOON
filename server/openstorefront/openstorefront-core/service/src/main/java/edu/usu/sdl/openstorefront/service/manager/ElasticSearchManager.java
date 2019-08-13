@@ -307,8 +307,8 @@ public class ElasticSearchManager
 	/**
 	 * Parses the elasticsearch return object into a readable form
 	 * 
-	 * @param SearchQuery object holding the search query
-	 * @param FilterQueryParams filters to apply to the returned elasticsearch result
+	 * @param searchQuery object holding the search query
+	 * @param filter to apply to the returned elasticsearch result
 	 * @return ComponentSearchWrapper 
 	 */
 	@Override
@@ -425,6 +425,15 @@ public class ElasticSearchManager
 		}
 
 		// tags
+		List<String> tags = searchFilters.getTags();
+		if(tags != null){
+			for(String tag : tags){
+				searchSourceBuilder = new SearchSourceBuilder();
+				searchSourceBuilder.query(QueryBuilders.matchQuery("tags.text", tag));
+				searchRequest.source(searchSourceBuilder);
+				request.add(searchRequest);
+			}
+		}
 
 		// Pagination
 		searchSourceBuilder = new SearchSourceBuilder();
