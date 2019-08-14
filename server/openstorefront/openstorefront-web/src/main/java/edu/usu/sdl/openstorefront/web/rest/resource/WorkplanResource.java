@@ -26,6 +26,8 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepRole;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanSubStatusType;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
@@ -422,7 +424,33 @@ public class WorkplanResource
 		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
 		WorkPlanLink workPlanLink = workPlanLinkExample.find();
 
-		if (workPlanLink != null) {
+		WorkPlan workPlanExample = new WorkPlan();
+		workPlanExample.setWorkPlanId(workPlanId);
+		WorkPlan workPlan = workPlanExample.find();
+
+		WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(workPlanLink.getCurrentStepId());
+		List<WorkPlanStepRole> requiredRoles = workPlanStep.getStepRole();
+		List<SecurityRole> userRoles = SecurityUtil.getUserContext().getRoles();
+
+		boolean authorized = false;
+		for(int i=0; i < requiredRoles.size(); i++)
+		{
+			for(int j=0; j < userRoles.size(); j++)
+			{
+				if(requiredRoles.get(i).getSecurityRole() == userRoles.get(j).getRoleName())
+				{
+					authorized = true;
+					break;
+				}
+			}
+		}
+		if(!authorized)
+		{
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+
+		if(workPlanLink != null)
+		{
 			service.getWorkPlanService().previousStep(workPlanLink);
 
 			workPlanLink = workPlanLinkExample.find();
@@ -449,6 +477,31 @@ public class WorkplanResource
 		workPlanLinkExample.setWorkPlanId(workPlanId);
 		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
 		WorkPlanLink workPlanLink = workPlanLinkExample.find();
+
+		WorkPlan workPlanExample = new WorkPlan();
+		workPlanExample.setWorkPlanId(workPlanId);
+		WorkPlan workPlan = workPlanExample.find();
+
+		WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(workPlanLink.getCurrentStepId());
+		List<WorkPlanStepRole> requiredRoles = workPlanStep.getStepRole();
+		List<SecurityRole> userRoles = SecurityUtil.getUserContext().getRoles();
+
+		boolean authorized = false;
+		for(int i=0; i < requiredRoles.size(); i++)
+		{
+			for(int j=0; j < userRoles.size(); j++)
+			{
+				if(requiredRoles.get(i).getSecurityRole() == userRoles.get(j).getRoleName())
+				{
+					authorized = true;
+					break;
+				}
+			}
+		}
+		if(!authorized)
+		{
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
 
 		if (workPlanLink != null) {
 			service.getWorkPlanService().nextStep(workPlanLink);
