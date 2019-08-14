@@ -646,7 +646,6 @@ hr {
   margin-bottom: 1em;
 }
 .side-menu {
-  // background-color: blue;
   border-right: 1px solid #DDD;
   overflow-y: auto;
   position: fixed;
