@@ -237,6 +237,26 @@ public class Branding
 	private String panelHeaderTextColor;
 
 	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String vueAccentColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String vueErrorColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String vueInfoColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String vueWarningColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	private String vueSuccessColor;
+
+	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	private String overrideCSS;
 
@@ -325,6 +345,11 @@ public class Branding
 		setLinkhoverColor(branding.getLinkhoverColor());
 		setPanelHeaderColor(branding.getPanelHeaderColor());
 		setPanelHeaderTextColor(branding.getPanelHeaderTextColor());
+		setVueAccentColor(branding.getVueAccentColor());
+		setVueErrorColor(branding.getVueErrorColor());
+		setVueInfoColor(branding.getVueInfoColor());
+		setVueWarningColor(branding.getVueWarningColor());
+		setVueSuccessColor(branding.getVueSuccessColor());
 		setOverrideCSS(branding.getOverrideCSS());
 
 		setShowLinkToMobile(branding.getShowLinkToMobile());
@@ -641,6 +666,46 @@ public class Branding
 	public void setPanelHeaderTextColor(String panelHeaderTextColor)
 	{
 		this.panelHeaderTextColor = panelHeaderTextColor;
+	}
+
+	public String getVueAccentColor() {
+		return this.vueAccentColor;
+	}
+
+	public void setVueAccentColor(String vueAccentColor) {
+		this.vueAccentColor = vueAccentColor;
+	}
+
+	public String getVueErrorColor() {
+		return this.vueErrorColor;
+	}
+
+	public void setVueErrorColor(String vueErrorColor) {
+		this.vueErrorColor = vueErrorColor;
+	}
+
+	public String getVueInfoColor() {
+		return this.vueInfoColor;
+	}
+
+	public void setVueInfoColor(String vueInfoColor) {
+		this.vueInfoColor = vueInfoColor;
+	}
+
+	public String getVueWarningColor() {
+		return this.vueWarningColor;
+	}
+
+	public void setVueWarningColor(String vueWarningColor) {
+		this.vueWarningColor = vueWarningColor;
+	}
+
+	public String getVueSuccessColor() {
+		return this.vueSuccessColor;
+	}
+
+	public void setVueSuccessColor(String vueSuccessColor) {
+		this.vueSuccessColor = vueSuccessColor;
 	}
 
 	public String getSubmissionFormWarning()

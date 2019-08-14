@@ -138,7 +138,7 @@
 													},									
 													{
 														xtype: 'textfield',
-														fieldLabel: 'Name<span class="field-required" />',
+														fieldLabel: 'Name<span class="field-required" data-qtip="On SPOON this is config is set to display at the top of the Landing page". />',
 														name: 'name',
 														width: '100%',
 														allowBlank: false,
@@ -146,7 +146,7 @@
 													},
 													{
 														xtype: 'textfield',
-														fieldLabel: 'Application Name <i class="fa fa-question-circle"  data-qtip="Defaults to config property." ></i>',
+														fieldLabel: 'Application Name <i class="fa fa-question-circle"  data-qtip="Appears as the title of the webpage (on the browser tab)." ></i>',
 														name: 'applicationName',
 														width: '100%',
 														allowBlank: true,
@@ -762,56 +762,117 @@
 														format: '#hex6',
 														fieldLabel: 'Secondary Color',
 														name: 'secondaryColor'
-													},										
+													},	
+																				
+													// EXT-spesific color options
 													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Accent Color',
-														name: 'accentColor'
+														xtype: 'panel',
+														title: 'Ext-spesific Color Options (Admin & User Tools)',
+														collapsible: true,
+														border: true,
+														padding: '6px',
+														style: {
+															padding: '10px'
+														},
+														items:[
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Quote Color',
+																name: 'quoteColor'
+															},		
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Accent Color',
+																name: 'accentColor'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Link Color',
+																name: 'linkColor'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Link Visited Color',
+																name: 'linkVisitedColor'
+															},										
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Link Hover Color',
+																name: 'linkhoverColor'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Panel Header Color',
+																name: 'panelHeaderColor'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Panel Header Text Color',
+																name: 'panelHeaderTextColor'
+															},	
+														]
 													},
+
+													//vue-spesific color options
 													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Quote Color',
-														name: 'quoteColor'
-													},
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Link Color',
-														name: 'linkColor'
-													},
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Link Visited Color',
-														name: 'linkVisitedColor'
-													},										
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Link Hover Color',
-														name: 'linkhoverColor'
-													},
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Panel Header Color',
-														name: 'panelHeaderColor'
-													},
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Panel Header Text Color',
-														name: 'panelHeaderTextColor'
-													},										
+														xtype: 'panel',
+														title: 'Vue-spesific Color Options (Mobile site, search page)',
+														border: true,
+														collapsible: true,
+														padding: '6px',
+														items:[
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Accent Color <i class="fa fa-question-circle"  data-qtip="Te color of most component" ></i>',
+																name: 'vueAccentColor'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Error Color <i class="fa fa-question-circle"  data-qtip="Add this text" ></i>',
+																name: 'vueErrorColor'
+															},
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Info Color <i class="fa fa-question-circle"  data-qtip="Add this text" ></i>',
+																name: 'vueInfoColor'
+															},
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Warning <i class="fa fa-question-circle"  data-qtip="Add this text" ></i>',
+																name: 'vueWarningColor'
+															},
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Success Color <i class="fa fa-question-circle"  data-qtip="Add this text" ></i>',
+																name: 'vueSuccessColor'
+															}
+														]
+													
+													},									
 													{
 														xtype: 'textarea',
 														width: '100%',
