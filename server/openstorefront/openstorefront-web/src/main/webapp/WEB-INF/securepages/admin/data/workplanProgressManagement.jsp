@@ -617,7 +617,7 @@
 									{
 										text: 'Complete This Step',											
 										iconCls: 'fa fa-lg fa-list-alt icon-button-color-save',
-										itemId:"complete",
+										itemId:'complete',
 										disabled: !!invalidEntry,
 										hidden: true,
 										handler: function(){
