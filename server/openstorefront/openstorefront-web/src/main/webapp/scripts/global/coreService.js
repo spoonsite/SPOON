@@ -122,8 +122,18 @@ var CoreService = {
 				});
 			}
 			return valid;
+		},
+		UserHasRoles: function(neededRoles) {
+			var userRoles = this.getCurrentUser().owner.completionValue.roles;
+			for(i in neededRoles) {
+				for(j in userRoles) {
+					if(neededRoles[i].securityRole === userRoles[j].roleName) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
-
 	},
 	systemservice: {
 

@@ -508,16 +508,9 @@
 						listeners: {
 							afterRender: function(){
 								var neededRoles = record.get("currentStep").roles;
-								var userRoles = CoreService.userservice.getCurrentUser().owner.completionValue.roles;
-
-								for(i in neededRoles){
-									for(j in userRoles){
-										if(neededRoles[i].securityRole === userRoles[j].roleName){
-											this.queryById('complete').show();
-											this.queryById('previous').show();
-											break;
-										}
-									}
+								if(CoreService.userservice.UserHasRoles(neededRoles)) {
+									this.queryById('complete').show();
+									this.queryById('previous').show();
 								}
 							}
 						},
@@ -617,7 +610,7 @@
 									{
 										text: 'Complete This Step',											
 										iconCls: 'fa fa-lg fa-list-alt icon-button-color-save',
-										itemId:'complete',
+										itemId: 'complete',
 										disabled: !!invalidEntry,
 										hidden: true,
 										handler: function(){
