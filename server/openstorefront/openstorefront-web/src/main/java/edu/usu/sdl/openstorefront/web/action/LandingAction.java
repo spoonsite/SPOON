@@ -48,7 +48,7 @@ public class LandingAction
 	@DefaultHandler
 	public Resolution landingPage()
 	{
-		setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/defaultLanding.jsp"));
+		setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/landing.jsp"));
 
 		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
 	}
