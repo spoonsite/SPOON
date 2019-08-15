@@ -843,6 +843,18 @@
 			SearchPage.filterPanel = filterPanel;
 
 			var filterMode;
+
+			/**
+			 * Filters the results show to the user.
+			 * The CLIENT mode (which is faster for filtering as it does not require a lengthy
+			 * request to the server) only filters the results that show on the current "page" of results,
+			 * not all the "pages" of results. <br>
+			 * For example, if there are 54 pages of results and you filter for a certain tag, it will
+			 * only show the results from page 1 that have the certain tag, and omit the results on the 
+			 * other 53 pages with tags.
+			 * Therefore a filterMode parameter was removed, to always use the 'REMOTE' mode that
+			 * sends a request to the server. 
+			 */
 			var filterResults = function() {
 				
 				//construct filter object
@@ -966,18 +978,27 @@
 					}
 
 					var sessionInfo = CoreUtil.sessionStorage().getItem('searchRequest')
-					var searchOptions = JSON.parse(sessionInfo).searchOptions;
+					if(sessionInfo){
+						var searchOptions = Ext.JSON.decode(sessionInfo).searchOptions;
+						if (searchOptions){
+							SearchPage.queryOfSearchArray = [];
 
-					for (var searchOption in searchOptions) {
-						if (options[searchOption]) {
-							originalSearchRequest.query.searchElements.push({
-								searchType: 'SEARCH OPTION',
-								field: 'searchOption',
-								value: searchOption,
-								caseInsensitive: true,
-								stringOperation: 'CONTAINS',
-								mergeCondition: 'AND'
-							});
+							for (var searchOption in searchOptions) {
+								if (searchOptions[searchOption]) {
+									SearchPage.queryOfSearchArray.push({
+										searchType: 'SEARCH OPTION',
+										field: 'searchOption',
+										value: searchOption,
+										caseInsensitive: true,
+										stringOperation: 'CONTAINS',
+										mergeCondition: 'AND'
+									});
+								}
+							}
+						}
+						else {
+							// typically this state fires during a second, third, so on, search
+							SearchPage.queryOfSearchArray = [Ext.JSON.decode(sessionInfo)];
 						}
 					}
 					
@@ -1138,7 +1159,7 @@
 						// MOXY couldn't serialize the model to key:value pairs
 						// Jaxson could parse the model to JSON
 						attributeStats = {};
-						attributeStats = JSON.parse(meta.resultAttributeStats);
+						attributeStats = Ext.JSON.decode(meta.resultAttributeStats);
 
 						var attributeStatContainers = [];
 						
@@ -1587,13 +1608,13 @@
 						callback: function(panel, tool, event) {
 							
 							var tip = Ext.create('Ext.tip.ToolTip', {
-								title: 'Search Criteria',
+								title: 'Original Search Criteria',
 								autoHide: false,
 								closable: true,
 								height: 500,
 								scrollable: "y", // this means that it is scrollable in the y direction
-								html: CoreUtil.descriptionOfAdvancedSearch(originalSearchRequest.query.searchElements),
-								width: 300								
+								html: CoreUtil.descriptionOfAdvancedSearch(SearchPage.queryOfSearchArray),
+								width: 300
 							});
 							tip.showAt(tool.getXY());
 						}
