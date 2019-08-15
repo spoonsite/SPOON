@@ -424,27 +424,8 @@ public class WorkplanResource
 		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
 		WorkPlanLink workPlanLink = workPlanLinkExample.find();
 
-		WorkPlan workPlanExample = new WorkPlan();
-		workPlanExample.setWorkPlanId(workPlanId);
-		WorkPlan workPlan = workPlanExample.find();
-
-		WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(workPlanLink.getCurrentStepId());
-		List<WorkPlanStepRole> requiredRoles = workPlanStep.getStepRole();
-		List<SecurityRole> userRoles = SecurityUtil.getUserContext().getRoles();
-
-		boolean authorized = false;
-		for(int i=0; i < requiredRoles.size(); i++)
-		{
-			for(int j=0; j < userRoles.size(); j++)
-			{
-				if(requiredRoles.get(i).getSecurityRole() == userRoles.get(j).getRoleName())
-				{
-					authorized = true;
-					break;
-				}
-			}
-		}
-		if(!authorized)
+		String workPlanStepId = workPlanLink.getCurrentStepId();
+		if(!SecurityUtil.hasRoles(workPlanId, workPlanStepId))
 		{
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
@@ -478,32 +459,14 @@ public class WorkplanResource
 		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
 		WorkPlanLink workPlanLink = workPlanLinkExample.find();
 
-		WorkPlan workPlanExample = new WorkPlan();
-		workPlanExample.setWorkPlanId(workPlanId);
-		WorkPlan workPlan = workPlanExample.find();
-
-		WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(workPlanLink.getCurrentStepId());
-		List<WorkPlanStepRole> requiredRoles = workPlanStep.getStepRole();
-		List<SecurityRole> userRoles = SecurityUtil.getUserContext().getRoles();
-
-		boolean authorized = false;
-		for(int i=0; i < requiredRoles.size(); i++)
-		{
-			for(int j=0; j < userRoles.size(); j++)
-			{
-				if(requiredRoles.get(i).getSecurityRole() == userRoles.get(j).getRoleName())
-				{
-					authorized = true;
-					break;
-				}
-			}
-		}
-		if(!authorized)
+		String workPlanStepId = workPlanLink.getCurrentStepId();
+		if(!SecurityUtil.hasRoles(workPlanId, workPlanStepId))
 		{
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
 
-		if (workPlanLink != null) {
+		if (workPlanLink != null)
+		{
 			service.getWorkPlanService().nextStep(workPlanLink);
 
 			workPlanLink = workPlanLinkExample.find();
