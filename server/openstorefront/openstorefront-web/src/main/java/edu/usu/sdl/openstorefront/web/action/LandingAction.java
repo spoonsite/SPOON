@@ -15,10 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
-import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.core.entity.Branding;
-import edu.usu.sdl.openstorefront.core.entity.LandingTemplate;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -39,11 +35,8 @@ public class LandingAction
 	private String appVersion;
 
 	/**
-	 * This functions returns a Stripes library object, Forward Resolution, which is 
-	 * given the file location of a .jsp file that serves to be a wrapper for the 
-	 * actual template. The actual template of the landingPage is set as a property
-	 * of this LandingAction object within this function. 
-	 * @return anonymous Forward Resolution object.  
+	 * Sets the file that will be used as the landing page.
+	 * @return 
 	 */
 	@DefaultHandler
 	public Resolution landingPage()
