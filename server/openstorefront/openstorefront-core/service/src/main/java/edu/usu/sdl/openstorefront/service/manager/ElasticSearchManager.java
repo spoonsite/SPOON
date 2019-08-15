@@ -61,6 +61,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.queryparser.xml.builders.TermQueryBuilder;
+import org.apache.lucene.search.TermQuery;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -82,6 +84,8 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.DisMaxQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
@@ -347,40 +351,83 @@ public class ElasticSearchManager
 		SearchRequest searchRequest = new SearchRequest(INDEX);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
+		/**************BEGIN BASIC SEARCH*************/
 		//query based on search options
 		String query = searchFilters.getQuery();
 
+		BoolQueryBuilder bqb = QueryBuilders.boolQuery();
+
+
+		// TEST
+		query = "mag";
+
+		DisMaxQueryBuilder disMaxQueryBuilder = new DisMaxQueryBuilder();
+
+
+		searchSourceBuilder.query(
+			disMaxQueryBuilder.add(QueryBuilders.termQuery("name", query))
+			.add(QueryBuilders.termQuery("organization", query))
+			.add(QueryBuilders.termQuery("description", query))
+			.add(QueryBuilders.termQuery("tags.text", query))
+			.add(QueryBuilders.termQuery("attributes.label", query))
+		);
+
+		searchRequest.source(searchSourceBuilder);
+		request.add(searchRequest);
+
+		MultiSearchResponse response;
+
+		try (ElasticSearchClient client = singleton.getClient()) {
+			response = client.getInstance().msearch(request, RequestOptions.DEFAULT);
+		} catch (IOException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to handle search result", "check index database", ex);
+		}
+
+		//END TEST
+                                
 		if(searchOptions.getCanUseNameInSearch()){
 			searchSourceBuilder = new SearchSourceBuilder();
 			searchSourceBuilder.query(QueryBuilders.matchQuery("name", query));
+			// bqb.filter(QueryBuilders.matchQuery("name", query));
 			searchRequest.source(searchSourceBuilder);
 			request.add(searchRequest);
 		}
 		if(searchOptions.getCanUseOrganizationsInSearch()){
 			searchSourceBuilder = new SearchSourceBuilder();
 			searchSourceBuilder.query(QueryBuilders.matchQuery("organization", query));
+			// bqb.filter(QueryBuilders.matchQuery("organization", query));
 			searchRequest.source(searchSourceBuilder);
 			request.add(searchRequest);
 		}
 		if(searchOptions.getCanUseDescriptionInSearch()){
 			searchSourceBuilder = new SearchSourceBuilder();
 			searchSourceBuilder.query(QueryBuilders.matchQuery("description", query));
+			// bqb.filter(QueryBuilders.matchQuery("description", query));
 			searchRequest.source(searchSourceBuilder);
 			request.add(searchRequest);
 		}
 		if(searchOptions.getCanUseTagsInSearch()){
 			searchSourceBuilder = new SearchSourceBuilder();
 			searchSourceBuilder.query(QueryBuilders.matchQuery("tags.text", query));
+			// bqb.filter(QueryBuilders.matchQuery("tags.text", query));
 			searchRequest.source(searchSourceBuilder);
 			request.add(searchRequest);
 		}
 		if(searchOptions.getCanUseAttributesInSearch()){
 			searchSourceBuilder = new SearchSourceBuilder();
 			searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.label", query));
+			// bqb.filter(QueryBuilders.matchQuery("attributes.label", query));
+			// bqb.filter(QueryBuilders.matchQuery("attributes.label", query));
 			searchRequest.source(searchSourceBuilder);
 			request.add(searchRequest);
 		}
 
+		// DisMaxQueryBuilder
+
+
+		/**************BEGIN BASIC SEARCH*************/
+
+		/**************BEGIN FILTERS******************/
 		//Component Type
 		List<String> componentTypes = searchFilters.getComponentTypes();
 
@@ -390,17 +437,19 @@ public class ElasticSearchManager
 					List<ComponentType> allComponentTypes = service.getComponentService().getAllComponentTypes();
 					for(ComponentType allComponentType : allComponentTypes){
 						if(allComponentType.getParentComponentType() == componentType){
-							searchSourceBuilder = new SearchSourceBuilder();
-							searchSourceBuilder.query(QueryBuilders.matchQuery("componentType", allComponentType.getComponentType()));
-							searchRequest.source(searchSourceBuilder);
-							request.add(searchRequest);
+							// searchSourceBuilder = new SearchSourceBuilder();
+							// searchSourceBuilder.query(QueryBuilders.matchQuery("componentType", allComponentType.getComponentType()));
+							bqb.filter(QueryBuilders.matchQuery("componentType", allComponentType.getComponentType()));
+							// searchRequest.source(searchSourceBuilder);
+							// request.add(searchRequest);
 						}
 					}
 				}
-				searchSourceBuilder = new SearchSourceBuilder();
-				searchSourceBuilder.query(QueryBuilders.matchQuery("componentType", componentType));
-				searchRequest.source(searchSourceBuilder);
-				request.add(searchRequest);
+				// searchSourceBuilder = new SearchSourceBuilder();
+				// searchSourceBuilder.query(QueryBuilders.matchQuery("componentType", componentType));
+				bqb.filter(QueryBuilders.matchQuery("componentType", componentType));
+				// searchRequest.source(searchSourceBuilder);
+				// request.add(searchRequest);
 			}
 		}
 
@@ -408,21 +457,24 @@ public class ElasticSearchManager
 		String organization = searchFilters.getOrganization();
 
 		if (organization != null){
-			searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.query(QueryBuilders.matchQuery("organization", organization));
-			searchRequest.source(searchSourceBuilder);
-			request.add(searchRequest);
+			// searchSourceBuilder = new SearchSourceBuilder();
+			// searchSourceBuilder.query(QueryBuilders.matchQuery("organization", organization));
+			bqb.filter(QueryBuilders.matchQuery("organization", organization));
+			// searchRequest.source(searchSourceBuilder);
+			// request.add(searchRequest);
 		}
 
 		// attributes
 		List<AttributeSearchType> attributes = searchFilters.getAttributes();
 		if(attributes != null){
 			for(AttributeSearchType attribute : attributes){
-				searchSourceBuilder = new SearchSourceBuilder();
-				searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.type", attribute.getType()));
-				searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.label", attribute.getCode()));
-				searchRequest.source(searchSourceBuilder);
-				request.add(searchRequest);
+				// searchSourceBuilder = new SearchSourceBuilder();
+				// searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.type", attribute.getType()));
+				// searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.label", attribute.getCode()));
+				bqb.filter(QueryBuilders.matchQuery("attributes.type", attribute.getType()));
+				bqb.filter(QueryBuilders.matchQuery("attributes.label", attribute.getCode()));
+				// searchRequest.source(searchSourceBuilder);
+				// request.add(searchRequest);
 			}
 		}
 
@@ -430,27 +482,77 @@ public class ElasticSearchManager
 		List<String> tags = searchFilters.getTags();
 		if(tags != null){
 			for(String tag : tags){
-				searchSourceBuilder = new SearchSourceBuilder();
-				searchSourceBuilder.query(QueryBuilders.matchQuery("tags.text", tag));
-				searchRequest.source(searchSourceBuilder);
-				request.add(searchRequest);
+				// searchSourceBuilder = new SearchSourceBuilder();
+				// searchSourceBuilder.query(QueryBuilders.matchQuery("tags.text", tag));
+				bqb.filter(QueryBuilders.matchQuery("tags.text", tag));
+				// searchRequest.source(searchSourceBuilder);
+				// request.add(searchRequest);
 			}
 		}
 
-		// Pagination
-		searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.from(searchFilters.getPage());
-		searchSourceBuilder.size(searchFilters.getPageSize());
+		/**************END FILTERS******************/
+
+		searchSourceBuilder.query(bqb);
+
+		/**************BEGIN PAGINATION*************/
+		// searchSourceBuilder = new SearchSourceBuilder();
+
+		// searchSourceBuilder.from(searchFilters.getPage());
+		// searchSourceBuilder.size(searchFilters.getPageSize());
+
+		// searchRequest.source(searchSourceBuilder);
+		// request.add(searchRequest);
+		/**************END PAGINATION*****************/
+
+		/**************BEGIN AGGREGATIONS*************/
+		
+		// searchSourceBuilder = new SearchSourceBuilder();
+		// TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("by_organization").field("organization.keyword");
+		// termsAggregationBuilder = AggregationBuilders.terms("by_componentType").field("componentType.keyword");
+		// termsAggregationBuilder = AggregationBuilders.terms("by_attributes").field("attributes.type.keyword");
+		// termsAggregationBuilder = AggregationBuilders.terms("by_attributes").field("attributes.label.keyword");
+		// termsAggregationBuilder = AggregationBuilders.terms("by_tags").field("tags.text.keyword");
+		// searchSourceBuilder.aggregation(termsAggregationBuilder);
+		// searchRequest.source(searchSourceBuilder);
+		// request.add(searchRequest);
+
+		// searchSourceBuilder = new SearchSourceBuilder();
+		// TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("by_organization").field("organization.keyword");
+		// termsAggregationBuilder = AggregationBuilders.terms("by_componentType").field("componentType.keyword");
+		
+		// searchSourceBuilder.aggregation(AggregationBuilders.terms("by_organization").field("organization.keyword"));
+		// searchSourceBuilder.aggregation(AggregationBuilders.terms("by_componentType").field("componentType.keyword"));
 		searchRequest.source(searchSourceBuilder);
 		request.add(searchRequest);
 
-		searchSourceBuilder = new SearchSourceBuilder();
-		TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("by_organization").field("organization.keyword");
-		searchSourceBuilder.aggregation(termsAggregationBuilder);
-		searchRequest.source(searchSourceBuilder);
-		request.add(searchRequest);
+		// searchSourceBuilder = new SearchSourceBuilder();
+		// termsAggregationBuilder = AggregationBuilders.terms("by_componentType").field("componentType.keyword");
+		// termsAggregationBuilder.subAggregation(aggregation)
+		// searchSourceBuilder.aggregation(termsAggregationBuilder);
+		// searchRequest.source(searchSourceBuilder);
+		// request.add(searchRequest);
 
-		MultiSearchResponse response;
+		// searchSourceBuilder = new SearchSourceBuilder();
+		// termsAggregationBuilder = AggregationBuilders.terms("by_tags").field("tags.text.keyword");
+		// searchSourceBuilder.aggregation(termsAggregationBuilder);
+		// searchRequest.source(searchSourceBuilder);
+		// request.add(searchRequest);
+
+		// searchSourceBuilder = new SearchSourceBuilder();
+		// termsAggregationBuilder = AggregationBuilders.terms("by_attributes").field("attributes.type.keyword");
+		// searchSourceBuilder.aggregation(termsAggregationBuilder);
+		// searchRequest.source(searchSourceBuilder);
+		// request.add(searchRequest);
+
+		// searchSourceBuilder = new SearchSourceBuilder();
+		// termsAggregationBuilder = AggregationBuilders.terms("by_attributes").field("attributes.label.keyword");
+		// searchSourceBuilder.aggregation(termsAggregationBuilder);
+		// searchRequest.source(searchSourceBuilder);
+		// request.add(searchRequest);
+
+		/**************END AGGREGATIONS*************/
+
+		// MultiSearchResponse response;
 
 		try (ElasticSearchClient client = singleton.getClient()) {
 			response = client.getInstance().msearch(request, RequestOptions.DEFAULT);
