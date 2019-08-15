@@ -22,6 +22,7 @@ import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 
+import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.entity.AttributeSearchType;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -35,36 +36,48 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
  */
 public class SearchFilters
 {
+	@ConsumeField
     @QueryParam("query")
     @DefaultValue("")
 	@Size(min = 0, max = 255)
 	@Sanitize(TextSanitizer.class)
     private String query;
 
+	@ConsumeField
     @QueryParam("page")
 	@DefaultValue("0")
     @Min(0)
     private int page;
 
+	@ConsumeField
     @QueryParam("pageSize")
 	@DefaultValue("20")
     @Min(0)
     private int pageSize;
 
+	@ConsumeField
     @QueryParam("componentTypes")
     private List<String> componentTypes;
 
+	@ConsumeField
     @QueryParam("includeChildren")
     private Boolean includeChildren;
 
+	@ConsumeField
     @QueryParam("organization")
     private String organization;
 
+	@ConsumeField
     @QueryParam("attributes")
 	private List<AttributeSearchType> attributes;
 	
-	@QueryParam("Tags")
+	@ConsumeField
+	@QueryParam("tags")
 	private List<String> tags;
+
+	public SearchFilters()
+	{
+	}
 
     //TODO add highlighting support https://www.elastic.co/guide/en/elasticsearch/client/java-rest/7.2/java-rest-high-search.html#java-rest-high-search-response-highlighting
     //TODO add sort variable

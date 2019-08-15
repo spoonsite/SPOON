@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.QueryParam;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
@@ -29,16 +30,20 @@ public abstract class AttributeSearchType
 {
     @NotNull
 	@ConsumeField
+    @QueryParam("type")
     private String type;
     
     @ConsumeField
+    @QueryParam("unit")
     private String unit;
     
     @ConsumeField
+    @QueryParam("typeLabel")
     private String typeLabel;
     
     @NotNull
-    @ConsumeField
+	@ConsumeField
+    @QueryParam("code")	
 	private String code;
 
 	public AttributeSearchType()

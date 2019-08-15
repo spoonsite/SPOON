@@ -85,6 +85,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -439,6 +441,12 @@ public class ElasticSearchManager
 		searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.from(searchFilters.getPage());
 		searchSourceBuilder.size(searchFilters.getPageSize());
+		searchRequest.source(searchSourceBuilder);
+		request.add(searchRequest);
+
+		searchSourceBuilder = new SearchSourceBuilder();
+		TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("by_organization").field("organization.keyword");
+		searchSourceBuilder.aggregation(termsAggregationBuilder);
 		searchRequest.source(searchSourceBuilder);
 		request.add(searchRequest);
 

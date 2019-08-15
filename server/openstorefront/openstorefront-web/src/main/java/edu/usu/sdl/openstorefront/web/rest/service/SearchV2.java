@@ -16,15 +16,14 @@
 package edu.usu.sdl.openstorefront.web.rest.service;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
-import edu.usu.sdl.openstorefront.core.annotation.DataType;
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.SearchFilters;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -45,12 +44,12 @@ public class SearchV2
 	@Context
     private HttpServletRequest request;
     
-    @GET
+    @POST
 	@APIDescription("Searches for listing based on given parameters")
 	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(ComponentSearchView.class)
+	@Consumes({MediaType.APPLICATION_JSON})
 	public Response searchListing(
-			@BeanParam SearchFilters searchFilters)
+			SearchFilters searchFilters)
 	{
 		ValidationResult validationResult = searchFilters.validate();
 		if (!validationResult.valid()) {
@@ -60,7 +59,7 @@ public class SearchV2
 		String searchResponse = SearchServerManager.getInstance().getSearchServer().indexSearchV2(searchFilters);
 
 		if(searchResponse != null){
-			return Response.ok("message").build();
+			return Response.ok(searchResponse).build();
 		} else {
 			return Response.ok("Search was not formatted correctly").build();
 		}

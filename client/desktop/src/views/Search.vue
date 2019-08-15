@@ -437,15 +437,15 @@ export default {
       if (that.searchQueryIsDirty) return
       that.searchQueryIsDirty = true
       
-      //build search request here
+      // build search request here
       var searchFilters = {
-        'query': '',
+        "query": '',
         'page': 0,
         'pageSize': 10,
         'componentTypes': [],
         'includeChildren': true,
         'organization': '',
-        'attributes': [],
+        'stringAttributes': [],
         'tags': []
       }
 
@@ -455,10 +455,24 @@ export default {
       searchFilters.componentTypes = ( this.filters.components ? this.filters.components : searchFilters.componentTypes )
       searchFilters.includeChildren = ( this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren )
       searchFilters.organization = ( this.filters.organization ? this.filters.organization : searchFilters.organization )
-      searchFilters.attributes = ( this.filters.attributes ? this.filters.attributes : searchFilters.attributes )
+      // searchFilters.stringAttributes = ( this.filters.attributes ? this.filters.attributes : searchFilters.attributes )
       searchFilters.tags = ( this.filters.tags ? this.filters.tags : searchFilters.tags )
+      
+      if (this.filters.attributes) {
+        this.filters.attributes.forEach(attribute => {
+          searchFilters.stringAttributes.push(JSON.parse(attribute))
+        })
+      }
 
       console.log(searchFilters)
+
+      this.$http
+        .post(
+          '/openstorefront/api/v2/service/search', 
+            searchFilters
+        ).then(response => {
+          console.log(response)
+        }).catch(err => console.log(err))
       
       let searchElements = [
         {
