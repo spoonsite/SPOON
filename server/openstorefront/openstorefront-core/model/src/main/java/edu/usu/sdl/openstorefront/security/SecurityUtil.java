@@ -273,7 +273,7 @@ public class SecurityUtil
 		{
 			for(int j=0; j < userRoles.size(); j++)
 			{
-				if(requiredRoles.get(i).getSecurityRole() == userRoles.get(j).getRoleName())
+				if(requiredRoles.get(i).getSecurityRole().toString().equals(userRoles.get(j).getRoleName().toString()))
 				{
 					return true;
 				}
