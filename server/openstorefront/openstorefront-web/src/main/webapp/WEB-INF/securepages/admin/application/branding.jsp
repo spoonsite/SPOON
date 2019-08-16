@@ -204,48 +204,6 @@
 													},
 													{
 														xtype: 'checkbox',
-														name: 'hideArchitectureSearchFlg',
-														boxLabel: 'Hide Architechture Search'
-													},										
-													{
-														xtype: 'textfield',
-														fieldLabel: 'Architecture Search <i class="fa fa-question-circle"  data-qtip="This is the name of the architecure on the search tool." ></i>',
-														name: 'architectureSearchLabel',
-														width: '100%',
-														allowBlank: true,
-														maxLength: 255
-													},
-													{
-														xtype: 'combobox',
-														name: 'architectureSearchType',
-														width: '100%',
-														fieldLabel: 'Architecture Search Type <i class="fa fa-question-circle"  data-qtip="This is the architecture to use on the search tools." ></i>',
-														queryMode: 'local',
-														displayField: 'description',
-														valueField: 'attributeType',
-														editable: false,
-														typeAhead: false,
-														store: {
-															autoLoad: true,
-															proxy: {
-																type: 'ajax',
-																url: 'api/v1/resource/attributes/attributetypes',
-																reader: {
-																	type: 'json',
-																	rootProperty: 'data'
-																}
-															},
-															listeners: {
-																load: function(store, records, successful, opts) {
-																	store.filterBy(function(record) {															
-																		return record.get('architectureFlg');
-																	});
-																}
-															}
-														}
-													},
-													{
-														xtype: 'checkbox',
 														name: 'showLinkToMobile',
 														boxLabel: 'Show link to mobile site in menu'													 	
 													},
