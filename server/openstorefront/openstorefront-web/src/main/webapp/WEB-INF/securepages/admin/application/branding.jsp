@@ -788,7 +788,7 @@
 													//vue-spesific color options
 													{
 														xtype: 'panel',
-														title: 'Vue-spesific Color Options (Mobile site, search page)',
+														title: 'Vue-spesific Color Options (Mobile site & search page)',
 														border: true,
 														collapsible: true,
 														padding: '6px',
@@ -882,7 +882,7 @@
 													var win = this.up('window');
 													var form = this.up('form');
 
-													actionSaveBranding(form, function(response, opt){	
+													actionSaveBranding(form, function(response, opt){
 														var rootItems = form.items.items;
 
 														// When the form is saved, reset all original values for checkboxes
@@ -946,21 +946,6 @@
 					}, 250);
 					
 					if (record) {
-						
-						//move depercated loginWarning to the loginFooter
-						if((record.data.loginFooter === undefined || record.data.loginFooter.length === 0) 
-									&& (record.data.loginWarning !== undefined && record.data.loginWarning.length > 0)) {
-							record.data.loginFooter = record.data.loginWarning;
-							record.data.loginWarning = "";
-						}
-						
-						//move depercated loginLogoBlock to the loginContentBlock
-						if((record.data.loginContentBlock === undefined || record.data.loginContentBlock.length === 0) 
-									&& (record.data.loginLogoBlock !== undefined && record.data.loginLogoBlock.length > 0)) {
-							record.data.loginContentBlock = record.data.loginLogoBlock;
-							record.data.loginLogoBlock = "";
-						}
-						
 						// Load branding data into form
 						addEditBrandingWin.queryById('brandingForm').loadRecord(record);
 
@@ -1005,6 +990,7 @@
 					var method='POST';
 					var endUrl = '';
 					if (data.brandingId) {
+						// Case of editing exisitng branding
 						method = 'PUT',
 						endUrl = '/' + data.brandingId;		
 					}
@@ -1015,7 +1001,7 @@
 						}
 					});
 					
-					CoreUtil.submitForm({						
+					CoreUtil.submitForm({
 						url: 'api/v1/resource/branding' + endUrl,
 						method: method,
 						form: form,
@@ -1023,9 +1009,20 @@
 							branding: data
 						},
 						success: function(response, opts){
-							Ext.toast('Saved Successfully');
-							form.getForm().setValues(form.getValues());
+							// In the case where this is a first time new branding save, make subsequent saves apply
+							// to this newly existing branding. In case .decode fails, we use the values on the webpage. 
+							var savedBrandingValues = Ext.JSON.decode(response.responseText, true) || form.getValues();
+
+							// Load saved Branding back into the webpage
+							form.getForm().setValues(savedBrandingValues);
+							Ext.getCmp('addEditBrandingWin').setTitle('Add/Edit Branding - ' + savedBrandingValues.name)
+
+							// Refresh Window
 							actionRefresh();
+
+							Ext.toast('Saved Successfully');
+							
+							// Pass action on to caller
 							successHandler(response, opts);		
 						},
 						failure: function(response, opts) {
