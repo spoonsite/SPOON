@@ -182,6 +182,7 @@ public class UserSubmissionResource
 			response = ownerCheck(existing, SecurityPermission.ADMIN_USER_SUBMISSIONS_UPDATE);
 			if (response == null) {
 				userSubmission.setUserSubmissionId(submissionId);
+				userSubmission.setSubmissionName(userSubmission.getFields().get(1).getRawValue());
 				response = handleSaveSubmission(userSubmission, false);
 			}
 		}
