@@ -169,17 +169,6 @@
 														})
 													},
 													{
-														xtype: 'htmleditor',
-														fieldLabel: 'Landing Stats Text <i class="fa fa-question-circle"  data-qtip="This is the Browsing X text" ></i>',
-														name: 'landingStatsText',
-														width: '100%',
-														resizable: {
-															handles: 's'
-														},
-														allowBlank: true,
-														maxLength: 255
-													},
-													{
 														xtype: 'panel',
 														html: '<b>Landing Banner </b><i class="fa fa-question-circle"  data-qtip="This is the quote on the landing page." ></i>'
 													},

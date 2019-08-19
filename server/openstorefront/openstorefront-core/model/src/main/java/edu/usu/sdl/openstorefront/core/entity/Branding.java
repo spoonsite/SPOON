@@ -100,11 +100,6 @@ public class Branding
 	@ConsumeField
 	private String landingPageTitle;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@Sanitize(HTMLSanitizer.class)
-	@ConsumeField
-	private String landingStatsText;
-
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
@@ -259,7 +254,6 @@ public class Branding
 		setLandingPageBanner(branding.getLandingPageBanner());
 		setLandingPageFooter(branding.getLandingPageFooter());
 		setLandingPageTitle(branding.getLandingPageTitle());
-		setLandingStatsText(branding.getLandingStatsText());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
@@ -394,16 +388,6 @@ public class Branding
 	public void setAllowSecurityMarkingsFlg(Boolean allowSecurityMarkingsFlg)
 	{
 		this.allowSecurityMarkingsFlg = allowSecurityMarkingsFlg;
-	}
-
-	public String getLandingStatsText()
-	{
-		return landingStatsText;
-	}
-
-	public void setLandingStatsText(String landingStatsText)
-	{
-		this.landingStatsText = landingStatsText;
 	}
 
 	public String getFeedbackHandler()
