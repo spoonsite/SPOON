@@ -76,11 +76,11 @@ store.dispatch('getBranding', () => {
     theme: {
       primary: store.state.branding.primaryColor,
       secondary: store.state.branding.secondaryColor,
-      accent: '#424242', // accent should be dark, used as button default
-      error: '#C62828',
-      info: '#3F51B5',
-      warning: '#FFA000',
-      success: '#388E3C'
+      accent: store.state.branding.vueAccentColor,//'#424242', // accent should be dark, used as button default
+      error: store.state.branding.vueErrorColor, //'#C62828',
+      info: store.state.branding.vueInfoColor, //'#3F51B5',
+      warning: store.state.branding.vueWarningColor, //'#FFA000',
+      success: store.state.branding.vueSuccessColor,//'#388E3C's
     }
   })
 

@@ -71,7 +71,7 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getLandingPageTitle() == null) {
-					branding.setLandingPageTitle("DI2E Storefront");
+					branding.setLandingPageTitle("Storefront");
 				}
 
 				if (branding.getLandingPageBanner() == null) {
@@ -88,10 +88,6 @@ public class BrandingServiceImpl
 
 				if (branding.getHomebackSplashUrl() == null) {
 					branding.setHomebackSplashUrl("/openstorefront/images/background_globe.jpg");
-				}
-
-				if (branding.getLandingStatsText() == null) {
-					branding.setLandingStatsText("DI2E Components");
 				}
 
 				if (branding.getLandingPageFooter() == null) {
@@ -150,7 +146,7 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getFeedbackHandler() == null) {
-					branding.setFeedbackHandler(FeedbackHandleType.JIRA);
+					branding.setFeedbackHandler(FeedbackHandleType.EMAIL);
 				}
 
 				if (branding.getDisclaimerMessage() == null){
@@ -169,7 +165,7 @@ public class BrandingServiceImpl
 				if (branding.getSecondaryColor() == null) {
 					branding.setSecondaryColor("#2D0D41");
 				}
-
+					//EXT-specific
 				if (branding.getAccentColor() == null) {
 					branding.setAccentColor("#58326f");
 				}
@@ -196,6 +192,22 @@ public class BrandingServiceImpl
 
 				if (branding.getPanelHeaderTextColor() == null) {
 					branding.setPanelHeaderTextColor("#FFFFFF");
+				}
+					//Vue-specific
+				if (branding.getVueAccentColor() == null){
+					branding.setVueAccentColor("#424242");
+				}
+				if (branding.getVueErrorColor() == null ){
+					branding.setVueErrorColor("#C62828",);
+				}
+				if (branding.getVueInfoColor() == null ){
+					branding.setVueInfoColor("#3F51B5");
+				}
+				if (branding.getVueWarningColor() == null){
+					branding.setVueWarningColor("#FFA000");
+				}
+				if (branding.getVueSuccessColor() == null){
+					branding.setVueSuccessColor("#388E3C");
 				}
 			}
 
