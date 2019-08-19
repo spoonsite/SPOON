@@ -35,8 +35,6 @@
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 
-			Ext.require('OSF.landing.designer.Designer');
-
 			Ext.onReady(function () {
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
@@ -203,48 +201,6 @@
 															mediaSelectionUrl: MediaUtil.generalMediaUrl,
 															mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
 														})
-													},
-													{
-														xtype: 'checkbox',
-														name: 'hideArchitectureSearchFlg',
-														boxLabel: 'Hide Architechture Search'
-													},										
-													{
-														xtype: 'textfield',
-														fieldLabel: 'Architecture Search <i class="fa fa-question-circle"  data-qtip="This is the name of the architecure on the search tool." ></i>',
-														name: 'architectureSearchLabel',
-														width: '100%',
-														allowBlank: true,
-														maxLength: 255
-													},
-													{
-														xtype: 'combobox',
-														name: 'architectureSearchType',
-														width: '100%',
-														fieldLabel: 'Architecture Search Type <i class="fa fa-question-circle"  data-qtip="This is the architecture to use on the search tools." ></i>',
-														queryMode: 'local',
-														displayField: 'description',
-														valueField: 'attributeType',
-														editable: false,
-														typeAhead: false,
-														store: {
-															autoLoad: true,
-															proxy: {
-																type: 'ajax',
-																url: 'api/v1/resource/attributes/attributetypes',
-																reader: {
-																	type: 'json',
-																	rootProperty: 'data'
-																}
-															},
-															listeners: {
-																load: function(store, records, successful, opts) {
-																	store.filterBy(function(record) {															
-																		return record.get('architectureFlg');
-																	});
-																}
-															}
-														}
 													},
 													{
 														xtype: 'checkbox',
@@ -821,25 +777,7 @@
 														name: 'overrideCSS',
 														grow: true,
 														maxLength: 1048576
-													},
-													{
-														xtype: 'checkbox',
-														width: '100%',
-														boxLabel: 'Use Default Landing Page <i class="fa fa-exclamation-circle" data-qtip="When checked, will override and<br />delete the custom landing page."></i>',
-														name: 'useDefaultLandingPage',
-														listeners: {
-															change: function(field, newValue, oldValue) {							
-																if (record) {
-																	if (newValue) {
-																		addEditBrandingWin.queryById('landingPageTab').setDisabled(true);
-																		addEditBrandingWin.queryById('landingPageTab').loadedTemplate = null;
-																	} else {
-																		addEditBrandingWin.queryById('landingPageTab').setDisabled(false);
-																	}
-																}
-															}
-														}
-													}	
+													}
 												]
 											}
 										],
@@ -914,22 +852,6 @@
 										]
 									},
 									{
-										xtype: 'ofs-landingPageDesigner',
-										title: 'Landing Page',
-										itemId: 'landingPageTab',
-										disabled: true,
-										saveHandler: function(landingTemplate) {
-											var form = addEditBrandingWin.queryById('brandingForm');
-											var landingTab = addEditBrandingWin.queryById('landingPageTab');
-											actionSaveBranding(form, function(response, opt){
-												landingTab.loadedTemplate = landingTab.code.getFullTemplate();
-											}, landingTemplate);
-										},
-										cancelHandler: function() {
-											addEditBrandingWin.close();
-										}
-									},
-									{
 										xtype: 'panel',
 										title: 'Current CSS',
 										scrollable: true,
@@ -977,17 +899,10 @@
 							record.data.loginLogoBlock = "";
 						}
 						
-						var landingTab = addEditBrandingWin.queryById('landingPageTab');
+						// Load branding data into form
 						addEditBrandingWin.queryById('brandingForm').loadRecord(record);
-						if (record.get('useDefaultLandingPage')) {
-							landingTab.setDisabled(true);
-						} else {
-							landingTab.setDisabled(false);
-							landingTab.initializeCallback = function() {
-								landingTab.loadData(record.data);
-							};
-						}
-						addEditBrandingWin.queryById('tabpanel').setActiveTab(landingTab);
+
+						// Ensures the first tab is the one that is displayed on render?
 						addEditBrandingWin.queryById('tabpanel').setActiveTab(0);
 					}
 					
@@ -996,10 +911,8 @@
 				var actionCloseBranding = function() {
 					var brandingWin = Ext.getCmp('addEditBrandingWin');
 					var form = brandingWin.queryById('brandingForm');
-					var landingTab = brandingWin.queryById('landingPageTab');
 					var formDirty = form.isDirty();
-					var landingTabDirty = landingTab.isDirty();
-					if (formDirty || landingTabDirty)  {
+					if (formDirty)  {
 						Ext.Msg.show({
 							title:'Save Changes?',
 							message: 'You are closing a form that has unsaved changes. Would you like to save your changes?',
@@ -1010,7 +923,7 @@
 									actionSaveBranding(form, function(response, opt){										
 										brandingWin.proceedWithClosing = true;
 										brandingWin.close();
-									}, landingTab.getTemplate());
+									});
 								} else if (btn === 'no') {
 									brandingWin.proceedWithClosing = true;
 									brandingWin.close();
@@ -1024,7 +937,7 @@
 					}
 				};
 				
-				var actionSaveBranding = function(form, successHandler, template) {
+				var actionSaveBranding = function(form, successHandler) {
 					var data = form.getValues();
 					
 					var method='POST';
@@ -1040,12 +953,6 @@
 						}
 					});
 					
-					if (!template) {
-						var landingTab = Ext.getCmp('addEditBrandingWin').queryById('landingPageTab');
-						template = landingTab.getTemplate();
-					}
-					data.landingTemplate = template;
-					
 					CoreUtil.submitForm({						
 						url: 'api/v1/resource/branding' + endUrl,
 						method: method,
@@ -1057,12 +964,6 @@
 							Ext.toast('Saved Successfully');
 							form.getForm().setValues(form.getValues());
 							actionRefresh();
-							var landingTab = Ext.getCmp('addEditBrandingWin').queryById('landingPageTab');
-							if (data.useDefaultLandingPage) {
-								landingTab.setDisabled(true);
-							} else {
-								landingTab.setDisabled(false);														
-							}	
 							successHandler(response, opts);		
 						},
 						failure: function(response, opts) {

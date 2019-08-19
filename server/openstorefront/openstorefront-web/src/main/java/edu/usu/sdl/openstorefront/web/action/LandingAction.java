@@ -15,10 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.web.action;
 
-import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
-import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.core.entity.Branding;
-import edu.usu.sdl.openstorefront.core.entity.LandingTemplate;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -38,33 +34,14 @@ public class LandingAction
 	private String landingTemplate;
 	private String appVersion;
 
+	/**
+	 * Sets the file that will be used as the landing page.
+	 * @return 
+	 */
 	@DefaultHandler
 	public Resolution landingPage()
 	{
-		appVersion = getApplicationVersion();
-		Branding branding = loadBranding();
-		LandingTemplate landingTemplateFull = branding.getLandingTemplate();
-		boolean useDefault = true;
-		if (getLandingTemplate() != null
-				|| Convert.toBoolean(branding.getUseDefaultLandingPage()) == false) {
-
-			if (landingTemplateFull != null) {
-				String fullTemplate = landingTemplateFull.fullTemplate();
-				if (StringUtils.isNotBlank(fullTemplate)) {
-					useDefault = false;
-				}
-			}
-		}
-		if (!useDefault) {
-			String fullTemplate = landingTemplateFull.fullTemplate();
-			setLandingTemplate(fullTemplate);
-		} else {
-			String defaultLanding = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_UI_DEFAULTLANDING_TEMPLATE, "defaultLanding.jsp");
-			if (StringUtils.isBlank(defaultLanding)) {
-				defaultLanding = "defaultLanding.jsp";
-			}
-			setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/" + defaultLanding));
-		}
+		setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/landing.jsp"));
 
 		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
 	}

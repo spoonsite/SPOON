@@ -70,27 +70,6 @@ public class Branding
 	@ConsumeField
 	private String loginFooter;
 
-	/**
-	 * warning banner in the center of the login page
-	 *
-	 * @deprecated As of 2.5-s, replaced by {@link #loginFooter}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
-	@Sanitize(HTMLSanitizer.class)
-	@ConsumeField
-	private String loginWarning;
-
-	/**
-	 * Logo section in the main section of the page
-	 *
-	 * @deprecated As of 2.5-s, replaced by {@link #loginContentBlock}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
-	@ConsumeField
-	private String loginLogoBlock;
-
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@ConsumeField
 	private String loginContentBlock;
@@ -139,19 +118,6 @@ public class Branding
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@ConsumeField
 	private String analyticsTrackingCode;
-
-	@ConsumeField
-	private Boolean hideArchitectureSearchFlg;
-
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@Sanitize(CleanKeySanitizer.class)
-	@ConsumeField
-	private String architectureSearchType;
-
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String architectureSearchLabel;
 
 	@ConsumeField
 	private Boolean allowSecurityMarkingsFlg;
@@ -241,9 +207,6 @@ public class Branding
 	private String overrideCSS;
 
 	@ConsumeField
-	private Boolean useDefaultLandingPage;
-
-	@ConsumeField
 	private Boolean showSupportMenuOnLogin;
 
 	@ConsumeField
@@ -258,11 +221,6 @@ public class Branding
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String bulkUploadMessage;
-	
-	@ConsumeField
-	@Embedded
-	@OneToOne(orphanRemoval = true)
-	private LandingTemplate landingTemplate;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Branding()
@@ -278,9 +236,6 @@ public class Branding
 
 		setAllowSecurityMarkingsFlg(branding.getAllowSecurityMarkingsFlg());
 		setApplicationName(branding.getApplicationName());
-		setHideArchitectureSearchFlg(branding.getHideArchitectureSearchFlg());
-		setArchitectureSearchLabel(branding.getArchitectureSearchLabel());
-		setArchitectureSearchType(branding.getArchitectureSearchType());
 		setLandingPageBanner(branding.getLandingPageBanner());
 		setLandingPageFooter(branding.getLandingPageFooter());
 		setLandingPageTitle(branding.getLandingPageTitle());
@@ -291,8 +246,6 @@ public class Branding
 		setHomebackSplashUrl(branding.getHomebackSplashUrl());
 		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
 
-		setLoginWarning(branding.getLoginWarning());
-		setLoginLogoBlock(branding.getLoginLogoBlock());
 		setLoginLogoUrl(branding.getLoginLogoUrl());
 		setLoginContentBlock(branding.getLoginContentBlock());
 		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
@@ -326,8 +279,6 @@ public class Branding
 		setShowLinkToMobile(branding.getShowLinkToMobile());
 		setDisclaimerMessage(branding.getDisclaimerMessage());
 		setBulkUploadMessage(branding.getBulkUploadMessage());
-		setUseDefaultLandingPage(branding.getUseDefaultLandingPage());
-		setLandingTemplate(branding.getLandingTemplate());
 	}
 
 	public String getBrandingId()
@@ -370,30 +321,6 @@ public class Branding
 		this.secondaryLogoUrl = secondaryLogoUrl;
 	}
 
-	/**
-	 * warning banner in the center of the login page
-	 *
-	 * @return logo image with image map
-	 * @deprecated As of 2.5-s, replaced by {@link #getLoginFooter()}
-	 */
-	@Deprecated
-	public String getLoginWarning()
-	{
-		return loginWarning;
-	}
-
-	/**
-	 * warning banner in the center of the login page
-	 *
-	 * @param loginWarning warning text
-	 * @deprecated As of 2.5-s, replaced by {@link #setLoginFooter(String)}
-	 */
-	@Deprecated
-	public void setLoginWarning(String loginWarning)
-	{
-		this.loginWarning = loginWarning;
-	}
-
 	public String getApplicationName()
 	{
 		return applicationName;
@@ -432,26 +359,6 @@ public class Branding
 	public void setLandingPageFooter(String landingPageFooter)
 	{
 		this.landingPageFooter = landingPageFooter;
-	}
-
-	public String getArchitectureSearchType()
-	{
-		return architectureSearchType;
-	}
-
-	public void setArchitectureSearchType(String architectureSearchType)
-	{
-		this.architectureSearchType = architectureSearchType;
-	}
-
-	public String getArchitectureSearchLabel()
-	{
-		return architectureSearchLabel;
-	}
-
-	public void setArchitectureSearchLabel(String architectureSearchLabel)
-	{
-		this.architectureSearchLabel = architectureSearchLabel;
 	}
 
 	public Boolean getAllowSecurityMarkingsFlg()
@@ -594,16 +501,6 @@ public class Branding
 		this.overrideCSS = overrideCSS;
 	}
 
-	public Boolean getHideArchitectureSearchFlg()
-	{
-		return hideArchitectureSearchFlg;
-	}
-
-	public void setHideArchitectureSearchFlg(Boolean hideArchitectureSearchFlg)
-	{
-		this.hideArchitectureSearchFlg = hideArchitectureSearchFlg;
-	}
-
 	public String getPrimaryTextColor()
 	{
 		return primaryTextColor;
@@ -664,16 +561,6 @@ public class Branding
 		this.changeRequestWarning = changeRequestWarning;
 	}
 
-	public LandingTemplate getLandingTemplate()
-	{
-		return landingTemplate;
-	}
-
-	public void setLandingTemplate(LandingTemplate landingTemplate)
-	{
-		this.landingTemplate = landingTemplate;
-	}
-
 	public String getHomebackSplashUrl()
 	{
 		return homebackSplashUrl;
@@ -692,16 +579,6 @@ public class Branding
 	public void setSecondaryColor(String secondaryColor)
 	{
 		this.secondaryColor = secondaryColor;
-	}
-
-	public Boolean getUseDefaultLandingPage()
-	{
-		return useDefaultLandingPage;
-	}
-
-	public void setUseDefaultLandingPage(Boolean useDefaultLandingPage)
-	{
-		this.useDefaultLandingPage = useDefaultLandingPage;
 	}
 
 	public String getLoginContentBlock()
@@ -732,31 +609,6 @@ public class Branding
 	public void setLoginFooter(String loginFooter)
 	{
 		this.loginFooter = loginFooter;
-	}
-
-	/**
-	 * Logo section in the main section of the page
-	 *
-	 * @return logo image with image map
-	 * @deprecated As of 2.5-s, replaced by {@link #getLoginContentBlock()}
-	 */
-	@Deprecated
-	public String getLoginLogoBlock()
-	{
-		return loginLogoBlock;
-	}
-
-	/**
-	 * Logo section in the main section of the page
-	 *
-	 * @param loginLogoBlock logo image with optional image map
-	 * @deprecated As of 2.5-s, replaced by
-	 * {@link #setLoginContentBlock(String)}
-	 */
-	@Deprecated
-	public void setLoginLogoBlock(String loginLogoBlock)
-	{
-		this.loginLogoBlock = loginLogoBlock;
 	}
 
 	public Boolean getShowSupportMedia()

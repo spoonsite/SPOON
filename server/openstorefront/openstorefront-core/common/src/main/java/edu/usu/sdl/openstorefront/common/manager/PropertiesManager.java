@@ -82,7 +82,6 @@ public class PropertiesManager
 
 	public static final String KEY_UI_IDLETIMEOUT_MINUTES = "ui.idletimeout.minutes";
 	public static final String KEY_UI_IDLETIMEGRACE_MINUTES = "ui.idlegraceperiod.minutes";
-	public static final String KEY_UI_DEFAULTLANDING_TEMPLATE = "ui.default.landing";
 
 	public static final String KEY_OPENAM_URL = "openam.url";
 	public static final String KEY_LOGOUT_URL = "logout.url";
