@@ -26,8 +26,8 @@
 	Ext.require('OSF.landing.DefaultSearchTools');
 	Ext.require('OSF.landing.DefaultActions');
 	Ext.require('OSF.landing.DefaultCategory');	
-	Ext.require('OSF.landing.StaticInfo');	
 	Ext.require('OSF.landing.DefaultInfo');	
+	Ext.require('OSF.landing.EntryTypeTopics');
 	Ext.require('OSF.landing.DefaultDisclaimer')
 	
 	Ext.onReady(function(){
@@ -74,7 +74,7 @@
 							//margin: '0 0 40 0'
 						},						
 						{
-							xtype: 'osf-defaultcategory'
+							xtype: 'osf-entryTypeTopics'
 						},
 						{
 							xtype: 'osf-defaultfooter',
@@ -89,8 +89,7 @@
 							bodyStyle: 'padding-bottom: 20px;',
 							itemId: 'disclaimerPanel',
 							hidden:true,
-							reference:'disclaimerPanel',
-
+							
 							beforeRender:function(){
 								//if there is a disclaimer message, show the element
 								var that = this;
