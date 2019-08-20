@@ -30,6 +30,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.elasticsearch.action.search.SearchResponse;
+
 /**
  * Search Service
  *
@@ -56,10 +58,10 @@ public class SearchV2
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		String searchResponse = SearchServerManager.getInstance().getSearchServer().indexSearchV2(searchFilters);
+		SearchResponse searchResponse = SearchServerManager.getInstance().getSearchServer().indexSearchV2(searchFilters);
 
 		if(searchResponse != null){
-			return Response.ok(searchResponse).build();
+			return Response.ok(searchResponse.toString()).build();
 		} else {
 			return Response.ok("Search was not formatted correctly").build();
 		}

@@ -25,13 +25,10 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
-import edu.usu.sdl.openstorefront.core.entity.Attribute;
-import edu.usu.sdl.openstorefront.core.entity.AttributeSearchType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
-import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -61,8 +58,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.queryparser.xml.builders.TermQueryBuilder;
-import org.apache.lucene.search.TermQuery;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -71,8 +66,6 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.MultiSearchRequest;
-import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
@@ -84,8 +77,6 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.DisMaxQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
@@ -339,12 +330,15 @@ public class ElasticSearchManager
 	 * @param searchFilters all necessary information needed for search
 	 * @return string of search response
 	 */
-	public String indexSearchV2(SearchFilters searchFilters)
+	@Override
+	public SearchResponse indexSearchV2(SearchFilters searchFilters)
 	{
 		int maxSearchResults = 10000;
 		if (searchFilters.getPageSize() < maxSearchResults) {
 			maxSearchResults = searchFilters.getPageSize();
 		}
+
+		searchFilters.setQuery("*"+searchFilters.getQuery()+"*");
 
 		BoolQueryBuilder esQuery = getSearchQuery(searchFilters, null);
 
@@ -354,17 +348,33 @@ public class ElasticSearchManager
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
 						: SortOrder.DESC);
 
-		TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("by_organization").field("organization.keyword");
+		TermsAggregationBuilder categoryAggregationBuilder = AggregationBuilders
+				.terms("by_category")
+				.field("componentType.keyword");
+		TermsAggregationBuilder tagAggregationBuilder = AggregationBuilders
+				.terms("by_tag")
+				.field("tags.text.keyword");
+		TermsAggregationBuilder orgAggregationBuilder = AggregationBuilders
+				.terms("by_organization")
+				.field("organization.keyword");
+		TermsAggregationBuilder attributeAggregationBuilder = AggregationBuilders
+				.terms("by_attribute")
+				.field("attributes.type.keyword");
 
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 			.query(esQuery)
-			.from(searchFilters.getPage() * searchFilters.getPageSize())
+			.from(0)
+			.from((searchFilters.getPage() -1) * searchFilters.getPageSize())
 			.size(maxSearchResults)
 			.sort(sort)
-			.aggregation(termsAggregationBuilder);
+			.aggregation(categoryAggregationBuilder)
+			.aggregation(tagAggregationBuilder)
+			.aggregation(orgAggregationBuilder)
+			.aggregation(attributeAggregationBuilder);
 
-		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
+		SearchRequest searchRequest = new SearchRequest(INDEX)
+			.source(searchSourceBuilder);
 
 		SearchResponse response;
 		try (ElasticSearchClient client = singleton.getClient()) {
@@ -374,7 +384,7 @@ public class ElasticSearchManager
 			response = new SearchResponse();
 		}
 
-		return response.toString();
+		return response;
 
 
 		/**************BEGIN AGGREGATIONS*************/

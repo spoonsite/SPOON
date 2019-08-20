@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.view.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.search.SearchResponse;
 
 /**
  *
@@ -69,7 +70,7 @@ public abstract class BaseSearchManager
 	 * Version 2 of the search, used for the Vue site
 	 * 
 	 */
-	public abstract String indexSearchV2(SearchFilters searchFilters);
+	public abstract SearchResponse indexSearchV2(SearchFilters searchFilters);
 
 	/**
 	 * Finds search suggestions
