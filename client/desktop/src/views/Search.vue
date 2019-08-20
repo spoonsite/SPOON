@@ -275,7 +275,7 @@
           style="max-width: 40px; margin-right: 1em; float: left;"
         >
         <div style="float: left;" class="mb-5">
-          <h3>{{ item.name }}</h3>
+          <h3 class='more-info' @click='moreInformation(item.componentId)'>{{ item.name }}</h3>
           <p class="mb-0">{{ item.organization }}</p>
           <router-link
             :to="{ path: 'search', query: { comp: item.componentType }}"
@@ -610,6 +610,14 @@ export default {
       document.execCommand('copy')
       this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
       // alert('Copied the text: ' + copyText.value)
+    },
+        moreInformation (componentId) {
+      router.push({
+        name: 'Entry Detail',
+        params: {
+          id: componentId
+        }
+      });
     }
   },
   watch: {
@@ -779,6 +787,13 @@ hr {
 }
 .search-block.closed {
   margin-left: $closed-width;
+}
+.more-info {
+  cursor: pointer;
+}
+.more-info:hover {
+  transition-duration: 0.2s;
+  text-decoration: underline;
 }
 .v-footer {
   height: $footer-height !important;
