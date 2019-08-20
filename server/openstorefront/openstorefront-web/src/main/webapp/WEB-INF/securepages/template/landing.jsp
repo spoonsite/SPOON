@@ -25,7 +25,6 @@
 	Ext.require('OSF.landing.DefaultVersion');
 	Ext.require('OSF.landing.DefaultSearchTools');
 	Ext.require('OSF.landing.DefaultActions');
-	Ext.require('OSF.landing.DefaultCategory');	
 	Ext.require('OSF.landing.DefaultInfo');	
 	Ext.require('OSF.landing.EntryTypeTopics');
 	Ext.require('OSF.landing.DefaultDisclaimer')
@@ -71,7 +70,6 @@
 						},
 						{
 							xtype: 'osf-defaultinfo'
-							//margin: '0 0 40 0'
 						},						
 						{
 							xtype: 'osf-entryTypeTopics'
