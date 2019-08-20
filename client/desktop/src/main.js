@@ -69,18 +69,17 @@ Vue.filter('formatDate', function (value, formatString) {
   }
 })
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)))
-
 store.dispatch('getSecurityPolicy')
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
     theme: {
       primary: store.state.branding.primaryColor,
       secondary: store.state.branding.secondaryColor,
-      accent: store.state.branding.vueAccentColor,//'#424242', // accent should be dark, used as button default
-      error: store.state.branding.vueErrorColor, //'#C62828',
-      info: store.state.branding.vueInfoColor, //'#3F51B5',
-      warning: store.state.branding.vueWarningColor, //'#FFA000',
-      success: store.state.branding.vueSuccessColor,//'#388E3C's
+      accent: store.state.branding.vueAccentColor,
+      error: store.state.branding.vueErrorColor,
+      info: store.state.branding.vueInfoColor,
+      warning: store.state.branding.vueWarningColor,
+      success: store.state.branding.vueSuccessColor,
     }
   })
 

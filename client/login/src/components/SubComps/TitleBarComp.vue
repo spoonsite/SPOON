@@ -42,7 +42,7 @@ export default {
         { link: '/contact-us', icon: 'comment', name: 'Contact Us' }
       ],
       topbarStyle: {
-        'border-bottom': `4px solid ${this.$store.state.branding.accentColor}`
+        'border-bottom': `4px solid ${this.$store.state.branding.vueAccentColor}`
       }
     };
   },

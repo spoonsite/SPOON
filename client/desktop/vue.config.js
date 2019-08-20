@@ -8,7 +8,7 @@ module.exports = {
         // ***STAGING ENVIRONMENTS***
         // 'target': 'http://spoon-staging.usurf.usu.edu',
         // 'target': 'http://store-accept.usurf.usu.edu',
-        'target': 'http://localhost:8080',
+        'target': 'http://localhost:9080',
         'changeOrigin': true
       },
       '/images': {

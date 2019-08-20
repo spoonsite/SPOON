@@ -789,35 +789,35 @@
 																xtype: 'colorfield',
 																format: '#hex6',
 																width:'100%',
-																fieldLabel: 'Accent Color <i class="fa fa-question-circle"  data-qtip="The color of most components" > Note: should be a darker color</i>',
+																fieldLabel: 'Accent Color <i class="fa fa-question-circle"  data-qtip="Should be a darker color, as this color tends to appear on buttons." ></i>',
 																name: 'vueAccentColor'
 															},
 															{
 																xtype: 'colorfield',
 																width: '100%',
 																format: '#hex6',
-																fieldLabel: 'Error Color <i class="fa fa-question-circle"  data-qtip="Add this text" ></i>',
+																fieldLabel: 'Error Color',
 																name: 'vueErrorColor'
 															},
 															{
 																xtype: 'colorfield',
 																format: '#hex6',
 																width:'100%',
-																fieldLabel: 'Info Color <i class="fa fa-question-circle"  data-qtip="Add this text" ></i>',
+																fieldLabel: 'Info Color',
 																name: 'vueInfoColor'
 															},
 															{
 																xtype: 'colorfield',
 																format: '#hex6',
 																width:'100%',
-																fieldLabel: 'Warning <i class="fa fa-question-circle"  data-qtip="Add this text" ></i>',
+																fieldLabel: 'Warning',
 																name: 'vueWarningColor'
 															},
 															{
 																xtype: 'colorfield',
 																format: '#hex6',
 																width:'100%',
-																fieldLabel: 'Success Color <i class="fa fa-question-circle"  data-qtip="Add this text" ></i>',
+																fieldLabel: 'Success Color',
 																name: 'vueSuccessColor'
 															}
 														]
