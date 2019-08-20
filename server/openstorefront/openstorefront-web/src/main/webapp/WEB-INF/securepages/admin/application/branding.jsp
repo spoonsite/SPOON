@@ -894,24 +894,6 @@
 												xtype: 'tbfill'
 											},
 											{
-												text: 'Preview',
-												tooltip: 'Saves and preview',
-												iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-small-vertical-correction',
-												scale: 'medium',
-												formBind: true,											
-												handler: function () {												
-													var form = this.up('form');
-
-													actionSaveBranding(form, function(response, opt){
-														var branding = Ext.decode(response.responseText);
-
-														previewWin.show();													
-														previewContents.load('Branding.action?Preview&brandingId=' + branding.brandingId);
-													});												
-
-												}
-											},
-											{
 												xtype: 'tbfill'
 											},
 											{
