@@ -254,20 +254,9 @@
 													labelSeparator: ''
 												},
 												items: [
-													// {
-													// 	xtype: 'htmleditor',
-													// 	fieldLabel: 'Login Page Content Section <i class="fa fa-question-circle"  data-qtip="Page Content" ></i>',
-													// 	name: 'loginContentBlock',
-													// 	resizable: {
-													// 		handles: 's'
-													// 	},
-													// 	width: '100%',											
-													// 	allowBlank: true,
-													// 	maxLength: 16000
-													// },
 													{
 														xtype: 'panel',
-														html: '<b>Login Page Content Section </b><i class="fa fa-question-circle"  data-qtip="Page Content" ></i>'
+														html: '<b>Login Page Content Section </b><i class="fa fa-question-circle"  data-qtip="Page Content, text. Leaving this empty leaves no trace on the page." ></i>'
 													},
 													{
 														xtype: 'tinymce_textarea',
@@ -281,44 +270,6 @@
 															mediaSelectionUrl: MediaUtil.generalMediaUrl,
 															mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
 														})
-													},
-													{
-														layout: 'hbox',
-														width: '100%',
-														margin: '5px 0 0 0',
-														items: [
-															{
-																xtype: 'textfield',
-																itemId: 'loginLogoUrl',
-																labelAlign: 'top',
-																labelSeparator: '',
-																fieldLabel: 'Logo URL <i class="fa fa-question-circle"  data-qtip="URL to the logo shown in the top left corner" ></i>',
-																name: 'loginLogoUrl',
-																allowBlank: true,									
-																maxLength: 255,																
-																flex: 4
-															},
-															{
-																xtype: 'button',
-																text: 'Insert Image',
-																flex: 1,
-																margin: '30 0 0 0',
-																handler: function() {
-																	var loginLogoUrl = this.up('panel').queryById('loginLogoUrl');																	
-																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
-																		isEditor: false,
-																		isBrandingMedia: true,
-																		mediaName:'Image',
-																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
-																		closeAction: 'destroy',
-																		mediaHandler: function(link) {
-																			updateMediaUrl(link,loginLogoUrl);
-																		}
-																	});	
-																	mediaWindow.show();
-																}
-															}
-														]														
 													},
 													{
 														layout: 'hbox',
@@ -441,18 +392,7 @@
 														width: '100%',
 														boxLabel: 'Show Support Menu <i class="fa fa-exclamation-circle" data-qtip="When checked, will enable the support menu on the login page."></i>',
 														name: 'showSupportMenuOnLogin'
-													},												
-													// {
-													// 	xtype: 'htmleditor',
-													// 	fieldLabel: 'Login Footer <i class="fa fa-question-circle"  data-qtip="Content to be displyed in the footer" ></i>',
-													// 	name: 'loginFooter',
-													// 	resizable: {
-													// 		handles: 's'
-													// 	},
-													// 	width: '100%',											
-													// 	allowBlank: true,
-													// 	maxLength: 16000
-													// }
+													},
 													{
 														xtype: 'panel',
 														html: '<b>Login Footer </b><i class="fa fa-question-circle"  data-qtip="Content to be displyed in the footer" ></i>'
@@ -490,7 +430,7 @@
 														xtype: 'combobox',
 														name: 'feedbackHandler',
 														width: '100%',
-														fieldLabel: 'Feeback Handling <i class="fa fa-question-circle"  data-qtip="This is the method to handle feedback capture by the application. (Default: Jira)<br>  Note: Email used is set in the system configuration properties." ></i>',
+														fieldLabel: 'Feedback Handling <i class="fa fa-question-circle"  data-qtip="This is the method to handle feedback capture by the application. (Default: Email)<br>  Note: Email used is set in the system configuration properties." ></i>',
 														queryMode: 'local',
 														displayField: 'description',
 														valueField: 'code',
@@ -849,7 +789,7 @@
 																xtype: 'colorfield',
 																format: '#hex6',
 																width:'100%',
-																fieldLabel: 'Accent Color <i class="fa fa-question-circle"  data-qtip="Te color of most component" ></i>',
+																fieldLabel: 'Accent Color <i class="fa fa-question-circle"  data-qtip="The color of most components" > Note: should be a darker color</i>',
 																name: 'vueAccentColor'
 															},
 															{

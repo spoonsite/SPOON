@@ -74,9 +74,7 @@ public class Branding
 	@ConsumeField
 	private String loginContentBlock;
 
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String loginLogoUrl;
+
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -260,7 +258,6 @@ public class Branding
 		setHomebackSplashUrl(branding.getHomebackSplashUrl());
 		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
 
-		setLoginLogoUrl(branding.getLoginLogoUrl());
 		setLoginContentBlock(branding.getLoginContentBlock());
 		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
 		setLoginOverviewVideoPosterUrl(branding.getLoginOverviewVideoPosterUrl());
@@ -638,16 +635,6 @@ public class Branding
 	public void setLoginContentBlock(String loginContentBlock)
 	{
 		this.loginContentBlock = loginContentBlock;
-	}
-
-	public String getLoginLogoUrl()
-	{
-		return loginLogoUrl;
-	}
-
-	public void setLoginLogoUrl(String loginLogoUrl)
-	{
-		this.loginLogoUrl = loginLogoUrl;
 	}
 
 	public String getLoginFooter()
