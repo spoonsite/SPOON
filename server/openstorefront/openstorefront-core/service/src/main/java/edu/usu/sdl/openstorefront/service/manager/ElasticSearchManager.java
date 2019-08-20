@@ -333,176 +333,49 @@ public class ElasticSearchManager
 		return componentSearchWrapper;
 	}
 
-	@Override
+	/**
+	 * Version 2 of index search
+	 * 
+	 * @param searchFilters all necessary information needed for search
+	 * @return string of search response
+	 */
 	public String indexSearchV2(SearchFilters searchFilters)
 	{
-
-		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
-		if (searchOptions == null) {
-			searchOptions = service.getSearchService().getGlobalSearchOptions();
+		int maxSearchResults = 10000;
+		if (searchFilters.getPageSize() < maxSearchResults) {
+			maxSearchResults = searchFilters.getPageSize();
 		}
 
-		// If all options are off, return everything
-		if (searchOptions.areAllOptionsOff()) {
-			return getAll().toString();
-		}
+		BoolQueryBuilder esQuery = getSearchQuery(searchFilters, null);
 
-		MultiSearchRequest request = new MultiSearchRequest();
-		SearchRequest searchRequest = new SearchRequest(INDEX);
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		FieldSortBuilder sort = new FieldSortBuilder(searchFilters.getSortField())
+				// .unmappedType("String") // currently the only fields we are searching/sorting
+				// on are strings
+				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
+						: SortOrder.DESC);
 
-		/**************BEGIN BASIC SEARCH*************/
-		//query based on search options
-		String query = searchFilters.getQuery();
-
-		BoolQueryBuilder bqb = QueryBuilders.boolQuery();
+		TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("by_organization").field("organization.keyword");
 
 
-		// TEST
-		query = "mag";
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+			.query(esQuery)
+			.from(searchFilters.getPage() * searchFilters.getPageSize())
+			.size(maxSearchResults)
+			.sort(sort)
+			.aggregation(termsAggregationBuilder);
 
-		DisMaxQueryBuilder disMaxQueryBuilder = new DisMaxQueryBuilder();
+		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
 
-
-		searchSourceBuilder.query(
-			disMaxQueryBuilder.add(QueryBuilders.termQuery("name", query))
-			.add(QueryBuilders.termQuery("organization", query))
-			.add(QueryBuilders.termQuery("description", query))
-			.add(QueryBuilders.termQuery("tags.text", query))
-			.add(QueryBuilders.termQuery("attributes.label", query))
-		);
-
-		searchRequest.source(searchSourceBuilder);
-		request.add(searchRequest);
-
-		MultiSearchResponse response;
-
+		SearchResponse response;
 		try (ElasticSearchClient client = singleton.getClient()) {
-			response = client.getInstance().msearch(request, RequestOptions.DEFAULT);
+			response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
 		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to handle search result", "check index database", ex);
+			LOG.log(Level.SEVERE, null, ex);
+			response = new SearchResponse();
 		}
 
-		//END TEST
-                                
-		if(searchOptions.getCanUseNameInSearch()){
-			searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.query(QueryBuilders.matchQuery("name", query));
-			// bqb.filter(QueryBuilders.matchQuery("name", query));
-			searchRequest.source(searchSourceBuilder);
-			request.add(searchRequest);
-		}
-		if(searchOptions.getCanUseOrganizationsInSearch()){
-			searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.query(QueryBuilders.matchQuery("organization", query));
-			// bqb.filter(QueryBuilders.matchQuery("organization", query));
-			searchRequest.source(searchSourceBuilder);
-			request.add(searchRequest);
-		}
-		if(searchOptions.getCanUseDescriptionInSearch()){
-			searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.query(QueryBuilders.matchQuery("description", query));
-			// bqb.filter(QueryBuilders.matchQuery("description", query));
-			searchRequest.source(searchSourceBuilder);
-			request.add(searchRequest);
-		}
-		if(searchOptions.getCanUseTagsInSearch()){
-			searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.query(QueryBuilders.matchQuery("tags.text", query));
-			// bqb.filter(QueryBuilders.matchQuery("tags.text", query));
-			searchRequest.source(searchSourceBuilder);
-			request.add(searchRequest);
-		}
-		if(searchOptions.getCanUseAttributesInSearch()){
-			searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.label", query));
-			// bqb.filter(QueryBuilders.matchQuery("attributes.label", query));
-			// bqb.filter(QueryBuilders.matchQuery("attributes.label", query));
-			searchRequest.source(searchSourceBuilder);
-			request.add(searchRequest);
-		}
+		return response.toString();
 
-		// DisMaxQueryBuilder
-
-
-		/**************BEGIN BASIC SEARCH*************/
-
-		/**************BEGIN FILTERS******************/
-		//Component Type
-		List<String> componentTypes = searchFilters.getComponentTypes();
-
-		if(componentTypes != null){
-			for(String componentType : componentTypes){
-				if(searchFilters.getIncludeChildren()){
-					List<ComponentType> allComponentTypes = service.getComponentService().getAllComponentTypes();
-					for(ComponentType allComponentType : allComponentTypes){
-						if(allComponentType.getParentComponentType() == componentType){
-							// searchSourceBuilder = new SearchSourceBuilder();
-							// searchSourceBuilder.query(QueryBuilders.matchQuery("componentType", allComponentType.getComponentType()));
-							bqb.filter(QueryBuilders.matchQuery("componentType", allComponentType.getComponentType()));
-							// searchRequest.source(searchSourceBuilder);
-							// request.add(searchRequest);
-						}
-					}
-				}
-				// searchSourceBuilder = new SearchSourceBuilder();
-				// searchSourceBuilder.query(QueryBuilders.matchQuery("componentType", componentType));
-				bqb.filter(QueryBuilders.matchQuery("componentType", componentType));
-				// searchRequest.source(searchSourceBuilder);
-				// request.add(searchRequest);
-			}
-		}
-
-		// organization
-		String organization = searchFilters.getOrganization();
-
-		if (organization != null){
-			// searchSourceBuilder = new SearchSourceBuilder();
-			// searchSourceBuilder.query(QueryBuilders.matchQuery("organization", organization));
-			bqb.filter(QueryBuilders.matchQuery("organization", organization));
-			// searchRequest.source(searchSourceBuilder);
-			// request.add(searchRequest);
-		}
-
-		// attributes
-		List<AttributeSearchType> attributes = searchFilters.getAttributes();
-		if(attributes != null){
-			for(AttributeSearchType attribute : attributes){
-				// searchSourceBuilder = new SearchSourceBuilder();
-				// searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.type", attribute.getType()));
-				// searchSourceBuilder.query(QueryBuilders.matchQuery("attributes.label", attribute.getCode()));
-				bqb.filter(QueryBuilders.matchQuery("attributes.type", attribute.getType()));
-				bqb.filter(QueryBuilders.matchQuery("attributes.label", attribute.getCode()));
-				// searchRequest.source(searchSourceBuilder);
-				// request.add(searchRequest);
-			}
-		}
-
-		// tags
-		List<String> tags = searchFilters.getTags();
-		if(tags != null){
-			for(String tag : tags){
-				// searchSourceBuilder = new SearchSourceBuilder();
-				// searchSourceBuilder.query(QueryBuilders.matchQuery("tags.text", tag));
-				bqb.filter(QueryBuilders.matchQuery("tags.text", tag));
-				// searchRequest.source(searchSourceBuilder);
-				// request.add(searchRequest);
-			}
-		}
-
-		/**************END FILTERS******************/
-
-		searchSourceBuilder.query(bqb);
-
-		/**************BEGIN PAGINATION*************/
-		// searchSourceBuilder = new SearchSourceBuilder();
-
-		// searchSourceBuilder.from(searchFilters.getPage());
-		// searchSourceBuilder.size(searchFilters.getPageSize());
-
-		// searchRequest.source(searchSourceBuilder);
-		// request.add(searchRequest);
-		/**************END PAGINATION*****************/
 
 		/**************BEGIN AGGREGATIONS*************/
 		
@@ -522,8 +395,6 @@ public class ElasticSearchManager
 		
 		// searchSourceBuilder.aggregation(AggregationBuilders.terms("by_organization").field("organization.keyword"));
 		// searchSourceBuilder.aggregation(AggregationBuilders.terms("by_componentType").field("componentType.keyword"));
-		searchRequest.source(searchSourceBuilder);
-		request.add(searchRequest);
 
 		// searchSourceBuilder = new SearchSourceBuilder();
 		// termsAggregationBuilder = AggregationBuilders.terms("by_componentType").field("componentType.keyword");
@@ -552,50 +423,44 @@ public class ElasticSearchManager
 
 		/**************END AGGREGATIONS*************/
 
-		// MultiSearchResponse response;
-
-		try (ElasticSearchClient client = singleton.getClient()) {
-			response = client.getInstance().msearch(request, RequestOptions.DEFAULT);
-		} catch (IOException ex) {
-			throw new OpenStorefrontRuntimeException("Unable to handle search result", "check index database", ex);
-		}
-
-		return response.toString();
 	}
 
 	/**
-	 * doIndexSearch with no additionalFieldsToReturn
+	 * Function for backwards compatibility to old version of search
+	 * for building the query for the search
 	 * 
-	 * @param query the string from user
-	 * @param FilterQueryParams any additional query filters
-	 * @return IndexSearchResult result from elasticsearch
+	 * @param query the query string from search bar
+	 * @return a BoolQueryBuilder to create the search request from
 	 */
-	@Override
-	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
-	{
-		return doIndexSearch(query, filter, null);
+	public BoolQueryBuilder getSearchQuery(String query){
+		SearchFilters searchFilters = new SearchFilters();
+		searchFilters.setQuery(query);
+		return getSearchQuery(searchFilters, null);
 	}
 
-	@Override
-	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] additionalFieldsToReturn)
-	{
-		// look for user search options if none are found use global search options
-		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
-		if (searchOptions == null) {
-			searchOptions = service.getSearchService().getGlobalSearchOptions();
+	/**
+	 * Function to build query for search
+	 * 
+	 * @param searchFilters all info necessary for creating the search request
+	 * @param searchOptions currently not used but will be used in a future implementation
+	 * @return a BoolQueryBuilder to create the search request from
+	 */
+	public BoolQueryBuilder getSearchQuery(SearchFilters searchFilters, SearchOptions searchOptions){
+
+		if(searchOptions == null){
+			searchOptions = service.getSearchService().getUserSearchOptions();
+			if (searchOptions == null) {
+				searchOptions = service.getSearchService().getGlobalSearchOptions();
+			}
 		}
 
-		IndexSearchResult indexSearchResult = new IndexSearchResult();
+		BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
 
 		if (searchOptions.areAllOptionsOff()) {
-			return indexSearchResult;
+			return esQuery;
 		}
 
-		int maxSearchResults = 10000;
-		if (filter.getMax() < maxSearchResults) {
-			maxSearchResults = filter.getMax();
-		}
-
+		String query = searchFilters.getQuery();
 		if (StringUtils.isBlank(query)) {
 			query = "*";
 		}
@@ -659,9 +524,6 @@ public class ElasticSearchManager
 				}
 			}
 		}
-
-		// Initialize ElasticSearch Query
-		BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
 
 		// Check For Remaining Query Items
 		if (queryString.length() > 0) {
@@ -763,18 +625,53 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, phrase));
 			}
 		}
+		
+		return esQuery;
+	} 
+
+	/**
+	 * doIndexSearch with no additionalFieldsToReturn
+	 * 
+	 * @param query the string from user
+	 * @param FilterQueryParams any additional query filters
+	 * @return IndexSearchResult result from elasticsearch
+	 */
+	@Override
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
+	{
+		return doIndexSearch(query, filter, null);
+	}
+
+	/**
+	 * Function for basic search
+	 * 
+	 * @param query the string from search bar
+	 * @param filter fields to filter on
+	 * @param additionalFieldsToReturn other fields to return from search
+	 */
+	@Override
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] additionalFieldsToReturn)
+	{
+
+		IndexSearchResult indexSearchResult = new IndexSearchResult();
+
+		int maxSearchResults = 10000;
+		if (filter.getMax() < maxSearchResults) {
+			maxSearchResults = filter.getMax();
+		}
+
+		BoolQueryBuilder esQuery = getSearchQuery(query);
+
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
-				//.unmappedType("String") // currently the only fields we are searching/sorting on are strings
-				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC : SortOrder.DESC);
+				// .unmappedType("String") // currently the only fields we are searching/sorting
+				// on are strings
+				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC
+						: SortOrder.DESC);
 
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-				.query(esQuery)
-				.from(filter.getOffset())
-				.size(maxSearchResults)
-				.sort(sort);
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().query(esQuery).from(filter.getOffset())
+				.size(maxSearchResults).sort(sort);
 
-		SearchRequest searchRequest = new SearchRequest(INDEX)
-				.source(searchSourceBuilder);
+		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
 
 		try {
 			performIndexSearch(searchRequest, indexSearchResult);

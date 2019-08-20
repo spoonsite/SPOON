@@ -436,7 +436,7 @@ export default {
       // sometimes 2 POST requests get sent out together
       if (that.searchQueryIsDirty) return
       that.searchQueryIsDirty = true
-      
+
       // build search request here
       var searchFilters = {
         "query": '',
@@ -446,7 +446,9 @@ export default {
         'includeChildren': true,
         'organization': '',
         'stringAttributes': [],
-        'tags': []
+        'tags': [],
+        'sortOrder': '',
+        'sortField': ''
       }
 
       searchFilters.query = ( this.searchQuery ? this.searchQuery : searchFilters.query )
@@ -457,7 +459,9 @@ export default {
       searchFilters.organization = ( this.filters.organization ? this.filters.organization : searchFilters.organization )
       // searchFilters.stringAttributes = ( this.filters.attributes ? this.filters.attributes : searchFilters.attributes )
       searchFilters.tags = ( this.filters.tags ? this.filters.tags : searchFilters.tags )
-      
+      searchFilters.sortField = ( this.searchSortField ? this.searchSortField : searchFilters.sortField )
+      searchFilters.sortOrder = ( this.searchSortOrder ? this.searchSortOrder : searchFilters.sortOrder )
+
       if (this.filters.attributes) {
         this.filters.attributes.forEach(attribute => {
           searchFilters.stringAttributes.push(JSON.parse(attribute))
@@ -468,12 +472,12 @@ export default {
 
       this.$http
         .post(
-          '/openstorefront/api/v2/service/search', 
+          '/openstorefront/api/v2/service/search',
             searchFilters
         ).then(response => {
           console.log(response)
         }).catch(err => console.log(err))
-      
+
       let searchElements = [
         {
           mergeCondition: 'AND',

@@ -75,13 +75,17 @@ public class SearchFilters
 	@QueryParam("tags")
 	private List<String> tags;
 
+	@ConsumeField
+	@QueryParam("sortOrder")
+	private String sortOrder;
+
+	@ConsumeField
+	@QueryParam("sortField")
+	private String sortField;
+
 	public SearchFilters()
 	{
 	}
-
-    //TODO add highlighting support https://www.elastic.co/guide/en/elasticsearch/client/java-rest/7.2/java-rest-high-search.html#java-rest-high-search-response-highlighting
-    //TODO add sort variable
-    //TODO add sorting here https://www.elastic.co/guide/en/elasticsearch/client/java-rest/7.2/java-rest-high-search.html#_specifying_sorting
 
     public ValidationResult validate()
 	{
@@ -151,6 +155,22 @@ public class SearchFilters
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
+	}
+
+	public String getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(String sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	public String getSortField() {
+		return sortField;
+	}
+
+	public void setSortField(String sortField) {
+		this.sortField = sortField;
 	}
 
 }
