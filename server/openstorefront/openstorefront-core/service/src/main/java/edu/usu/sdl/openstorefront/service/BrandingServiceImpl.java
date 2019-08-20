@@ -198,7 +198,7 @@ public class BrandingServiceImpl
 					branding.setVueAccentColor("#424242");
 				}
 				if (branding.getVueErrorColor() == null ){
-					branding.setVueErrorColor("#C62828",);
+					branding.setVueErrorColor("#C62828");
 				}
 				if (branding.getVueInfoColor() == null ){
 					branding.setVueInfoColor("#3F51B5");
