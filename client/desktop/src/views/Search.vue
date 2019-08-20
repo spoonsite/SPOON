@@ -296,8 +296,8 @@
             </span>
           </div>
           <div>
-            <input type="checkbox" v-bind:id="item.componentId">
-            <label v-bind:for="item.componentId">Add to Compare</label>
+            <input type="checkbox" v-model="comparisonList" v-bind:value="item.componentId">
+            <label>Add to Compare</label>
           </div>
         </div>
       </div>
@@ -665,6 +665,7 @@ export default {
       tagsList: [],
       organizationsList: [],
       selected: [],
+      comparisonList: [],
       showFilters: false,
       showOptions: false,
       showHelp: false,
