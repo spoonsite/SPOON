@@ -266,13 +266,18 @@
         v-else-if="!!searchResults.data"
         v-for="item in searchResults.data.data"
         :key="item.name"
-        class="mt-4"
-        style="clear: left;"
+        class="mt-4 item"
+        style="clear: left; display: flex; flex-wrap: nowrap;"
       >
         <img
-          v-if="item.includeIconInSearch && item.componentTypeIconUrl"
+          v-if="computeHasImage(item)"
+          :src="item.link"
+          style="max-width: 40px; max-height: 40px; margin-right: 1em; float: left;"
+        >
+        <img
+          v-else-if="item.includeIconInSearch && item.componentTypeIconUrl"
           :src="'/openstorefront/' + item.componentTypeIconUrl"
-          style="max-width: 40px; margin-right: 1em; float: left;"
+          style="max-width: 40px; max-height: 40px; margin-right: 1em; float: left;"
         >
         <div style="float: left;" class="mb-5">
           <h3 class='more-info' @click='moreInformation(item.componentId)'>{{ item.name }}</h3>
@@ -618,7 +623,16 @@ export default {
           id: componentId
         }
       });
-    }
+    },
+    computeHasImage (item) {
+      if (item.componentMedia) {
+        for (var i = 0; i < item.componentMedia.length; i++) {
+          if (item.componentMedia[i].mediaTypeCode === 'IMG') {
+            return true;
+          }
+        }
+      }
+    },
   },
   watch: {
     filters: {
