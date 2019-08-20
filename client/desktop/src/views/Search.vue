@@ -295,6 +295,10 @@
               <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
             </span>
           </div>
+          <div>
+            <input type="checkbox" v-bind:id="item.componentId">
+            <label v-bind:for="item.componentId">Add to Compare</label>
+          </div>
         </div>
       </div>
     </div><!-- Search Results -->
