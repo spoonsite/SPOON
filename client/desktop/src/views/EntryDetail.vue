@@ -7,10 +7,10 @@
       </v-card-text>
     </v-card>
 
-    <!-- <Lightbox
+    <Lightbox
       v-if="detail.componentMedia && detail.componentMedia.length > 0"
       :list="lightboxList"
-    ></Lightbox> -->
+    ></Lightbox>
   <v-layout
       row
       justify-center
@@ -456,7 +456,7 @@
 <script lang="js">
 import StarRating from 'vue-star-rating';
 import _ from 'lodash';
-// import Lightbox from './subcomponents/Lightbox';
+import Lightbox from '../components/Lightbox';
 // import LoadingOverlay from './subcomponents/LoadingOverlay';
 // import Question from './subcomponents/Question';
 import format from 'date-fns/format';
@@ -468,6 +468,7 @@ export default {
   components: {
     router,
     StarRating,
+    Lightbox,
   },
   mounted () {
     if (this.$route.params.id) {

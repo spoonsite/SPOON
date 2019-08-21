@@ -118,6 +118,7 @@
             v-model="attributeQuery"
             placeholder="Search Attributes"
             ref="attributeBar"
+            style="width: 90%;"
           >
           <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery=''">clear</v-icon>
         </div>
@@ -270,16 +271,11 @@
         style="clear: left; display: flex; flex-wrap: nowrap;"
       >
         <img
-          v-if="computeHasImage(item)"
-          :src="item.link"
-          style="max-width: 40px; max-height: 40px; margin-right: 1em; float: left;"
-        >
-        <img
-          v-else-if="item.includeIconInSearch && item.componentTypeIconUrl"
+          v-if="item.includeIconInSearch && item.componentTypeIconUrl"
           :src="'/openstorefront/' + item.componentTypeIconUrl"
-          style="max-width: 40px; max-height: 40px; margin-right: 1em; float: left;"
+          style="min-width: 40px; max-height: 40px; margin-right: 1em; float: left;"
         >
-        <div style="float: left;" class="mb-5">
+        <div style="float: left; width: -moz-fit-content;" class="mb-5">
           <h3 class='more-info' @click='moreInformation(item.componentId)'>{{ item.name }}</h3>
           <p class="mb-0">{{ item.organization }}</p>
           <router-link
@@ -301,6 +297,9 @@
             </span>
           </div>
         </div>
+        <!-- <div class="description-wrapper">
+          <p>{{ item.description }}</p>
+        </div> -->
       </div>
     </div><!-- Search Results -->
   </div>
@@ -683,23 +682,6 @@ export default {
       this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
       // alert('Copied the text: ' + copyText.value)
     },
-        moreInformation (componentId) {
-      router.push({
-        name: 'Entry Detail',
-        params: {
-          id: componentId
-        }
-      });
-    },
-    computeHasImage (item) {
-      if (item.componentMedia) {
-        for (var i = 0; i < item.componentMedia.length; i++) {
-          if (item.componentMedia[i].mediaTypeCode === 'IMG') {
-            return true;
-          }
-        }
-      }
-    },
   },
   watch: {
     filters: {
@@ -750,7 +732,7 @@ export default {
       tagsList: [],
       organizationsList: [],
       selected: [],
-      showFilters: false,
+      showFilters: true,
       showOptions: false,
       showHelp: false,
       searchQuery: '',
@@ -771,7 +753,6 @@ export default {
       searchPageSize: 10,
       totalSearchResults: 0,
       searchSortOrder: 'DESC',
-      showAll: false,
       searchSortField: 'searchScore',
       searchSortFields: [
         { text: 'Name', value: 'name' },
@@ -875,6 +856,12 @@ hr {
 .more-info:hover {
   transition-duration: 0.2s;
   text-decoration: underline;
+}
+.description-wrapper {
+  width: 50%;
+  padding-left: 15px;
+  display: flex;
+  align-items: center;
 }
 .v-footer {
   height: $footer-height !important;
