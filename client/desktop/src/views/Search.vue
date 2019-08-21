@@ -428,12 +428,47 @@ export default {
       // initialize the attributes
       var keys = Object.keys(this.searchResultsAttributes)
       this.attributeKeys = keys.slice(0, 10)
-      console.log(this.attributeKeys)
+      // console.log(this.attributeKeys)
     },
-    getCompTypeLabels(entryTypes){
+    parseAttributesFromSearchResponse(attributesAggregation) {
+      this.attributeKeys = []
+      var that = this
+      console.log(this.$store.state.attributeMap)
+      var tempSearchAttributes = {}
+      attributesAggregation.forEach(element => {
+        this.attributeKeys.push(element.key)
+
+
+
+        var attributes = element['top_hits#name'].hits.hits[0]._source.attributes
+        var attribute = attributes.filter(attribute => attribute.type == element.key)[0]
+        // console.log(attributes)
+        // console.log(element.key)
+        // console.log(this.$store.state.attributeMap[element.key])
+        if(!tempSearchAttributes[element.key]){
+          tempSearchAttributes[element.key] = {
+            attributeType: element.key,
+            attributeTypeLabel: that.$store.state.attributeMap[element.key].description,
+            attributeUnit: that.$store.state.attributeMap[element.key].attributeUnit,
+            codeMap:[attribute.label],
+            count: element.doc_count
+          }
+        } else {
+          console.log(attribute.label)
+         tempSearchAttributes[element.key].codeMap.push(attribute.label)
+        }
+
+
+
+      })
+      // console.log(this.attributeKeys)
+      console.log(tempSearchAttributes)
+    },
+    getCompTypeLabels(entryTypes) {
+      var that = this
       // This gets the labels for each of the entry types by using the codes return from request
       entryTypes.forEach(entryType => {
-        entryType['label'] = this.$store.state.componentTypeList.find(element => {
+        entryType['label'] = that.$store.state.componentTypeList.find(element => {
           return entryType.key == element.componentType
         }).parentLabel
       })
@@ -497,7 +532,10 @@ export default {
 
           // Attributes List
           // that.organizationsList = response.data.aggregations['sterms#by_attribute'].buckets
-          // console.log(response.data.aggregations['sterms#by_attribute_type'].buckets)
+          var attributesAggregation = response.data.aggregations['sterms#by_attribute_type'].buckets
+          console.log(attributesAggregation)
+          this.parseAttributesFromSearchResponse(attributesAggregation)
+
           // console.log(response.data.aggregations['sterms#by_attribute_label'].buckets)
           that.searchQueryIsDirty = false
         }).catch(err => console.log(err))

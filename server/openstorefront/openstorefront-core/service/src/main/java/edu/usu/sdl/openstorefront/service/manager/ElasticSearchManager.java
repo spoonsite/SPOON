@@ -74,11 +74,13 @@ import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.script.Script;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.composite.CompositeAggregationBuilder;
@@ -87,6 +89,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
@@ -348,31 +351,36 @@ public class ElasticSearchManager
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
 						: SortOrder.DESC);
 
+		// Get all categories from search result
 		TermsAggregationBuilder categoryAggregationBuilder = AggregationBuilders
 				.terms("by_category")
 				.field("componentType.keyword")
 				.size(1000);
 
+		// Get all tags from search result
 		TermsAggregationBuilder tagAggregationBuilder = AggregationBuilders
 				.terms("by_tag")
 				.field("tags.text.keyword")
 				.size(10000);
 
+		// Get all organizations from search result
 		TermsAggregationBuilder orgAggregationBuilder = AggregationBuilders
 				.terms("by_organization")
 				.field("organization.keyword")
 				.size(10000);
 
+		
+		String [] include = new String[]{"attributes"};
+
 		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
 				.topHits("name")
-				// .fetchSource(true)
-				.docValueField("attributes")
-				.size(10);
+				.fetchSource(include, null)
+				.size(1);
 
+		// Gets list of all attribute labels from search as well as all the whole attribute object
 		TermsAggregationBuilder attributeLabelAggregationBuilder = AggregationBuilders
-				.terms("by_attribute_label")
-				.field("attributes.label.keyword")
-				// .
+				.terms("by_attribute_type")
+				.field("attributes.type.keyword")
 				.subAggregation(topHitsAggregationBuilder)
 				.size(10000);
 
@@ -386,8 +394,6 @@ public class ElasticSearchManager
 				.aggregation(tagAggregationBuilder)
 				.aggregation(orgAggregationBuilder)
 				.aggregation(attributeLabelAggregationBuilder);
-
-		// See https://discuss.elastic.co/t/composite-aggregation-query-fails-on-elasticsearch-6-3-2/164542
 
 		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
 
