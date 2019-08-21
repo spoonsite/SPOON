@@ -81,13 +81,13 @@
           class="pb-3"
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="deleteTag(data.item.tagLabel)" >
-              <v-avatar class="grey lighten-1">{{ data.item.count }}</v-avatar>
-              {{ data.item.tagLabel}}
+            <v-chip close small @input="deleteTag(data.item.key)" >
+              <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
+              {{ data.item.key}}
             </v-chip>
           </template>
           <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.tagLabel}}</v-list-tile-title></v-list-tile-content>
+            <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.key}}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-select>
         <!-- <v-radio-group label="Tag Search Condition: " v-model="filters.tagCondition">
@@ -103,10 +103,10 @@
           clearable
         >
           <template slot="selection" slot-scope="data">
-            ({{ data.item.count }}) {{ data.item.organization }}
+            ({{ data.item.doc_count }}) {{ data.item.key }}
           </template>
           <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.organization }}</v-list-tile-title></v-list-tile-content>
+            <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.key }}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-autocomplete>
         <h3 class="pb-3">Attributes</h3>
@@ -225,12 +225,12 @@
     <div class="px-3">
       <h2 style="text-align: center" class="mb-2">Search Results</h2>
 
-      <p v-if="searchResults.data && searchResults.data.totalNumber === 0">No Search Results</p>
-      <p v-else-if="searchResults.data && !searchQueryIsDirty" class="pl-5 ma-0">
+      <p v-if="totalSearchResults === 0">No Search Results</p>
+      <p v-else-if="searchResults && !searchQueryIsDirty" class="pl-5 ma-0">
         {{ offset + 1 }} -
         {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
         of
-        {{ searchResults.data.totalNumber }} results
+        {{ totalSearchResults }} results
       </p>
 
       <!-- SEARCH RESULTS DATA -->
@@ -251,8 +251,8 @@
         </v-flex>
       </v-layout>
       <div
-        v-else-if="!!searchResults.data"
-        v-for="item in searchResults.data.data"
+        v-else-if="!!searchResults"
+        v-for="item in searchResults"
         :key="item.name"
         class="mt-4"
         style="clear: left;"
@@ -272,7 +272,7 @@
           </router-link>
           <div
             style="padding-bottom: 1em;"
-            v-if="item.tags.length !== 0"
+            v-if="!!item.tags && item.tags.length !== 0"
           >
             <span
               v-for="tag in item.tags"
@@ -468,14 +468,27 @@ export default {
         })
       }
 
-      console.log(searchFilters)
-
       this.$http
         .post(
           '/openstorefront/api/v2/service/search',
             searchFilters
         ).then(response => {
-          console.log(response)
+
+          that.searchResults = response.data.hits.hits.map(e => e._source)
+          that.totalSearchResults = response.data.hits.total.value
+          that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
+
+          // Tags List
+          that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
+          console.log(response.data.aggregations['sterms#by_tag'].buckets)
+
+          // Component Type List
+          // that.componentsList = response.data.aggregations['sterms#by_category'].buckets
+          // console.log(response.data.aggregations['sterms#by_category'].buckets)
+
+          // Attributes List
+          // that.organizationsList = response.data.aggregations['sterms#by_attribute'].buckets
+          // console.log(response.data.aggregations['sterms#by_attribute'].buckets)
         }).catch(err => console.log(err))
 
       let searchElements = [
@@ -557,10 +570,10 @@ export default {
           }
         )
         .then(response => {
-          that.searchResults = response
-          that.totalSearchResults = response.data.totalNumber
-          that.organizationsList = _.sortBy(response.data.meta.resultOrganizationStats, [function (o) { return o.organization }])
-          that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel }])
+          // that.searchResults = response
+          // that.totalSearchResults = response.data.totalNumber
+          // that.organizationsList = _.sortBy(response.data.meta.resultOrganizationStats, [function (o) { return o.organization }])
+          // that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel }])
           // this may not return full list of all components
           that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription }])
           that.searchQueryIsDirty = false

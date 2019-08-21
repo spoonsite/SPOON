@@ -81,6 +81,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.composite.CompositeAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.composite.CompositeValuesSourceBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
@@ -235,8 +237,6 @@ public class ElasticSearchManager
 				} catch (ElasticsearchException e){
 					LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 				}
-			} else {
-				LOG.log(Level.INFO, "[" + INDEX + "] already exists.");
 			}
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
@@ -325,7 +325,7 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * Version 2 of index search
+	 * Version 2 of index search, specifically for Vue frontend usage
 	 * 
 	 * @param searchFilters all necessary information needed for search
 	 * @return string of search response
@@ -343,38 +343,43 @@ public class ElasticSearchManager
 		BoolQueryBuilder esQuery = getSearchQuery(searchFilters, null);
 
 		FieldSortBuilder sort = new FieldSortBuilder(searchFilters.getSortField())
-				// .unmappedType("String") // currently the only fields we are searching/sorting
-				// on are strings
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
 						: SortOrder.DESC);
 
 		TermsAggregationBuilder categoryAggregationBuilder = AggregationBuilders
 				.terms("by_category")
-				.field("componentType.keyword");
+				.field("componentType.keyword")
+				.size(1000);
+
 		TermsAggregationBuilder tagAggregationBuilder = AggregationBuilders
 				.terms("by_tag")
-				.field("tags.text.keyword");
+				.field("tags.text.keyword")
+				.size(10000);
+
 		TermsAggregationBuilder orgAggregationBuilder = AggregationBuilders
 				.terms("by_organization")
-				.field("organization.keyword");
+				.field("organization.keyword")
+				.size(10000);
+
 		TermsAggregationBuilder attributeAggregationBuilder = AggregationBuilders
 				.terms("by_attribute")
-				.field("attributes.type.keyword");
-
+				.field("attributes.type.keyword")
+				.size(10000);
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-			.query(esQuery)
-			.from(0)
-			.from((searchFilters.getPage() -1) * searchFilters.getPageSize())
-			.size(maxSearchResults)
-			.sort(sort)
-			.aggregation(categoryAggregationBuilder)
-			.aggregation(tagAggregationBuilder)
-			.aggregation(orgAggregationBuilder)
-			.aggregation(attributeAggregationBuilder);
+				.query(esQuery)
+				.from(0)
+				.from((searchFilters.getPage() -1) * searchFilters.getPageSize())
+				.size(maxSearchResults)
+				.sort(sort)
+				.aggregation(categoryAggregationBuilder)
+				.aggregation(tagAggregationBuilder)
+				.aggregation(orgAggregationBuilder)
+				.aggregation(attributeAggregationBuilder);
 
-		SearchRequest searchRequest = new SearchRequest(INDEX)
-			.source(searchSourceBuilder);
+		// See https://discuss.elastic.co/t/composite-aggregation-query-fails-on-elasticsearch-6-3-2/164542
+
+		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
 
 		SearchResponse response;
 		try (ElasticSearchClient client = singleton.getClient()) {
