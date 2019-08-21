@@ -25,7 +25,6 @@ limitations under the License.
 <%@ include file="workPlan.css.jsp" %>
 <%@ include file="submissionComments.css.jsp" %>
 <%@ include file="workPlanView.css.jsp" %>
-<%@ include file="branding.css.jsp" %>
 
 
 @media print {
@@ -593,9 +592,9 @@ table.confluenceTable td.numberingColumn {
 input::placeholder{
     opacity: 0.5;
 }
-input:-ms-input5placeholder{
+input:-ms-input-placeholder{
     opacity: 0.5;
 }
-input::-ms-inpu5-placeholder{
+input::-ms-input-placeholder{
     opactiy: 0.5;
 }
