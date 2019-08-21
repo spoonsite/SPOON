@@ -587,3 +587,15 @@ table.confluenceTable td.numberingColumn {
 .red {
     color: #F44;
 }
+
+/* placeholder text is faded. 
+	older browser support included*/
+input::placeholder{
+    opacity: 0.5;
+}
+input:-ms-input5placeholder{
+    opacity: 0.5;
+}
+input::-ms-inpu5-placeholder{
+    opactiy: 0.5;
+}
