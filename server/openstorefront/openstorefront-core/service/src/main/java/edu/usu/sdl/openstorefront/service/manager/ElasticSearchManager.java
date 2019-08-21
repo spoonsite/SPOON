@@ -83,7 +83,9 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.composite.CompositeAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.composite.CompositeValuesSourceBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -361,9 +363,17 @@ public class ElasticSearchManager
 				.field("organization.keyword")
 				.size(10000);
 
-		TermsAggregationBuilder attributeAggregationBuilder = AggregationBuilders
-				.terms("by_attribute")
-				.field("attributes.type.keyword")
+		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
+				.topHits("name")
+				// .fetchSource(true)
+				.docValueField("attributes")
+				.size(10);
+
+		TermsAggregationBuilder attributeLabelAggregationBuilder = AggregationBuilders
+				.terms("by_attribute_label")
+				.field("attributes.label.keyword")
+				// .
+				.subAggregation(topHitsAggregationBuilder)
 				.size(10000);
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
@@ -375,7 +385,7 @@ public class ElasticSearchManager
 				.aggregation(categoryAggregationBuilder)
 				.aggregation(tagAggregationBuilder)
 				.aggregation(orgAggregationBuilder)
-				.aggregation(attributeAggregationBuilder);
+				.aggregation(attributeLabelAggregationBuilder);
 
 		// See https://discuss.elastic.co/t/composite-aggregation-query-fails-on-elasticsearch-6-3-2/164542
 
@@ -390,54 +400,6 @@ public class ElasticSearchManager
 		}
 
 		return response;
-
-
-		/**************BEGIN AGGREGATIONS*************/
-		
-		// searchSourceBuilder = new SearchSourceBuilder();
-		// TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("by_organization").field("organization.keyword");
-		// termsAggregationBuilder = AggregationBuilders.terms("by_componentType").field("componentType.keyword");
-		// termsAggregationBuilder = AggregationBuilders.terms("by_attributes").field("attributes.type.keyword");
-		// termsAggregationBuilder = AggregationBuilders.terms("by_attributes").field("attributes.label.keyword");
-		// termsAggregationBuilder = AggregationBuilders.terms("by_tags").field("tags.text.keyword");
-		// searchSourceBuilder.aggregation(termsAggregationBuilder);
-		// searchRequest.source(searchSourceBuilder);
-		// request.add(searchRequest);
-
-		// searchSourceBuilder = new SearchSourceBuilder();
-		// TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("by_organization").field("organization.keyword");
-		// termsAggregationBuilder = AggregationBuilders.terms("by_componentType").field("componentType.keyword");
-		
-		// searchSourceBuilder.aggregation(AggregationBuilders.terms("by_organization").field("organization.keyword"));
-		// searchSourceBuilder.aggregation(AggregationBuilders.terms("by_componentType").field("componentType.keyword"));
-
-		// searchSourceBuilder = new SearchSourceBuilder();
-		// termsAggregationBuilder = AggregationBuilders.terms("by_componentType").field("componentType.keyword");
-		// termsAggregationBuilder.subAggregation(aggregation)
-		// searchSourceBuilder.aggregation(termsAggregationBuilder);
-		// searchRequest.source(searchSourceBuilder);
-		// request.add(searchRequest);
-
-		// searchSourceBuilder = new SearchSourceBuilder();
-		// termsAggregationBuilder = AggregationBuilders.terms("by_tags").field("tags.text.keyword");
-		// searchSourceBuilder.aggregation(termsAggregationBuilder);
-		// searchRequest.source(searchSourceBuilder);
-		// request.add(searchRequest);
-
-		// searchSourceBuilder = new SearchSourceBuilder();
-		// termsAggregationBuilder = AggregationBuilders.terms("by_attributes").field("attributes.type.keyword");
-		// searchSourceBuilder.aggregation(termsAggregationBuilder);
-		// searchRequest.source(searchSourceBuilder);
-		// request.add(searchRequest);
-
-		// searchSourceBuilder = new SearchSourceBuilder();
-		// termsAggregationBuilder = AggregationBuilders.terms("by_attributes").field("attributes.label.keyword");
-		// searchSourceBuilder.aggregation(termsAggregationBuilder);
-		// searchRequest.source(searchSourceBuilder);
-		// request.add(searchRequest);
-
-		/**************END AGGREGATIONS*************/
-
 	}
 
 	/**

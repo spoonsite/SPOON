@@ -57,13 +57,13 @@
           multi-line
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="removeComponent(data.item.componentType)" >
-              <v-avatar class="grey lighten-1">{{ data.item.count }}</v-avatar>
-              {{ data.item.componentTypeDescription}}
+            <v-chip close small @input="removeComponent(data.item.key)" >
+              <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
+              {{ data.item.label}}
             </v-chip>
           </template>
           <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.componentTypeDescription}}</v-list-tile-title></v-list-tile-content>
+            <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.label}}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-select>
         <v-checkbox class="ma-0" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
@@ -424,9 +424,20 @@ export default {
     },
     loadAttributes (attributes) {
       this.searchResultsAttributes = this.$jsonparse(attributes)
+      console.log(this.searchResultsAttributes)
       // initialize the attributes
       var keys = Object.keys(this.searchResultsAttributes)
       this.attributeKeys = keys.slice(0, 10)
+      console.log(this.attributeKeys)
+    },
+    getCompTypeLabels(entryTypes){
+      // This gets the labels for each of the entry types by using the codes return from request
+      entryTypes.forEach(entryType => {
+        entryType['label'] = this.$store.state.componentTypeList.find(element => {
+          return entryType.key == element.componentType
+        }).parentLabel
+      })
+      this.componentsList = entryTypes
     },
     filterAttributeKeys () {
     },
@@ -474,21 +485,21 @@ export default {
             searchFilters
         ).then(response => {
 
+          console.log(response)
+
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
-
-          // Tags List
           that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
-          console.log(response.data.aggregations['sterms#by_tag'].buckets)
 
-          // Component Type List
-          // that.componentsList = response.data.aggregations['sterms#by_category'].buckets
-          // console.log(response.data.aggregations['sterms#by_category'].buckets)
+          var entryTypes = response.data.aggregations['sterms#by_category'].buckets
+          this.getCompTypeLabels(entryTypes)
 
           // Attributes List
           // that.organizationsList = response.data.aggregations['sterms#by_attribute'].buckets
-          // console.log(response.data.aggregations['sterms#by_attribute'].buckets)
+          // console.log(response.data.aggregations['sterms#by_attribute_type'].buckets)
+          // console.log(response.data.aggregations['sterms#by_attribute_label'].buckets)
+          that.searchQueryIsDirty = false
         }).catch(err => console.log(err))
 
       let searchElements = [
@@ -575,7 +586,7 @@ export default {
           // that.organizationsList = _.sortBy(response.data.meta.resultOrganizationStats, [function (o) { return o.organization }])
           // that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel }])
           // this may not return full list of all components
-          that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription }])
+          // that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription }])
           that.searchQueryIsDirty = false
           this.loadAttributes(response.data.meta.resultAttributeStats)
         })
