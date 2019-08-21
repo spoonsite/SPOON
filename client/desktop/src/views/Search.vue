@@ -14,6 +14,9 @@
         <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
         <input type="text" value="https://spoonsite.com" ref="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
       </div>
+      <div>
+        <v-btn @click="showComparison = !showComparison" small fab icon><v-icon>fas fa-</v-icon></v-btn>
+      </div>
     </div>
 
     <div v-if="showOptions || showFilters" class="close-btn">
@@ -302,6 +305,20 @@
         </div>
       </div>
     </div><!-- Search Results -->
+      <!-- Comparison Table Dialog -->
+      <v-dialog
+        v-model="showComparison"
+        width="500">
+
+          <v-card>
+            <v-card-title>Title</v-card-title>
+            <v-card-text>Text</v-card-text>
+            <v-card-actions>
+              <v-btn @click="!showComparison">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+      </v-dialog>
+      <!-- Comparison Table Dialog -->
   </div>
 
   <!-- Pagination -->
@@ -669,6 +686,7 @@ export default {
       showFilters: false,
       showOptions: false,
       showHelp: false,
+      showComparison: false,
       searchQuery: '',
       attributeQuery: '',
       attributeKeys: [],
