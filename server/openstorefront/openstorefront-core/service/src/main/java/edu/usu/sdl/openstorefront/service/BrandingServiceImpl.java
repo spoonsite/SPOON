@@ -157,10 +157,6 @@ public class BrandingServiceImpl
 					branding.setFeedbackHandler(FeedbackHandleType.JIRA);
 				}
 
-				if (branding.getDisclaimerMessage() == null){
-					branding.setDisclaimerMessage("Disclaimer: This organization provides no guarantees for the validity of the data provided.");
-				}
-
 				//Colors
 				if (branding.getPrimaryColor() == null) {
 					branding.setPrimaryColor("#441e60"); //#1a0227
@@ -226,7 +222,7 @@ public class BrandingServiceImpl
 				branding.setActiveStatus(Branding.INACTIVE_STATUS);
 			}
 			branding.populateBaseUpdateFields();
-			persistenceService.persist(branding);
+			getPersistenceService().persist(branding);
 		}
 		OSFCacheManager.getApplicationCache().remove(CURRENT_BRANDING);
 	}
@@ -244,15 +240,15 @@ public class BrandingServiceImpl
 	{
 		Objects.requireNonNull(branding);
 
-		Branding brandingExisting = persistenceService.findById(Branding.class, branding.getBrandingId());
+		Branding brandingExisting = getPersistenceService().findById(Branding.class, branding.getBrandingId());
 		if (brandingExisting != null) {
 			brandingExisting.updateFields(branding);
-			branding = persistenceService.persist(brandingExisting);
+			branding = getPersistenceService().persist(brandingExisting);
 		} else {
-			branding.setBrandingId(persistenceService.generateId());
+			branding.setBrandingId(getPersistenceService().generateId());
 			branding.populateBaseCreateFields();
 			branding.setActiveStatus(Branding.INACTIVE_STATUS);
-			branding = persistenceService.persist(branding);
+			branding = getPersistenceService().persist(branding);
 		}
 		OSFCacheManager.getApplicationCache().remove(CURRENT_BRANDING);
 
@@ -262,10 +258,10 @@ public class BrandingServiceImpl
 	@Override
 	public void deleteBranding(String brandingId)
 	{
-		Branding branding = persistenceService.findById(Branding.class, brandingId);
+		Branding branding = getPersistenceService().findById(Branding.class, brandingId);
 
 		if (branding != null) {
-			persistenceService.delete(branding);
+			getPersistenceService().delete(branding);
 		}
 		OSFCacheManager.getApplicationCache().remove(CURRENT_BRANDING);
 	}

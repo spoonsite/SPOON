@@ -62,6 +62,9 @@ public abstract class StandardEntity<T>
 	public static final String FIELD_ACTIVE_STATUS = "activeStatus";
 	public static final String FIELD_CREATE_DTS = "createDts";
 	public static final String FIELD_UPDATE_DTS = "updateDts";
+	public static final String FIELD_CREATE_USER = "createUser";
+	public static final String FIELD_UPDATE_USER = "updateUser";
+	public static final String FIELD_DATA_SENSITIVITY = "dataSensitivity";
 
 	@Sanitize({TextSanitizer.class, BlankSantizer.class})
 	@ConsumeField
@@ -196,6 +199,7 @@ public abstract class StandardEntity<T>
 	 *
 	 * @return Newly Saved or Updated entity
 	 */
+	@SuppressWarnings("unchecked")
 	public T save()
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();
@@ -220,6 +224,7 @@ public abstract class StandardEntity<T>
 		return existing;
 	}
 
+	@SuppressWarnings("unchecked")
 	private T getDBEntity()
 	{
 		Service service = ServiceProxyFactory.getServiceProxy();

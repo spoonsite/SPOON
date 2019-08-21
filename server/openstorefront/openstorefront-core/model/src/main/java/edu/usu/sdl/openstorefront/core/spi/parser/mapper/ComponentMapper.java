@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
-import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryErrorType;
@@ -233,15 +232,9 @@ public class ComponentMapper
 			entity = new ComponentTag();
 			entityMap.put(fieldMapper.getEntityClass().getName(), entity);
 			componentAll.getTags().add((ComponentTag) entity);
-		} else if (ComponentMetadata.class.getName().equals(fieldMapper.getEntityClass().getName())) {
-			entity = new ComponentMetadata();
-			entityMap.put(fieldMapper.getEntityClass().getName(), entity);
-			componentAll.getMetadata().add((ComponentMetadata) entity);
-
 		} else if (ComponentAttribute.class.getName().equals(fieldMapper.getEntityClass().getName())
 				|| ComponentAttributePk.class.getName().equals(fieldMapper.getEntityClass().getName())) {
 			//create everytime
-
 			ComponentAttribute componentAttribute = new ComponentAttribute();
 			entity = new ComponentAttributePk();
 			componentAttribute.setComponentAttributePk((ComponentAttributePk) entity);

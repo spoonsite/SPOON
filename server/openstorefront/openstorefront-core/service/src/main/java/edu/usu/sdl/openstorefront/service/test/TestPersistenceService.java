@@ -264,12 +264,6 @@ public class TestPersistenceService implements PersistenceService
 	}
 
 	@Override
-	public <T> T find(Class<T> entityClass, Object primaryKey)
-	{
-		throw new UnsupportedOperationException("Not supported yet. find(Class<T> entityClass, Object primaryKey)");
-	}
-
-	@Override
 	public boolean isManaged(BaseEntity baseEntity)
 	{
 		throw new UnsupportedOperationException("Not supported yet. isManaged(BaseEntity baseEntity)");
@@ -285,18 +279,6 @@ public class TestPersistenceService implements PersistenceService
 	public <T> int runDbCommand(String query, Map<String, Object> queryParams)
 	{
 		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public <T> T saveNonBaseEntity(T entity)
-	{
-		throw new UnsupportedOperationException("Not supported yet. saveNonBaseEntity(T entity)");
-	}
-
-	@Override
-	public <T extends BaseEntity> T saveNonPkEntity(T entity)
-	{
-		throw new UnsupportedOperationException("Not supported yet. saveNonPkEntity(T entity)");
 	}
 
 	@Override

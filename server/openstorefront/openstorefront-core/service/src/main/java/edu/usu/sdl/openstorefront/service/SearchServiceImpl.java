@@ -15,17 +15,15 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.SearchService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
+import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
@@ -46,7 +44,6 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
-import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
@@ -60,7 +57,6 @@ import edu.usu.sdl.openstorefront.service.search.EntryTypeSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.EvaluationScoreSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.MetaDataSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.QuestionResponseSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.QuestionSearchHandler;
 import edu.usu.sdl.openstorefront.service.search.ReviewProConSearchHandler;
@@ -101,15 +97,13 @@ public class SearchServiceImpl
 	@Override
 	public List<ComponentSearchView> getAll()
 	{
-		ServiceProxy service = new ServiceProxy();
 		List<ComponentSearchView> list = new ArrayList<>();
-		List<ComponentSearchView> components = service.getComponentService().getComponents();
+		List<ComponentSearchView> components = getComponentService().getComponents();
 		list.addAll(components);
 		return list;
 	}
 
-	@Override
-	public SearchOptions getGlobalSearchOptions()
+	public SearchOptions getSearchOptions()
 	{
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
@@ -119,112 +113,16 @@ public class SearchServiceImpl
 		if (searchOptions == null) {
 			// Return the default.
 			searchOptions = new SearchOptions();
-			searchOptions.setUsername(null);
 			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
 			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
 			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
-			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
-			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
 		}
 		return searchOptions;
 	}
 
-	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions)
+	public void saveSearchOptions(SearchOptions searchOptions)
 	{
-
-		OSFCacheManager.getSearchCache().removeAll();
-
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-		SearchOptions existing = searchOptionsExample.findProxy();
-
-		if (existing != null) {
-			searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-			existing.updateFields(searchOptions);
-			persistenceService.persist(existing);
-		} else {
-			searchOptions.setSearchOptionsId(persistenceService.generateId());
-			searchOptions.setGlobalFlag(Boolean.TRUE);
-			searchOptions.setUsername(null);
-			searchOptions.setDefaultSearchOptions();
-			existing = persistenceService.persist(searchOptions);
-		}
-		return existing;
-	}
-
-	public SearchOptions getUserSearchOptions()
-	{
-
-		String username = SecurityUtil.getCurrentUserName();
-
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
-		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		searchOptionsExample.setUsername(username);
-		SearchOptions searchOptions = searchOptionsExample.find();
-
-		if (searchOptions == null) {
-			// Return the default.
-			searchOptions = new SearchOptions();
-			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
-			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
-			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
-			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
-			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
-		}
-		return searchOptions;
-	}
-
-	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions)
-	{
-
-		Boolean forceCacheClear = false;
-		String username = SecurityUtil.getCurrentUserName();
-
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		searchOptionsExample.setUsername(username);
-		SearchOptions existing = searchOptionsExample.findProxy();
-
-		if (existing == null) {
-			forceCacheClear = true;
-			searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-			searchOptionsExample.setUsername(null);
-			existing = searchOptionsExample.findProxy();
-
-			if (existing == null) {
-				existing = new SearchOptions();
-				existing.setSearchOptionsId(persistenceService.generateId());
-				existing.setDefaultSearchOptions();
-			}
-		}
-
-		// If the search options changed clear the cache
-		if (!existing.compare(searchOptions) || forceCacheClear) {
-			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
-			if (userSearchElementResult != null) {
-				@SuppressWarnings("unchecked")
-				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
-
-				if (listOfKeys != null) {
-					for (String key : listOfKeys) {
-						OSFCacheManager.getSearchCache().remove(key);
-					}
-				}
-				Element afterDeletedKeys = new Element(username, null);
-				OSFCacheManager.getUserSearchCache().put(afterDeletedKeys);
-			}
-		}
-
-		forceCacheClear = false;
-
-		existing.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		existing.setUsername(username);
-		existing.setGlobalFlag(Boolean.FALSE);
-		existing.updateFields(searchOptions);
-		persistenceService.persist(existing);
-
-		return existing;
+		searchOptions.save();
 	}
 
 	@Override
@@ -243,15 +141,6 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public void indexFullComponents(List<ComponentAll> componentAlls)
-	{
-		if (!componentAlls.isEmpty()) {
-			SearchServerManager.getInstance().getSearchServer().indexFullComponents(componentAlls);
-			OSFCacheManager.getSearchCache().removeAll();
-		}
-	}
-
-	@Override
 	public List<ComponentSearchView> architectureSearch(AttributeCodePk pk, FilterQueryParams filter)
 	{
 		List<ComponentSearchView> views = new ArrayList<>();
@@ -262,9 +151,9 @@ public class SearchServiceImpl
 		attributeCodeExample.setAttributeCodePk(attributeCodePkExample);
 		attributeCodeExample.setArchitectureCode(pk.getAttributeCode());
 
-		AttributeCode attributeCode = persistenceService.queryOneByExample(attributeCodeExample);
+		AttributeCode attributeCode = getPersistenceService().queryOneByExample(attributeCodeExample);
 		if (attributeCode == null) {
-			attributeCode = persistenceService.findById(AttributeCode.class, pk);
+			attributeCode = getPersistenceService().findById(AttributeCode.class, pk);
 		}
 
 		AttributeCode attributeExample = new AttributeCode();
@@ -281,27 +170,36 @@ public class SearchServiceImpl
 			attributeCodeLikeExample.setAttributeCodePk(attributePkLikeExample);
 		}
 
-		QueryByExample queryByExample = new QueryByExample(attributeExample);
+		QueryByExample<AttributeCode> queryByExample = new QueryByExample<>(attributeExample);
 
 		//check for like skip
 		if (SPECIAL_ARCH_SEARCH_CODE.equals(pk.getAttributeCode()) == false) {
 			queryByExample.setLikeExample(attributeCodeLikeExample);
 		}
 
-		List<AttributeCode> attributeCodes = persistenceService.queryByExample(queryByExample);
-		List<String> ids = new ArrayList();
+		List<AttributeCode> attributeCodes = getPersistenceService().queryByExample(queryByExample);
+		List<String> ids = new ArrayList<>();
 		attributeCodes.forEach(code -> {
 			ids.add(code.getAttributeCodePk().getAttributeCode());
 		});
 
 		if (ids.isEmpty() == false) {
 
-			String componentAttributeQuery = "select from " + ComponentAttribute.class.getSimpleName() + " where componentAttributePk.attributeType = :attributeType and componentAttributePk.attributeCode IN :attributeCodeIdListParam";
+			ComponentAttribute componentAttributeExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
+			componentAttributePk.setAttributeType(pk.getAttributeType());
+			componentAttributeExample.setComponentAttributePk(componentAttributePk);
 
-			Map<String, Object> params = new HashMap<>();
-			params.put("attributeType", pk.getAttributeType());
-			params.put("attributeCodeIdListParam", ids);
-			List<ComponentAttribute> componentAttributes = persistenceService.query(componentAttributeQuery, params);
+			ComponentAttribute componentAttributeInExample = new ComponentAttribute();
+			ComponentAttributePk componentAttributeInPk = new ComponentAttributePk();
+			componentAttributePk.setAttributeCode(QueryByExample.STRING_FLAG);
+			componentAttributeInExample.setComponentAttributePk(componentAttributeInPk);
+
+			QueryByExample<ComponentAttribute> queryChildCodes = new QueryByExample<>(componentAttributeExample);
+			queryChildCodes.setInExample(componentAttributeInExample);
+			queryChildCodes.getInExampleOption().getParameterValues().addAll(ids);
+
+			List<ComponentAttribute> componentAttributes = getPersistenceService().queryByExample(queryChildCodes);
 			Set<String> uniqueComponents = new HashSet<>();
 			componentAttributes.forEach(componentAttribute -> {
 				uniqueComponents.add(componentAttribute.getComponentId());
@@ -348,20 +246,12 @@ public class SearchServiceImpl
 
 		AdvanceSearchResult searchResult = new AdvanceSearchResult();
 
-		// getting cached result
-		String username = SecurityUtil.getCurrentUserName();
-		String key = searchModel.getUserSessionKey() + searchModel.searchKey();
-		Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
-
-		if (userSearchElementResult != null) {
-			@SuppressWarnings("unchecked")
-			List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
-			if (listOfKeys != null && listOfKeys.contains(key)) {
-				Element cachedSearchResult = OSFCacheManager.getSearchCache().get(key);
-				if (cachedSearchResult != null) {
-					searchResult = (AdvanceSearchResult) cachedSearchResult.getObjectValue();
-					return searchResult;
-				}
+		//each user may get different results depending on security roles
+		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
+			Element element = OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
+			if (element != null) {
+				searchResult = (AdvanceSearchResult) element.getObjectValue();
+				return searchResult;
 			}
 		}
 
@@ -400,9 +290,6 @@ public class SearchServiceImpl
 				case INDEX:
 					indexSearches.addAll(searchElements);
 					handlers.add(new IndexSearchHandler(searchElements));
-					break;
-				case METADATA:
-					handlers.add(new MetaDataSearchHandler(searchElements));
 					break;
 				case REVIEW:
 					handlers.add(new ReviewSearchHandler(searchElements));
@@ -458,42 +345,15 @@ public class SearchServiceImpl
 
 			//get intermediate Results
 			if (!masterResults.isEmpty()) {
-				String dataFilterRestriction = getFilterEngine().queryComponentRestriction();
-				if (StringUtils.isNotBlank(dataFilterRestriction)) {
-					dataFilterRestriction += " and ";
-				}
-
-				String query = "select componentId, componentType, name, lastUpdateDts, activeStatus, approvalState from "
-						+ Component.class.getSimpleName()
-						+ " where "
-						+ dataFilterRestriction
-						+ " componentId in :idList";
-
-				Map<String, Object> parameterMap = new HashMap<>();
-				parameterMap.put("idList", masterResults);
-				List<ODocument> results = persistenceService.query(query, parameterMap);
-
-				Map<String, ComponentSearchView> resultMap = new HashMap<>();
-				for (ODocument doc : results) {
-					if (Component.ACTIVE_STATUS.equals(doc.field("activeStatus"))
-							&& ApprovalStatus.APPROVED.equals(doc.field("approvalState"))) {
-						ComponentSearchView view = new ComponentSearchView();
-						view.setComponentId(doc.field("componentId"));
-						view.setName(doc.field("name"));
-						view.setComponentType(doc.field("componentType"));
-						view.setLastActivityDts(doc.field("lastUpdateDts"));
-						resultMap.put(view.getComponentId(), view);
-					}
-				}
+				Map<String, ComponentSearchView> resultMap = getRepoFactory().getComponentRepo().getIntermidateSearchResults(masterResults);
 				searchResult.setTotalNumber(resultMap.size());
 
 				//get review average
-				query = "select componentId, avg(rating) as rating from " + ComponentReview.class.getSimpleName() + " group by componentId ";
-				List<ODocument> resultsRatings = persistenceService.query(query, new HashMap<>());
-				for (ODocument doc : resultsRatings) {
-					ComponentSearchView view = resultMap.get(doc.field("componentId").toString());
+				Map<String, Integer> ratingsMap = getRepoFactory().getComponentRepo().findAverageUserRatingForComponents();
+				for (String componentId : ratingsMap.keySet()) {
+					ComponentSearchView view = resultMap.get(componentId);
 					if (view != null) {
-						view.setAverageRating(doc.field("rating"));
+						view.setAverageRating(ratingsMap.get(componentId));
 					}
 				}
 
@@ -519,10 +379,7 @@ public class SearchServiceImpl
 
 				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
 				searchResult.getMeta().getResultTagStats().addAll(tagStats);
-				searchResult.getMeta().setResultAttributeStats(attributeStats);
-				// MERGE CONFLICT BELOW
-				// not sure what the difference is
-				//searchResult.getMeta().getResultAttributeStats().addAll(attributeStats);
+				//searchResult.getMeta().getResultAttributeStats().addAll(attributeStats); // TODO: @Ryan Frazier broken on merge
 
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 
@@ -582,40 +439,9 @@ public class SearchServiceImpl
 		}
 		searchResult.setValidationResult(validationResultMain);
 
-		// Adding searchResult to the search caches
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
-
-			username = SecurityUtil.getCurrentUserName();
-			key = searchModel.getUserSessionKey() + searchModel.searchKey();
-			userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
-
-			if (userSearchElementResult != null) {
-
-				@SuppressWarnings("unchecked")
-				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
-				if (listOfKeys == null) {
-					listOfKeys = new ArrayList<String>();
-				}
-				listOfKeys.add(key);
-				Element searchElement = new Element(key, searchResult);
-				OSFCacheManager.getSearchCache().put(searchElement);
-
-				Element userSearchElement = new Element(username, listOfKeys);
-				OSFCacheManager.getUserSearchCache().put(userSearchElement);
-			} else {
-
-				String newKey = searchModel.getUserSessionKey() + searchModel.searchKey();
-				// add username in cache and create list and put that in as key
-				List<String> newListOfKeys = new ArrayList<String>();
-				newListOfKeys.add(newKey);
-
-				Element newUserSearchElement = new Element(username, newListOfKeys);
-				OSFCacheManager.getUserSearchCache().put(newUserSearchElement);
-
-				// add result to search cache
-				Element searchElement = new Element(newKey, searchResult);
-				OSFCacheManager.getSearchCache().put(searchElement);
-			}
+			Element element = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
+			OSFCacheManager.getSearchCache().put(element);
 		}
 		return searchResult;
 	}
@@ -660,16 +486,16 @@ public class SearchServiceImpl
 	{
 		Objects.requireNonNull(systemSearch);
 
-		SystemSearch existing = persistenceService.findById(SystemSearch.class, systemSearch.getSearchId());
+		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, systemSearch.getSearchId());
 		if (existing != null) {
 			existing.updateFields(systemSearch);
-			systemSearch = persistenceService.persist(existing);
+			systemSearch = getPersistenceService().persist(existing);
 		} else {
 			if (StringUtil.isBlank(systemSearch.getSearchId())) {
-				systemSearch.setSearchId(persistenceService.generateId());
+				systemSearch.setSearchId(getPersistenceService().generateId());
 			}
 			systemSearch.populateBaseCreateFields();
-			systemSearch = persistenceService.persist(systemSearch);
+			systemSearch = getPersistenceService().persist(systemSearch);
 		}
 		return systemSearch;
 	}
@@ -684,11 +510,11 @@ public class SearchServiceImpl
 	{
 		Objects.requireNonNull(searchId);
 
-		SystemSearch existing = persistenceService.findById(SystemSearch.class, searchId);
+		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, searchId);
 		if (existing != null) {
 			existing.setActiveStatus(newStatus);
 			existing.populateBaseUpdateFields();
-			persistenceService.persist(existing);
+			getPersistenceService().persist(existing);
 		} else {
 			throw new OpenStorefrontRuntimeException("Search not found", "Check Id: " + searchId);
 		}
@@ -698,6 +524,31 @@ public class SearchServiceImpl
 	public void activateSearch(String searchId)
 	{
 		toggleStatusOnSearch(searchId, SystemSearch.ACTIVE_STATUS);
+	}
+
+	@Override
+	public SearchOptions getGlobalSearchOptions() {
+		return null;
+	}
+
+	@Override
+	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions) {
+		return null;
+	}
+
+	@Override
+	public SearchOptions getUserSearchOptions() {
+		return null;
+	}
+
+	@Override
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions) {
+		return null;
+	}
+
+	@Override
+	public void indexFullComponents(List<ComponentAll> componentAlls) {
+
 	}
 
 }

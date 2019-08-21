@@ -74,8 +74,6 @@ import edu.usu.sdl.openstorefront.core.view.TagView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.io.export.DescribeExport;
-import edu.usu.sdl.openstorefront.service.io.export.Exporter;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
@@ -491,34 +489,6 @@ public abstract class GeneralComponentResourceExt
 			throw new OpenStorefrontRuntimeException("Unable to export components.", io);
 		}
 		return archiveName;
-	}
-
-	@POST
-	@APIDescription("Exports a set of components. In describe record format.")
-	@RequireSecurity(SecurityPermission.ADMIN_ENTRY_EXPORT)
-	@Produces({MediaType.WILDCARD})
-	@DataType(ComponentAll.class)
-	@Path("/export/describe")
-	public Response getComponentExportDescribe(
-			@FormParam("id")
-			@RequiredParam List<String> ids
-	)
-	{
-		List<ComponentAll> fullComponents = new ArrayList<>();
-		for (String componentId : ids) {
-			ComponentAll componentAll = service.getComponentService().getFullComponent(componentId);
-			fullComponents.add(componentAll);
-		}
-
-		Exporter exporter = new DescribeExport();
-		File exportFile = exporter.export(fullComponents);
-
-		Response.ResponseBuilder response = Response.ok((StreamingOutput) (OutputStream output) -> {
-			Files.copy(exportFile.toPath(), output);
-		});
-		response.header(HEADER_CONTENT_TYPE, "application/zip");
-		response.header(HEADER_CONTENT_DISPOSITION, "attachment; filename=\"ExportedComponents.zip\"");
-		return response.build();
 	}
 
 	@GET

@@ -33,6 +33,10 @@ public class NotificationEvent
 		extends StandardEntity<NotificationEvent>
 {
 
+	public static final String FIELD_EVENTID = "eventId";
+	public static final String FIELD_USERNAME = "username";
+	public static final String FIELD_ROLEGROUP = "roleGroup";
+
 	@PK(generated = true)
 	@NotNull
 	private String eventId;
