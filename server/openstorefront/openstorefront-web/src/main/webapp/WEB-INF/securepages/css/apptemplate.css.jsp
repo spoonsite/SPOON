@@ -25,7 +25,6 @@ limitations under the License.
 <%@ include file="workPlan.css.jsp" %>
 <%@ include file="submissionComments.css.jsp" %>
 <%@ include file="workPlanView.css.jsp" %>
-<%@ include file="branding.css.jsp" %>
 
 
 @media print {
