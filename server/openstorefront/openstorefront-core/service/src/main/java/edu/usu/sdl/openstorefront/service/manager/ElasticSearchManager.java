@@ -36,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.SearchFilters;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
@@ -79,6 +80,12 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.composite.CompositeAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.composite.CompositeValuesSourceBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -232,8 +239,6 @@ public class ElasticSearchManager
 				} catch (ElasticsearchException e){
 					LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 				}
-			} else {
-				LOG.log(Level.INFO, "[" + INDEX + "] already exists.");
 			}
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
@@ -301,8 +306,8 @@ public class ElasticSearchManager
 	/**
 	 * Parses the elasticsearch return object into a readable form
 	 * 
-	 * @param SearchQuery object holding the search query
-	 * @param FilterQueryParams filters to apply to the returned elasticsearch result
+	 * @param searchQuery object holding the search query
+	 * @param filter to apply to the returned elasticsearch result
 	 * @return ComponentSearchWrapper 
 	 */
 	@Override
@@ -322,38 +327,117 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * doIndexSearch with no additionalFieldsToReturn
+	 * Version 2 of index search, specifically for Vue frontend usage
 	 * 
-	 * @param query the string from user
-	 * @param FilterQueryParams any additional query filters
-	 * @return IndexSearchResult result from elasticsearch
+	 * @param searchFilters all necessary information needed for search
+	 * @return string of search response
 	 */
 	@Override
-	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
+	public SearchResponse indexSearchV2(SearchFilters searchFilters)
 	{
-		return doIndexSearch(query, filter, null);
+		int maxSearchResults = 10000;
+		if (searchFilters.getPageSize() < maxSearchResults) {
+			maxSearchResults = searchFilters.getPageSize();
+		}
+
+		searchFilters.setQuery("*"+searchFilters.getQuery()+"*");
+
+		BoolQueryBuilder esQuery = getSearchQuery(searchFilters, null);
+
+		FieldSortBuilder sort = new FieldSortBuilder(searchFilters.getSortField())
+				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
+						: SortOrder.DESC);
+
+		TermsAggregationBuilder categoryAggregationBuilder = AggregationBuilders
+				.terms("by_category")
+				.field("componentType.keyword")
+				.size(1000);
+
+		TermsAggregationBuilder tagAggregationBuilder = AggregationBuilders
+				.terms("by_tag")
+				.field("tags.text.keyword")
+				.size(10000);
+
+		TermsAggregationBuilder orgAggregationBuilder = AggregationBuilders
+				.terms("by_organization")
+				.field("organization.keyword")
+				.size(10000);
+
+		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
+				.topHits("name")
+				// .fetchSource(true)
+				.docValueField("attributes")
+				.size(10);
+
+		TermsAggregationBuilder attributeLabelAggregationBuilder = AggregationBuilders
+				.terms("by_attribute_label")
+				.field("attributes.label.keyword")
+				// .
+				.subAggregation(topHitsAggregationBuilder)
+				.size(10000);
+
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+				.query(esQuery)
+				.from(0)
+				.from((searchFilters.getPage() -1) * searchFilters.getPageSize())
+				.size(maxSearchResults)
+				.sort(sort)
+				.aggregation(categoryAggregationBuilder)
+				.aggregation(tagAggregationBuilder)
+				.aggregation(orgAggregationBuilder)
+				.aggregation(attributeLabelAggregationBuilder);
+
+		// See https://discuss.elastic.co/t/composite-aggregation-query-fails-on-elasticsearch-6-3-2/164542
+
+		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
+
+		SearchResponse response;
+		try (ElasticSearchClient client = singleton.getClient()) {
+			response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+			response = new SearchResponse();
+		}
+
+		return response;
 	}
 
-	@Override
-	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] additionalFieldsToReturn)
-	{
-		// look for user search options if none are found use global search options
-		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
-		if (searchOptions == null) {
-			searchOptions = service.getSearchService().getGlobalSearchOptions();
+	/**
+	 * Function for backwards compatibility to old version of search
+	 * for building the query for the search
+	 * 
+	 * @param query the query string from search bar
+	 * @return a BoolQueryBuilder to create the search request from
+	 */
+	public BoolQueryBuilder getSearchQuery(String query){
+		SearchFilters searchFilters = new SearchFilters();
+		searchFilters.setQuery(query);
+		return getSearchQuery(searchFilters, null);
+	}
+
+	/**
+	 * Function to build query for search
+	 * 
+	 * @param searchFilters all info necessary for creating the search request
+	 * @param searchOptions currently not used but will be used in a future implementation
+	 * @return a BoolQueryBuilder to create the search request from
+	 */
+	public BoolQueryBuilder getSearchQuery(SearchFilters searchFilters, SearchOptions searchOptions){
+
+		if(searchOptions == null){
+			searchOptions = service.getSearchService().getUserSearchOptions();
+			if (searchOptions == null) {
+				searchOptions = service.getSearchService().getGlobalSearchOptions();
+			}
 		}
 
-		IndexSearchResult indexSearchResult = new IndexSearchResult();
+		BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
 
 		if (searchOptions.areAllOptionsOff()) {
-			return indexSearchResult;
+			return esQuery;
 		}
 
-		int maxSearchResults = 10000;
-		if (filter.getMax() < maxSearchResults) {
-			maxSearchResults = filter.getMax();
-		}
-
+		String query = searchFilters.getQuery();
 		if (StringUtils.isBlank(query)) {
 			query = "*";
 		}
@@ -417,9 +501,6 @@ public class ElasticSearchManager
 				}
 			}
 		}
-
-		// Initialize ElasticSearch Query
-		BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
 
 		// Check For Remaining Query Items
 		if (queryString.length() > 0) {
@@ -521,18 +602,53 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, phrase));
 			}
 		}
+		
+		return esQuery;
+	} 
+
+	/**
+	 * doIndexSearch with no additionalFieldsToReturn
+	 * 
+	 * @param query the string from user
+	 * @param FilterQueryParams any additional query filters
+	 * @return IndexSearchResult result from elasticsearch
+	 */
+	@Override
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
+	{
+		return doIndexSearch(query, filter, null);
+	}
+
+	/**
+	 * Function for basic search
+	 * 
+	 * @param query the string from search bar
+	 * @param filter fields to filter on
+	 * @param additionalFieldsToReturn other fields to return from search
+	 */
+	@Override
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] additionalFieldsToReturn)
+	{
+
+		IndexSearchResult indexSearchResult = new IndexSearchResult();
+
+		int maxSearchResults = 10000;
+		if (filter.getMax() < maxSearchResults) {
+			maxSearchResults = filter.getMax();
+		}
+
+		BoolQueryBuilder esQuery = getSearchQuery(query);
+
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
-				//.unmappedType("String") // currently the only fields we are searching/sorting on are strings
-				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC : SortOrder.DESC);
+				// .unmappedType("String") // currently the only fields we are searching/sorting
+				// on are strings
+				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC
+						: SortOrder.DESC);
 
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-				.query(esQuery)
-				.from(filter.getOffset())
-				.size(maxSearchResults)
-				.sort(sort);
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().query(esQuery).from(filter.getOffset())
+				.size(maxSearchResults).sort(sort);
 
-		SearchRequest searchRequest = new SearchRequest(INDEX)
-				.source(searchSourceBuilder);
+		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
 
 		try {
 			performIndexSearch(searchRequest, indexSearchResult);

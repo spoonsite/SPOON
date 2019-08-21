@@ -57,13 +57,13 @@
           multi-line
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="removeComponent(data.item.componentType)" >
-              <v-avatar class="grey lighten-1">{{ data.item.count }}</v-avatar>
-              {{ data.item.componentTypeDescription}}
+            <v-chip close small @input="removeComponent(data.item.key)" >
+              <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
+              {{ data.item.label}}
             </v-chip>
           </template>
           <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.componentTypeDescription}}</v-list-tile-title></v-list-tile-content>
+            <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.label}}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-select>
         <v-checkbox class="ma-0" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
@@ -81,13 +81,13 @@
           class="pb-3"
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="deleteTag(data.item.tagLabel)" >
-              <v-avatar class="grey lighten-1">{{ data.item.count }}</v-avatar>
-              {{ data.item.tagLabel}}
+            <v-chip close small @input="deleteTag(data.item.key)" >
+              <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
+              {{ data.item.key}}
             </v-chip>
           </template>
           <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.tagLabel}}</v-list-tile-title></v-list-tile-content>
+            <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.key}}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-select>
         <!-- <v-radio-group label="Tag Search Condition: " v-model="filters.tagCondition">
@@ -103,10 +103,10 @@
           clearable
         >
           <template slot="selection" slot-scope="data">
-            ({{ data.item.count }}) {{ data.item.organization }}
+            ({{ data.item.doc_count }}) {{ data.item.key }}
           </template>
           <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.count }}) {{ data.item.organization }}</v-list-tile-title></v-list-tile-content>
+            <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.key }}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-autocomplete>
         <h3 class="pb-3">Attributes</h3>
@@ -237,12 +237,12 @@
     <div class="px-3">
       <h2 style="text-align: center" class="mb-2">Search Results</h2>
 
-      <p v-if="searchResults.data && searchResults.data.totalNumber === 0">No Search Results</p>
-      <p v-else-if="searchResults.data && !searchQueryIsDirty" class="pl-5 ma-0">
+      <p v-if="totalSearchResults === 0">No Search Results</p>
+      <p v-else-if="searchResults && !searchQueryIsDirty" class="pl-5 ma-0">
         {{ offset + 1 }} -
         {{ totalSearchResults > offset + searchPageSize ? offset + searchPageSize : totalSearchResults }}
         of
-        {{ searchResults.data.totalNumber }} results
+        {{ totalSearchResults }} results
       </p>
 
       <!-- SEARCH RESULTS DATA -->
@@ -263,8 +263,8 @@
         </v-flex>
       </v-layout>
       <div
-        v-else-if="!!searchResults.data"
-        v-for="item in searchResults.data.data"
+        v-else-if="!!searchResults"
+        v-for="item in searchResults"
         :key="item.name"
         class="mt-4 item"
         style="clear: left; display: flex; flex-wrap: nowrap;"
@@ -289,7 +289,7 @@
           </router-link>
           <div
             style="padding-bottom: 1em;"
-            v-if="item.tags.length !== 0"
+            v-if="!!item.tags && item.tags.length !== 0"
           >
             <span
               v-for="tag in item.tags"
@@ -452,9 +452,20 @@ export default {
     },
     loadAttributes (attributes) {
       this.searchResultsAttributes = this.$jsonparse(attributes)
+      console.log(this.searchResultsAttributes)
       // initialize the attributes
       var keys = Object.keys(this.searchResultsAttributes)
       this.attributeKeys = keys.slice(0, 10)
+      console.log(this.attributeKeys)
+    },
+    getCompTypeLabels(entryTypes){
+      // This gets the labels for each of the entry types by using the codes return from request
+      entryTypes.forEach(entryType => {
+        entryType['label'] = this.$store.state.componentTypeList.find(element => {
+          return entryType.key == element.componentType
+        }).parentLabel
+      })
+      this.componentsList = entryTypes
     },
     filterAttributeKeys () {
     },
@@ -464,6 +475,61 @@ export default {
       // sometimes 2 POST requests get sent out together
       if (that.searchQueryIsDirty) return
       that.searchQueryIsDirty = true
+
+      // build search request here
+      var searchFilters = {
+        "query": '',
+        'page': 0,
+        'pageSize': 10,
+        'componentTypes': [],
+        'includeChildren': true,
+        'organization': '',
+        'stringAttributes': [],
+        'tags': [],
+        'sortOrder': '',
+        'sortField': ''
+      }
+
+      searchFilters.query = ( this.searchQuery ? this.searchQuery : searchFilters.query )
+      searchFilters.page = ( this.searchPage ? this.searchPage : searchFilters.page )
+      searchFilters.pageSize = ( this.searchPageSize ? this.searchPageSize : searchFilters.pageSize )
+      searchFilters.componentTypes = ( this.filters.components ? this.filters.components : searchFilters.componentTypes )
+      searchFilters.includeChildren = ( this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren )
+      searchFilters.organization = ( this.filters.organization ? this.filters.organization : searchFilters.organization )
+      // searchFilters.stringAttributes = ( this.filters.attributes ? this.filters.attributes : searchFilters.attributes )
+      searchFilters.tags = ( this.filters.tags ? this.filters.tags : searchFilters.tags )
+      searchFilters.sortField = ( this.searchSortField ? this.searchSortField : searchFilters.sortField )
+      searchFilters.sortOrder = ( this.searchSortOrder ? this.searchSortOrder : searchFilters.sortOrder )
+
+      if (this.filters.attributes) {
+        this.filters.attributes.forEach(attribute => {
+          searchFilters.stringAttributes.push(JSON.parse(attribute))
+        })
+      }
+
+      this.$http
+        .post(
+          '/openstorefront/api/v2/service/search',
+            searchFilters
+        ).then(response => {
+
+          console.log(response)
+
+          that.searchResults = response.data.hits.hits.map(e => e._source)
+          that.totalSearchResults = response.data.hits.total.value
+          that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
+          that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
+
+          var entryTypes = response.data.aggregations['sterms#by_category'].buckets
+          this.getCompTypeLabels(entryTypes)
+
+          // Attributes List
+          // that.organizationsList = response.data.aggregations['sterms#by_attribute'].buckets
+          // console.log(response.data.aggregations['sterms#by_attribute_type'].buckets)
+          // console.log(response.data.aggregations['sterms#by_attribute_label'].buckets)
+          that.searchQueryIsDirty = false
+        }).catch(err => console.log(err))
+
       let searchElements = [
         {
           mergeCondition: 'AND',
@@ -531,6 +597,7 @@ export default {
           }
         })
       }
+
       this.$http
         .post(
           `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
@@ -542,12 +609,12 @@ export default {
           }
         )
         .then(response => {
-          that.searchResults = response
-          that.totalSearchResults = response.data.totalNumber
-          that.organizationsList = _.sortBy(response.data.meta.resultOrganizationStats, [function (o) { return o.organization }])
-          that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel }])
+          // that.searchResults = response
+          // that.totalSearchResults = response.data.totalNumber
+          // that.organizationsList = _.sortBy(response.data.meta.resultOrganizationStats, [function (o) { return o.organization }])
+          // that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel }])
           // this may not return full list of all components
-          that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription }])
+          // that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription }])
           that.searchQueryIsDirty = false
           this.loadAttributes(response.data.meta.resultAttributeStats)
         })
