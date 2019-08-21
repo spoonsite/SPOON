@@ -299,7 +299,7 @@
             </span>
           </div>
           <div>
-            <input type="checkbox" v-model="comparisonList" v-bind:value="item.componentId">
+            <input type="checkbox" v-model="comparisonList" v-bind:value="item">
             <label>Add to Compare</label>
           </div>
         </div>
@@ -308,11 +308,30 @@
       <!-- Comparison Table Dialog -->
       <v-dialog
         v-model="showComparison"
-        width="500">
-
+        fullscreen: true>
           <v-card>
-            <v-card-title>Title</v-card-title>
-            <v-card-text>Text</v-card-text>
+            <v-card-title>Compare</v-card-title>
+            <v-card-text>
+              <table>
+                <thead>
+                  <tr>
+                    <th v-for="component in comparisonList"
+                    :key="component.name">
+                      {{component.name}}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="component in comparisonList"
+                  :key="component.name">
+                    <td v-for="attribute in component.attributes"
+                    :key="attribute.name"> {{attribute.typeLabel}}</td>
+                    <td v-for="attribute in component.attributes"
+                    :key="attribute.name"> {{attribute.label}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </v-card-text>
             <v-card-actions>
               <v-btn @click="!showComparison">Close</v-btn>
             </v-card-actions>
