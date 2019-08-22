@@ -373,9 +373,9 @@ public class ElasticSearchManager
 		String [] include = new String[]{"attributes"};
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
-				.topHits("name")
+				.topHits("attribute")
 				.fetchSource(include, null)
-				.size(1);
+				.size(100);
 
 		// Gets list of all attribute labels from search as well as all the whole attribute object
 		TermsAggregationBuilder attributeLabelAggregationBuilder = AggregationBuilders

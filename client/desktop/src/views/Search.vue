@@ -424,52 +424,47 @@ export default {
     },
     loadAttributes (attributes) {
       this.searchResultsAttributes = this.$jsonparse(attributes)
-      console.log(this.searchResultsAttributes)
+      // console.log(this.searchResultsAttributes)
       // initialize the attributes
       var keys = Object.keys(this.searchResultsAttributes)
       this.attributeKeys = keys.slice(0, 10)
       // console.log(this.attributeKeys)
     },
-    parseAttributesFromSearchResponse(attributesAggregation) {
+    parseAttributesFromSearchResponse (attributesAggregation) {
       this.attributeKeys = []
       var that = this
-      console.log(this.$store.state.attributeMap)
       var tempSearchAttributes = {}
       attributesAggregation.forEach(element => {
+        // console.log(element)
         this.attributeKeys.push(element.key)
 
-
-
-        var attributes = element['top_hits#name'].hits.hits[0]._source.attributes
-        var attribute = attributes.filter(attribute => attribute.type == element.key)[0]
+        var attributes = element['top_hits#attribute'].hits.hits[0]._source.attributes
+        var attribute = attributes.filter(attribute => attribute.type === element.key)[0]
         // console.log(attributes)
         // console.log(element.key)
         // console.log(this.$store.state.attributeMap[element.key])
-        if(!tempSearchAttributes[element.key]){
+        if (!tempSearchAttributes[element.key]) {
           tempSearchAttributes[element.key] = {
             attributeType: element.key,
             attributeTypeLabel: that.$store.state.attributeMap[element.key].description,
             attributeUnit: that.$store.state.attributeMap[element.key].attributeUnit,
-            codeMap:[attribute.label],
+            codeMap: [attribute.label],
             count: element.doc_count
           }
         } else {
-          console.log(attribute.label)
-         tempSearchAttributes[element.key].codeMap.push(attribute.label)
+          // console.log(attribute.label)
+          tempSearchAttributes[element.key].codeMap.push(attribute.label)
         }
-
-
-
       })
       // console.log(this.attributeKeys)
-      console.log(tempSearchAttributes)
+      // console.log(tempSearchAttributes)
     },
-    getCompTypeLabels(entryTypes) {
+    getCompTypeLabels (entryTypes) {
       var that = this
       // This gets the labels for each of the entry types by using the codes return from request
       entryTypes.forEach(entryType => {
         entryType['label'] = that.$store.state.componentTypeList.find(element => {
-          return entryType.key == element.componentType
+          return entryType.key === element.componentType
         }).parentLabel
       })
       this.componentsList = entryTypes
@@ -485,7 +480,7 @@ export default {
 
       // build search request here
       var searchFilters = {
-        "query": '',
+        'query': '',
         'page': 0,
         'pageSize': 10,
         'componentTypes': [],
@@ -497,16 +492,16 @@ export default {
         'sortField': ''
       }
 
-      searchFilters.query = ( this.searchQuery ? this.searchQuery : searchFilters.query )
-      searchFilters.page = ( this.searchPage ? this.searchPage : searchFilters.page )
-      searchFilters.pageSize = ( this.searchPageSize ? this.searchPageSize : searchFilters.pageSize )
-      searchFilters.componentTypes = ( this.filters.components ? this.filters.components : searchFilters.componentTypes )
-      searchFilters.includeChildren = ( this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren )
-      searchFilters.organization = ( this.filters.organization ? this.filters.organization : searchFilters.organization )
-      // searchFilters.stringAttributes = ( this.filters.attributes ? this.filters.attributes : searchFilters.attributes )
-      searchFilters.tags = ( this.filters.tags ? this.filters.tags : searchFilters.tags )
-      searchFilters.sortField = ( this.searchSortField ? this.searchSortField : searchFilters.sortField )
-      searchFilters.sortOrder = ( this.searchSortOrder ? this.searchSortOrder : searchFilters.sortOrder )
+      searchFilters.query = (this.searchQuery ? this.searchQuery : searchFilters.query)
+      searchFilters.page = (this.searchPage ? this.searchPage : searchFilters.page)
+      searchFilters.pageSize = (this.searchPageSize ? this.searchPageSize : searchFilters.pageSize)
+      searchFilters.componentTypes = (this.filters.components ? this.filters.components : searchFilters.componentTypes)
+      searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
+      searchFilters.organization = (this.filters.organization ? this.filters.organization : searchFilters.organization)
+      // searchFilters.stringAttributes = (this.filters.attributes ? this.filters.attributes : searchFilters.attributes)
+      searchFilters.tags = (this.filters.tags ? this.filters.tags : searchFilters.tags)
+      searchFilters.sortField = (this.searchSortField ? this.searchSortField : searchFilters.sortField)
+      searchFilters.sortOrder = (this.searchSortOrder ? this.searchSortOrder : searchFilters.sortOrder)
 
       if (this.filters.attributes) {
         this.filters.attributes.forEach(attribute => {
@@ -517,11 +512,10 @@ export default {
       this.$http
         .post(
           '/openstorefront/api/v2/service/search',
-            searchFilters
+          searchFilters
         ).then(response => {
-
           console.log(response)
-
+          
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -687,7 +681,7 @@ export default {
       copyText.value = url
       copyText.select()
       document.execCommand('copy')
-      this.$toasted.show('Search url copied to clip board', {position: 'top-left', duration : 3000})
+      this.$toasted.show('Search url copied to clip board', { position: 'top-left', duration: 3000 })
       // alert('Copied the text: ' + copyText.value)
     }
   },
