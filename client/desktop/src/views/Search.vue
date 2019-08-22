@@ -217,7 +217,7 @@
         <v-avatar left>
           <v-icon small>fas fa-university</v-icon>
         </v-avatar>
-        {{ filters.organization }}
+        {{ filters.organization.key }}
         <div class="v-chip__close"><v-icon right @click="filters.organization = ''">cancel</v-icon></div>
       </v-chip>
       <v-chip
@@ -247,7 +247,7 @@
       </p>
 
       <!-- SEARCH RESULTS DATA -->
-      <div style="display: flex; flex-wrap: wrap;">
+      <div class="search-results" style="display: flex; flex-wrap: wrap; align-items: stretch;">
         <v-layout
           row
           justify-center
@@ -264,52 +264,66 @@
             ></v-progress-circular>
           </v-flex>
         </v-layout>
-        <v-card
+        <v-flex
           v-else-if="!!searchResults"
           v-for="item in searchResults"
           :key="item.name"
-          class="mt-4 item"
-          style="padding: 15px; padding-bottom: 0px; margin: 5px; flex-grow: 1; overflow: hidden;"
-          max-width="440"
-          min-width="250"
-          height="300"
+          xs12 sm6 md4 lg4 xl3
+          style="margin-bottom: 10px;"
         >
-          <v-list-item>
-            <v-list-item-avatar>
-              <img
-              v-if="item.includeIconInSearch && item.componentTypeIconUrl"
-              :src="'/openstorefront/' + item.componentTypeIconUrl"
-              style="min-width: 40px; max-height: 40px; margin-right: 1em; float: left;"
-              >
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="headline more-info" @click='moreInformation(item.componentId)'>{{ item.name }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-          <div>
-            <p>{{ item.organization }}</p>
-            <router-link
-              :to="{ path: 'search', query: { comp: item.componentType }}"
+        <v-card class="item">
+          <div class="item-header">
+            <img
+            v-if="item.includeIconInSearch && item.componentTypeIconUrl"
+            :src="'/openstorefront/' + item.componentTypeIconUrl"
+            style="min-width: 40px; max-height: 40px; margin-right: 15px"
             >
-              {{ item.componentTypeDescription }}
-            </router-link>
-            <div
-              style="padding-bottom: 1.5em;"
-              v-if="!!item.tags && item.tags.length !== 0"
-            >
-              <span
-                v-for="tag in item.tags"
-                :key="tag.text"
-                style="float: left; margin-right: 0.8em; cursor: pointer;"
-                @click="addTag(tag.text)"
-              >
-                <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
+            <h3 class="headline more-info" @click='moreInformation(item.componentId)'>{{ item.name }}</h3>
+          </div>
+          <v-divider></v-divider>
+          <div class="item-body">
+            <div class="item-properties">
+              <span>
+                <v-chip small>
+                  <i data-v-1a1d373c="" aria-hidden="true" class="v-icon fas fa-university theme--light" style="font-size: 16px;"></i>
+                  {{ item.organization }}
+                </v-chip>
               </span>
+              <div class="comp-type-wrapper">
+                <router-link :to="{ path: 'search', query: { comp: item.componentType }}">
+                  <v-chip v-if='item.componentTypeDescription.includes(">")' style="padding: 2px 0px;">
+                    {{ getFirstCompType(item.componentTypeDescription) }}<br>{{ getSecondCompType(item.componentTypeDescription) }}
+                  </v-chip>
+                  <v-chip v-else small>
+                    {{ item.componentTypeDescription }}
+                  </v-chip>
+                </router-link>
+              </div>
+              <div
+                class="tag-wrapper"
+                v-if="!!item.tags && item.tags.length !== 0"
+              >
+                <span
+                  v-for="tag in item.tags"
+                  :key="tag.text"
+                  style="margin-right: 0.8em; cursor: pointer;"
+                  @click="addTag(tag.text)"
+                >
+                  <v-icon style="font-size: 14px; color: rgb(248, 197, 51);">fas fa-tag</v-icon> {{ tag.text }}
+                </span>
+              </div>
+            </div>
+            <v-divider></v-divider>
+            <div class="item-details">
+              <div class="description-wrapper">{{ item.description }}</div>
+              <div>
+                <p><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
+                <p><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
+              </div>
             </div>
           </div>
-          <div class="description-wrapper">{{ item.description }}</div>
         </v-card>
+        </v-flex>
       </div>
     </div><!-- Search Results -->
   </div>
@@ -692,6 +706,18 @@ export default {
       this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
       // alert('Copied the text: ' + copyText.value)
     },
+    getFirstCompType(componentType){
+      var index = componentType.indexOf(">")
+      if(index != -1){
+        return componentType.slice(0, index)
+      }
+    },
+    getSecondCompType(componentType){
+      var index = componentType.indexOf(">")
+      if(index != -1){
+        return componentType.slice(index)
+      }
+    }
   },
   watch: {
     filters: {
@@ -786,6 +812,38 @@ $side-menu-width-large: 34em;
 $closed-width: 5em;
 $footer-height: 42.4px;
 
+.item {
+  padding: 15px;
+  height: 100%;
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+}
+.item-header {
+  display: flex;
+  margin-bottom: 15px;
+}
+.item-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.comp-type-wrapper {
+  padding: 5px 0px;
+}
+.tag-wrapper {
+  padding: 5px 0px;
+}
+.item-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.description-wrapper {
+  text-overflow: ellipsis;
+}
+
 p {
   margin: 0px;
 }
@@ -800,7 +858,6 @@ p {
   transition: box-shadow 0.7s;
   background-color: #FFF;
 }
-
 .dn {
   display: none;
 }
@@ -810,9 +867,6 @@ p {
 .centeralign {
   margin-right: auto;
   margin-left: auto;
-}
-.spinner {
-  margin-top: 7em;
 }
 hr {
   color: #333;
@@ -863,16 +917,15 @@ hr {
 .search-block.closed {
   margin-left: $closed-width;
 }
+.spinner {
+  margin-top: 7em;
+}
 .more-info {
   cursor: pointer;
 }
 .more-info:hover {
   transition-duration: 0.2s;
   text-decoration: underline;
-}
-.description-wrapper {
-  text-overflow: ellipsis;
-  bottom: 0;
 }
 .v-footer {
   height: $footer-height !important;
