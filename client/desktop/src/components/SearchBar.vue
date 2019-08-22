@@ -1,7 +1,7 @@
 <template>
   <form v-on:submit.prevent="submitQuery()">
     <div class="searchbar-button">
-      <v-icon @click="showOptions=!showOptions" class="search-icon search-options-icon">expand_more</v-icon>
+      <v-icon @click="showOptions=!showOptions" class="drop-down-icon search-options-icon">fas {{ (showOptions ? 'fa-chevron-down' : 'fa-chevron-up')}} fa-xs</v-icon>
     </div>
     <div class="searchbar">
       <input
@@ -25,7 +25,11 @@
         </v-list-tile>
       </v-list>
     </v-card>
-    <v-card v-if="hideSearchSuggestions && showOptions && canShowOptions" :height="overlaySuggestions ? 0 : 'auto'" style="position:relative; z-index:9999">
+    <v-card
+      v-if="hideSearchSuggestions && showOptions && canShowOptions"
+      :height="overlaySuggestions ? 0 : 'auto'"
+      style="position:relative; z-index:5"
+    >
       <v-list dense class="elevation-1">
         <h4 class="search-option-titles">Search Options</h4>
         <v-list-tile v-for="(e,index) in searchOptionsSource" v-bind:key="index" class="suggestion" height="100px">
@@ -63,7 +67,7 @@ import _ from 'lodash'
 
 export default {
   name: 'SearchBar',
-  props: ['value', 'hideSuggestions', 'overlaySuggestions', 'submittedEntryTypes'],
+  props: ['value', 'hideSuggestions', 'overlaySuggestions'],
   mounted () {
   },
   data () {
@@ -125,7 +129,11 @@ export default {
         })
     },
     populateEntryTypes (entryTypes) {
-      this.selectedEntryTypes = entryTypes.split(',')
+      if (entryTypes != null && entryTypes !== '') {
+        this.selectedEntryTypes = entryTypes.split(',')
+      } else {
+        this.selectedEntryTypes = []
+      }
     }
   },
   computed: {
@@ -138,13 +146,26 @@ export default {
       } else if (!this.searchQueryIsDirty) {
         this.getSearchSuggestions()
       }
-    }, 400)
+    }, 400),
+    selectedEntryTypes: function () {
+      if (this.$store.getters.getSelectedComponentTypes !== this.selectedEntryTypes) {
+        this.$store.commit('setSelectedComponentTypes', { data: this.selectedEntryTypes })
+      }
+    }
   },
   created: function () {
     var components = this.$route.query.comp
     if (components !== undefined) {
       this.populateEntryTypes(components)
     }
+
+    this.$store.commit('setSelectedComponentTypes', { data: this.selectedEntryTypes })
+
+    this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
+      if (this.selectedEntryTypes !== newValue) {
+        this.selectedEntryTypes = newValue
+      }
+    })
 
     this.$http
       .get('/openstorefront/api/v1/resource/searchoptions/user')
@@ -211,10 +232,16 @@ export default {
   font-size: 34px !important;
   margin-bottom: 0.1em;
 }
+.drop-down-icon {
+  float: right;
+  font-size: 20px !important;
+  margin-bottom: 0.1em;
+}
 .search-options-icon {
   float: left !important;
   padding: 0em 0.3em;
-  height: 1.66em;
+  height: 56.8px;
+  width: 40px;
   background-color: rgba(0,0,0,.12);
 }
 .search-option-titles {

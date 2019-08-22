@@ -12,7 +12,8 @@ export default new Vuex.Store({
     permissionMap: [],
     appVersion: '',
     componentTypeList: [],
-    attributeMap: {}
+    attributeMap: {},
+    selectedComponentTypes: []
   },
   // mutations must be synchronous
   mutations: {
@@ -47,6 +48,9 @@ export default new Vuex.Store({
       response.data.forEach(element => {
         state.attributeMap[element.attributeType] = element
       })
+    },
+    setSelectedComponentTypes (state, response) {
+      state.selectedComponentTypes = response.data
     }
   },
   actions: {
@@ -100,6 +104,7 @@ export default new Vuex.Store({
   },
   getters: {
     // call this.$store.getters.hasPermission('ADMIN-...')
-    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0
+    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0,
+    getSelectedComponentTypes: (state) => state.selectedComponentTypes
   }
 })

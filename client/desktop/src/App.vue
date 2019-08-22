@@ -4,12 +4,12 @@
       <header>
         <div :style="topbarStyle">
         <v-toolbar color="primary" dense dark flat>
+          <v-btn icon to="/" active-class=""><v-icon>fas fa-home</v-icon></v-btn>
           <v-spacer></v-spacer>
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
           <Notifications/>
-          <v-btn icon @click="nav('profile')"><v-icon>fas fa-user</v-icon></v-btn>
           <!-- <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn> -->
           </v-toolbar-items>
           <v-menu offset-y>
@@ -20,7 +20,9 @@
                 v-for="link in filteredLinks"
                 :key="link.name"
                 class="menu-item"
-                @click="nav(link.link)"
+                :to="link.link ? link.link : undefined"
+                :href="link.href ? link.href : undefined"
+                active-class="menu-item-active"
               >
                 <v-list-tile-action>
                   <v-icon>fa fa-{{ link.icon }}</v-icon>
@@ -181,13 +183,17 @@ export default {
           icon: 'home',
           name: 'Home',
           permissions: [] },
-        { link: '/admin',
+        { href: '/openstorefront/AdminTool.action',
           icon: 'cog',
           name: 'Admin Tools',
           permissions: permissions.ADMIN },
-        { link: '/user',
+        { href: '/openstorefront/UserTool.action',
           icon: 'user',
           name: 'User Tools',
+          permissions: [] },
+        { link: '/profile',
+          icon: 'address-card',
+          name: 'Profile',
           permissions: [] },
         { link: '/faq',
           icon: 'question',
@@ -219,7 +225,9 @@ export default {
         //   permissions: [] }
       ],
       topbarStyle: {
-        'border-bottom': `4px solid ${this.$store.state.branding.accentColor}`
+        'border-bottom': `4px solid ${this.$store.state.branding.accentColor}`,
+        'position': 'relative',
+        'z-index': '10'
       },
       alert: false
     }
@@ -318,6 +326,9 @@ $banner-height: 30px;
 $offset: $toolbar-height + $goldbar-height;
 $offset-banner: $offset + $banner-height;
 
+html {
+  overflow: auto !important;
+}
 #app {
   font-family: "Roboto";
   color: #333;
@@ -325,6 +336,9 @@ $offset-banner: $offset + $banner-height;
 .menu-item:hover {
   background-color: rgba(0,0,0,0.1);
   cursor: pointer;
+}
+.menu-item-active {
+  background-color: rgba(0,0,0,0.1);
 }
 .offset-banner {
   margin-top: $offset-banner;

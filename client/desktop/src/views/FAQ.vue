@@ -24,21 +24,21 @@ export default {
   }),
   methods: {
     getQuestions: function () {
-      let that = this;
+      let that = this
 
       this.$http
         .get('/openstorefront/api/v1/resource/faq')
         .then(response => {
-          var filtered = response.data.filter(item => item.activeStatus === 'A');
-          that.questions = filtered;
+          var filtered = response.data.filter(item => item.activeStatus === 'A')
+          that.questions = filtered
         })
-        .catch(e => this.errors.push(e));
+        .catch(e => this.errors.push(e))
     }
   },
   mounted () {
-    this.getQuestions();
+    this.getQuestions()
   }
-};
+}
 </script>
 
 <style>

@@ -3,7 +3,7 @@
 
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- CONTROLS -->
-    <div class="side-menu-btns mt-4">
+    <div class="side-menu-btns">
       <div>
         <v-btn @click="showFilters = !showFilters; showOptions = false;" small fab dark icon :color="`primary ${showFilters ? 'lighten-4' : ''}`"><v-icon dark>fas fa-filter</v-icon></v-btn>
       </div>
@@ -12,11 +12,11 @@
       </div>
       <div>
         <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
-        <input type="text" value="https://spoonsite.com" id="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
+        <input type="text" value="https://spoonsite.com" ref="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
       </div>
     </div>
 
-    <div v-if="showOptions || showFilters" style="width: 100%; text-align: right;">
+    <div v-if="showOptions || showFilters" class="close-btn">
       <v-btn icon @click="showOptions = false; showFilters = false;"><v-icon>fas fa-times</v-icon></v-btn>
     </div>
     <!-- END CONTROLS -->
@@ -110,13 +110,17 @@
           </template>
         </v-autocomplete>
         <h3 class="pb-3">Attributes</h3>
-
-        <v-text-field
-          label="Search Attributes"
-          solo
-          v-model="attributeQuery"
-          placeholder="Search Attributes"
-        ></v-text-field>
+        <div class="searchbar">
+          <input
+            type="text"
+            label="Search Attributes"
+            solo
+            v-model="attributeQuery"
+            placeholder="Search Attributes"
+            ref="attributeBar"
+          >
+          <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery=''">clear</v-icon>
+        </div>
         <div>
           <v-chip
             close
@@ -173,22 +177,26 @@
         :hideSuggestions="hideSearchSuggestions"
         v-model="searchQuery"
         :overlaySuggestions="true"
+        :submittedEntryTypes="this.$route.query.comp.split(',')"
+        @componentsChange="componentsChange"
       ></SearchBar>
       <!-- SEARCH FILTERS PILLS -->
       <v-chip
-        color="teal"
-        text-color="white"
         v-for="component in filters.components"
         :key="component"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-cubes</v-icon>
+        </v-avatar>
         {{ getComponentName(component) }}
         <div class="v-chip__close"><v-icon right @click="removeComponent(component)">cancel</v-icon></div>
       </v-chip>
       <v-chip
-        color="light-blue lighten-2"
-        text-color="white"
         v-if="this.filters.children && !!this.filters.components && this.filters.components.length > 0"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-check-square</v-icon>
+        </v-avatar>
         Include Sub-Catagories
         <div class="v-chip__close"><v-icon right @click="filters.children = !filters.children">cancel</v-icon></div>
       </v-chip>
@@ -204,9 +212,10 @@
       </v-chip>
       <v-chip
         v-if="filters.organization"
-        color="indigo"
-        text-color="white"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-university</v-icon>
+        </v-avatar>
         {{ filters.organization }}
         <div class="v-chip__close"><v-icon right @click="filters.organization = ''">cancel</v-icon></div>
       </v-chip>
@@ -216,6 +225,9 @@
         :key="attr"
         @input="removeAttributeFilter(attr)"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-clipboard-list</v-icon>
+        </v-avatar>
         {{ printAttribute(attr) }}
       </v-chip>
       <!-- SEARCH FILTERS PILLS -->
@@ -290,7 +302,6 @@
 
   <!-- Pagination -->
   <v-footer
-    height="auto"
     fixed
     color="#FFF"
     style="border-top: 1px solid #DDD"
@@ -319,6 +330,13 @@ export default {
     SearchBar
     // AttributeRange
   },
+  created () {
+    this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
+      if (this.selectedEntryTypes !== newValue) {
+        this.filters.components = newValue
+      }
+    })
+  },
   mounted () {
     if (this.$route.query.q) {
       this.searchQuery = this.$route.query.q
@@ -326,8 +344,10 @@ export default {
     if (this.$route.query.comp) {
       this.filters.components = this.$route.query.comp.split(',')
     }
-    if (this.$route.query.children) {
-      this.filters.children = this.$route.query.children
+    if (this.$route.query.children === 'false') {
+      this.filters.children = false
+    } else {
+      this.filters.children = true
     }
     if (this.$route.query.tags) {
       this.filters.tags = this.$route.query.tags.split(',')
@@ -356,6 +376,9 @@ export default {
     this.newSearch()
   },
   methods: {
+    componentsChange (data) {
+      this.filters.components = data
+    },
     getComponentName (code) {
       // this.addHashToLocation(code)
       let name = ''
@@ -422,23 +445,17 @@ export default {
         this.filters.tags.push(tag)
       }
     },
-    loadAttributes (attributes) {
-      this.searchResultsAttributes = this.$jsonparse(attributes)
-      // initialize the attributes
-      var keys = Object.keys(this.searchResultsAttributes)
-      this.attributeKeys = keys.slice(0, 10)
-    },
     parseAttributesFromSearchResponse (attributesAggregation) {
       this.attributeKeys = []
-      var that = this
-      var searchResultsAttributes = {}
+      let that = this
+      let searchResultsAttributes = {}
 
       attributesAggregation.forEach(element => {
         this.attributeKeys.push(element.key)
 
         // Create list of codes from results
-        var attributes = {}
-        var sources = element['top_hits#attribute'].hits.hits
+        let attributes = {}
+        let sources = element['top_hits#attribute'].hits.hits
         sources.forEach(source => {
           source._source.attributes.forEach(e => {
             if (e.type === element.key) {
@@ -462,7 +479,7 @@ export default {
       this.searchResultsAttributes = searchResultsAttributes
     },
     getCompTypeLabels (entryTypes) {
-      var that = this
+      let that = this
       // This gets the labels for each of the entry types by using the codes return from request
       entryTypes.forEach(entryType => {
         entryType['label'] = that.$store.state.componentTypeList.find(element => {
@@ -470,8 +487,6 @@ export default {
         }).parentLabel
       })
       this.componentsList = entryTypes
-    },
-    filterAttributeKeys () {
     },
     submitSearch () {
       let that = this
@@ -481,7 +496,7 @@ export default {
       that.searchQueryIsDirty = true
 
       // build search request here
-      var searchFilters = {
+      let searchFilters = {
         'query': '',
         'page': 0,
         'pageSize': 10,
@@ -515,7 +530,7 @@ export default {
         .post(
           '/openstorefront/api/v2/service/search',
           searchFilters
-        ).then(response => {          
+        ).then(response => {
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -528,96 +543,8 @@ export default {
           this.parseAttributesFromSearchResponse(attributesAggregation)
 
           that.searchQueryIsDirty = false
-        }).catch(err => console.log(err))
-
-      let searchElements = [
-        {
-          mergeCondition: 'AND',
-          searchType: 'INDEX',
-          value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
-        }
-      ]
-      if (that.filters.components) {
-        that.filters.components.forEach(function (entryType) {
-          searchElements.push(
-            {
-              caseInsensitive: false,
-              field: 'componentType',
-              mergeCondition: 'AND',
-              searchType: 'ENTRYTYPE',
-              searchChildren: that.filters.children,
-              stringOperation: 'EQUALS',
-              value: entryType
-            }
-          )
         })
-      }
-      if (that.filters.tags) {
-        that.filters.tags.forEach(function (tag) {
-          searchElements.push(
-            {
-              caseInsensitive: true,
-              mergeCondition: that.filters.tagCondition,
-              searchType: 'TAG',
-              stringOperation: 'EQUALS',
-              value: tag
-            }
-          )
-        })
-      }
-      if (that.filters.organization) {
-        searchElements.push(
-          {
-            caseInsensitive: false,
-            mergeCondition: 'AND',
-            searchType: 'COMPONENT',
-            numberOperation: 'EQUALS',
-            stringOperation: 'EQUALS',
-            field: 'organization',
-            value: that.filters.organization
-          }
-        )
-      }
-      if (that.filters.attributes) {
-        that.filters.attributes.forEach(function (attribute) {
-          let attr = that.$jsonparse(attribute)
-          if (attr !== '') {
-            searchElements.push(
-              {
-                keyField: attr.type,
-                keyValue: attr.code,
-                caseInsensitive: true,
-                // mergeCondition: that.filters.attributeCondition,
-                mergeCondition: 'AND',
-                numberOperations: 'EQUALS',
-                searchType: 'ATTRIBUTESET',
-                stringOperation: 'EQUALS'
-              }
-            )
-          }
-        })
-      }
-
-      this.$http
-        .post(
-          `/openstorefront/api/v1/service/search/advance?paging=true&sortField=${
-            that.searchSortField
-          }&sortOrder=${that.searchSortOrder}&offset=${(that.searchPage - 1) *
-            that.searchPageSize}&max=${that.searchPageSize}`,
-          {
-            searchElements
-          }
-        )
-        .then(response => {
-          // that.searchResults = response
-          // that.totalSearchResults = response.data.totalNumber
-          // that.organizationsList = _.sortBy(response.data.meta.resultOrganizationStats, [function (o) { return o.organization }])
-          // that.tagsList = _.sortBy(response.data.meta.resultTagStats, [function (o) { return o.tagLabel }])
-          // this may not return full list of all components
-          // that.componentsList = _.sortBy(response.data.meta.resultTypeStats, [function (o) { return o.componentTypeDescription }])
-          that.searchQueryIsDirty = false
-          this.loadAttributes(response.data.meta.resultAttributeStats)
-        })
+        .catch(err => console.log(err))
         .finally(() => {
           that.searchQueryIsDirty = false
         })
@@ -658,6 +585,9 @@ export default {
     },
     printAttribute (attribute) {
       let attr = this.$jsonparse(attribute)
+      if (attr === null) {
+        attr.unit = ''
+      }
       return `${attr.typelabel} : ${attr.code} ${attr.unit}`
     },
     copyUrlToClipboard () {
@@ -665,19 +595,19 @@ export default {
       window.location.href.match(/(.*?)\?/m).forEach(element => {
         urlBeginning = element
       })
-      var url = encodeURI(urlBeginning +
-          '?q=' + this.searchQuery +
+      var urlEnding = '?q=' + this.searchQuery +
           '&comp=' + this.filters.components.join(',') +
           '&children=' + this.filters.children.toString() +
           '&tags=' + this.filters.tags.join(',') +
           '&orgs=' + this.filters.organization +
-          '&attributes=' + this.filters.attributes.join(','))
+          '&attributes=' + this.filters.attributes.join(',')
 
-      var copyText = document.getElementById('urlForClipboard')
+      var url = encodeURI(urlBeginning + urlEnding)
+      var copyText = this.$refs.urlForClipboard
       copyText.value = url
       copyText.select()
       document.execCommand('copy')
-      this.$toasted.show('Search url copied to clip board', { position: 'top-left', duration: 3000 })
+      this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
       // alert('Copied the text: ' + copyText.value)
     }
   },
@@ -708,6 +638,9 @@ export default {
     },
     searchPage () {
       this.submitSearch()
+    },
+    componentTypeListComputed: function () {
+      this.$store.commit('setSelectedComponentTypes', { data: this.componentTypeListComputed })
     }
   },
   computed: {
@@ -716,6 +649,9 @@ export default {
     },
     hideSearchSuggestions () {
       return this.searchQueryIsDirty || this.searchQuery.length === 0
+    },
+    componentTypeListComputed () {
+      return this.filters.components
     }
   },
   data () {
@@ -761,11 +697,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/scss/variables.scss';
+
 $side-menu-width: 24em;
 $side-menu-width-medium: 30em;
 $side-menu-width-large: 34em;
 $closed-width: 5em;
-$footer-height: 10em;
+$footer-height: 42.4px;
+
+.searchbar {
+  border-radius: 2px;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+  padding: 0.7em 0.7em 0.7em 1.2em;
+  margin-bottom: 0.3em;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 140%;
+  transition: box-shadow 0.7s;
+  background-color: #FFF;
+}
 
 .dn {
   display: none;
@@ -786,9 +736,15 @@ hr {
 }
 .side-menu {
   border-right: 1px solid #DDD;
+  overflow-y: auto;
   position: fixed;
-  height: 100%;
-  padding-bottom: $footer-height;
+  left: 0;
+  top: $header-height;
+  bottom: $footer-height;
+}
+.close-btn {
+  width: 100%;
+  text-align: right;
 }
 .side-menu.open {
   width: $side-menu-width;
@@ -798,17 +754,24 @@ hr {
 }
 .side-menu-btns {
   position: fixed;
+  top: $header-height;
+  left: 0;
   margin: 0.5em;
 }
 .side-menu-content {
-  height: 100%;
   max-width: $side-menu-width;
   padding-right: 2em;
   margin-left: $closed-width;
-  overflow: auto;
+  overflow-y: auto;
 }
 .search-block {
+  position: fixed;
   min-width: 24em;
+  overflow-y: scroll;
+  top: $header-height;
+  bottom: $footer-height;
+  right: 0;
+  left: 0;
 }
 .search-block.open {
   margin-left: $side-menu-width;
@@ -816,7 +779,9 @@ hr {
 .search-block.closed {
   margin-left: $closed-width;
 }
-
+.v-footer {
+  height: $footer-height !important;
+}
 @media only screen and (min-width: 800px) {
   .search-block.open {
     margin-left: $side-menu-width-medium;
