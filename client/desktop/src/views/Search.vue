@@ -424,40 +424,42 @@ export default {
     },
     loadAttributes (attributes) {
       this.searchResultsAttributes = this.$jsonparse(attributes)
-      // console.log(this.searchResultsAttributes)
       // initialize the attributes
       var keys = Object.keys(this.searchResultsAttributes)
       this.attributeKeys = keys.slice(0, 10)
-      // console.log(this.attributeKeys)
     },
     parseAttributesFromSearchResponse (attributesAggregation) {
       this.attributeKeys = []
       var that = this
-      var tempSearchAttributes = {}
+      var searchResultsAttributes = {}
+
       attributesAggregation.forEach(element => {
-        // console.log(element)
         this.attributeKeys.push(element.key)
 
-        var attributes = element['top_hits#attribute'].hits.hits[0]._source.attributes
-        var attribute = attributes.filter(attribute => attribute.type === element.key)[0]
-        // console.log(attributes)
-        // console.log(element.key)
-        // console.log(this.$store.state.attributeMap[element.key])
-        if (!tempSearchAttributes[element.key]) {
-          tempSearchAttributes[element.key] = {
+        // Create list of codes from results
+        var attributes = {}
+        var sources = element['top_hits#attribute'].hits.hits
+        sources.forEach(source => {
+          source._source.attributes.forEach(e => {
+            if (e.type === element.key) {
+              attributes[String(e.label)] = undefined
+            }
+          })
+        })
+
+        // Populate attribute object
+        if (!searchResultsAttributes[element.key]) {
+          searchResultsAttributes[element.key] = {
             attributeType: element.key,
             attributeTypeLabel: that.$store.state.attributeMap[element.key].description,
             attributeUnit: that.$store.state.attributeMap[element.key].attributeUnit,
-            codeMap: [attribute.label],
+            codeMap: attributes,
             count: element.doc_count
           }
-        } else {
-          // console.log(attribute.label)
-          tempSearchAttributes[element.key].codeMap.push(attribute.label)
         }
       })
-      // console.log(this.attributeKeys)
-      // console.log(tempSearchAttributes)
+
+      this.searchResultsAttributes = searchResultsAttributes
     },
     getCompTypeLabels (entryTypes) {
       var that = this
@@ -513,9 +515,7 @@ export default {
         .post(
           '/openstorefront/api/v2/service/search',
           searchFilters
-        ).then(response => {
-          console.log(response)
-          
+        ).then(response => {          
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -524,13 +524,9 @@ export default {
           var entryTypes = response.data.aggregations['sterms#by_category'].buckets
           this.getCompTypeLabels(entryTypes)
 
-          // Attributes List
-          // that.organizationsList = response.data.aggregations['sterms#by_attribute'].buckets
           var attributesAggregation = response.data.aggregations['sterms#by_attribute_type'].buckets
-          console.log(attributesAggregation)
           this.parseAttributesFromSearchResponse(attributesAggregation)
 
-          // console.log(response.data.aggregations['sterms#by_attribute_label'].buckets)
           that.searchQueryIsDirty = false
         }).catch(err => console.log(err))
 
