@@ -11,11 +11,11 @@
         <v-btn @click="showOptions = !showOptions; showFilters = false;" small fab dark icon :color="`primary ${showOptions ? 'lighten-4' : ''}`"><v-icon dark>fas fa-cog</v-icon></v-btn>
       </div>
       <div>
-        <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
-        <input type="text" value="https://spoonsite.com" ref="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
+        <v-btn @click="sortComparisonData(); showComparison = !showComparison;" small fab icon><v-icon>fas fa-columns</v-icon></v-btn>
       </div>
       <div>
-        <v-btn @click="showComparison = !showComparison" small fab icon><v-icon>fas fa-</v-icon></v-btn>
+        <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
+        <input type="text" value="https://spoonsite.com" ref="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
       </div>
     </div>
 
@@ -313,23 +313,29 @@
             <v-card-title>Compare</v-card-title>
             <v-card-text>
               <table>
-                <thead>
-                  <tr>
+                <v-data-table
+                :headers="this.comparisonDataHeaders"
+                :items="this.comparisonDataDisplay">
+                </v-data-table>
+                  <!-- <tr>
+                    <th>Attributes</th>
                     <th v-for="component in comparisonList"
                     :key="component.name">
                       {{component.name}}
                     </th>
                   </tr>
-                </thead>
-                <tbody>
                   <tr v-for="component in comparisonList"
                   :key="component.name">
-                    <td v-for="attribute in component.attributes"
+                  <td></td> -->
+                    <!-- <td v-for="attribute in component"
+                    :key="attribute.name">
+                      {{attribute.typeLabel}}
+                    </td> -->
+                    <!-- <td v-for="attribute in component.attributes"
                     :key="attribute.name"> {{attribute.typeLabel}}</td>
-                    <td v-for="attribute in component.attributes"
-                    :key="attribute.name"> {{attribute.label}}</td>
-                  </tr>
-                </tbody>
+                      <td v-for="attribute in component.attributes"
+                      :key="attribute.name"> {{attribute.label}}</td> -->
+                  <!-- </tr> -->
               </table>
             </v-card-text>
             <v-card-actions>
@@ -650,6 +656,39 @@ export default {
       document.execCommand('copy')
       this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
       // alert('Copied the text: ' + copyText.value)
+    },
+    sortComparisonData(){
+      this.comparisonDataHeaders.push({text:'Attribute', value: 'name'})
+      for(var component in this.comparisonList){
+        this.comparisonDataHeaders.push({text: this.comparisonList[component].name, value: 'component'+ component})
+      }
+      var possibleAttributes = this.getListOfComparableAttributes()
+      for(var attribute in possibleAttributes){
+        this.comparisonDataDisplay.push({name: possibleAttributes[attribute]})
+        for(var component in this.comparisonList){
+          for(var componentAttribute in this.comparisonList[component].attributes){
+            if(possibleAttributes[attribute] === this.comparisonList[component].attributes[componentAttribute].typeLabel){
+              this.comparisonDataDisplay[attribute]['name']=possibleAttributes[attribute]
+              this.comparisonDataDisplay[attribute]['component' +component]=this.comparisonList[component].attributes[componentAttribute].label
+            }
+          }
+            if(!this.comparisonDataDisplay[attribute].hasOwnProperty('component'+component)){
+              this.comparisonDataDisplay[attribute]['component' +component]="--"
+            }
+        }
+      }
+              console.log(this.comparisonDataDisplay)
+    },
+    getListOfComparableAttributes(){
+      var possibleAttributes=[]
+        for(var component in this.comparisonList){
+          for(var attribute in this.comparisonList[component].attributes){
+            if(!possibleAttributes.includes(this.comparisonList[component].attributes[attribute].typeLabel)){
+                possibleAttributes.push(this.comparisonList[component].attributes[attribute].typeLabel)
+            }
+          }
+        }
+      return possibleAttributes
     }
   },
   watch: {
@@ -702,6 +741,8 @@ export default {
       organizationsList: [],
       selected: [],
       comparisonList: [],
+      comparisonDataHeaders: [],
+      comparisonDataDisplay: [],
       showFilters: false,
       showOptions: false,
       showHelp: false,
