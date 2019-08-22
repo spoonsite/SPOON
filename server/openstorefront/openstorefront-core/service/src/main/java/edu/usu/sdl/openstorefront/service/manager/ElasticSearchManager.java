@@ -74,22 +74,16 @@ import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
-import org.elasticsearch.script.Script;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.composite.CompositeAggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.composite.CompositeValuesSourceBuilder;
-import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
@@ -112,6 +106,8 @@ public class ElasticSearchManager
 	private static final String INDEX = "openstorefront";
 	private static final String INDEX_TYPE = "component";
 	private static final int MAX_DESCRIPTION_INDEX_SIZE = 8000;
+	private static final int MAX_SEARCH_RESULTS = 10000;
+	private static final int MAX_ATTRIBUTES_RETURNED = 100;
 	private static final String DEFAULT_POOL_SIZE = "40";
 
 	//TODO: Add back search all field as an option
@@ -338,7 +334,7 @@ public class ElasticSearchManager
 	@Override
 	public SearchResponse indexSearchV2(SearchFilters searchFilters)
 	{
-		int maxSearchResults = 10000;
+		int maxSearchResults = MAX_SEARCH_RESULTS;
 		if (searchFilters.getPageSize() < maxSearchResults) {
 			maxSearchResults = searchFilters.getPageSize();
 		}
@@ -355,19 +351,19 @@ public class ElasticSearchManager
 		TermsAggregationBuilder categoryAggregationBuilder = AggregationBuilders
 				.terms("by_category")
 				.field("componentType.keyword")
-				.size(1000);
+				.size(MAX_SEARCH_RESULTS);
 
 		// Get all tags from search result
 		TermsAggregationBuilder tagAggregationBuilder = AggregationBuilders
 				.terms("by_tag")
 				.field("tags.text.keyword")
-				.size(10000);
+				.size(MAX_SEARCH_RESULTS);
 
 		// Get all organizations from search result
 		TermsAggregationBuilder orgAggregationBuilder = AggregationBuilders
 				.terms("by_organization")
 				.field("organization.keyword")
-				.size(10000);
+				.size(MAX_SEARCH_RESULTS);
 
 		
 		String [] include = new String[]{"attributes"};
@@ -375,14 +371,14 @@ public class ElasticSearchManager
 		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
 				.topHits("attribute")
 				.fetchSource(include, null)
-				.size(100);
+				.size(MAX_ATTRIBUTES_RETURNED);
 
 		// Gets list of all attribute labels from search as well as all the whole attribute object
 		TermsAggregationBuilder attributeLabelAggregationBuilder = AggregationBuilders
 				.terms("by_attribute_type")
 				.field("attributes.type.keyword")
 				.subAggregation(topHitsAggregationBuilder)
-				.size(10000);
+				.size(MAX_SEARCH_RESULTS);
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 				.query(esQuery)
@@ -638,7 +634,7 @@ public class ElasticSearchManager
 
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
 
-		int maxSearchResults = 10000;
+		int maxSearchResults = MAX_SEARCH_RESULTS;
 		if (filter.getMax() < maxSearchResults) {
 			maxSearchResults = filter.getMax();
 		}
@@ -1076,7 +1072,7 @@ public class ElasticSearchManager
 			SearchRequest searchRequest = new SearchRequest(INDEX); 
 			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
 			searchSourceBuilder.query(QueryBuilders.matchAllQuery()); 
-			searchSourceBuilder.size(10000);
+			searchSourceBuilder.size(MAX_SEARCH_RESULTS);
 			searchRequest.source(searchSourceBuilder);
 
 			searchResponse = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
