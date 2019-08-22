@@ -106,7 +106,11 @@
             ({{ data.item.doc_count }}) {{ data.item.key }}
           </template>
           <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.key }}</v-list-tile-title></v-list-tile-content>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                ({{ data.item.doc_count }}) {{ data.item.key }}
+              </v-list-tile-title>
+            </v-list-tile-content>
           </template>
         </v-autocomplete>
         <h3 class="pb-3">Attributes</h3>
@@ -151,13 +155,13 @@
                 <!-- <attribute-range/> -->
                 <v-checkbox
                   v-for="code in (searchResultsAttributes[key].codeMap)"
-                  :key="code.codeLabel"
+                  :key="code"
                   v-model="filters.attributes"
                   :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].attributeTypeLabel, 'code': code.codeLabel })"
                   hide-details
                 >
                   <template slot="label">
-                    <div>{{ code.codeLabel }}</div>
+                    <div>{{ code }}</div>
                   </template>
                 </v-checkbox>
               </v-container>
@@ -450,16 +454,23 @@ export default {
       let that = this
       let searchResultsAttributes = {}
 
+      if (that.$store.state.attributeMap === undefined) {
+        this.$store.dispatch('getAttributeMap')
+      }
+
       attributesAggregation.forEach(element => {
         this.attributeKeys.push(element.key)
 
         // Create list of codes from results
-        let attributes = {}
+        let attributes = []
         let sources = element['top_hits#attribute'].hits.hits
         sources.forEach(source => {
-          source._source.attributes.forEach(e => {
-            if (e.type === element.key) {
-              attributes[String(e.label)] = undefined
+          source._source.attributes.forEach(attribute => {
+            if (attribute.type === element.key) {
+              let code = attribute.label.toString()
+              if (!attributes.includes(code)) {
+                attributes.push(code)
+              }
             }
           })
         })
@@ -495,7 +506,7 @@ export default {
       if (that.searchQueryIsDirty) return
       that.searchQueryIsDirty = true
 
-      // build search request here
+      // Default values
       let searchFilters = {
         'query': '',
         'page': 0,
@@ -509,13 +520,14 @@ export default {
         'sortField': ''
       }
 
+      // Use values from ui if available
       searchFilters.query = (this.searchQuery ? this.searchQuery : searchFilters.query)
       searchFilters.page = (this.searchPage ? this.searchPage : searchFilters.page)
       searchFilters.pageSize = (this.searchPageSize ? this.searchPageSize : searchFilters.pageSize)
       searchFilters.componentTypes = (this.filters.components ? this.filters.components : searchFilters.componentTypes)
       searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
       searchFilters.organization = (this.filters.organization ? this.filters.organization : searchFilters.organization)
-      // searchFilters.stringAttributes = (this.filters.attributes ? this.filters.attributes : searchFilters.attributes)
+
       searchFilters.tags = (this.filters.tags ? this.filters.tags : searchFilters.tags)
       searchFilters.sortField = (this.searchSortField ? this.searchSortField : searchFilters.sortField)
       searchFilters.sortOrder = (this.searchSortOrder ? this.searchSortOrder : searchFilters.sortOrder)
