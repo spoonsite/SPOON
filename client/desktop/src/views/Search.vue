@@ -132,6 +132,7 @@
             :key="attr"
             @input="removeAttributeFilter(attr)"
           >
+          <!-- TODO fix attributes -->
             {{ printAttribute(attr) }}
           </v-chip>
         </div>
@@ -187,7 +188,7 @@
       <!-- SEARCH FILTERS PILLS -->
       <v-chip
         v-for="component in filters.components"
-        :key="component"
+        :key="component.key"
       >
         <v-avatar left>
           <v-icon small>fas fa-cubes</v-icon>
@@ -206,13 +207,13 @@
       </v-chip>
       <v-chip
         v-for="tag in filters.tags"
-        :key="tag"
+        :key="tag.key"
       >
         <v-avatar left>
           <v-icon small>fas fa-tag</v-icon>
         </v-avatar>
-        {{ tag }}
-        <div class="v-chip__close"><v-icon right @click="removeTag(tag)">cancel</v-icon></div>
+        {{ tag.key }}
+        <div class="v-chip__close"><v-icon right @click="removeTag(tag.key)">cancel</v-icon></div>
       </v-chip>
       <v-chip
         v-if="filters.organization"
@@ -220,7 +221,7 @@
         <v-avatar left>
           <v-icon small>fas fa-university</v-icon>
         </v-avatar>
-        {{ filters.organization }}
+        {{ filters.organization.key }}
         <div class="v-chip__close"><v-icon right @click="filters.organization = ''">cancel</v-icon></div>
       </v-chip>
       <v-chip
@@ -399,9 +400,12 @@ export default {
       })
     },
     removeComponent (component) {
+      console.log(component)
+      console.log(this.filters.components)
       this.filters.components = this.filters.components.filter(el => {
         return el !== component
       })
+      console.log(this.filters.components)
     },
     naturalSort (data) {
       function compare (a, b) {
@@ -526,9 +530,16 @@ export default {
       searchFilters.pageSize = (this.searchPageSize ? this.searchPageSize : searchFilters.pageSize)
       searchFilters.componentTypes = (this.filters.components ? this.filters.components : searchFilters.componentTypes)
       searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
-      searchFilters.organization = (this.filters.organization ? this.filters.organization : searchFilters.organization)
+      searchFilters.organization = (this.filters.organization ? this.filters.organization.key : searchFilters.organization)
 
-      searchFilters.tags = (this.filters.tags ? this.filters.tags : searchFilters.tags)
+      let tags = []
+      if(this.filters.tags != null){
+        this.filters.tags.forEach(tag => {
+          tags.push(tag.key)
+        })
+      }
+
+      searchFilters.tags = tags
       searchFilters.sortField = (this.searchSortField ? this.searchSortField : searchFilters.sortField)
       searchFilters.sortOrder = (this.searchSortOrder ? this.searchSortOrder : searchFilters.sortOrder)
 
@@ -537,6 +548,8 @@ export default {
           searchFilters.stringAttributes.push(JSON.parse(attribute))
         })
       }
+
+      console.log(searchFilters)
 
       this.$http
         .post(
