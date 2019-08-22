@@ -186,7 +186,7 @@
 													},
 													{
 														xtype: 'panel',
-														html: '<b>Landing Page Footer</b> <i class="fa fa-question-circle"  data-qtip="This is the footer on the landing page." ></i>'
+														html: '<em>Landing Page Footer</em> <i class="fa fa-question-circle"  data-qtip="This is the footer on the landing page." ></i>'
 													},
 													{
 														xtype: 'tinymce_textarea',
@@ -777,10 +777,10 @@
 														]
 													},
 
-													//vue-spesific color options
+													//vue-specific color options
 													{
 														xtype: 'panel',
-														title: 'Vue-spesific Color Options (Mobile site & search page)',
+														title: 'Vue-specific Color Options (Mobile site, search page, and login page)',
 														border: true,
 														collapsible: true,
 														padding: '6px',
@@ -878,12 +878,12 @@
 														var rootItems = form.items.items;
 
 														// When the form is saved, reset all original values for checkboxes
-														for (var ii = 0; ii < rootItems.length; ii += 1) {
+														for (var i = 0; i < rootItems.length; i += 1) {
 															
-															var subItems = rootItems[ii].items.items;
-															for (var jj = 0; jj < subItems.length; jj += 1) {
-																if (form.items.items[ii].items.items[jj].xtype === 'checkbox') {
-																	subItems[jj].originalValue = subItems[jj].getValue();
+															var subItems = rootItems[i].items.items;
+															for (var j = 0; j < subItems.length; j += 1) {
+																if (form.items.items[i].items.items[j].xtype === 'checkbox') {
+																	subItems[j].originalValue = subItems[j].getValue();
 																}
 															}
 														}
@@ -1308,7 +1308,7 @@
 					Ext.Msg.show({
 						title: 'Delete Branding?',
 						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
-						message: '<b>Are you sure you want to delete branding - "' + name + '"?</b>',
+						message: '<em>Are you sure you want to delete branding - "' + name + '"?</em>',
 						minWidth: 400,
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,
