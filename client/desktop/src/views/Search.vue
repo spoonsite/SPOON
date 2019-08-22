@@ -247,59 +247,69 @@
       </p>
 
       <!-- SEARCH RESULTS DATA -->
-      <v-layout
-        row
-        justify-center
-        align-center
-        v-if="searchQueryIsDirty"
-      >
-        <v-flex xs1>
-          <v-progress-circular
-            color="primary"
-            :size="60"
-            :width="6"
-            indeterminate
-            class="spinner"
-          ></v-progress-circular>
-        </v-flex>
-      </v-layout>
-      <div
-        v-else-if="!!searchResults"
-        v-for="item in searchResults"
-        :key="item.name"
-        class="mt-4 item"
-        style="clear: left; display: flex; flex-wrap: nowrap;"
-      >
-        <img
-          v-if="item.includeIconInSearch && item.componentTypeIconUrl"
-          :src="'/openstorefront/' + item.componentTypeIconUrl"
-          style="min-width: 40px; max-height: 40px; margin-right: 1em; float: left;"
+      <div style="display: flex; flex-wrap: wrap;">
+        <v-layout
+          row
+          justify-center
+          align-center
+          v-if="searchQueryIsDirty"
         >
-        <div style="float: left; width: -moz-fit-content;" class="mb-5">
-          <h3 class='more-info' @click='moreInformation(item.componentId)'>{{ item.name }}</h3>
-          <p class="mb-0">{{ item.organization }}</p>
-          <router-link
-            :to="{ path: 'search', query: { comp: item.componentType }}"
-          >
-            {{ item.componentTypeDescription }}
-          </router-link>
-          <div
-            style="padding-bottom: 1em;"
-            v-if="!!item.tags && item.tags.length !== 0"
-          >
-            <span
-              v-for="tag in item.tags"
-              :key="tag.text"
-              style="float: left; margin-right: 0.8em; cursor: pointer;"
-              @click="addTag(tag.text)"
+          <v-flex xs1>
+            <v-progress-circular
+              color="primary"
+              :size="60"
+              :width="6"
+              indeterminate
+              class="spinner"
+            ></v-progress-circular>
+          </v-flex>
+        </v-layout>
+        <v-card
+          v-else-if="!!searchResults"
+          v-for="item in searchResults"
+          :key="item.name"
+          class="mt-4 item"
+          style="padding: 15px; padding-bottom: 0px; margin: 5px; flex-grow: 1; overflow: hidden;"
+          max-width="440"
+          min-width="250"
+          height="300"
+        >
+          <v-list-item>
+            <v-list-item-avatar>
+              <img
+              v-if="item.includeIconInSearch && item.componentTypeIconUrl"
+              :src="'/openstorefront/' + item.componentTypeIconUrl"
+              style="min-width: 40px; max-height: 40px; margin-right: 1em; float: left;"
+              >
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title class="headline more-info" @click='moreInformation(item.componentId)'>{{ item.name }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <div>
+            <p>{{ item.organization }}</p>
+            <router-link
+              :to="{ path: 'search', query: { comp: item.componentType }}"
             >
-              <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
-            </span>
+              {{ item.componentTypeDescription }}
+            </router-link>
+            <div
+              style="padding-bottom: 1.5em;"
+              v-if="!!item.tags && item.tags.length !== 0"
+            >
+              <span
+                v-for="tag in item.tags"
+                :key="tag.text"
+                style="float: left; margin-right: 0.8em; cursor: pointer;"
+                @click="addTag(tag.text)"
+              >
+                <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
+              </span>
+            </div>
           </div>
-        </div>
-        <!-- <div class="description-wrapper">
-          <p>{{ item.description }}</p>
-        </div> -->
+          <div class="description-wrapper">{{ item.description }}</div>
+        </v-card>
       </div>
     </div><!-- Search Results -->
   </div>
@@ -776,6 +786,9 @@ $side-menu-width-large: 34em;
 $closed-width: 5em;
 $footer-height: 42.4px;
 
+p {
+  margin: 0px;
+}
 .searchbar {
   border-radius: 2px;
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
@@ -858,10 +871,8 @@ hr {
   text-decoration: underline;
 }
 .description-wrapper {
-  width: 50%;
-  padding-left: 15px;
-  display: flex;
-  align-items: center;
+  text-overflow: ellipsis;
+  bottom: 0;
 }
 .v-footer {
   height: $footer-height !important;
