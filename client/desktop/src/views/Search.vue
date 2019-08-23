@@ -284,8 +284,8 @@
           <div class="item-body">
             <div class="item-properties">
               <span>
-                <v-chip small>
-                  <i data-v-1a1d373c="" aria-hidden="true" class="v-icon fas fa-university theme--light" style="font-size: 16px;"></i>
+                <v-chip small class="organization-chip">
+                  <i data-v-1a1d373c="" aria-hidden="true" class="v-icon fas fa-university theme--light" style="font-size: 16px; padding-right: 4px;"></i>
                   {{ item.organization }}
                 </v-chip>
               </span>
@@ -315,7 +315,9 @@
             </div>
             <v-divider></v-divider>
             <div class="item-details">
-              <div class="description-wrapper">{{ item.description }}</div>
+              <div class="description-wrapper">
+                {{ shortenDescription(item.description) }}
+              </div>
               <div>
                 <p><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
                 <p><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
@@ -458,7 +460,7 @@ export default {
       }
     },
     resetOptions () {
-      this.searchPageSize = 10
+      this.searchPageSize = 12
       this.searchSortField = 'searchScore'
       this.searchSortOrder = 'DESC'
     },
@@ -503,7 +505,7 @@ export default {
       var searchFilters = {
         "query": '',
         'page': 0,
-        'pageSize': 10,
+        'pageSize': 12,
         'componentTypes': [],
         'includeChildren': true,
         'organization': '',
@@ -707,16 +709,20 @@ export default {
       // alert('Copied the text: ' + copyText.value)
     },
     getFirstCompType(componentType){
-      var index = componentType.indexOf(">")
+      var index = componentType.indexOf('>')
       if(index != -1){
         return componentType.slice(0, index)
       }
     },
     getSecondCompType(componentType){
-      var index = componentType.indexOf(">")
+      var index = componentType.indexOf('>')
       if(index != -1){
         return componentType.slice(index)
       }
+    },
+    shortenDescription(desc){
+      var descriptionLength = 200;
+      return (desc.slice(0, descriptionLength) + '...')
     }
   },
   watch: {
@@ -786,7 +792,7 @@ export default {
       searchResultsAttributes: {},
       searchQueryIsDirty: false,
       searchPage: 0,
-      searchPageSize: 10,
+      searchPageSize: 12,
       totalSearchResults: 0,
       searchSortOrder: 'DESC',
       searchSortField: 'searchScore',
@@ -827,6 +833,12 @@ $footer-height: 42.4px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  overflow: hidden;
+}
+.organization-chip {
+  width: min-content;
+  display: flex;
+  align-items: center;
 }
 .comp-type-wrapper {
   padding: 5px 0px;
@@ -904,8 +916,8 @@ hr {
 }
 .search-block {
   position: fixed;
-  min-width: 24em;
   overflow-y: scroll;
+  overflow-x: hidden;
   top: $header-height;
   bottom: $footer-height;
   right: 0;
