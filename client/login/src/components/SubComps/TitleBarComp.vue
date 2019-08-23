@@ -8,7 +8,7 @@
         <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
       </v-toolbar>
     </div>
-    <div class="subtitle dark accent">
+    <div class="subtitle dark secondary">
       {{ CSubtitle }}
     </div>
 

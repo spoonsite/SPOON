@@ -193,23 +193,31 @@ public class Branding
 	private String panelHeaderTextColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vuePrimaryColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueSecondaryColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String vueAccentColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String vueErrorColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String vueInfoColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String vueWarningColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String vueSuccessColor;
 
 	@ConsumeField
@@ -282,6 +290,8 @@ public class Branding
 		setLinkhoverColor(branding.getLinkhoverColor());
 		setPanelHeaderColor(branding.getPanelHeaderColor());
 		setPanelHeaderTextColor(branding.getPanelHeaderTextColor());
+		setVuePrimaryColor(branding.getVuePrimaryColor());
+		setVueSecondaryColor(branding.getVueSecondaryColor());
 		setVueAccentColor(branding.getVueAccentColor());
 		setVueErrorColor(branding.getVueErrorColor());
 		setVueInfoColor(branding.getVueInfoColor());
@@ -532,6 +542,22 @@ public class Branding
 	public void setPanelHeaderTextColor(String panelHeaderTextColor)
 	{
 		this.panelHeaderTextColor = panelHeaderTextColor;
+	}
+
+	public String getVuePrimaryColor() {
+		return this.vuePrimaryColor;
+	}
+
+	public void setVuePrimaryColor(String vuePrimaryColor) {
+		this.vuePrimaryColor = vuePrimaryColor;
+	}
+
+	public String getVueSecondaryColor() {
+		return this.vueSecondaryColor;
+	}
+
+	public void setVueSecondaryColor(String vueSecondaryColor) {
+		this.vueSecondaryColor = vueSecondaryColor;
 	}
 
 	public String getVueAccentColor() {
