@@ -310,14 +310,13 @@
         v-model="showComparison"
         fullscreen: true>
           <v-card>
-            <v-card-title>Compare
-              <v-btn @click="showComparison = false">Close</v-btn>
-            </v-card-title>
+            <v-btn @click="showComparison = false" small fab icon style="position: absolute; top: 0; right: 0;"><v-icon>fas fa-times</v-icon></v-btn>
+            <v-card-title>Compare</v-card-title>
             <v-card-text>
               <v-data-table
               :headers="comparisonDataHeaders"
               :items="comparisonDataDisplay"
-              :rows-per-page-items="[-1,30,20,10]"
+              hide-actions
               >
                 <template slot='items' slot-scope='props'>
                   <td v-for="header in comparisonDataHeaders"
@@ -650,6 +649,7 @@ export default {
       for(var component in this.comparisonList){
         this.comparisonDataHeaders.push({text: this.comparisonList[component].name, value: 'component'+ component})
       }
+
       var possibleAttributes = this.getListOfComparableAttributes()
       for(var attribute in possibleAttributes){
         this.comparisonDataDisplay.push({name: possibleAttributes[attribute]})
@@ -664,7 +664,23 @@ export default {
               this.comparisonDataDisplay[attribute]['component' +component]="--"
             }
         }
-      }
+       }
+      // this.comparisonDataDisplay.push({name: 'Entry Type'})
+      // this.comparisonDataDisplay.push({name: 'Description'})
+      // this.comparisonDataDisplay.push({name: 'Organization'})
+
+      // for(var i=0; i<3; i++){
+      //   this.comparisonDataDisplay[this.comparisonDataDisplay.length-i]['component'+i]=this.comparisonList[i].componentTypeDescription
+      //   this.comparisonDataDisplay[this.comparisonDataDisplay.length-i]['component'+i]=this.comparisonList[i].description
+      //   this.comparisonDataDisplay[this.comparisonDataDisplay.length-i]['component'+i]=this.comparisonList[i].organization
+      // }
+
+      // for(var i=possibleAttributes.length+3, j=0; i<possibleAttributes.length; i++, j++){
+      //   this.comparisonDataDisplay[i]['component' +j]=this.comparisonList[j].componentTypeDescription
+      //   this.comparisonDataDisplay[i]['component' +j]=this.comparisonList[j].description
+      //   this.comparisonDataDisplay[i]['component' +j]=this.comparisonList[j].organization
+      // }
+      console.log(this.comparisonDataDisplay)
     },
     getListOfComparableAttributes(){
       var possibleAttributes=[]
