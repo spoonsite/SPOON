@@ -11,7 +11,7 @@
         <v-btn @click="showOptions = !showOptions; showFilters = false;" small fab dark icon :color="`primary ${showOptions ? 'lighten-4' : ''}`"><v-icon dark>fas fa-cog</v-icon></v-btn>
       </div>
       <div>
-        <v-btn @click="sortComparisonData(); showComparison = !showComparison;" small fab icon><v-icon>fas fa-columns</v-icon></v-btn>
+        <v-btn @click="sortComparisonData(); showComparison = true;" small fab icon><v-icon>fas fa-columns</v-icon></v-btn>
       </div>
       <div>
         <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
@@ -310,36 +310,23 @@
         v-model="showComparison"
         fullscreen: true>
           <v-card>
-            <v-card-title>Compare</v-card-title>
+            <v-card-title>Compare
+              <v-btn @click="showComparison = false">Close</v-btn>
+            </v-card-title>
             <v-card-text>
-              <table>
-                <v-data-table
-                :headers="this.comparisonDataHeaders"
-                :items="this.comparisonDataDisplay">
-                </v-data-table>
-                  <!-- <tr>
-                    <th>Attributes</th>
-                    <th v-for="component in comparisonList"
-                    :key="component.name">
-                      {{component.name}}
-                    </th>
-                  </tr>
-                  <tr v-for="component in comparisonList"
-                  :key="component.name">
-                  <td></td> -->
-                    <!-- <td v-for="attribute in component"
-                    :key="attribute.name">
-                      {{attribute.typeLabel}}
-                    </td> -->
-                    <!-- <td v-for="attribute in component.attributes"
-                    :key="attribute.name"> {{attribute.typeLabel}}</td>
-                      <td v-for="attribute in component.attributes"
-                      :key="attribute.name"> {{attribute.label}}</td> -->
-                  <!-- </tr> -->
-              </table>
+              <v-data-table
+              :headers="comparisonDataHeaders"
+              :items="comparisonDataDisplay"
+              :rows-per-page-items="[-1,30,20,10]"
+              >
+                <template slot='items' slot-scope='props'>
+                  <td v-for="header in comparisonDataHeaders"
+                  :key="header.name">{{props.item[header.value]}}</td>
+                </template>
+              </v-data-table>
             </v-card-text>
             <v-card-actions>
-              <v-btn @click="!showComparison">Close</v-btn>
+
             </v-card-actions>
           </v-card>
       </v-dialog>
@@ -658,6 +645,7 @@ export default {
       // alert('Copied the text: ' + copyText.value)
     },
     sortComparisonData(){
+      this.deleteAllTableData()
       this.comparisonDataHeaders.push({text:'Attribute', value: 'name'})
       for(var component in this.comparisonList){
         this.comparisonDataHeaders.push({text: this.comparisonList[component].name, value: 'component'+ component})
@@ -677,7 +665,6 @@ export default {
             }
         }
       }
-              console.log(this.comparisonDataDisplay)
     },
     getListOfComparableAttributes(){
       var possibleAttributes=[]
@@ -689,7 +676,11 @@ export default {
           }
         }
       return possibleAttributes
-    }
+    },
+    deleteAllTableData(){
+      this.comparisonDataHeaders.splice(0, this.comparisonDataHeaders.length)
+      this.comparisonDataDisplay.splice(0, this.comparisonDataDisplay.length)
+    },
   },
   watch: {
     filters: {
