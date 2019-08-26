@@ -153,7 +153,7 @@
 														maxLength: 255
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
 														name: 'landingPageTitle',
 														width: '100%',
@@ -161,7 +161,7 @@
 														maxLength: 255
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Landing Banner <i class="fa fa-question-circle"  data-qtip="This is the quote on the landing page." ></i>',
 														name: 'landingPageBanner',
 														width: '100%',
@@ -169,7 +169,7 @@
 														maxLength: 255
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Landing Page Footer <i class="fa fa-question-circle"  data-qtip="This is the footer on the landing page." ></i>',
 														name: 'landingPageFooter',
 														width: '100%',
@@ -182,7 +182,7 @@
 														boxLabel: 'Show link to mobile site in menu'													 	
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Disclaimer Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottom right of the Search Results." ></i>',
 														name: 'disclaimerMessage',
 														width: '100%',
@@ -190,7 +190,7 @@
 														maxLength: 4096
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Bulk Upload Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup box when a vendor uses the Bulk Upload tool."></i>',
 														name: 'bulkUploadMessage',
 														width: '100%',
@@ -214,7 +214,7 @@
 												},
 												items: [
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Login Page Content Section <i class="fa fa-question-circle"  data-qtip="Page Content, text. Leaving this empty leaves no trace on the page."></i>',
 														name: 'loginContentBlock',
 														width: '100%',
@@ -273,7 +273,7 @@
 																fieldLabel: 'Login Overview Video Poster URL <i class="fa fa-question-circle"  data-qtip="Initial image to display for the video" ></i>',
 																name: 'loginOverviewVideoPosterUrl',
 																allowBlank: true,									
-																maxLength: 255,																
+																maxLength: 255,
 																flex: 4
 															},
 															{
@@ -344,7 +344,7 @@
 														name: 'showSupportMenuOnLogin'
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Login Footer <i class="fa fa-question-circle"  data-qtip="Content to be displayed in the footer."></i>',
 														name: 'loginFooter',
 														width: '100%',
@@ -426,7 +426,7 @@
 														boxLabel: 'Allow Security Markings <i class="fa fa-question-circle"  data-qtip="Allows the capture and display of security markings." ></i>'
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Security Banner Text <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'securityBannerText',
 														width: '100%',
@@ -448,7 +448,7 @@
 														name: 'securityBannerBackgroundColor'
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'User Input Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'userInputWarning',
 														width: '100%',
@@ -456,7 +456,7 @@
 														maxLength: 4000
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Submission Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'submissionFormWarning',
 														width: '100%',
@@ -464,7 +464,7 @@
 														maxLength: 4000
 													},
 													{
-														xtype: 'textfield',
+														xtype: 'htmleditor',
 														fieldLabel: 'Change Request Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'changeRequestWarning',
 														width: '100%',
