@@ -71,7 +71,7 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getLandingPageTitle() == null) {
-					branding.setLandingPageTitle("DI2E Storefront");
+					branding.setLandingPageTitle("Storefront");
 				}
 
 				if (branding.getLandingPageBanner() == null) {
@@ -88,10 +88,6 @@ public class BrandingServiceImpl
 
 				if (branding.getHomebackSplashUrl() == null) {
 					branding.setHomebackSplashUrl("/openstorefront/images/background_globe.jpg");
-				}
-
-				if (branding.getLandingStatsText() == null) {
-					branding.setLandingStatsText("DI2E Components");
 				}
 
 				if (branding.getLandingPageFooter() == null) {
@@ -150,7 +146,7 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getFeedbackHandler() == null) {
-					branding.setFeedbackHandler(FeedbackHandleType.JIRA);
+					branding.setFeedbackHandler(FeedbackHandleType.EMAIL);
 				}
 
 				if (branding.getDisclaimerMessage() == null){
@@ -159,7 +155,7 @@ public class BrandingServiceImpl
 
 				//Colors
 				if (branding.getPrimaryColor() == null) {
-					branding.setPrimaryColor("#441e60"); //#1a0227
+					branding.setPrimaryColor("#252931"); //#1a0227
 				}
 
 				if (branding.getPrimaryTextColor() == null) {
@@ -167,11 +163,11 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getSecondaryColor() == null) {
-					branding.setSecondaryColor("#2D0D41");
+					branding.setSecondaryColor("#183A4C");
 				}
-
+					//EXT-specific
 				if (branding.getAccentColor() == null) {
-					branding.setAccentColor("#58326f");
+					branding.setAccentColor("#F8C533");
 				}
 
 				if (branding.getLinkColor() == null) {
@@ -187,7 +183,7 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getQuoteColor() == null) {
-					branding.setQuoteColor("#745189");
+					branding.setQuoteColor("#303540");
 				}
 
 				if (branding.getPanelHeaderColor() == null) {
@@ -196,6 +192,28 @@ public class BrandingServiceImpl
 
 				if (branding.getPanelHeaderTextColor() == null) {
 					branding.setPanelHeaderTextColor("#FFFFFF");
+				}
+					//Vue-specific
+				if (branding.getVuePrimaryColor() == null){
+					branding.setVuePrimaryColor("#252931");
+				}
+				if (branding.getVueSecondaryColor() == null){
+					branding.setVueSecondaryColor("#424242");
+				}
+				if (branding.getVueAccentColor() == null){
+					branding.setVueAccentColor("#F8C533");
+				}
+				if (branding.getVueErrorColor() == null ){
+					branding.setVueErrorColor("#C62828");
+				}
+				if (branding.getVueInfoColor() == null ){
+					branding.setVueInfoColor("#3F51B5");
+				}
+				if (branding.getVueWarningColor() == null){
+					branding.setVueWarningColor("#FFA000");
+				}
+				if (branding.getVueSuccessColor() == null){
+					branding.setVueSuccessColor("#388E3C");
 				}
 			}
 

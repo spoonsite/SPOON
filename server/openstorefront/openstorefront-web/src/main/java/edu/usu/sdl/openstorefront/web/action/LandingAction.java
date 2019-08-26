@@ -46,18 +46,6 @@ public class LandingAction
 		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
 	}
 
-	@HandlesEvent("Preview")
-	public Resolution previewLandingPage()
-	{
-		appVersion = getApplicationVersion();
-		if (StringUtils.isBlank(landingTemplate)) {
-			landingTemplate = (String) getContext().getRequest().getSession().getAttribute(LANDING_PAGE_PREVIEW);
-		} else {
-			getContext().getRequest().getSession().setAttribute(LANDING_PAGE_PREVIEW, landingTemplate);
-		}
-		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
-	}
-
 	public String getLandingTemplate()
 	{
 		return landingTemplate;

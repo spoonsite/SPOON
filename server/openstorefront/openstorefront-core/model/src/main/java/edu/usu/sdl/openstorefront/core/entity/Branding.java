@@ -20,12 +20,9 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
-import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
-import javax.persistence.Embedded;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -74,9 +71,7 @@ public class Branding
 	@ConsumeField
 	private String loginContentBlock;
 
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String loginLogoUrl;
+
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -99,11 +94,6 @@ public class Branding
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String landingPageTitle;
-
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@Sanitize(HTMLSanitizer.class)
-	@ConsumeField
-	private String landingStatsText;
 
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)
@@ -163,44 +153,72 @@ public class Branding
 	private Boolean showFAQ;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String primaryColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String primaryTextColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String secondaryColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String accentColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String quoteColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String linkColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String linkVisitedColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String linkhoverColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String panelHeaderColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String panelHeaderTextColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vuePrimaryColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueSecondaryColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueAccentColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueErrorColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueInfoColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueWarningColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueSuccessColor;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
@@ -239,14 +257,12 @@ public class Branding
 		setLandingPageBanner(branding.getLandingPageBanner());
 		setLandingPageFooter(branding.getLandingPageFooter());
 		setLandingPageTitle(branding.getLandingPageTitle());
-		setLandingStatsText(branding.getLandingStatsText());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
 		setHomebackSplashUrl(branding.getHomebackSplashUrl());
 		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
 
-		setLoginLogoUrl(branding.getLoginLogoUrl());
 		setLoginContentBlock(branding.getLoginContentBlock());
 		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
 		setLoginOverviewVideoPosterUrl(branding.getLoginOverviewVideoPosterUrl());
@@ -274,6 +290,13 @@ public class Branding
 		setLinkhoverColor(branding.getLinkhoverColor());
 		setPanelHeaderColor(branding.getPanelHeaderColor());
 		setPanelHeaderTextColor(branding.getPanelHeaderTextColor());
+		setVuePrimaryColor(branding.getVuePrimaryColor());
+		setVueSecondaryColor(branding.getVueSecondaryColor());
+		setVueAccentColor(branding.getVueAccentColor());
+		setVueErrorColor(branding.getVueErrorColor());
+		setVueInfoColor(branding.getVueInfoColor());
+		setVueWarningColor(branding.getVueWarningColor());
+		setVueSuccessColor(branding.getVueSuccessColor());
 		setOverrideCSS(branding.getOverrideCSS());
 
 		setShowLinkToMobile(branding.getShowLinkToMobile());
@@ -369,16 +392,6 @@ public class Branding
 	public void setAllowSecurityMarkingsFlg(Boolean allowSecurityMarkingsFlg)
 	{
 		this.allowSecurityMarkingsFlg = allowSecurityMarkingsFlg;
-	}
-
-	public String getLandingStatsText()
-	{
-		return landingStatsText;
-	}
-
-	public void setLandingStatsText(String landingStatsText)
-	{
-		this.landingStatsText = landingStatsText;
 	}
 
 	public String getFeedbackHandler()
@@ -531,6 +544,62 @@ public class Branding
 		this.panelHeaderTextColor = panelHeaderTextColor;
 	}
 
+	public String getVuePrimaryColor() {
+		return this.vuePrimaryColor;
+	}
+
+	public void setVuePrimaryColor(String vuePrimaryColor) {
+		this.vuePrimaryColor = vuePrimaryColor;
+	}
+
+	public String getVueSecondaryColor() {
+		return this.vueSecondaryColor;
+	}
+
+	public void setVueSecondaryColor(String vueSecondaryColor) {
+		this.vueSecondaryColor = vueSecondaryColor;
+	}
+
+	public String getVueAccentColor() {
+		return this.vueAccentColor;
+	}
+
+	public void setVueAccentColor(String vueAccentColor) {
+		this.vueAccentColor = vueAccentColor;
+	}
+
+	public String getVueErrorColor() {
+		return this.vueErrorColor;
+	}
+
+	public void setVueErrorColor(String vueErrorColor) {
+		this.vueErrorColor = vueErrorColor;
+	}
+
+	public String getVueInfoColor() {
+		return this.vueInfoColor;
+	}
+
+	public void setVueInfoColor(String vueInfoColor) {
+		this.vueInfoColor = vueInfoColor;
+	}
+
+	public String getVueWarningColor() {
+		return this.vueWarningColor;
+	}
+
+	public void setVueWarningColor(String vueWarningColor) {
+		this.vueWarningColor = vueWarningColor;
+	}
+
+	public String getVueSuccessColor() {
+		return this.vueSuccessColor;
+	}
+
+	public void setVueSuccessColor(String vueSuccessColor) {
+		this.vueSuccessColor = vueSuccessColor;
+	}
+
 	public String getSubmissionFormWarning()
 	{
 		return submissionFormWarning;
@@ -589,16 +658,6 @@ public class Branding
 	public void setLoginContentBlock(String loginContentBlock)
 	{
 		this.loginContentBlock = loginContentBlock;
-	}
-
-	public String getLoginLogoUrl()
-	{
-		return loginLogoUrl;
-	}
-
-	public void setLoginLogoUrl(String loginLogoUrl)
-	{
-		this.loginLogoUrl = loginLogoUrl;
 	}
 
 	public String getLoginFooter()

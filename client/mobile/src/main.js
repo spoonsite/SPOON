@@ -69,13 +69,13 @@ store.dispatch('getSecurityPolicy');
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
     theme: {
-      primary: store.state.branding.primaryColor,
-      secondary: store.state.branding.secondaryColor,
-      accent: '#424242', // accent should be dark, used as button default
-      error: '#C62828',
-      info: '#3F51B5',
-      warning: '#FFA000',
-      success: '#388E3C'
+      primary: store.state.branding.vuePrimaryColor,
+      secondary: store.state.branding.vueSecondaryColor,
+      accent: store.state.branding.vueAccentColor,
+      error: store.state.branding.vueErrorColor,
+      info: store.state.branding.vueInfoColor,
+      warning: store.state.branding.vueWarningColor,
+      success: store.state.branding.vueSuccessColor,
     }
   });
 
