@@ -155,7 +155,7 @@ public class BrandingServiceImpl
 
 				//Colors
 				if (branding.getPrimaryColor() == null) {
-					branding.setPrimaryColor("#441e60"); //#1a0227
+					branding.setPrimaryColor("#252931"); //#1a0227
 				}
 
 				if (branding.getPrimaryTextColor() == null) {
@@ -163,11 +163,11 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getSecondaryColor() == null) {
-					branding.setSecondaryColor("#2D0D41");
+					branding.setSecondaryColor("#183A4C");
 				}
 					//EXT-specific
 				if (branding.getAccentColor() == null) {
-					branding.setAccentColor("#58326f");
+					branding.setAccentColor("#F8C533");
 				}
 
 				if (branding.getLinkColor() == null) {
@@ -183,7 +183,7 @@ public class BrandingServiceImpl
 				}
 
 				if (branding.getQuoteColor() == null) {
-					branding.setQuoteColor("#745189");
+					branding.setQuoteColor("#303540");
 				}
 
 				if (branding.getPanelHeaderColor() == null) {
@@ -194,8 +194,14 @@ public class BrandingServiceImpl
 					branding.setPanelHeaderTextColor("#FFFFFF");
 				}
 					//Vue-specific
+				if (branding.getVuePrimaryColor() == null){
+					branding.setVuePrimaryColor("#252931");
+				}
+				if (branding.getVueSecondaryColor() == null){
+					branding.setVueSecondaryColor("#424242");
+				}
 				if (branding.getVueAccentColor() == null){
-					branding.setVueAccentColor("#424242");
+					branding.setVueAccentColor("#F8C533");
 				}
 				if (branding.getVueErrorColor() == null ){
 					branding.setVueErrorColor("#C62828");

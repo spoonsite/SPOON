@@ -73,8 +73,8 @@ store.dispatch('getSecurityPolicy')
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
     theme: {
-      primary: store.state.branding.primaryColor,
-      secondary: store.state.branding.secondaryColor,
+      primary: store.state.branding.vuePrimaryColor,
+      secondary: store.state.branding.vueSecondaryColor,
       accent: store.state.branding.vueAccentColor,
       error: store.state.branding.vueErrorColor,
       info: store.state.branding.vueInfoColor,

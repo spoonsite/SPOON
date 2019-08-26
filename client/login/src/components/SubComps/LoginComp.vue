@@ -35,7 +35,7 @@
           <v-flex xs12>
             <v-btn
               block
-              color="accent"
+              color="secondary"
               style="margin-bottom:1em;"
               @click="login"
               :disabled="!valid"
