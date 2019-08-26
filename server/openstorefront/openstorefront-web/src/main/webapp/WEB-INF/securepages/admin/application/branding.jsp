@@ -153,53 +153,28 @@
 														maxLength: 255
 													},
 													{
-														xtype: 'panel',
-														html: '<b>Landing Page Title </b><i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
 														name: 'landingPageTitle',
-														width: '100%',										
-														height: 300,											
-														maxLength: 255,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | charmap | link savedsearchlink table | osffullscreen | preview",
-														})
+														width: '100%',
+														allowBlank: true,
+														maxLength: 255
 													},
 													{
-														xtype: 'panel',
-														html: '<b>Landing Banner </b><i class="fa fa-question-circle"  data-qtip="This is the quote on the landing page." ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Landing Banner <i class="fa fa-question-circle"  data-qtip="This is the quote on the landing page." ></i>',
 														name: 'landingPageBanner',
-														width: '100%',										
-														height: 300,											
-														maxLength: 255,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | charmap | link savedsearchlink table | osffullscreen | preview",
-														})
+														width: '100%',
+														allowBlank: true,
+														maxLength: 255
 													},
 													{
-														xtype: 'panel',
-														html: '<em>Landing Page Footer</em> <i class="fa fa-question-circle"  data-qtip="This is the footer on the landing page." ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Landing Page Footer <i class="fa fa-question-circle"  data-qtip="This is the footer on the landing page." ></i>',
 														name: 'landingPageFooter',
-														width: '100%',										
-														height: 300,											
-														maxLength: 65536,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															mediaSelectionUrl: MediaUtil.generalMediaUrl,
-															mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
-														})
+														width: '100%',
+														allowBlank: true,
+														maxLength: 65536
 													},
 													{
 														xtype: 'checkbox',
@@ -207,36 +182,20 @@
 														boxLabel: 'Show link to mobile site in menu'													 	
 													},
 													{
-														xtype: 'panel',
-														html: '<b>Disclaimer Message </b><i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottome right of the Search Results." ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Disclaimer Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottom right of the Search Results." ></i>',
 														name: 'disclaimerMessage',
-														width: '100%',										
-														height: 300,											
-														maxLength: 4096,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | charmap | link savedsearchlink table | osffullscreen | preview",
-														})
+														width: '100%',
+														allowBlank: true,
+														maxLength: 4096
 													},
 													{
-														xtype: 'panel',
-														html: '<b>Bulk Upload Message </b><i class="fa fa-question-circle"  data-qtip="This text will appear in a popup box when a vendor uses the Bulk Upload tool." ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Bulk Upload Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup box when a vendor uses the Bulk Upload tool."></i>',
 														name: 'bulkUploadMessage',
-														width: '100%',										
-														height: 300,											
-														maxLength: 4096,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | charmap | link savedsearchlink table | osffullscreen | preview",
-														})
+														width: '100%',
+														allowBlank: true,
+														maxLength: 4096
 													},
 												]
 											},
@@ -255,21 +214,12 @@
 												},
 												items: [
 													{
-														xtype: 'panel',
-														html: '<b>Login Page Content Section </b><i class="fa fa-question-circle"  data-qtip="Page Content, text. Leaving this empty leaves no trace on the page." ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Login Page Content Section <i class="fa fa-question-circle"  data-qtip="Page Content, text. Leaving this empty leaves no trace on the page."></i>',
 														name: 'loginContentBlock',
 														width: '100%',
-														height: 300,
-														maxLength: 16000,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															mediaSelectionUrl: MediaUtil.generalMediaUrl,
-															mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
-														})
+														allowBlank: true,
+														maxLength: 4096
 													},
 													{
 														layout: 'hbox',
@@ -394,21 +344,12 @@
 														name: 'showSupportMenuOnLogin'
 													},
 													{
-														xtype: 'panel',
-														html: '<b>Login Footer </b><i class="fa fa-question-circle"  data-qtip="Content to be displyed in the footer" ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Login Footer <i class="fa fa-question-circle"  data-qtip="Content to be displayed in the footer."></i>',
 														name: 'loginFooter',
 														width: '100%',
-														height: 300,
-														maxLength: 16000,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															mediaSelectionUrl: MediaUtil.generalMediaUrl,
-															mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
-														})
+														allowBlank: true,
+														maxLength: 16384
 													},
 												]
 											},
@@ -485,20 +426,12 @@
 														boxLabel: 'Allow Security Markings <i class="fa fa-question-circle"  data-qtip="Allows the capture and display of security markings." ></i>'
 													},
 													{
-														xtype: 'panel',
-														html: '<b>Security Banner Text </b><i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Security Banner Text <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'securityBannerText',
 														width: '100%',
-														height: 300,
-														maxLength: 4000,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | charmap | link savedsearchlink table | osffullscreen | preview",
-														})
+														allowBlank: true,
+														maxLength: 4000
 													},
 													{
 														xtype: 'colorfield',
@@ -515,52 +448,28 @@
 														name: 'securityBannerBackgroundColor'
 													},
 													{
-														xtype: 'panel',
-														html: '<b>User Input Warning </b><i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'User Input Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'userInputWarning',
 														width: '100%',
-														height: 300,
-														maxLength: 4000,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | charmap | link savedsearchlink table | osffullscreen | preview",
-														})
+														allowBlank: true,
+														maxLength: 4000
 													},
 													{
-														xtype: 'panel',
-														html: '<b>Submission Form Warning </b><i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Submission Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'submissionFormWarning',
 														width: '100%',
-														height: 300,
-														maxLength: 4000,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | charmap | link savedsearchlink table | osffullscreen | preview",
-														})
+														allowBlank: true,
+														maxLength: 4000
 													},
 													{
-														xtype: 'panel',
-														html: '<b>Change Request Form Warning </b><i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'textfield',
+														fieldLabel: 'Change Request Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'changeRequestWarning',
 														width: '100%',
-														height: 300,
-														maxLength: 4000,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															toolbar1: "formatselect | bold italic underline forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright | charmap | link savedsearchlink table | osffullscreen | preview",
-														})
+														allowBlank: true,
+														maxLength: 4000
 													},						
 												]
 											},
