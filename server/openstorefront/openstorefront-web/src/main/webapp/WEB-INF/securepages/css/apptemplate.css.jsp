@@ -595,6 +595,3 @@ input::placeholder{
 input:-ms-input-placeholder{
     opacity: 0.5;
 }
-input::-ms-input-placeholder{
-    opactiy: 0.5;
-}
