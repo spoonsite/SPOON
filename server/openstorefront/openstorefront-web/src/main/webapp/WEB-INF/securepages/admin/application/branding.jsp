@@ -154,40 +154,19 @@
 													},
 													{
 														xtype: 'htmleditor',
-<<<<<<< HEAD
 														fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
 														name: 'landingPageTitle',
 														width: '100%',
 														allowBlank: true,
-=======
-														fieldLabel: '<em>Landing Page Title </em><i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
-														style: {border: '0'},
-														name: 'landingPageTitle',
-														width: '100%',										
-														height: 300,											
->>>>>>> 458d1c18696e7ee812aa840513fdcbf144de7286
 														maxLength: 255
 													},
 													{
 														xtype: 'htmleditor',
-<<<<<<< HEAD
 														fieldLabel: 'Landing Banner <i class="fa fa-question-circle"  data-qtip="This is the quote on the landing page." ></i>',
 														name: 'landingPageBanner',
 														width: '100%',
 														allowBlank: true,
 														maxLength: 255
-=======
-														fieldLabel: '<em>Landing Banner </em><i class="fa fa-question-circle"  data-qtip="This is the quote on the landing page." ></i>',
-														style: {border: '0'},
-														name: 'landingPageBanner',
-														width: '100%',										
-														height: 300,											
-														maxLength: 255
-													},
-													{
-														xtype: 'panel',
-														html: '<em>Landing Page Footer</em> <i class="fa fa-question-circle"  data-qtip="This is the footer on the landing page." ></i>'
->>>>>>> 458d1c18696e7ee812aa840513fdcbf144de7286
 													},
 													{
 														xtype: 'htmleditor',
@@ -204,34 +183,18 @@
 													},
 													{
 														xtype: 'htmleditor',
-<<<<<<< HEAD
 														fieldLabel: 'Disclaimer Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottom right of the Search Results." ></i>',
 														name: 'disclaimerMessage',
 														width: '100%',
 														allowBlank: true,
-=======
-														fieldLabel: '<em>Disclaimer Message </em><i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottome right of the Search Results." ></i>',
-														style: {border: '0'},
-														name: 'disclaimerMessage',
-														width: '100%',										
-														height: 300,											
->>>>>>> 458d1c18696e7ee812aa840513fdcbf144de7286
 														maxLength: 4096
 													},
 													{
 														xtype: 'htmleditor',
-<<<<<<< HEAD
 														fieldLabel: 'Bulk Upload Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup box when a vendor uses the Bulk Upload tool."></i>',
 														name: 'bulkUploadMessage',
 														width: '100%',
 														allowBlank: true,
-=======
-														fieldLabel: '<em>Bulk Upload Message </em><i class="fa fa-question-circle"  data-qtip="This text will appear in a popup box when a vendor uses the Bulk Upload tool." ></i>',
-														style: {border: '0'},
-														name: 'bulkUploadMessage',
-														width: '100%',										
-														height: 300,											
->>>>>>> 458d1c18696e7ee812aa840513fdcbf144de7286
 														maxLength: 4096
 													},
 												]
@@ -382,20 +345,11 @@
 													},
 													{
 														xtype: 'htmleditor',
-<<<<<<< HEAD
 														fieldLabel: 'Login Footer <i class="fa fa-question-circle"  data-qtip="Content to be displayed in the footer."></i>',
 														name: 'loginFooter',
 														width: '100%',
 														allowBlank: true,
 														maxLength: 16384
-=======
-														fieldLabel: '<em>Login Footer </em><i class="fa fa-question-circle"  data-qtip="Content to be displyed in the footer" ></i>',
-														style: {border: '0'},
-														name: 'loginFooter',
-														width: '100%',
-														height: 300,
-														maxLength: 16000
->>>>>>> 458d1c18696e7ee812aa840513fdcbf144de7286
 													},
 												]
 											},
@@ -473,18 +427,10 @@
 													},
 													{
 														xtype: 'htmleditor',
-<<<<<<< HEAD
 														fieldLabel: 'Security Banner Text <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'securityBannerText',
 														width: '100%',
 														allowBlank: true,
-=======
-														fieldLabel: '<em>Security Banner Text </em><i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
-														style: {border: '0'},
-														name: 'securityBannerText',
-														width: '100%',
-														height: 300,
->>>>>>> 458d1c18696e7ee812aa840513fdcbf144de7286
 														maxLength: 4000
 													},
 													{
@@ -503,50 +449,26 @@
 													},
 													{
 														xtype: 'htmleditor',
-<<<<<<< HEAD
 														fieldLabel: 'User Input Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'userInputWarning',
 														width: '100%',
 														allowBlank: true,
-=======
-														fieldLabel: '<em>User Input Warning </em><i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
-														style: {border: '0'},
-														name: 'userInputWarning',
-														width: '100%',
-														height: 300,
->>>>>>> 458d1c18696e7ee812aa840513fdcbf144de7286
 														maxLength: 4000
 													},
 													{
 														xtype: 'htmleditor',
-<<<<<<< HEAD
 														fieldLabel: 'Submission Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'submissionFormWarning',
 														width: '100%',
 														allowBlank: true,
-=======
-														fieldLabel: '<em>Submission Form Warning </em><i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
-														style: {border: '0'},
-														name: 'submissionFormWarning',
-														width: '100%',
-														height: 300,
->>>>>>> 458d1c18696e7ee812aa840513fdcbf144de7286
 														maxLength: 4000
 													},
 													{
 														xtype: 'htmleditor',
-<<<<<<< HEAD
 														fieldLabel: 'Change Request Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'changeRequestWarning',
 														width: '100%',
 														allowBlank: true,
-=======
-														fieldLabel: '<em>Change Request Form Warning </em><i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
-														style: {border: '0'},
-														name: 'changeRequestWarning',
-														width: '100%',
-														height: 300,
->>>>>>> 458d1c18696e7ee812aa840513fdcbf144de7286
 														maxLength: 4000
 													},						
 												]
