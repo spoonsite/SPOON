@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,9 +57,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -68,22 +67,30 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.ResponseException;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
 /**
+ * Manages elasticsearch, specifically:
+ * 	-Adding components to index
+ * 	-Removing components from index
+ * 	-Reset the index (delete all from index and save all active and approved parts)
+ * 	-Search
  *
- * @author dshurtleff
+ * @author dshurtleff & gfowler
  */
 public class ElasticSearchManager
 		extends BaseSearchManager
@@ -114,6 +121,16 @@ public class ElasticSearchManager
 		this.clientPool = clientPool;
 		this.propertiesManager = propertiesManager;
 		this.service = service;
+	}
+
+	/**
+	 * Check if the search manager is started
+	 * @return boolean as to the state of the search manager
+	 */
+	@Override
+	public boolean isStarted()
+	{
+		return started.get();
 	}
 
 	public static ElasticSearchManager getInstance()
@@ -181,7 +198,7 @@ public class ElasticSearchManager
 		}
 
 		if (clientPool.isEmpty()) {
-			throw new OpenStorefrontRuntimeException("No elasticsearch client avaliable for searching", "Check pool size and restart search server (system admin)");
+			throw new OpenStorefrontRuntimeException("No elasticsearch client available for searching", "Check pool size and restart search server (system admin)");
 		}
 
 		int waitTimeSeconds = Convert.toInteger(propertiesManager.getValue(PropertiesManager.KEY_ELASTIC_CONNECTION_WAIT_TIME, "60"));
@@ -197,33 +214,33 @@ public class ElasticSearchManager
 		}
 	}
 
+	/**
+	 * Check if the index exists, if it does not exist, create an index. 
+	 */
 	private void checkSearchIndexCreation()
 	{
-		//	Check if index already exists...
-		//	As of now (Elasticsearch 5.6.3), the best way to check if an index exists is to try and create it!
-		//	... then catch the error if thrown... High/Low-level REST client doesn't support checking the existence indices.
-		//		per: https://discuss.elastic.co/t/high-level-rest-client-admin-api/100461
-		if (!indexCreated.get()) {
-			try (ElasticSearchClient client = justGetClient();) {
+		try (ElasticSearchClient client = justGetClient();) {
 
-				XContentBuilder source = JsonXContent.contentBuilder().startObject().endObject();
-				StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
+			GetIndexRequest indexRequest = new GetIndexRequest(INDEX);
+			boolean exists = client.getInstance().indices().exists(indexRequest, RequestOptions.DEFAULT);
+			if (!exists){
+				try{
+					CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX);
+					client.getInstance().indices().create(createIndexRequest, RequestOptions.DEFAULT);
+					LOG.log(Level.INFO, "Created index: " + INDEX);
 
-				//	Perform a request attempting to create an index
-				Response response = client
-						.getInstance()
-						.getLowLevelClient()
-						.performRequest("PUT", "/" + INDEX, Collections.emptyMap(), entity);
-
-				LOG.log(Level.INFO, () -> "Search index: " + INDEX + " has been created. " + response.getStatusLine().getStatusCode());
-				indexCreated.set(true);
-
-			} catch (ResponseException e) {
-				//	Index was already created...
-				indexCreated.set(true);
-			} catch (IOException e) {
-				LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+				} catch (ElasticsearchException e){
+					LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+				}
+			} else {
+				LOG.log(Level.INFO, "[" + INDEX + "] already exists.");
 			}
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+			indexCreated.set(false);
+		} catch (OpenStorefrontRuntimeException e){
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+			indexCreated.set(false);
 		}
 	}
 
@@ -281,6 +298,13 @@ public class ElasticSearchManager
 		started.set(false);
 	}
 
+	/**
+	 * Parses the elasticsearch return object into a readable form
+	 * 
+	 * @param SearchQuery object holding the search query
+	 * @param FilterQueryParams filters to apply to the returned elasticsearch result
+	 * @return ComponentSearchWrapper 
+	 */
 	@Override
 	public ComponentSearchWrapper search(SearchQuery searchQuery, FilterQueryParams filter)
 	{
@@ -297,6 +321,13 @@ public class ElasticSearchManager
 		return componentSearchWrapper;
 	}
 
+	/**
+	 * doIndexSearch with no additionalFieldsToReturn
+	 * 
+	 * @param query the string from user
+	 * @param FilterQueryParams any additional query filters
+	 * @return IndexSearchResult result from elasticsearch
+	 */
 	@Override
 	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
 	{
@@ -304,20 +335,19 @@ public class ElasticSearchManager
 	}
 
 	@Override
-	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] addtionalFieldsToReturn)
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] additionalFieldsToReturn)
 	{
-		// look for user search options if none user global
+		// look for user search options if none are found use global search options
 		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
 		if (searchOptions == null) {
 			searchOptions = service.getSearchService().getGlobalSearchOptions();
 		}
 
-		if (searchOptions.areAllOptionsOff()) {
-			IndexSearchResult blankIndexSearchResult = new IndexSearchResult();
-			return blankIndexSearchResult;
-		}
-
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
+
+		if (searchOptions.areAllOptionsOff()) {
+			return indexSearchResult;
+		}
 
 		int maxSearchResults = 10000;
 		if (filter.getMax() < maxSearchResults) {
@@ -399,7 +429,7 @@ public class ElasticSearchManager
 			String allLowerQuery;
 			String properCaseQuery;
 
-			// This is done becuase searching doesn't properly deal with the hyphens.
+			// This is done because searching doesn't properly deal with the hyphens.
 			if (isHyphenatedWithoutSpaces(queryString.toString())) {
 				// Create custom queries
 				allUpperQuery = createSubstringOfQuery(queryString.toString().toUpperCase());
@@ -438,7 +468,7 @@ public class ElasticSearchManager
 
 			if (searchOptions.getCanUseDescriptionInSearch()) {
 				// Custom query for description
-				esQuery.should(QueryBuilders.matchPhraseQuery("description", actualQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, actualQuery));
 			}
 
 			if (searchOptions.getCanUseTagsInSearch()) {
@@ -480,7 +510,7 @@ public class ElasticSearchManager
 			}
 
 			if (searchOptions.getCanUseDescriptionInSearch()) {
-				esQuery.should(QueryBuilders.matchPhraseQuery("description", phrase.toLowerCase()));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, phrase.toLowerCase()));
 			}
 
 			if (searchOptions.getCanUseTagsInSearch()) {
@@ -500,6 +530,7 @@ public class ElasticSearchManager
 				.from(filter.getOffset())
 				.size(maxSearchResults)
 				.sort(sort);
+
 		SearchRequest searchRequest = new SearchRequest(INDEX)
 				.source(searchSourceBuilder);
 
@@ -529,10 +560,10 @@ public class ElasticSearchManager
 		// perform search
 		SearchResponse response;
 		try (ElasticSearchClient client = singleton.getClient()) {
-			response = client.getInstance().search(searchRequest);
+			response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
 		}
 
-		indexSearchResult.setTotalResults(response.getHits().getTotalHits());
+		indexSearchResult.setTotalResults(response.getHits().getTotalHits().value);
 		indexSearchResult.setMaxScore(response.getHits().getMaxScore());
 
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
@@ -680,6 +711,10 @@ public class ElasticSearchManager
 		return searchSuggestions;
 	}
 
+	/**
+	 * Index add a list of components to elasticsearch
+	 * @param components a list of components
+	 */
 	@Override
 	public void index(List<Component> components)
 	{
@@ -707,7 +742,8 @@ public class ElasticSearchManager
 				component.setDescription(StringProcessor.ellipseString(component.getDescription(), MAX_DESCRIPTION_INDEX_SIZE));
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
 				try {
-					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
+					bulkRequest.add(new IndexRequest(INDEX)
+							.id(componentSearchView.getComponentId())
 							.source(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON));
 				} catch (JsonProcessingException ex) {
 					LOG.log(Level.SEVERE, null, ex);
@@ -722,7 +758,7 @@ public class ElasticSearchManager
 	{
 		BulkResponse bulkResponse;
 		try (ElasticSearchClient client = singleton.getClient()) {
-			bulkResponse = client.getInstance().bulk(bulkRequest);
+			bulkResponse = client.getInstance().bulk(bulkRequest, RequestOptions.DEFAULT);
 
 			if (bulkResponse.hasFailures()) {
 				bulkResponse.forEach(response -> {
@@ -764,7 +800,8 @@ public class ElasticSearchManager
 						componentAll.getTags()
 				);
 				try {
-					bulkRequest.add(new IndexRequest(INDEX, INDEX_TYPE, componentSearchView.getComponentId())
+					bulkRequest.add(new IndexRequest(INDEX)
+							.id(componentSearchView.getComponentId())
 							.source(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON));
 				} catch (JsonProcessingException ex) {
 					LOG.log(Level.SEVERE, null, ex);
@@ -772,83 +809,53 @@ public class ElasticSearchManager
 			}
 			executeIndexRequest(bulkRequest);
 		}
-
 	}
 
+	/**
+	 * Delete a single item from the index using an id. 
+	 * 
+	 * @param id: the unique identifier for the component
+	 */
 	@Override
 	public void deleteById(String id)
 	{
-		DeleteRequest deleteRequest = new DeleteRequest(INDEX, INDEX_TYPE, id);
-		DeleteResponse response;
-		try (ElasticSearchClient client = singleton.getClient()) {
-			response = client.getInstance().delete(deleteRequest);
-			LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.getId()));
+		try (ElasticSearchClient client = justGetClient();) {
+
+			GetIndexRequest indexRequest = new GetIndexRequest(INDEX);
+			boolean exists = client.getInstance().indices().exists(indexRequest, RequestOptions.DEFAULT);
+			if (exists) {
+				DeleteRequest deleteRequest = new DeleteRequest(INDEX, id);
+				DeleteResponse response;
+				response = client.getInstance().delete(deleteRequest, RequestOptions.DEFAULT);
+				LOG.log(Level.FINER, MessageFormat.format("Found Record to delete: {0}", response.getId()));
+			}
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
 		}
 	}
 
+	/**
+	 * Delete then index and then recreate it. All information in the index is gone. 
+	 */
 	@Override
 	public void deleteAll()
 	{
-		//query all (delete in groups)
-		int start = 0;
-		int max = 1000;
-		long total = max;
+		try (ElasticSearchClient client = justGetClient();) {
+			DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest(INDEX);
+			deleteByQueryRequest.setQuery(QueryBuilders.matchAllQuery());
 
-		int maxRetries = 5;
-		int retries = 0;
+			client.getInstance().deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
 
-		while (start < total) {
-
-			//	Create the search request
-			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder()
-					.query(QueryBuilders.matchAllQuery())
-					.from(start)
-					.size(max);
-			SearchRequest searchRequest = new SearchRequest(INDEX)
-					.types(INDEX_TYPE)
-					.source(sourceBuilder);
-
-			SearchResponse response;
-			try (ElasticSearchClient client = singleton.getClient()) {
-				response = client.getInstance().search(searchRequest);
-
-				SearchHits searchHits = response.getHits();
-				BulkRequest bulkRequest = new BulkRequest();
-				if (searchHits.getTotalHits() > 0) {
-					//bulk delete results
-					searchHits.forEach(hit -> {
-						bulkRequest.add(new DeleteRequest(INDEX, INDEX_TYPE, hit.getId()));
-					});
-
-					//	Process the bulk request (ensure there were no failures)
-					BulkResponse bulkResponse = client.getInstance().bulk(bulkRequest);
-					if (bulkResponse.hasFailures()) {
-						bulkResponse.forEach(br -> {
-							if (StringUtils.isNotBlank(br.getFailureMessage())) {
-								LOG.log(Level.WARNING, MessageFormat.format("A component failed to delete: {0}", br.getFailureMessage()));
-							}
-						});
-					}
-				}
-				start += searchHits.getHits().length;
-				total = searchHits.getTotalHits();
-			} catch (ElasticsearchStatusException ex) {
-				LOG.log(Level.WARNING, "Index is not found. Skipping delete.");
-				LOG.log(Level.FINER, null, ex);
-				indexCreated.set(false);
-
-				retries++;
-				if (retries == maxRetries) {
-					throw new OpenStorefrontRuntimeException("Unable to correct index/search error on detail. Giving up.", "Check elasticsearch", ex);
-				}
-			} catch (IOException ex) {
-				LOG.log(Level.SEVERE, null, ex);
-			}
+		} catch (ElasticsearchException e) {
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
 		}
 	}
 
+	/**
+	 * Load all active and approved components into elasticsearch
+	 */
 	@Override
 	public void saveAll()
 	{
@@ -860,6 +867,9 @@ public class ElasticSearchManager
 		index(components);
 	}
 
+	/**
+	 * Delete the index, repopulate the index, and update the mapping for the index.
+	 */
 	@Override
 	public void resetIndexer()
 	{
@@ -868,12 +878,9 @@ public class ElasticSearchManager
 		updateMapping();
 	}
 
-	@Override
-	public boolean isStarted()
-	{
-		return started.get();
-	}
-
+	/**
+	 * Update the mapping of the index
+	 */
 	private void updateMapping()
 	{
 		// Update description field to use fielddata=true
@@ -903,18 +910,74 @@ public class ElasticSearchManager
 						.endObject()
 						.endObject();
 
-				//	Use low-level REST client to perform re-mapping
-				StringEntity entity = new StringEntity(source.string(), ContentType.APPLICATION_JSON);
+				try{
+					PutMappingRequest putMappingRequest = new PutMappingRequest(INDEX);
+					putMappingRequest.source(source);
 
-				//	Perform a PUT request to update the description mapping
-				client.getInstance()
-						.getLowLevelClient()
-						.performRequest("PUT", "/" + INDEX + "/_mapping/" + INDEX_TYPE + "?update_all_types", Collections.emptyMap(), entity);
+					AcknowledgedResponse putMappingResponse = client.getInstance().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
+					LOG.log(Level.INFO, putMappingResponse.toString());
+				} catch (IOException ex){
+					LOG.log(Level.SEVERE, null, ex);
+				} 
 			}
 
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
 		}
+		LOG.log(Level.INFO, "Mapping Updated");
 	}
 
+	/**
+	 * The test for deleteById()
+	 */
+	public void deleteByIdTest(){
+		SearchResponse searchResponse = getAll();
+		long firstHits = searchResponse.getHits().getTotalHits().value;
+		LOG.log(Level.INFO, "GetAll() returned " + firstHits + " Hits.");
+		String idToDelete = searchResponse.getHits().getAt(1).getId();
+		deleteById(idToDelete);
+		searchResponse = getAll();
+		long secondHits = searchResponse.getHits().getTotalHits().value;
+		LOG.log(Level.INFO, "GetAll() returned " + secondHits + " Hits.");
+		if(firstHits - 1 == secondHits){
+			LOG.log(Level.INFO, "Delete By Id worked.");
+		}
+	}
+
+	/**
+	 * Get every object in the index.
+	 * @return SearchResponse object with all objects
+	 */
+	public SearchResponse getAll(){
+		SearchResponse searchResponse = new SearchResponse();
+		try (ElasticSearchClient client = singleton.getClient()) {
+			SearchRequest searchRequest = new SearchRequest(INDEX); 
+			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
+			searchSourceBuilder.query(QueryBuilders.matchAllQuery()); 
+			searchSourceBuilder.size(10000);
+			searchRequest.source(searchSourceBuilder);
+
+			searchResponse = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+		}
+		return searchResponse;
+	}
+
+	/**
+	 * Delete the index
+	 */
+	public void deleteIndex(){
+		try (ElasticSearchClient client = singleton.getClient()) {
+			DeleteIndexRequest request = new DeleteIndexRequest(INDEX);
+
+			AcknowledgedResponse deleteIndexResponse = client.getInstance().indices().delete(request, RequestOptions.DEFAULT);
+			LOG.log(Level.INFO, deleteIndexResponse.toString());
+			
+		} catch (ElasticsearchException exception) {
+			LOG.log(Level.SEVERE, null, exception);
+		} catch (IOException ex){
+			LOG.log(Level.SEVERE, null, ex);
+		} 
+	}
 }
