@@ -317,10 +317,11 @@
               :headers="comparisonDataHeaders"
               :items="comparisonDataDisplay"
               hide-actions
-              >
+              disable-initial-sort>
                 <template slot='items' slot-scope='props'>
                   <td v-for="header in comparisonDataHeaders"
-                  :key="header.name">{{props.item[header.value]}}</td>
+                  :key="header.name">
+                    {{props.item[header.value]}}</td>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -645,7 +646,7 @@ export default {
     },
     sortComparisonData(){
       this.deleteAllTableData()
-      this.comparisonDataHeaders.push({text:'Attribute', value: 'name'})
+      this.comparisonDataHeaders.push({text:'Entry Name', value: 'name'})
       for(var component in this.comparisonList){
         this.comparisonDataHeaders.push({text: this.comparisonList[component].name, value: 'component'+ component})
       }
@@ -665,22 +666,7 @@ export default {
             }
         }
        }
-      // this.comparisonDataDisplay.push({name: 'Entry Type'})
-      // this.comparisonDataDisplay.push({name: 'Description'})
-      // this.comparisonDataDisplay.push({name: 'Organization'})
-
-      // for(var i=0; i<3; i++){
-      //   this.comparisonDataDisplay[this.comparisonDataDisplay.length-i]['component'+i]=this.comparisonList[i].componentTypeDescription
-      //   this.comparisonDataDisplay[this.comparisonDataDisplay.length-i]['component'+i]=this.comparisonList[i].description
-      //   this.comparisonDataDisplay[this.comparisonDataDisplay.length-i]['component'+i]=this.comparisonList[i].organization
-      // }
-
-      // for(var i=possibleAttributes.length+3, j=0; i<possibleAttributes.length; i++, j++){
-      //   this.comparisonDataDisplay[i]['component' +j]=this.comparisonList[j].componentTypeDescription
-      //   this.comparisonDataDisplay[i]['component' +j]=this.comparisonList[j].description
-      //   this.comparisonDataDisplay[i]['component' +j]=this.comparisonList[j].organization
-      // }
-      console.log(this.comparisonDataDisplay)
+      this.addDescriptionTableData()
     },
     getListOfComparableAttributes(){
       var possibleAttributes=[]
@@ -692,6 +678,21 @@ export default {
           }
         }
       return possibleAttributes
+    },
+    addDescriptionTableData(){
+      this.comparisonDataDisplay.unshift({name: 'Attributes'})
+      this.comparisonDataDisplay.unshift({name: 'Organization'})
+      for(var component in this.comparisonList){
+        this.comparisonDataDisplay[0]['component'+component]=this.comparisonList[component].organization
+      }
+      this.comparisonDataDisplay.unshift({name: 'Description'})
+      for(var component in this.comparisonList){
+        this.comparisonDataDisplay[0]['component'+component]=this.comparisonList[component].description
+      }
+      this.comparisonDataDisplay.unshift({name: 'Entry Type'})
+      for(var component in this.comparisonList){
+        this.comparisonDataDisplay[0]['component'+component]=this.comparisonList[component].componentTypeDescription
+      }
     },
     deleteAllTableData(){
       this.comparisonDataHeaders.splice(0, this.comparisonDataHeaders.length)
