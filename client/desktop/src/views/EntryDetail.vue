@@ -720,6 +720,7 @@ export default {
   }
   .entry-media {
     display: flex;
+    flex-grow: 25;
   }
   .no-media {
     display: flex;

@@ -2,7 +2,7 @@
 <div>
     <!-- MEDIA carousel -->
         <img
-          v-if="item.mediaTypeCode === 'IMG'"
+          v-if="item.mediaTypeCode === 'IMG' && index === 0"
           v-for="(item, index) in list"
           :key="item.link"
           :src="'https://spoonsite.com/openstorefront/mobile/' + item.link"
@@ -142,6 +142,7 @@ export default {
     width: 100%;
     max-width: 500px;
     margin: 15px;
+    border: 3px solid #252931;
   }
   /* transition animations */
   .fade-enter-active, .fade-leave-active {
