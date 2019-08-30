@@ -658,6 +658,10 @@ export default {
           for(var componentAttribute in this.comparisonList[component].attributes){
             if(possibleAttributes[attribute] === this.comparisonList[component].attributes[componentAttribute].typeLabel){
               this.comparisonDataDisplay[attribute]['name']=possibleAttributes[attribute]
+              if(!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')){
+                var numericAttribute = parseFloat(this.comparisonList[component].attributes[componentAttribute].label)
+                this.comparisonList[component].attributes[componentAttribute].label=Math.round(numericAttribute*10000).toString()
+              }
               this.comparisonDataDisplay[attribute]['component' +component]=this.comparisonList[component].attributes[componentAttribute].label
             }
           }
