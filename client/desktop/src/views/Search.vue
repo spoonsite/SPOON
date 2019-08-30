@@ -236,7 +236,7 @@
 
     <!-- Search Results -->
     <div class="px-3">
-      <h2 style="text-align: center" class="mb-2">Search Results</h2>
+      <h2 style="text-align: center" class="mb-2">Search Results for "{{ searchQuery }}"</h2>
 
       <p v-if="totalSearchResults === 0">No Search Results</p>
       <p v-else-if="searchResults && !searchQueryIsDirty" class="pl-5 ma-0">
@@ -318,9 +318,15 @@
               <div class="description-wrapper">
                 {{ shortenDescription(item.description) }}
               </div>
-              <div>
-                <p><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
-                <p><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
+              <div class=item-details-bottom>
+                <div>
+                  <p><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
+                  <p><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
+                </div>
+                <div class="compare-box">
+                  <input type="checkbox" v-model="comparisonList" v-bind:value="item">
+                  <label>Add to Compare</label>
+                </div>
               </div>
             </div>
           </div>
@@ -833,6 +839,7 @@ $footer-height: 42.4px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  padding: 2px;
   overflow: hidden;
 }
 .organization-chip {
@@ -854,6 +861,18 @@ $footer-height: 42.4px;
 }
 .description-wrapper {
   text-overflow: ellipsis;
+}
+.item-details-bottom {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.compare-box {
+  display: flex;
+  align-items: center;
+}
+.compare-box label {
+  padding-left: 4px;
 }
 
 p {
