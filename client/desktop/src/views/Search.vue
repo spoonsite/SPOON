@@ -665,8 +665,49 @@ export default {
               this.comparisonDataDisplay[attribute]['component' +component]="--"
             }
         }
-       }
+      }
+      console.log(this.comparisonDataDisplay)
+      var commonAttributes = this.createListOfCommonalities()
+      this.percolateCommonalitiesUp(commonAttributes)
       this.addDescriptionTableData()
+    },
+    createListOfCommonalities(){
+      var commonAttributes = []
+      for(var attribute in this.comparisonDataDisplay){
+      var counter = 0
+        for(var componentAttribute in this.comparisonDataDisplay[attribute]){
+          if(this.comparisonDataDisplay[attribute][componentAttribute] !== "--" && componentAttribute != "name"){
+            counter++
+          }
+        }
+        if(counter > 1){
+          commonAttributes.push(this.comparisonDataDisplay[attribute].name)
+        }
+      }
+      return commonAttributes
+    },
+    percolateCommonalitiesUp(commonAttributes){
+      var index=0
+      for(var commonElement in commonAttributes){
+        for(var i=0; i<this.comparisonDataDisplay.length; i++){
+          if(this.comparisonDataDisplay['name'] === commonAttributes[commonElement]){
+            index = i
+            break
+          }
+        }
+        var temp = {};
+				for(var i = this.comparisonDataDisplay - 1; i >= 0; i--) {
+					if((index == i) && i != 0){
+						// Found it so swap with above
+						temp = this.comparisonDataDisplay[i-1];
+						this.comparisonDataDisplay[i-1] = this.comparisonDataDisplay[i];
+						this.comparisonDataDisplay[i] = temp;
+						index = index - 1;
+						temp = {};
+					}
+        }
+      }
+      console.log(this.comparisonDataDisplay)
     },
     getListOfComparableAttributes(){
       var possibleAttributes=[]
