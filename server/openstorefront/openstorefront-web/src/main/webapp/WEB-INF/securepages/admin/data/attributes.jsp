@@ -349,7 +349,7 @@
 					displayInfo: true,
 					displayMsg: 'Displaying Attributes {0} - {1} of {2}',
 					emptyMsg: "No attributes to display"
-				}),				
+				}),
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						
@@ -435,50 +435,37 @@
 						}
 					},
 					{
-						text: 'Visible', 
+						text: 'Visible <i class="fa fa-question-circle"  data-qtip="Show in the list of filters?" ></i>', 
 						dataIndex: 'visibleFlg',
 						flex: 1, 
-						tooltip: 'Show in the list of filters?',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},					
 					{
-						text: 'Important',
+						text: 'Important <i class="fa fa-question-circle"  data-qtip="Shows on main page browse categories" ></i>',
 						dataIndex: 'importantFlg',
 						flex: 1, 
-						tooltip: 'Shows on main page browse categories',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
-						text: 'Architecture',
-						dataIndex: 'architectureFlg',
-						flex: 1, 
-						tooltip: 'Denotes attribute is an architecture',
-						align: 'center',
-						renderer: CoreUtil.renderer.booleanRenderer
-					},
-					{
-						text: 'Allow Multiple',
+						text: 'Allow Multiple <i class="fa fa-question-circle"  data-qtip="A component will be allowed to have more than one code for this attribute" ></i>',
 						dataIndex: 'allowMultipleFlg',
-						flex: 1, 
-						tooltip: 'A component will be allowed to have more than one code for this attribute',
+						flex: 1,
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
-						text: 'Allow User Codes',
+						text: 'Allow User Codes <i class="fa fa-question-circle"  data-qtip="Should users be able to generate codes for this attribute" ></i>',
 						dataIndex: 'allowUserGeneratedCodes',
 						flex: 1,
-						tooltip: 'Should users be able to generate codes for this attribute',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
-						text: 'Hide On Submission',
+						text: 'Hide On Submission <i class="fa fa-question-circle"  data-qtip="Should the attribute type show on the submission form" ></i>',
 						dataIndex: 'hideOnSubmission',
-						flex: 1, 
-						tooltip: 'Should the attribute type show on the submission form',
+						flex: 1,
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
