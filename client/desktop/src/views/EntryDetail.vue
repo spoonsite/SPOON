@@ -720,7 +720,9 @@ export default {
   }
   .entry-media {
     display: flex;
-    flex-grow: 25;
+    margin: 15px;
+    height: auto;
+    width: auto;
   }
   .no-media {
     display: flex;

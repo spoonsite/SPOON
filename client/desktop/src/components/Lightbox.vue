@@ -138,10 +138,10 @@ export default {
     text-align: center;
   }
   .mediaImage {
-    flex-grow: 100;
-    width: 100%;
+    width: auto;
+    height: 100%;
     max-width: 500px;
-    margin: 15px;
+    max-height: 500px;
     border: 3px solid #252931;
   }
   /* transition animations */
