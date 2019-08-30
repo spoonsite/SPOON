@@ -1,82 +1,98 @@
 <template lang="html">
-
-  <div class="entry-detail-page">
-    <v-card class="grey darken-3 white--text text-md-center">
-      <v-card-text>
-        <h1 class="title">{{detail.name}}</h1>
-      </v-card-text>
-    </v-card>
-
-    <Lightbox
-      v-if="detail.componentMedia && detail.componentMedia.length > 0"
-      :list="lightboxList"
-    ></Lightbox>
   <v-layout
-      row
-      justify-center
-      align-center
-      v-if="isLoading"
+    row
+    justify-center
+    align-center
+    v-if="isLoading"
     >
-      <v-flex xs1>
-        <v-progress-circular
-          color="primary"
-          :size="60"
-          :width="6"
-          indeterminate
-          class="spinner"
-        ></v-progress-circular>
-      </v-flex>
-    </v-layout>
+    <v-flex xs1>
+      <v-progress-circular
+        color="primary"
+        :size="60"
+        :width="6"
+        indeterminate
+        class="spinner"
+      ></v-progress-circular>
+    </v-flex>
+  </v-layout>
 
-    <v-layout mt-3 mx-2 v-else>
-    <v-flex xs12 md6 offset-md3>
-    <v-expansion-panel popout>
-
-      <v-expansion-panel-content>
-        <div slot="header">Summary</div>
-        <v-card class="grey lighten-5">
-          <v-card-text>
-            <h2>Component Type</h2>
-            <hr>
-            <p>
-              <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="30" >
-              <router-link
-                :to="{path: '/search', query: { comp: detail.componentType }}"
-              >
+  <div v-else class="entry-detail-page">
+    <div class="entry-details-top">
+      <Lightbox
+        v-if="detail.componentMedia && detail.componentMedia.length > 0"
+        :list="lightboxList"
+        class="entry-media"
+      ></Lightbox>
+      <div v-else class="no-media">
+        <i class="far fa-images fa-9x"></i>
+        <h3>No media to display</h3>
+      </div>
+      <div class="detail-header">
+        <div class="component-name">
+          <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="40px">
+          <p class="headline">{{detail.name}}</p>
+        </div>
+        <div class="detail-header-body">
+          <div class="detail-header-left">
+            <v-chip small class="organization">
+              <v-icon small class="org-icon">fas fa-university</v-icon> {{ detail.organization }}
+            </v-chip>
+            <div class="comp-type">
+              <v-chip v-if='detail.componentTypeLabel.includes(">")' style="padding: 2px 0px;">
+                {{ getFirstCompType(detail.componentTypeLabel) }}<br>{{ getSecondCompType(detail.componentTypeLabel) }}
+              </v-chip>
+              <v-chip v-else small>
                 {{ detail.componentTypeLabel }}
-              </router-link>
-            </p>
-            <p
-              style="padding-bottom: 1em;"
-              class="clearfix"
-              v-if="detail.tags && detail.tags.length !== 0"
+              </v-chip>
+            </div>
+            <div
+                style="padding-bottom: 1em;"
+                class="clearfix tags"
+                v-if="detail.tags && detail.tags.length !== 0"
             >
               <span
                 v-for="tag in detail.tags"
                 :key="tag.text"
-                style="float: left; margin-right: 0.8em; cursor: pointer;"
+                style="margin-right: 0.8em; cursor: pointer;"
               >
-                <v-icon style="font-size: 14px;">fas fa-tag</v-icon>
+                <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
                 {{ tag.text }}
               </span>
+            </div>
+            <div class="dates">
+              <p class="date"><strong>Last Updated:</strong> {{ detail.lastActivityDts | formatDate}}</p>
+              <p class="date"><strong>Approved Date:</strong> {{ detail.approvedDate | formatDate}}</p>
+            </div>
+          </div>
+          <div class="detail-header-right">
+            <v-switch class="watching" color="success" :label="watchSwitch ? 'Watching' : 'Not Watching'" v-model="watchSwitch"></v-switch>
+            <p>
+              <strong>Average User Rating:</strong>
+              <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
-            <h2>Details</h2>
-            <hr>
-            <p><strong>Organization:</strong> {{ detail.organization }}</p>
-            <p><strong>Last Updated:</strong> {{ detail.lastActivityDts | formatDate}}</p>
-            <p><strong>Approved Date:</strong> {{ detail.approvedDate | formatDate}}</p>
-            <h2>Description</h2>
-            <hr>
-            <div style="overflow: auto;" v-html="detail.description" class="detail"></div>
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <v-expansion-panel-content v-if="detail.attributes && detail.attributes.length !== 0">
-        <div slot="header">Attributes</div>
-        <v-card class="grey lighten-5">
-          <v-card-text>
-            <v-data-table
+    <v-divider></v-divider>
+
+    <div class="entry-details-bottom">
+      <v-expansion-panel class="description-wrapper" value="1">
+        <v-expansion-panel-content>
+          <div slot="header"><h2>Description</h2></div>
+          <div class="description" v-html="detail.description">
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
+      <v-divider></v-divider>
+
+      <v-expansion-panel class=attributes-wrapper value="1">
+        <v-expansion-panel-content>
+          <div slot="header"><h2>Attributes</h2></div>
+          <div class="attributes">
+            <v-data-table dense
               :headers="attributeTableHeaders"
               :items="detail.attributes"
               hide-actions
@@ -84,69 +100,20 @@
             >
               <template slot="items" slot-scope="props">
                 <td>{{ props.item.typeDescription }}</td>
-                <td class="text-xs-right">{{ props.item.codeDescription }}</td>
-                <td><span v-if="props.item.unit" v-html="$ascii2katex(props.item.unit)"></span></td>
+                <td>{{ props.item.codeDescription }}</td>
+                <td><span v-if="props.item.unit" v-html="props.item.unit"></span></td>
               </template>
             </v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content>
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
 
-      <v-expansion-panel-content v-if="detail.componentMedia && detail.componentMedia.length > 0">
-        <div slot="header">Media Download</div>
-        <v-card class="grey lighten-5">
-          <v-card-text>
-            <ul class="fa-ul">
-            <li
-              v-for="item in detail.componentMedia"
-              v-if="item.link"
-              :key="item.componentType"
-              class="list-item"
-            >
-              <span class="fa-li"><v-icon class="icon-2x">fas fa-{{ mediaIconMap[item.mediaTypeCode] }}</v-icon></span>
-              <a
-                :href="item.link"
-                class="media-link"
-              >
-                <span v-if="item.caption">{{ item.caption }}</span><span v-else>{{ item.originalFileName }}</span>
-              </a>
-              <v-btn small icon @click="showMediaDetails(item)"><v-icon style="color: #999">fas fa-info-circle</v-icon></v-btn>
-            </li>
-            </ul>
-          </v-card-text>
-        </v-card>
+      <v-divider></v-divider>
 
-        <v-dialog
-          v-model="mediaDetailsDialog"
-          >
-          <v-card>
-            <v-card-title>
-              <h2 class="w-100">Media Details</h2>
-            </v-card-title>
-            <v-card-text>
-              <div v-if="currentMediaDetailItem.mediaTypeCode === 'IMG'" style="text-align: center; padding-bottom: 2em;">
-                <h3 v-if="currentMediaDetailItem.caption">{{ currentMediaDetailItem.caption }}</h3>
-                <img style="width: 100%;" :src="currentMediaDetailItem.link" :alt="currentMediaDetailItem.caption">
-              </div>
-              <ul style="overflow: auto;padding-bottom: 0.5em;">
-                <li v-if="currentMediaDetailItem.originalFileName"><strong>File Name: </strong>{{ currentMediaDetailItem.originalFileName }}</li>
-                <li><strong>Media Type:  </strong> {{ currentMediaDetailItem.contentType }}</li>
-                <li><strong>Link:        </strong> <a :href="currentMediaDetailItem.link">{{ currentMediaDetailItem.link}}</a></li>
-                <li><strong>Last Updated:</strong> {{ currentMediaDetailItem.updateDts | formatDate }}</li>
-              </ul>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn @click="mediaDetailsDialog = false;">Close</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-      </v-expansion-panel-content>
-
-      <v-expansion-panel-content v-if="detail.resources && detail.resources.length !== 0">
-        <div slot="header">Resources</div>
-        <v-card class="grey lighten-5">
-          <v-card-text>
+      <v-expansion-panel class="resources-wrapper">
+        <v-expansion-panel-content>
+          <div slot="header"><h2>Resources</h2></div>
+          <div class="resources">
             <div v-for="item in detail.resources"
               :key="item.resourceId"
             >
@@ -158,298 +125,150 @@
                 </a>
               </div>
             </div>
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content>
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
 
-      <v-expansion-panel-content>
-        <div slot="header">Reviews</div>
-        <v-card class="grey lighten-5">
-          <v-card-text>
+      <v-divider></v-divider>
+
+      <v-expansion-panel v-if="commentsViewable" text-xs-center class="comments-wrapper">
+        <v-expansion-panel-content>
+          <div slot="header"><h2>Submission Comments</h2></div>
+            <div class="comments">
+            <v-btn color="accent" @click="goToComments()">Go To Comments</v-btn>
+            </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
+      <v-divider></v-divider>
+
+      <v-expansion-panel class="reviews-wrapper">
+        <v-expansion-panel-content>
+          <div slot="header">
+            <h2>Reviews</h2>
+            <strong>Average User Rating:</strong>
+            <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             <v-btn style="margin-bottom: 1em;" color="white" @click="writeReviewDialog = true">Write a Review</v-btn>
-            <p>
-              <strong>Average User Rating:</strong>
-              <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
-            </p>
-
-            <div v-if="detail.reviews && detail.reviews.length !== 0">
-              <div
-                v-for="review in detail.reviews"
-                :key="review.reviewId"
-              >
-                <div style="background-color: white; padding: 0.5em; margin-bottom: 1em;" class="elevation-2">
-                  <h2>{{ review.title }}</h2>
-                  <v-alert type="warning" :value="review.activeStatus === 'P'">This review is pending admin approval.</v-alert>
-                  <p>
-                    <star-rating :rating="review.rating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
-                  </p>
-                  <p>{{ review.username + " (" + review.userTypeCode + ") - " }} {{ review.updateDate | formatDate }}</p>
-                  <p class="reviewPar"><strong>Organization: </strong>{{ review.organization }}</p>
-                  <p class="reviewPar"><strong>Experience: </strong>{{ review.userTimeDescription }}</p>
-                  <p class="reviewPar"><strong>Last Used: </strong>{{ review.lastUsed | formatDate }}</p>
-                  <div v-if="review.pros.length > 0 || review.cons.length > 0">
-                    <v-layout row justify-space-around>
-                      <v-flex v-if="review.pros.length > 0" xs4>
-                          <v-card-text class="px-0">
-                            <p><strong>Pros</strong></p>
-                            <li v-for="pro in review.pros" :key="pro.code">{{ pro.text }}</li>
-                          </v-card-text>
-                      </v-flex>
-                      <v-flex v-if="review.cons.length > 0" xs4>
-                          <v-card-text class="px-0">
-                            <p><strong>Cons</strong></p>
-                            <p v-for="cons in review.cons" :key="cons.code">{{ cons.text }}</p>
-                          </v-card-text>
-                      </v-flex>
-                    </v-layout>
-                  </div>
-                  <p class="reviewPar"><strong>Comments:</strong></p>
-                  <p v-html="review.comment"></p>
-                  <v-btn v-if="review.username === $store.state.currentUser.username"
-                    @click="editReviewSetup(review)"
-                    small
-                  >Edit
-                  </v-btn>
-                  <v-btn v-if="review.username === $store.state.currentUser.username"
-                    @click="deleteReviewDialog=true; deleteRequestId=review.reviewId;"
-                    small
-                  >Delete
-                  </v-btn>
+          </div>
+          <div v-if="detail.reviews && detail.reviews.length !== 0">
+            <div
+              v-for="review in detail.reviews"
+              :key="review.reviewId"
+            >
+              <div style="background-color: white; padding: 0.5em; margin-bottom: 1em;" class="elevation-2">
+                <h2>{{ review.title }}</h2>
+                <v-alert type="warning" :value="review.activeStatus === 'P'">This review is pending admin approval.</v-alert>
+                <p>
+                  <star-rating :rating="review.rating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
+                </p>
+                <p>{{ review.username + " (" + review.userTypeCode + ") - " }} {{ review.updateDate | formatDate }}</p>
+                <p class="reviewPar"><strong>Organization: </strong>{{ review.organization }}</p>
+                <p class="reviewPar"><strong>Experience: </strong>{{ review.userTimeDescription }}</p>
+                <p class="reviewPar"><strong>Last Used: </strong>{{ review.lastUsed | formatDate }}</p>
+                <div v-if="review.pros.length > 0 || review.cons.length > 0">
+                  <v-layout row justify-space-around>
+                    <v-flex v-if="review.pros.length > 0" xs4>
+                        <v-card-text class="px-0">
+                          <p><strong>Pros</strong></p>
+                          <li v-for="pro in review.pros" :key="pro.code">{{ pro.text }}</li>
+                        </v-card-text>
+                    </v-flex>
+                    <v-flex v-if="review.cons.length > 0" xs4>
+                        <v-card-text class="px-0">
+                          <p><strong>Cons</strong></p>
+                          <p v-for="cons in review.cons" :key="cons.code">{{ cons.text }}</p>
+                        </v-card-text>
+                    </v-flex>
+                  </v-layout>
                 </div>
+                <p class="reviewPar"><strong>Comments:</strong></p>
+                <p v-html="review.comment"></p>
+                <v-btn v-if="review.username === $store.state.currentUser.username"
+                  @click="editReviewSetup(review)"
+                  small
+                >Edit
+                </v-btn>
+                <v-btn v-if="review.username === $store.state.currentUser.username"
+                  @click="deleteReviewDialog=true; deleteRequestId=review.reviewId;"
+                  small
+                >Delete
+                </v-btn>
               </div>
             </div>
-            <div v-else>
-              <p>There are no reviews for this entry.</p>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content>
+          </div>
+          <div v-else>
+            <p>There are no reviews for this entry.</p>
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
 
+      <v-divider></v-divider>
+
+      <v-expansion-panel class="questions-wrapper">
+        <v-expansion-panel-content>
+          <div slot="header"><h2>Questions and Answers</h2></div>
+          <v-btn color="white" @click="askQuestionDialog = true">Ask a Question</v-btn>
+          <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
+          <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
       <v-dialog
-      v-model="writeReviewDialog"
-      max-width="500px"
-      >
-      <v-card>
-        <v-card-title>
-          <h2 class="w-100">Write a Review</h2>
-          <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
-          <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
-        </v-card-title>
-
-        <v-form v-model="reviewValid">
-
-        <v-container>
-          <v-text-field
-            v-model="newReview.title"
-            :rules="reviewTitleRules"
-            :counter="255"
-            label="Title"
-            required
-          ></v-text-field>
-
-          <p>
-            <strong>Rating*</strong>
-          </p>
-
-          <star-rating
-            v-model="newReview.rating"
-            :rating="newReview.rating"
-            :read-only="false"
-            :increment="1"
-            :star-size="30"
-          ></star-rating>
-
-          <v-spacer style="height: 1.5em"></v-spacer>
-
-          <p>
-            <strong>Last date asset was used*</strong>
-          </p>
-
-          <v-text-field
-            v-model="newReview.lastUsed"
-            :rules="lastUsedRules"
-            label="Last Used"
-            readonly
-            required
-            disabled
-            solo
-          ></v-text-field>
-
-          <v-date-picker
-            v-model="newReview.lastUsed"
-            :allowed-dates="todaysDateFormatted"
-            no-title
-            reactive
-            full-width
-          >
-            <v-spacer></v-spacer>
-            <v-btn flat color="accent" @click="newReview.lastUsed=''">Cancel</v-btn>
-          </v-date-picker>
-
-          <v-spacer style="height: 1em"></v-spacer>
-
-          <v-select
-            v-model="newReview.timeUsed"
-            :items="timeSelectOptions"
-            :rules="timeUsedRules"
-            label="How long have you used it"
-            required
-          ></v-select>
-
-          <v-select
-            v-model="newReview.pros"
-            :items="prosSelectOptions"
-            label="Pros"
-            chips
-            multiple
-          ></v-select>
-
-          <v-select
-            v-model="newReview.cons"
-            :items="consSelectOptions"
-            label="Cons"
-            chips
-            multiple
-          ></v-select>
-
-          <p>
-            Comment: <span v-if="newReview.comment === ''" class="red--text">comment is required *</span>
-          </p>
-
-          <quill-editor
-            style="background-color: white;"
-            v-model="comment"
-            :rules="commentRules"
-            required
-          ></quill-editor>
-
-        </v-container>
-          <v-card-actions>
-            <v-btn :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
-            <v-btn @click="writeReviewDialog = false; newReview.comment='';">Cancel</v-btn>
-          </v-card-actions>
-        </v-form>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="deleteReviewDialog">
-      <v-card>
-        <v-card-title>Confirm Review Deletion</v-card-title>
-        <v-btn @click="deleteReviewConfirmation()">OK</v-btn>
-        <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
-      </v-card>
-    </v-dialog>
-
-      <!-- TODO: do this once we're integrated with DI2E -->
-      <v-expansion-panel-content v-if="detail.fullEvailation">
-        <div slot="header">Evaluation</div>
-        <v-card class="grey lighten-5">
-          <v-card-text>
-
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content>
-
-      <!-- TODO: allow authorized users to add tags to the entry -->
-      <!-- <v-expansion-panel-content v-if="detail.tags && detail.tags.length !== 0">
-        <div slot="header">Tags</div>
-        <v-card class="grey lighten-5">
-          <v-card-text>
-
-            <div
-              v-for="tag in detail.tags"
-              :key="tag.text"
-              style="margin-right: 0.8em; cursor: pointer;"
-            >
-              <p>
-                <v-icon style="font-size: 14px;">fas fa-tag</v-icon>
-                {{ tag.text }}
-              </p>
-            </div>
-
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content> -->
-
-      <v-expansion-panel-content v-if="detail.contacts && detail.contacts.length !== 0">
-        <div slot="header">Contacts</div>
-        <v-card class="grey lighten-5">
-          <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
-            <h2>Points of Contact</h2>
-            <div
-              v-for="contact in detail.contacts"
-              :key="contact.name"
-            >
-              <hr>
-              <p class="contactPar"><strong>Name: </strong>{{ contact.name }}</p>
-              <p class="contactPar"><strong>Organization: </strong>{{ contact.organization }}</p>
-              <p class="contactPar"><strong>Position: </strong>{{ contact.positionDescription }}</p>
-              <p class="contactPar"><strong>Phone: </strong><a :href="`tel: ${contact.phone}`">{{ contact.phone }}</a></p>
-              <p class="contactPar"><strong>Email: </strong><a :href="`mailto:${contact.email}`">{{ contact.email }}</a></p>
-            </div>
-          </v-card-text>
-          <v-card-text v-else>
-            <p>There are no contacts for this entry.</p>
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content>
-
-      <v-expansion-panel-content>
-        <div slot="header">Watches</div>
-        <v-card class="grey lighten-5">
-          <v-card-text>
-            <p>Watch this entry?</p>
-            <!-- TODO: make watch api calls -->
-            <v-switch color="success" :label="watchSwitch ? 'Watching' : 'Not Watching'" v-model="watchSwitch"></v-switch>
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content>
-
-      <v-expansion-panel-content>
-        <div slot="header">Questions and Answers</div>
-        <v-card class="grey lighten-5">
-          <v-card-text>
-            <v-btn color="white" @click="askQuestionDialog = true">Ask a Question</v-btn>
-            <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
-            <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
-          </v-card-text>
-        </v-card>
-      </v-expansion-panel-content>
-
-      <v-expansion-panel-content v-if="commentsViewable" text-xs-center>
-        <div slot="header">Submission Comments</div>
-        <v-card class="grey lighten-5">
-          <v-card-actions>
-            <v-btn color="accent" @click="goToComments()">Go To Comments</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-expansion-panel-content>
-
-    <v-dialog
       v-model="askQuestionDialog"
       >
-      <v-card>
-        <v-card-title>
-          <h2 class="w-100">Ask a Question</h2>
-          <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
-          <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
-        </v-card-title>
-        <v-card-text>
-          <quill-editor
-          style="background-color: white;"
-          v-model="newQuestion"
-          ></quill-editor>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn @click="submitQuestion()">Submit</v-btn>
-          <v-btn @click="askQuestionDialog = false; newQuestion = '';">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        <v-card>
+          <v-card-title>
+            <h2 class="w-100">Ask a Question</h2>
+            <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
+            <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
+          </v-card-title>
+          <v-card-text>
+            <quill-editor
+            style="background-color: white;"
+            v-model="newQuestion"
+            ></quill-editor>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="submitQuestion()">Submit</v-btn>
+            <v-btn @click="askQuestionDialog = false; newQuestion = '';">Cancel</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
-    </v-expansion-panel>
-    </v-flex>
-    </v-layout>
+      <v-divider></v-divider>
+
+      <v-expansion-panel class="contacts-wrapper">
+        <v-expansion-panel-content>
+          <div slot="header"><h2>Contacts</h2></div>
+          <v-card class="grey lighten-5">
+            <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
+              <h2>Points of Contact</h2>
+              <div
+                v-for="contact in detail.contacts"
+                :key="contact.contactId"
+              >
+                <hr>
+                <p class="contactPar"><strong>Name: </strong>{{ contact.name }}</p>
+                <p class="contactPar"><strong>Organization: </strong>{{ contact.organization }}</p>
+                <p class="contactPar"><strong>Position: </strong>{{ contact.positionDescription }}</p>
+                <p class="contactPar"><strong>Phone: </strong><a :href="`tel: ${contact.phone}`">{{ contact.phone }}</a></p>
+                <p class="contactPar"><strong>Email: </strong><a :href="`mailto:${contact.email}`">{{ contact.email }}</a></p>
+              </div>
+            </v-card-text>
+            <v-card-text v-else>
+              <p>There are no contacts for this entry.</p>
+            </v-card-text>
+          </v-card>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
+      <v-divider></v-divider>
+    </div>
+    <v-footer color="primary" dark height="auto" display="flex" style="justify-content: center;">
+      <v-card color="primary" dark flat class="footer-wrapper">
+        <div class="footer-block" v-html="$store.state.branding.landingPageFooter"></div>
+        <p style="text-align: center;" v-html="$store.state.appVersion"></p>
+      </v-card>
+    </v-footer>
   </div>
 </template>
 
@@ -457,8 +276,7 @@
 import StarRating from 'vue-star-rating';
 import _ from 'lodash';
 import Lightbox from '../components/Lightbox';
-// import LoadingOverlay from './subcomponents/LoadingOverlay';
-// import Question from './subcomponents/Question';
+import Question from '../components/Question';
 import format from 'date-fns/format';
 import isFuture from 'date-fns/is_future';
 import router from '../router';
@@ -469,6 +287,7 @@ export default {
     router,
     StarRating,
     Lightbox,
+    Question,
   },
   mounted () {
     if (this.$route.params.id) {
@@ -806,6 +625,18 @@ export default {
     },
     todaysDateFormatted (val) {
       return !isFuture(val);
+    },
+    getFirstCompType(componentType){
+      var index = componentType.indexOf('>')
+      if(index != -1) {
+        return componentType.slice(0, index)
+      }
+    },
+    getSecondCompType(componentType){
+      var index = componentType.indexOf('>')
+      if(index != -1) {
+        return componentType.slice(index)
+      }
     }
   },
   watch: {
@@ -883,6 +714,100 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+  p {
+    margin: 0px;
+  }
+  .entry-media {
+    display: flex;
+  }
+  .no-media {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 100;
+    justify-content: center;
+    align-items: center;
+    max-width: 500px;
+    max-height: 500px;
+    border: 3px solid #252931;
+    margin: 15px;
+  }
+  .entry-detail-page {
+    display: flex;
+    flex-direction: column;
+  }
+  .entry-details-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .detail-header {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 100;
+    width: auto;
+  }
+  .component-name {
+    display: flex;
+    align-items: center;
+    padding-top: 15px;
+    padding-left: 15px;
+  }
+  .headline {
+    padding-left: 10px;
+  }
+  .detail-header-body {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .detail-header-left {
+    flex-grow: 2;
+  }
+  .detail-header-right {
+    padding-left: 15px;
+    padding-bottom: 10px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .organization, .comp-type, .tags {
+    margin: 15px 0px 0px 15px;
+  }
+  .org-icon {
+    padding-right: 5px;
+  }
+  .detail-header-right {
+    flex-grow: 1;
+  }
+  .entry-details-bottom {
+    display: flex;
+    flex-direction: column;
+  }
+  .dates {
+    padding: 10px 0px 10px 15px;
+  }
+  .date {
+    padding-bottom: 10px;
+  }
+  .watching {
+    margin: 0px;
+    padding: 0px;
+  }
+  .description-wrapper,
+  .attributes-wrapper,
+  .resources-wrapper,
+  .comments-wrapper,
+  .reviews-wrapper,
+  .questions-wrapper,
+  .contacts-wrapper {
+    padding: 0px 15px 10px 15px;
+  }
+  .description, .attributes, .resources, .comments {
+    padding: 10px;
+    padding-left: 24px;
+  }
+
   .spinner {
     margin-top: 7em;
   }

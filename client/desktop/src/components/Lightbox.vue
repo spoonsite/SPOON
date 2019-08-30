@@ -1,15 +1,11 @@
 <template>
 <div>
     <!-- MEDIA carousel -->
-    <div
-      class="mediaWrapper"
-      >
-      <div class="mediaItem">
         <img
           v-if="item.mediaTypeCode === 'IMG'"
           v-for="(item, index) in list"
           :key="item.link"
-          :src="item.link"
+          :src="'https://spoonsite.com/openstorefront/mobile/' + item.link"
           class="mediaImage elevation-4"
           @click="lightboxOn(index)"
         >
@@ -20,8 +16,6 @@
           @click="lightboxOn(index)"
           style="display: inline-block;"
         ></video>
-      </div>
-    </div>
 
     <!-- LIGHTBOX Popup -->
     <transition name="fade">
@@ -38,7 +32,7 @@
         <transition name="swipe" keep-alive mode="out-in">
           <div :key="currentItem.link" style="margin-bottom: 3em;">
             <p style="color: white;">{{ currentItem.caption}}</p>
-            <img v-if="currentItem.mediaTypeCode === 'IMG'" :src="currentItem.link" class="lightboxImage elevation-6">
+            <img v-if="currentItem.mediaTypeCode === 'IMG'" :src="'https://spoonsite.com/openstorefront/mobile/' + currentItem.link" class="lightboxImage elevation-6">
             <video controls v-else-if="currentItem.mediaTypeCode === 'VID'" :src="currentItem.link" class="lightboxImage elevation-6"></video>
             <p style="color: white;">
               Image {{ currentIndex + 1 }} of {{ list.length }}
@@ -143,18 +137,11 @@ export default {
     transform: translate(-50%, -50%);
     text-align: center;
   }
-  .mediaWrapper {
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-  .mediaItem{
-    float: left;
-    display: block;
-  }
   .mediaImage {
-    background: #fff;
-    margin: 1em;
-    max-height: 8em;
+    flex-grow: 100;
+    width: 100%;
+    max-width: 500px;
+    margin: 15px;
   }
   /* transition animations */
   .fade-enter-active, .fade-leave-active {
