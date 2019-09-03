@@ -316,8 +316,7 @@
               <v-data-table
               :headers="comparisonDataHeaders"
               :items="comparisonDataDisplay"
-              hide-actions
-              disable-initial-sort>
+              hide-actions>
                 <template slot='items' slot-scope='props'>
                   <td v-for="header in comparisonDataHeaders"
                   :key="header.name">
@@ -325,9 +324,6 @@
                 </template>
               </v-data-table>
             </v-card-text>
-            <v-card-actions>
-
-            </v-card-actions>
           </v-card>
       </v-dialog>
       <!-- Comparison Table Dialog -->
@@ -646,9 +642,9 @@ export default {
     },
     sortComparisonData(){
       this.deleteAllTableData()
-      this.comparisonDataHeaders.push({text:'Entry Name', value: 'name'})
+      this.comparisonDataHeaders.push({text:'Entry Name', value: 'name', sortable: false})
       for(var component in this.comparisonList){
-        this.comparisonDataHeaders.push({text: this.comparisonList[component].name, value: 'component'+ component})
+        this.comparisonDataHeaders.push({text: this.comparisonList[component].name, value: 'component'+ component, sortable: false})
       }
 
       var possibleAttributes = this.getListOfComparableAttributes()
@@ -900,6 +896,9 @@ hr {
 }
 .search-block.closed {
   margin-left: $closed-width;
+}
+table.v-table thead tr th{
+  font-size: 50px;
 }
 .v-footer {
   height: $footer-height !important;
