@@ -317,9 +317,17 @@
               :headers="comparisonDataHeaders"
               :items="comparisonDataDisplay"
               hide-actions>
+                <template slot='headers' slot-scope='props'>
+                  <th v-for="header in props.headers"
+                  :key="header.text"
+                  class="table-header">
+                    {{header.text}}</th>
+                </template>
                 <template slot='items' slot-scope='props'>
                   <td v-for="header in comparisonDataHeaders"
-                  :key="header.name">
+                  :key="header.name"
+                  :class="changeTableClass(header)"
+                  >
                     {{props.item[header.value]}}</td>
                 </template>
               </v-data-table>
@@ -724,6 +732,13 @@ export default {
       this.comparisonDataHeaders.splice(0, this.comparisonDataHeaders.length)
       this.comparisonDataDisplay.splice(0, this.comparisonDataDisplay.length)
     },
+    changeTableClass(header){
+      console.log(header)
+      return{
+        'table-header': header.value == 'name',
+        'table-column': header.value != 'name'
+      }
+    }
   },
   watch: {
     filters: {
@@ -897,8 +912,12 @@ hr {
 .search-block.closed {
   margin-left: $closed-width;
 }
-table.v-table thead tr th{
-  font-size: 50px;
+.table-header{
+  font-weight: bold;
+  font-size: 20px;
+}
+.table-column{
+  width: 100px;
 }
 .v-footer {
   height: $footer-height !important;
