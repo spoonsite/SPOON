@@ -311,7 +311,7 @@
         fullscreen: true>
           <v-card>
             <v-btn @click="showComparison = false" small fab icon style="position: absolute; top: 0; right: 0;"><v-icon>fas fa-times</v-icon></v-btn>
-            <v-card-title>Compare</v-card-title>
+            <v-card-title style="font-weight: bold">Compare</v-card-title>
             <v-card-text>
               <v-data-table
               :headers="comparisonDataHeaders"
@@ -325,8 +325,8 @@
                 </template>
                 <template slot='items' slot-scope='props'>
                   <td v-for="header in comparisonDataHeaders"
-                  :key="header.name"
                   :class="changeTableClass(header)"
+                  :key="header.value"
                   >
                     {{props.item[header.value]}}</td>
                 </template>
@@ -733,7 +733,6 @@ export default {
       this.comparisonDataDisplay.splice(0, this.comparisonDataDisplay.length)
     },
     changeTableClass(header){
-      console.log(header)
       return{
         'table-header': header.value == 'name',
         'table-column': header.value != 'name'
@@ -915,9 +914,10 @@ hr {
 .table-header{
   font-weight: bold;
   font-size: 20px;
+  width: 500px;
 }
 .table-column{
-  width: 100px;
+  width: 500px;
 }
 .v-footer {
   height: $footer-height !important;
