@@ -664,10 +664,7 @@ export default {
           for(var componentAttribute in this.comparisonList[component].attributes){
             if(possibleAttributes[attribute] === this.comparisonList[component].attributes[componentAttribute].typeLabel){
               this.comparisonDataDisplay[attribute]['name']=possibleAttributes[attribute]
-              if(!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')){
-                var numericAttribute = parseFloat(this.comparisonList[component].attributes[componentAttribute].label)
-                this.comparisonList[component].attributes[componentAttribute].label=numericAttribute.toFixed(4).toString()
-              }
+              this.setDecimalSizeLimit(component, componentAttribute)
               this.comparisonDataDisplay[attribute]['component' +component]=this.comparisonList[component].attributes[componentAttribute].label
             }
           }
@@ -717,6 +714,14 @@ export default {
       this.comparisonDataDisplay.unshift({name: 'Entry Type'})
       for(var component in this.comparisonList){
         this.comparisonDataDisplay[0]['component'+component]=this.comparisonList[component].componentTypeDescription
+      }
+    },
+    setDecimalSizeLimit(component, componentAttribute){
+      if(!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')){
+        if(this.comparisonList[component].attributes[componentAttribute].label.split('.')[1].length >4){
+          var numericAttribute = parseFloat(this.comparisonList[component].attributes[componentAttribute].label)
+          this.comparisonList[component].attributes[componentAttribute].label=numericAttribute.toFixed(4).toString()
+        }
       }
     },
     deleteAllTableData(){
