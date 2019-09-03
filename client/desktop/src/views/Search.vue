@@ -652,6 +652,12 @@ export default {
       }
 
       var possibleAttributes = this.getListOfComparableAttributes()
+      this.formatDataForDisplay(possibleAttributes)
+      this.countNumberOfSimilarities()
+      this.sortListByCommonalities()
+      this.addDescriptionTableData()
+    },
+    formatDataForDisplay(possibleAttributes){
       for(var attribute in possibleAttributes){
         this.comparisonDataDisplay.push({name: possibleAttributes[attribute]})
         for(var component in this.comparisonList){
@@ -660,7 +666,7 @@ export default {
               this.comparisonDataDisplay[attribute]['name']=possibleAttributes[attribute]
               if(!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')){
                 var numericAttribute = parseFloat(this.comparisonList[component].attributes[componentAttribute].label)
-                this.comparisonList[component].attributes[componentAttribute].label=Math.round(numericAttribute*10000).toString()
+                this.comparisonList[component].attributes[componentAttribute].label=numericAttribute.toFixed(4).toString()
               }
               this.comparisonDataDisplay[attribute]['component' +component]=this.comparisonList[component].attributes[componentAttribute].label
             }
@@ -670,48 +676,22 @@ export default {
             }
         }
       }
-      console.log(this.comparisonDataDisplay)
-      var commonAttributes = this.createListOfCommonalities()
-      this.percolateCommonalitiesUp(commonAttributes)
-      this.addDescriptionTableData()
     },
-    createListOfCommonalities(){
-      var commonAttributes = []
+    countNumberOfSimilarities(){
       for(var attribute in this.comparisonDataDisplay){
-      var counter = 0
+        var counter = 0
         for(var componentAttribute in this.comparisonDataDisplay[attribute]){
           if(this.comparisonDataDisplay[attribute][componentAttribute] !== "--" && componentAttribute != "name"){
             counter++
           }
         }
-        if(counter > 1){
-          commonAttributes.push(this.comparisonDataDisplay[attribute].name)
-        }
+      this.comparisonDataDisplay[attribute]['similarities']=counter
       }
-      return commonAttributes
     },
-    percolateCommonalitiesUp(commonAttributes){
-      var index=0
-      for(var commonElement in commonAttributes){
-        for(var i=0; i<this.comparisonDataDisplay.length; i++){
-          if(this.comparisonDataDisplay['name'] === commonAttributes[commonElement]){
-            index = i
-            break
-          }
-        }
-        var temp = {};
-				for(var i = this.comparisonDataDisplay - 1; i >= 0; i--) {
-					if((index == i) && i != 0){
-						// Found it so swap with above
-						temp = this.comparisonDataDisplay[i-1];
-						this.comparisonDataDisplay[i-1] = this.comparisonDataDisplay[i];
-						this.comparisonDataDisplay[i] = temp;
-						index = index - 1;
-						temp = {};
-					}
-        }
-      }
-      console.log(this.comparisonDataDisplay)
+    sortListByCommonalities(){
+      this.comparisonDataDisplay.sort(function(similar1, similar2){
+        return similar2.similarities - similar1.similarities
+      })
     },
     getListOfComparableAttributes(){
       var possibleAttributes=[]
