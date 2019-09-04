@@ -4,19 +4,25 @@
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- CONTROLS -->
     <div class="side-menu-btns">
-      <div>
-        <v-btn @click="showFilters = !showFilters; showOptions = false;" small fab dark icon :color="`primary ${showFilters ? 'lighten-4' : ''}`"><v-icon dark>fas fa-filter</v-icon></v-btn>
-      </div>
-      <div>
-        <v-btn @click="showOptions = !showOptions; showFilters = false;" small fab dark icon :color="`primary ${showOptions ? 'lighten-4' : ''}`"><v-icon dark>fas fa-cog</v-icon></v-btn>
-      </div>
-      <div>
-        <v-btn @click="sortComparisonData(); showComparison = true;" small fab icon><v-icon>fas fa-columns</v-icon></v-btn>
-      </div>
-      <div>
-        <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
+        <v-btn
+          class="db"
+          @click="showFilters = !showFilters; showOptions = false;"
+          small fab dark icon
+          :color="`primary ${showFilters ? 'lighten-4' : ''}`"
+        >
+          <v-icon dark>fas fa-filter</v-icon>
+        </v-btn>
+        <v-btn
+          class="db"
+          @click="showOptions = !showOptions; showFilters = false;"
+          small fab dark icon
+          :color="`primary ${showOptions ? 'lighten-4' : ''}`"
+        >
+          <v-icon dark>fas fa-cog</v-icon>
+        </v-btn>
+        <v-btn class="db" @click="sortComparisonData(); showComparison = true;" small fab icon><v-icon>fas fa-columns</v-icon></v-btn>
+        <v-btn class="db" @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
         <input type="text" value="https://spoonsite.com" ref="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
-      </div>
     </div>
 
     <div v-if="showOptions || showFilters" class="close-btn">
