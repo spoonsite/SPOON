@@ -20,9 +20,26 @@
         >
           <v-icon dark>fas fa-cog</v-icon>
         </v-btn>
-        <v-btn class="db" @click="sortComparisonData(); showComparison = true;" small fab icon><v-icon>fas fa-columns</v-icon></v-btn>
-        <v-btn class="db" @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
-        <input type="text" value="https://spoonsite.com" ref="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
+        <v-btn
+          class="db"
+          @click="sortComparisonData(); showComparison = true;"
+          small fab icon
+        >
+          <v-icon>fas fa-columns</v-icon>
+        </v-btn>
+        <v-btn
+          class="db"
+          @click="copyUrlToClipboard"
+          small fab icon
+        >
+          <v-icon>fas fa-share-alt</v-icon>
+        </v-btn>
+        <input
+          type="text"
+          value="https://spoonsite.com"
+          ref="urlForClipboard"
+          style="position: absolute; left: -1000px; top: -1000px"
+        >
     </div>
 
     <div v-if="showOptions || showFilters" class="close-btn">
