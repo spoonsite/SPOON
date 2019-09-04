@@ -68,10 +68,13 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.PutMappingRequest;
+import org.elasticsearch.common.xcontent.XContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
@@ -81,6 +84,7 @@ import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
+import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import org.elasticsearch.search.sort.SortOrder;
 
 /**
@@ -752,6 +756,31 @@ public class ElasticSearchManager
 
 			executeIndexRequest(bulkRequest);
 		}
+	}
+
+	@Override
+	public UpdateResponse updateSingleComponent(String componentId){
+		Objects.requireNonNull(componentId, "Requires Component ID");
+
+		System.out.println("Hello World0");
+		UpdateResponse updateResponse = new UpdateResponse();
+		Component oldComponent = service.getPersistenceService().findById(Component.class, componentId);
+		ComponentSearchView componentSearchView = ComponentSearchView.toView(oldComponent);
+		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+		
+		System.out.println("Hello World01");
+		try (ElasticSearchClient client = singleton.getClient()) {
+			UpdateRequest updateRequest = new UpdateRequest(INDEX, componentId);
+			updateRequest.doc(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON);
+			updateResponse = client.getInstance().update(updateRequest, RequestOptions.DEFAULT);
+			
+		} catch(JsonProcessingException ex){
+			LOG.log(Level.SEVERE, null, ex);
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+		}
+		System.out.println("Hello World2");
+		return updateResponse;
 	}
 
 	private void executeIndexRequest(BulkRequest bulkRequest)
