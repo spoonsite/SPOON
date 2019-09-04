@@ -333,13 +333,16 @@
         v-model="showComparison"
         fullscreen: true>
           <v-card>
-            <v-btn
+
+            <v-card-title style="display: flex; justify-content: space-between;">
+              <h2>Compare</h2>
+              <v-btn
               @click="showComparison = false"
               small fab icon
-              style="position: absolute; top: 0; right: 0;">
+              >
               <v-icon>fas fa-times</v-icon>
             </v-btn>
-            <v-card-title style="font-weight: bold">Compare</v-card-title>
+              </v-card-title>
             <v-card-text>
               <v-data-table
               :headers="comparisonDataHeaders"
