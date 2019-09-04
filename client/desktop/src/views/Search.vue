@@ -322,8 +322,8 @@
             </span>
           </div>
           <div>
-            <input type="checkbox" v-model="comparisonList" v-bind:value="item">
-            <label>Add to Compare</label>
+            <input type="checkbox" v-model="comparisonList" :value="item" :id="item.componentId">
+            <label :for="item.componentId">Add to Compare</label>
           </div>
         </div>
       </div>
