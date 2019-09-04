@@ -333,7 +333,12 @@
         v-model="showComparison"
         fullscreen: true>
           <v-card>
-            <v-btn @click="showComparison = false" small fab icon style="position: absolute; top: 0; right: 0;"><v-icon>fas fa-times</v-icon></v-btn>
+            <v-btn
+              @click="showComparison = false"
+              small fab icon
+              style="position: absolute; top: 0; right: 0;">
+              <v-icon>fas fa-times</v-icon>
+            </v-btn>
             <v-card-title style="font-weight: bold">Compare</v-card-title>
             <v-card-text>
               <v-data-table
@@ -341,13 +346,15 @@
               :items="comparisonDataDisplay"
               hide-actions>
                 <template slot='headers' slot-scope='props'>
-                  <th v-for="header in props.headers"
+                  <th
+                  v-for="header in props.headers"
                   :key="header.text"
                   class="table-header">
                     {{header.text}}</th>
                 </template>
                 <template slot='items' slot-scope='props'>
-                  <td v-for="header in comparisonDataHeaders"
+                  <td
+                  v-for="header in comparisonDataHeaders"
                   :class="changeTableClass(header)"
                   :key="header.value"
                   >
@@ -671,11 +678,11 @@ export default {
       this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
       // alert('Copied the text: ' + copyText.value)
     },
-    sortComparisonData(){
+    sortComparisonData () {
       this.deleteAllTableData()
-      this.comparisonDataHeaders.push({text:'Entry Name', value: 'name', sortable: false})
-      for(var component in this.comparisonList){
-        this.comparisonDataHeaders.push({text: this.comparisonList[component].name, value: 'component'+ component, sortable: false})
+      this.comparisonDataHeaders.push({ text: 'Entry Name', value: 'name', sortable: false })
+      for (var component in this.comparisonList) {
+        this.comparisonDataHeaders.push({ text: this.comparisonList[component].name, value: 'component' + component, sortable: false })
       }
 
       var possibleAttributes = this.getListOfComparableAttributes()
@@ -684,81 +691,81 @@ export default {
       this.sortListByCommonalities()
       this.addDescriptionTableData()
     },
-    formatDataForDisplay(possibleAttributes){
-      for(var attribute in possibleAttributes){
-        this.comparisonDataDisplay.push({name: possibleAttributes[attribute]})
-        for(var component in this.comparisonList){
-          for(var componentAttribute in this.comparisonList[component].attributes){
-            if(possibleAttributes[attribute] === this.comparisonList[component].attributes[componentAttribute].typeLabel){
-              this.comparisonDataDisplay[attribute]['name']=possibleAttributes[attribute]
+    formatDataForDisplay (possibleAttributes) {
+      for (var attribute in possibleAttributes) {
+        this.comparisonDataDisplay.push({ name: possibleAttributes[attribute] })
+        for (var component in this.comparisonList) {
+          for (var componentAttribute in this.comparisonList[component].attributes) {
+            if (possibleAttributes[attribute] === this.comparisonList[component].attributes[componentAttribute].typeLabel) {
+              this.comparisonDataDisplay[attribute]['name'] = possibleAttributes[attribute]
               this.setDecimalSizeLimit(component, componentAttribute)
-              this.comparisonDataDisplay[attribute]['component' +component]=this.comparisonList[component].attributes[componentAttribute].label
+              this.comparisonDataDisplay[attribute]['component' + component] = this.comparisonList[component].attributes[componentAttribute].label
             }
           }
-            if(!this.comparisonDataDisplay[attribute].hasOwnProperty('component'+component)){
-              this.comparisonDataDisplay[attribute]['component' +component]="--"
-            }
+          if (!this.comparisonDataDisplay[attribute].hasOwnProperty('component' + component)) {
+            this.comparisonDataDisplay[attribute]['component' + component] = '--'
+          }
         }
       }
     },
-    countNumberOfSimilarities(){
-      for(var attribute in this.comparisonDataDisplay){
+    countNumberOfSimilarities () {
+      for (var attribute in this.comparisonDataDisplay) {
         var counter = 0
-        for(var componentAttribute in this.comparisonDataDisplay[attribute]){
-          if(this.comparisonDataDisplay[attribute][componentAttribute] !== "--" && componentAttribute != "name"){
+        for (var componentAttribute in this.comparisonDataDisplay[attribute]) {
+          if (this.comparisonDataDisplay[attribute][componentAttribute] !== '--' && componentAttribute !== 'name') {
             counter++
           }
         }
-      this.comparisonDataDisplay[attribute]['similarities']=counter
+        this.comparisonDataDisplay[attribute]['similarities'] = counter
       }
     },
-    sortListByCommonalities(){
-      this.comparisonDataDisplay.sort(function(similar1, similar2){
+    sortListByCommonalities () {
+      this.comparisonDataDisplay.sort(function (similar1, similar2) {
         return similar2.similarities - similar1.similarities
       })
     },
-    getListOfComparableAttributes(){
-      var possibleAttributes=[]
-        for(var component in this.comparisonList){
-          for(var attribute in this.comparisonList[component].attributes){
-            if(!possibleAttributes.includes(this.comparisonList[component].attributes[attribute].typeLabel)){
-                possibleAttributes.push(this.comparisonList[component].attributes[attribute].typeLabel)
-            }
+    getListOfComparableAttributes () {
+      var possibleAttributes = []
+      for (var component in this.comparisonList) {
+        for (var attribute in this.comparisonList[component].attributes) {
+          if (!possibleAttributes.includes(this.comparisonList[component].attributes[attribute].typeLabel)) {
+            possibleAttributes.push(this.comparisonList[component].attributes[attribute].typeLabel)
           }
         }
+      }
       return possibleAttributes
     },
-    addDescriptionTableData(){
-      this.comparisonDataDisplay.unshift({name: 'Attributes'})
-      this.comparisonDataDisplay.unshift({name: 'Organization'})
-      for(var component in this.comparisonList){
-        this.comparisonDataDisplay[0]['component'+component]=this.comparisonList[component].organization
+    addDescriptionTableData () {
+      this.comparisonDataDisplay.unshift({ name: 'Attributes' })
+      this.comparisonDataDisplay.unshift({ name: 'Organization' })
+      for (var component in this.comparisonList) {
+        this.comparisonDataDisplay[0]['component' + component] = this.comparisonList[component].organization
       }
-      this.comparisonDataDisplay.unshift({name: 'Description'})
-      for(var component in this.comparisonList){
-        this.comparisonDataDisplay[0]['component'+component]=this.comparisonList[component].description
+      this.comparisonDataDisplay.unshift({ name: 'Description' })
+      for (var item in this.comparisonList) {
+        this.comparisonDataDisplay[0]['component' + item] = this.comparisonList[item].description
       }
-      this.comparisonDataDisplay.unshift({name: 'Entry Type'})
-      for(var component in this.comparisonList){
-        this.comparisonDataDisplay[0]['component'+component]=this.comparisonList[component].componentTypeDescription
+      this.comparisonDataDisplay.unshift({ name: 'Entry Type' })
+      for (var comp in this.comparisonList) {
+        this.comparisonDataDisplay[0]['component' + comp] = this.comparisonList[comp].componentTypeDescription
       }
     },
-    setDecimalSizeLimit(component, componentAttribute){
-      if(!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')){
-        if(this.comparisonList[component].attributes[componentAttribute].label.split('.')[1].length >4){
+    setDecimalSizeLimit (component, componentAttribute) {
+      if (!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')) {
+        if (this.comparisonList[component].attributes[componentAttribute].label.split('.')[1].length > 4) {
           var numericAttribute = parseFloat(this.comparisonList[component].attributes[componentAttribute].label)
-          this.comparisonList[component].attributes[componentAttribute].label=numericAttribute.toFixed(4).toString()
+          this.comparisonList[component].attributes[componentAttribute].label = numericAttribute.toFixed(4).toString()
         }
       }
     },
-    deleteAllTableData(){
-      this.comparisonDataHeaders.splice(0, this.comparisonDataHeaders.length)
-      this.comparisonDataDisplay.splice(0, this.comparisonDataDisplay.length)
+    deleteAllTableData () {
+      this.comparisonDataHeaders = []
+      this.comparisonDataDisplay = []
     },
-    changeTableClass(header){
-      return{
-        'table-header': header.value == 'name',
-        'table-column': header.value != 'name'
+    changeTableClass (header) {
+      return {
+        'table-header': header.value === 'name',
+        'table-column': header.value !== 'name'
       }
     }
   },
