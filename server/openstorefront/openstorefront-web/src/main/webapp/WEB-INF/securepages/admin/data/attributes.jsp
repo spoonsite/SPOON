@@ -700,25 +700,23 @@
 				]
 			});
 
-			var actionAddAttribute = function() {				
+			var actionAddAttribute = function() {
 				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
 				
+				// Configure the showAttributeWindow's fields to be appropriate for this action, Adding new attr  
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').hide();
 				Ext.getCmp('editAttributeForm-entryTypeAssignment').hide();			
 				
-				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
-				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 			};
 
 			var actionEditAttribute = function(record) {
 				showAttributeWin(true, '<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType, record);
 				
-				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);				
-				//Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
-				//Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
-				//Ext.getCmp('editAttributeForm').reset();
+				// Configure the showAttributeWindow's fields to be appropriate for the Edit action
+				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
+
 				
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 
@@ -2373,6 +2371,7 @@
 								},
 								{
 									xtype: 'fieldcontainer',
+									itemId: 'editAttributeForm-Flags',
 									layout: 'hbox',
 									defaultType: 'checkboxfield',
 									defaultLayout: '100%',
@@ -2392,11 +2391,6 @@
 											listeners: formChange
 										},
 										{
-											name: 'architectureFlg',
-											boxLabel: 'Architecture',
-											listeners: formChange
-										},
-										{
 											name: 'allowMultipleFlg',
 											id: 'multipleFlagCheckBox',
 											boxLabel: 'Allow Multiple'
@@ -2404,13 +2398,30 @@
 										{
 											name: 'allowUserGeneratedCodes',
 											boxLabel: 'Allow User-Created Codes',
-											listeners: formChange
+											// default value set to true for more likely scenario
+											value: true,
+											listeners: {
+												change: function(box, newValue){
+													if (!newValue){
+														this.up().up().insert(-1,
+															{
+																xtype:'panel',
+																id:'editAttributeForm-warningLabel',
+																//style:'border-left:6px solid yellow;background-color:${branding.primaryColor};border-radius: 15px / 50px;',
+																style: 'color:red; font-size:1.6em',
+																html:'<i class="fa fa-exclamation-triangle"></i> Note: After saving you will be prompted to add attribute codes.'
+															}
+														)
+													} else {
+														Ext.getCmp('editAttributeForm-warningLabel').destroy();
+													}
+												}
+											}
 										},
 										{
 											name: 'hideOnSubmission',
-											boxLabel: 'Hide on Submission',
+											boxLabel: 'Hide on Submission <i class="fa fa-lg fa-question-circle"  data-qtip="The attribute will be automatically added to the component without the user being able to change it. Hiding a required attribute requires a default code. Codes must be created before this flag can be set." ></i>',
 											id: 'editAttributeForm-hideOnSubmission',
-											toolTip: 'Hiding a required attribute requires a default code. Codes must be created before this flag can be set.',
 											listeners: {
 												change: function(box, newValue) {
 													var select = Ext.getCmp('editAttributeForm-defaultCode');
@@ -2569,6 +2580,12 @@
 															Ext.toast('Saved Successfully', '', 'tr');
 															attributeStore.load();
 															editAttributeWin.close();
+
+															// Handle special after-actions
+															// Check for need for admin-defined codes
+															if(!formValues.allowUserGeneratedCodes){
+
+															}
 														},
 														failure: function (response, opts) {
 															Ext.toast('Failed to save', '', 'tr');
