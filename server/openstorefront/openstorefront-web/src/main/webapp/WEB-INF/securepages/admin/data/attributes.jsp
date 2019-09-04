@@ -2580,12 +2580,6 @@
 															Ext.toast('Saved Successfully', '', 'tr');
 															attributeStore.load();
 															editAttributeWin.close();
-
-															// Handle special after-actions
-															// Check for need for admin-defined codes
-															if(!formValues.allowUserGeneratedCodes){
-
-															}
 														},
 														failure: function (response, opts) {
 															Ext.toast('Failed to save', '', 'tr');
