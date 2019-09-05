@@ -762,13 +762,11 @@ public class ElasticSearchManager
 	public UpdateResponse updateSingleComponent(String componentId){
 		Objects.requireNonNull(componentId, "Requires Component ID");
 
-		System.out.println("Hello World0");
 		UpdateResponse updateResponse = new UpdateResponse();
 		Component oldComponent = service.getPersistenceService().findById(Component.class, componentId);
 		ComponentSearchView componentSearchView = ComponentSearchView.toView(oldComponent);
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
 		
-		System.out.println("Hello World01");
 		try (ElasticSearchClient client = singleton.getClient()) {
 			UpdateRequest updateRequest = new UpdateRequest(INDEX, componentId);
 			updateRequest.doc(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON);
@@ -779,7 +777,6 @@ public class ElasticSearchManager
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
 		}
-		System.out.println("Hello World2");
 		return updateResponse;
 	}
 
