@@ -2409,7 +2409,7 @@
 																id:'editAttributeForm-warningLabel',
 																//style:'border-left:6px solid yellow;background-color:${branding.primaryColor};border-radius: 15px / 50px;',
 																style: 'color:red; font-size:1.6em',
-																html:'<i class="fa fa-exclamation-triangle"></i> Note: After saving you will be prompted to add attribute codes.'
+																html:'<i class="fa fa-exclamation-triangle"></i> Note: You should ensure that there are codes defined for this attribute, otherwise users will be unable to set the value.'
 															}
 														)
 													} else {

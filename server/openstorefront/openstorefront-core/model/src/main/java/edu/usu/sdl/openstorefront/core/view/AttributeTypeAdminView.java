@@ -48,6 +48,7 @@ public class AttributeTypeAdminView
 		}
 		Service service = ServiceProxyFactory.getServiceProxy();
 
+		// Unnessisary condition check revoked, kept this for future circumstances
 		// if (adminView.getRequiredRestrictions() != null
 		// 		&& !adminView.getRequiredRestrictions().isEmpty()) {
 
