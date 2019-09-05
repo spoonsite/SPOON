@@ -703,7 +703,7 @@
 			var actionAddAttribute = function() {
 				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
 				
-				// Configure the showAttributeWindow's fields to be appropriate for this action, Adding new attr  
+				// Setup the showAttributeWindow for the Adding action  
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').hide();
@@ -714,7 +714,7 @@
 			var actionEditAttribute = function(record) {
 				showAttributeWin(true, '<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType, record);
 				
-				// Configure the showAttributeWindow's fields to be appropriate for the Edit action
+				// Setup the showAttributeWindow for the Edit action
 				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
 
 				
@@ -2398,7 +2398,7 @@
 										{
 											name: 'allowUserGeneratedCodes',
 											boxLabel: 'Allow User-Created Codes',
-											// default value set to true for more likely scenario
+											// default value set to true as this box is usually checked by admin user.
 											value: true,
 											listeners: {
 												change: function(box, newValue){
@@ -2407,7 +2407,6 @@
 															{
 																xtype:'panel',
 																id:'editAttributeForm-warningLabel',
-																//style:'border-left:6px solid yellow;background-color:${branding.primaryColor};border-radius: 15px / 50px;',
 																style: 'color:red; font-size:1.6em',
 																html:'<i class="fa fa-exclamation-triangle"></i> Note: You should ensure that there are codes defined for this attribute, otherwise users will be unable to set the value.'
 															}
