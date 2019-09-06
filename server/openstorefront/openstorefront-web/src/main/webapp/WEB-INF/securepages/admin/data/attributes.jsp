@@ -2391,11 +2391,6 @@
 											listeners: formChange
 										},
 										{
-											name: 'architectureFlg',
-											boxLabel: 'Architecture',
-											listeners: formChange
-										},
-										{
 											name: 'allowMultipleFlg',
 											id: 'multipleFlagCheckBox',
 											boxLabel: 'Allow Multiple'
@@ -2407,9 +2402,8 @@
 										},
 										{
 											name: 'hideOnSubmission',
-											boxLabel: 'Hide on Submission',
+											boxLabel: 'Hide on Submission <i class="fa fa-lg fa-question-circle"  data-qtip="The attribute will be automatically added to the component without the user being able to change it. Hiding a required attribute requires a default code. Codes must be created before this flag can be set." ></i>',
 											id: 'editAttributeForm-hideOnSubmission',
-											toolTip: 'Hiding a required attribute requires a default code. Codes must be created before this flag can be set.',
 											listeners: {
 												change: function(box, newValue) {
 													var select = Ext.getCmp('editAttributeForm-defaultCode');
