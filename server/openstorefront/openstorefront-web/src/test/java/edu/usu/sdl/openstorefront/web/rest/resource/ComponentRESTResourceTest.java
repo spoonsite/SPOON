@@ -231,7 +231,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 
 		//Act
 		// Trying to get the component from the persistance service results in null, 
-		// therefor we check that there are no errors when saving the attribute.
+		// therefore we check that there are no validation errors when saving the attribute.
 		ComponentCommonSubResourceExtTest componentCommonSubResourceExtTest = new ComponentCommonSubResourceExtTest();
 		ValidationResult validationResult = componentCommonSubResourceExtTest.saveAttribute(componentId, postAttribute);
 
