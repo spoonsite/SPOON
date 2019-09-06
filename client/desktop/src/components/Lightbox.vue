@@ -46,7 +46,7 @@
         <v-btn v-if="list.length > 1" flat icon dark @click="lightboxPrev()">
           <v-icon dark>navigate_before</v-icon>
         </v-btn>
-        <v-btn icon dark style="margin-left: 2em; margin-right: 2em;" @click="lightbox = false;">
+        <v-btn icon dark style="margin-left: 2em; margin-right: 2em;" @click="lightbox = false">
           <v-icon dark>clear</v-icon>
         </v-btn>
         <v-btn v-if="list.length > 1" flat icon dark @click="lightboxNext()">
@@ -71,35 +71,35 @@ export default {
       lightbox: false,
       currentItem: null,
       currentIndex: 0
-    };
+    }
   },
   methods: {
     lightboxOn (index) {
-      this.lightbox = true;
-      this.currentIndex = index;
-      this.currentItem = this.list[index];
-      this.lightboxSetImage();
+      this.lightbox = true
+      this.currentIndex = index
+      this.currentItem = this.list[index]
+      this.lightboxSetImage()
     },
     lightboxSetImage () {
-      this.currentItem = this.list[this.currentIndex];
+      this.currentItem = this.list[this.currentIndex]
     },
     lightboxNext () {
-      this.currentIndex = (this.currentIndex + 1) % this.list.length;
-      this.lightboxSetImage();
+      this.currentIndex = (this.currentIndex + 1) % this.list.length
+      this.lightboxSetImage()
     },
     lightboxPrev () {
-      this.currentIndex = this.currentIndex - 1;
+      this.currentIndex = this.currentIndex - 1
       if (this.currentIndex < 0) {
-        this.currentIndex = this.list.length - 1;
+        this.currentIndex = this.list.length - 1
       }
-      this.lightboxSetImage();
+      this.lightboxSetImage()
     }
   },
   computed: {
   },
   watch: {
   }
-};
+}
 </script>
 
 <style>

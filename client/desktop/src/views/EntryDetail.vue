@@ -273,31 +273,30 @@
 </template>
 
 <script lang="js">
-import StarRating from 'vue-star-rating';
-import _ from 'lodash';
-import Lightbox from '../components/Lightbox';
-import Question from '../components/Question';
-import format from 'date-fns/format';
-import isFuture from 'date-fns/is_future';
-import router from '../router';
+import StarRating from 'vue-star-rating'
+import _ from 'lodash'
+import Lightbox from '../components/Lightbox'
+import Question from '../components/Question'
+import format from 'date-fns/format'
+import isFuture from 'date-fns/is_future'
+import router from '../router'
 
 export default {
   name: 'entry-detail-page',
   components: {
-    router,
     StarRating,
     Lightbox,
-    Question,
+    Question
   },
   mounted () {
     if (this.$route.params.id) {
-      this.id = this.$route.params.id;
+      this.id = this.$route.params.id
     }
 
-    this.lookupTypes();
-    this.getDetail();
-    this.getQuestions();
-    this.checkWatch();
+    this.lookupTypes()
+    this.getDetail()
+    this.getQuestions()
+    this.checkWatch()
   },
   data () {
     return {
@@ -362,11 +361,11 @@ export default {
       },
       attributeTableHeaders: [
         { text: 'Attribute Type', value: 'typeDescription' },
-        { text: 'Value', value: 'codeDescription'},
-        { text: 'Unit', value: 'unit'}
+        { text: 'Value', value: 'codeDescription' },
+        { text: 'Unit', value: 'unit' }
       ]
 
-    };
+    }
   },
   methods: {
     checkWatch () {
@@ -374,126 +373,126 @@ export default {
         .then(response => {
           if (response) {
             if (response.data && response.data.length > 0) {
-              let tempWatch = false;
+              let tempWatch = false
               for (var i = 0; i < response.data.length; i++) {
                 if (response.data[i].componentId === this.id) {
-                  this.watchSwitch = true;
-                  tempWatch = true;
-                  this.watchId = response.data[i].watchId;
-                  break;
+                  this.watchSwitch = true
+                  tempWatch = true
+                  this.watchId = response.data[i].watchId
+                  break
                 }
               }
               if (tempWatch === false) {
-                this.watchSwitch = false;
+                this.watchSwitch = false
               }
             }
           }
         })
         .finally(() => {
-          this.watchBeingChecked = false;
-        });
+          this.watchBeingChecked = false
+        })
     },
     computeAverageRating (detail) {
-      var temp = 0;
-      var averageRating = 0;
+      var temp = 0
+      var averageRating = 0
       if (detail.reviews) {
         for (var i = 0; i < detail.reviews.length; i++) {
           if (detail.reviews[i].rating) {
-            temp += detail.reviews[i].rating;
+            temp += detail.reviews[i].rating
           } else {
-            return 0;
+            return 0
           }
         }
       } else {
-        return 0;
+        return 0
       }
       if (detail.reviews.length !== 0) {
-        averageRating = temp / detail.reviews.length;
+        averageRating = temp / detail.reviews.length
       }
-      return averageRating;
+      return averageRating
     },
     computeHasImage () {
       if (this.detail.componentMedia) {
         for (var i = 0; i < this.detail.componentMedia.length; i++) {
           if (this.detail.componentMedia[i].mediaTypeCode === 'IMG') {
-            this.hasImage = true;
-            return;
+            this.hasImage = true
+            return
           }
         }
       }
     },
     deleteQuestion (question) {
-      this.questions = this.questions.filter(el => el.questionId !== question.questionId);
+      this.questions = this.questions.filter(el => el.questionId !== question.questionId)
     },
     deleteReviewConfirmation () {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
         .then(response => {
-          this.$toasted.show('Review Deleted');
-          this.deleteReviewDialog = false;
-          this.getDetail();
-        });
+          this.$toasted.show('Review Deleted')
+          this.deleteReviewDialog = false
+          this.getDetail()
+        })
     },
     editReviewSetup (review) {
-      this.writeReviewDialog = true;
-      this.newReview.title = review.title;
-      this.newReview.rating = review.rating;
-      this.newReview.recommend = review.recommend;
-      this.newReview.lastUsed = format(review.lastUsed, 'YYYY-MM-DD');
-      this.newReview.timeUsed = review.userTimeDescription;
+      this.writeReviewDialog = true
+      this.newReview.title = review.title
+      this.newReview.rating = review.rating
+      this.newReview.recommend = review.recommend
+      this.newReview.lastUsed = format(review.lastUsed, 'YYYY-MM-DD')
+      this.newReview.timeUsed = review.userTimeDescription
       review.pros.forEach(element => {
-        this.newReview.pros.push(element.text);
-      });
+        this.newReview.pros.push(element.text)
+      })
       review.cons.forEach(element => {
-        this.newReview.cons.push(element.text);
-      });
-      this.comment = review.comment;
-      this.editReviewId = review.reviewId;
+        this.newReview.cons.push(element.text)
+      })
+      this.comment = review.comment
+      this.editReviewId = review.reviewId
     },
     filterLightboxList () {
       if (this.detail.componentMedia) {
         this.lightboxList = _.filter(this.detail.componentMedia, function (o) {
-          return (o.mediaTypeCode === 'IMG' || o.mediaTypeCode === 'VID') && !o.hideInDisplay;
-        });
+          return (o.mediaTypeCode === 'IMG' || o.mediaTypeCode === 'VID') && !o.hideInDisplay
+        })
       }
     },
     getAddDetail () {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}`)
         .then(response => {
-          this.addDetail = response.data;
+          this.addDetail = response.data
         })
         .finally(() => {
-          this.isLoading = false;
-        });
+          this.isLoading = false
+        })
     },
     getAnswers (qid) {
-      this.isLoading = true;
+      this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions/${qid}/responses`)
         .then(response => {
-          this.answers[qid] = response.data;
-          this.isLoading = false;
+          this.answers[qid] = response.data
+          this.isLoading = false
         })
-        .catch(e => this.errors.push(e));
+        .catch(e => this.errors.push(e))
     },
     getDetail () {
-      this.isLoading = true;
+      this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/detail`)
         .then(response => {
-          this.detail = response.data;
+          this.detail = response.data
         })
         .catch(e => this.errors.push(e))
         .finally(() => {
-          this.computeHasImage();
-          this.filterLightboxList();
-          this.getAddDetail();
-        });
+          this.computeHasImage()
+          this.filterLightboxList()
+          this.getAddDetail()
+        })
     },
     getQuestions () {
-      this.isLoading = true;
+      this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions`)
         .then(response => {
-          this.questions = response.data;
+          this.questions = response.data
         })
-        .catch(e => this.errors.push(e));
+        .catch(e => this.errors.push(e))
     },
     goToComments () {
       router.push({
@@ -501,45 +500,45 @@ export default {
         params: {
           id: this.id
         }
-      });
+      })
     },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
         .then(response => {
           if (response.data) {
-            this.timeOptions = response.data;
+            this.timeOptions = response.data
             response.data.forEach(element => {
-              this.timeSelectOptions.push(element.description);
-            });
+              this.timeSelectOptions.push(element.description)
+            })
           }
         })
-        .catch(e => this.errors.push(e));
+        .catch(e => this.errors.push(e))
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
         .then(response => {
           if (response.data) {
-            this.prosOptions = response.data;
+            this.prosOptions = response.data
             response.data.forEach(element => {
-              this.prosSelectOptions.push(element.description);
-            });
+              this.prosSelectOptions.push(element.description)
+            })
           }
         })
-        .catch(e => this.errors.push(e));
+        .catch(e => this.errors.push(e))
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
         .then(response => {
           if (response.data) {
-            this.consOptions = response.data;
+            this.consOptions = response.data
             response.data.forEach(element => {
-              this.consSelectOptions.push(element.description);
-            });
+              this.consSelectOptions.push(element.description)
+            })
           }
         })
-        .catch(e => this.errors.push(e));
+        .catch(e => this.errors.push(e))
     },
     showMediaDetails (item) {
-      this.currentMediaDetailItem = item;
-      this.mediaDetailsDialog = true;
+      this.currentMediaDetailItem = item
+      this.mediaDetailsDialog = true
     },
     submitQuestion () {
       let data = {
@@ -548,18 +547,18 @@ export default {
         question: this.newQuestion,
         securityMarkingType: '',
         userTypeCode: this.$store.state.currentUser.userTypeCode
-      };
+      }
       this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/questions`, data)
         .then(response => {
-          this.questions.push(response.data);
-          this.newQuestion = '';
-          this.askQuestionDialog = false;
-          this.$toasted.show('Question submitted.');
+          this.questions.push(response.data)
+          this.newQuestion = ''
+          this.askQuestionDialog = false
+          this.$toasted.show('Question submitted.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the question.'));
+        .catch(e => this.$toasted.error('There was a problem submitting the question.'))
     },
     submitReview () {
-      this.isLoading = true;
+      this.isLoading = true
 
       let data = {
         comment: this.comment,
@@ -574,67 +573,67 @@ export default {
         title: this.newReview.title,
         userTimeCode: '',
         userTypeCode: this.$store.state.currentUser.userTypeCode
-      };
+      }
 
       this.consOptions.forEach(consElement => {
         this.newReview.cons.forEach(selectElement => {
           if (consElement.description === selectElement) {
-            data.cons.push({text: consElement.code});
+            data.cons.push({ text: consElement.code })
           }
-        });
-      });
+        })
+      })
 
       this.prosOptions.forEach(prosElement => {
         this.newReview.pros.forEach(selectElement => {
           if (prosElement.description === selectElement) {
-            data.pros.push({text: prosElement.code});
+            data.pros.push({ text: prosElement.code })
           }
-        });
-      });
+        })
+      })
 
       this.timeOptions.forEach(element => {
         if (this.newReview.timeUsed === element.description) {
-          data.userTimeCode = element.code;
+          data.userTimeCode = element.code
         }
-      });
+      })
 
       if (this.editReviewId) {
         this.$http.put(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.editReviewId}/detail`, data)
           .then(response => {
-            this.writeReviewDialog = false;
-            this.editReviewId = '';
-            this.$toasted.show('Review Submitted');
+            this.writeReviewDialog = false
+            this.editReviewId = ''
+            this.$toasted.show('Review Submitted')
           })
           .finally(() => {
-            this.isLoading = false;
-            this.getDetail();
+            this.isLoading = false
+            this.getDetail()
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'));
+          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
       } else {
         this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/reviews/detail`, data)
           .then(response => {
-            this.writeReviewDialog = false;
-            this.$toasted.show('Review Submitted');
+            this.writeReviewDialog = false
+            this.$toasted.show('Review Submitted')
           })
           .finally(() => {
-            this.isLoading = false;
-            this.getDetail();
+            this.isLoading = false
+            this.getDetail()
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'));
+          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
       }
     },
     todaysDateFormatted (val) {
-      return !isFuture(val);
+      return !isFuture(val)
     },
-    getFirstCompType(componentType){
+    getFirstCompType (componentType) {
       var index = componentType.indexOf('>')
-      if(index != -1) {
+      if (index !== -1) {
         return componentType.slice(0, index)
       }
     },
-    getSecondCompType(componentType){
+    getSecondCompType (componentType) {
       var index = componentType.indexOf('>')
-      if(index != -1) {
+      if (index !== -1) {
         return componentType.slice(index)
       }
     }
@@ -642,56 +641,56 @@ export default {
   watch: {
     comment: function (val) {
       if (val !== '' && this.reviewValid) {
-        this.reviewSubmit = true;
+        this.reviewSubmit = true
       } else {
-        this.reviewSubmit = false;
+        this.reviewSubmit = false
       }
     },
     reviewValid: function (val) {
       if (val && this.comment !== '') {
-        this.reviewSubmit = true;
+        this.reviewSubmit = true
       } else {
-        this.reviewSubmit = false;
+        this.reviewSubmit = false
       }
     },
     watchSwitch: function (val) {
       if (!this.watchBeingChecked) {
-        this.watchBeingChecked = true;
+        this.watchBeingChecked = true
         if (this.watchSwitch === true) {
           let watch = {
             componentId: this.detail.componentId,
             lastViewDts: new Date(),
             username: this.$store.state.currentUser.username,
             notifyFlg: false
-          };
+          }
           this.$http.post(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`, watch)
             .then(response => {
               if (response.errors) {
-                this.watchSwitch = false;
+                this.watchSwitch = false
               }
             })
             .finally(() => {
-              this.checkWatch();
-            });
+              this.checkWatch()
+            })
         } else {
           this.$http.delete(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches/${this.watchId}`)
             .finally(() => {
-              this.checkWatch();
-            });
+              this.checkWatch()
+            })
         }
       }
     },
     writeReviewDialog: function (val) {
       if (val === false) {
-        this.newReview.title = '';
-        this.newReview.rating = 0;
-        this.newReview.recommend = false;
-        this.newReview.lastUsed = '';
-        this.newReview.timeUsed = '';
-        this.newReview.pros = [];
-        this.newReview.cons = [];
-        this.editReviewId = '';
-        this.comment = '';
+        this.newReview.title = ''
+        this.newReview.rating = 0
+        this.newReview.recommend = false
+        this.newReview.lastUsed = ''
+        this.newReview.timeUsed = ''
+        this.newReview.pros = []
+        this.newReview.cons = []
+        this.editReviewId = ''
+        this.comment = ''
       }
     }
   },
@@ -699,18 +698,18 @@ export default {
     commentsViewable () {
       // TODO: look at me when the endpoints are implemented
       if (this.$store.state.currentUser.username === this.addDetail.ownerUser) {
-        return true;
+        return true
       }
       if (this.$store.getters.hasPermission('ADMIN-ENTRY-COMMENT-MANAGEMENT')) {
-        return true;
+        return true
       }
       if (this.$store.getters.hasPermission('WORKFLOW-ADMIN-SUBMISSION-COMMENTS')) {
-        return true;
+        return true
       }
-      return false;
+      return false
     }
   }
-};
+}
 </script>
 
 <style scoped lang="scss">
