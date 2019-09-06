@@ -999,6 +999,15 @@ var CoreUtil = {
 					desc += '<b>String Operation: </b>' + element.stringOperation + '<br>';
 				}
 
+				// In some states a non-standard object is passed in as searchElements that has
+				// only these properties
+				if (element.type) {
+					desc += '<b>Type: </b>' + element.type + '<br>';
+				}
+				if (element.query) {
+					desc += '<b>Query: </b>' + element.query + '<br>';
+				}
+
 				if (count !== 0) {
 					desc += '<br>' + element.mergeCondition + '<br><br>';
 				}

@@ -19,7 +19,7 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn :loading="loading" :disabled="!valid" block color="accent" @click="submitEmail()">Send Username</v-btn>
+          <v-btn :loading="loading" :disabled="!valid" block color="secondary" @click="submitEmail()">Send Username</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>

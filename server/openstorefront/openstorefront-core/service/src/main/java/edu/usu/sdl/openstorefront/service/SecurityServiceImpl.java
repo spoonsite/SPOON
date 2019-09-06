@@ -919,16 +919,18 @@ public class SecurityServiceImpl
 			}
 		}
 
-		Map<String, Object> data = new HashMap<>();
-		String subject = "Forgot Username";
-		data.put("username", username);
-		data.put("replyName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
-		data.put("replyAddress", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
-		data.put("title", subject);
-		Email email = MailManager.newTemplateEmail(MailManager.Templates.FORGOT_USERNAME.toString(), data);
-		email.setSubject(subject);
-		email.addRecipient("", emailAddress, Message.RecipientType.TO);
-		MailManager.send(email, true);
+		if (username != null){
+			Map<String, Object> data = new HashMap<>();
+			String subject = "Forgot Username";
+			data.put("username", username);
+			data.put("replyName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
+			data.put("replyAddress", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+			data.put("title", subject);
+			Email email = MailManager.newTemplateEmail(MailManager.Templates.FORGOT_USERNAME.toString(), data);
+			email.setSubject(subject);
+			email.addRecipient("", emailAddress, Message.RecipientType.TO);
+			MailManager.send(email, true);
+		}
 
 	}
 

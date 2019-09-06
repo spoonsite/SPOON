@@ -680,6 +680,13 @@ public class MediaAction
 
 	}
 
+	/**
+	 * This function is the endpoint for a "Download Image" button for Relationship charts.
+	 * Due to a bug (server errored when the image size/resolution was too great), this button
+	 * was removed rather than fixed. Button exists in Ext.js at git commit with SHA hash 
+	 * 2f795533ee830bffa2c7d1f6eee3bbb45f2c4e1d before deletion. 
+	 */
+	@Deprecated
 	@HandlesEvent("DataImage")
 	public Resolution tranformDataImage()
 	{

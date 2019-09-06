@@ -504,23 +504,6 @@ public class AttributeResource
 	}
 
 	@GET
-	@APIDescription("Gets architecture")
-	@Produces({MediaType.APPLICATION_JSON})
-	@DataType(Architecture.class)
-	@Path("/attributetypes/{type}/architecture")
-	public Response getArchitecture(
-			@PathParam("type")
-			@RequiredParam String type)
-	{
-		Architecture architecture = null;
-		AttributeType attributeType = service.getAttributeService().findType(type);
-		if (attributeType != null) {
-			architecture = service.getAttributeService().generateArchitecture(type);
-		}
-		return sendSingleEntityResponse(architecture);
-	}
-
-	@GET
 	@APIDescription("Gets an attribute code.")
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(AttributeCode.class)

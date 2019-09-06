@@ -20,12 +20,9 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
-import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.HTMLSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
-import javax.persistence.Embedded;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -70,34 +67,11 @@ public class Branding
 	@ConsumeField
 	private String loginFooter;
 
-	/**
-	 * warning banner in the center of the login page
-	 *
-	 * @deprecated As of 2.5-s, replaced by {@link #loginFooter}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
-	@Sanitize(HTMLSanitizer.class)
-	@ConsumeField
-	private String loginWarning;
-
-	/**
-	 * Logo section in the main section of the page
-	 *
-	 * @deprecated As of 2.5-s, replaced by {@link #loginContentBlock}
-	 */
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
-	@ConsumeField
-	private String loginLogoBlock;
-
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@ConsumeField
 	private String loginContentBlock;
 
-	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	private String loginLogoUrl;
+
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
@@ -121,11 +95,6 @@ public class Branding
 	@ConsumeField
 	private String landingPageTitle;
 
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@Sanitize(HTMLSanitizer.class)
-	@ConsumeField
-	private String landingStatsText;
-
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
@@ -139,19 +108,6 @@ public class Branding
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_16K)
 	@ConsumeField
 	private String analyticsTrackingCode;
-
-	@ConsumeField
-	private Boolean hideArchitectureSearchFlg;
-
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@Sanitize(CleanKeySanitizer.class)
-	@ConsumeField
-	private String architectureSearchType;
-
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
-	@Sanitize(TextSanitizer.class)
-	@ConsumeField
-	private String architectureSearchLabel;
 
 	@ConsumeField
 	private Boolean allowSecurityMarkingsFlg;
@@ -197,51 +153,76 @@ public class Branding
 	private Boolean showFAQ;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String primaryColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String primaryTextColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String secondaryColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String accentColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String quoteColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String linkColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String linkVisitedColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String linkhoverColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String panelHeaderColor;
 
 	@ConsumeField
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
 	private String panelHeaderTextColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vuePrimaryColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueSecondaryColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueAccentColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueErrorColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueInfoColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueWarningColor;
+
+	@ConsumeField
+	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_COLOR)
+	private String vueSuccessColor;
 
 	@ConsumeField
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1MB)
 	private String overrideCSS;
-
-	@ConsumeField
-	private Boolean useDefaultLandingPage;
 
 	@ConsumeField
 	private Boolean showSupportMenuOnLogin;
@@ -258,11 +239,6 @@ public class Branding
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
 	private String bulkUploadMessage;
-	
-	@ConsumeField
-	@Embedded
-	@OneToOne(orphanRemoval = true)
-	private LandingTemplate landingTemplate;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Branding()
@@ -278,22 +254,15 @@ public class Branding
 
 		setAllowSecurityMarkingsFlg(branding.getAllowSecurityMarkingsFlg());
 		setApplicationName(branding.getApplicationName());
-		setHideArchitectureSearchFlg(branding.getHideArchitectureSearchFlg());
-		setArchitectureSearchLabel(branding.getArchitectureSearchLabel());
-		setArchitectureSearchType(branding.getArchitectureSearchType());
 		setLandingPageBanner(branding.getLandingPageBanner());
 		setLandingPageFooter(branding.getLandingPageFooter());
 		setLandingPageTitle(branding.getLandingPageTitle());
-		setLandingStatsText(branding.getLandingStatsText());
 		setName(branding.getName());
 		setPrimaryLogoUrl(branding.getPrimaryLogoUrl());
 		setSecondaryLogoUrl(branding.getSecondaryLogoUrl());
 		setHomebackSplashUrl(branding.getHomebackSplashUrl());
 		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
 
-		setLoginWarning(branding.getLoginWarning());
-		setLoginLogoBlock(branding.getLoginLogoBlock());
-		setLoginLogoUrl(branding.getLoginLogoUrl());
 		setLoginContentBlock(branding.getLoginContentBlock());
 		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
 		setLoginOverviewVideoPosterUrl(branding.getLoginOverviewVideoPosterUrl());
@@ -321,13 +290,18 @@ public class Branding
 		setLinkhoverColor(branding.getLinkhoverColor());
 		setPanelHeaderColor(branding.getPanelHeaderColor());
 		setPanelHeaderTextColor(branding.getPanelHeaderTextColor());
+		setVuePrimaryColor(branding.getVuePrimaryColor());
+		setVueSecondaryColor(branding.getVueSecondaryColor());
+		setVueAccentColor(branding.getVueAccentColor());
+		setVueErrorColor(branding.getVueErrorColor());
+		setVueInfoColor(branding.getVueInfoColor());
+		setVueWarningColor(branding.getVueWarningColor());
+		setVueSuccessColor(branding.getVueSuccessColor());
 		setOverrideCSS(branding.getOverrideCSS());
 
 		setShowLinkToMobile(branding.getShowLinkToMobile());
 		setDisclaimerMessage(branding.getDisclaimerMessage());
 		setBulkUploadMessage(branding.getBulkUploadMessage());
-		setUseDefaultLandingPage(branding.getUseDefaultLandingPage());
-		setLandingTemplate(branding.getLandingTemplate());
 	}
 
 	public String getBrandingId()
@@ -370,30 +344,6 @@ public class Branding
 		this.secondaryLogoUrl = secondaryLogoUrl;
 	}
 
-	/**
-	 * warning banner in the center of the login page
-	 *
-	 * @return logo image with image map
-	 * @deprecated As of 2.5-s, replaced by {@link #getLoginFooter()}
-	 */
-	@Deprecated
-	public String getLoginWarning()
-	{
-		return loginWarning;
-	}
-
-	/**
-	 * warning banner in the center of the login page
-	 *
-	 * @param loginWarning warning text
-	 * @deprecated As of 2.5-s, replaced by {@link #setLoginFooter(String)}
-	 */
-	@Deprecated
-	public void setLoginWarning(String loginWarning)
-	{
-		this.loginWarning = loginWarning;
-	}
-
 	public String getApplicationName()
 	{
 		return applicationName;
@@ -434,26 +384,6 @@ public class Branding
 		this.landingPageFooter = landingPageFooter;
 	}
 
-	public String getArchitectureSearchType()
-	{
-		return architectureSearchType;
-	}
-
-	public void setArchitectureSearchType(String architectureSearchType)
-	{
-		this.architectureSearchType = architectureSearchType;
-	}
-
-	public String getArchitectureSearchLabel()
-	{
-		return architectureSearchLabel;
-	}
-
-	public void setArchitectureSearchLabel(String architectureSearchLabel)
-	{
-		this.architectureSearchLabel = architectureSearchLabel;
-	}
-
 	public Boolean getAllowSecurityMarkingsFlg()
 	{
 		return allowSecurityMarkingsFlg;
@@ -462,16 +392,6 @@ public class Branding
 	public void setAllowSecurityMarkingsFlg(Boolean allowSecurityMarkingsFlg)
 	{
 		this.allowSecurityMarkingsFlg = allowSecurityMarkingsFlg;
-	}
-
-	public String getLandingStatsText()
-	{
-		return landingStatsText;
-	}
-
-	public void setLandingStatsText(String landingStatsText)
-	{
-		this.landingStatsText = landingStatsText;
 	}
 
 	public String getFeedbackHandler()
@@ -594,16 +514,6 @@ public class Branding
 		this.overrideCSS = overrideCSS;
 	}
 
-	public Boolean getHideArchitectureSearchFlg()
-	{
-		return hideArchitectureSearchFlg;
-	}
-
-	public void setHideArchitectureSearchFlg(Boolean hideArchitectureSearchFlg)
-	{
-		this.hideArchitectureSearchFlg = hideArchitectureSearchFlg;
-	}
-
 	public String getPrimaryTextColor()
 	{
 		return primaryTextColor;
@@ -632,6 +542,62 @@ public class Branding
 	public void setPanelHeaderTextColor(String panelHeaderTextColor)
 	{
 		this.panelHeaderTextColor = panelHeaderTextColor;
+	}
+
+	public String getVuePrimaryColor() {
+		return this.vuePrimaryColor;
+	}
+
+	public void setVuePrimaryColor(String vuePrimaryColor) {
+		this.vuePrimaryColor = vuePrimaryColor;
+	}
+
+	public String getVueSecondaryColor() {
+		return this.vueSecondaryColor;
+	}
+
+	public void setVueSecondaryColor(String vueSecondaryColor) {
+		this.vueSecondaryColor = vueSecondaryColor;
+	}
+
+	public String getVueAccentColor() {
+		return this.vueAccentColor;
+	}
+
+	public void setVueAccentColor(String vueAccentColor) {
+		this.vueAccentColor = vueAccentColor;
+	}
+
+	public String getVueErrorColor() {
+		return this.vueErrorColor;
+	}
+
+	public void setVueErrorColor(String vueErrorColor) {
+		this.vueErrorColor = vueErrorColor;
+	}
+
+	public String getVueInfoColor() {
+		return this.vueInfoColor;
+	}
+
+	public void setVueInfoColor(String vueInfoColor) {
+		this.vueInfoColor = vueInfoColor;
+	}
+
+	public String getVueWarningColor() {
+		return this.vueWarningColor;
+	}
+
+	public void setVueWarningColor(String vueWarningColor) {
+		this.vueWarningColor = vueWarningColor;
+	}
+
+	public String getVueSuccessColor() {
+		return this.vueSuccessColor;
+	}
+
+	public void setVueSuccessColor(String vueSuccessColor) {
+		this.vueSuccessColor = vueSuccessColor;
 	}
 
 	public String getSubmissionFormWarning()
@@ -664,16 +630,6 @@ public class Branding
 		this.changeRequestWarning = changeRequestWarning;
 	}
 
-	public LandingTemplate getLandingTemplate()
-	{
-		return landingTemplate;
-	}
-
-	public void setLandingTemplate(LandingTemplate landingTemplate)
-	{
-		this.landingTemplate = landingTemplate;
-	}
-
 	public String getHomebackSplashUrl()
 	{
 		return homebackSplashUrl;
@@ -694,16 +650,6 @@ public class Branding
 		this.secondaryColor = secondaryColor;
 	}
 
-	public Boolean getUseDefaultLandingPage()
-	{
-		return useDefaultLandingPage;
-	}
-
-	public void setUseDefaultLandingPage(Boolean useDefaultLandingPage)
-	{
-		this.useDefaultLandingPage = useDefaultLandingPage;
-	}
-
 	public String getLoginContentBlock()
 	{
 		return loginContentBlock;
@@ -714,16 +660,6 @@ public class Branding
 		this.loginContentBlock = loginContentBlock;
 	}
 
-	public String getLoginLogoUrl()
-	{
-		return loginLogoUrl;
-	}
-
-	public void setLoginLogoUrl(String loginLogoUrl)
-	{
-		this.loginLogoUrl = loginLogoUrl;
-	}
-
 	public String getLoginFooter()
 	{
 		return loginFooter;
@@ -732,31 +668,6 @@ public class Branding
 	public void setLoginFooter(String loginFooter)
 	{
 		this.loginFooter = loginFooter;
-	}
-
-	/**
-	 * Logo section in the main section of the page
-	 *
-	 * @return logo image with image map
-	 * @deprecated As of 2.5-s, replaced by {@link #getLoginContentBlock()}
-	 */
-	@Deprecated
-	public String getLoginLogoBlock()
-	{
-		return loginLogoBlock;
-	}
-
-	/**
-	 * Logo section in the main section of the page
-	 *
-	 * @param loginLogoBlock logo image with optional image map
-	 * @deprecated As of 2.5-s, replaced by
-	 * {@link #setLoginContentBlock(String)}
-	 */
-	@Deprecated
-	public void setLoginLogoBlock(String loginLogoBlock)
-	{
-		this.loginLogoBlock = loginLogoBlock;
 	}
 
 	public Boolean getShowSupportMedia()

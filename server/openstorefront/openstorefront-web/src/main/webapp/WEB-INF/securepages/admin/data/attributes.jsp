@@ -349,7 +349,7 @@
 					displayInfo: true,
 					displayMsg: 'Displaying Attributes {0} - {1} of {2}',
 					emptyMsg: "No attributes to display"
-				}),				
+				}),
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
 						
@@ -435,50 +435,37 @@
 						}
 					},
 					{
-						text: 'Visible', 
+						text: 'Visible <i class="fa fa-question-circle"  data-qtip="Show in the list of filters?" ></i>', 
 						dataIndex: 'visibleFlg',
 						flex: 1, 
-						tooltip: 'Show in the list of filters?',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},					
 					{
-						text: 'Important',
+						text: 'Important <i class="fa fa-question-circle"  data-qtip="Shows on main page browse categories" ></i>',
 						dataIndex: 'importantFlg',
 						flex: 1, 
-						tooltip: 'Shows on main page browse categories',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
-						text: 'Architecture',
-						dataIndex: 'architectureFlg',
-						flex: 1, 
-						tooltip: 'Denotes attribute is an architecture',
-						align: 'center',
-						renderer: CoreUtil.renderer.booleanRenderer
-					},
-					{
-						text: 'Allow Multiple',
+						text: 'Allow Multiple <i class="fa fa-question-circle"  data-qtip="A component will be allowed to have more than one code for this attribute" ></i>',
 						dataIndex: 'allowMultipleFlg',
-						flex: 1, 
-						tooltip: 'A component will be allowed to have more than one code for this attribute',
+						flex: 1,
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
-						text: 'Allow User Codes',
+						text: 'Allow User Codes <i class="fa fa-question-circle"  data-qtip="Should users be able to generate codes for this attribute" ></i>',
 						dataIndex: 'allowUserGeneratedCodes',
 						flex: 1,
-						tooltip: 'Should users be able to generate codes for this attribute',
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
 					{
-						text: 'Hide On Submission',
+						text: 'Hide On Submission <i class="fa fa-question-circle"  data-qtip="Should the attribute type show on the submission form" ></i>',
 						dataIndex: 'hideOnSubmission',
-						flex: 1, 
-						tooltip: 'Should the attribute type show on the submission form',
+						flex: 1,
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
@@ -713,25 +700,23 @@
 				]
 			});
 
-			var actionAddAttribute = function() {				
+			var actionAddAttribute = function() {
 				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
 				
+				// Setup the showAttributeWindow for the Adding action  
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').hide();
 				Ext.getCmp('editAttributeForm-entryTypeAssignment').hide();			
 				
-				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
-				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 			};
 
 			var actionEditAttribute = function(record) {
 				showAttributeWin(true, '<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType, record);
 				
-				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);				
-				//Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
-				//Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
-				//Ext.getCmp('editAttributeForm').reset();
+				// Setup the showAttributeWindow for the Edit action
+				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
+
 				
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 
@@ -2386,6 +2371,7 @@
 								},
 								{
 									xtype: 'fieldcontainer',
+									itemId: 'editAttributeForm-Flags',
 									layout: 'hbox',
 									defaultType: 'checkboxfield',
 									defaultLayout: '100%',
@@ -2405,11 +2391,6 @@
 											listeners: formChange
 										},
 										{
-											name: 'architectureFlg',
-											boxLabel: 'Architecture',
-											listeners: formChange
-										},
-										{
 											name: 'allowMultipleFlg',
 											id: 'multipleFlagCheckBox',
 											boxLabel: 'Allow Multiple'
@@ -2417,13 +2398,29 @@
 										{
 											name: 'allowUserGeneratedCodes',
 											boxLabel: 'Allow User-Created Codes',
-											listeners: formChange
+											// default value set to true as this box is usually checked by admin user.
+											value: true,
+											listeners: {
+												change: function(box, newValue){
+													if (!newValue){
+														this.up().up().insert(-1,
+															{
+																xtype:'panel',
+																id:'editAttributeForm-warningLabel',
+																style: 'color:red; font-size:1.6em',
+																html:'<i class="fa fa-exclamation-triangle"></i> Note: You should ensure that there are codes defined for this attribute, otherwise users will be unable to set the value.'
+															}
+														)
+													} else {
+														Ext.getCmp('editAttributeForm-warningLabel').destroy();
+													}
+												}
+											}
 										},
 										{
 											name: 'hideOnSubmission',
-											boxLabel: 'Hide on Submission',
+											boxLabel: 'Hide on Submission <i class="fa fa-lg fa-question-circle"  data-qtip="The attribute will be automatically added to the component without the user being able to change it. Hiding a required attribute requires a default code. Codes must be created before this flag can be set." ></i>',
 											id: 'editAttributeForm-hideOnSubmission',
-											toolTip: 'Hiding a required attribute requires a default code. Codes must be created before this flag can be set.',
 											listeners: {
 												change: function(box, newValue) {
 													var select = Ext.getCmp('editAttributeForm-defaultCode');
