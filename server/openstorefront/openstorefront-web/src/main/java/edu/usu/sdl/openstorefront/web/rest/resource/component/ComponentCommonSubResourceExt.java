@@ -330,7 +330,7 @@ public abstract class ComponentCommonSubResourceExt
 				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeCode()))).entity(attribute).build();
 	}
 
-	private ValidationResult saveAttribute(String componentId, ComponentAttribute attribute)
+	public ValidationResult saveAttribute(String componentId, ComponentAttribute attribute)
 	{
 		attribute.setComponentId(componentId);
 		attribute.getComponentAttributePk().setComponentId(componentId);
