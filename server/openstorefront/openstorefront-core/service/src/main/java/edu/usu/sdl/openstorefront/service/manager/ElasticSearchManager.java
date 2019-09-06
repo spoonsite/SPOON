@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeSearchType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -602,6 +603,26 @@ public class ElasticSearchManager
 
 			if (searchOptions.getCanUseAttributesInSearch()) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, phrase));
+			}
+		}
+
+		if(!searchFilters.getComponentTypes().isEmpty()){
+			for(String type : searchFilters.getComponentTypes()){
+				esQuery.should(QueryBuilders.matchPhraseQuery("componentType.ComponentType", type));
+			}
+		}
+
+		// FIXME: Attribute Selection Issue
+		// if(!searchFilters.getAttributes().isEmpty()){
+		// 	for(AttributeSearchType type : searchFilters.getAttributes()){
+		// 		esQuery.should(QueryBuilders.matchPhraseQuery("attributes.type", type.getType()));
+		// 		esQuery.should(QueryBuilders.matchPhraseQuery("attributes.type", type.getType()));
+		// 	}
+		// }
+
+		if(!searchFilters.getTags().isEmpty()){
+			for(String tag : searchFilters.getTags()){
+				esQuery.should(QueryBuilders.matchPhraseQuery("tags", tag));
 			}
 		}
 		
