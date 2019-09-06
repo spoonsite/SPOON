@@ -46,7 +46,7 @@
         <h2>Search Filters</h2>
         <v-btn block class="" @click="clear()">Clear Filters</v-btn>
         <v-select
-          v-model="filters.components"
+          v-model="selectedEntryTypes"
           :items="componentsList"
           item-text="componentTypeDescription"
           item-value="componentType"
@@ -180,16 +180,16 @@
       <v-chip
         color="teal"
         text-color="white"
-        v-for="component in filters.components"
-        :key="component"
+        v-for="entryType in selectedEntryTypes"
+        :key="entryType"
       >
-        {{ getComponentName(component) }}
-        <div class="v-chip__close"><v-icon right @click="removeComponent(component)">cancel</v-icon></div>
+        {{ getComponentName(entryType) }}
+        <div class="v-chip__close"><v-icon right @click="removeComponent(entryType)">cancel</v-icon></div>
       </v-chip>
       <v-chip
         color="light-blue lighten-2"
         text-color="black"
-        v-if="this.filters.children && !!this.filters.components && this.filters.components.length > 0"
+        v-if="this.filters.children && !!selectedEntryTypes && selectedEntryTypes.length > 0"
       >
         Include Sub-Catagories
         <div class="v-chip__close"><v-icon right @click="filters.children = !filters.children">cancel</v-icon></div>
@@ -323,9 +323,7 @@ export default {
   },
   created () {
     this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
-      if (this.selectedEntryTypes !== newValue) {
-        this.filters.components = newValue
-      }
+      this.newSearch()
     })
   },
   mounted () {
@@ -333,10 +331,10 @@ export default {
       this.searchQuery = this.$route.query.q
     }
     if (this.$route.query.comp) {
-      this.filters.components = this.$route.query.comp.split(',')
+      this.$store.commit('setSelectedComponentTypes', { data: this.$route.query.comp.split(',') })
     }
     if (this.$route.query.children) {
-      this.filters.children = this.$route.query.children
+      this.filters.children = (this.$route.query.children === 'true')
     }
     if (this.$route.query.tags) {
       this.filters.tags = this.$route.query.tags.split(',')
@@ -357,7 +355,7 @@ export default {
       this.searchQuery = to.query.q
     }
     if (to.query.comp) {
-      this.filters.components = to.query.comp.split(',')
+      this.$store.commit('setSelectedComponentTypes', { data: to.query.comp.split(',') })
     }
     if (to.query.children) {
       this.filters.children = to.query.children
@@ -366,7 +364,7 @@ export default {
   },
   methods: {
     componentsChange (data) {
-      this.filters.components = data
+      this.$store.commit('setSelectedComponentTypes', { data: data })
     },
     getComponentName (code) {
       // this.addHashToLocation(code)
@@ -384,9 +382,10 @@ export default {
       })
     },
     removeComponent (component) {
-      this.filters.components = this.filters.components.filter(el => {
+      let filteredEntryTypes = this.$store.getters.getSelectedComponentTypes.filter(el => {
         return el !== component
       })
+      this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
     },
     naturalSort (data) {
       function compare (a, b) {
@@ -427,7 +426,8 @@ export default {
       this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
     },
     deleteCompnent (component) {
-      this.filters.components = _.remove(this.filters.components, n => n !== component)
+      let filteredEntryTypes = _.remove(this.$store.state.componentTypeList, n => n !== component)
+      this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
     },
     addTag (tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
@@ -455,8 +455,8 @@ export default {
           value: that.searchQuery.trim() ? `*${that.searchQuery}*` : '***'
         }
       ]
-      if (that.filters.components) {
-        that.filters.components.forEach(function (entryType) {
+      if (that.selectedEntryTypes) {
+        that.selectedEntryTypes.forEach(function (entryType) {
           searchElements.push(
             {
               caseInsensitive: false,
@@ -639,6 +639,16 @@ export default {
     },
     componentTypeListComputed () {
       return this.filters.components
+    },
+    selectedEntryTypes: {
+      set (entryTypes) {
+        if (this.$store.getters.getSelectedComponentTypes !== entryTypes) {
+          this.$store.commit('setSelectedComponentTypes', { data: entryTypes })
+        }
+      },
+      get () {
+        return this.$store.getters.getSelectedComponentTypes
+      }
     }
   },
   data () {
@@ -654,7 +664,7 @@ export default {
       attributeQuery: '',
       attributeKeys: [],
       filters: {
-        components: [],
+        // For components see computed selectedEntryTypes
         tags: [],
         attributes: [],
         organization: '',
