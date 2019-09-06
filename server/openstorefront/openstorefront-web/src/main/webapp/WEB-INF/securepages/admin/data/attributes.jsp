@@ -715,10 +715,9 @@
 			var actionEditAttribute = function(record) {
 				showAttributeWin(true, '<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType, record);
 				
-				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);				
-				//Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
-				//Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
-				//Ext.getCmp('editAttributeForm').reset();
+				// Setup the showAttributeWindow for the Edit action
+				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
+
 				
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 

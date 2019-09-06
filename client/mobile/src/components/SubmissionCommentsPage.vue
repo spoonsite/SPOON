@@ -129,7 +129,7 @@ export default {
         commentType: 'SUBMISSION', // ask about this.
         comment: this.newComment,
         parentCommentId: null,
-        privateComment: null,
+        privateComment: false,
         adminComment: null
       };
 
