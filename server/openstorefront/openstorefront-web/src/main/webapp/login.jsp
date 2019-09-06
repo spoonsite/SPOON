@@ -505,7 +505,7 @@
 		<div class="page-header">
 			<div class="top">
 				<div class="spacer logo">
-					<img src="${branding.loginLogoUrl}" alt="logo"/>
+					<img src="${branding.primaryLogoUrl}" alt="logo"/>
 				</div>
 				<div class="login-header">	
 					<h1>${branding.landingPageTitle}</h1>        
@@ -772,7 +772,7 @@
 					});
 				}
 
-				if (${(branding.loginLogoUrl == null || branding.loginLogoUrl.length() == 0)}) {
+				if (${(branding.primaryLogoUrl == null || branding.primaryLogoUrl.length() == 0)}) {
 					$('html').addClass("no-logo");
 				}
 

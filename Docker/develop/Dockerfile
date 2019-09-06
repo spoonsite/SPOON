@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y unzip tar wget procps
 ###################
 
 ENV ES_NAME elasticsearch
-ARG ES_VERSION=6.0.1
+ARG ES_VERSION=7.2.0-linux-x86_64
 ENV ES_FILE=$ES_NAME-$ES_VERSION
 ENV ES_HOME /usr/local/share/$ES_FILE
 ARG ES_TGZ_URL=https://artifacts.elastic.co/downloads/$ES_NAME/$ES_FILE.tar.gz

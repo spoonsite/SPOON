@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
 import java.io.StringWriter;
@@ -183,6 +184,11 @@ public class Search
 		taskRequest.setName("Resetting Indexer");
 		taskRequest.setDetails("Reindexing components and articles");
 		service.getAsyncProxy(service.getSearchService(), taskRequest).resetIndexer();
+
+		// workaround to make attributes in the search filter reset, 
+		// so that newly added attributes will appear
+		SearchStatTable.setThereIsNewAttributeTypeSaved(true);
+		
 		return Response.ok().build();
 	}
 

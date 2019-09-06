@@ -46,7 +46,7 @@
         <h2>Search Filters</h2>
         <v-btn block class="" @click="clear()">Clear Filters</v-btn>
         <v-select
-          v-model="filters.components"
+          v-model="selectedEntryTypes"
           :items="componentsList"
           item-text="componentTypeDescription"
           item-value="componentType"
@@ -57,9 +57,9 @@
           multi-line
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="removeComponent(data.item.key)" >
-              <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
-              {{ data.item.label}}
+            <v-chip close small @input="removeComponent(data.item)" :key="data.item.label">
+              <!-- <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar> -->
+              {{ data.item }}
             </v-chip>
           </template>
           <template slot="item" slot-scope="data">
@@ -187,17 +187,15 @@
       ></SearchBar>
       <!-- SEARCH FILTERS PILLS -->
       <v-chip
-        v-for="component in filters.components"
-        :key="component.key"
+        v-for="entryType in selectedEntryTypes"
+        :key="entryType"
       >
-        <v-avatar left>
-          <v-icon small>fas fa-cubes</v-icon>
-        </v-avatar>
-        {{ getComponentName(component) }}
-        <div class="v-chip__close"><v-icon right @click="removeComponent(component)">cancel</v-icon></div>
+        {{ getComponentName(entryType) }}
+        <div class="v-chip__close"><v-icon right @click="removeComponent(entryType)">cancel</v-icon></div>
       </v-chip>
       <v-chip
-        v-if="this.filters.children && !!this.filters.components && this.filters.components.length > 0"
+        text-color="black"
+        v-if="this.filters.children && !!selectedEntryTypes && selectedEntryTypes.length > 0"
       >
         <v-avatar left>
           <v-icon small>fas fa-check-square</v-icon>
@@ -337,9 +335,7 @@ export default {
   },
   created () {
     this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
-      if (this.selectedEntryTypes !== newValue) {
-        this.filters.components = newValue
-      }
+      this.newSearch()
     })
   },
   mounted () {
@@ -347,12 +343,10 @@ export default {
       this.searchQuery = this.$route.query.q
     }
     if (this.$route.query.comp) {
-      this.filters.components = this.$route.query.comp.split(',')
+      this.$store.commit('setSelectedComponentTypes', { data: this.$route.query.comp.split(',') })
     }
-    if (this.$route.query.children === 'false') {
-      this.filters.children = false
-    } else {
-      this.filters.children = true
+    if (this.$route.query.children) {
+      this.filters.children = (this.$route.query.children === 'true')
     }
     if (this.$route.query.tags) {
       this.filters.tags = this.$route.query.tags.split(',')
@@ -373,7 +367,7 @@ export default {
       this.searchQuery = to.query.q
     }
     if (to.query.comp) {
-      this.filters.components = to.query.comp.split(',')
+      this.$store.commit('setSelectedComponentTypes', { data: to.query.comp.split(',') })
     }
     if (to.query.children) {
       this.filters.children = to.query.children
@@ -382,7 +376,7 @@ export default {
   },
   methods: {
     componentsChange (data) {
-      this.filters.components = data
+      this.$store.commit('setSelectedComponentTypes', { data: data })
     },
     getComponentName (code) {
       // this.addHashToLocation(code)
@@ -400,12 +394,12 @@ export default {
       })
     },
     removeComponent (component) {
+      console.log(this.selectedEntryTypes)
       console.log(component)
-      console.log(this.filters.components)
-      this.filters.components = this.filters.components.filter(el => {
+      let filteredEntryTypes = this.$store.getters.getSelectedComponentTypes.filter(el => {
         return el !== component
       })
-      console.log(this.filters.components)
+      this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
     },
     naturalSort (data) {
       function compare (a, b) {
@@ -446,7 +440,8 @@ export default {
       this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
     },
     deleteCompnent (component) {
-      this.filters.components = _.remove(this.filters.components, n => n !== component)
+      let filteredEntryTypes = _.remove(this.$store.state.componentTypeList, n => n !== component)
+      this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
     },
     addTag (tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
@@ -549,13 +544,14 @@ export default {
         })
       }
 
-      console.log(searchFilters)
+      // console.log(searchFilters)
 
       this.$http
         .post(
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
+          // console.log(response)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -572,6 +568,7 @@ export default {
         .catch(err => console.log(err))
         .finally(() => {
           that.searchQueryIsDirty = false
+          console.log(that.selectedEntryTypes)
         })
     },
     getNestedComponentTypes () {
@@ -677,6 +674,16 @@ export default {
     },
     componentTypeListComputed () {
       return this.filters.components
+    },
+    selectedEntryTypes: {
+      set (entryTypes) {
+        if (this.$store.getters.getSelectedComponentTypes !== entryTypes) {
+          this.$store.commit('setSelectedComponentTypes', { data: entryTypes })
+        }
+      },
+      get () {
+        return this.$store.getters.getSelectedComponentTypes
+      }
     }
   },
   data () {
@@ -692,7 +699,7 @@ export default {
       attributeQuery: '',
       attributeKeys: [],
       filters: {
-        components: [],
+        // For components see computed selectedEntryTypes
         tags: [],
         attributes: [],
         organization: '',

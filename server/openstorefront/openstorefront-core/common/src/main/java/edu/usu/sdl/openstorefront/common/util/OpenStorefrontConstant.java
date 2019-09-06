@@ -59,6 +59,7 @@ public class OpenStorefrontConstant
 	public static final int FIELD_SIZE_COMPONENT_DESCRIPTION = 32000;
 	public static final int FIELD_SIZE_GUID = 40;
 	public static final int FIELD_SIZE_GENERAL_TEXT = 255;
+	public static final int FIELD_SIZE_GENERAL_COLOR = 30;
 	public static final int FIELD_SIZE_URL = 1024;
 	public static final int FIELD_SIZE_QUESTION = 1024;
 	public static final int FIELD_SIZE_RESPONSE = 4096;

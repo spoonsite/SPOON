@@ -202,11 +202,7 @@ export default {
         { link: '/contact',
           icon: 'comment',
           name: 'Contact',
-          permissions: [] }
-        // { link: '/watches',
-        //   icon: 'binoculars',
-        //   name: 'Watches',
-        //   permissions: [] },
+          permissions: [] },
         // { link: '/sme-approval',
         //   icon: 'check',
         //   name: 'SME Approval',
@@ -225,9 +221,7 @@ export default {
         //   permissions: [] }
       ],
       topbarStyle: {
-        'border-bottom': `4px solid ${this.$store.state.branding.accentColor}`,
-        'position': 'relative',
-        'z-index': '10'
+        'border-bottom': `4px solid ${this.$store.state.branding.vueAccentColor}`
       },
       alert: false
     }

@@ -74,7 +74,7 @@
                   <v-flex>
                     <v-btn
                       block
-                      color="accent"
+                      color="secondary"
                       style="margin-bottom:2em;"
                       :disabled="!valid"
                       @click="submit"
@@ -86,7 +86,7 @@
                   <v-flex>
                     <v-btn
                       block
-                      color="accent"
+                      color="secondary"
                       @click="cancel"
                       >Cancel</v-btn>
                   </v-flex>
