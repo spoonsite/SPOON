@@ -48,8 +48,8 @@
         <v-select
           v-model="selectedEntryTypes"
           :items="componentsList"
-          item-text="componentTypeDescription"
-          item-value="componentType"
+          item-text="label"
+          item-value="key"
           label="Category"
           clearable
           multiple
@@ -59,7 +59,7 @@
           <template slot="selection" slot-scope="data">
             <v-chip close small @input="removeComponent(data.item)" :key="data.item.label">
               <!-- <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar> -->
-              {{ data.item }}
+              {{ data.item.label }}
             </v-chip>
           </template>
           <template slot="item" slot-scope="data">
@@ -142,7 +142,7 @@
           <!-- need the v-if with the v-for because the data sometimes gets out of sync -->
           <!-- eslint-disable vue/no-use-v-if-with-v-for -->
           <v-expansion-panel-content
-            v-for="key in attributeKeys"
+            v-for="key in attributeKeys.slice(0,9)"
             :key="key"
             v-if="searchResultsAttributes[key]"
           >
@@ -458,7 +458,8 @@ export default {
       }
 
       attributesAggregation.forEach(element => {
-        this.attributeKeys.push(element.key)
+        if(this.attributeKeys.length < 10)
+          this.attributeKeys.push(element.key)
 
         // Create list of codes from results
         let attributes = []
@@ -523,7 +524,7 @@ export default {
       searchFilters.query = (this.searchQuery ? this.searchQuery : searchFilters.query)
       searchFilters.page = (this.searchPage ? this.searchPage : searchFilters.page)
       searchFilters.pageSize = (this.searchPageSize ? this.searchPageSize : searchFilters.pageSize)
-      searchFilters.componentTypes = (this.filters.components ? this.filters.components : searchFilters.componentTypes)
+      searchFilters.componentTypes = (this.selectedEntryTypes ? this.selectedEntryTypes : searchFilters.componentTypes)
       searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
       searchFilters.organization = (this.filters.organization ? this.filters.organization.key : searchFilters.organization)
 
@@ -544,14 +545,14 @@ export default {
         })
       }
 
-      // console.log(searchFilters)
+      console.log(searchFilters)
 
       this.$http
         .post(
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
-          // console.log(response)
+          console.log(response)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -674,6 +675,16 @@ export default {
     },
     componentTypeListComputed () {
       return this.filters.components
+    },
+    entryTypesFilterList () {
+      let combinedList = this.componentsList
+      this.selectedEntryTypes.forEach(el => {
+        if(!combinedList.includes(el)){
+          combinedList.append(el)
+        }
+      })
+      console.log(combinedList)
+      return combinedList
     },
     selectedEntryTypes: {
       set (entryTypes) {
