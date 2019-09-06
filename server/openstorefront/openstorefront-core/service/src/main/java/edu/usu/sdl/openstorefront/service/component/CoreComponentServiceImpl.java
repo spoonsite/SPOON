@@ -117,6 +117,7 @@ import edu.usu.sdl.openstorefront.service.ComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -782,6 +783,7 @@ public class CoreComponentServiceImpl
 				entityEventModel.setEntityChanged(component);
 				componentService.getEntityEventService().processEvent(entityEventModel);
 			}
+			SearchServerManager.getInstance().getSearchServer().updateSingleComponent(component.getComponent().getComponentId());
 			cleanupCache(component.getComponent().getComponentId());
 		} else {
 			throw new OpenStorefrontRuntimeException(validationResult.toString());

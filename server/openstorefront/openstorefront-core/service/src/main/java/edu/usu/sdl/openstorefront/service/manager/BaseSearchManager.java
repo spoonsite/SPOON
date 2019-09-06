@@ -27,6 +27,7 @@ import edu.usu.sdl.openstorefront.core.view.SearchResultAttribute;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.update.UpdateResponse;
 
 /**
  *
@@ -86,6 +87,14 @@ public abstract class BaseSearchManager
 	 * @param componentAlls
 	 */
 	public abstract void indexFullComponents(List<ComponentAll> componentAlls);
+
+	/**
+	 * Updates a single component in the elasticsearch index using a componentID
+	 * 
+	 * @param componentId
+	 * @return UpdateResponse from elasticsearch
+	 */
+	public abstract UpdateResponse updateSingleComponent(String componentId);
 
 	/**
 	 * Delete an index by the Index id
