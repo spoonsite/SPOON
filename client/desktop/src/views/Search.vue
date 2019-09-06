@@ -3,7 +3,7 @@
 
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- CONTROLS -->
-    <div class="side-menu-btns mt-4">
+    <div class="side-menu-btns">
       <div>
         <v-btn @click="showFilters = !showFilters; showOptions = false;" small fab dark icon :color="`primary ${showFilters ? 'lighten-4' : ''}`"><v-icon dark>fas fa-filter</v-icon></v-btn>
       </div>
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div v-if="showOptions || showFilters" style="width: 100%; text-align: right;">
+    <div v-if="showOptions || showFilters" class="close-btn">
       <v-btn icon @click="showOptions = false; showFilters = false;"><v-icon>fas fa-times</v-icon></v-btn>
     </div>
     <!-- END CONTROLS -->
@@ -110,13 +110,17 @@
           </template>
         </v-autocomplete>
         <h3 class="pb-3">Attributes</h3>
-
-        <v-text-field
-          label="Search Attributes"
-          solo
-          v-model="attributeQuery"
-          placeholder="Search Attributes"
-        ></v-text-field>
+        <div class="searchbar">
+          <input
+            type="text"
+            label="Search Attributes"
+            solo
+            v-model="attributeQuery"
+            placeholder="Search Attributes"
+            ref="attributeBar"
+          >
+          <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery=''">clear</v-icon>
+        </div>
         <div>
           <v-chip
             close
@@ -191,6 +195,9 @@
         text-color="black"
         v-if="this.filters.children && !!selectedEntryTypes && selectedEntryTypes.length > 0"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-check-square</v-icon>
+        </v-avatar>
         Include Sub-Catagories
         <div class="v-chip__close"><v-icon right @click="filters.children = !filters.children">cancel</v-icon></div>
       </v-chip>
@@ -206,9 +213,10 @@
       </v-chip>
       <v-chip
         v-if="filters.organization"
-        color="indigo"
-        text-color="white"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-university</v-icon>
+        </v-avatar>
         {{ filters.organization }}
         <div class="v-chip__close"><v-icon right @click="filters.organization = ''">cancel</v-icon></div>
       </v-chip>
@@ -218,6 +226,9 @@
         :key="attr"
         @input="removeAttributeFilter(attr)"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-clipboard-list</v-icon>
+        </v-avatar>
         {{ printAttribute(attr) }}
       </v-chip>
       <!-- SEARCH FILTERS PILLS -->
@@ -292,7 +303,6 @@
 
   <!-- Pagination -->
   <v-footer
-    height="auto"
     fixed
     color="#FFF"
     style="border-top: 1px solid #DDD"
@@ -575,6 +585,9 @@ export default {
     },
     printAttribute (attribute) {
       let attr = this.$jsonparse(attribute)
+      if (attr === null) {
+        attr.unit = ''
+      }
       return `${attr.typelabel} : ${attr.code} ${attr.unit}`
     },
     copyUrlToClipboard () {
@@ -582,14 +595,14 @@ export default {
       window.location.href.match(/(.*?)\?/m).forEach(element => {
         urlBeginning = element
       })
-      var url = encodeURI(urlBeginning +
-          '?q=' + this.searchQuery +
+      var urlEnding = '?q=' + this.searchQuery +
           '&comp=' + this.filters.components.join(',') +
           '&children=' + this.filters.children.toString() +
           '&tags=' + this.filters.tags.join(',') +
           '&orgs=' + this.filters.organization +
-          '&attributes=' + this.filters.attributes.join(','))
+          '&attributes=' + this.filters.attributes.join(',')
 
+      var url = encodeURI(urlBeginning + urlEnding)
       var copyText = this.$refs.urlForClipboard
       copyText.value = url
       copyText.select()
@@ -694,11 +707,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/scss/variables.scss';
+
 $side-menu-width: 24em;
 $side-menu-width-medium: 30em;
 $side-menu-width-large: 34em;
 $closed-width: 5em;
-$footer-height: 10em;
+$footer-height: 42.4px;
+
+.searchbar {
+  border-radius: 2px;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+  padding: 0.7em 0.7em 0.7em 1.2em;
+  margin-bottom: 0.3em;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 140%;
+  transition: box-shadow 0.7s;
+  background-color: #FFF;
+}
 
 .dn {
   display: none;
@@ -719,9 +746,15 @@ hr {
 }
 .side-menu {
   border-right: 1px solid #DDD;
+  overflow-y: auto;
   position: fixed;
-  height: 100%;
-  padding-bottom: $footer-height;
+  left: 0;
+  top: $header-height;
+  bottom: $footer-height;
+}
+.close-btn {
+  width: 100%;
+  text-align: right;
 }
 .side-menu.open {
   width: $side-menu-width;
@@ -731,17 +764,24 @@ hr {
 }
 .side-menu-btns {
   position: fixed;
+  top: $header-height;
+  left: 0;
   margin: 0.5em;
 }
 .side-menu-content {
-  height: 100%;
   max-width: $side-menu-width;
   padding-right: 2em;
   margin-left: $closed-width;
-  overflow: auto;
+  overflow-y: auto;
 }
 .search-block {
+  position: fixed;
   min-width: 24em;
+  overflow-y: scroll;
+  top: $header-height;
+  bottom: $footer-height;
+  right: 0;
+  left: 0;
 }
 .search-block.open {
   margin-left: $side-menu-width;
@@ -749,7 +789,9 @@ hr {
 .search-block.closed {
   margin-left: $closed-width;
 }
-
+.v-footer {
+  height: $footer-height !important;
+}
 @media only screen and (min-width: 800px) {
   .search-block.open {
     margin-left: $side-menu-width-medium;

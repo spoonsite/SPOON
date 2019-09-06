@@ -1,7 +1,7 @@
 <template>
   <form v-on:submit.prevent="submitQuery()">
     <div class="searchbar-button">
-      <v-icon @click="showOptions=!showOptions" class="search-icon search-options-icon">{{ (showOptions ? 'fa-chevron-down' : 'fa-chevron-up')}}</v-icon>
+      <v-icon @click="showOptions=!showOptions" class="drop-down-icon search-options-icon">fas {{ (showOptions ? 'fa-chevron-down' : 'fa-chevron-up')}} fa-xs</v-icon>
     </div>
     <div class="searchbar">
       <input
@@ -215,10 +215,16 @@ export default {
   font-size: 34px !important;
   margin-bottom: 0.1em;
 }
+.drop-down-icon {
+  float: right;
+  font-size: 20px !important;
+  margin-bottom: 0.1em;
+}
 .search-options-icon {
   float: left !important;
   padding: 0em 0.3em;
-  height: 1.66em;
+  height: 56.8px;
+  width: 40px;
   background-color: rgba(0,0,0,.12);
 }
 .search-option-titles {

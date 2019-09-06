@@ -4,7 +4,6 @@
       offset-y
       left
       :close-on-content-click="false"
-      min-width="35em"
     >
       <v-btn icon slot="activator">
         <v-badge left overlap light color="info">
