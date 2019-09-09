@@ -783,7 +783,7 @@ public class CoreComponentServiceImpl
 				entityEventModel.setEntityChanged(component);
 				componentService.getEntityEventService().processEvent(entityEventModel);
 			}
-			SearchServerManager.getInstance().getSearchServer().updateSingleComponent(component.getComponent().getComponentId());
+			SearchServerManager.getInstance().getSearchServer().updateSingleComponent(component.getComponent());
 			cleanupCache(component.getComponent().getComponentId());
 		} else {
 			throw new OpenStorefrontRuntimeException(validationResult.toString());

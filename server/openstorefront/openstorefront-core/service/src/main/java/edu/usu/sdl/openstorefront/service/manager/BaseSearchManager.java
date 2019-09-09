@@ -97,6 +97,14 @@ public abstract class BaseSearchManager
 	public abstract UpdateResponse updateSingleComponent(String componentId);
 
 	/**
+	 * Updates a single component in the elasticsearch index using a component
+	 * 
+	 * @param component
+	 * @return UpdateResponse from elasticsearch
+	 */
+	public abstract UpdateResponse updateSingleComponent(Component component);
+
+	/**
 	 * Delete an index by the Index id
 	 *
 	 * @param id
