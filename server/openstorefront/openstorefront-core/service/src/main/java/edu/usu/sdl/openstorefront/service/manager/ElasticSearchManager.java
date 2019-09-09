@@ -74,7 +74,6 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.PutMappingRequest;
-import org.elasticsearch.common.xcontent.XContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
@@ -84,7 +83,6 @@ import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
-import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import org.elasticsearch.search.sort.SortOrder;
 
 /**
@@ -236,8 +234,6 @@ public class ElasticSearchManager
 				} catch (ElasticsearchException e){
 					LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 				}
-			} else {
-				LOG.log(Level.INFO, "[" + INDEX + "] already exists.");
 			}
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
@@ -762,20 +758,32 @@ public class ElasticSearchManager
 	public UpdateResponse updateSingleComponent(String componentId){
 		Objects.requireNonNull(componentId, "Requires Component ID");
 
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+
+		return updateSingleComponent(component);
+	}
+
+	@Override
+	public UpdateResponse updateSingleComponent(Component component){
+		Objects.requireNonNull(component, "Requires Component");
+
 		UpdateResponse updateResponse = new UpdateResponse();
-		Component oldComponent = service.getPersistenceService().findById(Component.class, componentId);
-		ComponentSearchView componentSearchView = ComponentSearchView.toView(oldComponent);
 		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
-		
-		try (ElasticSearchClient client = singleton.getClient()) {
-			UpdateRequest updateRequest = new UpdateRequest(INDEX, componentId);
-			updateRequest.doc(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON);
-			updateResponse = client.getInstance().update(updateRequest, RequestOptions.DEFAULT);
+
+		if(component.getApprovalState() == ApprovalStatus.APPROVED){
+			ComponentSearchView componentSearchView = ComponentSearchView.toView(component);
 			
-		} catch(JsonProcessingException ex){
-			LOG.log(Level.SEVERE, null, ex);
-		} catch (IOException ex) {
-			LOG.log(Level.SEVERE, null, ex);
+			try (ElasticSearchClient client = singleton.getClient()) {
+
+				UpdateRequest updateRequest = new UpdateRequest(INDEX, component.getComponentId());
+				updateRequest.doc(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON);
+				updateResponse = client.getInstance().update(updateRequest, RequestOptions.DEFAULT);
+				
+			} catch(JsonProcessingException ex){
+				LOG.log(Level.SEVERE, null, ex);
+			} catch (IOException ex) {
+				LOG.log(Level.SEVERE, null, ex);
+			}
 		}
 		return updateResponse;
 	}
