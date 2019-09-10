@@ -331,9 +331,12 @@
     </div><!-- Search Results -->
       <!-- Comparison Table Dialog -->
       <v-dialog
-        v-model="showComparison">
+        v-model="showComparison"
+        class="dialog-scroll"
+        justify="center"
+        max-width="85vw">
           <v-card
-          >
+          class="dialog-scroll">
           <!-- class="dialog-scroll" -->
             <v-card-title style="display: flex; justify-content: space-between;">
               <h2>Compare</h2>
@@ -344,11 +347,8 @@
               </v-btn>
               </v-card-title>
               <v-card-text>
-              <table>
-                <div
-                class="wrapper">
-                <div
-                class="container">
+              <div class="scrollable">
+                <table>
                   <thead>
                     <tr>
                       <th
@@ -371,9 +371,8 @@
                       </td>
                     </tr>
                   </tbody>
-                </div>
-                </div>
-              </table>
+                </table>
+              </div>
               <!-- <v-data-table
               :headers="comparisonDataHeaders"
               :items="comparisonDataDisplay"
@@ -772,7 +771,10 @@ export default {
       return possibleAttributes
     },
     addDescriptionTableData () {
-      this.comparisonDataDisplay.unshift({ name: 'Attributes', component0: '\u00A0', component1: '\u00A0'})
+      this.comparisonDataDisplay.unshift({ name: 'Attributes' })
+      for (var emptySpace in this.comparisonList) {
+        this.comparisonDataDisplay[0]['component' + emptySpace] = '\u00A0'
+      }
       this.comparisonDataDisplay.unshift({ name: 'Organization' })
       for (var component in this.comparisonList) {
         this.comparisonDataDisplay[0]['component' + component] = this.comparisonList[component].organization
@@ -785,6 +787,7 @@ export default {
       for (var comp in this.comparisonList) {
         this.comparisonDataDisplay[0]['component' + comp] = this.comparisonList[comp].componentTypeDescription
       }
+      console.log(this.comparisonDataDisplay)
     },
     setDecimalSizeLimit (component, componentAttribute) {
       if (!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')) {
@@ -801,7 +804,7 @@ export default {
     changeTableClass (position) {
       return {
         'left-column': position === 'name' || position === 0,
-        'table-column': position !== 'name'
+        'table-column': position !== 'name' && position !== 0
       }
     }
   },
@@ -977,88 +980,50 @@ hr {
 .search-block.closed {
   margin-left: $closed-width;
 }
-           th {
-                border-top: 1px solid black;
-                background-color: beige;
-            }
-            th,
-            td {
-                border-bottom: 1px solid black;
-                border-right: 1px solid black;
-                //border-collapse: collapse;
-                border-spacing: 0;
-                white-space: wrap;
-            }
-            th:first-child,
-            td:first-child {
-                border: none;
-                border-top: 1px solid black;
-            }
-            table {
-                border: none;
-                border-collapse: separate;
-                border-spacing: 0;
-            }
-            th,
-            td {
-                padding: 1em;
-            }
-            td {
-                padding-bottom: 10px;
-            }
-// .table-header {
-//   font-weight: bold;
-//   font-size: 20px;
-//   padding: 20px;
-//   background-color: #FFF;
-//   border-bottom: 1px solid #000;
-//   min-width: 500px;
-//   border: 1px solid black;
-// }
+th,
+td {
+    border-bottom: 1px solid black;
+    //border-right: 1px solid black;
+    border-left: 1px solid #000;
+    border-collapse: collapse;
+    border-spacing: 0;
+    padding: 1em;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  height: 100%;
+}
+td {
+  padding-bottom: 10px;
+}
 .left-column {
   font-weight: bold;
-  // font-size: 15px;
-  //padding: 1em;
-  //background-color: #FFF;
+  background-color: #FFF;
   border-right: 1px solid #000;
-  min-width: 168px;
-  position: absolute;
-  left: 0;
-  top: auto;
-  //border: 1px solid black;
+  min-width: 220px;
+  border-right: 1px solid black;
 }
 .table-column {
-  //padding: 1em;
-  //min-width: 500px;
-  //border-bottom: 1px solid black;
-  //border-right: 1px solid black;
-  //border-collapse: collapse;
-  //border-spacing: 0;
-  //white-space: wrap;
-  background-color: #FFF;
-  // font-size: 15px;
+  min-width: 400px;
+  //background-color: #FFF;
 }
-// .scrollable {
-//   overflow-x: scroll;
-//   overflow-y: scroll;
-//   height: 78vh;
-//   width: 94vw;
-// }
-// .dialog-scroll {
-//   overflow-y: hidden !important;
-//   overflow-x: hidden !important;
-//   height: 90vh;
-//   width: 95vw;
-// }
-.wrapper {
+.scrollable {
+  overflow-x: scroll;
+  overflow-y: scroll;
+  position: absolute;
+  top: 75px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.dialog-scroll {
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+  height: 80vh;
+  width: 85vw;
   position: relative;
-  width: 40em;
-  padding-right: 200px;
-}
-.container {
-  width: 40em;
-  overflow: auto;
-  margin-left: 200px;
 }
 .v-footer {
   height: $footer-height !important;
