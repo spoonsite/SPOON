@@ -21,7 +21,7 @@
           <v-icon dark>fas fa-cog</v-icon>
         </v-btn>
         <v-btn
-          class=".button-blink"
+          class="db"
           @click="sortComparisonData(); showComparison = true;"
           :disabled="!(this.comparisonList.length >= 2)"
           small fab icon
@@ -322,7 +322,7 @@
               <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
             </span>
           </div>
-          <div>
+          <div style="margin: 10px;">
             <input type="checkbox" v-model="comparisonList" :value="item" :id="item.componentId">
             <label :for="item.componentId">Add to Compare</label>
           </div>
@@ -361,38 +361,40 @@
                   </thead>
                   <tbody>
                     <tr
-                    v-for="attribute in this.comparisonDataDisplay"
+                    v-for="(attribute, row) in this.comparisonDataDisplay"
                     :key="attribute.name">
                       <td
                       v-for="(compAtt, position) in attribute"
                       :class="changeTableClass(position)"
                       :key="compAtt.name">
                         {{ compAtt }}
+                        <span class="tooltip">{{ comparisonDataHeaders[row].text }}</span>
                       </td>
                     </tr>
                   </tbody>
                 </table>
-              </div>
-              <!-- <v-data-table
+                              <!-- <v-data-table
               :headers="comparisonDataHeaders"
               :items="comparisonDataDisplay"
               hide-actions>
                 <template slot='headers' slot-scope='props'>
                   <th
-                  v-for="header in props.headers"
+                  v-for="(header, position) in props.headers"
                   :key="header.text"
-                  class="table-header">
+                  :class="changeTableClass(position)">
                     {{header.text}}</th>
                 </template>
                 <template slot='items' slot-scope='props'>
                   <td
-                  v-for="header in comparisonDataHeaders"
-                  :class="changeTableClass(header)"
+                  v-for="(header, position) in comparisonDataHeaders"
+                  :class="changeTableClass(position)"
                   :key="header.value"
                   >
                     {{props.item[header.value]}}</td>
                 </template>
               </v-data-table> -->
+              </div>
+
             </v-card-text>
           </v-card>
       </v-dialog>
@@ -802,8 +804,10 @@ export default {
       this.comparisonDataDisplay = []
     },
     changeTableClass (position) {
+      console.log(position)
       return {
-        'left-column': position === 'name' || position === 0,
+        'left-column': position === 'name',
+        'top-corner': position === 0,
         'table-column': position !== 'name' && position !== 0
       }
     }
@@ -980,34 +984,48 @@ hr {
 .search-block.closed {
   margin-left: $closed-width;
 }
-th,
-td {
-    border-bottom: 1px solid black;
-    //border-right: 1px solid black;
-    border-left: 1px solid #000;
-    border-collapse: collapse;
-    border-spacing: 0;
-    padding: 1em;
-}
-table {
+table{
   border-collapse: separate;
   border-spacing: 0;
-  width: 100%;
-  height: 100%;
 }
-td {
-  padding-bottom: 10px;
+tr:nth-child(even){
+  background-color: rgba(0,0,0,0.12);
+}
+tr:hover {
+  background-color: #b3d4fc;
+}
+td:hover .tooltip {
+  visibility: visible;
+}
+.tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
 }
 .left-column {
   font-weight: bold;
-  background-color: #FFF;
-  border-right: 1px solid #000;
   min-width: 220px;
-  border-right: 1px solid black;
+  font-size: 17px;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
 }
 .table-column {
   min-width: 400px;
-  //background-color: #FFF;
+  padding: 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.top-corner {
+    font-weight: bold;
+    font-size: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
 }
 .scrollable {
   overflow-x: scroll;
@@ -1028,14 +1046,9 @@ td {
 .v-footer {
   height: $footer-height !important;
 }
-// .button-blink {
-//   animation: blinker 1s linear infinate;
-// }
-// @keyframes blinker {
-//   50%{
-//     opacity: 0;
-//   }
-// }
+div.v-table{
+  overflow:  hidden !important;
+}
 @media only screen and (min-width: 800px) {
   .search-block.open {
     margin-left: $side-menu-width-medium;
