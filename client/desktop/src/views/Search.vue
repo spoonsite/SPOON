@@ -368,7 +368,8 @@
                       :class="changeTableClass(position)"
                       :key="compAtt.name">
                         {{ compAtt }}
-                        <span class="tooltip">{{ attribute.name }} of {{ comparisonDataHeaders[col].text }}</span>
+                        <span class="tooltip"
+                        v-if="attribute.name != 'Attributes'">{{ attribute.name }} of {{ comparisonDataHeaders[col].text }}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -984,9 +985,6 @@ td.table-column:hover .tooltip {
   padding: 5px;
   position: relative;
   width: 200px;
-  // top: 80%;
-  // right: 10%;
-  //margin-left: -100px;
   z-index: 1;
   display: block;
 }
