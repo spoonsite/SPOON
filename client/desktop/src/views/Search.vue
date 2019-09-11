@@ -361,40 +361,19 @@
                   </thead>
                   <tbody>
                     <tr
-                    v-for="(attribute, row) in this.comparisonDataDisplay"
+                    v-for="(attribute) in this.comparisonDataDisplay"
                     :key="attribute.name">
                       <td
-                      v-for="(compAtt, position) in attribute"
+                      v-for="(compAtt, position, col) in attribute"
                       :class="changeTableClass(position)"
                       :key="compAtt.name">
                         {{ compAtt }}
-                        <span class="tooltip">{{ comparisonDataHeaders[row].text }}</span>
+                        <span class="tooltip">{{ attribute.name }} of {{ comparisonDataHeaders[col].text }}</span>
                       </td>
                     </tr>
                   </tbody>
                 </table>
-                              <!-- <v-data-table
-              :headers="comparisonDataHeaders"
-              :items="comparisonDataDisplay"
-              hide-actions>
-                <template slot='headers' slot-scope='props'>
-                  <th
-                  v-for="(header, position) in props.headers"
-                  :key="header.text"
-                  :class="changeTableClass(position)">
-                    {{header.text}}</th>
-                </template>
-                <template slot='items' slot-scope='props'>
-                  <td
-                  v-for="(header, position) in comparisonDataHeaders"
-                  :class="changeTableClass(position)"
-                  :key="header.value"
-                  >
-                    {{props.item[header.value]}}</td>
-                </template>
-              </v-data-table> -->
               </div>
-
             </v-card-text>
           </v-card>
       </v-dialog>
@@ -804,7 +783,6 @@ export default {
       this.comparisonDataDisplay = []
     },
     changeTableClass (position) {
-      console.log(position)
       return {
         'left-column': position === 'name',
         'top-corner': position === 0,
@@ -994,19 +972,23 @@ tr:nth-child(even){
 tr:hover {
   background-color: #b3d4fc;
 }
-td:hover .tooltip {
+td.table-column:hover .tooltip {
   visibility: visible;
 }
 .tooltip {
   visibility: hidden;
-  width: 120px;
   background-color: black;
   color: #fff;
   text-align: center;
   border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
+  padding: 5px;
+  position: relative;
+  width: 200px;
+  // top: 80%;
+  // right: 10%;
+  //margin-left: -100px;
   z-index: 1;
+  display: block;
 }
 .left-column {
   font-weight: bold;
@@ -1020,6 +1002,7 @@ td:hover .tooltip {
   min-width: 400px;
   padding: 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  position: relative;
 }
 .top-corner {
     font-weight: bold;
