@@ -970,7 +970,7 @@ table{
 tr:nth-child(even){
   background-color: rgba(0,0,0,0.12);
 }
-tr:hover {
+tr:hover td{
   background-color: #b3d4fc;
 }
 td.table-column:hover .tooltip {
