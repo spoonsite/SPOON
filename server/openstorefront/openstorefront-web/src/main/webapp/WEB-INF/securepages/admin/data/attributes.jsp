@@ -392,7 +392,7 @@
 							if (record.get('configurationWarning')) {
 								warning = ' <i class="fa fa-exclamation-triangle icon-button-color-warning" data-qtip="Missing code and does not allow user codes"></i>';
 							}
-							return value + warning;
+							return warning + " " + value;
 						}
 					},
 					{text: 'Unit', dataIndex: 'attributeUnit', flex: 1},
