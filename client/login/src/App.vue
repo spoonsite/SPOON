@@ -2,9 +2,9 @@
   <div id="app">
     <v-app>
       <title-bar-comp :CTitle="title" :CSubtitle="subTitle"/>
-      <router-view style="height: 100%;" />
+      <router-view :style="'padding-bottom: ' + footer + 'px;'"/>
       <div id="particle-js"></div>
-      <v-footer color="primary" dark height="auto">
+      <v-footer absolute color="primary" dark height="auto" id="footer">
         <v-card color="primary" dark flat class="footer-wrapper">
           <div v-html="$store.state.branding.loginFooter"></div>
         </v-card>
@@ -20,6 +20,11 @@ export default {
   name: 'App',
   components: {
     TitleBarComp
+  },
+  data() {
+    return {
+      footerHeight: undefined,
+    }
   },
   mounted () {
     /* eslint-disable no-undef */
@@ -82,6 +87,7 @@ export default {
         retina_detect: true
       });
     }
+    this.footerHeight = document.getElementById("footer").clientHeight;
   },
   computed: {
     title () {
@@ -89,6 +95,9 @@ export default {
     },
     subTitle () {
       return this.$store.state.branding.landingPageBanner;
+    },
+    footer () {
+      return this.footerHeight +175;
     }
   }
 };

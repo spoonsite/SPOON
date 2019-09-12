@@ -20,6 +20,11 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepRole;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -245,6 +250,36 @@ public class SecurityUtil
 			}
 		}
 		return allow;
+	}
+
+	/**
+	 * Checks the current for permission
+	 *
+	 * @param workPlanId
+	 * @param workPlanStepId
+	 * @return true if the user has a matching role that is required
+	 */
+	public static boolean hasRoles(String workPlanId, String workPlanStepId)
+	{
+		WorkPlan workPlanExample = new WorkPlan();
+		workPlanExample.setWorkPlanId(workPlanId);
+		WorkPlan workPlan = workPlanExample.find();
+
+		WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(workPlanStepId);
+		List<WorkPlanStepRole> requiredRoles = workPlanStep.getStepRole();
+		List<SecurityRole> userRoles = getUserContext().getRoles();
+
+		for(int i=0; i < requiredRoles.size(); i++)
+		{
+			for(int j=0; j < userRoles.size(); j++)
+			{
+				if(requiredRoles.get(i).getSecurityRole().toString().equals(userRoles.get(j).getRoleName().toString()))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

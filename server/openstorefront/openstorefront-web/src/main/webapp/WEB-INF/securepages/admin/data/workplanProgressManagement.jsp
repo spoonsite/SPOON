@@ -505,6 +505,15 @@
 						closeAction: 'destroy',
 						layout: 'fit',						
 						modal: true,
+						listeners: {
+							afterRender: function(){
+								var neededRoles = record.get("currentStep").roles;
+								if(CoreService.userservice.UserHasRoles(neededRoles)) {
+									this.queryById('complete').show();
+									this.queryById('previous').show();
+								}
+							}
+						},
 						items: [
 							{
 								xtype: 'panel',
@@ -576,7 +585,9 @@
 									{
 										text: 'Go To Previous Step',
 										iconCls: 'fa fa-lg fa-backward icon-button-color-save',
+										itemId: 'previous',
 										disabled: !!invalidEntry,
+										hidden: true,
 										handler: function(){
 											processCompWin.setLoading('Updating State...');
 											Ext.Ajax.request({
@@ -599,7 +610,9 @@
 									{
 										text: 'Complete This Step',											
 										iconCls: 'fa fa-lg fa-list-alt icon-button-color-save',
+										itemId: 'complete',
 										disabled: !!invalidEntry,
+										hidden: true,
 										handler: function(){
 											processCompWin.setLoading('Updating State...');
 											Ext.Ajax.request({

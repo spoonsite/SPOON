@@ -26,6 +26,8 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepRole;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanSubStatusType;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
@@ -422,7 +424,14 @@ public class WorkplanResource
 		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
 		WorkPlanLink workPlanLink = workPlanLinkExample.find();
 
-		if (workPlanLink != null) {
+		String workPlanStepId = workPlanLink.getCurrentStepId();
+		if(!SecurityUtil.hasRoles(workPlanId, workPlanStepId))
+		{
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+
+		if(workPlanLink != null)
+		{
 			service.getWorkPlanService().previousStep(workPlanLink);
 
 			workPlanLink = workPlanLinkExample.find();
@@ -450,7 +459,14 @@ public class WorkplanResource
 		workPlanLinkExample.setWorkPlanLinkId(workLinkId);
 		WorkPlanLink workPlanLink = workPlanLinkExample.find();
 
-		if (workPlanLink != null) {
+		String workPlanStepId = workPlanLink.getCurrentStepId();
+		if(!SecurityUtil.hasRoles(workPlanId, workPlanStepId))
+		{
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+
+		if (workPlanLink != null)
+		{
 			service.getWorkPlanService().nextStep(workPlanLink);
 
 			workPlanLink = workPlanLinkExample.find();

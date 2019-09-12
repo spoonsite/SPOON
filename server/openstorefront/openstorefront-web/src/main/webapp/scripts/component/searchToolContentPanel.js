@@ -842,100 +842,6 @@ Ext.define('OSF.component.SearchToolWindow', {
 			newTab.getComponent('archPanel').loadGrid(searchToolWin.searchObj);
 		};
 
-
-
-
-		//
-		//  This method calls an API call to get all the SVC-V4-A tree arcg and creates a tree inside the navPanel.
-		//
-		//
-		var loadArchNav = function (newTab) {
-			
-			var architectureType = 'DI2E-SVCV4-A';
-			if  (searchToolWin.branding && searchToolWin.branding.architectureSearchType) {
-				architectureType = searchToolWin.branding.architectureSearchType;
-			}
-
-			newTab.setLoading(true);
-			Ext.Ajax.request({
-				url: 'api/v1/resource/attributes/attributetypes/' + encodeURIComponent(architectureType) + '/architecture',
-				success: function (response, opts) {
-					newTab.setLoading(false);
-					var data = Ext.decode(response.responseText);
-					var tStore = Ext.create('Ext.data.TreeStore', {
-						storeId: 'archStore',
-						rootVisible: true,
-						fields: [{
-								name: 'text',
-								mapping: 'name'
-							},
-							"description",
-							"attributeType",
-							"attributeCode",
-							"originalAttributeCode",
-							"architectureCode",
-							"sortOrder"
-
-						],
-						data: data
-					});
-
-					newTab.getComponent('archPanel').navPanel.addDocked({
-						xtype: 'toolbar',
-						dock: 'top',
-						items: [
-							{
-								text: 'Expand All',
-								iconCls: 'fa fa-expand',
-								handler: function () {
-									this.up('panel').down('treepanel').expandAll();
-								}
-							},
-							{
-								xtype: 'tbfill'
-							},
-							{
-								text: 'Collapse All',
-								iconCls: 'fa fa-compress',
-								handler: function () {
-									this.up('panel').down('treepanel').collapseAll();
-								}
-							}
-						]
-					});
-
-					newTab.getComponent('archPanel').navPanel.add({
-						xtype: 'treepanel',
-						store: tStore,
-						width: '100%',
-						rootVisible: false,
-						listeners: {
-							beforeselect: function (thetree, therecord, theindex, theOpts) {
-								archSelectHandler(newTab, therecord);
-							}
-						}
-					});
-
-				},
-				failure: function (response, opts) {
-					newTab.setLoading(false);
-				}
-			});
-			newTab.doneLoad = true;
-		};
-
-
-
-		//
-		//  Architecture Tab Processing
-		//
-		var archTabProcessing = function (tabpanel, newTab, oldtab, opts) {
-			if (!newTab.doneLoad) {
-				loadArchNav(newTab);
-			}
-		};
-
-
 		//***************************
 		//  Tab Panel  Methods 
 		//***************************
@@ -952,8 +858,6 @@ Ext.define('OSF.component.SearchToolWindow', {
 				tagTabProcessing(tabpanel, newTab, oldtab, opts);
 			} else if (newTab.getTitle() === 'Category') {
 				categoryTabProcessing(tabpanel, newTab, oldtab, opts);
-			} else if (newTab.getTitle() === 'Architecture') {
-				archTabProcessing(tabpanel, newTab, oldtab, opts);
 			}
 		});
 		searchToolWin.add(tabPanel);
