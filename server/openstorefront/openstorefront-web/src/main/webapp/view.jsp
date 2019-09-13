@@ -301,10 +301,10 @@
 										'<br>' +
 										'<b>Last System Update: </b>' +
 										'{[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}' +
-											'<tpl if="securityMarkingType">' +
+											'<tpl if="listingSecurityMarkingType && ' + ${branding.allowSecurityMarkingsFlg} + '">' +
 												'<br>' +
 												'Highest Classification: ' +
-												'<b>(<span title="{securityMarkingDescription}">{securityMarkingType}</span>)</b>' +
+												'<b>(<span title="{listingSecurityMarkingDescription}">{listingSecurityMarkingType}</span>)</b>' +
 											'</tpl>' +
 									'</span>'
 								)
