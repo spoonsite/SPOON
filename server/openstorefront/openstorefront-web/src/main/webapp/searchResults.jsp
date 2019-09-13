@@ -1278,7 +1278,6 @@
 				
 				currentDataSet = data;
 				Ext.getCmp('resultsDisplayPanel').update(data);
-				console.log(data);	
 		
 				//update Stats
 				if (filterMode === 'CLIENT') {
@@ -1554,7 +1553,7 @@
 				'			<b>Tags: </b>',
 				'			<tpl for="tags">',
 				'				<span class="searchresults-tag">',
-				'					<tpl if="values.listingSecurityMarkingType">({values.listingSecurityMarkingType}) </tpl>{text}',
+				'					<tpl if="listingSecurityMarkingType && ' + ${branding.allowSecurityMarkingsFlg} + '">({listingSecurityMarkingType}) </tpl>{text}',
 				'				</span>&nbsp;',
 				'			</tpl>',
 				'		</tpl>',
