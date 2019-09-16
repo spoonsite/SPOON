@@ -59,6 +59,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.util.QueryBuilder;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -606,25 +607,37 @@ public class ElasticSearchManager
 			}
 		}
 
-		if(!searchFilters.getComponentTypes().isEmpty()){
-			for(String type : searchFilters.getComponentTypes()){
-				esQuery.should(QueryBuilders.matchPhraseQuery("componentType.ComponentType", type));
+		BoolQueryBuilder boolQueryBuilderComponentTypes = QueryBuilders.boolQuery();
+		if(searchFilters.getComponentTypes() != null){
+			if(!searchFilters.getComponentTypes().isEmpty()){
+				for(String type : searchFilters.getComponentTypes()){
+					boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentType", type));
+					if(searchFilters.getIncludeChildren()){
+						boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentTypeNestedModel.componentType.componentType", type));
+					}
+				}
 			}
 		}
 
 		// FIXME: Attribute Selection Issue
 		// if(!searchFilters.getAttributes().isEmpty()){
-		// 	for(AttributeSearchType type : searchFilters.getAttributes()){
+			// needsFiltering = true;
+			// 	for(AttributeSearchType type : searchFilters.getAttributes()){
 		// 		esQuery.should(QueryBuilders.matchPhraseQuery("attributes.type", type.getType()));
 		// 		esQuery.should(QueryBuilders.matchPhraseQuery("attributes.type", type.getType()));
 		// 	}
 		// }
 
-		if(!searchFilters.getTags().isEmpty()){
-			for(String tag : searchFilters.getTags()){
-				esQuery.should(QueryBuilders.matchPhraseQuery("tags", tag));
+		BoolQueryBuilder boolQueryBuilderTags = QueryBuilders.boolQuery();
+		if (searchFilters.getTags() != null) {
+			if (!searchFilters.getTags().isEmpty()) {
+				for (String tag : searchFilters.getTags()) {
+					boolQueryBuilderTags.should(QueryBuilders.matchPhraseQuery("tags.text", tag));
+				}
 			}
 		}
+
+		esQuery.filter(boolQueryBuilderComponentTypes).filter(boolQueryBuilderTags);//.filter(boolQueryBuilder);
 		
 		return esQuery;
 	} 

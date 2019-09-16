@@ -514,7 +514,7 @@ export default {
         'componentTypes': [],
         'includeChildren': true,
         'organization': '',
-        'stringAttributes': [],
+        'attributes': null,
         'tags': [],
         'sortOrder': '',
         'sortField': ''
@@ -539,9 +539,12 @@ export default {
       searchFilters.sortField = (this.searchSortField ? this.searchSortField : searchFilters.sortField)
       searchFilters.sortOrder = (this.searchSortOrder ? this.searchSortOrder : searchFilters.sortOrder)
 
+      console.log(this.filters.attributes)
       if (this.filters.attributes) {
+        searchFilters.attributes = []
         this.filters.attributes.forEach(attribute => {
-          searchFilters.stringAttributes.push(JSON.parse(attribute))
+          console.log(JSON.parse(attribute))
+          searchFilters.attributes.push(JSON.parse(attribute))
         })
       }
 
@@ -607,6 +610,7 @@ export default {
       this.filters.attributes = [...this.filters.attributes]
     },
     printAttribute (attribute) {
+      console.log(attribute)
       let attr = this.$jsonparse(attribute)
       if (attr === null) {
         attr.unit = ''
