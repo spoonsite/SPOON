@@ -156,9 +156,9 @@
                 <!-- <attribute-range/> -->
                 <v-checkbox
                   v-for="code in (searchResultsAttributes[key].codeMap)"
-                  :key="code"
+                  :key="key + code"
                   v-model="filters.attributes"
-                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].attributeTypeLabel, 'code': code.codeLabel })"
+                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].attributeTypeLabel, 'code': code })"
                   hide-details
                 >
                   <template slot="label">
@@ -394,8 +394,6 @@ export default {
       })
     },
     removeComponent (component) {
-      console.log(this.selectedEntryTypes)
-      console.log(component)
       let filteredEntryTypes = this.$store.getters.getSelectedComponentTypes.filter(el => {
         return el !== component
       })
@@ -488,6 +486,7 @@ export default {
       })
 
       this.searchResultsAttributes = searchResultsAttributes
+      console.log(searchResultsAttributes)
     },
     getCompTypeLabels (entryTypes) {
       let that = this
@@ -539,23 +538,27 @@ export default {
       searchFilters.sortField = (this.searchSortField ? this.searchSortField : searchFilters.sortField)
       searchFilters.sortOrder = (this.searchSortOrder ? this.searchSortOrder : searchFilters.sortOrder)
 
-      console.log(this.filters.attributes)
       if (this.filters.attributes) {
         searchFilters.attributes = []
         this.filters.attributes.forEach(attribute => {
-          console.log(JSON.parse(attribute))
           searchFilters.attributes.push(JSON.parse(attribute))
         })
+        console.log(searchFilters.attributes)
+        searchFilters.attributes = JSON.stringify(searchFilters.attributes)
+        console.log(searchFilters.attributes)
       }
-
-      console.log(searchFilters)
+      if (searchFilters.attributes.length == 2){
+        var attributeSearchType = "[{\"code\": \"0.01\", \"type\": \"MASSKG\", \"typelabel\": \"Mass\", \"unit\": \"kg\"},{\"code\": \"0.01\", \"type\": \"MASSKG\", \"typelabel\": \"Mass\", \"unit\": \"kg\"}]"
+        console.log(JSON.stringify([{"code": 0.01, "type": "MASSKG", "typelabel": "Mass", "unit": "kg"},{"code": 0.01, "type": "MASSKG", "typelabel": "Mass", "unit": "kg"}]))
+        searchFilters.attributes = attributeSearchType
+        console.log(searchFilters.attributes)
+      }
 
       this.$http
         .post(
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
-          console.log(response)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -572,7 +575,6 @@ export default {
         .catch(err => console.log(err))
         .finally(() => {
           that.searchQueryIsDirty = false
-          console.log(that.selectedEntryTypes)
         })
     },
     getNestedComponentTypes () {
@@ -610,7 +612,6 @@ export default {
       this.filters.attributes = [...this.filters.attributes]
     },
     printAttribute (attribute) {
-      console.log(attribute)
       let attr = this.$jsonparse(attribute)
       if (attr === null) {
         attr.unit = ''
@@ -687,7 +688,6 @@ export default {
           combinedList.append(el)
         }
       })
-      console.log(combinedList)
       return combinedList
     },
     selectedEntryTypes: {

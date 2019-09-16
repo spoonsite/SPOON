@@ -34,8 +34,7 @@ import edu.usu.sdl.openstorefront.validation.ValidationUtil;
  *
  * @author gfowler
  */
-public class SearchFilters
-{
+public class SearchFilters {
 	@ConsumeField
     @QueryParam("query")
     @DefaultValue("")
@@ -69,8 +68,8 @@ public class SearchFilters
 
 	@ConsumeField
     @QueryParam("attributes")
-	private List<AttributeSearchType> attributes;
-	
+    private String attributes;
+
 	@ConsumeField
 	@QueryParam("tags")
 	private List<String> tags;
@@ -83,8 +82,9 @@ public class SearchFilters
 	@QueryParam("sortField")
 	private String sortField;
 
-	public SearchFilters()
-	{
+	private List<AttributeSearchType> attributeSearchType;
+
+	public SearchFilters() {
 	}
 
     public ValidationResult validate()
@@ -141,11 +141,11 @@ public class SearchFilters
 		this.organization = organization;
 	}
 
-	public List<AttributeSearchType> getAttributes() {
+	public String getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<AttributeSearchType> attributes) {
+	public void setAttributes(String attributes) {
 		this.attributes = attributes;
 	}
 
@@ -173,4 +173,11 @@ public class SearchFilters
 		this.sortField = sortField;
 	}
 
+	public List<AttributeSearchType> getAttributeSearchType() {
+		return attributeSearchType;
+	}
+
+	public void setAttributeSearchType(List<AttributeSearchType> attributeSearchType) {
+		this.attributeSearchType = attributeSearchType;
+	}
 }
