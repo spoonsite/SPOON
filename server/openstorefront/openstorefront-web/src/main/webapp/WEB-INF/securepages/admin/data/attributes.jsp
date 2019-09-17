@@ -390,9 +390,9 @@
 						renderer: function(value, meta, record) {
 							var warning = '';
 							if (record.get('configurationWarning')) {
-								warning = ' <i class="fa fa-exclamation-triangle icon-button-color-warning" data-qtip="Missing code and does not allow user codes"></i>';
+								warning = ' <i class="fa fa-exclamation-triangle icon-button-color-warning" data-qtip="Missing code and does not allow user codes"></i>&nbsp;';
 							}
-							return warning + " " + value;
+							return warning + value;
 						}
 					},
 					{text: 'Unit', dataIndex: 'attributeUnit', flex: 1},
