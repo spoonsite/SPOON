@@ -330,53 +330,54 @@
       </div>
     </div><!-- Search Results -->
       <!-- Comparison Table Dialog -->
-      <v-dialog
-        v-model="showComparison"
-        class="dialog-scroll"
-        justify="center"
-        max-width="85vw">
-          <v-card
-          class="dialog-scroll">
-          <!-- class="dialog-scroll" -->
-            <v-card-title style="display: flex; justify-content: space-between;">
-              <h2>Compare</h2>
-              <v-btn
-              @click="showComparison = false"
-              small fab icon>
-              <v-icon>fas fa-times</v-icon>
-              </v-btn>
-              </v-card-title>
-              <v-card-text>
-              <div class="scrollable">
-                <table>
-                  <thead>
-                    <tr>
-                      <th
-                      v-for="(component, position) in this.comparisonDataHeaders"
-                      :class="changeTableClass(position)"
-                      :key="component.text">
-                        {{ component.text }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                    v-for="(attribute) in this.comparisonDataDisplay"
-                    :key="attribute.name">
-                      <td
-                      v-for="(compAtt, position, col) in attribute"
-                      :class="changeTableClass(position)"
-                      :key="compAtt.name">
-                        {{ compAtt }}
-                        <span class="tooltip"
-                        v-if="attribute.name != 'Attributes'">{{ attribute.name }} of {{ comparisonDataHeaders[col].text }}</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </v-card-text>
-          </v-card>
+    <v-dialog
+      v-model="showComparison"
+      class="dialog-scroll"
+      justify="center"
+      max-width="85vw">
+        <v-card
+        class="dialog-scroll">
+          <v-card-title style="display: flex; justify-content: space-between;">
+            <h2>Compare</h2>
+            <v-btn
+            @click="showComparison = false"
+            small fab icon>
+            <v-icon>fas fa-times</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <div class="scrollable">
+              <table>
+                <thead>
+                  <tr>
+                    <th
+                    v-for="(component, position) in this.comparisonDataHeaders"
+                    :class="changeTableClass(position)"
+                    :key="component.text">
+                      {{ component.text }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                  v-for="(attribute) in this.comparisonDataDisplay"
+                  :key="attribute.name">
+                    <td
+                    v-for="(compAtt, position, col) in attribute"
+                    :class="changeTableClass(position)"
+                    :key="compAtt.name">
+                      {{ compAtt }}
+                      <span class="tooltip"
+                      v-if="attribute.name != 'Attributes'">
+                        {{ attribute.name }} of {{ comparisonDataHeaders[col].text }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </v-card-text>
+        </v-card>
       </v-dialog>
       <!-- Comparison Table Dialog -->
   </div>
@@ -963,14 +964,14 @@ hr {
 .search-block.closed {
   margin-left: $closed-width;
 }
-table{
+table {
   border-collapse: separate;
   border-spacing: 0;
 }
-tr:nth-child(even){
+tr:nth-child(even) {
   background-color: rgba(0,0,0,0.12);
 }
-tr:hover td{
+tr:hover td {
   background-color: #b3d4fc;
 }
 td.table-column:hover .tooltip {
@@ -993,14 +994,15 @@ td.table-column:hover .tooltip {
   min-width: 220px;
   font-size: 17px;
   padding: 20px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   border-right: 1px solid rgba(0, 0, 0, 0.12);
 }
 .table-column {
   min-width: 400px;
   padding: 24px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   position: relative;
+}
+th{
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 .top-corner {
     font-weight: bold;
@@ -1026,9 +1028,6 @@ td.table-column:hover .tooltip {
 }
 .v-footer {
   height: $footer-height !important;
-}
-div.v-table{
-  overflow:  hidden !important;
 }
 @media only screen and (min-width: 800px) {
   .search-block.open {
