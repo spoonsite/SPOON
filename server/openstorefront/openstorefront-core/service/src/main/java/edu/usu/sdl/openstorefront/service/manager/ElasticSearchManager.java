@@ -71,6 +71,8 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.GetIndexRequest;
@@ -922,6 +924,40 @@ public class ElasticSearchManager
 
 			executeIndexRequest(bulkRequest);
 		}
+	}
+
+	@Override
+	public UpdateResponse updateSingleComponent(String componentId){
+		Objects.requireNonNull(componentId, "Requires Component ID");
+
+		Component component = service.getPersistenceService().findById(Component.class, componentId);
+
+		return updateSingleComponent(component);
+	}
+
+	@Override
+	public UpdateResponse updateSingleComponent(Component component){
+		Objects.requireNonNull(component, "Requires Component");
+
+		UpdateResponse updateResponse = new UpdateResponse();
+		ObjectMapper objectMapper = StringProcessor.defaultObjectMapper();
+
+		if(component.getApprovalState() == ApprovalStatus.APPROVED){
+			ComponentSearchView componentSearchView = ComponentSearchView.toView(component);
+			
+			try (ElasticSearchClient client = singleton.getClient()) {
+
+				UpdateRequest updateRequest = new UpdateRequest(INDEX, component.getComponentId());
+				updateRequest.doc(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON);
+				updateResponse = client.getInstance().update(updateRequest, RequestOptions.DEFAULT);
+				
+			} catch(JsonProcessingException ex){
+				LOG.log(Level.SEVERE, null, ex);
+			} catch (IOException ex) {
+				LOG.log(Level.SEVERE, null, ex);
+			}
+		}
+		return updateResponse;
 	}
 
 	private void executeIndexRequest(BulkRequest bulkRequest)
