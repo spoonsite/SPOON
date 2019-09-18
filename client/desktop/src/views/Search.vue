@@ -546,11 +546,7 @@ export default {
           searchFilters.attributes.push(JSON.parse(attribute))
         })
         searchFilters.attributes = JSON.stringify(searchFilters.attributes)
-        // if(searchFilters.attributes === JSON.stringify([])){
-        //   searchFilters.attributes = ''
-        // }
       }
-      console.log(searchFilters)
 
       this.$http
         .post(
