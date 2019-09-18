@@ -132,7 +132,6 @@
             :key="attr"
             @input="removeAttributeFilter(attr)"
           >
-          <!-- TODO: fix attributes -->
             {{ printAttribute(attr) }}
           </v-chip>
         </div>
@@ -190,6 +189,9 @@
         v-for="entryType in selectedEntryTypes"
         :key="entryType"
       >
+        <v-avatar left>
+          <v-icon small>fas fa-layer-group</v-icon>
+        </v-avatar>
         {{ getComponentName(entryType) }}
         <div class="v-chip__close"><v-icon right @click="removeComponent(entryType)">cancel</v-icon></div>
       </v-chip>
@@ -456,8 +458,9 @@ export default {
       }
 
       attributesAggregation.forEach(element => {
-        if(this.attributeKeys.length < 10)
+        if (this.attributeKeys.length < 10) {
           this.attributeKeys.push(element.key)
+        }
 
         // Create list of codes from results
         let attributes = []
@@ -527,7 +530,7 @@ export default {
       searchFilters.organization = (this.filters.organization ? this.filters.organization.key : searchFilters.organization)
 
       let tags = []
-      if(this.filters.tags != null){
+      if (this.filters.tags != null) {
         this.filters.tags.forEach(tag => {
           tags.push(tag.key)
         })
@@ -543,20 +546,17 @@ export default {
           searchFilters.attributes.push(JSON.parse(attribute))
         })
         searchFilters.attributes = JSON.stringify(searchFilters.attributes)
+        // if(searchFilters.attributes === JSON.stringify([])){
+        //   searchFilters.attributes = ''
+        // }
       }
-      // if (searchFilters.attributes.length == 2){
-      //   var attributeSearchType = "[{\"code\": \"0.01\", \"type\": \"MASSKG\", \"typelabel\": \"Mass\", \"unit\": \"kg\"},{\"code\": \"0.01\", \"type\": \"MASSKG\", \"typelabel\": \"Mass\", \"unit\": \"kg\"}]"
-      //   console.log(JSON.stringify([{"code": 0.01, "type": "MASSKG", "typelabel": "Mass", "unit": "kg"},{"code": 0.01, "type": "MASSKG", "typelabel": "Mass", "unit": "kg"}]))
-      //   searchFilters.attributes = attributeSearchType
-      //   console.log(searchFilters.attributes)
-      // }
+      console.log(searchFilters)
 
       this.$http
         .post(
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
-          console.log(response)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -682,7 +682,7 @@ export default {
     entryTypesFilterList () {
       let combinedList = this.componentsList
       this.selectedEntryTypes.forEach(el => {
-        if(!combinedList.includes(el)){
+        if (!combinedList.includes(el)) {
           combinedList.append(el)
         }
       })
