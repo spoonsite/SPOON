@@ -22,7 +22,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 /**
  * This base abstraction for attributes
  *
- * @author dshurtleff
+ * @author gfowler
  */
 @APIDescription("This is base abstraction for attributes")
 public class AttributeSearchType
