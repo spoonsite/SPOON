@@ -57,8 +57,8 @@
           multi-line
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="removeComponent(data.item)" :key="data.item.label">
-              <!-- <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar> -->
+            <v-chip close small @input="removeComponent(data.item.key)" :key="data.item.label">
+              <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
               {{ data.item.label }}
             </v-chip>
           </template>
@@ -132,7 +132,7 @@
             :key="attr"
             @input="removeAttributeFilter(attr)"
           >
-          <!-- TODO fix attributes -->
+          <!-- TODO: fix attributes -->
             {{ printAttribute(attr) }}
           </v-chip>
         </div>
@@ -437,7 +437,7 @@ export default {
     deleteTag (tag) {
       this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
     },
-    deleteCompnent (component) {
+    deleteComponent (component) {
       let filteredEntryTypes = _.remove(this.$store.state.componentTypeList, n => n !== component)
       this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
     },
@@ -486,7 +486,6 @@ export default {
       })
 
       this.searchResultsAttributes = searchResultsAttributes
-      console.log(searchResultsAttributes)
     },
     getCompTypeLabels (entryTypes) {
       let that = this
@@ -543,22 +542,21 @@ export default {
         this.filters.attributes.forEach(attribute => {
           searchFilters.attributes.push(JSON.parse(attribute))
         })
-        console.log(searchFilters.attributes)
         searchFilters.attributes = JSON.stringify(searchFilters.attributes)
-        console.log(searchFilters.attributes)
       }
-      if (searchFilters.attributes.length == 2){
-        var attributeSearchType = "[{\"code\": \"0.01\", \"type\": \"MASSKG\", \"typelabel\": \"Mass\", \"unit\": \"kg\"},{\"code\": \"0.01\", \"type\": \"MASSKG\", \"typelabel\": \"Mass\", \"unit\": \"kg\"}]"
-        console.log(JSON.stringify([{"code": 0.01, "type": "MASSKG", "typelabel": "Mass", "unit": "kg"},{"code": 0.01, "type": "MASSKG", "typelabel": "Mass", "unit": "kg"}]))
-        searchFilters.attributes = attributeSearchType
-        console.log(searchFilters.attributes)
-      }
+      // if (searchFilters.attributes.length == 2){
+      //   var attributeSearchType = "[{\"code\": \"0.01\", \"type\": \"MASSKG\", \"typelabel\": \"Mass\", \"unit\": \"kg\"},{\"code\": \"0.01\", \"type\": \"MASSKG\", \"typelabel\": \"Mass\", \"unit\": \"kg\"}]"
+      //   console.log(JSON.stringify([{"code": 0.01, "type": "MASSKG", "typelabel": "Mass", "unit": "kg"},{"code": 0.01, "type": "MASSKG", "typelabel": "Mass", "unit": "kg"}]))
+      //   searchFilters.attributes = attributeSearchType
+      //   console.log(searchFilters.attributes)
+      // }
 
       this.$http
         .post(
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
+          console.log(response)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets

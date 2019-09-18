@@ -619,14 +619,18 @@ public class ElasticSearchManager
 			}
 		}
 
-		// FIXME: Attribute Selection Issue
-		// if(!searchFilters.getAttributes().isEmpty()){
-			// needsFiltering = true;
-			// 	for(AttributeSearchType type : searchFilters.getAttributes()){
-		// 		esQuery.should(QueryBuilders.matchPhraseQuery("attributes.type", type.getType()));
-		// 		esQuery.should(QueryBuilders.matchPhraseQuery("attributes.type", type.getType()));
-		// 	}
-		// }
+		// FIXME: Issue with mapping, needs to use nested models for this to work
+		BoolQueryBuilder boolQueryBuilderAttributes = QueryBuilders.boolQuery();
+		if(searchFilters.getAttributes() != null){
+			if(!searchFilters.getAttributes().isEmpty()){
+				for(AttributeSearchType type : searchFilters.getAttributeSearchType()){
+					BoolQueryBuilder boolQueryBuilderAttributeTypes = QueryBuilders.boolQuery();
+					boolQueryBuilderAttributeTypes.should(QueryBuilders.matchPhraseQuery("attributes.type", type.getType()));
+					boolQueryBuilderAttributeTypes.should(QueryBuilders.matchPhraseQuery("attributes.code", type.getCode()));
+					boolQueryBuilderAttributes.should(boolQueryBuilderAttributeTypes);
+				}
+			}
+		}
 
 		BoolQueryBuilder boolQueryBuilderTags = QueryBuilders.boolQuery();
 		if (searchFilters.getTags() != null) {
@@ -637,9 +641,23 @@ public class ElasticSearchManager
 			}
 		}
 
-		esQuery.filter(boolQueryBuilderComponentTypes).filter(boolQueryBuilderTags);//.filter(boolQueryBuilder);
+		BoolQueryBuilder finalQuery = QueryBuilders.boolQuery();
+
+		if(boolQueryBuilderComponentTypes.hasClauses()){
+			finalQuery.must(boolQueryBuilderComponentTypes);
+		}
+
+		if(boolQueryBuilderTags.hasClauses()){
+			finalQuery.must(boolQueryBuilderTags);
+		}
+
+		if(boolQueryBuilderAttributes.hasClauses()){
+			finalQuery.must(boolQueryBuilderAttributes);
+		}
+
+		finalQuery.must(esQuery);
 		
-		return esQuery;
+		return finalQuery;
 	} 
 
 	/**
