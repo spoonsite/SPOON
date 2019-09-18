@@ -700,15 +700,16 @@
 				]
 			});
 
-			var actionAddAttribute = function() {
+			var actionAddAttribute = function() {				
 				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
 				
-				// Setup the showAttributeWindow for the Adding action  
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').hide();
 				Ext.getCmp('editAttributeForm-entryTypeAssignment').hide();			
 				
+				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
+				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 			};
 
 			var actionEditAttribute = function(record) {
@@ -2371,7 +2372,6 @@
 								},
 								{
 									xtype: 'fieldcontainer',
-									itemId: 'editAttributeForm-Flags',
 									layout: 'hbox',
 									defaultType: 'checkboxfield',
 									defaultLayout: '100%',
@@ -2398,24 +2398,7 @@
 										{
 											name: 'allowUserGeneratedCodes',
 											boxLabel: 'Allow User-Created Codes',
-											// default value set to true as this box is usually checked by admin user.
-											value: true,
-											listeners: {
-												change: function(box, newValue){
-													if (!newValue){
-														this.up().up().insert(-1,
-															{
-																xtype:'panel',
-																id:'editAttributeForm-warningLabel',
-																style: 'color:red; font-size:1.6em',
-																html:'<i class="fa fa-exclamation-triangle"></i> Note: You should ensure that there are codes defined for this attribute, otherwise users will be unable to set the value.'
-															}
-														)
-													} else {
-														Ext.getCmp('editAttributeForm-warningLabel').destroy();
-													}
-												}
-											}
+											listeners: formChange
 										},
 										{
 											name: 'hideOnSubmission',

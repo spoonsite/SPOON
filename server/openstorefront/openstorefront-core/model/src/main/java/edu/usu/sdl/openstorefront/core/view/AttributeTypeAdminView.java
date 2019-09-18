@@ -48,9 +48,8 @@ public class AttributeTypeAdminView
 		}
 		Service service = ServiceProxyFactory.getServiceProxy();
 
-		// Check for attribute that are set to disallow user-created codes, yet there are no codes for them to choose.
 		List<AttributeCode> codes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
-		if (codes.isEmpty() && !Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
+		if (!Convert.toBoolean(attributeType.getAllowUserGeneratedCodes()) && (codes == null || codes.isEmpty())) {
 			adminView.setConfigurationWarning(true);
 		}
 

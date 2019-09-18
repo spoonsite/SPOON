@@ -35,6 +35,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.core.sort.SortUtil;
 import edu.usu.sdl.openstorefront.core.util.UnitConvertUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentAttributeView;
@@ -320,13 +321,16 @@ public abstract class ComponentCommonSubResourceExt
 		if (!validationResult.valid()) {
 			return Response.ok(validationResult.toRestError()).build();
 		}
+		
+		SearchServerManager.getInstance().getSearchServer().updateSingleComponent(componentId);
+
 		return Response.created(URI.create(BASE_RESOURCE_PATH
 				+ attribute.getComponentAttributePk().getComponentId() + "/attributes/"
 				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeType()) + "/"
 				+ StringProcessor.urlEncode(attribute.getComponentAttributePk().getAttributeCode()))).entity(attribute).build();
 	}
 
-	private ValidationResult saveAttribute(String componentId, ComponentAttribute attribute)
+	public ValidationResult saveAttribute(String componentId, ComponentAttribute attribute)
 	{
 		attribute.setComponentId(componentId);
 		attribute.getComponentAttributePk().setComponentId(componentId);
@@ -1362,6 +1366,7 @@ public abstract class ComponentCommonSubResourceExt
 			if (cont) {
 				service.getComponentService().saveComponentTag(tag);
 			}
+			SearchServerManager.getInstance().getSearchServer().updateSingleComponent(componentId);
 		} else {
 			return Response.ok(validationResult.toRestError()).build();
 		}
