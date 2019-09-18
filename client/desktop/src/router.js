@@ -5,6 +5,7 @@ import Profile from './views/Profile.vue'
 import Search from './views/Search.vue'
 import FAQ from './views/FAQ.vue'
 import ContactUs from './views/ContactUs.vue'
+import Watches from './views/Watches.vue'
 
 Vue.use(Router)
 
@@ -35,6 +36,11 @@ export default new Router({
       path: '/profile',
       name: 'Profile',
       component: Profile
+    },
+    {
+      path: '/watches',
+      name: 'Watches',
+      component: Watches
     }
     // {
     //   path: '/about',

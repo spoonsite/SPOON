@@ -83,11 +83,6 @@ public class BrandingAction
 		}
 	}
 
-	@HandlesEvent("Preview")
-	public Resolution previewBranding()
-	{
-		return new ForwardResolution("/WEB-INF/securepages/admin/application/brandingPreview.jsp");
-	}
 
 	@HandlesEvent("GeneralMedia")
 	public Resolution generalMedia() throws FileNotFoundException

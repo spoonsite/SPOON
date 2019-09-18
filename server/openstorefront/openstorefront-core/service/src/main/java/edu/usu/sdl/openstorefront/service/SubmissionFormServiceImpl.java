@@ -299,9 +299,9 @@ public class SubmissionFormServiceImpl
 					formTemplate.setTemplateStatus(SubmissionTemplateStatus.VERIFIED);
 					formTemplate.populateBaseUpdateFields();
 					persistenceService.persist(formTemplate);
-
-					deleteUserSubmission(userSubmission.getUserSubmissionId());
 				}
+				
+				deleteUserSubmission(userSubmission.getUserSubmissionId());
 
 			} catch (MappingException ex) {
 				LOG.log(Level.WARNING, "Failed to mapped user submisson");
