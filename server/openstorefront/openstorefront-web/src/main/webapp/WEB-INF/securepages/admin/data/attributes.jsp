@@ -700,7 +700,7 @@
 				]
 			});
 
-			var actionAddAttribute = function() {				
+			var actionAddAttribute = function() {
 				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
 				
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
