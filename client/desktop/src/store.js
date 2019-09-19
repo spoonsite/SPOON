@@ -12,6 +12,7 @@ export default new Vuex.Store({
     permissionMap: [],
     appVersion: '',
     componentTypeList: [],
+    attributeMap: {},
     selectedComponentTypes: []
   },
   // mutations must be synchronous
@@ -41,6 +42,12 @@ export default new Vuex.Store({
     },
     setComponentTypeList (state, response) {
       state.componentTypeList = response.data
+    },
+    setAttributeMap (state, response) {
+      state.attributeMap = {}
+      response.data.forEach(element => {
+        state.attributeMap[element.attributeType] = element
+      })
     },
     setSelectedComponentTypes (state, response) {
       state.selectedComponentTypes = response.data
@@ -86,6 +93,12 @@ export default new Vuex.Store({
       axios.get('/openstorefront/api/v1/resource/componenttypes')
         .then(response => {
           context.commit('setComponentTypeList', response)
+        })
+    },
+    getAttributeMap (context) {
+      axios.get('/openstorefront/api/v1/resource/attributes')
+        .then(response => {
+          context.commit('setAttributeMap', response)
         })
     }
   },

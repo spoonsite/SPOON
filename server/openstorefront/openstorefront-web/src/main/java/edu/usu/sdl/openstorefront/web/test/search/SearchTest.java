@@ -30,15 +30,15 @@ public class SearchTest
 	@Override
 	protected void runInternalTest()
 	{
-		results.append("Searching...<br>");
-		SearchQuery query = new SearchQuery();
-		FilterQueryParams filterQueryParams = FilterQueryParams.defaultFilter();
-		filterQueryParams.setSortField("name");
-		ComponentSearchWrapper searchViews = service.getSearchService().getSearchItems(query, filterQueryParams);
-		results.append("Results...").append("<br><br>");
-		searchViews.getData().forEach(view -> {
-			results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
-		});
+		// results.append("Searching...<br>");
+		// SearchQuery query = new SearchQuery();
+		// FilterQueryParams filterQueryParams = FilterQueryParams.defaultFilter();
+		// filterQueryParams.setSortField("name");
+		// ComponentSearchWrapper searchViews = service.getSearchService().getSearchItems(query, filterQueryParams);
+		// results.append("Results...").append("<br><br>");
+		// searchViews.getData().forEach(view -> {
+		// 	results.append(view.getName()).append("   Type:").append(view.getListingType()).append("<br>");
+		// });
 	}
 
 	@Override

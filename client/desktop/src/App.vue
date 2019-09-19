@@ -159,6 +159,7 @@ export default {
     this.$store.dispatch('getCurrentUser', { axios: this.$http, callback: this.checkWatches })
     this.$store.dispatch('getAppVersion')
     this.$store.dispatch('getComponentTypeList')
+    this.$store.dispatch('getAttributeMap')
     this.checkWatches()
   },
   computed: {
