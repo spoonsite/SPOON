@@ -132,7 +132,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 						items: [
 							{
 								xtype: 'textfield',
-								fieldLabel: 'Enter Inital Submission Name<span class="field-required" />',
+								fieldLabel: 'Enter Initial Submission Name<span class="field-required" />',
 								labelAlign: 'top',
 								width: '100%',
 								allowBlank: false,

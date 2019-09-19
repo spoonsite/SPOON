@@ -75,7 +75,6 @@ export default {
       hideSearchSuggestions: true,
       entryTypes: {},
       searchSuggestions: [],
-      selectedEntryTypes: [],
       showOptions: false,
       canShowOptions: true,
       searchOptionsSource: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
@@ -127,17 +126,19 @@ export default {
           canUseAttributesInSearch: this.searchOptions.includes('Vitals'),
           canUseTagsInSearch: this.searchOptions.includes('Tags')
         })
-    },
-    populateEntryTypes (entryTypes) {
-      if (entryTypes != null && entryTypes !== '') {
-        this.selectedEntryTypes = entryTypes.split(',')
-      } else {
-        this.selectedEntryTypes = []
-      }
     }
   },
   computed: {
-
+    selectedEntryTypes: {
+      set (entryTypes) {
+        if (this.$store.getters.getSelectedComponentTypes !== entryTypes) {
+          this.$store.commit('setSelectedComponentTypes', { data: entryTypes })
+        }
+      },
+      get () {
+        return this.$store.getters.getSelectedComponentTypes
+      }
+    }
   },
   watch: {
     value: _.throttle(function () {
@@ -146,27 +147,9 @@ export default {
       } else if (!this.searchQueryIsDirty) {
         this.getSearchSuggestions()
       }
-    }, 400),
-    selectedEntryTypes: function () {
-      if (this.$store.getters.getSelectedComponentTypes !== this.selectedEntryTypes) {
-        this.$store.commit('setSelectedComponentTypes', { data: this.selectedEntryTypes })
-      }
-    }
+    }, 400)
   },
   created: function () {
-    var components = this.$route.query.comp
-    if (components !== undefined) {
-      this.populateEntryTypes(components)
-    }
-
-    this.$store.commit('setSelectedComponentTypes', { data: this.selectedEntryTypes })
-
-    this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
-      if (this.selectedEntryTypes !== newValue) {
-        this.selectedEntryTypes = newValue
-      }
-    })
-
     this.$http
       .get('/openstorefront/api/v1/resource/searchoptions/user')
       .then(response => {

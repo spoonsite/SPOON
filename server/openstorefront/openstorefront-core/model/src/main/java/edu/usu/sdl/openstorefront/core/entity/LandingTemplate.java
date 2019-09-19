@@ -25,10 +25,10 @@ import javax.persistence.Version;
 import javax.validation.constraints.Size;
 
 /**
- *
+ * @deprecated in v2.10, as part of removal of custom Landing pages feature.
  * @author dshurtleff
  */
-@APIDescription("This is part of branding")
+@APIDescription("This is part of branding; DEPRECATED")
 @Embeddable
 public class LandingTemplate
 		implements Serializable

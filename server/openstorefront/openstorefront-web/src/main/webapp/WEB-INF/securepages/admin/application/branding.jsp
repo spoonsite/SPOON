@@ -35,8 +35,6 @@
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 
-			Ext.require('OSF.landing.designer.Designer');
-
 			Ext.onReady(function () {
 
 				var previewContents = Ext.create('OSF.ux.IFrame', {
@@ -87,7 +85,7 @@
 
 					var addEditBrandingWin = Ext.create('Ext.window.Window', {
 						id: 'addEditBrandingWin',
-						title: 'Add/Edit Branding',
+						title: 'Add/Edit Branding - ' + (!!record ? record.data.name : "Unsaved, Untitled Branding"),
 						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
 						modal: true,
 						closeAction: 'destroy',
@@ -109,16 +107,16 @@
 							}
 						},						
 						items: [
+							
 							{
-								xtype: 'tabpanel',
-								itemId: 'tabpanel',
+								xtype: 'form',
+								itemId: 'brandingForm',
+								scrollable: true,
+								trackResetOnLoad: true,
 								items: [
 									{
-										xtype: 'form',
-										title: 'Branding',
-										itemId: 'brandingForm',
-										scrollable: true,
-										trackResetOnLoad: true,
+										xtype: 'tabpanel',
+										itemId: 'tabpanel',
 										items: [
 											{
 												xtype: 'panel',
@@ -140,7 +138,7 @@
 													},									
 													{
 														xtype: 'textfield',
-														fieldLabel: 'Name<span class="field-required" />',
+														fieldLabel: 'Name<span class="field-required" data-qtip="On SPOON this is config is set to display at the top of the Landing page". />',
 														name: 'name',
 														width: '100%',
 														allowBlank: false,
@@ -148,31 +146,17 @@
 													},
 													{
 														xtype: 'textfield',
-														fieldLabel: 'Application Name <i class="fa fa-question-circle"  data-qtip="Defaults to config property." ></i>',
+														fieldLabel: 'Application Name <i class="fa fa-question-circle"  data-qtip="Appears as the title of the webpage (on the browser tab)." ></i>',
 														name: 'applicationName',
 														width: '100%',
-														allowBlank: true,
-														maxLength: 255
-													},	
-													{
-														xtype: 'htmleditor',
-														fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
-														name: 'landingPageTitle',
-														width: '100%',
-														resizable: {
-															handles: 's'
-														},
 														allowBlank: true,
 														maxLength: 255
 													},
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'Landing Stats Text <i class="fa fa-question-circle"  data-qtip="This is the Browsing X text" ></i>',
-														name: 'landingStatsText',
+														fieldLabel: 'Landing Page Title <i class="fa fa-question-circle"  data-qtip="This is the title at the top of the landing page" ></i>',
+														name: 'landingPageTitle',
 														width: '100%',
-														resizable: {
-															handles: 's'
-														},
 														allowBlank: true,
 														maxLength: 255
 													},
@@ -181,70 +165,16 @@
 														fieldLabel: 'Landing Banner <i class="fa fa-question-circle"  data-qtip="This is the quote on the landing page." ></i>',
 														name: 'landingPageBanner',
 														width: '100%',
-														resizable: {
-															handles: 's'
-														},
 														allowBlank: true,
 														maxLength: 255
 													},
 													{
-														xtype: 'panel',
-														html: '<b>Landing Page Footer</b> <i class="fa fa-question-circle"  data-qtip="This is the footer on the landing page." ></i>'
-													},
-													{
-														xtype: 'tinymce_textarea',
-														fieldStyle: 'font-family: Courier New; font-size: 12px;',
-														style: {border: '0'},
+														xtype: 'htmleditor',
+														fieldLabel: 'Landing Page Footer <i class="fa fa-question-circle"  data-qtip="This is the footer on the landing page." ></i>',
 														name: 'landingPageFooter',
-														width: '100%',										
-														height: 300,											
-														maxLength: 65536,
-														tinyMCEConfig: Ext.apply(CoreUtil.tinymceConfig(), {
-															mediaSelectionUrl: MediaUtil.generalMediaUrl,
-															mediaUploadHandler: MediaUtil.generalMediaUnloadHandler
-														})
-													},
-													{
-														xtype: 'checkbox',
-														name: 'hideArchitectureSearchFlg',
-														boxLabel: 'Hide Architechture Search'
-													},										
-													{
-														xtype: 'textfield',
-														fieldLabel: 'Architecture Search <i class="fa fa-question-circle"  data-qtip="This is the name of the architecure on the search tool." ></i>',
-														name: 'architectureSearchLabel',
 														width: '100%',
 														allowBlank: true,
-														maxLength: 255
-													},
-													{
-														xtype: 'combobox',
-														name: 'architectureSearchType',
-														width: '100%',
-														fieldLabel: 'Architecture Search Type <i class="fa fa-question-circle"  data-qtip="This is the architecture to use on the search tools." ></i>',
-														queryMode: 'local',
-														displayField: 'description',
-														valueField: 'attributeType',
-														editable: false,
-														typeAhead: false,
-														store: {
-															autoLoad: true,
-															proxy: {
-																type: 'ajax',
-																url: 'api/v1/resource/attributes/attributetypes',
-																reader: {
-																	type: 'json',
-																	rootProperty: 'data'
-																}
-															},
-															listeners: {
-																load: function(store, records, successful, opts) {
-																	store.filterBy(function(record) {															
-																		return record.get('architectureFlg');
-																	});
-																}
-															}
-														}
+														maxLength: 65536
 													},
 													{
 														xtype: 'checkbox',
@@ -253,26 +183,20 @@
 													},
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'Disclaimer Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottome right of the Search Results." ></i>',
+														fieldLabel: 'Disclaimer Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup message box from the \'Disclaimer\' button in the bottom right of the Search Results." ></i>',
 														name: 'disclaimerMessage',
 														width: '100%',
-														resizable: {
-															handles: 's'
-														},
 														allowBlank: true,
-														maxLength: 255
+														maxLength: 4096
 													},
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'Bulk Upload Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup box when a vendor uses the Bulk Upload tool." ></i>',
+														fieldLabel: 'Bulk Upload Message <i class="fa fa-question-circle"  data-qtip="This text will appear in a popup box when a vendor uses the Bulk Upload tool."></i>',
 														name: 'bulkUploadMessage',
 														width: '100%',
-														resizable: {
-															handles: 's'
-														},
 														allowBlank: true,
 														maxLength: 4096
-													}
+													},
 												]
 											},
 											{
@@ -288,66 +212,14 @@
 													labelAlign: 'top',
 													labelSeparator: ''
 												},
-												items: [{
-														//deprecated field
-														xtype: 'hiddenfield',
-														name: 'loginWarning',										
-														allowBlank: true
-													},
-													{
-														//deprecated field
-														xtype: 'hiddenfield',
-														name: 'loginLogoBlock',										
-														allowBlank: true
-													},
+												items: [
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'Login Page Content Section <i class="fa fa-question-circle"  data-qtip="Page Content" ></i>',
+														fieldLabel: 'Login Page Content Section <i class="fa fa-question-circle"  data-qtip="Page Content, text. Leaving this empty leaves no trace on the page."></i>',
 														name: 'loginContentBlock',
-														resizable: {
-															handles: 's'
-														},
-														width: '100%',											
-														allowBlank: true,
-														maxLength: 16000
-													},
-													{
-														layout: 'hbox',
 														width: '100%',
-														margin: '5px 0 0 0',
-														items: [
-															{
-																xtype: 'textfield',
-																itemId: 'loginLogoUrl',
-																labelAlign: 'top',
-																labelSeparator: '',
-																fieldLabel: 'Logo URL <i class="fa fa-question-circle"  data-qtip="URL to the logo shown in the top left corner" ></i>',
-																name: 'loginLogoUrl',
-																allowBlank: true,									
-																maxLength: 255,																
-																flex: 4
-															},
-															{
-																xtype: 'button',
-																text: 'Insert Image',
-																flex: 1,
-																margin: '30 0 0 0',
-																handler: function() {
-																	var loginLogoUrl = this.up('panel').queryById('loginLogoUrl');																	
-																	var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {																		
-																		isEditor: false,
-																		isBrandingMedia: true,
-																		mediaName:'Image',
-																		mediaSelectionUrl: 'api/v1/resource/generalmedia',
-																		closeAction: 'destroy',
-																		mediaHandler: function(link) {
-																			updateMediaUrl(link,loginLogoUrl);
-																		}
-																	});	
-																	mediaWindow.show();
-																}
-															}
-														]														
+														allowBlank: true,
+														maxLength: 4096
 													},
 													{
 														layout: 'hbox',
@@ -401,7 +273,7 @@
 																fieldLabel: 'Login Overview Video Poster URL <i class="fa fa-question-circle"  data-qtip="Initial image to display for the video" ></i>',
 																name: 'loginOverviewVideoPosterUrl',
 																allowBlank: true,									
-																maxLength: 255,																
+																maxLength: 255,
 																flex: 4
 															},
 															{
@@ -470,18 +342,15 @@
 														width: '100%',
 														boxLabel: 'Show Support Menu <i class="fa fa-exclamation-circle" data-qtip="When checked, will enable the support menu on the login page."></i>',
 														name: 'showSupportMenuOnLogin'
-													},												
+													},
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'Login Footer <i class="fa fa-question-circle"  data-qtip="Content to be displyed in the footer" ></i>',
+														fieldLabel: 'Login Footer <i class="fa fa-question-circle"  data-qtip="Content to be displayed in the footer."></i>',
 														name: 'loginFooter',
-														resizable: {
-															handles: 's'
-														},
-														width: '100%',											
+														width: '100%',
 														allowBlank: true,
-														maxLength: 16000
-													}
+														maxLength: 16384
+													},
 												]
 											},
 											{
@@ -502,7 +371,7 @@
 														xtype: 'combobox',
 														name: 'feedbackHandler',
 														width: '100%',
-														fieldLabel: 'Feeback Handling <i class="fa fa-question-circle"  data-qtip="This is the method to handle feedback capture by the application. (Default: Jira)<br>  Note: Email used is set in the system configuration properties." ></i>',
+														fieldLabel: 'Feedback Handling <i class="fa fa-question-circle"  data-qtip="This is the method to handle feedback capture by the application. (Default: Email)<br>  Note: Email used is set in the system configuration properties." ></i>',
 														queryMode: 'local',
 														displayField: 'description',
 														valueField: 'code',
@@ -558,14 +427,11 @@
 													},
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'Security Banner Text <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
+														fieldLabel: 'Security Banner Text <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'securityBannerText',
 														width: '100%',
-														resizable: {
-															handles: 's'
-														},
 														allowBlank: true,
-														maxLength: 4000										
+														maxLength: 4000
 													},
 													{
 														xtype: 'colorfield',
@@ -580,40 +446,31 @@
 														format: '#hex6',
 														fieldLabel: 'Security Banner Background Color',
 														name: 'securityBannerBackgroundColor'
-													},										
+													},
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'User Input Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
+														fieldLabel: 'User Input Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'userInputWarning',
 														width: '100%',
-														resizable: {
-															handles: 's'
-														},
 														allowBlank: true,
-														maxLength: 4000										
+														maxLength: 4000
 													},
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'Submission Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
+														fieldLabel: 'Submission Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'submissionFormWarning',
 														width: '100%',
-														resizable: {
-															handles: 's'
-														},
 														allowBlank: true,
-														maxLength: 4000										
+														maxLength: 4000
 													},
 													{
 														xtype: 'htmleditor',
-														fieldLabel: 'Change Request Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show" ></i>',
+														fieldLabel: 'Change Request Form Warning <i class="fa fa-question-circle"  data-qtip="Leave blank to not show."></i>',
 														name: 'changeRequestWarning',
 														width: '100%',
-														resizable: {
-															handles: 's'
-														},
 														allowBlank: true,
-														maxLength: 4000										
-													}											
+														maxLength: 4000
+													},						
 												]
 											},
 											{
@@ -643,7 +500,7 @@
 																fieldLabel: 'Primary Logo URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Home page Logo (625w x 200h)" ></i>',
 																name: 'primaryLogoUrl',
 																allowBlank: false,
-																emptyText: 'Branding.action?GeneralMedia&name=logo',											
+																emptyText: 'example: Branding.action?GeneralMedia&name=logo',											
 																maxLength: 255,																
 																flex: 4
 															},
@@ -681,7 +538,7 @@
 																fieldLabel: 'Secondary Logo URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Top corner Logo (181w x 53h)" ></i>',
 																name: 'secondaryLogoUrl',
 																allowBlank: false,
-																emptyText: 'Branding.action?GeneralMedia&name=logo',											
+																emptyText: 'example: Branding.action?GeneralMedia&name=logo',											
 																maxLength: 255,																
 																flex: 4
 															},
@@ -719,7 +576,7 @@
 																fieldLabel: 'Backsplash URL<span class="field-required" /> <i class="fa fa-question-circle"  data-qtip="Top corner Logo ~(4000w x 1000h)" ></i>',
 																name: 'homebackSplashUrl',
 																allowBlank: false,
-																emptyText: 'Branding.action?GeneralMedia&name=logo',											
+																emptyText: 'example: Branding.action?GeneralMedia&name=logo',											
 																maxLength: 255,																
 																flex: 4
 															},
@@ -764,56 +621,138 @@
 														format: '#hex6',
 														fieldLabel: 'Secondary Color',
 														name: 'secondaryColor'
-													},										
+													},	
+																				
+													// EXT-spesific color options
 													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Accent Color',
-														name: 'accentColor'
+														xtype: 'panel',
+														title: 'Ext-spesific Color Options (Admin & User Tools)',
+														collapsible: true,
+														border: true,
+														padding: '6px',
+														style: {
+															padding: '10px'
+														},
+														items:[
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Quote Color',
+																name: 'quoteColor'
+															},		
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Accent Color',
+																name: 'accentColor'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Link Color',
+																name: 'linkColor'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Link Visited Color',
+																name: 'linkVisitedColor'
+															},										
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Link Hover Color',
+																name: 'linkhoverColor'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Panel Header Color',
+																name: 'panelHeaderColor'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Panel Header Text Color',
+																name: 'panelHeaderTextColor'
+															},	
+														]
 													},
+
+													//vue-specific color options
 													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Quote Color',
-														name: 'quoteColor'
-													},
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Link Color',
-														name: 'linkColor'
-													},
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Link Visited Color',
-														name: 'linkVisitedColor'
-													},										
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Link Hover Color',
-														name: 'linkhoverColor'
-													},
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Panel Header Color',
-														name: 'panelHeaderColor'
-													},
-													{
-														xtype: 'colorfield',
-														width: '100%',
-														format: '#hex6',
-														fieldLabel: 'Panel Header Text Color',
-														name: 'panelHeaderTextColor'
-													},										
+														xtype: 'panel',
+														title: 'Vue-specific Color Options (Mobile site, search page, and login page)',
+														border: true,
+														collapsible: true,
+														padding: '6px',
+														items:[
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Primary Color',
+																name: 'vuePrimaryColor',
+																value: '252931'
+															},
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Secondary Color <i class="fa fa-question-circle"  data-qtip="Should be a darker color, as this color tends to appear on buttons." ></i>',
+																name: 'vueSecondaryColor',
+																value: '424242'
+															},
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Accent Color',
+																name: 'vueAccentColor',
+																value: 'F8C533'
+															},
+															{
+																xtype: 'colorfield',
+																width: '100%',
+																format: '#hex6',
+																fieldLabel: 'Error Color',
+																name: 'vueErrorColor',
+																value: 'C62828'
+															},
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Info Color',
+																name: 'vueInfoColor',
+																value: '3F51B5'
+															},
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Warning',
+																name: 'vueWarningColor',
+																value: 'FFA000'
+															},
+															{
+																xtype: 'colorfield',
+																format: '#hex6',
+																width:'100%',
+																fieldLabel: 'Success Color',
+																name: 'vueSuccessColor',
+																value: '388E3C'
+															}
+														]
+													
+													},									
 													{
 														xtype: 'textarea',
 														width: '100%',
@@ -821,134 +760,83 @@
 														name: 'overrideCSS',
 														grow: true,
 														maxLength: 1048576
-													},
-													{
-														xtype: 'checkbox',
-														width: '100%',
-														boxLabel: 'Use Default Landing Page <i class="fa fa-exclamation-circle" data-qtip="When checked, will override and<br />delete the custom landing page."></i>',
-														name: 'useDefaultLandingPage',
-														listeners: {
-															change: function(field, newValue, oldValue) {							
-																if (record) {
-																	if (newValue) {
-																		addEditBrandingWin.queryById('landingPageTab').setDisabled(true);
-																		addEditBrandingWin.queryById('landingPageTab').loadedTemplate = null;
-																	} else {
-																		addEditBrandingWin.queryById('landingPageTab').setDisabled(false);
-																	}
-																}
-															}
-														}
-													}	
+													}
 												]
-											}
-										],
-										dockedItems: [
+											},
 											{
-												xtype: 'toolbar',
-												dock: 'bottom',
-												items: [
+												xtype: 'panel',
+												title: 'Current CSS',
+												scrollable: true,
+												bodyStyle: 'padding: 10px;',										
+												loader: {
+													url: 'Branding.action?CSS&template=apptemplate.css.jsp&v=' + (Math.random() * 100000),
+													autoLoad: true,
+													success: function(loader, response, opts) {
+														var data = response.responseText;
+														
+														data = '<pre>' + data + '</pre>';	
+														loader.getTarget().update(data);
+												}
+												},
+												dockedItems: [
 													{
-														text: 'Save',
-														iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
-														scale: 'medium',
-														formBind: true,
-														handler: function () {
-															var win = this.up('window');
-															var form = this.up('form');
-
-															actionSaveBranding(form, function(response, opt){	
-																var rootItems = form.items.items;
-
-																// When the form is saved, reset all original values for checkboxes
-																for (var ii = 0; ii < rootItems.length; ii += 1) {
-																	
-																	var subItems = rootItems[ii].items.items;
-																	for (var jj = 0; jj < subItems.length; jj += 1) {
-																		if (form.items.items[ii].items.items[jj].xtype === 'checkbox') {
-																			subItems[jj].originalValue = subItems[jj].getValue();
-																		}
-																	}
-																}
-															});
-														}
-													},
-													{
-														xtype: 'tbfill'
-													},
-													{
-														text: 'Preview',
-														tooltip: 'Saves and preview',
-														iconCls: 'fa fa-lg fa-eye icon-button-color-view icon-small-vertical-correction',
-														scale: 'medium',
-														formBind: true,											
-														handler: function () {												
-															var form = this.up('form');
-
-															actionSaveBranding(form, function(response, opt){
-																var branding = Ext.decode(response.responseText);
-
-																previewWin.show();													
-																previewContents.load('Branding.action?Preview&brandingId=' + branding.brandingId);
-															});												
-
-														}
-													},
-													{
-														xtype: 'tbfill'
-													},
-													{
-														text: 'Close',
-														iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
-														scale: 'medium',
-														handler: function () {
-															
-															//check for unsaved state
-															var form = this.up('form');
-															
-															this.up('window').close();
-														}
+														xtype: 'panel',
+														dock: 'top',
+														html: '<em>Read-Only</em>'
 													}
 												]
 											}
-										]
-									},
+										],
+										
+									}
+								],
+								dockedItems: [
 									{
-										xtype: 'ofs-landingPageDesigner',
-										title: 'Landing Page',
-										itemId: 'landingPageTab',
-										disabled: true,
-										saveHandler: function(landingTemplate) {
-											var form = addEditBrandingWin.queryById('brandingForm');
-											var landingTab = addEditBrandingWin.queryById('landingPageTab');
-											actionSaveBranding(form, function(response, opt){
-												landingTab.loadedTemplate = landingTab.code.getFullTemplate();
-											}, landingTemplate);
-										},
-										cancelHandler: function() {
-											addEditBrandingWin.close();
-										}
-									},
-									{
-										xtype: 'panel',
-										title: 'Current CSS',
-										scrollable: true,
-										bodyStyle: 'padding: 10px;',										
-										loader: {
-											 url: 'Branding.action?CSS&template=apptemplate.css.jsp&v=' + (Math.random() * 100000),
-											 autoLoad: true,
-											 success: function(loader, response, opts) {
-												var data = response.responseText;
-												 
-												data = '<pre>' + data + '</pre>';	
-												loader.getTarget().update(data);
-											 }
-										},
-										dockedItems: [
+										xtype: 'toolbar',
+										dock: 'bottom',
+										items: [
 											{
-												xtype: 'panel',
-												dock: 'top',
-												html: '<b>Read-Only</b>'
+												text: 'Save',
+												iconCls: 'fa fa-lg fa-save icon-button-color-save icon-small-vertical-correction',
+												scale: 'medium',
+												formBind: true,
+												handler: function () {
+													var win = this.up('window');
+													var form = this.up('form');
+
+													actionSaveBranding(form, function(response, opt){
+														var rootItems = form.items.items;
+
+														// When the form is saved, reset all original values for checkboxes
+														for (var i = 0; i < rootItems.length; i += 1) {
+															
+															var subItems = rootItems[i].items.items;
+															for (var j = 0; j < subItems.length; j += 1) {
+																if (form.items.items[i].items.items[j].xtype === 'checkbox') {
+																	subItems[j].originalValue = subItems[j].getValue();
+																}
+															}
+														}
+													});
+												}
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												xtype: 'tbfill'
+											},
+											{
+												text: 'Close',
+												iconCls: 'fa fa-lg fa-close icon-button-color-warning icon-small-vertical-correction',
+												scale: 'medium',
+												handler: function () {
+													
+													//check for unsaved state
+													var form = this.up('form');
+													
+													this.up('window').close();
+												}
 											}
 										]
 									}
@@ -962,32 +850,10 @@
 					}, 250);
 					
 					if (record) {
-						
-						//move depercated loginWarning to the loginFooter
-						if((record.data.loginFooter === undefined || record.data.loginFooter.length === 0) 
-									&& (record.data.loginWarning !== undefined && record.data.loginWarning.length > 0)) {
-							record.data.loginFooter = record.data.loginWarning;
-							record.data.loginWarning = "";
-						}
-						
-						//move depercated loginLogoBlock to the loginContentBlock
-						if((record.data.loginContentBlock === undefined || record.data.loginContentBlock.length === 0) 
-									&& (record.data.loginLogoBlock !== undefined && record.data.loginLogoBlock.length > 0)) {
-							record.data.loginContentBlock = record.data.loginLogoBlock;
-							record.data.loginLogoBlock = "";
-						}
-						
-						var landingTab = addEditBrandingWin.queryById('landingPageTab');
+						// Load branding data into form
 						addEditBrandingWin.queryById('brandingForm').loadRecord(record);
-						if (record.get('useDefaultLandingPage')) {
-							landingTab.setDisabled(true);
-						} else {
-							landingTab.setDisabled(false);
-							landingTab.initializeCallback = function() {
-								landingTab.loadData(record.data);
-							};
-						}
-						addEditBrandingWin.queryById('tabpanel').setActiveTab(landingTab);
+
+						// Ensures the first tab is the one that is displayed on render?
 						addEditBrandingWin.queryById('tabpanel').setActiveTab(0);
 					}
 					
@@ -996,10 +862,8 @@
 				var actionCloseBranding = function() {
 					var brandingWin = Ext.getCmp('addEditBrandingWin');
 					var form = brandingWin.queryById('brandingForm');
-					var landingTab = brandingWin.queryById('landingPageTab');
 					var formDirty = form.isDirty();
-					var landingTabDirty = landingTab.isDirty();
-					if (formDirty || landingTabDirty)  {
+					if (formDirty)  {
 						Ext.Msg.show({
 							title:'Save Changes?',
 							message: 'You are closing a form that has unsaved changes. Would you like to save your changes?',
@@ -1010,7 +874,7 @@
 									actionSaveBranding(form, function(response, opt){										
 										brandingWin.proceedWithClosing = true;
 										brandingWin.close();
-									}, landingTab.getTemplate());
+									});
 								} else if (btn === 'no') {
 									brandingWin.proceedWithClosing = true;
 									brandingWin.close();
@@ -1024,12 +888,13 @@
 					}
 				};
 				
-				var actionSaveBranding = function(form, successHandler, template) {
+				var actionSaveBranding = function(form, successHandler) {
 					var data = form.getValues();
 					
 					var method='POST';
 					var endUrl = '';
 					if (data.brandingId) {
+						// Case of editing exisitng branding
 						method = 'PUT',
 						endUrl = '/' + data.brandingId;		
 					}
@@ -1040,13 +905,7 @@
 						}
 					});
 					
-					if (!template) {
-						var landingTab = Ext.getCmp('addEditBrandingWin').queryById('landingPageTab');
-						template = landingTab.getTemplate();
-					}
-					data.landingTemplate = template;
-					
-					CoreUtil.submitForm({						
+					CoreUtil.submitForm({
 						url: 'api/v1/resource/branding' + endUrl,
 						method: method,
 						form: form,
@@ -1054,15 +913,20 @@
 							branding: data
 						},
 						success: function(response, opts){
-							Ext.toast('Saved Successfully');
-							form.getForm().setValues(form.getValues());
+							// In the case where this is a first time new branding save, make subsequent saves apply
+							// to this newly existing branding. In case .decode fails, we use the values on the webpage. 
+							var savedBrandingValues = Ext.JSON.decode(response.responseText, true) || form.getValues();
+
+							// Load saved Branding back into the webpage
+							form.getForm().setValues(savedBrandingValues);
+							Ext.getCmp('addEditBrandingWin').setTitle('Add/Edit Branding - ' + savedBrandingValues.name)
+
+							// Refresh Window
 							actionRefresh();
-							var landingTab = Ext.getCmp('addEditBrandingWin').queryById('landingPageTab');
-							if (data.useDefaultLandingPage) {
-								landingTab.setDisabled(true);
-							} else {
-								landingTab.setDisabled(false);														
-							}	
+
+							Ext.toast('Saved Successfully');
+							
+							// Pass action on to caller
 							successHandler(response, opts);		
 						},
 						failure: function(response, opts) {
@@ -1374,7 +1238,7 @@
 					Ext.Msg.show({
 						title: 'Delete Branding?',
 						iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
-						message: '<b>Are you sure you want to delete branding - "' + name + '"?</b>',
+						message: '<em>Are you sure you want to delete branding - "' + name + '"?</em>',
 						minWidth: 400,
 						buttons: Ext.Msg.YESNO,
 						icon: Ext.Msg.QUESTION,

@@ -16,10 +16,16 @@
 package edu.usu.sdl.openstorefront.web.rest.service;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
+import edu.usu.sdl.openstorefront.core.entity.AttributeSearchType;
 import edu.usu.sdl.openstorefront.core.view.SearchFilters;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -29,6 +35,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.elasticsearch.action.search.SearchResponse;
 
@@ -42,6 +52,7 @@ import org.elasticsearch.action.search.SearchResponse;
 public class SearchV2
 		extends BaseResource
 {
+	private static final Logger LOG = Logger.getLogger(SearchV2.class.getName());
 
 	@Context
     private HttpServletRequest request;
@@ -58,12 +69,28 @@ public class SearchV2
 			return sendSingleEntityResponse(validationResult.toRestError());
 		}
 
-		SearchResponse searchResponse = SearchServerManager.getInstance().getSearchServer().indexSearchV2(searchFilters);
+		ObjectMapper mapper = new ObjectMapper();
 
-		if(searchResponse != null){
-			return Response.ok(searchResponse.toString()).build();
-		} else {
+		try {
+			AttributeSearchType[] attributeSearchType = mapper.readValue(
+					searchFilters.getAttributes(),
+					TypeFactory.defaultInstance().constructArrayType(AttributeSearchType.class));
+			
+			ArrayList<AttributeSearchType> list = new ArrayList<AttributeSearchType>(Arrays.asList(attributeSearchType));
+
+			searchFilters.setAttributeSearchType(list);
+
+			SearchResponse searchResponse = SearchServerManager.getInstance().getSearchServer()
+					.indexSearchV2(searchFilters);
+
+			if (searchResponse != null) {
+				return Response.ok(searchResponse.toString()).build();
+			} else {
+				return Response.ok("Search was not formatted correctly").build();
+			}
+		} catch (JsonProcessingException ex) {
+			LOG.log(Level.SEVERE, null, ex);
 			return Response.ok("Search was not formatted correctly").build();
 		}
-    }
+	}
 }

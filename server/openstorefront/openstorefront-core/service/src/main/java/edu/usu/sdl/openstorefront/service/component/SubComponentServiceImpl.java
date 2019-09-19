@@ -51,6 +51,10 @@ import edu.usu.sdl.openstorefront.core.entity.ReviewCon;
 import edu.usu.sdl.openstorefront.core.entity.ReviewPro;
 import edu.usu.sdl.openstorefront.core.model.BulkComponentAttributeChange;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
+import edu.usu.sdl.openstorefront.service.search.TagSearchHandler;
+import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
+import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
+import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.core.view.AttributeCodeSave;
 import edu.usu.sdl.openstorefront.core.view.ComponentReviewProCon;
@@ -728,6 +732,27 @@ public class SubComponentServiceImpl
 			componentService.getChangeLogService().addEntityChange(tag);
 		}
 		handleUserDataAlert(tag);
+		
+		// Check if this is the first-of-it's kind tag; first populate example tag;
+		// Possible future speed optimization: a SQL query that only find the number of existing tags, 
+		// rather than the list of existing tags, if that would be faster. 
+		SearchElement ExampleTag = new SearchElement();
+
+		ExampleTag.setSearchType(SearchOperation.SearchType.TAG);
+		ExampleTag.setValue(tag.getText());
+		ExampleTag.setCaseInsensitive(false);
+		ExampleTag.setStringOperation(SearchOperation.StringOperation.EQUALS);
+		ExampleTag.setMergeCondition(SearchOperation.MergeCondition.AND);		
+		
+		List<SearchElement> ExampleTagList = new ArrayList<SearchElement>();
+		ExampleTagList.add(ExampleTag);
+
+		TagSearchHandler tagSearchHandler = new TagSearchHandler(ExampleTagList);
+		List<String> OtherComponentsToThisTag = tagSearchHandler.processSearch();
+		if(OtherComponentsToThisTag.isEmpty()){
+			// Alert advanced search cache that it needs to refresh it's Tag list now that there is a new Tag in town
+			SearchStatTable.setThereIsNewTagSaved(true);
+		}
 
 		if (updateLastActivity) {
 			updateComponentLastActivity(tag.getComponentId());

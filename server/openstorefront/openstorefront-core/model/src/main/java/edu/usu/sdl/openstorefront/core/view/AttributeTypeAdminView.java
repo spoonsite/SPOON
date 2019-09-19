@@ -48,13 +48,9 @@ public class AttributeTypeAdminView
 		}
 		Service service = ServiceProxyFactory.getServiceProxy();
 
-		if (adminView.getRequiredRestrictions() != null
-				&& !adminView.getRequiredRestrictions().isEmpty()) {
-
-			List<AttributeCode> codes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
-			if (codes.isEmpty() && !Convert.toBoolean(attributeType.getAllowUserGeneratedCodes())) {
-				adminView.setConfigurationWarning(true);
-			}
+		List<AttributeCode> codes = service.getAttributeService().findCodesForType(attributeType.getAttributeType());
+		if (!Convert.toBoolean(attributeType.getAllowUserGeneratedCodes()) && (codes == null || codes.isEmpty())) {
+			adminView.setConfigurationWarning(true);
 		}
 
 		return adminView;

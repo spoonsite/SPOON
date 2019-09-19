@@ -301,11 +301,11 @@
 										'<br>' +
 										'<b>Last System Update: </b>' +
 										'{[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}' +
-											'<tpl if="securityMarkingType">' +
-												'<br>' +
-												'Highest Classification: ' +
-												'<b>(<span title="{securityMarkingDescription}">{securityMarkingType}</span>)</b>' +
-											'</tpl>' +
+										'<tpl if="componentSecurityMarkingType && ' + ${branding.allowSecurityMarkingsFlg} + '">' +
+											'<br>' +
+											'<b>Highest Classification:</b> ' +
+											'<b>(</b><span title="{componentSecurityMarkingDescription}">{componentSecurityMarkingType}</span><b>)</b>' +
+										'</tpl>' +
 									'</span>'
 								)
 							}
@@ -600,17 +600,17 @@
 							Ext.defer(function(){
 								headerPanel.updateLayout(true, true);
 							}, 1000);
-							
+
 							if(!user.isAnonymousUser && entry.createUser === '${user}'){
 								Ext.getCmp('nonOwnerMenu').setHidden(true);
-								Ext.getCmp('ownerMenu').setHidden(false);								
+								Ext.getCmp('ownerMenu').setHidden(false);
 							}
-							
+
 							Ext.getCmp('toolsPanel').getComponent('updatedInfo').update(entry);
-							
+
 							if (entry.approvalState !== "A" || entry.activeStatus !== 'A') {
-								
-								var html = '';						
+
+								var html = '';
 								if (entry.approvalState == 'P') {
 									html = 'This entry has not yet been approved for the site and is still under review.';								
 								} else if (entry.approvalState == 'N') {
