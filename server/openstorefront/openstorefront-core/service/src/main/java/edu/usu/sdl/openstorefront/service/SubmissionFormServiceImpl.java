@@ -303,6 +303,8 @@ public class SubmissionFormServiceImpl
 
 					deleteUserSubmission(userSubmission.getUserSubmissionId());
 				}
+				
+				deleteUserSubmission(userSubmission.getUserSubmissionId());
 
 			} catch (MappingException ex) {
 				LOG.log(Level.WARNING, "Failed to mapped user submisson");

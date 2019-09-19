@@ -126,6 +126,24 @@ a given entry type.
 * Emails are sent when a entry or change request is approved.
 * User submissions will now enter a queued state while being processed. 
 
+## 1.9 Release Notes for v2.9.1
+-----
+
+* Fix for commenting on WorkPlan submissions.
+
+## 1.10 Release Notes for v2.9.2
+-----
+
+* Fix for mobile site not being able to load.
+
+## 1.11 Release Notes for v2.10
+-----
+
+* Removed Solr as a search engine option.
+* Updated Elasticsearch to version 7.2.0.
+* Removed the move submission buttons in the WorkPlan if you did not have the correct permissions. 
+* Updated branding and removed non-functional sections of branding.
+
 # 2. User Features
 ------
 

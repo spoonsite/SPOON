@@ -596,12 +596,13 @@ public abstract class ComponentExtendedSubResourceExt
 					emailText = emailText + "Comment left by approver: " + changeRequestComment;
 				}
 
-				Email email = MailManager.newEmail();
-				email.setSubject("SPOON Entry Change Request Approved");
-				email.setText(emailText);
-				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
-
-				MailManager.send(email, true);
+				if(vendorEmail != "" && vendorEmail != null){
+					Email email = MailManager.newEmail();
+					email.setSubject("SPOON Entry Change Request Approved");
+					email.setText(emailText);
+					email.addRecipient("", vendorEmail, Message.RecipientType.TO);
+					MailManager.send(email, true);
+				}
 			}
 			return saveComment(comment, true);
 		} else {

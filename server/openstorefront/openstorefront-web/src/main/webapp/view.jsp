@@ -301,11 +301,11 @@
 										'<br>' +
 										'<b>Last System Update: </b>' +
 										'{[Ext.util.Format.date(values.lastActivityDts, "m/d/y")]}' +
-											'<tpl if="securityMarkingType">' +
-												'<br>' +
-												'Highest Classification: ' +
-												'<b>(<span title="{securityMarkingDescription}">{securityMarkingType}</span>)</b>' +
-											'</tpl>' +
+										'<tpl if="componentSecurityMarkingType && ' + ${branding.allowSecurityMarkingsFlg} + '">' +
+											'<br>' +
+											'<b>Highest Classification:</b> ' +
+											'<b>(</b><span title="{componentSecurityMarkingDescription}">{componentSecurityMarkingType}</span><b>)</b>' +
+										'</tpl>' +
 									'</span>'
 								)
 							}
@@ -606,6 +606,7 @@
 								Ext.getCmp('ownerMenu').setHidden(false);								
 							}
 							
+							// console.log("Whats going into the Detials page: ",entry)
 							Ext.getCmp('toolsPanel').getComponent('updatedInfo').update(entry);
 							
 							if (entry.approvalState !== "A" || entry.activeStatus !== 'A') {

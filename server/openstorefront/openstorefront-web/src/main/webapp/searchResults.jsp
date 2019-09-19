@@ -1277,7 +1277,7 @@
 				});
 				
 				currentDataSet = data;
-				Ext.getCmp('resultsDisplayPanel').update(data);				
+				Ext.getCmp('resultsDisplayPanel').update(data);
 		
 				//update Stats
 				if (filterMode === 'CLIENT') {
@@ -1524,7 +1524,7 @@
 			var resultsTemplate = new Ext.XTemplate(
 				'<tpl for=".">',
 				' <div id="result-{componentId}" class="searchresults-item">',
-				'	<h2 id="result-{componentId}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result-{componentId}\')"><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{name}</h2>',
+				'	<h2 id="result-{componentId}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result-{componentId}\')"><tpl if="listingSecurityMarkingType && ' + ${branding.allowSecurityMarkingsFlg} + '">({listingSecurityMarkingType}) </tpl>{name}</h2>',
 				'	<tpl if="show.logo && logo">',
 				'		<img src="{logo}" width=100 />',				
 				'	</tpl>',
@@ -1544,7 +1544,8 @@
 				'  </tpl>',
 				'	<tpl if="show.attributes">',	
 				'		<ul>',
-				'		<tpl for="attributes"><li><b>{typeLabel}: </b><tpl if="securityMarkingType">({securityMarkingType}) </tpl>{label}</li></tpl>',
+				'		<tpl for="attributes"><li><b>{typeLabel}: </b><tpl if="listingSecurityMarkingType && ' + ${branding.allowSecurityMarkingsFlg} + '">({listingSecurityMarkingType}) </tpl>{label}</li></tpl>',
+																			// ^ Attributes used to have their own security classifications.
 				'		</ul>',
 				'   </tpl>',
 				'	<tpl if="show.tags">',				
@@ -1552,7 +1553,7 @@
 				'			<b>Tags: </b>',
 				'			<tpl for="tags">',
 				'				<span class="searchresults-tag">',
-				'					<tpl if="securityMarkingType">({securityMarkingType}) </tpl>{text}',
+				'					<tpl if="listingSecurityMarkingType && ' + ${branding.allowSecurityMarkingsFlg} + '">({listingSecurityMarkingType}) </tpl>{text}',
 				'				</span>&nbsp;',
 				'			</tpl>',
 				'		</tpl>',

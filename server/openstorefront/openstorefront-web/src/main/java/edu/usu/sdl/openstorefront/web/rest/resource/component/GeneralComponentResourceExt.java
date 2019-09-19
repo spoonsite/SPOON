@@ -729,16 +729,17 @@ public abstract class GeneralComponentResourceExt
 			if (hasPermission && vendor != null) {
 
 				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
-				Email email = MailManager.newEmail();
-				email.setSubject("SPOON Entry Updated");
-				email.setText(
-					"Your entry, " + 
-					updatedComponent.getName() +
-					", on spoonsite.com, has been updated by a system administrator. "
-				);
-				email.addRecipient("", vendorEmail, Message.RecipientType.TO);
-
-				MailManager.send(email, true);
+				if(vendorEmail != "" && vendorEmail != null){
+					Email email = MailManager.newEmail();
+					email.setSubject("SPOON Entry Updated");
+					email.setText(
+						"Your entry, " + 
+						updatedComponent.getName() +
+						", on spoonsite.com, has been updated by a system administrator. "
+					);
+					email.addRecipient("", vendorEmail, Message.RecipientType.TO);
+					MailManager.send(email, true);
+				}
 			}
 
 			return Response.ok(updatedComponent).build();

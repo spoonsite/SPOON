@@ -178,7 +178,7 @@
 					} 
 				%>
 				<br>
-				<a href="login.jsp">Login</a>
+				<a href="login/index.html#/">Login</a>
 			</div>
 		</div>	
     </body>
