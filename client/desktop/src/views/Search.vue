@@ -536,6 +536,7 @@ export default {
     filterAttributeKeys () {
     },
     submitSearch () {
+      this.comparisonList = []
       let that = this
       // a new search clears the data and can trigger a watcher
       // sometimes 2 POST requests get sent out together
