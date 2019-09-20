@@ -72,6 +72,7 @@ Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)))
 store.dispatch('getSecurityPolicy')
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
+    // TODO: Fix accent color
     theme: {
       primary: store.state.branding.vuePrimaryColor,
       secondary: store.state.branding.vueSecondaryColor,

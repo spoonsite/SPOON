@@ -450,67 +450,50 @@ export default {
     },
     parseAttributesFromSearchResponse (attributesAggregation) {
       // FIXME: updated backend, now need to be fixed.
-      this.attributeKeys = []
       let that = this
-      let searchResultsAttributes = {}
+      that.attributeKeys = []
 
       if (that.$store.state.attributeMap === undefined) {
-        this.$store.dispatch('getAttributeMap')
+        that.$store.dispatch('getAttributeMap')
       }
 
       let source = {}
-      let map = {}
+      let searchResultsAttributes = {}
+
+      console.log({'"this"':1})
+      let arr = {'this-this':1}
+      console.log(arr['this-this'])
+      console.log(arr['"this-this"'])
+      arr = []
+
 
       attributesAggregation.forEach(el =>{
         source = el._source
-        // console.log(source)
-        source["count"] = 0
-        if (!map.hasOwnProperty(source.type)){
-          map[source.type] = {'codes': {}}
-          map[source.type].codes[source.code] = 1
+        source.originalType = source.type
+        source.type = source.type.replace('-', '')
+        if (!searchResultsAttributes.hasOwnProperty(source.type)){
+          arr.push(source.type.toString())
+          searchResultsAttributes[source.type] = {
+            codes: {}, 
+            label: source.typeLabel,
+            attributeUnit: that.$store.state.attributeMap[source.originalType].attributeUnit,
+          }
+          searchResultsAttributes[source.type].codes[source.label] = 1
         }
         else {
-          if(!map[source.type].codes.hasOwnProperty(source.code)){
-            map[source.type].codes[source.code] = 1
+          if(!searchResultsAttributes[source.type].codes.hasOwnProperty(source.label)){
+            searchResultsAttributes[source.type].codes[source.label] = 1
           } else {
-            map[source.type].codes[source.code]++
+            searchResultsAttributes[source.type].codes[source.label]++
           }
         }
       })
-      console.log(map)
-
-      attributesAggregation.forEach(element => {
-        if (this.attributeKeys.length < 10) {
-          this.attributeKeys.push(element.key)
-        }
-
-        // Create list of codes from results
-        let attributes = []
-        let sources = element['top_hits#attribute'].hits.hits
-        sources.forEach(source => {
-          source._source.forEach(attribute => {
-            if (attribute.type === element.key) {
-              let code = attribute.label.toString()
-              if (!attributes.includes(code)) {
-                attributes.push(code)
-              }
-            }
-          })
-        })
-
-        // Populate attribute object
-        if (!searchResultsAttributes[element.key]) {
-          searchResultsAttributes[element.key] = {
-            attributeType: element.key,
-            attributeTypeLabel: that.$store.state.attributeMap[element.key].description,
-            attributeUnit: that.$store.state.attributeMap[element.key].attributeUnit,
-            codeMap: attributes,
-            count: element.doc_count
-          }
-        }
-      })
-
-      this.searchResultsAttributes = searchResultsAttributes
+      that.searchResultsAttributes = searchResultsAttributes
+      that.attributeKeys = Object.keys(searchResultsAttributes).slice(0, 10)
+      console.log(that.searchResultsAttributes)
+      console.log(searchResultsAttributes)
+      console.log(arr)
+      console.log(that.attributeKeys)
     },
     generateMap (stuff) {
       let map = []
@@ -544,16 +527,16 @@ export default {
 
       // Default values
       let searchFilters = {
-        'query': '',
-        'page': 0,
-        'pageSize': 10,
-        'componentTypes': [],
-        'includeChildren': true,
-        'organization': '',
-        'attributes': null,
-        'tags': [],
-        'sortOrder': '',
-        'sortField': ''
+        query: '',
+        page: 0,
+        pageSize: 10,
+        componentTypes: [],
+        includeChildren: true,
+        organization: '',
+        attributes: null,
+        tags: [],
+        sortOrder: '',
+        sortField: ''
       }
 
       // Use values from ui if available
