@@ -445,7 +445,7 @@ public class ElasticSearchManager
 				actualQuery = queryString.toString();
 			}
 
-			if (searchOptions.getCanUseOrganizationsInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseOrganizationsInSearch())) {
 				// Custom query for entry organization
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
@@ -453,7 +453,7 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
 			}
 
-			if (searchOptions.getCanUseNameInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseNameInSearch())) {
 				// Custom query for entry name
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
@@ -466,12 +466,12 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
 			}
 
-			if (searchOptions.getCanUseDescriptionInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseDescriptionInSearch())) {
 				// Custom query for description
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, actualQuery));
 			}
 
-			if (searchOptions.getCanUseTagsInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseTagsInSearch())) {
 				// Custom query for Tags
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
@@ -484,7 +484,7 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
 			}
 
-			if (searchOptions.getCanUseAttributesInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseAttributesInSearch())) {
 				// Custom query for Attributes
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
@@ -501,23 +501,23 @@ public class ElasticSearchManager
 		// Loop Through Search Phrases
 		for (String phrase : searchPhrases) {
 
-			if (searchOptions.getCanUseOrganizationsInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseOrganizationsInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
 			}
 
-			if (searchOptions.getCanUseNameInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseNameInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
 			}
 
-			if (searchOptions.getCanUseDescriptionInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseDescriptionInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, phrase.toLowerCase()));
 			}
 
-			if (searchOptions.getCanUseTagsInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseTagsInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, phrase));
 			}
 
-			if (searchOptions.getCanUseAttributesInSearch()) {
+			if (Convert.toBoolean(searchOptions.getCanUseAttributesInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, phrase));
 			}
 		}
