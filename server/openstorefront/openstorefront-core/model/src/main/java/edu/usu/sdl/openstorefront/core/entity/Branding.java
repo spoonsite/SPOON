@@ -263,7 +263,6 @@ public class Branding
 		setHomebackSplashUrl(branding.getHomebackSplashUrl());
 		setAnalyticsTrackingCode(branding.getAnalyticsTrackingCode());
 
-		setLoginLogoUrl(branding.getLoginLogoUrl());
 		setLoginContentBlock(branding.getLoginContentBlock());
 		setLoginOverviewVideoUrl(branding.getLoginOverviewVideoUrl());
 		setLoginOverviewVideoPosterUrl(branding.getLoginOverviewVideoPosterUrl());
