@@ -449,6 +449,7 @@ export default {
       }
     },
     parseAttributesFromSearchResponse (attributesAggregation) {
+      // FIXME: updated backend, now need to be fixed.
       this.attributeKeys = []
       let that = this
       let searchResultsAttributes = {}
@@ -456,6 +457,27 @@ export default {
       if (that.$store.state.attributeMap === undefined) {
         this.$store.dispatch('getAttributeMap')
       }
+
+      let source = {}
+      let map = {}
+
+      attributesAggregation.forEach(el =>{
+        source = el._source
+        // console.log(source)
+        source["count"] = 0
+        if (!map.hasOwnProperty(source.type)){
+          map[source.type] = {'codes': {}}
+          map[source.type].codes[source.code] = 1
+        }
+        else {
+          if(!map[source.type].codes.hasOwnProperty(source.code)){
+            map[source.type].codes[source.code] = 1
+          } else {
+            map[source.type].codes[source.code]++
+          }
+        }
+      })
+      console.log(map)
 
       attributesAggregation.forEach(element => {
         if (this.attributeKeys.length < 10) {
@@ -466,7 +488,7 @@ export default {
         let attributes = []
         let sources = element['top_hits#attribute'].hits.hits
         sources.forEach(source => {
-          source._source.attributes.forEach(attribute => {
+          source._source.forEach(attribute => {
             if (attribute.type === element.key) {
               let code = attribute.label.toString()
               if (!attributes.includes(code)) {
@@ -489,6 +511,19 @@ export default {
       })
 
       this.searchResultsAttributes = searchResultsAttributes
+    },
+    generateMap (stuff) {
+      let map = []
+      stuff.forEach(el => {
+        if(!map[el]){
+          map[el] = el
+          map[el].count = 0
+        }
+        else {
+          map[el].count += 1
+        }
+      })
+      console.log(map)
     },
     getCompTypeLabels (entryTypes) {
       let that = this
@@ -550,13 +585,13 @@ export default {
         //   searchFilters.attributes = ''
         // }
       }
-      console.log(searchFilters)
 
       this.$http
         .post(
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
+          console.log(response)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -565,7 +600,8 @@ export default {
           var entryTypes = response.data.aggregations['sterms#by_category'].buckets
           this.getCompTypeLabels(entryTypes)
 
-          var attributesAggregation = response.data.aggregations['sterms#by_attribute_type'].buckets
+          var attributesAggregation = response.data.aggregations['nested#by_attribute_type']["top_hits#attribute"].hits.hits
+          console.log(attributesAggregation)
           this.parseAttributesFromSearchResponse(attributesAggregation)
 
           that.searchQueryIsDirty = false
