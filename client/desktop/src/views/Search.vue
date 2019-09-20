@@ -148,21 +148,22 @@
           >
           <!-- eslint-enable vue/no-use-v-if-with-v-for -->
             <div slot="header"
-              v-html="searchResultsAttributes[key].attributeTypeLabel + (searchResultsAttributes[key].attributeUnit ? ' (' + searchResultsAttributes[key].attributeUnit + ') ' : '')"
+              v-html="searchResultsAttributes[key].label + (searchResultsAttributes[key].attributeUnit ? ' (' + searchResultsAttributes[key].attributeUnit + ') ' : '')"
             >
             </div>
             <v-card>
               <v-container class="pt-0" fluid>
                 <!-- <attribute-range/> -->
                 <v-checkbox
-                  v-for="code in (searchResultsAttributes[key].codeMap)"
+                  v-for="code in (searchResultsAttributes[key].codes)"
                   :key="key + code"
                   v-model="filters.attributes"
                   :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].attributeTypeLabel, 'code': code })"
                   hide-details
                 >
                   <template slot="label">
-                    <div>{{ code }}</div>
+                    <!-- TODO: Write custom filter see main.js -->
+                    <div>{{ crushNumericString.crushNumericString(parseFloat(code)) }}</div>
                   </template>
                 </v-checkbox>
               </v-container>
@@ -329,7 +330,7 @@ import _ from 'lodash'
 import SearchBar from '../components/SearchBar'
 // import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
-import Vue from 'vue'
+import crushNumericString from '../util/crushNumericString'
 
 export default {
   name: 'SearchPage',
@@ -459,22 +460,25 @@ export default {
       }
 
       let source = {}
+      let codesMap = {}
 
+      // TODO: Think through logic better
       attributesAggregation.forEach(el =>{
         source = el._source
         if (!that.searchResultsAttributes.hasOwnProperty(source.type)){
           that.searchResultsAttributes[source.type] = {
-            codes: {}, 
+            codes: [], 
             label: source.typeLabel,
             attributeUnit: that.$store.state.attributeMap[source.type].attributeUnit,
           }
-          that.searchResultsAttributes[source.type].codes[source.label] = 1
+          that.searchResultsAttributes[source.type].codes.push(source.label)
+          codesMap[source.type] = {}
+          codesMap[source.type][source.label] = 0
         }
         else {
-          if(!that.searchResultsAttributes[source.type].codes.hasOwnProperty(source.label)){
-            that.searchResultsAttributes[source.type].codes[source.label] = 1
-          } else {
-            that.searchResultsAttributes[source.type].codes[source.label]++
+          if(!codesMap[source.type].hasOwnProperty(source.label)){
+            that.searchResultsAttributes[source.type].codes.push(source.label)
+            codesMap[source.type][source.label] = 0
           }
         }
       })
@@ -487,20 +491,9 @@ export default {
           attributeUnit: that.searchResultsAttributes[el].attributeUnit,
           type: el})
       })
+      that.attributeKeys = Object.keys(that.searchResultsAttributes).slice(0, 10)
+      console.log(that.searchResultsAttributes)
       console.log(that.attributeKeys)
-    },
-    generateMap (stuff) {
-      let map = []
-      stuff.forEach(el => {
-        if(!map[el]){
-          map[el] = el
-          map[el].count = 0
-        }
-        else {
-          map[el].count += 1
-        }
-      })
-      console.log(map)
     },
     getCompTypeLabels (entryTypes) {
       let that = this
