@@ -135,6 +135,7 @@
             {{ printAttribute(attr) }}
           </v-chip>
         </div>
+        <!-- FIXME: Data processing finished now need to update UI-->
         <div v-if="Object.keys(searchResultsAttributes).length !== 0">Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
         <v-expansion-panel class="mb-4" v-if="Object.keys(searchResultsAttributes).length !== 0">
@@ -328,6 +329,7 @@ import _ from 'lodash'
 import SearchBar from '../components/SearchBar'
 // import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
+import Vue from 'vue'
 
 export default {
   name: 'SearchPage',
@@ -449,7 +451,6 @@ export default {
       }
     },
     parseAttributesFromSearchResponse (attributesAggregation) {
-      // FIXME: updated backend, now need to be fixed.
       let that = this
       that.attributeKeys = []
 
@@ -458,41 +459,34 @@ export default {
       }
 
       let source = {}
-      let searchResultsAttributes = {}
-
-      console.log({'"this"':1})
-      let arr = {'this-this':1}
-      console.log(arr['this-this'])
-      console.log(arr['"this-this"'])
-      arr = []
-
 
       attributesAggregation.forEach(el =>{
         source = el._source
-        source.originalType = source.type
-        source.type = source.type.replace('-', '')
-        if (!searchResultsAttributes.hasOwnProperty(source.type)){
-          arr.push(source.type.toString())
-          searchResultsAttributes[source.type] = {
+        if (!that.searchResultsAttributes.hasOwnProperty(source.type)){
+          that.searchResultsAttributes[source.type] = {
             codes: {}, 
             label: source.typeLabel,
-            attributeUnit: that.$store.state.attributeMap[source.originalType].attributeUnit,
+            attributeUnit: that.$store.state.attributeMap[source.type].attributeUnit,
           }
-          searchResultsAttributes[source.type].codes[source.label] = 1
+          that.searchResultsAttributes[source.type].codes[source.label] = 1
         }
         else {
-          if(!searchResultsAttributes[source.type].codes.hasOwnProperty(source.label)){
-            searchResultsAttributes[source.type].codes[source.label] = 1
+          if(!that.searchResultsAttributes[source.type].codes.hasOwnProperty(source.label)){
+            that.searchResultsAttributes[source.type].codes[source.label] = 1
           } else {
-            searchResultsAttributes[source.type].codes[source.label]++
+            that.searchResultsAttributes[source.type].codes[source.label]++
           }
         }
       })
-      that.searchResultsAttributes = searchResultsAttributes
-      that.attributeKeys = Object.keys(searchResultsAttributes).slice(0, 10)
-      console.log(that.searchResultsAttributes)
-      console.log(searchResultsAttributes)
-      console.log(arr)
+
+      let showAttributes = Object.keys(that.searchResultsAttributes).slice(0, 10)
+      showAttributes.forEach (el => {
+        that.attributeKeys.push ({
+          codes: that.searchResultsAttributes[el].codes, 
+          label: that.searchResultsAttributes[el].label,
+          attributeUnit: that.searchResultsAttributes[el].attributeUnit,
+          type: el})
+      })
       console.log(that.attributeKeys)
     },
     generateMap (stuff) {
@@ -583,8 +577,7 @@ export default {
           var entryTypes = response.data.aggregations['sterms#by_category'].buckets
           this.getCompTypeLabels(entryTypes)
 
-          var attributesAggregation = response.data.aggregations['nested#by_attribute_type']["top_hits#attribute"].hits.hits
-          console.log(attributesAggregation)
+          var attributesAggregation = response.data.aggregations['nested#by_attribute_type']['top_hits#attribute'].hits.hits
           this.parseAttributesFromSearchResponse(attributesAggregation)
 
           that.searchQueryIsDirty = false
