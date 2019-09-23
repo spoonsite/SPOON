@@ -342,6 +342,10 @@ public class ElasticSearchManager
 		if (searchOptions == null) {
 			searchOptions = service.getSearchService().getGlobalSearchOptions();
 		}
+		if (searchOptions == null) {
+			searchOptions = new SearchOptions();
+			searchOptions.setDefaultSearchOptions();
+		}
 
 		IndexSearchResult indexSearchResult = new IndexSearchResult();
 
