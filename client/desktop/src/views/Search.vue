@@ -163,7 +163,8 @@
                 >
                   <template slot="label">
                     <!-- TODO: Write custom filter see main.js -->
-                    <div>{{ crushNumericString.crushNumericString(parseFloat(code)) }}</div>
+                    <!-- <div>{{ crushNumericString.crushNumericString(parseFloat(code)) }}</div> -->
+                    <div>{{ code | crushNumericString }}</div>
                   </template>
                 </v-checkbox>
               </v-container>
@@ -330,7 +331,6 @@ import _ from 'lodash'
 import SearchBar from '../components/SearchBar'
 // import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
-import crushNumericString from '../util/crushNumericString'
 
 export default {
   name: 'SearchPage',

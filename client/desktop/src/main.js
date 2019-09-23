@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router.js'
 import store from './store.js'
+import scientificToDecimal from './util/scientificToDecimal'
 
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
@@ -68,19 +69,70 @@ Vue.filter('formatDate', function (value, formatString) {
     return format(value, 'YYYY/MM/DD')
   }
 })
+
+Vue.filter('crushNumericString', function (inputNumber) {
+  // If inputNumber is not a number return.
+  if (isNaN(inputNumber)) {
+    return inputNumber
+  }
+  // If it contains an E or e don't touch it and return.
+  if (inputNumber.indexOf('E') !== -1) {
+    inputNumber = scientificToDecimal.scientificToDecimal(inputNumber)
+  }
+  if (inputNumber.indexOf('e') !== -1) {
+    inputNumber = scientificToDecimal.scientificToDecimal(inputNumber)
+  }
+
+  var magnitudeIsGreaterThanOne = false
+  var numberLength = inputNumber.length
+
+  // Is the absolute value of this number bigger than one?
+  if (Math.abs(inputNumber) > 1) {
+    magnitudeIsGreaterThanOne = true
+  }
+
+  // If it is take this route
+  if (magnitudeIsGreaterThanOne) {
+    if (inputNumber.indexOf('.') !== -1) {
+      if ((numberLength - inputNumber.indexOf('.')) > 5) {
+        return parseFloat(parseFloat(inputNumber.slice(0, inputNumber.indexOf('.') + 4)).toFixed(3))
+      }
+      return parseFloat(inputNumber)
+    }
+  }
+
+  // Otherwise take this route
+  if (!magnitudeIsGreaterThanOne) {
+    // Find first non zero thing after the decimal and show 3 decimal places after it.
+    var firstNonZeroIndex
+    for (var i = 0; i < numberLength; i++) {
+      if ((inputNumber[i] === '-') || (inputNumber[i] === '.') || (inputNumber[i] === '0')) {
+        continue
+      }
+      firstNonZeroIndex = i
+      break
+    }
+    if (numberLength - firstNonZeroIndex > 5) {
+      return parseFloat(parseFloat(inputNumber.slice(0, firstNonZeroIndex + 4)).toFixed(firstNonZeroIndex + 1))
+    }
+    return parseFloat(inputNumber)
+  }
+  return parseFloat(inputNumber)
+})
+
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)))
 store.dispatch('getSecurityPolicy')
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
-    // TODO: Fix accent color
     theme: {
       primary: store.state.branding.vuePrimaryColor,
       secondary: store.state.branding.vueSecondaryColor,
-      accent: store.state.branding.vueAccentColor,
+      accent: '#757575',
+      accentColor: store.state.branding.vueAccentColor,
       error: store.state.branding.vueErrorColor,
       info: store.state.branding.vueInfoColor,
       warning: store.state.branding.vueWarningColor,
-      success: store.state.branding.vueSuccessColor,
+      success: store.state.branding.vueSuccessColor
     }
   })
 
