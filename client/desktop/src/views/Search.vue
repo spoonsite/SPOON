@@ -138,14 +138,10 @@
         <div v-if="Object.keys(searchResultsAttributes).length !== 0">Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
         <v-expansion-panel class="mb-4" v-if="Object.keys(searchResultsAttributes).length !== 0">
-          <!-- need the v-if with the v-for because the data sometimes gets out of sync -->
-          <!-- eslint-disable vue/no-use-v-if-with-v-for -->
           <v-expansion-panel-content
             v-for="key in attributeKeys.slice(0,9)"
             :key="key"
-            v-if="searchResultsAttributes[key]"
           >
-          <!-- eslint-enable vue/no-use-v-if-with-v-for -->
             <div slot="header"
               v-html="searchResultsAttributes[key].label + (searchResultsAttributes[key].attributeUnit ? ' (' + searchResultsAttributes[key].attributeUnit + ') ' : '')"
             >
@@ -451,6 +447,7 @@ export default {
     parseAttributesFromSearchResponse (attributesAggregation) {
       let that = this
       that.attributeKeys = []
+      that.searchResultsAttributes = {}
 
       if (that.$store.state.attributeMap === undefined) {
         that.$store.dispatch('getAttributeMap')
@@ -458,14 +455,16 @@ export default {
 
       let source = {}
       let codesMap = {}
+      let unit = ''
 
       attributesAggregation.forEach(el => {
         source = el._source
         if (!that.searchResultsAttributes.hasOwnProperty(source.type)) {
+          unit = (that.$store.state.attributeMap[source.type] ? that.$store.state.attributeMap[source.type].attributeUnit : undefined)
           that.searchResultsAttributes[source.type] = {
             codes: [],
             label: source.typeLabel,
-            attributeUnit: that.$store.state.attributeMap[source.type].attributeUnit
+            attributeUnit: unit
           }
           that.searchResultsAttributes[source.type].codes.push(source.label)
           codesMap[source.type] = {}
