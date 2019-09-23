@@ -135,7 +135,6 @@
             {{ printAttribute(attr) }}
           </v-chip>
         </div>
-        <!-- FIXME: Data processing finished now need to update UI-->
         <div v-if="Object.keys(searchResultsAttributes).length !== 0">Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
         <v-expansion-panel class="mb-4" v-if="Object.keys(searchResultsAttributes).length !== 0">
@@ -162,8 +161,6 @@
                   hide-details
                 >
                   <template slot="label">
-                    <!-- TODO: Write custom filter see main.js -->
-                    <!-- <div>{{ crushNumericString.crushNumericString(parseFloat(code)) }}</div> -->
                     <div>{{ code | crushNumericString }}</div>
                   </template>
                 </v-checkbox>
@@ -462,38 +459,29 @@ export default {
       let source = {}
       let codesMap = {}
 
-      // TODO: Think through logic better
-      attributesAggregation.forEach(el =>{
+      attributesAggregation.forEach(el => {
         source = el._source
-        if (!that.searchResultsAttributes.hasOwnProperty(source.type)){
+        if (!that.searchResultsAttributes.hasOwnProperty(source.type)) {
           that.searchResultsAttributes[source.type] = {
-            codes: [], 
+            codes: [],
             label: source.typeLabel,
-            attributeUnit: that.$store.state.attributeMap[source.type].attributeUnit,
+            attributeUnit: that.$store.state.attributeMap[source.type].attributeUnit
           }
           that.searchResultsAttributes[source.type].codes.push(source.label)
           codesMap[source.type] = {}
           codesMap[source.type][source.label] = 0
-        }
-        else {
-          if(!codesMap[source.type].hasOwnProperty(source.label)){
+        } else {
+          if (!codesMap[source.type].hasOwnProperty(source.label)) {
             that.searchResultsAttributes[source.type].codes.push(source.label)
             codesMap[source.type][source.label] = 0
           }
         }
       })
 
-      let showAttributes = Object.keys(that.searchResultsAttributes).slice(0, 10)
-      showAttributes.forEach (el => {
-        that.attributeKeys.push ({
-          codes: that.searchResultsAttributes[el].codes, 
-          label: that.searchResultsAttributes[el].label,
-          attributeUnit: that.searchResultsAttributes[el].attributeUnit,
-          type: el})
-      })
-      that.attributeKeys = Object.keys(that.searchResultsAttributes).slice(0, 10)
-      console.log(that.searchResultsAttributes)
-      console.log(that.attributeKeys)
+      that.attributeKeys =
+          Object.keys(that.searchResultsAttributes)
+            .sort()
+            .slice(0, 10)
     },
     getCompTypeLabels (entryTypes) {
       let that = this
