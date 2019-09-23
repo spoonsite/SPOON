@@ -362,16 +362,21 @@
                   <tr
                   v-for="(attribute) in this.comparisonDataDisplay"
                   :key="attribute.name">
-                    <td
-                    v-for="(compAtt, position, col) in attribute"
-                    :class="changeTableClass(position)"
-                    :key="compAtt.name">
-                      {{ compAtt }}
-                      <span class="tooltip"
+                  <template>
+                     <td
+                      v-for="(compAtt, position) in attribute"
+                      :class="changeTableClass(position)"
+                      :key="compAtt.name">
+                        {{ compAtt }}
+                      </td>
+                  </template>
+                    <!-- <span v-tooltip="message">Bottom tooltip</span> -->
+
+                      <!-- <span
                       v-if="attribute.name != 'Attributes'">
-                        {{ attribute.name }} of {{ comparisonDataHeaders[col].text }}
-                      </span>
-                    </td>
+                        hello
+                        {{ attribute.name }} of {{ comparisonDataHeaders }}
+                      </span> -->
                   </tr>
                 </tbody>
               </table>
@@ -1004,12 +1009,14 @@ td.table-column:hover .tooltip {
 }
 th{
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  text-align: left;
 }
 .top-corner {
     font-weight: bold;
     font-size: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     border-right: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 20px;
 }
 .scrollable {
   overflow-x: scroll;
