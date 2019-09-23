@@ -44,6 +44,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
@@ -101,28 +102,6 @@ public class SearchServiceImpl
 		List<ComponentSearchView> components = getComponentService().getComponents();
 		list.addAll(components);
 		return list;
-	}
-
-	public SearchOptions getSearchOptions()
-	{
-		SearchOptions searchOptionsExample = new SearchOptions();
-		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
-		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
-		SearchOptions searchOptions = searchOptionsExample.find();
-
-		if (searchOptions == null) {
-			// Return the default.
-			searchOptions = new SearchOptions();
-			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
-			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
-			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
-		}
-		return searchOptions;
-	}
-
-	public void saveSearchOptions(SearchOptions searchOptions)
-	{
-		searchOptions.save();
 	}
 
 	@Override
@@ -527,28 +506,135 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public SearchOptions getGlobalSearchOptions() {
-		return null;
+	public SearchOptions getGlobalSearchOptions()
+	{
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		SearchOptions searchOptions = searchOptionsExample.find();
+
+		if (searchOptions == null) {
+			// Return the default.
+			searchOptions = new SearchOptions();
+			searchOptions.setUsername(null);
+			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
+			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
+			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
+		}
+		return searchOptions;
+	}
+
+	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions)
+	{
+
+		OSFCacheManager.getSearchCache().removeAll();
+
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		SearchOptions existing = searchOptionsExample.findProxy();
+
+		if (existing != null) {
+			searchOptions.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+			existing.updateFields(searchOptions);
+			getPersistenceService().persist(existing);
+		} else {
+			searchOptions.setSearchOptionsId(getPersistenceService().generateId());
+			searchOptions.setGlobalFlag(Boolean.TRUE);
+			searchOptions.setUsername(null);
+			searchOptions.setDefaultSearchOptions();
+			existing = getPersistenceService().persist(searchOptions);
+		}
+		return existing;
+	}
+
+	public SearchOptions getUserSearchOptions()
+	{
+
+		String username = SecurityUtil.getCurrentUserName();
+
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.FALSE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		searchOptionsExample.setUsername(username);
+		SearchOptions searchOptions = searchOptionsExample.find();
+
+		searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		searchOptions = searchOptionsExample.find();
+
+		if (searchOptions == null) {
+			// Return the default.
+			searchOptions = new SearchOptions();
+			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
+			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
+			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseTagsInSearch(Boolean.TRUE);
+			searchOptions.setCanUseAttributesInSearch(Boolean.TRUE);
+		}
+		return searchOptions;
+	}
+
+	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions)
+	{
+
+		Boolean forceCacheClear = false;
+		String username = SecurityUtil.getCurrentUserName();
+
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		searchOptionsExample.setUsername(username);
+		SearchOptions existing = searchOptionsExample.findProxy();
+
+		if (existing == null) {
+			forceCacheClear = true;
+			searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+			searchOptionsExample.setUsername(null);
+			existing = searchOptionsExample.findProxy();
+
+			if (existing == null) {
+				existing = new SearchOptions();
+				existing.setSearchOptionsId(getPersistenceService().generateId());
+				existing.setDefaultSearchOptions();
+			}
+		}
+
+		// If the search options changed clear the cache
+		if (!existing.compare(searchOptions) || forceCacheClear) {
+			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+			if (userSearchElementResult != null) {
+				@SuppressWarnings("unchecked")
+				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+
+				if (listOfKeys != null) {
+					for (String key : listOfKeys) {
+						OSFCacheManager.getSearchCache().remove(key);
+					}
+				}
+				Element afterDeletedKeys = new Element(username, null);
+				OSFCacheManager.getUserSearchCache().put(afterDeletedKeys);
+			}
+		}
+
+		forceCacheClear = false;
+
+		existing.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		existing.setUsername(username);
+		existing.setGlobalFlag(Boolean.FALSE);
+		existing.updateFields(searchOptions);
+		getPersistenceService().persist(existing);
+
+		return existing;
 	}
 
 	@Override
-	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions) {
-		return null;
+	public void indexFullComponents(List<ComponentAll> componentAlls)
+	{
+		if (!componentAlls.isEmpty()) {
+			SearchServerManager.getInstance().getSearchServer().indexFullComponents(componentAlls);
+			OSFCacheManager.getSearchCache().removeAll();
+		}
 	}
-
-	@Override
-	public SearchOptions getUserSearchOptions() {
-		return null;
-	}
-
-	@Override
-	public SearchOptions saveUserSearchOptions(SearchOptions searchOptions) {
-		return null;
-	}
-
-	@Override
-	public void indexFullComponents(List<ComponentAll> componentAlls) {
-
-	}
-
 }
