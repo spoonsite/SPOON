@@ -362,21 +362,16 @@
                   <tr
                   v-for="(attribute) in this.comparisonDataDisplay"
                   :key="attribute.name">
-                  <template>
                      <td
-                      v-for="(compAtt, position) in attribute"
+                      v-for="(compAtt, position, col) in attribute"
                       :class="changeTableClass(position)"
                       :key="compAtt.name">
                         {{ compAtt }}
-                      </td>
-                  </template>
-                    <!-- <span v-tooltip="message">Bottom tooltip</span> -->
-
-                      <!-- <span
+                      <span class="tooltip"
                       v-if="attribute.name != 'Attributes'">
-                        hello
-                        {{ attribute.name }} of {{ comparisonDataHeaders }}
-                      </span> -->
+                        {{ attribute.name }} of {{ comparisonDataHeaders[col].text }}
+                      </span>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -776,7 +771,6 @@ export default {
       for (var comp in this.comparisonList) {
         this.comparisonDataDisplay[0]['component' + comp] = this.comparisonList[comp].componentTypeDescription
       }
-      console.log(this.comparisonDataDisplay)
     },
     setDecimalSizeLimit (component, componentAttribute) {
       if (!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')) {
@@ -990,10 +984,10 @@ td.table-column:hover .tooltip {
   text-align: center;
   border-radius: 6px;
   padding: 5px;
-  position: relative;
   width: 200px;
   z-index: 1;
   display: block;
+  position: absolute;
 }
 .left-column {
   font-weight: bold;
