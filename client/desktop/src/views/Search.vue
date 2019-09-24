@@ -713,9 +713,10 @@ export default {
         for (var component in this.comparisonList) {
           for (var componentAttribute in this.comparisonList[component].attributes) {
             if (possibleAttributes[attribute] === this.comparisonList[component].attributes[componentAttribute].typeLabel) {
+              var unit = this.getAttributeUnit(possibleAttributes[attribute])
               this.comparisonDataDisplay[attribute]['name'] = possibleAttributes[attribute]
               this.setDecimalSizeLimit(component, componentAttribute)
-              this.comparisonDataDisplay[attribute]['component' + component] = this.comparisonList[component].attributes[componentAttribute].label
+              this.comparisonDataDisplay[attribute]['component' + component] = this.comparisonList[component].attributes[componentAttribute].label + unit
             }
           }
           if (!this.comparisonDataDisplay[attribute].hasOwnProperty('component' + component)) {
@@ -723,6 +724,14 @@ export default {
           }
         }
       }
+    },
+    getAttributeUnit(attributeCompared){
+      for (var attribute in this.searchResultsAttributes) {
+        if (this.searchResultsAttributes[attribute].attributeTypeLabel === attributeCompared && this.searchResultsAttributes[attribute].attributeUnit != null) {
+          return " " + this.searchResultsAttributes[attribute].attributeUnit
+        }
+      }
+      return ""
     },
     countNumberOfSimilarities () {
       for (var attribute in this.comparisonDataDisplay) {
