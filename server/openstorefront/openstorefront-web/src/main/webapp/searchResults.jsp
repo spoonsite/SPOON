@@ -293,7 +293,7 @@
 						if (foundVal != ""){
 							foundVal += ", ";
 						}
-						foundVal += CoreUtil.crushNumericString(entryAttribute.codeDescription);
+						foundVal += CoreUtil.crushNumericString(entryAttribute.code);
 					}
 				});
 
