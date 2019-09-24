@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Mar 05 08:06:39 MST 2019
+atlassian-httpclient-plugin-0.23.0-sources.jar>atlassian-public=
+atlassian-httpclient-plugin-0.23.0.jar>atlassian-public=
+atlassian-httpclient-plugin-0.23.0.pom>atlassian-public=

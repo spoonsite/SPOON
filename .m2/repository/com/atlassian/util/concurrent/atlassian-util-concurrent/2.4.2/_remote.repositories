@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Mar 05 08:06:36 MST 2019
+atlassian-util-concurrent-2.4.2.jar>atlassian-public=
+atlassian-util-concurrent-2.4.2-sources.jar>atlassian-public=
+atlassian-util-concurrent-2.4.2.pom>atlassian-public=
