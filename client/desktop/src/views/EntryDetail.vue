@@ -135,7 +135,7 @@
         <v-expansion-panel-content>
           <div slot="header"><h2>Submission Comments</h2></div>
             <div class="comments">
-            <v-btn color="accent" @click="goToComments()">Go To Comments</v-btn>
+            <v-btn @click="goToComments()">Go To Comments</v-btn>
             </div>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -148,7 +148,7 @@
             <h2>Reviews</h2>
             <strong>Average User Rating:</strong>
             <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
-            <v-btn style="margin-bottom: 1em;" color="white" @click="writeReviewDialog = true">Write a Review</v-btn>
+            <v-btn style="margin-bottom: 1em;" @click="writeReviewDialog = true">Write a Review</v-btn>
           </div>
           <div v-if="detail.reviews && detail.reviews.length !== 0">
             <div
@@ -207,7 +207,7 @@
       <v-expansion-panel class="questions-wrapper">
         <v-expansion-panel-content>
           <div slot="header"><h2>Questions and Answers</h2></div>
-          <v-btn color="white" @click="askQuestionDialog = true">Ask a Question</v-btn>
+          <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
           <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
           <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
         </v-expansion-panel-content>
@@ -722,6 +722,7 @@ export default {
     margin: 15px;
     height: auto;
     width: auto;
+    max-width: 95vw;
   }
   .no-media {
     display: flex;

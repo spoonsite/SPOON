@@ -117,7 +117,6 @@ export default {
   .lightboxControl {
     bottom: 0%;
     position: fixed;
-    width: 100%;
     z-index: 999;
     text-align: center;
     background-color: rgba(39, 39, 39, 0.7);
@@ -138,6 +137,7 @@ export default {
     text-align: center;
   }
   .mediaImage {
+    min-width: 20vw;
     width: auto;
     height: 100%;
     max-width: 500px;
