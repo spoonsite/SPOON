@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Mar 05 08:06:35 MST 2019
+jira-rest-java-client-api-4.0.0-sources.jar>atlassian-public=
+jira-rest-java-client-api-4.0.0.jar>atlassian-public=
+jira-rest-java-client-api-4.0.0.pom>atlassian-public=
