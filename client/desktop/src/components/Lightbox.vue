@@ -116,6 +116,7 @@ export default {
   }
   .lightboxControl {
     bottom: 0%;
+    width: 100%;
     position: fixed;
     z-index: 999;
     text-align: center;
