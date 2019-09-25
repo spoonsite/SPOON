@@ -542,6 +542,7 @@ export default {
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
+          console.log(response)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -603,6 +604,8 @@ export default {
       if (attr === null) {
         attr.unit = ''
       }
+      console.log(attr)
+      console.log(`${attributeType.description} : ${attr.code} ${attributeType.attributeUnit}`)
       return `${attributeType.description} : ${attr.code} ${attributeType.attributeUnit}`
     },
     copyUrlToClipboard () {

@@ -59,6 +59,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -82,6 +83,9 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
+import org.elasticsearch.index.query.NestedQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
@@ -651,6 +655,8 @@ public class ElasticSearchManager
 			}
 		}
 
+		//FIXME: organizations
+
 		BoolQueryBuilder boolQueryBuilderComponentTypes = QueryBuilders.boolQuery();
 		if(searchFilters.getComponentTypes() != null){
 			if(!searchFilters.getComponentTypes().isEmpty()){
@@ -668,10 +674,11 @@ public class ElasticSearchManager
 		if(searchFilters.getAttributes() != null){
 			if(!searchFilters.getAttributes().isEmpty()){
 				for(AttributeSearchType type : searchFilters.getAttributeSearchType()){
-					BoolQueryBuilder boolQueryBuilderAttributeTypes = QueryBuilders.boolQuery();
-					boolQueryBuilderAttributeTypes.should(QueryBuilders.matchPhraseQuery("attributes.type", type.getType()));
-					boolQueryBuilderAttributeTypes.should(QueryBuilders.matchPhraseQuery("attributes.code", type.getCode()));
-					boolQueryBuilderAttributes.should(boolQueryBuilderAttributeTypes);
+					QueryBuilder boolQueryBuilderAttributeTypes = QueryBuilders.boolQuery()
+								.must(QueryBuilders.matchQuery("attributes.type", type.getType()))
+								.must(QueryBuilders.matchQuery("attributes.code", type.getCode()));
+					NestedQueryBuilder nestedQueryBuilder = QueryBuilders.nestedQuery("attributes", boolQueryBuilderAttributeTypes, ScoreMode.Avg);
+					boolQueryBuilderAttributes.must(nestedQueryBuilder);
 				}
 			}
 		}
