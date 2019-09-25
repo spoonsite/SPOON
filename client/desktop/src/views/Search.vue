@@ -451,9 +451,12 @@ export default {
       }
 
       let source = {}
-      let codesMap = {}
       let unit = ''
 
+      // This is a map to increase speed of building the searchResultsAttributes dict
+      let codesMap = {}
+
+      // Iterate over each returned attribute and make an entry in the dict or add a code if the entry already exists
       attributesAggregation.forEach(el => {
         source = el._source
         if (!that.searchResultsAttributes.hasOwnProperty(source.type)) {
@@ -474,6 +477,7 @@ export default {
         }
       })
 
+      // Get the first 10 attributes
       that.attributeKeys =
           Object.keys(that.searchResultsAttributes)
             .sort()
@@ -604,8 +608,6 @@ export default {
       if (attr === null) {
         attr.unit = ''
       }
-      console.log(attr)
-      console.log(`${attributeType.description} : ${attr.code} ${attributeType.attributeUnit}`)
       return `${attributeType.description} : ${attr.code} ${attributeType.attributeUnit}`
     },
     copyUrlToClipboard () {

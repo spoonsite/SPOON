@@ -83,7 +83,6 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -655,7 +654,10 @@ public class ElasticSearchManager
 			}
 		}
 
-		//FIXME: organizations
+		BoolQueryBuilder boolQueryBuilderOrganization = QueryBuilders.boolQuery();
+		if(searchFilters.getOrganization() != null && searchFilters.getOrganization() != ""){
+			boolQueryBuilderOrganization.must(QueryBuilders.matchPhraseQuery("organization", searchFilters.getOrganization()));
+		}
 
 		BoolQueryBuilder boolQueryBuilderComponentTypes = QueryBuilders.boolQuery();
 		if(searchFilters.getComponentTypes() != null){
@@ -669,7 +671,6 @@ public class ElasticSearchManager
 			}
 		}
 
-		// FIXME: Issue with mapping, needs to use nested models for this to work
 		BoolQueryBuilder boolQueryBuilderAttributes = QueryBuilders.boolQuery();
 		if(searchFilters.getAttributes() != null){
 			if(!searchFilters.getAttributes().isEmpty()){
@@ -693,6 +694,10 @@ public class ElasticSearchManager
 		}
 
 		BoolQueryBuilder finalQuery = QueryBuilders.boolQuery();
+
+		if(boolQueryBuilderOrganization.hasClauses()){
+			finalQuery.must(boolQueryBuilderOrganization);
+		}
 
 		if(boolQueryBuilderComponentTypes.hasClauses()){
 			finalQuery.must(boolQueryBuilderComponentTypes);
