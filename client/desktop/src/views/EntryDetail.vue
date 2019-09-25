@@ -93,8 +93,6 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
 
-      <v-divider></v-divider>
-
       <v-expansion-panel class=attributes-wrapper value="1">
         <v-expansion-panel-content>
           <div slot="header"><h2>Attributes</h2></div>
@@ -115,8 +113,6 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
 
-      <v-divider></v-divider>
-
       <v-expansion-panel class="resources-wrapper">
         <v-expansion-panel-content>
           <div slot="header"><h2>Resources</h2></div>
@@ -136,18 +132,14 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
 
-      <v-divider></v-divider>
-
       <v-expansion-panel v-if="commentsViewable" text-xs-center class="comments-wrapper">
         <v-expansion-panel-content>
           <div slot="header"><h2>Submission Comments</h2></div>
-            <div class="comments">
+          <div class="comments">
             <v-btn @click="goToComments()">Go To Comments</v-btn>
-            </div>
+          </div>
         </v-expansion-panel-content>
       </v-expansion-panel>
-
-      <v-divider></v-divider>
 
       <v-expansion-panel class="reviews-wrapper">
         <v-expansion-panel-content>
@@ -209,7 +201,121 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
 
-      <v-divider></v-divider>
+      <v-dialog
+      v-model="writeReviewDialog"
+      max-width="500px"
+      >
+      <v-card>
+        <v-card-title>
+          <h2 class="w-100">Write a Review</h2>
+          <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
+          <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
+        </v-card-title>
+
+        <v-form v-model="reviewValid">
+
+        <v-container>
+          <v-text-field
+            v-model="newReview.title"
+            :rules="reviewTitleRules"
+            :counter="255"
+            label="Title"
+            required
+          ></v-text-field>
+
+          <p>
+            <strong>Rating*</strong>
+          </p>
+
+          <star-rating
+            v-model="newReview.rating"
+            :rating="newReview.rating"
+            :read-only="false"
+            :increment="1"
+            :star-size="30"
+          ></star-rating>
+
+          <v-spacer style="height: 1.5em"></v-spacer>
+
+          <p>
+            <strong>Last date asset was used*</strong>
+          </p>
+
+          <v-text-field
+            v-model="newReview.lastUsed"
+            :rules="lastUsedRules"
+            label="Last Used"
+            readonly
+            required
+            disabled
+            solo
+          ></v-text-field>
+
+          <v-date-picker
+            v-model="newReview.lastUsed"
+            :allowed-dates="todaysDateFormatted"
+            no-title
+            reactive
+            full-width
+          >
+            <v-spacer></v-spacer>
+            <v-btn flat color="accent" @click="newReview.lastUsed=''">Cancel</v-btn>
+          </v-date-picker>
+
+          <v-spacer style="height: 1em"></v-spacer>
+
+          <v-select
+            v-model="newReview.timeUsed"
+            :items="timeSelectOptions"
+            :rules="timeUsedRules"
+            label="How long have you used it"
+            required
+          ></v-select>
+
+          <v-select
+            v-model="newReview.pros"
+            :items="prosSelectOptions"
+            label="Pros"
+            chips
+            multiple
+          ></v-select>
+
+          <v-select
+            v-model="newReview.cons"
+            :items="consSelectOptions"
+            label="Cons"
+            chips
+            multiple
+          ></v-select>
+
+          <p>
+            Comment: <span v-if="newReview.comment === ''" class="red--text">comment is required *</span>
+          </p>
+
+          <quill-editor
+            style="background-color: white;"
+            v-model="comment"
+            :rules="commentRules"
+            required
+          ></quill-editor>
+
+        </v-container>
+          <v-card-actions>
+            <v-btn :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
+            <v-btn @click="writeReviewDialog = false; newReview.comment='';">Cancel</v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="deleteReviewDialog">
+      <v-card>
+        <v-card-title>Confirm Review Deletion</v-card-title>
+        <v-btn @click="deleteReviewConfirmation()">OK</v-btn>
+        <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
+      </v-card>
+    </v-dialog>
+
 
       <v-expansion-panel class="questions-wrapper">
         <v-expansion-panel-content>
@@ -241,8 +347,6 @@
         </v-card>
       </v-dialog>
 
-      <v-divider></v-divider>
-
       <v-expansion-panel class="contacts-wrapper">
         <v-expansion-panel-content>
           <div slot="header"><h2>Contacts</h2></div>
@@ -268,7 +372,6 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
 
-      <v-divider></v-divider>
     </div>
     <v-footer color="primary" dark height="auto" display="flex" style="justify-content: center;">
       <v-card color="primary" dark flat class="footer-wrapper">
@@ -795,7 +898,7 @@ export default {
     flex-direction: column;
   }
   .dates {
-    padding: 10px 0px 10px 15px;
+    padding: 10px 0px 0px 15px;
   }
   .date {
     padding-bottom: 10px;
@@ -811,7 +914,9 @@ export default {
   .reviews-wrapper,
   .questions-wrapper,
   .contacts-wrapper {
-    padding: 0px 15px 10px 15px;
+    padding: 0px 5% 10px 5%;
+    box-shadow: none;
+    width: 100%;
   }
   .description, .attributes, .resources, .comments {
     padding: 10px;
