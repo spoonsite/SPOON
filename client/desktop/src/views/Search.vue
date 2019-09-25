@@ -81,7 +81,7 @@
           class="pb-3"
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="deleteTag(data.item.key)" >
+            <v-chip close small @input="removeTag(data.item.key)" >
               <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
               {{ data.item.key}}
             </v-chip>
@@ -388,7 +388,7 @@ export default {
     },
     removeTag (tag) {
       this.filters.tags = this.filters.tags.filter(el => {
-        return el !== tag
+        return el.key !== tag
       })
     },
     removeComponent (component) {
@@ -431,9 +431,6 @@ export default {
       this.searchPageSize = 10
       this.searchSortField = 'searchScore'
       this.searchSortOrder = 'DESC'
-    },
-    deleteTag (tag) {
-      this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
     },
     deleteComponent (component) {
       let filteredEntryTypes = _.remove(this.$store.state.componentTypeList, n => n !== component)
