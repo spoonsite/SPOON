@@ -203,18 +203,18 @@ public class ValidationUtil
 							//simple case
 							for (BaseRule rule : RULES) {
 								//Stanize if requested
-								if (validateModel.getSantize()) {
-									Sanitize santizers = field.getAnnotation(Sanitize.class);
-									if (santizers != null) {
-										for (Class<? extends Sanitizer> sanitizeClass : santizers.value()) {
+								if (validateModel.getSanitize()) {
+									Sanitize sanitizers = field.getAnnotation(Sanitize.class);
+									if (sanitizers != null) {
+										for (Class<? extends Sanitizer> sanitizeClass : sanitizers.value()) {
 											try {
-												Sanitizer santizer = sanitizeClass.newInstance();
+												Sanitizer sanitizer = sanitizeClass.newInstance();
 
 												@SuppressWarnings("unchecked")
 												Method method = dataClass.getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
 												Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
 
-												Object newValue = santizer.santize(returnObj);
+												Object newValue = sanitizer.sanitize(returnObj);
 
 												method = dataClass.getMethod("set" + StringUtils.capitalize(field.getName()), String.class);
 												method.invoke(validateModel.getDataObject(), newValue);

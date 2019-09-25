@@ -21,12 +21,12 @@ import org.apache.commons.lang3.StringUtils;
  * If blank (empty string) set the value to null
  * @author dshurtleff
  */
-public class BlankSantizer
+public class BlankSanitizer
 	extends Sanitizer
 {
 
 	@Override
-	public Object santize(Object fieldData)
+	public Object sanitize(Object fieldData)
 	{
 		if (fieldData == null) {
 			return fieldData;

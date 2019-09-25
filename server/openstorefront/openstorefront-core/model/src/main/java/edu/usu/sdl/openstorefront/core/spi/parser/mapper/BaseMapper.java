@@ -93,7 +93,7 @@ public abstract class BaseMapper<T>
 		AttributeType attributeType = new AttributeType();
 
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-		String key = sanitizer.santize(attributeTypeCode.toUpperCase()).toString();
+		String key = sanitizer.sanitize(attributeTypeCode.toUpperCase()).toString();
 
 		attributeType.setAttributeType(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
 		attributeType.setDescription(StringUtils.left(attributeTypeCode, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
@@ -132,7 +132,7 @@ public abstract class BaseMapper<T>
 		attributeCodePk.setAttributeCode(attributeCode);
 
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-		String key = sanitizer.santize(attributeCode).toString();
+		String key = sanitizer.sanitize(attributeCode).toString();
 		attributeCodePk.setAttributeCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT));
 
 		AttributeCode attributeCodeFound = new AttributeCode();

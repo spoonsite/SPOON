@@ -308,9 +308,9 @@ public class SubComponentServiceImpl
 
 		ValidationResult validationResult = checkComponentAttribute(attribute);
 
-		//Need to Santize the user code to match the attribute code after the code has been converted.
+		//Need to Sanitize the user code to match the attribute code after the code has been converted.
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-		String sanitizedCode = (String) sanitizer.santize(attribute.getComponentAttributePk().getAttributeCode());
+		String sanitizedCode = (String) sanitizer.sanitize(attribute.getComponentAttributePk().getAttributeCode());
 		attribute.getComponentAttributePk().setAttributeCode(sanitizedCode);
 
 		if (validationResult.valid()) {

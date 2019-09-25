@@ -336,7 +336,7 @@ public class AttributeServiceImpl
 	private String attributeLabelToCode(String code)
 	{
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-		return sanitizer.santize(StringUtils.left(code.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+		return sanitizer.sanitize(StringUtils.left(code.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
 	}
 
 	@Override

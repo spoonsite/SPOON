@@ -27,7 +27,7 @@ import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.validation.BlankSantizer;
+import edu.usu.sdl.openstorefront.validation.BlankSanitizer;
 import edu.usu.sdl.openstorefront.validation.Sanitize;
 import edu.usu.sdl.openstorefront.validation.TextSanitizer;
 import java.lang.reflect.Field;
@@ -66,14 +66,14 @@ public abstract class StandardEntity<T>
 	public static final String FIELD_UPDATE_USER = "updateUser";
 	public static final String FIELD_DATA_SENSITIVITY = "dataSensitivity";
 
-	@Sanitize({TextSanitizer.class, BlankSantizer.class})
+	@Sanitize({TextSanitizer.class, BlankSanitizer.class})
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = SecurityMarkingType.class)
 	@APIDescription("Security Classification")
 	@FK(SecurityMarkingType.class)
 	private String securityMarkingType;
 
-	@Sanitize({TextSanitizer.class, BlankSantizer.class})
+	@Sanitize({TextSanitizer.class, BlankSanitizer.class})
 	@ConsumeField
 	@ValidValueType(value = {}, lookupClass = DataSensitivity.class)
 	@APIDescription("Data Sensitivity")

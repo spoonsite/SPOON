@@ -393,7 +393,7 @@ public class MongoPersistenceServiceImpl
 			updatePKFieldValue(entity);
 
 			ValidationModel validationModel = new ValidationModel(entity);
-			validationModel.setSantize(false);
+			validationModel.setSanitize(false);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				MongoCollection<T> collection = queryUtil.getCollectionForEntity(entity);

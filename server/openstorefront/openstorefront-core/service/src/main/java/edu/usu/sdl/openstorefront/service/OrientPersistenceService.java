@@ -949,7 +949,7 @@ public class OrientPersistenceService
 			updatePKFieldValue(entity);
 
 			ValidationModel validationModel = new ValidationModel(entity);
-			validationModel.setSantize(false);
+			validationModel.setSanitize(false);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				t = db.save(entity);

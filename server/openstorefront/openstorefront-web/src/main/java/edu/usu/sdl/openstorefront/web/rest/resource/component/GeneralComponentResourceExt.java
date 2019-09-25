@@ -305,7 +305,7 @@ public abstract class GeneralComponentResourceExt
 	)
 	{
 		TextSanitizer sanitizer = new TextSanitizer();
-		search = (String) sanitizer.santize(search);
+		search = (String) sanitizer.sanitize(search);
 		return service.getComponentService().getTypeahead(search);
 	}
 
