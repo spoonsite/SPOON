@@ -125,14 +125,14 @@ store.dispatch('getSecurityPolicy')
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
     theme: {
-      primary: store.state.branding.vuePrimaryColor,
-      secondary: store.state.branding.vueSecondaryColor,
+      primary: (store.state.branding.vuePrimaryColor ? store.state.branding.vuePrimaryColor : '#252931'),
+      secondary: (store.state.branding.vueSecondaryColor ? store.state.branding.vueSecondaryColor : '#183a4c'),
       accent: '#757575',
-      accentColor: store.state.branding.vueAccentColor,
-      error: store.state.branding.vueErrorColor,
-      info: store.state.branding.vueInfoColor,
-      warning: store.state.branding.vueWarningColor,
-      success: store.state.branding.vueSuccessColor
+      accentColor: (store.state.branding.vueAccentColor ? store.state.branding.vueAccentColor : '#f8c533'),
+      error: (store.state.branding.vueErrorColor ? store.state.branding.vueAccentColor : '#c62828'),
+      info: (store.state.branding.vueInfoColor ? store.state.branding.vueInfoColor : '#3f51b5'),
+      warning: (store.state.branding.vueWarningColor ? store.state.branding.vueWarningColor : '#ffa000'),
+      success: (store.state.branding.vueSuccessColor ? store.state.branding.vueSuccessColor : '#388e3c')
     }
   })
 
