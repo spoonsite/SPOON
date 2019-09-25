@@ -34,16 +34,26 @@
         </div>
         <div class="detail-header-body">
           <div class="detail-header-left">
-            <v-chip small class="organization">
+            <!-- <p class="organization">
               <v-icon small class="org-icon">fas fa-university</v-icon> {{ detail.organization }}
-            </v-chip>
+            </p>
             <div class="comp-type">
-              <v-chip v-if='detail.componentTypeLabel.includes(">")' style="padding: 2px 0px;">
+              <p v-if='detail.componentTypeLabel.includes(">")' style="padding: 2px 0px;">
                 {{ getFirstCompType(detail.componentTypeLabel) }}<br>{{ getSecondCompType(detail.componentTypeLabel) }}
-              </v-chip>
+              </p>
               <v-chip v-else small>
                 {{ detail.componentTypeLabel }}
               </v-chip>
+            </div> -->
+            
+            <div class="dates">
+              <p class="date"><strong>Organization:</strong> {{ detail.organization }}
+              <p class="date" v-if='detail.componentTypeLabel.includes(">")'>
+                <strong>Category:</strong>
+                {{ detail.componentTypeLabel }}
+                <!-- {{ getFirstCompType(detail.componentTypeLabel) }}{{ getSecondCompType(detail.componentTypeLabel) }}</p> -->
+              <p class="date"><strong>Last Updated:</strong> {{ detail.lastActivityDts | formatDate}}</p>
+              <p class="date"><strong>Approved Date:</strong> {{ detail.approvedDate | formatDate}}</p>
             </div>
             <div
                 style="padding-bottom: 1em;"
@@ -59,11 +69,8 @@
                 {{ tag.text }}
               </span>
             </div>
-            <div class="dates">
-              <p class="date"><strong>Last Updated:</strong> {{ detail.lastActivityDts | formatDate}}</p>
-              <p class="date"><strong>Approved Date:</strong> {{ detail.approvedDate | formatDate}}</p>
-            </div>
           </div>
+          
           <div class="detail-header-right">
             <v-switch class="watching" color="success" :label="watchSwitch ? 'Watching' : 'Not Watching'" v-model="watchSwitch"></v-switch>
             <p>
