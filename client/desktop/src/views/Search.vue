@@ -153,7 +153,7 @@
                   v-for="code in (searchResultsAttributes[key].codes)"
                   :key="key + code"
                   v-model="filters.attributes"
-                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].attributeTypeLabel, 'code': code })"
+                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].label, 'code': code })"
                   hide-details
                 >
                   <template slot="label">
@@ -538,9 +538,6 @@ export default {
           searchFilters.attributes.push(JSON.parse(attribute))
         })
         searchFilters.attributes = JSON.stringify(searchFilters.attributes)
-        // if(searchFilters.attributes === JSON.stringify([])){
-        //   searchFilters.attributes = ''
-        // }
       }
 
       this.$http
@@ -548,7 +545,6 @@ export default {
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
-          console.log(response)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
@@ -602,11 +598,15 @@ export default {
       this.filters.attributes = [...this.filters.attributes]
     },
     printAttribute (attribute) {
+      if (this.$store.state.attributeMap === undefined) {
+        this.$store.dispatch('getAttributeMap')
+      }
       let attr = this.$jsonparse(attribute)
+      let attributeType = this.$store.state.attributeMap[attr.type]
       if (attr === null) {
         attr.unit = ''
       }
-      return `${attr.typelabel} : ${attr.code} ${attr.unit}`
+      return `${attributeType.description} : ${attr.code} ${attributeType.attributeUnit}`
     },
     copyUrlToClipboard () {
       var urlBeginning
