@@ -45,9 +45,6 @@ The following key libraries were used in the development:
 
 ## 1.3 Dev Environment with NetBeans
 
-
-These steps need to be overridden!!! 
-
 1. First you need to install openjdk 8
     - Windows: https://github.com/ojdkbuild/ojdkbuild
     - Linux: ```sudo apt install openjdk-8-jdk```
