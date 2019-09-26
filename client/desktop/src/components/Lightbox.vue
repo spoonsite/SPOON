@@ -36,7 +36,7 @@
             <video controls v-else-if="currentItem.mediaTypeCode === 'VID'" :src="currentItem.link" class="lightboxImage elevation-6"></video>
             <p style="color: white;">
               Image {{ currentIndex + 1 }} of {{ list.length }}
-              <v-btn dark small flat icon :href="currentItem.link"><v-icon class="download-icon">fas fa-download</v-icon></v-btn>
+              <v-btn dark small flat icon :href="'openstorefront/'+currentItem.link"><v-icon class="download-icon">fas fa-download</v-icon></v-btn>
             </p>
           </div>
         </transition>
