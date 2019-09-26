@@ -34,24 +34,11 @@
         </div>
         <div class="detail-header-body">
           <div class="detail-header-left">
-            <!-- <p class="organization">
-              <v-icon small class="org-icon">fas fa-university</v-icon> {{ detail.organization }}
-            </p>
-            <div class="comp-type">
-              <p v-if='detail.componentTypeLabel.includes(">")' style="padding: 2px 0px;">
-                {{ getFirstCompType(detail.componentTypeLabel) }}<br>{{ getSecondCompType(detail.componentTypeLabel) }}
-              </p>
-              <v-chip v-else small>
-                {{ detail.componentTypeLabel }}
-              </v-chip>
-            </div> -->
-            
             <div class="dates">
               <p class="date"><strong>Organization:</strong> {{ detail.organization }}
               <p class="date" v-if='detail.componentTypeLabel.includes(">")'>
                 <strong>Category:</strong>
                 {{ detail.componentTypeLabel }}
-                <!-- {{ getFirstCompType(detail.componentTypeLabel) }}{{ getSecondCompType(detail.componentTypeLabel) }}</p> -->
               <p class="date"><strong>Last Updated:</strong> {{ detail.lastActivityDts | formatDate}}</p>
               <p class="date"><strong>Approved Date:</strong> {{ detail.approvedDate | formatDate}}</p>
             </div>
@@ -70,7 +57,6 @@
               </span>
             </div>
           </div>
-          
           <div class="detail-header-right">
             <v-switch class="watching" color="success" :label="watchSwitch ? 'Watching' : 'Not Watching'" v-model="watchSwitch"></v-switch>
             <p>
@@ -315,7 +301,6 @@
         <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
       </v-card>
     </v-dialog>
-
 
       <v-expansion-panel class="questions-wrapper">
         <v-expansion-panel-content>
@@ -734,18 +719,6 @@ export default {
     },
     todaysDateFormatted (val) {
       return !isFuture(val)
-    },
-    getFirstCompType (componentType) {
-      var index = componentType.indexOf('>')
-      if (index !== -1) {
-        return componentType.slice(0, index)
-      }
-    },
-    getSecondCompType (componentType) {
-      var index = componentType.indexOf('>')
-      if (index !== -1) {
-        return componentType.slice(index)
-      }
     }
   },
   watch: {
@@ -884,11 +857,8 @@ export default {
     display: flex;
     flex-wrap: wrap;
   }
-  .organization, .comp-type, .tags {
+  .tags {
     margin: 15px 0px 0px 15px;
-  }
-  .org-icon {
-    padding-right: 5px;
   }
   .detail-header-right {
     flex-grow: 1;
