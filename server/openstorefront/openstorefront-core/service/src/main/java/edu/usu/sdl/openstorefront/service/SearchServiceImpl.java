@@ -358,7 +358,7 @@ public class SearchServiceImpl
 
 				searchResult.getMeta().getResultOrganizationStats().addAll(organizationStats);
 				searchResult.getMeta().getResultTagStats().addAll(tagStats);
-				//searchResult.getMeta().getResultAttributeStats().addAll(attributeStats); // TODO: @Ryan Frazier broken on merge
+				searchResult.getMeta().setResultAttributeStats(attributeStats); // TODO: @Ryan Frazier broken on merge
 
 				List<ComponentSearchView> intermediateViews = new ArrayList<>(resultMap.values());
 
