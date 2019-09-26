@@ -195,6 +195,7 @@ export default {
   font-size: 140%;
   transition: box-shadow 0.7s;
   background-color: $white;
+  min-width: 100%;
 }
 .searchbar-button {
   border-radius: 2px;
