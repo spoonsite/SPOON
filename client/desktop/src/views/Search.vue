@@ -696,7 +696,7 @@ export default {
     },
     sortComparisonData () {
       this.deleteAllTableData()
-      this.comparisonDataHeaders.push({ text: 'Entry Name', value: 'name', sortable: false })
+      this.comparisonDataHeaders.push({ text: '', value: 'name', sortable: false })
       for (var component in this.comparisonList) {
         this.comparisonDataHeaders.push({ text: this.comparisonList[component].name, value: 'component' + component, sortable: false })
       }
@@ -725,13 +725,13 @@ export default {
         }
       }
     },
-    getAttributeUnit(attributeCompared){
+    getAttributeUnit (attributeCompared) {
       for (var attribute in this.searchResultsAttributes) {
         if (this.searchResultsAttributes[attribute].attributeTypeLabel === attributeCompared && this.searchResultsAttributes[attribute].attributeUnit != null) {
-          return " " + this.searchResultsAttributes[attribute].attributeUnit
+          return ' ' + this.searchResultsAttributes[attribute].attributeUnit
         }
       }
-      return ""
+      return ''
     },
     countNumberOfSimilarities () {
       for (var attribute in this.comparisonDataDisplay) {
