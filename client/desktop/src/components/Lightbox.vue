@@ -5,7 +5,7 @@
           v-if="item.mediaTypeCode === 'IMG' && index === 0"
           v-for="(item, index) in list"
           :key="item.link"
-          :src="'https://spoonsite.com/openstorefront/mobile/' + item.link"
+          :src="'https://spoonsite.com/openstorefront/' + item.link"
           class="mediaImage elevation-4"
           @click="lightboxOn(index)"
         >
@@ -32,7 +32,7 @@
         <transition name="swipe" keep-alive mode="out-in">
           <div :key="currentItem.link" style="margin-bottom: 3em;">
             <p style="color: white;">{{ currentItem.caption}}</p>
-            <img v-if="currentItem.mediaTypeCode === 'IMG'" :src="'https://spoonsite.com/openstorefront/mobile/' + currentItem.link" class="lightboxImage elevation-6">
+            <img v-if="currentItem.mediaTypeCode === 'IMG'" :src="'https://spoonsite.com/openstorefront/' + currentItem.link" class="lightboxImage elevation-6">
             <video controls v-else-if="currentItem.mediaTypeCode === 'VID'" :src="currentItem.link" class="lightboxImage elevation-6"></video>
             <p style="color: white;">
               Image {{ currentIndex + 1 }} of {{ list.length }}
