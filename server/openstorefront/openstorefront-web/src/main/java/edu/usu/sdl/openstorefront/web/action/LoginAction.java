@@ -134,21 +134,13 @@ public class LoginAction
 
 	private String startPage()
 	{
-		String startPage = "/Landing.action";
+		String startPage = "/desktop/index.html";
 
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
-			String userAgent = getContext().getRequest().getHeader(OpenStorefrontConstant.HEADER_USER_AGENT);
-			ReadableUserAgent readableUserAgent = UserAgentManager.parse(userAgent);
-			switch (readableUserAgent.getDeviceCategory().getCategory()) {
-				case SMARTPHONE:
-				case TABLET:
-					startPage = "/mobile/index.html";
-					break;
-				default:
-					startPage = userContext.userLandingPage();
-					break;
-			}
+			
+			startPage = userContext.userLandingPage();
+			
 		}
 
 		if (StringUtils.isNotBlank(gotoPage)) {
