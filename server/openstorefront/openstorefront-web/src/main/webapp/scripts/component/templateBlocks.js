@@ -301,7 +301,8 @@ Ext.define('OSF.component.template.Vitals', {
 						codeValue = item.preferredUnit.convertedValue;
 					} else if (item.unit){
 						unit = item.unit;
-					}					
+					}
+					codeValue = CoreUtil.crushNumericString(codeValue);
 					
 					var unitToShow = '';
 					if (unit) {
