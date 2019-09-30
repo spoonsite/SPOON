@@ -23,7 +23,6 @@
           :list="lightboxList"
           class="entry-media"
         ></Lightbox>
-        <p class="image-number">Image 1 of {{ detail.componentMedia.length }}</p>
       </div>
       <div v-else class="no-media">
         <i class="far fa-images fa-9x"></i>
@@ -807,7 +806,7 @@ export default {
     margin: 15px;
     height: auto;
     width: auto;
-    max-width: 95vw;
+    max-width: 500px;
   }
   .no-media {
     display: flex;
@@ -875,11 +874,6 @@ export default {
   .date {
     padding-bottom: 10px;
   }
-  .image-number {
-    font-weight: bold;
-    padding: 0px 0px 10px 5px;
-    text-align: center;
-  }
   .watching {
     margin: 0px;
     padding: 0px;
@@ -899,7 +893,6 @@ export default {
     padding: 10px;
     padding-left: 24px;
   }
-
   .spinner {
     margin-top: 7em;
   }

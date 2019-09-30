@@ -1,10 +1,11 @@
 <template>
-<div>
+  <div>
     <!-- MEDIA carousel -->
-        <img
+    <div v-for="(item, index) in list"
+    :key="item.link"
+    class="imageSizing">
+        <img 
           v-if="item.mediaTypeCode === 'IMG' && index === 0"
-          v-for="(item, index) in list"
-          :key="item.link"
           :src="'https://spoonsite.com/openstorefront/' + item.link"
           class="mediaImage elevation-4"
           @click="lightboxOn(index)"
@@ -16,6 +17,13 @@
           @click="lightboxOn(index)"
           style="display: inline-block;"
         ></video>
+        <p 
+        v-if="index === 0"
+        @click="lightboxOn(index)" 
+        class="image-number">
+          Image 1 of {{ list.length }}
+        </p>
+    </div>
 
     <!-- LIGHTBOX Popup -->
     <transition name="fade">
@@ -114,6 +122,14 @@ export default {
     background-color: rgba(71, 71, 71, 0.8);
     pointer-events: all;
   }
+  .imageSizing {
+    min-width: 100%;
+    width: auto;
+    height: 100%;
+    max-width: 500px;
+    max-height: 500px;
+    cursor: default;
+  }
   .lightboxControl {
     bottom: 0%;
     width: 100%;
@@ -141,7 +157,7 @@ export default {
     min-width: 20vw;
     width: auto;
     height: 100%;
-    max-width: 500px;
+    max-width: 100%;
     max-height: 500px;
     border: 3px solid #252931;
   }
@@ -163,5 +179,10 @@ export default {
   }
   .download-icon {
     font-size: 14px;
+  }
+  .image-number {
+    font-weight: bold;
+    text-align: center;
+    text-decoration: underline;
   }
 </style>
