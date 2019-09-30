@@ -134,7 +134,7 @@ public class LoginAction
 
 	private String startPage()
 	{
-		String startPage = "/desktop/index.html";
+		String startPage = "/";
 
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
