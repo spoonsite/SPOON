@@ -249,21 +249,12 @@ public class ElasticSearchManager
 					client.getInstance().indices().create(createIndexRequest, RequestOptions.DEFAULT);
 					LOG.log(Level.INFO, "Created index: " + INDEX);
 					updateMappingAttributes();
-					UpdateSettingsRequest request = new UpdateSettingsRequest("index1");
-					String settingKey = INDEX_INNER_WINDOW;
-					int settingValue = NUMBER_INNER_WINDOW_RETURN;
-					Settings settings =
-							Settings.builder()
-							.put(settingKey, settingValue)
-							.build();
-
-					request.settings(settings);
-					AcknowledgedResponse updateSettingsResponse = client.getInstance().indices().putSettings(request, RequestOptions.DEFAULT);
-					LOG.log(Level.INFO, "Updating Settings: ", Boolean.toString(updateSettingsResponse.isAcknowledged()));
-
+					updateElasticsearchSettings();
 				} catch (ElasticsearchException e){
 					LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 				}
+			} else {
+				updateElasticsearchSettings();
 			}
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
@@ -272,6 +263,29 @@ public class ElasticSearchManager
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 			indexCreated.set(false);
 		}
+	}
+
+	public Boolean updateElasticsearchSettings() {
+		try (ElasticSearchClient client = justGetClient();) {
+			UpdateSettingsRequest request = new UpdateSettingsRequest(INDEX);
+			String settingKey = INDEX_INNER_WINDOW;
+			int settingValue = NUMBER_INNER_WINDOW_RETURN;
+			Settings settings =
+					Settings.builder()
+					.put(settingKey, settingValue)
+					.build();
+
+			request.settings(settings);
+			AcknowledgedResponse updateSettingsResponse = client.getInstance().indices().putSettings(request, RequestOptions.DEFAULT);
+			Boolean acknowledged = updateSettingsResponse.isAcknowledged();
+			LOG.log(Level.INFO, "Updating Settings: ", Boolean.toString(acknowledged));
+			return acknowledged;
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+		} catch (OpenStorefrontRuntimeException e){
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+		}
+		return false;
 	}
 
 	public void updateMappingAttributes(){
@@ -444,6 +458,7 @@ public class ElasticSearchManager
 
 		SearchResponse response;
 		try (ElasticSearchClient client = singleton.getClient()) {
+			checkSearchIndexCreation();
 			response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);

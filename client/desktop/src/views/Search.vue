@@ -546,7 +546,6 @@ export default {
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
-          console.log(response)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets

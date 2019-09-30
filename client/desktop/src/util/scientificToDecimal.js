@@ -1,6 +1,6 @@
 export default {
-  /**
- * This method will change a string that is a number from scientific notation to decimal notation.
+/**
+ * Change number string in scientific notation (e.g. "12e-4") to decimal notation ("0.0012")
  * https://gist.github.com/jiggzson/b5f489af9ad931e3d186
  * @param {String} number
  * @returns {String} Number in decimal notation.
@@ -30,5 +30,61 @@ export default {
       }
     }
     return sign + number
+  },
+  /**
+ * This method will check if the inputNumber is actually a number
+ * and if it is, it will reduce it's length in a meaningful way.
+ * ParseFloat info found at https://stackoverflow.com/questions/3612744/remove-insignificant-trailing-zeros-from-a-number
+ * @param {String} inputNumber
+ * @returns {String} The modified string if able to modify, otherwise return original inputNumber
+ */
+  crushNumericString (inputNumber) {
+    // If inputNumber is not a number return.
+    if (isNaN(inputNumber)) {
+      return inputNumber
+    }
+    // If it contains an E or e don't touch it and return.
+    if (inputNumber.indexOf('E') !== -1) {
+      inputNumber = this.scientificToDecimal(inputNumber)
+    }
+    if (inputNumber.indexOf('e') !== -1) {
+      inputNumber = this.scientificToDecimal(inputNumber)
+    }
+
+    var magnitudeIsGreaterThanOne = false
+    var numberLength = inputNumber.length
+
+    // Is the absolute value of this number bigger than one?
+    if (Math.abs(inputNumber) > 1) {
+      magnitudeIsGreaterThanOne = true
+    }
+
+    // If it is take this route
+    if (magnitudeIsGreaterThanOne) {
+      if (inputNumber.indexOf('.') !== -1) {
+        if ((numberLength - inputNumber.indexOf('.')) > 5) {
+          return parseFloat(parseFloat(inputNumber.slice(0, inputNumber.indexOf('.') + 4)).toFixed(3))
+        }
+        return parseFloat(inputNumber)
+      }
+    }
+
+    // Otherwise take this route
+    if (!magnitudeIsGreaterThanOne) {
+      // Find first non zero thing after the decimal and show 3 decimal places after it.
+      var firstNonZeroIndex
+      for (var i = 0; i < numberLength; i++) {
+        if ((inputNumber[i] === '-') || (inputNumber[i] === '.') || (inputNumber[i] === '0')) {
+          continue
+        }
+        firstNonZeroIndex = i
+        break
+      }
+      if (numberLength - firstNonZeroIndex > 5) {
+        return parseFloat(parseFloat(inputNumber.slice(0, firstNonZeroIndex + 4)).toFixed(firstNonZeroIndex + 1))
+      }
+      return parseFloat(inputNumber)
+    }
+    return parseFloat(inputNumber)
   }
 }
