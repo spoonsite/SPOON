@@ -72,296 +72,299 @@
     <v-divider></v-divider>
 
     <div class="entry-details-bottom">
-      <v-expansion-panel class="description-wrapper" value="1">
-        <v-expansion-panel-content>
-          <div slot="header"><h2>Description</h2></div>
-          <div class="description" v-html="detail.description">
-          </div>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-
-      <v-expansion-panel class=attributes-wrapper value="1">
-        <v-expansion-panel-content>
-          <div slot="header"><h2>Attributes</h2></div>
-          <div class="attributes">
-            <v-data-table dense
-              :headers="attributeTableHeaders"
-              :items="detail.attributes"
-              hide-actions
-              item-key="name"
-            >
-              <template slot="items" slot-scope="props">
-                <td>{{ props.item.typeDescription }}</td>
-                <td>{{ props.item.codeDescription }}</td>
-                <td><span v-if="props.item.unit" v-html="props.item.unit"></span></td>
-              </template>
-            </v-data-table>
-          </div>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-
-      <v-expansion-panel class="resources-wrapper">
-        <v-expansion-panel-content>
-          <div slot="header"><h2>Resources</h2></div>
-          <div class="resources">
-            <div v-for="item in detail.resources"
-              :key="item.resourceId"
-            >
-              <strong >{{ item.resourceTypeDesc }}</strong>
-              <v-btn flat icon :href="baseURL+item.actualLink"><v-icon>link</v-icon></v-btn>
-              <div style="overflow-x: auto; white-space: nowrap;">
-                <a :href="item.link" style="display: block; margin-bottom: 0.5em;">
-                  <span v-if="item.description">{{ item.description }}</span><span v-else>{{ item.link }}</span>
-                </a>
-              </div>
+      <v-expansion-panels>
+        <v-expansion-panel class="description-wrapper" value="1">
+          <v-expansion-panel-content>
+            <div slot="header"><h2>Description</h2></div>
+            <div class="description grey lighten-4" v-html="detail.description">
             </div>
-          </div>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
 
-      <v-expansion-panel v-if="commentsViewable" text-xs-center class="comments-wrapper">
-        <v-expansion-panel-content>
-          <div slot="header"><h2>Submission Comments</h2></div>
-          <div class="comments">
-            <v-btn @click="goToComments()">Go To Comments</v-btn>
-          </div>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+        <v-expansion-panel class=attributes-wrapper value="1">
+          <v-expansion-panel-content>
+            <div slot="header"><h2>Attributes</h2></div>
+            <div class="attributes grey lighten-4">
+              <v-data-table dense
+                :headers="attributeTableHeaders"
+                :items="detail.attributes"
+                hide-actions
+                item-key="name"
+              >
+                <template slot="items" slot-scope="props">
+                  <td>{{ props.item.typeDescription }}</td>
+                  <td>{{ props.item.codeDescription }}</td>
+                  <td><span v-if="props.item.unit" v-html="props.item.unit"></span></td>
+                </template>
+              </v-data-table>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
 
-      <v-expansion-panel class="reviews-wrapper">
-        <v-expansion-panel-content>
-          <div slot="header">
-            <h2>Reviews</h2>
-          </div>
-          <div class="reviews">
-            <strong>Average User Rating:</strong>
-            <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
-            <v-btn style="margin-bottom: 1em;" @click="writeReviewDialog = true">Write a Review</v-btn>
-          </div>
-          <div v-if="detail.reviews && detail.reviews.length !== 0">
-            <div
-              v-for="review in detail.reviews"
-              :key="review.reviewId"
-            >
-              <div style="background-color: white; padding: 0.5em; margin-bottom: 1em;" class="elevation-2">
-                <h2>{{ review.title }}</h2>
-                <v-alert type="warning" :value="review.activeStatus === 'P'">This review is pending admin approval.</v-alert>
-                <p>
-                  <star-rating :rating="review.rating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
-                </p>
-                <p>{{ review.username + " (" + review.userTypeCode + ") - " }} {{ review.updateDate | formatDate }}</p>
-                <p class="reviewPar"><strong>Organization: </strong>{{ review.organization }}</p>
-                <p class="reviewPar"><strong>Experience: </strong>{{ review.userTimeDescription }}</p>
-                <p class="reviewPar"><strong>Last Used: </strong>{{ review.lastUsed | formatDate }}</p>
-                <div v-if="review.pros.length > 0 || review.cons.length > 0">
-                  <v-layout row justify-space-around>
-                    <v-flex v-if="review.pros.length > 0" xs4>
-                        <v-card-text class="px-0">
-                          <p><strong>Pros</strong></p>
-                          <li v-for="pro in review.pros" :key="pro.code">{{ pro.text }}</li>
-                        </v-card-text>
-                    </v-flex>
-                    <v-flex v-if="review.cons.length > 0" xs4>
-                        <v-card-text class="px-0">
-                          <p><strong>Cons</strong></p>
-                          <p v-for="cons in review.cons" :key="cons.code">{{ cons.text }}</p>
-                        </v-card-text>
-                    </v-flex>
-                  </v-layout>
+        <v-expansion-panel class="resources-wrapper">
+          <v-expansion-panel-content>
+            <div slot="header"><h2>Resources</h2></div>
+            <div class="resources grey lighten-4">
+              <div v-for="item in detail.resources"
+                :key="item.resourceId"
+              >
+                <strong >{{ item.resourceTypeDesc }}</strong>
+                <v-btn flat icon :href="baseURL+item.actualLink"><v-icon>link</v-icon></v-btn>
+                <div style="overflow-x: auto; white-space: nowrap;">
+                  <a :href="item.link" style="display: block; margin-bottom: 0.5em;">
+                    <span v-if="item.description">{{ item.description }}</span><span v-else>{{ item.link }}</span>
+                  </a>
                 </div>
-                <p class="reviewPar"><strong>Comments:</strong></p>
-                <p v-html="review.comment"></p>
-                <v-btn v-if="review.username === $store.state.currentUser.username"
-                  @click="editReviewSetup(review)"
-                  small
-                >Edit
-                </v-btn>
-                <v-btn v-if="review.username === $store.state.currentUser.username"
-                  @click="deleteReviewDialog=true; deleteRequestId=review.reviewId;"
-                  small
-                >Delete
-                </v-btn>
               </div>
             </div>
-          </div>
-          <div v-else class="reviews">
-            <p>There are no reviews for this entry.</p>
-          </div>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
 
-      <v-dialog
-      v-model="writeReviewDialog"
-      max-width="500px"
-      >
-      <v-card>
-        <v-card-title>
-          <h2 class="w-100">Write a Review</h2>
-          <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
-          <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
-        </v-card-title>
+        <v-expansion-panel v-if="commentsViewable" text-xs-center class="comments-wrapper">
+          <v-expansion-panel-content>
+            <div slot="header"><h2>Submission Comments</h2></div>
+            <div class="comments grey lighten-4">
+              <v-btn @click="goToComments()">Go To Comments</v-btn>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
 
-        <v-form v-model="reviewValid">
+        <v-expansion-panel class="reviews-wrapper">
+          <v-expansion-panel-content>
+            <div slot="header">
+              <h2>Reviews</h2>
+            </div>
+            <div class="reviews grey lighten-4">
+              <strong>Average User Rating:</strong>
+              <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
+              <v-btn style="margin-bottom: 1em;" @click="writeReviewDialog = true">Write a Review</v-btn>
+            </div>
+            <div v-if="detail.reviews && detail.reviews.length !== 0">
+              <div
+                v-for="review in detail.reviews"
+                :key="review.reviewId"
+              >
+                <div style="background-color: white; padding: 0.5em; margin-bottom: 1em;" class="elevation-2">
+                  <h2>{{ review.title }}</h2>
+                  <v-alert type="warning" :value="review.activeStatus === 'P'">This review is pending admin approval.</v-alert>
+                  <p>
+                    <star-rating :rating="review.rating" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
+                  </p>
+                  <p>{{ review.username + " (" + review.userTypeCode + ") - " }} {{ review.updateDate | formatDate }}</p>
+                  <p class="reviewPar"><strong>Organization: </strong>{{ review.organization }}</p>
+                  <p class="reviewPar"><strong>Experience: </strong>{{ review.userTimeDescription }}</p>
+                  <p class="reviewPar"><strong>Last Used: </strong>{{ review.lastUsed | formatDate }}</p>
+                  <div v-if="review.pros.length > 0 || review.cons.length > 0">
+                    <v-layout row justify-space-around>
+                      <v-flex v-if="review.pros.length > 0" xs4>
+                          <v-card-text class="px-0">
+                            <p><strong>Pros</strong></p>
+                            <li v-for="pro in review.pros" :key="pro.code">{{ pro.text }}</li>
+                          </v-card-text>
+                      </v-flex>
+                      <v-flex v-if="review.cons.length > 0" xs4>
+                          <v-card-text class="px-0">
+                            <p><strong>Cons</strong></p>
+                            <p v-for="cons in review.cons" :key="cons.code">{{ cons.text }}</p>
+                          </v-card-text>
+                      </v-flex>
+                    </v-layout>
+                  </div>
+                  <p class="reviewPar"><strong>Comments:</strong></p>
+                  <p v-html="review.comment"></p>
+                  <v-btn v-if="review.username === $store.state.currentUser.username"
+                    @click="editReviewSetup(review)"
+                    small
+                  >Edit
+                  </v-btn>
+                  <v-btn v-if="review.username === $store.state.currentUser.username"
+                    @click="deleteReviewDialog=true; deleteRequestId=review.reviewId;"
+                    small
+                  >Delete
+                  </v-btn>
+                </div>
+              </div>
+            </div>
+            <div v-else class="reviews grey lighten-4">
+              <p>There are no reviews for this entry.</p>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
 
-        <v-container>
-          <v-text-field
-            v-model="newReview.title"
-            :rules="reviewTitleRules"
-            :counter="255"
-            label="Title"
-            required
-          ></v-text-field>
-
-          <p>
-            <strong>Rating*</strong>
-          </p>
-
-          <star-rating
-            v-model="newReview.rating"
-            :rating="newReview.rating"
-            :read-only="false"
-            :increment="1"
-            :star-size="30"
-          ></star-rating>
-
-          <v-spacer style="height: 1.5em"></v-spacer>
-
-          <p>
-            <strong>Last date asset was used*</strong>
-          </p>
-
-          <v-text-field
-            v-model="newReview.lastUsed"
-            :rules="lastUsedRules"
-            label="Last Used"
-            readonly
-            required
-            disabled
-            solo
-          ></v-text-field>
-
-          <v-date-picker
-            v-model="newReview.lastUsed"
-            :allowed-dates="todaysDateFormatted"
-            no-title
-            reactive
-            full-width
-          >
-            <v-spacer></v-spacer>
-            <v-btn flat color="accent" @click="newReview.lastUsed=''">Cancel</v-btn>
-          </v-date-picker>
-
-          <v-spacer style="height: 1em"></v-spacer>
-
-          <v-select
-            v-model="newReview.timeUsed"
-            :items="timeSelectOptions"
-            :rules="timeUsedRules"
-            label="How long have you used it"
-            required
-          ></v-select>
-
-          <v-select
-            v-model="newReview.pros"
-            :items="prosSelectOptions"
-            label="Pros"
-            chips
-            multiple
-          ></v-select>
-
-          <v-select
-            v-model="newReview.cons"
-            :items="consSelectOptions"
-            label="Cons"
-            chips
-            multiple
-          ></v-select>
-
-          <p>
-            Comment: <span v-if="newReview.comment === ''" class="red--text">comment is required *</span>
-          </p>
-
-          <quill-editor
-            style="background-color: white;"
-            v-model="comment"
-            :rules="commentRules"
-            required
-          ></quill-editor>
-
-        </v-container>
-          <v-card-actions>
-            <v-btn :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
-            <v-btn @click="writeReviewDialog = false; newReview.comment='';">Cancel</v-btn>
-          </v-card-actions>
-        </v-form>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="deleteReviewDialog">
-      <v-card>
-        <v-card-title>Confirm Review Deletion</v-card-title>
-        <v-btn @click="deleteReviewConfirmation()">OK</v-btn>
-        <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
-      </v-card>
-    </v-dialog>
-
-      <v-expansion-panel class="questions-wrapper">
-        <v-expansion-panel-content>
-          <div slot="header"><h2>Questions and Answers</h2></div>
-          <div class="questions">
-            <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
-            <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
-            <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
-          </div>
-
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-      <v-dialog
-      v-model="askQuestionDialog"
-      >
+        <v-dialog
+        v-model="writeReviewDialog"
+        max-width="500px"
+        >
         <v-card>
           <v-card-title>
-            <h2 class="w-100">Ask a Question</h2>
+            <h2 class="w-100">Write a Review</h2>
             <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
             <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
           </v-card-title>
-          <v-card-text>
+
+          <v-form v-model="reviewValid">
+
+          <v-container>
+            <v-text-field
+              v-model="newReview.title"
+              :rules="reviewTitleRules"
+              :counter="255"
+              label="Title"
+              required
+            ></v-text-field>
+
+            <p>
+              <strong>Rating*</strong>
+            </p>
+
+            <star-rating
+              v-model="newReview.rating"
+              :rating="newReview.rating"
+              :read-only="false"
+              :increment="1"
+              :star-size="30"
+            ></star-rating>
+
+            <v-spacer style="height: 1.5em"></v-spacer>
+
+            <p>
+              <strong>Last date asset was used*</strong>
+            </p>
+
+            <v-text-field
+              v-model="newReview.lastUsed"
+              :rules="lastUsedRules"
+              label="Last Used"
+              readonly
+              required
+              disabled
+              solo
+            ></v-text-field>
+
+            <v-date-picker
+              v-model="newReview.lastUsed"
+              :allowed-dates="todaysDateFormatted"
+              no-title
+              reactive
+              full-width
+            >
+              <v-spacer></v-spacer>
+              <v-btn flat color="accent" @click="newReview.lastUsed=''">Cancel</v-btn>
+            </v-date-picker>
+
+            <v-spacer style="height: 1em"></v-spacer>
+
+            <v-select
+              v-model="newReview.timeUsed"
+              :items="timeSelectOptions"
+              :rules="timeUsedRules"
+              label="How long have you used it"
+              required
+            ></v-select>
+
+            <v-select
+              v-model="newReview.pros"
+              :items="prosSelectOptions"
+              label="Pros"
+              chips
+              multiple
+            ></v-select>
+
+            <v-select
+              v-model="newReview.cons"
+              :items="consSelectOptions"
+              label="Cons"
+              chips
+              multiple
+            ></v-select>
+
+            <p>
+              Comment: <span v-if="newReview.comment === ''" class="red--text">comment is required *</span>
+            </p>
+
             <quill-editor
-            style="background-color: white;"
-            v-model="newQuestion"
+              style="background-color: white;"
+              v-model="comment"
+              :rules="commentRules"
+              required
             ></quill-editor>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn @click="submitQuestion()">Submit</v-btn>
-            <v-btn @click="askQuestionDialog = false; newQuestion = '';">Cancel</v-btn>
-          </v-card-actions>
+
+          </v-container>
+            <v-card-actions>
+              <v-btn :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
+              <v-btn @click="writeReviewDialog = false; newReview.comment='';">Cancel</v-btn>
+            </v-card-actions>
+          </v-form>
         </v-card>
       </v-dialog>
 
-      <v-expansion-panel class="contacts-wrapper">
-        <v-expansion-panel-content>
-          <div slot="header"><h2>Contacts</h2></div>
+      <v-dialog v-model="deleteReviewDialog">
+        <v-card>
+          <v-card-title>Confirm Review Deletion</v-card-title>
+          <v-btn @click="deleteReviewConfirmation()">OK</v-btn>
+          <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
+        </v-card>
+      </v-dialog>
+
+        <v-expansion-panel class="questions-wrapper">
+          <v-expansion-panel-content>
+            <div slot="header"><h2>Questions and Answers</h2></div>
+            <div class="questions grey lighten-4">
+              <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
+              <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
+              <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
+            </div>
+
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-dialog
+        v-model="askQuestionDialog"
+        >
           <v-card>
-            <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
-              <h2>Points of Contact</h2>
-              <div
-                v-for="contact in detail.contacts"
-                :key="contact.contactId"
-              >
-                <hr>
-                <p class="contactPar"><strong>Name: </strong>{{ contact.name }}</p>
-                <p class="contactPar"><strong>Organization: </strong>{{ contact.organization }}</p>
-                <p class="contactPar"><strong>Position: </strong>{{ contact.positionDescription }}</p>
-                <p class="contactPar"><strong>Phone: </strong><a :href="`tel: ${contact.phone}`">{{ contact.phone }}</a></p>
-                <p class="contactPar"><strong>Email: </strong><a :href="`mailto:${contact.email}`">{{ contact.email }}</a></p>
-              </div>
+            <v-card-title>
+              <h2 class="w-100">Ask a Question</h2>
+              <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
+              <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
+            </v-card-title>
+            <v-card-text>
+              <quill-editor
+              style="background-color: white;"
+              v-model="newQuestion"
+              ></quill-editor>
             </v-card-text>
-            <v-card-text v-else>
-              <p>There are no contacts for this entry.</p>
-            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="submitQuestion()">Submit</v-btn>
+              <v-btn @click="askQuestionDialog = false; newQuestion = '';">Cancel</v-btn>
+            </v-card-actions>
           </v-card>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+        </v-dialog>
+
+        <v-expansion-panel class="contacts-wrapper">
+          <v-expansion-panel-content>
+            <div slot="header"><h2>Contacts</h2></div>
+            <v-card class="grey lighten-4">
+              <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
+                <h2>Points of Contact</h2>
+                <div
+                  v-for="contact in detail.contacts"
+                  :key="contact.contactId"
+                >
+                  <hr>
+                  <p class="contactPar"><strong>Name: </strong>{{ contact.name }}</p>
+                  <p class="contactPar"><strong>Organization: </strong>{{ contact.organization }}</p>
+                  <p class="contactPar"><strong>Position: </strong>{{ contact.positionDescription }}</p>
+                  <p class="contactPar"><strong>Phone: </strong><a :href="`tel: ${contact.phone}`">{{ contact.phone }}</a></p>
+                  <p class="contactPar"><strong>Email: </strong><a :href="`mailto:${contact.email}`">{{ contact.email }}</a></p>
+                </div>
+              </v-card-text>
+              <v-card-text v-else>
+                <p>There are no contacts for this entry.</p>
+              </v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+      </v-expansion-panels>
 
     </div>
     <v-footer color="primary" dark height="auto" display="flex" style="justify-content: center;">
@@ -935,8 +938,5 @@ export default {
   .centeralign {
     margin-right: auto;
     margin-left: auto;
-  }
-  .expansion-header {
-    color: green;
   }
 </style>
