@@ -890,7 +890,7 @@ export default {
   .reviews-wrapper,
   .questions-wrapper,
   .contacts-wrapper {
-    padding: 0px 5% 10px 5%;
+    padding: 0px 15vw 10px 15vw;
     box-shadow: none;
     width: 100%;
   }
