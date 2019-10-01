@@ -1,29 +1,28 @@
 <template>
   <div>
     <!-- MEDIA carousel -->
-    <div v-for="(item, index) in list"
+    <button type="button"
+    v-for="(item, index) in list"
     :key="item.link"
-    class="imageSizing">
+    class="imageSizing"
+    @click="lightboxOn(index)">
         <img 
           v-if="item.mediaTypeCode === 'IMG' && index === 0"
           :src="'https://spoonsite.com/openstorefront/' + item.link"
           class="mediaImage elevation-4"
-          @click="lightboxOn(index)"
         >
         <video
           v-else-if="item.mediaTypeCode === 'VID'"
           :src="item.link"
           class="mediaImage elevation-4"
-          @click="lightboxOn(index)"
           style="display: inline-block;"
         ></video>
         <p 
-        v-if="index === 0"
-        @click="lightboxOn(index)" 
+        v-if="index === 0" 
         class="image-number">
           Image 1 of {{ list.length }}
         </p>
-    </div>
+    </button>
 
     <!-- LIGHTBOX Popup -->
     <transition name="fade">
@@ -128,7 +127,6 @@ export default {
     height: 100%;
     max-width: 500px;
     max-height: 500px;
-    cursor: default;
   }
   .lightboxControl {
     bottom: 0%;
