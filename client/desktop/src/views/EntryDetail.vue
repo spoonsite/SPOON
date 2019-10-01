@@ -132,6 +132,8 @@
         <v-expansion-panel-content>
           <div slot="header">
             <h2>Reviews</h2>
+          </div>
+          <div class="reviews">
             <strong>Average User Rating:</strong>
             <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             <v-btn style="margin-bottom: 1em;" @click="writeReviewDialog = true">Write a Review</v-btn>
@@ -182,7 +184,7 @@
               </div>
             </div>
           </div>
-          <div v-else>
+          <div v-else class="reviews">
             <p>There are no reviews for this entry.</p>
           </div>
         </v-expansion-panel-content>
@@ -306,9 +308,12 @@
       <v-expansion-panel class="questions-wrapper">
         <v-expansion-panel-content>
           <div slot="header"><h2>Questions and Answers</h2></div>
-          <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
-          <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
-          <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
+          <div class="questions">
+            <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
+            <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
+            <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
+          </div>
+
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-dialog
@@ -336,7 +341,7 @@
       <v-expansion-panel class="contacts-wrapper">
         <v-expansion-panel-content>
           <div slot="header"><h2>Contacts</h2></div>
-          <v-card class="grey lighten-5">
+          <v-card>
             <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
               <h2>Points of Contact</h2>
               <div
@@ -889,7 +894,7 @@ export default {
     box-shadow: none;
     width: 100%;
   }
-  .description, .attributes, .resources, .comments {
+  .description, .attributes, .resources, .comments, .reviews, .questions {
     padding: 10px;
     padding-left: 24px;
   }
@@ -930,5 +935,8 @@ export default {
   .centeralign {
     margin-right: auto;
     margin-left: auto;
+  }
+  .expansion-header {
+    color: green;
   }
 </style>
