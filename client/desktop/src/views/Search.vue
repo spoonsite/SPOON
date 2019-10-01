@@ -976,6 +976,8 @@ hr {
 table {
   border-collapse: separate;
   border-spacing: 0;
+  height: 100%;
+  width: 100%;
 }
 tr:nth-child(even) {
   background-color: rgba(0,0,0,0.12);
@@ -1002,24 +1004,24 @@ td.table-column:hover .tooltip {
   font-weight: bold;
   min-width: 220px;
   font-size: 17px;
-  padding: 20px;
+  padding: 5px 0px 5px 20px;
   border-right: 1px solid rgba(0, 0, 0, 0.12);
 }
 .table-column {
   min-width: 400px;
-  padding: 24px;
+  padding-left: 24px;
   position: relative;
 }
-th{
+th {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   text-align: left;
 }
 .top-corner {
-    font-weight: bold;
-    font-size: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    border-right: 1px solid rgba(0, 0, 0, 0.12);
-    padding: 20px;
+  font-weight: bold;
+  font-size: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 20px;
 }
 .scrollable {
   overflow-x: scroll;
