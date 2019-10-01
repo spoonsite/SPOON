@@ -4,16 +4,43 @@
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- CONTROLS -->
     <div class="side-menu-btns">
-      <div>
-        <v-btn @click="showFilters = !showFilters; showOptions = false;" small fab dark icon :color="`primary ${showFilters ? 'lighten-4' : ''}`"><v-icon dark>fas fa-filter</v-icon></v-btn>
-      </div>
-      <div>
-        <v-btn @click="showOptions = !showOptions; showFilters = false;" small fab dark icon :color="`primary ${showOptions ? 'lighten-4' : ''}`"><v-icon dark>fas fa-cog</v-icon></v-btn>
-      </div>
-      <div>
-        <v-btn @click="copyUrlToClipboard" small fab icon><v-icon>fas fa-share-alt</v-icon></v-btn>
-        <input type="text" value="https://spoonsite.com" ref="urlForClipboard" style="position: absolute; left: -1000px; top: -1000px">
-      </div>
+        <v-btn
+          class="db"
+          @click="showFilters = !showFilters; showOptions = false;"
+          small fab dark icon
+          :color="`primary ${showFilters ? 'lighten-4' : ''}`"
+        >
+          <v-icon dark>fas fa-filter</v-icon>
+        </v-btn>
+        <v-btn
+          class="db"
+          @click="showOptions = !showOptions; showFilters = false;"
+          small fab dark icon
+          :color="`primary ${showOptions ? 'lighten-4' : ''}`"
+        >
+          <v-icon dark>fas fa-cog</v-icon>
+        </v-btn>
+        <v-btn
+          class="db"
+          @click="sortComparisonData(); showComparison = true;"
+          :disabled="!(this.comparisonList.length >= 2)"
+          small fab icon
+        >
+          <v-icon>fas fa-columns</v-icon>
+        </v-btn>
+        <v-btn
+          class="db"
+          @click="copyUrlToClipboard"
+          small fab icon
+        >
+          <v-icon>fas fa-share-alt</v-icon>
+        </v-btn>
+        <input
+          type="text"
+          value="https://spoonsite.com"
+          ref="urlForClipboard"
+          style="position: absolute; left: -1000px; top: -1000px"
+        >
     </div>
 
     <div v-if="showOptions || showFilters" class="close-btn">
@@ -300,9 +327,64 @@
               <v-icon style="font-size: 14px;">fas fa-tag</v-icon> {{ tag.text }}
             </span>
           </div>
+          <div style="margin: 10px;">
+            <input type="checkbox" v-model="comparisonList" :value="item" :id="item.componentId">
+            <label :for="item.componentId">Add to Compare</label>
+          </div>
         </div>
       </div>
     </div><!-- Search Results -->
+      <!-- Comparison Table Dialog -->
+    <v-dialog
+      v-model="showComparison"
+      class="dialog-scroll"
+      justify="center"
+      max-width="85vw">
+        <v-card
+        class="dialog-scroll">
+          <v-card-title style="display: flex; justify-content: space-between;">
+            <h2>Compare</h2>
+            <v-btn
+            @click="showComparison = false"
+            small fab icon>
+            <v-icon>fas fa-times</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <div class="scrollable">
+              <table>
+                <thead>
+                  <tr>
+                    <th
+                    v-for="(component, position) in this.comparisonDataHeaders"
+                    :class="changeTableClass(position)"
+                    :key="component.text">
+                      {{ component.text }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                  v-for="(attribute) in this.comparisonDataDisplay"
+                  :key="attribute.name">
+                     <td
+                      v-for="(compAtt, position, col) in attribute"
+                      :class="changeTableClass(position)"
+                      :key="compAtt.name">
+                        {{ compAtt }}
+                      <span class="tooltip"
+                      v-if="attribute.name != 'Attributes'">
+                        {{ attribute.name }} of {{ comparisonDataHeaders[col].text }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <!-- Comparison Table Dialog -->
   </div>
 
   <!-- Pagination -->
@@ -501,6 +583,7 @@ export default {
       this.componentsList = entryTypes
     },
     submitSearch () {
+      this.comparisonList = []
       let that = this
       // a new search clears the data and can trigger a watcher
       // sometimes 2 POST requests get sent out together
@@ -631,6 +714,112 @@ export default {
       document.execCommand('copy')
       this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
       // alert('Copied the text: ' + copyText.value)
+    },
+    sortComparisonData () {
+      this.deleteAllTableData()
+      this.comparisonDataHeaders.push({ text: '', value: 'name', sortable: false })
+      for (var component in this.comparisonList) {
+        this.comparisonDataHeaders.push({ text: this.comparisonList[component].name, value: 'component' + component, sortable: false })
+      }
+
+      var possibleAttributes = this.getListOfComparableAttributes()
+      this.formatDataForDisplay(possibleAttributes)
+      this.countNumberOfSimilarities()
+      this.sortListByCommonalities()
+      this.addDescriptionTableData()
+    },
+    formatDataForDisplay (possibleAttributes) {
+      for (var attribute in possibleAttributes) {
+        this.comparisonDataDisplay.push({ name: possibleAttributes[attribute] })
+        for (var component in this.comparisonList) {
+          for (var componentAttribute in this.comparisonList[component].attributes) {
+            if (possibleAttributes[attribute] === this.comparisonList[component].attributes[componentAttribute].typeLabel) {
+              var unit = this.getAttributeUnit(possibleAttributes[attribute])
+              this.comparisonDataDisplay[attribute]['name'] = possibleAttributes[attribute]
+              this.setDecimalSizeLimit(component, componentAttribute)
+              this.comparisonDataDisplay[attribute]['component' + component] = this.comparisonList[component].attributes[componentAttribute].label + unit
+            }
+          }
+          if (!this.comparisonDataDisplay[attribute].hasOwnProperty('component' + component)) {
+            this.comparisonDataDisplay[attribute]['component' + component] = '\u2014'
+          }
+        }
+      }
+    },
+    getAttributeUnit (attributeCompared) {
+      for (var attribute in this.searchResultsAttributes) {
+        if (this.searchResultsAttributes[attribute].attributeTypeLabel === attributeCompared && this.searchResultsAttributes[attribute].attributeUnit != null) {
+          return ' ' + this.searchResultsAttributes[attribute].attributeUnit
+        }
+      }
+      return ''
+    },
+    countNumberOfSimilarities () {
+      for (var attribute in this.comparisonDataDisplay) {
+        var counter = 0
+        for (var componentAttribute in this.comparisonDataDisplay[attribute]) {
+          if (this.comparisonDataDisplay[attribute][componentAttribute] !== '\u2014' && componentAttribute !== 'name') {
+            counter++
+          }
+        }
+        this.comparisonDataDisplay[attribute]['similarities'] = counter
+      }
+    },
+    sortListByCommonalities () {
+      this.comparisonDataDisplay.sort(function (similar1, similar2) {
+        return similar2.similarities - similar1.similarities
+      })
+      for (var data in this.comparisonDataDisplay) {
+        delete this.comparisonDataDisplay[data].similarities
+      }
+    },
+    getListOfComparableAttributes () {
+      var possibleAttributes = []
+      for (var component in this.comparisonList) {
+        for (var attribute in this.comparisonList[component].attributes) {
+          if (!possibleAttributes.includes(this.comparisonList[component].attributes[attribute].typeLabel)) {
+            possibleAttributes.push(this.comparisonList[component].attributes[attribute].typeLabel)
+          }
+        }
+      }
+      return possibleAttributes
+    },
+    addDescriptionTableData () {
+      this.comparisonDataDisplay.unshift({ name: 'Attributes' })
+      for (var emptySpace in this.comparisonList) {
+        this.comparisonDataDisplay[0]['component' + emptySpace] = '\u00A0'
+      }
+      this.comparisonDataDisplay.unshift({ name: 'Organization' })
+      for (var component in this.comparisonList) {
+        this.comparisonDataDisplay[0]['component' + component] = this.comparisonList[component].organization
+      }
+      this.comparisonDataDisplay.unshift({ name: 'Description' })
+      for (var item in this.comparisonList) {
+        this.comparisonDataDisplay[0]['component' + item] = this.comparisonList[item].description
+      }
+      this.comparisonDataDisplay.unshift({ name: 'Entry Type' })
+      for (var comp in this.comparisonList) {
+        this.comparisonDataDisplay[0]['component' + comp] = this.comparisonList[comp].componentTypeDescription
+      }
+    },
+    setDecimalSizeLimit (component, componentAttribute) {
+      if (!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')) {
+        if (this.comparisonList[component].attributes[componentAttribute].label.split('.')[1].length > 4) {
+          var numericAttribute = parseFloat(this.comparisonList[component].attributes[componentAttribute].label)
+          this.comparisonList[component].attributes[componentAttribute].label = numericAttribute.toFixed(4).toString()
+        }
+      }
+    },
+    deleteAllTableData () {
+      this.comparisonDataHeaders = []
+      this.comparisonDataDisplay = []
+    },
+    changeTableClass (position) {
+      return {
+        'left-column': position === 'name',
+        'top-corner': position === 0,
+        'table-column': position !== 'name' && position !== 0
+      }
     }
   },
   watch: {
@@ -701,9 +890,13 @@ export default {
       tagsList: [],
       organizationsList: [],
       selected: [],
+      comparisonList: [],
+      comparisonDataHeaders: [],
+      comparisonDataDisplay: [],
       showFilters: false,
       showOptions: false,
       showHelp: false,
+      showComparison: false,
       searchQuery: '',
       attributeQuery: '',
       attributeKeys: [],
@@ -819,6 +1012,72 @@ hr {
 }
 .search-block.closed {
   margin-left: $closed-width;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  height: 100%;
+  width: 100%;
+}
+tr:nth-child(even) {
+  background-color: rgba(0,0,0,0.12);
+}
+tr:hover td {
+  background-color: #b3d4fc;
+}
+td.table-column:hover .tooltip {
+  visibility: visible;
+}
+.tooltip {
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  width: 200px;
+  z-index: 1;
+  display: block;
+  position: absolute;
+}
+.left-column {
+  font-weight: bold;
+  min-width: 220px;
+  font-size: 17px;
+  padding: 5px 0px 5px 20px;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+.table-column {
+  min-width: 400px;
+  padding-left: 24px;
+  position: relative;
+}
+th {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  text-align: left;
+}
+.top-corner {
+  font-weight: bold;
+  font-size: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 20px;
+}
+.scrollable {
+  overflow-x: scroll;
+  overflow-y: scroll;
+  position: absolute;
+  top: 75px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.dialog-scroll {
+  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+  height: 80vh;
+  width: 85vw;
+  position: relative;
 }
 .v-footer {
   height: $footer-height !important;
