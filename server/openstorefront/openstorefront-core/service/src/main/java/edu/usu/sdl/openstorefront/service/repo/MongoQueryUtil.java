@@ -93,19 +93,6 @@ public class MongoQueryUtil
 		query = handleLikeExample(queryRequest, query);
 		query = handleSpecialWhereClause(queryRequest, query);
 
-//		//$and/$or/$nor must be a nonempty array  (See if this is need...it seems most cases the query can adjusted)
-//		BsonDocument andOrFilterDoc = query.toBsonDocument(BsonDocument.class, MongoClientSettings.getDefaultCodecRegistry());
-//		if (andOrFilterDoc.get("$and") != null) {
-//			if (andOrFilterDoc.get("$and").asArray().isEmpty()) {
-//				//send back an empty doc
-//				query = new BasicDBObject();
-//			}
-//		} else if (andOrFilterDoc.get("$or") != null) {
-//			if (andOrFilterDoc.get("$or").asArray().isEmpty()) {
-//				//send back an empty doc
-//				query = new BasicDBObject();
-//			}
-//		}
 		return query;
 	}
 
@@ -261,7 +248,7 @@ public class MongoQueryUtil
 
 	public String convertSQLLikeCharacterToRegex(String value)
 	{
-		//deterime starts with (a% = ^a), endwith (%a = a$) and contains (a)
+		// these are equivalent: startswith (SQL a% == regex ^a), endswith (SQL %a == regex a$) and contains (a)
 		if (value.startsWith(LIKE_QUERY_CHARACTER) && value.endsWith(LIKE_QUERY_CHARACTER)) {
 			value = value.replace(LIKE_QUERY_CHARACTER, "");
 		} else if (value.startsWith(LIKE_QUERY_CHARACTER)) {

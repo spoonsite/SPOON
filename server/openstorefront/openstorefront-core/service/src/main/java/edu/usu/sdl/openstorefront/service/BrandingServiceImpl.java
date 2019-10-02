@@ -149,6 +149,10 @@ public class BrandingServiceImpl
 					branding.setFeedbackHandler(FeedbackHandleType.EMAIL);
 				}
 
+				if (branding.getDisclaimerMessage() == null){
+					branding.setDisclaimerMessage("Disclaimer: This organization provides no guarantees for the validity of the data provided.");
+				}
+
 				//Colors
 				if (branding.getPrimaryColor() == null) {
 					branding.setPrimaryColor("#252931"); //#1a0227

@@ -195,35 +195,6 @@ public class OrientPersistenceService
 		return found;
 	}
 
-	/**
-	 * This only works on managed objects
-	 *
-	 * @param <T>
-	 * @param entityClass
-	 * @param primaryKey (DB RID not our Entity PK)
-	 * @return
-	 */
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public <T> T find(Class<T> entityClass, Object primaryKey)
-//	{
-//		final ORecordId rid;
-//
-//		OObjectDatabaseTx database = getConnection();
-//		try {
-//			if (primaryKey instanceof ORecordId) {
-//				rid = (ORecordId) primaryKey;
-//			} else if (primaryKey instanceof String) {
-//				rid = new ORecordId((String) primaryKey);
-//			} else {
-//				throw new IllegalArgumentException("PrimaryKey '" + primaryKey + "' type (" + primaryKey.getClass() + ") is not supported");
-//			}
-//
-//			return (T) database.load(rid);
-//		} finally {
-//			closeConnection(database);
-//		}
-//	}
 	@Override
 	public <T> T findById(Class<T> entity, Object id)
 	{

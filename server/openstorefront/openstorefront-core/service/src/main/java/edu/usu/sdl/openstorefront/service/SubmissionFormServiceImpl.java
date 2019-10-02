@@ -300,8 +300,6 @@ public class SubmissionFormServiceImpl
 					formTemplate.setTemplateStatus(SubmissionTemplateStatus.VERIFIED);
 					formTemplate.populateBaseUpdateFields();
 					getPersistenceService().persist(formTemplate);
-
-					deleteUserSubmission(userSubmission.getUserSubmissionId());
 				}
 				
 				deleteUserSubmission(userSubmission.getUserSubmissionId());
