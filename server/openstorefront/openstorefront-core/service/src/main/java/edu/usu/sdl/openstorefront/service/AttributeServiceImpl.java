@@ -61,6 +61,7 @@ import edu.usu.sdl.openstorefront.core.view.NewAttributeCode;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.api.AttributeServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -69,6 +70,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -182,6 +185,10 @@ public class AttributeServiceImpl
 	public void saveAttributeType(AttributeType attributeType, boolean updateIndexes)
 	{
 		getAttributeServicePrivate().performSaveAttributeType(attributeType);
+		// the advanced search filter needs a way to know when to refresh it's cache 
+		// TODO: check that this attribute cache thing is not broken
+		// @see{SearchStatTable#isThereNewAttributeTypeSaved}
+		SearchStatTable.setThereIsNewAttributeTypeSaved(true);
 
 		if (updateIndexes) {
 			ComponentAttributePk componentAttributePk = new ComponentAttributePk();
@@ -1202,8 +1209,71 @@ public class AttributeServiceImpl
 	}
 
 	@Override
-	public String crushGeneralNumericString(String inputNumber) {
-		return null;
+	public String crushGeneralNumericString(String inputNumber)
+	{
+		try {
+			// Try to cast... if this fails then catch the error.
+			BigDecimal bigDecimal = new BigDecimal(inputNumber);
+		} catch (NumberFormatException e) {
+			return inputNumber;
+		}
+		// If the number contains an E or e return.
+		Boolean inputNumberIsScientificNotation = false;
+		if (inputNumber.indexOf('E') != -1) {
+			inputNumberIsScientificNotation = true;
+		}
+		if (inputNumber.indexOf('e') != -1) {
+			inputNumberIsScientificNotation = true;
+		}
+
+		Boolean magnitudeIsGreaterThanOne = false;
+		int numberLength = inputNumber.length();
+
+		BigDecimal bigDecimalCast = new BigDecimal(inputNumber);
+		BigDecimal oneValue = new BigDecimal(1);
+
+		int result = bigDecimalCast.abs().compareTo(oneValue);
+		// result == 0; if bigDecimalCast and oneValue are equal.
+		// result == 1; if bigDecimalCast is greater than oneValue.
+		// result ==-1; if bigDecimalCast is less than oneValue.
+
+		// Is bigDecimalCast greater than one?
+		if (result >= 0) {
+			magnitudeIsGreaterThanOne = true;
+		}
+
+		if (inputNumberIsScientificNotation) {
+			inputNumber = bigDecimalCast.toPlainString();
+			numberLength = inputNumber.length();
+		}
+
+		if (magnitudeIsGreaterThanOne) {
+			if (inputNumber.indexOf('.') != -1) {
+				if ((numberLength - inputNumber.indexOf('.')) > 5) {
+					// only show 3 decimal places after the decimal point
+					return inputNumber.substring(0, inputNumber.indexOf('.') + 4);
+				}
+				return inputNumber;
+			}
+		}
+
+		if (!magnitudeIsGreaterThanOne) {
+			// Find first non zero thing after the decimal and show 3 decimal places after it.
+			int firstNonZeroIndex = 0;
+			for (int i = 0; i < numberLength; i++) {
+				if ((inputNumber.charAt(i) == '-') || (inputNumber.charAt(i) == '.') || (inputNumber.charAt(i) == '0')) {
+					continue;
+				}
+				firstNonZeroIndex = i;
+				break;
+			}
+			if (numberLength - firstNonZeroIndex > 5) {
+				BigDecimal bd = new BigDecimal(Double.parseDouble(inputNumber.substring(0, firstNonZeroIndex + 4))).setScale(firstNonZeroIndex + 1, RoundingMode.HALF_UP);
+				return Double.toString(bd.doubleValue());
+			}
+			return inputNumber;
+		}
+		return inputNumber;
 	}
 
 }
