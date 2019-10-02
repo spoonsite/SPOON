@@ -29,6 +29,19 @@
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 		</repository>
+		<repository>
+			<id>atlassian-external</id>
+			<url>https://packages.atlassian.com/mvn/maven-external/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+		</repository>
 		<!--
 		<repository>
 		  <id>xmappr-repo-googlecode</id>
@@ -42,6 +55,17 @@
 		<pluginRepository>
 			<id>atlassian-public</id>
 			<url>https://maven.atlassian.com/public/</url>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>atlassian-external</id>
+			<url>https://packages.atlassian.com/mvn/maven-external/</url>
 			<releases>
 				<enabled>true</enabled>
 				<checksumPolicy>warn</checksumPolicy>
