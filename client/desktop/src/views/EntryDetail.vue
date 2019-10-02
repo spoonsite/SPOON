@@ -71,6 +71,8 @@
 
     <v-divider></v-divider>
 
+
+
     <div class="entry-details-bottom">
       <v-expansion-panels>
         <v-expansion-panel class="description-wrapper" value="1">
@@ -893,13 +895,13 @@ export default {
   .reviews-wrapper,
   .questions-wrapper,
   .contacts-wrapper {
-    padding: 0px 15vw 10px 15vw;
-    box-shadow: none;
-    width: 100%;
+    // padding: 0px 15vw 10px 15vw;
+    // width: 100%;
   }
   .description, .attributes, .resources, .comments, .reviews, .questions {
-    padding: 10px;
-    padding-left: 24px;
+    // padding: 10px;
+    // padding-left: 24px;
+
   }
   .spinner {
     margin-top: 7em;
