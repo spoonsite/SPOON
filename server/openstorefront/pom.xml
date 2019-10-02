@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.usu.sdl</groupId>
@@ -6,7 +6,7 @@
 	<version>2.10</version>
 	<packaging>pom</packaging>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>di2e-github</sonar.organization>
 		<sonar.login>d0499c5a2dc1e97534f18c9fc33fddba4e17449a</sonar.login>
@@ -21,19 +21,19 @@
 		<module>openstorefront-web</module>
 		<module>describe</module>
 		<module>er2-xmlparser</module>
-		<module>apiclient</module>		
+		<module>apiclient</module>
 		<module>openstorefront-core</module>
 		<module>openstorefront-plugin</module>
 		<module>atmosphere-socketio</module>
 		<module>extjs</module>
 		<module>tinymcetextarea</module>
-		<module>selenium-tests</module>
+		<!-- <module>selenium-tests</module> -->
 		<!-- <module>dataupdater</module> -->
 		<module>system-tests</module>
 		<module>openstorefront-client-login</module>
 		<module>openstorefront-client-mobile</module>
 	</modules>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>javax</groupId>
