@@ -705,7 +705,7 @@ public class ImportServiceImpl
 
 	@Override
 	public Map<String, String> getComponentTypeMapFromCSV(Reader in) throws IOException {
-		return null;
+		throw new OpenStorefrontRuntimeException("Function not implemented");
 	}
 
 }
