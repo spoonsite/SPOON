@@ -1,11 +1,9 @@
 module.exports = {
   devServer: {
-    port: 3000,
     proxy: {
       '/openstorefront': {
         // ***PRODUCTION INSTANCES***
         // 'target': 'https://spoonsite.com',
-        // 'target': 'https://storefront.di2e.net/openstorefront/',
         // ***STAGING ENVIRONMENTS***
         // 'target': 'http://spoon-staging.usurf.usu.edu',
         // 'target': 'http://store-accept.usurf.usu.edu',
@@ -19,7 +17,6 @@ module.exports = {
 
         // ***PRODUCTION INSTANCES***
         // 'target': 'https://spoonsite.com',
-        // 'target': 'https://storefront.di2e.net/openstorefront/',
         // ***STAGING ENVIRONMENTS***
         // 'target': 'http://spoon-staging.usurf.usu.edu',
         // 'target': 'http://store-accept.usurf.usu.edu/openstorefront',

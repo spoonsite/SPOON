@@ -45,21 +45,21 @@ The following key libraries were used in the development:
 
 ## 1.3 Dev Environment with NetBeans
 
-1. First you need to install openjdk 8
+1. Install openjdk 8
     - Windows: https://github.com/ojdkbuild/ojdkbuild
     - Linux: ```sudo apt install openjdk-8-jdk```
 
-2. Now you need netbeans 8.2 Java EE version
+1. Install netbeans 8.2 Java EE version
     - https://netbeans.org/downloads/8.2/
     - Run the installer, and during install don't checkbox either server box (glassfish or tomcat)
         * Point netbeans to the openjdk 8 installation path
             * Windows: "C:\Program Files\ojdkbuild\java-1.8.0-openjdk-1.8.0.222-2"
             * Linux: /usr/lib/jvm/java-8-openjdk-amd64/
 
-3. You also need Tomcat 7, download tomcat 7.0.96 binaries from https://tomcat.apache.org/download-70.cgi
+1. Download tomcat 7.0.96 binaries from https://tomcat.apache.org/download-70.cgi
     - Unpack tomcat
 
-4. You will also need to download elasticsearch 7.2.1 from https://www.elastic.co/downloads/past-releases/elasticsearch-7-2-1
+1. Download elasticsearch 7.2.1 from https://www.elastic.co/downloads/past-releases/elasticsearch-7-2-1
     - Once it is downloaded you need to unpack elasticsearch
     - Inside the bin folder of elasticsearch you need to find and edit the elasticsearch file. 
         * It is a .bat file for Windows
@@ -69,36 +69,32 @@ The following key libraries were used in the development:
         * Linux: JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
     - Now start up elasticsearch by double clicking on the file that was just modified.
 
-5. Finally you need to download the latest maven 3.6 binaries from https://maven.apache.org/download.cgi
+1. Download the latest maven 3.6 binaries from https://maven.apache.org/download.cgi
     - Unpack maven
 
-6. You also need to clone the project from where ever it is located
+1. Clone the project from where ever it is located
+    - clone project
+    - For example `git clone https://github.com/spoonsite/SPOON.git`
 
-7. Start netbeans
+1. Start netbeans
     - netbeans > tools > options > java > maven > maven Home > "Point to maven folder downloaded from above" > apply > OK
     - netbeans > services > servers > add server > apache tomcat or tomEE > next > "Point to downloaded tomcat" > " Set user name and password = 1" > finish
     - netbeans > services > "just created server" > properties > Platform > VM Options > "-Xms8G -Dapplication.datadir=E:/SPOON_PROJECT_DATA"
     - netbeans > File > open project > "cloned project" > Open Project > spoon_Directory=>server_Directory=>openstorefront > Open Required Projects > Open Project
     - Resolve Problems > "Resolve each problem until all green." >> Close
   
-8. Now we need to handle some dependencies, inside your user directory there is a folder called: .m2
-    - We need to add some items to this directory. 
-    - Inside the spoon project folder, there is a directory called .m2
-    - This directory has the following contents. .m2=>repository=>com=>atlassian
-    - We need to take this atlassian folder, and drop it into the .m2=>repository=>com folder that is located in your user directory.
-
-9. Back in netbeans we need to clean the top level openstorefront project in the projects tab,(right click) then build with dependencies.(right-click)
+1. Back in netbeans we need to clean the top level openstorefront project in the projects tab,(right click) then build with dependencies.(right-click)
     - Once that is completed(it can take several minutes the first time.)
     - run the openstorefront-web project
 
-10. Start up a web browser, navigate to localhost:8080/openstorefront
+1. Start up a web browser, navigate to localhost:8080/openstorefront
     - login as an admin
     - Go to local Admin -> Admin Tools
     - Application Management -> System
     - Search Control -> Re-Index Listings
     - You may have to run the re-indexer twice.
 
-11. Finally we can start up a dev server for developing front end stuff.
+1. Finally we can start up a dev server for developing front end stuff.
     - In a terminal navigate to the spoon project and step into the client=>desktop folder
     - Run: ```npm install```
     - Then run: ```npm run serve```
