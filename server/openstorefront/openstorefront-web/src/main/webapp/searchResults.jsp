@@ -827,7 +827,7 @@
 									Ext.getCmp('filterByName').reset();
 									Ext.getCmp('filterByTag').reset();
 									Ext.getCmp('filterByType').reset();
-									Ext.getCmp('filterByRating').setValue(null);
+									// Ext.getCmp('filterByRating').setValue(null);
 								
 									Ext.Array.each(attributeFilters, function(filter) {
 										filter.checkbox.suspendEvents(false);
@@ -864,7 +864,7 @@
 					name: Ext.getCmp('filterByName').getValue(),
 					tags: Ext.getCmp('filterByTag').getValue(),
 					type: Ext.getCmp('filterByType').getValue(),
-					rating: Ext.getCmp('filterByRating').getValue(),
+					// rating: Ext.getCmp('filterByRating').getValue(),
 					sortBy: Ext.getCmp('sortByCB').getSelection() ? Ext.getCmp('sortByCB').getSelection().data : null,
 					attributes: attributeFilters
 				};
