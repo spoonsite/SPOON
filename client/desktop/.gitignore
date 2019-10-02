@@ -1,6 +1,9 @@
 .DS_Store
+
+# Build artifacts
 node_modules
 /dist
+/node
 
 /tests/e2e/reports/
 selenium-debug.log
