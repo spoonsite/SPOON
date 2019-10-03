@@ -120,15 +120,6 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel v-if="commentsViewable" text-xs-center class="expansion-spacing">
-          <v-expansion-panel-content>
-            <div slot="header"><h2>Submission Comments</h2></div>
-            <div class="expansion-content">
-              <v-btn @click="goToComments()">Go To Comments</v-btn>
-            </div>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header">
@@ -597,14 +588,6 @@ export default {
           this.questions = response.data
         })
         .catch(e => this.errors.push(e))
-    },
-    goToComments () {
-      router.push({
-        name: 'Submission Comments',
-        params: {
-          id: this.id
-        }
-      })
     },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
