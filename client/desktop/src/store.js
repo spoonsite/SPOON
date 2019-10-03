@@ -10,7 +10,10 @@ export default new Vuex.Store({
     branding: {},
     securityPolicy: {},
     permissionMap: [],
-    appVersion: ''
+    appVersion: '',
+    componentTypeList: [],
+    attributeMap: {},
+    selectedComponentTypes: []
   },
   // mutations must be synchronous
   mutations: {
@@ -36,6 +39,18 @@ export default new Vuex.Store({
           if (!found) state.permissionMap.push(permission.permission)
         })
       })
+    },
+    setComponentTypeList (state, response) {
+      state.componentTypeList = response.data
+    },
+    setAttributeMap (state, response) {
+      state.attributeMap = {}
+      response.data.forEach(element => {
+        state.attributeMap[element.attributeType] = element
+      })
+    },
+    setSelectedComponentTypes (state, response) {
+      state.selectedComponentTypes = response.data
     }
   },
   actions: {
@@ -73,10 +88,23 @@ export default new Vuex.Store({
             callback()
           }
         })
+    },
+    getComponentTypeList (context) {
+      axios.get('/openstorefront/api/v1/resource/componenttypes')
+        .then(response => {
+          context.commit('setComponentTypeList', response)
+        })
+    },
+    getAttributeMap (context) {
+      axios.get('/openstorefront/api/v1/resource/attributes')
+        .then(response => {
+          context.commit('setAttributeMap', response)
+        })
     }
   },
   getters: {
     // call this.$store.getters.hasPermission('ADMIN-...')
-    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0
+    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0,
+    getSelectedComponentTypes: (state) => state.selectedComponentTypes
   }
 })
