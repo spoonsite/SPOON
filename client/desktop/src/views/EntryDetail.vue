@@ -111,7 +111,7 @@
                 <strong >{{ item.resourceTypeDesc }}</strong>
                 <v-btn flat icon :href="baseURL+item.actualLink"><v-icon>link</v-icon></v-btn>
                 <div style="overflow-x: auto; white-space: nowrap;">
-                  <a :href="item.link" style="display: block; margin-bottom: 0.5em;">
+                  <a :href="baseURL+item.link" style="display: block; margin-bottom: 0.5em;">
                     <span v-if="item.description">{{ item.description }}</span><span v-else>{{ item.link }}</span>
                   </a>
                 </div>
@@ -815,6 +815,7 @@ export default {
   .entry-media {
     display: flex;
     margin: 15px;
+    margin-bottom: 2em;
     height: auto;
     width: auto;
     max-width: 500px;

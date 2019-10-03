@@ -6,19 +6,19 @@
     :key="item.link"
     class="imageSizing"
     @click="lightboxOn(index)">
-        <img 
+        <img
           v-if="item.mediaTypeCode === 'IMG' && index === 0"
-          :src="'https://spoonsite.com/openstorefront/' + item.link"
+          :src="baseURL + item.link"
           class="mediaImage elevation-4"
         >
         <video
           v-else-if="item.mediaTypeCode === 'VID'"
-          :src="item.link"
+          :src="baseURL + item.link"
           class="mediaImage elevation-4"
           style="display: inline-block;"
         ></video>
-        <p 
-        v-if="index === 0" 
+        <p
+        v-if="index === 0"
         class="image-number">
           Image 1 of {{ list.length }}
         </p>
@@ -39,11 +39,11 @@
         <transition name="swipe" keep-alive mode="out-in">
           <div :key="currentItem.link" style="margin-bottom: 3em;">
             <p style="color: white;">{{ currentItem.caption}}</p>
-            <img v-if="currentItem.mediaTypeCode === 'IMG'" :src="'https://spoonsite.com/openstorefront/' + currentItem.link" class="lightboxImage elevation-6">
+            <img v-if="currentItem.mediaTypeCode === 'IMG'" :src="baseURL + currentItem.link" class="lightboxImage elevation-6">
             <video controls v-else-if="currentItem.mediaTypeCode === 'VID'" :src="currentItem.link" class="lightboxImage elevation-6"></video>
             <p style="color: white;">
               Image {{ currentIndex + 1 }} of {{ list.length }}
-              <v-btn dark small flat icon :href="'openstorefront/'+currentItem.link"><v-icon class="download-icon">fas fa-download</v-icon></v-btn>
+              <v-btn dark small flat icon :href="baseURL + currentItem.link"><v-icon class="download-icon">fas fa-download</v-icon></v-btn>
             </p>
           </div>
         </transition>
