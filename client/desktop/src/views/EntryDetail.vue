@@ -891,7 +891,7 @@ export default {
   }
   .expansion-spacing {
     margin: auto;
-    max-width:65vw;
+    max-width:85em;
     margin-bottom: 5px;
   }
   .expansion-content {
