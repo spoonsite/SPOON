@@ -72,26 +72,24 @@
     <v-divider></v-divider>
 
 
-
     <div class="entry-details-bottom">
       <v-expansion-panels>
-        <v-expansion-panel class="description-wrapper" value="1">
+        <v-expansion-panel class="expansion-spacing" value="1">
           <v-expansion-panel-content>
             <div slot="header"><h2>Description</h2></div>
-            <div class="description grey lighten-4" v-html="detail.description">
-            </div>
+            <div class="expansion-content" v-html="detail.description"></div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class=attributes-wrapper value="1">
+        <v-expansion-panel class="expansion-spacing" value="1">
           <v-expansion-panel-content>
             <div slot="header"><h2>Attributes</h2></div>
-            <div class="attributes grey lighten-4">
+            <div class="expansion-content">
               <v-data-table dense
-                :headers="attributeTableHeaders"
-                :items="detail.attributes"
-                hide-actions
-                item-key="name"
+              :headers="attributeTableHeaders"
+              :items="detail.attributes"
+              hide-actions
+              item-key="name"
               >
                 <template slot="items" slot-scope="props">
                   <td>{{ props.item.typeDescription }}</td>
@@ -103,10 +101,10 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="resources-wrapper">
+        <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header"><h2>Resources</h2></div>
-            <div class="resources grey lighten-4">
+            <div class="expansion-content"> 
               <div v-for="item in detail.resources"
                 :key="item.resourceId"
               >
@@ -122,24 +120,24 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel v-if="commentsViewable" text-xs-center class="comments-wrapper">
+        <v-expansion-panel v-if="commentsViewable" text-xs-center class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header"><h2>Submission Comments</h2></div>
-            <div class="comments grey lighten-4">
+            <div class="expansion-content">
               <v-btn @click="goToComments()">Go To Comments</v-btn>
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="reviews-wrapper">
+        <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header">
               <h2>Reviews</h2>
             </div>
-            <div class="reviews grey lighten-4">
+            <div class="expansion-content">
               <strong>Average User Rating:</strong>
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
-              <v-btn style="margin-bottom: 1em;" @click="writeReviewDialog = true">Write a Review</v-btn>
+              <v-btn @click="writeReviewDialog = true">Write a Review</v-btn>
             </div>
             <div v-if="detail.reviews && detail.reviews.length !== 0">
               <div
@@ -187,7 +185,7 @@
                 </div>
               </div>
             </div>
-            <div v-else class="reviews grey lighten-4">
+            <div v-else class="expansion-content">
               <p>There are no reviews for this entry.</p>
             </div>
           </v-expansion-panel-content>
@@ -308,10 +306,10 @@
         </v-card>
       </v-dialog>
 
-        <v-expansion-panel class="questions-wrapper">
+        <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header"><h2>Questions and Answers</h2></div>
-            <div class="questions grey lighten-4">
+            <div class="expansion-content">
               <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
               <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
               <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
@@ -341,10 +339,10 @@
           </v-card>
         </v-dialog>
 
-        <v-expansion-panel class="contacts-wrapper">
+        <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header"><h2>Contacts</h2></div>
-            <v-card class="grey lighten-4">
+            <v-card class="expansion-content">
               <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
                 <h2>Points of Contact</h2>
                 <div
@@ -811,6 +809,9 @@ export default {
   p {
     margin: 0px;
   }
+  button {
+    background-color: white !important;
+  }
   .entry-media {
     display: flex;
     margin: 15px;
@@ -888,20 +889,15 @@ export default {
     margin: 0px;
     padding: 0px;
   }
-  .description-wrapper,
-  .attributes-wrapper,
-  .resources-wrapper,
-  .comments-wrapper,
-  .reviews-wrapper,
-  .questions-wrapper,
-  .contacts-wrapper {
-    // padding: 0px 15vw 10px 15vw;
-    // width: 100%;
+  .expansion-spacing {
+    margin: auto;
+    max-width:65vw;
+    margin-bottom: 5px;
   }
-  .description, .attributes, .resources, .comments, .reviews, .questions {
-    // padding: 10px;
-    // padding-left: 24px;
-
+  .expansion-content {
+    padding: 15px;
+    padding-bottom: 5px;
+    background-color: #EEEEEE !important;
   }
   .spinner {
     margin-top: 7em;
