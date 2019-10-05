@@ -1,7 +1,7 @@
 +++
 title = "Bulk Upload Process"
 description = "Bulk Upload Instructions - upload pdfs, Excel spreadsheets, etc, to be manual imported to SPOONsite.com"
-weight = 1
+weight = 10
 +++
 
 
