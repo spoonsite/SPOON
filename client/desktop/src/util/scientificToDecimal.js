@@ -6,7 +6,6 @@ export default {
  * @returns {String} Number in decimal notation.
  */
   scientificToDecimal: function (number) {
-    console.log('check123check123')
     let numberHasSign = number.startsWith('-') || number.startsWith('+')
     let sign = numberHasSign ? number[0] : ''
     number = numberHasSign ? number.replace(sign, '') : number

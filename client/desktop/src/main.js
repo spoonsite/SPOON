@@ -70,9 +70,7 @@ Vue.filter('formatDate', function (value, formatString) {
   }
 })
 
-Vue.filter('crushNumericString', function (inputNumber) {
-  return scientificToDecimal.crushNumericString(inputNumber)
-})
+Vue.filter('crushNumericString', scientificToDecimal.crushNumericString)
 
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)))
 store.dispatch('getSecurityPolicy')
