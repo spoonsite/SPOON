@@ -84,6 +84,7 @@
               <v-data-table dense
               :headers="attributeTableHeaders"
               :items="detail.attributes"
+              class="attributes-table"
               hide-actions
               item-key="name"
               >
@@ -453,7 +454,6 @@ export default {
         { text: 'Attribute Type', value: 'typeDescription' },
         { text: 'Value', value: 'codeDescription' }
       ]
-
     }
   },
   methods: {
@@ -909,5 +909,15 @@ export default {
   .centeralign {
     margin-right: auto;
     margin-left: auto;
+  }
+  .attributes-table /deep/ {
+    th {
+      font-size: 18px;
+      font-weight: bold;
+      background-color: white;
+    }
+    tr:nth-child(odd) {
+      background-color: rgba(0,0,0,0.12);
+    }
   }
 </style>
