@@ -84,7 +84,7 @@
 								Ext.create('OSF.component.UserMenu', {									
 									showAdminTools: true,
 									showUserTools: true,
-									showHelp: true,
+									showHelp: false,
 									showSupportMedia: false,
 									ui: 'default',
 									initCallBack: function(usercontext) {
