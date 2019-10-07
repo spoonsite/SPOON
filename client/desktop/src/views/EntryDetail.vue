@@ -68,7 +68,6 @@
 
     <v-divider></v-divider>
 
-
     <div class="entry-details-bottom">
       <v-expansion-panels>
         <v-expansion-panel class="expansion-spacing" value="1">
@@ -90,8 +89,7 @@
               >
                 <template slot="items" slot-scope="props">
                   <td>{{ props.item.typeDescription }}</td>
-                  <td>{{ props.item.codeDescription }}</td>
-                  <td><span v-if="props.item.unit" v-html="props.item.unit"></span></td>
+                  <td>{{ props.item.codeDescription }} <span v-if="props.item.unit" v-html="props.item.unit"></span></td>
                 </template>
               </v-data-table>
             </div>
@@ -453,8 +451,7 @@ export default {
       },
       attributeTableHeaders: [
         { text: 'Attribute Type', value: 'typeDescription' },
-        { text: 'Value', value: 'codeDescription' },
-        { text: 'Unit', value: 'unit' }
+        { text: 'Value', value: 'codeDescription' }
       ]
 
     }
