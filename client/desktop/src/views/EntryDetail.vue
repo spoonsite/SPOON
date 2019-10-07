@@ -24,10 +24,7 @@
           class="entry-media"
         ></Lightbox>
       </div>
-      <div v-else class="no-media">
-        <i class="far fa-images fa-9x"></i>
-        <h3>No media to display</h3>
-      </div>
+      <div v-else class="no-media"></div>
       <div class="detail-header">
         <div class="component-name">
           <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="40px">
@@ -804,14 +801,9 @@ export default {
     max-width: 500px;
   }
   .no-media {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 100;
-    justify-content: center;
-    align-items: center;
+    flex-grow: 27;
     max-width: 500px;
     max-height: 500px;
-    border: 3px solid #252931;
     margin: 15px;
   }
   .entry-detail-page {
