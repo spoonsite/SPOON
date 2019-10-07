@@ -41,13 +41,6 @@ public class LandingAction
 	@DefaultHandler
 	public Resolution landingPage()
 	{
-		if (PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APP_CLIENT_USEOLDSTOREFRONT, "false").toLowerCase().equals("true")) {
-
-			setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/landing.jsp"));
-
-			return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
-		}
-
 		return new ForwardResolution("desktop/index.html");
 	}
 

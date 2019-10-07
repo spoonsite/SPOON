@@ -128,7 +128,6 @@ public class PropertiesManager
 	public static final String KEY_MESSAGE_RECENT_CHANGE_DAYS = "message.recentchanges.days";
 
 	public static final String KEY_APPLICATION_TITLE = "app.title";
-	public static final String KEY_APP_CLIENT_USEOLDSTOREFRONT = "app.client.useOldStorefront";
 	public static final String KEY_MAX_TASK_POOL_SIZE = "task.pool.size";
 	public static final String KEY_MAX_TASK_COMPLETE_EXPIRE = "task.complete.expireminutes";
 	public static final String KEY_MAX_TASK_ERROR_EXPIRE = "task.error.expireminutes";
@@ -352,7 +351,6 @@ public class PropertiesManager
 			defaults.put(KEY_REPORT_LIFETIME, REPORT_HISTORY_DAYS_TO_LIVE);
 			defaults.put(KEY_MAIL_ATTACH_FILE, Boolean.FALSE);
 			defaults.put(KEY_MAX_POST_SIZE, "1024"); // 1GB
-            defaults.put(KEY_APP_CLIENT_USEOLDSTOREFRONT, "false");
 
 			String propertiesFilename = fileSystemManager.getConfig(getPropertiesFile()).getPath();
 
