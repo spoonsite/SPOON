@@ -66,7 +66,7 @@
             <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.label}}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-select>
-        <v-checkbox class="ma-0" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
+        <v-checkbox class="ma-0" color="black" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
         <v-select
           v-model="filters.tags"
           hide-details
@@ -157,6 +157,7 @@
                 <v-checkbox
                   v-for="code in (searchResultsAttributes[key].codeMap)"
                   :key="key + code"
+                  color="black"
                   v-model="filters.attributes"
                   :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].attributeTypeLabel, 'code': code })"
                   hide-details
