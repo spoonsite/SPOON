@@ -4,11 +4,10 @@ module.exports = {
       '/openstorefront': {
         // ***PRODUCTION INSTANCES***
         // 'target': 'https://spoonsite.com',
-        // 'target': 'https://storefront.di2e.net/openstorefront/',
         // ***STAGING ENVIRONMENTS***
-        'target': 'http://spoon-staging.usurf.usu.edu',
+        // 'target': 'http://spoon-staging.usurf.usu.edu',
         // 'target': 'http://store-accept.usurf.usu.edu',
-        // 'target': 'http://localhost:8080',
+        'target': 'http://localhost:8080',
         'changeOrigin': true
       },
       '/images': {
@@ -18,7 +17,6 @@ module.exports = {
 
         // ***PRODUCTION INSTANCES***
         // 'target': 'https://spoonsite.com',
-        // 'target': 'https://storefront.di2e.net/openstorefront/',
         // ***STAGING ENVIRONMENTS***
         // 'target': 'http://spoon-staging.usurf.usu.edu',
         // 'target': 'http://store-accept.usurf.usu.edu/openstorefront',

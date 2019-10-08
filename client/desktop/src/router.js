@@ -5,6 +5,7 @@ import Profile from './views/Profile.vue'
 import Search from './views/Search.vue'
 import FAQ from './views/FAQ.vue'
 import ContactUs from './views/ContactUs.vue'
+import EntryDetail from './views/EntryDetail.vue'
 import Watches from './views/Watches.vue'
 
 Vue.use(Router)
@@ -36,6 +37,11 @@ export default new Router({
       path: '/profile',
       name: 'Profile',
       component: Profile
+    },
+    {
+      path: '/entry-detail/:id',
+      name: 'Entry Detail',
+      component: EntryDetail
     },
     {
       path: '/watches',
