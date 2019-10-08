@@ -144,7 +144,7 @@
           class="pb-3"
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="deleteTag(data.item.key)" >
+            <v-chip close small @input="removeTag(data.item.key)" >
               <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
               {{ data.item.key}}
             </v-chip>
@@ -202,31 +202,27 @@
         <div v-if="Object.keys(searchResultsAttributes).length !== 0">Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
         <v-expansion-panel class="mb-4" v-if="Object.keys(searchResultsAttributes).length !== 0">
-          <!-- need the v-if with the v-for because the data sometimes gets out of sync -->
-          <!-- eslint-disable vue/no-use-v-if-with-v-for -->
           <v-expansion-panel-content
             v-for="key in attributeKeys.slice(0,9)"
             :key="key"
-            v-if="searchResultsAttributes[key]"
           >
-          <!-- eslint-enable vue/no-use-v-if-with-v-for -->
             <div slot="header"
-              v-html="searchResultsAttributes[key].attributeTypeLabel + (searchResultsAttributes[key].attributeUnit ? ' (' + searchResultsAttributes[key].attributeUnit + ') ' : '')"
+              v-html="searchResultsAttributes[key].label + (searchResultsAttributes[key].attributeUnit ? ' (' + searchResultsAttributes[key].attributeUnit + ') ' : '')"
             >
             </div>
             <v-card>
               <v-container class="pt-0" fluid>
                 <!-- <attribute-range/> -->
                 <v-checkbox
-                  v-for="code in (searchResultsAttributes[key].codeMap)"
+                  v-for="code in (searchResultsAttributes[key].codes)"
                   :key="key + code"
                   color="black"
                   v-model="filters.attributes"
-                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].attributeTypeLabel, 'code': code })"
+                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].label, 'code': code })"
                   hide-details
                 >
                   <template slot="label">
-                    <div>{{ code }}</div>
+                    <div>{{ code | crushNumericString }}</div>
                   </template>
                 </v-checkbox>
               </v-container>
@@ -546,7 +542,7 @@ export default {
     },
     removeTag (tag) {
       this.filters.tags = this.filters.tags.filter(el => {
-        return el !== tag
+        return el.key !== tag
       })
     },
     removeComponent (component) {
@@ -599,9 +595,6 @@ export default {
       this.lastUpdated = true
       this.approvalDate = true
     },
-    deleteTag (tag) {
-      this.filters.tags = _.remove(this.filters.tags, n => n !== tag)
-    },
     deleteComponent (component) {
       let filteredEntryTypes = _.remove(this.$store.state.componentTypeList, n => n !== component)
       this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
@@ -612,46 +605,46 @@ export default {
       }
     },
     parseAttributesFromSearchResponse (attributesAggregation) {
-      this.attributeKeys = []
       let that = this
-      let searchResultsAttributes = {}
+      that.attributeKeys = []
+      that.searchResultsAttributes = {}
 
       if (that.$store.state.attributeMap === undefined) {
-        this.$store.dispatch('getAttributeMap')
+        that.$store.dispatch('getAttributeMap')
       }
 
-      attributesAggregation.forEach(element => {
-        if (this.attributeKeys.length < 10) {
-          this.attributeKeys.push(element.key)
-        }
+      let source = {}
+      let unit = ''
 
-        // Create list of codes from results
-        let attributes = []
-        let sources = element['top_hits#attribute'].hits.hits
-        sources.forEach(source => {
-          source._source.attributes.forEach(attribute => {
-            if (attribute.type === element.key) {
-              let code = attribute.label.toString()
-              if (!attributes.includes(code)) {
-                attributes.push(code)
-              }
-            }
-          })
-        })
+      // This is a map to increase speed of building the searchResultsAttributes dict
+      let codesMap = {}
 
-        // Populate attribute object
-        if (!searchResultsAttributes[element.key]) {
-          searchResultsAttributes[element.key] = {
-            attributeType: element.key,
-            attributeTypeLabel: that.$store.state.attributeMap[element.key].description,
-            attributeUnit: that.$store.state.attributeMap[element.key].attributeUnit,
-            codeMap: attributes,
-            count: element.doc_count
+      // Iterate over each returned attribute and make an entry in the dict or add a code if the entry already exists
+      attributesAggregation.forEach(el => {
+        source = el._source
+        if (!that.searchResultsAttributes.hasOwnProperty(source.type)) {
+          unit = (that.$store.state.attributeMap[source.type] ? that.$store.state.attributeMap[source.type].attributeUnit : undefined)
+          that.searchResultsAttributes[source.type] = {
+            codes: [],
+            label: source.typeLabel,
+            attributeUnit: unit
+          }
+          that.searchResultsAttributes[source.type].codes.push(source.label)
+          codesMap[source.type] = {}
+          codesMap[source.type][source.label] = 0
+        } else {
+          if (!codesMap[source.type].hasOwnProperty(source.label)) {
+            that.searchResultsAttributes[source.type].codes.push(source.label)
+            codesMap[source.type][source.label] = 0
           }
         }
       })
 
-      this.searchResultsAttributes = searchResultsAttributes
+      // Get the first 10 attributes
+      that.attributeKeys =
+          Object.keys(that.searchResultsAttributes)
+            .sort()
+            .slice(0, 10)
     },
     getCompTypeLabels (entryTypes) {
       let that = this
@@ -725,7 +718,7 @@ export default {
           var entryTypes = response.data.aggregations['sterms#by_category'].buckets
           this.getCompTypeLabels(entryTypes)
 
-          var attributesAggregation = response.data.aggregations['sterms#by_attribute_type'].buckets
+          var attributesAggregation = response.data.aggregations['nested#by_attribute_type']['top_hits#attribute'].hits.hits
           this.parseAttributesFromSearchResponse(attributesAggregation)
 
           that.searchQueryIsDirty = false
@@ -770,11 +763,15 @@ export default {
       this.filters.attributes = [...this.filters.attributes]
     },
     printAttribute (attribute) {
+      if (this.$store.state.attributeMap === undefined) {
+        this.$store.dispatch('getAttributeMap')
+      }
       let attr = this.$jsonparse(attribute)
+      let attributeType = this.$store.state.attributeMap[attr.type]
       if (attr === null) {
         attr.unit = ''
       }
-      return `${attr.typelabel} : ${attr.code} ${attr.unit}`
+      return `${attributeType.description} : ${attr.code} ${attributeType.attributeUnit}`
     },
     copyUrlToClipboard () {
       var urlBeginning

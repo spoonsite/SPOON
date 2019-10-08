@@ -59,10 +59,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.util.QueryBuilder;
+import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -77,14 +78,18 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.PutMappingRequest;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.NestedQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -110,8 +115,13 @@ public class ElasticSearchManager
 	private static final String INDEX = "openstorefront";
 	private static final String INDEX_TYPE = "component";
 	private static final int MAX_DESCRIPTION_INDEX_SIZE = 8000;
+
+	private static final String INDEX_INNER_WINDOW = "index.max_inner_result_window";
+
+	//These numbers MAY need to changed based on number of components
 	private static final int MAX_SEARCH_RESULTS = 10000;
-	private static final int MAX_ATTRIBUTES_RETURNED = 100;
+	private static final int NUMBER_INNER_WINDOW_RETURN = 100000;
+
 	private static final String DEFAULT_POOL_SIZE = "40";
 
 	//TODO: Add back search all field as an option
@@ -238,10 +248,13 @@ public class ElasticSearchManager
 					CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX);
 					client.getInstance().indices().create(createIndexRequest, RequestOptions.DEFAULT);
 					LOG.log(Level.INFO, "Created index: " + INDEX);
-
+					updateMappingAttributes();
+					updateElasticsearchSettings();
 				} catch (ElasticsearchException e){
 					LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 				}
+			} else {
+				updateElasticsearchSettings();
 			}
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
@@ -250,6 +263,53 @@ public class ElasticSearchManager
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 			indexCreated.set(false);
 		}
+	}
+
+	public Boolean updateElasticsearchSettings() {
+		try (ElasticSearchClient client = justGetClient();) {
+			UpdateSettingsRequest request = new UpdateSettingsRequest(INDEX);
+			String settingKey = INDEX_INNER_WINDOW;
+			int settingValue = NUMBER_INNER_WINDOW_RETURN;
+			Settings settings =
+					Settings.builder()
+					.put(settingKey, settingValue)
+					.build();
+
+			request.settings(settings);
+			AcknowledgedResponse updateSettingsResponse = client.getInstance().indices().putSettings(request, RequestOptions.DEFAULT);
+			Boolean acknowledged = updateSettingsResponse.isAcknowledged();
+			LOG.log(Level.INFO, "Updating Settings: ", Boolean.toString(acknowledged));
+			return acknowledged;
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+		} catch (OpenStorefrontRuntimeException e){
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+		}
+		return false;
+	}
+
+	public void updateMappingAttributes(){
+		try (ElasticSearchClient client = singleton.getClient()) {
+
+				String source = 
+				"{\n" +
+				"  \"properties\": {\n" +
+				"    \"attributes\": {\n" +
+				"      \"type\": \"nested\"\n" +
+				"    }\n" +
+				"  }\n" +
+				"}";
+
+				try{
+					PutMappingRequest putMappingRequest = new PutMappingRequest(INDEX);
+					putMappingRequest.source(source, XContentType.JSON);
+
+					AcknowledgedResponse putMappingResponse = client.getInstance().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
+					LOG.log(Level.INFO, putMappingResponse.toString());
+				} catch (IOException ex){
+					LOG.log(Level.SEVERE, null, ex);
+				} 
+			}
 	}
 
 	@Override
@@ -375,14 +435,13 @@ public class ElasticSearchManager
 		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
 				.topHits("attribute")
 				.fetchSource(include, null)
-				.size(MAX_ATTRIBUTES_RETURNED);
+				.size(NUMBER_INNER_WINDOW_RETURN);
 
 		// Gets list of all attribute labels from search as well as all the whole attribute object
-		TermsAggregationBuilder attributeLabelAggregationBuilder = AggregationBuilders
-				.terms("by_attribute_type")
-				.field("attributes.type.keyword")
-				.subAggregation(topHitsAggregationBuilder)
-				.size(MAX_SEARCH_RESULTS);
+		NestedAggregationBuilder nestedAttributeLabelAggregationBuilder = AggregationBuilders
+				.nested("by_attribute_type", "attributes")
+				.subAggregation(topHitsAggregationBuilder);
+			
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 				.query(esQuery)
@@ -393,12 +452,13 @@ public class ElasticSearchManager
 				.aggregation(categoryAggregationBuilder)
 				.aggregation(tagAggregationBuilder)
 				.aggregation(orgAggregationBuilder)
-				.aggregation(attributeLabelAggregationBuilder);
+				.aggregation(nestedAttributeLabelAggregationBuilder);
 
 		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
 
 		SearchResponse response;
 		try (ElasticSearchClient client = singleton.getClient()) {
+			checkSearchIndexCreation();
 			response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
@@ -609,6 +669,11 @@ public class ElasticSearchManager
 			}
 		}
 
+		BoolQueryBuilder boolQueryBuilderOrganization = QueryBuilders.boolQuery();
+		if(searchFilters.getOrganization() != null && searchFilters.getOrganization() != ""){
+			boolQueryBuilderOrganization.must(QueryBuilders.matchPhraseQuery("organization", searchFilters.getOrganization()));
+		}
+
 		BoolQueryBuilder boolQueryBuilderComponentTypes = QueryBuilders.boolQuery();
 		if(searchFilters.getComponentTypes() != null){
 			if(!searchFilters.getComponentTypes().isEmpty()){
@@ -621,15 +686,15 @@ public class ElasticSearchManager
 			}
 		}
 
-		// FIXME: Issue with mapping, needs to use nested models for this to work
 		BoolQueryBuilder boolQueryBuilderAttributes = QueryBuilders.boolQuery();
 		if(searchFilters.getAttributes() != null){
 			if(!searchFilters.getAttributes().isEmpty()){
 				for(AttributeSearchType type : searchFilters.getAttributeSearchType()){
-					BoolQueryBuilder boolQueryBuilderAttributeTypes = QueryBuilders.boolQuery();
-					boolQueryBuilderAttributeTypes.should(QueryBuilders.matchPhraseQuery("attributes.type", type.getType()));
-					boolQueryBuilderAttributeTypes.should(QueryBuilders.matchPhraseQuery("attributes.code", type.getCode()));
-					boolQueryBuilderAttributes.should(boolQueryBuilderAttributeTypes);
+					QueryBuilder boolQueryBuilderAttributeTypes = QueryBuilders.boolQuery()
+								.must(QueryBuilders.matchQuery("attributes.type", type.getType()))
+								.must(QueryBuilders.matchQuery("attributes.code", type.getCode()));
+					NestedQueryBuilder nestedQueryBuilder = QueryBuilders.nestedQuery("attributes", boolQueryBuilderAttributeTypes, ScoreMode.Avg);
+					boolQueryBuilderAttributes.must(nestedQueryBuilder);
 				}
 			}
 		}
@@ -644,6 +709,10 @@ public class ElasticSearchManager
 		}
 
 		BoolQueryBuilder finalQuery = QueryBuilders.boolQuery();
+
+		if(boolQueryBuilderOrganization.hasClauses()){
+			finalQuery.must(boolQueryBuilderOrganization);
+		}
 
 		if(boolQueryBuilderComponentTypes.hasClauses()){
 			finalQuery.must(boolQueryBuilderComponentTypes);
@@ -1122,6 +1191,7 @@ public class ElasticSearchManager
 
 					AcknowledgedResponse putMappingResponse = client.getInstance().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
 					LOG.log(Level.INFO, putMappingResponse.toString());
+					updateMappingAttributes();
 				} catch (IOException ex){
 					LOG.log(Level.SEVERE, null, ex);
 				} 
