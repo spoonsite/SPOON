@@ -17,11 +17,7 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
-import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
-import org.apache.commons.lang3.StringUtils;
-
-import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 
 /**
  *
