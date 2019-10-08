@@ -332,7 +332,7 @@
                   </v-chip>
                 </router-link>
               </div>
-              <div
+            <div
                 class="tag-wrapper"
                 v-if="!!item.tags && item.tags.length !== 0"
               >
@@ -344,6 +344,7 @@
                 >
                   <v-icon style="font-size: 14px; color: rgb(248, 197, 51);">fas fa-tag</v-icon> {{ tag.text }}
                 </span>
+                <p><star-rating :rating="averageRating" :read-only="true" :increment="0.01" :star-size="20"></star-rating></p>
               </div>
             </div>
             <v-divider></v-divider>
@@ -440,6 +441,7 @@
 
 <script>
 import _ from 'lodash'
+import StarRating from 'vue-star-rating'
 import SearchBar from '../components/SearchBar'
 // import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
@@ -447,7 +449,8 @@ import router from '../router.js'
 export default {
   name: 'SearchPage',
   components: {
-    SearchBar
+    SearchBar,
+    StarRating
     // AttributeRange
   },
   created () {
@@ -931,7 +934,26 @@ export default {
       get () {
         return this.$store.getters.getSelectedComponentTypes
       }
-    }
+    },
+    computeAverageRating (detail) {
+      var temp = 0
+      var averageRating = 0
+      if (detail.reviews) {
+        for (var i = 0; i < detail.reviews.length; i++) {
+          if (detail.reviews[i].rating) {
+            temp += detail.reviews[i].rating
+          } else {
+            return 0
+          }
+        }
+      } else {
+        return 0
+      }
+      if (detail.reviews.length !== 0) {
+        averageRating = temp / detail.reviews.length
+      }
+      return averageRating
+    },
   },
   data () {
     return {
