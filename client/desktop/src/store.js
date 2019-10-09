@@ -10,7 +10,8 @@ export default new Vuex.Store({
     branding: {},
     securityPolicy: {},
     permissionMap: [],
-    appVersion: ''
+    appVersion: '',
+    helpUrl: ''
   },
   // mutations must be synchronous
   mutations: {
@@ -25,6 +26,9 @@ export default new Vuex.Store({
     },
     setBranding (state, response) {
       state.branding = response.data
+    },
+    setHelpUrl (state, response) {
+      state.helpUrl = response.data.description
     },
     setPermissionMap (state, response) {
       response.data.roles.forEach(roles => {
@@ -72,6 +76,12 @@ export default new Vuex.Store({
           if (callback) {
             callback()
           }
+        })
+    },
+    getHelpUrl (context, callback) {
+      axios.get('/openstorefront/api/v1/service/application/configproperties/help.url')
+        .then(response => {
+          context.commit('setHelpUrl', response)
         })
     }
   },

@@ -65,6 +65,8 @@ public class PropertiesManager
 	public static final String KEY_ELASTIC_SEARCH_POOL = "elastic.connectionpool.size";
 	public static final String KEY_ELASTIC_CONNECTION_WAIT_TIME = "elastic.connection.wait.seconds";
 
+	public static final String HELP_URL = "help.url";
+
 	public static final String KEY_MAX_AGE_TRACKING_RECORDS = "trackingrecords.max.age.days";
 	public static final String KEY_EXTERNAL_USER_MANAGER = "external.usermanager";
 	public static final String KEY_EXTERNAL_SYNC_ACTIVATE = "external.sync.activate";
