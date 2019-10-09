@@ -195,6 +195,7 @@ export default {
   font-size: 140%;
   transition: box-shadow 0.7s;
   background-color: $white;
+  min-width: 100%;
 }
 .searchbar-button {
   border-radius: 2px;
@@ -259,5 +260,26 @@ input:focus + .icon {
   content: "";
   clear: both;
   display: table;
+}
+@media only screen and (max-width: 360px) {
+  .searchfield {
+    width: 160px;
+  }
+  .searchbar {
+    width: 230px;
+  }
+}
+@media only screen and (max-width: 415px) {
+  .searchfield {
+    width: 150px;
+  }
+}
+@media only screen and (max-width: 380px) {
+  .searchfield {
+    width: 150px;
+  }
+  .searchbar {
+    width: 220px;
+  }
 }
 </style>
