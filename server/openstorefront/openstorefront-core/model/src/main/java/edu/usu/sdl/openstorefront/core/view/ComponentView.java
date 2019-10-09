@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.DateConverter;
 
 /**
  *
@@ -76,6 +78,7 @@ public class ComponentView
 		ComponentView componentView = new ComponentView();
 
 		try {
+			ConvertUtils.register(new DateConverter(null), Date.class);
 			BeanUtils.copyProperties(componentView, component);
 		} catch (IllegalAccessException | InvocationTargetException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
