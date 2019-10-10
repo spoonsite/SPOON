@@ -365,9 +365,9 @@
       <!-- Comparison Table Dialog -->
     <v-dialog
       v-model="showComparison"
-      class="dialog-scroll"
       justify="center"
-      max-width="85vw">
+      max-width="85vw"
+      :class="{ 'dialog-scroll': showComparison }">
         <v-card
         class="dialog-scroll">
           <v-card-title style="display: flex; justify-content: space-between;">
