@@ -180,7 +180,7 @@
 	 </dependency>
 	 <dependency>
 	  <groupId>${project.groupId}</groupId>
-	  <artifactId>openstorefront-client-mobile</artifactId>
+	  <artifactId>openstorefront-client-desktop</artifactId>
 	  <version>${project.version}</version>
 	 </dependency>
 	 <dependency>

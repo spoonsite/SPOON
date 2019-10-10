@@ -17,9 +17,7 @@ package edu.usu.sdl.openstorefront.web.action;
 
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
-import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -28,8 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 public class LandingAction
 		extends BaseAction
 {
-
-	private static final String LANDING_PAGE_PREVIEW = "LANDING-PAGE-PREVIEW";
 
 	private String landingTemplate;
 	private String appVersion;
@@ -41,9 +37,7 @@ public class LandingAction
 	@DefaultHandler
 	public Resolution landingPage()
 	{
-		setLandingTemplate(getPageOutput("/WEB-INF/securepages/template/landing.jsp"));
-
-		return new ForwardResolution("/WEB-INF/securepages/shared/index.jsp");
+		return new ForwardResolution("desktop/index.html");
 	}
 
 	public String getLandingTemplate()
