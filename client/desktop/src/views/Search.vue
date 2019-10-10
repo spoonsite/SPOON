@@ -794,7 +794,7 @@ export default {
     },
     getAttributeUnit (attributeCompared) {
       for (var attribute in this.searchResultsAttributes) {
-        if (this.searchResultsAttributes[attribute].attributeTypeLabel === attributeCompared && this.searchResultsAttributes[attribute].attributeUnit != null) {
+        if (this.searchResultsAttributes[attribute].label === attributeCompared && this.searchResultsAttributes[attribute].attributeUnit != null) {
           return ' ' + this.searchResultsAttributes[attribute].attributeUnit
         }
       }
