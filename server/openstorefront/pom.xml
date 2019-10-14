@@ -31,7 +31,8 @@
 		<!-- <module>dataupdater</module> -->
 		<module>system-tests</module>
 		<module>openstorefront-client-login</module>
-		<module>openstorefront-client-mobile</module>
+		<!-- <module>openstorefront-client-mobile</module> -->
+		<module>openstorefront-client-desktop</module>
 	</modules>
 
 	<dependencies>

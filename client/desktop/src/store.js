@@ -11,6 +11,9 @@ export default new Vuex.Store({
     securityPolicy: {},
     permissionMap: [],
     appVersion: '',
+    componentTypeList: [],
+    attributeMap: {},
+    selectedComponentTypes: [],
     helpUrl: ''
   },
   // mutations must be synchronous
@@ -40,6 +43,18 @@ export default new Vuex.Store({
           if (!found) state.permissionMap.push(permission.permission)
         })
       })
+    },
+    setComponentTypeList (state, response) {
+      state.componentTypeList = response.data
+    },
+    setAttributeMap (state, response) {
+      state.attributeMap = {}
+      response.data.forEach(element => {
+        state.attributeMap[element.attributeType] = element
+      })
+    },
+    setSelectedComponentTypes (state, response) {
+      state.selectedComponentTypes = response.data
     }
   },
   actions: {
@@ -78,6 +93,18 @@ export default new Vuex.Store({
           }
         })
     },
+    getComponentTypeList (context) {
+      axios.get('/openstorefront/api/v1/resource/componenttypes')
+        .then(response => {
+          context.commit('setComponentTypeList', response)
+        })
+    },
+    getAttributeMap (context) {
+      axios.get('/openstorefront/api/v1/resource/attributes')
+        .then(response => {
+          context.commit('setAttributeMap', response)
+        })
+    },
     getHelpUrl (context, callback) {
       axios.get('/openstorefront/api/v1/service/application/configproperties/help.url')
         .then(response => {
@@ -87,6 +114,7 @@ export default new Vuex.Store({
   },
   getters: {
     // call this.$store.getters.hasPermission('ADMIN-...')
-    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0
+    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0,
+    getSelectedComponentTypes: (state) => state.selectedComponentTypes
   }
 })

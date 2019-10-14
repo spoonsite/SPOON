@@ -600,18 +600,17 @@
 							Ext.defer(function(){
 								headerPanel.updateLayout(true, true);
 							}, 1000);
-							
+
 							if(!user.isAnonymousUser && entry.createUser === '${user}'){
 								Ext.getCmp('nonOwnerMenu').setHidden(true);
-								Ext.getCmp('ownerMenu').setHidden(false);								
+								Ext.getCmp('ownerMenu').setHidden(false);
 							}
-							
-							// console.log("Whats going into the Detials page: ",entry)
+
 							Ext.getCmp('toolsPanel').getComponent('updatedInfo').update(entry);
-							
+
 							if (entry.approvalState !== "A" || entry.activeStatus !== 'A') {
-								
-								var html = '';						
+
+								var html = '';
 								if (entry.approvalState == 'P') {
 									html = 'This entry has not yet been approved for the site and is still under review.';								
 								} else if (entry.approvalState == 'N') {

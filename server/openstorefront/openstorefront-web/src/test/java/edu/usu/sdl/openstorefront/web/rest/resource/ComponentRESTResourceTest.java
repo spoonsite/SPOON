@@ -167,10 +167,9 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 //
 //	}
 	/**
-	 * @POST @Path("/{id}/attributes")
 	 * 
-	 * This test no longer functions correctly because of new code
-	 * requiring a connection to elasticsearch
+	 * This test attempts to add an attribute to the database,
+	 * if no errors are reported, then the test passes.
 	 */
 	@Test
 	public void addComponentAttributeTest()
