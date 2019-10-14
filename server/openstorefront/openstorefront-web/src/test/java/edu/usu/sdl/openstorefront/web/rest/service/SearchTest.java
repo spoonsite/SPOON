@@ -38,7 +38,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -74,12 +75,12 @@ public class SearchTest extends JerseyShiroTest
 				.post(Entity.form(idMap));
 
 		//Assert
-		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("application/csv", response.getHeaderString("Content-Type"));
-		Assert.assertEquals("attachment; filename=\"searchResults.csv\"", response.getHeaderString("Content-Disposition"));
-		Assert.assertTrue(response.hasEntity());
+		assertEquals(200, response.getStatus());
+		assertEquals("application/csv", response.getHeaderString("Content-Type"));
+		assertEquals("attachment; filename=\"searchResults.csv\"", response.getHeaderString("Content-Disposition"));
+		assertTrue(response.hasEntity());
 		String actualOutput = response.readEntity(String.class);
-		Assert.assertEquals(expectedOutput, actualOutput);
+		assertEquals(expectedOutput, actualOutput);
 	}
 
 	/**
@@ -205,11 +206,11 @@ public class SearchTest extends JerseyShiroTest
 				.post(Entity.form(idMap));
 
 		//Assert
-		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("application/csv", response.getHeaderString("Content-Type"));
-		Assert.assertEquals("attachment; filename=\"searchResults.csv\"", response.getHeaderString("Content-Disposition"));
-		Assert.assertTrue(response.hasEntity());
+		assertEquals(200, response.getStatus());
+		assertEquals("application/csv", response.getHeaderString("Content-Type"));
+		assertEquals("attachment; filename=\"searchResults.csv\"", response.getHeaderString("Content-Disposition"));
+		assertTrue(response.hasEntity());
 		String actualOutput = response.readEntity(String.class);
-		Assert.assertEquals(expectedOutput, actualOutput);
+		assertEquals(expectedOutput, actualOutput);
 	}
 }
