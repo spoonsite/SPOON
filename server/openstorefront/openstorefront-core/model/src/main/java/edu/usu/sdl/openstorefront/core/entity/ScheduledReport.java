@@ -57,26 +57,10 @@ public class ScheduledReport
 	@FK(ReportType.class)
 	private String reportType;
 
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
-	@ConsumeField
-	@FK(ReportFormat.class)
-	@APIDescription("Deprecated: Use Report Outputs and NOT this field")
-	private String reportFormat;
-
 	@ConsumeField
 	@Embedded
 	@OneToOne(orphanRemoval = true)
 	private ReportOption reportOption;
-
-	@Deprecated
-	@ConsumeField
-	@Embedded
-	@DataType(EmailAddress.class)
-	@OneToMany(orphanRemoval = true)
-	@APIDescription("Deprecated: Use Report Outputs and NOT this field")
-	private List<EmailAddress> emailAddresses;
 
 	@Min(1)
 	@Max(30)
@@ -119,8 +103,6 @@ public class ScheduledReport
 		ScheduledReport scheduledReport = (ScheduledReport) entity;
 
 		this.setLastRanDts(scheduledReport.getLastRanDts());
-		this.setEmailAddresses(scheduledReport.getEmailAddresses());
-		this.setReportFormat(scheduledReport.getReportFormat());
 		this.setReportOption(scheduledReport.getReportOption());
 		this.setReportType(scheduledReport.getReportType());
 		this.setScheduleIntervalDays(scheduledReport.getScheduleIntervalDays());
@@ -189,30 +171,6 @@ public class ScheduledReport
 	public void setReportOption(ReportOption reportOption)
 	{
 		this.reportOption = reportOption;
-	}
-
-	@Deprecated
-	public List<EmailAddress> getEmailAddresses()
-	{
-		return emailAddresses;
-	}
-
-	@Deprecated
-	public void setEmailAddresses(List<EmailAddress> emailAddresses)
-	{
-		this.emailAddresses = emailAddresses;
-	}
-
-	@Deprecated
-	public String getReportFormat()
-	{
-		return reportFormat;
-	}
-
-	@Deprecated
-	public void setReportFormat(String reportFormat)
-	{
-		this.reportFormat = reportFormat;
 	}
 
 	public Date getLastRanDts()

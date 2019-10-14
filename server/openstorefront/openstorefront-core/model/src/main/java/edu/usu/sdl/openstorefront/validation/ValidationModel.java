@@ -25,7 +25,7 @@ public class ValidationModel
 	private Object dataObject;
 	private boolean acceptNull = false;
 	private boolean consumeFieldsOnly = false;
-	private boolean santize = true;
+	private boolean sanitize = true;
 	private boolean applyDefaults = true;
 
 	public ValidationModel(Object dataObject)
@@ -38,7 +38,7 @@ public class ValidationModel
 		ValidationModel validateModel = new ValidationModel(newDataObject);
 		validateModel.setAcceptNull(original.isAcceptNull());
 		validateModel.setConsumeFieldsOnly(original.isConsumeFieldsOnly());
-		validateModel.setSantize(original.getSantize());
+		validateModel.setSanitize(original.getSanitize());
 		validateModel.setApplyDefaults(original.applyDefaults);
 		return validateModel;
 	}
@@ -73,14 +73,14 @@ public class ValidationModel
 		this.consumeFieldsOnly = consumeFieldsOnly;
 	}
 
-	public boolean getSantize()
+	public boolean getSanitize()
 	{
-		return santize;
+		return sanitize;
 	}
 
-	public void setSantize(boolean santize)
+	public void setSanitize(boolean sanitize)
 	{
-		this.santize = santize;
+		this.sanitize = sanitize;
 	}
 
 	public boolean getApplyDefaults()

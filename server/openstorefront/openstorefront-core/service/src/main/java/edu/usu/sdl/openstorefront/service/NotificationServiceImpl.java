@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
@@ -27,31 +26,29 @@ import edu.usu.sdl.openstorefront.core.entity.NotificationEvent;
 import edu.usu.sdl.openstorefront.core.entity.NotificationEventReadStatus;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.UserRole;
+import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventView;
 import edu.usu.sdl.openstorefront.core.view.NotificationEventWrapper;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.service.api.NotificationServicePrivate;
+import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.mail.Message;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
-import edu.usu.sdl.openstorefront.core.spi.NotificationEventListener;
-import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.api.NotificationServicePrivate;
-import edu.usu.sdl.openstorefront.service.manager.MailManager;
-import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
-import javax.mail.Message;
 import org.codemonkey.simplejavamail.email.Email;
 
 /**
@@ -74,71 +71,14 @@ public class NotificationServiceImpl
 	@Override
 	public NotificationEventWrapper getAllEventsForUser(String username, FilterQueryParams queryParams)
 	{
-		// Initialize Response Object
 		NotificationEventWrapper notificationEventWrapper = new NotificationEventWrapper();
 
-		// Initialize Notification Event Query
-		String eventQuery = "SELECT FROM " + NotificationEvent.class.getSimpleName() + " WHERE activeStatus = '" + NotificationEvent.ACTIVE_STATUS + "'";
-
-		// Check For Username
-		if (username != null) {
-
-			// Add User-Specific Filtering To Query
-			eventQuery += " AND (username = '" + username + "' OR (username IS NULL AND roleGroup IS NULL))";
-		}
-
-		/////////////////////
-		// Get Total Count //
-		/////////////////////
-		// Modify Query To Get Count
-		String eventCountQuery = eventQuery.replace("SELECT FROM", "SELECT COUNT(*) FROM");
-
-		// Request Count
-		List<ODocument> countDocuments = persistenceService.query(eventCountQuery, null);
-
-		// Initialize Count Variable
-		Long totalCount;
-
-		// Check For Count Results
-		if (!countDocuments.isEmpty()) {
-
-			// Set Total Count
-			totalCount = countDocuments.get(0).field("COUNT");
-		} else {
-
-			// Set Total Count To Zero
-			// (Something Happened)
-			totalCount = 0L;
-		}
-
-		// Set Total Count On Response Object
+		long totalCount = getRepoFactory().getNotificationRepo().getTotalNotificationsForUser(username);
 		notificationEventWrapper.setTotalNumber(totalCount);
 
-		/////////////////////
-		// End Total Count //
-		/////////////////////
-		//////////////////////
-		// Sorting & Offset //
-		//////////////////////
-		// Handle Sorting (In Query)
-		eventQuery += " ORDER BY " + queryParams.getSortField() + " " + queryParams.getSortOrder();
+		List<NotificationEvent> notificationEvents = getRepoFactory().getNotificationRepo().getNotificationsForUser(username, queryParams);
 
-		// Handle Offset (In Query)
-		eventQuery += " SKIP " + queryParams.getOffset();
-
-		// Handle Limit (In Query)
-		eventQuery += " LIMIT " + queryParams.getMax();
-
-		//////////////////////////
-		// End Sorting & Offset //
-		//////////////////////////
-		// Request Notification Events
-		List<NotificationEvent> notificationEvents = persistenceService.query(eventQuery, null);
-
-		// Set Result Set Size In Response Object
 		notificationEventWrapper.setResults(notificationEvents.size());
-
-		// Set Returned Notification Events In Response Object
 		notificationEventWrapper.setData(NotificationEventView.toView(notificationEvents));
 
 		//mark read flag
@@ -148,12 +88,7 @@ public class NotificationServiceImpl
 		}
 
 		if (eventIds.isEmpty() == false) {
-			String query = "select from " + NotificationEventReadStatus.class.getSimpleName() + " where username = :usernameParam and eventId in :eventIdSetParam ";
-			Map<String, Object> paramMap = new HashMap<>();
-			paramMap.put("usernameParam", username);
-			paramMap.put("eventIdSetParam", eventIds);
-
-			List<NotificationEventReadStatus> readStatuses = persistenceService.query(query, paramMap);
+			List<NotificationEventReadStatus> readStatuses = getRepoFactory().getNotificationRepo().getReadNoficationsForUser(username, eventIds);
 
 			Set<String> readSet = new HashSet<>();
 			for (NotificationEventReadStatus readStatus : readStatuses) {
@@ -178,6 +113,7 @@ public class NotificationServiceImpl
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void registerNotificationListerner(NotificationEventListener notificationEventListerner)
 	{
 		Element element = OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
@@ -192,15 +128,16 @@ public class NotificationServiceImpl
 	@Override
 	public NotificationEvent postEvent(NotificationEvent notificationEvent)
 	{
-		notificationEvent.setEventId(persistenceService.generateId());
+		notificationEvent.setEventId(getPersistenceService().generateId());
 		notificationEvent.populateBaseCreateFields();
-		notificationEvent = persistenceService.persist(notificationEvent);
+		notificationEvent = getPersistenceService().persist(notificationEvent);
 
 		Element element = OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
 		if (element != null) {
+			@SuppressWarnings("unchecked")
 			List<NotificationEventListener> listerners = (List<NotificationEventListener>) element.getObjectValue();
 			for (NotificationEventListener listerner : listerners) {
-				listerner.processEvent(persistenceService.deattachAll(notificationEvent));
+				listerner.processEvent(getPersistenceService().deattachAll(notificationEvent));
 			}
 		}
 		return notificationEvent;
@@ -209,14 +146,14 @@ public class NotificationServiceImpl
 	@Override
 	public void deleteEvent(String eventId)
 	{
-		NotificationEvent notificationEvent = persistenceService.findById(NotificationEvent.class, eventId);
+		NotificationEvent notificationEvent = getPersistenceService().findById(NotificationEvent.class, eventId);
 		if (notificationEvent != null) {
 
 			NotificationEventReadStatus notificationEventReadStatus = new NotificationEventReadStatus();
 			notificationEventReadStatus.setEventId(eventId);
-			persistenceService.deleteByExample(notificationEventReadStatus);
+			getPersistenceService().deleteByExample(notificationEventReadStatus);
 
-			persistenceService.delete(notificationEvent);
+			getPersistenceService().delete(notificationEvent);
 		}
 	}
 
@@ -228,15 +165,11 @@ public class NotificationServiceImpl
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);
 		archiveTime = archiveTime.truncatedTo(ChronoUnit.DAYS);
-		String deleteQuery = "updateDts < :maxUpdateDts";
 
 		ZonedDateTime zdt = archiveTime.atZone(ZoneId.systemDefault());
 		Date archiveDts = Date.from(zdt.toInstant());
 
-		Map<String, Object> queryParams = new HashMap<>();
-		queryParams.put("maxUpdateDts", archiveDts);
-
-		persistenceService.deleteByQuery(NotificationEvent.class, deleteQuery, queryParams);
+		getRepoFactory().getNotificationRepo().deleteNotificationBeforeDate(archiveDts);
 	}
 
 	@Override
@@ -246,11 +179,11 @@ public class NotificationServiceImpl
 		Objects.requireNonNull(username);
 
 		NotificationEventReadStatus notificationEventReadStatus = new NotificationEventReadStatus();
-		notificationEventReadStatus.setReadStatusId(persistenceService.generateId());
+		notificationEventReadStatus.setReadStatusId(getPersistenceService().generateId());
 		notificationEventReadStatus.setEventId(eventId);
 		notificationEventReadStatus.setUsername(username);
 
-		persistenceService.persist(notificationEventReadStatus);
+		getPersistenceService().persist(notificationEventReadStatus);
 	}
 
 	@Override
@@ -265,7 +198,7 @@ public class NotificationServiceImpl
 
 		NotificationEventReadStatus temp = notificationEventReadStatus.findProxy();
 
-		persistenceService.delete(temp);
+		getPersistenceService().delete(temp);
 	}
 
 	@Override
@@ -275,16 +208,16 @@ public class NotificationServiceImpl
 			//mark all event global events and read
 			NotificationEvent notificationEventExample = new NotificationEvent();
 			notificationEventExample.setActiveStatus(NotificationEvent.ACTIVE_STATUS);
-			QueryByExample queryByExample = new QueryByExample(notificationEventExample);
+			QueryByExample<NotificationEvent> queryByExample = new QueryByExample<>(notificationEventExample);
 
 			NotificationEvent notificationNotExample = new NotificationEvent();
 			notificationNotExample.setUsername(QueryByExample.STRING_FLAG);
 			notificationNotExample.setRoleGroup(QueryByExample.STRING_FLAG);
-			SpecialOperatorModel specialOperatorModel = new SpecialOperatorModel(notificationNotExample);
+			SpecialOperatorModel<NotificationEvent> specialOperatorModel = new SpecialOperatorModel<>(notificationNotExample);
 			specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_NULL);
 			queryByExample.getExtraWhereCauses().add(specialOperatorModel);
 
-			List<NotificationEvent> notificationEvents = persistenceService.queryByExample(queryByExample);
+			List<NotificationEvent> notificationEvents = getPersistenceService().queryByExample(queryByExample);
 			for (NotificationEvent notificationEvent : notificationEvents) {
 				markEventAsRead(notificationEvent.getEventId(), username);
 			}
@@ -292,15 +225,15 @@ public class NotificationServiceImpl
 			//delete user events
 			NotificationEvent notificationEvent = new NotificationEvent();
 			notificationEvent.setUsername(username);
-			persistenceService.deleteByExample(notificationEvent);
+			getPersistenceService().deleteByExample(notificationEvent);
 		} else {
 			throw new OpenStorefrontRuntimeException("Username is required.", "Check data passed in.");
 		}
-
 	}
-	
-	private void sendEmailToProfile(UserProfile userProfile, EmailCommentModel emailCommentModel){
-		
+
+	private void sendEmailToProfile(UserProfile userProfile, EmailCommentModel emailCommentModel)
+	{
+
 		if (userProfile != null) {
 			if (StringUtils.isNotBlank(userProfile.getEmail())) {
 				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
@@ -313,42 +246,40 @@ public class NotificationServiceImpl
 		} else {
 			throw new OpenStorefrontRuntimeException(NO_USER, NO_USER_SOL);
 		}
-		
+
 	}
 
 	@Override
 	public void emailCommentMessage(EmailCommentModel emailCommentModel)
 	{
 
-		List<UserRole> userRoles = null;
-		if(StringUtils.isNotBlank(emailCommentModel.getAssignedGroup()) && StringUtils.isNotEmpty(emailCommentModel.getAssignedGroup())){
+		List<UserRole> userRoles = new ArrayList<>();
+		if (StringUtils.isNotBlank(emailCommentModel.getAssignedGroup()) && StringUtils.isNotEmpty(emailCommentModel.getAssignedGroup())) {
 			UserRole userRole = new UserRole();
 			userRole.setRole(emailCommentModel.getAssignedGroup());
 			userRole.setActiveStatus(UserRole.ACTIVE_STATUS);
 			userRoles = userRole.findByExample();
-			
-			userRoles.removeIf( (uRole) -> {
+
+			userRoles.removeIf((uRole) -> {
 				return SecurityUtil.getCurrentUserName().equals(uRole.getUsername());
-			} );
+			});
 		}
-		
+
 		boolean canEmailAssignee = StringUtils.isNotBlank(emailCommentModel.getAssignedUser()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getAssignedUser());
-		boolean canEmailGroup = !(userRoles == null || userRoles.isEmpty());
+		boolean canEmailGroup = !userRoles.isEmpty();
 		boolean canEmailOwner = StringUtils.isNotBlank(emailCommentModel.getEntryOwner()) && !SecurityUtil.getCurrentUserName().equals(emailCommentModel.getEntryOwner());
 
-		if(!emailCommentModel.isAdminComment()){
+		if (!emailCommentModel.isAdminComment()) {
 			// THIS IS AN OWNER COMMENT.
-			if(canEmailAssignee) {		
+			if (canEmailAssignee) {
 				// EMAIL THE ASSIGNEE FROM THE WORKLINK
 				sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);
-			}
-			else if(canEmailGroup) {
+			} else if (canEmailGroup) {
 				// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
 				for (UserRole uRole : userRoles) {
 					sendEmailToProfile(getUserService().getUserProfile(uRole.getUsername()), emailCommentModel);
 				}
-			}
-			else {
+			} else {
 				// EMAIL SUPPORT SO THAT THE OWNER ALWAYS HAS A CONTACT. support@spoonsite.com
 				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
 				email.setSubject("Owner Comment to Support.");
@@ -356,35 +287,31 @@ public class NotificationServiceImpl
 				MailManager.send(email, true);
 
 			}
-		}
-		else {
+		} else {
 			// THIS IS AN ADMIN COMMENT
-			if(emailCommentModel.isPrivateComment()){
+			if (emailCommentModel.isPrivateComment()) {
 				// THIS IS AN ADMIN PRIVATE COMMENT DO NOT EMAIL THE OWNER.
-				if (canEmailAssignee) {					
+				if (canEmailAssignee) {
 					// EMAIL THE ASSIGNEE FROM THE WORKLINK
-					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);					
-				}
-				else if (canEmailGroup) {
+					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);
+				} else if (canEmailGroup) {
 					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT.
 					for (UserRole uRole : userRoles) {
 						sendEmailToProfile(getUserService().getUserProfile(uRole.getUsername()), emailCommentModel);
-					}				
+					}
 				}
-			}
-			else {
+			} else {
 				// THIS IS AN ADMIN PUBLIC COMMENT. SEND AN EMAIL TO THE OWNER, GROUP, AND, ASSIGNEE BUT DON'T SEND AN EMAIL TO THE PERSON WHO MADE THE COMMENT.
 				if (canEmailAssignee) {
 					// EMAIL THE ASSIGNEE FROM THE WORKLINK
 					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getAssignedUser()), emailCommentModel);
-				}				
-				else if (canEmailGroup) {
+				} else if (canEmailGroup) {
 					// EMAIL THE GROUP BUT DON'T EMAIL THE PERSON WHO MADE THE COMMENT
 					for (UserRole uRole : userRoles) {
 						sendEmailToProfile(getUserService().getUserProfile(uRole.getUsername()), emailCommentModel);
 					}
 				}
-				if(canEmailOwner){
+				if (canEmailOwner) {
 					// EMAIL THE OWNER
 					sendEmailToProfile(getUserService().getUserProfile(emailCommentModel.getEntryOwner()), emailCommentModel);
 				}

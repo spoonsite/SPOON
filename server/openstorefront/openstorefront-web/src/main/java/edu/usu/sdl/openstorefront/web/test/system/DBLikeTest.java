@@ -52,7 +52,7 @@ public class DBLikeTest
 		TestEntity testEntityLikeExample = new TestEntity();
 		testEntityLikeExample.setCode("A%");
 
-		QueryByExample queryByExample = new QueryByExample(new TestEntity());
+		QueryByExample<TestEntity> queryByExample = new QueryByExample<>(new TestEntity());
 		queryByExample.setLikeExample(testEntityLikeExample);
 
 		List<TestEntity> testEntities = service.getPersistenceService().queryByExample(queryByExample);
@@ -67,7 +67,7 @@ public class DBLikeTest
 		testEntityLikeExample = new TestEntity();
 		testEntityLikeExample.setCode("%ange");
 
-		queryByExample = new QueryByExample(new TestEntity());
+		queryByExample = new QueryByExample<>(new TestEntity());
 		queryByExample.setLikeExample(testEntityLikeExample);
 
 		testEntities = service.getPersistenceService().queryByExample(queryByExample);
@@ -82,7 +82,7 @@ public class DBLikeTest
 		testEntityLikeExample = new TestEntity();
 		testEntityLikeExample.setCode("%Test%");
 
-		queryByExample = new QueryByExample(new TestEntity());
+		queryByExample = new QueryByExample<>(new TestEntity());
 		queryByExample.setLikeExample(testEntityLikeExample);
 
 		testEntities = service.getPersistenceService().queryByExample(queryByExample);

@@ -17,11 +17,11 @@ package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -95,11 +95,17 @@ public class UserWatchView
 		});
 
 		if (componentIdSet.isEmpty() == false) {
-			String query = "Select from " + Component.class.getSimpleName() + " where componentId in :idSet";
-			Map<String, Object> paramMap = new HashMap<>();
-			paramMap.put("idSet", componentIdSet);
 
-			List<Component> components = ServiceProxyFactory.getServiceProxy().getPersistenceService().query(query, paramMap);
+			Component componentExample = new Component();
+
+			Component componentInExample = new Component();
+			componentInExample.setComponentId(QueryByExample.STRING_FLAG);
+
+			QueryByExample<Component> queryByExample = new QueryByExample<>(componentExample);
+			queryByExample.setInExample(componentExample);
+			queryByExample.getInExampleOption().setParameterValues(new ArrayList<>(componentIdSet));
+
+			List<Component> components = ServiceProxyFactory.getServiceProxy().getPersistenceService().queryByExample(queryByExample);
 			Map<String, List<Component>> componentMap = components.stream().collect(Collectors.groupingBy(Component::getComponentId));
 			watches.forEach(watch -> {
 				List<Component> componentsList = componentMap.get(watch.getComponentId());

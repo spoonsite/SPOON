@@ -87,7 +87,7 @@ public class ChecklistServiceImpl
 		Objects.requireNonNull(checklistQuestion);
 		Objects.requireNonNull(checklistQuestion.getQid());
 
-		ChecklistQuestion questionExisting = persistenceService.findById(ChecklistQuestion.class, checklistQuestion.getQuestionId());
+		ChecklistQuestion questionExisting = getPersistenceService().findById(ChecklistQuestion.class, checklistQuestion.getQuestionId());
 		if (questionExisting == null) {
 			ChecklistQuestion dupCheckQuestion = new ChecklistQuestion();
 			dupCheckQuestion.setQid(checklistQuestion.getQid());
@@ -96,13 +96,13 @@ public class ChecklistServiceImpl
 
 		if (questionExisting != null) {
 			questionExisting.updateFields(checklistQuestion);
-			questionExisting = persistenceService.persist(questionExisting);
+			questionExisting = getPersistenceService().persist(questionExisting);
 		} else {
 			if (StringUtils.isBlank(checklistQuestion.getQuestionId())) {
-				checklistQuestion.setQuestionId(persistenceService.generateId());
+				checklistQuestion.setQuestionId(getPersistenceService().generateId());
 			}
 			checklistQuestion.populateBaseCreateFields();
-			questionExisting = persistenceService.persist(checklistQuestion);
+			questionExisting = getPersistenceService().persist(checklistQuestion);
 		}
 
 		OSFCacheManager.getChecklistQuestionCache().removeAll();
@@ -141,7 +141,7 @@ public class ChecklistServiceImpl
 			EvaluationChecklistResponse response = new EvaluationChecklistResponse();
 			response.setQuestionId(questionId);
 
-			long count = persistenceService.countByExample(response);
+			long count = getPersistenceService().countByExample(response);
 			if (count > 0) {
 				inUse = true;
 			}
@@ -156,9 +156,9 @@ public class ChecklistServiceImpl
 		if (isQuestionBeingUsed(questionId)) {
 			throw new OpenStorefrontRuntimeException("Unable to remove question.", "Remove all ties to the quesiton (templates, evaluation responses)");
 		} else {
-			ChecklistQuestion questionExisting = persistenceService.findById(ChecklistQuestion.class, questionId);
+			ChecklistQuestion questionExisting = getPersistenceService().findById(ChecklistQuestion.class, questionId);
 			if (questionExisting != null) {
-				persistenceService.delete(questionExisting);
+				getPersistenceService().delete(questionExisting);
 				OSFCacheManager.getChecklistQuestionCache().remove(questionExisting.getQuestionId());
 			}
 		}
@@ -185,9 +185,9 @@ public class ChecklistServiceImpl
 		if (isChecklistTemplateBeingUsed(checklistTemplateId)) {
 			throw new OpenStorefrontRuntimeException("Unable to remove checklist template.", "Remove all ties to the template (evaluation checklists)");
 		} else {
-			ChecklistTemplate existing = persistenceService.findById(ChecklistTemplate.class, checklistTemplateId);
+			ChecklistTemplate existing = getPersistenceService().findById(ChecklistTemplate.class, checklistTemplateId);
 			if (existing != null) {
-				persistenceService.delete(existing);
+				getPersistenceService().delete(existing);
 			}
 		}
 	}
@@ -226,7 +226,7 @@ public class ChecklistServiceImpl
 					response.setActiveStatus(EvaluationChecklistResponse.ACTIVE_STATUS);
 					response.populateBaseUpdateFields();
 					response.setUserAddRemoveFlg(Boolean.TRUE);
-					persistenceService.persist(response);
+					getPersistenceService().persist(response);
 				}
 				questionAlreadyThere.add(response.getQuestionId());
 			} else {
@@ -236,7 +236,7 @@ public class ChecklistServiceImpl
 				response.setActiveStatus(EvaluationChecklistResponse.INACTIVE_STATUS);
 				response.populateBaseUpdateFields();
 				response.setUserAddRemoveFlg(Boolean.TRUE);
-				persistenceService.persist(response);
+				getPersistenceService().persist(response);
 
 			}
 		}
@@ -251,12 +251,12 @@ public class ChecklistServiceImpl
 
 					EvaluationChecklistResponse response = new EvaluationChecklistResponse();
 					response.setChecklistId(checklistId);
-					response.setResponseId(persistenceService.generateId());
+					response.setResponseId(getPersistenceService().generateId());
 					response.setQuestionId(questionIdKeep);
 					response.setWorkflowStatus(initialStatus.getCode());
 					response.populateBaseCreateFields();
 					response.setUserAddRemoveFlg(Boolean.TRUE);
-					persistenceService.persist(response);
+					getPersistenceService().persist(response);
 					getChangeLogService().addEntityChange(response);
 				} else {
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to find existing question to add new response. (skipping) QuestionId: {0}", questionIdKeep));

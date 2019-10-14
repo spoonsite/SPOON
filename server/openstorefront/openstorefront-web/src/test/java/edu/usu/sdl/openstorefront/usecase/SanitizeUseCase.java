@@ -23,27 +23,27 @@ import org.junit.Test;
  *
  * @author dshurtleff
  */
-public class SantizeUseCase
+public class SanitizeUseCase
 {
 
 	@Test
-	public void testSantize()
+	public void testSanitize()
 	{
 		LinkSanitizer linkSanitizer = new LinkSanitizer();
 
-		String out = (String) linkSanitizer.santize("Media.action?GeneralMedia&name=Test");
+		String out = (String) linkSanitizer.sanitize("Media.action?GeneralMedia&name=Test");
 		System.out.println(out);
 
-		out = (String) linkSanitizer.santize("ws://www.google.com/q=test&check=true");
+		out = (String) linkSanitizer.sanitize("ws://www.google.com/q=test&check=true");
 		System.out.println(out);
 
-		out = (String) linkSanitizer.santize("<a href='ws://www.google.com/q=test&check=true'>test</a>");
+		out = (String) linkSanitizer.sanitize("<a href='ws://www.google.com/q=test&check=true'>test</a>");
 		System.out.println(out);
 
-		out = (String) linkSanitizer.santize("<a href='Media.action?GeneralMedia&name=Test'>test2</a>");
+		out = (String) linkSanitizer.sanitize("<a href='Media.action?GeneralMedia&name=Test'>test2</a>");
 		System.out.println(out);
 
-		out = (String) linkSanitizer.santize("<a href='http://test.com/Media.action?GeneralMedia&name=Test'>test2</a>");
+		out = (String) linkSanitizer.sanitize("<a href='http://test.com/Media.action?GeneralMedia&name=Test'>test2</a>");
 		System.out.println(out);
 
 	}

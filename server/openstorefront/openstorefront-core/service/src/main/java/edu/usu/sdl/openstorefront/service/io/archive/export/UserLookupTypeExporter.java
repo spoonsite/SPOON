@@ -16,19 +16,18 @@
 package edu.usu.sdl.openstorefront.service.io.archive.export;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.service.io.archive.BaseExporter;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,6 +35,7 @@ import java.util.logging.Logger;
 import net.java.truevfs.access.TFile;
 import net.java.truevfs.access.TFileInputStream;
 import net.java.truevfs.access.TFileOutputStream;
+import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
@@ -69,10 +69,19 @@ public class UserLookupTypeExporter
 	{
 		super.exporterInit();
 
-		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
-		for (Class entityClass : entityClasses) {
+		ResolverUtil resolverUtil = new ResolverUtil();
+		try {
+			resolverUtil.find(new ResolverUtil.IsA(LookupEntity.class), OpenStorefrontConstant.ENTITY_PACKAGE);
+		} catch (Exception e) {
+			LOG.log(Level.WARNING, "Unable resolve all lookup classes; may have partial results.");
+		}
+
+		for (Object entityClassObject : resolverUtil.getClasses()) {
+			Class entityClass = (Class) entityClassObject;
 			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubLookupEntity(entityClass)) {
+
+					@SuppressWarnings("unchecked")
 					SystemTable systemTable = (SystemTable) entityClass.getAnnotation(SystemTable.class);
 					if (systemTable == null) {
 						lookupsToExport.add(entityClass);
@@ -95,6 +104,7 @@ public class UserLookupTypeExporter
 	{
 		for (Class lookup : lookupsToExport) {
 
+			@SuppressWarnings("unchecked")
 			List<LookupEntity> lookupData = service.getLookupService().findLookup(lookup, null);
 			File lookupFile = new TFile(archiveBasePath + LOOKUP_DIR + lookup.getSimpleName() + ".json");
 
@@ -112,6 +122,7 @@ public class UserLookupTypeExporter
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void importRecords()
 	{
 		//this doesn't support replace as that could cause issues.

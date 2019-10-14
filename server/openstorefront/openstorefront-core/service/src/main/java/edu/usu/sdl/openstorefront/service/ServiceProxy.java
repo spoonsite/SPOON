@@ -15,6 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
+import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.api.AlertService;
 import edu.usu.sdl.openstorefront.core.api.AsyncService;
 import edu.usu.sdl.openstorefront.core.api.AttributeService;
@@ -58,7 +60,9 @@ import edu.usu.sdl.openstorefront.service.api.SearchServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.SystemArchiveServicePrivate;
 import edu.usu.sdl.openstorefront.service.api.UserServicePrivate;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.MongoDBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
+import edu.usu.sdl.openstorefront.service.repo.RepoFactory;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -75,7 +79,7 @@ public class ServiceProxy
 
 	private String modificationType = ModificationType.API;
 
-	protected PersistenceService persistenceService = new OrientPersistenceService(DBManager.getInstance());
+	private PersistenceService persistenceService;
 	private LookupService lookupService;
 	private AttributeService attributeService;
 	private AttributeServicePrivate attributeServicePrivate;
@@ -115,6 +119,7 @@ public class ServiceProxy
 
 	private FilterEngine filterEngine;
 	private static ProxyFactory proxyFactory = null;
+	private RepoFactory repoFactory;
 
 	public ServiceProxy()
 	{
@@ -123,6 +128,7 @@ public class ServiceProxy
 		} else if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
+		repoFactory = new RepoFactory();
 	}
 
 	public ServiceProxy(String modificationType)
@@ -134,6 +140,7 @@ public class ServiceProxy
 		} else if (Test.isTestPersistenceService.get()) {
 			this.persistenceService = new TestPersistenceService();
 		}
+		repoFactory = new RepoFactory();
 	}
 
 	public ServiceProxy(PersistenceService persistenceService)
@@ -181,7 +188,7 @@ public class ServiceProxy
 	@Override
 	public void reset()
 	{
-		setPersistenceService(getNewPersistenceService());
+		persistenceService = null;
 		lookupService = null;
 		attributeService = null;
 		attributeServicePrivate = null;
@@ -224,13 +231,35 @@ public class ServiceProxy
 	@Override
 	public PersistenceService getPersistenceService()
 	{
+		if (persistenceService == null) {
+			persistenceService = createPersistenceService();
+		}
 		return persistenceService;
 	}
 
 	@Override
 	public PersistenceService getNewPersistenceService()
 	{
-		return Test.isTestPersistenceService.get() ? new TestPersistenceService() : new OrientPersistenceService(DBManager.getInstance());
+		return createPersistenceService();
+	}
+
+	protected PersistenceService createPersistenceService()
+	{
+		PersistenceService persistenceServiceLocal;
+
+		if (Test.isTestPersistenceService.get()) {
+			persistenceServiceLocal = new TestPersistenceService();
+		} else {
+			boolean useMongo = Convert.toBoolean(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_DB_USE_MONGO, "false"));
+
+			if (useMongo) {
+				persistenceServiceLocal = new MongoPersistenceServiceImpl(MongoDBManager.getInstance());
+			} else {
+				persistenceServiceLocal = new OrientPersistenceService(OrientDBManager.getInstance());
+			}
+		}
+
+		return persistenceServiceLocal;
 	}
 
 	@Override
@@ -397,7 +426,7 @@ public class ServiceProxy
 		}
 		return notificationService;
 	}
-	
+
 	public NotificationServicePrivate getNotificationServicePrivate()
 	{
 		if (notificationServicePrivate == null) {
@@ -607,6 +636,16 @@ public class ServiceProxy
 	public void setPersistenceService(PersistenceService persistenceService)
 	{
 		this.persistenceService = persistenceService;
+	}
+
+	public RepoFactory getRepoFactory()
+	{
+		return repoFactory;
+	}
+
+	public void setRepoFactory(RepoFactory repoFactory)
+	{
+		this.repoFactory = repoFactory;
 	}
 
 }

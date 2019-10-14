@@ -48,6 +48,6 @@ public interface LoggableModel<T>
 	 *
 	 * @param changeLog
 	 */
-	public void setChangeParent(ChangeLog changeLog);
+	public void updateChangeParent(ChangeLog changeLog);
 
 }

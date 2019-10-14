@@ -76,7 +76,7 @@ public class MediaFile
 	/**
 	 * This copy the file and create a new record
 	 *
-	 * @return a new Media file (Note it's not persist to the db)
+	 * @return a new Media file (Note it's not persisted to the db)
 	 */
 	public MediaFile copy()
 	{
