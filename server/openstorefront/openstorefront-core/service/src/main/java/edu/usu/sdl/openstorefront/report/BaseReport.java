@@ -33,6 +33,7 @@ import edu.usu.sdl.openstorefront.report.output.BaseOutput;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
+import edu.usu.sdl.openstorefront.service.repo.RepoFactory;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -54,6 +55,7 @@ public abstract class BaseReport<T extends BaseReportModel>
 	protected Report report;
 	protected Service service;
 	protected FilterEngine filterEngine;
+	protected RepoFactory repoFactory;
 
 	//Note: not thread-safe; don't make static need a new one per thread
 	protected SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss z");
@@ -62,26 +64,32 @@ public abstract class BaseReport<T extends BaseReportModel>
 
 	public BaseReport(Report report)
 	{
-		initBaseReport(report, ServiceProxy.getProxy(), null);
+		initBaseReport(report, ServiceProxy.getProxy(), null, null);
 	}
 
 	public BaseReport(Report report, Service service)
 	{
-		initBaseReport(report, service, null);
+		initBaseReport(report, service, null, null);
 	}
 
 	public BaseReport(Report report, Service service, FilterEngine filterEngine)
 	{
-		initBaseReport(report, service, filterEngine);
+		initBaseReport(report, service, filterEngine, null);
 	}
 
-	private void initBaseReport(Report report, Service service, FilterEngine filterEngine)
+	public BaseReport(Report report, Service service, FilterEngine filterEngine, RepoFactory repoFactory)
+	{
+		initBaseReport(report, service, filterEngine, null);
+	}
+
+	private void initBaseReport(Report report, Service service, FilterEngine filterEngine, RepoFactory repoFactory)
 	{
 		Objects.requireNonNull(report, "Report must set");
 		Objects.requireNonNull(service);
 
 		this.report = report;
 		this.service = service;
+		this.repoFactory = repoFactory;
 		if (filterEngine != null) {
 			this.filterEngine = filterEngine;
 		} else {
@@ -91,6 +99,9 @@ public abstract class BaseReport<T extends BaseReportModel>
 
 		if (this.report.getReportOption() == null) {
 			this.report.setReportOption(new ReportOption());
+		}
+		if (repoFactory == null) {
+			this.repoFactory = new RepoFactory();
 		}
 	}
 

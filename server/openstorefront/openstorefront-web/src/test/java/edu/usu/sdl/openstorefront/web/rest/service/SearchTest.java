@@ -17,22 +17,8 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.service;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
-import edu.usu.sdl.openstorefront.core.entity.ComponentType;
-import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -41,7 +27,6 @@ import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  *

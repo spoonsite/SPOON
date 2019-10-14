@@ -669,7 +669,7 @@ public class Application
 
 		if (StringUtils.isNotBlank(label)) {
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-			key = sanitizer.santize(StringUtils.left(label.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
+			key = sanitizer.sanitize(StringUtils.left(label.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
 		}
 		return Response.ok(key).build();
 	}

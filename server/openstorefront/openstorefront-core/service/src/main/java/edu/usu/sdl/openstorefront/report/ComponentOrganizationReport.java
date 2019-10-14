@@ -15,8 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.report;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
@@ -31,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -51,55 +48,20 @@ public class ComponentOrganizationReport
 	{
 		ComponentOrganizationReportModel reportModel = new ComponentOrganizationReportModel();
 
-		Map<String, Object> params = new HashMap<>();
-		String componentFilter = "";
-		if (!report.dataIdSet().isEmpty()) {
-			params = new HashMap<>();
-			params.put("idlistParam", report.dataIdSet());
-			componentFilter = " and componentId in :idlistParam";
-		}
+		Map<String, List<Component>> orgComponentMap = repoFactory.getComponentRepo().getComponentByOrganization(report.dataIdSet());
 
-		String restrictionQuery = filterEngine.queryComponentRestriction();
-
-		List<ODocument> documents = service.getPersistenceService().query(
-				"Select organization, name, name.toLowerCase()"
-				+ " as sortname, securityMarkingType, submittedDts, lastActivityDts, approvedDts, approvalState from " + Component.class.getSimpleName()
-				+ " where approvalState='" + ApprovalStatus.APPROVED + "' and "
-				+ (StringUtils.isNotBlank(restrictionQuery) ? restrictionQuery + " and " : "")
-				+ " activeStatus= '" + Component.ACTIVE_STATUS + "' " + componentFilter + " order by sortname", params);
-
-		//group by org
-		Map<String, List<ODocument>> orgMap = new HashMap<>();
-
-		documents.forEach(document
-				-> {
-			String org = document.field("organization");
-			if (StringUtils.isBlank(org)) {
-				org = "No Organization Specified";
-			}
-			if (orgMap.containsKey(org)) {
-				orgMap.get(org).add(document);
-			} else {
-				List<ODocument> records = new ArrayList<>();
-				records.add(document);
-				orgMap.put(org, records);
-			}
-		});
 		long totalComponents = 0;
-		List<String> sortedOrganizations = new ArrayList<>(orgMap.keySet());
-
+		List<String> sortedOrganizations = new ArrayList<>(orgComponentMap.keySet());
 		sortedOrganizations.sort(null);
 
 		for (String organization : sortedOrganizations) {
 			ComponentOrganizationReportLineModel lineModel = new ComponentOrganizationReportLineModel();
 			lineModel.setOrganization(organization);
-			for (ODocument document : orgMap.get(organization)) {
+			for (Component component : orgComponentMap.get(organization)) {
 				EntryOrgDetailModel detailModel = new EntryOrgDetailModel();
-				detailModel.setName(document.field("name"));
-				detailModel.setLastSubmitDts(document.field("submittedDts"));
-				detailModel.setLastActivityDts(document.field("lastActivityDts"));
-				detailModel.setApprovedDts(document.field("approvedDts"));
-				detailModel.setApprovalState(document.field("approvalState"));
+				detailModel.setName(component.getName());
+				detailModel.setLastActivityDts(component.getLastActivityDts());
+				detailModel.setApprovalState(component.getApprovalState());
 
 				lineModel.getEntries().add(detailModel);
 				totalComponents++;
@@ -107,7 +69,7 @@ public class ComponentOrganizationReport
 			reportModel.getData().add(lineModel);
 		}
 		reportModel.setTotalComponent(totalComponents);
-		reportModel.setTotalOrganizations(orgMap.keySet().size());
+		reportModel.setTotalOrganizations(orgComponentMap.keySet().size());
 
 		return reportModel;
 	}

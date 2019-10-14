@@ -63,15 +63,15 @@ public class AlertServiceImpl
 	@Override
 	public Alert saveAlert(Alert alert)
 	{
-		Alert oldAlert = persistenceService.findById(Alert.class, alert.getAlertId());
+		Alert oldAlert = getPersistenceService().findById(Alert.class, alert.getAlertId());
 		if (oldAlert != null) {
 			oldAlert.updateFields(alert);
-			persistenceService.persist(oldAlert);
+			getPersistenceService().persist(oldAlert);
 			alert = oldAlert;
 		} else {
-			alert.setAlertId(persistenceService.generateId());
+			alert.setAlertId(getPersistenceService().generateId());
 			alert.populateBaseCreateFields();
-			persistenceService.persist(alert);
+			getPersistenceService().persist(alert);
 		}
 		return alert;
 	}
@@ -79,9 +79,9 @@ public class AlertServiceImpl
 	@Override
 	public void deleteAlert(String alertId)
 	{
-		Alert existingAlert = persistenceService.findById(Alert.class, alertId);
+		Alert existingAlert = getPersistenceService().findById(Alert.class, alertId);
 		if (existingAlert != null) {
-			persistenceService.delete(existingAlert);
+			getPersistenceService().delete(existingAlert);
 		}
 	}
 
@@ -94,7 +94,7 @@ public class AlertServiceImpl
 		Alert alertExample = new Alert();
 		alertExample.setAlertType(alertContext.getAlertType());
 		alertExample.setActiveStatus(Alert.ACTIVE_STATUS);
-		List<Alert> alerts = persistenceService.queryByExample(alertExample);
+		List<Alert> alerts = getPersistenceService().queryByExample(alertExample);
 
 		for (Alert alert : alerts) {
 			boolean createUserMessage = false;

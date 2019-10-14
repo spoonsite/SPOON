@@ -33,6 +33,8 @@ public class ComponentTracking
 		extends BaseComponent<ComponentTracking>
 {
 
+	public static final String FIELD_EVENT_DTS = "eventDts";
+
 	@PK(generated = true)
 	@NotNull
 	private String componentTrackingId;
