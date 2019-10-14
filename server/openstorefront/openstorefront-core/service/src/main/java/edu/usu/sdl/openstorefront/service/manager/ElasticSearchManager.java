@@ -445,6 +445,10 @@ public class ElasticSearchManager
 				searchOptions = service.getSearchService().getGlobalSearchOptions();
 			}
 		}
+		if (searchOptions == null) {
+			searchOptions = new SearchOptions();
+			searchOptions.setDefaultSearchOptions();
+		}
 
 		BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
 
