@@ -464,10 +464,6 @@ public class ElasticSearchManager
 			LOG.log(Level.SEVERE, null, ex);
 			response = new SearchResponse();
 		}
-		if (searchOptions == null) {
-			searchOptions = new SearchOptions();
-			searchOptions.setDefaultSearchOptions();
-		}
 
 		return response;
 	}
@@ -499,6 +495,10 @@ public class ElasticSearchManager
 			if (searchOptions == null) {
 				searchOptions = service.getSearchService().getGlobalSearchOptions();
 			}
+		}
+		if (searchOptions == null) {
+			searchOptions = new SearchOptions();
+			searchOptions.setDefaultSearchOptions();
 		}
 
 		BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
