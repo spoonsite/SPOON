@@ -204,6 +204,11 @@ export default {
           icon: 'comment',
           name: 'Contact',
           permissions: [] },
+        { link: (this.$store.state.helpUrl ? this.$store.state.helpUrl : 'https://spoonsite.github.io/'),
+          icon: 'question-circle',
+          name: 'Help',
+          newTab: true,
+          permissions: [] },
         // { link: '/sme-approval',
         //   icon: 'check',
         //   name: 'SME Approval',
@@ -228,8 +233,12 @@ export default {
     }
   },
   methods: {
-    nav (url) {
-      router.push(url)
+    nav (url, newTab = false) {
+      if (!newTab) {
+        router.push(url)
+      } else {
+        window.open(url)
+      }
     },
     logout () {
       this.loggingOut = true

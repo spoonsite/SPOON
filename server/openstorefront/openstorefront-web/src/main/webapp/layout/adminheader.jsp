@@ -362,13 +362,13 @@
 					actionLoadContent('System');
 				}				
 			});
-			appMenu.push({
-				text: 'System Archives',
-				permission: ['ADMIN-SYSTEM-ARCHIVES-PAGE'],
-				handler: function(){
-					actionLoadContent('System-Archives');
-				}				
-			});			
+			// appMenu.push({
+			// 	text: 'System Archives',
+			// 	permission: ['ADMIN-SYSTEM-ARCHIVES-PAGE'],
+			// 	handler: function(){
+			// 		actionLoadContent('System-Archives');
+			// 	}				
+			// });			
 			appMenu.push({
 				text: 'Tracking',
 				permission: ['ADMIN-TRACKING-PAGE'],
