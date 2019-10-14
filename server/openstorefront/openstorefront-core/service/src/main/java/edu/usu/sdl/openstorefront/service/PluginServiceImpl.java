@@ -63,7 +63,7 @@ public class PluginServiceImpl
 	public Plugin installPlugin(String filename, InputStream pluginInput, boolean filenameSafe)
 	{
 		//Check for Id first as file name maybe pickup from the directory
-		Plugin plugin = persistenceService.findById(Plugin.class, filename);
+		Plugin plugin = getPersistenceService().findById(Plugin.class, filename);
 		if (plugin == null) {
 			//Check for an original name match
 			Plugin existing = new Plugin();
@@ -80,7 +80,7 @@ public class PluginServiceImpl
 			plugin.populateBaseUpdateFields();
 		} else {
 			plugin = new Plugin();
-			plugin.setPluginId(persistenceService.generateId());
+			plugin.setPluginId(getPersistenceService().generateId());
 			if (filenameSafe) {
 				plugin.setActualFilename(filename);
 			} else {
@@ -103,7 +103,7 @@ public class PluginServiceImpl
 		}
 		try {
 			PluginManager.installBundle(plugin.getLocation(), new FileInputStream(plugin.fullPath()));
-			persistenceService.persist(plugin);
+			getPersistenceService().persist(plugin);
 		} catch (Exception ex) {
 			throw new OpenStorefrontRuntimeException("Failed to install plugin.", "Make sure file was actually contained a plugin. (jar, war). See log for more details.", ex);
 		}
@@ -121,7 +121,7 @@ public class PluginServiceImpl
 	public void uninstallPlugin(String pluginId)
 	{
 		//find plug in record
-		Plugin plugin = persistenceService.findById(Plugin.class, pluginId);
+		Plugin plugin = getPersistenceService().findById(Plugin.class, pluginId);
 		if (plugin != null) {
 			//uninstall plugin
 			PluginManager.uninstallBundle(plugin.getLocation());
@@ -140,7 +140,7 @@ public class PluginServiceImpl
 			}
 
 			//delete  plugin record
-			persistenceService.delete(plugin);
+			getPersistenceService().delete(plugin);
 		} else {
 			log.log(Level.WARNING, MessageFormat.format("Unable to find plugin to uninstall: {0}", pluginId));
 		}
@@ -167,7 +167,7 @@ public class PluginServiceImpl
 	public void inactivatePlugin(String pluginId)
 	{
 		//find plug in record
-		Plugin plugin = persistenceService.findById(Plugin.class, pluginId);
+		Plugin plugin = getPersistenceService().findById(Plugin.class, pluginId);
 
 		if (plugin != null) {
 			//stop plug
@@ -175,7 +175,7 @@ public class PluginServiceImpl
 
 			//inactivate
 			plugin.setActiveStatus(Plugin.INACTIVE_STATUS);
-			persistenceService.persist(plugin);
+			getPersistenceService().persist(plugin);
 		} else {
 			log.log(Level.WARNING, MessageFormat.format("Unable to find plugin to inactivate: {0}", pluginId));
 		}
@@ -185,7 +185,7 @@ public class PluginServiceImpl
 	public void activatePlugin(String pluginId)
 	{
 		//find plug in record
-		Plugin plugin = persistenceService.findById(Plugin.class, pluginId);
+		Plugin plugin = getPersistenceService().findById(Plugin.class, pluginId);
 
 		if (plugin != null) {
 			//start plug
@@ -193,7 +193,7 @@ public class PluginServiceImpl
 
 			//activate
 			plugin.setActiveStatus(Plugin.ACTIVE_STATUS);
-			persistenceService.persist(plugin);
+			getPersistenceService().persist(plugin);
 		} else {
 			log.log(Level.WARNING, MessageFormat.format("Unable to find plugin to activate: {0}", pluginId));
 		}

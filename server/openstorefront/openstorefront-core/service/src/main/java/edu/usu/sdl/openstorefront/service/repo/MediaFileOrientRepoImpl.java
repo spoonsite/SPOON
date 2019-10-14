@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
+ * Copyright 2019 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.usu.sdl.openstorefront.validation;
+package edu.usu.sdl.openstorefront.service.repo;
 
-import org.apache.commons.lang3.StringUtils;
+import edu.usu.sdl.openstorefront.core.api.PersistenceService;
+import edu.usu.sdl.openstorefront.core.entity.MediaFile;
+import edu.usu.sdl.openstorefront.service.repo.api.MediaFileRepo;
 
 /**
- * If blank (empty string) set the value to null
+ *
  * @author dshurtleff
  */
-public class BlankSantizer
-	extends Sanitizer
+public class MediaFileOrientRepoImpl
+		extends BaseRepo
+		implements MediaFileRepo
 {
 
 	@Override
-	public Object santize(Object fieldData)
+	public void handleMediFileSave(PersistenceService persistenceService, MediaFile mediaFile)
 	{
-		if (fieldData == null) {
-			return fieldData;
-		} else {
-			if (StringUtils.isBlank(fieldData.toString())) {
-				return null;
-			} else {
-				return fieldData;
-			}
-		}
+		//pass through;  Intentionally blank as there is nothing to do.
 	}
-	
+
 }

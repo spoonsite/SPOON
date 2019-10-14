@@ -1,6 +1,5 @@
 package edu.usu.sdl.openstorefront.service;
 
-
 import edu.usu.sdl.openstorefront.core.api.FaqService;
 import edu.usu.sdl.openstorefront.core.entity.Faq;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
@@ -22,7 +21,6 @@ import java.util.logging.Logger;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  *
  * @author cyearsley
@@ -31,28 +29,27 @@ public class FaqServiceImpl
 		extends ServiceProxy
 		implements FaqService
 {
-	
+
 	private static final Logger LOG = Logger.getLogger(FaqServiceImpl.class.getName());
-	
+
 	public List<Faq> getFaqs(boolean isAdmin)
 	{
 		return getFaqs(isAdmin, StandardEntity.ACTIVE_STATUS);
 	}
-	
+
 	@Override
 	public List<Faq> getFaqs(boolean isAdmin, String activeStatus)
 	{
 		Faq faqExample = new Faq();
-		
-		if(!isAdmin) {
+
+		if (!isAdmin) {
 			faqExample.setActiveStatus(StandardEntity.ACTIVE_STATUS);
-		}
-		else {
+		} else {
 			faqExample.setActiveStatus(activeStatus);
 		}
-		
+
 		List<Faq> faqs = faqExample.findByExample();
-		
+
 		return faqs;
 	}
 
@@ -61,20 +58,20 @@ public class FaqServiceImpl
 	{
 		Faq faqExample = new Faq();
 		faqExample.setFaqId(faqId);
-		
-		if(!isAdmin) {
+
+		if (!isAdmin) {
 			faqExample.setActiveStatus(StandardEntity.ACTIVE_STATUS);
 		}
-		
+
 		Faq faq = faqExample.find();
-		
+
 		return faq;
 	}
 
 	@Override
 	public Faq createFaq(Faq faq)
 	{
-		return persistenceService.persist(faq);
+		return getPersistenceService().persist(faq);
 	}
 
 	@Override
@@ -83,26 +80,26 @@ public class FaqServiceImpl
 		Faq faqExample = new Faq();
 		faqExample.setFaqId(faqId);
 		Faq faq = faqExample.findProxy();
-		
+
 		if (faq != null) {
 			faq.updateFields(newFaq);
-			
-			faq = persistenceService.persist(faq);
+
+			faq = getPersistenceService().persist(faq);
 		}
-		
+
 		return faq;
 	}
-	
+
 	@Override
 	public void deleteFaq(String faqId)
 	{
 		Faq faqExample = new Faq();
 		faqExample.setFaqId(faqId);
 		Faq faq = faqExample.findProxy();
-		
+
 		if (faq != null) {
-			persistenceService.delete(faq);
+			getPersistenceService().delete(faq);
 		}
 	}
-	
+
 }

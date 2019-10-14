@@ -11,7 +11,7 @@
 	<name>openstorefront-plugin</name>
 	<modules>
     <module>example</module>
-	<module>spoon-importer</module>
+	<!-- <module>spoon-importer</module> -->
     <module>aerospaceimport</module>
     <module>example-importer</module>
   </modules>

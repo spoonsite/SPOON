@@ -47,16 +47,16 @@ public class HelpSupportServiceImpl
 	{
 		Objects.requireNonNull(supportMedia);
 
-		SupportMedia existing = persistenceService.findById(SupportMedia.class, supportMedia.getSupportMediaId());
+		SupportMedia existing = getPersistenceService().findById(SupportMedia.class, supportMedia.getSupportMediaId());
 		if (existing != null) {
 			existing.updateFields(supportMedia);
-			persistenceService.persist(existing);
+			getPersistenceService().persist(existing);
 		} else {
-			supportMedia.setSupportMediaId(persistenceService.generateId());
+			supportMedia.setSupportMediaId(getPersistenceService().generateId());
 			supportMedia.populateBaseCreateFields();
-			existing = persistenceService.persist(supportMedia);
+			existing = getPersistenceService().persist(supportMedia);
 		}
-		existing = persistenceService.unwrapProxyObject(existing);
+		existing = getPersistenceService().unwrapProxyObject(existing);
 		return existing;
 	}
 
@@ -71,15 +71,15 @@ public class HelpSupportServiceImpl
 			Objects.requireNonNull(mediaData);
 
 			supportMedia = saveSupportMedia(supportMedia);
-			SupportMedia existing = persistenceService.findById(SupportMedia.class, supportMedia.getSupportMediaId());
+			SupportMedia existing = getPersistenceService().findById(SupportMedia.class, supportMedia.getSupportMediaId());
 
-			existing.getFile().setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(existing.getFile().getMimeType()));
+			existing.getFile().setFileName(getPersistenceService().generateId() + OpenStorefrontConstant.getFileExtensionForMime(existing.getFile().getMimeType()));
 			existing.getFile().setFileType(MediaFileType.SUPPORT);
 			Path path = Paths.get(MediaFileType.SUPPORT.getPath() + "/" + existing.getFile().getFileName());
 			Files.copy(mediaData, path, StandardCopyOption.REPLACE_EXISTING);
-			persistenceService.persist(existing);
+			getPersistenceService().persist(existing);
 
-			supportMedia = persistenceService.unwrapProxyObject(existing);
+			supportMedia = getPersistenceService().unwrapProxyObject(existing);
 
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to save support file.", "Contact System Admin.  Check file permissions and disk space ", ex);
@@ -90,7 +90,7 @@ public class HelpSupportServiceImpl
 	@Override
 	public void deleteSupportMedia(String supportMediaId)
 	{
-		SupportMedia supportMedia = persistenceService.findById(SupportMedia.class, supportMediaId);
+		SupportMedia supportMedia = getPersistenceService().findById(SupportMedia.class, supportMediaId);
 		if (supportMedia != null) {
 			Path path = supportMedia.pathToMedia();
 			if (path != null) {
@@ -100,7 +100,7 @@ public class HelpSupportServiceImpl
 					}
 				}
 			}
-			persistenceService.delete(supportMedia);
+			getPersistenceService().delete(supportMedia);
 		}
 	}
 

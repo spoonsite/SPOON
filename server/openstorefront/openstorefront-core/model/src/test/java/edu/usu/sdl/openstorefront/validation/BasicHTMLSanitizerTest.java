@@ -58,10 +58,10 @@ public class BasicHTMLSanitizerTest
 	}
 
 	@Test
-	public void santizeTest()
+	public void sanitizeTest()
 	{
 		BasicHTMLSanitizer sanitizer = new BasicHTMLSanitizer();
-		Object result = sanitizer.santize(input);
+		Object result = sanitizer.sanitize(input);
 		System.out.println("EXPECTED: " + expectedOutput);
 		System.out.println("RESULT  : " + result);
 		assertEquals(expectedOutput, result);
