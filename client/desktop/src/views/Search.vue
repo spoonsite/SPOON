@@ -787,10 +787,11 @@ export default {
             }
           }
           if (!this.comparisonDataDisplay[attribute].hasOwnProperty('component' + component)) {
-            this.comparisonDataDisplay[attribute]['component' + component] = '\u2014'
+            this.comparisonDataDisplay[attribute]['component' + component] = '--'
           }
         }
       }
+      console.log(attribute)
     },
     getAttributeUnit (attributeCompared) {
       for (var attribute in this.searchResultsAttributes) {
@@ -804,7 +805,7 @@ export default {
       for (var attribute in this.comparisonDataDisplay) {
         var counter = 0
         for (var componentAttribute in this.comparisonDataDisplay[attribute]) {
-          if (this.comparisonDataDisplay[attribute][componentAttribute] !== '\u2014' && componentAttribute !== 'name') {
+          if (this.comparisonDataDisplay[attribute][componentAttribute] !== '--' && componentAttribute !== '--') {
             counter++
           }
         }
@@ -833,7 +834,7 @@ export default {
     addDescriptionTableData () {
       this.comparisonDataDisplay.unshift({ name: 'Attributes' })
       for (var emptySpace in this.comparisonList) {
-        this.comparisonDataDisplay[0]['component' + emptySpace] = '\u00A0'
+        this.comparisonDataDisplay[0]['component' + emptySpace] = ''
       }
       this.comparisonDataDisplay.unshift({ name: 'Organization' })
       for (var component in this.comparisonList) {
