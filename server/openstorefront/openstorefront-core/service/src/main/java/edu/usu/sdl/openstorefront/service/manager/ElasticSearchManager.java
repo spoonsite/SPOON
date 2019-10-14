@@ -414,11 +414,6 @@ public class ElasticSearchManager
 			LOG.log(Level.SEVERE, null, ex);
 			response = new SearchResponse();
 		}
-		if (searchOptions == null) {
-			searchOptions = new SearchOptions();
-			searchOptions.setDefaultSearchOptions();
-		}
-
 		return response;
 	}
 
