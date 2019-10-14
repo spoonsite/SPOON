@@ -34,18 +34,15 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
-import edu.usu.sdl.openstorefront.core.entity.HelpSection;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
-import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.PluginManager;
@@ -57,7 +54,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,15 +70,11 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -350,6 +342,7 @@ public class SystemServiceImpl
 
 		if (count > max) {
 
+			//query ticket
 			long limit = count - max;
 
 			ErrorTicket errorTicketExample = new ErrorTicket();
@@ -683,175 +676,6 @@ public class SystemServiceImpl
 		DBLogRecord dbLogRecordExample = new DBLogRecord();
 		int recordsRemoved = getPersistenceService().deleteByExample(dbLogRecordExample);
 		LOG.log(Level.WARNING, MessageFormat.format("DB log records were cleared.  Records cleared: {0}", recordsRemoved));
-	}
-
-	@Override
-	public void loadNewHelpSections(List<HelpSection> helpSections)
-	{
-		Objects.requireNonNull(helpSections, "Help sections required");
-
-		HelpSection helpSectionExample = new HelpSection();
-		int recordsRemoved = getPersistenceService().deleteByExample(helpSectionExample);
-		LOG.log(Level.FINE, MessageFormat.format("Help records were cleared.  Records cleared: {0}", recordsRemoved));
-
-		LOG.log(Level.FINE, MessageFormat.format("Saving new Help records: {0}", helpSections.size()));
-		for (HelpSection helpSection : helpSections) {
-			helpSection.setId(getPersistenceService().generateId());
-			getPersistenceService().persist(helpSection);
-		}
-	}
-
-	@Override
-	public HelpSectionAll getAllHelp(Boolean includeAdmin)
-	{
-		HelpSectionAll helpSectionAll = new HelpSectionAll();
-
-		HelpSection helpSectionExample = new HelpSection();
-		helpSectionExample.setAdminSection(includeAdmin);
-
-		List<HelpSection> allHelpSections = getPersistenceService().queryByExample(helpSectionExample);
-		List<HelpSection> helpSections = Collections.emptyList();
-
-		UserContext userContext = SecurityUtil.getUserContext();
-
-		// Filter out help items the user does not have access to
-		if (userContext != null) {
-			final Set<String> permissions = userContext.permissions();
-			helpSections = allHelpSections.stream().filter(help
-					-> {
-				if (StringUtils.isNotBlank(help.getPermission())) {
-					if (permissions.contains(help.getPermission())) {
-						return true;
-					} else {
-						return false;
-					}
-				} else {
-					return true;
-				}
-			}).collect(Collectors.toList());
-		}
-
-		// Build a tree from the list of sorted help sections based on the section numbers
-		if (helpSections.isEmpty() == false) {
-
-			//Root Section
-			HelpSection helpSectionRoot = new HelpSection();
-			helpSectionRoot.setTitle(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
-			helpSectionRoot.setContent("<center><h2>User Guide</h2>Version: " + PropertiesManager.getInstance().getApplicationVersion() + "</center>");
-			helpSectionAll.setHelpSection(helpSectionRoot);
-
-			//sort in original section order
-			helpSections.sort((section1, section2) -> {
-				BigDecimal sectionNumber1 = StringProcessor.archtecureCodeToDecimal(section1.getSectionNumber());
-				BigDecimal sectionNumber2 = StringProcessor.archtecureCodeToDecimal(section2.getSectionNumber());
-				return sectionNumber1.compareTo(sectionNumber2);
-			});
-
-			for (HelpSection helpSection : helpSections) {
-				String codeTokens[] = helpSection.getSectionNumber().split(Pattern.quote("."));
-				HelpSectionAll rootHelp = helpSectionAll;
-				StringBuilder codeKey = new StringBuilder();
-				// Make sure the tree contains nodes for all parents of the current node
-				// Due to the filtering it may be possible to have access to a child without access to the parent
-				for (String codeToken : codeTokens) {
-					codeKey.append(codeToken);
-					//put in stubs as needed
-					boolean found = false;
-					String compare = codeKey.toString();
-					if (codeKey.toString().length() == 1) {
-						compare += ".";
-					}
-					for (HelpSectionAll child : rootHelp.getChildSections()) {
-						if (child.getHelpSection().getSectionNumber().equals(compare)) {
-							// The section already exists, nothing more to do with this child
-							found = true;
-							rootHelp = child;
-							break;
-						}
-					}
-					if (!found) {
-						// Add placeholder in tree
-						HelpSectionAll newChild = new HelpSectionAll();
-						HelpSection childHelp = new HelpSection();
-						childHelp.setSectionNumber(compare);
-
-						for (HelpSection each : allHelpSections) {
-							// Make sure that every section has the correct title.
-							// Even sections that are otherwise blank due to not having permission to view the contents should have the correct title.
-							if (each.getSectionNumber().equals(compare)) {
-								String title = each.getTitle();
-								// Strip off the section number.
-								// NOTE: Substring is inclusive, so adding one to get all characters from AFTER the last period to end of line
-								title = title.substring(title.lastIndexOf('.') + 1);
-								childHelp.setTitle(title);
-								childHelp.setContent(each.getContent());
-								break;
-							}
-						}
-
-						newChild.setHelpSection(childHelp);
-						rootHelp.getChildSections().add(newChild);
-						rootHelp = newChild;
-					}
-					codeKey.append(".");
-				}
-				// Add each help section to the appropriate place in the tree
-				rootHelp.setHelpSection(helpSection);
-			}
-		}
-		//reorder help number so missing sections do not cause holes in the final numbered list
-		reorderHelpSectionTitles(helpSectionAll, "");
-		return helpSectionAll;
-	}
-
-	private void reorderHelpSectionTitles(HelpSectionAll helpSectionAll, String parentSection)
-	{
-		if (helpSectionAll.getChildSections().isEmpty()) {
-			return;
-		}
-
-		int sectionNumber = 1;
-		for (HelpSectionAll helpSection : helpSectionAll.getChildSections()) {
-			if (helpSection.getHelpSection().getTitle() == null) {
-				helpSection.getHelpSection().setTitle("");
-				LOG.log(Level.FINE, "This is a stub help section.  Check help data to make sure that is desired.  *=admin sections; make sure child sections are appropriately starred.");
-			}
-
-			String titleSplit[] = helpSection.getHelpSection().getTitle().split(" ");
-			String titleNumber;
-			if (StringUtils.isBlank(parentSection)) {
-				titleNumber = sectionNumber + ". ";
-
-			} else {
-				titleNumber = parentSection + sectionNumber + " ";
-			}
-
-			StringBuilder restOfTitle = new StringBuilder();
-			for (int i = 1; i < titleSplit.length; i++) {
-				if (restOfTitle.length() != 0) {
-					restOfTitle.append(" ");
-				}
-				restOfTitle.append(titleSplit[i]);
-			}
-
-			helpSection.getHelpSection().setTitle(titleNumber + restOfTitle.toString());
-
-			if (titleNumber.endsWith(". ") == false) {
-				StringBuilder temp = new StringBuilder();
-				temp.append(titleNumber);
-				temp = temp.deleteCharAt(temp.length() - 1);
-				temp.append(".");
-				titleNumber = temp.toString();
-			} else {
-				StringBuilder temp = new StringBuilder();
-				temp.append(titleNumber);
-				temp = temp.deleteCharAt(temp.length() - 1);
-				titleNumber = temp.toString();
-			}
-			reorderHelpSectionTitles(helpSection, titleNumber);
-
-			sectionNumber++;
-		}
 	}
 
 	@Override

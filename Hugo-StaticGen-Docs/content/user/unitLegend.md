@@ -1,12 +1,12 @@
 +++
 title = "Unit Legend"
 description = ""
-weight = 3
+weight = 100
 hasMath = true
 markup = "mmark"
 +++
 
-This is the legend for commonly confused unit names and acronyms. 
+This is the legend for commonly confused unit names and acronyms.
 <!--more-->
 
 | Symbol           | Base unit                          | Description                                       |

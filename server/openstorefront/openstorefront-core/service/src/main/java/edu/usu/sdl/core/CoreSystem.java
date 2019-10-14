@@ -28,7 +28,6 @@ import edu.usu.sdl.openstorefront.core.view.ManagerView;
 import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.DefaultTemplateImporter;
-import edu.usu.sdl.openstorefront.service.io.HelpImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.ConfluenceManager;
@@ -96,7 +95,6 @@ public class CoreSystem
 			new AsyncTaskManager(),
 			new ReportManager(),
 			new LDAPManager(),
-			new HelpImporter(),
 			new DBLogManager(),
 			new DefaultTemplateImporter(),
 			new PluginManager(),
