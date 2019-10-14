@@ -86,6 +86,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -248,13 +249,9 @@ public class ElasticSearchManager
 					CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX);
 					client.getInstance().indices().create(createIndexRequest, RequestOptions.DEFAULT);
 					LOG.log(Level.INFO, "Created index: " + INDEX);
-					updateMappingAttributes();
-					updateElasticsearchSettings();
 				} catch (ElasticsearchException e){
 					LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 				}
-			} else {
-				updateElasticsearchSettings();
 			}
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
@@ -263,53 +260,6 @@ public class ElasticSearchManager
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 			indexCreated.set(false);
 		}
-	}
-
-	public Boolean updateElasticsearchSettings() {
-		try (ElasticSearchClient client = justGetClient();) {
-			UpdateSettingsRequest request = new UpdateSettingsRequest(INDEX);
-			String settingKey = INDEX_INNER_WINDOW;
-			int settingValue = NUMBER_INNER_WINDOW_RETURN;
-			Settings settings =
-					Settings.builder()
-					.put(settingKey, settingValue)
-					.build();
-
-			request.settings(settings);
-			AcknowledgedResponse updateSettingsResponse = client.getInstance().indices().putSettings(request, RequestOptions.DEFAULT);
-			Boolean acknowledged = updateSettingsResponse.isAcknowledged();
-			LOG.log(Level.INFO, "Updating Settings: ", Boolean.toString(acknowledged));
-			return acknowledged;
-		} catch (IOException e) {
-			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
-		} catch (OpenStorefrontRuntimeException e){
-			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
-		}
-		return false;
-	}
-
-	public void updateMappingAttributes(){
-		try (ElasticSearchClient client = singleton.getClient()) {
-
-				String source = 
-				"{\n" +
-				"  \"properties\": {\n" +
-				"    \"attributes\": {\n" +
-				"      \"type\": \"nested\"\n" +
-				"    }\n" +
-				"  }\n" +
-				"}";
-
-				try{
-					PutMappingRequest putMappingRequest = new PutMappingRequest(INDEX);
-					putMappingRequest.source(source, XContentType.JSON);
-
-					AcknowledgedResponse putMappingResponse = client.getInstance().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
-					LOG.log(Level.INFO, putMappingResponse.toString());
-				} catch (IOException ex){
-					LOG.log(Level.SEVERE, null, ex);
-				} 
-			}
 	}
 
 	@Override
@@ -1042,7 +992,7 @@ public class ElasticSearchManager
 					}
 				});
 			} else {
-				LOG.log(Level.FINE, "Index components successfully");
+				LOG.log(Level.INFO, "Index components successfully");
 			}
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
@@ -1119,7 +1069,8 @@ public class ElasticSearchManager
 			DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest(INDEX);
 			deleteByQueryRequest.setQuery(QueryBuilders.matchAllQuery());
 
-			client.getInstance().deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
+			BulkByScrollResponse response = client.getInstance().deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
+			LOG.log(Level.INFO, "Deletion of index: " + response.getStatus().toString());
 
 		} catch (ElasticsearchException e) {
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
@@ -1148,9 +1099,12 @@ public class ElasticSearchManager
 	@Override
 	public void resetIndexer()
 	{
+		checkSearchIndexCreation();
 		deleteAll();
-		saveAll();
+		updateElasticsearchSettings();
 		updateMapping();
+		updateMappingAttributes();
+		saveAll();
 	}
 
 	/**
@@ -1190,8 +1144,7 @@ public class ElasticSearchManager
 					putMappingRequest.source(source);
 
 					AcknowledgedResponse putMappingResponse = client.getInstance().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
-					LOG.log(Level.INFO, putMappingResponse.toString());
-					updateMappingAttributes();
+					LOG.log(Level.INFO, "Updated Mapping of " + field + " : " + Boolean.toString(putMappingResponse.isAcknowledged()));
 				} catch (IOException ex){
 					LOG.log(Level.SEVERE, null, ex);
 				} 
@@ -1200,7 +1153,59 @@ public class ElasticSearchManager
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
 		}
-		LOG.log(Level.INFO, "Mapping Updated");
+	}
+
+	/**
+	 * Updates the settings of the elasticsearch index
+	 * @return Boolean if settings were updated
+	*/
+	public Boolean updateElasticsearchSettings() {
+		try (ElasticSearchClient client = justGetClient();) {
+			UpdateSettingsRequest request = new UpdateSettingsRequest(INDEX);
+			String settingKey = INDEX_INNER_WINDOW;
+			int settingValue = NUMBER_INNER_WINDOW_RETURN;
+			Settings settings =
+					Settings.builder()
+					.put(settingKey, settingValue)
+					.build();
+
+			request.settings(settings);
+			AcknowledgedResponse updateSettingsResponse = client.getInstance().indices().putSettings(request, RequestOptions.DEFAULT);
+			LOG.log(Level.INFO, "Updated settings: " + Boolean.toString(updateSettingsResponse.isAcknowledged()));
+			return updateSettingsResponse.isAcknowledged();
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+		} catch (OpenStorefrontRuntimeException e){
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+		}
+		return false;
+	}
+
+	/**
+	 * Updates the mapping of the index. Specifically for attributes, non-nested -> nested
+	 */
+	public void updateMappingAttributes(){
+		try (ElasticSearchClient client = singleton.getClient()) {
+
+				String source = 
+				"{\n" +
+				"  \"properties\": {\n" +
+				"    \"attributes\": {\n" +
+				"      \"type\": \"nested\"\n" +
+				"    }\n" +
+				"  }\n" +
+				"}";
+
+				try{
+					PutMappingRequest putMappingRequest = new PutMappingRequest(INDEX);
+					putMappingRequest.source(source, XContentType.JSON);
+
+					AcknowledgedResponse putMappingResponse = client.getInstance().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
+					LOG.log(Level.INFO, "Updated Mapping of attributes: " + Boolean.toString(putMappingResponse.isAcknowledged()));
+				} catch (IOException ex){
+					LOG.log(Level.SEVERE, null, ex);
+				} 
+			}
 	}
 
 	/**
