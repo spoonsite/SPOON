@@ -204,7 +204,7 @@ export default {
           icon: 'comment',
           name: 'Contact',
           permissions: [] },
-        { link: (this.$store.state.helpUrl ? this.$store.state.helpUrl : 'https://spoonsite.github.io/'),
+        { href: (this.$store.state.helpUrl ? this.$store.state.helpUrl : 'https://spoonsite.github.io/'),
           icon: 'question-circle',
           name: 'Help',
           newTab: true,
