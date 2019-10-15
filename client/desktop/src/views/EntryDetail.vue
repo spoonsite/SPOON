@@ -118,6 +118,20 @@
 
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
+            <div slot="header"><h2>Tags</h2></div>
+            <div class="expansion-content">
+              <v-combobox
+                label="Tags"
+                :items="allTags"
+                v-model="tagName">
+              </v-combobox>
+              <v-btn @click="submitTag(tagName)">Add</v-btn>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-expansion-panel class="expansion-spacing">
+          <v-expansion-panel-content>
             <div slot="header">
               <h2>Reviews</h2>
             </div>
@@ -387,6 +401,7 @@ export default {
     this.lookupTypes()
     this.getDetail()
     this.getQuestions()
+    this.getTags()
     this.checkWatch()
   },
   data () {
@@ -410,6 +425,7 @@ export default {
         cons: []
       },
       comment: '',
+      tagName: '',
       reviewTitleRules: [
         v => !!v || 'Title is required',
         v => (v && v.length <= 255) || 'Title must be less than 255 characters'
@@ -429,6 +445,7 @@ export default {
       prosSelectOptions: [],
       consOptions: [],
       consSelectOptions: [],
+      allTags: [],
       reviewValid: false,
       todaysDate: new Date(),
       detail: {},
@@ -583,6 +600,14 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
+    getTags () {
+      this.isLoading = true
+      this.$http.get(`/openstorefront/api/v1/resource/components/tags`)
+        .then(response => {
+          this.allTags = response.data
+        })
+        .catch(e => this.errors.push(e))
+    },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
         .then(response => {
@@ -620,6 +645,28 @@ export default {
     showMediaDetails (item) {
       this.currentMediaDetailItem = item
       this.mediaDetailsDialog = true
+    },
+    determineTagType () {
+      if (this.allTags.includes(name)){
+        submitTag(name)
+      }
+      else{
+        console.log(name)
+      }
+    },
+    submitTag (name) {
+      let data = {
+        securityMarkingType: '',
+        dataSensitivity: '',
+        text: name.text
+      }
+      this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, data)
+        .then(response => {
+          this.detail.tags.push(response.data)
+          this.tagName = ''
+          this.$toasted.show('Tag submitted.')
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the question.'))
     },
     submitQuestion () {
       let data = {
