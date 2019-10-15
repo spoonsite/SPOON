@@ -7,7 +7,7 @@ See https://docs.docker.com/samples/library/mongo/ for container information.
 
 For ease of use just bind the port to `0.0.0.0` with the  `mongod.conf` file.
 
-```ini
+```yaml
 # mongod.conf
 net:
    bindIp: 0.0.0.0
@@ -28,9 +28,12 @@ To build: `docker build -t spoon-mongo .`
 To run: `docker run -it --name some-mongo -p 27017:27017 spoon-mongo --config /etc/mongo/mongod.conf`
 
 Application settings need to be changed to allow mongo to run: 
-   db.use.mongo=true
-   mongo.connection.url=mongodb://172.31.24.33
-   mongo.database=storefront
+
+```ini
+db.use.mongo=true
+mongo.connection.url=mongodb://172.31.24.33
+mongo.database=storefront
+```
 
 These can be changed in the application and also need to be changed in the openstorefront.properties file
 
