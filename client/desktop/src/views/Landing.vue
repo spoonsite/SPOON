@@ -16,6 +16,57 @@
     </div>
 
     <h2>
+        <span style="padding: 0.5em; background-color: white; border-radius: 2px;">
+          Browse Entries
+        </span>
+    </h2>
+    <v-container>
+      <v-layout row wrap>
+        <v-flex
+          v-for="(item,i) in nestedComponentTypesList.children"
+          class="mb-2"
+          :key="i"
+          xs6
+          sm4
+          md2
+        >
+          <v-card
+            style="height: 100%;"
+            class="ma-2 entry-card"
+          >
+            <v-card-title
+              class="mb-3"
+              style="border-bottom: 1px solid; height: 6em;"
+            >
+              <router-link
+                :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
+              >
+                <img
+                  :src="'/openstorefront/' + item.componentType.iconUrl"
+                  width="50"
+                  style="vertical-align: middle;" 
+                  class="icon-img pr-3"
+                >
+                <span>{{ item.componentType.label }}</span>
+              </router-link>
+            </v-card-title>
+            <ul class="ml-3">
+              <li v-for="child in item.children" :key="child">
+                <router-link
+                  :to="{ path: 'search', query: { comp: child.componentType.componentType, children: true }}"
+                >
+                  {{ child.componentType.label }}
+                </router-link>
+              </li>
+            </ul>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+
+    </v-img>
+
+    <h2>
       <span style="background-color: #FAFAFA; border-radius: 1px;" class="pa-2">
       Quick Launch
       </span>
@@ -46,69 +97,34 @@
       </v-layout>
     </v-container>
 
-    </v-img>
-
-      <h2>
-          Browse Topics
-      </h2>
-      <v-container v-if="isSpoon()" text-xs-center>
-        <v-layout row wrap>
-          <v-flex
-            v-for="(item,i) in nestedComponentTypesList.children"
-            class="mb-2"
-            :key="i"
-            xs6
-            sm4
-            md2
-          >
-            <v-hover>
-            <v-card
-              slot-scope="{ hover }"
-              flat
-              :class="`elevation-${hover ? 8 : 0} ma-2 pt-2 px-2`"
-              style="background-color: rgba(0,0,0,0);"
-            >
-              <router-link
-                :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
-                style="width: 100%; text-decoration: none;"
-              >
-                <img :src="'/openstorefront/' + item.componentType.iconUrl" width="50" class="icon-img">
-                <v-card-text>{{ item.componentType.label }}</v-card-text>
-              </router-link>
-            </v-card>
-            </v-hover>
-          </v-flex>
-        </v-layout>
-      </v-container>
-
-  <v-container>
-      <h2>Highlights</h2>
-      <v-container>
-        <v-flex xs10 offset-xs1>
-          <v-carousel
-            class="elevation-3 mt-4"
-            height="500"
-            light
-            hide-delimiters
-            :cycle="false"
-          >
-            <v-carousel-item
-              v-for="(item,i) in highlights"
-              :key="i"
+    <v-container>
+        <h2>Highlights</h2>
+        <v-container>
+          <v-flex xs10 offset-xs1>
+            <v-carousel
+              class="elevation-3 mt-4"
+              height="500"
               light
+              hide-delimiters
+              :cycle="false"
             >
-              <div slot="default" class="px-5 py-3" style="height: 500px; overflow: auto;">
-                <h3 class="headline" style="text-align: center;">{{ item.title }}</h3>
-                <span v-html="item.description"></span>
-                <v-btn dark :href="item.link">View More</v-btn>
-                <div style="height: 50px;"></div>
-              </div>
-            </v-carousel-item>
-          </v-carousel>
-        </v-flex>
-      </v-container>
+              <v-carousel-item
+                v-for="(item,i) in highlights"
+                :key="i"
+                light
+              >
+                <div slot="default" class="px-5 py-3" style="height: 500px; overflow: auto;">
+                  <h3 class="headline" style="text-align: center;">{{ item.title }}</h3>
+                  <span v-html="item.description"></span>
+                  <v-btn dark :href="item.link">View More</v-btn>
+                  <div style="height: 50px;"></div>
+                </div>
+              </v-carousel-item>
+            </v-carousel>
+          </v-flex>
+        </v-container>
 
-  </v-container>
+    </v-container>
 
     <v-footer color="primary" dark height="auto">
       <v-card color="primary" dark flat class="footer-wrapper">
@@ -218,8 +234,11 @@ h2 {
 h3 {
   margin-bottom: 1em;
 }
-.shadow {
-  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+.entry-card a {
+  text-decoration: none; 
+}
+.entry-card a:hover {
+  text-decoration: underline; 
 }
 .link-tile:hover {
   background-color: rgba(0,0,0,0.2);
@@ -239,16 +258,6 @@ h3 {
 .footer-block a {
   color: white;
   text-decoration: none;
-}
-.action-btn {
-  border: none;
-}
-.dim:hover {
-  /* box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1); */
-  filter: brightness(130%);
-}
-.darken {
-  background-color:rgba(0,0,0,.1);
 }
 .launch-icon {
   color:#333 !important;
