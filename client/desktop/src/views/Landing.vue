@@ -26,9 +26,11 @@
           v-for="(item,i) in nestedComponentTypesList.children"
           class="mb-2"
           :key="i"
-          xs6
-          sm4
-          md2
+          xs12
+          sm6
+          md4
+          lg3
+          xl2
         >
           <v-card
             style="height: 100%;"
@@ -40,17 +42,18 @@
             >
               <router-link
                 :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
+                style="display: flex; align-items: stretch;"
               >
                 <img
                   :src="'/openstorefront/' + item.componentType.iconUrl"
-                  width="50"
+                  height="50"
                   style="vertical-align: middle;" 
                   class="icon-img pr-3"
                 >
                 <span>{{ item.componentType.label }}</span>
               </router-link>
             </v-card-title>
-            <ul class="ml-3">
+            <ul v-if="item.children.length > 0" class="ml-3">
               <li v-for="child in item.children" :key="child">
                 <router-link
                   :to="{ path: 'search', query: { comp: child.componentType.componentType, children: true }}"
@@ -59,6 +62,7 @@
                 </router-link>
               </li>
             </ul>
+            <div v-else class="ml-3">No sub-categories</div>
           </v-card>
         </v-flex>
       </v-layout>
@@ -82,15 +86,14 @@
         >
           <v-hover>
           <v-card
+            :href="item.href"
             slot-scope="{ hover }"
-            :class="`elevation-${hover ? 12 : 2} ma-2 pt-2 px-2`"
+            :class="`elevation-${hover ? 6 : 2} ma-2 pt-2 px-2`"
           >
-          <a :href="item.href" class="" style="text-decoration: none;">
             <v-icon class="launch-icon">fas fa-{{ item.icon }}</v-icon>
             <v-card-title primary-title>
               <v-card-text class="headline pa-0">{{ item.title }}</v-card-text>
             </v-card-title>
-          </a>
           </v-card>
           </v-hover>
         </v-flex>
