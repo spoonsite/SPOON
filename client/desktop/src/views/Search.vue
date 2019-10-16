@@ -663,7 +663,6 @@ export default {
           searchFilters
         ).then(response => {
           that.searchResults = response.data.hits.hits.map(e => e._source)
-          console.log(that.searchResults)
           that.totalSearchResults = response.data.hits.total.value
           that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
           that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
@@ -792,7 +791,6 @@ export default {
           }
         }
       }
-      console.log(attribute)
     },
     getAttributeUnit (attributeCompared) {
       for (var attribute in this.searchResultsAttributes) {
