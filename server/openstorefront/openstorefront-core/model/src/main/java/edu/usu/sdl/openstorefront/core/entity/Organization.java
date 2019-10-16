@@ -42,6 +42,8 @@ public class Organization
 		extends StandardEntity<Organization>
 {
 
+	public static final String FIELD_ORGANIZATION_ID = "organizationId";
+
 	@PK
 	@NotNull
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_1K)

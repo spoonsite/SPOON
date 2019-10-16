@@ -32,6 +32,9 @@ public class NotificationEventReadStatus
 		extends BaseEntity<NotificationEventReadStatus>
 {
 
+	public static final String FIELD_EVENTID = "eventId";
+	public static final String FIELD_USERNAME = "username";
+
 	@PK(generated = true)
 	@NotNull
 	private String readStatusId;

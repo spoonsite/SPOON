@@ -576,7 +576,6 @@ Ext.define('OSF.component.UserMenu', {
 	menu: {
 		minWidth: 300
 	},
-	helpWin: Ext.create('OSF.component.HelpWindow', {}),
 	feedbackWin: Ext.create('OSF.component.FeedbackWindow', {}),
 	customMenuItems: [],
 	initComponent: function () {
@@ -652,7 +651,18 @@ Ext.define('OSF.component.UserMenu', {
 					text: '<b>Help</b>',
 					iconCls: 'fa fa-2x fa-question-circle icon-button-color-default',
 					handler: function () {
-						userMenu.helpWin.show();
+						let newTab = window.open();
+						let url;
+						Ext.Ajax.request({
+							url: 'api/v1/service/application/configproperties/help.url',
+							success: function(response, opt) {
+								url = response.description;
+								if(url == undefined || url == null){
+									url = "https://spoonsite.github.io/"
+								}
+								newTab.location.href = url;
+							}
+						});
 					}
 				});
 			}

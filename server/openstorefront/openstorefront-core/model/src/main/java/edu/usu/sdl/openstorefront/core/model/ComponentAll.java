@@ -28,7 +28,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
-import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
 import edu.usu.sdl.openstorefront.core.entity.ComponentResource;
@@ -73,9 +72,6 @@ public class ComponentAll
 	@DataType(ComponentMedia.class)
 	private List<ComponentMedia> media = new ArrayList<>();
 
-	@DataType(ComponentMetadata.class)
-	private List<ComponentMetadata> metadata = new ArrayList<>();
-
 	@DataType(QuestionAll.class)
 	private List<QuestionAll> questions = new ArrayList<>();
 
@@ -112,7 +108,6 @@ public class ComponentAll
 		validationResult.merge(validateSubComponent(evaluationSections));
 		validationResult.merge(validateSubComponent(externalDependencies));
 		validationResult.merge(validateSubComponent(media));
-		validationResult.merge(validateSubComponent(metadata));
 		validationResult.merge(validateSubComponent(resources));
 		validationResult.merge(validateSubComponent(tags));
 		validationResult.merge(validateSubComponent(relationships));
@@ -153,7 +148,6 @@ public class ComponentAll
 		populateCreateUpdateFieldsBaseComponent(evaluationSections, update);
 		populateCreateUpdateFieldsBaseComponent(externalDependencies, update);
 		populateCreateUpdateFieldsBaseComponent(media, update);
-		populateCreateUpdateFieldsBaseComponent(metadata, update);
 		populateCreateUpdateFieldsBaseComponent(resources, update);
 		populateCreateUpdateFieldsBaseComponent(tags, update);
 		populateCreateUpdateFieldsBaseComponent(relationships, update);
@@ -226,7 +220,6 @@ public class ComponentAll
 				this.evaluationSections = componentAll.getEvaluationSections();
 				this.externalDependencies = componentAll.getExternalDependencies();
 				this.media = componentAll.getMedia();
-				this.metadata = componentAll.getMetadata();
 				this.questions = componentAll.getQuestions();
 				this.resources = componentAll.getResources();
 				this.reviews = componentAll.getReviews();
@@ -298,16 +291,6 @@ public class ComponentAll
 	public void setMedia(List<ComponentMedia> media)
 	{
 		this.media = media;
-	}
-
-	public List<ComponentMetadata> getMetadata()
-	{
-		return metadata;
-	}
-
-	public void setMetadata(List<ComponentMetadata> metadata)
-	{
-		this.metadata = metadata;
 	}
 
 	public List<QuestionAll> getQuestions()

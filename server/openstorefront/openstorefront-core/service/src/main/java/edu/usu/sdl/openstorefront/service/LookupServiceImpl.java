@@ -23,8 +23,8 @@ import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -76,8 +76,8 @@ public class LookupServiceImpl
 			for (T lookup : lookupList) {
 				if (lookupCacheMap.containsKey(lookup.getCode())) {
 					//remove any duplicates from the db
-					T existing = persistenceService.findById(lookTableClass, lookup.getCode());
-					persistenceService.delete(existing);
+					T existing = getPersistenceService().findById(lookTableClass, lookup.getCode());
+					getPersistenceService().delete(existing);
 				} else {
 					lookupCacheMap.put(lookup.getCode(), lookup);
 				}
@@ -98,7 +98,7 @@ public class LookupServiceImpl
 				return testExample.systemValues();
 			} else {
 				testExample.setActiveStatus(activeStatus);
-				return persistenceService.queryByExample(new QueryByExample(testExample));
+				return getPersistenceService().queryByExample(new QueryByExample(testExample));
 			}
 		} catch (InstantiationException | IllegalAccessException ex) {
 			throw new OpenStorefrontRuntimeException(ex);
@@ -108,7 +108,7 @@ public class LookupServiceImpl
 	@Override
 	public void saveLookupValue(LookupEntity lookupEntity)
 	{
-		LookupEntity oldEntity = persistenceService.findById(lookupEntity.getClass(), lookupEntity.getCode());
+		LookupEntity oldEntity = getPersistenceService().findById(lookupEntity.getClass(), lookupEntity.getCode());
 		if (StringUtils.isBlank(lookupEntity.getActiveStatus())) {
 			lookupEntity.setActiveStatus(LookupEntity.ACTIVE_STATUS);
 		}
@@ -119,10 +119,10 @@ public class LookupServiceImpl
 			oldEntity.setHighlightStyle(lookupEntity.getHighlightStyle());
 			oldEntity.setActiveStatus(lookupEntity.getActiveStatus());
 			oldEntity.populateBaseUpdateFields();
-			persistenceService.persist(oldEntity);
+			getPersistenceService().persist(oldEntity);
 		} else {
 			lookupEntity.populateBaseCreateFields();
-			persistenceService.persist(lookupEntity);
+			getPersistenceService().persist(lookupEntity);
 		}
 		OSFCacheManager.getLookupCache().remove((Object) lookupEntity.getClass().getName());
 	}
@@ -212,12 +212,12 @@ public class LookupServiceImpl
 	@Override
 	public <T extends LookupEntity> void removeValue(Class<T> lookTableClass, String code)
 	{
-		LookupEntity lookupEntity = persistenceService.findById(lookTableClass, code);
+		LookupEntity lookupEntity = getPersistenceService().findById(lookTableClass, code);
 		if (lookupEntity != null) {
 			lookupEntity.setActiveStatus(LookupEntity.INACTIVE_STATUS);
 			lookupEntity.setUpdateDts(TimeUtil.currentDate());
 			lookupEntity.setUpdateUser(SecurityUtil.getCurrentUserName());
-			persistenceService.persist(lookupEntity);
+			getPersistenceService().persist(lookupEntity);
 
 			OSFCacheManager.getLookupCache().remove((Object) lookupEntity.getClass().getName());
 		}
@@ -250,7 +250,7 @@ public class LookupServiceImpl
 					} else {
 						example.setCode(code);
 						example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-						lookupEntity = persistenceService.queryOneByExample(new QueryByExample(example));
+						lookupEntity = getPersistenceService().queryOneByExample(new QueryByExample(example));
 					}
 					if (lookupEntity != null) {
 						lookupCacheMap.put(code, lookupEntity);
@@ -268,7 +268,7 @@ public class LookupServiceImpl
 	{
 		LookupEntity lookupEntity = null;
 		try {
-			Class lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
+			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
 			lookupEntity = getLookupEnity(lookupClass, code);
 		} catch (ClassNotFoundException ex) {
 			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");
@@ -293,7 +293,7 @@ public class LookupServiceImpl
 				} else {
 					example.setDescription(description);
 					example.setActiveStatus(LookupEntity.ACTIVE_STATUS);
-					lookupEntity = persistenceService.queryOneByExample(new QueryByExample(example));
+					lookupEntity = getPersistenceService().queryOneByExample(new QueryByExample(example));
 				}
 
 			} catch (InstantiationException | IllegalAccessException e) {
@@ -308,7 +308,7 @@ public class LookupServiceImpl
 	{
 		LookupEntity lookupEntity = null;
 		try {
-			Class lookupClass = Class.forName(DBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
+			Class lookupClass = Class.forName(OrientDBManager.getInstance().getEntityModelPackage() + "." + lookClassName);
 			lookupEntity = getLookupEnityByDesc(lookupClass, description);
 		} catch (ClassNotFoundException ex) {
 			throw new OpenStorefrontRuntimeException("Lookup Type not found", "Check entity name passed in. (Case-Sensitive and should be Camel-Cased)");
@@ -321,12 +321,12 @@ public class LookupServiceImpl
 	{
 		Objects.requireNonNull(lookupEntity, "Lookup Enity required");
 
-		LookupEntity lookupEntityFound = persistenceService.findById(lookupEntity.getClass(), lookupEntity.getCode());
+		LookupEntity lookupEntityFound = getPersistenceService().findById(lookupEntity.getClass(), lookupEntity.getCode());
 		if (lookupEntityFound != null) {
 			lookupEntityFound.setActiveStatus(status);
 			lookupEntityFound.setUpdateDts(TimeUtil.currentDate());
 			lookupEntityFound.setUpdateUser(SecurityUtil.getCurrentUserName());
-			persistenceService.persist(lookupEntityFound);
+			getPersistenceService().persist(lookupEntityFound);
 
 			OSFCacheManager.getLookupCache().remove((Object) lookupEntityFound.getClass().getName());
 		}

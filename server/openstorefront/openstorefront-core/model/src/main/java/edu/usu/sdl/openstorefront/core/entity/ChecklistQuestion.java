@@ -174,11 +174,6 @@ public class ChecklistQuestion
 		this.evaluationSection = evaluationSection;
 	}
 
-	public void setChecklistQuestion(String questionId)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
 	public List<Tag> getTags()
 	{
 		return tags;

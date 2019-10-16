@@ -89,12 +89,10 @@ public class ComponentSubmissionResource
 			pullOldOwnedComponents(componentExample, components);
 
 			List<ComponentView> views = ComponentView.toViewList(components);
-			
-			
+
 			List<SubmissionView> submissionViews = flagSubmissionsWithEvaluations(views);
 			processPendingChanges(submissionViews);
 			findUserSubmissionForView(submissionViews);
-			
 
 			GenericEntity<List<SubmissionView>> entity = new GenericEntity<List<SubmissionView>>(submissionViews)
 			{
@@ -104,31 +102,33 @@ public class ComponentSubmissionResource
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
 	}
-	
-	private List<SubmissionView> flagSubmissionsWithEvaluations(List<ComponentView> componentViews){
-		List<String> compIds = componentViews.stream()
+
+	private List<SubmissionView> flagSubmissionsWithEvaluations(List<ComponentView> componentViews)
+	{
+		List<String> componentIds = componentViews.stream()
 				.filter(viewComponent -> {
 					return ApprovalStatus.PENDING.equals(viewComponent.getApprovalState());
 				})
 				.map(ComponentView::getComponentId)
 				.collect(Collectors.toList());
-			
-			
-		Evaluation evalutation = new Evaluation();
 
-		QueryByExample<Evaluation> queryByExample = new QueryByExample<>(evalutation);
+		if (!componentIds.isEmpty()) {
+			Evaluation evalutation = new Evaluation();
 
-		Evaluation evaluationInExample = new Evaluation();
-		evaluationInExample.setOriginComponentId(QueryByExample.STRING_FLAG);
-		queryByExample.setInExample(evaluationInExample);
+			QueryByExample<Evaluation> queryByExample = new QueryByExample<>(evalutation);
 
-		queryByExample.getInExampleOption().setParameterValues(compIds);
+			Evaluation evaluationInExample = new Evaluation();
+			evaluationInExample.setOriginComponentId(QueryByExample.STRING_FLAG);
+			queryByExample.setInExample(evaluationInExample);
+			queryByExample.getInExampleOption().setParameterValues(componentIds);
 
-		// All components that match myType and my parents type.
-		List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
-		
-		Map<String, List<Evaluation>> evaluationMap = evaluations.stream().collect(Collectors.groupingBy(Evaluation::getOriginComponentId));
-		return SubmissionView.toView(componentViews, evaluationMap);
+			List<Evaluation> evaluations = service.getPersistenceService().queryByExample(queryByExample);
+
+			Map<String, List<Evaluation>> evaluationMap = evaluations.stream().collect(Collectors.groupingBy(Evaluation::getOriginComponentId));
+			return SubmissionView.toView(componentViews, evaluationMap);
+		} else {
+			return SubmissionView.toView(componentViews, new HashMap<>());
+		}
 	}
 
 	private void processPendingChanges(List<SubmissionView> views)

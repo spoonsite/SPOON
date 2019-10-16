@@ -88,7 +88,7 @@ public abstract class BaseComponent<T>
 		return excludeFields;
 	}
 
-	public void setChangeParent(ChangeLog changeLog)
+	public void updateChangeParent(ChangeLog changeLog)
 	{
 		changeLog.setParentEntity(Component.class.getSimpleName());
 		changeLog.setParentEntityId(getComponentId());
