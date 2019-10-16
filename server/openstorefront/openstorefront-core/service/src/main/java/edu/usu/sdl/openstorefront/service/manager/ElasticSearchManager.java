@@ -627,14 +627,10 @@ public class ElasticSearchManager
 		}
 
 		BoolQueryBuilder boolQueryBuilderComponentTypes = QueryBuilders.boolQuery();
-		if(searchFilters.getComponentTypes() != null){
-			if(!searchFilters.getComponentTypes().isEmpty()){
-				for(String type : searchFilters.getComponentTypes()){
-					boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentType", type));
-					if(searchFilters.getIncludeChildren()){
-						boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentTypeNestedModel.componentType.componentType", type));
-					}
-				}
+		if(searchFilters.getComponentType() != null && searchFilters.getComponentType() != ""){
+			boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentType", searchFilters.getComponentType()));
+			if(searchFilters.getIncludeChildren()){
+				boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentTypeNestedModel.componentType.componentType", searchFilters.getComponentType()));
 			}
 		}
 
