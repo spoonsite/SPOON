@@ -56,7 +56,7 @@ public class SearchFilters {
 
 	@ConsumeField
     @QueryParam("componentTypes")
-    private List<String> componentTypes;
+    private String componentType;
 
 	@ConsumeField
     @QueryParam("includeChildren")
@@ -117,12 +117,12 @@ public class SearchFilters {
 		this.pageSize = pageSize;
 	}
 
-	public List<String> getComponentTypes() {
-		return componentTypes;
+	public String getComponentType() {
+		return componentType;
 	}
 
-	public void setComponentTypes(List<String> componentTypes) {
-		this.componentTypes = componentTypes;
+	public void setComponentType(String componentType) {
+		this.componentType = componentType;
 	}
 
 	public Boolean getIncludeChildren() {
