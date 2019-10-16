@@ -42,7 +42,6 @@ import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.service.search.ElasticsearchComponentModel;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -924,8 +923,6 @@ public class ElasticSearchManager
 			List<ComponentReview> componentReviews = componentReview.findByExample();
 			Map<String, List<ComponentReview>> reviewMap = componentReviews.stream().collect(Collectors.groupingBy(ComponentReview::getComponentId));
 
-			//This should be initialized (if not this will be slow)
-			SearchStatTable statTable = new SearchStatTable();
 			for (Component component : components) {
 
 				// fetch all component attributes
@@ -934,8 +931,13 @@ public class ElasticSearchManager
 				componentAttribute.setComponentId(component.getComponentId());
 				List<ComponentAttribute> componentAttributes = componentAttribute.findByExample();
 
+				// fetch all component attributes
+				ComponentTag componentTag = new ComponentTag();
+				componentTag.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				componentTag.setComponentId(component.getComponentId());
+				List<ComponentTag> componentTags = componentTag.findByExample();
+
 				componentReviews = reviewMap.getOrDefault(component.getComponentId(), new ArrayList<>());
-				List<ComponentTag> componentTags = statTable.getTagMap().getOrDefault(component.getComponentId(), new ArrayList<>());
 				component.setDescription(StringProcessor.stripHtml(component.getDescription()));
 				component.setDescription(StringProcessor.ellipseString(component.getDescription(), MAX_DESCRIPTION_INDEX_SIZE));
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
