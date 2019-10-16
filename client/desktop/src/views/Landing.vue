@@ -54,7 +54,7 @@
               </router-link>
             </v-card-title>
             <ul v-if="item.children.length > 0" class="ml-3">
-              <li v-for="child in item.children" :key="child">
+              <li v-for="child in item.children" :key="child.componentType.componentType">
                 <router-link
                   :to="{ path: 'search', query: { comp: child.componentType.componentType, children: true }}"
                 >
