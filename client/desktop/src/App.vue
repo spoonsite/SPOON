@@ -4,7 +4,7 @@
       <header>
         <div :style="topbarStyle">
         <v-toolbar color="primary" dense dark flat>
-          <v-btn icon to="/" active-class=""><v-icon>fas fa-home</v-icon></v-btn>
+          <router-link style="height: 100%;" to="/"><img height="100%" src="./assets/SPOONlogohorz.png" alt="SPOON logo"></router-link>
           <v-spacer></v-spacer>
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
           <v-spacer></v-spacer>
