@@ -43,20 +43,6 @@
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
-      <v-list dense class="elevation-1">
-        <h4 class="search-option-titles">Entry Types</h4>
-        <v-list-tile v-for="(e,index) in entryTypes" v-bind:key="index" class="suggestion">
-          <v-list-tile-content>
-            <v-checkbox
-              :ripple="false"
-              :key="index"
-              v-model="selectedEntryTypes"
-              :value="e.componentType.componentType"
-              :label="e.componentType.label"
-            ></v-checkbox>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
     </v-card>
   </form>
 </template>
@@ -73,7 +59,6 @@ export default {
   data () {
     return {
       hideSearchSuggestions: true,
-      entryTypes: {},
       searchSuggestions: [],
       showOptions: false,
       canShowOptions: true,
@@ -128,18 +113,6 @@ export default {
         })
     }
   },
-  computed: {
-    selectedEntryTypes: {
-      set (entryTypes) {
-        if (this.$store.getters.getSelectedComponentTypes !== entryTypes) {
-          this.$store.commit('setSelectedComponentTypes', { data: entryTypes })
-        }
-      },
-      get () {
-        return this.$store.getters.getSelectedComponentTypes
-      }
-    }
-  },
   watch: {
     value: _.throttle(function () {
       if (this.value === '') {
@@ -170,13 +143,6 @@ export default {
         if (response.data.canUseTagsInSearch) {
           this.searchOptions.push('Tags')
         }
-      })
-    this.$http
-      .get(
-        '/openstorefront/api/v1/resource/componenttypes/nested'
-      )
-      .then(response => {
-        this.entryTypes = response.data.children
       })
   }
 }
