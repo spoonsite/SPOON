@@ -84,8 +84,7 @@ export default {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      this.$emit('submitSearch', '&comp=' + this.selectedEntryTypes.toString() + '&children=true')
-      // this.$router.push(`/search?q=${this.value}`)
+      this.$emit('submitSearch', '&comp=' + '' + '&children=true')
     },
     getSearchSuggestions () {
       if (!this.hideSearchSuggestions) {

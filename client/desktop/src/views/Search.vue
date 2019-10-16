@@ -1,6 +1,5 @@
 <template>
 <div>
-
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- CONTROLS -->
     <div class="side-menu-btns">
@@ -72,27 +71,25 @@
       <div v-if="showFilters">
         <h2>Search Filters</h2>
         <v-btn block class="" @click="clear()">Clear Filters</v-btn>
-        <v-select
-          v-model="selectedEntryTypes"
+        <v-autocomplete
+          v-model="filters.entryType"
           :items="componentsList"
           item-text="label"
           item-value="key"
           label="Category"
           clearable
-          multiple
-          chips
-          multi-line
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="removeComponent(data.item.key)" :key="data.item.label">
-              <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
-              {{ data.item.label }}
-            </v-chip>
+            ({{ data.item.doc_count }}) {{ data.item.label }}
           </template>
           <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.label}}</v-list-tile-title></v-list-tile-content>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                ({{ data.item.doc_count }}) {{ data.item.label }}
+              </v-list-tile-title>
+            </v-list-tile-content>
           </template>
-        </v-select>
+        </v-autocomplete>
         <v-checkbox class="ma-0" color="black" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
         <v-select
           v-model="filters.tags"
@@ -117,10 +114,6 @@
             <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.key}}</v-list-tile-title></v-list-tile-content>
           </template>
         </v-select>
-        <!-- <v-radio-group label="Tag Search Condition: " v-model="filters.tagCondition">
-          <v-radio label="And" value="AND"></v-radio>
-          <v-radio label="Or" value="OR"></v-radio>
-        </v-radio-group> -->
         <v-autocomplete
           v-model="filters.organization"
           :items="organizationsList"
@@ -211,18 +204,17 @@
       ></SearchBar>
       <!-- SEARCH FILTERS PILLS -->
       <v-chip
-        v-for="entryType in selectedEntryTypes"
-        :key="entryType"
+        v-if="filters.entryType"
       >
         <v-avatar left>
           <v-icon small>fas fa-layer-group</v-icon>
         </v-avatar>
-        {{ getComponentName(entryType) }}
-        <div class="v-chip__close"><v-icon right @click="removeComponent(entryType)">cancel</v-icon></div>
+        {{ getComponentName(filters.entryType) }}
+        <div class="v-chip__close"><v-icon right @click="filters.entryType = ''">cancel</v-icon></div>
       </v-chip>
       <v-chip
         text-color="black"
-        v-if="this.filters.children && !!selectedEntryTypes && selectedEntryTypes.length > 0"
+        v-if="this.filters.children && this.filters.entryType"
       >
         <v-avatar left>
           <v-icon small>fas fa-check-square</v-icon>
@@ -506,50 +498,20 @@ export default {
         return el.key !== tag
       })
     },
-    removeComponent (component) {
-      let filteredEntryTypes = this.$store.getters.getSelectedComponentTypes.filter(el => {
-        return el !== component
-      })
-      this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
-    },
-    naturalSort (data) {
-      function compare (a, b) {
-        var itemA
-        var itemB
-        if (isNaN(parseFloat(a.attributeCodeLabel))) {
-          itemA = a.attributeCodeLabel.toUpperCase()
-          itemB = b.attributeCodeLabel.toUpperCase()
-        } else {
-          itemA = parseFloat(a.attributeCodeLabel)
-          itemB = parseFloat(b.attributeCodeLabel)
-        }
-        if (itemA < itemB) {
-          return -1
-        } else if (itemA > itemB) {
-          return 1
-        }
-        return 0
-      }
-      return data.sort(compare)
-    },
     clear () {
+      console.log('trigger')
       this.filters = {
         attributes: [],
         component: '',
         tags: [],
         organization: '',
-        children: false,
-        tagCondition: 'AND'
+        children: false
       }
     },
     resetOptions () {
       this.searchPageSize = 12
       this.searchSortField = 'searchScore'
       this.searchSortOrder = 'DESC'
-    },
-    deleteComponent (component) {
-      let filteredEntryTypes = _.remove(this.$store.state.componentTypeList, n => n !== component)
-      this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
     },
     addTag (tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
@@ -621,7 +583,7 @@ export default {
         'query': '',
         'page': 0,
         'pageSize': 12,
-        'componentTypes': [],
+        'componentType': '',
         'includeChildren': true,
         'organization': '',
         'attributes': null,
@@ -634,7 +596,7 @@ export default {
       searchFilters.query = (this.searchQuery ? this.searchQuery : searchFilters.query)
       searchFilters.page = (this.searchPage ? this.searchPage : searchFilters.page)
       searchFilters.pageSize = (this.searchPageSize ? this.searchPageSize : searchFilters.pageSize)
-      searchFilters.componentTypes = (this.selectedEntryTypes ? this.selectedEntryTypes : searchFilters.componentTypes)
+      searchFilters.componentType = (this.filters.entryType ? this.filters.entryType : searchFilters.componentType)
       searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
       searchFilters.organization = (this.filters.organization ? this.filters.organization.key : searchFilters.organization)
 
@@ -662,11 +624,21 @@ export default {
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
+          console.log(response)
+          console.log(searchFilters)
           that.searchResults = response.data.hits.hits.map(e => e._source)
-          console.log(that.searchResults)
           that.totalSearchResults = response.data.hits.total.value
-          that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
-          that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
+          // that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
+          // that.organizationsList.length = 0
+          that.organizationsList = (that.filters.organization != '' ? [that.filters.organization] : [])
+          response.data.aggregations['sterms#by_organization'].buckets.forEach(el =>{
+            if(that.filters.organization != el.label)
+              that.organizationsList.push(el)
+          })
+
+          // that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
+          // that.tagsList.length = 0
+          response.data.aggregations['sterms#by_tag'].buckets.forEach(el => that.tagsList.push(el))
 
           var entryTypes = response.data.aggregations['sterms#by_category'].buckets
           this.getCompTypeLabels(entryTypes)
@@ -681,21 +653,8 @@ export default {
           that.searchQueryIsDirty = false
         })
     },
-    getNestedComponentTypes () {
-      this.$http
-        .get(
-          '/openstorefront/api/v1/resource/componenttypes/nested'
-        )
-        .then(response => {
-          this.nestedComponentTypesList = response.data.data
-        })
-    },
     newSearch () {
       this.searchPage = 1
-      this.submitSearch()
-    },
-    searchCategory (category) {
-      this.filters.component = category
       this.submitSearch()
     },
     getNumPages () {
@@ -897,9 +856,6 @@ export default {
     },
     searchPage () {
       this.submitSearch()
-    },
-    componentTypeListComputed: function () {
-      this.$store.commit('setSelectedComponentTypes', { data: this.componentTypeListComputed })
     }
   },
   computed: {
@@ -909,27 +865,8 @@ export default {
     hideSearchSuggestions () {
       return this.searchQueryIsDirty || this.searchQuery.length === 0
     },
-    componentTypeListComputed () {
-      return this.filters.components
-    },
-    entryTypesFilterList () {
-      let combinedList = this.componentsList
-      this.selectedEntryTypes.forEach(el => {
-        if (!combinedList.includes(el)) {
-          combinedList.append(el)
-        }
-      })
-      return combinedList
-    },
-    selectedEntryTypes: {
-      set (entryTypes) {
-        if (this.$store.getters.getSelectedComponentTypes !== entryTypes) {
-          this.$store.commit('setSelectedComponentTypes', { data: entryTypes })
-        }
-      },
-      get () {
-        return this.$store.getters.getSelectedComponentTypes
-      }
+    tagsStuff () {
+      return this.filters.tags
     }
   },
   data () {
@@ -937,7 +874,6 @@ export default {
       componentsList: [],
       tagsList: [],
       organizationsList: [],
-      selected: [],
       comparisonList: [],
       comparisonDataHeaders: [],
       comparisonDataDisplay: [],
@@ -949,12 +885,11 @@ export default {
       attributeQuery: '',
       attributeKeys: [],
       filters: {
-        // For components see computed selectedEntryTypes
         tags: [],
         attributes: [],
         organization: '',
-        children: false,
-        tagCondition: 'AND'
+        entryType: '',
+        children: false
       },
       searchResults: {},
       searchResultsAttributes: {},
