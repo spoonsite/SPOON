@@ -91,13 +91,13 @@
           </template>
         </v-autocomplete>
         <v-checkbox class="ma-0" color="black" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
-        <v-select
+        <v-autocomplete
           v-model="filters.tags"
           hide-details
           :items="tagsList"
           :disabled="!tagsList || tagsList.length === 0"
-          item-text="tagLabel"
-          item-value="tagLabel"
+          item-text="key"
+          item-value="key"
           :label="!tagsList || tagsList.length === 0 ? 'No Tags' : 'Tags'"
           multiple
           small-chips
@@ -113,13 +113,13 @@
           <template slot="item" slot-scope="data">
             <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.key}}</v-list-tile-title></v-list-tile-content>
           </template>
-        </v-select>
+        </v-autocomplete>
         <v-autocomplete
           v-model="filters.organization"
           :items="organizationsList"
           label="Organization"
-          item-text="organization"
-          item-value="organization"
+          item-text="key"
+          item-value="key"
           clearable
         >
           <template slot="selection" slot-scope="data">
@@ -224,13 +224,13 @@
       </v-chip>
       <v-chip
         v-for="tag in filters.tags"
-        :key="tag.key"
+        :key="tag"
       >
         <v-avatar left>
           <v-icon small>fas fa-tag</v-icon>
         </v-avatar>
-        {{ tag.key }}
-        <div class="v-chip__close"><v-icon right @click="removeTag(tag.key)">cancel</v-icon></div>
+        {{ tag }}
+        <div class="v-chip__close"><v-icon right @click="removeTag(tag)">cancel</v-icon></div>
       </v-chip>
       <v-chip
         v-if="filters.organization"
@@ -495,11 +495,10 @@ export default {
     },
     removeTag (tag) {
       this.filters.tags = this.filters.tags.filter(el => {
-        return el.key !== tag
+        return el !== tag
       })
     },
     clear () {
-      console.log('trigger')
       this.filters = {
         attributes: [],
         component: '',
@@ -603,7 +602,7 @@ export default {
       let tags = []
       if (this.filters.tags != null) {
         this.filters.tags.forEach(tag => {
-          tags.push(tag.key)
+          tags.push(tag)
         })
       }
 
@@ -624,26 +623,44 @@ export default {
           '/openstorefront/api/v2/service/search',
           searchFilters
         ).then(response => {
-          console.log(response)
-          console.log(searchFilters)
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
-          // that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
-          // that.organizationsList.length = 0
-          that.organizationsList = (that.filters.organization != '' ? [that.filters.organization] : [])
+
+          // Organizations
+          that.organizationsList = []
           response.data.aggregations['sterms#by_organization'].buckets.forEach(el =>{
-            if(that.filters.organization != el.label)
+            if(that.filters.organization.key != el.key)
               that.organizationsList.push(el)
+            else{
+              that.filters.organization.doc_count = el.doc_count
+              that.organizationsList.push(that.filters.organization)
+            }
           })
 
-          // that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
-          // that.tagsList.length = 0
-          response.data.aggregations['sterms#by_tag'].buckets.forEach(el => that.tagsList.push(el))
+          that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
 
-          var entryTypes = response.data.aggregations['sterms#by_category'].buckets
+          // Tags
+          // have to think differently
+          that.tagsList = []
+          response.data.aggregations['sterms#by_tag'].buckets.forEach(el =>{
+            if(!that.filters.tags.includes(el.key))
+              that.tagsList.push(el)
+            else{
+              console.log(el)
+              let result = that.filters.tags.findIndex(e => e == el.key )
+              that.filters.tags[result].doc_count = el.doc_count
+              that.tagsList.push(that.filters.tags[result])
+              console.log(that.tagsList)
+            }
+          })
+          // that.tagsList.length = 0
+          // response.data.aggregations['sterms#by_tag'].buckets.forEach(el => that.tagsList.push(el))
+          that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
+
+          let entryTypes = response.data.aggregations['sterms#by_category'].buckets
           this.getCompTypeLabels(entryTypes)
 
-          var attributesAggregation = response.data.aggregations['nested#by_attribute_type']['top_hits#attribute'].hits.hits
+          let attributesAggregation = response.data.aggregations['nested#by_attribute_type']['top_hits#attribute'].hits.hits
           this.parseAttributesFromSearchResponse(attributesAggregation)
 
           that.searchQueryIsDirty = false
@@ -751,7 +768,6 @@ export default {
           }
         }
       }
-      console.log(attribute)
     },
     getAttributeUnit (attributeCompared) {
       for (var attribute in this.searchResultsAttributes) {
