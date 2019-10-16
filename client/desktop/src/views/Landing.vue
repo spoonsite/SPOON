@@ -243,18 +243,6 @@ h3 {
 .entry-card a:hover {
   text-decoration: underline; 
 }
-.link-tile:hover {
-  background-color: rgba(0,0,0,0.2);
-}
-.logo-wrapper {
-  max-width: 100%;
-  text-align: center;
-  margin-bottom: 2em;
-}
-.logo {
-  padding: 2em;
-  max-width: 100%;
-}
 .footer-wrapper {
   width: 100%;
 }
