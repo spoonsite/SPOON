@@ -54,7 +54,7 @@
               </router-link>
             </v-card-title>
             <ul v-if="item.children.length > 0" class="ml-3">
-              <li v-for="child in item.children" :key="child">
+              <li v-for="child in item.children" :key="child.componentType.componentType">
                 <router-link
                   :to="{ path: 'search', query: { comp: child.componentType.componentType, children: true }}"
                 >
@@ -242,18 +242,6 @@ h3 {
 }
 .entry-card a:hover {
   text-decoration: underline; 
-}
-.link-tile:hover {
-  background-color: rgba(0,0,0,0.2);
-}
-.logo-wrapper {
-  max-width: 100%;
-  text-align: center;
-  margin-bottom: 2em;
-}
-.logo {
-  padding: 2em;
-  max-width: 100%;
 }
 .footer-wrapper {
   width: 100%;
