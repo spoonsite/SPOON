@@ -977,6 +977,14 @@ public class ElasticSearchManager
 
 				//convert to search result object
 				List<ComponentAttribute> componentAttributes = statTable.getAttributeMap().getOrDefault(component.getComponentId(), new ArrayList<>());
+
+				// TODO: build table to get attributes from. Also see what toView does with that table. 
+
+				ComponentAttribute componentAttribute = new ComponentAttribute();
+				componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				componentAttribute.setComponentId(component.getComponentId());
+				componentAttributes = componentAttribute.findByExample();
+
 				componentReviews = reviewMap.getOrDefault(component.getComponentId(), new ArrayList<>());
 				List<ComponentTag> componentTags = statTable.getTagMap().getOrDefault(component.getComponentId(), new ArrayList<>());
 				component.setDescription(StringProcessor.stripHtml(component.getDescription()));
