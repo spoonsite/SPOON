@@ -119,6 +119,20 @@
           <v-expansion-panel-content>
             <div slot="header"><h2>Tags</h2></div>
             <div class="expansion-content">
+              <div
+                style="padding-bottom: 1em;"
+                class="clearfix tags"
+                v-if="detail.tags && detail.tags.length !== 0"
+              >
+              <span
+                v-for="tag in detail.tags"
+                :key="tag.text"
+                style="margin-right: 0.8em; cursor: pointer;"
+                >
+                <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
+                {{ tag.text }}
+              </span>
+            </div>
               <v-combobox
                 id="tagEntry"
                 label="Tags"
@@ -670,7 +684,6 @@ export default {
     determineTagType () {
       document.getElementById("tagEntry").blur()
       this.tagName = document.getElementById("tagEntry").value
-      console.log(this.tagName)
       if (this.allTags.includes(this.tagName)) {
         this.submitTag(this.tagName)
       }
