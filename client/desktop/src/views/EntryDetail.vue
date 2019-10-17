@@ -143,7 +143,7 @@
               <p>New Tag Name: <strong style="color: red;">{{ tagName }}</strong></p>
             </v-card-text>
             <v-card-actions>
-              <v-btn @click="submitTag()">Submit</v-btn>
+              <v-btn @click="submitTag(tagName)">Submit</v-btn>
               <v-btn @click="newTagConfermationDialog = false;">Cancel</v-btn>
             </v-card-actions>
           </v-card>
@@ -622,7 +622,10 @@ export default {
       this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/tags`)
         .then(response => {
-          this.allTags=response.data
+          var tags = response.data
+          for(var i=0; i<tags.length; i++) {
+            this.allTags.push(tags[i].text)
+          }
         })
         .catch(e => this.errors.push(e))
     },
@@ -667,8 +670,9 @@ export default {
     determineTagType () {
       document.getElementById("tagEntry").blur()
       this.tagName = document.getElementById("tagEntry").value
+      console.log(this.tagName)
       if (this.allTags.includes(this.tagName)) {
-        submitTag (this.tagName)
+        this.submitTag(this.tagName)
       }
       else {
         this.newTagConfermationDialog = true;
@@ -679,7 +683,7 @@ export default {
       let data = {
         securityMarkingType: '',
         dataSensitivity: '',
-        text: name.text
+        text: name
       }
       this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, data)
         .then(response => {
