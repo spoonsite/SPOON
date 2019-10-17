@@ -553,7 +553,7 @@ export default {
     },
     addTag (tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
-        this.filters.tags.push(tag)
+        this.filters.tags.push({key: tag})
       }
     },
     parseAttributesFromSearchResponse (attributesAggregation) {
