@@ -69,15 +69,14 @@
     <v-divider></v-divider>
 
     <div class="entry-details-bottom">
-      <v-expansion-panels>
-        <v-expansion-panel class="expansion-spacing" value="1">
+        <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Description</h2></div>
             <div class="expansion-content" v-html="detail.description"></div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="expansion-spacing" value="1">
+        <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Attributes</h2></div>
             <div class="expansion-content">
@@ -100,7 +99,7 @@
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header"><h2>Resources</h2></div>
-            <div class="expansion-content"> 
+            <div class="expansion-content">
               <div v-for="item in detail.resources"
                 :key="item.resourceId"
               >
@@ -121,14 +120,34 @@
             <div slot="header"><h2>Tags</h2></div>
             <div class="expansion-content">
               <v-combobox
+                id="tagEntry"
                 label="Tags"
                 :items="allTags"
                 v-model="tagName">
               </v-combobox>
-              <v-btn @click="submitTag(tagName)">Add</v-btn>
+              <v-btn @click="determineTagType()">Add</v-btn>
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
+
+        <v-dialog
+        v-model="newTagConfermationDialog"
+        >
+          <v-card>
+            <v-card-title>
+              <h2 class="w-100">Are you sure you want to add a new tag?</h2>
+            </v-card-title>
+            <v-card-text>
+              <p>Are you sure that you would like to add a new tag?</p>
+              <p>Please see other possible matches below.</p>
+              <p>New Tag Name: <strong style="color: red;">{{ tagName }}</strong></p>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="submitTag()">Submit</v-btn>
+              <v-btn @click="newTagConfermationDialog = false;">Cancel</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
@@ -365,8 +384,6 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-      </v-expansion-panels>
-
     </div>
     <v-footer color="primary" dark height="auto" display="flex" style="justify-content: center;">
       <v-card color="primary" dark flat class="footer-wrapper">
@@ -412,6 +429,7 @@ export default {
       newQuestion: '',
       writeReviewDialog: false,
       deleteReviewDialog: false,
+      newTagConfermationDialog: false,
       deleteRequestId: '',
       editReviewId: '',
       reviewSubmit: false,
@@ -604,7 +622,7 @@ export default {
       this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/tags`)
         .then(response => {
-          this.allTags = response.data
+          this.allTags=response.data
         })
         .catch(e => this.errors.push(e))
     },
@@ -647,12 +665,15 @@ export default {
       this.mediaDetailsDialog = true
     },
     determineTagType () {
-      if (this.allTags.includes(name)){
-        submitTag(name)
+      document.getElementById("tagEntry").blur()
+      this.tagName = document.getElementById("tagEntry").value
+      if (this.allTags.includes(this.tagName)) {
+        submitTag (this.tagName)
       }
-      else{
-        console.log(name)
+      else {
+        this.newTagConfermationDialog = true;
       }
+
     },
     submitTag (name) {
       let data = {
@@ -666,7 +687,7 @@ export default {
           this.tagName = ''
           this.$toasted.show('Tag submitted.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the question.'))
+        .catch(e => this.$toasted.error('There was a problem submitting this tag.'))
     },
     submitQuestion () {
       let data = {
