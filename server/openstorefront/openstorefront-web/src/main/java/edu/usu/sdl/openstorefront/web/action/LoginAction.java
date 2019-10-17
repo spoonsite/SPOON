@@ -18,9 +18,7 @@ package edu.usu.sdl.openstorefront.web.action;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.NetworkUtil;
-import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
-import edu.usu.sdl.openstorefront.service.manager.UserAgentManager;
 import edu.usu.sdl.openstorefront.core.view.JsonResponse;
 import edu.usu.sdl.openstorefront.security.HeaderRealm;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
@@ -36,10 +34,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
-import net.sf.uadetector.ReadableUserAgent;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
-import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -134,21 +130,13 @@ public class LoginAction
 
 	private String startPage()
 	{
-		String startPage = "/Landing.action";
+		String startPage = "/";
 
 		UserContext userContext = SecurityUtil.getUserContext();
 		if (userContext != null) {
-			String userAgent = getContext().getRequest().getHeader(OpenStorefrontConstant.HEADER_USER_AGENT);
-			ReadableUserAgent readableUserAgent = UserAgentManager.parse(userAgent);
-			switch (readableUserAgent.getDeviceCategory().getCategory()) {
-				case SMARTPHONE:
-				case TABLET:
-					startPage = "/mobile/index.html";
-					break;
-				default:
-					startPage = userContext.userLandingPage();
-					break;
-			}
+			
+			startPage = userContext.userLandingPage();
+			
 		}
 
 		if (StringUtils.isNotBlank(gotoPage)) {
