@@ -131,6 +131,17 @@
                 >
                 <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
                 {{ tag.text }}
+                <v-menu offset-y v-if="tag.createUser === $store.state.currentUser.username">
+                  <v-btn slot="activator"><v-icon>fas fa-chevron-down</v-icon></v-btn>
+                  <v-list>
+                    <v-list-tile>
+                      <v-list-tile-title>Delete</v-list-tile-title>
+                    </v-list-tile>
+                    <v-list-tile>
+                      <v-list-tile-title>Show Related Entries</v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
               </span>
             </div>
               <v-combobox
