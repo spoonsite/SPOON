@@ -123,12 +123,12 @@
           clearable
         >
           <template slot="selection" slot-scope="data">
-            ({{ data.item.doc_count }}) {{ data.item.key }}
+            ({{ organizationsMap.get(data.item) }}) {{ data.item }}
           </template>
           <template slot="item" slot-scope="data">
             <v-list-tile-content>
               <v-list-tile-title>
-                ({{ data.item.doc_count }}) {{ data.item.key }}
+                ({{ organizationsMap.get(data.item) }}) {{ data.item }}
               </v-list-tile-title>
             </v-list-tile-content>
           </template>
@@ -238,7 +238,7 @@
         <v-avatar left>
           <v-icon small>fas fa-university</v-icon>
         </v-avatar>
-        {{ filters.organization.key }}
+        {{ filters.organization }}
         <div class="v-chip__close"><v-icon right @click="filters.organization = ''">cancel</v-icon></div>
       </v-chip>
       <v-chip
@@ -597,7 +597,7 @@ export default {
       searchFilters.pageSize = (this.searchPageSize ? this.searchPageSize : searchFilters.pageSize)
       searchFilters.componentType = (this.filters.entryType ? this.filters.entryType : searchFilters.componentType)
       searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
-      searchFilters.organization = (this.filters.organization ? this.filters.organization.key : searchFilters.organization)
+      searchFilters.organization = (this.filters.organization ? this.filters.organization : searchFilters.organization)
 
       let tags = []
       if (this.filters.tags != null) {
@@ -628,33 +628,13 @@ export default {
 
           // Organizations
           that.organizationsList = []
+          that.organizationsMap.clear()
+
           response.data.aggregations['sterms#by_organization'].buckets.forEach(el =>{
-            if(that.filters.organization.key != el.key)
-              that.organizationsList.push(el)
-            else{
-              that.filters.organization.doc_count = el.doc_count
-              that.organizationsList.push(that.filters.organization)
-            }
+            that.organizationsList.push(el.key)
+            that.organizationsMap.set(el.key, el.doc_count)
           })
 
-          that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
-
-          // Tags
-          // have to think differently
-          that.tagsList = []
-          response.data.aggregations['sterms#by_tag'].buckets.forEach(el =>{
-            if(!that.filters.tags.includes(el.key))
-              that.tagsList.push(el)
-            else{
-              console.log(el)
-              let result = that.filters.tags.findIndex(e => e == el.key )
-              that.filters.tags[result].doc_count = el.doc_count
-              that.tagsList.push(that.filters.tags[result])
-              console.log(that.tagsList)
-            }
-          })
-          // that.tagsList.length = 0
-          // response.data.aggregations['sterms#by_tag'].buckets.forEach(el => that.tagsList.push(el))
           that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
 
           let entryTypes = response.data.aggregations['sterms#by_category'].buckets
@@ -890,6 +870,7 @@ export default {
       componentsList: [],
       tagsList: [],
       organizationsList: [],
+      organizationsMap: new Map(),
       comparisonList: [],
       comparisonDataHeaders: [],
       comparisonDataDisplay: [],
