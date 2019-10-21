@@ -860,9 +860,6 @@ export default {
     },
     hideSearchSuggestions () {
       return this.searchQueryIsDirty || this.searchQuery.length === 0
-    },
-    tagsStuff () {
-      return this.filters.tags
     }
   },
   data () {
