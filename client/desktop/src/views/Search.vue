@@ -552,7 +552,13 @@ export default {
       this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
     },
     addTag (tag) {
-      if (this.filters.tags.indexOf(tag) === -1) {
+      var index = -1;
+      for (var i=0; i<this.filters.tags.length; i++){
+        if (this.filters.tags[i].key === tag) {
+          index = 0;
+        }
+      }
+      if (index === -1) {
         this.filters.tags.push({key: tag})
       }
     },
