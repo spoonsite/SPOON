@@ -124,25 +124,25 @@
                 class="clearfix tags"
                 v-if="detail.tags && detail.tags.length !== 0"
               >
-              <span
+              <v-btn
                 v-for="tag in detail.tags"
                 :key="tag.text"
-                style="margin-right: 0.8em; cursor: pointer;"
+                style="margin-right: 0.8em; text-transform: none; font-weight:normal;"
                 >
                 <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
                 {{ tag.text }}
-                <v-menu offset-y v-if="tag.createUser === $store.state.currentUser.username">
-                  <v-btn slot="activator"><v-icon>fas fa-chevron-down</v-icon></v-btn>
+                <v-menu offset-y >
+                  <v-btn slot="activator" v-if="tag.createUser === $store.state.currentUser.username"><v-icon>fas fa-chevron-down</v-icon></v-btn>
                   <v-list>
-                    <v-list-tile>
+                    <v-list-tile @click="deleteTag(tag.tagId);">
                       <v-list-tile-title>Delete</v-list-tile-title>
                     </v-list-tile>
                     <v-list-tile>
-                      <v-list-tile-title>Show Related Entries</v-list-tile-title>
+                      <v-list-tile-title @click="ShowRelatedTags();">Show Related Entries</v-list-tile-title>
                     </v-list-tile>
                   </v-list>
                 </v-menu>
-              </span>
+              </v-btn>
             </div>
               <v-combobox
                 id="tagEntry"
@@ -693,7 +693,6 @@ export default {
       this.mediaDetailsDialog = true
     },
     determineTagType () {
-      document.getElementById("tagEntry").blur()
       this.tagName = document.getElementById("tagEntry").value
       if (this.allTags.includes(this.tagName)) {
         this.submitTag(this.tagName)
@@ -701,6 +700,16 @@ export default {
       else {
         this.newTagConfermationDialog = true;
       }
+
+    },
+    deleteTag (deleteId) {
+      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${deleteId}`)
+        .then(response => {
+          this.$toasted.show('Tag Deleted')
+          this.getDetail()
+        })
+    },
+    showRelatedTags () {
 
     },
     submitTag (name) {
