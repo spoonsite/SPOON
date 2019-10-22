@@ -7,6 +7,7 @@ weight = 2
 All the facial, cosmetic aspects of Spoon are organized in what is called Branding. This tool allows the Admin to have the ability to set the graphic design and theme characteristics for the site.
 
 [__How do I change what Spoon looks like?__](#gothere)   \
+[__What do I do if the Security Banner is not turning off?__](/applicationadmin/thebrandingpage/#Security)
 
 <!--more-->
 
@@ -33,22 +34,32 @@ This easily lead to a mistake if one Admin makes the text of the contents of one
 
 If the Admin knows HTML/CSS, (s)he can insert custom language by selecting the "__Source Edit__" option on the input boxes: ![Source Edit Button](/images/AppAdmin/sourceeditbutton.png).
 
+The "__Show link to mobile site in menu__" checkbox does nothing in Spoon v2.11.
+
 <a name="LoginPage"></a>
 
 ### 2 - Login Page
-This....
+Here you can set the content seen on the login page. 
 <a name="Support"></a>
 
 ### 1 - Support
-This....
+Some additional utility options are available for configuration here. Note that JIRA support was dropped from Spoon in v2.11. 
 <a name="Security"></a>
 
 ### 1 - Security
-This....
+There instances when the Spoon Admin might need to gain the attention of every current Spoon user - for example, if Spoon experienced a security breach that threatened Spoon users while a security patch was being applied. In these cases, the Admin can quickly create a custom text message that is visible at the top of all the pages on the legacy site.
+![Security Banner](/images/AppAdmin/SecurityBanner.png)
+Putting any text in the "__Security Banner Text__" input box will turn on the banner, and to remove, delete all text within the box. 
+Do note that as of v2.11, the front page will not show the warning banner. If you are having difficulty turning off the banner, be sure to check if the input box is truly clear by using the "__Source Edit__" button in the toolbar. 
+
+One of the uses for the "__User Input Warning__" is at the top of the form that users use to make a new part submission.
+
+To learn more about Change Requests, see [Workplans](/application/admin/workplans/#)
+
 <a name="Colors/Logos"></a>
 
 ### 1 - Colors/Logos
-This....
+In Spoon v2.11, there are two separate web technologies that are managing the user interface: Ext.js and Vue.js. Each have a different way of handling where colors are displayed, so the best way to get a consistent theme is across both flavors is experimentation. 
 <a name="CurrentCSS"></a>
 
 ### 1 - Current CSS
