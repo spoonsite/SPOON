@@ -134,6 +134,7 @@ export default {
     this.$http
       .get('/openstorefront/api/v1/resource/searchoptions/user')
       .then(response => {
+        console.log(response)
         this.searchOptionsId = response.data.searchOptionsId
         this.searchOptions = []
         if (response.data.canUseNameInSearch) {

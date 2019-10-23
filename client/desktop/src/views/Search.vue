@@ -194,13 +194,11 @@
     <!-- Search Bar and menu  -->
     <div class="centeralign px-3 mb-5" style="max-width: 46em;">
       <SearchBar
-        v-on:submitSearch="submitSearch()"
+        @submitSearch="submitSearch"
         v-on:clear="submitSearch()"
         :hideSuggestions="hideSearchSuggestions"
         v-model="searchQuery"
         :overlaySuggestions="true"
-        :submittedEntryTypes="this.$route.query.comp.split(',')"
-        @componentsChange="componentsChange"
       ></SearchBar>
       <!-- SEARCH FILTERS PILLS -->
       <v-chip
@@ -439,16 +437,11 @@ export default {
     // AttributeRange
   },
   created () {
-    this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
-      this.newSearch()
-    })
-  },
-  mounted () {
     if (this.$route.query.q) {
       this.searchQuery = this.$route.query.q
     }
     if (this.$route.query.comp) {
-      this.$store.commit('setSelectedComponentTypes', { data: this.$route.query.comp.split(',') })
+      this.filters.entryType = this.$route.query.comp
     }
     if (this.$route.query.children) {
       this.filters.children = (this.$route.query.children === 'true')
@@ -465,27 +458,58 @@ export default {
         this.filters.attributes.push(attribute)
       })
     }
+    if (this.$route.query.searchoptions) {
+      this.searchoptions = this.$route.query.searchoptions.split(',')
+    }
+  },
+  mounted () {
     this.newSearch()
   },
   beforeRouteUpdate (to, from, next) {
     if (to.query.q) {
       this.searchQuery = to.query.q
+    } else {
+      this.searchQuery = ''
     }
     if (to.query.comp) {
-      this.$store.commit('setSelectedComponentTypes', { data: to.query.comp.split(',') })
+      this.filters.entryType = to.query.comp
+    } else {
+      this.filters.entryType = ''
     }
     if (to.query.children) {
-      this.filters.children = to.query.children
+      this.filters.children = (to.query.children === 'true')
+    } else {
+      this.fitlers.children = true
+    }
+    if (to.query.tags) {
+      this.filters.tags = to.query.tags.split(',')
+    } else {
+      this.filters.tags = []
+    }
+    if (to.query.orgs) {
+      this.filters.organization = to.query.orgs
+    } else {
+      this.filters.organization = ''
+    }
+    if (to.query.attributes) {
+      this.filters.attributes = []
+      to.query.attributes.match(/({.*?})/gm).forEach(attribute => {
+        this.filters.attributes.push(attribute)
+      })
+    } else {
+      this.filters.attributes = []
+    }
+    if (to.query.searchoptions) {
+      this.searchoptions = to.query.searchoptions.split(',')
     }
     this.newSearch()
   },
   methods: {
-    componentsChange (data) {
-      this.$store.commit('setSelectedComponentTypes', { data: data })
-    },
     getComponentName (code) {
-      // this.addHashToLocation(code)
       let name = ''
+      if (this.$store.state.componentTypeList === undefined) {
+        this.$store.dispatch('getComponentTypeList')
+      }
       this.$store.state.componentTypeList.forEach(comp => {
         if (comp.componentType === code) {
           name = comp.parentLabel
@@ -562,6 +586,10 @@ export default {
     getCompTypeLabels (entryTypes) {
       let that = this
       // This gets the labels for each of the entry types by using the codes return from request
+
+      if (that.$store.state.componentTypeList === undefined) {
+        that.$store.dispatch('getComponentTypeList')
+      }
       entryTypes.forEach(entryType => {
         entryType['label'] = that.$store.state.componentTypeList.find(element => {
           return entryType.key === element.componentType
@@ -617,6 +645,8 @@ export default {
         })
         searchFilters.attributes = JSON.stringify(searchFilters.attributes)
       }
+
+      history.pushState({}, '', this.searchUrl())
 
       this.$http
         .post(
@@ -683,24 +713,12 @@ export default {
       return `${attributeType.description} : ${attr.code} ${attributeType.attributeUnit}`
     },
     copyUrlToClipboard () {
-      var urlBeginning
-      window.location.href.match(/(.*?)\?/m).forEach(element => {
-        urlBeginning = element
-      })
-      var urlEnding = '?q=' + this.searchQuery +
-          '&comp=' + this.filters.components.join(',') +
-          '&children=' + this.filters.children.toString() +
-          '&tags=' + this.filters.tags.join(',') +
-          '&orgs=' + this.filters.organization +
-          '&attributes=' + this.filters.attributes.join(',')
-
-      var url = encodeURI(urlBeginning + urlEnding)
+      var url = encodeURI(window.location.origin + window.location.pathname + this.searchUrl())
       var copyText = this.$refs.urlForClipboard
       copyText.value = url
       copyText.select()
       document.execCommand('copy')
       this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
-      // alert('Copied the text: ' + copyText.value)
     },
     getFirstCompType (componentType) {
       var index = componentType.indexOf('>')
@@ -823,6 +841,17 @@ export default {
         'top-corner': position === 0,
         'table-column': position !== 'name' && position !== 0
       }
+    },
+    searchUrl () {
+      let searchOptions = window.localStorage.getItem('searchOptions')
+      let url = '#/search?q=' + this.searchQuery +
+                '&comp=' + this.filters.entryType +
+                '&children=' + this.filters.children +
+                '&organiation=' + this.filters.organization +
+                '&attributes=' + (this.filters.attributes.length > 0 ? JSON.stringify(this.filters.attributes) : '') +
+                '&tags=' + this.filters.tags.join(',') +
+                '&searchoptions=' + JSON.parse(searchOptions).join(',')
+      return url
     }
   },
   watch: {
@@ -873,6 +902,7 @@ export default {
       comparisonDataDisplay: [],
       showFilters: true,
       showOptions: false,
+      searchoptions: [],
       showHelp: false,
       showComparison: false,
       searchQuery: '',
