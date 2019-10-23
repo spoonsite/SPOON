@@ -42,6 +42,11 @@
             ></v-checkbox>
           </v-list-tile-content>
         </v-list-tile>
+        <v-list-tile v-if="searchOptions.length==0" avatar>
+          <v-list-tile-content :style="warningStyle">
+            <v-list-tile-title class ="v-label soWarning">All search options are off, this will cause a search to return nothing.</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-card>
   </form>
@@ -84,7 +89,7 @@ export default {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      this.$emit('submitSearch', '&comp=' + '' + '&children=true')
+      this.$emit('submitSearch', '&comp=&children=true&searchoptions=' + this.searchOptions.join(','))
     },
     getSearchSuggestions () {
       if (!this.hideSearchSuggestions) {
@@ -119,7 +124,11 @@ export default {
       } else if (!this.searchQueryIsDirty) {
         this.getSearchSuggestions()
       }
-    }, 400)
+    }, 400),
+    searchOptions: function (val) {
+      window.localStorage.setItem('searchOptions', JSON.stringify(val))
+      this.saveSearchOptions()
+    }
   },
   created: function () {
     this.$http
@@ -142,7 +151,13 @@ export default {
         if (response.data.canUseTagsInSearch) {
           this.searchOptions.push('Tags')
         }
+        window.localStorage.setItem('searchOptions', JSON.stringify(this.searchOptions))
       })
+  },
+  computed: {
+    warningStyle () {
+      return 'background-color: ' + this.$store.state.branding.vueErrorColor
+    }
   }
 }
 </script>
@@ -225,6 +240,10 @@ input:focus + .icon {
   content: "";
   clear: both;
   display: table;
+}
+.soWarning {
+  text-align:center;
+  color: white;
 }
 @media only screen and (max-width: 360px) {
   .searchfield {
