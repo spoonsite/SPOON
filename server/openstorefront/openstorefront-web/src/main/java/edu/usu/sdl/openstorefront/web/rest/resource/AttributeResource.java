@@ -799,7 +799,7 @@ public class AttributeResource
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-			String attributeTypeCode = sanitizer.santize(StringUtils.left(attributeTypeMetadata.getLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
+			String attributeTypeCode = sanitizer.sanitize(StringUtils.left(attributeTypeMetadata.getLabel().toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)).toString();
 
 			AttributeType attributeType = new AttributeType();
 			attributeType.setAttributeType(attributeTypeCode);

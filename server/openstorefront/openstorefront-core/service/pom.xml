@@ -29,6 +29,19 @@
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 		</repository>
+		<repository>
+			<id>atlassian-external</id>
+			<url>https://packages.atlassian.com/mvn/maven-external/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+		</repository>
 		<!--
 		<repository>
 		  <id>xmappr-repo-googlecode</id>
@@ -42,6 +55,17 @@
 		<pluginRepository>
 			<id>atlassian-public</id>
 			<url>https://maven.atlassian.com/public/</url>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>atlassian-external</id>
+			<url>https://packages.atlassian.com/mvn/maven-external/</url>
 			<releases>
 				<enabled>true</enabled>
 				<checksumPolicy>warn</checksumPolicy>
@@ -106,6 +130,12 @@
 			<artifactId>elasticsearch-rest-high-level-client</artifactId>
 			<version>7.2.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-sync</artifactId>
+			<version>3.9.1</version>
+		</dependency>		
 		
 		<dependency>
 			<groupId>net.sourceforge.stripes</groupId>
@@ -260,7 +290,7 @@
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
-			<version>2.2.1</version>
+			<version>2.3.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -271,7 +301,7 @@
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz-jobs</artifactId>
-			<version>2.2.1</version>
+			<version>2.3.0</version>
 		</dependency>				
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -337,7 +367,7 @@
 			<artifactId>glassfish-embedded-all</artifactId>
 			<version>4.1.2</version>
 			<scope>test</scope>
-		</dependency>	
+		</dependency>			
 	</dependencies>
 
 	<build>

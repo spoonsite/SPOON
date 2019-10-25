@@ -29,6 +29,6 @@ public abstract class Sanitizer
 	 * @param fieldData
 	 * @return
 	 */
-	public abstract Object santize(Object fieldData);
+	public abstract Object sanitize(Object fieldData);
 
 }

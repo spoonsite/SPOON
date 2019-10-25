@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
@@ -41,7 +40,7 @@ import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.util.EntityUtil;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -49,7 +48,6 @@ import edu.usu.sdl.openstorefront.validation.exception.OpenStorefrontValidationE
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,9 +75,9 @@ public class OrientPersistenceService
 	private static final String PARAM_NAME_SEPARATOR = "1";
 
 	private OObjectDatabaseTx transaction;
-	private final DBManager manager;
+	private final OrientDBManager manager;
 
-	public OrientPersistenceService(DBManager manager)
+	public OrientPersistenceService(OrientDBManager manager)
 	{
 		this.manager = manager;
 	}
@@ -197,36 +195,6 @@ public class OrientPersistenceService
 		return found;
 	}
 
-	/**
-	 * This only works on managed objects
-	 *
-	 * @param <T>
-	 * @param entityClass
-	 * @param primaryKey (DB RID not our Entity PK)
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T find(Class<T> entityClass, Object primaryKey)
-	{
-		final ORecordId rid;
-
-		OObjectDatabaseTx database = getConnection();
-		try {
-			if (primaryKey instanceof ORecordId) {
-				rid = (ORecordId) primaryKey;
-			} else if (primaryKey instanceof String) {
-				rid = new ORecordId((String) primaryKey);
-			} else {
-				throw new IllegalArgumentException("PrimaryKey '" + primaryKey + "' type (" + primaryKey.getClass() + ") is not supported");
-			}
-
-			return (T) database.load(rid);
-		} finally {
-			closeConnection(database);
-		}
-	}
-
 	@Override
 	public <T> T findById(Class<T> entity, Object id)
 	{
@@ -239,7 +207,7 @@ public class OrientPersistenceService
 		T returnEntity = null;
 		try {
 			if (checkPkObject(db, entity, id)) {
-				Map<String, Object> pkFields = findIdField(entity, id);
+				Map<String, Object> pkFields = EntityUtil.findIdField(entity, id);
 
 				if (pkFields.isEmpty()) {
 					throw new OpenStorefrontRuntimeException("Unable to find PK field", "Mark the Primary Key field (@PK) on the entity: " + entity.getName());
@@ -300,42 +268,6 @@ public class OrientPersistenceService
 		}
 
 		return pkValid;
-	}
-
-	private Map<String, Object> findIdField(Class entityClass, Object id)
-	{
-		Map<String, Object> fieldValueMap = new HashMap<>();
-
-		//Start at the root (The first Id found wins ...there should only be one)
-		if (entityClass.getSuperclass() != null) {
-			fieldValueMap = findIdField(entityClass.getSuperclass(), id);
-		}
-		if (fieldValueMap.isEmpty()) {
-			for (Field field : entityClass.getDeclaredFields()) {
-				PK idAnnotation = field.getAnnotation(PK.class);
-				if (idAnnotation != null) {
-					if (ReflectionUtil.isComplexClass(field.getType())) {
-						//PK class should only be one level deep
-						for (Field pkField : field.getType().getDeclaredFields()) {
-							try {
-								if (Modifier.isStatic(pkField.getModifiers()) == false
-										&& Modifier.isFinal(pkField.getModifiers()) == false) {
-									Method method = id.getClass().getMethod("get" + StringUtils.capitalize(pkField.getName()), (Class<?>[]) null);
-									Object returnObj = method.invoke(id, (Object[]) null);
-									fieldValueMap.put(field.getName() + "." + pkField.getName(), returnObj);
-								}
-							} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-								throw new OpenStorefrontRuntimeException(ex);
-							}
-						}
-					} else {
-						fieldValueMap.put(field.getName(), id);
-						break;
-					}
-				}
-			}
-		}
-		return fieldValueMap;
 	}
 
 	@Override
@@ -510,7 +442,7 @@ public class OrientPersistenceService
 		return count;
 	}
 
-	public List<ODocument> dbCommandQuery(String query, Map<String, Object> params)
+	private List<ODocument> dbCommandQuery(String query, Map<String, Object> params)
 	{
 		List<ODocument> documents = new ArrayList<>();
 		OObjectDatabaseTx db = getConnection();
@@ -909,9 +841,9 @@ public class OrientPersistenceService
 	 * @return the entity or null if not found
 	 */
 	@Override
-	public <T> T queryOneByExample(BaseEntity baseEnity)
+	public <T> T queryOneByExample(BaseEntity baseEntity)
 	{
-		return queryOneByExample(new QueryByExample<>(baseEnity));
+		return queryOneByExample(new QueryByExample<>(baseEntity));
 	}
 
 	@Override
@@ -988,7 +920,7 @@ public class OrientPersistenceService
 			updatePKFieldValue(entity);
 
 			ValidationModel validationModel = new ValidationModel(entity);
-			validationModel.setSantize(false);
+			validationModel.setSanitize(false);
 			ValidationResult validationResult = ValidationUtil.validate(validationModel);
 			if (validationResult.valid()) {
 				t = db.save(entity);
@@ -1039,44 +971,6 @@ public class OrientPersistenceService
 				}
 			}
 		}
-	}
-
-	@Override
-	public <T extends BaseEntity> T saveNonPkEntity(T entity)
-	{
-		return saveNonBaseEntity(entity);
-	}
-
-	/**
-	 * This is used for non-base entity object. Keep in mind they still need to
-	 * be registered with the DB.
-	 *
-	 * @param <T>
-	 * @param entity
-	 * @return
-	 */
-	@Override
-	public <T> T saveNonBaseEntity(T entity)
-	{
-		Objects.requireNonNull(entity, "Unable to persist a NULL entity.");
-
-		OObjectDatabaseTx db = getConnection();
-		T t = null;
-		try {
-			ValidationModel validationModel = new ValidationModel(entity);
-			validationModel.setSantize(false);
-			ValidationResult validationResult = ValidationUtil.validate(validationModel);
-			if (validationResult.valid()) {
-				t = db.save(entity);
-			} else {
-				throw new OpenStorefrontRuntimeException(validationResult.toString(), "Check the data to make sure it conforms to the rules. Recored type: " + entity.getClass().getName());
-			}
-		} catch (OpenStorefrontRuntimeException e) {
-			throw new OpenStorefrontRuntimeException("Unable to save record: " + StringProcessor.printObject(entity), e);
-		} finally {
-			closeConnection(db);
-		}
-		return t;
 	}
 
 	@Override

@@ -47,9 +47,11 @@
 		
         <title>Openstorefront - Standby</title>
 		<style>
-			body{
-				background: whitesmoke;
+			body{			
 				font-family: sans-serif;
+				background-image: linear-gradient(lightgrey, white);
+				background-repeat: no-repeat;
+				margin: 50px;
 			}
 			
 			.loader {
@@ -160,15 +162,55 @@
 			  }
 			}
 			
-			.status-text {
+			.lds-ring {
+				display: inline-block;
 				position: absolute;
+				top: 15%;
+				/* margin: auto; */
+				width: 15%;
+				
+			}
+			.lds-ring div {
+			  box-sizing: border-box;
+			  display: block;
+			  position: absolute;
+			  width: 100%;
+			  height: 100%;
+			  /* margin: 6px; */
+			  border: 6px solid #5f67a0;
+			  border-radius: 50%;
+			  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+			  border-color: #3a657399  transparent transparent transparent;
+			}
+			.lds-ring div:nth-child(1) {
+			  animation-delay: -0.45s;
+			}
+			.lds-ring div:nth-child(2) {
+			  animation-delay: -0.3s;
+			}
+			.lds-ring div:nth-child(3) {
+			  animation-delay: -0.15s;
+			}
+			@keyframes lds-ring {
+			  0% {
+				transform: rotate(0deg);
+			  }
+			  100% {
+				transform: rotate(360deg);
+			  }
+			}			
+			
+			
+			.status-text {
+				/*  position: absolute; */
 				left: 50%;
-				top: 100px;				
-				font-size: 24px;
-				margin-left: -200px;
+				top: 100px;	
+				/* margin-top: 100px;  */
+				/* margin-left: 25%;  */				
+				font-size: 24px;				
 			}
 			.version {
-				position: absolute;
+				/* position: absolute; */
 				bottom: 100px;
 				width: 99%;
 				text-align: center;
@@ -177,22 +219,26 @@
 		
     </head>
     <body>
-		<div class="loader"><i class="loader__tile loader__tile__1"></i><i class="loader__tile loader__tile__2"></i><i class="loader__tile loader__tile__3"></i><i class="loader__tile loader__tile__4"></i><i class="loader__tile loader__tile__5"></i><i class="loader__tile loader__tile__6"></i><i class="loader__tile loader__tile__7"></i><i class="loader__tile loader__tile__8"></i><i class="loader__tile loader__tile__9"></i>						
-		</div>
+		<%-- <div class="loader"><i class="loader__tile loader__tile__1"></i><i class="loader__tile loader__tile__2"></i><i class="loader__tile loader__tile__3"></i><i class="loader__tile loader__tile__4"></i><i class="loader__tile loader__tile__5"></i><i class="loader__tile loader__tile__6"></i><i class="loader__tile loader__tile__7"></i><i class="loader__tile loader__tile__8"></i><i class="loader__tile loader__tile__9"></i></div> --%>						
+		
 		<div class="status-text">
-			Application is initializing please wait...<br><br><br>
+			Application is initializing please wait... <div class="lds-ring"><div></div><div></div><div></div><div></div></div> <br><br><br>
 			Current Status: <span id="status" style="font-weight: bold">${status}</span><br>
-			<c:if test="detailedStatus">Details: ${detailedStatus}</c:if>
+			<hr> ${detailedStatus}
 		</div>
-		<div class="version">
+		<hr>
+		<div class="version">			
 			${appVersion}
 		</div>
 		
 		<script type="text/javascript">
 			//refresh page to see if it's ready
+			
 			setInterval(function(){
 				window.location.reload();
+				window.scrollTo(0,document.body.scrollHeight);
 			}, 6000);
+			
 		</script>		
     </body>
 </html>

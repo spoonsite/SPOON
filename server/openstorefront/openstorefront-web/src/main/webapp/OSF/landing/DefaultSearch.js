@@ -69,6 +69,9 @@ Ext.define('OSF.landing.DefaultSearch', {
 					canUseAttributesInSearch: true
 				}
 
+				let checkboxgroup = Ext.getCmp('defaultSearch').queryById('searchOptionsGroup');
+				let values = checkboxgroup.getValue();
+
 				if (!values.canUseOrganizationsInSearch) {
 					searchOptions.canUseOrganizationsInSearch = false;
 				}
@@ -135,10 +138,10 @@ Ext.define('OSF.landing.DefaultSearch', {
 				}
 
 				// Save the searchOptions in the searchRequest so they can be retrieved from
-				// session storage instead of only being retrievable by the api endpoint in the request.
-				searchRequest.searchOptions = searchOptions;
-
-				Ext.Ajax.request({
+		 		// session storage instead of only being retrievable by the api endpoint in the request.
+		 		searchRequest.searchOptions = searchOptions;
+ 
+		 		Ext.Ajax.request({
 					url: "api/v1/resource/searchoptions/user",
 					jsonData: searchOptions,
 					method: 'PUT',
@@ -152,11 +155,6 @@ Ext.define('OSF.landing.DefaultSearch', {
 						Ext.toast('Failed to apply the search options.', '', 'tr');
 					}
 				});
-				
-
-				
-
-				
 			},
 			items: [
 				{

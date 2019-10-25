@@ -65,7 +65,7 @@ public class FeedbackServiceImpl
 				ticket.setUsername(userProfile.getUsername());
 				ticket.setFullname(ticket.getFullname());
 			} else {
-				
+
 				ticket.setFirstname(userProfile.getFirstName());
 				ticket.setLastname(userProfile.getLastName());
 				ticket.setOrganization(userProfile.getOrganization());
@@ -75,9 +75,9 @@ public class FeedbackServiceImpl
 				ticket.setFullname(userProfile.getFirstName() + " " + userProfile.getLastName());
 			}
 		}
-		ticket.setFeedbackId(persistenceService.generateId());
+		ticket.setFeedbackId(getPersistenceService().generateId());
 		ticket.populateBaseCreateFields();
-		ticket = persistenceService.persist(ticket);
+		ticket = getPersistenceService().persist(ticket);
 
 		Branding branding = getBrandingService().getCurrentBrandingView();
 		switch (branding.getFeedbackHandler()) {
@@ -90,7 +90,7 @@ public class FeedbackServiceImpl
 					if (issue != null) {
 						LOG.log(Level.INFO, MessageFormat.format("Jira Ticket: {0}", issue.getKey()));
 						ticket.setExternalId(issue.getKey());
-						ticket = persistenceService.persist(ticket);
+						ticket = getPersistenceService().persist(ticket);
 					}
 				}
 				break;
@@ -125,11 +125,11 @@ public class FeedbackServiceImpl
 
 	private FeedbackTicket updateStatus(String ticketId, String status)
 	{
-		FeedbackTicket feedbackTicket = persistenceService.findById(FeedbackTicket.class, ticketId);
+		FeedbackTicket feedbackTicket = getPersistenceService().findById(FeedbackTicket.class, ticketId);
 		if (feedbackTicket != null) {
 			feedbackTicket.setActiveStatus(status);
 			feedbackTicket.populateBaseUpdateFields();
-			feedbackTicket = persistenceService.persist(feedbackTicket);
+			feedbackTicket = getPersistenceService().persist(feedbackTicket);
 		}
 		return feedbackTicket;
 	}
@@ -137,9 +137,9 @@ public class FeedbackServiceImpl
 	@Override
 	public void deleteFeedback(String ticketId)
 	{
-		FeedbackTicket feedbackTicket = persistenceService.findById(FeedbackTicket.class, ticketId);
+		FeedbackTicket feedbackTicket = getPersistenceService().findById(FeedbackTicket.class, ticketId);
 		if (feedbackTicket != null) {
-			persistenceService.delete(feedbackTicket);
+			getPersistenceService().delete(feedbackTicket);
 		}
 	}
 

@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service.component;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -69,12 +68,12 @@ public class ComponentTypeServiceImpl
 		if (element != null) {
 			componentType = (String) element.getObjectValue();
 		} else {
-			String query = "select componentId, componentType from " + Component.class.getSimpleName();
-			List<ODocument> documents = persistenceService.query(query, null);
-			for (ODocument document : documents) {
-				Element newElement = new Element(document.field("componentId"), document.field("componentType"));
-				if (document.field("componentId").equals(componentId)) {
-					componentType = document.field("componentType");
+
+			Component componentExample = new Component();
+			for (Component component : componentExample.findByExample()) {
+				Element newElement = new Element(component.getComponentId(), component.getComponentType());
+				if (component.getComponentId().equals(componentId)) {
+					componentType = component.getComponentType();
 				}
 				OSFCacheManager.getComponentTypeComponentCache().put(newElement);
 			}

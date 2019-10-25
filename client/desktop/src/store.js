@@ -10,7 +10,11 @@ export default new Vuex.Store({
     branding: {},
     securityPolicy: {},
     permissionMap: [],
-    appVersion: ''
+    appVersion: '',
+    componentTypeList: [],
+    attributeMap: {},
+    selectedComponentTypes: [],
+    helpUrl: ''
   },
   // mutations must be synchronous
   mutations: {
@@ -26,6 +30,9 @@ export default new Vuex.Store({
     setBranding (state, response) {
       state.branding = response.data
     },
+    setHelpUrl (state, response) {
+      state.helpUrl = response.data.description
+    },
     setPermissionMap (state, response) {
       response.data.roles.forEach(roles => {
         roles.permissions.forEach(permission => {
@@ -36,6 +43,18 @@ export default new Vuex.Store({
           if (!found) state.permissionMap.push(permission.permission)
         })
       })
+    },
+    setComponentTypeList (state, response) {
+      state.componentTypeList = response.data
+    },
+    setAttributeMap (state, response) {
+      state.attributeMap = {}
+      response.data.forEach(element => {
+        state.attributeMap[element.attributeType] = element
+      })
+    },
+    setSelectedComponentTypes (state, response) {
+      state.selectedComponentTypes = response.data
     }
   },
   actions: {
@@ -73,10 +92,29 @@ export default new Vuex.Store({
             callback()
           }
         })
+    },
+    getComponentTypeList (context) {
+      axios.get('/openstorefront/api/v1/resource/componenttypes')
+        .then(response => {
+          context.commit('setComponentTypeList', response)
+        })
+    },
+    getAttributeMap (context) {
+      axios.get('/openstorefront/api/v1/resource/attributes')
+        .then(response => {
+          context.commit('setAttributeMap', response)
+        })
+    },
+    getHelpUrl (context, callback) {
+      axios.get('/openstorefront/api/v1/service/application/configproperties/help.url')
+        .then(response => {
+          context.commit('setHelpUrl', response)
+        })
     }
   },
   getters: {
     // call this.$store.getters.hasPermission('ADMIN-...')
-    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0
+    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0,
+    getSelectedComponentTypes: (state) => state.selectedComponentTypes
   }
 })

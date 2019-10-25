@@ -56,10 +56,10 @@ public class TextSanitizerTest
 	}
 
 	@Test
-	public void santizeTest()
+	public void sanitizeTest()
 	{
 		TextSanitizer sanitizer = new TextSanitizer();
-		Object result = sanitizer.santize(input);
+		Object result = sanitizer.sanitize(input);
 		assertEquals(expectedOutput, result);
 	}
 }

@@ -19,7 +19,10 @@ import static edu.usu.sdl.openstorefront.common.util.NetworkUtil.getClientIp;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
+import edu.usu.sdl.openstorefront.core.entity.SecurityRolePermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
+import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
@@ -199,14 +202,48 @@ public class SecurityUtil
 
 	private static UserContext getGuestUserContext()
 	{
-		UserContext userContext = ServiceProxyFactory.getServiceProxy().getSecurityService().getGuestContext();
+		UserContext userContext;
+		if (ServiceProxyFactory.isSystemStarted()) {
+			userContext = ServiceProxyFactory.getServiceProxy().getSecurityService().getGuestContext();
+		} else {
+			userContext = createUnstartedApplicationUser();
+		}
+		return userContext;
+	}
+
+	private static UserContext createUnstartedApplicationUser()
+	{
+		UserContext userContext = new UserContext();
+		userContext.setSystemUser(true);
+		userContext.setUserProfile(new UserProfile());
+		userContext.getUserProfile().setActiveStatus(UserProfile.INACTIVE_STATUS);
+		userContext.getUserProfile().setFirstName(OpenStorefrontConstant.SYSTEM_USER);
+		userContext.getUserProfile().setUsername(OpenStorefrontConstant.SYSTEM_USER);
+
+		//psuedo role with all permission and access to all data
+		SecurityRole systemRole = new SecurityRole();
+		systemRole.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
+		systemRole.setAllowUnspecifiedDataSource(Boolean.TRUE);
+		systemRole.setRoleName("SPECIAL SYSTEM GROUP");
+		systemRole.setDescription("The group is only for the System when the system is not started yet");
+
+		SecurityPermission securityPermission = new SecurityPermission();
+		List<SecurityPermission> permissions = securityPermission.systemValues();
+		systemRole.setPermissions(new ArrayList<>());
+		for (SecurityPermission permission : permissions) {
+			SecurityRolePermission rolePermission = new SecurityRolePermission();
+			rolePermission.setPermission(permission.getCode());
+			systemRole.getPermissions().add(rolePermission);
+		}
+
+		userContext.getRoles().add(systemRole);
+
 		return userContext;
 	}
 
 	private static UserContext getSystemUserContext()
 	{
-		UserContext userContext = ServiceProxyFactory.getServiceProxy().getSecurityService().getSystemContext();
-		return userContext;
+		return createUnstartedApplicationUser();
 	}
 
 	/**

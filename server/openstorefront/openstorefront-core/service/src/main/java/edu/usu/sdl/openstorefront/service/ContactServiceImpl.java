@@ -50,7 +50,7 @@ public class ContactServiceImpl
 		if (element != null) {
 			contact = (Contact) element.getObjectValue();
 		} else {
-			contact = persistenceService.findById(Contact.class, contactId);
+			contact = getPersistenceService().findById(Contact.class, contactId);
 
 			if (contact != null) {
 				element = new Element(contactId, contact);
@@ -62,11 +62,11 @@ public class ContactServiceImpl
 	}
 
 	@Override
-	public Contact saveContact(Contact contact,boolean mergeSimilar)
+	public Contact saveContact(Contact contact, boolean mergeSimilar)
 	{
 		Objects.requireNonNull(contact, "Contact required");
 
-		Contact existing = persistenceService.findById(Contact.class, contact.getContactId());
+		Contact existing = getPersistenceService().findById(Contact.class, contact.getContactId());
 		if (existing == null && mergeSimilar) {
 
 			existing = new Contact();
@@ -93,17 +93,17 @@ public class ContactServiceImpl
 				alertContext.setDataTrigger(existing);
 				getAlertService().checkAlert(alertContext);
 			}
-			
+
 			// Update Existing Contact With New Values
 			existing.updateFields(contact);
 
 			// Store Changes & Return New Version
-			contact = persistenceService.persist(existing);
-				
+			contact = getPersistenceService().persist(existing);
+
 		} else {
-			contact.setContactId(persistenceService.generateId());
+			contact.setContactId(getPersistenceService().generateId());
 			contact.populateBaseCreateFields();
-			contact = persistenceService.persist(contact);
+			contact = getPersistenceService().persist(contact);
 		}
 		OSFCacheManager.getContactCache().remove(contact.getContactId());
 
@@ -113,17 +113,17 @@ public class ContactServiceImpl
 	@Override
 	public Contact saveContact(Contact contact)
 	{
-		return saveContact(contact,true);
+		return saveContact(contact, true);
 	}
 
 	@Override
 	public void deleteContact(String contactId)
 	{
-		Contact contact = persistenceService.findById(Contact.class, contactId);
+		Contact contact = getPersistenceService().findById(Contact.class, contactId);
 		if (contact != null) {
 			List<ComponentContact> references = getComponentContacts(contactId);
 			if (references.isEmpty()) {
-				persistenceService.delete(contact);
+				getPersistenceService().delete(contact);
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to delete contact; references attached. Contact: " + contact.getFirstName() + " " + contact.getLastName(), "Remove reference and try again.");
 			}
@@ -145,11 +145,11 @@ public class ContactServiceImpl
 
 	private void handleStatusUpdate(String contactId, boolean cascadeComponents, String activeStatus)
 	{
-		Contact contact = persistenceService.findById(Contact.class, contactId);
+		Contact contact = getPersistenceService().findById(Contact.class, contactId);
 		if (contact != null) {
 			contact.setActiveStatus(activeStatus);
 			contact.populateBaseUpdateFields();
-			persistenceService.persist(contact);
+			getPersistenceService().persist(contact);
 
 			if (cascadeComponents) {
 				List<ComponentContact> referencedContacts = getComponentContacts(contactId);
@@ -174,8 +174,8 @@ public class ContactServiceImpl
 		Objects.requireNonNull(targetContactId);
 		Objects.requireNonNull(mergeContactId);
 
-		Contact target = persistenceService.findById(Contact.class, targetContactId);
-		Contact merge = persistenceService.findById(Contact.class, mergeContactId);
+		Contact target = getPersistenceService().findById(Contact.class, targetContactId);
+		Contact merge = getPersistenceService().findById(Contact.class, mergeContactId);
 		if (target != null) {
 			if (merge != null) {
 				if (target.getContactId().equals(merge.getContactId()) == false) {
@@ -186,10 +186,10 @@ public class ContactServiceImpl
 					for (ComponentContact contact : componentContacts) {
 						contact.setContactId(targetContactId);
 						contact.populateBaseUpdateFields();
-						persistenceService.persist(contact);
+						getPersistenceService().persist(contact);
 					}
 
-					persistenceService.delete(merge);
+					getPersistenceService().delete(merge);
 
 					OSFCacheManager.getContactCache().remove(targetContactId);
 					OSFCacheManager.getContactCache().remove(mergeContactId);
@@ -249,10 +249,10 @@ public class ContactServiceImpl
 			contact = saveContact(contact);
 			for (ComponentContact oldContact : componentContacts) {
 				if (StringUtils.isBlank(oldContact.getComponentContactId())) {
-					oldContact.setComponentContactId(persistenceService.generateId());
+					oldContact.setComponentContactId(getPersistenceService().generateId());
 				}
 				oldContact.setContactId(contact.getContactId());
-				persistenceService.persist(oldContact);
+				getPersistenceService().persist(oldContact);
 			}
 		}
 	}

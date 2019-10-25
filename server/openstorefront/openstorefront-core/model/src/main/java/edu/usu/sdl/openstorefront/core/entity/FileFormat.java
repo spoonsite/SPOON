@@ -28,8 +28,6 @@ public class FileFormat
 {
 
 	public static final String COMPONENT_STANDARD = "CMP_STANDARD";
-	public static final String COMPONENT_ER2 = "CMP_ER2";
-	public static final String COMPONENT_DESCRIBE = "CMP_DESCRIBE";
 	public static final String COMPONENT_MAPPED_CSV = "CMP_MAP_CSV";
 	public static final String COMPONENT_MAPPED_TSV = "CMP_MAP_TSV";
 	public static final String COMPONENT_MAPPED_EXCEL = "CMP_MAP_EXCEL";
@@ -65,20 +63,6 @@ public class FileFormat
 		fileFormat.setFileType(FileType.COMPONENT);
 		fileFormat.setFileRequirements("ZIP with media and JSON data containing component records or just the JSON file.  See Export.");
 		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentStandardParser");
-		fileFormat.setSupportsDataMap(false);
-		addFormat(codeMap, fileFormat);
-
-		fileFormat = newLookup(FileFormat.class, COMPONENT_ER2, "ER2 Format (XML)");
-		fileFormat.setFileType(FileType.COMPONENT);
-		fileFormat.setFileRequirements("XML of ER2 Asset data");
-		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentER2Parser");
-		fileFormat.setSupportsDataMap(false);
-		addFormat(codeMap, fileFormat);
-
-		fileFormat = newLookup(FileFormat.class, COMPONENT_DESCRIBE, "Describe (XML)");
-		fileFormat.setFileType(FileType.COMPONENT);
-		fileFormat.setFileRequirements("XML of Describe Record");
-		fileFormat.setParserClass("edu.usu.sdl.openstorefront.service.io.parser.ComponentDescribeParser");
 		fileFormat.setSupportsDataMap(false);
 		addFormat(codeMap, fileFormat);
 

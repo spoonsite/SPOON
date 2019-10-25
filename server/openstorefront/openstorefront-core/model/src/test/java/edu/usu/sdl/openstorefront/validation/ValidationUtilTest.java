@@ -118,7 +118,7 @@ public class ValidationUtilTest
 		System.out.println("Failed: " + result.toString());
 
 		validateModel = new ValidationModel(userTypeCode);
-		validateModel.setSantize(true);
+		validateModel.setSanitize(true);
 
 		result = ValidationUtil.validate(validateModel);
 		if (result.valid() == true) {

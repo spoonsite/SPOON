@@ -1,6 +1,6 @@
 
 +++
-title = "Architecture"
+title = "Project Architecture"
 description = ""
 weight = 2
 +++

@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
@@ -32,7 +31,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryType;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.Alert;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Branding;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.DashboardWidget;
@@ -125,7 +123,7 @@ public class UserServiceImpl
 		UserWatch temp = new UserWatch();
 		temp.setUsername(userId);
 		temp.setActiveStatus(UserWatch.ACTIVE_STATUS);
-		return persistenceService.queryByExample(new QueryByExample<>(temp));
+		return getPersistenceService().queryByExample(new QueryByExample<>(temp));
 	}
 
 	@Override
@@ -133,7 +131,7 @@ public class UserServiceImpl
 	{
 		UserWatch temp = new UserWatch();
 		temp.setUserWatchId(watchId);
-		return persistenceService.queryOneByExample(new QueryByExample<>(temp));
+		return getPersistenceService().queryOneByExample(new QueryByExample<>(temp));
 	}
 
 	/**
@@ -144,33 +142,33 @@ public class UserServiceImpl
 	@Override
 	public UserWatch saveWatch(UserWatch watch)
 	{
-		UserWatch oldWatch = persistenceService.findById(UserWatch.class, watch.getUserWatchId());
+		UserWatch oldWatch = getPersistenceService().findById(UserWatch.class, watch.getUserWatchId());
 		if (oldWatch != null) {
 			oldWatch.setActiveStatus(watch.getActiveStatus());
 			oldWatch.setLastViewDts(watch.getLastViewDts());
 			oldWatch.setNotifyFlg(watch.getNotifyFlg());
 			oldWatch.setUpdateUser(watch.getUpdateUser());
-			return persistenceService.persist(oldWatch);
+			return getPersistenceService().persist(oldWatch);
 		}
-		watch.setUserWatchId(persistenceService.generateId());
+		watch.setUserWatchId(getPersistenceService().generateId());
 		watch.setCreateDts(TimeUtil.currentDate());
 		watch.setUpdateDts(TimeUtil.currentDate());
 		watch.setLastViewDts(TimeUtil.currentDate());
-		return persistenceService.persist(watch);
+		return getPersistenceService().persist(watch);
 	}
 
 	@Override
 	public Boolean deleteWatch(String watchId)
 	{
-		UserWatch temp = persistenceService.findById(UserWatch.class, watchId);
-		persistenceService.delete(temp);
+		UserWatch temp = getPersistenceService().findById(UserWatch.class, watchId);
+		getPersistenceService().delete(temp);
 		return Boolean.TRUE;
 	}
 
 	@Override
 	public UserProfile getUserProfile(String userId)
 	{
-		UserProfile profile = persistenceService.findById(UserProfile.class, userId);
+		UserProfile profile = getPersistenceService().findById(UserProfile.class, userId);
 		return profile;
 	}
 
@@ -222,7 +220,7 @@ public class UserServiceImpl
 	@Override
 	public UserProfile saveUserProfile(UserProfile user, boolean refreshSession)
 	{
-		UserProfile userProfile = persistenceService.findById(UserProfile.class, user.getUsername());
+		UserProfile userProfile = getPersistenceService().findById(UserProfile.class, user.getUsername());
 		if (userProfile != null) {
 			if (StringUtils.isBlank(user.getActiveStatus())) {
 				userProfile.setActiveStatus(UserProfile.ACTIVE_STATUS);
@@ -238,17 +236,17 @@ public class UserServiceImpl
 			userProfile.setOrganization(user.getOrganization());
 			userProfile.setUserTypeCode(user.getUserTypeCode());
 			if (StringUtils.isNotBlank(userProfile.getInternalGuid())) {
-				userProfile.setInternalGuid(persistenceService.generateId());
+				userProfile.setInternalGuid(getPersistenceService().generateId());
 			}
 			userProfile.populateBaseUpdateFields();
-			persistenceService.persist(userProfile);
+			getPersistenceService().persist(userProfile);
 		} else {
-			user.setInternalGuid(persistenceService.generateId());
+			user.setInternalGuid(getPersistenceService().generateId());
 			user.populateBaseCreateFields();
-			userProfile = persistenceService.persist(user);
+			userProfile = getPersistenceService().persist(user);
 		}
 
-		userProfile = persistenceService.deattachAll(userProfile);
+		userProfile = getPersistenceService().deattachAll(userProfile);
 		getOrganizationService().addOrganization(userProfile.getOrganization());
 		if (refreshSession) {
 			UserContext userContext = SecurityUtil.getUserContext();
@@ -267,7 +265,7 @@ public class UserServiceImpl
 	@Override
 	public void deleteProfile(String username)
 	{
-		UserProfile profile = persistenceService.findById(UserProfile.class, username);
+		UserProfile profile = getPersistenceService().findById(UserProfile.class, username);
 		if (profile != null) {
 
 			//Check for duplicate (Should be rare)
@@ -286,7 +284,7 @@ public class UserServiceImpl
 				for (UserProfile userProfile : dupUsers) {
 					if (userProfile.getUpdateDts().before(maxUpdateDate)) {
 						//Because of the duplicate username we can only delete the user safely
-						persistenceService.delete(userProfile);
+						getPersistenceService().delete(userProfile);
 					} else {
 						profile = userProfile;
 					}
@@ -298,9 +296,9 @@ public class UserServiceImpl
 			profile.setUpdateUser(SecurityUtil.getCurrentUserName());
 			if (StringUtils.isBlank(profile.getInternalGuid())) {
 				//old profiles add missing info
-				profile.setInternalGuid((persistenceService.generateId()));
+				profile.setInternalGuid((getPersistenceService().generateId()));
 			}
-			persistenceService.persist(profile);
+			getPersistenceService().persist(profile);
 
 			UserWatch userwatchExample = new UserWatch();
 			userwatchExample.setUsername(username);
@@ -310,7 +308,7 @@ public class UserServiceImpl
 			userwatchSetExample.setUpdateDts(TimeUtil.currentDate());
 			userwatchSetExample.setUpdateUser(SecurityUtil.getCurrentUserName());
 
-			persistenceService.updateByExample(UserWatch.class, userwatchSetExample, userwatchExample);
+			getPersistenceService().updateByExample(UserWatch.class, userwatchSetExample, userwatchExample);
 
 			UserMessage userMessageExample = new UserMessage();
 			userMessageExample.setUsername(username);
@@ -319,7 +317,7 @@ public class UserServiceImpl
 			userMessageSetExample.setActiveStatus(UserWatch.INACTIVE_STATUS);
 			userMessageSetExample.setUpdateDts(TimeUtil.currentDate());
 			userMessageSetExample.setUpdateUser(SecurityUtil.getCurrentUserName());
-			persistenceService.updateByExample(UserMessage.class, userMessageSetExample, userMessageExample);
+			getPersistenceService().updateByExample(UserMessage.class, userMessageSetExample, userMessageExample);
 
 			getReportService().disableAllScheduledReportsForUser(username);
 			getComponentServicePrivate().removeUserFromComponentType(username);
@@ -331,12 +329,12 @@ public class UserServiceImpl
 	@Override
 	public void reactiveProfile(String username)
 	{
-		UserProfile profile = persistenceService.findById(UserProfile.class, username);
+		UserProfile profile = getPersistenceService().findById(UserProfile.class, username);
 		if (profile != null) {
 			profile.setActiveStatus(UserProfile.ACTIVE_STATUS);
 			profile.setUpdateDts(TimeUtil.currentDate());
 			profile.setUpdateUser(SecurityUtil.getCurrentUserName());
-			persistenceService.persist(profile);
+			getPersistenceService().persist(profile);
 
 			UserWatch userwatchExample = new UserWatch();
 			userwatchExample.setUsername(username);
@@ -347,7 +345,7 @@ public class UserServiceImpl
 			userwatchSetExample.setUpdateUser(SecurityUtil.getCurrentUserName());
 
 			//Inactive Schedules reports for the user will stay inactive; user should activate the ones they want.
-			persistenceService.updateByExample(UserWatch.class, userwatchSetExample, userwatchExample);
+			getPersistenceService().updateByExample(UserWatch.class, userwatchSetExample, userwatchExample);
 
 			clearCache();
 		} else {
@@ -358,7 +356,7 @@ public class UserServiceImpl
 	@Override
 	public UserTracking saveUserTracking(UserTracking tracking)
 	{
-		UserTracking oldTracking = persistenceService.findById(UserTracking.class, tracking.getTrackingId());
+		UserTracking oldTracking = getPersistenceService().findById(UserTracking.class, tracking.getTrackingId());
 		if (oldTracking != null) {
 			oldTracking.setActiveStatus(tracking.getActiveStatus());
 			oldTracking.setBrowser(tracking.getBrowser());
@@ -375,13 +373,13 @@ public class UserServiceImpl
 			oldTracking.setOrganization(tracking.getOrganization());
 			oldTracking.setUserTypeCode(tracking.getUserTypeCode());
 			oldTracking.setUserAgent(tracking.getUserAgent());
-			return persistenceService.persist(oldTracking);
+			return getPersistenceService().persist(oldTracking);
 		}
 		tracking.setActiveStatus(UserTracking.ACTIVE_STATUS);
 		tracking.setCreateDts(TimeUtil.currentDate());
 		tracking.setUpdateDts(TimeUtil.currentDate());
-		tracking.setTrackingId(persistenceService.generateId());
-		return persistenceService.persist(tracking);
+		tracking.setTrackingId(getPersistenceService().generateId());
+		return getPersistenceService().persist(tracking);
 	}
 
 	@Override
@@ -403,7 +401,7 @@ public class UserServiceImpl
 		if (validationResult.valid()) {
 
 			//check for an existing profile (username must be unique whether internally or externally)
-			UserProfile profile = persistenceService.findById(UserProfile.class, userprofile.getUsername());
+			UserProfile profile = getPersistenceService().findById(UserProfile.class, userprofile.getUsername());
 			if (profile == null) {
 				//new user
 				profile = userprofile;
@@ -445,7 +443,7 @@ public class UserServiceImpl
 				}
 			}
 
-			profile = persistenceService.deattachAll(profile);
+			profile = getPersistenceService().deattachAll(profile);
 			userContext = getSecurityService().getUserContext(profile.getUsername());
 			SecurityUtils.getSubject().getSession().setAttribute(SecurityUtil.USER_CONTEXT_KEY, userContext);
 
@@ -493,7 +491,7 @@ public class UserServiceImpl
 	{
 		UserWatch userWatchExample = new UserWatch();
 		userWatchExample.setComponentId(componentId);
-		persistenceService.deleteByExample(userWatchExample);
+		getPersistenceService().deleteByExample(userWatchExample);
 	}
 
 	@Override
@@ -534,7 +532,7 @@ public class UserServiceImpl
 		userWatchExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 		userWatchExample.setComponentId(component.getComponentId());
 
-		List<UserWatch> userWatches = persistenceService.queryByExample(userWatchExample);
+		List<UserWatch> userWatches = getPersistenceService().queryByExample(userWatchExample);
 		for (UserWatch userWatch : userWatches) {
 			if (component.getLastActivityDts().after(userWatch.getLastViewDts())) {
 
@@ -577,12 +575,12 @@ public class UserServiceImpl
 		userMessageExample.setEmailAddress(userMessage.getEmailAddress());
 
 		//Duplicate check;
-		UserMessage userMessageExisting = persistenceService.queryOneByExample(userMessageExample);
+		UserMessage userMessageExisting = getPersistenceService().queryOneByExample(userMessageExample);
 		if (userMessageExisting == null) {
-			userMessage.setUserMessageId(persistenceService.generateId());
+			userMessage.setUserMessageId(getPersistenceService().generateId());
 			userMessage.setRetryCount(0);
 			userMessage.populateBaseCreateFields();
-			persistenceService.persist(userMessage);
+			getPersistenceService().persist(userMessage);
 		}
 	}
 
@@ -594,16 +592,25 @@ public class UserServiceImpl
 		LocalDateTime archiveTime = LocalDateTime.now();
 		archiveTime = archiveTime.minusDays(maxDays);
 		archiveTime = archiveTime.truncatedTo(ChronoUnit.DAYS);
-		String deleteQuery = "updateDts < :maxUpdateDts AND activeStatus = :activeStatusParam";
 
 		ZonedDateTime zdt = archiveTime.atZone(ZoneId.systemDefault());
 		Date archiveDts = Date.from(zdt.toInstant());
 
-		Map<String, Object> queryParams = new HashMap<>();
-		queryParams.put("maxUpdateDts", archiveDts);
-		queryParams.put("activeStatusParam", UserMessage.INACTIVE_STATUS);
+		UserMessage userMessageExample = new UserMessage();
+		userMessageExample.setActiveStatus(UserMessage.INACTIVE_STATUS);
 
-		persistenceService.deleteByQuery(UserMessage.class, deleteQuery, queryParams);
+		UserMessage userMessageMaxExample = new UserMessage();
+		userMessageMaxExample.setUpdateDts(archiveDts);
+
+		QueryByExample<UserMessage> query = new QueryByExample<>(userMessageExample);
+
+		SpecialOperatorModel<UserMessage> specialOperatorModel = new SpecialOperatorModel<>();
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_LESS_THAN);
+		specialOperatorModel.setExample(userMessageMaxExample);
+		query.getExtraWhereCauses().add(specialOperatorModel);
+
+		getPersistenceService().deleteByExample(query);
+
 	}
 
 	@Override
@@ -620,7 +627,7 @@ public class UserServiceImpl
 		if (StringUtils.isNotBlank(adminMessage.getUserTypeCode())) {
 			LOG.log(Level.INFO, MessageFormat.format("(Admin Message) Sending email to users of type: {0}", adminMessage.getUserTypeCode()));
 			userProfileExample.setUserTypeCode(adminMessage.getUserTypeCode());
-			List<UserProfile> userProfiles = persistenceService.queryByExample(userProfileExample);
+			List<UserProfile> userProfiles = getPersistenceService().queryByExample(userProfileExample);
 			for (UserProfile userProfile : userProfiles) {
 				if (StringUtils.isNotBlank(userProfile.getEmail())) {
 					usersToSend.add(userProfile);
@@ -635,12 +642,7 @@ public class UserServiceImpl
 				}
 			}
 
-			StringBuilder query = new StringBuilder();
-			query.append("select from ").append(UserProfile.class.getSimpleName()).append(" where email IS NOT NULL AND username IN :userList OR email IN :userList2");
-			Map<String, Object> params = new HashMap<>();
-			params.put("userList", emailList);
-			params.put("userList2", emailList);
-			usersToSend = persistenceService.query(query.toString(), params);
+			usersToSend = getRepoFactory().getUserRepo().findUsersFromEmails(emailList);
 			for (String email : emailList) {
 				Boolean found = false;
 				for (UserProfile user : usersToSend) {
@@ -700,7 +702,7 @@ public class UserServiceImpl
 		UserMessage userMessageExample = new UserMessage();
 		userMessageExample.setActiveStatus(UserMessage.ACTIVE_STATUS);
 
-		List<UserMessage> userMessages = persistenceService.queryByExample(userMessageExample);
+		List<UserMessage> userMessages = getPersistenceService().queryByExample(userMessageExample);
 		int minQueueMinutes = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MESSAGE_MIN_QUEUE_MINUTES, "10"));
 		int maxRetries = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MESSAGE_MAX_RETRIES, "5"));
 		if (minQueueMinutes < 0) {
@@ -723,7 +725,7 @@ public class UserServiceImpl
 			if (sendNow || userMessage.getCreateDts().getTime() <= queueMills) {
 
 				boolean updateUserMessage = false;
-				UserMessage userMessageExisting = persistenceService.findById(UserMessage.class, userMessage.getUserMessageId());
+				UserMessage userMessageExisting = getPersistenceService().findById(UserMessage.class, userMessage.getUserMessageId());
 				if (userMessage.getRetryCount() < maxRetries) {
 					try {
 						getUserServicePrivate().sendUserMessage(userMessage);
@@ -748,7 +750,7 @@ public class UserServiceImpl
 
 					userMessageExisting.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
 					userMessageExisting.setUpdateDts(TimeUtil.currentDate());
-					persistenceService.persist(userMessageExisting);
+					getPersistenceService().persist(userMessageExisting);
 				}
 
 			} else {
@@ -763,7 +765,7 @@ public class UserServiceImpl
 	public void sendUserMessage(UserMessage userMessage)
 	{
 		UserProfile userProfile = getUserProfile(userMessage.getUsername());
-		UserMessage userMessageExisting = persistenceService.findById(UserMessage.class, userMessage.getUserMessageId());
+		UserMessage userMessageExisting = getPersistenceService().findById(UserMessage.class, userMessage.getUserMessageId());
 
 		String emailAddress = userMessage.getEmailAddress();
 		if (StringUtils.isBlank(emailAddress)) {
@@ -776,7 +778,7 @@ public class UserServiceImpl
 			MessageContext messageContext = new MessageContext(userProfile);
 			messageContext.setUserMessage(userMessage);
 			if (StringUtils.isNotBlank(userMessage.getAlertId())) {
-				messageContext.setAlert(persistenceService.findById(Alert.class, userMessage.getAlertId()));
+				messageContext.setAlert(getPersistenceService().findById(Alert.class, userMessage.getAlertId()));
 			}
 
 			BaseMessageGenerator generator = null;
@@ -827,7 +829,7 @@ public class UserServiceImpl
 		userMessageExisting.setActiveStatus(UserMessage.INACTIVE_STATUS);
 		userMessageExisting.setUpdateDts(TimeUtil.currentDate());
 		userMessageExisting.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-		persistenceService.persist(userMessageExisting);
+		getPersistenceService().persist(userMessageExisting);
 	}
 
 	@Override
@@ -845,16 +847,23 @@ public class UserServiceImpl
 		userProfileExample.setActiveStatus(UserProfile.ACTIVE_STATUS);
 		userProfileExample.setNotifyOfNew(Boolean.TRUE);
 
-		List<UserProfile> userProfiles = persistenceService.queryByExample(userProfileExample);
+		List<UserProfile> userProfiles = getPersistenceService().queryByExample(userProfileExample);
 		RecentChangeMessage recentChangeMessage = new RecentChangeMessage();
 		recentChangeMessage.setLastRunDts(lastRunDts);
 
-		String componentQuery = "select from " + Component.class.getSimpleName() + " where lastActivityDts > :lastActivityParam and activeStatus = :activeStatusParam";
+		Component componentExample = new Component();
+		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+		QueryByExample<Component> componentQuery = new QueryByExample<>(componentExample);
 
-		Map<String, Object> queryParams = new HashMap<>();
-		queryParams.put("lastActivityParam", lastRunDts);
-		queryParams.put("activeStatusParam", Component.ACTIVE_STATUS);
-		List<Component> components = persistenceService.query(componentQuery, queryParams);
+		Component componentLastActivityExample = new Component();
+		componentLastActivityExample.setLastActivityDts(lastRunDts);
+
+		SpecialOperatorModel<Component> specialOperatorModel = new SpecialOperatorModel<>();
+		specialOperatorModel.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		specialOperatorModel.setExample(componentLastActivityExample);
+		componentQuery.getExtraWhereCauses().add(specialOperatorModel);
+
+		List<Component> components = getPersistenceService().queryByExample(componentExample);
 		for (Component component : components) {
 			if (ApprovalStatus.APPROVED.equals(component.getApprovalState())) {
 				if (component.getApprovedDts() != null
@@ -866,11 +875,19 @@ public class UserServiceImpl
 			}
 		}
 
-		String highlightQuery = "select from " + Highlight.class.getSimpleName() + " where updateDts > :updateDtsParam and activeStatus = :activeStatusParam";
-		queryParams = new HashMap<>();
-		queryParams.put("updateDtsParam", lastRunDts);
-		queryParams.put("activeStatusParam", AttributeCode.ACTIVE_STATUS);
-		List<Highlight> highLights = persistenceService.query(highlightQuery, queryParams);
+		Highlight highlightExample = new Highlight();
+		highlightExample.setActiveStatus(Highlight.ACTIVE_STATUS);
+		QueryByExample<Highlight> highlightQuery = new QueryByExample<>(highlightExample);
+
+		Highlight highlightUpdateExample = new Highlight();
+		highlightUpdateExample.setUpdateDts(lastRunDts);
+
+		SpecialOperatorModel<Highlight> specialOperatorModelHighlight = new SpecialOperatorModel<>();
+		specialOperatorModelHighlight.getGenerateStatementOption().setOperation(GenerateStatementOption.OPERATION_GREATER_THAN);
+		specialOperatorModelHighlight.setExample(highlightUpdateExample);
+		highlightQuery.getExtraWhereCauses().add(specialOperatorModelHighlight);
+
+		List<Highlight> highLights = getPersistenceService().queryByExample(highlightQuery);
 		for (Highlight highLight : highLights) {
 			if (highLight.getCreateDts().after(lastRunDts)) {
 				recentChangeMessage.getHighlightsAdded().add(highLight);
@@ -910,40 +927,16 @@ public class UserServiceImpl
 	@Override
 	public void removeUserMessage(String userMessageId)
 	{
-		UserMessage userMessage = persistenceService.findById(UserMessage.class, userMessageId);
+		UserMessage userMessage = getPersistenceService().findById(UserMessage.class, userMessageId);
 		if (userMessage != null) {
-			persistenceService.delete(userMessage);
+			getPersistenceService().delete(userMessage);
 		}
 	}
 
 	@Override
 	public Map<String, Date> getLastLogin(List<UserProfile> userProfiles)
 	{
-		Map<String, Date> userLoginMap = new HashMap<>();
-
-		if (userProfiles.isEmpty() == false) {
-			StringBuilder query = new StringBuilder();
-			query.append("select MAX(eventDts), createUser from ").append(UserTracking.class.getSimpleName());
-			query.append(" where activeStatus = :userTrackingActiveStatusParam  and  trackEventTypeCode = :trackEventCodeParam and createUser IN :userListParam");
-
-			List<String> usernames = new ArrayList<>();
-			userProfiles.stream().forEach((userProfile) -> {
-				usernames.add(userProfile.getUsername());
-			});
-			query.append(" group by createUser");
-
-			if (usernames.isEmpty() == false) {
-				Map<String, Object> paramMap = new HashMap<>();
-				paramMap.put("userTrackingActiveStatusParam", UserTracking.ACTIVE_STATUS);
-				paramMap.put("trackEventCodeParam", TrackEventCode.LOGIN);
-				paramMap.put("userListParam", usernames);
-				List<ODocument> documents = persistenceService.query(query.toString(), paramMap);
-				documents.stream().forEach((document) -> {
-					userLoginMap.put(document.field("createUser"), document.field("MAX"));
-				});
-			}
-		}
-
+		Map<String, Date> userLoginMap = getRepoFactory().getUserRepo().getLastLoginFromTracking(userProfiles);
 		return userLoginMap;
 	}
 
@@ -999,9 +992,9 @@ public class UserServiceImpl
 			queryByExample.setOrderBy(userTrackingOrderExample);
 		}
 
-		result.setResult(persistenceService.queryByExample(queryByExample));
+		result.setResult(getPersistenceService().queryByExample(queryByExample));
 		queryByExample.setQueryType(QueryType.COUNT);
-		result.setCount(persistenceService.countByExample(queryByExample));
+		result.setCount(getPersistenceService().countByExample(queryByExample));
 
 		return result;
 	}
@@ -1014,14 +1007,14 @@ public class UserServiceImpl
 
 		//page through users
 		long pageSize = 200;
-		long maxRecords = persistenceService.countByExample(userProfileExample);
+		long maxRecords = getPersistenceService().countByExample(userProfileExample);
 		for (long i = 0; i < maxRecords; i = i + pageSize) {
 			QueryByExample<UserProfile> queryByExample = new QueryByExample<>(userProfileExample);
 			queryByExample.setFirstResult((int) i);
 			queryByExample.setMaxResults((int) pageSize);
 			queryByExample.setReturnNonProxied(false);
 
-			List<UserProfile> userProfiles = persistenceService.queryByExample(queryByExample);
+			List<UserProfile> userProfiles = getPersistenceService().queryByExample(queryByExample);
 			List<String> usernames = new ArrayList<>();
 			for (UserProfile userProfile : userProfiles) {
 				usernames.add(userProfile.getUsername());
@@ -1075,14 +1068,14 @@ public class UserServiceImpl
 	@Override
 	public UserSavedSearch saveUserSearch(UserSavedSearch userSavedSearch)
 	{
-		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSavedSearch.getUserSearchId());
+		UserSavedSearch existing = getPersistenceService().findById(UserSavedSearch.class, userSavedSearch.getUserSearchId());
 		if (existing != null) {
 			existing.updateFields(userSavedSearch);
-			existing = persistenceService.persist(existing);
+			existing = getPersistenceService().persist(existing);
 		} else {
-			userSavedSearch.setUserSearchId(persistenceService.generateId());
+			userSavedSearch.setUserSearchId(getPersistenceService().generateId());
 			userSavedSearch.populateBaseCreateFields();
-			existing = persistenceService.persist(userSavedSearch);
+			existing = getPersistenceService().persist(userSavedSearch);
 		}
 
 		return existing;
@@ -1091,9 +1084,9 @@ public class UserServiceImpl
 	@Override
 	public void deleteUserSearch(String userSearchId)
 	{
-		UserSavedSearch existing = persistenceService.findById(UserSavedSearch.class, userSearchId);
+		UserSavedSearch existing = getPersistenceService().findById(UserSavedSearch.class, userSearchId);
 		if (existing != null) {
-			persistenceService.delete(existing);
+			getPersistenceService().delete(existing);
 		}
 	}
 
@@ -1108,11 +1101,11 @@ public class UserServiceImpl
 
 		if (userDashboard == null) {
 			userDashboard = new UserDashboard();
-			userDashboard.setDashboardId(persistenceService.generateId());
+			userDashboard.setDashboardId(getPersistenceService().generateId());
 			userDashboard.setUsername(username);
 			userDashboard.setName(UserDashboard.DEFAULT_NAME);
 			userDashboard.populateBaseCreateFields();
-			userDashboard = persistenceService.persist(userDashboard);
+			userDashboard = getPersistenceService().persist(userDashboard);
 		} else {
 			DashboardWidget widget = new DashboardWidget();
 			widget.setDashboardId(userDashboard.getDashboardId());
@@ -1130,26 +1123,26 @@ public class UserServiceImpl
 		Objects.requireNonNull(dashboard);
 		Objects.requireNonNull(dashboard.getDashboard());
 
-		UserDashboard userDashboard = persistenceService.findById(UserDashboard.class, dashboard.getDashboard().getDashboardId());
+		UserDashboard userDashboard = getPersistenceService().findById(UserDashboard.class, dashboard.getDashboard().getDashboardId());
 		if (userDashboard != null) {
 			userDashboard.updateFields(dashboard.getDashboard());
-			userDashboard = persistenceService.persist(userDashboard);
+			userDashboard = getPersistenceService().persist(userDashboard);
 		} else {
-			dashboard.getDashboard().setDashboardId(persistenceService.generateId());
+			dashboard.getDashboard().setDashboardId(getPersistenceService().generateId());
 			dashboard.getDashboard().populateBaseCreateFields();
-			userDashboard = persistenceService.persist(dashboard.getDashboard());
+			userDashboard = getPersistenceService().persist(dashboard.getDashboard());
 		}
 
 		//clear old widgets and replace
 		DashboardWidget widgetExample = new DashboardWidget();
 		widgetExample.setDashboardId(userDashboard.getDashboardId());
-		persistenceService.deleteByExample(widgetExample);
+		getPersistenceService().deleteByExample(widgetExample);
 
 		for (DashboardWidget widget : dashboard.getWidgets()) {
-			widget.setWidgetId(persistenceService.generateId());
+			widget.setWidgetId(getPersistenceService().generateId());
 			widget.populateBaseCreateFields();
 			widget.setDashboardId(userDashboard.getDashboardId());
-			persistenceService.persist(widget);
+			getPersistenceService().persist(widget);
 		}
 
 		dashboard.setDashboard(userDashboard);

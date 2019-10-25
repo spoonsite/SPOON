@@ -3,10 +3,11 @@
 
   <v-img
     :src='$store.state.branding.homebackSplashUrl'
+    style="overflow: visible; position:relative; z-index:1"
   >
     <div class="mx-3">
       <SearchBar
-        v-on:submitSearch="submitSearch()"
+        @submitSearch="submitSearch"
         v-model="searchQuery"
         :hideSuggestions="hideSearchSuggestions"
         style="margin: 6em auto; max-width: 46em;"
@@ -140,28 +141,6 @@ export default {
       errors: [],
       highlights: [],
       attributes: [],
-      searchToolLinks: [
-        {
-          icon: 'cloud',
-          href: '#', // open tag cloud
-          title: 'Tags'
-        },
-        {
-          icon: 'sitemap',
-          href: '#', // search by organization popup selector
-          title: 'Organizations'
-        },
-        {
-          icon: 'share-alt',
-          href: '#', // relationship view picker popup -> /openstorefront/UserTool.action?load=Relationships&viewType={type}&entityId={id}&entityName={name}
-          title: 'Relationships'
-        },
-        {
-          icon: 'search-plus',
-          href: '#', // advanced search creator popup
-          title: 'Advanced'
-        }
-      ],
       quickLaunchLinks: [
         {
           img: '/openstorefront/images/dash.png',
@@ -188,8 +167,8 @@ export default {
     link (query) {
       return `/search?q=${query}`
     },
-    submitSearch () {
-      this.$router.push(`/search?q=${this.searchQuery}`)
+    submitSearch (additionalOptions) {
+      this.$router.push(encodeURI(`/search?q=${this.searchQuery}`) + additionalOptions)
     },
     getNestedComponentTypes () {
       this.$http

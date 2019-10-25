@@ -58,13 +58,6 @@ public class Report
 	@FK(ReportType.class)
 	private String reportType;
 
-	@Deprecated
-	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
-	@ValidValueType(value = {}, lookupClass = ReportFormat.class)
-	@FK(ReportFormat.class)
-	@APIDescription("Use Report Outputs and not this field")
-	private String reportFormat;
-
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_CODE)
 	@ValidValueType(value = {}, lookupClass = RunStatus.class)
@@ -183,18 +176,6 @@ public class Report
 	public void setScheduled(Boolean scheduled)
 	{
 		this.scheduled = scheduled;
-	}
-
-	@Deprecated
-	public String getReportFormat()
-	{
-		return reportFormat;
-	}
-
-	@Deprecated
-	public void setReportFormat(String reportFormat)
-	{
-		this.reportFormat = reportFormat;
 	}
 
 	public List<ReportDataId> getIds()

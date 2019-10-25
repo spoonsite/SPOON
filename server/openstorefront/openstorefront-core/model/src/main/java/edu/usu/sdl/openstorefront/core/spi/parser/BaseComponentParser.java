@@ -219,7 +219,7 @@ public abstract class BaseComponentParser
 
 			input = input.trim();
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-			String key = sanitizer.santize(input).toString();
+			String key = sanitizer.sanitize(input).toString();
 
 			LookupEntity lookup = service.getLookupService().getLookupEnity(lookupClass, key);
 			if (lookup == null) {
@@ -295,7 +295,7 @@ public abstract class BaseComponentParser
 		attributeCodePk.setAttributeType(attributeType.getAttributeType());
 
 		CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-		String key = sanitizer.santize(attributeCode).toString();
+		String key = sanitizer.sanitize(attributeCode).toString();
 		attributeCodePk.setAttributeCode(StringUtils.left(key, OpenStorefrontConstant.FIELD_SIZE_CODE));
 
 		AttributeCode attributeCodeFound = service.getAttributeService().findCodeForType(attributeCodePk);
@@ -344,7 +344,7 @@ public abstract class BaseComponentParser
 				attributeCodePk.setAttributeType(attributeTypeCode);
 
 				CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-				String key = sanitizer.santize(StringUtils.left(attributeCodeLabel.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
+				String key = sanitizer.sanitize(StringUtils.left(attributeCodeLabel.toUpperCase(), OpenStorefrontConstant.FIELD_SIZE_CODE)).toString();
 				attributeCodePk.setAttributeCode(key);
 				attributeCode.setAttributeCodePk(attributeCodePk);
 
@@ -367,7 +367,7 @@ public abstract class BaseComponentParser
 		if (StringUtils.isNotBlank(entryTypeLabel)) {
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
 			entryCode = StringUtils.left(entryTypeLabel.toUpperCase(), ENTRY_TYPE_SHORT_CODE);
-			entryCode = sanitizer.santize(entryCode).toString();
+			entryCode = sanitizer.sanitize(entryCode).toString();
 
 			ComponentType componentType = new ComponentType();
 			componentType.setComponentType(entryCode);
