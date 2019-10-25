@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.view;
 import java.util.List;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
@@ -46,12 +47,14 @@ public class SearchFilters {
     @QueryParam("page")
 	@DefaultValue("0")
     @Min(0)
+	@NotNull
     private int page;
 
 	@ConsumeField
     @QueryParam("pageSize")
 	@DefaultValue("20")
     @Min(0)
+	@NotNull
     private int pageSize;
 
 	@ConsumeField
@@ -76,11 +79,15 @@ public class SearchFilters {
 
 	@ConsumeField
 	@QueryParam("sortOrder")
+	@NotNull
 	private String sortOrder;
 
 	@ConsumeField
 	@QueryParam("sortField")
+	@NotNull
 	private String sortField;
+
+	private SearchFilterOptions searchFilterOptions;
 
 	private List<AttributeSearchType> attributeSearchType;
 
@@ -179,5 +186,13 @@ public class SearchFilters {
 
 	public void setAttributeSearchType(List<AttributeSearchType> attributeSearchType) {
 		this.attributeSearchType = attributeSearchType;
+	}
+
+	public SearchFilterOptions getSearchFilterOptions() {
+		return searchFilterOptions;
+	}
+
+	public void setSearchFilterOptions(SearchFilterOptions searchFilterOptions) {
+		this.searchFilterOptions = searchFilterOptions;
 	}
 }
