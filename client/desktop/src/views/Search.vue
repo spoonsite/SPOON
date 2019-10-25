@@ -385,7 +385,7 @@
                   <tr
                   v-for="(attribute) in this.comparisonDataDisplay"
                   :key="attribute.name">
-                     <td
+                    <td
                       v-for="(compAtt, position, col) in attribute"
                       :class="changeTableClass(position)"
                       :key="compAtt.name">
@@ -429,6 +429,7 @@ import _ from 'lodash'
 import SearchBar from '../components/SearchBar'
 // import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
+import crush from '../util/scientificToDecimal.js'
 
 export default {
   name: 'SearchPage',
@@ -590,12 +591,35 @@ export default {
       if (that.$store.state.componentTypeList === undefined) {
         that.$store.dispatch('getComponentTypeList')
       }
+      console.log(that.$store.state.componentTypeList)
+
       entryTypes.forEach(entryType => {
         entryType['label'] = that.$store.state.componentTypeList.find(element => {
           return entryType.key === element.componentType
         }).parentLabel
       })
       this.componentsList = entryTypes
+
+      if(this.componentsList.length == 0 && this.filters.entryType != ''){
+        console.log(this.componentsList)
+        let entryTypeLabel = that.$store.state.componentTypeList.find(element => {
+            return this.filters.entryType === element.componentType
+        }).parentLabel
+
+        console.log(this.componentsList)
+        this.componentsList.push({'doc_count': 0, 'key': this.filters.entryType, 'label': entryTypeLabel})
+        console.log(this.componentsList)
+      }
+
+      // let entryTypeLabel = "TESTTEST"
+      // console.log(that.$store.state.componentTypeList.find(element => {
+      //     return this.filters.entryTypes === element.componentType
+      // }).parentLabel)
+
+      // console.log(this.componentsList)
+      // this.componentsList.push({'doc_count': 0, 'key': this.filters.entryType, 'label': entryTypeLabel})
+      // console.log(this.componentsList)
+
     },
     submitSearch () {
       this.comparisonList = []
@@ -604,6 +628,16 @@ export default {
       // sometimes 2 POST requests get sent out together
       if (that.searchQueryIsDirty) return
       that.searchQueryIsDirty = true
+
+      let cachedOptions = window.localStorage.getItem('searchOptions')
+
+      let searchFilterOptions = {
+        'canUseNameInSearch': cachedOptions.includes('Name'),
+        'canUseDescriptionInSearch': cachedOptions.includes('Organization'),
+        'canUseOrganizationsInSearch': cachedOptions.includes('Description'),
+        'canUseAttributesInSearch': cachedOptions.includes('Vitals'),
+        'canUseTagsInSearch': cachedOptions.includes('Tags')
+        }
 
       // Default values
       let searchFilters = {
@@ -616,7 +650,8 @@ export default {
         'attributes': null,
         'tags': [],
         'sortOrder': '',
-        'sortField': ''
+        'sortField': '',
+        'searchFilterOptions' : searchFilterOptions
       }
 
       // Use values from ui if available
@@ -710,7 +745,7 @@ export default {
       if (attr === null) {
         attr.unit = ''
       }
-      return `${attributeType.description} : ${attr.code} ${attributeType.attributeUnit}`
+      return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
     },
     copyUrlToClipboard () {
       var url = encodeURI(window.location.origin + window.location.pathname + this.searchUrl())
@@ -844,10 +879,10 @@ export default {
     },
     searchUrl () {
       let searchOptions = window.localStorage.getItem('searchOptions')
-      let url = '#/search?q=' + this.searchQuery +
-                '&comp=' + this.filters.entryType +
-                '&children=' + this.filters.children +
-                '&organiation=' + this.filters.organization +
+      let url = '#/search?q=' + (this.searchQuery ? this.searchQuery : '' ) +
+                '&comp=' + (this.filters.entryType ? this.filters.entryType : '' ) +
+                '&children=' + (this.filters.children ? this.filters.children : 'true' ) +
+                '&organiation=' + (this.filters.organization ? this.filters.organization : '' ) +
                 '&attributes=' + (this.filters.attributes.length > 0 ? JSON.stringify(this.filters.attributes) : '') +
                 '&tags=' + this.filters.tags.join(',') +
                 '&searchoptions=' + JSON.parse(searchOptions).join(',')
