@@ -17,7 +17,7 @@ The focus of this document is for configuration.  See other guides for other top
 
 [Setup]({{< ref "Setup.md" >}})
 
-[Developer Guide]({{< ref "DevelopersGuide.md" >}})
+[Developer Guide]({{< ref "../dev/DevelopersGuide.md" >}})
 
 # 2.  Configuration
 
