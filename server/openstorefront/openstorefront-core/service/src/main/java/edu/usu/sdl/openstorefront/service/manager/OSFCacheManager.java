@@ -15,13 +15,19 @@
  */
 package edu.usu.sdl.openstorefront.service.manager;
 
-import edu.usu.sdl.openstorefront.common.manager.Initializable;
+import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.config.Configuration;
+
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.expiry.ExpiryPolicy;
+
+import edu.usu.sdl.openstorefront.common.manager.Initializable;
 
 /**
  * Handling Application level caching
@@ -63,10 +69,12 @@ public class OSFCacheManager
 	{
 		LOCK.lock();
 		try {
-			Configuration config = new Configuration();
-			config.setUpdateCheck(false);
-			config.setName("Main");
-			CacheManager singletonManager = CacheManager.create(config);
+			CacheConfigurationBuilder<Long, String> configuration =
+			CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class, ResourcePoolsBuilder
+				.heap(100));
+
+			CacheManager cacheManager = initCacheManager();
+			lookupCache = cacheManager.createCache("lookupCache", configuration);
 
 			Cache memoryOnlyCache = new Cache("lookupCache", 500, false, false, 600, 600);
 			singletonManager.addCache(memoryOnlyCache);
@@ -144,6 +152,15 @@ public class OSFCacheManager
 			LOCK.unlock();
 		}
 
+	}
+
+	private static CacheManager initCacheManager() {
+		CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder() 
+			.withCache("preConfigured",
+				CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class, ResourcePoolsBuilder.heap(10))) 
+			.build(); 
+		cacheManager.init();
+		return cacheManager;
 	}
 
 	public static CacheManager getCacheManager()

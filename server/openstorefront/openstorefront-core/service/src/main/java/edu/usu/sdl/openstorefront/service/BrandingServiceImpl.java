@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.model.BrandingModel;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.util.List;
 import java.util.Objects;
-import net.sf.ehcache.Element;
+import org.ehcache.Element;
 
 /**
  * Handle branding related items

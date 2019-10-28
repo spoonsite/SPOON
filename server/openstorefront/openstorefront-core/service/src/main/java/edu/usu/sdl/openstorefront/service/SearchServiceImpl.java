@@ -75,7 +75,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
-import net.sf.ehcache.Element;
+import org.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 

@@ -67,7 +67,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.mail.Message;
-import net.sf.ehcache.Element;
+import org.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.credential.DefaultPasswordService;

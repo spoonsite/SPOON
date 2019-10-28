@@ -144,7 +144,7 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
-import net.sf.ehcache.Element;
+import org.ehcache.Element;
 import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;

@@ -96,7 +96,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Message;
 import javax.servlet.http.HttpServletRequest;
-import net.sf.ehcache.Element;
+import org.ehcache.Element;
 import net.sf.uadetector.ReadableUserAgent;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;

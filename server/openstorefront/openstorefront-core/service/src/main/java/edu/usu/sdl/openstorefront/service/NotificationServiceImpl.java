@@ -47,7 +47,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.mail.Message;
-import net.sf.ehcache.Element;
+import org.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.codemonkey.simplejavamail.email.Email;
 

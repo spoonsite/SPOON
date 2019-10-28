@@ -17,7 +17,7 @@ package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import java.util.concurrent.atomic.AtomicBoolean;
-import net.sf.ehcache.Element;
+import org.ehcache.Element;
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 

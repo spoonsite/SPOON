@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.ehcache.Element;
+import org.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 
 /**

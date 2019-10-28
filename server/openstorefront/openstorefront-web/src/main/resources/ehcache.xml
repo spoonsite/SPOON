@@ -66,7 +66,7 @@
     Configuring Automatic Discovery:
     Automatic discovery is configured as per the following example:
     <cacheManagerPeerProviderFactory
-                        class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+                        class="org.ehcache.distribution.RMICacheManagerPeerProviderFactory"
                         properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.1,
                                     multicastGroupPort=4446, timeToLive=32"/>
 
@@ -88,7 +88,7 @@
     Configuring Manual Discovery:
     Manual discovery is configured as per the following example:
     <cacheManagerPeerProviderFactory class=
-                          "net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+                          "org.ehcache.distribution.RMICacheManagerPeerProviderFactory"
                           properties="peerDiscovery=manual,
                           rmiUrls=//server1:40000/sampleCache1|//server2:40000/sampleCache1
                           | //server1:40000/sampleCache2|//server2:40000/sampleCache2"/>
@@ -102,7 +102,7 @@
     port of the RMICacheManagerPeerListener of the remote CacheManager peer.
 
     <cacheManagerPeerProviderFactory
-            class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+            class="org.ehcache.distribution.RMICacheManagerPeerProviderFactory"
             properties="peerDiscovery=automatic,
                         multicastGroupAddress=230.0.0.1,
                         multicastGroupPort=4446, timeToLive=1"/>
@@ -124,7 +124,7 @@
     RMICacheManagerPeerListenerFactory. It is configured as per the following example:
 
     <cacheManagerPeerListenerFactory
-        class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+        class="org.ehcache.distribution.RMICacheManagerPeerListenerFactory"
         properties="hostName=fully_qualified_hostname_or_ip,
                     port=40001,
                     socketTimeoutMillis=120000"/>
@@ -140,7 +140,7 @@
       If not specified it defaults 120000ms.
 
     <cacheManagerPeerListenerFactory
-            class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"/>
+            class="org.ehcache.distribution.RMICacheManagerPeerListenerFactory"/>
     -->
 
 
@@ -217,7 +217,7 @@
     by adding a cacheEventListenerFactory element of type RMICacheReplicatorFactory to each
     distributed cache's configuration as per the following example:
 
-    <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+    <cacheEventListenerFactory class="org.ehcache.distribution.RMICacheReplicatorFactory"
          properties="replicateAsynchronously=true,
          replicatePuts=true,
          replicateUpdates=true,
@@ -253,7 +253,7 @@
     used. It is configured as per the following example:
 
     <bootstrapCacheLoaderFactory
-        class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
+        class="org.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
         properties="bootstrapAsynchronously=true, maximumChunkSizeBytes=5000000"/>
 
     The RMIBootstrapCacheLoaderFactory recognises the following optional properties:
