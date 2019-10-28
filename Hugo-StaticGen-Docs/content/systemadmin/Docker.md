@@ -4,45 +4,29 @@ description = ""
 weight = 3
 +++
 
-The SPOON application contains a Dockerfile in order to build Docker images. There are two dockerfiles in the repo. One is for development which is used by Jenkins to deploy the application for testing of new features. The other dockerfile is for the release build. These can be found in the repo at https://github.com/spoonsite/spoon/tree/master/Docker.
+Information on running SPOON in a Docker container.
 
-SPOON also automatically builds release versions of the application for consumption by users.  These builds are available on [Docker Hub](http://hub.docker.com).
+<!--more-->
 
-## Release Docker Container
+The SPOON application contains a Dockerfile in order to build Docker images. There are two Dockerfiles in the repo. One is for development which is used by Jenkins to deploy the application for testing of new features. The other dockerfile is for the release build. These can be found in the repo on [GitHub](https://github.com/spoonsite/spoon/tree/master/Docker).
 
-To run the latest release container from Docker Hub run the following:
-
-```bash
-docker run -p 9050:8080 openstorefront/openstorefront
-```
-
-To run a specific version of the application run:
-
-```bash
-docker run -p 9050:8080 openstorefront/openstorefront:release-2.7.3
-```
-
-For available tags for the Docker container please see https://hub.docker.com/r/openstorefront/openstorefront/tags/
-
-The only thing required to build the release docker container is the dockerfile found at `openstorefront/Docker/release`.
+SPOON also automatically builds release versions of the application for consumption by users. These builds are available on [Docker Hub](http://hub.docker.com).
 
 ## Development Docker Container
 
 To build the container you will need:
 
-- a zip of an openstorefront database
+- a zip of an SPOON database
 - the startup.sh
 - the tomcat-users.xml
 
-The `startup.sh` and `tomcat-users.xml` can be found at https://github.com/di2e/openstorefront/tree/master/Docker/develop. To obtain the database take the database folder from a previous running instance of Storefront and zip the folder. Place all three items in the same directory as the dockerfile when building the image. To build the image run:
+The `startup.sh` and `tomcat-users.xml` can be found at [GitHub](https://github.com/di2e/openstorefront/tree/master/Docker/develop). To obtain the database take the database folder from a previous running instance of Storefront and zip the folder. Place all three items in the same directory as the dockerfile when building the image. To build the image run:
 
 ```bash
 docker build -t some-tag .
 ```
 
-To run the container you will need:
-
-- a war file to mount to the container
+To run the container you will need a war file to mount to the container.
 
 Run the container as a detached process with:
 
