@@ -100,7 +100,7 @@
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header"><h2>Resources</h2></div>
-            <div class="expansion-content"> 
+            <div class="expansion-content">
               <div v-for="item in detail.resources"
                 :key="item.resourceId"
               >
@@ -370,7 +370,6 @@ import Lightbox from '../components/Lightbox'
 import Question from '../components/Question'
 import format from 'date-fns/format'
 import isFuture from 'date-fns/is_future'
-import router from '../router'
 
 export default {
   name: 'entry-detail-page',
