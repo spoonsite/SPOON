@@ -1,12 +1,12 @@
 +++
 title = "Setup"
-description = ""
+description = "These are instructions on how to get production instance of SPOON set up on a VM."
 weight = 2
 markup = "mmark"
 +++
 
-
 These are instructions on how to get production instance of SPOON set up on a VM.
+
 <!--more-->
 
 ## Walkthrough
@@ -20,29 +20,22 @@ This Documentation will walk you through setting up a production server to serve
 - [Tomcat](/systemadmin/setup/#tomcat)
 - [Deployment](/systemadmin/setup/#deployment)
 
-
-https://www.elastic.co/guide/en/elasticsearch/reference/7.2/rpm.html#install-rpm
-https://tomcat.apache.org/download-70.cgi
-https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-centos-7
-https://github.com/CentOS/sig-cloud-instance-images/issues/28
-
 ### Prerequisites
 
-Required Hardware (can be run on a VM or dedicated hardware):
+#### Required Hardware (can be run on a VM or dedicated hardware)
 
-Suggested:
+- Suggested:
 
-- CPUs: 4
-- RAM: 8GB
-- DISK: 40GB (Increase, if storing a lot of media and resources locally)
+  - CPUs: 4
+  - RAM: 8GB
+  - DISK: 40GB (Increase, if storing a lot of media and resources locally)
 
-Minimum:
+- Minimum:
+  - CPUs: 1
+  - RAM: 2GB (Application should be set to use 1GB)
+  - DISK: 20GB
 
-- CPUs: 1
-- RAM: 2GB (Application should be set to use 1GB)
-- DISK: 20GB
-
-Required Software:
+#### Required Software
 
 - OpenJDK 8
 - Elasticsearch 7.2.1
@@ -56,30 +49,30 @@ Install CentOS 7 onto a VM using the following options:
 - Set up correct timezone
 - Ensure keyboard is in the correct language (if using english make sure the `~` works)
 - Software Selection:
-    - Minimal install
-        - Compatibility libraries
-        - Development Tools
-        - Security Tools
-        - System Administrator Tools
+  - Minimal install
+    - Compatibility libraries
+    - Development Tools
+    - Security Tools
+    - System Administrator Tools
 
 Once CentOS has finished installing connect the VM to the internet and run `yum update`
 
-__WARING: Some commands may need to be run with sudo.__
+**WARING: Some commands may need to be run with sudo.**
 
 #### OpenJDK
 
-1. Install openjdk-8:
+1. Install openjdk-8
 
     ```sh
     yum install java-1.8.0-openjdk -y
     java -version
     ```
 
-1. Verify that the openjdk version is '1.8.0_***'
+1. Verify that the openjdk version is '1.8.0\_\*\*\*'
 
 #### Elasticsearch
 
-1. Get and install elasticsearch:
+1. Get and install elasticsearch
 
     ```sh
     wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.2.1-x86_64.rpm
@@ -96,7 +89,7 @@ __WARING: Some commands may need to be run with sudo.__
     service elasticsearch status
     ```
 
-1. Verify that elasticsearch is running, the last command from above should output something similar to:
+1. Verify that elasticsearch is running, the last command from above should output something similar to
 
     ```ini
     ● elasticsearch.service - Elasticsearch
@@ -114,7 +107,7 @@ __WARING: Some commands may need to be run with sudo.__
     sudo vi /etc/yum.repos.d/mongodb.repo
     ```
 
-    Add the following to the file:
+    Add the following to the file
 
     ```ini
     [MongoDB]
@@ -160,91 +153,115 @@ __WARING: Some commands may need to be run with sudo.__
 #### Tomcat
 
 1. Install tomcat
-```sh
-sudo groupadd tomcat
-sudo useradd -M -s /bin/nologin -g tomcat -d /opt/tomcat tomcat
-sudo mkdir /opt/tomcat
-cd ~
-wget http://mirror.reverse.net/pub/apache/tomcat/tomcat-7/v7.0.96/bin/apache-tomcat-7.0.96.tar.gz
-cd /opt/tomcat
-mv apache-tomcat-7.0.96/* .
-rm -rf apache-tomcat-7.0.96/
-sudo chgrp -R tomcat /opt/tomcat
-sudo chmod -R g+r conf
-sudo chmod g+r conf
-sudo chown -R tomcat webapps/ work/ temp/ logs/
-```
 
-```sh
-sudo vi /etc/systemd/system/tomcat.service
-```
+    ```sh
+    yum install tomcat
+    ```
 
-```txt
-# Systemd unit file for tomcat
-[Unit]
-Description=Apache Tomcat
-After=elasticsearch.service
+1. Update the tomcat configuration to use a specific data directory
 
-[Service]
-Type=forking
+    Paste the following line into `/usr/share/tomcat/conf/tomcat.conf`.
 
-ExecStart=/opt/tomcat/bin/startup.sh
-ExecStop=/bin/kill -15 $MAINPID
+    ```ini
+    JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dapplication.datadir=/var/spoon -Xmx4g -XX:+UseConcMarkSweepGC"
+    ```
 
-User=tomcat
-Group=tomcat
-UMask=0007
-RestartSec=10
-Restart=always
+1. Add an admin user to the tomcat server (this is only for the tomcat server and not the SPOON application)
 
-[Install]
-WantedBy=multi-user.target
-```
+    Uncomment out the second to last line and change the admin password.
 
-JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dapplication.datadir=/var/spoon -Xmx4g -XX:+UseConcMarkSweepGC"
+    ```sh
+    sudo vim /etc/share/tomcat/conf/tomcat-users.xml
+    ```
 
+1. Set up tomcat as a service to start on boot and start tomcat
 
+    ```sh
+    systemctl enable tomcat.service
+    systemctl start tomcat.service
+    systemctl status tomcat.service
+    ```
 
+1. Ensure tomcat is running
 
-cd /tmp
-wget http://us.mirrors.quenda.co/apache/tomcat/tomcat-7/v7.0.96/bin/apache-tomcat-7.0.96.tar.gz
-sudo tar -xzf apache-tomcat-7.0.96.tar.gz -C /usr/share/
-cd /usr/share/apache-tomcat-7.0.96
-sudo groupadd tomcat
-sudo mkdir /opt/tomcat
-sudo useradd -s /bin/nologin -g tomcat -d /usr/share/apache-tomcat-7.0.96 tomcat
+    ```sh
+    tomcat version
+    ```
 
-sudo chown -R tomcat:tomcat *
-sudo chmod 755 -R *
+    You should get something like
 
-```sh
-sudo vi /etc/systemd/system/tomcat.service
-```
-
-```txt
-# Systemd unit file for tomcat
-[Unit]
-Description=Apache Tomcat
-After=elasticsearch.service
-
-[Service]
-Type=forking
-
-ExecStart=/usr/share/apache-tomcat-7.0.96/bin/startup.sh
-ExecStop=/bin/kill -15 $MAINPID
-
-User=tomcat
-Group=tomcat
-UMask=0007
-RestartSec=10
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Add `JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dapplication.datadir=/var/spoon -Xmx4g -XX:+UseConcMarkSweepGC"` to conf
-
-Get files from 
+    ```ini
+    Server version: Apache Tomcat/7.0.76
+    Server built:   Mar 12 2019 10:11:36 UTC
+    Server number:  7.0.76.0
+    OS Name:        Linux
+    OS Version:     3.10.0-1062.4.1.el7.x86_64
+    Architecture:   amd64
+    JVM Version:    1.8.0_232-b09
+    JVM Vendor:     Oracle Corporation
+    ```
 
 ### Deployment
+
+1. Copy the war file to the VM (run this command on your local machine)
+
+    ```sh
+    scp openstorefront.war username@vm-hostname:~/openstorefront.war
+    ```
+
+1. Change the permissions of the war (run this command on the VM)
+
+    ```sh
+    chmod 777 ~/openstorefront.war
+    chown tomcat:tomcat ~/openstorefront.war
+    ```
+
+1. Remove any old SPOON applications
+
+    ```sh
+    systemctl stop tomcat
+    rm -rf /usr/share/tomcat/webapps/openstorefront /usr/share/tomcat/webapps/openstorefront.war
+    systemctl start tomcat
+    ```
+
+1. Deploy the new SPOON application
+
+    **If you already have data, see [Add data to the application](#add-data-to-the-application), before doing this step.**
+
+    ```sh
+    mv ~/openstorefront.war /usr/share/tomcat/webapps/
+    ```
+
+1. Navigate to `localhost:8080/openstorefront/` to view SPOON.
+
+1. If something has gone wrong and you are unable to view SPOON, use journalctl to debug the issue
+
+    ```sh
+    journalctl -u tomcat -f
+    ```
+
+#### Add data to the application
+
+The application will create some base data for you, but if you have data from a previous instance, you can use it with the application using these steps.
+
+1. Create the data directory (SPOON will automatically create data if data is not found)
+
+    ```sh
+    mkdir /var/spoon
+    ```
+
+1. Copy the data from your local machine to the VM (should be run on your local machine)
+
+    ```sh
+    scp spoon-data.tar.gz username@VM-address:~/spoon-data.tar.gz
+    ```
+
+1. Unpack the data and change permissions to allow tomcat to access it (should be run on the VM)
+
+    ```sh
+    tar -zxf ~/spoon-data.tar.gz -C /var/spoon
+    mv /var/spoon/spoon/* /var/spoon
+    rm -rf /var/spoon/spoon
+    chown -R root:tomcat /var/spoon
+    chmod 777 -R /var/spoon
+    ```
