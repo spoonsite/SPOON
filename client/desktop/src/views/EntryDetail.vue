@@ -146,14 +146,13 @@
                 </v-chip>
               </span>
             </div>
-            <div id="comboWrapper" style="margin: 0; padding: 0;">
               <v-combobox
                 id="tagEntry"
                 label="Tags"
                 :items="allTags"
+                :error="tagEmpty"
                 v-model="tagName">
               </v-combobox>
-              </div>
               <v-btn 
               @click="determineTagType()">
                 Add
@@ -488,6 +487,7 @@ export default {
       deleteReviewDialog: false,
       deleteTagDialog: false,
       newTagConfirmationDialog: false,
+      tagEmpty: false,
       deleteRequestId: '',
       deleteTagId: '',
       editReviewId: '',
@@ -524,7 +524,6 @@ export default {
       consSelectOptions: [],
       allTags: [],
       relatedComponents: [],
-      relatedComponentHeaders: [{name: 'Name', description: 'Description', type: 'Type'}],
       reviewValid: false,
       todaysDate: new Date(),
       detail: {},
@@ -684,7 +683,7 @@ export default {
       this.$http.get(`/openstorefront/api/v1/resource/components/tags`)
         .then(response => {
           var tags = response.data
-          for(var i=0; i<tags.length; i++) {
+          for (var i = 0; i < tags.length; i++) {
             this.allTags.push(tags[i].text)
           }
         })
@@ -742,31 +741,27 @@ export default {
       this.currentMediaDetailItem = item
       this.mediaDetailsDialog = true
     },
-    updateTagName(){
-      this.tagName = document.getElementById("tagEntry").value
-    }
     determineTagType () {
-      this.updateTagName()
-      var alreadyExists = false;
-      for (var tag in this.allTags) {
-        console.log(this.tagName)
-        console.log(this.allTags[tag])
-        if (this.allTags[tag] === this.tagName) {
-          alreadyExists = true;
-          // document.getElementById("tagEntry").className = "invalidInput";
+      this.tagName = document.getElementById('tagEntry').value
+      var alreadyExists = false
+      for (var tag in this.detail.tags) {
+        if (this.detail.tags[tag].text === this.tagName) {
+          alreadyExists = true
         }
       }
-      if (this.allTags.includes(this.tagName)) {
+      if (alreadyExists) {
+        this.tagEmpty = true
+      }
+      else if (this.allTags.includes(this.tagName)) {
+        this.tagEmpty = false
         this.submitTag(this.tagName)
       }
-      else if (this.tagName === ''){
-        document.getElementById("tagEntry").className = "invalidInput";
-      }
-      else if (alreadyExists) {
-        console.log(this.tagName)
+      else if (this.tagName === '') {
+        this.tagEmpty = true
       }
       else {
-        this.newTagConfirmationDialog = true;
+        this.tagEmpty = false
+        this.newTagConfirmationDialog = true
       }
     },
     deleteTag () {
