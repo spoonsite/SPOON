@@ -124,39 +124,66 @@
                 class="clearfix tags"
                 v-if="detail.tags && detail.tags.length !== 0"
               >
-              <v-btn
+              <span
                 v-for="tag in detail.tags"
                 :key="tag.text"
-                style="margin-right: 0.8em; text-transform: none; font-weight:normal;"
+                style="margin-right: 0.8em;"
                 >
-                <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
-                {{ tag.text }}
-                <v-menu offset-y >
-                  <v-btn slot="activator" v-if="tag.createUser === $store.state.currentUser.username"><v-icon>fas fa-chevron-down</v-icon></v-btn>
-                  <v-list>
-                    <v-list-tile @click="deleteTag(tag.tagId);">
-                      <v-list-tile-title>Delete</v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile>
-                      <v-list-tile-title @click="ShowRelatedTags();">Show Related Entries</v-list-tile-title>
-                    </v-list-tile>
-                  </v-list>
-                </v-menu>
-              </v-btn>
+                <v-chip
+                  v-if="tag.createUser === $store.state.currentUser.username"
+                  close
+                  href=""
+                  @input="deleteTagDialog = true; tagName = tag.text; deleteTagId = tag.tagId">
+                  <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
+                  {{ tag.text }}
+                </v-chip>
+                <v-chip v-else>
+                  <v-icon style="font-size: 14px; color: #f8c533;"
+                  @click="">
+                    fas fa-tag
+                  </v-icon>
+                  {{ tag.text }}
+                </v-chip>
+              </span>
             </div>
+            <div id="comboWrapper" style="margin: 0; padding: 0;">
               <v-combobox
                 id="tagEntry"
                 label="Tags"
                 :items="allTags"
                 v-model="tagName">
               </v-combobox>
-              <v-btn @click="determineTagType()">Add</v-btn>
+              </div>
+              <v-btn 
+              @click="determineTagType()">
+                Add
+              </v-btn>
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-dialog
-        v-model="newTagConfermationDialog"
+        v-model="deleteTagDialog"
+        width="25em"
+        >
+          <v-card>
+            <v-card-title>
+              <h2 class="w-100">Are you sure you want to delete this tag?</h2>
+            </v-card-title>
+            <v-card-text>
+              <p>Are you sure that you would like to delete this tag?</p>
+              <p>Tag to be deleted: <strong style="color: red;">{{ tagName }}</strong></p>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="deleteTag(); deleteTagDialog = false;">Delete</v-btn>
+              <v-btn @click="deleteTagDialog = false;">Cancel</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog
+        v-model="newTagConfirmationDialog"
+        width="25em"
         >
           <v-card>
             <v-card-title>
@@ -166,10 +193,15 @@
               <p>Are you sure that you would like to add a new tag?</p>
               <p>Please see other possible matches below.</p>
               <p>New Tag Name: <strong style="color: red;">{{ tagName }}</strong></p>
+              <v-list>
+                <template>
+
+                </template>
+              </v-list>
             </v-card-text>
             <v-card-actions>
               <v-btn @click="submitTag(tagName)">Submit</v-btn>
-              <v-btn @click="newTagConfermationDialog = false;">Cancel</v-btn>
+              <v-btn @click="newTagConfirmationDialog = false;">Cancel</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -454,8 +486,10 @@ export default {
       newQuestion: '',
       writeReviewDialog: false,
       deleteReviewDialog: false,
-      newTagConfermationDialog: false,
+      deleteTagDialog: false,
+      newTagConfirmationDialog: false,
       deleteRequestId: '',
+      deleteTagId: '',
       editReviewId: '',
       reviewSubmit: false,
       newReview: {
@@ -489,6 +523,8 @@ export default {
       consOptions: [],
       consSelectOptions: [],
       allTags: [],
+      relatedComponents: [],
+      relatedComponentHeaders: [{name: 'Name', description: 'Description', type: 'Type'}],
       reviewValid: false,
       todaysDate: new Date(),
       detail: {},
@@ -654,6 +690,20 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
+    // getComponentsMatchingTag (tagId) {
+    //   this.$http.get(`/openstorefront/api/v1/resource/components/singletagview`)
+    //     .then(response => {
+    //       var tags = response.data
+    //       for(var i=0; i<tags.length; i++) {
+    //         // if(this.tagName === tags[i].text){
+    //           this.relatedComponents.push(tags[i].text)
+    //           console.log(tags[i])
+    //       //  }
+
+    //       }
+    //     })
+    //     .catch(e => this.errors.push(e))
+    // },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
         .then(response => {
@@ -692,25 +742,39 @@ export default {
       this.currentMediaDetailItem = item
       this.mediaDetailsDialog = true
     },
-    determineTagType () {
+    updateTagName(){
       this.tagName = document.getElementById("tagEntry").value
+    }
+    determineTagType () {
+      this.updateTagName()
+      var alreadyExists = false;
+      for (var tag in this.allTags) {
+        console.log(this.tagName)
+        console.log(this.allTags[tag])
+        if (this.allTags[tag] === this.tagName) {
+          alreadyExists = true;
+          // document.getElementById("tagEntry").className = "invalidInput";
+        }
+      }
       if (this.allTags.includes(this.tagName)) {
         this.submitTag(this.tagName)
       }
-      else {
-        this.newTagConfermationDialog = true;
+      else if (this.tagName === ''){
+        document.getElementById("tagEntry").className = "invalidInput";
       }
-
+      else if (alreadyExists) {
+        console.log(this.tagName)
+      }
+      else {
+        this.newTagConfirmationDialog = true;
+      }
     },
-    deleteTag (deleteId) {
-      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${deleteId}`)
+    deleteTag () {
+      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)
         .then(response => {
           this.$toasted.show('Tag Deleted')
           this.getDetail()
         })
-    },
-    showRelatedTags () {
-
     },
     submitTag (name) {
       let data = {
@@ -949,6 +1013,9 @@ export default {
   }
   .tags {
     margin: 15px 0px 0px 15px;
+  }
+  .invalidInput {
+    border: 1px solid red !important;
   }
   .detail-header-right {
     flex-grow: 1;
