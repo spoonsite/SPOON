@@ -182,7 +182,7 @@
 
         <v-dialog
         v-model="newTagConfirmationDialog"
-        width="25em"
+        width="50em"
         >
           <v-card>
             <v-card-title>
@@ -192,15 +192,45 @@
               <p>Are you sure that you would like to add a new tag?</p>
               <p>Please see other possible matches below.</p>
               <p>New Tag Name: <strong style="color: red;">{{ tagName }}</strong></p>
-              <v-list>
-                <template>
-
-                </template>
-              </v-list>
+              <p style="font-weight: bold; padding-top: 1em;">Related Tags:</p>
+              <div style="overflow-y: auto; height: 20em;">
+                <v-list>
+                  <v-list-tile-content
+                    v-for="tag in relatedTags"
+                    :key="tag"
+                  >
+                    <v-list-tile-title v-if="selectedTag===tag"
+                    v-text="tag"
+                    class="list"
+                    style="background-color: rgba(0,0,0,0.12);"
+                    @click="selectedTag = tag;">
+                    </v-list-tile-title>
+                    <v-list-tile-title v-else
+                    v-text="tag"
+                    class="list"
+                    @click="selectedTag = tag;">
+                    </v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list>
+              </div>
             </v-card-text>
             <v-card-actions>
-              <v-btn @click="submitTag(tagName)">Submit</v-btn>
-              <v-btn @click="newTagConfirmationDialog = false;">Cancel</v-btn>
+              <v-btn 
+              style="text-transform: none;" 
+              @click="submitTag(tagName); newTagConfirmationDialog=false;">
+                Yes I am sure. Add the new tag.
+              </v-btn>
+              <v-btn 
+              style="text-transform: none;"
+              :disabled="selectedTag === ''"
+              @click="submitTag(selectedTag); newTagConfirmationDialog=false;">
+                No, I want to use the selected prexisting tag.
+              </v-btn>
+              <v-btn 
+              style="text-transform: none;" 
+              @click="newTagConfirmationDialog = false;">
+                Cancel
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -488,6 +518,7 @@ export default {
       deleteTagDialog: false,
       newTagConfirmationDialog: false,
       tagEmpty: false,
+      selectedTag: '',
       deleteRequestId: '',
       deleteTagId: '',
       editReviewId: '',
@@ -523,6 +554,7 @@ export default {
       consOptions: [],
       consSelectOptions: [],
       allTags: [],
+      relatedTags: [],
       relatedComponents: [],
       reviewValid: false,
       todaysDate: new Date(),
@@ -689,20 +721,17 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
-    // getComponentsMatchingTag (tagId) {
-    //   this.$http.get(`/openstorefront/api/v1/resource/components/singletagview`)
-    //     .then(response => {
-    //       var tags = response.data
-    //       for(var i=0; i<tags.length; i++) {
-    //         // if(this.tagName === tags[i].text){
-    //           this.relatedComponents.push(tags[i].text)
-    //           console.log(tags[i])
-    //       //  }
-
-    //       }
-    //     })
-    //     .catch(e => this.errors.push(e))
-    // },
+    getRelatedTags () {
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/relatedtags`)
+        .then(response => {
+          var tags = response.data
+          this.relatedTags = [];
+          for (var i = 0; i < tags.length; i++) {
+            this.relatedTags.push(tags[i].text)
+          }
+        })
+        .catch(e => this.errors.push(e))
+    },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
         .then(response => {
@@ -761,6 +790,8 @@ export default {
       }
       else {
         this.tagEmpty = false
+        this.getRelatedTags()
+        this.selectedTag = ''
         this.newTagConfirmationDialog = true
       }
     },
@@ -1005,12 +1036,12 @@ export default {
   .tags {
     display: flex;
     flex-wrap: wrap;
-  }
-  .tags {
     margin: 15px 0px 0px 15px;
   }
-  .invalidInput {
-    border: 1px solid red !important;
+  .list {
+    border-bottom: 1px solid rgba(0,0,0,0.12); 
+    cursor: pointer; 
+    padding-left: 0.5em;
   }
   .detail-header-right {
     flex-grow: 1;
