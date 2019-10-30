@@ -591,7 +591,6 @@ export default {
       if (that.$store.state.componentTypeList === undefined) {
         that.$store.dispatch('getComponentTypeList')
       }
-      console.log(that.$store.state.componentTypeList)
 
       entryTypes.forEach(entryType => {
         entryType['label'] = that.$store.state.componentTypeList.find(element => {
@@ -600,26 +599,13 @@ export default {
       })
       this.componentsList = entryTypes
 
-      if(this.componentsList.length == 0 && this.filters.entryType != ''){
-        console.log(this.componentsList)
+      if (this.componentsList.length === 0 && this.filters.entryType !== '') {
         let entryTypeLabel = that.$store.state.componentTypeList.find(element => {
-            return this.filters.entryType === element.componentType
+          return this.filters.entryType === element.componentType
         }).parentLabel
 
-        console.log(this.componentsList)
-        this.componentsList.push({'doc_count': 0, 'key': this.filters.entryType, 'label': entryTypeLabel})
-        console.log(this.componentsList)
+        this.componentsList.push({ 'doc_count': 0, 'key': this.filters.entryType, 'label': entryTypeLabel })
       }
-
-      // let entryTypeLabel = "TESTTEST"
-      // console.log(that.$store.state.componentTypeList.find(element => {
-      //     return this.filters.entryTypes === element.componentType
-      // }).parentLabel)
-
-      // console.log(this.componentsList)
-      // this.componentsList.push({'doc_count': 0, 'key': this.filters.entryType, 'label': entryTypeLabel})
-      // console.log(this.componentsList)
-
     },
     submitSearch () {
       this.comparisonList = []
@@ -637,7 +623,7 @@ export default {
         'canUseOrganizationsInSearch': cachedOptions.includes('Description'),
         'canUseAttributesInSearch': cachedOptions.includes('Vitals'),
         'canUseTagsInSearch': cachedOptions.includes('Tags')
-        }
+      }
 
       // Default values
       let searchFilters = {
@@ -651,7 +637,7 @@ export default {
         'tags': [],
         'sortOrder': '',
         'sortField': '',
-        'searchFilterOptions' : searchFilterOptions
+        'searchFilterOptions': searchFilterOptions
       }
 
       // Use values from ui if available
@@ -695,7 +681,7 @@ export default {
           that.organizationsList = []
           that.organizationsMap.clear()
 
-          response.data.aggregations['sterms#by_organization'].buckets.forEach(el =>{
+          response.data.aggregations['sterms#by_organization'].buckets.forEach(el => {
             that.organizationsList.push(el.key)
             that.organizationsMap.set(el.key, el.doc_count)
           })
@@ -879,10 +865,10 @@ export default {
     },
     searchUrl () {
       let searchOptions = window.localStorage.getItem('searchOptions')
-      let url = '#/search?q=' + (this.searchQuery ? this.searchQuery : '' ) +
-                '&comp=' + (this.filters.entryType ? this.filters.entryType : '' ) +
-                '&children=' + (this.filters.children ? this.filters.children : 'true' ) +
-                '&organiation=' + (this.filters.organization ? this.filters.organization : '' ) +
+      let url = '#/search?q=' + (this.searchQuery ? this.searchQuery : '') +
+                '&comp=' + (this.filters.entryType ? this.filters.entryType : '') +
+                '&children=' + (this.filters.children ? this.filters.children : 'true') +
+                '&organiation=' + (this.filters.organization ? this.filters.organization : '') +
                 '&attributes=' + (this.filters.attributes.length > 0 ? JSON.stringify(this.filters.attributes) : '') +
                 '&tags=' + this.filters.tags.join(',') +
                 '&searchoptions=' + JSON.parse(searchOptions).join(',')
