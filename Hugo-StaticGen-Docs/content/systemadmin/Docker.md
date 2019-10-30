@@ -8,9 +8,9 @@ Information on running SPOON in a Docker container.
 
 <!--more-->
 
-The SPOON application contains a Dockerfile in order to build Docker images. There are two Dockerfiles in the repo. One is for development which is used by Jenkins to deploy the application for testing of new features. The other dockerfile is for the release build. These can be found in the repo on [GitHub](https://github.com/spoonsite/spoon/tree/master/Docker).
-
-SPOON also automatically builds release versions of the application for consumption by users. These builds are available on [Docker Hub](http://hub.docker.com).
+The SPOON application contains multiple Dockerfiles in order to build Docker images. There are two Dockerfiles in the repo. One
+is for development which is used by Jenkins to deploy the application for testing of new features. The other dockerfile is for the
+release build. These can be found in the repo on [GitHub](https://github.com/spoonsite/spoon/tree/master/Docker).
 
 ## Development Docker Container
 
@@ -20,7 +20,9 @@ To build the container you will need:
 - the startup.sh
 - the tomcat-users.xml
 
-The `startup.sh` and `tomcat-users.xml` can be found at [GitHub](https://github.com/di2e/openstorefront/tree/master/Docker/develop). To obtain the database take the database folder from a previous running instance of Storefront and zip the folder. Place all three items in the same directory as the dockerfile when building the image. To build the image run:
+The `startup.sh` and `tomcat-users.xml` can be found at [GitHub](https://github.com/spoonsite/SPOON/tree/master/Docker/develop). To
+obtain the database take the database folder from a previous running instance of Storefront and zip the folder. Place all three items
+in the same directory as the dockerfile when building the image. To build the image run:
 
 ```bash
 docker build -t some-tag .

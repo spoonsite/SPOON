@@ -13,7 +13,7 @@ In general, you should always upgrade one version at a time in order. (IE. going
 
 ## Note: 2.11
 
-This version requires MongoDB 4.2.1. This can be done through `yum`. See the [MongoDB documentation](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/)
+This version requires MongoDB 4.2.1. This can be done through `yum`. See the [MongoDB documentation](https://docs.mongodb.com/v4.2/tutorial/install-mongodb-on-red-hat/)
 
 ## Note: 2.10
 
@@ -65,6 +65,7 @@ From Orient
 
 ```bash
 $ cd bin
+>
 $ ./console.sh (or bin/console.bat under Windows)
 orientdb> CONNECT plocal:/var/openstorefront/db/openstorefront <DBuser> <db password
 orientdb> EXPORT DATABASE /temp/mydb.json.gz
