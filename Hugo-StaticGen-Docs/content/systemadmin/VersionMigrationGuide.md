@@ -9,15 +9,46 @@ This guide details changes and upgrades that have happened from version to versi
 
 <!--more-->
 
-In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4) That way data migrations will occur in the proper order. If you start from the latest version and have no data then migration is not needed.
+In general, you should always upgrade one version at a time in order. (IE. going from 2.2 to 2.4 then 2.2 to 2.3 then to 2.4) That way
+data migrations will occur in the proper order. If you start from the latest version and have no data then migration is not needed.
 
 ## Note: 2.11
 
-This version requires MongoDB 4.2.1. This can be done through `yum`. See the [MongoDB documentation](https://docs.mongodb.com/v4.2/tutorial/install-mongodb-on-red-hat/)
+Mongo DB support was added. Orient is still used the default Database unless configured otherwise.
+
+1. Install MongoDB 4.2.1. This can be done through `yum`. See the [MongoDB documentation](https://docs.mongodb.com/v4.2/tutorial/install-mongodb-on-red-hat/)
+
+1. Add/edit application properties
+
+    ```ini
+    db.use.mongo=true
+    mongo.connection.url=mongodb://localhost:27017
+    ```
+
+1. Either deploy 2.11 or if already deployed then restart server for the change to take affect.
+
+    The data migration process will apply automatically if the following conditions are met:
+
+    1. Configured to use Mongo
+
+    1. There was an previous Orient Install (as determined by the db file directory)
+
+    1. If the migration hasn't already been applied.
+
+    To force it to re-apply remove the `DB-MIGRATION-Mongo_STATUS, DB-MIGRATION-Mongo_LASTRUN_DTS` Application Properties
+    from the database by using the application system UI or by using an external tool.
+
+    Generally the migration process is expect to only take about 1-2 minutes but, it depends on the size of database and system resources.
+
+{{% notice warning %}}
+The Data migration will remove existing Mongo "Storefront" database collections and replace the content from the equivalent
+Orient data. Orient's data is not effected by the migration. So the process can be repeated.
+{{% /notice %}}
 
 ## Note: 2.10
 
-This version requires an upgrade to Elasticsearch 7.2.1. This can be done through an RPM. See the [Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/7.2/rpm.html)
+This version requires an upgrade to Elasticsearch 7.2.1. This can be done through an RPM. See the
+[Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/7.2/rpm.html)
 
 ## Note: 2.6.3
 
@@ -41,7 +72,8 @@ Some feature such as custom submission require new permission (See Admin -> Secu
 
 ## Note: 2.4.3
 
-This includes the database upgrade. Note: rollback to pervious storefront version will require restore from a backup proir to 2.4.3 for existing data to work for that version.
+This includes the database upgrade. Note: rollback to pervious storefront version will require restore from a backup prior
+to 2.4.3 for existing data to work for that version.
 
 **2.4.2** Must be deployed before 2.4.3 if you have existing data.
 
@@ -70,7 +102,7 @@ $ ./console.sh (or bin/console.bat under Windows)
 orientdb> CONNECT plocal:/var/openstorefront/db/openstorefront <DBuser> <db password
 orientdb> EXPORT DATABASE /temp/mydb.json.gz
 orientdb> DISCONNECT
-orientdb> CREATE DATABASE plocal:/var/openstorefront/db/openstorefront only do this if you have move the old one out of the way)
+orientdb> CREATE DATABASE plocal:/var/openstorefront/db/openstorefront (only do this if you have move the old one out of the way)
 orientdb> IMPORT DATABASE /temp/mydb.json.gz
 ```
 
@@ -90,7 +122,8 @@ Windows (manually)
 
 CentOS using Yum
 
-_Documentation on installation: [https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html](https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html)_
+_Documentation on installation:_
+_[https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html](https://www.elastic.co/guide/en/elasticsearch/reference/5.6/rpm.html)_
 
 1. Download and install the public signing key
 
@@ -170,12 +203,14 @@ Getting everything setup in the SPOON
 
 1. In Openstorefront, navigate to Admin Tools -> Application Management -> System -> Search Control
 2. Click "Re-Index Listings"
-3. (optional) if you haven't set the elastic.server.port to 9200, you can do so now from **Admin Tools** -> **App Management** -> **System** -> **System Configuration Properties**
+3. (optional) if you haven't set the elastic.server.port to 9200, you can do so now from **Admin Tools** -> **App Management**
+-> **System** -> **System Configuration Properties**
 
 ## Upgrading from 2.3 to 2.4
 
 {{% notice note %}}
-As part of the upgrade, Metadata will be automatically converted to Attributes. This may take a while, if there is a lot of Metadata associated with the entries. The server won't be avaliable until the migration is complete.  
+As part of the upgrade, Metadata will be automatically converted to Attributes. This may take a while, if there is a lot of
+Metadata associated with the entries. The server won't be available until the migration is complete.  
 {{% /notice %}}
 
 Pre-Deployment
@@ -195,12 +230,13 @@ DI2E environments that use open am should follow JIRA ticket STORE-1243.
     1. Delete /var/openstorefront/config/shiro.ini
     1. On next server restart the application will pull the default
 
-Keep in mind this is for environments that use the built in user management rather then an external user management.
-The default shiro config is set for the built in user management.
+Keep in mind this is for environments that use the built in user management rather then an external user management. The default shiro
+config is set for the built in user management.
 
 1. **Update Database** - 2.3 includes a update to the database.
     1. Make sure tomcat is shutdown
     1. Make a backup of existing db
 
 1. Copy /var/openstorefront/db directory to backup location
-    1. Delete all /var/openstorefront/db/databases/openstorefront/openstorefront.\*.wal files (just the WAL files there maybe 1 or more, this appears to be optional)
+    1. Delete all /var/openstorefront/db/databases/openstorefront/openstorefront.\*.wal files (just the WAL files there maybe
+        1 or more, this appears to be optional)
