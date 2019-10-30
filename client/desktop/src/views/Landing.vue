@@ -17,7 +17,7 @@
 
     <h2>
         <span style="padding: 0.5em; background-color: white; border-radius: 2px;">
-          Browse Entries
+          Browse by Category
         </span>
     </h2>
     <v-container>
@@ -100,33 +100,15 @@
       </v-layout>
     </v-container>
 
-    <v-container>
-        <h2>Highlights</h2>
-        <v-container>
-          <v-flex xs10 offset-xs1>
-            <v-carousel
-              class="elevation-3 mt-4"
-              height="500"
-              light
-              hide-delimiters
-              :cycle="false"
-            >
-              <v-carousel-item
-                v-for="(item,i) in highlights"
-                :key="i"
-                light
-              >
-                <div slot="default" class="px-5 py-3" style="height: 500px; overflow: auto;">
-                  <h3 class="headline" style="text-align: center;">{{ item.title }}</h3>
-                  <span v-html="item.description"></span>
-                  <v-btn dark :href="item.link">View More</v-btn>
-                  <div style="height: 50px;"></div>
-                </div>
-              </v-carousel-item>
-            </v-carousel>
-          </v-flex>
-        </v-container>
-
+    <h2>Highlights</h2>
+    <v-container
+      v-for="(item,i) in highlights"
+      :key="i"
+    >
+      <h3 class="headline pb-0 mb-0">{{ item.title }}</h3>
+      <date class="mb-4 grey--text text--darken-1" style="display: block;">{{ item.updateDts | formatDate("MMMM d, YYYY") }}</date>
+      <div v-html="item.description"></div>
+      <v-btn dark :href="item.link">View More</v-btn>
     </v-container>
 
     <v-footer color="primary" dark height="auto">
@@ -170,7 +152,7 @@ export default {
         {
           img: '/openstorefront/images/submission.png',
           href: '/openstorefront/UserTool.action?load=Submissions',
-          title: 'Submissions',
+          title: 'Submit a SmallSat part',
           icon: 'file-upload'
         },
         {
@@ -236,12 +218,6 @@ h2 {
 }
 h3 {
   margin-bottom: 1em;
-}
-.entry-card a {
-  text-decoration: none; 
-}
-.entry-card a:hover {
-  text-decoration: underline; 
 }
 .footer-wrapper {
   width: 100%;

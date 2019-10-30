@@ -9,7 +9,7 @@
         @input="$emit('input', $event.target.value)"
         class="searchfield"
         type="text"
-        placeholder="Search"
+        placeholder="Keyword Search"
         @click="searchBarFocused"
         @blur="searchBarBlur"
       >
