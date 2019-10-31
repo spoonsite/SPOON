@@ -831,10 +831,6 @@ export default {
       return possibleAttributes
     },
     addDescriptionTableData () {
-      this.comparisonDataDisplay.unshift({ name: 'Attributes' })
-      for (var emptySpace in this.comparisonList) {
-        this.comparisonDataDisplay[0]['component' + emptySpace] = ''
-      }
       this.comparisonDataDisplay.unshift({ name: 'Organization' })
       for (var component in this.comparisonList) {
         this.comparisonDataDisplay[0]['component' + component] = this.comparisonList[component].organization
