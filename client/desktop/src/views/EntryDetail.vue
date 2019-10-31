@@ -124,27 +124,27 @@
                 class="clearfix tags"
                 v-if="detail.tags && detail.tags.length !== 0"
               >
-              <span
+              <a
                 v-for="tag in detail.tags"
                 :key="tag.text"
+                :href="baseURL + '#/search?tags='+ tag.text"
                 style="margin-right: 0.8em;"
                 >
                 <v-chip
                   v-if="tag.createUser === $store.state.currentUser.username"
                   close
-                  href=""
+                  
                   @input="deleteTagDialog = true; tagName = tag.text; deleteTagId = tag.tagId">
                   <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
                   {{ tag.text }}
                 </v-chip>
                 <v-chip v-else>
-                  <v-icon style="font-size: 14px; color: #f8c533;"
-                  @click="">
+                  <v-icon style="font-size: 14px; color: #f8c533;">
                     fas fa-tag
                   </v-icon>
                   {{ tag.text }}
                 </v-chip>
-              </span>
+              </a>
             </div>
               <v-combobox
                 id="tagEntry"
@@ -193,7 +193,7 @@
               <p>Please see other possible matches below.</p>
               <p>New Tag Name: <strong style="color: red;">{{ tagName }}</strong></p>
               <p style="font-weight: bold; padding-top: 1em;">Related Tags:</p>
-              <div style="overflow-y: auto; height: 20em;">
+              <div style="overflow-y: auto; overflow-x: hidden; height: 15em;">
                 <v-list>
                   <v-list-tile-content
                     v-for="tag in relatedTags"
@@ -214,20 +214,20 @@
                 </v-list>
               </div>
             </v-card-text>
-            <v-card-actions>
+            <v-card-actions style="display: flex; flex-wrap: wrap; overflow-x: hidden; justify-content: space-around;">
               <v-btn 
-              style="text-transform: none;" 
+              style="text-transform: none; margin-bottom: 0.4em;" 
               @click="submitTag(tagName); newTagConfirmationDialog=false;">
-                Yes I am sure. Add the new tag.
+                Add the new tag
               </v-btn>
               <v-btn 
-              style="text-transform: none;"
+              style="text-transform: none; margin-bottom: 0.4em;"
               :disabled="selectedTag === ''"
               @click="submitTag(selectedTag); newTagConfirmationDialog=false;">
-                No, I want to use the selected prexisting tag.
+                Use the selected prexisting tag
               </v-btn>
               <v-btn 
-              style="text-transform: none;" 
+              style="text-transform: none; margin-bottom: 0.4em;" 
               @click="newTagConfirmationDialog = false;">
                 Cancel
               </v-btn>
