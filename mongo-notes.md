@@ -2,6 +2,8 @@
 
 ## Here we present the primary method for standing up a mongo db instance for developers
 
+### METHOD #1 Build a Docker Container with a Dockerfile
+
 1. First we need to create a file called "Dockerfile" and it has to have the following contents:
 
 ```Dockerfile
@@ -30,7 +32,7 @@ docker run -it --name some-mongo -p 27017:27017 spoon-mongo --config /etc/mongo/
 For example, the openstorefront.properties file might be found in: "C:\dev\...\SPOON_DEAD_STAGING\config"
 The following properties need to be added near the top of the file.
 
-```openstorefront.properties
+```ini
 db.use.mongo=true
 mongo.database=storefront
 ```
@@ -38,7 +40,9 @@ mongo.database=storefront
 1. Now that you have performed all the above steps, you just need to shutdown your tomcat server and restart it along with elasticsearch. After a few minutes your
 spoonsite instance should be up and running along all the data found in the aforementioned directory.
 
-## Here we show a secondary method to standing up a mongo instance, although this has had limited success.
+## Here we show a secondary method to standing up a mongo instance, although this has had limited success
+
+### METHOD #2 Mount the mongod.conf file into the container
 
 1. First you need to make a mongod.conf file and give it the following contents:
 
@@ -63,7 +67,7 @@ You may have to resolve the issues with the choice of forward slashes and/or bac
 1. Also remember you will still need to modify the openstorefront.properties file as mentioned above. 
 Further you may need to add an additional property to the file:
 
-```openstorefront.properties
+```ini
 db.use.mongo=true
 mongo.connection.url=mongodb://<your ip address>
 mongo.database=storefront
