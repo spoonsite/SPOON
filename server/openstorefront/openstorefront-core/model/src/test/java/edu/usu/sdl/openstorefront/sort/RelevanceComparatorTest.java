@@ -19,7 +19,7 @@ import edu.usu.sdl.openstorefront.core.sort.RelevanceComparator;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import java.util.Arrays;
 import java.util.Collection;
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -103,6 +103,6 @@ public class RelevanceComparatorTest
 		int result = comparator.compare(view1, view2);
 		
 		// Assert
-		Assert.assertEquals(expectedOutput, result);
+		assertEquals(expectedOutput, result);
 	}
 }
