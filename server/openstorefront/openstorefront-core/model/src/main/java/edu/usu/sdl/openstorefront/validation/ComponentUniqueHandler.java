@@ -52,10 +52,11 @@ public class ComponentUniqueHandler
 		Service service = ServiceProxyFactory.getServiceProxy();
 
 		//find records with the same name (case-insensitive)
+		//This triggers mongo regex which is a contains
 		Component componentSearch = new Component();
 		componentSearch.setName(((String) value).toLowerCase());
 
-		QueryByExample queryByExample = new QueryByExample(componentSearch);
+		QueryByExample<Component> queryByExample = new QueryByExample<>(componentSearch);
 		queryByExample.getFieldOptions().put(Component.FIELD_NAME,
 				new GenerateStatementOptionBuilder()
 						.setMethod(GenerateStatementOption.METHOD_LOWER_CASE)
@@ -63,6 +64,9 @@ public class ComponentUniqueHandler
 
 		List<Component> existingComponents = service.getPersistenceService().queryByExample(queryByExample);
 		for (Component component : existingComponents) {
+
+			//Make sure it's an exact match
+			if (component.getName().equalsIgnoreCase(value.toString())) {
 
 			//see duplicate is me
 			if (component.getComponentId().equals(fullDataObject.getComponentId()) == false) {
