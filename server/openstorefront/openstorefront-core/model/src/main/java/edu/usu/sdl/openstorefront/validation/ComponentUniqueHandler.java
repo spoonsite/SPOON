@@ -68,37 +68,38 @@ public class ComponentUniqueHandler
 			//Make sure it's an exact match
 			if (component.getName().equalsIgnoreCase(value.toString())) {
 
-			//see duplicate is me
-			if (component.getComponentId().equals(fullDataObject.getComponentId()) == false) {
+				//see duplicate is me
+				if (component.getComponentId().equals(fullDataObject.getComponentId()) == false) {
 
-				//indicate a new record
-				if (fullDataObject.getComponentId() != null) {
-					//check to see if entry is a child of me
-					if (fullDataObject.getComponentId().equals(component.getPendingChangeId()) == false) {
+					//indicate a new record
+					if (fullDataObject.getComponentId() != null) {
+						//check to see if entry is a child of me
+						if (fullDataObject.getComponentId().equals(component.getPendingChangeId()) == false) {
 
-						//if the record is a change request check parent name if they are the same that ok
-						if (StringUtils.isNotBlank(fullDataObject.getPendingChangeId())) {
+							//if the record is a change request check parent name if they are the same that ok
+							if (StringUtils.isNotBlank(fullDataObject.getPendingChangeId())) {
 
-							//change request; check parent
-							Component parentComponent = new Component();
-							parentComponent.setComponentId(fullDataObject.getPendingChangeId());
-							parentComponent = parentComponent.find();
-							if (parentComponent != null) {
-								if (parentComponent.getName().equalsIgnoreCase(fullDataObject.getName()) == false) {
+								//change request; check parent
+								Component parentComponent = new Component();
+								parentComponent.setComponentId(fullDataObject.getPendingChangeId());
+								parentComponent = parentComponent.find();
+								if (parentComponent != null) {
+									if (parentComponent.getName().equalsIgnoreCase(fullDataObject.getName()) == false) {
+										isUnique = false;
+									}
+								} else {
+									LOG.log(Level.WARNING, MessageFormat.format("Change Request is orphaned. Entry Name: {0} ID: {1}",
+											new Object[]{fullDataObject.getName(), fullDataObject.getComponentId()}));
+
 									isUnique = false;
 								}
 							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Change Request is orphaned. Entry Name: {0} ID: {1}",
-										new Object[]{fullDataObject.getName(), fullDataObject.getComponentId()}));
-
 								isUnique = false;
 							}
-						} else {
-							isUnique = false;
 						}
+					} else {
+						isUnique = false;
 					}
-				} else {
-					isUnique = false;
 				}
 			}
 		}
