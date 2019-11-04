@@ -480,7 +480,7 @@ export default {
     if (to.query.children) {
       this.filters.children = (to.query.children === 'true')
     } else {
-      this.fitlers.children = true
+      this.fitlers.children = false
     }
     if (to.query.tags) {
       this.filters.tags = to.query.tags.split(',')
@@ -866,11 +866,11 @@ export default {
     searchUrl () {
       let searchOptions = window.localStorage.getItem('searchOptions')
       let url = '#/search?q=' + (this.searchQuery ? this.searchQuery : '') +
-                '&comp=' + (this.filters.entryType ? this.filters.entryType : '') +
-                '&children=' + (this.filters.children ? this.filters.children : 'true') +
-                '&organiation=' + (this.filters.organization ? this.filters.organization : '') +
-                '&attributes=' + (this.filters.attributes.length > 0 ? JSON.stringify(this.filters.attributes) : '') +
-                '&tags=' + this.filters.tags.join(',') +
+                (this.filters.entryType ? '&comp=' + this.filters.entryType : '') +
+                (this.filters.children ? '&children=' + this.filters.children : '') +
+                (this.filters.organization ? '&organiation=' + this.filters.organization : '') +
+                (this.filters.attributes.length > 0 ? '&attributes=' + JSON.stringify(this.filters.attributes) : '') +
+                (this.filters.tags.length > 0 ? '&tags=' + this.filters.tags.join(',') : '') +
                 '&searchoptions=' + JSON.parse(searchOptions).join(',')
       return url
     }
