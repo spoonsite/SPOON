@@ -24,6 +24,8 @@ Download the latest release of Hugo at https://github.com/gohugoio/hugo/releases
 
 Hugo provides a live development server for viewing changes as you are editing the files. Go to `openstorefront/Hugo-StaticGen-Docs/` and run `hugo server --baseURL localhost:1313 --watch`. This will run a local dev server at `localhost:1313`, any changes made to the files will trigger a rebuild and refresh your browser.
 
+Running in Docker requires you to run `hugo server -w --bind="0.0.0.0"`
+
 ## How to build the Documentation
 
 This should only be done once per release.  For Development use `hugo server -b localhost:1313 -w` which will run a live reloading development server. To see perform a build run `hugo` from `openstorefront/Hugo-StaticGen-Docs/` which will build to the `./build` by default which is in the gitignore.
