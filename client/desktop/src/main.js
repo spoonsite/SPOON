@@ -74,6 +74,7 @@ Vue.filter('crushNumericString', scientificToDecimal.crushNumericString)
 
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)))
 store.dispatch('getSecurityPolicy')
+store.dispatch('getHelpUrl')
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
     theme: {

@@ -31,7 +31,7 @@ public class HTMLSanitizer
 {
 
 	@Override
-	public Object santize(Object fieldData)
+	public Object sanitize(Object fieldData)
 	{
 		if (fieldData == null) {
 			return fieldData;

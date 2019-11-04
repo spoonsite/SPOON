@@ -35,6 +35,8 @@ public abstract class ApplyOnceInit
 
 	private static final Logger LOG = Logger.getLogger(ApplyOnceInit.class.getName());
 
+	protected static final String SKIP_APPLY = "-SKIP_APPLY-";
+
 	protected ServiceProxy service = new ServiceProxy();
 	protected String appliedKey;
 
@@ -58,9 +60,11 @@ public abstract class ApplyOnceInit
 			LOG.log(Level.INFO, () -> MessageFormat.format("Already Applied {0} on {1}", appliedKey, lastRunString));
 		} else {
 			String results = internalApply();
-			LOG.log(Level.INFO, () -> MessageFormat.format("Applied {0} changes", appliedKey));
-			service.getSystemService().saveProperty(appliedKey + "_LASTRUN_DTS", TimeUtil.dateToString(TimeUtil.currentDate()));
-			service.getSystemService().saveProperty(appliedKey + "_STATUS", results);
+			if (!SKIP_APPLY.equals(results)) {
+				LOG.log(Level.INFO, () -> MessageFormat.format("Applied {0} changes", appliedKey));
+				service.getSystemService().saveProperty(appliedKey + "_LASTRUN_DTS", TimeUtil.dateToString(TimeUtil.currentDate()));
+				service.getSystemService().saveProperty(appliedKey + "_STATUS", results);
+			}
 		}
 	}
 

@@ -293,7 +293,7 @@
 						if (foundVal != ""){
 							foundVal += ", ";
 						}
-						foundVal += CoreUtil.crushNumericString(entryAttribute.codeDescription);
+						foundVal += CoreUtil.crushNumericString(entryAttribute.code);
 					}
 				});
 
@@ -738,36 +738,38 @@
 							this.getStore().removeAll();
 						}
 					}),
-					{
-						xtype: 'label',
-						margin: '8 0 5 0',
-						html: '<b style="font-weight: bold;">By User Rating</b>'
-					},
-					{
-						xtype: 'container',
-						layout: {
-							type: 'hbox'
-						}, 
-						items: [
-							{
-								xtype: 'button',
-								iconCls: 'fa fa-close',								
-								style: 'border-radius: 50%; margin-right: 5px;',
-								handler: function(){
-									var rating = this.up('container').getComponent('filterRating');
-									rating.setValue(null);
-								}
-							},
-							{
-								xtype: 'rating',
-								id: 'filterByRating',
-								itemId: 'filterRating',
-								scale: '200%',
-								overStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
-								selectedStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
-							}
-						]
-					},
+					// There are no user ratings so this provides no value right now
+					// uncomment to add back in when more parts have ratings
+					// {
+					// 	xtype: 'label',
+					// 	margin: '8 0 5 0',
+					// 	html: '<b style="font-weight: bold;">By User Rating</b>'
+					// },
+					// {
+					// 	xtype: 'container',
+					// 	layout: {
+					// 		type: 'hbox'
+					// 	}, 
+					// 	items: [
+					// 		{
+					// 			xtype: 'button',
+					// 			iconCls: 'fa fa-close',								
+					// 			style: 'border-radius: 50%; margin-right: 5px;',
+					// 			handler: function(){
+					// 				var rating = this.up('container').getComponent('filterRating');
+					// 				rating.setValue(null);
+					// 			}
+					// 		},
+					// 		{
+					// 			xtype: 'rating',
+					// 			id: 'filterByRating',
+					// 			itemId: 'filterRating',
+					// 			scale: '200%',
+					// 			overStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
+					// 			selectedStyle: 'text-shadow: -1px -1px 0 #000, 1px -1px 0 #000,-1px 1px 0 #000, 1px 1px 0 #000;',
+					// 		}
+					// 	]
+					// },
 					{
 						xtype: 'label',
 						margin: '8 0 5 0',
@@ -825,7 +827,7 @@
 									Ext.getCmp('filterByName').reset();
 									Ext.getCmp('filterByTag').reset();
 									Ext.getCmp('filterByType').reset();
-									Ext.getCmp('filterByRating').setValue(null);
+									// Ext.getCmp('filterByRating').setValue(null);
 								
 									Ext.Array.each(attributeFilters, function(filter) {
 										filter.checkbox.suspendEvents(false);
@@ -862,7 +864,7 @@
 					name: Ext.getCmp('filterByName').getValue(),
 					tags: Ext.getCmp('filterByTag').getValue(),
 					type: Ext.getCmp('filterByType').getValue(),
-					rating: Ext.getCmp('filterByRating').getValue(),
+					// rating: Ext.getCmp('filterByRating').getValue(),
 					sortBy: Ext.getCmp('sortByCB').getSelection() ? Ext.getCmp('sortByCB').getSelection().data : null,
 					attributes: attributeFilters
 				};
@@ -1087,7 +1089,7 @@
 				pageSize : 20,
 				currentPage : 0,
 				loadData : function(data) {
-					attributeFilterStore.attributes = data;	
+					attributeFilterStore.attributes = data;
 				},
 				clear : function() {
 					// TODO: don't remove currently selected items
@@ -1126,10 +1128,10 @@
 				proxy: CoreUtil.pagingProxy({
 						url: 'api/v1/service/search',						
 						reader: {
-						   type: 'json',
-						   rootProperty: 'data',
-						   totalProperty: 'totalNumber',
-						   metaProperty: 'meta'
+							type: 'json',
+							rootProperty: 'data',
+							totalProperty: 'totalNumber',
+							metaProperty: 'meta'
 						}
 				}),
 				listeners: {
@@ -1526,7 +1528,7 @@
 				' <div id="result-{componentId}" class="searchresults-item">',
 				'	<h2 id="result-{componentId}name" title="View Details" class="searchresults-item-click" onclick="SearchPage.viewDetails(\'{componentId}\', \'result-{componentId}\')"><tpl if="listingSecurityMarkingType && ' + ${branding.allowSecurityMarkingsFlg} + '">({listingSecurityMarkingType}) </tpl>{name}</h2>',
 				'	<tpl if="show.logo && logo">',
-				'		<img src="{logo}" width=100 />',				
+				'		<img src="{logo}" width=100 />',
 				'	</tpl>',
 				'	<tpl if="show.organization">',
 				'		<p class="searchresults-item-org">{organization}</p>',

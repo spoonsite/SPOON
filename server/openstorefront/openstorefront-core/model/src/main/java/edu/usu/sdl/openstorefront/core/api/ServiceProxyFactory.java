@@ -56,6 +56,12 @@ public class ServiceProxyFactory
 		}
 	}
 
+	public static boolean isSystemStarted()
+	{
+		SystemManager systemManager = context.getService(context.getServiceReference(SystemManager.class));
+		return systemManager.managerStarted();
+	}
+
 	public static void setContext(BundleContext bundleContext)
 	{
 		context = bundleContext;

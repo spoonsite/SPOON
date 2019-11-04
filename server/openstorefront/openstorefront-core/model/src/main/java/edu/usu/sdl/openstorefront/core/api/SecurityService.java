@@ -245,8 +245,8 @@ public interface SecurityService
 	UserSecurityWrapper getUserViews(UserFilterParams queryParams);
 
 	/**
-	 * This will remove all roles from a given user, except for those rolls
-	 * that were given from within storefront proper.
+	 * This will remove all roles from a given user, except for those rolls that
+	 * were given from within storefront proper.
 	 *
 	 * This is used to handling supporting external role/group management
 	 *
@@ -262,13 +262,5 @@ public interface SecurityService
 	 * @return
 	 */
 	UserContext getGuestContext();
-
-	/**
-	 * Use this for the System user which has all permissions and no restriction
-	 * and special role System
-	 *
-	 * @return
-	 */
-	UserContext getSystemContext();
 
 }

@@ -39,6 +39,9 @@ public class UserProfile
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String FIELD_USERNAME = "username";
+	public static final String FIELD_EMAIL = "email";
+
 	@PK
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_USERNAME)

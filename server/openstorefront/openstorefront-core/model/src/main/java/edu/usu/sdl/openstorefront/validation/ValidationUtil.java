@@ -44,6 +44,7 @@ public class ValidationUtil
 {
 
 	private static final Logger LOG = Logger.getLogger(ValidationUtil.class.getName());
+	private static boolean skipValidationForTesting = false;
 
 	private static final List<BaseRule> RULES = Arrays.asList(
 			new MaxValueRule(),
@@ -71,6 +72,11 @@ public class ValidationUtil
 		Objects.requireNonNull(validateModel);
 
 		ValidationResult validationResult = new ValidationResult();
+
+		if (skipValidationForTesting) {
+			return validationResult;
+		}
+
 		if (validateModel.getDataObject() == null
 				&& validateModel.isAcceptNull() == false) {
 			RuleResult ruleResult = new RuleResult();
@@ -197,18 +203,18 @@ public class ValidationUtil
 							//simple case
 							for (BaseRule rule : RULES) {
 								//Stanize if requested
-								if (validateModel.getSantize()) {
-									Sanitize santizers = field.getAnnotation(Sanitize.class);
-									if (santizers != null) {
-										for (Class<? extends Sanitizer> sanitizeClass : santizers.value()) {
+								if (validateModel.getSanitize()) {
+									Sanitize sanitizers = field.getAnnotation(Sanitize.class);
+									if (sanitizers != null) {
+										for (Class<? extends Sanitizer> sanitizeClass : sanitizers.value()) {
 											try {
-												Sanitizer santizer = sanitizeClass.newInstance();
+												Sanitizer sanitizer = sanitizeClass.newInstance();
 
 												@SuppressWarnings("unchecked")
 												Method method = dataClass.getMethod("get" + StringUtils.capitalize(field.getName()), (Class<?>[]) null);
 												Object returnObj = method.invoke(validateModel.getDataObject(), (Object[]) null);
 
-												Object newValue = santizer.santize(returnObj);
+												Object newValue = sanitizer.sanitize(returnObj);
 
 												method = dataClass.getMethod("set" + StringUtils.capitalize(field.getName()), String.class);
 												method.invoke(validateModel.getDataObject(), newValue);
@@ -232,6 +238,11 @@ public class ValidationUtil
 		}
 
 		return ruleResults;
+	}
+
+	public static void setSkipValidationForTesting(boolean aSkipValidationForTesting)
+	{
+		skipValidationForTesting = aSkipValidationForTesting;
 	}
 
 }

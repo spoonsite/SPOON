@@ -19,11 +19,9 @@ import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
-import edu.usu.sdl.openstorefront.core.entity.HelpSection;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
-import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
 import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import java.io.InputStream;
@@ -255,23 +253,6 @@ public interface SystemService
 	 * login method.
 	 */
 	public void clearAllLogRecord();
-
-	/**
-	 * Loads a new set of help sections...it will remove the old and save the
-	 * new Full Refresh of the help data
-	 *
-	 * @param helpSections
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void loadNewHelpSections(List<HelpSection> helpSections);
-
-	/**
-	 * Pull all help and organize it
-	 *
-	 * @param includeAdmin
-	 * @return root help section and all children
-	 */
-	public HelpSectionAll getAllHelp(Boolean includeAdmin);
 
 	/**
 	 * Check system state.

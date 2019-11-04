@@ -59,10 +59,10 @@ public class HTMLSanitizerTest
 	}
 
 	@Test
-	public void santizeTest()
+	public void sanitizeTest()
 	{
 		HTMLSanitizer sanitizer = new HTMLSanitizer();
-		Object result = sanitizer.santize(input);
+		Object result = sanitizer.sanitize(input);
 		assertEquals(expectedOutput, result);
 	}
 }

@@ -28,7 +28,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
-import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
@@ -155,11 +154,6 @@ public class ComponentRESTClient
 	}
 
 	public Response addComponentMedia(String componentId, ComponentMedia media)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	public Response addComponentMetadata(String componentId, ComponentMetadata metadata)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
@@ -531,16 +525,6 @@ public class ComponentRESTClient
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	public List<ComponentMetadata> getComponentMetadata()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	public List<ComponentMetadata> getComponentMetadata(String componentId)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
 	public Response getComponentMetadataEntity(String componentId, String metadataId)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -828,11 +812,6 @@ public class ComponentRESTClient
 	}
 
 	public Response updateComponentMedia(String componentId, String mediaId, ComponentMedia media)
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	public Response updateComponentMetadata(String componentId, String metadataId, ComponentMetadata metadata)
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}

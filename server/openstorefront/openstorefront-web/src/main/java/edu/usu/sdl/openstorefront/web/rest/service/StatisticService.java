@@ -97,7 +97,7 @@ public class StatisticService
 		ComponentTracking componentTracking = new ComponentTracking();
 		componentTracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 
-		QueryByExample queryByExample = new QueryByExample(componentTracking);
+		QueryByExample<ComponentTracking> queryByExample = new QueryByExample<>(componentTracking);
 		ComponentTracking componentTrackingOrderBy = new ComponentTracking();
 		componentTrackingOrderBy.setEventDts(QueryByExample.DATE_FLAG);
 		queryByExample.setOrderBy(componentTrackingOrderBy);
@@ -157,7 +157,7 @@ public class StatisticService
 		UserTracking userTracking = new UserTracking();
 		userTracking.setActiveStatus(ComponentTracking.ACTIVE_STATUS);
 
-		QueryByExample queryByExample = new QueryByExample(userTracking);
+		QueryByExample<UserTracking> queryByExample = new QueryByExample<>(userTracking);
 		UserTracking trackingOrderBy = new UserTracking();
 		trackingOrderBy.setEventDts(QueryByExample.DATE_FLAG);
 		queryByExample.setOrderBy(trackingOrderBy);
