@@ -131,28 +131,33 @@ export default {
     }
   },
   created: function () {
-    this.$http
-      .get('/openstorefront/api/v1/resource/searchoptions/user')
-      .then(response => {
-        this.searchOptionsId = response.data.searchOptionsId
-        this.searchOptions = []
-        if (response.data.canUseNameInSearch) {
-          this.searchOptions.push('Name')
-        }
-        if (response.data.canUseDescriptionInSearch) {
-          this.searchOptions.push('Description')
-        }
-        if (response.data.canUseOrganizationsInSearch) {
-          this.searchOptions.push('Organization')
-        }
-        if (response.data.canUseAttributesInSearch) {
-          this.searchOptions.push('Vitals')
-        }
-        if (response.data.canUseTagsInSearch) {
-          this.searchOptions.push('Tags')
-        }
-        window.localStorage.setItem('searchOptions', JSON.stringify(this.searchOptions))
-      })
+    let searchOptions = window.localStorage.getItem('searchOptions')
+    if(searchOptions === null){
+      this.$http
+        .get('/openstorefront/api/v1/resource/searchoptions/user')
+        .then(response => {
+          this.searchOptionsId = response.data.searchOptionsId
+          this.searchOptions = []
+          if (response.data.canUseNameInSearch) {
+            this.searchOptions.push('Name')
+          }
+          if (response.data.canUseDescriptionInSearch) {
+            this.searchOptions.push('Description')
+          }
+          if (response.data.canUseOrganizationsInSearch) {
+            this.searchOptions.push('Organization')
+          }
+          if (response.data.canUseAttributesInSearch) {
+            this.searchOptions.push('Vitals')
+          }
+          if (response.data.canUseTagsInSearch) {
+            this.searchOptions.push('Tags')
+          }
+          window.localStorage.setItem('searchOptions', JSON.stringify(this.searchOptions))
+        })
+    } else {
+      this.searchOptions = JSON.parse(searchOptions)
+    }
   },
   computed: {
     warningStyle () {
