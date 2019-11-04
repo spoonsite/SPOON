@@ -623,8 +623,8 @@ export default {
 
       let searchFilterOptions = {
         'canUseNameInSearch': cachedOptions.includes('Name'),
-        'canUseDescriptionInSearch': cachedOptions.includes('Organization'),
-        'canUseOrganizationsInSearch': cachedOptions.includes('Description'),
+        'canUseDescriptionInSearch': cachedOptions.includes('Description'),
+        'canUseOrganizationsInSearch': cachedOptions.includes('Organization'),
         'canUseAttributesInSearch': cachedOptions.includes('Vitals'),
         'canUseTagsInSearch': cachedOptions.includes('Tags')
       }
