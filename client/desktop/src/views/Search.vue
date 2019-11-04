@@ -179,14 +179,14 @@
                 <!-- <attribute-range/> -->
                 <v-checkbox
                   v-for="code in (searchResultsAttributes[key].codes)"
-                  :key="key + code"
+                  :key="key + code.code"
                   color="black"
                   v-model="filters.attributes"
-                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].label, 'code': code })"
+                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].label, 'code': code.code })"
                   hide-details
                 >
                   <template slot="label">
-                    <div>{{ code | crushNumericString }}</div>
+                    <div>{{ code.code | crushNumericString }} ({{ code.count }})</div>
                   </template>
                 </v-checkbox>
               </v-container>
@@ -582,13 +582,18 @@ export default {
             label: source.typeLabel,
             attributeUnit: unit
           }
-          that.searchResultsAttributes[source.type].codes.push(source.label)
+          that.searchResultsAttributes[source.type].codes.push({'code':source.label,'count':1})
           codesMap[source.type] = {}
           codesMap[source.type][source.label] = 0
         } else {
           if (!codesMap[source.type].hasOwnProperty(source.label)) {
-            that.searchResultsAttributes[source.type].codes.push(source.label)
+            that.searchResultsAttributes[source.type].codes.push({'code':source.label,'count':1})
             codesMap[source.type][source.label] = 0
+          } else {
+            codesMap[source.type][source.label] = codesMap[source.type][source.label] + 1
+            let objIndex = that.searchResultsAttributes[source.type].codes.findIndex(obj => obj.code == source.label)
+            let count = that.searchResultsAttributes[source.type].codes[objIndex].count
+            that.searchResultsAttributes[source.type].codes[objIndex] = {'code':source.label,'count':count + 1}
           }
         }
       })
