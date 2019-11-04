@@ -575,6 +575,7 @@ export default {
       // Iterate over each returned attribute and make an entry in the dict or add a code if the entry already exists
       attributesAggregation.forEach(el => {
         source = el._source
+        // If the attribute does not exist in the table, create a new entry for it and add the attribute code to the new entry
         if (!that.searchResultsAttributes.hasOwnProperty(source.type)) {
           unit = (that.$store.state.attributeMap[source.type] ? that.$store.state.attributeMap[source.type].attributeUnit : undefined)
           that.searchResultsAttributes[source.type] = {
@@ -582,18 +583,21 @@ export default {
             label: source.typeLabel,
             attributeUnit: unit
           }
-          that.searchResultsAttributes[source.type].codes.push({'code':source.label,'count':1})
+          that.searchResultsAttributes[source.type].codes.push({ 'code': source.label, 'count': 1 })
           codesMap[source.type] = {}
           codesMap[source.type][source.label] = 0
         } else {
+          // If the attribute is in the table but the attribute code is not, then append the attribute code
           if (!codesMap[source.type].hasOwnProperty(source.label)) {
-            that.searchResultsAttributes[source.type].codes.push({'code':source.label,'count':1})
+            that.searchResultsAttributes[source.type].codes.push({ 'code': source.label, 'count': 1 })
             codesMap[source.type][source.label] = 0
-          } else {
+          }
+          // If the attribute code is in the table, increment the count
+          else {
             codesMap[source.type][source.label] = codesMap[source.type][source.label] + 1
-            let objIndex = that.searchResultsAttributes[source.type].codes.findIndex(obj => obj.code == source.label)
+            let objIndex = that.searchResultsAttributes[source.type].codes.findIndex(obj => obj.code === source.label)
             let count = that.searchResultsAttributes[source.type].codes[objIndex].count
-            that.searchResultsAttributes[source.type].codes[objIndex] = {'code':source.label,'count':count + 1}
+            that.searchResultsAttributes[source.type].codes[objIndex] = { 'code': source.label, 'count': count + 1 }
           }
         }
       })
