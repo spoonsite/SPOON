@@ -10,7 +10,16 @@
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <Notifications/>
-            <v-btn icon @click="nav('profile')"><v-icon>fas fa-user</v-icon></v-btn>
+            <v-tooltip bottom>
+              <v-btn
+                slot="activator"
+                icon
+                @click="nav('profile')"
+              >
+                <v-icon>fas fa-user</v-icon>
+              </v-btn>
+              <span>User Profile</span>
+            </v-tooltip>
             <!-- <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn> -->
           </v-toolbar-items>
           <v-menu offset-y>
