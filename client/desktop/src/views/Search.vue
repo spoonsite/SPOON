@@ -645,8 +645,8 @@ export default {
       searchFilters.page = (this.searchPage ? this.searchPage : searchFilters.page)
       searchFilters.pageSize = (this.searchPageSize ? this.searchPageSize : searchFilters.pageSize)
       searchFilters.componentType = (this.filters.entryType ? this.filters.entryType : searchFilters.componentType)
-      searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
       searchFilters.organization = (this.filters.organization ? this.filters.organization : searchFilters.organization)
+      searchFilters.includeChildren = this.filters.children
 
       let tags = []
       if (this.filters.tags != null) {
