@@ -638,9 +638,10 @@ export default {
       searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
       searchFilters.organization = (this.filters.organization ? this.filters.organization.key : searchFilters.organization)
 
-      if (searchFilters.page === 1) {
+      if (this.oldQuery !== null && this.oldQuery !== searchFilters.query) {
         this.comparisonList = []
       }
+      this.oldQuery = that.searchQuery
 
       let tags = []
       if (this.filters.tags != null) {
@@ -944,6 +945,7 @@ export default {
       showHelp: false,
       showComparison: false,
       searchQuery: '',
+      oldQuery: null,
       attributeQuery: '',
       attributeKeys: [],
       filters: {
