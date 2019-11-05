@@ -52,10 +52,11 @@ public class ComponentUniqueHandler
 		Service service = ServiceProxyFactory.getServiceProxy();
 
 		//find records with the same name (case-insensitive)
+		//This triggers mongo regex which is a contains
 		Component componentSearch = new Component();
 		componentSearch.setName(((String) value).toLowerCase());
 
-		QueryByExample queryByExample = new QueryByExample(componentSearch);
+		QueryByExample<Component> queryByExample = new QueryByExample<>(componentSearch);
 		queryByExample.getFieldOptions().put(Component.FIELD_NAME,
 				new GenerateStatementOptionBuilder()
 						.setMethod(GenerateStatementOption.METHOD_LOWER_CASE)
@@ -64,37 +65,41 @@ public class ComponentUniqueHandler
 		List<Component> existingComponents = service.getPersistenceService().queryByExample(queryByExample);
 		for (Component component : existingComponents) {
 
-			//see duplicate is me
-			if (component.getComponentId().equals(fullDataObject.getComponentId()) == false) {
+			//Make sure it's an exact match
+			if (component.getName().equalsIgnoreCase(value.toString())) {
 
-				//indicate a new record
-				if (fullDataObject.getComponentId() != null) {
-					//check to see if entry is a child of me
-					if (fullDataObject.getComponentId().equals(component.getPendingChangeId()) == false) {
+				//see duplicate is me
+				if (component.getComponentId().equals(fullDataObject.getComponentId()) == false) {
 
-						//if the record is a change request check parent name if they are the same that ok
-						if (StringUtils.isNotBlank(fullDataObject.getPendingChangeId())) {
+					//indicate a new record
+					if (fullDataObject.getComponentId() != null) {
+						//check to see if entry is a child of me
+						if (fullDataObject.getComponentId().equals(component.getPendingChangeId()) == false) {
 
-							//change request; check parent
-							Component parentComponent = new Component();
-							parentComponent.setComponentId(fullDataObject.getPendingChangeId());
-							parentComponent = parentComponent.find();
-							if (parentComponent != null) {
-								if (parentComponent.getName().equalsIgnoreCase(fullDataObject.getName()) == false) {
+							//if the record is a change request check parent name if they are the same that ok
+							if (StringUtils.isNotBlank(fullDataObject.getPendingChangeId())) {
+
+								//change request; check parent
+								Component parentComponent = new Component();
+								parentComponent.setComponentId(fullDataObject.getPendingChangeId());
+								parentComponent = parentComponent.find();
+								if (parentComponent != null) {
+									if (parentComponent.getName().equalsIgnoreCase(fullDataObject.getName()) == false) {
+										isUnique = false;
+									}
+								} else {
+									LOG.log(Level.WARNING, MessageFormat.format("Change Request is orphaned. Entry Name: {0} ID: {1}",
+											new Object[]{fullDataObject.getName(), fullDataObject.getComponentId()}));
+
 									isUnique = false;
 								}
 							} else {
-								LOG.log(Level.WARNING, MessageFormat.format("Change Request is orphaned. Entry Name: {0} ID: {1}",
-										new Object[]{fullDataObject.getName(), fullDataObject.getComponentId()}));
-
 								isUnique = false;
 							}
-						} else {
-							isUnique = false;
 						}
+					} else {
+						isUnique = false;
 					}
-				} else {
-					isUnique = false;
 				}
 			}
 		}
