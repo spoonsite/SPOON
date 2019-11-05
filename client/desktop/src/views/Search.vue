@@ -610,7 +610,6 @@ export default {
       this.componentsList = entryTypes
     },
     submitSearch () {
-      this.comparisonList = []
       let that = this
       // a new search clears the data and can trigger a watcher
       // sometimes 2 POST requests get sent out together
@@ -638,6 +637,10 @@ export default {
       searchFilters.componentTypes = (this.selectedEntryTypes ? this.selectedEntryTypes : searchFilters.componentTypes)
       searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
       searchFilters.organization = (this.filters.organization ? this.filters.organization.key : searchFilters.organization)
+
+      if (searchFilters.page === 1) {
+        this.comparisonList = []
+      }
 
       let tags = []
       if (this.filters.tags != null) {
