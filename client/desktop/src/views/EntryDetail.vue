@@ -33,18 +33,14 @@
         <div class="detail-header-body">
           <div class="detail-header-left">
             <div class="dates">
-              <p class="date"><strong>Organization:</strong> {{ detail.organization }}
+              <p class="date"><strong>Organization:</strong> {{ detail.organization }} </p>
               <p class="date" v-if='detail.componentTypeLabel.includes(">")'>
                 <strong>Category:</strong>
                 {{ detail.componentTypeLabel }}
-
-              <div v-if="detail.lastSubmitDts">
-                <p class="date"><strong>Last Vendor Update Provided:</strong> {{ detail.lastSubmitDts | formatDate}}</p>
-              </div>
-              <div v-else>
-                <p class="date"><strong>Last Vendor Update Provided:</strong> {{ detail.approvedDate | formatDate}}</p>
-              </div>
-              <p class="date"><strong>Last System Update:</strong> {{ detail.lastActivityDts | formatDate}}</p>
+              </p>
+              <p v-if="detail.lastSubmitDts" class="date"><strong>Last Vendor Update Provided:</strong> {{ detail.lastSubmitDts | formatDate }}</p>
+              <p v-else class="date"><strong>Last Vendor Update Provided:</strong> {{ detail.approvedDate | formatDate }}</p>
+              <p class="date"><strong>Last System Update:</strong> {{ detail.lastActivityDts | formatDate }}</p>
             </div>
             <div
                 style="padding-bottom: 1em;"

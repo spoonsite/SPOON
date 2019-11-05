@@ -21,13 +21,9 @@
           </div>
           <v-card class="grey lighten-5">
             <v-card-text>
-              <div v-if="item.lastSubmitDts">
-                <p class="date"><strong>Last Vendor Update Provided:</strong> {{ item.lastSubmitDts | formatDate}}</p>
-              </div>
-              <div v-else>
-                <p class="date"><strong>Last Vendor Update Provided:</strong> {{ item.approvedDts | formatDate}}</p>
-              </div>
-              <p class="date"><strong>Last System Update:</strong> {{ item.lastUpdateDts | formatDate}}</p>
+              <p v-if="item.lastSubmitDts" class="date"><strong>Last Vendor Update Provided:</strong> {{ item.lastSubmitDts | formatDate }}</p>
+              <p v-else class="date"><strong>Last Vendor Update Provided:</strong> {{ item.approvedDts | formatDate }}</p>
+              <p class="date"><strong>Last System Update:</strong> {{ item.lastUpdateDts | formatDate }}</p>
             </v-card-text>
             <v-card-actions>
               <v-btn color="accent" @click="nav('/')">More Information</v-btn>
