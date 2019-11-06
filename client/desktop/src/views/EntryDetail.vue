@@ -372,7 +372,6 @@ import Lightbox from '../components/Lightbox'
 import Question from '../components/Question'
 import format from 'date-fns/format'
 import isFuture from 'date-fns/is_future'
-import router from '../router'
 
 export default {
   name: 'entry-detail-page',

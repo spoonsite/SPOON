@@ -26,7 +26,7 @@
               <p class="date"><strong>Last System Update:</strong> {{ item.lastUpdateDts | formatDate }}</p>
             </v-card-text>
             <v-card-actions>
-              <v-btn color="accent" @click="nav('/')">More Information</v-btn>
+              <v-btn color="accent" :to="`entry-detail/${item.componentId}`">More Information</v-btn>
               <!-- <v-btn color="accent" @click="moreInformation(item.componentId)">More Information</v-btn> -->
             </v-card-actions>
           </v-card>
@@ -51,12 +51,23 @@ export default {
   name: 'watches-page',
   props: [],
   mounted () {
-    this.getWatches()
+    // need to check if we have the current user
+    if (this.$store.state.currentUser.username) {
+      this.getWatches()
+    } else {
+      // trigger an update once the user has been fetched
+      this.$store.watch(
+        (state, getters) => state.currentUser,
+        (newValue, oldValue) => {
+          this.getWatches()
+        }
+      )
+    }
   },
   data () {
     return {
       watches: [],
-      loading: false
+      loading: true
     }
   },
   methods: {

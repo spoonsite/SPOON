@@ -1,6 +1,5 @@
 <template>
 <div>
-
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- CONTROLS -->
     <div class="side-menu-btns">
@@ -72,35 +71,33 @@
       <div v-if="showFilters">
         <h2>Search Filters</h2>
         <v-btn block class="" @click="clear()">Clear Filters</v-btn>
-        <v-select
-          v-model="selectedEntryTypes"
+        <v-autocomplete
+          v-model="filters.entryType"
           :items="componentsList"
           item-text="label"
           item-value="key"
           label="Category"
           clearable
-          multiple
-          chips
-          multi-line
         >
           <template slot="selection" slot-scope="data">
-            <v-chip close small @input="removeComponent(data.item.key)" :key="data.item.label">
-              <v-avatar class="grey lighten-1">{{ data.item.doc_count }}</v-avatar>
-              {{ data.item.label }}
-            </v-chip>
+            ({{ data.item.doc_count }}) {{ data.item.label }}
           </template>
           <template slot="item" slot-scope="data">
-            <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.label}}</v-list-tile-title></v-list-tile-content>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                ({{ data.item.doc_count }}) {{ data.item.label }}
+              </v-list-tile-title>
+            </v-list-tile-content>
           </template>
-        </v-select>
+        </v-autocomplete>
         <v-checkbox class="ma-0" color="black" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
-        <v-select
+        <v-autocomplete
           v-model="filters.tags"
           hide-details
           :items="tagsList"
           :disabled="!tagsList || tagsList.length === 0"
-          item-text="tagLabel"
-          item-value="tagLabel"
+          item-text="key"
+          item-value="key"
           :label="!tagsList || tagsList.length === 0 ? 'No Tags' : 'Tags'"
           multiple
           small-chips
@@ -116,26 +113,22 @@
           <template slot="item" slot-scope="data">
             <v-list-tile-content><v-list-tile-title>({{ data.item.doc_count }}) {{ data.item.key}}</v-list-tile-title></v-list-tile-content>
           </template>
-        </v-select>
-        <!-- <v-radio-group label="Tag Search Condition: " v-model="filters.tagCondition">
-          <v-radio label="And" value="AND"></v-radio>
-          <v-radio label="Or" value="OR"></v-radio>
-        </v-radio-group> -->
+        </v-autocomplete>
         <v-autocomplete
           v-model="filters.organization"
           :items="organizationsList"
           label="Organization"
-          item-text="organization"
-          item-value="organization"
+          item-text="key"
+          item-value="key"
           clearable
         >
           <template slot="selection" slot-scope="data">
-            ({{ data.item.doc_count }}) {{ data.item.key }}
+            ({{ organizationsMap.get(data.item) }}) {{ data.item }}
           </template>
           <template slot="item" slot-scope="data">
             <v-list-tile-content>
               <v-list-tile-title>
-                ({{ data.item.doc_count }}) {{ data.item.key }}
+                ({{ organizationsMap.get(data.item) }}) {{ data.item }}
               </v-list-tile-title>
             </v-list-tile-content>
           </template>
@@ -179,14 +172,14 @@
                 <!-- <attribute-range/> -->
                 <v-checkbox
                   v-for="code in (searchResultsAttributes[key].codes)"
-                  :key="key + code"
+                  :key="key + code.code"
                   color="black"
                   v-model="filters.attributes"
-                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].label, 'code': code })"
+                  :value="JSON.stringify({ 'type': key, 'unit': searchResultsAttributes[key].attributeUnit ,'typelabel': searchResultsAttributes[key].label, 'code': code.code })"
                   hide-details
                 >
                   <template slot="label">
-                    <div>{{ code | crushNumericString }}</div>
+                    <div>{{ code.code | crushNumericString }} ({{ code.count }})</div>
                   </template>
                 </v-checkbox>
               </v-container>
@@ -201,28 +194,25 @@
     <!-- Search Bar and menu  -->
     <div class="centeralign px-3 mb-5" style="max-width: 46em;">
       <SearchBar
-        v-on:submitSearch="submitSearch()"
+        @submitSearch="submitSearch"
         v-on:clear="submitSearch()"
         :hideSuggestions="hideSearchSuggestions"
         v-model="searchQuery"
         :overlaySuggestions="true"
-        :submittedEntryTypes="this.$route.query.comp.split(',')"
-        @componentsChange="componentsChange"
       ></SearchBar>
       <!-- SEARCH FILTERS PILLS -->
       <v-chip
-        v-for="entryType in selectedEntryTypes"
-        :key="entryType"
+        v-if="filters.entryType"
       >
         <v-avatar left>
           <v-icon small>fas fa-layer-group</v-icon>
         </v-avatar>
-        {{ getComponentName(entryType) }}
-        <div class="v-chip__close"><v-icon right @click="removeComponent(entryType)">cancel</v-icon></div>
+        {{ getComponentName(filters.entryType) }}
+        <div class="v-chip__close"><v-icon right @click="filters.entryType = ''">cancel</v-icon></div>
       </v-chip>
       <v-chip
         text-color="black"
-        v-if="this.filters.children && !!selectedEntryTypes && selectedEntryTypes.length > 0"
+        v-if="this.filters.children && this.filters.entryType"
       >
         <v-avatar left>
           <v-icon small>fas fa-check-square</v-icon>
@@ -232,13 +222,13 @@
       </v-chip>
       <v-chip
         v-for="tag in filters.tags"
-        :key="tag.key"
+        :key="tag"
       >
         <v-avatar left>
           <v-icon small>fas fa-tag</v-icon>
         </v-avatar>
-        {{ tag.key }}
-        <div class="v-chip__close"><v-icon right @click="removeTag(tag.key)">cancel</v-icon></div>
+        {{ tag }}
+        <div class="v-chip__close"><v-icon right @click="removeTag(tag)">cancel</v-icon></div>
       </v-chip>
       <v-chip
         v-if="filters.organization"
@@ -246,7 +236,7 @@
         <v-avatar left>
           <v-icon small>fas fa-university</v-icon>
         </v-avatar>
-        {{ filters.organization.key }}
+        {{ filters.organization }}
         <div class="v-chip__close"><v-icon right @click="filters.organization = ''">cancel</v-icon></div>
       </v-chip>
       <v-chip
@@ -366,9 +356,9 @@
       <!-- Comparison Table Dialog -->
     <v-dialog
       v-model="showComparison"
-      class="dialog-scroll"
       justify="center"
-      max-width="85vw">
+      max-width="85vw"
+      :class="{ 'dialog-scroll': showComparison }">
         <v-card
         class="dialog-scroll">
           <v-card-title style="display: flex; justify-content: space-between;">
@@ -396,7 +386,7 @@
                   <tr
                   v-for="(attribute) in this.comparisonDataDisplay"
                   :key="attribute.name">
-                     <td
+                    <td
                       v-for="(compAtt, position, col) in attribute"
                       :class="changeTableClass(position)"
                       :key="compAtt.name">
@@ -440,6 +430,7 @@ import _ from 'lodash'
 import SearchBar from '../components/SearchBar'
 // import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
+import crush from '../util/scientificToDecimal.js'
 
 export default {
   name: 'SearchPage',
@@ -448,16 +439,11 @@ export default {
     // AttributeRange
   },
   created () {
-    this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
-      this.newSearch()
-    })
-  },
-  mounted () {
     if (this.$route.query.q) {
       this.searchQuery = this.$route.query.q
     }
     if (this.$route.query.comp) {
-      this.$store.commit('setSelectedComponentTypes', { data: this.$route.query.comp.split(',') })
+      this.filters.entryType = this.$route.query.comp
     }
     if (this.$route.query.children) {
       this.filters.children = (this.$route.query.children === 'true')
@@ -474,27 +460,60 @@ export default {
         this.filters.attributes.push(attribute)
       })
     }
+    if (this.$route.query.searchoptions) {
+      this.searchoptions = this.$route.query.searchoptions.split(',')
+      localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
+    }
+  },
+  mounted () {
     this.newSearch()
   },
   beforeRouteUpdate (to, from, next) {
     if (to.query.q) {
       this.searchQuery = to.query.q
+    } else {
+      this.searchQuery = ''
     }
     if (to.query.comp) {
-      this.$store.commit('setSelectedComponentTypes', { data: to.query.comp.split(',') })
+      this.filters.entryType = to.query.comp
+    } else {
+      this.filters.entryType = ''
     }
     if (to.query.children) {
-      this.filters.children = to.query.children
+      this.filters.children = (to.query.children === 'true')
+    } else {
+      this.fitlers.children = false
+    }
+    if (to.query.tags) {
+      this.filters.tags = to.query.tags.split(',')
+    } else {
+      this.filters.tags = []
+    }
+    if (to.query.orgs) {
+      this.filters.organization = to.query.orgs
+    } else {
+      this.filters.organization = ''
+    }
+    if (to.query.attributes) {
+      this.filters.attributes = []
+      to.query.attributes.match(/({.*?})/gm).forEach(attribute => {
+        this.filters.attributes.push(attribute)
+      })
+    } else {
+      this.filters.attributes = []
+    }
+    if (to.query.searchoptions) {
+      this.searchoptions = to.query.searchoptions.split(',')
+      localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
     }
     this.newSearch()
   },
   methods: {
-    componentsChange (data) {
-      this.$store.commit('setSelectedComponentTypes', { data: data })
-    },
     getComponentName (code) {
-      // this.addHashToLocation(code)
       let name = ''
+      if (this.$store.state.componentTypeList === undefined) {
+        this.$store.dispatch('getComponentTypeList')
+      }
       this.$store.state.componentTypeList.forEach(comp => {
         if (comp.componentType === code) {
           name = comp.parentLabel
@@ -504,34 +523,8 @@ export default {
     },
     removeTag (tag) {
       this.filters.tags = this.filters.tags.filter(el => {
-        return el.key !== tag
+        return el !== tag
       })
-    },
-    removeComponent (component) {
-      let filteredEntryTypes = this.$store.getters.getSelectedComponentTypes.filter(el => {
-        return el !== component
-      })
-      this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
-    },
-    naturalSort (data) {
-      function compare (a, b) {
-        var itemA
-        var itemB
-        if (isNaN(parseFloat(a.attributeCodeLabel))) {
-          itemA = a.attributeCodeLabel.toUpperCase()
-          itemB = b.attributeCodeLabel.toUpperCase()
-        } else {
-          itemA = parseFloat(a.attributeCodeLabel)
-          itemB = parseFloat(b.attributeCodeLabel)
-        }
-        if (itemA < itemB) {
-          return -1
-        } else if (itemA > itemB) {
-          return 1
-        }
-        return 0
-      }
-      return data.sort(compare)
     },
     clear () {
       this.filters = {
@@ -539,18 +532,13 @@ export default {
         component: '',
         tags: [],
         organization: '',
-        children: false,
-        tagCondition: 'AND'
+        children: false
       }
     },
     resetOptions () {
       this.searchPageSize = 12
       this.searchSortField = 'searchScore'
       this.searchSortOrder = 'DESC'
-    },
-    deleteComponent (component) {
-      let filteredEntryTypes = _.remove(this.$store.state.componentTypeList, n => n !== component)
-      this.$store.commit('setSelectedComponentTypes', { data: filteredEntryTypes })
     },
     addTag (tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
@@ -575,6 +563,7 @@ export default {
       // Iterate over each returned attribute and make an entry in the dict or add a code if the entry already exists
       attributesAggregation.forEach(el => {
         source = el._source
+        // If the attribute does not exist in the table, create a new entry for it and add the attribute code to the new entry
         if (!that.searchResultsAttributes.hasOwnProperty(source.type)) {
           unit = (that.$store.state.attributeMap[source.type] ? that.$store.state.attributeMap[source.type].attributeUnit : undefined)
           that.searchResultsAttributes[source.type] = {
@@ -582,13 +571,21 @@ export default {
             label: source.typeLabel,
             attributeUnit: unit
           }
-          that.searchResultsAttributes[source.type].codes.push(source.label)
+          that.searchResultsAttributes[source.type].codes.push({ 'code': source.label, 'count': 1 })
           codesMap[source.type] = {}
           codesMap[source.type][source.label] = 0
         } else {
+          // If the attribute is in the table but the attribute code is not, then append the attribute code
           if (!codesMap[source.type].hasOwnProperty(source.label)) {
-            that.searchResultsAttributes[source.type].codes.push(source.label)
+            that.searchResultsAttributes[source.type].codes.push({ 'code': source.label, 'count': 1 })
             codesMap[source.type][source.label] = 0
+          }
+          // If the attribute code is in the table, increment the count
+          else {
+            codesMap[source.type][source.label] = codesMap[source.type][source.label] + 1
+            let objIndex = that.searchResultsAttributes[source.type].codes.findIndex(obj => obj.code === source.label)
+            let count = that.searchResultsAttributes[source.type].codes[objIndex].count
+            that.searchResultsAttributes[source.type].codes[objIndex] = { 'code': source.label, 'count': count + 1 }
           }
         }
       })
@@ -602,12 +599,25 @@ export default {
     getCompTypeLabels (entryTypes) {
       let that = this
       // This gets the labels for each of the entry types by using the codes return from request
+
+      if (that.$store.state.componentTypeList === undefined) {
+        that.$store.dispatch('getComponentTypeList')
+      }
+
       entryTypes.forEach(entryType => {
         entryType['label'] = that.$store.state.componentTypeList.find(element => {
           return entryType.key === element.componentType
         }).parentLabel
       })
       this.componentsList = entryTypes
+
+      if (this.componentsList.length === 0 && this.filters.entryType !== '') {
+        let entryTypeLabel = that.$store.state.componentTypeList.find(element => {
+          return this.filters.entryType === element.componentType
+        }).parentLabel
+
+        this.componentsList.push({ 'doc_count': 0, 'key': this.filters.entryType, 'label': entryTypeLabel })
+      }
     },
     submitSearch () {
       this.comparisonList = []
@@ -617,32 +627,43 @@ export default {
       if (that.searchQueryIsDirty) return
       that.searchQueryIsDirty = true
 
+      let cachedOptions = window.localStorage.getItem('searchOptions')
+
+      let searchFilterOptions = {
+        'canUseNameInSearch': cachedOptions.includes('Name'),
+        'canUseDescriptionInSearch': cachedOptions.includes('Description'),
+        'canUseOrganizationsInSearch': cachedOptions.includes('Organization'),
+        'canUseAttributesInSearch': cachedOptions.includes('Vitals'),
+        'canUseTagsInSearch': cachedOptions.includes('Tags')
+      }
+
       // Default values
       let searchFilters = {
         'query': '',
         'page': 0,
         'pageSize': 12,
-        'componentTypes': [],
+        'componentType': '',
         'includeChildren': true,
         'organization': '',
         'attributes': null,
         'tags': [],
         'sortOrder': '',
-        'sortField': ''
+        'sortField': '',
+        'searchFilterOptions': searchFilterOptions
       }
 
       // Use values from ui if available
       searchFilters.query = (this.searchQuery ? this.searchQuery : searchFilters.query)
       searchFilters.page = (this.searchPage ? this.searchPage : searchFilters.page)
       searchFilters.pageSize = (this.searchPageSize ? this.searchPageSize : searchFilters.pageSize)
-      searchFilters.componentTypes = (this.selectedEntryTypes ? this.selectedEntryTypes : searchFilters.componentTypes)
-      searchFilters.includeChildren = (this.filters.includeChildren ? this.filters.includeChildren : searchFilters.includeChildren)
-      searchFilters.organization = (this.filters.organization ? this.filters.organization.key : searchFilters.organization)
+      searchFilters.componentType = (this.filters.entryType ? this.filters.entryType : searchFilters.componentType)
+      searchFilters.organization = (this.filters.organization ? this.filters.organization : searchFilters.organization)
+      searchFilters.includeChildren = this.filters.children
 
       let tags = []
       if (this.filters.tags != null) {
         this.filters.tags.forEach(tag => {
-          tags.push(tag.key)
+          tags.push(tag)
         })
       }
 
@@ -658,6 +679,8 @@ export default {
         searchFilters.attributes = JSON.stringify(searchFilters.attributes)
       }
 
+      history.pushState({}, '', this.searchUrl())
+
       this.$http
         .post(
           '/openstorefront/api/v2/service/search',
@@ -665,13 +688,22 @@ export default {
         ).then(response => {
           that.searchResults = response.data.hits.hits.map(e => e._source)
           that.totalSearchResults = response.data.hits.total.value
-          that.organizationsList = response.data.aggregations['sterms#by_organization'].buckets
+
+          // Organizations
+          that.organizationsList = []
+          that.organizationsMap.clear()
+
+          response.data.aggregations['sterms#by_organization'].buckets.forEach(el => {
+            that.organizationsList.push(el.key)
+            that.organizationsMap.set(el.key, el.doc_count)
+          })
+
           that.tagsList = response.data.aggregations['sterms#by_tag'].buckets
 
-          var entryTypes = response.data.aggregations['sterms#by_category'].buckets
+          let entryTypes = response.data.aggregations['sterms#by_category'].buckets
           this.getCompTypeLabels(entryTypes)
 
-          var attributesAggregation = response.data.aggregations['nested#by_attribute_type']['top_hits#attribute'].hits.hits
+          let attributesAggregation = response.data.aggregations['nested#by_attribute_type']['top_hits#attribute'].hits.hits
           this.parseAttributesFromSearchResponse(attributesAggregation)
 
           that.searchQueryIsDirty = false
@@ -681,21 +713,8 @@ export default {
           that.searchQueryIsDirty = false
         })
     },
-    getNestedComponentTypes () {
-      this.$http
-        .get(
-          '/openstorefront/api/v1/resource/componenttypes/nested'
-        )
-        .then(response => {
-          this.nestedComponentTypesList = response.data.data
-        })
-    },
     newSearch () {
       this.searchPage = 1
-      this.submitSearch()
-    },
-    searchCategory (category) {
-      this.filters.component = category
       this.submitSearch()
     },
     getNumPages () {
@@ -724,27 +743,15 @@ export default {
       if (attr === null) {
         attr.unit = ''
       }
-      return `${attributeType.description} : ${attr.code} ${attributeType.attributeUnit}`
+      return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
     },
     copyUrlToClipboard () {
-      var urlBeginning
-      window.location.href.match(/(.*?)\?/m).forEach(element => {
-        urlBeginning = element
-      })
-      var urlEnding = '?q=' + this.searchQuery +
-          '&comp=' + this.filters.components.join(',') +
-          '&children=' + this.filters.children.toString() +
-          '&tags=' + this.filters.tags.join(',') +
-          '&orgs=' + this.filters.organization +
-          '&attributes=' + this.filters.attributes.join(',')
-
-      var url = encodeURI(urlBeginning + urlEnding)
+      var url = encodeURI(window.location.origin + window.location.pathname + this.searchUrl())
       var copyText = this.$refs.urlForClipboard
       copyText.value = url
       copyText.select()
       document.execCommand('copy')
       this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
-      // alert('Copied the text: ' + copyText.value)
     },
     getFirstCompType (componentType) {
       var index = componentType.indexOf('>')
@@ -788,14 +795,14 @@ export default {
             }
           }
           if (!this.comparisonDataDisplay[attribute].hasOwnProperty('component' + component)) {
-            this.comparisonDataDisplay[attribute]['component' + component] = '\u2014'
+            this.comparisonDataDisplay[attribute]['component' + component] = '--'
           }
         }
       }
     },
     getAttributeUnit (attributeCompared) {
       for (var attribute in this.searchResultsAttributes) {
-        if (this.searchResultsAttributes[attribute].attributeTypeLabel === attributeCompared && this.searchResultsAttributes[attribute].attributeUnit != null) {
+        if (this.searchResultsAttributes[attribute].label === attributeCompared && this.searchResultsAttributes[attribute].attributeUnit != null) {
           return ' ' + this.searchResultsAttributes[attribute].attributeUnit
         }
       }
@@ -805,7 +812,7 @@ export default {
       for (var attribute in this.comparisonDataDisplay) {
         var counter = 0
         for (var componentAttribute in this.comparisonDataDisplay[attribute]) {
-          if (this.comparisonDataDisplay[attribute][componentAttribute] !== '\u2014' && componentAttribute !== 'name') {
+          if (this.comparisonDataDisplay[attribute][componentAttribute] !== '--' && componentAttribute !== '--') {
             counter++
           }
         }
@@ -834,7 +841,7 @@ export default {
     addDescriptionTableData () {
       this.comparisonDataDisplay.unshift({ name: 'Attributes' })
       for (var emptySpace in this.comparisonList) {
-        this.comparisonDataDisplay[0]['component' + emptySpace] = '\u00A0'
+        this.comparisonDataDisplay[0]['component' + emptySpace] = ''
       }
       this.comparisonDataDisplay.unshift({ name: 'Organization' })
       for (var component in this.comparisonList) {
@@ -867,6 +874,17 @@ export default {
         'top-corner': position === 0,
         'table-column': position !== 'name' && position !== 0
       }
+    },
+    searchUrl () {
+      let searchOptions = window.localStorage.getItem('searchOptions')
+      let url = '#/search?q=' + (this.searchQuery ? this.searchQuery : '') +
+                (this.filters.entryType ? '&comp=' + this.filters.entryType : '') +
+                (this.filters.children ? '&children=' + this.filters.children : '') +
+                (this.filters.organization ? '&organiation=' + this.filters.organization : '') +
+                (this.filters.attributes.length > 0 ? '&attributes=' + JSON.stringify(this.filters.attributes) : '') +
+                (this.filters.tags.length > 0 ? '&tags=' + this.filters.tags.join(',') : '') +
+                '&searchoptions=' + JSON.parse(searchOptions).join(',')
+      return url
     }
   },
   watch: {
@@ -896,9 +914,6 @@ export default {
     },
     searchPage () {
       this.submitSearch()
-    },
-    componentTypeListComputed: function () {
-      this.$store.commit('setSelectedComponentTypes', { data: this.componentTypeListComputed })
     }
   },
   computed: {
@@ -907,28 +922,6 @@ export default {
     },
     hideSearchSuggestions () {
       return this.searchQueryIsDirty || this.searchQuery.length === 0
-    },
-    componentTypeListComputed () {
-      return this.filters.components
-    },
-    entryTypesFilterList () {
-      let combinedList = this.componentsList
-      this.selectedEntryTypes.forEach(el => {
-        if (!combinedList.includes(el)) {
-          combinedList.append(el)
-        }
-      })
-      return combinedList
-    },
-    selectedEntryTypes: {
-      set (entryTypes) {
-        if (this.$store.getters.getSelectedComponentTypes !== entryTypes) {
-          this.$store.commit('setSelectedComponentTypes', { data: entryTypes })
-        }
-      },
-      get () {
-        return this.$store.getters.getSelectedComponentTypes
-      }
     }
   },
   data () {
@@ -936,24 +929,24 @@ export default {
       componentsList: [],
       tagsList: [],
       organizationsList: [],
-      selected: [],
+      organizationsMap: new Map(),
       comparisonList: [],
       comparisonDataHeaders: [],
       comparisonDataDisplay: [],
       showFilters: true,
       showOptions: false,
+      searchoptions: [],
       showHelp: false,
       showComparison: false,
       searchQuery: '',
       attributeQuery: '',
       attributeKeys: [],
       filters: {
-        // For components see computed selectedEntryTypes
         tags: [],
         attributes: [],
         organization: '',
-        children: false,
-        tagCondition: 'AND'
+        entryType: '',
+        children: false
       },
       searchResults: {},
       searchResultsAttributes: {},
