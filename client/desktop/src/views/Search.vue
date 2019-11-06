@@ -64,7 +64,7 @@
         ></v-select>
         <h3>Page Size</h3>
         {{ searchPageSize }}
-        <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
+        <v-slider v-model="searchPageSize" step="4" min="4" thumb-label></v-slider>
         <v-btn block class="primary" @click="resetOptions()">Reset Options</v-btn>
       </div><!-- SEARCH OPTIONS -->
 
@@ -451,6 +451,12 @@ export default {
     this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
       this.newSearch()
     })
+    let sortOrder = JSON.parse(window.localStorage.getItem('searchSortOrder'))
+    let sortField = JSON.parse(window.localStorage.getItem('searchSortField'))
+    let pageSize = JSON.parse(window.localStorage.getItem('searchPageSize'))
+    this.searchSortOrder = (sortOrder ? sortOrder : this.searchSortOrder)
+    this.searchSortField = (sortField ? sortField : this.searchSortField)
+    this.searchPageSize = (pageSize ? pageSize : this.searchPageSize)
   },
   mounted () {
     if (this.$route.query.q) {
@@ -886,12 +892,15 @@ export default {
       }
     }, 500),
     searchSortField () {
+      window.localStorage.setItem('searchSortField', JSON.stringify(this.searchSortField))
       this.newSearch()
     },
     searchSortOrder () {
+      window.localStorage.setItem('searchSortOrder', JSON.stringify(this.searchSortOrder))
       this.newSearch()
     },
     searchPageSize () {
+      window.localStorage.setItem('searchPageSize', JSON.stringify(this.searchPageSize))
       this.newSearch()
     },
     searchPage () {
