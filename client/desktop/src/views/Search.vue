@@ -462,7 +462,6 @@ export default {
     }
     if (this.$route.query.searchoptions) {
       this.searchoptions = this.$route.query.searchoptions.split(',')
-      console.log(this.searchoptions)
       localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
     }
   },
