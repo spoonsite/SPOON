@@ -208,7 +208,7 @@ export default {
           icon: 'question-circle',
           name: 'Help',
           newTab: true,
-          permissions: [] },
+          permissions: [] }
         // { link: '/sme-approval',
         //   icon: 'check',
         //   name: 'SME Approval',
