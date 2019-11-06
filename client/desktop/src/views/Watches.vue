@@ -29,7 +29,7 @@
               </p>
             </v-card-text>
             <v-card-actions>
-              <v-btn color="accent" @click="nav('/')">More Information</v-btn>
+              <v-btn color="accent" :to="`entry-detail/${item.componentId}`">More Information</v-btn>
               <!-- <v-btn color="accent" @click="moreInformation(item.componentId)">More Information</v-btn> -->
             </v-card-actions>
           </v-card>
@@ -48,33 +48,44 @@
 </template>
 
 <script lang="js">
-import router from '../router';
+import router from '../router'
 
 export default {
   name: 'watches-page',
   props: [],
   mounted () {
-    this.getWatches();
+    // need to check if we have the current user
+    if (this.$store.state.currentUser.username) {
+      this.getWatches() 
+    } else {
+      // trigger an update once the user has been fetched
+      this.$store.watch(
+        (state, getters) => state.currentUser,
+        (newValue, oldValue) => {
+          this.getWatches()
+        }
+      )
+    }
   },
   data () {
     return {
       watches: [],
-      loading: false
-    };
+      loading: true
+    }
   },
   methods: {
     nav (url) {
       router.push(url)
     },
     getWatches () {
-      this.loading = true;
+      this.loading = true
       this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
         .then(response => {
           if (response.data && response.data.length > 0) {
-            this.watches = response.data;
+            this.watches = response.data
           }
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
     moreInformation (componentId) {
       router.push({
@@ -82,13 +93,13 @@ export default {
         params: {
           id: componentId
         }
-      });
+      })
     },
     updateClasses (item) {
-      return item.lastUpdateDts > item.lastViewDts ? 'light-green accent-1' : '';
+      return item.lastUpdateDts > item.lastViewDts ? 'light-green accent-1' : ''
     }
   }
-};
+}
 </script>
 
 <style scoped lang="scss">

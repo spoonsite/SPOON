@@ -87,6 +87,8 @@
 			});
 			dataMenu.push({
 				text: 'Entry Templates',
+				hidden: true,
+				disabled: true,
 				permission: ['ADMIN-ENTRYTEMPLATES-PAGE'],
 				handler: function(){
 					actionLoadContent('Entry-Template');

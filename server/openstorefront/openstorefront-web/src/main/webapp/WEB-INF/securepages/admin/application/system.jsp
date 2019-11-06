@@ -1926,41 +1926,6 @@
 											}											
 										});										
 									}									
-								},
-								{
-									xtype: 'tbfill'
-								},
-								{
-									text: 'Restart Application',
-									scale: 'medium',
-									minWidth: '140px',
-									iconCls: 'fa fa-2x fa-repeat icon-button-color-refresh icon-vertical-correction',
-									handler: function(){
-										var grid = this.up('grid');																		
-										
-										Ext.Msg.show({
-											title:'Restart Application?',
-											message: 'Are you sure you want to restart? <br> The application will be unavailable while restarting.',
-											buttons: Ext.Msg.YESNO,
-											icon: Ext.Msg.QUESTION,
-											fn: function(btn) {
-												if (btn === 'yes') {
-													grid.setLoading('Restarting Application...');
-													Ext.Ajax.request({
-														url: 'api/v1/service/application/restart',
-														method: 'POST',
-														callback: function(){
-															grid.setLoading(false);
-														},
-														success: function(){
-															grid.getStore().reload();
-														}											
-													});														
-												} 
-											}
-										});	
-										
-									}																										
 								}
 							]
 						}
