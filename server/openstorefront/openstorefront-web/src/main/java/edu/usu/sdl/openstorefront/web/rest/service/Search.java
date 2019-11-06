@@ -382,7 +382,7 @@ public class Search
 		try {
 			csvWriter.close();
 		} catch (IOException e) {
-			LOG.log(Level.FINER, "CsvWriter failed to close");
+			LOG.log(Level.SEVERE, "CsvWriter failed to close");
 		}
 
 		Response.ResponseBuilder response = Response.ok(writer.toString());

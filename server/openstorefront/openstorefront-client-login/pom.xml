@@ -68,18 +68,22 @@
                             <arguments>run copy</arguments>
                         </configuration>
                     </execution>
-
-                    <!-- <execution>
-                      <id>javascript tests</id>
-                      <goals>
-                        <goal>karma</goal>
-                      </goals>
-                      <configuration>
-                        <karmaConfPath>src/test/javascript/karma.conf.ci.js</karmaConfPath>
-                      </configuration>
-                    </execution> -->
-
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                <filesets>
+                    <fileset>
+                    <directory>../../../client/login/</directory>
+                    <includes>
+                        <include>node_modules/</include>
+                    </includes>
+                    <followSymlinks>false</followSymlinks>
+                    </fileset>
+                </filesets>
+                </configuration>
             </plugin>
         </plugins>
     </build>
