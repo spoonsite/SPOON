@@ -298,7 +298,11 @@
             :src="'/openstorefront/' + item.componentTypeIconUrl"
             style="min-width: 40px; max-height: 40px; margin-right: 15px"
             >
-            <h3 class="headline more-info" @click='moreInformation(item.componentId)'>{{ item.name }}</h3>
+            <h3 class="headline more-info">
+              <router-link :to="'/entry-detail/' + item.componentId">
+                {{ item.name }}
+              </router-link>
+            </h3>
           </div>
           <v-divider></v-divider>
           <div class="item-body">
@@ -482,7 +486,7 @@ export default {
     if (to.query.children) {
       this.filters.children = (to.query.children === 'true')
     } else {
-      this.fitlers.children = false
+      this.filters.children = false
     }
     if (to.query.tags) {
       this.filters.tags = to.query.tags.split(',')
@@ -721,14 +725,6 @@ export default {
       // compute number of pages of data based on page size
       if (this.totalSearchResults % this.searchPageSize === 0) return (this.totalSearchResults / this.searchPageSize) - 1
       return Math.floor(this.totalSearchResults / this.searchPageSize) + 1
-    },
-    moreInformation (componentId) {
-      router.push({
-        name: 'Entry Detail',
-        params: {
-          id: componentId
-        }
-      })
     },
     removeAttributeFilter (attribute) {
       this.filters.attributes.splice(this.filters.attributes.indexOf(attribute), 1)
