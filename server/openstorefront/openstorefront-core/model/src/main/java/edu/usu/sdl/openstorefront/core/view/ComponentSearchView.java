@@ -67,7 +67,8 @@ public class ComponentSearchView
 	private String componentTypeDescription;
 	private String componentIconId;
 	private String componentTypeIconUrl;
-	private Integer averageRating;
+	private float averageRating;
+	private Integer numberOfRatings;
 	private Date releaseDate;
 	private Date approvedDts;
 	private Date lastActivityDts;
@@ -159,11 +160,12 @@ public class ComponentSearchView
 			view.toStandardView(review);
 		}
 		if (reviews.size() > 0) {
-			view.setAverageRating(total / reviews.size());
+			view.setAverageRating((float)total / (float)reviews.size());
 		} else {
 			view.setAverageRating(0);
 		}
 
+		view.setNumberOfRatings(reviews.size());
 		view.setActiveStatus(component.getActiveStatus());
 		view.setCreateUser(component.getCreateUser());
 		view.setUpdateDts(component.getUpdateDts());
@@ -477,7 +479,7 @@ public class ComponentSearchView
 	/**
 	 * @return the averageRating
 	 */
-	public Integer getAverageRating()
+	public float getAverageRating()
 	{
 		return averageRating;
 	}
@@ -485,9 +487,25 @@ public class ComponentSearchView
 	/**
 	 * @param averageRating the averageRating to set
 	 */
-	public void setAverageRating(Integer averageRating)
+	public void setAverageRating(float averageRating)
 	{
 		this.averageRating = averageRating;
+	}
+	
+	/**
+	 * @return the numberOfRatings
+	 */
+	public Integer getNumberOfRatings()
+	{
+		return numberOfRatings;
+	}
+	
+	/**
+	 * @param numberOfRatings the numberOfRatings to set
+	 */
+	public void setNumberOfRatings(int numberOfRatings)
+	{
+		this.numberOfRatings = numberOfRatings;
 	}
 
 	/**

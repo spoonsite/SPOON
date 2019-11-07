@@ -66,39 +66,39 @@
         {{ searchPageSize }}
         <v-slider v-model="searchPageSize" step="5" min="5" thumb-label></v-slider>
         <h2>Display Options</h2>
-        <v-checkbox 
-        v-model="displayOptions.organization" 
-        :label="'Organization'" 
+        <v-checkbox
+        v-model="displayOptions.organization"
+        :label="'Organization'"
         class="checkbox-spacing">
         </v-checkbox>
-        <v-checkbox 
-        v-model="displayOptions.category" 
-        :label="'Category'" 
+        <v-checkbox
+        v-model="displayOptions.category"
+        :label="'Category'"
         class="checkbox-spacing">
         </v-checkbox>
-        <v-checkbox 
-        v-model="displayOptions.tags" 
-        :label="'Tags'" 
+        <v-checkbox
+        v-model="displayOptions.tags"
+        :label="'Tags'"
         class="checkbox-spacing">
         </v-checkbox>
-        <v-checkbox 
-        v-model="displayOptions.userRating" 
-        :label="'Average User Rating'" 
+        <v-checkbox
+        v-model="displayOptions.userRating"
+        :label="'Average User Rating'"
         class="checkbox-spacing">
         </v-checkbox>
-        <v-checkbox 
-        v-model="displayOptions.description" 
-        :label="'Description'" 
+        <v-checkbox
+        v-model="displayOptions.description"
+        :label="'Description'"
         class="checkbox-spacing">
         </v-checkbox>
-        <v-checkbox 
-        v-model="displayOptions.lastUpdated" 
-        :label="'Last Updated'" 
+        <v-checkbox
+        v-model="displayOptions.lastUpdated"
+        :label="'Last Updated'"
         class="checkbox-spacing">
         </v-checkbox>
-        <v-checkbox 
-        v-model="displayOptions.approvalDate" 
-        :label="'Approval Date'" 
+        <v-checkbox
+        v-model="displayOptions.approvalDate"
+        :label="'Approval Date'"
         class="checkbox-spacing">
         </v-checkbox>
         <v-btn block class="primary" @click="resetOptions()">Reset Options</v-btn>
@@ -377,7 +377,9 @@
                   <v-icon style="font-size: 14px; color: rgb(248, 197, 51);">fas fa-tag</v-icon> {{ tag.text }}
                 </span>
               </div>
-              <p v-if="displayOptions.userRating"><star-rating :rating="item.averageRating" :read-only="true" :increment="0.01" :star-size="20"></star-rating></p>
+              <p v-if="displayOptions.userRating">
+                <star-rating :rating="item.averageRating" :read-only="true" :show-rating="false" :increment="0.01" inline :star-size="17"></star-rating>({{ item.numberOfRatings }})
+              </p>
             </div>
             <v-divider></v-divider>
             <div class="item-details">
