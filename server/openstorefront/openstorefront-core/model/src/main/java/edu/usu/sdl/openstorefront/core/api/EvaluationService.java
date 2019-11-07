@@ -18,6 +18,8 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.model.ChecklistAll;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.view.CheckQuestionFilterParams;
+import edu.usu.sdl.openstorefront.core.view.ChecklistQuestionWrapper;
 import java.util.List;
 
 /**
@@ -104,10 +106,11 @@ public interface EvaluationService
 	 * @param evaluation
 	 */
 	public void updateEvaluationToLatestTemplateVersion(Evaluation evaluation);
-	
+
 	/**
 	 * set the updatePending flag for all evaluations with the given templateId
-	 * @param templateId Id of the evaluation template being updated 
+	 *
+	 * @param templateId Id of the evaluation template being updated
 	 * @param evaluationIdsToSkip list of evaluations to skip the update
 	 */
 	public void setEvaluationUpdatePending(String templateId, List<String> evaluationIdsToSkip);
@@ -168,4 +171,12 @@ public interface EvaluationService
 	 */
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void approveEvaluationSummary(String evaluationId);
+
+	/**
+	 * Searches all checklist questions based on filter
+	 *
+	 * @param filterQueryParams
+	 * @return
+	 */
+	public ChecklistQuestionWrapper findChecklistQuestions(CheckQuestionFilterParams filterQueryParams);
 }

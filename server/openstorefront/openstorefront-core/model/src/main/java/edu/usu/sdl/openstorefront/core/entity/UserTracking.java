@@ -43,6 +43,9 @@ public class UserTracking
 		implements ExportImport
 {
 
+	public static final String FIELD_EVENTDTS = "eventDts";
+	public static final String FIELD_TRACK_EVENT_TYPE_CODE = "trackEventTypeCode";
+
 	@PK(generated = true)
 	@NotNull
 	private String trackingId;

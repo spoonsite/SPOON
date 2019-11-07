@@ -15,12 +15,12 @@
  */
 package edu.usu.sdl.openstorefront.web.test.lookup;
 
+import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.ReflectionUtil;
 import edu.usu.sdl.openstorefront.core.entity.LookupEntity;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
-import java.util.Collection;
 import java.util.List;
+import net.sourceforge.stripes.util.ResolverUtil;
 
 /**
  *
@@ -34,8 +34,15 @@ public class FindLookupTest
 	@SuppressWarnings("squid:S1872")
 	protected void runInternalTest()
 	{
-		Collection<Class<?>> entityClasses = DBManager.getInstance().getConnection().getEntityManager().getRegisteredEntities();
-		for (Class entityClass : entityClasses) {
+		ResolverUtil resolverUtil = new ResolverUtil();
+		try {
+			resolverUtil.find(new ResolverUtil.IsA(LookupEntity.class), OpenStorefrontConstant.ENTITY_PACKAGE);
+		} catch (Exception e) {
+			addResultsLines("Unable resolve all lookup classes; may have partial results.");
+		}
+
+		for (Object entityClassObject : resolverUtil.getClasses()) {
+			Class entityClass = (Class) entityClassObject;
 			if (ReflectionUtil.LOOKUP_ENTITY.equals(entityClass.getSimpleName()) == false) {
 				if (ReflectionUtil.isSubLookupEntity(entityClass)) {
 					@SuppressWarnings("unchecked")

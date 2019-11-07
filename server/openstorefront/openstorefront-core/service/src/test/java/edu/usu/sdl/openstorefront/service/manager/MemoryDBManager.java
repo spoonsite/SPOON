@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  * @author kbair
  */
 public class MemoryDBManager
-		extends DBManager
+		extends OrientDBManager
 {
 
 	private static final Logger LOG = Logger.getLogger(MemoryDBManager.class.getName());

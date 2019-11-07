@@ -23,7 +23,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.api.query.WhereClauseGroup;
 import edu.usu.sdl.openstorefront.core.entity.BaseEntity;
 import edu.usu.sdl.openstorefront.core.entity.TestEntity;
-import edu.usu.sdl.openstorefront.service.manager.DBManager;
+import edu.usu.sdl.openstorefront.service.manager.OrientDBManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.testModels.*;
 import java.util.AbstractMap;
@@ -56,7 +56,7 @@ public class OrientPersistenceServiceTest
 		OObjectDatabaseTx mockDatabase = Mockito.mock(OObjectDatabaseTx.class);
 		Mockito.when(mockDatabase.save(Mockito.any(BaseEntity.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArguments()[0]);
 
-		DBManager mockManager = Mockito.mock(DBManager.class);
+		OrientDBManager mockManager = Mockito.mock(OrientDBManager.class);
 		Mockito.when(mockManager.getConnection()).thenReturn(mockDatabase);
 
 		TestParent p1 = new TestParent();
@@ -93,7 +93,7 @@ public class OrientPersistenceServiceTest
 		QueryByExample queryByExample = new QueryByExample(example);
 		String expQuery = "select from TestEntity";
 		Map<String, String> expPrams = new HashMap<>();
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -111,7 +111,7 @@ public class OrientPersistenceServiceTest
 		String expQuery = "select from TestClassWithEnum where  myEnum = :myEnumParam";
 		Map<String, String> expPrams = new HashMap<>();
 		expPrams.put("myEnumParam", "ONE");
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -129,7 +129,7 @@ public class OrientPersistenceServiceTest
 		queryByExample.setQueryType(QueryType.COUNT);
 		String expQuery = "select count(*) from TestEntity";
 		Map<String, String> expPrams = new HashMap<>();
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -148,7 +148,7 @@ public class OrientPersistenceServiceTest
 		queryByExample.setDistinctField("code");
 		String expQuery = "select count(distinct(code)) from TestEntity";
 		Map<String, String> expPrams = new HashMap<>();
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -169,7 +169,7 @@ public class OrientPersistenceServiceTest
 		String expQuery = "select count(*) from TestParent where   child.value = :child1valueParam";
 		Map<String, String> expPrams = new HashMap<>();
 		expPrams.put("child1valueParam", "Test");
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -187,7 +187,7 @@ public class OrientPersistenceServiceTest
 		String expQuery = "select from TestEntity where  code = :codeParam";
 		Map<String, String> expPrams = new HashMap<>();
 		expPrams.put("codeParam", "TestTestEntity");
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -207,7 +207,7 @@ public class OrientPersistenceServiceTest
 		String expQuery = "select from TestParent where   child.value = :child1valueParam";
 		Map<String, String> expPrams = new HashMap<>();
 		expPrams.put("child1valueParam", "This is a Test");
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -229,7 +229,7 @@ public class OrientPersistenceServiceTest
 		Map<String, Object> expPrams = new HashMap<>();
 		expPrams.put("codeParam", "A%");
 
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		Assert.assertEquals(expPrams, result.getValue());
 	}
@@ -256,7 +256,7 @@ public class OrientPersistenceServiceTest
 		Map<String, Object> expPrams = new HashMap<>();
 		expPrams.put("codeParam", "A%");
 
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		Assert.assertEquals(expPrams, result.getValue());
 	}
@@ -285,7 +285,7 @@ public class OrientPersistenceServiceTest
 		Map<String, Object> expPrams = new HashMap<>();
 		expPrams.put("activeStatusParam", "A");
 		expPrams.put("codeParam", "%Test%");
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		Assert.assertEquals(expPrams, result.getValue());
 	}
@@ -313,7 +313,7 @@ public class OrientPersistenceServiceTest
 		expPrams.put("codeParam1", "CODE2");
 		expPrams.put("codeParam2", "CODE3");
 
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		Assert.assertEquals(expPrams, result.getValue());
 	}
@@ -348,7 +348,7 @@ public class OrientPersistenceServiceTest
 		expPrams.put("codeParam1", "CODE2");
 		expPrams.put("codeParam2", "CODE3");
 
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		Assert.assertEquals(expPrams, result.getValue());
 	}
@@ -383,7 +383,7 @@ public class OrientPersistenceServiceTest
 		expPrams.put("codeParam1", "CODE2");
 		expPrams.put("codeParam2", "CODE3");
 
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		Assert.assertEquals(expPrams, result.getValue());
 	}
@@ -401,7 +401,7 @@ public class OrientPersistenceServiceTest
 		queryByExample.setGroupBy(groupByExample);
 
 		String expQuery = "select from TestEntity group by  code";
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(new HashMap<>(), result.getValue());
 	}
@@ -418,7 +418,7 @@ public class OrientPersistenceServiceTest
 		groupByExample.setCode(QueryByExample.STRING_FLAG);
 		queryByExample.setOrderBy(groupByExample);
 		String expQuery = "select from TestEntity order by  code ASC";
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(new HashMap<>(), result.getValue());
 	}
@@ -434,7 +434,7 @@ public class OrientPersistenceServiceTest
 		queryByExample.setFirstResult(10);
 		queryByExample.setMaxResults(100);
 		String expQuery = "select from TestEntity SKIP 10 LIMIT 100";
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(new HashMap<>(), result.getValue());
 	}
@@ -449,7 +449,7 @@ public class OrientPersistenceServiceTest
 		QueryByExample queryByExample = new QueryByExample(new TestEntity());
 		queryByExample.setTimeout(1000);
 		String expQuery = "select from TestEntity TIMEOUT 1000 RETURN";
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(new HashMap<>(), result.getValue());
 	}
@@ -464,7 +464,7 @@ public class OrientPersistenceServiceTest
 		QueryByExample queryByExample = new QueryByExample(new TestEntity());
 		queryByExample.setParallelQuery(true);
 		String expQuery = "select from TestEntity PARALLEL ";
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(new HashMap<>(), result.getValue());
 	}
@@ -505,7 +505,7 @@ public class OrientPersistenceServiceTest
 		QueryByExample queryByExample = new QueryByExample(example);
 		queryByExample.getExtraWhereCauses().add(group);
 
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -568,7 +568,7 @@ public class OrientPersistenceServiceTest
 		QueryByExample queryByExample = new QueryByExample(example);
 		queryByExample.getExtraWhereCauses().add(outerGroup);
 
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -628,7 +628,7 @@ public class OrientPersistenceServiceTest
 		queryByExample.getExtraWhereCauses().add(group1);
 		queryByExample.getExtraWhereCauses().add(group2);
 
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -663,7 +663,7 @@ public class OrientPersistenceServiceTest
 		queryByExample.getExtraWhereCauses().add(extraItem1);
 		queryByExample.getExtraWhereCauses().add(extraItem2);
 
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}
@@ -683,7 +683,7 @@ public class OrientPersistenceServiceTest
 		String expQuery = "delete from TestEntity where  code = :codeParam";
 		Map<String, String> expPrams = new HashMap<>();
 		expPrams.put("codeParam", "TEST");
-		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(DBManager.class)).generateQuery(queryByExample);
+		AbstractMap.SimpleEntry<String, Map<String, Object>> result = new OrientPersistenceService(Mockito.mock(OrientDBManager.class)).generateQuery(queryByExample);
 		Assert.assertEquals(expQuery, result.getKey());
 		assertMapEquals(expPrams, result.getValue());
 	}

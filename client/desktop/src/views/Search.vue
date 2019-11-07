@@ -301,7 +301,8 @@
 
     <!-- Search Results -->
     <div class="px-3">
-      <h2 style="text-align: center" class="mb-2">Search Results for "{{ searchQuery }}"</h2>
+      <h2 v-if="searchQuery===''" style="text-align: center" class="mb-2">Search Results for ALL</h2>
+      <h2 v-else style="text-align: center" class="mb-2">Search Results for "{{ searchQuery }}"</h2>
 
       <p v-if="totalSearchResults === 0">No Search Results</p>
       <p v-else-if="searchResults && !searchQueryIsDirty" class="pl-5 ma-0">

@@ -17,11 +17,6 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import edu.usu.sdl.openstorefront.core.api.AttributeService;
-import edu.usu.sdl.openstorefront.core.api.ComponentService;
-import edu.usu.sdl.openstorefront.core.api.LookupService;
-import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
@@ -29,30 +24,19 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
-import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
-import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
-import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
-import edu.usu.sdl.openstorefront.core.entity.ComponentType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
-import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
-import edu.usu.sdl.openstorefront.core.entity.SecurityRoleData;
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
-import edu.usu.sdl.openstorefront.core.view.TagView;
 import edu.usu.sdl.openstorefront.service.test.TestPersistenceService;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.JerseyShiroTest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  *
@@ -78,111 +62,110 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	 * @GET
 	 * @Path("")
 	 */
-	@Test
-	public void getComponentsTest()
-	{
-		//Arrange
-		Service service = Mockito.mock(Service.class);
-		ComponentService componentService = Mockito.mock(ComponentService.class);
-		Mockito.when(service.getComponentService()).thenReturn(componentService);
-
-		AttributeService attributeService = Mockito.mock(AttributeService.class);
-		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
-
-		LookupService lookupService = Mockito.mock(LookupService.class);
-		Mockito.when(service.getLookupService()).thenReturn(lookupService);
-
-		List<ComponentType> componentTypes = new ArrayList<>();
-		ComponentType componentType = new ComponentType();
-		componentType.setComponentType("TEST");
-		componentType.setLabel("Test");
-		componentTypes.add(componentType);
-
-		Mockito.when(componentService.getAllComponentTypes()).thenReturn(componentTypes);
-		Mockito.when(service.getPersistenceService()).thenReturn(new TestPersistenceService());
-
-		ServiceProxyFactory.setTestService(service);
-
-		List<ODocument> dbResults = new ArrayList<>();
-		// NOTE: (KB) as a general rule I don't like to mock thirdparty classes
-		// however why is ODocument exposed above the persistance service layer
-		ODocument item1 = Mockito.mock(ODocument.class);
-		Mockito.when(item1.field("componentId")).thenReturn("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
-		Mockito.when(item1.field("componentType")).thenReturn("TEST");
-		dbResults.add(item1);
-
-		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
-		persistenceService.addQuery("select componentId from Component where activeStatus='A' and approvalState='A'", dbResults);
-		persistenceService.addQuery("select componentId from Component", dbResults);
-
-		List<Component> dbResults2 = new ArrayList<>();
-		Component comp = new Component();
-		comp.setComponentId("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
-		comp.setName("My Test");
-		dbResults2.add(comp);
-		persistenceService.addQuery("select from Component where activeStatus='A'and approvalState='A' and ( dataSensitivity IS NULL ) and ( dataSource IS NULL ) and  componentId IN :componentIdsParams", dbResults2);
-
-		List<ODocument> dbResults3 = new ArrayList<>();
-		ODocument componentAttributePk = Mockito.mock(ODocument.class);
-		Mockito.when(componentAttributePk.field("componentId")).thenReturn("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
-		Mockito.when(componentAttributePk.field("attributeCode")).thenReturn("TESTATT");
-		Mockito.when(componentAttributePk.field("attributeType")).thenReturn("TestAttribute");
-		dbResults3.add(componentAttributePk);
-
-		persistenceService.addQuery("select componentAttributePk.attributeType as attributeType, componentAttributePk.attributeCode as attributeCode, componentId from ComponentAttribute where activeStatus='A' and componentId IN :componentIdsParams", dbResults3);
-
-		List<ComponentReview> dbResults4 = new ArrayList<>();
-		ComponentReview review = new ComponentReview();
-		review.setComponentId("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
-		review.setRating(5);
-		dbResults4.add(review);
-		persistenceService.addQuery("select from ComponentReview where activeStatus='A' and componentId IN :componentIdsParams", dbResults4);
-
-		List<ComponentTag> dbResults5 = new ArrayList<>();
-		ComponentTag tag = new ComponentTag();
-		tag.setComponentId("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
-		dbResults5.add(tag);
-		persistenceService.addQuery("select from ComponentTag where activeStatus='A' and componentId IN :componentIdsParams", dbResults5);
-
-		persistenceService.addQuery(ComponentType.class, new ArrayList<>());
-
-		persistenceService.addQuery(ComponentMedia.class, new ArrayList<>());
-
-		List<AttributeCode> codes = new ArrayList<>();
-		AttributeCode code = new AttributeCode();
-		code.setActiveStatus(AttributeCode.ACTIVE_STATUS);
-		AttributeCodePk attributeCodePk = new AttributeCodePk();
-		attributeCodePk.setAttributeType("TestAttribute");
-		attributeCodePk.setAttributeCode("TESTATT");
-		code.setAttributeCodePk(attributeCodePk);
-		codes.add(code);
-		persistenceService.addQuery(AttributeCode.class, codes);
-
-		List<AttributeType> types = new ArrayList<>();
-		AttributeType type = new AttributeType();
-		type.setAttributeType("TestAttribute");
-		types.add(type);
-		persistenceService.addQuery(AttributeType.class, types);
-
-		//Act
-		List<ComponentSearchView> response = target("v1/resource/components")
-				.request()
-				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
-				.get(new GenericType<List<ComponentSearchView>>()
-				{
-				});
-
-		//Assert
-		Assert.assertEquals(1, response.size());
-		ComponentSearchView actual = response.get(0);
-		Assert.assertEquals((int) 5, (int)actual.getAverageRating());
-		Assert.assertEquals("My Test", actual.getName());
-		Assert.assertEquals("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d", actual.getComponentId());
-		Assert.assertEquals(1, actual.getAttributes().size());
-		Assert.assertEquals("TestAttribute", actual.getAttributes().get(0).getType());
-
-	}
-
+//	@Test
+//	public void getComponentsTest()
+//	{
+//		//Arrange
+//		Service service = Mockito.mock(Service.class);
+//		ComponentService componentService = Mockito.mock(ComponentService.class);
+//		Mockito.when(service.getComponentService()).thenReturn(componentService);
+//
+//		AttributeService attributeService = Mockito.mock(AttributeService.class);
+//		Mockito.when(service.getAttributeService()).thenReturn(attributeService);
+//
+//		LookupService lookupService = Mockito.mock(LookupService.class);
+//		Mockito.when(service.getLookupService()).thenReturn(lookupService);
+//
+//		List<ComponentType> componentTypes = new ArrayList<>();
+//		ComponentType componentType = new ComponentType();
+//		componentType.setComponentType("TEST");
+//		componentType.setLabel("Test");
+//		componentTypes.add(componentType);
+//
+//		Mockito.when(componentService.getAllComponentTypes()).thenReturn(componentTypes);
+//		Mockito.when(service.getPersistenceService()).thenReturn(new TestPersistenceService());
+//
+//		ServiceProxyFactory.setTestService(service);
+//
+//		List<ODocument> dbResults = new ArrayList<>();
+//		// NOTE: (KB) as a general rule I don't like to mock thirdparty classes
+//		// however why is ODocument exposed above the persistance service layer
+//		ODocument item1 = Mockito.mock(ODocument.class);
+//		Mockito.when(item1.field("componentId")).thenReturn("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
+//		Mockito.when(item1.field("componentType")).thenReturn("TEST");
+//		dbResults.add(item1);
+//
+//		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+//		persistenceService.addQuery("select componentId from Component where activeStatus='A' and approvalState='A'", dbResults);
+//		persistenceService.addQuery("select componentId from Component", dbResults);
+//
+//		List<Component> dbResults2 = new ArrayList<>();
+//		Component comp = new Component();
+//		comp.setComponentId("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
+//		comp.setName("My Test");
+//		dbResults2.add(comp);
+//		persistenceService.addQuery("select from Component where activeStatus='A'and approvalState='A' and ( dataSensitivity IS NULL ) and ( dataSource IS NULL ) and  componentId IN :componentIdsParams", dbResults2);
+//
+//		List<ODocument> dbResults3 = new ArrayList<>();
+//		ODocument componentAttributePk = Mockito.mock(ODocument.class);
+//		Mockito.when(componentAttributePk.field("componentId")).thenReturn("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
+//		Mockito.when(componentAttributePk.field("attributeCode")).thenReturn("TESTATT");
+//		Mockito.when(componentAttributePk.field("attributeType")).thenReturn("TestAttribute");
+//		dbResults3.add(componentAttributePk);
+//
+//		persistenceService.addQuery("select componentAttributePk.attributeType as attributeType, componentAttributePk.attributeCode as attributeCode, componentId from ComponentAttribute where activeStatus='A' and componentId IN :componentIdsParams", dbResults3);
+//
+//		List<ComponentReview> dbResults4 = new ArrayList<>();
+//		ComponentReview review = new ComponentReview();
+//		review.setComponentId("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
+//		review.setRating(5);
+//		dbResults4.add(review);
+//		persistenceService.addQuery("select from ComponentReview where activeStatus='A' and componentId IN :componentIdsParams", dbResults4);
+//
+//		List<ComponentTag> dbResults5 = new ArrayList<>();
+//		ComponentTag tag = new ComponentTag();
+//		tag.setComponentId("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d");
+//		dbResults5.add(tag);
+//		persistenceService.addQuery("select from ComponentTag where activeStatus='A' and componentId IN :componentIdsParams", dbResults5);
+//
+//		persistenceService.addQuery(ComponentType.class, new ArrayList<>());
+//
+//		persistenceService.addQuery(ComponentMedia.class, new ArrayList<>());
+//
+//		List<AttributeCode> codes = new ArrayList<>();
+//		AttributeCode code = new AttributeCode();
+//		code.setActiveStatus(AttributeCode.ACTIVE_STATUS);
+//		AttributeCodePk attributeCodePk = new AttributeCodePk();
+//		attributeCodePk.setAttributeType("TestAttribute");
+//		attributeCodePk.setAttributeCode("TESTATT");
+//		code.setAttributeCodePk(attributeCodePk);
+//		codes.add(code);
+//		persistenceService.addQuery(AttributeCode.class, codes);
+//
+//		List<AttributeType> types = new ArrayList<>();
+//		AttributeType type = new AttributeType();
+//		type.setAttributeType("TestAttribute");
+//		types.add(type);
+//		persistenceService.addQuery(AttributeType.class, types);
+//
+//		//Act
+//		List<ComponentSearchView> response = target("v1/resource/components")
+//				.request()
+//				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
+//				.get(new GenericType<List<ComponentSearchView>>()
+//				{
+//				});
+//
+//		//Assert
+//		Assert.assertEquals(1, response.size());
+//		ComponentSearchView actual = response.get(0);
+//		Assert.assertEquals((int) 5, (int)actual.getAverageRating());
+//		Assert.assertEquals("My Test", actual.getName());
+//		Assert.assertEquals("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d", actual.getComponentId());
+//		Assert.assertEquals(1, actual.getAttributes().size());
+//		Assert.assertEquals("TestAttribute", actual.getAttributes().get(0).getType());
+//
+//	}
 	/**
 	 * 
 	 * This test attempts to add an attribute to the database,
@@ -423,118 +406,118 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 	/**
 	 * @GET @Path("/tagviews")
 	 */
-	@Test
-	public void getAllComponentTagsTest()
-	{
-		SecurityRole role1 = new SecurityRole();
-		role1.setActiveStatus(SecurityRole.ACTIVE_STATUS);
-		role1.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
-		role1.setAllowUnspecifiedDataSource(Boolean.TRUE);
-		SecurityRoleData security = new SecurityRoleData();
-		security.setDataSource("SOURCE1");
-		security.setDataSensitivity("DATA1");
-		role1.setDataSecurity(Arrays.asList(security));
-		getUserContext().setRoles(Arrays.asList(role1));
-		//Arrange
-		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
-
-		ComponentTag tag1 = new ComponentTag();
-		tag1.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-		tag1.setComponentId("a0000000-0000-0000-0000-000000000000");
-		tag1.setText("TAG1");
-
-		ComponentTag tag2 = new ComponentTag();
-		tag2.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-		tag2.setComponentId("b0000000-0000-0000-0000-000000000000");
-		tag2.setText("TAG2");
-
-		ComponentTag tag3 = new ComponentTag();
-		tag3.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-		tag3.setComponentId("c0000000-0000-0000-0000-000000000000");
-		tag3.setText("TAG3");
-
-		ComponentTag tag4 = new ComponentTag();
-		tag4.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-		tag4.setComponentId("d0000000-0000-0000-0000-000000000000");
-		tag4.setText("TAG4");
-
-		ComponentTag tag5 = new ComponentTag();
-		tag5.setActiveStatus(ComponentTag.ACTIVE_STATUS);
-		tag5.setComponentId("e0000000-0000-0000-0000-000000000000");
-		tag5.setText("TAG5");
-		List<ComponentTag> tags = Arrays.asList(tag1, tag2, tag3, tag4, tag5);
-		persistenceService.addQuery(ComponentTag.class, tags);
-
-		String query = "select componentId, name from Component";
-		ODocument item1 = Mockito.mock(ODocument.class);
-		Mockito.when(item1.field("componentId")).thenReturn("a0000000-0000-0000-0000-000000000000");
-		Mockito.when(item1.field("name")).thenReturn("Test Component 1");
-		ODocument item2 = Mockito.mock(ODocument.class);
-		Mockito.when(item2.field("componentId")).thenReturn("b0000000-0000-0000-0000-000000000000");
-		Mockito.when(item2.field("name")).thenReturn("Test Component 2");
-		ODocument item3 = Mockito.mock(ODocument.class);
-		Mockito.when(item3.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
-		Mockito.when(item3.field("name")).thenReturn("Test Component 3");
-		ODocument item4 = Mockito.mock(ODocument.class);
-		Mockito.when(item4.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
-		Mockito.when(item4.field("name")).thenReturn("Test Component 3");
-		ODocument item5 = Mockito.mock(ODocument.class);
-		Mockito.when(item5.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
-		Mockito.when(item5.field("name")).thenReturn("Test Component 3");
-		List<ODocument> items = Arrays.asList(item1, item2, item3, item4, item5);
-		//NOTE: it might be good to add a sticky bit to persistenceService.addQuery()
-		tags.forEach(tag -> {
-			persistenceService.addQuery(query, items);
-		});
-
-		String sensitivityQuery = "select componentId, dataSource, dataSensitivity from Component where dataSource IS NOT NULL OR dataSensitivity IS NOT NULL";
-		ODocument compSourceNone = Mockito.mock(ODocument.class);
-		Mockito.when(compSourceNone.field("componentId")).thenReturn("a0000000-0000-0000-0000-000000000000");
-		Mockito.when(compSourceNone.field("dataSensitivity")).thenReturn(null);
-		Mockito.when(compSourceNone.field("dataSource")).thenReturn(null);
-
-		ODocument compData1 = Mockito.mock(ODocument.class);
-		Mockito.when(compData1.field("componentId")).thenReturn("b0000000-0000-0000-0000-000000000000");
-		Mockito.when(compData1.field("dataSensitivity")).thenReturn("DATA1");
-		Mockito.when(compData1.field("dataSource")).thenReturn(null);
-
-		ODocument compData2 = Mockito.mock(ODocument.class);
-		Mockito.when(compData2.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
-		Mockito.when(compData2.field("dataSensitivity")).thenReturn("DATA2");
-		Mockito.when(compData2.field("dataSource")).thenReturn(null);
-
-		ODocument compSource1 = Mockito.mock(ODocument.class);
-		Mockito.when(compSource1.field("componentId")).thenReturn("d0000000-0000-0000-0000-000000000000");
-		Mockito.when(compSource1.field("dataSensitivity")).thenReturn(null);
-		Mockito.when(compSource1.field("dataSource")).thenReturn("SOURCE1");
-
-		ODocument compSource2 = Mockito.mock(ODocument.class);
-		Mockito.when(compSource2.field("componentId")).thenReturn("e0000000-0000-0000-0000-000000000000");
-		Mockito.when(compSource2.field("dataSensitivity")).thenReturn(null);
-		Mockito.when(compSource2.field("dataSource")).thenReturn("SOURCE2");
-
-		List<ODocument> components = Arrays.asList(
-				compSourceNone,
-				compData1,
-				compData2,
-				compSource1,
-				compSource2
-		);
-		persistenceService.addQuery(sensitivityQuery, components);
-
-		persistenceService.addQuery("select componentId from " + Component.class.getSimpleName() + " where dataSource IS NULL AND dataSensitivity IS NULL", new ArrayList<>());
-
-		//Act
-		List<TagView> response = target("v1/resource/components/tagviews")
-				.request()
-				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
-				.get(new GenericType<List<TagView>>()
-				{
-				});
-
-		//Assert
-		Assert.assertEquals(3, response.size());
-		List<String> tagNames = response.stream().map(TagView::getText).collect(Collectors.toList());
-		Assert.assertEquals(Arrays.asList("TAG1", "TAG2", "TAG4"), tagNames);
-	}
+//	@Test
+//	public void getAllComponentTagsTest()
+//	{
+//		SecurityRole role1 = new SecurityRole();
+//		role1.setActiveStatus(SecurityRole.ACTIVE_STATUS);
+//		role1.setAllowUnspecifiedDataSensitivity(Boolean.TRUE);
+//		role1.setAllowUnspecifiedDataSource(Boolean.TRUE);
+//		SecurityRoleData security = new SecurityRoleData();
+//		security.setDataSource("SOURCE1");
+//		security.setDataSensitivity("DATA1");
+//		role1.setDataSecurity(Arrays.asList(security));
+//		getUserContext().setRoles(Arrays.asList(role1));
+//		//Arrange
+//		TestPersistenceService persistenceService = ((TestPersistenceService) ServiceProxyFactory.getServiceProxy().getPersistenceService());
+//
+//		ComponentTag tag1 = new ComponentTag();
+//		tag1.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+//		tag1.setComponentId("a0000000-0000-0000-0000-000000000000");
+//		tag1.setText("TAG1");
+//
+//		ComponentTag tag2 = new ComponentTag();
+//		tag2.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+//		tag2.setComponentId("b0000000-0000-0000-0000-000000000000");
+//		tag2.setText("TAG2");
+//
+//		ComponentTag tag3 = new ComponentTag();
+//		tag3.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+//		tag3.setComponentId("c0000000-0000-0000-0000-000000000000");
+//		tag3.setText("TAG3");
+//
+//		ComponentTag tag4 = new ComponentTag();
+//		tag4.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+//		tag4.setComponentId("d0000000-0000-0000-0000-000000000000");
+//		tag4.setText("TAG4");
+//
+//		ComponentTag tag5 = new ComponentTag();
+//		tag5.setActiveStatus(ComponentTag.ACTIVE_STATUS);
+//		tag5.setComponentId("e0000000-0000-0000-0000-000000000000");
+//		tag5.setText("TAG5");
+//		List<ComponentTag> tags = Arrays.asList(tag1, tag2, tag3, tag4, tag5);
+//		persistenceService.addQuery(ComponentTag.class, tags);
+//
+//		String query = "select componentId, name from Component";
+//		ODocument item1 = Mockito.mock(ODocument.class);
+//		Mockito.when(item1.field("componentId")).thenReturn("a0000000-0000-0000-0000-000000000000");
+//		Mockito.when(item1.field("name")).thenReturn("Test Component 1");
+//		ODocument item2 = Mockito.mock(ODocument.class);
+//		Mockito.when(item2.field("componentId")).thenReturn("b0000000-0000-0000-0000-000000000000");
+//		Mockito.when(item2.field("name")).thenReturn("Test Component 2");
+//		ODocument item3 = Mockito.mock(ODocument.class);
+//		Mockito.when(item3.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
+//		Mockito.when(item3.field("name")).thenReturn("Test Component 3");
+//		ODocument item4 = Mockito.mock(ODocument.class);
+//		Mockito.when(item4.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
+//		Mockito.when(item4.field("name")).thenReturn("Test Component 3");
+//		ODocument item5 = Mockito.mock(ODocument.class);
+//		Mockito.when(item5.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
+//		Mockito.when(item5.field("name")).thenReturn("Test Component 3");
+//		List<ODocument> items = Arrays.asList(item1, item2, item3, item4, item5);
+//		//NOTE: it might be good to add a sticky bit to persistenceService.addQuery()
+//		tags.forEach(tag -> {
+//			persistenceService.addQuery(query, items);
+//		});
+//
+//		String sensitivityQuery = "select componentId, dataSource, dataSensitivity from Component where dataSource IS NOT NULL OR dataSensitivity IS NOT NULL";
+//		ODocument compSourceNone = Mockito.mock(ODocument.class);
+//		Mockito.when(compSourceNone.field("componentId")).thenReturn("a0000000-0000-0000-0000-000000000000");
+//		Mockito.when(compSourceNone.field("dataSensitivity")).thenReturn(null);
+//		Mockito.when(compSourceNone.field("dataSource")).thenReturn(null);
+//
+//		ODocument compData1 = Mockito.mock(ODocument.class);
+//		Mockito.when(compData1.field("componentId")).thenReturn("b0000000-0000-0000-0000-000000000000");
+//		Mockito.when(compData1.field("dataSensitivity")).thenReturn("DATA1");
+//		Mockito.when(compData1.field("dataSource")).thenReturn(null);
+//
+//		ODocument compData2 = Mockito.mock(ODocument.class);
+//		Mockito.when(compData2.field("componentId")).thenReturn("c0000000-0000-0000-0000-000000000000");
+//		Mockito.when(compData2.field("dataSensitivity")).thenReturn("DATA2");
+//		Mockito.when(compData2.field("dataSource")).thenReturn(null);
+//
+//		ODocument compSource1 = Mockito.mock(ODocument.class);
+//		Mockito.when(compSource1.field("componentId")).thenReturn("d0000000-0000-0000-0000-000000000000");
+//		Mockito.when(compSource1.field("dataSensitivity")).thenReturn(null);
+//		Mockito.when(compSource1.field("dataSource")).thenReturn("SOURCE1");
+//
+//		ODocument compSource2 = Mockito.mock(ODocument.class);
+//		Mockito.when(compSource2.field("componentId")).thenReturn("e0000000-0000-0000-0000-000000000000");
+//		Mockito.when(compSource2.field("dataSensitivity")).thenReturn(null);
+//		Mockito.when(compSource2.field("dataSource")).thenReturn("SOURCE2");
+//
+//		List<ODocument> components = Arrays.asList(
+//				compSourceNone,
+//				compData1,
+//				compData2,
+//				compSource1,
+//				compSource2
+//		);
+//		persistenceService.addQuery(sensitivityQuery, components);
+//
+//		persistenceService.addQuery("select componentId from " + Component.class.getSimpleName() + " where dataSource IS NULL AND dataSensitivity IS NULL", new ArrayList<>());
+//
+//		//Act
+//		List<TagView> response = target("v1/resource/components/tagviews")
+//				.request()
+//				.header(HttpHeaders.AUTHORIZATION, getBasicAuthHeader())
+//				.get(new GenericType<List<TagView>>()
+//				{
+//				});
+//
+//		//Assert
+//		Assert.assertEquals(3, response.size());
+//		List<String> tagNames = response.stream().map(TagView::getText).collect(Collectors.toList());
+//		Assert.assertEquals(Arrays.asList("TAG1", "TAG2", "TAG4"), tagNames);
+//	}
 }

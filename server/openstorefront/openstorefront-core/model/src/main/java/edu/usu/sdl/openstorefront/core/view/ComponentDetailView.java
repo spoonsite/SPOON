@@ -138,9 +138,6 @@ public class ComponentDetailView
 	@DataType(ComponentTag.class)
 	private List<ComponentTag> tags = new ArrayList<>();
 
-	@DataType(ComponentMetadataView.class)
-	private List<ComponentMetadataView> metadata = new ArrayList<>();
-
 	@DataType(ComponentMediaView.class)
 	private List<ComponentMediaView> componentMedia = new ArrayList<>();
 
@@ -178,7 +175,6 @@ public class ComponentDetailView
 		detailView.setReviews(ComponentReviewView.toViewListAll(componentAll.getReviews()));
 		detailView.setQuestions(ComponentQuestionView.toViewListAll(componentAll.getQuestions()));
 		detailView.setDependencies(ComponentExternalDependencyView.toViewList(componentAll.getExternalDependencies()));
-		detailView.setMetadata(ComponentMetadataView.toViewList(componentAll.getMetadata()));
 		detailView.setTags(componentAll.getTags());
 		detailView.setEvaluation(ComponentEvaluationView.toViewFromStorage(componentAll.getEvaluationSections()));
 		detailView.setFullEvaluations(evaluations);
@@ -215,9 +211,9 @@ public class ComponentDetailView
 		}
 		approvalStateLabel = TranslateUtil.translate(ApprovalStatus.class, component.getApprovalState());
 		Service service = ServiceProxyFactory.getServiceProxy();
-		
+
 		componentTypeLabel = service.getComponentService().getComponentTypeParentsString(componentType, true);
-		
+
 		componentIconId = service.getComponentService().resolveComponentIcon(componentId);
 		componentTypeIconUrl = service.getComponentService().resolveComponentTypeIcon(componentType);
 
@@ -250,7 +246,6 @@ public class ComponentDetailView
 		this.toStandardViewBaseEntities(tags);
 		this.toStandardView(questions);
 		this.toStandardView(attributes);
-		this.toStandardView(metadata);
 		this.toStandardView(componentMedia);
 		this.toStandardView(contacts);
 		this.toStandardView(resources);
@@ -391,16 +386,6 @@ public class ComponentDetailView
 	public void setAttributes(List<ComponentAttributeView> attributes)
 	{
 		this.attributes = attributes;
-	}
-
-	public List<ComponentMetadataView> getMetadata()
-	{
-		return metadata;
-	}
-
-	public void setMetadata(List<ComponentMetadataView> metadata)
-	{
-		this.metadata = metadata;
 	}
 
 	public List<ComponentMediaView> getComponentMedia()
