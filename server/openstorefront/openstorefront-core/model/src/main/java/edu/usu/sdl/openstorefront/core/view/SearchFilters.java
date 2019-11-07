@@ -18,6 +18,7 @@ package edu.usu.sdl.openstorefront.core.view;
 import java.util.List;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
@@ -46,17 +47,19 @@ public class SearchFilters {
     @QueryParam("page")
 	@DefaultValue("0")
     @Min(0)
+	@NotNull
     private int page;
 
 	@ConsumeField
     @QueryParam("pageSize")
 	@DefaultValue("20")
     @Min(0)
+	@NotNull
     private int pageSize;
 
 	@ConsumeField
     @QueryParam("componentTypes")
-    private List<String> componentTypes;
+    private String componentType;
 
 	@ConsumeField
     @QueryParam("includeChildren")
@@ -76,11 +79,15 @@ public class SearchFilters {
 
 	@ConsumeField
 	@QueryParam("sortOrder")
+	@NotNull
 	private String sortOrder;
 
 	@ConsumeField
 	@QueryParam("sortField")
+	@NotNull
 	private String sortField;
+
+	private SearchFilterOptions searchFilterOptions;
 
 	private List<AttributeSearchType> attributeSearchType;
 
@@ -117,12 +124,12 @@ public class SearchFilters {
 		this.pageSize = pageSize;
 	}
 
-	public List<String> getComponentTypes() {
-		return componentTypes;
+	public String getComponentType() {
+		return componentType;
 	}
 
-	public void setComponentTypes(List<String> componentTypes) {
-		this.componentTypes = componentTypes;
+	public void setComponentType(String componentType) {
+		this.componentType = componentType;
 	}
 
 	public Boolean getIncludeChildren() {
@@ -179,5 +186,13 @@ public class SearchFilters {
 
 	public void setAttributeSearchType(List<AttributeSearchType> attributeSearchType) {
 		this.attributeSearchType = attributeSearchType;
+	}
+
+	public SearchFilterOptions getSearchFilterOptions() {
+		return searchFilterOptions;
+	}
+
+	public void setSearchFilterOptions(SearchFilterOptions searchFilterOptions) {
+		this.searchFilterOptions = searchFilterOptions;
 	}
 }
