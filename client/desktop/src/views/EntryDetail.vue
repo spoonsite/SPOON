@@ -63,9 +63,18 @@
               <strong>Average User Rating:</strong>
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
-            <v-btn fab><v-icon>fas fa-print</v-icon></v-btn>
-            <v-btn fab><v-icon>far fa-comment</v-icon></v-btn>
-            <v-btn>Request Ownership</v-btn>
+            <v-tooltip bottom>
+              <v-btn fab style="margin-left: 0;" slot="activator"><v-icon>fas fa-print</v-icon></v-btn>
+              <span>Print</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn fab slot="activator"><v-icon>far fa-comment</v-icon></v-btn>
+              <span>Submit Correction</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn fab slot="activator"><v-icon>fas fa-user-edit</v-icon></v-btn>
+              <span>Request Ownership</span>
+            </v-tooltip>
           </div>
         </div>
       </div>
@@ -75,14 +84,14 @@
 
     <div class="entry-details-bottom">
       <v-expansion-panels>
-        <v-expansion-panel class="expansion-spacing" :value="1">
+        <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Description</h2></div>
             <div class="expansion-content" v-html="detail.description"></div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="expansion-spacing" :value="1">
+        <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Attributes</h2></div>
             <div class="expansion-content">
