@@ -63,6 +63,9 @@
               <strong>Average User Rating:</strong>
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
+            <v-btn fab><v-icon>fas fa-print</v-icon></v-btn>
+            <v-btn fab><v-icon>far fa-comment</v-icon></v-btn>
+            <v-btn>Request Ownership</v-btn>
           </div>
         </div>
       </div>
