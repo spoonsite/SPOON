@@ -1,5 +1,5 @@
 +++
-title = "The Attributes Page"
+title = "Attributes and Entries Types"
 description = ""
 weight = 2
 +++
