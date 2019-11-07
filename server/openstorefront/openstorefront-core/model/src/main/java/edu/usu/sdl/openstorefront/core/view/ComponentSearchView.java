@@ -503,7 +503,7 @@ public class ComponentSearchView
 	/**
 	 * @param numberOfRatings the numberOfRatings to set
 	 */
-	public void setNumberOfRatings(int numberOfRatings)
+	public void setNumberOfRatings(Integer numberOfRatings)
 	{
 		this.numberOfRatings = numberOfRatings;
 	}
