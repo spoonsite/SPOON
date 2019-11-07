@@ -71,7 +71,6 @@
     <v-divider></v-divider>
 
     <div class="entry-details-bottom">
-      <v-expansion-panels>
         <v-expansion-panel class="expansion-spacing" :value="1">
           <v-expansion-panel-content>
             <div slot="header"><h2>Description</h2></div>
@@ -127,27 +126,30 @@
                 class="clearfix tags"
                 v-if="detail.tags && detail.tags.length !== 0"
               >
-              <a
+              <span
                 v-for="tag in detail.tags"
                 :key="tag.text"
-                :href="baseURL + '#/search?tags='+ tag.text"
                 style="margin-right: 0.8em;"
                 >
                 <v-chip
                   v-if="tag.createUser === $store.state.currentUser.username"
                   close
-                  
                   @input="deleteTagDialog = true; tagName = tag.text; deleteTagId = tag.tagId">
-                  <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
-                  {{ tag.text }}
+                  <a :href="baseURL + '#/search?tags='+ tag.text">
+                    <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
+                    {{ tag.text }}
+                   </a>
                 </v-chip>
-                <v-chip v-else>
+
+                <v-chip v-else @click="this.$router.push()">
+                  <a :href="baseURL + '#/search?tags='+ tag.text">
                   <v-icon style="font-size: 14px; color: #f8c533;">
                     fas fa-tag
                   </v-icon>
                   {{ tag.text }}
+                  </a>
                 </v-chip>
-              </a>
+              </span>
             </div>
               <v-combobox
                 id="tagEntry"
@@ -156,7 +158,7 @@
                 :error="tagEmpty"
                 v-model="tagName">
               </v-combobox>
-              <v-btn 
+              <v-btn
               @click="determineTagType()">
                 Add
               </v-btn>
@@ -218,19 +220,19 @@
               </div>
             </v-card-text>
             <v-card-actions style="display: flex; flex-wrap: wrap; overflow-x: hidden; justify-content: space-around;">
-              <v-btn 
-              style="text-transform: none; margin-bottom: 0.4em;" 
+              <v-btn
+              style="text-transform: none; margin-bottom: 0.4em;"
               @click="submitTag(tagName); newTagConfirmationDialog=false;">
                 Add the new tag
               </v-btn>
-              <v-btn 
+              <v-btn
               style="text-transform: none; margin-bottom: 0.4em;"
               :disabled="selectedTag === ''"
               @click="submitTag(selectedTag); newTagConfirmationDialog=false;">
                 Use the selected prexisting tag
               </v-btn>
-              <v-btn 
-              style="text-transform: none; margin-bottom: 0.4em;" 
+              <v-btn
+              style="text-transform: none; margin-bottom: 0.4em;"
               @click="newTagConfirmationDialog = false;">
                 Cancel
               </v-btn>
@@ -727,7 +729,7 @@ export default {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/relatedtags`)
         .then(response => {
           var tags = response.data
-          this.relatedTags = [];
+          this.relatedTags = []
           for (var i = 0; i < tags.length; i++) {
             this.relatedTags.push(tags[i].text)
           }
@@ -1041,8 +1043,8 @@ export default {
     margin: 15px 0px 0px 15px;
   }
   .list {
-    border-bottom: 1px solid rgba(0,0,0,0.12); 
-    cursor: pointer; 
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    cursor: pointer;
     padding-left: 0.5em;
   }
   .detail-header-right {
