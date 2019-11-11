@@ -649,7 +649,7 @@ public class ElasticSearchManager
 				for(AttributeSearchType type : searchFilters.getAttributeSearchType()){
 					QueryBuilder boolQueryBuilderAttributeTypes = QueryBuilders.boolQuery()
 								.must(QueryBuilders.matchQuery("attributes.type", type.getType()))
-								.must(QueryBuilders.matchQuery("attributes.code", type.getCode()));
+								.must(QueryBuilders.matchQuery("attributes.label", type.getCode()));
 					NestedQueryBuilder nestedQueryBuilder = QueryBuilders.nestedQuery("attributes", boolQueryBuilderAttributeTypes, ScoreMode.Avg);
 					boolQueryBuilderAttributes.must(nestedQueryBuilder);
 				}

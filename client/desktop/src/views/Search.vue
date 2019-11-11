@@ -176,7 +176,7 @@
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
         <v-expansion-panel class="mb-4" v-if="Object.keys(searchResultsAttributes).length !== 0">
           <v-expansion-panel-content
-            v-for="key in attributeKeys.slice(0,9)"
+            v-for="key in attributeKeys.slice(0,9)" 
             :key="key"
           >
             <div slot="header"
@@ -600,7 +600,8 @@ export default {
           that.searchResultsAttributes[source.type] = {
             codes: [],
             label: source.typeLabel,
-            attributeUnit: unit
+            attributeUnit: unit,
+            code: source.type
           }
           that.searchResultsAttributes[source.type].codes.push({ 'code': source.label, 'count': 1 })
           codesMap[source.type] = {}
@@ -758,7 +759,6 @@ export default {
       this.filters.attributes = [...this.filters.attributes]
     },
     printAttribute (attribute) {
-      console.log(attribute)
       if (this.$store.state.attributeMap === undefined) {
         this.$store.dispatch('getAttributeMap')
       }
