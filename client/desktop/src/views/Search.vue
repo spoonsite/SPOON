@@ -731,6 +731,7 @@ export default {
       this.filters.attributes = [...this.filters.attributes]
     },
     printAttribute (attribute) {
+      console.log(attribute)
       if (this.$store.state.attributeMap === undefined) {
         this.$store.dispatch('getAttributeMap')
       }
@@ -739,7 +740,7 @@ export default {
       if (attr === null) {
         attr.unit = ''
       }
-      return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
+      return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${(attributeType.attributeUnit ? attributeType.attributeUnit : '')}`
     },
     copyUrlToClipboard () {
       var url = encodeURI(window.location.origin + window.location.pathname + this.searchUrl())
@@ -954,7 +955,6 @@ export default {
       searchSortField: 'searchScore',
       searchSortFields: [
         { text: 'Name', value: 'name' },
-        { text: 'Organization', value: 'organization' },
         { text: 'User Rating', value: 'averageRating' },
         { text: 'Last Update', value: 'lastActivityDts' },
         { text: 'Approval Date', value: 'approvedDts' },
