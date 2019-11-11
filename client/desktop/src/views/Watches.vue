@@ -21,12 +21,9 @@
           </div>
           <v-card class="grey lighten-5">
             <v-card-text>
-              <p>
-                <strong>Last update to entry: </strong>  {{ item.lastUpdateDts | formatDate('YYYY/MM/DD hh:mm') }}
-              </p>
-              <p>
-                <strong>Last time viewed: </strong> {{ item.lastViewDts | formatDate}}
-              </p>
+              <p v-if="item.lastSubmitDts" class="date"><strong>Last Vendor Update Provided:</strong> {{ item.lastSubmitDts | formatDate }}</p>
+              <p v-else class="date"><strong>Last Vendor Update Provided:</strong> {{ item.approvedDts | formatDate }}</p>
+              <p class="date"><strong>Last System Update:</strong> {{ item.lastUpdateDts | formatDate }}</p>
             </v-card-text>
             <v-card-actions>
               <v-btn color="accent" :to="`entry-detail/${item.componentId}`">More Information</v-btn>
@@ -56,7 +53,7 @@ export default {
   mounted () {
     // need to check if we have the current user
     if (this.$store.state.currentUser.username) {
-      this.getWatches() 
+      this.getWatches()
     } else {
       // trigger an update once the user has been fetched
       this.$store.watch(

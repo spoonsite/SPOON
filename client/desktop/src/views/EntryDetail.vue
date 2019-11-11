@@ -33,12 +33,14 @@
         <div class="detail-header-body">
           <div class="detail-header-left">
             <div class="dates">
-              <p class="date"><strong>Organization:</strong> {{ detail.organization }}
+              <p class="date"><strong>Organization:</strong> {{ detail.organization }} </p>
               <p class="date" v-if='detail.componentTypeLabel.includes(">")'>
                 <strong>Category:</strong>
                 {{ detail.componentTypeLabel }}
-              <p class="date"><strong>Last Updated:</strong> {{ detail.lastActivityDts | formatDate}}</p>
-              <p class="date"><strong>Approved Date:</strong> {{ detail.approvedDate | formatDate}}</p>
+              </p>
+              <p v-if="detail.lastSubmitDts" class="date"><strong>Last Vendor Update Provided:</strong> {{ detail.lastSubmitDts | formatDate }}</p>
+              <p v-else class="date"><strong>Last Vendor Update Provided:</strong> {{ detail.approvedDate | formatDate }}</p>
+              <p class="date"><strong>Last System Update:</strong> {{ detail.lastActivityDts | formatDate }}</p>
             </div>
             <div
                 style="padding-bottom: 1em;"
@@ -70,14 +72,14 @@
 
     <div class="entry-details-bottom">
       <v-expansion-panels>
-        <v-expansion-panel class="expansion-spacing" value="1">
+        <v-expansion-panel class="expansion-spacing" :value="1">
           <v-expansion-panel-content>
             <div slot="header"><h2>Description</h2></div>
             <div class="expansion-content" v-html="detail.description"></div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="expansion-spacing" value="1">
+        <v-expansion-panel class="expansion-spacing" :value="1">
           <v-expansion-panel-content>
             <div slot="header"><h2>Attributes</h2></div>
             <div class="expansion-content">
