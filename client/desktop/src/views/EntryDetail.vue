@@ -34,7 +34,7 @@
           <div class="detail-header-left">
             <div class="dates">
               <p class="date"><strong>Organization:</strong> {{ detail.organization }} </p>
-              <p class="date" v-if='detail.componentTypeLabel.includes(">")'>
+              <p class="date" v-if='detail.componentTypeLabel && detail.componentTypeLabel.includes(">")'>
                 <strong>Category:</strong>
                 {{ detail.componentTypeLabel }}
               </p>
