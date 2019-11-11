@@ -42,18 +42,9 @@
             ></v-checkbox>
           </v-list-tile-content>
         </v-list-tile>
-      </v-list>
-      <v-list dense class="elevation-1">
-        <h4 class="search-option-titles">Entry Types</h4>
-        <v-list-tile v-for="(e,index) in entryTypes" v-bind:key="index" class="suggestion">
-          <v-list-tile-content>
-            <v-checkbox
-              :ripple="false"
-              :key="index"
-              v-model="selectedEntryTypes"
-              :value="e.componentType.componentType"
-              :label="e.componentType.label"
-            ></v-checkbox>
+        <v-list-tile v-if="searchOptions.length==0" avatar>
+          <v-list-tile-content :style="warningStyle">
+            <v-list-tile-title class ="v-label soWarning">All search options are off, this will cause a search to return nothing.</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -73,7 +64,6 @@ export default {
   data () {
     return {
       hideSearchSuggestions: true,
-      entryTypes: {},
       searchSuggestions: [],
       showOptions: false,
       canShowOptions: true,
@@ -99,8 +89,7 @@ export default {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      this.$emit('submitSearch', '&comp=' + this.selectedEntryTypes.toString() + '&children=true')
-      // this.$router.push(`/search?q=${this.value}`)
+      this.$emit('submitSearch', '&comp=&children=true&searchoptions=' + this.searchOptions.join(','))
     },
     getSearchSuggestions () {
       if (!this.hideSearchSuggestions) {
@@ -128,18 +117,6 @@ export default {
         })
     }
   },
-  computed: {
-    selectedEntryTypes: {
-      set (entryTypes) {
-        if (this.$store.getters.getSelectedComponentTypes !== entryTypes) {
-          this.$store.commit('setSelectedComponentTypes', { data: entryTypes })
-        }
-      },
-      get () {
-        return this.$store.getters.getSelectedComponentTypes
-      }
-    }
-  },
   watch: {
     value: _.throttle(function () {
       if (this.value === '') {
@@ -147,37 +124,45 @@ export default {
       } else if (!this.searchQueryIsDirty) {
         this.getSearchSuggestions()
       }
-    }, 400)
+    }, 400),
+    searchOptions: function (val) {
+      window.localStorage.setItem('searchOptions', JSON.stringify(val))
+      this.saveSearchOptions()
+    }
   },
   created: function () {
-    this.$http
-      .get('/openstorefront/api/v1/resource/searchoptions/user')
-      .then(response => {
-        this.searchOptionsId = response.data.searchOptionsId
-        this.searchOptions = []
-        if (response.data.canUseNameInSearch) {
-          this.searchOptions.push('Name')
-        }
-        if (response.data.canUseDescriptionInSearch) {
-          this.searchOptions.push('Description')
-        }
-        if (response.data.canUseOrganizationsInSearch) {
-          this.searchOptions.push('Organization')
-        }
-        if (response.data.canUseAttributesInSearch) {
-          this.searchOptions.push('Vitals')
-        }
-        if (response.data.canUseTagsInSearch) {
-          this.searchOptions.push('Tags')
-        }
-      })
-    this.$http
-      .get(
-        '/openstorefront/api/v1/resource/componenttypes/nested'
-      )
-      .then(response => {
-        this.entryTypes = response.data.children
-      })
+    let searchOptions = window.localStorage.getItem('searchOptions')
+    if(searchOptions === null){
+      this.$http
+        .get('/openstorefront/api/v1/resource/searchoptions/user')
+        .then(response => {
+          this.searchOptionsId = response.data.searchOptionsId
+          this.searchOptions = []
+          if (response.data.canUseNameInSearch) {
+            this.searchOptions.push('Name')
+          }
+          if (response.data.canUseDescriptionInSearch) {
+            this.searchOptions.push('Description')
+          }
+          if (response.data.canUseOrganizationsInSearch) {
+            this.searchOptions.push('Organization')
+          }
+          if (response.data.canUseAttributesInSearch) {
+            this.searchOptions.push('Vitals')
+          }
+          if (response.data.canUseTagsInSearch) {
+            this.searchOptions.push('Tags')
+          }
+          window.localStorage.setItem('searchOptions', JSON.stringify(this.searchOptions))
+        })
+    } else {
+      this.searchOptions = JSON.parse(searchOptions)
+    }
+  },
+  computed: {
+    warningStyle () {
+      return 'background-color: ' + this.$store.state.branding.vueErrorColor
+    }
   }
 }
 </script>
@@ -260,6 +245,10 @@ input:focus + .icon {
   content: "";
   clear: both;
   display: table;
+}
+.soWarning {
+  text-align:center;
+  color: white;
 }
 @media only screen and (max-width: 360px) {
   .searchfield {
