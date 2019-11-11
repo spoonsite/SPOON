@@ -1,8 +1,11 @@
 <template>
   <form v-on:submit.prevent="submitQuery()">
-    <div class="searchbar-button">
-      <v-icon @click="showOptions=!showOptions" class="drop-down-icon search-options-icon">fas {{ (showOptions ? 'fa-chevron-down' : 'fa-chevron-up')}} fa-xs</v-icon>
-    </div>
+      <v-tooltip top>
+      <div slot="activator" class="searchbar-button">
+        <v-icon @click="showOptions=!showOptions" class="drop-down-icon search-options-icon">fas {{ (showOptions ? 'fa-chevron-down' : 'fa-chevron-up')}} fa-xs</v-icon>
+      </div>
+      <span>Search Options</span>
+    </v-tooltip>
     <div class="searchbar">
       <input
         :value="value"

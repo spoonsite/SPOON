@@ -3,37 +3,53 @@
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- CONTROLS -->
     <div class="side-menu-btns">
+      <v-tooltip right>
         <v-btn
           class="db"
           @click="showFilters = !showFilters; showOptions = false;"
           small fab dark icon
           :color="`primary ${showFilters ? 'lighten-4' : ''}`"
+          slot="activator"
         >
           <v-icon dark>fas fa-filter</v-icon>
         </v-btn>
+        <span>Search Filters</span>
+      </v-tooltip>
+      <v-tooltip right>
         <v-btn
           class="db"
           @click="showOptions = !showOptions; showFilters = false;"
           small fab dark icon
           :color="`primary ${showOptions ? 'lighten-4' : ''}`"
+          slot="activator"
         >
           <v-icon dark>fas fa-cog</v-icon>
         </v-btn>
+        <span>Search Options</span>
+      </v-tooltip>
+      <v-tooltip right>
         <v-btn
           class="db"
           @click="sortComparisonData(); showComparison = true;"
           :disabled="!(this.comparisonList.length >= 2)"
           small fab icon
+          slot="activator"
         >
           <v-icon>fas fa-columns</v-icon>
         </v-btn>
+        <span>Compare</span>
+      </v-tooltip>
+      <v-tooltip right>
         <v-btn
           class="db"
           @click="copyUrlToClipboard"
           small fab icon
+          slot="activator"
         >
           <v-icon>fas fa-share-alt</v-icon>
         </v-btn>
+        <span>Share Search</span>
+      </v-tooltip>
         <input
           type="text"
           value="https://spoonsite.com"
