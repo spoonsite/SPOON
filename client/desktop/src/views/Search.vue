@@ -176,7 +176,7 @@
         <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
         <v-expansion-panel class="mb-4" v-if="Object.keys(searchResultsAttributes).length !== 0">
           <v-expansion-panel-content
-            v-for="key in attributeKeys.slice(0,9)" 
+            v-for="key in attributeKeys.slice(0,9)"
             :key="key"
           >
             <div slot="header"
