@@ -134,7 +134,7 @@ export default {
       if (typeof response.data === 'string' &&
           response.data.includes('<!-- ***USER-NOT-LOGIN*** -->') &&
           !this.loggingOut) {
-        window.location.href="/openstorefront/login/index.html"
+        window.location.href = 'openstorefront'
       }
       return response
     },
@@ -234,7 +234,7 @@ export default {
       this.loggingOut = true
       this.$http.get('/openstorefront/Login.action?Logout')
         .then(response => {
-          window.location.href = '/openstorefront/login/index.html'
+          window.location.href = 'openstorefront'
         })
         .catch(e => this.errors.push(e))
     },
