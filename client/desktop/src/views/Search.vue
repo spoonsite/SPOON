@@ -466,76 +466,39 @@ export default {
     this.searchPageSize = (pageSize ? pageSize : this.searchPageSize)
   },
   mounted () {
-    if (this.$route.query.q) {
-      this.searchQuery = this.$route.query.q
-    }
-    if (this.$route.query.comp) {
-      this.filters.entryType = this.$route.query.comp
-    }
-    if (this.$route.query.children) {
-      this.filters.children = (this.$route.query.children === 'true')
-    }
-    if (this.$route.query.tags) {
-      this.filters.tags = this.$route.query.tags.split(',')
-    }
-    if (this.$route.query.orgs) {
-      this.filters.organization = this.$route.query.orgs
-    }
-    if (this.$route.query.attributes) {
-      this.filters.attributes = []
-      this.$route.query.attributes.match(/({.*?})/gm).forEach(attribute => {
-        this.filters.attributes.push(attribute)
-      })
-    }
-    if (this.$route.query.searchoptions) {
-      this.searchoptions = this.$route.query.searchoptions.split(',')
-      localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
-    }
-  },
-  mounted () {
-    this.newSearch()
+    this.parseFiltersFromUrl(this.$route.query)
   },
   beforeRouteUpdate (to, from, next) {
-    if (to.query.q) {
-      this.searchQuery = to.query.q
-    } else {
-      this.searchQuery = ''
-    }
-    if (to.query.comp) {
-      this.filters.entryType = to.query.comp
-    } else {
-      this.filters.entryType = ''
-    }
-    if (to.query.children) {
-      this.filters.children = (to.query.children === 'true')
-    } else {
-      this.fitlers.children = false
-    }
-    if (to.query.tags) {
-      this.filters.tags = to.query.tags.split(',')
-    } else {
-      this.filters.tags = []
-    }
-    if (to.query.orgs) {
-      this.filters.organization = to.query.orgs
-    } else {
-      this.filters.organization = ''
-    }
-    if (to.query.attributes) {
-      this.filters.attributes = []
-      to.query.attributes.match(/({.*?})/gm).forEach(attribute => {
-        this.filters.attributes.push(attribute)
-      })
-    } else {
-      this.filters.attributes = []
-    }
-    if (to.query.searchoptions) {
-      this.searchoptions = to.query.searchoptions.split(',')
-      localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
-    }
+    this.parseFiltersFromUrl(to.query)
     this.newSearch()
   },
   methods: {
+    parseFiltersFromUrl (params) {
+      if (params.q) {
+        this.searchQuery = params.q
+      }
+      if (params.comp) {
+        this.filters.entryType = params.comp
+      }
+      if (params.children) {
+        this.filters.children = (params.children === 'true')
+      }
+      if (params.tags) {
+        this.filters.tags = params.tags.split(',')
+      }
+      if (params.organization) {
+        this.filters.organization = params.organization
+      }
+      if (params.attributes) {
+        this.filters.attributes = []
+        this.filters.attributes = JSON.parse(params.attributes)
+      }
+      if (params.searchoptions) {
+        this.searchoptions = params.searchoptions.split(',')
+        localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
+      }
+      console.log(this.filters)
+    },
     getComponentName (code) {
       let name = ''
       if (this.$store.state.componentTypeList === undefined) {
@@ -762,15 +725,21 @@ export default {
       this.filters.attributes = [...this.filters.attributes]
     },
     printAttribute (attribute) {
-      if (this.$store.state.attributeMap === undefined) {
-        this.$store.dispatch('getAttributeMap')
-      }
-      let attr = this.$jsonparse(attribute)
+      let attr = JSON.parse(attribute)
       let attributeType = this.$store.state.attributeMap[attr.type]
-      if (attr === null) {
-        attr.unit = ''
+      if (attributeType === undefined) {
+        this.$store.dispatch('getAttributeMap').then(() => {
+          if (attr === null || attributeType.attributeUnit === undefined) {
+            attributeType.attributeUnit = ''
+          }
+          return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
+        })
+      } else {
+        if (attr === null || attributeType.attributeUnit === undefined) {
+          attributeType.attributeUnit = ''
+        }
+        return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
       }
-      return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
     },
     copyUrlToClipboard () {
       var url = encodeURI(window.location.origin + window.location.pathname + this.searchUrl())
@@ -907,7 +876,7 @@ export default {
       let url = '#/search?q=' + (this.searchQuery ? this.searchQuery : '') +
                 (this.filters.entryType ? '&comp=' + this.filters.entryType : '') +
                 (this.filters.children ? '&children=' + this.filters.children : '') +
-                (this.filters.organization ? '&organiation=' + this.filters.organization : '') +
+                (this.filters.organization ? '&organization=' + this.filters.organization : '') +
                 (this.filters.attributes.length > 0 ? '&attributes=' + JSON.stringify(this.filters.attributes) : '') +
                 (this.filters.tags.length > 0 ? '&tags=' + this.filters.tags.join(',') : '') +
                 '&searchoptions=' + JSON.parse(searchOptions).join(',')
