@@ -68,17 +68,53 @@
               <span>Print</span>
             </v-tooltip>
             <v-tooltip bottom>
-              <v-btn fab slot="activator"><v-icon>far fa-comment</v-icon></v-btn>
+              <v-btn fab slot="activator" @click="submitCorrectionDialog = true"><v-icon>far fa-comment</v-icon></v-btn>
               <span>Submit Correction</span>
             </v-tooltip>
             <v-tooltip bottom>
               <v-btn fab slot="activator"><v-icon>fas fa-user-edit</v-icon></v-btn>
               <span>Request Ownership</span>
             </v-tooltip>
+            <v-tooltip bottom>
+              <v-btn slot="activator">Contact Vendor</v-btn>
+              <span>Contact Vendor</span>
+            </v-tooltip>
           </div>
         </div>
       </div>
     </div>
+
+    <v-dialog
+      v-model="submitCorrectionDialog"
+      width="25em"
+    >
+      <v-card>
+        <v-card-title>Submit Correction</v-card-title>
+        <v-card-text>
+          <p>Correction:</p>
+          <p>(Please include the section needing the correction. Eg. Contacts):*</p>
+            <v-textarea
+              style="background-color: white;"
+              v-model="correction"
+              required
+              outline
+            ></v-textarea>
+          <p>Contact Information:</p>
+          <div style="display: flex; background-color: #EEE; padding: 1em;">
+            <div style="display: flex; flex-direction: column;">
+              <v-text-field error single-line solo label="Name*"></v-text-field>
+              <v-text-field error single-line solo label="Email*"></v-text-field>
+              <v-text-field single-line solo label="Phone"></v-text-field>
+              <v-text-field single-line solo label="Organization"></v-text-field>
+            </div>
+          </div>
+        </v-card-text>
+        <div style="display: flex; justify-content: space-between;">
+          <v-btn @click="deleteReviewConfirmation()">Submit</v-btn>
+          <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
 
     <v-divider></v-divider>
 
@@ -410,8 +446,11 @@ export default {
       newQuestion: '',
       writeReviewDialog: false,
       deleteReviewDialog: false,
+      submitCorrectionDialog: false,
+      requestOwnershipDialog: false,
       deleteRequestId: '',
       editReviewId: '',
+      correction: '',
       reviewSubmit: false,
       newReview: {
         title: '',
