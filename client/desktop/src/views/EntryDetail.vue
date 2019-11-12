@@ -159,7 +159,8 @@
                 v-model="tagName">
               </v-combobox>
               <v-btn
-              @click="determineTagType()">
+                @click="determineTagType()"
+              >
                 Add
               </v-btn>
             </div>
@@ -221,19 +222,22 @@
             </v-card-text>
             <v-card-actions style="display: flex; flex-wrap: wrap; overflow-x: hidden; justify-content: space-around;">
               <v-btn
-              style="text-transform: none; margin-bottom: 0.4em;"
-              @click="submitTag(tagName); newTagConfirmationDialog=false;">
+                style="text-transform: none; margin-bottom: 0.4em;"
+                @click="submitTag(tagName); newTagConfirmationDialog=false;"
+              >
                 Add the new tag
               </v-btn>
               <v-btn
-              style="text-transform: none; margin-bottom: 0.4em;"
-              :disabled="selectedTag === ''"
-              @click="submitTag(selectedTag); newTagConfirmationDialog=false;">
+                style="text-transform: none; margin-bottom: 0.4em;"
+                :disabled="selectedTag === ''"
+                @click="submitTag(selectedTag); newTagConfirmationDialog=false;"
+              >
                 Use the selected prexisting tag
               </v-btn>
               <v-btn
-              style="text-transform: none; margin-bottom: 0.4em;"
-              @click="newTagConfirmationDialog = false;">
+                style="text-transform: none; margin-bottom: 0.4em;"
+                @click="newTagConfirmationDialog = false;"
+              >
                 Cancel
               </v-btn>
             </v-card-actions>
