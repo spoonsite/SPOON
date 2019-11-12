@@ -82,39 +82,46 @@
         <v-slider v-model="searchPageSize" step="4" min="4" thumb-label></v-slider>
         <h2>Display Options</h2>
         <v-checkbox
-        v-model="displayOptions.organization"
-        :label="'Organization'"
-        class="checkbox-spacing">
+          v-model="displayOptions.organization"
+          :label="'Organization'"
+          class="checkbox-spacing"
+        >
         </v-checkbox>
         <v-checkbox
-        v-model="displayOptions.category"
-        :label="'Category'"
-        class="checkbox-spacing">
+          v-model="displayOptions.category"
+          :label="'Category'"
+          class="checkbox-spacing"
+        >
         </v-checkbox>
         <v-checkbox
-        v-model="displayOptions.tags"
-        :label="'Tags'"
-        class="checkbox-spacing">
+          v-model="displayOptions.tags"
+          :label="'Tags'"
+          class="checkbox-spacing"
+        >
         </v-checkbox>
         <v-checkbox
-        v-model="displayOptions.userRating"
-        :label="'Average User Rating'"
-        class="checkbox-spacing">
+          v-model="displayOptions.userRating"
+          :label="'Average User Rating'"
+          class="checkbox-spacing"
+        >
         </v-checkbox>
         <v-checkbox
-        v-model="displayOptions.description"
-        :label="'Description'"
-        class="checkbox-spacing">
+          v-model="displayOptions.description"
+          :label="'Description'"
+          class="checkbox-spacing"
+        >
         </v-checkbox>
         <v-checkbox
-        v-model="displayOptions.lastUpdated"
-        :label="'Last Updated'"
-        class="checkbox-spacing">
+          v-model="displayOptions.lastUpdated"
+          :label="'Last Updated'"
+          class="checkbox-spacing"
+        >
         </v-checkbox>
         <v-checkbox
-        v-model="displayOptions.approvalDate"
-        :label="'Approval Date'"
-        class="checkbox-spacing">
+          v-model="displayOptions.approvalDate"
+          :label="'Approval Date'"
+          class="checkbox-spacing"
+        >
         </v-checkbox>
         <v-btn block class="primary" @click="resetOptions()">Reset Options</v-btn>
       </div><!-- SEARCH OPTIONS -->
