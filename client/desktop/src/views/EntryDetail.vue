@@ -50,7 +50,7 @@
               <span
                 v-for="tag in detail.tags"
                 :key="tag.text"
-                style="margin-right: 0.8em; cursor: pointer;"
+                style="margin-right: 0.8em;;"
               >
                 <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
                 {{ tag.text }}
@@ -71,14 +71,14 @@
     <v-divider></v-divider>
 
     <div class="entry-details-bottom">
-        <v-expansion-panel class="expansion-spacing" :value="1">
+        <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Description</h2></div>
             <div class="expansion-content" v-html="detail.description"></div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="expansion-spacing" :value="1">
+        <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Attributes</h2></div>
             <div class="expansion-content">
@@ -135,19 +135,19 @@
                   v-if="tag.createUser === $store.state.currentUser.username"
                   close
                   @input="deleteTagDialog = true; tagName = tag.text; deleteTagId = tag.tagId">
-                  <a :href="baseURL + '#/search?tags='+ tag.text">
+                  <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
                     <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
                     {{ tag.text }}
-                   </a>
+                   </router-link>
                 </v-chip>
 
-                <v-chip v-else @click="this.$router.push()">
-                  <a :href="baseURL + '#/search?tags='+ tag.text">
-                  <v-icon style="font-size: 14px; color: #f8c533;">
-                    fas fa-tag
-                  </v-icon>
-                  {{ tag.text }}
-                  </a>
+                <v-chip v-else>
+                  <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
+                    <v-icon style="font-size: 14px; color: #f8c533;">
+                      fas fa-tag
+                    </v-icon>
+                    {{ tag.text }}
+                  </router-link>
                 </v-chip>
               </span>
             </div>
