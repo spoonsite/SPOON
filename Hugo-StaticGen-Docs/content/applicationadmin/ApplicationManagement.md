@@ -39,8 +39,9 @@ Customized alerts can be setup to send an email to a specified email address. Yo
 ![ Display](/images/AppAdmin/Feedback.png)
 Every Spoon user can submit feedback by clicking on their Username in the top right corner of Spoon, then clicking "Contact Us". That feedback appears on this sub-page. 
 
+{{% notice note %}}
 Warning! Do note that entries are by default displayed by Create Date ascending, meaning that the oldest tickets will appear at the top. Don't miss the new tickets that get generated. 
-
+{{% /notice %}}
 
 <a name="Jobs"></a>
 
@@ -82,5 +83,6 @@ As of Spoon v2.11, when a user attempts to register for an account with Spoon, t
 
 Using the "__Message__" button on the screen sends an email from the support@spoonsite email address (depending on how the server's configurations are setup). 
 
+{{% notice note %}}
 WARNING! As of v2.11 of Spoon, it is a known issue that Spoon's emails seem to be particularly susceptible to being caught in spam filters, so it is a frequent occurrence for attempted registrants of Spoon to log complaints that they are not being sent the confirmation code. In these instances it is best to manually create a new account for these individuals. Go to the Registrations tab, then click "__Add__". Be careful entering in the registrant's data in manually, as the verifications for a new user on from this side is less stringent then the verification on the public-facing signup. Email the registrant his new username and password from an email account that is not the main spoon support email address and verify the registrant's reception of the email via other means (phone perhaps).
-
+{{% /notice %}}
