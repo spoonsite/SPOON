@@ -5,6 +5,18 @@
     :src='$store.state.branding.homebackSplashUrl'
     style="overflow: visible; position:relative; z-index:1"
   >
+
+  <div class="text-right pt-2">
+    <div style="display: inline-block; background:#01080D; border-radius: 8px;" class="pa-1 pl-3">
+      <span class="display-1 white--text" style="vertical-align: middle;">
+        Are you a vendor?
+      </span>
+      <v-btn color="success" large href="/openstorefront/UserTool.action?load=Submissions">
+        Submit a part
+      </v-btn>
+    </div>
+  </div>
+
     <div class="mx-3">
       <SearchBar
         @submitSearch="submitSearch"
@@ -16,89 +28,54 @@
     </div>
 
     <h2>
-        <span style="padding: 0.5em; background-color: white; border-radius: 2px;">
+        <span style="color:#F8C533;">
           Browse by Category
         </span>
     </h2>
     <v-container>
-      <v-layout row wrap>
+      <v-layout row wrap justify-center>
         <v-flex
-          v-for="(item,i) in nestedComponentTypesList.children"
+          v-for="(item,i) in nestedComponentTypesList.children.filter(item => item.children.length > 0)"
           class="mb-2"
           :key="i"
           xs12
           sm6
           md4
-          lg3
-          xl2
+          xl3
         >
           <v-card
             style="height: 100%;"
-            class="ma-2 entry-card"
+            class="ma-2 category-card"
           >
-            <v-card-title
-              class="mb-3"
-              style="border-bottom: 1px solid; height: 6em;"
+            <router-link
+              :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
+              style="display: flex; align-items: center; min-height: 6em;"
+              class="pa-2"
             >
-              <router-link
-                :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
-                style="display: flex; align-items: stretch;"
+              <img
+                :src="'/openstorefront/' + item.componentType.iconUrl"
+                height="50"
+                class="pr-3"
               >
-                <img
-                  :src="'/openstorefront/' + item.componentType.iconUrl"
-                  height="50"
-                  style="vertical-align: middle;" 
-                  class="icon-img pr-3"
-                >
-                <span>{{ item.componentType.label }}</span>
-              </router-link>
-            </v-card-title>
-            <ul v-if="item.children.length > 0" class="ml-3">
+              <span class="headline" style="vertical-align: top;">{{ item.componentType.label }}</span>
+            </router-link>
+            <v-divider class="d-xs-none"></v-divider>
+            <ul class="d-xs-none">
               <li v-for="child in item.children" :key="child.componentType.componentType">
                 <router-link
                   :to="{ path: 'search', query: { comp: child.componentType.componentType, children: true }}"
+                  class="title font-weight-regular"
                 >
                   {{ child.componentType.label }}
                 </router-link>
               </li>
             </ul>
-            <div v-else class="ml-3">No sub-categories</div>
           </v-card>
         </v-flex>
       </v-layout>
     </v-container>
 
     </v-img>
-
-    <h2>
-      <span style="background-color: #FAFAFA; border-radius: 1px;" class="pa-2">
-      Quick Launch
-      </span>
-    </h2>
-    <v-container text-xs-center>
-      <v-layout row wrap>
-        <v-flex
-          v-for="(item,i) in quickLaunchLinks"
-          :key="i"
-          xs12
-          sm4
-          md4
-        >
-          <v-hover>
-          <v-card
-            :href="item.href"
-            slot-scope="{ hover }"
-            :class="`elevation-${hover ? 6 : 2} ma-2 pt-2 px-2`"
-          >
-            <v-icon class="launch-icon">fas fa-{{ item.icon }}</v-icon>
-            <v-card-title primary-title>
-              <v-card-text class="headline pa-0">{{ item.title }}</v-card-text>
-            </v-card-title>
-          </v-card>
-          </v-hover>
-        </v-flex>
-      </v-layout>
-    </v-container>
 
     <h2>Highlights</h2>
     <v-container
@@ -219,6 +196,30 @@ h2 {
 h3 {
   margin-bottom: 1em;
 }
+.category-card {
+  a {
+    text-decoration: none;
+  }
+  a:hover {
+    background-color: rgba(0,0,0,0.05);
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li a {
+    width: 100%;
+    display: block;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-left: 2em;
+  }
+}
 .footer-wrapper {
   width: 100%;
 }
@@ -229,5 +230,22 @@ h3 {
 .launch-icon {
   color:#333 !important;
   font-size: 64px;
+}
+.submission-btn {
+  text-decoration: none;
+  background: #212121;
+  color: white;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 2em;
+  text-transform: uppercase;
+}
+.text-right {
+  text-align: right;
+}
+@media only screen and (max-width: 800px) {
+  .d-xs-none {
+    display: none;
+  }
 }
 </style>
