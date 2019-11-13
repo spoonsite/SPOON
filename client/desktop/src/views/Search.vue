@@ -80,6 +80,49 @@
         <h3>Page Size</h3>
         {{ searchPageSize }}
         <v-slider v-model="searchPageSize" step="4" min="4" thumb-label></v-slider>
+        <h2>Display Options</h2>
+        <v-checkbox
+          v-model="displayOptions.organization"
+          :label="'Organization'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.category"
+          :label="'Category'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.tags"
+          :label="'Tags'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.userRating"
+          :label="'Average User Rating'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.description"
+          :label="'Description'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.lastUpdated"
+          :label="'Last Updated'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.approvalDate"
+          :label="'Approval Date'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
         <v-btn block class="primary" @click="resetOptions()">Reset Options</v-btn>
       </div><!-- SEARCH OPTIONS -->
 
@@ -323,13 +366,13 @@
           <v-divider></v-divider>
           <div class="item-body">
             <div class="item-properties">
-              <span>
+              <span v-if="displayOptions.organization">
                 <v-chip small class="organization-chip">
                   <i data-v-1a1d373c="" aria-hidden="true" class="v-icon fas fa-university theme--light" style="font-size: 16px; padding-right: 4px;"></i>
                   {{ item.organization }}
                 </v-chip>
               </span>
-              <div class="comp-type-wrapper">
+              <div class="comp-type-wrapper" v-if="displayOptions.category">
                 <router-link :to="{ path: 'search', query: { comp: item.componentType }}">
                   <v-chip v-if='item.componentTypeDescription.includes(">")' style="padding: 2px 0px;">
                     {{ getFirstCompType(item.componentTypeDescription) }}<br>{{ getSecondCompType(item.componentTypeDescription) }}
@@ -339,9 +382,9 @@
                   </v-chip>
                 </router-link>
               </div>
-              <div
+            <div
                 class="tag-wrapper"
-                v-if="!!item.tags && item.tags.length !== 0"
+                v-if="!!item.tags && item.tags.length !== 0 && displayOptions.tags"
               >
                 <span
                   v-for="tag in item.tags"
@@ -352,16 +395,19 @@
                   <v-icon style="font-size: 14px; color: rgb(248, 197, 51);">fas fa-tag</v-icon> {{ tag.text }}
                 </span>
               </div>
+              <p v-if="displayOptions.userRating">
+                <star-rating :rating="item.averageRating" :read-only="true" :show-rating="false" :increment="0.01" inline :star-size="17"></star-rating>({{ item.numberOfRatings }})
+              </p>
             </div>
             <v-divider></v-divider>
             <div class="item-details">
-              <div class="description-wrapper">
+              <div class="description-wrapper" v-if="displayOptions.description">
                 {{ shortenDescription(item.description) }}
               </div>
               <div class=item-details-bottom>
                 <div>
-                  <p><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
-                  <p><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
+                  <p v-if="displayOptions.lastUpdated"><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
+                  <p v-if="displayOptions.approvalDate"><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
                 </div>
                 <div class="compare-box">
                   <input type="checkbox" v-model="comparisonList" :value="item" :id="item.componentId">
@@ -447,6 +493,7 @@
 
 <script>
 import _ from 'lodash'
+import StarRating from 'vue-star-rating'
 import SearchBar from '../components/SearchBar'
 // import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
@@ -455,7 +502,8 @@ import crush from '../util/scientificToDecimal.js'
 export default {
   name: 'SearchPage',
   components: {
-    SearchBar
+    SearchBar,
+    StarRating
     // AttributeRange
   },
   created () {
@@ -567,6 +615,13 @@ export default {
       this.searchPageSize = 12
       this.searchSortField = 'searchScore'
       this.searchSortOrder = 'DESC'
+      this.displayOptions.organization = true
+      this.displayOptions.category = true
+      this.displayOptions.tags = true
+      this.displayOptions.userRating = false
+      this.displayOptions.description = true
+      this.displayOptions.lastUpdated = true
+      this.displayOptions.approvalDate = true
     },
     addTag (tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
@@ -958,6 +1013,15 @@ export default {
       searchoptions: [],
       showHelp: false,
       showComparison: false,
+      displayOptions: {
+        organization: true,
+        category: true,
+        tags: true,
+        userRating: false,
+        description: true,
+        lastUpdated: true,
+        approvalDate: true
+      },
       searchQuery: '',
       attributeQuery: '',
       attributeKeys: [],
@@ -1195,6 +1259,10 @@ th {
   height: 80vh;
   width: 85vw;
   position: relative;
+}
+.checkbox-spacing {
+  margin: 0;
+  padding: 0;
 }
 .v-footer {
   height: $footer-height !important;
