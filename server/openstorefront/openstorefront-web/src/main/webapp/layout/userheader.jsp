@@ -81,7 +81,7 @@
 				text: 'Watches',
 				requiredPermissions: ['USER-WATCHES-PAGE'],
 				handler: function(){
-					window.location.href = '/openstorefront/' + '#/watches';
+					window.location.href = '/openstorefront/#/watches';
 				}			
 			});
 			
@@ -187,7 +187,7 @@
 									margin: '0 10 0 0',
 									requiredPermissions: ['USER-PROFILE-PAGE'],
 									handler: function(){
-										window.location.href = '/openstorefront/' + '#/profile';
+										window.location.href = '/openstorefront/#/profile';
 									}									
 								},
 								{
