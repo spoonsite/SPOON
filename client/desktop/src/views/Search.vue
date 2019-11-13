@@ -1160,8 +1160,8 @@ hr {
 .spinner {
   margin-top: 7em;
 }
-.more-info {
-  cursor: pointer;
+.more-info a {
+  text-decoration: none;
 }
 .more-info:hover {
   transition-duration: 0.2s;
