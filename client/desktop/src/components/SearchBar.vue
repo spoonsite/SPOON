@@ -1,11 +1,8 @@
 <template>
-  <form v-on:submit.prevent="submitQuery()">
-      <v-tooltip top>
-      <div slot="activator" class="searchbar-button">
-        <v-icon @click="showOptions=!showOptions" class="drop-down-icon search-options-icon">fas {{ (showOptions ? 'fa-chevron-down' : 'fa-chevron-up')}} fa-xs</v-icon>
-      </div>
-      <span>Search Options</span>
-    </v-tooltip>
+  <form v-on:submit.prevent="submitQuery()" v-click-outside="searchBarBlur">
+    <div class="searchbar-button">
+      <v-icon @click="searchOptionsClicked" class="drop-down-icon search-options-icon">fas {{ (hideSearchOptions ? 'fa-chevron-up' : 'fa-chevron-down')}} fa-xs</v-icon>
+    </div>
     <div class="searchbar">
       <input
         :value="value"
@@ -14,7 +11,6 @@
         type="text"
         placeholder="Search"
         @click="searchBarFocused"
-        @blur="searchBarBlur"
       >
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
       <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">clear</v-icon>
@@ -29,7 +25,7 @@
       </v-list>
     </v-card>
     <v-card
-      v-if="hideSearchSuggestions && showOptions && canShowOptions"
+      v-if="hideSearchSuggestions && !hideSearchOptions"
       :height="overlaySuggestions ? 0 : 'auto'"
       style="position:relative; z-index:5"
     >
@@ -67,9 +63,8 @@ export default {
   data () {
     return {
       hideSearchSuggestions: true,
+      hideSearchOptions: true,
       searchSuggestions: [],
-      showOptions: false,
-      canShowOptions: true,
       searchOptionsSource: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptions: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptionsId: '',
@@ -79,12 +74,15 @@ export default {
   methods: {
     searchBarFocused () {
       this.hideSearchSuggestions = false
-      this.canShowOptions = false
-      this.showOptions = false
+      this.hideSearchOptions = true
     },
     searchBarBlur () {
       this.hideSearchSuggestions = true
-      this.canShowOptions = true
+      this.hideSearchOptions = true
+    },
+    searchOptionsClicked () {
+      this.hideSearchOptions = !this.hideSearchOptions
+      this.hideSearchSuggestions = true
     },
     submitQuery (query) {
       this.saveSearchOptions()
@@ -92,7 +90,9 @@ export default {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      this.$emit('submitSearch', '&comp=&children=true&searchoptions=' + this.searchOptions.join(','))
+      this.$emit('submitSearch', '&children=true&searchoptions=' + this.searchOptions.join(','))
+      this.hideSearchSuggestions = true
+      this.hideSearchOptions = true
     },
     getSearchSuggestions () {
       if (!this.hideSearchSuggestions) {
