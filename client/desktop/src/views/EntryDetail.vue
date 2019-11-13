@@ -63,22 +63,24 @@
               <strong>Average User Rating:</strong>
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
-            <v-tooltip bottom>
-              <v-btn fab style="margin-left: 0;" slot="activator"><v-icon>fas fa-print</v-icon></v-btn>
-              <span>Print</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn fab slot="activator" @click="submitCorrectionDialog = true"><v-icon>far fa-comment</v-icon></v-btn>
-              <span>Submit Correction</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn fab slot="activator"><v-icon>fas fa-user-edit</v-icon></v-btn>
-              <span>Request Ownership</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <v-btn slot="activator">Contact Vendor</v-btn>
-              <span>Contact Vendor</span>
-            </v-tooltip>
+            <div style="display: flex; flex-direction: column;">
+              <span>
+                <v-btn fab><v-icon>fas fa-print</v-icon></v-btn>
+                <label>Print</label>
+              </span>
+              <span>
+                <v-btn fab><v-icon>fas fa-envelope-square</v-icon></v-btn>
+                <label>Contact Vendor</label>
+              </span>
+              <span>
+                <v-btn fab @click="submitCorrectionDialog = true"><v-icon>far fa-comment</v-icon></v-btn>
+                <label>Submit Correction</label>
+              </span>
+              <span>
+                <v-btn fab @click="requestOwnershipDialog = true"><v-icon>fas fa-user-edit</v-icon></v-btn>
+                <label>Request Ownership</label>
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -101,6 +103,38 @@
             ></v-textarea>
           <p>Contact Information:</p>
           <div style="display: flex; background-color: #EEE; padding: 1em;">
+            <div>
+              <v-text-field error single-line solo label="Name*"></v-text-field>
+              <v-text-field error single-line solo label="Email*"></v-text-field>
+              <v-text-field single-line solo label="Phone"></v-text-field>
+              <v-text-field single-line solo label="Organization"></v-text-field>
+            </div>
+          </div>
+        </v-card-text>
+        <div style="display: flex; justify-content: space-between;">
+          <v-btn @click="">Submit</v-btn>
+          <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="requestOwnershipDialog"
+      width="25em"
+    >
+      <v-card>
+        <v-card-title>Request Ownership</v-card-title>
+        <v-card-text>
+          <p>Request Reason:</p>
+          <p>(Entries you own show in the User Tools->Submissions which provies tools for management):*</p>
+            <v-textarea
+              style="background-color: white;"
+              v-model="correction"
+              required
+              outline
+            ></v-textarea>
+          <p>Contact Information:</p>
+          <div style="display: flex; background-color: #EEE; padding: 1em;">
             <div style="display: flex; flex-direction: column;">
               <v-text-field error single-line solo label="Name*"></v-text-field>
               <v-text-field error single-line solo label="Email*"></v-text-field>
@@ -111,7 +145,7 @@
         </v-card-text>
         <div style="display: flex; justify-content: space-between;">
           <v-btn @click="deleteReviewConfirmation()">Submit</v-btn>
-          <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
+          <v-btn @click="requestOwnershipDialog = false;">Cancel</v-btn>
         </div>
       </v-card>
     </v-dialog>
