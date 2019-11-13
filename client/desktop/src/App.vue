@@ -41,6 +41,20 @@
                   <v-list-tile-title>{{ link.name }}</v-list-tile-title>
                 </v-content>
               </v-list-tile>
+              <v-list-tile
+                class="menu-item"
+                @click="showDisclaimer = true"
+                @keyup.enter="showDisclaimer = true"
+                role="button"
+                aria-pressed="false"
+              >
+                <v-list-tile-action>
+                  <v-icon>fas fa-exclamation-triangle</v-icon>
+                </v-list-tile-action>
+                <v-content>
+                  <v-list-tile-title>Disclaimer</v-list-tile-title>
+                </v-content>
+              </v-list-tile>
               <v-divider></v-divider>
               <v-list-tile class="menu-item" @click="logout()">
                 <v-list-tile-action>
@@ -109,6 +123,20 @@
           </v-card-actions>
         </v-card>
       </v-dialog> -->
+      <v-dialog
+        v-model="showDisclaimer"
+        max-width="300px"
+        >
+        <v-card>
+          <v-card-title>
+            <h2 v-if="this.$store.state.branding">Site Disclaimer</h2>
+          </v-card-title>
+          <v-card-text v-html="this.$store.state.branding.disclaimerMessage"></v-card-text>
+          <v-card-actions>
+            <v-btn @click="showDisclaimer = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <main class="offset-banner" :class="{ offset: !alert }">
         <router-view/>
@@ -164,6 +192,7 @@ export default {
       currentError: {},
       errorDialog: false,
       showErrorDetails: false,
+      showDisclaimer: false,
       messagesDialog: false,
       firstTimeDialog: false,
       loggingOut: false,
