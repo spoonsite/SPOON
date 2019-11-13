@@ -314,7 +314,11 @@
             :src="'/openstorefront/' + item.componentTypeIconUrl"
             style="min-width: 40px; max-height: 40px; margin-right: 15px"
             >
-            <h3 class="headline more-info" @click='moreInformation(item.componentId)'>{{ item.name }}</h3>
+            <h3 class="headline more-info">
+              <router-link :to="'/entry-detail/' + item.componentId">
+                {{ item.name }}
+              </router-link>
+            </h3>
           </div>
           <v-divider></v-divider>
           <div class="item-body">
@@ -593,7 +597,8 @@ export default {
           that.searchResultsAttributes[source.type] = {
             codes: [],
             label: source.typeLabel,
-            attributeUnit: unit
+            attributeUnit: unit,
+            code: source.type
           }
           that.searchResultsAttributes[source.type].codes.push({ 'code': source.label, 'count': 1 })
           codesMap[source.type] = {}
@@ -746,14 +751,6 @@ export default {
       if (this.totalSearchResults % this.searchPageSize === 0) return (this.totalSearchResults / this.searchPageSize) - 1
       return Math.floor(this.totalSearchResults / this.searchPageSize) + 1
     },
-    moreInformation (componentId) {
-      router.push({
-        name: 'Entry Detail',
-        params: {
-          id: componentId
-        }
-      })
-    },
     removeAttributeFilter (attribute) {
       this.filters.attributes.splice(this.filters.attributes.indexOf(attribute), 1)
       this.filters.attributes = [...this.filters.attributes]
@@ -767,7 +764,7 @@ export default {
       if (attr === null) {
         attr.unit = ''
       }
-      return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
+      return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${(attributeType.attributeUnit ? attributeType.attributeUnit : '')}`
     },
     copyUrlToClipboard () {
       var url = encodeURI(window.location.origin + window.location.pathname + this.searchUrl())
@@ -985,7 +982,6 @@ export default {
       searchSortField: 'searchScore',
       searchSortFields: [
         { text: 'Name', value: 'name' },
-        { text: 'Organization', value: 'organization' },
         { text: 'User Rating', value: 'averageRating' },
         { text: 'Last Update', value: 'lastActivityDts' },
         { text: 'Approval Date', value: 'approvedDts' },
