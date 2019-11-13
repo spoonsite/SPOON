@@ -51,7 +51,7 @@ public class SearchResult
 	private Date updateDts;
 
 	@NotNull
-	private int averageRating;
+	private float averageRating;
 
 	@NotNull
 	private long views;
@@ -160,12 +160,12 @@ public class SearchResult
 		this.updateDts = updateDts;
 	}
 
-	public int getAverageRating()
+	public float getAverageRating()
 	{
 		return averageRating;
 	}
 
-	public void setAverageRating(int averageRating)
+	public void setAverageRating(float averageRating)
 	{
 		this.averageRating = averageRating;
 	}

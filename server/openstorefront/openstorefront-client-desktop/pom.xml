@@ -58,8 +58,22 @@
                             <arguments>run build</arguments>
                         </configuration>
                     </execution>
-
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                <filesets>
+                    <fileset>
+                    <directory>../../../client/desktop/</directory>
+                    <includes>
+                        <include>node_modules/</include>
+                    </includes>
+                    <followSymlinks>false</followSymlinks>
+                    </fileset>
+                </filesets>
+                </configuration>
             </plugin>
         </plugins>
     </build>

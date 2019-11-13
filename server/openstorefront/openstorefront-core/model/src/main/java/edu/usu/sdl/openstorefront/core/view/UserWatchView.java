@@ -35,6 +35,7 @@ import javax.validation.constraints.NotNull;
  */
 public class UserWatchView
 {
+	private Date approvedDts;
 
 	@NotNull
 	private String watchId;
@@ -75,6 +76,7 @@ public class UserWatchView
 			view.setComponentName(component.getName());
 			view.setLastUpdateDts(component.getLastActivityDts());
 			view.setLastSubmitDts(component.getSubmittedDts());
+			view.setApprovedDts(component.getApprovedDts());
 		}
 		view.setLastViewDts(watch.getLastViewDts());
 		view.setNotifyFlg(watch.getNotifyFlg());
@@ -116,6 +118,16 @@ public class UserWatchView
 		}
 
 		return views;
+	}
+	
+	public Date getApprovedDts()
+	{
+		return approvedDts;
+	}
+
+	public void setApprovedDts(Date approvedDts)
+	{
+		this.approvedDts = approvedDts;
 	}
 
 	public String getWatchId()

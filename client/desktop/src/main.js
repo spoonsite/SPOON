@@ -15,6 +15,7 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import Toasted from 'vue-toasted'
+import vClickOutside from 'v-click-outside'
 
 Vue.config.productionTip = false
 
@@ -55,6 +56,8 @@ Vue.use(Toasted, {
   duration: 5000
 })
 Vue.use(VueTruncate)
+Vue.use(vClickOutside)
+
 Vue.use(VueQuillEditor, {
   modules: { toolbar: [
     [{ 'header': 1 }, { 'header': 2 }], ['bold', 'italic'],
@@ -75,6 +78,7 @@ Vue.filter('crushNumericString', scientificToDecimal.crushNumericString)
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)))
 store.dispatch('getSecurityPolicy')
 store.dispatch('getHelpUrl')
+store.dispatch('getAttributeMap')
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
     theme: {

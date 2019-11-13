@@ -37,12 +37,12 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.SearchFilterOptions;
 import edu.usu.sdl.openstorefront.core.view.SearchFilters;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.service.search.ElasticsearchComponentModel;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -353,9 +353,9 @@ public class ElasticSearchManager
 			maxSearchResults = searchFilters.getPageSize();
 		}
 
-		searchFilters.setQuery("*"+searchFilters.getQuery()+"*");
+		searchFilters.setQuery("*" + searchFilters.getQuery() + "*");
 
-		BoolQueryBuilder esQuery = getSearchQuery(searchFilters, null);
+		BoolQueryBuilder esQuery = getSearchQuery(searchFilters);
 
 		FieldSortBuilder sort = new FieldSortBuilder(searchFilters.getSortField())
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
@@ -427,7 +427,20 @@ public class ElasticSearchManager
 	public BoolQueryBuilder getSearchQuery(String query){
 		SearchFilters searchFilters = new SearchFilters();
 		searchFilters.setQuery(query);
-		return getSearchQuery(searchFilters, null);
+
+		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
+		if (searchOptions == null) {
+			searchOptions = service.getSearchService().getGlobalSearchOptions();
+			if (searchOptions == null) {
+				searchOptions = new SearchOptions();
+				searchOptions.setDefaultSearchOptions();
+			}
+		}
+		SearchFilterOptions searchFilterOptions = new SearchFilterOptions();
+		searchFilterOptions.populateFromSearchOptions(searchOptions);
+		searchFilters.setSearchFilterOptions(searchFilterOptions);
+
+		return getSearchQuery(searchFilters);
 	}
 
 	/**
@@ -437,22 +450,13 @@ public class ElasticSearchManager
 	 * @param searchOptions currently not used but will be used in a future implementation
 	 * @return a BoolQueryBuilder to create the search request from
 	 */
-	public BoolQueryBuilder getSearchQuery(SearchFilters searchFilters, SearchOptions searchOptions){
+	public BoolQueryBuilder getSearchQuery(SearchFilters searchFilters){
 
-		if(searchOptions == null){
-			searchOptions = service.getSearchService().getUserSearchOptions();
-			if (searchOptions == null) {
-				searchOptions = service.getSearchService().getGlobalSearchOptions();
-			}
-		}
-		if (searchOptions == null) {
-			searchOptions = new SearchOptions();
-			searchOptions.setDefaultSearchOptions();
-		}
+		SearchFilterOptions searchFilterOptions = searchFilters.getSearchFilterOptions();
 
 		BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
 
-		if (searchOptions.areAllOptionsOff()) {
+		if (searchFilterOptions.areAllOptionsOff()) {
 			return esQuery;
 		}
 
@@ -545,7 +549,7 @@ public class ElasticSearchManager
 				actualQuery = queryString.toString();
 			}
 
-			if (Convert.toBoolean(searchOptions.getCanUseOrganizationsInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseOrganizationsInSearch())) {
 				// Custom query for entry organization
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
@@ -553,7 +557,7 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
 			}
 
-			if (Convert.toBoolean(searchOptions.getCanUseNameInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseNameInSearch())) {
 				// Custom query for entry name
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
@@ -566,12 +570,12 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
 			}
 
-			if (Convert.toBoolean(searchOptions.getCanUseDescriptionInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseDescriptionInSearch())) {
 				// Custom query for description
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, actualQuery));
 			}
 
-			if (Convert.toBoolean(searchOptions.getCanUseTagsInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseTagsInSearch())) {
 				// Custom query for Tags
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
@@ -584,40 +588,44 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
 			}
 
-			if (Convert.toBoolean(searchOptions.getCanUseAttributesInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseAttributesInSearch())) {
 				// Custom query for Attributes
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
+				BoolQueryBuilder nestedAttributesQuery = QueryBuilders.boolQuery();
 
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
+				nestedAttributesQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
+				nestedAttributesQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
+				nestedAttributesQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
+				nestedAttributesQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
+
+				nestedAttributesQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
+				nestedAttributesQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
+				nestedAttributesQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
+				nestedAttributesQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
+
+				esQuery.should(QueryBuilders.nestedQuery("attributes", nestedAttributesQuery, ScoreMode.Avg));
 			}
 		}
 
 		// Loop Through Search Phrases
 		for (String phrase : searchPhrases) {
 
-			if (Convert.toBoolean(searchOptions.getCanUseOrganizationsInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseOrganizationsInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
 			}
 
-			if (Convert.toBoolean(searchOptions.getCanUseNameInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseNameInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
 			}
 
-			if (Convert.toBoolean(searchOptions.getCanUseDescriptionInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseDescriptionInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, phrase.toLowerCase()));
 			}
 
-			if (Convert.toBoolean(searchOptions.getCanUseTagsInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseTagsInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, phrase));
 			}
 
-			if (Convert.toBoolean(searchOptions.getCanUseAttributesInSearch())) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseAttributesInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, phrase));
 			}
 		}
@@ -628,14 +636,10 @@ public class ElasticSearchManager
 		}
 
 		BoolQueryBuilder boolQueryBuilderComponentTypes = QueryBuilders.boolQuery();
-		if(searchFilters.getComponentTypes() != null){
-			if(!searchFilters.getComponentTypes().isEmpty()){
-				for(String type : searchFilters.getComponentTypes()){
-					boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentType", type));
-					if(searchFilters.getIncludeChildren()){
-						boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentTypeNestedModel.componentType.componentType", type));
-					}
-				}
+		if(searchFilters.getComponentType() != null && searchFilters.getComponentType() != ""){
+			boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentType", searchFilters.getComponentType()));
+			if(searchFilters.getIncludeChildren()){
+				boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentTypeNestedModel.componentType.componentType", searchFilters.getComponentType()));
 			}
 		}
 
@@ -645,7 +649,7 @@ public class ElasticSearchManager
 				for(AttributeSearchType type : searchFilters.getAttributeSearchType()){
 					QueryBuilder boolQueryBuilderAttributeTypes = QueryBuilders.boolQuery()
 								.must(QueryBuilders.matchQuery("attributes.type", type.getType()))
-								.must(QueryBuilders.matchQuery("attributes.code", type.getCode()));
+								.must(QueryBuilders.matchQuery("attributes.label", type.getCode()));
 					NestedQueryBuilder nestedQueryBuilder = QueryBuilders.nestedQuery("attributes", boolQueryBuilderAttributeTypes, ScoreMode.Avg);
 					boolQueryBuilderAttributes.must(nestedQueryBuilder);
 				}
@@ -924,14 +928,21 @@ public class ElasticSearchManager
 			List<ComponentReview> componentReviews = componentReview.findByExample();
 			Map<String, List<ComponentReview>> reviewMap = componentReviews.stream().collect(Collectors.groupingBy(ComponentReview::getComponentId));
 
-			//This should be initialized (if not this will be slow)
-			SearchStatTable statTable = new SearchStatTable();
 			for (Component component : components) {
 
-				//convert to search result object
-				List<ComponentAttribute> componentAttributes = statTable.getAttributeMap().getOrDefault(component.getComponentId(), new ArrayList<>());
+				// fetch all component attributes
+				ComponentAttribute componentAttribute = new ComponentAttribute();
+				componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				componentAttribute.setComponentId(component.getComponentId());
+				List<ComponentAttribute> componentAttributes = componentAttribute.findByExample();
+
+				// fetch all component attributes
+				ComponentTag componentTag = new ComponentTag();
+				componentTag.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				componentTag.setComponentId(component.getComponentId());
+				List<ComponentTag> componentTags = componentTag.findByExample();
+
 				componentReviews = reviewMap.getOrDefault(component.getComponentId(), new ArrayList<>());
-				List<ComponentTag> componentTags = statTable.getTagMap().getOrDefault(component.getComponentId(), new ArrayList<>());
 				component.setDescription(StringProcessor.stripHtml(component.getDescription()));
 				component.setDescription(StringProcessor.ellipseString(component.getDescription(), MAX_DESCRIPTION_INDEX_SIZE));
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
