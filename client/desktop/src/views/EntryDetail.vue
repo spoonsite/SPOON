@@ -65,7 +65,7 @@
             </p>
             <div style="display: flex; flex-direction: column;">
               <span>
-                <v-btn fab><v-icon>fas fa-print</v-icon></v-btn>
+                <v-btn fab @click="openPrintScreen()"><v-icon>fas fa-print</v-icon></v-btn>
                 <label>Print</label>
               </span>
               <span>
@@ -791,6 +791,9 @@ export default {
     },
     todaysDateFormatted (val) {
       return !isFuture(val)
+    },
+    openPrintScreen() {
+      window.open("/openstorefront/print.jsp?id=" + this.detail.componentId)
     }
   },
   watch: {
