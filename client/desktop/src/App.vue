@@ -91,24 +91,6 @@
         </v-card>
       </v-dialog>
 
-      <!-- Login Expired Dialog -->
-      <v-dialog
-        v-model="loginExpiredDialog"
-        max-width="300px"
-        >
-        <v-card>
-          <v-card-title>
-            <h2>Authentication Error</h2>
-          </v-card-title>
-          <v-card-text>
-            Oops! It looks like you are not logged in.
-          </v-card-text>
-          <v-card-actions>
-            <v-btn block href="openstorefront">Login</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
       <!-- First Time User Dialog -->
       <!-- TODO: welcome user to storefront for the first time -->
       <!-- TODO: show a tutorial of basic features -->
@@ -152,7 +134,7 @@ export default {
       if (typeof response.data === 'string' &&
           response.data.includes('<!-- ***USER-NOT-LOGIN*** -->') &&
           !this.loggingOut) {
-        this.loginExpiredDialog = true
+        window.location.href = 'openstorefront'
       }
       return response
     },
@@ -182,7 +164,6 @@ export default {
       currentError: {},
       errorDialog: false,
       showErrorDetails: false,
-      loginExpiredDialog: false,
       messagesDialog: false,
       firstTimeDialog: false,
       loggingOut: false,
