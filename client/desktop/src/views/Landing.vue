@@ -28,7 +28,7 @@
     </div>
 
     <h2>
-        <span style="color:#F8C533;">
+        <span class="pa-2" style="color: #F8C533; background-color:#060B13; border-radius: 2px;">
           Browse by Category
         </span>
     </h2>
@@ -36,7 +36,7 @@
       <v-layout row wrap justify-center>
         <v-flex
           v-for="(item,i) in nestedComponentTypesList.children.filter(item => item.children.length > 0)"
-          class="mb-2"
+          class="mb-3"
           :key="i"
           xs12
           sm6
@@ -45,7 +45,7 @@
         >
           <v-card
             style="height: 100%;"
-            class="ma-2 category-card"
+            class="mx-2 category-card"
           >
             <router-link
               :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
