@@ -90,7 +90,9 @@ export default {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      this.$emit('submitSearch', '&comp=&children=true&searchoptions=' + this.searchOptions.join(','))
+      this.$emit('submitSearch', '&children=true&searchoptions=' + this.searchOptions.join(','))
+      this.hideSearchSuggestions = true
+      this.hideSearchOptions = true
     },
     getSearchSuggestions () {
       if (!this.hideSearchSuggestions) {

@@ -492,9 +492,6 @@ export default {
       localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
     }
   },
-  mounted () {
-    this.newSearch()
-  },
   beforeRouteUpdate (to, from, next) {
     if (to.query.q) {
       this.searchQuery = to.query.q
@@ -509,7 +506,7 @@ export default {
     if (to.query.children) {
       this.filters.children = (to.query.children === 'true')
     } else {
-      this.fitlers.children = false
+      this.filters.children = false
     }
     if (to.query.tags) {
       this.filters.tags = to.query.tags.split(',')
