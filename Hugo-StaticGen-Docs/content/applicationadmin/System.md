@@ -69,6 +69,8 @@ because it is necessary for the functioning of the site it is marked as a "Core 
 If you are interested in creating your own plugins for Spoon, there is an example plugin that you can start developing off of in the Spoon repository in the file path server `openstorefront/openstorefront-plugin/example/src/main/java/edu/usu/sdl/example/Activator.java`
 
 
+**[GO TO TOP]({{<relref "#toc">}})**
+
 <a name="Cache"></a>
 
 ### 6 - Cache
@@ -111,3 +113,5 @@ For more infomration on how Java handles memory, see [https://docs.oracle.com/da
 
 ### 12 - Garbage College
 See the link above for Heap Memory and Memory Pools.
+
+

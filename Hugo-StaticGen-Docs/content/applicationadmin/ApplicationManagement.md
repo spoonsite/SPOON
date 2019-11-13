@@ -86,3 +86,5 @@ Using the "__Message__" button on the screen sends an email from the support@spo
 {{% notice note %}}
 WARNING! As of v2.11 of Spoon, it is a known issue that Spoon's emails seem to be particularly susceptible to being caught in spam filters, so it is a frequent occurrence for attempted registrants of Spoon to log complaints that they are not being sent the confirmation code. In these instances it is best to manually create a new account for these individuals. Go to the Registrations tab, then click "__Add__". Be careful entering in the registrant's data in manually, as the verifications for a new user on from this side is less stringent then the verification on the public-facing signup. Email the registrant his new username and password from an email account that is not the main spoon support email address and verify the registrant's reception of the email via other means (phone perhaps).
 {{% /notice %}}
+
+Be aware that part of the functionality of this page can also be found at the [User Data > User Profiles page](../userdata/#UserProfiles)
