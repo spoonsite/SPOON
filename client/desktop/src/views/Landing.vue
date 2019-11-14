@@ -28,9 +28,9 @@
     </div>
 
     <h2>
-        <span class="pa-2" style="color: white; background-color:#060B13; border-radius: 2px;">
-          Browse by Category
-        </span>
+      <span class="pa-2" style="color: white; background-color:#060B13; border-radius: 2px;">
+        Browse by Category
+      </span>
     </h2>
     <v-container>
       <v-layout row wrap justify-center>
@@ -59,6 +59,7 @@
                 <img
                   :src="'/openstorefront/' + item.componentType.iconUrl"
                   height="50"
+                  width="50"
                   class="pa-1"
                 >
               </div>
@@ -188,8 +189,10 @@ export default {
       return this.searchQuery.length === 0
     },
     filteredComponentList () {
+      // excluded entry types to show on the landing page
+      let excluded = ['SOFTWARE']
       if (this.nestedComponentTypesList && this.nestedComponentTypesList.children) {
-        return this.nestedComponentTypesList.children.filter(item => item.children.length > 0)
+        return this.nestedComponentTypesList.children.filter(item => { return (item.children.length > 0 && !excluded.includes(item.componentType.componentType)) })
       } else {
         return []
       }
