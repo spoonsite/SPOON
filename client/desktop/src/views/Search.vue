@@ -1148,6 +1148,7 @@ hr {
   overflow-x: hidden;
   top: $header-height;
   bottom: $footer-height;
+  min-width: 300px;
   right: 0;
   left: 0;
 }
