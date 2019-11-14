@@ -29,7 +29,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
-import edu.usu.sdl.openstorefront.core.entity.ComponentMetadata;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentRelationship;
@@ -62,6 +61,7 @@ import edu.usu.sdl.openstorefront.core.view.ComponentReviewView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentTrackingResult;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.ListingStats;
 import edu.usu.sdl.openstorefront.core.view.LookupModel;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
 import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
@@ -276,12 +276,6 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void saveComponentMetadata(ComponentMetadata metadata)
-	{
-		sub.saveComponentMetadata(metadata);
-	}
-
-	@Override
 	public ComponentRelationship saveComponentRelationship(ComponentRelationship componentRelationship)
 	{
 		return sub.saveComponentRelationship(componentRelationship);
@@ -393,12 +387,6 @@ public class ComponentServiceImpl
 	public List<ComponentTag> getTagCloud()
 	{
 		return sub.getTagCloud();
-	}
-
-	@Override
-	public List<ComponentMetadata> getMetadata()
-	{
-		return sub.getMetadata();
 	}
 
 	@Override
@@ -798,21 +786,20 @@ public class ComponentServiceImpl
 	public void saveComponentComment(ComponentComment componentComment)
 	{
 		componentComment.save();
-		
-		if(ComponentCommentType.SUBMISSION.equals(componentComment.getCommentType())){
-			
+
+		if (ComponentCommentType.SUBMISSION.equals(componentComment.getCommentType())) {
+
 			EmailCommentModel emailCommentModel = new EmailCommentModel();
-			
+
 			WorkPlanLink workPlanLink = getWorkPlanService().getWorkPlanForComponent(componentComment.getComponentId());
 			Component component = getPersistenceService().findById(Component.class, workPlanLink.getComponentId());
-			
-			emailCommentModel.setComment(componentComment.getComment());			
-			if(componentComment.getAdminComment() != null && (componentComment.getAdminComment())){
+
+			emailCommentModel.setComment(componentComment.getComment());
+			if (componentComment.getAdminComment() != null && (componentComment.getAdminComment())) {
 				emailCommentModel.setAuthor("ADMIN");
-			}
-			else {
+			} else {
 				emailCommentModel.setAuthor(component.getOwnerUser());
-			}	
+			}
 			emailCommentModel.setEntryName(component.getName());
 			emailCommentModel.setCurrentStep(getWorkPlanService().getWorkPlan(workPlanLink.getWorkPlanId()).findWorkPlanStep(workPlanLink.getCurrentStepId()).getName());
 			emailCommentModel.setReplyInstructions("To respond to this comment, please login and go to the submission.");
@@ -821,10 +808,17 @@ public class ComponentServiceImpl
 			emailCommentModel.setPrivateComment(componentComment.getPrivateComment());
 			emailCommentModel.setAdminComment((componentComment.getAdminComment() != null && componentComment.getAdminComment()));
 			emailCommentModel.setEntryOwner(component.entityOwner());
-			
+
 			getNotificationServicePrivate().emailCommentMessage(emailCommentModel);
-			
+
 		}
-		
+
 	}
+
+	@Override
+	public ListingStats getComponentListingStats()
+	{
+		return core.getComponentListingStats();
+	}
+
 }

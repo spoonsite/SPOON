@@ -21,11 +21,9 @@ import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
-import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
-import edu.usu.sdl.openstorefront.core.api.query.QueryType;
-import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
@@ -45,11 +43,16 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+
+import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -58,6 +61,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -77,7 +81,7 @@ import javax.ws.rs.core.Response;
 public class Search
 		extends BaseResource
 {
-
+	private static final Logger LOG = Logger.getLogger(Search.class.getName());
 	private static final String USER_SEARCH_KEY = "UserSearchKey";
 
 	@Context
@@ -107,6 +111,60 @@ public class Search
 			};
 			return sendSingleEntityResponse(entity);
 		}
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
+	@APIDescription("Get the search options for indexing. (Admin)")
+	@Produces({MediaType.APPLICATION_JSON})
+	@DataType(SearchOptions.class)
+	@Path("/options")
+	public Response updateSearchModel()
+	{
+		SearchOptions searchOptionsExample = new SearchOptions();
+		SearchOptions searchOptions = searchOptionsExample.find();
+
+		if (searchOptions == null) {
+			// Return the default.
+			searchOptions = new SearchOptions();
+			searchOptions.setCanUseDescriptionInSearch(Boolean.TRUE);
+			searchOptions.setCanUseNameInSearch(Boolean.TRUE);
+			searchOptions.setCanUseOrganizationsInSearch(Boolean.TRUE);
+		}
+
+		return Response.ok(searchOptions).build();
+	}
+
+	@PUT
+	@RequireSecurity(SecurityPermission.ADMIN_SEARCH_UPDATE)
+	@APIDescription("Update the search options for indexing.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@DataType(SearchOptions.class)
+	@Path("/options")
+	public Response updateSearchModel(
+			SearchOptions incomingSearchOptions)
+	{
+		ValidationResult validationResult = incomingSearchOptions.validate();
+		if (!validationResult.valid()) {
+			return sendSingleEntityResponse(validationResult.toRestError());
+		}
+		SearchOptions searchOptionsExample = new SearchOptions();
+		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
+		searchOptionsExample.setActiveStatus(SearchOptions.ACTIVE_STATUS);
+		SearchOptions searchOptions = searchOptionsExample.find();
+
+		if (searchOptions == null) {
+			searchOptions = new SearchOptions();
+		}
+		searchOptions.setCanUseDescriptionInSearch(incomingSearchOptions.getCanUseDescriptionInSearch());
+		searchOptions.setCanUseNameInSearch(incomingSearchOptions.getCanUseNameInSearch());
+		searchOptions.setCanUseOrganizationsInSearch(incomingSearchOptions.getCanUseOrganizationsInSearch());
+
+		incomingSearchOptions.setGlobalFlag(Boolean.TRUE);
+		//service.getSearchService().saveSearchOptions(searchOptions); // TODO: @Ryan Frazier unable to compile after merge
+
+		return Response.ok(searchOptions).build();
 	}
 
 	@POST
@@ -284,16 +342,7 @@ public class Search
 	@Path("/stats")
 	public Response getListingStats()
 	{
-		ListingStats listingStats = new ListingStats();
-
-		Component componentExample = new Component();
-		componentExample.setActiveStatus(Component.ACTIVE_STATUS);
-		componentExample.setApprovalState(ApprovalStatus.APPROVED);
-		QueryByExample queryByExample = new QueryByExample(QueryType.COUNT, componentExample);
-		queryByExample.setAdditionalWhere(filterEngine.queryComponentRestriction());
-		long numberOfActiveComponents = service.getPersistenceService().countByExample(queryByExample);
-		listingStats.setNumberOfComponents(numberOfActiveComponents);
-
+		ListingStats listingStats = service.getComponentService().getComponentListingStats();
 		return Response.ok(listingStats).build();
 	}
 
@@ -329,6 +378,11 @@ public class Search
 				view.getComponentTypeDescription()
 			};
 			csvWriter.writeNext(data);
+		}
+		try {
+			csvWriter.close();
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "CsvWriter failed to close");
 		}
 
 		Response.ResponseBuilder response = Response.ok(writer.toString());

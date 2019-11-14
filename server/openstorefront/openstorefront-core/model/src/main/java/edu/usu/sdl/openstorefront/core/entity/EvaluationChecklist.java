@@ -105,7 +105,7 @@ public class EvaluationChecklist
 	}
 
 	@Override
-	public void setChangeParent(ChangeLog changeLog)
+	public void updateChangeParent(ChangeLog changeLog)
 	{
 		changeLog.setParentEntity(Evaluation.class.getSimpleName());
 		changeLog.setParentEntityId(getEvaluationId());

@@ -64,6 +64,7 @@ public class ChangeLogServiceImpl
 	{
 		List<ChangeLog> changeLogs = new ArrayList<>();
 
+		@SuppressWarnings("unchecked")
 		List<FieldChangeModel> changes = original.findChanges(updated);
 		original = unwrapProxy(original);
 
@@ -101,15 +102,15 @@ public class ChangeLogServiceImpl
 	{
 		if (saveChanges) {
 			changeLog.populateBaseCreateFields();
-			persistenceService.persist(changeLog);
+			getPersistenceService().persist(changeLog);
 		}
 	}
 
 	private <T extends StandardEntity> T unwrapProxy(T original)
 	{
 		T unwrapped;
-		if (persistenceService.isProxy(original)) {
-			unwrapped = persistenceService.deattachAll(original);
+		if (getPersistenceService().isProxy(original)) {
+			unwrapped = getPersistenceService().deattachAll(original);
 		} else {
 			unwrapped = original;
 		}
@@ -120,7 +121,7 @@ public class ChangeLogServiceImpl
 	{
 		if (original instanceof LoggableModel) {
 			LoggableModel loggableModel = (LoggableModel) original;
-			loggableModel.setChangeParent(changeLog);
+			loggableModel.updateChangeParent(changeLog);
 		}
 	}
 
@@ -237,13 +238,13 @@ public class ChangeLogServiceImpl
 		ChangeLog changeLogExample = new ChangeLog();
 		changeLogExample.setParentEntity(EntityUtil.getRealClassName(entity));
 		changeLogExample.setParentEntityId(entityId);
-		long childRecordsRemoved = persistenceService.deleteByExample(changeLogExample);
+		long childRecordsRemoved = getPersistenceService().deleteByExample(changeLogExample);
 		LOG.log(Level.FINE, MessageFormat.format("Removed: {0} child change log records.", childRecordsRemoved));
 
 		changeLogExample = new ChangeLog();
 		changeLogExample.setEntity(EntityUtil.getRealClassName(entity));
 		changeLogExample.setEntityId(entityId);
-		long recordsRemoved = persistenceService.deleteByExample(changeLogExample);
+		long recordsRemoved = getPersistenceService().deleteByExample(changeLogExample);
 		LOG.log(Level.FINE, MessageFormat.format("Removed: {0} change log records.", recordsRemoved));
 
 	}

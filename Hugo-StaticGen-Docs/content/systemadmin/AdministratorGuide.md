@@ -1,36 +1,126 @@
- +++
++++
 title = "Administrator Guide"
 description = ""
 weight = 4
 +++
 
 This article gives further instructions on setting up and configuring the web application.
+
 <!--more-->
 
-
-# 1. Other Guides
-
-This guide has been organized into separate documents to make it easier to navigate.
-The focus of this document is for configuration.  See other guides for other topics.
+## Related Documentation
 
 [Architecture]({{< ref "Architecture.md" >}})
 
 [Setup]({{< ref "Setup.md" >}})
 
 
-# 2.  Configuration
+## Application Properties
 
-## 2.1  Security
+Configure in: `/var/openstorefront/config/openstorefront.properties`
 
-### 2.1.1 Supported Realms
+| Property                            | Description                                                             | Default                                                      |
+|-------------------------------------|-------------------------------------------------------------------------|--------------------------------------------------------------|
+| **Database**                        |                                                                         |                                                              |
+| db.connectionpool.min               | DB min pool size                                                        | 5                                                            |
+| db.connectionpool.max               | DB max pool size                                                        | 40                                                           |
+| db.user                             | Should match orientdb-server-config.xml                                 | app                                                          |
+| db.pw                               | Should match orientdb-server-config.xml                                 | aPpw0rd!                                                     |
+| db.use.mongo                        | If the application should use MongoDB instead of OrientDB               | true                                                         |
+| mongo.database                      | The name of the database in MongoDB                                     | storefront                                                   |
+| errorticket.max                     | Max amount of ticket to hold (culls the oldest records upon filling)    | 5000                                                         |
+| trackingrecords.max.age.days        | Max age of tracking records                                             | 365                                                          |
+| external.usermanager                | Specifies manager for external user management (LdapUserManager)        | IniRealmManager                                              |
+| external.sync.activate              | Set to true to run the sync                                             | false                                                        |
+| search.server                       | The search server that the application uses (must use elasticsearch)    | elasticsearch                                                |
+| elastic.server.host                 | The hostname of the machine hosting Elasticsearch                       | localhost                                                    |
+| elastic.server.port                 | The port that elasticseach is using                                     | 9200                                                         |
+|                                     |                                                                         |                                                              |
+| **Security Header**                 | **Not in use for SPOON**                                                |                                                              |
+| openam.url                          | http:/…/openam (Full URL to open am instance)                           |                                                              |
+| logout.url                          | http:/…/openam/UI/Logout (Full URL to logout)                           |                                                              |
+| openam.header.username              | HTTP Header for Username                                                | sAMAccountName                                               |
+| openam.header.firstname             | HTTP Header for Firstname                                               | givenname                                                    |
+| openam.header.lastname              | HTTP Header for Lastname                                                | sn                                                           |
+| openam.header.email                 | HTTP Header for email                                                   | mail                                                         |
+| openam.header.phone                 | HTTP Header for group                                                   | telephonenumber                                              |
+| openam.header.group                 | HTTP Header for ldapguid                                                | memberOf                                                     |
+| openam.header.ldapguid              | HTTP Header for organization                                            | memberid                                                     |
+| openam.header.organization          |                                                                         | company                                                      |
+| openam.header.admingroupname        | HTTP Header for Admin Group Name \*Handles multiple values              | STOREFRONT-Admin                                             |
+|                                     |                                                                         |                                                              |
+| **Security**                        |                                                                         |                                                              |
+| role.admin                          | Name of the Admin Role                                                  | STOREFRONT-Admin                                             |
+|                                     |                                                                         |                                                              |
+| **Dev Tools Login**                 | **Not in use for SPOON**                                                |                                                              |
+| tools.login.user                    |                                                                         |                                                              |
+| tools.login.pw                      |                                                                         |                                                              |
+|                                     |                                                                         |                                                              |
+| **Jira Integration**                | **Deprecated**                                                          |                                                              |
+| jira.connectionpool.size            |                                                                         | 20                                                           |
+| jira.connection.wait.seconds        |                                                                         | 60                                                           |
+| jira.server.url                     |                                                                         | [https://jira.di2e.net](https://jira.di2e.net)               |
+|                                     |                                                                         |                                                              |
+| **Job management**                  |                                                                         |                                                              |
+| job.working.state.override.minutes  | Max job running time, used for Integrations                             | 30                                                           |
+| task.complete.expireminutes         |                                                                         | 5                                                            |
+| task.error.expireminutes            |                                                                         | 4320                                                         |
+| report.lifetime                     | How long will this report be in the system?                             | 180                                                          |
+|                                     |                                                                         |                                                              |
+| **Email Support**                   |                                                                         |                                                              |
+| mail.smtp.url                       | Login Credentials for Integrations (currently just for jira)            | localhost                                                    |
+| mail.server.user                    | Login Credentials for mail server                                       |                                                              |
+| mail.server.pw                      | Login Credentials for mail server                                       |                                                              |
+| mail.smtp.port                      | Mail Port (25 common)                                                   |                                                              |
+| mail.use.ssl                        | Set to true if server requires it                                       |                                                              |
+| mail.use.tls                        | Set to true if server requires it                                       |                                                              |
+| mail.from.name                      | From Name                                                               | Storefront Notification                                      |
+| mail.from.address                   | From Email Address                                                      | donotreply@storefront.net                                    |
+| mail.reply.name                     | Reply name (usually display at the bottom the message)                  |                                                              |
+| mail.reply.address                  | Reply email (usually display at the bottom the message)                 |                                                              |
+| mail.attach.file                    | Set to true or false indicating if emails should contain attached files | 0                                                            |
+| message.archive.days                | User message max age of archives                                        | 30                                                           |
+| message.queue.minmintues            | User message queue time or the time the message waits before sending    | 10                                                           |
+| message.maxretires                  | Max times the user message will try to send if unable to deliver        | 5                                                            |
+| message.recentchanges.days          | Time between “recent changes” messages from being sent                  | 28                                                           |
+|                                     |                                                                         |                                                              |
+| **General**                         |                                                                         |                                                              |
+| app.title                           | Title of the application. Used in emails but, also other places.        | Storefront                                                   |
+| websockets.enabled                  | Enables the use of websockets for server notifications                  | false                                                        |
+| userreview.autoapprove              | Allows user submitted info to be automatically approved (reviews, ect.) | true                                                         |
+| max.post.size                       | Maximum file size for files being saved to the system (in MB)           | 2000                                                         |
+|                                     |                                                                         |                                                              |
+| **LDAP Manager**                    | **Not in use for SPOON**                                                |                                                              |
+| ldapmanager.url                     | Full URL to the LDAP                                                    |                                                              |
+| ldapmanager.userDnTemplate          | uid={0},ou=users,dc=mycompany,dc=com; Reserved, not currently used      |                                                              |
+| ldapmanager.authenticationMechanism | NONE, SIMPLE, DIGEST-MD5, etc.                                          | SIMPLE                                                       |
+| ldapmanager.security.sasl.realm     | May be needed for SASL authentication                                   |                                                              |
+| ldapmanager.binddn                  | The LDAP user to use in the connection (Full DN name)                   |                                                              |
+| ldapmanager.pw                      |                                                                         |                                                              |
+| ldapmanager.connectionTimeout       |                                                                         | 15000                                                        |
+| ldapmanager.contextRoot             | Root to directory to search                                             |                                                              |
+| ldapmanager.attribute.username      | Attribute to map to username                                            | sAMAccountName                                               |
+| ldapmanager.attribute.email         | Attribute to map to email                                               | mail                                                         |
+| ldapmanager.attribute.phone         | Attribute to map to phone number                                        | telephonenumber                                              |
+| ldapmanager.attribute.fullname      | Attribute to map to fullname                                            | name                                                         |
+| ldapmanager.attribute.organization  | Attribute to map to organization                                        | company                                                      |
+| ldapmanager.attribute.guid          | Attribute to map to guid                                                | objectGUID                                                   |
+|                                     |                                                                         |                                                              |
+| **Help**                            |                                                                         |                                                              |
+| help.url                            | The URL that hosts this documentation                                   | [https://spoonsite.github.io/](https://spoonsite.github.io/) |
+
+## Configuration
+
+This section contains information on how to configure LDAP and OpenAM for SPOON. These features are currently inactive
+on SPOON, but could be activated in the future.
+
+### LDAP Configuration
+
+{{% notice warning %}}
+LDAP is currently not in use on SPOON.
+{{% /notice %}}
 
 Configure in `/var/openstorefront/config/shiro.ini`
-
--   INI (Properties File; Default)
-
-    Users are specified in the users section.
-
--   LDAP (Example)
 
 ```ini
 [main]
@@ -47,7 +137,7 @@ ldapRealm.contextFactory.environment[some.obscure.jndi.key] = some
 value
 ```
 
-#### 2.1.1.1 Database
+#### Database
 
 See
 [Configure JDBC Realm](http://stackoverflow.com/questions/17441019/how-to-configure-jdbcrealm-to-obtain-its-datasource-from-jndi)
@@ -71,7 +161,13 @@ jdbcRealm.dataSource = $dataSource
 securityManager.realms = $realm
 ```
 
-#### 2.1.1.2 OPENAM (Request Header)
+#### OPENAM (Request Header)
+
+{{% notice warning %}}
+OpenAM is currently not in use on SPOON.
+{{% /notice %}}
+
+OpenAM configuration
 
 ```ini
 [main]
@@ -83,66 +179,44 @@ headerRealm = edu.usu.sdl.openstorefront.security.HeaderRealm
 securityManager.realms = $headerRealm
 ```
 
-#### 2.1.1.3 Integration with OpenAM
+#### Integration with OpenAM
 
-Configure in: `/var/openstorefront/config/openstorefront.properties`
+1. Adjust the open am agent filter
 
-( **Property** -description ( **Default** ))
+    Change:
 
--  **openam.url**  -http:/.../openam (Full URL to open am instance)              
+    ```xml
+        <filter-mapping>
+            <filter-name>Agent</filter-name>
+            <url-pattern>/*</url-pattern>
+            <dispatcher>REQUEST</dispatcher>
+            <dispatcher>INCLUDE</dispatcher>
+            <dispatcher>FORWARD</dispatcher>
+            <dispatcher>ERROR</dispatcher>
+        </filter-mapping>
+    ```
 
--  **logout.url** - http:/.../openam/UI/Logout   (Full URL to logout)   
+    To
 
--  **openam.header.username**  - HTTP Header for Username    ( **sAMAccountName** )   
+    ```xml
+        <filter-mapping>
+            <filter-name>Agent</filter-name>
+            <url-pattern>/*</url-pattern>
+            <dispatcher>REQUEST</dispatcher>
+            <dispatcher>ERROR</dispatcher>
+        </filter-mapping>
+    ```
 
--  **openam.header.firstname**  - HTTP Header for Firstname    ( **givenname** )        
+1. Update system properties configurations
 
--  **openam.header.lastname** - HTTP Header for Lastname      ( **sn** )      
+    See Security Header in [Application Properties](#application-properties)
 
--  **openam.header.email**  - HTTP Header for email      ( **mail** )      
+## User Types
 
--  **openam.header.group**  - HTTP Header for group      ( **memberOf** )      
+The user types are defined as based on the roles they belong to.
 
-- **openam.header.ldapguid** - HTTP Header for ldapguid      ( **memberid** )      
-
--  **openam.header.organization** - HTTP Header for organization    
-
--  **openam.header.admingroupname** - HTTP Header for Admin Group Name \*Handles multiple values  ( **STORE-Admin** )    
-
-Also, need to adjust the open am agent filter
-
-Change:
-
-```xml
-    <filter-mapping>
-        <filter-name>Agent</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>ERROR</dispatcher>
-    </filter-mapping>
-```
-
-To
-
-```xml
-    <filter-mapping>
-        <filter-name>Agent</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>ERROR</dispatcher>
-    </filter-mapping>
-```
-
-
-### 2.1.2 User Types
-
-The user types are:
-
-Are defined as based on the roles they belong to.  
-If using the built-in security then the system will create default roles for
-default users, admins and evaluators.  It will create a default admin user: (admin / Secret1@)
+If using the built-in security then the system will create default roles for default users, admins and evaluators. It
+will also create a default admin user: (admin / Secret1@)
 
 {{% notice warning %}}
 You should change the admin password after login in.
@@ -162,242 +236,67 @@ Pre-defined groups:
 
 An admin can define new groups as needed.
 
-
 {{% notice note %}}
-All users are part of the Default group. 
+All users are part of the Default group.
 {{% /notice %}}
 
-## 2.2  Integration External LDAP (User Syncing)
+## Database Management
 
-When a user is not located in the external management system then the
-user profile in the application will be deactivated.
+The application handles all database interaction transparently, so direct database access and manipulation is not needed.
 
-The Security Policy in the application now allows for disabling user information editing. (Optional)
-This allow the external LDAP/Active Directory to be sole source of user information.
-Information will be synced at login and periodically according to teh user sync job.
-
-Warning: This will not prevent login! Upon login the user profile will
-be reactivated. To prevent login, refer to the external user management
-system that the application is connected to and inactive the user from
-there.
-
-Configure in: `/var/openstorefront/config/openstorefront.properties`
-
-( **Property** -description ( **Default** ))
-
-Also need to set the following properties to activate the feature:
--	**external.sync.activate**			- Set to true to activate
--	**external.usermanager**			- LdapUserManager
-
-
--   **ldapmanager.url**                       -Full URL to the LDAP (ldap://ldapHost:389 or ldap://localhost:389/o=JNDITutorial)   
--   **ldapmanager.userDnTemplate**   -         uid={0},ou=users,dc=mycompany,dc=com; Reserved, not currently used                  
--   **ldapmanager.authenticationMechanism** -  NONE, SIMPLE, DIGEST-MD5, etc.                                                      ( **SIMPLE** )
--   **ldapmanager.security.sasl.realm** -      May be needed for SASL authentication                                               
--   **ldapmanager.binddn** -                    The LDAP user to use in the connection (Full DN name)                               
--   **ldapmanager.credentials** -               The LDAP credentials                                                                
--   **ldapmanager.contextRoot** -               Root to directory to search                                                         
--   **ldapmanager.attribute.username** -        Attribute to map to username                                                       ( **sAMAccountName** )
--   **ldapmanager.attribute.email** -           Attribute to map to email                                                           ( **mail** )
--   **ldapmanager.attribute.fullname** -        Attribute to map to fullname                                                        ( **name** )
--   **ldapmanager.attribute.organization** -    Attribute to map to organization                                                    ( **company** )
--   **ldapmanager.attribute.guid** -            Attribute to map to guid                                                            ( **objectGUID** )
-
-## 2.3 Jira Integration
-
-Configure in: `/var/openstorefront/config/openstorefront.properties`
-
-( **Property** -description ( **Default** ))
-
--  **tools.login.user** -               Login Credentials for Integrations (currently just for jira)   
--  **tools.login.pw** -                 Login Credentials for Integrations (currently just for jira)   
--  **jra.connectionpool.size** -       Resource pool size                                             ( **20** )
--  **jira.connection.wait.seconds** -   Wait time if the pool is empty                                 ( **60** )
--  **jira.server.url** -                Jira server to connect to                                      ( **https://jira.di2e.net** )
-
-## 2.4 Confluence Integration
-
-Configure in: `/var/openstorefront/config/openstorefront.properties`
-
-( **Property** -description ( **Default** ))
-
--  **confluence.server.url** -URL to confluence
-
-
-## 2.5 Mail Server
-
-Configure in: `/var/openstorefront/config/openstorefront.properties`
-
-( **Property** -description ( **Default** ))
-
--  **mail.attach.file** -     Set to true or false indicating if emails should contain attached files
--  **mail.smtp.url** -        Login Credentials for Integrations (currently just for jira)   ( **localhost** )
--  **mail.server.user** -     Login Credentials for mail server                              
--  **mail.server.pw** -       Login Credentials for mail server                              
--  **mail.smtp.port** -       Mail Port (25 common)                                          
--  **mail.use.ssl** -         Set to true if server requires it                            
--  **mail.use.tls** -         Set to true if server requires it                            
--  **mail.from.name** -       From Name                                                      ( **Storefront Notification** )
--  **mail.from.address** -    From Email Address                                             ( **donotreply@storefront.net** )
--  **mail.reply.name** -      Reply name (usually display at the bottom the message)         ( **Support** )
--  **mail.reply.address** -   Reply email (usually display at the bottom the message)        ( **helpdesk@di2e.net** )
--  **test.email** -           Set for automated testing only; the email to use for testing
-
-## 2.6 Other Application Properties
-
-Configure in: `/var/openstorefront/config/openstorefront.properties`
-
-( **Property** -description ( **Default** ))
-
--  **errorticket.max**          -            Max amount of ticket to hold (culls the oldest records upon filling)                                                                                                       ( **5000** )
--  **trackingrecords.max.age.days**  -       Max age of tracking records                                                                                                                                                ( **365** )
--  **solr.server.url**     -                 URL to the SOLR instance to use. ; it should point to the appropriate collection.                                                                               ( **http://localhost:8983/solr/esa** )
--  **db.connectionpool.min**    -            DB min pool size                                                                                                                                                           ( **5** )
--  **db.connectionpool.max** -               DB max pool size                                                                                                                                                           ( **40** )
--  **db.user**             -                 Should match orientdb-server-config.xml                                                                                                                                    
--  **db.pw**            -                    Should match orientdb-server-config.xml
--  **external.host.url**   -                 Should point to the external host url (Eg. https://<host>/openstorefront) this is used in emails/external communication                                         ( **http://localhost:8080/openstorefront** )                                                                                                                                    
--  **job.working.state.override.minutes** -  Max job running time. Use for Integrations. To determine if a job got stuck.                                                                                               ( **30** )
--  **message.archive.days**        -         User message max age of archives                                                                                                                                           ( **30** )
--  **message.queue.minmintues**    -         User message queue time or the time the message waits before sending.                                                                                                      ( **10** )
--  **message.maxretires**    -               Max times the user message will try to send if unable to deliver.                                                                                                          ( **5** )
--  **message.recentchanges.days**   -        Time between "recent changes" messages from being sent.                                                                                                                    ( **28** )
--  **app.title**   -                         Title of the application. Used in emails but, also other places.                                                                                                           ( **DI2E Storefront** )
--  **external.usermanager**   -              Specifies the manager that is used for external user management. The manager must be supported by the application. ( IniRealmManager or LdapUserManager)                   ( **IniRealmManager** )
--  **external.sync.activate**  -             Set to 'true' to run the sync                                                                                                                                              (**False**)
--  **dblog.on**        -                     Activates logging records to the database; Note: All log record are still logged in the server logs regardless of setting this. This just controls the database logging.   ( **false** )
--  **dblog.maxrecords**     -                Maximum database records to store                                                                                                                                          ( **50000** )
--  **dblog.logSecurityFilter**  -            Log security API audit records; Note: setting this to true can cause noise when using the application log viewer.                                                          ( **False** )
--  **jirafeedback.show** - Allows users to provide jira feedback (True/False) ( **True** )
--  **filehistory.max.days** - Sets the max days to keep file history ( **180** )
--  **notification.max.days** - Set the max days to keep notification messages ( **7** )
--  **report.lifetime** - Set the lifetime of a report (how long will this report be in the system?) ( **180** )
--  **feedback.email** - Email address to send feedback to
--  **ui.idletimeout.minutes** - Set to a value > 1 to have the UI popup a idle warning about their session (Default is the application tries to keep the session alive.)
--  **ui.idlegraceperiod.minutes** -Set this to configure the grace period for the idle timeout. After the message appears.
--  **system.archive.maxprocessminutes** -Max time for system archive process without making progress (**60**)
--  **websockets.enabled** - Enables the use of websockets for server notifications ( **False** )
--  **userreview.autoapprove** - Allows user reviews, questions, and answers submitted by users to be automatically approved, otherwise an administrator must approve each update. (**True**)
--  **role.admin** -Set this before strarting the application the first time to set the name of the Admin Role
--  **test.email** -Set to run container tests that require email
--  **system.archive.maxprocessminutes** -Set the max time for running archive process; this used to clean up stuck working archives ( **60** )
--  **max.post.size** - Set to configure the maximum file size for files being saved to the system (in MB) ( **1000** )
--  **elastic.connectionpool.size** - Set the connection pool size ( **30**)
--  **elastic.connection.wait.seconds** - Max time to wait for an open connection. ( **60**)
-
-# 3. Database Management
-
-The application handles all database interaction transparently, so
-direct database access and manipulation is not needed.  
-
-See the following for information on outside control (should rarely be
-needed/used).
-
-## 3.1 Refreshing the Database
+### Refreshing the Database
 
 {{% notice warning %}}
-This will wipe out all data in the application. Data, such
-as User profiles, cannot be recovered. Component user data can be
-preserved by performing an export from the component admin tool.
+This will wipe out all data in the application. Data, such as User profiles, cannot be recovered. Component user data can
+be preserved by performing an export from the component admin tool.
 {{% /notice %}}
 
-Make a backup by copying all of the files in the /var/openstorefront/db
-directory or use the following console tools steps:
+Make a backup by copying all of the files in the /var/openstorefront/db directory or use the following console tools steps:
 
-1.  Stop the Tomcat server  (e.g. service tomcat stop)
+1. Stop the Tomcat server (e.g. service tomcat stop)
 
-2.  Remove the folder /var/openstorefront/db
-    (rm -rf /var/openstorefront/db)
+1. Remove the folder /var/openstorefront/db
 
-3.  Start the tomcat server
+    ```sh
+    rm -rf /var/openstorefront/db
+    ```
 
-When the application loads it will create a new database and populate
-the data from whatever is currently in the import folders (lookups only; attributes, component, articles will need to be manually
-trigger or uploaded via the Admin Tools UI).
+1. Start the tomcat server
 
-The initial load of the application may take a few minutes. If the
-import directories are empty, the application will load default lookup
-files that are packaged with the application.
+When the application loads it will create a new database and populate the data from whatever is currently in the import
+folders (lookups only; attributes, component, articles will need to be manually trigger or uploaded via the Admin Tools UI).
 
-## 3.2 Installing Database Console
+The initial load of the application may take a few minutes. If the import directories are empty, the application will load
+default lookup files that are packaged with the application.
 
-{{% notice warning %}}
-Viewing (Querying) information is fine; however, use
-extreme caution when modifying any records as all logic is handled by
-the application.
+## Troubleshooting
 
-Also, note longterm uses on external tools and access may have STIG consequences.
-For full audit log support Orient Enterprise edition is needed.  External server
-would need to be set.  The application does not currently have support for that but,
-it could added.
+If elasticsearch detects low disk space it will change into Read-Only mode. At which point the index records can’t be changed
+which cause with searching and updating records.
 
-{{% /notice %}}
+To resolve:
 
-1.  Download Orient DB (Currently using the 2.2.x series) at
-    [OrientDB.org](http://www.orientechnologies.com/download/)
+1. Correct the disk space issue
 
-2.  Extract the archive
+1. Force Elasticsearch out of read-only mode (this should only be done when the disk space issue cannot be resolved)
 
-3.  Run the console ./bin/console.sh
+    ```sh
+    curl -X PUT localhost:9200/_settings -H "Content-Type: application/json" -d '
+    {
+        "index": {
+            "blocks": {
+                "read_only_allow_delete": "false"
+            }
+        }
+    }'
+    ```
 
-4.  Connect to the DB:
+    Elasticsearch should respond with:
 
-connect remote: localhost/openstorefront (user) (password) (see the
-    /var/openstorefront/config/openstorefront.properties for
-    connection information)
+    ```json
+    {
+        "acknowledged": true
+    }
+    ```
 
-The database supports an SQL like interface and then adds other
-functionality on top.
-
--   See [Orient DB Backup](http://www.orientechnologies.com/docs/last/orientdb.wiki/Backup-and-Restore.html) for
-    information about backup
-
--   See [Orient DB Export/Import](http://www.orientechnologies.com/docs/last/orientdb.wiki/Export-and-Import.html) for
-    export and imports.
-
-## 3.3 Installing Database Studio
-
-{{% notice note %}}
-Orient DB includes a web application for viewing the database
-visually, instead of viewing everything from the console. Once installed,
-Orient DB Studio will run with the database itself once OpenStoreFront
-is running, and will not require anything to be run locally
-{{% /notice %}}
-
-{{% notice warning %}}
-Viewing (Querying) information is fine; however, use
-extreme caution when modifying any records as all logic is handled by
-the application.
-{{% /notice %}}
-
-1.  Download Orient DB (Currently using the 2.2.x series) at
-    [OrientDB.org](http://www.orientechnologies.com/download/)
-
-  1. If you already downloaded Orient DB in section 3.2 above,
-    you may simply reuse that download.
-
-2.  Extract the archive
-
-3.  Locate the Studio plugin: ./plugins/studio-2.1.zip
-
-4.  Copy plugin to OpenStoreFront database on server:
-    /var/openstorefront/db/plugins
-
-  1. Copy entire .zip file; do not extract.
-
-5. Start or Restart OpenStoreFront
-
-  1. Plugin will automatically be installed when the database service
-        is initialized.
-
-6. Access Orient DB Studio: <http://localhost:2480/studio/index.html>
-
-  1. Change 'localhost' to the appropriate domain name or IP address if OpenStoreFront is not running locally
-  2. Ensure 'openstorefront' is selected as the database in the dropdown.
-  3. Login using the credentials located in the configuration file: /var/openstorefront/config/openstorefront.properties
-
-The database supports an SQL like interface and then adds other
-functionality on top.
-
--   See [Orient DB Studio](http://orientdb.com/docs/2.2.x/Home-page.html) for
-    more information about Studio
+See [https://discuss.elastic.co/t/forbidden-12-index-read-only-allow-delete-api/110282/4](https://discuss.elastic.co/t/forbidden-12-index-read-only-allow-delete-api/110282/4)

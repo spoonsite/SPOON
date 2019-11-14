@@ -153,7 +153,7 @@ Ext.define('OSF.customSubmission.SubmissionForm', {
 										width: 75,
 										handler: function() {
 											var data = this.up('form').getValues();
-											submissionForm.initialSubmissionName = data.name; 
+											submissionForm.initialSubmissionName = data.name;
 											completeInitialSave();
 											promptWin.close();
 										}

@@ -117,7 +117,7 @@ public class AttributeMapper
 
 			String attributeTypeKey = fileHistoryAll.getDataMapModel().getFileDataMap().getName();
 			CleanKeySanitizer sanitizer = new CleanKeySanitizer();
-			attributeTypeKey = sanitizer.santize(attributeTypeKey).toString();
+			attributeTypeKey = sanitizer.sanitize(attributeTypeKey).toString();
 			attributeTypeKey = StringUtils.left(attributeTypeKey.toUpperCase().trim(), OpenStorefrontConstant.FIELD_SIZE_CODE);
 
 			attributeAll.getAttributeType().setAttributeType(attributeTypeKey);

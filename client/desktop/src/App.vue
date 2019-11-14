@@ -4,6 +4,7 @@
       <header>
         <div :style="topbarStyle">
         <v-toolbar color="primary" dense dark flat>
+          <v-btn icon to="/" active-class=""><v-icon>fas fa-home</v-icon></v-btn>
           <v-spacer></v-spacer>
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -20,7 +21,9 @@
                 v-for="link in filteredLinks"
                 :key="link.name"
                 class="menu-item"
-                @click="nav(link.link)"
+                :to="link.link ? link.link : undefined"
+                :href="link.href ? link.href : undefined"
+                active-class="menu-item-active"
               >
                 <v-list-tile-action>
                   <v-icon>fa fa-{{ link.icon }}</v-icon>
@@ -155,6 +158,8 @@ export default {
     // pass in current axios instance
     this.$store.dispatch('getCurrentUser', { axios: this.$http, callback: this.checkWatches })
     this.$store.dispatch('getAppVersion')
+    this.$store.dispatch('getComponentTypeList')
+    this.$store.dispatch('getAttributeMap')
     this.checkWatches()
   },
   computed: {
@@ -179,11 +184,11 @@ export default {
           icon: 'home',
           name: 'Home',
           permissions: [] },
-        { link: '/admin',
+        { href: '/openstorefront/AdminTool.action',
           icon: 'cog',
           name: 'Admin Tools',
           permissions: permissions.ADMIN },
-        { link: '/user',
+        { href: '/openstorefront/UserTool.action',
           icon: 'user',
           name: 'User Tools',
           permissions: [] },
@@ -199,6 +204,11 @@ export default {
           icon: 'comment',
           name: 'Contact',
           permissions: [] },
+        { href: (this.$store.state.helpUrl ? this.$store.state.helpUrl : 'https://spoonsite.github.io/'),
+          icon: 'question-circle',
+          name: 'Help',
+          newTab: true,
+          permissions: [] }
         // { link: '/sme-approval',
         //   icon: 'check',
         //   name: 'SME Approval',
@@ -223,8 +233,12 @@ export default {
     }
   },
   methods: {
-    nav (url) {
-      router.push(url)
+    nav (url, newTab = false) {
+      if (!newTab) {
+        router.push(url)
+      } else {
+        window.open(url)
+      }
     },
     logout () {
       this.loggingOut = true
@@ -316,6 +330,9 @@ $banner-height: 30px;
 $offset: $toolbar-height + $goldbar-height;
 $offset-banner: $offset + $banner-height;
 
+html {
+  overflow: auto !important;
+}
 #app {
   font-family: "Roboto";
   color: #333;
@@ -323,6 +340,9 @@ $offset-banner: $offset + $banner-height;
 .menu-item:hover {
   background-color: rgba(0,0,0,0.1);
   cursor: pointer;
+}
+.menu-item-active {
+  background-color: rgba(0,0,0,0.1);
 }
 .offset-banner {
   margin-top: $offset-banner;

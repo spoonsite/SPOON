@@ -16,6 +16,7 @@
 package edu.usu.sdl.core;
 
 import edu.usu.sdl.openstorefront.core.api.Service;
+import edu.usu.sdl.openstorefront.core.api.SystemManager;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,12 +36,16 @@ public class CoreActivator
 	private static final Logger log = Logger.getLogger(CoreActivator.class.getName());
 
 	private ServiceRegistration registration;
+	private ServiceRegistration systemRegistration;
 
 	@Override
 	public void start(BundleContext context) throws Exception
 	{
 		registration = context.registerService(Service.class, new ServiceProxy(), null);
-		log.log(Level.INFO, "Registered Core service");
+		log.log(Level.INFO, "Registered Core Service");
+
+		systemRegistration = context.registerService(SystemManager.class, new CoreSystem(), null);
+		log.log(Level.INFO, "Registered Core System");
 	}
 
 	@Override
@@ -48,7 +53,11 @@ public class CoreActivator
 	{
 		if (registration != null) {
 			registration.unregister();
-			log.log(Level.INFO, "Unregistered Core service");
+			log.log(Level.INFO, "Unregistered Core Service");
+
+			systemRegistration.unregister();
+			log.log(Level.INFO, "Unregistered Core System");
+
 		}
 	}
 

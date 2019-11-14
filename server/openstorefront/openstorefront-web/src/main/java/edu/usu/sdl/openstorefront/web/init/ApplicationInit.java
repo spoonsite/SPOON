@@ -37,7 +37,7 @@ public class ApplicationInit
 
 	private static final Logger LOG = Logger.getLogger(ApplicationInit.class.getName());
 
-	// inject Items that need started at sytem startup
+	// inject Items that need starting at sytem startup
 	@Inject
 	private CoreSystem coreSystem;
 

@@ -25,6 +25,7 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
+import edu.usu.sdl.openstorefront.core.entity.AttributeSearchType;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -36,11 +37,12 @@ import edu.usu.sdl.openstorefront.core.model.search.SearchSuggestion;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchView;
 import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.SearchFilterOptions;
+import edu.usu.sdl.openstorefront.core.view.SearchFilters;
 import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.manager.resource.ElasticSearchClient;
 import edu.usu.sdl.openstorefront.service.search.IndexSearchResult;
-import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.service.search.ElasticsearchComponentModel;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -57,9 +59,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -74,13 +78,21 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.PutMappingRequest;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.NestedQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -104,6 +116,13 @@ public class ElasticSearchManager
 	private static final String INDEX = "openstorefront";
 	private static final String INDEX_TYPE = "component";
 	private static final int MAX_DESCRIPTION_INDEX_SIZE = 8000;
+
+	private static final String INDEX_INNER_WINDOW = "index.max_inner_result_window";
+
+	//These numbers MAY need to changed based on number of components
+	private static final int MAX_SEARCH_RESULTS = 10000;
+	private static final int NUMBER_INNER_WINDOW_RETURN = 100000;
+
 	private static final String DEFAULT_POOL_SIZE = "40";
 
 	//TODO: Add back search all field as an option
@@ -230,7 +249,6 @@ public class ElasticSearchManager
 					CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX);
 					client.getInstance().indices().create(createIndexRequest, RequestOptions.DEFAULT);
 					LOG.log(Level.INFO, "Created index: " + INDEX);
-
 				} catch (ElasticsearchException e){
 					LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
 				}
@@ -301,8 +319,8 @@ public class ElasticSearchManager
 	/**
 	 * Parses the elasticsearch return object into a readable form
 	 * 
-	 * @param SearchQuery object holding the search query
-	 * @param FilterQueryParams filters to apply to the returned elasticsearch result
+	 * @param searchQuery object holding the search query
+	 * @param filter to apply to the returned elasticsearch result
 	 * @return ComponentSearchWrapper 
 	 */
 	@Override
@@ -322,38 +340,127 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * doIndexSearch with no additionalFieldsToReturn
+	 * Version 2 of index search, specifically for Vue frontend usage
 	 * 
-	 * @param query the string from user
-	 * @param FilterQueryParams any additional query filters
-	 * @return IndexSearchResult result from elasticsearch
+	 * @param searchFilters all necessary information needed for search
+	 * @return string of search response
 	 */
 	@Override
-	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
+	public SearchResponse indexSearchV2(SearchFilters searchFilters)
 	{
-		return doIndexSearch(query, filter, null);
+		int maxSearchResults = MAX_SEARCH_RESULTS;
+		if (searchFilters.getPageSize() < maxSearchResults) {
+			maxSearchResults = searchFilters.getPageSize();
+		}
+
+		searchFilters.setQuery("*" + searchFilters.getQuery() + "*");
+
+		BoolQueryBuilder esQuery = getSearchQuery(searchFilters);
+
+		FieldSortBuilder sort = new FieldSortBuilder(searchFilters.getSortField())
+				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
+						: SortOrder.DESC);
+
+		// Get all categories from search result
+		TermsAggregationBuilder categoryAggregationBuilder = AggregationBuilders
+				.terms("by_category")
+				.field("componentType.keyword")
+				.size(MAX_SEARCH_RESULTS);
+
+		// Get all tags from search result
+		TermsAggregationBuilder tagAggregationBuilder = AggregationBuilders
+				.terms("by_tag")
+				.field("tags.text.keyword")
+				.size(MAX_SEARCH_RESULTS);
+
+		// Get all organizations from search result
+		TermsAggregationBuilder orgAggregationBuilder = AggregationBuilders
+				.terms("by_organization")
+				.field("organization.keyword")
+				.size(MAX_SEARCH_RESULTS);
+
+		
+		String [] include = new String[]{"attributes"};
+
+		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
+				.topHits("attribute")
+				.fetchSource(include, null)
+				.size(NUMBER_INNER_WINDOW_RETURN);
+
+		// Gets list of all attribute labels from search as well as all the whole attribute object
+		NestedAggregationBuilder nestedAttributeLabelAggregationBuilder = AggregationBuilders
+				.nested("by_attribute_type", "attributes")
+				.subAggregation(topHitsAggregationBuilder);
+			
+
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+				.query(esQuery)
+				.from(0)
+				.from((searchFilters.getPage() -1) * searchFilters.getPageSize())
+				.size(maxSearchResults)
+				.sort(sort)
+				.aggregation(categoryAggregationBuilder)
+				.aggregation(tagAggregationBuilder)
+				.aggregation(orgAggregationBuilder)
+				.aggregation(nestedAttributeLabelAggregationBuilder);
+
+		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
+
+		SearchResponse response;
+		try (ElasticSearchClient client = singleton.getClient()) {
+			checkSearchIndexCreation();
+			response = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+			response = new SearchResponse();
+		}
+		return response;
 	}
 
-	@Override
-	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] additionalFieldsToReturn)
-	{
-		// look for user search options if none are found use global search options
+	/**
+	 * Function for backwards compatibility to old version of search
+	 * for building the query for the search
+	 * 
+	 * @param query the query string from search bar
+	 * @return a BoolQueryBuilder to create the search request from
+	 */
+	public BoolQueryBuilder getSearchQuery(String query){
+		SearchFilters searchFilters = new SearchFilters();
+		searchFilters.setQuery(query);
+
 		SearchOptions searchOptions = service.getSearchService().getUserSearchOptions();
 		if (searchOptions == null) {
 			searchOptions = service.getSearchService().getGlobalSearchOptions();
+			if (searchOptions == null) {
+				searchOptions = new SearchOptions();
+				searchOptions.setDefaultSearchOptions();
+			}
+		}
+		SearchFilterOptions searchFilterOptions = new SearchFilterOptions();
+		searchFilterOptions.populateFromSearchOptions(searchOptions);
+		searchFilters.setSearchFilterOptions(searchFilterOptions);
+
+		return getSearchQuery(searchFilters);
+	}
+
+	/**
+	 * Function to build query for search
+	 * 
+	 * @param searchFilters all info necessary for creating the search request
+	 * @param searchOptions currently not used but will be used in a future implementation
+	 * @return a BoolQueryBuilder to create the search request from
+	 */
+	public BoolQueryBuilder getSearchQuery(SearchFilters searchFilters){
+
+		SearchFilterOptions searchFilterOptions = searchFilters.getSearchFilterOptions();
+
+		BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
+
+		if (searchFilterOptions.areAllOptionsOff()) {
+			return esQuery;
 		}
 
-		IndexSearchResult indexSearchResult = new IndexSearchResult();
-
-		if (searchOptions.areAllOptionsOff()) {
-			return indexSearchResult;
-		}
-
-		int maxSearchResults = 10000;
-		if (filter.getMax() < maxSearchResults) {
-			maxSearchResults = filter.getMax();
-		}
-
+		String query = searchFilters.getQuery();
 		if (StringUtils.isBlank(query)) {
 			query = "*";
 		}
@@ -418,9 +525,6 @@ public class ElasticSearchManager
 			}
 		}
 
-		// Initialize ElasticSearch Query
-		BoolQueryBuilder esQuery = QueryBuilders.boolQuery();
-
 		// Check For Remaining Query Items
 		if (queryString.length() > 0) {
 
@@ -445,7 +549,7 @@ public class ElasticSearchManager
 				actualQuery = queryString.toString();
 			}
 
-			if (searchOptions.getCanUseOrganizationsInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseOrganizationsInSearch())) {
 				// Custom query for entry organization
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
@@ -453,7 +557,7 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
 			}
 
-			if (searchOptions.getCanUseNameInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseNameInSearch())) {
 				// Custom query for entry name
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
@@ -466,12 +570,12 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
 			}
 
-			if (searchOptions.getCanUseDescriptionInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseDescriptionInSearch())) {
 				// Custom query for description
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, actualQuery));
 			}
 
-			if (searchOptions.getCanUseTagsInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseTagsInSearch())) {
 				// Custom query for Tags
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
@@ -484,7 +588,7 @@ public class ElasticSearchManager
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
 			}
 
-			if (searchOptions.getCanUseAttributesInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseAttributesInSearch())) {
 				// Custom query for Attributes
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allUpperQuery));
 				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ATTRIBUTES, allLowerQuery));
@@ -501,38 +605,128 @@ public class ElasticSearchManager
 		// Loop Through Search Phrases
 		for (String phrase : searchPhrases) {
 
-			if (searchOptions.getCanUseOrganizationsInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseOrganizationsInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ORGANIZATION, phrase));
 			}
 
-			if (searchOptions.getCanUseNameInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseNameInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, phrase));
 			}
 
-			if (searchOptions.getCanUseDescriptionInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseDescriptionInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, phrase.toLowerCase()));
 			}
 
-			if (searchOptions.getCanUseTagsInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseTagsInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, phrase));
 			}
 
-			if (searchOptions.getCanUseAttributesInSearch()) {
+			if (Convert.toBoolean(searchFilterOptions.getCanUseAttributesInSearch())) {
 				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, phrase));
 			}
 		}
+
+		BoolQueryBuilder boolQueryBuilderOrganization = QueryBuilders.boolQuery();
+		if(searchFilters.getOrganization() != null && searchFilters.getOrganization() != ""){
+			boolQueryBuilderOrganization.must(QueryBuilders.matchPhraseQuery("organization", searchFilters.getOrganization()));
+		}
+
+		BoolQueryBuilder boolQueryBuilderComponentTypes = QueryBuilders.boolQuery();
+		if(searchFilters.getComponentType() != null && searchFilters.getComponentType() != ""){
+			boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentType", searchFilters.getComponentType()));
+			if(searchFilters.getIncludeChildren()){
+				boolQueryBuilderComponentTypes.should(QueryBuilders.matchPhraseQuery("componentTypeNestedModel.componentType.componentType", searchFilters.getComponentType()));
+			}
+		}
+
+		BoolQueryBuilder boolQueryBuilderAttributes = QueryBuilders.boolQuery();
+		if(searchFilters.getAttributes() != null){
+			if(!searchFilters.getAttributes().isEmpty()){
+				for(AttributeSearchType type : searchFilters.getAttributeSearchType()){
+					QueryBuilder boolQueryBuilderAttributeTypes = QueryBuilders.boolQuery()
+								.must(QueryBuilders.matchQuery("attributes.type", type.getType()))
+								.must(QueryBuilders.matchQuery("attributes.code", type.getCode()));
+					NestedQueryBuilder nestedQueryBuilder = QueryBuilders.nestedQuery("attributes", boolQueryBuilderAttributeTypes, ScoreMode.Avg);
+					boolQueryBuilderAttributes.must(nestedQueryBuilder);
+				}
+			}
+		}
+
+		BoolQueryBuilder boolQueryBuilderTags = QueryBuilders.boolQuery();
+		if (searchFilters.getTags() != null) {
+			if (!searchFilters.getTags().isEmpty()) {
+				for (String tag : searchFilters.getTags()) {
+					boolQueryBuilderTags.should(QueryBuilders.matchPhraseQuery("tags.text", tag));
+				}
+			}
+		}
+
+		BoolQueryBuilder finalQuery = QueryBuilders.boolQuery();
+
+		if(boolQueryBuilderOrganization.hasClauses()){
+			finalQuery.must(boolQueryBuilderOrganization);
+		}
+
+		if(boolQueryBuilderComponentTypes.hasClauses()){
+			finalQuery.must(boolQueryBuilderComponentTypes);
+		}
+
+		if(boolQueryBuilderTags.hasClauses()){
+			finalQuery.must(boolQueryBuilderTags);
+		}
+
+		if(boolQueryBuilderAttributes.hasClauses()){
+			finalQuery.must(boolQueryBuilderAttributes);
+		}
+
+		finalQuery.must(esQuery);
+		
+		return finalQuery;
+	} 
+
+	/**
+	 * doIndexSearch with no additionalFieldsToReturn
+	 * 
+	 * @param query the string from user
+	 * @param FilterQueryParams any additional query filters
+	 * @return IndexSearchResult result from elasticsearch
+	 */
+	@Override
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter)
+	{
+		return doIndexSearch(query, filter, null);
+	}
+
+	/**
+	 * Function for basic search
+	 * 
+	 * @param query the string from search bar
+	 * @param filter fields to filter on
+	 * @param additionalFieldsToReturn other fields to return from search
+	 */
+	@Override
+	public IndexSearchResult doIndexSearch(String query, FilterQueryParams filter, String[] additionalFieldsToReturn)
+	{
+
+		IndexSearchResult indexSearchResult = new IndexSearchResult();
+
+		int maxSearchResults = MAX_SEARCH_RESULTS;
+		if (filter.getMax() < maxSearchResults) {
+			maxSearchResults = filter.getMax();
+		}
+
+		BoolQueryBuilder esQuery = getSearchQuery(query);
+
 		FieldSortBuilder sort = new FieldSortBuilder(filter.getSortField())
-				//.unmappedType("String") // currently the only fields we are searching/sorting on are strings
-				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC : SortOrder.DESC);
+				// .unmappedType("String") // currently the only fields we are searching/sorting
+				// on are strings
+				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(filter.getSortOrder()) ? SortOrder.ASC
+						: SortOrder.DESC);
 
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-				.query(esQuery)
-				.from(filter.getOffset())
-				.size(maxSearchResults)
-				.sort(sort);
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().query(esQuery).from(filter.getOffset())
+				.size(maxSearchResults).sort(sort);
 
-		SearchRequest searchRequest = new SearchRequest(INDEX)
-				.source(searchSourceBuilder);
+		SearchRequest searchRequest = new SearchRequest(INDEX).source(searchSourceBuilder);
 
 		try {
 			performIndexSearch(searchRequest, indexSearchResult);
@@ -730,14 +924,21 @@ public class ElasticSearchManager
 			List<ComponentReview> componentReviews = componentReview.findByExample();
 			Map<String, List<ComponentReview>> reviewMap = componentReviews.stream().collect(Collectors.groupingBy(ComponentReview::getComponentId));
 
-			//This should be initialized (if not this will be slow)
-			SearchStatTable statTable = new SearchStatTable();
 			for (Component component : components) {
 
-				//convert to search result object
-				List<ComponentAttribute> componentAttributes = statTable.getAttributeMap().getOrDefault(component.getComponentId(), new ArrayList<>());
+				// fetch all component attributes
+				ComponentAttribute componentAttribute = new ComponentAttribute();
+				componentAttribute.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				componentAttribute.setComponentId(component.getComponentId());
+				List<ComponentAttribute> componentAttributes = componentAttribute.findByExample();
+
+				// fetch all component attributes
+				ComponentTag componentTag = new ComponentTag();
+				componentTag.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
+				componentTag.setComponentId(component.getComponentId());
+				List<ComponentTag> componentTags = componentTag.findByExample();
+
 				componentReviews = reviewMap.getOrDefault(component.getComponentId(), new ArrayList<>());
-				List<ComponentTag> componentTags = statTable.getTagMap().getOrDefault(component.getComponentId(), new ArrayList<>());
 				component.setDescription(StringProcessor.stripHtml(component.getDescription()));
 				component.setDescription(StringProcessor.ellipseString(component.getDescription(), MAX_DESCRIPTION_INDEX_SIZE));
 				ComponentSearchView componentSearchView = ComponentSearchView.toView(component, componentAttributes, componentReviews, componentTags);
@@ -801,7 +1002,7 @@ public class ElasticSearchManager
 					}
 				});
 			} else {
-				LOG.log(Level.FINE, "Index components successfully");
+				LOG.log(Level.INFO, "Index components successfully");
 			}
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
@@ -878,7 +1079,8 @@ public class ElasticSearchManager
 			DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest(INDEX);
 			deleteByQueryRequest.setQuery(QueryBuilders.matchAllQuery());
 
-			client.getInstance().deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
+			BulkByScrollResponse response = client.getInstance().deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
+			LOG.log(Level.INFO, "Deletion of index: " + response.getStatus().toString());
 
 		} catch (ElasticsearchException e) {
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
@@ -907,9 +1109,12 @@ public class ElasticSearchManager
 	@Override
 	public void resetIndexer()
 	{
+		checkSearchIndexCreation();
 		deleteAll();
-		saveAll();
+		updateElasticsearchSettings();
 		updateMapping();
+		updateMappingAttributes();
+		saveAll();
 	}
 
 	/**
@@ -949,7 +1154,7 @@ public class ElasticSearchManager
 					putMappingRequest.source(source);
 
 					AcknowledgedResponse putMappingResponse = client.getInstance().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
-					LOG.log(Level.INFO, putMappingResponse.toString());
+					LOG.log(Level.INFO, "Updated Mapping of " + field + " : " + Boolean.toString(putMappingResponse.isAcknowledged()));
 				} catch (IOException ex){
 					LOG.log(Level.SEVERE, null, ex);
 				} 
@@ -958,7 +1163,59 @@ public class ElasticSearchManager
 		} catch (IOException ex) {
 			LOG.log(Level.SEVERE, null, ex);
 		}
-		LOG.log(Level.INFO, "Mapping Updated");
+	}
+
+	/**
+	 * Updates the settings of the elasticsearch index
+	 * @return Boolean if settings were updated
+	*/
+	public Boolean updateElasticsearchSettings() {
+		try (ElasticSearchClient client = justGetClient();) {
+			UpdateSettingsRequest request = new UpdateSettingsRequest(INDEX);
+			String settingKey = INDEX_INNER_WINDOW;
+			int settingValue = NUMBER_INNER_WINDOW_RETURN;
+			Settings settings =
+					Settings.builder()
+					.put(settingKey, settingValue)
+					.build();
+
+			request.settings(settings);
+			AcknowledgedResponse updateSettingsResponse = client.getInstance().indices().putSettings(request, RequestOptions.DEFAULT);
+			LOG.log(Level.INFO, "Updated settings: " + Boolean.toString(updateSettingsResponse.isAcknowledged()));
+			return updateSettingsResponse.isAcknowledged();
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+		} catch (OpenStorefrontRuntimeException e){
+			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
+		}
+		return false;
+	}
+
+	/**
+	 * Updates the mapping of the index. Specifically for attributes, non-nested -> nested
+	 */
+	public void updateMappingAttributes(){
+		try (ElasticSearchClient client = singleton.getClient()) {
+
+				String source = 
+				"{\n" +
+				"  \"properties\": {\n" +
+				"    \"attributes\": {\n" +
+				"      \"type\": \"nested\"\n" +
+				"    }\n" +
+				"  }\n" +
+				"}";
+
+				try{
+					PutMappingRequest putMappingRequest = new PutMappingRequest(INDEX);
+					putMappingRequest.source(source, XContentType.JSON);
+
+					AcknowledgedResponse putMappingResponse = client.getInstance().indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
+					LOG.log(Level.INFO, "Updated Mapping of attributes: " + Boolean.toString(putMappingResponse.isAcknowledged()));
+				} catch (IOException ex){
+					LOG.log(Level.SEVERE, null, ex);
+				} 
+			}
 	}
 
 	/**
@@ -988,7 +1245,7 @@ public class ElasticSearchManager
 			SearchRequest searchRequest = new SearchRequest(INDEX); 
 			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
 			searchSourceBuilder.query(QueryBuilders.matchAllQuery()); 
-			searchSourceBuilder.size(10000);
+			searchSourceBuilder.size(MAX_SEARCH_RESULTS);
 			searchRequest.source(searchSourceBuilder);
 
 			searchResponse = client.getInstance().search(searchRequest, RequestOptions.DEFAULT);

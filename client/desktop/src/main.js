@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router.js'
 import store from './store.js'
+import scientificToDecimal from './util/scientificToDecimal'
 
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
@@ -68,18 +69,22 @@ Vue.filter('formatDate', function (value, formatString) {
     return format(value, 'YYYY/MM/DD')
   }
 })
+
+Vue.filter('crushNumericString', scientificToDecimal.crushNumericString)
+
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)))
 store.dispatch('getSecurityPolicy')
+store.dispatch('getHelpUrl')
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify, {
     theme: {
-      primary: store.state.branding.vuePrimaryColor,
-      secondary: store.state.branding.vueSecondaryColor,
-      accent: store.state.branding.vueAccentColor,
-      error: store.state.branding.vueErrorColor,
-      info: store.state.branding.vueInfoColor,
-      warning: store.state.branding.vueWarningColor,
-      success: store.state.branding.vueSuccessColor,
+      primary: (store.state.branding.vuePrimaryColor ? store.state.branding.vuePrimaryColor : '#252931'),
+      secondary: (store.state.branding.vueSecondaryColor ? store.state.branding.vueSecondaryColor : '#183a4c'),
+      accent: '#757575',
+      error: (store.state.branding.vueErrorColor ? store.state.branding.vueErrorColor : '#c62828'),
+      info: (store.state.branding.vueInfoColor ? store.state.branding.vueInfoColor : '#3f51b5'),
+      warning: (store.state.branding.vueWarningColor ? store.state.branding.vueWarningColor : '#ffa000'),
+      success: (store.state.branding.vueSuccessColor ? store.state.branding.vueSuccessColor : '#388e3c')
     }
   })
 

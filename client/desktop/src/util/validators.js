@@ -1,4 +1,4 @@
-import store from '../store';
+import store from '../store'
 
 export default {
   data: () => ({
@@ -11,18 +11,18 @@ export default {
         // invalid or support unicode in the domain name.
         // The intent here is to keep things VERY loose as DI2E and other groups
         // have had issues in the past and we need international support which adds whole other layers of complications
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || 'Email address is not in a valid format';
+        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        return pattern.test(value) || 'Email address is not in a valid format'
       },
       required: value => {
         // Value cannot be empty or only whitespace
-        return (!!value && /^\s+$/.test(value) === false) || 'This field is required';
+        return (!!value && /^\s+$/.test(value) === false) || 'This field is required'
       },
       password: value => {
-        let regex = new RegExp('^(?=.*[A-Z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{' + String(store.state.securityPolicy.minPasswordLength) + ',}$');
+        let regex = new RegExp('^(?=.*[A-Z])(?=.*\\d)(?=.*[~`!@#$%^&*()-+=<>:;"\',.?])[A-Za-z\\d~`!@#$%^&*()-+=<>:;"\',.?]{' + String(store.state.securityPolicy.minPasswordLength) + ',}$')
         return regex.test(value) ||
-        `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least ${store.state.securityPolicy.minPasswordLength} characters`;
+        `Password must contain 1 uppercase, 1 number, 1 special character (i.e. @$!%*#?&), and be at least ${store.state.securityPolicy.minPasswordLength} characters`
       }
     }
   })
-};
+}

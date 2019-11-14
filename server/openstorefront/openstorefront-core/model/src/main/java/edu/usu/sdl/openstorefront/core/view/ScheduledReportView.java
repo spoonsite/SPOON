@@ -52,16 +52,13 @@ public class ScheduledReportView
 		}
 		view.setReportTypeDescription(TranslateUtil.translate(ReportType.class, report.getReportType()));
 
-		String format = report.getReportFormat();
-		if (StringUtils.isBlank(format)) {
-			format = "";
-			for (ReportOutput output : report.getReportOutputs()) {
-				if (ReportTransmissionType.VIEW.equals(output.getReportTransmissionType())) {
-					format += "<b>" + TranslateUtil.translate(ReportTransmissionType.class, output.getReportTransmissionType())
-							+ "</b>: "
-							+ TranslateUtil.translate(ReportFormat.class, output.getReportTransmissionOption().getReportFormat())
-							+ "<br>";
-				}
+		String format = "";
+		for (ReportOutput output : report.getReportOutputs()) {
+			if (ReportTransmissionType.VIEW.equals(output.getReportTransmissionType())) {
+				format += "<b>" + TranslateUtil.translate(ReportTransmissionType.class, output.getReportTransmissionType())
+						+ "</b>: "
+						+ TranslateUtil.translate(ReportFormat.class, output.getReportTransmissionOption().getReportFormat())
+						+ "<br>";
 			}
 		}
 

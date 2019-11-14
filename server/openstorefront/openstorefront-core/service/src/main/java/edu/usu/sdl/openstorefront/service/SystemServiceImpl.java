@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.common.util.TimeUtil;
 import edu.usu.sdl.openstorefront.core.api.SystemService;
 import edu.usu.sdl.openstorefront.core.api.model.TaskFuture;
+import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.AsyncTask;
@@ -33,18 +34,15 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
-import edu.usu.sdl.openstorefront.core.entity.HelpSection;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.MediaFile;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
-import edu.usu.sdl.openstorefront.core.model.HelpSectionAll;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
 import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.security.UserContext;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.PluginManager;
@@ -56,7 +54,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,15 +71,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Collections;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -105,7 +97,7 @@ public class SystemServiceImpl
 	@Override
 	public ApplicationProperty getProperty(String key)
 	{
-		ApplicationProperty applicationProperty = persistenceService.findById(ApplicationProperty.class, key);
+		ApplicationProperty applicationProperty = getPersistenceService().findById(ApplicationProperty.class, key);
 		return applicationProperty;
 	}
 
@@ -124,17 +116,17 @@ public class SystemServiceImpl
 	{
 		if (StringUtils.isBlank(value)) {
 			//remove existing
-			ApplicationProperty existingProperty = persistenceService.findById(ApplicationProperty.class, key);
+			ApplicationProperty existingProperty = getPersistenceService().findById(ApplicationProperty.class, key);
 			if (existingProperty != null) {
-				persistenceService.delete(existingProperty);
+				getPersistenceService().delete(existingProperty);
 			}
 		} else {
-			ApplicationProperty existingProperty = persistenceService.findById(ApplicationProperty.class, key);
+			ApplicationProperty existingProperty = getPersistenceService().findById(ApplicationProperty.class, key);
 			if (existingProperty != null) {
 				existingProperty.setValue(value);
 				existingProperty.setUpdateDts(TimeUtil.currentDate());
 				existingProperty.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-				persistenceService.persist(existingProperty);
+				getPersistenceService().persist(existingProperty);
 			} else {
 				ApplicationProperty property = new ApplicationProperty();
 				property.setKey(key);
@@ -144,7 +136,7 @@ public class SystemServiceImpl
 				property.setUpdateDts(TimeUtil.currentDate());
 				property.setCreateUser(OpenStorefrontConstant.SYSTEM_USER);
 				property.setUpdateUser(OpenStorefrontConstant.SYSTEM_USER);
-				persistenceService.persist(property);
+				getPersistenceService().persist(property);
 			}
 		}
 	}
@@ -162,7 +154,7 @@ public class SystemServiceImpl
 	{
 		Highlight existing = null;
 		if (StringUtils.isNotBlank(highlight.getHighlightId())) {
-			existing = persistenceService.findById(Highlight.class, highlight.getHighlightId());
+			existing = getPersistenceService().findById(Highlight.class, highlight.getHighlightId());
 		}
 		if (existing != null) {
 			Date existingUpdateDts = existing.getUpdateDts();
@@ -176,53 +168,53 @@ public class SystemServiceImpl
 				existing.setUpdateDts(existingUpdateDts);
 			}
 
-			persistenceService.persist(existing);
+			getPersistenceService().persist(existing);
 		} else {
 			if (StringUtils.isBlank(highlight.getHighlightId())) {
-				highlight.setHighlightId(persistenceService.generateId());
+				highlight.setHighlightId(getPersistenceService().generateId());
 			}
 			highlight.populateBaseCreateFields();
-			persistenceService.persist(highlight);
+			getPersistenceService().persist(highlight);
 		}
 	}
 
 	@Override
 	public void removeHighlight(String hightlightId)
 	{
-		Highlight highlight = persistenceService.findById(Highlight.class, hightlightId);
+		Highlight highlight = getPersistenceService().findById(Highlight.class, hightlightId);
 		if (highlight != null) {
 			highlight.setActiveStatus(Highlight.INACTIVE_STATUS);
 			highlight.setUpdateUser(SecurityUtil.getCurrentUserName());
 			highlight.setUpdateDts(TimeUtil.currentDate());
-			persistenceService.persist(highlight);
+			getPersistenceService().persist(highlight);
 		}
 	}
 
 	@Override
 	public void deleteHighlight(String hightlightId)
 	{
-		Highlight highlight = persistenceService.findById(Highlight.class, hightlightId);
+		Highlight highlight = getPersistenceService().findById(Highlight.class, hightlightId);
 		if (highlight != null) {
-			persistenceService.delete(highlight);
+			getPersistenceService().delete(highlight);
 		}
 	}
 
 	@Override
 	public void activateHighlight(String hightlightId)
 	{
-		Highlight highlight = persistenceService.findById(Highlight.class, hightlightId);
+		Highlight highlight = getPersistenceService().findById(Highlight.class, hightlightId);
 		if (highlight != null) {
 			highlight.setActiveStatus(Highlight.ACTIVE_STATUS);
 			highlight.setUpdateUser(SecurityUtil.getCurrentUserName());
 			highlight.setUpdateDts(TimeUtil.currentDate());
-			persistenceService.persist(highlight);
+			getPersistenceService().persist(highlight);
 		}
 	}
 
 	@Override
 	public void syncHighlights(List<Highlight> highlights)
 	{
-		int removeCount = persistenceService.deleteByExample(new Highlight());
+		int removeCount = getPersistenceService().deleteByExample(new Highlight());
 		LOG.log(Level.FINE, MessageFormat.format("Old Highlights removed: {0}", removeCount));
 
 		for (Highlight highlight : highlights) {
@@ -258,7 +250,7 @@ public class SystemServiceImpl
 		}
 		try {
 
-			String ticketNumber = persistenceService.generateId();
+			String ticketNumber = getPersistenceService().generateId();
 			StringBuilder ticket = new StringBuilder();
 			ticket.append("TicketNumber: ").append(ticketNumber).append("\n");
 			ticket.append("Client IP: ").append(errorInfo.getClientIp()).append("\n");
@@ -293,7 +285,7 @@ public class SystemServiceImpl
 			errorTicket.setUpdateDts(TimeUtil.currentDate());
 			errorTicket.setCreateUser(SecurityUtil.getCurrentUserName());
 			errorTicket.setUpdateUser(SecurityUtil.getCurrentUserName());
-			persistenceService.persist(errorTicket);
+			getPersistenceService().persist(errorTicket);
 
 			//save file
 			Path path = Paths.get(FileSystemManager.getInstance().getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
@@ -316,7 +308,7 @@ public class SystemServiceImpl
 	public String errorTicketInfo(String errorTicketId)
 	{
 		String ticketData = null;
-		ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, errorTicketId);
+		ErrorTicket errorTicket = getPersistenceService().findById(ErrorTicket.class, errorTicketId);
 		if (errorTicket != null) {
 			Path path = Paths.get(FileSystemManager.getInstance().getDir(FileSystemManager.ERROR_TICKET_DIR).getPath() + "/" + errorTicket.getTicketFile());
 			try {
@@ -336,7 +328,7 @@ public class SystemServiceImpl
 	{
 		List<ErrorTicket> errorTickets = new ArrayList<>();
 		for (String id : ticketIds) {
-			ErrorTicket errorTicket = persistenceService.findById(ErrorTicket.class, id);
+			ErrorTicket errorTicket = getPersistenceService().findById(ErrorTicket.class, id);
 			errorTickets.add(errorTicket);
 		}
 		performDelete(errorTickets);
@@ -345,15 +337,24 @@ public class SystemServiceImpl
 	@Override
 	public void cleanupOldErrors()
 	{
-		long count = persistenceService.countClass(ErrorTicket.class);
+		long count = getPersistenceService().countClass(ErrorTicket.class);
 		long max = Long.parseLong(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_ERROR_TICKETS, OpenStorefrontConstant.ERRORS_MAX_COUNT_DEFAULT));
 
 		if (count > max) {
 
 			//query ticket
 			long limit = count - max;
-			String query = "SELECT FROM ErrorTicket ORDER BY updateDts ASC LIMIT " + limit;
-			List<ErrorTicket> errorTickets = persistenceService.query(query, null);
+
+			ErrorTicket errorTicketExample = new ErrorTicket();
+			QueryByExample<ErrorTicket> queryByExample = new QueryByExample<>(errorTicketExample);
+			queryByExample.setMaxResults((int) limit);
+
+			ErrorTicket errorTicketOrderByExample = new ErrorTicket();
+			errorTicketOrderByExample.setUpdateDts(QueryByExample.DATE_FLAG);
+			queryByExample.setOrderBy(errorTicketOrderByExample);
+			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_ASCENDING);
+
+			List<ErrorTicket> errorTickets = getPersistenceService().queryByExample(queryByExample);
 			performDelete(errorTickets);
 		}
 	}
@@ -368,7 +369,7 @@ public class SystemServiceImpl
 					LOG.log(Level.WARNING, MessageFormat.format("Unable to remove error ticket. Path: {0}", path.toString()));
 				}
 			}
-			persistenceService.delete(errorTicket);
+			getPersistenceService().delete(errorTicket);
 		});
 	}
 
@@ -408,7 +409,7 @@ public class SystemServiceImpl
 		try {
 			generalMedia.setFile(saveMediaFile(generalMedia.getFile(), fileInput, mimeType, originalFileName));
 			generalMedia.populateBaseCreateFields();
-			persistenceService.persist(generalMedia);
+			getPersistenceService().persist(generalMedia);
 			return generalMedia;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
@@ -421,7 +422,7 @@ public class SystemServiceImpl
 		if (media == null) {
 			media = new MediaFile();
 		}
-		media.setFileName(persistenceService.generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
+		media.setFileName(getPersistenceService().generateId() + OpenStorefrontConstant.getFileExtensionForMime(mimeType));
 		media.setMimeType(mimeType);
 		media.setOriginalName(originalFileName);
 		media.setFileType(MediaFileType.GENERAL);
@@ -433,7 +434,7 @@ public class SystemServiceImpl
 	@Override
 	public void removeGeneralMedia(String mediaName)
 	{
-		GeneralMedia generalMedia = persistenceService.findById(GeneralMedia.class, mediaName);
+		GeneralMedia generalMedia = getPersistenceService().findById(GeneralMedia.class, mediaName);
 		if (generalMedia != null) {
 			Path path = generalMedia.pathToMedia();
 			if (path != null) {
@@ -443,7 +444,7 @@ public class SystemServiceImpl
 					}
 				}
 			}
-			persistenceService.delete(generalMedia);
+			getPersistenceService().delete(generalMedia);
 		}
 	}
 
@@ -458,7 +459,7 @@ public class SystemServiceImpl
 		try (InputStream in = fileInput) {
 			Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 			temporaryMedia.populateBaseCreateFields();
-			persistenceService.persist(temporaryMedia);
+			getPersistenceService().persist(temporaryMedia);
 			return temporaryMedia;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
@@ -468,7 +469,7 @@ public class SystemServiceImpl
 	@Override
 	public void removeTemporaryMedia(String temporaryMediaId)
 	{
-		TemporaryMedia temporaryMedia = persistenceService.findById(TemporaryMedia.class, temporaryMediaId);
+		TemporaryMedia temporaryMedia = getPersistenceService().findById(TemporaryMedia.class, temporaryMediaId);
 		if (temporaryMedia != null) {
 			Path path = temporaryMedia.pathToMedia();
 			if (path != null) {
@@ -478,7 +479,7 @@ public class SystemServiceImpl
 					}
 				}
 			}
-			persistenceService.delete(temporaryMedia);
+			getPersistenceService().delete(temporaryMedia);
 		}
 	}
 
@@ -493,7 +494,7 @@ public class SystemServiceImpl
 			throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue", ex);
 		}
 
-		TemporaryMedia existingMedia = persistenceService.findById(TemporaryMedia.class, hash);
+		TemporaryMedia existingMedia = getPersistenceService().findById(TemporaryMedia.class, hash);
 		if (existingMedia != null) {
 			existingMedia.setUpdateDts(TimeUtil.currentDate());
 			return existingMedia;
@@ -575,8 +576,8 @@ public class SystemServiceImpl
 	public void cleanUpOldTemporaryMedia()
 	{
 
-		String query = "SELECT FROM " + TemporaryMedia.class.getSimpleName();
-		List<TemporaryMedia> allTemporaryMedia = persistenceService.query(query, null);
+		TemporaryMedia temporaryMediaExample = new TemporaryMedia();
+		List<TemporaryMedia> allTemporaryMedia = temporaryMediaExample.findByExample();
 		int maxDays = Convert.toInteger(PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.TEMPORARY_MEDIA_KEEP_DAYS));
 
 		for (TemporaryMedia media : allTemporaryMedia) {
@@ -596,9 +597,9 @@ public class SystemServiceImpl
 	@Override
 	public void saveAsyncTask(TaskFuture taskFuture)
 	{
-		AsyncTask existingTask = persistenceService.findById(AsyncTask.class, taskFuture.getTaskId());
+		AsyncTask existingTask = getPersistenceService().findById(AsyncTask.class, taskFuture.getTaskId());
 		if (existingTask != null) {
-			persistenceService.delete(existingTask);
+			getPersistenceService().delete(existingTask);
 		}
 
 		AsyncTask asyncTask = new AsyncTask();
@@ -615,30 +616,30 @@ public class SystemServiceImpl
 		asyncTask.setUpdateUser(taskFuture.getCreateUser());
 		asyncTask.populateBaseCreateFields();
 
-		persistenceService.persist(asyncTask);
+		getPersistenceService().persist(asyncTask);
 
 	}
 
 	@Override
 	public void removeAsyncTask(String taskId)
 	{
-		AsyncTask task = persistenceService.findById(AsyncTask.class, taskId);
+		AsyncTask task = getPersistenceService().findById(AsyncTask.class, taskId);
 		if (task != null) {
-			persistenceService.delete(task);
+			getPersistenceService().delete(task);
 		}
 	}
 
 	@Override
 	public void addLogRecord(DBLogRecord logRecord)
 	{
-		logRecord.setLogId(persistenceService.generateId());
-		persistenceService.saveNonBaseEntity(logRecord);
+		logRecord.setLogId(getPersistenceService().generateId());
+		getPersistenceService().persist(logRecord);
 	}
 
 	@Override
 	public void cleanUpOldLogRecords()
 	{
-		long count = persistenceService.countClass(DBLogRecord.class);
+		long count = getPersistenceService().countClass(DBLogRecord.class);
 		long max = DBLogManager.getMaxLogEntries();
 
 		if (count > max) {
@@ -651,11 +652,20 @@ public class SystemServiceImpl
 			if (limit < 0) {
 				limit = 1;
 			}
-			String query = "SELECT FROM DBLogRecord ORDER BY eventDts ASC LIMIT " + limit;
-			List<DBLogRecord> logRecords = persistenceService.query(query, null);
+
+			DBLogRecord dBLogRecordExample = new DBLogRecord();
+			QueryByExample<DBLogRecord> queryByExample = new QueryByExample<>(dBLogRecordExample);
+			queryByExample.setMaxResults((int) limit);
+
+			DBLogRecord dbLogOrderBy = new DBLogRecord();
+			dbLogOrderBy.setEventDts(QueryByExample.DATE_FLAG);
+			queryByExample.setOrderBy(dbLogOrderBy);
+			queryByExample.setSortDirection(OpenStorefrontConstant.SORT_ASCENDING);
+
+			List<DBLogRecord> logRecords = getPersistenceService().queryByExample(queryByExample);
 			logRecords.stream().forEach((record)
 					-> {
-				persistenceService.delete(record);
+				getPersistenceService().delete(record);
 			});
 		}
 	}
@@ -663,178 +673,9 @@ public class SystemServiceImpl
 	@Override
 	public void clearAllLogRecord()
 	{
-		int recordsRemoved = persistenceService.deleteByQuery(DBLogRecord.class, "", new HashMap<>());
+		DBLogRecord dbLogRecordExample = new DBLogRecord();
+		int recordsRemoved = getPersistenceService().deleteByExample(dbLogRecordExample);
 		LOG.log(Level.WARNING, MessageFormat.format("DB log records were cleared.  Records cleared: {0}", recordsRemoved));
-	}
-
-	@Override
-	public void loadNewHelpSections(List<HelpSection> helpSections)
-	{
-		Objects.requireNonNull(helpSections, "Help sections required");
-
-		int recordsRemoved = persistenceService.deleteByQuery(HelpSection.class, "", new HashMap<>());
-		LOG.log(Level.FINE, MessageFormat.format("Help records were cleared.  Records cleared: {0}", recordsRemoved));
-
-		LOG.log(Level.FINE, MessageFormat.format("Saving new Help records: {0}", helpSections.size()));
-		for (HelpSection helpSection : helpSections) {
-			helpSection.setId(persistenceService.generateId());
-			persistenceService.persist(helpSection);
-		}
-	}
-
-	@Override
-	public HelpSectionAll getAllHelp(Boolean includeAdmin)
-	{
-		HelpSectionAll helpSectionAll = new HelpSectionAll();
-
-		HelpSection helpSectionExample = new HelpSection();
-		helpSectionExample.setAdminSection(includeAdmin);
-
-		List<HelpSection> allHelpSections = persistenceService.queryByExample(helpSectionExample);
-		List<HelpSection> helpSections = Collections.emptyList();
-		
-		UserContext userContext = SecurityUtil.getUserContext();
-
-		// Filter out help items the user does not have access to
-		if (userContext != null) {
-			final Set<String> permissions = userContext.permissions();
-			helpSections = allHelpSections.stream().filter(help
-					-> {
-				if (StringUtils.isNotBlank(help.getPermission())) {
-					if (permissions.contains(help.getPermission())) {
-						return true;
-					} else {
-						return false;
-					}
-				} else {
-					return true;
-				}
-			}).collect(Collectors.toList());
-		}
-
-		// Build a tree from the list of sorted help sections based on the section numbers
-		if (helpSections.isEmpty() == false) {
-
-			//Root Section
-			HelpSection helpSectionRoot = new HelpSection();
-			helpSectionRoot.setTitle(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
-			helpSectionRoot.setContent("<center><h2>User Guide</h2>Version: " + PropertiesManager.getInstance().getApplicationVersion() + "</center>");
-			helpSectionAll.setHelpSection(helpSectionRoot);
-
-			//sort in original section order
-			helpSections.sort((section1, section2) -> {
-				BigDecimal sectionNumber1 = StringProcessor.archtecureCodeToDecimal(section1.getSectionNumber());
-				BigDecimal sectionNumber2 = StringProcessor.archtecureCodeToDecimal(section2.getSectionNumber());
-				return sectionNumber1.compareTo(sectionNumber2);
-			});
-
-			for (HelpSection helpSection : helpSections) {
-				String codeTokens[] = helpSection.getSectionNumber().split(Pattern.quote("."));
-				HelpSectionAll rootHelp = helpSectionAll;
-				StringBuilder codeKey = new StringBuilder();
-				// Make sure the tree contains nodes for all parents of the current node
-				// Due to the filtering it may be possible to have access to a child without access to the parent
-				for (String codeToken : codeTokens) {
-					codeKey.append(codeToken);
-					//put in stubs as needed
-					boolean found = false;
-					String compare = codeKey.toString();
-					if (codeKey.toString().length() == 1) {
-						compare += ".";
-					}
-					for (HelpSectionAll child : rootHelp.getChildSections()) {
-						if (child.getHelpSection().getSectionNumber().equals(compare)) {
-							// The section already exists, nothing more to do with this child
-							found = true;
-							rootHelp = child;
-							break;
-						}
-					}
-					if (!found) {
-						// Add placeholder in tree
-						HelpSectionAll newChild = new HelpSectionAll();
-						HelpSection childHelp = new HelpSection();
-						childHelp.setSectionNumber(compare);
-
-						for (HelpSection each : allHelpSections)
-						{
-							// Make sure that every section has the correct title. 
-							// Even sections that are otherwise blank due to not having permission to view the contents should have the correct title.
-							if (each.getSectionNumber().equals(compare))
-							{
-								String title = each.getTitle();
-								// Strip off the section number. 
-								// NOTE: Substring is inclusive, so adding one to get all characters from AFTER the last period to end of line
-								title = title.substring(title.lastIndexOf('.') + 1); 
-								childHelp.setTitle(title);
-								childHelp.setContent(each.getContent());
-								break;
-							}
-						}
-
-						newChild.setHelpSection(childHelp);
-						rootHelp.getChildSections().add(newChild);
-						rootHelp = newChild;
-					}
-					codeKey.append(".");
-				}
-				// Add each help section to the appropriate place in the tree
-				rootHelp.setHelpSection(helpSection);
-			}
-		}
-		//reorder help number so missing sections do not cause holes in the final numbered list
-		reorderHelpSectionTitles(helpSectionAll, "");
-		return helpSectionAll;
-	}
-
-	private void reorderHelpSectionTitles(HelpSectionAll helpSectionAll, String parentSection)
-	{
-		if (helpSectionAll.getChildSections().isEmpty()) {
-			return;
-		}
-
-		int sectionNumber = 1;
-		for (HelpSectionAll helpSection : helpSectionAll.getChildSections()) {
-			if (helpSection.getHelpSection().getTitle() == null) {
-				helpSection.getHelpSection().setTitle("");
-				LOG.log(Level.FINE, "This is a stub help section.  Check help data to make sure that is desired.  *=admin sections; make sure child sections are appropriately starred.");
-			}
-
-			String titleSplit[] = helpSection.getHelpSection().getTitle().split(" ");
-			String titleNumber;
-			if (StringUtils.isBlank(parentSection)) {
-				titleNumber = sectionNumber + ". ";
-
-			} else {
-				titleNumber = parentSection + sectionNumber + " ";
-			}
-
-			StringBuilder restOfTitle = new StringBuilder();
-			for (int i = 1; i < titleSplit.length; i++) {
-				if (restOfTitle.length() != 0) {
-					restOfTitle.append(" ");
-				}
-				restOfTitle.append(titleSplit[i]);
-			}
-			
-			helpSection.getHelpSection().setTitle(titleNumber + restOfTitle.toString());
-
-			if (titleNumber.endsWith(". ") == false) {
-				StringBuilder temp = new StringBuilder();
-				temp.append(titleNumber);
-				temp = temp.deleteCharAt(temp.length() - 1);
-				temp.append(".");
-				titleNumber = temp.toString();
-			} else {
-				StringBuilder temp = new StringBuilder();
-				temp.append(titleNumber);
-				temp = temp.deleteCharAt(temp.length() - 1);
-				titleNumber = temp.toString();
-			}
-			reorderHelpSectionTitles(helpSection, titleNumber);
-
-			sectionNumber++;
-		}
 	}
 
 	@Override

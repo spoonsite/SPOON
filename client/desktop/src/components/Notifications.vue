@@ -4,7 +4,6 @@
       offset-y
       left
       :close-on-content-click="false"
-      min-width="35em"
     >
       <v-btn icon slot="activator">
         <v-badge left overlap light color="info">
@@ -14,11 +13,11 @@
       </v-btn>
       <v-list three-line v-if="notifications && notifications.length > 0">
         <v-subheader>Notifications</v-subheader>
-        <template v-for="(item, index) in notifications">
+        <template v-for="(item, index) in sortedNotifications">
           <v-list-tile :key="item.eventId">
             <v-list-tile-content :class="`${item.readMessage ? '' : 'font-weight-bold' }`">
               <v-list-tile-title>{{ item.message }}</v-list-tile-title>
-              <v-list-tile-sub-title>{{ item.updateDts | formatDate }}</v-list-tile-sub-title>
+              <v-list-tile-sub-title>{{ item.updateDts | formatDate('YYYY/MM/DD - HH:mm:ss') }}</v-list-tile-sub-title>
               <v-list-tile-sub-title>Event Type: {{ item.eventTypeDescription }}</v-list-tile-sub-title>
             </v-list-tile-content>
             <v-list-tile-action>
@@ -78,6 +77,12 @@ export default {
     this.getNotifications()
   },
   computed: {
+    sortedNotifications () {
+        this.notifications.sort((a, b) => {
+          return new Date(b.updateDts) - new Date(a.updateDts);
+        });
+        return this.notifications;
+    },
     newNotifications () {
       var cnt = 0
 
