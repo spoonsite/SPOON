@@ -197,10 +197,8 @@ export default {
       return this.searchQuery.length === 0
     },
     filteredComponentList () {
-      // excluded entry types to show on the landing page
-      let excluded = ['SOFTWARE']
       if (this.nestedComponentTypesList && this.nestedComponentTypesList.children) {
-        return this.nestedComponentTypesList.children.filter(item => { return (item.children.length > 0 && !excluded.includes(item.componentType.componentType)) })
+        return this.nestedComponentTypesList.children.filter(item => item.children.length > 0)
       } else {
         return []
       }
