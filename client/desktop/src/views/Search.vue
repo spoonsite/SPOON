@@ -495,7 +495,6 @@
 import _ from 'lodash'
 import StarRating from 'vue-star-rating'
 import SearchBar from '../components/SearchBar'
-// import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
 import crush from '../util/scientificToDecimal.js'
 
@@ -504,7 +503,6 @@ export default {
   components: {
     SearchBar,
     StarRating
-    // AttributeRange
   },
   created () {
     this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
@@ -524,6 +522,7 @@ export default {
   beforeRouteUpdate (to, from, next) {
     this.parseFiltersFromUrl(to.query)
     this.newSearch()
+    next()
   },
   methods: {
     parseFiltersFromUrl (params) {
@@ -550,7 +549,6 @@ export default {
         this.searchoptions = params.searchoptions.split(',')
         localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
       }
-      console.log(this.filters)
     },
     getComponentName (code) {
       let name = ''
@@ -730,7 +728,12 @@ export default {
         searchFilters.attributes = JSON.stringify(searchFilters.attributes)
       }
 
-      history.pushState({}, '', this.searchUrl())
+      // need to check that the route is not already in the history
+      // this occurs when search comes from the landing page
+      let currentURL = window.location.href.toString().split('#')[1]
+      if (('#' + currentURL) !== this.searchUrl()) {
+        window.history.pushState({}, '', this.searchUrl())
+      }
 
       this.$http
         .post(
@@ -759,7 +762,7 @@ export default {
 
           that.searchQueryIsDirty = false
         })
-        .catch(err => console.log(err))
+        .catch(err => console.error(err))
         .finally(() => {
           that.searchQueryIsDirty = false
         })
