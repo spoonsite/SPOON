@@ -162,9 +162,11 @@ export default {
   name: 'profile',
   mixins: [validators],
   mounted () {
-    this.setUserInfo()
-    this.getOrgs()
-    this.getRoles()
+    if (this.$store.state.currentUser.username) {
+      this.populateInfo()
+    } else {
+      this.$store.dispatch('getCurrentUser', this.populateInfo)
+    }
   },
   data () {
     return {
@@ -204,6 +206,11 @@ export default {
     }
   },
   methods: {
+    populateInfo () {
+      this.setUserInfo()
+      this.getOrgs()
+      this.getRoles()
+    },
     setUserInfo () {
       this.user.firstName = this.$store.state.currentUser.firstName
       this.user.lastName = this.$store.state.currentUser.lastName
