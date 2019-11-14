@@ -226,7 +226,7 @@
             <v-text-field
               single-line
               disabled
-              v-model="$store.state.currentUser.email"
+              v-model="userEmail = $store.state.currentUser.email"
               outline
             >
             </v-text-field>
@@ -241,7 +241,7 @@
         </v-card-text>
         <div style="display: flex; justify-content: space-between;">
           <v-btn
-            @click="submitOwnershipRequest()"
+            @click="contactVendor()"
             :loading="buttonLoad"
             :disabled="vendorMessage === ''"
           >
@@ -799,7 +799,8 @@ export default {
       attributeTableHeaders: [
         { text: 'Attribute Type', value: 'typeDescription' },
         { text: 'Value', value: 'codeDescription' }
-      ]
+      ],
+      userEmail: ''
     }
   },
   methods: {
@@ -1058,6 +1059,22 @@ export default {
         this.newTagConfirmationDialog = true
       }
     },
+    submitVendorMessage (sendToEmail) {
+      this.buttonLoad = true
+      let data = {
+        userToEmail: sendToEmail,
+        userFromEmail: this.userEmail,
+        message: this.vendorMessage
+      }
+      this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor`, data)
+        .then(response => {
+          this.vendorMessage = ''
+          this.contactVendorDialog = false
+          this.buttonLoad = false
+          this.$toasted.show('Message to vendor was sent.')
+        })
+        .catch(e => this.$toasted.error('There was a problem contacting this vendor.'))
+    },
     deleteTag () {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)
         .then(response => {
@@ -1166,6 +1183,15 @@ export default {
     },
     openPrintScreen () {
       window.open('/openstorefront/print.jsp?id=" + this.detail.componentId')
+    },
+    contactVendor () {
+      var sendToEmail = 'support@spoonsite.com'
+      if (this.detail.contacts.length > 0) {
+        if (this.detail.contacts[0].email !== ''){
+          sendToEmail = this.detail.contacts[0].email
+        }
+      }
+      this.submitVendorMessage(sendToEmail)
     }
   },
   watch: {
