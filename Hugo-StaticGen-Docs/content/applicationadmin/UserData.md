@@ -7,26 +7,23 @@ weight = 2
  
  The definitive guide on seeing and editing Spoon's user data. 
 
-[__How do I see a list of all the organizations registered on Spoon, and their affiliated users/parts?__](#gothere)  \
+[__How do I see a list of all the organizations registered on Spoon, and their affiliated users/parts?__](/applicationadmin/userdata/#Organizations)  \
 
  <!--more-->
 
-
-
  ![Diagram of main System sub-page](/images/AppAdmin/UserDataManagementMapping.png)
-
-
-{{< highlight go >}} A bunch of code here {{< /highlight >}}
-
-{{% notice %}}Stuff to `process` in the *center*.{{% /notice %}}
 
 <a name="Contacts"></a>
 
 ## 1 - Contacts
 Every entry on Spoon can have a designated 'Contact', a person who is responsible for being the point of contact for that particular entry. 
 
+<a name="Organizations"></a>
+
 ## 2 - Organizations
 Here you can see all of the registered organizations on Spoon. There are tools for merging organizations when duplicates are found.
+
+<a name="Questions"></a>
 
 ## 3 - Questions
 Users can ask questions to entry's contacts, but before the question shows up publicly on Spoon, it must be approved by the Admin. 
@@ -54,9 +51,13 @@ Pending | All newly created reviews (created by users, that is) are viewable her
 Active | Setting a review as being "Active" makes it visible to everyone
 Inactive | Inactivating the question/answer archives it. Even the user who placed the question/answer will not be able to see it when he/she looks at the entry. 
 
+<a name="UserDataWatches"></a>
+
 ## 5 - User Data> Watches
 ![Watches page screenshot](/images/AppAdmin/UserDataWatches.png)
 All watches created by all users are visible here. The Admin can toggle off watches on any user, which makes the watch disappear (from the user's perspective).
+
+<a name="UserDataTags"></a>
 
 ## 6 - User Data> Tags
 ![Tags page screenshot](/images/AppAdmin/UserDataTags.png)

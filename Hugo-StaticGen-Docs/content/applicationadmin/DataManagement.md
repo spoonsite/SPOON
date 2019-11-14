@@ -6,26 +6,28 @@ weight = 2
  
  The definitive guide on managing videos, home page widgets, some security options, part relationships and more data on Spoon. 
 
-[__Where can I change what shows on the front page carousel? fixlater__](#gothere)   \
+[__Where can I change what shows on the front page carousel?__](/applicationadmin/datamanagement/#Highlights)   \
 
  <!--more-->
 
-## Data Management
- ![Diagram of main System sub-page](/images/AppAdmin/SystemMapping.png)
-### It's the final countdown!!!!
+ ![Diagram of main System sub-page](/images/AppAdmin/DataManagementMapping.png)
 
-<a name="HelpFrequentlyAskedQuestionis"></a>
+<a name="HelpFrequentlyAskedQuestions"></a>
 
-## - Help > Frequently Asked Questions
+## 1 - Help > Frequently Asked Questions
 In previous versions of Spoon, the "__Help__" button in the top right site menu would bring up a pop-up that had a list of Frequently Asked Questions. In v2.11, that button now redirects the user to the [spoonsite.github.io](https://spoonsite.github.io/) site. Therefore this page is currently obsolete.
 
-## - Help > Support Media
+## 2 - Help > Support Media
 In the top right site menu there is a "__Tutorials__" button that shows the list of video tutorials uploaded onto Spoon. It is also obsolete.
 
-## - Highlights
+<a name="Highlights"></a>
 
+## 3 - Highlights
+"Highlights" is the name of Spoon's carousel home-page widget. Here you can set is on that carousel, and in what order the slides are displayed. 
 
-## - Lookups
+<a name="Lookups"></a>
+
+## 4 - Lookups
 Spoon was designed to be very customizable for the Admin user, and Lookups can be a great tool when the Admin needs to create new states and standards that were not in the original design of Spoon. 
 
 The list of Editable Tables as of v2.11:
@@ -49,8 +51,13 @@ ExperienceTimeType | User who are creating [Entry Reviews](../userdata/#UserData
 RecommendationType | [Evaluations](../evaluations/) use this. No more information about this can be documented at this time.
 DataSensitivity | Similar to the SecurityMarkingType, the Data Sensitivity is a property of Spoon entries that delimits what level of authority is necessary to see the entry. This is the list of Data Sensitivity levels, any entry given any one of the Data Sensitivity levels will become invisible to a default user. The Admin can set who can see the Data Sensitivity levels defined in this list by editing the [Security Roles](../SecurityRoles/#DefaultDataRestrictions).
 
-## - Media
+<a name="Media"></a>
+
+## 5 - Media
 This page lists all the video and images that are used by the site. Note that the "__Copy Link__" only copies the back half of the url to get to see an image, so you will need to prepend the domain name yourself.
 
-## - Relationships
+<a name="Relationships"></a>
+
+## 6 - Relationships
 ![Relationships Screenshot](/images/AppAdmin/DataManagementRelationships.png)
+
