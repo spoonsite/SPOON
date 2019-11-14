@@ -63,10 +63,194 @@
               <strong>Average User Rating:</strong>
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
+            <div style="display: flex; flex-direction: column;">
+              <span>
+                <v-btn fab @click="openPrintScreen()"><v-icon>fas fa-print</v-icon></v-btn>
+                <label>Print</label>
+              </span>
+              <span>
+                <v-btn fab @click="contactVendorDialog = true"><v-icon>fas fa-envelope-square</v-icon></v-btn>
+                <label>Contact Vendor</label>
+              </span>
+              <span>
+                <v-btn fab @click="submitCorrectionDialog = true"><v-icon>far fa-comment</v-icon></v-btn>
+                <label>Submit Correction</label>
+              </span>
+              <span>
+                <v-btn fab @click="requestOwnershipDialog = true"><v-icon>fas fa-user-edit</v-icon></v-btn>
+                <label>Request Ownership</label>
+              </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <v-dialog
+      v-model="submitCorrectionDialog"
+      width="25em"
+    >
+      <v-card>
+        <v-card-title>Submit Correction</v-card-title>
+        <v-card-text>
+          <p>Correction:</p>
+          <p>(Please include the section needing the correction. Eg. Contacts):*</p>
+            <v-textarea
+              style="background-color: white;"
+              v-model="feedbackForm.message"
+              :rules="formCorrectionRules"
+              outline
+            ></v-textarea>
+          <p>Contact Information:</p>
+          <div style="display: flex; background-color: #EEE; padding: 1em;">
+            <div>
+              <v-text-field
+                :rules="formNameRules"
+                single-line
+                solo
+                label="Name*"
+                v-model="feedbackForm.name"
+              >
+              </v-text-field>
+              <v-text-field
+                :rules="formEmailRules"
+                single-line
+                solo
+                label="Email*"
+                v-model="feedbackForm.email"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Phone"
+                v-model="feedbackForm.phone"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Organization"
+                v-model="feedbackForm.organization"
+              >
+              </v-text-field>
+            </div>
+          </div>
+        </v-card-text>
+        <div style="display: flex; justify-content: space-between;">
+          <v-btn
+            @click="submitCorrection()"
+            :loading="buttonLoad"
+            :disabled="feedbackForm.message ==='' || feedbackForm.name ==='' || feedbackForm.email ===''"
+          >
+            Submit
+          </v-btn>
+          <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="requestOwnershipDialog"
+      width="25em"
+    >
+      <v-card>
+        <v-card-title>Request Ownership</v-card-title>
+        <v-card-text>
+          <p>Request Reason:</p>
+          <p>(Entries you own show in the User Tools->Submissions which provides tools for management):*</p>
+            <v-textarea
+              :rules="formReasonRules"
+              style="background-color: white;"
+              v-model="feedbackForm.message"
+              required
+              outline
+            ></v-textarea>
+          <p>Contact Information:</p>
+          <div style="display: flex; background-color: #EEE; padding: 1em;">
+            <div>
+              <v-text-field
+                :rules="formNameRules"
+                single-line
+                solo
+                label="Name*"
+                v-model="feedbackForm.name"
+              >
+              </v-text-field>
+              <v-text-field
+                :rules="formEmailRules"
+                single-line
+                solo
+                label="Email*"
+                v-model="feedbackForm.email"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Phone"
+                v-model="feedbackForm.phone"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Organization"
+                v-model="feedbackForm.organization"
+              >
+              </v-text-field>
+            </div>
+          </div>
+        </v-card-text>
+        <div style="display: flex; justify-content: space-between;">
+          <v-btn
+            @click="submitOwnershipRequest()"
+            :loading="buttonLoad"
+            :disabled="feedbackForm.message ==='' || feedbackForm.name ==='' || feedbackForm.email ===''"
+          >
+            Submit
+          </v-btn>
+          <v-btn @click="requestOwnershipDialog = false;">Cancel</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="contactVendorDialog"
+      width="25em"
+    >
+      <v-card>
+        <v-card-title>Contact Vendor</v-card-title>
+        <v-card-text>
+          <p>From:</p>
+            <v-text-field
+              single-line
+              disabled
+              v-model="userEmail = $store.state.currentUser.email"
+              outline
+            >
+            </v-text-field>
+            <p>Message:</p>
+            <v-textarea
+              :rules="formMessageRules"
+              style="background-color: white;"
+              v-model="vendorMessage"
+              required
+              outline
+            ></v-textarea>
+        </v-card-text>
+        <div style="display: flex; justify-content: space-between;">
+          <v-btn
+            @click="contactVendor()"
+            :loading="buttonLoad"
+            :disabled="vendorMessage === ''"
+          >
+            Send
+          </v-btn>
+          <v-btn @click="contactVendorDialog = false;">Cancel</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
 
     <v-divider></v-divider>
 
@@ -523,13 +707,17 @@ export default {
       newQuestion: '',
       writeReviewDialog: false,
       deleteReviewDialog: false,
+      submitCorrectionDialog: false,
+      requestOwnershipDialog: false,
       deleteTagDialog: false,
       newTagConfirmationDialog: false,
+      contactVendorDialog: false,
       tagEmpty: false,
       selectedTag: '',
       deleteRequestId: '',
       deleteTagId: '',
       editReviewId: '',
+      vendorMessage: '',
       reviewSubmit: false,
       newReview: {
         title: '',
@@ -554,6 +742,21 @@ export default {
       ],
       commentRules: [
         v => !!v || 'Comment is required'
+      ],
+      formCorrectionRules: [
+        v => !!v || 'A correction is required'
+      ],
+      formNameRules: [
+        v => !!v || 'Name is required'
+      ],
+      formEmailRules: [
+        v => !!v || 'Email is required'
+      ],
+      formReasonRules: [
+        v => !!v || 'A reason is required'
+      ],
+      formMessageRules: [
+        v => !!v || 'A message is required'
       ],
       timeOptions: [],
       timeSelectOptions: [],
@@ -585,10 +788,19 @@ export default {
         'IMG': 'file-image',
         'OTH': 'file'
       },
+      feedbackForm: {
+        message: '',
+        name: '',
+        email: '',
+        phone: '',
+        organization: ''
+      },
+      buttonLoad: false,
       attributeTableHeaders: [
         { text: 'Attribute Type', value: 'typeDescription' },
         { text: 'Value', value: 'codeDescription' }
-      ]
+      ],
+      userEmail: ''
     }
   },
   methods: {
@@ -778,6 +990,50 @@ export default {
       this.currentMediaDetailItem = item
       this.mediaDetailsDialog = true
     },
+    submitCorrection () {
+      this.buttonLoad = true
+      let data = {
+        securityMarkingType: '',
+        dataSensitivity: '',
+        description: 'Entry Name: ' + this.detail.name + '\n\n' + this.feedbackForm.message,
+        fullname: this.feedbackForm.name,
+        email: this.feedbackForm.email,
+        organization: this.feedbackForm.organization,
+        phone: this.feedbackForm.phone,
+        summary: this.detail.name,
+        ticketType: 'Correction Requested'
+      }
+      this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
+        .then(response => {
+          this.submitCorrectionDialog = false
+          this.buttonLoad = false
+          this.feedbackForm.message = ''
+          this.$toasted.show('Correction submitted.')
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
+    },
+    submitOwnershipRequest () {
+      this.buttonLoad = true
+      let data = {
+        securityMarkingType: '',
+        dataSensitivity: '',
+        description: 'Entry Name: ' + this.detail.name + '\n\n' + this.feedbackForm.message,
+        fullname: this.feedbackForm.name,
+        email: this.feedbackForm.email,
+        organization: this.feedbackForm.organization,
+        phone: this.feedbackForm.phone,
+        summary: this.detail.name,
+        ticketType: 'Request Ownership'
+      }
+      this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
+        .then(response => {
+          this.feedbackForm.message = ''
+          this.requestOwnershipDialog = false
+          this.buttonLoad = false
+          this.$toasted.show('Ownership request submitted.')
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the ownership request.'))
+    },
     determineTagType () {
       this.tagName = document.getElementById('tagEntry').value
       var alreadyExists = false
@@ -802,6 +1058,22 @@ export default {
         this.selectedTag = ''
         this.newTagConfirmationDialog = true
       }
+    },
+    submitVendorMessage (sendToEmail) {
+      this.buttonLoad = true
+      let data = {
+        userToEmail: sendToEmail,
+        userFromEmail: this.userEmail,
+        message: this.vendorMessage
+      }
+      this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor`, data)
+        .then(response => {
+          this.vendorMessage = ''
+          this.contactVendorDialog = false
+          this.buttonLoad = false
+          this.$toasted.show('Message to vendor was sent.')
+        })
+        .catch(e => this.$toasted.error('There was a problem contacting this vendor.'))
     },
     deleteTag () {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)
@@ -908,6 +1180,18 @@ export default {
     },
     todaysDateFormatted (val) {
       return !isFuture(val)
+    },
+    openPrintScreen () {
+      window.open('/openstorefront/print.jsp?id=' + this.detail.componentId)
+    },
+    contactVendor () {
+      var sendToEmail = 'support@spoonsite.com'
+      if (this.detail.contacts.length > 0) {
+        if (this.detail.contacts[0].email !== ''){
+          sendToEmail = this.detail.contacts[0].email
+        }
+      }
+      this.submitVendorMessage(sendToEmail)
     }
   },
   watch: {
