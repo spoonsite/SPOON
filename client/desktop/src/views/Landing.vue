@@ -8,7 +8,7 @@
 
   <div class="text-right pt-2">
     <div style="display: inline-block; background:#01080D; border-radius: 8px;" class="pa-1 pl-3">
-      <span class="display-1 white--text" style="vertical-align: middle;">
+      <span class="title white--text" style="vertical-align: middle;">
         Are you a vendor?
       </span>
       <v-btn color="success" large href="/openstorefront/UserTool.action?load=Submissions">
@@ -28,7 +28,7 @@
     </div>
 
     <h2>
-        <span class="pa-2" style="color: #F8C533; background-color:#060B13; border-radius: 2px;">
+        <span class="pa-2" style="color: white; background-color:#060B13; border-radius: 2px;">
           Browse by Category
         </span>
     </h2>
@@ -49,14 +49,19 @@
           >
             <router-link
               :to="{ path: 'search', query: { comp: item.componentType.componentType, children: true }}"
-              style="display: flex; align-items: center; min-height: 6em;"
+              style="background-color: #3C3C3C;color: white; display: flex; align-items: center; min-height: 6em;"
               class="pa-2"
             >
-              <img
-                :src="'/openstorefront/' + item.componentType.iconUrl"
-                height="50"
-                class="pr-3"
+              <div
+                class="mr-3 ml-1 pa-2"
+                style="height: 70; width: 70; display: flex; background-color: white; border-radius: 50%;"
               >
+                <img
+                  :src="'/openstorefront/' + item.componentType.iconUrl"
+                  height="50"
+                  class="pa-1"
+                >
+              </div>
               <span class="headline" style="vertical-align: top;">{{ item.componentType.label }}</span>
             </router-link>
             <v-divider class="d-xs-none"></v-divider>
@@ -243,7 +248,7 @@ h3 {
 .text-right {
   text-align: right;
 }
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 598px) {
   .d-xs-none {
     display: none;
   }
