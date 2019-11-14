@@ -69,7 +69,7 @@
                 <label>Print</label>
               </span>
               <span>
-                <v-btn fab><v-icon>fas fa-envelope-square</v-icon></v-btn>
+                <v-btn fab @click="contactVendorDialog = true"><v-icon>fas fa-envelope-square</v-icon></v-btn>
                 <label>Contact Vendor</label>
               </span>
               <span>
@@ -203,7 +203,7 @@
           </div>
         </v-card-text>
         <div style="display: flex; justify-content: space-between;">
-          <v-btn 
+          <v-btn
             @click="submitOwnershipRequest()"
             :loading="buttonLoad"
             :disabled="feedbackForm.message ==='' || feedbackForm.name ==='' || feedbackForm.email ===''"
@@ -211,6 +211,43 @@
             Submit
           </v-btn>
           <v-btn @click="requestOwnershipDialog = false;">Cancel</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="contactVendorDialog"
+      width="25em"
+    >
+      <v-card>
+        <v-card-title>Contact Vendor</v-card-title>
+        <v-card-text>
+          <p>From:</p>
+            <v-text-field
+              single-line
+              disabled
+              v-model="$store.state.currentUser.email"
+              outline
+            >
+            </v-text-field>
+            <p>Message:</p>
+            <v-textarea
+              :rules="formMessageRules"
+              style="background-color: white;"
+              v-model="vendorMessage"
+              required
+              outline
+            ></v-textarea>
+        </v-card-text>
+        <div style="display: flex; justify-content: space-between;">
+          <v-btn
+            @click="submitOwnershipRequest()"
+            :loading="buttonLoad"
+            :disabled="vendorMessage === ''"
+          >
+            Send
+          </v-btn>
+          <v-btn @click="contactVendorDialog = false;">Cancel</v-btn>
         </div>
       </v-card>
     </v-dialog>
@@ -674,11 +711,13 @@ export default {
       requestOwnershipDialog: false,
       deleteTagDialog: false,
       newTagConfirmationDialog: false,
+      contactVendorDialog: false,
       tagEmpty: false,
       selectedTag: '',
       deleteRequestId: '',
       deleteTagId: '',
       editReviewId: '',
+      vendorMessage: '',
       reviewSubmit: false,
       newReview: {
         title: '',
@@ -715,6 +754,9 @@ export default {
       ],
       formReasonRules: [
         v => !!v || 'A reason is required'
+      ],
+      formMessageRules: [
+        v => !!v || 'A message is required'
       ],
       timeOptions: [],
       timeSelectOptions: [],
@@ -958,7 +1000,7 @@ export default {
         organization: this.feedbackForm.organization,
         phone: this.feedbackForm.phone,
         summary: this.detail.name,
-        ticketType: "Correction Requested"
+        ticketType: 'Correction Requested'
       }
       this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
         .then(response => {
@@ -966,7 +1008,7 @@ export default {
           this.buttonLoad = false
           this.feedbackForm.message = ''
           this.$toasted.show('Correction submitted.')
-      })
+        })
         .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
     },
     submitOwnershipRequest () {
@@ -980,7 +1022,7 @@ export default {
         organization: this.feedbackForm.organization,
         phone: this.feedbackForm.phone,
         summary: this.detail.name,
-        ticketType: "Request Ownership"
+        ticketType: 'Request Ownership'
       }
       this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
         .then(response => {
@@ -990,7 +1032,7 @@ export default {
           this.$toasted.show('Ownership request submitted.')
         })
         .catch(e => this.$toasted.error('There was a problem submitting the ownership request.'))
-      },
+    },
     determineTagType () {
       this.tagName = document.getElementById('tagEntry').value
       var alreadyExists = false
@@ -1122,8 +1164,8 @@ export default {
     todaysDateFormatted (val) {
       return !isFuture(val)
     },
-    openPrintScreen() {
-      window.open("/openstorefront/print.jsp?id=" + this.detail.componentId)
+    openPrintScreen () {
+      window.open('/openstorefront/print.jsp?id=" + this.detail.componentId')
     }
   },
   watch: {
