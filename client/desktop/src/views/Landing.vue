@@ -35,7 +35,7 @@
     <v-container>
       <v-layout row wrap justify-center>
         <v-flex
-          v-for="(item,i) in nestedComponentTypesList.children.filter(item => item.children.length > 0)"
+          v-for="(item,i) in filteredComponentList"
           class="mb-3"
           :key="i"
           xs12
@@ -88,7 +88,7 @@
       :key="i"
     >
       <h3 class="headline pb-0 mb-0">{{ item.title }}</h3>
-      <date class="mb-4 grey--text text--darken-1" style="display: block;">{{ item.updateDts | formatDate("MMMM d, YYYY") }}</date>
+      <time class="mb-4 grey--text text--darken-1" style="display: block;">{{ item.updateDts | formatDate("MMMM d, YYYY") }}</time>
       <div v-html="item.description"></div>
       <v-btn dark :href="item.link">View More</v-btn>
     </v-container>
@@ -186,6 +186,13 @@ export default {
   computed: {
     hideSearchSuggestions () {
       return this.searchQuery.length === 0
+    },
+    filteredComponentList () {
+      if (this.nestedComponentTypesList && this.nestedComponentTypesList.children) {
+        return this.nestedComponentTypesList.children.filter(item => item.children.length > 0)
+      } else {
+        return []
+      }
     }
   }
 }
