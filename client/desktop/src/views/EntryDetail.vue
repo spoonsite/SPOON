@@ -98,14 +98,14 @@
             <v-textarea
               style="background-color: white;"
               v-model="feedbackForm.message"
-              required
+              :rules="formCorrectionRules"
               outline
             ></v-textarea>
           <p>Contact Information:</p>
           <div style="display: flex; background-color: #EEE; padding: 1em;">
             <div>
               <v-text-field
-                error
+                :rules="formNameRules"
                 single-line
                 solo
                 label="Name*"
@@ -113,7 +113,7 @@
               >
               </v-text-field>
               <v-text-field
-                error
+                :rules="formEmailRules"
                 single-line
                 solo
                 label="Email*"
@@ -138,7 +138,13 @@
           </div>
         </v-card-text>
         <div style="display: flex; justify-content: space-between;">
-          <v-btn @click="submitCorrection()">Submit</v-btn>
+          <v-btn
+            @click="submitCorrection()"
+            :loading="buttonLoad"
+            :disabled="feedbackForm.message ==='' || feedbackForm.name ==='' || feedbackForm.email ===''"
+          >
+            Submit
+          </v-btn>
           <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
         </div>
       </v-card>
@@ -154,6 +160,7 @@
           <p>Request Reason:</p>
           <p>(Entries you own show in the User Tools->Submissions which provies tools for management):*</p>
             <v-textarea
+              :rules="formReasonRules"
               style="background-color: white;"
               v-model="feedbackForm.message"
               required
@@ -163,7 +170,7 @@
           <div style="display: flex; background-color: #EEE; padding: 1em;">
             <div>
               <v-text-field
-                error
+                :rules="formNameRules"
                 single-line
                 solo
                 label="Name*"
@@ -171,7 +178,7 @@
               >
               </v-text-field>
               <v-text-field
-                error
+                :rules="formEmailRules"
                 single-line
                 solo
                 label="Email*"
@@ -196,7 +203,13 @@
           </div>
         </v-card-text>
         <div style="display: flex; justify-content: space-between;">
-          <v-btn @click="deleteReviewConfirmation()">Submit</v-btn>
+          <v-btn 
+            @click="submitOwnershipRequest()"
+            :loading="buttonLoad"
+            :disabled="feedbackForm.message ==='' || feedbackForm.name ==='' || feedbackForm.email ===''"
+          >
+            Submit
+          </v-btn>
           <v-btn @click="requestOwnershipDialog = false;">Cancel</v-btn>
         </div>
       </v-card>
@@ -560,6 +573,18 @@ export default {
       commentRules: [
         v => !!v || 'Comment is required'
       ],
+      formCorrectionRules: [
+        v => !!v || 'A correction is required'
+      ],
+      formNameRules: [
+        v => !!v || 'Name is required'
+      ],
+      formEmailRules: [
+        v => !!v || 'Email is required'
+      ],
+      formReasonRules: [
+        v => !!v || 'A reason is required'
+      ],
       timeOptions: [],
       timeSelectOptions: [],
       prosOptions: [],
@@ -594,6 +619,7 @@ export default {
         phone: '',
         organization: ''
       },
+      buttonLoad: false,
       attributeTableHeaders: [
         { text: 'Attribute Type', value: 'typeDescription' },
         { text: 'Value', value: 'codeDescription' }
@@ -766,7 +792,8 @@ export default {
       this.mediaDetailsDialog = true
     },
     submitCorrection () {
-        let data = {
+      this.buttonLoad = true
+      let data = {
         securityMarkingType: '',
         dataSensitivity: '',
         description: 'Entry Name: ' + this.detail.name + '\n\n' + this.feedbackForm.message,
@@ -779,15 +806,16 @@ export default {
       }
       this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
         .then(response => {
-          this.questions.push(response.data)
-          this.feedbackForm.message = ''
           this.submitCorrectionDialog = false
+          this.buttonLoad = false
+          this.feedbackForm.message = ''
           this.$toasted.show('Correction submitted.')
-        })
+      })
         .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
     },
     submitOwnershipRequest () {
-        let data = {
+      this.buttonLoad = true
+      let data = {
         securityMarkingType: '',
         dataSensitivity: '',
         description: 'Entry Name: ' + this.detail.name + '\n\n' + this.feedbackForm.message,
@@ -800,13 +828,13 @@ export default {
       }
       this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
         .then(response => {
-          this.questions.push(response.data)
           this.feedbackForm.message = ''
-          this.submitCorrectionDialog = false
-          this.$toasted.show('Correction submitted.')
+          this.requestOwnershipDialog = false
+          this.buttonLoad = false
+          this.$toasted.show('Ownership request submitted.')
         })
         .catch(e => this.$toasted.error('There was a problem submitting the ownership request.'))
-    },
+      },
     submitQuestion () {
       let data = {
         dataSensitivity: '',
