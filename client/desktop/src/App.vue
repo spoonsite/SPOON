@@ -123,20 +123,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog> -->
-      <v-dialog
-        v-model="showDisclaimer"
-        max-width="300px"
-        >
-        <v-card>
-          <v-card-title>
-            <h2 v-if="this.$store.state.branding">Site Disclaimer</h2>
-          </v-card-title>
-          <v-card-text v-html="this.$store.state.branding.disclaimerMessage"></v-card-text>
-          <v-card-actions>
-            <v-btn @click="showDisclaimer = false">Close</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <DisclaimerModal v-model="showDisclaimer"></DisclaimerModal>
 
       <main class="offset-banner" :class="{ offset: !alert }">
         <router-view/>
@@ -151,11 +138,13 @@ import router from './router.js'
 import safeParse from 'safe-json-parse/callback'
 import permissions from './util/permissions.js'
 import Notifications from './components/Notifications'
+import DisclaimerModal from './components/DisclaimerModal'
 
 export default {
   name: 'App',
   components: {
-    Notifications
+    Notifications,
+    DisclaimerModal
   },
   mounted () {
     this.$http.interceptors.response.use(response => {

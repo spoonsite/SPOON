@@ -94,10 +94,15 @@
       <v-btn dark :href="item.link">View More</v-btn>
     </v-container>
 
+    <DisclaimerModal v-model="showDisclaimer"></DisclaimerModal>
+
     <v-footer color="primary" dark height="auto">
       <v-card color="primary" dark flat class="footer-wrapper">
         <div class="footer-block" v-html="$store.state.branding.landingPageFooter"></div>
-        <p style="text-align: center;" v-html="$store.state.appVersion"></p>
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <p style="text-align: center;" class="ma-0" v-html="$store.state.appVersion"></p>
+          <v-btn dark color="grey darken-3" @click="showDisclaimer = true">Disclaimer</v-btn>
+        </div>
       </v-card>
     </v-footer>
 
@@ -106,11 +111,13 @@
 
 <script lang="js">
 import SearchBar from '../components/SearchBar'
+import DisclaimerModal from '../components/DisclaimerModal'
 
 export default {
   name: 'landing-page',
   components: {
-    SearchBar
+    SearchBar,
+    DisclaimerModal
   },
   props: [],
   mounted () {
@@ -125,6 +132,7 @@ export default {
       errors: [],
       highlights: [],
       attributes: [],
+      showDisclaimer: false,
       quickLaunchLinks: [
         {
           img: '/openstorefront/images/dash.png',
