@@ -97,22 +97,48 @@
           <p>(Please include the section needing the correction. Eg. Contacts):*</p>
             <v-textarea
               style="background-color: white;"
-              v-model="correction"
+              v-model="feedbackForm.message"
               required
               outline
             ></v-textarea>
           <p>Contact Information:</p>
           <div style="display: flex; background-color: #EEE; padding: 1em;">
             <div>
-              <v-text-field error single-line solo label="Name*"></v-text-field>
-              <v-text-field error single-line solo label="Email*"></v-text-field>
-              <v-text-field single-line solo label="Phone"></v-text-field>
-              <v-text-field single-line solo label="Organization"></v-text-field>
+              <v-text-field
+                error
+                single-line
+                solo
+                label="Name*"
+                v-model="feedbackForm.name"
+              >
+              </v-text-field>
+              <v-text-field
+                error
+                single-line
+                solo
+                label="Email*"
+                v-model="feedbackForm.email"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Phone"
+                v-model="feedbackForm.phone"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Organization"
+                v-model="feedbackForm.organization"
+              >
+              </v-text-field>
             </div>
           </div>
         </v-card-text>
         <div style="display: flex; justify-content: space-between;">
-          <v-btn @click="">Submit</v-btn>
+          <v-btn @click="submitCorrection()">Submit</v-btn>
           <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
         </div>
       </v-card>
@@ -129,17 +155,43 @@
           <p>(Entries you own show in the User Tools->Submissions which provies tools for management):*</p>
             <v-textarea
               style="background-color: white;"
-              v-model="correction"
+              v-model="feedbackForm.message"
               required
               outline
             ></v-textarea>
           <p>Contact Information:</p>
           <div style="display: flex; background-color: #EEE; padding: 1em;">
-            <div style="display: flex; flex-direction: column;">
-              <v-text-field error single-line solo label="Name*"></v-text-field>
-              <v-text-field error single-line solo label="Email*"></v-text-field>
-              <v-text-field single-line solo label="Phone"></v-text-field>
-              <v-text-field single-line solo label="Organization"></v-text-field>
+            <div>
+              <v-text-field
+                error
+                single-line
+                solo
+                label="Name*"
+                v-model="feedbackForm.name"
+              >
+              </v-text-field>
+              <v-text-field
+                error
+                single-line
+                solo
+                label="Email*"
+                v-model="feedbackForm.email"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Phone"
+                v-model="feedbackForm.phone"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Organization"
+                v-model="feedbackForm.organization"
+              >
+              </v-text-field>
             </div>
           </div>
         </v-card-text>
@@ -484,7 +536,6 @@ export default {
       requestOwnershipDialog: false,
       deleteRequestId: '',
       editReviewId: '',
-      correction: '',
       reviewSubmit: false,
       newReview: {
         title: '',
@@ -535,6 +586,13 @@ export default {
         'ARC': 'file-archive',
         'IMG': 'file-image',
         'OTH': 'file'
+      },
+      feedbackForm: {
+        message: '',
+        name: '',
+        email: '',
+        phone: '',
+        organization: ''
       },
       attributeTableHeaders: [
         { text: 'Attribute Type', value: 'typeDescription' },
@@ -706,6 +764,48 @@ export default {
     showMediaDetails (item) {
       this.currentMediaDetailItem = item
       this.mediaDetailsDialog = true
+    },
+    submitCorrection () {
+        let data = {
+        securityMarkingType: '',
+        dataSensitivity: '',
+        description: 'Entry Name: ' + this.detail.name + '\n\n' + this.feedbackForm.message,
+        fullname: this.feedbackForm.name,
+        email: this.feedbackForm.email,
+        organization: this.feedbackForm.organization,
+        phone: this.feedbackForm.phone,
+        summary: this.detail.name,
+        ticketType: "Correction Requested"
+      }
+      this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
+        .then(response => {
+          this.questions.push(response.data)
+          this.feedbackForm.message = ''
+          this.submitCorrectionDialog = false
+          this.$toasted.show('Correction submitted.')
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
+    },
+    submitOwnershipRequest () {
+        let data = {
+        securityMarkingType: '',
+        dataSensitivity: '',
+        description: 'Entry Name: ' + this.detail.name + '\n\n' + this.feedbackForm.message,
+        fullname: this.feedbackForm.name,
+        email: this.feedbackForm.email,
+        organization: this.feedbackForm.organization,
+        phone: this.feedbackForm.phone,
+        summary: this.detail.name,
+        ticketType: "Request Ownership"
+      }
+      this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
+        .then(response => {
+          this.questions.push(response.data)
+          this.feedbackForm.message = ''
+          this.submitCorrectionDialog = false
+          this.$toasted.show('Correction submitted.')
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the ownership request.'))
     },
     submitQuestion () {
       let data = {
