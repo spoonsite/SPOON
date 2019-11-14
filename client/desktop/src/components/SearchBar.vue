@@ -100,7 +100,6 @@ export default {
       this.hideSearchSuggestions = true
     },
     submitQuery (query) {
-      this.saveSearchOptions()
       if (query) {
         this.$emit('input', query)
       }
