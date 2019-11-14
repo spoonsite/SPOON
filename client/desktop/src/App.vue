@@ -4,7 +4,7 @@
       <header>
         <div :style="topbarStyle">
         <v-toolbar color="primary" dense dark flat>
-          <v-btn icon to="/" active-class=""><v-icon>fas fa-home</v-icon></v-btn>
+          <router-link style="height: 100%;" to="/"><img height="100%" src="./assets/SPOONlogohorz.png" alt="SPOON logo"></router-link>
           <v-spacer></v-spacer>
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -39,6 +39,20 @@
                 </v-list-tile-action>
                 <v-content>
                   <v-list-tile-title>{{ link.name }}</v-list-tile-title>
+                </v-content>
+              </v-list-tile>
+              <v-list-tile
+                class="menu-item"
+                @click="showDisclaimer = true"
+                @keyup.enter="showDisclaimer = true"
+                role="button"
+                aria-pressed="false"
+              >
+                <v-list-tile-action>
+                  <v-icon>fas fa-exclamation-triangle</v-icon>
+                </v-list-tile-action>
+                <v-content>
+                  <v-list-tile-title>Disclaimer</v-list-tile-title>
                 </v-content>
               </v-list-tile>
               <v-divider></v-divider>
@@ -109,6 +123,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog> -->
+      <DisclaimerModal v-model="showDisclaimer"></DisclaimerModal>
 
       <main class="offset-banner" :class="{ offset: !alert }">
         <router-view/>
@@ -123,11 +138,13 @@ import router from './router.js'
 import safeParse from 'safe-json-parse/callback'
 import permissions from './util/permissions.js'
 import Notifications from './components/Notifications'
+import DisclaimerModal from './components/DisclaimerModal'
 
 export default {
   name: 'App',
   components: {
-    Notifications
+    Notifications,
+    DisclaimerModal
   },
   mounted () {
     this.$http.interceptors.response.use(response => {
@@ -164,6 +181,7 @@ export default {
       currentError: {},
       errorDialog: false,
       showErrorDetails: false,
+      showDisclaimer: false,
       messagesDialog: false,
       firstTimeDialog: false,
       loggingOut: false,

@@ -693,11 +693,21 @@ export default {
       this.id = this.$route.params.id
     }
 
+    if (this.$store.state.currentUser.username) {
+      this.checkWatch()
+    } else {
+      this.$store.watch(
+        (state, getters) => state.currentUser,
+        (newValue, oldValue) => {
+          this.checkWatch()
+        }
+      )
+    }
+
     this.lookupTypes()
     this.getDetail()
     this.getQuestions()
     this.getTags()
-    this.checkWatch()
   },
   data () {
     return {
