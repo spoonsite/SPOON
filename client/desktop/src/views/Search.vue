@@ -547,7 +547,6 @@ export default {
       }
       if (params.searchoptions) {
         this.searchoptions = params.searchoptions.split(',')
-        localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
       }
     },
     getComponentName (code) {
