@@ -15,23 +15,38 @@
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
       <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">clear</v-icon>
     </div>
-    <v-card v-if="searchSuggestions.length > 0 && !hideSearchSuggestions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
+    <!-- SEARCH SUGGESTIONS -->
+    <v-card
+      v-if="searchSuggestions.length > 0 && !hideSearchSuggestions"
+      :height="overlaySuggestions ? 0 : 'auto'"
+      style="z-index: 2; top: 6px;"
+    >
       <v-list dense class="elevation-1">
-        <v-list-tile v-for="i in searchSuggestions" :key="i.name" @click="submitQuery(i.name);" class="suggestion">
+        <v-list-tile
+          v-for="i in searchSuggestions"
+          :key="i.name"
+          @click="submitQuery(i.name);"
+          role="button"
+        >
           <v-list-tile-content>
             {{ i.name }}
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
     </v-card>
+    <!-- SEARCH OPTIONS -->
     <v-card
       v-if="hideSearchSuggestions && !hideSearchOptions"
       :height="overlaySuggestions ? 0 : 'auto'"
-      style="position:relative; z-index:5"
+      style="position:relative; z-index:5; top: 6px;"
     >
       <v-list dense class="elevation-1">
         <h4 class="search-option-titles">Search Options</h4>
-        <v-list-tile v-for="(e,index) in searchOptionsSource" v-bind:key="index" class="suggestion" height="100px">
+        <v-list-tile
+          v-for="(e,index) in searchOptionsSource"
+          :key="index"
+          height="100px"
+        >
           <v-list-tile-content>
             <v-checkbox
               :ripple="false"
@@ -177,7 +192,6 @@ export default {
   border-radius: 2px;
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
   padding: 0.7em 0.7em 0.7em 0.7em;
-  margin-bottom: 0.3em;
   margin-left: auto;
   margin-right: auto;
   font-size: 140%;
@@ -202,12 +216,12 @@ export default {
 .search-icon {
   float: right;
   font-size: 34px !important;
-  margin-bottom: 0.1em;
+  position: relative;
+  top: -2px;
 }
 .drop-down-icon {
   float: right;
   font-size: 20px !important;
-  margin-bottom: 0.1em;
 }
 .search-options-icon {
   float: left !important;
