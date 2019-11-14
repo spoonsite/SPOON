@@ -158,7 +158,7 @@
         <v-card-title>Request Ownership</v-card-title>
         <v-card-text>
           <p>Request Reason:</p>
-          <p>(Entries you own show in the User Tools->Submissions which provies tools for management):*</p>
+          <p>(Entries you own show in the User Tools->Submissions which provides tools for management):*</p>
             <v-textarea
               :rules="formReasonRules"
               style="background-color: white;"
@@ -1182,7 +1182,7 @@ export default {
       return !isFuture(val)
     },
     openPrintScreen () {
-      window.open('/openstorefront/print.jsp?id=" + this.detail.componentId')
+      window.open('/openstorefront/print.jsp?id=' + this.detail.componentId)
     },
     contactVendor () {
       var sendToEmail = 'support@spoonsite.com'
