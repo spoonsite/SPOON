@@ -39,6 +39,9 @@ export function scientificToDecimal (number) {
 export function crushNumericString (inputNumber) {
   // If inputNumber is not a number return.
   if (isNaN(inputNumber)) {
+    if (typeof inputNumber === 'string' || inputNumber instanceof String) {
+      return inputNumber.slice(0, 40) + '...'
+    }
     return inputNumber
   }
   // If it contains an E or e don't touch it and return.

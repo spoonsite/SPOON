@@ -10,7 +10,16 @@
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <Notifications/>
-            <v-btn icon @click="nav('profile')"><v-icon>fas fa-user</v-icon></v-btn>
+            <v-tooltip bottom>
+              <v-btn
+                slot="activator"
+                icon
+                @click="nav('profile')"
+              >
+                <v-icon>fas fa-user</v-icon>
+              </v-btn>
+              <span>User Profile</span>
+            </v-tooltip>
             <!-- <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn> -->
           </v-toolbar-items>
           <v-menu offset-y>
@@ -82,24 +91,6 @@
         </v-card>
       </v-dialog>
 
-      <!-- Login Expired Dialog -->
-      <v-dialog
-        v-model="loginExpiredDialog"
-        max-width="300px"
-        >
-        <v-card>
-          <v-card-title>
-            <h2>Authentication Error</h2>
-          </v-card-title>
-          <v-card-text>
-            Oops! It looks like you are not logged in.
-          </v-card-text>
-          <v-card-actions>
-            <v-btn block href="openstorefront">Login</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
       <!-- First Time User Dialog -->
       <!-- TODO: welcome user to storefront for the first time -->
       <!-- TODO: show a tutorial of basic features -->
@@ -143,7 +134,7 @@ export default {
       if (typeof response.data === 'string' &&
           response.data.includes('<!-- ***USER-NOT-LOGIN*** -->') &&
           !this.loggingOut) {
-        this.loginExpiredDialog = true
+        window.location.href = 'openstorefront'
       }
       return response
     },
@@ -156,7 +147,7 @@ export default {
 
     this.checkFirstTime()
     // pass in current axios instance
-    this.$store.dispatch('getCurrentUser', { axios: this.$http, callback: this.checkWatches })
+    this.$store.dispatch('getCurrentUser', this.checkWatches)
     this.$store.dispatch('getAppVersion')
     this.$store.dispatch('getComponentTypeList')
     this.$store.dispatch('getAttributeMap')
@@ -173,7 +164,6 @@ export default {
       currentError: {},
       errorDialog: false,
       showErrorDetails: false,
-      loginExpiredDialog: false,
       messagesDialog: false,
       firstTimeDialog: false,
       loggingOut: false,

@@ -69,15 +69,6 @@
 				handler: function(){
 					actionLoadContent('Relationships');
 				}			
-			});			
-			toolsMenu.push({
-				id: 'tools-menu-reports',
-				text: 'Reports',
-				hidden: true,
-				requiredPermissions: ['REPORTS-PAGE'],
-				handler: function(){
-					actionLoadContent('Reports');
-				}			
 			});
 			toolsMenu.push({
 				text: 'Reviews',
@@ -85,19 +76,12 @@
 				handler: function(){
 					actionLoadContent('Reviews');
 				}				
-			});
-			toolsMenu.push({
-				text: 'Searches',
-				requiredPermissions: ['USER-SEARCHES-PAGE'],
-				handler: function(){
-					actionLoadContent('Searches');
-				}				
-			});			
+			});		
 			toolsMenu.push({
 				text: 'Watches',
 				requiredPermissions: ['USER-WATCHES-PAGE'],
 				handler: function(){
-					actionLoadContent('Watches');
+					window.location.href = '/openstorefront/#/watches';
 				}			
 			});
 			
@@ -203,7 +187,7 @@
 									margin: '0 10 0 0',
 									requiredPermissions: ['USER-PROFILE-PAGE'],
 									handler: function(){
-										actionLoadContent('User-Profile');
+										window.location.href = '/openstorefront/#/profile';
 									}									
 								},
 								{
