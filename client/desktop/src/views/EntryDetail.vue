@@ -53,7 +53,9 @@
                 style="margin-right: 0.8em;;"
               >
                 <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
-                {{ tag.text }}
+                <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
+                  {{ tag.text }}
+                </router-link>
               </span>
             </div>
           </div>
@@ -319,19 +321,13 @@
                   v-if="tag.createUser === $store.state.currentUser.username"
                   close
                   @input="deleteTagDialog = true; tagName = tag.text; deleteTagId = tag.tagId">
-                  <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
-                    <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
-                    {{ tag.text }}
-                   </router-link>
+                  <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
+                  {{ tag.text }}
                 </v-chip>
 
                 <v-chip v-else>
-                  <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
-                    <v-icon style="font-size: 14px; color: #f8c533;">
-                      fas fa-tag
-                    </v-icon>
-                    {{ tag.text }}
-                  </router-link>
+                  <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
+                  {{ tag.text }}
                 </v-chip>
               </span>
             </div>
@@ -344,6 +340,7 @@
               </v-combobox>
               <v-btn
                 @click="determineTagType()"
+                :disabled="tagName === ''"
               >
                 Add
               </v-btn>
@@ -1089,7 +1086,7 @@ export default {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)
         .then(response => {
           this.$toasted.show('Tag Deleted')
-          this.getDetail()
+          this.detail.tags = this.detail.tags.filter(e => e.tagId !== this.deleteTagId)
         })
     },
     submitTag (name) {

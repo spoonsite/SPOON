@@ -367,20 +367,36 @@
           <div class="item-body">
             <div class="item-properties">
               <span v-if="displayOptions.organization">
-                <v-chip small class="organization-chip">
-                  <i data-v-1a1d373c="" aria-hidden="true" class="v-icon fas fa-university theme--light" style="font-size: 16px; padding-right: 4px;"></i>
-                  {{ item.organization }}
+                <v-chip
+                  small
+                  class="organization-chip"
+                  @click="addOrganization(item.organization)"
+                >
+                  <v-icon style="font-size: 16px; padding-right: 4px;">fas fa-university</v-icon>
+                  <div class="tag-links">
+                    {{ item.organization }}
+                  </div>
                 </v-chip>
               </span>
               <div class="comp-type-wrapper" v-if="displayOptions.category">
-                <router-link :to="{ path: 'search', query: { comp: item.componentType }}">
-                  <v-chip v-if='item.componentTypeDescription.includes(">")' style="padding: 2px 0px;">
+                <v-chip
+                  v-if='item.componentTypeDescription.includes(">")'
+                  style="padding: 2px 0px;"
+                  @click="addComponentType(item.componentType)"
+                >
+                  <div class="tag-links">
                     {{ getFirstCompType(item.componentTypeDescription) }}<br>{{ getSecondCompType(item.componentTypeDescription) }}
-                  </v-chip>
-                  <v-chip v-else small>
+                  </div>
+                </v-chip>
+                <v-chip
+                  v-else
+                  small                
+                  @click="addComponentType(item.componentType)"
+                >
+                  <div class="tag-links">
                     {{ item.componentTypeDescription }}
-                  </v-chip>
-                </router-link>
+                  </div>
+                </v-chip>
               </div>
             <div
                 class="tag-wrapper"
@@ -389,7 +405,7 @@
                 <span
                   v-for="tag in item.tags"
                   :key="tag.text"
-                  style="margin-right: 0.8em; cursor: pointer;"
+                  class="tag-links"
                   @click="addTag(tag.text)"
                 >
                   <v-icon style="font-size: 14px; color: rgb(248, 197, 51);">fas fa-tag</v-icon> {{ tag.text }}
@@ -566,10 +582,16 @@ export default {
         return el !== tag
       })
     },
+    addComponentType (compType) {
+      this.filters.entryType = compType
+    },
+    addOrganization (org) {
+      this.filters.organization = org
+    },
     clear () {
       this.filters = {
         attributes: [],
-        component: '',
+        entryType: '',
         tags: [],
         organization: '',
         children: false
@@ -1078,6 +1100,13 @@ $footer-height: 42.4px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+}
+.tag-links {
+  margin-right: 0.8em;
+  cursor: pointer;
+}
+.tag-links:hover {
+  text-decoration: underline;
 }
 .compare-box {
   display: flex;
