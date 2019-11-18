@@ -969,7 +969,7 @@ export default {
       if (this.attributeQuery.trim() === '') {
         this.attributeKeys = keys.slice(0, 10)
       } else {
-        this.attributeKeys = keys.filter((v) => regEx.test(v)).slice(0, 10)
+        this.attributeKeys = keys.filter((v) => regEx.test(this.searchResultsAttributes[v].label)).slice(0, 10)
       }
     }, 500),
     searchSortField () {
