@@ -1223,9 +1223,10 @@ public abstract class GeneralComponentResourceExt
 	)
 	{
 		return entryActionWithComment((component) -> {
-			String comment = multipleEntryAction.getComment().getComment();
-			if (comment == null){
-				comment = "";
+			ComponentComment componentComment = multipleEntryAction.getComment();
+			String comment = "";
+			if (componentComment != null){
+				comment = componentComment.getComment();
 			}
 			if (Component.ACTIVE_STATUS.equals(component.getActiveStatus())) {
 				service.getChangeLogService().logOtherChange(component, ChangeType.INACTIVATED, comment);
