@@ -168,7 +168,6 @@ export default {
     this.$store.dispatch('getAppVersion')
     this.$store.dispatch('getComponentTypeList')
     this.$store.dispatch('getAttributeMap')
-    this.checkWatches()
   },
   computed: {
     filteredLinks () {
@@ -298,33 +297,31 @@ export default {
       return ret
     },
     checkWatches () {
-      if (this.$store.state.currentUser) {
-        this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
-          .then(response => {
-            if (response.data && response.data.length > 0) {
-              for (var i = 0; i < response.data.length; i++) {
-                if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
-                  this.watchNumber++
-                }
+      this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
+        .then(response => {
+          if (response.data && response.data.length > 0) {
+            for (var i = 0; i < response.data.length; i++) {
+              if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
+                this.watchNumber++
               }
             }
-          })
-          .catch(e => this.errors.push(e))
-          .finally(() => {
-            if (this.watchNumber > 0) {
-              this.$toasted.show(this.watchNumber + (this.watchNumber === 1 ? ' entry has' : ' entries have') + ' been updated.', {
-                icon: 'binoculars',
-                action: {
-                  text: 'View',
-                  onClick: (e, toastObject) => {
-                    this.$router.push('Watches')
-                    toastObject.goAway(0)
-                  }
+          }
+        })
+        .catch(e => this.errors.push(e))
+        .finally(() => {
+          if (this.watchNumber > 0) {
+            this.$toasted.show(this.watchNumber + (this.watchNumber === 1 ? ' entry has' : ' entries have') + ' been updated.', {
+              icon: 'binoculars',
+              action: {
+                text: 'View',
+                onClick: (e, toastObject) => {
+                  this.$router.push('Watches')
+                  toastObject.goAway(0)
                 }
-              })
-            }
-          })
-      }
+              }
+            })
+          }
+        })
     }
   }
 }
