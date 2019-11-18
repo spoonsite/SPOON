@@ -354,11 +354,10 @@
         >
           <v-card>
             <v-card-title>
-              <h2 class="w-100">Are you sure you want to delete this tag?</h2>
+              <h2 class="w-100">Are you sure you want to remove this tag from this entry?</h2>
             </v-card-title>
             <v-card-text>
-              <p>Are you sure that you would like to delete this tag?</p>
-              <p>Tag to be deleted: <strong style="color: red;">{{ tagName }}</strong></p>
+              <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p>
             </v-card-text>
             <v-card-actions>
               <v-btn @click="deleteTag(); deleteTagDialog = false;">Delete</v-btn>
