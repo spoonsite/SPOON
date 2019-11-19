@@ -64,25 +64,25 @@
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
             <div style="display: flex; flex-direction: column;">
-              <v-chip @click="openPrintScreen()" style="width: 13em;">
+              <v-chip @click="openPrintScreen()" style="width: 12.75em;">
                 <v-avatar left>
                   <v-icon>fas fa-print</v-icon>
                 </v-avatar>
                 Print
               </v-chip>
-              <v-chip @click="contactVendorDialog = true" style="width: 13em;">
+              <v-chip @click="contactVendorDialog = true" style="width: 12.75em;">
                 <v-avatar left>
                   <v-icon>far fa-envelope</v-icon>
                 </v-avatar>
                 Contact Vendor
               </v-chip>
-              <v-chip @click="submitCorrectionDialog = true" style="width: 13em;">
+              <v-chip @click="submitCorrectionDialog = true" style="width: 12.75em;">
                 <v-avatar left>
                   <v-icon>far fa-comment</v-icon>
                 </v-avatar>
                 Submit Correction
               </v-chip>
-              <v-chip @click="requestOwnershipDialog = true" style="width: 13em;">
+              <v-chip @click="requestOwnershipDialog = true" style="width: 12.75em;">
                 <v-avatar left>
                   <v-icon>fa-user-edit</v-icon>
                 </v-avatar>
