@@ -67,8 +67,11 @@
               <v-btn
                 block
                 color="accent"
+                :disabled="!cancelable"
                 @click="cancel"
-                >Cancel</v-btn>
+              >
+                Clear
+              </v-btn>
             </v-flex>
           </v-layout>
         </v-container>
@@ -103,7 +106,7 @@ export default {
     valid: true,
     confirmationDialog: false,
     isLoading: false,
-    contactType: null,
+    contactType: undefined,
     contactTypeRules: [
       v => !!v || 'Type is required'
     ],
@@ -113,12 +116,12 @@ export default {
       'Improvement',
       'New Feature'
     ],
-    subject: '',
+    subject: undefined,
     subjectRules: [
       v => !!v || 'Subject is required',
       v => (v && v.length <= 255) || 'Maximum length for this field is 255'
     ],
-    description: '',
+    description: undefined,
     descriptionRules: [
       v => !!v || 'Description is required',
       v => (v && v.length <= 4096) || 'Maximum length for this field is 4096'
@@ -155,10 +158,13 @@ export default {
     cancel () {
       this.$refs.form.reset()
     }
-
   },
   computed: {
-
+    cancelable () {
+      return this.contactType !== undefined ||
+        this.subject !== undefined ||
+        this.description !== undefined
+    }
   }
 }
 </script>
