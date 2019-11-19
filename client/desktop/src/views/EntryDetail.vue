@@ -64,7 +64,7 @@
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
             <div style="display: flex; flex-direction: column;">
-              <span>
+              <!-- <span>
                 <v-btn fab @click="openPrintScreen()"><v-icon>fas fa-print</v-icon></v-btn>
                 <label>Print</label>
               </span>
@@ -79,7 +79,31 @@
               <span>
                 <v-btn fab @click="requestOwnershipDialog = true"><v-icon>fas fa-user-edit</v-icon></v-btn>
                 <label>Request Ownership</label>
-              </span>
+              </span> -->
+              <v-chip @click="openPrintScreen()" style="width: 165px;">
+                <v-avatar left>
+                  <v-icon>fas fa-print</v-icon>
+                </v-avatar>
+                Print
+              </v-chip>
+              <v-chip @click="contactVendorDialog = true" style="width: 165px;">
+                <v-avatar left>
+                  <v-icon>far fa-envelope</v-icon>
+                </v-avatar>
+                Contact Vendor
+              </v-chip>
+              <v-chip @click="submitCorrectionDialog = true" style="width: 165px;">
+                <v-avatar left>
+                  <v-icon>far fa-comment</v-icon>
+                </v-avatar>
+                Submit Correction
+              </v-chip>
+              <v-chip @click="requestOwnershipDialog = true" style="width: 165px;">
+                <v-avatar left>
+                  <v-icon>fa-user-edit</v-icon>
+                </v-avatar>
+                Request Ownership
+              </v-chip>
             </div>
           </div>
         </div>
