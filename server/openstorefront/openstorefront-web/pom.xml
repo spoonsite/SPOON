@@ -302,7 +302,6 @@
 						</goals>
 						<configuration>
 							<target>
-
 								<copy todir="../../../client/openstorefront/app/scripts">
 									<fileset dir="target/openstorefront/scripts">
 										<include name="**/*" />
@@ -313,7 +312,6 @@
 										<include name="**/*" />
 									</fileset>
 								</copy>
-
 							</target>
 						</configuration>
 					</execution>
