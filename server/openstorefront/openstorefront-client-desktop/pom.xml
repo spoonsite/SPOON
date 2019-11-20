@@ -1,18 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>edu.usu.sdl</groupId>
         <artifactId>openstorefront</artifactId>
-        <version>2.10</version>
+        <version>2.11</version>
     </parent>
+
     <artifactId>openstorefront-client-desktop</artifactId>
     <packaging>jar</packaging>
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <sonar.skip>true</sonar.skip>
     </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -23,9 +27,7 @@
                 <configuration>
                     <workingDirectory>../../../client/desktop/</workingDirectory>
                 </configuration>
-
                 <executions>
-
                     <execution>
                         <id>install node and npm</id>
                         <goals>
@@ -37,7 +39,6 @@
                             <npmVersion>6.12.0</npmVersion>
                         </configuration>
                     </execution>
-
                     <execution>
                         <id>npm install</id>
                         <goals>
@@ -48,7 +49,6 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-
                     <execution>
                         <id>npm run build (then copy)</id>
                         <goals>
@@ -64,15 +64,15 @@
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                <filesets>
-                    <fileset>
-                    <directory>../../../client/desktop/</directory>
-                    <includes>
-                        <include>node_modules/</include>
-                    </includes>
-                    <followSymlinks>false</followSymlinks>
-                    </fileset>
-                </filesets>
+                    <filesets>
+                        <fileset>
+                            <directory>../../../client/desktop/</directory>
+                            <includes>
+                                <include>node_modules/</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
         </plugins>
