@@ -66,22 +66,32 @@
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
             <div style="display: flex; flex-direction: column;">
-              <span>
-                <v-btn fab @click="openPrintScreen()"><v-icon>fas fa-print</v-icon></v-btn>
-                <label>Print</label>
-              </span>
-              <span>
-                <v-btn fab @click="contactVendorDialog = true"><v-icon>fas fa-envelope-square</v-icon></v-btn>
-                <label>Contact Vendor</label>
-              </span>
-              <span>
-                <v-btn fab @click="submitCorrectionDialog = true"><v-icon>far fa-comment</v-icon></v-btn>
-                <label>Submit Correction</label>
-              </span>
-              <span>
-                <v-btn fab @click="requestOwnershipDialog = true"><v-icon>fas fa-user-edit</v-icon></v-btn>
-                <label>Request Ownership</label>
-              </span>
+              <v-chip @click="openPrintScreen()" class="ml-0" style="width: 13em;">
+                <v-avatar left>
+                  <v-icon small>fas fa-print</v-icon>
+                </v-avatar>
+                Print
+              </v-chip>
+              <v-chip @click="contactVendorDialog = true" class="ml-0" style="width: 13em;">
+                <v-avatar left>
+                  <v-icon small>far fa-envelope</v-icon>
+                </v-avatar>
+                Contact Vendor
+              </v-chip>
+              <v-chip @click="submitCorrectionDialog = true" class="ml-0" style="width: 13em;">
+                <v-avatar left>
+                  <v-icon small>far fa-comment</v-icon>
+                </v-avatar>
+                Submit Correction
+              </v-chip>
+              <v-chip 
+                @click="requestOwnershipDialog = true" class="ml-0" style="width: 13em;"
+              >
+                <v-avatar left>
+                  <v-icon small>fa-user-edit</v-icon>
+                </v-avatar>
+                Request Ownership
+              </v-chip>
             </div>
           </div>
         </div>
