@@ -63,28 +63,30 @@
               <strong>Average User Rating:</strong>
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
-            <div style="display: flex; flex-direction: column;width: 13em">
-              <v-chip @click="openPrintScreen()" style="padding-left: 1em;">
+            <div style="display: flex; flex-direction: column;">
+              <v-chip @click="openPrintScreen()" class="ml-0" style="width: 13em;">
                 <v-avatar left>
-                  <v-icon>fas fa-print</v-icon>
+                  <v-icon small>fas fa-print</v-icon>
                 </v-avatar>
                 Print
               </v-chip>
-              <v-chip @click="contactVendorDialog = true" style="padding-left: 1em;">
+              <v-chip @click="contactVendorDialog = true" class="ml-0" style="width: 13em;">
                 <v-avatar left>
-                  <v-icon>far fa-envelope</v-icon>
+                  <v-icon small>far fa-envelope</v-icon>
                 </v-avatar>
                 Contact Vendor
               </v-chip>
-              <v-chip @click="submitCorrectionDialog = true" style="padding-left: 1em;">
+              <v-chip @click="submitCorrectionDialog = true" class="ml-0" style="width: 13em;">
                 <v-avatar left>
-                  <v-icon>far fa-comment</v-icon>
+                  <v-icon small>far fa-comment</v-icon>
                 </v-avatar>
                 Submit Correction
               </v-chip>
-              <v-chip @click="requestOwnershipDialog = true" style="padding-left: 1em;">
+              <v-chip 
+                @click="requestOwnershipDialog = true" class="ml-0" style="width: 13em;"
+              >
                 <v-avatar left>
-                  <v-icon>fa-user-edit</v-icon>
+                  <v-icon small>fa-user-edit</v-icon>
                 </v-avatar>
                 Request Ownership
               </v-chip>
