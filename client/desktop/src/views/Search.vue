@@ -3,37 +3,53 @@
   <div :class="`side-menu ${showFilters || showOptions ? 'open' : 'closed'}`">
     <!-- CONTROLS -->
     <div class="side-menu-btns">
+      <v-tooltip right>
         <v-btn
           class="db"
           @click="showFilters = !showFilters; showOptions = false;"
           small fab dark icon
           :color="`primary ${showFilters ? 'lighten-4' : ''}`"
+          slot="activator"
         >
           <v-icon dark>fas fa-filter</v-icon>
         </v-btn>
+        <span>Search Filters</span>
+      </v-tooltip>
+      <v-tooltip right>
         <v-btn
           class="db"
           @click="showOptions = !showOptions; showFilters = false;"
           small fab dark icon
           :color="`primary ${showOptions ? 'lighten-4' : ''}`"
+          slot="activator"
         >
           <v-icon dark>fas fa-cog</v-icon>
         </v-btn>
+        <span>Search Options</span>
+      </v-tooltip>
+      <v-tooltip right>
         <v-btn
           class="db"
           @click="sortComparisonData(); showComparison = true;"
           :disabled="!(this.comparisonList.length >= 2)"
           small fab icon
+          slot="activator"
         >
           <v-icon>fas fa-columns</v-icon>
         </v-btn>
+        <span>Compare</span>
+      </v-tooltip>
+      <v-tooltip right>
         <v-btn
           class="db"
           @click="copyUrlToClipboard"
           small fab icon
+          slot="activator"
         >
           <v-icon>fas fa-share-alt</v-icon>
         </v-btn>
+        <span>Share Search</span>
+      </v-tooltip>
         <input
           type="text"
           value="https://spoonsite.com"
@@ -64,6 +80,49 @@
         <h3>Page Size</h3>
         {{ searchPageSize }}
         <v-slider v-model="searchPageSize" step="4" min="4" thumb-label></v-slider>
+        <h2>Display Options</h2>
+        <v-checkbox
+          v-model="displayOptions.organization"
+          :label="'Organization'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.category"
+          :label="'Category'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.tags"
+          :label="'Tags'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.userRating"
+          :label="'Average User Rating'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.description"
+          :label="'Description'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.lastUpdated"
+          :label="'Last Updated'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
+        <v-checkbox
+          v-model="displayOptions.approvalDate"
+          :label="'Approval Date'"
+          class="checkbox-spacing"
+        >
+        </v-checkbox>
         <v-btn block class="primary" @click="resetOptions()">Reset Options</v-btn>
       </div><!-- SEARCH OPTIONS -->
 
@@ -298,18 +357,22 @@
             :src="'/openstorefront/' + item.componentTypeIconUrl"
             style="min-width: 40px; max-height: 40px; margin-right: 15px"
             >
-            <h3 class="headline more-info" @click='moreInformation(item.componentId)'>{{ item.name }}</h3>
+            <h3 class="headline more-info">
+              <router-link :to="'/entry-detail/' + item.componentId">
+                {{ item.name }}
+              </router-link>
+            </h3>
           </div>
           <v-divider></v-divider>
           <div class="item-body">
             <div class="item-properties">
-              <span>
+              <span v-if="displayOptions.organization">
                 <v-chip small class="organization-chip">
                   <i data-v-1a1d373c="" aria-hidden="true" class="v-icon fas fa-university theme--light" style="font-size: 16px; padding-right: 4px;"></i>
                   {{ item.organization }}
                 </v-chip>
               </span>
-              <div class="comp-type-wrapper">
+              <div class="comp-type-wrapper" v-if="displayOptions.category">
                 <router-link :to="{ path: 'search', query: { comp: item.componentType }}">
                   <v-chip v-if='item.componentTypeDescription.includes(">")' style="padding: 2px 0px;">
                     {{ getFirstCompType(item.componentTypeDescription) }}<br>{{ getSecondCompType(item.componentTypeDescription) }}
@@ -319,9 +382,9 @@
                   </v-chip>
                 </router-link>
               </div>
-              <div
+            <div
                 class="tag-wrapper"
-                v-if="!!item.tags && item.tags.length !== 0"
+                v-if="!!item.tags && item.tags.length !== 0 && displayOptions.tags"
               >
                 <span
                   v-for="tag in item.tags"
@@ -332,16 +395,19 @@
                   <v-icon style="font-size: 14px; color: rgb(248, 197, 51);">fas fa-tag</v-icon> {{ tag.text }}
                 </span>
               </div>
+              <p v-if="displayOptions.userRating">
+                <star-rating :rating="item.averageRating" :read-only="true" :show-rating="false" :increment="0.01" inline :star-size="17"></star-rating>({{ item.numberOfRatings }})
+              </p>
             </div>
             <v-divider></v-divider>
             <div class="item-details">
-              <div class="description-wrapper">
+              <div class="description-wrapper" v-if="displayOptions.description">
                 {{ shortenDescription(item.description) }}
               </div>
               <div class=item-details-bottom>
                 <div>
-                  <p><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
-                  <p><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
+                  <p v-if="displayOptions.lastUpdated"><strong>Last Updated:</strong> {{ item.updateDts | formatDate }}</p>
+                  <p v-if="displayOptions.approvalDate"><strong>Approved Date:</strong> {{ item.approvedDts | formatDate }}</p>
                 </div>
                 <div class="compare-box">
                   <input type="checkbox" v-model="comparisonList" :value="item" :id="item.componentId">
@@ -427,16 +493,16 @@
 
 <script>
 import _ from 'lodash'
+import StarRating from 'vue-star-rating'
 import SearchBar from '../components/SearchBar'
-// import AttributeRange from '../components/AttributeRange'
 import router from '../router.js'
 import crush from '../util/scientificToDecimal.js'
 
 export default {
   name: 'SearchPage',
   components: {
-    SearchBar
-    // AttributeRange
+    SearchBar,
+    StarRating
   },
   created () {
     this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
@@ -450,76 +516,39 @@ export default {
     this.searchPageSize = (pageSize ? pageSize : this.searchPageSize)
   },
   mounted () {
-    if (this.$route.query.q) {
-      this.searchQuery = this.$route.query.q
-    }
-    if (this.$route.query.comp) {
-      this.filters.entryType = this.$route.query.comp
-    }
-    if (this.$route.query.children) {
-      this.filters.children = (this.$route.query.children === 'true')
-    }
-    if (this.$route.query.tags) {
-      this.filters.tags = this.$route.query.tags.split(',')
-    }
-    if (this.$route.query.orgs) {
-      this.filters.organization = this.$route.query.orgs
-    }
-    if (this.$route.query.attributes) {
-      this.filters.attributes = []
-      this.$route.query.attributes.match(/({.*?})/gm).forEach(attribute => {
-        this.filters.attributes.push(attribute)
-      })
-    }
-    if (this.$route.query.searchoptions) {
-      this.searchoptions = this.$route.query.searchoptions.split(',')
-      localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
-    }
-  },
-  mounted () {
+    this.parseFiltersFromUrl(this.$route.query)
     this.newSearch()
   },
   beforeRouteUpdate (to, from, next) {
-    if (to.query.q) {
-      this.searchQuery = to.query.q
-    } else {
-      this.searchQuery = ''
-    }
-    if (to.query.comp) {
-      this.filters.entryType = to.query.comp
-    } else {
-      this.filters.entryType = ''
-    }
-    if (to.query.children) {
-      this.filters.children = (to.query.children === 'true')
-    } else {
-      this.fitlers.children = false
-    }
-    if (to.query.tags) {
-      this.filters.tags = to.query.tags.split(',')
-    } else {
-      this.filters.tags = []
-    }
-    if (to.query.orgs) {
-      this.filters.organization = to.query.orgs
-    } else {
-      this.filters.organization = ''
-    }
-    if (to.query.attributes) {
-      this.filters.attributes = []
-      to.query.attributes.match(/({.*?})/gm).forEach(attribute => {
-        this.filters.attributes.push(attribute)
-      })
-    } else {
-      this.filters.attributes = []
-    }
-    if (to.query.searchoptions) {
-      this.searchoptions = to.query.searchoptions.split(',')
-      localStorage.setItem('searchOptions', JSON.stringify(this.searchoptions))
-    }
+    this.parseFiltersFromUrl(to.query)
     this.newSearch()
+    next()
   },
   methods: {
+    parseFiltersFromUrl (params) {
+      if (params.q) {
+        this.searchQuery = params.q
+      }
+      if (params.comp) {
+        this.filters.entryType = params.comp
+      }
+      if (params.children) {
+        this.filters.children = (params.children === 'true')
+      }
+      if (params.tags) {
+        this.filters.tags = params.tags.split(',')
+      }
+      if (params.organization) {
+        this.filters.organization = params.organization
+      }
+      if (params.attributes) {
+        this.filters.attributes = []
+        this.filters.attributes = JSON.parse(params.attributes)
+      }
+      if (params.searchoptions) {
+        this.searchoptions = params.searchoptions.split(',')
+      }
+    },
     getComponentName (code) {
       let name = ''
       if (this.$store.state.componentTypeList === undefined) {
@@ -550,6 +579,13 @@ export default {
       this.searchPageSize = 12
       this.searchSortField = 'searchScore'
       this.searchSortOrder = 'DESC'
+      this.displayOptions.organization = true
+      this.displayOptions.category = true
+      this.displayOptions.tags = true
+      this.displayOptions.userRating = false
+      this.displayOptions.description = true
+      this.displayOptions.lastUpdated = true
+      this.displayOptions.approvalDate = true
     },
     addTag (tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
@@ -580,7 +616,8 @@ export default {
           that.searchResultsAttributes[source.type] = {
             codes: [],
             label: source.typeLabel,
-            attributeUnit: unit
+            attributeUnit: unit,
+            code: source.type
           }
           that.searchResultsAttributes[source.type].codes.push({ 'code': source.label, 'count': 1 })
           codesMap[source.type] = {}
@@ -690,7 +727,12 @@ export default {
         searchFilters.attributes = JSON.stringify(searchFilters.attributes)
       }
 
-      history.pushState({}, '', this.searchUrl())
+      // need to check that the route is not already in the history
+      // this occurs when search comes from the landing page
+      let currentURL = window.location.href.toString().split('#')[1]
+      if (('#' + currentURL) !== this.searchUrl()) {
+        window.history.pushState({}, '', this.searchUrl())
+      }
 
       this.$http
         .post(
@@ -719,7 +761,7 @@ export default {
 
           that.searchQueryIsDirty = false
         })
-        .catch(err => console.log(err))
+        .catch(err => console.error(err))
         .finally(() => {
           that.searchQueryIsDirty = false
         })
@@ -733,28 +775,26 @@ export default {
       if (this.totalSearchResults % this.searchPageSize === 0) return (this.totalSearchResults / this.searchPageSize) - 1
       return Math.floor(this.totalSearchResults / this.searchPageSize) + 1
     },
-    moreInformation (componentId) {
-      router.push({
-        name: 'Entry Detail',
-        params: {
-          id: componentId
-        }
-      })
-    },
     removeAttributeFilter (attribute) {
       this.filters.attributes.splice(this.filters.attributes.indexOf(attribute), 1)
       this.filters.attributes = [...this.filters.attributes]
     },
     printAttribute (attribute) {
-      if (this.$store.state.attributeMap === undefined) {
-        this.$store.dispatch('getAttributeMap')
-      }
-      let attr = this.$jsonparse(attribute)
+      let attr = JSON.parse(attribute)
       let attributeType = this.$store.state.attributeMap[attr.type]
-      if (attr === null) {
-        attr.unit = ''
+      if (attributeType === undefined) {
+        this.$store.dispatch('getAttributeMap').then(() => {
+          if (attr === null || attributeType.attributeUnit === undefined) {
+            attributeType.attributeUnit = ''
+          }
+          return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
+        })
+      } else {
+        if (attr === null || attributeType.attributeUnit === undefined) {
+          attributeType.attributeUnit = ''
+        }
+        return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
       }
-      return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
     },
     copyUrlToClipboard () {
       var url = encodeURI(window.location.origin + window.location.pathname + this.searchUrl())
@@ -850,10 +890,6 @@ export default {
       return possibleAttributes
     },
     addDescriptionTableData () {
-      this.comparisonDataDisplay.unshift({ name: 'Attributes' })
-      for (var emptySpace in this.comparisonList) {
-        this.comparisonDataDisplay[0]['component' + emptySpace] = ''
-      }
       this.comparisonDataDisplay.unshift({ name: 'Organization' })
       for (var component in this.comparisonList) {
         this.comparisonDataDisplay[0]['component' + component] = this.comparisonList[component].organization
@@ -891,7 +927,7 @@ export default {
       let url = '#/search?q=' + (this.searchQuery ? this.searchQuery : '') +
                 (this.filters.entryType ? '&comp=' + this.filters.entryType : '') +
                 (this.filters.children ? '&children=' + this.filters.children : '') +
-                (this.filters.organization ? '&organiation=' + this.filters.organization : '') +
+                (this.filters.organization ? '&organization=' + this.filters.organization : '') +
                 (this.filters.attributes.length > 0 ? '&attributes=' + JSON.stringify(this.filters.attributes) : '') +
                 (this.filters.tags.length > 0 ? '&tags=' + this.filters.tags.join(',') : '') +
                 '&searchoptions=' + JSON.parse(searchOptions).join(',')
@@ -952,6 +988,15 @@ export default {
       searchoptions: [],
       showHelp: false,
       showComparison: false,
+      displayOptions: {
+        organization: true,
+        category: true,
+        tags: true,
+        userRating: false,
+        description: true,
+        lastUpdated: true,
+        approvalDate: true
+      },
       searchQuery: '',
       attributeQuery: '',
       attributeKeys: [],
@@ -972,7 +1017,6 @@ export default {
       searchSortField: 'searchScore',
       searchSortFields: [
         { text: 'Name', value: 'name' },
-        { text: 'Organization', value: 'organization' },
         { text: 'User Rating', value: 'averageRating' },
         { text: 'Last Update', value: 'lastActivityDts' },
         { text: 'Approval Date', value: 'approvedDts' },
@@ -1106,6 +1150,7 @@ hr {
   overflow-x: hidden;
   top: $header-height;
   bottom: $footer-height;
+  min-width: 300px;
   right: 0;
   left: 0;
 }
@@ -1118,8 +1163,8 @@ hr {
 .spinner {
   margin-top: 7em;
 }
-.more-info {
-  cursor: pointer;
+.more-info a {
+  text-decoration: none;
 }
 .more-info:hover {
   transition-duration: 0.2s;
@@ -1190,6 +1235,10 @@ th {
   height: 80vh;
   width: 85vw;
   position: relative;
+}
+.checkbox-spacing {
+  margin: 0;
+  padding: 0;
 }
 .v-footer {
   height: $footer-height !important;

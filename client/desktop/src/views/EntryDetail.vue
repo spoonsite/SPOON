@@ -34,7 +34,7 @@
           <div class="detail-header-left">
             <div class="dates">
               <p class="date"><strong>Organization:</strong> {{ detail.organization }} </p>
-              <p class="date" v-if='detail.componentTypeLabel.includes(">")'>
+              <p class="date" v-if='detail.componentTypeLabel && detail.componentTypeLabel.includes(">")'>
                 <strong>Category:</strong>
                 {{ detail.componentTypeLabel }}
               </p>
@@ -50,7 +50,7 @@
               <span
                 v-for="tag in detail.tags"
                 :key="tag.text"
-                style="margin-right: 0.8em; cursor: pointer;"
+                style="margin-right: 0.8em;;"
               >
                 <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
                 {{ tag.text }}
@@ -63,23 +63,206 @@
               <strong>Average User Rating:</strong>
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
+            <div style="display: flex; flex-direction: column;">
+              <span>
+                <v-btn fab @click="openPrintScreen()"><v-icon>fas fa-print</v-icon></v-btn>
+                <label>Print</label>
+              </span>
+              <span>
+                <v-btn fab @click="contactVendorDialog = true"><v-icon>fas fa-envelope-square</v-icon></v-btn>
+                <label>Contact Vendor</label>
+              </span>
+              <span>
+                <v-btn fab @click="submitCorrectionDialog = true"><v-icon>far fa-comment</v-icon></v-btn>
+                <label>Submit Correction</label>
+              </span>
+              <span>
+                <v-btn fab @click="requestOwnershipDialog = true"><v-icon>fas fa-user-edit</v-icon></v-btn>
+                <label>Request Ownership</label>
+              </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
+    <v-dialog
+      v-model="submitCorrectionDialog"
+      width="25em"
+    >
+      <v-card>
+        <v-card-title>Submit Correction</v-card-title>
+        <v-card-text>
+          <p>Correction:</p>
+          <p>(Please include the section needing the correction. Eg. Contacts):*</p>
+            <v-textarea
+              style="background-color: white;"
+              v-model="feedbackForm.message"
+              :rules="formCorrectionRules"
+              outline
+            ></v-textarea>
+          <p>Contact Information:</p>
+          <div style="display: flex; background-color: #EEE; padding: 1em;">
+            <div>
+              <v-text-field
+                :rules="formNameRules"
+                single-line
+                solo
+                label="Name*"
+                v-model="feedbackForm.name"
+              >
+              </v-text-field>
+              <v-text-field
+                :rules="formEmailRules"
+                single-line
+                solo
+                label="Email*"
+                v-model="feedbackForm.email"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Phone"
+                v-model="feedbackForm.phone"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Organization"
+                v-model="feedbackForm.organization"
+              >
+              </v-text-field>
+            </div>
+          </div>
+        </v-card-text>
+        <div style="display: flex; justify-content: space-between;">
+          <v-btn
+            @click="submitCorrection()"
+            :loading="buttonLoad"
+            :disabled="feedbackForm.message ==='' || feedbackForm.name ==='' || feedbackForm.email ===''"
+          >
+            Submit
+          </v-btn>
+          <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="requestOwnershipDialog"
+      width="25em"
+    >
+      <v-card>
+        <v-card-title>Request Ownership</v-card-title>
+        <v-card-text>
+          <p>Request Reason:</p>
+          <p>(Entries you own show in the User Tools->Submissions which provides tools for management):*</p>
+            <v-textarea
+              :rules="formReasonRules"
+              style="background-color: white;"
+              v-model="feedbackForm.message"
+              required
+              outline
+            ></v-textarea>
+          <p>Contact Information:</p>
+          <div style="display: flex; background-color: #EEE; padding: 1em;">
+            <div>
+              <v-text-field
+                :rules="formNameRules"
+                single-line
+                solo
+                label="Name*"
+                v-model="feedbackForm.name"
+              >
+              </v-text-field>
+              <v-text-field
+                :rules="formEmailRules"
+                single-line
+                solo
+                label="Email*"
+                v-model="feedbackForm.email"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Phone"
+                v-model="feedbackForm.phone"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                solo
+                label="Organization"
+                v-model="feedbackForm.organization"
+              >
+              </v-text-field>
+            </div>
+          </div>
+        </v-card-text>
+        <div style="display: flex; justify-content: space-between;">
+          <v-btn
+            @click="submitOwnershipRequest()"
+            :loading="buttonLoad"
+            :disabled="feedbackForm.message ==='' || feedbackForm.name ==='' || feedbackForm.email ===''"
+          >
+            Submit
+          </v-btn>
+          <v-btn @click="requestOwnershipDialog = false;">Cancel</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="contactVendorDialog"
+      width="25em"
+    >
+      <v-card>
+        <v-card-title>Contact Vendor</v-card-title>
+        <v-card-text>
+          <p>From:</p>
+            <v-text-field
+              single-line
+              disabled
+              v-model="userEmail = $store.state.currentUser.email"
+              outline
+            >
+            </v-text-field>
+            <p>Message:</p>
+            <v-textarea
+              :rules="formMessageRules"
+              style="background-color: white;"
+              v-model="vendorMessage"
+              required
+              outline
+            ></v-textarea>
+        </v-card-text>
+        <div style="display: flex; justify-content: space-between;">
+          <v-btn
+            @click="contactVendor()"
+            :loading="buttonLoad"
+            :disabled="vendorMessage === ''"
+          >
+            Send
+          </v-btn>
+          <v-btn @click="contactVendorDialog = false;">Cancel</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+
     <v-divider></v-divider>
 
     <div class="entry-details-bottom">
-      <v-expansion-panels>
-        <v-expansion-panel class="expansion-spacing" :value="1">
+        <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Description</h2></div>
             <div class="expansion-content" v-html="detail.description"></div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="expansion-spacing" :value="1">
+        <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Attributes</h2></div>
             <div class="expansion-content">
@@ -117,6 +300,133 @@
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
+
+        <v-expansion-panel class="expansion-spacing">
+          <v-expansion-panel-content>
+            <div slot="header"><h2>Tags</h2></div>
+            <div class="expansion-content">
+              <div
+                style="padding-bottom: 1em;"
+                class="clearfix tags"
+                v-if="detail.tags && detail.tags.length !== 0"
+              >
+              <span
+                v-for="tag in detail.tags"
+                :key="tag.text"
+                style="margin-right: 0.8em;"
+                >
+                <v-chip
+                  v-if="tag.createUser === $store.state.currentUser.username"
+                  close
+                  @input="deleteTagDialog = true; tagName = tag.text; deleteTagId = tag.tagId">
+                  <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
+                    <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
+                    {{ tag.text }}
+                   </router-link>
+                </v-chip>
+
+                <v-chip v-else>
+                  <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
+                    <v-icon style="font-size: 14px; color: #f8c533;">
+                      fas fa-tag
+                    </v-icon>
+                    {{ tag.text }}
+                  </router-link>
+                </v-chip>
+              </span>
+            </div>
+              <v-combobox
+                id="tagEntry"
+                label="Tags"
+                :items="allTags"
+                :error="tagEmpty"
+                v-model="tagName">
+              </v-combobox>
+              <v-btn
+                @click="determineTagType()"
+              >
+                Add
+              </v-btn>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-dialog
+        v-model="deleteTagDialog"
+        width="25em"
+        >
+          <v-card>
+            <v-card-title>
+              <h2 class="w-100">Are you sure you want to delete this tag?</h2>
+            </v-card-title>
+            <v-card-text>
+              <p>Are you sure that you would like to delete this tag?</p>
+              <p>Tag to be deleted: <strong style="color: red;">{{ tagName }}</strong></p>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn @click="deleteTag(); deleteTagDialog = false;">Delete</v-btn>
+              <v-btn @click="deleteTagDialog = false;">Cancel</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog
+        v-model="newTagConfirmationDialog"
+        width="50em"
+        >
+          <v-card>
+            <v-card-title>
+              <h2 class="w-100">Are you sure you want to add a new tag?</h2>
+            </v-card-title>
+            <v-card-text>
+              <p>Are you sure that you would like to add a new tag?</p>
+              <p>Please see other possible matches below.</p>
+              <p>New Tag Name: <strong style="color: red;">{{ tagName }}</strong></p>
+              <p style="font-weight: bold; padding-top: 1em;">Related Tags:</p>
+              <div style="overflow-y: auto; overflow-x: hidden; height: 15em;">
+                <v-list>
+                  <v-list-tile-content
+                    v-for="tag in relatedTags"
+                    :key="tag"
+                  >
+                    <v-list-tile-title v-if="selectedTag===tag"
+                    v-text="tag"
+                    class="list"
+                    style="background-color: rgba(0,0,0,0.12);"
+                    @click="selectedTag = tag;">
+                    </v-list-tile-title>
+                    <v-list-tile-title v-else
+                    v-text="tag"
+                    class="list"
+                    @click="selectedTag = tag;">
+                    </v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list>
+              </div>
+            </v-card-text>
+            <v-card-actions style="display: flex; flex-wrap: wrap; overflow-x: hidden; justify-content: space-around;">
+              <v-btn
+                style="text-transform: none; margin-bottom: 0.4em;"
+                @click="submitTag(tagName); newTagConfirmationDialog=false;"
+              >
+                Add the new tag
+              </v-btn>
+              <v-btn
+                style="text-transform: none; margin-bottom: 0.4em;"
+                :disabled="selectedTag === ''"
+                @click="submitTag(selectedTag); newTagConfirmationDialog=false;"
+              >
+                Use the selected prexisting tag
+              </v-btn>
+              <v-btn
+                style="text-transform: none; margin-bottom: 0.4em;"
+                @click="newTagConfirmationDialog = false;"
+              >
+                Cancel
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
@@ -353,8 +663,6 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-      </v-expansion-panels>
-
     </div>
     <v-footer color="primary" dark height="auto" display="flex" style="justify-content: center;">
       <v-card color="primary" dark flat class="footer-wrapper">
@@ -385,10 +693,21 @@ export default {
       this.id = this.$route.params.id
     }
 
+    if (this.$store.state.currentUser.username) {
+      this.checkWatch()
+    } else {
+      this.$store.watch(
+        (state, getters) => state.currentUser,
+        (newValue, oldValue) => {
+          this.checkWatch()
+        }
+      )
+    }
+
     this.lookupTypes()
     this.getDetail()
     this.getQuestions()
-    this.checkWatch()
+    this.getTags()
   },
   data () {
     return {
@@ -398,8 +717,17 @@ export default {
       newQuestion: '',
       writeReviewDialog: false,
       deleteReviewDialog: false,
+      submitCorrectionDialog: false,
+      requestOwnershipDialog: false,
+      deleteTagDialog: false,
+      newTagConfirmationDialog: false,
+      contactVendorDialog: false,
+      tagEmpty: false,
+      selectedTag: '',
       deleteRequestId: '',
+      deleteTagId: '',
       editReviewId: '',
+      vendorMessage: '',
       reviewSubmit: false,
       newReview: {
         title: '',
@@ -411,6 +739,7 @@ export default {
         cons: []
       },
       comment: '',
+      tagName: '',
       reviewTitleRules: [
         v => !!v || 'Title is required',
         v => (v && v.length <= 255) || 'Title must be less than 255 characters'
@@ -424,12 +753,30 @@ export default {
       commentRules: [
         v => !!v || 'Comment is required'
       ],
+      formCorrectionRules: [
+        v => !!v || 'A correction is required'
+      ],
+      formNameRules: [
+        v => !!v || 'Name is required'
+      ],
+      formEmailRules: [
+        v => !!v || 'Email is required'
+      ],
+      formReasonRules: [
+        v => !!v || 'A reason is required'
+      ],
+      formMessageRules: [
+        v => !!v || 'A message is required'
+      ],
       timeOptions: [],
       timeSelectOptions: [],
       prosOptions: [],
       prosSelectOptions: [],
       consOptions: [],
       consSelectOptions: [],
+      allTags: [],
+      relatedTags: [],
+      relatedComponents: [],
       reviewValid: false,
       todaysDate: new Date(),
       detail: {},
@@ -451,10 +798,19 @@ export default {
         'IMG': 'file-image',
         'OTH': 'file'
       },
+      feedbackForm: {
+        message: '',
+        name: '',
+        email: '',
+        phone: '',
+        organization: ''
+      },
+      buttonLoad: false,
       attributeTableHeaders: [
         { text: 'Attribute Type', value: 'typeDescription' },
         { text: 'Value', value: 'codeDescription' }
-      ]
+      ],
+      userEmail: ''
     }
   },
   methods: {
@@ -584,6 +940,28 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
+    getTags () {
+      this.isLoading = true
+      this.$http.get(`/openstorefront/api/v1/resource/components/tags`)
+        .then(response => {
+          var tags = response.data
+          for (var i = 0; i < tags.length; i++) {
+            this.allTags.push(tags[i].text)
+          }
+        })
+        .catch(e => this.errors.push(e))
+    },
+    getRelatedTags () {
+      this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/relatedtags`)
+        .then(response => {
+          var tags = response.data
+          this.relatedTags = []
+          for (var i = 0; i < tags.length; i++) {
+            this.relatedTags.push(tags[i].text)
+          }
+        })
+        .catch(e => this.errors.push(e))
+    },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
         .then(response => {
@@ -621,6 +999,112 @@ export default {
     showMediaDetails (item) {
       this.currentMediaDetailItem = item
       this.mediaDetailsDialog = true
+    },
+    submitCorrection () {
+      this.buttonLoad = true
+      let data = {
+        securityMarkingType: '',
+        dataSensitivity: '',
+        description: 'Entry Name: ' + this.detail.name + '\n\n' + this.feedbackForm.message,
+        fullname: this.feedbackForm.name,
+        email: this.feedbackForm.email,
+        organization: this.feedbackForm.organization,
+        phone: this.feedbackForm.phone,
+        summary: this.detail.name,
+        ticketType: 'Correction Requested'
+      }
+      this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
+        .then(response => {
+          this.submitCorrectionDialog = false
+          this.buttonLoad = false
+          this.feedbackForm.message = ''
+          this.$toasted.show('Correction submitted.')
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
+    },
+    submitOwnershipRequest () {
+      this.buttonLoad = true
+      let data = {
+        securityMarkingType: '',
+        dataSensitivity: '',
+        description: 'Entry Name: ' + this.detail.name + '\n\n' + this.feedbackForm.message,
+        fullname: this.feedbackForm.name,
+        email: this.feedbackForm.email,
+        organization: this.feedbackForm.organization,
+        phone: this.feedbackForm.phone,
+        summary: this.detail.name,
+        ticketType: 'Request Ownership'
+      }
+      this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
+        .then(response => {
+          this.feedbackForm.message = ''
+          this.requestOwnershipDialog = false
+          this.buttonLoad = false
+          this.$toasted.show('Ownership request submitted.')
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the ownership request.'))
+    },
+    determineTagType () {
+      this.tagName = document.getElementById('tagEntry').value
+      var alreadyExists = false
+      for (var tag in this.detail.tags) {
+        if (this.detail.tags[tag].text === this.tagName) {
+          alreadyExists = true
+        }
+      }
+      if (alreadyExists) {
+        this.tagEmpty = true
+      }
+      else if (this.allTags.includes(this.tagName)) {
+        this.tagEmpty = false
+        this.submitTag(this.tagName)
+      }
+      else if (this.tagName === '') {
+        this.tagEmpty = true
+      }
+      else {
+        this.tagEmpty = false
+        this.getRelatedTags()
+        this.selectedTag = ''
+        this.newTagConfirmationDialog = true
+      }
+    },
+    submitVendorMessage (sendToEmail) {
+      this.buttonLoad = true
+      let data = {
+        userToEmail: sendToEmail,
+        userFromEmail: this.userEmail,
+        message: this.vendorMessage
+      }
+      this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor`, data)
+        .then(response => {
+          this.vendorMessage = ''
+          this.contactVendorDialog = false
+          this.buttonLoad = false
+          this.$toasted.show('Message to vendor was sent.')
+        })
+        .catch(e => this.$toasted.error('There was a problem contacting this vendor.'))
+    },
+    deleteTag () {
+      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)
+        .then(response => {
+          this.$toasted.show('Tag Deleted')
+          this.getDetail()
+        })
+    },
+    submitTag (name) {
+      let data = {
+        securityMarkingType: '',
+        dataSensitivity: '',
+        text: name
+      }
+      this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, data)
+        .then(response => {
+          this.detail.tags.push(response.data)
+          this.tagName = ''
+          this.$toasted.show('Tag submitted.')
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting this tag.'))
     },
     submitQuestion () {
       let data = {
@@ -706,6 +1190,18 @@ export default {
     },
     todaysDateFormatted (val) {
       return !isFuture(val)
+    },
+    openPrintScreen () {
+      window.open('/openstorefront/print.jsp?id=' + this.detail.componentId)
+    },
+    contactVendor () {
+      var sendToEmail = 'support@spoonsite.com'
+      if (this.detail.contacts.length > 0) {
+        if (this.detail.contacts[0].email !== ''){
+          sendToEmail = this.detail.contacts[0].email
+        }
+      }
+      this.submitVendorMessage(sendToEmail)
     }
   },
   watch: {
@@ -842,9 +1338,12 @@ export default {
   .tags {
     display: flex;
     flex-wrap: wrap;
-  }
-  .tags {
     margin: 15px 0px 0px 15px;
+  }
+  .list {
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    cursor: pointer;
+    padding-left: 0.5em;
   }
   .detail-header-right {
     flex-grow: 1;

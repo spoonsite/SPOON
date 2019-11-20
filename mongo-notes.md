@@ -46,7 +46,7 @@ spoonsite instance should be up and running along all the data found in the afor
 
 1. First you need to make a mongod.conf file and give it the following contents:
 
-```ini
+```yaml
 # mongod.conf
 net:
    bindIp: 0.0.0.0

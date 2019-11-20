@@ -159,7 +159,7 @@ public class ComponentRESTResourceTest extends JerseyShiroTest
 //		//Assert
 //		Assert.assertEquals(1, response.size());
 //		ComponentSearchView actual = response.get(0);
-//		Assert.assertEquals((Integer) 5, actual.getAverageRating());
+//		Assert.assertEquals((int) 5, (int)actual.getAverageRating());
 //		Assert.assertEquals("My Test", actual.getName());
 //		Assert.assertEquals("a6b8c6c2-3ac1-40d3-b08a-f52f82dacd4d", actual.getComponentId());
 //		Assert.assertEquals(1, actual.getAttributes().size());

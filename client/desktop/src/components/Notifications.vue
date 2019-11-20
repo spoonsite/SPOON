@@ -8,7 +8,10 @@
       <v-btn icon slot="activator">
         <v-badge left overlap light color="info">
           <span v-if="notifications && notifications.length > 0" slot="badge">{{ newNotifications }}</span>
-          <v-icon>fas fa-envelope</v-icon>
+          <v-tooltip bottom>
+            <v-icon slot="activator">fas fa-envelope</v-icon>
+            <span>Notifications</span>
+          </v-tooltip>
         </v-badge>
       </v-btn>
       <v-list three-line v-if="notifications && notifications.length > 0">
