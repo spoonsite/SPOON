@@ -64,15 +64,15 @@ export default new Vuex.Store({
           context.commit('setSecurityPolicy', response)
         })
     },
-    getCurrentUser (context) {
+    getCurrentUser (context, callback) {
       axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
           context.commit('setCurrentUser', response)
           context.commit('setPermissionMap', response)
         })
         .finally(() => {
-          if (context.callback) {
-            context.callback()
+          if (callback) {
+            callback()
           }
         })
     },

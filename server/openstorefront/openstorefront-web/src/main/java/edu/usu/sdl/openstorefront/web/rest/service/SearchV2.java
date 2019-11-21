@@ -17,6 +17,7 @@ package edu.usu.sdl.openstorefront.web.rest.service;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.entity.AttributeSearchType;
+import edu.usu.sdl.openstorefront.core.view.SearchFilterOptions;
 import edu.usu.sdl.openstorefront.core.view.SearchFilters;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -61,8 +62,7 @@ public class SearchV2
 	@APIDescription("Searches for listing based on given parameters")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.APPLICATION_JSON})
-	public Response searchListing(
-			SearchFilters searchFilters)
+	public Response searchListing(SearchFilters searchFilters)
 	{
 		ValidationResult validationResult = searchFilters.validate();
 		if (!validationResult.valid()) {

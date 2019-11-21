@@ -43,11 +43,16 @@ import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.service.search.SearchStatTable;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+
+import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -76,7 +81,7 @@ import javax.ws.rs.core.Response;
 public class Search
 		extends BaseResource
 {
-
+	private static final Logger LOG = Logger.getLogger(Search.class.getName());
 	private static final String USER_SEARCH_KEY = "UserSearchKey";
 
 	@Context
@@ -373,6 +378,11 @@ public class Search
 				view.getComponentTypeDescription()
 			};
 			csvWriter.writeNext(data);
+		}
+		try {
+			csvWriter.close();
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "CsvWriter failed to close");
 		}
 
 		Response.ResponseBuilder response = Response.ok(writer.toString());

@@ -645,18 +645,6 @@ public class Application
 		return sendSingleEntityResponse(null);
 	}
 
-	@POST
-	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_MANAGERS)
-	@APIDescription("Restart the application. Note the system will be unavailable until the restart is complete.")
-	@Path("/restart")
-	public Response restartApplication(
-			@PathParam("managerClass") String managerClass
-	)
-	{
-		coreSystem.restart();
-		return Response.ok().build();
-	}
-
 	@GET
 	@Produces({MediaType.TEXT_PLAIN})
 	@APIDescription("Translate a label to key; Useful for generating code for attribute.")

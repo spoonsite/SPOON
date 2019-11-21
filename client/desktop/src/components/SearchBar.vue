@@ -1,7 +1,7 @@
 <template>
-  <form v-on:submit.prevent="submitQuery()">
+  <form v-on:submit.prevent="submitQuery()" v-click-outside="searchBarBlur">
     <div class="searchbar-button">
-      <v-icon @click="showOptions=!showOptions" class="drop-down-icon search-options-icon">fas {{ (showOptions ? 'fa-chevron-down' : 'fa-chevron-up')}} fa-xs</v-icon>
+      <v-icon @click="searchOptionsClicked" class="drop-down-icon search-options-icon">fas {{ (hideSearchOptions ? 'fa-chevron-up' : 'fa-chevron-down')}} fa-xs</v-icon>
     </div>
     <div class="searchbar">
       <input
@@ -9,30 +9,44 @@
         @input="$emit('input', $event.target.value)"
         class="searchfield"
         type="text"
-        placeholder="Search"
+        placeholder="Keyword Search"
         @click="searchBarFocused"
-        @blur="searchBarBlur"
       >
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
       <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">clear</v-icon>
     </div>
-    <v-card v-if="searchSuggestions.length > 0 && !hideSearchSuggestions" :height="overlaySuggestions ? 0 : 'auto'" style="z-index: 2">
+    <!-- SEARCH SUGGESTIONS -->
+    <v-card
+      v-if="searchSuggestions.length > 0 && !hideSearchSuggestions"
+      :height="overlaySuggestions ? 0 : 'auto'"
+      style="z-index: 2; top: 6px;"
+    >
       <v-list dense class="elevation-1">
-        <v-list-tile v-for="i in searchSuggestions" :key="i.name" @click="submitQuery(i.name);" class="suggestion">
+        <v-list-tile
+          v-for="i in searchSuggestions"
+          :key="i.name"
+          @click="submitQuery(i.name);"
+          role="button"
+        >
           <v-list-tile-content>
             {{ i.name }}
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
     </v-card>
+    <!-- SEARCH OPTIONS -->
     <v-card
-      v-if="hideSearchSuggestions && showOptions && canShowOptions"
+      v-if="hideSearchSuggestions && !hideSearchOptions"
       :height="overlaySuggestions ? 0 : 'auto'"
-      style="position:relative; z-index:5"
+      style="position:relative; z-index:5; top: 6px;"
     >
       <v-list dense class="elevation-1">
         <h4 class="search-option-titles">Search Options</h4>
-        <v-list-tile v-for="(e,index) in searchOptionsSource" v-bind:key="index" class="suggestion" height="100px">
+        <v-list-tile
+          v-for="(e,index) in searchOptionsSource"
+          :key="index"
+          height="100px"
+        >
           <v-list-tile-content>
             <v-checkbox
               :ripple="false"
@@ -42,18 +56,9 @@
             ></v-checkbox>
           </v-list-tile-content>
         </v-list-tile>
-      </v-list>
-      <v-list dense class="elevation-1">
-        <h4 class="search-option-titles">Entry Types</h4>
-        <v-list-tile v-for="(e,index) in entryTypes" v-bind:key="index" class="suggestion">
-          <v-list-tile-content>
-            <v-checkbox
-              :ripple="false"
-              :key="index"
-              v-model="selectedEntryTypes"
-              :value="e.componentType.componentType"
-              :label="e.componentType.label"
-            ></v-checkbox>
+        <v-list-tile v-if="searchOptions.length==0" avatar>
+          <v-list-tile-content :style="warningStyle">
+            <v-list-tile-title class ="v-label soWarning">All search options are off, this will cause a search to return nothing.</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -73,10 +78,8 @@ export default {
   data () {
     return {
       hideSearchSuggestions: true,
-      entryTypes: {},
+      hideSearchOptions: true,
       searchSuggestions: [],
-      showOptions: false,
-      canShowOptions: true,
       searchOptionsSource: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptions: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptionsId: '',
@@ -86,21 +89,24 @@ export default {
   methods: {
     searchBarFocused () {
       this.hideSearchSuggestions = false
-      this.canShowOptions = false
-      this.showOptions = false
+      this.hideSearchOptions = true
     },
     searchBarBlur () {
       this.hideSearchSuggestions = true
-      this.canShowOptions = true
+      this.hideSearchOptions = true
+    },
+    searchOptionsClicked () {
+      this.hideSearchOptions = !this.hideSearchOptions
+      this.hideSearchSuggestions = true
     },
     submitQuery (query) {
-      this.saveSearchOptions()
       if (query) {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      this.$emit('submitSearch', '&comp=' + this.selectedEntryTypes.toString() + '&children=true')
-      // this.$router.push(`/search?q=${this.value}`)
+      this.$emit('submitSearch', '&children=true&searchoptions=' + this.searchOptions.join(','))
+      this.hideSearchSuggestions = true
+      this.hideSearchOptions = true
     },
     getSearchSuggestions () {
       if (!this.hideSearchSuggestions) {
@@ -128,18 +134,6 @@ export default {
         })
     }
   },
-  computed: {
-    selectedEntryTypes: {
-      set (entryTypes) {
-        if (this.$store.getters.getSelectedComponentTypes !== entryTypes) {
-          this.$store.commit('setSelectedComponentTypes', { data: entryTypes })
-        }
-      },
-      get () {
-        return this.$store.getters.getSelectedComponentTypes
-      }
-    }
-  },
   watch: {
     value: _.throttle(function () {
       if (this.value === '') {
@@ -147,37 +141,45 @@ export default {
       } else if (!this.searchQueryIsDirty) {
         this.getSearchSuggestions()
       }
-    }, 400)
+    }, 400),
+    searchOptions: function (val) {
+      window.localStorage.setItem('searchOptions', JSON.stringify(val))
+      this.saveSearchOptions()
+    }
   },
   created: function () {
-    this.$http
-      .get('/openstorefront/api/v1/resource/searchoptions/user')
-      .then(response => {
-        this.searchOptionsId = response.data.searchOptionsId
-        this.searchOptions = []
-        if (response.data.canUseNameInSearch) {
-          this.searchOptions.push('Name')
-        }
-        if (response.data.canUseDescriptionInSearch) {
-          this.searchOptions.push('Description')
-        }
-        if (response.data.canUseOrganizationsInSearch) {
-          this.searchOptions.push('Organization')
-        }
-        if (response.data.canUseAttributesInSearch) {
-          this.searchOptions.push('Vitals')
-        }
-        if (response.data.canUseTagsInSearch) {
-          this.searchOptions.push('Tags')
-        }
-      })
-    this.$http
-      .get(
-        '/openstorefront/api/v1/resource/componenttypes/nested'
-      )
-      .then(response => {
-        this.entryTypes = response.data.children
-      })
+    let searchOptions = window.localStorage.getItem('searchOptions')
+    if(searchOptions === null){
+      this.$http
+        .get('/openstorefront/api/v1/resource/searchoptions/user')
+        .then(response => {
+          this.searchOptionsId = response.data.searchOptionsId
+          this.searchOptions = []
+          if (response.data.canUseNameInSearch) {
+            this.searchOptions.push('Name')
+          }
+          if (response.data.canUseDescriptionInSearch) {
+            this.searchOptions.push('Description')
+          }
+          if (response.data.canUseOrganizationsInSearch) {
+            this.searchOptions.push('Organization')
+          }
+          if (response.data.canUseAttributesInSearch) {
+            this.searchOptions.push('Vitals')
+          }
+          if (response.data.canUseTagsInSearch) {
+            this.searchOptions.push('Tags')
+          }
+          window.localStorage.setItem('searchOptions', JSON.stringify(this.searchOptions))
+        })
+    } else {
+      this.searchOptions = JSON.parse(searchOptions)
+    }
+  },
+  computed: {
+    warningStyle () {
+      return 'background-color: ' + this.$store.state.branding.vueErrorColor
+    }
   }
 }
 </script>
@@ -189,7 +191,6 @@ export default {
   border-radius: 2px;
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
   padding: 0.7em 0.7em 0.7em 0.7em;
-  margin-bottom: 0.3em;
   margin-left: auto;
   margin-right: auto;
   font-size: 140%;
@@ -214,12 +215,12 @@ export default {
 .search-icon {
   float: right;
   font-size: 34px !important;
-  margin-bottom: 0.1em;
+  position: relative;
+  top: -2px;
 }
 .drop-down-icon {
   float: right;
   font-size: 20px !important;
-  margin-bottom: 0.1em;
 }
 .search-options-icon {
   float: left !important;
@@ -260,6 +261,10 @@ input:focus + .icon {
   content: "";
   clear: both;
   display: table;
+}
+.soWarning {
+  text-align:center;
+  color: white;
 }
 @media only screen and (max-width: 360px) {
   .searchfield {

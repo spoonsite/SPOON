@@ -33,7 +33,7 @@
       :disabled="disableForm"
     ></v-text-field>
   </v-flex>
-  <v-flex xs12 pt-0 pb-0>
+  <v-flex xs12 sm10 pt-0 pb-0>
     <v-text-field
       ref="email"
       type="email"
@@ -47,6 +47,9 @@
       hint="Enter your email. Example: my.name@example.com"
       :disabled="disableForm"
     ></v-text-field>
+  </v-flex>
+  <v-flex xs12 sm2 pt-0 pb-0>
+    <v-btn @click="sendTestMsg">Send Test Message</v-btn>
   </v-flex>
   <v-flex xs12 pt-0 pb-0>
     <!-- Consider using a true parser later for validation of phone number
@@ -162,9 +165,11 @@ export default {
   name: 'profile',
   mixins: [validators],
   mounted () {
-    this.setUserInfo()
-    this.getOrgs()
-    this.getRoles()
+    if (this.$store.state.currentUser.username) {
+      this.populateInfo()
+    } else {
+      this.$store.dispatch('getCurrentUser', this.populateInfo)
+    }
   },
   data () {
     return {
@@ -204,6 +209,11 @@ export default {
     }
   },
   methods: {
+    populateInfo () {
+      this.setUserInfo()
+      this.getOrgs()
+      this.getRoles()
+    },
     setUserInfo () {
       this.user.firstName = this.$store.state.currentUser.firstName
       this.user.lastName = this.$store.state.currentUser.lastName
@@ -275,6 +285,11 @@ export default {
     },
     reset () {
       this.user = JSON.parse(JSON.stringify(this.cachedUser))
+    },
+    sendTestMsg () {
+      console.log('test')
+      this.$http
+        .post('/openstorefront/api/v1/resource/userprofiles/' + this.username + '/test-email', this.user.email)
     }
   }
 }

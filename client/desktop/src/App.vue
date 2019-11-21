@@ -4,13 +4,22 @@
       <header>
         <div :style="topbarStyle">
         <v-toolbar color="primary" dense dark flat>
-          <v-btn icon to="/" active-class=""><v-icon>fas fa-home</v-icon></v-btn>
+          <router-link style="height: 100%;" to="/"><img height="100%" src="./assets/SPOONlogohorz.png" alt="SPOON logo"></router-link>
           <v-spacer></v-spacer>
           <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <Notifications/>
-            <v-btn icon @click="nav('profile')"><v-icon>fas fa-user</v-icon></v-btn>
+            <v-tooltip bottom>
+              <v-btn
+                slot="activator"
+                icon
+                @click="nav('profile')"
+              >
+                <v-icon>fas fa-user</v-icon>
+              </v-btn>
+              <span>User Profile</span>
+            </v-tooltip>
             <!-- <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn> -->
           </v-toolbar-items>
           <v-menu offset-y>
@@ -30,6 +39,20 @@
                 </v-list-tile-action>
                 <v-content>
                   <v-list-tile-title>{{ link.name }}</v-list-tile-title>
+                </v-content>
+              </v-list-tile>
+              <v-list-tile
+                class="menu-item"
+                @click="showDisclaimer = true"
+                @keyup.enter="showDisclaimer = true"
+                role="button"
+                aria-pressed="false"
+              >
+                <v-list-tile-action>
+                  <v-icon>fas fa-exclamation-triangle</v-icon>
+                </v-list-tile-action>
+                <v-content>
+                  <v-list-tile-title>Disclaimer</v-list-tile-title>
                 </v-content>
               </v-list-tile>
               <v-divider></v-divider>
@@ -82,24 +105,6 @@
         </v-card>
       </v-dialog>
 
-      <!-- Login Expired Dialog -->
-      <v-dialog
-        v-model="loginExpiredDialog"
-        max-width="300px"
-        >
-        <v-card>
-          <v-card-title>
-            <h2>Authentication Error</h2>
-          </v-card-title>
-          <v-card-text>
-            Oops! It looks like you are not logged in.
-          </v-card-text>
-          <v-card-actions>
-            <v-btn block href="openstorefront">Login</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
       <!-- First Time User Dialog -->
       <!-- TODO: welcome user to storefront for the first time -->
       <!-- TODO: show a tutorial of basic features -->
@@ -118,6 +123,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog> -->
+      <DisclaimerModal v-model="showDisclaimer"></DisclaimerModal>
 
       <main class="offset-banner" :class="{ offset: !alert }">
         <router-view/>
@@ -132,18 +138,20 @@ import router from './router.js'
 import safeParse from 'safe-json-parse/callback'
 import permissions from './util/permissions.js'
 import Notifications from './components/Notifications'
+import DisclaimerModal from './components/DisclaimerModal'
 
 export default {
   name: 'App',
   components: {
-    Notifications
+    Notifications,
+    DisclaimerModal
   },
   mounted () {
     this.$http.interceptors.response.use(response => {
       if (typeof response.data === 'string' &&
           response.data.includes('<!-- ***USER-NOT-LOGIN*** -->') &&
           !this.loggingOut) {
-        this.loginExpiredDialog = true
+        window.location.href = 'openstorefront'
       }
       return response
     },
@@ -156,11 +164,10 @@ export default {
 
     this.checkFirstTime()
     // pass in current axios instance
-    this.$store.dispatch('getCurrentUser', { axios: this.$http, callback: this.checkWatches })
+    this.$store.dispatch('getCurrentUser', this.checkWatches)
     this.$store.dispatch('getAppVersion')
     this.$store.dispatch('getComponentTypeList')
     this.$store.dispatch('getAttributeMap')
-    this.checkWatches()
   },
   computed: {
     filteredLinks () {
@@ -173,7 +180,7 @@ export default {
       currentError: {},
       errorDialog: false,
       showErrorDetails: false,
-      loginExpiredDialog: false,
+      showDisclaimer: false,
       messagesDialog: false,
       firstTimeDialog: false,
       loggingOut: false,
@@ -208,7 +215,7 @@ export default {
           icon: 'question-circle',
           name: 'Help',
           newTab: true,
-          permissions: [] },
+          permissions: [] }
         // { link: '/sme-approval',
         //   icon: 'check',
         //   name: 'SME Approval',
@@ -290,33 +297,31 @@ export default {
       return ret
     },
     checkWatches () {
-      if (this.$store.state.currentUser) {
-        this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
-          .then(response => {
-            if (response.data && response.data.length > 0) {
-              for (var i = 0; i < response.data.length; i++) {
-                if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
-                  this.watchNumber++
-                }
+      this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
+        .then(response => {
+          if (response.data && response.data.length > 0) {
+            for (var i = 0; i < response.data.length; i++) {
+              if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
+                this.watchNumber++
               }
             }
-          })
-          .catch(e => this.errors.push(e))
-          .finally(() => {
-            if (this.watchNumber > 0) {
-              this.$toasted.show(this.watchNumber + (this.watchNumber === 1 ? ' entry has' : ' entries have') + ' been updated.', {
-                icon: 'binoculars',
-                action: {
-                  text: 'View',
-                  onClick: (e, toastObject) => {
-                    this.$router.push('Watches')
-                    toastObject.goAway(0)
-                  }
+          }
+        })
+        .catch(e => this.errors.push(e))
+        .finally(() => {
+          if (this.watchNumber > 0) {
+            this.$toasted.show(this.watchNumber + (this.watchNumber === 1 ? ' entry has' : ' entries have') + ' been updated.', {
+              icon: 'binoculars',
+              action: {
+                text: 'View',
+                onClick: (e, toastObject) => {
+                  this.$router.push('Watches')
+                  toastObject.goAway(0)
                 }
-              })
-            }
-          })
-      }
+              }
+            })
+          }
+        })
     }
   }
 }

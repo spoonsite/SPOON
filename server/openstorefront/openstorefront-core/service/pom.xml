@@ -1,19 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<artifactId>openstorefront-core</artifactId>
 		<groupId>edu.usu.sdl</groupId>
-		<version>2.10</version>
+		<version>2.11</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront-core-service</artifactId>
-	<version>2.10</version>
+	<version>2.11</version>
 	<packaging>bundle</packaging>
-
 	<name>openstorefront-core-service</name>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<orientdb.version>2.2.29</orientdb.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
+	</properties>
 
 	<repositories>
 		<repository>
@@ -44,13 +51,13 @@
 		</repository>
 		<!--
 		<repository>
-		  <id>xmappr-repo-googlecode</id>
-		  <name>Xmappr Repository</name>
-		  <url>http://xmappr.googlecode.com/svn/repo/</url>
+			<id>xmappr-repo-googlecode</id>
+			<name>Xmappr Repository</name>
+			<url>http://xmappr.googlecode.com/svn/repo/</url>
 		</repository>		
 		-->
 	</repositories>
-	
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>atlassian-public</id>
@@ -74,87 +81,69 @@
 				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
 		</pluginRepository>
-	</pluginRepositories>	
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<orientdb.version>2.2.29</orientdb.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
-	</properties>
+	</pluginRepositories>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.framework</artifactId>
-			<version>5.0.1</version>			
+			<version>5.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>openstorefront-core-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<version>2.3.26-incubating</version>
 		</dependency>
-
 		<dependency>
-		    <groupId>net.sf.jtidy</groupId>
-		    <artifactId>jtidy</artifactId>
-		    <version>r938</version>
+			<groupId>net.sf.jtidy</groupId>
+			<artifactId>jtidy</artifactId>
+			<version>r938</version>
 		</dependency>
-
-        <dependency>
-            <groupId>org.simpleframework</groupId>
-            <artifactId>simple-xml</artifactId>
-            <version>2.7.1</version>	
-        </dependency>
-		
 		<dependency>
-            <groupId>org.xhtmlrenderer</groupId>
-            <artifactId>flying-saucer-core</artifactId>
-            <version>9.1.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xhtmlrenderer</groupId>
-            <artifactId>flying-saucer-pdf</artifactId>
-            <version>9.1.9</version>
-        </dependency>  
-		
+			<groupId>org.simpleframework</groupId>
+			<artifactId>simple-xml</artifactId>
+			<version>2.7.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-core</artifactId>
+			<version>9.1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-pdf</artifactId>
+			<version>9.1.9</version>
+		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>elasticsearch-rest-high-level-client</artifactId>
 			<version>7.2.0</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver-sync</artifactId>
 			<version>3.9.1</version>
-		</dependency>		
-		
+		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.stripes</groupId>
 			<artifactId>stripes</artifactId>
 			<version>1.6.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.passay</groupId>
 			<artifactId>passay</artifactId>
 			<version>1.2.0</version>
-		</dependency>				
-		
+		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.10</version>
 		</dependency>
-
 		<!--						
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
@@ -162,7 +151,6 @@
 			<version>6.4-OD-08-006</version>		
 		</dependency>		
 		-->
-						
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-rest-java-client-api</artifactId>
@@ -181,8 +169,7 @@
 					<artifactId>jersey-json</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>	
-
+		</dependency>
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-rest-java-client-core</artifactId>
@@ -201,14 +188,12 @@
 					<artifactId>jersey-json</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>	
-		
+		</dependency>
 		<dependency>
 			<groupId>com.atlassian.fugue</groupId>
 			<artifactId>fugue</artifactId>
-			<version>2.6.1</version>			
-		</dependency>													
-	
+			<version>2.6.1</version>
+		</dependency>
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-core</artifactId>
@@ -218,7 +203,7 @@
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-object</artifactId>
 			<version>${orientdb.version}</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-graphdb</artifactId>
@@ -243,9 +228,9 @@
 				<exclusion>
 					<groupId>asm</groupId>
 					<artifactId>asm-util</artifactId>
-				</exclusion>				
-			</exclusions>			
-		</dependency>		 
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>com.orientechnologies</groupId>
 			<artifactId>orientdb-client</artifactId>
@@ -261,14 +246,12 @@
 					<artifactId>mail</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>	
-		  
+		</dependency>
 		<dependency>
 			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 			<version>3.8.1</version>
 		</dependency>
-		  
 		<dependency>
 			<groupId>net.sf.uadetector</groupId>
 			<artifactId>uadetector-resources</artifactId>
@@ -279,12 +262,11 @@
 					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>			  
-		  
+		</dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
-			<version>2.2.1</version>
+			<version>2.3.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -295,8 +277,8 @@
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz-jobs</artifactId>
-			<version>2.2.1</version>
-		</dependency>				
+			<version>2.3.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jdk14</artifactId>
@@ -312,12 +294,12 @@
 			<artifactId>pegdown</artifactId>
 			<version>1.5.0</version>
 			<type>jar</type>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>net.java.truevfs</groupId>
 			<artifactId>truevfs-profile-default</artifactId>
 			<version>0.11.1</version>
-			<exclusions>					
+			<exclusions>
 				<exclusion>
 					<groupId>net.java.truevfs</groupId>
 					<artifactId>truevfs-access-swing</artifactId>
@@ -361,7 +343,7 @@
 			<artifactId>glassfish-embedded-all</artifactId>
 			<version>4.1.2</version>
 			<scope>test</scope>
-		</dependency>			
+		</dependency>
 	</dependencies>
 
 	<build>

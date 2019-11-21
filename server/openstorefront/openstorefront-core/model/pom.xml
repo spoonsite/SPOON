@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<artifactId>openstorefront-core</artifactId>
 		<groupId>edu.usu.sdl</groupId>
-		<version>2.10</version>
+		<version>2.11</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront-core-api</artifactId>
-	<version>2.10</version>
+	<version>2.11</version>
 	<packaging>bundle</packaging>
-
 	<name>openstorefront-core-api</name>
 
 	<properties>
@@ -52,13 +52,13 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.14</version>
-		</dependency>						
+		</dependency>
 		<dependency>
 			<groupId>net.redhogs.cronparser</groupId>
 			<artifactId>cron-parser</artifactId>
 			<version>2.6</version>
-			<type>jar</type>			
-		</dependency>		
+			<type>jar</type>
+		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom2</artifactId>
@@ -77,12 +77,12 @@
 			<artifactId>jscience</artifactId>
 			<version>4.3.1</version>
 		</dependency>
-	 <dependency>
-	  <groupId>org.eclipse.persistence</groupId>
-	  <artifactId>org.eclipse.persistence.core</artifactId>
-	  <version>2.6.0</version>
-	  <type>jar</type>
-	 </dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.core</artifactId>
+			<version>2.6.0</version>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
 
 	<build>

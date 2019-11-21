@@ -1,27 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>edu.usu.sdl</groupId>
-        <artifactId>openstorefront</artifactId>
-        <version>2.10</version>
-    </parent>
-    <groupId>edu.usu.sdl.openstorefront</groupId>
-    <artifactId>system-tests</artifactId>
-    <packaging>jar</packaging>
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>edu.usu.sdl</groupId>
+		<artifactId>openstorefront</artifactId>
+		<version>2.11</version>
+	</parent>
+
+	<groupId>edu.usu.sdl.openstorefront</groupId>
+	<artifactId>system-tests</artifactId>
+	<packaging>jar</packaging>
+
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<tomcat.version>7.0.94</tomcat.version>
 		<sonar.skip>true</sonar.skip>
-	</properties>	
-    <dependencies>
-        <dependency>
-            <groupId>edu.usu.sdl</groupId>
-            <artifactId>openstorefront-web</artifactId>
-            <version>2.10</version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>edu.usu.sdl</groupId>
+			<artifactId>openstorefront-web</artifactId>
+			<version>2.11</version>
 			<type>war</type>
-        </dependency>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-core</artifactId>
@@ -52,10 +56,10 @@
 			<artifactId>tomcat-jsp-api</artifactId>
 			<version>${tomcat.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.6</version>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
+	</dependencies>
 </project>
