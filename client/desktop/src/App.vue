@@ -14,7 +14,7 @@
               <v-btn
                 slot="activator"
                 icon
-                @click="nav('profile')"
+                to="/profile"
               >
                 <v-icon>fas fa-user</v-icon>
               </v-btn>
@@ -240,13 +240,6 @@ export default {
     }
   },
   methods: {
-    nav (url, newTab = false) {
-      if (!newTab) {
-        router.push(url)
-      } else {
-        window.open(url)
-      }
-    },
     logout () {
       this.loggingOut = true
       this.$http.get('/openstorefront/Login.action?Logout')
