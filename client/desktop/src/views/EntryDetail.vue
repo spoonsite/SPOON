@@ -66,31 +66,31 @@
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
             <div style="display: flex; flex-direction: column;">
-              <v-chip @click="openPrintScreen()" class="ml-0" style="width: 13em;">
-                <v-avatar left>
+              <v-chip @click="openPrintScreen()" class="ml-0 chip-hover-color pointer" style="width: 13em;">
+                <v-avatar class="pointer" left>
                   <v-icon small>fas fa-print</v-icon>
                 </v-avatar>
-                Print
+                <span class="pointer">Print</span>
               </v-chip>
-              <v-chip @click="contactVendorDialog = true" class="ml-0" style="width: 13em;">
-                <v-avatar left>
+              <v-chip @click="contactVendorDialog = true" class="ml-0 chip-hover-color pointer" style="width: 13em;">
+                <v-avatar class="pointer" left>
                   <v-icon small>far fa-envelope</v-icon>
                 </v-avatar>
-                Contact Vendor
+                <span class="pointer">Contact Vendor</span>
               </v-chip>
-              <v-chip @click="submitCorrectionDialog = true" class="ml-0" style="width: 13em;">
-                <v-avatar left>
+              <v-chip @click="submitCorrectionDialog = true" class="ml-0 chip-hover-color pointer" style="width: 13em;">
+                <v-avatar class="pointer" left>
                   <v-icon small>far fa-comment</v-icon>
                 </v-avatar>
-                Submit Correction
+                <span class="pointer">Submit Correction</span>
               </v-chip>
-              <v-chip 
-                @click="requestOwnershipDialog = true" class="ml-0" style="width: 13em;"
+              <v-chip
+                @click="requestOwnershipDialog = true" class="ml-0 chip-hover-color pointer" style="width: 13em;"
               >
-                <v-avatar left>
+                <v-avatar class="pointer" left>
                   <v-icon small>fa-user-edit</v-icon>
                 </v-avatar>
-                Request Ownership
+                <span class="pointer">Request Ownership</span>
               </v-chip>
             </div>
           </div>
@@ -1425,5 +1425,18 @@ export default {
     tr:nth-child(odd) {
       background-color: rgba(0,0,0,0.12);
     }
+  }
+  .chip-hover-color:hover {
+    background-color:#C9C9C9;
+  }
+  .pointer:hover {
+    cursor: pointer;
+  }
+  .pointer .v-chip__content {
+    margin: 0 !important;
+    padding: 0 12px !important;
+  }
+  .pointer .v-chip__content:hover {
+    cursor: pointer;
   }
 </style>
