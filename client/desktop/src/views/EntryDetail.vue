@@ -270,7 +270,7 @@
         <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Attributes</h2></div>
-            <div v-if="detail.attributes" class="expansion-content">
+            <div v-if="detail.attributes && detail.attributes.length > 0" class="expansion-content">
               <v-data-table dense
               :headers="attributeTableHeaders"
               :items="detail.attributes"
@@ -291,7 +291,7 @@
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header"><h2>Resources</h2></div>
-            <div v-if="detail.resources" class="expansion-content">
+            <div v-if="detail.resources && detail.resources.length > 0" class="expansion-content">
               <div v-for="item in detail.resources"
                 :key="item.resourceId"
               >
