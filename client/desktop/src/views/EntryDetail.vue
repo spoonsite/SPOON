@@ -100,26 +100,24 @@
 
     <v-dialog
       v-model="submitCorrectionDialog"
-      width="25em"
+      width="35em"
     >
       <v-card>
-        <v-card-title>Submit Correction</v-card-title>
+        <v-card-title><h2>Submit Correction</h2></v-card-title>
         <v-card-text>
-          <p>Correction:</p>
-          <p>(Please include the section needing the correction. Eg. Contacts):*</p>
-            <v-textarea
-              style="background-color: white;"
-              v-model="feedbackForm.message"
-              :rules="formCorrectionRules"
-              outline
-            ></v-textarea>
-          <p>Contact Information:</p>
-          <div style="display: flex; background-color: #EEE; padding: 1em;">
-            <div>
+          <v-form>
+            <v-container>
+              <p>Please include the section needing the correction (e.g. Contacts ):*</p>
+              <v-textarea
+                style="background-color: white;"
+                v-model="feedbackForm.message"
+                :rules="formCorrectionRules"
+                outline
+              ></v-textarea>
+              <p>Contact Information:</p>
               <v-text-field
                 :rules="formNameRules"
                 single-line
-                solo
                 label="Name*"
                 v-model="feedbackForm.name"
               >
@@ -127,29 +125,26 @@
               <v-text-field
                 :rules="formEmailRules"
                 single-line
-                solo
                 label="Email*"
                 v-model="feedbackForm.email"
               >
               </v-text-field>
               <v-text-field
                 single-line
-                solo
                 label="Phone"
                 v-model="feedbackForm.phone"
               >
               </v-text-field>
               <v-text-field
                 single-line
-                solo
                 label="Organization"
                 v-model="feedbackForm.organization"
               >
               </v-text-field>
-            </div>
-          </div>
+            </v-container>
+          </v-form>
         </v-card-text>
-        <div style="display: flex; justify-content: space-between;">
+        <v-card-actions>
           <v-btn
             @click="submitCorrection()"
             :loading="buttonLoad"
@@ -158,33 +153,34 @@
             Submit
           </v-btn>
           <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
-        </div>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-dialog
       v-model="requestOwnershipDialog"
-      width="25em"
+      width="35em"
     >
       <v-card>
-        <v-card-title>Request Ownership</v-card-title>
+        <v-card-title>
+          <h2>Request Ownership</h2>
+          <p>Your current entries can be found at <a href="/openstorefront/UserTool.action?load=Submissions">User Tools > Submissions</a>:*</p>
+        </v-card-title>
         <v-card-text>
-          <p>Request Reason:</p>
-          <p>(Entries you own show in the User Tools->Submissions which provides tools for management):*</p>
-            <v-textarea
-              :rules="formReasonRules"
-              style="background-color: white;"
-              v-model="feedbackForm.message"
-              required
-              outline
-            ></v-textarea>
-          <p>Contact Information:</p>
-          <div style="display: flex; background-color: #EEE; padding: 1em;">
-            <div>
+          <v-form>
+            <v-container>
+              <p>Provide a reason for this request:</p>
+              <v-textarea
+                :rules="formReasonRules"
+                style="background-color: white;"
+                v-model="feedbackForm.message"
+                required
+                outline
+              ></v-textarea>
+              <p>Contact Information:</p>
               <v-text-field
                 :rules="formNameRules"
                 single-line
-                solo
                 label="Name*"
                 v-model="feedbackForm.name"
               >
@@ -192,29 +188,26 @@
               <v-text-field
                 :rules="formEmailRules"
                 single-line
-                solo
                 label="Email*"
                 v-model="feedbackForm.email"
               >
               </v-text-field>
               <v-text-field
                 single-line
-                solo
                 label="Phone"
                 v-model="feedbackForm.phone"
               >
               </v-text-field>
               <v-text-field
                 single-line
-                solo
                 label="Organization"
                 v-model="feedbackForm.organization"
               >
               </v-text-field>
-            </div>
-          </div>
+            </v-container>
+          </v-form>
         </v-card-text>
-        <div style="display: flex; justify-content: space-between;">
+        <v-card-actions>
           <v-btn
             @click="submitOwnershipRequest()"
             :loading="buttonLoad"
@@ -223,23 +216,22 @@
             Submit
           </v-btn>
           <v-btn @click="requestOwnershipDialog = false;">Cancel</v-btn>
-        </div>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-dialog
       v-model="contactVendorDialog"
-      width="25em"
+      width="35em"
     >
       <v-card>
-        <v-card-title>Contact Vendor</v-card-title>
+        <v-card-title><h2>Contact Vendor</h2></v-card-title>
         <v-card-text>
           <p>From:</p>
             <v-text-field
               single-line
               disabled
               v-model="userEmail = $store.state.currentUser.email"
-              outline
             >
             </v-text-field>
             <p>Message:</p>
@@ -251,7 +243,7 @@
               outline
             ></v-textarea>
         </v-card-text>
-        <div style="display: flex; justify-content: space-between;">
+        <v-card-actions>
           <v-btn
             @click="contactVendor()"
             :loading="buttonLoad"
@@ -260,7 +252,7 @@
             Send
           </v-btn>
           <v-btn @click="contactVendorDialog = false;">Cancel</v-btn>
-        </div>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -360,7 +352,7 @@
 
         <v-dialog
         v-model="deleteTagDialog"
-        width="25em"
+        width="35em"
         >
           <v-card>
             <v-card-title>
@@ -543,7 +535,6 @@
               readonly
               required
               disabled
-              solo
             ></v-text-field>
 
             <v-date-picker
