@@ -53,7 +53,7 @@
                 style="margin-right: 0.8em;;"
               >
                 <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
-                <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
+                <router-link :to="{ name: 'Search', query: { tags: tag.text }}"class="media-link">
                   {{ tag.text }}
                 </router-link>
               </span>
