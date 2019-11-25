@@ -262,14 +262,15 @@
         <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Description</h2></div>
-            <div class="expansion-content" v-html="detail.description"></div>
+            <div v-if="detail.description" class="expansion-content" v-html="detail.description"></div>
+            <div v-else class="expansion-content">No description</div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Attributes</h2></div>
-            <div class="expansion-content">
+            <div v-if="detail.attributes" class="expansion-content">
               <v-data-table dense
               :headers="attributeTableHeaders"
               :items="detail.attributes"
@@ -283,13 +284,14 @@
                 </template>
               </v-data-table>
             </div>
+            <div v-else class="expansion-content">No entry attributes</div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header"><h2>Resources</h2></div>
-            <div class="expansion-content">
+            <div v-if="detail.resources" class="expansion-content">
               <div v-for="item in detail.resources"
                 :key="item.resourceId"
               >
@@ -302,6 +304,7 @@
                 </div>
               </div>
             </div>
+            <div v-else class="expansion-content">No resources</div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
