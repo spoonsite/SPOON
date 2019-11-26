@@ -21,11 +21,11 @@ This list of questions is accessible to each user and should hold a couple of co
 
 ### Support Media
 
-In the top right site menu there is a "**Tutorials**" button that shows the list of video tutorials uploaded onto Spoon. All this information will now be provided externally, on this site ([spoonsite.github.io](https://spoonsite.github.io/))
+In the top right site menu there is a "**Tutorials**" button that shows the list of video tutorials uploaded onto Spoon. All this information is provided externally, on this site ([spoonsite.github.io](https://spoonsite.github.io/))
 
 ### Highlights
 
-"Highlights" is the name of Spoon's carousel home-page widget. Here you can set is on that carousel, and in what order the slides are displayed.
+"Highlights" is the name of Spoon's carousel home-page widget. Here you can set is on that carousel and in which order the slides are displayed.
 
 ### Lookups
 
@@ -33,7 +33,7 @@ Spoon was designed to be very customizable for the Admin user, and Lookups can b
 
 Explanations of each table:
 
- TABLE | EXPLANATION
+TABLE | EXPLANATION
 -----------------: | -----------
 ResourceType | Not used in SPOON
 ReviewPro | Not used in SPOON

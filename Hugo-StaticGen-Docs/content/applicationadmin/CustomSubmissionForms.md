@@ -5,7 +5,7 @@ weight = 220
 markup="mmark"
 +++
 
-## Create a Custom Form to be used
+## Create a Custom Form
 
 This is how to create a custom submission form for new submissions.
 
@@ -38,8 +38,8 @@ Before a form can be designed, any needed required or custom attributes should b
 
 ## Verify the form and activate it
 
-1. When you are finished with the form, from the main Custom Forms page, select the Form and then click on the **Verify** button. This will prompt you to enter data to verify the validity of the form, that all of the required fields are able to be entered, and so forth.
-1. On the final page, **Review Submission** ensure that all of the sections have a green checkmark. When finished click the **Verify Submission** button.
+1. When you are finished with the form, from the main Custom Forms page, select the Form and then click on the **Verify** button. This will prompt you to enter data to verify the validity of the form, that all the required fields are able to be entered, and so forth.
+1. On the final page, **Review Submission** ensure that all the sections have a green checkmark. When finished click the **Verify Submission** button.
 1. When the form is in the status of **Verified**, be sure to select it, then click **Toggle Active Status** so that **"A"** appears in the Active Status Column.
 1. If you get a message indicating that a custom form is already active for that entry type, deactivate (Toggle Active Status) the other custom form then activate yours that was just created. An entry type cannot have more than one active custom form at any given time.
 

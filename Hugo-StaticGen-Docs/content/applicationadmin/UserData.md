@@ -19,11 +19,11 @@ weight = 230
 
 ## Contacts
 
-Entries on Spoon can have a designated 'Contact', a person who is responsible for being the point of contact for that particular entry.
+Entries on Spoon can have a designated 'Contact', a person who is the point of contact for that particular entry.
 
 ## Organizations
 
-Here you can see all of the registered organizations on Spoon. There are tools for merging organizations when duplicates are found.
+Here you can see all the registered organizations on Spoon. There are tools for merging organizations when duplicates are found.
 
 ## Questions
 

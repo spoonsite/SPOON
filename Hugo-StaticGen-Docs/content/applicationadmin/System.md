@@ -82,7 +82,7 @@ The Hit Ratio is calculated by the number of hits divided by requests (Hits plus
 
 ### Search Control
 
-"**Re-index Listings**" updates Elasticsearch with all approved and active parts from the database. This will take awhile, around a minute. You must re-index when starting SPOON, updating elasticsearch, or restarting elasticsearch. If this is not done, searching will not work.
+"**Re-index Listings**" updates Elasticsearch with all approved and active parts from the database. This will take awhile, around a minute. You must re-index when starting SPOON, updating Elasticsearch, or restarting Elasticsearch. If this is not done, searching will not work.
 
 ### Recent Changes Email
 
@@ -102,7 +102,7 @@ You can see more about what heap memory is at [https://docs.oracle.com/cd/E13150
 
 ### Memory Pools
 
-For more infomration on how Java handles memory, see [https://docs.oracle.com/database/121/CNCPT/memory.htm#CNCPT007](https://docs.oracle.com/database/121/CNCPT/memory.htm#CNCPT007)
+For more information on how Java handles memory, see [https://docs.oracle.com/database/121/CNCPT/memory.htm#CNCPT007](https://docs.oracle.com/database/121/CNCPT/memory.htm#CNCPT007)
 
 ### Garbage Collection
 
