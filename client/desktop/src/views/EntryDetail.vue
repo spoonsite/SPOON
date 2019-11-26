@@ -53,7 +53,9 @@
                 style="margin-right: 0.8em;;"
               >
                 <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
-                {{ tag.text }}
+                <router-link :to="{ name: 'Search', query: { tags: tag.text }}"class="media-link">
+                  {{ tag.text }}
+                </router-link>
               </span>
             </div>
           </div>
@@ -64,22 +66,32 @@
               <star-rating :rating="computeAverageRating(detail)" :read-only="true" :increment="0.01" :star-size="30"></star-rating>
             </p>
             <div style="display: flex; flex-direction: column;">
-              <span>
-                <v-btn fab @click="openPrintScreen()"><v-icon>fas fa-print</v-icon></v-btn>
-                <label>Print</label>
-              </span>
-              <span>
-                <v-btn fab @click="contactVendorDialog = true"><v-icon>fas fa-envelope-square</v-icon></v-btn>
-                <label>Contact Vendor</label>
-              </span>
-              <span>
-                <v-btn fab @click="submitCorrectionDialog = true"><v-icon>far fa-comment</v-icon></v-btn>
-                <label>Submit Correction</label>
-              </span>
-              <span>
-                <v-btn fab @click="requestOwnershipDialog = true"><v-icon>fas fa-user-edit</v-icon></v-btn>
-                <label>Request Ownership</label>
-              </span>
+              <v-chip @click="openPrintScreen()" class="ml-0 chip-hover-color pointer" style="width: 13em;">
+                <v-avatar class="pointer" left>
+                  <v-icon small>fas fa-print</v-icon>
+                </v-avatar>
+                <span class="pointer">Print</span>
+              </v-chip>
+              <v-chip @click="contactVendorDialog = true" class="ml-0 chip-hover-color pointer" style="width: 13em;">
+                <v-avatar class="pointer" left>
+                  <v-icon small>far fa-envelope</v-icon>
+                </v-avatar>
+                <span class="pointer">Contact Vendor</span>
+              </v-chip>
+              <v-chip @click="submitCorrectionDialog = true" class="ml-0 chip-hover-color pointer" style="width: 13em;">
+                <v-avatar class="pointer" left>
+                  <v-icon small>far fa-comment</v-icon>
+                </v-avatar>
+                <span class="pointer">Submit Correction</span>
+              </v-chip>
+              <v-chip
+                @click="requestOwnershipDialog = true" class="ml-0 chip-hover-color pointer" style="width: 13em;"
+              >
+                <v-avatar class="pointer" left>
+                  <v-icon small>fa-user-edit</v-icon>
+                </v-avatar>
+                <span class="pointer">Request Ownership</span>
+              </v-chip>
             </div>
           </div>
         </div>
@@ -88,26 +100,24 @@
 
     <v-dialog
       v-model="submitCorrectionDialog"
-      width="25em"
+      width="35em"
     >
       <v-card>
-        <v-card-title>Submit Correction</v-card-title>
+        <v-card-title><h2>Submit Correction</h2></v-card-title>
         <v-card-text>
-          <p>Correction:</p>
-          <p>(Please include the section needing the correction. Eg. Contacts):*</p>
-            <v-textarea
-              style="background-color: white;"
-              v-model="feedbackForm.message"
-              :rules="formCorrectionRules"
-              outline
-            ></v-textarea>
-          <p>Contact Information:</p>
-          <div style="display: flex; background-color: #EEE; padding: 1em;">
-            <div>
+          <v-form>
+            <v-container>
+              <p>Please include the section needing the correction (e.g. Contacts ):*</p>
+              <v-textarea
+                style="background-color: white;"
+                v-model="feedbackForm.message"
+                :rules="formCorrectionRules"
+                outline
+              ></v-textarea>
+              <p>Contact Information:</p>
               <v-text-field
                 :rules="formNameRules"
                 single-line
-                solo
                 label="Name*"
                 v-model="feedbackForm.name"
               >
@@ -115,29 +125,26 @@
               <v-text-field
                 :rules="formEmailRules"
                 single-line
-                solo
                 label="Email*"
                 v-model="feedbackForm.email"
               >
               </v-text-field>
               <v-text-field
                 single-line
-                solo
                 label="Phone"
                 v-model="feedbackForm.phone"
               >
               </v-text-field>
               <v-text-field
                 single-line
-                solo
                 label="Organization"
                 v-model="feedbackForm.organization"
               >
               </v-text-field>
-            </div>
-          </div>
+            </v-container>
+          </v-form>
         </v-card-text>
-        <div style="display: flex; justify-content: space-between;">
+        <v-card-actions>
           <v-btn
             @click="submitCorrection()"
             :loading="buttonLoad"
@@ -146,33 +153,34 @@
             Submit
           </v-btn>
           <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
-        </div>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-dialog
       v-model="requestOwnershipDialog"
-      width="25em"
+      width="35em"
     >
       <v-card>
-        <v-card-title>Request Ownership</v-card-title>
+        <v-card-title>
+          <h2>Request Ownership</h2>
+          <p>Your current entries can be found at <a href="/openstorefront/UserTool.action?load=Submissions">User Tools > Submissions</a>:*</p>
+        </v-card-title>
         <v-card-text>
-          <p>Request Reason:</p>
-          <p>(Entries you own show in the User Tools->Submissions which provides tools for management):*</p>
-            <v-textarea
-              :rules="formReasonRules"
-              style="background-color: white;"
-              v-model="feedbackForm.message"
-              required
-              outline
-            ></v-textarea>
-          <p>Contact Information:</p>
-          <div style="display: flex; background-color: #EEE; padding: 1em;">
-            <div>
+          <v-form>
+            <v-container>
+              <p>Provide a reason for this request:</p>
+              <v-textarea
+                :rules="formReasonRules"
+                style="background-color: white;"
+                v-model="feedbackForm.message"
+                required
+                outline
+              ></v-textarea>
+              <p>Contact Information:</p>
               <v-text-field
                 :rules="formNameRules"
                 single-line
-                solo
                 label="Name*"
                 v-model="feedbackForm.name"
               >
@@ -180,29 +188,26 @@
               <v-text-field
                 :rules="formEmailRules"
                 single-line
-                solo
                 label="Email*"
                 v-model="feedbackForm.email"
               >
               </v-text-field>
               <v-text-field
                 single-line
-                solo
                 label="Phone"
                 v-model="feedbackForm.phone"
               >
               </v-text-field>
               <v-text-field
                 single-line
-                solo
                 label="Organization"
                 v-model="feedbackForm.organization"
               >
               </v-text-field>
-            </div>
-          </div>
+            </v-container>
+          </v-form>
         </v-card-text>
-        <div style="display: flex; justify-content: space-between;">
+        <v-card-actions>
           <v-btn
             @click="submitOwnershipRequest()"
             :loading="buttonLoad"
@@ -211,23 +216,22 @@
             Submit
           </v-btn>
           <v-btn @click="requestOwnershipDialog = false;">Cancel</v-btn>
-        </div>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-dialog
       v-model="contactVendorDialog"
-      width="25em"
+      width="35em"
     >
       <v-card>
-        <v-card-title>Contact Vendor</v-card-title>
+        <v-card-title><h2>Contact Vendor</h2></v-card-title>
         <v-card-text>
           <p>From:</p>
             <v-text-field
               single-line
               disabled
               v-model="userEmail = $store.state.currentUser.email"
-              outline
             >
             </v-text-field>
             <p>Message:</p>
@@ -239,7 +243,7 @@
               outline
             ></v-textarea>
         </v-card-text>
-        <div style="display: flex; justify-content: space-between;">
+        <v-card-actions>
           <v-btn
             @click="contactVendor()"
             :loading="buttonLoad"
@@ -248,7 +252,7 @@
             Send
           </v-btn>
           <v-btn @click="contactVendorDialog = false;">Cancel</v-btn>
-        </div>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -258,14 +262,15 @@
         <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Description</h2></div>
-            <div class="expansion-content" v-html="detail.description"></div>
+            <div v-if="detail.description" class="expansion-content" v-html="detail.description"></div>
+            <div v-else class="expansion-content">No description</div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-expansion-panel class="expansion-spacing" :value="0">
           <v-expansion-panel-content>
             <div slot="header"><h2>Attributes</h2></div>
-            <div class="expansion-content">
+            <div v-if="detail.attributes && detail.attributes.length > 0" class="expansion-content">
               <v-data-table dense
               :headers="attributeTableHeaders"
               :items="detail.attributes"
@@ -279,13 +284,14 @@
                 </template>
               </v-data-table>
             </div>
+            <div v-else class="expansion-content">No entry attributes</div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
             <div slot="header"><h2>Resources</h2></div>
-            <div class="expansion-content">
+            <div v-if="detail.resources && detail.resources.length > 0" class="expansion-content">
               <div v-for="item in detail.resources"
                 :key="item.resourceId"
               >
@@ -298,6 +304,7 @@
                 </div>
               </div>
             </div>
+            <div v-else class="expansion-content">No resources</div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
@@ -319,19 +326,13 @@
                   v-if="tag.createUser === $store.state.currentUser.username"
                   close
                   @input="deleteTagDialog = true; tagName = tag.text; deleteTagId = tag.tagId">
-                  <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
-                    <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
-                    {{ tag.text }}
-                   </router-link>
+                  <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
+                  {{ tag.text }}
                 </v-chip>
 
                 <v-chip v-else>
-                  <router-link :to="{ name: 'Search', query: { tags: tag.text }}" style="text-decoration: none;">
-                    <v-icon style="font-size: 14px; color: #f8c533;">
-                      fas fa-tag
-                    </v-icon>
-                    {{ tag.text }}
-                  </router-link>
+                  <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
+                  {{ tag.text }}
                 </v-chip>
               </span>
             </div>
@@ -344,6 +345,7 @@
               </v-combobox>
               <v-btn
                 @click="determineTagType()"
+                :disabled="tagName === ''"
               >
                 Add
               </v-btn>
@@ -353,15 +355,14 @@
 
         <v-dialog
         v-model="deleteTagDialog"
-        width="25em"
+        width="35em"
         >
           <v-card>
             <v-card-title>
-              <h2 class="w-100">Are you sure you want to delete this tag?</h2>
+              <h2 class="w-100">Are you sure you want to remove this tag from this entry?</h2>
             </v-card-title>
             <v-card-text>
-              <p>Are you sure that you would like to delete this tag?</p>
-              <p>Tag to be deleted: <strong style="color: red;">{{ tagName }}</strong></p>
+              <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p>
             </v-card-text>
             <v-card-actions>
               <v-btn @click="deleteTag(); deleteTagDialog = false;">Delete</v-btn>
@@ -537,7 +538,6 @@
               readonly
               required
               disabled
-              solo
             ></v-text-field>
 
             <v-date-picker
@@ -1089,7 +1089,7 @@ export default {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)
         .then(response => {
           this.$toasted.show('Tag Deleted')
-          this.getDetail()
+          this.detail.tags = this.detail.tags.filter(e => e.tagId !== this.deleteTagId)
         })
     },
     submitTag (name) {
@@ -1419,5 +1419,18 @@ export default {
     tr:nth-child(odd) {
       background-color: rgba(0,0,0,0.12);
     }
+  }
+  .chip-hover-color:hover {
+    background-color:#C9C9C9;
+  }
+  .pointer:hover {
+    cursor: pointer;
+  }
+  .pointer .v-chip__content {
+    margin: 0 !important;
+    padding: 0 12px !important;
+  }
+  .pointer .v-chip__content:hover {
+    cursor: pointer;
   }
 </style>

@@ -147,7 +147,7 @@
 						},
 						{
 							xtype: 'fieldset',
-							title: 'Storefront Realm',
+							title: 'Spoon Realm',
 							width: '100%',
 							layout: 'anchor',
 							defaults: {
