@@ -535,6 +535,7 @@ export default {
   mounted () {
     this.parseFiltersFromUrl(this.$route.query)
     this.newSearch()
+    this.hideOrShowFilters()
   },
   beforeRouteUpdate (to, from, next) {
     this.parseFiltersFromUrl(to.query)
