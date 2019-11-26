@@ -1,30 +1,27 @@
 +++
 title = "App Management"
 description = ""
-weight = 2
+weight = 100
 +++
 
-There are numerous tools available to manage the Application itself, this guide covers most of those.
-
-[**What do I do if a user does not receive the account confirmation email?**](/applicationadmin/applicationmanagement/#user-management) \
-[**How can I be notified when a user puts in a change request on a part?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a user makes a comment on a part?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a user submits a new part?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when there is a system error?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a user makes a new tag, review, or attribute code?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a new user registers for a Spoon account?**](/applicationadmin/applicationmanagement/#alerts) \
-[**Where can I see user feedback?**](/applicationadmin/applicationmanagement/#feedback) \
-[**How do I pause Spoon's automatic tasks?**](/applicationadmin/applicationmanagement/#jobs) \
-[**What processes does Spoon run in the background and when? Can I control them?**](/applicationadmin/applicationmanagement/#jobs) \
-[**What are Jobs on Spoon?**](/applicationadmin/applicationmanagement/#alerts) \
-[**Who is on Spoon at this particular moment, and what are they looking at?**](/applicationadmin/applicationmanagement/#tracking) \
-[**How do I control user privileges on Spoon?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a user puts in a change request on a part?**](/applicationadmin/applicationmanagement/#alerts) \
-
- <!--more-->
-
 ![Diagram of main System sub-page](/images/AppAdmin/AppManageMapping.png)
-(If you are wondering, where is the documentation for the rest of the options? Check the rest of this site, likely the option you looking for is covered in it's own separate page.)
+
+## Table of Contents
+
+1. [**Alerts**](/applicationadmin/applicationmanagement/#alerts)
+2. [**Feedback**](/applicationadmin/applicationmanagement/#feedback)
+3. [**Jobs**](/applicationadmin/applicationmanagement/#jobs)
+4. [**Messages**](/applicationadmin/applicationmanagement/#messages)
+5. [**Tracking**](/applicationadmin/applicationmanagement/#tracking)
+6. [**User Management**](/applicationadmin/applicationmanagement/#user-management)
+7. [**Reports**](/applicationadmin/applicationmanagement/#reports)
+
+Sections not covered in this page:
+
+1. [**Branding**](/applicationadmin/branding/)
+1. [**Security**](/applicationadmin/securityroles/)
+1. [**Security Roles**](/applicationadmin/securityroles/)
+1. [**System**](/applicationadmin/system/)
 
 ## Alerts
 
@@ -56,7 +53,7 @@ In Spoon v2.11, there is an option near the top to "**Show Integration Jobs**", 
 
 1. User messages are queued messages from users. The primary usage for messages is from watches. This tool allows for viewing of queued messages as well as viewing of archived messages.
 
-2. Event Notifications. Notifications are messages sent internally to user to notify them of event in the application. You can also see these notifications by clicking "**Notifications**" in the top right corner of the screen. The "**Create Admin MEssage**" allows you to make a notification that can be visible to all Spoon users; the "Send to" input box searches according to the recorded First, Last Name, or Email address of a user - NOT according to the user name. If you enter a user's username into the "Send to" box you will not find who you are looking for.
+2. Event Notifications. Notifications are messages sent internally to user to notify them of event in the application. You can also see these notifications by clicking "**Notifications**" in the top right corner of the screen. The "**Create Admin Message**" allows you to make a notification that can be visible to all Spoon users; the "Send to" input box searches according to the recorded First, Last Name, or Email address of a user - NOT according to the user name. If you enter a user's username into the "Send to" box you will not find who you are looking for.
 
 ## Tracking
 
@@ -74,7 +71,11 @@ As of Spoon v2.11, when a user attempts to register for an account with Spoon, t
 Using the "**Message**" button on the screen sends an email from the support@spoonsite email address (depending on how the server's configurations are setup).
 
 {{% notice note %}}
-WARNING! As of v2.11 of Spoon, it is a known issue that Spoon's emails seem to be particularly susceptible to being caught in spam filters, so it is a frequent occurrence for attempted registrants of Spoon to log complaints that they are not being sent the confirmation code. In these instances it is best to manually create a new account for these individuals. Go to the Registrations tab, then click "**Add**". Be careful entering in the registrant's data in manually, as the verifications for a new user on from this side is less stringent then the verification on the public-facing signup. Email the registrant his new username and password from an email account that is not the main spoon support email address and verify the registrant's reception of the email via other means (phone perhaps).
+It is a known issue that Spoon's emails seem to be particularly susceptible to being caught in spam filters, so it is a frequent occurrence for attempted registrants of Spoon to contact the administrator that they are not being sent the confirmation code. It is first best to ask them to check their spam and then if they are still not able to find it, to register them manually. Go to the Registrations tab, then click "**Add**". Be careful entering in the registrant's data in manually, as the verifications for a new user on from this side is less stringent then the verification on the public-facing signup. Email the registrant his new username and password from an email account that is not the main spoon support email address and verify the registrant's reception of the email via other means (phone perhaps).
 {{% /notice %}}
 
-Be aware that part of the functionality of this page can also be found at the [User Data > User Profiles page](../userdata/#UserProfiles)
+Be aware that part of the functionality of this page can also be found at the [User Data > User Profiles page](/applicationadmin/userdata/#UserProfiles)
+
+## Reports
+
+Reports are automatically generated statistics of SPOON. They can be scheduled to run once, daily, weekly, monthly, or a custom schedule based on a [cron expression](https://www.freeformatter.com/cron-expression-generator-quartz.html). These reports can be run on entries, users, or SPOON usage. To run a report go to the Application Management button and select reports. Then click the add button, a popup will appear, which you can then choose which type of report you would like to run.
