@@ -125,6 +125,12 @@ public class ElasticSearchManager
 
 	private static final String DEFAULT_POOL_SIZE = "40";
 
+	private static final float TITLE_BOOST = 5.0f;
+	private static final float ORGANIZATION_BOOST = 3.0f;
+	private static final float TAG_BOOST = 2.0f;
+	private static final float ATTRIBUTE_BOOST = 1.0f;
+	private static final float DESCRIPTION_BOOST = 0.5f;
+
 	//TODO: Add back search all field as an option
 	private static final String ELASTICSEARCH_ALL_FIELDS = "_all";
 
@@ -550,43 +556,54 @@ public class ElasticSearchManager
 				actualQuery = queryString.toString();
 			}
 
+			// ****************** SEARCH KEYWORD ***************************
 			if (Convert.toBoolean(searchFilterOptions.getCanUseOrganizationsInSearch())) {
 				// Custom query for entry organization
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
+				BoolQueryBuilder organizationQueryBuilder = QueryBuilders.boolQuery();
+
+				organizationQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
+				organizationQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
+				organizationQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
+				organizationQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
+
+				esQuery.should(organizationQueryBuilder.boost(ORGANIZATION_BOOST));
 			}
 
 			if (Convert.toBoolean(searchFilterOptions.getCanUseNameInSearch())) {
 				// Custom query for entry name
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+				BoolQueryBuilder titleQueryBuilder = QueryBuilders.boolQuery();
 
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
+				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
+				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
+				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
+				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
+				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
+				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+
+				esQuery.should(titleQueryBuilder.boost(TITLE_BOOST));
 			}
 
 			if (Convert.toBoolean(searchFilterOptions.getCanUseDescriptionInSearch())) {
 				// Custom query for description
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, actualQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, actualQuery).boost(DESCRIPTION_BOOST));
 			}
 
 			if (Convert.toBoolean(searchFilterOptions.getCanUseTagsInSearch())) {
+				BoolQueryBuilder tagsQueryBuilder = QueryBuilders.boolQuery();
 				// Custom query for Tags
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+				tagsQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
+				tagsQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
+				tagsQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
+				tagsQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
 
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
+				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
+				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
+				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+
+				esQuery.should(tagsQueryBuilder.boost(TAG_BOOST));
 			}
 
 			if (Convert.toBoolean(searchFilterOptions.getCanUseAttributesInSearch())) {
@@ -603,7 +620,7 @@ public class ElasticSearchManager
 				nestedAttributesQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
 				nestedAttributesQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
 
-				esQuery.should(QueryBuilders.nestedQuery("attributes", nestedAttributesQuery, ScoreMode.Avg));
+				esQuery.should(QueryBuilders.nestedQuery("attributes", nestedAttributesQuery, ScoreMode.Avg).boost(ATTRIBUTE_BOOST));
 			}
 		}
 
@@ -631,6 +648,7 @@ public class ElasticSearchManager
 			}
 		}
 
+		// ****************** FILTERS ***************************
 		BoolQueryBuilder boolQueryBuilderOrganization = QueryBuilders.boolQuery();
 		if(searchFilters.getOrganization() != null && searchFilters.getOrganization() != ""){
 			boolQueryBuilderOrganization.must(QueryBuilders.matchPhraseQuery("organization", searchFilters.getOrganization()));
