@@ -1036,13 +1036,13 @@ export default {
       searchPageSize: 12,
       totalSearchResults: 0,
       searchSortOrder: 'DESC',
-      searchSortField: 'searchScore',
+      searchSortField: '_score',
       searchSortFields: [
         { text: 'Name', value: 'name' },
         { text: 'User Rating', value: 'averageRating' },
         { text: 'Last Update', value: 'lastActivityDts' },
         { text: 'Approval Date', value: 'approvedDts' },
-        { text: 'Relevance', value: 'searchScore' }
+        { text: 'Relevance', value: '_score' }
       ]
     }
   }

@@ -394,6 +394,7 @@ public class ElasticSearchManager
 			
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+				.trackScores(true)
 				.query(esQuery)
 				.from(0)
 				.from((searchFilters.getPage() -1) * searchFilters.getPageSize())
