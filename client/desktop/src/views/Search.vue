@@ -390,7 +390,7 @@
                 </v-chip>
                 <v-chip
                   v-else
-                  small                
+                  small
                   @click="addComponentType(item.componentType)"
                 >
                   <div class="tag-links">
@@ -527,6 +527,7 @@ export default {
     let sortOrder = JSON.parse(window.localStorage.getItem('searchSortOrder'))
     let sortField = JSON.parse(window.localStorage.getItem('searchSortField'))
     let pageSize = JSON.parse(window.localStorage.getItem('searchPageSize'))
+    this.displayOptions = JSON.parse(window.localStorage.getItem('displayOptions'))
     this.searchSortOrder = (sortOrder ? sortOrder : this.searchSortOrder)
     this.searchSortField = (sortField ? sortField : this.searchSortField)
     this.searchPageSize = (pageSize ? pageSize : this.searchPageSize)
@@ -983,6 +984,12 @@ export default {
     searchPageSize () {
       window.localStorage.setItem('searchPageSize', JSON.stringify(this.searchPageSize))
       this.newSearch()
+    },
+    displayOptions: {
+      handler: function () {
+        window.localStorage.setItem('displayOptions', JSON.stringify(this.displayOptions))
+      },
+      deep: true
     },
     searchPage () {
       this.submitSearch()
