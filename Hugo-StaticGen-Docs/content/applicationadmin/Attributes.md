@@ -16,13 +16,13 @@ weight = 210
 
 ![Attributes Page](/images/AppAdmin/Attributes.png)
 
-An "attribute" on Spoon is usually a scientific measurement of a Spoon entry, for example height, width, or length of a part.
+An "attribute" on SPOON is an entry specification, for example height, width, or length of a part.
 
 If you want to add a new attribute or edit an existing one, click "**Add New Type**" or "**Edit Attribute**" respectively, and a popup with options will appear.
 
 ![Screenshot of the Edit popup](/images/AppAdmin/AttributesEditAttributesPopup.png)
 
-The Options in that Popup | EXPLANATION
+Edit Attribute Fields | EXPLANATION
 -----------------: | -----------
 Label | The label is the name of the attribute that a user would actually see
 Type Code | The TypeCode is the attribute ID that is used internally to keep track of this attribute, as such this should be unique. Any alphabetical character you enter will be converted to upper case, so as such it doesn't matter if you put in a code in all lowercase, when it is entered into the database it is converted to all uppercase. Numbers are acceptable. By convention the Type Code is the same as the label except for when special characters or excessive length in the label necessitate slight difference
@@ -71,4 +71,4 @@ The submission form templates are a way for the administrator to have different 
 
 ## Partial Submissions
 
-All of the incomplete entry submissions that users are in process of uploaded to Spoon appear here. Any part that is seen in the Workplan Progress page will also be found here.
+All of the incomplete entry submissions that users are in process of uploaded to SPOON appear here. Any part that is seen in the Workplan Progress page will also be found here.

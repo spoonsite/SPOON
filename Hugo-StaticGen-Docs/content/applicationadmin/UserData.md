@@ -19,15 +19,15 @@ weight = 230
 
 ## Contacts
 
-Entries on Spoon can have a designated 'Contact', a person who is the point of contact for that particular entry.
+Entries on SPOON can have a designated 'Contact', a person who is the point of contact for that particular entry.
 
 ## Organizations
 
-Here you can see all the registered organizations on Spoon. There are tools for merging organizations when duplicates are found.
+Here you can see all the registered organizations on SPOON. There are tools for merging organizations when duplicates are found.
 
 ## Questions
 
-Users can ask questions to entry's contacts, but before the question shows up publicly on Spoon, it must be approved by the Admin.
+Users can ask questions to entry's contacts, but before the question shows up publicly on SPOON, it must be approved by the Admin.
 
 Question/Answer Status | EXPLANATION
 -----------------: | -----------
@@ -59,7 +59,7 @@ All watches created by all users are visible here. The Admin can toggle off watc
 ![Tags page screenshot](/images/AppAdmin/UserDataTags.png)
 Any user can add or remove tags from an entry, no Admin approval required whatsoever (with exception of entries that said user could not see in the first place, such as entries that have security restrictions).
 
-The "__Select A Tag__" column lists all the tags that currently exist on Spoon.
+The "__Select A Tag__" column lists all the tags that currently exist on SPOON.
 
 {{% notice info %}}
  A tag cannot exist unless it is assigned to at least one entry at a time. Be careful when un-assigning parts from a tag not to remove all of them all at once if you want to keep that tag. The only exception to this rule is when the Admin creates a brand new tag by clicking the "__Add__" button - then the Admin can assign parts to a tag that previously had no existing assignments. Otherwise, the tag will decease.
@@ -72,4 +72,4 @@ Selecting a tag populates the "__Associated Entries__" and "__Unassociated Entri
 ![Tags page screenshot](/images/AppAdmin/UserDataUserProfile.png)
 You may notice that this page is very similar in functionality to the [User Management page](/applicationadmin/applicationmanagement/#user-management) from Application Management.
 
-Toggling a profile only switches it's "Active Status", a boolean (on/off) value that is attached to all profiles on Spoon. However, in v2.11, this value is not tied to anything. If the Admin toggles off a profile to make it inactive, it will not affect any user functions at all, and when the user logins into Spoon next the "Active Status" value will be switched back to "A" (which stands for Active, as opposed to "I", which signifies Inactive).
+Toggling a profile only switches it's "Active Status", a boolean (on/off) value that is attached to all profiles on SPOON. However, in v2.11, this value is not tied to anything. If the Admin toggles off a profile to make it inactive, it will not affect any user functions at all, and when the user logins into SPOON next the "Active Status" value will be switched back to "A" (which stands for Active, as opposed to "I", which signifies Inactive).

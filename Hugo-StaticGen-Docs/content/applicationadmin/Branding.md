@@ -33,7 +33,7 @@ If the Admin knows HTML/CSS, they can insert custom language by selecting the "*
 
 ![Source Edit Button](/images/AppAdmin/sourceeditbutton.png)
 
-The "**Show link to mobile site in menu**" checkbox does nothing in Spoon v2.11.
+The "**Show link to mobile site in menu**" checkbox does nothing in SPOON v2.11.
 
 ### Login Page
 
@@ -41,11 +41,17 @@ Here you can set the content seen on the login page.
 
 ### Support
 
-Some utility options are available for configuration here. Note that JIRA support was dropped from Spoon in v2.11.
+In this section you are able to set your feedback handing method, such as email or internal storage.
+
+{{% notice note %}}
+JIRA is a selection in the dropdown but support has been dropped for JIRA integration in V2.11.
+{{% /notice %}}
+
+You are also able to add a analytics tracking code, as to learn more about what your user are doing on the site.
 
 ### Security
 
-There instances when the Spoon Admin might need to gain the attention of every current Spoon user - for example, if Spoon experienced a security breach that threatened Spoon users while a security patch was being applied. In these cases, the Admin can quickly create a custom text message that is visible at the top of all the pages on the legacy site.
+SPOON has the ability to activate a security banner for when it used in a secure environment ("Secret", "Top Secret", etc.).
 
 ![Security Banner](/images/AppAdmin/SecurityBanner.png)
 
@@ -58,7 +64,7 @@ To learn more about Change Requests, see [Workplans](/applicationadmin/workplans
 
 ### Colors/Logos
 
-In Spoon v2.11, there are two separate web technologies that are managing the user interface: Ext.js and Vue.js. Each have a different way of handling where colors are displayed, so the best way to get a consistent theme is across both flavors is experimentation.
+In SPOON v2.11, there are two separate web technologies that are managing the user interface: Ext.js and Vue.js. Each have a different way of handling where colors are displayed, so the best way to get a consistent theme is across both flavors is experimentation.
 
 For Admins who know CSS, they can add their own custom styles to the CSS page included.
 

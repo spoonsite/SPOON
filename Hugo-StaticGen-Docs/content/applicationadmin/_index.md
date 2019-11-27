@@ -46,51 +46,45 @@ weight = 20
 
 ### Alerts
 
-[**How can I be notified when a user puts in a change request on a part?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a user makes a comment on a part?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a user submits a new part?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when there is a system error?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a user makes a new tag, review, or attribute code?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a new user registers for a Spoon account?**](/applicationadmin/applicationmanagement/#alerts) \
-[**How can I be notified when a user puts in a change request on a part?**](/applicationadmin/applicationmanagement/#alerts) \
+[**How can I be notified when something happends on SPOON?**](/applicationadmin/applicationmanagement/#alerts)
 
 ### Automatic Tasks
 
-[**How do I pause Spoon's automatic tasks?**](/applicationadmin/applicationmanagement/#jobs) \
-[**What processes does Spoon run in the background and when? Can I control them?**](/applicationadmin/applicationmanagement/#jobs) \
-[**What are Jobs on Spoon?**](/applicationadmin/applicationmanagement/#jobs) \
+[**How do I pause SPOON's automatic tasks?**](/applicationadmin/applicationmanagement/#jobs) \
+[**What processes does SPOON run in the background and when? Can I control them?**](/applicationadmin/applicationmanagement/#jobs) \
+[**What are Jobs on SPOON?**](/applicationadmin/applicationmanagement/#jobs) \
 
 ### Branding
 
-[**How do I change what Spoon looks like?**](/applicationadmin/branding) \
+[**How do I change what SPOON looks like?**](/applicationadmin/branding) \
 [**What do I do if the Security Banner is not turning off?**](/applicationadmin/branding/#security) \
-[**Can I change the look of Spoon without knowing how to code?**](/applicationadmin/branding/#general) \
-[**How do I change the colors on Spoon?**](/applicationadmin/branding/#colors-logos) \
-[**What is a Security Banner on Spoon? How do I edit it?**](/applicationadmin/branding/#security) \
+[**Can I change the look of SPOON without knowing how to code?**](/applicationadmin/branding/#general) \
+[**How do I change the colors on SPOON?**](/applicationadmin/branding/#colors-logos) \
+[**What is a Security Banner on SPOON? How do I edit it?**](/applicationadmin/branding/#security) \
 
 ### Security
 
-[**How do I control user privileges on Spoon?**](/applicationadmin/securityroles) \
+[**How do I control user privileges on SPOON?**](/applicationadmin/securityroles) \
 
 ### User Management
 
 [**What do I do if a user does not receive the account confirmation email?**](/applicationadmin/applicationmanagement/#user-management) \
 [**Where can I see user feedback?**](/applicationadmin/applicationmanagement/#feedback) \
-[**Who is on Spoon at this particular moment?**](/applicationadmin/applicationmanagement/#tracking) \
+[**Who is on SPOON at this particular moment?**](/applicationadmin/applicationmanagement/#tracking) \
 
 ### Evaluations
 
-[**What are Spoon Evaluations?**](/applicationadmin/evaluations) \
-[**How do I make a Spoon Evaluation for my part?**](/applicationadmin/evaluations/#evaluations) \
+[**What are SPOON Evaluations?**](/applicationadmin/evaluations) \
+[**How do I make a SPOON Evaluation for my part?**](/applicationadmin/evaluations/#evaluations) \
 [**How do I give other users Evaluations to complete?**](/applicationadmin/evaluations/#evaluations) \
 
 ### Other
 
-[**How do I add a new Spoon entry category?**](/applicationadmin/attributes/#entry-types) \
+[**How do I add a new SPOON entry category?**](/applicationadmin/attributes/#entry-types) \
 [**What do I do if SPOON's search isn't working?**](/applicationadmin/system/#search-control) \
 [**I tried re-indexing and SPOON's search still isn't working, what should I do?**](/applicationadmin/system/#cache) \
 [**How can I see the error messages my users are seeing?**](/applicationadmin/system/#error-tickets) \
-[**What are Plugins on Spoon?**](/applicationadmin/system/#plugins) \
+[**What are Plugins on SPOON?**](/applicationadmin/system/#plugins) \
 [**What do these statistics on the Systems page mean?**](/applicationadmin/system/#heap-memory) \
 [**Where can I change what shows on the front page carousel?**](/applicationadmin/datamanagement/#highlights) \
-[**How do I see a list of all the organizations registered on Spoon, and their affiliated users/parts?**](/applicationadmin/userdata/#organizations) \
+[**How do I see a list of all the organizations registered on SPOON, and their affiliated users/parts?**](/applicationadmin/userdata/#organizations) \

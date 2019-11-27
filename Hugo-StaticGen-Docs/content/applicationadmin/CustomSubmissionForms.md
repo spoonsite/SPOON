@@ -23,16 +23,16 @@ Before a form can be designed, any needed required or custom attributes should b
 ### Create/Design The Form
 
 1. Navigate to **Admin Tools** if you are not already there (click on your username in the upper-right, then Admin Tools)
-1. Select Data Management &rarr; **Submissions &rarr; Submissions Form Templates**
+1. Select **Data Management** &rarr; **Submissions &rarr; Submissions Form Templates**
 1. Click the **+ Add Form** button. Select an Entry Type. Fill in the Form Name, Description, and Entry Type. Remember that these custom submission forms are tied to a specific entry type(s). If needed, create a new entry type and then navigate back here (Data Management &rarr; Entry Types). Click **Create Form.**
 ![addTemplate](/images/AppAdmin/addTemplate.JPG)
 1. In the Form Builder Tool Window add sections as needed. Add fields, paragraphs, horizontal rules, images, and so forth.
-![customForm](/images/AppAdmin/customForm.JPG)
+![customForm](/images/AppAdmin/customForm.jpg)
 1. Note the **Mappings** tab. The Mappable Fields **MUST** be on the form as well as the Required Attributes. These sections will have a red x or a green checkmark, depending on if they have been added to the form.
-![mappingsTab](/images/AppAdmin/mappingsTab.JPG)
+![mappingsTab](/images/AppAdmin/mappingsTab.jpg)
 1. To add a mappable field:
     1. Click the **Add a field** button at the bottom of the form then **Mappable Field OR Attribute**.
-    1. Above in the form select the **Map To Field:** drop-down** OR the **Attribute Type:\*\* drop down to select the attribute.
+    1. Above in the form select the **"Map To Field:" drop-down** OR the **"Attribute Type:" drop down** to select the attribute.
     1. Be sure to check the **Required** box if the field or attribute is a required one.
     1. When you have finished the form and there are no more red checkmarks on the Mappings tab, save the form and close it.
 
@@ -56,7 +56,7 @@ Before a form can be designed, any needed required or custom attributes should b
 
 ## Entry and Approval using the Custom Form
 
-1. Click on your **username** in the upper-right then **User Tools &rarr; Submissions &rarr; + New Submission **
+1. Click on your **username** in the upper-right then **User Tools &rarr; Submissions &rarr; + New Submission**
 1. From the **Select Entry Type Form** box select the Entry Type that you created your custom form for.
 1. Click **+ Create** and then enter a unique initial submission name and click **Ok**.
 1. The submission form loads with your customization attributes and fields as designed prior. Answer the required questions/fields and confirm on the **Review Submission** section that the entry has no red "x" marks, but only green checkmarks.
