@@ -242,7 +242,7 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * Check if the index exists, if it does not exist, create an index. 
+	 * Check if the index exists, if it does not exist, create an index.
 	 */
 	private void checkSearchIndexCreation()
 	{
@@ -324,10 +324,10 @@ public class ElasticSearchManager
 
 	/**
 	 * Parses the elasticsearch return object into a readable form
-	 * 
+	 *
 	 * @param searchQuery object holding the search query
 	 * @param filter to apply to the returned elasticsearch result
-	 * @return ComponentSearchWrapper 
+	 * @return ComponentSearchWrapper
 	 */
 	@Override
 	public ComponentSearchWrapper search(SearchQuery searchQuery, FilterQueryParams filter)
@@ -347,7 +347,7 @@ public class ElasticSearchManager
 
 	/**
 	 * Version 2 of index search, specifically for Vue frontend usage
-	 * 
+	 *
 	 * @param searchFilters all necessary information needed for search
 	 * @return string of search response
 	 */
@@ -385,7 +385,7 @@ public class ElasticSearchManager
 				.field("organization.keyword")
 				.size(MAX_SEARCH_RESULTS);
 
-		
+
 		String [] include = new String[]{"attributes"};
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
@@ -397,7 +397,7 @@ public class ElasticSearchManager
 		NestedAggregationBuilder nestedAttributeLabelAggregationBuilder = AggregationBuilders
 				.nested("by_attribute_type", "attributes")
 				.subAggregation(topHitsAggregationBuilder);
-			
+
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
 				.trackScores(true)
@@ -427,7 +427,7 @@ public class ElasticSearchManager
 	/**
 	 * Function for backwards compatibility to old version of search
 	 * for building the query for the search
-	 * 
+	 *
 	 * @param query the query string from search bar
 	 * @return a BoolQueryBuilder to create the search request from
 	 */
@@ -452,7 +452,7 @@ public class ElasticSearchManager
 
 	/**
 	 * Function to build query for search
-	 * 
+	 *
 	 * @param searchFilters all info necessary for creating the search request
 	 * @param searchOptions currently not used but will be used in a future implementation
 	 * @return a BoolQueryBuilder to create the search request from
@@ -703,13 +703,13 @@ public class ElasticSearchManager
 		}
 
 		finalQuery.must(esQuery);
-		
+
 		return finalQuery;
-	} 
+	}
 
 	/**
 	 * doIndexSearch with no additionalFieldsToReturn
-	 * 
+	 *
 	 * @param query the string from user
 	 * @param FilterQueryParams any additional query filters
 	 * @return IndexSearchResult result from elasticsearch
@@ -722,7 +722,7 @@ public class ElasticSearchManager
 
 	/**
 	 * Function for basic search
-	 * 
+	 *
 	 * @param query the string from search bar
 	 * @param filter fields to filter on
 	 * @param additionalFieldsToReturn other fields to return from search
@@ -996,13 +996,13 @@ public class ElasticSearchManager
 
 		if(component.getApprovalState() == ApprovalStatus.APPROVED){
 			ComponentSearchView componentSearchView = ComponentSearchView.toView(component);
-			
+
 			try (ElasticSearchClient client = singleton.getClient()) {
 
 				UpdateRequest updateRequest = new UpdateRequest(INDEX, component.getComponentId());
 				updateRequest.doc(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON);
 				updateResponse = client.getInstance().update(updateRequest, RequestOptions.DEFAULT);
-				
+
 			} catch(JsonProcessingException ex){
 				LOG.log(Level.SEVERE, null, ex);
 			} catch (IOException ex) {
@@ -1070,8 +1070,8 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * Delete a single item from the index using an id. 
-	 * 
+	 * Delete a single item from the index using an id.
+	 *
 	 * @param id: the unique identifier for the component
 	 */
 	@Override
@@ -1093,7 +1093,7 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * Delete then index and then recreate it. All information in the index is gone. 
+	 * Delete then index and then recreate it. All information in the index is gone.
 	 */
 	@Override
 	public void deleteAll()
@@ -1180,7 +1180,7 @@ public class ElasticSearchManager
 					LOG.log(Level.INFO, "Updated Mapping of " + field + " : " + Boolean.toString(putMappingResponse.isAcknowledged()));
 				} catch (IOException ex){
 					LOG.log(Level.SEVERE, null, ex);
-				} 
+				}
 			}
 
 		} catch (IOException ex) {
@@ -1220,7 +1220,7 @@ public class ElasticSearchManager
 	public void updateMappingAttributes(){
 		try (ElasticSearchClient client = singleton.getClient()) {
 
-				String source = 
+				String source =
 				"{\n" +
 				"  \"properties\": {\n" +
 				"    \"attributes\": {\n" +
@@ -1237,7 +1237,7 @@ public class ElasticSearchManager
 					LOG.log(Level.INFO, "Updated Mapping of attributes: " + Boolean.toString(putMappingResponse.isAcknowledged()));
 				} catch (IOException ex){
 					LOG.log(Level.SEVERE, null, ex);
-				} 
+				}
 			}
 	}
 
@@ -1265,9 +1265,9 @@ public class ElasticSearchManager
 	public SearchResponse getAll(){
 		SearchResponse searchResponse = new SearchResponse();
 		try (ElasticSearchClient client = singleton.getClient()) {
-			SearchRequest searchRequest = new SearchRequest(INDEX); 
-			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
-			searchSourceBuilder.query(QueryBuilders.matchAllQuery()); 
+			SearchRequest searchRequest = new SearchRequest(INDEX);
+			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 			searchSourceBuilder.size(MAX_SEARCH_RESULTS);
 			searchRequest.source(searchSourceBuilder);
 
@@ -1287,11 +1287,11 @@ public class ElasticSearchManager
 
 			AcknowledgedResponse deleteIndexResponse = client.getInstance().indices().delete(request, RequestOptions.DEFAULT);
 			LOG.log(Level.INFO, deleteIndexResponse.toString());
-			
+
 		} catch (ElasticsearchException exception) {
 			LOG.log(Level.SEVERE, null, exception);
 		} catch (IOException ex){
 			LOG.log(Level.SEVERE, null, ex);
-		} 
+		}
 	}
 }

@@ -390,7 +390,7 @@
                 </v-chip>
                 <v-chip
                   v-else
-                  small                
+                  small
                   @click="addComponentType(item.componentType)"
                 >
                   <div class="tag-links">
