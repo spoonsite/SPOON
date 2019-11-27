@@ -1090,6 +1090,7 @@ export default {
         .then(response => {
           this.$toasted.show('Tag Deleted')
           this.detail.tags = this.detail.tags.filter(e => e.tagId !== this.deleteTagId)
+          this.tagName = ''
         })
     },
     submitTag (name) {
