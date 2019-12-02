@@ -43,7 +43,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
-import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
@@ -1412,22 +1411,6 @@ public class CoreComponentServiceImpl
 					}
 					componentAll.setReviews(allReviews);
 
-					ComponentIntegration componentIntegrationExample = new ComponentIntegration();
-					componentIntegrationExample.setActiveStatus(ComponentIntegration.ACTIVE_STATUS);
-					componentIntegrationExample.setComponentId(componentId);
-
-					ComponentIntegration componentIntegration = persistenceService.queryOneByExample(componentIntegrationExample);
-					if (componentIntegration != null) {
-						IntegrationAll integrationAll = new IntegrationAll();
-						integrationAll.setIntegration(componentIntegration);
-
-						ComponentIntegrationConfig configExample = new ComponentIntegrationConfig();
-						configExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
-						configExample.setComponentId(componentId);
-						integrationAll.setConfigs(persistenceService.queryByExample(configExample));
-						componentAll.setIntegrationAll(integrationAll);
-					}
-
 					element = new Element(componentId, componentAll);
 					OSFCacheManager.getComponentCache().put(element);
 				}
@@ -1512,22 +1495,6 @@ public class CoreComponentServiceImpl
 
 		result.setTotalNumber(components.size());
 
-		ComponentIntegrationConfig integrationConfigExample = new ComponentIntegrationConfig();
-		integrationConfigExample.setActiveStatus(ComponentIntegrationConfig.ACTIVE_STATUS);
-
-		List<ComponentIntegrationConfig> componentIntegrationConfigs = persistenceService.queryByExample(integrationConfigExample);
-		Map<String, List<ComponentIntegrationConfig>> configMap = new HashMap<>();
-		componentIntegrationConfigs.forEach(config
-				-> {
-			if (configMap.containsKey(config.getComponentId())) {
-				configMap.get(config.getComponentId()).add(config);
-			} else {
-				List<ComponentIntegrationConfig> configList = new ArrayList<>();
-				configList.add(config);
-				configMap.put(config.getComponentId(), configList);
-			}
-		});
-
 		Component pendingChangeExample = new Component();
 		pendingChangeExample.setPendingChangeId(QueryByExample.STRING_FLAG);
 
@@ -1568,19 +1535,6 @@ public class CoreComponentServiceImpl
 		for (ComponentView componentView : componentViews) {
 			ComponentAdminView componentAdminView = new ComponentAdminView();
 			componentAdminView.setComponent(componentView);
-			StringBuilder configs = new StringBuilder();
-			List<ComponentIntegrationConfig> configList = configMap.get(componentView.getComponentId());
-			if (configList != null) {
-				configList.forEach(config
-						-> {
-					if (StringUtils.isNotBlank(config.getIssueNumber())) {
-						configs.append("(").append(config.getIntegrationType()).append(" - ").append(config.getIssueNumber()).append(") ");
-					} else {
-						configs.append("(").append(config.getIntegrationType()).append(") ");
-					}
-				});
-			}
-			componentAdminView.setIntegrationManagement(configs.toString());
 			componentAdminViews.add(componentAdminView);
 		}
 		result.setComponents(componentAdminViews);

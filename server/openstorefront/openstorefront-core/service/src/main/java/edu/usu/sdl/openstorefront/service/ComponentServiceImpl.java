@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.atlassian.jira.rest.client.api.domain.Issue;
 import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
@@ -26,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
-import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
@@ -67,7 +65,6 @@ import edu.usu.sdl.openstorefront.core.view.statistic.ComponentRecordStatistic;
 import edu.usu.sdl.openstorefront.service.api.ComponentServicePrivate;
 import edu.usu.sdl.openstorefront.service.component.ComponentTypeServiceImpl;
 import edu.usu.sdl.openstorefront.service.component.CoreComponentServiceImpl;
-import edu.usu.sdl.openstorefront.service.component.IntegrationComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.component.SubComponentServiceImpl;
 import edu.usu.sdl.openstorefront.service.model.EmailCommentModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -88,18 +85,15 @@ public class ComponentServiceImpl
 
 	private CoreComponentServiceImpl core;
 	private SubComponentServiceImpl sub;
-	private IntegrationComponentServiceImpl integration;
 	private ComponentTypeServiceImpl type;
 
 	public ComponentServiceImpl()
 	{
 		this.core = new CoreComponentServiceImpl(this);
 		this.sub = new SubComponentServiceImpl(this);
-		this.integration = new IntegrationComponentServiceImpl(this);
 		this.type = new ComponentTypeServiceImpl(this);
 		this.core.init();
 		this.sub.init();
-		this.integration.init();
 		this.type.init();
 	}
 
@@ -109,11 +103,9 @@ public class ComponentServiceImpl
 
 		this.core = new CoreComponentServiceImpl(this);
 		this.sub = new SubComponentServiceImpl(this);
-		this.integration = new IntegrationComponentServiceImpl(this);
 		this.type = new ComponentTypeServiceImpl(this);
 		this.core.init();
 		this.sub.init();
-		this.integration.init();
 		this.type.init();
 	}
 
@@ -425,12 +417,6 @@ public class ComponentServiceImpl
 	}
 
 	@Override
-	public void mapComponentAttributes(Issue issue, ComponentIntegrationConfig integrationConfig)
-	{
-		integration.mapComponentAttributes(issue, integrationConfig);
-	}
-
-	@Override
 	public List<ComponentSearchView> getSearchComponentList(List<String> componentIds)
 	{
 		return core.getSearchComponentList(componentIds);
@@ -540,11 +526,6 @@ public class ComponentServiceImpl
 	public SubComponentServiceImpl getSub()
 	{
 		return sub;
-	}
-
-	public IntegrationComponentServiceImpl getIntegration()
-	{
-		return integration;
 	}
 
 	@Override
