@@ -22,6 +22,8 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentComment;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
+import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;

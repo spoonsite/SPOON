@@ -78,6 +78,7 @@ import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.model.ComponentRestoreOptions;
 import edu.usu.sdl.openstorefront.core.model.EntityEventModel;
 import edu.usu.sdl.openstorefront.core.model.EvaluationAll;
+import edu.usu.sdl.openstorefront.core.model.IntegrationAll;
 import edu.usu.sdl.openstorefront.core.model.QuestionAll;
 import edu.usu.sdl.openstorefront.core.model.ReviewAll;
 import edu.usu.sdl.openstorefront.core.sort.BeanComparator;
