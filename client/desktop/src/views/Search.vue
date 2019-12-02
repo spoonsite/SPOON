@@ -530,6 +530,11 @@ export default {
     this.searchSortOrder = (sortOrder ? sortOrder : this.searchSortOrder)
     this.searchSortField = (sortField ? sortField : this.searchSortField)
     this.searchPageSize = (pageSize ? pageSize : this.searchPageSize)
+    // If the cached options is no longer available, use default
+    let hasSearchSortField = this.searchSortFields.filter(e=>e.value === this.searchSortField).length > 0
+    if (!hasSearchSortField){
+      this.searchSortField = "_score"
+    }
   },
   mounted () {
     this.parseFiltersFromUrl(this.$route.query)
