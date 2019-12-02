@@ -80,9 +80,7 @@
         v-model="errorDialog"
         >
         <v-card>
-          <v-card-title>
-            <h2>Error</h2>
-          </v-card-title>
+          <ModalTitle title='Error' @close='errorDialog = false'/>
           <v-card-text>
             <p>Oops! Something went wrong. Please contact the admin.</p>
             <v-btn depressed small v-if="currentError" @click="showErrorDetails = !showErrorDetails">Details</v-btn>
@@ -139,12 +137,14 @@ import safeParse from 'safe-json-parse/callback'
 import permissions from './util/permissions.js'
 import Notifications from './components/Notifications'
 import DisclaimerModal from './components/DisclaimerModal'
+import ModalTitle from '@/components/ModalTitle'
 
 export default {
   name: 'App',
   components: {
     Notifications,
-    DisclaimerModal
+    DisclaimerModal,
+    ModalTitle
   },
   mounted () {
     this.$http.interceptors.response.use(response => {

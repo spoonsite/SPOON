@@ -39,12 +39,10 @@
     v-model="answerQuestionDialog"
     >
     <v-card>
-      <v-card-title>
-        <h2 class="w-100">Answer a Question</h2>
+      <ModalTitle title='Answer a Question' @close='answerQuestionDialog = false' />
+      <v-card-text>
         <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
         <v-alert class="w-100" type="info" :value="true">All answers need admin approval before being made public.</v-alert>
-      </v-card-title>
-      <v-card-text>
         <div v-html="question.question"></div>
         <quill-editor
         style="background-color: white;"
@@ -63,6 +61,7 @@
     max-width="300px"
     >
     <v-card>
+      <ModalTitle title='Delete?' @close='deleteQuestionDialog = false' />
       <v-card-text>
         <p>Are you sure you want to delete this question?</p>
       </v-card-text>
@@ -77,12 +76,10 @@
     v-model="editQuestionDialog"
     >
     <v-card>
-      <v-card-title>
-        <h2 class="w-100">Edit a Question</h2>
+      <ModalTitle title='Edit a Question' @close='editQuestionDialog = false' />
+      <v-card-text>
         <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
         <v-alert class="w-100" type="info" :value="true">All questions need admin approval before being made public.</v-alert>
-      </v-card-title>
-      <v-card-text>
         <quill-editor
         style="background-color: white;"
         v-model="newQuestion"
@@ -100,13 +97,15 @@
 
 <script>
 import Answer from './Answer'
+import ModalTitle from '@/components/ModalTitle'
 import _ from 'lodash'
 
 export default {
   name: 'Question',
   props: ['question'],
   components: {
-    Answer
+    Answer,
+    ModalTitle
   },
   mounted () {
   },

@@ -53,7 +53,7 @@
                 style="margin-right: 0.8em;;"
               >
                 <v-icon style="font-size: 14px; color: #f8c533;">fas fa-tag</v-icon>
-                <router-link :to="{ name: 'Search', query: { tags: tag.text }}"class="media-link">
+                <router-link :to="{ name: 'Search', query: { tags: tag.text }}" class="media-link">
                   {{ tag.text }}
                 </router-link>
               </span>
@@ -103,7 +103,7 @@
       width="35em"
     >
       <v-card>
-        <v-card-title><h2>Submit Correction</h2></v-card-title>
+        <ModalTitle title='Submit Correction' @close='submitCorrectionDialog = false' />
         <v-card-text>
           <v-form>
             <v-container>
@@ -152,7 +152,7 @@
           >
             Submit
           </v-btn>
-          <v-btn @click="submitCorrectionDialog = false;">Cancel</v-btn>
+          <v-btn @click="submitCorrectionDialog = false">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -162,11 +162,9 @@
       width="35em"
     >
       <v-card>
-        <v-card-title>
-          <h2>Request Ownership</h2>
-          <p>Your current entries can be found at <a href="/openstorefront/UserTool.action?load=Submissions">User Tools > Submissions</a>:*</p>
-        </v-card-title>
+        <ModalTitle title='Request Ownership' @close='requestOwnershipDialog = false' />
         <v-card-text>
+          <p>Your current entries can be found at <a href="/openstorefront/UserTool.action?load=Submissions">User Tools > Submissions</a>:*</p>
           <v-form>
             <v-container>
               <p>Provide a reason for this request:</p>
@@ -215,7 +213,7 @@
           >
             Submit
           </v-btn>
-          <v-btn @click="requestOwnershipDialog = false;">Cancel</v-btn>
+          <v-btn @click="requestOwnershipDialog = false">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -225,7 +223,7 @@
       width="35em"
     >
       <v-card>
-        <v-card-title><h2>Contact Vendor</h2></v-card-title>
+        <ModalTitle title='Contact Vendor' @close='contactVendorDialog = false' />
         <v-card-text>
           <p>From:</p>
             <v-text-field
@@ -251,7 +249,7 @@
           >
             Send
           </v-btn>
-          <v-btn @click="contactVendorDialog = false;">Cancel</v-btn>
+          <v-btn @click="contactVendorDialog = false">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -358,9 +356,7 @@
         width="35em"
         >
           <v-card>
-            <v-card-title>
-              <h2 class="w-100">Are you sure you want to remove this tag from this entry?</h2>
-            </v-card-title>
+            <ModalTitle title='Are you sure you want to remove this tag from this entry?' @close='deleteTagDialog = false' />
             <v-card-text>
               <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p>
             </v-card-text>
@@ -376,9 +372,7 @@
         width="50em"
         >
           <v-card>
-            <v-card-title>
-              <h2 class="w-100">Are you sure you want to add a new tag?</h2>
-            </v-card-title>
+            <ModalTitle title='Are you sure you want to add a new tag?' @close='newTagConfirmationDialog = false' />
             <v-card-text>
               <p>Are you sure that you would like to add a new tag?</p>
               <p>Please see other possible matches below.</p>
@@ -408,20 +402,20 @@
             <v-card-actions style="display: flex; flex-wrap: wrap; overflow-x: hidden; justify-content: space-around;">
               <v-btn
                 style="text-transform: none; margin-bottom: 0.4em;"
-                @click="submitTag(tagName); newTagConfirmationDialog=false;"
+                @click="submitTag(tagName); newTagConfirmationDialog=false"
               >
                 Add the new tag
               </v-btn>
               <v-btn
                 style="text-transform: none; margin-bottom: 0.4em;"
                 :disabled="selectedTag === ''"
-                @click="submitTag(selectedTag); newTagConfirmationDialog=false;"
+                @click="submitTag(selectedTag); newTagConfirmationDialog=false"
               >
                 Use the selected prexisting tag
               </v-btn>
               <v-btn
                 style="text-transform: none; margin-bottom: 0.4em;"
-                @click="newTagConfirmationDialog = false;"
+                @click="newTagConfirmationDialog = false"
               >
                 Cancel
               </v-btn>
@@ -496,110 +490,110 @@
         max-width="500px"
         >
         <v-card>
-          <v-card-title>
-            <h2 class="w-100">Write a Review</h2>
+          <ModalTitle title='Write a Review' @close='writeReviewDialog = false' />
+          <v-card-text>
             <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
             <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
-          </v-card-title>
 
-          <v-form v-model="reviewValid">
+            <v-form v-model="reviewValid">
 
-          <v-container>
-            <v-text-field
-              v-model="newReview.title"
-              :rules="reviewTitleRules"
-              :counter="255"
-              label="Title"
-              required
-            ></v-text-field>
+            <v-container>
+              <v-text-field
+                v-model="newReview.title"
+                :rules="reviewTitleRules"
+                :counter="255"
+                label="Title"
+                required
+              ></v-text-field>
 
-            <p>
-              <strong>Rating*</strong>
-            </p>
+              <p>
+                <strong>Rating*</strong>
+              </p>
 
-            <star-rating
-              v-model="newReview.rating"
-              :rating="newReview.rating"
-              :read-only="false"
-              :increment="1"
-              :star-size="30"
-            ></star-rating>
+              <star-rating
+                v-model="newReview.rating"
+                :rating="newReview.rating"
+                :read-only="false"
+                :increment="1"
+                :star-size="30"
+              ></star-rating>
 
-            <v-spacer style="height: 1.5em"></v-spacer>
+              <v-spacer style="height: 1.5em"></v-spacer>
 
-            <p>
-              <strong>Last date asset was used*</strong>
-            </p>
+              <p>
+                <strong>Last date asset was used*</strong>
+              </p>
 
-            <v-text-field
-              v-model="newReview.lastUsed"
-              :rules="lastUsedRules"
-              label="Last Used"
-              readonly
-              required
-              disabled
-            ></v-text-field>
+              <v-text-field
+                v-model="newReview.lastUsed"
+                :rules="lastUsedRules"
+                label="Last Used"
+                readonly
+                required
+                disabled
+              ></v-text-field>
 
-            <v-date-picker
-              v-model="newReview.lastUsed"
-              :allowed-dates="todaysDateFormatted"
-              no-title
-              reactive
-              full-width
-            >
-              <v-spacer></v-spacer>
-              <v-btn flat color="accent" @click="newReview.lastUsed=''">Cancel</v-btn>
-            </v-date-picker>
+              <v-date-picker
+                v-model="newReview.lastUsed"
+                :allowed-dates="todaysDateFormatted"
+                no-title
+                reactive
+                full-width
+              >
+                <v-spacer></v-spacer>
+                <v-btn flat color="accent" @click="newReview.lastUsed=''">Cancel</v-btn>
+              </v-date-picker>
 
-            <v-spacer style="height: 1em"></v-spacer>
+              <v-spacer style="height: 1em"></v-spacer>
 
-            <v-select
-              v-model="newReview.timeUsed"
-              :items="timeSelectOptions"
-              :rules="timeUsedRules"
-              label="How long have you used it"
-              required
-            ></v-select>
+              <v-select
+                v-model="newReview.timeUsed"
+                :items="timeSelectOptions"
+                :rules="timeUsedRules"
+                label="How long have you used it"
+                required
+              ></v-select>
 
-            <v-select
-              v-model="newReview.pros"
-              :items="prosSelectOptions"
-              label="Pros"
-              chips
-              multiple
-            ></v-select>
+              <v-select
+                v-model="newReview.pros"
+                :items="prosSelectOptions"
+                label="Pros"
+                chips
+                multiple
+              ></v-select>
 
-            <v-select
-              v-model="newReview.cons"
-              :items="consSelectOptions"
-              label="Cons"
-              chips
-              multiple
-            ></v-select>
+              <v-select
+                v-model="newReview.cons"
+                :items="consSelectOptions"
+                label="Cons"
+                chips
+                multiple
+              ></v-select>
 
-            <p>
-              Comment: <span v-if="newReview.comment === ''" class="red--text">comment is required *</span>
-            </p>
+              <p>
+                Comment: <span v-if="newReview.comment === ''" class="red--text">comment is required *</span>
+              </p>
 
-            <quill-editor
-              style="background-color: white;"
-              v-model="comment"
-              :rules="commentRules"
-              required
-            ></quill-editor>
+              <quill-editor
+                style="background-color: white;"
+                v-model="comment"
+                :rules="commentRules"
+                required
+              ></quill-editor>
 
-          </v-container>
-            <v-card-actions>
-              <v-btn :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
-              <v-btn @click="writeReviewDialog = false; newReview.comment='';">Cancel</v-btn>
-            </v-card-actions>
-          </v-form>
+            </v-container>
+              <v-card-actions>
+                <v-btn :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
+                <v-btn @click="writeReviewDialog = false; newReview.comment=''">Cancel</v-btn>
+              </v-card-actions>
+            </v-form>
+          </v-card-text>
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="deleteReviewDialog">
+      <v-dialog v-model="deleteReviewDialog" width='50em'>
         <v-card>
-          <v-card-title>Confirm Review Deletion</v-card-title>
+          <ModalTitle title='Confirm Review Deletion' @close='deleteReviewDialog = false' />
           <v-btn @click="deleteReviewConfirmation()">OK</v-btn>
           <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
         </v-card>
@@ -620,12 +614,10 @@
         v-model="askQuestionDialog"
         >
           <v-card>
-            <v-card-title>
-              <h2 class="w-100">Ask a Question</h2>
+            <ModalTitle title='Ask a Question' @close='askQuestionDialog = false' />
+            <v-card-text>
               <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
               <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
-            </v-card-title>
-            <v-card-text>
               <quill-editor
               style="background-color: white;"
               v-model="newQuestion"
@@ -678,6 +670,7 @@ import StarRating from 'vue-star-rating'
 import _ from 'lodash'
 import Lightbox from '../components/Lightbox'
 import Question from '../components/Question'
+import ModalTitle from '@/components/ModalTitle'
 import format from 'date-fns/format'
 import isFuture from 'date-fns/is_future'
 
@@ -686,7 +679,8 @@ export default {
   components: {
     StarRating,
     Lightbox,
-    Question
+    Question,
+    ModalTitle
   },
   mounted () {
     if (this.$route.params.id) {
@@ -1197,7 +1191,7 @@ export default {
     contactVendor () {
       var sendToEmail = 'support@spoonsite.com'
       if (this.detail.contacts.length > 0) {
-        if (this.detail.contacts[0].email !== ''){
+        if (this.detail.contacts[0].email !== '') {
           sendToEmail = this.detail.contacts[0].email
         }
       }

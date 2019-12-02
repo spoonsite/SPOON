@@ -15,12 +15,10 @@
     v-model="edit"
   >
     <v-card>
-      <v-card-title>
-        <h2 class="w-100">Edit answer</h2>
-        <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
-        <v-alert class="w-100" type="info" :value="true">All answers need admin approval before being made public.</v-alert>
-      </v-card-title>
+      <ModalTitle title='Edit answer' @close='edit = false' />
       <v-card-text>
+        <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
+        <v-alert class="w-100" type="info" :value="true">TestAll answers need admin approval before being made public.</v-alert>
         <quill-editor
         style="background-color: white;"
         v-model="answer.response"
@@ -36,11 +34,10 @@
 
   <v-dialog
     v-model="deleteDialog"
+    width='50em'
     >
     <v-card>
-      <v-card-text>
-        <p>Are you sure you want to delete this answer?</p>
-      </v-card-text>
+      <ModalTitle title='Delete?' @close='deleteDialog = false' />
       <v-card-actions>
         <v-btn color="warning" @click="deleteAnswer()"><v-icon>delete</v-icon> Delete</v-btn>
         <v-btn @click="deleteDialog = false">Cancel</v-btn>
@@ -52,8 +49,13 @@
 </template>
 
 <script>
+import ModalTitle from '@/components/ModalTitle'
+
 export default {
   name: 'Answer',
+  components: {
+    ModalTitle
+  },
   props: ['answer'],
   mounted () {
   },
