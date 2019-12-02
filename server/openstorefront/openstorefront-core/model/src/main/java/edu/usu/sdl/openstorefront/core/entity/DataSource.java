@@ -16,7 +16,6 @@
 package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
-import static edu.usu.sdl.openstorefront.core.entity.LookupEntity.newLookup;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -19,18 +19,14 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
-import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Faq;
-import edu.usu.sdl.openstorefront.core.entity.FaqCategoryType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.sort.FaqCategoryViewComparator;
 import edu.usu.sdl.openstorefront.core.view.FaqView;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -60,29 +56,29 @@ public class FaqResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@DataType(Faq.class)
 	public Response faqLookupAll(
-			@QueryParam("status") 
+			@QueryParam("status")
 			@DefaultValue(StandardEntity.ACTIVE_STATUS)
 			String activeStatus
 	)
 	{
-		
+
 		activeStatus = activeStatus.toUpperCase();
 		if ("ALL".equals(activeStatus)) {
 			activeStatus = null;
 		}
-		
+
 		List<Faq> faqs = service.getFaqService().getFaqs(SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ_READ), activeStatus);
-		
+
 		List<FaqView> faqViews = FaqView.toView(faqs);
 
 		Collections.sort(faqViews, new FaqCategoryViewComparator<>());
-		
+
 		GenericEntity<List<FaqView>> entity = new GenericEntity<List<FaqView>>(faqViews)
 			{
 			};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@GET
 	@APIDescription("Gets a single FAQ")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -90,20 +86,20 @@ public class FaqResource
 	@Path("/{id}")
 	public Response faqSingleLookup(@PathParam("id") String faqId)
 	{
-		
+
 		Faq faq = service.getFaqService().getFaq(faqId, SecurityUtil.hasPermission(SecurityPermission.ADMIN_FAQ_READ));
-		
+
 		if (faq == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-		
+
 		GenericEntity<FaqView> entity = new GenericEntity<FaqView>(FaqView.toView(faq))
 			{
 			};
-		
+
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@POST
 	@APIDescription("Creates an FAQ")
 	@RequireSecurity(SecurityPermission.ADMIN_FAQ_CREATE)
@@ -115,13 +111,13 @@ public class FaqResource
 		faq.populateBaseCreateFields();
 		faq.setFaqId(null);
 		Faq createdFaq = service.getFaqService().createFaq(faq);
-		
+
 		GenericEntity<FaqView> entity = new GenericEntity<FaqView>(FaqView.toView(createdFaq))
 			{
 			};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@PUT
 	@APIDescription("Updates an FAQ")
 	@RequireSecurity(SecurityPermission.ADMIN_FAQ_UPDATE)
@@ -135,13 +131,13 @@ public class FaqResource
 	)
 	{
 		Faq updatedFaq = service.getFaqService().updateFaq(faqId, faq);
-		
+
 		GenericEntity<FaqView> entity = new GenericEntity<FaqView>(FaqView.toView(updatedFaq))
 			{
 			};
 		return sendSingleEntityResponse(entity);
 	}
-	
+
 	@DELETE
 	@APIDescription("Deletes an FAQ")
 	@RequireSecurity(SecurityPermission.ADMIN_FAQ_DELETE)

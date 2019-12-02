@@ -20,7 +20,6 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
-import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
