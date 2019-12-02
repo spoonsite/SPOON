@@ -86,10 +86,10 @@ public class StorefrontRealm
 				if (securityPolicy.getRequireAdminUnlock() == false) {
 					userSecurity.setFailedLoginAttempts(0);
 				} else {
-					throw new LockedAccountException("Account is lock due to excessive failed attempts. Requires admin to unlock.");
+					throw new LockedAccountException("Account is locked due to multiple failed attempts. Requires admin to unlock.");
 				}
 			} else {
-				throw new LockedAccountException("Account is lock due to excessive failed attempts.");
+				throw new LockedAccountException("Account is locked due to multiple failed attempts.");
 			}
 		}
 
@@ -144,6 +144,12 @@ public class StorefrontRealm
 				userSecurity.setFailedLoginAttempts(1);
 			} else {
 				userSecurity.setFailedLoginAttempts(userSecurity.getFailedLoginAttempts() + 1);
+				ServiceProxy serviceProxy = ServiceProxy.getProxy();
+				SecurityPolicy securityPolicy = serviceProxy.getSecurityService().getSecurityPolicy();
+				if (userSecurity.getFailedLoginAttempts() > securityPolicy.getLoginLockoutMaxAttempts()) {
+					userSecurity.save();
+					throw new LockedAccountException("Account is locked due to multiple failed attempts.");
+				}
 			}
 			userSecurity.save();
 			throw authenticationException;
