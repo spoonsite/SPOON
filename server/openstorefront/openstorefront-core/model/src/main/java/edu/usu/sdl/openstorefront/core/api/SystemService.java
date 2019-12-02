@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
-import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import java.io.InputStream;
 import java.util.List;
