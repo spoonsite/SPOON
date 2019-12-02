@@ -26,7 +26,6 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentContact;
 import edu.usu.sdl.openstorefront.core.entity.ComponentEvaluationSection;
 import edu.usu.sdl.openstorefront.core.entity.ComponentExternalDependency;
-import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentMedia;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
@@ -435,54 +434,6 @@ public class ComponentServiceImpl
 	public List<ComponentSearchView> getSearchComponentList(List<String> componentIds)
 	{
 		return core.getSearchComponentList(componentIds);
-	}
-
-	@Override
-	public void saveComponentIntegration(ComponentIntegration componentIntegration)
-	{
-		integration.saveComponentIntegration(componentIntegration);
-	}
-
-	@Override
-	public void setStatusOnComponentIntegration(String componentId, String status)
-	{
-		integration.setStatusOnComponentIntegration(componentId, status);
-	}
-
-	@Override
-	public List<ComponentIntegration> getComponentIntegrationModels(String activeStatus)
-	{
-		return integration.getComponentIntegrationModels(activeStatus);
-	}
-
-	@Override
-	public void processComponentIntegration(String componentId, String integrationConfigId)
-	{
-		integration.processComponentIntegration(componentId, integrationConfigId);
-	}
-
-	@Override
-	public ComponentIntegrationConfig saveComponentIntegrationConfig(ComponentIntegrationConfig integrationConfig)
-	{
-		return integration.saveComponentIntegrationConfig(integrationConfig);
-	}
-
-	@Override
-	public void setStatusOnComponentIntegrationConfig(String integrationConfigId, String activeStatus)
-	{
-		integration.setStatusOnComponentIntegrationConfig(integrationConfigId, activeStatus);
-	}
-
-	@Override
-	public void deleteComponentIntegration(String componentId)
-	{
-		integration.deleteComponentIntegration(componentId);
-	}
-
-	@Override
-	public void deleteComponentIntegrationConfig(String integrationConfigId)
-	{
-		integration.deleteComponentIntegrationConfig(integrationConfigId);
 	}
 
 	@Override

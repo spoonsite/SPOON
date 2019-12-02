@@ -141,20 +141,6 @@ public interface SystemService
 	public void cleanupOldErrors();
 
 	/**
-	 * Gets the Global integration properties
-	 *
-	 * @return
-	 */
-	public GlobalIntegrationModel getGlobalIntegrationConfig();
-
-	/**
-	 * Save the Global Config properties
-	 *
-	 * @param globalIntegrationModel
-	 */
-	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel);
-
-	/**
 	 * Saves a general media file
 	 *
 	 * @param generalMedia

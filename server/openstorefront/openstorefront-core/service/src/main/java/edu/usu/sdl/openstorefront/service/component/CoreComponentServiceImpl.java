@@ -987,33 +987,6 @@ public class CoreComponentServiceImpl
 			lockSwitch.setSwitched(handleBaseComponentSave(ComponentReviewCon.class, componentCons, component.getComponentId()));
 		}
 
-		if (Convert.toBoolean(options.getUploadIntegration())) {
-			if (componentAll.getIntegrationAll() != null) {
-				//Note: this should effect watches or component updating.
-
-				componentAll.getIntegrationAll().getIntegration().setComponentId(component.getComponentId());
-				validationModel = new ValidationModel(componentAll.getIntegrationAll().getIntegration());
-				validationModel.setConsumeFieldsOnly(true);
-				validationResult = ValidationUtil.validate(validationModel);
-				if (validationResult.valid()) {
-
-					integration.saveComponentIntegration(componentAll.getIntegrationAll().getIntegration());
-
-					for (ComponentIntegrationConfig config : componentAll.getIntegrationAll().getConfigs()) {
-						validationModel = new ValidationModel(config);
-						validationModel.setConsumeFieldsOnly(true);
-						validationResult = ValidationUtil.validate(validationModel);
-						if (validationResult.valid()) {
-							config.setComponentId(component.getComponentId());
-							integration.saveComponentIntegrationConfig(config);
-						}
-					}
-				} else {
-					throw new OpenStorefrontRuntimeException(validationResult.toString());
-				}
-			}
-		}
-
 		if (Component.INACTIVE_STATUS.equals(component.getActiveStatus())) {
 			componentService.getUserService().removeAllWatchesForComponent(component.getComponentId());
 			componentService.getSearchService().deleteById(component.getComponentId());
@@ -1169,9 +1142,6 @@ public class CoreComponentServiceImpl
 					}
 				}
 			}
-		}
-		if (option.getIgnoreClasses().contains(ComponentIntegration.class.getSimpleName()) == false) {
-			integration.deleteComponentIntegration(componentId);
 		}
 
 		//Delete relationships pointed to this asset

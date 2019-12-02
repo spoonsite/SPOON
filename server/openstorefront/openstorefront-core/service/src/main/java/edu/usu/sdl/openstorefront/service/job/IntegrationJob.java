@@ -47,7 +47,6 @@ public class IntegrationJob
 				configId = configIdObj.toString();
 			}
 
-			ServiceProxy.getProxy(ModificationType.EXTERNAL).getComponentService().processComponentIntegration(componentId, configId);
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to get component id.  Job failed.", "Check config data.", ErrorTypeCode.INTEGRATION);
 		}

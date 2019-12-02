@@ -121,93 +121,10 @@ public class JobManager
 		addRecentChangeNotifyJob();
 		addScheduledReportJob();
 		addComponentUpdate();
-		addComponentIntegrationJobs();
 		addUserProfileSyncjob();
 		addImportJob();
 		addArchiveJob();
 		addSearchStatsJob();
-	}
-
-	private static void addComponentIntegrationJobs() throws SchedulerException
-	{
-		LOG.log(Level.INFO, "Adding Integration Jobs");
-
-		ServiceProxy serviceProxy = new ServiceProxy();
-		List<ComponentIntegration> integrations = serviceProxy.getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
-		for (ComponentIntegration integration : integrations) {
-			addComponentIntegrationJob(integration);
-		}
-	}
-
-	private static void addComponentIntegrationJob(ComponentIntegration componentIntegration) throws SchedulerException
-	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		String jobName = "ComponentJob-" + componentIntegration.getComponentId();
-
-		JobKey jobKey = JobKey.jobKey(jobName, JOB_GROUP_SYSTEM);
-		if (scheduler.checkExists(jobKey)) {
-			LOG.log(Level.WARNING, MessageFormat.format("Job already Exist: {0} check data", jobName));
-		} else {
-			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
-					.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
-					.withDescription("Component Integration Job for " + serviceProxy.getComponentService().getComponentName(componentIntegration.getComponentId()))
-					.build();
-
-			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
-			String cron = componentIntegration.getRefreshRate();
-			if (cron == null) {
-				cron = serviceProxy.getSystemService().getGlobalIntegrationConfig().getJiraRefreshRate();
-			}
-			Trigger trigger = newTrigger()
-					.withIdentity("ComponentTrigger-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
-					.startNow()
-					.withSchedule(cronSchedule(cron))
-					.build();
-
-			scheduler.scheduleJob(job, trigger);
-		}
-	}
-
-	/**
-	 * Add or Update job
-	 *
-	 * @param componentIntegration
-	 */
-	public static void updateComponentIntegrationJob(ComponentIntegration componentIntegration)
-	{
-		try {
-			removeComponentIntegrationJob(componentIntegration.getComponentId());
-			addComponentIntegrationJob(componentIntegration);
-		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Unable update Job: " + componentIntegration.getComponentId(), ex);
-		}
-	}
-
-	public static void removeComponentIntegrationJob(String componentId)
-	{
-		JobKey jobKey = JobKey.jobKey("ComponentJob-" + componentId, JOB_GROUP_SYSTEM);
-		try {
-			if (scheduler.checkExists(jobKey)) {
-				scheduler.deleteJob(jobKey);
-			}
-		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Unable remove Job.", ex);
-		}
-	}
-
-	public static void runComponentIntegrationNow(String componentId, String integrationConfigId)
-	{
-		JobKey jobKey = JobKey.jobKey("ComponentJob-" + componentId, JOB_GROUP_SYSTEM);
-		try {
-			JobDataMap jobDataMap = new JobDataMap();
-			jobDataMap.put(IntegrationJob.COMPONENT_ID, componentId);
-			if (StringUtils.isNotBlank(integrationConfigId)) {
-				jobDataMap.put(IntegrationJob.CONFIG_ID, integrationConfigId);
-			}
-			scheduler.triggerJob(jobKey, jobDataMap);
-		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Unable run Job.", ex);
-		}
 	}
 
 	public static void unscheduleSystemJob(String triggerName)

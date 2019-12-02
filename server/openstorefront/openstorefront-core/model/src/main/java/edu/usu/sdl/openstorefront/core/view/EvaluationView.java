@@ -68,12 +68,6 @@ public class EvaluationView
 		}
 		evaluationView.setWorkflowStatusDescription(TranslateUtil.translate(WorkflowStatus.class, evaluation.getWorkflowStatus()));
 
-		ComponentIntegrationConfig integration = integrationConfigMap.get(evaluation.getOriginComponentId());
-		if (integration != null && integration.getIntegrationType().equals(IntegrationType.JIRA)) {
-			evaluationView.setIssueNumber(integration.getIssueNumber());
-			String url = MessageFormat.format("{0}/browse/{1}", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_URL), integration.getIssueNumber());
-			evaluationView.setIntegrationUrl(url);
-		}
 		return evaluationView;
 	}
 
