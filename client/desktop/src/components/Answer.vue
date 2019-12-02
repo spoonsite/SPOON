@@ -63,7 +63,7 @@ export default {
     return {
       edit: false,
       deleteDialog: false
-    };
+    }
   },
   methods: {
     editAnswer () {
@@ -74,32 +74,32 @@ export default {
         response: this.answer.response,
         securityMarkingType: '',
         userTypeCode: this.$store.state.currentUser.userTypeCode
-      };
+      }
       this.$http.put(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${this.answer.questionId}/responses/${this.answer.responseId}`, data)
         .then(response => {
-          this.$toasted.show('Edit submitted.');
-          this.answer.response = response.data.response;
-          this.answer.activeStatus = response.data.activeStatus;
-          this.answer.updateDts = new Date(); // the date is not sent back in the response
-          this.edit = false;
+          this.$toasted.show('Edit submitted.')
+          this.answer.response = response.data.response
+          this.answer.activeStatus = response.data.activeStatus
+          this.answer.updateDts = new Date() // the date is not sent back in the response
+          this.edit = false
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the edit.'));
+        .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
     },
     deleteAnswer () {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${this.answer.questionId}/responses/${this.answer.responseId}`)
         .then(response => {
-          this.$toasted.show('Answer deleted.');
-          this.$emit('answerDeleted', this.answer);
-          this.deleteDialog = false;
+          this.$toasted.show('Answer deleted.')
+          this.$emit('answerDeleted', this.answer)
+          this.deleteDialog = false
         })
-        .catch(e => this.$toasted.error('There was a problem deleting the answer.'));
+        .catch(e => this.$toasted.error('There was a problem deleting the answer.'))
     }
   },
   computed: {
   },
   watch: {
   }
-};
+}
 </script>
 
 <style>
