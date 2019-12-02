@@ -1672,7 +1672,7 @@
 							}
 						},
 						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 150, hidden:true,
-						 renderer: function(value){
+						renderer: function(value){
 							return Ext.util.Format.stripTags(value);
 						}},
 						{ text: 'Pending Changes', tooltip: 'See Action->Change Requests to view', align: 'center', dataIndex: 'numberOfPendingChanges', width: 150 },
@@ -1685,7 +1685,6 @@
 						},
 						{ text: 'Approval Date', dataIndex: 'approvedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 125 },
-						{ text: 'Integration Management', dataIndex: 'integrationManagement', width: 175, sortable: false },
 						{ text: 'Current Owner', dataIndex: 'currentDataOwner', width: 175, sortable: false },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s'},
 						{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
@@ -2353,8 +2352,6 @@
 							mainAddEditWin.generalForm.loadComponentAttributes();
 						});
 
-
-						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(false);
 						mainAddEditWin.generalForm.queryById('changeHistoryBtn').setDisabled(false);
 					} else {
 						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');
@@ -2363,13 +2360,12 @@
 						requiredStore.removeAll();
 
 						Ext.getCmp('componentGrid').getSelectionModel().deselectAll();
-						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(true);
 						mainAddEditWin.generalForm.queryById('changeHistoryBtn').setDisabled(true);
 
 					}
 					mainAddEditWin.generalForm.queryById('componentTypeMainCB').resumeEvent('change');
 
-				   return mainAddEditWin;
+					return mainAddEditWin;
 				};
 
 				var checkFormTabs = function(mainAddEditWin, record, componentType) {
