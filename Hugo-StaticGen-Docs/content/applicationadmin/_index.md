@@ -24,7 +24,7 @@ weight = 20
 
     1. [**Attributes and Entry Types**](/applicationadmin/attributes)
 
-        Attributes are information about entries. Attributes can be height, width, mass, or downlink speed. Attributes are designed to be very versatile and can be used to represent many different types of information about entries.
+        Attributes are information about entries. Attributes can be height, width, mass, or downlink speed.
 
     1. [**Custom Submission Forms**](/applicationadmin/customsubmissionforms)
 
@@ -42,7 +42,7 @@ weight = 20
 
     Evaluations are currently not in use on SPOON
 
-## Popular questions
+## Common Questions 
 
 ### Alerts
 

@@ -18,7 +18,7 @@ weight = 210
 
 An "attribute" on SPOON is an entry specification, for example height, width, or length of a part.
 
-If you want to add a new attribute or edit an existing one, click "**Add New Type**" or "**Edit Attribute**" respectively, and a popup with options will appear.
+If you want to add a new attribute or edit an existing one, click "**Add New Type**" or "**Edit Attribute**" respectively and a popup with options will appear.
 
 ![Screenshot of the Edit popup](/images/AppAdmin/AttributesEditAttributesPopup.png)
 
@@ -52,12 +52,12 @@ The Administrator can manage all entries on this page. Admins have to ability to
 
 Option | EXPLANATION
 -----------------: | -----------
-Type Code | Internal ID for catagories, by default anything given will be converted to uppercase upon entry into the database and the convention for naming is an acronym of the category title
+Type Code | Internal ID for categories, by default anything given will be converted to uppercase upon entry into the database and the convention for naming is an acronym of the category title
 Label | Name of the category that the user will see
 Description | The description of the entry type
-Parent Type | Parent catagories can have multiple children
+Parent Type | Parent categories can have multiple children
 Assigned User(s) | Single users that are in charge of reviewing that parts of that category
-Assigned Group(S) |  Groups are a function of [Security roles](/applicationadmin/securityroles/); assigning a group to this catagories will ensure that the group has permission to see parts of this type ( to review them as they are going through the Workplan Progress)
+Assigned Group(S) |  Groups are a function of [Security roles](/applicationadmin/securityroles/); assigning a group to this categories will ensure that the group has permission to see parts of this type ( to review them as they are going through the Workplan Progress)
 Entry Display Template | This feature was deprecated in V2.11. It allowed administrators to create custom templates, for the search results page, for each entry type
 Icon URL | The url for the icon that will be shown for that entry type on the search results page
 
