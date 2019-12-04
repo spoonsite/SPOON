@@ -28,8 +28,7 @@ The user can then select the suggestion by clicking on it or continue with a ful
 ### Search Field Differentiation or Specificity
 
 To search on different fields using a keyword search, you will need to change your search options. These
-options allow you to filter your search by only matching on certain fields. This is done on the bar just
-left of the search bar, labeled search options.
+options allow you to filter your search by only matching on certain fields. This is done in the menu bar left of the search bar labeled "search options".
 
 ### Fuzzy Matching and Wildcards
 

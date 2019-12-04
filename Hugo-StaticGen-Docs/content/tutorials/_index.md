@@ -1,5 +1,5 @@
 +++
-title = "Tutorials"
+title = "Tutorial Videos"
 description = ""
 weight = 40
 +++

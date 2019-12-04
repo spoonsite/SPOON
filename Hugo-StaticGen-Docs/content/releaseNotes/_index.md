@@ -42,7 +42,7 @@ For more information, please see [GitHub](https://github.com/spoonsite/SPOON/rel
 * Fixed issues with reports.
 * Mobile search filters improved.
 
-### Administrator Release Notes, v2.7
+### Administrator Release Notes for v2.7
 
 * Various improvements to Entries admin page.
 
