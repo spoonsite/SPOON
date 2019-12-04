@@ -43,8 +43,7 @@
               </v-list-tile>
               <v-list-tile
                 class="menu-item"
-                @click="showDisclaimer = true"
-                @keyup.enter="showDisclaimer = true"
+                @click.stop="showDisclaimer = true"
                 role="button"
                 aria-pressed="false"
               >
@@ -78,7 +77,8 @@
       <!-- Request Error Dialog -->
       <v-dialog
         v-model="errorDialog"
-        >
+        max-width="75em"
+      >
         <v-card>
           <ModalTitle title='Error' @close='errorDialog = false'/>
           <v-card-text>
@@ -97,6 +97,7 @@
             </div>
           </v-card-text>
           <v-card-actions>
+            <v-spacer/>
             <v-btn @click="submitErrorReport" color="success">Send Error Report</v-btn>
             <v-btn @click.stop="errorDialog = false">Close</v-btn>
           </v-card-actions>
@@ -121,7 +122,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog> -->
-      <DisclaimerModal v-model="showDisclaimer"></DisclaimerModal>
+      <DisclaimerModal v-model="showDisclaimer" @close="showDisclaimer=false"></DisclaimerModal>
 
       <main class="offset-banner" :class="{ offset: !alert }">
         <router-view/>

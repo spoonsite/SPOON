@@ -145,7 +145,9 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
+          <v-spacer/>
           <v-btn
+            color="success"
             @click="submitCorrection()"
             :loading="buttonLoad"
             :disabled="feedbackForm.message ==='' || feedbackForm.name ==='' || feedbackForm.email ===''"
@@ -206,7 +208,9 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
+          <v-spacer/>
           <v-btn
+            color="success"
             @click="submitOwnershipRequest()"
             :loading="buttonLoad"
             :disabled="feedbackForm.message ==='' || feedbackForm.name ==='' || feedbackForm.email ===''"
@@ -242,7 +246,9 @@
             ></v-textarea>
         </v-card-text>
         <v-card-actions>
+          <v-spacer/>
           <v-btn
+            color="success"
             @click="contactVendor()"
             :loading="buttonLoad"
             :disabled="vendorMessage === ''"
@@ -361,7 +367,8 @@
               <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p>
             </v-card-text>
             <v-card-actions>
-              <v-btn @click="deleteTag(); deleteTagDialog = false;">Delete</v-btn>
+              <v-spacer/>
+              <v-btn color="warning" @click="deleteTag(); deleteTagDialog = false;">Delete</v-btn>
               <v-btn @click="deleteTagDialog = false;">Cancel</v-btn>
             </v-card-actions>
           </v-card>
@@ -399,7 +406,8 @@
                 </v-list>
               </div>
             </v-card-text>
-            <v-card-actions style="display: flex; flex-wrap: wrap; overflow-x: hidden; justify-content: space-around;">
+            <v-card-actions>
+              <v-spacer/>
               <v-btn
                 style="text-transform: none; margin-bottom: 0.4em;"
                 @click="submitTag(tagName); newTagConfirmationDialog=false"
@@ -486,8 +494,8 @@
         </v-expansion-panel>
 
         <v-dialog
-        v-model="writeReviewDialog"
-        max-width="500px"
+          v-model="writeReviewDialog"
+          max-width="50em"
         >
         <v-card>
           <ModalTitle title='Write a Review' @close='writeReviewDialog = false' />
@@ -583,7 +591,8 @@
 
             </v-container>
               <v-card-actions>
-                <v-btn :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
+                <v-spacer/>
+                <v-btn color="success" :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
                 <v-btn @click="writeReviewDialog = false; newReview.comment=''">Cancel</v-btn>
               </v-card-actions>
             </v-form>
@@ -591,11 +600,17 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="deleteReviewDialog" width='50em'>
+      <v-dialog
+        v-model="deleteReviewDialog"
+        width='25em'
+      >
         <v-card>
           <ModalTitle title='Confirm Review Deletion' @close='deleteReviewDialog = false' />
-          <v-btn @click="deleteReviewConfirmation()">OK</v-btn>
-          <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
+          <v-card-actions>
+            <v-spacer/>
+            <v-btn color="warning" @click="deleteReviewConfirmation()">Delete</v-btn>
+            <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
+          </v-card-actions>
         </v-card>
       </v-dialog>
 
@@ -611,7 +626,8 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-dialog
-        v-model="askQuestionDialog"
+          v-model="askQuestionDialog"
+          max-width="75em"
         >
           <v-card>
             <ModalTitle title='Ask a Question' @close='askQuestionDialog = false' />
@@ -624,7 +640,8 @@
               ></quill-editor>
             </v-card-text>
             <v-card-actions>
-              <v-btn @click="submitQuestion()">Submit</v-btn>
+              <v-spacer/>
+              <v-btn color="success" :disabled="newQuestion===''" @click="submitQuestion()">Submit</v-btn>
               <v-btn @click="askQuestionDialog = false; newQuestion = '';">Cancel</v-btn>
             </v-card-actions>
           </v-card>
@@ -1276,9 +1293,6 @@ export default {
 
   p {
     margin: 0px;
-  }
-  button {
-    background-color: white !important;
   }
   .entry-media {
     display: flex;

@@ -37,20 +37,22 @@
 
   <v-dialog
     v-model="answerQuestionDialog"
-    >
+    max-width='75em'
+  >
     <v-card>
       <ModalTitle title='Answer a Question' @close='answerQuestionDialog = false' />
       <v-card-text>
         <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
         <v-alert class="w-100" type="info" :value="true">All answers need admin approval before being made public.</v-alert>
-        <div v-html="question.question"></div>
+        <div class="pt-2" v-html="question.question"></div>
         <quill-editor
-        style="background-color: white;"
-        v-model="newAnswer"
-        ></quill-editor>
+          style="background-color: white;"
+          v-model="newAnswer"
+        />
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="submitAnswer(question.questionId)">Submit</v-btn>
+        <v-spacer/>
+        <v-btn color="success" @click="submitAnswer(question.questionId)">Submit</v-btn>
         <v-btn @click="answerQuestionDialog = false; newAnswer = '';">Cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -58,7 +60,7 @@
 
   <v-dialog
     v-model="deleteQuestionDialog"
-    max-width="300px"
+    max-width="25em"
     >
     <v-card>
       <ModalTitle title='Delete?' @close='deleteQuestionDialog = false' />
@@ -66,6 +68,7 @@
         <p>Are you sure you want to delete this question?</p>
       </v-card-text>
       <v-card-actions>
+        <v-spacer/>
         <v-btn color="warning" @click="deleteQuestion(question.questionId)"><v-icon>delete</v-icon> Delete</v-btn>
         <v-btn @click="deleteQuestionDialog = false">Cancel</v-btn>
       </v-card-actions>
@@ -74,7 +77,8 @@
 
   <v-dialog
     v-model="editQuestionDialog"
-    >
+    max-width="75em"
+  >
     <v-card>
       <ModalTitle title='Edit a Question' @close='editQuestionDialog = false' />
       <v-card-text>
@@ -86,6 +90,7 @@
         ></quill-editor>
       </v-card-text>
       <v-card-actions>
+        <v-spacer/>
         <v-btn color="success" @click="editQuestion(question.questionId)">Submit</v-btn>
         <v-btn @click="editQuestionDialog = false">Cancel</v-btn>
       </v-card-actions>

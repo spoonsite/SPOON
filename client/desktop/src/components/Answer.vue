@@ -13,19 +13,21 @@
 
   <v-dialog
     v-model="edit"
+    max-width="75em"
   >
     <v-card>
       <ModalTitle title='Edit answer' @close='edit = false' />
       <v-card-text>
         <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
-        <v-alert class="w-100" type="info" :value="true">TestAll answers need admin approval before being made public.</v-alert>
+        <v-alert class="w-100" type="info" :value="true">All answers need admin approval before being made public.</v-alert>
         <quill-editor
-        style="background-color: white;"
-        v-model="answer.response"
-        ></quill-editor>
+          style="background-color: white;"
+          v-model="answer.response"
+        />
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="editAnswer()">Save</v-btn>
+        <v-spacer/>
+        <v-btn color="success" @click="editAnswer()">Save</v-btn>
         <v-btn @click="edit = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -34,11 +36,17 @@
 
   <v-dialog
     v-model="deleteDialog"
-    width='50em'
+    max-width='25em'
     >
     <v-card>
       <ModalTitle title='Delete?' @close='deleteDialog = false' />
+      <v-card-text>
+        <p>
+          Are you sure you want to delete this answer?
+        </p>
+      </v-card-text>
       <v-card-actions>
+        <v-spacer/>
         <v-btn color="warning" @click="deleteAnswer()"><v-icon>delete</v-icon> Delete</v-btn>
         <v-btn @click="deleteDialog = false">Cancel</v-btn>
       </v-card-actions>

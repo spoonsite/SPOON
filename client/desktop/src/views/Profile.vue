@@ -120,12 +120,16 @@
         :disabled="disableForm"
       ></v-switch>
     </v-badge>
-    <v-dialog v-model="notificationDialog" max-width="300px">
+    <v-dialog
+      v-model="notificationDialog"
+      max-width="25em"
+    >
       <v-card>
         <v-card-text>
           Receive a periodic email about recent changes.
         </v-card-text>
         <v-card-actions>
+          <v-spacer/>
           <v-btn @click="notificationDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
