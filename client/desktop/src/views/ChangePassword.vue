@@ -14,6 +14,7 @@
         v-model="existingPassword"
         :append-icon="showExisting ? 'fas fa-eye' : 'fas fa-eye-slash'"
         :type="showExisting ? 'text' : 'password'"
+        :error-messages="existingPasswordError"
         @click:append="showExisting = !showExisting"
       ></v-text-field>
       <v-text-field
@@ -22,7 +23,7 @@
         v-model="newPassword"
         :append-icon="showNew ? 'fas fa-eye' : 'fas fa-eye-slash'"
         :type="showNew ? 'text' : 'password'"
-        :rules="lengthRules"
+        :error-messages="errorMessages"
         @click:append="showNew = !showNew"
       ></v-text-field>
       <v-text-field
@@ -31,8 +32,7 @@
         v-model="confirmPassword"
         :append-icon="showConfirmation ? 'fas fa-eye' : 'fas fa-eye-slash'"
         :type="showConfirmation ? 'text' : 'password'"
-        :rules="lengthRules"
-        :error-messages="errorMessages"
+
         @click:append="showConfirmation = !showConfirmation"
       ></v-text-field>
       <v-btn
@@ -60,19 +60,15 @@ export default {
       newPassword: '',
       confirmPassword: '',
       errorMessages: [],
+      existingPasswordError: [],
       showExisting: false,
       showNew: false,
-      showConfirmation: false,
-      existingError: false,
-      newError: false,
-      confirmationError: false,
-      lengthRules: [
-        v => v.length >= 8 || 'Your password must be 8 characters or more in length'
-      ]
+      showConfirmation: false
     }
   },
 methods: {
   submitPassword () {
+    this.errorMessages = []
     if (this.newPassword !== this.confirmPassword) {
       this.errorMessages.push("The new password and confirmation doen't match.")
     }
@@ -109,7 +105,8 @@ methods: {
         .then(response => {
           var validation = response.data
           if (validation.success === false){
-            console.log("wrong existing password")
+            this.existingPasswordError.push(validation.errors.entry[0].value)
+            console.log(response)
           }
           else {
             this.$toasted.show("Password changed successfully.")
