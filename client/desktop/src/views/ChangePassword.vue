@@ -1,0 +1,126 @@
+<template lang="html">
+  <div>
+    <v-form style="margin:auto; max-width: 90em; padding: 1em; padding-top: 2em;">
+      <h2>Password Requires</h2>
+      <ul>
+        <li>At least 1 Capital Letter</li>
+        <li>At least 1 Number</li>
+        <li>At least 8 Characters</li>
+        <li>At least 1 Special Character (?!@#$%*)</li>
+      </ul>
+      <v-text-field
+        required
+        label="Existing Password*"
+        v-model="existingPassword"
+        :append-icon="showExisting ? 'fas fa-eye' : 'fas fa-eye-slash'"
+        :type="showExisting ? 'text' : 'password'"
+        @click:append="showExisting = !showExisting"
+      ></v-text-field>
+      <v-text-field
+        required
+        label="New Password*"
+        v-model="newPassword"
+        :append-icon="showNew ? 'fas fa-eye' : 'fas fa-eye-slash'"
+        :type="showNew ? 'text' : 'password'"
+        :rules="lengthRules"
+        @click:append="showNew = !showNew"
+      ></v-text-field>
+      <v-text-field
+        required
+        label="Confirm New Password*"
+        v-model="confirmPassword"
+        :append-icon="showConfirmation ? 'fas fa-eye' : 'fas fa-eye-slash'"
+        :type="showConfirmation ? 'text' : 'password'"
+        :rules="lengthRules"
+        :error-messages="errorMessages"
+        @click:append="showConfirmation = !showConfirmation"
+      ></v-text-field>
+      <v-btn
+        style="margin-left: 0px;"
+        color="accent"
+        :disabled="existingPassword == '' || newPassword == ''|| confirmPassword == ''"
+        @click="submitPassword()"
+      >
+        Update Password
+      </v-btn>
+    </v-form>
+  </div>
+</template>
+
+<script lang="js">
+
+export default {
+  name: 'change-password-page',
+  mounted () {
+ 
+  },
+  data () {
+    return {
+      existingPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+      errorMessages: [],
+      showExisting: false,
+      showNew: false,
+      showConfirmation: false,
+      existingError: false,
+      newError: false,
+      confirmationError: false,
+      lengthRules: [
+        v => v.length >= 8 || 'Your password must be 8 characters or more in length'
+      ]
+    }
+  },
+methods: {
+  submitPassword () {
+    if (this.newPassword !== this.confirmPassword) {
+      this.errorMessages.push("The new password and confirmation doen't match.")
+    }
+    else {
+      this.checkPasswordChange()
+    }
+  },
+  checkPasswordChange () {
+    let data = {
+      password: this.newPassword,
+      existingPassword: this.existingPassword
+    }
+    this.$http.post(`/openstorefront/api/v1/service/security/checkPassword`, data)
+      .then(response => {
+        var validation = response.data
+        if (validation.success === false){
+          this.errorMessages.push(validation.errors.entry[0].value)
+        }
+        else {
+          this.resetUserPassword()
+          this.confirmPassword = ''
+          this.existingPassword = ''
+          this.newPassword = ''
+        }
+      })
+      .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
+    },
+    resetUserPassword () {
+      let data = {
+        password: this.newPassword,
+        existingPassword: this.existingPassword
+      }
+      this.$http.put(`/openstorefront/api/v1/resource/users/currentuser/resetpassword`, data)
+        .then(response => {
+          var validation = response.data
+          if (validation.success === false){
+            console.log("wrong existing password")
+          }
+          else {
+            this.$toasted.show("Password changed successfully.")
+          }
+
+      })
+      .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+</style>
