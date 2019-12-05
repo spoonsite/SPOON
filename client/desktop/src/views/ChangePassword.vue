@@ -51,9 +51,6 @@
 
 export default {
   name: 'change-password-page',
-  mounted () {
- 
-  },
   data () {
     return {
       existingPassword: '',
