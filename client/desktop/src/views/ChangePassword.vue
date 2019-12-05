@@ -106,7 +106,6 @@ methods: {
           var validation = response.data
           if (validation.success === false){
             this.existingPasswordError.push(validation.errors.entry[0].value)
-            console.log(response)
           }
           else {
             this.$toasted.show("Password changed successfully.")
