@@ -1288,11 +1288,7 @@ export default {
   }
   .entry-media {
     display: flex;
-    margin: 15px;
-    margin-bottom: 2em;
-    height: auto;
-    width: auto;
-    max-width: 500px;
+    margin: 15px 15px 0px 15px;
   }
   .no-media {
     flex-grow: 27;

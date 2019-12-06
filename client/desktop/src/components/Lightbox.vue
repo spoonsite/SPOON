@@ -152,12 +152,9 @@ export default {
     text-align: center;
   }
   .mediaImage {
-    min-width: 20vw;
-    width: auto;
-    height: 100%;
-    max-width: 100%;
-    max-height: 500px;
+    max-height: 300px;
     border: 3px solid #252931;
+    max-width: 100%;
   }
   /* transition animations */
   .fade-enter-active, .fade-leave-active {
