@@ -530,10 +530,12 @@ export default {
     this.searchSortOrder = (sortOrder ? sortOrder : this.searchSortOrder)
     this.searchSortField = (sortField ? sortField : this.searchSortField)
     this.searchPageSize = (pageSize ? pageSize : this.searchPageSize)
+    window.addEventListener('resize', this.hideOrShowFilters)
   },
   mounted () {
     this.parseFiltersFromUrl(this.$route.query)
     this.newSearch()
+    this.hideOrShowFilters()
   },
   beforeRouteUpdate (to, from, next) {
     this.parseFiltersFromUrl(to.query)
@@ -954,6 +956,14 @@ export default {
                 (this.filters.tags.length > 0 ? '&tags=' + this.filters.tags.join(',') : '') +
                 '&searchoptions=' + JSON.parse(searchOptions).join(',')
       return url
+    },
+    hideOrShowFilters () {
+      if (window.innerWidth < 700) {
+        this.showFilters = false
+      }
+      else {
+        this.showFilters = true
+      }
     }
   },
   watch: {
