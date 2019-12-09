@@ -1,5 +1,5 @@
 <%--
-/* 
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,9 +22,9 @@
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
-		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
-		</stripes:layout-render>		
-		
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">
+		</stripes:layout-render>
+
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 
@@ -45,13 +45,13 @@
 							property: 'updateDts',
 							direction: 'DESC'
 						})
-					],	
+					],
 					fields: [
 						{
 							name: 'createDts',
 							type:	'date',
 							dateFormat: 'c'
-						},						
+						},
 						{
 							name: 'updateDts',
 							type:	'date',
@@ -59,7 +59,7 @@
 						}
 					],
 					proxy: CoreUtil.pagingProxy({
-						url: 'api/v1/resource/usermessages',											
+						url: 'api/v1/resource/usermessages',
 						reader: {
 							type: 'json',
 							rootProperty: 'data',
@@ -114,7 +114,7 @@
 						},
 						{text: 'Status', dataIndex: 'activeStatus', width: 75},
 						{text: 'Create Date', dataIndex: 'createDts', width: 125, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
-						{text: 'Update Date', dataIndex: 'updateDts', width: 125, xtype: 'datecolumn', format: 'm/d/y H:i:s'},						
+						{text: 'Update Date', dataIndex: 'updateDts', width: 125, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Subject', dataIndex: 'subject', width: 150},
 						{text: 'Sent Email Address', dataIndex: 'sentEmailAddress', width: 200, flex: 1}
 					],
@@ -338,9 +338,9 @@
 						message = "<b>Subject:</b><br><br>" + record.get('subject') + "<br><br>";
 						if (record.get('bodyOfMessage')) {
 							message += "<b>Message:</b><br><br> " + record.get('bodyOfMessage');
-						}						
+						}
 					}
-					
+
 					Ext.create('Ext.window.Window', {
 						title: 'View Message',
 						iconCls: 'fa fa-lg fa-eye icon-small-vertical-correction',
@@ -350,13 +350,13 @@
 						y: 40,
 						modal: true,
 						maximizable: false,
-						closeAction: 'destroy',						
+						closeAction: 'destroy',
 						autoScroll: true,
 						listeners:	{
-							show: function() {        
-								this.removeCls("x-unselectable");    
+							show: function() {
+								this.removeCls("x-unselectable");
 							}
-						},							
+						},
 						html: message
 					}).show();
 				};
@@ -414,7 +414,7 @@
 							type:	'date',
 							dateFormat: 'c'
 						}
-					],					
+					],
 					proxy: CoreUtil.pagingProxy({
 						url: 'api/v1/resource/notificationevent/all',
 						method: 'GET',
@@ -450,19 +450,19 @@
 						{text: 'Message', dataIndex: 'message', width: 200, flex: 1},
 						{text: 'Event Type', dataIndex: 'eventType', width: 150,
 							renderer: function(value, metaData, record, rowIndex) {
-								
+
 								// Set Tooltip
 								metaData.tdAttr = 'data-qtip="' + record.get('eventTypeDescription') + '"';
-								
+
 								// Simply Return Value
 								return value;
 							}
 						},
 						{
-							text: 'Update Date', 
+							text: 'Update Date',
 							dataIndex: 'updateDts',
 							width: 150,
-							xtype: 'datecolumn', 
+							xtype: 'datecolumn',
 							format: 'm/d/y H:i:s'
 						}
 					],
@@ -724,7 +724,7 @@
 				});
 
 				addComponentToMainViewPort(msgTabPanel);
-				
+
 			});
 
         </script>
