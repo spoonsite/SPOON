@@ -34,10 +34,10 @@
                 :href="link.href ? link.href : undefined"
                 active-class="menu-item-active"
               >
-                <v-list-tile-action>
+                <v-list-tile-action v-if="!link.hasChildren">
                   <v-icon>fa fa-{{ link.icon }}</v-icon>
                 </v-list-tile-action>
-                <v-content>
+                <v-content v-if="!link.hasChildren">
                   <v-list-tile-title>{{ link.name }}</v-list-tile-title>
                 </v-content>
               </v-list-tile>
@@ -190,26 +190,32 @@ export default {
         { link: '/',
           icon: 'home',
           name: 'Home',
+          hasChildern: false,
           permissions: [] },
         { href: '/openstorefront/AdminTool.action',
           icon: 'cog',
           name: 'Admin Tools',
+          hasChildern: false,
           permissions: permissions.ADMIN },
         { href: '/openstorefront/UserTool.action',
           icon: 'user',
           name: 'User Tools',
+          hasChildern: true,
           permissions: [] },
         { link: '/watches',
           icon: 'binoculars',
           name: 'Watches',
+          hasChildern: false,
           permissions: [] },
         { link: '/faq',
           icon: 'question',
           name: 'F.A.Q.',
+          hasChildern: false,
           permissions: [] },
         { link: '/contact',
           icon: 'comment',
           name: 'Contact',
+          hasChildern: false,
           permissions: [] },
         { href: (this.$store.state.helpUrl ? this.$store.state.helpUrl : 'https://spoonsite.github.io/'),
           icon: 'question-circle',
