@@ -91,7 +91,7 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
 
 1. Verify that elasticsearch is running, the last command from above should output something similar to
 
-    ```ini
+    ```sh
     ● elasticsearch.service - Elasticsearch
     Loaded: loaded (/usr/lib/systemd/system/elasticsearch.service; enabled; vendor preset: disabled)
     Active: active (running) since ...
@@ -136,9 +136,9 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
     mongod --version
     ```
 
-    You should get something like:
+    You should get something like
 
-    ```ini
+    ```sh
     db version v4.2.1
     git version: edf6d45851c0b9ee15548f0f847df141764a317e
     OpenSSL version: OpenSSL 1.0.1e-fips 11 Feb 2013
@@ -190,7 +190,7 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
 
     You should get something like
 
-    ```ini
+    ```sh
     Server version: Apache Tomcat/7.0.76
     Server built:   Mar 12 2019 10:11:36 UTC
     Server number:  7.0.76.0
