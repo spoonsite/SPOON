@@ -14,8 +14,6 @@ This article gives further instructions on setting up and configuring the web ap
 
 [Setup]({{< ref "Setup.md" >}})
 
-[Developer Guide]({{< ref "DevelopersGuide.md" >}})
-
 ## Application Properties
 
 Configure in: `/var/openstorefront/config/openstorefront.properties`
