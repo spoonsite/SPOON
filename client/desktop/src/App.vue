@@ -183,14 +183,12 @@ import safeParse from 'safe-json-parse/callback'
 import permissions from './util/permissions.js'
 import Notifications from './components/Notifications'
 import DisclaimerModal from './components/DisclaimerModal'
-import MenuExpansion from './components/MenuExpansion'
 
 export default {
   name: 'App',
   components: {
     Notifications,
     DisclaimerModal,
-    MenuExpansion
   },
   mounted () {
     this.$http.interceptors.response.use(response => {
