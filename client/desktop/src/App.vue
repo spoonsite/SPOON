@@ -22,25 +22,69 @@
             </v-tooltip>
             <!-- <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn> -->
           </v-toolbar-items>
-          <v-menu offset-y>
+          <v-menu offset-y :close-on-content-click="false">
             <v-toolbar-side-icon slot="activator"></v-toolbar-side-icon>
             <v-list>
               <!-- Add permissions check. -->
               <v-list-tile
-                v-for="link in filteredLinks"
+                v-for="link in filteredBeginningLinks"
                 :key="link.name"
                 class="menu-item"
                 :to="link.link ? link.link : undefined"
                 :href="link.href ? link.href : undefined"
                 active-class="menu-item-active"
               >
-                <v-list-tile-action v-if="!link.hasChildren">
+                <v-list-tile-action>
                   <v-icon>fa fa-{{ link.icon }}</v-icon>
                 </v-list-tile-action>
-                <v-content v-if="!link.hasChildren">
+                <v-content>
                   <v-list-tile-title>{{ link.name }}</v-list-tile-title>
                 </v-content>
               </v-list-tile>
+
+              <v-list-group
+                v-for="link in filteredGroupLinks"
+                :key="link.name"
+                :prepend-icon="'fa fa-' + link.icon"
+              >
+                <v-list-tile slot="activator">
+                  <v-list-tile-content>
+                    <v-list-tile-title>{{ link.name }}</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile
+                  v-for="children in link.children"
+                  :key="children.name"
+                  style="background-color: #EEEEEE;"
+                  class="menu-item"
+                  :to="children.link ? children.link : undefined"
+                  :href="children.href ? children.href : undefined"
+                  active-class="menu-item-active">
+                  <v-list-tile-action>
+                    <v-icon>fa fa-{{ children.icon }}</v-icon>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>{{ children.name }}</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </v-list-group>
+
+              <v-list-tile
+                v-for="link in filteredEndLinks"
+                :key="link.name"
+                class="menu-item"
+                :to="link.link ? link.link : undefined"
+                :href="link.href ? link.href : undefined"
+                active-class="menu-item-active"
+              >
+                <v-list-tile-action>
+                  <v-icon>fa fa-{{ link.icon }}</v-icon>
+                </v-list-tile-action>
+                <v-content>
+                  <v-list-tile-title>{{ link.name }}</v-list-tile-title>
+                </v-content>
+              </v-list-tile>
+
               <v-list-tile
                 class="menu-item"
                 @click="showDisclaimer = true"
@@ -139,12 +183,14 @@ import safeParse from 'safe-json-parse/callback'
 import permissions from './util/permissions.js'
 import Notifications from './components/Notifications'
 import DisclaimerModal from './components/DisclaimerModal'
+import MenuExpansion from './components/MenuExpansion'
 
 export default {
   name: 'App',
   components: {
     Notifications,
-    DisclaimerModal
+    DisclaimerModal,
+    MenuExpansion
   },
   mounted () {
     this.$http.interceptors.response.use(response => {
@@ -170,8 +216,14 @@ export default {
     this.$store.dispatch('getAttributeMap')
   },
   computed: {
-    filteredLinks () {
-      return this.links.filter(link => this.checkPermissions(link.permissions))
+    filteredBeginningLinks () {
+      return this.beginningLinks.filter(link => this.checkPermissions(link.permissions))
+    },
+    filteredGroupLinks () {
+      return this.groupLinks.filter(link => this.checkPermissions(link.permissions))
+    },
+    filteredEndLinks () {
+      return this.endLinks.filter(link => this.checkPermissions(link.permissions))
     }
   },
   data () {
@@ -186,58 +238,54 @@ export default {
       loggingOut: false,
       drawer: false,
       watchNumber: 0,
-      links: [ // Leave a permission array empty if no permissions are needed.
+      beginningLinks: [ // Leave a permission array empty if no permissions are needed.
         { link: '/',
           icon: 'home',
           name: 'Home',
-          hasChildern: false,
+          hasChildren: false,
           permissions: [] },
         { href: '/openstorefront/AdminTool.action',
           icon: 'cog',
           name: 'Admin Tools',
-          hasChildern: false,
-          permissions: permissions.ADMIN },
-        { href: '/openstorefront/UserTool.action',
+          hasChildren: false,
+          permissions: permissions.ADMIN }
+      ],
+      groupLinks: [ // Leave a permission array empty if no permissions are needed.
+        { href: '',
           icon: 'user',
           name: 'User Tools',
-          hasChildern: true,
-          permissions: [] },
-        { link: '/watches',
-          icon: 'binoculars',
-          name: 'Watches',
-          hasChildern: false,
-          permissions: [] },
+          hasChildren: true,
+          children: [
+            { link: '/watches',
+            icon: 'binoculars',
+            name: 'Watches',
+            hasChildren: false,
+            permissions: [] },
+            { link: '/watches',
+            icon: 'binoculars',
+            name: 'Test',
+            hasChildren: false,
+            permissions: [] },
+          ],
+          permissions: [] }
+      ],
+      endLinks: [ // Leave a permission array empty if no permissions are needed.
         { link: '/faq',
           icon: 'question',
           name: 'F.A.Q.',
-          hasChildern: false,
+          hasChildren: false,
           permissions: [] },
         { link: '/contact',
           icon: 'comment',
           name: 'Contact',
-          hasChildern: false,
+          hasChildren: false,
           permissions: [] },
         { href: (this.$store.state.helpUrl ? this.$store.state.helpUrl : 'https://spoonsite.github.io/'),
           icon: 'question-circle',
           name: 'Help',
           newTab: true,
+          hasChildren: false,
           permissions: [] }
-        // { link: '/sme-approval',
-        //   icon: 'check',
-        //   name: 'SME Approval',
-        //   permissions: [ 'WORKPLAN-PROGRESS-MANAGEMENT-PAGE' ] },
-        // { link: '/submission-status',
-        //   icon: 'sticky-note',
-        //   name: 'Submission Status',
-        //   permissions: [] },
-        // { link: '/profile',
-        //   icon: 'user-edit',
-        //   name: 'Manage Profile',
-        //   permissions: [] },
-        // { link: '/reset-password',
-        //   icon: 'key',
-        //   name: 'Reset Password',
-        //   permissions: [] }
       ],
       topbarStyle: {
         'border-bottom': `4px solid ${this.$store.state.branding.vueAccentColor}`
@@ -363,5 +411,12 @@ header {
 .nav-drawer {
   background-color: white;
   z-index: 999;
+}
+.v-list__group--active::after, .v-list__group--active::before {
+    background: white !important;
+}
+.v-list__group__header:hover{
+  background-color: rgba(0,0,0,0.1) !important;
+  cursor: pointer;
 }
 </style>
