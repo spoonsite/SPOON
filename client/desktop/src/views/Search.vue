@@ -527,6 +527,11 @@ export default {
     this.searchSortOrder = (sortOrder ? sortOrder : this.searchSortOrder)
     this.searchSortField = (sortField ? sortField : this.searchSortField)
     this.searchPageSize = (pageSize ? pageSize : this.searchPageSize)
+    // If the cached options is no longer available, use default
+    let hasSearchSortField = this.searchSortFields.filter(e=>e.value === this.searchSortField).length > 0
+    if (!hasSearchSortField){
+      this.searchSortField = "_score"
+    }
     window.addEventListener('resize', this.hideOrShowFilters)
   },
   mounted () {
@@ -1049,13 +1054,13 @@ export default {
       searchPageSize: 12,
       totalSearchResults: 0,
       searchSortOrder: 'DESC',
-      searchSortField: 'searchScore',
+      searchSortField: '_score',
       searchSortFields: [
         { text: 'Name', value: 'name' },
         { text: 'User Rating', value: 'averageRating' },
         { text: 'Last Update', value: 'lastActivityDts' },
         { text: 'Approval Date', value: 'approvedDts' },
-        { text: 'Relevance', value: 'searchScore' }
+        { text: 'Relevance', value: '_score' }
       ]
     }
   }
