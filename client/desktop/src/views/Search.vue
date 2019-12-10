@@ -443,14 +443,7 @@
       :class="{ 'dialog-scroll': showComparison }">
         <v-card
         class="dialog-scroll">
-          <v-card-title style="display: flex; justify-content: space-between;">
-            <h2>Compare</h2>
-            <v-btn
-            @click="showComparison = false"
-            small fab icon>
-            <v-icon>fas fa-times</v-icon>
-            </v-btn>
-          </v-card-title>
+          <ModalTitle title='Compare' @close='showComparison = false' />
           <v-card-text>
             <div class="scrollable">
               <table>
@@ -511,6 +504,7 @@
 import _ from 'lodash'
 import StarRating from 'vue-star-rating'
 import SearchBar from '../components/SearchBar'
+import ModalTitle from '@/components/ModalTitle'
 import router from '../router.js'
 import crush from '../util/scientificToDecimal.js'
 
@@ -518,7 +512,8 @@ export default {
   name: 'SearchPage',
   components: {
     SearchBar,
-    StarRating
+    StarRating,
+    ModalTitle
   },
   created () {
     this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
