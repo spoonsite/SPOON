@@ -14,5 +14,5 @@
 		<p>If you are not the intended user of this message, please delete this message. <br>
 			Contact ${replyName} at ${replyAddress} for questions.</p>
 		<p><small><sup>*</sup>NOTE: Please enter the verification code exactly as it appears it is case sensitive</small></p>
-		</body>
-	</html>
+	</body>
+</html>

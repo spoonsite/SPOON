@@ -35,10 +35,18 @@ public class ContactVendorMessage
 	@APIDescription("Email addresses to send message to (To Field)")
 	@ConsumeField
     private String userToEmail = new String();
-    
+
     @APIDescription("Email addresses that the message is coming from (From Field)")
 	@ConsumeField
 	private String userFromEmail = new String();
+
+	@APIDescription("Name of the part")
+	@ConsumeField
+	private String partName = new String();
+
+	@APIDescription("Url of the parts entry detail page")
+	@ConsumeField
+	private String partUrl = new String();
 
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ADMIN_MESSAGE)
@@ -65,7 +73,7 @@ public class ContactVendorMessage
 	{
 		this.userToEmail = userToEmail;
     }
-    
+
     public String getUserFromEmail()
 	{
 		return userFromEmail;
@@ -74,5 +82,21 @@ public class ContactVendorMessage
 	public void setUserFromEmail(String userFromEmail)
 	{
 		this.userFromEmail = userFromEmail;
+	}
+
+	public String getPartName() {
+		return partName;
+	}
+
+	public void setPartName(String partName) {
+		this.partName = partName;
+	}
+
+	public String getPartUrl() {
+		return partUrl;
+	}
+
+	public void setPartUrl(String partUrl) {
+		this.partUrl = partUrl;
 	}
 }

@@ -40,6 +40,9 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -123,7 +126,7 @@ public class NotificationService
 	}
 
 	@POST
-	@APIDescription("Sends an email to a vendor")
+	@APIDescription("Sends an email to a vendor (Backwards compatibility with old Extjs entry detail page")
 	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
 	@Path("/contact-vendor")
 	public Response contactVendor(
@@ -138,7 +141,54 @@ public class NotificationService
 			email.setSubject("SpoonSite User Request for Information");
 			// message
 			email.setText(contactVendorMessage.getMessage());
-			
+
+			// to and from
+			String toEmail = contactVendorMessage.getUserToEmail();
+
+			String fromEmail = contactVendorMessage.getUserFromEmail();
+
+			email.addRecipient("", toEmail, Message.RecipientType.TO);
+			email.setFromAddress("", fromEmail);
+			email.setReplyToAddress("", fromEmail);
+			try {
+				MailManager.send(email, true);
+			} catch (Exception e) {
+				SimpleRestError simpleRestError = new SimpleRestError();
+				simpleRestError.setError(e.toString());
+				return Response.ok(simpleRestError).build();
+			}
+			return Response.ok().build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@POST
+	@APIDescription("Sends an email to a vendor")
+	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
+	@Path("/contact-vendor-template")
+	public Response contactVendorTemplate(
+			@RequiredParam ContactVendorMessage contactVendorMessage)
+	{
+		ValidationModel validationModel = new ValidationModel(contactVendorMessage);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("partName", contactVendorMessage.getPartName());
+			data.put("partUrl", contactVendorMessage.getPartUrl());
+			data.put("message", contactVendorMessage.getMessage());
+			// Add Branding configs
+			data.put("hostUrl", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL));
+			data.put("applicationName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
+			data.put("supportEmail", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL));
+			data.put("logoUrl", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL + service.getBrandingService().getCurrentBrandingView().getSecondaryLogoUrl()));
+			data.put("primaryColor", service.getBrandingService().getCurrentBrandingView().getVuePrimaryColor());
+			Email email = MailManager.newTemplateEmail(MailManager.Templates.CONTACT_VENDOR.toString(), data);
+
+			// subject
+			// email.setSubject("Spoonsite User Request for Information");
+
 			// to and from
 			String toEmail = contactVendorMessage.getUserToEmail();
 

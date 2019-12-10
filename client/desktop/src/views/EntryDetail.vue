@@ -1074,9 +1074,11 @@ export default {
       let data = {
         userToEmail: sendToEmail,
         userFromEmail: this.userEmail,
-        message: this.vendorMessage
+        message: this.vendorMessage,
+        partName: this.detail.name,
+        partUrl: window.location.href
       }
-      this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor`, data)
+      this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor-template`, data)
         .then(response => {
           this.vendorMessage = ''
           this.contactVendorDialog = false
