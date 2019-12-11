@@ -7,6 +7,7 @@ import FAQ from './views/FAQ.vue'
 import ContactUs from './views/ContactUs.vue'
 import EntryDetail from './views/EntryDetail.vue'
 import Watches from './views/Watches.vue'
+import Submissions from './views/Submissions.vue'
 
 Vue.use(Router)
 
@@ -47,6 +48,11 @@ export default new Router({
       path: '/watches',
       name: 'Watches',
       component: Watches
+    },
+    {
+      path: '/submissions',
+      name: 'Submissions',
+      component: Submissions
     }
     // {
     //   path: '/about',
