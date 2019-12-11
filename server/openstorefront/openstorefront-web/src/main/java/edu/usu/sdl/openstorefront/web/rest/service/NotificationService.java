@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.web.rest.service;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
@@ -24,6 +25,8 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
+import edu.usu.sdl.openstorefront.core.entity.Branding;
+import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
 import edu.usu.sdl.openstorefront.core.model.ContactVendorMessage;
@@ -40,8 +43,6 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -50,6 +51,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.codemonkey.simplejavamail.email.Email;
+
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 
 /**
@@ -174,29 +178,19 @@ public class NotificationService
 		validationModel.setConsumeFieldsOnly(true);
 		ValidationResult validationResult = ValidationUtil.validate(validationModel);
 		if (validationResult.valid()) {
-			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("partName", contactVendorMessage.getPartName());
-			data.put("partUrl", contactVendorMessage.getPartUrl());
-			data.put("message", contactVendorMessage.getMessage());
-			// Add Branding configs
-			data.put("hostUrl", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL));
-			data.put("applicationName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
-			data.put("supportEmail", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL));
-			data.put("logoUrl", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL + service.getBrandingService().getCurrentBrandingView().getSecondaryLogoUrl()));
-			data.put("primaryColor", service.getBrandingService().getCurrentBrandingView().getVuePrimaryColor());
-			Email email = MailManager.newTemplateEmail(MailManager.Templates.CONTACT_VENDOR.toString(), data);
+			Branding branding = service.getBrandingService().getCurrentBrandingView();
+			contactVendorMessage.updateConfigs(branding);
+			Email email = MailManager.newTemplateEmail(MailManager.Templates.CONTACT_VENDOR.toString(), contactVendorMessage, false);
 
-			// subject
-			// email.setSubject("Spoonsite User Request for Information");
-
-			// to and from
-			String toEmail = contactVendorMessage.getUserToEmail();
-
-			String fromEmail = contactVendorMessage.getUserFromEmail();
-
-			email.addRecipient("", toEmail, Message.RecipientType.TO);
-			email.setFromAddress("", fromEmail);
-			email.setReplyToAddress("", fromEmail);
+			GeneralMedia generalMediaExample = new GeneralMedia();
+			generalMediaExample.setName(contactVendorMessage.getLogoName());
+			GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
+			if(generalMedia != null){
+				DataSource imageData = new FileDataSource(FileSystemManager.getInstance().getBaseDirectory() + FileSystemManager.MEDIA_DIR + generalMedia.getFile().getFileName());
+				email.addEmbeddedImage("cid:embeddedimage", imageData);
+			}
+			email.addRecipient("", contactVendorMessage.getUserToEmail(), Message.RecipientType.TO);
+			email.setSubject("Spoonsite User Request for Information");
 			try {
 				MailManager.send(email, true);
 			} catch (Exception e) {

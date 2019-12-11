@@ -1085,7 +1085,10 @@ export default {
           this.buttonLoad = false
           this.$toasted.show('Message to vendor was sent.')
         })
-        .catch(e => this.$toasted.error('There was a problem contacting this vendor.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem contacting this vendor.')
+          this.buttonLoad = false
+        })
     },
     deleteTag () {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)

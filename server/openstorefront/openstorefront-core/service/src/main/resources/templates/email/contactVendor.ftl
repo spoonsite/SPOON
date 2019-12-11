@@ -385,6 +385,7 @@
                                     <tr>
                                         <td>
                                             <img class="pic-background" src="${logoUrl}"/>
+                                            <img class="pic-background" src="cid:embeddedimage"/>
                                             <h2>Request for information about ${partName}</h2>
                                             <p>Hi there,</p>
                                             <p>A user on ${applicationName} was looking to contact you about <a href="${partUrl}">${partName}</a>.</p>
