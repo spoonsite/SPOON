@@ -88,8 +88,7 @@
 
               <v-list-tile
                 class="menu-item"
-                @click="showDisclaimer = true"
-                @keyup.enter="showDisclaimer = true"
+                @click.stop="showDisclaimer = true"
                 role="button"
                 aria-pressed="false"
               >
@@ -123,11 +122,10 @@
       <!-- Request Error Dialog -->
       <v-dialog
         v-model="errorDialog"
-        >
+        max-width="75em"
+      >
         <v-card>
-          <v-card-title>
-            <h2>Error</h2>
-          </v-card-title>
+          <ModalTitle title='Error' @close='errorDialog = false'/>
           <v-card-text>
             <p>Oops! Something went wrong. Please contact the admin.</p>
             <v-btn depressed small v-if="currentError" @click="showErrorDetails = !showErrorDetails">Details</v-btn>
@@ -144,6 +142,7 @@
             </div>
           </v-card-text>
           <v-card-actions>
+            <v-spacer/>
             <v-btn @click="submitErrorReport" color="success">Send Error Report</v-btn>
             <v-btn @click.stop="errorDialog = false">Close</v-btn>
           </v-card-actions>
@@ -168,7 +167,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog> -->
-      <DisclaimerModal v-model="showDisclaimer"></DisclaimerModal>
+      <DisclaimerModal v-model="showDisclaimer" @close="showDisclaimer=false"></DisclaimerModal>
 
       <main class="offset-banner" :class="{ offset: !alert }">
         <router-view/>
@@ -184,12 +183,14 @@ import safeParse from 'safe-json-parse/callback'
 import permissions from './util/permissions.js'
 import Notifications from './components/Notifications'
 import DisclaimerModal from './components/DisclaimerModal'
+import ModalTitle from '@/components/ModalTitle'
 
 export default {
   name: 'App',
   components: {
     Notifications,
     DisclaimerModal,
+    ModalTitle
   },
   mounted () {
     this.$http.interceptors.response.use(response => {

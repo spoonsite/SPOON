@@ -149,7 +149,7 @@ export default {
   },
   created: function () {
     let searchOptions = window.localStorage.getItem('searchOptions')
-    if(searchOptions === null){
+    if (searchOptions === null) {
       this.$http
         .get('/openstorefront/api/v1/resource/searchoptions/user')
         .then(response => {

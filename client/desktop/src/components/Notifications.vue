@@ -47,13 +47,15 @@
 
     <v-dialog
       v-model="deleteAllDialog"
-      max-width="300px"
+      max-width="25em"
       >
       <v-card>
+        <ModalTitle title="Delete?" @close="deleteAllDialog = false"/>
         <v-card-text>
           <p>Are you sure you want to delete all notifications?</p>
         </v-card-text>
         <v-card-actions>
+          <v-spacer/>
           <v-btn :loading="deletingAllNotifications" color="warning" @click="deleteAllNotifications()"><v-icon>delete</v-icon> Delete</v-btn>
           <v-btn @click="deleteAllDialog = false">Cancel</v-btn>
         </v-card-actions>
@@ -64,9 +66,13 @@
 </template>
 
 <script>
+import ModalTitle from '@/components/ModalTitle'
 
 export default {
   name: 'Notifications',
+  components: {
+    ModalTitle
+  },
   data () {
     return {
       messagesDialog: false,

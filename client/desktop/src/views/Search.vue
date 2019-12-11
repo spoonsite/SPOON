@@ -390,7 +390,7 @@
                 </v-chip>
                 <v-chip
                   v-else
-                  small                
+                  small
                   @click="addComponentType(item.componentType)"
                 >
                   <div class="tag-links">
@@ -443,14 +443,7 @@
       :class="{ 'dialog-scroll': showComparison }">
         <v-card
         class="dialog-scroll">
-          <v-card-title style="display: flex; justify-content: space-between;">
-            <h2>Compare</h2>
-            <v-btn
-            @click="showComparison = false"
-            small fab icon>
-            <v-icon>fas fa-times</v-icon>
-            </v-btn>
-          </v-card-title>
+          <ModalTitle title='Compare' @close='showComparison = false' />
           <v-card-text>
             <div class="scrollable">
               <table>
@@ -511,6 +504,7 @@
 import _ from 'lodash'
 import StarRating from 'vue-star-rating'
 import SearchBar from '../components/SearchBar'
+import ModalTitle from '@/components/ModalTitle'
 import router from '../router.js'
 import crush from '../util/scientificToDecimal.js'
 
@@ -518,7 +512,8 @@ export default {
   name: 'SearchPage',
   components: {
     SearchBar,
-    StarRating
+    StarRating,
+    ModalTitle
   },
   created () {
     this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
@@ -527,9 +522,16 @@ export default {
     let sortOrder = JSON.parse(window.localStorage.getItem('searchSortOrder'))
     let sortField = JSON.parse(window.localStorage.getItem('searchSortField'))
     let pageSize = JSON.parse(window.localStorage.getItem('searchPageSize'))
+    let displayOptions = JSON.parse(window.localStorage.getItem('displayOptions'))
+    this.displayOptions = (displayOptions ? displayOptions : this.displayOptions)
     this.searchSortOrder = (sortOrder ? sortOrder : this.searchSortOrder)
     this.searchSortField = (sortField ? sortField : this.searchSortField)
     this.searchPageSize = (pageSize ? pageSize : this.searchPageSize)
+    // If the cached options is no longer available, use default
+    let hasSearchSortField = this.searchSortFields.filter(e=>e.value === this.searchSortField).length > 0
+    if (!hasSearchSortField){
+      this.searchSortField = "_score"
+    }
     window.addEventListener('resize', this.hideOrShowFilters)
   },
   mounted () {
@@ -994,6 +996,12 @@ export default {
       window.localStorage.setItem('searchPageSize', JSON.stringify(this.searchPageSize))
       this.newSearch()
     },
+    displayOptions: {
+      handler: function () {
+        window.localStorage.setItem('displayOptions', JSON.stringify(this.displayOptions))
+      },
+      deep: true
+    },
     searchPage () {
       this.submitSearch()
     }
@@ -1046,13 +1054,13 @@ export default {
       searchPageSize: 12,
       totalSearchResults: 0,
       searchSortOrder: 'DESC',
-      searchSortField: 'searchScore',
+      searchSortField: '_score',
       searchSortFields: [
         { text: 'Name', value: 'name' },
         { text: 'User Rating', value: 'averageRating' },
         { text: 'Last Update', value: 'lastActivityDts' },
         { text: 'Approval Date', value: 'approvedDts' },
-        { text: 'Relevance', value: 'searchScore' }
+        { text: 'Relevance', value: '_score' }
       ]
     }
   }
