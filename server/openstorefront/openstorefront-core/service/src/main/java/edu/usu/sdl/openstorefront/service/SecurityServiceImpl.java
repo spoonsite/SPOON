@@ -262,6 +262,9 @@ public class SecurityServiceImpl
 					data.put("verificationCode", userRegistration.getVerificationCode());
 					data.put("replyName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
 					data.put("replyAddress", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+					data.put("applicationName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
+					data.put("hostUrl", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL));
+					data.put("supportEmail", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL));
 					data.put("title", subject);
 					Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_VERIFICATION.toString(), data);
 					email.setSubject(subject);
