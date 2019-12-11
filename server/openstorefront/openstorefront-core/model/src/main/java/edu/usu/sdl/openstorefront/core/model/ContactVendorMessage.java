@@ -61,8 +61,6 @@ public class ContactVendorMessage
 
 	private String supportEmail;
 
-	private String primaryColor;
-
 	@NotNull
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ADMIN_MESSAGE)
 	@Sanitize(HTMLSanitizer.class)
@@ -75,7 +73,6 @@ public class ContactVendorMessage
 		this.hostUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL);
 		this.applicationName = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE);
 		this.supportEmail = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);
-		this.primaryColor = branding.getVuePrimaryColor();
 	}
 
 	public String getMessage()
