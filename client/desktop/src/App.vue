@@ -59,7 +59,8 @@
                   class="menu-item"
                   :to="children.link ? children.link : undefined"
                   :href="children.href ? children.href : undefined"
-                  active-class="menu-item-active">
+                  active-class="menu-item-active"
+                >
                   <v-list-tile-action>
                     <v-icon>fa fa-{{ children.icon }}</v-icon>
                   </v-list-tile-action>
@@ -259,9 +260,24 @@ export default {
             name: 'Watches',
             hasChildren: false,
             permissions: [] },
-            { link: '/watches',
-            icon: 'binoculars',
-            name: 'Test',
+            { href: '/openstorefront/UserTool.action',
+            icon: 'list',
+            name: 'Submissions',
+            hasChildren: false,
+            permissions: [] },
+            { link: '/change-password',
+            icon: 'key',
+            name: 'Change Password',
+            hasChildren: false,
+            permissions: [] },
+            { href: '/openstorefront/UserTool.action',
+            icon: 'question-circle',
+            name: 'Questions',
+            hasChildren: false,
+            permissions: [] },
+            { href: '/openstorefront/UserTool.action',
+            icon: 'star-half-alt',
+            name: 'Reviews',
             hasChildren: false,
             permissions: [] },
           ],
@@ -387,7 +403,7 @@ html {
   font-family: "Roboto";
   color: #333;
 }
-.menu-item:hover {
+.menu-item:hover, .v-list__group__header:hover {
   background-color: rgba(0,0,0,0.1);
   cursor: pointer;
 }
@@ -412,9 +428,5 @@ header {
 }
 .v-list__group--active::after, .v-list__group--active::before {
     background: white !important;
-}
-.v-list__group__header:hover{
-  background-color: rgba(0,0,0,0.1) !important;
-  cursor: pointer;
 }
 </style>
