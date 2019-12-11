@@ -1076,7 +1076,7 @@ export default {
         userFromEmail: this.userEmail,
         message: this.vendorMessage,
         partName: this.detail.name,
-        partUrl: window.location.href
+        partId: this.detail.componentId
       }
       this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor-template`, data)
         .then(response => {

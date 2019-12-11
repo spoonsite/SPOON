@@ -1,5 +1,28 @@
 <!-- FROM: https://github.com/leemunroe/responsive-html-email-template -->
 
+<!--
+The MIT License (MIT)
+
+Copyright (c) [2013] [Lee Munroe]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
 <!doctype html>
 <html>
 
@@ -43,11 +66,6 @@
             font-family: sans-serif;
             font-size: 14px;
             vertical-align: top;
-        }
-
-
-        .pic-background {
-            background-color: ${primaryColor};
         }
 
         .text-block {
@@ -384,8 +402,9 @@
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td>
-                                            <img class="pic-background" src="${logoUrl}"/>
-                                            <img class="pic-background" src="cid:embeddedimage"/>
+                                            <!-- This is the SPOON Logo -->
+                                            <img src="data:image/png;base64,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" alt="SPOON Logo" />
+                                            <br/>
                                             <h2>Request for information about ${partName}</h2>
                                             <p>Hi there,</p>
                                             <p>A user on ${applicationName} was looking to contact you about <a href="${partUrl}">${partName}</a>.</p>
@@ -413,11 +432,6 @@
                                             ${applicationName}
                                         </a>
                                     </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="content-block powered-by">
-                                    Powered by <a href="http://htmlemail.io">HTMLemail</a>.
                                 </td>
                             </tr>
                         </table>

@@ -51,6 +51,8 @@ public class ContactVendorMessage
 
 	@APIDescription("Url of the parts entry detail page")
 	@ConsumeField
+	private String partId;
+
 	private String partUrl;
 
 	private String hostUrl;
@@ -58,10 +60,6 @@ public class ContactVendorMessage
 	private String applicationName;
 
 	private String supportEmail;
-
-	private String logoUrl;
-
-	private String logoName;
 
 	private String primaryColor;
 
@@ -73,19 +71,10 @@ public class ContactVendorMessage
 
 	public void updateConfigs(Branding branding)
 	{
+		this.partUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL) + "/Landing.action#/entry-detail/" + this.partId;
 		this.hostUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL);
 		this.applicationName = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE);
 		this.supportEmail = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);
-		this.logoUrl = branding.getSecondaryLogoUrl();
-
-		String name = null;
-		try{
-			name = logoUrl.split("GeneralMedia&name=")[1];
-		} catch(Exception e) {
-			name = null;
-		}
-
-		this.logoName = name;
 		this.primaryColor = branding.getVuePrimaryColor();
 	}
 
@@ -167,27 +156,11 @@ public class ContactVendorMessage
 		this.supportEmail = supportEmail;
 	}
 
-	public String getLogoUrl() {
-		return logoUrl;
-	}
-
-	public void setLogoUrl(String logoUrl) {
-		this.logoUrl = logoUrl;
-	}
-
 	public String getPrimaryColor() {
 		return primaryColor;
 	}
 
 	public void setPrimaryColor(String primaryColor) {
 		this.primaryColor = primaryColor;
-	}
-
-	public String getLogoName() {
-		return logoName;
-	}
-
-	public void setLogoName(String logoName) {
-		this.logoName = logoName;
 	}
 }

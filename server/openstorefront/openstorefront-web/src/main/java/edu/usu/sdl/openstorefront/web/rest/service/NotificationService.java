@@ -39,10 +39,18 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -66,6 +74,7 @@ import javax.mail.Message;
 public class NotificationService
 		extends BaseResource
 {
+	private static final Logger LOG = Logger.getLogger(NotificationService.class.getName());
 
 	@POST
 	@APIDescription("Sends an admin message to all active user with emails.")
@@ -182,13 +191,6 @@ public class NotificationService
 			contactVendorMessage.updateConfigs(branding);
 			Email email = MailManager.newTemplateEmail(MailManager.Templates.CONTACT_VENDOR.toString(), contactVendorMessage, false);
 
-			GeneralMedia generalMediaExample = new GeneralMedia();
-			generalMediaExample.setName(contactVendorMessage.getLogoName());
-			GeneralMedia generalMedia = service.getPersistenceService().queryOneByExample(generalMediaExample);
-			if(generalMedia != null){
-				DataSource imageData = new FileDataSource(FileSystemManager.getInstance().getBaseDirectory() + FileSystemManager.MEDIA_DIR + generalMedia.getFile().getFileName());
-				email.addEmbeddedImage("cid:embeddedimage", imageData);
-			}
 			email.addRecipient("", contactVendorMessage.getUserToEmail(), Message.RecipientType.TO);
 			email.setSubject("Spoonsite User Request for Information");
 			try {
@@ -232,4 +234,22 @@ public class NotificationService
 		return sendSingleEntityResponse(recentChangesStatus);
 	}
 
+	private String getByteArrayFromImageURL(String url) {
+		try {
+			URL imageUrl = new URL(url);
+			URLConnection ucon = imageUrl.openConnection();
+			InputStream is = ucon.getInputStream();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int read = 0;
+			while ((read = is.read(buffer, 0, buffer.length)) != -1) {
+				baos.write(buffer, 0, read);
+			}
+			baos.flush();
+			return Base64.getEncoder().encodeToString(baos.toByteArray());
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, e.toString());
+		}
+		return null;
+	}
 }
