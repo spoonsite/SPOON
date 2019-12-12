@@ -22,7 +22,10 @@
             </v-tooltip>
             <!-- <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn> -->
           </v-toolbar-items>
-          <v-menu offset-y :close-on-content-click="false">
+          <v-menu offset-y
+            :close-on-content-click="closeMenu"
+
+          >
             <v-toolbar-side-icon slot="activator"></v-toolbar-side-icon>
             <v-list>
               <!-- Add permissions check. -->
@@ -33,6 +36,7 @@
                 :to="link.link ? link.link : undefined"
                 :href="link.href ? link.href : undefined"
                 active-class="menu-item-active"
+                @mouseover="closeMenu = true"
               >
                 <v-list-tile-action>
                   <v-icon>fa fa-{{ link.icon }}</v-icon>
@@ -47,7 +51,10 @@
                 :key="link.name"
                 :prepend-icon="'fa fa-' + link.icon"
               >
-                <v-list-tile slot="activator">
+                <v-list-tile
+                  slot="activator"
+                  @mouseover="closeMenu = false"
+                >
                   <v-list-tile-content>
                     <v-list-tile-title>{{ link.name }}</v-list-tile-title>
                   </v-list-tile-content>
@@ -60,6 +67,7 @@
                   :to="children.link ? children.link : undefined"
                   :href="children.href ? children.href : undefined"
                   active-class="menu-item-active"
+                  @mouseover="closeMenu = true"
                 >
                   <v-list-tile-action>
                     <v-icon>fa fa-{{ children.icon }}</v-icon>
@@ -77,6 +85,7 @@
                 :to="link.link ? link.link : undefined"
                 :href="link.href ? link.href : undefined"
                 active-class="menu-item-active"
+                @mouseover="closeMenu = true"
               >
                 <v-list-tile-action>
                   <v-icon>fa fa-{{ link.icon }}</v-icon>
@@ -237,6 +246,7 @@ export default {
       firstTimeDialog: false,
       loggingOut: false,
       drawer: false,
+      closeMenu: true,
       watchNumber: 0,
       beginningLinks: [ // Leave a permission array empty if no permissions are needed.
         { link: '/',
