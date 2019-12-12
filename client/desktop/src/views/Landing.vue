@@ -94,14 +94,14 @@
       <v-btn dark :href="item.link">View More</v-btn>
     </v-container>
 
-    <DisclaimerModal v-model="showDisclaimer"></DisclaimerModal>
+    <DisclaimerModal v-model="showDisclaimer" @close="showDisclaimer=false"></DisclaimerModal>
 
     <v-footer color="primary" dark height="auto">
       <v-card color="primary" dark flat class="footer-wrapper">
         <div class="footer-block" v-html="$store.state.branding.landingPageFooter"></div>
         <div style="display: flex; align-items: center; justify-content: center;">
           <p style="text-align: center;" class="ma-0" v-html="$store.state.appVersion"></p>
-          <v-btn dark color="grey darken-3" @click="showDisclaimer = true">Disclaimer</v-btn>
+          <v-btn dark color="grey darken-3" @click.stop="showDisclaimer = true">Disclaimer</v-btn>
         </div>
       </v-card>
     </v-footer>

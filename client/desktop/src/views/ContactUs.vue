@@ -54,7 +54,7 @@
             <v-flex xs12 pt-0 pb-0>
               <v-btn
                 block
-                color="accent"
+                color="success"
                 style="margin-bottom:2em;"
                 :disabled="!valid"
                 @click="submit"
@@ -78,10 +78,15 @@
       </v-form>
     </v-layout>
 
-    <v-dialog v-model="confirmationDialog" max-width="300px">
-      <v-card title>
+    <v-dialog
+      v-model="confirmationDialog"
+      max-width="25em"
+    >
+      <v-card>
+        <ModalTitle title="Submitted Feedback" @close="confirmationDialog = false" />
         <v-card-text>Feedback has been submitted.</v-card-text>
-        <v-card-actions >
+        <v-card-actions>
+          <v-spacer/>
           <v-btn @click="$router.push('/')">Return to Homepage</v-btn>
         </v-card-actions>
       </v-card>
@@ -91,8 +96,13 @@
 </template>
 
 <script lang="js">
+import ModalTitle from '@/components/ModalTitle'
+
 export default {
   name: 'contact-page',
+  components: {
+    ModalTitle
+  },
   props: [],
   mounted () {
     if (this.$route.params.ticket) {
