@@ -6,9 +6,7 @@ weight = 99999
 
 This is a list of all the features on SPOON.
 
-## Landing
-
-Features that are on the Landing page.
+## Landing Page
 
 ### Searching
 
@@ -22,14 +20,14 @@ Features that are on the Landing page.
 
 ### Highlights
 
-* Displays Active Highlights  (will be able to read more with full HTML display)
+* Displays Active Highlights (will be able to read more with full HTML display)
 * Highlights are HTML and can have Media
 
 ---
 
 ## Notifications
 
-Notifications are system generated or admin generated messages. They are primarily intended is to notify the user that some background process (IE. reports) have completed.
+Notifications are system generated or admin generated messages. They are primarily intended to notify the user that some background process (e.g. reports) have completed.
 
 * Notification should be monitoring events on all pages
 * The application will pop-up a message when it receives the message (Usually in the bottom right-hand corner of the screen)
