@@ -19,7 +19,7 @@ weight = 230
 
 ## Contacts
 
-Entries on SPOON can have a designated 'Contact', a person who is the point of contact for that particular entry.
+Entries on SPOON can have a designated "Contact", a person who is the point of contact for that particular entry.
 
 ## Organizations
 
@@ -27,11 +27,11 @@ Here you can see all the registered organizations on SPOON. There are tools for 
 
 ## Questions
 
-Users can ask questions to entry's contacts, but before the question shows up publicly on SPOON, it must be approved by the Admin.
+Users can ask questions to an entry's contacts, but before the question shows up publicly on SPOON, it must be approved by the Admin.
 
 Question/Answer Status | EXPLANATION
 -----------------: | -----------
-Pending Questions/Answers | All newly created questions (created by users, that is) are viewable here. While a question is marked as a Pending Question, it is not visible to anyone by the user that posed the question. __The Admin will NOT receive any notification when a new question is placed.__ After a question has been asked, the Admin must *explicitly click on the Question* in the question queue to load answers to that question into the "Answers" queue on the far right column. __The Admin will NOT receive any notifications when a new answer is placed.__ Any edits to the question/answer by a user will reset the status of that question/answer to Pending.
+Pending Questions/Answers | All newly created questions (i.e. created by users, that is) are viewable here. While a question is marked as a Pending Question, it is not visible to anyone but the user who posed the question. __The Admin will NOT receive any notification when a new question is placed.__ After a question has been asked, the Admin must *explicitly click the Question* in the question queue to load answers to that question into the **Answers** queue on the far right column. __The Admin will NOT receive any notifications when a new answer is placed.__ Any edits to the question/answer by a user will reset the status of that question/answer to Pending.
 Active Questions/Answers | Setting a question/answer as being "Active" makes it visible to everyone
 Inactive Questions/Answers | Inactivating the question/answer archives it. Even the user who placed the question/answer will not be able to see it when he/she looks at the entry.
 
