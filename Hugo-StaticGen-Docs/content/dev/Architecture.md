@@ -35,7 +35,7 @@ Figure 2. Server Architecture Diagram
 Component definitions are as follows:
 
 - **Security** - Authentication and authorization is delegated to OpenAM. This is configured through a custom realm using the Apache Shiro library. All requests are passed through this filter.
-- **REST API** - The REST API is the component that handles the data interaction between the clients and provides the interface through which the clients can communicate. The REST API(application programming interface) is broken into two sections: resources and services. Resources handle the CRUD(create, reade, update, and delete) operations on the data. Services handle operations across data sets. This provides a clean and clear API for integrators.
+- **REST API** - The REST API is the component that handles the data interaction between the clients and provides the interface through which the clients can communicate. The REST API (application programming interface) is broken into two sections: resources and services. Resources handle the CRUD (create, reade, update, and delete) operations on the data. Services handle operations across data sets. This provides a clean and clear API for integrators.
 - **API Docs** - The API docs are generated live based on the currently running code. This keeps the documents always current and reduces maintenance. Other system-related call-backs (e.g., retrieving binary resources, login handling, etc.) are handled through the Stripes framework.
 - **Business Layer**  - Handles all rules applied to the data as well transaction support.
 - **Managers** - The role of the manager class is to handle the interaction with a resource. This enables clean initialization and shutdown of resources and provides centralized access.
@@ -84,7 +84,7 @@ Figure 4. Runtime Component Integration Vectors
 
 ### 3.4 Component Integration Vectors Details
 
-The component integration vectors(CIV) are shown below.
+The component integration vectors (CIV) are shown below.
 
 | Source Component       | Class | Target Component | Notes                                                                            |
 |------------------------|-------|------------------|----------------------------------------------------------------------------------|
@@ -121,12 +121,12 @@ The CIVs, as defined by the DI2E PMO, are as follows:
 
 The applicable ports are shown below:
 
-| Port(Default) | Description                   | Type                                                     |
+| Port (Default) | Description                   | Type                                                     |
 |---------------|-------------------------------|----------------------------------------------------------|
 | 8080          | Tomcat HTTP                   | Inbound                                                  |
-| 8009          | Tomcat AJP                    | Inbound(Open if not using 8080)                          |
-| 9200          | Elasticsearch(Accepts JSON)   | Outbound(Does not need to be exposed outside the system) |
-| 9300          | Elasticsearch(Accepts Binary) | Outbound(Does not need to be exposed outside the system) |
+| 8009          | Tomcat AJP                    | Inbound (Open if not using 8080)                          |
+| 9200          | Elasticsearch (Accepts JSON)   | Outbound (Does not need to be exposed outside the system) |
+| 9300          | Elasticsearch (Accepts Binary) | Outbound (Does not need to be exposed outside the system) |
 
 ------
 
