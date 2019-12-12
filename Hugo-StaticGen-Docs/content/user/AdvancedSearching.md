@@ -17,18 +17,18 @@ types of searches that can be performed are:
 1. Wildcard searching (\* and ?)
 1. Exact phrase searching
 1. Case insensitivity
-1. Filtered Searches
+1. Filtered searches
 1. Tags
-1. Comparing
-1. Customizing the display
+1. Comparison
+1. Customization of the display
 
 **Note:** The type ahead on the search field only looks at the title to see if it contains the text.  
-The user can then select the suggestion by clicking on it or continue with a full text search.
+The user can then select the suggestion by clicking it or continue with a full text search.
 
 ### Search Field Differentiation or Specificity
 
 To search on different fields using a keyword search, you will need to change your search options. These
-options allow you to filter your search by only matching on certain fields. This is done in the menu bar left of the search bar labeled "search options".
+options allow you to filter your search by only matching on certain fields. This is done in the menu bar left of the search bar labeled **Search Options**.
 
 ### Fuzzy Matching and Wildcards
 
@@ -77,35 +77,35 @@ Search examples:
 
 ### Filtered Searches
 
-From the search results screen the left-most panel is the Filters panel.  
+On the **Search Results** page the left-most panel is the **Filters** panel.  
 Here, results can be narrowed by filtering on various aspects such as:
 
 * **Name:**  The name of the entry
 * **Tag:**  Type the name of a tag or select from the drop-down.  Tags can be combined and added to the filter or removed.
 * **Topic:**  DI2E Component, Article, etc.
-* **User Rating:**  This will show all entries with the average star rating selected (or better, i.e. or a **higher** average star rating)
-* **Vitals:**  This gives a fine-tuned and very detailed approach to filtering by many different vitals such as DI2E Intent, State, and Alignment, for example.
+* **User Rating:**  This will show all entries with the average star rating selected (or better, *i.e.* a **higher** average star rating)
+* **Vitals:**  This gives a fine-tuned and very detailed approach to filtering by many different vitals such as DI2E Intent, State, and Alignment.
 
 ### Using Tags
 
-Users can "Tag" listings so that they can be used to later find and refine search results. User-created tags are visible to all users. However, only the
-owner of the tag or an admin user may remove a tag. Tags are used in the search field shown at the top of the screen and on the home page.
+Users can "tag" listings so that they can be used to later find and refine search results. User-created tags are visible to all users. However, only the
+owner of the tag or an admin user may remove a tag. Tags are used in the search field shown at the top of the **Search Results** page and on the **Home** page.
 
 **How to create a tag:**
 
-1. From the search results screen, click on the entry title.  The details of the entry will be displayed.
-1. Click on the "Tag" icon to open the tag panel.
-1. Enter a new tag in the text field OR choose an existing tag by clicking on the drop down arrow.  Click "Add" to apply the tag to the entry.
+1. From the **Search Results** page, click on the entry title.  The details of the entry will be displayed.
+1. Click the **Tag** icon to open the tag panel.
+1. Enter a new tag in the text field OR choose an existing tag by clicking on the drop down arrow.  Click **Add** to apply the tag to the entry.
 
 **How to remove a tag you created:**
 
-1. From the search results screen, click on the entry title.  The details of the entry will be displayed.
+1. From the **Search Results** page, click on the entry title.  The details of the entry will be displayed.
 1. Click on the "Tag" icon to open the tag panel. Tags will be displayed below the "Add Tag" text field.
-1. Locate the tag and click on the drop down arrow and select "Delete".
+1. Locate the tag, click the drop down arrow and select **Delete**.
 
 ### Comparing
 
-The comparison feature allows for side-by-side viewing of multiple
+The comparison feature enables side-by-side comparison of multiple
 listings. For example, there may be several entries that provide the
 same kind of features (e.g. Cesium and Google maps). You can use the
 comparison feature to view their details together to find the entry
@@ -113,14 +113,14 @@ better suited your project's needs.
 
 **How to compare entries:**
 
-1. From the Search Results screen check the "Add to Compare" box on 2 or more entries.
-1. Click on the **Compare** button at the top of the Search Results window. A side-by-side comparison will appear in a new window.
-1. If more than two entries were selected, you can select which entries to compare by using the drop-down list at the top to select the various entries.
-1. To remove all selected entries,  click on the drop-down arrow next to the **Compare** button and select "Clear All Selected Entries".
+1. From the **Search Results** page, check the **Add to Compare** box on 2 or more entries.
+1. Click on the **Compare** button at the top of the **Search Results** page. A side-by-side comparison will appear in a pop-up window.
+1. If more than two entries were selected, you can select which entries to compare by using the drop-down list at the top.
+1. To remove all selected entries, click the drop-down arrow next to the **Compare** button and select **Clear All Selected Entries**.
 
 ### Customizing the Search Display
 
-On the search results page, filtering can be done by Name, Tag, Topic, User Rating, or Vitals.
+On the **Search Results** page, filtering can be done by Name, Tag, Topic, User Rating, or Vitals.
 
 The search results display can also be customized by clicking on the gear icon
 and down arrow at the top-right of the search results.  Check or uncheck the

@@ -58,8 +58,8 @@ Description | The description of the entry type
 Parent Type | Parent categories can have multiple children
 Assigned User(s) | Single users that are in charge of reviewing that parts of that category
 Assigned Group(S) |  Groups are a function of [Security roles](/applicationadmin/securityroles/); assigning a group to this categories will ensure that the group has permission to see parts of this type ( to review them as they are going through the Workplan Progress)
-Entry Display Template | This feature was deprecated in V2.11. It allowed administrators to create custom templates, for the search results page, for each entry type
-Icon URL | The url for the icon that will be shown for that entry type on the search results page
+Entry Display Template | This feature was deprecated in V2.11. It allowed administrators to create custom templates, for the **Search Results** page, for each entry type
+Icon URL | The url for the icon that will be shown for that entry type on the **Search Results** page
 
 ## Submission Form Templates
 
