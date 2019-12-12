@@ -50,10 +50,12 @@
                 v-for="link in filteredGroupLinks"
                 :key="link.name"
                 :prepend-icon="'fa fa-' + link.icon"
+                @mouseover="closeMenu = false"
               >
                 <v-list-tile
                   slot="activator"
                   @mouseover="closeMenu = false"
+                  class="alt-menu-item"
                 >
                   <v-list-tile-content>
                     <v-list-tile-title>{{ link.name }}</v-list-tile-title>
@@ -63,7 +65,7 @@
                   v-for="children in link.children"
                   :key="children.name"
                   style="background-color: #EEEEEE;"
-                  class="menu-item"
+
                   :to="children.link ? children.link : undefined"
                   :href="children.href ? children.href : undefined"
                   active-class="menu-item-active"
@@ -414,8 +416,12 @@ html {
   font-family: "Roboto";
   color: #333;
 }
-.menu-item:hover, .v-list__group__header:hover {
-  background-color: rgba(0,0,0,0.1);
+.menu-item:hover, .v-list__group__header:hover{
+  background-color: rgba(0,0,0,0.1) !important;
+  cursor: pointer;
+}
+.alt-menu-item:hover{
+  background-color: rgba(0,0,0,0) !important;
   cursor: pointer;
 }
 .menu-item-active {
