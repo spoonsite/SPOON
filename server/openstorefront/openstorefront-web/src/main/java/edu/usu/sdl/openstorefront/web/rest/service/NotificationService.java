@@ -192,7 +192,8 @@ public class NotificationService
 			Email email = MailManager.newTemplateEmail(MailManager.Templates.CONTACT_VENDOR.toString(), contactVendorMessage, false);
 
 			email.addRecipient("", contactVendorMessage.getUserToEmail(), Message.RecipientType.TO);
-			email.setSubject("Spoonsite User Request for Information");
+			email.setFromAddress(contactVendorMessage.getUserName(), contactVendorMessage.getUserFromEmail());
+			email.setSubject("SPOON - Request for Information");
 			try {
 				MailManager.send(email, true);
 			} catch (Exception e) {

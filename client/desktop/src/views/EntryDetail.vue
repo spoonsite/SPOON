@@ -234,7 +234,7 @@
               v-model="userEmail = $store.state.currentUser.email"
             >
             </v-text-field>
-            <p>Message:</p>
+            <p>Detailed Message:</p>
             <v-textarea
               :rules="formMessageRules"
               style="background-color: white;"
@@ -1074,6 +1074,7 @@ export default {
       let data = {
         userToEmail: sendToEmail,
         userFromEmail: this.userEmail,
+        userName: this.$store.state.currentUser.firstName + ' ' + this.$store.state.currentUser.lastName,
         message: this.vendorMessage,
         partName: this.detail.name,
         partId: this.detail.componentId

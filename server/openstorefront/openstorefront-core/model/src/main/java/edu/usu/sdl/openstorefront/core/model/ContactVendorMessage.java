@@ -45,6 +45,10 @@ public class ContactVendorMessage
 	@ConsumeField
 	private String userFromEmail;
 
+    @APIDescription("Name of user sending the message")
+	@ConsumeField
+	private String userName;
+
 	@APIDescription("Name of the part")
 	@ConsumeField
 	private String partName;
@@ -153,11 +157,19 @@ public class ContactVendorMessage
 		this.supportEmail = supportEmail;
 	}
 
-	public String getPrimaryColor() {
-		return primaryColor;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setPrimaryColor(String primaryColor) {
-		this.primaryColor = primaryColor;
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getPartId() {
+		return partId;
+	}
+
+	public void setPartId(String partId) {
+		this.partId = partId;
 	}
 }
