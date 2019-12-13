@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import Answer from './Answer'
+import Answer from '@/components/Answer'
 import ModalTitle from '@/components/ModalTitle'
 import _ from 'lodash'
 
@@ -112,9 +112,9 @@ export default {
     Answer,
     ModalTitle
   },
-  mounted () {
+  mounted() {
   },
-  data () {
+  data() {
     return {
       answers: [],
       showAnswers: false,
@@ -130,13 +130,13 @@ export default {
     }
   },
   methods: {
-    checkAnswers () {
+    checkAnswers() {
       this.noAnswers = false
       if (this.answers.length === 0) {
         this.noAnswers = true
       } else {
         let hasAnswer = false
-        this.answers.forEach(function (el) {
+        this.answers.forEach(function(el) {
           if (el.activeStatus !== 'I') {
             hasAnswer = true
           }
@@ -146,7 +146,7 @@ export default {
         }
       }
     },
-    getAnswers (qid) {
+    getAnswers(qid) {
       if (_.isEmpty(this.answers)) {
         this.loading = true
         this.$http.get(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`)
@@ -158,7 +158,7 @@ export default {
           .catch(e => this.errors.push(e))
       }
     },
-    submitAnswer (qid) {
+    submitAnswer(qid) {
       let data = {
         dataSensitivity: '',
         organization: this.$store.state.currentUser.organization,
@@ -179,7 +179,7 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting the answer.'))
     },
-    deleteQuestion (qid) {
+    deleteQuestion(qid) {
       this.$http.delete(`http://localhost:8080/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}`)
         .then(response => {
           this.deleteQuestionDialog = false
@@ -189,7 +189,7 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem deleting the question.'))
     },
-    editQuestion (qid) {
+    editQuestion(qid) {
       let data = {
         dataSensitivity: '',
         organization: this.$store.state.currentUser.organization,
@@ -208,14 +208,14 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
     },
-    deleteAnswer (answer) {
-      this.answers = this.answers.filter(function (el) {
+    deleteAnswer(answer) {
+      this.answers = this.answers.filter(function(el) {
         return el.responseId !== answer.responseId
       })
       // check if no answers
       this.checkAnswers()
     },
-    openEditQuestionDialog () {
+    openEditQuestionDialog() {
       this.newQuestion = this.question.question
       this.editQuestionDialog = true
     }

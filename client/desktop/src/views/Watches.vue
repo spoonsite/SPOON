@@ -45,12 +45,12 @@
 </template>
 
 <script lang="js">
-import router from '../router'
+import router from '@/router/index'
 
 export default {
   name: 'watches-page',
   props: [],
-  mounted () {
+  mounted() {
     // need to check if we have the current user
     if (this.$store.state.currentUser.username) {
       this.getWatches()
@@ -64,17 +64,17 @@ export default {
       )
     }
   },
-  data () {
+  data() {
     return {
       watches: [],
       loading: true
     }
   },
   methods: {
-    nav (url) {
+    nav(url) {
       router.push(url)
     },
-    getWatches () {
+    getWatches() {
       this.loading = true
       this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
         .then(response => {
@@ -84,7 +84,7 @@ export default {
           this.loading = false
         })
     },
-    moreInformation (componentId) {
+    moreInformation(componentId) {
       router.push({
         name: 'Entry Detail',
         params: {
@@ -92,7 +92,7 @@ export default {
         }
       })
     },
-    updateClasses (item) {
+    updateClasses(item) {
       return item.lastUpdateDts > item.lastViewDts ? 'light-green accent-1' : ''
     }
   }

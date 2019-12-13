@@ -70,9 +70,9 @@
 export default {
   name: 'Lightbox',
   props: ['list'],
-  mounted () {
+  mounted() {
   },
-  data () {
+  data() {
     return {
       baseURL: '/openstorefront/',
       lightbox: false,
@@ -81,20 +81,20 @@ export default {
     }
   },
   methods: {
-    lightboxOn (index) {
+    lightboxOn(index) {
       this.lightbox = true
       this.currentIndex = index
       this.currentItem = this.list[index]
       this.lightboxSetImage()
     },
-    lightboxSetImage () {
+    lightboxSetImage() {
       this.currentItem = this.list[this.currentIndex]
     },
-    lightboxNext () {
+    lightboxNext() {
       this.currentIndex = (this.currentIndex + 1) % this.list.length
       this.lightboxSetImage()
     },
-    lightboxPrev () {
+    lightboxPrev() {
       this.currentIndex = this.currentIndex - 1
       if (this.currentIndex < 0) {
         this.currentIndex = this.list.length - 1

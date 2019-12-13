@@ -104,7 +104,7 @@ export default {
     ModalTitle
   },
   props: [],
-  mounted () {
+  mounted() {
     if (this.$route.params.ticket) {
       this.ticket = this.$route.params.ticket
       this.description = 'Error Description: ' + this.ticket
@@ -138,7 +138,7 @@ export default {
     ]
   }),
   methods: {
-    submit () {
+    submit() {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
         this.isLoading = true
@@ -165,12 +165,12 @@ export default {
           })
       }
     },
-    cancel () {
+    cancel() {
       this.$refs.form.reset()
     }
   },
   computed: {
-    cancelable () {
+    cancelable() {
       return this.contactType !== undefined ||
         this.subject !== undefined ||
         this.description !== undefined

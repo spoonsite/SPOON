@@ -503,10 +503,9 @@
 <script>
 import _ from 'lodash'
 import StarRating from 'vue-star-rating'
-import SearchBar from '../components/SearchBar'
+import SearchBar from '@/components/SearchBar'
 import ModalTitle from '@/components/ModalTitle'
-import router from '../router.js'
-import crush from '../util/scientificToDecimal.js'
+import crush from '@/util/scientificToDecimal'
 
 export default {
   name: 'SearchPage',
@@ -515,7 +514,7 @@ export default {
     StarRating,
     ModalTitle
   },
-  created () {
+  created() {
     this.$store.watch((state) => state.selectedComponentTypes, (newValue, oldValue) => {
       this.newSearch()
     })
@@ -523,29 +522,29 @@ export default {
     let sortField = JSON.parse(window.localStorage.getItem('searchSortField'))
     let pageSize = JSON.parse(window.localStorage.getItem('searchPageSize'))
     let displayOptions = JSON.parse(window.localStorage.getItem('displayOptions'))
-    this.displayOptions = (displayOptions ? displayOptions : this.displayOptions)
-    this.searchSortOrder = (sortOrder ? sortOrder : this.searchSortOrder)
-    this.searchSortField = (sortField ? sortField : this.searchSortField)
-    this.searchPageSize = (pageSize ? pageSize : this.searchPageSize)
+    this.displayOptions = (displayOptions || this.displayOptions)
+    this.searchSortOrder = (sortOrder || this.searchSortOrder)
+    this.searchSortField = (sortField || this.searchSortField)
+    this.searchPageSize = (pageSize || this.searchPageSize)
     // If the cached options is no longer available, use default
-    let hasSearchSortField = this.searchSortFields.filter(e=>e.value === this.searchSortField).length > 0
-    if (!hasSearchSortField){
-      this.searchSortField = "_score"
+    let hasSearchSortField = this.searchSortFields.filter(e => e.value === this.searchSortField).length > 0
+    if (!hasSearchSortField) {
+      this.searchSortField = '_score'
     }
     window.addEventListener('resize', this.hideOrShowFilters)
   },
-  mounted () {
+  mounted() {
     this.parseFiltersFromUrl(this.$route.query)
     this.newSearch()
     this.hideOrShowFilters()
   },
-  beforeRouteUpdate (to, from, next) {
+  beforeRouteUpdate(to, from, next) {
     this.parseFiltersFromUrl(to.query)
     this.newSearch()
     next()
   },
   methods: {
-    parseFiltersFromUrl (params) {
+    parseFiltersFromUrl(params) {
       if (params.q) {
         this.searchQuery = params.q
       }
@@ -569,7 +568,7 @@ export default {
         this.searchoptions = params.searchoptions.split(',')
       }
     },
-    getComponentName (code) {
+    getComponentName(code) {
       let name = ''
       if (this.$store.state.componentTypeList === undefined) {
         this.$store.dispatch('getComponentTypeList')
@@ -581,18 +580,18 @@ export default {
       })
       return name
     },
-    removeTag (tag) {
+    removeTag(tag) {
       this.filters.tags = this.filters.tags.filter(el => {
         return el !== tag
       })
     },
-    addComponentType (compType) {
+    addComponentType(compType) {
       this.filters.entryType = compType
     },
-    addOrganization (org) {
+    addOrganization(org) {
       this.filters.organization = org
     },
-    clear () {
+    clear() {
       this.filters = {
         attributes: [],
         entryType: '',
@@ -601,7 +600,7 @@ export default {
         children: false
       }
     },
-    resetOptions () {
+    resetOptions() {
       this.searchPageSize = 12
       this.searchSortField = 'searchScore'
       this.searchSortOrder = 'DESC'
@@ -613,12 +612,12 @@ export default {
       this.displayOptions.lastUpdated = true
       this.displayOptions.approvalDate = true
     },
-    addTag (tag) {
+    addTag(tag) {
       if (this.filters.tags.indexOf(tag) === -1) {
         this.filters.tags.push(tag)
       }
     },
-    parseAttributesFromSearchResponse (attributesAggregation) {
+    parseAttributesFromSearchResponse(attributesAggregation) {
       let that = this
       that.attributeKeys = []
       that.searchResultsAttributes = {}
@@ -653,9 +652,8 @@ export default {
           if (!codesMap[source.type].hasOwnProperty(source.label)) {
             that.searchResultsAttributes[source.type].codes.push({ 'code': source.label, 'count': 1 })
             codesMap[source.type][source.label] = 0
-          }
-          // If the attribute code is in the table, increment the count
-          else {
+          } else {
+            // If the attribute code is in the table, increment the count
             codesMap[source.type][source.label] = codesMap[source.type][source.label] + 1
             let objIndex = that.searchResultsAttributes[source.type].codes.findIndex(obj => obj.code === source.label)
             let count = that.searchResultsAttributes[source.type].codes[objIndex].count
@@ -670,7 +668,7 @@ export default {
             .sort()
             .slice(0, 10)
     },
-    getCompTypeLabels (entryTypes) {
+    getCompTypeLabels(entryTypes) {
       let that = this
       // This gets the labels for each of the entry types by using the codes return from request
 
@@ -693,7 +691,7 @@ export default {
         this.componentsList.push({ 'doc_count': 0, 'key': this.filters.entryType, 'label': entryTypeLabel })
       }
     },
-    submitSearch () {
+    submitSearch() {
       this.comparisonList = []
       let that = this
       // a new search clears the data and can trigger a watcher
@@ -792,20 +790,20 @@ export default {
           that.searchQueryIsDirty = false
         })
     },
-    newSearch () {
+    newSearch() {
       this.searchPage = 1
       this.submitSearch()
     },
-    getNumPages () {
+    getNumPages() {
       // compute number of pages of data based on page size
       if (this.totalSearchResults % this.searchPageSize === 0) return (this.totalSearchResults / this.searchPageSize) - 1
       return Math.floor(this.totalSearchResults / this.searchPageSize) + 1
     },
-    removeAttributeFilter (attribute) {
+    removeAttributeFilter(attribute) {
       this.filters.attributes.splice(this.filters.attributes.indexOf(attribute), 1)
       this.filters.attributes = [...this.filters.attributes]
     },
-    printAttribute (attribute) {
+    printAttribute(attribute) {
       let attr = JSON.parse(attribute)
       let attributeType = this.$store.state.attributeMap[attr.type]
       if (attributeType === undefined) {
@@ -822,7 +820,7 @@ export default {
         return `${attributeType.description} : ${crush.crushNumericString(attr.code)} ${attributeType.attributeUnit}`
       }
     },
-    copyUrlToClipboard () {
+    copyUrlToClipboard() {
       var url = encodeURI(window.location.origin + window.location.pathname + this.searchUrl())
       var copyText = this.$refs.urlForClipboard
       copyText.value = url
@@ -830,23 +828,23 @@ export default {
       document.execCommand('copy')
       this.$toasted.show('Search url copied to clipboard', { position: 'top-left', duration: 3000 })
     },
-    getFirstCompType (componentType) {
+    getFirstCompType(componentType) {
       var index = componentType.indexOf('>')
       if (index !== -1) {
         return componentType.slice(0, index)
       }
     },
-    getSecondCompType (componentType) {
+    getSecondCompType(componentType) {
       var index = componentType.indexOf('>')
       if (index !== -1) {
         return componentType.slice(index)
       }
     },
-    shortenDescription (desc) {
+    shortenDescription(desc) {
       var descriptionLength = 200
       return (desc.slice(0, descriptionLength) + '...')
     },
-    sortComparisonData () {
+    sortComparisonData() {
       this.deleteAllTableData()
       this.comparisonDataHeaders.push({ text: '', value: 'name', sortable: false })
       for (var component in this.comparisonList) {
@@ -859,7 +857,7 @@ export default {
       this.sortListByCommonalities()
       this.addDescriptionTableData()
     },
-    formatDataForDisplay (possibleAttributes) {
+    formatDataForDisplay(possibleAttributes) {
       for (var attribute in possibleAttributes) {
         this.comparisonDataDisplay.push({ name: possibleAttributes[attribute] })
         for (var component in this.comparisonList) {
@@ -877,7 +875,7 @@ export default {
         }
       }
     },
-    getAttributeUnit (attributeCompared) {
+    getAttributeUnit(attributeCompared) {
       for (var attribute in this.searchResultsAttributes) {
         if (this.searchResultsAttributes[attribute].label === attributeCompared && this.searchResultsAttributes[attribute].attributeUnit != null) {
           return ' ' + this.searchResultsAttributes[attribute].attributeUnit
@@ -885,7 +883,7 @@ export default {
       }
       return ''
     },
-    countNumberOfSimilarities () {
+    countNumberOfSimilarities() {
       for (var attribute in this.comparisonDataDisplay) {
         var counter = 0
         for (var componentAttribute in this.comparisonDataDisplay[attribute]) {
@@ -896,15 +894,15 @@ export default {
         this.comparisonDataDisplay[attribute]['similarities'] = counter
       }
     },
-    sortListByCommonalities () {
-      this.comparisonDataDisplay.sort(function (similar1, similar2) {
+    sortListByCommonalities() {
+      this.comparisonDataDisplay.sort(function(similar1, similar2) {
         return similar2.similarities - similar1.similarities
       })
       for (var data in this.comparisonDataDisplay) {
         delete this.comparisonDataDisplay[data].similarities
       }
     },
-    getListOfComparableAttributes () {
+    getListOfComparableAttributes() {
       var possibleAttributes = []
       for (var component in this.comparisonList) {
         for (var attribute in this.comparisonList[component].attributes) {
@@ -915,7 +913,7 @@ export default {
       }
       return possibleAttributes
     },
-    addDescriptionTableData () {
+    addDescriptionTableData() {
       this.comparisonDataDisplay.unshift({ name: 'Organization' })
       for (var component in this.comparisonList) {
         this.comparisonDataDisplay[0]['component' + component] = this.comparisonList[component].organization
@@ -929,7 +927,7 @@ export default {
         this.comparisonDataDisplay[0]['component' + comp] = this.comparisonList[comp].componentTypeDescription
       }
     },
-    setDecimalSizeLimit (component, componentAttribute) {
+    setDecimalSizeLimit(component, componentAttribute) {
       if (!isNaN(this.comparisonList[component].attributes[componentAttribute].label) && this.comparisonList[component].attributes[componentAttribute].label.includes('.')) {
         if (this.comparisonList[component].attributes[componentAttribute].label.split('.')[1].length > 4) {
           var numericAttribute = parseFloat(this.comparisonList[component].attributes[componentAttribute].label)
@@ -937,18 +935,18 @@ export default {
         }
       }
     },
-    deleteAllTableData () {
+    deleteAllTableData() {
       this.comparisonDataHeaders = []
       this.comparisonDataDisplay = []
     },
-    changeTableClass (position) {
+    changeTableClass(position) {
       return {
         'left-column': position === 'name',
         'top-corner': position === 0,
         'table-column': position !== 'name' && position !== 0
       }
     },
-    searchUrl () {
+    searchUrl() {
       let searchOptions = window.localStorage.getItem('searchOptions')
       let url = '#/search?q=' + (this.searchQuery ? this.searchQuery : '') +
                 (this.filters.entryType ? '&comp=' + this.filters.entryType : '') +
@@ -959,23 +957,22 @@ export default {
                 '&searchoptions=' + JSON.parse(searchOptions).join(',')
       return url
     },
-    hideOrShowFilters () {
+    hideOrShowFilters() {
       if (window.innerWidth < 700) {
         this.showFilters = false
-      }
-      else {
+      } else {
         this.showFilters = true
       }
     }
   },
   watch: {
     filters: {
-      handler: function () {
+      handler: function() {
         this.newSearch()
       },
       deep: true
     },
-    attributeQuery: _.debounce(function () {
+    attributeQuery: _.debounce(function() {
       var keys = Object.keys(this.searchResultsAttributes)
       var regEx = RegExp(this.attributeQuery, 'gi')
       if (this.attributeQuery.trim() === '') {
@@ -984,37 +981,37 @@ export default {
         this.attributeKeys = keys.filter((v) => regEx.test(this.searchResultsAttributes[v].label)).slice(0, 10)
       }
     }, 500),
-    searchSortField () {
+    searchSortField() {
       window.localStorage.setItem('searchSortField', JSON.stringify(this.searchSortField))
       this.newSearch()
     },
-    searchSortOrder () {
+    searchSortOrder() {
       window.localStorage.setItem('searchSortOrder', JSON.stringify(this.searchSortOrder))
       this.newSearch()
     },
-    searchPageSize () {
+    searchPageSize() {
       window.localStorage.setItem('searchPageSize', JSON.stringify(this.searchPageSize))
       this.newSearch()
     },
     displayOptions: {
-      handler: function () {
+      handler: function() {
         window.localStorage.setItem('displayOptions', JSON.stringify(this.displayOptions))
       },
       deep: true
     },
-    searchPage () {
+    searchPage() {
       this.submitSearch()
     }
   },
   computed: {
-    offset () {
+    offset() {
       return (this.searchPage - 1) * this.searchPageSize
     },
-    hideSearchSuggestions () {
+    hideSearchSuggestions() {
       return this.searchQueryIsDirty || this.searchQuery.length === 0
     }
   },
-  data () {
+  data() {
     return {
       componentsList: [],
       tagsList: [],

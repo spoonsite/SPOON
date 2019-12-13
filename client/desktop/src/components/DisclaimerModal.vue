@@ -20,14 +20,14 @@ import ModalTitle from '@/components/ModalTitle'
 
 export default {
   name: 'DisclaimerModal',
-  props: ["value"],
+  props: ['value'],
   components: {
     ModalTitle
   },
   methods: {
-    close () {
+    close() {
       this.$emit('close')
     }
-  },
+  }
 }
 </script>

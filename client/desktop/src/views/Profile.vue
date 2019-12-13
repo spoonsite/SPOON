@@ -163,19 +163,19 @@
 </template>
 
 <script lang="js">
-import validators from '../util/validators'
+import validators from '@/util/validators'
 
 export default {
   name: 'profile',
   mixins: [validators],
-  mounted () {
+  mounted() {
     if (this.$store.state.currentUser.username) {
       this.populateInfo()
     } else {
       this.$store.dispatch('getCurrentUser', this.populateInfo)
     }
   },
-  data () {
+  data() {
     return {
       errors: [],
       user: {
@@ -200,25 +200,25 @@ export default {
     }
   },
   computed: {
-    disableForm () {
+    disableForm() {
       return !!this.$store.state.securityPolicy.disableUserInfoEdit
     }
   },
   watch: {
     user: {
-      handler (after, before) {
+      handler(after, before) {
         this.formChanged = JSON.stringify(this.user) !== JSON.stringify(this.cachedUser)
       },
       deep: true
     }
   },
   methods: {
-    populateInfo () {
+    populateInfo() {
       this.setUserInfo()
       this.getOrgs()
       this.getRoles()
     },
-    setUserInfo () {
+    setUserInfo() {
       this.user.firstName = this.$store.state.currentUser.firstName
       this.user.lastName = this.$store.state.currentUser.lastName
       this.user.email = this.$store.state.currentUser.email
@@ -232,7 +232,7 @@ export default {
 
       this.cachedUser = JSON.parse(JSON.stringify(this.user))
     },
-    orgFilter (item, queryText, itemText) {
+    orgFilter(item, queryText, itemText) {
       const hasValue = val => val != null ? val : ''
       const text = hasValue(item.description)
       const query = hasValue(queryText)
@@ -240,14 +240,14 @@ export default {
         .toLowerCase()
         .indexOf(query.toString().toLowerCase()) > -1
     },
-    getOrgs () {
+    getOrgs() {
       this.$http
         .get('/openstorefront/api/v1/resource/organizations/lookup')
         .then(response => {
           this.organizations = response.data
         })
     },
-    getRoles () {
+    getRoles() {
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/UserTypeCode')
         .then(response => {
@@ -256,7 +256,7 @@ export default {
           })
         })
     },
-    updateProfile () {
+    updateProfile() {
       if (this.$refs.form.validate()) {
         this.saving = true
         let newProfile = {
@@ -287,10 +287,10 @@ export default {
           })
       }
     },
-    reset () {
+    reset() {
       this.user = JSON.parse(JSON.stringify(this.cachedUser))
     },
-    sendTestMsg () {
+    sendTestMsg() {
       console.log('test')
       this.$http
         .post('/openstorefront/api/v1/resource/userprofiles/' + this.username + '/test-email', this.user.email)

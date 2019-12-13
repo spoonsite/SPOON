@@ -233,7 +233,7 @@
             <v-text-field
               single-line
               disabled
-              v-model="userEmail = $store.state.currentUser.email"
+              v-model="userEmail"
             >
             </v-text-field>
             <p>Message:</p>
@@ -685,11 +685,11 @@
 <script lang="js">
 import StarRating from 'vue-star-rating'
 import _ from 'lodash'
-import Lightbox from '../components/Lightbox'
-import Question from '../components/Question'
+import Lightbox from '@/components/Lightbox'
+import Question from '@/components/Question'
 import ModalTitle from '@/components/ModalTitle'
 import format from 'date-fns/format'
-import isFuture from 'date-fns/is_future'
+import isFuture from 'date-fns/isFuture'
 
 export default {
   name: 'entry-detail-page',
@@ -699,7 +699,7 @@ export default {
     Question,
     ModalTitle
   },
-  mounted () {
+  mounted() {
     if (this.$route.params.id) {
       this.id = this.$route.params.id
     }
@@ -720,7 +720,7 @@ export default {
     this.getQuestions()
     this.getTags()
   },
-  data () {
+  data() {
     return {
       baseURL: '/openstorefront/',
       isLoading: true,
@@ -821,11 +821,11 @@ export default {
         { text: 'Attribute Type', value: 'typeDescription' },
         { text: 'Value', value: 'codeDescription' }
       ],
-      userEmail: ''
+      userEmail: this.$store.state.currentUser.email
     }
   },
   methods: {
-    checkWatch () {
+    checkWatch() {
       this.$http.get(`/openstorefront/api/v1/resource/userprofiles/${this.$store.state.currentUser.username}/watches`)
         .then(response => {
           if (response) {
@@ -849,7 +849,7 @@ export default {
           this.watchBeingChecked = false
         })
     },
-    computeAverageRating (detail) {
+    computeAverageRating(detail) {
       var temp = 0
       var averageRating = 0
       if (detail.reviews) {
@@ -868,7 +868,7 @@ export default {
       }
       return averageRating
     },
-    computeHasImage () {
+    computeHasImage() {
       if (this.detail.componentMedia) {
         for (var i = 0; i < this.detail.componentMedia.length; i++) {
           if (this.detail.componentMedia[i].mediaTypeCode === 'IMG') {
@@ -878,10 +878,10 @@ export default {
         }
       }
     },
-    deleteQuestion (question) {
+    deleteQuestion(question) {
       this.questions = this.questions.filter(el => el.questionId !== question.questionId)
     },
-    deleteReviewConfirmation () {
+    deleteReviewConfirmation() {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
         .then(response => {
           this.$toasted.show('Review Deleted')
@@ -889,12 +889,12 @@ export default {
           this.getDetail()
         })
     },
-    editReviewSetup (review) {
+    editReviewSetup(review) {
       this.writeReviewDialog = true
       this.newReview.title = review.title
       this.newReview.rating = review.rating
       this.newReview.recommend = review.recommend
-      this.newReview.lastUsed = format(review.lastUsed, 'YYYY-MM-DD')
+      this.newReview.lastUsed = format(review.lastUsed, 'yyyy-mm-dd')
       this.newReview.timeUsed = review.userTimeDescription
       review.pros.forEach(element => {
         this.newReview.pros.push(element.text)
@@ -905,14 +905,14 @@ export default {
       this.comment = review.comment
       this.editReviewId = review.reviewId
     },
-    filterLightboxList () {
+    filterLightboxList() {
       if (this.detail.componentMedia) {
-        this.lightboxList = _.filter(this.detail.componentMedia, function (o) {
+        this.lightboxList = _.filter(this.detail.componentMedia, function(o) {
           return (o.mediaTypeCode === 'IMG' || o.mediaTypeCode === 'VID') && !o.hideInDisplay
         })
       }
     },
-    getAddDetail () {
+    getAddDetail() {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}`)
         .then(response => {
           this.addDetail = response.data
@@ -921,7 +921,7 @@ export default {
           this.isLoading = false
         })
     },
-    getAnswers (qid) {
+    getAnswers(qid) {
       this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions/${qid}/responses`)
         .then(response => {
@@ -930,7 +930,7 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
-    getDetail () {
+    getDetail() {
       this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/detail`)
         .then(response => {
@@ -943,7 +943,7 @@ export default {
           this.getAddDetail()
         })
     },
-    getQuestions () {
+    getQuestions() {
       this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions`)
         .then(response => {
@@ -951,7 +951,7 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
-    getTags () {
+    getTags() {
       this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/tags`)
         .then(response => {
@@ -962,7 +962,7 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
-    getRelatedTags () {
+    getRelatedTags() {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/relatedtags`)
         .then(response => {
           var tags = response.data
@@ -973,7 +973,7 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
-    lookupTypes () {
+    lookupTypes() {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
         .then(response => {
           if (response.data) {
@@ -1007,11 +1007,11 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
-    showMediaDetails (item) {
+    showMediaDetails(item) {
       this.currentMediaDetailItem = item
       this.mediaDetailsDialog = true
     },
-    submitCorrection () {
+    submitCorrection() {
       this.buttonLoad = true
       let data = {
         securityMarkingType: '',
@@ -1033,7 +1033,7 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
     },
-    submitOwnershipRequest () {
+    submitOwnershipRequest() {
       this.buttonLoad = true
       let data = {
         securityMarkingType: '',
@@ -1055,7 +1055,7 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting the ownership request.'))
     },
-    determineTagType () {
+    determineTagType() {
       this.tagName = document.getElementById('tagEntry').value
       var alreadyExists = false
       for (var tag in this.detail.tags) {
@@ -1065,22 +1065,19 @@ export default {
       }
       if (alreadyExists) {
         this.tagEmpty = true
-      }
-      else if (this.allTags.includes(this.tagName)) {
+      } else if (this.allTags.includes(this.tagName)) {
         this.tagEmpty = false
         this.submitTag(this.tagName)
-      }
-      else if (this.tagName === '') {
+      } else if (this.tagName === '') {
         this.tagEmpty = true
-      }
-      else {
+      } else {
         this.tagEmpty = false
         this.getRelatedTags()
         this.selectedTag = ''
         this.newTagConfirmationDialog = true
       }
     },
-    submitVendorMessage (sendToEmail) {
+    submitVendorMessage(sendToEmail) {
       this.buttonLoad = true
       let data = {
         userToEmail: sendToEmail,
@@ -1096,7 +1093,7 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem contacting this vendor.'))
     },
-    deleteTag () {
+    deleteTag() {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)
         .then(response => {
           this.$toasted.show('Tag Deleted')
@@ -1104,7 +1101,7 @@ export default {
           this.tagName = ''
         })
     },
-    submitTag (name) {
+    submitTag(name) {
       let data = {
         securityMarkingType: '',
         dataSensitivity: '',
@@ -1118,7 +1115,7 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting this tag.'))
     },
-    submitQuestion () {
+    submitQuestion() {
       let data = {
         dataSensitivity: '',
         organization: this.$store.state.currentUser.organization,
@@ -1135,7 +1132,7 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting the question.'))
     },
-    submitReview () {
+    submitReview() {
       this.isLoading = true
 
       let data = {
@@ -1200,13 +1197,13 @@ export default {
           .catch(e => this.$toasted.error('There was a problem submitting the review.'))
       }
     },
-    todaysDateFormatted (val) {
+    todaysDateFormatted(val) {
       return !isFuture(val)
     },
-    openPrintScreen () {
+    openPrintScreen() {
       window.open('/openstorefront/print.jsp?id=' + this.detail.componentId)
     },
-    contactVendor () {
+    contactVendor() {
       var sendToEmail = 'support@spoonsite.com'
       if (this.detail.contacts.length > 0) {
         if (this.detail.contacts[0].email !== '') {
@@ -1217,21 +1214,21 @@ export default {
     }
   },
   watch: {
-    comment: function (val) {
+    comment: function(val) {
       if (val !== '' && this.reviewValid) {
         this.reviewSubmit = true
       } else {
         this.reviewSubmit = false
       }
     },
-    reviewValid: function (val) {
+    reviewValid: function(val) {
       if (val && this.comment !== '') {
         this.reviewSubmit = true
       } else {
         this.reviewSubmit = false
       }
     },
-    watchSwitch: function (val) {
+    watchSwitch: function(val) {
       if (!this.watchBeingChecked) {
         this.watchBeingChecked = true
         if (this.watchSwitch === true) {
@@ -1258,7 +1255,7 @@ export default {
         }
       }
     },
-    writeReviewDialog: function (val) {
+    writeReviewDialog: function(val) {
       if (val === false) {
         this.newReview.title = ''
         this.newReview.rating = 0
@@ -1273,7 +1270,7 @@ export default {
     }
   },
   computed: {
-    commentsViewable () {
+    commentsViewable() {
       // TODO: look at me when the endpoints are implemented
       if (this.$store.state.currentUser.username === this.addDetail.ownerUser) {
         return true
@@ -1415,7 +1412,7 @@ export default {
     margin-right: auto;
     margin-left: auto;
   }
-  .attributes-table /deep/ {
+  .attributes-table {
     th {
       font-size: 18px;
       font-weight: bold;

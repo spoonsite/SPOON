@@ -65,16 +65,16 @@ export default {
     ModalTitle
   },
   props: ['answer'],
-  mounted () {
+  mounted() {
   },
-  data () {
+  data() {
     return {
       edit: false,
       deleteDialog: false
     }
   },
   methods: {
-    editAnswer () {
+    editAnswer() {
       let data = {
         dataSensitivity: '',
         organization: this.$store.state.currentUser.organization,
@@ -93,7 +93,7 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
     },
-    deleteAnswer () {
+    deleteAnswer() {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${this.answer.questionId}/responses/${this.answer.responseId}`)
         .then(response => {
           this.$toasted.show('Answer deleted.')

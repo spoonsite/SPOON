@@ -1,13 +1,16 @@
 import Vue from 'vue'
-import App from './App.vue'
-import router from './router.js'
-import store from './store.js'
-import scientificToDecimal from './util/scientificToDecimal'
+import App from '@/App.vue'
+import router from '@/router'
+import store from '@/store/index'
+import scientificToDecimal from '@/util/scientificToDecimal'
 
-import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css'
+// import Vuetify from 'vuetify/lib'
+import vuetify from '@/plugins/vuetify'
+// import 'vuetify/dist/vuetify.min.css'
+// import vuetify from '@/plugins/vuetify'
 import format from 'date-fns/format'
-import 'babel-polyfill'
+import parseISO from 'date-fns/parseISO'
+// import 'babel-polyfill'
 import VueTruncate from 'vue-truncate-filter'
 import axios from 'axios'
 import Cookies from 'js-cookie'
@@ -24,7 +27,7 @@ Vue.prototype.$cookies = Cookies
 
 // Add CSRF Token on every request
 axios.interceptors.request.use(
-  function (config) {
+  function(config) {
     let csrfToken = Cookies.get('X-Csrf-Token')
     config.headers = {
       'X-Requested-With': 'XMLHttpRequest',
@@ -34,7 +37,7 @@ axios.interceptors.request.use(
     }
     return config
   },
-  function (error) {
+  function(error) {
     // Do something with request error
     return Promise.reject(error)
   }
@@ -65,11 +68,11 @@ Vue.use(VueQuillEditor, {
   }
 })
 
-Vue.filter('formatDate', function (value, formatString) {
+Vue.filter('formatDate', function(value, formatString) {
   if (formatString) {
-    return format(value, formatString)
+    return format(parseISO(value), formatString)
   } else {
-    return format(value, 'YYYY/MM/DD')
+    return format(parseISO(value), 'yyyy/mm/dd')
   }
 })
 
@@ -80,23 +83,24 @@ store.dispatch('getSecurityPolicy')
 store.dispatch('getHelpUrl')
 store.dispatch('getAttributeMap')
 store.dispatch('getBranding', () => {
-  Vue.use(Vuetify, {
-    theme: {
-      primary: (store.state.branding.vuePrimaryColor ? store.state.branding.vuePrimaryColor : '#252931'),
-      secondary: (store.state.branding.vueSecondaryColor ? store.state.branding.vueSecondaryColor : '#183a4c'),
-      accent: '#757575',
-      error: (store.state.branding.vueErrorColor ? store.state.branding.vueErrorColor : '#c62828'),
-      info: (store.state.branding.vueInfoColor ? store.state.branding.vueInfoColor : '#3f51b5'),
-      warning: (store.state.branding.vueWarningColor ? store.state.branding.vueWarningColor : '#ffa000'),
-      success: (store.state.branding.vueSuccessColor ? store.state.branding.vueSuccessColor : '#388e3c')
-    }
-  })
+  // Vue.use(Vuetify, {
+  //   theme: {
+  //     primary: (store.state.branding.vuePrimaryColor ? store.state.branding.vuePrimaryColor : '#252931'),
+  //     secondary: (store.state.branding.vueSecondaryColor ? store.state.branding.vueSecondaryColor : '#183a4c'),
+  //     accent: '#757575',
+  //     error: (store.state.branding.vueErrorColor ? store.state.branding.vueErrorColor : '#c62828'),
+  //     info: (store.state.branding.vueInfoColor ? store.state.branding.vueInfoColor : '#3f51b5'),
+  //     warning: (store.state.branding.vueWarningColor ? store.state.branding.vueWarningColor : '#ffa000'),
+  //     success: (store.state.branding.vueSuccessColor ? store.state.branding.vueSuccessColor : '#388e3c')
+  //   }
+  // })
 
   Vue.config.productionTip = false
-
-  new Vue({
-    router,
-    store,
-    render: h => h(App)
-  }).$mount('#app')
 })
+
+new Vue({
+  router,
+  store,
+  vuetify,
+  render: h => h(App)
+}).$mount('#app')

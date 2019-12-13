@@ -73,9 +73,9 @@ import _ from 'lodash'
 export default {
   name: 'SearchBar',
   props: ['value', 'hideSuggestions', 'overlaySuggestions'],
-  mounted () {
+  mounted() {
   },
-  data () {
+  data() {
     return {
       hideSearchSuggestions: true,
       hideSearchOptions: true,
@@ -87,19 +87,19 @@ export default {
     }
   },
   methods: {
-    searchBarFocused () {
+    searchBarFocused() {
       this.hideSearchSuggestions = false
       this.hideSearchOptions = true
     },
-    searchBarBlur () {
+    searchBarBlur() {
       this.hideSearchSuggestions = true
       this.hideSearchOptions = true
     },
-    searchOptionsClicked () {
+    searchOptionsClicked() {
       this.hideSearchOptions = !this.hideSearchOptions
       this.hideSearchSuggestions = true
     },
-    submitQuery (query) {
+    submitQuery(query) {
       if (query) {
         this.$emit('input', query)
       }
@@ -108,7 +108,7 @@ export default {
       this.hideSearchSuggestions = true
       this.hideSearchOptions = true
     },
-    getSearchSuggestions () {
+    getSearchSuggestions() {
       if (!this.hideSearchSuggestions) {
         axios
           .get(
@@ -120,7 +120,7 @@ export default {
           .catch(e => this.errors.push(e))
       }
     },
-    saveSearchOptions () {
+    saveSearchOptions() {
       this.$http.put('/openstorefront/api/v1/resource/searchoptions/user',
         {
           globalFlag: false,
@@ -135,19 +135,19 @@ export default {
     }
   },
   watch: {
-    value: _.throttle(function () {
+    value: _.throttle(function() {
       if (this.value === '') {
         this.searchSuggestions = []
       } else if (!this.searchQueryIsDirty) {
         this.getSearchSuggestions()
       }
     }, 400),
-    searchOptions: function (val) {
+    searchOptions: function(val) {
       window.localStorage.setItem('searchOptions', JSON.stringify(val))
       this.saveSearchOptions()
     }
   },
-  created: function () {
+  created: function() {
     let searchOptions = window.localStorage.getItem('searchOptions')
     if (searchOptions === null) {
       this.$http
@@ -177,7 +177,7 @@ export default {
     }
   },
   computed: {
-    warningStyle () {
+    warningStyle() {
       return 'background-color: ' + this.$store.state.branding.vueErrorColor
     }
   }

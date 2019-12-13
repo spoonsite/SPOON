@@ -23,7 +23,7 @@ export default {
     errors: []
   }),
   methods: {
-    getQuestions: function () {
+    getQuestions: function() {
       let that = this
 
       this.$http
@@ -35,7 +35,7 @@ export default {
         .catch(e => this.errors.push(e))
     }
   },
-  mounted () {
+  mounted() {
     this.getQuestions()
   }
 }

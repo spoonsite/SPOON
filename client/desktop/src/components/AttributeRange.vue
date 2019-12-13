@@ -33,12 +33,12 @@ export default {
   name: 'AttributeRange',
   props: [],
   methods: {
-    validNumber (v) {
+    validNumber(v) {
       return !isNaN(v) || 'Must be a valid number'
     }
   },
   watch: {},
-  data () {
+  data() {
     return {
       min: null,
       max: null

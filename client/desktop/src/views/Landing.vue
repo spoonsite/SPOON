@@ -89,7 +89,7 @@
       :key="i"
     >
       <h3 class="headline pb-0 mb-0">{{ item.title }}</h3>
-      <time class="mb-4 grey--text text--darken-1" style="display: block;">{{ item.updateDts | formatDate("MMMM d, YYYY") }}</time>
+      <time class="mb-4 grey--text text--darken-1" style="display: block;">{{ item.updateDts | formatDate("mmmm d, yyyy") }}</time>
       <div v-html="item.description"></div>
       <v-btn dark :href="item.link">View More</v-btn>
     </v-container>
@@ -110,8 +110,8 @@
 </template>
 
 <script lang="js">
-import SearchBar from '../components/SearchBar'
-import DisclaimerModal from '../components/DisclaimerModal'
+import SearchBar from '@/components/SearchBar'
+import DisclaimerModal from '@/components/DisclaimerModal'
 
 export default {
   name: 'landing-page',
@@ -120,12 +120,12 @@ export default {
     DisclaimerModal
   },
   props: [],
-  mounted () {
+  mounted() {
     this.getNestedComponentTypes()
     this.getHighlights()
     this.getAttributes()
   },
-  data () {
+  data() {
     return {
       searchQuery: '',
       nestedComponentTypesList: [],
@@ -156,13 +156,13 @@ export default {
     }
   },
   methods: {
-    link (query) {
+    link(query) {
       return `/search?q=${query}`
     },
-    submitSearch (additionalOptions) {
+    submitSearch(additionalOptions) {
       this.$router.push(encodeURI(`/search?q=${this.searchQuery}`) + additionalOptions)
     },
-    getNestedComponentTypes () {
+    getNestedComponentTypes() {
       this.$http
         .get(
           '/openstorefront/api/v1/resource/componenttypes/nested'
@@ -171,32 +171,32 @@ export default {
           this.nestedComponentTypesList = response.data
         })
     },
-    action (type) {
+    action(type) {
       alert(type)// switch on the type of action
     },
-    getHighlights () {
+    getHighlights() {
       this.$http
         .get('/openstorefront/api/v1/resource/highlights')
         .then(response => {
           this.highlights = response.data
         })
     },
-    getAttributes () {
+    getAttributes() {
       this.$http
         .get('/openstorefront/api/v1/resource/attributes?important=true&page=1&start=0&limit=25')
         .then(response => {
           this.attributes = response.data
         })
     },
-    isSpoon () {
+    isSpoon() {
       return this.$store.state.branding.applicationName === 'SPOON'
     }
   },
   computed: {
-    hideSearchSuggestions () {
+    hideSearchSuggestions() {
       return this.searchQuery.length === 0
     },
-    filteredComponentList () {
+    filteredComponentList() {
       if (this.nestedComponentTypesList && this.nestedComponentTypesList.children) {
         return this.nestedComponentTypesList.children.filter(item => item.children.length > 0)
       } else {
