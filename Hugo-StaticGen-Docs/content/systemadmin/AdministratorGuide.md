@@ -31,12 +31,12 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 | trackingrecords.max.age.days        | Max age of tracking records                                             | 365                                                          |
 | external.usermanager                | Specifies manager for external user management (LdapUserManager)        | IniRealmManager                                              |
 | external.sync.activate              | Set to true to run the sync                                             | false                                                        |
-| search.server                       | The search server that the application uses (must use elasticsearch)    | elasticsearch                                                |
+| search.server                       | The search server that the application uses (must use Elasticsearch)    | Elasticsearch                                                |
 | elastic.server.host                 | The hostname of the machine hosting Elasticsearch                       | localhost                                                    |
-| elastic.server.port                 | The port that elasticseach is using                                     | 9200                                                         |
+| elastic.server.port                 | The port that Elasticseach is using                                     | 9200                                                         |
 |                                     |                                                                         |                                                              |
 | **Security Header**                 | **Not in use for SPOON**                                                |                                                              |
-| openam.url                          | http:/…/openam (Full URL to open am instance)                           |                                                              |
+| openam.url                          | http:/…/openam (Full URL to OpenAM instance)                           |                                                              |
 | logout.url                          | http:/…/openam/UI/Logout (Full URL to logout)                           |                                                              |
 | openam.header.username              | HTTP Header for Username                                                | sAMAccountName                                               |
 | openam.header.firstname             | HTTP Header for Firstname                                               | givenname                                                    |
@@ -67,7 +67,7 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 | report.lifetime                     | How long will this report be in the system?                             | 180                                                          |
 |                                     |                                                                         |                                                              |
 | **Email Support**                   |                                                                         |                                                              |
-| mail.smtp.url                       | Login Credentials for Integrations (currently just for jira)            | localhost                                                    |
+| mail.smtp.url                       | Login Credentials for Integrations (currently just for Jira)            | localhost                                                    |
 | mail.server.user                    | Login Credentials for mail server                                       |                                                              |
 | mail.server.pw                      | Login Credentials for mail server                                       |                                                              |
 | mail.smtp.port                      | Mail Port (25 common)                                                   |                                                              |
@@ -75,8 +75,8 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 | mail.use.tls                        | Set to true if server requires it                                       |                                                              |
 | mail.from.name                      | From Name                                                               | Storefront Notification                                      |
 | mail.from.address                   | From Email Address                                                      | donotreply@storefront.net                                    |
-| mail.reply.name                     | Reply name (usually display at the bottom the message)                  |                                                              |
-| mail.reply.address                  | Reply email (usually display at the bottom the message)                 |                                                              |
+| mail.reply.name                     | Reply name (usually display at the bottom of the message)                  |                                                              |
+| mail.reply.address                  | Reply email (usually display at the bottom of the message)                 |                                                              |
 | mail.attach.file                    | Set to true or false indicating if emails should contain attached files | 0                                                            |
 | message.archive.days                | User message max age of archives                                        | 30                                                           |
 | message.queue.minmintues            | User message queue time or the time the message waits before sending    | 10                                                           |
@@ -84,7 +84,7 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 | message.recentchanges.days          | Time between “recent changes” messages from being sent                  | 28                                                           |
 |                                     |                                                                         |                                                              |
 | **General**                         |                                                                         |                                                              |
-| app.title                           | Title of the application. Used in emails but, also other places.        | Storefront                                                   |
+| app.title                           | Title of the application. Used in emails but, also other places        | Storefront                                                   |
 | websockets.enabled                  | Enables the use of websockets for server notifications                  | false                                                        |
 | userreview.autoapprove              | Allows user submitted info to be automatically approved (reviews, ect.) | true                                                         |
 | max.post.size                       | Maximum file size for files being saved to the system (in MB)           | 2000                                                         |
@@ -103,7 +103,7 @@ Configure in: `/var/openstorefront/config/openstorefront.properties`
 | ldapmanager.attribute.phone         | Attribute to map to phone number                                        | telephonenumber                                              |
 | ldapmanager.attribute.fullname      | Attribute to map to fullname                                            | name                                                         |
 | ldapmanager.attribute.organization  | Attribute to map to organization                                        | company                                                      |
-| ldapmanager.attribute.guid          | Attribute to map to guid                                                | objectGUID                                                   |
+| ldapmanager.attribute.guid          | Attribute to map to GUID                                                | objectGUID                                                   |
 |                                     |                                                                         |                                                              |
 | **Help**                            |                                                                         |                                                              |
 | help.url                            | The URL that hosts this documentation                                   | [https://spoonsite.github.io/](https://spoonsite.github.io/) |
@@ -180,7 +180,7 @@ securityManager.realms = $headerRealm
 
 #### Integration with OpenAM
 
-1. Adjust the open am agent filter
+1. Adjust the OpenAM agent filter
 
     Change:
 
@@ -214,11 +214,11 @@ securityManager.realms = $headerRealm
 
 The user types are defined as based on the roles they belong to.
 
-If using the built-in security then the system will create default roles for default users, admins and evaluators. It
-will also create a default admin user: (admin / Secret1@)
+If using the built-in security, the system will create default roles for default users, admins and evaluators. It
+will also create a default admin user: (admin / Secret1@).
 
 {{% notice warning %}}
-You should change the admin password after login in.
+You should change the admin password after login.
 {{% /notice %}}
 
 Pre-defined groups:
@@ -227,11 +227,11 @@ Pre-defined groups:
 
 **Guest** -Permissions for guest user. (Only applies if security is setup for that)
 
-**Admin** - All administration permissions. There maybe some optional features that the admin doesn't by default have permission.
+**Admin** - All administration permissions. There may be some optional features for which the admin doesn't have permission by default.
 
 **Librarian** -Data management permissions.
 
-**Evaluators** - Allows user to edit unpublished evaluations
+**Evaluators** - Allows user to edit unpublished evaluations.
 
 An admin can define new groups as needed.
 
@@ -260,18 +260,18 @@ Make a backup by copying all of the files in the /var/openstorefront/db director
     rm -rf /var/openstorefront/db
     ```
 
-1. Start the tomcat server
+1. Start the Tomcat server
 
 When the application loads it will create a new database and populate the data from whatever is currently in the import
-folders (lookups only; attributes, component, articles will need to be manually trigger or uploaded via the Admin Tools UI).
+folders (lookups only; attributes, component, articles will need to be manually triggered or uploaded via the **Admin Tools** UI).
 
 The initial load of the application may take a few minutes. If the import directories are empty, the application will load
 default lookup files that are packaged with the application.
 
 ## Troubleshooting
 
-If elasticsearch detects low disk space it will change into Read-Only mode. At which point the index records can’t be changed
-which cause with searching and updating records.
+If Elasticsearch detects low disk space it will change into Read-Only mode at which point the index records can’t be changed
+which, causing problems with searching and updating records.
 
 To resolve:
 
