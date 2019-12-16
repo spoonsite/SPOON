@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app>
-      <v-app-bar app color="primary" dark dense elevate-on-scroll :height="appBarHeight" >
+      <v-app-bar app color="primary" dark dense elevate-on-scroll :height="appBarHeight">
         <router-link style="height: 100%;" to="/">
           <img height="100%" src="./assets/SPOONlogohorz.png" alt="SPOON logo" />
         </router-link>
@@ -63,11 +63,12 @@
           </v-list>
         </v-menu>
       </v-app-bar>
-      <v-alert
-        :value="true"
-        class="security-banner security-banner-text"
-        color="warning"
-        >Security Banner</v-alert>
+      <div :style="accentBarColor" class="accentDiv" />
+      <div
+        :hidden="hideSecurityBanner"
+        class="securityDiv"
+        :style="securityBannerColors"
+      >{{ $store.state.branding.securityBannerText }}</div>
 
       <!-- Request Error Dialog -->
       <v-dialog v-model="errorDialog" max-width="75em">
@@ -127,7 +128,7 @@
       </v-dialog>-->
       <DisclaimerModal v-model="showDisclaimer" @close="showDisclaimer=false"></DisclaimerModal>
 
-      <main class="offset-banner" :class="{ offset: !alert }">
+      <main>
         <router-view />
       </main>
     </v-app>
@@ -179,6 +180,16 @@ export default {
   computed: {
     filteredLinks() {
       return this.links.filter(link => this.checkPermissions(link.permissions))
+    },
+    securityBannerColors() {
+      return `background-color: ${this.$store.state.branding.securityBannerBackgroundColor}; color: ${this.$store.state.branding.securityBannerTextColor};`
+    },
+    accentBarColor() {
+      return `background-color: ${this.$store.state.branding.vueAccentColor};`
+    },
+    hideSecurityBanner() {
+      if (this.$store.state.branding['securityBannerText']) return false
+      else return true
     }
   },
   data() {
@@ -344,12 +355,7 @@ export default {
 </script>
 
 <style lang="scss">
-$toolbar-height: 48px;
-$goldbar-height: 4px;
-$banner-height: 10px;
-
-$offset: $toolbar-height;
-$offset-banner: $offset + $banner-height;
+$appBarHeight: 48px;
 
 html {
   overflow: auto !important;
@@ -365,18 +371,14 @@ html {
 .menu-item-active {
   background-color: rgba(0, 0, 0, 0.1);
 }
-.offset-banner {
-  margin-top: $offset-banner;
+.accentDiv {
+  height: 3px;
+  margin-top: $appBarHeight;
 }
-.offset {
-  margin-top: $offset;
-}
-.security-banner {
-  margin-top: $offset;
-}
-.security-banner-text {
+.securityDiv {
+  height: 20px;
   text-align: center;
-  font-size: 12px;
+  font-size: small;
 }
 header {
   position: fixed;
