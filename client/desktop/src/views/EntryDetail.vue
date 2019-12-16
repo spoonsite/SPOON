@@ -744,7 +744,6 @@ export default {
       editReviewId: '',
       vendorMessage: '',
       reviewSubmit: false,
-      userRating: 0,
       newReview: {
         title: '',
         rating: 0,
