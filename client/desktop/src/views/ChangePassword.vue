@@ -5,7 +5,7 @@
       <ul>
         <li>At least 1 Capital Letter</li>
         <li>At least 1 Number</li>
-        <li>At least 8 Characters</li>
+        <li>At least {{ $store.state.securityPolicy.minPasswordLength }} Characters</li>
         <li>At least 1 Special Character (?!@#$%*)</li>
       </ul>
       <v-text-field
