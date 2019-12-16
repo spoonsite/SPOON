@@ -2,9 +2,9 @@
   <div>
     <v-form style="padding: 1em; padding-top: 2em;">
       <div>
-        <v-btn class="top-buttons">Refresh</v-btn>
+        <v-btn class="top-buttons" @click="getUserParts()">Refresh</v-btn>
         <v-btn class="top-buttons"><v-icon class="fa-xs">fas fa-plus</v-icon>&nbsp; Add New</v-btn>
-        <v-btn class="top-buttons"><v-icon>fas fa-upload</v-icon>&nbsp; Bulk Upload</v-btn>
+        <v-btn class="top-buttons" @click="openBulkUpload()"><v-icon>fas fa-upload</v-icon>&nbsp; Bulk Upload</v-btn>
       </div>
       <div style="display: flex; ">
         <v-data-table
@@ -70,10 +70,12 @@ export default {
     getUserParts () {
       this.$http.get(`/openstorefront/api/v1/resource/componentsubmissions`)
         .then(response => {
+          this.componentData = []
+          this.componentDisplay = []
           this.componentData = response.data
           this.formatData()
         })
-        .catch(e => this.errors.push(e))
+        // .catch(e => this.errors.push(e))
     },
     formatData () {
       for (var component in this.componentData) {
@@ -92,23 +94,39 @@ export default {
       this.componentData[component].description = description
     },
     changeDateFormat (component) {
-      var createDate = new Date(this.componentData[component].createDts)
-      this.componentData[component].createDts = createDate.toDateString()
       var updateDate = new Date(this.componentData[component].updateDts)
       this.componentData[component].updateDts = updateDate.toDateString()
+      var submittedDate = new Date(this.componentData[component].submittedDts)
+      this.componentData[component].submittedDts = submittedDate.toDateString()
+      var approvedDate = new Date(this.componentData[component].approvedDts)
+      this.componentData[component].approvedDts = approvedDate.toDateString()
+    },
+    getSubmitOrApprovalDate (component) {
+      if (this.componentData[component].approvalState === 'A') {
+				return this.componentData[component].approvedDts;
+			}
+      else if (this.componentData[component].approvalState === 'N') {
+        return ''
+      }
+      else {
+				return this.componentData[component].submittedDts;
+			}
     },
     setUpTableArray () {
       for (var component in this.componentData) {
         this.componentDisplay.push({
           name: this.componentData[component].name,
           status: this.componentData[component].approvalStateLabel,
-          type: this.componentData[component].componentType,
-          submitDate: this.componentData[component].updateDts,
+          type: this.componentData[component].componentTypeLabel,
+          submitDate: this.getSubmitOrApprovalDate(component),
           pendingChange: this.componentData[component].adminModified,
-          lastUpdate: this.componentData[component].adminModified
+          lastUpdate: this.componentData[component].updateDts
         })
       }
       console.log(this.componentData)
+    },
+    openBulkUpload () {
+      window.open('openstorefront/bulkUpload.jsp','uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
     }
   }
 }
