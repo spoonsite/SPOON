@@ -4,13 +4,9 @@ import router from '@/router'
 import store from '@/store/index'
 import scientificToDecimal from '@/util/scientificToDecimal'
 
-// import Vuetify from 'vuetify/lib'
-import vuetify from '@/plugins/vuetify'
-// import 'vuetify/dist/vuetify.min.css'
-// import vuetify from '@/plugins/vuetify'
+import Vuetify from 'vuetify/lib'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-// import 'babel-polyfill'
 import VueTruncate from 'vue-truncate-filter'
 import axios from 'axios'
 import Cookies from 'js-cookie'
@@ -44,7 +40,7 @@ axios.interceptors.request.use(
 )
 Vue.prototype.$http = axios
 
-Vue.prototype.$jsonparse = (json) => {
+Vue.prototype.$jsonparse = json => {
   let parsed = {}
   try {
     parsed = JSON.parse(json)
@@ -62,9 +58,13 @@ Vue.use(VueTruncate)
 Vue.use(vClickOutside)
 
 Vue.use(VueQuillEditor, {
-  modules: { toolbar: [
-    [{ 'header': 1 }, { 'header': 2 }], ['bold', 'italic'],
-    [{ 'list': 'bullet' }, { 'list': 'ordered' }], ['clean']]
+  modules: {
+    toolbar: [
+      [{ header: 1 }, { header: 2 }],
+      ['bold', 'italic'],
+      [{ list: 'bullet' }, { list: 'ordered' }],
+      ['clean']
+    ]
   }
 })
 
@@ -83,24 +83,30 @@ store.dispatch('getSecurityPolicy')
 store.dispatch('getHelpUrl')
 store.dispatch('getAttributeMap')
 store.dispatch('getBranding', () => {
-  // Vue.use(Vuetify, {
-  //   theme: {
-  //     primary: (store.state.branding.vuePrimaryColor ? store.state.branding.vuePrimaryColor : '#252931'),
-  //     secondary: (store.state.branding.vueSecondaryColor ? store.state.branding.vueSecondaryColor : '#183a4c'),
-  //     accent: '#757575',
-  //     error: (store.state.branding.vueErrorColor ? store.state.branding.vueErrorColor : '#c62828'),
-  //     info: (store.state.branding.vueInfoColor ? store.state.branding.vueInfoColor : '#3f51b5'),
-  //     warning: (store.state.branding.vueWarningColor ? store.state.branding.vueWarningColor : '#ffa000'),
-  //     success: (store.state.branding.vueSuccessColor ? store.state.branding.vueSuccessColor : '#388e3c')
-  //   }
-  // })
+  Vue.use(Vuetify)
+
+  let vuetify = new Vuetify({
+    theme: {
+      themes: {
+        light: {
+          primary: store.state.branding.vuePrimaryColor,
+          secondary: store.state.branding.vueSecondaryColor,
+          accent: store.state.branding.vueAccentColor,
+          error: store.state.branding.vueErrorColor,
+          info: store.state.branding.vueInfoColor,
+          warning: store.state.branding.vueWarningColor,
+          success: store.state.branding.vueSuccessColor
+        }
+      }
+    }
+  })
 
   Vue.config.productionTip = false
-})
 
-new Vue({
-  router,
-  store,
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+  new Vue({
+    router,
+    store,
+    vuetify,
+    render: h => h(App)
+  }).$mount('#app')
+})
