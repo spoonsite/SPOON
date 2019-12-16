@@ -7,30 +7,22 @@ weight = 2
 This guide describes the high-level design of the server and client architecture.
 <!--more-->
 
-## 1.  Client Architecture
+## Client Architecture
 
-### 1.1 Client Architecture Diagram
+{{< figure src="/images/client-archtechture-new.png" alt="Client Architecture Diagram" title="Client Architecture Diagram" >}}
 
-![clientarch](/images/client-archtechture-new.png)
-
-Figure 1. Client Architecture Diagram
-
-### 1.2 Client Details
+### Client Details
 
 The client core structure is based on Ext.js which provides UI components and utilities. This significantly reduces third-party dependencies which in turn reduces maintenance, shortens the learning curve, and improves quality and consistency.
 
 In addition, there are application-specific overrides and high-level components created to facilitate reuse.
 The application is composed by stripes layouts with a top-level page and fragment tool pages.
 
-## 2.  Server Architecture
+## Server Architecture
 
-### 2.1 Server Architecture Diagram
+{{< figure src="/images/serverarch.png" alt="Server Architecture Diagram" title="Server Architecture Diagram" >}}
 
-![serverarch](/images/serverarch.png)
-
-Figure 2. Server Architecture Diagram
-
-### 2.2 Server Details
+### Server Details
 
 Component definitions are as follows:
 
@@ -48,9 +40,9 @@ The server build environment relies on the following platforms/tools:
 - **Java** - Core language and platform
 - **Maven** - Used for the project structure, building, and dependency management
 
-## 2.3 Storage Details
+## Storage Details
 
-![storage](/images/storage.png)
+{{< figure src="/images/storage.png" alt="Storage Diagram" title="Storage Diagram" >}}
 
 **File System**  - Holds configuration, resources, media, imports, reports and plugins. By default, under `/var/openstorefront` it can be changed by setting the system property `-Dapplication.datadir=<directory>` on the command line.
 
@@ -58,15 +50,11 @@ The server build environment relies on the following platforms/tools:
 
 **Database** - Holds all entry data and application data.
 
-## 3. Runtime Environment
+## Runtime Environment
 
-### 3.1 Runtime Environment Diagram
+{{< figure src="/images/deployarch.png" title="Runtime Environment Diagram" alt="Runtime Environment Diagram">}}
 
-![deployarch](/images/deployarch.png)
-
-Figure 3. Runtime Environment Diagram
-
-### 3.2 Runtime Details
+### Runtime Details
 
 The runtime environment relies upon the following applications:
 
@@ -76,13 +64,11 @@ The runtime environment relies upon the following applications:
 - **OS/VM** - Is the host machines operating system.
 - **OpenAM** - OpenAM runs externally and a policy agent in Tomcat ensures the site is secure.
 
-### 3.3 Runtime Component Integration Vectors
+### Runtime Component Integration Vectors
 
-![component vectors](/images/civarch.png)
+{{< figure title="Runtime Component Integration Vectors" src="/images/civarch.png" alt="Runtime Component Integration Vectors" >}}
 
-Figure 4. Runtime Component Integration Vectors
-
-### 3.4 Component Integration Vectors Details
+### Component Integration Vectors Details
 
 The component integration vectors (CIV) are shown below.
 
@@ -117,7 +103,7 @@ The CIVs, as defined by the DI2E PMO, are as follows:
     (e.g., subscriber/publisher relationship; A integrates with another
     component that offers data from B).
 
-### 3.5 Ports
+### Ports
 
 The applicable ports are shown below:
 
