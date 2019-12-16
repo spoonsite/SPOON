@@ -15,9 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.web.test.search;
 
-import edu.usu.sdl.openstorefront.core.view.ComponentSearchWrapper;
-import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
-import edu.usu.sdl.openstorefront.core.view.SearchQuery;
 import edu.usu.sdl.openstorefront.web.test.BaseTestCase;
 
 /**

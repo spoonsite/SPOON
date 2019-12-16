@@ -26,8 +26,6 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
-import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
-import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepRole;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanSubStatusType;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
@@ -289,8 +287,8 @@ public class WorkplanResource
 		}
 		return Response.status(Response.Status.NOT_FOUND).build();
 	}
-	
-	
+
+
 	@PUT
 	@APIDescription("Inativates a Work Plan")
 	@RequireSecurity(SecurityPermission.ADMIN_WORKPLAN_UPDATE)
