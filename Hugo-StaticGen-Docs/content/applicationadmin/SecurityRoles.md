@@ -15,7 +15,7 @@ markup = "mmark"
 
 ## Default Roles and Resetting to Default
 
-When setting up an instance of SPOON it comes with a few default roles as described below and as shown in **Admin Tools &rarr; Application Management &rarr; Security Roles** on the website __(must be logged in as an administrator to view)__
+When setting up an instance of SPOON it comes with a few default roles as described below and as shown in **Admin Tools &rarr; Application Management &rarr; Security Roles** on the website __(must be logged in as an administrator to view).__
 
 |   SECURITY ROLE NAME | EXPLANATION                                                                                  | DEFAULT PERMISSIONS NOTES                                                             |
 | -------------------: | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -28,7 +28,7 @@ When setting up an instance of SPOON it comes with a few default roles as descri
 {{% notice note %}}
 **If these permissions get changed and you would like to reset them to the default (new installation) defaults, please do the following:**
 
-1. Go to **Admin Tools &rarr; Application Management &rarr; System** and click on the **Application State Properties** tab.
+1. Go to **Admin Tools &rarr; Application Management &rarr; System** and click the **Application State Properties** tab.
 2. Locate the Key **Security-Init_v2_LASTRUN_DTS** and click **Edit**
 3. Delete all of the text in the value box and click **Save**
 4. Repeat the prior two steps for the **Security-Init_v2_STATUS** key.
@@ -128,7 +128,7 @@ Allow New Sections  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Allow Question Management  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Delete a Comment  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Create an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
-Delete a Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Delete an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Publish just the Summary  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Publish or Unplublish an Evaluation  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 **EVALUATION (USER)** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin
@@ -341,7 +341,7 @@ Update other User's Submissions  | {{<x>}} | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>
 Access to Admin Watches Page  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Read Watches  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Delete Watches  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
-Update WAtches  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
+Update Watches  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
 Access to the User Watches Page  | {{<x>}} | {{<c>}} | {{<x>}} | {{<x>}} | {{<c>}}
 **WORKPLAN** | GUEST-GROUP | DEFAULT-GROUP | SME-Approver | STOREFRONT-Librarian | STOREFRONT-Admin
 Create Workplans  | {{<x>}} | {{<x>}} | {{<x>}} | {{<c>}} | {{<c>}}
