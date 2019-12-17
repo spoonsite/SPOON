@@ -1,6 +1,7 @@
 <template lang="html">
 
   <div class="watches-page">
+    <h2 class="text-center">Watches</h2>
 
     <div v-if="loading" class="text-xs-center overlay">
       <v-progress-circular
@@ -14,24 +15,20 @@
 
     <v-layout v-if="watches.length > 0" mt-3 mx-2>
     <v-flex xs12 md6 offset-md3>
-      <v-expansion-panel popout>
-        <v-expansion-panel-content v-for="item in watches" :key="item.componentName" :class="updateClasses(item)">
-          <div slot="header">
-            <strong>{{ item.componentName }}</strong>
-          </div>
-          <v-card class="grey lighten-5">
-            <v-card-text>
+      <v-expansion-panels popout>
+        <v-expansion-panel v-for="item in watches" :key="item.componentName" :class="updateClasses(item)">
+          <v-expansion-panel-header>
+            {{ item.componentName}}
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
               <p v-if="item.lastSubmitDts" class="date"><strong>Last Vendor Update Provided:</strong> {{ item.lastSubmitDts | formatDate }}</p>
               <p v-else class="date"><strong>Last Vendor Update Provided:</strong> {{ item.approvedDts | formatDate }}</p>
               <p class="date"><strong>Last System Update:</strong> {{ item.lastUpdateDts | formatDate }}</p>
-            </v-card-text>
-            <v-card-actions>
               <v-btn color="accent" :to="`entry-detail/${item.componentId}`">More Information</v-btn>
               <!-- <v-btn color="accent" @click="moreInformation(item.componentId)">More Information</v-btn> -->
-            </v-card-actions>
-          </v-card>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-flex>
     </v-layout>
 
@@ -100,15 +97,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .centeralign {
-    margin-right: auto;
-    margin-left: auto;
-  }
+.centeralign {
+  margin-right: auto;
+  margin-left: auto;
+}
 
-  .overlay {
-    width: 100%;
-    height: 100%;
-    pointer-events: all;
-    margin-top: 10%;
-  }
+.overlay {
+  width: 100%;
+  height: 100%;
+  pointer-events: all;
+  margin-top: 10%;
+}
 </style>
