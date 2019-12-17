@@ -28,7 +28,7 @@
                 <v-list-item-title v-text="link.name" />
               </v-list-item>
               <v-list-group
-                prepend-icon="account_circle"
+                prepend-icon="fa fa-user-circle"
                 :append-icon="userToolsExpand ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
                 :value="userToolsExpand"
               >
@@ -83,7 +83,6 @@
           </v-card>
         </v-menu>
       </v-app-bar>
-      <!-- <div :style="accentBarColor" class="accentDiv" /> -->
       <div
         :hidden="hideSecurityBanner"
         class="securityDiv"

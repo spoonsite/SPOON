@@ -15,12 +15,12 @@
         placeholder="Keyword Search"
         @click="searchBarFocused"
       />
-      <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">fa fa-search</v-icon>
+      <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">mdi-magnify</v-icon>
       <v-icon
         v-if="value !== ''"
         class="search-icon"
         @click="$emit('input', ''), $emit('clear')"
-      >fa fa-times</v-icon>
+      >mdi-close</v-icon>
     </div>
     <!-- SEARCH SUGGESTIONS -->
     <v-card
@@ -51,9 +51,9 @@
         :hidden="searchOptions.length !== 0"
       >All search options are off, this will cause a search to return nothing</div>
       <v-list dense :class="'elevation-1 ' + (searchOptions.length !== 0 ? '' : 'flat-top')">
-        <v-list-item v-for="(e,index) in searchOptionsSource" :key="index">
+        <v-list-item v-for="(e,index) in searchOptionsSource" :key="index" style="height: 50px">
           <v-list-item-content>
-            <v-checkbox v-model="searchOptions" :value="e" :label="e" />
+            <v-checkbox v-model="searchOptions" :value="e" :label="e" class="ml-2" />
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -74,13 +74,7 @@ export default {
       hideSearchSuggestions: true,
       hideSearchOptions: true,
       searchSuggestions: [],
-      searchOptionsSource: [
-        'Name',
-        'Organization',
-        'Description',
-        'Vitals',
-        'Tags'
-      ],
+      searchOptionsSource: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptions: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptionsId: '',
       submittedEntries: ''
@@ -104,19 +98,14 @@ export default {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      this.$emit(
-        'submitSearch',
-        '&children=true&searchoptions=' + this.searchOptions.join(',')
-      )
+      this.$emit('submitSearch', '&children=true&searchoptions=' + this.searchOptions.join(','))
       this.hideSearchSuggestions = true
       this.hideSearchOptions = true
     },
     getSearchSuggestions() {
       if (!this.hideSearchSuggestions) {
         axios
-          .get(
-            `/openstorefront/api/v1/service/search/suggestions?query=${this.value}&componentType=`
-          )
+          .get(`/openstorefront/api/v1/service/search/suggestions?query=${this.value}&componentType=`)
           .then(response => {
             this.searchSuggestions = response.data
           })
@@ -152,31 +141,26 @@ export default {
   created: function() {
     let searchOptions = window.localStorage.getItem('searchOptions')
     if (searchOptions === null) {
-      this.$http
-        .get('/openstorefront/api/v1/resource/searchoptions/user')
-        .then(response => {
-          this.searchOptionsId = response.data.searchOptionsId
-          this.searchOptions = []
-          if (response.data.canUseNameInSearch) {
-            this.searchOptions.push('Name')
-          }
-          if (response.data.canUseDescriptionInSearch) {
-            this.searchOptions.push('Description')
-          }
-          if (response.data.canUseOrganizationsInSearch) {
-            this.searchOptions.push('Organization')
-          }
-          if (response.data.canUseAttributesInSearch) {
-            this.searchOptions.push('Vitals')
-          }
-          if (response.data.canUseTagsInSearch) {
-            this.searchOptions.push('Tags')
-          }
-          window.localStorage.setItem(
-            'searchOptions',
-            JSON.stringify(this.searchOptions)
-          )
-        })
+      this.$http.get('/openstorefront/api/v1/resource/searchoptions/user').then(response => {
+        this.searchOptionsId = response.data.searchOptionsId
+        this.searchOptions = []
+        if (response.data.canUseNameInSearch) {
+          this.searchOptions.push('Name')
+        }
+        if (response.data.canUseDescriptionInSearch) {
+          this.searchOptions.push('Description')
+        }
+        if (response.data.canUseOrganizationsInSearch) {
+          this.searchOptions.push('Organization')
+        }
+        if (response.data.canUseAttributesInSearch) {
+          this.searchOptions.push('Vitals')
+        }
+        if (response.data.canUseTagsInSearch) {
+          this.searchOptions.push('Tags')
+        }
+        window.localStorage.setItem('searchOptions', JSON.stringify(this.searchOptions))
+      })
     } else {
       this.searchOptions = JSON.parse(searchOptions)
     }
@@ -194,8 +178,7 @@ export default {
 /* Search Bar */
 .searchbar {
   border-radius: 2px;
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   padding: 0.7em 0.7em 0.7em 0.7em;
   margin-left: auto;
   margin-right: auto;
@@ -206,8 +189,7 @@ export default {
 }
 .searchbar-button {
   border-radius: 2px;
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   margin-bottom: 0.3em;
   font-size: 140%;
   transition: box-shadow 0.7s;
@@ -278,7 +260,7 @@ input:focus + .icon {
 }
 @media only screen and (max-width: 360px) {
   .searchfield {
-    width: 160px;
+    width: 200px;
   }
   .searchbar {
     width: 230px;
@@ -286,12 +268,12 @@ input:focus + .icon {
 }
 @media only screen and (max-width: 415px) {
   .searchfield {
-    width: 150px;
+    width: 200px;
   }
 }
 @media only screen and (max-width: 380px) {
   .searchfield {
-    width: 150px;
+    width: 200px;
   }
   .searchbar {
     width: 220px;

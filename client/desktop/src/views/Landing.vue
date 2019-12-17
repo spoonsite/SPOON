@@ -89,7 +89,7 @@
       :key="i"
     >
       <h3 class="headline pb-0 mb-0">{{ item.title }}</h3>
-      <time class="mb-4 grey--text text--darken-1" style="display: block;">{{ item.updateDts | formatDate("mmmm d, yyyy") }}</time>
+      <time class="mb-4 grey--text text--darken-1" style="display: block;">{{ item.updateDts | formatDate("LLLL d, yyyy") }}</time>
       <div v-html="item.description"></div>
       <v-btn dark :href="item.link">View More</v-btn>
     </v-container>

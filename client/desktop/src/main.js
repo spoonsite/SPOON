@@ -59,20 +59,16 @@ Vue.use(vClickOutside)
 
 Vue.use(VueQuillEditor, {
   modules: {
-    toolbar: [
-      [{ header: 1 }, { header: 2 }],
-      ['bold', 'italic'],
-      [{ list: 'bullet' }, { list: 'ordered' }],
-      ['clean']
-    ]
+    toolbar: [[{ header: 1 }, { header: 2 }], ['bold', 'italic'], [{ list: 'bullet' }, { list: 'ordered' }], ['clean']]
   }
 })
 
 Vue.filter('formatDate', function(value, formatString) {
+  let date = new Date(value)
   if (formatString) {
-    return format(parseISO(value), formatString)
+    return format(parseISO(date.toISOString()), formatString)
   } else {
-    return format(parseISO(value), 'yyyy/mm/dd')
+    return format(parseISO(date.toISOString()), 'yyyy/mm/dd')
   }
 })
 
