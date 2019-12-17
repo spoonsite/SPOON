@@ -1,7 +1,10 @@
 <template>
   <form v-on:submit.prevent="submitQuery()" v-click-outside="searchBarBlur">
     <div class="searchbar-button">
-      <v-icon @click="searchOptionsClicked" class="drop-down-icon search-options-icon">fas {{ (hideSearchOptions ? 'fa-chevron-up' : 'fa-chevron-down')}} fa-xs</v-icon>
+      <v-icon
+        @click="searchOptionsClicked"
+        class="drop-down-icon search-options-icon"
+      >fas {{ (hideSearchOptions ? 'fa-chevron-up' : 'fa-chevron-down')}} fa-xs</v-icon>
     </div>
     <div class="searchbar">
       <input
@@ -11,9 +14,13 @@
         type="text"
         placeholder="Keyword Search"
         @click="searchBarFocused"
-      >
-      <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">search</v-icon>
-      <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">clear</v-icon>
+      />
+      <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">fa fa-search</v-icon>
+      <v-icon
+        v-if="value !== ''"
+        class="search-icon"
+        @click="$emit('input', ''), $emit('clear')"
+      >fa fa-times</v-icon>
     </div>
     <!-- SEARCH SUGGESTIONS -->
     <v-card
@@ -22,16 +29,14 @@
       style="z-index: 2; top: 6px;"
     >
       <v-list dense class="elevation-1">
-        <v-list-tile
+        <v-list-item
           v-for="i in searchSuggestions"
           :key="i.name"
           @click="submitQuery(i.name);"
           role="button"
         >
-          <v-list-tile-content>
-            {{ i.name }}
-          </v-list-tile-content>
-        </v-list-tile>
+          <v-list-item-content>{{ i.name }}</v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-card>
     <!-- SEARCH OPTIONS -->
@@ -40,27 +45,17 @@
       :height="overlaySuggestions ? 0 : 'auto'"
       style="position:relative; z-index:5; top: 6px;"
     >
-      <v-list dense class="elevation-1">
-        <h4 class="search-option-titles">Search Options</h4>
-        <v-list-tile
-          v-for="(e,index) in searchOptionsSource"
-          :key="index"
-          height="100px"
-        >
-          <v-list-tile-content>
-            <v-checkbox
-              :ripple="false"
-              v-model="searchOptions"
-              :value="e"
-              :label="e"
-            ></v-checkbox>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile v-if="searchOptions.length==0" avatar>
-          <v-list-tile-content :style="warningStyle">
-            <v-list-tile-title class ="v-label soWarning">All search options are off, this will cause a search to return nothing.</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+      <div
+        width="100%"
+        style="background-color: red; text-align: center;"
+        :hidden="searchOptions.length !== 0"
+      >All search options are off, this will cause a search to return nothing</div>
+      <v-list dense :class="'elevation-1 ' + (searchOptions.length !== 0 ? '' : 'flat-top')">
+        <v-list-item v-for="(e,index) in searchOptionsSource" :key="index">
+          <v-list-item-content>
+            <v-checkbox v-model="searchOptions" :value="e" :label="e" />
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-card>
   </form>
@@ -73,14 +68,19 @@ import _ from 'lodash'
 export default {
   name: 'SearchBar',
   props: ['value', 'hideSuggestions', 'overlaySuggestions'],
-  mounted() {
-  },
+  mounted() {},
   data() {
     return {
       hideSearchSuggestions: true,
       hideSearchOptions: true,
       searchSuggestions: [],
-      searchOptionsSource: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
+      searchOptionsSource: [
+        'Name',
+        'Organization',
+        'Description',
+        'Vitals',
+        'Tags'
+      ],
       searchOptions: ['Name', 'Organization', 'Description', 'Vitals', 'Tags'],
       searchOptionsId: '',
       submittedEntries: ''
@@ -104,7 +104,10 @@ export default {
         this.$emit('input', query)
       }
       this.searchSuggestions = []
-      this.$emit('submitSearch', '&children=true&searchoptions=' + this.searchOptions.join(','))
+      this.$emit(
+        'submitSearch',
+        '&children=true&searchoptions=' + this.searchOptions.join(',')
+      )
       this.hideSearchSuggestions = true
       this.hideSearchOptions = true
     },
@@ -121,17 +124,16 @@ export default {
       }
     },
     saveSearchOptions() {
-      this.$http.put('/openstorefront/api/v1/resource/searchoptions/user',
-        {
-          globalFlag: false,
-          username: this.$store.state.currentUser.username,
-          searchOptionsId: this.searchOptionsId,
-          canUseNameInSearch: this.searchOptions.includes('Name'),
-          canUseDescriptionInSearch: this.searchOptions.includes('Organization'),
-          canUseOrganizationsInSearch: this.searchOptions.includes('Description'),
-          canUseAttributesInSearch: this.searchOptions.includes('Vitals'),
-          canUseTagsInSearch: this.searchOptions.includes('Tags')
-        })
+      this.$http.put('/openstorefront/api/v1/resource/searchoptions/user', {
+        globalFlag: false,
+        username: this.$store.state.currentUser.username,
+        searchOptionsId: this.searchOptionsId,
+        canUseNameInSearch: this.searchOptions.includes('Name'),
+        canUseDescriptionInSearch: this.searchOptions.includes('Organization'),
+        canUseOrganizationsInSearch: this.searchOptions.includes('Description'),
+        canUseAttributesInSearch: this.searchOptions.includes('Vitals'),
+        canUseTagsInSearch: this.searchOptions.includes('Tags')
+      })
     }
   },
   watch: {
@@ -170,7 +172,10 @@ export default {
           if (response.data.canUseTagsInSearch) {
             this.searchOptions.push('Tags')
           }
-          window.localStorage.setItem('searchOptions', JSON.stringify(this.searchOptions))
+          window.localStorage.setItem(
+            'searchOptions',
+            JSON.stringify(this.searchOptions)
+          )
         })
     } else {
       this.searchOptions = JSON.parse(searchOptions)
@@ -185,11 +190,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/scss/colors.scss";
+@import '../assets/scss/colors.scss';
 /* Search Bar */
 .searchbar {
   border-radius: 2px;
-  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
   padding: 0.7em 0.7em 0.7em 0.7em;
   margin-left: auto;
   margin-right: auto;
@@ -200,7 +206,8 @@ export default {
 }
 .searchbar-button {
   border-radius: 2px;
-  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
   margin-bottom: 0.3em;
   font-size: 140%;
   transition: box-shadow 0.7s;
@@ -210,13 +217,12 @@ export default {
 .searchfield {
   display: inline-block;
   width: 80%;
-  padding-left: .7em;
+  padding-left: 0.7em;
 }
 .search-icon {
   float: right;
   font-size: 34px !important;
   position: relative;
-  top: -2px;
 }
 .drop-down-icon {
   float: right;
@@ -225,9 +231,9 @@ export default {
 .search-options-icon {
   float: left !important;
   padding: 0em 0.3em;
-  height: 56.8px;
-  width: 40px;
-  background-color: rgba(0,0,0,.12);
+  height: 65px;
+  width: 45px;
+  background-color: rgba(0, 0, 0, 0.12);
 }
 .search-option-titles {
   padding-left: 0.7em;
@@ -236,8 +242,8 @@ export default {
   cursor: pointer;
 }
 input {
-    caret-color: $blue;
-    padding-left: 0.3em;
+  caret-color: $blue;
+  padding-left: 0.3em;
 }
 input:focus {
   outline: none;
@@ -249,22 +255,26 @@ input:focus + .icon {
   font-size: 14px;
 }
 .fade-enter-active {
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
 .fade-leave-active {
-  transition: opacity .1s;
+  transition: opacity 0.1s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
 .clearfix:after {
-  content: "";
+  content: '';
   clear: both;
   display: table;
 }
 .soWarning {
-  text-align:center;
+  text-align: center;
   color: white;
+}
+.flat-top {
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
 }
 @media only screen and (max-width: 360px) {
   .searchfield {

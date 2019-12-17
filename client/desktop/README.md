@@ -1,5 +1,7 @@
 # desktop
 
+Formatter used: Prettier
+
 ## Project setup
 ```
 npm install

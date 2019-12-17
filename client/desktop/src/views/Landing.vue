@@ -101,7 +101,7 @@
         <div class="footer-block" v-html="$store.state.branding.landingPageFooter"></div>
         <div style="display: flex; align-items: center; justify-content: center;">
           <p style="text-align: center;" class="ma-0" v-html="$store.state.appVersion"></p>
-          <v-btn dark color="grey darken-3" @click.stop="showDisclaimer = true">Disclaimer</v-btn>
+          <v-btn dark color="grey darken-3" class="ml-4" @click.stop="showDisclaimer = true">Disclaimer</v-btn>
         </div>
       </v-card>
     </v-footer>
@@ -222,7 +222,7 @@ h3 {
     text-decoration: none;
   }
   a:hover {
-    background-color: rgba(0,0,0,0.05);
+    background-color: rgba(0, 0, 0, 0.05);
   }
   ul {
     margin: 0;
@@ -249,14 +249,13 @@ h3 {
   text-decoration: none;
 }
 .launch-icon {
-  color:#333 !important;
+  color: #333 !important;
   font-size: 64px;
 }
 .submission-btn {
   text-decoration: none;
   background: #212121;
   color: white;
-  border-radius: 8px;
   padding: 14px;
   font-size: 2em;
   text-transform: uppercase;

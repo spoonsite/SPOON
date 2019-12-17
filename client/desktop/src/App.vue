@@ -7,67 +7,87 @@
         </router-link>
         <v-spacer></v-spacer>
         <Notifications />
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn icon to="/profile" v-on="on">
-              <v-icon>fas fa-user</v-icon>
-            </v-btn>
-          </template>
-          <span>User Profile</span>
-        </v-tooltip>
-        <v-menu offset-y>
+        <v-menu offset-y :close-on-content-click="false" max-width="500px">
           <template v-slot:activator="{ on }">
             <v-btn icon v-on="on">
               <v-icon>fa fa-bars</v-icon>
             </v-btn>
           </template>
-          <v-list>
-            <!-- Add permissions check. -->
-            <v-list-tile
-              v-for="link in filteredLinks"
-              :key="link.name"
-              class="menu-item"
-              :to="link.link ? link.link : undefined"
-              :href="link.href ? link.href : undefined"
-              active-class="menu-item-active"
-            >
-              <v-list-tile-action>
-                <v-icon>fa fa-{{ link.icon }}</v-icon>
-              </v-list-tile-action>
-              <v-content>
-                <v-list-tile-title>{{ link.name }}</v-list-tile-title>
-              </v-content>
-            </v-list-tile>
-            <v-list-tile
-              class="menu-item"
-              @click.stop="showDisclaimer = true"
-              role="button"
-              aria-pressed="false"
-            >
-              <v-list-tile-action>
-                <v-icon>fas fa-exclamation-triangle</v-icon>
-              </v-list-tile-action>
-              <v-content>
-                <v-list-tile-title>Disclaimer</v-list-tile-title>
-              </v-content>
-            </v-list-tile>
-            <v-divider></v-divider>
-            <v-list-tile class="menu-item" @click="logout()">
-              <v-list-tile-action>
-                <v-icon>fas fa-sign-out-alt</v-icon>
-              </v-list-tile-action>
-              <v-content>
-                <v-list-tile-title>Logout</v-list-tile-title>
-              </v-content>
-            </v-list-tile>
-          </v-list>
+          <v-card>
+            <v-list>
+              <v-list-item
+                v-for="link in beginningLinks"
+                :key="link.name"
+                link
+                :to="link.link ? link.link : undefined"
+                :href="link.href ? link.href : undefined"
+              >
+                <v-list-item-action>
+                  <v-icon>fa fa-{{ link.icon }}</v-icon>
+                </v-list-item-action>
+                <v-list-item-title v-text="link.name" />
+              </v-list-item>
+              <v-list-group
+                prepend-icon="account_circle"
+                :append-icon="userToolsExpand ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
+                :value="userToolsExpand"
+              >
+                <template v-slot:activator>
+                  <v-list-item-title style="margin-right: 2em;">Personalization</v-list-item-title>
+                </template>
+                <v-list-item
+                  v-for="link in userToolLinks"
+                  :key="link.name"
+                  link
+                  :to="link.link ? link.link : undefined"
+                  :href="link.href ? link.href : undefined"
+                  style="margin-left: 2em"
+                >
+                  <v-list-item-action>
+                    <v-icon>fa fa-{{ link.icon }}</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title v-text="link.name" />
+                </v-list-item>
+              </v-list-group>
+              <v-list-item
+                v-for="link in endLinks"
+                :key="link.name"
+                link
+                :to="link.link ? link.link : undefined"
+                :href="link.href ? link.href : undefined"
+              >
+                <v-list-item-action>
+                  <v-icon>fa fa-{{ link.icon }}</v-icon>
+                </v-list-item-action>
+                <v-list-item-title v-text="link.name" />
+              </v-list-item>
+              <v-list-item
+                class="menu-item"
+                @click.stop="showDisclaimer = true"
+                role="button"
+                aria-pressed="false"
+              >
+                <v-list-item-action>
+                  <v-icon>fas fa-exclamation-triangle</v-icon>
+                </v-list-item-action>
+                <v-list-item-title>Disclaimer</v-list-item-title>
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item class="menu-item" @click="logout()">
+                <v-list-item-action>
+                  <v-icon>fas fa-sign-out-alt</v-icon>
+                </v-list-item-action>
+                <v-list-item-title>Logout</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-card>
         </v-menu>
       </v-app-bar>
-      <div :style="accentBarColor" class="accentDiv" />
+      <!-- <div :style="accentBarColor" class="accentDiv" /> -->
       <div
         :hidden="hideSecurityBanner"
         class="securityDiv"
-        :style="securityBannerColors"
+        :style="securityBannerColors "
       >{{ $store.state.branding.securityBannerText }}</div>
 
       <!-- Request Error Dialog -->
@@ -128,7 +148,7 @@
       </v-dialog>-->
       <DisclaimerModal v-model="showDisclaimer" @close="showDisclaimer=false"></DisclaimerModal>
 
-      <main>
+      <main :style="(hideSecurityBanner ? 'padding-top: 48px' : '')">
         <router-view />
       </main>
     </v-app>
@@ -178,11 +198,27 @@ export default {
     this.$store.dispatch('getAttributeMap')
   },
   computed: {
-    filteredLinks() {
-      return this.links.filter(link => this.checkPermissions(link.permissions))
+    filteredBeginningLinks() {
+      return this.beginningLinks.filter(link =>
+        this.checkPermissions(link.permissions)
+      )
+    },
+    filteredGroupLinks() {
+      return this.groupLinks.filter(link =>
+        this.checkPermissions(link.permissions)
+      )
+    },
+    filteredEndLinks() {
+      return this.endLinks.filter(link =>
+        this.checkPermissions(link.permissions)
+      )
     },
     securityBannerColors() {
-      return `background-color: ${this.$store.state.branding.securityBannerBackgroundColor}; color: ${this.$store.state.branding.securityBannerTextColor};`
+      return `background-color: ${
+        this.$store.state.branding.securityBannerBackgroundColor
+      };
+        color: ${this.$store.state.branding.securityBannerTextColor};
+      ${this.hideSecurityBanner ? '' : 'margin-top: 48px;'}`
     },
     accentBarColor() {
       return `background-color: ${this.$store.state.branding.vueAccentColor};`
@@ -205,29 +241,77 @@ export default {
       loggingOut: false,
       drawer: false,
       watchNumber: 0,
-      links: [
+      beginningLinks: [
         // Leave a permission array empty if no permissions are needed.
-        { link: '/', icon: 'home', name: 'Home', permissions: [] },
+        {
+          link: '/',
+          icon: 'home',
+          name: 'Home',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          link: '/profile',
+          icon: 'user',
+          name: 'Profile',
+          hasChildren: false,
+          permissions: []
+        },
         {
           href: '/openstorefront/AdminTool.action',
           icon: 'cog',
           name: 'Admin Tools',
+          hasChildren: false,
           permissions: permissions.ADMIN
-        },
-        {
-          href: '/openstorefront/UserTool.action',
-          icon: 'user',
-          name: 'User Tools',
-          permissions: []
-        },
+        }
+      ],
+      userToolsExpand: false,
+      userToolLinks: [
         {
           link: '/watches',
           icon: 'binoculars',
           name: 'Watches',
+          hasChildren: false,
           permissions: []
         },
-        { link: '/faq', icon: 'question', name: 'F.A.Q.', permissions: [] },
-        { link: '/contact', icon: 'comment', name: 'Contact', permissions: [] },
+        {
+          href: '/openstorefront/UserTool.action',
+          icon: 'list',
+          name: 'Submissions',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          href: '/openstorefront/UserTool.action',
+          icon: 'question-circle',
+          name: 'Questions',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          href: '/openstorefront/UserTool.action',
+          icon: 'star-half-alt',
+          name: 'Reviews',
+          hasChildren: false,
+          permissions: []
+        }
+      ],
+      endLinks: [
+        // Leave a permission array empty if no permissions are needed.
+        {
+          link: '/faq',
+          icon: 'question',
+          name: 'F.A.Q.',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          link: '/contact',
+          icon: 'comment',
+          name: 'Contact',
+          hasChildren: false,
+          permissions: []
+        },
         {
           href: this.$store.state.helpUrl
             ? this.$store.state.helpUrl
@@ -235,24 +319,9 @@ export default {
           icon: 'question-circle',
           name: 'Help',
           newTab: true,
+          hasChildren: false,
           permissions: []
         }
-        // { link: '/sme-approval',
-        //   icon: 'check',
-        //   name: 'SME Approval',
-        //   permissions: [ 'WORKPLAN-PROGRESS-MANAGEMENT-PAGE' ] },
-        // { link: '/submission-status',
-        //   icon: 'sticky-note',
-        //   name: 'Submission Status',
-        //   permissions: [] },
-        // { link: '/profile',
-        //   icon: 'user-edit',
-        //   name: 'Manage Profile',
-        //   permissions: [] },
-        // { link: '/reset-password',
-        //   icon: 'key',
-        //   name: 'Reset Password',
-        //   permissions: [] }
       ],
       topbarStyle: {
         'border-bottom': `4px solid ${this.$store.state.branding.vueAccentColor}`
@@ -261,6 +330,13 @@ export default {
     }
   },
   methods: {
+    test() {
+      console.log('testing')
+    },
+    routeLink(link) {
+      console.log('route!')
+      console.log(link)
+    },
     logout() {
       this.loggingOut = true
       this.$http
