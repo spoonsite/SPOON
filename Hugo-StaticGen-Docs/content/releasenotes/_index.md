@@ -12,7 +12,7 @@ For more information, please see [GitHub](https://github.com/spoonsite/SPOON/rel
 
 ## Release Notes for v2.11
 
-This release started the process to remove ExtJS pages and convert them to VueJS. Most of the **User Tools** area was implemented. A lot of work had done previously in VueJS to make a mobile version of the site. The mobile pages were taken and made responsive to desktop and mobile.
+This release started the process to remove ExtJS pages and convert them to VueJS. Most of the **User Tools** area was implemented. A lot of work was done previously in VueJS to make a mobile version of the site. The mobile pages were taken and made responsive for desktop and mobile.
 
 * Redesigned landing page
 * Remove the separate mobile VueJS site
