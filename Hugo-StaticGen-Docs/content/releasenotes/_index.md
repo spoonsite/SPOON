@@ -6,6 +6,19 @@ weight = 9999
 
 For more information, please see [GitHub](https://github.com/spoonsite/SPOON/releases).
 
+## Release Notes for v2.11.1
+
+* Fixed a small bug that prevented viewing of some entries for Admins reviewing submission
+
+## Release Notes for v2.11
+
+This release started the process to remove ExtJS pages and convert them to VueJS. Most of the **User Tools** area was implemented. A lot of work was done previously in VueJS to make a mobile version of the site. The mobile pages were taken and made responsive for desktop and mobile.
+
+* Redesigned landing page
+* Remove the separate mobile VueJS site
+* Search speed improvements
+* Search page user interaction redesign
+
 ## Release Notes for v2.10
 
 * Removed Solr as a search engine option.
