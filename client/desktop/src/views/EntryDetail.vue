@@ -263,9 +263,10 @@
     <v-divider></v-divider>
 
     <div class="entry-details-bottom">
-        <v-expansion-panel class="expansion-spacing" :value="0">
+        <v-expansion-panels class="expansion-spacing" :value="0">
+        <v-expansion-panel>
+          <v-expansion-panel-header><h2>Description</h2></v-expansion-panel-header>
           <v-expansion-panel-content>
-            <div slot="header"><h2>Description</h2></div>
             <div v-if="detail.description" class="expansion-content" v-html="detail.description"></div>
             <div v-else class="expansion-content">No description</div>
           </v-expansion-panel-content>
@@ -614,17 +615,16 @@
         </v-card>
       </v-dialog>
 
-        <v-expansion-panel class="expansion-spacing">
-          <v-expansion-panel-content>
-            <div slot="header"><h2>Questions and Answers</h2></div>
-            <div class="expansion-content">
+          <v-expansion-panel>
+            <v-expansion-panel-header><h2>Questions and Answers</h2></v-expansion-panel-header>
+            <v-expansion-panel-content>
               <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
               <Question v-for="question in questions" :key="question.question" @questionDeleted="deleteQuestion(question)" :question="question"></Question>
               <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
-            </div>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
 
-          </v-expansion-panel-content>
-        </v-expansion-panel>
         <v-dialog
           v-model="askQuestionDialog"
           max-width="75em"
@@ -1288,151 +1288,146 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-  p {
-    margin: 0px;
+p {
+  margin: 0px;
+}
+.entry-media {
+  display: flex;
+  margin: 15px 15px 0px 15px;
+}
+.no-media {
+  flex-grow: 27;
+  max-width: 500px;
+  max-height: 500px;
+  margin: 15px;
+}
+.entry-detail-page {
+  display: flex;
+  flex-direction: column;
+}
+.entry-details-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.detail-header {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 100;
+  width: auto;
+}
+.component-name {
+  display: flex;
+  align-items: center;
+  padding-top: 15px;
+  padding-left: 15px;
+}
+.headline {
+  padding-left: 10px;
+}
+.detail-header-body {
+  display: flex;
+  flex-wrap: wrap;
+}
+.detail-header-left {
+  flex-grow: 2;
+}
+.detail-header-right {
+  padding-left: 15px;
+  padding-bottom: 10px;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 15px 0px 0px 15px;
+}
+.list {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  padding-left: 0.5em;
+}
+.detail-header-right {
+  flex-grow: 1;
+}
+.entry-details-bottom {
+  display: flex;
+  flex-direction: column;
+}
+.dates {
+  padding: 10px 0px 0px 15px;
+}
+.date {
+  padding-bottom: 10px;
+}
+.watching {
+  margin: 0px;
+  padding: 0px;
+}
+.expansion-spacing {
+  margin: auto;
+  max-width: 85em;
+  margin-bottom: 5px;
+}
+.expansion-content {
+  padding: 15px;
+  padding-bottom: 5px;
+  background-color: #eeeeee !important;
+}
+.spinner {
+  margin-top: 7em;
+}
+.carousel {
+  margin-bottom: 1em;
+}
+.contactPar {
+  margin-bottom: 0.5em;
+}
+.reviewPar {
+  margin-bottom: 0.5em;
+}
+hr {
+  color: #333;
+  margin-bottom: 1em;
+}
+.icon {
+  margin-right: 0.3em;
+}
+.w-100 {
+  width: 100%;
+}
+.icon-2x {
+  font-size: 20px;
+}
+.media-link {
+  text-decoration: none;
+}
+.media-link:hover {
+  text-decoration: underline;
+}
+.list-item {
+  line-height: 2.4em;
+}
+.centeralign {
+  margin-right: auto;
+  margin-left: auto;
+}
+.attributes-table {
+  th {
+    font-size: 18px;
+    font-weight: bold;
+    background-color: white;
   }
-  .entry-media {
-    display: flex;
-    margin: 15px 15px 0px 15px;
+  tr:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.12);
   }
-  .no-media {
-    flex-grow: 27;
-    max-width: 500px;
-    max-height: 500px;
-    margin: 15px;
-  }
-  .entry-detail-page {
-    display: flex;
-    flex-direction: column;
-  }
-  .entry-details-top {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .detail-header {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 100;
-    width: auto;
-  }
-  .component-name {
-    display: flex;
-    align-items: center;
-    padding-top: 15px;
-    padding-left: 15px;
-  }
-  .headline {
-    padding-left: 10px;
-  }
-  .detail-header-body {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .detail-header-left {
-    flex-grow: 2;
-  }
-  .detail-header-right {
-    padding-left: 15px;
-    padding-bottom: 10px;
-  }
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 15px 0px 0px 15px;
-  }
-  .list {
-    border-bottom: 1px solid rgba(0,0,0,0.12);
-    cursor: pointer;
-    padding-left: 0.5em;
-  }
-  .detail-header-right {
-    flex-grow: 1;
-  }
-  .entry-details-bottom {
-    display: flex;
-    flex-direction: column;
-  }
-  .dates {
-    padding: 10px 0px 0px 15px;
-  }
-  .date {
-    padding-bottom: 10px;
-  }
-  .watching {
-    margin: 0px;
-    padding: 0px;
-  }
-  .expansion-spacing {
-    margin: auto;
-    max-width:85em;
-    margin-bottom: 5px;
-  }
-  .expansion-content {
-    padding: 15px;
-    padding-bottom: 5px;
-    background-color: #EEEEEE !important;
-  }
-  .spinner {
-    margin-top: 7em;
-  }
-  .carousel {
-    margin-bottom: 1em;
-  }
-  .contactPar {
-    margin-bottom: 0.5em;
-  }
-  .reviewPar {
-    margin-bottom: 0.5em;
-  }
-  hr {
-    color: #333;
-    margin-bottom: 1em;
-  }
-  .icon {
-    margin-right: 0.3em;
-  }
-  .w-100 {
-    width: 100%;
-  }
-  .icon-2x {
-    font-size: 20px;
-  }
-  .media-link {
-    text-decoration: none;
-  }
-  .media-link:hover {
-    text-decoration: underline;
-  }
-  .list-item {
-    line-height: 2.4em;
-  }
-  .centeralign {
-    margin-right: auto;
-    margin-left: auto;
-  }
-  .attributes-table {
-    th {
-      font-size: 18px;
-      font-weight: bold;
-      background-color: white;
-    }
-    tr:nth-child(odd) {
-      background-color: rgba(0,0,0,0.12);
-    }
-  }
-  .chip-hover-color:hover {
-    background-color:#C9C9C9;
-  }
-  .pointer:hover {
-    cursor: pointer;
-  }
-  .pointer .v-chip__content {
-    margin: 0 !important;
-    padding: 0 12px !important;
-  }
-  .pointer .v-chip__content:hover {
-    cursor: pointer;
-  }
+}
+.chip-hover-color:hover {
+  background-color: #c9c9c9;
+}
+.pointer:hover {
+  cursor: pointer;
+}
+.v-chip {
+  margin-bottom: 5px;
+}
 </style>
