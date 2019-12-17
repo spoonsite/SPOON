@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <v-layout my-5 mx-3>
-      <v-form class="centeralign" ref="form" v-model="valid" lazy-validation>
+      <v-form class="centeralign" ref="form" lazy-validation>
         <v-container grid-list-xl text-xs-left>
           <v-layout row wrap>
             <v-flex xs12 pt-0 pb-0>
@@ -56,7 +56,7 @@
                 block
                 color="success"
                 style="margin-bottom:2em;"
-                :disabled="!valid"
+                :disabled="valid"
                 @click="submit"
                 :loading="isLoading"
               >
@@ -113,10 +113,9 @@ export default {
   },
   data: () => ({
     ticket: '',
-    valid: true,
     confirmationDialog: false,
     isLoading: false,
-    contactType: undefined,
+    contactType: '',
     contactTypeRules: [
       v => !!v || 'Type is required'
     ],
@@ -126,12 +125,12 @@ export default {
       'Improvement',
       'New Feature'
     ],
-    subject: undefined,
+    subject: '',
     subjectRules: [
       v => !!v || 'Subject is required',
       v => (v && v.length <= 255) || 'Maximum length for this field is 255'
     ],
-    description: undefined,
+    description: '',
     descriptionRules: [
       v => !!v || 'Description is required',
       v => (v && v.length <= 4096) || 'Maximum length for this field is 4096'
@@ -159,21 +158,26 @@ export default {
             }
           })
           .then(response => {
-            this.$refs.form.reset()
+            this.cancel()
             this.confirmationDialog = true
             this.isLoading = false
           })
       }
     },
     cancel() {
-      this.$refs.form.reset()
+      this.contactType = ''
+      this.subject = ''
+      this.description = ''
     }
   },
   computed: {
     cancelable() {
-      return this.contactType !== undefined ||
-        this.subject !== undefined ||
-        this.description !== undefined
+      return this.contactType !== '' ||
+        this.subject !== '' ||
+        this.description !== ''
+    },
+    valid() {
+      return !(this.contactType !== '' && this.subject !== '' && this.description !== '')
     }
   }
 }
