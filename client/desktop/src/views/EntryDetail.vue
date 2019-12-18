@@ -1,5 +1,5 @@
 <template lang="html">
-  <v-layout row justify-center align-center v-if="isLoading">
+  <v-layout row justify-center align-center v-if="isLoading" style="height:100%;">
     <v-flex xs1>
       <v-progress-circular color="primary" :size="60" :width="6" indeterminate class="spinner"></v-progress-circular>
     </v-flex>
@@ -19,18 +19,18 @@
         <div class="detail-header-body">
           <div class="detail-header-left">
             <div class="dates">
-              <p class="date"><strong>Organization:</strong> {{ detail.organization }}</p>
-              <p class="date" v-if="detail.componentTypeLabel && detail.componentTypeLabel.includes('>')">
+              <p class="pb-1 mb-1"><strong>Organization:</strong> {{ detail.organization }}</p>
+              <p class="pb-1 mb-1" v-if="detail.componentTypeLabel && detail.componentTypeLabel.includes('>')">
                 <strong>Category:</strong>
                 {{ detail.componentTypeLabel }}
               </p>
-              <p v-if="detail.lastSubmitDts" class="date">
+              <p v-if="detail.lastSubmitDts" class="pb-0 mb-1">
                 <strong>Last Vendor Update Provided:</strong> {{ detail.lastSubmitDts | formatDate }}
               </p>
-              <p v-else class="date">
+              <p v-else class="pb-1 mb-1">
                 <strong>Last Vendor Update Provided:</strong> {{ detail.approvedDate | formatDate }}
               </p>
-              <p class="date"><strong>Last System Update:</strong> {{ detail.lastActivityDts | formatDate }}</p>
+              <p class="pb-1 mb-1"><strong>Last System Update:</strong> {{ detail.lastActivityDts | formatDate }}</p>
             </div>
             <div style="padding-bottom: 1em;" class="clearfix tags" v-if="detail.tags && detail.tags.length !== 0">
               <span v-for="tag in detail.tags" :key="tag.text" style="margin-right: 0.8em;;">
@@ -94,14 +94,15 @@
         <v-card-text>
           <v-form>
             <v-container>
-              <p>Please include the section needing the correction (e.g. Contacts ):*</p>
+              <p>Please include the section needing the correction (e.g. Contacts)</p>
               <v-textarea
                 style="background-color: white;"
                 v-model="feedbackForm.message"
                 :rules="formCorrectionRules"
-                outline
+                label="Correction*"
+                outlined
               ></v-textarea>
-              <p>Contact Information:</p>
+              <p class="mt-4 mb-0">Contact Information:</p>
               <v-text-field :rules="formNameRules" single-line label="Name*" v-model="feedbackForm.name">
               </v-text-field>
               <v-text-field :rules="formEmailRules" single-line label="Email*" v-model="feedbackForm.email">
@@ -136,15 +137,15 @@
           </p>
           <v-form>
             <v-container>
-              <p>Provide a reason for this request:</p>
               <v-textarea
                 :rules="formReasonRules"
                 style="background-color: white;"
                 v-model="feedbackForm.message"
                 required
-                outline
+                label="Reason For Request*"
+                outlined
               ></v-textarea>
-              <p>Contact Information:</p>
+              <p class="mt-4 mb-0">Contact Information:</p>
               <v-text-field :rules="formNameRules" single-line label="Name*" v-model="feedbackForm.name">
               </v-text-field>
               <v-text-field :rules="formEmailRules" single-line label="Email*" v-model="feedbackForm.email">
@@ -173,15 +174,15 @@
       <v-card>
         <ModalTitle title="Contact Vendor" @close="contactVendorDialog = false" />
         <v-card-text>
-          <p>From:</p>
+          <p class="mb-0">From:</p>
           <v-text-field single-line disabled v-model="userEmail"> </v-text-field>
-          <p>Message:</p>
           <v-textarea
             :rules="formMessageRules"
             style="background-color: white;"
             v-model="vendorMessage"
+            label="Detailed Message"
             required
-            outline
+            outlined
           ></v-textarea>
         </v-card-text>
         <v-card-actions>
@@ -197,10 +198,10 @@
     <v-divider></v-divider>
 
     <div class="entry-details-bottom">
-      <v-expansion-panels class="expansion-spacing" :value="0">
+      <v-expansion-panels accordion multiple class="expansion-spacing" v-model="panels" :value="0">
         <v-expansion-panel>
           <v-expansion-panel-header><h2>Description</h2></v-expansion-panel-header>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content class="expansion-content">
             <div v-if="detail.description" v-html="detail.description"></div>
             <div v-else class="expansion-content">No description</div>
           </v-expansion-panel-content>
@@ -208,8 +209,8 @@
 
         <v-expansion-panel :value="0">
           <v-expansion-panel-header><h2>Attributes</h2></v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <div v-if="detail.attributes && detail.attributes.length > 0" >
+          <v-expansion-panel-content class="expansion-content">
+            <div v-if="detail.attributes && detail.attributes.length > 0">
               <v-simple-table>
                 <template v-slot:default>
                   <thead>
@@ -227,13 +228,13 @@
                 </template>
               </v-simple-table>
             </div>
-            <div v-else >No entry attributes</div>
+            <div v-else>No entry attributes</div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-expansion-panel>
           <v-expansion-panel-header><h2>Resources</h2></v-expansion-panel-header>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content class="expansion-content">
             <div v-if="detail.resources && detail.resources.length > 0">
               <div v-for="item in detail.resources" :key="item.resourceId">
                 <strong>{{ item.resourceTypeDesc }}</strong>
@@ -250,10 +251,10 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel >
-          <v-expansion-panel-content>
-            <div slot="header"><h2>Tags</h2></div>
-            <div class="expansion-content">
+        <v-expansion-panel>
+          <v-expansion-panel-header><h2>Tags</h2></v-expansion-panel-header>
+          <v-expansion-panel-content class="expansion-content">
+            <div>
               <div style="padding-bottom: 1em;" class="clearfix tags" v-if="detail.tags && detail.tags.length !== 0">
                 <span v-for="tag in detail.tags" :key="tag.text" style="margin-right: 0.8em;">
                   <v-chip
@@ -363,12 +364,10 @@
           </v-card>
         </v-dialog>
 
-        <v-expansion-panel class="expansion-spacing">
-          <v-expansion-panel-content>
-            <div slot="header">
-              <h2>Reviews</h2>
-            </div>
-            <div class="expansion-content">
+        <v-expansion-panel>
+          <v-expansion-panel-header><h2>Reviews</h2></v-expansion-panel-header>
+          <v-expansion-panel-content class="expansion-content">
+            <div>
               <strong>Average User Rating:</strong>
               <star-rating
                 :rating="computeAverageRating(detail)"
@@ -558,7 +557,7 @@
 
         <v-expansion-panel>
           <v-expansion-panel-header><h2>Questions and Answers</h2></v-expansion-panel-header>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content class="expansion-content">
             <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
             <Question
               v-for="question in questions"
@@ -569,59 +568,59 @@
             <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
           </v-expansion-panel-content>
         </v-expansion-panel>
-      </v-expansion-panels>
 
-      <v-dialog v-model="askQuestionDialog" max-width="75em">
-        <v-card>
-          <ModalTitle title="Ask a Question" @close="askQuestionDialog = false" />
-          <v-card-text>
-            <v-alert class="w-100" type="warning" :value="true"
-              ><span v-html="$store.state.branding.userInputWarning"></span
-            ></v-alert>
-            <v-alert class="w-100" type="info" :value="true"
-              ><span v-html="$store.state.branding.submissionFormWarning"></span
-            ></v-alert>
-            <quill-editor style="background-color: white;" v-model="newQuestion"></quill-editor>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn color="success" :disabled="newQuestion === ''" @click="submitQuestion()">Submit</v-btn>
-            <v-btn
-              @click="
-                askQuestionDialog = false
-                newQuestion = ''
-              "
-              >Cancel</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-expansion-panel class="expansion-spacing">
-        <v-expansion-panel-content>
-          <div slot="header"><h2>Contacts</h2></div>
-          <v-card class="expansion-content">
-            <v-card-text v-if="detail.contacts && detail.contacts.length > 0">
-              <h2>Points of Contact</h2>
-              <div v-for="contact in detail.contacts" :key="contact.contactId">
-                <hr />
-                <p class="contactPar"><strong>Name: </strong>{{ contact.name }}</p>
-                <p class="contactPar"><strong>Organization: </strong>{{ contact.organization }}</p>
-                <p class="contactPar"><strong>Position: </strong>{{ contact.positionDescription }}</p>
-                <p class="contactPar">
-                  <strong>Phone: </strong><a :href="`tel: ${contact.phone}`">{{ contact.phone }}</a>
-                </p>
-                <p class="contactPar">
-                  <strong>Email: </strong><a :href="`mailto:${contact.email}`">{{ contact.email }}</a>
-                </p>
-              </div>
+        <v-dialog v-model="askQuestionDialog" max-width="75em">
+          <v-card>
+            <ModalTitle title="Ask a Question" @close="askQuestionDialog = false" />
+            <v-card-text>
+              <v-alert class="w-100" type="warning" :value="true"
+                ><span v-html="$store.state.branding.userInputWarning"></span
+              ></v-alert>
+              <v-alert class="w-100" type="info" :value="true"
+                ><span v-html="$store.state.branding.submissionFormWarning"></span
+              ></v-alert>
+              <quill-editor style="background-color: white;" v-model="newQuestion"></quill-editor>
             </v-card-text>
-            <v-card-text v-else>
-              <p>There are no contacts for this entry.</p>
-            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn color="success" :disabled="newQuestion === ''" @click="submitQuestion()">Submit</v-btn>
+              <v-btn
+                @click="
+                  askQuestionDialog = false
+                  newQuestion = ''
+                "
+                >Cancel</v-btn
+              >
+            </v-card-actions>
           </v-card>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+        </v-dialog>
+
+        <v-expansion-panel>
+          <v-expansion-panel-header><h2>Contacts</h2></v-expansion-panel-header>
+          <v-expansion-panel-content class="expansion-content">
+              <div style="color:black;">
+                <div v-if="detail.contacts && detail.contacts.length > 0">
+                  <h2>Points of Contact</h2>
+                  <div v-for="(contact, index) in detail.contacts" :key="index">
+                    <hr />
+                    <p class="contactPar"><strong>Name: </strong>{{ contact.name }}</p>
+                    <p class="contactPar"><strong>Organization: </strong>{{ contact.organization }}</p>
+                    <p class="contactPar"><strong>Position: </strong>{{ contact.positionDescription }}</p>
+                    <p class="contactPar">
+                      <strong>Phone: </strong><a :href="`tel: ${contact.phone}`">{{ contact.phone }}</a>
+                    </p>
+                    <p class="contactPar">
+                      <strong>Email: </strong><a :href="`mailto:${contact.email}`">{{ contact.email }}</a>
+                    </p>
+                  </div>
+                </div>
+                <div v-else>
+                  <p>There are no contacts for this entry.</p>
+                </div>
+              </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </div>
     <v-footer color="primary" dark height="auto" display="flex" style="justify-content: center;">
       <v-card color="primary" dark flat class="footer-wrapper">
@@ -751,6 +750,7 @@ export default {
       errors: [],
       mediaDetailsDialog: false,
       currentMediaDetailItem: {},
+      panels: [0, 1],
       mediaIconMap: {
         'VID': 'file-video',
         'TEX': 'file-alt',

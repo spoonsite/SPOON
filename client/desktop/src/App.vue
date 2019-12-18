@@ -33,7 +33,7 @@
                 :value="userToolsExpand"
               >
                 <template v-slot:activator>
-                  <v-list-item-title style="margin-right: 2em;">Personalization</v-list-item-title>
+                  <v-list-item-title style="margin-right: 2em;">User Tools</v-list-item-title>
                 </template>
                 <v-list-item
                   v-for="link in userToolLinks"
@@ -61,12 +61,7 @@
                 </v-list-item-action>
                 <v-list-item-title v-text="link.name" />
               </v-list-item>
-              <v-list-item
-                class="menu-item"
-                @click.stop="showDisclaimer = true"
-                role="button"
-                aria-pressed="false"
-              >
+              <v-list-item class="menu-item" @click.stop="showDisclaimer = true" role="button" aria-pressed="false">
                 <v-list-item-action>
                   <v-icon>fas fa-exclamation-triangle</v-icon>
                 </v-list-item-action>
@@ -83,11 +78,9 @@
           </v-card>
         </v-menu>
       </v-app-bar>
-      <div
-        :hidden="hideSecurityBanner"
-        class="securityDiv"
-        :style="securityBannerColors "
-      >{{ $store.state.branding.securityBannerText }}</div>
+      <div :hidden="hideSecurityBanner" class="securityDiv" :style="securityBannerColors">
+        {{ $store.state.branding.securityBannerText }}
+      </div>
 
       <!-- Request Error Dialog -->
       <v-dialog v-model="errorDialog" max-width="75em">
@@ -95,12 +88,7 @@
           <ModalTitle title="Error" @close="errorDialog = false" />
           <v-card-text>
             <p>Oops! Something went wrong. Please contact the admin.</p>
-            <v-btn
-              depressed
-              small
-              v-if="currentError"
-              @click="showErrorDetails = !showErrorDetails"
-            >Details</v-btn>
+            <v-btn depressed small v-if="currentError" @click="showErrorDetails = !showErrorDetails">Details</v-btn>
             <div v-if="showErrorDetails && currentError">
               <strong>STATUS CODE:</strong>
               {{ currentError.status }} {{ currentError.statusText }}
@@ -109,10 +97,8 @@
               {{ currentError.config.method }}
               <br />
               <strong>URL:</strong>
-              {{ currentError.config.url}}
-              <span
-                v-if="parseJSON(currentError.config.data)"
-              >
+              {{ currentError.config.url }}
+              <span v-if="parseJSON(currentError.config.data)">
                 <br />
                 <strong>REQUEST DATA:</strong>
                 <pre style="overflow-x: scroll;">{{ parseJSON(currentError.config.data) }}</pre>
@@ -145,9 +131,9 @@
           </v-card-actions>
         </v-card>
       </v-dialog>-->
-      <DisclaimerModal v-model="showDisclaimer" @close="showDisclaimer=false"></DisclaimerModal>
+      <DisclaimerModal v-model="showDisclaimer" @close="showDisclaimer = false"></DisclaimerModal>
 
-      <main :style="(hideSecurityBanner ? 'padding-top: 48px' : '')">
+      <main :style="hideSecurityBanner ? 'padding-top: 48px' : ''">
         <router-view />
       </main>
     </v-app>
@@ -198,24 +184,16 @@ export default {
   },
   computed: {
     filteredBeginningLinks() {
-      return this.beginningLinks.filter(link =>
-        this.checkPermissions(link.permissions)
-      )
+      return this.beginningLinks.filter(link => this.checkPermissions(link.permissions))
     },
     filteredGroupLinks() {
-      return this.groupLinks.filter(link =>
-        this.checkPermissions(link.permissions)
-      )
+      return this.groupLinks.filter(link => this.checkPermissions(link.permissions))
     },
     filteredEndLinks() {
-      return this.endLinks.filter(link =>
-        this.checkPermissions(link.permissions)
-      )
+      return this.endLinks.filter(link => this.checkPermissions(link.permissions))
     },
     securityBannerColors() {
-      return `background-color: ${
-        this.$store.state.branding.securityBannerBackgroundColor
-      };
+      return `background-color: ${this.$store.state.branding.securityBannerBackgroundColor};
         color: ${this.$store.state.branding.securityBannerTextColor};
       ${this.hideSecurityBanner ? '' : 'margin-top: 48px;'}`
     },
@@ -312,9 +290,7 @@ export default {
           permissions: []
         },
         {
-          href: this.$store.state.helpUrl
-            ? this.$store.state.helpUrl
-            : 'https://spoonsite.github.io/',
+          href: this.$store.state.helpUrl ? this.$store.state.helpUrl : 'https://spoonsite.github.io/',
           icon: 'question-circle',
           name: 'Help',
           newTab: true,
@@ -388,17 +364,11 @@ export default {
     },
     checkWatches() {
       this.$http
-        .get(
-          '/openstorefront/api/v1/resource/userprofiles/' +
-            this.$store.state.currentUser.username +
-            '/watches'
-        )
+        .get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
         .then(response => {
           if (response.data && response.data.length > 0) {
             for (var i = 0; i < response.data.length; i++) {
-              if (
-                response.data[i].lastViewDts < response.data[i].lastUpdateDts
-              ) {
+              if (response.data[i].lastViewDts < response.data[i].lastUpdateDts) {
                 this.watchNumber++
               }
             }
@@ -408,9 +378,7 @@ export default {
         .finally(() => {
           if (this.watchNumber > 0) {
             this.$toasted.show(
-              this.watchNumber +
-                (this.watchNumber === 1 ? ' entry has' : ' entries have') +
-                ' been updated.',
+              this.watchNumber + (this.watchNumber === 1 ? ' entry has' : ' entries have') + ' been updated.',
               {
                 icon: 'binoculars',
                 action: {
