@@ -36,20 +36,23 @@
           >
         </p>
         <div class="pt-2" style="font-size: 16px;" v-html="question.question"></div>
-        <v-btn small @click="answerQuestionDialog = true">Answer</v-btn>
+        <div class="d-flex justify-end">
+          <v-btn small @click="answerQuestionDialog = true" class="mx-3">Answer</v-btn>
 
-        <v-btn
-          :loading="loading"
-          v-if="!showAnswers"
-          small
-          @click="
-            getAnswers(question.questionId)
-            showAnswers = true
-          "
-          >View Answers</v-btn
-        >
-        <v-btn :loading="loading" v-else-if="noAnswers" disabled small>No Answers</v-btn>
-        <v-btn :loading="loading" v-else small @click="showAnswers = false">Hide Answers</v-btn>
+          <v-btn
+            :loading="loading"
+            v-if="!showAnswers"
+            small
+            class="mx-3"
+            @click="
+              getAnswers(question.questionId)
+              showAnswers = true
+            "
+            >View Answers</v-btn
+          >
+          <v-btn :loading="loading" v-else-if="noAnswers" disabled small class="mx-3">No Answers</v-btn>
+          <v-btn :loading="loading" v-else small @click="showAnswers = false" class="mx-3">Hide Answers</v-btn>
+        </div>
 
         <transition name="slide">
           <div v-if="showAnswers">

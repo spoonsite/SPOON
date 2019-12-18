@@ -260,7 +260,7 @@
                   <v-chip
                     v-if="tag.createUser === $store.state.currentUser.username"
                     close
-                    @input="
+                    @click:close="
                       deleteTagDialog = true
                       tagName = tag.text
                       deleteTagId = tag.tagId
@@ -276,7 +276,7 @@
                   </v-chip>
                 </span>
               </div>
-              <v-combobox id="tagEntry" label="Tags" :items="allTags" :error="tagEmpty" v-model="tagName"> </v-combobox>
+              <v-combobox id="tagEntry" label="Tags" :items="allTags" :error="tagEmpty" v-model="tagName" clearable/>
               <v-btn @click="determineTagType()" :disabled="tagName === ''">
                 Add
               </v-btn>
@@ -287,12 +287,12 @@
         <v-dialog v-model="deleteTagDialog" width="35em">
           <v-card>
             <ModalTitle
-              title="Are you sure you want to remove this tag from this entry?"
+              title="Are you sure?"
               @close="deleteTagDialog = false"
             />
             <v-card-text>
               <p>
-                Tag to be removed: <strong style="color: red;">{{ tagName }}</strong>
+                <strong style="color: red;">{{ tagName }}</strong> will be removed from this entry.
               </p>
             </v-card-text>
             <v-card-actions>
@@ -321,18 +321,18 @@
               </p>
               <p style="font-weight: bold; padding-top: 1em;">Related Tags:</p>
               <div style="overflow-y: auto; overflow-x: hidden; height: 15em;">
-                <v-list>
-                  <v-list-tile-content v-for="tag in relatedTags" :key="tag">
-                    <v-list-tile-title
+                <v-list dense>
+                  <v-list-item-content v-for="tag in relatedTags" :key="tag" class="py-1">
+                    <v-list-item-title
                       v-if="selectedTag === tag"
                       v-text="tag"
                       class="list"
                       style="background-color: rgba(0,0,0,0.12);"
                       @click="selectedTag = tag"
                     >
-                    </v-list-tile-title>
-                    <v-list-tile-title v-else v-text="tag" class="list" @click="selectedTag = tag"> </v-list-tile-title>
-                  </v-list-tile-content>
+                    </v-list-item-title>
+                    <v-list-item-title v-else v-text="tag" class="list" @click="selectedTag = tag"> </v-list-item-title>
+                  </v-list-item-content>
                 </v-list>
               </div>
             </v-card-text>
@@ -375,7 +375,9 @@
                 :increment="0.01"
                 :star-size="30"
               ></star-rating>
-              <v-btn @click="writeReviewDialog = true">Write a Review</v-btn>
+              <div class="py-3">
+                <v-btn @click="writeReviewDialog = true">Write a Review</v-btn>
+              </div>
             </div>
             <div v-if="detail.reviews && detail.reviews.length !== 0">
               <div v-for="review in detail.reviews" :key="review.reviewId">
@@ -416,21 +418,24 @@
                   </div>
                   <p class="reviewPar"><strong>Comments:</strong></p>
                   <p v-html="review.comment"></p>
-                  <v-btn
-                    v-if="review.username === $store.state.currentUser.username"
-                    @click="editReviewSetup(review)"
-                    small
-                    >Edit
-                  </v-btn>
-                  <v-btn
-                    v-if="review.username === $store.state.currentUser.username"
-                    @click="
-                      deleteReviewDialog = true
-                      deleteRequestId = review.reviewId
-                    "
-                    small
-                    >Delete
-                  </v-btn>
+                  <div class="d-flex justify-end">
+                    <v-btn
+                      v-if="review.username === $store.state.currentUser.username"
+                      @click="editReviewSetup(review)"
+                      class="mx-3"
+                      >Edit
+                    </v-btn>
+                    <v-btn
+                      v-if="review.username === $store.state.currentUser.username"
+                      @click="
+                        deleteReviewDialog = true
+                        deleteRequestId = review.reviewId
+                      "
+                      color="warning"
+                      class="mx-3"
+                      >Delete
+                    </v-btn>
+                  </div>
                 </div>
               </div>
             </div>
@@ -540,7 +545,10 @@
 
         <v-dialog v-model="deleteReviewDialog" width="25em">
           <v-card>
-            <ModalTitle title="Confirm Review Deletion" @close="deleteReviewDialog = false" />
+            <ModalTitle title="Confirm" @close="deleteReviewDialog = false" />
+            <v-card-text>
+              Are you sure you want to delete your review?
+              </v-card-text>
             <v-card-actions>
               <v-spacer />
               <v-btn color="warning" @click="deleteReviewConfirmation()">Delete</v-btn>
