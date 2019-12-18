@@ -454,9 +454,6 @@ public class SecurityServiceImpl
 					passwordResetEmail.setSubject(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE) +" - Forgot Password" );
 					MailManager.send(passwordResetEmail);
 
-					// ResetPasswordMessageGenerator resetPasswordMessageGenerator = new ResetPasswordMessageGenerator(messageContent);
-					// Email email = resetPasswordMessageGenerator.generateMessage();
-					// MailManager.send(email);
 				}
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find user profile to reset", "Check input: " + username);

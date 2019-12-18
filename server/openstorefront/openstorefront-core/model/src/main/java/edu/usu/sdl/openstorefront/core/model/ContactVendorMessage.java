@@ -71,7 +71,7 @@ public class ContactVendorMessage
 	@ConsumeField
 	private String message;
 
-	public void updateConfigs(Branding branding)
+	public void updateConfigs()
 	{
 		this.partUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL) + "/Landing.action#/entry-detail/" + this.partId;
 		this.hostUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL);
