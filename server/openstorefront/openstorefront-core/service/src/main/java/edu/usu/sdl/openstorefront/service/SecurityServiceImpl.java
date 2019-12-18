@@ -47,7 +47,6 @@ import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.message.MessageContext;
-import edu.usu.sdl.openstorefront.service.message.ResetPasswordMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.UserApprovedMessageGenerator;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -439,7 +438,6 @@ public class SecurityServiceImpl
 					MessageContext messageContent = new MessageContext(userProfile);
 					messageContent.setUserPasswordResetCode(rawApprovalCode);
 
-					LOG.log(Level.SEVERE, "Got here");
 					Map<String, Object> data = new HashMap<>();
 					data.put("username", userProfile.getUsername());
 					data.put("applicationName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
