@@ -1,10 +1,9 @@
 <template>
   <form v-on:submit.prevent="submitQuery()" v-click-outside="searchBarBlur">
     <div class="searchbar-button">
-      <v-icon
-        @click="searchOptionsClicked"
-        class="drop-down-icon search-options-icon"
-      >fas {{ (hideSearchOptions ? 'fa-chevron-up' : 'fa-chevron-down')}} fa-xs</v-icon>
+      <v-icon @click="searchOptionsClicked" class="drop-down-icon search-options-icon"
+        >fas {{ hideSearchOptions ? 'fa-chevron-up' : 'fa-chevron-down' }} fa-xs</v-icon
+      >
     </div>
     <div class="searchbar">
       <input
@@ -16,11 +15,7 @@
         @click="searchBarFocused"
       />
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">mdi-magnify</v-icon>
-      <v-icon
-        v-if="value !== ''"
-        class="search-icon"
-        @click="$emit('input', ''), $emit('clear')"
-      >mdi-close</v-icon>
+      <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">mdi-close</v-icon>
     </div>
     <!-- SEARCH SUGGESTIONS -->
     <v-card
@@ -29,12 +24,7 @@
       style="z-index: 2; top: 6px;"
     >
       <v-list dense class="elevation-1">
-        <v-list-item
-          v-for="i in searchSuggestions"
-          :key="i.name"
-          @click="submitQuery(i.name);"
-          role="button"
-        >
+        <v-list-item v-for="i in searchSuggestions" :key="i.name" @click="submitQuery(i.name)" role="button">
           <v-list-item-content>{{ i.name }}</v-list-item-content>
         </v-list-item>
       </v-list>
@@ -45,13 +35,11 @@
       :height="overlaySuggestions ? 0 : 'auto'"
       style="position:relative; z-index:5; top: 6px;"
     >
-      <div
-        width="100%"
-        style="background-color: red; text-align: center;"
-        :hidden="searchOptions.length !== 0"
-      >All search options are off, this will cause a search to return nothing</div>
+      <div width="100%" style="background-color: red; text-align: center;" :hidden="searchOptions.length !== 0">
+        All search options are off, this will cause a search to return nothing
+      </div>
       <v-list dense :class="'elevation-1 ' + (searchOptions.length !== 0 ? '' : 'flat-top')">
-        <v-list-item v-for="(e,index) in searchOptionsSource" :key="index" style="height: 50px">
+        <v-list-item v-for="(e, index) in searchOptionsSource" :key="index" style="height: 50px">
           <v-list-item-content>
             <v-checkbox v-model="searchOptions" :value="e" :label="e" class="ml-2" />
           </v-list-item-content>

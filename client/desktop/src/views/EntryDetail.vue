@@ -276,7 +276,7 @@
                   </v-chip>
                 </span>
               </div>
-              <v-combobox id="tagEntry" label="Tags" :items="allTags" :error="tagEmpty" v-model="tagName" clearable/>
+              <v-combobox id="tagEntry" label="Tags" :items="allTags" :error="tagEmpty" v-model="tagName" clearable />
               <v-btn @click="determineTagType()" :disabled="tagName === ''">
                 Add
               </v-btn>
@@ -286,10 +286,7 @@
 
         <v-dialog v-model="deleteTagDialog" width="35em">
           <v-card>
-            <ModalTitle
-              title="Are you sure?"
-              @close="deleteTagDialog = false"
-            />
+            <ModalTitle title="Are you sure?" @close="deleteTagDialog = false" />
             <v-card-text>
               <p>
                 <strong style="color: red;">{{ tagName }}</strong> will be removed from this entry.
@@ -548,7 +545,7 @@
             <ModalTitle title="Confirm" @close="deleteReviewDialog = false" />
             <v-card-text>
               Are you sure you want to delete your review?
-              </v-card-text>
+            </v-card-text>
             <v-card-actions>
               <v-spacer />
               <v-btn color="warning" @click="deleteReviewConfirmation()">Delete</v-btn>
@@ -606,26 +603,26 @@
         <v-expansion-panel>
           <v-expansion-panel-header><h2>Contacts</h2></v-expansion-panel-header>
           <v-expansion-panel-content class="expansion-content">
-              <div style="color:black;">
-                <div v-if="detail.contacts && detail.contacts.length > 0">
-                  <h2>Points of Contact</h2>
-                  <div v-for="(contact, index) in detail.contacts" :key="index">
-                    <hr />
-                    <p class="contactPar"><strong>Name: </strong>{{ contact.name }}</p>
-                    <p class="contactPar"><strong>Organization: </strong>{{ contact.organization }}</p>
-                    <p class="contactPar"><strong>Position: </strong>{{ contact.positionDescription }}</p>
-                    <p class="contactPar">
-                      <strong>Phone: </strong><a :href="`tel: ${contact.phone}`">{{ contact.phone }}</a>
-                    </p>
-                    <p class="contactPar">
-                      <strong>Email: </strong><a :href="`mailto:${contact.email}`">{{ contact.email }}</a>
-                    </p>
-                  </div>
-                </div>
-                <div v-else>
-                  <p>There are no contacts for this entry.</p>
+            <div style="color:black;">
+              <div v-if="detail.contacts && detail.contacts.length > 0">
+                <h2>Points of Contact</h2>
+                <div v-for="(contact, index) in detail.contacts" :key="index">
+                  <hr />
+                  <p class="contactPar"><strong>Name: </strong>{{ contact.name }}</p>
+                  <p class="contactPar"><strong>Organization: </strong>{{ contact.organization }}</p>
+                  <p class="contactPar"><strong>Position: </strong>{{ contact.positionDescription }}</p>
+                  <p class="contactPar">
+                    <strong>Phone: </strong><a :href="`tel: ${contact.phone}`">{{ contact.phone }}</a>
+                  </p>
+                  <p class="contactPar">
+                    <strong>Email: </strong><a :href="`mailto:${contact.email}`">{{ contact.email }}</a>
+                  </p>
                 </div>
               </div>
+              <div v-else>
+                <p>There are no contacts for this entry.</p>
+              </div>
+            </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>

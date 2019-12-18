@@ -7,7 +7,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               class="db"
-              @click="showFilters = !showFilters; showOptions = false;"
+              @click="
+                showFilters = !showFilters
+                showOptions = false
+              "
               small
               fab
               dark
@@ -24,7 +27,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               class="db"
-              @click="showOptions = !showOptions; showFilters = false;"
+              @click="
+                showOptions = !showOptions
+                showFilters = false
+              "
               small
               fab
               dark
@@ -41,7 +47,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               class="db"
-              @click="sortComparisonData(); showComparison = true;"
+              @click="
+                sortComparisonData()
+                showComparison = true
+              "
               :disabled="!(comparisonList.length >= 2)"
               small
               fab
@@ -70,7 +79,13 @@
       </div>
 
       <div v-if="showOptions || showFilters" class="close-btn">
-        <v-btn icon @click="showOptions = false; showFilters = false;">
+        <v-btn
+          icon
+          @click="
+            showOptions = false
+            showFilters = false
+          "
+        >
           <v-icon>fas fa-times</v-icon>
         </v-btn>
       </div>
@@ -96,22 +111,14 @@
             :label="'Organization'"
             class="checkbox-spacing"
           ></v-checkbox>
-          <v-checkbox
-            v-model="displayOptions.category"
-            :label="'Category'"
-            class="checkbox-spacing"
-          ></v-checkbox>
+          <v-checkbox v-model="displayOptions.category" :label="'Category'" class="checkbox-spacing"></v-checkbox>
           <v-checkbox v-model="displayOptions.tags" :label="'Tags'" class="checkbox-spacing"></v-checkbox>
           <v-checkbox
             v-model="displayOptions.userRating"
             :label="'Average User Rating'"
             class="checkbox-spacing"
           ></v-checkbox>
-          <v-checkbox
-            v-model="displayOptions.description"
-            :label="'Description'"
-            class="checkbox-spacing"
-          ></v-checkbox>
+          <v-checkbox v-model="displayOptions.description" :label="'Description'" class="checkbox-spacing"></v-checkbox>
           <v-checkbox
             v-model="displayOptions.lastUpdated"
             :label="'Last Updated'"
@@ -138,22 +145,14 @@
             label="Category"
             clearable
           >
-            <template
-              slot="selection"
-              slot-scope="data"
-            >({{ data.item.doc_count }}) {{ data.item.label }}</template>
+            <template slot="selection" slot-scope="data">({{ data.item.doc_count }}) {{ data.item.label }}</template>
             <template slot="item" slot-scope="data">
               <v-list-item-content>
                 <v-list-item-title>({{ data.item.doc_count }}) {{ data.item.label }}</v-list-item-title>
               </v-list-item-content>
             </template>
           </v-autocomplete>
-          <v-checkbox
-            class="ma-0"
-            color="black"
-            label="Include Sub-Categories"
-            v-model="filters.children"
-          ></v-checkbox>
+          <v-checkbox class="ma-0" color="black" label="Include Sub-Categories" v-model="filters.children"></v-checkbox>
           <v-autocomplete
             v-model="filters.tags"
             hide-details
@@ -170,12 +169,12 @@
             <template slot="selection" slot-scope="data">
               <v-chip close small @click:close="removeTag(data.item.key)">
                 <v-avatar left class="grey lighten-1 mr-2">{{ data.item.doc_count }}</v-avatar>
-                {{ data.item.key}}
+                {{ data.item.key }}
               </v-chip>
             </template>
             <template slot="item" slot-scope="data">
               <v-list-item-content>
-                <v-list-item-title>({{ data.item.doc_count }}) {{ data.item.key}}</v-list-item-title>
+                <v-list-item-title>({{ data.item.doc_count }}) {{ data.item.key }}</v-list-item-title>
               </v-list-item-content>
             </template>
           </v-autocomplete>
@@ -187,10 +186,9 @@
             item-value="key"
             clearable
           >
-            <template
-              slot="selection"
-              slot-scope="data"
-            >({{ organizationsMap.get(data.item) }}) {{ data.item }}</template>
+            <template slot="selection" slot-scope="data"
+              >({{ organizationsMap.get(data.item) }}) {{ data.item }}</template
+            >
             <template slot="item" slot-scope="data">
               <v-list-item-content>
                 <v-list-item-title>({{ organizationsMap.get(data.item) }}) {{ data.item }}</v-list-item-title>
@@ -208,41 +206,42 @@
               ref="attributeBar"
               style="width: 90%;"
             />
-            <v-icon
-              v-if="attributeQuery !== ''"
-              class="search-icon"
-              @click="attributeQuery=''"
-            >clear</v-icon>
+            <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery = ''">clear</v-icon>
           </div>
           <div>
-            <v-chip
-              close
-              v-for="attr in filters.attributes"
-              :key="attr"
-              @input="removeAttributeFilter(attr)"
-            >{{ printAttribute(attr) }}</v-chip>
+            <v-chip close v-for="attr in filters.attributes" :key="attr" @input="removeAttributeFilter(attr)">{{
+              printAttribute(attr)
+            }}</v-chip>
           </div>
-          <div
-            v-if="Object.keys(searchResultsAttributes).length !== 0"
-          >Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes</div>
+          <div v-if="Object.keys(searchResultsAttributes).length !== 0">
+            Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes
+          </div>
           <div v-if="Object.keys(attributeKeys).length === 0">No Attributes</div>
           <v-expansion-panels accordion>
-            <v-expansion-panel v-for="key in attributeKeys.slice(0,9)" :key="key">
+            <v-expansion-panel v-for="key in attributeKeys.slice(0, 9)" :key="key">
               <v-expansion-panel-header>
-                {{ searchResultsAttributes[key].label +
-                (searchResultsAttributes[key].attributeUnit ? ' (' + searchResultsAttributes[key].attributeUnit + ') ' : '') }}
+                {{
+                  searchResultsAttributes[key].label +
+                    (searchResultsAttributes[key].attributeUnit
+                      ? ' (' + searchResultsAttributes[key].attributeUnit + ') '
+                      : '')
+                }}
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-container class="pt-0" fluid>
                   <v-checkbox
-                    v-for="code in (searchResultsAttributes[key].codes)"
+                    v-for="code in searchResultsAttributes[key].codes"
                     :key="key + code.code"
                     color="black"
                     v-model="filters.attributes"
-                    :value="JSON.stringify({ 'type': key,
-                        'unit': searchResultsAttributes[key].attributeUnit,
-                        'typelabel': searchResultsAttributes[key].label,
-                        'code': code.code })"
+                    :value="
+                      JSON.stringify({
+                        type: key,
+                        unit: searchResultsAttributes[key].attributeUnit,
+                        typelabel: searchResultsAttributes[key].label,
+                        code: code.code
+                      })
+                    "
                     hide-details
                   >
                     <template slot="label">
@@ -272,7 +271,7 @@
         ></SearchBar>
         <!-- SEARCH FILTERS PILLS -->
         <div style="padding-top:20px; ">
-          <v-chip v-if="filters.entryType" close @click:close="filters.entryType=''">
+          <v-chip v-if="filters.entryType" close @click:close="filters.entryType = ''">
             <v-avatar left>
               <v-icon small>fas fa-layer-group</v-icon>
             </v-avatar>
@@ -285,8 +284,8 @@
             @click:close="filters.children = !filters.children"
           >
             <v-avatar left>
-              <v-icon small>fas fa-check-square</v-icon>
-            </v-avatar>Include Sub-Catagories
+              <v-icon small>fas fa-check-square</v-icon> </v-avatar
+            >Include Sub-Catagories
           </v-chip>
           <v-chip v-for="tag in filters.tags" :key="tag" close @click:close="removeTag(tag)">
             <v-avatar left>
@@ -300,12 +299,7 @@
             </v-avatar>
             {{ filters.organization }}
           </v-chip>
-          <v-chip
-            close
-            @click:close="removeAttributeFilter(attr)"
-            v-for="attr in filters.attributes"
-            :key="attr"
-          >
+          <v-chip close @click:close="removeAttributeFilter(attr)" v-for="attr in filters.attributes" :key="attr">
             <v-avatar left>
               <v-icon small>fas fa-clipboard-list</v-icon>
             </v-avatar>
@@ -318,7 +312,7 @@
 
       <!-- Search Results -->
       <div class="px-3">
-        <h2 v-if="searchQuery===''" style="text-align: center" class="mb-2">Search Results for ALL</h2>
+        <h2 v-if="searchQuery === ''" style="text-align: center" class="mb-2">Search Results for ALL</h2>
         <h2 v-else style="text-align: center" class="mb-2">Search Results for "{{ searchQuery }}"</h2>
 
         <p v-if="totalSearchResults === 0">No Search Results</p>
@@ -368,11 +362,7 @@
               <div class="item-body">
                 <div class="item-properties">
                   <span v-if="displayOptions.organization">
-                    <v-chip
-                      small
-                      class="organization-chip"
-                      @click="addOrganization(item.organization)"
-                    >
+                    <v-chip small class="organization-chip" @click="addOrganization(item.organization)">
                       <v-icon style="font-size: 16px; padding-right: 4px;">fas fa-university</v-icon>
                       <div class="tag-links">{{ item.organization }}</div>
                     </v-chip>
@@ -394,16 +384,8 @@
                       <div class="tag-links">{{ item.componentTypeDescription }}</div>
                     </v-chip>
                   </div>
-                  <div
-                    class="tag-wrapper"
-                    v-if="!!item.tags && item.tags.length !== 0 && displayOptions.tags"
-                  >
-                    <span
-                      v-for="tag in item.tags"
-                      :key="tag.text"
-                      class="tag-links"
-                      @click="addTag(tag.text)"
-                    >
+                  <div class="tag-wrapper" v-if="!!item.tags && item.tags.length !== 0 && displayOptions.tags">
+                    <span v-for="tag in item.tags" :key="tag.text" class="tag-links" @click="addTag(tag.text)">
                       <v-icon style="font-size: 14px; color: rgb(248, 197, 51);">fas fa-tag</v-icon>
                       {{ tag.text }}
                     </span>
@@ -422,10 +404,9 @@
                 </div>
                 <v-divider></v-divider>
                 <div class="item-details">
-                  <div
-                    class="description-wrapper"
-                    v-if="displayOptions.description"
-                  >{{ shortenDescription(item.description) }}</div>
+                  <div class="description-wrapper" v-if="displayOptions.description">
+                    {{ shortenDescription(item.description) }}
+                  </div>
                   <div class="item-details-bottom">
                     <div>
                       <p v-if="displayOptions.lastUpdated">
@@ -440,12 +421,7 @@
                       </p>
                     </div>
                     <div class="compare-box">
-                      <input
-                        type="checkbox"
-                        v-model="comparisonList"
-                        :value="item"
-                        :id="item.componentId"
-                      />
+                      <input type="checkbox" v-model="comparisonList" :value="item" :id="item.componentId" />
                       <label :for="item.componentId">Add to Compare</label>
                     </div>
                   </div>
@@ -473,21 +449,22 @@
                         v-for="(component, position) in this.comparisonDataHeaders"
                         :class="changeTableClass(position)"
                         :key="component.text"
-                      >{{ component.text }}</th>
+                      >
+                        {{ component.text }}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(attribute) in this.comparisonDataDisplay" :key="attribute.name">
+                    <tr v-for="attribute in this.comparisonDataDisplay" :key="attribute.name">
                       <td
                         v-for="(compAtt, position, col) in attribute"
                         :class="changeTableClass(position)"
                         :key="compAtt.name"
                       >
                         {{ compAtt }}
-                        <span
-                          class="tooltip"
-                          v-if="attribute.name != 'Attributes'"
-                        >{{ attribute.name }} of {{ comparisonDataHeaders[col].text }}</span>
+                        <span class="tooltip" v-if="attribute.name != 'Attributes'"
+                          >{{ attribute.name }} of {{ comparisonDataHeaders[col].text }}</span
+                        >
                       </td>
                     </tr>
                   </tbody>

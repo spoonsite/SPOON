@@ -5,7 +5,7 @@
     <v-form ref="form" v-model="valid">
       <v-container grid-list-xl text-xs-center>
         <v-layout row wrap>
-        <!-- Contact Details -->
+          <!-- Contact Details -->
           <v-flex xs12 sm6 pt-0 pb-0>
             <v-text-field
               ref="firstName"
@@ -13,7 +13,7 @@
               name="fname"
               :rules="[rules.required]"
               required
-              counter=80
+              counter="80"
               maxLength="80"
               label="First Name"
               :disabled="disableForm"
@@ -26,7 +26,7 @@
               name="lname"
               :rules="[rules.required]"
               required
-              counter=80
+              counter="80"
               maxLength="80"
               label="Last Name"
               :disabled="disableForm"
@@ -46,40 +46,40 @@
               hint="Enter your email. Example: my.name@example.com"
               :disabled="disableForm"
             />
-        </v-flex>
-        <v-flex xs12 pt-0 pb-0>
-          <v-btn @click="sendTestMsg">Send Test Email</v-btn>
-        </v-flex>
-        <v-flex xs12 pt-0 pb-0>
-          <!-- Consider using a true parser later for validation of phone number
+          </v-flex>
+          <v-flex xs12 pt-0 pb-0>
+            <v-btn @click="sendTestMsg">Send Test Email</v-btn>
+          </v-flex>
+          <v-flex xs12 pt-0 pb-0>
+            <!-- Consider using a true parser later for validation of phone number
           https://github.com/googlei18n/libphonenumber -->
-          <v-text-field
-            ref="phone"
-            v-model="user.phone"
-            name="phone"
-            type="tel"
-            maxLength="80"
-            label="Phone number"
-            hint="Enter your phone number"
-            :disabled="disableForm"
-          />
-        </v-flex>
-        <v-flex xs12 pt-0 pb-0>
-          <v-combobox
-            ref="user_org"
-            :items="organizations"
-            name="organization"
-            item-text="description"
-            item-value="description"
-            :filter="orgFilter"
-            :rules="[rules.required]"
-            v-model="user.currentOrg"
-            label="Select an Organization"
-            required
-            maxLength="120"
-            hint="Type to filter or click to select"
-            :disabled="disableForm"
-          />
+            <v-text-field
+              ref="phone"
+              v-model="user.phone"
+              name="phone"
+              type="tel"
+              maxLength="80"
+              label="Phone number"
+              hint="Enter your phone number"
+              :disabled="disableForm"
+            />
+          </v-flex>
+          <v-flex xs12 pt-0 pb-0>
+            <v-combobox
+              ref="user_org"
+              :items="organizations"
+              name="organization"
+              item-text="description"
+              item-value="description"
+              :filter="orgFilter"
+              :rules="[rules.required]"
+              v-model="user.currentOrg"
+              label="Select an Organization"
+              required
+              maxLength="120"
+              hint="Type to filter or click to select"
+              :disabled="disableForm"
+            />
           </v-flex>
           <v-flex xs12 pt-0 pb-0>
             <v-text-field
@@ -120,10 +120,7 @@
                 color="success"
               />
             </v-badge>
-            <v-dialog
-              v-model="notificationDialog"
-              max-width="25em"
-            >
+            <v-dialog v-model="notificationDialog" max-width="25em">
               <v-card>
                 <v-card-title>
                   Notify About Updates
@@ -132,7 +129,7 @@
                   Receive a periodic email about recent changes.
                 </v-card-text>
                 <v-card-actions>
-                  <v-spacer/>
+                  <v-spacer />
                   <v-btn @click="notificationDialog = false">Close</v-btn>
                 </v-card-actions>
               </v-card>
@@ -147,16 +144,14 @@
               block
               @click="updateProfile"
               color="accent"
-            >Save</v-btn>
+              >Save</v-btn
+            >
           </v-flex>
           <!-- Reset Button -->
           <v-flex xs12 sm2>
-            <v-btn
-              :disabled="!valid || disableForm || !formChanged"
-              block
-              @click="reset"
-              color="accent"
-            >Reset Form</v-btn>
+            <v-btn :disabled="!valid || disableForm || !formChanged" block @click="reset" color="accent"
+              >Reset Form</v-btn
+            >
           </v-flex>
         </v-layout>
       </v-container>
