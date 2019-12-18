@@ -67,6 +67,9 @@
 								}
 							}
 						}
+						if (record.data.reportType === 'WORKPLANSTATUS'){
+							details += "Some Workplan Steps were selected.";
+						}
 						
 						var classList = '';
 
@@ -547,6 +550,9 @@
 												var form = cb.up('form');
 												form.queryById('reportDescription').update(reportType.get('detailedDescription'));												
 												
+												console.log("outputing all the data-state i have at 553");
+												console.log(newVal, oldVal, opts);
+
 												scheduleOptionsShow(form);
 												showReportOptions(form, newVal);
 												
@@ -705,7 +711,7 @@
 												handler: function () {
 													var form = this.up('form');
 																
-		
+													debugger;
 													if (validateOutputs()){										
 
 														var formData = form.getValues();
@@ -1280,7 +1286,47 @@
 								}
 							});
 						}
-						reportOptionSet.add(optionsToAdd);						
+						else if (reportType === 'WORKPLANSTATUS'){
+
+							// Get all possible Workplan, Workplan Steps combinations
+							Ext.Ajax.request({
+								url: 'api/v1/resource/workplans',
+								success: function(response, opts) {
+									var workplanData = Ext.JSON.decode(response.responseText);
+									for(workplan of workplanData){
+										for(step of workplan.steps){
+											if(step.name){
+												optionsToAdd.push(
+													{
+														boxLabel: workplan.name + ": " +step.name,
+														name: ('display' + workplan.name + "-" +step.name).replace(/\s+/g, '-').toLowerCase(),
+														itemId: ('display' + workplan.name + "-" +step.name).replace(/\s+/g, '-').toLowerCase(),
+														value: true
+													}
+												);
+											}
+										}
+									} // Completed: getting Workplan/Steps combinations
+									
+									debugger;
+
+									// Because this is an async call, this function must load the data into the page itself. 
+									
+									optionsToAdd = {
+										xtype: 'fieldcontainer',
+										defaultType: 'checkboxfield',
+										baseCls: 'detailReportColumn',
+										items:optionsToAdd			
+									};
+									reportOptionSet.add(optionsToAdd);
+
+								}
+							});
+						
+							// We will just show all steps from all workplans
+
+						}
+						reportOptionSet.add(optionsToAdd);					
 						
 					};
 					

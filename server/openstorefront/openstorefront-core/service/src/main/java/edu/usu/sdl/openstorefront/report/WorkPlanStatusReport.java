@@ -34,11 +34,15 @@ import edu.usu.sdl.openstorefront.report.model.WorkPlanStatusLineModel;
 import edu.usu.sdl.openstorefront.report.model.WorkPlanStatusReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -62,6 +66,7 @@ public class WorkPlanStatusReport
 
 		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 		workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
+		// workPlanLinkExample.setCurrentStepId("");  here, for every step approved by the user, findbyExmpale, merge multiple lists together
 		List<WorkPlanLink> links = workPlanLinkExample.findByExample();
 
 		Map<String, WorkPlan> workPlanMap = new HashMap<>();
@@ -158,10 +163,26 @@ public class WorkPlanStatusReport
 
 			reportModel.getData().add(lineModel);
 		}
-		reportModel.getData().sort((a, b) -> {
-			return a.getLinkName().toLowerCase().compareTo(b.getLinkName().toLowerCase());
-		});
 
+//		// for sorting alphebetically
+//		Collections.sort(reportModel.getData(), (WorkPlanStatusLineModel a, WorkPlanStatusLineModel b) -> {
+//			return a.getLinkName().toLowerCase().compareTo(b.getLinkName().toLowerCase()) > 0;
+//		});
+
+
+		// Attempt sorting the array
+		try {
+			
+			reportModel.getData().sort((WorkPlanStatusLineModel a, WorkPlanStatusLineModel b) -> {
+				return (int)(a.getDaysSincesLastUpdate() - b.getDaysSincesLastUpdate());
+			});
+			
+		} catch(Exception e){
+			Logger LOG = Logger.getLogger("testLogger4WorkplanReports");
+			LOG.log(Level.SEVERE, "Sorting the list of parts didn't work. -WorkPlanStatusReport.java");
+		}
+		
+		
 		return reportModel;
 	}
 
@@ -232,7 +253,7 @@ public class WorkPlanStatusReport
 				"Current Assigned Group",
 				"Current SubStatus",
 				"Last Step Change Date",
-				"Number of Sumission Comments",
+				"Number of Submission Comments",
 				"Last Comment Update",
 				"Work Plan Link"
 		);
