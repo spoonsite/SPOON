@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -131,7 +129,7 @@ public class AttributeType
 	@ValidValueType(value = {}, lookupClass = AttributeValueType.class)
 	@FK(AttributeValueType.class)
 	private String attributeValueType;
-	
+
 	@ConsumeField
 	@APIDescription("Base Unit of measure for the attribute  ie... m (parsable to meters)")
 	private String attributeUnit;
@@ -472,5 +470,5 @@ public class AttributeType
 	{
 		this.attributeUnitList = attributeUnitList;
 	}
-	
+
 }

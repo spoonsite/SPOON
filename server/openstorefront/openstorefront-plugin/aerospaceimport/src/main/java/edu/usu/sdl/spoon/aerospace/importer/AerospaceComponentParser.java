@@ -72,7 +72,7 @@ public class AerospaceComponentParser
     private static final String SNAPSHOT_FILE_NAME = "Snapshot.";
     private static final String HTTP_PREPENDER = "http://";
     private static final String AEROSPACE_IMPORT_KEY_PREPENDER = "AEROSPACE_IMPORT#";
-    
+
     private List<String> resourceWebKeys = new ArrayList<String>();
     private List<String> resourceDocKeys = new ArrayList<String>();
     private List<String> resourceMediaKeys = new ArrayList<String>();
@@ -106,18 +106,18 @@ public class AerospaceComponentParser
     @Override
     @SuppressWarnings("deprecation")
     protected <T> Object parseRecord(T record) {
-        
+
         // Set up the product
-        Product product = (Product) record;       
+        Product product = (Product) record;
         String descriptionMetaData;
-        
+
         // Set up the ComponentMapper
         ComponentMapper componentMapper = new ComponentMapper(() -> {
             ComponentAll componentAll = defaultComponentAll();
             componentAll.getComponent().setDescription(null);
             return componentAll;
         }, fileHistoryAll);
-        
+
         // Set up a Default ComponentAll
         ComponentAll componentAll = defaultComponentAll();
         // Shortcut to the component
@@ -125,10 +125,10 @@ public class AerospaceComponentParser
         component.setActiveStatus(Component.INACTIVE_STATUS);
         component.setApprovalState(ApprovalStatus.APPROVED);
         component.setExternalId(AEROSPACE_IMPORT_KEY_PREPENDER + Integer.toString(product.getKey()));
-        
+
         String lookUpDataSourceType = getLookup(DataSource.class, AEROSPACE_IMPORT_KEY_PREPENDER);
         component.setDataSource(lookUpDataSourceType);
-        
+
         // Get the name of the component.
         if(StringProcessor.stringIsNotBlank(product.getLongName())){
             component.setName(product.getLongName());
@@ -138,21 +138,21 @@ public class AerospaceComponentParser
             LOG.log(Level.WARNING, "This product does not have any associated name. Entry cannot be created. " + "Key: " + product.getKey());
             return null;
         }
-        
+
         // Verify that the product is not from delisted site.
-        if(component.getName().startsWith(SITE_DELISTED)) {  
+        if(component.getName().startsWith(SITE_DELISTED)) {
             /**
              * Code has been removed to help improve basic importing functionality.
              * Code is being preserved as it shows the proper way to delete components that are already existing.
              */
 //            for (ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
-//                if((componentAdminView.getComponent().getExternalId() != null) 
+//                if((componentAdminView.getComponent().getExternalId() != null)
 //                        && componentAdminView.getComponent().getExternalId().equals(component.getExternalId())) {
 //                    Component exampleComponent = new Component();
 //                    exampleComponent.setComponentId(componentAdminView.getComponent().getComponentId());
 //                    List<Component> foundComponents = new ArrayList<>();
 //                    foundComponents = exampleComponent.findByExample();
-//                    
+//
 //                    if(foundComponents != null){
 //                        for(Component comp : foundComponents){
 //                            service.getComponentService().cascadeDeleteOfComponent(comp.getComponentId());
@@ -165,13 +165,13 @@ public class AerospaceComponentParser
                     + "THE CORRESPONDING ENTRY (IF ANY) HAS NOT BEEN DELETED." + component.getName() + " Key: " + product.getKey());
             fileHistoryAll.addError(FileHistoryErrorType.WARNING, "This record has been delisted and was not imported. "
                     + "The corresponding entry (if any) has not been deleted. " + component.getName() + " Key: " + product.getKey());
-            return null;            
+            return null;
         }
-        
+
         // Verify conditions are correct to import/update the product.
         for (ComponentAdminView componentAdminView : reader.masterComponentAdminViewList) {
             if((componentAdminView.getComponent().getExternalId() != null)
-                    && (componentAdminView.getComponent().getExternalId().equals(component.getExternalId())) 
+                    && (componentAdminView.getComponent().getExternalId().equals(component.getExternalId()))
                     && (!componentAdminView.getComponent().getCurrentDataOwner().equals(SYSTEM_DATA_OWNER))) {
                 LOG.log(Level.WARNING, ""
                         + "THIS RECORD WAS PREVIOUSLY IMPORTED AND IS NOW BEING MAINTAINED BY A THIRD PARTY. "
@@ -181,7 +181,7 @@ public class AerospaceComponentParser
                         + "The record was not imported/updated. " + component.getName() + " Key: " + product.getKey());
                 return null;
             }
-            
+
             if ((componentAdminView.getComponent().getName().toLowerCase().equals(component.getName().toLowerCase()))
                     && (!componentAdminView.getComponent().getName().equals(component.getName()))) {
                 LOG.log(Level.WARNING, ""
@@ -192,7 +192,7 @@ public class AerospaceComponentParser
                         + "The record was not imported. " + component.getName() + " Key: " + product.getKey());
                 return null;
             }
-            
+
             if ((componentAdminView.getComponent().getName().equals(component.getName()))
                     && (!componentAdminView.getComponent().getCurrentDataOwner().equals(SYSTEM_DATA_OWNER))) {
                 LOG.log(Level.WARNING, ""
@@ -203,7 +203,7 @@ public class AerospaceComponentParser
                         + "The record was not imported. " + component.getName() + " Key: " + product.getKey());
                 return null;
             }
-            
+
             if (componentAdminView.getComponent().getName().equals(component.getName())
                     && (!componentAdminView.getComponent().getExternalId().equals(component.getExternalId()))) {
                 LOG.log(Level.WARNING, ""
@@ -214,23 +214,23 @@ public class AerospaceComponentParser
                         + "The record was not imported. " + component.getName() + " Key: " + product.getKey());
                 return null;
             }
-            
+
         }
         // If we made it this far we have ownership and can import/update the entry as needed.
-        
+
         // Created a String and stored description information.
         descriptionMetaData = "<strong>Product Name: </strong>" + component.getName() + "<br>";
         if(StringProcessor.stringIsNotBlank(product.getModelNumber())){
             descriptionMetaData += "<strong>Model Number: </strong>" + product.getModelNumber()+ "<br>";
         }
-        
+
         component.setComponentType(parser.getComponentType(product));
-        
+
         // Create an attributeContext that holds information about the attribute. This will be used to create each individual attribute.
         Map<String, AttributeContext> attributeContextMap = new HashMap<>();
-        
+
         if(product.getProductRevision().getProductType().getClassification().size() > 0) {
-        
+
             ComponentAttribute attribute = new ComponentAttribute();
             ComponentAttributePk attributePk = new ComponentAttributePk();
             attributePk.setAttributeType(PRODUCT_TYPE_ATTRIBUTE);
@@ -244,11 +244,11 @@ public class AerospaceComponentParser
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
 
         }
-        
+
         List<FloatFeature> floatList = new ArrayList<>();
         List<IntFeature> intList = new ArrayList<>();
         List<TextFeature> textList = new ArrayList<>();
-      
+
         // Gather all the features, these will be turned into attributes.
         floatList.addAll(product.getProductRevision().getSpecs().getFloatFeatures());
         floatList.addAll(product.getProductRevision().getShape().getFloatFeatures());
@@ -259,7 +259,7 @@ public class AerospaceComponentParser
         textList.addAll(product.getProductRevision().getSpecs().getTextFeatures());
         textList.addAll(product.getProductRevision().getShape().getTextFeatures());
         textList.addAll(product.getProductRevision().getAdditional().getTextFeatures());
-        
+
         // Parse the features
         for(FloatFeature floatFeature : floatList) {
             if(floatFeature.getValue() == null) {
@@ -268,14 +268,14 @@ public class AerospaceComponentParser
             ComponentAttribute attribute = new ComponentAttribute();
             ComponentAttributePk attributePk = new ComponentAttributePk();
             attributePk.setAttributeType(floatFeature.getName() + "(" + floatFeature.getUnitAbbr() + ")");
-            attributePk.setAttributeCode(floatFeature.getValue().toString());            
+            attributePk.setAttributeCode(floatFeature.getValue().toString());
             attribute.setComponentAttributePk(attributePk);
             componentAll.getAttributes().add(attribute);
-            
+
             AttributeContext attributeContext = new AttributeContext();
             attributeContext.setComponentType(component.getComponentType());
-            attributeContext.setAttributeValueType(AttributeValueType.NUMBER);          
-         
+            attributeContext.setAttributeValueType(AttributeValueType.NUMBER);
+
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
 
@@ -290,14 +290,14 @@ public class AerospaceComponentParser
             attributePk.setAttributeCode(intFeature.getValue().toString());
             attribute.setComponentAttributePk(attributePk);
             componentAll.getAttributes().add(attribute);
-            
+
             AttributeContext attributeContext = new AttributeContext();
             attributeContext.setComponentType(component.getComponentType());
             attributeContext.setAttributeValueType(AttributeValueType.NUMBER);
-            
+
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
-        
+
         // Parse the features
         for(TextFeature textFeature : textList) {
             if(textFeature.getValue() == null) {
@@ -309,25 +309,25 @@ public class AerospaceComponentParser
             attributePk.setAttributeCode(textFeature.getValue());
             attribute.setComponentAttributePk(attributePk);
             componentAll.getAttributes().add(attribute);
-            
+
             AttributeContext attributeContext = new AttributeContext();
             attributeContext.setComponentType(component.getComponentType());
             attributeContext.setAttributeValueType(AttributeValueType.TEXT);
-            
+
             attributeContextMap.put(attributePk.getAttributeType(), attributeContext);
         }
-        
+
         // Once we have all the features, then we are going to apply then to the componentAll
         componentMapper.applyAttributeMapping(componentAll, attributeContextMap);
-        
+
         int listSize = product.getOrganizations().getRelatedOrganizations().size();
         boolean foundManufacturer = false;
-        
+
         // Logic to determine which organization to name
         if(listSize == 0) {
             component.setOrganization(UNKNOWN_ORGANIZATION);
         } else if(listSize == 1) {
-            component.setOrganization(product.getOrganizations().getRelatedOrganizations().get(0).getOrganization().getLongName());            
+            component.setOrganization(product.getOrganizations().getRelatedOrganizations().get(0).getOrganization().getLongName());
         } else {
             for(RelatedOrganization relatedOrganization : product.getOrganizations().getRelatedOrganizations()) {
                 if(relatedOrganization.getRole().equals(MANUFACTURER_ORG)) {
@@ -336,7 +336,7 @@ public class AerospaceComponentParser
                 } else if(!foundManufacturer){
                     component.setOrganization(relatedOrganization.getOrganization().getLongName());
                 }
-                
+
                 if (StringProcessor.stringIsNotBlank(relatedOrganization.getOrganization().getShortName())) {
                     descriptionMetaData += "<strong>Organization Short Name: </strong>" + relatedOrganization.getOrganization().getShortName() + "<br>";
                 }
@@ -348,21 +348,21 @@ public class AerospaceComponentParser
                 }
                 if (StringProcessor.stringIsNotBlank(relatedOrganization.getOrganization().getType())) {
                     descriptionMetaData += "<strong>Type: </strong>" + relatedOrganization.getOrganization().getType() + "<br>";
-                } 
+                }
             }
         }
-        
+
         if(StringProcessor.stringIsNotBlank(product.getDescription())){
             component.setDescription(descriptionMetaData + "<br>" + product.getDescription());
         }
-        
+
         // For every piece of provenance documentaton we need to add it as a resource to the component
         for(RevisionProvenanceWebsite revisionProvenanceWebsite : product.getProductRevision().getProvenance().getWebsites()) {
             ComponentResource componentResource = new ComponentResource();
             boolean snapshotExists = false;
             String lookUpResourceType = getLookup(ResourceType.class, ResourceType.HOME_PAGE);
             componentResource.setResourceType(lookUpResourceType);
-            
+
             String componentResourceDescription = "<br>";
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getSnapshotUrl())) {
                 componentResourceDescription += "<strong>Snapshot URL: </strong>" + revisionProvenanceWebsite.getSnapshotUrl() + "<br>";
@@ -380,7 +380,7 @@ public class AerospaceComponentParser
                         String linkUrl = HTTP_PREPENDER + revisionProvenanceWebsite.getUrl();
                         componentResource.setLink(linkUrl);
                     }
-                }              
+                }
             }
 
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getSnapshotId())) {
@@ -396,16 +396,16 @@ public class AerospaceComponentParser
             if (StringProcessor.stringIsNotBlank(revisionProvenanceWebsite.getDescription())) {
                 componentResourceDescription += "<br><strong>Website Description: </strong>" + revisionProvenanceWebsite.getDescription()  + "<br>";
             }
-            
+
             componentResource.setDescription(componentResourceDescription);
             componentAll.getResources().add(componentResource);
         }
-        
+
         for (RevisionProvenanceDocument revisionProvenanceDocument : product.getProductRevision().getProvenance().getDocuments()) {
             ComponentResource componentResource = new ComponentResource();
             String lookUpResourceType = getLookup(ResourceType.class, ResourceType.DOCUMENT);
             componentResource.setResourceType(lookUpResourceType);
-            
+
             String componentResourceDescription = "<br>";
 
             if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getKey())) {
@@ -419,7 +419,7 @@ public class AerospaceComponentParser
                 MediaFile mediaFile = new MediaFile();
                 mediaFile.setOriginalName(revisionProvenanceDocument.getFilename());
                 mediaFile.setMimeType(OpenStorefrontConstant.getMimeForFileExtension(revisionProvenanceDocument.getType()));
-                
+
                 componentResource.setFile(mediaFile);
             }
             if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getTitle())) {
@@ -428,11 +428,11 @@ public class AerospaceComponentParser
             if (StringProcessor.stringIsNotBlank(revisionProvenanceDocument.getDescription())) {
                 componentResourceDescription += "<strong>Document Description: </strong>" + revisionProvenanceDocument.getDescription() + "<br>";
             }
-            
+
             componentResource.setDescription(componentResourceDescription);
             componentAll.getResources().add(componentResource);
         }
-        
+
         // We need to check if there is an image or images for us to use.
         String imageFileName = reader.checkForProductImage(product.getKey());
         if(StringProcessor.stringIsNotBlank(imageFileName)) {
@@ -441,7 +441,7 @@ public class AerospaceComponentParser
             String lookUpMediaCode = getLookup(MediaType.class, MediaType.IMAGE);
             componentMedia.setMediaTypeCode(lookUpMediaCode);
             componentMedia.setCaption(imageFileName);
-            componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);            
+            componentMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 
             String key = fileHistoryAll.getFileHistory().getFileHistoryId() + KEY_SPLITTER + imageFileName;
             componentMedia.setExternalId(key);
@@ -453,18 +453,18 @@ public class AerospaceComponentParser
             mediaFile.setFileType(MediaFileType.MEDIA);
 
             componentMedia.setFile(mediaFile);
-            
+
             componentAll.getMedia().add(componentMedia);
-            
+
         }
-        
+
         return componentAll;
     }
 
     @Override
     protected void finishProcessing() {
         super.finishProcessing(); //To change body of generated methods, choose Tools | Templates.
-        
+
         // Work through the provenance items and build each resource.
         for(String key : resourceWebKeys) {
             ComponentResource componentResource = new ComponentResource();
@@ -474,17 +474,17 @@ public class AerospaceComponentParser
             ZipEntry zipFileEntry = reader.getFileFromWebKey(webId);
             if(zipFileEntry != null) {
                 String fileExtension = StringProcessor.getFileExtension(zipFileEntry.getName());
-                
+
                 InputStream in = reader.getZipFileEntry(webId);
                 service.getComponentService().saveResourceFile(componentResource, in, OpenStorefrontConstant.getMimeForFileExtension(fileExtension), SNAPSHOT_FILE_NAME + fileExtension);
             }
         }
-        
+
         for (String key : resourceDocKeys) {
             ComponentResource componentResource = new ComponentResource();
             componentResource.setExternalId(key);
             componentResource = componentResource.find();
-            
+
             String docId = key.split(KEY_SPLITTER)[1];
             String zipFileName = docId + "_" + componentResource.getFile().getOriginalName();
             InputStream in = reader.getZipFileEntry(zipFileName);
@@ -493,7 +493,7 @@ public class AerospaceComponentParser
             }
 
         }
-        
+
         for (String key : resourceMediaKeys) {
             ComponentMedia componentMedia = new ComponentMedia();
             componentMedia.setExternalId(key);
