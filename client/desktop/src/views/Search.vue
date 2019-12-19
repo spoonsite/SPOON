@@ -283,9 +283,7 @@
             close
             @click:close="filters.children = !filters.children"
           >
-            <v-avatar left>
-              <v-icon small>fas fa-check-square</v-icon> </v-avatar
-            >Include Sub-Catagories
+            <v-avatar left> <v-icon small>fas fa-check-square</v-icon> </v-avatar>Include Sub-Catagories
           </v-chip>
           <v-chip v-for="tag in filters.tags" :key="tag" close @click:close="removeTag(tag)">
             <v-avatar left>
@@ -371,18 +369,32 @@
                 ({{ item.numberOfRatings }})
               </v-card-subtitle>
 
-              <v-divider v-if="displayOptions.organization || displayOptions.category || displayOptions.tags" class="my-2"/>
+              <v-divider
+                v-if="displayOptions.organization || displayOptions.category || displayOptions.tags"
+                class="my-2"
+              />
 
               <v-card-text class="pa-0">
-                <v-chip v-if="displayOptions.organization && item.organization" @click="addOrganization(item.organization)">
+                <v-chip
+                  v-if="displayOptions.organization && item.organization"
+                  @click="addOrganization(item.organization)"
+                >
                   <v-icon left small>fa fa-university</v-icon>
                   {{ item.organization }}
                 </v-chip>
 
                 <div v-if="displayOptions.category">
-                  <v-chip v-if="item.componentTypeDescription.includes('>')" @click="addComponentType(item.componentType)">
+                  <v-chip
+                    v-if="item.componentTypeDescription.includes('>')"
+                    @click="addComponentType(item.componentType)"
+                  >
                     <v-icon left small>fa fa-layer-group</v-icon>
-                    {{ (item.componentTypeDescription.substring(item.componentTypeDescription.indexOf('>') + 1, item.componentTypeDescription.length)) }}
+                    {{
+                      item.componentTypeDescription.substring(
+                        item.componentTypeDescription.indexOf('>') + 1,
+                        item.componentTypeDescription.length
+                      )
+                    }}
                   </v-chip>
 
                   <v-chip v-else @click="addComponentType(item.componentType)">
@@ -398,23 +410,34 @@
                   </v-chip>
                 </div>
 
-              <v-divider v-if="displayOptions.description || displayOptions.lastUpdated || displayOptions.approvalDate" class="my-2"/>
-              <div v-if="displayOptions.description" style="color: black">
-                {{ shortenDescription(item.description) }}
+                <v-divider
+                  v-if="displayOptions.description || displayOptions.lastUpdated || displayOptions.approvalDate"
+                  class="my-2"
+                />
+                <div v-if="displayOptions.description" style="color: black">
+                  {{ shortenDescription(item.description) }}
 
-                <p v-if="displayOptions.lastUpdated" class="mb-0 mt-4">
-                  <strong>Last Updated:</strong>
-                  {{ item.updateDts | formatDate }}
-                </p>
-                <p v-if="displayOptions.approvalDate" class="my-0">
-                  <strong>Approved Date:</strong>
-                  {{ item.approvedDts | formatDate }}
-                </p>
-              </div>
+                  <p v-if="displayOptions.lastUpdated" class="mb-0 mt-4">
+                    <strong>Last Updated:</strong>
+                    {{ item.updateDts | formatDate }}
+                  </p>
+                  <p v-if="displayOptions.approvalDate" class="my-0">
+                    <strong>Approved Date:</strong>
+                    {{ item.approvedDts | formatDate }}
+                  </p>
+                </div>
               </v-card-text>
 
               <v-card-actions class="d-flex justify-end align-end pa-0" style="height: 100%">
-                <v-checkbox v-model="comparisonList" :value="item" :id="item.componentId" label="Add to compare" class="mx-0 px-0" dense hide-details/>
+                <v-checkbox
+                  v-model="comparisonList"
+                  :value="item"
+                  :id="item.componentId"
+                  label="Add to compare"
+                  class="mx-0 px-0"
+                  dense
+                  hide-details
+                />
               </v-card-actions>
             </v-card>
           </v-flex>
