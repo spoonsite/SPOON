@@ -1104,7 +1104,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/variables.scss';
+@import '@/assets/scss/variables.scss';
 
 $side-menu-width: 24em;
 $side-menu-width-medium: 30em;
@@ -1118,56 +1118,6 @@ $footer-height: 42.4px;
   margin: 5px;
   display: flex;
   flex-direction: column;
-}
-.item-header {
-  display: flex;
-  margin-bottom: 15px;
-}
-.item-body {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  padding: 2px;
-  overflow: hidden;
-}
-.organization-chip {
-  width: min-content;
-  display: flex;
-  align-items: center;
-}
-.comp-type-wrapper {
-  padding: 5px 0px;
-}
-.tag-wrapper {
-  padding: 5px 0px;
-}
-.item-details {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
-.description-wrapper {
-  text-overflow: ellipsis;
-}
-.item-details-bottom {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-.tag-links {
-  margin-right: 0.8em;
-  cursor: pointer;
-}
-.tag-links:hover {
-  text-decoration: underline;
-}
-.compare-box {
-  display: flex;
-  align-items: center;
-}
-.compare-box label {
-  padding-left: 4px;
 }
 p {
   margin: 0px;

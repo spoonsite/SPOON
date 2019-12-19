@@ -71,7 +71,6 @@
 export default {
   name: 'Lightbox',
   props: ['list'],
-  mounted() {},
   data() {
     return {
       baseURL: '/openstorefront/',
@@ -101,9 +100,7 @@ export default {
       }
       this.lightboxSetImage()
     }
-  },
-  computed: {},
-  watch: {}
+  }
 }
 </script>
 

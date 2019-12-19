@@ -257,9 +257,7 @@ export default {
       this.newQuestion = this.question.question
       this.editQuestionDialog = true
     }
-  },
-  computed: {},
-  watch: {}
+  }
 }
 </script>
 

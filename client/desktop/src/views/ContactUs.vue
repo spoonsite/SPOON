@@ -89,7 +89,6 @@ export default {
   components: {
     ModalTitle
   },
-  props: [],
   mounted() {
     if (this.$route.params.ticket) {
       this.ticket = this.$route.params.ticket

@@ -65,7 +65,6 @@ export default {
     ModalTitle
   },
   props: ['answer'],
-  mounted() {},
   data() {
     return {
       edit: false,
@@ -108,9 +107,7 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem deleting the answer.'))
     }
-  },
-  computed: {},
-  watch: {}
+  }
 }
 </script>
 
