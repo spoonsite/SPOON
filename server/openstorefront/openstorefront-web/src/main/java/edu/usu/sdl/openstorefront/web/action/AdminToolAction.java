@@ -45,7 +45,6 @@ public class AdminToolAction
 		pageMap.put("Entries", new PageModel("/WEB-INF/securepages/admin/data/components.jsp", new String[]{SecurityPermission.ADMIN_ENTRIES_PAGE}));
 		pageMap.put("Entry-Types", new PageModel("/WEB-INF/securepages/admin/data/entryType.jsp", new String[]{SecurityPermission.ADMIN_ENTRYTYPE_PAGE}));
 		pageMap.put("Highlights", new PageModel("/WEB-INF/securepages/admin/data/highlights.jsp", new String[]{SecurityPermission.ADMIN_HIGHLIGHTS_PAGE}));
-		pageMap.put("Integrations", new PageModel("/WEB-INF/securepages/admin/data/integrations.jsp", new String[]{SecurityPermission.ADMIN_INTEGRATION_PAGE}));
 		pageMap.put("Imports", new PageModel("/WEB-INF/securepages/admin/data/imports.jsp", new String[]{SecurityPermission.ADMIN_IMPORT_PAGE}));
 		pageMap.put("Lookups", new PageModel("/WEB-INF/securepages/admin/data/lookup.jsp", new String[]{SecurityPermission.ADMIN_LOOKUPS_PAGE}));
 		pageMap.put("Media", new PageModel("/WEB-INF/securepages/admin/data/media.jsp", new String[]{SecurityPermission.ADMIN_MEDIA_PAGE}));

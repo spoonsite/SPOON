@@ -80,7 +80,6 @@ public class PropertiesManager
 	public static final String KEY_DBLOG_MAX_RECORD = "dblog.maxrecords";
 	public static final String KEY_DBLOG_ON = "dblog.on";
 	public static final String KEY_DBLOG_LOG_SECURITY = "dblog.logSecurityFilter";
-	public static final String KEY_ALLOW_JIRA_FEEDBACK = "jirafeedback.show";
 	public static final String KEY_FILE_HISTORY_KEEP_DAYS = "filehistory.max.days";
 	public static final String KEY_NOTIFICATION_MAX_DAYS = "notification.max.days";
 	public static final String TEMPORARY_MEDIA_KEEP_DAYS = "temporary.media.keep.days";
@@ -109,12 +108,7 @@ public class PropertiesManager
 	public static final String KEY_TOOLS_USER = "tools.login.user";
 	public static final String KEY_TOOLS_CREDENTIALS = "tools.login.pw";
 
-	public static final String KEY_JIRA_POOL_SIZE = "jira.connectionpool.size";
-	public static final String KEY_JIRA_CONNECTION_WAIT_TIME = "jira.connection.wait.seconds";
-	public static final String KEY_JIRA_URL = "jira.server.url";
 	public static final String KEY_JOB_WORKING_STATE_OVERRIDE = "job.working.state.override.minutes";
-	public static final String KEY_JIRA_FEEDBACK_PROJECT = "jira.feedback.project";
-	public static final String KEY_JIRA_FEEDBACK_ISSUETYPE = "jira.feedback.issuetype";
 	public static final String KEY_FEEDBACK_EMAIL = "feedback.email";
 	public static final String KEY_CONFLUENCE_URL = "confluence.server.url";
 	public static final String KEY_CONFLUENCE_POOL_SIZE = "confluence.connectionpool.size";
@@ -352,9 +346,6 @@ public class PropertiesManager
 			defaults.put(KEY_EXTERNAL_HOST_URL, "http://localhost:8080/openstorefront");
 			defaults.put(KEY_DBLOG_MAX_RECORD, "50000");
 			defaults.put(KEY_DBLOG_ON, "false");
-			defaults.put(KEY_ALLOW_JIRA_FEEDBACK, "true");
-			defaults.put(KEY_JIRA_FEEDBACK_PROJECT, "STORE");
-			defaults.put(KEY_JIRA_FEEDBACK_ISSUETYPE, "Help Desk Ticket");
 			defaults.put(TEMPORARY_MEDIA_KEEP_DAYS, "1");
 			defaults.put(KEY_SYSTEM_ARCHIVE_MAX_PROCESSMINTUES, "60");
 			defaults.put(KEY_REPORT_LIFETIME, REPORT_HISTORY_DAYS_TO_LIVE);

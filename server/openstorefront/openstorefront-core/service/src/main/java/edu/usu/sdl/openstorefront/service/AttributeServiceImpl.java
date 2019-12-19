@@ -185,7 +185,7 @@ public class AttributeServiceImpl
 	public void saveAttributeType(AttributeType attributeType, boolean updateIndexes)
 	{
 		getAttributeServicePrivate().performSaveAttributeType(attributeType);
-		// the advanced search filter needs a way to know when to refresh it's cache 
+		// the advanced search filter needs a way to know when to refresh it's cache
 		// TODO: check that this attribute cache thing is not broken
 		// @see{SearchStatTable#isThereNewAttributeTypeSaved}
 		SearchStatTable.setThereIsNewAttributeTypeSaved(true);
@@ -792,7 +792,6 @@ public class AttributeServiceImpl
 	{
 		AttributeXRefType xrefAttributeTypeExample = new AttributeXRefType();
 		xrefAttributeTypeExample.setActiveStatus(AttributeXRefType.ACTIVE_STATUS);
-		xrefAttributeTypeExample.setIntegrationType(attributeXrefModel.getIntegrationType());
 		xrefAttributeTypeExample.setProjectType(attributeXrefModel.getProjectKey());
 		xrefAttributeTypeExample.setIssueType(attributeXrefModel.getIssueType());
 		List<AttributeXRefType> xrefAttributeTypes = getPersistenceService().queryByExample(xrefAttributeTypeExample);
@@ -840,7 +839,6 @@ public class AttributeServiceImpl
 			type.setActiveStatus(attributeXRefView.getType().getActiveStatus());
 			type.setFieldId(attributeXRefView.getType().getFieldId());
 			type.setFieldName(attributeXRefView.getType().getFieldName());
-			type.setIntegrationType(attributeXRefView.getType().getIntegrationType());
 			type.setIssueType(attributeXRefView.getType().getIssueType());
 			type.setProjectType(attributeXRefView.getType().getProjectType());
 			getPersistenceService().persist(type);
