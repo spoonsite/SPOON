@@ -12,7 +12,7 @@ http://dodcio.defense.gov/Portals/0/Documents/OSSFAQ/dodfoss_pdf.pdf
 
 - Can modify Branding without having to release changes? Yes, that would be consider data.
 
-- Does this restrict deploying the application?  No, you can deploy internally and publicly.  
+- Does this restrict deploying the application?  No, you can deploy internally and publicly.
 
 - GPL only applies to releasing software? Yes, if you don't release the software you can make any modifications you want and not have to release them.  (See GPL, DOD FAQ)
 
@@ -22,14 +22,14 @@ http://dodcio.defense.gov/Portals/0/Documents/OSSFAQ/dodfoss_pdf.pdf
 
 - Does this affect external programs using the REST API? No, external programs can have their own licenses.  This project is not using AGPL license.  The license does not apply to the data.
 
-- Can I use openstorefront as part of larger application?  Yes, you can integrate it with other applications.  You can use it internally and expose a different interface publicly that is closed source.  In this case it would be similar to Mysql. 
+- Can I use openstorefront as part of larger application?  Yes, you can integrate it with other applications.  You can use it internally and expose a different interface publicly that is closed source.  In this case it would be similar to Mysql.
 
 
-This Software Contains (most when compiled/packaged):  
+This Software Contains (most when compiled/packaged):
 This is listed here for convenience as the individual packages contain their respective licenses.
 
 Patterns from http://subtlepatterns.com/
-Which are licensed under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/ which have be modified as and released as CC BY-SA 4.0 
+Which are licensed under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/ which have be modified as and released as CC BY-SA 4.0
 
 UI: (Included)
 
@@ -47,7 +47,6 @@ Apache Commons Apache V2
 JEE 6 API CDDL 1.0/GPL V2 class path exception which is compatible with GPL V3
 stripes	Apache V2
 jackson	Apache V2
-orientdb Apache V2
 ehcache	Apache V2
 quartz	Apache V2
 jstl	CDDL 1.0
@@ -58,7 +57,6 @@ opencsv	Apache V2
 shiro	Apache V2
 commons-beanutils	Apache V2
 commons-lang3	Apache V2
-jira-rest-java-client	Apache V2
 cachefilter	Apache V2
 uadetector-resources Apache V2
 cron-parser	MIT

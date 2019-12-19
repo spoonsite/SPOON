@@ -30,7 +30,6 @@ import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.entity.AlertType;
 import edu.usu.sdl.openstorefront.core.entity.ApplicationProperty;
 import edu.usu.sdl.openstorefront.core.entity.AsyncTask;
-import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
 import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
 import edu.usu.sdl.openstorefront.core.entity.ErrorTicket;
 import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
@@ -40,11 +39,9 @@ import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.AlertContext;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
 import edu.usu.sdl.openstorefront.core.util.MediaFileType;
-import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
-import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.PluginManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -371,33 +368,6 @@ public class SystemServiceImpl
 			}
 			getPersistenceService().delete(errorTicket);
 		});
-	}
-
-	@Override
-	public GlobalIntegrationModel getGlobalIntegrationConfig()
-	{
-		GlobalIntegrationModel globalIntegrationModel = new GlobalIntegrationModel();
-
-		String refreshTime = getPropertyValue(ApplicationProperty.GLOBAL_INTEGRATION_REFRESH);
-		if (refreshTime == null) {
-			refreshTime = GlobalIntegrationModel.DEFAULT_REFRESH_RATE;
-		}
-		globalIntegrationModel.setJiraRefreshRate(refreshTime);
-
-		return globalIntegrationModel;
-	}
-
-	@Override
-	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel)
-	{
-		saveProperty(ApplicationProperty.GLOBAL_INTEGRATION_REFRESH, globalIntegrationModel.getJiraRefreshRate());
-
-		List<ComponentIntegration> integrations = getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
-		for (ComponentIntegration integration : integrations) {
-			if (StringUtils.isBlank(integration.getRefreshRate())) {
-				JobManager.updateComponentIntegrationJob(integration);
-			}
-		}
 	}
 
 	@Override

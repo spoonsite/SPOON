@@ -22,7 +22,6 @@ import edu.usu.sdl.openstorefront.core.entity.GeneralMedia;
 import edu.usu.sdl.openstorefront.core.entity.Highlight;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
 import edu.usu.sdl.openstorefront.core.model.ErrorInfo;
-import edu.usu.sdl.openstorefront.core.view.GlobalIntegrationModel;
 import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import java.io.InputStream;
 import java.util.List;
@@ -139,20 +138,6 @@ public interface SystemService
 	 * Removes excess errors beyond max....deleting oldest first
 	 */
 	public void cleanupOldErrors();
-
-	/**
-	 * Gets the Global integration properties
-	 *
-	 * @return
-	 */
-	public GlobalIntegrationModel getGlobalIntegrationConfig();
-
-	/**
-	 * Save the Global Config properties
-	 *
-	 * @param globalIntegrationModel
-	 */
-	public void saveGlobalIntegrationConfig(GlobalIntegrationModel globalIntegrationModel);
 
 	/**
 	 * Saves a general media file

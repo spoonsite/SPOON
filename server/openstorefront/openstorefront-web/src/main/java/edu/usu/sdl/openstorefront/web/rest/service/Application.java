@@ -287,7 +287,7 @@ public class Application
 			return Response.status(404).build();
 		}
 
-		return Response.ok(temporaryMedia).build();                                                                                                                                                                                             
+		return Response.ok(temporaryMedia).build();
 	}
 
 	@POST
@@ -508,22 +508,6 @@ public class Application
 	{
 		service.getSystemService().toggleDBlogger(Convert.toBoolean(use));
 		return Response.ok().build();
-	}
-
-	@GET
-	@APIDescription("Gets information about whether the Jira User Feedback is available or not.")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Path("/showfeedback")
-	public LookupModel getShowFeedBack()
-	{
-		LookupModel lookupModel = new LookupModel();
-		lookupModel.setCode(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_ALLOW_JIRA_FEEDBACK, "True").toUpperCase());
-		if (Convert.toBoolean(lookupModel.getCode())) {
-			lookupModel.setDescription("Allow jira feedback");
-		} else {
-			lookupModel.setDescription("Do not allow jira feedback");
-		}
-		return lookupModel;
 	}
 
 	@GET

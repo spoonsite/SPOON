@@ -30,7 +30,6 @@ public class FeedbackHandleType
 		extends LookupEntity<FeedbackHandleType>
 {
 
-	public static final String JIRA = "JIRA";
 	public static final String EMAIL = "EMAIL";
 	public static final String INTERNAL = "INTERNAL";
 
@@ -43,7 +42,6 @@ public class FeedbackHandleType
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(JIRA, newLookup(FeedbackHandleType.class, JIRA, "JIRA"));
 		codeMap.put(EMAIL, newLookup(FeedbackHandleType.class, EMAIL, "Email"));
 		codeMap.put(INTERNAL, newLookup(FeedbackHandleType.class, INTERNAL, "Internal Storage"));
 		return codeMap;
