@@ -664,6 +664,7 @@ export default {
       this.$store.watch(
         (state, getters) => state.currentUser,
         (newValue, oldValue) => {
+          this.userEmail = this.$store.state.currentUser.email
           this.checkWatch()
         }
       )
