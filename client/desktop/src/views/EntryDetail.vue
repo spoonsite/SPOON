@@ -639,11 +639,11 @@
 <script lang="js">
 import StarRating from 'vue-star-rating'
 import _ from 'lodash'
+import format from 'date-fns/format'
+import isFuture from 'date-fns/isFuture'
 import Lightbox from '@/components/Lightbox'
 import Question from '@/components/Question'
 import ModalTitle from '@/components/ModalTitle'
-import format from 'date-fns/format'
-import isFuture from 'date-fns/isFuture'
 
 export default {
   name: 'entry-detail-page',

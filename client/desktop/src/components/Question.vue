@@ -131,9 +131,9 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import Answer from '@/components/Answer'
 import ModalTitle from '@/components/ModalTitle'
-import _ from 'lodash'
 
 export default {
   name: 'Question',

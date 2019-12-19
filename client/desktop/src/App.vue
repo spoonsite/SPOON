@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import router from '@/router/index'
+import router from '@/router'
 import safeParse from 'safe-json-parse/callback'
 import permissions from '@/util/permissions'
 import Notifications from '@/components/Notifications'
