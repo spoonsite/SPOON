@@ -433,4 +433,7 @@ header {
   background-color: white;
   z-index: 999;
 }
+.v-card__title {
+  word-break: normal;
+}
 </style>

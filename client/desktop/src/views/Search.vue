@@ -345,10 +345,10 @@
             md4
             lg4
             xl3
-            style="margin-bottom: 10px;"
+            class="mb-3"
           >
             <v-card class="item">
-              <div class="item-header">
+              <v-card-title class="flex-nowrap pa-0 mb-4">
                 <img
                   v-if="item.includeIconInSearch && item.componentTypeIconUrl"
                   :src="'/openstorefront/' + item.componentTypeIconUrl"
@@ -357,76 +357,65 @@
                 <h3 class="headline more-info">
                   <router-link :to="'/entry-detail/' + item.componentId">{{ item.name }}</router-link>
                 </h3>
-              </div>
-              <v-divider></v-divider>
-              <div class="item-body">
-                <div class="item-properties">
-                  <span v-if="displayOptions.organization">
-                    <v-chip small class="organization-chip" @click="addOrganization(item.organization)">
-                      <v-icon style="font-size: 16px; padding-right: 4px;">fas fa-university</v-icon>
-                      <div class="tag-links">{{ item.organization }}</div>
-                    </v-chip>
-                  </span>
-                  <div class="comp-type-wrapper" v-if="displayOptions.category">
-                    <v-chip
-                      v-if="item.componentTypeDescription.includes('>')"
-                      style="padding: 5px 0px;"
-                      large
-                      @click="addComponentType(item.componentType)"
-                    >
-                      <div class="tag-links two-line-chips">
-                        {{ getFirstCompType(item.componentTypeDescription) }}
-                        <br />
-                        {{ getSecondCompType(item.componentTypeDescription) }}
-                      </div>
-                    </v-chip>
-                    <v-chip v-else @click="addComponentType(item.componentType)">
-                      <div class="tag-links">{{ item.componentTypeDescription }}</div>
-                    </v-chip>
-                  </div>
-                  <div class="tag-wrapper" v-if="!!item.tags && item.tags.length !== 0 && displayOptions.tags">
-                    <span v-for="tag in item.tags" :key="tag.text" class="tag-links" @click="addTag(tag.text)">
-                      <v-icon style="font-size: 14px; color: rgb(248, 197, 51);">fas fa-tag</v-icon>
-                      {{ tag.text }}
-                    </span>
-                  </div>
-                  <p v-if="displayOptions.userRating">
-                    <star-rating
-                      :rating="item.averageRating"
-                      :read-only="true"
-                      :show-rating="false"
-                      :increment="0.01"
-                      inline
-                      :star-size="17"
-                    ></star-rating>
-                    ({{ item.numberOfRatings }})
-                  </p>
+              </v-card-title>
+
+              <v-card-subtitle class="pa-0 pt-2" v-if="displayOptions.userRating">
+                <star-rating
+                  :rating="item.averageRating"
+                  :read-only="true"
+                  :show-rating="false"
+                  :increment="0.01"
+                  inline
+                  :star-size="17"
+                />
+                ({{ item.numberOfRatings }})
+              </v-card-subtitle>
+
+              <v-divider v-if="displayOptions.organization || displayOptions.category || displayOptions.tags" class="my-2"/>
+
+              <v-card-text class="pa-0">
+                <v-chip v-if="displayOptions.organization && item.organization" @click="addOrganization(item.organization)">
+                  <v-icon left small>fa fa-university</v-icon>
+                  {{ item.organization }}
+                </v-chip>
+
+                <div v-if="displayOptions.category">
+                  <v-chip v-if="item.componentTypeDescription.includes('>')" @click="addComponentType(item.componentType)">
+                    <v-icon left small>fa fa-layer-group</v-icon>
+                    {{ (item.componentTypeDescription.substring(item.componentTypeDescription.indexOf('>') + 1, item.componentTypeDescription.length)) }}
+                  </v-chip>
+
+                  <v-chip v-else @click="addComponentType(item.componentType)">
+                    <v-icon left small>fa fa-layer-group</v-icon>
+                    {{ item.componentTypeDescription }}
+                  </v-chip>
                 </div>
-                <v-divider></v-divider>
-                <div class="item-details">
-                  <div class="description-wrapper" v-if="displayOptions.description">
-                    {{ shortenDescription(item.description) }}
-                  </div>
-                  <div class="item-details-bottom">
-                    <div>
-                      <p v-if="displayOptions.lastUpdated">
-                        <strong>Last Updated:</strong>
-                        <!-- {{ Date(item.updateDts) | formatDate }} -->
-                        {{ item.updateDts | formatDate }}
-                      </p>
-                      <p v-if="displayOptions.approvalDate">
-                        <strong>Approved Date:</strong>
-                        <!-- {{ Date(item.approvedDts) | formatDate }} -->
-                        {{ item.approvedDts | formatDate }}
-                      </p>
-                    </div>
-                    <div class="compare-box">
-                      <input type="checkbox" v-model="comparisonList" :value="item" :id="item.componentId" />
-                      <label :for="item.componentId">Add to Compare</label>
-                    </div>
-                  </div>
+
+                <div v-if="!!item.tags && item.tags.length !== 0 && displayOptions.tags">
+                  <v-chip v-for="tag in item.tags" :key="tag.text" small @click="addTag(tag.text)">
+                    <v-icon left small color="accent">fa fa-tag</v-icon>
+                    {{ tag.text }}
+                  </v-chip>
                 </div>
+
+              <v-divider v-if="displayOptions.description || displayOptions.lastUpdated || displayOptions.approvalDate" class="my-2"/>
+              <div v-if="displayOptions.description" style="color: black">
+                {{ shortenDescription(item.description) }}
+
+                <p v-if="displayOptions.lastUpdated" class="mb-0 mt-4">
+                  <strong>Last Updated:</strong>
+                  {{ item.updateDts | formatDate }}
+                </p>
+                <p v-if="displayOptions.approvalDate" class="my-0">
+                  <strong>Approved Date:</strong>
+                  {{ item.approvedDts | formatDate }}
+                </p>
               </div>
+              </v-card-text>
+
+              <v-card-actions class="d-flex justify-end align-end pa-0" style="height: 100%">
+                <v-checkbox v-model="comparisonList" :value="item" :id="item.componentId" label="Add to compare" class="mx-0 px-0" dense hide-details/>
+              </v-card-actions>
             </v-card>
           </v-flex>
         </div>
