@@ -155,7 +155,11 @@
       color="accent"
     >Reset Form</v-btn>
   </v-flex>
+  
 </v-layout>
+  <v-flex  xs12 pt-0 pb-0>
+    <ChangePassword></ChangePassword>
+  </v-flex>
 </v-container>
 </v-form>
 </section>
@@ -164,10 +168,14 @@
 
 <script lang="js">
 import validators from '../util/validators'
+import ChangePassword from '../components/ChangePassword'
 
 export default {
   name: 'profile',
   mixins: [validators],
+  components: {
+    ChangePassword
+  },
   mounted () {
     if (this.$store.state.currentUser.username) {
       this.populateInfo()

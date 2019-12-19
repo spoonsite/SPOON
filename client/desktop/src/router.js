@@ -7,7 +7,6 @@ import FAQ from './views/FAQ.vue'
 import ContactUs from './views/ContactUs.vue'
 import EntryDetail from './views/EntryDetail.vue'
 import Watches from './views/Watches.vue'
-import ChangePassword from './views/ChangePassword.vue'
 
 Vue.use(Router)
 
@@ -48,11 +47,6 @@ export default new Router({
       path: '/watches',
       name: 'Watches',
       component: Watches
-    },
-    {
-      path: '/change-password',
-      name: 'Change Password',
-      component: ChangePassword
     }
     // {
     //   path: '/about',

@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
-    <v-form style="margin:auto; max-width: 90em; padding: 1em; padding-top: 2em;">
-      <h2>Password Requires</h2>
+    <v-form>
+      <h2>Change Password</h2>
       <ul>
         <li>At least 1 Capital Letter</li>
         <li>At least 1 Number</li>
@@ -35,14 +35,17 @@
 
         @click:append="showConfirmation = !showConfirmation"
       ></v-text-field>
-      <v-btn
-        style="margin-left: 0px;"
-        color="accent"
-        :disabled="existingPassword == '' || newPassword == ''|| confirmPassword == ''"
-        @click="submitPassword()"
-      >
-        Update Password
-      </v-btn>
+      <v-flex xs12 pt-0 pb-0>
+        <v-btn
+          block
+          style="margin-left: 0px;"
+          color="accent"
+          :disabled="existingPassword == '' || newPassword == ''|| confirmPassword == ''"
+          @click="submitPassword()"
+        >
+          Update Password
+        </v-btn>
+      </v-flex>
     </v-form>
   </div>
 </template>
