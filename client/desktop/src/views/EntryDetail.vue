@@ -222,7 +222,7 @@
                   <tbody>
                     <tr v-for="attr in detail.attributes" :key="attr.typeDescription">
                       <td>{{ attr.typeDescription }}</td>
-                      <td>{{ attr.codeDescription }}</td>
+                      <td>{{ attr.codeDescription }} {{ attr.unit }}</td>
                     </tr>
                   </tbody>
                 </template>
