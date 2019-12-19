@@ -259,7 +259,7 @@ export default {
           permissions: []
         },
         {
-          href: '/openstorefront/UserTool.action',
+          link: '/questions',
           icon: 'question-circle',
           name: 'Questions',
           hasChildren: false,
