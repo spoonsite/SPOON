@@ -22,10 +22,11 @@ import java.util.logging.Logger;
 
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
+import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.expiry.ExpiryPolicy;
 
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 
@@ -41,6 +42,7 @@ public class OSFCacheManager
 	private static final Logger LOG = Logger.getLogger(OSFCacheManager.class.getName());
 
 	public static final String ALLCODE_KEY = "ALLCODES";
+	public static CacheManager cacheManager;
 
 	private static Cache lookupCache;
 	private static Cache attributeCache;
@@ -65,89 +67,39 @@ public class OSFCacheManager
 
 	private static final ReentrantLock LOCK = new ReentrantLock();
 
+	private static Cache createCache(String name, int maxElementsInMemory, boolean overflowToDisk, boolean eternal, long timeToLiveSeconds, long timeToIdleSeconds) {
+		CacheConfiguration<Long, String> configuration =
+		CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class,
+				ResourcePoolsBuilder.heap(maxElementsInMemory))
+			.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(timeToLiveSeconds)))
+			.withExpiry(ExpiryPolicyBuilder.timeToIdleExpiration(Duration.ofSeconds(timeToIdleSeconds)))
+			.build();
+
+		return cacheManager.createCache(name, configuration);
+	}
+
 	public static void init()
 	{
 		LOCK.lock();
 		try {
-			CacheConfigurationBuilder<Long, String> configuration =
-			CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class, ResourcePoolsBuilder
-				.heap(100));
-
-			CacheManager cacheManager = initCacheManager();
-			lookupCache = cacheManager.createCache("lookupCache", configuration);
-
-			Cache memoryOnlyCache = new Cache("lookupCache", 500, false, false, 600, 600);
-			singletonManager.addCache(memoryOnlyCache);
-			lookupCache = singletonManager.getCache("lookupCache");
-
-			memoryOnlyCache = new Cache("attributeCache", 30000, false, true, 0, 0);
-			singletonManager.addCache(memoryOnlyCache);
-			attributeCache = singletonManager.getCache("attributeCache");
-
-			memoryOnlyCache = new Cache("attributeTypeCache", 5000, false, true, 0, 0);
-			singletonManager.addCache(memoryOnlyCache);
-			attributeTypeCache = singletonManager.getCache("attributeTypeCache");
-
-			memoryOnlyCache = new Cache("attributeCodeAllCache", 1, false, true, 0, 0);
-			singletonManager.addCache(memoryOnlyCache);
-			attributeCodeAllCache = singletonManager.getCache("attributeCodeAllCache");
-
-			memoryOnlyCache = new Cache("userAgentCache", 100, false, false, 7200, 7200);
-			singletonManager.addCache(memoryOnlyCache);
-			userAgentCache = singletonManager.getCache("userAgentCache");
-
-			memoryOnlyCache = new Cache("componentCache", 200, false, false, 300, 300);
-			singletonManager.addCache(memoryOnlyCache);
-			componentCache = singletonManager.getCache("componentCache");
-
-			memoryOnlyCache = new Cache("componentLookupCache", 50000, false, false, 300, 300);
-			singletonManager.addCache(memoryOnlyCache);
-			componentLookupCache = singletonManager.getCache("componentLookupCache");
-
-			memoryOnlyCache = new Cache("componentApprovalCache", 50000, false, false, 300, 300);
-			singletonManager.addCache(memoryOnlyCache);
-			componentApprovalCache = singletonManager.getCache("componentApprovalCache");
-
-			memoryOnlyCache = new Cache("componentIconCache", 50000, false, false, 1800, 1800);
-			singletonManager.addCache(memoryOnlyCache);
-			componentIconCache = singletonManager.getCache("componentIconCache");
-
-			memoryOnlyCache = new Cache("componentDataRestrictionCache", 50000, false, false, 1800, 1800);
-			singletonManager.addCache(memoryOnlyCache);
-			componentDataRestrictionCache = singletonManager.getCache("componentDataRestrictionCache");
-
-			memoryOnlyCache = new Cache("componentTypeCache", 1, false, false, 300, 300);
-			singletonManager.addCache(memoryOnlyCache);
-			componentTypeCache = singletonManager.getCache("componentTypeCache");
-
-			memoryOnlyCache = new Cache("componentTypeComponentCache", 50000, false, false, 300, 300);
-			singletonManager.addCache(memoryOnlyCache);
-			componentTypeComponentCache = singletonManager.getCache("componentTypeComponentCache");
-
-			memoryOnlyCache = new Cache("applicationCache", 100, false, true, 0, 0);
-			singletonManager.addCache(memoryOnlyCache);
-			applicationCache = singletonManager.getCache("applicationCache");
-
-			memoryOnlyCache = new Cache("contactCache", 5000, false, false, 1800, 1800);
-			singletonManager.addCache(memoryOnlyCache);
-			contactCache = singletonManager.getCache("contactCache");
-
-			memoryOnlyCache = new Cache("userSearchCache", 250, false, false, 1800, 1800);
-			singletonManager.addCache(memoryOnlyCache);
-			userSearchCache = singletonManager.getCache("userSearchCache");
-
-			memoryOnlyCache = new Cache("searchCache", 250, false, false, 1800, 1800);
-			singletonManager.addCache(memoryOnlyCache);
-			searchCache = singletonManager.getCache("searchCache");
-
-			memoryOnlyCache = new Cache("checklistQuestionCache", 1000, false, false, 300, 300);
-			singletonManager.addCache(memoryOnlyCache);
-			checklistQuestionCache = singletonManager.getCache("checklistQuestionCache");
-
-			memoryOnlyCache = new Cache("workPlanTypeCache", 1000, false, false, 7200, 7200);
-			singletonManager.addCache(memoryOnlyCache);
-			workPlanTypeCache = singletonManager.getCache("workPlanTypeCache");
-
+			lookupCache                   = createCache("lookupCache", 500, false, false, 600, 600);
+			attributeCache                = createCache("attributeCache", 30000, false, true, 0, 0);
+			attributeTypeCache            = createCache("attributeTypeCache", 5000, false, true, 0, 0);
+			attributeCodeAllCache         = createCache("attributeCodeAllCache", 1, false, true, 0, 0);
+			userAgentCache                = createCache("userAgentCache", 100, false, false, 7200, 7200);
+			componentCache                = createCache("componentCache", 200, false, false, 300, 300);
+			componentLookupCache          = createCache("componentLookupCache", 50000, false, false, 300, 300);
+			componentApprovalCache        = createCache("componentApprovalCache", 50000, false, false, 300, 300);
+			componentIconCache            = createCache("componentIconCache", 50000, false, false, 1800, 1800);
+			componentDataRestrictionCache = createCache("componentDataRestrictionCache", 50000, false, false, 1800, 1800);
+			componentTypeCache            = createCache("componentTypeCache", 1, false, false, 300, 300);
+			componentTypeComponentCache   = createCache("componentTypeComponentCache", 50000, false, false, 300, 300);
+			applicationCache              = createCache("applicationCache", 100, false, true, 0, 0);
+			contactCache                  = createCache("contactCache", 5000, false, false, 1800, 1800);
+			userSearchCache               = createCache("userSearchCache", 250, false, false, 1800, 1800);
+			searchCache                   = createCache("searchCache", 250, false, false, 1800, 1800);
+			checklistQuestionCache        = createCache("checklistQuestionCache", 1000, false, false, 300, 300);
+			workPlanTypeCache             = createCache("workPlanTypeCache", 1000, false, false, 7200, 7200);
 		} finally {
 			LOCK.unlock();
 		}
@@ -165,12 +117,7 @@ public class OSFCacheManager
 
 	public static CacheManager getCacheManager()
 	{
-		return CacheManager.getInstance();
-	}
-
-	public static void cleanUp()
-	{
-		CacheManager.getInstance().shutdown();
+		return cacheManager;
 	}
 
 	public static Cache getLookupCache()
@@ -271,14 +218,14 @@ public class OSFCacheManager
 	@Override
 	public void initialize()
 	{
-		OSFCacheManager.init();
+		cacheManager = initCacheManager();
 		started.set(true);
 	}
 
 	@Override
 	public void shutdown()
 	{
-		OSFCacheManager.cleanUp();
+		cacheManager.close();
 		started.set(false);
 	}
 
