@@ -1,5 +1,5 @@
 <template lang="html">
-  <v-layout
+  <!-- <v-layout
     row
     justify-center
     align-center
@@ -13,13 +13,14 @@
         indeterminate
       ></v-progress-circular>
     </v-flex>
-  </v-layout>
-  <div v-else>
+  </v-layout> -->
+  <div>
     <v-form style="padding: 1em; padding-top: 2em;">
       <div>
         <v-btn class="top-buttons" @click="getUserParts()">Refresh</v-btn>
         <v-btn class="top-buttons" @click="showData()"><v-icon class="fa-xs">fas fa-plus</v-icon>&nbsp; Add New</v-btn>
-        <v-btn class="top-buttons" @click="openBulkUpload()"><v-icon>fas fa-upload</v-icon>&nbsp; Bulk Upload</v-btn>
+        <v-btn class="top-buttons" @click="bulkUploadDialog = true"><v-icon>fas fa-upload</v-icon>&nbsp; Bulk Upload</v-btn>
+        <v-btn class="top-buttons" @click="commentsDialog = true"><v-icon>far fa-comment</v-icon>&nbsp; Comments</v-btn>
       </div>
       <div style="display: flex; ">
         <v-data-table
@@ -48,7 +49,7 @@
             </td>
             <td>
               <svg width="200" height="50">
-                <circle v-for="(step, i) in props.item.approvalWorkflow.steps" :cx="cx" cy="25" r="15" stroke="black" fill="blue" />
+                <!-- <circle v-for="(step, i) in props.item.approvalWorkflow.steps" :cx="cx" cy="25" r="15" stroke="black" fill="blue" /> -->
                 <line x1="35" y1="25" x2="55" y2="25" style="stroke:black; stroke-width:2"></line>
                 <!-- <circle cx="70" cy="25" r="15" stroke="black" fill="grey" /> -->
                 <line x1="85" y1="25" x2="105" y2="25" style="stroke:black; stroke-width:2"></line>
@@ -61,13 +62,58 @@
         </v-data-table>
       </div>
     </v-form>
+    <v-dialog
+      v-model="bulkUploadDialog"
+      width="35em"
+    >
+      <v-card>
+        <ModalTitle title='Bulk Uploads' @close='bulkUploadDialog = false' />
+          <v-card-text>
+            <p>
+              This bulk upload tool is designed to help you submit a part or parts into our database. 
+              You can upload a zip file containing PDFs, excel spreadsheets, or other human readable files. 
+              The SPOON support team will then do all the data entry for you.
+            </p>
+            <p>
+              Once SPOON support is done entering your information, you will then need to review and submit the information for Subject Matter Expert (SME) review. 
+              Once the SME has approved your information your part will become searchable on the site.
+            </p>
+            <p style="color: red;">
+              The information submitted to this site will be made publicly available. 
+              Please do not submit any sensitive information such as proprietary or ITAR restricted information.
+            </p>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer/>
+            <!-- <v-file-input label="File input"></v-file-input> -->
+          </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="commentsDialog"
+      width="35em"
+    >
+      <v-card>
+        <ModalTitle title='Comments' @close='commentsDialog = false' />
+          <v-card-text>
+            <!-- <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p> -->
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer/>
+          </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script lang="js">
+import ModalTitle from '@/components/ModalTitle'
 
 export default {
   name: 'submissions-page',
+  components: {
+    ModalTitle
+  },
   mounted () {
     this.getUserParts()
   },
@@ -87,6 +133,8 @@ export default {
       componentData: [],
       isLoading: true,
       counter: 0,
+      bulkUploadDialog: false,
+      commentsDialog: false,
       cx: 20
     }
   },
@@ -100,7 +148,8 @@ export default {
           this.componentDisplay = []
           this.componentData = response.data
           this.formatData()
-          this.getComponentWorkplan()
+          console.log(this.componentData)
+          // this.getComponentWorkplan()
         })
     },
     getComponentWorkplan () {
@@ -183,7 +232,7 @@ export default {
       }
     },
     openBulkUpload () {
-      window.open('openstorefront/bulkUpload.jsp','uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
+      // window.open('openstorefront/bulkUpload.jsp','uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
     },
     showData () {
       console.log(this.componentDisplay)
