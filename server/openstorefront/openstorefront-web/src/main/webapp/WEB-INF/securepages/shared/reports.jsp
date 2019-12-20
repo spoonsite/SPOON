@@ -711,7 +711,6 @@
 												handler: function () {
 													var form = this.up('form');
 																
-													debugger;
 													if (validateOutputs()){										
 
 														var formData = form.getValues();
@@ -740,6 +739,7 @@
 															reportOutput.reportTransmissionOption.reportNotify = formData.reportNotify;
 														});
 
+														// Prepare options data that will be consumed by backend
 														var report = {
 															reportType: formData.reportType,															  
 															reportOption: formData,
@@ -749,6 +749,19 @@
 															ids: null,
 															reportOutputs: outputs
 														};
+
+														// Append WorkPlan Status Report-specific options
+														var workPlanSteps = []; debugger;
+														debugger;
+														console.log("was going on?")
+														for(opt in formData){
+															if(opt.match(/displayStep-(.*)/)){
+																workPlanSteps.push(opt.replace(/displayStep-/, ""));
+															}
+														}
+														report.workPlanSteps = workPlanSteps;
+
+														// Append Evaluation Report-specific options
 														if (report.reportOption.evaluationType) {
 															if (report.reportOption.evaluationType === 'summary') {
 																report.reportOption.displayEvalSummary = true;
@@ -1291,16 +1304,16 @@
 							// Get all possible Workplan, Workplan Steps combinations
 							Ext.Ajax.request({
 								url: 'api/v1/resource/workplans',
-								success: function(response, opts) {
+								success: function(response, opts) { debugger;
 									var workplanData = Ext.JSON.decode(response.responseText);
 									for(workplan of workplanData){
 										for(step of workplan.steps){
-											if(step.name){
+											if(step.workPlanStepId){
 												optionsToAdd.push(
 													{
-														boxLabel: workplan.name + ": " +step.name,
-														name: ('display' + workplan.name + "-" +step.name).replace(/\s+/g, '-').toLowerCase(),
-														itemId: ('display' + workplan.name + "-" +step.name).replace(/\s+/g, '-').toLowerCase(),
+														boxLabel: "Workplan: " + workplan.name + " Step: " +step.name,
+														name: ("displayStep-" +step.workPlanStepId),  // in case I need this .replace(/\s+/g, '-').toLowerCase()
+														itemId: ("displayStep-" +step.workPlanStepId),
 														value: true
 													}
 												);
@@ -1308,7 +1321,6 @@
 										}
 									} // Completed: getting Workplan/Steps combinations
 									
-									debugger;
 
 									// Because this is an async call, this function must load the data into the page itself. 
 									
@@ -1322,12 +1334,9 @@
 
 								}
 							});
-						
-							// We will just show all steps from all workplans
-
 						}
+
 						reportOptionSet.add(optionsToAdd);					
-						
 					};
 					
 					
