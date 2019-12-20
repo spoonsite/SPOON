@@ -38,7 +38,6 @@
 <script lang="js">
 import StarRating from 'vue-star-rating'
 import ModalTitle from '@/components/ModalTitle'
-import isFuture from 'date-fns/is_future'
 export default {
   name: 'reviews-page',
   components: {
@@ -60,6 +59,14 @@ export default {
         }
       )
     }
+    var tables = document.getElementsByClassName('v-datatable__actions')
+    // for (var table in tables) {
+      console.log(tables[0])
+      tables[0].style.bottom = 0
+      tables[0].style.left = 0
+      tables[0].style.right = 0
+      tables[0].style.position = 'fixed'
+    // }
   },
   data () {
     return {
@@ -83,24 +90,7 @@ export default {
         pros: [],
         cons: [],
         comment: '',
-      },
-      reviewTitleRules: [
-        v => !!v || 'Title is required',
-        v => (v && v.length <= 255) || 'Title must be less than 255 characters'
-      ],
-      lastUsedRules: [
-        v => !!v || 'Date is required'
-      ],
-      timeUsedRules: [
-        v => !!v || 'Time used is required'
-      ],
-      commentRules: [
-        v => !!v || 'Comment is required'
-      ],
-      prosSelectOptions: [],
-      consSelectOptions: [],
-      timeSelectOptions: [],
-      editReviewDialog: false
+      }
     }
   },
   methods: {
@@ -135,7 +125,6 @@ export default {
       }
     },
     setUpTableArray () {
-      console.log(this.reviewsData)
       for (var review in this.reviewsData) {
         this.reviewsDisplay.push({
           entry: this.reviewsData[review].name,
@@ -152,7 +141,6 @@ export default {
     },
     setUpEditDialog (tableReview) {
       this.getCurrentItemData(tableReview)
-      this.lookupTypes()
       this.editReviewDialog = true
     },
     getCurrentItemData (tableReview) {
@@ -163,7 +151,6 @@ export default {
       this.currentReview.pros = tableReview.pros
       this.currentReview.cons = tableReview.cons
       this.currentReview.comment = tableReview.comment
-      console.log(this.currentReview)
     },
   }
 }
@@ -179,4 +166,8 @@ export default {
     flex-direction: column;
     flex-grow: 1;
   }
+.tablePaging {
+    position: fixed !important;
+    bottom: 0 !important;
+}
 </style>
