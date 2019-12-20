@@ -2,6 +2,7 @@
   <div>
     <v-dialog
       v-model="editReviewDialog"
+      @input="close"
       max-width="50em"
     >
       <v-card>
@@ -115,7 +116,7 @@ import StarRating from 'vue-star-rating'
 import ModalTitle from '@/components/ModalTitle'
 import isFuture from 'date-fns/is_future'
 export default {
-  name: 'Review',
+  name: 'ReviewModal',
   props: ['list'],
   components: {
     StarRating,
