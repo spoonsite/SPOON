@@ -1,0 +1,182 @@
+<template lang="html">
+  <div>
+    <v-form style="padding: 1em; padding-top: 2em;">
+      <div>
+        <v-btn class="top-buttons" @click="getUserReviews()">Refresh</v-btn>
+      </div>
+      <div style="display: flex;">
+        <v-data-table
+          :headers="tableHeaders"
+          :items="reviewsDisplay"
+          class="tableLayout"
+        >
+          <template slot="items" slot-scope="props">
+            <td>{{ props.item.entry }}</td>
+            <td>{{ props.item.title }}</td>
+
+            <td>
+              <star-rating :rating="props.item.rating" :read-only="true" :show-rating="false" :increment="0.01" :star-size="25"></star-rating>
+            </td>
+            <td>{{ props.item.status }}</td>
+
+            <td>{{ props.item.comment }}</td>
+            <td>{{ props.item.updateDate }}</td>
+            <td>
+              <v-btn small fab class="grey lighten-2" @click="setUpEditDialog(props.item)"><v-icon>fas fa-pencil-alt</v-icon></v-btn>
+              <v-btn small fab class="table-buttons red lighten-3"><v-icon>fas fa-trash</v-icon></v-btn>
+            </td>
+            <td>
+            </td>
+          </template>
+        </v-data-table>
+      </div>
+    </v-form>
+
+  </div>
+</template>
+
+<script lang="js">
+import StarRating from 'vue-star-rating'
+import ModalTitle from '@/components/ModalTitle'
+import isFuture from 'date-fns/is_future'
+export default {
+  name: 'reviews-page',
+  components: {
+    StarRating,
+    ModalTitle
+  },
+ mounted () {
+    // need to check if we have the current user
+    if (this.$store.state.currentUser.username) {
+      this.username = this.$store.state.currentUser.username
+      this.getUserReviews()
+    } else {
+      // trigger an update once the user has been fetched
+      this.$store.watch(
+        (state, getters) => state.currentUser,
+        (newValue, oldValue) => {
+          this.username = this.$store.state.currentUser.username
+          this.getUserReviews()
+        }
+      )
+    }
+  },
+  data () {
+    return {
+      tableHeaders: [
+        { text: 'Entry', value: 'entry' },
+        { text: 'Title', value: 'title' },
+        { text: 'Rating', value: 'rating' },
+        { text: 'Status', value: 'status' },
+        { text: 'Comment', value: 'comment' },
+        { text: 'Update Date', value: 'updateDate' },
+        { text: 'Actions', value: 'actions' }
+      ],
+      reviewsData: [],
+      reviewsDisplay: [],
+      username: '',
+      currentReview: {
+        title: '',
+        rating: 0,
+        lastUsed: '',
+        durationUsed: '',
+        pros: [],
+        cons: [],
+        comment: '',
+      },
+      reviewTitleRules: [
+        v => !!v || 'Title is required',
+        v => (v && v.length <= 255) || 'Title must be less than 255 characters'
+      ],
+      lastUsedRules: [
+        v => !!v || 'Date is required'
+      ],
+      timeUsedRules: [
+        v => !!v || 'Time used is required'
+      ],
+      commentRules: [
+        v => !!v || 'Comment is required'
+      ],
+      prosSelectOptions: [],
+      consSelectOptions: [],
+      timeSelectOptions: [],
+      editReviewDialog: false
+    }
+  },
+  methods: {
+    getUserReviews () {
+      this.$http.get(`/openstorefront/api/v1/resource/components/reviews/${this.username}`)
+        .then(response => {
+          this.reviewsData = []
+          this.reviewsDisplay = []
+          this.reviewsData = response.data
+          this.setUpTableArray()
+        })
+    },
+    removeCommentHtml (review) {
+      var comment = review.comment
+      var tmp = document.createElement('div')
+      tmp.innerHTML = comment
+      comment = tmp.innerText
+      var commentLength = 200
+      comment = comment.slice(0, commentLength)
+      return comment
+    },
+    changeDateFormat (review) {
+      var updateDate = new Date(review.updateDate)
+      return updateDate.toDateString()
+    },
+    determineActiveOrPending (review) {
+      if (review.activeStatus === 'A') {
+        return 'Approved'
+      }
+      else {
+        return 'Pending'
+      }
+    },
+    setUpTableArray () {
+      console.log(this.reviewsData)
+      for (var review in this.reviewsData) {
+        this.reviewsDisplay.push({
+          entry: this.reviewsData[review].name,
+          title: this.reviewsData[review].title,
+          rating: this.reviewsData[review].rating,
+          status: this.determineActiveOrPending(this.reviewsData[review]),
+          comment: this.removeCommentHtml(this.reviewsData[review]),
+          updateDate: this.changeDateFormat(this.reviewsData[review]),
+          pros: this.reviewsData[review].pros,
+          cons: this.reviewsData[review].cons,
+          lastUsed: this.reviewsData[review].lastUsed
+        })
+      }
+    },
+    setUpEditDialog (tableReview) {
+      this.getCurrentItemData(tableReview)
+      this.lookupTypes()
+      this.editReviewDialog = true
+    },
+    getCurrentItemData (tableReview) {
+      this.currentReview.title = tableReview.title
+      this.currentReview.rating = tableReview.rating
+      this.currentReview.lastUsed = tableReview.lastUsed
+      this.currentReview.durationUsed = tableReview.durationUsed
+      this.currentReview.pros = tableReview.pros
+      this.currentReview.cons = tableReview.cons
+      this.currentReview.comment = tableReview.comment
+      console.log(this.currentReview)
+    },
+  }
+}
+</script>
+
+<style scoped lang="scss">
+  .top-buttons {
+    text-transform: none;
+    background-color: #E0E0E0 !important;
+  }
+  .tableLayout {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+</style>
