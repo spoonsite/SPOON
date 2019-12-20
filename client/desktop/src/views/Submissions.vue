@@ -18,11 +18,17 @@
     <v-form style="padding: 1em; padding-top: 2em;">
       <div>
         <v-btn class="top-buttons" @click="getUserParts()">Refresh</v-btn>
-        <v-btn class="top-buttons" @click="showData()"><v-icon class="fa-xs">fas fa-plus</v-icon>&nbsp; Add New</v-btn>
-        <v-btn class="top-buttons" @click="bulkUploadDialog = true"><v-icon>fas fa-upload</v-icon>&nbsp; Bulk Upload</v-btn>
-        <v-btn class="top-buttons" @click="commentsDialog = true"><v-icon>far fa-comment</v-icon>&nbsp; Comments</v-btn>
+        <v-btn class="top-buttons" @click="showData()"
+          ><v-icon class="fa-xs pr-2">fas fa-plus</v-icon>Add New</v-btn
+        >
+        <v-btn class="top-buttons pr-2" @click="bulkUploadDialog = true"
+          ><v-icon>fas fa-upload</v-icon>Bulk Upload</v-btn
+        >
+        <v-btn class="top-buttons pr-2" @click="commentsDialog = true"
+          ><v-icon>far fa-comment</v-icon>Comments</v-btn
+        >
       </div>
-      <div style="display: flex; ">
+      <div class="d-flex">
         <v-data-table
           :headers="tableHeaders"
           :items="componentDisplay"
@@ -38,23 +44,42 @@
             <td>N/A</td>
             <td>{{ props.item.lastUpdate }}</td>
             <td style="display: flex; flex-direction: row;">
-              <v-btn
-                class="grey lighten-2"
-                small fab
-              >
+              <v-btn class="grey lighten-2" small fab>
                 <v-icon>far fa-eye</v-icon>
               </v-btn>
-              <v-btn small fab class="grey lighten-2" small f><v-icon>fas fa-pencil-alt</v-icon></v-btn>
-              <v-btn small fab class="table-buttons red lighten-3"><v-icon>fas fa-trash</v-icon></v-btn>
+              <v-btn small fab class="grey lighten-2" small f
+                ><v-icon>fas fa-pencil-alt</v-icon></v-btn
+              >
+              <v-btn small fab class="table-buttons red lighten-3"
+                ><v-icon>fas fa-trash</v-icon></v-btn
+              >
             </td>
             <td>
               <svg width="200" height="50">
                 <!-- <circle v-for="(step, i) in props.item.approvalWorkflow.steps" :cx="cx" cy="25" r="15" stroke="black" fill="blue" /> -->
-                <line x1="35" y1="25" x2="55" y2="25" style="stroke:black; stroke-width:2"></line>
+                <line
+                  x1="35"
+                  y1="25"
+                  x2="55"
+                  y2="25"
+                  style="stroke:black; stroke-width:2"
+                ></line>
                 <!-- <circle cx="70" cy="25" r="15" stroke="black" fill="grey" /> -->
-                <line x1="85" y1="25" x2="105" y2="25" style="stroke:black; stroke-width:2"></line>
+                <line
+                  x1="85"
+                  y1="25"
+                  x2="105"
+                  y2="25"
+                  style="stroke:black; stroke-width:2"
+                ></line>
                 <!-- <circle cx="120" cy="25" r="15" stroke="black" fill="grey" /> -->
-                <line x1="135" y1="25" x2="155" y2="25" style="stroke:black; stroke-width:2"></line>
+                <line
+                  x1="135"
+                  y1="25"
+                  x2="155"
+                  y2="25"
+                  style="stroke:black; stroke-width:2"
+                ></line>
                 <!-- <circle cx="170" cy="25" r="15" stroke="black" fill="grey" /> -->
               </svg>
             </td>
@@ -62,45 +87,43 @@
         </v-data-table>
       </div>
     </v-form>
-    <v-dialog
-      v-model="bulkUploadDialog"
-      width="35em"
-    >
+    <v-dialog v-model="bulkUploadDialog" width="35em">
       <v-card>
-        <ModalTitle title='Bulk Uploads' @close='bulkUploadDialog = false' />
-          <v-card-text>
-            <p>
-              This bulk upload tool is designed to help you submit a part or parts into our database. 
-              You can upload a zip file containing PDFs, excel spreadsheets, or other human readable files. 
-              The SPOON support team will then do all the data entry for you.
-            </p>
-            <p>
-              Once SPOON support is done entering your information, you will then need to review and submit the information for Subject Matter Expert (SME) review. 
-              Once the SME has approved your information your part will become searchable on the site.
-            </p>
-            <p style="color: red;">
-              The information submitted to this site will be made publicly available. 
-              Please do not submit any sensitive information such as proprietary or ITAR restricted information.
-            </p>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer/>
-            <!-- <v-file-input label="File input"></v-file-input> -->
-          </v-card-actions>
+        <ModalTitle title="Bulk Uploads" @close="bulkUploadDialog = false" />
+        <v-card-text>
+          <p>
+            This bulk upload tool is designed to help you submit a part or parts
+            into our database. You can upload a zip file containing PDFs, excel
+            spreadsheets, or other human readable files. The SPOON support team
+            will then do all the data entry for you.
+          </p>
+          <p>
+            Once SPOON support is done entering your information, you will then
+            need to review and submit the information for Subject Matter Expert
+            (SME) review. Once the SME has approved your information your part
+            will become searchable on the site.
+          </p>
+          <p style="color: red;">
+            The information submitted to this site will be made publicly
+            available. Please do not submit any sensitive information such as
+            proprietary or ITAR restricted information.
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <!-- <v-file-input label="File input"></v-file-input> -->
+        </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog
-      v-model="commentsDialog"
-      width="35em"
-    >
+    <v-dialog v-model="commentsDialog" width="35em">
       <v-card>
-        <ModalTitle title='Comments' @close='commentsDialog = false' />
-          <v-card-text>
-            <!-- <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p> -->
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer/>
-          </v-card-actions>
+        <ModalTitle title="Comments" @close="commentsDialog = false" />
+        <v-card-text>
+          <!-- <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p> -->
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -141,7 +164,7 @@ export default {
   methods: {
     getUserParts () {
       this.counter = 0
-      this.$http.get(`/openstorefront/api/v1/resource/componentsubmissions`)
+      this.$http.get(`/openstorefront/api/v1/resource/componentsubmissions/user`)
         .then(response => {
           this.isLoading = true
           this.componentData = []
@@ -164,7 +187,7 @@ export default {
             this.counter++
             if (this.counter >= this.componentData.length) {
               this.isLoading = false
-            } 
+            }
           })
         }
         else {
@@ -172,7 +195,7 @@ export default {
           .then(response => {
             this.componentDisplay[component][approvalWorkflow] = response.data
             console.log(this.componentDisplay[component].approvalWorkflow)
-            
+
           })
           .finally(() => {
             this.counter++
@@ -182,7 +205,7 @@ export default {
           })
         }
       }
-      
+
     },
     formatData () {
       for (var component in this.componentData) {
@@ -242,13 +265,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .top-buttons {
-    text-transform: none;
-    background-color: #E0E0E0 !important;
-  }
-  .tableLayout {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
+.top-buttons {
+  text-transform: none;
+  background-color: #e0e0e0 !important;
+}
+.tableLayout {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
 </style>
