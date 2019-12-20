@@ -45,7 +45,8 @@ Vue.prototype.$jsonparse = json => {
   try {
     parsed = JSON.parse(json)
   } catch (e) {
-    console.log('Failed to parse json: ', e)
+    /* eslint no-console: ["error", { allow: ["error"] }] */
+    console.error('Failed to parse json: ', e)
   }
   return parsed
 }

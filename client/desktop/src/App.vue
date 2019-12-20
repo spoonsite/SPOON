@@ -305,13 +305,6 @@ export default {
     }
   },
   methods: {
-    test() {
-      console.log('testing')
-    },
-    routeLink(link) {
-      console.log('route!')
-      console.log(link)
-    },
     logout() {
       this.loggingOut = true
       this.$http

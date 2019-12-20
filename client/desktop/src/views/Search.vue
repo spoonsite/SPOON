@@ -799,7 +799,11 @@ export default {
 
           that.searchQueryIsDirty = false
         })
-        .catch(err => console.error(err))
+        .catch(err => {
+          /* eslint no-console: ["error", { allow: ["error"] }] */
+          console.error(err)
+          that.searchQueryIsDirty = false
+        })
         .finally(() => {
           that.searchQueryIsDirty = false
         })
