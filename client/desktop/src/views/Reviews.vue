@@ -29,6 +29,7 @@
             </td>
           </template>
         </v-data-table>
+        <ReviewModal></ReviewModal>
       </div>
     </v-form>
 
@@ -38,11 +39,13 @@
 <script lang="js">
 import StarRating from 'vue-star-rating'
 import ModalTitle from '@/components/ModalTitle'
+import ReviewModal from '../components/ReviewModal'
 export default {
   name: 'reviews-page',
   components: {
     StarRating,
-    ModalTitle
+    ModalTitle,
+    Review
   },
  mounted () {
     // need to check if we have the current user
