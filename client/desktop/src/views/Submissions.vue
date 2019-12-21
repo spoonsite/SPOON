@@ -21,17 +21,18 @@
         <v-btn class="top-buttons" @click="showData()"
           ><v-icon class="fa-xs pr-2">fas fa-plus</v-icon>Add New</v-btn
         >
-        <v-btn class="top-buttons pr-2" @click="bulkUploadDialog = true"
-          ><v-icon>fas fa-upload</v-icon>Bulk Upload</v-btn
+        <v-btn class="top-buttons" @click="bulkUploadDialog = true"
+          ><v-icon class='pr-2'>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
         <v-btn class="top-buttons pr-2" @click="commentsDialog = true"
-          ><v-icon>far fa-comment</v-icon>Comments</v-btn
+          ><v-icon class='pr-2'>far fa-comment</v-icon>Comments</v-btn
         >
       </div>
       <div class="d-flex">
         <v-data-table
           :headers="tableHeaders"
-          :items="componentDisplay"
+          :items="componentData"
+          :loading="isLoading"
           class="tableLayout"
         >
           <template slot="items" slot-scope="props">
@@ -146,14 +147,30 @@ export default {
         { text: 'Name', value: 'name' },
         { text: 'Status', value: 'status' },
         { text: 'Type', value: 'type' },
-        { text: 'Submit Date', value: 'submitDate' },
+        { text: 'Submit/Approved Date', value: 'submitDate' },
         { text: 'Pending Change', value: 'pendingChange' },
         { text: 'Last Update', value: 'lastUpdate' },
         { text: 'Actions', value: 'actions' },
         { text: 'Approval Workflow', value: 'approvalWorkflow' }
       ],
+      component: {
+        name: '',
+        status: '',
+        type: '',
+        submitDate: '',
+        pendingChange: false,
+        lastUpdate: '',
+        steps: [
+          {
+            name: 'step',
+            color: '#333'
+          }
+        ]
+      },
       componentDisplay: [],
       componentData: [],
+      components: [],
+      workPlans: [],
       isLoading: true,
       counter: 0,
       bulkUploadDialog: false,
@@ -164,16 +181,89 @@ export default {
   methods: {
     getUserParts () {
       this.counter = 0
-      this.$http.get(`/openstorefront/api/v1/resource/componentsubmissions/user`)
+      this.isLoading = true
+      this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
         .then(response => {
-          this.isLoading = true
-          this.componentData = []
-          this.componentDisplay = []
-          this.componentData = response.data
-          this.formatData()
-          console.log(this.componentData)
+          this.isLoading = false
+          console.log(response)
+          this.components = response.data.componentWorkPlanIds
+          this.workPlans = response.data.workPlans
+          // this.components = [response.data.componentWorkPlanIds[0]]
+          // this.workPlans = [response.data.workPlans[1]]
+          this.componentData = this.combineComponentsAndWorkPlans([response.data.componentWorkPlanIds[0]], [response.data.workPlans[1]])
+
+          // this.componentData = []
+          // this.componentDisplay = []
+          // this.componentData = response.data
+          // this.formatData()
           // this.getComponentWorkplan()
         })
+    },
+    combineComponentsAndWorkPlans(components, workPlans){
+      // console.log(components)
+      // console.log(workPlans)
+      let updatedComponents = []
+      components.forEach(component => {
+        let myWorkPlan = null;
+        workPlans.forEach(workPlan => {
+          // console.log(component.workPlanID)
+          // console.log(workPlan.workPlanId)
+          if(component.workPlanID === workPlan.workPlanId){
+            // console.log('match')
+            myWorkPlan = workPlan
+          }
+        })
+        if(myWorkPlan !== null){
+          updatedComponents.push(this.generateComponent(component, myWorkPlan))
+        }
+      })
+      return updatedComponents
+    },
+    generateComponent(component, workPlan){
+      let seenCurrStep = false
+      let steps = []
+
+      workPlan.steps.forEach((step, index) => {
+        if(!seenCurrStep){
+          if(component.stepId === step.workPlanStepId){
+            if(index === workPlan.steps.length - 1){
+              steps.push({
+                name: step.name,
+                color: workPlan.completeColor
+              })
+            } else {
+              steps.push({
+                name: step.name,
+                color: workPlan.inProgressColor
+              })
+            }
+            seenCurrStep = true
+          } else {
+            steps.push({
+              name: step.name,
+              color: workPlan.completeColor
+            })
+          }
+        } else {
+          steps.push({
+            name: step.name,
+            color: workPlan.pendingColor
+          })
+        }
+      })
+
+      // TODO: deal with the chance of the component being a submission
+      let updatedComponent = {
+        name: component.component.name,
+        lastUpdate: this.$filters.formatDate(component.component.updateDts),
+        type: component.component.componentType,
+        componentId: component.component.componentId,
+        status: component.component.approvalState,
+        submitDate: this.$filters.formatDate(component.component.approvedDts),
+        steps: steps
+      }
+
+      return updatedComponent
     },
     getComponentWorkplan () {
       for (var component in this.componentDisplay) {
