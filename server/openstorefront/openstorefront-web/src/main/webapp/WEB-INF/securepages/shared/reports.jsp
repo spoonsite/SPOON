@@ -549,9 +549,6 @@
 												var reportType = cb.getSelection();
 												var form = cb.up('form');
 												form.queryById('reportDescription').update(reportType.get('detailedDescription'));												
-												
-												console.log("outputing all the data-state i have at 553");
-												console.log(newVal, oldVal, opts);
 
 												scheduleOptionsShow(form);
 												showReportOptions(form, newVal);
@@ -1737,6 +1734,9 @@
 					if (scheduleData) {
 						//edit
 						var genform = scheduleWin.down('form');
+						
+						var data = scheduleData.data;
+						
 						scheduleWin.scheduleReportId = data.scheduleReportId
 						
 						//set report Type
