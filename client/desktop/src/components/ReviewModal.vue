@@ -11,7 +11,7 @@
       <v-card-text>
         <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
         <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
-        <v-form>
+        <v-form v-model="reviewValid">
           <v-container>
             <v-text-field
               v-model="review.title"
@@ -36,7 +36,7 @@
             <v-spacer style="height: 1.5em"></v-spacer>
 
             <p>
-              <strong>{{ review }}</strong>
+              <strong>Last date asset was used*</strong>
             </p>
 
             <v-text-field
@@ -99,7 +99,7 @@
           <v-card-actions>
             <v-spacer/>
 
-            <v-btn color="success">Submit</v-btn>
+            <v-btn color="success" :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
             <v-btn @click="close">Cancel</v-btn>
           </v-card-actions>
         </v-form>
@@ -112,22 +112,30 @@
 <script>
 import ModalTitle from '@/components/ModalTitle'
 import StarRating from 'vue-star-rating'
+import isFuture from 'date-fns/is_future'
 
 export default {
   name: 'ReviewsModal',
   props: {
     value: false,
-    review: {}
+    review: {},
   },
   components: {
     ModalTitle,
     StarRating
+  },
+  mounted () {
+    this.lookupTypes()
   },
   data () {
     return {
       timeSelectOptions: [],
       prosSelectOptions: [],
       consSelectOptions: [],
+      reviewSubmit: false,
+      reviewValid: false,
+      isLoading: false,
+      comment: '',
       reviewTitleRules: [
         v => !!v || 'Title is required',
         v => (v && v.length <= 255) || 'Title must be less than 255 characters'
@@ -143,10 +151,130 @@ export default {
       ],
     }
   },
+  watch: {
+    'review.comment': function (val) {
+      if (val !== '' && this.reviewValid) {
+        this.reviewSubmit = true
+      } else {
+        this.reviewSubmit = false
+      }
+    },
+    reviewValid: function (val) {
+      if (val && this.review.comment !== '') {
+        this.reviewSubmit = true
+      } else {
+        this.reviewSubmit = false
+      }
+    },
+  },
   methods: {
+    todaysDateFormatted (val) {
+      return !isFuture(val)
+    },
     close () {
       this.$emit('close')
-    }
-  },
+    },
+    lookupTypes () {
+      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
+        .then(response => {
+          if (response.data) {
+            this.timeOptions = response.data
+            response.data.forEach(element => {
+              this.timeSelectOptions.push(element.description)
+            })
+          }
+        })
+        .catch(e => this.errors.push(e))
+
+      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
+        .then(response => {
+          if (response.data) {
+            this.prosOptions = response.data
+            response.data.forEach(element => {
+              this.prosSelectOptions.push(element.description)
+            })
+          }
+        })
+        .catch(e => this.errors.push(e))
+
+      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
+        .then(response => {
+          if (response.data) {
+            this.consOptions = response.data
+            response.data.forEach(element => {
+              this.consSelectOptions.push(element.description)
+            })
+          }
+        })
+        .catch(e => this.errors.push(e))
+    },
+    submitReview () {
+      let data = {
+        comment: this.review.comment,
+        cons: [],
+        dataSensitivity: '',
+        lastUsed: this.review.lastUsed + 'T00:00:00',
+        organization: this.$store.state.currentUser.organization,
+        pros: [],
+        rating: this.review.rating,
+        reviewId: '',
+        securityMarkingType: '',
+        title: this.review.title,
+        userTimeCode: '',
+        userTypeCode: this.$store.state.currentUser.userTypeCode
+      }
+
+      this.consOptions.forEach(consElement => {
+        this.review.cons.forEach(selectElement => {
+          if (consElement.description === selectElement) {
+            data.cons.push({ text: consElement.code })
+          }
+        })
+      })
+
+      this.prosOptions.forEach(prosElement => {
+        this.review.pros.forEach(selectElement => {
+          if (prosElement.description === selectElement) {
+            data.pros.push({ text: prosElement.code })
+          }
+        })
+      })
+
+      this.timeOptions.forEach(element => {
+        if (this.review.timeUsed === element.description) {
+          data.userTimeCode = element.code
+        }
+      })
+      console.log(this.review.editReviewId)
+      if (this.review.editReviewId) {
+        console.log("true")
+        this.$http.put(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/${this.review.editReviewId}/detail`, data)
+          .then(response => {
+            this.review.editReviewId = ''
+            this.$toasted.show('Review Submitted')
+            this.close()
+          })
+          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+      } else {
+        // this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/reviews/detail`, data)
+        //   .then(response => {
+        //     this.writeReviewDialog = false
+        //     this.$toasted.show('Review Submitted')
+        //   })
+        //   // .finally(() => {
+        //   //   this.isLoading = false
+        //   //   this.getDetail()
+        //   // })
+        //   .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+        console.log(false)
+      }
+    },
+  }
 }
 </script>
+
+<style>
+  .w-100 {
+    width: 100%;
+  }
+</style>

@@ -19,7 +19,8 @@
             </td>
             <td>{{ props.item.status }}</td>
 
-            <td>{{ props.item.comment }}</td>
+            <td style="word-wrap: break-word" v-if="props.item.comment.length<200">{{ props.item.comment }}</td>
+            <td style="word-wrap: break-word" v-else>{{ props.item.comment.substring(0,200)+"..." }}</td>
             <td>{{ props.item.updateDate }}</td>
             <td>
               <v-btn small fab class="grey lighten-2" @click.stop="setUpEditDialog(props.item)"><v-icon>fas fa-pencil-alt</v-icon></v-btn>
@@ -32,7 +33,6 @@
         <ReviewModal v-model="editReviewDialog" @close="editReviewDialog = false" :review="currentReview"></ReviewModal>
       </div>
     </v-form>
-
   </div>
 </template>
 
@@ -40,6 +40,7 @@
 import StarRating from 'vue-star-rating'
 import ModalTitle from '@/components/ModalTitle'
 import ReviewModal from '../components/ReviewModal'
+import format from 'date-fns/format'
 export default {
   name: 'reviews-page',
   components: {
@@ -85,7 +86,7 @@ export default {
         title: '',
         rating: 0,
         lastUsed: '',
-        durationUsed: '',
+        timeUsed: '',
         pros: [],
         cons: [],
         comment: ''
@@ -100,6 +101,7 @@ export default {
           this.reviewsDisplay = []
           this.reviewsData = response.data
           this.setUpTableArray()
+          console.log(this.reviewsData)
         })
     },
     removeCommentHtml (review) {
@@ -107,8 +109,6 @@ export default {
       var tmp = document.createElement('div')
       tmp.innerHTML = comment
       comment = tmp.innerText
-      var commentLength = 200
-      comment = comment.slice(0, commentLength)
       return comment
     },
     changeDateFormat (review) {
@@ -134,7 +134,10 @@ export default {
           updateDate: this.changeDateFormat(this.reviewsData[review]),
           pros: this.reviewsData[review].pros,
           cons: this.reviewsData[review].cons,
-          lastUsed: this.reviewsData[review].lastUsed
+          lastUsed: this.reviewsData[review].lastUsed,
+          timeUsed: this.reviewsData[review].userTimeDescription,
+          editReviewId: this.reviewsData[review].reviewId,
+          componentId: this.reviewsData[review].componentId
         })
       }
     },
@@ -145,11 +148,14 @@ export default {
     getCurrentItemData (tableReview) {
       this.currentReview.title = tableReview.title
       this.currentReview.rating = tableReview.rating
-      this.currentReview.lastUsed = tableReview.lastUsed
-      this.currentReview.durationUsed = tableReview.durationUsed
+      this.currentReview.lastUsed = format(tableReview.lastUsed, 'YYYY-MM-DD')
+      this.currentReview.timeUsed = tableReview.timeUsed
       this.currentReview.pros = tableReview.pros
       this.currentReview.cons = tableReview.cons
       this.currentReview.comment = tableReview.comment
+      this.currentReview.timeUsed = tableReview.timeUsed
+      this.currentReview.editReviewId = tableReview.editReviewId
+      this.currentReview.componentId = tableReview.componentId
     }
   }
 }
