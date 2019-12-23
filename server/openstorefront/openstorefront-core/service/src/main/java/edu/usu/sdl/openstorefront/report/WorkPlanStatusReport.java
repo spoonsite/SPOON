@@ -178,7 +178,7 @@ public class WorkPlanStatusReport
 			reportModel.getData().add(lineModel);
 		}
 
-		// Attempt sorting the array
+		// Sort array by most recently changed date
 		try {
 			
 			reportModel.getData().sort((WorkPlanStatusLineModel a, WorkPlanStatusLineModel b) -> {
