@@ -22,14 +22,14 @@
             <td>{{ props.item.comment }}</td>
             <td>{{ props.item.updateDate }}</td>
             <td>
-              <v-btn small fab class="grey lighten-2" @click="setUpEditDialog(props.item)"><v-icon>fas fa-pencil-alt</v-icon></v-btn>
+              <v-btn small fab class="grey lighten-2" @click.stop="setUpEditDialog(props.item)"><v-icon>fas fa-pencil-alt</v-icon></v-btn>
               <v-btn small fab class="table-buttons red lighten-3"><v-icon>fas fa-trash</v-icon></v-btn>
             </td>
             <td>
             </td>
           </template>
         </v-data-table>
-        <ReviewModal></ReviewModal>
+        <ReviewModal v-model="editReviewDialog" @close="editReviewDialog = false" :review="currentReview"></ReviewModal>
       </div>
     </v-form>
 
@@ -45,15 +45,13 @@ export default {
   components: {
     StarRating,
     ModalTitle,
-    Review
+    ReviewModal
   },
  mounted () {
-    // need to check if we have the current user
     if (this.$store.state.currentUser.username) {
       this.username = this.$store.state.currentUser.username
       this.getUserReviews()
     } else {
-      // trigger an update once the user has been fetched
       this.$store.watch(
         (state, getters) => state.currentUser,
         (newValue, oldValue) => {
@@ -63,13 +61,10 @@ export default {
       )
     }
     var tables = document.getElementsByClassName('v-datatable__actions')
-    // for (var table in tables) {
-      console.log(tables[0])
-      tables[0].style.bottom = 0
-      tables[0].style.left = 0
-      tables[0].style.right = 0
-      tables[0].style.position = 'fixed'
-    // }
+    tables[0].style.bottom = 0
+    tables[0].style.left = 0
+    tables[0].style.right = 0
+    tables[0].style.position = 'fixed'
   },
   data () {
     return {
@@ -85,6 +80,7 @@ export default {
       reviewsData: [],
       reviewsDisplay: [],
       username: '',
+      editReviewDialog: false,
       currentReview: {
         title: '',
         rating: 0,
@@ -92,7 +88,7 @@ export default {
         durationUsed: '',
         pros: [],
         cons: [],
-        comment: '',
+        comment: ''
       }
     }
   },
@@ -154,7 +150,7 @@ export default {
       this.currentReview.pros = tableReview.pros
       this.currentReview.cons = tableReview.cons
       this.currentReview.comment = tableReview.comment
-    },
+    }
   }
 }
 </script>

@@ -1,132 +1,133 @@
+
+
 <template>
-  <div>
-    <v-dialog
-      v-model="editReviewDialog"
-      @input="close"
-      max-width="50em"
-    >
-      <v-card>
-        <ModalTitle title='Write a Review' @close='editReviewDialog = false' />
-        <v-card-text>
-          <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
-          <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
+  <v-dialog
+    :value="value"
+    @input="close"
+    max-width='50em'
+  >
+    <v-card>
+      <ModalTitle title='Write a Review' @close='close' />
+      <v-card-text>
+        <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
+        <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
+        <v-form>
+          <v-container>
+            <v-text-field
+              v-model="review.title"
+              :rules="reviewTitleRules"
+              :counter="255"
+              label="Title"
+              required
+            ></v-text-field>
 
-          <v-form>
+            <p>
+              <strong>Rating*</strong>
+            </p>
 
-            <v-container>
-              <v-text-field
-                v-model="currentReview.title"
-                :rules="reviewTitleRules"
-                :counter="255"
-                label="Title"
-                required
-              ></v-text-field>
+            <star-rating
+              v-model="review.rating"
+              :rating="review.rating"
+              :read-only="false"
+              :increment="1"
+              :star-size="30"
+            ></star-rating>
 
-              <p>
-                <strong>Rating*</strong>
-              </p>
+            <v-spacer style="height: 1.5em"></v-spacer>
 
-              <star-rating
-                v-model="currentReview.rating"
-                :rating="currentReview.rating"
-                :read-only="false"
-                :increment="1"
-                :star-size="30"
-              ></star-rating>
+            <p>
+              <strong>{{ review }}</strong>
+            </p>
 
-              <v-spacer style="height: 1.5em"></v-spacer>
+            <v-text-field
+              v-model="review.lastUsed"
+              :rules="lastUsedRules"
+              label="Last Used"
+              readonly
+              required
+              disabled
+            ></v-text-field>
 
-              <p>
-                <strong>Last date asset was used*</strong>
-              </p>
+            <v-date-picker
+              v-model="review.lastUsed"
+              :allowed-dates="todaysDateFormatted"
+              no-title
+              reactive
+              full-width
+            >
+              <v-spacer></v-spacer>
+              <v-btn flat color="accent" @click="review.lastUsed=''">Cancel</v-btn>
+            </v-date-picker>
 
-              <v-text-field
-                v-model="currentReview.lastUsed"
-                :rules="lastUsedRules"
-                label="Last Used"
-                readonly
-                required
-                disabled
-              ></v-text-field>
+            <v-spacer style="height: 1em"></v-spacer>
 
-              <v-date-picker
-                v-model="currentReview.lastUsed"
-                :allowed-dates="todaysDateFormatted"
-                no-title
-                reactive
-                full-width
-              >
-                <v-spacer></v-spacer>
-                <v-btn flat color="accent" @click="currentReview.lastUsed=''">Cancel</v-btn>
-              </v-date-picker>
+            <v-select
+              v-model="review.timeUsed"
+              :items="timeSelectOptions"
+              :rules="timeUsedRules"
+              label="How long have you used it"
+              required
+            ></v-select>
 
-              <v-spacer style="height: 1em"></v-spacer>
+            <v-select
+              v-model="review.pros"
+              :items="prosSelectOptions"
+              label="Pros"
+              chips
+              multiple
+            ></v-select>
 
-              <v-select
-                v-model="currentReview.timeUsed"
-                :items="timeSelectOptions"
-                :rules="timeUsedRules"
-                label="How long have you used it"
-                required
-              ></v-select>
+            <v-select
+              v-model="review.cons"
+              :items="consSelectOptions"
+              label="Cons"
+              chips
+              multiple
+            ></v-select>
 
-              <v-select
-                v-model="currentReview.pros"
-                :items="prosSelectOptions"
-                label="Pros"
-                chips
-                multiple
-              ></v-select>
+            <p>
+              Comment: <span v-if="review.comment === ''" class="red--text">comment is required *</span>
+            </p>
 
-              <v-select
-                v-model="currentReview.cons"
-                :items="consSelectOptions"
-                label="Cons"
-                chips
-                multiple
-              ></v-select>
+            <quill-editor
+              style="background-color: white;"
+              v-model="review.comment"
+              :rules="commentRules"
+              required
+            ></quill-editor>
+          </v-container>
+          <v-card-actions>
+            <v-spacer/>
 
-              <p>
-                Comment: <span v-if="currentReview.comment === ''" class="red--text">comment is required *</span>
-              </p>
-
-              <quill-editor
-                style="background-color: white;"
-                v-model="currentReview.comment"
-                :rules="commentRules"
-                required
-              ></quill-editor>
-
-            </v-container>
-            <v-card-actions>
-              <v-spacer/>
-              
-              <v-btn color="success" :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
-              <v-btn @click="writeReviewDialog = false; currentReview.comment=''">Cancel</v-btn>
-            </v-card-actions>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-  </div>
+            <v-btn color="success">Submit</v-btn>
+            <v-btn @click="close">Cancel</v-btn>
+          </v-card-actions>
+        </v-form>
+      
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
-import StarRating from 'vue-star-rating'
 import ModalTitle from '@/components/ModalTitle'
-import isFuture from 'date-fns/is_future'
+import StarRating from 'vue-star-rating'
+
 export default {
-  name: 'ReviewModal',
-  props: ['list'],
-  components: {
-    StarRating,
-    ModalTitle
+  name: 'ReviewsModal',
+  props: {
+    value: false,
+    review: {}
   },
-  mounted () {
-    
+  components: {
+    ModalTitle,
+    StarRating
   },
   data () {
     return {
+      timeSelectOptions: [],
+      prosSelectOptions: [],
+      consSelectOptions: [],
       reviewTitleRules: [
         v => !!v || 'Title is required',
         v => (v && v.length <= 255) || 'Title must be less than 255 characters'
@@ -140,54 +141,12 @@ export default {
       commentRules: [
         v => !!v || 'Comment is required'
       ],
-      prosSelectOptions: [],
-      consSelectOptions: [],
-      timeSelectOptions: [],
-      editReviewDialog: false
     }
   },
   methods: {
-    todaysDateFormatted (val) {
-      return !isFuture(val)
-    },
-    lookupTypes () {
-      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
-        .then(response => {
-          if (response.data) {
-            this.timeOptions = response.data
-            response.data.forEach(element => {
-              this.timeSelectOptions.push(element.description)
-            })
-          }
-        })
-        .catch(e => this.errors.push(e))
-
-      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
-        .then(response => {
-          if (response.data) {
-            this.prosOptions = response.data
-            response.data.forEach(element => {
-              this.prosSelectOptions.push(element.description)
-            })
-          }
-        })
-        .catch(e => this.errors.push(e))
-
-      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
-        .then(response => {
-          if (response.data) {
-            this.consOptions = response.data
-            response.data.forEach(element => {
-              this.consSelectOptions.push(element.description)
-            })
-          }
-        })
-        .catch(e => this.errors.push(e))
-    },
-  }
+    close () {
+      this.$emit('close')
+    }
+  },
 }
 </script>
-
-<style>
-
-</style>
