@@ -739,9 +739,10 @@
 															reportOutput.reportTransmissionOption.reportNotify = formData.reportNotify;
 														});
 
-														// Prepare options data that will be consumed by backend
+													
+														// Prepare reportOptions data that will be consumed by backend
 														var report = {
-															reportType: formData.reportType,															  
+															reportType: formData.reportType,
 															reportOption: formData,
 															scheduleIntervalDays: null,
 															scheduleIntervalMinutes: null,
@@ -750,25 +751,14 @@
 															reportOutputs: outputs
 														};
 
-														// Append WorkPlan Status Report-specific options
-														var workPlanSteps = []; debugger;
-														debugger;
-														console.log("was going on?")
-														for(opt in formData){
-															if(opt.match(/displayStep-(.*)/)){
-																workPlanSteps.push(opt.replace(/displayStep-/, ""));
-															}
-														}
-														report.workPlanSteps = workPlanSteps;
-
-														// Append Evaluation Report-specific options
+														// Append Evaluation Report-specific options to reportOptions
 														if (report.reportOption.evaluationType) {
 															if (report.reportOption.evaluationType === 'summary') {
 																report.reportOption.displayEvalSummary = true;
 															} else if (report.reportOption.evaluationType === 'detail') {
 																report.reportOption.displayEvalDetails = true;
 															}
-														}														
+														}
 														
 														reportData.report = report;
 													
@@ -1304,32 +1294,32 @@
 							// Get all possible Workplan, Workplan Steps combinations
 							Ext.Ajax.request({
 								url: 'api/v1/resource/workplans',
-								success: function(response, opts) { debugger;
+								success: function(response, opts) {
 									var workplanData = Ext.JSON.decode(response.responseText);
-									for(workplan of workplanData){
-										for(step of workplan.steps){
-											if(step.workPlanStepId){
-												optionsToAdd.push(
-													{
-														boxLabel: "Workplan: " + workplan.name + " Step: " +step.name,
-														name: ("displayStep-" +step.workPlanStepId),  // in case I need this .replace(/\s+/g, '-').toLowerCase()
-														itemId: ("displayStep-" +step.workPlanStepId),
-														value: true
-													}
-												);
-											}
-										}
-									} // Completed: getting Workplan/Steps combinations
+									var workplanStepsArray = [];
+
 									
+									for(ii=0; ii< workplanData.length; ii++){
+										for(jj=0; jj < workplanData[ii].steps.length; jj++){
+											workplanStepsArray.push({
+												"id": workplanData[ii].steps[jj].workPlanStepId,
+												"show" : "Workplan: " + workplanData[ii].name + "   Step: " + workplanData[ii].steps[jj].name
+											})
+										}
+									}// Completed: getting Workplan/Steps combinations
+
+									optionsToAdd = {
+										xtype: 'tagfield',
+										name: "workPlanSteps",
+										fieldLabel: 'Select which Workplan Steps you want to be included in this report:',
+										store: {data: workplanStepsArray},
+										displayField: 'show', 
+										valueField: 'id', 
+										queryMode: 'local', 
+										filterPickList: true
+									}
 
 									// Because this is an async call, this function must load the data into the page itself. 
-									
-									optionsToAdd = {
-										xtype: 'fieldcontainer',
-										defaultType: 'checkboxfield',
-										baseCls: 'detailReportColumn',
-										items:optionsToAdd			
-									};
 									reportOptionSet.add(optionsToAdd);
 
 								}

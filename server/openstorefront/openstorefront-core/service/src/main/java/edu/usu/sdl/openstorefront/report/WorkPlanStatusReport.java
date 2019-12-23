@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
+import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
@@ -62,13 +63,27 @@ public class WorkPlanStatusReport
 	protected BaseReportModel gatherData()
 	{
 		WorkPlanStatusReportModel reportModel = new WorkPlanStatusReportModel();
-		reportModel.setTitle("WorkPlan Status");
-
+		reportModel.setTitle("WorkPlan Status");	
+		
+		
+		List<WorkPlanLink> links = new ArrayList<>();
+		HashMap stepTotalsCount = new HashMap<String, Integer>() {};
+		
+		// Query DB for worklinks in appropiate workplan steps
 		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 		workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
-		// workPlanLinkExample.setCurrentStepId("");  here, for every step approved by the user, findbyExmpale, merge multiple lists together
-		List<WorkPlanLink> links = workPlanLinkExample.findByExample();
+		
+		for(String WorkPlanStepID : report.getReportOption().getWorkPlanSteps()){
+			if(WorkPlanStepID != null && WorkPlanStepID != ""){
+				workPlanLinkExample.setCurrentStepId(WorkPlanStepID);
+				List tempHolder = workPlanLinkExample.findByExample();
+				stepTotalsCount.put(WorkPlanStepID,tempHolder.size());
+				links.addAll(tempHolder);
+			}
+		}
+		reportModel.setMetaData(stepTotalsCount);
 
+		// Load information from the WorkPlanLink objects into a WorkPLanStatusLineModel
 		Map<String, WorkPlan> workPlanMap = new HashMap<>();
 		for (WorkPlanLink link : links) {
 			WorkPlanStatusLineModel lineModel = new WorkPlanStatusLineModel();
@@ -164,12 +179,6 @@ public class WorkPlanStatusReport
 			reportModel.getData().add(lineModel);
 		}
 
-//		// for sorting alphebetically
-//		Collections.sort(reportModel.getData(), (WorkPlanStatusLineModel a, WorkPlanStatusLineModel b) -> {
-//			return a.getLinkName().toLowerCase().compareTo(b.getLinkName().toLowerCase()) > 0;
-//		});
-
-
 		// Attempt sorting the array
 		try {
 			
@@ -178,8 +187,8 @@ public class WorkPlanStatusReport
 			});
 			
 		} catch(Exception e){
-			Logger LOG = Logger.getLogger("testLogger4WorkplanReports");
-			LOG.log(Level.SEVERE, "Sorting the list of parts didn't work. -WorkPlanStatusReport.java");
+			Logger LOG = Logger.getLogger("WorkplanReportsLogger");
+			LOG.log(Level.SEVERE, "Unable to sort the list of parts in WorkPlanStatusReport ");
 		}
 		
 		
@@ -243,37 +252,43 @@ public class WorkPlanStatusReport
 
 		//write header
 		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
+		
+		WorkPlanStatusReportModel workPlanStatusModel = (WorkPlanStatusReportModel) reportModel;
+		
+		cvsGenerator.addLine("Workplan Step", "Total Submissions");
+		
+		WorkPlan workPlanExample = new WorkPlan();
+		List<WorkPlan> allWorkPlansList = workPlanExample.findByExample();
+		workPlanStatusModel.getMetaData().forEach((k,v) -> {
+			for(WorkPlan workPlan : allWorkPlansList){
+				WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(k);
+				if (workPlanStep != null){
+					cvsGenerator.addLine(workPlanStep.getName(), v);
+					break;
+				}
+			}
+		});
+		
+		cvsGenerator.addLine(""); // Empty space for clarity
 		cvsGenerator.addLine(
-				"Link Name",
-				"Link Type",
+				"Entry Name",
 				"Entry Type",
-				"Workplan Name",
 				"Current Step Name",
-				"Current Assignee",
-				"Current Assigned Group",
 				"Current SubStatus",
 				"Last Step Change Date",
 				"Number of Submission Comments",
-				"Last Comment Update",
-				"Work Plan Link"
+				"Last Comment Update"
 		);
-
-		WorkPlanStatusReportModel workPlanStatusModel = (WorkPlanStatusReportModel) reportModel;
 
 		for (WorkPlanStatusLineModel reportLineModel : workPlanStatusModel.getData()) {
 			cvsGenerator.addLine(
 					reportLineModel.getLinkName(),
-					reportLineModel.getLinkType(),
 					reportLineModel.getComponentType(),
-					reportLineModel.getWorkPlanName(),
 					reportLineModel.getCurrentStepName(),
-					reportLineModel.getCurrentAssignee(),
-					reportLineModel.getCurrentAssignedGroup(),
 					reportLineModel.getCurrentSubStatus(),
 					reportLineModel.getLastUpdateChangeDts() != null ? sdf.format(reportLineModel.getLastUpdateChangeDts()) : "",
 					reportLineModel.getNumberOfComments(),
-					reportLineModel.getLastCommentUpdate() != null ? sdf.format(reportLineModel.getLastCommentUpdate()) : "",
-					reportLineModel.getWorkPlanLinkId()
+					reportLineModel.getLastCommentUpdate() != null ? sdf.format(reportLineModel.getLastCommentUpdate()) : ""
 			);
 		}
 	}

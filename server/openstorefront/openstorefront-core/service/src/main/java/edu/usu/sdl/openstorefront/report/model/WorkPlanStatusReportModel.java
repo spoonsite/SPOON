@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.report.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,6 +28,12 @@ public class WorkPlanStatusReportModel
 {
 
 	private List<WorkPlanStatusLineModel> data = new ArrayList<>();
+	
+	/**
+	 * This holds a list of the workplan steps that were included for this report, 
+	 * and a count of how many entries were found in each step.
+	 */
+	private HashMap<String, Integer> metaData = new HashMap<>();
 
 	public WorkPlanStatusReportModel()
 	{
@@ -41,5 +48,16 @@ public class WorkPlanStatusReportModel
 	public void setData(List<WorkPlanStatusLineModel> data)
 	{
 		this.data = data;
+	}
+	
+	
+	public HashMap<String, Integer> getMetaData()
+	{
+		return metaData;
+	}
+
+	public void setMetaData(HashMap<String, Integer> metaData)
+	{
+		this.metaData = metaData;
 	}
 }
