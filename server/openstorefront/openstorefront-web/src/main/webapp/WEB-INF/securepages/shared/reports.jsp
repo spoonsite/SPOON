@@ -1737,10 +1737,6 @@
 					if (scheduleData) {
 						//edit
 						var genform = scheduleWin.down('form');
-						
-						console.log(scheduleData);
-						var data = scheduleData.data;
-						
 						scheduleWin.scheduleReportId = data.scheduleReportId
 						
 						//set report Type

@@ -65,7 +65,6 @@ public class WorkPlanStatusReport
 		WorkPlanStatusReportModel reportModel = new WorkPlanStatusReportModel();
 		reportModel.setTitle("WorkPlan Status");	
 		
-		
 		List<WorkPlanLink> links = new ArrayList<>();
 		HashMap stepTotalsCount = new HashMap<String, Integer>() {};
 		
