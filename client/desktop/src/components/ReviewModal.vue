@@ -245,9 +245,7 @@ export default {
           data.userTimeCode = element.code
         }
       })
-      console.log(this.review.editReviewId)
       if (this.review.editReviewId) {
-        console.log("true")
         this.$http.put(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/${this.review.editReviewId}/detail`, data)
           .then(response => {
             this.review.editReviewId = ''
@@ -256,17 +254,12 @@ export default {
           })
           .catch(e => this.$toasted.error('There was a problem submitting the review.'))
       } else {
-        // this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/reviews/detail`, data)
-        //   .then(response => {
-        //     this.writeReviewDialog = false
-        //     this.$toasted.show('Review Submitted')
-        //   })
-        //   // .finally(() => {
-        //   //   this.isLoading = false
-        //   //   this.getDetail()
-        //   // })
-        //   .catch(e => this.$toasted.error('There was a problem submitting the review.'))
-        console.log(false)
+        this.$http.post(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/detail`, data)
+          .then(response => {
+            this.close()
+            this.$toasted.show('Review Submitted')
+          })
+          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
       }
     },
   }
