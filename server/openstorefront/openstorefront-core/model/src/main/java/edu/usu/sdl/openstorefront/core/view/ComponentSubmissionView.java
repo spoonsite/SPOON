@@ -17,8 +17,6 @@ package edu.usu.sdl.openstorefront.core.view;
 
 import java.util.Date;
 
-import org.eclipse.persistence.annotations.CompositeMember;
-
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;

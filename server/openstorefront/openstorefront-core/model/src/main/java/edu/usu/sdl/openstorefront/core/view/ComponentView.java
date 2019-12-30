@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeNestedModel;
 import edu.usu.sdl.openstorefront.core.model.ComponentTypeOptions;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
-import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -94,6 +93,7 @@ public class ComponentView
 		componentView.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		componentView.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
 		componentView.setComponentTypeNestedModel(service.getComponentService().getComponentType(new ComponentTypeOptions(component.getComponentType())));
+
 		return componentView;
 	}
 
@@ -274,4 +274,5 @@ public class ComponentView
 	{
 		this.submissionOriginalComponentId = submissionOriginalComponentId;
 	}
+
 }
