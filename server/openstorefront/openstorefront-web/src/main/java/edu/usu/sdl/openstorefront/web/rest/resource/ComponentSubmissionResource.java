@@ -35,8 +35,8 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.core.view.ComponentSubmissionView;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
-import edu.usu.sdl.openstorefront.core.view.ComponentWorkPlanId;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.SubmissionView;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionPageView;
@@ -92,37 +92,6 @@ public class ComponentSubmissionResource
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
 			pullOldOwnedComponents(componentExample, components);
 
-			int numComponents = components.size();
-
-			// NEW CODE
-			WorkPlan workPlanExample = new WorkPlan();
-			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
-
-			List<WorkPlan> workPlans = service.getPersistenceService().queryByExample(workPlanExample);
-
-			for(Component component : components){
-				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
-				workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
-				workPlanLinkExample.setComponentId(component.getComponentId());
-				WorkPlanLink workPlanLink = service.getPersistenceService().queryOneByExample(workPlanLinkExample);
-				workPlanLink.getWorkPlanId();
-
-				for(WorkPlan workPlan : workPlans){
-					String workPlanLinkWorkPlanId = workPlanLink.getWorkPlanId();
-					String workPlanWorkPlanId = workPlan.getWorkPlanId();
-					if(workPlanLinkWorkPlanId.equals(workPlanWorkPlanId)){
-						int tester = 0;
-						System.out.println(tester);
-						// Build object here
-					}
-				}
-
-			}
-
-			// END NEW CODE
-
-			// pullOldOwnedComponents(componentExample, components);
-
 			List<ComponentView> views = ComponentView.toViewList(components);
 
 			List<SubmissionView> submissionViews = flagSubmissionsWithEvaluations(views);
@@ -140,7 +109,7 @@ public class ComponentSubmissionResource
 
 	@GET
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_READ)
-	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this is only the top level component object) Vue.js ONLY")
+	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this is only the top level component object)")
 	@DataType(SubmissionView.class)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/user")
@@ -159,19 +128,23 @@ public class ComponentSubmissionResource
 
 			List<WorkPlan> workPlans = service.getPersistenceService().queryByExample(workPlanExample);
 
-			List<ComponentWorkPlanId> componentWorkPlanIds = new ArrayList<ComponentWorkPlanId>();
+			List<ComponentSubmissionView> componentSubmissionViews = new ArrayList<ComponentSubmissionView>();
 
 			for(Component component : components){
 				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 				workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
 				workPlanLinkExample.setComponentId(component.getComponentId());
 				WorkPlanLink workPlanLink = service.getPersistenceService().queryOneByExample(workPlanLinkExample);
-				workPlanLink.getWorkPlanId();
 
-				componentWorkPlanIds.add(new ComponentWorkPlanId(component, workPlanLink.getWorkPlanId(), workPlanLink.getCurrentStepId()));
+				componentSubmissionViews.add(new ComponentSubmissionView(component, workPlanLink.getWorkPlanId(), workPlanLink.getCurrentStepId()));
 			}
 
-			UserSubmissionPageView userSubmissionPageView = new UserSubmissionPageView(componentWorkPlanIds, workPlans);
+			List<UserSubmission> userSubmissions = service.getSubmissionFormService().getUserSubmissions(SecurityUtil.getCurrentUserName());
+			for(UserSubmission userSubmission : userSubmissions){
+				componentSubmissionViews.add(new ComponentSubmissionView(userSubmission));
+			}
+
+			UserSubmissionPageView userSubmissionPageView = new UserSubmissionPageView(componentSubmissionViews, workPlans);
 
 			return Response.ok(userSubmissionPageView).build();
 		} else {

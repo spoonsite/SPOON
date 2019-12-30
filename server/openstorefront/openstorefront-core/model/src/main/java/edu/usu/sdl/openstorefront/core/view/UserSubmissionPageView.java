@@ -27,24 +27,24 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 public class UserSubmissionPageView
 {
     @ConsumeField
-    private List<ComponentWorkPlanId> componentWorkPlanIds;
+    private List<ComponentSubmissionView> componentSubmissionViews;
 
     @ConsumeField
     private List<WorkPlan> workPlans;
 
     public UserSubmissionPageView(){}
 
-    public UserSubmissionPageView(List<ComponentWorkPlanId> componentWorkPlanIds, List<WorkPlan> workPlans){
-        this.componentWorkPlanIds = componentWorkPlanIds;
+    public UserSubmissionPageView(List<ComponentSubmissionView> componentSubmissionViews, List<WorkPlan> workPlans){
+        this.componentSubmissionViews = componentSubmissionViews;
         this.workPlans = workPlans;
     }
 
-    public List<ComponentWorkPlanId> getComponentWorkPlanIds() {
-        return componentWorkPlanIds;
+    public List<ComponentSubmissionView> getComponentSubmissionView() {
+        return componentSubmissionViews;
     }
 
-    public void setComponentWorkPlanIds(List<ComponentWorkPlanId> componentWorkPlanIds) {
-        this.componentWorkPlanIds = componentWorkPlanIds;
+    public void setComponentSubmissionView(List<ComponentSubmissionView> componentSubmissionViews) {
+        this.componentSubmissionViews = componentSubmissionViews;
     }
 
     public List<WorkPlan> getWorkPlans() {
