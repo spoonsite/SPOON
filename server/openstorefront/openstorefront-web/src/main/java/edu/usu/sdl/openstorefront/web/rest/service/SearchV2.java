@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.web.rest.service;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.entity.AttributeSearchType;
-import edu.usu.sdl.openstorefront.core.view.SearchFilterOptions;
 import edu.usu.sdl.openstorefront.core.view.SearchFilters;
 import edu.usu.sdl.openstorefront.service.manager.SearchServerManager;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -57,7 +56,7 @@ public class SearchV2
 
 	@Context
     private HttpServletRequest request;
-    
+
     @POST
 	@APIDescription("Searches for listing based on given parameters")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -75,7 +74,7 @@ public class SearchV2
 			AttributeSearchType[] attributeSearchType = mapper.readValue(
 					searchFilters.getAttributes(),
 					TypeFactory.defaultInstance().constructArrayType(AttributeSearchType.class));
-			
+
 			ArrayList<AttributeSearchType> list = new ArrayList<AttributeSearchType>(Arrays.asList(attributeSearchType));
 
 			searchFilters.setAttributeSearchType(list);

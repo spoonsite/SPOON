@@ -96,36 +96,6 @@ public class AttributeProvider
 		return client.postAttributeCode(attributeType, attrCode);
 	}
 
-	public void createJiraMapping()
-	{
-		// Need to create an attribute here with api before mapping
-		//
-		createAttribute(TEST_ATTRIBUTE_TYPE, TEST_ATTRIBUTE_CODE, TEST_ATTRIBUTE_MAPPING_CODE);
-
-		AttributeXRefType xRefType = new AttributeXRefType();
-		xRefType.setAttributeType(TEST_ATTRIBUTE_TYPE);
-		xRefType.setIssueType("ASSET-TEST");
-		xRefType.setProjectType("ASSET");
-		xRefType.setFieldId("FieldId");
-		xRefType.setFieldName("DI2E Intent");
-		xRefType.setIntegrationType(IntegrationType.JIRA);
-
-		attributeXRefTypes.add(xRefType.getAttributeType());
-
-		AttributeXRefMap xRefMap = new AttributeXRefMap();
-		xRefMap.setAttributeType(TEST_ATTRIBUTE_TYPE);
-		xRefMap.setLocalCode(TEST_ATTRIBUTE_MAPPING_CODE);
-		xRefMap.setExternalCode("No Evaluation Planned");
-		List<AttributeXRefMap> map = new ArrayList<>();
-		map.add(xRefMap);
-
-		AttributeXRefView xRefView = new AttributeXRefView();
-		xRefView.setType(xRefType);
-		xRefView.setMap(map);
-
-		client.saveMapping(xRefView);
-	}
-
 	public void cleanup()
 	{
 		for (String type : attributeTypes) {
