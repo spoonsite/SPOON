@@ -17,15 +17,17 @@
   <div>
     <v-form style="padding: 1em; padding-top: 2em;">
       <div>
-        <v-btn class="top-buttons" @click="getUserParts()">Refresh</v-btn>
+        <v-btn class="top-buttons" @click="getUserParts()"
+          ><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn
+        >
         <v-btn class="top-buttons" @click="showData()"
-          ><v-icon class="fa-xs pr-2">fas fa-plus</v-icon>Add New</v-btn
+          ><v-icon left>fas fa-plus</v-icon>Add New</v-btn
         >
         <v-btn class="top-buttons" @click="bulkUploadDialog = true"
-          ><v-icon class='pr-2'>fas fa-upload</v-icon>Bulk Upload</v-btn
+          ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
         <v-btn class="top-buttons pr-2" @click="commentsDialog = true"
-          ><v-icon class='pr-2'>far fa-comment</v-icon>Comments</v-btn
+          ><v-icon left>far fa-comment</v-icon>Comments</v-btn
         >
       </div>
       <div class="d-flex">
@@ -34,55 +36,83 @@
           :items="componentData"
           :loading="isLoading"
           class="tableLayout"
+          disable-pagination
         >
           <template slot="items" slot-scope="props">
-            <td>{{ props.item.name }}</td>
-            <td>{{ props.item.status }}</td>
-
-            <td>{{ props.item.type }}</td>
-            <td>{{ props.item.submitDate }}</td>
-
-            <td>N/A</td>
-            <td>{{ props.item.lastUpdate }}</td>
-            <td style="display: flex; flex-direction: row;">
-              <v-btn class="grey lighten-2" small fab>
-                <v-icon>far fa-eye</v-icon>
-              </v-btn>
-              <v-btn small fab class="grey lighten-2" small f
-                ><v-icon>fas fa-pencil-alt</v-icon></v-btn
-              >
-              <v-btn small fab class="table-buttons red lighten-3"
-                ><v-icon>fas fa-trash</v-icon></v-btn
-              >
+            <td>
+              <div>{{ props.item.name }}</div>
+              <div v-if="props.item.isChangeRequest" class="red">Incomplete Change Request</div>
+              <div v-else-if="props.item.submissionId" class="red">Incomplete Submission</div>
             </td>
             <td>
-              <svg width="200" height="50">
-                <!-- <circle v-for="(step, i) in props.item.approvalWorkflow.steps" :cx="cx" cy="25" r="15" stroke="black" fill="blue" /> -->
-                <line
-                  x1="35"
-                  y1="25"
-                  x2="55"
-                  y2="25"
-                  style="stroke:black; stroke-width:2"
-                ></line>
-                <!-- <circle cx="70" cy="25" r="15" stroke="black" fill="grey" /> -->
-                <line
-                  x1="85"
-                  y1="25"
-                  x2="105"
-                  y2="25"
-                  style="stroke:black; stroke-width:2"
-                ></line>
-                <!-- <circle cx="120" cy="25" r="15" stroke="black" fill="grey" /> -->
-                <line
-                  x1="135"
-                  y1="25"
-                  x2="155"
-                  y2="25"
-                  style="stroke:black; stroke-width:2"
-                ></line>
-                <!-- <circle cx="170" cy="25" r="15" stroke="black" fill="grey" /> -->
-              </svg>
+              <div v-if="props.item.status === 'A'">Approved</div>
+              <div v-if="props.item.status === 'P'">Pending</div>
+              <div v-if="props.item.status === 'N'">Not Submitted</div>
+            </td>
+
+            <td>{{ props.item.type }}</td>
+            <td>
+              <div v-if="props.item.submitDate">{{ props.item.submitDate | formatDate }}</div>
+              <div v-else-if="props.item.status === 'P'">{{ props.item.lastUpdate | formatDate }}</div>
+            </td>
+
+            <!-- <td>N/A</td> -->
+            <td>
+              <div v-if="props.item.lastUpdate">{{ props.item.lastUpdate | formatDate }}</div>
+            </td>
+            <td>
+              <div v-if="props.item.componentId">
+                <svg width="200" height="50">
+                  <!-- <circle v-for="(step, i) in props.item.approvalWorkflow.steps" :cx="cx" cy="25" r="15" stroke="black" fill="blue" /> -->
+                  <line
+                    x1="35"
+                    y1="25"
+                    x2="55"
+                    y2="25"
+                    style="stroke:black; stroke-width:2"
+                  ></line>
+                  <!-- <circle cx="70" cy="25" r="15" stroke="black" fill="grey" /> -->
+                  <line
+                    x1="85"
+                    y1="25"
+                    x2="105"
+                    y2="25"
+                    style="stroke:black; stroke-width:2"
+                  ></line>
+                  <!-- <circle cx="120" cy="25" r="15" stroke="black" fill="grey" /> -->
+                  <line
+                    x1="135"
+                    y1="25"
+                    x2="155"
+                    y2="25"
+                    style="stroke:black; stroke-width:2"
+                  ></line>
+                  <!-- <circle cx="170" cy="25" r="15" stroke="black" fill="grey" /> -->
+                </svg>
+              </div>
+            </td>
+            <td>
+              <div>
+                <!-- TODO: Add tool tips:
+                  Component:
+                    - Request Change
+                    - Comments
+                    - Request Removal
+                    - View
+                  Submission:
+                    - Edit
+                    - Delete
+                    - Comments -->
+                <v-btn icon class="pa-4 grey lighten-2" v-if="props.item.componentId">
+                  <v-icon>far fa-eye</v-icon>
+                </v-btn>
+                <v-btn icon class="pa-4 grey lighten-2">
+                  <v-icon>fas fa-pencil-alt</v-icon>
+                </v-btn>
+                <v-btn icon class="pa-4 red lighten-3">
+                  <v-icon>fas fa-trash</v-icon>
+                </v-btn>
+              </div>
             </td>
           </template>
         </v-data-table>
@@ -148,10 +178,10 @@ export default {
         { text: 'Status', value: 'status' },
         { text: 'Type', value: 'type' },
         { text: 'Submit/Approved Date', value: 'submitDate' },
-        { text: 'Pending Change', value: 'pendingChange' },
+        // { text: 'Pending Change', value: 'pendingChange' },
         { text: 'Last Update', value: 'lastUpdate' },
-        { text: 'Actions', value: 'actions' },
-        { text: 'Approval Workflow', value: 'approvalWorkflow' }
+        { text: 'Approval Workflow', value: 'approvalWorkflow', sortable: false },
+        { text: 'Actions', value: 'actions', sortable: false }
       ],
       component: {
         name: '',
@@ -169,8 +199,6 @@ export default {
       },
       componentDisplay: [],
       componentData: [],
-      components: [],
-      workPlans: [],
       isLoading: true,
       counter: 0,
       bulkUploadDialog: false,
@@ -186,47 +214,43 @@ export default {
         .then(response => {
           this.isLoading = false
           console.log(response)
-          this.components = response.data.componentWorkPlanIds
-          this.workPlans = response.data.workPlans
-          // this.components = [response.data.componentWorkPlanIds[0]]
-          // this.workPlans = [response.data.workPlans[1]]
-          this.componentData = this.combineComponentsAndWorkPlans([response.data.componentWorkPlanIds[0]], [response.data.workPlans[1]])
-
-          // this.componentData = []
-          // this.componentDisplay = []
-          // this.componentData = response.data
-          // this.formatData()
-          // this.getComponentWorkplan()
+          this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
+        }).catch(error => {
+          this.isLoading = false
+          console.error(error)
         })
     },
-    combineComponentsAndWorkPlans(components, workPlans){
-      // console.log(components)
-      // console.log(workPlans)
+    combineComponentsAndWorkPlans (allComponents, workPlans) {
+      let components = allComponents.filter(e => e.componentId !== undefined)
+      let submissions = allComponents.filter(e => e.submissionId !== undefined)
       let updatedComponents = []
+
       components.forEach(component => {
-        let myWorkPlan = null;
+        let myWorkPlan = null
         workPlans.forEach(workPlan => {
-          // console.log(component.workPlanID)
-          // console.log(workPlan.workPlanId)
-          if(component.workPlanID === workPlan.workPlanId){
-            // console.log('match')
+          if (component.workPlanID === workPlan.workPlanId) {
             myWorkPlan = workPlan
           }
         })
-        if(myWorkPlan !== null){
+        if (myWorkPlan !== null) {
           updatedComponents.push(this.generateComponent(component, myWorkPlan))
         }
       })
+
+      submissions.forEach(submission => {
+        updatedComponents.push(this.generateSubmission(submission))
+      })
+
       return updatedComponents
     },
-    generateComponent(component, workPlan){
+    generateComponent (component, workPlan) {
       let seenCurrStep = false
       let steps = []
 
       workPlan.steps.forEach((step, index) => {
-        if(!seenCurrStep){
-          if(component.stepId === step.workPlanStepId){
-            if(index === workPlan.steps.length - 1){
+        if (!seenCurrStep) {
+          if (component.stepId === step.workPlanStepId) {
+            if (index === workPlan.steps.length - 1) {
               steps.push({
                 name: step.name,
                 color: workPlan.completeColor
@@ -253,102 +277,34 @@ export default {
       })
 
       // TODO: deal with the chance of the component being a submission
-      let updatedComponent = {
-        name: component.component.name,
-        lastUpdate: this.$filters.formatDate(component.component.updateDts),
-        type: component.component.componentType,
-        componentId: component.component.componentId,
-        status: component.component.approvalState,
-        submitDate: this.$filters.formatDate(component.component.approvedDts),
+
+      let updatedComponent = {}
+
+      updatedComponent = {
+        name: component.name,
+        lastUpdate: component.lastActivityDts,
+        type: component.type,
+        componentId: component.componentId,
+        status: component.status,
+        submitDate: component.approveDts,
         steps: steps
       }
 
       return updatedComponent
     },
-    getComponentWorkplan () {
-      for (var component in this.componentDisplay) {
-        if (this.componentData[component].componentId) {
-          this.$http.get(`/openstorefront/api/v1/resource/components/${this.componentData[component].componentId}/worklink`)
-          .then(response => {
-            this.componentDisplay[component][approvalWorkflow] = response.data
-
-          })
-          .finally(() => {
-            this.counter++
-            if (this.counter >= this.componentData.length) {
-              this.isLoading = false
-            }
-          })
-        }
-        else {
-          this.$http.get(`/openstorefront/api/v1/resource/usersubmissions/${this.componentData[component].userSubmissionId}/worklink`)
-          .then(response => {
-            this.componentDisplay[component][approvalWorkflow] = response.data
-            console.log(this.componentDisplay[component].approvalWorkflow)
-
-          })
-          .finally(() => {
-            this.counter++
-            if (this.counter >= this.componentData.length) {
-              this.isLoading = false
-            }
-          })
-        }
-      }
-
-    },
-    formatData () {
-      for (var component in this.componentData) {
-        this.removeDescriptionHtml(component)
-        this.changeDateFormat(component)
-      }
-      this.setUpTableArray()
-    },
-    removeDescriptionHtml (component) {
-      var description = this.componentData[component].description
-      var tmp = document.createElement('div')
-      tmp.innerHTML = description
-      description = tmp.innerText
-      var descriptionLength = 200
-      description = description.slice(0, descriptionLength) + '...'
-      this.componentData[component].description = description
-    },
-    changeDateFormat (component) {
-      var updateDate = new Date(this.componentData[component].updateDts)
-      this.componentData[component].updateDts = updateDate.toDateString()
-      var submittedDate = new Date(this.componentData[component].submittedDts)
-      this.componentData[component].submittedDts = submittedDate.toDateString()
-      var approvedDate = new Date(this.componentData[component].approvedDts)
-      this.componentData[component].approvedDts = approvedDate.toDateString()
-    },
-    getSubmitOrApprovalDate (component) {
-      if (this.componentData[component].approvalState === 'A') {
-				return this.componentData[component].approvedDts;
-			}
-      else if (this.componentData[component].approvalState === 'N') {
-        return ''
-      }
-      else {
-				return this.componentData[component].submittedDts;
-			}
-    },
-    setUpTableArray () {
-      for (var component in this.componentData) {
-        this.componentDisplay.push({
-          name: this.componentData[component].name,
-          status: this.componentData[component].approvalStateLabel,
-          type: this.componentData[component].componentTypeLabel,
-          submitDate: this.getSubmitOrApprovalDate(component),
-          pendingChange: this.componentData[component].adminModified,
-          lastUpdate: this.componentData[component].updateDts
-        })
+    generateSubmission (submission) {
+      return {
+        name: submission.name,
+        submissionId: submission.submissionId,
+        type: submission.type,
+        status: submission.status,
+        isChangeRequest: submission.isChangeRequest,
+        lastUpdate: submission.lastActivityDts,
+        steps: null
       }
     },
     openBulkUpload () {
       // window.open('openstorefront/bulkUpload.jsp','uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
-    },
-    showData () {
-      console.log(this.componentDisplay)
     }
   }
 }
