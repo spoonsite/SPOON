@@ -21,13 +21,14 @@ import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
 import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.Report;
 import edu.usu.sdl.openstorefront.core.entity.ReportFormat;
-import edu.usu.sdl.openstorefront.core.entity.ReportOption;
 import edu.usu.sdl.openstorefront.core.entity.ReportTransmissionType;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLinkType;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanSubStatusType;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
@@ -35,15 +36,11 @@ import edu.usu.sdl.openstorefront.report.model.WorkPlanStatusLineModel;
 import edu.usu.sdl.openstorefront.report.model.WorkPlanStatusReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -75,14 +72,14 @@ public class WorkPlanStatusReport
 		for(String WorkPlanStepID : report.getReportOption().getWorkPlanSteps()){
 			if(WorkPlanStepID != null && WorkPlanStepID != ""){
 				workPlanLinkExample.setCurrentStepId(WorkPlanStepID);
-				List tempHolder = workPlanLinkExample.findByExample();
-				stepTotalsCount.put(WorkPlanStepID,tempHolder.size());
-				links.addAll(tempHolder);
+				List<WorkPlanLink> workPlanLinksList = workPlanLinkExample.findByExample();
+				stepTotalsCount.put(WorkPlanStepID,workPlanLinksList.size());
+				links.addAll(workPlanLinksList);
 			}
 		}
-		reportModel.setMetaData(stepTotalsCount);
+		reportModel.setStepEntryInstanceCount(stepTotalsCount);
 
-		// Load information from the WorkPlanLink objects into a WorkPLanStatusLineModel
+		// Load information from the WorkPlanLink objects into a WorkPlanStatusLineModel
 		Map<String, WorkPlan> workPlanMap = new HashMap<>();
 		for (WorkPlanLink link : links) {
 			WorkPlanStatusLineModel lineModel = new WorkPlanStatusLineModel();
@@ -146,7 +143,8 @@ public class WorkPlanStatusReport
 			}
 			lineModel.setCurrentStepName(stepName);
 
-			lineModel.setCurrentSubStatus(link.getSubStatus());
+			lineModel.setCurrentSubStatus(TranslateUtil.translate(WorkPlanSubStatusType.class, link.getSubStatus()));
+
 			lineModel.setLastUpdateChangeDts(link.getUpdateDts());
 			long diff = TimeUtil.currentDate().getTime() - link.getUpdateDts().getTime();
 			long daysBetween = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
@@ -179,16 +177,9 @@ public class WorkPlanStatusReport
 		}
 
 		// Sort array by most recently changed date
-		try {
-
-			reportModel.getData().sort((WorkPlanStatusLineModel a, WorkPlanStatusLineModel b) -> {
-				return (int)(a.getDaysSincesLastUpdate() - b.getDaysSincesLastUpdate());
-			});
-
-		} catch(Exception e){
-			Logger LOG = Logger.getLogger("WorkplanReportsLogger");
-			LOG.log(Level.SEVERE, "Unable to sort the list of parts in WorkPlanStatusReport ");
-		}
+		reportModel.getData().sort((WorkPlanStatusLineModel a, WorkPlanStatusLineModel b) -> {
+			return (int)(a.getDaysSincesLastUpdate() - b.getDaysSincesLastUpdate());
+		});
 
 
 		return reportModel;
@@ -256,9 +247,10 @@ public class WorkPlanStatusReport
 
 		cvsGenerator.addLine("Workplan Step", "Total Submissions");
 
+		// Get summary stats and place in the header
 		WorkPlan workPlanExample = new WorkPlan();
 		List<WorkPlan> allWorkPlansList = workPlanExample.findByExample();
-		workPlanStatusModel.getMetaData().forEach((k,v) -> {
+		workPlanStatusModel.getStepEntryInstanceCount().forEach((k,v) -> {
 			for(WorkPlan workPlan : allWorkPlansList){
 				WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(k);
 				if (workPlanStep != null){

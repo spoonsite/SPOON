@@ -28,12 +28,15 @@ public class WorkPlanStatusReportModel
 {
 
 	private List<WorkPlanStatusLineModel> data = new ArrayList<>();
-	
+
 	/**
-	 * This holds a list of the workplan steps that were included for this report, 
+	 * This holds a list of the workplan steps that were included for this report,
 	 * and a count of how many entries were found in each step.
+	 *
+	 * This field was created for quick reference to this information in the report.
+	 * @see WorkPlanStatusReport#writeCVS()
 	 */
-	private HashMap<String, Integer> metaData = new HashMap<>();
+	private HashMap<String, Integer> stepEntryInstanceCount = new HashMap<>();
 
 	public WorkPlanStatusReportModel()
 	{
@@ -49,15 +52,14 @@ public class WorkPlanStatusReportModel
 	{
 		this.data = data;
 	}
-	
-	
-	public HashMap<String, Integer> getMetaData()
+
+	public HashMap<String, Integer> getStepEntryInstanceCount()
 	{
-		return metaData;
+		return stepEntryInstanceCount;
 	}
 
-	public void setMetaData(HashMap<String, Integer> metaData)
+	public void setStepEntryInstanceCount(HashMap<String, Integer> metaData)
 	{
-		this.metaData = metaData;
+		this.stepEntryInstanceCount = metaData;
 	}
 }
