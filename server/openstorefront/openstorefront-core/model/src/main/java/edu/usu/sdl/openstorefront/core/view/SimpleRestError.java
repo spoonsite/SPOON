@@ -15,8 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
-import java.io.Serializable;
-
 /**
  *
  * @author rfrazier
@@ -25,9 +23,9 @@ public class SimpleRestError
 {
 	private boolean success = false;
 	private String error = "";
-	
+
 	public SimpleRestError() {}
-	
+
 	public SimpleRestError(String error) {
 		this.error = error;
 	}
@@ -51,5 +49,5 @@ public class SimpleRestError
 	{
 		this.error = error;
 	}
-	
+
 }
