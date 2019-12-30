@@ -59,12 +59,6 @@ public class AttributeXRefType
 	@ConsumeField
 	private String issueType;
 
-	@NotNull
-	@ValidValueType(value = {}, lookupClass = IntegrationType.class)
-	@ConsumeField
-	@FK(IntegrationType.class)
-	private String integrationType;
-
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeXRefType()
 	{
@@ -109,16 +103,6 @@ public class AttributeXRefType
 	public void setIssueType(String issueType)
 	{
 		this.issueType = issueType;
-	}
-
-	public String getIntegrationType()
-	{
-		return integrationType;
-	}
-
-	public void setIntegrationType(String integrationType)
-	{
-		this.integrationType = integrationType;
 	}
 
 	public String getFieldId()
