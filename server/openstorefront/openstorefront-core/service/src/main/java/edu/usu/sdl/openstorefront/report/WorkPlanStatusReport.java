@@ -63,15 +63,15 @@ public class WorkPlanStatusReport
 	protected BaseReportModel gatherData()
 	{
 		WorkPlanStatusReportModel reportModel = new WorkPlanStatusReportModel();
-		reportModel.setTitle("WorkPlan Status");	
-		
+		reportModel.setTitle("WorkPlan Status");
+
 		List<WorkPlanLink> links = new ArrayList<>();
 		HashMap stepTotalsCount = new HashMap<String, Integer>() {};
-		
+
 		// Query DB for worklinks in appropiate workplan steps
 		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 		workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
-		
+
 		for(String WorkPlanStepID : report.getReportOption().getWorkPlanSteps()){
 			if(WorkPlanStepID != null && WorkPlanStepID != ""){
 				workPlanLinkExample.setCurrentStepId(WorkPlanStepID);
@@ -180,17 +180,17 @@ public class WorkPlanStatusReport
 
 		// Sort array by most recently changed date
 		try {
-			
+
 			reportModel.getData().sort((WorkPlanStatusLineModel a, WorkPlanStatusLineModel b) -> {
 				return (int)(a.getDaysSincesLastUpdate() - b.getDaysSincesLastUpdate());
 			});
-			
+
 		} catch(Exception e){
 			Logger LOG = Logger.getLogger("WorkplanReportsLogger");
 			LOG.log(Level.SEVERE, "Unable to sort the list of parts in WorkPlanStatusReport ");
 		}
-		
-		
+
+
 		return reportModel;
 	}
 
@@ -251,11 +251,11 @@ public class WorkPlanStatusReport
 
 		//write header
 		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
-		
+
 		WorkPlanStatusReportModel workPlanStatusModel = (WorkPlanStatusReportModel) reportModel;
-		
+
 		cvsGenerator.addLine("Workplan Step", "Total Submissions");
-		
+
 		WorkPlan workPlanExample = new WorkPlan();
 		List<WorkPlan> allWorkPlansList = workPlanExample.findByExample();
 		workPlanStatusModel.getMetaData().forEach((k,v) -> {
@@ -267,7 +267,7 @@ public class WorkPlanStatusReport
 				}
 			}
 		});
-		
+
 		cvsGenerator.addLine(""); // Empty space for clarity
 		cvsGenerator.addLine(
 				"Entry Name",
