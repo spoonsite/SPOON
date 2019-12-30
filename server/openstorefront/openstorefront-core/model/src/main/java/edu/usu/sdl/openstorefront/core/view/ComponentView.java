@@ -61,7 +61,6 @@ public class ComponentView
 	private String userSubmissionId;
 	private String submissionTemplateId;
 	private String submissionOriginalComponentId;
-	private WorkPlanLink componentWorkPlan;
 
 	public static ComponentView toView(Component component, boolean populateOwnerInfo)
 	{
@@ -95,8 +94,6 @@ public class ComponentView
 		componentView.setComponentIconId(service.getComponentService().resolveComponentIcon(component.getComponentId()));
 		componentView.setComponentTypeIconUrl(service.getComponentService().resolveComponentTypeIcon(component.getComponentType()));
 		componentView.setComponentTypeNestedModel(service.getComponentService().getComponentType(new ComponentTypeOptions(component.getComponentType())));
-		WorkPlanLink workLink = service.getWorkPlanService().getWorkPlanForComponent(component.getComponentId());
-		componentView.setComponentWorkPlan(WorkPlanLinkView.toView(workLink));
 		return componentView;
 	}
 
@@ -276,15 +273,5 @@ public class ComponentView
 	public void setSubmissionOriginalComponentId(String submissionOriginalComponentId)
 	{
 		this.submissionOriginalComponentId = submissionOriginalComponentId;
-	}
-
-	public WorkPlanLink getComponentWorkPlan()
-	{
-		return componentWorkPlan;
-	}
-
-	public void setComponentWorkPlan(WorkPlanLink componentWorkPlan)
-	{
-		this.componentWorkPlan = componentWorkPlan;
 	}
 }
