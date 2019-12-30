@@ -36,7 +36,7 @@
           :items="componentData"
           :loading="isLoading"
           class="tableLayout"
-          disable-pagination
+          hide-actions
         >
           <template slot="items" slot-scope="props">
             <td>
