@@ -1,124 +1,368 @@
 <template>
-  <div class="cont" style="background-color: hotpink">
-    <h2 class="text-center">Questions</h2>
-    <!-- <v-data-table
-      :headers="headers"
-      :items="desserts"
-      :items-per-page="5"
-      class="elevation-1"
-      hide-default-footer
-      style="height: 100%"
-    ></v-data-table> -->
+  <div>
+    <h2 class="text-center">Questions & Answers</h2>
+    <v-tabs>
+      <v-tab>
+        <v-icon left>fa fa-question</v-icon>
+        Questions
+      </v-tab>
+      <v-tab>
+        <v-icon left>fa fa-comments</v-icon>
+        Answers
+      </v-tab>
+
+      <v-tab-item>
+        <div class="pa-5">
+          <v-btn color="grey lighten-2" @click="refreshQuestions"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
+        </div>
+        <v-data-table
+          :headers="question.headers"
+          :items="question.questions"
+          :items-per-page="1000"
+          class="elevation-1"
+          hide-default-footer
+        >
+          <template v-slot:item.activeStatus="{ item }">
+            <div v-if="item.activeStatus === 'A'">Active</div>
+            <div v-else-if="item.activeStatus === 'P'">Pending</div>
+            <div v-else>{{ item.activeStatus }}</div>
+          </template>
+          <template v-slot:item.question="{ item }">
+            <div v-html="item.question" />
+          </template>
+          <template v-slot:item.createDts="{ item }">
+            {{ item.createDts | formatDate }}
+          </template>
+          <template v-slot:item.questionUpdateDts="{ item }">
+            {{ item.questionUpdateDts | formatDate }}
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn icon @click="viewComponent(item.componentId)" v-on="on">
+                  <v-icon>fas fa-eye</v-icon>
+                </v-btn>
+              </template>
+              <span>View Entry</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn icon @click="editQuestion(item)" v-on="on">
+                  <v-icon>fas fa-pencil-alt</v-icon>
+                </v-btn>
+              </template>
+              <span>Edit</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <!-- <v-btn icon @click="deleteQuestion(item.componentId, item.questionId)" v-on="on"> -->
+                <v-btn
+                  icon
+                  @click="
+                    question.currentDelete = item
+                    question.checkDeleteModal = true
+                  "
+                  v-on="on"
+                >
+                  <v-icon>fas fa-trash</v-icon>
+                </v-btn>
+              </template>
+              <span>Delete</span>
+            </v-tooltip>
+          </template>
+          <template v-slot:no-data>
+            No questions have been asked...
+          </template>
+        </v-data-table>
+      </v-tab-item>
+      <v-tab-item>
+        <div class="pa-5">
+          <v-btn color="grey lighten-2" @click="refreshAnswers"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
+        </div>
+        <v-data-table
+          :headers="answer.headers"
+          :items="answer.answers"
+          :items-per-page="1000"
+          class="elevation-1"
+          hide-default-footer
+        >
+          <template v-slot:item.activeStatus="{ item }">
+            <div v-if="item.activeStatus === 'A'">Active</div>
+            <div v-else-if="item.activeStatus === 'P'">Pending</div>
+            <div v-else>{{ item.activeStatus }}</div>
+          </template>
+          <template v-slot:item.response="{ item }">
+            <div v-html="item.response" />
+          </template>
+          <template v-slot:item.answeredDate="{ item }">
+            {{ item.answeredDate | formatDate }}
+          </template>
+          <template v-slot:item.updateDts="{ item }">
+            {{ item.updateDts | formatDate }}
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn icon @click="viewComponent(item.componentId)" v-on="on">
+                  <v-icon>fas fa-eye</v-icon>
+                </v-btn>
+              </template>
+              <span>View Entry</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn icon @click="editAnswer(item)" v-on="on">
+                  <v-icon>fas fa-pencil-alt</v-icon>
+                </v-btn>
+              </template>
+              <span>Edit</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  @click="
+                    answer.checkDeleteModal = true
+                    answer.currentDelete = item
+                  "
+                  v-on="on"
+                >
+                  <v-icon>fas fa-trash</v-icon>
+                </v-btn>
+              </template>
+              <span>Delete</span>
+            </v-tooltip>
+          </template>
+          <template v-slot:no-data>
+            No answers have been posted...
+          </template>
+        </v-data-table>
+      </v-tab-item>
+    </v-tabs>
+
+    <!-- Modals -->
+    <QuestionModal
+      v-model="question.questionModal"
+      :questionProp="question.currentQuestion.question"
+      @close="submitQuestionEdit($event)"
+    />
+    <AnswerModal v-model="answer.answerModal" :answerProp="answer.currentAnswer" @close="submitAnswerEdit($event)" />
+    <v-dialog v-model="question.checkDeleteModal" max-width="30em">
+      <v-card>
+        <ModalTitle title="Are you sure?" @close="question.checkDeleteModal = false" />
+        <v-card-text>
+          Are you sure you want to delete this question?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="warning" @click="deleteQuestion(question.currentDelete)"
+            ><v-icon left>mdi-delete</v-icon>Delete</v-btn
+          >
+          <v-btn @click="question.checkDeleteModal = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="answer.checkDeleteModal" max-width="30em">
+      <v-card>
+        <ModalTitle title="Are you sure?" @close="answer.checkDeleteModal = false" />
+        <v-card-text>
+          Are you sure you want to delete this answer?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="warning" @click="deleteAnswer(answer.currentDelete)"
+            ><v-icon left>mdi-delete</v-icon>Delete</v-btn
+          >
+          <v-btn @click="answer.checkDeleteModal = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
+import ModalTitle from '@/components/ModalTitle'
+import QuestionModal from '@/components/QuestionModal'
+import AnswerModal from '@/components/AnswerModal'
+
 export default {
   name: 'Questions',
+  components: { QuestionModal, AnswerModal, ModalTitle },
+  mounted() {
+    this.refreshQuestions()
+    this.refreshAnswers()
+  },
   data() {
     return {
-      headers: [
-        {
-          text: 'Dessert (100g serving)',
-          align: 'left',
-          sortable: false,
-          value: 'name'
-        },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Iron (%)', value: 'iron' }
-      ],
-      desserts: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          iron: '1%'
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          iron: '1%'
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          iron: '7%'
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          iron: '16%'
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          iron: '0%'
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          iron: '6%'
-        }
-      ]
+      question: {
+        isLoading: false,
+        checkDeleteModal: false,
+        currentDelete: {},
+        questionModal: false,
+        currentQuestion: '',
+        headers: [
+          { text: 'Entry', value: 'componentName' },
+          { text: 'Status', value: 'activeStatus' },
+          { text: 'Question', value: 'question', sortable: false },
+          { text: 'Update Date', value: 'questionUpdateDts' },
+          { text: 'Post Date', value: 'createDts' },
+          { text: 'Actions', value: 'actions', sortable: false }
+        ],
+        questions: []
+      },
+      answer: {
+        isLoading: false,
+        checkDeleteModal: false,
+        currentDelete: {},
+        answerModal: false,
+        currentAnswer: '',
+        headers: [
+          { text: 'Entry', value: 'componentName' },
+          { text: 'Status', value: 'activeStatus' },
+          { text: 'Answer', value: 'response', sortable: false },
+          // { text: 'Update Date', value: 'updateDts' },
+          { text: 'Answer Date', value: 'answeredDate' },
+          { text: 'Actions', value: 'actions', sortable: false }
+        ],
+        answers: []
+      }
+    }
+  },
+  methods: {
+    editQuestion(question) {
+      this.question.currentQuestion = question
+      this.question.questionModal = true
+    },
+    submitQuestionEdit(event) {
+      this.question.questionModal = false
+      if (event === undefined) {
+        return
+      }
+      this.$http
+        .put(
+          `openstorefront/api/v1/resource/components/${this.question.currentQuestion.componentId}/questions/${this.question.currentQuestion.questionId}`,
+          {
+            question: event,
+            userTypeCode: this.$store.state.currentUser.userTypeCode,
+            organization: this.$store.state.currentUser.organization
+          }
+        )
+        .then(response => {
+          this.refreshQuestions()
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
+    viewComponent(componentId) {
+      this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
+    },
+    deleteQuestion(question) {
+      this.question.checkDeleteModal = false
+      this.question.isLoading = true
+      this.$http
+        .delete(`openstorefront/api/v1/resource/components/${question.componentId}/questions/${question.questionId}`)
+        .then(response => {
+          this.question.isLoading = false
+          this.refreshQuestions()
+        })
+        .catch(error => {
+          console.error(error)
+          this.question.isLoading = false
+        })
+    },
+    refreshQuestions() {
+      this.question.isLoading = true
+      this.$http
+        .get('openstorefront/api/v1/resource/componentquestions/admin?status=A')
+        .then(response => {
+          this.question.isLoading = false
+          this.question.questions = response.data
+          this.$http
+            .get('openstorefront/api/v1/resource/componentquestions/admin?status=P')
+            .then(response => {
+              this.question.isLoading = false
+              this.question.questions.push(...response.data)
+            })
+            .catch(error => {
+              console.error(error)
+              this.question.isLoading = false
+            })
+        })
+        .catch(error => {
+          console.error(error)
+          this.question.isLoading = false
+        })
+    },
+    editAnswer(answer) {
+      this.answer.currentAnswer = answer
+      this.answer.answerModal = true
+    },
+    submitAnswerEdit(event) {
+      this.answer.answerModal = false
+      if (event === undefined) {
+        return
+      }
+      this.$http
+        .put(
+          `openstorefront/api/v1/resource/components/${event.componentId}/questions/${event.questionId}/responses/${event.responseId}`,
+          {
+            questionId: event.questionId,
+            response: event.answer,
+            userTypeCode: this.$store.state.currentUser.userTypeCode,
+            organization: this.$store.state.currentUser.organization
+          }
+        )
+        .then(response => {
+          this.refreshAnswers()
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
+    deleteAnswer(response) {
+      this.answer.checkDeleteModal = false
+      let componentId = response.componentId
+      let questionId = response.questionId
+      let responseId = response.responseId
+      this.answer.isLoading = true
+      this.$http
+        .delete(
+          `openstorefront/api/v1/resource/components/${componentId}/questions/${questionId}/responses/${responseId}`
+        )
+        .then(response => {
+          this.answer.isLoading = false
+          this.refreshAnswers()
+        })
+        .catch(error => {
+          console.error(error)
+          this.answer.isLoading = false
+        })
+    },
+    refreshAnswers() {
+      this.answer.isLoading = true
+      this.$http
+        .get('openstorefront/api/v1/resource/componentquestions/responses/admin?status=A')
+        .then(response => {
+          this.answer.answers = response.data
+          this.$http
+            .get('openstorefront/api/v1/resource/componentquestions/responses/admin?status=P')
+            .then(response => {
+              this.answer.isLoading = false
+              this.answer.answers.push(...response.data)
+            })
+            .catch(error => {
+              console.error(error)
+              this.answer.isLoading = false
+            })
+        })
+        .catch(error => {
+          console.error(error)
+          this.answer.isLoading = false
+        })
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.cont {
-  height: calc(100vh - $appBarHeight);
-}
-</style>
+<style lang="scss" scoped></style>

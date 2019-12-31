@@ -53,7 +53,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn :loading="deletingAllNotifications" color="warning" @click="deleteAllNotifications()">
-            <v-icon>delete</v-icon>Delete
+            <v-icon>mdi-delete</v-icon>Delete
           </v-btn>
           <v-btn @click="deleteAllDialog = false">Cancel</v-btn>
         </v-card-actions>
