@@ -7,9 +7,9 @@
         </router-link>
         <v-spacer></v-spacer>
         <Notifications />
-        <v-menu offset-y :close-on-content-click="false" max-width="500px">
+        <v-menu offset-y :close-on-content-click="false" v-model="menu" max-width="500px">
           <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on">
+            <v-btn icon v-on="on" @click="menu = true">
               <v-icon>fa fa-bars</v-icon>
             </v-btn>
           </template>
@@ -19,6 +19,7 @@
                 v-for="link in beginningLinks"
                 :key="link.name"
                 link
+                @click="menu = false"
                 :to="link.link ? link.link : undefined"
                 :href="link.href ? link.href : undefined"
               >
@@ -39,6 +40,7 @@
                   v-for="link in userToolLinks"
                   :key="link.name"
                   link
+                  @click="menu = false"
                   :to="link.link ? link.link : undefined"
                   :href="link.href ? link.href : undefined"
                   style="margin-left: 2em"
@@ -53,6 +55,7 @@
                 v-for="link in endLinks"
                 :key="link.name"
                 link
+                @click="menu = false"
                 :to="link.link ? link.link : undefined"
                 :href="link.href ? link.href : undefined"
               >
@@ -208,6 +211,7 @@ export default {
   data() {
     return {
       appBarHeight: '48px',
+      menu: false,
       errors: [],
       currentError: {},
       errorDialog: false,
