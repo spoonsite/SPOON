@@ -9,6 +9,7 @@
           :headers="tableHeaders"
           :items="reviewsDisplay"
           class="tableLayout"
+          hide-actions
         >
           <template slot="items" slot-scope="props">
             <td>{{ props.item.entry }}</td>
@@ -64,11 +65,6 @@ export default {
         }
       )
     }
-    var tables = document.getElementsByClassName('v-datatable__actions')
-    tables[0].style.bottom = 0
-    tables[0].style.left = 0
-    tables[0].style.right = 0
-    tables[0].style.position = 'fixed'
   },
   data () {
     return {
@@ -179,8 +175,4 @@ export default {
     flex-direction: column;
     flex-grow: 1;
   }
-.tablePaging {
-    position: fixed !important;
-    bottom: 0 !important;
-}
 </style>
