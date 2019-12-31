@@ -24,13 +24,14 @@
             <td>{{ props.item.updateDate }}</td>
             <td>
               <v-btn small fab class="grey lighten-2" @click.stop="setUpEditDialog(props.item)"><v-icon>fas fa-pencil-alt</v-icon></v-btn>
-              <v-btn small fab class="table-buttons red lighten-3"><v-icon>fas fa-trash</v-icon></v-btn>
+              <v-btn small fab class="table-buttons red lighten-3" @click.stop="setUpDeleteDialog(props.item)"><v-icon>fas fa-trash</v-icon></v-btn>
             </td>
             <td>
             </td>
           </template>
         </v-data-table>
         <ReviewModal v-model="editReviewDialog" @close="editReviewDialog = false" :review="currentReview"></ReviewModal>
+        <DeleteReviewModal v-model="deleteReviewDialog" @close="deleteReviewDialog = false" :review="currentReview"></DeleteReviewModal>
       </div>
     </v-form>
   </div>
@@ -40,13 +41,15 @@
 import StarRating from 'vue-star-rating'
 import ModalTitle from '@/components/ModalTitle'
 import ReviewModal from '../components/ReviewModal'
+import DeleteReviewModal from '../components/DeleteReviewModal'
 import format from 'date-fns/format'
 export default {
   name: 'reviews-page',
   components: {
     StarRating,
     ModalTitle,
-    ReviewModal
+    ReviewModal,
+    DeleteReviewModal
   },
  mounted () {
     if (this.$store.state.currentUser.username) {
@@ -82,6 +85,7 @@ export default {
       reviewsDisplay: [],
       username: '',
       editReviewDialog: false,
+      deleteReviewDialog: false,
       currentReview: {
         title: '',
         rating: 0,
@@ -89,7 +93,9 @@ export default {
         timeUsed: '',
         pros: [],
         cons: [],
-        comment: ''
+        comment: '',
+        editReviewId: '',
+        componentId: ''
       }
     }
   },
@@ -101,7 +107,6 @@ export default {
           this.reviewsDisplay = []
           this.reviewsData = response.data
           this.setUpTableArray()
-          console.log(this.reviewsData)
         })
     },
     removeCommentHtml (review) {
@@ -145,6 +150,10 @@ export default {
       this.getCurrentItemData(tableReview)
       this.editReviewDialog = true
     },
+    setUpDeleteDialog (tableReview) {
+      this.getCurrentItemData(tableReview)
+      this.deleteReviewDialog = true
+    },
     getCurrentItemData (tableReview) {
       this.currentReview.title = tableReview.title
       this.currentReview.rating = tableReview.rating
@@ -153,10 +162,9 @@ export default {
       this.currentReview.pros = tableReview.pros
       this.currentReview.cons = tableReview.cons
       this.currentReview.comment = tableReview.comment
-      this.currentReview.timeUsed = tableReview.timeUsed
       this.currentReview.editReviewId = tableReview.editReviewId
       this.currentReview.componentId = tableReview.componentId
-    }
+    },
   }
 }
 </script>

@@ -480,7 +480,7 @@
                   >Edit
                   </v-btn>
                   <v-btn v-if="review.username === $store.state.currentUser.username"
-                    @click="deleteReviewDialog=true; deleteRequestId=review.reviewId;"
+                    @click.stop="deleteReviewSetup(review); deleteRequestId=review.reviewId;"
                     small
                   >Delete
                   </v-btn>
@@ -500,19 +500,12 @@
       >
       </ReviewModal>
 
-      <v-dialog
+      <DeleteReviewModal
         v-model="deleteReviewDialog"
-        width='25em'
+        @close="deleteReviewDialog = false; getDetail();"
+        :review="newReview"
       >
-        <v-card>
-          <ModalTitle title='Confirm Review Deletion' @close='deleteReviewDialog = false' />
-          <v-card-actions>
-            <v-spacer/>
-            <v-btn color="warning" @click="deleteReviewConfirmation()">Delete</v-btn>
-            <v-btn @click="deleteReviewDialog = false; deleteRequestId=''">Cancel</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      </DeleteReviewModal>
 
         <v-expansion-panel class="expansion-spacing">
           <v-expansion-panel-content>
@@ -591,6 +584,7 @@ import ModalTitle from '@/components/ModalTitle'
 import format from 'date-fns/format'
 import isFuture from 'date-fns/is_future'
 import ReviewModal from '../components/ReviewModal'
+import DeleteReviewModal from '../components/DeleteReviewModal'
 
 export default {
   name: 'entry-detail-page',
@@ -599,7 +593,8 @@ export default {
     Lightbox,
     Question,
     ModalTitle,
-    ReviewModal
+    ReviewModal,
+    DeleteReviewModal
   },
   mounted () {
     if (this.$route.params.id) {
@@ -637,9 +632,7 @@ export default {
       contactVendorDialog: false,
       tagEmpty: false,
       selectedTag: '',
-      deleteRequestId: '',
       deleteTagId: '',
-      // editReviewId: '',
       vendorMessage: '',
       reviewSubmit: false,
       newReview: {
@@ -768,16 +761,15 @@ export default {
     deleteQuestion (question) {
       this.questions = this.questions.filter(el => el.questionId !== question.questionId)
     },
-    deleteReviewConfirmation () {
-      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/reviews/${this.deleteRequestId}`)
-        .then(response => {
-          this.$toasted.show('Review Deleted')
-          this.deleteReviewDialog = false
-          this.getDetail()
-        })
-    },
     editReviewSetup (review) {
       this.writeReviewDialog = true
+      this.fillReviewInformation(review)
+    },
+    deleteReviewSetup (review) {
+      this.deleteReviewDialog = true
+      this.fillReviewInformation(review)
+    },
+    fillReviewInformation (review) {
       this.newReview.title = review.title
       this.newReview.rating = review.rating
       this.newReview.recommend = review.recommend
