@@ -154,17 +154,24 @@ export default {
   },
   watch: {
     'review.comment': function (val) {
-      if (val !== '' && this.reviewValid) {
-        this.reviewSubmit = true
+      if (val !== '' && this.reviewValid && this.review.rating !== 0) {
+        this.reviewSubmit = true;
       } else {
-        this.reviewSubmit = false
+        this.reviewSubmit = false;
+      }
+    },
+    'review.rating': function (val) {
+      if (val !== 0 && this.reviewValid && this.review.comment !== '') {
+        this.reviewSubmit = true;
+      } else {
+        this.reviewSubmit = false;
       }
     },
     reviewValid: function (val) {
-      if (val && this.review.comment !== '') {
-        this.reviewSubmit = true
+      if (val && this.review.comment !== '' && this.review.rating !== 0) {
+        this.reviewSubmit = true;
       } else {
-        this.reviewSubmit = false
+        this.reviewSubmit = false;
       }
     },
   },

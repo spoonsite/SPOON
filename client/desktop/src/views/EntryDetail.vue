@@ -643,6 +643,7 @@ export default {
         timeUsed: '',
         pros: [],
         cons: [],
+        comment: '',
         componentId: '',
         editReviewId: ''
       },
@@ -668,7 +669,6 @@ export default {
       allTags: [],
       relatedTags: [],
       relatedComponents: [],
-      reviewValid: false,
       todaysDate: new Date(),
       detail: {},
       addDetail: {},
