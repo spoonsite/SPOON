@@ -125,6 +125,9 @@ export default {
     StarRating
   },
   mounted () {
+    this.timeSelectOptions = []
+    this.prosSelectOptions = []
+    this.consSelectOptions = []
     this.lookupTypes()
   },
   data () {
