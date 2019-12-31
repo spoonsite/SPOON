@@ -495,7 +495,7 @@
         
       <ReviewModal
         v-model="writeReviewDialog"
-        @close="writeReviewDialog = false"
+        @close="writeReviewDialog = false; getDetail(); isLoading = false"
         :review="newReview"
       >
       </ReviewModal>

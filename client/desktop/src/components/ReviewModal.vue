@@ -134,8 +134,6 @@ export default {
       consSelectOptions: [],
       reviewSubmit: false,
       reviewValid: false,
-      isLoading: false,
-      comment: '',
       reviewTitleRules: [
         v => !!v || 'Title is required',
         v => (v && v.length <= 255) || 'Title must be less than 255 characters'
@@ -256,7 +254,7 @@ export default {
       } else {
         this.$http.post(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/detail`, data)
           .then(response => {
-            this.close()
+            this.close() 
             this.$toasted.show('Review Submitted')
           })
           .catch(e => this.$toasted.error('There was a problem submitting the review.'))
