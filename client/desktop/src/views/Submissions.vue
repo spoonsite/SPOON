@@ -103,7 +103,7 @@
                     - Edit
                     - Delete
                     - Comments -->
-                <v-btn icon class="pa-4 grey lighten-2" v-if="props.item.componentId">
+                <v-btn icon class="pa-4 grey lighten-2" v-if="props.item.componentId" @click="viewComponent(props.item.componentID)">
                   <v-icon>far fa-eye</v-icon>
                 </v-btn>
                 <v-btn icon class="pa-4 grey lighten-2">
@@ -219,6 +219,9 @@ export default {
           this.isLoading = false
           console.error(error)
         })
+    },
+    viewComponent (componentId) {
+      this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
     },
     combineComponentsAndWorkPlans (allComponents, workPlans) {
       let components = allComponents.filter(e => e.componentId !== undefined)
