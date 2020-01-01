@@ -1,19 +1,4 @@
 <template lang="html">
-  <!-- <v-layout
-    row
-    justify-center
-    align-center
-    v-if="isLoading"
-    >
-    <v-flex xs1>
-      <v-progress-circular
-        color="primary"
-        :size="60"
-        :width="6"
-        indeterminate
-      ></v-progress-circular>
-    </v-flex>
-  </v-layout> -->
   <div>
     <v-form style="padding: 1em; padding-top: 2em;">
       <div>
@@ -55,39 +40,30 @@
               <div v-if="props.item.submitDate">{{ props.item.submitDate | formatDate }}</div>
               <div v-else-if="props.item.status === 'P'">{{ props.item.lastUpdate | formatDate }}</div>
             </td>
-
-            <!-- <td>N/A</td> -->
             <td>
               <div v-if="props.item.lastUpdate">{{ props.item.lastUpdate | formatDate }}</div>
             </td>
             <td>
-              <div v-if="props.item.componentId">
+              <div>
                 <svg width="200" height="50">
-                  <!-- <circle v-for="(step, i) in props.item.approvalWorkflow.steps" :cx="cx" cy="25" r="15" stroke="black" fill="blue" /> -->
+                  <circle
+                    v-for="(step, i) in props.item.steps"
+                    :key="step.name"
+                    :cx="20 + i * 50"
+                    cy="25"
+                    r="15"
+                    stroke="black"
+                    :fill="'#' + step.color"
+                  />
                   <line
-                    x1="35"
+                    v-for="(line, i) in props.item.steps"
+                    :key="line.name"
+                    :x1="35 + i * 50"
                     y1="25"
-                    x2="55"
+                    :x2="55 + i * 50"
                     y2="25"
                     style="stroke:black; stroke-width:2"
                   ></line>
-                  <!-- <circle cx="70" cy="25" r="15" stroke="black" fill="grey" /> -->
-                  <line
-                    x1="85"
-                    y1="25"
-                    x2="105"
-                    y2="25"
-                    style="stroke:black; stroke-width:2"
-                  ></line>
-                  <!-- <circle cx="120" cy="25" r="15" stroke="black" fill="grey" /> -->
-                  <line
-                    x1="135"
-                    y1="25"
-                    x2="155"
-                    y2="25"
-                    style="stroke:black; stroke-width:2"
-                  ></line>
-                  <!-- <circle cx="170" cy="25" r="15" stroke="black" fill="grey" /> -->
                 </svg>
               </div>
             </td>
@@ -203,7 +179,6 @@ export default {
       counter: 0,
       bulkUploadDialog: false,
       commentsDialog: false,
-      cx: 20
     }
   },
   methods: {
@@ -213,8 +188,9 @@ export default {
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
         .then(response => {
           this.isLoading = false
-          console.log(response)
+          // console.log(response)
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
+          console.log(this.componentData)
         }).catch(error => {
           this.isLoading = false
           console.error(error)
