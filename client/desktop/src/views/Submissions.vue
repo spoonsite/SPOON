@@ -46,24 +46,26 @@
             <td>
               <div>
                 <svg width="200" height="50">
-                  <circle
-                    v-for="(step, i) in props.item.steps"
+                  <g v-for="(step, i) in props.item.steps"
                     :key="step.name"
-                    :cx="20 + i * 50"
-                    cy="25"
-                    r="15"
-                    stroke="black"
-                    :fill="'#' + step.color"
-                  />
-                  <line
-                    v-for="(line, i) in props.item.steps"
-                    :key="line.name"
-                    :x1="35 + i * 50"
-                    y1="25"
-                    :x2="55 + i * 50"
-                    y2="25"
-                    style="stroke:black; stroke-width:2"
-                  ></line>
+                    :id="step.name"
+                  >
+                    <circle
+                      :cx="20 + i * 50"
+                      cy="25"
+                      r="15"
+                      stroke="black"
+                      :fill="'#' + step.color"
+                    />
+                    <line
+                      v-if="i !== props.item.steps.length - 1"
+                      :x1="35 + i * 50"
+                      y1="25"
+                      :x2="55 + i * 50"
+                      y2="25"
+                      style="stroke:black; stroke-width:2"
+                    ></line>
+                  </g>
                 </svg>
               </div>
             </td>
