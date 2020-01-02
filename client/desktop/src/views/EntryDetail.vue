@@ -13,8 +13,10 @@
       <div v-else class="no-media"></div>
       <div class="detail-header">
         <div class="component-name">
-          <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="40px" />
-          <p class="headline">{{ detail.name }}</p>
+          <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="40px">
+          <p class="headline">{{detail.name}}</p>
+           &nbsp;
+          <star-rating :rating="computeAverageRating(detail)" :read-only="true" :show-rating="false" :increment="0.01" :star-size="20"></star-rating>
         </div>
         <div class="detail-header-body">
           <div class="detail-header-left">
@@ -49,13 +51,10 @@
               v-model="watchSwitch"
             ></v-switch>
             <p>
-              <strong>Average User Rating:</strong>
-              <star-rating
-                :rating="computeAverageRating(detail)"
-                :read-only="true"
-                :increment="0.01"
-                :star-size="30"
-              ></star-rating>
+              <strong>Add a Rating:</strong>
+              <p @click="writeReviewDialog = true">
+                <star-rating v-model="newReview.rating" :rating="newReview.rating" :read-only="false" :increment="1" :star-size="25"></star-rating>
+              </p>
             </p>
             <div style="display: flex; flex-direction: column;">
               <v-chip @click="openPrintScreen()" class="ml-0 chip-hover-color pointer" style="width: 13em;">
