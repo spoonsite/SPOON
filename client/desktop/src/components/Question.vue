@@ -142,7 +142,6 @@ export default {
     Answer,
     ModalTitle
   },
-  mounted() {},
   data() {
     return {
       answers: [],
