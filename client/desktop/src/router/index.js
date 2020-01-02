@@ -7,7 +7,6 @@ import ContactUs from '@/views/ContactUs'
 import Profile from '@/views/Profile'
 import EntryDetail from '@/views/EntryDetail'
 import Watches from '@/views/Watches'
-import SubmitEntry from '@/views/SubmitEntry'
 
 Vue.use(VueRouter)
 
