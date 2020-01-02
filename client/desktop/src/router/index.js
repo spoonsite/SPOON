@@ -47,11 +47,6 @@ const routes = [
     path: '/watches',
     name: 'Watches',
     component: Watches
-  },
-  {
-    path: '/submitentry',
-    name: 'SubmitEntry',
-    component: SubmitEntry
   }
   // {
   //   path: '/about',
