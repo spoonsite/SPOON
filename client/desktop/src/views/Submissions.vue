@@ -11,9 +11,6 @@
         <v-btn class="top-buttons" @click="bulkUploadDialog = true"
           ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
-        <v-btn class="top-buttons pr-2" @click="commentsDialog = true"
-          ><v-icon left>far fa-comment</v-icon>Comments</v-btn
-        >
       </div>
       <div class="d-flex">
         <v-data-table
@@ -87,6 +84,9 @@
                 <v-btn icon class="pa-4 grey lighten-2">
                   <v-icon>fas fa-pencil-alt</v-icon>
                 </v-btn>
+                <v-btn icon class="pa-4 grey lighten-2" @click="getComments(props.item)">
+                  <v-icon>far fa-comment</v-icon>
+                </v-btn>
                 <v-btn icon class="pa-4 red lighten-3">
                   <v-icon>fas fa-trash</v-icon>
                 </v-btn>
@@ -129,6 +129,7 @@
         <ModalTitle title="Comments" @close="commentsDialog = false" />
         <v-card-text>
           <!-- <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p> -->
+          <p>{{ comments }}</p>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -177,6 +178,7 @@ export default {
       },
       componentDisplay: [],
       componentData: [],
+      comments: [],
       isLoading: true,
       counter: 0,
       bulkUploadDialog: false,
@@ -197,6 +199,24 @@ export default {
           this.isLoading = false
           console.error(error)
         })
+    },
+    getComments (component) {
+      if (component.componentId) {
+        this.$http.get(`/openstorefront/api/v1/resource/components/${component.componentId}/comments`)
+          .then(response => {
+            this.comments = response.data
+            this.commentsDialog = true
+          })
+          .catch(e => this.errors.push(e))
+      }
+      else {
+        this.$http.get(`/openstorefront/api/v1/resource/usersubmissions/${component.submissionId}/comments`)
+          .then(response => {
+            this.comments = response.data
+            this.commentsDialog = true
+          })
+          .catch(e => this.errors.push(e))
+      }
     },
     viewComponent (componentId) {
       this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
@@ -283,9 +303,6 @@ export default {
         lastUpdate: submission.lastActivityDts,
         steps: null
       }
-    },
-    openBulkUpload () {
-      // window.open('openstorefront/bulkUpload.jsp','uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
     }
   }
 }
