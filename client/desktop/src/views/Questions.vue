@@ -23,9 +23,6 @@
           hide-default-footer
           :expanded.sync="expanded"
           item-key="questionId"
-          @click:row="
-            expanded.includes($event) ? (expanded = expanded.filter(e => e !== $event)) : expanded.push($event)
-          "
           show-expand
         >
           <template v-slot:item.activeStatus="{ item }">
