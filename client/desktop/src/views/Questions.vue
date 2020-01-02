@@ -21,6 +21,12 @@
           :items-per-page="1000"
           class="elevation-1"
           hide-default-footer
+          :expanded.sync="expanded"
+          item-key="questionId"
+          @click:row="
+            expanded.includes($event) ? (expanded = expanded.filter(e => e !== $event)) : expanded.push($event)
+          "
+          show-expand
         >
           <template v-slot:item.activeStatus="{ item }">
             <div v-if="item.activeStatus === 'A'">Active</div>
@@ -55,7 +61,6 @@
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <!-- <v-btn icon @click="deleteQuestion(item.componentId, item.questionId)" v-on="on"> -->
                 <v-btn
                   icon
                   @click="
@@ -69,6 +74,18 @@
               </template>
               <span>Delete</span>
             </v-tooltip>
+          </template>
+          <template v-slot:expanded-item="{ headers, item }">
+            <td colspan="7" class="py-4">
+              <h3>Answers:</h3>
+              <div v-for="response in item.responses" :key="response.responseId" class="py-4">
+                <v-card>
+                  <v-card-text style="margin-bottom: -12px;">
+                    <p class="text--primary" v-html="response.response" />
+                  </v-card-text>
+                </v-card>
+              </div>
+            </td>
           </template>
           <template v-slot:no-data>
             No questions have been asked...
@@ -194,6 +211,7 @@ export default {
   },
   data() {
     return {
+      expanded: [],
       question: {
         isLoading: false,
         checkDeleteModal: false,
@@ -206,7 +224,8 @@ export default {
           { text: 'Question', value: 'question', sortable: false },
           { text: 'Update Date', value: 'questionUpdateDts' },
           { text: 'Post Date', value: 'createDts' },
-          { text: 'Actions', value: 'actions', sortable: false }
+          { text: 'Actions', value: 'actions', sortable: false },
+          { text: '', value: 'data-table-expand', sortable: false }
         ],
         questions: []
       },
@@ -283,6 +302,7 @@ export default {
             .then(response => {
               this.question.isLoading = false
               this.question.questions.push(...response.data)
+              this.getAnswersToQuestions()
             })
             .catch(error => {
               console.error(error)
@@ -293,6 +313,15 @@ export default {
           console.error(error)
           this.question.isLoading = false
         })
+    },
+    getAnswersToQuestions() {
+      this.question.questions.forEach(question => {
+        this.$http
+          .get(`openstorefront/api/v1/resource/componentquestions/${question.questionId}/responses`)
+          .then(response => {
+            question.responses = response.data
+          })
+      })
     },
     editAnswer(answer) {
       this.answer.currentAnswer = answer
@@ -361,8 +390,13 @@ export default {
           this.answer.isLoading = false
         })
     }
+  },
+  watch: {
+    expanded(val) {
+      console.log(val)
+    }
   }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped></style>
