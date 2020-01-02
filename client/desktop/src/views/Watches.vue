@@ -38,11 +38,10 @@
 </template>
 
 <script lang="js">
-import router from '@/router/index'
+import router from '@/router'
 
 export default {
   name: 'watches-page',
-  props: [],
   mounted() {
     // need to check if we have the current user
     if (this.$store.state.currentUser.username) {
@@ -97,7 +96,6 @@ export default {
   margin-right: auto;
   margin-left: auto;
 }
-
 .overlay {
   width: 100%;
   height: 100%;

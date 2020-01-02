@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from '@/App.vue'
 import router from '@/router'
-import store from '@/store/index'
+import store from '@/store'
 import scientificToDecimal from '@/util/scientificToDecimal'
 
 import Vuetify from 'vuetify/lib'
@@ -45,7 +45,8 @@ Vue.prototype.$jsonparse = json => {
   try {
     parsed = JSON.parse(json)
   } catch (e) {
-    console.log('Failed to parse json: ', e)
+    /* eslint no-console: ["error", { allow: ["error"] }] */
+    console.error('Failed to parse json: ', e)
   }
   return parsed
 }

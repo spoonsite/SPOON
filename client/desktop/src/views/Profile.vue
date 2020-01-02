@@ -288,7 +288,6 @@ export default {
       this.user = JSON.parse(JSON.stringify(this.cachedUser))
     },
     sendTestMsg() {
-      console.log('test')
       this.$http
         .post('/openstorefront/api/v1/resource/userprofiles/' + this.username + '/test-email', this.user.email)
     }

@@ -95,7 +95,6 @@ export default {
     SearchBar,
     DisclaimerModal
   },
-  props: [],
   mounted() {
     this.getNestedComponentTypes()
     this.getHighlights()

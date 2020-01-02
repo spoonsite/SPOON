@@ -131,9 +131,9 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import Answer from '@/components/Answer'
 import ModalTitle from '@/components/ModalTitle'
-import _ from 'lodash'
 
 export default {
   name: 'Question',
@@ -142,7 +142,6 @@ export default {
     Answer,
     ModalTitle
   },
-  mounted() {},
   data() {
     return {
       answers: [],
@@ -257,9 +256,7 @@ export default {
       this.newQuestion = this.question.question
       this.editQuestionDialog = true
     }
-  },
-  computed: {},
-  watch: {}
+  }
 }
 </script>
 

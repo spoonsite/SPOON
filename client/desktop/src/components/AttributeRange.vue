@@ -29,13 +29,11 @@
 <script>
 export default {
   name: 'AttributeRange',
-  props: [],
   methods: {
     validNumber(v) {
       return !isNaN(v) || 'Must be a valid number'
     }
   },
-  watch: {},
   data() {
     return {
       min: null,
@@ -44,5 +42,3 @@ export default {
   }
 }
 </script>
-
-<style scoped></style>

@@ -56,7 +56,6 @@ import _ from 'lodash'
 export default {
   name: 'SearchBar',
   props: ['value', 'hideSuggestions', 'overlaySuggestions'],
-  mounted() {},
   data() {
     return {
       hideSearchSuggestions: true,
