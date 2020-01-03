@@ -11,7 +11,7 @@ These are instructions on how to get production instance of SPOON set up on a VM
 
 ## Walkthrough
 
-This Documentation will walk you through setting up a production server to serve SPOON.
+This documentation will walk you through setting up a production server to serve SPOON.
 
 - [Prerequisites](/systemadmin/setup/#prerequisites)
 - [OpenJDK](/systemadmin/setup/#openjdk)
@@ -46,16 +46,16 @@ This Documentation will walk you through setting up a production server to serve
 
 Install CentOS 7 onto a VM using the following options:
 
-- Set up correct timezone
-- Ensure keyboard is in the correct language (if using english make sure the `~` works)
+- Set up correct time zone
+- Ensure keyboard is in the correct language (if using English make sure the `~` works)
 - Software Selection:
   - Minimal install
-    - Compatibility libraries
+    - Compatibility Libraries
     - Development Tools
     - Security Tools
     - System Administrator Tools
 
-Once CentOS has finished installing connect the VM to the internet and run `yum update`
+Once CentOS has finished installing connect the VM to the internet and run `yum update`.
 
 **WARING: Some commands may need to be run with sudo.**
 
@@ -68,11 +68,11 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
     java -version
     ```
 
-1. Verify that the openjdk version is '1.8.0\_\*\*\*'
+1. Verify that the openjdk version is "1.8.0\_\*\*\*"
 
 #### Elasticsearch
 
-1. Get and install elasticsearch
+1. Get and install Elasticsearch
 
     ```sh
     wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.2.1-x86_64.rpm
@@ -81,7 +81,7 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
     rpm --install elasticsearch-7.2.1-x86_64.rpm
     ```
 
-1. Enable elasticsearch as a service and start elasticsearch
+1. Enable Elasticsearch as a service and start Elasticsearch
 
     ```sh
     systemctl enable elasticsearch
@@ -89,7 +89,7 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
     service elasticsearch status
     ```
 
-1. Verify that elasticsearch is running, the last command from above should output something similar to
+1. Verify that Elasticsearch is running, the last command from above should output something similar to:
 
     ```sh
     ● elasticsearch.service - Elasticsearch
@@ -152,13 +152,13 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
 
 #### Tomcat
 
-1. Install tomcat
+1. Install Tomcat
 
     ```sh
     yum install tomcat
     ```
 
-1. Update the tomcat configuration to use a specific data directory
+1. Update the Tomcat configuration to use a specific data directory
 
     Paste the following line into `/usr/share/tomcat/conf/tomcat.conf`.
 
@@ -166,15 +166,15 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
     JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dapplication.datadir=/var/spoon -Xmx4g -XX:+UseConcMarkSweepGC"
     ```
 
-1. Add an admin user to the tomcat server (this is only for the tomcat server and not the SPOON application)
+1. Add an admin user to the Tomcat server (this is only for the tomcat server and not the SPOON application)
 
-    Uncomment out the second to last line and change the admin password.
+    Uncomment out the second-to-last line and change the admin password
 
     ```sh
     sudo vim /etc/share/tomcat/conf/tomcat-users.xml
     ```
 
-1. Set up tomcat as a service to start on boot and start tomcat
+1. Set up Tomcat as a service to start on boot and start Tomcat
 
     ```sh
     systemctl enable tomcat.service
@@ -182,13 +182,13 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
     systemctl status tomcat.service
     ```
 
-1. Ensure tomcat is running
+1. Ensure Tomcat is running
 
     ```sh
     tomcat version
     ```
 
-    You should get something like
+    You should get something like:
 
     ```sh
     Server version: Apache Tomcat/7.0.76
@@ -232,7 +232,7 @@ Once CentOS has finished installing connect the VM to the internet and run `yum 
     mv ~/openstorefront.war /usr/share/tomcat/webapps/
     ```
 
-1. Navigate to `localhost:8080/openstorefront/` to view SPOON.
+1. Navigate to `localhost:8080/openstorefront/` to view SPOON
 
 1. If something has gone wrong and you are unable to view SPOON, use journalctl to debug the issue
 
@@ -256,7 +256,7 @@ The application will create some base data for you, but if you have data from a 
     scp spoon-data.tar.gz username@VM-address:~/spoon-data.tar.gz
     ```
 
-1. Unpack the data and change permissions to allow tomcat to access it (should be run on the VM)
+1. Unpack the data and change permissions to allow Tomcat to access it (should be run on the VM)
 
     ```sh
     tar -zxf ~/spoon-data.tar.gz -C /var/spoon

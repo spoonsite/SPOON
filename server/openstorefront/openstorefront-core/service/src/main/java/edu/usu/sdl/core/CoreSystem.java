@@ -33,7 +33,6 @@ import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
 import edu.usu.sdl.openstorefront.service.manager.ConfluenceManager;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
-import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.LDAPManager;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
@@ -86,7 +85,6 @@ public class CoreSystem
 			DBManager.getInstance(),
 			SearchServerManager.getInstance(),
 			new OSFCacheManager(),
-			new JiraManager(),
 			new ConfluenceManager(),
 			new LookupImporter(),
 			new MailManager(),
