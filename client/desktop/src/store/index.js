@@ -18,22 +18,22 @@ export default new Vuex.Store({
   },
   // mutations must be synchronous
   mutations: {
-    setSecurityPolicy (state, response) {
+    setSecurityPolicy(state, response) {
       state.securityPolicy = response.data
     },
-    setCurrentUser (state, response) {
+    setCurrentUser(state, response) {
       state.currentUser = response.data
     },
-    setAppVersion (state, response) {
+    setAppVersion(state, response) {
       state.appVersion = response.data
     },
-    setBranding (state, response) {
+    setBranding(state, response) {
       state.branding = response.data
     },
-    setHelpUrl (state, response) {
+    setHelpUrl(state, response) {
       state.helpUrl = response.data.description
     },
-    setPermissionMap (state, response) {
+    setPermissionMap(state, response) {
       response.data.roles.forEach(roles => {
         roles.permissions.forEach(permission => {
           let found = false
@@ -44,27 +44,27 @@ export default new Vuex.Store({
         })
       })
     },
-    setComponentTypeList (state, response) {
+    setComponentTypeList(state, response) {
       state.componentTypeList = response.data
     },
-    setAttributeMap (state, response) {
+    setAttributeMap(state, response) {
       state.attributeMap = {}
       response.data.forEach(element => {
         state.attributeMap[element.attributeType] = element
       })
     },
-    setSelectedComponentTypes (state, response) {
+    setSelectedComponentTypes(state, response) {
       state.selectedComponentTypes = response.data
     }
   },
   actions: {
-    getSecurityPolicy (context) {
+    getSecurityPolicy(context) {
       axios.get('/openstorefront/api/v1/resource/securitypolicy')
         .then(response => {
           context.commit('setSecurityPolicy', response)
         })
     },
-    getCurrentUser (context, callback) {
+    getCurrentUser(context, callback) {
       axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
           context.commit('setCurrentUser', response)
@@ -76,13 +76,13 @@ export default new Vuex.Store({
           }
         })
     },
-    getAppVersion (context) {
+    getAppVersion(context) {
       axios.get('/openstorefront/api/v1/service/application/version')
         .then(response => {
           context.commit('setAppVersion', response)
         })
     },
-    getBranding (context, callback) {
+    getBranding(context, callback) {
       axios.get('/openstorefront/api/v1/resource/branding/current')
         .then(response => {
           context.commit('setBranding', response)
@@ -93,19 +93,19 @@ export default new Vuex.Store({
           }
         })
     },
-    getComponentTypeList (context) {
+    getComponentTypeList(context) {
       axios.get('/openstorefront/api/v1/resource/componenttypes')
         .then(response => {
           context.commit('setComponentTypeList', response)
         })
     },
-    getAttributeMap (context) {
+    getAttributeMap(context) {
       axios.get('/openstorefront/api/v1/resource/attributes')
         .then(response => {
           context.commit('setAttributeMap', response)
         })
     },
-    getHelpUrl (context, callback) {
+    getHelpUrl(context, callback) {
       axios.get('/openstorefront/api/v1/service/application/configproperties/help.url')
         .then(response => {
           context.commit('setHelpUrl', response)
